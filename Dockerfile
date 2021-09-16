@@ -2,7 +2,7 @@ FROM harbor.statkart.no/proxy_cache/library/node:latest as nodeContainer
 WORKDIR /app
 COPY package.json package-lock.json .npmrc ./
 RUN npm install
-RUN rm -f -npmrc
+RUN rm -f .npmrc
 COPY . .
 RUN npm run build
 

@@ -5,7 +5,7 @@ import './App.css';
 function App() {
 
   const fetchBackendInfo = async () => {
-    const response = await fetch("/actuator/info", {})
+    const response = await fetch("/nibas/api/layers/", {})
        .then((res) => res.json());
     console.log(JSON.stringify(response));
   };
