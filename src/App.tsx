@@ -1,18 +1,18 @@
-import React, {useEffect} from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from "react";
+import logo from "./logo.svg";
+import "./App.css";
 
 function App() {
-
   const fetchBackendInfo = async () => {
-    const response = await fetch("/nibas/api/layers/", {})
-       .then((res) => res.json());
+    const response = await fetch("/nibas/api/layers/", {}).then((res) =>
+      res.json()
+    );
     console.log(JSON.stringify(response));
   };
 
   useEffect(() => {
     fetchBackendInfo();
-  })
+  });
 
   return (
     <div className="App">
