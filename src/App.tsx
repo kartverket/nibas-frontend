@@ -1,37 +1,24 @@
-import React, { useEffect } from "react";
-import logo from "./logo.svg";
+import { useState } from "react";
 import "./App.css";
+import Map from "./Map/Map";
+import Layers from "./Layers";
+import Controls from "./Controls";
+import { fromLonLat } from "ol/proj";
+import { ThemeProvider } from "styled-components";
+import { defaultTheme } from "./style/theme";
 
-function App() {
-  const fetchBackendInfo = async () => {
-    const response = await fetch("/nibas/api/layers/", {}).then((res) =>
-      res.json()
-    );
-    console.log(JSON.stringify(response));
-  };
-
-  useEffect(() => {
-    fetchBackendInfo();
-  });
+const App = () => {
+  const [zoom] = useState(4);
+  const [center] = useState<[number, number]>([-94.9065, 38.9884]);
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={defaultTheme}>
+      <Map zoom={zoom} center={fromLonLat(center)}>
+        <Layers />
+        <Controls />
+      </Map>
+    </ThemeProvider>
   );
-}
+};
 
 export default App;
