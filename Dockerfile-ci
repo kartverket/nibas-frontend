@@ -1,5 +1,5 @@
-FROM harbor.statkart.no/proxy_cache/nginx:1.21
+FROM harbor.statkart.no/proxy_cache/nginxinc/nginx-unprivileged
 COPY ./build-config/nginx/k8s/nginx.conf /etc/nginx/nginx.conf
 COPY ./build/ /usr/share/nginx/html
-EXPOSE 80
+EXPOSE 8080
 CMD ["nginx", "-g", "daemon off;"]
