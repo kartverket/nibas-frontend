@@ -1,22 +1,21 @@
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { Draw, Interaction, Modify, Snap } from "ol/interaction";
-import MapContext from "../Map/MapContext";
 import Geometry from "ol/geom/Geometry";
 import VectorSource from "ol/source/Vector";
-import { DrawEvent } from "ol/interaction/Draw";
+import { useMap } from "components/Map/MapContext";
 
-const useInteraction = (interaction: Interaction) => {
-  const map = useContext(MapContext);
+const useInteraction = (interaction: Interaction, enabled = true) => {
+  const { map } = useMap();
 
   useEffect(() => {
-    if (!map) return;
+    if (!map || !enabled) return;
 
     map.addInteraction(interaction);
 
     return () => {
       map.removeInteraction(interaction);
     };
-  }, [map, interaction]);
+  }, [map, interaction, enabled]);
 };
 
 export const useModifyInteraction = (vectorSource: VectorSource<Geometry>) => {
@@ -33,7 +32,6 @@ export const useModifyInteraction = (vectorSource: VectorSource<Geometry>) => {
 };
 
 export const useDrawInteraction = (vectorSource: VectorSource<Geometry>) => {
-  const [newFeatureId, setNewFeatureId] = useState(0);
   const draw = useMemo(
     () =>
       new Draw({
@@ -47,21 +45,6 @@ export const useDrawInteraction = (vectorSource: VectorSource<Geometry>) => {
     () => new Snap({ source: vectorSource }),
     [vectorSource]
   );
-
-  useEffect(() => {
-    const onDrawEnd = (e: DrawEvent) => {
-      // adds drawing to the vector source
-      e.feature.setId("nibas-" + newFeatureId);
-      setNewFeatureId(newFeatureId + 1);
-      vectorSource.addFeature(e.feature);
-    };
-
-    draw.on("drawend", onDrawEnd);
-
-    return () => {
-      draw.un("drawend", onDrawEnd);
-    };
-  }, [draw, vectorSource, newFeatureId]);
 
   useInteraction(draw);
   useInteraction(snap);
