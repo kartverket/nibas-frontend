@@ -2,6 +2,7 @@ import XYZ from "ol/source/XYZ";
 import VectorSource from "ol/source/Vector";
 import GeoJSON from "ol/format/GeoJSON";
 import { get } from "ol/proj";
+import { TileWMS } from "ol/source";
 
 const geo1 = {
   type: "FeatureCollection",
@@ -68,4 +69,9 @@ export const vectorSource = new VectorSource({
 
 export const tileSource = new XYZ({
   url: "https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+});
+
+export const administrativeEnheterSource = new TileWMS({
+  url: "https://wms.geonorge.no/skwms1/wms.adm_enheter2?service=wms",
+  params: { LAYERS: "adm_enheter_V2_WMS" },
 });
