@@ -1,8 +1,8 @@
+import { get } from "ol/proj";
 import XYZ from "ol/source/XYZ";
 import VectorSource from "ol/source/Vector";
 import GeoJSON from "ol/format/GeoJSON";
-import { get } from "ol/proj";
-import { TileWMS } from "ol/source";
+import TileWMS from "ol/source/TileWMS";
 
 const geo1 = {
   type: "FeatureCollection",
