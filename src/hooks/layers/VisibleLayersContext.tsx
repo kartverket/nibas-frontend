@@ -1,18 +1,11 @@
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-import { useMap } from "components/Map/MapContext";
-
-// https://kentcdodds.com/blog/how-to-use-react-context-effectively
+import React, { createContext, useCallback, useContext, useState } from "react";
+import { LayerId } from "./types";
 
 const VisibleLayersContext = createContext<
   | {
-      isLayerVisible: (layerId: string) => boolean;
-      toggleLayer: (layerId: string) => void;
+      setLayerVisibility: (layerId: LayerId, visible: boolean) => void;
+      isLayerVisible: (layerId: LayerId) => boolean;
+      toggleLayerVisibility: (layerId: LayerId) => void;
     }
   | undefined
 >(undefined);
@@ -22,44 +15,25 @@ export const VisibleLayersProvider: React.FC = ({ children }) => {
     {}
   );
 
-  const { map } = useMap();
-
-  useEffect(() => {
-    if (!map) return;
-
-    const mapLayers = map.getLayers().getArray();
-
-    const newVisibleLayers = mapLayers.reduce<typeof visibleLayers>(
-      (acc, layer) => {
-        const layerId = layer.get("id");
-
-        return {
-          ...acc,
-          [layerId]: true,
-        };
-      },
-      {}
-    );
-
-    setVisibleLayers(newVisibleLayers);
-  }, [map]);
-
-  const toggleLayer = useCallback(
-    (layerId: string) => {
-      setVisibleLayers({
-        ...visibleLayers,
-        [layerId]: !visibleLayers[layerId],
-      });
-    },
-    [visibleLayers]
+  const setLayerVisibility = useCallback(
+    (layerId: LayerId, visible: boolean) =>
+      setVisibleLayers((prevLayers) => ({ ...prevLayers, [layerId]: visible })),
+    []
   );
+
+  const toggleLayerVisibility = useCallback((layerId: LayerId) => {
+    setVisibleLayers((prevLayers) => ({
+      ...prevLayers,
+      [layerId]: !prevLayers[layerId],
+    }));
+  }, []);
 
   const isLayerVisible = useCallback(
-    (layerId: string) => visibleLayers[layerId],
+    (layerId: LayerId) => visibleLayers[layerId],
     [visibleLayers]
   );
 
-  const value = { toggleLayer, isLayerVisible };
+  const value = { toggleLayerVisibility, isLayerVisible, setLayerVisibility };
 
   return (
     <VisibleLayersContext.Provider value={value}>

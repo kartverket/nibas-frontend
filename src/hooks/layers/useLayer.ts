@@ -3,26 +3,28 @@ import { Source } from "ol/source";
 import { Layer } from "ol/layer";
 import { useMap } from "components/Map/MapContext";
 import { useVisibleLayers } from "./VisibleLayersContext";
+import { LayerId } from "./types";
 
 export const useLayer = <T extends Source>(
-  layerId: string,
+  layerId: LayerId,
   layer?: Layer<T>
 ) => {
   const { map } = useMap();
-  const { isLayerVisible } = useVisibleLayers();
+  const { isLayerVisible, setLayerVisibility } = useVisibleLayers();
 
   const layerVisible = isLayerVisible(layerId);
 
   useEffect(() => {
     if (!map || !layer) return;
 
-    layer.set("id", layerId);
     map.addLayer(layer);
+    layer.set("id", layerId);
+    setLayerVisibility(layerId, true);
 
     return () => {
       map.removeLayer(layer);
     };
-  }, [map, layer, layerId]);
+  }, [map, layer, layerId, setLayerVisibility]);
 
   useEffect(() => {
     if (!layer) return;
