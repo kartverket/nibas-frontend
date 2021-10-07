@@ -11,7 +11,7 @@ import { useVisibleLayers } from "hooks/layers/VisibleLayersContext";
 
 const Map = () => {
   const { mapRef } = useMap();
-  const { toggleLayer } = useVisibleLayers();
+  const { toggleLayerVisibility } = useVisibleLayers();
 
   useLayers();
   useInteractions();
@@ -31,7 +31,7 @@ const Map = () => {
   };
 
   const toggleVectorLayer = () => {
-    toggleLayer("vector");
+    toggleLayerVisibility("vector");
   };
 
   return (
