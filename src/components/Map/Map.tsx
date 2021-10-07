@@ -7,9 +7,11 @@ import useDefaultControls from "hooks/useDefaultControls";
 import CustomControl from "components/CustomControl";
 // import { vectorSource } from "sources";
 import { useMap } from "./MapContext";
+import { useVisibleLayers } from "hooks/layers/VisibleLayersContext";
 
 const Map = () => {
   const { mapRef } = useMap();
+  const { toggleLayer } = useVisibleLayers();
 
   useLayers();
   useInteractions();
@@ -28,10 +30,17 @@ const Map = () => {
     // console.log("transformed?", lonLatCoords);
   };
 
+  const toggleVectorLayer = () => {
+    toggleLayer("vector");
+  };
+
   return (
     <MapTarget ref={mapRef}>
       <CustomControl>
         <button onClick={downloadData}>N</button>
+      </CustomControl>
+      <CustomControl>
+        <button onClick={toggleVectorLayer}>Toggle vector</button>
       </CustomControl>
     </MapTarget>
   );

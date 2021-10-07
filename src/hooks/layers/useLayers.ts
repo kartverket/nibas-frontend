@@ -1,27 +1,18 @@
-import { useLayer } from "./useLayer";
-import { administrativeEnheterSource, tileSource, vectorSource } from "sources";
-import { useMemo } from "react";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
+import { useLayer } from "./useLayer";
+import { administrativeEnheterSource, tileSource, vectorSource } from "sources";
+
+const backgroundLayer = new TileLayer({ source: tileSource });
+const administrativeEnheterLayer = new TileLayer({
+  source: administrativeEnheterSource,
+});
+const vectorLayer = new VectorLayer({ source: vectorSource });
 
 const useLayers = () => {
-  const backgroundLayer = useMemo(
-    () => new TileLayer({ source: tileSource }),
-    []
-  );
-  useLayer(backgroundLayer);
-
-  const administrativeEnheterLayer = useMemo(
-    () => new TileLayer({ source: administrativeEnheterSource }),
-    []
-  );
-  useLayer(administrativeEnheterLayer);
-
-  const vectorLayer = useMemo(
-    () => new VectorLayer({ source: vectorSource }),
-    []
-  );
-  useLayer(vectorLayer);
+  useLayer("background", backgroundLayer);
+  useLayer("administrativeGrenser", administrativeEnheterLayer);
+  useLayer("vector", vectorLayer);
 };
 
 export default useLayers;
