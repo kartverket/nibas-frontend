@@ -63,7 +63,7 @@ const geo1 = {
 
 export const vectorSource = new VectorSource({
   features: new GeoJSON().readFeatures(geo1, {
-    featureProjection: get("EPSG:3857"),
+    featureProjection: get("EPSG:25833"),
   }),
 });
 
@@ -73,5 +73,5 @@ export const tileSource = new XYZ({
 
 export const administrativeEnheterSource = new TileWMS({
   url: "https://wms.geonorge.no/skwms1/wms.adm_enheter2?service=wms",
-  params: { LAYERS: "adm_enheter_V2_WMS" },
+  params: { LAYERS: "adm_enheter_V2_WMS", CRS: "EPSG:25833" },
 });

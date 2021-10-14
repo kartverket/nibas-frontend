@@ -1,47 +1,56 @@
-// import MultiPolygon from "ol/geom/MultiPolygon";
-// import { toLonLat } from "ol/proj";
+import { useState } from "react";
 import styled from "styled-components";
 import useInteractions from "hooks/interactions/useInteractions";
 import useLayers from "hooks/layers/useLayers";
 import useDefaultControls from "hooks/useDefaultControls";
 import CustomControl from "components/CustomControl";
-// import { vectorSource } from "sources";
 import { useMap } from "./MapContext";
-import { useVisibleLayers } from "hooks/layers/VisibleLayersContext";
+import {
+  toggleLayerVisibility,
+  useVisibleLayers,
+} from "hooks/layers/useVisibleLayers";
+import { useSources } from "hooks/sources/useSources";
+import { LayerId } from "hooks/layers/types";
 
 const Map = () => {
   const { mapRef } = useMap();
-  const { toggleLayerVisibility } = useVisibleLayers();
+  const [forceHideKommuner, setForceHideKommuner] = useState(false);
+  const [editing, setEditing] = useState(false);
 
-  useLayers();
-  useInteractions();
+  const { visibleLayers, dispatch } = useVisibleLayers();
+
+  const sources = useSources();
+  useLayers(sources, visibleLayers);
+  useInteractions(sources, visibleLayers.kommuner && editing);
   useDefaultControls();
 
-  const downloadData = () => {
-    // const features = vectorSource.getFeatures();
-    // console.log("Features", features);
-    // const feature = features[0];
-    // console.log("Feature", feature);
-    // const idk = feature.getGeometry() as MultiPolygon;
-    // const coords = idk.getCoordinates();
-    // console.log("Polygons?", idk);
-    // console.log("aaa?", coords);
-    // const lonLatCoords = coords[0][0].map((coord) => toLonLat(coord));
-    // console.log("transformed?", lonLatCoords);
-  };
-
-  const toggleVectorLayer = () => {
-    toggleLayerVisibility("vector");
+  const toggleKommunerLayer = () => {
+    setForceHideKommuner(!forceHideKommuner);
+    dispatch(toggleLayerVisibility("kommuner"));
   };
 
   return (
     <MapTarget ref={mapRef}>
       <CustomControl>
-        <button onClick={downloadData}>N</button>
+        <button onClick={toggleKommunerLayer}>
+          {forceHideKommuner ? "Vis" : "Skjul"} kommuner
+        </button>
       </CustomControl>
       <CustomControl>
-        <button onClick={toggleVectorLayer}>Toggle vector</button>
+        <button onClick={() => setEditing(!editing)}>
+          {editing ? "Stop editing" : "Edit"}
+        </button>
       </CustomControl>
+
+      {Object.keys(visibleLayers).map((layerId) => (
+        <CustomControl key={layerId}>
+          <button
+            onClick={() => dispatch(toggleLayerVisibility(layerId as LayerId))}
+          >
+            Toggle {layerId}
+          </button>
+        </CustomControl>
+      ))}
     </MapTarget>
   );
 };
