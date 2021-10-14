@@ -29,7 +29,11 @@ export const MapProvider: React.FC = ({ children }) => {
     if (!mapRef.current) return;
 
     const options: MapOptions = {
-      view: new View({ zoom: INITIAL_ZOOM, center: INITIAL_CENTER }),
+      view: new View({
+        zoom: INITIAL_ZOOM,
+        center: INITIAL_CENTER,
+        projection: "EPSG:25833",
+      }),
       layers: [],
       controls: [],
       overlays: [],

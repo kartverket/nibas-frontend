@@ -1,3 +1,7 @@
-import { LAYERS } from "./constants";
+import { Sources } from "hooks/sources/types";
 
-export type LayerId = typeof LAYERS[number];
+export type LayerId = keyof Sources;
+
+export type ByLayerId<T> = {
+  [Property in LayerId]: T;
+};
