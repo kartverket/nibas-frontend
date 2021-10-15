@@ -1,53 +1,58 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Layer from "ol/layer/Layer";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import Source from "ol/source/Source";
 import { Sources } from "hooks/sources/types";
-import { useLayer } from "./useLayer";
-import { ByLayerId } from "./types";
-import { VisibleLayers } from "./useVisibleLayers";
+import { ByLayerId, LayerId } from "./types";
+import { useMap } from "components/Map/MapContext";
+import { getLayersArray, layerExistsInMap } from "utils/map/layers";
 
 type LayersById = ByLayerId<Layer<Source> | undefined>;
 
-const useLayers = (sources: Sources, visibleLayers: VisibleLayers) => {
-  const [layers, setLayers] = useState<LayersById>(() => ({
-    administrativeGrenser: new TileLayer({
-      source: sources.administrativeGrenser,
-    }),
-    background: new TileLayer({ source: sources.background }),
-    vector: new VectorLayer({ source: sources.vector }),
-    fylker: undefined,
-    kommuner: undefined,
-  }));
+const useLayers = (sources: Sources) => {
+  const { map } = useMap();
 
   useEffect(() => {
-    if (!sources.fylker) return;
+    if (!map) return;
 
-    setLayers((prevLayers) => ({
-      ...prevLayers,
-      fylker: new VectorLayer({ source: sources.fylker }),
-    }));
-  }, [sources.fylker]);
+    const layers: LayersById = {
+      administrativeGrenser: new TileLayer({
+        source: sources.administrativeGrenser,
+      }),
+      background: new TileLayer({ source: sources.background }),
+      vector: new VectorLayer({ source: sources.vector }),
+      fylker: sources.fylker && new VectorLayer({ source: sources.fylker }),
+      kommuner:
+        sources.kommuner &&
+        new VectorLayer({ source: sources.kommuner, minZoom: 11 }),
+      matrikkelen: new TileLayer({ source: sources.matrikkelen }),
+      stedsnavn: new TileLayer({ source: sources.stedsnavn }),
+    };
 
+    Object.keys(layers).forEach((layerId) => {
+      const layer = layers[layerId as LayerId];
+
+      if (!layer) return;
+
+      if (!layerExistsInMap(map, layerId as LayerId)) {
+        layer.set("id", layerId);
+        map.addLayer(layer);
+      }
+    });
+  }, [map, sources]);
+
+  // fjern layers når map unmountes
   useEffect(() => {
-    if (!sources.kommuner) return;
+    if (!map) return;
 
-    setLayers((prevLayers) => ({
-      ...prevLayers,
-      kommuner: new VectorLayer({ source: sources.kommuner, minZoom: 9 }),
-    }));
-  }, [sources.kommuner]);
-
-  useLayer("background", layers.background, visibleLayers.background);
-  useLayer(
-    "administrativeGrenser",
-    layers.administrativeGrenser,
-    visibleLayers.administrativeGrenser
-  );
-  useLayer("kommuner", layers.kommuner, visibleLayers.kommuner);
-  useLayer("fylker", layers.fylker, visibleLayers.fylker);
-  useLayer("vector", layers.vector, visibleLayers.vector);
+    return () => {
+      const layers = getLayersArray(map);
+      layers.forEach((layer) => {
+        map.removeLayer(layer);
+      });
+    };
+  }, [map]);
 };
 
 export default useLayers;
