@@ -14,7 +14,8 @@ const Map = () => {
   const [editing, setEditing] = useState(false);
 
   useEffect(() => {
-    // mapRef er egentlig aldri null, MapTarget blir rendret før denne useEffect'en blir kjørt
+    // mapRef kan egentlig ikke være null her,
+    // MapTarget blir rendret før denne useEffect'en blir kjørt
     if (!mapRef.current) return;
 
     map.setTarget(mapRef.current);
