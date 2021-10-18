@@ -7,7 +7,7 @@ import CustomControl from "components/CustomControl";
 import { useMap } from "./MapContext";
 import { useAsyncSources } from "hooks/sources/useAsyncSources";
 import { LayerId } from "hooks/layers/types";
-import { getLayerById, getLayersArray, isLayerVisible } from "utils/map/layers";
+import { getLayerById, getLayerIds, isLayerVisible } from "utils/map/layers";
 
 const Map = () => {
   const { mapRef, map } = useMap();
@@ -21,7 +21,7 @@ const Map = () => {
   useInteractions(asyncSources.kommuner, canEditKommuner);
   useDefaultControls();
 
-  const layerIds = getLayersArray(map).map((layer) => layer.get("id"));
+  const layerIds = getLayerIds(map);
 
   const toggleLayerVisibility = (layerId: LayerId) => {
     if (!map) return;

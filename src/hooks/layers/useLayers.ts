@@ -7,7 +7,7 @@ import { useMap } from "components/Map/MapContext";
 import { addLayerIfNotExists, getLayersArray } from "utils/map/layers";
 import { getSyncLayers } from "./constants";
 
-const useLayers = (sources: AsyncSources) => {
+const useLayers = (asyncSources: AsyncSources) => {
   const { map } = useMap();
 
   // legg alle konstante sources inn i layer
@@ -28,10 +28,11 @@ const useLayers = (sources: AsyncSources) => {
     if (!map) return;
 
     const asyncLayers: Record<AsyncSourceId, Layer<Source> | undefined> = {
-      fylker: sources.fylker && new VectorLayer({ source: sources.fylker }),
+      fylker:
+        asyncSources.fylker && new VectorLayer({ source: asyncSources.fylker }),
       kommuner:
-        sources.kommuner &&
-        new VectorLayer({ source: sources.kommuner, minZoom: 11 }),
+        asyncSources.kommuner &&
+        new VectorLayer({ source: asyncSources.kommuner, minZoom: 11 }),
     };
 
     Object.keys(asyncLayers).forEach((asyncSourceId) => {
@@ -42,7 +43,7 @@ const useLayers = (sources: AsyncSources) => {
       layer.set("id", asyncSourceId);
       addLayerIfNotExists(map, layer);
     });
-  }, [map, sources]);
+  }, [map, asyncSources]);
 
   // fjern layers når map unmountes
   useEffect(() => {
