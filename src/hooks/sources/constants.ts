@@ -3,6 +3,7 @@ import XYZ from "ol/source/XYZ";
 import VectorSource from "ol/source/Vector";
 import GeoJSON from "ol/format/GeoJSON";
 import TileWMS from "ol/source/TileWMS";
+import { SyncSources } from "./types";
 
 const geo1 = {
   type: "FeatureCollection",
@@ -74,4 +75,27 @@ export const tileSource = new XYZ({
 export const administrativeEnheterSource = new TileWMS({
   url: "https://wms.geonorge.no/skwms1/wms.adm_enheter2?service=wms",
   params: { LAYERS: "adm_enheter_V2_WMS", CRS: "EPSG:25833" },
+});
+
+export const matrikkelenSource = new TileWMS({
+  url: "https://wms.geonorge.no/skwms1/wms.matrikkel.v1?service=WMS",
+  params: { LAYERS: "matrikkel:GATEADRESSEWFS", CRS: "EPSG:4326" },
+  // tileLoadFunction: async (tile, src) => {
+  //   const response = await fetch(src);
+  //   console.log(response);
+  // },
+});
+
+export const stedsnavnSource = new TileWMS({
+  url: "http://openwms.statkart.no/skwms1/wms.stedsnavnenkel?version=1.3.0&service=wms",
+  params: { LAYERS: "stedsnavnenkel", CRS: "EPSG:25833", format: "image/png" },
+});
+// stedsnavnSource.updateParams({});
+
+export const getSyncSources: () => SyncSources = () => ({
+  administrativeGrenser: administrativeEnheterSource,
+  background: tileSource,
+  matrikkelen: matrikkelenSource,
+  stedsnavn: stedsnavnSource,
+  vector: vectorSource,
 });

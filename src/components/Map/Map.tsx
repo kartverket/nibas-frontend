@@ -5,9 +5,9 @@ import useLayers from "hooks/layers/useLayers";
 import useDefaultControls from "hooks/useDefaultControls";
 import CustomControl from "components/CustomControl";
 import { useMap } from "./MapContext";
-import { useSources } from "hooks/sources/useSources";
+import { useAsyncSources } from "hooks/sources/useAsyncSources";
 import { LayerId } from "hooks/layers/types";
-import { getLayerById, isLayerVisible } from "utils/map/layers";
+import { getLayerById, getLayersArray, isLayerVisible } from "utils/map/layers";
 
 const Map = () => {
   const { mapRef, map } = useMap();
@@ -15,10 +15,13 @@ const Map = () => {
 
   const canEditKommuner = !!map && isLayerVisible(map, "kommuner") && editing;
 
-  const sources = useSources();
-  useLayers(sources);
-  useInteractions(sources, canEditKommuner);
+  const asyncSources = useAsyncSources();
+
+  useLayers(asyncSources);
+  useInteractions(asyncSources.kommuner, canEditKommuner);
   useDefaultControls();
+
+  const layerIds = getLayersArray(map).map((layer) => layer.get("id"));
 
   const toggleLayerVisibility = (layerId: LayerId) => {
     if (!map) return;
@@ -38,7 +41,7 @@ const Map = () => {
         </button>
       </CustomControl>
 
-      {Object.keys(sources).map((layerId) => (
+      {layerIds.map((layerId) => (
         <CustomControl key={layerId}>
           <button onClick={() => toggleLayerVisibility(layerId as LayerId)}>
             Toggle {layerId}

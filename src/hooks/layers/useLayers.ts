@@ -1,44 +1,46 @@
 import { useEffect } from "react";
 import Layer from "ol/layer/Layer";
-import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import Source from "ol/source/Source";
-import { Sources } from "hooks/sources/types";
-import { ByLayerId, LayerId } from "./types";
+import { AsyncSourceId, AsyncSources, SyncSourceId } from "hooks/sources/types";
 import { useMap } from "components/Map/MapContext";
-import { getLayersArray, layerExistsInMap } from "utils/map/layers";
+import { addLayerIfNotExists, getLayersArray } from "utils/map/layers";
+import { getSyncLayers } from "./constants";
 
-type LayersById = ByLayerId<Layer<Source> | undefined>;
-
-const useLayers = (sources: Sources) => {
+const useLayers = (sources: AsyncSources) => {
   const { map } = useMap();
 
+  // legg alle konstante sources inn i layer
   useEffect(() => {
     if (!map) return;
 
-    const layers: LayersById = {
-      administrativeGrenser: new TileLayer({
-        source: sources.administrativeGrenser,
-      }),
-      background: new TileLayer({ source: sources.background }),
-      vector: new VectorLayer({ source: sources.vector }),
+    const syncLayers = getSyncLayers();
+
+    Object.keys(syncLayers).forEach((sourceId) => {
+      const layer = syncLayers[sourceId as SyncSourceId];
+      layer.set("id", sourceId);
+      addLayerIfNotExists(map, layer);
+    });
+  }, [map]);
+
+  // legg til async lag når sources blir oppdatert
+  useEffect(() => {
+    if (!map) return;
+
+    const asyncLayers: Record<AsyncSourceId, Layer<Source> | undefined> = {
       fylker: sources.fylker && new VectorLayer({ source: sources.fylker }),
       kommuner:
         sources.kommuner &&
         new VectorLayer({ source: sources.kommuner, minZoom: 11 }),
-      matrikkelen: new TileLayer({ source: sources.matrikkelen }),
-      stedsnavn: new TileLayer({ source: sources.stedsnavn }),
     };
 
-    Object.keys(layers).forEach((layerId) => {
-      const layer = layers[layerId as LayerId];
+    Object.keys(asyncLayers).forEach((asyncSourceId) => {
+      const layer = asyncLayers[asyncSourceId as AsyncSourceId];
 
       if (!layer) return;
 
-      if (!layerExistsInMap(map, layerId as LayerId)) {
-        layer.set("id", layerId);
-        map.addLayer(layer);
-      }
+      layer.set("id", asyncSourceId);
+      addLayerIfNotExists(map, layer);
     });
   }, [map, sources]);
 
