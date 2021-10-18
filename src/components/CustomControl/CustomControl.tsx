@@ -1,16 +1,13 @@
 import React, { useEffect, useRef } from "react";
 import Control from "ol/control/Control";
-import { useMap } from "components/Map/MapContext";
+import { map } from "components/Map/constants";
 
 const CustomControl: React.FC = ({ children }) => {
   // vi trenger et element å referere til for control
   const element = useRef<HTMLDivElement>(null);
-  const { map } = useMap();
   const singleChild = React.Children.only(children);
 
   useEffect(() => {
-    if (!map) return;
-
     const control = new Control({
       element: element.current ?? undefined,
     });
@@ -21,7 +18,7 @@ const CustomControl: React.FC = ({ children }) => {
     return () => {
       map.removeControl(control);
     };
-  }, [map]);
+  }, []);
 
   if (!singleChild || !React.isValidElement(singleChild)) return null;
 

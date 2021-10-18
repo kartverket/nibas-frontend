@@ -3,14 +3,6 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./components/App";
 import reportWebVitals from "./reportWebVitals";
-import proj4 from "proj4";
-import { register } from "ol/proj/proj4";
-
-proj4.defs(
-  "EPSG:25833",
-  "+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
-);
-register(proj4);
 
 ReactDOM.render(
   <React.StrictMode>
