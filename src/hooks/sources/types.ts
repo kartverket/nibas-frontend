@@ -11,6 +11,7 @@ export type SyncSources = {
   vector: GeometryVectorSource;
   matrikkelen: TileWMS;
   stedsnavn: TileWMS;
+  topografiskNorgeskart: TileWMS;
 };
 
 export type AsyncSources = {

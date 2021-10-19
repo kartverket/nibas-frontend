@@ -6,10 +6,13 @@ import useDefaultControls from "hooks/useDefaultControls";
 import CustomControl from "components/CustomControl";
 import { useAsyncSources } from "hooks/sources/useAsyncSources";
 import { LayerId } from "hooks/layers/types";
-import { getLayerById, getLayerIds, isLayerVisible } from "utils/map/layers";
+import { getLayerById, isLayerVisible } from "utils/map/layers";
 import { map } from "./constants";
+import useZIndexes from "hooks/layers/useZIndexes";
 
 const Map = () => {
+  const { moveLayerUp, moveLayerDown, layersInZIndexOrder, moveLayer } =
+    useZIndexes();
   const mapRef = useRef<HTMLDivElement>(null);
   const [editing, setEditing] = useState(false);
 
@@ -33,8 +36,6 @@ const Map = () => {
   useInteractions(asyncSources.kommuner, canEditKommuner);
   useDefaultControls();
 
-  const layerIds = getLayerIds(map);
-
   const toggleLayerVisibility = (layerId: LayerId) => {
     if (!map) return;
 
@@ -53,11 +54,30 @@ const Map = () => {
         </button>
       </CustomControl>
 
-      {layerIds.map((layerId) => (
-        <CustomControl key={layerId}>
-          <button onClick={() => toggleLayerVisibility(layerId as LayerId)}>
-            Toggle {layerId}
-          </button>
+      <CustomControl>
+        <button onClick={() => moveLayer("topografiskNorgeskart", 10)}>
+          Topo to top
+        </button>
+      </CustomControl>
+
+      {layersInZIndexOrder.map((layerId, i) => (
+        // index som key gjør at controls rerendres ordentlig
+        <CustomControl key={i}>
+          <div>
+            {i < layersInZIndexOrder.length - 1 && (
+              <button onClick={() => moveLayerDown(layerId as LayerId)}>
+                Down
+              </button>
+            )}
+            <button onClick={() => toggleLayerVisibility(layerId as LayerId)}>
+              Toggle {layerId}
+            </button>
+            {i > 0 && (
+              <button onClick={() => moveLayerUp(layerId as LayerId)}>
+                Up
+              </button>
+            )}
+          </div>
         </CustomControl>
       ))}
     </MapTarget>
