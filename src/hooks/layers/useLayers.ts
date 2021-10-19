@@ -4,8 +4,9 @@ import VectorLayer from "ol/layer/Vector";
 import Source from "ol/source/Source";
 import { AsyncSourceId, AsyncSources, SyncSourceId } from "hooks/sources/types";
 import { addLayerIfNotExists, getLayersArray } from "utils/map/layers";
-import { getSyncLayers } from "./constants";
+import { getSyncLayers, INITIAL_ZINDEXES } from "./constants";
 import { map } from "components/Map/constants";
+import { LayerId } from "./types";
 
 const useLayers = (asyncSources: AsyncSources) => {
   // legg alle konstante sources inn i layer
@@ -14,6 +15,7 @@ const useLayers = (asyncSources: AsyncSources) => {
 
     Object.keys(syncLayers).forEach((sourceId) => {
       const layer = syncLayers[sourceId as SyncSourceId];
+      layer.setZIndex(INITIAL_ZINDEXES[sourceId as LayerId]);
       layer.set("id", sourceId);
       addLayerIfNotExists(map, layer);
     });

@@ -18,3 +18,14 @@ export const getSyncLayers: () => Record<SyncSourceId, Layer<Source>> = () => {
     stedsnavn: new TileLayer({ source: syncSources.stedsnavn }),
   };
 };
+
+export const INITIAL_ZINDEXES: ByLayerId<number> = {
+  topografiskNorgeskart: 0,
+  administrativeGrenser: 1,
+  fylker: 2,
+  kommuner: 3,
+  stedsnavn: 4,
+  background: -1,
+  matrikkelen: -2,
+  vector: -3,
+};

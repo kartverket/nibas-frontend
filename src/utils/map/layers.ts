@@ -5,6 +5,7 @@ import Map from "ol/Map";
 
 export const getLayersArray = (map: Map | undefined) =>
   map?.getLayers().getArray() ?? [];
+
 export const getLayerIds = (map: Map | undefined) =>
   getLayersArray(map).map((layer) => layer.get("id"));
 
