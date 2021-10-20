@@ -6,7 +6,7 @@ import useDefaultControls from "hooks/useDefaultControls";
 import CustomControl from "components/CustomControl";
 import { useAsyncSources } from "hooks/sources/useAsyncSources";
 import { LayerId } from "hooks/layers/types";
-import { getLayerById, isLayerVisible } from "utils/map/layers";
+import { isLayerVisible, toggleLayerVisibility } from "utils/map/layers";
 import { map } from "./constants";
 import useZIndexes from "hooks/layers/useZIndexes";
 
@@ -36,16 +36,6 @@ const Map = () => {
   useInteractions(asyncSources.kommuner, canEditKommuner);
   useDefaultControls();
 
-  const toggleLayerVisibility = (layerId: LayerId) => {
-    if (!map) return;
-
-    const layer = getLayerById(map, layerId);
-
-    if (!layer) return;
-
-    layer.setVisible(!layer.getVisible());
-  };
-
   return (
     <MapTarget ref={mapRef}>
       <CustomControl>
@@ -69,7 +59,9 @@ const Map = () => {
                 Down
               </button>
             )}
-            <button onClick={() => toggleLayerVisibility(layerId as LayerId)}>
+            <button
+              onClick={() => toggleLayerVisibility(map, layerId as LayerId)}
+            >
               Toggle {layerId}
             </button>
             {i > 0 && (
@@ -85,12 +77,23 @@ const Map = () => {
 };
 
 const MapTarget = styled.div`
-  width: 100vw;
-  height: 100vh;
+  grid-area: map;
   position: relative;
 
   .ol-control {
     text-align: center;
+  }
+`;
+
+const MapOverlay = styled.div`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+
+  * {
+    pointer-events: auto;
   }
 `;
 

@@ -38,3 +38,13 @@ export const addLayerIfNotExists = (map: Map, layer: Layer<Source>) => {
     map.addLayer(layer);
   }
 };
+
+export const toggleLayerVisibility = (map: Map, layerId: LayerId) => {
+  if (!map) return;
+
+  const layer = getLayerById(map, layerId);
+
+  if (!layer) return;
+
+  layer.setVisible(!layer.getVisible());
+};
