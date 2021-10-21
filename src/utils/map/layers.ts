@@ -2,6 +2,8 @@ import { LayerId } from "hooks/layers/types";
 import Layer from "ol/layer/Layer";
 import Source from "ol/source/Source";
 import Map from "ol/Map";
+import TileLayer from "ol/layer/Tile";
+import TileWMS from "ol/source/TileWMS";
 
 export const getLayersArray = (map: Map | undefined) =>
   map?.getLayers().getArray() ?? [];
@@ -47,4 +49,13 @@ export const toggleLayerVisibility = (map: Map, layerId: LayerId) => {
   if (!layer) return;
 
   layer.setVisible(!layer.getVisible());
+};
+
+export const getWMSLayersInMap = (map: Map) => {
+  const layers = getLayersArray(map);
+
+  return layers.filter(
+    (layer) =>
+      layer instanceof TileLayer && layer.getSource() instanceof TileWMS
+  ) as TileLayer<TileWMS>[];
 };
