@@ -10,7 +10,7 @@ import { isLayerVisible, toggleLayerVisibility } from "utils/map/layers";
 import { map } from "./constants";
 import useZIndexes from "hooks/layers/useZIndexes";
 
-const Map = () => {
+const Map: React.FC = ({ children }) => {
   const { moveLayerUp, moveLayerDown, layersInZIndexOrder, moveLayer } =
     useZIndexes();
   const mapRef = useRef<HTMLDivElement>(null);
@@ -38,6 +38,7 @@ const Map = () => {
 
   return (
     <MapTarget ref={mapRef}>
+      <MapOverlay>{children}</MapOverlay>
       <CustomControl>
         <button onClick={() => setEditing(!editing)}>
           {editing ? "Stop editing" : "Edit"}
@@ -85,6 +86,12 @@ const MapTarget = styled.div`
   }
 `;
 
+export const MapInteractable = styled.div`
+  display: inline-block;
+  border: 1px solid red;
+  background-color: white;
+`;
+
 const MapOverlay = styled.div`
   width: 100%;
   height: 100%;
@@ -92,7 +99,7 @@ const MapOverlay = styled.div`
   pointer-events: none;
   z-index: 1;
 
-  * {
+  ${MapInteractable} {
     pointer-events: auto;
   }
 `;
