@@ -9,8 +9,14 @@ import { LayerId } from "hooks/layers/types";
 import { isLayerVisible, toggleLayerVisibility } from "utils/map/layers";
 import { map } from "./constants";
 import useZIndexes from "hooks/layers/useZIndexes";
+import LayerOrdering from "components/LayerOrdering";
 
-const Map: React.FC = ({ children }) => {
+type Props = {
+  backgroundLayersOpen: boolean;
+  editingOpen: boolean;
+};
+
+const Map = ({ backgroundLayersOpen, editingOpen }: Props) => {
   const { moveLayerUp, moveLayerDown, layersInZIndexOrder, moveLayer } =
     useZIndexes();
   const mapRef = useRef<HTMLDivElement>(null);
@@ -38,7 +44,8 @@ const Map: React.FC = ({ children }) => {
 
   return (
     <MapTarget ref={mapRef}>
-      <MapOverlay>{children}</MapOverlay>
+      <MapOverlay>{backgroundLayersOpen && <LayerOrdering />}</MapOverlay>
+
       <CustomControl>
         <button onClick={() => setEditing(!editing)}>
           {editing ? "Stop editing" : "Edit"}
@@ -86,22 +93,12 @@ const MapTarget = styled.div`
   }
 `;
 
-export const MapInteractable = styled.div`
-  display: inline-block;
-  border: 1px solid red;
-  background-color: white;
-`;
-
 const MapOverlay = styled.div`
   width: 100%;
   height: 100%;
   position: absolute;
   pointer-events: none;
   z-index: 1;
-
-  ${MapInteractable} {
-    pointer-events: auto;
-  }
 `;
 
 export default Map;

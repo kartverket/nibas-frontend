@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { MapInteractable } from "components/Map/Map";
+import { MapInteractable } from "components/Map/MapInteractable";
 import { MappedLayer } from "utils/getLayersFromWMS";
 
 type Props = {

@@ -2,7 +2,6 @@ import { useState } from "react";
 import styled from "styled-components";
 import Map from "components/Map";
 import Sidebar from "components/Sidebar";
-import LayerOrdering from "components/LayerOrdering";
 
 const PageLayout = () => {
   // navn er ikke helt riktige
@@ -20,7 +19,7 @@ const PageLayout = () => {
   return (
     <Grid>
       <Sidebar onLayersClick={onLayersClick} onEditClick={onEditClick} />
-      <Map>{backgroundLayersOpen && <LayerOrdering />}</Map>
+      <Map backgroundLayersOpen={backgroundLayersOpen} editingOpen={editOpen} />
     </Grid>
   );
 };

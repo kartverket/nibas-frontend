@@ -1,5 +1,3 @@
-import { map } from "components/Map/constants";
-import { MapInteractable } from "components/Map/Map";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import getSubLayersFromWMSSource, {
@@ -12,6 +10,8 @@ import {
   toggleLayerVisibility,
 } from "utils/map/layers";
 import BakgrunnskartOptions from "./BakgrunnskartOptions";
+import { map } from "components/Map/constants";
+import { MapInteractable } from "components/Map/MapInteractable";
 
 const LayerOrdering = () => {
   const [mappedLayers, setMappedLayers] = useState<MainMappedLayer[]>([]);
