@@ -3,17 +3,32 @@ import styled from "styled-components";
 import getSubLayersFromWMSSource, {
   MainMappedLayer,
 } from "utils/getLayersFromWMS";
-import {
-  getLayersArray,
-  getWMSLayersInMap,
-  isLayerVisible,
-  toggleLayerVisibility,
-} from "utils/map/layers";
+import { getLayersArray, getWMSLayersInMap } from "utils/map/layers";
 import BakgrunnskartOptions from "./BakgrunnskartOptions";
 import { map } from "components/Map/constants";
 import { MapInteractable } from "components/Map/MapInteractable";
+import useVisibleLayers, {
+  toggleLayerVisibility,
+} from "hooks/layers/useVisibleLayers";
+import { LayerId } from "hooks/layers/types";
 
-const LayerOrdering = () => {
+const getLayerIdFromMappedLayer = (mappedLayer: MainMappedLayer) => {
+  const layers = getLayersArray(map);
+  const layer = layers.find(
+    (layer) => layer.get("id") === mappedLayer.sourceId
+  );
+
+  if (!layer) return;
+
+  return layer.get("id") as LayerId;
+};
+
+type Props = {
+  visibleLayers: ReturnType<typeof useVisibleLayers>["visibleLayers"];
+  dispatch: ReturnType<typeof useVisibleLayers>["dispatch"];
+};
+
+const LayerOrdering = ({ visibleLayers, dispatch }: Props) => {
   const [mappedLayers, setMappedLayers] = useState<MainMappedLayer[]>([]);
   const [editingLayer, setEditingLayer] = useState<MainMappedLayer | null>(
     null
@@ -39,27 +54,20 @@ const LayerOrdering = () => {
     updateMappedLayers();
   }, []);
 
-  const getLayerIdFromMappedLayer = (mappedLayer: MainMappedLayer) => {
-    const layers = getLayersArray(map);
-    const layer = layers.find(
-      (layer) => layer.get("id") === mappedLayer.sourceId
-    );
-
-    if (!layer) return;
-
-    return layer.get("id");
-  };
-
   const toggleMainLayer = (mappedLayer: MainMappedLayer) => {
     const layerId = getLayerIdFromMappedLayer(mappedLayer);
 
-    toggleLayerVisibility(map, layerId);
+    if (!layerId) return;
+
+    dispatch(toggleLayerVisibility(layerId));
   };
 
   const isMainLayerVisible = (mappedLayer: MainMappedLayer) => {
     const layerId = getLayerIdFromMappedLayer(mappedLayer);
 
-    return isLayerVisible(map, layerId);
+    if (!layerId) return;
+
+    return visibleLayers[layerId];
   };
 
   return (

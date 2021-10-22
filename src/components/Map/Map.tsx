@@ -10,6 +10,7 @@ import { isLayerVisible, toggleLayerVisibility } from "utils/map/layers";
 import { map } from "./constants";
 import useZIndexes from "hooks/layers/useZIndexes";
 import LayerOrdering from "components/LayerOrdering";
+import useVisibleLayers from "hooks/layers/useVisibleLayers";
 
 type Props = {
   backgroundLayersOpen: boolean;
@@ -36,15 +37,20 @@ const Map = ({ backgroundLayersOpen, editingOpen }: Props) => {
 
   const canEditKommuner = !!map && isLayerVisible(map, "kommuner") && editing;
 
+  const { visibleLayers, dispatch } = useVisibleLayers();
   const asyncSources = useAsyncSources();
 
-  useLayers(asyncSources);
+  useLayers(asyncSources, visibleLayers);
   useInteractions(asyncSources.kommuner, canEditKommuner);
   useDefaultControls();
 
   return (
     <MapTarget ref={mapRef}>
-      <MapOverlay>{backgroundLayersOpen && <LayerOrdering />}</MapOverlay>
+      <MapOverlay>
+        {backgroundLayersOpen && (
+          <LayerOrdering visibleLayers={visibleLayers} dispatch={dispatch} />
+        )}
+      </MapOverlay>
 
       <CustomControl>
         <button onClick={() => setEditing(!editing)}>

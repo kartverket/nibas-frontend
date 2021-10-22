@@ -3,12 +3,20 @@ import Layer from "ol/layer/Layer";
 import VectorLayer from "ol/layer/Vector";
 import Source from "ol/source/Source";
 import { AsyncSourceId, AsyncSources, SyncSourceId } from "hooks/sources/types";
-import { addLayerIfNotExists, getLayersArray } from "utils/map/layers";
+import {
+  addLayerIfNotExists,
+  getLayerById,
+  getLayersArray,
+} from "utils/map/layers";
 import { getSyncLayers, INITIAL_ZINDEXES } from "./constants";
 import { map } from "components/Map/constants";
 import { LayerId } from "./types";
+import { VisibleLayers } from "./useVisibleLayers";
 
-const useLayers = (asyncSources: AsyncSources) => {
+const useLayers = (
+  asyncSources: AsyncSources,
+  visibleLayers: VisibleLayers
+) => {
   // legg alle konstante sources inn i layer
   useEffect(() => {
     const syncLayers = getSyncLayers();
@@ -40,6 +48,14 @@ const useLayers = (asyncSources: AsyncSources) => {
       addLayerIfNotExists(map, layer);
     });
   }, [asyncSources]);
+
+  // sett synlighet på lag i map
+  useEffect(() => {
+    Object.keys(visibleLayers).forEach((layerId) => {
+      const layer = getLayerById(map, layerId as LayerId);
+      layer?.setVisible(visibleLayers[layerId as LayerId]);
+    });
+  }, [asyncSources, visibleLayers]);
 
   // fjern layers når map unmountes
   useEffect(() => {
