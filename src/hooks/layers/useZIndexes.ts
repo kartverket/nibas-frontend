@@ -1,6 +1,7 @@
 import { map } from "components/Map/constants";
 import { useEffect, useMemo, useState } from "react";
 import { getLayerById } from "utils/map/layers";
+import { INITIAL_ZINDEXES } from "./constants";
 import { ByLayerId, LayerId } from "./types";
 
 export type ZIndexes = ByLayerId<number>;
@@ -35,16 +36,7 @@ const getSwappedIndexes = (
 };
 
 const useZIndexes = () => {
-  const [zIndexes, setZIndexes] = useState<ZIndexes>({
-    topografiskNorgeskart: 0,
-    administrativeGrenser: 1,
-    fylker: 2,
-    kommuner: 3,
-    stedsnavn: 4,
-    background: -1,
-    matrikkelen: -2,
-    vector: -3,
-  });
+  const [zIndexes, setZIndexes] = useState<ZIndexes>(INITIAL_ZINDEXES);
 
   const layersInZIndexOrder = useMemo(() => {
     return Object.keys(zIndexes).sort((layerId1, layerId2) => {

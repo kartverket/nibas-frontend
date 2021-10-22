@@ -105,3 +105,12 @@ export const getSyncSources: () => SyncSources = () => ({
   vector: vectorSource,
   topografiskNorgeskart: topografiskNorgeskartSource,
 });
+
+// sett id på alle sources for å gjøre de mulig å sjekke opp med layers
+(() => {
+  const sources = getSyncSources();
+
+  Object.keys(sources).forEach((id) =>
+    sources[id as SyncSourceId].set("id", id)
+  );
+})();

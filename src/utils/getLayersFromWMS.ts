@@ -1,5 +1,6 @@
 import { TileWMS } from "ol/source";
 import WMSCapabilities from "ol/format/WMSCapabilities";
+import { SyncSourceId } from "hooks/sources/types";
 
 const parser = new WMSCapabilities();
 
@@ -8,6 +9,10 @@ export type MappedLayer = {
   title: string;
   name?: string;
   queryable: boolean;
+};
+
+export type MainMappedLayer = MappedLayer & {
+  sourceId: SyncSourceId;
 };
 
 const mapLayer = (responseLayer: any): MappedLayer | null => {
@@ -27,7 +32,7 @@ const mapLayer = (responseLayer: any): MappedLayer | null => {
   };
 };
 
-const getLayersFromWMS = async (source: TileWMS) => {
+const getSubLayersFromWMSSource = async (source: TileWMS) => {
   const urls = source.getUrls();
 
   if (!urls || urls.length === 0) return null;
@@ -40,9 +45,10 @@ const getLayersFromWMS = async (source: TileWMS) => {
 
   const json = parser.read(xml);
   const mainLayer = json.Capability.Layer;
-  const transformedLayer = mapLayer(mainLayer);
+  const transformedLayer = mapLayer(mainLayer) as MainMappedLayer;
+  transformedLayer.sourceId = source.get("id") as SyncSourceId;
 
   return transformedLayer;
 };
 
-export default getLayersFromWMS;
+export default getSubLayersFromWMSSource;
