@@ -1,13 +1,14 @@
 import { useState } from "react";
 import styled from "styled-components";
 import useInteractions from "hooks/interactions/useInteractions";
-import useLayers from "hooks/layers/useLayers";
+import useAsyncLayers from "hooks/layers/useAsyncLayers";
 import useDefaultControls from "hooks/useDefaultControls";
 import CustomControl from "components/CustomControl";
 import { useMap } from "./MapContext";
 import { useAsyncSources } from "hooks/sources/useAsyncSources";
 import { LayerId } from "hooks/layers/types";
 import { getLayerById, getLayerIds, isLayerVisible } from "utils/map/layers";
+import useSyncLayers from "hooks/layers/useSyncLayers";
 
 const Map = () => {
   const { mapRef, map } = useMap();
@@ -15,9 +16,9 @@ const Map = () => {
 
   const canEditKommuner = !!map && isLayerVisible(map, "kommuner") && editing;
 
+  useSyncLayers();
   const asyncSources = useAsyncSources();
-
-  useLayers(asyncSources);
+  useAsyncLayers(asyncSources);
   useInteractions(asyncSources.kommuner, canEditKommuner);
   useDefaultControls();
 
