@@ -13,7 +13,7 @@ variables:
 
 build:
   stage: build
-  image: harbor.statkart.no/proxy_cache/library/node:latest
+  image: harbor-staging.statkart.no/proxy_cache/library/node:latest
   script:
     - echo "Start building App"
     - npm config set proxy http://tkgeproxy1.statkart.no:3128
@@ -36,7 +36,7 @@ build:
 
 test:
   stage: test
-  image: harbor.statkart.no/proxy_cache/library/node:latest
+  image: harbor-staging.statkart.no/proxy_cache/library/node:latest
   script:
     - echo "Testing App, placeholder"
     #    - CI=true npm test
@@ -59,7 +59,7 @@ publish:
       KANIKOCFG="${KANIKOCFG} }"
       echo "${KANIKOCFG}" > /kaniko/.docker/config.json
     - cat /kaniko/.docker/config.json
-    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile-ci $KANIKOPROXYBUILDARGS --destination harbor.statkart.no/nibas/nibas-klient-frontend:${PROJECT_VERSION}
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile-ci $KANIKOPROXYBUILDARGS --destination harbor-staging.statkart.no/nibas/nibas-klient-frontend:${PROJECT_VERSION}
   only:
     refs:
       - master
