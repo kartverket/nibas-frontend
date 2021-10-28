@@ -97,20 +97,18 @@ const topografiskNorgeskartSource = new TileWMS({
   params: { LAYERS: "topo4_WMS", CRS: "EPSG:25833", format: "image/png" },
 });
 
-export const getSyncSources: () => SyncSources = () => ({
+export const syncSources: SyncSources = {
   administrativeGrenser: administrativeEnheterSource,
   background: tileSource,
   matrikkelen: matrikkelenSource,
   stedsnavn: stedsnavnSource,
   vector: vectorSource,
   topografiskNorgeskart: topografiskNorgeskartSource,
-});
+};
 
 // sett id på alle sources for å gjøre de mulig å sjekke opp med layers
 (() => {
-  const sources = getSyncSources();
-
-  Object.keys(sources).forEach((id) =>
-    sources[id as SyncSourceId].set("id", id)
+  Object.keys(syncSources).forEach((id) =>
+    syncSources[id as SyncSourceId].set("id", id)
   );
 })();

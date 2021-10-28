@@ -1,4 +1,4 @@
-import { getSyncSources } from "hooks/sources/constants";
+import { syncSources } from "hooks/sources/constants";
 import { SyncSourceId } from "hooks/sources/types";
 import Layer from "ol/layer/Layer";
 import TileLayer from "ol/layer/Tile";
@@ -7,8 +7,6 @@ import Source from "ol/source/Source";
 import { ByLayerId } from "./types";
 
 export const getSyncLayers: () => Record<SyncSourceId, Layer<Source>> = () => {
-  const syncSources = getSyncSources();
-
   return {
     topografiskNorgeskart: new TileLayer({
       source: syncSources.topografiskNorgeskart,
