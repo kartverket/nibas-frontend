@@ -17,7 +17,7 @@ type Props = {
   editingOpen: boolean;
 };
 
-const Map = ({ backgroundLayersOpen, editingOpen }: Props) => {
+const Map = ({ backgroundLayersOpen }: Props) => {
   const { moveLayerUp, moveLayerDown, layersInZIndexOrder, moveLayer } =
     useZIndexes();
   const mapRef = useRef<HTMLDivElement>(null);

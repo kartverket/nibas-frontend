@@ -11,17 +11,24 @@ export type MappedLayer = {
   queryable: boolean;
 };
 
+type ResponseLayer = {
+  Name: string | undefined;
+  Title: string;
+  queryable: boolean;
+  Layer: ResponseLayer[];
+};
+
 export type MainMappedLayer = MappedLayer & {
   sourceId: SyncSourceId;
 };
 
-const mapLayer = (responseLayer: any): MappedLayer | null => {
+const mapLayer = (responseLayer: ResponseLayer): MappedLayer | null => {
   let layers: MappedLayer[] = [];
 
   if (responseLayer.Layer) {
-    layers = responseLayer.Layer.map((nestedLayer: any) =>
+    layers = responseLayer.Layer.map((nestedLayer: ResponseLayer) =>
       mapLayer(nestedLayer)
-    ).filter(Boolean); // fjerner falsy entries
+    ).filter(Boolean) as MappedLayer[]; // fjerner falsy entries
   }
 
   return {
