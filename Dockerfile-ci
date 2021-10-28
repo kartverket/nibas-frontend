@@ -1,4 +1,4 @@
-FROM node:latest as nodeContainer
+FROM node:lts as nodeContainer
 WORKDIR /app
 COPY . .
 RUN npm install

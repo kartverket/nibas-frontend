@@ -13,7 +13,7 @@ variables:
 
 build:
   stage: build
-  image: $HARBOR_URL/proxy_cache/library/node:latest
+  image: $HARBOR_URL/proxy_cache/library/node:lts
   script:
     - echo "Start building App"
     - npm config set proxy http://tkgeproxy1.statkart.no:3128
@@ -36,7 +36,7 @@ build:
 
 test:
   stage: test
-  image: $HARBOR_URL/proxy_cache/library/node:latest
+  image: $HARBOR_URL/proxy_cache/library/node:lts
   script:
     - echo "Testing App, placeholder"
     #    - CI=true npm test

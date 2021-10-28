@@ -1,4 +1,4 @@
-FROM harbor-staging.statkart.no/proxy_cache/library/node:latest as nodeContainer
+FROM harbor-staging.statkart.no/proxy_cache/library/node:lts as nodeContainer
 WORKDIR /app
 COPY package.json package-lock.json .npmrc ./
 RUN npm install
