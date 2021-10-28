@@ -44,6 +44,9 @@ const getSubLayersFromWMSSource = async (source: TileWMS) => {
   const xml = await response.text();
 
   const json = parser.read(xml);
+
+  if (!json.Capability) return null;
+
   const mainLayer = json.Capability.Layer;
   const transformedLayer = mapLayer(mainLayer) as MainMappedLayer;
   transformedLayer.sourceId = source.get("id") as SyncSourceId;

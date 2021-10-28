@@ -3,25 +3,13 @@ import styled from "styled-components";
 import getSubLayersFromWMSSource, {
   MainMappedLayer,
 } from "utils/getLayersFromWMS";
-import { getLayersArray, getWMSLayersInMap } from "utils/map/layers";
+import { getLayerIdFromMappedLayer, getWMSLayersInMap } from "utils/map/layers";
 import BakgrunnskartOptions from "./BakgrunnskartOptions";
 import { map } from "components/Map/constants";
 import { MapInteractable } from "components/Map/MapInteractable";
 import useVisibleLayers, {
   toggleLayerVisibility,
 } from "hooks/layers/useVisibleLayers";
-import { LayerId } from "hooks/layers/types";
-
-const getLayerIdFromMappedLayer = (mappedLayer: MainMappedLayer) => {
-  const layers = getLayersArray(map);
-  const layer = layers.find(
-    (layer) => layer.get("id") === mappedLayer.sourceId
-  );
-
-  if (!layer) return;
-
-  return layer.get("id") as LayerId;
-};
 
 type Props = {
   visibleLayers: ReturnType<typeof useVisibleLayers>["visibleLayers"];
@@ -55,7 +43,7 @@ const LayerOrdering = ({ visibleLayers, dispatch }: Props) => {
   }, []);
 
   const toggleMainLayer = (mappedLayer: MainMappedLayer) => {
-    const layerId = getLayerIdFromMappedLayer(mappedLayer);
+    const layerId = getLayerIdFromMappedLayer(map, mappedLayer);
 
     if (!layerId) return;
 
@@ -63,7 +51,7 @@ const LayerOrdering = ({ visibleLayers, dispatch }: Props) => {
   };
 
   const isMainLayerVisible = (mappedLayer: MainMappedLayer) => {
-    const layerId = getLayerIdFromMappedLayer(mappedLayer);
+    const layerId = getLayerIdFromMappedLayer(map, mappedLayer);
 
     if (!layerId) return;
 

@@ -4,6 +4,7 @@ import Source from "ol/source/Source";
 import Map from "ol/Map";
 import TileLayer from "ol/layer/Tile";
 import TileWMS from "ol/source/TileWMS";
+import { MainMappedLayer } from "utils/getLayersFromWMS";
 
 export const getLayersArray = (map: Map | undefined) =>
   map?.getLayers().getArray() ?? [];
@@ -58,4 +59,18 @@ export const getWMSLayersInMap = (map: Map) => {
     (layer) =>
       layer instanceof TileLayer && layer.getSource() instanceof TileWMS
   ) as TileLayer<TileWMS>[];
+};
+
+export const getLayerIdFromMappedLayer = (
+  map: Map,
+  mappedLayer: MainMappedLayer
+) => {
+  const layers = getLayersArray(map);
+  const layer = layers.find(
+    (layer) => layer.get("id") === mappedLayer.sourceId
+  );
+
+  if (!layer) return;
+
+  return layer.get("id") as LayerId;
 };

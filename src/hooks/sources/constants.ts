@@ -3,7 +3,7 @@ import XYZ from "ol/source/XYZ";
 import VectorSource from "ol/source/Vector";
 import GeoJSON from "ol/format/GeoJSON";
 import TileWMS from "ol/source/TileWMS";
-import { SyncSources } from "./types";
+import { SyncSourceId, SyncSources } from "./types";
 
 const geo1 = {
   type: "FeatureCollection",
