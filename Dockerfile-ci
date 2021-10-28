@@ -1,4 +1,4 @@
-FROM node:lts as nodeContainer
+FROM harbor-staging.statkart.no/proxy_cache/library/node:lts as nodeContainer
 WORKDIR /app
 COPY . .
 RUN npm install
