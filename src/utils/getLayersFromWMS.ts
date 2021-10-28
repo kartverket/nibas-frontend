@@ -22,13 +22,13 @@ export type MainMappedLayer = MappedLayer & {
   sourceId: SyncSourceId;
 };
 
-const mapLayer = (responseLayer: ResponseLayer): MappedLayer | null => {
+const mapLayer = (responseLayer: ResponseLayer) => {
   let layers: MappedLayer[] = [];
 
   if (responseLayer.Layer) {
     layers = responseLayer.Layer.map((nestedLayer: ResponseLayer) =>
       mapLayer(nestedLayer)
-    ).filter(Boolean) as MappedLayer[]; // fjerner falsy entries
+    );
   }
 
   return {
@@ -36,7 +36,7 @@ const mapLayer = (responseLayer: ResponseLayer): MappedLayer | null => {
     name: responseLayer.Name,
     title: responseLayer.Title,
     queryable: responseLayer.queryable,
-  };
+  } as MappedLayer;
 };
 
 const getSubLayersFromWMSSource = async (source: TileWMS) => {
