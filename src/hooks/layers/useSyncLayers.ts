@@ -19,10 +19,6 @@ const useSyncLayers = () => {
       addLayerIfNotExists(map, layer);
     });
   }, [map]);
-
-  useEffect(() => {
-    console.log("lol");
-  }, []);
 };
 
 export default useSyncLayers;
