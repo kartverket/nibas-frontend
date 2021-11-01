@@ -1,7 +1,7 @@
+import TileWMS from "ol/source/TileWMS";
 import { MappedLayer } from "utils/getLayersFromWMS";
 import { SyncSourceId } from "hooks/sources/types";
-import { syncSources } from "hooks/sources/constants";
-import TileWMS from "ol/source/TileWMS";
+import { syncSources } from "hooks/sources/syncSources";
 
 const getLayersStringToReplace = (
   layersInParams: string,

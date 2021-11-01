@@ -1,4 +1,4 @@
-import { syncSources } from "./constants";
+import { syncSources } from "./syncSources";
 import { AsyncSources, Sources } from "./types";
 
 export const getAllSources = (asyncSources: AsyncSources): Sources => {

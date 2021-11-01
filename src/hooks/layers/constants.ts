@@ -1,9 +1,9 @@
-import { syncSources } from "hooks/sources/constants";
-import { SyncSourceId } from "hooks/sources/types";
 import Layer from "ol/layer/Layer";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import Source from "ol/source/Source";
+import { SyncSourceId } from "hooks/sources/types";
+import { syncSources } from "hooks/sources/syncSources";
 import { ByLayerId } from "./types";
 
 export const getSyncLayers: () => Record<SyncSourceId, Layer<Source>> = () => {

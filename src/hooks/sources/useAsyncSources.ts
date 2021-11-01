@@ -1,17 +1,16 @@
 import { useEffect, useState } from "react";
-import { LayerId } from "hooks/layers/types";
 import Source from "ol/source/Source";
 import {
   getAdministrativeEnheterFylkerSource,
   getAdministrativeEnheterKommunerSource,
-} from "./sourceGetters";
-import { AsyncSources } from "./types";
+} from "./asyncSourceGetters";
+import { AsyncSourceId, AsyncSources } from "./types";
 
 // henter en Source og oppdaterer sources når Source har blitt hentet
 const useUpdateSource = (
   getSource: () => Promise<Source>,
   setSources: (callback: (prevSources: AsyncSources) => AsyncSources) => void,
-  sourceId: LayerId
+  sourceId: AsyncSourceId
 ) => {
   useEffect(() => {
     const updateSource = async () => {

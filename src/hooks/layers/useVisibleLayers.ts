@@ -48,6 +48,7 @@ const useVisibleLayers = () => {
     vector: true,
     stedsnavn: true,
     topografiskNorgeskart: true,
+    matrikkelen: true,
   });
 
   // sett synlighet til layer i map til ny verdi

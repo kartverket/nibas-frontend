@@ -1,16 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import useInteractions from "hooks/interactions/useInteractions";
-import useLayers from "hooks/layers/useLayers";
+import useAsyncLayers from "hooks/layers/useAsyncLayers";
 import useDefaultControls from "hooks/useDefaultControls";
 import CustomControl from "components/CustomControl";
 import { useAsyncSources } from "hooks/sources/useAsyncSources";
 import { LayerId } from "hooks/layers/types";
-import { isLayerVisible, toggleLayerVisibility } from "utils/map/layers";
+import { isLayerVisible } from "utils/map/layers";
 import { map } from "./constants";
 import useZIndexes from "hooks/layers/useZIndexes";
 import LayerOrdering from "components/LayerOrdering";
-import useVisibleLayers from "hooks/layers/useVisibleLayers";
+import useVisibleLayers, {
+  toggleLayerVisibility,
+} from "hooks/layers/useVisibleLayers";
+import useSyncLayers from "hooks/layers/useSyncLayers";
 
 type Props = {
   backgroundLayersOpen: boolean;
@@ -40,7 +43,8 @@ const Map = ({ backgroundLayersOpen }: Props) => {
   const { visibleLayers, dispatch } = useVisibleLayers();
   const asyncSources = useAsyncSources();
 
-  useLayers(asyncSources, visibleLayers);
+  useSyncLayers();
+  useAsyncLayers(asyncSources);
   useInteractions(asyncSources.kommuner, canEditKommuner);
   useDefaultControls();
 
@@ -74,7 +78,9 @@ const Map = ({ backgroundLayersOpen }: Props) => {
               </button>
             )}
             <button
-              onClick={() => toggleLayerVisibility(map, layerId as LayerId)}
+              onClick={() =>
+                dispatch(toggleLayerVisibility(layerId as LayerId))
+              }
             >
               Toggle {layerId}
             </button>
