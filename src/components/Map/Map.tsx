@@ -14,6 +14,7 @@ import useVisibleLayers, {
   toggleLayerVisibility,
 } from "hooks/layers/useVisibleLayers";
 import useSyncLayers from "hooks/layers/useSyncLayers";
+import { sourceToGeoJson } from "utils/map/geoJson";
 
 type Props = {
   backgroundLayersOpen: boolean;
@@ -65,6 +66,14 @@ const Map = ({ backgroundLayersOpen }: Props) => {
       <CustomControl>
         <button onClick={() => moveLayer("topografiskNorgeskart", 10)}>
           Topo to top
+        </button>
+      </CustomControl>
+
+      <CustomControl>
+        <button
+          onClick={() => console.log(sourceToGeoJson(asyncSources.kommuner))}
+        >
+          Save
         </button>
       </CustomControl>
 

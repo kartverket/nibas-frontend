@@ -11,7 +11,7 @@ const useInteractions = (
     if (!source || !shouldAddInteractions) return;
 
     const modify = new Modify({ source });
-    const draw = new Draw({ type: "Polygon", source });
+    const draw = new Draw({ type: "LineString", source });
     const snap = new Snap({ source });
 
     map.addInteraction(modify);
