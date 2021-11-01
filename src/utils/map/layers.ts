@@ -3,8 +3,9 @@ import Layer from "ol/layer/Layer";
 import Source from "ol/source/Source";
 import Map from "ol/Map";
 
-export const getLayersArray = (map?: Map) => map?.getLayers().getArray() ?? [];
-export const getLayerIds = (map?: Map) =>
+export const getLayersArray = (map: Map | undefined) =>
+  map?.getLayers().getArray() ?? [];
+export const getLayerIds = (map: Map | undefined) =>
   getLayersArray(map).map((layer) => layer.get("id"));
 
 export const getLayerById = (map: Map, id: LayerId) => {

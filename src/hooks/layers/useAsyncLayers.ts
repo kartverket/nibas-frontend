@@ -3,16 +3,12 @@ import Layer from "ol/layer/Layer";
 import VectorLayer from "ol/layer/Vector";
 import Source from "ol/source/Source";
 import { AsyncSourceId, AsyncSources } from "hooks/sources/types";
-import { useMap } from "components/Map/MapContext";
 import { addLayerIfNotExists } from "utils/map/layers";
+import { map } from "components/Map/constants";
 
-const useLayers = (asyncSources: AsyncSources) => {
-  const { map } = useMap();
-
+const useAsyncLayers = (asyncSources: AsyncSources) => {
   // legg til async lag når sources blir oppdatert
   useEffect(() => {
-    if (!map) return;
-
     const asyncLayers: Record<AsyncSourceId, Layer<Source> | undefined> = {
       fylker:
         asyncSources.fylker && new VectorLayer({ source: asyncSources.fylker }),
@@ -29,7 +25,7 @@ const useLayers = (asyncSources: AsyncSources) => {
       layer.set("id", asyncSourceId);
       addLayerIfNotExists(map, layer);
     });
-  }, [map, asyncSources]);
+  }, [asyncSources]);
 };
 
-export default useLayers;
+export default useAsyncLayers;

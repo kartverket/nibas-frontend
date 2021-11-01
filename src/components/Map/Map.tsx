@@ -1,18 +1,30 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import useInteractions from "hooks/interactions/useInteractions";
 import useAsyncLayers from "hooks/layers/useAsyncLayers";
 import useDefaultControls from "hooks/useDefaultControls";
 import CustomControl from "components/CustomControl";
-import { useMap } from "./MapContext";
 import { useAsyncSources } from "hooks/sources/useAsyncSources";
 import { LayerId } from "hooks/layers/types";
 import { getLayerById, getLayerIds, isLayerVisible } from "utils/map/layers";
+import { map } from "./constants";
 import useSyncLayers from "hooks/layers/useSyncLayers";
 
 const Map = () => {
-  const { mapRef, map } = useMap();
+  const mapRef = useRef<HTMLDivElement>(null);
   const [editing, setEditing] = useState(false);
+
+  useEffect(() => {
+    // mapRef kan egentlig ikke være null her,
+    // MapTarget blir rendret før denne useEffect'en blir kjørt
+    if (!mapRef.current) return;
+
+    map.setTarget(mapRef.current);
+
+    return () => {
+      map.setTarget(undefined);
+    };
+  }, []);
 
   const canEditKommuner = !!map && isLayerVisible(map, "kommuner") && editing;
 

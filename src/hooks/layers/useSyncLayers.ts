@@ -1,16 +1,12 @@
-import { useMap } from "components/Map/MapContext";
+import { map } from "components/Map/constants";
 import { SyncSourceId } from "hooks/sources/types";
 import { useEffect } from "react";
 import { addLayerIfNotExists } from "utils/map/layers";
 import { getSyncLayers } from "./constants";
 
 const useSyncLayers = () => {
-  const { map } = useMap();
-
   // legg alle konstante sources inn i layer
   useEffect(() => {
-    if (!map) return;
-
     const syncLayers = getSyncLayers();
 
     Object.keys(syncLayers).forEach((sourceId) => {
@@ -18,7 +14,7 @@ const useSyncLayers = () => {
       layer.set("id", sourceId);
       addLayerIfNotExists(map, layer);
     });
-  }, [map]);
+  }, []);
 };
 
 export default useSyncLayers;
