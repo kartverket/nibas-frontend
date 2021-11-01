@@ -2,20 +2,15 @@ import { useEffect, useState } from "react";
 import { LayerId } from "hooks/layers/types";
 import Source from "ol/source/Source";
 import {
-  administrativeEnheterSource,
-  tileSource,
-  vectorSource,
-} from "./constants";
-import {
   getAdministrativeEnheterFylkerSource,
   getAdministrativeEnheterKommunerSource,
-} from "./sourceGetters";
-import { Sources } from "./types";
+} from "./asyncSourceGetters";
+import { AsyncSources } from "./types";
 
 // henter en Source og oppdaterer sources når Source har blitt hentet
 const useUpdateSource = (
   getSource: () => Promise<Source>,
-  setSources: (callback: (prevSources: Sources) => Sources) => void,
+  setSources: (callback: (prevSources: AsyncSources) => AsyncSources) => void,
   sourceId: LayerId
 ) => {
   useEffect(() => {
@@ -29,13 +24,10 @@ const useUpdateSource = (
   }, [setSources, getSource, sourceId]);
 };
 
-export const useSources = () => {
-  const [sources, setSources] = useState<Sources>(() => ({
-    administrativeGrenser: administrativeEnheterSource,
-    background: tileSource,
+export const useAsyncSources = () => {
+  const [sources, setSources] = useState<AsyncSources>(() => ({
     fylker: undefined,
     kommuner: undefined,
-    vector: vectorSource,
   }));
 
   useUpdateSource(

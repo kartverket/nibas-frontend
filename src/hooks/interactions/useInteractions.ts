@@ -1,34 +1,33 @@
-import { Sources } from "hooks/sources/types";
+import { useEffect } from "react";
 import { Draw, Modify, Snap } from "ol/interaction";
-import { useMemo } from "react";
-import useInteraction from "./useInteraction";
+import { useMap } from "components/Map/MapContext";
+import { GeometryVectorSource } from "hooks/sources/types";
 
-const useInteractions = (sources: Sources, shouldAddInteractions: boolean) => {
-  const vectorModify = useMemo(
-    () =>
-      sources.kommuner &&
-      new Modify({
-        source: sources.kommuner,
-      }),
-    [sources.kommuner]
-  );
-  const vectorDraw = useMemo(
-    () =>
-      sources.kommuner &&
-      new Draw({
-        source: sources.kommuner,
-        type: "Polygon",
-      }),
-    [sources.kommuner]
-  );
-  const vectorSnap = useMemo(
-    () => sources.kommuner && new Snap({ source: sources.kommuner }),
-    [sources.kommuner]
-  );
+const useInteractions = (
+  source: GeometryVectorSource | undefined,
+  shouldAddInteractions: boolean
+) => {
+  const { map } = useMap();
 
-  useInteraction(vectorModify, shouldAddInteractions);
-  useInteraction(vectorDraw, shouldAddInteractions);
-  useInteraction(vectorSnap, shouldAddInteractions);
+  useEffect(() => {
+    if (!map || !shouldAddInteractions) return;
+
+    if (!source) return;
+
+    const modify = new Modify({ source });
+    const draw = new Draw({ type: "Polygon", source });
+    const snap = new Snap({ source });
+
+    map.addInteraction(modify);
+    map.addInteraction(draw);
+    map.addInteraction(snap);
+
+    return () => {
+      map.removeInteraction(modify);
+      map.removeInteraction(draw);
+      map.removeInteraction(snap);
+    };
+  }, [map, source, shouldAddInteractions]);
 };
 
 export default useInteractions;
