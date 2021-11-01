@@ -2,23 +2,11 @@ import { useEffect } from "react";
 import Layer from "ol/layer/Layer";
 import VectorLayer from "ol/layer/Vector";
 import Source from "ol/source/Source";
-import { AsyncSourceId, AsyncSources, SyncSourceId } from "hooks/sources/types";
-import { addLayerIfNotExists, getLayersArray } from "utils/map/layers";
-import { getSyncLayers } from "./constants";
+import { AsyncSourceId, AsyncSources } from "hooks/sources/types";
+import { addLayerIfNotExists } from "utils/map/layers";
 import { map } from "components/Map/constants";
 
-const useLayers = (asyncSources: AsyncSources) => {
-  // legg alle konstante sources inn i layer
-  useEffect(() => {
-    const syncLayers = getSyncLayers();
-
-    Object.keys(syncLayers).forEach((sourceId) => {
-      const layer = syncLayers[sourceId as SyncSourceId];
-      layer.set("id", sourceId);
-      addLayerIfNotExists(map, layer);
-    });
-  }, []);
-
+const useAsyncLayers = (asyncSources: AsyncSources) => {
   // legg til async lag når sources blir oppdatert
   useEffect(() => {
     const asyncLayers: Record<AsyncSourceId, Layer<Source> | undefined> = {
@@ -38,16 +26,6 @@ const useLayers = (asyncSources: AsyncSources) => {
       addLayerIfNotExists(map, layer);
     });
   }, [asyncSources]);
-
-  // fjern layers når map unmountes
-  useEffect(() => {
-    return () => {
-      const layers = getLayersArray(map);
-      layers.forEach((layer) => {
-        map.removeLayer(layer);
-      });
-    };
-  }, []);
 };
 
-export default useLayers;
+export default useAsyncLayers;

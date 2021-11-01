@@ -4,7 +4,7 @@ import Source from "ol/source/Source";
 import {
   getAdministrativeEnheterFylkerSource,
   getAdministrativeEnheterKommunerSource,
-} from "./sourceGetters";
+} from "./asyncSourceGetters";
 import { AsyncSources } from "./types";
 
 // henter en Source og oppdaterer sources når Source har blitt hentet
