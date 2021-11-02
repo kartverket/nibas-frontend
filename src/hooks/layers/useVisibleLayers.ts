@@ -1,6 +1,7 @@
 import { map } from "components/Map/constants";
 import { useEffect, useReducer } from "react";
 import { getLayerById } from "utils/map/layers";
+import { INITIAL_VISIBILITY } from "./constants";
 import { ByLayerId, LayerId } from "./types";
 
 export type VisibleLayers = ByLayerId<boolean>;
@@ -40,16 +41,10 @@ const visibleLayersReducer = (state: VisibleLayers, action: Action) => {
 };
 
 const useVisibleLayers = () => {
-  const [visibleLayers, dispatch] = useReducer(visibleLayersReducer, {
-    administrativeGrenser: false,
-    background: true,
-    fylker: false,
-    kommuner: true,
-    vector: true,
-    stedsnavn: true,
-    topografiskNorgeskart: true,
-    matrikkelen: true,
-  });
+  const [visibleLayers, dispatch] = useReducer(
+    visibleLayersReducer,
+    INITIAL_VISIBILITY
+  );
 
   // sett synlighet til layer i map til ny verdi
   useEffect(() => {
