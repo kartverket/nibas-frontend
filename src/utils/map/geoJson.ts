@@ -8,7 +8,7 @@ const geoJson = new GeoJSON();
 export const sourceToGeoJson = (source: GeometryVectorSource | undefined) => {
   if (!source) return null;
 
-  return geoJson.writeFeatures(source.getFeatures() ?? [], {
+  return geoJson.writeFeatures(source.getFeatures(), {
     dataProjection: "EPSG:25833",
   });
 };
