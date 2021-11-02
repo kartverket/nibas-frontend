@@ -26,7 +26,7 @@ const Map = () => {
     };
   }, []);
 
-  const canEditKommuner = !!map && isLayerVisible(map, "kommuner") && editing;
+  const canEditKommuner = !!map && isLayerVisible("kommuner") && editing;
 
   useSyncLayers();
   const asyncSources = useAsyncSources();
@@ -34,12 +34,10 @@ const Map = () => {
   useInteractions(asyncSources.kommuner, canEditKommuner);
   useDefaultControls();
 
-  const layerIds = getLayerIds(map);
+  const layerIds = getLayerIds();
 
   const toggleLayerVisibility = (layerId: LayerId) => {
-    if (!map) return;
-
-    const layer = getLayerById(map, layerId);
+    const layer = getLayerById(layerId);
 
     if (!layer) return;
 
