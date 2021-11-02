@@ -5,6 +5,7 @@ import Map from "ol/Map";
 import TileLayer from "ol/layer/Tile";
 import TileWMS from "ol/source/TileWMS";
 import { MainMappedLayer } from "utils/getLayersFromWMS";
+import { map } from "components/Map/constants";
 
 export const getLayersArray = (map: Map | undefined) =>
   map?.getLayers().getArray() ?? [];
@@ -42,17 +43,7 @@ export const addLayerIfNotExists = (map: Map, layer: Layer<Source>) => {
   }
 };
 
-export const toggleLayerVisibility = (map: Map, layerId: LayerId) => {
-  if (!map) return;
-
-  const layer = getLayerById(map, layerId);
-
-  if (!layer) return;
-
-  layer.setVisible(!layer.getVisible());
-};
-
-export const getWMSLayersInMap = (map: Map) => {
+export const getWMSLayersInMap = () => {
   const layers = getLayersArray(map);
 
   return layers.filter(
@@ -61,10 +52,7 @@ export const getWMSLayersInMap = (map: Map) => {
   ) as TileLayer<TileWMS>[];
 };
 
-export const getLayerIdFromMappedLayer = (
-  map: Map,
-  mappedLayer: MainMappedLayer
-) => {
+export const getLayerIdFromMappedLayer = (mappedLayer: MainMappedLayer) => {
   const layers = getLayersArray(map);
   const layer = layers.find(
     (layer) => layer.get("id") === mappedLayer.sourceId
