@@ -1,11 +1,11 @@
 import { ThemeProvider } from "styled-components";
 import { defaultTheme } from "style/theme";
-import Map from "components/Map";
+import PageLayout from "components/PageLayout";
 
 const App = () => {
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Map />
+      <PageLayout />
     </ThemeProvider>
   );
 };

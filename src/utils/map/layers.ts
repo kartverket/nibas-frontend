@@ -2,9 +2,14 @@ import { LayerId } from "hooks/layers/types";
 import Layer from "ol/layer/Layer";
 import Source from "ol/source/Source";
 import Map from "ol/Map";
+import TileLayer from "ol/layer/Tile";
+import TileWMS from "ol/source/TileWMS";
+import { MainMappedLayer } from "utils/getLayersFromWMS";
+import { map } from "components/Map/constants";
 
 export const getLayersArray = (map: Map | undefined) =>
   map?.getLayers().getArray() ?? [];
+
 export const getLayerIds = (map: Map | undefined) =>
   getLayersArray(map).map((layer) => layer.get("id"));
 
@@ -36,4 +41,24 @@ export const addLayerIfNotExists = (map: Map, layer: Layer<Source>) => {
   if (!layerExistsInMap(map, layer.get("id"))) {
     map.addLayer(layer);
   }
+};
+
+export const getWMSLayersInMap = () => {
+  const layers = getLayersArray(map);
+
+  return layers.filter(
+    (layer) =>
+      layer instanceof TileLayer && layer.getSource() instanceof TileWMS
+  ) as TileLayer<TileWMS>[];
+};
+
+export const getLayerIdFromMappedLayer = (mappedLayer: MainMappedLayer) => {
+  const layers = getLayersArray(map);
+  const layer = layers.find(
+    (layer) => layer.get("id") === mappedLayer.sourceId
+  );
+
+  if (!layer) return;
+
+  return layer.get("id") as LayerId;
 };
