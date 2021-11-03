@@ -90,7 +90,6 @@ const stedsnavnSource = new TileWMS({
   url: "http://openwms.statkart.no/skwms1/wms.stedsnavnenkel?version=1.3.0&service=wms",
   params: { LAYERS: "stedsnavnenkel", CRS: "EPSG:25833", format: "image/png" },
 });
-// stedsnavnSource.updateParams({});
 
 const topografiskNorgeskartSource = new TileWMS({
   url: "https://openwms.statkart.no/skwms1/wms.topo4?service=wms",
