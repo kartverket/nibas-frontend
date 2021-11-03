@@ -4,6 +4,7 @@ import VectorLayer from "ol/layer/Vector";
 import Source from "ol/source/Source";
 import { AsyncSourceId, AsyncSources } from "hooks/sources/types";
 import { addLayerIfNotExists } from "utils/map/layers";
+import { INITIAL_VISIBILITY } from "./constants";
 
 const useAsyncLayers = (asyncSources: AsyncSources) => {
   // legg til async lag når sources blir oppdatert
@@ -22,6 +23,7 @@ const useAsyncLayers = (asyncSources: AsyncSources) => {
       if (!layer) return;
 
       layer.set("id", asyncSourceId);
+      layer.setVisible(INITIAL_VISIBILITY[asyncSourceId as AsyncSourceId]);
       addLayerIfNotExists(layer);
     });
   }, [asyncSources]);
