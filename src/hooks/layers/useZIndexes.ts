@@ -91,23 +91,23 @@ const useZIndexes = () => {
 
     let newIndexes = { ...zIndexes };
 
+    const swapIndexes = (i: number) => {
+      const layerIdAtZIndex = getLayerIdByZIndex(newIndexes, i);
+
+      if (layerIdAtZIndex !== null) {
+        newIndexes = getSwappedIndexes(newIndexes, layerId, layerIdAtZIndex);
+      }
+    };
+
     if (oldIndex > newIndex) {
       // flytt laget nedover ved å bytte plass på dem frem til newIndex
       for (let i = oldIndex; i > newIndex + 1; i--) {
-        const layerIdAtZIndex = getLayerIdByZIndex(newIndexes, i);
-
-        if (!layerIdAtZIndex) continue;
-
-        newIndexes = getSwappedIndexes(newIndexes, layerId, layerIdAtZIndex);
+        swapIndexes(i);
       }
     } else {
       // flytt laget oppover ved å bytte plass på dem frem til newIndex
       for (let i = oldIndex; i < newIndex - 1; i++) {
-        const layerIdAtZIndex = getLayerIdByZIndex(newIndexes, i);
-
-        if (!layerIdAtZIndex) continue;
-
-        newIndexes = getSwappedIndexes(newIndexes, layerId, layerIdAtZIndex);
+        swapIndexes(i);
       }
     }
 
