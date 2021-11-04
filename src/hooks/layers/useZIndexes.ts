@@ -1,4 +1,3 @@
-import { map } from "components/Map/constants";
 import { useEffect, useMemo, useState } from "react";
 import { getLayerById } from "utils/map/layers";
 import { INITIAL_ZINDEXES } from "./constants";
@@ -56,7 +55,7 @@ const useZIndexes = () => {
   // sett z-index i OL Map
   useEffect(() => {
     Object.keys(zIndexes).forEach((layerId) => {
-      const layer = getLayerById(map, layerId as LayerId);
+      const layer = getLayerById(layerId as LayerId);
       layer?.setZIndex(zIndexes[layerId as LayerId]);
     });
   }, [zIndexes]);

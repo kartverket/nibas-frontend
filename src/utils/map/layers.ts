@@ -1,20 +1,17 @@
 import { LayerId } from "hooks/layers/types";
 import Layer from "ol/layer/Layer";
 import Source from "ol/source/Source";
-import Map from "ol/Map";
 import TileLayer from "ol/layer/Tile";
 import TileWMS from "ol/source/TileWMS";
 import { MainMappedLayer } from "utils/getLayersFromWMS";
 import { map } from "components/Map/constants";
 
-export const getLayersArray = (map: Map | undefined) =>
-  map?.getLayers().getArray() ?? [];
+export const getLayersArray = () => map?.getLayers().getArray() ?? [];
+export const getLayerIds = () =>
+  getLayersArray().map((layer) => layer.get("id"));
 
-export const getLayerIds = (map: Map | undefined) =>
-  getLayersArray(map).map((layer) => layer.get("id"));
-
-export const getLayerById = (map: Map, id: LayerId) => {
-  const layersWithId = getLayersArray(map).filter(
+export const getLayerById = (id: LayerId) => {
+  const layersWithId = getLayersArray().filter(
     (layer) => layer.get("id") === id
   );
 
@@ -31,20 +28,19 @@ export const getLayerById = (map: Map, id: LayerId) => {
   return layersWithId[0];
 };
 
-export const layerExistsInMap = (map: Map, id: LayerId) =>
-  !!getLayerById(map, id);
+export const layerExistsInMap = (id: LayerId) => !!getLayerById(id);
 
-export const isLayerVisible = (map: Map, id: LayerId) =>
-  getLayerById(map, id)?.getVisible() ?? false;
+export const isLayerVisible = (id: LayerId) =>
+  getLayerById(id)?.getVisible() ?? false;
 
-export const addLayerIfNotExists = (map: Map, layer: Layer<Source>) => {
-  if (!layerExistsInMap(map, layer.get("id"))) {
+export const addLayerIfNotExists = (layer: Layer<Source>) => {
+  if (!layerExistsInMap(layer.get("id"))) {
     map.addLayer(layer);
   }
 };
 
 export const getWMSLayersInMap = () => {
-  const layers = getLayersArray(map);
+  const layers = getLayersArray();
 
   return layers.filter(
     (layer) =>
@@ -53,7 +49,7 @@ export const getWMSLayersInMap = () => {
 };
 
 export const getLayerIdFromMappedLayer = (mappedLayer: MainMappedLayer) => {
-  const layers = getLayersArray(map);
+  const layers = getLayersArray();
   const layer = layers.find(
     (layer) => layer.get("id") === mappedLayer.sourceId
   );

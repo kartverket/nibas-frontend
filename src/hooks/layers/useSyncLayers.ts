@@ -1,4 +1,3 @@
-import { map } from "components/Map/constants";
 import { SyncSourceId } from "hooks/sources/types";
 import { useEffect } from "react";
 import { addLayerIfNotExists } from "utils/map/layers";
@@ -13,7 +12,7 @@ const useSyncLayers = () => {
       const layer = syncLayers[sourceId as SyncSourceId];
       layer.set("id", sourceId);
       layer.setVisible(INITIAL_VISIBILITY[sourceId as SyncSourceId]);
-      addLayerIfNotExists(map, layer);
+      addLayerIfNotExists(layer);
     });
   }, []);
 };
