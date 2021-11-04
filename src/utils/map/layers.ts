@@ -5,6 +5,7 @@ import TileLayer from "ol/layer/Tile";
 import TileWMS from "ol/source/TileWMS";
 import { MainMappedLayer } from "utils/getLayersFromWMS";
 import { map } from "components/Map/constants";
+import { INITIAL_VISIBILITY, INITIAL_ZINDEXES } from "hooks/layers/constants";
 
 export const getLayersArray = () => map?.getLayers().getArray() ?? [];
 export const getLayerIds = () =>
@@ -57,4 +58,11 @@ export const getLayerIdFromMappedLayer = (mappedLayer: MainMappedLayer) => {
   if (!layer) return;
 
   return layer.get("id") as LayerId;
+};
+
+export const initLayer = (layer: Layer<Source>, layerId: LayerId) => {
+  layer.set("id", layerId);
+  layer.setVisible(INITIAL_VISIBILITY[layerId as LayerId]);
+  layer.setZIndex(INITIAL_ZINDEXES[layerId as LayerId]);
+  addLayerIfNotExists(layer);
 };
