@@ -1,4 +1,3 @@
-import { map } from "components/Map/constants";
 import { useEffect, useReducer } from "react";
 import { getLayerById } from "utils/map/layers";
 import { INITIAL_VISIBILITY } from "./constants";
@@ -49,7 +48,7 @@ const useVisibleLayers = () => {
   // sett synlighet til layer i map til ny verdi
   useEffect(() => {
     Object.keys(visibleLayers).forEach((layerId) => {
-      const layer = getLayerById(map, layerId as LayerId);
+      const layer = getLayerById(layerId as LayerId);
       layer?.setVisible(visibleLayers[layerId as LayerId]);
     });
   }, [visibleLayers]);
