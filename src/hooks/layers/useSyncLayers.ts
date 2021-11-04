@@ -1,7 +1,7 @@
 import { SyncSourceId } from "hooks/sources/types";
 import { useEffect } from "react";
-import { addLayerIfNotExists } from "utils/map/layers";
-import { getSyncLayers, INITIAL_VISIBILITY } from "./constants";
+import { initLayer } from "utils/map/layers";
+import { getSyncLayers } from "./constants";
 
 const useSyncLayers = () => {
   // legg alle konstante sources inn i layer
@@ -10,9 +10,7 @@ const useSyncLayers = () => {
 
     Object.keys(syncLayers).forEach((sourceId) => {
       const layer = syncLayers[sourceId as SyncSourceId];
-      layer.set("id", sourceId);
-      layer.setVisible(INITIAL_VISIBILITY[sourceId as SyncSourceId]);
-      addLayerIfNotExists(layer);
+      initLayer(layer, sourceId as SyncSourceId);
     });
   }, []);
 };

@@ -56,7 +56,10 @@ const useZIndexes = () => {
   useEffect(() => {
     Object.keys(zIndexes).forEach((layerId) => {
       const layer = getLayerById(layerId as LayerId);
-      layer?.setZIndex(zIndexes[layerId as LayerId]);
+
+      if (!layer) return;
+
+      layer.setZIndex(zIndexes[layerId as LayerId]);
     });
   }, [zIndexes]);
 

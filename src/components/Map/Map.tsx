@@ -6,7 +6,7 @@ import useDefaultControls from "hooks/useDefaultControls";
 import CustomControl from "components/CustomControl";
 import { useAsyncSources } from "hooks/sources/useAsyncSources";
 import { LayerId } from "hooks/layers/types";
-import { isLayerVisible } from "utils/map/layers";
+import { getLayersArray, isLayerVisible } from "utils/map/layers";
 import { map } from "./constants";
 import useZIndexes from "hooks/layers/useZIndexes";
 import LayerOrdering from "components/LayerOrdering";
@@ -65,6 +65,17 @@ const Map = ({ backgroundLayersOpen }: Props) => {
       <CustomControl>
         <button onClick={() => moveLayer("topografiskNorgeskart", 10)}>
           Topo to top
+        </button>
+      </CustomControl>
+
+      <CustomControl>
+        <button
+          onClick={() => {
+            console.log(getLayersArray().map((layer) => layer.getZIndex()));
+            console.log(layersInZIndexOrder);
+          }}
+        >
+          Layers z indexes
         </button>
       </CustomControl>
 
