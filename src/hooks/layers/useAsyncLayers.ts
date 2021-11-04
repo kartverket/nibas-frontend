@@ -4,7 +4,6 @@ import VectorLayer from "ol/layer/Vector";
 import Source from "ol/source/Source";
 import { AsyncSourceId, AsyncSources } from "hooks/sources/types";
 import { initLayer } from "utils/map/layers";
-import { LayerId } from "./types";
 
 const useAsyncLayers = (asyncSources: AsyncSources) => {
   // legg til async lag når sources blir oppdatert
@@ -22,7 +21,7 @@ const useAsyncLayers = (asyncSources: AsyncSources) => {
 
       if (!layer) return;
 
-      initLayer(layer, asyncSourceId as LayerId);
+      initLayer(layer, asyncSourceId as AsyncSourceId);
     });
   }, [asyncSources]);
 };

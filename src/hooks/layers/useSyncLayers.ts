@@ -8,9 +8,9 @@ const useSyncLayers = () => {
   useEffect(() => {
     const syncLayers = getSyncLayers();
 
-    Object.keys(syncLayers).forEach((sourceId) => {
-      const layer = syncLayers[sourceId as SyncSourceId];
-      initLayer(layer, sourceId as SyncSourceId);
+    Object.keys(syncLayers).forEach((syncSourceId) => {
+      const layer = syncLayers[syncSourceId as SyncSourceId];
+      initLayer(layer, syncSourceId as SyncSourceId);
     });
   }, []);
 };
