@@ -5,7 +5,6 @@ import getSubLayersFromWMSSource, {
 } from "utils/getLayersFromWMS";
 import { getLayerIdFromMappedLayer, getWMSLayersInMap } from "utils/map/layers";
 import BakgrunnskartOptions from "./BakgrunnskartOptions";
-import { map } from "components/Map/constants";
 import { MapInteractable } from "components/Map/MapInteractable";
 import useVisibleLayers, {
   toggleLayerVisibility,
@@ -24,7 +23,7 @@ const LayerOrdering = ({ visibleLayers, dispatch }: Props) => {
 
   useEffect(() => {
     const updateMappedLayers = async () => {
-      const wmsLayers = getWMSLayersInMap(map);
+      const wmsLayers = getWMSLayersInMap();
 
       const mappedLayersPromises = wmsLayers.map((layer) =>
         getSubLayersFromWMSSource(layer.getSource())
@@ -43,7 +42,7 @@ const LayerOrdering = ({ visibleLayers, dispatch }: Props) => {
   }, []);
 
   const toggleMainLayer = (mappedLayer: MainMappedLayer) => {
-    const layerId = getLayerIdFromMappedLayer(map, mappedLayer);
+    const layerId = getLayerIdFromMappedLayer(mappedLayer);
 
     if (!layerId) return;
 
@@ -51,7 +50,7 @@ const LayerOrdering = ({ visibleLayers, dispatch }: Props) => {
   };
 
   const isMainLayerVisible = (mappedLayer: MainMappedLayer) => {
-    const layerId = getLayerIdFromMappedLayer(map, mappedLayer);
+    const layerId = getLayerIdFromMappedLayer(mappedLayer);
 
     if (!layerId) return;
 

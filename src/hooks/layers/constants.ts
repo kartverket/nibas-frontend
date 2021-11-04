@@ -31,3 +31,14 @@ export const INITIAL_ZINDEXES: ByLayerId<number> = {
   matrikkelen: -2,
   vector: -3,
 };
+
+export const INITIAL_VISIBILITY: ByLayerId<boolean> = {
+  administrativeGrenser: false,
+  background: true,
+  fylker: false,
+  kommuner: true,
+  vector: true,
+  stedsnavn: true,
+  topografiskNorgeskart: true,
+  matrikkelen: true,
+};

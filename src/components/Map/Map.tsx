@@ -39,7 +39,7 @@ const Map = ({ backgroundLayersOpen }: Props) => {
     };
   }, []);
 
-  const canEditKommuner = !!map && isLayerVisible(map, "kommuner") && editing;
+  const canEditKommuner = isLayerVisible("kommuner") && editing;
 
   const { visibleLayers, dispatch } = useVisibleLayers();
   const asyncSources = useAsyncSources();

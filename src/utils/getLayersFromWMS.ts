@@ -4,18 +4,18 @@ import { SyncSourceId } from "hooks/sources/types";
 
 const parser = new WMSCapabilities();
 
-export type MappedLayer = {
-  layers: MappedLayer[];
-  title: string;
-  name?: string;
-  queryable: boolean;
-};
-
 type ResponseLayer = {
   Name: string | undefined;
   Title: string;
   queryable: boolean;
   Layer: ResponseLayer[];
+};
+
+export type MappedLayer = {
+  layers: MappedLayer[];
+  title: string;
+  name?: string;
+  queryable: boolean;
 };
 
 export type MainMappedLayer = MappedLayer & {
