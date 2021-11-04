@@ -20,6 +20,8 @@ const useAsyncLayers = (asyncSources: AsyncSources) => {
     Object.keys(asyncLayers).forEach((asyncSourceId) => {
       const layer = asyncLayers[asyncSourceId as AsyncSourceId];
 
+      if (!layer) return;
+
       initLayer(layer, asyncSourceId as LayerId);
     });
   }, [asyncSources]);
