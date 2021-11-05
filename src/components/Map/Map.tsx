@@ -15,13 +15,14 @@ import useVisibleLayers, {
 } from "hooks/layers/useVisibleLayers";
 import useSyncLayers from "hooks/layers/useSyncLayers";
 import { sourceToGeoJson } from "utils/map/geoJson";
+import GrenserDrillDown from "components/GrenserDrillDown";
 
 type Props = {
   backgroundLayersOpen: boolean;
   editingOpen: boolean;
 };
 
-const Map = ({ backgroundLayersOpen }: Props) => {
+const Map = ({ backgroundLayersOpen, editingOpen }: Props) => {
   const { moveLayerUp, moveLayerDown, layersInZIndexOrder, moveLayer } =
     useZIndexes();
   const mapRef = useRef<HTMLDivElement>(null);
@@ -55,6 +56,7 @@ const Map = ({ backgroundLayersOpen }: Props) => {
         {backgroundLayersOpen && (
           <LayerOrdering visibleLayers={visibleLayers} dispatch={dispatch} />
         )}
+        {editingOpen && <GrenserDrillDown />}
       </MapOverlay>
 
       <CustomControl>

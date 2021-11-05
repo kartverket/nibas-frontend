@@ -29,11 +29,11 @@ export const useAsyncSources = () => {
     kommuner: undefined,
   }));
 
-  useUpdateSource(
-    getAdministrativeEnheterKommunerSource,
-    setSources,
-    "kommuner"
-  );
+  // useUpdateSource(
+  //   getAdministrativeEnheterKommunerSource,
+  //   setSources,
+  //   "kommuner"
+  // );
   useUpdateSource(getAdministrativeEnheterFylkerSource, setSources, "fylker");
 
   return sources;

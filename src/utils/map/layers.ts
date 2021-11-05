@@ -7,7 +7,7 @@ import { MainMappedLayer } from "utils/getLayersFromWMS";
 import { map } from "components/Map/constants";
 import { INITIAL_VISIBILITY, INITIAL_ZINDEXES } from "hooks/layers/constants";
 
-export const getLayersArray = () => map?.getLayers().getArray() ?? [];
+export const getLayersArray = () => map.getLayers().getArray() ?? [];
 export const getLayerIds = () =>
   getLayersArray().map((layer) => layer.get("id"));
 

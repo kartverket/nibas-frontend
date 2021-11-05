@@ -11,9 +11,7 @@ const useAsyncLayers = (asyncSources: AsyncSources) => {
     const asyncLayers: Record<AsyncSourceId, Layer<Source> | undefined> = {
       fylker:
         asyncSources.fylker && new VectorLayer({ source: asyncSources.fylker }),
-      kommuner:
-        asyncSources.kommuner &&
-        new VectorLayer({ source: asyncSources.kommuner, minZoom: 11 }),
+      kommuner: new VectorLayer(),
     };
 
     Object.keys(asyncLayers).forEach((asyncSourceId) => {
