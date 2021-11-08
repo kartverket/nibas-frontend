@@ -9,10 +9,12 @@ const PageLayout = () => {
   const [editOpen, setEditOpen] = useState(false);
 
   const onLayersClick = () => {
+    setEditOpen(false);
     setBackgroundLayersOpen(!backgroundLayersOpen);
   };
 
   const onEditClick = () => {
+    setBackgroundLayersOpen(false);
     setEditOpen(!editOpen);
   };
 
