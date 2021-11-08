@@ -4,6 +4,7 @@ import VectorLayer from "ol/layer/Vector";
 import { geoJsonToSource } from "utils/map/geoJson";
 import { getLayerById } from "utils/map/layers";
 import { Fylke, SimpleFylke, SimpleKommune } from "./types";
+import styled from "styled-components";
 
 type Props = {
   fylke: SimpleFylke;
@@ -53,7 +54,7 @@ const KommuneList = ({
   };
 
   return (
-    <div style={{ marginLeft: 8 }}>
+    <Wrapper>
       {kommuner.map((kommune) => (
         <div key={kommune.kommunenummer}>
           <input
@@ -64,8 +65,12 @@ const KommuneList = ({
           <span>{kommune.kommunenavn}</span>
         </div>
       ))}
-    </div>
+    </Wrapper>
   );
 };
+
+const Wrapper = styled.div`
+  margin-left: 8px;
+`;
 
 export default KommuneList;

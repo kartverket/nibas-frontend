@@ -37,16 +37,16 @@ const GrenserDrillDown = ({ visible }: Props) => {
           <p>lol</p>
         </Accordion>
         <Accordion title="Fylkesgrenser">
-          <div style={{ marginLeft: 8 }}>
+          <AccordionContent>
             {fylker.map((fylke) => (
               <div key={fylke.fylkesnummer}>
                 <span>{fylke.fylkesnavn}</span>
               </div>
             ))}
-          </div>
+          </AccordionContent>
         </Accordion>
         <Accordion title="Kommunegrenser">
-          <div style={{ marginLeft: 8 }}>
+          <AccordionContent>
             {fylker.map((fylke) => (
               <Accordion key={fylke.fylkesnummer} title={fylke.fylkesnavn}>
                 <KommuneList
@@ -56,7 +56,7 @@ const GrenserDrillDown = ({ visible }: Props) => {
                 />
               </Accordion>
             ))}
-          </div>
+          </AccordionContent>
         </Accordion>
         <Accordion title="Kretser">
           <p>lol</p>
@@ -85,11 +85,14 @@ const Wrapper = styled.div`
 const Panel = styled(MapInteractable)`
   margin-top: 30px;
   margin-left: 8px;
-  /* height: 80%; */
   width: 300px;
   padding: 30px 15px;
   overflow: auto;
   max-height: 80%;
+`;
+
+const AccordionContent = styled.div`
+  margin-left: 8px;
 `;
 
 export default GrenserDrillDown;
