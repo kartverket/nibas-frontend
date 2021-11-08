@@ -53,10 +53,12 @@ const Map = ({ backgroundLayersOpen, editingOpen }: Props) => {
   return (
     <MapTarget ref={mapRef}>
       <MapOverlay>
-        {backgroundLayersOpen && (
-          <LayerOrdering visibleLayers={visibleLayers} dispatch={dispatch} />
-        )}
-        {editingOpen && <GrenserDrillDown />}
+        <LayerOrdering
+          visible={backgroundLayersOpen}
+          visibleLayers={visibleLayers}
+          dispatch={dispatch}
+        />
+        <GrenserDrillDown visible={editingOpen} />
       </MapOverlay>
 
       <CustomControl>
