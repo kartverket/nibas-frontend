@@ -21,4 +21,3 @@ export type AsyncSources = {
 
 export type Sources = SyncSources & AsyncSources;
 export type SyncSourceId = keyof SyncSources;
-export type AsyncSourceId = keyof AsyncSources;
