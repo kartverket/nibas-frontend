@@ -6,6 +6,22 @@ import { SyncSourceId } from "hooks/sources/types";
 import { syncSources } from "hooks/sources/syncSources";
 import { ByLayerId } from "./types";
 
+export const createLayers = () => ({
+  topografiskNorgeskart: new TileLayer({
+    source: syncSources.topografiskNorgeskart,
+  }),
+  administrativeGrenser: new TileLayer({
+    source: syncSources.administrativeGrenser,
+  }),
+  background: new TileLayer({ source: syncSources.background }),
+  vector: new VectorLayer({ source: syncSources.vector }),
+  matrikkelen: new TileLayer({ source: syncSources.matrikkelen }),
+  stedsnavn: new TileLayer({ source: syncSources.stedsnavn }),
+  // ingen source betyr at source settes async
+  fylker: new VectorLayer(),
+  kommuner: new VectorLayer({ minZoom: 11 }),
+});
+
 export const getSyncLayers: () => Record<SyncSourceId, Layer<Source>> = () => {
   return {
     topografiskNorgeskart: new TileLayer({

@@ -4,7 +4,7 @@ import { GeometryVectorSource } from "hooks/sources/types";
 import { map } from "components/Map/constants";
 
 const useInteractions = (
-  source: GeometryVectorSource | undefined,
+  source: GeometryVectorSource | null,
   shouldAddInteractions: boolean
 ) => {
   useEffect(() => {

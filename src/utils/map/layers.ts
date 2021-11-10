@@ -5,31 +5,41 @@ import TileLayer from "ol/layer/Tile";
 import TileWMS from "ol/source/TileWMS";
 import { MainMappedLayer } from "utils/getLayersFromWMS";
 import { map } from "components/Map/constants";
-import { INITIAL_VISIBILITY, INITIAL_ZINDEXES } from "hooks/layers/constants";
+import {
+  createLayers,
+  INITIAL_VISIBILITY,
+  INITIAL_ZINDEXES,
+} from "hooks/layers/constants";
+import VectorLayer from "ol/layer/Vector";
+import { GeometryVectorSource } from "hooks/sources/types";
 
 export const getLayersArray = () => map?.getLayers().getArray() ?? [];
 export const getLayerIds = () =>
   getLayersArray().map((layer) => layer.get("id"));
 
-export const getLayerById = (id: LayerId) => {
+export const getLayerById = <T extends LayerId>(id: T) => {
   const layersWithId = getLayersArray().filter(
     (layer) => layer.get("id") === id
   );
 
-  if (layersWithId.length === 0) {
-    return null;
-  }
-
-  if (layersWithId.length > 1) {
+  if (layersWithId.length !== 1) {
     throw new Error(
-      `Found ${layersWithId.length} layers with id ${id}. Check the function that inserts layers`
+      `Fant ${layersWithId.length} lag med id ${id}. Sjekk funksjonen som oppretter og setter inn lag i kartet`
     );
   }
 
-  return layersWithId[0];
+  return layersWithId[0] as ReturnType<typeof createLayers>[T];
 };
 
-export const layerExistsInMap = (id: LayerId) => !!getLayerById(id);
+export const layerExistsInMap = (id: LayerId) => {
+  try {
+    const layer = getLayerById(id);
+
+    return !!layer;
+  } catch {
+    return false;
+  }
+};
 
 export const isLayerVisible = (id: LayerId) =>
   getLayerById(id)?.getVisible() ?? false;
@@ -62,7 +72,24 @@ export const getLayerIdFromMappedLayer = (mappedLayer: MainMappedLayer) => {
 
 export const initLayer = (layer: Layer<Source>, layerId: LayerId) => {
   layer.set("id", layerId);
-  layer.setVisible(INITIAL_VISIBILITY[layerId as LayerId]);
-  layer.setZIndex(INITIAL_ZINDEXES[layerId as LayerId]);
+  layer.setVisible(INITIAL_VISIBILITY[layerId]);
+  layer.setZIndex(INITIAL_ZINDEXES[layerId]);
   addLayerIfNotExists(layer);
+};
+
+export const setSourceForVectorLayer = (
+  layerId: LayerId,
+  source: GeometryVectorSource
+) => {
+  const layer = getLayerById(layerId);
+
+  if (!layer) return;
+
+  if (!(layer instanceof VectorLayer)) {
+    throw new Error(
+      "Layer er ikke et VectorLayer, så man kan ikke sette Source"
+    );
+  }
+
+  layer.setSource(source);
 };
