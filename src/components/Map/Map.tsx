@@ -23,11 +23,6 @@ import {
 import { createLayers } from "hooks/layers/constants";
 import { GeometryVectorSource } from "hooks/sources/types";
 
-type Props = {
-  backgroundLayersOpen: boolean;
-  editingOpen: boolean;
-};
-
 const initLayers = () => {
   const layers = createLayers();
 
@@ -38,6 +33,11 @@ const initLayers = () => {
 };
 
 initLayers();
+
+type Props = {
+  backgroundLayersOpen: boolean;
+  editingOpen: boolean;
+};
 
 const Map = ({ backgroundLayersOpen }: Props) => {
   const { moveLayerUp, moveLayerDown, layersInZIndexOrder, moveLayer } =
@@ -55,6 +55,7 @@ const Map = ({ backgroundLayersOpen }: Props) => {
   useDefaultControls();
 
   useEffect(() => {
+    // midlertidig
     const fetchKommuneSource = async () => {
       const source = await getAdministrativeEnheterKommunerSource();
 
@@ -65,6 +66,7 @@ const Map = ({ backgroundLayersOpen }: Props) => {
   }, []);
 
   useEffect(() => {
+    // midlertidig
     const fetchFylkeSource = async () => {
       const source = await getAdministrativeEnheterFylkerSource();
 
@@ -87,6 +89,7 @@ const Map = ({ backgroundLayersOpen }: Props) => {
   }, []);
 
   useEffect(() => {
+    // slik kan vi endre hvilken source som vi endrer på
     const kommuneLayer = getLayerById("kommuner");
 
     if (!kommuneLayer) return;
