@@ -99,6 +99,10 @@ const Map = ({ backgroundLayersOpen }: Props) => {
     }
   }, [editing]);
 
+  const toggleEditingInteractions = () => {
+    setEditing(!editing);
+  };
+
   return (
     <MapTarget ref={mapRef}>
       <MapOverlay>
@@ -108,7 +112,7 @@ const Map = ({ backgroundLayersOpen }: Props) => {
       </MapOverlay>
 
       <CustomControl>
-        <button onClick={() => setEditing(!editing)}>
+        <button onClick={toggleEditingInteractions}>
           {editing ? "Stop editing" : "Edit"}
         </button>
       </CustomControl>
