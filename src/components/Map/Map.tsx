@@ -92,8 +92,6 @@ const Map = ({ backgroundLayersOpen }: Props) => {
     // slik kan vi endre hvilken source som vi endrer på
     const kommuneLayer = getLayerById("kommuner");
 
-    if (!kommuneLayer) return;
-
     if (editing) {
       setEditingSource(kommuneLayer.getSource());
     } else {
