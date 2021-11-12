@@ -17,7 +17,6 @@ export const createLayers = () => {
       source: syncSources.administrativeGrenser,
     }),
     background: new TileLayer({ source: syncSources.background }),
-    vector: new VectorLayer({ source: syncSources.vector }),
     matrikkelen: new TileLayer({ source: syncSources.matrikkelen }),
     stedsnavn: new TileLayer({ source: syncSources.stedsnavn }),
     // ingen source betyr at source settes async
@@ -36,7 +35,6 @@ export const INITIAL_ZINDEXES: ByLayerId<number> = {
   stedsnavn: 4,
   background: -1,
   matrikkelen: -2,
-  vector: -3,
 };
 
 export const INITIAL_VISIBILITY: ByLayerId<boolean> = {
@@ -44,7 +42,6 @@ export const INITIAL_VISIBILITY: ByLayerId<boolean> = {
   background: true,
   fylker: false,
   kommuner: true,
-  vector: true,
   stedsnavn: true,
   topografiskNorgeskart: true,
   matrikkelen: true,

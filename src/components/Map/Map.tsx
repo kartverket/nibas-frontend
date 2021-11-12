@@ -113,7 +113,7 @@ const Map = ({ backgroundLayersOpen }: Props) => {
 
       <CustomControl>
         <button onClick={toggleEditingInteractions}>
-          {editing ? "Stop editing" : "Edit"}
+          {editing ? "Stop editing kommuner" : "Edit kommuner"}
         </button>
       </CustomControl>
 
@@ -137,7 +137,7 @@ const Map = ({ backgroundLayersOpen }: Props) => {
                 dispatch(toggleLayerVisibility(layerId as LayerId))
               }
             >
-              Toggle {layerId}
+              Toggle {layerId} {visibleLayers[layerId as LayerId] ? "av" : "på"}
             </button>
             {i > 0 && (
               <button onClick={() => moveLayerUp(layerId as LayerId)}>
