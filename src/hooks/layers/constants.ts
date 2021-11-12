@@ -22,7 +22,7 @@ export const createLayers = () => {
     stedsnavn: new TileLayer({ source: syncSources.stedsnavn }),
     // ingen source betyr at source settes async
     fylker: new VectorLayer(),
-    kommuner: new VectorLayer({ minZoom: 11 }),
+    kommuner: new VectorLayer({ minZoom: 7 }),
   };
 
   return layers as LayerIdGuard<typeof layers>;
