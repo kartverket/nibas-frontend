@@ -1,18 +1,38 @@
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import useAsyncLayers from "hooks/layers/useAsyncLayers";
+import useInteractions from "hooks/interactions/useInteractions";
 import useDefaultControls from "hooks/useDefaultControls";
 import CustomControl from "components/CustomControl";
-import { useAsyncSources } from "hooks/sources/useAsyncSources";
 import { LayerId } from "hooks/layers/types";
+import {
+  getLayerById,
+  initLayer,
+  isLayerVisible,
+  setSourceForVectorLayer,
+} from "utils/map/layers";
 import { map } from "./constants";
 import useZIndexes from "hooks/layers/useZIndexes";
 import LayerOrdering from "components/LayerOrdering";
 import useVisibleLayers, {
   toggleLayerVisibility,
 } from "hooks/layers/useVisibleLayers";
-import useSyncLayers from "hooks/layers/useSyncLayers";
-import useInteractions from "hooks/interactions/useInteractions";
+import {
+  getAdministrativeEnheterFylkerSource,
+  getAdministrativeEnheterKommunerSource,
+} from "hooks/sources/asyncSourceGetters";
+import { createLayers } from "hooks/layers/constants";
+import { GeometryVectorSource } from "hooks/sources/types";
+
+const initLayers = () => {
+  const layers = createLayers();
+
+  Object.keys(layers).forEach((layerId) => {
+    const layer = layers[layerId as LayerId];
+    initLayer(layer, layerId as LayerId);
+  });
+};
+
+initLayers();
 
 type Props = {
   backgroundLayersOpen: boolean;
@@ -24,6 +44,37 @@ const Map = ({ backgroundLayersOpen }: Props) => {
     useZIndexes();
   const mapRef = useRef<HTMLDivElement>(null);
   const [editing, setEditing] = useState(false);
+  const [editingSource, setEditingSource] =
+    useState<GeometryVectorSource | null>(null);
+
+  const canEditKommuner = isLayerVisible("kommuner") && editing;
+
+  const { visibleLayers, dispatch } = useVisibleLayers();
+
+  useInteractions(editingSource, canEditKommuner);
+  useDefaultControls();
+
+  useEffect(() => {
+    // midlertidig
+    const fetchKommuneSource = async () => {
+      const source = await getAdministrativeEnheterKommunerSource();
+
+      setSourceForVectorLayer("kommuner", source);
+    };
+
+    fetchKommuneSource();
+  }, []);
+
+  useEffect(() => {
+    // midlertidig
+    const fetchFylkeSource = async () => {
+      const source = await getAdministrativeEnheterFylkerSource();
+
+      setSourceForVectorLayer("fylker", source);
+    };
+
+    fetchFylkeSource();
+  }, []);
 
   useEffect(() => {
     // mapRef kan egentlig ikke være null her,
@@ -37,13 +88,16 @@ const Map = ({ backgroundLayersOpen }: Props) => {
     };
   }, []);
 
-  const { visibleLayers, dispatch } = useVisibleLayers();
-  const asyncSources = useAsyncSources();
+  useEffect(() => {
+    // slik kan vi endre hvilken source som vi endrer på
+    const kommuneLayer = getLayerById("kommuner");
 
-  useSyncLayers();
-  useAsyncLayers(asyncSources);
-  useInteractions(asyncSources.kommuner, editing);
-  useDefaultControls();
+    if (editing) {
+      setEditingSource(kommuneLayer.getSource());
+    } else {
+      setEditingSource(null);
+    }
+  }, [editing]);
 
   const toggleEditingInteractions = () => {
     setEditing(!editing);
