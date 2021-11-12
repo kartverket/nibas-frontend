@@ -1,12 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import useInteractions from "hooks/interactions/useInteractions";
 import useAsyncLayers from "hooks/layers/useAsyncLayers";
 import useDefaultControls from "hooks/useDefaultControls";
 import CustomControl from "components/CustomControl";
 import { useAsyncSources } from "hooks/sources/useAsyncSources";
 import { LayerId } from "hooks/layers/types";
-import { isLayerVisible } from "utils/map/layers";
 import { map } from "./constants";
 import useZIndexes from "hooks/layers/useZIndexes";
 import LayerOrdering from "components/LayerOrdering";
@@ -14,6 +12,7 @@ import useVisibleLayers, {
   toggleLayerVisibility,
 } from "hooks/layers/useVisibleLayers";
 import useSyncLayers from "hooks/layers/useSyncLayers";
+import useInteractions from "hooks/interactions/useInteractions";
 
 type Props = {
   backgroundLayersOpen: boolean;
@@ -38,15 +37,17 @@ const Map = ({ backgroundLayersOpen }: Props) => {
     };
   }, []);
 
-  const canEditKommuner = isLayerVisible("kommuner") && editing;
-
   const { visibleLayers, dispatch } = useVisibleLayers();
   const asyncSources = useAsyncSources();
 
   useSyncLayers();
   useAsyncLayers(asyncSources);
-  useInteractions(asyncSources.kommuner, canEditKommuner);
+  useInteractions(asyncSources.kommuner, editing);
   useDefaultControls();
+
+  const toggleEditingInteractions = () => {
+    setEditing(!editing);
+  };
 
   return (
     <MapTarget ref={mapRef}>
@@ -57,7 +58,7 @@ const Map = ({ backgroundLayersOpen }: Props) => {
       </MapOverlay>
 
       <CustomControl>
-        <button onClick={() => setEditing(!editing)}>
+        <button onClick={toggleEditingInteractions}>
           {editing ? "Stop editing" : "Edit"}
         </button>
       </CustomControl>

@@ -1,17 +1,20 @@
 import { useEffect } from "react";
-import { Draw, Modify, Snap } from "ol/interaction";
+import { Draw, Modify, Select, Snap } from "ol/interaction";
 import { GeometryVectorSource } from "hooks/sources/types";
 import { map } from "components/Map/constants";
 
 const useInteractions = (
   source: GeometryVectorSource | undefined,
-  shouldAddInteractions: boolean
+  editing: boolean
 ) => {
   useEffect(() => {
-    if (!source || !shouldAddInteractions) return;
+    if (!editing || !source) return;
 
     const modify = new Modify({ source });
-    const draw = new Draw({ type: "Polygon", source });
+    const draw = new Draw({
+      type: "LineString",
+      source,
+    });
     const snap = new Snap({ source });
 
     map.addInteraction(modify);
@@ -23,7 +26,21 @@ const useInteractions = (
       map.removeInteraction(draw);
       map.removeInteraction(snap);
     };
-  }, [source, shouldAddInteractions]);
+  }, [editing, source]);
+
+  useEffect(() => {
+    if (editing) return;
+
+    const select = new Select({ hitTolerance: 5 });
+
+    // valgte features er lagret i select.getFeatures()
+
+    map.addInteraction(select);
+
+    return () => {
+      map.removeInteraction(select);
+    };
+  }, [editing]);
 };
 
 export default useInteractions;
