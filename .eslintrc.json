@@ -69,6 +69,7 @@
         ],
         "pathGroupsExcludedImportTypes": ["react"]
       }
-    ]
+    ],
+    "import/no-named-as-default-member": "off"
   }
 }
