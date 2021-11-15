@@ -1,6 +1,6 @@
 import { ThemeProvider } from "styled-components";
-import { defaultTheme } from "style/theme";
 import PageLayout from "components/PageLayout";
+import { defaultTheme } from "style/theme";
 
 const App = () => {
   return (

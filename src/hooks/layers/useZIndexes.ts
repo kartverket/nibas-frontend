@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { getLayerById } from "utils/map/layers";
 import { INITIAL_ZINDEXES } from "./constants";
 import { ByLayerId, LayerId } from "./types";
+import { getLayerById } from "utils/map/layers";
 
 export type ZIndexes = ByLayerId<number>;
 
