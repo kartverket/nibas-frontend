@@ -8,7 +8,6 @@ export type GeometryVectorSource = VectorSource<Geometry>;
 export type SyncSources = {
   background: XYZ;
   administrativeGrenser: TileWMS;
-  vector: GeometryVectorSource;
   matrikkelen: TileWMS;
   stedsnavn: TileWMS;
   topografiskNorgeskart: TileWMS;
@@ -21,4 +20,3 @@ export type AsyncSources = {
 
 export type Sources = SyncSources & AsyncSources;
 export type SyncSourceId = keyof SyncSources;
-export type AsyncSourceId = keyof AsyncSources;

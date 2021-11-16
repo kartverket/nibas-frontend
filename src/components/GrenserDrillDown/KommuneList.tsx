@@ -41,7 +41,7 @@ const KommuneList = ({
       // fjern features med property med riktig kommunenavn
     } else {
       const geojsonRequest = await fetch(
-        "/v1/feature/administrativeEnheter?type=Kommune&administrativeEnheterNummer=1,2"
+        "v1/feature/administrative-enheter?type=FYLKE&ider=1"
       );
       const json = await geojsonRequest.json();
       const kommuneLayer = getLayerById(
