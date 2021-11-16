@@ -16,13 +16,14 @@ const Accordion: React.FC<Props> = ({ title, children }) => {
           {open ? "Close" : "Open"}
         </button>
       </TitleWrapper>
-      {open && children}
+
+      {open && <ChildrenWrapper>{children}</ChildrenWrapper>}
     </Wrapper>
   );
 };
 
 const Wrapper = styled.div`
-  /* display: flex; */
+  margin: 16px 0;
 `;
 
 const TitleWrapper = styled.div`
@@ -31,6 +32,10 @@ const TitleWrapper = styled.div`
   > :first-child {
     flex: 1;
   }
+`;
+
+const ChildrenWrapper = styled.div`
+  margin: 8px 0;
 `;
 
 export default Accordion;

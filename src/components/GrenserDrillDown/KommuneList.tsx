@@ -1,10 +1,13 @@
-import { useEffect, useState } from "react";
-import { GeometryVectorSource } from "hooks/sources/types";
-import VectorLayer from "ol/layer/Vector";
+import { useState } from "react";
 import { geoJsonToSource } from "utils/map/geoJson";
 import { getLayerById } from "utils/map/layers";
-import { Fylke, SimpleFylke, SimpleKommune } from "./types";
+import { SimpleFylke, SimpleKommune } from "./types";
 import styled from "styled-components";
+import { fetchKommuneById } from "api/kommuner";
+import {
+  addFeaturesToSource,
+  removeFeaturesFromSource,
+} from "utils/map/source";
 
 type Props = {
   fylke: SimpleFylke;
@@ -17,53 +20,91 @@ const KommuneList = ({
   selectedKommuner,
   toggleKommunegrense,
 }: Props) => {
-  const [kommuner, setKommuner] = useState<SimpleKommune[]>([]);
+  const [kommuner, setKommuner] = useState<SimpleKommune[]>([
+    {
+      kommunenavn: "Ringerike",
+      kommunenummer: "3007",
+      id: 1,
+    },
+    {
+      kommunenavn: "Hole",
+      kommunenummer: "3038",
+      id: 2,
+    },
+  ]);
 
-  useEffect(() => {
-    if (!fylke) return;
+  // hent liste over kommuner i fylke
+  // per nå har vi to hardkodede fylker, så denne er kommentert ut
+  // useEffect(() => {
+  //   if (!fylke) return;
 
-    const fetchKommuner = async () => {
-      const response = await fetch(
-        `https://ws.geonorge.no/kommuneinfo/v1/fylker/${fylke.fylkesnummer}`
-      );
-      const json = (await response.json()) as Fylke;
+  //   const fetchKommuner = async () => {
+  //     const response = await fetch(
+  //       `https://ws.geonorge.no/kommuneinfo/v1/fylker/${fylke.fylkesnummer}`
+  //     );
+  //     const json = (await response.json()) as Fylke;
 
-      setKommuner(json.kommuner);
-    };
+  //     setKommuner(json.kommuner);
+  //   };
 
-    fetchKommuner();
-  }, [fylke]);
+  //   fetchKommuner();
+  // }, [fylke]);
 
   const onChange = async (kommune: SimpleKommune) => {
-    const { kommunenavn } = kommune;
-
-    if (selectedKommuner[kommunenavn]) {
-      // fjern features med property med riktig kommunenavn
-    } else {
-      const geojsonRequest = await fetch(
-        "v1/feature/administrative-enheter?type=FYLKE&ider=1"
+    if (kommuneVisible(kommune)) {
+      const kommuneLayer = getLayerById("kommuner");
+      const featuresInLayer = kommuneLayer.getSource().getFeatures();
+      const kommuneFeatures = featuresInLayer.filter(
+        (feature) =>
+          feature.getProperties().administrativEnhet.nummer ===
+          kommune.kommunenummer
       );
-      const json = await geojsonRequest.json();
-      const kommuneLayer = getLayerById(
-        "kommuner"
-      ) as VectorLayer<GeometryVectorSource>;
-      kommuneLayer.setSource(geoJsonToSource(json));
+
+      removeFeaturesFromSource("kommuner", kommuneFeatures);
+    } else {
+      const json = await fetchKommuneById(kommune.id);
+      const features = geoJsonToSource(json).getFeatures();
+
+      addFeaturesToSource("kommuner", features);
     }
 
     toggleKommunegrense(kommune.kommunenavn);
   };
 
+  // edit kan se om kommunen er hentet allerede
+  // om finnes, hent features og legg til i laget
+  // ellers, hent dem og legg til
+  // kan ikke være i både kommuner og edit lag på samme tid, må flyttes
+  const editKommune = async (kommune: SimpleKommune) => {
+    const json = await fetchKommuneById(kommune.id);
+    const features = geoJsonToSource(json).getFeatures();
+
+    addFeaturesToSource("edit", features);
+    toggleKommunegrense(kommune.kommunenavn);
+  };
+
+  const openInfo = (kommune: SimpleKommune) => {
+    // b
+  };
+
+  const kommuneVisible = (kommune: SimpleKommune) =>
+    selectedKommuner[kommune.kommunenavn] ?? false;
+
   return (
     <Wrapper>
       {kommuner.map((kommune) => (
-        <div key={kommune.kommunenummer}>
+        <KommuneWrapper key={kommune.kommunenummer}>
+          <button onClick={() => onChange(kommune)}>
+            {kommuneVisible(kommune) ? "Skjul" : "Vis"}
+          </button>
           <input
             type="checkbox"
-            checked={selectedKommuner[kommune.kommunenavn] ?? false}
-            onChange={() => onChange(kommune)}
+            checked={kommuneVisible(kommune)}
+            onChange={() => editKommune(kommune)}
           />
           <span>{kommune.kommunenavn}</span>
-        </div>
+          <button onClick={() => openInfo(kommune)}>Metadata</button>
+        </KommuneWrapper>
       ))}
     </Wrapper>
   );
@@ -71,6 +112,14 @@ const KommuneList = ({
 
 const Wrapper = styled.div`
   margin-left: 8px;
+`;
+
+const KommuneWrapper = styled.div`
+  display: flex;
+
+  > span {
+    flex: 1;
+  }
 `;
 
 export default KommuneList;

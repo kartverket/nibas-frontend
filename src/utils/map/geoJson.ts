@@ -13,11 +13,15 @@ export const sourceToGeoJson = (source: GeometryVectorSource | undefined) => {
   });
 };
 
+export const getFeaturesFromGeoJson = (json: string) => {
+  return geoJson.readFeatures(json, {
+    dataProjection: "EPSG:25833",
+  });
+};
+
 export const geoJsonToSource = (json: string) => {
   return new VectorSource({
-    features: geoJson.readFeatures(json, {
-      dataProjection: "EPSG:25833",
-    }),
+    features: getFeaturesFromGeoJson(json),
   });
 };
 

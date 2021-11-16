@@ -21,7 +21,8 @@ export const createLayers = () => {
     stedsnavn: new TileLayer({ source: syncSources.stedsnavn }),
     // ingen source betyr at source settes async
     fylker: new VectorLayer(),
-    kommuner: new VectorLayer({ minZoom: 7 }),
+    kommuner: new VectorLayer(),
+    edit: new VectorLayer(),
   };
 
   return layers as LayerIdGuard<typeof layers>;
@@ -35,6 +36,7 @@ export const INITIAL_ZINDEXES: ByLayerId<number> = {
   stedsnavn: 4,
   background: -1,
   matrikkelen: -2,
+  edit: 5,
 };
 
 export const INITIAL_VISIBILITY: ByLayerId<boolean> = {
@@ -45,4 +47,5 @@ export const INITIAL_VISIBILITY: ByLayerId<boolean> = {
   stedsnavn: true,
   topografiskNorgeskart: true,
   matrikkelen: true,
+  edit: true,
 };

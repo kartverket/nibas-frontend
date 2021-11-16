@@ -6,6 +6,7 @@ export type SimpleFylke = {
 export type SimpleKommune = {
   kommunenavn: string;
   kommunenummer: string;
+  id: number;
 };
 
 export type Fylke = {
