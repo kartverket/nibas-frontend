@@ -1,9 +1,21 @@
 import { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
-import useInteractions from "hooks/interactions/useInteractions";
-import useDefaultControls from "hooks/useDefaultControls";
 import CustomControl from "components/CustomControl";
+import GrenserDrillDown from "components/GrenserDrillDown";
+import LayerOrdering from "components/LayerOrdering";
+import useInteractions from "hooks/interactions/useInteractions";
+import { createLayers } from "hooks/layers/constants";
 import { LayerId } from "hooks/layers/types";
+import useVisibleLayers, {
+  toggleLayerVisibility,
+} from "hooks/layers/useVisibleLayers";
+import useZIndexes from "hooks/layers/useZIndexes";
+import {
+  getAdministrativeEnheterFylkerSource,
+  getAdministrativeEnheterKommunerSource,
+} from "hooks/sources/asyncSourceGetters";
+import { GeometryVectorSource } from "hooks/sources/types";
+import useDefaultControls from "hooks/useDefaultControls";
+import styled from "styled-components";
 import {
   getLayerById,
   initLayer,
@@ -11,15 +23,6 @@ import {
   setSourceForVectorLayer,
 } from "utils/map/layers";
 import { map } from "./constants";
-import useZIndexes from "hooks/layers/useZIndexes";
-import LayerOrdering from "components/LayerOrdering";
-import useVisibleLayers, {
-  toggleLayerVisibility,
-} from "hooks/layers/useVisibleLayers";
-import { getAdministrativeEnheterFylkerSource } from "hooks/sources/asyncSourceGetters";
-import { createLayers } from "hooks/layers/constants";
-import { GeometryVectorSource } from "hooks/sources/types";
-import GrenserDrillDown from "components/GrenserDrillDown";
 
 const initLayers = () => {
   const layers = createLayers();

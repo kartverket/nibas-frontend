@@ -1,7 +1,7 @@
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
-import { syncSources } from "hooks/sources/syncSources";
 import { ByLayerId, LayerId } from "./types";
+import { syncSources } from "hooks/sources/syncSources";
 
 // gi oss en error hvis layers ikke inneholder Layer definisjon for alle LayerIds
 type LayerIdGuard<T extends ByLayerId<unknown>> = T[LayerId] extends unknown
