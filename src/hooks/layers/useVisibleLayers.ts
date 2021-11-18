@@ -1,7 +1,7 @@
 import { useEffect, useReducer } from "react";
-import { getLayerById } from "utils/map/layers";
 import { INITIAL_VISIBILITY } from "./constants";
 import { ByLayerId, LayerId } from "./types";
+import { getLayerById } from "utils/map/layers";
 
 export type VisibleLayers = ByLayerId<boolean>;
 type Action =

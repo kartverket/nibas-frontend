@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Draw, Modify, Select, Snap } from "ol/interaction";
-import { GeometryVectorSource } from "hooks/sources/types";
 import { map } from "components/Map/constants";
+import { GeometryVectorSource } from "hooks/sources/types";
 
 const useInteractions = (
   source: GeometryVectorSource | null,

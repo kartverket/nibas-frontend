@@ -1,5 +1,5 @@
-import XYZ from "ol/source/XYZ";
 import TileWMS from "ol/source/TileWMS";
+import XYZ from "ol/source/XYZ";
 import { SyncSourceId, SyncSources } from "./types";
 
 const tileSource = new XYZ({

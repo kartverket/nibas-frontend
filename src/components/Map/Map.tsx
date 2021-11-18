@@ -1,27 +1,27 @@
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import useInteractions from "hooks/interactions/useInteractions";
-import useDefaultControls from "hooks/useDefaultControls";
+import { map } from "./constants";
 import CustomControl from "components/CustomControl";
+import LayerOrdering from "components/LayerOrdering";
+import useInteractions from "hooks/interactions/useInteractions";
+import { createLayers } from "hooks/layers/constants";
 import { LayerId } from "hooks/layers/types";
+import useVisibleLayers, {
+  toggleLayerVisibility,
+} from "hooks/layers/useVisibleLayers";
+import useZIndexes from "hooks/layers/useZIndexes";
+import {
+  getAdministrativeEnheterFylkerSource,
+  getAdministrativeEnheterKommunerSource,
+} from "hooks/sources/asyncSourceGetters";
+import { GeometryVectorSource } from "hooks/sources/types";
+import useDefaultControls from "hooks/useDefaultControls";
 import {
   getLayerById,
   initLayer,
   isLayerVisible,
   setSourceForVectorLayer,
 } from "utils/map/layers";
-import { map } from "./constants";
-import useZIndexes from "hooks/layers/useZIndexes";
-import LayerOrdering from "components/LayerOrdering";
-import useVisibleLayers, {
-  toggleLayerVisibility,
-} from "hooks/layers/useVisibleLayers";
-import {
-  getAdministrativeEnheterFylkerSource,
-  getAdministrativeEnheterKommunerSource,
-} from "hooks/sources/asyncSourceGetters";
-import { createLayers } from "hooks/layers/constants";
-import { GeometryVectorSource } from "hooks/sources/types";
 
 const initLayers = () => {
   const layers = createLayers();

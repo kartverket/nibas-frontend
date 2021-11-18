@@ -1,5 +1,5 @@
-import { TileWMS } from "ol/source";
 import WMSCapabilities from "ol/format/WMSCapabilities";
+import { TileWMS } from "ol/source";
 import { SyncSourceId } from "hooks/sources/types";
 
 const parser = new WMSCapabilities();

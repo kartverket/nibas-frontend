@@ -1,6 +1,6 @@
+import GeoJSON from "ol/format/GeoJSON";
 import { get } from "ol/proj";
 import VectorSource from "ol/source/Vector";
-import GeoJSON from "ol/format/GeoJSON";
 
 export const getAdministrativeEnheterKommunerSource = async () => {
   const geojsonRequest = await fetch(

@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import getSubLayersFromWMSSource, {
-  MainMappedLayer,
-} from "utils/getLayersFromWMS";
-import { getLayerIdFromMappedLayer, getWMSLayersInMap } from "utils/map/layers";
 import BakgrunnskartOptions from "./BakgrunnskartOptions";
 import { MapInteractable } from "components/Map/MapInteractable";
 import useVisibleLayers, {
   toggleLayerVisibility,
 } from "hooks/layers/useVisibleLayers";
+import getSubLayersFromWMSSource, {
+  MainMappedLayer,
+} from "utils/getLayersFromWMS";
+import { getLayerIdFromMappedLayer, getWMSLayersInMap } from "utils/map/layers";
 
 type Props = {
   visibleLayers: ReturnType<typeof useVisibleLayers>["visibleLayers"];

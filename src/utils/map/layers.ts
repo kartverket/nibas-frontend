@@ -1,17 +1,17 @@
-import { LayerId } from "hooks/layers/types";
 import Layer from "ol/layer/Layer";
-import Source from "ol/source/Source";
 import TileLayer from "ol/layer/Tile";
+import VectorLayer from "ol/layer/Vector";
+import Source from "ol/source/Source";
 import TileWMS from "ol/source/TileWMS";
-import { MainMappedLayer } from "utils/getLayersFromWMS";
 import { map } from "components/Map/constants";
 import {
   createLayers,
   INITIAL_VISIBILITY,
   INITIAL_ZINDEXES,
 } from "hooks/layers/constants";
-import VectorLayer from "ol/layer/Vector";
+import { LayerId } from "hooks/layers/types";
 import { GeometryVectorSource } from "hooks/sources/types";
+import { MainMappedLayer } from "utils/getLayersFromWMS";
 
 export const getLayersArray = () => map?.getLayers().getArray() ?? [];
 export const getLayerIds = () =>

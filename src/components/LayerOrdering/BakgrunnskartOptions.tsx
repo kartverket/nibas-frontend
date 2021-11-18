@@ -1,7 +1,7 @@
 import styled from "styled-components";
+import RecursiveLayer from "./RecursiveLayer";
 import { MapInteractable } from "components/Map/MapInteractable";
 import { MainMappedLayer } from "utils/getLayersFromWMS";
-import RecursiveLayer from "./RecursiveLayer";
 
 type Props = {
   editingLayer: MainMappedLayer;
