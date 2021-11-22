@@ -1,12 +1,15 @@
-export type SimpleFylke = {
-  fylkesnavn: string;
-  fylkesnummer: string;
+export type Grense = {
+  id: number;
 };
 
-export type SimpleKommune = {
+export type SimpleFylke = Grense & {
+  navn: string;
+  nummer: string;
+};
+
+export type SimpleKommune = Grense & {
   kommunenavn: string;
   kommunenummer: string;
-  id: number;
 };
 
 export type Fylke = {

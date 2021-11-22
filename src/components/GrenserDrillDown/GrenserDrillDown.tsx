@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
+import FylkeList from "./FylkeList";
 import KommuneList from "./KommuneList";
 import { SimpleFylke } from "./types";
 import useEditGrenser, { ObjectValue } from "./useEditGrenser";
+import { fetchFylker } from "api/fylker";
 import Accordion from "components/Accordion";
 import { MapInteractable } from "components/Map/MapInteractable";
 
@@ -16,16 +18,13 @@ const GrenserDrillDown = ({ visible }: Props) => {
   const { setObjectValue, editingObject } = useEditGrenser();
 
   useEffect(() => {
-    const fetchFylker = async () => {
-      const response = await fetch(
-        "https://ws.geonorge.no/kommuneinfo/v1/fylker"
-      );
-      const json = await response.json();
+    const updateFylker = async () => {
+      const fetchedFylker = await fetchFylker();
 
-      setFylker(json);
+      setFylker(fetchedFylker);
     };
 
-    fetchFylker();
+    updateFylker();
   }, []);
 
   if (!visible) return null;
@@ -38,21 +37,23 @@ const GrenserDrillDown = ({ visible }: Props) => {
         </Accordion>
         <Accordion title="Fylkesgrenser">
           <AccordionContent>
-            {fylker.map((fylke) => (
-              <div key={fylke.fylkesnummer}>
-                <span>{fylke.fylkesnavn}</span>
-              </div>
-            ))}
+            <FylkeList
+              fylker={fylker}
+              fylkeValues={editingObject.fylke ?? {}}
+              setFylkeValue={(fylkesnavn: string, value: ObjectValue) =>
+                setObjectValue("fylke", fylkesnavn, value)
+              }
+            />
           </AccordionContent>
         </Accordion>
         <Accordion title="Kommunegrenser">
           <AccordionContent>
             {fylker.map((fylke) => (
-              <Accordion key={fylke.fylkesnummer} title={fylke.fylkesnavn}>
+              <Accordion key={fylke.nummer} title={fylke.navn}>
                 <KommuneList
                   fylke={fylke}
                   kommuneValues={editingObject.kommune ?? {}}
-                  setObjectValue={(kommunenavn: string, value: ObjectValue) =>
+                  setKommuneValue={(kommunenavn: string, value: ObjectValue) =>
                     setObjectValue("kommune", kommunenavn, value)
                   }
                 />

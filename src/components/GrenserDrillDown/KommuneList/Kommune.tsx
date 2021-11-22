@@ -43,11 +43,11 @@ const removeKommuneFromLayer = async (
 
 type Props = {
   kommune: SimpleKommune;
-  setObjectValue: (kommune: string, value: ObjectValue) => void;
+  setKommuneValue: (kommune: string, value: ObjectValue) => void;
   objectValue: ObjectValue | undefined;
 };
 
-const Kommune = ({ kommune, setObjectValue, objectValue = {} }: Props) => {
+const Kommune = ({ kommune, setKommuneValue, objectValue = {} }: Props) => {
   const { visible = false, selected = false } = objectValue;
 
   const handleVisibleClick = async () => {
@@ -65,7 +65,7 @@ const Kommune = ({ kommune, setObjectValue, objectValue = {} }: Props) => {
       }
     }
 
-    setObjectValue(kommune.kommunenavn, {
+    setKommuneValue(kommune.kommunenavn, {
       ...objectValue,
       visible: !objectValue?.visible,
     });
@@ -96,7 +96,7 @@ const Kommune = ({ kommune, setObjectValue, objectValue = {} }: Props) => {
 
     newObjectValue.selected = !newObjectValue.selected;
 
-    setObjectValue(kommune.kommunenavn, newObjectValue);
+    setKommuneValue(kommune.kommunenavn, newObjectValue);
   };
 
   const openInfo = () => {

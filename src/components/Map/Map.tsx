@@ -11,14 +11,9 @@ import useVisibleLayers, {
   toggleLayerVisibility,
 } from "hooks/layers/useVisibleLayers";
 import useZIndexes from "hooks/layers/useZIndexes";
-import { getAdministrativeEnheterFylkerSource } from "hooks/sources/asyncSourceGetters";
 import { GeometryVectorSource } from "hooks/sources/types";
 import useDefaultControls from "hooks/useDefaultControls";
-import {
-  getLayerById,
-  initLayer,
-  setSourceForVectorLayer,
-} from "utils/map/layers";
+import { getLayerById, initLayer } from "utils/map/layers";
 
 const initLayers = () => {
   const layers = createLayers();
@@ -48,17 +43,6 @@ const Map = ({ backgroundLayersOpen, editingOpen }: Props) => {
 
   useInteractions(editingSource, editing);
   useDefaultControls();
-
-  useEffect(() => {
-    // midlertidig
-    const fetchFylkeSource = async () => {
-      const source = await getAdministrativeEnheterFylkerSource();
-
-      setSourceForVectorLayer("fylker", source);
-    };
-
-    fetchFylkeSource();
-  }, []);
 
   useEffect(() => {
     // mapRef kan egentlig ikke være null her,

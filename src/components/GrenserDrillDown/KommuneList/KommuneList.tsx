@@ -14,10 +14,10 @@ import Kommune from "./Kommune";
 type Props = {
   fylke: SimpleFylke;
   kommuneValues: Record<string, ObjectValue>;
-  setObjectValue: (kommune: string, value: ObjectValue) => void;
+  setKommuneValue: (kommune: string, value: ObjectValue) => void;
 };
 
-const KommuneList = ({ /*fylke, */ kommuneValues, setObjectValue }: Props) => {
+const KommuneList = ({ /*fylke, */ kommuneValues, setKommuneValue }: Props) => {
   const [kommuner /*, setKommuner*/] = useState<SimpleKommune[]>([
     {
       kommunenavn: "Ringerike",
@@ -54,7 +54,7 @@ const KommuneList = ({ /*fylke, */ kommuneValues, setObjectValue }: Props) => {
         <Kommune
           key={kommune.id}
           kommune={kommune}
-          setObjectValue={setObjectValue}
+          setKommuneValue={setKommuneValue}
           objectValue={kommuneValues[kommune.kommunenavn]}
         />
       ))}
