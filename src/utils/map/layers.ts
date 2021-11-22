@@ -15,7 +15,7 @@ import { MainMappedLayer } from "utils/getLayersFromWMS";
 
 export const getLayersArray = () => map.getLayers().getArray() ?? [];
 export const getLayerIds = () =>
-  getLayersArray().map((layer) => layer.get("id"));
+  getLayersArray().map((layer) => layer.get("id")) as LayerId[];
 
 export const getLayerById = <T extends LayerId>(id: T) => {
   const layersWithId = getLayersArray().filter(
@@ -77,19 +77,10 @@ export const initLayer = (layer: Layer<Source>, layerId: LayerId) => {
   addLayerIfNotExists(layer);
 };
 
-export const setSourceForVectorLayer = (
-  layerId: LayerId,
-  source: GeometryVectorSource
-) => {
-  const layer = getLayerById(layerId);
+export const getVectorLayers = () => {
+  const layers = getLayersArray();
 
-  if (!layer) return;
-
-  if (!(layer instanceof VectorLayer)) {
-    throw new Error(
-      "Layer er ikke et VectorLayer, så man kan ikke sette Source"
-    );
-  }
-
-  layer.setSource(source);
+  return layers.filter(
+    (layer) => layer instanceof VectorLayer
+  ) as VectorLayer<GeometryVectorSource>[];
 };

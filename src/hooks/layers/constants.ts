@@ -1,5 +1,6 @@
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
+import VectorSource from "ol/source/Vector";
 import { ByLayerId, LayerId } from "./types";
 import { syncSources } from "hooks/sources/syncSources";
 
@@ -20,9 +21,9 @@ export const createLayers = () => {
     matrikkelen: new TileLayer({ source: syncSources.matrikkelen }),
     stedsnavn: new TileLayer({ source: syncSources.stedsnavn }),
     // ingen source betyr at source settes async
-    fylker: new VectorLayer(),
-    kommuner: new VectorLayer(),
-    edit: new VectorLayer(),
+    fylker: new VectorLayer({ source: new VectorSource() }),
+    kommuner: new VectorLayer({ source: new VectorSource() }),
+    edit: new VectorLayer({ source: new VectorSource() }),
   };
 
   return layers as LayerIdGuard<typeof layers>;
