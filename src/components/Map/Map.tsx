@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import styled from "styled-components";
+import { map } from "./constants";
 import CustomControl from "components/CustomControl";
 import GrenserDrillDown from "components/GrenserDrillDown";
 import LayerOrdering from "components/LayerOrdering";
@@ -9,20 +11,14 @@ import useVisibleLayers, {
   toggleLayerVisibility,
 } from "hooks/layers/useVisibleLayers";
 import useZIndexes from "hooks/layers/useZIndexes";
-import {
-  getAdministrativeEnheterFylkerSource,
-  getAdministrativeEnheterKommunerSource,
-} from "hooks/sources/asyncSourceGetters";
+import { getAdministrativeEnheterFylkerSource } from "hooks/sources/asyncSourceGetters";
 import { GeometryVectorSource } from "hooks/sources/types";
 import useDefaultControls from "hooks/useDefaultControls";
-import styled from "styled-components";
 import {
   getLayerById,
   initLayer,
-  isLayerVisible,
   setSourceForVectorLayer,
 } from "utils/map/layers";
-import { map } from "./constants";
 
 const initLayers = () => {
   const layers = createLayers();
@@ -48,23 +44,10 @@ const Map = ({ backgroundLayersOpen, editingOpen }: Props) => {
   const [editingSource, setEditingSource] =
     useState<GeometryVectorSource | null>(null);
 
-  const canEditKommuner = isLayerVisible("kommuner") && editing;
-
   const { visibleLayers, dispatch } = useVisibleLayers();
 
   useInteractions(editingSource, editing);
   useDefaultControls();
-
-  // useEffect(() => {
-  //   // midlertidig
-  //   const fetchKommuneSource = async () => {
-  //     const source = await getAdministrativeEnheterKommunerSource();
-
-  //     setSourceForVectorLayer("kommuner", source);
-  //   };
-
-  //   fetchKommuneSource();
-  // }, []);
 
   useEffect(() => {
     // midlertidig

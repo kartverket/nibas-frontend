@@ -13,7 +13,7 @@ type Props = {
 const GrenserDrillDown = ({ visible }: Props) => {
   const [fylker, setFylker] = useState<SimpleFylke[]>([]);
 
-  const { mode, setMode, setObjectValue, editingObject } = useEditGrenser();
+  const { setObjectValue, editingObject } = useEditGrenser();
 
   useEffect(() => {
     const fetchFylker = async () => {

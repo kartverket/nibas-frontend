@@ -1,7 +1,7 @@
-import { GeometryVectorSource } from "hooks/sources/types";
 import { FeatureLike } from "ol/Feature";
 import GeoJSON from "ol/format/GeoJSON";
 import VectorSource from "ol/source/Vector";
+import { GeometryVectorSource } from "hooks/sources/types";
 
 const geoJson = new GeoJSON();
 

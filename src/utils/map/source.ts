@@ -1,11 +1,11 @@
-import { LayerId } from "hooks/layers/types";
-import { GeometryVectorSource } from "hooks/sources/types";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { featuresToGeoJson, geoJsonToSource } from "./geoJson";
 import { getLayerById } from "./layers";
+import { LayerId } from "hooks/layers/types";
+import { GeometryVectorSource } from "hooks/sources/types";
 
 export const addFeaturesToSource = (
   sourceId: LayerId,

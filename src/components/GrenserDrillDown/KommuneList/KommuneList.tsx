@@ -3,13 +3,13 @@ import styled from "styled-components";
 import { SimpleFylke, SimpleKommune } from "../types";
 import { ObjectValue } from "../useEditGrenser";
 import Kommune from "./Kommune";
-import { fetchKommuneById } from "api/kommuner";
-import { geoJsonToSource } from "utils/map/geoJson";
-import { getLayerById } from "utils/map/layers";
-import {
-  addFeaturesToSource,
-  removeFeaturesFromSource,
-} from "utils/map/source";
+// import { fetchKommuneById } from "api/kommuner";
+// import { geoJsonToSource } from "utils/map/geoJson";
+// import { getLayerById } from "utils/map/layers";
+// import {
+//   addFeaturesToSource,
+//   removeFeaturesFromSource,
+// } from "utils/map/source";
 
 type Props = {
   fylke: SimpleFylke;
@@ -17,8 +17,8 @@ type Props = {
   setObjectValue: (kommune: string, value: ObjectValue) => void;
 };
 
-const KommuneList = ({ fylke, kommuneValues, setObjectValue }: Props) => {
-  const [kommuner, setKommuner] = useState<SimpleKommune[]>([
+const KommuneList = ({ /*fylke, */ kommuneValues, setObjectValue }: Props) => {
+  const [kommuner /*, setKommuner*/] = useState<SimpleKommune[]>([
     {
       kommunenavn: "Ringerike",
       kommunenummer: "3007",

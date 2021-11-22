@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import VectorLayer from "ol/layer/Vector";
 import styled from "styled-components";
 import { SimpleKommune } from "../types";
@@ -49,7 +48,7 @@ type Props = {
 };
 
 const Kommune = ({ kommune, setObjectValue, objectValue = {} }: Props) => {
-  const { visible, selected } = objectValue;
+  const { visible = false, selected = false } = objectValue;
 
   const handleVisibleClick = async () => {
     if (visible) {
@@ -101,7 +100,7 @@ const Kommune = ({ kommune, setObjectValue, objectValue = {} }: Props) => {
   };
 
   const openInfo = () => {
-    // b
+    // todo
   };
 
   return (
