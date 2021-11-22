@@ -52,7 +52,7 @@ const Map = ({ backgroundLayersOpen, editingOpen }: Props) => {
 
   const { visibleLayers, dispatch } = useVisibleLayers();
 
-  useInteractions(editingSource, canEditKommuner);
+  useInteractions(editingSource, editing);
   useDefaultControls();
 
   // useEffect(() => {
@@ -91,10 +91,10 @@ const Map = ({ backgroundLayersOpen, editingOpen }: Props) => {
 
   useEffect(() => {
     // slik kan vi endre hvilken source som vi endrer på
-    const kommuneLayer = getLayerById("kommuner");
+    const editLayer = getLayerById("edit");
 
     if (editing) {
-      setEditingSource(kommuneLayer.getSource());
+      setEditingSource(editLayer.getSource());
     } else {
       setEditingSource(null);
     }

@@ -1,10 +1,10 @@
-import Accordion from "components/Accordion";
-import { MapInteractable } from "components/Map/MapInteractable";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import KommuneList from "./KommuneList";
 import { SimpleFylke } from "./types";
-import useKommunegrenser from "./useKommunegrenser";
+import useEditGrenser, { ObjectValue } from "./useEditGrenser";
+import Accordion from "components/Accordion";
+import { MapInteractable } from "components/Map/MapInteractable";
 
 type Props = {
   visible: boolean;
@@ -13,7 +13,7 @@ type Props = {
 const GrenserDrillDown = ({ visible }: Props) => {
   const [fylker, setFylker] = useState<SimpleFylke[]>([]);
 
-  const { selectedKommuner, toggleKommunegrense } = useKommunegrenser();
+  const { mode, setMode, setObjectValue, editingObject } = useEditGrenser();
 
   useEffect(() => {
     const fetchFylker = async () => {
@@ -51,8 +51,10 @@ const GrenserDrillDown = ({ visible }: Props) => {
               <Accordion key={fylke.fylkesnummer} title={fylke.fylkesnavn}>
                 <KommuneList
                   fylke={fylke}
-                  selectedKommuner={selectedKommuner}
-                  toggleKommunegrense={toggleKommunegrense}
+                  kommuneValues={editingObject.kommune ?? {}}
+                  setObjectValue={(kommunenavn: string, value: ObjectValue) =>
+                    setObjectValue("kommune", kommunenavn, value)
+                  }
                 />
               </Accordion>
             ))}
