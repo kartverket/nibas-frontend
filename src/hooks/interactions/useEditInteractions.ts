@@ -1,21 +1,20 @@
 import { useEffect } from "react";
 import { Draw, Modify, Select, Snap } from "ol/interaction";
 import { map } from "components/Map/constants";
-import { GeometryVectorSource } from "hooks/sources/types";
+import { getLayerById } from "utils/map/layers";
 
-const useInteractions = (
-  source: GeometryVectorSource | null,
-  editing: boolean
-) => {
+const useEditInteractions = (editing: boolean) => {
   useEffect(() => {
-    if (!editing || !source) return;
+    if (!editing) return;
 
-    const modify = new Modify({ source });
+    const editSource = getLayerById("edit").getSource();
+
+    const modify = new Modify({ source: editSource });
     const draw = new Draw({
       type: "LineString",
-      source,
+      source: editSource,
     });
-    const snap = new Snap({ source });
+    const snap = new Snap({ source: editSource });
 
     map.addInteraction(modify);
     map.addInteraction(draw);
@@ -26,7 +25,7 @@ const useInteractions = (
       map.removeInteraction(draw);
       map.removeInteraction(snap);
     };
-  }, [editing, source]);
+  }, [editing]);
 
   useEffect(() => {
     if (editing) return;
@@ -43,4 +42,4 @@ const useInteractions = (
   }, [editing]);
 };
 
-export default useInteractions;
+export default useEditInteractions;
