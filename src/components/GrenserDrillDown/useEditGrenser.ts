@@ -51,8 +51,11 @@ const useEditGrenser = () => {
     });
   };
 
+  const canSelect = (type: EditingType) => !mode || type === mode;
+
   return {
     mode,
+    canSelect,
     editingObject,
     setObjectValue,
   };

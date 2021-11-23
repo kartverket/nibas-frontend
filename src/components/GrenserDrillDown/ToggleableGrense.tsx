@@ -23,6 +23,7 @@ type Props<T extends Grense> = {
   objectValue: ObjectValue | undefined;
   title: string;
   type: EditingType;
+  canSelect: boolean;
   getFeaturesToAdd: (grense: T) => Promise<Feature<Geometry>[]>;
   getFeaturesToRemove: (
     grense: T,
@@ -36,6 +37,7 @@ const ToggleableGrense = <T extends Grense>({
   objectValue = {},
   title,
   type,
+  canSelect,
   getFeaturesToAdd,
   getFeaturesToRemove,
 }: Props<T>) => {
@@ -121,6 +123,8 @@ const ToggleableGrense = <T extends Grense>({
         type="checkbox"
         checked={selected}
         onChange={() => handleOnChange()}
+        disabled={!canSelect}
+        title={!canSelect ? "Kun ett tema kan redigeres på en gang" : ""}
       />
       <span>{title}</span>
       <button onClick={openInfo}>Metadata</button>

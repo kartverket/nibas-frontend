@@ -11,9 +11,15 @@ type Props = {
   fylker: SimpleFylke[];
   fylkeValues: Record<string, ObjectValue>;
   setFylkeValue: (kommune: string, value: ObjectValue) => void;
+  canSelect: boolean;
 };
 
-const FylkeList = ({ fylker, fylkeValues, setFylkeValue }: Props) => {
+const FylkeList = ({
+  fylker,
+  fylkeValues,
+  setFylkeValue,
+  canSelect,
+}: Props) => {
   const getFeaturesToAdd = async (fylke: SimpleFylke) => {
     const json = await fetchFylkeFeaturesById(fylke.id);
     return geoJsonToSource(json).getFeatures();
@@ -40,6 +46,7 @@ const FylkeList = ({ fylker, fylkeValues, setFylkeValue }: Props) => {
           getFeaturesToAdd={getFeaturesToAdd}
           getFeaturesToRemove={getFeaturesToRemove}
           setObjectValue={setFylkeValue}
+          canSelect={canSelect}
         />
       ))}
     </Wrapper>
