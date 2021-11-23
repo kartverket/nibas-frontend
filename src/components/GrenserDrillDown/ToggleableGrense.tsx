@@ -85,10 +85,6 @@ const ToggleableGrense = <T extends Grense>({
     });
   };
 
-  // edit kan se om kommunen er hentet allerede
-  // om finnes, hent features og legg til i laget
-  // ellers, hent dem og legg til
-  // kan ikke være i både kommuner og edit lag på samme tid, må flyttes
   const handleOnChange = async () => {
     const layerId = layerIdByGrenseType[type];
     const newObjectValue = { ...objectValue };
@@ -120,16 +116,14 @@ const ToggleableGrense = <T extends Grense>({
 
   return (
     <Wrapper>
-      <button onClick={() => handleVisibleClick()}>
-        {visible ? "Skjul" : "Vis"}
-      </button>
+      <button onClick={handleVisibleClick}>{visible ? "Skjul" : "Vis"}</button>
       <input
         type="checkbox"
         checked={selected}
         onChange={() => handleOnChange()}
       />
       <span>{title}</span>
-      <button onClick={() => openInfo()}>Metadata</button>
+      <button onClick={openInfo}>Metadata</button>
     </Wrapper>
   );
 };
