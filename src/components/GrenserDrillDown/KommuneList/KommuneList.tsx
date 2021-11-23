@@ -1,15 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Feature } from "ol";
+import Geometry from "ol/geom/Geometry";
 import styled from "styled-components";
+import ToggleableGrense from "../ToggleableGrense";
 import { SimpleFylke, SimpleKommune } from "../types";
 import { ObjectValue } from "../useEditGrenser";
-import Kommune from "./Kommune";
-// import { fetchKommuneById } from "api/kommuner";
-// import { geoJsonToSource } from "utils/map/geoJson";
-// import { getLayerById } from "utils/map/layers";
-// import {
-//   addFeaturesToSource,
-//   removeFeaturesFromSource,
-// } from "utils/map/source";
+import { fetchKommuneFeaturesById, fetchKommunerByFylke } from "api/kommuner";
+import { geoJsonToSource } from "utils/map/geoJson";
 
 type Props = {
   fylke: SimpleFylke;
@@ -17,45 +14,47 @@ type Props = {
   setKommuneValue: (kommune: string, value: ObjectValue) => void;
 };
 
-const KommuneList = ({ /*fylke, */ kommuneValues, setKommuneValue }: Props) => {
-  const [kommuner /*, setKommuner*/] = useState<SimpleKommune[]>([
-    {
-      kommunenavn: "Ringerike",
-      kommunenummer: "3007",
-      id: 1,
-    },
-    {
-      kommunenavn: "Hole",
-      kommunenummer: "3038",
-      id: 2,
-    },
-  ]);
+const KommuneList = ({ fylke, kommuneValues, setKommuneValue }: Props) => {
+  const [kommuner, setKommuner] = useState<SimpleKommune[]>([]);
 
-  // hent liste over kommuner i fylke
-  // per nå har vi to hardkodede fylker, så denne er kommentert ut
-  // useEffect(() => {
-  //   if (!fylke) return;
+  useEffect(() => {
+    if (!fylke) return;
 
-  //   const fetchKommuner = async () => {
-  //     const response = await fetch(
-  //       `https://ws.geonorge.no/kommuneinfo/v1/fylker/${fylke.fylkesnummer}`
-  //     );
-  //     const json = (await response.json()) as Fylke;
+    const updateKommuner = async () => {
+      const fetchedKommuner = await fetchKommunerByFylke(fylke.nummer);
 
-  //     setKommuner(json.kommuner);
-  //   };
+      setKommuner(fetchedKommuner);
+    };
 
-  //   fetchKommuner();
-  // }, [fylke]);
+    updateKommuner();
+  }, [fylke]);
+
+  const getFeaturesToAdd = async (kommune: SimpleKommune) => {
+    const json = await fetchKommuneFeaturesById(kommune.id);
+    return geoJsonToSource(json).getFeatures();
+  };
+
+  const getFeaturesToRemove = (
+    kommune: SimpleKommune,
+    layerFeatures: Feature<Geometry>[]
+  ) =>
+    layerFeatures.filter(
+      (feature) =>
+        feature.getProperties().administrativEnhet.nummer === kommune.nummer
+    );
 
   return (
     <Wrapper>
       {kommuner.map((kommune) => (
-        <Kommune
-          key={kommune.id}
-          kommune={kommune}
-          setKommuneValue={setKommuneValue}
-          objectValue={kommuneValues[kommune.kommunenavn]}
+        <ToggleableGrense
+          key={kommune.nummer}
+          grense={kommune}
+          objectValue={kommuneValues[kommune.navn]}
+          setObjectValue={setKommuneValue}
+          title={kommune.navn}
+          type="kommune"
+          getFeaturesToAdd={getFeaturesToAdd}
+          getFeaturesToRemove={getFeaturesToRemove}
         />
       ))}
     </Wrapper>

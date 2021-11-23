@@ -8,8 +8,8 @@ export type SimpleFylke = Grense & {
 };
 
 export type SimpleKommune = Grense & {
-  kommunenavn: string;
-  kommunenummer: string;
+  navn: string;
+  nummer: string;
 };
 
 export type Fylke = {
