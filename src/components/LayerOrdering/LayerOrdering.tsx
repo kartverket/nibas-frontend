@@ -11,17 +11,20 @@ import getSubLayersFromWMSSource, {
 import { getLayerIdFromMappedLayer, getWMSLayersInMap } from "utils/map/layers";
 
 type Props = {
+  visible: boolean;
   visibleLayers: ReturnType<typeof useVisibleLayers>["visibleLayers"];
   dispatch: ReturnType<typeof useVisibleLayers>["dispatch"];
 };
 
-const LayerOrdering = ({ visibleLayers, dispatch }: Props) => {
+const LayerOrdering = ({ visible, visibleLayers, dispatch }: Props) => {
   const [mappedLayers, setMappedLayers] = useState<MainMappedLayer[]>([]);
   const [editingLayer, setEditingLayer] = useState<MainMappedLayer | null>(
     null
   );
 
   useEffect(() => {
+    if (!visible || mappedLayers.length > 0) return;
+
     const updateMappedLayers = async () => {
       const wmsLayers = getWMSLayersInMap();
 
@@ -39,7 +42,7 @@ const LayerOrdering = ({ visibleLayers, dispatch }: Props) => {
     };
 
     updateMappedLayers();
-  }, []);
+  }, [visible, mappedLayers.length]);
 
   const toggleMainLayer = (mappedLayer: MainMappedLayer) => {
     const layerId = getLayerIdFromMappedLayer(mappedLayer);
@@ -56,6 +59,8 @@ const LayerOrdering = ({ visibleLayers, dispatch }: Props) => {
 
     return visibleLayers[layerId];
   };
+
+  if (!visible) return null;
 
   return (
     <CenterAlignment>

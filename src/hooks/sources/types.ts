@@ -16,6 +16,7 @@ export type SyncSources = {
 export type AsyncSources = {
   fylker: GeometryVectorSource | undefined;
   kommuner: GeometryVectorSource | undefined;
+  edit: GeometryVectorSource | undefined;
 };
 
 export type Sources = SyncSources & AsyncSources;

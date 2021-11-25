@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { map } from "./constants";
 import CustomControl from "components/CustomControl";
+import GrenserDrillDown from "components/GrenserDrillDown";
 import LayerOrdering from "components/LayerOrdering";
 import useInteractions from "hooks/interactions/useInteractions";
 import { createLayers } from "hooks/layers/constants";
@@ -10,18 +11,9 @@ import useVisibleLayers, {
   toggleLayerVisibility,
 } from "hooks/layers/useVisibleLayers";
 import useZIndexes from "hooks/layers/useZIndexes";
-import {
-  getAdministrativeEnheterFylkerSource,
-  getAdministrativeEnheterKommunerSource,
-} from "hooks/sources/asyncSourceGetters";
 import { GeometryVectorSource } from "hooks/sources/types";
 import useDefaultControls from "hooks/useDefaultControls";
-import {
-  getLayerById,
-  initLayer,
-  isLayerVisible,
-  setSourceForVectorLayer,
-} from "utils/map/layers";
+import { getLayerById, initLayer } from "utils/map/layers";
 
 const initLayers = () => {
   const layers = createLayers();
@@ -39,7 +31,7 @@ type Props = {
   editingOpen: boolean;
 };
 
-const Map = ({ backgroundLayersOpen }: Props) => {
+const Map = ({ backgroundLayersOpen, editingOpen }: Props) => {
   const { moveLayerUp, moveLayerDown, layersInZIndexOrder, moveLayer } =
     useZIndexes();
   const mapRef = useRef<HTMLDivElement>(null);
@@ -47,34 +39,10 @@ const Map = ({ backgroundLayersOpen }: Props) => {
   const [editingSource, setEditingSource] =
     useState<GeometryVectorSource | null>(null);
 
-  const canEditKommuner = isLayerVisible("kommuner") && editing;
-
   const { visibleLayers, dispatch } = useVisibleLayers();
 
-  useInteractions(editingSource, canEditKommuner);
+  useInteractions(editingSource, editing);
   useDefaultControls();
-
-  useEffect(() => {
-    // midlertidig
-    const fetchKommuneSource = async () => {
-      const source = await getAdministrativeEnheterKommunerSource();
-
-      setSourceForVectorLayer("kommuner", source);
-    };
-
-    fetchKommuneSource();
-  }, []);
-
-  useEffect(() => {
-    // midlertidig
-    const fetchFylkeSource = async () => {
-      const source = await getAdministrativeEnheterFylkerSource();
-
-      setSourceForVectorLayer("fylker", source);
-    };
-
-    fetchFylkeSource();
-  }, []);
 
   useEffect(() => {
     // mapRef kan egentlig ikke være null her,
@@ -90,10 +58,10 @@ const Map = ({ backgroundLayersOpen }: Props) => {
 
   useEffect(() => {
     // slik kan vi endre hvilken source som vi endrer på
-    const kommuneLayer = getLayerById("kommuner");
+    const editLayer = getLayerById("edit");
 
     if (editing) {
-      setEditingSource(kommuneLayer.getSource());
+      setEditingSource(editLayer.getSource());
     } else {
       setEditingSource(null);
     }
@@ -106,9 +74,12 @@ const Map = ({ backgroundLayersOpen }: Props) => {
   return (
     <MapTarget ref={mapRef}>
       <MapOverlay>
-        {backgroundLayersOpen && (
-          <LayerOrdering visibleLayers={visibleLayers} dispatch={dispatch} />
-        )}
+        <LayerOrdering
+          visible={backgroundLayersOpen}
+          visibleLayers={visibleLayers}
+          dispatch={dispatch}
+        />
+        <GrenserDrillDown visible={editingOpen} />
       </MapOverlay>
 
       <CustomControl>
@@ -122,6 +93,14 @@ const Map = ({ backgroundLayersOpen }: Props) => {
           Topo to top
         </button>
       </CustomControl>
+
+      {/* <CustomControl>
+        <button
+          onClick={() => console.log(sourceToGeoJson(asyncSources.kommuner))}
+        >
+          Save
+        </button>
+      </CustomControl> */}
 
       {layersInZIndexOrder.map((layerId, i) => (
         // index som key gjør at controls rerendres ordentlig
