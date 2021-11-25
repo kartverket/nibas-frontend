@@ -64,7 +64,7 @@ const ToggleableGrense = <T extends Grense>({
     removeFeaturesFromSource(layerId, grenseFeatures);
   };
 
-  const handleVisibleClick = async () => {
+  const toggleVisible = async () => {
     const layerId = layerIdByGrenseType[type];
 
     if (visible) {
@@ -87,7 +87,7 @@ const ToggleableGrense = <T extends Grense>({
     });
   };
 
-  const handleOnChange = async () => {
+  const toggleSelected = async () => {
     const layerId = layerIdByGrenseType[type];
     const newObjectValue = { ...objectValue };
 
@@ -118,11 +118,11 @@ const ToggleableGrense = <T extends Grense>({
 
   return (
     <Wrapper>
-      <button onClick={handleVisibleClick}>{visible ? "Skjul" : "Vis"}</button>
+      <button onClick={toggleVisible}>{visible ? "Skjul" : "Vis"}</button>
       <input
         type="checkbox"
         checked={selected}
-        onChange={() => handleOnChange()}
+        onChange={toggleSelected}
         disabled={!canSelect}
         title={!canSelect ? "Kun ett tema kan redigeres på en gang" : ""}
       />
