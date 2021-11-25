@@ -1,15 +1,15 @@
-export const fetchFylker = async () => {
-  const geojsonRequest = await fetch(`v1/administrativ-enhet?type=FYLKE`);
-  const json = await geojsonRequest.json();
+import { Feature } from "ol";
+import Geometry from "ol/geom/Geometry";
+import {
+  fetchAdministrativEnhet,
+  fetchAdministrativEnhetFeaturesById,
+  updateAdministrativEnhetFeatures,
+} from "./administrativeEnheter";
 
-  return json;
-};
+export const fetchFylker = () => fetchAdministrativEnhet("FYLKE");
 
-export const fetchFylkeFeaturesById = async (id: number) => {
-  const geojsonRequest = await fetch(
-    `v1/feature/administrative-enheter?type=FYLKE&ider=${id}`
-  );
-  const json = await geojsonRequest.json();
+export const fetchFylkeFeaturesById = async (id: number) =>
+  fetchAdministrativEnhetFeaturesById(id, "FYLKE");
 
-  return json;
-};
+export const updateFylkeFeatures = async (features: Feature<Geometry>[]) =>
+  updateAdministrativEnhetFeatures(features, "FYLKE");

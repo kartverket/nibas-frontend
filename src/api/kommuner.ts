@@ -1,11 +1,12 @@
-export const fetchKommuneFeaturesById = async (id: number) => {
-  const geojsonRequest = await fetch(
-    `v1/feature/administrative-enheter?type=KOMMUNE&ider=${id}`
-  );
-  const json = await geojsonRequest.json();
+import { Feature } from "ol";
+import Geometry from "ol/geom/Geometry";
+import {
+  fetchAdministrativEnhetFeaturesById,
+  updateAdministrativEnhetFeatures,
+} from "./administrativeEnheter";
 
-  return json;
-};
+export const fetchKommuneFeaturesById = async (id: number) =>
+  fetchAdministrativEnhetFeaturesById(id, "KOMMUNE");
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const fetchKommunerByFylke = async (fylkeId: string) => {
@@ -14,3 +15,6 @@ export const fetchKommunerByFylke = async (fylkeId: string) => {
 
   return json;
 };
+
+export const updateKommuneFeatures = async (features: Feature<Geometry>[]) =>
+  updateAdministrativEnhetFeatures(features, "KOMMUNE");
