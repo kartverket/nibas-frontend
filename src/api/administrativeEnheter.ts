@@ -27,19 +27,19 @@ export const updateAdministrativEnhetFeatures = async (
   features: Feature<Geometry>[],
   type: AdministrativEnhetType
 ) => {
-  const fylkesnumre = features.reduce<string[]>((accumulator, feature) => {
-    const fylkesnummer = feature.getProperties().administrativEnhet.nummer;
+  const enhetsnumre = features.reduce<string[]>((accumulator, feature) => {
+    const enhetsnummer = feature.getProperties().administrativEnhet.nummer;
 
-    if (accumulator.includes(fylkesnummer)) return accumulator;
+    if (accumulator.includes(enhetsnummer)) return accumulator;
 
-    accumulator.push(fylkesnummer);
+    accumulator.push(enhetsnummer);
 
     return accumulator;
   }, []);
 
   // console.log("Fylker to update", fylkesnumre);
 
-  const updateRequests = fylkesnumre.map((fylkesnummer) => {
+  const updateRequests = enhetsnumre.map((fylkesnummer) => {
     const fylkeFeatures = features.filter(
       (feature) =>
         feature.getProperties().administrativEnhet.nummer === fylkesnummer
