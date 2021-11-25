@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { getLayerById } from "utils/map/layers";
 
 export type EditingType = "fylke" | "kommune";
 
@@ -11,6 +12,16 @@ const useEditGrenser = () => {
   // må vi vite hvilken type grenser det blir aktivt jobbet med
   const [mode, setMode] = useState<EditingType | null>(null);
   const [editingObject, setEditingObject] = useState<EditingObject>({});
+
+  useEffect(() => {
+    const editLayer = getLayerById("edit");
+
+    if (mode) {
+      editLayer.set("type", mode);
+    } else {
+      editLayer.unset("type");
+    }
+  }, [mode]);
 
   useEffect(() => {
     setMode((prevMode) => {
@@ -51,11 +62,11 @@ const useEditGrenser = () => {
     });
   };
 
-  const canSelect = (type: EditingType) => !mode || type === mode;
+  const getCanSelect = (type: EditingType) => !mode || type === mode;
 
   return {
     mode,
-    canSelect,
+    getCanSelect,
     editingObject,
     setObjectValue,
   };

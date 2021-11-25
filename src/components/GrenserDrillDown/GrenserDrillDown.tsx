@@ -15,7 +15,7 @@ type Props = {
 const GrenserDrillDown = ({ visible }: Props) => {
   const [fylker, setFylker] = useState<SimpleFylke[]>([]);
 
-  const { canSelect, setObjectValue, editingObject } = useEditGrenser();
+  const { getCanSelect, setObjectValue, editingObject } = useEditGrenser();
 
   useEffect(() => {
     const updateFylker = async () => {
@@ -43,7 +43,7 @@ const GrenserDrillDown = ({ visible }: Props) => {
               setFylkeValue={(fylkesnavn: string, value: ObjectValue) =>
                 setObjectValue("fylke", fylkesnavn, value)
               }
-              canSelect={canSelect("fylke")}
+              canSelect={getCanSelect("fylke")}
             />
           </AccordionContent>
         </Accordion>
@@ -57,7 +57,7 @@ const GrenserDrillDown = ({ visible }: Props) => {
                   setKommuneValue={(kommunenavn: string, value: ObjectValue) =>
                     setObjectValue("kommune", kommunenavn, value)
                   }
-                  canSelect={canSelect("kommune")}
+                  canSelect={getCanSelect("kommune")}
                 />
               </Accordion>
             ))}
