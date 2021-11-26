@@ -1,14 +1,13 @@
 FROM harbor-staging.statkart.no/proxy_cache/library/node:lts as nodeContainer
 WORKDIR /app
-COPY package.json package-lock.json .npmrc ./
+COPY . .
 RUN npm install
 RUN rm -f .npmrc
-COPY . .
 RUN npm run build
 
-FROM harbor-staging.statkart.no/proxy_cache/library/nginx:alpine
-RUN rm -rf /usr/share/nginx/html/*
-COPY /build-config/nginx/localhost/nginx.conf /etc/nginx/nginx.conf
-COPY --from=nodeContainer /app/build/ /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+FROM harbor-staging.statkart.no/proxy_cache/library/caddy:2
+RUN addgroup -g 1242 nibas; \
+  adduser -u 1242 -D -G nibas nibas
+COPY build-config/caddy/Caddyfile-local /etc/caddy/Caddyfile
+COPY --from=nodeContainer /app/build/ /srv
+USER 1242

@@ -1,0 +1,5 @@
+#Starter applikasjonen på port 6060 og proxyer kall til /v1/* til nibas-backend i test
+:6060
+
+reverse_proxy /v1/* nibas-backend.tz2-test-apps.k8s.local:80
+file_server
