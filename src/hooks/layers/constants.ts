@@ -43,7 +43,7 @@ export const INITIAL_ZINDEXES: ByLayerId<number> = {
 export const INITIAL_VISIBILITY: ByLayerId<boolean> = {
   administrativeGrenser: false,
   background: true,
-  fylker: false,
+  fylker: true,
   kommuner: true,
   stedsnavn: true,
   topografiskNorgeskart: true,
