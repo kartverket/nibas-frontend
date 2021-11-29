@@ -1,17 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { map } from "./constants";
+import { updateFylkeFeatures } from "api/fylker";
+import { updateKommuneFeatures } from "api/kommuner";
 import CustomControl from "components/CustomControl";
 import GrenserDrillDown from "components/GrenserDrillDown";
+import { EditingType } from "components/GrenserDrillDown/useEditGrenser";
 import LayerOrdering from "components/LayerOrdering";
-import useInteractions from "hooks/interactions/useInteractions";
+import useEditInteractions from "hooks/interactions/useEditInteractions";
 import { createLayers } from "hooks/layers/constants";
 import { LayerId } from "hooks/layers/types";
 import useVisibleLayers, {
   toggleLayerVisibility,
 } from "hooks/layers/useVisibleLayers";
 import useZIndexes from "hooks/layers/useZIndexes";
-import { GeometryVectorSource } from "hooks/sources/types";
 import useDefaultControls from "hooks/useDefaultControls";
 import { getLayerById, initLayer } from "utils/map/layers";
 
@@ -36,12 +38,10 @@ const Map = ({ backgroundLayersOpen, editingOpen }: Props) => {
     useZIndexes();
   const mapRef = useRef<HTMLDivElement>(null);
   const [editing, setEditing] = useState(false);
-  const [editingSource, setEditingSource] =
-    useState<GeometryVectorSource | null>(null);
 
   const { visibleLayers, dispatch } = useVisibleLayers();
 
-  useInteractions(editingSource, editing);
+  useEditInteractions(editing);
   useDefaultControls();
 
   useEffect(() => {
@@ -56,19 +56,27 @@ const Map = ({ backgroundLayersOpen, editingOpen }: Props) => {
     };
   }, []);
 
-  useEffect(() => {
-    // slik kan vi endre hvilken source som vi endrer på
-    const editLayer = getLayerById("edit");
-
-    if (editing) {
-      setEditingSource(editLayer.getSource());
-    } else {
-      setEditingSource(null);
-    }
-  }, [editing]);
-
   const toggleEditingInteractions = () => {
     setEditing(!editing);
+  };
+
+  const saveDraft = async () => {
+    const editLayer = getLayerById("edit");
+    const editingType = editLayer.get("type") as EditingType;
+    const editFeatures = editLayer.getSource().getFeatures();
+
+    if (!editingType) return;
+
+    switch (editingType) {
+      case "fylke": {
+        updateFylkeFeatures(editFeatures);
+        break;
+      }
+      case "kommune": {
+        updateKommuneFeatures(editFeatures);
+        break;
+      }
+    }
   };
 
   return (
@@ -92,6 +100,10 @@ const Map = ({ backgroundLayersOpen, editingOpen }: Props) => {
         <button onClick={() => moveLayer("topografiskNorgeskart", 10)}>
           Topo to top
         </button>
+      </CustomControl>
+
+      <CustomControl>
+        <button onClick={saveDraft}>Lagre endringer</button>
       </CustomControl>
 
       {/* <CustomControl>

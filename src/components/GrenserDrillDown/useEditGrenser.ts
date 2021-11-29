@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
+import { getLayerById } from "utils/map/layers";
 
 export type EditingType = "fylke" | "kommune";
 
-export type ObjectValue = { selected?: boolean; visible?: boolean };
+export type ObjectValue = { editing?: boolean; visible?: boolean };
 type GrenseDictionary = Record<string, ObjectValue>;
 type EditingObject = Partial<Record<EditingType, GrenseDictionary>>;
 
@@ -13,25 +14,34 @@ const useEditGrenser = () => {
   const [editingObject, setEditingObject] = useState<EditingObject>({});
 
   useEffect(() => {
-    setMode((prevMode) => {
-      if (!prevMode) return prevMode;
+    const editLayer = getLayerById("edit");
 
-      // sjekk dypt i treet om det er en value som er selected
-      const hasSelected = Object.keys(editingObject).some((editingType) => {
-        const children = editingObject[editingType as EditingType];
+    if (mode) {
+      editLayer.set("type", mode);
+    } else {
+      editLayer.unset("type");
+    }
+  }, [mode]);
 
-        if (!children) return false;
+  useEffect(() => {
+    if (!mode) return;
 
-        const atLeastOneChildSelected = Object.keys(children).some(
-          (child) => children[child].selected
-        );
+    // sjekk dypt i treet om det er en value som er selected
+    const hasSelected = Object.keys(editingObject).some((editingType) => {
+      const children = editingObject[editingType as EditingType];
 
-        return atLeastOneChildSelected;
-      });
+      if (!children) return false;
 
-      return hasSelected ? prevMode : null;
+      const atLeastOneChildSelected = Object.keys(children).some(
+        (child) => children[child].editing
+      );
+
+      return atLeastOneChildSelected;
     });
-  }, [editingObject]);
+
+    // hvis selected, sett mode, hvis ikke, set mode til null
+    setMode(hasSelected ? mode : null);
+  }, [editingObject, mode]);
 
   const setObjectValue = (
     type: EditingType,
@@ -51,8 +61,11 @@ const useEditGrenser = () => {
     });
   };
 
+  const getCanSelect = (type: EditingType) => !mode || type === mode;
+
   return {
     mode,
+    getCanSelect,
     editingObject,
     setObjectValue,
   };

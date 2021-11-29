@@ -12,9 +12,15 @@ type Props = {
   fylke: SimpleFylke;
   kommuneValues: Record<string, ObjectValue>;
   setKommuneValue: (kommune: string, value: ObjectValue) => void;
+  canSelect: boolean;
 };
 
-const KommuneList = ({ fylke, kommuneValues, setKommuneValue }: Props) => {
+const KommuneList = ({
+  fylke,
+  kommuneValues,
+  setKommuneValue,
+  canSelect,
+}: Props) => {
   const [kommuner, setKommuner] = useState<SimpleKommune[]>([]);
 
   useEffect(() => {
@@ -53,6 +59,7 @@ const KommuneList = ({ fylke, kommuneValues, setKommuneValue }: Props) => {
           setObjectValue={setKommuneValue}
           title={kommune.navn}
           type="kommune"
+          canSelect={canSelect}
           getFeaturesToAdd={getFeaturesToAdd}
           getFeaturesToRemove={getFeaturesToRemove}
         />

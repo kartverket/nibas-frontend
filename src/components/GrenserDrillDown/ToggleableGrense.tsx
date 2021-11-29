@@ -23,6 +23,7 @@ type Props<T extends Grense> = {
   objectValue: ObjectValue | undefined;
   title: string;
   type: EditingType;
+  canSelect: boolean;
   getFeaturesToAdd: (grense: T) => Promise<Feature<Geometry>[]>;
   getFeaturesToRemove: (
     grense: T,
@@ -36,10 +37,11 @@ const ToggleableGrense = <T extends Grense>({
   objectValue = {},
   title,
   type,
+  canSelect,
   getFeaturesToAdd,
   getFeaturesToRemove,
 }: Props<T>) => {
-  const { visible = false, selected = false } = objectValue;
+  const { visible = false, editing = false } = objectValue;
 
   const addGrenseToLayer = async (layerId: LayerId) => {
     const featuresToAdd = await getFeaturesToAdd(grense);
@@ -66,13 +68,13 @@ const ToggleableGrense = <T extends Grense>({
     const layerId = layerIdByGrenseType[type];
 
     if (visible) {
-      if (selected) {
+      if (editing) {
         removeGrenseFromLayer("edit");
       } else {
         removeGrenseFromLayer(layerId);
       }
     } else {
-      if (selected) {
+      if (editing) {
         addGrenseToLayer("edit");
       } else {
         addGrenseToLayer(layerId);
@@ -89,7 +91,7 @@ const ToggleableGrense = <T extends Grense>({
     const layerId = layerIdByGrenseType[type];
     const newObjectValue = { ...objectValue };
 
-    if (selected) {
+    if (editing) {
       removeGrenseFromLayer("edit");
 
       if (visible) {
@@ -105,7 +107,7 @@ const ToggleableGrense = <T extends Grense>({
       }
     }
 
-    newObjectValue.selected = !newObjectValue.selected;
+    newObjectValue.editing = !newObjectValue.editing;
 
     setObjectValue(title, newObjectValue);
   };
@@ -119,8 +121,10 @@ const ToggleableGrense = <T extends Grense>({
       <button onClick={toggleVisible}>{visible ? "Skjul" : "Vis"}</button>
       <input
         type="checkbox"
-        checked={selected}
-        onChange={() => toggleSelected()}
+        checked={editing}
+        onChange={toggleSelected}
+        disabled={!canSelect}
+        title={!canSelect ? "Kun ett tema kan redigeres på en gang" : ""}
       />
       <span>{title}</span>
       <button onClick={openInfo}>Metadata</button>
