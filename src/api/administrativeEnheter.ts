@@ -27,36 +27,16 @@ export const updateAdministrativEnhetFeatures = async (
   features: Feature<Geometry>[],
   type: AdministrativEnhetType
 ) => {
-  const enhetsnumre = features.reduce<string[]>((accumulator, feature) => {
-    const enhetsnummer = feature.getProperties().administrativEnhet.nummer;
+  const geoJson = featuresToGeoJson(features);
 
-    if (accumulator.includes(enhetsnummer)) return accumulator;
-
-    accumulator.push(enhetsnummer);
-
-    return accumulator;
-  }, []);
-
-  // console.log("Fylker to update", fylkesnumre);
-
-  const updateRequests = enhetsnumre.map((fylkesnummer) => {
-    const fylkeFeatures = features.filter(
-      (feature) =>
-        feature.getProperties().administrativEnhet.nummer === fylkesnummer
-    );
-    const geoJson = featuresToGeoJson(fylkeFeatures);
-    // console.log(geoJson);
-
-    return fetch(`v1/feature/grenser?type=${type}&ider=${fylkesnummer}`, {
-      method: "PUT",
-      body: geoJson,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+  const results = await fetch(`v1/feature/grenser?type=${type}&ider=${0}`, {
+    method: "PUT",
+    body: geoJson,
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 
-  const results = await Promise.all(updateRequests);
   // eslint-disable-next-line no-console
   console.log(results);
 };
