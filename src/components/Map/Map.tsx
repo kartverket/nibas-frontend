@@ -92,7 +92,7 @@ const Map = ({ backgroundLayersOpen, editingOpen }: Props) => {
 
       <CustomControl>
         <button onClick={toggleEditingInteractions}>
-          {editing ? "Stop editing kommuner" : "Edit kommuner"}
+          {editing ? "Stopp endre valgte objekter" : "Endre valgte objekter"}
         </button>
       </CustomControl>
 

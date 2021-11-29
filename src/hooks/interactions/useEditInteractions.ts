@@ -6,26 +6,6 @@ import { getLayerById, getVectorLayers } from "utils/map/layers";
 const useEditInteractions = (editing: boolean) => {
   useEffect(() => {
     if (!editing) return;
-
-    const editSource = getLayerById("edit").getSource();
-
-    const modify = new Modify({ source: editSource });
-    const draw = new Draw({
-      type: "LineString",
-      source: editSource,
-    });
-
-    map.addInteraction(modify);
-    map.addInteraction(draw);
-
-    return () => {
-      map.removeInteraction(modify);
-      map.removeInteraction(draw);
-    };
-  }, [editing]);
-
-  // snaps må legges til etter modify og draw for å funke ordentlig
-  useEffect(() => {
     const vectorLayers = getVectorLayers();
     const snaps: Snap[] = [];
 
@@ -37,11 +17,24 @@ const useEditInteractions = (editing: boolean) => {
       snaps.push(snap);
     });
 
+    const editSource = getLayerById("edit").getSource();
+
+    const modify = new Modify({ source: editSource });
+    const draw = new Draw({
+      type: "LineString",
+      source: editSource,
+    });
+
+    map.addInteraction(modify);
+    map.addInteraction(draw);
+    // snaps må legges til etter modify og draw interactions
     snaps.forEach((snap) => {
       map.addInteraction(snap);
     });
 
     return () => {
+      map.removeInteraction(modify);
+      map.removeInteraction(draw);
       snaps.forEach((snap) => {
         map.removeInteraction(snap);
       });
