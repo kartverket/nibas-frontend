@@ -3,7 +3,7 @@ import { getLayerById } from "utils/map/layers";
 
 export type EditingType = "fylke" | "kommune";
 
-export type ObjectValue = { selected?: boolean; visible?: boolean };
+export type ObjectValue = { editing?: boolean; visible?: boolean };
 type GrenseDictionary = Record<string, ObjectValue>;
 type EditingObject = Partial<Record<EditingType, GrenseDictionary>>;
 
@@ -24,25 +24,24 @@ const useEditGrenser = () => {
   }, [mode]);
 
   useEffect(() => {
-    setMode((prevMode) => {
-      if (!prevMode) return prevMode;
+    if (!mode) return;
 
-      // sjekk dypt i treet om det er en value som er selected
-      const hasSelected = Object.keys(editingObject).some((editingType) => {
-        const children = editingObject[editingType as EditingType];
+    // sjekk dypt i treet om det er en value som er selected
+    const hasSelected = Object.keys(editingObject).some((editingType) => {
+      const children = editingObject[editingType as EditingType];
 
-        if (!children) return false;
+      if (!children) return false;
 
-        const atLeastOneChildSelected = Object.keys(children).some(
-          (child) => children[child].selected
-        );
+      const atLeastOneChildSelected = Object.keys(children).some(
+        (child) => children[child].editing
+      );
 
-        return atLeastOneChildSelected;
-      });
-
-      return hasSelected ? prevMode : null;
+      return atLeastOneChildSelected;
     });
-  }, [editingObject]);
+
+    // hvis selected, sett mode, hvis ikke, set mode til null
+    setMode(hasSelected ? mode : null);
+  }, [editingObject, mode]);
 
   const setObjectValue = (
     type: EditingType,
