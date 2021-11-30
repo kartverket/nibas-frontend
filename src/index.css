@@ -21,4 +21,29 @@ code {
 *:before,
 *:after {
   box-sizing: border-box;
+  font-family: "Mulish";
+}
+
+@font-face {
+  font-family: "Mulish";
+  src: local("Mulish"), url(./fonts/Mulish-Regular.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "Mulish";
+  src: local("Mulish"), url(./fonts/Mulish-Bold.ttf) format("truetype");
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: "Mulish";
+  src: local("Mulish"), url(./fonts/Mulish-Italic.ttf) format("truetype");
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Mulish";
+  src: local("Mulish"), url(./fonts/Mulish-BoldItalic.ttf) format("truetype");
+  font-weight: bold;
+  font-style: italic;
 }
