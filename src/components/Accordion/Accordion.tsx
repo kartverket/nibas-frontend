@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import Button from "components/Button";
+import { ReactComponent as CaretDown } from "icons/caretdown.svg";
+import { ReactComponent as CaretUp } from "icons/caretup.svg";
 
 type Props = {
   title: React.ReactNode;
@@ -12,9 +15,9 @@ const Accordion: React.FC<Props> = ({ title, children }) => {
     <Wrapper>
       <TitleWrapper>
         <span>{title}</span>
-        <button onClick={() => setOpen(!open)}>
-          {open ? "Close" : "Open"}
-        </button>
+        <Button variant="unstyled" onClick={() => setOpen(!open)}>
+          {open ? <CaretUp /> : <CaretDown />}
+        </Button>
       </TitleWrapper>
 
       {open && <ChildrenWrapper>{children}</ChildrenWrapper>}
