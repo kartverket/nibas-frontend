@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import BakgrunnskartOptions from "./BakgrunnskartOptions";
+import RecursiveLayer from "./RecursiveLayer";
 import { MapInteractable } from "components/Map/MapInteractable";
 import useVisibleLayers, {
   toggleLayerVisibility,
@@ -18,9 +18,6 @@ type Props = {
 
 const LayerOrdering = ({ visible, visibleLayers, dispatch }: Props) => {
   const [mappedLayers, setMappedLayers] = useState<MainMappedLayer[]>([]);
-  const [editingLayer, setEditingLayer] = useState<MainMappedLayer | null>(
-    null
-  );
 
   useEffect(() => {
     if (!visible || mappedLayers.length > 0) return;
@@ -55,7 +52,7 @@ const LayerOrdering = ({ visible, visibleLayers, dispatch }: Props) => {
   const isMainLayerVisible = (mappedLayer: MainMappedLayer) => {
     const layerId = getLayerIdFromMappedLayer(mappedLayer);
 
-    if (!layerId) return;
+    if (!layerId) return false;
 
     return visibleLayers[layerId];
   };
@@ -63,45 +60,29 @@ const LayerOrdering = ({ visible, visibleLayers, dispatch }: Props) => {
   if (!visible) return null;
 
   return (
-    <CenterAlignment>
-      <SideBySide>
-        <BakgrunnslagSelector>
-          {mappedLayers.map((mappedLayer) => (
-            <div key={mappedLayer.title}>
-              <input
-                type="checkbox"
-                onChange={() => toggleMainLayer(mappedLayer)}
-                checked={isMainLayerVisible(mappedLayer)}
-              />
-              <span>{mappedLayer.title}</span>
-              <button onClick={() => setEditingLayer(mappedLayer)}>Edit</button>
-            </div>
-          ))}
-        </BakgrunnslagSelector>
-        {editingLayer && (
-          <BakgrunnskartOptions
-            editingLayer={editingLayer}
-            closeMenu={() => setEditingLayer(null)}
-          />
-        )}
-      </SideBySide>
-    </CenterAlignment>
+    <Panel>
+      {mappedLayers.map((mappedLayer) => (
+        <RecursiveLayer
+          key={mappedLayer.title}
+          indent={0}
+          mappedLayer={mappedLayer}
+          mainLayerSourceId={mappedLayer.sourceId}
+          mainLayerName={mappedLayer.name ?? ""}
+          toggleMainLayer={toggleMainLayer}
+          isMainLayerVisible={isMainLayerVisible}
+        />
+      ))}
+    </Panel>
   );
 };
 
-const CenterAlignment = styled.div`
-  display: flex;
-  align-items: center;
-  height: 100%;
-`;
-
-const SideBySide = styled.div`
-  display: flex;
-`;
-
-const BakgrunnslagSelector = styled(MapInteractable)`
-  height: 600px;
-  width: 200px;
+const Panel = styled(MapInteractable)`
+  min-height: 400px;
+  max-height: 80%;
+  width: 400px;
+  margin-top: 180px;
+  border: 2px solid ${({ theme }) => theme.colors.blue};
+  padding: 8px;
   overflow: auto;
 `;
 

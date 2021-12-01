@@ -46,13 +46,6 @@ const StyledSidebar = styled.div`
   flex-direction: column;
   align-items: center;
   margin-top: 80px;
-
-  button {
-    display: block;
-    margin: 8px 0;
-    padding: 4px 8px;
-    width: 100%;
-  }
 `;
 
 type SidebarButtonProps = {
@@ -62,6 +55,11 @@ type SidebarButtonProps = {
 const SidebarButton = styled(Button).attrs(() => ({
   variant: "unstyled",
 }))<SidebarButtonProps>`
+  display: block;
+  margin: 8px 0;
+  padding: 4px 8px;
+  width: 100%;
+
   border-top: 2px solid
     ${(props) => (props.active ? props.theme.colors.blue : "transparent")};
   border-bottom: 2px solid

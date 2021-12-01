@@ -1,7 +1,14 @@
+import { useEffect, useState } from "react";
 import TileWMS from "ol/source/TileWMS";
+import styled from "styled-components";
+import Button from "components/Button";
 import { syncSources } from "hooks/sources/syncSources";
 import { SyncSourceId } from "hooks/sources/types";
-import { MappedLayer } from "utils/getLayersFromWMS";
+import { ReactComponent as CaretDown } from "icons/caretdown.svg";
+import { ReactComponent as CaretUp } from "icons/caretup.svg";
+import { ReactComponent as Visibility } from "icons/visibility.svg";
+import { ReactComponent as VisibilityOff } from "icons/visibility_off.svg";
+import { MainMappedLayer, MappedLayer } from "utils/getLayersFromWMS";
 
 const getLayersStringToReplace = (
   layersInParams: string,
@@ -34,26 +41,50 @@ type Props = {
   mappedLayer: MappedLayer;
   indent: number;
   mainLayerSourceId: SyncSourceId;
+  mainLayerName: string;
+  toggleMainLayer?: (mappedLayer: MainMappedLayer) => void;
+  isMainLayerVisible?: (mappedLayer: MainMappedLayer) => boolean;
 };
 
-const RecursiveLayer = ({ mappedLayer, indent, mainLayerSourceId }: Props) => {
-  const isSubLayerVisible = () => {
-    const source = syncSources[mainLayerSourceId] as TileWMS;
-    const layersInParams = source.getParams().LAYERS as string;
+const RecursiveLayer = ({
+  mappedLayer,
+  indent,
+  mainLayerSourceId,
+  mainLayerName,
+  toggleMainLayer,
+  isMainLayerVisible,
+}: Props) => {
+  const [open, setOpen] = useState(false);
+  const [visible, setVisible] = useState(false);
 
-    if (!mappedLayer.name) return false;
+  useEffect(() => {
+    const isSubLayerVisible = () => {
+      const source = syncSources[mainLayerSourceId] as TileWMS;
+      const layersInParams = source.getParams().LAYERS as string;
 
-    return layersInParams.includes(mappedLayer.name);
-  };
+      if (!mappedLayer.name) return false;
 
-  const onChange = () => {
+      return layersInParams.includes(mappedLayer.name);
+    };
+
+    // hvis hovedlag, sjekk i funksjonen fra props om laget er synlig
+    if (isMainLayerVisible) {
+      setVisible(isMainLayerVisible(mappedLayer as MainMappedLayer));
+    } else {
+      setVisible(isSubLayerVisible());
+    }
+  }, [mainLayerSourceId, mappedLayer.name, isMainLayerVisible, mappedLayer]);
+
+  const updateSourceParams = () => {
     const source = syncSources[mainLayerSourceId] as TileWMS;
     const layersInParams = source.getParams().LAYERS as string;
     const mappedLayerName = mappedLayer.name;
 
     if (!mappedLayerName) return;
 
-    if (isSubLayerVisible()) {
+    let newParamsLayerString = "";
+
+    if (visible) {
       const replaceString = getLayersStringToReplace(
         layersInParams,
         mappedLayerName
@@ -62,38 +93,79 @@ const RecursiveLayer = ({ mappedLayer, indent, mainLayerSourceId }: Props) => {
       if (!replaceString) return;
 
       const layersReplacedString = layersInParams.replace(replaceString, "");
-      source.updateParams({ LAYERS: layersReplacedString });
+
+      // hvis param layer ville vært tom, gjør den til hovedlaget igjen
+      if (!layersReplacedString) {
+        newParamsLayerString = mainLayerName;
+      } else {
+        newParamsLayerString = layersReplacedString;
+      }
     } else {
       let newLayers = "";
 
-      if (!layersInParams) {
+      if (!layersInParams || mainLayerName === layersInParams) {
         newLayers = `${mappedLayerName}`;
       } else {
         newLayers = `${layersInParams},${mappedLayerName}`;
       }
 
-      source.updateParams({ LAYERS: newLayers });
+      newParamsLayerString = newLayers;
     }
+
+    source.updateParams({ LAYERS: newParamsLayerString });
+  };
+
+  const onVisibilityClick = () => {
+    // hvis dette er et hovedlag, skjul i hook i stedet for å endre params
+    if (toggleMainLayer) {
+      toggleMainLayer(mappedLayer as MainMappedLayer);
+    } else {
+      updateSourceParams();
+    }
+
+    setVisible(!visible);
   };
 
   return (
-    <div style={{ marginLeft: indent * 8 }}>
-      <input
-        type="checkbox"
-        onChange={onChange}
-        defaultChecked={isSubLayerVisible()}
-      />
-      <span>{mappedLayer.title}</span>
-      {mappedLayer.layers.map((subMappedLayer, i) => (
-        <RecursiveLayer
-          key={`${mappedLayer.title}-${i}`}
-          mappedLayer={subMappedLayer}
-          indent={indent + 1}
-          mainLayerSourceId={mainLayerSourceId}
-        />
-      ))}
+    <div>
+      <Wrapper indent={indent}>
+        <Button variant="unstyled" onClick={onVisibilityClick}>
+          {visible ? <Visibility /> : <VisibilityOff />}
+        </Button>
+        <span>{mappedLayer.title}</span>
+        {mappedLayer.layers.length > 0 && (
+          <Button variant="unstyled" onClick={() => setOpen(!open)}>
+            {open ? <CaretUp /> : <CaretDown />}
+          </Button>
+        )}
+      </Wrapper>
+
+      {open &&
+        mappedLayer.layers.map((layer) => (
+          <RecursiveLayer
+            key={layer.title}
+            mappedLayer={layer}
+            mainLayerSourceId={mainLayerSourceId}
+            mainLayerName={mainLayerName}
+            indent={indent + 1}
+          />
+        ))}
     </div>
   );
 };
+
+const Wrapper = styled.div<{ indent: number }>`
+  display: flex;
+  margin: 8px 0;
+  margin-left: ${({ indent }) => indent * 16}px;
+
+  > span {
+    flex: 1;
+  }
+
+  button {
+    margin: 0 4px;
+  }
+`;
 
 export default RecursiveLayer;
