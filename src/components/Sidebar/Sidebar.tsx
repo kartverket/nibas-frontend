@@ -66,6 +66,8 @@ const SidebarButton = styled(Button).attrs(() => ({
     ${(props) => (props.active ? props.theme.colors.blue : "transparent")};
   border-bottom: 2px solid
     ${(props) => (props.active ? props.theme.colors.blue : "transparent")};
+  color: ${({ active, theme }) =>
+    active ? theme.colors.blue : theme.colors.black};
 
   :hover {
     border-color: ${({ theme }) => theme.colors.blue};

@@ -4,8 +4,12 @@ import VectorLayer from "ol/layer/Vector";
 import styled from "styled-components";
 import { Grense } from "./types";
 import { ObjectValue, EditingType } from "./useEditGrenser";
+import Button from "components/Button";
 import { LayerId } from "hooks/layers/types";
 import { GeometryVectorSource } from "hooks/sources/types";
+import { ReactComponent as Info } from "icons/info.svg";
+import { ReactComponent as Visibility } from "icons/visibility.svg";
+import { ReactComponent as VisibilityOff } from "icons/visibility_off.svg";
 import { getLayerById } from "utils/map/layers";
 import {
   addFeaturesToSource,
@@ -118,7 +122,9 @@ const ToggleableGrense = <T extends Grense>({
 
   return (
     <Wrapper>
-      <button onClick={toggleVisible}>{visible ? "Skjul" : "Vis"}</button>
+      <Button onClick={toggleVisible} variant="unstyled">
+        {visible ? <Visibility /> : <VisibilityOff />}
+      </Button>
       <input
         type="checkbox"
         checked={editing}
@@ -127,17 +133,24 @@ const ToggleableGrense = <T extends Grense>({
         title={!canSelect ? "Kun ett tema kan redigeres på en gang" : ""}
       />
       <span>{title}</span>
-      <button onClick={openInfo}>Metadata</button>
+      <Button variant="unstyled" onClick={openInfo}>
+        <ColoredInfo />
+      </Button>
     </Wrapper>
   );
 };
 
 const Wrapper = styled.div`
   display: flex;
+  align-items: center;
 
   > span {
     flex: 1;
   }
+`;
+
+const ColoredInfo = styled(Info)`
+  color: ${({ theme }) => theme.colors.blue};
 `;
 
 export default ToggleableGrense;

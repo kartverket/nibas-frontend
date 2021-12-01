@@ -30,74 +30,68 @@ const GrenserDrillDown = ({ visible }: Props) => {
   if (!visible) return null;
 
   return (
-    <Wrapper>
-      <Panel>
-        <Accordion title="Riksgrenser">
-          <p>lol</p>
-        </Accordion>
-        <Accordion title="Fylkesgrenser">
-          <AccordionContent>
-            <FylkeList
-              fylker={fylker}
-              fylkeValues={editingObject.fylke ?? {}}
-              setFylkeValue={(fylkesnavn: string, value: ObjectValue) =>
-                setObjectValue("fylke", fylkesnavn, value)
-              }
-              canSelect={getCanSelect("fylke")}
-            />
-          </AccordionContent>
-        </Accordion>
-        <Accordion title="Kommunegrenser">
-          <AccordionContent>
-            {fylker.map((fylke) => (
-              <Accordion key={fylke.nummer} title={fylke.navn}>
-                <KommuneList
-                  fylke={fylke}
-                  kommuneValues={editingObject.kommune ?? {}}
-                  setKommuneValue={(kommunenavn: string, value: ObjectValue) =>
-                    setObjectValue("kommune", kommunenavn, value)
-                  }
-                  canSelect={getCanSelect("kommune")}
-                />
-              </Accordion>
-            ))}
-          </AccordionContent>
-        </Accordion>
-        <Accordion title="Kretser">
-          <p>lol</p>
-        </Accordion>
-        <Accordion title="Etat og sektorinndeling">
-          <p>lol</p>
-        </Accordion>
-        <Accordion title="Lovers virke">
-          <p>lol</p>
-        </Accordion>
-        <Accordion title="Svalbardområdet">
-          <p>lol</p>
-        </Accordion>
-        <Accordion title="Maritime grenser">
-          <p>lol</p>
-        </Accordion>
-      </Panel>
-    </Wrapper>
+    <Panel>
+      <Accordion title="Riksgrenser">
+        <p>lol</p>
+      </Accordion>
+      <Accordion title="Fylkesgrenser">
+        <AccordionContent>
+          <FylkeList
+            fylker={fylker}
+            fylkeValues={editingObject.fylke ?? {}}
+            setFylkeValue={(fylkesnavn: string, value: ObjectValue) =>
+              setObjectValue("fylke", fylkesnavn, value)
+            }
+            canSelect={getCanSelect("fylke")}
+          />
+        </AccordionContent>
+      </Accordion>
+      <Accordion title="Kommunegrenser">
+        <AccordionContent>
+          {fylker.map((fylke) => (
+            <Accordion key={fylke.nummer} title={fylke.navn}>
+              <KommuneList
+                fylke={fylke}
+                kommuneValues={editingObject.kommune ?? {}}
+                setKommuneValue={(kommunenavn: string, value: ObjectValue) =>
+                  setObjectValue("kommune", kommunenavn, value)
+                }
+                canSelect={getCanSelect("kommune")}
+              />
+            </Accordion>
+          ))}
+        </AccordionContent>
+      </Accordion>
+      <Accordion title="Kretser">
+        <p>lol</p>
+      </Accordion>
+      <Accordion title="Etat og sektorinndeling">
+        <p>lol</p>
+      </Accordion>
+      <Accordion title="Lovers virke">
+        <p>lol</p>
+      </Accordion>
+      <Accordion title="Svalbardområdet">
+        <p>lol</p>
+      </Accordion>
+      <Accordion title="Maritime grenser">
+        <p>lol</p>
+      </Accordion>
+    </Panel>
   );
 };
 
-const Wrapper = styled.div`
-  height: 100%;
-`;
-
 const Panel = styled(MapInteractable)`
   margin-top: 30px;
-  margin-left: 8px;
   width: 300px;
-  padding: 30px 15px;
+  padding: 8px 16px;
   overflow: auto;
   max-height: 80%;
+  border: 2px solid ${({ theme }) => theme.colors.blue};
 `;
 
 const AccordionContent = styled.div`
-  margin-left: 8px;
+  margin-left: 16px;
 `;
 
 export default GrenserDrillDown;

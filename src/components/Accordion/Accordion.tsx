@@ -26,11 +26,12 @@ const Accordion: React.FC<Props> = ({ title, children }) => {
 };
 
 const Wrapper = styled.div`
-  margin: 16px 0;
+  margin: 8px 0;
 `;
 
 const TitleWrapper = styled.div`
   display: flex;
+  align-items: center;
 
   > :first-child {
     flex: 1;
