@@ -83,7 +83,7 @@ const GrenserDrillDown = ({ visible }: Props) => {
 
 const Panel = styled(MapInteractable)`
   margin-top: 30px;
-  width: 300px;
+  width: 400px;
   padding: 8px 16px;
   overflow: auto;
   max-height: 80%;
