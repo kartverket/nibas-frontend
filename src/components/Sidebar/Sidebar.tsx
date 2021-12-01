@@ -1,26 +1,74 @@
 import styled from "styled-components";
+import Button from "components/Button";
+import {
+  OpenSidebarPanels,
+  SidebarPanel,
+} from "components/PageLayout/PageLayout";
+import { ReactComponent as Drafts } from "icons/drafts.svg";
+import { ReactComponent as Map } from "icons/map.svg";
+import { ReactComponent as Nibas } from "icons/nibas.svg";
+import { ReactComponent as Search } from "icons/search.svg";
 
 type Props = {
-  onLayersClick: () => void;
-  onEditClick: () => void;
+  openPanels: OpenSidebarPanels;
+  togglePanel: (panel: SidebarPanel) => void;
 };
 
-const Sidebar = ({ onLayersClick, onEditClick }: Props) => {
+const Sidebar = ({ openPanels, togglePanel }: Props) => {
   return (
     <StyledSidebar>
-      <button onClick={onEditClick}>Edit</button>
-      <button onClick={onLayersClick}>Layers</button>
+      <SidebarButton
+        active={openPanels.nibas}
+        onClick={() => togglePanel("nibas")}
+      >
+        <Nibas />
+      </SidebarButton>
+      <SidebarButton active={openPanels.search}>
+        <Search />
+      </SidebarButton>
+      <SidebarButton
+        active={openPanels.backgroundLayers}
+        onClick={() => togglePanel("backgroundLayers")}
+      >
+        <Map />
+      </SidebarButton>
+      <SidebarButton active={openPanels.drafts}>
+        <Drafts />
+      </SidebarButton>
     </StyledSidebar>
   );
 };
 
 const StyledSidebar = styled.div`
   grid-area: sidebar;
-  background-color: #bbb;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 80px;
 
   button {
     display: block;
+    margin: 8px 0;
+    padding: 4px 8px;
+    width: 100%;
+  }
+`;
+
+type SidebarButtonProps = {
+  active: boolean;
+};
+
+const SidebarButton = styled(Button).attrs(() => ({
+  variant: "unstyled",
+}))<SidebarButtonProps>`
+  border-top: 2px solid
+    ${(props) => (props.active ? props.theme.colors.blue : "transparent")};
+  border-bottom: 2px solid
+    ${(props) => (props.active ? props.theme.colors.blue : "transparent")};
+
+  :hover {
+    border-color: ${({ theme }) => theme.colors.blue};
   }
 `;
 

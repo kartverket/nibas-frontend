@@ -7,6 +7,7 @@ import CustomControl from "components/CustomControl";
 import GrenserDrillDown from "components/GrenserDrillDown";
 import { EditingType } from "components/GrenserDrillDown/useEditGrenser";
 import LayerOrdering from "components/LayerOrdering";
+import { OpenSidebarPanels } from "components/PageLayout/PageLayout";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
 import { createLayers } from "hooks/layers/constants";
 import { LayerId } from "hooks/layers/types";
@@ -29,11 +30,10 @@ const initLayers = () => {
 initLayers();
 
 type Props = {
-  backgroundLayersOpen: boolean;
-  editingOpen: boolean;
+  openPanels: OpenSidebarPanels;
 };
 
-const Map = ({ backgroundLayersOpen, editingOpen }: Props) => {
+const Map = ({ openPanels }: Props) => {
   const { moveLayerUp, moveLayerDown, layersInZIndexOrder, moveLayer } =
     useZIndexes();
   const mapRef = useRef<HTMLDivElement>(null);
@@ -82,12 +82,12 @@ const Map = ({ backgroundLayersOpen, editingOpen }: Props) => {
   return (
     <MapTarget ref={mapRef}>
       <MapOverlay>
+        <GrenserDrillDown visible={openPanels.nibas} />
         <LayerOrdering
-          visible={backgroundLayersOpen}
+          visible={openPanels.backgroundLayers}
           visibleLayers={visibleLayers}
           dispatch={dispatch}
         />
-        <GrenserDrillDown visible={editingOpen} />
       </MapOverlay>
 
       <CustomControl>

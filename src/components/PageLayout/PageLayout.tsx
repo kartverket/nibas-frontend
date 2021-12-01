@@ -3,25 +3,37 @@ import styled from "styled-components";
 import Map from "components/Map";
 import Sidebar from "components/Sidebar";
 
+export type SidebarPanel = "nibas" | "search" | "backgroundLayers" | "drafts";
+export type OpenSidebarPanels = Record<SidebarPanel, boolean>;
+
+const getClosedPanels = () => ({
+  nibas: false,
+  search: false,
+  backgroundLayers: false,
+  drafts: false,
+});
+
 const PageLayout = () => {
-  // navn er ikke helt riktige
-  const [backgroundLayersOpen, setBackgroundLayersOpen] = useState(false);
-  const [editOpen, setEditOpen] = useState(false);
+  const [openPanels, setOpenPanels] = useState<OpenSidebarPanels>(
+    getClosedPanels()
+  );
 
-  const onLayersClick = () => {
-    setEditOpen(false);
-    setBackgroundLayersOpen(!backgroundLayersOpen);
+  const setPanel = (panel: SidebarPanel, value: boolean) => {
+    const newPanels = {
+      ...getClosedPanels(),
+      [panel]: value,
+    };
+
+    setOpenPanels(newPanels);
   };
 
-  const onEditClick = () => {
-    setBackgroundLayersOpen(false);
-    setEditOpen(!editOpen);
-  };
+  const togglePanel = (panel: SidebarPanel) =>
+    setPanel(panel, !openPanels[panel]);
 
   return (
     <Grid>
-      <Sidebar onLayersClick={onLayersClick} onEditClick={onEditClick} />
-      <Map backgroundLayersOpen={backgroundLayersOpen} editingOpen={editOpen} />
+      <Sidebar openPanels={openPanels} togglePanel={togglePanel} />
+      <Map openPanels={openPanels} />
     </Grid>
   );
 };
