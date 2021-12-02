@@ -1,7 +1,7 @@
-import React from "react";
+import { ButtonHTMLAttributes } from "react";
 import styled from "styled-components";
 
-type Props = React.HTMLAttributes<HTMLButtonElement> & {
+type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: "unstyled" | "icon";
 };
 
@@ -25,6 +25,10 @@ const UnstyledButton = styled(StyledButton)`
   font: inherit;
   cursor: pointer;
   outline: inherit;
+
+  :disabled {
+    cursor: initial;
+  }
 `;
 
 const IconButton = styled(UnstyledButton)`
