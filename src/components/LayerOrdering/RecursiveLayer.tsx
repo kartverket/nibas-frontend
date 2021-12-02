@@ -129,12 +129,12 @@ const RecursiveLayer = ({
   return (
     <div>
       <Wrapper indent={indent}>
-        <Button variant="unstyled" onClick={onVisibilityClick}>
+        <Button variant="icon" onClick={onVisibilityClick}>
           {visible ? <Visibility /> : <VisibilityOff />}
         </Button>
         <span>{mappedLayer.title}</span>
         {mappedLayer.layers.length > 0 && (
-          <Button variant="unstyled" onClick={() => setOpen(!open)}>
+          <Button variant="icon" onClick={() => setOpen(!open)}>
             {open ? <CaretUp /> : <CaretDown />}
           </Button>
         )}

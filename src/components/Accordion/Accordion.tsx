@@ -15,7 +15,7 @@ const Accordion: React.FC<Props> = ({ title, children }) => {
     <Wrapper>
       <TitleWrapper>
         <span>{title}</span>
-        <Button variant="unstyled" onClick={() => setOpen(!open)}>
+        <Button variant="icon" onClick={() => setOpen(!open)}>
           {open ? <CaretUp /> : <CaretDown />}
         </Button>
       </TitleWrapper>

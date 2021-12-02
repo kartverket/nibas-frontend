@@ -2,15 +2,17 @@ import React from "react";
 import styled from "styled-components";
 
 type Props = React.HTMLAttributes<HTMLButtonElement> & {
-  variant?: "unstyled";
+  variant?: "unstyled" | "icon";
 };
 
-const Button = ({ variant, ...props }: Props) => {
+const Button = ({ variant, children, ...props }: Props) => {
   if (variant === "unstyled") {
-    return <UnstyledButton {...props}>{props.children}</UnstyledButton>;
+    return <UnstyledButton {...props}>{children}</UnstyledButton>;
+  } else if (variant === "icon") {
+    return <IconButton {...props}>{children}</IconButton>;
   }
 
-  return <StyledButton {...props}>{props.children}</StyledButton>;
+  return <StyledButton {...props}>{children}</StyledButton>;
 };
 
 const StyledButton = styled.button``;
@@ -23,6 +25,13 @@ const UnstyledButton = styled(StyledButton)`
   font: inherit;
   cursor: pointer;
   outline: inherit;
+`;
+
+const IconButton = styled(UnstyledButton)`
+  > * {
+    // gjør at children ikke gir ekstra plass til tekst
+    vertical-align: middle;
+  }
 `;
 
 export default Button;

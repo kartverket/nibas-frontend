@@ -41,6 +41,7 @@ const Sidebar = ({ openPanels, togglePanel }: Props) => {
 
 const StyledSidebar = styled.div`
   grid-area: sidebar;
+  width: 60px;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -53,7 +54,7 @@ type SidebarButtonProps = {
 };
 
 const SidebarButton = styled(Button).attrs(() => ({
-  variant: "unstyled",
+  variant: "icon",
 }))<SidebarButtonProps>`
   display: block;
   margin: 8px 0;

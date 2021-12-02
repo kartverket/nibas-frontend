@@ -122,7 +122,7 @@ const ToggleableGrense = <T extends Grense>({
 
   return (
     <Wrapper>
-      <Button onClick={toggleVisible} variant="unstyled">
+      <Button onClick={toggleVisible} variant="icon">
         {visible ? <Visibility /> : <VisibilityOff />}
       </Button>
       <input
@@ -133,7 +133,7 @@ const ToggleableGrense = <T extends Grense>({
         title={!canSelect ? "Kun ett tema kan redigeres på en gang" : ""}
       />
       <span>{title}</span>
-      <Button variant="unstyled" onClick={openInfo}>
+      <Button variant="icon" onClick={openInfo}>
         <ColoredInfo />
       </Button>
     </Wrapper>
