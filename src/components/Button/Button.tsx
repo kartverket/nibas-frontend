@@ -1,19 +1,35 @@
-import { ButtonHTMLAttributes } from "react";
+import { ButtonHTMLAttributes, forwardRef } from "react";
 import styled from "styled-components";
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: "unstyled" | "icon";
 };
 
-const Button = ({ variant, children, ...props }: Props) => {
-  if (variant === "unstyled") {
-    return <UnstyledButton {...props}>{children}</UnstyledButton>;
-  } else if (variant === "icon") {
-    return <IconButton {...props}>{children}</IconButton>;
-  }
+const Button = forwardRef<HTMLButtonElement, Props>(
+  ({ variant, children, ...props }, ref) => {
+    if (variant === "unstyled") {
+      return (
+        <UnstyledButton {...props} ref={ref}>
+          {children}
+        </UnstyledButton>
+      );
+    } else if (variant === "icon") {
+      return (
+        <IconButton {...props} ref={ref}>
+          {children}
+        </IconButton>
+      );
+    }
 
-  return <StyledButton {...props}>{children}</StyledButton>;
-};
+    return (
+      <StyledButton {...props} ref={ref}>
+        {children}
+      </StyledButton>
+    );
+  }
+);
+
+Button.displayName = "Button";
 
 const StyledButton = styled.button``;
 

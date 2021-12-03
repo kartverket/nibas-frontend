@@ -58,7 +58,7 @@ const SidebarButton = styled(Button).attrs(() => ({
 }))<SidebarButtonProps>`
   display: block;
   margin: 8px 0;
-  padding: 4px 8px;
+  padding: 8px;
   width: 100%;
 
   border-top: 2px solid

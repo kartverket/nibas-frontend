@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { map } from "./constants";
+import ZoomControls from "./controls/ZoomControls";
 import { updateFylkeFeatures } from "api/fylker";
 import { updateKommuneFeatures } from "api/kommuner";
 import CustomControl from "components/CustomControl";
@@ -11,11 +12,8 @@ import { OpenSidebarPanels } from "components/PageLayout/PageLayout";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
 import { createLayers } from "hooks/layers/constants";
 import { LayerId } from "hooks/layers/types";
-import useVisibleLayers, {
-  toggleLayerVisibility,
-} from "hooks/layers/useVisibleLayers";
+import useVisibleLayers from "hooks/layers/useVisibleLayers";
 import useZIndexes from "hooks/layers/useZIndexes";
-import useDefaultControls from "hooks/useDefaultControls";
 import { getLayerById, initLayer } from "utils/map/layers";
 
 const initLayers = () => {
@@ -42,7 +40,6 @@ const Map = ({ openPanels }: Props) => {
   const { visibleLayers, dispatch } = useVisibleLayers();
 
   useEditInteractions(editing);
-  useDefaultControls();
 
   useEffect(() => {
     // mapRef kan egentlig ikke være null her,
@@ -97,47 +94,10 @@ const Map = ({ openPanels }: Props) => {
       </CustomControl>
 
       <CustomControl>
-        <button onClick={() => moveLayer("topografiskNorgeskart", 10)}>
-          Topo to top
-        </button>
-      </CustomControl>
-
-      <CustomControl>
         <button onClick={saveDraft}>Lagre endringer</button>
       </CustomControl>
 
-      {/* <CustomControl>
-        <button
-          onClick={() => console.log(sourceToGeoJson(asyncSources.kommuner))}
-        >
-          Save
-        </button>
-      </CustomControl> */}
-
-      {layersInZIndexOrder.map((layerId, i) => (
-        // index som key gjør at controls rerendres ordentlig
-        <CustomControl key={i}>
-          <div>
-            {i < layersInZIndexOrder.length - 1 && (
-              <button onClick={() => moveLayerDown(layerId as LayerId)}>
-                Down
-              </button>
-            )}
-            <button
-              onClick={() =>
-                dispatch(toggleLayerVisibility(layerId as LayerId))
-              }
-            >
-              Toggle {layerId} {visibleLayers[layerId as LayerId] ? "av" : "på"}
-            </button>
-            {i > 0 && (
-              <button onClick={() => moveLayerUp(layerId as LayerId)}>
-                Up
-              </button>
-            )}
-          </div>
-        </CustomControl>
-      ))}
+      <ZoomControls />
     </MapTarget>
   );
 };
