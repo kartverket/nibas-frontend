@@ -1,10 +1,12 @@
 import Geometry from "ol/geom/Geometry";
 import TileWMS from "ol/source/TileWMS";
 import VectorSource from "ol/source/Vector";
+import XYZ from "ol/source/XYZ";
 
 export type GeometryVectorSource = VectorSource<Geometry>;
 
 export type SyncSources = {
+  background: XYZ;
   administrativeGrenser: TileWMS;
   matrikkelen: TileWMS;
   stedsnavn: TileWMS;
