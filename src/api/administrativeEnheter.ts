@@ -29,7 +29,7 @@ export const updateAdministrativEnhetFeatures = async (
 ) => {
   const geoJson = featuresToGeoJson(features);
 
-  const results = await fetch(`v1/feature/grenser?type=${type}&ider=${0}`, {
+  const results = await fetch(`v1/feature/grenser?type=${type}`, {
     method: "PUT",
     body: geoJson,
     headers: {
