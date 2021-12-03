@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { map } from "./constants";
 import ZoomControls from "./controls/ZoomControls";
@@ -35,7 +35,6 @@ const Map = ({ openPanels }: Props) => {
   const { moveLayerUp, moveLayerDown, layersInZIndexOrder, moveLayer } =
     useZIndexes();
   const mapRef = useRef<HTMLDivElement>(null);
-  const [editing, setEditing] = useState(false);
 
   const { visibleLayers, dispatch } = useVisibleLayers();
 
@@ -52,10 +51,6 @@ const Map = ({ openPanels }: Props) => {
       map.setTarget(undefined);
     };
   }, []);
-
-  const toggleEditingInteractions = () => {
-    setEditing(!editing);
-  };
 
   const saveDraft = async () => {
     const editLayer = getLayerById("edit");
