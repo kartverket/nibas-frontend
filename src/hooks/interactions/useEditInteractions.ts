@@ -1,11 +1,11 @@
 import { useEffect } from "react";
-import { Draw, Modify, Select, Snap } from "ol/interaction";
+import { Modify, Select, Snap } from "ol/interaction";
+import Style from "ol/style/Style";
 import { map } from "components/Map/constants";
 import { getLayerById, getVectorLayers } from "utils/map/layers";
 
-const useEditInteractions = (editing: boolean) => {
+const useEditInteractions = () => {
   useEffect(() => {
-    if (!editing) return;
     const vectorLayers = getVectorLayers();
     const snaps: Snap[] = [];
 
@@ -19,14 +19,12 @@ const useEditInteractions = (editing: boolean) => {
 
     const editSource = getLayerById("edit").getSource();
 
-    const modify = new Modify({ source: editSource });
-    const draw = new Draw({
-      type: "LineString",
+    const modify = new Modify({
       source: editSource,
+      style: new Style({}), // fjerne sirkel som kommer når man hoverer feature
     });
 
     map.addInteraction(modify);
-    map.addInteraction(draw);
     // snaps må legges til etter modify og draw interactions
     snaps.forEach((snap) => {
       map.addInteraction(snap);
@@ -34,16 +32,13 @@ const useEditInteractions = (editing: boolean) => {
 
     return () => {
       map.removeInteraction(modify);
-      map.removeInteraction(draw);
       snaps.forEach((snap) => {
         map.removeInteraction(snap);
       });
     };
-  }, [editing]);
+  }, []);
 
   useEffect(() => {
-    if (editing) return;
-
     const select = new Select({ hitTolerance: 5 });
 
     // valgte features er lagret i select.getFeatures()
@@ -53,7 +48,7 @@ const useEditInteractions = (editing: boolean) => {
     return () => {
       map.removeInteraction(select);
     };
-  }, [editing]);
+  }, []);
 };
 
 export default useEditInteractions;

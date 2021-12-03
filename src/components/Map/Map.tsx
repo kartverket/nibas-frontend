@@ -39,7 +39,7 @@ const Map = ({ openPanels }: Props) => {
 
   const { visibleLayers, dispatch } = useVisibleLayers();
 
-  useEditInteractions(editing);
+  useEditInteractions();
 
   useEffect(() => {
     // mapRef kan egentlig ikke være null her,
@@ -86,12 +86,6 @@ const Map = ({ openPanels }: Props) => {
           dispatch={dispatch}
         />
       </MapOverlay>
-
-      <CustomControl>
-        <button onClick={toggleEditingInteractions}>
-          {editing ? "Stopp endre valgte objekter" : "Endre valgte objekter"}
-        </button>
-      </CustomControl>
 
       <CustomControl>
         <button onClick={saveDraft}>Lagre endringer</button>
