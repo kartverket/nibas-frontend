@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import RecursiveLayer from "./RecursiveLayer";
+import MainLayer from "./Layer/MainLayer";
 import { MapInteractable } from "components/Map/MapInteractable";
 import useVisibleLayers, {
   toggleLayerVisibility,
@@ -62,9 +62,8 @@ const LayerOrdering = ({ visible, visibleLayers, dispatch }: Props) => {
   return (
     <Panel>
       {mappedLayers.map((mappedLayer) => (
-        <RecursiveLayer
+        <MainLayer
           key={mappedLayer.title}
-          indent={0}
           mappedLayer={mappedLayer}
           mainLayerSourceId={mappedLayer.sourceId}
           mainLayerName={mappedLayer.name ?? ""}

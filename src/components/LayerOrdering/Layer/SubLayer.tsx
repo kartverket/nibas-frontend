@@ -1,13 +1,8 @@
 import { useEffect, useState } from "react";
 import TileWMS from "ol/source/TileWMS";
-import styled from "styled-components";
-import Button from "components/Button";
+import LayerAccordion from "./LayerAccordion";
 import { syncSources } from "hooks/sources/syncSources";
 import { SyncSourceId } from "hooks/sources/types";
-import { ReactComponent as CaretDown } from "icons/caretdown.svg";
-import { ReactComponent as CaretUp } from "icons/caretup.svg";
-import { ReactComponent as Visibility } from "icons/visibility.svg";
-import { ReactComponent as VisibilityOff } from "icons/visibility_off.svg";
 import { MainMappedLayer, MappedLayer } from "utils/getLayersFromWMS";
 
 const getLayersStringToReplace = (
@@ -46,7 +41,7 @@ type Props = {
   isMainLayerVisible?: (mappedLayer: MainMappedLayer) => boolean;
 };
 
-const RecursiveLayer = ({
+const SubLayer = ({
   mappedLayer,
   indent,
   mainLayerSourceId,
@@ -54,7 +49,6 @@ const RecursiveLayer = ({
   toggleMainLayer,
   isMainLayerVisible,
 }: Props) => {
-  const [open, setOpen] = useState(false);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -127,22 +121,16 @@ const RecursiveLayer = ({
   };
 
   return (
-    <div>
-      <Wrapper indent={indent}>
-        <Button variant="icon" onClick={onVisibilityClick}>
-          {visible ? <Visibility /> : <VisibilityOff />}
-        </Button>
-        <span>{mappedLayer.title}</span>
-        {mappedLayer.layers.length > 0 && (
-          <Button variant="icon" onClick={() => setOpen(!open)}>
-            {open ? <CaretUp /> : <CaretDown />}
-          </Button>
-        )}
-      </Wrapper>
-
-      {open &&
-        mappedLayer.layers.map((layer) => (
-          <RecursiveLayer
+    <LayerAccordion
+      key={mappedLayer.title}
+      mappedLayer={mappedLayer}
+      indent={indent}
+      visible={visible}
+      onVisibilityClick={onVisibilityClick}
+    >
+      <>
+        {mappedLayer.layers.map((layer) => (
+          <SubLayer
             key={layer.title}
             mappedLayer={layer}
             mainLayerSourceId={mainLayerSourceId}
@@ -150,22 +138,9 @@ const RecursiveLayer = ({
             indent={indent + 1}
           />
         ))}
-    </div>
+      </>
+    </LayerAccordion>
   );
 };
 
-const Wrapper = styled.div<{ indent: number }>`
-  display: flex;
-  margin: 8px 0;
-  margin-left: ${({ indent }) => indent * 16}px;
-
-  > span {
-    flex: 1;
-  }
-
-  button {
-    margin: 0 4px;
-  }
-`;
-
-export default RecursiveLayer;
+export default SubLayer;
