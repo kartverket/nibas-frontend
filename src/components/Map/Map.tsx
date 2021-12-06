@@ -13,6 +13,7 @@ import useEditInteractions from "hooks/interactions/useEditInteractions";
 import { createLayers } from "hooks/layers/constants";
 import { LayerId } from "hooks/layers/types";
 import useVisibleLayers from "hooks/layers/useVisibleLayers";
+import useZIndexes from "hooks/layers/useZIndexes";
 import { getLayerById, initLayer } from "utils/map/layers";
 
 const initLayers = () => {
@@ -31,6 +32,8 @@ type Props = {
 };
 
 const Map = ({ openPanels }: Props) => {
+  const { moveLayerUp, moveLayerDown, layersInZIndexOrder, moveLayer } =
+    useZIndexes();
   const mapRef = useRef<HTMLDivElement>(null);
 
   const { visibleLayers, dispatch } = useVisibleLayers();
@@ -91,6 +94,7 @@ const Map = ({ openPanels }: Props) => {
 const MapTarget = styled.div`
   grid-area: map;
   position: relative;
+  margin-left: -2px;
 
   .ol-control {
     text-align: center;

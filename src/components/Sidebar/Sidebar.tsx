@@ -60,16 +60,20 @@ const SidebarButton = styled(Button).attrs(() => ({
   margin: 8px 0;
   padding: 8px;
   width: 100%;
+  z-index: 2;
 
   border-top: 2px solid
     ${(props) => (props.active ? props.theme.colors.blue : "transparent")};
   border-bottom: 2px solid
     ${(props) => (props.active ? props.theme.colors.blue : "transparent")};
+  border-right: 2px solid
+  ${(props) => (props.active ? props.theme.colors.white : "transparent")};
   color: ${({ active, theme }) =>
     active ? theme.colors.blue : theme.colors.black};
 
   :hover {
     border-color: ${({ theme }) => theme.colors.blue};
+    border-right-color: ${({ theme }) => theme.colors.white};
   }
 `;
 
