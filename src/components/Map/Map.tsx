@@ -32,8 +32,7 @@ type Props = {
 };
 
 const Map = ({ openPanels }: Props) => {
-  const { moveLayerUp, moveLayerDown, layersInZIndexOrder, moveLayer } =
-    useZIndexes();
+  const { moveLayer, layersInZIndexOrder } = useZIndexes();
   const mapRef = useRef<HTMLDivElement>(null);
 
   const { visibleLayers, dispatch } = useVisibleLayers();
@@ -79,6 +78,8 @@ const Map = ({ openPanels }: Props) => {
           visible={openPanels.backgroundLayers}
           visibleLayers={visibleLayers}
           dispatch={dispatch}
+          moveLayer={moveLayer}
+          layersInZIndexOrder={layersInZIndexOrder}
         />
       </MapOverlay>
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import MainLayer from "./Layer/MainLayer";
 import { MapInteractable } from "components/Map/MapInteractable";
+import { LayerId } from "hooks/layers/types";
 import useVisibleLayers, {
   toggleLayerVisibility,
 } from "hooks/layers/useVisibleLayers";
@@ -14,9 +15,17 @@ type Props = {
   visible: boolean;
   visibleLayers: ReturnType<typeof useVisibleLayers>["visibleLayers"];
   dispatch: ReturnType<typeof useVisibleLayers>["dispatch"];
+  moveLayer: (direction: "up" | "down", layerId: LayerId) => void;
+  layersInZIndexOrder: LayerId[];
 };
 
-const LayerOrdering = ({ visible, visibleLayers, dispatch }: Props) => {
+const LayerOrdering = ({
+  visible,
+  visibleLayers,
+  dispatch,
+  moveLayer,
+  layersInZIndexOrder,
+}: Props) => {
   const [mappedLayers, setMappedLayers] = useState<MainMappedLayer[]>([]);
 
   useEffect(() => {
@@ -57,22 +66,30 @@ const LayerOrdering = ({ visible, visibleLayers, dispatch }: Props) => {
     return visibleLayers[layerId];
   };
 
+  const renderMainLayerByZIndex = (layerId: LayerId, i: number) => {
+    const mappedLayer = mappedLayers.find(
+      (mappedLayer) => mappedLayer.sourceId === layerId
+    );
+
+    if (!mappedLayer) return null;
+
+    return (
+      <MainLayer
+        key={mappedLayer.title}
+        mappedLayer={mappedLayer}
+        mainLayerSourceId={mappedLayer.sourceId}
+        mainLayerName={mappedLayer.name ?? ""}
+        toggleMainLayer={toggleMainLayer}
+        isMainLayerVisible={isMainLayerVisible}
+        index={i}
+        moveLayer={moveLayer}
+      />
+    );
+  };
+
   if (!visible) return null;
 
-  return (
-    <Panel>
-      {mappedLayers.map((mappedLayer) => (
-        <MainLayer
-          key={mappedLayer.title}
-          mappedLayer={mappedLayer}
-          mainLayerSourceId={mappedLayer.sourceId}
-          mainLayerName={mappedLayer.name ?? ""}
-          toggleMainLayer={toggleMainLayer}
-          isMainLayerVisible={isMainLayerVisible}
-        />
-      ))}
-    </Panel>
-  );
+  return <Panel>{layersInZIndexOrder.map(renderMainLayerByZIndex)}</Panel>;
 };
 
 const Panel = styled(MapInteractable)`

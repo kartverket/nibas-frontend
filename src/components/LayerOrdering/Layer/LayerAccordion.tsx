@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { forwardRef, useState } from "react";
 import styled from "styled-components";
 import Button from "components/Button";
 import { ReactComponent as CaretDown } from "icons/caretdown.svg";
@@ -12,35 +12,34 @@ type Props = {
   indent: number;
   onVisibilityClick: () => void;
   visible: boolean;
+  children: React.ReactNode;
 };
 
-const LayerAccordion: React.FC<Props> = ({
-  mappedLayer,
-  indent,
-  visible,
-  onVisibilityClick,
-  children,
-}) => {
-  const [open, setOpen] = useState(false);
+const LayerAccordion = forwardRef<HTMLDivElement, Props>(
+  ({ mappedLayer, indent, visible, onVisibilityClick, children }, ref) => {
+    const [open, setOpen] = useState(false);
 
-  return (
-    <div>
-      <Wrapper indent={indent}>
-        <Button variant="icon" onClick={onVisibilityClick}>
-          {visible ? <Visibility /> : <VisibilityOff />}
-        </Button>
-        <span>{mappedLayer.title}</span>
-        {mappedLayer.layers.length > 0 && (
-          <Button variant="icon" onClick={() => setOpen(!open)}>
-            {open ? <CaretUp /> : <CaretDown />}
+    return (
+      <div>
+        <Wrapper indent={indent}>
+          <Button variant="icon" onClick={onVisibilityClick}>
+            {visible ? <Visibility /> : <VisibilityOff />}
           </Button>
-        )}
-      </Wrapper>
+          <DraggableName ref={ref}>{mappedLayer.title}</DraggableName>
+          {mappedLayer.layers.length > 0 && (
+            <Button variant="icon" onClick={() => setOpen(!open)}>
+              {open ? <CaretUp /> : <CaretDown />}
+            </Button>
+          )}
+        </Wrapper>
 
-      {open && children}
-    </div>
-  );
-};
+        {open && children}
+      </div>
+    );
+  }
+);
+
+LayerAccordion.displayName = "LayerAccordion";
 
 const Wrapper = styled.div<{ indent: number }>`
   display: flex;
@@ -54,6 +53,10 @@ const Wrapper = styled.div<{ indent: number }>`
   button {
     margin: 0 4px;
   }
+`;
+
+const DraggableName = styled.span`
+  cursor: move;
 `;
 
 export default LayerAccordion;
