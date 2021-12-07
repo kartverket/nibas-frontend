@@ -17,42 +17,25 @@ const useZIndexes = () => {
       if (!layer) return;
 
       // bakgrunnskart vil alltid ha negativ z-index
-      layer.setZIndex(zIndexes.length - i);
+      layer.setZIndex(-i);
     });
   }, [zIndexes]);
 
-  const moveLayerUp = (layerId: LayerId) => {
-    const index = zIndexes.indexOf(layerId);
-
-    const newZIndexes = [...zIndexes];
-    newZIndexes.splice(index, 1);
-    newZIndexes.splice(index + 1, 0, layerId);
-
-    setZIndexes(newZIndexes);
-  };
-
-  const moveLayerDown = (layerId: LayerId) => {
-    const index = zIndexes.indexOf(layerId);
-
-    const newZIndexes = [...zIndexes];
-    newZIndexes.splice(index, 1);
-    newZIndexes.splice(index - 1, 0, layerId);
-
-    setZIndexes(newZIndexes);
-  };
-
   const moveLayer = (direction: "up" | "down", layerId: LayerId) => {
-    if (direction === "up") {
-      moveLayerUp(layerId);
-    } else {
-      moveLayerDown(layerId);
-    }
+    const indexDifference = direction === "up" ? 1 : -1;
+
+    const index = zIndexes.indexOf(layerId);
+
+    const newZIndexes = [...zIndexes];
+    newZIndexes.splice(index, 1);
+    newZIndexes.splice(index + indexDifference, 0, layerId);
+
+    setZIndexes(newZIndexes);
   };
 
   return {
     zIndexes,
     moveLayer,
-    layersInZIndexOrder: zIndexes,
   };
 };
 
