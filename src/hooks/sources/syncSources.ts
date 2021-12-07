@@ -1,10 +1,5 @@
 import TileWMS from "ol/source/TileWMS";
-import XYZ from "ol/source/XYZ";
 import { SyncSourceId, SyncSources } from "./types";
-
-const tileSource = new XYZ({
-  url: "https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-});
 
 const administrativeEnheterSource = new TileWMS({
   url: "https://wms.geonorge.no/skwms1/wms.adm_enheter2?service=wms",
@@ -32,7 +27,6 @@ const topografiskNorgeskartSource = new TileWMS({
 
 export const syncSources: SyncSources = {
   administrativeGrenser: administrativeEnheterSource,
-  background: tileSource,
   matrikkelen: matrikkelenSource,
   stedsnavn: stedsnavnSource,
   topografiskNorgeskart: topografiskNorgeskartSource,
