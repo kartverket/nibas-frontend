@@ -19,7 +19,6 @@ export const createLayers = () => {
     administrativeGrenser: new TileLayer({
       source: syncSources.administrativeGrenser,
     }),
-    matrikkelen: new TileLayer({ source: syncSources.matrikkelen }),
     stedsnavn: new TileLayer({ source: syncSources.stedsnavn }),
     // ingen source betyr at source settes async
     fylker: new VectorLayer({ source: new VectorSource() }),
@@ -54,6 +53,5 @@ export const INITIAL_VISIBILITY: ByLayerId<boolean> = {
   kommuner: true,
   stedsnavn: true,
   topografiskNorgeskart: true,
-  matrikkelen: true,
   edit: true,
 };

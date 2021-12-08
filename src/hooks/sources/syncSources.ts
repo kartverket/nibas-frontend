@@ -6,15 +6,6 @@ const administrativeEnheterSource = new TileWMS({
   params: { LAYERS: "adm_enheter_V2_WMS", CRS: "EPSG:25833" },
 });
 
-const matrikkelenSource = new TileWMS({
-  url: "https://wms.geonorge.no/skwms1/wms.matrikkel.v1?service=WMS",
-  params: { LAYERS: "matrikkel:GATEADRESSEWFS", CRS: "EPSG:4326" },
-  // tileLoadFunction: async (tile, src) => {
-  //   const response = await fetch(src);
-  //   console.log(response);
-  // },
-});
-
 const stedsnavnSource = new TileWMS({
   url: "http://openwms.statkart.no/skwms1/wms.stedsnavnenkel?version=1.3.0&service=wms",
   params: { LAYERS: "stedsnavnenkel", CRS: "EPSG:25833", format: "image/png" },
@@ -27,7 +18,6 @@ const topografiskNorgeskartSource = new TileWMS({
 
 export const syncSources: SyncSources = {
   administrativeGrenser: administrativeEnheterSource,
-  matrikkelen: matrikkelenSource,
   stedsnavn: stedsnavnSource,
   topografiskNorgeskart: topografiskNorgeskartSource,
 };
