@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Modify, Select, Snap } from "ol/interaction";
+import { Modify, Snap } from "ol/interaction";
 import Style from "ol/style/Style";
 import { map } from "components/Map/constants";
 import { getLayerById, getVectorLayers } from "utils/map/layers";
@@ -35,18 +35,6 @@ const useEditInteractions = () => {
       snaps.forEach((snap) => {
         map.removeInteraction(snap);
       });
-    };
-  }, []);
-
-  useEffect(() => {
-    const select = new Select({ hitTolerance: 5 });
-
-    // valgte features er lagret i select.getFeatures()
-
-    map.addInteraction(select);
-
-    return () => {
-      map.removeInteraction(select);
     };
   }, []);
 };

@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { map } from "./constants";
 import ZoomControls from "./controls/ZoomControls";
+import MetadataPanel from "./MetadataPanel";
 import SidebarPanels from "./SidebarPanels";
 import { updateFylkeFeatures } from "api/fylker";
 import { updateKommuneFeatures } from "api/kommuner";
@@ -9,6 +10,7 @@ import CustomControl from "components/CustomControl";
 import { EditingType } from "components/GrenserDrillDown/useEditGrenser";
 import { OpenSidebarPanels } from "components/PageLayout/PageLayout";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
+import useSelectInteraction from "hooks/interactions/useSelectInteraction";
 import { createLayers } from "hooks/layers/constants";
 import { LayerId } from "hooks/layers/types";
 import { getLayerById, initLayer } from "utils/map/layers";
@@ -32,6 +34,7 @@ const Map = ({ openPanels }: Props) => {
   const mapRef = useRef<HTMLDivElement>(null);
 
   useEditInteractions();
+  const selectedFeatures = useSelectInteraction();
 
   useEffect(() => {
     // mapRef kan egentlig ikke være null her,
@@ -68,6 +71,7 @@ const Map = ({ openPanels }: Props) => {
     <MapTarget ref={mapRef}>
       <MapOverlay>
         <SidebarPanels openPanels={openPanels} />
+        <MetadataPanel selectedFeatures={selectedFeatures} />
       </MapOverlay>
 
       <CustomControl>
