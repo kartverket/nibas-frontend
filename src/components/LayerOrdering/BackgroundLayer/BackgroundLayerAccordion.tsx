@@ -14,7 +14,7 @@ type Props = {
   visible: boolean;
 };
 
-const LayerAccordion: React.FC<Props> = ({
+const BackgroundLayerAccordion: React.FC<Props> = ({
   mappedLayer,
   indent,
   visible,
@@ -56,4 +56,4 @@ const Wrapper = styled.div<{ indent: number }>`
   }
 `;
 
-export default LayerAccordion;
+export default BackgroundLayerAccordion;

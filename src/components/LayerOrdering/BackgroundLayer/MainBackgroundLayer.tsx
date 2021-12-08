@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import LayerAccordion from "./LayerAccordion";
-import SubLayer from "./SubLayer";
+import BackgroundLayerAccordion from "./BackgroundLayerAccordion";
+import SubBackgroundLayer from "./SubBackgroundLayer";
 import { SyncSourceId } from "hooks/sources/types";
 import { MainMappedLayer, MappedLayer } from "utils/getLayersFromWMS";
 
@@ -12,7 +12,7 @@ type Props = {
   isMainLayerVisible: (mappedLayer: MainMappedLayer) => boolean;
 };
 
-const MainLayer = ({
+const MainBackgroundLayer = ({
   mappedLayer,
   mainLayerSourceId,
   mainLayerName,
@@ -32,7 +32,7 @@ const MainLayer = ({
   };
 
   return (
-    <LayerAccordion
+    <BackgroundLayerAccordion
       key={mappedLayer.title}
       mappedLayer={mappedLayer}
       indent={0}
@@ -41,7 +41,7 @@ const MainLayer = ({
     >
       <>
         {mappedLayer.layers.map((layer) => (
-          <SubLayer
+          <SubBackgroundLayer
             key={layer.title}
             mappedLayer={layer}
             mainLayerSourceId={mainLayerSourceId}
@@ -50,8 +50,8 @@ const MainLayer = ({
           />
         ))}
       </>
-    </LayerAccordion>
+    </BackgroundLayerAccordion>
   );
 };
 
-export default MainLayer;
+export default MainBackgroundLayer;

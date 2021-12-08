@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import MainLayer from "./Layer/MainLayer";
+import MainBackgroundLayer from "./BackgroundLayer/MainBackgroundLayer";
 import { MapInteractable } from "components/Map/MapInteractable";
 import useVisibleLayers, {
   toggleLayerVisibility,
@@ -62,7 +62,7 @@ const LayerOrdering = ({ visible, visibleLayers, dispatch }: Props) => {
   return (
     <Panel>
       {mappedLayers.map((mappedLayer) => (
-        <MainLayer
+        <MainBackgroundLayer
           key={mappedLayer.title}
           mappedLayer={mappedLayer}
           mainLayerSourceId={mappedLayer.sourceId}
