@@ -7,9 +7,9 @@ import { ObjectValue, EditingType } from "./useEditGrenser";
 import Button from "components/Button";
 import { LayerId } from "hooks/layers/types";
 import { GeometryVectorSource } from "hooks/sources/types";
-import { ReactComponent as Info } from "icons/info.svg";
-import { ReactComponent as Visibility } from "icons/visibility.svg";
-import { ReactComponent as VisibilityOff } from "icons/visibility_off.svg";
+import { ReactComponent as InfoIcon } from "icons/info.svg";
+import { ReactComponent as VisibilityIcon } from "icons/visibility.svg";
+import { ReactComponent as VisibilityOffIcon } from "icons/visibility_off.svg";
 import { getLayerById } from "utils/map/layers";
 import {
   addFeaturesToSource,
@@ -123,7 +123,7 @@ const ToggleableGrense = <T extends Grense>({
   return (
     <Wrapper>
       <Button onClick={toggleVisible} variant="icon">
-        {visible ? <Visibility /> : <VisibilityOff />}
+        {visible ? <VisibilityIcon /> : <VisibilityOffIcon />}
       </Button>
       <input
         type="checkbox"
@@ -149,7 +149,7 @@ const Wrapper = styled.div`
   }
 `;
 
-const ColoredInfo = styled(Info)`
+const ColoredInfo = styled(InfoIcon)`
   color: ${({ theme }) => theme.colors.blue};
 `;
 

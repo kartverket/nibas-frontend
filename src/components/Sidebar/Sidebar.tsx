@@ -4,10 +4,10 @@ import {
   OpenSidebarPanels,
   SidebarPanel,
 } from "components/PageLayout/PageLayout";
-import { ReactComponent as Drafts } from "icons/drafts.svg";
-import { ReactComponent as Map } from "icons/map.svg";
-import { ReactComponent as Nibas } from "icons/nibas.svg";
-import { ReactComponent as Search } from "icons/search.svg";
+import { ReactComponent as DraftsIcon } from "icons/drafts.svg";
+import { ReactComponent as MapIcon } from "icons/map.svg";
+import { ReactComponent as NibasIcon } from "icons/nibas.svg";
+import { ReactComponent as SearchIcon } from "icons/search.svg";
 
 type Props = {
   openPanels: OpenSidebarPanels;
@@ -21,19 +21,19 @@ const Sidebar = ({ openPanels, togglePanel }: Props) => {
         active={openPanels.nibas}
         onClick={() => togglePanel("nibas")}
       >
-        <Nibas />
+        <NibasIcon />
       </SidebarButton>
       <SidebarButton active={openPanels.search}>
-        <Search />
+        <SearchIcon />
       </SidebarButton>
       <SidebarButton
         active={openPanels.backgroundLayers}
         onClick={() => togglePanel("backgroundLayers")}
       >
-        <Map />
+        <MapIcon />
       </SidebarButton>
       <SidebarButton active={openPanels.drafts}>
-        <Drafts />
+        <DraftsIcon />
       </SidebarButton>
     </StyledSidebar>
   );

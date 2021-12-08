@@ -1,10 +1,10 @@
 import { useState } from "react";
 import styled from "styled-components";
 import Button from "components/Button";
-import { ReactComponent as CaretDown } from "icons/caretdown.svg";
-import { ReactComponent as CaretUp } from "icons/caretup.svg";
-import { ReactComponent as Visibility } from "icons/visibility.svg";
-import { ReactComponent as VisibilityOff } from "icons/visibility_off.svg";
+import { ReactComponent as CaretDownIcon } from "icons/caretdown.svg";
+import { ReactComponent as CaretUpIcon } from "icons/caretup.svg";
+import { ReactComponent as VisibilityIcon } from "icons/visibility.svg";
+import { ReactComponent as VisibilityOffIcon } from "icons/visibility_off.svg";
 import { MappedLayer } from "utils/getLayersFromWMS";
 
 type Props = {
@@ -27,12 +27,12 @@ const BackgroundLayerAccordion: React.FC<Props> = ({
     <div>
       <Wrapper indent={indent}>
         <Button variant="icon" onClick={onVisibilityClick}>
-          {visible ? <Visibility /> : <VisibilityOff />}
+          {visible ? <VisibilityIcon /> : <VisibilityOffIcon />}
         </Button>
         <span>{mappedLayer.title}</span>
         {mappedLayer.layers.length > 0 && (
           <Button variant="icon" onClick={() => setOpen(!open)}>
-            {open ? <CaretUp /> : <CaretDown />}
+            {open ? <CaretUpIcon /> : <CaretDownIcon />}
           </Button>
         )}
       </Wrapper>
