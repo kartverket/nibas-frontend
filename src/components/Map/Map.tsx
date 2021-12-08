@@ -2,18 +2,15 @@ import { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { map } from "./constants";
 import ZoomControls from "./controls/ZoomControls";
+import SidebarPanels from "./SidebarPanels";
 import { updateFylkeFeatures } from "api/fylker";
 import { updateKommuneFeatures } from "api/kommuner";
 import CustomControl from "components/CustomControl";
-import GrenserDrillDown from "components/GrenserDrillDown";
 import { EditingType } from "components/GrenserDrillDown/useEditGrenser";
-import LayerOrdering from "components/LayerOrdering";
 import { OpenSidebarPanels } from "components/PageLayout/PageLayout";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
 import { createLayers } from "hooks/layers/constants";
 import { LayerId } from "hooks/layers/types";
-import useVisibleLayers from "hooks/layers/useVisibleLayers";
-import useZIndexes from "hooks/layers/useZIndexes";
 import { getLayerById, initLayer } from "utils/map/layers";
 
 const initLayers = () => {
@@ -32,10 +29,7 @@ type Props = {
 };
 
 const Map = ({ openPanels }: Props) => {
-  const { moveLayer, zIndexes } = useZIndexes();
   const mapRef = useRef<HTMLDivElement>(null);
-
-  const { visibleLayers, dispatch } = useVisibleLayers();
 
   useEditInteractions();
 
@@ -73,14 +67,7 @@ const Map = ({ openPanels }: Props) => {
   return (
     <MapTarget ref={mapRef}>
       <MapOverlay>
-        <GrenserDrillDown visible={openPanels.nibas} />
-        <LayerOrdering
-          visible={openPanels.backgroundLayers}
-          visibleLayers={visibleLayers}
-          dispatch={dispatch}
-          moveLayer={moveLayer}
-          layersInZIndexOrder={zIndexes}
-        />
+        <SidebarPanels openPanels={openPanels} />
       </MapOverlay>
 
       <CustomControl>
@@ -102,6 +89,12 @@ const MapTarget = styled.div`
 `;
 
 const MapOverlay = styled.div`
+  display: grid;
+  grid-template-rows: 3fr 1fr;
+  grid-template-columns: auto 1fr;
+  grid-template-areas:
+    "panel ."
+    "panel metadata";
   width: 100%;
   height: 100%;
   position: absolute;
