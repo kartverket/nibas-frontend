@@ -95,6 +95,7 @@ const Map = ({ openPanels }: Props) => {
 const MapTarget = styled.div`
   grid-area: map;
   position: relative;
+  margin-left: -2px;
 
   .ol-control {
     text-align: center;

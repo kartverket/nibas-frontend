@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import MainLayer from "./Layer/MainLayer";
+import MainBackgroundLayer from "./BackgroundLayer/MainBackgroundLayer";
 import { MapInteractable } from "components/Map/MapInteractable";
 import { LayerId } from "hooks/layers/types";
 import useVisibleLayers, {
@@ -74,7 +74,7 @@ const LayerOrdering = ({
     if (!mappedLayer) return null;
 
     return (
-      <MainLayer
+      <MainBackgroundLayer
         key={mappedLayer.title}
         mappedLayer={mappedLayer}
         mainLayerSourceId={mappedLayer.sourceId}

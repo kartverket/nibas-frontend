@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import TileWMS from "ol/source/TileWMS";
-import LayerAccordion from "./LayerAccordion";
+import BackgroundLayerAccordion from "./BackgroundLayerAccordion";
 import { syncSources } from "hooks/sources/syncSources";
 import { SyncSourceId } from "hooks/sources/types";
 import { MainMappedLayer, MappedLayer } from "utils/getLayersFromWMS";
@@ -41,7 +41,7 @@ type Props = {
   isMainLayerVisible?: (mappedLayer: MainMappedLayer) => boolean;
 };
 
-const SubLayer = ({
+const SubBackgroundLayer = ({
   mappedLayer,
   indent,
   mainLayerSourceId,
@@ -121,7 +121,7 @@ const SubLayer = ({
   };
 
   return (
-    <LayerAccordion
+    <BackgroundLayerAccordion
       key={mappedLayer.title}
       mappedLayer={mappedLayer}
       indent={indent}
@@ -130,7 +130,7 @@ const SubLayer = ({
     >
       <>
         {mappedLayer.layers.map((layer) => (
-          <SubLayer
+          <SubBackgroundLayer
             key={layer.title}
             mappedLayer={layer}
             mainLayerSourceId={mainLayerSourceId}
@@ -139,8 +139,8 @@ const SubLayer = ({
           />
         ))}
       </>
-    </LayerAccordion>
+    </BackgroundLayerAccordion>
   );
 };
 
-export default SubLayer;
+export default SubBackgroundLayer;
