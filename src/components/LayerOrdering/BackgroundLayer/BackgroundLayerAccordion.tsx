@@ -93,6 +93,11 @@ const ClickableName = styled(Button)`
   justify-content: space-between;
   align-items: center;
   flex: 1;
+
+  > :first-child {
+    flex: 1;
+    text-align: left;
+  }
 `;
 
 const DraggableName = styled.span`

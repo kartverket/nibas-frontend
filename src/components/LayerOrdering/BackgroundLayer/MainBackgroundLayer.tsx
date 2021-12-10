@@ -101,11 +101,11 @@ const MainBackgroundLayer = ({
   });
 
   useEffect(() => {
-    setVisible(isMainLayerVisible(mappedLayer as MainMappedLayer));
+    setVisible(isMainLayerVisible(mappedLayer));
   }, [isMainLayerVisible, mappedLayer]);
 
   const onVisibilityClick = () => {
-    toggleMainLayer(mappedLayer as MainMappedLayer);
+    toggleMainLayer(mappedLayer);
 
     setVisible(!visible);
   };
