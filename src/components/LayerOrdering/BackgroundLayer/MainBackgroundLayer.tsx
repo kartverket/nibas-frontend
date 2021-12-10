@@ -120,6 +120,7 @@ const MainBackgroundLayer = ({
       visible={visible}
       onVisibilityClick={onVisibilityClick}
       ref={ref}
+      isMainLayer
     >
       <>
         {mappedLayer.layers.map((layer) => (
