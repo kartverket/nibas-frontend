@@ -6,6 +6,7 @@ import { LayerId } from "hooks/layers/types";
 import useVisibleLayers, {
   toggleLayerVisibility,
 } from "hooks/layers/useVisibleLayers";
+import useZIndexes from "hooks/layers/useZIndexes";
 import getSubLayersFromWMSSource, {
   MainMappedLayer,
 } from "utils/getLayersFromWMS";
@@ -13,20 +14,13 @@ import { getLayerIdFromMappedLayer, getWMSLayersInMap } from "utils/map/layers";
 
 type Props = {
   visible: boolean;
-  visibleLayers: ReturnType<typeof useVisibleLayers>["visibleLayers"];
-  dispatch: ReturnType<typeof useVisibleLayers>["dispatch"];
-  moveLayer: (direction: "up" | "down", layerId: LayerId) => void;
-  layersInZIndexOrder: LayerId[];
 };
 
-const LayerOrdering = ({
-  visible,
-  visibleLayers,
-  dispatch,
-  moveLayer,
-  layersInZIndexOrder,
-}: Props) => {
+const LayerOrdering = ({ visible }: Props) => {
   const [mappedLayers, setMappedLayers] = useState<MainMappedLayer[]>([]);
+
+  const { visibleLayers, dispatch } = useVisibleLayers();
+  const { moveLayer, zIndexes } = useZIndexes();
 
   useEffect(() => {
     if (!visible || mappedLayers.length > 0) return;
@@ -89,7 +83,7 @@ const LayerOrdering = ({
 
   if (!visible) return null;
 
-  return <Panel>{layersInZIndexOrder.map(renderMainLayerByZIndex)}</Panel>;
+  return <Panel>{zIndexes.map(renderMainLayerByZIndex)}</Panel>;
 };
 
 const Panel = styled(MapInteractable)`

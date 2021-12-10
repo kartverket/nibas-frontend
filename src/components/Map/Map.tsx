@@ -12,8 +12,6 @@ import { OpenSidebarPanels } from "components/PageLayout/PageLayout";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
 import { createLayers } from "hooks/layers/constants";
 import { LayerId } from "hooks/layers/types";
-import useVisibleLayers from "hooks/layers/useVisibleLayers";
-import useZIndexes from "hooks/layers/useZIndexes";
 import { getLayerById, initLayer } from "utils/map/layers";
 
 const initLayers = () => {
@@ -32,10 +30,7 @@ type Props = {
 };
 
 const Map = ({ openPanels }: Props) => {
-  const { moveLayer, zIndexes } = useZIndexes();
   const mapRef = useRef<HTMLDivElement>(null);
-
-  const { visibleLayers, dispatch } = useVisibleLayers();
 
   useEditInteractions();
 
@@ -74,13 +69,7 @@ const Map = ({ openPanels }: Props) => {
     <MapTarget ref={mapRef}>
       <MapOverlay>
         <GrenserDrillDown visible={openPanels.nibas} />
-        <LayerOrdering
-          visible={openPanels.backgroundLayers}
-          visibleLayers={visibleLayers}
-          dispatch={dispatch}
-          moveLayer={moveLayer}
-          layersInZIndexOrder={zIndexes}
-        />
+        <LayerOrdering visible={openPanels.backgroundLayers} />
       </MapOverlay>
 
       <CustomControl>
