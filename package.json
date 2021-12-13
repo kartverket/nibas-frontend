@@ -63,6 +63,8 @@
   },
   "proxy": "http://localhost:8080",
   "jest": {
-    "transformIgnorePatterns": ["node_modules/(?!(ol)/)"]
+    "transformIgnorePatterns": [
+      "node_modules/(?!(ol)/)"
+    ]
   }
 }
