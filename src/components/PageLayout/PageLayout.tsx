@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
-import Map from "components/Map";
+import Map from "components/Kart";
 import Sidebar from "components/Sidebar";
 import TopBar from "components/TopBar";
 

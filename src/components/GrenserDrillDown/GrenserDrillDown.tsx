@@ -6,7 +6,7 @@ import { SimpleFylke } from "./types";
 import useEditGrenser, { ObjectValue } from "./useEditGrenser";
 import { fetchFylker } from "api/fylker";
 import Accordion from "components/Accordion";
-import { MapInteractable } from "components/Map/MapInteractable";
+import { KartInteractable } from "components/Kart/KartInteractable";
 
 type Props = {
   visible: boolean;
@@ -81,7 +81,7 @@ const GrenserDrillDown = ({ visible }: Props) => {
   );
 };
 
-const Panel = styled(MapInteractable)`
+const Panel = styled(KartInteractable)`
   margin-top: 30px;
   width: 400px;
   padding: 8px 16px;

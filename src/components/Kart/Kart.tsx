@@ -29,7 +29,7 @@ type Props = {
   openPanels: OpenSidebarPanels;
 };
 
-const Map = ({ openPanels }: Props) => {
+const Kart = ({ openPanels }: Props) => {
   const mapRef = useRef<HTMLDivElement>(null);
 
   useEditInteractions();
@@ -66,22 +66,22 @@ const Map = ({ openPanels }: Props) => {
   };
 
   return (
-    <MapTarget ref={mapRef}>
-      <MapOverlay>
+    <KartTarget ref={mapRef}>
+      <KartOverlay>
         <GrenserDrillDown visible={openPanels.nibas} />
         <LayerOrdering visible={openPanels.backgroundLayers} />
-      </MapOverlay>
+      </KartOverlay>
 
       <CustomControl>
         <button onClick={saveDraft}>Lagre endringer</button>
       </CustomControl>
 
       <ZoomControls />
-    </MapTarget>
+    </KartTarget>
   );
 };
 
-const MapTarget = styled.div`
+const KartTarget = styled.div`
   grid-area: map;
   position: relative;
   margin-left: -2px;
@@ -91,7 +91,7 @@ const MapTarget = styled.div`
   }
 `;
 
-const MapOverlay = styled.div`
+const KartOverlay = styled.div`
   width: 100%;
   height: 100%;
   position: absolute;
@@ -99,4 +99,4 @@ const MapOverlay = styled.div`
   z-index: 1;
 `;
 
-export default Map;
+export default Kart;

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import Control from "ol/control/Control";
-import { map } from "components/Map/constants";
+import { map } from "components/Kart/constants";
 
 const CustomControl: React.FC = ({ children }) => {
   // vi trenger et element å referere til for control
