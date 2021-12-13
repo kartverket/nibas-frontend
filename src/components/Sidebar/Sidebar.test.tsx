@@ -2,7 +2,7 @@
 
 import Sidebar from "./Sidebar";
 import { defaultTheme } from "style/theme";
-import { fireEvent, render, screen } from "test/utils";
+import { fireEvent, render, screen } from "test/test-utils";
 
 const defaultProps: React.ComponentProps<typeof Sidebar> = {
   openPanels: {
