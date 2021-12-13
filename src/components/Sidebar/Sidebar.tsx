@@ -20,19 +20,21 @@ const Sidebar = ({ openPanels, togglePanel }: Props) => {
       <SidebarButton
         active={openPanels.nibas}
         onClick={() => togglePanel("nibas")}
+        title="Nibas"
       >
         <NibasIcon />
       </SidebarButton>
-      <SidebarButton active={openPanels.search}>
+      <SidebarButton active={openPanels.search} title="Søk">
         <SearchIcon />
       </SidebarButton>
       <SidebarButton
         active={openPanels.backgroundLayers}
         onClick={() => togglePanel("backgroundLayers")}
+        title="Bakgrunnskart"
       >
         <MapIcon />
       </SidebarButton>
-      <SidebarButton active={openPanels.drafts}>
+      <SidebarButton active={openPanels.drafts} title="Utkast">
         <DraftsIcon />
       </SidebarButton>
     </StyledSidebar>
