@@ -32,7 +32,7 @@ const GrenserDrillDown = ({ visible }: Props) => {
   return (
     <Panel>
       <Accordion title="Riksgrenser">
-        <p>lol</p>
+        <p>Kommer senere!</p>
       </Accordion>
       <Accordion title="Fylkesgrenser">
         <AccordionContent>
@@ -63,19 +63,19 @@ const GrenserDrillDown = ({ visible }: Props) => {
         </AccordionContent>
       </Accordion>
       <Accordion title="Kretser">
-        <p>lol</p>
+        <p>Kommer senere!</p>
       </Accordion>
       <Accordion title="Etat og sektorinndeling">
-        <p>lol</p>
+        <p>Kommer senere!</p>
       </Accordion>
       <Accordion title="Lovers virke">
-        <p>lol</p>
+        <p>Kommer senere!</p>
       </Accordion>
       <Accordion title="Svalbardområdet">
-        <p>lol</p>
+        <p>Kommer senere!</p>
       </Accordion>
       <Accordion title="Maritime grenser">
-        <p>lol</p>
+        <p>Kommer senere!</p>
       </Accordion>
     </Panel>
   );
