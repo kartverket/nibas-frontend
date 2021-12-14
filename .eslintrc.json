@@ -65,6 +65,11 @@
             "pattern": "react",
             "group": "builtin",
             "position": "before"
+          },
+          {
+            "pattern": "test/test-utils",
+            "group": "builtin",
+            "position": "before"
           }
         ],
         "pathGroupsExcludedImportTypes": ["react"]
