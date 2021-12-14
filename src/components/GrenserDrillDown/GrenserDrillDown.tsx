@@ -19,9 +19,13 @@ const GrenserDrillDown = ({ visible }: Props) => {
 
   useEffect(() => {
     const updateFylker = async () => {
-      const fetchedFylker = await fetchFylker();
+      try {
+        const fetchedFylker = await fetchFylker();
 
-      setFylker(fetchedFylker);
+        setFylker(fetchedFylker);
+      } catch (err) {
+        setFylker([]);
+      }
     };
 
     updateFylker();

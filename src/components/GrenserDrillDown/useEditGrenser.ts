@@ -14,12 +14,16 @@ const useEditGrenser = () => {
   const [editingObject, setEditingObject] = useState<EditingObject>({});
 
   useEffect(() => {
-    const editLayer = getLayerById("edit");
+    try {
+      const editLayer = getLayerById("edit");
 
-    if (mode) {
-      editLayer.set("type", mode);
-    } else {
-      editLayer.unset("type");
+      if (mode) {
+        editLayer.set("type", mode);
+      } else {
+        editLayer.unset("type");
+      }
+    } catch (err) {
+      // TODO
     }
   }, [mode]);
 

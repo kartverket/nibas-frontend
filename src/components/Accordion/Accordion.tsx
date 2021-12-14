@@ -5,7 +5,7 @@ import { ReactComponent as CaretDownIcon } from "icons/caretdown.svg";
 import { ReactComponent as CaretUpIcon } from "icons/caretup.svg";
 
 type Props = {
-  title: React.ReactNode;
+  title: string;
 };
 
 const Accordion: React.FC<Props> = ({ title, children }) => {
@@ -15,7 +15,11 @@ const Accordion: React.FC<Props> = ({ title, children }) => {
     <Wrapper>
       <TitleWrapper>
         <span>{title}</span>
-        <Button variant="icon" onClick={() => setOpen(!open)}>
+        <Button
+          variant="icon"
+          onClick={() => setOpen(!open)}
+          aria-label={title}
+        >
           {open ? <CaretUpIcon /> : <CaretDownIcon />}
         </Button>
       </TitleWrapper>
