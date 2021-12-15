@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import FylkeList from "./FylkeList";
 import KommuneList from "./KommuneList";
-import { SimpleFylke } from "./types";
+import { AdministrativEnhet } from "./types";
 import useEditGrenser, { ObjectValue } from "./useEditGrenser";
 import { fetchFylker } from "api/fylker";
 import Accordion from "components/Accordion";
@@ -13,7 +13,7 @@ type Props = {
 };
 
 const GrenserDrillDown = ({ visible }: Props) => {
-  const [fylker, setFylker] = useState<SimpleFylke[]>([]);
+  const [fylker, setFylker] = useState<AdministrativEnhet[]>([]);
 
   const { getCanSelect, setObjectValue, editingObject } = useEditGrenser();
 
@@ -49,7 +49,13 @@ const GrenserDrillDown = ({ visible }: Props) => {
       <Accordion title="Kommunegrenser">
         <AccordionContent>
           {fylker.map((fylke) => (
-            <Accordion key={fylke.nummer} title={fylke.navn}>
+            <Accordion
+              key={fylke.id}
+              title={
+                fylke.navn.find((fylkesNavn) => fylkesNavn.spraak === "nor")
+                  ?.navn ?? ""
+              }
+            >
               <KommuneList
                 fylke={fylke}
                 kommuneValues={editingObject.kommune ?? {}}

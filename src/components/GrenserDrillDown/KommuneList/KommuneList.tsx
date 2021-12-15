@@ -3,13 +3,13 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import styled from "styled-components";
 import ToggleableGrense from "../ToggleableGrense";
-import { SimpleFylke, SimpleKommune } from "../types";
+import { AdministrativEnhet } from "../types";
 import { ObjectValue } from "../useEditGrenser";
 import { fetchKommuneFeaturesById, fetchKommunerByFylke } from "api/kommuner";
 import { geoJsonToSource } from "utils/map/geoJson";
 
 type Props = {
-  fylke: SimpleFylke;
+  fylke: AdministrativEnhet;
   kommuneValues: Record<string, ObjectValue>;
   setKommuneValue: (kommune: string, value: ObjectValue) => void;
   canSelect: boolean;
@@ -21,13 +21,13 @@ const KommuneList = ({
   setKommuneValue,
   canSelect,
 }: Props) => {
-  const [kommuner, setKommuner] = useState<SimpleKommune[]>([]);
+  const [kommuner, setKommuner] = useState<AdministrativEnhet[]>([]);
 
   useEffect(() => {
     if (!fylke) return;
 
     const updateKommuner = async () => {
-      const fetchedKommuner = await fetchKommunerByFylke(fylke.nummer);
+      const fetchedKommuner = await fetchKommunerByFylke(fylke.id);
 
       setKommuner(fetchedKommuner);
     };
@@ -35,35 +35,40 @@ const KommuneList = ({
     updateKommuner();
   }, [fylke]);
 
-  const getFeaturesToAdd = async (kommune: SimpleKommune) => {
+  const getFeaturesToAdd = async (kommune: AdministrativEnhet) => {
     const json = await fetchKommuneFeaturesById(kommune.id);
     return geoJsonToSource(json).getFeatures();
   };
 
   const getFeaturesToRemove = (
-    kommune: SimpleKommune,
+    kommune: AdministrativEnhet,
     layerFeatures: Feature<Geometry>[]
   ) =>
     layerFeatures.filter(
-      (feature) =>
-        feature.getProperties().administrativEnhet.nummer === kommune.nummer
+      (feature) => feature.getProperties().administrativEnhet.id === kommune.id
     );
 
   return (
     <Wrapper>
-      {kommuner.map((kommune) => (
-        <ToggleableGrense
-          key={kommune.nummer}
-          grense={kommune}
-          objectValue={kommuneValues[kommune.navn]}
-          setObjectValue={setKommuneValue}
-          title={kommune.navn}
-          type="kommune"
-          canSelect={canSelect}
-          getFeaturesToAdd={getFeaturesToAdd}
-          getFeaturesToRemove={getFeaturesToRemove}
-        />
-      ))}
+      {kommuner.map((kommune) => {
+        const navn =
+          kommune.navn.find((kommuneNavn) => kommuneNavn.spraak === "nor")
+            ?.navn ?? "";
+
+        return (
+          <ToggleableGrense
+            key={navn}
+            grense={kommune}
+            objectValue={kommuneValues[navn]}
+            setObjectValue={setKommuneValue}
+            title={navn}
+            type="kommune"
+            canSelect={canSelect}
+            getFeaturesToAdd={getFeaturesToAdd}
+            getFeaturesToRemove={getFeaturesToRemove}
+          />
+        );
+      })}
     </Wrapper>
   );
 };
