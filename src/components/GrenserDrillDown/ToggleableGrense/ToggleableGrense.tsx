@@ -122,12 +122,12 @@ const ToggleableGrense = <T extends Grense>({
 
   return (
     <Wrapper>
-      <Button
-        onClick={toggleVisible}
-        variant="icon"
-        aria-label="Toggle synlighet"
-      >
-        {visible ? <VisibilityIcon aria-label="Test" /> : <VisibilityOffIcon />}
+      <Button onClick={toggleVisible} variant="icon">
+        {visible ? (
+          <VisibilityIcon aria-label="Synlig" />
+        ) : (
+          <VisibilityOffIcon aria-label="Usynlig" />
+        )}
       </Button>
       <label>
         <input
@@ -136,7 +136,6 @@ const ToggleableGrense = <T extends Grense>({
           onChange={toggleSelected}
           disabled={!canSelect}
           title={!canSelect ? "Kun ett tema kan redigeres på en gang" : ""}
-          aria-label={`Toggle endring på ${title}`}
         />
         {title}
       </label>
