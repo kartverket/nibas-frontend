@@ -2,8 +2,8 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import VectorLayer from "ol/layer/Vector";
 import styled from "styled-components";
-import { Grense } from "./types";
-import { ObjectValue, EditingType } from "./useEditGrenser";
+import { Grense } from "../types";
+import { ObjectValue, EditingType } from "../useEditGrenser";
 import Button from "components/Button";
 import { LayerId } from "hooks/layers/types";
 import { GeometryVectorSource } from "hooks/sources/types";
@@ -122,17 +122,24 @@ const ToggleableGrense = <T extends Grense>({
 
   return (
     <Wrapper>
-      <Button onClick={toggleVisible} variant="icon">
-        {visible ? <VisibilityIcon /> : <VisibilityOffIcon />}
+      <Button
+        onClick={toggleVisible}
+        variant="icon"
+        aria-label="Toggle synlighet"
+      >
+        {visible ? <VisibilityIcon aria-label="Test" /> : <VisibilityOffIcon />}
       </Button>
-      <input
-        type="checkbox"
-        checked={editing}
-        onChange={toggleSelected}
-        disabled={!canSelect}
-        title={!canSelect ? "Kun ett tema kan redigeres på en gang" : ""}
-      />
-      <span>{title}</span>
+      <label>
+        <input
+          type="checkbox"
+          checked={editing}
+          onChange={toggleSelected}
+          disabled={!canSelect}
+          title={!canSelect ? "Kun ett tema kan redigeres på en gang" : ""}
+          aria-label={`Toggle endring på ${title}`}
+        />
+        {title}
+      </label>
       <Button variant="icon" onClick={openInfo}>
         <ColoredInfo />
       </Button>
@@ -144,7 +151,7 @@ const Wrapper = styled.div`
   display: flex;
   align-items: center;
 
-  > span {
+  > label {
     flex: 1;
   }
 `;
