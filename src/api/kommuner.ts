@@ -4,6 +4,7 @@ import {
   fetchAdministrativEnhetFeaturesById,
   updateAdministrativEnhetFeatures,
 } from "./administrativeEnheter";
+import { AdministrativEnhet } from "components/GrenserDrillDown/types";
 
 export const fetchKommuneFeaturesById = async (id: number) =>
   fetchAdministrativEnhetFeaturesById(id, "KOMMUNE");
@@ -11,9 +12,9 @@ export const fetchKommuneFeaturesById = async (id: number) =>
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const fetchKommunerByFylke = async (fylkeId: number) => {
   const geojsonRequest = await fetch(`/v1/administrativ-enhet?type=KOMMUNE`);
-  const json = await geojsonRequest.json();
+  const json = (await geojsonRequest.json()) as AdministrativEnhet[];
 
-  return json;
+  return json.slice(0, 10);
 };
 
 export const updateKommuneFeatures = async (features: Feature<Geometry>[]) =>
