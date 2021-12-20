@@ -19,7 +19,7 @@ type Props = {
   layersInZIndexOrder: LayerId[];
 };
 
-const LayerOrdering = ({
+const Bakgrunnskart = ({
   visible,
   visibleLayers,
   dispatch,
@@ -102,4 +102,4 @@ const Panel = styled(MapInteractable)`
   overflow: auto;
 `;
 
-export default LayerOrdering;
+export default Bakgrunnskart;

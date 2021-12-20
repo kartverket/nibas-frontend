@@ -4,10 +4,10 @@ import { map } from "./constants";
 import ZoomControls from "./controls/ZoomControls";
 import { updateFylkeFeatures } from "api/fylker";
 import { updateKommuneFeatures } from "api/kommuner";
+import Bakgrunnskart from "components/Bakgrunnskart";
 import CustomControl from "components/CustomControl";
 import GrenserDrillDown from "components/GrenserDrillDown";
 import { EditingType } from "components/GrenserDrillDown/useEditGrenser";
-import LayerOrdering from "components/LayerOrdering";
 import { OpenSidebarPanels } from "components/PageLayout/PageLayout";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
 import { createLayers } from "hooks/layers/constants";
@@ -74,7 +74,7 @@ const Map = ({ openPanels }: Props) => {
     <MapTarget ref={mapRef}>
       <MapOverlay>
         <GrenserDrillDown visible={openPanels.nibas} />
-        <LayerOrdering
+        <Bakgrunnskart
           visible={openPanels.backgroundLayers}
           visibleLayers={visibleLayers}
           dispatch={dispatch}
