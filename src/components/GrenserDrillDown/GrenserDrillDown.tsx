@@ -1,35 +1,22 @@
-import { useEffect, useState } from "react";
 import styled from "styled-components";
 import FylkeList from "./FylkeList";
 import KommuneList from "./KommuneList";
 import { SimpleFylke } from "./types";
 import useEditGrenser, { ObjectValue } from "./useEditGrenser";
-import { fetchFylker } from "api/fylker";
 import Accordion from "components/Accordion";
 import { MapInteractable } from "components/Map/MapInteractable";
+import useApi from "hooks/useApi";
 
 type Props = {
   visible: boolean;
 };
 
 const GrenserDrillDown = ({ visible }: Props) => {
-  const [fylker, setFylker] = useState<SimpleFylke[]>([]);
-
+  const { data: fylker, loading } = useApi<SimpleFylke[]>(
+    "v1/administrativ-enhet?type=FYLKE",
+    []
+  );
   const { getCanSelect, setObjectValue, editingObject } = useEditGrenser();
-
-  useEffect(() => {
-    const updateFylker = async () => {
-      try {
-        const fetchedFylker = await fetchFylker();
-
-        setFylker(fetchedFylker);
-      } catch (err) {
-        setFylker([]);
-      }
-    };
-
-    updateFylker();
-  }, []);
 
   if (!visible) return null;
 
@@ -40,30 +27,38 @@ const GrenserDrillDown = ({ visible }: Props) => {
       </Accordion>
       <Accordion title="Fylkesgrenser">
         <AccordionContent>
-          <FylkeList
-            fylker={fylker}
-            fylkeValues={editingObject.fylke ?? {}}
-            setFylkeValue={(fylkesnavn: string, value: ObjectValue) =>
-              setObjectValue("fylke", fylkesnavn, value)
-            }
-            canSelect={getCanSelect("fylke")}
-          />
+          {!loading && fylker ? (
+            <FylkeList
+              fylker={fylker}
+              fylkeValues={editingObject.fylke ?? {}}
+              setFylkeValue={(fylkesnavn: string, value: ObjectValue) =>
+                setObjectValue("fylke", fylkesnavn, value)
+              }
+              canSelect={getCanSelect("fylke")}
+            />
+          ) : (
+            <p>Henter fylker...</p>
+          )}
         </AccordionContent>
       </Accordion>
       <Accordion title="Kommunegrenser">
         <AccordionContent>
-          {fylker.map((fylke) => (
-            <Accordion key={fylke.nummer} title={fylke.navn}>
-              <KommuneList
-                fylke={fylke}
-                kommuneValues={editingObject.kommune ?? {}}
-                setKommuneValue={(kommunenavn: string, value: ObjectValue) =>
-                  setObjectValue("kommune", kommunenavn, value)
-                }
-                canSelect={getCanSelect("kommune")}
-              />
-            </Accordion>
-          ))}
+          {!loading && fylker ? (
+            fylker.map((fylke) => (
+              <Accordion key={fylke.nummer} title={fylke.navn}>
+                <KommuneList
+                  fylke={fylke}
+                  kommuneValues={editingObject.kommune ?? {}}
+                  setKommuneValue={(kommunenavn: string, value: ObjectValue) =>
+                    setObjectValue("kommune", kommunenavn, value)
+                  }
+                  canSelect={getCanSelect("kommune")}
+                />
+              </Accordion>
+            ))
+          ) : (
+            <p>Henter fylker...</p>
+          )}
         </AccordionContent>
       </Accordion>
       <Accordion title="Kretser">

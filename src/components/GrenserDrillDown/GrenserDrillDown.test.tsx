@@ -1,19 +1,10 @@
-import { fireEvent, render, screen, waitFor } from "test/test-utils";
+import { fireEvent, render, screen } from "test/test-utils";
 import GrenserDrillDown from "./GrenserDrillDown";
-import { fetchFylker } from "api/fylker";
-
-jest.mock("api/fylker");
-jest.mock("api/kommuner");
-
-beforeEach(() => {
-  jest.clearAllMocks();
-});
 
 describe("GrenserDrillDown", () => {
   it("should not render when not visible", async () => {
+    // wrap i act for å vente på async state change
     render(<GrenserDrillDown visible={false} />);
-
-    await waitFor(() => expect(fetchFylker).toHaveBeenCalledTimes(1));
   });
 
   it("should render all accordions", async () => {
@@ -38,8 +29,6 @@ describe("GrenserDrillDown", () => {
     expect(loversVirkeAccordion).toBeInTheDocument();
     expect(svalbardomradetAccordion).toBeInTheDocument();
     expect(maritimeGrenserAccordion).toBeInTheDocument();
-
-    await waitFor(() => expect(fetchFylker).toHaveBeenCalledTimes(1));
   });
 
   it("should show fylker on Fylker accordion click", async () => {
