@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { DropTargetMonitor, useDrag, useDrop, XYCoord } from "react-dnd";
-import LayerAccordion from "./LayerAccordion";
-import SubLayer from "./SubLayer";
+import BackgroundLayerAccordion from "./BackgroundLayerAccordion";
+import SubBackgroundLayer from "./SubBackgroundLayer";
 import { LayerId } from "hooks/layers/types";
 import { SyncSourceId } from "hooks/sources/types";
 import { MainMappedLayer } from "utils/getLayersFromWMS";
@@ -23,7 +23,7 @@ type DragItem = {
   type: string;
 };
 
-const MainLayer = ({
+const MainBackgroundLayer = ({
   mappedLayer,
   mainLayerSourceId,
   mainLayerName,
@@ -101,11 +101,11 @@ const MainLayer = ({
   });
 
   useEffect(() => {
-    setVisible(isMainLayerVisible(mappedLayer as MainMappedLayer));
+    setVisible(isMainLayerVisible(mappedLayer));
   }, [isMainLayerVisible, mappedLayer]);
 
   const onVisibilityClick = () => {
-    toggleMainLayer(mappedLayer as MainMappedLayer);
+    toggleMainLayer(mappedLayer);
 
     setVisible(!visible);
   };
@@ -113,17 +113,18 @@ const MainLayer = ({
   drag(drop(ref));
 
   return (
-    <LayerAccordion
+    <BackgroundLayerAccordion
       key={mappedLayer.title}
       mappedLayer={mappedLayer}
       indent={0}
       visible={visible}
       onVisibilityClick={onVisibilityClick}
       ref={ref}
+      isMainLayer
     >
       <>
         {mappedLayer.layers.map((layer) => (
-          <SubLayer
+          <SubBackgroundLayer
             key={layer.title}
             mappedLayer={layer}
             mainLayerSourceId={mainLayerSourceId}
@@ -132,8 +133,8 @@ const MainLayer = ({
           />
         ))}
       </>
-    </LayerAccordion>
+    </BackgroundLayerAccordion>
   );
 };
 
-export default MainLayer;
+export default MainBackgroundLayer;

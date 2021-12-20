@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import MainLayer from "./Layer/MainLayer";
-import { MapInteractable } from "components/Map/MapInteractable";
+import MainBackgroundLayer from "./BackgroundLayer/MainBackgroundLayer";
+import { KartInteractable } from "components/Kart/KartInteractable";
 import { LayerId } from "hooks/layers/types";
 import useVisibleLayers, {
   toggleLayerVisibility,
@@ -68,7 +68,7 @@ const LayerOrdering = ({ visible }: Props) => {
     if (!mappedLayer) return null;
 
     return (
-      <MainLayer
+      <MainBackgroundLayer
         key={mappedLayer.title}
         mappedLayer={mappedLayer}
         mainLayerSourceId={mappedLayer.sourceId}
@@ -86,7 +86,7 @@ const LayerOrdering = ({ visible }: Props) => {
   return <Panel>{zIndexes.map(renderMainLayerByZIndex)}</Panel>;
 };
 
-const Panel = styled(MapInteractable)`
+const Panel = styled(KartInteractable)`
   min-height: 400px;
   max-height: 80%;
   width: 400px;

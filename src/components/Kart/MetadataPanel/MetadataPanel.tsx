@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import styled from "styled-components";
-import { MapInteractable } from "../MapInteractable";
+import { KartInteractable } from "../KartInteractable";
 import Button from "components/Button";
 
 type Props = {
@@ -40,7 +40,7 @@ const MetadataPanel = ({ selectedFeatures }: Props) => {
   );
 };
 
-const Panel = styled(MapInteractable)`
+const Panel = styled(KartInteractable)`
   grid-area: metadata;
   border: 1px solid ${({ theme }) => theme.colors.grayLight};
   padding: 16px;

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { Select } from "ol/interaction";
-import { map } from "components/Map/constants";
+import { map } from "components/Kart/constants";
 
 const useSelectInteraction = () => {
   const [features, setFeatures] = useState<Feature<Geometry>[]>([]);

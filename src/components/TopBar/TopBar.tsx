@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Button from "components/Button";
 import Input from "components/Input";
-import { ReactComponent as Search } from "icons/search.svg";
+import { ReactComponent as SearchIcon } from "icons/search.svg";
 import logo from "images/logo.png";
 
 const TopBar = () => {
@@ -62,7 +62,7 @@ const SearchIconButton = styled(Button)`
   width: 24px;
 `;
 
-const InputSearchIcon = styled(Search)`  
+const InputSearchIcon = styled(SearchIcon)`  
   width: 24px;
 }
 `;

@@ -6,7 +6,7 @@ import { SimpleFylke } from "./types";
 import useEditGrenser, { ObjectValue } from "./useEditGrenser";
 import { fetchFylker } from "api/fylker";
 import Accordion from "components/Accordion";
-import { MapInteractable } from "components/Map/MapInteractable";
+import { KartInteractable } from "components/Kart/KartInteractable";
 
 type Props = {
   visible: boolean;
@@ -32,7 +32,7 @@ const GrenserDrillDown = ({ visible }: Props) => {
   return (
     <Panel>
       <Accordion title="Riksgrenser">
-        <p>lol</p>
+        <p>Kommer senere!</p>
       </Accordion>
       <Accordion title="Fylkesgrenser">
         <AccordionContent>
@@ -63,25 +63,25 @@ const GrenserDrillDown = ({ visible }: Props) => {
         </AccordionContent>
       </Accordion>
       <Accordion title="Kretser">
-        <p>lol</p>
+        <p>Kommer senere!</p>
       </Accordion>
       <Accordion title="Etat og sektorinndeling">
-        <p>lol</p>
+        <p>Kommer senere!</p>
       </Accordion>
       <Accordion title="Lovers virke">
-        <p>lol</p>
+        <p>Kommer senere!</p>
       </Accordion>
       <Accordion title="Svalbardområdet">
-        <p>lol</p>
+        <p>Kommer senere!</p>
       </Accordion>
       <Accordion title="Maritime grenser">
-        <p>lol</p>
+        <p>Kommer senere!</p>
       </Accordion>
     </Panel>
   );
 };
 
-const Panel = styled(MapInteractable)`
+const Panel = styled(KartInteractable)`
   margin-top: 30px;
   width: 400px;
   padding: 8px 16px;

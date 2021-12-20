@@ -17,6 +17,7 @@ const defaultTheme: DefaultTheme = {
     orange: "#FCF1E8",
     yellow: "#FFDD9D",
     yellowLight: "#FCEBCD",
+    white: "#FFFFFF",
   },
 };
 
