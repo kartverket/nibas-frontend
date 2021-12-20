@@ -1,6 +1,14 @@
 import { fireEvent, render, screen } from "test/test-utils";
 import GrenserDrillDown from "./GrenserDrillDown";
 
+jest.mock("utils/map/source", () => ({
+  addFeaturesToSource: jest.fn(),
+  removeFeaturesFromSource: jest.fn(),
+}));
+jest.mock("utils/map/layers", () => ({
+  getLayerById: () => ({ getSource: jest.fn() }),
+}));
+
 describe("GrenserDrillDown", () => {
   it("should not render when not visible", async () => {
     // wrap i act for å vente på async state change
@@ -46,10 +54,10 @@ describe("GrenserDrillDown", () => {
   it("should show fylker and kommuner on Kommuner accordion click", async () => {
     render(<GrenserDrillDown visible />);
 
-    const fylkesGrenserAccordionButton = screen.getByRole("button", {
+    const kommuneGrenserAccordionButton = screen.getByRole("button", {
       name: /kommunegrenser/i,
     });
-    fireEvent.click(fylkesGrenserAccordionButton);
+    fireEvent.click(kommuneGrenserAccordionButton);
 
     const vikenAccordionButton = await screen.findByRole("button", {
       name: /viken/i,
@@ -58,5 +66,59 @@ describe("GrenserDrillDown", () => {
 
     expect(await screen.findByText(/ringerike/i)).toBeInTheDocument();
     expect(await screen.findByText(/hole/i)).toBeInTheDocument();
+  });
+
+  describe("ToggleableGrense", () => {
+    it("should open eye on eye click", async () => {
+      render(<GrenserDrillDown visible />);
+
+      const fylkesGrenserAccordionButton = screen.getByRole("button", {
+        name: /fylkesgrenser/i,
+      });
+      fireEvent.click(fylkesGrenserAccordionButton);
+
+      const closedEyes = await screen.findAllByRole("button", {
+        name: "Usynlig",
+      });
+      fireEvent.click(closedEyes[0]);
+
+      const openEye = screen.getByRole("button", { name: "Synlig" });
+      expect(openEye).toBeInTheDocument();
+    });
+
+    it("should open eye and check checkbox on checkbox click", async () => {
+      render(<GrenserDrillDown visible />);
+
+      const fylkesGrenserAccordionButton = screen.getByRole("button", {
+        name: /fylkesgrenser/i,
+      });
+      fireEvent.click(fylkesGrenserAccordionButton);
+
+      const checkbox = await screen.findByRole("checkbox", { name: "Viken" });
+      fireEvent.click(checkbox);
+
+      expect(checkbox).toBeChecked();
+      expect(
+        screen.getByRole("button", { name: "Synlig" })
+      ).toBeInTheDocument();
+    });
+
+    it("should close both eye and uncheck checkbox when checkbox is checked", async () => {
+      render(<GrenserDrillDown visible />);
+
+      const fylkesGrenserAccordionButton = screen.getByRole("button", {
+        name: /fylkesgrenser/i,
+      });
+      fireEvent.click(fylkesGrenserAccordionButton);
+
+      const checkbox = await screen.findByRole("checkbox", { name: "Viken" });
+      fireEvent.click(checkbox);
+      fireEvent.click(checkbox);
+
+      expect(checkbox).not.toBeChecked();
+      expect(
+        screen.queryByRole("button", { name: "Synlig" })
+      ).not.toBeInTheDocument();
+    });
   });
 });
