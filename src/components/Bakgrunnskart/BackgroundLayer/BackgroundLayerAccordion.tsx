@@ -51,7 +51,7 @@ const Wrapper = styled.div<{ indent: number }>`
   }
 
   button {
-    margin: 0 4px;
+    margin-right: 4px;
   }
 `;
 

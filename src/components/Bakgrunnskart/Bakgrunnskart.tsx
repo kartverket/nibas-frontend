@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import MainBackgroundLayer from "./BackgroundLayer/MainBackgroundLayer";
 import { MapInteractable } from "components/Map/MapInteractable";
+import { SidebarPanelTitle } from "components/PageLayout/PageLayout";
 import { LayerId } from "hooks/layers/types";
 import useVisibleLayers, {
   toggleLayerVisibility,
@@ -89,7 +90,12 @@ const Bakgrunnskart = ({
 
   if (!visible) return null;
 
-  return <Panel>{layersInZIndexOrder.map(renderMainLayerByZIndex)}</Panel>;
+  return (
+    <Panel>
+      <SidebarPanelTitle>Bakgrunnskart</SidebarPanelTitle>
+      {layersInZIndexOrder.map(renderMainLayerByZIndex)}
+    </Panel>
+  );
 };
 
 const Panel = styled(MapInteractable)`

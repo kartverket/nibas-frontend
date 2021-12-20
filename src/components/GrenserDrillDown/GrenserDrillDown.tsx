@@ -5,6 +5,7 @@ import { SimpleFylke } from "./types";
 import useEditGrenser, { ObjectValue } from "./useEditGrenser";
 import Accordion from "components/Accordion";
 import { MapInteractable } from "components/Map/MapInteractable";
+import { SidebarPanelTitle } from "components/PageLayout/PageLayout";
 import useApi from "hooks/useApi";
 
 type Props = {
@@ -22,6 +23,7 @@ const GrenserDrillDown = ({ visible }: Props) => {
 
   return (
     <Panel>
+      <SidebarPanelTitle>Grenser</SidebarPanelTitle>
       <Accordion title="Riksgrenser">
         <p>lol</p>
       </Accordion>
