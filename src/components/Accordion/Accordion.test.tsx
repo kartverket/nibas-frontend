@@ -19,10 +19,10 @@ describe("Accordion", () => {
       </Accordion>
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "Title" }));
+    fireEvent.click(screen.getByRole("button", { name: /title åpne/i }));
     expect(screen.getByText("Children")).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "Title" }));
+    fireEvent.click(screen.getByRole("button", { name: /title lukk/i }));
     expect(screen.queryByText("Children")).not.toBeInTheDocument();
   });
 });

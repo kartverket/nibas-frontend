@@ -16,9 +16,9 @@ const Accordion: React.FC<Props> = ({ title, children }) => {
       <TitleWrapper variant="icon" onClick={() => setOpen(!open)}>
         <span>{title}</span>
         {open ? (
-          <CaretUpIcon aria-label={`Lukk ${title}`} />
+          <CaretUpIcon aria-label="Lukk" />
         ) : (
-          <CaretDownIcon aria-label={`Åpne ${title}`} />
+          <CaretDownIcon aria-label="Åpne" />
         )}
       </TitleWrapper>
 
