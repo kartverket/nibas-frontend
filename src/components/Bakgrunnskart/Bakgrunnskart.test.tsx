@@ -1,29 +1,27 @@
 import { render, screen } from "test/test-utils";
 import Bakgrunnskart from "./Bakgrunnskart";
 
+const mockLayer = {
+  getSource: () => ({
+    getUrls: () => [
+      "https://wms.geonorge.no/skwms1/wms.adm_enheter2?service=wms",
+    ],
+    get: () => "administrativeGrenser",
+  }),
+  get: () => "administrativeGrenser",
+  setZIndex: jest.fn(),
+  setVisible: jest.fn(),
+};
+
 // mock et layer så vi kan gjøre request og mapping riktig
 jest.mock("utils/map/layers", () => ({
   getLayerIdFromMappedLayer: jest.fn(),
-  getWMSLayersInMap: () => [
-    {
-      getSource: () => ({
-        getUrls: () => [
-          "https://wms.geonorge.no/skwms1/wms.adm_enheter2?service=wms",
-        ],
-        get: () => "administrativeGrenser",
-      }),
-    },
-  ],
+  getWMSLayersInMap: () => [mockLayer],
+  getLayerById: () => mockLayer,
 }));
 
 const defaultProps: React.ComponentProps<typeof Bakgrunnskart> = {
-  dispatch: jest.fn(),
-  layersInZIndexOrder: ["administrativeGrenser"],
-  moveLayer: jest.fn(),
   visible: true,
-  visibleLayers: {
-    administrativeGrenser: true,
-  } as never, // vi bryr oss ikke om de andre lagene nå
 };
 
 describe("Bakgrunnskart", () => {

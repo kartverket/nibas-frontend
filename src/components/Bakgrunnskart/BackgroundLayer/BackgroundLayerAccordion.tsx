@@ -35,7 +35,13 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
           <ClickableName variant="unstyled" onClick={() => setOpen(!open)}>
             <DraggableName ref={ref}>{mappedLayer.title}</DraggableName>
             {mappedLayer.layers.length > 0 && (
-              <>{open ? <CaretUpIcon /> : <CaretDownIcon />}</>
+              <>
+                {open ? (
+                  <CaretUpIcon aria-label="Lukk" />
+                ) : (
+                  <CaretDownIcon aria-label="Åpne" />
+                )}
+              </>
             )}
           </ClickableName>
         );
@@ -46,7 +52,11 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
         return (
           <ClickableName variant="unstyled" onClick={() => setOpen(!open)}>
             <span>{mappedLayer.title}</span>
-            {open ? <CaretUpIcon /> : <CaretDownIcon />}
+            {open ? (
+              <CaretUpIcon aria-label="Lukke" />
+            ) : (
+              <CaretDownIcon aria-label="Åpne" />
+            )}
           </ClickableName>
         );
       }
@@ -58,25 +68,12 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
     return (
       <div>
         <Wrapper indent={indent}>
-          {/* <Button variant="icon" onClick={onVisibilityClick}>
+          <IconButton onClick={onVisibilityClick}>
             {visible ? (
               <VisibilityIcon aria-label={`Skjul ${mappedLayer.title}`} />
             ) : (
               <VisibilityOffIcon aria-label={`Vis ${mappedLayer.title}`} />
             )}
-          </Button>
-          <DraggableName ref={ref}>{mappedLayer.title}</DraggableName>
-          {mappedLayer.layers.length > 0 && (
-            <Button variant="icon" onClick={() => setOpen(!open)}>
-              {open ? (
-                <CaretUpIcon aria-label={`Lukk ${mappedLayer.title}`} />
-              ) : (
-                <CaretDownIcon aria-label={`Åpne ${mappedLayer.title}`} />
-              )}
-            </Button>
-          )} */}
-          <IconButton onClick={onVisibilityClick}>
-            {visible ? <VisibilityIcon /> : <VisibilityOffIcon />}
           </IconButton>
           {renderNameAndCaret()}
         </Wrapper>

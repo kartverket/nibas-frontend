@@ -31,7 +31,7 @@ describe("SubBackgroundLayer", () => {
     render(<SubBackgroundLayer {...defaultProps} />);
 
     const caret = screen.getByRole("button", {
-      name: /åpne sublag/i,
+      name: /sublag åpne/i,
     });
     fireEvent.click(caret);
 

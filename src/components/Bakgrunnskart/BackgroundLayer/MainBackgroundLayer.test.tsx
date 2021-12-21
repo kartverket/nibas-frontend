@@ -35,7 +35,7 @@ describe("MainBackgroundLayer", () => {
     render(<MainBackgroundLayer {...defaultProps} />);
 
     const caret = screen.getByRole("button", {
-      name: /åpne hovedlag/i,
+      name: /hovedlag åpne/i,
     });
     fireEvent.click(caret);
 
