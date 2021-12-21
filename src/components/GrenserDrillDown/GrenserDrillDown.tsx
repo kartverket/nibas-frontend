@@ -4,8 +4,10 @@ import KommuneList from "./KommuneList";
 import { SimpleFylke } from "./types";
 import useEditGrenser, { ObjectValue } from "./useEditGrenser";
 import Accordion from "components/Accordion";
-import { SidebarPanelTitle } from "components/Sidebar/Sidebar";
-import { SidebarPanel } from "components/Sidebar/SidebarPanel";
+import {
+  SidebarPanel,
+  SidebarPanelTitle,
+} from "components/Sidebar/SidebarPanel";
 import useApi from "hooks/useApi";
 
 type Props = {

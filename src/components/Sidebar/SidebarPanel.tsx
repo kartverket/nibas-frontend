@@ -9,3 +9,8 @@ export const SidebarPanel = styled(MapInteractable)`
   padding: 8px 16px;
   overflow: auto;
 `;
+
+export const SidebarPanelTitle = styled.h3`
+  margin-top: 8px;
+  margin-bottom: 16px;
+`;

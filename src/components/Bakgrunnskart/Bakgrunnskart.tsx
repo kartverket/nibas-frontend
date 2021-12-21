@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import MainBackgroundLayer from "./BackgroundLayer/MainBackgroundLayer";
-import { SidebarPanelTitle } from "components/Sidebar/Sidebar";
-import { SidebarPanel } from "components/Sidebar/SidebarPanel";
+import {
+  SidebarPanel,
+  SidebarPanelTitle,
+} from "components/Sidebar/SidebarPanel";
 import { LayerId } from "hooks/layers/types";
 import useVisibleLayers, {
   toggleLayerVisibility,
