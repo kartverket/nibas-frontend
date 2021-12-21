@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import MainBackgroundLayer from "./BackgroundLayer/MainBackgroundLayer";
-import { MapInteractable } from "components/Map/MapInteractable";
 import { SidebarPanelTitle } from "components/Sidebar/Sidebar";
+import { SidebarPanel } from "components/Sidebar/SidebarPanel";
 import { LayerId } from "hooks/layers/types";
 import useVisibleLayers, {
   toggleLayerVisibility,
@@ -98,14 +98,8 @@ const Bakgrunnskart = ({
   );
 };
 
-const Panel = styled(MapInteractable)`
-  min-height: 400px;
-  max-height: 80%;
-  width: 400px;
+const Panel = styled(SidebarPanel)`
   margin-top: 180px;
-  border: 2px solid ${({ theme }) => theme.colors.blue};
-  padding: 8px;
-  overflow: auto;
 `;
 
 export default Bakgrunnskart;

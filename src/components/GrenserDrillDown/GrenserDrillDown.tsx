@@ -4,8 +4,8 @@ import KommuneList from "./KommuneList";
 import { SimpleFylke } from "./types";
 import useEditGrenser, { ObjectValue } from "./useEditGrenser";
 import Accordion from "components/Accordion";
-import { MapInteractable } from "components/Map/MapInteractable";
 import { SidebarPanelTitle } from "components/Sidebar/Sidebar";
+import { SidebarPanel } from "components/Sidebar/SidebarPanel";
 import useApi from "hooks/useApi";
 
 type Props = {
@@ -82,13 +82,8 @@ const GrenserDrillDown = ({ visible }: Props) => {
   );
 };
 
-const Panel = styled(MapInteractable)`
+const Panel = styled(SidebarPanel)`
   margin-top: 30px;
-  width: 400px;
-  padding: 8px 16px;
-  overflow: auto;
-  max-height: 80%;
-  border: 2px solid ${({ theme }) => theme.colors.blue};
 `;
 
 const AccordionContent = styled.div`
