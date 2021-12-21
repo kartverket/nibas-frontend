@@ -33,11 +33,9 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
           {mappedLayer.layers.length > 0 && (
             <Button variant="icon" onClick={() => setOpen(!open)}>
               {open ? (
-                <CaretUpIcon aria-label={`Lukk ${mappedLayer.title} sublag`} />
+                <CaretUpIcon aria-label={`Lukk ${mappedLayer.title}`} />
               ) : (
-                <CaretDownIcon
-                  aria-label={`Åpne ${mappedLayer.title} sublag`}
-                />
+                <CaretDownIcon aria-label={`Åpne ${mappedLayer.title}`} />
               )}
             </Button>
           )}
