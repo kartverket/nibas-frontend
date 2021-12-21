@@ -23,12 +23,22 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
       <div>
         <Wrapper indent={indent}>
           <Button variant="icon" onClick={onVisibilityClick}>
-            {visible ? <VisibilityIcon /> : <VisibilityOffIcon />}
+            {visible ? (
+              <VisibilityIcon aria-label={`Skjul ${mappedLayer.title}`} />
+            ) : (
+              <VisibilityOffIcon aria-label={`Vis ${mappedLayer.title}`} />
+            )}
           </Button>
           <DraggableName ref={ref}>{mappedLayer.title}</DraggableName>
           {mappedLayer.layers.length > 0 && (
             <Button variant="icon" onClick={() => setOpen(!open)}>
-              {open ? <CaretUpIcon /> : <CaretDownIcon />}
+              {open ? (
+                <CaretUpIcon aria-label={`Lukk ${mappedLayer.title} sublag`} />
+              ) : (
+                <CaretDownIcon
+                  aria-label={`Åpne ${mappedLayer.title} sublag`}
+                />
+              )}
             </Button>
           )}
         </Wrapper>
