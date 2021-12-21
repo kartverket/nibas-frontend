@@ -3,7 +3,7 @@ import TileWMS from "ol/source/TileWMS";
 import BackgroundLayerAccordion from "./BackgroundLayerAccordion";
 import { syncSources } from "hooks/sources/syncSources";
 import { SyncSourceId } from "hooks/sources/types";
-import { MainMappedLayer, MappedLayer } from "utils/getLayersFromWMS";
+import { MappedLayer } from "utils/getLayersFromWMS";
 
 const getLayersStringToReplace = (
   layersInParams: string,
