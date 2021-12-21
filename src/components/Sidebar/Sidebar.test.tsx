@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-
+import { render, screen } from "test/test-utils";
 import Sidebar from "./Sidebar";
 import { defaultTheme } from "style/theme";
-import { fireEvent, render, screen } from "test/test-utils";
 
 const defaultProps: React.ComponentProps<typeof Sidebar> = {
   openPanels: {
@@ -11,7 +9,7 @@ const defaultProps: React.ComponentProps<typeof Sidebar> = {
     nibas: false,
     search: false,
   },
-  togglePanel: () => {},
+  togglePanel: jest.fn(),
 };
 
 describe("Sidebar", () => {
@@ -29,16 +27,6 @@ describe("Sidebar", () => {
     expect(sokButton).toBeInTheDocument();
     expect(bakgrunnskartButton).toBeInTheDocument();
     expect(utkastButton).toBeInTheDocument();
-  });
-
-  it("should call togglePanel prop on button click", () => {
-    const togglePanel = jest.fn();
-    render(<Sidebar {...defaultProps} togglePanel={togglePanel} />);
-
-    const nibasButton = screen.getByRole("button", { name: /nibas/i });
-    fireEvent.click(nibasButton);
-
-    expect(togglePanel).toHaveBeenCalledWith("nibas");
   });
 
   it("should turn button blue when panel is open", () => {
