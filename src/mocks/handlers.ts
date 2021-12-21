@@ -13,16 +13,20 @@ export const handlers: RestHandler[] = [
       return res(
         ctx.status(200),
         ctx.json([
-          { type: "FYLKE", id: 1, navn: "Viken", nummer: "30" },
-          { type: "FYLKE", id: 2, navn: "Innlandet", nummer: "34" },
+          {
+            type: "FYLKE",
+            id: 1,
+            navn: [{ navn: "Vestfold og Telemark", spraak: "nor" }],
+          },
+          { type: "FYLKE", id: 2, navn: [{ navn: "Agder", spraak: "nor" }] },
         ])
       );
     } else if (type.toUpperCase() === "KOMMUNE") {
       return res(
         ctx.status(200),
         ctx.json([
-          { type: "KOMMUNE", id: 1, navn: "Ringerike", nummer: "3007" },
-          { type: "KOMMUNE", id: 2, navn: "Hole", nummer: "3038" },
+          { type: "KOMMUNE", id: 1, navn: [{ navn: "Malvik", spraak: "nor" }] },
+          { type: "KOMMUNE", id: 2, navn: [{ navn: "Giske", spraak: "nor" }] },
         ])
       );
     }

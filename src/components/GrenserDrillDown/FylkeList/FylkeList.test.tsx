@@ -4,18 +4,22 @@ import FylkeList from "./FylkeList";
 const defaultProps: React.ComponentProps<typeof FylkeList> = {
   canSelect: true,
   fylkeValues: {
-    fylke1: {
+    "Vestfold og Telemark": {
       editing: false,
       visible: false,
     },
-    fylke2: {
+    Agder: {
       editing: false,
       visible: false,
     },
   },
   fylker: [
-    { id: 1, navn: "fylke1", nummer: "1" },
-    { id: 2, navn: "fylke2", nummer: "2" },
+    {
+      type: "FYLKE",
+      id: 1,
+      navn: [{ navn: "Vestfold og Telemark", spraak: "nor" }],
+    },
+    { type: "FYLKE", id: 2, navn: [{ navn: "Agder", spraak: "nor" }] },
   ],
   setFylkeValue: jest.fn(),
 };
@@ -24,7 +28,7 @@ describe("FylkeList", () => {
   it("should render two names from fylker", () => {
     render(<FylkeList {...defaultProps} />);
 
-    expect(screen.getByText("fylke1")).toBeInTheDocument();
-    expect(screen.getByText("fylke2")).toBeInTheDocument();
+    expect(screen.getByText("Vestfold og Telemark")).toBeInTheDocument();
+    expect(screen.getByText("Agder")).toBeInTheDocument();
   });
 });

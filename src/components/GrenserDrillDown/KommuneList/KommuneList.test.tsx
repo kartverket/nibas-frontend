@@ -21,7 +21,7 @@ describe("KommuneList", () => {
   it("should render two kommuner based on fylke", async () => {
     render(<KommuneList {...defaultProps} />);
 
-    expect(await screen.findByText("Ringerike")).toBeInTheDocument();
-    expect(await screen.findByText("Hole")).toBeInTheDocument();
+    expect(await screen.findByText("Malvik")).toBeInTheDocument();
+    expect(await screen.findByText("Giske")).toBeInTheDocument();
   });
 });

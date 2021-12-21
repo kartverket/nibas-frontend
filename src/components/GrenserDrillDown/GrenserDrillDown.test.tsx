@@ -47,8 +47,10 @@ describe("GrenserDrillDown", () => {
     });
     fireEvent.click(fylkesGrenserAccordionButton);
 
-    expect(await screen.findByText(/viken/i)).toBeInTheDocument();
-    expect(await screen.findByText(/innlandet/i)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/vestfold og telemark/i)
+    ).toBeInTheDocument();
+    expect(await screen.findByText(/agder/i)).toBeInTheDocument();
   });
 
   it("should show fylker and kommuner on Kommuner accordion click", async () => {
@@ -60,12 +62,12 @@ describe("GrenserDrillDown", () => {
     fireEvent.click(kommuneGrenserAccordionButton);
 
     const vikenAccordionButton = await screen.findByRole("button", {
-      name: /viken/i,
+      name: /agder/i,
     });
     fireEvent.click(vikenAccordionButton);
 
-    expect(await screen.findByText(/ringerike/i)).toBeInTheDocument();
-    expect(await screen.findByText(/hole/i)).toBeInTheDocument();
+    expect(await screen.findByText(/malvik/i)).toBeInTheDocument();
+    expect(await screen.findByText(/giske/i)).toBeInTheDocument();
   });
 
   describe("ToggleableGrense", () => {
@@ -94,7 +96,7 @@ describe("GrenserDrillDown", () => {
       });
       fireEvent.click(fylkesGrenserAccordionButton);
 
-      const checkbox = await screen.findByRole("checkbox", { name: "Viken" });
+      const checkbox = await screen.findByRole("checkbox", { name: /agder/i });
       fireEvent.click(checkbox);
 
       expect(checkbox).toBeChecked();
@@ -111,7 +113,7 @@ describe("GrenserDrillDown", () => {
       });
       fireEvent.click(fylkesGrenserAccordionButton);
 
-      const checkbox = await screen.findByRole("checkbox", { name: "Viken" });
+      const checkbox = await screen.findByRole("checkbox", { name: /agder/i });
       fireEvent.click(checkbox);
       fireEvent.click(checkbox);
 
