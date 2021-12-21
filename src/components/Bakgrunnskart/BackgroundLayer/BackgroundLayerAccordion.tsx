@@ -13,16 +13,52 @@ type Props = {
   onVisibilityClick: () => void;
   visible: boolean;
   children: React.ReactNode;
+  isMainLayer?: boolean;
 };
 
 const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
-  ({ mappedLayer, indent, visible, onVisibilityClick, children }, ref) => {
+  (props, ref) => {
+    const {
+      mappedLayer,
+      indent,
+      visible,
+      onVisibilityClick,
+      children,
+      isMainLayer = false,
+    } = props;
     const [open, setOpen] = useState(false);
+
+    const renderNameAndCaret = () => {
+      // hvis hovedlag som kan dras på, vis annen musepeker på navnet
+      if (isMainLayer) {
+        return (
+          <ClickableName variant="unstyled" onClick={() => setOpen(!open)}>
+            <DraggableName ref={ref}>{mappedLayer.title}</DraggableName>
+            {mappedLayer.layers.length > 0 && (
+              <>{open ? <CaretUpIcon /> : <CaretDownIcon />}</>
+            )}
+          </ClickableName>
+        );
+      }
+
+      // hvis har sub-lag, la navnet være klikkbart for å åpne accordion
+      if (mappedLayer.layers.length > 0) {
+        return (
+          <ClickableName variant="unstyled" onClick={() => setOpen(!open)}>
+            <span>{mappedLayer.title}</span>
+            {open ? <CaretUpIcon /> : <CaretDownIcon />}
+          </ClickableName>
+        );
+      }
+
+      // ellers bare render tittelen til sub-laget
+      return <span>{mappedLayer.title}</span>;
+    };
 
     return (
       <div>
         <Wrapper indent={indent}>
-          <Button variant="icon" onClick={onVisibilityClick}>
+          {/* <Button variant="icon" onClick={onVisibilityClick}>
             {visible ? (
               <VisibilityIcon aria-label={`Skjul ${mappedLayer.title}`} />
             ) : (
@@ -38,7 +74,11 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
                 <CaretDownIcon aria-label={`Åpne ${mappedLayer.title}`} />
               )}
             </Button>
-          )}
+          )} */}
+          <IconButton onClick={onVisibilityClick}>
+            {visible ? <VisibilityIcon /> : <VisibilityOffIcon />}
+          </IconButton>
+          {renderNameAndCaret()}
         </Wrapper>
 
         {open && children}
@@ -49,6 +89,12 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
 
 BackgroundLayerAccordion.displayName = "BackgroundLayerAccordion";
 
+const IconButton = styled(Button).attrs(() => ({
+  variant: "icon",
+}))`
+  margin-right: 8px;
+`;
+
 const Wrapper = styled.div<{ indent: number }>`
   display: flex;
   margin: 8px 0;
@@ -57,9 +103,17 @@ const Wrapper = styled.div<{ indent: number }>`
   > span {
     flex: 1;
   }
+`;
 
-  button {
-    margin-right: 4px;
+const ClickableName = styled(Button)`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
+
+  > :first-child {
+    flex: 1;
+    text-align: left;
   }
 `;
 

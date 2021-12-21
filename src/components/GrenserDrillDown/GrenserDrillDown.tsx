@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import FylkeList from "./FylkeList";
 import KommuneList from "./KommuneList";
-import { SimpleFylke } from "./types";
+import { AdministrativEnhet } from "./types";
 import useEditGrenser, { ObjectValue } from "./useEditGrenser";
 import Accordion from "components/Accordion";
 import {
@@ -15,7 +15,7 @@ type Props = {
 };
 
 const GrenserDrillDown = ({ visible }: Props) => {
-  const { data: fylker, loading } = useApi<SimpleFylke[]>(
+  const { data: fylker, loading } = useApi<AdministrativEnhet[]>(
     "v1/administrativ-enhet?type=FYLKE",
     []
   );
@@ -27,7 +27,7 @@ const GrenserDrillDown = ({ visible }: Props) => {
     <Panel>
       <SidebarPanelTitle>Grenser</SidebarPanelTitle>
       <Accordion title="Riksgrenser">
-        <p>lol</p>
+        <p>Kommer senere!</p>
       </Accordion>
       <Accordion title="Fylkesgrenser">
         <AccordionContent>
@@ -49,7 +49,13 @@ const GrenserDrillDown = ({ visible }: Props) => {
         <AccordionContent>
           {!loading && fylker ? (
             fylker.map((fylke) => (
-              <Accordion key={fylke.nummer} title={fylke.navn}>
+              <Accordion
+                key={fylke.id}
+                title={
+                  fylke.navn.find((fylkesNavn) => fylkesNavn.spraak === "nor")
+                    ?.navn ?? ""
+                }
+              >
                 <KommuneList
                   fylke={fylke}
                   kommuneValues={editingObject.kommune ?? {}}
@@ -66,19 +72,19 @@ const GrenserDrillDown = ({ visible }: Props) => {
         </AccordionContent>
       </Accordion>
       <Accordion title="Kretser">
-        <p>lol</p>
+        <p>Kommer senere!</p>
       </Accordion>
       <Accordion title="Etat og sektorinndeling">
-        <p>lol</p>
+        <p>Kommer senere!</p>
       </Accordion>
       <Accordion title="Lovers virke">
-        <p>lol</p>
+        <p>Kommer senere!</p>
       </Accordion>
       <Accordion title="Svalbardområdet">
-        <p>lol</p>
+        <p>Kommer senere!</p>
       </Accordion>
       <Accordion title="Maritime grenser">
-        <p>lol</p>
+        <p>Kommer senere!</p>
       </Accordion>
     </Panel>
   );

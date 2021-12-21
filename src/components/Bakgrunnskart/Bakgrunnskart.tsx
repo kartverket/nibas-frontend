@@ -9,6 +9,7 @@ import { LayerId } from "hooks/layers/types";
 import useVisibleLayers, {
   toggleLayerVisibility,
 } from "hooks/layers/useVisibleLayers";
+import useZIndexes from "hooks/layers/useZIndexes";
 import getSubLayersFromWMSSource, {
   MainMappedLayer,
 } from "utils/getLayersFromWMS";
@@ -16,20 +17,13 @@ import { getLayerIdFromMappedLayer, getWMSLayersInMap } from "utils/map/layers";
 
 type Props = {
   visible: boolean;
-  visibleLayers: ReturnType<typeof useVisibleLayers>["visibleLayers"];
-  dispatch: ReturnType<typeof useVisibleLayers>["dispatch"];
-  moveLayer: (direction: "up" | "down", layerId: LayerId) => void;
-  layersInZIndexOrder: LayerId[];
 };
 
-const Bakgrunnskart = ({
-  visible,
-  visibleLayers,
-  dispatch,
-  moveLayer,
-  layersInZIndexOrder,
-}: Props) => {
+const Bakgrunnskart = ({ visible }: Props) => {
   const [mappedLayers, setMappedLayers] = useState<MainMappedLayer[]>([]);
+
+  const { visibleLayers, dispatch } = useVisibleLayers();
+  const { moveLayer, zIndexes } = useZIndexes();
 
   useEffect(() => {
     if (!visible || mappedLayers.length > 0) return;
@@ -95,7 +89,7 @@ const Bakgrunnskart = ({
   return (
     <Panel>
       <SidebarPanelTitle>Bakgrunnskart</SidebarPanelTitle>
-      {layersInZIndexOrder.map(renderMainLayerByZIndex)}
+      {zIndexes.map(renderMainLayerByZIndex)}
     </Panel>
   );
 };

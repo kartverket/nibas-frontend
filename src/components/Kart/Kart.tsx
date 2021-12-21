@@ -12,8 +12,6 @@ import { OpenSidebarPanels } from "components/PageLayout/PageLayout";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
 import { createLayers } from "hooks/layers/constants";
 import { LayerId } from "hooks/layers/types";
-import useVisibleLayers from "hooks/layers/useVisibleLayers";
-import useZIndexes from "hooks/layers/useZIndexes";
 import { getLayerById, initLayer } from "utils/map/layers";
 
 const initLayers = () => {
@@ -31,11 +29,8 @@ type Props = {
   openPanels: OpenSidebarPanels;
 };
 
-const Map = ({ openPanels }: Props) => {
-  const { moveLayer, zIndexes } = useZIndexes();
+const Kart = ({ openPanels }: Props) => {
   const mapRef = useRef<HTMLDivElement>(null);
-
-  const { visibleLayers, dispatch } = useVisibleLayers();
 
   useEditInteractions();
 
@@ -71,28 +66,22 @@ const Map = ({ openPanels }: Props) => {
   };
 
   return (
-    <MapTarget ref={mapRef}>
-      <MapOverlay>
+    <KartTarget ref={mapRef}>
+      <KartOverlay>
         <GrenserDrillDown visible={openPanels.nibas} />
-        <Bakgrunnskart
-          visible={openPanels.backgroundLayers}
-          visibleLayers={visibleLayers}
-          dispatch={dispatch}
-          moveLayer={moveLayer}
-          layersInZIndexOrder={zIndexes}
-        />
-      </MapOverlay>
+        <Bakgrunnskart visible={openPanels.backgroundLayers} />
+      </KartOverlay>
 
       <CustomControl>
         <button onClick={saveDraft}>Lagre endringer</button>
       </CustomControl>
 
       <ZoomControls />
-    </MapTarget>
+    </KartTarget>
   );
 };
 
-const MapTarget = styled.div`
+const KartTarget = styled.div`
   grid-area: map;
   position: relative;
   margin-left: -2px;
@@ -102,7 +91,7 @@ const MapTarget = styled.div`
   }
 `;
 
-const MapOverlay = styled.div`
+const KartOverlay = styled.div`
   width: 100%;
   height: 100%;
   position: absolute;
@@ -110,4 +99,4 @@ const MapOverlay = styled.div`
   z-index: 1;
 `;
 
-export default Map;
+export default Kart;

@@ -3,7 +3,7 @@ import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import Source from "ol/source/Source";
 import TileWMS from "ol/source/TileWMS";
-import { map } from "components/Map/constants";
+import { map } from "components/Kart/constants";
 import {
   createLayers,
   INITIAL_VISIBILITY,

@@ -2,20 +2,12 @@ export type Grense = {
   id: number;
 };
 
-export type SimpleFylke = Grense & {
+type Spraak = {
   navn: string;
-  nummer: string;
+  spraak: string;
 };
 
-export type SimpleKommune = Grense & {
-  navn: string;
-  nummer: string;
-};
-
-export type Fylke = {
-  avgrensningsboks: unknown;
-  crs: unknown;
-  fylkesnavn: string;
-  fylkesnummer: string;
-  kommuner: SimpleKommune[];
+export type AdministrativEnhet = Grense & {
+  type: "FYLKE" | "KOMMUNE";
+  navn: Spraak[];
 };

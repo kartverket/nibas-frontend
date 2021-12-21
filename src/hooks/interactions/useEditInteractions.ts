@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Modify, Select, Snap } from "ol/interaction";
 import Style from "ol/style/Style";
-import { map } from "components/Map/constants";
+import { map } from "components/Kart/constants";
 import { getLayerById, getVectorLayers } from "utils/map/layers";
 
 const useEditInteractions = () => {

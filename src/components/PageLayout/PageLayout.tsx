@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
-import Map from "components/Map";
+import Kart from "components/Kart";
 import Sidebar from "components/Sidebar";
 import TopBar from "components/TopBar";
 
@@ -35,7 +35,7 @@ const PageLayout = () => {
     <Grid>
       <TopBar />
       <Sidebar openPanels={openPanels} togglePanel={togglePanel} />
-      <Map openPanels={openPanels} />
+      <Kart openPanels={openPanels} />
     </Grid>
   );
 };

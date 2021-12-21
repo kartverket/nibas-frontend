@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import { MapInteractable } from "components/Map/MapInteractable";
+import { KartInteractable } from "components/Kart/KartInteractable";
 
-export const SidebarPanel = styled(MapInteractable)`
+export const SidebarPanel = styled(KartInteractable)`
   min-height: 400px;
   max-height: 80%;
   width: 400px;

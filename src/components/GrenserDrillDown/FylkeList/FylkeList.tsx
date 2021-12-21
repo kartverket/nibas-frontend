@@ -2,13 +2,13 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import styled from "styled-components";
 import ToggleableGrense from "../ToggleableGrense";
-import { SimpleFylke } from "../types";
+import { AdministrativEnhet } from "../types";
 import { ObjectValue } from "../useEditGrenser";
 import { fetchFylkeFeaturesById } from "api/fylker";
 import { geoJsonToSource } from "utils/map/geoJson";
 
 type Props = {
-  fylker: SimpleFylke[];
+  fylker: AdministrativEnhet[];
   fylkeValues: Record<string, ObjectValue>;
   setFylkeValue: (kommune: string, value: ObjectValue) => void;
   canSelect: boolean;
@@ -20,35 +20,40 @@ const FylkeList = ({
   setFylkeValue,
   canSelect,
 }: Props) => {
-  const getFeaturesToAdd = async (fylke: SimpleFylke) => {
+  const getFeaturesToAdd = async (fylke: AdministrativEnhet) => {
     const json = await fetchFylkeFeaturesById(fylke.id);
     return geoJsonToSource(json).getFeatures();
   };
 
   const getFeaturesToRemove = (
-    fylke: SimpleFylke,
+    fylke: AdministrativEnhet,
     layerFeatures: Feature<Geometry>[]
   ) =>
     layerFeatures.filter(
-      (feature) =>
-        feature.getProperties().administrativEnhet.nummer === fylke.nummer
+      (feature) => feature.getProperties().administrativEnhet.id === fylke.id
     );
 
   return (
     <Wrapper>
-      {fylker.map((fylke) => (
-        <ToggleableGrense
-          key={fylke.navn}
-          grense={fylke}
-          type="fylke"
-          title={fylke.navn}
-          objectValue={fylkeValues[fylke.navn]}
-          getFeaturesToAdd={getFeaturesToAdd}
-          getFeaturesToRemove={getFeaturesToRemove}
-          setObjectValue={setFylkeValue}
-          canSelect={canSelect}
-        />
-      ))}
+      {fylker.map((fylke) => {
+        const navn =
+          fylke.navn.find((fylkesNavn) => fylkesNavn.spraak === "nor")?.navn ??
+          "";
+
+        return (
+          <ToggleableGrense
+            key={navn}
+            grense={fylke}
+            type="fylke"
+            title={navn}
+            objectValue={fylkeValues[navn]}
+            getFeaturesToAdd={getFeaturesToAdd}
+            getFeaturesToRemove={getFeaturesToRemove}
+            setObjectValue={setFylkeValue}
+            canSelect={canSelect}
+          />
+        );
+      })}
     </Wrapper>
   );
 };
