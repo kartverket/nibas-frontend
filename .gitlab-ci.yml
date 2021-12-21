@@ -37,7 +37,7 @@ test:
   stage: test
   image: $HARBOR_URL/proxy_cache/library/node:lts
   script:
-    - CI=true npm test
+    - CI=true npm run test:coverage
 
 publish:
   stage: publish
