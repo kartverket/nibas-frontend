@@ -10,7 +10,6 @@ variables:
   CACHE_COMPRESSION_LEVEL: default # same as above, but for caches
   TRANSFER_METER_FREQUENCY: 5s # will display transfer progress every 5 seconds for artifacts and remote caches
 
-
 build:
   stage: build
   image: $HARBOR_URL/proxy_cache/library/node:lts
@@ -38,15 +37,13 @@ test:
   stage: test
   image: $HARBOR_URL/proxy_cache/library/node:lts
   script:
-    - echo "Testing App, placeholder"
-    #    - CI=true npm test
-    - echo "Test successfully!"
+    - CI=true npm test
 
 publish:
   stage: publish
   image:
     name: gcr.io/kaniko-project/executor:debug
-    entrypoint: [ "" ]
+    entrypoint: [""]
   script:
     - mkdir -p /kaniko/.docker
     - |-
