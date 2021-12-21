@@ -37,8 +37,6 @@ type Props = {
   indent: number;
   mainLayerSourceId: SyncSourceId;
   mainLayerName: string;
-  toggleMainLayer?: (mappedLayer: MainMappedLayer) => void;
-  isMainLayerVisible?: (mappedLayer: MainMappedLayer) => boolean;
 };
 
 const SubBackgroundLayer = ({
@@ -46,8 +44,6 @@ const SubBackgroundLayer = ({
   indent,
   mainLayerSourceId,
   mainLayerName,
-  toggleMainLayer,
-  isMainLayerVisible,
 }: Props) => {
   const [visible, setVisible] = useState(false);
 
@@ -61,13 +57,8 @@ const SubBackgroundLayer = ({
       return layersInParams.includes(mappedLayer.name);
     };
 
-    // hvis hovedlag, sjekk i funksjonen fra props om laget er synlig
-    if (isMainLayerVisible) {
-      setVisible(isMainLayerVisible(mappedLayer as MainMappedLayer));
-    } else {
-      setVisible(isSubLayerVisible());
-    }
-  }, [mainLayerSourceId, mappedLayer.name, isMainLayerVisible, mappedLayer]);
+    setVisible(isSubLayerVisible());
+  }, [mainLayerSourceId, mappedLayer.name, mappedLayer]);
 
   const updateSourceParams = () => {
     const source = syncSources[mainLayerSourceId] as TileWMS;
@@ -110,12 +101,7 @@ const SubBackgroundLayer = ({
   };
 
   const onVisibilityClick = () => {
-    // hvis dette er et hovedlag, skjul i hook i stedet for å endre params
-    if (toggleMainLayer) {
-      toggleMainLayer(mappedLayer as MainMappedLayer);
-    } else {
-      updateSourceParams();
-    }
+    updateSourceParams();
 
     setVisible(!visible);
   };

@@ -13,7 +13,7 @@ describe("PageLayout", () => {
     ).toBeInTheDocument();
   });
 
-  it("should open bakgrunsskart on bakgrunsskart button click", () => {
+  it("should open bakgrunnskart panel on bakgrunsskart button click", () => {
     render(<PageLayout />);
 
     const bakgrunnskartButton = screen.getByRole("button", {

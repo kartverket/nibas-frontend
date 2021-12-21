@@ -24,8 +24,6 @@ const defaultProps: React.ComponentProps<typeof SubBackgroundLayer> = {
     title: "Sublag",
     name: "Sublag",
   },
-  isMainLayerVisible: jest.fn(),
-  toggleMainLayer: jest.fn(),
 };
 
 describe("SubBackgroundLayer", () => {
