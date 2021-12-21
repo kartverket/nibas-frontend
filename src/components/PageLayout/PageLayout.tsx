@@ -50,9 +50,4 @@ const Grid = styled.div`
     "sidebar map";
 `;
 
-export const SidebarPanelTitle = styled.h3`
-  margin-top: 8px;
-  margin-bottom: 16px;
-`;
-
 export default PageLayout;

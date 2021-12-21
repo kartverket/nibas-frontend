@@ -5,7 +5,7 @@ import { SimpleFylke } from "./types";
 import useEditGrenser, { ObjectValue } from "./useEditGrenser";
 import Accordion from "components/Accordion";
 import { MapInteractable } from "components/Map/MapInteractable";
-import { SidebarPanelTitle } from "components/PageLayout/PageLayout";
+import { SidebarPanelTitle } from "components/Sidebar/Sidebar";
 import useApi from "hooks/useApi";
 
 type Props = {

@@ -79,4 +79,9 @@ const SidebarButton = styled(Button).attrs(() => ({
   }
 `;
 
+export const SidebarPanelTitle = styled.h3`
+  margin-top: 8px;
+  margin-bottom: 16px;
+`;
+
 export default Sidebar;

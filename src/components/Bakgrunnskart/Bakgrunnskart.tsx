@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import MainBackgroundLayer from "./BackgroundLayer/MainBackgroundLayer";
 import { MapInteractable } from "components/Map/MapInteractable";
-import { SidebarPanelTitle } from "components/PageLayout/PageLayout";
+import { SidebarPanelTitle } from "components/Sidebar/Sidebar";
 import { LayerId } from "hooks/layers/types";
 import useVisibleLayers, {
   toggleLayerVisibility,
