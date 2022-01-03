@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import MainBackgroundLayer from "./BackgroundLayer/MainBackgroundLayer";
-import {
-  SidebarPanel,
-  SidebarPanelTitle,
-} from "components/Sidebar/SidebarPanel";
+import { SidebarPanel } from "components/Sidebar/SidebarPanel";
+import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
 import { LayerId } from "hooks/layers/types";
 import useVisibleLayers, {
   toggleLayerVisibility,
@@ -17,9 +15,10 @@ import { getLayerIdFromMappedLayer, getWMSLayersInMap } from "utils/map/layers";
 
 type Props = {
   visible: boolean;
+  closePanel: () => void;
 };
 
-const Bakgrunnskart = ({ visible }: Props) => {
+const Bakgrunnskart = ({ visible, closePanel }: Props) => {
   const [mappedLayers, setMappedLayers] = useState<MainMappedLayer[]>([]);
 
   const { visibleLayers, dispatch } = useVisibleLayers();
@@ -88,7 +87,9 @@ const Bakgrunnskart = ({ visible }: Props) => {
 
   return (
     <Panel>
-      <SidebarPanelTitle>Bakgrunnskart</SidebarPanelTitle>
+      <SidebarPanelTitle closePanel={closePanel}>
+        Bakgrunnskart
+      </SidebarPanelTitle>
       {zIndexes.map(renderMainLayerByZIndex)}
     </Panel>
   );

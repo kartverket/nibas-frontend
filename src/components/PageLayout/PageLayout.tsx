@@ -35,7 +35,7 @@ const PageLayout = () => {
     <Grid>
       <TopBar />
       <Sidebar openPanels={openPanels} togglePanel={togglePanel} />
-      <Kart openPanels={openPanels} />
+      <Kart openPanels={openPanels} setPanel={setPanel} />
     </Grid>
   );
 };

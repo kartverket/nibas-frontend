@@ -4,17 +4,16 @@ import KommuneList from "./KommuneList";
 import { AdministrativEnhet } from "./types";
 import useEditGrenser, { ObjectValue } from "./useEditGrenser";
 import Accordion from "components/Accordion";
-import {
-  SidebarPanel,
-  SidebarPanelTitle,
-} from "components/Sidebar/SidebarPanel";
+import { SidebarPanel } from "components/Sidebar/SidebarPanel";
+import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
 import useApi from "hooks/useApi";
 
 type Props = {
   visible: boolean;
+  closePanel: () => void;
 };
 
-const GrenserDrillDown = ({ visible }: Props) => {
+const GrenserDrillDown = ({ visible, closePanel }: Props) => {
   const { data: fylker, loading } = useApi<AdministrativEnhet[]>(
     "v1/administrativ-enhet?type=FYLKE",
     []
@@ -25,7 +24,7 @@ const GrenserDrillDown = ({ visible }: Props) => {
 
   return (
     <Panel>
-      <SidebarPanelTitle>Grenser</SidebarPanelTitle>
+      <SidebarPanelTitle closePanel={closePanel}>Grenser</SidebarPanelTitle>
       <Accordion title="Riksgrenser">
         <p>Kommer senere!</p>
       </Accordion>
