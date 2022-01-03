@@ -6,14 +6,11 @@ import useEditGrenser, { ObjectValue } from "./useEditGrenser";
 import Accordion from "components/Accordion";
 import { SidebarPanel } from "components/Sidebar/SidebarPanel";
 import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
+import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import useApi from "hooks/useApi";
 
-type Props = {
-  visible: boolean;
-  closePanel: () => void;
-};
-
-const GrenserDrillDown = ({ visible, closePanel }: Props) => {
+const GrenserDrillDown = () => {
+  const { open: visible, togglePanel } = useSidebarPanel("nibas");
   const { data: fylker, loading } = useApi<AdministrativEnhet[]>(
     "v1/administrativ-enhet?type=FYLKE",
     []
@@ -24,7 +21,7 @@ const GrenserDrillDown = ({ visible, closePanel }: Props) => {
 
   return (
     <Panel>
-      <SidebarPanelTitle closePanel={closePanel}>Grenser</SidebarPanelTitle>
+      <SidebarPanelTitle closePanel={togglePanel}>Grenser</SidebarPanelTitle>
       <Accordion title="Riksgrenser">
         <p>Kommer senere!</p>
       </Accordion>

@@ -3,6 +3,7 @@ import styled from "styled-components";
 import MainBackgroundLayer from "./BackgroundLayer/MainBackgroundLayer";
 import { SidebarPanel } from "components/Sidebar/SidebarPanel";
 import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
+import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { LayerId } from "hooks/layers/types";
 import useVisibleLayers, {
   toggleLayerVisibility,
@@ -13,12 +14,8 @@ import getSubLayersFromWMSSource, {
 } from "utils/getLayersFromWMS";
 import { getLayerIdFromMappedLayer, getWMSLayersInMap } from "utils/map/layers";
 
-type Props = {
-  visible: boolean;
-  closePanel: () => void;
-};
-
-const Bakgrunnskart = ({ visible, closePanel }: Props) => {
+const Bakgrunnskart = () => {
+  const { open: visible, togglePanel } = useSidebarPanel("backgroundLayers");
   const [mappedLayers, setMappedLayers] = useState<MainMappedLayer[]>([]);
 
   const { visibleLayers, dispatch } = useVisibleLayers();
@@ -87,7 +84,7 @@ const Bakgrunnskart = ({ visible, closePanel }: Props) => {
 
   return (
     <Panel>
-      <SidebarPanelTitle closePanel={closePanel}>
+      <SidebarPanelTitle closePanel={togglePanel}>
         Bakgrunnskart
       </SidebarPanelTitle>
       {zIndexes.map(renderMainLayerByZIndex)}

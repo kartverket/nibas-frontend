@@ -1,20 +1,14 @@
 import styled from "styled-components";
 import Button from "components/Button";
-import {
-  OpenSidebarPanels,
-  SidebarPanel,
-} from "components/PageLayout/PageLayout";
+import { useSidebarPanels } from "contexts/SidebarPanelContext";
 import { ReactComponent as DraftsIcon } from "icons/drafts.svg";
 import { ReactComponent as MapIcon } from "icons/map.svg";
 import { ReactComponent as NibasIcon } from "icons/nibas.svg";
 import { ReactComponent as SearchIcon } from "icons/search.svg";
 
-type Props = {
-  openPanels: OpenSidebarPanels;
-  togglePanel: (panel: SidebarPanel) => void;
-};
+const Sidebar = () => {
+  const { openPanels, togglePanel } = useSidebarPanels();
 
-const Sidebar = ({ openPanels, togglePanel }: Props) => {
   return (
     <StyledSidebar>
       <SidebarButton

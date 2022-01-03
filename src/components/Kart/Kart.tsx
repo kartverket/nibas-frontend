@@ -8,10 +8,6 @@ import Bakgrunnskart from "components/Bakgrunnskart";
 import CustomControl from "components/CustomControl";
 import GrenserDrillDown from "components/GrenserDrillDown";
 import { EditingType } from "components/GrenserDrillDown/useEditGrenser";
-import {
-  OpenSidebarPanels,
-  SidebarPanel,
-} from "components/PageLayout/PageLayout";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
 import { createLayers } from "hooks/layers/constants";
 import { LayerId } from "hooks/layers/types";
@@ -28,12 +24,7 @@ const initLayers = () => {
 
 initLayers();
 
-type Props = {
-  openPanels: OpenSidebarPanels;
-  setPanel: (panel: SidebarPanel, value: boolean) => void;
-};
-
-const Kart = ({ openPanels, setPanel }: Props) => {
+const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
 
   useEditInteractions();
@@ -72,14 +63,8 @@ const Kart = ({ openPanels, setPanel }: Props) => {
   return (
     <KartTarget ref={mapRef}>
       <KartOverlay>
-        <GrenserDrillDown
-          visible={openPanels.nibas}
-          closePanel={() => setPanel("nibas", false)}
-        />
-        <Bakgrunnskart
-          visible={openPanels.backgroundLayers}
-          closePanel={() => setPanel("backgroundLayers", false)}
-        />
+        <GrenserDrillDown />
+        <Bakgrunnskart />
       </KartOverlay>
 
       <CustomControl>
