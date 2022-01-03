@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import Button from "components/Button";
-import { ReactComponent as CaretLeft } from "icons/cog.svg";
+import { ReactComponent as CaretLeft } from "icons/caretleft.svg";
 
 type Props = {
   closePanel: () => void;
