@@ -20,7 +20,7 @@ const SidebarPanelTitle: React.FC<Props> = ({ children, closePanel }) => {
 
 const TitleWrapper = styled.div`
   margin-top: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 
   display: flex;
   justify-content: space-between;
@@ -31,6 +31,11 @@ const StyledTitle = styled.h3`
   margin: 0;
 `;
 
-const CloseButton = styled(Button)``;
+const CloseButton = styled(Button)`
+  > svg {
+    width: 36px;
+    height: 36px;
+  }
+`;
 
 export default SidebarPanelTitle;
