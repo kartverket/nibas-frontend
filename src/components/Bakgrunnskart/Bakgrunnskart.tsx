@@ -15,7 +15,7 @@ import getSubLayersFromWMSSource, {
 import { getLayerIdFromMappedLayer, getWMSLayersInMap } from "utils/map/layers";
 
 const Bakgrunnskart = () => {
-  const { open: visible, togglePanel } = useSidebarPanel("backgroundLayers");
+  const { isOpen: visible, togglePanel } = useSidebarPanel("backgroundLayers");
   const [mappedLayers, setMappedLayers] = useState<MainMappedLayer[]>([]);
 
   const { visibleLayers, dispatch } = useVisibleLayers();

@@ -10,7 +10,7 @@ import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import useApi from "hooks/useApi";
 
 const GrenserDrillDown = () => {
-  const { open: visible, togglePanel } = useSidebarPanel("nibas");
+  const { isOpen: visible, togglePanel } = useSidebarPanel("nibas");
   const { data: fylker, loading } = useApi<AdministrativEnhet[]>(
     "v1/administrativ-enhet?type=FYLKE",
     []

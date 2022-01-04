@@ -60,7 +60,7 @@ export const useSidebarPanel = (panel: SidebarPanel) => {
   const { openPanels, setPanel, togglePanel } = useSidebarPanels();
 
   return {
-    open: openPanels[panel],
+    isOpen: openPanels[panel],
     setPanel: (value: boolean) => setPanel(panel, value),
     togglePanel: () => togglePanel(panel),
   };
