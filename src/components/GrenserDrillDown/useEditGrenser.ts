@@ -23,7 +23,8 @@ const useEditGrenser = () => {
         editLayer.unset("type");
       }
     } catch (err) {
-      // TODO
+      // Denne skal ikke tryne i appen, men noen tester prøver å hente
+      // laget uten at de er lagt inn i OpenLayers
     }
   }, [mode]);
 

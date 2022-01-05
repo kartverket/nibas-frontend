@@ -13,7 +13,7 @@ const defaultProps: React.ComponentProps<typeof KommuneList> = {
       visible: false,
     },
   },
-  fylke: { id: 2, navn: "fylke2", nummer: "2" },
+  fylke: { id: 2, navn: [{ navn: "Fylke2", spraak: "nor" }], type: "FYLKE" },
   setKommuneValue: jest.fn(),
 };
 

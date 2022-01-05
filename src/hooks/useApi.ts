@@ -53,7 +53,13 @@ const createApiReducer =
       }
     }
   };
-
+/**
+ * En hook som kjører en request idet komponenten mounter. Denne kansellerer requesten dersom komponenten den brukes i unmounter før den får hentet data, som gjør at tester ikke blir sure.
+ * Hvis requests kjører har en effekt som oppdaterer UI kan de brukes fremfor denne
+ * @param url
+ * @param initialData
+ * @returns
+ */
 const useApi = <T>(url: string, initialData: T | null = null) => {
   const apiReducer = useMemo(() => createApiReducer<T>(), []);
   const [state, dispatch] = useReducer(apiReducer, {

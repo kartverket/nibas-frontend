@@ -27,7 +27,6 @@ describe("ToggleableGrense", () => {
     expect(
       screen.getByRole("checkbox", { name: defaultProps.title })
     ).not.toBeChecked();
-    expect(screen.getByText(defaultProps.title)).toBeInTheDocument();
   });
 
   it("should show open eye and checked checkbox when objectValue values are true", () => {
@@ -43,6 +42,5 @@ describe("ToggleableGrense", () => {
     expect(
       screen.getByRole("checkbox", { name: defaultProps.title })
     ).toBeChecked();
-    expect(screen.getByText(defaultProps.title)).toBeInTheDocument();
   });
 });

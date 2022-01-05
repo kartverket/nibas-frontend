@@ -11,8 +11,11 @@ jest.mock("utils/map/layers", () => ({
 
 describe("GrenserDrillDown", () => {
   it("should not render when not visible", async () => {
-    // wrap i act for å vente på async state change
     render(<GrenserDrillDown visible={false} />);
+
+    expect(
+      screen.queryByRole("heading", { name: /grenser/i })
+    ).not.toBeInTheDocument();
   });
 
   it("should render all accordions", async () => {
@@ -61,10 +64,10 @@ describe("GrenserDrillDown", () => {
     });
     fireEvent.click(kommuneGrenserAccordionButton);
 
-    const vikenAccordionButton = await screen.findByRole("button", {
+    const agderAccordionButton = await screen.findByRole("button", {
       name: /agder/i,
     });
-    fireEvent.click(vikenAccordionButton);
+    fireEvent.click(agderAccordionButton);
 
     expect(await screen.findByText(/malvik/i)).toBeInTheDocument();
     expect(await screen.findByText(/giske/i)).toBeInTheDocument();
@@ -82,10 +85,15 @@ describe("GrenserDrillDown", () => {
       const closedEyes = await screen.findAllByRole("button", {
         name: "Usynlig",
       });
+      const openEyesBeforeClick = screen.queryAllByRole("button", {
+        name: "Synlig",
+      });
+
       fireEvent.click(closedEyes[0]);
 
       const openEye = screen.getByRole("button", { name: "Synlig" });
       expect(openEye).toBeInTheDocument();
+      expect(openEyesBeforeClick).toHaveLength(0);
     });
 
     it("should open eye and check checkbox on checkbox click", async () => {
