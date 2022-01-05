@@ -1,4 +1,4 @@
-import { render, screen } from "test/test-utils";
+import { render, screen, fireEvent } from "test/test-utils";
 import Bakgrunnskart from "./Bakgrunnskart";
 
 const mockLayer = {
@@ -39,5 +39,21 @@ describe("Bakgrunnskart", () => {
     expect(
       await screen.findByText("Administrative enheter WMS versjon 2")
     ).toBeInTheDocument();
+  });
+
+  it("should toggle visibility of main layer on eye click", async () => {
+    render(<Bakgrunnskart {...defaultProps} />);
+
+    const showLayerButton = await screen.findByRole("button", {
+      name: /vis Administrative enheter WMS versjon 2/i,
+    });
+    fireEvent.click(showLayerButton);
+
+    const hideLayerButton = await screen.findByRole("button", {
+      name: /skjul Administrative enheter WMS versjon 2/i,
+    });
+    fireEvent.click(hideLayerButton);
+
+    expect(showLayerButton).toBeInTheDocument();
   });
 });
