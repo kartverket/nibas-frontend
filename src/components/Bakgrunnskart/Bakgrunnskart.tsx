@@ -24,6 +24,8 @@ const Bakgrunnskart = () => {
   useEffect(() => {
     if (!visible || mappedLayers.length > 0) return;
 
+    let isMounted = true;
+
     const updateMappedLayers = async () => {
       const wmsLayers = getWMSLayersInMap();
 
@@ -37,10 +39,16 @@ const Bakgrunnskart = () => {
         (layer) => layer !== null
       ) as MainMappedLayer[];
 
-      setMappedLayers(nonNullLayers);
+      if (isMounted) {
+        setMappedLayers(nonNullLayers);
+      }
     };
 
     updateMappedLayers();
+
+    return () => {
+      isMounted = false;
+    };
   }, [visible, mappedLayers.length]);
 
   const toggleMainLayer = (mappedLayer: MainMappedLayer) => {
@@ -84,9 +92,7 @@ const Bakgrunnskart = () => {
 
   return (
     <Panel>
-      <SidebarPanelTitle closePanel={togglePanel}>
-        Bakgrunnskart
-      </SidebarPanelTitle>
+      <SidebarPanelTitle closePanel={togglePanel} title="Bakgrunnskart" />
       {zIndexes.map(renderMainLayerByZIndex)}
     </Panel>
   );

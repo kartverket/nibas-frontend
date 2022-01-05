@@ -1,18 +1,18 @@
-import React from "react";
 import styled from "styled-components";
 import Button from "components/Button";
 import { ReactComponent as CaretLeft } from "icons/caretleft.svg";
 
 type Props = {
   closePanel: () => void;
+  title: string;
 };
 
-const SidebarPanelTitle: React.FC<Props> = ({ children, closePanel }) => {
+const SidebarPanelTitle = ({ title, closePanel }: Props) => {
   return (
     <TitleWrapper>
-      <StyledTitle>{children}</StyledTitle>
+      <StyledTitle>{title}</StyledTitle>
       <CloseButton variant="icon" onClick={closePanel}>
-        <CaretLeft />
+        <CaretLeft aria-label={`Lukk ${title}`} />
       </CloseButton>
     </TitleWrapper>
   );

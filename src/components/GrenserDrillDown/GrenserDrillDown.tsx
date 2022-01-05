@@ -22,7 +22,7 @@ const GrenserDrillDown = () => {
 
   return (
     <Panel>
-      <SidebarPanelTitle closePanel={togglePanel}>Grenser</SidebarPanelTitle>
+      <SidebarPanelTitle closePanel={togglePanel} title="Grenser" />
       <Accordion title="Riksgrenser">
         <p>Kommer senere!</p>
       </Accordion>

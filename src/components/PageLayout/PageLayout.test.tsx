@@ -2,6 +2,59 @@ import { fireEvent, render, screen } from "test/test-utils";
 import PageLayout from "./PageLayout";
 
 describe("PageLayout", () => {
+  describe("Sidebar", () => {
+    it("should close panel on same sidebar button click", () => {
+      render(<PageLayout />);
+
+      const bakgrunnskartButton = screen.getByRole("button", {
+        name: /bakgrunnskart/i,
+      });
+      fireEvent.click(bakgrunnskartButton);
+      fireEvent.click(bakgrunnskartButton);
+
+      expect(
+        screen.queryByRole("heading", { name: /bakgrunnskart/i })
+      ).not.toBeInTheDocument();
+    });
+
+    it("should close other panels if another sidebar panel is opened", () => {
+      render(<PageLayout />);
+
+      const bakgrunnskartButton = screen.getByRole("button", {
+        name: /bakgrunnskart/i,
+      });
+      fireEvent.click(bakgrunnskartButton);
+
+      const nibasButton = screen.getByRole("button", { name: /nibas/i });
+      fireEvent.click(nibasButton);
+
+      expect(
+        screen.getByRole("heading", { name: /grenser/i })
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole("heading", { name: /bakgrunnskart/i })
+      ).not.toBeInTheDocument();
+    });
+
+    it("should close panel on left caret button click", () => {
+      render(<PageLayout />);
+
+      const bakgrunnskartButton = screen.getByRole("button", {
+        name: /bakgrunnskart/i,
+      });
+      fireEvent.click(bakgrunnskartButton);
+
+      const closeButton = screen.getByRole("button", {
+        name: /lukk bakgrunnskart/i,
+      });
+      fireEvent.click(closeButton);
+
+      expect(
+        screen.queryByRole("heading", { name: /bakgrunnskart/i })
+      ).not.toBeInTheDocument();
+    });
+  });
+
   describe("Background layers panel", () => {
     it("should not render when not visible", () => {
       render(<PageLayout />);
