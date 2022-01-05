@@ -3,7 +3,8 @@ import { createXYZ } from "ol/tilegrid";
 import { SyncSourceId, SyncSources } from "./types";
 
 const getWMSTileGrid = () => {
-  const tileSize = 1056;
+  // default er 256, så vi henter 4 gansker så store tiles
+  const tileSize = 1024;
   // http://epsg.io/25833
   // extent for EPSG:25833
   const extent = [-2465144.8, 4102893.55, 776625.76, 9408555.22];
