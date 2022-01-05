@@ -26,6 +26,27 @@ describe("PageLayout", () => {
         await screen.findByText("Administrative enheter WMS versjon 2")
       ).toBeInTheDocument();
     });
+
+    it("should toggle visibility of main layer on eye click", async () => {
+      render(<PageLayout />);
+
+      const bakgrunnskartButton = screen.getByRole("button", {
+        name: /bakgrunnskart/i,
+      });
+      fireEvent.click(bakgrunnskartButton);
+
+      const showLayerButton = await screen.findByRole("button", {
+        name: /vis Administrative enheter WMS versjon 2/i,
+      });
+      fireEvent.click(showLayerButton);
+
+      const hideLayerButton = await screen.findByRole("button", {
+        name: /skjul Administrative enheter WMS versjon 2/i,
+      });
+      fireEvent.click(hideLayerButton);
+
+      expect(showLayerButton).toBeInTheDocument();
+    });
   });
 
   describe("Nibas panel", () => {
@@ -103,10 +124,10 @@ describe("PageLayout", () => {
       });
       fireEvent.click(kommuneGrenserAccordionButton);
 
-      const vikenAccordionButton = await screen.findByRole("button", {
+      const agderAccordionButton = await screen.findByRole("button", {
         name: /agder/i,
       });
-      fireEvent.click(vikenAccordionButton);
+      fireEvent.click(agderAccordionButton);
 
       expect(await screen.findByText(/malvik/i)).toBeInTheDocument();
       expect(await screen.findByText(/giske/i)).toBeInTheDocument();
@@ -127,10 +148,15 @@ describe("PageLayout", () => {
         const closedEyes = await screen.findAllByRole("button", {
           name: "Usynlig",
         });
+        const openEyesBeforeClick = screen.queryAllByRole("button", {
+          name: "Synlig",
+        });
+
         fireEvent.click(closedEyes[0]);
 
         const openEye = screen.getByRole("button", { name: "Synlig" });
         expect(openEye).toBeInTheDocument();
+        expect(openEyesBeforeClick).toHaveLength(0);
       });
 
       it("should open eye and check checkbox on checkbox click", async () => {
