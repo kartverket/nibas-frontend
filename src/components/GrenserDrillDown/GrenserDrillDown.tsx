@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
+import KodelistePreview from "../KodelisteSelect/KodelistePreview";
 import FylkeList from "./FylkeList";
 import KommuneList from "./KommuneList";
 import { AdministrativEnhet } from "./types";
@@ -78,7 +79,8 @@ const GrenserDrillDown = ({ visible }: Props) => {
         <p>Kommer senere!</p>
       </Accordion>
       <Accordion title="Svalbardområdet">
-        <p>Kommer senere!</p>
+        {/* Kun for test/displayformål. */}
+        <KodelistePreview />
       </Accordion>
       <Accordion title="Maritime grenser">
         <p>Kommer senere!</p>
