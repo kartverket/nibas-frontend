@@ -8,6 +8,7 @@ export type SyncSources = {
   administrativeGrenser: TileWMS;
   stedsnavn: TileWMS;
   topografiskNorgeskart: TileWMS;
+  norgesMaritimeGrenser: TileWMS;
 };
 
 export type AsyncSources = {

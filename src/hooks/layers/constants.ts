@@ -13,6 +13,9 @@ type LayerIdGuard<T extends ByLayerId<unknown>> = T[LayerId] extends unknown
 
 export const createLayers = () => {
   const layers = {
+    norgesMaritimeGrenser: new TileLayer({
+      source: syncSources.norgesMaritimeGrenser,
+    }),
     topografiskNorgeskart: new TileLayer({
       source: syncSources.topografiskNorgeskart,
     }),
@@ -54,4 +57,5 @@ export const INITIAL_VISIBILITY: ByLayerId<boolean> = {
   stedsnavn: true,
   topografiskNorgeskart: true,
   edit: true,
+  norgesMaritimeGrenser: false,
 };

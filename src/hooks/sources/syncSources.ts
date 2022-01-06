@@ -44,10 +44,20 @@ const topografiskNorgeskartSource = new TileWMS({
   tileGrid: getWMSTileGrid(),
 });
 
+const norgesMaritimeGrenser = new TileWMS({
+  url: "https://openwms.statkart.no/skwms1/wms.nmg?service=wms",
+  params: {
+    LAYERS: "nmg_WMS",
+    CRS: "EPSG:25833",
+    TILED: true,
+  },
+});
+
 export const syncSources: SyncSources = {
   administrativeGrenser: administrativeEnheterSource,
   stedsnavn: stedsnavnSource,
   topografiskNorgeskart: topografiskNorgeskartSource,
+  norgesMaritimeGrenser,
 };
 
 // sett id på alle sources for å gjøre de mulig å sjekke opp med layers
