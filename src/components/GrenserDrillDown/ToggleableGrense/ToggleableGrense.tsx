@@ -2,7 +2,6 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import VectorLayer from "ol/layer/Vector";
 import styled from "styled-components";
-import { Grense } from "../types";
 import { ObjectValue, EditingType } from "../useEditGrenser";
 import Button from "components/Button";
 import { LayerId } from "hooks/layers/types";
@@ -10,6 +9,7 @@ import { GeometryVectorSource } from "hooks/sources/types";
 import { ReactComponent as InfoIcon } from "icons/info.svg";
 import { ReactComponent as VisibilityIcon } from "icons/visibility.svg";
 import { ReactComponent as VisibilityOffIcon } from "icons/visibility_off.svg";
+import { Grense } from "types/api";
 import { getLayerById } from "utils/map/layers";
 import {
   addFeaturesToSource,
@@ -27,7 +27,6 @@ type Props<T extends Grense> = {
   objectValue: ObjectValue | undefined;
   title: string;
   type: EditingType;
-  canSelect: boolean;
   getFeaturesToAdd: (grense: T) => Promise<Feature<Geometry>[]>;
   getFeaturesToRemove: (
     grense: T,
@@ -41,7 +40,6 @@ const ToggleableGrense = <T extends Grense>({
   objectValue = {},
   title,
   type,
-  canSelect,
   getFeaturesToAdd,
   getFeaturesToRemove,
 }: Props<T>) => {
@@ -130,13 +128,7 @@ const ToggleableGrense = <T extends Grense>({
         )}
       </Button>
       <label>
-        <input
-          type="checkbox"
-          checked={editing}
-          onChange={toggleSelected}
-          disabled={!canSelect}
-          title={!canSelect ? "Kun ett tema kan redigeres på en gang" : ""}
-        />
+        <input type="checkbox" checked={editing} onChange={toggleSelected} />
         {title}
       </label>
       <Button variant="icon" onClick={openInfo}>

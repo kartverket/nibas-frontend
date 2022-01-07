@@ -1,21 +1,17 @@
 import { Feature } from "ol";
-import Geometry from "ol/geom/Geometry";
-import {
-  fetchAdministrativEnhetFeaturesById,
-  updateAdministrativEnhetFeatures,
-} from "./administrativeEnheter";
-import { AdministrativEnhet } from "components/GrenserDrillDown/types";
+import LineString from "ol/geom/LineString";
+import { SimpleKommune } from "types/api";
 
-export const fetchKommuneFeaturesById = async (id: number) =>
-  fetchAdministrativEnhetFeaturesById(id, "KOMMUNE");
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const fetchKommunerByFylke = async (fylkeId: number) => {
-  const geojsonRequest = await fetch(`/v1/administrativ-enhet?type=KOMMUNE`);
-  const json = (await geojsonRequest.json()) as AdministrativEnhet[];
+  const response = await fetch(`/v1/kommuner?fylkeid=${fylkeId}`);
+  const json = (await response.json()) as SimpleKommune[];
 
-  return json.slice(0, 10);
+  return json;
 };
 
-export const updateKommuneFeatures = async (features: Feature<Geometry>[]) =>
-  updateAdministrativEnhetFeatures(features, "KOMMUNE");
+export const fetchKommuneFeaturesById = async (id: number) => {
+  const response = await fetch(`v1/kommuner/${id}/grenser`);
+  const json = (await response.json()) as Feature<LineString>;
+
+  return json;
+};

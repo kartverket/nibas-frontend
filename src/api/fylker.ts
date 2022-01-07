@@ -1,15 +1,17 @@
 import { Feature } from "ol";
-import Geometry from "ol/geom/Geometry";
-import {
-  fetchAdministrativEnhet,
-  fetchAdministrativEnhetFeaturesById,
-  updateAdministrativEnhetFeatures,
-} from "./administrativeEnheter";
+import LineString from "ol/geom/LineString";
+import { SimpleFylke } from "types/api";
 
-export const fetchFylker = () => fetchAdministrativEnhet("FYLKE");
+export const fetchFylker = async () => {
+  const response = await fetch(`v1/fylker`);
+  const json = (await response.json()) as SimpleFylke[];
 
-export const fetchFylkeFeaturesById = async (id: number) =>
-  fetchAdministrativEnhetFeaturesById(id, "FYLKE");
+  return json;
+};
 
-export const updateFylkeFeatures = async (features: Feature<Geometry>[]) =>
-  updateAdministrativEnhetFeatures(features, "FYLKE");
+export const fetchFylkeFeaturesById = async (id: number) => {
+  const response = await fetch(`v1/fylker/${id}/grenser`);
+  const json = (await response.json()) as Feature<LineString>;
+
+  return json;
+};
