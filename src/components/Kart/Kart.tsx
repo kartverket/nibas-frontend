@@ -6,7 +6,6 @@ import { updateGrenser } from "api/grenser";
 import Bakgrunnskart from "components/Bakgrunnskart";
 import CustomControl from "components/CustomControl";
 import GrenserDrillDown from "components/GrenserDrillDown";
-import { EditingType } from "components/GrenserDrillDown/useEditGrenser";
 import { OpenSidebarPanels } from "components/PageLayout/PageLayout";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
 import { createLayers } from "hooks/layers/constants";

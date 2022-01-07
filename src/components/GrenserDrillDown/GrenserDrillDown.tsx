@@ -17,7 +17,7 @@ type Props = {
 
 const GrenserDrillDown = ({ visible }: Props) => {
   const { data: fylker, loading } = useApi<SimpleFylke[]>("v1/fylker", []);
-  const { getCanSelect, setObjectValue, editingObject } = useEditGrenser();
+  const { setObjectValue, editingObject } = useEditGrenser();
 
   if (!visible) return null;
 
@@ -36,7 +36,6 @@ const GrenserDrillDown = ({ visible }: Props) => {
               setFylkeValue={(fylkesnavn: string, value: ObjectValue) =>
                 setObjectValue("fylke", fylkesnavn, value)
               }
-              canSelect={getCanSelect("fylke")}
             />
           ) : (
             <p>Henter fylker...</p>
@@ -60,7 +59,6 @@ const GrenserDrillDown = ({ visible }: Props) => {
                   setKommuneValue={(kommunenavn: string, value: ObjectValue) =>
                     setObjectValue("kommune", kommunenavn, value)
                   }
-                  canSelect={getCanSelect("kommune")}
                 />
               </Accordion>
             ))
