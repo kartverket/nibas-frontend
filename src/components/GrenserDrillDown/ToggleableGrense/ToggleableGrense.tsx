@@ -2,7 +2,6 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import VectorLayer from "ol/layer/Vector";
 import styled from "styled-components";
-import { Grense } from "../types";
 import { ObjectValue, EditingType } from "../useEditGrenser";
 import Button from "components/Button";
 import { LayerId } from "hooks/layers/types";
@@ -10,6 +9,7 @@ import { GeometryVectorSource } from "hooks/sources/types";
 import { ReactComponent as InfoIcon } from "icons/info.svg";
 import { ReactComponent as VisibilityIcon } from "icons/visibility.svg";
 import { ReactComponent as VisibilityOffIcon } from "icons/visibility_off.svg";
+import { Grense } from "types/api";
 import { getLayerById } from "utils/map/layers";
 import {
   addFeaturesToSource,

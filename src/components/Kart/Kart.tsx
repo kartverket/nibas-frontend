@@ -2,8 +2,7 @@ import { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { map } from "./constants";
 import ZoomControls from "./controls/ZoomControls";
-import { updateFylkeFeatures } from "api/fylker";
-import { updateKommuneFeatures } from "api/kommuner";
+import { updateGrenser } from "api/grenser";
 import Bakgrunnskart from "components/Bakgrunnskart";
 import CustomControl from "components/CustomControl";
 import GrenserDrillDown from "components/GrenserDrillDown";
@@ -48,21 +47,9 @@ const Kart = ({ openPanels }: Props) => {
 
   const saveDraft = async () => {
     const editLayer = getLayerById("edit");
-    const editingType = editLayer.get("type") as EditingType;
     const editFeatures = editLayer.getSource().getFeatures();
 
-    if (!editingType) return;
-
-    switch (editingType) {
-      case "fylke": {
-        updateFylkeFeatures(editFeatures);
-        break;
-      }
-      case "kommune": {
-        updateKommuneFeatures(editFeatures);
-        break;
-      }
-    }
+    updateGrenser(editFeatures);
   };
 
   return (

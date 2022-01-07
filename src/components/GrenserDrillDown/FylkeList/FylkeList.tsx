@@ -2,13 +2,13 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import styled from "styled-components";
 import ToggleableGrense from "../ToggleableGrense";
-import { AdministrativEnhet } from "../types";
 import { ObjectValue } from "../useEditGrenser";
 import { fetchFylkeFeaturesById } from "api/fylker";
+import { SimpleFylke } from "types/api";
 import { geoJsonToSource } from "utils/map/geoJson";
 
 type Props = {
-  fylker: AdministrativEnhet[];
+  fylker: SimpleFylke[];
   fylkeValues: Record<string, ObjectValue>;
   setFylkeValue: (kommune: string, value: ObjectValue) => void;
   canSelect: boolean;
@@ -20,17 +20,17 @@ const FylkeList = ({
   setFylkeValue,
   canSelect,
 }: Props) => {
-  const getFeaturesToAdd = async (fylke: AdministrativEnhet) => {
+  const getFeaturesToAdd = async (fylke: SimpleFylke) => {
     const json = await fetchFylkeFeaturesById(fylke.id);
     return geoJsonToSource(json).getFeatures();
   };
 
   const getFeaturesToRemove = (
-    fylke: AdministrativEnhet,
+    fylke: SimpleFylke,
     layerFeatures: Feature<Geometry>[]
   ) =>
     layerFeatures.filter(
-      (feature) => feature.getProperties().administrativEnhet.id === fylke.id
+      (feature) => feature.getProperties().kontekstId === fylke.id
     );
 
   return (
