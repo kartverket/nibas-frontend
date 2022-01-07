@@ -1,3 +1,4 @@
+import styled from "styled-components";
 import {
   fetchFylkesnumre,
   fetchKommunenumre,
@@ -7,35 +8,38 @@ import KodelisteSelect from "components/KodelisteSelect/KodelisteSelect";
 
 const KodelistePreview = () => {
   return (
-    <div>
+    <KodelistePreviewPanel>
       <div>
         <KodelisteSelect
           id="kommunenummerDropdown"
-          label="Velg et kommunenummer:"
+          label="Kommunenummer"
           name="kommunenummerName"
-          showSelectedText={true}
           fetchKodeListeFunction={fetchKommunenumre}
         />
       </div>
       <div>
         <KodelisteSelect
           id="fylkesnummerDropdown"
-          label="Velg et fylkesnummer:"
+          label="Fylkesnummer"
           name="fylkesnummerName"
-          selectedValue="77c14c5f-51ea-4b80-8746-32035193b811"
           fetchKodeListeFunction={fetchFylkesnumre}
         />
       </div>
       <div>
         <KodelisteSelect
           id="maalemetodeKoderDropdown"
-          label="Velg en målemetode:"
+          label="Målemetode"
           name="maalemetodeName"
           fetchKodeListeFunction={fetchMaalemetodeKoder}
         />
       </div>
-    </div>
+    </KodelistePreviewPanel>
   );
 };
+
+const KodelistePreviewPanel = styled.div`
+  margin-top: 16px;
+  margin-bottom: 16px;
+`;
 
 export default KodelistePreview;
