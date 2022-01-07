@@ -4,18 +4,19 @@ import VectorSource from "ol/source/Vector";
 
 export type GeometryVectorSource = VectorSource<Geometry>;
 
-export type SyncSources = {
+export type BakgrunnskartSources = {
   administrativeGrenser: TileWMS;
   stedsnavn: TileWMS;
   topografiskNorgeskart: TileWMS;
   norgesMaritimeGrenser: TileWMS;
 };
 
-export type AsyncSources = {
+export type GrenserSources = {
   fylker: GeometryVectorSource | undefined;
   kommuner: GeometryVectorSource | undefined;
   edit: GeometryVectorSource | undefined;
 };
 
-export type Sources = SyncSources & AsyncSources;
-export type SyncSourceId = keyof SyncSources;
+export type Sources = BakgrunnskartSources & GrenserSources;
+export type BakgrunnskartId = keyof BakgrunnskartSources;
+export type GrenserId = keyof GrenserSources;

@@ -1,8 +1,6 @@
 import Layer from "ol/layer/Layer";
-import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import Source from "ol/source/Source";
-import TileWMS from "ol/source/TileWMS";
 import { map } from "components/Kart/constants";
 import {
   createLayers,
@@ -50,15 +48,6 @@ export const addLayerIfNotExists = (layer: Layer<Source>) => {
   }
 };
 
-export const getWMSLayersInMap = () => {
-  const layers = getLayersArray();
-
-  return layers.filter(
-    (layer) =>
-      layer instanceof TileLayer && layer.getSource() instanceof TileWMS
-  ) as TileLayer<TileWMS>[];
-};
-
 export const getLayerIdFromMappedLayer = (mappedLayer: MainMappedLayer) => {
   const layers = getLayersArray();
   const layer = layers.find(
@@ -73,7 +62,7 @@ export const getLayerIdFromMappedLayer = (mappedLayer: MainMappedLayer) => {
 export const initLayer = (layer: Layer<Source>, layerId: LayerId) => {
   layer.set("id", layerId);
   layer.setVisible(INITIAL_VISIBILITY[layerId]);
-  layer.setZIndex(INITIAL_ZINDEXES[layerId]);
+  layer.setZIndex(INITIAL_ZINDEXES[layerId] ?? 0);
   addLayerIfNotExists(layer);
 };
 

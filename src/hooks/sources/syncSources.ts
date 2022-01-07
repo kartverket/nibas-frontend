@@ -1,9 +1,9 @@
 import TileWMS from "ol/source/TileWMS";
 import { createXYZ } from "ol/tilegrid";
-import { SyncSourceId, SyncSources } from "./types";
+import { BakgrunnskartId, BakgrunnskartSources } from "./types";
 
 const getWMSTileGrid = () => {
-  // default er 256, så vi henter 4 gansker så store tiles
+  // default er 256, så vi henter 4 ganger så store tiles
   const tileSize = 1024;
   // http://epsg.io/25833
   // extent for EPSG:25833
@@ -16,53 +16,60 @@ const getWMSTileGrid = () => {
   return tileGrid;
 };
 
+const defaultParams = {
+  CRS: "EPSG:25833",
+  TILED: true,
+};
+
 const administrativeEnheterSource = new TileWMS({
   url: "https://wms.geonorge.no/skwms1/wms.adm_enheter2?service=wms",
-  params: { LAYERS: "adm_enheter_V2_WMS", CRS: "EPSG:25833", TILED: true },
-  tileGrid: getWMSTileGrid(),
+  params: { LAYERS: "adm_enheter_V2_WMS", ...defaultParams },
 });
 
 const stedsnavnSource = new TileWMS({
   url: "http://openwms.statkart.no/skwms1/wms.stedsnavnenkel?version=1.3.0&service=wms",
   params: {
     LAYERS: "stedsnavnenkel",
-    CRS: "EPSG:25833",
     format: "image/png",
-    TILED: true,
+    ...defaultParams,
   },
-  tileGrid: getWMSTileGrid(),
 });
 
 const topografiskNorgeskartSource = new TileWMS({
   url: "https://openwms.statkart.no/skwms1/wms.topo4?service=wms",
   params: {
     LAYERS: "topo4_WMS",
-    CRS: "EPSG:25833",
     format: "image/png",
-    TILED: true,
+    ...defaultParams,
   },
-  tileGrid: getWMSTileGrid(),
 });
 
-const norgesMaritimeGrenser = new TileWMS({
+const norgesMaritimeGrenserSource = new TileWMS({
   url: "https://openwms.statkart.no/skwms1/wms.nmg?service=wms",
   params: {
     LAYERS: "nmg_WMS",
-    CRS: "EPSG:25833",
-    TILED: true,
+    ...defaultParams,
   },
 });
 
-export const syncSources: SyncSources = {
+export const bakgrunnskartSources: BakgrunnskartSources = {
   administrativeGrenser: administrativeEnheterSource,
   stedsnavn: stedsnavnSource,
   topografiskNorgeskart: topografiskNorgeskartSource,
-  norgesMaritimeGrenser,
+  norgesMaritimeGrenser: norgesMaritimeGrenserSource,
 };
 
-// sett id på alle sources for å gjøre de mulig å sjekke opp med layers
 (() => {
-  Object.keys(syncSources).forEach((id) =>
-    syncSources[id as SyncSourceId].set("id", id)
-  );
+  const tileGrid = getWMSTileGrid();
+
+  Object.keys(bakgrunnskartSources).forEach((id) => {
+    // sett id på alle sources for å gjøre de mulig å sjekke opp  med layers
+    bakgrunnskartSources[id as BakgrunnskartId].set("id", id);
+
+    // sett tile grid på alle sources
+    bakgrunnskartSources[id as BakgrunnskartId].setTileGridForProjection(
+      "EPSG:25833",
+      tileGrid
+    );
+  });
 })();

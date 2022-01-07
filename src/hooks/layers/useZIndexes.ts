@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
+import { bakgrunnskartLayers } from "./constants";
 import { ByLayerId, LayerId } from "./types";
-import { getLayerById, getWMSLayersInMap } from "utils/map/layers";
+import { getLayerById } from "utils/map/layers";
 
 export type ZIndexes = ByLayerId<number>;
 
 const useZIndexes = () => {
   const [zIndexes, setZIndexes] = useState<LayerId[]>(
-    getWMSLayersInMap().map((layer) => layer.get("id"))
+    Object.values(bakgrunnskartLayers).map((layer) => layer.get("id"))
   );
 
   // sett z-index i OL Map
