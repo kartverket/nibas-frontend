@@ -3,15 +3,16 @@ import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import Stroke from "ol/style/Stroke";
 import Style from "ol/style/Style";
-import { ByLayerId, LayerId } from "./types";
 import { bakgrunnskartSources } from "hooks/sources/syncSources";
+import { BakgrunnskartId, GrenseId } from "hooks/sources/types";
 
 // gi oss en error hvis layers ikke inneholder Layer definisjon for alle LayerIds
-type LayerIdGuard<T extends ByLayerId<unknown>> = T[LayerId] extends unknown
-  ? T
-  : never;
+type IdGuard<
+  Id extends string,
+  Layers extends Record<Id, unknown>
+> = Layers[Id] extends unknown ? Layers : never;
 
-export const bakgrunnskartLayers = {
+const typelessBakgrunnskartLayers = {
   stedsnavn: new TileLayer({ source: bakgrunnskartSources.stedsnavn }),
   administrativeGrenser: new TileLayer({
     source: bakgrunnskartSources.administrativeGrenser,
@@ -24,7 +25,12 @@ export const bakgrunnskartLayers = {
   }),
 };
 
-export const grenserLayers = {
+export const bakgrunnskartLayers = typelessBakgrunnskartLayers as IdGuard<
+  BakgrunnskartId,
+  typeof typelessBakgrunnskartLayers
+>;
+
+const typelessGrenserLayers = {
   // ingen source betyr at source settes async
   fylker: new VectorLayer({ source: new VectorSource() }),
   kommuner: new VectorLayer({ source: new VectorSource() }),
@@ -38,12 +44,7 @@ export const grenserLayers = {
   }),
 };
 
-// ubrukt atm
-export const createLayers = () => {
-  const layers = {
-    ...bakgrunnskartLayers,
-    ...grenserLayers,
-  };
-
-  return layers as LayerIdGuard<typeof layers>;
-};
+export const grenserLayers = typelessGrenserLayers as IdGuard<
+  GrenseId,
+  typeof typelessGrenserLayers
+>;

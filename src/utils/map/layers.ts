@@ -7,7 +7,7 @@ import { LayerId } from "hooks/layers/types";
 import {
   BakgrunnskartId,
   GeometryVectorSource,
-  GrenserId,
+  GrenseId,
 } from "hooks/sources/types";
 import { MainMappedLayer } from "utils/getLayersFromWMS";
 
@@ -76,7 +76,7 @@ export const initBakgrunnskartLayers = () => {
 
 export const initGrenserLayers = () => {
   Object.keys(grenserLayers).map((layerId) => {
-    initLayer(grenserLayers[layerId as GrenserId], layerId as GrenserId);
+    initLayer(grenserLayers[layerId as GrenseId], layerId as GrenseId);
   });
 };
 

@@ -17,6 +17,5 @@ export type GrenserSources = {
   edit: GeometryVectorSource | undefined;
 };
 
-export type Sources = BakgrunnskartSources & GrenserSources;
 export type BakgrunnskartId = keyof BakgrunnskartSources;
-export type GrenserId = keyof GrenserSources;
+export type GrenseId = keyof GrenserSources;
