@@ -8,24 +8,20 @@ import CustomControl from "components/CustomControl";
 import GrenserDrillDown from "components/GrenserDrillDown";
 import { OpenSidebarPanels } from "components/PageLayout/PageLayout";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
-import { createLayers } from "hooks/layers/constants";
-import { LayerId } from "hooks/layers/types";
-import { getLayerById, initLayer } from "utils/map/layers";
-
-const initLayers = () => {
-  const layers = createLayers();
-
-  Object.keys(layers).forEach((layerId) => {
-    const layer = layers[layerId as LayerId];
-    initLayer(layer, layerId as LayerId);
-  });
-};
-
-initLayers();
+import {
+  getLayerById,
+  initBakgrunnskartLayers,
+  initGrenserLayers,
+} from "utils/map/layers";
 
 type Props = {
   openPanels: OpenSidebarPanels;
 };
+
+// dette må skje utenfor komponenten siden React kjører dypere useEffects
+// før de lenger opp i treet, så lag er ikke definert når de trengs lenger ned
+initGrenserLayers();
+initBakgrunnskartLayers();
 
 const Kart = ({ openPanels }: Props) => {
   const mapRef = useRef<HTMLDivElement>(null);

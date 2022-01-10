@@ -2,13 +2,13 @@ import Layer from "ol/layer/Layer";
 import VectorLayer from "ol/layer/Vector";
 import Source from "ol/source/Source";
 import { map } from "components/Kart/constants";
-import {
-  createLayers,
-  INITIAL_VISIBILITY,
-  INITIAL_ZINDEXES,
-} from "hooks/layers/constants";
+import { bakgrunnskartLayers, grenserLayers } from "hooks/layers/constants";
 import { LayerId } from "hooks/layers/types";
-import { GeometryVectorSource } from "hooks/sources/types";
+import {
+  BakgrunnskartId,
+  GeometryVectorSource,
+  GrenserId,
+} from "hooks/sources/types";
 import { MainMappedLayer } from "utils/getLayersFromWMS";
 
 export const getLayersArray = () => map.getLayers().getArray() ?? [];
@@ -26,7 +26,8 @@ export const getLayerById = <T extends LayerId>(id: T) => {
     );
   }
 
-  return layersWithId[0] as ReturnType<typeof createLayers>[T];
+  return layersWithId[0] as (typeof bakgrunnskartLayers &
+    typeof grenserLayers)[T];
 };
 
 export const layerExistsInMap = (id: LayerId) => {
@@ -56,14 +57,27 @@ export const getLayerIdFromMappedLayer = (mappedLayer: MainMappedLayer) => {
 
   if (!layer) return;
 
-  return layer.get("id") as LayerId;
+  return layer.get("id") as BakgrunnskartId;
 };
 
 export const initLayer = (layer: Layer<Source>, layerId: LayerId) => {
   layer.set("id", layerId);
-  layer.setVisible(INITIAL_VISIBILITY[layerId]);
-  layer.setZIndex(INITIAL_ZINDEXES[layerId] ?? 0);
   addLayerIfNotExists(layer);
+};
+
+export const initBakgrunnskartLayers = () => {
+  Object.keys(bakgrunnskartLayers).map((layerId) => {
+    initLayer(
+      bakgrunnskartLayers[layerId as BakgrunnskartId],
+      layerId as BakgrunnskartId
+    );
+  });
+};
+
+export const initGrenserLayers = () => {
+  Object.keys(grenserLayers).map((layerId) => {
+    initLayer(grenserLayers[layerId as GrenserId], layerId as GrenserId);
+  });
 };
 
 export const getVectorLayers = () => {

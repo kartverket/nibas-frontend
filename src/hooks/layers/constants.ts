@@ -38,6 +38,7 @@ export const grenserLayers = {
   }),
 };
 
+// ubrukt atm
 export const createLayers = () => {
   const layers = {
     ...bakgrunnskartLayers,
@@ -45,29 +46,4 @@ export const createLayers = () => {
   };
 
   return layers as LayerIdGuard<typeof layers>;
-};
-
-const getInitialZIndexes = () => {
-  const bakgrunnskartIds = Object.keys(bakgrunnskartLayers);
-  const bakgrunnskartZIndexes = bakgrunnskartIds.reduce(
-    (acc, id, i) => ({
-      ...acc,
-      [id]: bakgrunnskartIds.length - i,
-    }),
-    {} as ByLayerId<number>
-  );
-
-  return bakgrunnskartZIndexes;
-};
-
-export const INITIAL_ZINDEXES = getInitialZIndexes();
-
-export const INITIAL_VISIBILITY: ByLayerId<boolean> = {
-  administrativeGrenser: false,
-  fylker: true,
-  kommuner: true,
-  stedsnavn: true,
-  topografiskNorgeskart: true,
-  edit: true,
-  norgesMaritimeGrenser: false,
 };

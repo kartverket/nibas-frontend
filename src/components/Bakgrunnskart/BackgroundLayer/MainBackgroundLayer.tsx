@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { DropTargetMonitor, useDrag, useDrop, XYCoord } from "react-dnd";
 import BackgroundLayerAccordion from "./BackgroundLayerAccordion";
 import SubBackgroundLayer from "./SubBackgroundLayer";
-import { LayerId } from "hooks/layers/types";
 import { BakgrunnskartId } from "hooks/sources/types";
 import { MainMappedLayer } from "utils/getLayersFromWMS";
 import { getLayerIdFromMappedLayer } from "utils/map/layers";
@@ -14,7 +13,7 @@ type Props = {
   toggleMainLayer: (mappedLayer: MainMappedLayer) => void;
   isMainLayerVisible: (mappedLayer: MainMappedLayer) => boolean;
   index: number;
-  moveLayer: (direction: "up" | "down", layerId: LayerId) => void;
+  moveLayer: (direction: "up" | "down", layerId: BakgrunnskartId) => void;
 };
 
 type DragItem = {
