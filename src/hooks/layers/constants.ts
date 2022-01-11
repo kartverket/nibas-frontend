@@ -5,20 +5,33 @@ import Stroke from "ol/style/Stroke";
 import Style from "ol/style/Style";
 import { bakgrunnskartSources } from "hooks/sources/syncSources";
 
+const createTileLayerFromBakgrunnskartSource = (
+  id: keyof typeof bakgrunnskartSources
+) => new TileLayer({ source: bakgrunnskartSources[id] });
+
 export const bakgrunnskartLayers = {
-  stedsnavn: new TileLayer({ source: bakgrunnskartSources.stedsnavn }),
-  administrativeGrenser: new TileLayer({
-    source: bakgrunnskartSources.administrativeGrenser,
-  }),
-  topografiskNorgeskart: new TileLayer({
-    source: bakgrunnskartSources.topografiskNorgeskart,
-  }),
-  norgesMaritimeGrenser: new TileLayer({
-    source: bakgrunnskartSources.norgesMaritimeGrenser,
-  }),
-  administrativeGrenserHistorisk: new TileLayer({
-    source: bakgrunnskartSources.administrativeGrenserHistorisk,
-  }),
+  stedsnavn: createTileLayerFromBakgrunnskartSource("stedsnavn"),
+  grunnkretser: createTileLayerFromBakgrunnskartSource("grunnkretser"),
+  administrativeGrenser: createTileLayerFromBakgrunnskartSource(
+    "administrativeGrenser"
+  ),
+  administrativeGrenserHistorisk: createTileLayerFromBakgrunnskartSource(
+    "administrativeGrenserHistorisk"
+  ),
+  topografiskNorgeskart: createTileLayerFromBakgrunnskartSource(
+    "topografiskNorgeskart"
+  ),
+  n5Raster2: createTileLayerFromBakgrunnskartSource("n5Raster2"),
+  kartbladinndelinger: createTileLayerFromBakgrunnskartSource(
+    "kartbladinndelinger"
+  ),
+  norgesMaritimeGrenser: createTileLayerFromBakgrunnskartSource(
+    "norgesMaritimeGrenser"
+  ),
+  sjokartDybdedata: createTileLayerFromBakgrunnskartSource("sjokartDybdedata"),
+  toporaster4: createTileLayerFromBakgrunnskartSource("toporaster4"),
+  stedsnavnSSR: createTileLayerFromBakgrunnskartSource("stedsnavnSSR"),
+  historiskeKart: createTileLayerFromBakgrunnskartSource("historiskeKart"),
 };
 
 export const grenserLayers = {

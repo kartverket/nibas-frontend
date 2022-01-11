@@ -1,6 +1,6 @@
 import { useEffect, useReducer } from "react";
+import { bakgrunnskartLayers } from "./constants";
 import { BakgrunnskartId } from "./types";
-import { bakgrunnskartSources } from "hooks/sources/syncSources";
 import { getLayerById } from "utils/map/layers";
 
 export type VisibleLayers = Record<BakgrunnskartId, boolean>;
@@ -41,7 +41,7 @@ const visibleLayersReducer = (state: VisibleLayers, action: Action) => {
 
 // lag er by default usynlige
 const getInitialVisibility = () => {
-  return Object.keys(bakgrunnskartSources).reduce(
+  return Object.keys(bakgrunnskartLayers).reduce(
     (acc, layerId) => ({
       ...acc,
       [layerId]: false,

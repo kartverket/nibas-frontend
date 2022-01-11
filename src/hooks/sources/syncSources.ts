@@ -21,41 +21,69 @@ const defaultParams = {
   TILED: true,
 };
 
+const createTileWMS = (
+  url: string,
+  mainLayerName: string,
+  params: Record<string, unknown> = {}
+) =>
+  new TileWMS({
+    url,
+    params: {
+      LAYERS: mainLayerName,
+      ...defaultParams,
+      ...params,
+    },
+  });
+
 export const bakgrunnskartSources = {
-  administrativeGrenser: new TileWMS({
-    url: "https://wms.geonorge.no/skwms1/wms.adm_enheter2?service=wms",
-    params: { LAYERS: "adm_enheter_V2_WMS", ...defaultParams },
-  }),
-  stedsnavn: new TileWMS({
-    url: "http://openwms.statkart.no/skwms1/wms.stedsnavnenkel?version=1.3.0&service=wms",
-    params: {
-      LAYERS: "stedsnavnenkel",
-      format: "image/png",
-      ...defaultParams,
-    },
-  }),
-  topografiskNorgeskart: new TileWMS({
-    url: "https://openwms.statkart.no/skwms1/wms.topo4?service=wms",
-    params: {
-      LAYERS: "topo4_WMS",
-      format: "image/png",
-      ...defaultParams,
-    },
-  }),
-  norgesMaritimeGrenser: new TileWMS({
-    url: "https://openwms.statkart.no/skwms1/wms.nmg?service=wms",
-    params: {
-      LAYERS: "nmg_WMS",
-      ...defaultParams,
-    },
-  }),
-  administrativeGrenserHistorisk: new TileWMS({
-    url: "https://wms.geonorge.no/skwms1/wms.adm_enheter_historisk?service=WMS",
-    params: {
-      LAYERS: "adm_enheter_historisk_WMS",
-      ...defaultParams,
-    },
-  }),
+  administrativeGrenser: createTileWMS(
+    "https://wms.geonorge.no/skwms1/wms.adm_enheter2?service=wms",
+    "adm_enheter_V2_WMS"
+  ),
+  stedsnavn: createTileWMS(
+    "http://openwms.statkart.no/skwms1/wms.stedsnavnenkel?version=1.3.0&service=wms",
+    "stedsnavnenkel"
+  ),
+  topografiskNorgeskart: createTileWMS(
+    "https://openwms.statkart.no/skwms1/wms.topo4?service=wms",
+    "topo4_WMS"
+  ),
+  norgesMaritimeGrenser: createTileWMS(
+    "https://openwms.statkart.no/skwms1/wms.nmg?service=wms",
+    "nmg_WMS"
+  ),
+  administrativeGrenserHistorisk: createTileWMS(
+    "https://wms.geonorge.no/skwms1/wms.adm_enheter_historisk?service=WMS",
+    "adm_enheter_historisk_WMS"
+  ),
+  grunnkretser: createTileWMS(
+    "https://openwms.statkart.no/skwms1/wms.grunnkretser?service=WMS",
+    "grunnkretser_WMS"
+  ),
+  n5Raster2: createTileWMS(
+    "https://openwms.statkart.no/skwms1/wms.n5raster2?service=WMS",
+    "n5Raster_WMS"
+  ),
+  kartbladinndelinger: createTileWMS(
+    "https://openwms.statkart.no/skwms1/wms.kartblad?service=WMS",
+    "Kartblad_WMS"
+  ),
+  sjokartDybdedata: createTileWMS(
+    "https://wms.geonorge.no/skwms1/wms.dybdedata2?service=WMS",
+    "Dybdedata2"
+  ),
+  toporaster4: createTileWMS(
+    "http://openwms.statkart.no/skwms1/wms.toporaster4?version=1.3.0&service=wms",
+    "toporaster"
+  ),
+  stedsnavnSSR: createTileWMS(
+    "https://openwms.statkart.no/skwms1/wms.ssr2?service=WMS",
+    "ssr2_wms"
+  ),
+  historiskeKart: createTileWMS(
+    "https://wms.geonorge.no/skwms1/wms.historiskekart?service=WMS",
+    "historiskekart"
+  ),
 };
 
 (() => {
