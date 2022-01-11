@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import TileWMS from "ol/source/TileWMS";
 import BackgroundLayerAccordion from "./BackgroundLayerAccordion";
+import { BakgrunnskartId } from "hooks/layers/types";
 import { bakgrunnskartSources } from "hooks/sources/syncSources";
-import { BakgrunnskartId } from "hooks/sources/types";
 import { MappedLayer } from "utils/getLayersFromWMS";
 
 const getLayersStringToReplace = (

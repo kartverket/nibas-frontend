@@ -1,6 +1,6 @@
 import { useEffect, useReducer } from "react";
+import { BakgrunnskartId } from "./types";
 import { bakgrunnskartSources } from "hooks/sources/syncSources";
-import { BakgrunnskartId } from "hooks/sources/types";
 import { getLayerById } from "utils/map/layers";
 
 export type VisibleLayers = Record<BakgrunnskartId, boolean>;

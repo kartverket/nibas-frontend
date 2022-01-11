@@ -1,6 +1,6 @@
 import TileWMS from "ol/source/TileWMS";
 import { createXYZ } from "ol/tilegrid";
-import { BakgrunnskartId, BakgrunnskartSources } from "./types";
+import { BakgrunnskartId } from "hooks/layers/types";
 
 const getWMSTileGrid = () => {
   // default er 256, så vi henter 4 ganger så store tiles
@@ -21,7 +21,7 @@ const defaultParams = {
   TILED: true,
 };
 
-export const bakgrunnskartSources: BakgrunnskartSources = {
+export const bakgrunnskartSources = {
   administrativeGrenser: new TileWMS({
     url: "https://wms.geonorge.no/skwms1/wms.adm_enheter2?service=wms",
     params: { LAYERS: "adm_enheter_V2_WMS", ...defaultParams },

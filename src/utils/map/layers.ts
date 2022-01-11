@@ -3,12 +3,8 @@ import VectorLayer from "ol/layer/Vector";
 import Source from "ol/source/Source";
 import { map } from "components/Kart/constants";
 import { bakgrunnskartLayers, grenserLayers } from "hooks/layers/constants";
-import { LayerId } from "hooks/layers/types";
-import {
-  BakgrunnskartId,
-  GeometryVectorSource,
-  GrenseId,
-} from "hooks/sources/types";
+import { BakgrunnskartId, GrenseId, LayerId } from "hooks/layers/types";
+import { GeometryVectorSource } from "hooks/sources/types";
 import { MainMappedLayer } from "utils/getLayersFromWMS";
 
 export const getLayersArray = () => map.getLayers().getArray() ?? [];

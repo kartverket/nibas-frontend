@@ -1,6 +1,6 @@
 import WMSCapabilities from "ol/format/WMSCapabilities";
 import { TileWMS } from "ol/source";
-import { BakgrunnskartId } from "hooks/sources/types";
+import { BakgrunnskartId } from "hooks/layers/types";
 
 const parser = new WMSCapabilities();
 

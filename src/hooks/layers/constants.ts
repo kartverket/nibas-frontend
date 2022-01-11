@@ -4,16 +4,8 @@ import VectorSource from "ol/source/Vector";
 import Stroke from "ol/style/Stroke";
 import Style from "ol/style/Style";
 import { bakgrunnskartSources } from "hooks/sources/syncSources";
-import { BakgrunnskartId, GrenseId } from "hooks/sources/types";
 
-// gi oss en error hvis layers ikke inneholder Layer definisjon for alle LayerIds
-// behold typen til objektet for TS automagi uten å generalisere den
-type IdGuard<
-  Id extends string,
-  Layers extends Record<Id, unknown>
-> = Layers[Id] extends unknown ? Layers : never;
-
-const typelessBakgrunnskartLayers = {
+export const bakgrunnskartLayers = {
   stedsnavn: new TileLayer({ source: bakgrunnskartSources.stedsnavn }),
   administrativeGrenser: new TileLayer({
     source: bakgrunnskartSources.administrativeGrenser,
@@ -29,12 +21,7 @@ const typelessBakgrunnskartLayers = {
   }),
 };
 
-export const bakgrunnskartLayers = typelessBakgrunnskartLayers as IdGuard<
-  BakgrunnskartId,
-  typeof typelessBakgrunnskartLayers
->;
-
-const typelessGrenserLayers = {
+export const grenserLayers = {
   // ingen source betyr at source settes async
   fylker: new VectorLayer({ source: new VectorSource() }),
   kommuner: new VectorLayer({ source: new VectorSource() }),
@@ -47,8 +34,3 @@ const typelessGrenserLayers = {
     }),
   }),
 };
-
-export const grenserLayers = typelessGrenserLayers as IdGuard<
-  GrenseId,
-  typeof typelessGrenserLayers
->;

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { DropTargetMonitor, useDrag, useDrop, XYCoord } from "react-dnd";
 import BackgroundLayerAccordion from "./BackgroundLayerAccordion";
 import SubBackgroundLayer from "./SubBackgroundLayer";
-import { BakgrunnskartId } from "hooks/sources/types";
+import { BakgrunnskartId } from "hooks/layers/types";
 import { MainMappedLayer } from "utils/getLayersFromWMS";
 import { getLayerIdFromMappedLayer } from "utils/map/layers";
 

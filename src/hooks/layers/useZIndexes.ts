@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { bakgrunnskartLayers } from "./constants";
-import { ByLayerId } from "./types";
-import { BakgrunnskartId } from "hooks/sources/types";
+import { BakgrunnskartId, ByLayerId } from "./types";
 import { getLayerById } from "utils/map/layers";
 
 export type ZIndexes = ByLayerId<number>;
