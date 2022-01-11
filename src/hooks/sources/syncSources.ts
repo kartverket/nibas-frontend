@@ -21,42 +21,41 @@ const defaultParams = {
   TILED: true,
 };
 
-const administrativeEnheterSource = new TileWMS({
-  url: "https://wms.geonorge.no/skwms1/wms.adm_enheter2?service=wms",
-  params: { LAYERS: "adm_enheter_V2_WMS", ...defaultParams },
-});
-
-const stedsnavnSource = new TileWMS({
-  url: "http://openwms.statkart.no/skwms1/wms.stedsnavnenkel?version=1.3.0&service=wms",
-  params: {
-    LAYERS: "stedsnavnenkel",
-    format: "image/png",
-    ...defaultParams,
-  },
-});
-
-const topografiskNorgeskartSource = new TileWMS({
-  url: "https://openwms.statkart.no/skwms1/wms.topo4?service=wms",
-  params: {
-    LAYERS: "topo4_WMS",
-    format: "image/png",
-    ...defaultParams,
-  },
-});
-
-const norgesMaritimeGrenserSource = new TileWMS({
-  url: "https://openwms.statkart.no/skwms1/wms.nmg?service=wms",
-  params: {
-    LAYERS: "nmg_WMS",
-    ...defaultParams,
-  },
-});
-
 export const bakgrunnskartSources: BakgrunnskartSources = {
-  administrativeGrenser: administrativeEnheterSource,
-  stedsnavn: stedsnavnSource,
-  topografiskNorgeskart: topografiskNorgeskartSource,
-  norgesMaritimeGrenser: norgesMaritimeGrenserSource,
+  administrativeGrenser: new TileWMS({
+    url: "https://wms.geonorge.no/skwms1/wms.adm_enheter2?service=wms",
+    params: { LAYERS: "adm_enheter_V2_WMS", ...defaultParams },
+  }),
+  stedsnavn: new TileWMS({
+    url: "http://openwms.statkart.no/skwms1/wms.stedsnavnenkel?version=1.3.0&service=wms",
+    params: {
+      LAYERS: "stedsnavnenkel",
+      format: "image/png",
+      ...defaultParams,
+    },
+  }),
+  topografiskNorgeskart: new TileWMS({
+    url: "https://openwms.statkart.no/skwms1/wms.topo4?service=wms",
+    params: {
+      LAYERS: "topo4_WMS",
+      format: "image/png",
+      ...defaultParams,
+    },
+  }),
+  norgesMaritimeGrenser: new TileWMS({
+    url: "https://openwms.statkart.no/skwms1/wms.nmg?service=wms",
+    params: {
+      LAYERS: "nmg_WMS",
+      ...defaultParams,
+    },
+  }),
+  administrativeGrenserHistorisk: new TileWMS({
+    url: "https://wms.geonorge.no/skwms1/wms.adm_enheter_historisk?service=WMS",
+    params: {
+      LAYERS: "adm_enheter_historisk_WMS",
+      ...defaultParams,
+    },
+  }),
 };
 
 (() => {

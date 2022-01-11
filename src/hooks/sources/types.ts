@@ -9,6 +9,7 @@ export type BakgrunnskartSources = {
   stedsnavn: TileWMS;
   topografiskNorgeskart: TileWMS;
   norgesMaritimeGrenser: TileWMS;
+  administrativeGrenserHistorisk: TileWMS;
 };
 
 export type GrenserSources = {

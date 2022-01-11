@@ -7,6 +7,7 @@ import { bakgrunnskartSources } from "hooks/sources/syncSources";
 import { BakgrunnskartId, GrenseId } from "hooks/sources/types";
 
 // gi oss en error hvis layers ikke inneholder Layer definisjon for alle LayerIds
+// behold typen til objektet for TS automagi uten å generalisere den
 type IdGuard<
   Id extends string,
   Layers extends Record<Id, unknown>
@@ -22,6 +23,9 @@ const typelessBakgrunnskartLayers = {
   }),
   norgesMaritimeGrenser: new TileLayer({
     source: bakgrunnskartSources.norgesMaritimeGrenser,
+  }),
+  administrativeGrenserHistorisk: new TileLayer({
+    source: bakgrunnskartSources.administrativeGrenserHistorisk,
   }),
 };
 

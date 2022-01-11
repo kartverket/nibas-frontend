@@ -1,4 +1,5 @@
 import { useEffect, useReducer } from "react";
+import { bakgrunnskartSources } from "hooks/sources/syncSources";
 import { BakgrunnskartId } from "hooks/sources/types";
 import { getLayerById } from "utils/map/layers";
 
@@ -38,12 +39,21 @@ const visibleLayersReducer = (state: VisibleLayers, action: Action) => {
   }
 };
 
+// lag er by default usynlige
+const getInitialVisibility = () => {
+  return Object.keys(bakgrunnskartSources).reduce(
+    (acc, layerId) => ({
+      ...acc,
+      [layerId]: false,
+    }),
+    {} as VisibleLayers
+  );
+};
+
 const useVisibleLayers = () => {
   const [visibleLayers, dispatch] = useReducer(visibleLayersReducer, {
-    administrativeGrenser: false,
-    stedsnavn: true,
+    ...getInitialVisibility(),
     topografiskNorgeskart: true,
-    norgesMaritimeGrenser: false,
   });
 
   // sett synlighet til layer i map til ny verdi
