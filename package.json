@@ -18,8 +18,8 @@
     "test": "react-scripts test",
     "test:coverage": "npm test -- src/* --coverage",
     "eject": "react-scripts eject",
-    "lint": "eslint src/**",
-    "lint:fix": "eslint src/** --fix"
+    "lint": "eslint src",
+    "lint:fix": "npm run lint -- --fix"
   },
   "eslintConfig": {
     "extends": [
