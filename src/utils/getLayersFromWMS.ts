@@ -52,7 +52,7 @@ const getSubLayersFromWMSSource = async (source: TileWMS) => {
 
   const json = parser.read(xml);
 
-  if (!json.Capability) return null;
+  if (!json?.Capability) return null;
 
   const mainLayer = json.Capability.Layer;
   const transformedLayer = mapLayer(mainLayer) as MainMappedLayer;

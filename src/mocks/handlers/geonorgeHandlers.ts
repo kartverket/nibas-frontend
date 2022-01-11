@@ -1,17 +1,30 @@
 import { rest } from "msw";
 import type { RestHandler } from "msw";
 
+const getFailingRequests = () => {
+  const requestUrls = [
+    "https://openwms.statkart.no/skwms1/wms.topo4",
+    "http://openwms.statkart.no/skwms1/wms.stedsnavnenkel",
+    "https://openwms.statkart.no/skwms1/wms.grunnkretser",
+    "https://wms.geonorge.no/skwms1/wms.adm_enheter_historisk",
+    "https://openwms.statkart.no/skwms1/wms.n5raster2",
+    "https://openwms.statkart.no/skwms1/wms.kartblad",
+    "https://openwms.statkart.no/skwms1/wms.nmg",
+    "https://wms.geonorge.no/skwms1/wms.dybdedata2",
+    "http://openwms.statkart.no/skwms1/wms.toporaster4",
+    "https://openwms.statkart.no/skwms1/wms.ssr2",
+    "https://wms.geonorge.no/skwms1/wms.historiskekart",
+    "https://openwms.statkart.no/skwms1/wms.grunnkretser",
+  ];
+
+  return requestUrls.map((url) =>
+    rest.get(url, (req, res, ctx) => res(ctx.status(501)))
+  );
+};
+
 export const geonorgeHandlers: RestHandler[] = [
   // vi mocker alle requests til WMS servere
-  rest.get("https://openwms.statkart.no/skwms1/wms.topo4", (req, res, ctx) => {
-    return res(ctx.status(501));
-  }),
-  rest.get(
-    "http://openwms.statkart.no/skwms1/wms.stedsnavnenkel",
-    (req, res, ctx) => {
-      return res(ctx.status(501));
-    }
-  ),
+  ...getFailingRequests(),
   rest.get(
     "https://wms.geonorge.no/skwms1/wms.adm_enheter2",
     (req, res, ctx) => {

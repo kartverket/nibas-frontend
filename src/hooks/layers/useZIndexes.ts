@@ -9,9 +9,7 @@ const useZIndexes = () => {
   const [zIndexes, setZIndexes] = useState<BakgrunnskartId[]>([]);
 
   useEffect(() => {
-    setZIndexes(
-      Object.values(bakgrunnskartLayers).map((layer) => layer.get("id"))
-    );
+    setZIndexes(Object.keys(bakgrunnskartLayers) as BakgrunnskartId[]);
   }, []);
 
   // sett z-index i OL Map

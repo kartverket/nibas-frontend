@@ -16,7 +16,6 @@ const mockLayer = {
 // mock et layer så vi kan gjøre request og mapping riktig
 jest.mock("utils/map/layers", () => ({
   getLayerIdFromMappedLayer: jest.fn(),
-  getWMSLayersInMap: () => [mockLayer],
   getLayerById: () => mockLayer,
 }));
 
