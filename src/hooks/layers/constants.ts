@@ -10,28 +10,31 @@ const createTileLayerFromBakgrunnskartSource = (
 ) => new TileLayer({ source: bakgrunnskartSources[id] });
 
 export const bakgrunnskartLayers = {
-  stedsnavn: createTileLayerFromBakgrunnskartSource("stedsnavn"),
-  grunnkretser: createTileLayerFromBakgrunnskartSource("grunnkretser"),
   administrativeGrenser: createTileLayerFromBakgrunnskartSource(
     "administrativeGrenser"
   ),
   administrativeGrenserHistorisk: createTileLayerFromBakgrunnskartSource(
     "administrativeGrenserHistorisk"
   ),
-  topografiskNorgeskart: createTileLayerFromBakgrunnskartSource(
-    "topografiskNorgeskart"
-  ),
-  n5Raster2: createTileLayerFromBakgrunnskartSource("n5Raster2"),
+  grunnkretser: createTileLayerFromBakgrunnskartSource("grunnkretser"),
+  stedsnavn: createTileLayerFromBakgrunnskartSource("stedsnavn"),
+  stedsnavnSSR: createTileLayerFromBakgrunnskartSource("stedsnavnSSR"),
   kartbladinndelinger: createTileLayerFromBakgrunnskartSource(
     "kartbladinndelinger"
   ),
+  sjokartDybdedata: createTileLayerFromBakgrunnskartSource("sjokartDybdedata"),
+  n5Raster2: createTileLayerFromBakgrunnskartSource("n5Raster2"),
+  historiskeKart: createTileLayerFromBakgrunnskartSource("historiskeKart"),
+  topografiskNorgeskart: createTileLayerFromBakgrunnskartSource(
+    "topografiskNorgeskart"
+  ),
+  topografiskNorgeskartGraatone: createTileLayerFromBakgrunnskartSource(
+    "topografiskNorgeskartGraatone"
+  ),
+  toporaster4: createTileLayerFromBakgrunnskartSource("toporaster4"),
   norgesMaritimeGrenser: createTileLayerFromBakgrunnskartSource(
     "norgesMaritimeGrenser"
   ),
-  sjokartDybdedata: createTileLayerFromBakgrunnskartSource("sjokartDybdedata"),
-  toporaster4: createTileLayerFromBakgrunnskartSource("toporaster4"),
-  stedsnavnSSR: createTileLayerFromBakgrunnskartSource("stedsnavnSSR"),
-  historiskeKart: createTileLayerFromBakgrunnskartSource("historiskeKart"),
 };
 
 export const grenserLayers = {

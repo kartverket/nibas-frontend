@@ -84,6 +84,10 @@ export const bakgrunnskartSources = {
     "https://wms.geonorge.no/skwms1/wms.historiskekart?service=WMS",
     "historiskekart"
   ),
+  topografiskNorgeskartGraatone: createTileWMS(
+    "https://openwms.statkart.no/skwms1/wms.topo4.graatone?service=wms",
+    "topo4graatone_WMS"
+  ),
 };
 
 (() => {
