@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import BaseLayer from "ol/layer/Base";
+import TileLayer from "ol/layer/Tile";
+import TileWMS from "ol/source/TileWMS";
 import styled from "styled-components";
 import MainBackgroundLayer from "./BackgroundLayer/MainBackgroundLayer";
 import { SidebarPanel } from "components/Sidebar/SidebarPanel";
@@ -15,9 +18,14 @@ import getSubLayersFromWMSSource, {
 } from "utils/getLayersFromWMS";
 import { getLayerIdFromMappedLayer } from "utils/map/layers";
 
+  const isWmsLayer = (layer: BaseLayer): layer is TileLayer<TileWMS> => {
+    return layer instanceof TileLayer;
+  };
+
 const Bakgrunnskart = () => {
-  const { isOpen: visible, togglePanel } = useSidebarPanel("backgroundLayers");
   const [mappedLayers, setMappedLayers] = useState<MainMappedLayer[]>([]);
+
+  const { isOpen: visible, togglePanel } = useSidebarPanel("backgroundLayers");
 
   const { visibleLayers, dispatch } = useVisibleLayers();
   const { moveLayer, zIndexes } = useZIndexes();
@@ -28,13 +36,21 @@ const Bakgrunnskart = () => {
     let isMounted = true;
 
     const updateMappedLayers = async () => {
-      const mappedLayersPromises = Object.values(bakgrunnskartLayers).map(
-        (layer) => getSubLayersFromWMSSource(layer.getSource())
-      );
+      const layers = Object.values(bakgrunnskartLayers);
 
-      const layers = await Promise.all(mappedLayersPromises);
+      const mappedLayerPromises: Promise<MainMappedLayer | null>[] = [];
 
-      const nonNullLayers = layers.filter(
+      layers.forEach((layer) => {
+        if (isWmsLayer(layer)) {
+          mappedLayerPromises.push(
+            getSubLayersFromWMSSource(layer.getSource())
+          );
+        }
+      });
+
+      const mappedLayers = await Promise.all(mappedLayerPromises);
+
+      const nonNullLayers = mappedLayers.filter(
         (layer) => layer !== null
       ) as MainMappedLayer[];
 

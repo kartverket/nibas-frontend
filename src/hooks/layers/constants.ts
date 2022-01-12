@@ -39,6 +39,7 @@ export const bakgrunnskartLayers = {
   sjokartElektroniske: createTileLayerFromBakgrunnskartSource(
     "sjokartElektroniske"
   ),
+  matrikkelenWfs: new VectorLayer({ source: new VectorSource() }),
 };
 
 export const grenserLayers = {

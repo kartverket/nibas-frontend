@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import TileWMS from "ol/source/TileWMS";
+import { bakgrunnskartLayers } from "../../../hooks/layers/constants";
 import BackgroundLayerAccordion from "./BackgroundLayerAccordion";
 import { BakgrunnskartId } from "hooks/layers/types";
-import { bakgrunnskartSources } from "hooks/sources/syncSources";
 import { MappedLayer } from "utils/getLayersFromWMS";
 
 const getLayersStringToReplace = (
@@ -49,7 +49,9 @@ const SubBackgroundLayer = ({
 
   useEffect(() => {
     const isSubLayerVisible = () => {
-      const source = bakgrunnskartSources[mainLayerSourceId] as TileWMS;
+      const source = bakgrunnskartLayers[
+        mainLayerSourceId
+      ].getSource() as TileWMS;
       const layersInParams = source.getParams().LAYERS as string;
 
       if (!mappedLayer.name) return false;
@@ -61,7 +63,9 @@ const SubBackgroundLayer = ({
   }, [mainLayerSourceId, mappedLayer.name, mappedLayer]);
 
   const updateSourceParams = () => {
-    const source = bakgrunnskartSources[mainLayerSourceId] as TileWMS;
+    const source = bakgrunnskartLayers[
+      mainLayerSourceId
+    ].getSource() as TileWMS;
     const layersInParams = source.getParams().LAYERS as string;
     const mappedLayerName = mappedLayer.name;
 

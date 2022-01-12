@@ -132,12 +132,11 @@ bakgrunnskartSources.sjokartElektroniske.set(
 
   Object.keys(bakgrunnskartSources).forEach((id) => {
     // sett id på alle sources for å gjøre de mulig å sjekke opp  med layers
-    bakgrunnskartSources[id as BakgrunnskartId].set("id", id);
+    bakgrunnskartSources[id as keyof typeof bakgrunnskartSources].set("id", id);
 
     // sett tile grid på alle sources
-    bakgrunnskartSources[id as BakgrunnskartId].setTileGridForProjection(
-      "EPSG:25833",
-      tileGrid
-    );
+    bakgrunnskartSources[
+      id as keyof typeof bakgrunnskartSources
+    ].setTileGridForProjection("EPSG:25833", tileGrid);
   });
 })();
