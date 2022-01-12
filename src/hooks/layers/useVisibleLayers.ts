@@ -55,6 +55,7 @@ const useVisibleLayers = () => {
     ...getInitialVisibility(),
     topografiskNorgeskart: true,
     sjokartElektroniske: true,
+    matrikkelenWfs: true,
   });
 
   // sett synlighet til layer i map til ny verdi
