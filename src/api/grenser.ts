@@ -6,7 +6,7 @@ export const updateGrenser = async (features: Feature<Geometry>[]) => {
   const geoJson = featuresToGeoJson(features);
 
   const results = await fetch(`v1/grenser`, {
-    method: "PUT",
+    method: "POST",
     body: geoJson,
     headers: {
       "Content-Type": "application/json",
