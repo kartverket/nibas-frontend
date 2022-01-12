@@ -15,6 +15,7 @@ const getFailingRequests = () => {
     "https://openwms.statkart.no/skwms1/wms.ssr2",
     "https://wms.geonorge.no/skwms1/wms.historiskekart",
     "https://openwms.statkart.no/skwms1/wms.grunnkretser",
+    "https://openwms.statkart.no/skwms1/wms.topo4.graatone",
   ];
 
   return requestUrls.map((url) =>
