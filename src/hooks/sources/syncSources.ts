@@ -1,6 +1,7 @@
 import TileWMS from "ol/source/TileWMS";
 import { createXYZ } from "ol/tilegrid";
 import { BakgrunnskartId } from "hooks/layers/types";
+import { getSrcWithTicket } from "utils/geonorgeTicket";
 
 const getWMSTileGrid = () => {
   // default er 256, så vi henter 4 ganger så store tiles
@@ -28,6 +29,30 @@ const createTileWMS = (
 ) =>
   new TileWMS({
     url,
+    params: {
+      LAYERS: mainLayerName,
+      ...defaultParams,
+      ...params,
+    },
+  });
+
+const createAuthedTileWMS = (
+  url: string,
+  mainLayerName: string,
+  tjenesteId: string,
+  params: Record<string, unknown> = {}
+) =>
+  new TileWMS({
+    url,
+    tileLoadFunction: async (imageTile, src) => {
+      // dokumentasjonen mener dette skal være måten det gjøres på,
+      // mens typescript klager. Type mismatch et sted i OpenLayers
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (imageTile as any).getImage().src = await getSrcWithTicket(
+        tjenesteId,
+        src
+      );
+    },
     params: {
       LAYERS: mainLayerName,
       ...defaultParams,
@@ -88,7 +113,19 @@ export const bakgrunnskartSources = {
     "https://openwms.statkart.no/skwms1/wms.topo4.graatone?service=wms",
     "topo4graatone_WMS"
   ),
+  sjokartElektroniske: createAuthedTileWMS(
+    "/skwms1/wms.ecc_enc?service=WMS",
+    "background",
+    "wms.ecc_enc"
+  ),
+  norgeIBilder: createAuthedTileWMS("/skwms1/wms.nib?", "ortofoto", "wms.nib"),
 };
+
+bakgrunnskartSources.norgeIBilder.set("protectedTjenesteId", "wms.nib");
+bakgrunnskartSources.sjokartElektroniske.set(
+  "protectedTjenesteId",
+  "wms.ecc_enc"
+);
 
 (() => {
   const tileGrid = getWMSTileGrid();

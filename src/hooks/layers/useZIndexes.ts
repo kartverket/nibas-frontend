@@ -20,7 +20,7 @@ const useZIndexes = () => {
       if (!layer) return;
 
       // bakgrunnskart vil alltid ha negativ z-index
-      layer.setZIndex(-i);
+      layer.setZIndex(-i - 1);
     });
   }, [zIndexes]);
 
