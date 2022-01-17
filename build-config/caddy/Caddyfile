@@ -1,5 +1,19 @@
-#Starter applikasjonen på port 8080 og proxyer kall til /v1/* til nibas-backend-service (som nås internt på kubernetes-clusteret)
-:8080
+# Starter applikasjonen på port 8080
+:{$PORT}
 
-reverse_proxy /v1/* nibas-backend-service:80
+# Proxy kall til /v1/* til nibas-backend i test
+reverse_proxy /v1/* {$BACKEND_HOST}
+
+# Legg på brukernavn og passord når klient skal hente ticket 
+# til de låste bakgrunnskartene
+rewrite /skbaatts/req ?{query}&brukerid={$BAAT_USERNAME}&passord={$BAAT_PASSWORD}&retformat=s
+
+# Send alle bakgrunnskart til geonorge for å unngå CORS error
+@laasteBakgrunnskart {
+    path /skwms1/wms.nib
+    path /skwms1/wms.ecc_enc
+}
+reverse_proxy @laasteBakgrunnskart https://wms.geonorge.no
+
+# Start filserveren
 file_server

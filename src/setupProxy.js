@@ -45,6 +45,7 @@ module.exports = function (app) {
     })
   );
 
+  // låste bakgrunnskart må proxyes gjennom backend pga cors
   app.use(
     createProxyMiddleware(["/skwms1/wms.nib", "/skwms1/wms.ecc_enc"], {
       target: "https://wms.geonorge.no",

@@ -37,3 +37,15 @@ REACT_APP_BAAT_PASSWORD=Ditt_BAAT_passord
 
 eslint blir installert på npm install. Men husk å aktivere plugin. For IntelliJ: Languages & Frameworks -> Javascript ->
 Code Quality Tools -> ESLint. Velg å huke av for Automatic ESLint configuration.
+
+## Docker
+
+Bygge image
+
+`docker build . -f Dockerfile-ci -t nibas-klient`
+
+Kjøre image
+
+`docker run -p 3000:8080 -e BACKEND_HOST=nibas-backend.tz2-test-apps.k8s.local:80 -e PORT=8080 --name nibas-klient nibas-klient`
+
+Her kan da BACKEND_HOST env variablen byttes ut, så vil kall proxyes gjennom Caddy til den verdien.

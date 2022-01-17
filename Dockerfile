@@ -8,6 +8,6 @@ RUN npm run build
 FROM harbor-staging.statkart.no/proxy_cache/library/caddy:2
 RUN addgroup -g 1242 nibas; \
   adduser -u 1242 -D -G nibas nibas
-COPY build-config/caddy/Caddyfile-local /etc/caddy/Caddyfile
+COPY build-config/caddy/Caddyfile /etc/caddy/Caddyfile
 COPY --from=nodeContainer /app/build/ /srv
 USER 1242
