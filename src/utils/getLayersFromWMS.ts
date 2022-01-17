@@ -48,7 +48,6 @@ const getSubLayersFromWMSSource = async (source: TileWMS) => {
   const url = urls[0];
   let capabilitiesUrl = "";
 
-  console.log("Url", url);
   if (url.includes("?")) {
     capabilitiesUrl = `${url}&request=GetCapabilities`;
   } else {
