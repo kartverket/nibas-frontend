@@ -56,7 +56,12 @@ export const getTicketForTjeneste = async (tjenesteId: string, src: string) => {
 };
 
 const isTicketValid = async (ticket: string, src: string) => {
-  const domain = src.substring(0, src.indexOf("?"));
+  let domain = src;
+
+  if (src.includes("?")) {
+    domain = src.substring(0, src.indexOf("?"));
+  }
+
   const capabilitiesUrl = `${domain}?ticket=${ticket}&service=WMS&request=GetCapabilities`;
 
   const response = await fetch(capabilitiesUrl);

@@ -118,7 +118,7 @@ export const bakgrunnskartSources = {
     "background",
     "wms.ecc_enc"
   ),
-  norgeIBilder: createAuthedTileWMS("/skwms1/wms.nib?", "ortofoto", "wms.nib"),
+  norgeIBilder: createAuthedTileWMS("/skwms1/wms.nib", "ortofoto", "wms.nib"),
 };
 
 bakgrunnskartSources.norgeIBilder.set("protectedTjenesteId", "wms.nib");

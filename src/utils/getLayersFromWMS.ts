@@ -46,7 +46,14 @@ const getSubLayersFromWMSSource = async (source: TileWMS) => {
   if (!urls || urls.length === 0) return null;
 
   const url = urls[0];
-  let capabilitiesUrl = `${url}&request=GetCapabilities`;
+  let capabilitiesUrl = "";
+
+  console.log("Url", url);
+  if (url.includes("?")) {
+    capabilitiesUrl = `${url}&request=GetCapabilities`;
+  } else {
+    capabilitiesUrl = `${url}?request=GetCapabilities`;
+  }
 
   if (source.get("protectedTjenesteId")) {
     const ticket = await getTicketForTjeneste(
