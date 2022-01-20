@@ -2,27 +2,21 @@ import { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { map } from "./constants";
 import ZoomControls from "./controls/ZoomControls";
-import { updateFylkeFeatures } from "api/fylker";
-import { updateKommuneFeatures } from "api/kommuner";
+import { updateGrenser } from "api/grenser";
 import Bakgrunnskart from "components/Bakgrunnskart";
 import CustomControl from "components/CustomControl";
 import GrenserDrillDown from "components/GrenserDrillDown";
-import { EditingType } from "components/GrenserDrillDown/useEditGrenser";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
-import { createLayers } from "hooks/layers/constants";
-import { LayerId } from "hooks/layers/types";
-import { getLayerById, initLayer } from "utils/map/layers";
+import {
+  getLayerById,
+  initBakgrunnskartLayers,
+  initGrenserLayers,
+} from "utils/map/layers";
 
-const initLayers = () => {
-  const layers = createLayers();
-
-  Object.keys(layers).forEach((layerId) => {
-    const layer = layers[layerId as LayerId];
-    initLayer(layer, layerId as LayerId);
-  });
-};
-
-initLayers();
+// dette må skje utenfor komponenten siden React kjører dypere useEffects
+// før de lenger opp i treet, så lag er ikke definert når de trengs lenger ned
+initGrenserLayers();
+initBakgrunnskartLayers();
 
 const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -43,21 +37,9 @@ const Kart = () => {
 
   const saveDraft = async () => {
     const editLayer = getLayerById("edit");
-    const editingType = editLayer.get("type") as EditingType;
     const editFeatures = editLayer.getSource().getFeatures();
 
-    if (!editingType) return;
-
-    switch (editingType) {
-      case "fylke": {
-        updateFylkeFeatures(editFeatures);
-        break;
-      }
-      case "kommune": {
-        updateKommuneFeatures(editFeatures);
-        break;
-      }
-    }
+    updateGrenser(editFeatures);
   };
 
   return (

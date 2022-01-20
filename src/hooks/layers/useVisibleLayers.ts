@@ -1,23 +1,23 @@
 import { useEffect, useReducer } from "react";
-import { INITIAL_VISIBILITY } from "./constants";
-import { ByLayerId, LayerId } from "./types";
+import { bakgrunnskartLayers } from "./constants";
+import { BakgrunnskartId } from "./types";
 import { getLayerById } from "utils/map/layers";
 
-export type VisibleLayers = ByLayerId<boolean>;
+export type VisibleLayers = Record<BakgrunnskartId, boolean>;
 type Action =
-  | { type: "setLayerVisibility"; layerId: LayerId; visible: boolean }
-  | { type: "toggleLayerVisibility"; layerId: LayerId };
+  | { type: "setLayerVisibility"; layerId: BakgrunnskartId; visible: boolean }
+  | { type: "toggleLayerVisibility"; layerId: BakgrunnskartId };
 
 // TODO optional med action creators, litt subjektivt
 export const setLayerVisibility = (
-  layerId: LayerId,
+  layerId: BakgrunnskartId,
   visible: boolean
 ): Action => ({
   type: "setLayerVisibility",
   layerId,
   visible,
 });
-export const toggleLayerVisibility = (layerId: LayerId): Action => ({
+export const toggleLayerVisibility = (layerId: BakgrunnskartId): Action => ({
   type: "toggleLayerVisibility",
   layerId,
 });
@@ -39,17 +39,28 @@ const visibleLayersReducer = (state: VisibleLayers, action: Action) => {
   }
 };
 
-const useVisibleLayers = () => {
-  const [visibleLayers, dispatch] = useReducer(
-    visibleLayersReducer,
-    INITIAL_VISIBILITY
+// lag er by default usynlige
+const getInitialVisibility = () => {
+  return Object.keys(bakgrunnskartLayers).reduce(
+    (acc, layerId) => ({
+      ...acc,
+      [layerId]: false,
+    }),
+    {} as VisibleLayers
   );
+};
+
+const useVisibleLayers = () => {
+  const [visibleLayers, dispatch] = useReducer(visibleLayersReducer, {
+    ...getInitialVisibility(),
+    topografiskNorgeskart: true,
+  });
 
   // sett synlighet til layer i map til ny verdi
   useEffect(() => {
     Object.keys(visibleLayers).forEach((layerId) => {
-      const layer = getLayerById(layerId as LayerId);
-      layer?.setVisible(visibleLayers[layerId as LayerId]);
+      const layer = getLayerById(layerId as BakgrunnskartId);
+      layer?.setVisible(visibleLayers[layerId as BakgrunnskartId]);
     });
   }, [visibleLayers]);
 

@@ -3,25 +3,19 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import styled from "styled-components";
 import ToggleableGrense from "../ToggleableGrense";
-import { AdministrativEnhet } from "../types";
 import { ObjectValue } from "../useEditGrenser";
 import { fetchKommuneFeaturesById, fetchKommunerByFylke } from "api/kommuner";
+import { SimpleKommune } from "types/api";
 import { geoJsonToSource } from "utils/map/geoJson";
 
 type Props = {
-  fylke: AdministrativEnhet;
+  fylke: SimpleKommune;
   kommuneValues: Record<string, ObjectValue>;
   setKommuneValue: (kommune: string, value: ObjectValue) => void;
-  canSelect: boolean;
 };
 
-const KommuneList = ({
-  fylke,
-  kommuneValues,
-  setKommuneValue,
-  canSelect,
-}: Props) => {
-  const [kommuner, setKommuner] = useState<AdministrativEnhet[]>([]);
+const KommuneList = ({ fylke, kommuneValues, setKommuneValue }: Props) => {
+  const [kommuner, setKommuner] = useState<SimpleKommune[]>([]);
 
   useEffect(() => {
     if (!fylke) return;
@@ -35,17 +29,17 @@ const KommuneList = ({
     updateKommuner();
   }, [fylke]);
 
-  const getFeaturesToAdd = async (kommune: AdministrativEnhet) => {
+  const getFeaturesToAdd = async (kommune: SimpleKommune) => {
     const json = await fetchKommuneFeaturesById(kommune.id);
     return geoJsonToSource(json).getFeatures();
   };
 
   const getFeaturesToRemove = (
-    kommune: AdministrativEnhet,
+    kommune: SimpleKommune,
     layerFeatures: Feature<Geometry>[]
   ) =>
     layerFeatures.filter(
-      (feature) => feature.getProperties().administrativEnhet.id === kommune.id
+      (feature) => feature.getProperties().kontekstId === kommune.id
     );
 
   return (
@@ -63,7 +57,6 @@ const KommuneList = ({
             setObjectValue={setKommuneValue}
             title={navn}
             type="kommune"
-            canSelect={canSelect}
             getFeaturesToAdd={getFeaturesToAdd}
             getFeaturesToRemove={getFeaturesToRemove}
           />

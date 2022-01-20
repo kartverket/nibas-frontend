@@ -1,27 +1,31 @@
 import { useEffect, useState } from "react";
-import { ByLayerId, LayerId } from "./types";
-import { getLayerById, getWMSLayersInMap } from "utils/map/layers";
+import { bakgrunnskartLayers } from "./constants";
+import { BakgrunnskartId, ByLayerId } from "./types";
+import { getLayerById } from "utils/map/layers";
 
 export type ZIndexes = ByLayerId<number>;
 
 const useZIndexes = () => {
-  const [zIndexes, setZIndexes] = useState<LayerId[]>(
-    getWMSLayersInMap().map((layer) => layer.get("id"))
-  );
+  const [zIndexes, setZIndexes] = useState<BakgrunnskartId[]>([]);
+
+  useEffect(() => {
+    setZIndexes(Object.keys(bakgrunnskartLayers) as BakgrunnskartId[]);
+  }, []);
 
   // sett z-index i OL Map
   useEffect(() => {
     zIndexes.forEach((layerId, i) => {
-      const layer = getLayerById(layerId as LayerId);
+      const layer = getLayerById(layerId as BakgrunnskartId);
 
       if (!layer) return;
 
       // bakgrunnskart vil alltid ha negativ z-index
+      // denne oppdaterer faktisk z-indexen på laget i kartet
       layer.setZIndex(-i);
     });
   }, [zIndexes]);
 
-  const moveLayer = (direction: "up" | "down", layerId: LayerId) => {
+  const moveLayer = (direction: "up" | "down", layerId: BakgrunnskartId) => {
     const indexDifference = direction === "up" ? 1 : -1;
 
     const index = zIndexes.indexOf(layerId);

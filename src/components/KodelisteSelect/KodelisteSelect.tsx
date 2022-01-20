@@ -9,8 +9,12 @@ type KodelisteSelectProps = {
   label: string;
   selectedValue?: string;
   showSelectedText?: boolean;
+  sortFunction?: (a: KodelisteItem, b: KodelisteItem) => number;
   fetchKodeListeFunction: () => Promise<KodelisteItem[]>;
 };
+
+const defaultSortFunction = (a: KodelisteItem, b: KodelisteItem) =>
+  parseInt(a.item.codevalue, 10) - parseInt(b.item.codevalue, 10);
 
 const KodelisteSelect: React.FC<KodelisteSelectProps> = ({
   id,
@@ -18,6 +22,7 @@ const KodelisteSelect: React.FC<KodelisteSelectProps> = ({
   label,
   selectedValue = "",
   showSelectedText = false,
+  sortFunction = defaultSortFunction,
   fetchKodeListeFunction,
 }) => {
   // De mulige kodeliste-valgene
@@ -44,9 +49,7 @@ const KodelisteSelect: React.FC<KodelisteSelectProps> = ({
   return (
     <Wrapper>
       <LabelWrapper>
-        <label htmlFor={id}>
-          {label} ({kodelisteItems.length} valg)
-        </label>
+        <label htmlFor={id}>{label}</label>
       </LabelWrapper>
       <SelectWrapper>
         <SelectInput
@@ -55,7 +58,7 @@ const KodelisteSelect: React.FC<KodelisteSelectProps> = ({
           value={selection}
           onChange={handleChange}
         >
-          {kodelisteItems.map((kodelisteItem) => {
+          {kodelisteItems.sort(sortFunction).map((kodelisteItem) => {
             const item = kodelisteItem.item;
             return (
               <option key={item.uuid} value={item.uuid}>
@@ -75,19 +78,32 @@ const Wrapper = styled.div`
 `;
 
 const LabelWrapper = styled.div`
-  margin: 0.3em 0;
-  font-weight: bold;
+  label {
+    color: ${(props) => props.theme.colors.gray1};
+    display: inline-block;
+    font-size: 14px;
+    line-height: 20px;
+    margin-bottom: 8px;
+    white-space: pre-line;
+  }
 `;
 
 const SelectInput = styled.select`
   border: 1px solid #000;
+  background-color: white;
   border-radius: 3px;
   box-sizing: border-box;
-  padding: 8px 44px 8px 16px; //Høyre padding er større for å få plass til ikon
+  padding: 8px 44px 8px 16px;
   margin: 0;
   width: 100%;
   height: 44px;
   appearance: none;
+
+  option {
+    &:nth-child(even) {
+      background-color: ${(props) => props.theme.colors.blueLight};
+    }
+  }
 
   &:hover {
     border-color: ${(props) => props.theme.colors.blue};

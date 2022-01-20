@@ -1,15 +1,9 @@
 import Layer from "ol/layer/Layer";
-import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import Source from "ol/source/Source";
-import TileWMS from "ol/source/TileWMS";
 import { map } from "components/Kart/constants";
-import {
-  createLayers,
-  INITIAL_VISIBILITY,
-  INITIAL_ZINDEXES,
-} from "hooks/layers/constants";
-import { LayerId } from "hooks/layers/types";
+import { bakgrunnskartLayers, grenserLayers } from "hooks/layers/constants";
+import { BakgrunnskartId, GrenseId, LayerId } from "hooks/layers/types";
 import { GeometryVectorSource } from "hooks/sources/types";
 import { MainMappedLayer } from "utils/getLayersFromWMS";
 
@@ -28,7 +22,8 @@ export const getLayerById = <T extends LayerId>(id: T) => {
     );
   }
 
-  return layersWithId[0] as ReturnType<typeof createLayers>[T];
+  return layersWithId[0] as (typeof bakgrunnskartLayers &
+    typeof grenserLayers)[T];
 };
 
 export const layerExistsInMap = (id: LayerId) => {
@@ -50,15 +45,6 @@ export const addLayerIfNotExists = (layer: Layer<Source>) => {
   }
 };
 
-export const getWMSLayersInMap = () => {
-  const layers = getLayersArray();
-
-  return layers.filter(
-    (layer) =>
-      layer instanceof TileLayer && layer.getSource() instanceof TileWMS
-  ) as TileLayer<TileWMS>[];
-};
-
 export const getLayerIdFromMappedLayer = (mappedLayer: MainMappedLayer) => {
   const layers = getLayersArray();
   const layer = layers.find(
@@ -67,14 +53,27 @@ export const getLayerIdFromMappedLayer = (mappedLayer: MainMappedLayer) => {
 
   if (!layer) return;
 
-  return layer.get("id") as LayerId;
+  return layer.get("id") as BakgrunnskartId;
 };
 
 export const initLayer = (layer: Layer<Source>, layerId: LayerId) => {
   layer.set("id", layerId);
-  layer.setVisible(INITIAL_VISIBILITY[layerId]);
-  layer.setZIndex(INITIAL_ZINDEXES[layerId]);
   addLayerIfNotExists(layer);
+};
+
+export const initBakgrunnskartLayers = () => {
+  Object.keys(bakgrunnskartLayers).map((layerId) => {
+    initLayer(
+      bakgrunnskartLayers[layerId as BakgrunnskartId],
+      layerId as BakgrunnskartId
+    );
+  });
+};
+
+export const initGrenserLayers = () => {
+  Object.keys(grenserLayers).map((layerId) => {
+    initLayer(grenserLayers[layerId as GrenseId], layerId as GrenseId);
+  });
 };
 
 export const getVectorLayers = () => {

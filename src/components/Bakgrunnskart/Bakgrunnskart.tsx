@@ -4,6 +4,7 @@ import MainBackgroundLayer from "./BackgroundLayer/MainBackgroundLayer";
 import { SidebarPanel } from "components/Sidebar/SidebarPanel";
 import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
+import { bakgrunnskartLayers } from "hooks/layers/constants";
 import { LayerId } from "hooks/layers/types";
 import useVisibleLayers, {
   toggleLayerVisibility,
@@ -12,7 +13,7 @@ import useZIndexes from "hooks/layers/useZIndexes";
 import getSubLayersFromWMSSource, {
   MainMappedLayer,
 } from "utils/getLayersFromWMS";
-import { getLayerIdFromMappedLayer, getWMSLayersInMap } from "utils/map/layers";
+import { getLayerIdFromMappedLayer } from "utils/map/layers";
 
 const Bakgrunnskart = () => {
   const { isOpen: visible, togglePanel } = useSidebarPanel("backgroundLayers");
@@ -27,10 +28,8 @@ const Bakgrunnskart = () => {
     let isMounted = true;
 
     const updateMappedLayers = async () => {
-      const wmsLayers = getWMSLayersInMap();
-
-      const mappedLayersPromises = wmsLayers.map((layer) =>
-        getSubLayersFromWMSSource(layer.getSource())
+      const mappedLayersPromises = Object.values(bakgrunnskartLayers).map(
+        (layer) => getSubLayersFromWMSSource(layer.getSource())
       );
 
       const layers = await Promise.all(mappedLayersPromises);

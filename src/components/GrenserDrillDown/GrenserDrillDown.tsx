@@ -2,21 +2,18 @@ import styled from "styled-components";
 import KodelistePreview from "../KodelisteSelect/KodelistePreview";
 import FylkeList from "./FylkeList";
 import KommuneList from "./KommuneList";
-import { AdministrativEnhet } from "./types";
 import useEditGrenser, { ObjectValue } from "./useEditGrenser";
 import Accordion from "components/Accordion";
 import { SidebarPanel } from "components/Sidebar/SidebarPanel";
 import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import useApi from "hooks/useApi";
+import { SimpleFylke } from "types/api";
 
 const GrenserDrillDown = () => {
   const { isOpen: visible, togglePanel } = useSidebarPanel("nibas");
-  const { data: fylker, loading } = useApi<AdministrativEnhet[]>(
-    "v1/administrativ-enhet?type=FYLKE",
-    []
-  );
-  const { getCanSelect, setObjectValue, editingObject } = useEditGrenser();
+  const { data: fylker, loading } = useApi<SimpleFylke[]>("v1/fylker", []);
+  const { setObjectValue, editingObject } = useEditGrenser();
 
   if (!visible) return null;
 
@@ -35,7 +32,6 @@ const GrenserDrillDown = () => {
               setFylkeValue={(fylkesnavn: string, value: ObjectValue) =>
                 setObjectValue("fylke", fylkesnavn, value)
               }
-              canSelect={getCanSelect("fylke")}
             />
           ) : (
             <p>Henter fylker...</p>
@@ -59,7 +55,6 @@ const GrenserDrillDown = () => {
                   setKommuneValue={(kommunenavn: string, value: ObjectValue) =>
                     setObjectValue("kommune", kommunenavn, value)
                   }
-                  canSelect={getCanSelect("kommune")}
                 />
               </Accordion>
             ))
