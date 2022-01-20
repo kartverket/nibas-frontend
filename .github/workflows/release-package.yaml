@@ -55,3 +55,38 @@ jobs:
           registry: ${{ env.registry }}
           image_tag: ${{ steps.tag_version.outputs.new_tag }}
           image_name: ${{ github.repository }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: atkv2-test-apps
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Authenticate with Google Cloud
+      uses: google-github-actions/auth@v0
+      with: 
+        credentials_json: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+
+    - name: Authenticate with cluster
+      run: gcloud container hub memberships get-credentials atkv2-test-apps --verbosity debug
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    - name: Generate terraform variables
+      run: |
+        cat <<EOF >> terraform.tfvars
+        nibas_frontend_version="${{ needs.build.outputs.new_tag }}"
+        EOF
+    
+    - name: Terraform init
+      run: terraform init -input=false
+
+    - name: Terraform plan
+      run: terraform plan -input=false
+
+    - name: Terraform apply
+      run: terraform apply -input=false -auto-approve   
