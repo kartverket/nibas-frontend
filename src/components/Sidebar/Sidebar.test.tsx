@@ -1,20 +1,10 @@
-import { render, screen } from "test/test-utils";
+import { render, screen, fireEvent } from "test/test-utils";
 import Sidebar from "./Sidebar";
 import { defaultTheme } from "style/theme";
 
-const defaultProps: React.ComponentProps<typeof Sidebar> = {
-  openPanels: {
-    backgroundLayers: false,
-    drafts: false,
-    nibas: false,
-    search: false,
-  },
-  togglePanel: jest.fn(),
-};
-
 describe("Sidebar", () => {
   it("should render four buttons", () => {
-    render(<Sidebar {...defaultProps} />);
+    render(<Sidebar />);
 
     const nibasButton = screen.getByRole("button", { name: /nibas/i });
     const sokButton = screen.getByRole("button", { name: /søk/i });
@@ -30,19 +20,10 @@ describe("Sidebar", () => {
   });
 
   it("should turn button blue when panel is open", () => {
-    render(
-      <Sidebar
-        {...defaultProps}
-        openPanels={{
-          nibas: true,
-          backgroundLayers: false,
-          drafts: false,
-          search: false,
-        }}
-      />
-    );
+    render(<Sidebar />);
 
     const nibasButton = screen.getByRole("button", { name: /nibas/i });
+    fireEvent.click(nibasButton);
 
     expect(nibasButton).toHaveStyle(`color: ${defaultTheme.colors.blue}`);
   });

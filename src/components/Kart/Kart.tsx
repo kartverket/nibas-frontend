@@ -6,7 +6,6 @@ import { updateGrenser } from "api/grenser";
 import Bakgrunnskart from "components/Bakgrunnskart";
 import CustomControl from "components/CustomControl";
 import GrenserDrillDown from "components/GrenserDrillDown";
-import { OpenSidebarPanels } from "components/PageLayout/PageLayout";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
 import {
   getLayerById,
@@ -14,16 +13,12 @@ import {
   initGrenserLayers,
 } from "utils/map/layers";
 
-type Props = {
-  openPanels: OpenSidebarPanels;
-};
-
 // dette må skje utenfor komponenten siden React kjører dypere useEffects
 // før de lenger opp i treet, så lag er ikke definert når de trengs lenger ned
 initGrenserLayers();
 initBakgrunnskartLayers();
 
-const Kart = ({ openPanels }: Props) => {
+const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
 
   useEditInteractions();
@@ -50,8 +45,8 @@ const Kart = ({ openPanels }: Props) => {
   return (
     <KartTarget ref={mapRef}>
       <KartOverlay>
-        <GrenserDrillDown visible={openPanels.nibas} />
-        <Bakgrunnskart visible={openPanels.backgroundLayers} />
+        <GrenserDrillDown />
+        <Bakgrunnskart />
       </KartOverlay>
 
       <CustomControl>

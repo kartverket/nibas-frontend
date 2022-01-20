@@ -4,18 +4,14 @@ import FylkeList from "./FylkeList";
 import KommuneList from "./KommuneList";
 import useEditGrenser, { ObjectValue } from "./useEditGrenser";
 import Accordion from "components/Accordion";
-import {
-  SidebarPanel,
-  SidebarPanelTitle,
-} from "components/Sidebar/SidebarPanel";
+import { SidebarPanel } from "components/Sidebar/SidebarPanel";
+import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
+import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import useApi from "hooks/useApi";
 import { SimpleFylke } from "types/api";
 
-type Props = {
-  visible: boolean;
-};
-
-const GrenserDrillDown = ({ visible }: Props) => {
+const GrenserDrillDown = () => {
+  const { isOpen: visible, togglePanel } = useSidebarPanel("nibas");
   const { data: fylker, loading } = useApi<SimpleFylke[]>("v1/fylker", []);
   const { setObjectValue, editingObject } = useEditGrenser();
 
@@ -23,7 +19,7 @@ const GrenserDrillDown = ({ visible }: Props) => {
 
   return (
     <Panel>
-      <SidebarPanelTitle>Grenser</SidebarPanelTitle>
+      <SidebarPanelTitle closePanel={togglePanel} title="Grenser" />
       <Accordion title="Riksgrenser">
         <p>Kommer senere!</p>
       </Accordion>

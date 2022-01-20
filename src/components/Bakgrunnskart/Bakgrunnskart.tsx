@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import MainBackgroundLayer from "./BackgroundLayer/MainBackgroundLayer";
-import {
-  SidebarPanel,
-  SidebarPanelTitle,
-} from "components/Sidebar/SidebarPanel";
+import { SidebarPanel } from "components/Sidebar/SidebarPanel";
+import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
+import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { bakgrunnskartLayers } from "hooks/layers/constants";
 import { LayerId } from "hooks/layers/types";
 import useVisibleLayers, {
@@ -16,11 +15,8 @@ import getSubLayersFromWMSSource, {
 } from "utils/getLayersFromWMS";
 import { getLayerIdFromMappedLayer } from "utils/map/layers";
 
-type Props = {
-  visible: boolean;
-};
-
-const Bakgrunnskart = ({ visible }: Props) => {
+const Bakgrunnskart = () => {
+  const { isOpen: visible, togglePanel } = useSidebarPanel("backgroundLayers");
   const [mappedLayers, setMappedLayers] = useState<MainMappedLayer[]>([]);
 
   const { visibleLayers, dispatch } = useVisibleLayers();
@@ -28,6 +24,8 @@ const Bakgrunnskart = ({ visible }: Props) => {
 
   useEffect(() => {
     if (!visible || mappedLayers.length > 0) return;
+
+    let isMounted = true;
 
     const updateMappedLayers = async () => {
       const mappedLayersPromises = Object.values(bakgrunnskartLayers).map(
@@ -40,10 +38,16 @@ const Bakgrunnskart = ({ visible }: Props) => {
         (layer) => layer !== null
       ) as MainMappedLayer[];
 
-      setMappedLayers(nonNullLayers);
+      if (isMounted) {
+        setMappedLayers(nonNullLayers);
+      }
     };
 
     updateMappedLayers();
+
+    return () => {
+      isMounted = false;
+    };
   }, [visible, mappedLayers.length]);
 
   const toggleMainLayer = (mappedLayer: MainMappedLayer) => {
@@ -87,7 +91,7 @@ const Bakgrunnskart = ({ visible }: Props) => {
 
   return (
     <Panel>
-      <SidebarPanelTitle>Bakgrunnskart</SidebarPanelTitle>
+      <SidebarPanelTitle closePanel={togglePanel} title="Bakgrunnskart" />
       {zIndexes.map(renderMainLayerByZIndex)}
     </Panel>
   );
