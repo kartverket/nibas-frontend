@@ -1,13 +1,10 @@
-FROM harbor-staging.statkart.no/proxy_cache/library/node:lts as nodeContainer
-WORKDIR /app
-COPY . .
-RUN npm install
-RUN rm -f .npmrc
-RUN npm run build
+# Intended to be used by CI
+FROM caddy:2-alpine
 
-FROM harbor-staging.statkart.no/proxy_cache/library/caddy:2
+COPY /build /srv
+
 RUN addgroup -g 1242 nibas; \
   adduser -u 1242 -D -G nibas nibas
-COPY build-config/caddy/Caddyfile-local /etc/caddy/Caddyfile
-COPY --from=nodeContainer /app/build/ /srv
+COPY build-config/caddy/Caddyfile /etc/caddy/Caddyfile
 USER 1242
+EXPOSE 8080
