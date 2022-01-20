@@ -45,7 +45,7 @@ resource "kubernetes_deployment" "nibas-frontend-deployment" {
             name="nibas-pull-token"
         }
         container {
-          image = "ghcr.io/kartverket/nibas-frontend:${var.nibas-frontend-version}"
+          image = "ghcr.io/kartverket/nibas-frontend:${var.nibas_frontend_version}"
           name  = "nibas-frontend"
           port {
             container_port = 8080
