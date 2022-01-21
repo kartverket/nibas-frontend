@@ -75,13 +75,13 @@ resource "kubernetes_service" "nibas-frontend-service" {
 }
 
 resource "kubernetes_manifest" "istio-destination-rule" {
-  manifest = yamldecode(file("${path.module}/kubernetes/destination-rule.yaml"))
+  manifest = yamldecode(file("${path.module}/kubernetes/destination-rule.yml"))
 }
 
 resource "kubernetes_manifest" "istio-gateway" {
-  manifest = yamldecode(file("${path.module}/kubernetes/gateway.yaml"))
+  manifest = yamldecode(file("${path.module}/kubernetes/gateway.yml"))
 }
 
 resource "kubernetes_manifest" "istio-virtualservice" {
-  manifest = yamldecode(file("${path.module}/kubernetes/virtualservice.yaml"))
+  manifest = yamldecode(file("${path.module}/kubernetes/virtualservice.yml"))
 }
