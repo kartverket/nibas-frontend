@@ -73,3 +73,15 @@ resource "kubernetes_service" "nibas-frontend-service" {
     type     = "ClusterIP"
   }
 }
+
+resource "kubernetes_manifest" "istio-destination-rule" {
+  manifest = yamldecode(file("${path.module}/kubernetes/destination-rule.yaml"))
+}
+
+resource "kubernetes_manifest" "istio-gateway" {
+  manifest = yamldecode(file("${path.module}/kubernetes/gateway.yaml"))
+}
+
+resource "kubernetes_manifest" "istio-virtualservice" {
+  manifest = yamldecode(file("${path.module}/kubernetes/virtualservice.yaml"))
+}

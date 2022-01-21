@@ -1,0 +1,19 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: nibas-frontend
+  namespace: nibas
+spec:
+  hosts:
+  - nibas-frontend.nibas.svc.cluster.local
+  - "app.nibas.test.skip.statkart.no"
+  gateways:
+  - nibas-backend
+  http:
+  - match:
+      - port: 80
+    route:
+    - destination:
+        host: nibas-frontend
+        port: 
+          number: 80
