@@ -21,7 +21,7 @@ const useZIndexes = () => {
 
       // bakgrunnskart vil alltid ha negativ z-index
       // denne oppdaterer faktisk z-indexen på laget i kartet
-      layer.setZIndex(-i);
+      layer.setZIndex(-i - 1);
     });
   }, [zIndexes]);
 

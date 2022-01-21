@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "http-proxy-middleware": "~2.0.1",
     "ol": "~6.8.1",
     "proj4": "~2.7.5",
     "react": "~17.0.2",
@@ -63,7 +64,6 @@
     "react-scripts": "4.0.3",
     "typescript": "~4.4.3"
   },
-  "proxy": "http://localhost:8080",
   "jest": {
     "transformIgnorePatterns": [
       "node_modules/(?!(ol)/)"
