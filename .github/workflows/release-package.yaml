@@ -1,9 +1,4 @@
 name: nibas-frontend
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
 env:
   image_name: nibas-frontend
