@@ -31,11 +31,13 @@ jobs:
           npm run build --if-present
           npm test
 
-      - name: Cache build folder
+      - name: Caching files
         uses: actions/cache@v2
         with: 
-          path: /build
-          key: build-folder
+          path: |
+            /build
+            /build-config/caddy/Caddyfile
+          key: cached-files
 
   build:
     runs-on: ubuntu-latest
@@ -45,11 +47,13 @@ jobs:
       - name: checkout code
         uses: actions/checkout@v2
 
-      - name: Cache build folder
+      - name: Caching files
         uses: actions/cache@v2
         with: 
-          path: /build
-          key: build-folder
+          path: |
+            /build
+            /build-config/caddy/Caddyfile
+          key: cached-files
 
       - name: Bump version and push tag
         id: tag_version
