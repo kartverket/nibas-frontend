@@ -1,5 +1,5 @@
 #Starter applikasjonen på port 8080 og proxyer kall til /v1/* til nibas-backend-service (som nås internt på kubernetes-clusteret)
 :8080
 
-reverse_proxy /v1/* nibas-backend-service:80
+reverse_proxy /v1/* nibas-backend:80
 file_server
