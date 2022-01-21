@@ -1,9 +1,6 @@
 name: nibas-frontend
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+  [push, pull_request]
 
 env:
   image_name: nibas-frontend
@@ -11,15 +8,13 @@ env:
   registry_path: kartverket
 
 jobs:
-  build:
+  compile_test:
     runs-on: ubuntu-latest
-    outputs:
-      new_tag: ${{ steps.tag_version.outputs.new_tag }}
 
     steps:
       - name: checkout code
         uses: actions/checkout@v2
-      
+        
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
@@ -32,6 +27,14 @@ jobs:
           npm run build --if-present
           npm test
 
+  build:
+    needs: compile_test
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    outputs:
+      new_tag: ${{ steps.tag_version.outputs.new_tag }}
+
+    steps:
       - name: Bump version and push tag
         id: tag_version
         uses: mathieudutour/github-tag-action@v6.0
@@ -58,6 +61,7 @@ jobs:
 
   deploy:
     needs: build
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     environment: atkv2-test-apps
     
