@@ -1,7 +1,7 @@
 name: nibas-frontend
 on:
   push:
-    - master
+    branches: master
 
 env:
   image_name: nibas-frontend
@@ -9,9 +9,7 @@ env:
   registry_path: kartverket
 
 jobs:
-
   build:
-    needs: compile_test
     runs-on: ubuntu-latest
     outputs:
       new_tag: ${{ steps.tag_version.outputs.new_tag }}
