@@ -1,4 +1,6 @@
 name: nibas-frontend
+on:
+  [push, pull_request]
 
 env:
   image_name: nibas-frontend
