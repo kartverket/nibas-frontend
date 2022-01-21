@@ -8,7 +8,7 @@ spec:
   - nibas-frontend.nibas.svc.cluster.local
   - "nibas.test.skip.statkart.no"
   gateways:
-  - nibas-backend
+  - nibas-frontend
   http:
   - match:
       - port: 80
