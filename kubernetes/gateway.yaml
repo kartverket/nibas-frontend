@@ -12,4 +12,4 @@ spec:
       name: http
       protocol: HTTP
     hosts:
-    - "app.nibas.test.skip.statkart.no"
+    - "nibas.test.skip.statkart.no"

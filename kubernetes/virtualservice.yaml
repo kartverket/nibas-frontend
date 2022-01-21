@@ -6,7 +6,7 @@ metadata:
 spec:
   hosts:
   - nibas-frontend.nibas.svc.cluster.local
-  - "app.nibas.test.skip.statkart.no"
+  - "nibas.test.skip.statkart.no"
   gateways:
   - nibas-backend
   http:
