@@ -28,6 +28,7 @@ const fetchNewTicket = async (tjenesteId: string) => {
 };
 
 export const getTicketForTjeneste = async (tjenesteId: string, src: string) => {
+  console.log("Get ticket for", tjenesteId);
   let existingTicket = getTicketInLocalStorage(tjenesteId);
 
   if (existingTicket) {
