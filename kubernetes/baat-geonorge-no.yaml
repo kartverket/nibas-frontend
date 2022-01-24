@@ -15,7 +15,7 @@ spec:
       port: 80
     route:
     - destination:
-        host: istio-egressgateway.istio-system.svc.cluster.local
+        host: baat-geonorge-no.istio-system.svc.cluster.local
         subset: target-egress-gateway
         port:
           number: 80
