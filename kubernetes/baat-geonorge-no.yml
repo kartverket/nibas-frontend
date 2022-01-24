@@ -26,32 +26,3 @@ spec:
           host: baat.geonorge.no
           port:
             number: 443
----
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: wms-geonorge-no
-  namespace: nibas
-spec:
-  hosts:
-    - wms.geonorge.no
-  gateways:
-    - istio-system/wms-geonorge-no
-  http:
-  - match:
-    - gateways:
-      - mesh
-      port: 80
-    route:
-    - destination:
-        host: istio-egressgateway.istio-system.svc.cluster.local
-        subset: target-egress-gateway
-        port:
-          number: 80
-  - match:
-      - port: 443
-    route:
-      - destination:
-          host: wms.geonorge.no
-          port:
-            number: 443
