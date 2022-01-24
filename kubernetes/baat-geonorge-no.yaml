@@ -7,7 +7,7 @@ spec:
   hosts:
     - baat.geonorge.no
   gateways:
-    - istio-system/baat-geonorge-no
+    - istio-system/istio-egressgateway
   http:
   - match:
     - gateways:
@@ -15,7 +15,7 @@ spec:
       port: 80
     route:
     - destination:
-        host: baat-geonorge-no.istio-system.svc.cluster.local
+        host: istio-egressgateway.istio-system.svc.cluster.local
         subset: target-egress-gateway
         port:
           number: 80
