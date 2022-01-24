@@ -1,0 +1,18 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: baat
+  namespace: nibas
+spec:
+  hosts:
+    - baat.geonorge.no
+  gateways:
+    - istio-egressgateway
+  http:
+    - match:
+        - port: 443
+      route:
+        - destination:
+            host: baat.geonorge.no
+            port:
+              number: 443
