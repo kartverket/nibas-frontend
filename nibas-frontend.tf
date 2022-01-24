@@ -105,3 +105,4 @@ resource "kubernetes_manifest" "baat-reverse-proxy" {
 
 resource "kubernetes_manifest" "wms-reverse-proxy" {
   manifest = yamldecode(file("${path.module}/kubernetes/wms-geonorge-no.yml"))
+}
