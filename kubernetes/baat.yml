@@ -7,7 +7,7 @@ spec:
   hosts:
     - baat.geonorge.no
   gateways:
-    - istio-egressgateway
+    - istio-system/istio-egressgateway
   http:
     - match:
         - port: 443
