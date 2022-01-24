@@ -1,5 +1,6 @@
 import WMSCapabilities from "ol/format/WMSCapabilities";
 import { TileWMS } from "ol/source";
+import { getTicketForTjeneste } from "./geonorgeTicket";
 import { BakgrunnskartId } from "hooks/layers/types";
 
 const parser = new WMSCapabilities();
@@ -45,7 +46,21 @@ const getSubLayersFromWMSSource = async (source: TileWMS) => {
   if (!urls || urls.length === 0) return null;
 
   const url = urls[0];
-  const capabilitiesUrl = `${url}&request=GetCapabilities`;
+  let capabilitiesUrl = "";
+
+  if (url.includes("?")) {
+    capabilitiesUrl = `${url}&request=GetCapabilities`;
+  } else {
+    capabilitiesUrl = `${url}?request=GetCapabilities`;
+  }
+
+  if (source.get("protectedTjenesteId")) {
+    const ticket = await getTicketForTjeneste(
+      source.get("protectedTjenesteId"),
+      url
+    );
+    capabilitiesUrl = `${capabilitiesUrl}&ticket=${ticket}`;
+  }
 
   const response = await fetch(capabilitiesUrl);
   const xml = await response.text();

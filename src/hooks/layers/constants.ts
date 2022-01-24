@@ -25,6 +25,7 @@ export const bakgrunnskartLayers = {
   sjokartDybdedata: createTileLayerFromBakgrunnskartSource("sjokartDybdedata"),
   n5Raster2: createTileLayerFromBakgrunnskartSource("n5Raster2"),
   historiskeKart: createTileLayerFromBakgrunnskartSource("historiskeKart"),
+  norgeIBilder: createTileLayerFromBakgrunnskartSource("norgeIBilder"),
   topografiskNorgeskart: createTileLayerFromBakgrunnskartSource(
     "topografiskNorgeskart"
   ),
@@ -34,6 +35,9 @@ export const bakgrunnskartLayers = {
   toporaster4: createTileLayerFromBakgrunnskartSource("toporaster4"),
   norgesMaritimeGrenser: createTileLayerFromBakgrunnskartSource(
     "norgesMaritimeGrenser"
+  ),
+  sjokartElektroniske: createTileLayerFromBakgrunnskartSource(
+    "sjokartElektroniske"
   ),
 };
 

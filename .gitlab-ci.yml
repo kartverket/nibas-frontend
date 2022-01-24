@@ -56,7 +56,7 @@ publish:
       KANIKOCFG="${KANIKOCFG} }"
       echo "${KANIKOCFG}" > /kaniko/.docker/config.json
     - cat /kaniko/.docker/config.json
-    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile-ci $KANIKOPROXYBUILDARGS --destination $HARBOR_URL/nibas/nibas-klient-frontend:${PROJECT_VERSION}
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile $KANIKOPROXYBUILDARGS --destination $HARBOR_URL/nibas/nibas-klient-frontend:${PROJECT_VERSION}
   only:
     refs:
       - master

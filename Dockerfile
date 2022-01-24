@@ -3,6 +3,8 @@ FROM caddy:2-alpine
 
 COPY /build /srv
 
+ENV PORT=8080
+ENV BACKEND_HOST=nibas-backend
 RUN addgroup -g 1242 nibas; \
   adduser -u 1242 -D -G nibas nibas
 COPY build-config/caddy/Caddyfile /etc/caddy/Caddyfile

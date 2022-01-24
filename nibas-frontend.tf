@@ -14,6 +14,10 @@ locals {
 
 variable "nibas_frontend_version" {}
 
+/*data "vault_generic_secret" "nibas-baat-bruker" {
+  path = "nibas/nibas-klient-frontend/${local.environment}/baat-bruker"
+}*/
+
 resource "kubernetes_deployment" "nibas-frontend-deployment" {
   metadata {
     name      = "nibas-frontend"
@@ -50,6 +54,14 @@ resource "kubernetes_deployment" "nibas-frontend-deployment" {
           port {
             container_port = 8080
           }
+          /*env {
+            name  = "BAAT_USERNAME"
+            value = data.vault_generic_secret.nibas-baat-bruker.data["username"]
+          }
+          env {
+            name  = "BAAT_PASSWORD"
+            value = data.vault_generic_secret.nibas-baat-bruker.data["password"]
+          }*/
         }
       }
     }
