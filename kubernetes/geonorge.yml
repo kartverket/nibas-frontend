@@ -20,10 +20,10 @@ spec:
         subset: target-egress-gateway
         port:
           number: 80
-    - match:
-        - port: 443
-      route:
-        - destination:
-            host: baat.geonorge.no
-            port:
-              number: 443
+  - match:
+      - port: 443
+    route:
+      - destination:
+          host: baat.geonorge.no
+          port:
+            number: 443
