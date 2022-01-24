@@ -7,7 +7,7 @@ spec:
   hosts:
     - baat.geonorge.no
   gateways:
-    - istio-system/istio-egressgateway
+    - istio-system/baat-geonorge-no
   http:
   - match:
     - gateways:
@@ -36,7 +36,7 @@ spec:
   hosts:
     - wms.geonorge.no
   gateways:
-    - istio-system/istio-egressgateway
+    - istio-system/wms-geonorge-no
   http:
   - match:
     - gateways:
