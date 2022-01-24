@@ -99,5 +99,5 @@ resource "kubernetes_manifest" "istio-virtualservice" {
 }
 
 resource "kubernetes_manifest" "baat-reverse-proxy" {
-  manifest = yamldecode(file("${path.module}/kubernetes/baat.yml"))
+  manifest = yamldecode(file("${path.module}/kubernetes/geonorge.yml"))
 }
