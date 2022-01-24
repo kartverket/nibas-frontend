@@ -1,14 +1,25 @@
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: baat
+  name: geonorge
   namespace: nibas
 spec:
   hosts:
     - baat.geonorge.no
+    - wms.geonorge.no
   gateways:
     - istio-system/istio-egressgateway
   http:
+  - match:
+    - gateways:
+      - mesh
+      port: 80
+    route:
+    - destination:
+        host: istio-egressgateway.istio-system.svc.cluster.local
+        subset: target-egress-gateway
+        port:
+          number: 80
     - match:
         - port: 443
       route:
