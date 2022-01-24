@@ -24,6 +24,8 @@ spec:
       - port: 443
         sniHosts:
           - baat.geonorge.no
+        gateways:
+          - mesh
     route:
       - destination:
           host: baat.geonorge.no
