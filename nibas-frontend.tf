@@ -64,12 +64,12 @@ resource "kubernetes_deployment" "nibas-frontend-deployment" {
           }*/
           env {
             # Proxy
-            - name: HTTP_PROXY
-              value: "http://tkgeproxy1.statkart.no:3128"
-            - name: HTTPS_PROXY
-              value: "http://tkgeproxy1.statkart.no:3128"
-            - name: NO_PROXY
-              value: "10.0.0.0/8"
+            - name = "HTTP_PROXY"
+              value = "http://tkgeproxy1.statkart.no:3128"
+            - name = "HTTPS_PROXY"
+              value = "http://tkgeproxy1.statkart.no:3128"
+            - name = "NO_PROXY"
+              value = "10.0.0.0/8"
           }
         }
       }
