@@ -62,7 +62,7 @@ resource "kubernetes_deployment" "nibas-frontend-deployment" {
             name  = "BAAT_PASSWORD"
             value = data.vault_generic_secret.nibas-baat-bruker.data["password"]
           }*/
-          env:
+          env {
             # Proxy
             - name: HTTP_PROXY
               value: "http://tkgeproxy1.statkart.no:3128"
@@ -70,6 +70,7 @@ resource "kubernetes_deployment" "nibas-frontend-deployment" {
               value: "http://tkgeproxy1.statkart.no:3128"
             - name: NO_PROXY
               value: "10.0.0.0/8"
+          }
         }
       }
     }
