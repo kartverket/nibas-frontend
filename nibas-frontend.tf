@@ -62,6 +62,14 @@ resource "kubernetes_deployment" "nibas-frontend-deployment" {
             name  = "BAAT_PASSWORD"
             value = data.vault_generic_secret.nibas-baat-bruker.data["password"]
           }*/
+          env:
+            # Proxy
+            - name: HTTP_PROXY
+              value: "http://tkgeproxy1.statkart.no:3128"
+            - name: HTTPS_PROXY
+              value: "http://tkgeproxy1.statkart.no:3128"
+            - name: NO_PROXY
+              value: "10.0.0.0/8"
         }
       }
     }
@@ -86,17 +94,17 @@ resource "kubernetes_service" "nibas-frontend-service" {
   }
 }
 
-resource "kubernetes_manifest" "istio-destination-rule" {
-  manifest = yamldecode(file("${path.module}/kubernetes/destination-rule.yml"))
-}
+# resource "kubernetes_manifest" "istio-destination-rule" {
+#  manifest = yamldecode(file("${path.module}/kubernetes/destination-rule.yml"))
+# }
 
-resource "kubernetes_manifest" "istio-gateway" {
-  manifest = yamldecode(file("${path.module}/kubernetes/gateway.yml"))
-}
+# resource "kubernetes_manifest" "istio-gateway" {
+#  manifest = yamldecode(file("${path.module}/kubernetes/gateway.yml"))
+# }
 
-resource "kubernetes_manifest" "istio-virtualservice" {
-  manifest = yamldecode(file("${path.module}/kubernetes/virtualservice.yml"))
-}
+# resource "kubernetes_manifest" "istio-virtualservice" {
+#  manifest = yamldecode(file("${path.module}/kubernetes/virtualservice.yml"))
+# }
 
 # resource "kubernetes_manifest" "baat-reverse-proxy" {
 #   manifest = yamldecode(file("${path.module}/kubernetes/baat-geonorge-no.yaml"))
