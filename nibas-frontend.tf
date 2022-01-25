@@ -98,11 +98,11 @@ resource "kubernetes_manifest" "istio-virtualservice" {
   manifest = yamldecode(file("${path.module}/kubernetes/virtualservice.yml"))
 }
 
-resource "kubernetes_manifest" "baat-reverse-proxy" {
-  manifest = yamldecode(file("${path.module}/kubernetes/baat-geonorge-no.yaml"))
-}
+# resource "kubernetes_manifest" "baat-reverse-proxy" {
+#   manifest = yamldecode(file("${path.module}/kubernetes/baat-geonorge-no.yaml"))
+# }
 
 
-resource "kubernetes_manifest" "wms-reverse-proxy" {
-  manifest = yamldecode(file("${path.module}/kubernetes/wms-geonorge-no.yaml"))
-}
+# resource "kubernetes_manifest" "wms-reverse-proxy" {
+#   manifest = yamldecode(file("${path.module}/kubernetes/wms-geonorge-no.yaml"))
+# }
