@@ -86,7 +86,7 @@ resource "kubernetes_service" "nibas-frontend-service" {
   }
 }
 
-/*resource "kubernetes_manifest" "istio-destination-rule" {
+resource "kubernetes_manifest" "istio-destination-rule" {
   manifest = yamldecode(file("${path.module}/kubernetes/destination-rule.yml"))
 }
 
@@ -96,7 +96,7 @@ resource "kubernetes_manifest" "istio-gateway" {
 
 resource "kubernetes_manifest" "istio-virtualservice" {
   manifest = yamldecode(file("${path.module}/kubernetes/virtualservice.yml"))
-}*/
+}
 
 # resource "kubernetes_manifest" "baat-reverse-proxy" {
 #   manifest = yamldecode(file("${path.module}/kubernetes/baat-geonorge-no.yaml"))
