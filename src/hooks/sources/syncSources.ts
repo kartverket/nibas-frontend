@@ -1,5 +1,8 @@
+import { getWidth } from "ol/extent";
 import TileWMS from "ol/source/TileWMS";
+import WMTS from "ol/source/WMTS";
 import { createXYZ } from "ol/tilegrid";
+import WMTSTileGrid from "ol/tilegrid/WMTS";
 import { BakgrunnskartId } from "hooks/layers/types";
 import { getSrcWithTicket } from "utils/geonorgeTicket";
 
@@ -15,6 +18,26 @@ const getWMSTileGrid = () => {
   });
 
   return tileGrid;
+};
+
+const getWMTSTileGrid = () => {
+  // extent fått fra `optionsFromCapabilities` funksjon, se eksempler
+  // https://openlayers.org/en/latest/examples/wmts-layer-from-capabilities.html
+  // https://openlayers.org/en/latest/examples/wmts.html
+  const extent = [-2500000, 3500000, 3045984, 9045984];
+  const size = getWidth(extent) / 256;
+  const resolutions = new Array(19);
+  const matrixIds = new Array(19);
+  for (let z = 0; z < 19; ++z) {
+    resolutions[z] = size / Math.pow(2, z);
+    matrixIds[z] = "EPSG:25833:" + z;
+  }
+
+  return new WMTSTileGrid({
+    extent,
+    resolutions,
+    matrixIds,
+  });
 };
 
 const defaultParams = {
@@ -69,10 +92,15 @@ export const bakgrunnskartSources = {
     "http://openwms.statkart.no/skwms1/wms.stedsnavnenkel?version=1.3.0&service=wms",
     "stedsnavnenkel"
   ),
-  topografiskNorgeskart: createTileWMS(
-    "https://openwms.statkart.no/skwms1/wms.topo4?service=wms",
-    "topo4_WMS"
-  ),
+  topografiskNorgeskart: new WMTS({
+    url: "https://opencache.statkart.no/gatekeeper/gk/gk.open_wmts",
+    layer: "topo4",
+    matrixSet: "EPSG:25833",
+    tileGrid: getWMTSTileGrid(),
+    style: "default",
+    format: "image/png",
+    wrapX: true,
+  }),
   norgesMaritimeGrenser: createTileWMS(
     "https://openwms.statkart.no/skwms1/wms.nmg?service=wms",
     "nmg_WMS"

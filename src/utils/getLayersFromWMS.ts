@@ -1,5 +1,6 @@
 import WMSCapabilities from "ol/format/WMSCapabilities";
-import { TileWMS } from "ol/source";
+import TileWMS from "ol/source/TileWMS";
+import WMTS from "ol/source/WMTS";
 import { getTicketForTjeneste } from "./geonorgeTicket";
 import { BakgrunnskartId } from "hooks/layers/types";
 
@@ -40,7 +41,7 @@ const mapLayer = (responseLayer: ResponseLayer) => {
   } as MappedLayer;
 };
 
-const getSubLayersFromWMSSource = async (source: TileWMS) => {
+const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
   const urls = source.getUrls();
 
   if (!urls || urls.length === 0) return null;
