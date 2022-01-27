@@ -1,41 +1,46 @@
-import { useEffect, useState } from "react";
 import BackgroundLayerAccordion from "./BackgroundLayerAccordion";
 import SubBackgroundLayer from "./SubBackgroundLayer";
 import useBackgroundLayerDND from "./useBackgroundLayerDND";
 import { BakgrunnskartId } from "hooks/layers/types";
+import { VisibleLayers } from "hooks/layers/useVisibleLayers";
 import { MainMappedLayer } from "utils/getLayersFromWMS";
+import { getLayerIdFromMappedLayer } from "utils/map/layers";
 
 type Props = {
   mappedLayer: MainMappedLayer;
   mainLayerSourceId: BakgrunnskartId;
   mainLayerName: string;
-  toggleMainLayer: (mappedLayer: MainMappedLayer) => void;
-  isMainLayerVisible: (mappedLayer: MainMappedLayer) => boolean;
   index: number;
   moveLayer: (direction: "up" | "down", layerId: BakgrunnskartId) => void;
+  visibleLayers: VisibleLayers;
+  toggleLayerVisibility: (layerId: BakgrunnskartId) => void;
 };
 
 const MainBackgroundLayer = ({
   mappedLayer,
   mainLayerSourceId,
   mainLayerName,
-  toggleMainLayer,
-  isMainLayerVisible,
+  visibleLayers,
+  toggleLayerVisibility,
   index,
   moveLayer,
 }: Props) => {
-  const [visible, setVisible] = useState(false);
-
   const ref = useBackgroundLayerDND(index, moveLayer, mappedLayer);
 
-  useEffect(() => {
-    setVisible(isMainLayerVisible(mappedLayer));
-  }, [isMainLayerVisible, mappedLayer]);
-
   const onVisibilityClick = () => {
-    toggleMainLayer(mappedLayer);
+    const layerId = getLayerIdFromMappedLayer(mappedLayer);
 
-    setVisible(!visible);
+    if (!layerId) return;
+
+    toggleLayerVisibility(layerId);
+  };
+
+  const isVisible = () => {
+    const layerId = getLayerIdFromMappedLayer(mappedLayer);
+
+    if (!layerId) return false;
+
+    return visibleLayers[layerId];
   };
 
   return (
@@ -43,7 +48,7 @@ const MainBackgroundLayer = ({
       key={mappedLayer.title}
       mappedLayer={mappedLayer}
       indent={0}
-      visible={visible}
+      visible={isVisible()}
       onVisibilityClick={onVisibilityClick}
       ref={ref}
       isMainLayer

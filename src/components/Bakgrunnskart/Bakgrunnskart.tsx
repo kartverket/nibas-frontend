@@ -13,7 +13,6 @@ import useZIndexes from "hooks/layers/useZIndexes";
 import getSubLayersFromWMSSource, {
   MainMappedLayer,
 } from "utils/getLayersFromWMS";
-import { getLayerIdFromMappedLayer } from "utils/map/layers";
 
 const Bakgrunnskart = () => {
   const { isOpen: visible, togglePanel } = useSidebarPanel("backgroundLayers");
@@ -50,22 +49,6 @@ const Bakgrunnskart = () => {
     };
   }, [visible, mappedLayers.length]);
 
-  const toggleMainLayer = (mappedLayer: MainMappedLayer) => {
-    const layerId = getLayerIdFromMappedLayer(mappedLayer);
-
-    if (!layerId) return;
-
-    dispatch(toggleLayerVisibility(layerId));
-  };
-
-  const isMainLayerVisible = (mappedLayer: MainMappedLayer) => {
-    const layerId = getLayerIdFromMappedLayer(mappedLayer);
-
-    if (!layerId) return false;
-
-    return visibleLayers[layerId];
-  };
-
   const renderMainLayerByZIndex = (layerId: LayerId, i: number) => {
     const mappedLayer = mappedLayers.find(
       (mappedLayer) => mappedLayer.sourceId === layerId
@@ -79,8 +62,10 @@ const Bakgrunnskart = () => {
         mappedLayer={mappedLayer}
         mainLayerSourceId={mappedLayer.sourceId}
         mainLayerName={mappedLayer.name ?? ""}
-        toggleMainLayer={toggleMainLayer}
-        isMainLayerVisible={isMainLayerVisible}
+        visibleLayers={visibleLayers}
+        toggleLayerVisibility={(layerId) =>
+          dispatch(toggleLayerVisibility(layerId))
+        }
         index={i}
         moveLayer={moveLayer}
       />
