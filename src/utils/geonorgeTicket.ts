@@ -7,7 +7,9 @@ const ticketPrefix = "ticket_";
 
 const parser = new WMSCapabilities();
 
-const removeTicketInLocalStore = (tjenesteId: string) =>
+let ticketConfigSetUpCorrectly = true;
+
+const removeTicketInLocalStorage = (tjenesteId: string) =>
   window.localStorage.removeItem(`${ticketPrefix}${tjenesteId}`);
 const setTicketInLocalStorage = (tjenesteId: string, ticket: string) =>
   window.localStorage.setItem(`${ticketPrefix}${tjenesteId}`, ticket);
@@ -22,6 +24,8 @@ export const getSrcWithTicket = async (tjenesteId: string, src: string) => {
 };
 
 const fetchNewTicket = async (tjenesteId: string) => {
+  if (!ticketConfigSetUpCorrectly) return "*";
+
   console.log("Fetching new ticket");
   const ticketResponse = await fetch(`/skbaatts/req?tjenesteid=${tjenesteId}`);
   return ticketResponse.text();
@@ -39,12 +43,20 @@ export const getTicketForTjeneste = async (tjenesteId: string, src: string) => {
     if (isValid) {
       return existingTicket;
     } else {
-      removeTicketInLocalStore(tjenesteId);
+      removeTicketInLocalStorage(tjenesteId);
     }
   }
 
   const ticket = await fetchNewTicket(tjenesteId);
   console.log("Fetched new ticket", ticket);
+
+  // hvis ticket inneholder stjerne har vi fått en error av tjeneren
+  // vi trenger ikke polle endepunktet flere ganger denne sessionen,
+  // noe er galt i configen av appen
+  if (ticket.includes("*")) {
+    ticketConfigSetUpCorrectly = false;
+    return "";
+  }
 
   // ticket fetching er async, så vi må sjekke om ticket har blitt satt etter requesten ble fyrt av
   existingTicket = getTicketInLocalStorage(tjenesteId);
