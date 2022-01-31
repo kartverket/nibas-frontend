@@ -2,7 +2,6 @@ import BackgroundLayerAccordion from "./BackgroundLayerAccordion";
 import SubBackgroundLayer from "./SubBackgroundLayer";
 import useBackgroundLayerDND from "./useBackgroundLayerDND";
 import { BakgrunnskartId } from "hooks/layers/types";
-import { VisibleLayers } from "hooks/layers/useVisibleLayers";
 import { MainMappedLayer } from "utils/getLayersFromWMS";
 import { getLayerIdFromMappedLayer } from "utils/map/layers";
 
@@ -12,15 +11,15 @@ type Props = {
   mainLayerName: string;
   index: number;
   moveLayer: (direction: "up" | "down", layerId: BakgrunnskartId) => void;
-  visibleLayers: VisibleLayers;
-  toggleLayerVisibility: (layerId: BakgrunnskartId) => void;
+  toggleLayerVisibility: () => void;
+  visible: boolean;
 };
 
 const MainBackgroundLayer = ({
   mappedLayer,
   mainLayerSourceId,
   mainLayerName,
-  visibleLayers,
+  visible,
   toggleLayerVisibility,
   index,
   moveLayer,
@@ -32,15 +31,7 @@ const MainBackgroundLayer = ({
 
     if (!layerId) return;
 
-    toggleLayerVisibility(layerId);
-  };
-
-  const isVisible = () => {
-    const layerId = getLayerIdFromMappedLayer(mappedLayer);
-
-    if (!layerId) return false;
-
-    return visibleLayers[layerId];
+    toggleLayerVisibility();
   };
 
   return (
@@ -48,7 +39,7 @@ const MainBackgroundLayer = ({
       key={mappedLayer.title}
       mappedLayer={mappedLayer}
       indent={0}
-      visible={isVisible()}
+      visible={visible}
       onVisibilityClick={onVisibilityClick}
       ref={ref}
       isMainLayer

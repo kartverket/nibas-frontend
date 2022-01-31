@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import MainBackgroundLayer from "./BackgroundLayer/MainBackgroundLayer";
+import WMTSBackgroundLayer from "./WMTS/WMTSBackgroundLayer";
 import { SidebarPanel } from "components/Sidebar/SidebarPanel";
 import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { bakgrunnskartLayers } from "hooks/layers/constants";
-import { LayerId } from "hooks/layers/types";
+import { BakgrunnskartId } from "hooks/layers/types";
 import useVisibleLayers, {
   toggleLayerVisibility,
 } from "hooks/layers/useVisibleLayers";
@@ -13,6 +14,7 @@ import useZIndexes from "hooks/layers/useZIndexes";
 import getSubLayersFromWMSSource, {
   MainMappedLayer,
 } from "utils/getLayersFromWMS";
+import { isWMTSLayer } from "utils/map/layers";
 
 const Bakgrunnskart = () => {
   const { isOpen: visible, togglePanel } = useSidebarPanel("backgroundLayers");
@@ -49,23 +51,33 @@ const Bakgrunnskart = () => {
     };
   }, [visible, mappedLayers.length]);
 
-  const renderMainLayerByZIndex = (layerId: LayerId, i: number) => {
+  const renderMainLayerByZIndex = (layerId: BakgrunnskartId, i: number) => {
+    const layer = bakgrunnskartLayers[layerId];
     const mappedLayer = mappedLayers.find(
       (mappedLayer) => mappedLayer.sourceId === layerId
     );
 
     if (!mappedLayer) return null;
 
+    if (isWMTSLayer(layer)) {
+      return (
+        <WMTSBackgroundLayer
+          key={mappedLayer.title}
+          mappedLayer={mappedLayer}
+          visible={visibleLayers[layerId]}
+          toggleLayerVisibility={() => dispatch(toggleLayerVisibility(layerId))}
+        />
+      );
+    }
+
     return (
       <MainBackgroundLayer
         key={mappedLayer.title}
         mappedLayer={mappedLayer}
         mainLayerSourceId={mappedLayer.sourceId}
-        mainLayerName={mappedLayer.name ?? ""}
-        visibleLayers={visibleLayers}
-        toggleLayerVisibility={(layerId) =>
-          dispatch(toggleLayerVisibility(layerId))
-        }
+        mainLayerName={mappedLayer.id ?? ""}
+        visible={visibleLayers[layerId]}
+        toggleLayerVisibility={() => dispatch(toggleLayerVisibility(layerId))}
         index={i}
         moveLayer={moveLayer}
       />
