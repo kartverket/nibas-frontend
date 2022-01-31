@@ -1,6 +1,8 @@
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import VectorLayer from "ol/layer/Vector";
+import Source from "ol/source/Source";
+import WMTS from "ol/source/WMTS";
 import { getLayerById } from "./layers";
 import { LayerId } from "hooks/layers/types";
 import { GeometryVectorSource } from "hooks/sources/types";

@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import WMTS from "ol/source/WMTS";
 import BackgroundLayerAccordion from "../BackgroundLayer/BackgroundLayerAccordion";
 import WMTSSubLayer from "./WMTSSubLayer";
 import { BakgrunnskartId } from "hooks/layers/types";
-import { bakgrunnskartSources } from "hooks/sources/syncSources";
 import { MainMappedLayer } from "utils/getLayersFromWMS";
+import { getLayerById } from "utils/map/layers";
 
 const getActiveSubLayer = (sourceId: BakgrunnskartId) => {
-  const source = bakgrunnskartSources[sourceId] as WMTS;
+  const layer = getLayerById(sourceId);
+  const source = layer.getSource() as WMTS;
+
   return source.getLayer();
 };
 
@@ -24,13 +26,17 @@ const WMTSBackgroundLayer = ({
 }: Props) => {
   // vi må manuelt oppdatere state når synlighet endres,
   // siden openlayers ikke rerendrer UIet vårt
-  const [visibleSubLayer, setVisibleSubLayer] = useState("");
+  const [activeSubLayer, setActiveSubLayer] = useState("");
 
-  useEffect(() => {
+  const updateActiveSubLayer = useCallback(() => {
     const activeSubLayer = getActiveSubLayer(mappedLayer.sourceId);
 
-    setVisibleSubLayer(activeSubLayer);
+    setActiveSubLayer(activeSubLayer);
   }, [mappedLayer.sourceId]);
+
+  useEffect(() => {
+    updateActiveSubLayer();
+  }, [updateActiveSubLayer]);
 
   return (
     <BackgroundLayerAccordion
@@ -46,12 +52,8 @@ const WMTSBackgroundLayer = ({
             key={subLayer.title}
             subLayer={subLayer}
             sourceId={mappedLayer.sourceId}
-            activeSubLayer={visibleSubLayer}
-            updateActiveSubLayer={() => {
-              const activeSubLayer = getActiveSubLayer(mappedLayer.sourceId);
-
-              setVisibleSubLayer(activeSubLayer);
-            }}
+            activeSubLayer={activeSubLayer}
+            updateActiveSubLayer={updateActiveSubLayer}
           />
         ))}
       </>

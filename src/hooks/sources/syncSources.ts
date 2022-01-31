@@ -3,6 +3,7 @@ import TileWMS from "ol/source/TileWMS";
 import WMTS from "ol/source/WMTS";
 import { createXYZ } from "ol/tilegrid";
 import WMTSTileGrid from "ol/tilegrid/WMTS";
+import { isWMTSSource } from "./utils";
 import { BakgrunnskartId } from "hooks/layers/types";
 import { getSrcWithTicket } from "utils/geonorgeTicket";
 
@@ -42,7 +43,7 @@ const getWMTSTileGrid = () => {
 
 const norgeskartConfig = {
   url: "https://opencache.statkart.no/gatekeeper/gk/gk.open_wmts",
-  layer: "norgeskart_bakgrunn",
+  layer: "norges_grunnkart_graatone",
   matrixSet: "EPSG:25833",
   tileGrid: getWMTSTileGrid(),
   style: "default",
@@ -171,13 +172,14 @@ bakgrunnskartSources.topografiskNorgeskart.set("config", norgeskartConfig);
   const tileGrid = getWMSTileGrid();
 
   Object.keys(bakgrunnskartSources).forEach((id) => {
-    // sett id på alle sources for å gjøre de mulig å sjekke opp  med layers
-    bakgrunnskartSources[id as BakgrunnskartId].set("id", id);
+    const source = bakgrunnskartSources[id as BakgrunnskartId];
 
-    // sett tile grid på alle sources
-    bakgrunnskartSources[id as BakgrunnskartId].setTileGridForProjection(
-      "EPSG:25833",
-      tileGrid
-    );
+    // sett id på alle sources for å gjøre de mulig å sjekke opp  med layers
+    source.set("id", id);
+
+    if (isWMTSSource(source)) return;
+
+    // sett tile grid på alle sources som ikke er WMTS
+    source.setTileGridForProjection("EPSG:25833", tileGrid);
   });
 })();

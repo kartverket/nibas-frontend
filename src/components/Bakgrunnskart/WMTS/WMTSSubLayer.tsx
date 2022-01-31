@@ -19,26 +19,15 @@ const WMTSSubLayer = ({
   updateActiveSubLayer,
 }: Props) => {
   const onSubLayerClick = () => {
-    // console.log(subLayer);
+    // hent originale sourcen med config
+    // lag ny source basert på options med det nye laget
     const source = bakgrunnskartSources[sourceId] as WMTS;
-    // console.log(source);
     const newSource = new WMTS({ ...source.get("config"), layer: subLayer.id });
-    // source.set("layer", subLayer.id ?? "");
-    source.set("config", source.get("config"));
     const layer = getLayerById(sourceId);
     layer.setSource(newSource);
 
     updateActiveSubLayer();
   };
-
-  // const isSubLayerVisible = (subLayer: MappedLayer) => {
-  //   const source = bakgrunnskartSources[sourceId] as WMTS;
-  //   const activeLayer = source.getLayer();
-  //   console.log(subLayer);
-  //   console.log(activeLayer);
-
-  //   return subLayer.id === activeLayer;
-  // };
 
   return (
     <BackgroundLayerAccordion
