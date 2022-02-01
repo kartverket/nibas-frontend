@@ -21,7 +21,29 @@ const getWMSTileGrid = () => {
   return tileGrid;
 };
 
-const getWMTSTileGrid = () => {
+const getWMTSTileGrid = (
+  extent: number[],
+  setMatrixId: (i: index) => string
+) => {
+  // extent fått fra `optionsFromCapabilities` funksjon, se eksempler
+  // https://openlayers.org/en/latest/examples/wmts-layer-from-capabilities.html
+  // https://openlayers.org/en/latest/examples/wmts.html
+  const size = getWidth(extent) / 256;
+  const resolutions = new Array(19);
+  const matrixIds = new Array(19);
+  for (let z = 0; z < 19; ++z) {
+    resolutions[z] = size / Math.pow(2, z);
+    matrixIds[z] = setMatrixId(z);
+  }
+
+  return new WMTSTileGrid({
+    extent,
+    resolutions,
+    matrixIds,
+  });
+};
+
+const getTopografiskNorgeskartTileGrid = () => {
   // extent fått fra `optionsFromCapabilities` funksjon, se eksempler
   // https://openlayers.org/en/latest/examples/wmts-layer-from-capabilities.html
   // https://openlayers.org/en/latest/examples/wmts.html
@@ -41,11 +63,28 @@ const getWMTSTileGrid = () => {
   });
 };
 
+const getNorgeIBilderTileGrid = () => {
+  const extent = [-2500000, 3500000, 3045984, 9045984];
+  const size = getWidth(extent) / 256;
+  const resolutions = new Array(19);
+  const matrixIds = new Array(19);
+  for (let z = 0; z < 19; ++z) {
+    resolutions[z] = size / Math.pow(2, z);
+    matrixIds[z] = z;
+  }
+
+  return new WMTSTileGrid({
+    extent,
+    resolutions,
+    matrixIds,
+  });
+};
+
 const norgeskartConfig = {
   url: "https://opencache.statkart.no/gatekeeper/gk/gk.open_wmts",
   layer: "norges_grunnkart_graatone",
   matrixSet: "EPSG:25833",
-  tileGrid: getWMTSTileGrid(),
+  tileGrid: getTopografiskNorgeskartTileGrid(),
   style: "default",
   format: "image/png",
 };
@@ -149,12 +188,11 @@ export const bakgrunnskartSources = {
     "wms.ecc_enc"
   ),
   // norgeIBilder: createAuthedTileWMS("/skwms1/wms.nib", "ortofoto", "wms.nib"),
-  // denne har helt felt matrixSet og tilematrix
   norgeIBilder: new WMTS({
-    url: "https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_web_mercator_wmts_v2",
-    layer: "Nibcache_web_mercator_v2",
-    matrixSet: "EPSG:25833",
-    tileGrid: getWMTSTileGrid(),
+    url: "https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm33_wmts_v2",
+    layer: "Nibcache_UTM33_EUREF89_v2",
+    matrixSet: "default028mm",
+    tileGrid: getNorgeIBilderTileGrid(),
     style: "default",
     format: "image/png",
   }),
