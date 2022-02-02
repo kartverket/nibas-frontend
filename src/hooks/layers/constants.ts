@@ -26,12 +26,7 @@ export const bakgrunnskartLayers = {
   n5Raster2: createTileLayerFromBakgrunnskartSource("n5Raster2"),
   historiskeKart: createTileLayerFromBakgrunnskartSource("historiskeKart"),
   norgeIBilder: createTileLayerFromBakgrunnskartSource("norgeIBilder"),
-  topografiskNorgeskart: createTileLayerFromBakgrunnskartSource(
-    "topografiskNorgeskart"
-  ),
-  topografiskNorgeskartGraatone: createTileLayerFromBakgrunnskartSource(
-    "topografiskNorgeskartGraatone"
-  ),
+  cachetjenester: createTileLayerFromBakgrunnskartSource("cachetjenester"),
   toporaster4: createTileLayerFromBakgrunnskartSource("toporaster4"),
   norgesMaritimeGrenser: createTileLayerFromBakgrunnskartSource(
     "norgesMaritimeGrenser"

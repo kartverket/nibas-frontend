@@ -52,7 +52,7 @@ const getTopografiskNorgeskartTileGrid = () =>
 const getNorgeIBilderTileGrid = () =>
   getWMTSTileGrid([-2500000, 3500000, 3045984, 9045984], (z) => z.toString());
 
-const norgeskartConfig = {
+const cachetjenesterConfig = {
   url: "https://opencache.statkart.no/gatekeeper/gk/gk.open_wmts",
   layer: "norges_grunnkart_graatone",
   matrixSet: "EPSG:25833",
@@ -122,7 +122,7 @@ export const bakgrunnskartSources = {
     "http://openwms.statkart.no/skwms1/wms.stedsnavnenkel",
     "stedsnavnenkel"
   ),
-  topografiskNorgeskart: new WMTS(norgeskartConfig),
+  cachetjenester: new WMTS(cachetjenesterConfig),
   norgesMaritimeGrenser: createTileWMS(
     "https://openwms.statkart.no/skwms1/wms.nmg",
     "nmg_WMS"
@@ -159,16 +159,11 @@ export const bakgrunnskartSources = {
     "https://wms.geonorge.no/skwms1/wms.historiskekart",
     "historiskekart"
   ),
-  topografiskNorgeskartGraatone: createTileWMS(
-    "https://openwms.statkart.no/skwms1/wms.topo4.graatone",
-    "topo4graatone_WMS"
-  ),
   sjokartElektroniske: createAuthedTileWMS(
     "/skwms1/wms.ecc_enc",
     "background",
     "wms.ecc_enc"
   ),
-  // norgeIBilder: createAuthedTileWMS("/skwms1/wms.nib", "ortofoto", "wms.nib"),
   norgeIBilder: new WMTS(norgeIBilderConfig),
 };
 
@@ -178,7 +173,7 @@ bakgrunnskartSources.sjokartElektroniske.set(
   "wms.ecc_enc"
 );
 
-bakgrunnskartSources.topografiskNorgeskart.set("config", norgeskartConfig);
+bakgrunnskartSources.cachetjenester.set("config", cachetjenesterConfig);
 bakgrunnskartSources.norgeIBilder.set("config", norgeIBilderConfig);
 
 (() => {

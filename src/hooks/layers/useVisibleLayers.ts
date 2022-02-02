@@ -53,7 +53,7 @@ const getInitialVisibility = () => {
 const useVisibleLayers = () => {
   const [visibleLayers, dispatch] = useReducer(visibleLayersReducer, {
     ...getInitialVisibility(),
-    topografiskNorgeskart: true,
+    cachetjenester: true,
   });
 
   // sett synlighet til layer i map til ny verdi
