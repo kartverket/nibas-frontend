@@ -12,13 +12,11 @@ import {
   initBakgrunnskartLayers,
   initGrenserLayers,
 } from "utils/map/layers";
-import { initWMTSSources } from "utils/map/source";
 
 // dette må skje utenfor komponenten siden React kjører dypere useEffects
 // før de lenger opp i treet, så lag er ikke definert når de trengs lenger ned
 initGrenserLayers();
 initBakgrunnskartLayers();
-initWMTSSources();
 
 const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);

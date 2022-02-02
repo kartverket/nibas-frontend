@@ -61,6 +61,15 @@ const norgeskartConfig = {
   format: "image/png",
 };
 
+const norgeIBilderConfig = {
+  url: "https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm33_wmts_v2",
+  layer: "Nibcache_UTM33_EUREF89_v2",
+  matrixSet: "default028mm",
+  tileGrid: getNorgeIBilderTileGrid(),
+  style: "default",
+  format: "image/png",
+};
+
 const defaultParams = {
   CRS: "EPSG:25833",
   TILED: true,
@@ -160,14 +169,7 @@ export const bakgrunnskartSources = {
     "wms.ecc_enc"
   ),
   // norgeIBilder: createAuthedTileWMS("/skwms1/wms.nib", "ortofoto", "wms.nib"),
-  norgeIBilder: new WMTS({
-    url: "https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm33_wmts_v2",
-    layer: "Nibcache_UTM33_EUREF89_v2",
-    matrixSet: "default028mm",
-    tileGrid: getNorgeIBilderTileGrid(),
-    style: "default",
-    format: "image/png",
-  }),
+  norgeIBilder: new WMTS(norgeIBilderConfig),
 };
 
 bakgrunnskartSources.norgeIBilder.set("protectedTjenesteId", "wms.nib");
@@ -177,6 +179,7 @@ bakgrunnskartSources.sjokartElektroniske.set(
 );
 
 bakgrunnskartSources.topografiskNorgeskart.set("config", norgeskartConfig);
+bakgrunnskartSources.norgeIBilder.set("config", norgeIBilderConfig);
 
 (() => {
   const tileGrid = getWMSTileGrid();
