@@ -147,10 +147,6 @@ export const bakgrunnskartSources = {
     "https://wms.geonorge.no/skwms1/wms.dybdedata2",
     "Dybdedata2"
   ),
-  toporaster4: createTileWMS(
-    "http://openwms.statkart.no/skwms1/wms.toporaster4",
-    "toporaster"
-  ),
   stedsnavnSSR: createTileWMS(
     "https://openwms.statkart.no/skwms1/wms.ssr2",
     "ssr2_wms"

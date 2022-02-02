@@ -27,7 +27,6 @@ export const bakgrunnskartLayers = {
   historiskeKart: createTileLayerFromBakgrunnskartSource("historiskeKart"),
   norgeIBilder: createTileLayerFromBakgrunnskartSource("norgeIBilder"),
   cachetjenester: createTileLayerFromBakgrunnskartSource("cachetjenester"),
-  toporaster4: createTileLayerFromBakgrunnskartSource("toporaster4"),
   norgesMaritimeGrenser: createTileLayerFromBakgrunnskartSource(
     "norgesMaritimeGrenser"
   ),
