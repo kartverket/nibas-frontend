@@ -66,6 +66,8 @@ const Bakgrunnskart = () => {
           mappedLayer={mappedLayer}
           visible={visibleLayers[layerId]}
           toggleLayerVisibility={() => dispatch(toggleLayerVisibility(layerId))}
+          index={i}
+          moveLayer={moveLayer}
         />
       );
     }
