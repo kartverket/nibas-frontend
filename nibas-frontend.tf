@@ -55,13 +55,25 @@ resource "kubernetes_deployment" "nibas-frontend-deployment" {
       }
       spec {
         image_pull_secrets {
-            name="nibas-pull-token"
+            name="nibas-pull-token-kes"
         }
         container {
           image = "ghcr.io/kartverket/nibas-frontend:${var.nibas_frontend_version}"
           name  = "nibas-frontend"
           port {
             container_port = 8080
+          }
+          env {
+            name = "HTTP_PROXY"
+            value = "http://tkgeproxy1.statkart.no:3128"
+          }
+          env {
+            name = "HTTPS_PROXY"
+            value = "http://tkgeproxy1.statkart.no:3128"
+          }
+          env {
+            name = "NO_PROXY"
+            value = "10.0.0.0/8"
           }
           env {
             name  = "BAAT_USERNAME"
