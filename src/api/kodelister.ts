@@ -3,11 +3,7 @@ export type KodelisteItem = {
   item: GeonorgeKodelisteItem;
 };
 
-enum KodelisteType {
-  KOMMUNENUMMER,
-  FYLKESNUMMER,
-  MALEMETODE_KODE,
-}
+type KodelisteType = "KOMMUNENUMMER" | "FYLKESNUMMER" | "MALEMETODE_KODE";
 
 type GeonorgeKodelisteItem = {
   id: string;

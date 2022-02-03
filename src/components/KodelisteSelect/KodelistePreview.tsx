@@ -1,9 +1,4 @@
 import styled from "styled-components";
-import {
-  fetchFylkesnumre,
-  fetchKommunenumre,
-  fetchMaalemetodeKoder,
-} from "../../api/kodelister";
 import KodelisteSelect from "components/KodelisteSelect/KodelisteSelect";
 
 const KodelistePreview = () => {
@@ -14,7 +9,7 @@ const KodelistePreview = () => {
           id="kommunenummerDropdown"
           label="Kommunenummer"
           name="kommunenummerName"
-          fetchKodeListeFunction={fetchKommunenumre}
+          kodelisteUrl="/v1/kodeliste/kommunenumre"
         />
       </div>
       <div>
@@ -22,7 +17,7 @@ const KodelistePreview = () => {
           id="fylkesnummerDropdown"
           label="Fylkesnummer"
           name="fylkesnummerName"
-          fetchKodeListeFunction={fetchFylkesnumre}
+          kodelisteUrl="/v1/kodeliste/fylkesnumre"
         />
       </div>
       <div>
@@ -30,7 +25,7 @@ const KodelistePreview = () => {
           id="maalemetodeKoderDropdown"
           label="Målemetode"
           name="maalemetodeName"
-          fetchKodeListeFunction={fetchMaalemetodeKoder}
+          kodelisteUrl="/v1/kodeliste/malemetode-koder"
         />
       </div>
     </KodelistePreviewPanel>
