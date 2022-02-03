@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import styled from "styled-components";
+import useSWR from "swr";
 import ToggleableGrense from "../ToggleableGrense";
 import { ObjectValue } from "../useEditGrenser";
 import { fetchKommuneFeaturesById, fetchKommunerByFylke } from "api/kommuner";
@@ -16,19 +16,9 @@ type Props = {
 };
 
 const KommuneList = ({ fylke, kommuneValues, setKommuneValue }: Props) => {
-  const [kommuner, setKommuner] = useState<SimpleKommune[]>([]);
-
-  useEffect(() => {
-    if (!fylke) return;
-
-    const updateKommuner = async () => {
-      const fetchedKommuner = await fetchKommunerByFylke(fylke.id);
-
-      setKommuner(fetchedKommuner);
-    };
-
-    updateKommuner();
-  }, [fylke]);
+  const { data: kommuner } = useSWR(`/v1/kommuner?fylkeid=${fylke.id}`, () =>
+    fetchKommunerByFylke(fylke.id)
+  );
 
   const getFeaturesToAdd = async (kommune: SimpleKommune) => {
     const json = await fetchKommuneFeaturesById(kommune.id);
@@ -42,6 +32,8 @@ const KommuneList = ({ fylke, kommuneValues, setKommuneValue }: Props) => {
     layerFeatures.filter(
       (feature) => feature.getProperties().kontekstId === kommune.id
     );
+
+  if (!kommuner) return null;
 
   return (
     <Wrapper>

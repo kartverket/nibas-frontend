@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
+import useSWR from "swr";
 import { KodelisteItem } from "../../api/kodelister";
 import CaretDownIcon from "icons/caretdown.svg";
+import { fetcher } from "utils/swr";
 
 type KodelisteSelectProps = {
   id: string;
@@ -10,31 +12,28 @@ type KodelisteSelectProps = {
   selectedValue?: string;
   showSelectedText?: boolean;
   sortFunction?: (a: KodelisteItem, b: KodelisteItem) => number;
-  fetchKodeListeFunction: () => Promise<KodelisteItem[]>;
+  kodelisteUrl: string;
 };
 
 const defaultSortFunction = (a: KodelisteItem, b: KodelisteItem) =>
   parseInt(a.item.codevalue, 10) - parseInt(b.item.codevalue, 10);
 
-const KodelisteSelect: React.FC<KodelisteSelectProps> = ({
+const KodelisteSelect = ({
   id,
   name,
   label,
   selectedValue = "",
   showSelectedText = false,
   sortFunction = defaultSortFunction,
-  fetchKodeListeFunction,
-}) => {
-  // De mulige kodeliste-valgene
-  const [kodelisteItems, setKodelisteItems] = useState<KodelisteItem[]>([]);
+  kodelisteUrl,
+}: KodelisteSelectProps) => {
+  const { data: kodelisteItems } = useSWR<KodelisteItem[]>(
+    kodelisteUrl,
+    fetcher
+  );
+
   // Holder på valgt UUID
   const [selection, setSelection] = useState<string>(selectedValue);
-
-  useEffect(() => {
-    (async () => {
-      setKodelisteItems(await fetchKodeListeFunction());
-    })();
-  }, [fetchKodeListeFunction]);
 
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setSelection(event.target.value as string);
@@ -58,7 +57,7 @@ const KodelisteSelect: React.FC<KodelisteSelectProps> = ({
           value={selection}
           onChange={handleChange}
         >
-          {kodelisteItems.sort(sortFunction).map((kodelisteItem) => {
+          {kodelisteItems?.sort(sortFunction).map((kodelisteItem) => {
             const item = kodelisteItem.item;
             return (
               <option key={item.uuid} value={item.uuid}>

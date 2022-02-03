@@ -6,16 +6,23 @@ import { ObjectValue } from "../useEditGrenser";
 import { fetchFylkeFeaturesById } from "api/fylker";
 import { SimpleFylke } from "types/api";
 import { geoJsonToSource } from "utils/map/geoJson";
+import { fetcher } from "utils/swr";
+import LineString from "ol/geom/LineString";
+import useSWR from "swr";
 
 type Props = {
-  fylker: SimpleFylke[];
   fylkeValues: Record<string, ObjectValue>;
   setFylkeValue: (kommune: string, value: ObjectValue) => void;
 };
 
-const FylkeList = ({ fylker, fylkeValues, setFylkeValue }: Props) => {
+const FylkeList = ({ fylkeValues, setFylkeValue }: Props) => {
+  const { data: fylker } = useSWR<SimpleFylke[]>("/v1/fylker", fetcher);
+
   const getFeaturesToAdd = async (fylke: SimpleFylke) => {
-    const json = await fetchFylkeFeaturesById(fylke.id);
+    // const json = await fetchFylkeFeaturesById(fylke.id);
+    const json = await fetcher<Feature<LineString>>(
+      `v1/fylker/${fylke.id}/grenser`
+    );
     return geoJsonToSource(json).getFeatures();
   };
 
@@ -26,6 +33,8 @@ const FylkeList = ({ fylker, fylkeValues, setFylkeValue }: Props) => {
     layerFeatures.filter(
       (feature) => feature.getProperties().kontekstId === fylke.id
     );
+
+  if (!fylker) return null;
 
   return (
     <Wrapper>
