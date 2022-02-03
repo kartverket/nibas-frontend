@@ -2,11 +2,12 @@ import { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { map } from "./constants";
 import ZoomControls from "./controls/ZoomControls";
+import MetadataPanel from "./MetadataPanel";
+import SidebarPanels from "./SidebarPanels";
 import { updateGrenser } from "api/grenser";
-import Bakgrunnskart from "components/Bakgrunnskart";
 import CustomControl from "components/CustomControl";
-import GrenserDrillDown from "components/GrenserDrillDown";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
+import useSelectInteraction from "hooks/interactions/useSelectInteraction";
 import {
   getLayerById,
   initBakgrunnskartLayers,
@@ -22,6 +23,7 @@ const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
 
   useEditInteractions();
+  const selectedFeatures = useSelectInteraction();
 
   useEffect(() => {
     // mapRef kan egentlig ikke være null her,
@@ -45,8 +47,8 @@ const Kart = () => {
   return (
     <KartTarget ref={mapRef}>
       <KartOverlay>
-        <GrenserDrillDown />
-        <Bakgrunnskart />
+        <SidebarPanels />
+        <MetadataPanel selectedFeatures={selectedFeatures} />
       </KartOverlay>
 
       <CustomControl>
@@ -69,6 +71,12 @@ const KartTarget = styled.div`
 `;
 
 const KartOverlay = styled.div`
+  display: grid;
+  grid-template-rows: 3fr 1fr;
+  grid-template-columns: auto 1fr;
+  grid-template-areas:
+    "panel ."
+    "panel metadata";
   width: 100%;
   height: 100%;
   position: absolute;
