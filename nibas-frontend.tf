@@ -64,18 +64,6 @@ resource "kubernetes_deployment" "nibas-frontend-deployment" {
             container_port = 8080
           }
           env {
-            name = "HTTP_PROXY"
-            value = "http://tkgeproxy1.statkart.no:3128"
-          }
-          env {
-            name = "HTTPS_PROXY"
-            value = "http://tkgeproxy1.statkart.no:3128"
-          }
-          env {
-            name = "NO_PROXY"
-            value = "10.0.0.0/8"
-          }
-          env {
             name  = "BAAT_USERNAME"
             value = data.vault_generic_secret.nibas-baat-bruker.data["username"]
           }
