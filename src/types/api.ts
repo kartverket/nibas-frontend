@@ -5,7 +5,7 @@ export type Grense = {
   id: number;
 };
 
-type Spraak = {
+export type Spraak = {
   navn: string;
   spraak: string;
 };

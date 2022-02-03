@@ -6,6 +6,7 @@ import { useEditGrenser } from "../../EditGrenserContext";
 import ToggleableGrense from "../../ToggleableGrense";
 import { fetchKommuneFeaturesById, fetchKommunerByFylke } from "api/kommuner";
 import { SimpleKommune } from "types/api";
+import { getNavnInSpraak } from "utils/language/language";
 import { geoJsonToSource } from "utils/map/geoJson";
 
 type Props = {
@@ -36,24 +37,18 @@ const KommuneList = ({ fylke }: Props) => {
 
   return (
     <Wrapper>
-      {kommuner.map((kommune) => {
-        const navn =
-          kommune.navn.find((kommuneNavn) => kommuneNavn.spraak === "nor")
-            ?.navn ?? "";
-
-        return (
-          <ToggleableGrense
-            key={navn}
-            grense={kommune}
-            objectValue={kommuneValues[navn]}
-            setObjectValue={setKommuneValue}
-            title={navn}
-            type="kommune"
-            getFeaturesToAdd={getFeaturesToAdd}
-            getFeaturesToRemove={getFeaturesToRemove}
-          />
-        );
-      })}
+      {kommuner.map((kommune) => (
+        <ToggleableGrense
+          key={getNavnInSpraak(fylke.navn, "nor")}
+          grense={kommune}
+          objectValue={kommuneValues[getNavnInSpraak(fylke.navn, "nor")]}
+          setObjectValue={setKommuneValue}
+          title={getNavnInSpraak(fylke.navn, "nor")}
+          type="kommune"
+          getFeaturesToAdd={getFeaturesToAdd}
+          getFeaturesToRemove={getFeaturesToRemove}
+        />
+      ))}
     </Wrapper>
   );
 };

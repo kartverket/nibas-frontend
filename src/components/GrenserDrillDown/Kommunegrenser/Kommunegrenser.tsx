@@ -2,6 +2,7 @@ import useSWR from "swr";
 import KommuneList from "./KommuneList";
 import Accordion from "components/Accordion";
 import { SimpleFylke } from "types/api";
+import { getNavnInSpraak } from "utils/language/language";
 import { fetcher } from "utils/swr";
 
 const Kommunegrenser = () => {
@@ -14,10 +15,7 @@ const Kommunegrenser = () => {
           fylker.map((fylke) => (
             <Accordion
               key={fylke.id}
-              title={
-                fylke.navn.find((fylkesNavn) => fylkesNavn.spraak === "nor")
-                  ?.navn ?? ""
-              }
+              title={getNavnInSpraak(fylke.navn, "nor")}
             >
               <KommuneList fylke={fylke} />
             </Accordion>

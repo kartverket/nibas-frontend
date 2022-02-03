@@ -6,6 +6,7 @@ import useSWR from "swr";
 import { useEditGrenser } from "components/GrenserDrillDown/EditGrenserContext";
 import ToggleableGrense from "components/GrenserDrillDown/ToggleableGrense";
 import { SimpleFylke } from "types/api";
+import { getNavnInSpraak } from "utils/language/language";
 import { geoJsonToSource } from "utils/map/geoJson";
 import { fetcher } from "utils/swr";
 
@@ -34,24 +35,18 @@ const FylkeList = () => {
 
   return (
     <Wrapper>
-      {fylker.map((fylke) => {
-        const navn =
-          fylke.navn.find((fylkesNavn) => fylkesNavn.spraak === "nor")?.navn ??
-          "";
-
-        return (
-          <ToggleableGrense
-            key={navn}
-            grense={fylke}
-            type="fylke"
-            title={navn}
-            objectValue={fylkeValues[navn]}
-            getFeaturesToAdd={getFeaturesToAdd}
-            getFeaturesToRemove={getFeaturesToRemove}
-            setObjectValue={setFylkeValue}
-          />
-        );
-      })}
+      {fylker.map((fylke) => (
+        <ToggleableGrense
+          key={getNavnInSpraak(fylke.navn, "nor")}
+          grense={fylke}
+          type="fylke"
+          title={getNavnInSpraak(fylke.navn, "nor")}
+          objectValue={fylkeValues[getNavnInSpraak(fylke.navn, "nor")]}
+          getFeaturesToAdd={getFeaturesToAdd}
+          getFeaturesToRemove={getFeaturesToRemove}
+          setObjectValue={setFylkeValue}
+        />
+      ))}
     </Wrapper>
   );
 };
