@@ -29,7 +29,6 @@ type Props<T extends Grense> = {
   type: EditingType;
   getFeaturesToAdd: (grense: T) => Promise<Feature<Geometry>[]>;
   getFeaturesToRemove: (
-    grense: T,
     layerFeatures: Feature<Geometry>[]
   ) => Feature<Geometry>[];
 };
@@ -61,7 +60,7 @@ const ToggleableGrense = <T extends Grense>({
     if (!source) return;
 
     const featuresInLayer = source.getFeatures();
-    const grenseFeatures = getFeaturesToRemove(grense, featuresInLayer);
+    const grenseFeatures = getFeaturesToRemove(featuresInLayer);
 
     removeFeaturesFromSource(layerId, grenseFeatures);
   };
