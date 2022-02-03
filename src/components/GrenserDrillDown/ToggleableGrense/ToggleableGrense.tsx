@@ -2,7 +2,7 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import VectorLayer from "ol/layer/Vector";
 import styled from "styled-components";
-import { ObjectValue, EditingType } from "../useEditGrenser";
+import { EditingType, ObjectValue } from "../EditGrenserContext";
 import Button from "components/Button";
 import { LayerId } from "hooks/layers/types";
 import { GeometryVectorSource } from "hooks/sources/types";

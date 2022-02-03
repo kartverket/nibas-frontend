@@ -2,19 +2,19 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import styled from "styled-components";
 import useSWR from "swr";
+import { useEditGrenser } from "../EditGrenserContext";
 import ToggleableGrense from "../ToggleableGrense";
-import { ObjectValue } from "../useEditGrenser";
 import { fetchKommuneFeaturesById, fetchKommunerByFylke } from "api/kommuner";
 import { SimpleKommune } from "types/api";
 import { geoJsonToSource } from "utils/map/geoJson";
 
 type Props = {
   fylke: SimpleKommune;
-  kommuneValues: Record<string, ObjectValue>;
-  setKommuneValue: (kommune: string, value: ObjectValue) => void;
 };
 
-const KommuneList = ({ fylke, kommuneValues, setKommuneValue }: Props) => {
+const KommuneList = ({ fylke }: Props) => {
+  const { values: kommuneValues, setObjectValue: setKommuneValue } =
+    useEditGrenser("kommune");
   const { data: kommuner } = useSWR(`/v1/kommuner?fylkeid=${fylke.id}`, () =>
     fetchKommunerByFylke(fylke.id)
   );
