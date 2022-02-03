@@ -77,6 +77,9 @@ jobs:
     - name: Generate terraform variables
       run: |
         cat <<EOF >> terraform.tfvars
+        vault_addr="${{ secrets.VAULT_ADDR }}"
+        vault_skip_verify="${{ secrets.VAULT_SKIP_VERIFY }}"
+        vault_token="${{ secrets.VAULT_TOKEN }}"
         nibas_frontend_version="${{ needs.build.outputs.new_tag }}"
         EOF
     
