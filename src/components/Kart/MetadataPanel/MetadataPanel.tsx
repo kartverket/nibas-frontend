@@ -3,6 +3,7 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import styled from "styled-components";
 import { KartInteractable } from "../KartInteractable";
+import MetadataContent from "./MetadataContent";
 import Button from "components/Button";
 
 type Props = {
@@ -38,6 +39,7 @@ const MetadataPanel = ({ selectedFeatures }: Props) => {
         {singleFeature.getProperties().kontekstType}{" "}
         {singleFeature.getProperties().kontekstId}
       </p>
+      <MetadataContent feature={singleFeature} />
       <Button onClick={() => setVisible(false)}>Close</Button>
     </Panel>
   );
@@ -47,6 +49,7 @@ const Panel = styled(KartInteractable)`
   grid-area: metadata;
   border: 1px solid ${({ theme }) => theme.colors.grayLight};
   padding: 16px;
+  overflow: auto;
 
   > h3 {
     margin-top: 0;
