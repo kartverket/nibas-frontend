@@ -2,6 +2,8 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { featuresToGeoJson } from "utils/map/geoJson";
 
+// TODO: Denne fila kan vel slettes?
+
 type AdministrativEnhetType = "FYLKE" | "KOMMUNE";
 
 export const fetchAdministrativEnhet = async (type: AdministrativEnhetType) => {

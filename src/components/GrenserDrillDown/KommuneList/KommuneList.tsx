@@ -8,6 +8,7 @@ import { fetchKommuneFeaturesById, fetchKommunerByFylke } from "api/kommuner";
 import { SimpleKommune } from "types/api";
 import { geoJsonToSource } from "utils/map/geoJson";
 
+// TODO: Skal vel renames til kommune?
 type Props = {
   fylke: SimpleKommune;
   kommuneValues: Record<string, ObjectValue>;

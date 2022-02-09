@@ -2,7 +2,7 @@ import { Feature } from "ol";
 import Polygon from "ol/geom/Polygon";
 
 export type Grense = {
-  id: number;
+  id: string;
 };
 
 type Spraak = {
