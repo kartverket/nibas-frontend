@@ -52,27 +52,27 @@ const SubBackgroundLayer = ({
       const source = bakgrunnskartSources[mainLayerSourceId] as TileWMS;
       const layersInParams = source.getParams().LAYERS as string;
 
-      if (!mappedLayer.name) return false;
+      if (!mappedLayer.id) return false;
 
-      return layersInParams.includes(mappedLayer.name);
+      return layersInParams.includes(mappedLayer.id);
     };
 
     setVisible(isSubLayerVisible());
-  }, [mainLayerSourceId, mappedLayer.name, mappedLayer]);
+  }, [mainLayerSourceId, mappedLayer.id, mappedLayer]);
 
   const updateSourceParams = () => {
     const source = bakgrunnskartSources[mainLayerSourceId] as TileWMS;
     const layersInParams = source.getParams().LAYERS as string;
-    const mappedLayerName = mappedLayer.name;
+    const mappedLayerId = mappedLayer.id;
 
-    if (!mappedLayerName) return;
+    if (!mappedLayerId) return;
 
     let newParamsLayerString = "";
 
     if (visible) {
       const replaceString = getLayersStringToReplace(
         layersInParams,
-        mappedLayerName
+        mappedLayerId
       );
 
       if (!replaceString) return;
@@ -89,9 +89,9 @@ const SubBackgroundLayer = ({
       let newLayers = "";
 
       if (!layersInParams || mainLayerName === layersInParams) {
-        newLayers = `${mappedLayerName}`;
+        newLayers = `${mappedLayerId}`;
       } else {
-        newLayers = `${layersInParams},${mappedLayerName}`;
+        newLayers = `${layersInParams},${mappedLayerId}`;
       }
 
       newParamsLayerString = newLayers;

@@ -1,6 +1,9 @@
+import BaseLayer from "ol/layer/Base";
 import Layer from "ol/layer/Layer";
+import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import Source from "ol/source/Source";
+import WMTS from "ol/source/WMTS";
 import { map } from "components/Kart/constants";
 import { bakgrunnskartLayers, grenserLayers } from "hooks/layers/constants";
 import { BakgrunnskartId, GrenseId, LayerId } from "hooks/layers/types";
@@ -82,4 +85,8 @@ export const getVectorLayers = () => {
   return layers.filter(
     (layer) => layer instanceof VectorLayer
   ) as VectorLayer<GeometryVectorSource>[];
+};
+
+export const isWMTSLayer = (layer: BaseLayer): layer is TileLayer<WMTS> => {
+  return layer instanceof TileLayer && layer.getSource() instanceof WMTS;
 };

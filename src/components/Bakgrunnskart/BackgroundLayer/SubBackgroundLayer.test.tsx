@@ -11,18 +11,18 @@ const defaultProps: React.ComponentProps<typeof SubBackgroundLayer> = {
         layers: [],
         queryable: true,
         title: "Subsublag1",
-        name: "Subsublag1",
+        id: "Subsublag1",
       },
       {
         layers: [],
         queryable: true,
         title: "Subsublag2",
-        name: "Subsublag2",
+        id: "Subsublag2",
       },
     ],
     queryable: true,
     title: "Sublag",
-    name: "Sublag",
+    id: "Sublag",
   },
 };
 

@@ -80,7 +80,7 @@ describe("PageLayout", () => {
       ).toBeInTheDocument();
     });
 
-    it("should toggle visibility of main layer on eye click", async () => {
+    it("should toggle visibility of WMS layer on eye click", async () => {
       render(<PageLayout />);
 
       const bakgrunnskartButton = screen.getByRole("button", {
@@ -95,6 +95,27 @@ describe("PageLayout", () => {
 
       const hideLayerButton = await screen.findByRole("button", {
         name: /skjul Administrative enheter WMS versjon 2/i,
+      });
+      fireEvent.click(hideLayerButton);
+
+      expect(showLayerButton).toBeInTheDocument();
+    });
+
+    it("should toggle visibility of WMTS layer on eye click", async () => {
+      render(<PageLayout />);
+
+      const bakgrunnskartButton = screen.getByRole("button", {
+        name: /bakgrunnskart/i,
+      });
+      fireEvent.click(bakgrunnskartButton);
+
+      const showLayerButton = await screen.findByRole("button", {
+        name: /vis Nibcache_UTM33_EUREF89_v2/i,
+      });
+      fireEvent.click(showLayerButton);
+
+      const hideLayerButton = await screen.findByRole("button", {
+        name: /skjul Nibcache_UTM33_EUREF89_v2/i,
       });
       fireEvent.click(hideLayerButton);
 
