@@ -16,6 +16,27 @@ const Checkbox = ({ label, ...props }: Props) => {
   );
 };
 
+const Checkmark = css`
+  left: 4px;
+  top: 1px;
+  width: 7px;
+  height: 11px;
+  border: solid ${({ theme }) => theme.colors.white};
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+`;
+
+const RadioFill = css`
+  top: 2px;
+  left: 2px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: ${({ theme }) => theme.colors.blueDark};
+`;
+
+// TODO: Random farge basert på label?
+
 // https://www.w3schools.com/howto/howto_css_custom_checkbox.asp
 const CustomCheckbox = styled.span<{ type: "radio" | "checkbox" }>`
   position: absolute;
@@ -24,36 +45,23 @@ const CustomCheckbox = styled.span<{ type: "radio" | "checkbox" }>`
   height: 17px;
   width: 17px;
   background-color: ${({ theme }) => theme.colors.white};
-  border-radius: ${({ type }) => (type === "radio" ? "50%" : 0)};
+  border-radius: ${({ type }) => (type === "radio" ? "50%" : "2px")};
   border: 1px solid ${({ theme }) => theme.colors.blueDark};
+  transition: 0.1s background-color;
 
   :after {
     content: "";
     position: absolute;
     display: none;
+    transition: 1s display;
 
     ${(props) => {
       switch (props.type) {
         case "radio": {
-          return css`
-            top: 2px;
-            left: 2px;
-            width: 11px;
-            height: 11px;
-            border-radius: 50%;
-            background: ${({ theme }) => theme.colors.blueDark};
-          `;
+          return RadioFill;
         }
         case "checkbox": {
-          return css`
-            left: 4px;
-            top: 1px;
-            width: 7px;
-            height: 11px;
-            border: solid ${({ theme }) => theme.colors.white};
-            border-width: 0 2px 2px 0;
-            transform: rotate(45deg);
-          `;
+          return Checkmark;
         }
       }
     }}
@@ -69,8 +77,7 @@ const DefaultCheckbox = styled.input`
 `;
 
 const Wrapper = styled.label<{ disabled: boolean }>`
-  // display: block;
-  display: inline-flex;
+  display: inline-block;
   align-items: center;
   position: relative;
   padding-left: 28px;
@@ -83,19 +90,22 @@ const Wrapper = styled.label<{ disabled: boolean }>`
     background-color: ${({ theme }) => theme.colors.grayLight};
   }
 
-  // når checked, style CustomCheckbox
+  // når checked, vis checkmark/radio fill
   ${DefaultCheckbox}:checked ~ ${CustomCheckbox} {
     :after {
       display: block;
     }
   }
 
-  ${DefaultCheckbox}:disabled ~ ${CustomCheckbox} {
-    background-color: ${({ theme }) => theme.colors.grayLight};
-    border-color: ${({ theme }) => theme.colors.gray};
+  // radio specific styles
+  ${DefaultCheckbox}[type="radio"] {
+    :disabled ~ ${CustomCheckbox} {
+      background-color: ${({ theme }) => theme.colors.grayLight};
+      border-color: ${({ theme }) => theme.colors.gray};
 
-    :after {
-      background-color: ${({ theme }) => theme.colors.gray};
+      :after {
+        background-color: ${({ theme }) => theme.colors.gray};
+      }
     }
   }
 
@@ -105,8 +115,17 @@ const Wrapper = styled.label<{ disabled: boolean }>`
       background-color: ${({ theme }) => theme.colors.blueDark};
     }
 
-    :disabled ~ ${CustomCheckbox}:after {
-      background-color: inherit;
+    :disabled ~ ${CustomCheckbox} {
+      background-color: ${({ theme }) => theme.colors.grayLight};
+    }
+
+    :checked:disabled ~ ${CustomCheckbox} {
+      background-color: ${({ theme }) => theme.colors.gray};
+
+      :after {
+        background-color: inherit;
+        border-color: ${({ theme }) => theme.colors.grayLight};
+      }
     }
   }
 `;
