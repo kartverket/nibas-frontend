@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from "react";
-import { DropTargetMonitor, useDrag, useDrop, XYCoord } from "react-dnd";
 import BackgroundLayerAccordion from "./BackgroundLayerAccordion";
 import SubBackgroundLayer from "./SubBackgroundLayer";
+import useBackgroundLayerDND from "./useBackgroundLayerDND";
 import { BakgrunnskartId } from "hooks/layers/types";
 import { MainMappedLayer } from "utils/getLayersFromWMS";
 import { getLayerIdFromMappedLayer } from "utils/map/layers";
@@ -10,106 +9,30 @@ type Props = {
   mappedLayer: MainMappedLayer;
   mainLayerSourceId: BakgrunnskartId;
   mainLayerName: string;
-  toggleMainLayer: (mappedLayer: MainMappedLayer) => void;
-  isMainLayerVisible: (mappedLayer: MainMappedLayer) => boolean;
   index: number;
   moveLayer: (direction: "up" | "down", layerId: BakgrunnskartId) => void;
-};
-
-type DragItem = {
-  index: number;
-  id: string;
-  type: string;
+  toggleLayerVisibility: () => void;
+  visible: boolean;
 };
 
 const MainBackgroundLayer = ({
   mappedLayer,
   mainLayerSourceId,
   mainLayerName,
-  toggleMainLayer,
-  isMainLayerVisible,
+  visible,
+  toggleLayerVisibility,
   index,
   moveLayer,
 }: Props) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-  const [, drag] = useDrag(() => ({
-    type: "mainLayer",
-  }));
-
-  // https://codesandbox.io/s/github/react-dnd/react-dnd/tree/gh-pages/examples_hooks_ts/04-sortable/simple?from-embed=&file=/src/Card.tsx
-  const [, drop] = useDrop({
-    accept: "mainLayer",
-    hover(item: DragItem, monitor: DropTargetMonitor) {
-      if (!ref.current) {
-        return;
-      }
-      const dragIndex = item.index;
-      const hoverIndex = index;
-
-      // Don't replace items with themselves
-      if (dragIndex === hoverIndex) {
-        return;
-      }
-
-      // Determine rectangle on screen
-      const hoverBoundingRect = ref.current?.getBoundingClientRect();
-
-      // Get vertical middle
-      const hoverMiddleY =
-        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
-
-      // Determine mouse position
-      const clientOffset = monitor.getClientOffset();
-
-      // Get pixels to the top
-      const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top;
-
-      // Only perform the move when the mouse has crossed half of the items height
-      // When dragging downwards, only move when the cursor is below 50%
-      // When dragging upwards, only move when the cursor is above 50%
-
-      // Dragging downwards
-      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
-        return;
-      }
-
-      // Dragging upwards
-      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
-        return;
-      }
-
-      // dragIndex er undefined på første frame av dragging
-      if (dragIndex !== undefined) {
-        const layerId = getLayerIdFromMappedLayer(mappedLayer);
-
-        if (!layerId) {
-          return;
-        }
-
-        // Time to actually perform the action
-        moveLayer(dragIndex > hoverIndex ? "up" : "down", layerId);
-      }
-
-      // Note: we're mutating the monitor item here!
-      // Generally it's better to avoid mutations,
-      // but it's good here for the sake of performance
-      // to avoid expensive index searches.
-      item.index = hoverIndex;
-    },
-  });
-
-  useEffect(() => {
-    setVisible(isMainLayerVisible(mappedLayer));
-  }, [isMainLayerVisible, mappedLayer]);
+  const ref = useBackgroundLayerDND(index, moveLayer, mappedLayer);
 
   const onVisibilityClick = () => {
-    toggleMainLayer(mappedLayer);
+    const layerId = getLayerIdFromMappedLayer(mappedLayer);
 
-    setVisible(!visible);
+    if (!layerId) return;
+
+    toggleLayerVisibility();
   };
-
-  drag(drop(ref));
 
   return (
     <BackgroundLayerAccordion

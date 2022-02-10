@@ -4,6 +4,7 @@ import { getMatWFSFeatures } from "../../utils/getMatrikkelWfsFeatures";
 import { addFeaturesToSource } from "../../utils/map/source";
 import Button from "../Button";
 import MainBackgroundLayer from "./BackgroundLayer/MainBackgroundLayer";
+import WMTSBackgroundLayer from "./WMTS/WMTSBackgroundLayer";
 import { SidebarPanel } from "components/Sidebar/SidebarPanel";
 import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
@@ -21,6 +22,7 @@ import {
   isVectorLayer,
   isWmsLayer,
 } from "utils/map/layers";
+import { isWMTSLayer } from "utils/map/layers";
 
 const Bakgrunnskart = () => {
   const [mappedLayers, setMappedLayers] = useState<MainMappedLayer[]>([]);
@@ -66,22 +68,6 @@ const Bakgrunnskart = () => {
     };
   }, [visible, mappedLayers.length]);
 
-  const toggleMainLayer = (mappedLayer: MainMappedLayer) => {
-    const layerId = getLayerIdFromMappedLayer(mappedLayer);
-
-    if (!layerId) return;
-
-    dispatch(toggleLayerVisibility(layerId));
-  };
-
-  const isMainLayerVisible = (mappedLayer: MainMappedLayer) => {
-    const layerId = getLayerIdFromMappedLayer(mappedLayer);
-
-    if (!layerId) return false;
-
-    return visibleLayers[layerId];
-  };
-
   const fetchMatrikkelWfsFeatures = async () => {
     const features = await getMatWFSFeatures();
     if (!features) return null;
@@ -95,22 +81,27 @@ const Bakgrunnskart = () => {
       const mappedLayer = mappedLayers.find(
         (mappedLayer) => mappedLayer.sourceId === layerId
       );
+  const renderMainLayerByZIndex = (layerId: BakgrunnskartId, i: number) => {
+    const layer = bakgrunnskartLayers[layerId];
+    const mappedLayer = mappedLayers.find(
+      (mappedLayer) => mappedLayer.sourceId === layerId
+    );
 
       if (!mappedLayer) return null;
 
+    if (isWMTSLayer(layer)) {
       return (
-        <MainBackgroundLayer
+        <WMTSBackgroundLayer
           key={mappedLayer.title}
           mappedLayer={mappedLayer}
-          mainLayerSourceId={mappedLayer.sourceId}
-          mainLayerName={mappedLayer.name ?? ""}
-          toggleMainLayer={toggleMainLayer}
-          isMainLayerVisible={isMainLayerVisible}
+          visible={visibleLayers[layerId]}
+          toggleLayerVisibility={() => dispatch(toggleLayerVisibility(layerId))}
           index={i}
           moveLayer={moveLayer}
         />
       );
-    } else if (isVectorLayer(layer)) {
+    }
+    if (isVectorLayer(layer)) {
       return (
         <div>
           <Button onClick={fetchMatrikkelWfsFeatures}>fetch wfs</Button>
@@ -118,6 +109,19 @@ const Bakgrunnskart = () => {
         </div>
       );
     }
+
+    return (
+      <MainBackgroundLayer
+        key={mappedLayer.title}
+        mappedLayer={mappedLayer}
+        mainLayerSourceId={mappedLayer.sourceId}
+        mainLayerName={mappedLayer.id ?? ""}
+        visible={visibleLayers[layerId]}
+        toggleLayerVisibility={() => dispatch(toggleLayerVisibility(layerId))}
+        index={i}
+        moveLayer={moveLayer}
+      />
+    );
   };
 
   if (!visible) return null;

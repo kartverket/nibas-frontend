@@ -53,8 +53,7 @@ const getInitialVisibility = () => {
 const useVisibleLayers = () => {
   const [visibleLayers, dispatch] = useReducer(visibleLayersReducer, {
     ...getInitialVisibility(),
-    topografiskNorgeskart: true,
-    sjokartElektroniske: true,
+    cachetjenester: true,
     matrikkelenWfs: true,
   });
 
