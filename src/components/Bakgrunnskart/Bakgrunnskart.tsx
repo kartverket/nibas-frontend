@@ -1,10 +1,5 @@
 import { useEffect, useState } from "react";
-import BaseLayer from "ol/layer/Base";
-import TileLayer from "ol/layer/Tile";
-import VectorLayer from "ol/layer/Vector";
-import TileWMS from "ol/source/TileWMS";
 import styled from "styled-components";
-import { GeometryVectorSource } from "../../hooks/sources/types";
 import { getMatWFSFeatures } from "../../utils/getMatrikkelWfsFeatures";
 import { addFeaturesToSource } from "../../utils/map/source";
 import Button from "../Button";
@@ -13,7 +8,7 @@ import { SidebarPanel } from "components/Sidebar/SidebarPanel";
 import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { bakgrunnskartLayers } from "hooks/layers/constants";
-import { BakgrunnskartId, LayerId } from "hooks/layers/types";
+import { BakgrunnskartId } from "hooks/layers/types";
 import useVisibleLayers, {
   toggleLayerVisibility,
 } from "hooks/layers/useVisibleLayers";
@@ -21,17 +16,11 @@ import useZIndexes from "hooks/layers/useZIndexes";
 import getSubLayersFromWMSSource, {
   MainMappedLayer,
 } from "utils/getLayersFromWMS";
-import { getLayerIdFromMappedLayer } from "utils/map/layers";
-
-const isWmsLayer = (layer: BaseLayer): layer is TileLayer<TileWMS> => {
-  return layer instanceof TileLayer;
-};
-
-const isVectorLayer = (
-  layer: BaseLayer
-): layer is VectorLayer<GeometryVectorSource> => {
-  return layer instanceof VectorLayer;
-};
+import {
+  getLayerIdFromMappedLayer,
+  isVectorLayer,
+  isWmsLayer,
+} from "utils/map/layers";
 
 const Bakgrunnskart = () => {
   const [mappedLayers, setMappedLayers] = useState<MainMappedLayer[]>([]);
@@ -56,8 +45,6 @@ const Bakgrunnskart = () => {
           mappedLayerPromises.push(
             getSubLayersFromWMSSource(layer.getSource())
           );
-        } else if (isVectorLayer(layer)) {
-          // todo
         }
       });
 
