@@ -1,0 +1,114 @@
+import { InputHTMLAttributes } from "react";
+import styled, { css } from "styled-components";
+
+type Props = InputHTMLAttributes<HTMLInputElement> & {
+  label: string;
+  type: "radio" | "checkbox";
+};
+
+const Checkbox = ({ label, ...props }: Props) => {
+  return (
+    <Wrapper disabled={!!props.disabled}>
+      {label}
+      <DefaultCheckbox {...props} />
+      <CustomCheckbox type={props.type} />
+    </Wrapper>
+  );
+};
+
+// https://www.w3schools.com/howto/howto_css_custom_checkbox.asp
+const CustomCheckbox = styled.span<{ type: "radio" | "checkbox" }>`
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 17px;
+  width: 17px;
+  background-color: ${({ theme }) => theme.colors.white};
+  border-radius: ${({ type }) => (type === "radio" ? "50%" : 0)};
+  border: 1px solid ${({ theme }) => theme.colors.blueDark};
+
+  :after {
+    content: "";
+    position: absolute;
+    display: none;
+
+    ${(props) => {
+      switch (props.type) {
+        case "radio": {
+          return css`
+            top: 2px;
+            left: 2px;
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            background: ${({ theme }) => theme.colors.blueDark};
+          `;
+        }
+        case "checkbox": {
+          return css`
+            left: 4px;
+            top: 1px;
+            width: 7px;
+            height: 11px;
+            border: solid ${({ theme }) => theme.colors.white};
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+          `;
+        }
+      }
+    }}
+  }
+`;
+
+const DefaultCheckbox = styled.input`
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+`;
+
+const Wrapper = styled.label<{ disabled: boolean }>`
+  // display: block;
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  padding-left: 28px;
+  margin-right: 28px;
+  margin-bottom: 14px;
+  cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
+  user-select: none;
+
+  :hover ${DefaultCheckbox} ~ ${CustomCheckbox} {
+    background-color: ${({ theme }) => theme.colors.grayLight};
+  }
+
+  // når checked, style CustomCheckbox
+  ${DefaultCheckbox}:checked ~ ${CustomCheckbox} {
+    :after {
+      display: block;
+    }
+  }
+
+  ${DefaultCheckbox}:disabled ~ ${CustomCheckbox} {
+    background-color: ${({ theme }) => theme.colors.grayLight};
+    border-color: ${({ theme }) => theme.colors.gray};
+
+    :after {
+      background-color: ${({ theme }) => theme.colors.gray};
+    }
+  }
+
+  // checkbox specific styles
+  ${DefaultCheckbox}[type="checkbox"] {
+    :checked ~ ${CustomCheckbox} {
+      background-color: ${({ theme }) => theme.colors.blueDark};
+    }
+
+    :disabled ~ ${CustomCheckbox}:after {
+      background-color: inherit;
+    }
+  }
+`;
+
+export default Checkbox;
