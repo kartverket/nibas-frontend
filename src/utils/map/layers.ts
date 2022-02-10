@@ -3,8 +3,8 @@ import Layer from "ol/layer/Layer";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import Source from "ol/source/Source";
-import WMTS from "ol/source/WMTS";
 import TileWMS from "ol/source/TileWMS";
+import WMTS from "ol/source/WMTS";
 import { map } from "components/Kart/constants";
 import { bakgrunnskartLayers, grenserLayers } from "hooks/layers/constants";
 import { BakgrunnskartId, GrenseId, LayerId } from "hooks/layers/types";
@@ -93,7 +93,7 @@ export const isWMTSLayer = (layer: BaseLayer): layer is TileLayer<WMTS> => {
 };
 
 export const isWmsLayer = (layer: BaseLayer): layer is TileLayer<TileWMS> => {
-  return layer instanceof TileLayer;
+  return layer instanceof TileLayer && layer.getSource() instanceof TileWMS;
 };
 
 export const isVectorLayer = (

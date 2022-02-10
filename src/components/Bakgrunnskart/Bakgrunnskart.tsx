@@ -17,12 +17,7 @@ import useZIndexes from "hooks/layers/useZIndexes";
 import getSubLayersFromWMSSource, {
   MainMappedLayer,
 } from "utils/getLayersFromWMS";
-import {
-  getLayerIdFromMappedLayer,
-  isVectorLayer,
-  isWmsLayer,
-} from "utils/map/layers";
-import { isWMTSLayer } from "utils/map/layers";
+import { isVectorLayer, isWmsLayer, isWMTSLayer } from "utils/map/layers";
 
 const Bakgrunnskart = () => {
   const [mappedLayers, setMappedLayers] = useState<MainMappedLayer[]>([]);
@@ -43,11 +38,9 @@ const Bakgrunnskart = () => {
       const mappedLayerPromises: Promise<MainMappedLayer | null>[] = [];
 
       layers.forEach((layer) => {
-        if (isWmsLayer(layer)) {
-          mappedLayerPromises.push(
-            getSubLayersFromWMSSource(layer.getSource())
-          );
-        }
+        if (isVectorLayer(layer)) return;
+
+        mappedLayerPromises.push(getSubLayersFromWMSSource(layer.getSource()));
       });
 
       const mappedLayers = await Promise.all(mappedLayerPromises);
@@ -81,15 +74,30 @@ const Bakgrunnskart = () => {
       const mappedLayer = mappedLayers.find(
         (mappedLayer) => mappedLayer.sourceId === layerId
       );
-  const renderMainLayerByZIndex = (layerId: BakgrunnskartId, i: number) => {
-    const layer = bakgrunnskartLayers[layerId];
-    const mappedLayer = mappedLayers.find(
-      (mappedLayer) => mappedLayer.sourceId === layerId
-    );
 
       if (!mappedLayer) return null;
 
+      return (
+        <MainBackgroundLayer
+          key={mappedLayer.title}
+          mappedLayer={mappedLayer}
+          mainLayerSourceId={mappedLayer.sourceId}
+          mainLayerName={mappedLayer.id ?? ""}
+          visible={visibleLayers[layerId]}
+          toggleLayerVisibility={() => dispatch(toggleLayerVisibility(layerId))}
+          index={i}
+          moveLayer={moveLayer}
+        />
+      );
+    }
+
     if (isWMTSLayer(layer)) {
+      const mappedLayer = mappedLayers.find(
+        (mappedLayer) => mappedLayer.sourceId === layerId
+      );
+
+      if (!mappedLayer) return null;
+
       return (
         <WMTSBackgroundLayer
           key={mappedLayer.title}
@@ -101,6 +109,7 @@ const Bakgrunnskart = () => {
         />
       );
     }
+
     if (isVectorLayer(layer)) {
       return (
         <div>
@@ -109,19 +118,6 @@ const Bakgrunnskart = () => {
         </div>
       );
     }
-
-    return (
-      <MainBackgroundLayer
-        key={mappedLayer.title}
-        mappedLayer={mappedLayer}
-        mainLayerSourceId={mappedLayer.sourceId}
-        mainLayerName={mappedLayer.id ?? ""}
-        visible={visibleLayers[layerId]}
-        toggleLayerVisibility={() => dispatch(toggleLayerVisibility(layerId))}
-        index={i}
-        moveLayer={moveLayer}
-      />
-    );
   };
 
   if (!visible) return null;

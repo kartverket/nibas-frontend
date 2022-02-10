@@ -1,7 +1,5 @@
-import { Feature } from "ol";
+/* eslint-disable no-console */
 import { WFS } from "ol/format";
-import GeoJSON from "ol/format/GeoJSON";
-import Geometry from "ol/geom/Geometry";
 import { map } from "../components/Kart/constants";
 import { getFeaturesFromGeoJson } from "./map/geoJson";
 
