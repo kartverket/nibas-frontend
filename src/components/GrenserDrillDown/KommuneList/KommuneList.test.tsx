@@ -1,10 +1,15 @@
 import { render, screen } from "test/test-utils";
 import KommuneList from "./KommuneList";
+import React from "react";
 
 const defaultProps: React.ComponentProps<typeof KommuneList> = {
-  canSelect: true,
+  // canSelect: true,
   kommuneValues: {},
-  fylke: { id: 2, navn: [{ navn: "Fylke", spraak: "nor" }], type: "FYLKE" },
+  fylke: {
+    id: "2",
+    navn: [{ navn: "Fylke", spraak: "nor" }],
+    href: "href1",
+  },
   setKommuneValue: jest.fn(),
 };
 

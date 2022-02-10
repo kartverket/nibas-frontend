@@ -2,16 +2,12 @@ import { Feature } from "ol";
 import LineString from "ol/geom/LineString";
 import { SimpleKommune } from "types/api";
 
-export const fetchKommunerByFylke = async (fylkeId: number) => {
+export const fetchKommunerByFylke = async (fylkeId: string) => {
   const response = await fetch(`/v1/kommuner?fylkeid=${fylkeId}`);
-  const json = (await response.json()) as SimpleKommune[];
-
-  return json;
+  return (await response.json()) as SimpleKommune[];
 };
 
-export const fetchKommuneFeaturesById = async (id: number) => {
+export const fetchKommuneFeaturesById = async (id: string) => {
   const response = await fetch(`v1/kommuner/${id}/grenser`);
-  const json = (await response.json()) as Feature<LineString>;
-
-  return json;
+  return (await response.json()) as Feature<LineString>;
 };
