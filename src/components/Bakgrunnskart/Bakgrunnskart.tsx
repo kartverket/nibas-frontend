@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { getMatWFSFeatures } from "../../utils/getMatrikkelWfsFeatures";
-import { addFeaturesToSource } from "../../utils/map/source";
-import Button from "../Button";
+import { mapVectorLayer } from "../../utils/getMatrikkelWfsFeatures";
 import MainBackgroundLayer from "./BackgroundLayer/MainBackgroundLayer";
+import WFSBackgroundLayer from "./WFS/WFSBackgroundLayer";
 import WMTSBackgroundLayer from "./WMTS/WMTSBackgroundLayer";
 import { SidebarPanel } from "components/Sidebar/SidebarPanel";
 import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
@@ -45,6 +44,12 @@ const Bakgrunnskart = () => {
 
       const mappedLayers = await Promise.all(mappedLayerPromises);
 
+      layers
+        .filter((layer) => isVectorLayer(layer))
+        // .map((layer) => layer as VectorLayer<VectorSource<Geometry>>) // todo tok in layeret i mapping for å sette SourceId.. men det finnes ikke på dette tidspunktet
+        .map(() => mapVectorLayer())
+        .forEach((mappedLayer) => mappedLayers.push(mappedLayer));
+
       const nonNullLayers = mappedLayers.filter(
         (layer) => layer !== null
       ) as MainMappedLayer[];
@@ -60,12 +65,6 @@ const Bakgrunnskart = () => {
       isMounted = false;
     };
   }, [visible, mappedLayers.length]);
-
-  const fetchMatrikkelWfsFeatures = async () => {
-    const features = await getMatWFSFeatures();
-    if (!features) return null;
-    addFeaturesToSource("matrikkelenWfs", features);
-  };
 
   const renderMainLayerByZIndex = (layerId: BakgrunnskartId, i: number) => {
     const layer = bakgrunnskartLayers[layerId];
@@ -111,11 +110,21 @@ const Bakgrunnskart = () => {
     }
 
     if (isVectorLayer(layer)) {
+      const mappedLayer = mappedLayers.find(
+        (mappedLayer) => mappedLayer.sourceId === layerId
+      );
+
+      if (!mappedLayer) return null;
+
       return (
-        <div>
-          <Button onClick={fetchMatrikkelWfsFeatures}>fetch wfs</Button>
-          <p>{layerId}</p>
-        </div>
+        <WFSBackgroundLayer
+          key={mappedLayer.title}
+          mappedLayer={mappedLayer}
+          visible={visibleLayers[layerId]}
+          toggleLayerVisibility={() => dispatch(toggleLayerVisibility(layerId))}
+          index={i}
+          moveLayer={moveLayer}
+        />
       );
     }
   };

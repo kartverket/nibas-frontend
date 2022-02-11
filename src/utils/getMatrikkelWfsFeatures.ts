@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import { WFS } from "ol/format";
 import { map } from "../components/Kart/constants";
+import { MainMappedLayer } from "./getLayersFromWMS";
 import { getFeaturesFromGeoJson } from "./map/geoJson";
 
 export const getMatWFSFeatures = () => {
@@ -19,6 +20,16 @@ export const getMatWFSFeatures = () => {
     // todo gjør bedre!
     alert("Zoom-nivå for lavt: " + zoom + " Minimum 10.");
   }
+};
+
+export const mapVectorLayer = (): MainMappedLayer => {
+  return {
+    layers: [],
+    queryable: true,
+    sourceId: "matrikkelenWfs", // todo: andre mappingfunksjoner setter layer.getSource().get("id"), men vi har ingenting på tidspunktet dette settes
+    title: "MatrikkelWfsLayer",
+    id: "MatrikkelWfsLayer",
+  };
 };
 
 const createWfsRequest = (extent: number[]): Node => {

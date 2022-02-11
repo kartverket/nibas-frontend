@@ -54,7 +54,6 @@ const useVisibleLayers = () => {
   const [visibleLayers, dispatch] = useReducer(visibleLayersReducer, {
     ...getInitialVisibility(),
     cachetjenester: true,
-    matrikkelenWfs: true,
   });
 
   // sett synlighet til layer i map til ny verdi
