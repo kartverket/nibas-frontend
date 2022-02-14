@@ -22,6 +22,7 @@ const SelectInput = styled.select`
   width: 100%;
   height: 44px;
   appearance: none;
+  font-size: 16px;
 
   option {
     &:nth-child(even) {
