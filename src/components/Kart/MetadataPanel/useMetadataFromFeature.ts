@@ -8,7 +8,7 @@ export type KontekstType = "FYLKE" | "KOMMUNE";
 
 type Kontekst = {
   type: KontekstType;
-  id: number;
+  id: string;
 };
 
 const kontekstEndepunktMapping: Record<KontekstType, string> = {
@@ -17,7 +17,7 @@ const kontekstEndepunktMapping: Record<KontekstType, string> = {
 };
 
 export type ResponseItem = {
-  id: number;
+  id: string;
   lokalid: string;
   oppdateringsdato: string;
 };

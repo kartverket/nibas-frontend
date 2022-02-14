@@ -13,10 +13,19 @@ locals {
 }
 
 variable "nibas_frontend_version" {}
+variable "vault_addr" {}
+variable "vault_skip_verify" {}
+variable "vault_token" {}
 
-/*data "vault_generic_secret" "nibas-baat-bruker" {
-  path = "nibas/nibas-klient-frontend/${local.environment}/baat-bruker"
-}*/
+provider "vault" {
+  address = var.vault_addr
+  token = var.vault_token
+  skip_tls_verify = var.vault_skip_verify
+}
+
+data "vault_generic_secret" "nibas-baat-bruker" {
+  path = "nibas/nibas-frontend/baat-bruker"
+}
 
 resource "kubernetes_deployment" "nibas-frontend-deployment" {
   metadata {
@@ -46,7 +55,7 @@ resource "kubernetes_deployment" "nibas-frontend-deployment" {
       }
       spec {
         image_pull_secrets {
-            name="nibas-pull-token"
+            name="nibas-pull-token-kes"
         }
         container {
           image = "ghcr.io/kartverket/nibas-frontend:${var.nibas_frontend_version}"
@@ -55,25 +64,13 @@ resource "kubernetes_deployment" "nibas-frontend-deployment" {
             container_port = 8080
           }
           env {
-            name = "HTTP_PROXY"
-            value = "http://tkgeproxy1.statkart.no:3128"
-          }
-          env {
-            name = "HTTPS_PROXY"
-            value = "http://tkgeproxy1.statkart.no:3128"
-          }
-          env {
-            name = "NO_PROXY"
-            value = "10.0.0.0/8"
-          }
-          /*env {
             name  = "BAAT_USERNAME"
             value = data.vault_generic_secret.nibas-baat-bruker.data["username"]
           }
           env {
             name  = "BAAT_PASSWORD"
             value = data.vault_generic_secret.nibas-baat-bruker.data["password"]
-          }*/
+          }
         }
       }
     }
