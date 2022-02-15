@@ -76,6 +76,10 @@
         "pathGroupsExcludedImportTypes": ["react"]
       }
     ],
-    "import/no-named-as-default-member": "off"
+    "import/no-named-as-default-member": "off",
+    "no-shadow": [
+      "error",
+      { "builtinGlobals": true, "hoist": "all", "allow": [] }
+    ]
   }
 }
