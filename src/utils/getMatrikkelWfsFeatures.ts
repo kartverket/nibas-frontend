@@ -16,13 +16,10 @@ export const getMatWFSFeatures = () => {
     } catch (Error) {
       console.log("Error: " + Error);
     }
-  } else {
-    // todo gjør bedre!
-    alert("Zoom-nivå for lavt: " + zoom + " Minimum 10.");
   }
 };
 
-export const mapVectorLayer = (): MainMappedLayer => {
+export const mapVectorLayer = async (): Promise<MainMappedLayer> => {
   return {
     layers: [],
     queryable: true,

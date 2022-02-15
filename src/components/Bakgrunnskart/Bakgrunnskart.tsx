@@ -16,7 +16,7 @@ import useZIndexes from "hooks/layers/useZIndexes";
 import getSubLayersFromWMSSource, {
   MainMappedLayer,
 } from "utils/getLayersFromWMS";
-import { isVectorLayer, isWmsLayer, isWMTSLayer } from "utils/map/layers";
+import { isVectorLayer, isWMSLayer, isWMTSLayer } from "utils/map/layers";
 
 const Bakgrunnskart = () => {
   const [mappedLayers, setMappedLayers] = useState<MainMappedLayer[]>([]);
@@ -32,25 +32,22 @@ const Bakgrunnskart = () => {
     let isMounted = true;
 
     const updateMappedLayers = async () => {
-      const layers = Object.values(bakgrunnskartLayers);
+      const mappedLayersPromises = Object.values(bakgrunnskartLayers);
 
       const mappedLayerPromises: Promise<MainMappedLayer | null>[] = [];
 
-      layers.forEach((layer) => {
-        if (isVectorLayer(layer)) return;
+      mappedLayersPromises.forEach((layer) => {
+        if (isVectorLayer(layer)) {
+          mappedLayerPromises.push(mapVectorLayer());
+          return;
+        }
 
         mappedLayerPromises.push(getSubLayersFromWMSSource(layer.getSource()));
       });
 
-      const mappedLayers = await Promise.all(mappedLayerPromises);
+      const layers = await Promise.all(mappedLayerPromises);
 
-      layers
-        .filter((layer) => isVectorLayer(layer))
-        // .map((layer) => layer as VectorLayer<VectorSource<Geometry>>) // todo tok in layeret i mapping for å sette SourceId.. men det finnes ikke på dette tidspunktet
-        .map(() => mapVectorLayer())
-        .forEach((mappedLayer) => mappedLayers.push(mappedLayer));
-
-      const nonNullLayers = mappedLayers.filter(
+      const nonNullLayers = layers.filter(
         (layer) => layer !== null
       ) as MainMappedLayer[];
 
@@ -69,13 +66,13 @@ const Bakgrunnskart = () => {
   const renderMainLayerByZIndex = (layerId: BakgrunnskartId, i: number) => {
     const layer = bakgrunnskartLayers[layerId];
 
-    if (isWmsLayer(layer)) {
-      const mappedLayer = mappedLayers.find(
-        (mappedLayer) => mappedLayer.sourceId === layerId
-      );
+    const mappedLayer = mappedLayers.find(
+      (mappedLayer) => mappedLayer.sourceId === layerId
+    );
 
-      if (!mappedLayer) return null;
+    if (!mappedLayer) return null;
 
+    if (isWMSLayer(layer)) {
       return (
         <MainBackgroundLayer
           key={mappedLayer.title}
@@ -91,12 +88,6 @@ const Bakgrunnskart = () => {
     }
 
     if (isWMTSLayer(layer)) {
-      const mappedLayer = mappedLayers.find(
-        (mappedLayer) => mappedLayer.sourceId === layerId
-      );
-
-      if (!mappedLayer) return null;
-
       return (
         <WMTSBackgroundLayer
           key={mappedLayer.title}
@@ -110,12 +101,6 @@ const Bakgrunnskart = () => {
     }
 
     if (isVectorLayer(layer)) {
-      const mappedLayer = mappedLayers.find(
-        (mappedLayer) => mappedLayer.sourceId === layerId
-      );
-
-      if (!mappedLayer) return null;
-
       return (
         <WFSBackgroundLayer
           key={mappedLayer.title}

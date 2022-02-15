@@ -92,7 +92,7 @@ export const isWMTSLayer = (layer: BaseLayer): layer is TileLayer<WMTS> => {
   return layer instanceof TileLayer && layer.getSource() instanceof WMTS;
 };
 
-export const isWmsLayer = (layer: BaseLayer): layer is TileLayer<TileWMS> => {
+export const isWMSLayer = (layer: BaseLayer): layer is TileLayer<TileWMS> => {
   return layer instanceof TileLayer && layer.getSource() instanceof TileWMS;
 };
 
