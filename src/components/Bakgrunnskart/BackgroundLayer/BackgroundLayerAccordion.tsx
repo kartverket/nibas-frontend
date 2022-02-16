@@ -106,11 +106,13 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
             )}
           </IconButton>
           {renderNameAndCaret()}
-          <PropertiesButton
-            onClick={() => setPropertiesVisible(!propertiesVisible)}
-          >
-            <CogIcon />
-          </PropertiesButton>
+          {props.isMainLayer && (
+            <PropertiesButton
+              onClick={() => setPropertiesVisible(!propertiesVisible)}
+            >
+              <CogIcon />
+            </PropertiesButton>
+          )}
         </Wrapper>
 
         {propertiesVisible && (
