@@ -1,40 +1,68 @@
-import { forwardRef, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
+import Slider from "rc-slider";
 import styled from "styled-components";
 import Button from "components/Button";
+import useSlider from "hooks/useSlider";
 import { ReactComponent as CaretDownIcon } from "icons/caretdown.svg";
 import { ReactComponent as CaretUpIcon } from "icons/caretup.svg";
+import { ReactComponent as CogIcon } from "icons/cog.svg";
 import { ReactComponent as VisibilityIcon } from "icons/visibility.svg";
 import { ReactComponent as VisibilityOffIcon } from "icons/visibility_off.svg";
-import { MappedLayer } from "utils/getLayersFromWMS";
+import { MainMappedLayer, MappedLayer } from "utils/getLayersFromWMS";
+import "rc-slider/assets/index.css";
+import { getLayerById } from "utils/map/layers";
 
-type Props = {
-  mappedLayer: MappedLayer;
+type SharedProps = {
   indent: number;
   onVisibilityClick: () => void;
   visible: boolean;
   children: React.ReactNode;
-  isMainLayer?: boolean;
 };
+
+type MainLayerProps = SharedProps & {
+  mappedLayer: MainMappedLayer;
+  isMainLayer: true;
+};
+
+type SubLayerProps = SharedProps & {
+  mappedLayer: MappedLayer;
+  isMainLayer?: false | undefined;
+};
+
+/**
+ * Hvis isMainLayer er true, betyr det at mappedLayer har en id vi kan hente layer/source med
+ * via MainMappedLayer.sourceId, hvis ikke er det et vanlig MappedLayer.
+ *
+ * Vi kan dermed bruke TypeScript til å gjøre sjekker og snevre inn typen basert på props.isMainLayer.
+ * Hvis vi destructurer vil vi miste denne snevringen
+ */
+type Props = MainLayerProps | SubLayerProps;
 
 const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
   (props, ref) => {
-    const {
-      mappedLayer,
-      indent,
-      visible,
-      onVisibilityClick,
-      children,
-      isMainLayer = false,
-    } = props;
+    const { indent, visible, onVisibilityClick, children } = props;
     const [open, setOpen] = useState(false);
+    const [propertiesVisible, setPropertiesVisible] = useState(false);
+    const sliderProps = useSlider(100);
+
+    useEffect(() => {
+      if (!props.isMainLayer) return;
+
+      const layerId = props.mappedLayer.sourceId;
+      const layer = getLayerById(layerId);
+
+      if (!layer) return;
+
+      layer.setOpacity(sliderProps.value / 100);
+    }, [props.isMainLayer, props.mappedLayer, sliderProps.value]);
 
     const renderNameAndCaret = () => {
       // hvis hovedlag som kan dras på, vis annen musepeker på navnet
-      if (isMainLayer) {
+      if (props.isMainLayer) {
         return (
           <ClickableName variant="unstyled" onClick={() => setOpen(!open)}>
-            <DraggableName ref={ref}>{mappedLayer.title}</DraggableName>
-            {mappedLayer.layers.length > 0 && (
+            <DraggableName ref={ref}>{props.mappedLayer.title}</DraggableName>
+            {props.mappedLayer.layers.length > 0 && (
               <>
                 {open ? (
                   <CaretUpIcon aria-label="Lukk" />
@@ -48,10 +76,10 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
       }
 
       // hvis har sub-lag, la navnet være klikkbart for å åpne accordion
-      if (mappedLayer.layers.length > 0) {
+      if (props.mappedLayer.layers.length > 0) {
         return (
           <ClickableName variant="unstyled" onClick={() => setOpen(!open)}>
-            <span>{mappedLayer.title}</span>
+            <span>{props.mappedLayer.title}</span>
             {open ? (
               <CaretUpIcon aria-label="Lukke" />
             ) : (
@@ -62,7 +90,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
       }
 
       // ellers bare render tittelen til sub-laget
-      return <span>{mappedLayer.title}</span>;
+      return <span>{props.mappedLayer.title}</span>;
     };
 
     return (
@@ -70,13 +98,26 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
         <Wrapper indent={indent}>
           <IconButton onClick={onVisibilityClick}>
             {visible ? (
-              <VisibilityIcon aria-label={`Skjul ${mappedLayer.title}`} />
+              <VisibilityIcon aria-label={`Skjul ${props.mappedLayer.title}`} />
             ) : (
-              <VisibilityOffIcon aria-label={`Vis ${mappedLayer.title}`} />
+              <VisibilityOffIcon
+                aria-label={`Vis ${props.mappedLayer.title}`}
+              />
             )}
           </IconButton>
           {renderNameAndCaret()}
+          <PropertiesButton
+            onClick={() => setPropertiesVisible(!propertiesVisible)}
+          >
+            <CogIcon />
+          </PropertiesButton>
         </Wrapper>
+
+        {propertiesVisible && (
+          <div>
+            <StyledSlider {...sliderProps} />
+          </div>
+        )}
 
         {open && children}
       </div>
@@ -90,6 +131,13 @@ const IconButton = styled(Button).attrs(() => ({
   variant: "icon",
 }))`
   margin-right: 8px;
+`;
+
+const PropertiesButton = styled(Button).attrs(() => ({
+  variant: "icon",
+}))`
+  margin-left: 8px;
+  color: ${({ theme }) => theme.colors.black};
 `;
 
 const Wrapper = styled.div<{ indent: number }>`
@@ -116,6 +164,18 @@ const ClickableName = styled(Button)`
 
 const DraggableName = styled.span`
   cursor: move;
+`;
+
+const StyledSlider = styled(Slider)`
+  .rc-slider-rail {
+    background-color: ${({ theme }) => theme.colors.grayLight};
+  }
+  .rc-slider-track {
+    background-color: ${({ theme }) => theme.colors.blueDark};
+  }
+  .rc-slider-handle {
+    border-color: ${({ theme }) => theme.colors.blueDark};
+  }
 `;
 
 export default BackgroundLayerAccordion;
