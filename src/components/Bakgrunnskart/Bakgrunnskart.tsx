@@ -32,11 +32,8 @@ const Bakgrunnskart = () => {
     let isMounted = true;
 
     const updateMappedLayers = async () => {
-      const mappedLayersPromises = Object.values(bakgrunnskartLayers);
-
       const mappedLayerPromises: Promise<MainMappedLayer | null>[] = [];
-
-      mappedLayersPromises.forEach((layer) => {
+      Object.values(bakgrunnskartLayers).forEach((layer) => {
         if (isVectorLayer(layer)) {
           mappedLayerPromises.push(mapVectorLayer());
           return;
