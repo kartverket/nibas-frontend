@@ -9,8 +9,8 @@ import { ReactComponent as CogIcon } from "icons/cog.svg";
 import { ReactComponent as VisibilityIcon } from "icons/visibility.svg";
 import { ReactComponent as VisibilityOffIcon } from "icons/visibility_off.svg";
 import { MainMappedLayer, MappedLayer } from "utils/getLayersFromWMS";
-import "rc-slider/assets/index.css";
 import { getLayerById } from "utils/map/layers";
+import "rc-slider/assets/index.css";
 
 type SharedProps = {
   indent: number;
@@ -49,11 +49,15 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
       if (!props.isMainLayer) return;
 
       const layerId = props.mappedLayer.sourceId;
-      const layer = getLayerById(layerId);
 
-      if (!layer) return;
+      try {
+        const layer = getLayerById(layerId);
 
-      layer.setOpacity(sliderProps.value / 100);
+        // slider går mellom 0 og 100
+        layer.setOpacity(sliderProps.value / 100);
+      } catch (error) {
+        // hvis laget ikke finnes trenger ikke slider å gjøre noe
+      }
     }, [props.isMainLayer, props.mappedLayer, sliderProps.value]);
 
     const renderNameAndCaret = () => {
