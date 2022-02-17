@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@kartverket/frontend-aut-lib": "0.0.19",
+    "@kartverket/frontend-aut-lib": "0.0.20",
     "@types/react-router-dom": "^5.3.3",
     "http-proxy-middleware": "~2.0.1",
     "ol": "~6.8.1",
