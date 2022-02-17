@@ -4,7 +4,6 @@ import WMTS from "ol/source/WMTS";
 import { createXYZ } from "ol/tilegrid";
 import WMTSTileGrid from "ol/tilegrid/WMTS";
 import { isWMTSSource } from "./utils";
-import { BakgrunnskartId } from "hooks/layers/types";
 import { getSrcWithTicket } from "utils/geonorgeTicket";
 
 const getWMSTileGrid = () => {
@@ -176,7 +175,8 @@ bakgrunnskartSources.norgeIBilder.set("config", norgeIBilderConfig);
   const tileGrid = getWMSTileGrid();
 
   Object.keys(bakgrunnskartSources).forEach((id) => {
-    const source = bakgrunnskartSources[id as BakgrunnskartId];
+    const source =
+      bakgrunnskartSources[id as keyof typeof bakgrunnskartSources];
 
     // sett id på alle sources for å gjøre de mulig å sjekke opp  med layers
     source.set("id", id);

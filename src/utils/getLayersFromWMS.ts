@@ -5,8 +5,8 @@ import WMTS from "ol/source/WMTS";
 import { getTicketForTjeneste } from "./geonorgeTicket";
 import { BakgrunnskartId } from "hooks/layers/types";
 
-const wmsParser = new WMSCapabilities();
-const wmtsParser = new WMTSCapabilities();
+const WMSParser = new WMSCapabilities();
+const WMTSParser = new WMTSCapabilities();
 
 type WMSResponseLayer = {
   Name: string | undefined;
@@ -62,7 +62,7 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
 
   const url = urls[0];
 
-  let capabilitiesUrl = "";
+  let capabilitiesUrl: string;
 
   if (url.includes("?")) {
     capabilitiesUrl = `${url}&request=GetCapabilities`;
@@ -70,7 +70,7 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
     capabilitiesUrl = `${url}?request=GetCapabilities`;
   }
 
-  let serviceParam = "";
+  let serviceParam: string;
 
   if (source instanceof TileWMS) {
     serviceParam = "&service=WMS";
@@ -95,7 +95,7 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
   let json: any;
 
   if (source instanceof TileWMS) {
-    json = wmsParser.read(xml);
+    json = WMSParser.read(xml);
     // console.log(capabilitiesUrl, json);
     if (!json?.Capability) return null;
 
@@ -107,12 +107,12 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
   }
 
   if (source instanceof WMTS) {
-    json = wmtsParser.read(xml);
+    json = WMTSParser.read(xml);
     // console.log(capabilitiesUrl, json);
 
     if (!json?.Contents) return null;
 
-    const mappedWmtsLayer: MainMappedLayer = {
+    const mappedWMTSLayer: MainMappedLayer = {
       layers: json.Contents.Layer.map(mapWMTSLayer),
       queryable: true,
       sourceId: source.get("id") as BakgrunnskartId,
@@ -120,7 +120,7 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
       id: json.ServiceIdentification.Title,
     };
 
-    return mappedWmtsLayer;
+    return mappedWMTSLayer;
   }
 
   return null;
