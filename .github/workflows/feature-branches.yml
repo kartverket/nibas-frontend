@@ -16,6 +16,7 @@ jobs:
         with:
           node-version: 16.x
 
+      - run: npm install @kartverket/frontend-aut-lib@0.0.19
       - run: npm install --no-audit
       - run: npm audit --production
       - run: npm run build --if-present
