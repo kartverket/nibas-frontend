@@ -69,7 +69,7 @@
   },
   "jest": {
     "transformIgnorePatterns": [
-      "node_modules/(?!(ol)/)"
+      "node_modules/(?!(ol|@kartverket/frontend-aut-lib)/)"
     ],
     "resetMocks": false
   }

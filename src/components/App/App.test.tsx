@@ -5,7 +5,7 @@ describe("App", () => {
   it("should render without exploding", () => {
     render(<App />);
 
-    const nibasTitle = screen.getByText("Nasjonal inndelingsbase");
+    const nibasTitle = screen.getByText("Home sweet home");
 
     expect(nibasTitle).toBeInTheDocument();
   });
