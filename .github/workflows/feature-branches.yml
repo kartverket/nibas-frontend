@@ -16,9 +16,9 @@ jobs:
         with:
           node-version: 16.x
 
+      - run: echo //npm.pkg.github.com/${{secrets.READ_PACKAGE_USER}}/:_authToken=${{secrets.PAT_READ_PACKAGE}} >> .npmrc
       - run: cat .npmrc
-      - run: npm install @kartverket/frontend-aut-lib@0.0.19
-      - run: npm install --no-audit
+      - run: npm ci --no-audit
       - run: npm audit --production
       - run: npm run build --if-present
       - run: npm test
