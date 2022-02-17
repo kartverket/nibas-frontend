@@ -4,6 +4,13 @@ Foreløpig kun create-react-app med typescript
 
 ## Lokal utvikling
 
+### Sette opp authZ og authN mot  github package registry
+Prosjektet trenger pakke(r) fra github package registry. For å kunne installere disse pakkene må man gjøre følgende:
+- Opprette et personal access token på github (https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-to-github-packages)
+- Autorisere personal access token for bruk med SSO (https://docs.github.com/en/enterprise-cloud@latest/authentication/authenticating-with-saml-single-sign-on/authorizing-a-personal-access-token-for-use-with-saml-single-sign-on)
+- Opprette en lokal .npmrc-fil i hjemmekatalogen som knytter github package registry med autorisert personal access token (https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-with-a-personal-access-token)
+
+### Oppstart av applikasjonen
 Last ned dependencies med
 
 ```

@@ -9,6 +9,10 @@ const baatPassword = process.env.REACT_APP_BAAT_PASSWORD;
 
 module.exports = function (app) {
   app.use(
+    createProxyMiddleware("/api/auth/", { target: "http://localhost:8080" })
+  );
+
+  app.use(
     createProxyMiddleware("/v1", {
       target: "http://localhost:8080",
       changeOrigin: true,
