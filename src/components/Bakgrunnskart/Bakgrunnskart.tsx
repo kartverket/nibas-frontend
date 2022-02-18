@@ -1,67 +1,26 @@
-import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { mapVectorLayer } from "../../utils/getMatrikkelWfsFeatures";
 import MainBackgroundLayer from "./BackgroundLayer/MainBackgroundLayer";
 import WFSBackgroundLayer from "./WFS/WFSBackgroundLayer";
 import WMTSBackgroundLayer from "./WMTS/WMTSBackgroundLayer";
 import { SidebarPanel } from "components/Sidebar/SidebarPanel";
 import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
+import { useBakgrunnskart } from "contexts/BakgrunnskartContext";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { bakgrunnskartLayers } from "hooks/layers/constants";
 import { BakgrunnskartId } from "hooks/layers/types";
-import useVisibleLayers, {
-  toggleLayerVisibility,
-} from "hooks/layers/useVisibleLayers";
-import useZIndexes from "hooks/layers/useZIndexes";
-import getSubLayersFromWMSSource, {
-  MainMappedLayer,
-} from "utils/getLayersFromWMS";
 import { isVectorLayer, isWMSLayer, isWMTSLayer } from "utils/map/layers";
 
 const Bakgrunnskart = () => {
-  const [mappedLayers, setMappedLayers] = useState<MainMappedLayer[]>([]);
-
-  const { isOpen: visible, togglePanel } = useSidebarPanel("kartlag");
-
-  const { visibleLayers, dispatch } = useVisibleLayers();
-  const { moveLayer, zIndexes } = useZIndexes();
-
   const { t } = useTranslation();
-
-  useEffect(() => {
-    if (!visible || mappedLayers.length > 0) return;
-
-    let isMounted = true;
-
-    const updateMappedLayers = async () => {
-      const mappedLayerPromises: Promise<MainMappedLayer | null>[] = [];
-      Object.values(bakgrunnskartLayers).forEach((layer) => {
-        if (isVectorLayer(layer)) {
-          mappedLayerPromises.push(mapVectorLayer());
-          return;
-        }
-
-        mappedLayerPromises.push(getSubLayersFromWMSSource(layer.getSource()));
-      });
-
-      const layers = await Promise.all(mappedLayerPromises);
-
-      const nonNullLayers = layers.filter(
-        (layer) => layer !== null
-      ) as MainMappedLayer[];
-
-      if (isMounted) {
-        setMappedLayers(nonNullLayers);
-      }
-    };
-
-    updateMappedLayers();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [visible, mappedLayers.length]);
+  const { isOpen: visible, togglePanel } = useSidebarPanel("kartlag");
+  const {
+    mappedLayers,
+    moveLayer,
+    toggleLayerVisibility,
+    visibleLayers,
+    zIndexes,
+  } = useBakgrunnskart();
 
   const renderMainLayerByZIndex = (layerId: BakgrunnskartId, i: number) => {
     const layer = bakgrunnskartLayers[layerId];
@@ -78,7 +37,7 @@ const Bakgrunnskart = () => {
           mainLayerSourceId={mappedLayer.sourceId}
           mainLayerName={mappedLayer.id ?? ""}
           visible={visibleLayers[layerId]}
-          toggleLayerVisibility={() => dispatch(toggleLayerVisibility(layerId))}
+          toggleLayerVisibility={() => toggleLayerVisibility(layerId)}
           index={i}
           moveLayer={moveLayer}
         />
@@ -91,7 +50,7 @@ const Bakgrunnskart = () => {
           key={mappedLayer.title}
           mappedLayer={mappedLayer}
           visible={visibleLayers[layerId]}
-          toggleLayerVisibility={() => dispatch(toggleLayerVisibility(layerId))}
+          toggleLayerVisibility={() => toggleLayerVisibility(layerId)}
           index={i}
           moveLayer={moveLayer}
         />
@@ -104,7 +63,7 @@ const Bakgrunnskart = () => {
           key={mappedLayer.title}
           mappedLayer={mappedLayer}
           visible={visibleLayers[layerId]}
-          toggleLayerVisibility={() => dispatch(toggleLayerVisibility(layerId))}
+          toggleLayerVisibility={() => toggleLayerVisibility(layerId)}
           index={i}
           moveLayer={moveLayer}
         />
