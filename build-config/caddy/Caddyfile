@@ -16,5 +16,11 @@ reverse_proxy /skbaatts/req https://baat.geonorge.no
 }
 reverse_proxy @laasteBakgrunnskart https://wms.geonorge.no
 
+# Matrikkelen WFS-tjeneste
+basicauth /geoservergeo/wfs/MATRIKKEL {
+    {$MATRIKKELENWFS_USER} {$MATRIKKELENWFS_PASSWORD}
+}
+reverse_proxy /geoservergeo/wfs/MATRIKKEL https://prodtest.matrikkel.no
+
 # Start filserveren
 file_server
