@@ -32,7 +32,11 @@ const GrenserDrillDown = () => {
         closePanel={togglePanel}
         title={t("sidebar.Inndelinger")}
       />
-      <Tabs tabs={tabs.ids} openTab={tabs.openTab}>
+      <Tabs
+        tabs={tabs.ids}
+        openTab={tabs.openTab}
+        selectedTab={tabs.selectedTab}
+      >
         <Tab value={tabs.ids["Grenser"]} selectedTab={tabs.selectedTab}>
           <UnstyledList>
             <Riksgrenser />
