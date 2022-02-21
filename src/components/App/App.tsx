@@ -15,13 +15,12 @@ const authFlowProps: ConfigureAuthFlowProps = {
   afterUserLogoutRedirect: "/",
 };
 
-/**
- * Bruker hook useConfigureAuthFlow for å lagre verdiene angitt over i ConfigureAuthFlowProps.
- * Denne returnerer 2 <Route>-objekter som brukes i routingen (se lenger ned) for å kunne initialisere logikk knyttet
- * til autentiseringsflyten, samt utloggingsflyt. Siden disse returneres i en array, kan de brukes direkte i routing-JSX.
- */
-
 const App = () => {
+  /**
+   * Bruker hook useConfigureAuthFlow for å lagre verdiene angitt over i ConfigureAuthFlowProps.
+   * Denne returnerer 2 <Route>-objekter som brukes i routingen (se lenger ned) for å kunne initialisere logikk knyttet
+   * til autentiseringsflyten, samt utloggingsflyt.
+   */
   const [redirectAfterLogon, redirectAfterLogout]: JSX.Element[] =
     useConfigureAuthFlow(authFlowProps);
   return (
