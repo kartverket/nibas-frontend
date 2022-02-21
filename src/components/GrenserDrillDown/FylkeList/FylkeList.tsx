@@ -1,14 +1,13 @@
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
+import LineString from "ol/geom/LineString";
 import styled from "styled-components";
+import useSWR from "swr";
 import ToggleableGrense from "../ToggleableGrense";
 import { ObjectValue } from "../useEditGrenser";
-import { fetchFylkeFeaturesById } from "api/fylker";
 import { SimpleFylke } from "types/api";
 import { geoJsonToSource } from "utils/map/geoJson";
 import { fetcher } from "utils/swr";
-import LineString from "ol/geom/LineString";
-import useSWR from "swr";
 
 type Props = {
   fylkeValues: Record<string, ObjectValue>;
