@@ -1,10 +1,14 @@
+import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import styled from "styled-components";
+import LogoutButton from "../Authentication/LogoutButton";
 import Button from "components/Button";
 import Input from "components/Input";
 import { ReactComponent as SearchIcon } from "icons/search.svg";
 import logo from "images/logo.png";
 
 const TopBar = () => {
+  const { isAuthenticatedFunc, tokenHolderFunc } = useAuthenticationFlow();
+
   return (
     <Wrapper>
       <LeftSide>
@@ -16,8 +20,12 @@ const TopBar = () => {
         </SearchIconButton>
       </LeftSide>
       <RightSide>
-        <p>Logget inn som ...</p>
-        <p>Logg ut</p>
+        {isAuthenticatedFunc() ? (
+          <p>Logget inn som {tokenHolderFunc()?.personId}</p>
+        ) : (
+          <p>Ikke logget inn</p>
+        )}
+        <LogoutButton />
       </RightSide>
     </Wrapper>
   );

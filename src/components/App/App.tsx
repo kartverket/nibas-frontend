@@ -2,11 +2,8 @@ import {
   ConfigureAuthFlowProps,
   useConfigureAuthFlow,
 } from "@kartverket/frontend-aut-lib";
-import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes } from "react-router-dom";
 import Providers from "./Providers";
-import LogoutButton from "components/Authentication/LogoutButton";
-import ProtectedTokenInfo from "components/Authentication/ProtectedTokenInfo";
-import StatusBar from "components/Authentication/StatusBar";
 import PageLayout from "components/PageLayout";
 
 /**
@@ -29,35 +26,12 @@ const App = () => {
     useConfigureAuthFlow(authFlowProps);
   return (
     <Router>
-      <StatusBar />
-      <LogoutButton />
-      <div>
-        <ul>
-          <li>
-            <Link to="/">Home sweet home</Link>
-          </li>
-          <li>
-            <Link to="/protectedTokenInfo">
-              Link til info om token (autentisering påkrevd)
-            </Link>
-          </li>
-          <li>
-            <Link to="/app">Link til app</Link>
-          </li>
-        </ul>
-      </div>
+      <Providers>
+        <PageLayout />
+      </Providers>
       <Routes>
         {redirectAfterLogon}
         {redirectAfterLogout}
-        <Route path="/protectedTokenInfo" element={<ProtectedTokenInfo />} />
-        <Route
-          path="/app"
-          element={
-            <Providers>
-              <PageLayout />
-            </Providers>
-          }
-        ></Route>
       </Routes>
     </Router>
   );
