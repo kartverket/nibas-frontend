@@ -6,8 +6,6 @@ import { MainMappedLayer } from "utils/getLayersFromWMS";
 
 type Props = {
   mappedLayer: MainMappedLayer;
-  mainLayerSourceId: BakgrunnskartId;
-  mainLayerName: string;
   index: number;
   moveLayer: (direction: "up" | "down", layerId: BakgrunnskartId) => void;
   toggleLayerVisibility: () => void;
@@ -16,8 +14,6 @@ type Props = {
 
 const MainBackgroundLayer = ({
   mappedLayer,
-  mainLayerSourceId,
-  mainLayerName,
   visible,
   toggleLayerVisibility,
   index,
@@ -40,8 +36,8 @@ const MainBackgroundLayer = ({
           <SubBackgroundLayer
             key={layer.title}
             mappedLayer={layer}
-            mainLayerSourceId={mainLayerSourceId}
-            mainLayerName={mainLayerName}
+            mainLayerSourceId={mappedLayer.sourceId}
+            mainLayerName={mappedLayer.id ?? ""}
             indent={1}
           />
         ))}

@@ -1,10 +1,18 @@
 import styled from "styled-components";
 import FylkeList from "../Fylkesgrenser/FylkeList";
 import KommuneList from "../Kommunegrenser/KommuneList";
+import MainLayer from "components/Bakgrunnskart/MainLayer";
+import { useBakgrunnskart } from "contexts/BakgrunnskartContext";
+import { BakgrunnskartId } from "hooks/layers/types";
 import useNibasApi from "hooks/useNibasApi";
 
 const AktiveKartlag = () => {
   const { data: fylker } = useNibasApi("/v1/fylker");
+  const { visibleLayers } = useBakgrunnskart();
+
+  const openLayers = Object.keys(visibleLayers).filter(
+    (id) => visibleLayers[id as BakgrunnskartId]
+  );
 
   return (
     <div>
@@ -14,6 +22,9 @@ const AktiveKartlag = () => {
       ))}
 
       <ActiveBackgroundLayers>Aktive bakgrunnskart</ActiveBackgroundLayers>
+      {openLayers.map((id, i) => (
+        <MainLayer key={id} layerId={id as BakgrunnskartId} index={i} />
+      ))}
     </div>
   );
 };
