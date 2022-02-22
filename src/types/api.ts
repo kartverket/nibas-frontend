@@ -34,6 +34,12 @@ export type SimpleKommune = Grense & {
   href: string;
 };
 
+export type SimpleGrense = {
+  id: string;
+  navn: Spraak[];
+  href: string;
+};
+
 export type Kommune = Grense & {
   administrativenhetnavn: Spraak[];
   lokalid: string;

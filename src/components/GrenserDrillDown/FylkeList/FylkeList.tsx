@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import useSWR from "swr";
+import ApiGrense from "../ApiGrense";
 import { ObjectValue } from "../useEditGrenser";
-import Fylke from "./Fylke";
 import { SimpleFylke } from "types/api";
 import { fetcher } from "utils/swr";
 
@@ -18,11 +18,13 @@ const FylkeList = ({ fylkeValues, setFylkeValue }: Props) => {
   return (
     <Wrapper>
       {fylker.map((fylke) => (
-        <Fylke
+        <ApiGrense
           key={fylke.id}
-          fylke={fylke}
-          fylkeValue={fylkeValues[fylke.id]}
-          setFylkeValue={setFylkeValue}
+          grense={fylke}
+          grenseValue={fylkeValues[fylke.id]}
+          setGrenseValue={setFylkeValue}
+          featuresUrl={`v1/fylker/${fylke.id}/grenser`}
+          type="fylke"
         />
       ))}
     </Wrapper>

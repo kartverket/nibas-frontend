@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import useSWR from "swr";
+import ApiGrense from "../ApiGrense";
 import { ObjectValue } from "../useEditGrenser";
-import Kommune from "./Kommune";
 import { fetchKommunerByFylke } from "api/kommuner";
 import { SimpleKommune } from "types/api";
 
@@ -21,11 +21,13 @@ const KommuneList = ({ fylke, kommuneValues, setKommuneValue }: Props) => {
   return (
     <Wrapper>
       {kommuner.map((kommune) => (
-        <Kommune
+        <ApiGrense
           key={kommune.id}
-          kommune={kommune}
-          kommuneValue={kommuneValues[kommune.id]}
-          setKommuneValue={setKommuneValue}
+          grense={kommune}
+          grenseValue={kommuneValues[kommune.id]}
+          setGrenseValue={setKommuneValue}
+          featuresUrl={`v1/kommuner/${kommune.id}/grenser`}
+          type="kommune"
         />
       ))}
     </Wrapper>
