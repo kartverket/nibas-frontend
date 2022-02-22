@@ -14,12 +14,11 @@ const useApiGrense = (featuresUrl: string) => {
       // vi ønsker ikke å refreshe dataene uten er refresh av siden?
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
-      revalidateOnMount: false,
     }
   );
 
   const features = useMemo(() => {
-    if (!geoJson) return [];
+    if (!geoJson) return null;
 
     return geoJsonToSource(geoJson).getFeatures();
   }, [geoJson]);

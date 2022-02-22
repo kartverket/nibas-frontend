@@ -25,7 +25,7 @@ type Props<T extends RotGrense> = {
   objectValue: ObjectValue | undefined;
   title: string;
   type: EditingType;
-  features: Feature<Geometry>[] | undefined;
+  features: Feature<Geometry>[] | null;
   fetchFeatures: () => void;
 };
 
@@ -44,7 +44,7 @@ const ToggleableGrense = <T extends RotGrense>({
     // hvis features skal være synlig, hent features
     if (!visible && !editing) return;
 
-    if (!features || features.length === 0) {
+    if (!features) {
       fetchFeatures();
     }
   }, [visible, editing, features, fetchFeatures]);
