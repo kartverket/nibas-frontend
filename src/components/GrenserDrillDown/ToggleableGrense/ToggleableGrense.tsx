@@ -8,7 +8,7 @@ import { LayerId } from "hooks/layers/types";
 import { ReactComponent as InfoIcon } from "icons/info.svg";
 import { ReactComponent as VisibilityIcon } from "icons/visibility.svg";
 import { ReactComponent as VisibilityOffIcon } from "icons/visibility_off.svg";
-import { Grense } from "types/api";
+import { RotGrense } from "types/api";
 import {
   addFeaturesToSource,
   removeFeaturesFromSource,
@@ -19,7 +19,7 @@ const layerIdByGrenseType: Record<EditingType, LayerId> = {
   kommune: "kommuner",
 };
 
-type Props<T extends Grense> = {
+type Props<T extends RotGrense> = {
   grense: T;
   setObjectValue: (objectKey: string, value: ObjectValue) => void;
   objectValue: ObjectValue | undefined;
@@ -29,7 +29,7 @@ type Props<T extends Grense> = {
   fetchFeatures: () => void;
 };
 
-const ToggleableGrense = <T extends Grense>({
+const ToggleableGrense = <T extends RotGrense>({
   grense,
   setObjectValue,
   objectValue = {},
