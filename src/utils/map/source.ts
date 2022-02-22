@@ -26,9 +26,14 @@ export const removeFeaturesFromSource = (
   const layer = getLayerById(sourceId) as VectorLayer<GeometryVectorSource>;
   const source = layer.getSource();
 
-  features.forEach((feature) => {
+  const removeFeature = (feature: Feature<Geometry>) =>
     source.removeFeature(feature);
-  });
+
+  try {
+    features.forEach(removeFeature);
+  } catch (error) {
+    // hvis den thrower betyr det bare at featuren ikke finnes, og det går fint
+  }
 };
 
 export const getWMTSOptions = async (
