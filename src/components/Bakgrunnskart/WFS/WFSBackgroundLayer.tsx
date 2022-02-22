@@ -28,7 +28,9 @@ const WFSBackgroundLayer = ({
 
     if (!layerId) return;
 
-    fetchMatrikkelWfsFeatures();
+    if (!visible) {
+      fetchMatrikkelWfsFeatures();
+    }
 
     toggleLayerVisibility();
   };
