@@ -4,6 +4,9 @@
 # Proxy kall til /v1/* til nibas-backend i test
 reverse_proxy /v1/* {$BACKEND_HOST}
 
+# Proxy kall til /api/auth til aut-idporten-modulen (foreløpig hardkodet, bør hentes fra vault når vi får flere miljøer)
+reverse_proxy /api/auth http://aut-idporten.test.skip.statkart.no
+
 # Legg på brukernavn og passord når klient skal hente ticket 
 # til de låste bakgrunnskartene
 rewrite /skbaatts/req ?{query}&brukerid={$BAAT_USERNAME}&passord={$BAAT_PASSWORD}&retformat=s
