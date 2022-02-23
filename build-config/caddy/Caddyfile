@@ -1,7 +1,3 @@
-{
-    debug
-}
-
 # Starter applikasjonen på port 8080
 :{$PORT}
 
