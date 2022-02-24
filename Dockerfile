@@ -5,7 +5,7 @@ COPY /build /srv
 
 ENV PORT=8080
 ENV BACKEND_HOST=nibas-backend
-ENV AUT-IDPORTEN=aut-idporten
+ENV AUT_IDPORTEN=aut-idporten
 RUN apk --no-cache add curl
 RUN addgroup -g 1242 nibas; \
   adduser -u 1242 -D -G nibas nibas
