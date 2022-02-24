@@ -26,7 +26,7 @@ const KommuneList = ({ fylke, kommuneValues, setKommuneValue }: Props) => {
           grense={kommune}
           grenseValue={kommuneValues[kommune.id]}
           setGrenseValue={setKommuneValue}
-          featuresUrl={`v1/kommuner/${kommune.id}/grenser`}
+          featuresUrl={`/v1/kommuner/${kommune.id}/grenser`}
           type="kommune"
         />
       ))}

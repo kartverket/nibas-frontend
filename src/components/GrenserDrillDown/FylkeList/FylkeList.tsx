@@ -23,7 +23,7 @@ const FylkeList = ({ fylkeValues, setFylkeValue }: Props) => {
           grense={fylke}
           grenseValue={fylkeValues[fylke.id]}
           setGrenseValue={setFylkeValue}
-          featuresUrl={`v1/fylker/${fylke.id}/grenser`}
+          featuresUrl={`/v1/fylker/${fylke.id}/grenser`}
           type="fylke"
         />
       ))}

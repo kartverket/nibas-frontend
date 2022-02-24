@@ -7,7 +7,7 @@ import { fetcher } from "utils/swr";
 
 const useApiGrense = (featuresUrl: string) => {
   const [shouldFetch, setShouldFetch] = useState(false);
-  const { data: geoJson } = useSWRImmutable<Feature<Geometry>>(
+  const { data: geoJson, mutate } = useSWRImmutable<Feature<Geometry>>(
     shouldFetch ? featuresUrl : null,
     fetcher
   );
@@ -15,7 +15,13 @@ const useApiGrense = (featuresUrl: string) => {
   const features = useMemo(() => {
     if (!geoJson) return null;
 
-    return geoJsonToSource(geoJson).getFeatures();
+    return geoJsonToSource(geoJson)
+      .getFeatures()
+      .map((feature) => {
+        feature.setId(feature.getProperties().lokalid);
+
+        return feature;
+      });
   }, [geoJson]);
 
   const fetchFeatures = useCallback(() => {
@@ -25,6 +31,7 @@ const useApiGrense = (featuresUrl: string) => {
   return {
     features,
     fetchFeatures,
+    mutate,
   };
 };
 

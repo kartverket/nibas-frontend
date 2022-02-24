@@ -1,10 +1,10 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import styled from "styled-components";
 import { ObjectValue, EditingType } from "../useEditGrenser";
 import Button from "components/Button";
-import { LayerId } from "hooks/layers/types";
+import { GrenseId } from "hooks/layers/types";
 import { ReactComponent as InfoIcon } from "icons/info.svg";
 import { ReactComponent as VisibilityIcon } from "icons/visibility.svg";
 import { ReactComponent as VisibilityOffIcon } from "icons/visibility_off.svg";
@@ -14,7 +14,7 @@ import {
   removeFeaturesFromSource,
 } from "utils/map/source";
 
-const layerIdByGrenseType: Record<EditingType, LayerId> = {
+export const layerIdByGrenseType: Record<EditingType, GrenseId> = {
   fylke: "fylker",
   kommune: "kommuner",
 };
@@ -38,43 +38,53 @@ const ToggleableGrense = <T extends RotGrense>({
   features,
   fetchFeatures,
 }: Props<T>) => {
-  const { visible = false, editing = false } = objectValue;
-
   useEffect(() => {
     // hvis features skal være synlig, hent features
-    if (!visible && !editing) return;
+    if (!objectValue.visible && !objectValue.editing) return;
 
     if (!features) {
       fetchFeatures();
     }
-  }, [visible, editing, features, fetchFeatures]);
+  }, [objectValue, features, fetchFeatures]);
+
+  const setInserted = useCallback(
+    (newInserted: boolean) => {
+      setObjectValue(grense.id, {
+        ...objectValue,
+        inserted: newInserted,
+      });
+    },
+    [grense.id, objectValue, setObjectValue]
+  );
 
   useEffect(() => {
-    if (!features) return;
+    if (!features || !objectValue.inserted || objectValue.visible) return;
 
     const layerId = layerIdByGrenseType[type];
 
-    if (!visible) {
-      // fjern lag hvis finnes
-      removeFeaturesFromSource("edit", features);
-      removeFeaturesFromSource(layerId, features);
+    // fjern lag hvis finnes
+    removeFeaturesFromSource("edit", features);
+    removeFeaturesFromSource(layerId, features);
 
-      return;
-    }
+    setInserted(false);
+  }, [features, objectValue, type, setInserted]);
 
-    if (editing) {
-      // legg til i editing lag
-      addFeaturesToSource("edit", features);
-    } else {
-      // legg til i layerId lag
-      addFeaturesToSource(layerId, features);
-    }
-  }, [visible, editing, features, type]);
+  useEffect(() => {
+    if (!features || objectValue.inserted) return;
+
+    if (!objectValue.visible) return;
+
+    const layerId = objectValue.editing ? "edit" : layerIdByGrenseType[type];
+
+    addFeaturesToSource(layerId, features);
+
+    setInserted(true);
+  }, [objectValue, features, type, setInserted]);
 
   const toggleVisible = async () => {
     setObjectValue(grense.id, {
       ...objectValue,
-      visible: !objectValue?.visible,
+      visible: !objectValue.visible,
     });
   };
 
@@ -83,10 +93,10 @@ const ToggleableGrense = <T extends RotGrense>({
 
     newObjectValue.editing = !newObjectValue.editing;
 
-    if (visible && !editing) {
-      newObjectValue.editing = true;
-    } else if (!visible && editing) {
-      newObjectValue.editing = false;
+    if (objectValue.visible && !objectValue.editing) {
+      newObjectValue.visible = true;
+    } else if (!objectValue.visible && objectValue.editing) {
+      newObjectValue.visible = false;
     } else {
       newObjectValue.visible = !newObjectValue.visible;
     }
@@ -101,14 +111,18 @@ const ToggleableGrense = <T extends RotGrense>({
   return (
     <Wrapper>
       <Button onClick={toggleVisible} variant="icon">
-        {visible ? (
+        {objectValue.visible ? (
           <VisibilityIcon aria-label="Synlig" />
         ) : (
           <VisibilityOffIcon aria-label="Usynlig" />
         )}
       </Button>
       <label>
-        <input type="checkbox" checked={editing} onChange={toggleEditing} />
+        <input
+          type="checkbox"
+          checked={objectValue.editing ?? false}
+          onChange={toggleEditing}
+        />
         {title}
       </label>
       <Button variant="icon" onClick={openInfo}>
