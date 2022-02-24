@@ -9,10 +9,7 @@
 reverse_proxy /v1/* {$BACKEND_HOST}
 
 # Proxy kall til /api/auth til aut-idporten-modulen (foreløpig hardkodet, bør hentes fra vault når vi får flere miljøer)
-reverse_proxy /api/auth {$AUT_IDPORTEN} {
-    header_up Host {upstream_hostport}
-    header_up X-Forwarded-Host {host}
-}
+reverse_proxy /api/auth {$AUT_IDPORTEN}
 
 # Legg på brukernavn og passord når klient skal hente ticket 
 # til de låste bakgrunnskartene
