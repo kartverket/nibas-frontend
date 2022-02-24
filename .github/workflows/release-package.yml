@@ -11,6 +11,10 @@ env:
 jobs:
   build:
     runs-on: [anthos, dev]
+    permissions:
+      contents: write
+      packages: write
+
     outputs:
       new_tag: ${{ steps.tag_version.outputs.new_tag }}
 
@@ -22,6 +26,9 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 16.x
+
+      - name: Update npmrc with secret to install internal packages
+        run: echo //npm.pkg.github.com/:_authToken=${{secrets.PAT_READ_PACKAGE}} >> .npmrc
 
       - name: Build and test
         run: |

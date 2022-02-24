@@ -16,9 +16,7 @@ jobs:
         with:
           node-version: 16.x
 
-      - name: Build and test
-        run: |
-          npm ci --no-audit
-          npm audit --production
-          npm run build --if-present
-          npm test
+      - run: echo //npm.pkg.github.com/:_authToken=${{secrets.PAT_READ_PACKAGE}} >> .npmrc
+      - run: npm ci --no-audit
+      - run: npm run build --if-present
+      - run: npm test

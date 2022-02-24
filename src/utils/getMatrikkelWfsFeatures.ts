@@ -43,7 +43,7 @@ const createWfsRequest = (extent: number[]): Node => {
 };
 
 const doGetFeatureRequest = async (request: Node) => {
-  const response = await fetch("/geoservergeo/wfs/MATRIKKEL", {
+  const response = await fetch("/geoservergeo/wfs/matrikkel", {
     method: "POST",
     body: new XMLSerializer().serializeToString(request),
   });

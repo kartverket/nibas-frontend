@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@kartverket/frontend-aut-lib": "0.0.20",
+    "@types/react-router-dom": "^5.3.3",
     "http-proxy-middleware": "~2.0.1",
     "ol": "~6.8.1",
     "proj4": "~2.7.5",
@@ -10,6 +12,7 @@
     "react-dnd": "~14.0.4",
     "react-dnd-html5-backend": "~14.0.2",
     "react-dom": "~17.0.2",
+    "react-router-dom": "^6.2.1",
     "styled-components": "~5.3.1",
     "swr": "^1.2.1",
     "web-vitals": "~1.0.1"
@@ -67,7 +70,7 @@
   },
   "jest": {
     "transformIgnorePatterns": [
-      "node_modules/(?!(ol)/)"
+      "node_modules/(?!(ol|@kartverket/frontend-aut-lib)/)"
     ],
     "resetMocks": false
   }

@@ -9,6 +9,14 @@ const baatPassword = process.env.REACT_APP_BAAT_PASSWORD;
 
 module.exports = function (app) {
   app.use(
+    createProxyMiddleware("/api/auth/", {
+      // bytt ut med lokalt kjørende aut-idporten evt.
+      target: "http://aut-idporten.test.skip.statkart.no",
+      changeOrigin: true,
+    })
+  );
+
+  app.use(
     createProxyMiddleware("/v1", {
       target: "http://localhost:8080",
       changeOrigin: true,
