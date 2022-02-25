@@ -17,7 +17,7 @@ jobs:
     steps:
       - name: checkout code
         uses: actions/checkout@v2
-
+        
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
@@ -26,6 +26,7 @@ jobs:
       - name: Build and test
         run: |
           npm ci --no-audit
+          npm audit --production
           npm run build --if-present
           npm test
 
@@ -40,7 +41,7 @@ jobs:
         with:
           registry: ${{ env.registry }}
           username: ${{ github.actor }}
-          password: ${{ github.token }}
+          password:  ${{ github.token }}
 
       - name: Build docker and push
         id: build
@@ -57,39 +58,39 @@ jobs:
     needs: build
     runs-on: [anthos, dev]
     environment: atkv2-test-apps
-
+    
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
 
-      - name: Authenticate with Google Cloud
-        uses: google-github-actions/auth@v0
-        with:
-          credentials_json: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+    - name: Authenticate with Google Cloud
+      uses: google-github-actions/auth@v0
+      with: 
+        credentials_json: ${{ secrets.SERVICE_ACCOUNT_JSON }}
 
-      - name: Authenticate with cluster
-        run: gcloud container hub memberships get-credentials atkv2-test-apps --verbosity debug
+    - name: Authenticate with cluster
+      run: gcloud container hub memberships get-credentials atkv2-test-apps --verbosity debug
 
-      # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
-      - name: Setup Terraform
-        uses: BlackDark/setup-terraform@proxy-custom-pkg
-        with:
-          terraform_wrapper: false
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      uses: BlackDark/setup-terraform@proxy-custom-pkg
+      with:
+        terraform_wrapper: false
 
-      - name: Generate terraform variables
-        run: |
-          cat <<EOF >> terraform.tfvars
-          vault_addr="${{ secrets.VAULT_ADDR }}"
-          vault_skip_verify="${{ secrets.VAULT_SKIP_VERIFY }}"
-          vault_token="${{ secrets.VAULT_TOKEN }}"
-          nibas_frontend_version="${{ needs.build.outputs.new_tag }}"
-          EOF
+    - name: Generate terraform variables
+      run: |
+        cat <<EOF >> terraform.tfvars
+        vault_addr="${{ secrets.VAULT_ADDR }}"
+        vault_skip_verify="${{ secrets.VAULT_SKIP_VERIFY }}"
+        vault_token="${{ secrets.VAULT_TOKEN }}"
+        nibas_frontend_version="${{ needs.build.outputs.new_tag }}"
+        EOF
+    
+    - name: Terraform init
+      run: terraform init -input=false
 
-      - name: Terraform init
-        run: terraform init -input=false
+    - name: Terraform plan
+      run: terraform plan -input=false
 
-      - name: Terraform plan
-        run: terraform plan -input=false
-
-      - name: Terraform apply
-        run: terraform apply -input=false -auto-approve
+    - name: Terraform apply
+      run: terraform apply -input=false -auto-approve   
