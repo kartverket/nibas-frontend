@@ -64,7 +64,7 @@ const ToggleableGrense = <T extends RotGrense>({
 
     // fjern lag hvis finnes
     removeFeaturesFromSource("edit", features);
-    removeFeaturesFromSource(layerId, features);
+    // removeFeaturesFromSource(layerId, features);
 
     setInserted(false);
   }, [features, objectValue, type, setInserted]);
