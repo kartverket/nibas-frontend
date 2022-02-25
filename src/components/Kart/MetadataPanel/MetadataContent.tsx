@@ -4,12 +4,19 @@ import styled from "styled-components";
 import Checkbox from "components/Checkbox";
 import Input from "components/Input";
 import Select from "components/Select";
+import useSWR from "swr";
+import { fetcher } from "utils/swr";
 
 type Props = {
   feature: Feature<Geometry>;
 };
 
 const MetadataContent = ({ feature }: Props) => {
+  const { data: malemetodeKoder } = useSWR<any[]>(
+    "/v1/kodeliste/malemetode-koder",
+    fetcher
+  );
+  console.log(malemetodeKoder);
   console.log(feature.getProperties());
   const { type, metadata } = feature.getProperties();
 
@@ -45,8 +52,13 @@ const MetadataContent = ({ feature }: Props) => {
         </label>
         <label>
           Målemetode
-          <Select disabled>
-            <option>Input</option>
+          <Select disabled value={metadata?.kvalitet?.maalemetode ?? ""}>
+            <option value="">---</option>
+            {malemetodeKoder?.map((kodeItem) => (
+              <option key={kodeItem.item.uuid} value={kodeItem.item.uuid}>
+                {kodeItem.item.label}
+              </option>
+            ))}
           </Select>
         </label>
       </Part>
