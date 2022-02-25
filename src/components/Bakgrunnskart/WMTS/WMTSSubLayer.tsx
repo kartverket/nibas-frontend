@@ -1,9 +1,8 @@
 import WMTS from "ol/source/WMTS";
 import BackgroundLayerAccordion from "../BackgroundLayer/BackgroundLayerAccordion";
 import { BakgrunnskartId } from "hooks/layers/types";
-import { bakgrunnskartSources } from "hooks/sources/syncSources";
 import { MappedLayer } from "utils/getLayersFromWMS";
-import { getLayerById } from "utils/map/layers";
+import { getLayerById, isWMTSLayer } from "utils/map/layers";
 
 type Props = {
   subLayer: MappedLayer;
@@ -21,9 +20,12 @@ const WMTSSubLayer = ({
   const onSubLayerClick = () => {
     // hent originale sourcen med config
     // lag ny source basert på options med det nye laget
-    const source = bakgrunnskartSources[sourceId] as WMTS;
-    const newSource = new WMTS({ ...source.get("config"), layer: subLayer.id });
     const layer = getLayerById(sourceId);
+
+    if (!isWMTSLayer(layer)) return;
+
+    const source = layer.getSource();
+    const newSource = new WMTS({ ...source.get("config"), layer: subLayer.id });
     layer.setSource(newSource);
 
     updateActiveSubLayer();

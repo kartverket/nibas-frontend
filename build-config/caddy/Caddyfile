@@ -1,8 +1,17 @@
+{
+    debug
+}
+
 # Starter applikasjonen på port 8080
 :{$PORT}
 
 # Proxy kall til /v1/* til nibas-backend i test
 reverse_proxy /v1/* {$BACKEND_HOST}
+
+# Proxy kall til /api/auth til aut-idporten-modulen (foreløpig hardkodet, bør hentes fra vault når vi får flere miljøer)
+reverse_proxy /api/auth/* http://aut-idporten.test.skip.statkart.no {
+    header_up Host aut-idporten.test.skip.statkart.no
+}
 
 # Legg på brukernavn og passord når klient skal hente ticket 
 # til de låste bakgrunnskartene
@@ -15,6 +24,13 @@ reverse_proxy /skbaatts/req https://baat.geonorge.no
     path /skwms1/wms.ecc_enc
 }
 reverse_proxy @laasteBakgrunnskart https://wms.geonorge.no
+
+# Matrikkelen WFS-tjeneste
+reverse_proxy /geoservergeo/wfs/matrikkel {$MATRIKKELEN_WFS_URL} {
+    header_up Host {upstream_hostport}
+    header_up X-Forwarded-Host {host}
+    header_up Authorization "Basic {$MATRIKKELEN_WFS_CREDENTIALS}"
+}
 
 # Start filserveren
 file_server

@@ -27,6 +27,10 @@ data "vault_generic_secret" "nibas-baat-bruker" {
   path = "nibas/nibas-frontend/baat-bruker"
 }
 
+data "vault_generic_secret" "matrikkelen-wfs-service" {
+  path = "nibas/nibas-frontend/matrikkelen-wfs"
+}
+
 resource "kubernetes_deployment" "nibas-frontend-deployment" {
   metadata {
     name      = "nibas-frontend"
@@ -70,6 +74,14 @@ resource "kubernetes_deployment" "nibas-frontend-deployment" {
           env {
             name  = "BAAT_PASSWORD"
             value = data.vault_generic_secret.nibas-baat-bruker.data["password"]
+          }
+          env {
+            name  = "MATRIKKELEN_WFS_CREDENTIALS"
+            value = data.vault_generic_secret.matrikkelen-wfs-service.data["credentials"]
+          }
+          env {
+            name  = "MATRIKKELEN_WFS_URL"
+            value = data.vault_generic_secret.matrikkelen-wfs-service.data["url"]
           }
         }
       }
