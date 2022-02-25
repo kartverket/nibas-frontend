@@ -78,8 +78,8 @@
     ],
     "import/no-named-as-default-member": "off",
     "no-shadow": [
-      "error",
-      { "builtinGlobals": true, "hoist": "all", "allow": [] }
+      "warning",
+      { "builtinGlobals": false, "hoist": "functions", "allow": [] }
     ]
   }
 }

@@ -51,9 +51,7 @@ export const addLayerIfNotExists = (layer: Layer<Source>) => {
 
 export const getLayerIdFromMappedLayer = (mappedLayer: MainMappedLayer) => {
   const layers = getLayersArray();
-  const layer = layers.find(
-    (layer) => layer.get("id") === mappedLayer.sourceId
-  );
+  const layer = layers.find((l) => l.get("id") === mappedLayer.sourceId);
 
   if (!layer) return;
 

@@ -36,9 +36,9 @@ const WMTSBackgroundLayer = ({
   const ref = useBackgroundLayerDND(index, moveLayer, mappedLayer);
 
   const updateActiveSubLayer = useCallback(() => {
-    const activeSubLayer = getActiveSubLayer(mappedLayer.sourceId);
+    const newActiveSubLayer = getActiveSubLayer(mappedLayer.sourceId);
 
-    setActiveSubLayer(activeSubLayer);
+    setActiveSubLayer(newActiveSubLayer);
   }, [mappedLayer.sourceId]);
 
   useEffect(() => {

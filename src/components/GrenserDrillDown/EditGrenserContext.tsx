@@ -67,8 +67,8 @@ export const useEditGrenser = (grenseType: EditingType) => {
   const { editingObject, setObjectValue } = useEditAllGrenser();
 
   const values = editingObject[grenseType] ?? {};
-  const setObjectValueForType = (name: string, values: ObjectValue) =>
-    setObjectValue(grenseType, name, values);
+  const setObjectValueForType = (name: string, newValues: ObjectValue) =>
+    setObjectValue(grenseType, name, newValues);
 
   return {
     values,
