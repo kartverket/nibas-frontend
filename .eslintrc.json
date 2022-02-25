@@ -78,7 +78,7 @@
     ],
     "import/no-named-as-default-member": "off",
     "no-shadow": [
-      "warning",
+      "warn",
       { "builtinGlobals": false, "hoist": "functions", "allow": [] }
     ]
   }

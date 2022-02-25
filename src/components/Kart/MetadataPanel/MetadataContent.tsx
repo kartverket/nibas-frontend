@@ -1,10 +1,11 @@
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import styled from "styled-components";
+import useSWR from "swr";
+import { KodelisteItem } from "api/kodelister";
 import Checkbox from "components/Checkbox";
 import Input from "components/Input";
 import Select from "components/Select";
-import useSWR from "swr";
 import { fetcher } from "utils/swr";
 
 type Props = {
@@ -12,12 +13,11 @@ type Props = {
 };
 
 const MetadataContent = ({ feature }: Props) => {
-  const { data: malemetodeKoder } = useSWR<any[]>(
+  const { data: malemetodeKoder } = useSWR<KodelisteItem[]>(
     "/v1/kodeliste/malemetode-koder",
     fetcher
   );
-  console.log(malemetodeKoder);
-  console.log(feature.getProperties());
+
   const { type, metadata } = feature.getProperties();
 
   return (
