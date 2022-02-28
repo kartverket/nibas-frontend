@@ -22,27 +22,37 @@ const StyledSlider = styled.input.attrs(() => ({
   height: 4px; /* Specified height */
   background: ${({ theme }) => theme.colors.blueDark}; /* Grey background */
   outline: none; /* Remove outline */
-  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
-  transition: opacity 0.2s;
-
-  :hover {
-    opacity: 1; /* Fully shown on mouse-over */
-  }
 
   /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
   ::-webkit-slider-thumb {
     appearance: none;
+    border-radius: 50%;
     width: 18px; /* Set a specific slider handle width */
     height: 18px; /* Slider handle height */
-    background: ${({ theme }) => theme.colors.blueDark}; /* Green background */
+    background-color: ${({ theme }) =>
+      theme.colors.white}; /* Green background-color */
+    border: 1px solid ${({ theme }) => theme.colors.blueDark};
     cursor: pointer; /* Cursor on hover */
+    transition: 0.2 all;
+
+    :hover {
+      background-color: ${({ theme }) => theme.colors.blueDark};
+    }
   }
 
   ::-moz-range-thumb {
+    border-radius: 50%;
     width: 18px; /* Set a specific slider handle width */
     height: 18px; /* Slider handle height */
-    background: ${({ theme }) => theme.colors.blueDark}; /* Green background */
+    background-color: ${({ theme }) =>
+      theme.colors.white}; /* Green background-color */
+    border: 3px solid ${({ theme }) => theme.colors.blueDark};
     cursor: pointer; /* Cursor on hover */
+    transition: 0.2 all;
+
+    :hover {
+      background-color: ${({ theme }) => theme.colors.blueDark};
+    }
   }
 `;
 

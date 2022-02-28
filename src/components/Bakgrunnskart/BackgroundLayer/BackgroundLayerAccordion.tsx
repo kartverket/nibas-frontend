@@ -1,15 +1,14 @@
-import { forwardRef, useEffect, useState } from "react";
+import { forwardRef, useState } from "react";
 import styled from "styled-components";
+import useLayerOpacity from "./useLayerOpacity";
 import Button from "components/Button";
 import Slider from "components/Slider";
-import useSlider from "hooks/useSlider";
 import { ReactComponent as CaretDownIcon } from "icons/caretdown.svg";
 import { ReactComponent as CaretUpIcon } from "icons/caretup.svg";
 import { ReactComponent as CogIcon } from "icons/cog.svg";
 import { ReactComponent as VisibilityIcon } from "icons/visibility.svg";
 import { ReactComponent as VisibilityOffIcon } from "icons/visibility_off.svg";
 import { MainMappedLayer, MappedLayer } from "utils/getLayersFromWMS";
-import { getLayerById } from "utils/map/layers";
 
 type SharedProps = {
   indent: number;
@@ -42,22 +41,10 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
     const { indent, visible, onVisibilityClick, children } = props;
     const [open, setOpen] = useState(false);
     const [propertiesVisible, setPropertiesVisible] = useState(false);
-    const { value: opacity, onChange: onSliderChange } = useSlider(100);
-
-    useEffect(() => {
-      if (!props.isMainLayer) return;
-
-      const layerId = props.mappedLayer.sourceId;
-
-      try {
-        const layer = getLayerById(layerId);
-
-        // slider går mellom 0 og 100
-        layer.setOpacity(opacity / 100);
-      } catch (error) {
-        // hvis laget ikke finnes trenger ikke slider å gjøre noe
-      }
-    }, [props.isMainLayer, props.mappedLayer, opacity]);
+    const { opacity, onSliderChange } = useLayerOpacity({
+      mappedLayer: props.mappedLayer,
+      isMainLayer: props.isMainLayer,
+    });
 
     const renderNameAndCaret = () => {
       // hvis hovedlag som kan dras på, vis annen musepeker på navnet
@@ -123,7 +110,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
             <Slider
               min={0}
               max={100}
-              value={opacity}
+              value={opacity ?? 100}
               onChange={onSliderChange}
             />
           </div>
