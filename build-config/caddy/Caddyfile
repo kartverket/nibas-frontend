@@ -8,7 +8,7 @@
 # Proxy kall til /v1/* til nibas-backend i test
 reverse_proxy /v1/* {$BACKEND_HOST}
 
-# Proxy kall til /api/auth til aut-idporten-modulen (foreløpig hardkodet, bør hentes fra vault når vi får flere miljøer)
+# Proxy kall til /api/auth til aut-idporten-modulen
 reverse_proxy /api/auth/* {$AUT-IDPORTEN-URL} {
     header_up Host {upstream_hostport}
 }
