@@ -1,9 +1,10 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
 const useSlider = (initialValue = 100) => {
   const [value, setValue] = useState(initialValue);
 
-  const onChange = (newValue: number) => setValue(newValue);
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+    setValue(parseInt(event.target.value, 10));
 
   return {
     value,

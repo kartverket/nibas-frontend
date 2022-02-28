@@ -1,5 +1,4 @@
 import { forwardRef, useEffect, useState } from "react";
-import Slider from "rc-slider";
 import styled from "styled-components";
 import Button from "components/Button";
 import useSlider from "hooks/useSlider";
@@ -10,7 +9,7 @@ import { ReactComponent as VisibilityIcon } from "icons/visibility.svg";
 import { ReactComponent as VisibilityOffIcon } from "icons/visibility_off.svg";
 import { MainMappedLayer, MappedLayer } from "utils/getLayersFromWMS";
 import { getLayerById } from "utils/map/layers";
-import "rc-slider/assets/index.css";
+import Slider from "components/Slider";
 
 type SharedProps = {
   indent: number;
@@ -43,7 +42,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
     const { indent, visible, onVisibilityClick, children } = props;
     const [open, setOpen] = useState(false);
     const [propertiesVisible, setPropertiesVisible] = useState(false);
-    const sliderProps = useSlider(100);
+    const { value: opacity, onChange: onSliderChange } = useSlider(100);
 
     useEffect(() => {
       if (!props.isMainLayer) return;
@@ -54,11 +53,11 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
         const layer = getLayerById(layerId);
 
         // slider går mellom 0 og 100
-        layer.setOpacity(sliderProps.value / 100);
+        layer.setOpacity(opacity / 100);
       } catch (error) {
         // hvis laget ikke finnes trenger ikke slider å gjøre noe
       }
-    }, [props.isMainLayer, props.mappedLayer, sliderProps.value]);
+    }, [props.isMainLayer, props.mappedLayer, opacity]);
 
     const renderNameAndCaret = () => {
       // hvis hovedlag som kan dras på, vis annen musepeker på navnet
@@ -121,7 +120,12 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
 
         {propertiesVisible && (
           <div>
-            <StyledSlider {...sliderProps} />
+            <Slider
+              min={0}
+              max={100}
+              value={opacity}
+              onChange={onSliderChange}
+            />
           </div>
         )}
 
