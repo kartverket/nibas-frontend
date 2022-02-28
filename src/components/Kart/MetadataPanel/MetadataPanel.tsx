@@ -35,10 +35,6 @@ const MetadataPanel = ({ selectedFeatures }: Props) => {
   return (
     <Panel>
       <h3>Linje metadata</h3>
-      <p>
-        {singleFeature.getProperties().kontekstType}{" "}
-        {singleFeature.getProperties().kontekstId}
-      </p>
       <MetadataContent feature={singleFeature} />
       <Button onClick={() => setVisible(false)}>Close</Button>
     </Panel>
