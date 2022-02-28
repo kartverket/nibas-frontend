@@ -1,6 +1,7 @@
 import { forwardRef, useEffect, useState } from "react";
 import styled from "styled-components";
 import Button from "components/Button";
+import Slider from "components/Slider";
 import useSlider from "hooks/useSlider";
 import { ReactComponent as CaretDownIcon } from "icons/caretdown.svg";
 import { ReactComponent as CaretUpIcon } from "icons/caretup.svg";
@@ -9,7 +10,6 @@ import { ReactComponent as VisibilityIcon } from "icons/visibility.svg";
 import { ReactComponent as VisibilityOffIcon } from "icons/visibility_off.svg";
 import { MainMappedLayer, MappedLayer } from "utils/getLayersFromWMS";
 import { getLayerById } from "utils/map/layers";
-import Slider from "components/Slider";
 
 type SharedProps = {
   indent: number;
@@ -174,18 +174,6 @@ const ClickableName = styled(Button)`
 
 const DraggableName = styled.span`
   cursor: move;
-`;
-
-const StyledSlider = styled(Slider)`
-  .rc-slider-rail {
-    background-color: ${({ theme }) => theme.colors.grayLight};
-  }
-  .rc-slider-track {
-    background-color: ${({ theme }) => theme.colors.blueDark};
-  }
-  .rc-slider-handle {
-    border-color: ${({ theme }) => theme.colors.blueDark};
-  }
 `;
 
 export default BackgroundLayerAccordion;
