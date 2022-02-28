@@ -19,11 +19,13 @@ const useLayerOpacity = (props: Props) => {
 
     const layerId = (props.mappedLayer as MainMappedLayer).sourceId;
 
-    if (!layerId) return;
+    try {
+      const layer = getLayerById(layerId);
 
-    const layer = getLayerById(layerId);
-
-    setOpacity(layer.getOpacity() * 100);
+      setOpacity(layer.getOpacity() * 100);
+    } catch (error) {
+      // hvis laget ikke finnes trenger ikke slider å gjøre noe
+    }
   }, [props.isMainLayer, props.mappedLayer]);
 
   useEffect(() => {
