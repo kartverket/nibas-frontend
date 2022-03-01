@@ -8,9 +8,9 @@
 # Proxy kall til /v1/* til nibas-backend i test
 reverse_proxy /v1/* {$BACKEND_HOST}
 
-# Proxy kall til /api/auth til aut-idporten-modulen (foreløpig hardkodet, bør hentes fra vault når vi får flere miljøer)
-reverse_proxy /api/auth/* http://aut-idporten.test.skip.statkart.no {
-    header_up Host aut-idporten.test.skip.statkart.no
+# Proxy kall til /api/auth til aut-idporten-modulen
+reverse_proxy /api/auth/* {$AUT-IDPORTEN-URL} {
+    header_up Host {upstream_hostport}
 }
 
 # Legg på brukernavn og passord når klient skal hente ticket 
@@ -30,6 +30,19 @@ reverse_proxy /geoservergeo/wfs/matrikkel {$MATRIKKELEN_WFS_URL} {
     header_up Host {upstream_hostport}
     header_up X-Forwarded-Host {host}
     header_up Authorization "Basic {$MATRIKKELEN_WFS_CREDENTIALS}"
+}
+
+# Håntere stegene i authentication flow
+handle_path /authenticated* {
+   try_files {path} /index.tsx
+}
+
+handle_path /logout {
+    try_files {path} /index.tsx
+}
+
+handle_path / {
+    try_files {path} /index.tsx
 }
 
 # Start filserveren
