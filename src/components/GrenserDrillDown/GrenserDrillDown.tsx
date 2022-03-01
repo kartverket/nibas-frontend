@@ -1,3 +1,4 @@
+import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import styled from "styled-components";
 import useSWR from "swr";
 import KodelistePreview from "../KodelisteSelect/KodelistePreview";
@@ -9,11 +10,18 @@ import { SidebarPanel } from "components/Sidebar/SidebarPanel";
 import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { SimpleFylke } from "types/api";
-import { fetcher } from "utils/swr";
+import { fetcherWithToken } from "utils/swr";
 
 const GrenserDrillDown = () => {
+  const { tokenHolderFunc } = useAuthenticationFlow();
+
   const { isOpen: visible, togglePanel } = useSidebarPanel("nibas");
-  const { data: fylker } = useSWR<SimpleFylke[]>("/v1/fylker", fetcher);
+
+  const { data: fylker, error } = useSWR<SimpleFylke[]>(
+    ["/v1/fylker", tokenHolderFunc()?.token],
+    fetcherWithToken
+  );
+
   const { setObjectValue, editingObject } = useEditGrenser();
 
   if (!visible) return null;
