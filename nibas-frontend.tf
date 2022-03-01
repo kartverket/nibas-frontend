@@ -89,7 +89,7 @@ resource "kubernetes_deployment" "nibas-frontend-deployment" {
           }
           env {
             name = "AUT-IDPORTEN-URL"
-            value = data.vault_generic_secret.aut-idporten.data["url"]
+            value = data.vault_generic_secret.aut-idporten-service.data["url"]
           }
         }
       }
