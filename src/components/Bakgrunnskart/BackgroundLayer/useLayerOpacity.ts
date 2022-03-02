@@ -29,8 +29,7 @@ const useLayerOpacity = (props: Props) => {
   }, [props.isMainLayer, props.mappedLayer]);
 
   useEffect(() => {
-    if (!props.isMainLayer) return;
-    if (opacity === undefined) return;
+    if (!props.isMainLayer || opacity === undefined) return;
 
     const layerId = (props.mappedLayer as MainMappedLayer).sourceId;
 
