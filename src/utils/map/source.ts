@@ -14,11 +14,29 @@ export const addFeaturesToSource = (
   features: Feature<Geometry>[]
 ) => {
   const layer = getLayerById(sourceId) as VectorLayer<GeometryVectorSource>;
-  const existingSource = layer.getSource();
+  const source = layer.getSource();
 
-  // const copiedFeatures = features.map((feature) => feature.clone());
+  const newFeatures: Feature<Geometry>[] = [];
 
-  existingSource.addFeatures(features);
+  features.forEach((feature) => {
+    const { id } = feature.getProperties();
+
+    feature.setId(id);
+
+    const existingFeature = source.getFeatureById(id);
+
+    // oppdatere eksisterende feature hvis den finnes, så den ikke slettes
+    // når nærliggende grense fjernes
+    if (existingFeature) {
+      const sharedIndex = existingFeature.get("sharedIndex") ?? 0;
+      existingFeature.set("sharedIndex", sharedIndex + 1);
+      return;
+    }
+
+    newFeatures.push(feature);
+  });
+
+  source.addFeatures(newFeatures);
 };
 
 export const removeFeaturesFromSource = (
@@ -30,10 +48,22 @@ export const removeFeaturesFromSource = (
 
   const removeFeature = (feature: Feature<Geometry>) => {
     try {
-      // console.log(feature);
-      source.removeFeature(feature);
+      const featureId = feature.getId();
+
+      if (!featureId) return;
+
+      const featureToRemove = source.getFeatureById(featureId);
+
+      // hvis delt, ikke slett
+      const sharedIndex = featureToRemove.get("sharedIndex");
+
+      if (sharedIndex !== undefined && sharedIndex > 0) {
+        featureToRemove.set("sharedIndex", sharedIndex - 1);
+        return;
+      }
+
+      source.removeFeature(featureToRemove);
     } catch (error) {
-      // lmao
       // ikke tryn når vi prøver å fjerne grense som allerede er fjernet
       // dette er en bug, grensen burde ikke ha vært fjernet
     }

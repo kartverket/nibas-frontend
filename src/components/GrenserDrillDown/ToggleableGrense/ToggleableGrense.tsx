@@ -58,28 +58,27 @@ const ToggleableGrense = <T extends RotGrense>({
   );
 
   useEffect(() => {
-    if (!features || !objectValue.inserted || objectValue.visible) return;
+    if (!features) return;
 
-    const layerId = layerIdByGrenseType[type];
+    if (objectValue.inserted && !objectValue.visible) {
+      // hvis laget er satt inn og IKKE synlig lenger, fjern fra layer
+      // og sett at det ikke er satt inn
+      const layerId = layerIdByGrenseType[type];
 
-    // fjern lag hvis finnes
-    removeFeaturesFromSource("edit", features);
-    // removeFeaturesFromSource(layerId, features);
+      // vi vet ikke hvilket lag features lå i før det fjernes, så vi fjerner fra begge
+      removeFeaturesFromSource("edit", features);
+      removeFeaturesFromSource(layerId, features);
 
-    setInserted(false);
+      setInserted(false);
+    } else if (!objectValue.inserted && objectValue.visible) {
+      // hvis laget IKKE satt inn og skal være synlig, sett inn i layer
+      // og sett at det er satt inn
+      const layerId = objectValue.editing ? "edit" : layerIdByGrenseType[type];
+
+      addFeaturesToSource(layerId, features);
+      setInserted(true);
+    }
   }, [features, objectValue, type, setInserted]);
-
-  useEffect(() => {
-    if (!features || objectValue.inserted) return;
-
-    if (!objectValue.visible) return;
-
-    const layerId = objectValue.editing ? "edit" : layerIdByGrenseType[type];
-
-    addFeaturesToSource(layerId, features);
-
-    setInserted(true);
-  }, [objectValue, features, type, setInserted]);
 
   const toggleVisible = async () => {
     setObjectValue(grense.id, {
