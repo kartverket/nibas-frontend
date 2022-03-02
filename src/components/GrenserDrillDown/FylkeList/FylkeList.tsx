@@ -14,7 +14,7 @@ type Props = {
 const FylkeList = ({ fylkeValues, setFylkeValue }: Props) => {
   const { tokenHolderFunc } = useAuthenticationFlow();
 
-  const { data: fylker, error } = useSWR<SimpleFylke[]>(
+  const { data: fylker } = useSWR<SimpleFylke[]>(
     ["/v1/fylker", tokenHolderFunc()?.token],
     fetcherWithToken
   );
