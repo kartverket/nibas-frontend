@@ -10,16 +10,20 @@ import { SidebarPanel } from "components/Sidebar/SidebarPanel";
 import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { SimpleFylke } from "types/api";
-import { fetcherWithToken } from "utils/swr";
+import { fetcherWithTokenAndErrorHandling } from "utils/swr";
 
-const GrenserDrillDown = () => {
+type Props = {
+  setErrorMessage: (message: string) => void;
+};
+
+const GrenserDrillDown = ({ setErrorMessage }: Props) => {
   const { tokenHolderFunc } = useAuthenticationFlow();
 
   const { isOpen: visible, togglePanel } = useSidebarPanel("nibas");
 
-  const { data: fylker, error } = useSWR<SimpleFylke[]>(
-    ["/v1/fylker", tokenHolderFunc()?.token],
-    fetcherWithToken
+  const { data: fylker } = useSWR<SimpleFylke[]>(
+    ["/v1/fylker", tokenHolderFunc()?.token, setErrorMessage],
+    fetcherWithTokenAndErrorHandling
   );
 
   const { setObjectValue, editingObject } = useEditGrenser();
