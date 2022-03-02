@@ -3,7 +3,6 @@ import SubBackgroundLayer from "./SubBackgroundLayer";
 import useBackgroundLayerDND from "./useBackgroundLayerDND";
 import { BakgrunnskartId } from "hooks/layers/types";
 import { MainMappedLayer } from "utils/getLayersFromWMS";
-import { getLayerIdFromMappedLayer } from "utils/map/layers";
 
 type Props = {
   mappedLayer: MainMappedLayer;
@@ -26,21 +25,13 @@ const MainBackgroundLayer = ({
 }: Props) => {
   const ref = useBackgroundLayerDND(index, moveLayer, mappedLayer);
 
-  const onVisibilityClick = () => {
-    const layerId = getLayerIdFromMappedLayer(mappedLayer);
-
-    if (!layerId) return;
-
-    toggleLayerVisibility();
-  };
-
   return (
     <BackgroundLayerAccordion
       key={mappedLayer.title}
       mappedLayer={mappedLayer}
       indent={0}
       visible={visible}
-      onVisibilityClick={onVisibilityClick}
+      onVisibilityClick={toggleLayerVisibility}
       ref={ref}
       isMainLayer
     >

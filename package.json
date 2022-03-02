@@ -71,6 +71,9 @@
     "transformIgnorePatterns": [
       "node_modules/(?!(ol|@kartverket/frontend-aut-lib)/)"
     ],
-    "resetMocks": false
+    "resetMocks": false,
+    "moduleNameMapper": {
+      "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.ts"
+    }
   }
 }
