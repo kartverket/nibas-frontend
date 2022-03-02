@@ -39,7 +39,7 @@ export const addFeaturesToSource = (
   source.addFeatures(newFeatures);
 };
 
-export const removeFeaturesFromSource = (
+export const removeFeaturesFromSourceByIds = (
   sourceId: LayerId,
   features: Feature<Geometry>[]
 ) => {
@@ -47,21 +47,22 @@ export const removeFeaturesFromSource = (
   const source = layer.getSource();
 
   const removeFeature = (feature: Feature<Geometry>) => {
+    const featureId = feature.getId();
+
+    if (!featureId) return;
+
+    const featureToRemove = source.getFeatureById(featureId);
+
+    // hvis delt, ikke slett
+    const sharedIndex = featureToRemove.get("sharedIndex");
+
+    if (sharedIndex !== undefined && sharedIndex > 0) {
+      featureToRemove.set("sharedIndex", sharedIndex - 1);
+      return;
+    }
+
+    // console.log(feature);
     try {
-      const featureId = feature.getId();
-
-      if (!featureId) return;
-
-      const featureToRemove = source.getFeatureById(featureId);
-
-      // hvis delt, ikke slett
-      const sharedIndex = featureToRemove.get("sharedIndex");
-
-      if (sharedIndex !== undefined && sharedIndex > 0) {
-        featureToRemove.set("sharedIndex", sharedIndex - 1);
-        return;
-      }
-
       source.removeFeature(featureToRemove);
     } catch (error) {
       // ikke tryn når vi prøver å fjerne grense som allerede er fjernet
@@ -69,13 +70,10 @@ export const removeFeaturesFromSource = (
     }
   };
 
-  console.log("Removing", features);
-
   try {
     features.forEach(removeFeature);
   } catch (error) {
     // TODO fiks det her, den thrower når man skal fjerne grenser som ligger inntil andre grenser
-    console.error(error);
     // hvis den thrower betyr det bare at featuren ikke finnes, og det går fint
   }
 };

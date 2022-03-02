@@ -11,7 +11,7 @@ import { ReactComponent as VisibilityOffIcon } from "icons/visibility_off.svg";
 import { RotGrense } from "types/api";
 import {
   addFeaturesToSource,
-  removeFeaturesFromSource,
+  removeFeaturesFromSourceByIds,
 } from "utils/map/source";
 
 export const layerIdByGrenseType: Record<EditingType, GrenseId> = {
@@ -66,8 +66,8 @@ const ToggleableGrense = <T extends RotGrense>({
       const layerId = layerIdByGrenseType[type];
 
       // vi vet ikke hvilket lag features lå i før det fjernes, så vi fjerner fra begge
-      removeFeaturesFromSource("edit", features);
-      removeFeaturesFromSource(layerId, features);
+      removeFeaturesFromSourceByIds("edit", features);
+      removeFeaturesFromSourceByIds(layerId, features);
 
       setInserted(false);
     } else if (!objectValue.inserted && objectValue.visible) {
