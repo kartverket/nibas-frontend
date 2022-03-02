@@ -14,6 +14,8 @@ export const fetcherWithTokenAndErrorHandling = (
   fetch(url, { headers: { Authorization: "Bearer " + token } }).then((res) => {
     if (!res.ok) {
       setErrorMessage("Klarte ikke hente data fra " + url);
+    } else {
+      setErrorMessage("");
     }
     return res.json();
   });
