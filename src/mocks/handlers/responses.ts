@@ -1,3 +1,5 @@
+import { Feature } from "ol";
+
 export const mockBasicGrense = {
   type: "FeatureCollection",
   id: "2a0c1103-7844-488c-96a2-1676fa66572b",
@@ -64,6 +66,8 @@ export const mockBasicGrense = {
     },
   ],
 };
+
+export const mockBasicFeature = new Feature(mockBasicGrense);
 
 export const mockFylker = [
   {
