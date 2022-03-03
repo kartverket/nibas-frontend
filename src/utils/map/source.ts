@@ -19,9 +19,9 @@ export const addFeaturesToSource = (
   const newFeatures: Feature<Geometry>[] = [];
 
   features.forEach((feature) => {
-    const { id } = feature.getProperties();
+    const id = feature.getId();
 
-    feature.setId(id);
+    if (!id) return;
 
     const existingFeature = source.getFeatureById(id);
 
@@ -69,6 +69,8 @@ export const removeFeaturesFromSourceByIds = (
       // dette er en bug, grensen burde ikke ha vært fjernet
     }
   };
+
+  console.log("Removing features", features);
 
   try {
     features.forEach(removeFeature);

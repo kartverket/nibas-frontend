@@ -15,13 +15,7 @@ const useApiGrense = (featuresUrl: string) => {
   const features = useMemo(() => {
     if (!geoJson) return null;
 
-    return geoJsonToSource(geoJson)
-      .getFeatures()
-      .map((feature) => {
-        feature.setId(feature.getProperties().lokalid);
-
-        return feature;
-      });
+    return geoJsonToSource(geoJson).getFeatures();
   }, [geoJson]);
 
   const fetchFeatures = useCallback(() => {
