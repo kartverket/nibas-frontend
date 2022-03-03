@@ -70,8 +70,6 @@ export const removeFeaturesFromSourceByIds = (
     }
   };
 
-  console.log("Removing features", features);
-
   try {
     features.forEach(removeFeature);
   } catch (error) {

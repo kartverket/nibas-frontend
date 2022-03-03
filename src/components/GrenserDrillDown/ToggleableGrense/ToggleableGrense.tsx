@@ -26,7 +26,6 @@ type Props<T extends RotGrense> = {
   title: string;
   type: EditingType;
   features: Feature<Geometry>[] | null;
-  fetchFeatures: () => void;
 };
 
 const ToggleableGrense = <T extends RotGrense>({
@@ -36,17 +35,7 @@ const ToggleableGrense = <T extends RotGrense>({
   title,
   type,
   features,
-  fetchFeatures,
 }: Props<T>) => {
-  useEffect(() => {
-    // hvis features skal være synlig, hent features
-    if (!objectValue.visible && !objectValue.editing) return;
-
-    if (!features) {
-      fetchFeatures();
-    }
-  }, [objectValue, features, fetchFeatures]);
-
   const setInserted = useCallback(
     (newInserted: boolean) => {
       setObjectValue(grense.id, {
