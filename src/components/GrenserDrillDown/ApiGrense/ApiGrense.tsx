@@ -1,7 +1,7 @@
 import { useCallback } from "react";
-import ToggleableGrense from "./ToggleableGrense";
+import ToggleableGrense from "../ToggleableGrense";
+import { EditingType, ObjectValue } from "../useEditGrenser";
 import useApiGrense from "./useApiGrense";
-import { EditingType, ObjectValue } from "./useEditGrenser";
 import { SimpleGrense } from "types/api";
 
 type Props<T> = {
