@@ -2,7 +2,7 @@ import { InputHTMLAttributes } from "react";
 import styled, { css } from "styled-components";
 
 type Props = InputHTMLAttributes<HTMLInputElement> & {
-  label: string;
+  label: React.ReactNode;
   type: "radio" | "checkbox";
 };
 

@@ -1,6 +1,6 @@
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import useSWR from "swr";
 import { KodelisteItem } from "api/kodelister";
 import Checkbox from "components/Checkbox";
@@ -23,16 +23,26 @@ const MetadataContent = ({ feature }: Props) => {
   return (
     <Container>
       <Part>
-        <label>
+        <BlockLabel>
           Grensetype
           <Select disabled>
             <option>{type}</option>
           </Select>
-        </label>
+        </BlockLabel>
         <div>
-          <p>Omtvisted</p>
-          <Checkbox type="radio" label="Ja" disabled defaultChecked={true} />
-          <Checkbox type="radio" label="Nei" disabled />
+          <MetadataText>Omtvisted</MetadataText>
+          <Checkbox
+            type="radio"
+            label={<MetadataText>Ja</MetadataText>}
+            disabled
+            defaultChecked={metadata?.omtvistet}
+          />
+          <Checkbox
+            type="radio"
+            label={<MetadataText>Nei</MetadataText>}
+            disabled
+            defaultChecked={!metadata?.omtvistet}
+          />
         </div>
         <BlockLabel>
           Gyldig fra
@@ -44,13 +54,13 @@ const MetadataContent = ({ feature }: Props) => {
         </BlockLabel>
       </Part>
       <Part>
-        <label>
+        <BlockLabel>
           Nøyaktighetsklasse
           <Select disabled>
-            <option>God</option>
+            <option>Mangler kodeliste</option>
           </Select>
-        </label>
-        <label>
+        </BlockLabel>
+        <BlockLabel>
           Målemetode
           <Select disabled value={metadata?.kvalitet?.maalemetode ?? ""}>
             <option value="">---</option>
@@ -60,11 +70,17 @@ const MetadataContent = ({ feature }: Props) => {
               </option>
             ))}
           </Select>
-        </label>
+        </BlockLabel>
       </Part>
       <Part>
-        <p>Oppdateringsdato: {metadata?.oppdateringsdato ?? "---"}</p>
-        <p>Datafangsdato: {metadata?.datafangstdato ?? "---"}</p>
+        <div>
+          <MetadataText>Oppdateringsdato</MetadataText>
+          <MetadataValue>{metadata?.oppdateringsdato ?? "---"}</MetadataValue>
+        </div>
+        <div>
+          <MetadataText>Datafangsdato</MetadataText>
+          <MetadataValue>{metadata?.datafangstdato ?? "---"}</MetadataValue>
+        </div>
       </Part>
     </Container>
   );
@@ -86,9 +102,31 @@ const Part = styled.div`
   }
 `;
 
+const MetadataTitleStyles = css`
+  font-size: 14px;
+`;
+
+const MetadataValue = styled.p`
+  margin: 0;
+  margin-bottom: 8px;
+`;
+
+const MetadataText = styled.p`
+  margin: 0;
+  ${MetadataTitleStyles};
+`;
+
 const BlockLabel = styled.label`
   display: block;
   margin-bottom: 8px;
+
+  ${MetadataTitleStyles};
+
+  > * {
+    margin-top: 4px;
+    width: 100%;
+    margin-bottom: 8px;
+  }
 `;
 
 export default MetadataContent;
