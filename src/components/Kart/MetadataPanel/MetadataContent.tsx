@@ -30,7 +30,7 @@ const MetadataContent = ({ feature }: Props) => {
           </Select>
         </BlockLabel>
         <div>
-          <MetadataText>Omtvisted</MetadataText>
+          <MetadataText>Omtvistet</MetadataText>
           <Checkbox
             type="radio"
             label={<MetadataText>Ja</MetadataText>}
