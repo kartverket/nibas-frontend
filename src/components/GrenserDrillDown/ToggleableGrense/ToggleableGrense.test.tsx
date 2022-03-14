@@ -1,17 +1,16 @@
 import { render, screen } from "test/test-utils";
 import ToggleableGrense from "./ToggleableGrense";
+import { mockBasicFeature } from "mocks/handlers/responses";
 
 const defaultProps: React.ComponentProps<typeof ToggleableGrense> = {
-  canSelect: true,
-  getFeaturesToAdd: jest.fn(),
-  getFeaturesToRemove: jest.fn(),
   grense: {
-    id: 1,
+    id: "1",
   },
   objectValue: { editing: false, visible: false },
   setObjectValue: jest.fn(),
   title: "Grense",
   type: "fylke",
+  features: [mockBasicFeature],
 };
 
 beforeEach(() => {

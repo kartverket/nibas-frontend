@@ -1,52 +1,32 @@
-import { Feature } from "ol";
-import Geometry from "ol/geom/Geometry";
 import styled from "styled-components";
-import ToggleableGrense from "../ToggleableGrense";
+import useSWR from "swr";
+import ApiGrense from "../ApiGrense";
 import { ObjectValue } from "../useEditGrenser";
-import { fetchFylkeFeaturesById } from "api/fylker";
 import { SimpleFylke } from "types/api";
-import { geoJsonToSource } from "utils/map/geoJson";
+import { fetcher } from "utils/swr";
 
 type Props = {
-  fylker: SimpleFylke[];
   fylkeValues: Record<string, ObjectValue>;
   setFylkeValue: (kommune: string, value: ObjectValue) => void;
 };
 
-const FylkeList = ({ fylker, fylkeValues, setFylkeValue }: Props) => {
-  const getFeaturesToAdd = async (fylke: SimpleFylke) => {
-    const json = await fetchFylkeFeaturesById(fylke.id);
-    return geoJsonToSource(json).getFeatures();
-  };
+const FylkeList = ({ fylkeValues, setFylkeValue }: Props) => {
+  const { data: fylker } = useSWR<SimpleFylke[]>("/v1/fylker", fetcher);
 
-  const getFeaturesToRemove = (
-    fylke: SimpleFylke,
-    layerFeatures: Feature<Geometry>[]
-  ) =>
-    layerFeatures.filter(
-      (feature) => feature.getProperties().kontekstId === fylke.id
-    );
+  if (!fylker) return null;
 
   return (
     <Wrapper>
-      {fylker.map((fylke) => {
-        const navn =
-          fylke.navn.find((fylkesNavn) => fylkesNavn.spraak === "nor")?.navn ??
-          "";
-
-        return (
-          <ToggleableGrense
-            key={navn}
-            grense={fylke}
-            type="fylke"
-            title={navn}
-            objectValue={fylkeValues[navn]}
-            getFeaturesToAdd={getFeaturesToAdd}
-            getFeaturesToRemove={getFeaturesToRemove}
-            setObjectValue={setFylkeValue}
-          />
-        );
-      })}
+      {fylker.map((fylke) => (
+        <ApiGrense
+          key={fylke.id}
+          grense={fylke}
+          grenseValue={fylkeValues[fylke.id]}
+          setGrenseValue={setFylkeValue}
+          featuresUrl={`/v1/fylker/${fylke.id}/grenser`}
+          type="fylke"
+        />
+      ))}
     </Wrapper>
   );
 };

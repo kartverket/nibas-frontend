@@ -1,7 +1,7 @@
 import { Feature } from "ol";
 import Polygon from "ol/geom/Polygon";
 
-export type Grense = {
+export type RotGrense = {
   id: string;
 };
 
@@ -10,12 +10,14 @@ type Spraak = {
   spraak: string;
 };
 
-export type SimpleFylke = Grense & {
+export type SimpleGrense = RotGrense & {
   navn: Spraak[];
   href: string;
 };
 
-export type Fylke = Grense & {
+export type SimpleFylke = SimpleGrense;
+
+export type Fylke = RotGrense & {
   administrativenhetnavn: Spraak[];
   lokalid: string;
   navnerom: string;
@@ -28,13 +30,9 @@ export type Fylke = Grense & {
   features: Feature<Polygon>;
 };
 
-export type SimpleKommune = Grense & {
-  // samme som fylker, splitt til generell type?
-  navn: Spraak[];
-  href: string;
-};
+export type SimpleKommune = SimpleGrense;
 
-export type Kommune = Grense & {
+export type Kommune = RotGrense & {
   administrativenhetnavn: Spraak[];
   lokalid: string;
   navnerom: string;

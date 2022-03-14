@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import useSWR from "swr";
 import KodelistePreview from "../KodelisteSelect/KodelistePreview";
 import FylkeList from "./FylkeList";
 import KommuneList from "./KommuneList";
@@ -7,12 +8,12 @@ import Accordion from "components/Accordion";
 import { SidebarPanel } from "components/Sidebar/SidebarPanel";
 import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
-import useApi from "hooks/useApi";
 import { SimpleFylke } from "types/api";
+import { fetcher } from "utils/swr";
 
 const GrenserDrillDown = () => {
   const { isOpen: visible, togglePanel } = useSidebarPanel("nibas");
-  const { data: fylker, loading } = useApi<SimpleFylke[]>("v1/fylker", []);
+  const { data: fylker } = useSWR<SimpleFylke[]>("/v1/fylker", fetcher);
   const { setObjectValue, editingObject } = useEditGrenser();
 
   if (!visible) return null;
@@ -25,22 +26,17 @@ const GrenserDrillDown = () => {
       </Accordion>
       <Accordion title="Fylkesgrenser">
         <AccordionContent>
-          {!loading && fylker ? (
-            <FylkeList
-              fylker={fylker}
-              fylkeValues={editingObject.fylke ?? {}}
-              setFylkeValue={(fylkesnavn: string, value: ObjectValue) =>
-                setObjectValue("fylke", fylkesnavn, value)
-              }
-            />
-          ) : (
-            <p>Henter fylker...</p>
-          )}
+          <FylkeList
+            fylkeValues={editingObject.fylke ?? {}}
+            setFylkeValue={(fylkesnavn: string, value: ObjectValue) =>
+              setObjectValue("fylke", fylkesnavn, value)
+            }
+          />
         </AccordionContent>
       </Accordion>
       <Accordion title="Kommunegrenser">
         <AccordionContent>
-          {!loading && fylker ? (
+          {fylker ? (
             fylker.map((fylke) => (
               <Accordion
                 key={fylke.id}
