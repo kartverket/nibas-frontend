@@ -53,6 +53,8 @@ export const removeFeaturesFromSourceByIds = (
 
     const featureToRemove = source.getFeatureById(featureId);
 
+    if (!featureToRemove) return null;
+
     // hvis delt, ikke slett
     const sharedIndex = featureToRemove.get("sharedIndex");
 
@@ -61,7 +63,6 @@ export const removeFeaturesFromSourceByIds = (
       return;
     }
 
-    // console.log(feature);
     try {
       source.removeFeature(featureToRemove);
     } catch (error) {
@@ -70,12 +71,7 @@ export const removeFeaturesFromSourceByIds = (
     }
   };
 
-  try {
-    features.forEach(removeFeature);
-  } catch (error) {
-    // TODO fiks det her, den thrower når man skal fjerne grenser som ligger inntil andre grenser
-    // hvis den thrower betyr det bare at featuren ikke finnes, og det går fint
-  }
+  features.forEach(removeFeature);
 };
 
 export const getWMTSOptions = async (
