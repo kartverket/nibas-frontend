@@ -11,7 +11,7 @@ import { ReactComponent as VisibilityOffIcon } from "icons/visibility_off.svg";
 import { RotGrense } from "types/api";
 import {
   addFeaturesToSource,
-  removeFeaturesFromSource,
+  removeFeaturesFromSourceByIds,
 } from "utils/map/source";
 
 export const layerIdByGrenseType: Record<EditingType, GrenseId> = {
@@ -26,7 +26,6 @@ type Props<T extends RotGrense> = {
   title: string;
   type: EditingType;
   features: Feature<Geometry>[] | null;
-  fetchFeatures: () => void;
 };
 
 const ToggleableGrense = <T extends RotGrense>({
@@ -36,17 +35,7 @@ const ToggleableGrense = <T extends RotGrense>({
   title,
   type,
   features,
-  fetchFeatures,
 }: Props<T>) => {
-  useEffect(() => {
-    // hvis features skal være synlig, hent features
-    if (!objectValue.visible && !objectValue.editing) return;
-
-    if (!features) {
-      fetchFeatures();
-    }
-  }, [objectValue, features, fetchFeatures]);
-
   const setInserted = useCallback(
     (newInserted: boolean) => {
       setObjectValue(grense.id, {
@@ -58,28 +47,27 @@ const ToggleableGrense = <T extends RotGrense>({
   );
 
   useEffect(() => {
-    if (!features || !objectValue.inserted || objectValue.visible) return;
+    if (!features) return;
 
-    const layerId = layerIdByGrenseType[type];
+    if (objectValue.inserted && !objectValue.visible) {
+      // hvis laget er satt inn og IKKE synlig lenger, fjern fra layer
+      // og sett at det ikke er satt inn
+      const layerId = layerIdByGrenseType[type];
 
-    // fjern lag hvis finnes
-    removeFeaturesFromSource("edit", features);
-    removeFeaturesFromSource(layerId, features);
+      // vi vet ikke hvilket lag features lå i før det fjernes, så vi fjerner fra begge
+      removeFeaturesFromSourceByIds("edit", features);
+      removeFeaturesFromSourceByIds(layerId, features);
 
-    setInserted(false);
+      setInserted(false);
+    } else if (!objectValue.inserted && objectValue.visible) {
+      // hvis laget IKKE satt inn og skal være synlig, sett inn i layer
+      // og sett at det er satt inn
+      const layerId = objectValue.editing ? "edit" : layerIdByGrenseType[type];
+
+      addFeaturesToSource(layerId, features);
+      setInserted(true);
+    }
   }, [features, objectValue, type, setInserted]);
-
-  useEffect(() => {
-    if (!features || objectValue.inserted) return;
-
-    if (!objectValue.visible) return;
-
-    const layerId = objectValue.editing ? "edit" : layerIdByGrenseType[type];
-
-    addFeaturesToSource(layerId, features);
-
-    setInserted(true);
-  }, [objectValue, features, type, setInserted]);
 
   const toggleVisible = async () => {
     setObjectValue(grense.id, {
