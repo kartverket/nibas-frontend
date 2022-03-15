@@ -1,12 +1,12 @@
-import Accordion from "components/Accordion";
+import ListItemAccordion from "../ListItemAccordion";
 import KodelistePreview from "components/KodelisteSelect/KodelistePreview";
 
 const Svalbardomradet = () => {
   return (
-    <Accordion title="Svalbardområdet">
+    <ListItemAccordion title="Svalbardområdet">
       {/* Kun for test/displayformål. */}
       <KodelistePreview />
-    </Accordion>
+    </ListItemAccordion>
   );
 };
 

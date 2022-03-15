@@ -1,10 +1,10 @@
-import Accordion from "components/Accordion";
+import ListItemAccordion from "../ListItemAccordion";
 
 const Delomrader = () => {
   return (
-    <Accordion title="Delomrader">
+    <ListItemAccordion title="Delomrader">
       <p>Kommer senere!</p>
-    </Accordion>
+    </ListItemAccordion>
   );
 };
 

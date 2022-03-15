@@ -1,10 +1,10 @@
-import Accordion from "components/Accordion";
+import ListItemAccordion from "../ListItemAccordion";
 
 const GestligeInndeliger = () => {
   return (
-    <Accordion title="Gestlige inndeliger">
+    <ListItemAccordion title="Gestlige inndeliger">
       <p>Kommer senere!</p>
-    </Accordion>
+    </ListItemAccordion>
   );
 };
 

@@ -1,6 +1,6 @@
 import useSWR from "swr";
+import ListItemAccordion from "../ListItemAccordion";
 import ToggleableFylke from "./ToggleableFylke";
-import Accordion from "components/Accordion";
 import { SimpleFylke } from "types/api";
 import { fetcher } from "utils/swr";
 
@@ -8,7 +8,7 @@ const Fylkesgrenser = () => {
   const { data: fylker } = useSWR<SimpleFylke[]>("/v1/fylker", fetcher);
 
   return (
-    <Accordion title="Fylkesgrenser">
+    <ListItemAccordion title="Fylkesgrenser">
       <div>
         {fylker ? (
           fylker.map((fylke) => (
@@ -18,7 +18,7 @@ const Fylkesgrenser = () => {
           <p>Henter fylker...</p>
         )}
       </div>
-    </Accordion>
+    </ListItemAccordion>
   );
 };
 

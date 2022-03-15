@@ -23,17 +23,19 @@ const GrenserDrillDown = () => {
     <EditGrenserProvider isOpen={isOpen}>
       <Panel>
         <SidebarPanelTitle closePanel={togglePanel} title="Grenser" />
-        <Riksgrenser />
-        <Fylkesgrenser />
-        <Kommunegrenser />
-        <Stemmekretser />
-        <Skolekretser />
-        <Grunnkretser />
-        <Delomrader />
-        <Postnummeromrader />
-        <GestligeInndelinger />
-        <MaritimeGrenser />
-        <Svalbardomradet />
+        <List>
+          <Riksgrenser />
+          <Fylkesgrenser />
+          <Kommunegrenser />
+          <Stemmekretser />
+          <Skolekretser />
+          <Grunnkretser />
+          <Delomrader />
+          <Postnummeromrader />
+          <GestligeInndelinger />
+          <MaritimeGrenser />
+          <Svalbardomradet />
+        </List>
       </Panel>
     </EditGrenserProvider>
   );
@@ -45,6 +47,12 @@ const Panel = styled(SidebarPanel)`
   > ${Accordion} > div {
     margin-left: 16px;
   }
+`;
+
+const List = styled.ul`
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
 `;
 
 export default GrenserDrillDown;

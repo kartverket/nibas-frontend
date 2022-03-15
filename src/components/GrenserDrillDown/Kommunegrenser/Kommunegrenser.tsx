@@ -1,6 +1,6 @@
 import useSWR from "swr";
+import ListItemAccordion from "../ListItemAccordion";
 import KommuneList from "./KommuneList";
-import Accordion from "components/Accordion";
 import { SimpleFylke } from "types/api";
 import { getNavnInSpraak } from "utils/language/language";
 import { fetcher } from "utils/swr";
@@ -9,22 +9,22 @@ const Kommunegrenser = () => {
   const { data: fylker } = useSWR<SimpleFylke[]>("/v1/fylker", fetcher);
 
   return (
-    <Accordion title="Kommunegrenser">
+    <ListItemAccordion title="Kommunegrenser">
       <div>
         {fylker ? (
           fylker.map((fylke) => (
-            <Accordion
+            <ListItemAccordion
               key={fylke.id}
               title={getNavnInSpraak(fylke.navn, "nor")}
             >
               <KommuneList fylke={fylke} />
-            </Accordion>
+            </ListItemAccordion>
           ))
         ) : (
           <p>Henter fylker...</p>
         )}
       </div>
-    </Accordion>
+    </ListItemAccordion>
   );
 };
 

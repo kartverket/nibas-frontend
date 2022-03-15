@@ -1,10 +1,10 @@
-import Accordion from "components/Accordion";
+import ListItemAccordion from "../ListItemAccordion";
 
 const Postnummeromrader = () => {
   return (
-    <Accordion title="Postnummeromrader">
+    <ListItemAccordion title="Postnummeromrader">
       <p>Kommer senere!</p>
-    </Accordion>
+    </ListItemAccordion>
   );
 };
 
