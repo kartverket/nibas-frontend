@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import styled from "styled-components";
 import useSWR from "swr";
@@ -11,7 +12,6 @@ import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { SimpleFylke } from "types/api";
 import { fetcherWithTokenAndErrorHandling } from "utils/swr";
-import { useState } from "react";
 
 const GrenserDrillDown = () => {
   function getError() {
