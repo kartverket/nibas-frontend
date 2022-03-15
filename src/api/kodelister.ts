@@ -3,7 +3,7 @@ export type KodelisteItem = {
   item: GeonorgeKodelisteItem;
 };
 
-type KodelisteType = "KOMMUNENUMMER" | "FYLKESNUMMER" | "MALEMETODE_KODE";
+type KodelisteType = "KOMMUNENUMMER" | "FYLKESNUMMER" | "MAALEMETODE_KODE";
 
 type GeonorgeKodelisteItem = {
   id: string;
@@ -28,7 +28,7 @@ export const fetchFylkesnumre = async (): Promise<KodelisteItem[]> => {
 };
 
 export const fetchMaalemetodeKoder = async (): Promise<KodelisteItem[]> => {
-  const kommunenrResponse = await fetch(`v1/kodeliste/malemetode-koder`);
+  const kommunenrResponse = await fetch(`v1/kodeliste/maalemetode-koder`);
   const json = await kommunenrResponse.json();
   return json as KodelisteItem[];
 };

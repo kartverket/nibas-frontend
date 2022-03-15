@@ -13,8 +13,8 @@ type Props = {
 };
 
 const MetadataContent = ({ feature }: Props) => {
-  const { data: malemetodeKoder } = useSWR<KodelisteItem[]>(
-    "/v1/kodeliste/malemetode-koder",
+  const { data: maalemetodeKoder } = useSWR<KodelisteItem[]>(
+    "/v1/kodeliste/maalemetode-koder",
     fetcher
   );
 
@@ -64,7 +64,7 @@ const MetadataContent = ({ feature }: Props) => {
           Målemetode
           <Select disabled value={metadata?.kvalitet?.maalemetode ?? ""}>
             <option value="">---</option>
-            {malemetodeKoder?.map((kodeItem) => (
+            {maalemetodeKoder?.map((kodeItem) => (
               <option key={kodeItem.item.uuid} value={kodeItem.item.uuid}>
                 {kodeItem.item.label}
               </option>
