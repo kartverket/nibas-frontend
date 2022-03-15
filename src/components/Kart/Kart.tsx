@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import styled from "styled-components";
 import { map } from "./constants";
 import ZoomControls from "./controls/ZoomControls";
@@ -20,6 +21,7 @@ initBakgrunnskartLayers();
 
 const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
+  const { tokenHolderFunc } = useAuthenticationFlow();
 
   useEditInteractions();
 
@@ -39,7 +41,7 @@ const Kart = () => {
     const editLayer = getLayerById("edit");
     const editFeatures = editLayer.getSource().getFeatures();
 
-    updateGrenser(editFeatures);
+    updateGrenser(editFeatures, tokenHolderFunc()?.token);
   };
 
   return (

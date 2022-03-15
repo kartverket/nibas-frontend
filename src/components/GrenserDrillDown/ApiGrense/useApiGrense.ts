@@ -1,15 +1,18 @@
 import { useCallback, useMemo, useState } from "react";
+import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import useSWRImmutable from "swr/immutable";
 import { geoJsonToSource } from "utils/map/geoJson";
-import { fetcher } from "utils/swr";
+import { fetcherWithToken } from "utils/swr";
 
 const useApiGrense = (featuresUrl: string) => {
   const [shouldFetch, setShouldFetch] = useState(false);
+  const { tokenHolderFunc } = useAuthenticationFlow();
+
   const { data: geoJson, mutate } = useSWRImmutable<Feature<Geometry>>(
-    shouldFetch ? featuresUrl : null,
-    fetcher
+    shouldFetch ? [featuresUrl, tokenHolderFunc()?.token] : null,
+    fetcherWithToken
   );
 
   const features = useMemo(() => {

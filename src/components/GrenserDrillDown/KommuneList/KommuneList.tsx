@@ -1,9 +1,10 @@
+import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import styled from "styled-components";
 import useSWR from "swr";
 import ApiGrense from "../ApiGrense";
 import { ObjectValue } from "../useEditGrenser";
-import { fetchKommunerByFylke } from "api/kommuner";
 import { SimpleKommune } from "types/api";
+import { fetcherWithToken } from "utils/swr";
 
 type Props = {
   fylke: SimpleKommune;
@@ -12,8 +13,11 @@ type Props = {
 };
 
 const KommuneList = ({ fylke, kommuneValues, setKommuneValue }: Props) => {
-  const { data: kommuner } = useSWR(`/v1/kommuner?fylkeid=${fylke.id}`, () =>
-    fetchKommunerByFylke(fylke.id)
+  const { tokenHolderFunc } = useAuthenticationFlow();
+
+  const { data: kommuner } = useSWR<SimpleKommune[]>(
+    [`/v1/kommuner?fylkeid=${fylke.id}`, tokenHolderFunc()?.token],
+    fetcherWithToken
   );
 
   if (!kommuner) return null;
