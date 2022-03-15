@@ -14,6 +14,7 @@ import Svalbardomradet from "./Svalbardomradet";
 import Accordion from "components/Accordion";
 import { SidebarPanel } from "components/Sidebar/SidebarPanel";
 import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
+import { UnstyledList } from "components/UnstyledList";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 
 const GrenserDrillDown = () => {
@@ -23,7 +24,7 @@ const GrenserDrillDown = () => {
     <EditGrenserProvider isOpen={isOpen}>
       <Panel>
         <SidebarPanelTitle closePanel={togglePanel} title="Grenser" />
-        <List>
+        <UnstyledList>
           <Riksgrenser />
           <Fylkesgrenser />
           <Kommunegrenser />
@@ -35,7 +36,7 @@ const GrenserDrillDown = () => {
           <GestligeInndelinger />
           <MaritimeGrenser />
           <Svalbardomradet />
-        </List>
+        </UnstyledList>
       </Panel>
     </EditGrenserProvider>
   );
@@ -47,12 +48,6 @@ const Panel = styled(SidebarPanel)`
   > ${Accordion} > div {
     margin-left: 16px;
   }
-`;
-
-const List = styled.ul`
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
 `;
 
 export default GrenserDrillDown;

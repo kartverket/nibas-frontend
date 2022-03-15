@@ -1,25 +1,33 @@
 import styled from "styled-components";
 import useSWR from "swr";
-import ToggleableKommune from "./ToggleableKommune";
+import { fetchKommunerByFylke } from "api/kommuner";
+import ApiGrense from "components/GrenserDrillDown/ApiGrense";
+import { useEditGrenser } from "components/GrenserDrillDown/EditGrenserContext";
 import { SimpleKommune } from "types/api";
-import { fetcher } from "utils/swr";
 
 type Props = {
   fylke: SimpleKommune;
 };
 
 const KommuneList = ({ fylke }: Props) => {
-  const { data: kommuner } = useSWR<SimpleKommune[]>(
-    `/v1/kommuner?fylkeid=${fylke.id}`,
-    fetcher
+  const { data: kommuner } = useSWR(`/v1/kommuner?fylkeid=${fylke.id}`, () =>
+    fetchKommunerByFylke(fylke.id)
   );
+  const { setObjectValue, values } = useEditGrenser("kommune");
 
   if (!kommuner) return null;
 
   return (
     <Wrapper>
       {kommuner.map((kommune) => (
-        <ToggleableKommune key={kommune.id} kommune={kommune} />
+        <ApiGrense
+          key={kommune.id}
+          grense={kommune}
+          grenseValue={values[kommune.id]}
+          setGrenseValue={setObjectValue}
+          featuresUrl={`/v1/kommuner/${kommune.id}/grenser`}
+          type="kommune"
+        />
       ))}
     </Wrapper>
   );

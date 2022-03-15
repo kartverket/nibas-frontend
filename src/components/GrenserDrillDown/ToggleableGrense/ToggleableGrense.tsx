@@ -1,116 +1,95 @@
+import { useCallback, useEffect } from "react";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
-import VectorLayer from "ol/layer/Vector";
 import styled from "styled-components";
 import { EditingType, ObjectValue } from "../EditGrenserContext";
 import Button from "components/Button";
-import { LayerId } from "hooks/layers/types";
-import { GeometryVectorSource } from "hooks/sources/types";
+import { GrenseId } from "hooks/layers/types";
 import { ReactComponent as InfoIcon } from "icons/info.svg";
 import { ReactComponent as VisibilityIcon } from "icons/visibility.svg";
 import { ReactComponent as VisibilityOffIcon } from "icons/visibility_off.svg";
-import { Grense } from "types/api";
-import { getLayerById } from "utils/map/layers";
+import { RotGrense } from "types/api";
 import {
   addFeaturesToSource,
-  removeFeaturesFromSource,
+  removeFeaturesFromSourceByIds,
 } from "utils/map/source";
 
-const layerIdByGrenseType: Record<EditingType, LayerId> = {
+export const layerIdByGrenseType: Record<EditingType, GrenseId> = {
   fylke: "fylker",
   kommune: "kommuner",
 };
 
-type Props<T extends Grense> = {
+type Props<T extends RotGrense> = {
   grense: T;
   setObjectValue: (objectKey: string, value: ObjectValue) => void;
   objectValue: ObjectValue | undefined;
   title: string;
   type: EditingType;
-  getFeaturesToAdd: (grense: T) => Promise<Feature<Geometry>[]>;
-  getFeaturesToRemove: (
-    layerFeatures: Feature<Geometry>[]
-  ) => Feature<Geometry>[];
+  features: Feature<Geometry>[] | null;
 };
 
-const ToggleableGrense = <T extends Grense>({
+const ToggleableGrense = <T extends RotGrense>({
   grense,
   setObjectValue,
   objectValue = {},
   title,
   type,
-  getFeaturesToAdd,
-  getFeaturesToRemove,
+  features,
 }: Props<T>) => {
-  const { visible = false, editing = false } = objectValue;
+  const setInserted = useCallback(
+    (newInserted: boolean) => {
+      setObjectValue(grense.id, {
+        ...objectValue,
+        inserted: newInserted,
+      });
+    },
+    [grense.id, objectValue, setObjectValue]
+  );
 
-  const addGrenseToLayer = async (layerId: LayerId) => {
-    const featuresToAdd = await getFeaturesToAdd(grense);
+  useEffect(() => {
+    if (!features) return;
 
-    addFeaturesToSource(layerId, featuresToAdd);
-  };
+    if (objectValue.inserted && !objectValue.visible) {
+      // hvis laget er satt inn og IKKE synlig lenger, fjern fra layer
+      // og sett at det ikke er satt inn
+      const layerId = layerIdByGrenseType[type];
 
-  const removeGrenseFromLayer = async (layerId: LayerId) => {
-    const grenseLayer = getLayerById(
-      layerId
-    ) as VectorLayer<GeometryVectorSource>;
-    const source = grenseLayer.getSource();
+      // vi vet ikke hvilket lag features lå i før det fjernes, så vi fjerner fra begge
+      removeFeaturesFromSourceByIds("edit", features);
+      removeFeaturesFromSourceByIds(layerId, features);
 
-    // om ingenting er satt inn i laget kan vi ikke fjerne noe fra det
-    if (!source) return;
+      setInserted(false);
+    } else if (!objectValue.inserted && objectValue.visible) {
+      // hvis laget IKKE satt inn og skal være synlig, sett inn i layer
+      // og sett at det er satt inn
+      const layerId = objectValue.editing ? "edit" : layerIdByGrenseType[type];
 
-    const featuresInLayer = source.getFeatures();
-    const grenseFeatures = getFeaturesToRemove(featuresInLayer);
-
-    removeFeaturesFromSource(layerId, grenseFeatures);
-  };
+      addFeaturesToSource(layerId, features);
+      setInserted(true);
+    }
+  }, [features, objectValue, type, setInserted]);
 
   const toggleVisible = async () => {
-    const layerId = layerIdByGrenseType[type];
-
-    if (visible) {
-      if (editing) {
-        removeGrenseFromLayer("edit");
-      } else {
-        removeGrenseFromLayer(layerId);
-      }
-    } else {
-      if (editing) {
-        addGrenseToLayer("edit");
-      } else {
-        addGrenseToLayer(layerId);
-      }
-    }
-
-    setObjectValue(title, {
+    setObjectValue(grense.id, {
       ...objectValue,
-      visible: !objectValue?.visible,
+      visible: !objectValue.visible,
     });
   };
 
-  const toggleSelected = async () => {
-    const layerId = layerIdByGrenseType[type];
+  const toggleEditing = async () => {
     const newObjectValue = { ...objectValue };
-
-    if (editing) {
-      removeGrenseFromLayer("edit");
-
-      if (visible) {
-        newObjectValue.visible = false;
-      }
-    } else {
-      addGrenseToLayer("edit");
-
-      if (visible) {
-        removeGrenseFromLayer(layerId);
-      } else {
-        newObjectValue.visible = true;
-      }
-    }
 
     newObjectValue.editing = !newObjectValue.editing;
 
-    setObjectValue(title, newObjectValue);
+    if (objectValue.visible && !objectValue.editing) {
+      newObjectValue.visible = true;
+    } else if (!objectValue.visible && objectValue.editing) {
+      newObjectValue.visible = false;
+    } else {
+      newObjectValue.visible = !newObjectValue.visible;
+    }
+
+    setObjectValue(grense.id, newObjectValue);
   };
 
   const openInfo = () => {
@@ -120,14 +99,18 @@ const ToggleableGrense = <T extends Grense>({
   return (
     <Wrapper>
       <Button onClick={toggleVisible} variant="icon">
-        {visible ? (
+        {objectValue.visible ? (
           <VisibilityIcon aria-label="Synlig" />
         ) : (
           <VisibilityOffIcon aria-label="Usynlig" />
         )}
       </Button>
       <label>
-        <input type="checkbox" checked={editing} onChange={toggleSelected} />
+        <input
+          type="checkbox"
+          checked={objectValue.editing ?? false}
+          onChange={toggleEditing}
+        />
         {title}
       </label>
       <Button variant="icon" onClick={openInfo}>

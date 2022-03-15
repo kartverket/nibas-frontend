@@ -31,6 +31,10 @@ data "vault_generic_secret" "matrikkelen-wfs-service" {
   path = "nibas/nibas-frontend/matrikkelen-wfs"
 }
 
+data "vault_generic_secret" "aut-idporten-service" {
+  path = "nibas/nibas-frontend/aut-idporten"
+}
+
 resource "kubernetes_deployment" "nibas-frontend-deployment" {
   metadata {
     name      = "nibas-frontend"
@@ -82,6 +86,10 @@ resource "kubernetes_deployment" "nibas-frontend-deployment" {
           env {
             name  = "MATRIKKELEN_WFS_URL"
             value = data.vault_generic_secret.matrikkelen-wfs-service.data["url"]
+          }
+          env {
+            name = "AUT-IDPORTEN-URL"
+            value = data.vault_generic_secret.aut-idporten-service.data["url"]
           }
         }
       }

@@ -1,7 +1,11 @@
 import React, { createContext, useContext, useState } from "react";
 
 export type EditingType = "fylke" | "kommune";
-export type ObjectValue = { editing?: boolean; visible?: boolean };
+export type ObjectValue = {
+  editing?: boolean;
+  visible?: boolean;
+  inserted?: boolean;
+};
 
 type GrenseDictionary = Record<string, ObjectValue>;
 type EditingObject = Partial<Record<EditingType, GrenseDictionary>>;
