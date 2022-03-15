@@ -23,8 +23,6 @@ const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const { tokenHolderFunc } = useAuthenticationFlow();
 
-  const [errorMessage, setErrorMessage] = useState<string>("");
-
   useEditInteractions();
 
   useEffect(() => {
@@ -46,17 +44,10 @@ const Kart = () => {
     updateGrenser(editFeatures, tokenHolderFunc()?.token);
   };
 
-  function getError() {
-    if (errorMessage !== "") {
-      return <div>Feil inntraff: {errorMessage}</div>;
-    }
-  }
-
   return (
     <KartTarget ref={mapRef}>
-      {getError()}
       <KartOverlay>
-        <GrenserDrillDown setErrorMessage={setErrorMessage} />
+        <GrenserDrillDown />
         <Bakgrunnskart />
       </KartOverlay>
 

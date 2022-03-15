@@ -11,15 +11,20 @@ import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { SimpleFylke } from "types/api";
 import { fetcherWithTokenAndErrorHandling } from "utils/swr";
+import { useState } from "react";
 
-type Props = {
-  setErrorMessage: (message: string) => void;
-};
+const GrenserDrillDown = () => {
+  function getError() {
+    if (errorMessage !== "") {
+      return <div>Feil inntraff: {errorMessage}</div>;
+    }
+  }
 
-const GrenserDrillDown = ({ setErrorMessage }: Props) => {
   const { tokenHolderFunc } = useAuthenticationFlow();
 
   const { isOpen: visible, togglePanel } = useSidebarPanel("nibas");
+
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const { data: fylker } = useSWR<SimpleFylke[]>(
     ["/v1/fylker", tokenHolderFunc()?.token, setErrorMessage],
@@ -32,6 +37,7 @@ const GrenserDrillDown = ({ setErrorMessage }: Props) => {
 
   return (
     <Panel>
+      {getError()}
       <SidebarPanelTitle closePanel={togglePanel} title="Grenser" />
       <Accordion title="Riksgrenser">
         <p>Kommer senere!</p>
