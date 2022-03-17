@@ -26,6 +26,7 @@ const WMTSSubLayer = ({
 
     const source = layer.getSource();
     const newSource = new WMTS({ ...source.get("config"), layer: subLayer.id });
+    newSource.set("config", source.get("config"));
     layer.setSource(newSource);
 
     updateActiveSubLayer();
