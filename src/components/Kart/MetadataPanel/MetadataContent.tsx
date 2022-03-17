@@ -3,7 +3,6 @@ import Geometry from "ol/geom/Geometry";
 import styled, { css } from "styled-components";
 import useSWR from "swr";
 import { KodelisteItem } from "api/kodelister";
-import Checkbox from "components/Checkbox";
 import Input from "components/Input";
 import Select from "components/Select";
 import { fetcher } from "utils/swr";
@@ -18,71 +17,78 @@ const MetadataContent = ({ feature }: Props) => {
     fetcher
   );
 
-  const { type, metadata } = feature.getProperties();
+  const properties = feature.getProperties();
+  const type = properties.type;
+  const metadata = properties.metadata;
 
   return (
-    <Container>
-      <Part>
-        <BlockLabel>
-          Grensetype
-          <Select disabled>
-            <option>{type}</option>
-          </Select>
-        </BlockLabel>
-        <div>
-          <MetadataText>Omtvistet</MetadataText>
-          <Checkbox
-            type="radio"
-            label={<MetadataText>Ja</MetadataText>}
-            disabled
-            defaultChecked={metadata?.omtvistet}
-          />
-          <Checkbox
-            type="radio"
-            label={<MetadataText>Nei</MetadataText>}
-            disabled
-            defaultChecked={!metadata?.omtvistet}
-          />
-        </div>
-        <BlockLabel>
-          Gyldig fra
-          <Input disabled defaultValue={metadata?.gyldigFra ?? "---"} />
-        </BlockLabel>
-        <BlockLabel>
-          Gyldig til
-          <Input disabled defaultValue={metadata?.gyldigTil ?? "---"} />
-        </BlockLabel>
-      </Part>
-      <Part>
-        <BlockLabel>
-          Nøyaktighetsklasse
-          <Select disabled>
-            <option>Mangler kodeliste</option>
-          </Select>
-        </BlockLabel>
-        <BlockLabel>
-          Målemetode
-          <Select disabled value={metadata?.kvalitet?.maalemetode ?? ""}>
-            <option value="">---</option>
-            {maalemetodeKoder?.map((kodeItem) => (
-              <option key={kodeItem.item.uuid} value={kodeItem.item.uuid}>
-                {kodeItem.item.label}
-              </option>
-            ))}
-          </Select>
-        </BlockLabel>
-      </Part>
-      <Part>
-        <div>
-          <MetadataText>Oppdateringsdato</MetadataText>
-          <MetadataValue>{metadata?.oppdateringsdato ?? "---"}</MetadataValue>
-        </div>
-        <div>
-          <MetadataText>Datafangsdato</MetadataText>
-          <MetadataValue>{metadata?.datafangstdato ?? "---"}</MetadataValue>
-        </div>
-      </Part>
-    </Container>
+    <div>
+      <Container>
+        <Part>
+          <BlockLabel>
+            Grensetype
+            <Select disabled>
+              <option>{type}</option>
+            </Select>
+          </BlockLabel>
+          <BlockLabel>
+            Målemetode
+            <Select
+              disabled
+              value={metadata?.common?.posisjonskvalitet?.maalemetode ?? ""}
+            >
+              <option value="">---</option>
+              {maalemetodeKoder?.map((kodeItem) => (
+                <option key={kodeItem.item.uuid} value={kodeItem.item.uuid}>
+                  {kodeItem.item.label}
+                </option>
+              ))}
+            </Select>
+          </BlockLabel>
+        </Part>
+        <Part>
+          <BlockLabel>
+            Gyldig fra
+            <Input
+              disabled
+              defaultValue={metadata?.common?.gyldigFra ?? "---"}
+            />
+          </BlockLabel>
+          <BlockLabel>
+            Gyldig til
+            <Input
+              disabled
+              defaultValue={metadata?.common?.gyldigTil ?? "---"}
+            />
+          </BlockLabel>
+        </Part>
+        <Part>
+          <div>
+            <MetadataText>Oppdateringsdato</MetadataText>
+            <MetadataValue>
+              {metadata?.common?.oppdateringsdato ?? "---"}
+            </MetadataValue>
+          </div>
+          <div>
+            <MetadataText>Datafangsdato</MetadataText>
+            <MetadataValue>
+              {metadata?.common?.datafangstdato ?? "---"}
+            </MetadataValue>
+          </div>
+        </Part>
+      </Container>
+      <BlockLabel>
+        Informasjon
+        <Input
+          disabled
+          defaultValue={metadata?.common?.informasjonselementer[0] ?? "---"}
+        />
+      </BlockLabel>
+      <BlockLabel>
+        Opphav
+        <Input disabled defaultValue={metadata?.common?.opphav ?? "---"} />
+      </BlockLabel>
+    </div>
   );
 };
 
