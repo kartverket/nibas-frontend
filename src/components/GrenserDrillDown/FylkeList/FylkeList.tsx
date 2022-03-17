@@ -1,10 +1,7 @@
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import styled from "styled-components";
-import useSWR from "swr";
 import ApiGrense from "../ApiGrense";
 import { ObjectValue } from "../useEditGrenser";
-import { SimpleFylke } from "types/api";
-import { fetcherWithToken } from "utils/swr";
+import useApiSWR from "hooks/useApiSWR";
 
 type Props = {
   fylkeValues: Record<string, ObjectValue>;
@@ -12,12 +9,12 @@ type Props = {
 };
 
 const FylkeList = ({ fylkeValues, setFylkeValue }: Props) => {
-  const { tokenHolderFunc } = useAuthenticationFlow();
-
-  const { data: fylker } = useSWR<SimpleFylke[]>(
-    ["/v1/fylker", tokenHolderFunc()?.token],
-    fetcherWithToken
-  );
+  const { data: fylker } = useApiSWR("/v1/fylker");
+  // const { data: fylke } = useApiSWR(`/v1/fylker/{id}`, { id: "5" });
+  const { data: fdffsd } = useApiSWR(`/v1/fylker/{id}/historikk/{revision}`, {
+    id: "b",
+    revision: 5,
+  });
 
   if (!fylker) return null;
 
