@@ -1,6 +1,7 @@
 import { render, screen } from "test/test-utils";
 import React from "react";
 import KommuneList from "./KommuneList";
+import { EditGrenserProvider } from "components/GrenserDrillDown/EditGrenserContext";
 
 const defaultProps: React.ComponentProps<typeof KommuneList> = {
   fylke: {
@@ -12,7 +13,11 @@ const defaultProps: React.ComponentProps<typeof KommuneList> = {
 
 describe("KommuneList", () => {
   it("should render two kommuner from API request", async () => {
-    render(<KommuneList {...defaultProps} />);
+    render(
+      <EditGrenserProvider isOpen>
+        <KommuneList {...defaultProps} />
+      </EditGrenserProvider>
+    );
 
     expect(await screen.findByText("Malvik")).toBeInTheDocument();
     expect(await screen.findByText("Giske")).toBeInTheDocument();

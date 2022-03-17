@@ -1,11 +1,11 @@
 import ListItemAccordion from "../ListItemAccordion";
 
-const Postnummeromrader = () => {
+const Postnummeromraader = () => {
   return (
-    <ListItemAccordion title="Postnummeromrader">
+    <ListItemAccordion title="Postnummerområder">
       <p>Kommer senere!</p>
     </ListItemAccordion>
   );
 };
 
-export default Postnummeromrader;
+export default Postnummeromraader;

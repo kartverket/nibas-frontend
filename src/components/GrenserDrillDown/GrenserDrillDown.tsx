@@ -6,11 +6,11 @@ import GestligeInndelinger from "./GestligeInndelinger";
 import Grunnkretser from "./Grunnkretser";
 import Kommunegrenser from "./Kommunegrenser";
 import MaritimeGrenser from "./MaritimeGrenser";
-import Postnummeromrader from "./Postnummeromrader";
+import Postnummeromraader from "./Postnummeromraader";
 import Riksgrenser from "./Riksgrenser";
 import Skolekretser from "./Skolekretser";
 import Stemmekretser from "./Stemmekretser";
-import Svalbardomradet from "./Svalbardomradet";
+import Svalbardomradet from "./Svalbardomraadet";
 import Accordion from "components/Accordion";
 import { SidebarPanel } from "components/Sidebar/SidebarPanel";
 import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
@@ -32,7 +32,7 @@ const GrenserDrillDown = () => {
           <Skolekretser />
           <Grunnkretser />
           <Delomrader />
-          <Postnummeromrader />
+          <Postnummeromraader />
           <GestligeInndelinger />
           <MaritimeGrenser />
           <Svalbardomradet />

@@ -2,7 +2,7 @@ import ListItemAccordion from "../ListItemAccordion";
 
 const Delomrader = () => {
   return (
-    <ListItemAccordion title="Delomrader">
+    <ListItemAccordion title="Delområder">
       <p>Kommer senere!</p>
     </ListItemAccordion>
   );

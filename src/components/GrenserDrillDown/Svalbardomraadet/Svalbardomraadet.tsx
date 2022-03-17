@@ -1,7 +1,7 @@
 import ListItemAccordion from "../ListItemAccordion";
 import KodelistePreview from "components/KodelisteSelect/KodelistePreview";
 
-const Svalbardomradet = () => {
+const Svalbardomraadet = () => {
   return (
     <ListItemAccordion title="Svalbardområdet">
       {/* Kun for test/displayformål. */}
@@ -10,4 +10,4 @@ const Svalbardomradet = () => {
   );
 };
 
-export default Svalbardomradet;
+export default Svalbardomraadet;
