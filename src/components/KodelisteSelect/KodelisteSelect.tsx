@@ -1,9 +1,10 @@
 import React, { useState } from "react";
+import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import styled from "styled-components";
 import useSWR from "swr";
 import { KodelisteItem } from "../../api/kodelister";
 import Select from "components/Select";
-import { fetcher } from "utils/swr";
+import { fetcherWithToken } from "utils/swr";
 
 type KodelisteSelectProps = {
   id: string;
@@ -27,9 +28,11 @@ const KodelisteSelect = ({
   sortFunction = defaultSortFunction,
   kodelisteUrl,
 }: KodelisteSelectProps) => {
+  const { tokenHolderFunc } = useAuthenticationFlow();
+
   const { data: kodelisteItems } = useSWR<KodelisteItem[]>(
-    kodelisteUrl,
-    fetcher
+    [kodelisteUrl, tokenHolderFunc()?.token],
+    fetcherWithToken
   );
 
   // Holder på valgt UUID

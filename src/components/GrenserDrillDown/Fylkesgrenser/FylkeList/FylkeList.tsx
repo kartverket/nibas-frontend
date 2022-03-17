@@ -1,13 +1,21 @@
+import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import styled from "styled-components";
 import useSWR from "swr";
 import ApiGrense from "../../ApiGrense";
 import { useEditGrenser } from "../../EditGrenserContext";
 import { SimpleFylke } from "types/api";
-import { fetcher } from "utils/swr";
+import { fetcherWithToken } from "utils/swr";
 
 const FylkeList = () => {
-  const { data: fylker } = useSWR<SimpleFylke[]>("/v1/fylker", fetcher);
+  const { tokenHolderFunc } = useAuthenticationFlow();
+  const { data: fylker, error } = useSWR<SimpleFylke[]>(
+    ["/v1/fylker", tokenHolderFunc()?.token],
+    fetcherWithToken
+  );
+
   const { setObjectValue, values } = useEditGrenser("fylke");
+
+  if (error) return <p>Fikk ikke hentet fylker</p>;
 
   if (!fylker) return null;
 

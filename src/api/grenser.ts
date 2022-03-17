@@ -2,7 +2,10 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { featuresToGeoJson } from "utils/map/geoJson";
 
-export const updateGrenser = async (features: Feature<Geometry>[]) => {
+export const updateGrenser = async (
+  features: Feature<Geometry>[],
+  token: string | undefined
+) => {
   const geoJson = featuresToGeoJson(features);
 
   const results = await fetch(`v1/grenser`, {
@@ -10,6 +13,7 @@ export const updateGrenser = async (features: Feature<Geometry>[]) => {
     body: geoJson,
     headers: {
       "Content-Type": "application/json",
+      Authorization: "Bearer " + token,
     },
   });
 

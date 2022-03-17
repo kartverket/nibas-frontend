@@ -1,19 +1,26 @@
+import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import styled from "styled-components";
 import useSWR from "swr";
-import { fetchKommunerByFylke } from "api/kommuner";
 import ApiGrense from "components/GrenserDrillDown/ApiGrense";
 import { useEditGrenser } from "components/GrenserDrillDown/EditGrenserContext";
+
 import { SimpleKommune } from "types/api";
+import { fetcherWithToken } from "utils/swr";
 
 type Props = {
   fylke: SimpleKommune;
 };
 
 const KommuneList = ({ fylke }: Props) => {
-  const { data: kommuner } = useSWR(`/v1/kommuner?fylkeid=${fylke.id}`, () =>
-    fetchKommunerByFylke(fylke.id)
+  const { tokenHolderFunc } = useAuthenticationFlow();
+  const { data: kommuner, error } = useSWR<SimpleKommune[]>(
+    [`/v1/kommuner?fylkeid=${fylke.id}`, tokenHolderFunc()?.token],
+    fetcherWithToken
   );
+
   const { setObjectValue, values } = useEditGrenser("kommune");
+
+  if (error) return <p>Fikk ikke hentet kommuner</p>;
 
   if (!kommuner) return null;
 
