@@ -1,9 +1,11 @@
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import useSWR from "swr";
+import { ApiPath } from "types/api";
 import { paths } from "types/api-gen";
 import { fetcherWithToken } from "utils/swr";
 
-type GetPathParameters<T extends keyof paths> = paths[T] extends {
+// hvis pathen eksponererer et get-kall med path-parametere, returner typen til disse
+type GetPathParameters<T extends ApiPath> = paths[T] extends {
   get: {
     parameters: { path: infer U };
   };
@@ -13,7 +15,8 @@ type GetPathParameters<T extends keyof paths> = paths[T] extends {
     : unknown
   : unknown;
 
-type GetQueryParameters<T extends keyof paths> = paths[T] extends {
+// hvis pathen eksponererer et get-kall med query-parametere, returner typen til disse
+type GetQueryParameters<T extends ApiPath> = paths[T] extends {
   get: {
     parameters: { query: infer U };
   };
@@ -23,13 +26,14 @@ type GetQueryParameters<T extends keyof paths> = paths[T] extends {
     : unknown
   : unknown;
 
-type GetParameters<T extends keyof paths> = GetPathParameters<T> &
+// slå sammen path og query parametere
+type GetParameters<T extends ApiPath> = GetPathParameters<T> &
   GetQueryParameters<T> extends Record<string, unknown>
   ? GetPathParameters<T> & GetQueryParameters<T>
   : never;
 
 // hvis URLen inneholder en get, hent typen som endepunktet skal returnere
-type ResponseType<Path extends keyof paths> = paths[Path] extends {
+type ResponseType<Path extends ApiPath> = paths[Path] extends {
   get: {
     responses: { 200: { content: { "application/json": infer ResType } } };
   };
@@ -37,7 +41,13 @@ type ResponseType<Path extends keyof paths> = paths[Path] extends {
   ? ResType
   : never;
 
-const useApiSWR = <Path extends keyof paths>(
+/**
+ * Hjelpehook for å gjøre det lettere å bruke `useSWR` med url som peker til APIet.
+ * @param url Url for data
+ * @param params Parametere som skal sendes med requesten, enten path eller query parametere
+ * @returns Resultatet fra useSWR(url)
+ */
+const useApiSWR = <Path extends ApiPath>(
   url: Path,
   params?: GetParameters<Path>
 ) => {

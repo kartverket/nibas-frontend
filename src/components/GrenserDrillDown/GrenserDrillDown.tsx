@@ -1,7 +1,4 @@
-import { useState } from "react";
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import styled from "styled-components";
-import useSWR from "swr";
 import KodelistePreview from "../KodelisteSelect/KodelistePreview";
 import FylkeList from "./FylkeList";
 import KommuneList from "./KommuneList";
@@ -10,26 +7,12 @@ import Accordion from "components/Accordion";
 import { SidebarPanel } from "components/Sidebar/SidebarPanel";
 import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
-import { SimpleFylke } from "types/api";
-import { fetcherWithTokenAndErrorHandling } from "utils/swr";
+import useApiSWR from "hooks/useApiSWR";
 
 const GrenserDrillDown = () => {
-  function getError() {
-    if (errorMessage !== "") {
-      return <div>Feil inntraff: {errorMessage}</div>;
-    }
-  }
-
-  const { tokenHolderFunc } = useAuthenticationFlow();
-
   const { isOpen: visible, togglePanel } = useSidebarPanel("nibas");
 
-  const [errorMessage, setErrorMessage] = useState<string>("");
-
-  const { data: fylker } = useSWR<SimpleFylke[]>(
-    ["/v1/fylker", tokenHolderFunc()?.token, setErrorMessage],
-    fetcherWithTokenAndErrorHandling
-  );
+  const { data: fylker } = useApiSWR("/v1/fylker");
 
   const { setObjectValue, editingObject } = useEditGrenser();
 
@@ -37,7 +20,6 @@ const GrenserDrillDown = () => {
 
   return (
     <Panel>
-      {getError()}
       <SidebarPanelTitle closePanel={togglePanel} title="Grenser" />
       <Accordion title="Riksgrenser">
         <p>Kommer senere!</p>

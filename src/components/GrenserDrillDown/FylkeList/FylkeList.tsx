@@ -10,11 +10,6 @@ type Props = {
 
 const FylkeList = ({ fylkeValues, setFylkeValue }: Props) => {
   const { data: fylker } = useApiSWR("/v1/fylker");
-  // const { data: fylke } = useApiSWR(`/v1/fylker/{id}`, { id: "5" });
-  const { data: fdffsd } = useApiSWR(`/v1/fylker/{id}/historikk/{revision}`, {
-    id: "b",
-    revision: 5,
-  });
 
   if (!fylker) return null;
 

@@ -1,51 +1,11 @@
-import { Feature } from "ol";
-import Polygon from "ol/geom/Polygon";
-import { components } from "./api-gen";
+import { components, paths } from "./api-gen";
 
-export type RotGrense = {
-  id: string;
-};
-
-type Spraak = {
+export type Spraak = {
   navn: string;
   spraak: string;
 };
 
-export type SimpleGrense = RotGrense & {
-  navn: Spraak[];
-  href: string;
-};
-
-export type SimpleFylke = SimpleGrense;
-
-export type Fylke = RotGrense & {
-  administrativenhetnavn: Spraak[];
-  lokalid: string;
-  navnerom: string;
-  fylkesnummer: {
-    id: string;
-    kodeverdi: number;
-  };
-  samiskforvaltningsomraade: boolean;
-  oppdateringsdato: string;
-  features: Feature<Polygon>;
-};
-
-export type SimpleKommune = SimpleGrense;
-
-export type Kommune = RotGrense & {
-  administrativenhetnavn: Spraak[];
-  lokalid: string;
-  navnerom: string;
-  kommunenummer: {
-    id: string;
-    kodeverdi: number;
-  };
-  samiskforvaltningsomraade: boolean;
-  oppdateringsdato: string;
-  features: Feature<Polygon>;
-};
-
+// renaming av typer fra generert api doc
 export type AdministrativEnhetNavn =
   components["schemas"]["AdministrativEnhetNavn"];
 export type AdministrativGrenseMetadata =
@@ -89,9 +49,12 @@ export type TerritorialgrenseMetadata =
   components["schemas"]["TerritorialgrenseMetadata"];
 export type Type = components["schemas"]["Type"];
 
+// custom typer basert på api doc
+export type ApiPath = keyof paths;
 export type Metadata =
   | AvtaltAvgrensningslinjeMetadata
   | AdministrativGrenseMetadata
   | GrunnlinjeMetadata
   | RiksgrenseMetadata
   | TerritorialgrenseMetadata;
+export type GrenseRef = FylkeRef | KommuneRef;

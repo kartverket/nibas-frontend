@@ -1,24 +1,17 @@
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import styled from "styled-components";
-import useSWR from "swr";
 import ApiGrense from "../ApiGrense";
 import { ObjectValue } from "../useEditGrenser";
-import { SimpleKommune } from "types/api";
-import { fetcherWithToken } from "utils/swr";
+import useApiSWR from "hooks/useApiSWR";
+import { FylkeRef } from "types/api";
 
 type Props = {
-  fylke: SimpleKommune;
+  fylke: FylkeRef;
   kommuneValues: Record<string, ObjectValue>;
   setKommuneValue: (kommune: string, value: ObjectValue) => void;
 };
 
 const KommuneList = ({ fylke, kommuneValues, setKommuneValue }: Props) => {
-  const { tokenHolderFunc } = useAuthenticationFlow();
-
-  const { data: kommuner } = useSWR<SimpleKommune[]>(
-    [`/v1/kommuner?fylkeid=${fylke.id}`, tokenHolderFunc()?.token],
-    fetcherWithToken
-  );
+  const { data: kommuner } = useApiSWR("/v1/kommuner", { fylkeid: fylke.id });
 
   if (!kommuner) return null;
 
