@@ -3,14 +3,29 @@ import useSWR from "swr";
 import { paths } from "types/api-gen";
 import { fetcherWithToken } from "utils/swr";
 
-type GetParameters<T extends keyof paths> = paths[T] extends {
+type GetPathParameters<T extends keyof paths> = paths[T] extends {
   get: {
     parameters: { path: infer U };
   };
 }
   ? U extends Record<string, unknown>
     ? U
-    : never
+    : unknown
+  : unknown;
+
+type GetQueryParameters<T extends keyof paths> = paths[T] extends {
+  get: {
+    parameters: { query: infer U };
+  };
+}
+  ? U extends Record<string, unknown>
+    ? U
+    : unknown
+  : unknown;
+
+type GetParameters<T extends keyof paths> = GetPathParameters<T> &
+  GetQueryParameters<T> extends Record<string, unknown>
+  ? GetPathParameters<T> & GetQueryParameters<T>
   : never;
 
 // hvis URLen inneholder en get, hent typen som endepunktet skal returnere
@@ -30,22 +45,37 @@ const useApiSWR = <Path extends keyof paths>(
 
   let modifiedUrl: string = url;
 
+  // gå gjennom alle parametere til Path og bytt de ut i urlen
   if (params) {
-    const curlyRegex = /{(\w+)}/i;
-    console.log("url", url);
+    const pathRegex = /{(\w+)}/i;
+    const paramKeys = Object.keys(params);
+    let pathParams = "";
+
     for (
       let replaceIndex = 0;
-      replaceIndex < Object.keys(params).length;
+      replaceIndex < paramKeys.length;
       replaceIndex++
     ) {
-      const match = curlyRegex.exec(modifiedUrl);
-      console.log("regex match", match);
+      const match = pathRegex.exec(modifiedUrl);
 
-      if (!match) break;
+      if (match) {
+        // hvis match, bytt ut {} med faktisk verdi i url
+        modifiedUrl = modifiedUrl.replace(match[0], params[match[1]] as string);
+      } else {
+        // hvis ikke match, legg på query parameter
+        if (pathParams) {
+          pathParams = pathParams.concat("&");
+        } else {
+          pathParams = "?";
+        }
 
-      modifiedUrl = modifiedUrl.replace(match[0], params[match[1]] as any);
-      console.log("New modified url", modifiedUrl);
+        const key = paramKeys[replaceIndex];
+
+        pathParams = pathParams.concat(`${key}=${params[key]}`);
+      }
     }
+
+    modifiedUrl = modifiedUrl.concat(pathParams);
   }
 
   return useSWR<ResponseType<Path>>(
