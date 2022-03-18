@@ -42,12 +42,12 @@ type ResponseType<Path extends ApiPath> = paths[Path] extends {
   : never;
 
 /**
- * Hjelpehook for å gjøre det lettere å bruke `useSWR` med url som peker til APIet.
+ * Hjelpehook for å gjøre det lettere å kjøre API-kall til nibas APIet
  * @param url Url for data
  * @param params Parametere som skal sendes med requesten, enten path eller query parametere
  * @returns Resultatet fra useSWR(url)
  */
-const useApiSWR = <Path extends ApiPath>(
+const useNibasApi = <Path extends ApiPath>(
   url: Path,
   params?: GetParameters<Path>
 ) => {
@@ -94,4 +94,4 @@ const useApiSWR = <Path extends ApiPath>(
   );
 };
 
-export default useApiSWR;
+export default useNibasApi;

@@ -7,12 +7,12 @@ import Accordion from "components/Accordion";
 import { SidebarPanel } from "components/Sidebar/SidebarPanel";
 import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
-import useApiSWR from "hooks/useApiSWR";
+import useNibasApi from "hooks/useNibasApi";
 
 const GrenserDrillDown = () => {
   const { isOpen: visible, togglePanel } = useSidebarPanel("nibas");
 
-  const { data: fylker } = useApiSWR("/v1/fylker");
+  const { data: fylker } = useNibasApi("/v1/fylker");
 
   const { setObjectValue, editingObject } = useEditGrenser();
 

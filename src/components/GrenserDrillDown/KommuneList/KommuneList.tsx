@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import ApiGrense from "../ApiGrense";
 import { ObjectValue } from "../useEditGrenser";
-import useApiSWR from "hooks/useApiSWR";
+import useNibasApi from "hooks/useNibasApi";
 import { FylkeRef } from "types/api";
 
 type Props = {
@@ -11,7 +11,7 @@ type Props = {
 };
 
 const KommuneList = ({ fylke, kommuneValues, setKommuneValue }: Props) => {
-  const { data: kommuner } = useApiSWR("/v1/kommuner", { fylkeid: fylke.id });
+  const { data: kommuner } = useNibasApi("/v1/kommuner", { fylkeid: fylke.id });
 
   if (!kommuner) return null;
 

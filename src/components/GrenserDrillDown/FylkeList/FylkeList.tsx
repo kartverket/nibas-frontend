@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import ApiGrense from "../ApiGrense";
 import { ObjectValue } from "../useEditGrenser";
-import useApiSWR from "hooks/useApiSWR";
+import useNibasApi from "hooks/useNibasApi";
 
 type Props = {
   fylkeValues: Record<string, ObjectValue>;
@@ -9,7 +9,7 @@ type Props = {
 };
 
 const FylkeList = ({ fylkeValues, setFylkeValue }: Props) => {
-  const { data: fylker } = useApiSWR("/v1/fylker");
+  const { data: fylker } = useNibasApi("/v1/fylker");
 
   if (!fylker) return null;
 
