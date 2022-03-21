@@ -7,6 +7,14 @@ import Input from "components/Input";
 import Select from "components/Select";
 import { fetcher } from "utils/swr";
 
+const getDateInFormat = (dateString?: string) => {
+  if (!dateString) return null;
+
+  const date = new Date(dateString);
+
+  return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+};
+
 type Props = {
   feature: Feature<Geometry>;
 };
@@ -66,13 +74,13 @@ const MetadataContent = ({ feature }: Props) => {
           <div>
             <MetadataText>Oppdateringsdato</MetadataText>
             <MetadataValue>
-              {metadata?.common?.oppdateringsdato ?? "---"}
+              {getDateInFormat(metadata?.common?.oppdateringsdato) ?? "---"}
             </MetadataValue>
           </div>
           <div>
             <MetadataText>Datafangsdato</MetadataText>
             <MetadataValue>
-              {metadata?.common?.datafangstdato ?? "---"}
+              {getDateInFormat(metadata?.common?.datafangstdato) ?? "---"}
             </MetadataValue>
           </div>
         </Part>
@@ -99,7 +107,7 @@ const Container = styled.div`
 
 const Part = styled.div`
   flex: 1;
-  max-width: 350px;
+  max-width: 500px;
   margin: 0 16px;
 
   &:first-child,
