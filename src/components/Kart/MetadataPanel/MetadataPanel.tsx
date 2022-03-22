@@ -46,6 +46,8 @@ const Panel = styled(KartInteractable)`
   border: 1px solid ${({ theme }) => theme.colors.grayLight};
   padding: 16px;
   overflow: auto;
+  max-height: 500px;
+  border-radius: 3px;
 
   > h3 {
     margin-top: 0;

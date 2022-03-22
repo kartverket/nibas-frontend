@@ -13,16 +13,16 @@ const Select = (props: Props) => {
 };
 
 const SelectInput = styled.select`
-  border: 1px solid #000;
-  background-color: white;
+  border: 1px solid ${({ theme }) => theme.colors.black};
+  background-color: ${({ theme }) => theme.colors.white};
   border-radius: 3px;
   box-sizing: border-box;
-  padding: 8px 44px 8px 16px;
+  padding: 8px 44px 8px 8px;
   margin: 0;
   width: 100%;
-  height: 44px;
   appearance: none;
-  font-size: 16px;
+  font-size: 14px;
+  margin-bottom: 8px;
 
   option {
     &:nth-child(even) {
@@ -37,7 +37,7 @@ const SelectInput = styled.select`
   &:active,
   &:focus {
     border-color: ${({ theme }) => theme.colors.blue};
-    box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.blue};
+    box-shadow: inset 0 0 2px ${({ theme }) => theme.colors.blue};
     outline: 0;
   }
 
@@ -71,7 +71,7 @@ const SelectWrapper = styled.div`
   &::after {
     content: url("${CaretDownIcon}");
     font-size: 24px;
-    top: 10px;
+    top: 7px;
     right: 10px;
     position: absolute;
     pointer-events: none;
