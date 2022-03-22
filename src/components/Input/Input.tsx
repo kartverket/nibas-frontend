@@ -26,6 +26,7 @@ const Wrapper = styled.input`
     background-color: ${({ theme }) => theme.colors.grayLight};
     border-color: ${({ theme }) => theme.colors.gray1};
     color: ${({ theme }) => theme.colors.gray2};
+    opacity: 0.7;
 
     &:active,
     &:focus {

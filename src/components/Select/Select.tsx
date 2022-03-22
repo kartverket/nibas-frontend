@@ -13,14 +13,13 @@ const Select = (props: Props) => {
 };
 
 const SelectInput = styled.select`
+  appearance: none;
   border: 1px solid ${({ theme }) => theme.colors.black};
   background-color: ${({ theme }) => theme.colors.white};
   border-radius: 3px;
-  box-sizing: border-box;
   padding: 8px 44px 8px 8px;
   margin: 0;
   width: 100%;
-  appearance: none;
   font-size: 14px;
   margin-bottom: 8px;
 
@@ -45,6 +44,8 @@ const SelectInput = styled.select`
     background-color: ${({ theme }) => theme.colors.grayLight};
     border-color: ${({ theme }) => theme.colors.gray1};
     color: ${({ theme }) => theme.colors.gray2};
+    opacity: 0.7;
+
     &:active,
     &:focus {
       box-shadow: none;
@@ -58,11 +59,13 @@ const SelectWrapper = styled.div`
   &.invalid {
     select {
       border-color: ${({ theme }) => theme.colors.redErrorText};
+
       &:active,
       &:focus {
-        box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.redErrorText};
+        box-shadow: inset 0 0 2px ${({ theme }) => theme.colors.redErrorText};
       }
     }
+
     &::after {
       color: ${({ theme }) => theme.colors.redErrorText};
     }
