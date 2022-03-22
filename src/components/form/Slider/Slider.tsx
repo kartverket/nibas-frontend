@@ -2,9 +2,9 @@ import { forwardRef, InputHTMLAttributes } from "react";
 import styled from "styled-components";
 
 type Props = InputHTMLAttributes<HTMLInputElement> & {
-  min?: number | string;
-  max?: number | string;
-  value?: number;
+  min: number;
+  max: number;
+  value: number;
 };
 
 // vi trenger ikke type inn til input, fordi den er bestemt av StyledSlider
