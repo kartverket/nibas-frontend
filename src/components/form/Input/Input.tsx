@@ -1,11 +1,11 @@
-import { InputHTMLAttributes } from "react";
+import { forwardRef, InputHTMLAttributes } from "react";
 import styled from "styled-components";
 
 type Props = InputHTMLAttributes<HTMLInputElement>;
 
-const Input = (props: Props) => {
-  return <Wrapper {...props} />;
-};
+const Input = forwardRef<HTMLInputElement, Props>(function Input(props, ref) {
+  return <Wrapper {...props} ref={ref} />;
+});
 
 const Wrapper = styled.input`
   padding: 8px;

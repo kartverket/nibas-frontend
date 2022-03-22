@@ -1,8 +1,8 @@
 import { forwardRef, useState } from "react";
 import styled from "styled-components";
 import useLayerOpacity from "./useLayerOpacity";
-import Button from "components/Button";
-import Slider from "components/Slider";
+import Button from "components/form/Button";
+import Slider from "components/form/Slider";
 import { ReactComponent as CaretDownIcon } from "icons/caretdown.svg";
 import { ReactComponent as CaretUpIcon } from "icons/caretup.svg";
 import { ReactComponent as CogIcon } from "icons/cog.svg";

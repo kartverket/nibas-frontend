@@ -3,7 +3,7 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import styled from "styled-components";
 import { EditingType, ObjectValue } from "../EditGrenserContext";
-import Button from "components/Button";
+import Button from "components/form/Button";
 import { GrenseId } from "hooks/layers/types";
 import { ReactComponent as InfoIcon } from "icons/info.svg";
 import { ReactComponent as VisibilityIcon } from "icons/visibility.svg";
