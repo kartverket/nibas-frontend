@@ -74,7 +74,7 @@ const KartTarget = styled.div`
 
 const KartOverlay = styled.div`
   display: grid;
-  grid-template-rows: 3fr 400px;
+  grid-template-rows: 3fr 500px;
   grid-template-columns: auto 1fr;
   grid-template-areas:
     "panel ."
