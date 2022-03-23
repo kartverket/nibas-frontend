@@ -9,7 +9,7 @@ import { KodelisteItem } from "api/kodelister";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
-import { fetcher } from "utils/swr";
+import { fetcherWithToken } from "utils/swr";
 
 const getDateInFormat = (dateString?: string) => {
   if (!dateString) return null;
@@ -47,8 +47,8 @@ const MetadataContent = ({ feature }: Props) => {
   });
 
   const { data: maalemetodeKoder } = useSWR<KodelisteItem[]>(
-    "/v1/kodeliste/maalemetode-koder",
-    fetcher
+    ["/v1/kodeliste/maalemetode-koder", tokenHolderFunc()?.token],
+    fetcherWithToken
   );
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {

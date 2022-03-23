@@ -1,3 +1,4 @@
+import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import styled from "styled-components";
 import useSWR from "swr";
 import ListItemAccordion from "../ListItemAccordion";
@@ -5,10 +6,14 @@ import KommuneList from "./KommuneList";
 import { UnstyledList } from "components/UnstyledList";
 import { SimpleFylke } from "types/api";
 import { getNavnInSpraak } from "utils/language/language";
-import { fetcher } from "utils/swr";
+import { fetcherWithToken } from "utils/swr";
 
 const Kommunegrenser = () => {
-  const { data: fylker } = useSWR<SimpleFylke[]>("/v1/fylker", fetcher);
+  const { tokenHolderFunc } = useAuthenticationFlow();
+  const { data: fylker } = useSWR<SimpleFylke[]>(
+    ["/v1/fylker", tokenHolderFunc()?.token],
+    fetcherWithToken
+  );
 
   return (
     <ListItemAccordion title="Kommunegrenser">
