@@ -6,13 +6,14 @@ import { ReactComponent as CaretUpIcon } from "icons/caretup.svg";
 
 type Props = {
   title: string;
+  className?: string;
 };
 
-const Accordion: React.FC<Props> = ({ title, children }) => {
+const Accordion: React.FC<Props> = ({ title, children, className }) => {
   const [open, setOpen] = useState(false);
 
   return (
-    <Wrapper>
+    <Wrapper className={className}>
       <TitleWrapperButton variant="icon" onClick={() => setOpen(!open)}>
         <span>{title}</span>
         {open ? (
@@ -42,4 +43,4 @@ const ChildrenWrapper = styled.div`
   margin: 8px 0;
 `;
 
-export default Accordion;
+export default styled(Accordion)``;

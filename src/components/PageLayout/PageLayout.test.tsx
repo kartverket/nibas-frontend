@@ -149,25 +149,17 @@ describe("PageLayout", () => {
       const nibasButton = screen.getByRole("button", { name: /nibas/i });
       fireEvent.click(nibasButton);
 
-      const riksgrenserAccordion = screen.getByText(/riksgrenser/i);
-      const fylkesgrenserAccordion = screen.getByText(/fylkesgrenser/i);
-      const kommunegrenserAccordion = screen.getByText(/kommunegrenser/i);
-      const kretserAccordion = screen.getByText(/kretser/i);
-      const etatOgSektorinndelingAccordion = screen.getByText(
-        /etat og sektorinndeling/i
-      );
-      const loversVirkeAccordion = screen.getByText(/lovers virke/i);
-      const svalbardomradetAccordion = screen.getByText(/svalbardområdet/i);
-      const maritimeGrenserAccordion = screen.getByText(/maritime grenser/i);
-
-      expect(riksgrenserAccordion).toBeInTheDocument();
-      expect(fylkesgrenserAccordion).toBeInTheDocument();
-      expect(kommunegrenserAccordion).toBeInTheDocument();
-      expect(kretserAccordion).toBeInTheDocument();
-      expect(etatOgSektorinndelingAccordion).toBeInTheDocument();
-      expect(loversVirkeAccordion).toBeInTheDocument();
-      expect(svalbardomradetAccordion).toBeInTheDocument();
-      expect(maritimeGrenserAccordion).toBeInTheDocument();
+      expect(screen.getByText(/riksgrenser/i)).toBeInTheDocument();
+      expect(screen.getByText(/fylkesgrenser/i)).toBeInTheDocument();
+      expect(screen.getByText(/kommunegrenser/i)).toBeInTheDocument();
+      expect(screen.getByText(/stemmekretser/i)).toBeInTheDocument();
+      expect(screen.getByText(/skolekretser/i)).toBeInTheDocument();
+      expect(screen.getByText(/grunnkretser/i)).toBeInTheDocument();
+      expect(screen.getByText(/delområder/i)).toBeInTheDocument();
+      expect(screen.getByText(/postnummerområder/i)).toBeInTheDocument();
+      expect(screen.getByText(/gestlige inndelinger/i)).toBeInTheDocument();
+      expect(screen.getByText(/maritime grenser/i)).toBeInTheDocument();
+      expect(screen.getByText(/svalbardområdet/i)).toBeInTheDocument();
     });
 
     it("should show fylker on Fylker accordion click", async () => {

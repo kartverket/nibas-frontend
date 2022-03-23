@@ -1,15 +1,14 @@
 import styled from "styled-components";
-import ApiGrense from "../ApiGrense";
-import { ObjectValue } from "../useEditGrenser";
+import ApiGrense from "../../ApiGrense";
+import { useEditGrenser } from "../../EditGrenserContext";
 import useNibasApi from "hooks/useNibasApi";
 
-type Props = {
-  fylkeValues: Record<string, ObjectValue>;
-  setFylkeValue: (kommune: string, value: ObjectValue) => void;
-};
+const FylkeList = () => {
+  const { data: fylker, error } = useNibasApi("/v1/fylker");
 
-const FylkeList = ({ fylkeValues, setFylkeValue }: Props) => {
-  const { data: fylker } = useNibasApi("/v1/fylker");
+  const { setObjectValue, values } = useEditGrenser("fylke");
+
+  if (error) return <p>Fikk ikke hentet fylker</p>;
 
   if (!fylker) return null;
 
@@ -19,8 +18,8 @@ const FylkeList = ({ fylkeValues, setFylkeValue }: Props) => {
         <ApiGrense
           key={fylke.id}
           grense={fylke}
-          grenseValue={fylkeValues[fylke.id]}
-          setGrenseValue={setFylkeValue}
+          grenseValue={values[fylke.id]}
+          setGrenseValue={setObjectValue}
           featuresUrl={`/v1/fylker/${fylke.id}/grenser`}
           type="fylke"
         />
