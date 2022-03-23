@@ -1,17 +1,10 @@
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import styled from "styled-components";
-import useSWR from "swr";
 import ApiGrense from "../../ApiGrense";
 import { useEditGrenser } from "../../EditGrenserContext";
-import { SimpleFylke } from "types/api";
-import { fetcherWithToken } from "utils/swr";
+import useNibasApi from "hooks/useNibasApi";
 
 const FylkeList = () => {
-  const { tokenHolderFunc } = useAuthenticationFlow();
-  const { data: fylker, error } = useSWR<SimpleFylke[]>(
-    ["/v1/fylker", tokenHolderFunc()?.token],
-    fetcherWithToken
-  );
+  const { data: fylker, error } = useNibasApi("/v1/fylker");
 
   const { setObjectValue, values } = useEditGrenser("fylke");
 

@@ -1,22 +1,17 @@
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import styled from "styled-components";
-import useSWR from "swr";
 import ApiGrense from "components/GrenserDrillDown/ApiGrense";
 import { useEditGrenser } from "components/GrenserDrillDown/EditGrenserContext";
-
-import { SimpleKommune } from "types/api";
-import { fetcherWithToken } from "utils/swr";
+import useNibasApi from "hooks/useNibasApi";
+import { GrenseRef } from "types/api";
 
 type Props = {
-  fylke: SimpleKommune;
+  fylke: GrenseRef;
 };
 
 const KommuneList = ({ fylke }: Props) => {
-  const { tokenHolderFunc } = useAuthenticationFlow();
-  const { data: kommuner, error } = useSWR<SimpleKommune[]>(
-    [`/v1/kommuner?fylkeid=${fylke.id}`, tokenHolderFunc()?.token],
-    fetcherWithToken
-  );
+  const { data: kommuner, error } = useNibasApi("/v1/kommuner", {
+    fylkeid: fylke.id,
+  });
 
   const { setObjectValue, values } = useEditGrenser("kommune");
 

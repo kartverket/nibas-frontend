@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { EditingType, ObjectValue } from "../EditGrenserContext";
 import ToggleableGrense from "../ToggleableGrense";
 import useApiGrense from "./useApiGrense";
-import { SimpleGrense } from "types/api";
+import { GrenseRef } from "types/api";
 
 type Props<T> = {
   grense: T;
@@ -12,7 +12,7 @@ type Props<T> = {
   featuresUrl: string;
 };
 
-const ApiGrense = <T extends SimpleGrense>({
+const ApiGrense = <T extends GrenseRef>({
   grense,
   grenseValue,
   setGrenseValue,
