@@ -1,19 +1,12 @@
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import styled from "styled-components";
-import useSWR from "swr";
 import ListItemAccordion from "../ListItemAccordion";
 import KommuneList from "./KommuneList";
 import { UnstyledList } from "components/UnstyledList";
-import { SimpleFylke } from "types/api";
+import useNibasApi from "hooks/useNibasApi";
 import { getNavnInSpraak } from "utils/language/language";
-import { fetcherWithToken } from "utils/swr";
 
 const Kommunegrenser = () => {
-  const { tokenHolderFunc } = useAuthenticationFlow();
-  const { data: fylker } = useSWR<SimpleFylke[]>(
-    ["/v1/fylker", tokenHolderFunc()?.token],
-    fetcherWithToken
-  );
+  const { data: fylker } = useNibasApi("/v1/fylker");
 
   return (
     <ListItemAccordion title="Kommunegrenser">

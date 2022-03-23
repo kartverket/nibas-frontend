@@ -4,13 +4,16 @@ Foreløpig kun create-react-app med typescript
 
 ## Lokal utvikling
 
-### Sette opp authZ og authN mot  github package registry
+### Sette opp authZ og authN mot github package registry
+
 Prosjektet trenger pakke(r) fra github package registry. For å kunne installere disse pakkene må man gjøre følgende:
+
 - Opprette et personal access token på github (https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-to-github-packages)
 - Autorisere personal access token for bruk med SSO (https://docs.github.com/en/enterprise-cloud@latest/authentication/authenticating-with-saml-single-sign-on/authorizing-a-personal-access-token-for-use-with-saml-single-sign-on)
 - Opprette en lokal .npmrc-fil i hjemmekatalogen som knytter github package registry med autorisert personal access token (https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-with-a-personal-access-token)
 
 ### Oppstart av applikasjonen
+
 Last ned dependencies med
 
 ```
@@ -44,6 +47,12 @@ REACT_APP_BAAT_PASSWORD=Ditt_BAAT_passord
 
 eslint blir installert på npm install. Men husk å aktivere plugin. For IntelliJ: Languages & Frameworks -> Javascript ->
 Code Quality Tools -> ESLint. Velg å huke av for Automatic ESLint configuration.
+
+### Types
+
+Types fra API blir generert ved `npm run update-api-types`. Videre blir disse typene renamet i `src/types/api` for å gjøre det lettere å skrive inn typene når de brukes. (Dette kan nok gjøres i et script for å gjøre det lettere å vedlikeholde på sikt)
+
+Disse typene brukes i en hjelpehook `useApiSWR` for å få typen tilbake basert på URLen som hentes. (Per tid ikke mulig å bruke med parametere)
 
 ## Docker
 

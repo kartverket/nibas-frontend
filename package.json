@@ -25,7 +25,9 @@
     "test:coverage": "npm test -- src/* --coverage",
     "eject": "react-scripts eject",
     "lint": "eslint src",
-    "lint:fix": "npm run lint -- --fix"
+    "lint:fix": "npm run lint -- --fix",
+    "update-api-types": "npx openapi-typescript http://localhost:8080/api-docs --output src/types/api-gen.ts",
+    "update-api-types:remote": "npx openapi-typescript http://nibas-backend.tz2-test-apps.k8s.local/api-docs --output src/types/api-gen.ts"
   },
   "eslintConfig": {
     "extends": [
