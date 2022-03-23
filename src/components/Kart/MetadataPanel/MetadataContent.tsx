@@ -1,3 +1,4 @@
+import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import styled, { css } from "styled-components";
@@ -5,7 +6,7 @@ import useSWR from "swr";
 import { KodelisteItem } from "api/kodelister";
 import Input from "components/Input";
 import Select from "components/Select";
-import { fetcher } from "utils/swr";
+import { fetcherWithToken } from "utils/swr";
 
 const getDateInFormat = (dateString?: string) => {
   if (!dateString) return null;
@@ -20,9 +21,10 @@ type Props = {
 };
 
 const MetadataContent = ({ feature }: Props) => {
+  const { tokenHolderFunc } = useAuthenticationFlow();
   const { data: maalemetodeKoder } = useSWR<KodelisteItem[]>(
-    "/v1/kodeliste/maalemetode-koder",
-    fetcher
+    ["/v1/kodeliste/maalemetode-koder", tokenHolderFunc()?.token],
+    fetcherWithToken
   );
 
   const properties = feature.getProperties();
