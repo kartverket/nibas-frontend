@@ -25,7 +25,7 @@ const KodelistePreview = () => {
           id="maalemetodeKoderDropdown"
           label="Målemetode"
           name="maalemetodeName"
-          kodelisteUrl="/v1/kodeliste/malemetode-koder"
+          kodelisteUrl="/v1/kodeliste/maalemetode-koder"
         />
       </div>
     </KodelistePreviewPanel>

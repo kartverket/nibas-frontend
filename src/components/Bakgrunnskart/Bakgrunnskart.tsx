@@ -63,9 +63,7 @@ const Bakgrunnskart = () => {
   const renderMainLayerByZIndex = (layerId: BakgrunnskartId, i: number) => {
     const layer = bakgrunnskartLayers[layerId];
 
-    const mappedLayer = mappedLayers.find(
-      (mappedLayer) => mappedLayer.sourceId === layerId
-    );
+    const mappedLayer = mappedLayers.find((ml) => ml.sourceId === layerId);
 
     if (!mappedLayer) return null;
 

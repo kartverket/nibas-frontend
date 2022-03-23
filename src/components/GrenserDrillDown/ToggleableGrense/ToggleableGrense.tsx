@@ -2,7 +2,7 @@ import { useCallback, useEffect } from "react";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import styled from "styled-components";
-import { ObjectValue, EditingType } from "../useEditGrenser";
+import { EditingType, ObjectValue } from "../EditGrenserContext";
 import Button from "components/Button";
 import { GrenseId } from "hooks/layers/types";
 import { ReactComponent as InfoIcon } from "icons/info.svg";

@@ -5,7 +5,7 @@ export type RotGrense = {
   id: string;
 };
 
-type Spraak = {
+export type Spraak = {
   navn: string;
   spraak: string;
 };

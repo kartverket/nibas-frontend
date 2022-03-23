@@ -1,24 +1,26 @@
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import styled from "styled-components";
 import useSWR from "swr";
-import ApiGrense from "../ApiGrense";
-import { ObjectValue } from "../useEditGrenser";
+import ApiGrense from "components/GrenserDrillDown/ApiGrense";
+import { useEditGrenser } from "components/GrenserDrillDown/EditGrenserContext";
+
 import { SimpleKommune } from "types/api";
 import { fetcherWithToken } from "utils/swr";
 
 type Props = {
   fylke: SimpleKommune;
-  kommuneValues: Record<string, ObjectValue>;
-  setKommuneValue: (kommune: string, value: ObjectValue) => void;
 };
 
-const KommuneList = ({ fylke, kommuneValues, setKommuneValue }: Props) => {
+const KommuneList = ({ fylke }: Props) => {
   const { tokenHolderFunc } = useAuthenticationFlow();
-
-  const { data: kommuner } = useSWR<SimpleKommune[]>(
+  const { data: kommuner, error } = useSWR<SimpleKommune[]>(
     [`/v1/kommuner?fylkeid=${fylke.id}`, tokenHolderFunc()?.token],
     fetcherWithToken
   );
+
+  const { setObjectValue, values } = useEditGrenser("kommune");
+
+  if (error) return <p>Fikk ikke hentet kommuner</p>;
 
   if (!kommuner) return null;
 
@@ -28,8 +30,8 @@ const KommuneList = ({ fylke, kommuneValues, setKommuneValue }: Props) => {
         <ApiGrense
           key={kommune.id}
           grense={kommune}
-          grenseValue={kommuneValues[kommune.id]}
-          setGrenseValue={setKommuneValue}
+          grenseValue={values[kommune.id]}
+          setGrenseValue={setObjectValue}
           featuresUrl={`/v1/kommuner/${kommune.id}/grenser`}
           type="kommune"
         />

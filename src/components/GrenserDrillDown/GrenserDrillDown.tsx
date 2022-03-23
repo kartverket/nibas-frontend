@@ -1,108 +1,53 @@
-import { useState } from "react";
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import styled from "styled-components";
-import useSWR from "swr";
-import KodelistePreview from "../KodelisteSelect/KodelistePreview";
-import FylkeList from "./FylkeList";
-import KommuneList from "./KommuneList";
-import useEditGrenser, { ObjectValue } from "./useEditGrenser";
+import Delomrader from "./Delomrader";
+import { EditGrenserProvider } from "./EditGrenserContext";
+import Fylkesgrenser from "./Fylkesgrenser";
+import GestligeInndelinger from "./GestligeInndelinger";
+import Grunnkretser from "./Grunnkretser";
+import Kommunegrenser from "./Kommunegrenser";
+import MaritimeGrenser from "./MaritimeGrenser";
+import Postnummeromraader from "./Postnummeromraader";
+import Riksgrenser from "./Riksgrenser";
+import Skolekretser from "./Skolekretser";
+import Stemmekretser from "./Stemmekretser";
+import Svalbardomradet from "./Svalbardomraadet";
 import Accordion from "components/Accordion";
 import { SidebarPanel } from "components/Sidebar/SidebarPanel";
 import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
+import { UnstyledList } from "components/UnstyledList";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
-import { SimpleFylke } from "types/api";
-import { fetcherWithTokenAndErrorHandling } from "utils/swr";
 
 const GrenserDrillDown = () => {
-  function getError() {
-    if (errorMessage !== "") {
-      return <div>Feil inntraff: {errorMessage}</div>;
-    }
-  }
-
-  const { tokenHolderFunc } = useAuthenticationFlow();
-
-  const { isOpen: visible, togglePanel } = useSidebarPanel("nibas");
-
-  const [errorMessage, setErrorMessage] = useState<string>("");
-
-  const { data: fylker } = useSWR<SimpleFylke[]>(
-    ["/v1/fylker", tokenHolderFunc()?.token, setErrorMessage],
-    fetcherWithTokenAndErrorHandling
-  );
-
-  const { setObjectValue, editingObject } = useEditGrenser();
-
-  if (!visible) return null;
+  const { isOpen, togglePanel } = useSidebarPanel("nibas");
 
   return (
-    <Panel>
-      {getError()}
-      <SidebarPanelTitle closePanel={togglePanel} title="Grenser" />
-      <Accordion title="Riksgrenser">
-        <p>Kommer senere!</p>
-      </Accordion>
-      <Accordion title="Fylkesgrenser">
-        <AccordionContent>
-          <FylkeList
-            fylkeValues={editingObject.fylke ?? {}}
-            setFylkeValue={(fylkesnavn: string, value: ObjectValue) =>
-              setObjectValue("fylke", fylkesnavn, value)
-            }
-          />
-        </AccordionContent>
-      </Accordion>
-      <Accordion title="Kommunegrenser">
-        <AccordionContent>
-          {fylker ? (
-            fylker.map((fylke) => (
-              <Accordion
-                key={fylke.id}
-                title={
-                  fylke.navn.find((fylkesNavn) => fylkesNavn.spraak === "nor")
-                    ?.navn ?? ""
-                }
-              >
-                <KommuneList
-                  fylke={fylke}
-                  kommuneValues={editingObject.kommune ?? {}}
-                  setKommuneValue={(kommunenavn: string, value: ObjectValue) =>
-                    setObjectValue("kommune", kommunenavn, value)
-                  }
-                />
-              </Accordion>
-            ))
-          ) : (
-            <p>Henter fylker...</p>
-          )}
-        </AccordionContent>
-      </Accordion>
-      <Accordion title="Kretser">
-        <p>Kommer senere!</p>
-      </Accordion>
-      <Accordion title="Etat og sektorinndeling">
-        <p>Kommer senere!</p>
-      </Accordion>
-      <Accordion title="Lovers virke">
-        <p>Kommer senere!</p>
-      </Accordion>
-      <Accordion title="Svalbardområdet">
-        {/* Kun for test/displayformål. */}
-        <KodelistePreview />
-      </Accordion>
-      <Accordion title="Maritime grenser">
-        <p>Kommer senere!</p>
-      </Accordion>
-    </Panel>
+    <EditGrenserProvider isOpen={isOpen}>
+      <Panel>
+        <SidebarPanelTitle closePanel={togglePanel} title="Grenser" />
+        <UnstyledList>
+          <Riksgrenser />
+          <Fylkesgrenser />
+          <Kommunegrenser />
+          <Stemmekretser />
+          <Skolekretser />
+          <Grunnkretser />
+          <Delomrader />
+          <Postnummeromraader />
+          <GestligeInndelinger />
+          <MaritimeGrenser />
+          <Svalbardomradet />
+        </UnstyledList>
+      </Panel>
+    </EditGrenserProvider>
   );
 };
 
 const Panel = styled(SidebarPanel)`
   margin-top: 30px;
-`;
 
-const AccordionContent = styled.div`
-  margin-left: 16px;
+  > ${Accordion} > div {
+    margin-left: 16px;
+  }
 `;
 
 export default GrenserDrillDown;

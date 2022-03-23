@@ -3,7 +3,7 @@ export type KodelisteItem = {
   item: GeonorgeKodelisteItem;
 };
 
-type KodelisteType = "KOMMUNENUMMER" | "FYLKESNUMMER" | "MALEMETODE_KODE";
+type KodelisteType = "KOMMUNENUMMER" | "FYLKESNUMMER" | "MAALEMETODE_KODE";
 
 type GeonorgeKodelisteItem = {
   id: string;

@@ -1,6 +1,6 @@
 import { useCallback } from "react";
+import { EditingType, ObjectValue } from "../EditGrenserContext";
 import ToggleableGrense from "../ToggleableGrense";
-import { EditingType, ObjectValue } from "../useEditGrenser";
 import useApiGrense from "./useApiGrense";
 import { SimpleGrense } from "types/api";
 
@@ -21,7 +21,8 @@ const ApiGrense = <T extends SimpleGrense>({
 }: Props<T>) => {
   const { features, fetchFeatures } = useApiGrense(featuresUrl);
 
-  const navn = grense.navn.find((navn) => navn.spraak === "nor")?.navn ?? "";
+  const navn =
+    grense.navn.find((grenseNavn) => grenseNavn.spraak === "nor")?.navn ?? "";
 
   const fetchSetObjectValue = useCallback(
     (grenseId: string, newGrenseValue: ObjectValue) => {
