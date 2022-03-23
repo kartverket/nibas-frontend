@@ -1,10 +1,14 @@
+import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
+import { SubmitHandler, useForm } from "react-hook-form";
 import styled, { css } from "styled-components";
 import useSWR from "swr";
+import { updateGrenser } from "api/grenser";
 import { KodelisteItem } from "api/kodelister";
-import Input from "components/Input";
-import Select from "components/Select";
+import Button from "components/form/Button";
+import Input from "components/form/Input";
+import Select from "components/form/Select";
 import { fetcher } from "utils/swr";
 
 const getDateInFormat = (dateString?: string) => {
@@ -19,18 +23,63 @@ type Props = {
   feature: Feature<Geometry>;
 };
 
+type Inputs = {
+  grenseType: string;
+  maalemetode: string;
+  informasjon: string;
+  opphav: string;
+};
+
 const MetadataContent = ({ feature }: Props) => {
+  const properties = feature.getProperties();
+  const type = properties.type;
+  const metadata = properties.metadata;
+
+  const { tokenHolderFunc } = useAuthenticationFlow();
+
+  const { register, handleSubmit } = useForm<Inputs>({
+    defaultValues: {
+      informasjon: metadata?.common?.informasjonselementer[0] ?? "",
+      grenseType: type,
+      maalemetode: metadata?.common?.maalemetode,
+      opphav: metadata?.common?.opphav ?? "",
+    },
+  });
+
   const { data: maalemetodeKoder } = useSWR<KodelisteItem[]>(
     "/v1/kodeliste/maalemetode-koder",
     fetcher
   );
 
-  const properties = feature.getProperties();
-  const type = properties.type;
-  const metadata = properties.metadata;
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    const newFeature = feature.clone();
+    const oldProperties = feature.getProperties();
+
+    newFeature.setId(feature.getId());
+    newFeature.setProperties({
+      ...(oldProperties ?? {}),
+      metadata: {
+        ...(oldProperties.metadata ?? {}),
+        common: {
+          ...(oldProperties.metadata.common ?? {}),
+          informasjonselementer: [data.informasjon],
+          opphav: data.opphav,
+          posisjonskvalitet: {
+            ...(oldProperties.metadata.common.posisjonskvalitet ?? {}),
+            maalemetode: data.maalemetode,
+          },
+        },
+      },
+    });
+
+    console.log(data);
+    console.log("New feature", newFeature);
+
+    updateGrenser([newFeature], tokenHolderFunc()?.token);
+  };
 
   return (
-    <div>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <Container>
         <Part>
           <BlockLabel>
@@ -41,10 +90,7 @@ const MetadataContent = ({ feature }: Props) => {
           </BlockLabel>
           <BlockLabel>
             Målemetode
-            <Select
-              disabled
-              value={metadata?.common?.posisjonskvalitet?.maalemetode ?? ""}
-            >
+            <Select {...register("maalemetode")}>
               <option value="">---</option>
               {maalemetodeKoder?.map((kodeItem) => (
                 <option key={kodeItem.item.uuid} value={kodeItem.item.uuid}>
@@ -88,15 +134,16 @@ const MetadataContent = ({ feature }: Props) => {
       <BlockLabel>
         Informasjon
         <Input
-          disabled
-          defaultValue={metadata?.common?.informasjonselementer[0] ?? "---"}
+          {...register("informasjon")}
+          // defaultValue={metadata?.common?.informasjonselementer[0] ?? "---"}
         />
       </BlockLabel>
       <BlockLabel>
         Opphav
-        <Input disabled defaultValue={metadata?.common?.opphav ?? "---"} />
+        <Input {...register("opphav")} />
       </BlockLabel>
-    </div>
+      <Button type="submit">Lagre</Button>
+    </form>
   );
 };
 

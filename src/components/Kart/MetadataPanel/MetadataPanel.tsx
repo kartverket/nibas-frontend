@@ -35,7 +35,7 @@ const MetadataPanel = ({ selectedFeatures }: Props) => {
   return (
     <Panel>
       <h3>Linje metadata</h3>
-      <MetadataContent feature={singleFeature} />
+      <MetadataContent key={singleFeature.getId()} feature={singleFeature} />
       <Button onClick={() => setVisible(false)}>Lukk</Button>
     </Panel>
   );
