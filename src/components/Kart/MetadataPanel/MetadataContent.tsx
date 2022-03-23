@@ -3,20 +3,28 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { SubmitHandler, useForm } from "react-hook-form";
 import styled, { css } from "styled-components";
-import useSWR from "swr";
 import { updateGrenser } from "api/grenser";
-import { KodelisteItem } from "api/kodelister";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
-import { fetcherWithToken } from "utils/swr";
+import useNibasApi from "hooks/useNibasApi";
+import { Metadata } from "types/api";
 
-const getDateInFormat = (dateString?: string) => {
+const getDateInFriendlyString = (dateString?: string) => {
   if (!dateString) return null;
 
   const date = new Date(dateString);
 
   return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+};
+
+const getDateStringToUTC = (dateString?: string) => {
+  if (!dateString) return "";
+
+  const date = new Date(dateString);
+
+  console.log(date.toISOString());
+  return date.toISOString();
 };
 
 type Props = {
@@ -28,27 +36,30 @@ type Inputs = {
   maalemetode: string;
   informasjon: string;
   opphav: string;
+  gyldigFra: string;
+  gyldigTil: string;
 };
 
 const MetadataContent = ({ feature }: Props) => {
   const properties = feature.getProperties();
   const type = properties.type;
-  const metadata = properties.metadata;
-
-  const { tokenHolderFunc } = useAuthenticationFlow();
+  const metadata = properties.metadata as Metadata;
 
   const { register, handleSubmit } = useForm<Inputs>({
     defaultValues: {
       informasjon: metadata?.common?.informasjonselementer[0] ?? "",
-      grenseType: type,
-      maalemetode: metadata?.common?.maalemetode,
+      grenseType: metadata?.discriminator ?? "",
+      maalemetode: metadata?.common?.posisjonskvalitet?.maalemetode ?? "",
       opphav: metadata?.common?.opphav ?? "",
+      gyldigFra: metadata?.common?.gyldigFra ?? "",
+      gyldigTil: metadata?.common?.gyldigTil ?? "",
     },
   });
 
-  const { data: maalemetodeKoder } = useSWR<KodelisteItem[]>(
-    ["/v1/kodeliste/maalemetode-koder", tokenHolderFunc()?.token],
-    fetcherWithToken
+  const { tokenHolderFunc } = useAuthenticationFlow();
+
+  const { data: maalemetodeKoder } = useNibasApi(
+    "/v1/kodeliste/maalemetode-koder"
   );
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
@@ -64,6 +75,8 @@ const MetadataContent = ({ feature }: Props) => {
           ...(oldProperties.metadata.common ?? {}),
           informasjonselementer: [data.informasjon],
           opphav: data.opphav,
+          gyldigFra: getDateStringToUTC(data.gyldigFra),
+          gyldigTil: getDateStringToUTC(data.gyldigTil),
           posisjonskvalitet: {
             ...(oldProperties.metadata.common.posisjonskvalitet ?? {}),
             maalemetode: data.maalemetode,
@@ -103,40 +116,33 @@ const MetadataContent = ({ feature }: Props) => {
         <Part>
           <BlockLabel>
             Gyldig fra
-            <Input
-              disabled
-              defaultValue={metadata?.common?.gyldigFra ?? "---"}
-            />
+            <Input type="date" {...register("gyldigFra")} />
           </BlockLabel>
           <BlockLabel>
             Gyldig til
-            <Input
-              disabled
-              defaultValue={metadata?.common?.gyldigTil ?? "---"}
-            />
+            <Input type="date" {...register("gyldigTil")} />
           </BlockLabel>
         </Part>
         <Part>
           <div>
             <MetadataText>Oppdateringsdato</MetadataText>
             <MetadataValue>
-              {getDateInFormat(metadata?.common?.oppdateringsdato) ?? "---"}
+              {getDateInFriendlyString(metadata?.common?.oppdateringsdato) ??
+                "---"}
             </MetadataValue>
           </div>
           <div>
             <MetadataText>Datafangsdato</MetadataText>
             <MetadataValue>
-              {getDateInFormat(metadata?.common?.datafangstdato) ?? "---"}
+              {getDateInFriendlyString(metadata?.common?.datafangstdato) ??
+                "---"}
             </MetadataValue>
           </div>
         </Part>
       </Container>
       <BlockLabel>
         Informasjon
-        <Input
-          {...register("informasjon")}
-          // defaultValue={metadata?.common?.informasjonselementer[0] ?? "---"}
-        />
+        <Input {...register("informasjon")} />
       </BlockLabel>
       <BlockLabel>
         Opphav

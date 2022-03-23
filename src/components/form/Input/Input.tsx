@@ -33,6 +33,17 @@ const Wrapper = styled.input`
       box-shadow: none;
     }
   }
+
+  // https://stackoverflow.com/questions/14946091/are-there-any-style-options-for-the-html5-date-picker
+  &[type="date"] {
+    &::-webkit-calendar-picker-indicator {
+      padding: 0;
+    }
+
+    &::-webkit-datetime-edit-fields-wrapper {
+      padding: 0;
+    }
+  }
 `;
 
 export default Input;
