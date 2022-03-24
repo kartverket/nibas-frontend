@@ -18,18 +18,31 @@ const getDateInFriendlyString = (dateString?: string) => {
   return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
 };
 
+const getDateStringFromISOString = (dateString: string) =>
+  dateString.replace(/T.+$/g, "");
+
 const getDateStringToUTC = (dateString?: string) => {
   if (!dateString) return "";
 
   const date = new Date(dateString);
-
-  console.log(date.toISOString());
   return date.toISOString();
 };
 
-type Props = {
-  feature: Feature<Geometry>;
-};
+const getUpdatedMetadata = (data: Inputs, oldMetadata: Metadata) =>
+  ({
+    ...(oldMetadata ?? {}),
+    common: {
+      ...(oldMetadata.common ?? {}),
+      informasjonselementer: [data.informasjon],
+      opphav: data.opphav,
+      gyldigFra: getDateStringToUTC(data.gyldigFra),
+      gyldigTil: getDateStringToUTC(data.gyldigTil),
+      posisjonskvalitet: {
+        ...(oldMetadata?.common?.posisjonskvalitet ?? {}),
+        maalemetode: data.maalemetode,
+      },
+    },
+  } as Metadata);
 
 type Inputs = {
   grenseType: string;
@@ -40,21 +53,29 @@ type Inputs = {
   gyldigTil: string;
 };
 
+type Props = {
+  feature: Feature<Geometry>;
+};
+
 const MetadataContent = ({ feature }: Props) => {
   const properties = feature.getProperties();
   const type = properties.type;
   const metadata = properties.metadata as Metadata;
 
-  const { register, handleSubmit } = useForm<Inputs>({
+  const { register, handleSubmit, watch } = useForm<Inputs>({
     defaultValues: {
       informasjon: metadata?.common?.informasjonselementer[0] ?? "",
       grenseType: metadata?.discriminator ?? "",
       maalemetode: metadata?.common?.posisjonskvalitet?.maalemetode ?? "",
       opphav: metadata?.common?.opphav ?? "",
-      gyldigFra: metadata?.common?.gyldigFra ?? "",
-      gyldigTil: metadata?.common?.gyldigTil ?? "",
+      gyldigFra: getDateStringFromISOString(metadata?.common?.gyldigFra ?? ""),
+      gyldigTil: getDateStringFromISOString(metadata?.common?.gyldigTil ?? ""),
     },
   });
+
+  const gyldigFra = watch("gyldigFra");
+  console.log("Metadata", metadata);
+  console.log("Gyldig fra", gyldigFra);
 
   const { tokenHolderFunc } = useAuthenticationFlow();
 
@@ -63,26 +84,15 @@ const MetadataContent = ({ feature }: Props) => {
   );
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    const newFeature = feature.clone();
+    const newFeature = feature;
     const oldProperties = feature.getProperties();
+
+    const newMetadata = getUpdatedMetadata(data, oldProperties.metadata);
 
     newFeature.setId(feature.getId());
     newFeature.setProperties({
-      ...(oldProperties ?? {}),
-      metadata: {
-        ...(oldProperties.metadata ?? {}),
-        common: {
-          ...(oldProperties.metadata.common ?? {}),
-          informasjonselementer: [data.informasjon],
-          opphav: data.opphav,
-          gyldigFra: getDateStringToUTC(data.gyldigFra),
-          gyldigTil: getDateStringToUTC(data.gyldigTil),
-          posisjonskvalitet: {
-            ...(oldProperties.metadata.common.posisjonskvalitet ?? {}),
-            maalemetode: data.maalemetode,
-          },
-        },
-      },
+      ...oldProperties,
+      metadata: newMetadata,
     });
 
     console.log(data);
