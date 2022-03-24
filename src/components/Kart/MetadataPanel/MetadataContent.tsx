@@ -62,7 +62,7 @@ const MetadataContent = ({ feature }: Props) => {
   const type = properties.type;
   const metadata = properties.metadata as Metadata;
 
-  const { register, handleSubmit, watch } = useForm<Inputs>({
+  const { register, handleSubmit } = useForm<Inputs>({
     defaultValues: {
       informasjon: metadata?.common?.informasjonselementer[0] ?? "",
       grenseType: metadata?.discriminator ?? "",
@@ -72,10 +72,6 @@ const MetadataContent = ({ feature }: Props) => {
       gyldigTil: getDateStringFromISOString(metadata?.common?.gyldigTil ?? ""),
     },
   });
-
-  const gyldigFra = watch("gyldigFra");
-  console.log("Metadata", metadata);
-  console.log("Gyldig fra", gyldigFra);
 
   const { tokenHolderFunc } = useAuthenticationFlow();
 
@@ -94,9 +90,6 @@ const MetadataContent = ({ feature }: Props) => {
       ...oldProperties,
       metadata: newMetadata,
     });
-
-    console.log(data);
-    console.log("New feature", newFeature);
 
     updateGrenser([newFeature], tokenHolderFunc()?.token);
   };
@@ -142,7 +135,7 @@ const MetadataContent = ({ feature }: Props) => {
             </MetadataValue>
           </div>
           <div>
-            <MetadataText>Datafangsdato</MetadataText>
+            <MetadataText>Datafangstdato</MetadataText>
             <MetadataValue>
               {getDateInFriendlyString(metadata?.common?.datafangstdato) ??
                 "---"}
