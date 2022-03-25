@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "test/test-utils";
+import { render, screen } from "test/test-utils";
+import userEvent from "@testing-library/user-event";
 import SubBackgroundLayer from "./SubBackgroundLayer";
 
 const defaultProps: React.ComponentProps<typeof SubBackgroundLayer> = {
@@ -33,7 +34,7 @@ describe("SubBackgroundLayer", () => {
     const caret = screen.getByRole("button", {
       name: /sublag åpne/i,
     });
-    fireEvent.click(caret);
+    userEvent.click(caret);
 
     expect(screen.getByText(/subsublag1/i)).toBeInTheDocument();
     expect(screen.getByText(/subsublag2/i)).toBeInTheDocument();
@@ -43,13 +44,13 @@ describe("SubBackgroundLayer", () => {
     render(<SubBackgroundLayer {...defaultProps} />);
 
     const closedEye = screen.getByRole("button", { name: /vis sublag/i });
-    fireEvent.click(closedEye);
+    userEvent.click(closedEye);
 
     const openEye = screen.getByRole("button", { name: /skjul sublag/i });
 
     expect(openEye).toBeInTheDocument();
 
-    fireEvent.click(openEye);
+    userEvent.click(openEye);
 
     expect(closedEye).toBeInTheDocument();
   });
