@@ -40,6 +40,7 @@ const getUpdatedMetadata = (data: Inputs, oldMetadata: Metadata) =>
       posisjonskvalitet: {
         ...(oldMetadata?.common?.posisjonskvalitet ?? {}),
         maalemetode: data.maalemetode,
+        noeyaktighet: data.noeyaktighet,
       },
     },
   } as Metadata);
@@ -47,6 +48,7 @@ const getUpdatedMetadata = (data: Inputs, oldMetadata: Metadata) =>
 type Inputs = {
   grenseType: string;
   maalemetode: string;
+  noeyaktighet: number;
   informasjon: string;
   opphav: string;
   gyldigFra: string;
@@ -67,6 +69,7 @@ const MetadataContent = ({ feature }: Props) => {
       informasjon: metadata?.common?.informasjonselementer[0] ?? "",
       grenseType: metadata?.discriminator ?? "",
       maalemetode: metadata?.common?.posisjonskvalitet?.maalemetode ?? "",
+      noeyaktighet: metadata?.common?.posisjonskvalitet?.noeyaktighet,
       opphav: metadata?.common?.opphav ?? "",
       gyldigFra: getDateStringFromISOString(metadata?.common?.gyldigFra ?? ""),
       gyldigTil: getDateStringFromISOString(metadata?.common?.gyldigTil ?? ""),
@@ -104,6 +107,18 @@ const MetadataContent = ({ feature }: Props) => {
               <option>{type}</option>
             </Select>
           </BlockLabel>
+          <DateWrapper>
+            <BlockLabel>
+              Gyldig fra
+              <Input type="date" role="textbox" {...register("gyldigFra")} />
+            </BlockLabel>
+            <BlockLabel>
+              Gyldig til
+              <Input type="date" role="textbox" {...register("gyldigTil")} />
+            </BlockLabel>
+          </DateWrapper>
+        </Part>
+        <Part>
           <BlockLabel>
             Målemetode
             <Select {...register("maalemetode")}>
@@ -115,15 +130,12 @@ const MetadataContent = ({ feature }: Props) => {
               ))}
             </Select>
           </BlockLabel>
-        </Part>
-        <Part>
           <BlockLabel>
-            Gyldig fra
-            <Input type="date" {...register("gyldigFra")} />
-          </BlockLabel>
-          <BlockLabel>
-            Gyldig til
-            <Input type="date" {...register("gyldigTil")} />
+            Nøyaktighet
+            <Input
+              type="number"
+              {...register("noeyaktighet", { valueAsNumber: true })}
+            />
           </BlockLabel>
         </Part>
         <Part>
@@ -196,6 +208,24 @@ const BlockLabel = styled.label`
     margin-top: 4px;
     width: 100%;
     margin-bottom: 8px;
+  }
+`;
+
+const DateWrapper = styled(Part)`
+  display: flex;
+
+  > * {
+    flex: 1;
+    margin: 0 8px;
+    min-width: 100px;
+
+    &:first-child {
+      margin-left: 0;
+    }
+
+    &:last-child {
+      margin-right: 0;
+    }
   }
 `;
 
