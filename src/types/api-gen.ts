@@ -168,9 +168,8 @@ export interface components {
     };
     /** @description Spesfikk metadata for en administrativ grense (fylkes/kommunegrense). Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Objekttype/Index/EAID_5142EDBA_4226_4ca3_924D_EECEFD216D1A */
     AdministrativGrenseMetadata: components["schemas"]["Metadata"] & {
-      /** @description Diskriminator for OpenAPI. */
-      discriminator?: string;
       common?: components["schemas"]["CommonMetadata"];
+      commonGrense?: components["schemas"]["CommonGrenseMetadata"];
       /** @description Opplysning om at grense følger naturlige skillelinjer i terrenget. */
       foelgerTerrengdetalj?: string;
       /** @description Klassifikasjon av stedfestingsnøyaktighet på grenser, og er basert på dårligste nøyaktighet til grensepunktene til grensen. */
@@ -179,18 +178,27 @@ export interface components {
       omtvistet?: boolean;
     } & {
       common: unknown;
-      discriminator: unknown;
+      commonGrense: unknown;
     };
     /** @description Spesifikk metadata for en AvtaltAvgrensningslinje. Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Diagram/Index/EAID_EEECEE48_B3FA_4807_AAE4_B30B63BC28E1 */
     AvtaltAvgrensningslinjeMetadata: components["schemas"]["Metadata"] & {
-      /** @description Diskriminator for OpenAPI. */
-      discriminator?: string;
       common?: components["schemas"]["CommonMetadata"];
+      commonGrense?: components["schemas"]["CommonGrenseMetadata"];
       maritimeGrenser?: components["schemas"]["MaritimeGrenserMetadata"];
     } & {
       common: unknown;
-      discriminator: unknown;
+      commonGrense: unknown;
       maritimeGrenser: unknown;
+    };
+    /** @description Felles metadata-egenskaper for grenser. */
+    CommonGrenseMetadata: {
+      /** @description Henviser til fastsettings- eller lovinformasjon. */
+      dokumentasjonsreferanser: components["schemas"]["Dokref"][];
+      posisjonskvalitet?: components["schemas"]["Posisjonskvalitet"];
+      /** @description Juridisk status på grensa. */
+      grensestatus?: string;
+      /** @description Måte en grense er fastsatt på. */
+      fastsettingstype?: string;
     };
     /** @description Felles metadata-egenskaper for grenser. */
     CommonMetadata: {
@@ -210,9 +218,7 @@ export interface components {
        * @description Tidspunktet når objektet opphørte å eksistere i den virkelige verden
        */
       gyldigTil?: string;
-      /** @description Generelle opplysninger/merknad */
-      informasjonselementer: string[];
-      posisjonskvalitet?: components["schemas"]["Posisjonskvalitet"];
+      informasjon?: components["schemas"]["TekstHolder"];
       /**
        * Format: date-time
        * @description Dato for siste endring på objektdataene
@@ -220,12 +226,6 @@ export interface components {
       oppdateringsdato: string;
       /** @description Referanse til opphavsmaterialet, kildematerialet, organisasjons/publiseringskilde. */
       opphav?: string;
-      /** @description Henviser til fastsettings- eller lovinformasjon. */
-      dokumentasjonsreferanser: components["schemas"]["Dokref"][];
-      /** @description Måte en grense er fastsatt på. */
-      fastsettingstype?: string;
-      /** @description Juridisk status på grensa. */
-      grensestatus?: string;
     };
     Coordinate: {
       /** Format: double */
@@ -248,8 +248,10 @@ export interface components {
     CoordinateSequenceFactory: { [key: string]: unknown };
     /** @description Henviser til fastsettings- eller lovinformasjon. */
     Dokref: {
+      /** @description ID for dokumentasjonsreferansen. */
+      id?: string;
       /** @description URL til saksdokument. */
-      dokumentlenker: string[];
+      dokumentlenker: components["schemas"]["TekstHolder"][];
       /**
        * Format: date
        * @description Dato for når dokumentet ble skrevet, publisert eller revidert.
@@ -260,7 +262,7 @@ export interface components {
       /** @description Lov som rettskilden er begrunnet i. */
       hjemmel?: string;
       /** @description Henvisning til saksdokument i Kartverkets eget arkiv. */
-      internReferanserKartverket: string[];
+      internReferanserKartverket: components["schemas"]["TekstHolder"][];
       /** @description Referanse til lov, forskrift, vedtak, dom eller traktat i form av kode som angir type dokument, dato og nummer For eksempel: LOV-2012-09-07-65. */
       rettskildeId?: string;
       /** @description Navn på lov, forskrift, vedtak, dom eller traktat. */
@@ -316,9 +318,9 @@ export interface components {
       length?: number;
       empty?: boolean;
       valid?: boolean;
+      simple?: boolean;
       /** Format: int32 */
       dimension?: number;
-      simple?: boolean;
       /** Format: int32 */
       srid?: number;
       geometryType?: string;
@@ -347,14 +349,13 @@ export interface components {
     };
     /** @description Spesifikk metadata for en Grunnlinje. Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Diagram/Index/EAID_EEECEE48_B3FA_4807_AAE4_B30B63BC28E1 */
     GrunnlinjeMetadata: components["schemas"]["Metadata"] & {
-      /** @description Diskriminator for OpenAPI. */
-      discriminator?: string;
       common?: components["schemas"]["CommonMetadata"];
+      commonGrense?: components["schemas"]["CommonGrenseMetadata"];
       maritimeGrenser?: components["schemas"]["MaritimeGrenserMetadata"];
       kommunenummer?: components["schemas"]["Kommunenummer"];
     } & {
       common: unknown;
-      discriminator: unknown;
+      commonGrense: unknown;
       maritimeGrenser: unknown;
     };
     /** @description Unik identifikasjon av et objekt */
@@ -403,17 +404,10 @@ export interface components {
        */
       hullIndeks?: number;
     };
-    /** @description Angivelse av hvilke land grensa er knyttet til Merknad: Alfanumerisk kode (ISO 3166-1 alpha-2) for land som definert i ISO 3166. */
-    Land: {
-      /** @description ID for landet. */
-      id: string;
-      /** @description Beskrivelse av landet. */
-      description: string;
-    };
     /** @description Metadata-egenskaper for maritim grense. */
     MaritimeGrenserMetadata: {
       /** @description Organisasjon som er ansvarlig for opprettholdelse av grensa. */
-      ansvarligeMyndigheter: string[];
+      ansvarligeMyndigheter: components["schemas"]["TekstHolder"][];
       /** @description Navn på område som loven gjelder for, eller område som grensa er beregnet fra. */
       gjelderOmraade?: string;
       /**
@@ -424,7 +418,7 @@ export interface components {
       /** @description Begrep knyttet til yttergrensa for virkeområdet, som oftest angitt i lov eller forskrift. */
       virkeomraadenavn?: string;
       /** @description Angivelse av hvilke land grensa er knyttet til Merknad: Alfanumerisk kode (ISO 3166-1 alpha-2) for land som definert i ISO 3166. */
-      land: components["schemas"]["Land"][];
+      land: components["schemas"]["TekstHolder"][];
     };
     /** @description Diverse metadata-felter fra sosi-modellen. */
     Metadata: {
@@ -448,13 +442,13 @@ export interface components {
       userData?: { [key: string]: unknown };
       coordinates?: components["schemas"]["Coordinate"][];
       empty?: boolean;
-      /** Format: int32 */
-      dimension?: number;
       /** Format: double */
       x?: number;
       /** Format: double */
       y?: number;
       simple?: boolean;
+      /** Format: int32 */
+      dimension?: number;
       geometryType?: string;
       coordinate?: components["schemas"]["Coordinate"];
       /** Format: int32 */
@@ -502,15 +496,14 @@ export interface components {
     };
     /** @description Spesifikk metadata for en riksgrense. Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Objekttype/Index/EAID_5C4B9E4D_05D7_4b2e_B467_9FCA428994F9 */
     RiksgrenseMetadata: components["schemas"]["Metadata"] & {
-      /** @description Diskriminator for OpenAPI. */
-      discriminator?: string;
       common?: components["schemas"]["CommonMetadata"];
+      commonGrense?: components["schemas"]["CommonGrenseMetadata"];
       /** @description Opplysning om at grense følger naturlige skillelinjer i terrenget. */
       foelgerTerrengdetalj?: string;
       /** @description Angivelse om stedfestingen (koordinatene) er kontrollert og funnet i orden (verifisert). */
       stedfestingVerifisert?: boolean;
       /** @description Organisasjon(er) som er ansvarlig for opprettholdelse av grensa. */
-      ansvarligeMyndigheter?: string[];
+      ansvarligeMyndigheter?: components["schemas"]["TekstHolder"][];
       /**
        * Format: double
        * @description Bredde av området på begge sider av riksgrensen som er ryddet for vegetasjon høyere enn 0,5 m.
@@ -519,13 +512,19 @@ export interface components {
     } & {
       ansvarligeMyndigheter: unknown;
       common: unknown;
-      discriminator: unknown;
+      commonGrense: unknown;
+    };
+    /** @description Angivelse av hvilke land grensa er knyttet til Merknad: Alfanumerisk kode (ISO 3166-1 alpha-2) for land som definert i ISO 3166. */
+    TekstHolder: {
+      /** @description ID for elementet. */
+      id?: string;
+      /** @description Tekstfelt. */
+      beskrivelse: string;
     };
     /** @description Spesifikk metadata for en territorialgrense. Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Diagram/Index/EAID_EEECEE48_B3FA_4807_AAE4_B30B63BC28E1 */
     TerritorialgrenseMetadata: components["schemas"]["Metadata"] & {
-      /** @description Diskriminator for OpenAPI. */
-      discriminator?: string;
       common?: components["schemas"]["CommonMetadata"];
+      commonGrense?: components["schemas"]["CommonGrenseMetadata"];
       maritimeGrenser?: components["schemas"]["MaritimeGrenserMetadata"];
       /**
        * Format: date
@@ -534,7 +533,7 @@ export interface components {
       beregningsdato?: string;
     } & {
       common: unknown;
-      discriminator: unknown;
+      commonGrense: unknown;
       maritimeGrenser: unknown;
     };
     Type: { [key: string]: unknown };

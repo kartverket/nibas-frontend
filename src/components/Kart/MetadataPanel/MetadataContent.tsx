@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
@@ -24,8 +25,7 @@ const getDateStringFromISOString = (dateString: string) =>
 const getDateStringToUTC = (dateString?: string) => {
   if (!dateString) return "";
 
-  const date = new Date(dateString);
-  return date.toISOString();
+  return new Date(dateString).toISOString();
 };
 
 const getUpdatedMetadata = (data: Inputs, oldMetadata: Metadata) =>
@@ -33,12 +33,18 @@ const getUpdatedMetadata = (data: Inputs, oldMetadata: Metadata) =>
     ...(oldMetadata ?? {}),
     common: {
       ...(oldMetadata.common ?? {}),
-      informasjonselementer: [data.informasjon],
+      informasjon: {
+        ...(oldMetadata.common?.informasjon ?? {}),
+        beskrivelse: data.informasjon,
+      },
       opphav: data.opphav,
       gyldigFra: getDateStringToUTC(data.gyldigFra),
       gyldigTil: getDateStringToUTC(data.gyldigTil),
+    },
+    commonGrense: {
+      ...(oldMetadata.commonGrense ?? {}),
       posisjonskvalitet: {
-        ...(oldMetadata?.common?.posisjonskvalitet ?? {}),
+        ...(oldMetadata?.commonGrense?.posisjonskvalitet ?? {}),
         maalemetode: data.maalemetode,
         noeyaktighet: data.noeyaktighet,
       },
@@ -64,13 +70,12 @@ const MetadataContent = ({ feature }: Props) => {
   const type = properties.type;
   const metadata = properties.metadata as Metadata;
 
-  const { register, handleSubmit } = useForm<Inputs>({
+  const { register, handleSubmit, setValue } = useForm<Inputs>({
     defaultValues: {
-      informasjon: metadata?.common?.informasjonselementer[0] ?? "",
-      grenseType: metadata?.discriminator ?? "",
-      maalemetode: metadata?.common?.posisjonskvalitet?.maalemetode ?? "",
-      noeyaktighet: metadata?.common?.posisjonskvalitet?.noeyaktighet,
-      opphav: metadata?.common?.opphav ?? "",
+      informasjon: metadata?.common?.informasjon?.beskrivelse,
+      grenseType: metadata?.discriminator,
+      noeyaktighet: metadata?.commonGrense?.posisjonskvalitet?.noeyaktighet,
+      opphav: metadata?.common?.opphav,
       gyldigFra: getDateStringFromISOString(metadata?.common?.gyldigFra ?? ""),
       gyldigTil: getDateStringFromISOString(metadata?.common?.gyldigTil ?? ""),
     },
@@ -82,19 +87,35 @@ const MetadataContent = ({ feature }: Props) => {
     "/v1/kodeliste/maalemetode-koder"
   );
 
+  // oppdater målemetode tekstfelt når kodene er hentet
+  useEffect(() => {
+    if (!maalemetodeKoder) return;
+
+    const selectedMaalemetode = maalemetodeKoder.find(
+      (kode) =>
+        kode.item.uuid === metadata.commonGrense?.posisjonskvalitet?.maalemetode
+    );
+
+    if (!selectedMaalemetode) return;
+
+    setValue("maalemetode", selectedMaalemetode.item.uuid);
+  }, [
+    maalemetodeKoder,
+    setValue,
+    metadata.commonGrense?.posisjonskvalitet?.maalemetode,
+  ]);
+
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    const newFeature = feature;
     const oldProperties = feature.getProperties();
 
     const newMetadata = getUpdatedMetadata(data, oldProperties.metadata);
 
-    newFeature.setId(feature.getId());
-    newFeature.setProperties({
+    feature.setProperties({
       ...oldProperties,
       metadata: newMetadata,
     });
 
-    updateGrenser([newFeature], tokenHolderFunc()?.token);
+    updateGrenser([feature], tokenHolderFunc()?.token);
   };
 
   return (
