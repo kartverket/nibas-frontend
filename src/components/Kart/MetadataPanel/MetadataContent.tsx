@@ -33,10 +33,7 @@ const getUpdatedMetadata = (data: Inputs, oldMetadata: Metadata) =>
     ...(oldMetadata ?? {}),
     common: {
       ...(oldMetadata.common ?? {}),
-      informasjon: {
-        ...(oldMetadata.common?.informasjon ?? {}),
-        beskrivelse: data.informasjon,
-      },
+      informasjon: data.informasjon,
       opphav: data.opphav,
       gyldigFra: getDateStringToUTC(data.gyldigFra),
       gyldigTil: getDateStringToUTC(data.gyldigTil),
@@ -72,7 +69,7 @@ const MetadataContent = ({ feature }: Props) => {
 
   const { register, handleSubmit, setValue } = useForm<Inputs>({
     defaultValues: {
-      informasjon: metadata?.common?.informasjon?.beskrivelse,
+      informasjon: metadata?.common?.informasjon,
       grenseType: metadata?.discriminator,
       noeyaktighet: metadata?.commonGrense?.posisjonskvalitet?.noeyaktighet,
       opphav: metadata?.common?.opphav,
@@ -108,11 +105,9 @@ const MetadataContent = ({ feature }: Props) => {
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     const oldProperties = feature.getProperties();
 
-    const newMetadata = getUpdatedMetadata(data, oldProperties.metadata);
-
     feature.setProperties({
       ...oldProperties,
-      metadata: newMetadata,
+      metadata: getUpdatedMetadata(data, oldProperties.metadata),
     });
 
     updateGrenser([feature], tokenHolderFunc()?.token);

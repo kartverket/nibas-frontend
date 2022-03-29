@@ -218,7 +218,8 @@ export interface components {
        * @description Tidspunktet når objektet opphørte å eksistere i den virkelige verden
        */
       gyldigTil?: string;
-      informasjon?: components["schemas"]["TekstHolder"];
+      /** @description Generelle opplysninger/merknad */
+      informasjon?: string;
       /**
        * Format: date-time
        * @description Dato for siste endring på objektdataene
@@ -318,9 +319,9 @@ export interface components {
       length?: number;
       empty?: boolean;
       valid?: boolean;
-      simple?: boolean;
       /** Format: int32 */
       dimension?: number;
+      simple?: boolean;
       /** Format: int32 */
       srid?: number;
       geometryType?: string;
@@ -442,13 +443,13 @@ export interface components {
       userData?: { [key: string]: unknown };
       coordinates?: components["schemas"]["Coordinate"][];
       empty?: boolean;
+      /** Format: int32 */
+      dimension?: number;
       /** Format: double */
       x?: number;
       /** Format: double */
       y?: number;
       simple?: boolean;
-      /** Format: int32 */
-      dimension?: number;
       geometryType?: string;
       coordinate?: components["schemas"]["Coordinate"];
       /** Format: int32 */

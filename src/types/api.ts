@@ -48,6 +48,8 @@ export type RiksgrenseMetadata = components["schemas"]["RiksgrenseMetadata"];
 export type TerritorialgrenseMetadata =
   components["schemas"]["TerritorialgrenseMetadata"];
 export type Type = components["schemas"]["Type"];
+export type CommonGrenseMetadata =
+  components["schemas"]["CommonGrenseMetadata"];
 
 // custom typer basert på api doc
 export type ApiPath = keyof paths;
