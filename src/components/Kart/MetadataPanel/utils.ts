@@ -9,8 +9,13 @@ export const getDateInFriendlyString = (dateString?: string) => {
 export const getDateStringFromISOString = (dateString: string) =>
   dateString.replace(/T.+$/g, "");
 
-export const getDateStringToUTC = (dateString?: string) => {
+export const getDateStringFromDateTime = (dateString?: string) => {
   if (!dateString) return "";
 
-  return new Date(dateString).toISOString();
+  const date = new Date(dateString);
+
+  const month =
+    date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+
+  return `${date.getFullYear()}-${month}-${date.getDate()}`;
 };
