@@ -26,7 +26,7 @@ type Inputs = {
   gyldigTil: string;
 };
 
-export const getUpdatedMetadata = (data: Inputs, oldMetadata: Metadata) =>
+const getUpdatedMetadata = (data: Inputs, oldMetadata: Metadata) =>
   ({
     ...(oldMetadata ?? {}),
     common: {

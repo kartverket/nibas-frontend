@@ -1,73 +1,68 @@
-import { Feature } from "ol";
+import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
+import { AdministrativGrenseMetadata } from "types/api";
+import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 
-export const mockBasicGrense = {
+export const mockGeoJsonFeatureResponse: GeoJSONFeatureCollection = {
   type: "FeatureCollection",
-  id: "2a0c1103-7844-488c-96a2-1676fa66572b",
   features: [
     {
       type: "Feature",
+      id: "9b4ab6bb-878f-472a-9243-64e2bdc48b8b",
       properties: {
-        id: 3,
-        navn: "viken_og_innlandet_grense",
-        type: "FYLKE",
-        administrativEnhet: {
+        type: "Fylkesgrense",
+        metadata: {
+          discriminator: "AdministrativGrenseMetadata",
+          common: {
+            identifikasjon: {
+              lokalid: "4a5d60ec-9385-4dec-ae76-14915d021010",
+              navnerom: "https://data.geonorge.no/sosi/administrativeenheter",
+              versjonid: undefined,
+            },
+            datafangstdato: "2020-06-15T00:00:00+02:00",
+            gyldigFra: "2020-06-16T00:00:00Z",
+            gyldigTil: "2020-06-17T00:00:00Z",
+            informasjon: "Informasjon",
+            oppdateringsdato: "2020-06-18T00:00:00+02:00",
+            opphav: "Opphav",
+            fastsettingstype: undefined,
+            grensestatus: undefined,
+          },
+          commonGrense: {
+            posisjonskvalitet: {
+              maalemetode: "9b4ab6bb-878f-472a-9243-64e2bdc48b8c",
+              noeyaktighet: 5,
+            },
+            dokumentasjonsreferanser: [],
+          },
+          foelgerTerrengdetalj: undefined,
+          noeyaktighetsklasse: "NøyaktigeMålinger",
+          omtvistet: false,
+        } as AdministrativGrenseMetadata,
+        kontekstEgenskaper: {
+          id: "064fdcd8-6123-478f-9976-171d14481277",
           type: "FYLKE",
-          id: 1,
-          navn: "Viken",
-          nummer: "30",
+          retningMedKlokken: true,
+          rekkefoelge: 0,
+          flateIndeks: 0,
+          hullIndeks: null,
         },
       },
       geometry: {
         type: "LineString",
+        srid: "25833",
         coordinates: [
-          [209895.43268598442, 6874687.984379287],
-          [211172.23122919415, 6875366.619199999],
-          [211159.5807131484, 6876177.451462617],
-          [209569.16963786847, 6878081.226561763],
-          [210609.98203931408, 6878957.403017106],
-          [212455.38700994628, 6880510.901403168],
-          [212013.36372773623, 6883402.173303616],
-        ],
-      },
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: 1,
-        navn: "viken_grense",
-        type: "FYLKE",
-        administrativEnhet: {
-          type: "FYLKE",
-          id: 1,
-          navn: "Viken",
-          nummer: "30",
-        },
-      },
-      geometry: {
-        type: "LineString",
-        coordinates: [
-          [151552.31768913998, 6856728.632614035],
-          [164914.38462092626, 6856071.953562445],
-          [164574.1089717507, 6845268.201701121],
-          [177419.5147281277, 6851223.025561694],
-          [177138.79093241104, 6854253.410312524],
-          [179205.9618862993, 6855731.67791327],
-          [179205.9618862993, 6850967.818824812],
-          [182268.44272887925, 6852754.265982984],
-          [188507.58954992722, 6841856.478432098],
-          [200983.60343353444, 6848160.544719114],
-          [173336.2069380211, 6867641.325634414],
-          [206486.05480473157, 6865081.983734359],
-          [206416.22673623555, 6866285.738400699],
-          [208265.3178440797, 6870751.274085945],
-          [209895.43268598442, 6874687.984379287],
+          [255736.58000000002, 6655335.41],
+          [255778.36000000002, 6655315.25],
+          [255831.85, 6655289.66],
         ],
       },
     },
   ],
 };
 
-export const mockBasicFeature = new Feature(mockBasicGrense);
+export const mockBasicFeature = getFeaturesFromGeoJson(
+  mockGeoJsonFeatureResponse
+)[0];
 
 export const mockFylker = [
   {
@@ -109,3 +104,16 @@ export const mockKommuner = [
     href: "http://localhost:8080/v1/kommuner/2",
   },
 ];
+
+export const mockMaalemetodeKode = {
+  type: "MAALEMETODE_KODE",
+  item: {
+    id: "https://register.geonorge.no/sosi-kodelister/malemetode-kode/terrengmalt-uspesifisert-maleinstrument/7f48625b-e46f-413e-ae4d-0381ac64264b",
+    label: "Terrengmålt: Uspesifisert måleinstrument",
+    lang: "no",
+    uuid: "9b4ab6bb-878f-472a-9243-64e2bdc48b8c",
+    status: "Gyldig",
+    description: "Målt i terrenget , uspesifisert metode/måleinstrument",
+    codevalue: "10",
+  },
+};
