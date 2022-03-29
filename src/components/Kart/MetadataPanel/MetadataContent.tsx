@@ -4,11 +4,7 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { SubmitHandler, useForm } from "react-hook-form";
 import styled, { css } from "styled-components";
-import {
-  getDateInFriendlyString,
-  getDateStringFromISOString,
-  getDateStringFromDateTime,
-} from "./utils";
+import { getDateInFriendlyString, getDateStringFromISOString } from "./utils";
 import { updateGrenser } from "api/grenser";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
@@ -33,8 +29,8 @@ const getUpdatedMetadata = (data: Inputs, oldMetadata: Metadata) =>
       ...(oldMetadata.common ?? {}),
       informasjon: data.informasjon,
       opphav: data.opphav,
-      gyldigFra: getDateStringFromDateTime(data.gyldigFra),
-      gyldigTil: getDateStringFromDateTime(data.gyldigTil),
+      gyldigFra: getDateStringFromISOString(data.gyldigFra),
+      gyldigTil: getDateStringFromISOString(data.gyldigTil),
     },
     commonGrense: {
       ...(oldMetadata.commonGrense ?? {}),
