@@ -4,6 +4,11 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { SubmitHandler, useForm } from "react-hook-form";
 import styled, { css } from "styled-components";
+import {
+  getDateInFriendlyString,
+  getDateStringFromISOString,
+  getDateStringToUTC,
+} from "./utils";
 import { updateGrenser } from "api/grenser";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
@@ -11,24 +16,17 @@ import Select from "components/form/Select";
 import useNibasApi from "hooks/useNibasApi";
 import { Metadata } from "types/api";
 
-const getDateInFriendlyString = (dateString?: string) => {
-  if (!dateString) return null;
-
-  const date = new Date(dateString);
-
-  return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+type Inputs = {
+  grenseType: string;
+  maalemetode: string;
+  noeyaktighet: number;
+  informasjon: string;
+  opphav: string;
+  gyldigFra: string;
+  gyldigTil: string;
 };
 
-const getDateStringFromISOString = (dateString: string) =>
-  dateString.replace(/T.+$/g, "");
-
-const getDateStringToUTC = (dateString?: string) => {
-  if (!dateString) return "";
-
-  return new Date(dateString).toISOString();
-};
-
-const getUpdatedMetadata = (data: Inputs, oldMetadata: Metadata) =>
+export const getUpdatedMetadata = (data: Inputs, oldMetadata: Metadata) =>
   ({
     ...(oldMetadata ?? {}),
     common: {
@@ -47,16 +45,6 @@ const getUpdatedMetadata = (data: Inputs, oldMetadata: Metadata) =>
       },
     },
   } as Metadata);
-
-type Inputs = {
-  grenseType: string;
-  maalemetode: string;
-  noeyaktighet: number;
-  informasjon: string;
-  opphav: string;
-  gyldigFra: string;
-  gyldigTil: string;
-};
 
 type Props = {
   feature: Feature<Geometry>;
