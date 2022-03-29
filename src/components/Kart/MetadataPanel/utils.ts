@@ -1,7 +1,9 @@
 export const getDateInFriendlyString = (dateString?: string) => {
   if (!dateString) return null;
 
-  const date = new Date(dateString);
+  const noTimezoneDateString = getDateStringFromISOString(dateString);
+
+  const date = new Date(noTimezoneDateString);
 
   return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
 };
