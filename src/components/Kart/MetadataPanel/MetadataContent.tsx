@@ -7,7 +7,7 @@ import styled, { css } from "styled-components";
 import {
   getDateInFriendlyString,
   getDateStringFromISOString,
-  getDateStringToUTC,
+  getDateStringFromDateTime,
 } from "./utils";
 import { updateGrenser } from "api/grenser";
 import Button from "components/form/Button";
@@ -33,8 +33,8 @@ const getUpdatedMetadata = (data: Inputs, oldMetadata: Metadata) =>
       ...(oldMetadata.common ?? {}),
       informasjon: data.informasjon,
       opphav: data.opphav,
-      gyldigFra: getDateStringToUTC(data.gyldigFra),
-      gyldigTil: getDateStringToUTC(data.gyldigTil),
+      gyldigFra: getDateStringFromDateTime(data.gyldigFra),
+      gyldigTil: getDateStringFromDateTime(data.gyldigTil),
     },
     commonGrense: {
       ...(oldMetadata.commonGrense ?? {}),
