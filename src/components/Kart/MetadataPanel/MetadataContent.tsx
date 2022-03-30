@@ -9,8 +9,15 @@ import { updateGrenser } from "api/grenser";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
+import { useEditGrenser } from "components/GrenserDrillDown/EditGrenserContext";
 import useNibasApi from "hooks/useNibasApi";
-import { Metadata } from "types/api";
+import { Metadata, FeatureProperties } from "types/api";
+
+const editingTypeByKontekstType = {
+  KOMMUNE: "kommune",
+  FYLKE: "fylke",
+  NASJON: "nasjon",
+} as const;
 
 type Inputs = {
   grenseType: string;
@@ -47,7 +54,7 @@ type Props = {
 };
 
 const MetadataContent = ({ feature }: Props) => {
-  const properties = feature.getProperties();
+  const properties = feature.getProperties() as FeatureProperties;
   const type = properties.type;
   const metadata = properties.metadata as Metadata;
 
@@ -67,6 +74,15 @@ const MetadataContent = ({ feature }: Props) => {
   const { data: maalemetodeKoder } = useNibasApi(
     "/v1/kodeliste/maalemetode-koder"
   );
+
+  const { values } = useEditGrenser(
+    editingTypeByKontekstType[properties.kontekstEgenskaper?.type ?? "FYLKE"]
+  );
+
+  const isDisabled = properties.kontekstEgenskaper?.id
+    ? values[properties.kontekstEgenskaper.id].visible &&
+      !values[properties.kontekstEgenskaper.id].editing
+    : true;
 
   // oppdater målemetode tekstfelt når kodene er hentet
   useEffect(() => {
@@ -110,18 +126,26 @@ const MetadataContent = ({ feature }: Props) => {
           <DateWrapper>
             <BlockLabel>
               Gyldig fra
-              <Input type="date" role="textbox" {...register("gyldigFra")} />
+              <Input
+                type="date"
+                role="textbox"
+                {...register("gyldigFra", { disabled: isDisabled })}
+              />
             </BlockLabel>
             <BlockLabel>
               Gyldig til
-              <Input type="date" role="textbox" {...register("gyldigTil")} />
+              <Input
+                type="date"
+                role="textbox"
+                {...register("gyldigTil", { disabled: isDisabled })}
+              />
             </BlockLabel>
           </DateWrapper>
         </Part>
         <Part>
           <BlockLabel>
             Målemetode
-            <Select {...register("maalemetode")}>
+            <Select {...register("maalemetode", { disabled: isDisabled })}>
               <option value="">---</option>
               {maalemetodeKoder?.map((kodeItem) => (
                 <option key={kodeItem.item.uuid} value={kodeItem.item.uuid}>
@@ -134,7 +158,10 @@ const MetadataContent = ({ feature }: Props) => {
             Nøyaktighet
             <Input
               type="number"
-              {...register("noeyaktighet", { valueAsNumber: true })}
+              {...register("noeyaktighet", {
+                valueAsNumber: true,
+                disabled: isDisabled,
+              })}
             />
           </BlockLabel>
         </Part>
@@ -157,11 +184,11 @@ const MetadataContent = ({ feature }: Props) => {
       </Container>
       <BlockLabel>
         Informasjon
-        <Input {...register("informasjon")} />
+        <Input {...register("informasjon", { disabled: isDisabled })} />
       </BlockLabel>
       <BlockLabel>
         Opphav
-        <Input {...register("opphav")} />
+        <Input {...register("opphav", { disabled: isDisabled })} />
       </BlockLabel>
       <Button type="submit">Lagre</Button>
     </form>
