@@ -35,7 +35,7 @@ const MetadataContent = ({ feature }: Props) => {
 
   const featureKontekstId = properties.kontekstEgenskaper?.id;
   const isDisabled = featureKontekstId
-    ? values[featureKontekstId].visible && !values[featureKontekstId].editing
+    ? values[featureKontekstId]?.visible && !values[featureKontekstId]?.editing
     : true;
 
   return (
