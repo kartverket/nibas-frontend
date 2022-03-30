@@ -1,16 +1,12 @@
-import { useEffect } from "react";
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
-import { SubmitHandler, useForm } from "react-hook-form";
 import styled, { css } from "styled-components";
-import { getDateInFriendlyString, getDateStringFromISOString } from "./utils";
-import { updateGrenser } from "api/grenser";
+import useMetadataForm from "./useMetadataForm";
+import { getDateInFriendlyString } from "./utils";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
 import { useEditGrenser } from "components/GrenserDrillDown/EditGrenserContext";
-import useNibasApi from "hooks/useNibasApi";
 import { Metadata, FeatureProperties } from "types/api";
 
 const editingTypeByKontekstType = {
@@ -18,36 +14,6 @@ const editingTypeByKontekstType = {
   FYLKE: "fylke",
   NASJON: "nasjon",
 } as const;
-
-type Inputs = {
-  grenseType: string;
-  maalemetode: string;
-  noeyaktighet: number;
-  informasjon: string;
-  opphav: string;
-  gyldigFra: string;
-  gyldigTil: string;
-};
-
-const getUpdatedMetadata = (data: Inputs, oldMetadata: Metadata) =>
-  ({
-    ...(oldMetadata ?? {}),
-    common: {
-      ...(oldMetadata.common ?? {}),
-      informasjon: data.informasjon,
-      opphav: data.opphav,
-      gyldigFra: getDateStringFromISOString(data.gyldigFra),
-      gyldigTil: getDateStringFromISOString(data.gyldigTil),
-    },
-    commonGrense: {
-      ...(oldMetadata.commonGrense ?? {}),
-      posisjonskvalitet: {
-        ...(oldMetadata?.commonGrense?.posisjonskvalitet ?? {}),
-        maalemetode: data.maalemetode,
-        noeyaktighet: data.noeyaktighet,
-      },
-    },
-  } as Metadata);
 
 type Props = {
   feature: Feature<Geometry>;
@@ -58,63 +24,22 @@ const MetadataContent = ({ feature }: Props) => {
   const type = properties.type;
   const metadata = properties.metadata as Metadata;
 
-  const { register, handleSubmit, setValue } = useForm<Inputs>({
-    defaultValues: {
-      informasjon: metadata?.common?.informasjon,
-      grenseType: metadata?.discriminator,
-      noeyaktighet: metadata?.commonGrense?.posisjonskvalitet?.noeyaktighet,
-      opphav: metadata?.common?.opphav,
-      gyldigFra: getDateStringFromISOString(metadata?.common?.gyldigFra ?? ""),
-      gyldigTil: getDateStringFromISOString(metadata?.common?.gyldigTil ?? ""),
-    },
-  });
-
-  const { tokenHolderFunc } = useAuthenticationFlow();
-
-  const { data: maalemetodeKoder } = useNibasApi(
-    "/v1/kodeliste/maalemetode-koder"
+  const { register, onSubmit, maalemetodeKoder } = useMetadataForm(
+    metadata,
+    feature
   );
 
   const { values } = useEditGrenser(
     editingTypeByKontekstType[properties.kontekstEgenskaper?.type ?? "FYLKE"]
   );
 
-  const isDisabled = properties.kontekstEgenskaper?.id
-    ? values[properties.kontekstEgenskaper.id].visible &&
-      !values[properties.kontekstEgenskaper.id].editing
+  const featureKontekstId = properties.kontekstEgenskaper?.id;
+  const isDisabled = featureKontekstId
+    ? values[featureKontekstId].visible && !values[featureKontekstId].editing
     : true;
 
-  // oppdater målemetode tekstfelt når kodene er hentet
-  useEffect(() => {
-    if (!maalemetodeKoder) return;
-
-    const selectedMaalemetode = maalemetodeKoder.find(
-      (kode) =>
-        kode.item.uuid === metadata.commonGrense?.posisjonskvalitet?.maalemetode
-    );
-
-    if (!selectedMaalemetode) return;
-
-    setValue("maalemetode", selectedMaalemetode.item.uuid);
-  }, [
-    maalemetodeKoder,
-    setValue,
-    metadata.commonGrense?.posisjonskvalitet?.maalemetode,
-  ]);
-
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    const oldProperties = feature.getProperties();
-
-    feature.setProperties({
-      ...oldProperties,
-      metadata: getUpdatedMetadata(data, oldProperties.metadata),
-    });
-
-    updateGrenser([feature], tokenHolderFunc()?.token);
-  };
-
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={onSubmit}>
       <Container>
         <Part>
           <BlockLabel>
