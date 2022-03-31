@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import Delomrader from "./Delomrader";
-import { EditGrenserProvider } from "./EditGrenserContext";
 import Fylkesgrenser from "./Fylkesgrenser";
 import GestligeInndelinger from "./GestligeInndelinger";
 import Grunnkretser from "./Grunnkretser";
@@ -20,25 +19,25 @@ import { useSidebarPanel } from "contexts/SidebarPanelContext";
 const GrenserDrillDown = () => {
   const { isOpen, togglePanel } = useSidebarPanel("nibas");
 
+  if (!isOpen) return null;
+
   return (
-    <EditGrenserProvider isOpen={isOpen}>
-      <Panel>
-        <SidebarPanelTitle closePanel={togglePanel} title="Grenser" />
-        <UnstyledList>
-          <Riksgrenser />
-          <Fylkesgrenser />
-          <Kommunegrenser />
-          <Stemmekretser />
-          <Skolekretser />
-          <Grunnkretser />
-          <Delomrader />
-          <Postnummeromraader />
-          <GestligeInndelinger />
-          <MaritimeGrenser />
-          <Svalbardomradet />
-        </UnstyledList>
-      </Panel>
-    </EditGrenserProvider>
+    <Panel>
+      <SidebarPanelTitle closePanel={togglePanel} title="Grenser" />
+      <UnstyledList>
+        <Riksgrenser />
+        <Fylkesgrenser />
+        <Kommunegrenser />
+        <Stemmekretser />
+        <Skolekretser />
+        <Grunnkretser />
+        <Delomrader />
+        <Postnummeromraader />
+        <GestligeInndelinger />
+        <MaritimeGrenser />
+        <Svalbardomradet />
+      </UnstyledList>
+    </Panel>
   );
 };
 

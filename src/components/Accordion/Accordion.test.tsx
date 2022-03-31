@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "test/test-utils";
+import { render, screen } from "test/test-utils";
+import userEvent from "@testing-library/user-event";
 import Accordion from "./Accordion";
 
 describe("Accordion", () => {
@@ -19,10 +20,10 @@ describe("Accordion", () => {
       </Accordion>
     );
 
-    fireEvent.click(screen.getByRole("button", { name: /title åpne/i }));
+    userEvent.click(screen.getByRole("button", { name: /title åpne/i }));
     expect(screen.getByText("Children")).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: /title lukk/i }));
+    userEvent.click(screen.getByRole("button", { name: /title lukk/i }));
     expect(screen.queryByText("Children")).not.toBeInTheDocument();
   });
 });

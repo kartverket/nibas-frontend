@@ -1,16 +1,19 @@
-import { SelectHTMLAttributes } from "react";
+import { forwardRef, SelectHTMLAttributes } from "react";
 import styled from "styled-components";
 import CaretDownIcon from "icons/caretdown.svg";
 
 type Props = SelectHTMLAttributes<HTMLSelectElement>;
 
-const Select = (props: Props) => {
+const Select = forwardRef<HTMLSelectElement, Props>(function Select(
+  props,
+  ref
+) {
   return (
     <SelectWrapper>
-      <SelectInput {...props}></SelectInput>
+      <SelectInput {...props} ref={ref}></SelectInput>
     </SelectWrapper>
   );
-};
+});
 
 const SelectInput = styled.select`
   appearance: none;

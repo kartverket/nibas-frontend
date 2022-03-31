@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "test/test-utils";
+import { render, screen } from "test/test-utils";
+import userEvent from "@testing-library/user-event";
 import BackgroundLayerAccordion from "./BackgroundLayerAccordion";
 
 const defaultProps: React.ComponentProps<typeof BackgroundLayerAccordion> = {
@@ -55,7 +56,7 @@ describe("BackgroundLayerAccordion", () => {
     const caret = screen.getByRole("button", {
       name: /layertitle åpne/i,
     });
-    fireEvent.click(caret);
+    userEvent.click(caret);
 
     expect(
       screen.getByRole("button", {

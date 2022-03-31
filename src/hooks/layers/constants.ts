@@ -40,6 +40,7 @@ export const grenserLayers = {
   // ingen source betyr at source settes async
   fylker: new VectorLayer({ source: new VectorSource() }),
   kommuner: new VectorLayer({ source: new VectorSource() }),
+  nasjoner: new VectorLayer({ source: new VectorSource() }),
   edit: new VectorLayer({
     source: new VectorSource(),
     style: new Style({

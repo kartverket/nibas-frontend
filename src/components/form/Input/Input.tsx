@@ -1,11 +1,11 @@
-import { InputHTMLAttributes } from "react";
+import { forwardRef, InputHTMLAttributes } from "react";
 import styled from "styled-components";
 
 type Props = InputHTMLAttributes<HTMLInputElement>;
 
-const Input = (props: Props) => {
-  return <Wrapper {...props} />;
-};
+const Input = forwardRef<HTMLInputElement, Props>(function Input(props, ref) {
+  return <Wrapper {...props} ref={ref} />;
+});
 
 const Wrapper = styled.input`
   padding: 8px;
@@ -31,6 +31,17 @@ const Wrapper = styled.input`
     &:active,
     &:focus {
       box-shadow: none;
+    }
+  }
+
+  // https://stackoverflow.com/questions/14946091/are-there-any-style-options-for-the-html5-date-picker
+  &[type="date"] {
+    &::-webkit-calendar-picker-indicator {
+      padding: 0;
+    }
+
+    &::-webkit-datetime-edit-fields-wrapper {
+      padding: 0;
     }
   }
 `;

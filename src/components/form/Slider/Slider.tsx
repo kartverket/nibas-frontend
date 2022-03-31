@@ -1,4 +1,4 @@
-import { InputHTMLAttributes } from "react";
+import { forwardRef, InputHTMLAttributes } from "react";
 import styled from "styled-components";
 
 type Props = InputHTMLAttributes<HTMLInputElement> & {
@@ -8,10 +8,13 @@ type Props = InputHTMLAttributes<HTMLInputElement> & {
 };
 
 // vi trenger ikke type inn til input, fordi den er bestemt av StyledSlider
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const Slider = ({ type, ...props }: Props) => {
-  return <StyledSlider {...props} />;
-};
+const Slider = forwardRef<HTMLInputElement, Props>(function Slider(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  { type, ...props },
+  ref
+) {
+  return <StyledSlider {...props} ref={ref} />;
+});
 
 // https://www.w3schools.com/howto/howto_js_rangeslider.asp
 const StyledSlider = styled.input.attrs(() => ({

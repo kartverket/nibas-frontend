@@ -1,38 +1,45 @@
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import styled, { css } from "styled-components";
-import useSWR from "swr";
-import { KodelisteItem } from "api/kodelister";
-import Input from "components/Input";
-import Select from "components/Select";
-import { fetcherWithToken } from "utils/swr";
+import useMetadataForm from "./useMetadataForm";
+import { getDateInFriendlyString } from "./utils";
+import Button from "components/form/Button";
+import Input from "components/form/Input";
+import Select from "components/form/Select";
+import { useEditGrenser } from "components/GrenserDrillDown/EditGrenserContext";
+import { Metadata, FeatureProperties } from "types/api";
 
-const getDateInFormat = (dateString?: string) => {
-  if (!dateString) return null;
-
-  const date = new Date(dateString);
-
-  return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
-};
+const editingTypeByKontekstType = {
+  KOMMUNE: "kommune",
+  FYLKE: "fylke",
+  NASJON: "nasjon",
+} as const;
 
 type Props = {
   feature: Feature<Geometry>;
 };
 
 const MetadataContent = ({ feature }: Props) => {
-  const { tokenHolderFunc } = useAuthenticationFlow();
-  const { data: maalemetodeKoder } = useSWR<KodelisteItem[]>(
-    ["/v1/kodeliste/maalemetode-koder", tokenHolderFunc()?.token],
-    fetcherWithToken
+  const properties = feature.getProperties() as FeatureProperties;
+  const type = properties.type;
+  const metadata = properties.metadata as Metadata;
+
+  const { register, onSubmit, maalemetodeKoder } = useMetadataForm(
+    metadata,
+    feature
   );
 
-  const properties = feature.getProperties();
-  const type = properties.type;
-  const metadata = properties.metadata;
+  const { values } = useEditGrenser(
+    editingTypeByKontekstType[properties.kontekstEgenskaper?.type ?? "FYLKE"]
+  );
+
+  const featureKontekstId = properties.kontekstEgenskaper?.id;
+  const isDisabled = featureKontekstId
+    ? values[featureKontekstId]?.visible && !values[featureKontekstId]?.editing
+    : true;
 
   return (
-    <div>
+    <form onSubmit={onSubmit}>
       <Container>
         <Part>
           <BlockLabel>
@@ -41,12 +48,29 @@ const MetadataContent = ({ feature }: Props) => {
               <option>{type}</option>
             </Select>
           </BlockLabel>
+          <DateWrapper>
+            <BlockLabel>
+              Gyldig fra
+              <Input
+                type="date"
+                role="textbox"
+                {...register("gyldigFra", { disabled: isDisabled })}
+              />
+            </BlockLabel>
+            <BlockLabel>
+              Gyldig til
+              <Input
+                type="date"
+                role="textbox"
+                {...register("gyldigTil", { disabled: isDisabled })}
+              />
+            </BlockLabel>
+          </DateWrapper>
+        </Part>
+        <Part>
           <BlockLabel>
             Målemetode
-            <Select
-              disabled
-              value={metadata?.common?.posisjonskvalitet?.maalemetode ?? ""}
-            >
+            <Select {...register("maalemetode", { disabled: isDisabled })}>
               <option value="">---</option>
               {maalemetodeKoder?.map((kodeItem) => (
                 <option key={kodeItem.item.uuid} value={kodeItem.item.uuid}>
@@ -55,20 +79,14 @@ const MetadataContent = ({ feature }: Props) => {
               ))}
             </Select>
           </BlockLabel>
-        </Part>
-        <Part>
           <BlockLabel>
-            Gyldig fra
+            Nøyaktighet
             <Input
-              disabled
-              defaultValue={metadata?.common?.gyldigFra ?? "---"}
-            />
-          </BlockLabel>
-          <BlockLabel>
-            Gyldig til
-            <Input
-              disabled
-              defaultValue={metadata?.common?.gyldigTil ?? "---"}
+              type="number"
+              {...register("noeyaktighet", {
+                valueAsNumber: true,
+                disabled: isDisabled,
+              })}
             />
           </BlockLabel>
         </Part>
@@ -76,29 +94,29 @@ const MetadataContent = ({ feature }: Props) => {
           <div>
             <MetadataText>Oppdateringsdato</MetadataText>
             <MetadataValue>
-              {getDateInFormat(metadata?.common?.oppdateringsdato) ?? "---"}
+              {getDateInFriendlyString(metadata?.common?.oppdateringsdato) ??
+                "---"}
             </MetadataValue>
           </div>
           <div>
-            <MetadataText>Datafangsdato</MetadataText>
+            <MetadataText>Datafangstdato</MetadataText>
             <MetadataValue>
-              {getDateInFormat(metadata?.common?.datafangstdato) ?? "---"}
+              {getDateInFriendlyString(metadata?.common?.datafangstdato) ??
+                "---"}
             </MetadataValue>
           </div>
         </Part>
       </Container>
       <BlockLabel>
         Informasjon
-        <Input
-          disabled
-          defaultValue={metadata?.common?.informasjonselementer[0] ?? "---"}
-        />
+        <Input {...register("informasjon", { disabled: isDisabled })} />
       </BlockLabel>
       <BlockLabel>
         Opphav
-        <Input disabled defaultValue={metadata?.common?.opphav ?? "---"} />
+        <Input {...register("opphav", { disabled: isDisabled })} />
       </BlockLabel>
-    </div>
+      <Button type="submit">Lagre</Button>
+    </form>
   );
 };
 
@@ -142,6 +160,24 @@ const BlockLabel = styled.label`
     margin-top: 4px;
     width: 100%;
     margin-bottom: 8px;
+  }
+`;
+
+const DateWrapper = styled(Part)`
+  display: flex;
+
+  > * {
+    flex: 1;
+    margin: 0 8px;
+    min-width: 100px;
+
+    &:first-child {
+      margin-left: 0;
+    }
+
+    &:last-child {
+      margin-right: 0;
+    }
   }
 `;
 

@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from "test/test-utils";
+import { render, screen } from "test/test-utils";
+import userEvent from "@testing-library/user-event";
 import Sidebar from "./Sidebar";
 import { defaultTheme } from "style/theme";
 
@@ -23,7 +24,7 @@ describe("Sidebar", () => {
     render(<Sidebar />);
 
     const nibasButton = screen.getByRole("button", { name: /nibas/i });
-    fireEvent.click(nibasButton);
+    userEvent.click(nibasButton);
 
     expect(nibasButton).toHaveStyle(`color: ${defaultTheme.colors.blue}`);
   });

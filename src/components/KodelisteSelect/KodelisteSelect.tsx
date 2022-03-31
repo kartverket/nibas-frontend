@@ -3,7 +3,7 @@ import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import styled from "styled-components";
 import useSWR from "swr";
 import { KodelisteItem } from "../../api/kodelister";
-import Select from "components/Select";
+import Select from "components/form/Select";
 import { fetcherWithToken } from "utils/swr";
 
 type KodelisteSelectProps = {

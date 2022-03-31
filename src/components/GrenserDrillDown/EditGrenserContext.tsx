@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
 
-export type EditingType = "fylke" | "kommune";
+export type EditingType = "fylke" | "kommune" | "nasjon";
 export type ObjectValue = {
   editing?: boolean;
   visible?: boolean;
@@ -22,11 +22,7 @@ const EditGrenserContext = createContext<
   | undefined
 >(undefined);
 
-type Props = {
-  isOpen: boolean;
-};
-
-export const EditGrenserProvider: React.FC<Props> = ({ children, isOpen }) => {
+export const EditGrenserProvider: React.FC = ({ children }) => {
   const [editingObject, setEditingObject] = useState<EditingObject>({});
 
   const setObjectValue = (
@@ -50,7 +46,7 @@ export const EditGrenserProvider: React.FC<Props> = ({ children, isOpen }) => {
 
   return (
     <EditGrenserContext.Provider value={value}>
-      {isOpen ? children : null}
+      {children}
     </EditGrenserContext.Provider>
   );
 };

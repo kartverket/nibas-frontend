@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "test/test-utils";
+import { render, screen } from "test/test-utils";
+import userEvent from "@testing-library/user-event";
 import PageLayout from "./PageLayout";
 
 describe("PageLayout", () => {
@@ -9,8 +10,8 @@ describe("PageLayout", () => {
       const bakgrunnskartButton = screen.getByRole("button", {
         name: /bakgrunnskart/i,
       });
-      fireEvent.click(bakgrunnskartButton);
-      fireEvent.click(bakgrunnskartButton);
+      userEvent.click(bakgrunnskartButton);
+      userEvent.click(bakgrunnskartButton);
 
       expect(
         screen.queryByRole("heading", { name: /bakgrunnskart/i })
@@ -23,10 +24,10 @@ describe("PageLayout", () => {
       const bakgrunnskartButton = screen.getByRole("button", {
         name: /bakgrunnskart/i,
       });
-      fireEvent.click(bakgrunnskartButton);
+      userEvent.click(bakgrunnskartButton);
 
       const nibasButton = screen.getByRole("button", { name: /nibas/i });
-      fireEvent.click(nibasButton);
+      userEvent.click(nibasButton);
 
       expect(
         screen.getByRole("heading", { name: /grenser/i })
@@ -42,12 +43,12 @@ describe("PageLayout", () => {
       const bakgrunnskartButton = screen.getByRole("button", {
         name: /bakgrunnskart/i,
       });
-      fireEvent.click(bakgrunnskartButton);
+      userEvent.click(bakgrunnskartButton);
 
       const closeButton = screen.getByRole("button", {
         name: /lukk bakgrunnskart/i,
       });
-      fireEvent.click(closeButton);
+      userEvent.click(closeButton);
 
       expect(
         screen.queryByRole("heading", { name: /bakgrunnskart/i })
@@ -70,7 +71,7 @@ describe("PageLayout", () => {
       const bakgrunnskartButton = screen.getByRole("button", {
         name: /bakgrunnskart/i,
       });
-      fireEvent.click(bakgrunnskartButton);
+      userEvent.click(bakgrunnskartButton);
 
       expect(
         screen.getByRole("heading", { name: /bakgrunnskart/i })
@@ -86,17 +87,17 @@ describe("PageLayout", () => {
       const bakgrunnskartButton = screen.getByRole("button", {
         name: /bakgrunnskart/i,
       });
-      fireEvent.click(bakgrunnskartButton);
+      userEvent.click(bakgrunnskartButton);
 
       const showLayerButton = await screen.findByRole("button", {
         name: /vis Administrative enheter WMS versjon 2/i,
       });
-      fireEvent.click(showLayerButton);
+      userEvent.click(showLayerButton);
 
       const hideLayerButton = await screen.findByRole("button", {
         name: /skjul Administrative enheter WMS versjon 2/i,
       });
-      fireEvent.click(hideLayerButton);
+      userEvent.click(hideLayerButton);
 
       expect(showLayerButton).toBeInTheDocument();
     });
@@ -107,17 +108,17 @@ describe("PageLayout", () => {
       const bakgrunnskartButton = screen.getByRole("button", {
         name: /bakgrunnskart/i,
       });
-      fireEvent.click(bakgrunnskartButton);
+      userEvent.click(bakgrunnskartButton);
 
       const showLayerButton = await screen.findByRole("button", {
         name: /vis Nibcache_UTM33_EUREF89_v2/i,
       });
-      fireEvent.click(showLayerButton);
+      userEvent.click(showLayerButton);
 
       const hideLayerButton = await screen.findByRole("button", {
         name: /skjul Nibcache_UTM33_EUREF89_v2/i,
       });
-      fireEvent.click(hideLayerButton);
+      userEvent.click(hideLayerButton);
 
       expect(showLayerButton).toBeInTheDocument();
     });
@@ -136,7 +137,7 @@ describe("PageLayout", () => {
       render(<PageLayout />);
 
       const nibasButton = screen.getByRole("button", { name: /nibas/i });
-      fireEvent.click(nibasButton);
+      userEvent.click(nibasButton);
 
       expect(
         screen.getByRole("heading", { name: /grenser/i })
@@ -147,7 +148,7 @@ describe("PageLayout", () => {
       render(<PageLayout />);
 
       const nibasButton = screen.getByRole("button", { name: /nibas/i });
-      fireEvent.click(nibasButton);
+      userEvent.click(nibasButton);
 
       expect(screen.getByText(/riksgrenser/i)).toBeInTheDocument();
       expect(screen.getByText(/fylkesgrenser/i)).toBeInTheDocument();
@@ -166,12 +167,12 @@ describe("PageLayout", () => {
       render(<PageLayout />);
 
       const nibasButton = screen.getByRole("button", { name: /nibas/i });
-      fireEvent.click(nibasButton);
+      userEvent.click(nibasButton);
 
       const fylkesGrenserAccordionButton = screen.getByRole("button", {
         name: /fylkesgrenser/i,
       });
-      fireEvent.click(fylkesGrenserAccordionButton);
+      userEvent.click(fylkesGrenserAccordionButton);
 
       expect(
         await screen.findByText(/vestfold og telemark/i)
@@ -183,17 +184,17 @@ describe("PageLayout", () => {
       render(<PageLayout />);
 
       const nibasButton = screen.getByRole("button", { name: /nibas/i });
-      fireEvent.click(nibasButton);
+      userEvent.click(nibasButton);
 
       const kommuneGrenserAccordionButton = screen.getByRole("button", {
         name: /kommunegrenser/i,
       });
-      fireEvent.click(kommuneGrenserAccordionButton);
+      userEvent.click(kommuneGrenserAccordionButton);
 
       const agderAccordionButton = await screen.findByRole("button", {
         name: /agder/i,
       });
-      fireEvent.click(agderAccordionButton);
+      userEvent.click(agderAccordionButton);
 
       expect(await screen.findByText(/malvik/i)).toBeInTheDocument();
       expect(await screen.findByText(/giske/i)).toBeInTheDocument();
@@ -204,12 +205,12 @@ describe("PageLayout", () => {
         render(<PageLayout />);
 
         const nibasButton = screen.getByRole("button", { name: /nibas/i });
-        fireEvent.click(nibasButton);
+        userEvent.click(nibasButton);
 
         const fylkesGrenserAccordionButton = screen.getByRole("button", {
           name: /fylkesgrenser/i,
         });
-        fireEvent.click(fylkesGrenserAccordionButton);
+        userEvent.click(fylkesGrenserAccordionButton);
 
         const closedEyes = await screen.findAllByRole("button", {
           name: "Usynlig",
@@ -218,7 +219,7 @@ describe("PageLayout", () => {
           name: "Synlig",
         });
 
-        fireEvent.click(closedEyes[0]);
+        userEvent.click(closedEyes[0]);
 
         const openEye = screen.getByRole("button", { name: "Synlig" });
         expect(openEye).toBeInTheDocument();
@@ -229,17 +230,17 @@ describe("PageLayout", () => {
         render(<PageLayout />);
 
         const nibasButton = screen.getByRole("button", { name: /nibas/i });
-        fireEvent.click(nibasButton);
+        userEvent.click(nibasButton);
 
         const fylkesGrenserAccordionButton = screen.getByRole("button", {
           name: /fylkesgrenser/i,
         });
-        fireEvent.click(fylkesGrenserAccordionButton);
+        userEvent.click(fylkesGrenserAccordionButton);
 
         const checkbox = await screen.findByRole("checkbox", {
           name: /agder/i,
         });
-        fireEvent.click(checkbox);
+        userEvent.click(checkbox);
 
         expect(checkbox).toBeChecked();
         expect(
@@ -251,18 +252,18 @@ describe("PageLayout", () => {
         render(<PageLayout />);
 
         const nibasButton = screen.getByRole("button", { name: /nibas/i });
-        fireEvent.click(nibasButton);
+        userEvent.click(nibasButton);
 
         const fylkesGrenserAccordionButton = screen.getByRole("button", {
           name: /fylkesgrenser/i,
         });
-        fireEvent.click(fylkesGrenserAccordionButton);
+        userEvent.click(fylkesGrenserAccordionButton);
 
         const checkbox = await screen.findByRole("checkbox", {
           name: /agder/i,
         });
-        fireEvent.click(checkbox);
-        fireEvent.click(checkbox);
+        userEvent.click(checkbox);
+        userEvent.click(checkbox);
 
         expect(checkbox).not.toBeChecked();
         expect(

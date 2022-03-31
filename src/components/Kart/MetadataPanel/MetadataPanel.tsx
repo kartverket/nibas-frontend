@@ -4,7 +4,7 @@ import Geometry from "ol/geom/Geometry";
 import styled from "styled-components";
 import { KartInteractable } from "../KartInteractable";
 import MetadataContent from "./MetadataContent";
-import Button from "components/Button";
+import Button from "components/form/Button";
 
 type Props = {
   selectedFeatures: Feature<Geometry>[];
@@ -35,7 +35,7 @@ const MetadataPanel = ({ selectedFeatures }: Props) => {
   return (
     <Panel>
       <h3>Linje metadata</h3>
-      <MetadataContent feature={singleFeature} />
+      <MetadataContent key={singleFeature.getId()} feature={singleFeature} />
       <Button onClick={() => setVisible(false)}>Lukk</Button>
     </Panel>
   );

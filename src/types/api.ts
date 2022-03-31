@@ -36,7 +36,7 @@ export type KommuneRequest = components["schemas"]["KommuneRequest"];
 export type KommuneResponse = components["schemas"]["KommuneResponse"];
 export type Kommunenummer = components["schemas"]["Kommunenummer"];
 export type KontekstEgenskaper = components["schemas"]["KontekstEgenskaper"];
-export type Land = components["schemas"]["Land"];
+export type Land = components["schemas"]["TekstHolder"];
 export type MaritimeGrenserMetadata =
   components["schemas"]["MaritimeGrenserMetadata"];
 export type NasjonRef = components["schemas"]["NasjonRef"];
@@ -48,6 +48,8 @@ export type RiksgrenseMetadata = components["schemas"]["RiksgrenseMetadata"];
 export type TerritorialgrenseMetadata =
   components["schemas"]["TerritorialgrenseMetadata"];
 export type Type = components["schemas"]["Type"];
+export type CommonGrenseMetadata =
+  components["schemas"]["CommonGrenseMetadata"];
 
 // custom typer basert på api doc
 export type ApiPath = keyof paths;

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { map } from "../constants";
-import Button from "components/Button";
 import CustomControl from "components/CustomControl";
+import Button from "components/form/Button";
 import { ReactComponent as MinusIcon } from "icons/minus.svg";
 import { ReactComponent as PlusIcon } from "icons/pluss.svg";
 

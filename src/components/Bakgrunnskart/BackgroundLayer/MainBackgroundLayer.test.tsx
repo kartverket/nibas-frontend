@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "test/test-utils";
+import { render, screen } from "test/test-utils";
+import userEvent from "@testing-library/user-event";
 import MainBackgroundLayer from "./MainBackgroundLayer";
 
 const defaultProps: React.ComponentProps<typeof MainBackgroundLayer> = {
@@ -37,7 +38,7 @@ describe("MainBackgroundLayer", () => {
     const caret = screen.getByRole("button", {
       name: /hovedlag åpne/i,
     });
-    fireEvent.click(caret);
+    userEvent.click(caret);
 
     expect(screen.getByText(/sublag1/i)).toBeInTheDocument();
     expect(screen.getByText(/sublag2/i)).toBeInTheDocument();

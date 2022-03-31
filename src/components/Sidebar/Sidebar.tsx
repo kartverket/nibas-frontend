@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import Button from "components/Button";
+import Button from "components/form/Button";
 import { useSidebarPanels } from "contexts/SidebarPanelContext";
 import { ReactComponent as DraftsIcon } from "icons/drafts.svg";
 import { ReactComponent as MapIcon } from "icons/map.svg";
