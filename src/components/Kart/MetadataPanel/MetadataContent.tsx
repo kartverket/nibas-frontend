@@ -86,6 +86,8 @@ const MetadataContent = ({ feature }: Props) => {
               {...register("noeyaktighet", {
                 valueAsNumber: true,
                 disabled: isDisabled,
+                min: 0,
+                max: 1_000_000,
               })}
             />
           </BlockLabel>
