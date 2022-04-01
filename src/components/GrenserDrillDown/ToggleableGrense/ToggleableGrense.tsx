@@ -50,23 +50,37 @@ const ToggleableGrense = <T extends GrenseRef>({
   useEffect(() => {
     if (!features) return;
 
-    if (objectValue.inserted && !objectValue.visible) {
-      // hvis laget er satt inn og IKKE synlig lenger, fjern fra layer
-      // og sett at det ikke er satt inn
-      const layerId = layerIdByGrenseType[type];
+    const { inserted, editing, visible } = objectValue;
 
-      // vi vet ikke hvilket lag features lå i før det fjernes, så vi fjerner fra begge
-      removeFeaturesFromSourceByIds("edit", features);
-      removeFeaturesFromSourceByIds(layerId, features);
+    if (inserted) {
+      if (!visible) {
+        // hvis laget er satt inn og IKKE synlig lenger, fjern fra layer
+        // og sett at det ikke er satt inn
+        const layerId = layerIdByGrenseType[type];
 
-      setInserted(false);
-    } else if (!objectValue.inserted && objectValue.visible) {
-      // hvis laget IKKE satt inn og skal være synlig, sett inn i layer
-      // og sett at det er satt inn
-      const layerId = objectValue.editing ? "edit" : layerIdByGrenseType[type];
+        // vi vet ikke hvilket lag features lå i før det fjernes, så vi fjerner fra begge
+        removeFeaturesFromSourceByIds("edit", features);
+        removeFeaturesFromSourceByIds(layerId, features);
 
-      addFeaturesToSource(layerId, features);
-      setInserted(true);
+        setInserted(false);
+      } else if (editing) {
+        // hvis laget er satt inn, synlig, og redigerbart, gikk det fra å bare være synlig til redigerbart
+        // fjern fra gamle laget og legg til i edit
+        const layerId = layerIdByGrenseType[type];
+
+        removeFeaturesFromSourceByIds(layerId, features);
+        addFeaturesToSource("edit", features);
+      }
+    } else {
+      if (visible) {
+        // hvis laget IKKE satt inn og skal være synlig, sett inn i layer
+        // og sett at det er satt inn
+        const layerId = editing ? "edit" : layerIdByGrenseType[type];
+
+        addFeaturesToSource(layerId, features);
+
+        setInserted(true);
+      }
     }
   }, [features, objectValue, type, setInserted]);
 
