@@ -1,36 +1,33 @@
 import styled from "styled-components";
-import Button from "components/form/Button";
-import { useSidebarPanels } from "contexts/SidebarPanelContext";
+import SidebarButton from "./SidebarButton";
 import { ReactComponent as DraftsIcon } from "icons/drafts.svg";
+import { ReactComponent as InndelingerIcon } from "icons/inndelinger.svg";
 import { ReactComponent as MapIcon } from "icons/map.svg";
-import { ReactComponent as NibasIcon } from "icons/nibas.svg";
 import { ReactComponent as SearchIcon } from "icons/search.svg";
 
 const Sidebar = () => {
-  const { openPanels, togglePanel } = useSidebarPanels();
-
   return (
     <StyledSidebar>
       <SidebarButton
-        active={openPanels.nibas}
-        onClick={() => togglePanel("nibas")}
-        title="Nibas"
-      >
-        <NibasIcon />
-      </SidebarButton>
-      <SidebarButton active={openPanels.search} title="Søk">
-        <SearchIcon />
-      </SidebarButton>
+        title="Inndelinger"
+        panel="inndelinger"
+        icon={<InndelingerIcon width={36} height={36} />}
+      />
       <SidebarButton
-        active={openPanels.backgroundLayers}
-        onClick={() => togglePanel("backgroundLayers")}
-        title="Bakgrunnskart"
-      >
-        <MapIcon />
-      </SidebarButton>
-      <SidebarButton active={openPanels.drafts} title="Utkast">
-        <DraftsIcon />
-      </SidebarButton>
+        title="Søk"
+        panel="soek"
+        icon={<SearchIcon width={36} height={36} />}
+      />
+      <SidebarButton
+        title="Kartlag"
+        panel="kartlag"
+        icon={<MapIcon width={36} height={36} />}
+      />
+      <SidebarButton
+        title="Utkast"
+        panel="utkast"
+        icon={<DraftsIcon width={36} height={36} />}
+      />
     </StyledSidebar>
   );
 };
@@ -43,34 +40,6 @@ const StyledSidebar = styled.div`
   flex-direction: column;
   align-items: center;
   margin-top: 80px;
-`;
-
-type SidebarButtonProps = {
-  active: boolean;
-};
-
-const SidebarButton = styled(Button).attrs(() => ({
-  variant: "icon",
-}))<SidebarButtonProps>`
-  display: block;
-  margin: 8px 0;
-  padding: 8px;
-  width: 100%;
-  z-index: 2;
-
-  border-top: 2px solid
-    ${(props) => (props.active ? props.theme.colors.blue : "transparent")};
-  border-bottom: 2px solid
-    ${(props) => (props.active ? props.theme.colors.blue : "transparent")};
-  border-right: 2px solid
-    ${(props) => (props.active ? props.theme.colors.white : "transparent")};
-  color: ${({ active, theme }) =>
-    active ? theme.colors.blue : theme.colors.black};
-
-  :hover {
-    border-color: ${({ theme }) => theme.colors.blue};
-    border-right-color: ${({ theme }) => theme.colors.white};
-  }
 `;
 
 export default Sidebar;

@@ -1,14 +1,14 @@
 import React, { createContext, useContext, useState } from "react";
 
-export type SidebarPanel = "nibas" | "search" | "backgroundLayers" | "drafts";
+export type SidebarPanel = "inndelinger" | "soek" | "kartlag" | "utkast";
 export type OpenSidebarPanels = Record<SidebarPanel, boolean>;
 
 const getClosedPanels = () =>
   ({
-    nibas: false,
-    search: false,
-    backgroundLayers: false,
-    drafts: false,
+    inndelinger: false,
+    soek: false,
+    kartlag: false,
+    utkast: false,
   } as OpenSidebarPanels);
 
 const SidebarPanelContext = createContext<

@@ -7,10 +7,10 @@ describe("Sidebar", () => {
   it("should render four buttons", () => {
     render(<Sidebar />);
 
-    const nibasButton = screen.getByRole("button", { name: /nibas/i });
+    const nibasButton = screen.getByRole("button", { name: /inndelinger/i });
     const sokButton = screen.getByRole("button", { name: /søk/i });
     const bakgrunnskartButton = screen.getByRole("button", {
-      name: /bakgrunnskart/i,
+      name: /kartlag/i,
     });
     const utkastButton = screen.getByRole("button", { name: /utkast/i });
 
@@ -23,7 +23,7 @@ describe("Sidebar", () => {
   it("should turn button blue when panel is open", () => {
     render(<Sidebar />);
 
-    const nibasButton = screen.getByRole("button", { name: /nibas/i });
+    const nibasButton = screen.getByRole("button", { name: /inndelinger/i });
     userEvent.click(nibasButton);
 
     expect(nibasButton).toHaveStyle(`color: ${defaultTheme.colors.blue}`);

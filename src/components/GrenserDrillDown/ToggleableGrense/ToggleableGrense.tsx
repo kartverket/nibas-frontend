@@ -3,9 +3,10 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import styled from "styled-components";
 import { EditingType, ObjectValue } from "../EditGrenserContext";
+import Checkbox from "components/Checkbox";
 import Button from "components/form/Button";
 import { GrenseId } from "hooks/layers/types";
-import { ReactComponent as InfoIcon } from "icons/info.svg";
+import { ReactComponent as EditIcon } from "icons/edit.svg";
 import { ReactComponent as VisibilityIcon } from "icons/visibility.svg";
 import { ReactComponent as VisibilityOffIcon } from "icons/visibility_off.svg";
 import { GrenseRef } from "types/api";
@@ -120,14 +121,12 @@ const ToggleableGrense = <T extends GrenseRef>({
           <VisibilityOffIcon aria-label="Usynlig" />
         )}
       </Button>
-      <label>
-        <input
+      <StyledCheckbox
+        label={title}
           type="checkbox"
           checked={objectValue.editing ?? false}
           onChange={toggleEditing}
         />
-        {title}
-      </label>
       <Button variant="icon" onClick={openInfo}>
         <ColoredInfo />
       </Button>
@@ -138,13 +137,19 @@ const ToggleableGrense = <T extends GrenseRef>({
 const Wrapper = styled.div`
   display: flex;
   align-items: center;
+  margin: 8px 0;
 
   > label {
     flex: 1;
   }
 `;
 
-const ColoredInfo = styled(InfoIcon)`
+const StyledCheckbox = styled(Checkbox)`
+  margin-bottom: 0;
+  margin-left: 4px;
+`;
+
+const ColoredInfo = styled(EditIcon)`
   color: ${({ theme }) => theme.colors.blue};
 `;
 

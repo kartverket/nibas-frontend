@@ -8,7 +8,7 @@ describe("PageLayout", () => {
       render(<PageLayout />);
 
       const bakgrunnskartButton = screen.getByRole("button", {
-        name: /bakgrunnskart/i,
+        name: /kartlag/i,
       });
       userEvent.click(bakgrunnskartButton);
       userEvent.click(bakgrunnskartButton);
@@ -22,15 +22,15 @@ describe("PageLayout", () => {
       render(<PageLayout />);
 
       const bakgrunnskartButton = screen.getByRole("button", {
-        name: /bakgrunnskart/i,
+        name: /kartlag/i,
       });
       userEvent.click(bakgrunnskartButton);
 
-      const nibasButton = screen.getByRole("button", { name: /nibas/i });
+      const nibasButton = screen.getByRole("button", { name: /inndelinger/i });
       userEvent.click(nibasButton);
 
       expect(
-        screen.getByRole("heading", { name: /grenser/i })
+        screen.getByRole("heading", { name: /inndelinger/i })
       ).toBeInTheDocument();
       expect(
         screen.queryByRole("heading", { name: /bakgrunnskart/i })
@@ -41,7 +41,7 @@ describe("PageLayout", () => {
       render(<PageLayout />);
 
       const bakgrunnskartButton = screen.getByRole("button", {
-        name: /bakgrunnskart/i,
+        name: /kartlag/i,
       });
       userEvent.click(bakgrunnskartButton);
 
@@ -69,7 +69,7 @@ describe("PageLayout", () => {
       render(<PageLayout />);
 
       const bakgrunnskartButton = screen.getByRole("button", {
-        name: /bakgrunnskart/i,
+        name: /kartlag/i,
       });
       userEvent.click(bakgrunnskartButton);
 
@@ -85,13 +85,19 @@ describe("PageLayout", () => {
       render(<PageLayout />);
 
       const bakgrunnskartButton = screen.getByRole("button", {
-        name: /bakgrunnskart/i,
+        name: /kartlag/i,
       });
       userEvent.click(bakgrunnskartButton);
 
-      const showLayerButton = await screen.findByRole("button", {
-        name: /vis Administrative enheter WMS versjon 2/i,
-      });
+      const showLayerButton = await screen.findByRole(
+        "button",
+        {
+          name: /vis Administrative enheter WMS versjon 2/i,
+        },
+        {
+          timeout: 3000,
+        }
+      );
       userEvent.click(showLayerButton);
 
       const hideLayerButton = await screen.findByRole("button", {
@@ -106,7 +112,7 @@ describe("PageLayout", () => {
       render(<PageLayout />);
 
       const bakgrunnskartButton = screen.getByRole("button", {
-        name: /bakgrunnskart/i,
+        name: /kartlag/i,
       });
       userEvent.click(bakgrunnskartButton);
 
@@ -133,21 +139,21 @@ describe("PageLayout", () => {
       ).not.toBeInTheDocument();
     });
 
-    it("should open nibas panel on nibas sidebar button click", () => {
+    it("should open inndelinger panel on nibas sidebar button click", () => {
       render(<PageLayout />);
 
-      const nibasButton = screen.getByRole("button", { name: /nibas/i });
+      const nibasButton = screen.getByRole("button", { name: /inndelinger/i });
       userEvent.click(nibasButton);
 
       expect(
-        screen.getByRole("heading", { name: /grenser/i })
+        screen.getByRole("heading", { name: /inndelinger/i })
       ).toBeInTheDocument();
     });
 
     it("should render all accordions", async () => {
       render(<PageLayout />);
 
-      const nibasButton = screen.getByRole("button", { name: /nibas/i });
+      const nibasButton = screen.getByRole("button", { name: /inndelinger/i });
       userEvent.click(nibasButton);
 
       expect(screen.getByText(/riksgrenser/i)).toBeInTheDocument();
@@ -166,7 +172,7 @@ describe("PageLayout", () => {
     it("should show fylker on Fylker accordion click", async () => {
       render(<PageLayout />);
 
-      const nibasButton = screen.getByRole("button", { name: /nibas/i });
+      const nibasButton = screen.getByRole("button", { name: /inndelinger/i });
       userEvent.click(nibasButton);
 
       const fylkesGrenserAccordionButton = screen.getByRole("button", {
@@ -183,7 +189,7 @@ describe("PageLayout", () => {
     it("should show fylker and kommuner on Kommuner accordion click", async () => {
       render(<PageLayout />);
 
-      const nibasButton = screen.getByRole("button", { name: /nibas/i });
+      const nibasButton = screen.getByRole("button", { name: /inndelinger/i });
       userEvent.click(nibasButton);
 
       const kommuneGrenserAccordionButton = screen.getByRole("button", {
@@ -204,7 +210,9 @@ describe("PageLayout", () => {
       it("should open eye on eye click", async () => {
         render(<PageLayout />);
 
-        const nibasButton = screen.getByRole("button", { name: /nibas/i });
+        const nibasButton = screen.getByRole("button", {
+          name: /inndelinger/i,
+        });
         userEvent.click(nibasButton);
 
         const fylkesGrenserAccordionButton = screen.getByRole("button", {
@@ -229,7 +237,9 @@ describe("PageLayout", () => {
       it("should open eye and check checkbox on checkbox click", async () => {
         render(<PageLayout />);
 
-        const nibasButton = screen.getByRole("button", { name: /nibas/i });
+        const nibasButton = screen.getByRole("button", {
+          name: /inndelinger/i,
+        });
         userEvent.click(nibasButton);
 
         const fylkesGrenserAccordionButton = screen.getByRole("button", {
@@ -251,7 +261,9 @@ describe("PageLayout", () => {
       it("should close both eye and uncheck checkbox when checkbox is checked", async () => {
         render(<PageLayout />);
 
-        const nibasButton = screen.getByRole("button", { name: /nibas/i });
+        const nibasButton = screen.getByRole("button", {
+          name: /inndelinger/i,
+        });
         userEvent.click(nibasButton);
 
         const fylkesGrenserAccordionButton = screen.getByRole("button", {

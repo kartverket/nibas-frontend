@@ -21,7 +21,7 @@ import { isVectorLayer, isWMSLayer, isWMTSLayer } from "utils/map/layers";
 const Bakgrunnskart = () => {
   const [mappedLayers, setMappedLayers] = useState<MainMappedLayer[]>([]);
 
-  const { isOpen: visible, togglePanel } = useSidebarPanel("backgroundLayers");
+  const { isOpen: visible, togglePanel } = useSidebarPanel("kartlag");
 
   const { visibleLayers, dispatch } = useVisibleLayers();
   const { moveLayer, zIndexes } = useZIndexes();

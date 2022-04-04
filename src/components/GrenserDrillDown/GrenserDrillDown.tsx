@@ -17,13 +17,13 @@ import { UnstyledList } from "components/UnstyledList";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 
 const GrenserDrillDown = () => {
-  const { isOpen, togglePanel } = useSidebarPanel("nibas");
+  const { isOpen, togglePanel } = useSidebarPanel("inndelinger");
 
   if (!isOpen) return null;
 
   return (
     <Panel>
-      <SidebarPanelTitle closePanel={togglePanel} title="Grenser" />
+      <SidebarPanelTitle closePanel={togglePanel} title="Inndelinger" />
       <UnstyledList>
         <Riksgrenser />
         <Fylkesgrenser />

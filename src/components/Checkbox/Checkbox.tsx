@@ -6,9 +6,9 @@ type Props = InputHTMLAttributes<HTMLInputElement> & {
   type: "radio" | "checkbox";
 };
 
-const Checkbox = ({ label, ...props }: Props) => {
+const Checkbox = ({ label, className, ...props }: Props) => {
   return (
-    <Wrapper disabled={!!props.disabled}>
+    <Wrapper disabled={!!props.disabled} className={className}>
       {label}
       <DefaultCheckbox {...props} />
       <CustomCheckbox type={props.type} />
@@ -48,6 +48,7 @@ const CustomCheckbox = styled.span<{ type: "radio" | "checkbox" }>`
   border-radius: ${({ type }) => (type === "radio" ? "50%" : "2px")};
   border: 1px solid ${({ theme }) => theme.colors.blueDark};
   transition: 0.1s background-color;
+  margin-top: 1px;
 
   :after {
     content: "";
@@ -78,9 +79,8 @@ const DefaultCheckbox = styled.input`
 
 const Wrapper = styled.label<{ disabled: boolean }>`
   display: inline-block;
-  align-items: center;
   position: relative;
-  padding-left: 28px;
+  padding-left: 24px;
   margin-right: 28px;
   margin-bottom: 14px;
   cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};

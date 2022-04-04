@@ -5,6 +5,13 @@ import { mockBasicFeature } from "mocks/handlers/responses";
 const defaultProps: React.ComponentProps<typeof ToggleableGrense> = {
   grense: {
     id: "1",
+    href: "",
+    navn: [
+      {
+        navn: "",
+        spraak: "",
+      },
+    ],
   },
   objectValue: { editing: false, visible: false },
   setObjectValue: jest.fn(),
@@ -32,7 +39,7 @@ describe("ToggleableGrense", () => {
     render(
       <ToggleableGrense
         {...defaultProps}
-        objectValue={{ editing: true, visible: true }}
+        objectValue={{ editing: true, visible: true, inserted: true }}
       />
     );
 
