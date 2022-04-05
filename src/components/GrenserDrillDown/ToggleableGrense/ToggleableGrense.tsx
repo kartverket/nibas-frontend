@@ -123,10 +123,10 @@ const ToggleableGrense = <T extends GrenseRef>({
       </Button>
       <StyledCheckbox
         label={title}
-          type="checkbox"
-          checked={objectValue.editing ?? false}
-          onChange={toggleEditing}
-        />
+        type="checkbox"
+        checked={objectValue.editing ?? false}
+        onChange={toggleEditing}
+      />
       <Button variant="icon" onClick={openInfo}>
         <ColoredInfo />
       </Button>
