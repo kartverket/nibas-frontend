@@ -4,7 +4,6 @@ export type EditingType = "fylke" | "kommune" | "nasjon";
 export type ObjectValue = {
   editing?: boolean;
   visible?: boolean;
-  inserted?: boolean;
 };
 
 type GrenseDictionary = Record<string, ObjectValue>;

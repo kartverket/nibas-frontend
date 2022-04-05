@@ -6,8 +6,8 @@ import useSWRImmutable from "swr/immutable";
 import { geoJsonToSource } from "utils/map/geoJson";
 import { fetcherWithToken } from "utils/swr";
 
-const useApiGrense = (featuresUrl: string) => {
-  const [shouldFetch, setShouldFetch] = useState(false);
+const useApiGrense = (featuresUrl: string, shouldFetchInitially = false) => {
+  const [shouldFetch, setShouldFetch] = useState(shouldFetchInitially);
   const { tokenHolderFunc } = useAuthenticationFlow();
 
   const { data: geoJson, mutate } = useSWRImmutable<Feature<Geometry>>(

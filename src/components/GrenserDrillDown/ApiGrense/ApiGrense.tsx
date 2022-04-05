@@ -19,7 +19,10 @@ const ApiGrense = <T extends GrenseRef>({
   type,
   featuresUrl,
 }: Props<T>) => {
-  const { features, fetchFeatures } = useApiGrense(featuresUrl);
+  const { features, fetchFeatures } = useApiGrense(
+    featuresUrl,
+    grenseValue?.editing || grenseValue?.visible
+  );
 
   const navn =
     grense.navn.find((grenseNavn) => grenseNavn.spraak === "nor")?.navn ?? "";
