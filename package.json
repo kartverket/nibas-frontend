@@ -29,7 +29,8 @@
     "lint": "eslint src",
     "lint:fix": "npm run lint -- --fix",
     "update-api-types": "npx openapi-typescript http://localhost:8080/api-docs --output src/types/api-gen.ts",
-    "update-api-types:remote": "npx openapi-typescript http://nibas-backend.tz2-test-apps.k8s.local/api-docs --output src/types/api-gen.ts"
+    "update-api-types:remote": "npx openapi-typescript http://nibas-backend.tz2-test-apps.k8s.local/api-docs --output src/types/api-gen.ts",
+    "scan-translations": "i18next-scanner 'src/**/*.{ts,tsx}'"
   },
   "eslintConfig": {
     "extends": [
@@ -70,6 +71,7 @@
     "eslint-plugin-prettier": "~4.0.0",
     "eslint-plugin-react": "~7.26.0",
     "eslint-plugin-react-hooks": "~4.2.0",
+    "i18next-scanner": "^3.1.0",
     "msw": "~0.36.3",
     "prettier": "~2.4.1",
     "react-scripts": "4.0.3",

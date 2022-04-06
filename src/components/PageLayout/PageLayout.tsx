@@ -1,8 +1,8 @@
+import { Suspense } from "react";
 import styled from "styled-components";
 import Kart from "components/Kart";
 import Sidebar from "components/Sidebar";
 import TopBar from "components/TopBar";
-import { Suspense } from "react";
 
 const PageLayout = () => {
   return (
