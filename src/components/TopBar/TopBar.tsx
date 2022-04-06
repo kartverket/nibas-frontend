@@ -17,14 +17,18 @@ const TopBar = () => {
       <LeftSide>
         <img src={logo} />
         <span>{t("Nasjonal inndelingsbase")}</span>
-        <SearchInput type="text" placeholder="Koordinater" disabled />
+        <SearchInput type="text" placeholder={t("Koordinater")} disabled />
         <SearchIconButton variant="icon" disabled>
           <InputSearchIcon />
         </SearchIconButton>
       </LeftSide>
       <RightSide>
         {isAuthenticatedFunc() ? (
-          <p>{t(`Logget inn som ${tokenHolderFunc()?.personId}`)}</p>
+          <p>
+            {t(`Logget inn som {{ personId }}`, {
+              personId: tokenHolderFunc()?.personId,
+            })}
+          </p>
         ) : (
           <p>{t("Ikke logget inn")}</p>
         )}

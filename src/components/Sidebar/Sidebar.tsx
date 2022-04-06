@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import SidebarButton from "./SidebarButton";
 import { ReactComponent as DraftsIcon } from "icons/drafts.svg";
@@ -6,25 +7,27 @@ import { ReactComponent as MapIcon } from "icons/map.svg";
 import { ReactComponent as SearchIcon } from "icons/search.svg";
 
 const Sidebar = () => {
+  const { t } = useTranslation();
+
   return (
     <StyledSidebar>
       <SidebarButton
-        title="Inndelinger"
+        title={t("sidebar.Inndelinger")}
         panel="inndelinger"
         icon={<InndelingerIcon width={36} height={36} />}
       />
       <SidebarButton
-        title="Søk"
+        title={t("sidebar.Søk")}
         panel="soek"
         icon={<SearchIcon width={36} height={36} />}
       />
       <SidebarButton
-        title="Kartlag"
+        title={t("sidebar.Kartlag")}
         panel="kartlag"
         icon={<MapIcon width={36} height={36} />}
       />
       <SidebarButton
-        title="Utkast"
+        title={t("sidebar.Utkast")}
         panel="utkast"
         icon={<DraftsIcon width={36} height={36} />}
       />

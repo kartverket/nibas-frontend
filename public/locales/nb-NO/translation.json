@@ -9,5 +9,20 @@
   "Logget inn som {{ personId }}": "Logget inn som {{ personId }}",
   "Ikke logget inn": "Ikke logget inn",
   "Login": "Logg inn",
-  "Logout": "Logg ut"
+  "Logout": "Logg ut",
+  "inndelinger": {
+    "Delområder": "Delområder",
+    "Fylkesgrenser": "Fylkesgrenser",
+    "Gestlige inndelinger": "Gestlige inndelinger",
+    "Grunnkretser": "Grunnkretser",
+    "Kommunegrenser": "Kommunegrenser",
+    "Maritime grenser": "Maritime grenser",
+    "Postnummerområder": "Postnummerområder",
+    "Riksgrenser": "Riksgrenser",
+    "Skolekretser": "Skolekretser",
+    "Stemmekretser": "Stemmekretser",
+    "Svalbardområdet": "Svalbardområdet"
+  },
+  "Henter fylker": "Henter fylker",
+  "Koordinater": "Koordinater"
 }
