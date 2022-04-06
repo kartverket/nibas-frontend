@@ -7,5 +7,7 @@
   },
   "Nasjonal inndelingsbase": "__STRING_NOT_TRANSLATED__",
   "Logget inn som {{ personId }}": "__STRING_NOT_TRANSLATED__",
-  "Ikke logget inn": "__STRING_NOT_TRANSLATED__"
+  "Ikke logget inn": "__STRING_NOT_TRANSLATED__",
+  "Login": "__STRING_NOT_TRANSLATED__",
+  "Logout": "__STRING_NOT_TRANSLATED__"
 }

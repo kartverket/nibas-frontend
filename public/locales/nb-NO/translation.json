@@ -1,0 +1,13 @@
+{
+  "sidebar": {
+    "Inndelinger": "Inndelinger",
+    "Søk": "Søk",
+    "Kartlag": "Kartlag",
+    "Utkast": "Utkast"
+  },
+  "Nasjonal inndelingsbase": "Nasjonal inndelingsbase",
+  "Logget inn som {{ personId }}": "Logget inn som {{ personId }}",
+  "Ikke logget inn": "Ikke logget inn",
+  "Login": "Logg inn",
+  "Logout": "Logg ut"
+}
