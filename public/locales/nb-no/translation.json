@@ -1,3 +1,11 @@
 {
-  "Nasjonal inndelingsbase": "Nasjonal inndelingsbase"
+  "sidebar": {
+    "Inndelinger": "__STRING_NOT_TRANSLATED__",
+    "Søk": "__STRING_NOT_TRANSLATED__",
+    "Kartlag": "__STRING_NOT_TRANSLATED__",
+    "Utkast": "__STRING_NOT_TRANSLATED__"
+  },
+  "Nasjonal inndelingsbase": "__STRING_NOT_TRANSLATED__",
+  "Logget inn som {{ personId }}": "__STRING_NOT_TRANSLATED__",
+  "Ikke logget inn": "__STRING_NOT_TRANSLATED__"
 }

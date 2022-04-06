@@ -33,17 +33,17 @@ module.exports = {
     // },
     lngs: ["en", "nb-no"],
     ns: ["translation"],
-    defaultLng: "en",
+    defaultLng: "nb-no",
     defaultNs: "translation",
     defaultValue: "__STRING_NOT_TRANSLATED__",
     resource: {
       loadPath: "public/locales/{{lng}}/{{ns}}.json",
-      savePath: "public/locales/missing/{{lng}}/{{ns}}.json",
+      savePath: "public/locales/{{lng}}/{{ns}}.json",
       jsonIndent: 2,
       lineEnding: "\n",
     },
-    nsSeparator: false, // namespace separator
-    keySeparator: false, // key separator
+    nsSeparator: ":", // namespace separator
+    keySeparator: ".", // key separator
     interpolation: {
       prefix: "{{",
       suffix: "}}",
