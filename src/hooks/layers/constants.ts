@@ -36,16 +36,28 @@ export const bakgrunnskartLayers = {
   matrikkelenWfs: new VectorLayer({ source: new VectorSource() }),
 };
 
+const defaultStyles = new Style({
+  stroke: new Stroke({
+    color: "#0062FF",
+  }),
+});
+
 export const grenserLayers = {
   // ingen source betyr at source settes async
-  fylker: new VectorLayer({ source: new VectorSource() }),
-  kommuner: new VectorLayer({ source: new VectorSource() }),
-  nasjoner: new VectorLayer({ source: new VectorSource() }),
+  fylker: new VectorLayer({ source: new VectorSource(), style: defaultStyles }),
+  kommuner: new VectorLayer({
+    source: new VectorSource(),
+    style: defaultStyles,
+  }),
+  nasjoner: new VectorLayer({
+    source: new VectorSource(),
+    style: defaultStyles,
+  }),
   edit: new VectorLayer({
     source: new VectorSource(),
     style: new Style({
       stroke: new Stroke({
-        color: "red",
+        color: "#FF00FF",
       }),
     }),
   }),
