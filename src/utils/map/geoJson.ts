@@ -1,6 +1,6 @@
 import { Feature } from "ol";
 import { FeatureLike } from "ol/Feature";
-import GeoJSON from "ol/format/GeoJSON";
+import GeoJSON, { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import Geometry from "ol/geom/Geometry";
 import VectorSource from "ol/source/Vector";
 import { GeometryVectorSource } from "hooks/sources/types";
@@ -27,10 +27,10 @@ export const geoJsonToSource = (json: string | Feature<Geometry>) => {
   });
 };
 
-export const featuresToGeoJson = (features: FeatureLike[]) => {
-  return JSON.stringify(
-    geoJson.writeFeaturesObject(features, {
-      dataProjection: "EPSG:25833",
-    })
-  );
+export const featuresToGeoJson = (
+  features: FeatureLike[]
+): GeoJSONFeatureCollection => {
+  return geoJson.writeFeaturesObject(features, {
+    dataProjection: "EPSG:25833",
+  });
 };

@@ -1,11 +1,11 @@
-import { useCallback, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import styled from "styled-components";
 import { EditingType, ObjectValue } from "../EditGrenserContext";
 import Checkbox from "components/Checkbox";
 import Button from "components/form/Button";
-import { GrenseId } from "hooks/layers/types";
+import { GrenseId, LayerId } from "hooks/layers/types";
 import { ReactComponent as EditIcon } from "icons/edit.svg";
 import { ReactComponent as VisibilityIcon } from "icons/visibility.svg";
 import { ReactComponent as VisibilityOffIcon } from "icons/visibility_off.svg";
@@ -38,58 +38,38 @@ const ToggleableGrense = <T extends GrenseRef>({
   type,
   features,
 }: Props<T>) => {
-  const setInserted = useCallback(
-    (newInserted: boolean) => {
-      setObjectValue(grense.id, {
-        ...objectValue,
-        inserted: newInserted,
-      });
-    },
-    [grense.id, objectValue, setObjectValue]
-  );
+  const [layerToAddTo, setLayerToAddTo] = useState<LayerId | null>(null);
 
   useEffect(() => {
-    if (!features) return;
+    if (!layerToAddTo || !features) return;
 
-    const { inserted, editing, visible } = objectValue;
+    addFeaturesToSource(layerToAddTo, features);
+    setLayerToAddTo(null);
+  }, [layerToAddTo, features]);
 
-    if (inserted) {
-      if (!visible) {
-        // hvis laget er satt inn og IKKE synlig lenger, fjern fra layer
-        // og sett at det ikke er satt inn
-        const layerId = layerIdByGrenseType[type];
-
-        // vi vet ikke hvilket lag features lå i før det fjernes, så vi fjerner fra begge
-        removeFeaturesFromSourceByIds("edit", features);
-        removeFeaturesFromSourceByIds(layerId, features);
-
-        setInserted(false);
-      } else if (editing) {
-        // hvis laget er satt inn, synlig, og redigerbart, gikk det fra å bare være synlig til redigerbart
-        // fjern fra gamle laget og legg til i edit
-        const layerId = layerIdByGrenseType[type];
-
-        removeFeaturesFromSourceByIds(layerId, features);
-        addFeaturesToSource("edit", features);
-      }
-    } else {
-      if (visible) {
-        // hvis laget IKKE satt inn og skal være synlig, sett inn i layer
-        // og sett at det er satt inn
-        const layerId = editing ? "edit" : layerIdByGrenseType[type];
-
-        addFeaturesToSource(layerId, features);
-
-        setInserted(true);
-      }
-    }
-  }, [features, objectValue, type, setInserted]);
-
-  const toggleVisible = async () => {
-    setObjectValue(grense.id, {
+  const toggleVisible = () => {
+    const newObjectValue = {
       ...objectValue,
       visible: !objectValue.visible,
-    });
+    };
+
+    setObjectValue(grense.id, newObjectValue);
+
+    const layerId = layerIdByGrenseType[type];
+
+    if (!newObjectValue.visible) {
+      if (!features) return;
+      // hvis var synlig blir det nå usynlig, fjern fra begge lag
+
+      // vi vet ikke hvilket lag features lå i før det fjernes, så vi fjerner fra begge
+      removeFeaturesFromSourceByIds("edit", features);
+      removeFeaturesFromSourceByIds(layerId, features);
+    } else if (newObjectValue.editing) {
+      // hvis editing skal features legges tilbake til edit-laget
+      setLayerToAddTo("edit");
+    } else {
+      setLayerToAddTo(layerId);
+    }
   };
 
   const toggleEditing = async () => {
@@ -106,6 +86,21 @@ const ToggleableGrense = <T extends GrenseRef>({
     }
 
     setObjectValue(grense.id, newObjectValue);
+
+    if (newObjectValue.visible) {
+      // legg til i edit fordi dette er etter checkbox click
+      setLayerToAddTo("edit");
+
+      // hvis var synlig før editing ble true, fjern fra gamle layer
+      if (!objectValue?.visible || !features) return;
+
+      const layerId = layerIdByGrenseType[type];
+      removeFeaturesFromSourceByIds(layerId, features);
+    } else if (!newObjectValue.editing) {
+      if (!features) return;
+
+      removeFeaturesFromSourceByIds("edit", features);
+    }
   };
 
   const openInfo = () => {

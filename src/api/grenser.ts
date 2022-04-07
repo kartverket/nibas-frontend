@@ -6,7 +6,7 @@ export const updateGrenser = async (
   features: Feature<Geometry>[],
   token: string | undefined
 ) => {
-  const geoJson = featuresToGeoJson(features);
+  const geoJson = JSON.stringify(featuresToGeoJson(features));
 
   const results = await fetch(`v1/grenser`, {
     method: "POST",
