@@ -34,6 +34,7 @@ const useApiGrense = (featuresUrl: string, shouldFetchInitially = false) => {
 
     if (updatedFeatures.length > 0) {
       mutate(featuresToGeoJson(updatedFeatures));
+      setShouldFetch(false);
     }
   }, [features, mutate, shouldFetch]);
 
