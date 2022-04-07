@@ -25,12 +25,12 @@ const TopBar = () => {
       <RightSide>
         {isAuthenticatedFunc() ? (
           <p>
-            {t(`Logget inn som {{ personId }}`, {
+            {t(`auth.Logget inn som {{ personId }}`, {
               personId: tokenHolderFunc()?.personId,
             })}
           </p>
         ) : (
-          <p>{t("Ikke logget inn")}</p>
+          <p>{t("auth.Ikke logget inn")}</p>
         )}
         <AuthenticationButton />
       </RightSide>

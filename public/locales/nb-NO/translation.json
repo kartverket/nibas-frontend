@@ -6,10 +6,6 @@
     "Utkast": "Utkast"
   },
   "Nasjonal inndelingsbase": "Nasjonal inndelingsbase",
-  "Logget inn som {{ personId }}": "Logget inn som {{ personId }}",
-  "Ikke logget inn": "Ikke logget inn",
-  "Login": "Logg inn",
-  "Logout": "Logg ut",
   "inndelinger": {
     "Delområder": "Delområder",
     "Fylkesgrenser": "Fylkesgrenser",
@@ -24,5 +20,12 @@
     "Svalbardområdet": "Svalbardområdet"
   },
   "Henter fylker": "Henter fylker",
-  "Koordinater": "Koordinater"
+  "Koordinater": "Koordinater",
+  "auth": {
+    "Login": "Logg inn",
+    "Logout": "Logg ut",
+    "Logget inn som {{ personId }}": "Logget inn som {{ personId }}",
+    "Ikke logget inn": "Ikke logget inn"
+  }
 }
+ 

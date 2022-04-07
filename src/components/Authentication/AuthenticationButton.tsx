@@ -12,10 +12,12 @@ export default function AuthenticationButton() {
   const { t } = useTranslation();
 
   const loginButton = (
-    <button onClick={() => handleAuthenticateFunc("/")}>{t("Login")}</button>
+    <button onClick={() => handleAuthenticateFunc("/")}>
+      {t("auth.Login")}
+    </button>
   );
   const logoutButton = (
-    <button onClick={handleLogoutFunc}>{t("Logout")}</button>
+    <button onClick={handleLogoutFunc}>{t("auth.Logout")}</button>
   );
 
   return isAuthenticatedFunc() ? logoutButton : loginButton;
