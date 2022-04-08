@@ -1,33 +1,55 @@
 import styled from "styled-components";
+import useSWR from "swr";
 import SidebarButton from "./SidebarButton";
 import { ReactComponent as DraftsIcon } from "icons/drafts.svg";
 import { ReactComponent as InndelingerIcon } from "icons/inndelinger.svg";
 import { ReactComponent as MapIcon } from "icons/map.svg";
 import { ReactComponent as SearchIcon } from "icons/search.svg";
+import { fetcher } from "utils/swr";
+
+type ActuatorResponse = {
+  application: {
+    version: string;
+  };
+};
 
 const Sidebar = () => {
+  const { data: actuator } = useSWR<ActuatorResponse>(
+    "/actuator/info",
+    fetcher
+  );
+  const backendVersion = actuator?.application.version ?? "---";
+  const frontendVersion = process.env.REACT_APP_VERSION;
+
   return (
     <StyledSidebar>
-      <SidebarButton
-        title="Inndelinger"
-        panel="inndelinger"
-        icon={<InndelingerIcon width={36} height={36} />}
-      />
-      <SidebarButton
-        title="Søk"
-        panel="soek"
-        icon={<SearchIcon width={36} height={36} />}
-      />
-      <SidebarButton
-        title="Kartlag"
-        panel="kartlag"
-        icon={<MapIcon width={36} height={36} />}
-      />
-      <SidebarButton
-        title="Utkast"
-        panel="utkast"
-        icon={<DraftsIcon width={36} height={36} />}
-      />
+      <ButtonsWrapper>
+        <SidebarButton
+          title="Inndelinger"
+          panel="inndelinger"
+          icon={<InndelingerIcon width={36} height={36} />}
+        />
+        <SidebarButton
+          title="Søk"
+          panel="soek"
+          icon={<SearchIcon width={36} height={36} />}
+        />
+        <SidebarButton
+          title="Kartlag"
+          panel="kartlag"
+          icon={<MapIcon width={36} height={36} />}
+        />
+        <SidebarButton
+          title="Utkast"
+          panel="utkast"
+          icon={<DraftsIcon width={36} height={36} />}
+        />
+      </ButtonsWrapper>
+
+      <Versions>
+        <Version>{backendVersion}</Version>
+        <Version>{frontendVersion}</Version>
+      </Versions>
     </StyledSidebar>
   );
 };
@@ -39,7 +61,22 @@ const StyledSidebar = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
   margin-top: 80px;
+`;
+
+const ButtonsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const Versions = styled.div`
+  text-align: center;
+`;
+
+const Version = styled.p`
+  margin: 8px 0;
 `;
 
 export default Sidebar;

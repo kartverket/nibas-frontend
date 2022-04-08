@@ -24,6 +24,13 @@ module.exports = function (app) {
   );
 
   app.use(
+    createProxyMiddleware("/actuator/info", {
+      target: "http://localhost:8080",
+      changeOrigin: true,
+    })
+  );
+
+  app.use(
     createProxyMiddleware("/geoservergeo/wfs/MATRIKKEL", {
       target: "https://prodtest.matrikkel.no",
       changeOrigin: true,
