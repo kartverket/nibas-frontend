@@ -47,8 +47,8 @@ const Sidebar = () => {
       </ButtonsWrapper>
 
       <Versions>
-        <Version>{backendVersion}</Version>
-        <Version>{frontendVersion}</Version>
+        <Version>F: {frontendVersion}</Version>
+        <Version>B: {backendVersion}</Version>
       </Versions>
     </StyledSidebar>
   );
@@ -66,6 +66,7 @@ const StyledSidebar = styled.div`
 `;
 
 const ButtonsWrapper = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
