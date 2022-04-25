@@ -43,12 +43,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          minor-wording: "add,Adds,new"
-          major-wording: "MAJOR,cut-major"
-          patch-wording:
-            "patch,fixes" # Providing patch-wording will override commits
-            # defaulting to a patch bump.
-          rc-wording: "RELEASE,alpha"
+          major-wording: "MAJOR"
+          minor-wording: "MINOR"
+          patch-wording: ""
+          rc-wording: ""
 
       - name: "Expose newly created tag"
         uses: actions-ecosystem/action-get-latest-tag@v1
