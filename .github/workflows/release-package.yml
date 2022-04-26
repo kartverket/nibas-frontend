@@ -40,6 +40,7 @@ jobs:
     runs-on: [anthos, test]
     permissions:
       contents: write
+      packages: write
 
     outputs:
       new_tag: ${{ steps.bump-version.outputs.newTag }}
@@ -47,6 +48,12 @@ jobs:
     steps:
       - name: checkout code
         uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          cache: "npm"
 
       - name: "Update package.json and push new tag"
         uses: "phips28/gh-action-bump-version@master"
@@ -109,7 +116,7 @@ jobs:
           vault_addr="${{ secrets.VAULT_ADDR }}"
           vault_skip_verify="${{ secrets.VAULT_SKIP_VERIFY }}"
           vault_token="${{ secrets.VAULT_TOKEN }}"
-          nibas_frontend_version="${{ needs.build.outputs.new_tag }}"
+          nibas_frontend_version="${{ needs.bump-version.outputs.new_tag }}"
           EOF
 
       - name: Terraform init
