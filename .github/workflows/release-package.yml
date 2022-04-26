@@ -26,7 +26,9 @@ jobs:
           cache: "npm"
 
       - name: Update npmrc with secret to install internal packages
-        run: echo //npm.pkg.github.com/:_authToken=${{secrets.PAT_READ_PACKAGE}} >> .npmrc
+        run: |
+          cp .npmrc .npmrc-copy
+          echo //npm.pkg.github.com/:_authToken=${{secrets.PAT_READ_PACKAGE}} >> .npmrc
 
       - name: Build and test
         run: |
@@ -35,27 +37,12 @@ jobs:
           npm run build --if-present
           npm test
 
-  bump-version:
-    needs: build
-    runs-on: [anthos, test]
-    permissions:
-      contents: write
-      packages: write
+      - name: Remove npmrc with secret
+      run: |
+        rm .npmrc
+        mv .npmrc-copy .npmrc
 
-    outputs:
-      new_tag: ${{ steps.bump-version.outputs.newTag }}
-
-    steps:
-      - name: checkout code
-        uses: actions/checkout@v2
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16.x
-          cache: "npm"
-
-      - name: "Update package.json and push new tag"
+      - name: Update package.json and push new tag
         uses: "phips28/gh-action-bump-version@master"
         id: "bump-version"
         env:
@@ -85,7 +72,7 @@ jobs:
           image_name: ${{ github.repository }}
 
   deploy:
-    needs: bump-version
+    needs: build
     runs-on: [anthos, test]
     environment: atkv2-test-apps
 
@@ -116,7 +103,7 @@ jobs:
           vault_addr="${{ secrets.VAULT_ADDR }}"
           vault_skip_verify="${{ secrets.VAULT_SKIP_VERIFY }}"
           vault_token="${{ secrets.VAULT_TOKEN }}"
-          nibas_frontend_version="${{ needs.bump-version.outputs.new_tag }}"
+          nibas_frontend_version="${{ needs.build.outputs.new_tag }}"
           EOF
 
       - name: Terraform init
