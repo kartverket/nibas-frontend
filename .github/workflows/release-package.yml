@@ -15,9 +15,6 @@ jobs:
       contents: write
       packages: write
 
-    outputs:
-      new_tag: ${{ steps.get-latest-tag.outputs.tag }}
-
     steps:
       - name: checkout code
         uses: actions/checkout@v2
@@ -38,8 +35,22 @@ jobs:
           npm run build --if-present
           npm test
 
+  bump-version:
+    needs: build
+    runs-on: [anthos, test]
+    permissions:
+      contents: write
+
+    outputs:
+      new_tag: ${{ steps.bump-version.outputs.newTag }}
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v2
+
       - name: "Update package.json and push new tag"
         uses: "phips28/gh-action-bump-version@master"
+        id: "bump-version"
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
@@ -47,10 +58,6 @@ jobs:
           minor-wording: "MINOR"
           patch-wording: ""
           rc-wording: ""
-
-      - name: "Expose newly created tag"
-        uses: actions-ecosystem/action-get-latest-tag@v1
-        id: get-latest-tag
 
       - name: Login to Github Container Registry
         uses: docker/login-action@v1
@@ -67,11 +74,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ github.token }}
           registry: ${{ env.registry }}
-          image_tag: ${{ steps.get-latest-tag.outputs.tag }}
+          image_tag: ${{ steps.bump-version.outputs.newTag }}
           image_name: ${{ github.repository }}
 
   deploy:
-    needs: build
+    needs: bump-version
     runs-on: [anthos, test]
     environment: atkv2-test-apps
 
