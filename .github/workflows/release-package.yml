@@ -56,6 +56,9 @@ jobs:
           patch-wording: ""
           rc-wording: ""
 
+      - name: Build with new package.json version
+        run: npm run build --if-present
+
       - name: Login to Github Container Registry
         uses: docker/login-action@v1
         with:
