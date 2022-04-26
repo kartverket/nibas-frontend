@@ -15,6 +15,9 @@ jobs:
       contents: write
       packages: write
 
+    outputs:
+      new_tag: ${{ steps.bump-version.outputs.newTag }}
+
     steps:
       - name: checkout code
         uses: actions/checkout@v2
