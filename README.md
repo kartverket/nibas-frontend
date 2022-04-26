@@ -75,3 +75,18 @@ Her kan da BACKEND_HOST og PORT env variablenene byttes ut, så vil kall gå gje
 For å få låste bakgrunnskart til å fungere lokalt må du også få tak i brukernavn og passord for en BAAT-bruker. Du kan finne en bruker i Vault og de må sendes inn i `docker run`:
 
 `docker run -p 3000:8080 -e BACKEND_HOST=nibas-backend.tz2-test-apps.k8s.local:80 -e PORT=8080 -e BAAT_USERNAME=some_username -e BAAT_PASSWORD=some_password --name nibas-klient nibas-klient`
+
+## Autentisering
+
+5 brukere har lov:
+
+21079408678
+21079408597
+21079408406
+21079408325
+21079408244
+
+### min-id
+
+passord: password01
+pin: 12345

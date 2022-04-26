@@ -276,8 +276,6 @@ export interface components {
       /** Format: double */
       width?: number;
       /** Format: double */
-      area?: number;
-      /** Format: double */
       minX?: number;
       /** Format: double */
       maxX?: number;
@@ -285,6 +283,8 @@ export interface components {
       minY?: number;
       /** Format: double */
       maxY?: number;
+      /** Format: double */
+      area?: number;
       /** Format: double */
       height?: number;
     };
@@ -454,10 +454,10 @@ export interface components {
       coordinate?: components["schemas"]["Coordinate"];
       /** Format: int32 */
       numPoints?: number;
+      coordinateSequence?: components["schemas"]["CoordinateSequence"];
       boundary?: components["schemas"]["Geometry"];
       /** Format: int32 */
       boundaryDimension?: number;
-      coordinateSequence?: components["schemas"]["CoordinateSequence"];
       /** Format: double */
       length?: number;
       valid?: boolean;
