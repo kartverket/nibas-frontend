@@ -1,8 +1,11 @@
+import { useTranslation } from "react-i18next";
 import ListItemAccordion from "../ListItemAccordion";
 
 const GestligeInndeliger = () => {
+  const { t } = useTranslation();
+
   return (
-    <ListItemAccordion title="Gestlige inndelinger">
+    <ListItemAccordion title={t("inndelinger.Gestlige inndelinger")}>
       <p>Kommer senere!</p>
     </ListItemAccordion>
   );

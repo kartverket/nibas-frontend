@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import ListItemAccordion from "../ListItemAccordion";
 import KommuneList from "./KommuneList";
@@ -7,9 +8,10 @@ import { getNavnInSpraak } from "utils/language/language";
 
 const Kommunegrenser = () => {
   const { data: fylker } = useNibasApi("/v1/fylker");
+  const { t } = useTranslation();
 
   return (
-    <ListItemAccordion title="Kommunegrenser">
+    <ListItemAccordion title={t("inndelinger.Kommunegrenser")}>
       <div>
         {fylker ? (
           <List>
@@ -23,7 +25,7 @@ const Kommunegrenser = () => {
             ))}
           </List>
         ) : (
-          <p>Henter fylker...</p>
+          <p>{t("Henter fylker")}...</p>
         )}
       </div>
     </ListItemAccordion>

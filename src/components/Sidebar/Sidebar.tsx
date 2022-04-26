@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import useSWR from "swr";
 import SidebarButton from "./SidebarButton";
@@ -21,26 +22,28 @@ const Sidebar = () => {
   const backendVersion = actuator?.application.version ?? "---";
   const frontendVersion = process.env.REACT_APP_VERSION;
 
+  const { t } = useTranslation();
+
   return (
     <StyledSidebar>
       <ButtonsWrapper>
         <SidebarButton
-          title="Inndelinger"
+          title={t("sidebar.Inndelinger")}
           panel="inndelinger"
           icon={<InndelingerIcon width={36} height={36} />}
         />
         <SidebarButton
-          title="Søk"
+          title={t("sidebar.Søk")}
           panel="soek"
           icon={<SearchIcon width={36} height={36} />}
         />
         <SidebarButton
-          title="Kartlag"
+          title={t("sidebar.Kartlag")}
           panel="kartlag"
           icon={<MapIcon width={36} height={36} />}
         />
         <SidebarButton
-          title="Utkast"
+          title={t("sidebar.Utkast")}
           panel="utkast"
           icon={<DraftsIcon width={36} height={36} />}
         />

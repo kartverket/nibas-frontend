@@ -23,6 +23,7 @@ const App = () => {
    */
   const [redirectAfterLogon, redirectAfterLogout]: JSX.Element[] =
     useConfigureAuthFlow(authFlowProps);
+
   return (
     <Router>
       <Providers>

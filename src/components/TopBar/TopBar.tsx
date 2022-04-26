@@ -1,4 +1,5 @@
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
+import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import AuthenticationButton from "../Authentication/AuthenticationButton";
 import Button from "components/form/Button";
@@ -9,21 +10,27 @@ import logo from "images/logo.png";
 const TopBar = () => {
   const { isAuthenticatedFunc, tokenHolderFunc } = useAuthenticationFlow();
 
+  const { t } = useTranslation();
+
   return (
     <Wrapper>
       <LeftSide>
         <img src={logo} />
-        <span>Nasjonal inndelingsbase</span>
-        <SearchInput type="text" placeholder="Koordinater" disabled />
+        <span>{t("Nasjonal inndelingsbase")}</span>
+        <SearchInput type="text" placeholder={t("Koordinater")} disabled />
         <SearchIconButton variant="icon" disabled>
           <InputSearchIcon />
         </SearchIconButton>
       </LeftSide>
       <RightSide>
         {isAuthenticatedFunc() ? (
-          <p>Logget inn som {tokenHolderFunc()?.personId}</p>
+          <p>
+            {t(`auth.Logget inn som {{ personId }}`, {
+              personId: tokenHolderFunc()?.personId,
+            })}
+          </p>
         ) : (
-          <p>Ikke logget inn</p>
+          <p>{t("auth.Ikke logget inn")}</p>
         )}
         <AuthenticationButton />
       </RightSide>
