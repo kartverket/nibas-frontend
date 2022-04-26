@@ -112,9 +112,6 @@ jobs:
       - name: Terraform init
         run: terraform init -input=false
 
-      - name: Force unlock
-        run: terraform force-unlock -force 1650965542154522
-
       - name: Terraform plan
         run: terraform plan -input=false
 
