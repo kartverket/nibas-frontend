@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { Suspense, useEffect, useRef } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import styled from "styled-components";
 import { map } from "./constants";
@@ -48,16 +48,18 @@ const Kart = () => {
 
   return (
     <KartTarget ref={mapRef}>
-      <KartOverlay>
-        <SidebarPanels />
-        <MetadataPanel selectedFeatures={selectedFeatures} />
-      </KartOverlay>
+      <Suspense fallback="More loading...">
+        <KartOverlay>
+          <SidebarPanels />
+          <MetadataPanel selectedFeatures={selectedFeatures} />
+        </KartOverlay>
 
-      <CustomControl>
-        <button onClick={saveDraft}>Lagre endringer</button>
-      </CustomControl>
+        <CustomControl>
+          <button onClick={saveDraft}>Lagre endringer</button>
+        </CustomControl>
 
-      <ZoomControls />
+        <ZoomControls />
+      </Suspense>
     </KartTarget>
   );
 };

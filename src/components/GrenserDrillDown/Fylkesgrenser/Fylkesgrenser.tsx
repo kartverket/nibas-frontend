@@ -1,9 +1,12 @@
+import { useTranslation } from "react-i18next";
 import ListItemAccordion from "../ListItemAccordion";
 import FylkeList from "./FylkeList/FylkeList";
 
 const Fylkesgrenser = () => {
+  const { t } = useTranslation();
+
   return (
-    <ListItemAccordion title="Fylkesgrenser">
+    <ListItemAccordion title={t("inndelinger.Fylkesgrenser")}>
       <FylkeList />
     </ListItemAccordion>
   );

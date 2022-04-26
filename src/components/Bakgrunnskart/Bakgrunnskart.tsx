@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { mapVectorLayer } from "../../utils/getMatrikkelWfsFeatures";
 import MainBackgroundLayer from "./BackgroundLayer/MainBackgroundLayer";
@@ -25,6 +26,8 @@ const Bakgrunnskart = () => {
 
   const { visibleLayers, dispatch } = useVisibleLayers();
   const { moveLayer, zIndexes } = useZIndexes();
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!visible || mappedLayers.length > 0) return;
@@ -113,7 +116,10 @@ const Bakgrunnskart = () => {
 
   return (
     <Panel>
-      <SidebarPanelTitle closePanel={togglePanel} title="Bakgrunnskart" />
+      <SidebarPanelTitle
+        closePanel={togglePanel}
+        title={t("sidebar.Kartlag")}
+      />
       {zIndexes.map(renderMainLayerByZIndex)}
     </Panel>
   );

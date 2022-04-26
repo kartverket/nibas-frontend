@@ -22,18 +22,20 @@ describe("PageLayout", () => {
       render(<PageLayout />);
 
       const bakgrunnskartButton = screen.getByRole("button", {
-        name: /kartlag/i,
+        name: /sidebar.kartlag/i,
       });
       userEvent.click(bakgrunnskartButton);
 
-      const nibasButton = screen.getByRole("button", { name: /inndelinger/i });
+      const nibasButton = screen.getByRole("button", {
+        name: /sidebar.inndelinger/i,
+      });
       userEvent.click(nibasButton);
 
       expect(
-        screen.getByRole("heading", { name: /inndelinger/i })
+        screen.getByRole("heading", { name: /sidebar.inndelinger/i })
       ).toBeInTheDocument();
       expect(
-        screen.queryByRole("heading", { name: /bakgrunnskart/i })
+        screen.queryByRole("heading", { name: /sidebar.kartlag/i })
       ).not.toBeInTheDocument();
     });
 
@@ -41,17 +43,17 @@ describe("PageLayout", () => {
       render(<PageLayout />);
 
       const bakgrunnskartButton = screen.getByRole("button", {
-        name: /kartlag/i,
+        name: /sidebar.kartlag/i,
       });
       userEvent.click(bakgrunnskartButton);
 
       const closeButton = screen.getByRole("button", {
-        name: /lukk bakgrunnskart/i,
+        name: /lukk sidebar.kartlag/i,
       });
       userEvent.click(closeButton);
 
       expect(
-        screen.queryByRole("heading", { name: /bakgrunnskart/i })
+        screen.queryByRole("heading", { name: /sidebar.kartlag/i })
       ).not.toBeInTheDocument();
     });
   });
@@ -61,7 +63,7 @@ describe("PageLayout", () => {
       render(<PageLayout />);
 
       expect(
-        screen.queryByRole("heading", { name: /bakgrunnskart/i })
+        screen.queryByRole("heading", { name: /sidebar.kartlag/i })
       ).not.toBeInTheDocument();
     });
 
@@ -69,12 +71,12 @@ describe("PageLayout", () => {
       render(<PageLayout />);
 
       const bakgrunnskartButton = screen.getByRole("button", {
-        name: /kartlag/i,
+        name: /sidebar.kartlag/i,
       });
       userEvent.click(bakgrunnskartButton);
 
       expect(
-        screen.getByRole("heading", { name: /bakgrunnskart/i })
+        screen.getByRole("heading", { name: /sidebar.kartlag/i })
       ).toBeInTheDocument();
       expect(
         await screen.findByText("Administrative enheter WMS versjon 2")
@@ -85,7 +87,7 @@ describe("PageLayout", () => {
       render(<PageLayout />);
 
       const bakgrunnskartButton = screen.getByRole("button", {
-        name: /kartlag/i,
+        name: /sidebar.kartlag/i,
       });
       userEvent.click(bakgrunnskartButton);
 
@@ -112,13 +114,17 @@ describe("PageLayout", () => {
       render(<PageLayout />);
 
       const bakgrunnskartButton = screen.getByRole("button", {
-        name: /kartlag/i,
+        name: /sidebar.kartlag/i,
       });
       userEvent.click(bakgrunnskartButton);
 
-      const showLayerButton = await screen.findByRole("button", {
-        name: /vis Nibcache_UTM33_EUREF89_v2/i,
-      });
+      const showLayerButton = await screen.findByRole(
+        "button",
+        {
+          name: /vis Nibcache_UTM33_EUREF89_v2/i,
+        },
+        { timeout: 3000 }
+      );
       userEvent.click(showLayerButton);
 
       const hideLayerButton = await screen.findByRole("button", {
@@ -142,18 +148,22 @@ describe("PageLayout", () => {
     it("should open inndelinger panel on nibas sidebar button click", () => {
       render(<PageLayout />);
 
-      const nibasButton = screen.getByRole("button", { name: /inndelinger/i });
+      const nibasButton = screen.getByRole("button", {
+        name: /sidebar.inndelinger/i,
+      });
       userEvent.click(nibasButton);
 
       expect(
-        screen.getByRole("heading", { name: /inndelinger/i })
+        screen.getByRole("heading", { name: /sidebar.inndelinger/i })
       ).toBeInTheDocument();
     });
 
     it("should render all accordions", async () => {
       render(<PageLayout />);
 
-      const nibasButton = screen.getByRole("button", { name: /inndelinger/i });
+      const nibasButton = screen.getByRole("button", {
+        name: /sidebar.inndelinger/i,
+      });
       userEvent.click(nibasButton);
 
       expect(screen.getByText(/riksgrenser/i)).toBeInTheDocument();
@@ -172,11 +182,13 @@ describe("PageLayout", () => {
     it("should show fylker on Fylker accordion click", async () => {
       render(<PageLayout />);
 
-      const nibasButton = screen.getByRole("button", { name: /inndelinger/i });
+      const nibasButton = screen.getByRole("button", {
+        name: /sidebar.inndelinger/i,
+      });
       userEvent.click(nibasButton);
 
       const fylkesGrenserAccordionButton = screen.getByRole("button", {
-        name: /fylkesgrenser/i,
+        name: /inndelinger.fylkesgrenser/i,
       });
       userEvent.click(fylkesGrenserAccordionButton);
 
@@ -189,11 +201,13 @@ describe("PageLayout", () => {
     it("should show fylker and kommuner on Kommuner accordion click", async () => {
       render(<PageLayout />);
 
-      const nibasButton = screen.getByRole("button", { name: /inndelinger/i });
+      const nibasButton = screen.getByRole("button", {
+        name: /sidebar.inndelinger/i,
+      });
       userEvent.click(nibasButton);
 
       const kommuneGrenserAccordionButton = screen.getByRole("button", {
-        name: /kommunegrenser/i,
+        name: /inndelinger.kommunegrenser/i,
       });
       userEvent.click(kommuneGrenserAccordionButton);
 
@@ -211,12 +225,12 @@ describe("PageLayout", () => {
         render(<PageLayout />);
 
         const nibasButton = screen.getByRole("button", {
-          name: /inndelinger/i,
+          name: /sidebar.inndelinger/i,
         });
         userEvent.click(nibasButton);
 
         const fylkesGrenserAccordionButton = screen.getByRole("button", {
-          name: /fylkesgrenser/i,
+          name: /inndelinger.fylkesgrenser/i,
         });
         userEvent.click(fylkesGrenserAccordionButton);
 
@@ -238,12 +252,12 @@ describe("PageLayout", () => {
         render(<PageLayout />);
 
         const nibasButton = screen.getByRole("button", {
-          name: /inndelinger/i,
+          name: /sidebar.inndelinger/i,
         });
         userEvent.click(nibasButton);
 
         const fylkesGrenserAccordionButton = screen.getByRole("button", {
-          name: /fylkesgrenser/i,
+          name: /inndelinger.fylkesgrenser/i,
         });
         userEvent.click(fylkesGrenserAccordionButton);
 
@@ -262,12 +276,12 @@ describe("PageLayout", () => {
         render(<PageLayout />);
 
         const nibasButton = screen.getByRole("button", {
-          name: /inndelinger/i,
+          name: /sidebar.inndelinger/i,
         });
         userEvent.click(nibasButton);
 
         const fylkesGrenserAccordionButton = screen.getByRole("button", {
-          name: /fylkesgrenser/i,
+          name: /inndelinger.fylkesgrenser/i,
         });
         userEvent.click(fylkesGrenserAccordionButton);
 

@@ -1,8 +1,11 @@
+import { useTranslation } from "react-i18next";
 import ListItemAccordion from "../ListItemAccordion";
 
 const Riksgrenser = () => {
+  const { t } = useTranslation();
+
   return (
-    <ListItemAccordion title="Riksgrenser">
+    <ListItemAccordion title={t("inndelinger.Riksgrenser")}>
       <p>Kommer senere!</p>
     </ListItemAccordion>
   );

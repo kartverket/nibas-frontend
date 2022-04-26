@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import styled from "styled-components";
 import Kart from "components/Kart";
 import Sidebar from "components/Sidebar";
@@ -6,8 +7,10 @@ import TopBar from "components/TopBar";
 const PageLayout = () => {
   return (
     <Grid>
-      <TopBar />
-      <Sidebar />
+      <Suspense fallback="Loading...">
+        <TopBar />
+        <Sidebar />
+      </Suspense>
       <Kart />
     </Grid>
   );
