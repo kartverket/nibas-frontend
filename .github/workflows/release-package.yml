@@ -38,9 +38,9 @@ jobs:
           npm test
 
       - name: Remove npmrc with secret
-      run: |
-        rm .npmrc
-        mv .npmrc-copy .npmrc
+        run: |
+          rm .npmrc
+          mv .npmrc-copy .npmrc
 
       - name: Update package.json and push new tag
         uses: "phips28/gh-action-bump-version@master"
