@@ -62,14 +62,32 @@ export interface paths {
     /** Henter grensene til en kommune med gitt id */
     get: operations["hentGrenser_1"];
   };
+  "/v1/kodeliste/terrengdetaljkoder": {
+    get: operations["fetchTerrengdetaljkoder"];
+  };
+  "/v1/kodeliste/noeyaktighetsklasser": {
+    get: operations["fetchNoeyaktighetsklasser"];
+  };
   "/v1/kodeliste/maalemetode-koder": {
     get: operations["fetchMaalemetodeKoder"];
+  };
+  "/v1/kodeliste/landkoder": {
+    get: operations["fetchLandkoder"];
   };
   "/v1/kodeliste/kommunenumre": {
     get: operations["fetchKommunenumre"];
   };
+  "/v1/kodeliste/grensetyper": {
+    get: operations["fetchGrensetyper"];
+  };
+  "/v1/kodeliste/grensestatuser": {
+    get: operations["fetchGrensestatuskoder"];
+  };
   "/v1/kodeliste/fylkesnumre": {
     get: operations["fetchFylkesnumre"];
+  };
+  "/v1/kodeliste/fastsettingstyper": {
+    get: operations["fetchFastsettingstyper"];
   };
   "/v1/grenser/territorialgrenser/{id}": {
     /** Henter territorialgrense med gitt id */
@@ -170,15 +188,15 @@ export interface components {
     AdministrativGrenseMetadata: components["schemas"]["Metadata"] & {
       common?: components["schemas"]["CommonMetadata"];
       commonGrense?: components["schemas"]["CommonGrenseMetadata"];
-      /** @description Opplysning om at grense følger naturlige skillelinjer i terrenget. */
-      foelgerTerrengdetalj?: string;
-      /** @description Klassifikasjon av stedfestingsnøyaktighet på grenser, og er basert på dårligste nøyaktighet til grensepunktene til grensen. */
-      noeyaktighetsklasse?: string;
+      foelgerTerrengdetalj?: components["schemas"]["KodelisteEntry"];
+      noeyaktighetsklasse?: components["schemas"]["KodelisteEntry"];
       /** @description Angir om grensen er omtvistet, eller det er tvil om forløpet. */
       omtvistet?: boolean;
     } & {
       common: unknown;
       commonGrense: unknown;
+      foelgerTerrengdetalj: unknown;
+      noeyaktighetsklasse: unknown;
     };
     /** @description Spesifikk metadata for en AvtaltAvgrensningslinje. Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Diagram/Index/EAID_EEECEE48_B3FA_4807_AAE4_B30B63BC28E1 */
     AvtaltAvgrensningslinjeMetadata: components["schemas"]["Metadata"] & {
@@ -195,33 +213,31 @@ export interface components {
       /** @description Henviser til fastsettings- eller lovinformasjon. */
       dokumentasjonsreferanser: components["schemas"]["Dokref"][];
       posisjonskvalitet?: components["schemas"]["Posisjonskvalitet"];
-      /** @description Juridisk status på grensa. */
-      grensestatus?: string;
-      /** @description Måte en grense er fastsatt på. */
-      fastsettingstype?: string;
+      grensestatus: components["schemas"]["KodelisteEntry"];
+      fastsettingstype: components["schemas"]["KodelisteEntry"];
     };
     /** @description Felles metadata-egenskaper for grenser. */
     CommonMetadata: {
       identifikasjon: components["schemas"]["Identifikasjon"];
       /**
-       * Format: date-time
+       * Format: date
        * @description Dato når objektet siste gang ble registrert/observert/målt i terrenget
        */
       datafangstdato?: string;
       /**
-       * Format: date-time
+       * Format: date
        * @description Tidspunktet når objektet oppstod i den virkelige verden
        */
       gyldigFra?: string;
       /**
-       * Format: date-time
+       * Format: date
        * @description Tidspunktet når objektet opphørte å eksistere i den virkelige verden
        */
       gyldigTil?: string;
       /** @description Generelle opplysninger/merknad */
       informasjon?: string;
       /**
-       * Format: date-time
+       * Format: date
        * @description Dato for siste endring på objektdataene
        */
       oppdateringsdato: string;
@@ -242,9 +258,9 @@ export interface components {
     };
     CoordinateSequence: {
       /** Format: int32 */
-      measures?: number;
-      /** Format: int32 */
       dimension?: number;
+      /** Format: int32 */
+      measures?: number;
     };
     CoordinateSequenceFactory: { [key: string]: unknown };
     /** @description Henviser til fastsettings- eller lovinformasjon. */
@@ -276,6 +292,8 @@ export interface components {
       /** Format: double */
       width?: number;
       /** Format: double */
+      area?: number;
+      /** Format: double */
       minX?: number;
       /** Format: double */
       maxX?: number;
@@ -283,8 +301,6 @@ export interface components {
       minY?: number;
       /** Format: double */
       maxY?: number;
-      /** Format: double */
-      area?: number;
       /** Format: double */
       height?: number;
     };
@@ -368,6 +384,13 @@ export interface components {
       /** @description Identifikasjon av en spesiell versjon av et geografisk objekt (instans), maksimum lengde på 25 karakterer. */
       versjonid?: string;
     };
+    /** @description Klassifikasjon av stedfestingsnøyaktighet på grenser, og er basert på dårligste nøyaktighet til grensepunktene til grensen. */
+    KodelisteEntry: {
+      /** @description Id for kodeliste-innslaget. */
+      id?: string;
+      /** @description Lenke til kodelista. */
+      href: string;
+    };
     /** @description Representasjon av et kommunenummer */
     Kommunenummer: {
       /** @description Unik UUID for kommunenummeret */
@@ -405,6 +428,13 @@ export interface components {
        */
       hullIndeks?: number;
     };
+    /** @description Angivelse av hvilke land grensa er knyttet til Merknad: Alfanumerisk kode (ISO 3166-1 alpha-2) for land som definert i ISO 3166. */
+    Landkoder: {
+      /** @description Liste av valgte landkode-ids. */
+      ids: string[];
+      /** @description Peker til landkoder-kodeliste. */
+      href: string;
+    };
     /** @description Metadata-egenskaper for maritim grense. */
     MaritimeGrenserMetadata: {
       /** @description Organisasjon som er ansvarlig for opprettholdelse av grensa. */
@@ -418,8 +448,7 @@ export interface components {
       transformasjonsdato?: string;
       /** @description Begrep knyttet til yttergrensa for virkeområdet, som oftest angitt i lov eller forskrift. */
       virkeomraadenavn?: string;
-      /** @description Angivelse av hvilke land grensa er knyttet til Merknad: Alfanumerisk kode (ISO 3166-1 alpha-2) for land som definert i ISO 3166. */
-      land: components["schemas"]["TekstHolder"][];
+      land: components["schemas"]["Landkoder"];
     };
     /** @description Diverse metadata-felter fra sosi-modellen. */
     Metadata: {
@@ -454,10 +483,10 @@ export interface components {
       coordinate?: components["schemas"]["Coordinate"];
       /** Format: int32 */
       numPoints?: number;
-      coordinateSequence?: components["schemas"]["CoordinateSequence"];
       boundary?: components["schemas"]["Geometry"];
       /** Format: int32 */
       boundaryDimension?: number;
+      coordinateSequence?: components["schemas"]["CoordinateSequence"];
       /** Format: double */
       length?: number;
       valid?: boolean;
@@ -475,8 +504,7 @@ export interface components {
     };
     /** @description Beskrivelse av kvaliteten på stedfestingen */
     Posisjonskvalitet: {
-      /** @description Metode for måling i grunnriss (x,y), og høyde (z) når metoden er den samme som ved måling i grunnriss. */
-      maalemetode: string;
+      maalemetode: components["schemas"]["KodelisteEntry"];
       /**
        * Format: int32
        * @description Punktstandardavviket i grunnriss for punkter samt tverravvik for linjer. Merknad: Oppgitt i cm.
@@ -499,8 +527,7 @@ export interface components {
     RiksgrenseMetadata: components["schemas"]["Metadata"] & {
       common?: components["schemas"]["CommonMetadata"];
       commonGrense?: components["schemas"]["CommonGrenseMetadata"];
-      /** @description Opplysning om at grense følger naturlige skillelinjer i terrenget. */
-      foelgerTerrengdetalj?: string;
+      foelgerTerrengdetalj?: components["schemas"]["KodelisteEntry"];
       /** @description Angivelse om stedfestingen (koordinatene) er kontrollert og funnet i orden (verifisert). */
       stedfestingVerifisert?: boolean;
       /** @description Organisasjon(er) som er ansvarlig for opprettholdelse av grensa. */
@@ -514,8 +541,9 @@ export interface components {
       ansvarligeMyndigheter: unknown;
       common: unknown;
       commonGrense: unknown;
+      foelgerTerrengdetalj: unknown;
     };
-    /** @description Angivelse av hvilke land grensa er knyttet til Merknad: Alfanumerisk kode (ISO 3166-1 alpha-2) for land som definert i ISO 3166. */
+    /** @description Organisasjon som er ansvarlig for opprettholdelse av grensa. */
     TekstHolder: {
       /** @description ID for elementet. */
       id?: string;
@@ -564,7 +592,7 @@ export interface components {
       /** @description Angir om kommunen er et samisk forvaltningsområde eller ikke */
       samiskforvaltningsomraade: boolean;
       /**
-       * Format: date-time
+       * Format: date
        * @description Angir når denne kommunen ble sist oppdatert
        */
       oppdateringsdato: string;
@@ -596,7 +624,7 @@ export interface components {
       /** @description Angir om fylket er et samisk forvaltningsområde eller ikke */
       samiskforvaltningsomraade: boolean;
       /**
-       * Format: date-time
+       * Format: date
        * @description Angir når dette fylket ble sist oppdatert
        */
       oppdateringsdato: string;
@@ -650,30 +678,30 @@ export interface components {
       /** @description URL til full representasjon av kommunen */
       href: string;
     };
-    /** @description Inneholder kodelisteinnslaget fra Geonorge. */
-    GeonorgeKodelisteItem: {
-      /** @description Id er en URL til kodelisteinnslaget hos Geonorge. */
-      id: string;
-      /** @description Kompakt tekst for framvisning. */
-      label: string;
-      /** @description Angir språket, no for norsk. */
-      lang: string;
-      /** @description Unik id. */
-      uuid: string;
-      /** @description Beskriver om kodelisteinnslaget er gyldig. */
-      status: string;
-      /** @description Beskrivelse av innslaget. */
-      description: string;
-      /** @description Numerisk kode. */
-      codevalue: string;
-    };
+    /** @description Liste av kodeliste-elementer. */
     KodelisteItem: {
+      /** @description Id til kodeliste-innslaget. */
+      id: string;
+      /** @description Beskrivelse av kodeliste-innslaget. */
+      label: string;
+    };
+    KodelisteRespons: {
       /**
-       * @description Angir typen av eksternt forvaltet kodeliste.
+       * @description Angir typen av kodeliste.
        * @enum {string}
        */
-      type: "KOMMUNENUMMER" | "FYLKESNUMMER" | "MAALEMETODE_KODE";
-      item: components["schemas"]["GeonorgeKodelisteItem"];
+      type:
+        | "KOMMUNENUMMER"
+        | "FYLKESNUMMER"
+        | "MAALEMETODE_KODE"
+        | "LAND"
+        | "TERRENGDETALJ"
+        | "NOEYAKTIGHETSKLASSE"
+        | "GRENSETYPE"
+        | "FASTSETTINGSTYPE"
+        | "GRENSESTATUS";
+      /** @description Liste av kodeliste-elementer. */
+      items: components["schemas"]["KodelisteItem"][];
     };
     /** @description En referanse til et fylke */
     FylkeRef: {
@@ -1023,12 +1051,42 @@ export interface operations {
       };
     };
   };
+  fetchTerrengdetaljkoder: {
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json": components["schemas"]["KodelisteRespons"];
+        };
+      };
+    };
+  };
+  fetchNoeyaktighetsklasser: {
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json": components["schemas"]["KodelisteRespons"];
+        };
+      };
+    };
+  };
   fetchMaalemetodeKoder: {
     responses: {
       /** OK */
       200: {
         content: {
-          "application/json": components["schemas"]["KodelisteItem"][];
+          "application/json": components["schemas"]["KodelisteRespons"];
+        };
+      };
+    };
+  };
+  fetchLandkoder: {
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json": components["schemas"]["KodelisteRespons"];
         };
       };
     };
@@ -1038,7 +1096,27 @@ export interface operations {
       /** OK */
       200: {
         content: {
-          "application/json": components["schemas"]["KodelisteItem"][];
+          "application/json": components["schemas"]["KodelisteRespons"];
+        };
+      };
+    };
+  };
+  fetchGrensetyper: {
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json": components["schemas"]["KodelisteRespons"];
+        };
+      };
+    };
+  };
+  fetchGrensestatuskoder: {
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json": components["schemas"]["KodelisteRespons"];
         };
       };
     };
@@ -1048,7 +1126,17 @@ export interface operations {
       /** OK */
       200: {
         content: {
-          "application/json": components["schemas"]["KodelisteItem"][];
+          "application/json": components["schemas"]["KodelisteRespons"];
+        };
+      };
+    };
+  };
+  fetchFastsettingstyper: {
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json": components["schemas"]["KodelisteRespons"];
         };
       };
     };

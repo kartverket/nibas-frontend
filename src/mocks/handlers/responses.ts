@@ -1,5 +1,5 @@
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
-import { AdministrativGrenseMetadata } from "types/api";
+import { AdministrativGrenseMetadata, KodelisteRespons } from "types/api";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 
 export const mockGeoJsonFeatureResponse: GeoJSONFeatureCollection = {
@@ -18,24 +18,29 @@ export const mockGeoJsonFeatureResponse: GeoJSONFeatureCollection = {
               navnerom: "https://data.geonorge.no/sosi/administrativeenheter",
               versjonid: undefined,
             },
-            datafangstdato: "2020-06-15T00:00:00+02:00",
-            gyldigFra: "2020-06-16T00:00:00+02:00",
-            gyldigTil: "2020-06-17T00:00:00+02:00",
+            datafangstdato: "2020-06-15",
+            gyldigFra: "2020-06-16",
+            gyldigTil: "2020-06-17",
             informasjon: "Informasjon",
-            oppdateringsdato: "2020-06-18T00:00:00+02:00",
+            oppdateringsdato: "2020-06-18",
             opphav: "Opphav",
             fastsettingstype: undefined,
             grensestatus: undefined,
           },
           commonGrense: {
             posisjonskvalitet: {
-              maalemetode: "9b4ab6bb-878f-472a-9243-64e2bdc48b8c",
+              maalemetode: {
+                id: "9b4ab6bb-878f-472a-9243-64e2bdc48b8c",
+                href: "",
+              },
               noeyaktighet: 5,
             },
+            fastsettingstype: { id: "", href: "" },
+            grensestatus: { id: "", href: "" },
             dokumentasjonsreferanser: [],
           },
           foelgerTerrengdetalj: undefined,
-          noeyaktighetsklasse: "NøyaktigeMålinger",
+          noeyaktighetsklasse: { id: "", href: "" },
           omtvistet: false,
         } as AdministrativGrenseMetadata,
         kontekstEgenskaper: {
@@ -105,15 +110,18 @@ export const mockKommuner = [
   },
 ];
 
-export const mockMaalemetodeKode = {
+export const mockMaalemetodeRespons: KodelisteRespons = {
   type: "MAALEMETODE_KODE",
-  item: {
-    id: "https://register.geonorge.no/sosi-kodelister/malemetode-kode/terrengmalt-uspesifisert-maleinstrument/7f48625b-e46f-413e-ae4d-0381ac64264b",
-    label: "Terrengmålt: Uspesifisert måleinstrument",
-    lang: "no",
-    uuid: "9b4ab6bb-878f-472a-9243-64e2bdc48b8c",
-    status: "Gyldig",
-    description: "Målt i terrenget , uspesifisert metode/måleinstrument",
-    codevalue: "10",
+  items: [
+    {
+      label: "Terrengmålt: Uspesifisert måleinstrument",
+      id: "9b4ab6bb-878f-472a-9243-64e2bdc48b8c",
+    },
+  ],
+};
+
+export const mockActuatorResponse = {
+  application: {
+    version: "1.2.3",
   },
 };
