@@ -31,7 +31,7 @@ jobs:
       - name: Update npmrc with secret to install internal packages
         run: |
           cp .npmrc .npmrc-copy
-          echo //npm.pkg.github.com/:_authToken=${{secrets.PAT_READ_PACKAGE}} >> .npmrc
+          echo //npm.pkg.github.com/:_authToken=${{secrets.PAT_SCOPE_READ_PACKAGE}} >> .npmrc
 
       - name: Build and test
         run: |
