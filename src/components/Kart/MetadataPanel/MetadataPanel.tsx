@@ -5,16 +5,17 @@ import Button from "components/form/Button";
 import { useMetadataPanel } from "contexts/MetadataPanelContext";
 
 const MetadataPanel = () => {
-  const { panelContent, panelData, closePanel } = useMetadataPanel();
+  const { panelContext, closePanel } = useMetadataPanel();
 
-  // kun vis metadata hvis én feature er selected
-  // det gir ikke mening å vise metadata for flere på en gang
-  if (panelContent !== "grensemetadata") return null;
+  if (panelContext?.content !== "grensemetadata") return null;
 
   return (
     <Panel>
       <h3>Linje metadata</h3>
-      <MetadataContent key={panelData.getId()} feature={panelData} />
+      <MetadataContent
+        key={panelContext.data.getId()}
+        feature={panelContext.data}
+      />
       <Button onClick={closePanel}>Lukk</Button>
     </Panel>
   );

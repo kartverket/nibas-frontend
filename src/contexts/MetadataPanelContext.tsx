@@ -2,37 +2,34 @@ import React, { createContext, useCallback, useContext, useState } from "react";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 
-type PanelContent = "grensemetadata";
-
-type PanelContext = {
-  grensemetadata: Feature<Geometry>;
+type GrenseMetadataPanel = {
+  content: "grensemetadata";
+  data: Feature<Geometry>;
 };
+
+type Panel = GrenseMetadataPanel;
 
 const MetadataPanelContext = createContext<
   | {
-      panelContent: PanelContent | null;
-      panelData: any | null;
-      openPanel: (content: PanelContent, data: any) => void;
+      panelContext: Panel | null;
+      openPanel: (newPanelContext: Panel) => void;
       closePanel: () => void;
     }
   | undefined
 >(undefined);
 
 export const MetadataPanelProvider: React.FC = ({ children }) => {
-  const [panelContent, setPanelContent] = useState<PanelContent | null>(null);
-  const [panelData, setPanelData] = useState<any | null>(null);
+  const [panelContext, setPanelContext] = useState<Panel | null>(null);
 
-  const openPanel = useCallback((content: PanelContent, data: any) => {
-    setPanelContent(content);
-    setPanelData(data);
+  const openPanel = useCallback((newPanelContext: Panel) => {
+    setPanelContext(newPanelContext);
   }, []);
 
   const closePanel = useCallback(() => {
-    setPanelContent(null);
-    setPanelData(null);
+    setPanelContext(null);
   }, []);
 
-  const value = { panelContent, panelData, openPanel, closePanel };
+  const value = { panelContext, openPanel, closePanel };
 
   return (
     <MetadataPanelContext.Provider value={value}>

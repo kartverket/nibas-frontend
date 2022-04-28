@@ -25,7 +25,7 @@ const useSelectInteraction = () => {
 
   useEffect(() => {
     if (features.length === 1) {
-      openPanel("grensemetadata", features[0]);
+      openPanel({ content: "grensemetadata", data: features[0] });
     } else {
       closePanel();
     }
