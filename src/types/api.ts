@@ -25,12 +25,11 @@ export type FylkeRef = components["schemas"]["FylkeRef"];
 export type FylkeRequest = components["schemas"]["FylkeRequest"];
 export type FylkeResponse = components["schemas"]["FylkeResponse"];
 export type Fylkesnummer = components["schemas"]["Fylkesnummer"];
-export type GeonorgeKodelisteItem =
-  components["schemas"]["GeonorgeKodelisteItem"];
 export type GrunnlinjeMetadata = components["schemas"]["GrunnlinjeMetadata"];
 export type HistorikkRef = components["schemas"]["HistorikkRef"];
 export type Identifikasjon = components["schemas"]["Identifikasjon"];
 export type KodelisteItem = components["schemas"]["KodelisteItem"];
+export type KodelisteRespons = components["schemas"]["KodelisteRespons"];
 export type KommuneRef = components["schemas"]["KommuneRef"];
 export type KommuneRequest = components["schemas"]["KommuneRequest"];
 export type KommuneResponse = components["schemas"]["KommuneResponse"];

@@ -73,8 +73,8 @@ const MetadataContent = ({ feature }: Props) => {
             <Select {...register("maalemetode", { disabled: isDisabled })}>
               <option value="">---</option>
               {maalemetodeKoder?.map((kodeItem) => (
-                <option key={kodeItem.item.uuid} value={kodeItem.item.uuid}>
-                  {kodeItem.item.label}
+                <option key={kodeItem.id} value={kodeItem.id}>
+                  {kodeItem.label}
                 </option>
               ))}
             </Select>

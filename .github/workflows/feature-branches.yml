@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: 16.x
 
-      - run: echo //npm.pkg.github.com/:_authToken=${{secrets.PAT_READ_PACKAGE}} >> .npmrc
+      - run: echo //npm.pkg.github.com/:_authToken=${{secrets.PAT_SCOPE_READ_PACKAGE}} >> .npmrc
       - run: npm ci --no-audit
       - run: npm run build --if-present
       - run: npm test
