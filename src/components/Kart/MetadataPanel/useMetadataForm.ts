@@ -3,7 +3,6 @@ import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { useForm } from "react-hook-form";
-import { getDateStringFromISOString } from "./utils";
 import { updateGrenser } from "api/grenser";
 import useNibasApi from "hooks/useNibasApi";
 import { Metadata } from "types/api";
@@ -25,14 +24,17 @@ const getUpdatedMetadata = (data: Inputs, oldMetadata: Metadata) =>
       ...(oldMetadata.common ?? {}),
       informasjon: data.informasjon,
       opphav: data.opphav,
-      gyldigFra: getDateStringFromISOString(data.gyldigFra),
-      gyldigTil: getDateStringFromISOString(data.gyldigTil),
+      gyldigFra: data.gyldigFra,
+      gyldigTil: data.gyldigTil,
     },
     commonGrense: {
       ...(oldMetadata.commonGrense ?? {}),
       posisjonskvalitet: {
         ...(oldMetadata?.commonGrense?.posisjonskvalitet ?? {}),
-        maalemetode: data.maalemetode,
+        maalemetode: {
+          id: data.maalemetode,
+          href: "",
+        },
         noeyaktighet: data.noeyaktighet,
       },
     },
@@ -49,8 +51,8 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
       grenseType: metadata?.discriminator,
       noeyaktighet: metadata?.commonGrense?.posisjonskvalitet?.noeyaktighet,
       opphav: metadata?.common?.opphav,
-      gyldigFra: getDateStringFromISOString(metadata?.common?.gyldigFra ?? ""),
-      gyldigTil: getDateStringFromISOString(metadata?.common?.gyldigTil ?? ""),
+      gyldigFra: metadata?.common?.gyldigFra,
+      gyldigTil: metadata?.common?.gyldigTil,
     },
   });
 
@@ -60,14 +62,14 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
   useEffect(() => {
     if (!maalemetodeKoder) return;
 
-    const selectedMaalemetode = maalemetodeKoder.find(
+    const selectedMaalemetode = maalemetodeKoder.items.find(
       (kode) =>
-        kode.item.uuid === metadata.commonGrense?.posisjonskvalitet?.maalemetode
+        kode.id === metadata.commonGrense?.posisjonskvalitet?.maalemetode.id
     );
 
     if (!selectedMaalemetode) return;
 
-    setValue("maalemetode", selectedMaalemetode.item.uuid);
+    setValue("maalemetode", selectedMaalemetode.id);
   }, [
     maalemetodeKoder,
     setValue,
@@ -88,7 +90,7 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
   return {
     register,
     onSubmit,
-    maalemetodeKoder,
+    maalemetodeKoder: maalemetodeKoder?.items,
   };
 };
 

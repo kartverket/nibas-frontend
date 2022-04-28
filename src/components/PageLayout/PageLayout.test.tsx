@@ -79,7 +79,11 @@ describe("PageLayout", () => {
         screen.getByRole("heading", { name: /sidebar.kartlag/i })
       ).toBeInTheDocument();
       expect(
-        await screen.findByText("Administrative enheter WMS versjon 2")
+        await screen.findByText(
+          "Administrative enheter WMS versjon 2",
+          undefined,
+          { timeout: 3000 }
+        )
       ).toBeInTheDocument();
     });
 

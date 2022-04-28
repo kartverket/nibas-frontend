@@ -4,7 +4,8 @@ import {
   mockGeoJsonFeatureResponse,
   mockFylker,
   mockKommuner,
-  mockMaalemetodeKode,
+  mockMaalemetodeRespons,
+  mockActuatorResponse,
 } from "./responses";
 
 export const nibasApiHandlers: RestHandler[] = [
@@ -21,9 +22,12 @@ export const nibasApiHandlers: RestHandler[] = [
     return res(ctx.status(200), ctx.json(mockGeoJsonFeatureResponse));
   }),
   rest.get("/v1/kodeliste/maalemetode-koder", (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json([mockMaalemetodeKode]));
+    return res(ctx.status(200), ctx.json(mockMaalemetodeRespons));
   }),
   rest.post("/v1/grenser", (req, res, ctx) => {
     return res(ctx.status(200));
+  }),
+  rest.get("/actuator/info", (req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(mockActuatorResponse));
   }),
 ];
