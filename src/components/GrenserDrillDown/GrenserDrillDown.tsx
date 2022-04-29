@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
+import AktiveKartlag from "./AktiveKartlag";
 import Delomrader from "./Delomrader";
 import Fylkesgrenser from "./Fylkesgrenser";
 import GestligeInndelinger from "./GestligeInndelinger";
@@ -28,16 +29,16 @@ const GrenserDrillDown = () => {
 
   return (
     <Panel>
-      <SidebarPanelTitle
-        closePanel={togglePanel}
-        title={t("sidebar.Inndelinger")}
-      />
       <Tabs
         tabs={tabs.ids}
         openTab={tabs.openTab}
         selectedTab={tabs.selectedTab}
       >
         <Tab value={tabs.ids["Grenser"]} selectedTab={tabs.selectedTab}>
+          <SidebarPanelTitle
+            closePanel={togglePanel}
+            title={t("sidebar.Inndelinger")}
+          />
           <UnstyledList>
             <Riksgrenser />
             <Fylkesgrenser />
@@ -54,6 +55,8 @@ const GrenserDrillDown = () => {
         </Tab>
         <Tab value={tabs.ids["Aktive kartlag"]} selectedTab={tabs.selectedTab}>
           <SidebarPanelTitle closePanel={togglePanel} title="Aktive kartlag" />
+
+          <AktiveKartlag />
         </Tab>
       </Tabs>
     </Panel>

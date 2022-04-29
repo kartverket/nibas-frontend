@@ -40,6 +40,7 @@ const ToggleableGrense = <T extends GrenseRef>({
 }: Props<T>) => {
   const [layerToAddTo, setLayerToAddTo] = useState<LayerId | null>(null);
 
+  // sett features inn i layer når features har blitt hentet
   useEffect(() => {
     if (!layerToAddTo || !features) return;
 
