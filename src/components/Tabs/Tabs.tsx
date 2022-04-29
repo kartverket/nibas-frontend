@@ -1,7 +1,7 @@
 import React from "react";
 import styled, { css } from "styled-components";
 import { TabDictionary } from "./useTabs";
-import Button from "components/Button";
+import Button from "components/form/Button";
 
 type TabsProps<T extends string> = {
   children: React.ReactNode;
