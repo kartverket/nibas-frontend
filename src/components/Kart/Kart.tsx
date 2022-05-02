@@ -25,7 +25,7 @@ const Kart = () => {
   const { tokenHolderFunc } = useAuthenticationFlow();
 
   useEditInteractions();
-  const selectedFeatures = useSelectInteraction();
+  useSelectInteraction();
 
   useEffect(() => {
     // mapRef kan egentlig ikke være null her,
@@ -51,7 +51,7 @@ const Kart = () => {
       <Suspense fallback="More loading...">
         <KartOverlay>
           <SidebarPanels />
-          <MetadataPanel selectedFeatures={selectedFeatures} />
+          <MetadataPanel />
         </KartOverlay>
 
         <CustomControl>

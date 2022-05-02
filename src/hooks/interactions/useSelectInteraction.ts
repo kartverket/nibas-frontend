@@ -3,9 +3,11 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { Select } from "ol/interaction";
 import { map } from "components/Kart/constants";
+import { useMetadataPanel } from "contexts/MetadataPanelContext";
 
 const useSelectInteraction = () => {
   const [features, setFeatures] = useState<Feature<Geometry>[]>([]);
+  const { openPanel, closePanel } = useMetadataPanel();
 
   useEffect(() => {
     const select = new Select({ hitTolerance: 5 });
@@ -20,6 +22,14 @@ const useSelectInteraction = () => {
       map.removeInteraction(select);
     };
   }, []);
+
+  useEffect(() => {
+    if (features.length === 1) {
+      openPanel({ content: "grensemetadata", data: features[0] });
+    } else {
+      closePanel();
+    }
+  }, [features, openPanel, closePanel]);
 
   return features;
 };
