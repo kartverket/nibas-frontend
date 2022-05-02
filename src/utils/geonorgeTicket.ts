@@ -18,7 +18,6 @@ const getTicketInLocalStorage = (tjenesteId: string) =>
 
 export const getSrcWithTicket = async (tjenesteId: string, src: string) => {
   const ticket = await getTicketForTjeneste(tjenesteId, src);
-  console.log("Returned ticket", ticket);
 
   return src.concat(`&ticket=${ticket}`);
 };
@@ -26,19 +25,15 @@ export const getSrcWithTicket = async (tjenesteId: string, src: string) => {
 const fetchNewTicket = async (tjenesteId: string) => {
   if (!ticketConfigSetUpCorrectly) return "*";
 
-  console.log("Fetching new ticket");
   const ticketResponse = await fetch(`/skbaatts/req?tjenesteid=${tjenesteId}`);
   return ticketResponse.text();
 };
 
 export const getTicketForTjeneste = async (tjenesteId: string, src: string) => {
-  console.log("Get ticket for", tjenesteId);
   let existingTicket = getTicketInLocalStorage(tjenesteId);
 
   if (existingTicket) {
     const isValid = await isTicketValid(existingTicket, src);
-
-    console.log("Existing ticket found", existingTicket);
 
     if (isValid) {
       return existingTicket;
@@ -48,7 +43,6 @@ export const getTicketForTjeneste = async (tjenesteId: string, src: string) => {
   }
 
   const ticket = await fetchNewTicket(tjenesteId);
-  console.log("Fetched new ticket", ticket);
 
   // hvis ticket inneholder stjerne har vi fått en error av tjeneren
   // vi trenger ikke polle endepunktet flere ganger denne sessionen,
@@ -61,11 +55,9 @@ export const getTicketForTjeneste = async (tjenesteId: string, src: string) => {
   // ticket fetching er async, så vi må sjekke om ticket har blitt satt etter requesten ble fyrt av
   existingTicket = getTicketInLocalStorage(tjenesteId);
   if (existingTicket) {
-    console.log("Existing ticket was found after fetching", existingTicket);
     return existingTicket;
   }
 
-  console.log("Setting ticket in local storage", ticket);
   setTicketInLocalStorage(tjenesteId, ticket);
 
   return ticket;
