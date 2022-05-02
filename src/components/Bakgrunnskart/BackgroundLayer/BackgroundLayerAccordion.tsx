@@ -48,7 +48,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
 
     const renderNameAndCaret = () => {
       // hvis hovedlag som kan dras på, vis annen musepeker på navnet
-      if (props.isMainLayer) {
+      if (props.isMainLayer && ref) {
         return (
           <ClickableName variant="unstyled" onClick={() => setOpen(!open)}>
             <DraggableName ref={ref}>{props.mappedLayer.title}</DraggableName>

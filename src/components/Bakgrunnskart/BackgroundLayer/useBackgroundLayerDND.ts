@@ -12,8 +12,8 @@ type DragItem = {
 
 const useBackgroundLayerDND = (
   index: number,
-  moveLayer: (direction: "up" | "down", layerId: BakgrunnskartId) => void,
-  mappedLayer: MainMappedLayer
+  mappedLayer: MainMappedLayer,
+  moveLayer?: (direction: "up" | "down", layerId: BakgrunnskartId) => void
 ) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -25,7 +25,7 @@ const useBackgroundLayerDND = (
   const [, drop] = useDrop({
     accept: "mainLayer",
     hover(item: DragItem, monitor: DropTargetMonitor) {
-      if (!ref.current) {
+      if (!ref.current || !moveLayer) {
         return;
       }
       const dragIndex = item.index;

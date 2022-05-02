@@ -19,7 +19,7 @@ type Props = {
   visible: boolean;
   toggleLayerVisibility: () => void;
   index: number;
-  moveLayer: (direction: "up" | "down", layerId: BakgrunnskartId) => void;
+  moveLayer?: (direction: "up" | "down", layerId: BakgrunnskartId) => void;
 };
 
 const WMTSBackgroundLayer = ({
@@ -33,7 +33,7 @@ const WMTSBackgroundLayer = ({
   // siden openlayers ikke rerendrer UIet vårt
   const [activeSubLayer, setActiveSubLayer] = useState("");
 
-  const ref = useBackgroundLayerDND(index, moveLayer, mappedLayer);
+  const ref = useBackgroundLayerDND(index, mappedLayer, moveLayer);
 
   const updateActiveSubLayer = useCallback(() => {
     const newActiveSubLayer = getActiveSubLayer(mappedLayer.sourceId);
@@ -52,7 +52,7 @@ const WMTSBackgroundLayer = ({
       mappedLayer={mappedLayer}
       onVisibilityClick={toggleLayerVisibility}
       visible={visible}
-      ref={ref}
+      ref={moveLayer ? ref : null}
     >
       <>
         {mappedLayer.layers.map((subLayer) => (

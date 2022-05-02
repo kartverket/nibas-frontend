@@ -23,7 +23,12 @@ const AktiveKartlag = () => {
 
       <ActiveBackgroundLayers>Aktive bakgrunnskart</ActiveBackgroundLayers>
       {openLayers.map((id, i) => (
-        <MainLayer key={id} layerId={id as BakgrunnskartId} index={i} />
+        <MainLayer
+          key={id}
+          layerId={id as BakgrunnskartId}
+          index={i}
+          canDrag={false}
+        />
       ))}
     </div>
   );

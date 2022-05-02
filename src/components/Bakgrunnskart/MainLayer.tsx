@@ -9,9 +9,10 @@ import { isVectorLayer, isWMSLayer, isWMTSLayer } from "utils/map/layers";
 type Props = {
   layerId: BakgrunnskartId;
   index: number;
+  canDrag?: boolean;
 };
 
-const MainLayer = ({ layerId, index }: Props) => {
+const MainLayer = ({ layerId, index, canDrag = true }: Props) => {
   const layer = bakgrunnskartLayers[layerId];
   const { mappedLayers, moveLayer, toggleLayerVisibility, visibleLayers } =
     useBakgrunnskart();
@@ -27,7 +28,7 @@ const MainLayer = ({ layerId, index }: Props) => {
         visible={visibleLayers[layerId]}
         toggleLayerVisibility={() => toggleLayerVisibility(layerId)}
         index={index}
-        moveLayer={moveLayer}
+        moveLayer={canDrag ? moveLayer : undefined}
       />
     );
   }
@@ -39,7 +40,7 @@ const MainLayer = ({ layerId, index }: Props) => {
         visible={visibleLayers[layerId]}
         toggleLayerVisibility={() => toggleLayerVisibility(layerId)}
         index={index}
-        moveLayer={moveLayer}
+        moveLayer={canDrag ? moveLayer : undefined}
       />
     );
   }
@@ -51,7 +52,7 @@ const MainLayer = ({ layerId, index }: Props) => {
         visible={visibleLayers[layerId]}
         toggleLayerVisibility={() => toggleLayerVisibility(layerId)}
         index={index}
-        moveLayer={moveLayer}
+        moveLayer={canDrag ? moveLayer : undefined}
       />
     );
   }

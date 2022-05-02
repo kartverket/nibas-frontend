@@ -11,7 +11,7 @@ type Props = {
   visible: boolean;
   toggleLayerVisibility: () => void;
   index: number;
-  moveLayer: (direction: "up" | "down", layerId: BakgrunnskartId) => void;
+  moveLayer?: (direction: "up" | "down", layerId: BakgrunnskartId) => void;
 };
 
 const WFSBackgroundLayer = ({
@@ -21,7 +21,7 @@ const WFSBackgroundLayer = ({
   index,
   moveLayer,
 }: Props) => {
-  const ref = useBackgroundLayerDND(index, moveLayer, mappedLayer);
+  const ref = useBackgroundLayerDND(index, mappedLayer, moveLayer);
 
   const onVisibilityClick = () => {
     const layerId = getLayerIdFromMappedLayer(mappedLayer);
@@ -42,7 +42,7 @@ const WFSBackgroundLayer = ({
       mappedLayer={mappedLayer}
       onVisibilityClick={onVisibilityClick}
       visible={visible}
-      ref={ref}
+      ref={moveLayer ? ref : null}
     >
       {null}
     </BackgroundLayerAccordion>
