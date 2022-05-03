@@ -30,7 +30,7 @@ const GrenserDrillDown = () => {
   return (
     <Panel>
       <Tabs
-        tabs={tabs.ids}
+        tabIds={tabs.ids}
         openTab={tabs.openTab}
         selectedTab={tabs.selectedTab}
       >

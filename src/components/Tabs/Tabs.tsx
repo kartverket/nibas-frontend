@@ -5,21 +5,21 @@ import Button from "components/form/Button";
 
 type TabsProps<T extends string> = {
   children: React.ReactNode;
-  tabs: TabDictionary<T>;
+  tabIds: TabDictionary<T>;
   openTab: (tab: T) => void;
   selectedTab: T;
 };
 
 const Tabs = <T extends string>({
   children,
-  tabs,
+  tabIds,
   openTab,
   selectedTab,
 }: TabsProps<T>) => {
   return (
     <div>
       <TabsWrapper>
-        {Object.keys(tabs).map((tabId) => (
+        {Object.keys(tabIds).map((tabId) => (
           <TabButton
             key={tabId}
             onClick={() => openTab(tabId as T)}
