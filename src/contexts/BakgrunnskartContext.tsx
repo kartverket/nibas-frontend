@@ -27,7 +27,7 @@ export const BakgrunnskartProvider: React.FC = ({ children }) => {
   const [mappedLayers, setMappedLayers] = useState<MainMappedLayer[]>([]);
 
   const { visibleLayers, dispatch } = useVisibleLayers();
-  const { moveLayer, orderedLayerIds } = useZIndexes();
+  const { moveLayer, orderedLayerIds } = useOrderedLayers();
 
   useEffect(() => {
     let isMounted = true;
