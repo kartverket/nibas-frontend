@@ -9,7 +9,7 @@ import { useSidebarPanel } from "contexts/SidebarPanelContext";
 const Bakgrunnskart = () => {
   const { t } = useTranslation();
   const { isOpen: visible, togglePanel } = useSidebarPanel("kartlag");
-  const { zIndexes } = useBakgrunnskart();
+  const { orderedLayerIds, updateMappedLayers } = useBakgrunnskart();
 
   if (!visible) return null;
 
@@ -19,7 +19,7 @@ const Bakgrunnskart = () => {
         closePanel={togglePanel}
         title={t("sidebar.Kartlag")}
       />
-      {zIndexes.map((layerId, index) => (
+      {orderedLayerIds.map((layerId, index) => (
         <MainLayer key={layerId} layerId={layerId} index={index} />
       ))}
     </Panel>
