@@ -60,7 +60,6 @@ const ToggleableGrense = <T extends GrenseRef>({
 
     if (!newObjectValue.visible) {
       if (!features) return;
-      // hvis var synlig blir det nå usynlig, fjern fra begge lag
 
       if (newObjectValue?.editing) {
         removeFeaturesFromSourceByIds("edit", features);
