@@ -54,7 +54,10 @@ const GrenserDrillDown = () => {
           </UnstyledList>
         </Tab>
         <Tab value={tabs.ids["Aktive kartlag"]} selectedTab={tabs.selectedTab}>
-          <SidebarPanelTitle closePanel={togglePanel} title="Aktive kartlag" />
+          <SidebarPanelTitle
+            closePanel={togglePanel}
+            title={t("inndelinger.Aktive kartlag")}
+          />
 
           <AktiveKartlag />
         </Tab>

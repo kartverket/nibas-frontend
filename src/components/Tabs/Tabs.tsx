@@ -1,7 +1,9 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import styled, { css } from "styled-components";
 import { TabDictionary } from "./useTabs";
 import Button from "components/form/Button";
+import { Translation } from "i18n";
 
 type TabsProps<T extends string> = {
   children: React.ReactNode;
@@ -16,6 +18,8 @@ const Tabs = <T extends string>({
   openTab,
   selectedTab,
 }: TabsProps<T>) => {
+  const { t } = useTranslation();
+
   return (
     <div>
       <TabsWrapper>
@@ -25,7 +29,7 @@ const Tabs = <T extends string>({
             onClick={() => openTab(tabId as T)}
             selected={(tabId as T) === selectedTab}
           >
-            {tabId}
+            {t(`inndelinger.${tabId}` as Translation)}
           </TabButton>
         ))}
       </TabsWrapper>

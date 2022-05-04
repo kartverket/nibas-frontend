@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-named-as-default
 import i18n from "i18next";
 import Backend from "i18next-http-backend";
-import { initReactI18next } from "react-i18next";
+import { initReactI18next, TFunction } from "react-i18next";
 
 i18n
   // load translation using http -> see /public/locales
@@ -22,5 +22,7 @@ i18n
       escapeValue: false, // not needed for react as it escapes by default
     },
   });
+
+export type Translation = Parameters<TFunction<"translation", undefined>>[0];
 
 export default i18n;

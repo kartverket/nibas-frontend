@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import FylkeList from "../Fylkesgrenser/FylkeList";
 import KommuneList from "../Kommunegrenser/KommuneList";
@@ -7,6 +8,7 @@ import { BakgrunnskartId } from "hooks/layers/types";
 import useNibasApi from "hooks/useNibasApi";
 
 const AktiveKartlag = () => {
+  const { t } = useTranslation();
   const { data: fylker } = useNibasApi("/v1/fylker");
   const { visibleLayers } = useBakgrunnskart();
 
@@ -21,7 +23,7 @@ const AktiveKartlag = () => {
         <KommuneList key={fylke.id} onlyDisplayEditing fylke={fylke} />
       ))}
 
-      <ActiveBackgroundLayers>Aktive bakgrunnskart</ActiveBackgroundLayers>
+      <ActiveBackgroundLayers>
       {openLayers.map((id, i) => (
         <MainLayer
           key={id}

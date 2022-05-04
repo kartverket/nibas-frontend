@@ -21,7 +21,9 @@
     "Riksgrenser": "__STRING_NOT_TRANSLATED__",
     "Skolekretser": "__STRING_NOT_TRANSLATED__",
     "Stemmekretser": "__STRING_NOT_TRANSLATED__",
-    "Svalbardområdet": "__STRING_NOT_TRANSLATED__"
+    "Svalbardområdet": "__STRING_NOT_TRANSLATED__",
+    "Aktive kartlag": "__STRING_NOT_TRANSLATED__",
+    "Grenser": "__STRING_NOT_TRANSLATED__"
   },
   "Henter fylker": "__STRING_NOT_TRANSLATED__",
   "Koordinater": "__STRING_NOT_TRANSLATED__",
@@ -30,5 +32,6 @@
     "Logout": "__STRING_NOT_TRANSLATED__",
     "Logget inn som {{ personId }}": "__STRING_NOT_TRANSLATED__",
     "Ikke logget inn": "__STRING_NOT_TRANSLATED__"
-  }
+  },
+  "Aktive bakgrunnskart": "__STRING_NOT_TRANSLATED__"
 }
