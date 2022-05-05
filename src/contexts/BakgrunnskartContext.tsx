@@ -1,11 +1,4 @@
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { bakgrunnskartLayers } from "hooks/layers/constants";
 import { BakgrunnskartId } from "hooks/layers/types";
 import useOrderedLayers from "hooks/layers/useOrderedLayers";
@@ -24,7 +17,6 @@ export type BakgrunnskartContextValue = {
   visibleLayers: VisibleLayers;
   toggleLayerVisibility: (layerId: BakgrunnskartId) => void;
   orderedLayerIds: BakgrunnskartId[];
-  updateMappedLayers: () => void;
   moveLayer: (direction: "up" | "down", layerId: BakgrunnskartId) => void;
 };
 
@@ -37,78 +29,42 @@ export const BakgrunnskartContext = createContext<
 
 export const BakgrunnskartProvider: React.FC = ({ children }) => {
   const [mappedLayers, setMappedLayers] = useState<MainMappedLayer[]>([]);
-  const isMounted = useRef(false);
 
   const { visibleLayers, dispatch } = useVisibleLayers();
   const { moveLayer, orderedLayerIds } = useOrderedLayers();
 
   useEffect(() => {
-    isMounted.current = true;
+    let isMounted = true;
+
+    const updateMappedLayers = async () => {
+      const mappedLayerPromises: Promise<MainMappedLayer | null>[] = [];
+
+      Object.values(bakgrunnskartLayers).forEach((layer) => {
+        if (isVectorLayer(layer)) {
+          mappedLayerPromises.push(mapVectorLayer());
+          return;
+        }
+
+        mappedLayerPromises.push(getSubLayersFromWMSSource(layer.getSource()));
+      });
+
+      const layers = await Promise.all(mappedLayerPromises);
+
+      const nonNullLayers = layers.filter(
+        (layer) => layer !== null
+      ) as MainMappedLayer[];
+
+      if (isMounted) {
+        setMappedLayers(nonNullLayers);
+      }
+    };
+
+    updateMappedLayers();
 
     return () => {
-      isMounted.current = false;
+      isMounted = false;
     };
-  });
-
-  const updateMappedLayers = useCallback(async () => {
-    if (mappedLayers.length > 0) return;
-
-    const mappedLayerPromises: Promise<MainMappedLayer | null>[] = [];
-
-    Object.values(bakgrunnskartLayers).forEach((layer) => {
-      if (isVectorLayer(layer)) {
-        mappedLayerPromises.push(mapVectorLayer());
-        return;
-      }
-
-      // antar feil fordi kode kjøres etter testen er ferdig
-      mappedLayerPromises.push(getSubLayersFromWMSSource(layer.getSource()));
-    });
-
-    const layers = await Promise.all(mappedLayerPromises);
-
-    const nonNullLayers = layers.filter(
-      (layer) => layer !== null
-    ) as MainMappedLayer[];
-
-    if (isMounted.current) {
-      setMappedLayers(nonNullLayers);
-    }
-  }, [mappedLayers]);
-
-  // useEffect(() => {
-  //   let isMounted = true;
-
-  //   const updateMappedLayers = async () => {
-  //     const mappedLayerPromises: Promise<MainMappedLayer | null>[] = [];
-
-  //     Object.values(bakgrunnskartLayers).forEach((layer) => {
-  //       if (isVectorLayer(layer)) {
-  //         mappedLayerPromises.push(mapVectorLayer());
-  //         return;
-  //       }
-
-  //       // antar feil fordi kode kjøres etter testen er ferdig
-  //       mappedLayerPromises.push(getSubLayersFromWMSSource(layer.getSource()));
-  //     });
-
-  //     const layers = await Promise.all(mappedLayerPromises);
-
-  //     const nonNullLayers = layers.filter(
-  //       (layer) => layer !== null
-  //     ) as MainMappedLayer[];
-
-  //     if (isMounted) {
-  //       setMappedLayers(nonNullLayers);
-  //     }
-  //   };
-
-  //   updateMappedLayers();
-
-  //   return () => {
-  //     isMounted = false;
-  //   };
-  // }, []);
+  }, []);
 
   const value = {
     mappedLayers,
@@ -117,7 +73,6 @@ export const BakgrunnskartProvider: React.FC = ({ children }) => {
       dispatch(toggleLayerVisibility(layerId)),
     moveLayer,
     orderedLayerIds,
-    updateMappedLayers,
   };
 
   return (

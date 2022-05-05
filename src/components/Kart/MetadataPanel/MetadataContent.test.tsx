@@ -1,14 +1,20 @@
 import { render, screen, waitFor } from "test/test-utils";
+import { ReactNode } from "react";
 import MetadataContent from "./MetadataContent";
+import { EditGrenserProvider } from "components/GrenserDrillDown/EditGrenserContext";
 import { mockBasicFeature } from "mocks/handlers/responses";
 
 const defaultProps: React.ComponentProps<typeof MetadataContent> = {
   feature: mockBasicFeature,
 };
 
+const renderWithProvider = (ui: ReactNode) =>
+  render(<EditGrenserProvider>{ui}</EditGrenserProvider>);
+
 describe("MetadataContent", () => {
   it("should display data from feature properties", async () => {
-    render(<MetadataContent {...defaultProps} />);
+    renderWithProvider(<MetadataContent {...defaultProps} />);
+
     expect(screen.getByRole("textbox", { name: /informasjon/i })).toHaveValue(
       "Informasjon"
     );
@@ -23,6 +29,7 @@ describe("MetadataContent", () => {
     );
     expect(screen.getByText("18.6.2020")).toBeInTheDocument();
     expect(screen.getByText("15.6.2020")).toBeInTheDocument();
+
     await waitFor(() =>
       expect(screen.getByRole("combobox", { name: /målemetode/i })).toHaveValue(
         "9b4ab6bb-878f-472a-9243-64e2bdc48b8c"

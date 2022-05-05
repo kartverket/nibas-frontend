@@ -39,7 +39,7 @@ describe("ToggleableGrense", () => {
     render(
       <ToggleableGrense
         {...defaultProps}
-        objectValue={{ editing: true, visible: true, inserted: true }}
+        objectValue={{ editing: true, visible: true }}
       />
     );
 

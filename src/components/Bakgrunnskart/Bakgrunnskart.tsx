@@ -9,7 +9,7 @@ import { useSidebarPanel } from "contexts/SidebarPanelContext";
 const Bakgrunnskart = () => {
   const { t } = useTranslation();
   const { isOpen: visible, togglePanel } = useSidebarPanel("kartlag");
-  const { orderedLayerIds, updateMappedLayers } = useBakgrunnskart();
+  const { orderedLayerIds } = useBakgrunnskart();
 
   if (!visible) return null;
 

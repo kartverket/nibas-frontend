@@ -24,6 +24,8 @@ const AktiveKartlag = () => {
       ))}
 
       <ActiveBackgroundLayers>
+        {t("Aktive bakgrunnskart")}
+      </ActiveBackgroundLayers>
       {openLayers.map((id, i) => (
         <MainLayer
           key={id}
