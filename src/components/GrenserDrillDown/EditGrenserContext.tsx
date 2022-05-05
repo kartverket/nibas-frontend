@@ -9,16 +9,20 @@ export type ObjectValue = {
 type GrenseDictionary = Record<string, ObjectValue>;
 type EditingObject = Partial<Record<EditingType, GrenseDictionary>>;
 
-const EditGrenserContext = createContext<
-  | {
-      editingObject: EditingObject;
-      setObjectValue: (
-        type: EditingType,
-        name: string,
-        values?: ObjectValue
-      ) => void;
-    }
-  | undefined
+export type EditGrenserContextValue = {
+  editingObject: EditingObject;
+  setObjectValue: (
+    type: EditingType,
+    name: string,
+    values?: ObjectValue
+  ) => void;
+};
+
+/**
+ * Bruk heller EditGrenserProvider i koden
+ */
+export const EditGrenserContext = createContext<
+  EditGrenserContextValue | undefined
 >(undefined);
 
 export const EditGrenserProvider: React.FC = ({ children }) => {

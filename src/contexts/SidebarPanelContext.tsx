@@ -11,13 +11,17 @@ const getClosedPanels = () =>
     utkast: false,
   } as OpenSidebarPanels);
 
-const SidebarPanelContext = createContext<
-  | {
-      openPanels: OpenSidebarPanels;
-      setPanel: (panel: SidebarPanel, value: boolean) => void;
-      togglePanel: (panel: SidebarPanel) => void;
-    }
-  | undefined
+export type SidebarPanelContextValue = {
+  openPanels: OpenSidebarPanels;
+  setPanel: (panel: SidebarPanel, value: boolean) => void;
+  togglePanel: (panel: SidebarPanel) => void;
+};
+
+/**
+ * Bruk heller SidebarPanelProvider i koden
+ */
+export const SidebarPanelContext = createContext<
+  SidebarPanelContextValue | undefined
 >(undefined);
 
 export const SidebarPanelProvider: React.FC = ({ children }) => {
