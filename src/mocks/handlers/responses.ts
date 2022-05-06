@@ -1,5 +1,10 @@
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
-import { AdministrativGrenseMetadata, KodelisteRespons } from "types/api";
+import {
+  AdministrativGrenseMetadata,
+  FylkeRef,
+  KodelisteRespons,
+  KommuneRef,
+} from "types/api";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 
 export const mockGeoJsonFeatureResponse: GeoJSONFeatureCollection = {
@@ -71,7 +76,7 @@ export const mockBasicFeature = getFeaturesFromGeoJson(
 
 export const mockFylker = [
   {
-    id: 1,
+    id: "1",
     navn: [
       {
         navn: "Vestfold og Telemark",
@@ -81,7 +86,7 @@ export const mockFylker = [
     href: "http://localhost:8080/v1/fylker/1",
   },
   {
-    id: 2,
+    id: "2",
     navn: [
       {
         navn: "Agder",
@@ -90,16 +95,16 @@ export const mockFylker = [
     ],
     href: "http://localhost:8080/v1/fylker/2",
   },
-];
+] as FylkeRef[];
 
 export const mockKommuner = [
   {
-    id: 1,
+    id: "1",
     navn: [{ navn: "Malvik", spraak: "nor" }],
     href: "http://localhost:8080/v1/kommuner/1",
   },
   {
-    id: 2,
+    id: "2",
     navn: [
       {
         navn: "Giske",
@@ -108,7 +113,7 @@ export const mockKommuner = [
     ],
     href: "http://localhost:8080/v1/kommuner/2",
   },
-];
+] as KommuneRef[];
 
 export const mockMaalemetodeRespons: KodelisteRespons = {
   type: "MAALEMETODE_KODE",

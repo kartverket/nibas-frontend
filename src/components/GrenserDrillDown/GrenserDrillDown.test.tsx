@@ -1,6 +1,9 @@
 import { render, screen } from "test/test-utils";
 import { ReactNode } from "react";
+import userEvent from "@testing-library/user-event";
+import { EditGrenserProvider } from "./EditGrenserContext";
 import GrenserDrillDown from "./GrenserDrillDown";
+import { BakgrunnskartContext } from "contexts/BakgrunnskartContext";
 import { SidebarPanelContext } from "contexts/SidebarPanelContext";
 
 const renderWithProvider = (ui: ReactNode) =>
@@ -52,5 +55,29 @@ describe("GrenserDrillDown", () => {
     expect(screen.getByText(/gestlige inndelinger/i)).toBeInTheDocument();
     expect(screen.getByText(/maritime grenser/i)).toBeInTheDocument();
     expect(screen.getByText(/svalbardområdet/i)).toBeInTheDocument();
+  });
+
+  it("should open aktive kartlag on aktive kartlag tab click", () => {
+    renderWithProvider(
+      <BakgrunnskartContext.Provider
+        value={{
+          mappedLayers: [],
+          moveLayer: jest.fn(),
+          orderedLayerIds: [],
+          toggleLayerVisibility: jest.fn(),
+          visibleLayers: {} as any,
+        }}
+      >
+        <EditGrenserProvider>
+          <GrenserDrillDown />
+        </EditGrenserProvider>
+      </BakgrunnskartContext.Provider>
+    );
+
+    userEvent.click(screen.getByRole("button", { name: /aktive kartlag/i }));
+
+    expect(
+      screen.getByRole("heading", { name: /aktive kartlag/i })
+    ).toBeInTheDocument();
   });
 });
