@@ -1,12 +1,13 @@
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
-import styled, { css } from "styled-components";
+import styled, { css, useTheme } from "styled-components";
 import useMetadataForm from "./useMetadataForm";
 import { getDateInFriendlyString } from "./utils";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
 import { useEditGrenser } from "components/GrenserDrillDown/EditGrenserContext";
+import useScreenWidth from "hooks/useScreenWidth";
 import { Metadata, FeatureProperties } from "types/api";
 
 const editingTypeByKontekstType = {
@@ -29,10 +30,14 @@ const MetadataContent = ({ feature }: Props) => {
     feature
   );
 
+  const screenWidth = useScreenWidth();
+  const theme = useTheme();
+
   const { values } = useEditGrenser(
     editingTypeByKontekstType[properties.kontekstEgenskaper?.type ?? "FYLKE"]
   );
 
+  // hvis synlig og ikke endrer, disable felter
   const featureKontekstId = properties.kontekstEgenskaper?.id;
   const isDisabled = featureKontekstId
     ? values[featureKontekstId]?.visible && !values[featureKontekstId]?.editing
@@ -92,22 +97,14 @@ const MetadataContent = ({ feature }: Props) => {
             />
           </BlockLabel>
         </Part>
-        <Part>
-          <div>
-            <MetadataText>Oppdateringsdato</MetadataText>
-            <MetadataValue>
-              {getDateInFriendlyString(metadata?.common?.oppdateringsdato) ??
-                "---"}
-            </MetadataValue>
-          </div>
-          <div>
-            <MetadataText>Datafangstdato</MetadataText>
-            <MetadataValue>
-              {getDateInFriendlyString(metadata?.common?.datafangstdato) ??
-                "---"}
-            </MetadataValue>
-          </div>
-        </Part>
+        {screenWidth < theme.dimensions.lg && (
+          <Part>
+            <Dates
+              oppdateringsdato={metadata?.common?.oppdateringsdato}
+              datafangstdato={metadata?.common?.datafangstdato}
+            />
+          </Part>
+        )}
       </Container>
       <BlockLabel>
         Informasjon
@@ -117,14 +114,48 @@ const MetadataContent = ({ feature }: Props) => {
         Opphav
         <Input {...register("opphav", { disabled: isDisabled })} />
       </BlockLabel>
+      {screenWidth > theme.dimensions.lg && (
+        <Part>
+          <Dates
+            oppdateringsdato={metadata?.common?.oppdateringsdato}
+            datafangstdato={metadata?.common?.datafangstdato}
+          />
+        </Part>
+      )}
       <Button type="submit">Lagre</Button>
     </form>
   );
 };
 
+type DatesProps = {
+  oppdateringsdato?: string;
+  datafangstdato?: string;
+};
+
+const Dates = ({ oppdateringsdato, datafangstdato }: DatesProps) => (
+  <>
+    <div>
+      <MetadataText>Oppdateringsdato</MetadataText>
+      <MetadataValue>
+        {getDateInFriendlyString(oppdateringsdato) ?? "---"}
+      </MetadataValue>
+    </div>
+    <div>
+      <MetadataText>Datafangstdato</MetadataText>
+      <MetadataValue>
+        {getDateInFriendlyString(datafangstdato) ?? "---"}
+      </MetadataValue>
+    </div>
+  </>
+);
+
 const Container = styled.div`
   display: flex;
   justify-content: flex-start;
+
+  @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
+    flex-direction: column;
+  }
 `;
 
 const Part = styled.div`
@@ -135,6 +166,15 @@ const Part = styled.div`
   &:first-child,
   &:last-child {
     margin: 0;
+  }
+
+  @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
+    margin: 8px 0;
+
+    &:first-child,
+    &:last-child {
+      margin: 8px 0;
+    }
   }
 `;
 

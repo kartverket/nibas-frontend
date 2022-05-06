@@ -76,6 +76,12 @@ const KartTarget = styled.div`
 
 const KartOverlay = styled.div`
   display: grid;
+
+  @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
+    grid-template-columns: auto 400px;
+    grid-template-areas: "panel metadata";
+  }
+
   grid-template-rows: 3fr auto;
   grid-template-columns: auto 1fr;
   grid-template-areas:

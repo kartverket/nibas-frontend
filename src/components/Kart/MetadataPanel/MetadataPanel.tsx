@@ -29,6 +29,10 @@ const Panel = styled(KartInteractable)`
   max-height: 500px;
   border-radius: 3px;
 
+  @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
+    max-height: 800px;
+  }
+
   > h3 {
     margin-top: 0;
     margin-bottom: 16px;

@@ -26,5 +26,10 @@ declare module "styled-components" {
       yellowLight: string;
       white: string;
     };
+
+    dimensions: {
+      lg: number;
+      lgPx: string;
+    };
   }
 }
