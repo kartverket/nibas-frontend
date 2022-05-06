@@ -114,7 +114,7 @@ const MetadataContent = ({ feature }: Props) => {
         Opphav
         <Input {...register("opphav", { disabled: isDisabled })} />
       </BlockLabel>
-      {screenWidth > theme.dimensions.lg && (
+      {screenWidth >= theme.dimensions.lg && (
         <Part>
           <Dates
             oppdateringsdato={metadata?.common?.oppdateringsdato}
