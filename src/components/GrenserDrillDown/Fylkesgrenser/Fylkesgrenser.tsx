@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import ListItemAccordion from "../ListItemAccordion";
-import FylkeList from "./FylkeList/FylkeList";
+import FylkeList from "./FylkeList";
 
 const Fylkesgrenser = () => {
   const { t } = useTranslation();

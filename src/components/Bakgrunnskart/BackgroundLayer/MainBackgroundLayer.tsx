@@ -6,24 +6,20 @@ import { MainMappedLayer } from "utils/getLayersFromWMS";
 
 type Props = {
   mappedLayer: MainMappedLayer;
-  mainLayerSourceId: BakgrunnskartId;
-  mainLayerName: string;
   index: number;
-  moveLayer: (direction: "up" | "down", layerId: BakgrunnskartId) => void;
   toggleLayerVisibility: () => void;
   visible: boolean;
+  moveLayer?: (direction: "up" | "down", layerId: BakgrunnskartId) => void;
 };
 
 const MainBackgroundLayer = ({
   mappedLayer,
-  mainLayerSourceId,
-  mainLayerName,
   visible,
   toggleLayerVisibility,
   index,
   moveLayer,
 }: Props) => {
-  const ref = useBackgroundLayerDND(index, moveLayer, mappedLayer);
+  const ref = useBackgroundLayerDND(index, mappedLayer, moveLayer);
 
   return (
     <BackgroundLayerAccordion
@@ -32,7 +28,7 @@ const MainBackgroundLayer = ({
       indent={0}
       visible={visible}
       onVisibilityClick={toggleLayerVisibility}
-      ref={ref}
+      ref={moveLayer ? ref : null}
       isMainLayer
     >
       <>
@@ -40,8 +36,8 @@ const MainBackgroundLayer = ({
           <SubBackgroundLayer
             key={layer.title}
             mappedLayer={layer}
-            mainLayerSourceId={mainLayerSourceId}
-            mainLayerName={mainLayerName}
+            mainLayerSourceId={mappedLayer.sourceId}
+            mainLayerName={mappedLayer.id ?? ""}
             indent={1}
           />
         ))}

@@ -3,7 +3,11 @@ import ApiGrense from "../../ApiGrense";
 import { useEditGrenser } from "../../EditGrenserContext";
 import useNibasApi from "hooks/useNibasApi";
 
-const FylkeList = () => {
+type Props = {
+  onlyDisplayEditing?: boolean;
+};
+
+const FylkeList = ({ onlyDisplayEditing = false }: Props) => {
   const { data: fylker, error } = useNibasApi("/v1/fylker");
 
   const { setObjectValue, values } = useEditGrenser("fylke");
@@ -12,9 +16,16 @@ const FylkeList = () => {
 
   if (!fylker) return null;
 
+  const fylkeIdsBeingEdited = Object.keys(values) ?? [];
+  const filteredFylker = onlyDisplayEditing
+    ? fylker.filter((fylke) =>
+        fylkeIdsBeingEdited.some((fylkeId) => fylke.id === fylkeId)
+      )
+    : fylker;
+
   return (
     <Wrapper>
-      {fylker.map((fylke) => (
+      {filteredFylker.map((fylke) => (
         <ApiGrense
           key={fylke.id}
           grense={fylke}

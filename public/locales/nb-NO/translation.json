@@ -17,7 +17,9 @@
     "Riksgrenser": "Riksgrenser",
     "Skolekretser": "Skolekretser",
     "Stemmekretser": "Stemmekretser",
-    "Svalbardområdet": "Svalbardområdet"
+    "Svalbardområdet": "Svalbardområdet",
+    "Aktive kartlag": "Aktive kartlag",
+    "Grenser": "Grenser"
   },
   "Henter fylker": "Henter fylker",
   "Koordinater": "Koordinater",
@@ -26,6 +28,6 @@
     "Logout": "Logg ut",
     "Logget inn som {{ personId }}": "Logget inn som {{ personId }}",
     "Ikke logget inn": "Ikke logget inn"
-  }
+  },
+  "Aktive bakgrunnskart": "Aktive bakgrunnskart"
 }
- 

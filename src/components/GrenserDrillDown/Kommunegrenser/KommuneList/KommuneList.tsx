@@ -6,9 +6,10 @@ import { GrenseRef } from "types/api";
 
 type Props = {
   fylke: GrenseRef;
+  onlyDisplayEditing?: boolean;
 };
 
-const KommuneList = ({ fylke }: Props) => {
+const KommuneList = ({ fylke, onlyDisplayEditing = false }: Props) => {
   const { data: kommuner, error } = useNibasApi("/v1/kommuner", {
     fylkeid: fylke.id,
   });
@@ -19,9 +20,16 @@ const KommuneList = ({ fylke }: Props) => {
 
   if (!kommuner) return null;
 
+  const kommuneIdsBeingEdited = Object.keys(values) ?? [];
+  const filteredKommuner = onlyDisplayEditing
+    ? kommuner.filter((kommune) =>
+        kommuneIdsBeingEdited.some((kommuneId) => kommune.id === kommuneId)
+      )
+    : kommuner;
+
   return (
     <Wrapper>
-      {kommuner.map((kommune) => (
+      {filteredKommuner.map((kommune) => (
         <ApiGrense
           key={kommune.id}
           grense={kommune}

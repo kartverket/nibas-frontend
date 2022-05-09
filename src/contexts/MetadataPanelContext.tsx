@@ -9,13 +9,17 @@ type GrenseMetadataPanel = {
 
 type Panel = GrenseMetadataPanel;
 
+export type MetadataPanelContextValue = {
+  panelContext: Panel | null;
+  openPanel: (newPanelContext: Panel) => void;
+  closePanel: () => void;
+};
+
+/**
+ * Bruk heller MetadataPanelProvider i koden
+ */
 const MetadataPanelContext = createContext<
-  | {
-      panelContext: Panel | null;
-      openPanel: (newPanelContext: Panel) => void;
-      closePanel: () => void;
-    }
-  | undefined
+  MetadataPanelContextValue | undefined
 >(undefined);
 
 export const MetadataPanelProvider: React.FC = ({ children }) => {

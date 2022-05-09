@@ -81,6 +81,7 @@ const Versions = styled.div`
 
 const Version = styled.p`
   margin: 8px 0;
+  font-size: 12px;
 `;
 
 export default Sidebar;

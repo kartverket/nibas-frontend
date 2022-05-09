@@ -3,18 +3,18 @@ import { bakgrunnskartLayers } from "./constants";
 import { BakgrunnskartId, ByLayerId } from "./types";
 import { getLayerById } from "utils/map/layers";
 
-export type ZIndexes = ByLayerId<number>;
+export type LayerOrder = ByLayerId<number>;
 
-const useZIndexes = () => {
-  const [zIndexes, setZIndexes] = useState<BakgrunnskartId[]>([]);
+const useOrderedLayers = () => {
+  const [orderedLayerIds, setOrderedLayerIds] = useState<BakgrunnskartId[]>([]);
 
   useEffect(() => {
-    setZIndexes(Object.keys(bakgrunnskartLayers) as BakgrunnskartId[]);
+    setOrderedLayerIds(Object.keys(bakgrunnskartLayers) as BakgrunnskartId[]);
   }, []);
 
   // sett z-index i OL Map
   useEffect(() => {
-    zIndexes.forEach((layerId, i) => {
+    orderedLayerIds.forEach((layerId, i) => {
       const layer = getLayerById(layerId as BakgrunnskartId);
 
       if (!layer) return;
@@ -23,24 +23,24 @@ const useZIndexes = () => {
       // denne oppdaterer faktisk z-indexen på laget i kartet
       layer.setZIndex(-i - 1);
     });
-  }, [zIndexes]);
+  }, [orderedLayerIds]);
 
   const moveLayer = (direction: "up" | "down", layerId: BakgrunnskartId) => {
     const indexDifference = direction === "up" ? 1 : -1;
 
-    const index = zIndexes.indexOf(layerId);
+    const index = orderedLayerIds.indexOf(layerId);
 
-    const newZIndexes = [...zIndexes];
+    const newZIndexes = [...orderedLayerIds];
     newZIndexes.splice(index, 1);
     newZIndexes.splice(index + indexDifference, 0, layerId);
 
-    setZIndexes(newZIndexes);
+    setOrderedLayerIds(newZIndexes);
   };
 
   return {
-    zIndexes,
+    orderedLayerIds,
     moveLayer,
   };
 };
 
-export default useZIndexes;
+export default useOrderedLayers;

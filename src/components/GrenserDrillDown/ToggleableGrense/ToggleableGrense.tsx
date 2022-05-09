@@ -40,6 +40,7 @@ const ToggleableGrense = <T extends GrenseRef>({
 }: Props<T>) => {
   const [layerToAddTo, setLayerToAddTo] = useState<LayerId | null>(null);
 
+  // sett features inn i layer når features har blitt hentet
   useEffect(() => {
     if (!layerToAddTo || !features) return;
 
@@ -59,12 +60,13 @@ const ToggleableGrense = <T extends GrenseRef>({
 
     if (!newObjectValue.visible) {
       if (!features) return;
-      // hvis var synlig blir det nå usynlig, fjern fra begge lag
 
-      // vi vet ikke hvilket lag features lå i før det fjernes, så vi fjerner fra begge
-      removeFeaturesFromSourceByIds("edit", features);
-      removeFeaturesFromSourceByIds(layerId, features);
-    } else if (newObjectValue.editing) {
+      if (newObjectValue?.editing) {
+        removeFeaturesFromSourceByIds("edit", features);
+      } else {
+        removeFeaturesFromSourceByIds(layerId, features);
+      }
+    } else if (newObjectValue?.editing) {
       // hvis editing skal features legges tilbake til edit-laget
       setLayerToAddTo("edit");
     } else {
