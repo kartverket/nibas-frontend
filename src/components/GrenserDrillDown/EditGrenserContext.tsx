@@ -6,8 +6,8 @@ export type ObjectValue = {
   visible?: boolean;
 };
 
-type GrenseDictionary = Record<string, ObjectValue>;
-type EditingObject = Partial<Record<EditingType, GrenseDictionary>>;
+export type GrenseDictionary = Record<string, ObjectValue>;
+export type EditingObject = Partial<Record<EditingType, GrenseDictionary>>;
 
 export type EditGrenserContextValue = {
   editingObject: EditingObject;
