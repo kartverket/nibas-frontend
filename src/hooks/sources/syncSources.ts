@@ -130,7 +130,7 @@ export const bakgrunnskartSources = {
     "https://wms.geonorge.no/skwms1/wms.adm_enheter_historisk",
     "adm_enheter_historisk_WMS"
   ),
-  grunnkretser: createTileWMS(
+  grunnkretserWMS: createTileWMS(
     "https://openwms.statkart.no/skwms1/wms.grunnkretser",
     "grunnkretser_WMS"
   ),

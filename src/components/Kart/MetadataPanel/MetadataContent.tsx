@@ -13,6 +13,7 @@ const editingTypeByKontekstType = {
   KOMMUNE: "kommune",
   FYLKE: "fylke",
   NASJON: "nasjon",
+  GRUNNKRETS: "grunnkrets",
 } as const;
 
 type Props = {

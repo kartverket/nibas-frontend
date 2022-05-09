@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
 
-export type EditingType = "fylke" | "kommune" | "nasjon";
+export type EditingType = "fylke" | "kommune" | "nasjon" | "grunnkrets";
 export type ObjectValue = {
   editing?: boolean;
   visible?: boolean;

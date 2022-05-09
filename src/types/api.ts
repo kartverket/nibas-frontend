@@ -49,6 +49,11 @@ export type TerritorialgrenseMetadata =
 export type Type = components["schemas"]["Type"];
 export type CommonGrenseMetadata =
   components["schemas"]["CommonGrenseMetadata"];
+export type GrunnkretsRef = components["schemas"]["GrunnkretsRef"];
+export type GrunnkretsRequest = components["schemas"]["GrunnkretsRequest"];
+export type GrunnkretsResponse = components["schemas"]["GrunnkretsResponse"];
+export type StatistiskgrenseMetadata =
+  components["schemas"]["StatistiskgrenseMetadata"];
 
 // custom typer basert på api doc
 export type ApiPath = keyof paths;
@@ -58,4 +63,4 @@ export type Metadata =
   | GrunnlinjeMetadata
   | RiksgrenseMetadata
   | TerritorialgrenseMetadata;
-export type GrenseRef = FylkeRef | KommuneRef;
+export type GrenseRef = FylkeRef | KommuneRef | GrunnkretsRef;
