@@ -1,5 +1,7 @@
 import { DefaultTheme } from "styled-components";
 
+const lgDimension = 1700;
+
 const defaultTheme: DefaultTheme = {
   colors: {
     black: "#222222",
@@ -21,6 +23,10 @@ const defaultTheme: DefaultTheme = {
     yellow: "#FFDD9D",
     yellowLight: "#FCEBCD",
     white: "#FFFFFF",
+  },
+  dimensions: {
+    lg: lgDimension,
+    lgPx: `${lgDimension}px`,
   },
 };
 
