@@ -131,8 +131,15 @@ jobs:
           nibas_frontend_version="${{ needs.build.outputs.new_tag }}"
           EOF
 
+      - name: Generate terraform backend variables
+        run: |
+          cat <<EOF >> backend.tfbackend
+          bucket="${{ env.BUCKET }}"
+          EOF
+
+
       - name: Terraform init
-        run: terraform init -input=false
+      run: terraform init -input=false -backend-config=backend.tfbackend
 
       - name: Terraform plan
         run: terraform plan -input=false
