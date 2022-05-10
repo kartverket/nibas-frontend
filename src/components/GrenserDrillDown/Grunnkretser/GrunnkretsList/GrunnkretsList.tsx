@@ -1,3 +1,4 @@
+import styled from "styled-components";
 import ApiGrense from "components/GrenserDrillDown/ApiGrense";
 import { useEditGrenser } from "components/GrenserDrillDown/EditGrenserContext";
 import useNibasApi from "hooks/useNibasApi";
@@ -19,7 +20,7 @@ const GrunnkretserList = ({ onlyDisplayEditing = false }: Props) => {
   if (!filteredGrunnkretser) return null;
 
   return (
-    <div>
+    <Wrapper>
       {filteredGrunnkretser.map((grunnkrets) => (
         <ApiGrense
           key={grunnkrets.id}
@@ -30,8 +31,12 @@ const GrunnkretserList = ({ onlyDisplayEditing = false }: Props) => {
           featuresUrl={`/v1/grunnkretser/${grunnkrets.id}/grenser`}
         />
       ))}
-    </div>
+    </Wrapper>
   );
 };
+
+const Wrapper = styled.div`
+  margin-left: 8px;
+`;
 
 export default GrunnkretserList;
