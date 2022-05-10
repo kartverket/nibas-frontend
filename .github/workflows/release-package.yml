@@ -3,6 +3,10 @@ on:
   push:
     branches: master
 
+permissions:
+  id-token: write
+  contents: 'read'
+
 env:
   image_name: nibas-frontend
   registry: ghcr.io
@@ -10,7 +14,7 @@ env:
 
 jobs:
   build:
-    runs-on: [anthos, test]
+    runs-on: ubuntu-latest
     permissions:
       contents: write
       packages: write
@@ -78,37 +82,52 @@ jobs:
           image_name: ${{ github.repository }}
 
   deploy:
+    permissions:
+      contents: read
+      id-token: write
     needs: build
-    runs-on: [anthos, test]
-    environment: atkv2-test-apps
-
+    runs-on: ${{ matrix.environment }}
+    environment: ${{ matrix.environment }}
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: ['atkv1-dev']
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
+      # Fetch environment variables and set for subsequent steps
+      - name: read .env
+        uses: c-py/action-dotenv-to-setenv@v3
+        with: 
+          env-file: .github/workflows/.env.${{matrix.environment}}
+        
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
 
-      - name: Authenticate with Google Cloud
+      # Authenticate with google cloud serviceaccount to have permissions in cluster.
+      # Variabel project_id må settes til kubernetesprosjektet her.   
+      - id: auth
+        name: Authenticate to GCP
         uses: google-github-actions/auth@v0
         with:
-          credentials_json: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+          workload_identity_provider: ${{env.WORKLOAD_IDENTITY_FEDERATION_PROVIDER}}
+          service_account: ${{env.WORKLOAD_IDENTITY_FEDERATION_SERVICE_ACCOUNT}}
+          project_id: ${{env.TF_VAR_PROJECT_ID}}
 
       - name: Authenticate with cluster
-        run: gcloud container hub memberships get-credentials atkv2-test-apps --verbosity debug
-
-      # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
-      - name: Setup Terraform
-        uses: BlackDark/setup-terraform@proxy-custom-pkg
-        with:
-          terraform_wrapper: false
+        run: gcloud container hub memberships get-credentials ${{ matrix.environment }} --verbosity debug
+        # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+        - name: Setup Terraform
+          uses: BlackDark/setup-terraform@proxy-custom-pkg
+          with:
+            terraform_wrapper: false
 
       - name: Generate terraform variables
         run: |
           cat <<EOF >> terraform.tfvars
-          vault_addr="${{ secrets.VAULT_ADDR }}"
+          vault_addr="${{ env.VAULT_ADDR }}"
           vault_skip_verify="${{ secrets.VAULT_SKIP_VERIFY }}"
-          vault_token="${{ secrets.VAULT_TOKEN }}"
           nibas_frontend_version="${{ needs.build.outputs.new_tag }}"
           EOF
 

@@ -15,12 +15,19 @@ locals {
 variable "nibas_frontend_version" {}
 variable "vault_addr" {}
 variable "vault_skip_verify" {}
-variable "vault_token" {}
+variable "GITHUB_TOKEN" {sensitive = true}
 
 provider "vault" {
   address = var.vault_addr
-  token = var.vault_token
   skip_tls_verify = var.vault_skip_verify
+  auth_login {
+    path = "auth/jwt-dev/login"
+    method = "jwt"
+    parameters = {
+      role = "nibas-frontend-read-role"
+      jwt = var.GITHUB_TOKEN
+    }
+  }
 }
 
 data "vault_generic_secret" "nibas-baat-bruker" {
@@ -44,7 +51,7 @@ resource "kubernetes_deployment" "nibas-frontend-deployment" {
     }
   }
   spec {
-    replicas = 1
+    replicas = 3
     selector {
       match_labels = {
         app = "nibas-frontend"
@@ -55,6 +62,7 @@ resource "kubernetes_deployment" "nibas-frontend-deployment" {
          
         annotations = {
           "prometheus.io/scrape" = "true"
+          "seccomp.security.alpha.kubernetes.io/pod" = "runtime/default"
         }
         labels = {
           app = "nibas-frontend"
@@ -63,11 +71,22 @@ resource "kubernetes_deployment" "nibas-frontend-deployment" {
       }
       spec {
         image_pull_secrets {
-            name="nibas-pull-token-kes"
+            name="nibas-pull-token-atkv1-kes"
+        }
+        security_context {
+          supplemental_groups = [199]
+          fs_group = 199
         }
         container {
           image = "ghcr.io/kartverket/nibas-frontend:${var.nibas_frontend_version}"
           name  = "nibas-frontend"
+          security_context {
+            privileged                 = false # Normal priviliges
+            allow_privilege_escalation = false # Prevent reqests for root priviliges
+            read_only_root_filesystem  = true  # Prevent writing to system files
+            run_as_user                = 199   # Run as an unpriviliged user
+            run_as_group               = 199   # Run as an unpriviliged group
+          }
           port {
             container_port = 8080
           }
