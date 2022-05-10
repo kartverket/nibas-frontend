@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
-    bucket  = "terraform-state-nibas-frontend"
+    prefix  = "nibas-frontend"
   }
 }
 
