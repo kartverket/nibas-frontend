@@ -105,6 +105,13 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
 
+      - name: Get JWT
+        id: githubtoken
+        uses: magic7s/expose-jwt-action@v0.1.1 
+
+      - run: |
+          echo "TF_VAR_GITHUB_TOKEN=${{ steps.githubtoken.outputs.jwt }}" >> $GITHUB_ENV
+          
       # Authenticate with google cloud serviceaccount to have permissions in cluster.
       # Variabel project_id må settes til kubernetesprosjektet her.   
       - id: auth
