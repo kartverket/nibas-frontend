@@ -137,9 +137,8 @@ jobs:
           bucket="${{ env.BUCKET }}"
           EOF
 
-
       - name: Terraform init
-      run: terraform init -input=false -backend-config=backend.tfbackend
+        run: terraform init -input=false -backend-config=backend.tfbackend
 
       - name: Terraform plan
         run: terraform plan -input=false
