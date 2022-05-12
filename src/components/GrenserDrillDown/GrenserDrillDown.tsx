@@ -15,7 +15,7 @@ import Svalbardomradet from "./Svalbardomraadet";
 import Accordion from "components/Accordion";
 import { SidebarPanel } from "components/Sidebar/SidebarPanel";
 import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
-import Tabs, { Tab, useTabs } from "components/Tabs";
+import Tabs from "components/Tabs";
 import { UnstyledList } from "components/UnstyledList";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 
@@ -23,18 +23,15 @@ const GrenserDrillDown = () => {
   const { isOpen, togglePanel } = useSidebarPanel("inndelinger");
 
   const { t } = useTranslation();
-  const tabs = useTabs(["Grenser", "Aktive kartlag"]);
 
   if (!isOpen) return null;
 
   return (
     <Panel>
       <Tabs
-        tabIds={tabs.ids}
-        openTab={tabs.openTab}
-        selectedTab={tabs.selectedTab}
+        tabTransKeys={["inndelinger.Grenser", "inndelinger.Aktive kartlag"]}
       >
-        <Tab value={tabs.ids["Grenser"]} selectedTab={tabs.selectedTab}>
+        <div>
           <SidebarPanelTitle
             closePanel={togglePanel}
             title={t("sidebar.Inndelinger")}
@@ -52,15 +49,15 @@ const GrenserDrillDown = () => {
             <MaritimeGrenser />
             <Svalbardomradet />
           </UnstyledList>
-        </Tab>
-        <Tab value={tabs.ids["Aktive kartlag"]} selectedTab={tabs.selectedTab}>
+        </div>
+        <div>
           <SidebarPanelTitle
             closePanel={togglePanel}
             title={t("inndelinger.Aktive kartlag")}
           />
 
           <AktiveKartlag />
-        </Tab>
+        </div>
       </Tabs>
     </Panel>
   );
