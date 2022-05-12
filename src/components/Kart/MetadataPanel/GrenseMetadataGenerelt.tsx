@@ -1,6 +1,14 @@
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
-import styled, { css, useTheme } from "styled-components";
+import { useTheme } from "styled-components";
+import {
+  BlockLabel,
+  Container,
+  DateWrapper,
+  MetadataText,
+  MetadataValue,
+  Part,
+} from "./metadataComponents";
 import useMetadataForm from "./useMetadataForm";
 import { getDateInFriendlyString } from "./utils";
 import Button from "components/form/Button";
@@ -148,79 +156,5 @@ const Dates = ({ oppdateringsdato, datafangstdato }: DatesProps) => (
     </div>
   </>
 );
-
-const Container = styled.div`
-  display: flex;
-  justify-content: flex-start;
-
-  @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
-    flex-direction: column;
-  }
-`;
-
-const Part = styled.div`
-  flex: 1;
-  max-width: 500px;
-  margin: 0 16px;
-
-  &:first-child,
-  &:last-child {
-    margin: 0;
-  }
-
-  @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
-    margin: 8px 0;
-
-    &:first-child,
-    &:last-child {
-      margin: 8px 0;
-    }
-  }
-`;
-
-const MetadataTitleStyles = css`
-  font-size: 14px;
-`;
-
-const MetadataValue = styled.p`
-  margin: 0;
-  margin-bottom: 8px;
-`;
-
-const MetadataText = styled.p`
-  margin: 0;
-  ${MetadataTitleStyles};
-`;
-
-const BlockLabel = styled.label`
-  display: block;
-  margin-bottom: 8px;
-
-  ${MetadataTitleStyles};
-
-  > * {
-    margin-top: 4px;
-    width: 100%;
-    margin-bottom: 8px;
-  }
-`;
-
-const DateWrapper = styled(Part)`
-  display: flex;
-
-  > * {
-    flex: 1;
-    margin: 0 8px;
-    min-width: 100px;
-
-    &:first-child {
-      margin-left: 0;
-    }
-
-    &:last-child {
-      margin-right: 0;
-    }
-  }
-`;
 
 export default MetadataContent;

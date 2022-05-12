@@ -1,21 +1,19 @@
 import styled from "styled-components";
 import { KartInteractable } from "../KartInteractable";
-import MetadataContent from "./MetadataContent";
+import GrenseMetadata from "./GrenseMetadata";
 import Button from "components/form/Button";
 import { useMetadataPanel } from "contexts/MetadataPanelContext";
 
 const MetadataPanel = () => {
   const { panelContext, closePanel } = useMetadataPanel();
 
-  if (panelContext?.content !== "grensemetadata") return null;
+  if (!panelContext) return null;
 
   return (
     <Panel>
-      <h3>Linje metadata</h3>
-      <MetadataContent
-        key={panelContext.data.getId()}
-        feature={panelContext.data}
-      />
+      {panelContext.content === "grensemetadata" && (
+        <GrenseMetadata data={panelContext.data} />
+      )}
       <Button onClick={closePanel}>Lukk</Button>
     </Panel>
   );
