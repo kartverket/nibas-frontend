@@ -9,20 +9,14 @@ import {
   MetadataValue,
   Part,
 } from "./metadataComponents";
+import useIsMetadataDisabled from "./useIsMetadataDisabled";
 import useMetadataForm from "./useMetadataForm";
 import { getDateInFriendlyString } from "./utils";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
-import { useEditGrenser } from "components/GrenserDrillDown/EditGrenserContext";
 import useScreenWidth from "hooks/useScreenWidth";
 import { Metadata, FeatureProperties } from "types/api";
-
-const editingTypeByKontekstType = {
-  KOMMUNE: "kommune",
-  FYLKE: "fylke",
-  NASJON: "nasjon",
-} as const;
 
 type Props = {
   feature: Feature<Geometry>;
@@ -41,15 +35,7 @@ const MetadataContent = ({ feature }: Props) => {
   const screenWidth = useScreenWidth();
   const theme = useTheme();
 
-  const { values } = useEditGrenser(
-    editingTypeByKontekstType[properties.kontekstEgenskaper?.type ?? "FYLKE"]
-  );
-
-  // hvis synlig og ikke endrer, disable felter
-  const featureKontekstId = properties.kontekstEgenskaper?.id;
-  const isDisabled = featureKontekstId
-    ? values[featureKontekstId]?.visible && !values[featureKontekstId]?.editing
-    : true;
+  const disabled = useIsMetadataDisabled(properties);
 
   return (
     <form onSubmit={onSubmit}>
@@ -67,7 +53,7 @@ const MetadataContent = ({ feature }: Props) => {
               <Input
                 type="date"
                 role="textbox"
-                {...register("gyldigFra", { disabled: isDisabled })}
+                {...register("gyldigFra", { disabled })}
               />
             </BlockLabel>
             <BlockLabel>
@@ -75,7 +61,7 @@ const MetadataContent = ({ feature }: Props) => {
               <Input
                 type="date"
                 role="textbox"
-                {...register("gyldigTil", { disabled: isDisabled })}
+                {...register("gyldigTil", { disabled })}
               />
             </BlockLabel>
           </DateWrapper>
@@ -83,7 +69,7 @@ const MetadataContent = ({ feature }: Props) => {
         <Part>
           <BlockLabel>
             Målemetode
-            <Select {...register("maalemetode", { disabled: isDisabled })}>
+            <Select {...register("maalemetode", { disabled })}>
               <option value="">---</option>
               {maalemetodeKoder?.map((kodeItem) => (
                 <option key={kodeItem.id} value={kodeItem.id}>
@@ -98,7 +84,7 @@ const MetadataContent = ({ feature }: Props) => {
               type="number"
               {...register("noeyaktighet", {
                 valueAsNumber: true,
-                disabled: isDisabled,
+                disabled,
                 min: 0,
                 max: 1_000_000,
               })}
@@ -116,11 +102,11 @@ const MetadataContent = ({ feature }: Props) => {
       </Container>
       <BlockLabel>
         Informasjon
-        <Input {...register("informasjon", { disabled: isDisabled })} />
+        <Input {...register("informasjon", { disabled })} />
       </BlockLabel>
       <BlockLabel>
         Opphav
-        <Input {...register("opphav", { disabled: isDisabled })} />
+        <Input {...register("opphav", { disabled })} />
       </BlockLabel>
       {screenWidth >= theme.dimensions.lg && (
         <Part>

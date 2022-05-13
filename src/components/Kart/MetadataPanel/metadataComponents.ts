@@ -29,7 +29,7 @@ export const Part = styled.div`
   }
 `;
 
-export const MetadataTitleStyles = css`
+const MetadataTitleStyles = css`
   font-size: 14px;
 `;
 
