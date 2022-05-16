@@ -1,5 +1,6 @@
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
+import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components";
 import {
   BlockLabel,
@@ -34,6 +35,7 @@ const MetadataContent = ({ feature }: Props) => {
 
   const screenWidth = useScreenWidth();
   const theme = useTheme();
+  const { t } = useTranslation();
 
   const disabled = useIsMetadataDisabled(properties);
 
@@ -42,14 +44,14 @@ const MetadataContent = ({ feature }: Props) => {
       <Container>
         <Part>
           <BlockLabel>
-            Grensetype
+            {t("metadata.Grensetype")}
             <Select disabled>
               <option>{type}</option>
             </Select>
           </BlockLabel>
           <DateWrapper>
             <BlockLabel>
-              Gyldig fra
+              {t("metadata.Gyldig fra")}
               <Input
                 type="date"
                 role="textbox"
@@ -57,7 +59,7 @@ const MetadataContent = ({ feature }: Props) => {
               />
             </BlockLabel>
             <BlockLabel>
-              Gyldig til
+              {t("metadata.Gyldig til")}
               <Input
                 type="date"
                 role="textbox"
@@ -68,7 +70,7 @@ const MetadataContent = ({ feature }: Props) => {
         </Part>
         <Part>
           <BlockLabel>
-            Målemetode
+            {t("metadata.Målemetode")}
             <Select {...register("maalemetode", { disabled })}>
               <option value="">---</option>
               {maalemetodeKoder?.map((kodeItem) => (
@@ -79,7 +81,7 @@ const MetadataContent = ({ feature }: Props) => {
             </Select>
           </BlockLabel>
           <BlockLabel>
-            Nøyaktighet
+            {t("metadata.Nøyaktighet")}
             <Input
               type="number"
               {...register("noeyaktighet", {
@@ -101,11 +103,11 @@ const MetadataContent = ({ feature }: Props) => {
         )}
       </Container>
       <BlockLabel>
-        Informasjon
+        {t("metadata.Informasjon")}
         <Input {...register("informasjon", { disabled })} />
       </BlockLabel>
       <BlockLabel>
-        Opphav
+        {t("metadata.Opphav")}
         <Input {...register("opphav", { disabled })} />
       </BlockLabel>
       {screenWidth >= theme.dimensions.lg && (
@@ -116,7 +118,7 @@ const MetadataContent = ({ feature }: Props) => {
           />
         </Part>
       )}
-      <Button type="submit">Lagre</Button>
+      <Button type="submit">{t("action.Lagre")}</Button>
     </form>
   );
 };

@@ -3,6 +3,7 @@ import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { BlockLabel, Container, Part } from "../../metadataComponents";
 import useIsMetadataDisabled from "../../useIsMetadataDisabled";
@@ -25,6 +26,7 @@ type Props = {
 
 const AdministrativGrenseDetaljer = ({ feature }: Props) => {
   const { tokenHolderFunc } = useAuthenticationFlow();
+  const { t } = useTranslation();
 
   const properties = feature.getProperties() as FeatureProperties;
   const metadata = properties.metadata as AdministrativGrenseMetadata;
@@ -95,7 +97,7 @@ const AdministrativGrenseDetaljer = ({ feature }: Props) => {
       <TwoPartsContainer>
         <Part>
           <BlockLabel>
-            Følger terrengdetalj
+            {t("metadata.Følger terrengdetalj")}
             <Select {...register("foelgerTerrengdetalj", { disabled })}>
               <option value="">---</option>
               {terrengdetaljkoder?.items.map((kodeItem) => (
@@ -108,7 +110,7 @@ const AdministrativGrenseDetaljer = ({ feature }: Props) => {
         </Part>
         <Part>
           <BlockLabel>
-            Nøyaktighetsklasse
+            {t("metadata.Nøyaktighetsklasse")}
             <Select {...register("noeyaktighetsklasse", { disabled })}>
               <option value="">---</option>
               {noeyaktighetsklassekoder?.items.map((kodeItem) => (
@@ -122,7 +124,7 @@ const AdministrativGrenseDetaljer = ({ feature }: Props) => {
       </TwoPartsContainer>
 
       <div>
-        <RadioTitle>Omtvistet</RadioTitle>
+        <RadioTitle>{t("metadata.Omtvistet")}</RadioTitle>
         <Checkbox
           type="radio"
           label="Ja"
@@ -137,7 +139,7 @@ const AdministrativGrenseDetaljer = ({ feature }: Props) => {
         />
       </div>
 
-      <Button type="submit">Submit</Button>
+      <Button type="submit">{t("action.Lagre")}</Button>
     </form>
   );
 };

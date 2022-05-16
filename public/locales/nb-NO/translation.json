@@ -29,5 +29,25 @@
     "Logget inn som {{ personId }}": "Logget inn som {{ personId }}",
     "Ikke logget inn": "Ikke logget inn"
   },
-  "Aktive bakgrunnskart": "Aktive bakgrunnskart"
+  "metadata": {
+    "Generelt": "Generelt",
+    "Detaljer": "Detaljer",
+    "Referanser": "Referanser",
+    "Historikk": "Historikk",
+    "Følger terrengdetalj": "Følger terrengdetalj",
+    "Nøyaktighetsklasse": "Nøyaktighetsklasse",
+    "Omtvistet": "Omtvistet",
+    "Grensetype": "Grensetype",
+    "Gyldig fra": "Gyldig fra",
+    "Gyldig til": "Gyldig til",
+    "Målemetode": "Målemetode",
+    "Nøyaktighet": "Nøyaktighet",
+    "Informasjon": "Informasjon",
+    "Opphav": "Opphav"
+  },
+  "Aktive bakgrunnskart": "Aktive bakgrunnskart",
+  "action": {
+    "Lagre": "Lagre",
+    "Lukk": "Lukk"
+  }
 }

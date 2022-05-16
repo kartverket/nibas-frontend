@@ -6,10 +6,6 @@
     "Utkast": "__STRING_NOT_TRANSLATED__"
   },
   "Nasjonal inndelingsbase": "__STRING_NOT_TRANSLATED__",
-  "Logget inn som {{ personId }}": "__STRING_NOT_TRANSLATED__",
-  "Ikke logget inn": "__STRING_NOT_TRANSLATED__",
-  "Login": "__STRING_NOT_TRANSLATED__",
-  "Logout": "__STRING_NOT_TRANSLATED__",
   "inndelinger": {
     "Delområder": "__STRING_NOT_TRANSLATED__",
     "Fylkesgrenser": "__STRING_NOT_TRANSLATED__",
@@ -33,5 +29,25 @@
     "Logget inn som {{ personId }}": "__STRING_NOT_TRANSLATED__",
     "Ikke logget inn": "__STRING_NOT_TRANSLATED__"
   },
-  "Aktive bakgrunnskart": "__STRING_NOT_TRANSLATED__"
+  "metadata": {
+    "Generelt": "Generelt",
+    "Detaljer": "Detaljer",
+    "Referanser": "Referanser",
+    "Historikk": "Historikk",
+    "Følger terrengdetalj": "__STRING_NOT_TRANSLATED__",
+    "Nøyaktighetsklasse": "__STRING_NOT_TRANSLATED__",
+    "Omtvistet": "__STRING_NOT_TRANSLATED__",
+    "Grensetype": "__STRING_NOT_TRANSLATED__",
+    "Gyldig fra": "__STRING_NOT_TRANSLATED__",
+    "Gyldig til": "__STRING_NOT_TRANSLATED__",
+    "Målemetode": "__STRING_NOT_TRANSLATED__",
+    "Nøyaktighet": "__STRING_NOT_TRANSLATED__",
+    "Informasjon": "__STRING_NOT_TRANSLATED__",
+    "Opphav": "__STRING_NOT_TRANSLATED__"
+  },
+  "Aktive bakgrunnskart": "__STRING_NOT_TRANSLATED__",
+  "action": {
+    "Lagre": "__STRING_NOT_TRANSLATED__",
+    "Lukk": "__STRING_NOT_TRANSLATED__"
+  }
 }
