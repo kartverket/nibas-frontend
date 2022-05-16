@@ -8,7 +8,7 @@ type Props = {
   data: Feature<Geometry>;
 };
 
-const GrenseMetadata = ({ data }: Props) => {
+const GrensePanel = ({ data }: Props) => {
   return (
     <Tabs
       key={data.getId()}
@@ -31,4 +31,4 @@ const GrenseMetadata = ({ data }: Props) => {
   );
 };
 
-export default GrenseMetadata;
+export default GrensePanel;

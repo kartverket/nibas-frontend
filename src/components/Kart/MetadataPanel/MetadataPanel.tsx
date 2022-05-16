@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { KartInteractable } from "../KartInteractable";
-import GrenseMetadata from "./GrenseMetadata";
+import GrensePanel from "./GrensePanel";
 import Button from "components/form/Button";
 import { useMetadataPanel } from "contexts/MetadataPanelContext";
 
@@ -12,7 +12,7 @@ const MetadataPanel = () => {
   return (
     <Panel>
       {panelContext.content === "grensemetadata" && (
-        <GrenseMetadata data={panelContext.data} />
+        <GrensePanel data={panelContext.data} />
       )}
       <Button onClick={closePanel}>Lukk</Button>
     </Panel>

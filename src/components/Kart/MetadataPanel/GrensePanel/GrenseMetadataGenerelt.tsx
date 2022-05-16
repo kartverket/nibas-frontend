@@ -8,10 +8,10 @@ import {
   MetadataText,
   MetadataValue,
   Part,
-} from "./metadataComponents";
-import useIsMetadataDisabled from "./useIsMetadataDisabled";
-import useMetadataForm from "./useMetadataForm";
-import { getDateInFriendlyString } from "./utils";
+} from "../metadataComponents";
+import useIsMetadataDisabled from "../useIsMetadataDisabled";
+import useMetadataForm from "../useMetadataForm";
+import { getDateInFriendlyString } from "../utils";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Select from "components/form/Select";

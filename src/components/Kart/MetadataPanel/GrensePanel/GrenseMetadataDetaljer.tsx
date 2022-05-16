@@ -9,6 +9,7 @@ type Props = {
 
 const GrenseMetadataDetaljer = ({ feature }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
+  console.log(properties);
 
   if (
     properties.type === "Fylkesgrense" ||
