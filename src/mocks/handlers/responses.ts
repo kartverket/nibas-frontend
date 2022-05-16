@@ -44,6 +44,7 @@ export const mockGeoJsonFeatureResponse: GeoJSONFeatureCollection = {
             grensestatus: { id: "", href: "" },
             dokumentasjonsreferanser: [],
           },
+          dokumentasjonsreferanser: [],
           foelgerTerrengdetalj: undefined,
           noeyaktighetsklasse: { id: "", href: "" },
           omtvistet: false,

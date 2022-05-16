@@ -15,9 +15,15 @@ export interface paths {
     /** Oppdaterer angitt kommune. Returnerer den oppdaterte kommunen */
     put: operations["oppdaterKommune"];
   };
+  "/v1/grunnkretser/{id}": {
+    /** Henter grunnkrets med gitt id */
+    get: operations["hentEn_2"];
+    /** Oppdaterer angitt grunnkrets. Returnerer den oppdaterte grunnkretsen */
+    put: operations["oppdaterGrunnkrets"];
+  };
   "/v1/fylker/{id}": {
     /** Henter fylke med gitt id */
-    get: operations["hentEn_2"];
+    get: operations["hentEn_3"];
     put: operations["oppdaterFylke"];
   };
   "/v1/admin/kodelister/invalidate": {
@@ -31,7 +37,7 @@ export interface paths {
     post: operations["lagreGrenser"];
   };
   "/v1/nasjoner": {
-    /** Henter alle nasjoner i nasjonal inndelingsbase. */
+    /** Henter alle nasjoner i Nasjonal inndelingsbase. */
     get: operations["hentAlle"];
   };
   "/v1/nasjoner/{id}/historikk": {
@@ -47,7 +53,7 @@ export interface paths {
     get: operations["hentGrenser"];
   };
   "/v1/kommuner": {
-    /** Henter alle kommuner i nasjonal inndelingsbase. */
+    /** Henter alle kommuner i Nasjonal inndelingsbase. */
     get: operations["hentAlle_1"];
   };
   "/v1/kommuner/{id}/historikk": {
@@ -88,6 +94,22 @@ export interface paths {
   };
   "/v1/kodeliste/fastsettingstyper": {
     get: operations["fetchFastsettingstyper"];
+  };
+  "/v1/grunnkretser": {
+    /** Henter alle grunnkretser i Nasjonal inndelingsbase. */
+    get: operations["hentAlle_2"];
+  };
+  "/v1/grunnkretser/{id}/historikk": {
+    /** Henter historikken til en grunnkrets med gitt id */
+    get: operations["hentHistorikkForEn_2"];
+  };
+  "/v1/grunnkretser/{id}/historikk/{revision}": {
+    /** Henter en gitt revisjon av en historisk grunnkrets */
+    get: operations["hentHistorikkRevisjon_2"];
+  };
+  "/v1/grunnkretser/{id}/grenser": {
+    /** Henter grensene til en grunnkrets med gitt id */
+    get: operations["hentGrenser_2"];
   };
   "/v1/grenser/territorialgrenser/{id}": {
     /** Henter territorialgrense med gitt id */
@@ -150,20 +172,20 @@ export interface paths {
     get: operations["hentAvtaltavgrensningslinjeRevisjon"];
   };
   "/v1/fylker": {
-    /** Henter alle fylker i nasjonal inndelingsbase. */
-    get: operations["hentAlle_2"];
+    /** Henter alle fylker i Nasjonal inndelingsbase. */
+    get: operations["hentAlle_3"];
   };
   "/v1/fylker/{id}/historikk": {
     /** Henter historikken til et fylke med gitt id */
-    get: operations["hentHistorikkForEn_2"];
+    get: operations["hentHistorikkForEn_3"];
   };
   "/v1/fylker/{id}/historikk/{revision}": {
     /** Henter en gitt revisjon av et historisk fylke */
-    get: operations["hentHistorikkRevisjon_2"];
+    get: operations["hentHistorikkRevisjon_3"];
   };
   "/v1/fylker/{id}/grenser": {
     /** Henter grensene til et fylke med gitt id */
-    get: operations["hentGrenser_2"];
+    get: operations["hentGrenser_3"];
   };
 }
 
@@ -188,6 +210,8 @@ export interface components {
     AdministrativGrenseMetadata: components["schemas"]["Metadata"] & {
       common?: components["schemas"]["CommonMetadata"];
       commonGrense?: components["schemas"]["CommonGrenseMetadata"];
+      /** @description Henviser til fastsettings- eller lovinformasjon. */
+      dokumentasjonsreferanser?: components["schemas"]["Dokref"][];
       foelgerTerrengdetalj?: components["schemas"]["KodelisteEntry"];
       noeyaktighetsklasse?: components["schemas"]["KodelisteEntry"];
       /** @description Angir om grensen er omtvistet, eller det er tvil om forløpet. */
@@ -195,6 +219,7 @@ export interface components {
     } & {
       common: unknown;
       commonGrense: unknown;
+      dokumentasjonsreferanser: unknown;
       foelgerTerrengdetalj: unknown;
       noeyaktighetsklasse: unknown;
     };
@@ -202,21 +227,22 @@ export interface components {
     AvtaltAvgrensningslinjeMetadata: components["schemas"]["Metadata"] & {
       common?: components["schemas"]["CommonMetadata"];
       commonGrense?: components["schemas"]["CommonGrenseMetadata"];
+      /** @description Henviser til fastsettings- eller lovinformasjon. */
+      dokumentasjonsreferanser?: components["schemas"]["Dokref"][];
       maritimeGrenser?: components["schemas"]["MaritimeGrenserMetadata"];
     } & {
       common: unknown;
       commonGrense: unknown;
+      dokumentasjonsreferanser: unknown;
       maritimeGrenser: unknown;
     };
     /** @description Felles metadata-egenskaper for grenser. */
     CommonGrenseMetadata: {
-      /** @description Henviser til fastsettings- eller lovinformasjon. */
-      dokumentasjonsreferanser: components["schemas"]["Dokref"][];
       posisjonskvalitet?: components["schemas"]["Posisjonskvalitet"];
       grensestatus: components["schemas"]["KodelisteEntry"];
       fastsettingstype: components["schemas"]["KodelisteEntry"];
     };
-    /** @description Felles metadata-egenskaper for grenser. */
+    /** @description Felles metadata-egenskaper. */
     CommonMetadata: {
       identifikasjon: components["schemas"]["Identifikasjon"];
       /**
@@ -258,9 +284,9 @@ export interface components {
     };
     CoordinateSequence: {
       /** Format: int32 */
-      dimension?: number;
-      /** Format: int32 */
       measures?: number;
+      /** Format: int32 */
+      dimension?: number;
     };
     CoordinateSequenceFactory: { [key: string]: unknown };
     /** @description Henviser til fastsettings- eller lovinformasjon. */
@@ -368,11 +394,14 @@ export interface components {
     GrunnlinjeMetadata: components["schemas"]["Metadata"] & {
       common?: components["schemas"]["CommonMetadata"];
       commonGrense?: components["schemas"]["CommonGrenseMetadata"];
+      /** @description Henviser til fastsettings- eller lovinformasjon. */
+      dokumentasjonsreferanser?: components["schemas"]["Dokref"][];
       maritimeGrenser?: components["schemas"]["MaritimeGrenserMetadata"];
       kommunenummer?: components["schemas"]["Kommunenummer"];
     } & {
       common: unknown;
       commonGrense: unknown;
+      dokumentasjonsreferanser: unknown;
       maritimeGrenser: unknown;
     };
     /** @description Unik identifikasjon av et objekt */
@@ -409,7 +438,7 @@ export interface components {
        * @description Hvilken kontekst geometrien skal sees i
        * @enum {string}
        */
-      type?: "FYLKE" | "KOMMUNE" | "NASJON";
+      type?: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS";
       /** @description Angir om grensen skal leses med klokken for å danne flate. */
       retningMedKlokken: boolean;
       /**
@@ -527,6 +556,8 @@ export interface components {
     RiksgrenseMetadata: components["schemas"]["Metadata"] & {
       common?: components["schemas"]["CommonMetadata"];
       commonGrense?: components["schemas"]["CommonGrenseMetadata"];
+      /** @description Henviser til fastsettings- eller lovinformasjon. */
+      dokumentasjonsreferanser?: components["schemas"]["Dokref"][];
       foelgerTerrengdetalj?: components["schemas"]["KodelisteEntry"];
       /** @description Angivelse om stedfestingen (koordinatene) er kontrollert og funnet i orden (verifisert). */
       stedfestingVerifisert?: boolean;
@@ -541,7 +572,20 @@ export interface components {
       ansvarligeMyndigheter: unknown;
       common: unknown;
       commonGrense: unknown;
+      dokumentasjonsreferanser: unknown;
       foelgerTerrengdetalj: unknown;
+    };
+    /** @description Spesifikk metadata for en statistisk grense (grunnkrets/delområde). Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Diagram/Index/EAID_A3C68E12_E409_42c0_937D_6C1B62351E42 */
+    StatistiskgrenseMetadata: components["schemas"]["Metadata"] & {
+      common?: components["schemas"]["CommonMetadata"];
+      commonGrense?: components["schemas"]["CommonGrenseMetadata"];
+      foelgerTerrengdetalj?: components["schemas"]["KodelisteEntry"];
+      noeyaktighetsklasse?: components["schemas"]["KodelisteEntry"];
+    } & {
+      common: unknown;
+      commonGrense: unknown;
+      foelgerTerrengdetalj: unknown;
+      noeyaktighetsklasse: unknown;
     };
     /** @description Organisasjon som er ansvarlig for opprettholdelse av grensa. */
     TekstHolder: {
@@ -554,6 +598,8 @@ export interface components {
     TerritorialgrenseMetadata: components["schemas"]["Metadata"] & {
       common?: components["schemas"]["CommonMetadata"];
       commonGrense?: components["schemas"]["CommonGrenseMetadata"];
+      /** @description Henviser til fastsettings- eller lovinformasjon. */
+      dokumentasjonsreferanser?: components["schemas"]["Dokref"][];
       maritimeGrenser?: components["schemas"]["MaritimeGrenserMetadata"];
       /**
        * Format: date
@@ -563,6 +609,7 @@ export interface components {
     } & {
       common: unknown;
       commonGrense: unknown;
+      dokumentasjonsreferanser: unknown;
       maritimeGrenser: unknown;
     };
     Type: { [key: string]: unknown };
@@ -596,6 +643,27 @@ export interface components {
        * @description Angir når denne kommunen ble sist oppdatert
        */
       oppdateringsdato: string;
+      features: components["schemas"]["FeatureCollection"];
+    };
+    /** @description Representasjon av en grunnkrets */
+    GrunnkretsRequest: {
+      /** @description Navnet på grunnkretsen */
+      navn: string;
+      /** @description Grunnkretsnummeret til grunnkretsen */
+      grunnkretsnummer: string;
+      identifikasjon: components["schemas"]["Identifikasjon"];
+    };
+    /** @description Representasjon av en grunnkrets */
+    GrunnkretsResponse: {
+      /** @description ID-en til grunnkretsen */
+      id: string;
+      /** @description Navnet på grunnkretsen */
+      navn: string;
+      /** @description Grunnkretsnummeret til grunnkretsen */
+      grunnkretsnummer: string;
+      identifikasjon: components["schemas"]["Identifikasjon"];
+      /** @description Kommunenummeret til grunnkretsen */
+      kommunenummer: string;
       features: components["schemas"]["FeatureCollection"];
     };
     FylkeRequest: {
@@ -702,6 +770,15 @@ export interface components {
         | "GRENSESTATUS";
       /** @description Liste av kodeliste-elementer. */
       items: components["schemas"]["KodelisteItem"][];
+    };
+    /** @description En referanse til en grunnkrets */
+    GrunnkretsRef: {
+      /** @description ID-en til grunnkretser */
+      id: string;
+      /** @description Navnet på grunnkretser */
+      navn: string;
+      /** @description URL til full representasjon av grunnkretsen */
+      href: string;
     };
     /** @description En referanse til et fylke */
     FylkeRef: {
@@ -811,8 +888,59 @@ export interface operations {
       };
     };
   };
-  /** Henter fylke med gitt id */
+  /** Henter grunnkrets med gitt id */
   hentEn_2: {
+    parameters: {
+      path: {
+        /** ID-en til grunnkretsen man vil hente */
+        id: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["GrunnkretsResponse"];
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["GrunnkretsResponse"];
+        };
+      };
+    };
+  };
+  /** Oppdaterer angitt grunnkrets. Returnerer den oppdaterte grunnkretsen */
+  oppdaterGrunnkrets: {
+    parameters: {
+      path: {
+        /** ID til grunnkretsen man vil oppdatere */
+        id: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["GrunnkretsResponse"];
+        };
+      };
+      /** Bad request. Check the request body and path */
+      400: {
+        content: {
+          "application/json": components["schemas"]["GrunnkretsResponse"];
+        };
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["GrunnkretsRequest"];
+      };
+    };
+  };
+  /** Henter fylke med gitt id */
+  hentEn_3: {
     parameters: {
       path: {
         /** ID-en til fylket man vil hente */
@@ -893,7 +1021,7 @@ export interface operations {
       };
     };
   };
-  /** Henter alle nasjoner i nasjonal inndelingsbase. */
+  /** Henter alle nasjoner i Nasjonal inndelingsbase. */
   hentAlle: {
     responses: {
       /** Successful operation */
@@ -969,7 +1097,7 @@ export interface operations {
       };
     };
   };
-  /** Henter alle kommuner i nasjonal inndelingsbase. */
+  /** Henter alle kommuner i Nasjonal inndelingsbase. */
   hentAlle_1: {
     parameters: {
       query: {
@@ -1137,6 +1265,88 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["KodelisteRespons"];
+        };
+      };
+    };
+  };
+  /** Henter alle grunnkretser i Nasjonal inndelingsbase. */
+  hentAlle_2: {
+    parameters: {
+      query: {
+        /** Valgfri kommunenummer til en kommune for å filtrere grunnkretser innenfor en kommune */
+        kommunenummer?: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["GrunnkretsRef"][];
+        };
+      };
+    };
+  };
+  /** Henter historikken til en grunnkrets med gitt id */
+  hentHistorikkForEn_2: {
+    parameters: {
+      path: {
+        /** ID-en til grunnkretsen man vil hente */
+        id: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["HistorikkRef"][];
+        };
+      };
+    };
+  };
+  /** Henter en gitt revisjon av en historisk grunnkrets */
+  hentHistorikkRevisjon_2: {
+    parameters: {
+      path: {
+        /** ID-en til grunnkretsen man vil hente */
+        id: string;
+        /** RevisjonsId til revisjonen man vil hente */
+        revision: number;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["GrunnkretsResponse"];
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["GrunnkretsResponse"];
+        };
+      };
+    };
+  };
+  /** Henter grensene til en grunnkrets med gitt id */
+  hentGrenser_2: {
+    parameters: {
+      path: {
+        /** ID-en til grunnkretsen man vil hente */
+        id: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["FeatureCollection"];
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["FeatureCollection"];
         };
       };
     };
@@ -1466,8 +1676,8 @@ export interface operations {
       };
     };
   };
-  /** Henter alle fylker i nasjonal inndelingsbase. */
-  hentAlle_2: {
+  /** Henter alle fylker i Nasjonal inndelingsbase. */
+  hentAlle_3: {
     responses: {
       /** Successful operation */
       200: {
@@ -1478,7 +1688,7 @@ export interface operations {
     };
   };
   /** Henter historikken til et fylke med gitt id */
-  hentHistorikkForEn_2: {
+  hentHistorikkForEn_3: {
     parameters: {
       path: {
         /** ID-en til fylket man vil hente historikk for */
@@ -1495,7 +1705,7 @@ export interface operations {
     };
   };
   /** Henter en gitt revisjon av et historisk fylke */
-  hentHistorikkRevisjon_2: {
+  hentHistorikkRevisjon_3: {
     parameters: {
       path: {
         /** ID-en til fylket man vil hente */
@@ -1520,7 +1730,7 @@ export interface operations {
     };
   };
   /** Henter grensene til et fylke med gitt id */
-  hentGrenser_2: {
+  hentGrenser_3: {
     parameters: {
       path: {
         /** ID-en til fylket man vil hente */

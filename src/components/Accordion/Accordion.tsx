@@ -7,10 +7,16 @@ import { ReactComponent as CaretUpIcon } from "icons/caretup.svg";
 type Props = {
   title: string;
   className?: string;
+  initialOpen?: boolean;
 };
 
-const Accordion: React.FC<Props> = ({ title, children, className }) => {
-  const [open, setOpen] = useState(false);
+const Accordion: React.FC<Props> = ({
+  title,
+  children,
+  className,
+  initialOpen,
+}) => {
+  const [open, setOpen] = useState(initialOpen ?? false);
 
   return (
     <Wrapper className={className}>

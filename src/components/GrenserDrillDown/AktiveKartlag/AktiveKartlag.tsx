@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import FylkeList from "../Fylkesgrenser/FylkeList";
+import GrunnkretsList from "../Grunnkretser/GrunnkretsList";
 import KommuneList from "../Kommunegrenser/KommuneList";
 import MainLayer from "components/Bakgrunnskart/MainLayer";
 import { useBakgrunnskart } from "contexts/BakgrunnskartContext";
@@ -22,6 +23,7 @@ const AktiveKartlag = () => {
       {fylker?.map((fylke) => (
         <KommuneList key={fylke.id} onlyDisplayEditing fylke={fylke} />
       ))}
+      <GrunnkretsList onlyDisplayEditing />
 
       <ActiveBackgroundLayers>
         {t("Aktive bakgrunnskart")}

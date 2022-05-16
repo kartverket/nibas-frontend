@@ -19,6 +19,7 @@ export const layerIdByGrenseType: Record<EditingType, GrenseId> = {
   fylke: "fylker",
   kommune: "kommuner",
   nasjon: "nasjoner",
+  grunnkrets: "grunnkretser",
 };
 
 type Props<T extends GrenseRef> = {
