@@ -16,7 +16,7 @@ export const bakgrunnskartLayers = {
   administrativeGrenserHistorisk: createTileLayerFromBakgrunnskartSource(
     "administrativeGrenserHistorisk"
   ),
-  grunnkretser: createTileLayerFromBakgrunnskartSource("grunnkretser"),
+  grunnkretserWMS: createTileLayerFromBakgrunnskartSource("grunnkretserWMS"),
   stedsnavn: createTileLayerFromBakgrunnskartSource("stedsnavn"),
   stedsnavnSSR: createTileLayerFromBakgrunnskartSource("stedsnavnSSR"),
   kartbladinndelinger: createTileLayerFromBakgrunnskartSource(
@@ -50,6 +50,10 @@ export const grenserLayers = {
     style: defaultStyles,
   }),
   nasjoner: new VectorLayer({
+    source: new VectorSource(),
+    style: defaultStyles,
+  }),
+  grunnkretser: new VectorLayer({
     source: new VectorSource(),
     style: defaultStyles,
   }),

@@ -3,6 +3,7 @@ import { EditingType, ObjectValue } from "../EditGrenserContext";
 import ToggleableGrense from "../ToggleableGrense";
 import useApiGrense from "./useApiGrense";
 import { GrenseRef } from "types/api";
+import { getNavnInSpraak } from "utils/language/language";
 
 type Props<T> = {
   grense: T;
@@ -24,8 +25,7 @@ const ApiGrense = <T extends GrenseRef>({
     grenseValue?.editing || grenseValue?.visible
   );
 
-  const navn =
-    grense.navn.find((grenseNavn) => grenseNavn.spraak === "nor")?.navn ?? "";
+  const navn = getNavnInSpraak(grense.navn, "nor");
 
   const fetchSetObjectValue = useCallback(
     (grenseId: string, newGrenseValue: ObjectValue) => {

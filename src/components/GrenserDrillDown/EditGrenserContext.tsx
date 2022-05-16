@@ -1,13 +1,13 @@
 import React, { createContext, useContext, useState } from "react";
 
-export type EditingType = "fylke" | "kommune" | "nasjon";
+export type EditingType = "fylke" | "kommune" | "nasjon" | "grunnkrets";
 export type ObjectValue = {
   editing?: boolean;
   visible?: boolean;
 };
 
-type GrenseDictionary = Record<string, ObjectValue>;
-type EditingObject = Partial<Record<EditingType, GrenseDictionary>>;
+export type GrenseDictionary = Record<string, ObjectValue>;
+export type EditingObject = Partial<Record<EditingType, GrenseDictionary>>;
 
 export type EditGrenserContextValue = {
   editingObject: EditingObject;

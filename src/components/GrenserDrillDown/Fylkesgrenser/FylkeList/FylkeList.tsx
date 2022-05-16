@@ -2,6 +2,7 @@ import styled from "styled-components";
 import ApiGrense from "../../ApiGrense";
 import { useEditGrenser } from "../../EditGrenserContext";
 import useNibasApi from "hooks/useNibasApi";
+import useOnlyDisplayEditingGrenser from "hooks/useOnlyDisplayEditingGrenser";
 
 type Props = {
   onlyDisplayEditing?: boolean;
@@ -12,16 +13,15 @@ const FylkeList = ({ onlyDisplayEditing = false }: Props) => {
 
   const { setObjectValue, values } = useEditGrenser("fylke");
 
+  const filteredFylker = useOnlyDisplayEditingGrenser(
+    fylker,
+    values,
+    onlyDisplayEditing
+  );
+
   if (error) return <p>Fikk ikke hentet fylker</p>;
 
-  if (!fylker) return null;
-
-  const fylkeIdsBeingEdited = Object.keys(values) ?? [];
-  const filteredFylker = onlyDisplayEditing
-    ? fylker.filter((fylke) =>
-        fylkeIdsBeingEdited.some((fylkeId) => fylke.id === fylkeId)
-      )
-    : fylker;
+  if (!filteredFylker) return null;
 
   return (
     <Wrapper>
