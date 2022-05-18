@@ -1,4 +1,4 @@
-# NIBAS klient
+# NIBAS klient (Nasjonal Inndelingsbase)
 
 Foreløpig kun create-react-app med typescript
 
