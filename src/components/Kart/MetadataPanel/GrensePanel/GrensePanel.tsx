@@ -5,7 +5,7 @@ import GrenseMetadataGenerelt from "./GrenseMetadataGenerelt";
 import Tabs from "components/Tabs";
 
 const showReferanserByGrenseType: Record<string, boolean> = {
-  TerritorialGrense: true,
+  Territorialgrense: true,
   Fylkesgrense: true,
   Kommunegrense: true,
   AvtaltAvgrensningslinje: true,
