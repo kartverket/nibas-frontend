@@ -43,11 +43,23 @@
     "Målemetode": "__STRING_NOT_TRANSLATED__",
     "Nøyaktighet": "__STRING_NOT_TRANSLATED__",
     "Informasjon": "__STRING_NOT_TRANSLATED__",
-    "Opphav": "__STRING_NOT_TRANSLATED__"
+    "Opphav": "__STRING_NOT_TRANSLATED__",
+    "Rettskilde-ID": "__STRING_NOT_TRANSLATED__",
+    "Rettskildetittel": "__STRING_NOT_TRANSLATED__",
+    "Fastsettingsmyndighet": "__STRING_NOT_TRANSLATED__",
+    "Fastsettingsdato": "__STRING_NOT_TRANSLATED__",
+    "Hjemmel": "__STRING_NOT_TRANSLATED__",
+    "Dokumentlenke": "__STRING_NOT_TRANSLATED__",
+    "Internreferanse": "__STRING_NOT_TRANSLATED__"
   },
   "Aktive bakgrunnskart": "__STRING_NOT_TRANSLATED__",
   "action": {
     "Lagre": "__STRING_NOT_TRANSLATED__",
-    "Lukk": "__STRING_NOT_TRANSLATED__"
+    "Lukk": "__STRING_NOT_TRANSLATED__",
+    "Legg til": "__STRING_NOT_TRANSLATED__",
+    "Slett": "__STRING_NOT_TRANSLATED__",
+    "Slett {{ item }}": "__STRING_NOT_TRANSLATED__",
+    "Legg til {{ item }}": "__STRING_NOT_TRANSLATED__",
+    "Ny {{ item }}": "__STRING_NOT_TRANSLATED__"
   }
 }

@@ -2,6 +2,7 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import GrenseMetadataDetaljer from "./GrenseMetadataDetaljer";
 import GrenseMetadataGenerelt from "./GrenseMetadataGenerelt";
+import GrenseMetadataReferanser from "./GrenseMetadataReferanser";
 import Tabs from "components/Tabs";
 
 const showReferanserByGrenseType: Record<string, boolean> = {
@@ -20,7 +21,10 @@ type Props = {
 const GrensePanel = ({ data }: Props) => {
   let tabs: string[];
 
-  if (showReferanserByGrenseType[data.getProperties().type as string]) {
+  const showReferanser =
+    showReferanserByGrenseType[data.getProperties().type as string];
+
+  if (showReferanser) {
     tabs = [
       "metadata.Generelt",
       "metadata.Detaljer",
@@ -41,6 +45,12 @@ const GrensePanel = ({ data }: Props) => {
         <h3>Detaljer</h3>
         <GrenseMetadataDetaljer feature={data} />
       </div>
+      {showReferanser && (
+        <div>
+          <h3>Dokumentasjonsreferanser</h3>
+          <GrenseMetadataReferanser feature={data} />
+        </div>
+      )}
     </Tabs>
   );
 };
