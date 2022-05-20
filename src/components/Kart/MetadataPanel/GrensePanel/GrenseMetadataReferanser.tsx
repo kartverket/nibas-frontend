@@ -1,21 +1,13 @@
+import { useState } from "react";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
-import {
-  Control,
-  useFieldArray,
-  useForm,
-  UseFormRegister,
-} from "react-hook-form";
+import { Control, useFieldArray, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { BlockLabel, Container, Part } from "../metadataComponents";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
 import { Dokref, Metadata } from "types/api";
-
-type Props = {
-  feature: Feature<Geometry>;
-};
 
 type Value = {
   value: string;
@@ -53,29 +45,29 @@ const mapFromApiToForm = (dokrefs: Dokref[] = []): DokrefForm[] => {
 
 type FieldArrayProps = {
   control: Control<Inputs>;
-  register: UseFormRegister<Inputs>;
   index: number;
 };
 
-const Dokumentlenker = ({ control, index, register }: FieldArrayProps) => {
+const Dokumentlenker = ({ control, index }: FieldArrayProps) => {
   const { t } = useTranslation();
+  const [newLenke, setNewLenke] = useState("");
   const { fields, append, remove } = useFieldArray({
     control,
     name: `dokrefs.${index}.dokumentlenker`,
   });
 
+  const onAdd = () => {
+    append({ value: newLenke });
+    setNewLenke("");
+  };
+
   return (
     <ColoredDiv>
       {fields.map((field, nestedIndex) => (
         <div key={field.id}>
-          <BlockLabel>
-            Lenke
-            <Input
-              {...register(
-                `dokrefs.${index}.dokumentlenker.${nestedIndex}.value`
-              )}
-            />
-          </BlockLabel>
+          <a href={field.value} target="_blank" rel="noreferrer">
+            {field.value}
+          </a>
           <Button onClick={() => remove(nestedIndex)}>
             {t("action.Slett {{ item }}", {
               item: t("metadata.Dokumentlenke").toLowerCase(),
@@ -83,7 +75,11 @@ const Dokumentlenker = ({ control, index, register }: FieldArrayProps) => {
           </Button>
         </div>
       ))}
-      <Button onClick={() => append({ value: "" })}>
+      <BlockLabel>
+        {t("metadata.Dokumentlenke")}
+        <Input value={newLenke} onChange={(e) => setNewLenke(e.target.value)} />
+      </BlockLabel>
+      <Button onClick={onAdd}>
         {t("action.Legg til {{ item }}", {
           item: t("metadata.Dokumentlenke").toLowerCase(),
         })}
@@ -92,25 +88,26 @@ const Dokumentlenker = ({ control, index, register }: FieldArrayProps) => {
   );
 };
 
-const Internreferanser = ({ control, index, register }: FieldArrayProps) => {
+const Internreferanser = ({ control, index }: FieldArrayProps) => {
   const { t } = useTranslation();
+  const [newLenke, setNewLenke] = useState("");
   const { fields, append, remove } = useFieldArray({
     control,
     name: `dokrefs.${index}.internReferanserKartverket`,
   });
 
+  const onAdd = () => {
+    append({ value: newLenke });
+    setNewLenke("");
+  };
+
   return (
     <ColoredDiv>
       {fields.map((field, nestedIndex) => (
         <div key={field.id}>
-          <BlockLabel>
-            Lenke
-            <Input
-              {...register(
-                `dokrefs.${index}.internReferanserKartverket.${nestedIndex}.value`
-              )}
-            />
-          </BlockLabel>
+          <a href={field.value} target="_blank" rel="noreferrer">
+            {field.value}
+          </a>
           <Button onClick={() => remove(nestedIndex)}>
             {t("action.Slett {{ item }}", {
               item: t("metadata.Internreferanse").toLowerCase(),
@@ -118,13 +115,21 @@ const Internreferanser = ({ control, index, register }: FieldArrayProps) => {
           </Button>
         </div>
       ))}
-      <Button onClick={() => append({ value: "" })}>
+      <BlockLabel>
+        {t("metadata.Internreferanse")}
+        <Input value={newLenke} onChange={(e) => setNewLenke(e.target.value)} />
+      </BlockLabel>
+      <Button onClick={onAdd}>
         {t("action.Legg til {{ item }}", {
           item: t("metadata.Internreferanse").toLowerCase(),
         })}
       </Button>
     </ColoredDiv>
   );
+};
+
+type Props = {
+  feature: Feature<Geometry>;
 };
 
 const GrenseMetadataReferanser = ({ feature }: Props) => {
@@ -146,9 +151,9 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
 
   return (
     <form onSubmit={onSubmit}>
-      <ColoredDiv>
-        {fields.map((field, i) => (
-          <div key={field.id}>
+      {fields.map((field, i) => (
+        <div key={field.id}>
+          <ColoredDiv>
             <Container>
               <Part>
                 <BlockLabel>
@@ -180,43 +185,35 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
                 </BlockLabel>
               </Part>
             </Container>
-            <Dokumentlenker
-              register={register}
-              control={control}
-              index={i}
-            ></Dokumentlenker>
-            <Internreferanser
-              register={register}
-              control={control}
-              index={i}
-            ></Internreferanser>
+            <Dokumentlenker control={control} index={i} />
+            <Internreferanser control={control} index={i} />
 
             <Button onClick={() => remove(i)}>
               {t("action.Slett {{ item }}", {
                 item: t("metadata.Referanse").toLowerCase(),
               })}
             </Button>
-          </div>
-        ))}
-        <Button type="submit">{t("action.Lagre")}</Button>
-        <Button
-          onClick={() =>
-            append({
-              dokumentlenker: [],
-              internReferanserKartverket: [],
-              fastsettingsdato: "",
-              fastsettingsmyndighet: "",
-              hjemmel: "",
-              rettskildeId: "",
-              rettskildeTittel: "",
-            })
-          }
-        >
-          {t("action.Ny {{ item }}", {
-            item: t("metadata.Referanse").toLowerCase(),
-          })}
-        </Button>
-      </ColoredDiv>
+          </ColoredDiv>
+        </div>
+      ))}
+      <Button type="submit">{t("action.Lagre")}</Button>
+      <Button
+        onClick={() =>
+          append({
+            dokumentlenker: [],
+            internReferanserKartverket: [],
+            fastsettingsdato: "",
+            fastsettingsmyndighet: "",
+            hjemmel: "",
+            rettskildeId: "",
+            rettskildeTittel: "",
+          })
+        }
+      >
+        {t("action.Ny {{ item }}", {
+          item: t("metadata.Referanse").toLowerCase(),
+        })}
+      </Button>
     </form>
   );
 };
