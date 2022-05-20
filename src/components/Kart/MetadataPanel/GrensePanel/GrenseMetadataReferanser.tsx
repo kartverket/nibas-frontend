@@ -78,14 +78,14 @@ const Dokumentlenker = ({ control, index, register }: FieldArrayProps) => {
           </BlockLabel>
           <Button onClick={() => remove(nestedIndex)}>
             {t("action.Slett {{ item }}", {
-              item: t("metadata.Dokumentlenke").toString().toLowerCase(),
+              item: t("metadata.Dokumentlenke").toLowerCase(),
             })}
           </Button>
         </div>
       ))}
       <Button onClick={() => append({ value: "" })}>
         {t("action.Legg til {{ item }}", {
-          item: t("metadata.Dokumentlenke").toString().toLowerCase(),
+          item: t("metadata.Dokumentlenke").toLowerCase(),
         })}
       </Button>
     </ColoredDiv>
@@ -113,14 +113,14 @@ const Internreferanser = ({ control, index, register }: FieldArrayProps) => {
           </BlockLabel>
           <Button onClick={() => remove(nestedIndex)}>
             {t("action.Slett {{ item }}", {
-              item: t("metadata.Internreferanse").toString().toLowerCase(),
+              item: t("metadata.Internreferanse").toLowerCase(),
             })}
           </Button>
         </div>
       ))}
       <Button onClick={() => append({ value: "" })}>
         {t("action.Legg til {{ item }}", {
-          item: t("metadata.Internreferanse").toString().toLowerCase(),
+          item: t("metadata.Internreferanse").toLowerCase(),
         })}
       </Button>
     </ColoredDiv>
@@ -192,7 +192,9 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
             ></Internreferanser>
 
             <Button onClick={() => remove(i)}>
-              {t("action.Slett {{ item }}", { item: "referanse" })}
+              {t("action.Slett {{ item }}", {
+                item: t("metadata.Referanse").toLowerCase(),
+              })}
             </Button>
           </div>
         ))}
@@ -210,7 +212,9 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
             })
           }
         >
-          {t("action.Ny {{ item }}", { item: "referanse" })}
+          {t("action.Ny {{ item }}", {
+            item: t("metadata.Referanse").toLowerCase(),
+          })}
         </Button>
       </ColoredDiv>
     </form>
