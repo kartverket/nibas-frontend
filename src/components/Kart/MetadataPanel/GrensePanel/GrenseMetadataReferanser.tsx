@@ -45,15 +45,18 @@ const mapFromApiToForm = (dokrefs: Dokref[] = []): DokrefForm[] => {
 
 type FieldArrayProps = {
   control: Control<Inputs>;
-  index: number;
+  itemName: string;
+  name:
+    | `dokrefs.${number}.dokumentlenker`
+    | `dokrefs.${number}.internReferanserKartverket`;
 };
 
-const Dokumentlenker = ({ control, index }: FieldArrayProps) => {
+const FieldArray = ({ control, name, itemName }: FieldArrayProps) => {
   const { t } = useTranslation();
   const [newLenke, setNewLenke] = useState("");
   const { fields, append, remove } = useFieldArray({
     control,
-    name: `dokrefs.${index}.dokumentlenker`,
+    name,
   });
 
   const onAdd = () => {
@@ -70,58 +73,18 @@ const Dokumentlenker = ({ control, index }: FieldArrayProps) => {
           </a>
           <Button onClick={() => remove(nestedIndex)}>
             {t("action.Slett {{ item }}", {
-              item: t("metadata.Dokumentlenke").toLowerCase(),
+              item: itemName.toLowerCase(),
             })}
           </Button>
         </div>
       ))}
       <BlockLabel>
-        {t("metadata.Dokumentlenke")}
+        {itemName}
         <Input value={newLenke} onChange={(e) => setNewLenke(e.target.value)} />
       </BlockLabel>
       <Button onClick={onAdd}>
         {t("action.Legg til {{ item }}", {
-          item: t("metadata.Dokumentlenke").toLowerCase(),
-        })}
-      </Button>
-    </ColoredDiv>
-  );
-};
-
-const Internreferanser = ({ control, index }: FieldArrayProps) => {
-  const { t } = useTranslation();
-  const [newLenke, setNewLenke] = useState("");
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: `dokrefs.${index}.internReferanserKartverket`,
-  });
-
-  const onAdd = () => {
-    append({ value: newLenke });
-    setNewLenke("");
-  };
-
-  return (
-    <ColoredDiv>
-      {fields.map((field, nestedIndex) => (
-        <div key={field.id}>
-          <a href={field.value} target="_blank" rel="noreferrer">
-            {field.value}
-          </a>
-          <Button onClick={() => remove(nestedIndex)}>
-            {t("action.Slett {{ item }}", {
-              item: t("metadata.Internreferanse").toLowerCase(),
-            })}
-          </Button>
-        </div>
-      ))}
-      <BlockLabel>
-        {t("metadata.Internreferanse")}
-        <Input value={newLenke} onChange={(e) => setNewLenke(e.target.value)} />
-      </BlockLabel>
-      <Button onClick={onAdd}>
-        {t("action.Legg til {{ item }}", {
-          item: t("metadata.Internreferanse").toLowerCase(),
+          item: itemName.toLowerCase(),
         })}
       </Button>
     </ColoredDiv>
@@ -185,8 +148,16 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
                 </BlockLabel>
               </Part>
             </Container>
-            <Dokumentlenker control={control} index={i} />
-            <Internreferanser control={control} index={i} />
+            <FieldArray
+              control={control}
+              name={`dokrefs.${i}.dokumentlenker`}
+              itemName={t("metadata.Dokumentlenke")}
+            />
+            <FieldArray
+              control={control}
+              name={`dokrefs.${i}.internReferanserKartverket`}
+              itemName={t("metadata.Internreferanse")}
+            />
 
             <Button onClick={() => remove(i)}>
               {t("action.Slett {{ item }}", {
