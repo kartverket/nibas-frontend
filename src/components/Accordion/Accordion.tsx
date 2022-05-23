@@ -20,13 +20,17 @@ const Accordion: React.FC<Props> = ({
 
   return (
     <Wrapper className={className}>
-      <TitleWrapperButton variant="icon" onClick={() => setOpen(!open)}>
-        <span>{title}</span>
-        {open ? (
-          <CaretUpIcon aria-label="Lukk" />
-        ) : (
-          <CaretDownIcon aria-label="Åpne" />
-        )}
+      <TitleWrapperButton
+        icon={
+          open ? (
+            <CaretUpIcon aria-label="Lukk" />
+          ) : (
+            <CaretDownIcon aria-label="Åpne" />
+          )
+        }
+        onClick={() => setOpen(!open)}
+      >
+        {title}
       </TitleWrapperButton>
 
       {open && <ChildrenWrapper>{children}</ChildrenWrapper>}
@@ -39,10 +43,7 @@ const Wrapper = styled.div`
 `;
 
 const TitleWrapperButton = styled(Button)`
-  display: flex;
-  align-items: center;
   width: 100%;
-  justify-content: space-between;
 `;
 
 const ChildrenWrapper = styled.div`

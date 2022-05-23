@@ -11,9 +11,10 @@ const SidebarPanelTitle = ({ title, closePanel }: Props) => {
   return (
     <TitleWrapper>
       <StyledTitle>{title}</StyledTitle>
-      <CloseButton variant="icon" onClick={closePanel}>
-        <CaretLeft aria-label={`Lukk ${title}`} />
-      </CloseButton>
+      <CloseButton
+        icon={<CaretLeft aria-label={`Lukk ${title}`} />}
+        onClick={closePanel}
+      ></CloseButton>
     </TitleWrapper>
   );
 };

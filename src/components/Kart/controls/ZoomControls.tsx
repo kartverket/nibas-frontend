@@ -2,8 +2,8 @@ import styled from "styled-components";
 import { map } from "../constants";
 import CustomControl from "components/CustomControl";
 import Button from "components/form/Button";
-import { ReactComponent as MinusIcon } from "icons/minus.svg";
-import { ReactComponent as PlusIcon } from "icons/pluss.svg";
+import { ReactComponent as MinusIcon } from "icons/minusZoom.svg";
+import { ReactComponent as PlusIcon } from "icons/plussZoom.svg";
 
 const ZoomControls = () => {
   const zoom = (difference: number) => {
@@ -17,14 +17,16 @@ const ZoomControls = () => {
   return (
     <>
       <CustomControl>
-        <PlusZoomButton variant="icon" onClick={() => zoom(1)}>
-          <PlusIcon />
-        </PlusZoomButton>
+        <PlusZoomButton
+          icon={<PlusIcon />}
+          onClick={() => zoom(1)}
+        ></PlusZoomButton>
       </CustomControl>
       <CustomControl>
-        <MinusZoomButton variant="icon" onClick={() => zoom(-1)}>
-          <MinusIcon />
-        </MinusZoomButton>
+        <MinusZoomButton
+          icon={<MinusIcon />}
+          onClick={() => zoom(-1)}
+        ></MinusZoomButton>
       </CustomControl>
     </>
   );

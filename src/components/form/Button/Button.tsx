@@ -2,28 +2,26 @@ import { ButtonHTMLAttributes, forwardRef } from "react";
 import styled from "styled-components";
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: "unstyled" | "icon";
+  variant?: "unstyled";
+  icon?: React.ReactElement;
 };
 
 const Button = forwardRef<HTMLButtonElement, Props>(
-  ({ variant, children, ...props }, ref) => {
+  ({ variant, children, icon, ...props }, ref) => {
     if (variant === "unstyled") {
       return (
         <UnstyledButton {...props} ref={ref}>
           {children}
         </UnstyledButton>
       );
-    } else if (variant === "icon") {
-      return (
-        <IconButton {...props} ref={ref}>
-          {children}
-        </IconButton>
-      );
     }
 
     return (
       <StyledButton {...props} ref={ref}>
-        {children}
+        <ButtonContentWrapper>
+          {children && <span>{children}</span>}
+          {icon}
+        </ButtonContentWrapper>
       </StyledButton>
     );
   }
@@ -31,7 +29,25 @@ const Button = forwardRef<HTMLButtonElement, Props>(
 
 Button.displayName = "Button";
 
-const StyledButton = styled.button``;
+const StyledButton = styled.button`
+  * {
+    // gjør at children ikke gir ekstra plass til tekst
+    vertical-align: middle;
+  }
+
+  text-align: left;
+`;
+
+const ButtonContentWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+
+  > *:first-child {
+    flex: 1;
+  }
+`;
 
 const UnstyledButton = styled(StyledButton)`
   background: none;
@@ -44,13 +60,6 @@ const UnstyledButton = styled(StyledButton)`
 
   :disabled {
     cursor: initial;
-  }
-`;
-
-const IconButton = styled(UnstyledButton)`
-  > * {
-    // gjør at children ikke gir ekstra plass til tekst
-    vertical-align: middle;
   }
 `;
 
