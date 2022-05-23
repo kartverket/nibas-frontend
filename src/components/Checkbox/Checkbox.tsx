@@ -1,4 +1,4 @@
-import { InputHTMLAttributes } from "react";
+import { forwardRef, InputHTMLAttributes } from "react";
 import styled, { css } from "styled-components";
 
 type Props = InputHTMLAttributes<HTMLInputElement> & {
@@ -6,15 +6,18 @@ type Props = InputHTMLAttributes<HTMLInputElement> & {
   type: "radio" | "checkbox";
 };
 
-const Checkbox = ({ label, className, ...props }: Props) => {
+const Checkbox = forwardRef<HTMLInputElement, Props>(function Checkbox(
+  { label, className, ...props },
+  ref
+) {
   return (
     <Wrapper disabled={!!props.disabled} className={className}>
       {label}
-      <DefaultCheckbox {...props} />
+      <DefaultCheckbox {...props} ref={ref} />
       <CustomCheckbox type={props.type} />
     </Wrapper>
   );
-};
+});
 
 const Checkmark = css`
   left: 4px;

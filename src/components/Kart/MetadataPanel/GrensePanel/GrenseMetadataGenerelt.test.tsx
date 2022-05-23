@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "test/test-utils";
 import { ReactNode } from "react";
-import MetadataContent from "./MetadataContent";
+import MetadataContent from "./GrenseMetadataGenerelt";
 import { EditGrenserProvider } from "components/GrenserDrillDown/EditGrenserContext";
 import { mockBasicFeature } from "mocks/handlers/responses";
 
@@ -11,7 +11,7 @@ const defaultProps: React.ComponentProps<typeof MetadataContent> = {
 const renderWithProvider = (ui: ReactNode) =>
   render(<EditGrenserProvider>{ui}</EditGrenserProvider>);
 
-describe("MetadataContent", () => {
+describe("GrenseMetadataGenerelt", () => {
   it("should display data from feature properties", async () => {
     renderWithProvider(<MetadataContent {...defaultProps} />);
 

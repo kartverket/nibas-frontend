@@ -1,21 +1,23 @@
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
-import styled, { css, useTheme } from "styled-components";
-import useMetadataForm from "./useMetadataForm";
-import { getDateInFriendlyString } from "./utils";
+import { useTranslation } from "react-i18next";
+import { useTheme } from "styled-components";
+import {
+  BlockLabel,
+  Container,
+  DateWrapper,
+  MetadataText,
+  MetadataValue,
+  Part,
+} from "../metadataComponents";
+import useIsMetadataDisabled from "../useIsMetadataDisabled";
+import useMetadataForm from "../useMetadataForm";
+import { getDateInFriendlyString } from "../utils";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
-import { useEditGrenser } from "components/GrenserDrillDown/EditGrenserContext";
 import useScreenWidth from "hooks/useScreenWidth";
 import { Metadata, FeatureProperties } from "types/api";
-
-const editingTypeByKontekstType = {
-  KOMMUNE: "kommune",
-  FYLKE: "fylke",
-  NASJON: "nasjon",
-  GRUNNKRETS: "grunnkrets",
-} as const;
 
 type Props = {
   feature: Feature<Geometry>;
@@ -33,50 +35,43 @@ const MetadataContent = ({ feature }: Props) => {
 
   const screenWidth = useScreenWidth();
   const theme = useTheme();
+  const { t } = useTranslation();
 
-  const { values } = useEditGrenser(
-    editingTypeByKontekstType[properties.kontekstEgenskaper?.type ?? "FYLKE"]
-  );
-
-  // hvis synlig og ikke endrer, disable felter
-  const featureKontekstId = properties.kontekstEgenskaper?.id;
-  const isDisabled = featureKontekstId
-    ? values[featureKontekstId]?.visible && !values[featureKontekstId]?.editing
-    : true;
+  const disabled = useIsMetadataDisabled(properties);
 
   return (
     <form onSubmit={onSubmit}>
       <Container>
         <Part>
           <BlockLabel>
-            Grensetype
+            {t("metadata.Grensetype")}
             <Select disabled>
               <option>{type}</option>
             </Select>
           </BlockLabel>
           <DateWrapper>
             <BlockLabel>
-              Gyldig fra
+              {t("metadata.Gyldig fra")}
               <Input
                 type="date"
                 role="textbox"
-                {...register("gyldigFra", { disabled: isDisabled })}
+                {...register("gyldigFra", { disabled })}
               />
             </BlockLabel>
             <BlockLabel>
-              Gyldig til
+              {t("metadata.Gyldig til")}
               <Input
                 type="date"
                 role="textbox"
-                {...register("gyldigTil", { disabled: isDisabled })}
+                {...register("gyldigTil", { disabled })}
               />
             </BlockLabel>
           </DateWrapper>
         </Part>
         <Part>
           <BlockLabel>
-            Målemetode
-            <Select {...register("maalemetode", { disabled: isDisabled })}>
+            {t("metadata.Målemetode")}
+            <Select {...register("maalemetode", { disabled })}>
               <option value="">---</option>
               {maalemetodeKoder?.map((kodeItem) => (
                 <option key={kodeItem.id} value={kodeItem.id}>
@@ -86,12 +81,12 @@ const MetadataContent = ({ feature }: Props) => {
             </Select>
           </BlockLabel>
           <BlockLabel>
-            Nøyaktighet
+            {t("metadata.Nøyaktighet")}
             <Input
               type="number"
               {...register("noeyaktighet", {
                 valueAsNumber: true,
-                disabled: isDisabled,
+                disabled,
                 min: 0,
                 max: 1_000_000,
               })}
@@ -108,12 +103,12 @@ const MetadataContent = ({ feature }: Props) => {
         )}
       </Container>
       <BlockLabel>
-        Informasjon
-        <Input {...register("informasjon", { disabled: isDisabled })} />
+        {t("metadata.Informasjon")}
+        <Input {...register("informasjon", { disabled })} />
       </BlockLabel>
       <BlockLabel>
-        Opphav
-        <Input {...register("opphav", { disabled: isDisabled })} />
+        {t("metadata.Opphav")}
+        <Input {...register("opphav", { disabled })} />
       </BlockLabel>
       {screenWidth >= theme.dimensions.lg && (
         <Part>
@@ -123,7 +118,7 @@ const MetadataContent = ({ feature }: Props) => {
           />
         </Part>
       )}
-      <Button type="submit">Lagre</Button>
+      <Button type="submit">{t("action.Lagre")}</Button>
     </form>
   );
 };
@@ -149,79 +144,5 @@ const Dates = ({ oppdateringsdato, datafangstdato }: DatesProps) => (
     </div>
   </>
 );
-
-const Container = styled.div`
-  display: flex;
-  justify-content: flex-start;
-
-  @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
-    flex-direction: column;
-  }
-`;
-
-const Part = styled.div`
-  flex: 1;
-  max-width: 500px;
-  margin: 0 16px;
-
-  &:first-child,
-  &:last-child {
-    margin: 0;
-  }
-
-  @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
-    margin: 8px 0;
-
-    &:first-child,
-    &:last-child {
-      margin: 8px 0;
-    }
-  }
-`;
-
-const MetadataTitleStyles = css`
-  font-size: 14px;
-`;
-
-const MetadataValue = styled.p`
-  margin: 0;
-  margin-bottom: 8px;
-`;
-
-const MetadataText = styled.p`
-  margin: 0;
-  ${MetadataTitleStyles};
-`;
-
-const BlockLabel = styled.label`
-  display: block;
-  margin-bottom: 8px;
-
-  ${MetadataTitleStyles};
-
-  > * {
-    margin-top: 4px;
-    width: 100%;
-    margin-bottom: 8px;
-  }
-`;
-
-const DateWrapper = styled(Part)`
-  display: flex;
-
-  > * {
-    flex: 1;
-    margin: 0 8px;
-    min-width: 100px;
-
-    &:first-child {
-      margin-left: 0;
-    }
-
-    &:last-child {
-      margin-right: 0;
-    }
-  }
-`;
 
 export default MetadataContent;

@@ -1,22 +1,22 @@
+import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { KartInteractable } from "../KartInteractable";
-import MetadataContent from "./MetadataContent";
+import GrensePanel from "./GrensePanel";
 import Button from "components/form/Button";
 import { useMetadataPanel } from "contexts/MetadataPanelContext";
 
 const MetadataPanel = () => {
+  const { t } = useTranslation();
   const { panelContext, closePanel } = useMetadataPanel();
 
-  if (panelContext?.content !== "grensemetadata") return null;
+  if (!panelContext) return null;
 
   return (
     <Panel>
-      <h3>Linje metadata</h3>
-      <MetadataContent
-        key={panelContext.data.getId()}
-        feature={panelContext.data}
-      />
-      <Button onClick={closePanel}>Lukk</Button>
+      {panelContext.content === "grensemetadata" && (
+        <GrensePanel data={panelContext.data} />
+      )}
+      <Button onClick={closePanel}>{t("action.Lukk")}</Button>
     </Panel>
   );
 };

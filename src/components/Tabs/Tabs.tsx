@@ -1,39 +1,38 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled, { css } from "styled-components";
-import { TabDictionary } from "./useTabs";
 import Button from "components/form/Button";
 import { Translation } from "i18n";
 
-type TabsProps<T extends string> = {
+type Props = {
   children: React.ReactNode;
-  tabIds: TabDictionary<T>;
-  openTab: (tab: T) => void;
-  selectedTab: T;
+  tabTransKeys: string[];
 };
 
-const Tabs = <T extends string>({
-  children,
-  tabIds,
-  openTab,
-  selectedTab,
-}: TabsProps<T>) => {
+const Tabs = ({ children, tabTransKeys }: Props) => {
   const { t } = useTranslation();
+  const [selectedTab, setSelectedTab] = useState<number>(0);
+
+  const openTab = (index: number) => {
+    setSelectedTab(index);
+  };
 
   return (
     <div>
       <TabsWrapper>
-        {Object.keys(tabIds).map((tabId) => (
+        {tabTransKeys.map((tabTransKey, index) => (
           <TabButton
-            key={tabId}
-            onClick={() => openTab(tabId as T)}
-            selected={(tabId as T) === selectedTab}
+            key={tabTransKey}
+            onClick={() => openTab(index)}
+            selected={selectedTab === index}
           >
-            {t(`inndelinger.${tabId}` as Translation)}
+            {t(tabTransKey as Translation)}
           </TabButton>
         ))}
       </TabsWrapper>
-      {children}
+      {React.Children.map(children, (child, index) =>
+        selectedTab === index ? child : null
+      )}
     </div>
   );
 };
