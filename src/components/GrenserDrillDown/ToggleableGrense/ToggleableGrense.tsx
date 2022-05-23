@@ -114,6 +114,7 @@ const ToggleableGrense = <T extends GrenseRef>({
     <Wrapper>
       <Button
         onClick={toggleVisible}
+        variant="unstyled"
         icon={
           objectValue.visible ? (
             <VisibilityIcon aria-label="Synlig" />
@@ -128,7 +129,11 @@ const ToggleableGrense = <T extends GrenseRef>({
         checked={objectValue.editing ?? false}
         onChange={toggleEditing}
       />
-      <Button icon={<ColoredInfo />} onClick={openInfo}></Button>
+      <Button
+        icon={<ColoredInfo />}
+        onClick={openInfo}
+        variant="unstyled"
+      ></Button>
     </Wrapper>
   );
 };

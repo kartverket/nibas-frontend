@@ -28,6 +28,7 @@ const Accordion: React.FC<Props> = ({
             <CaretDownIcon aria-label="Åpne" />
           )
         }
+        variant="unstyled"
         onClick={() => setOpen(!open)}
       >
         {title}

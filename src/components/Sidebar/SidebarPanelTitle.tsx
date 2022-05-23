@@ -14,6 +14,7 @@ const SidebarPanelTitle = ({ title, closePanel }: Props) => {
       <CloseButton
         icon={<CaretLeft aria-label={`Lukk ${title}`} />}
         onClick={closePanel}
+        variant="unstyled"
       ></CloseButton>
     </TitleWrapper>
   );
@@ -33,7 +34,7 @@ const StyledTitle = styled.h3`
 `;
 
 const CloseButton = styled(Button)`
-  > svg {
+  svg {
     width: 36px;
     height: 36px;
   }

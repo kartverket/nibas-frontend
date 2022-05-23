@@ -8,21 +8,16 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
 
 const Button = forwardRef<HTMLButtonElement, Props>(
   ({ variant, children, icon, ...props }, ref) => {
-    if (variant === "unstyled") {
-      return (
-        <UnstyledButton {...props} ref={ref}>
-          {children}
-        </UnstyledButton>
-      );
-    }
+    const ButtonWrapper =
+      variant === "unstyled" ? UnstyledButton : StyledButton;
 
     return (
-      <StyledButton {...props} ref={ref}>
+      <ButtonWrapper {...props} ref={ref}>
         <ButtonContentWrapper>
           {children && <span>{children}</span>}
           {icon}
         </ButtonContentWrapper>
-      </StyledButton>
+      </ButtonWrapper>
     );
   }
 );
