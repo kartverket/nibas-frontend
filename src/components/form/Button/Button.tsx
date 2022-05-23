@@ -39,8 +39,12 @@ const ButtonContentWrapper = styled.div`
   justify-content: space-between;
   width: 100%;
 
-  > *:first-child {
+  > span:first-child {
     flex: 1;
+  }
+
+  > svg {
+    margin-left: 4px;
   }
 `;
 

@@ -11,7 +11,6 @@ export const Container = styled.div`
 
 export const Part = styled.div`
   flex: 1;
-  max-width: 500px;
   margin: 0 16px;
 
   &:first-child,
