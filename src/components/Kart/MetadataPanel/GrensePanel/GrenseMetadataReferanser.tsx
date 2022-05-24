@@ -7,6 +7,8 @@ import styled from "styled-components";
 import { BlockLabel, Container, Part } from "../metadataComponents";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
+import { ReactComponent as Minus } from "icons/minus.svg";
+import { ReactComponent as Pluss } from "icons/pluss.svg";
 import { Dokref, Metadata } from "types/api";
 
 type Value = {
@@ -59,6 +61,13 @@ const FieldArray = ({ control, name, itemName }: FieldArrayProps) => {
     name,
   });
 
+  const onKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key !== "Enter") return;
+
+    e.preventDefault();
+    onAdd();
+  };
+
   const onAdd = () => {
     append({ value: newLenke });
     setNewLenke("");
@@ -66,27 +75,38 @@ const FieldArray = ({ control, name, itemName }: FieldArrayProps) => {
 
   return (
     <ColoredDiv>
+      <FieldTitle>{itemName}</FieldTitle>
       {fields.map((field, nestedIndex) => (
-        <div key={field.id}>
+        <FieldWrapper key={field.id}>
           <a href={field.value} target="_blank" rel="noreferrer">
             {field.value}
           </a>
-          <Button onClick={() => remove(nestedIndex)}>
-            {t("action.Slett {{ item }}", {
-              item: itemName.toLowerCase(),
-            })}
-          </Button>
-        </div>
+          <div>
+            <Button icon={<Minus />} onClick={() => remove(nestedIndex)}>
+              {t("action.Slett")}
+            </Button>
+          </div>
+        </FieldWrapper>
       ))}
-      <BlockLabel>
-        {itemName}
-        <Input value={newLenke} onChange={(e) => setNewLenke(e.target.value)} />
-      </BlockLabel>
-      <Button onClick={onAdd}>
-        {t("action.Legg til {{ item }}", {
-          item: itemName.toLowerCase(),
-        })}
-      </Button>
+      <form>
+        <BlockLabel>
+          {t("action.Ny {{ item }}", { item: "URL" })}
+          <Input
+            value={newLenke}
+            onChange={(e) => setNewLenke(e.target.value)}
+            placeholder="URL"
+            onKeyPress={onKeyPress}
+          />
+        </BlockLabel>
+        <Button
+          onClick={onAdd}
+          disabled={!newLenke}
+          icon={<Pluss />}
+          type="submit"
+        >
+          {t("action.Legg til")}
+        </Button>
+      </form>
     </ColoredDiv>
   );
 };
@@ -151,12 +171,12 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
             <FieldArray
               control={control}
               name={`dokrefs.${i}.dokumentlenker`}
-              itemName={t("metadata.Dokumentlenke")}
+              itemName={t("metadata.Dokumentlenker")}
             />
             <FieldArray
               control={control}
               name={`dokrefs.${i}.internReferanserKartverket`}
-              itemName={t("metadata.Internreferanse")}
+              itemName={t("metadata.Internreferanser")}
             />
 
             <Button onClick={() => remove(i)}>
@@ -193,6 +213,26 @@ const ColoredDiv = styled.div`
   border: 1px solid red;
   padding: 8px;
   margin: 8px;
+`;
+
+const FieldWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+
+  a {
+    font-size: 14px;
+  }
+
+  > :first-child {
+    margin-right: 8px;
+  }
+`;
+
+const FieldTitle = styled.h4`
+  margin: 0;
+  margin-bottom: 8px;
 `;
 
 export default GrenseMetadataReferanser;
