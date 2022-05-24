@@ -69,6 +69,8 @@ const FieldArray = ({ control, name, itemName }: FieldArrayProps) => {
   };
 
   const onAdd = () => {
+    if (!newLenke) return;
+
     append({ value: newLenke });
     setNewLenke("");
   };
