@@ -4,8 +4,10 @@ import {
   mockGeoJsonFeatureResponse,
   mockFylker,
   mockKommuner,
-  mockMaalemetodeRespons,
+  mockMaalemetodeResponse,
   mockActuatorResponse,
+  mockNoeyaktighetsklasseResponse,
+  mockTerrengdetaljResponse,
 } from "./responses";
 
 export const nibasApiHandlers: RestHandler[] = [
@@ -22,12 +24,18 @@ export const nibasApiHandlers: RestHandler[] = [
     return res(ctx.status(200), ctx.json(mockGeoJsonFeatureResponse));
   }),
   rest.get("/v1/kodeliste/maalemetode-koder", (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mockMaalemetodeRespons));
+    return res(ctx.status(200), ctx.json(mockMaalemetodeResponse));
   }),
   rest.post("/v1/grenser", (req, res, ctx) => {
     return res(ctx.status(200));
   }),
   rest.get("/actuator/info", (req, res, ctx) => {
     return res(ctx.status(200), ctx.json(mockActuatorResponse));
+  }),
+  rest.get("/v1/kodeliste/terrengdetaljkoder", (req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(mockTerrengdetaljResponse));
+  }),
+  rest.get("/v1/kodeliste/noeyaktighetsklasser", (req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(mockNoeyaktighetsklasseResponse));
   }),
 ];

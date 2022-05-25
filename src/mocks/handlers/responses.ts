@@ -42,11 +42,31 @@ export const mockGeoJsonFeatureResponse: GeoJSONFeatureCollection = {
             },
             fastsettingstype: { id: "", href: "" },
             grensestatus: { id: "", href: "" },
-            dokumentasjonsreferanser: [],
           },
-          dokumentasjonsreferanser: [],
-          foelgerTerrengdetalj: undefined,
-          noeyaktighetsklasse: { id: "", href: "" },
+          dokumentasjonsreferanser: [
+            {
+              id: "123",
+              dokumentlenker: [
+                {
+                  id: "doklenke",
+                  beskrivelse: "Doklenke",
+                },
+              ],
+              fastsettingsdato: "2022-12-31",
+              fastsettingsmyndighet: "Fastsettingsmyndighet",
+              hjemmel: "Hjemmel",
+              internReferanserKartverket: [
+                {
+                  id: "internref",
+                  beskrivelse: "Internrefeferanse",
+                },
+              ],
+              rettskildeId: "RID",
+              rettskildeTittel: "Rettskildetittel",
+            },
+          ],
+          foelgerTerrengdetalj: { id: "IKA", href: "" },
+          noeyaktighetsklasse: { id: "IngenNøyaktighet", href: "" },
           omtvistet: false,
         } as AdministrativGrenseMetadata,
         kontekstEgenskaper: {
@@ -116,12 +136,32 @@ export const mockKommuner = [
   },
 ] as KommuneRef[];
 
-export const mockMaalemetodeRespons: KodelisteRespons = {
+export const mockMaalemetodeResponse: KodelisteRespons = {
   type: "MAALEMETODE_KODE",
   items: [
     {
       label: "Terrengmålt: Uspesifisert måleinstrument",
       id: "9b4ab6bb-878f-472a-9243-64e2bdc48b8c",
+    },
+  ],
+};
+
+export const mockTerrengdetaljResponse: KodelisteRespons = {
+  type: "TERRENGDETALJ",
+  items: [
+    {
+      id: "IKA",
+      label: "InnsjøKant",
+    },
+  ],
+};
+
+export const mockNoeyaktighetsklasseResponse: KodelisteRespons = {
+  type: "NOEYAKTIGHETSKLASSE",
+  items: [
+    {
+      id: "IngenNøyaktighet",
+      label: "IngenNøyaktighet",
     },
   ],
 };
