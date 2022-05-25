@@ -54,6 +54,27 @@ const mapFromApiToForm = (dokrefs: Dokref[] = []): DokrefForm[] => {
   }));
 };
 
+const mapFromFormToApi = (data: Inputs): Dokref[] => {
+  return data.dokrefs.map((dokref) => ({
+    id: dokref.apiId,
+    rettskildeTittel: dokref.rettskildeTittel,
+    fastsettingsdato: dokref.fastsettingsdato,
+    fastsettingsmyndighet: dokref.fastsettingsmyndighet,
+    hjemmel: dokref.hjemmel,
+    rettskildeId: dokref.rettskildeId,
+    dokumentlenker: dokref.dokumentlenker.map((lenke) => ({
+      id: lenke.apiId,
+      beskrivelse: lenke.beskrivelse,
+    })),
+    internReferanserKartverket: dokref.internReferanserKartverket.map(
+      (ref) => ({
+        id: ref.apiId,
+        beskrivelse: ref.beskrivelse,
+      })
+    ),
+  }));
+};
+
 type FieldArrayProps = {
   control: Control<Inputs>;
   itemName: string;
@@ -142,24 +163,7 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
       ...properties,
       metadata: {
         ...properties.metadata,
-        dokumentasjonsreferanser: data.dokrefs.map((dokref) => ({
-          id: dokref.apiId ?? null,
-          rettskildeTittel: dokref.rettskildeTittel,
-          fastsettingsdato: dokref.fastsettingsdato,
-          fastsettingsmyndighet: dokref.fastsettingsmyndighet,
-          hjemmel: dokref.hjemmel,
-          rettskildeId: dokref.rettskildeId,
-          dokumentlenker: dokref.dokumentlenker.map((lenke) => ({
-            id: lenke.apiId ?? null,
-            beskrivelse: lenke.beskrivelse,
-          })),
-          internReferanserKartverket: dokref.internReferanserKartverket.map(
-            (ref) => ({
-              id: ref.apiId ?? null,
-              beskrivelse: ref.beskrivelse,
-            })
-          ),
-        })),
+        dokumentasjonsreferanser: mapFromFormToApi(data),
       } as Metadata,
     };
 
@@ -193,6 +197,7 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
                 <Input
                   {...register(`dokrefs.${i}.fastsettingsdato`)}
                   type="date"
+                  role="textbox"
                 />
               </BlockLabel>
             </Part>
@@ -259,7 +264,7 @@ const FieldWrapper = styled.div`
   }
 `;
 
-const FieldTitle = styled.h4`
+const FieldTitle = styled.legend`
   margin: 0;
   margin-bottom: 8px;
 `;
@@ -277,7 +282,7 @@ const DokRefWrapper = styled.div`
   }
 `;
 
-const FieldArrayWrapper = styled.div`
+const FieldArrayWrapper = styled.fieldset`
   margin-bottom: 16px;
 `;
 
