@@ -6,6 +6,7 @@ import { Control, useFieldArray, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { BlockLabel, Container, Part } from "../metadataComponents";
+import useIsMetadataDisabled from "../useIsMetadataDisabled";
 import { updateGrenser } from "api/grenser";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
@@ -78,12 +79,13 @@ const mapFromFormToApi = (data: Inputs): Dokref[] => {
 type FieldArrayProps = {
   control: Control<Inputs>;
   itemName: string;
+  disabled: boolean;
   name:
     | `dokrefs.${number}.dokumentlenker`
     | `dokrefs.${number}.internReferanserKartverket`;
 };
 
-const FieldArray = ({ control, name, itemName }: FieldArrayProps) => {
+const FieldArray = ({ control, name, itemName, disabled }: FieldArrayProps) => {
   const { t } = useTranslation();
   const [newLenke, setNewLenke] = useState("");
   const { fields, append, remove } = useFieldArray({
@@ -114,7 +116,11 @@ const FieldArray = ({ control, name, itemName }: FieldArrayProps) => {
             {field.beskrivelse}
           </a>
           <div>
-            <Button icon={<Minus />} onClick={() => remove(nestedIndex)}>
+            <Button
+              icon={<Minus />}
+              onClick={() => remove(nestedIndex)}
+              disabled={disabled}
+            >
               {t("action.Slett")}
             </Button>
           </div>
@@ -128,6 +134,7 @@ const FieldArray = ({ control, name, itemName }: FieldArrayProps) => {
             onChange={(e) => setNewLenke(e.target.value)}
             placeholder="URL"
             onKeyPress={onKeyPress}
+            disabled={disabled}
           />
         </BlockLabel>
         <Button onClick={onAdd} disabled={!newLenke} icon={<Pluss />}>
@@ -145,8 +152,9 @@ type Props = {
 const GrenseMetadataReferanser = ({ feature }: Props) => {
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { t } = useTranslation();
-  const dokrefs = (feature.getProperties().metadata as Metadata)
-    .dokumentasjonsreferanser;
+
+  const properties = feature.getProperties() as FeatureProperties;
+  const dokrefs = (properties.metadata as Metadata).dokumentasjonsreferanser;
 
   const { register, handleSubmit, control } = useForm<Inputs>({
     defaultValues: { dokrefs: mapFromApiToForm(dokrefs) },
@@ -156,9 +164,9 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
     name: "dokrefs",
   });
 
-  const onSubmit = handleSubmit((data) => {
-    const properties = feature.getProperties() as FeatureProperties;
+  const disabled = useIsMetadataDisabled(properties);
 
+  const onSubmit = handleSubmit((data) => {
     const newProperties: FeatureProperties = {
       ...properties,
       metadata: {
@@ -179,23 +187,31 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
           <Container>
             <Part>
               <BlockLabel>
-                {t("metadata.Rettskilde-ID")}
-                <Input {...register(`dokrefs.${i}.rettskildeId`)} />
+                {t("metadata.Rettskildetittel")}
+                <Input
+                  {...register(`dokrefs.${i}.rettskildeTittel`, { disabled })}
+                />
               </BlockLabel>
               <BlockLabel>
-                {t("metadata.Rettskildetittel")}
-                <Input {...register(`dokrefs.${i}.rettskildeTittel`)} />
+                {t("metadata.Rettskilde-ID")}
+                <Input
+                  {...register(`dokrefs.${i}.rettskildeId`, { disabled })}
+                />
               </BlockLabel>
             </Part>
             <Part>
               <BlockLabel>
                 {t("metadata.Fastsettingsmyndighet")}
-                <Input {...register(`dokrefs.${i}.fastsettingsmyndighet`)} />
+                <Input
+                  {...register(`dokrefs.${i}.fastsettingsmyndighet`, {
+                    disabled,
+                  })}
+                />
               </BlockLabel>
               <BlockLabel>
                 {t("metadata.Fastsettingsdato")}
                 <Input
-                  {...register(`dokrefs.${i}.fastsettingsdato`)}
+                  {...register(`dokrefs.${i}.fastsettingsdato`, { disabled })}
                   type="date"
                   role="textbox"
                 />
@@ -204,7 +220,7 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
             <Part>
               <BlockLabel>
                 {t("metadata.Hjemmel")}
-                <Input {...register(`dokrefs.${i}.hjemmel`)} />
+                <Input {...register(`dokrefs.${i}.hjemmel`, { disabled })} />
               </BlockLabel>
             </Part>
           </Container>
@@ -212,14 +228,16 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
             control={control}
             name={`dokrefs.${i}.dokumentlenker`}
             itemName={t("metadata.Dokumentlenker")}
+            disabled={disabled}
           />
           <FieldArray
             control={control}
             name={`dokrefs.${i}.internReferanserKartverket`}
             itemName={t("metadata.Internreferanser")}
+            disabled={disabled}
           />
 
-          <Button onClick={() => remove(i)}>
+          <Button onClick={() => remove(i)} disabled={disabled}>
             {t("action.Slett {{ item }}", {
               item: t("metadata.Referanse").toLowerCase(),
             })}
@@ -228,6 +246,7 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
       ))}
       <Button
         type="button"
+        disabled={disabled}
         onClick={() =>
           append({
             dokumentlenker: [],
@@ -244,7 +263,9 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
           item: t("metadata.Referanse").toLowerCase(),
         })}
       </Button>
-      <Button type="submit">{t("action.Lagre")}</Button>
+      <Button type="submit" disabled={disabled}>
+        {t("action.Lagre")}
+      </Button>
     </form>
   );
 };
