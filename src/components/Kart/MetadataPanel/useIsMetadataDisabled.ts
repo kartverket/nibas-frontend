@@ -19,7 +19,7 @@ const useIsMetadataDisabled = (properties: FeatureProperties) => {
 
   const value = values[featureKontekstId];
 
-  return value?.visible && !value?.editing;
+  return (value?.visible && !value?.editing) ?? false;
 };
 
 export default useIsMetadataDisabled;

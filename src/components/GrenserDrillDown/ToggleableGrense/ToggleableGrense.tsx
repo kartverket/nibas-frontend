@@ -112,22 +112,28 @@ const ToggleableGrense = <T extends GrenseRef>({
 
   return (
     <Wrapper>
-      <Button onClick={toggleVisible} variant="icon">
-        {objectValue.visible ? (
-          <VisibilityIcon aria-label="Synlig" />
-        ) : (
-          <VisibilityOffIcon aria-label="Usynlig" />
-        )}
-      </Button>
+      <Button
+        onClick={toggleVisible}
+        variant="unstyled"
+        icon={
+          objectValue.visible ? (
+            <VisibilityIcon aria-label="Synlig" />
+          ) : (
+            <VisibilityOffIcon aria-label="Usynlig" />
+          )
+        }
+      ></Button>
       <StyledCheckbox
         label={title}
         type="checkbox"
         checked={objectValue.editing ?? false}
         onChange={toggleEditing}
       />
-      <Button variant="icon" onClick={openInfo}>
-        <ColoredInfo />
-      </Button>
+      <Button
+        icon={<ColoredInfo />}
+        onClick={openInfo}
+        variant="unstyled"
+      ></Button>
     </Wrapper>
   );
 };

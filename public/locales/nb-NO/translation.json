@@ -43,11 +43,27 @@
     "Målemetode": "Målemetode",
     "Nøyaktighet": "Nøyaktighet",
     "Informasjon": "Informasjon",
-    "Opphav": "Opphav"
+    "Opphav": "Opphav",
+    "Rettskilde-ID": "Rettskilde-ID",
+    "Rettskildetittel": "Rettskildetittel",
+    "Fastsettingsmyndighet": "Fastsettingsmyndighet",
+    "Fastsettingsdato": "Fastsettingsdato",
+    "Hjemmel": "Hjemmel",
+    "Dokumentlenke": "Dokumentlenke",
+    "Internreferanse": "Internreferanse",
+    "Referanse": "Referanse",
+    "Dokumentlenker": "Dokumentlenker",
+    "Internreferanser": "Internreferanser"
   },
   "Aktive bakgrunnskart": "Aktive bakgrunnskart",
   "action": {
     "Lagre": "Lagre",
-    "Lukk": "Lukk"
+    "Lukk": "Lukk",
+    "Legg til": "Legg til",
+    "Slett": "Slett",
+    "Ny referanse": "Ny referanse",
+    "Slett {{ item }}": "Slett {{ item }}",
+    "Legg til {{ item }}": "Legg til {{ item }}",
+    "Ny {{ item }}": "Ny {{ item }}"
   }
 }

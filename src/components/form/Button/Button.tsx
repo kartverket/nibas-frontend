@@ -2,36 +2,51 @@ import { ButtonHTMLAttributes, forwardRef } from "react";
 import styled from "styled-components";
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: "unstyled" | "icon";
+  variant?: "unstyled";
+  icon?: React.ReactElement;
 };
 
 const Button = forwardRef<HTMLButtonElement, Props>(
-  ({ variant, children, ...props }, ref) => {
-    if (variant === "unstyled") {
-      return (
-        <UnstyledButton {...props} ref={ref}>
-          {children}
-        </UnstyledButton>
-      );
-    } else if (variant === "icon") {
-      return (
-        <IconButton {...props} ref={ref}>
-          {children}
-        </IconButton>
-      );
-    }
+  ({ variant, children, icon, ...props }, ref) => {
+    const ButtonWrapper =
+      variant === "unstyled" ? UnstyledButton : StyledButton;
 
     return (
-      <StyledButton {...props} ref={ref}>
-        {children}
-      </StyledButton>
+      <ButtonWrapper {...props} ref={ref}>
+        <ButtonContentWrapper>
+          {children && <span>{children}</span>}
+          {icon}
+        </ButtonContentWrapper>
+      </ButtonWrapper>
     );
   }
 );
 
 Button.displayName = "Button";
 
-const StyledButton = styled.button``;
+const StyledButton = styled.button`
+  * {
+    // gjør at children ikke gir ekstra plass til tekst
+    vertical-align: middle;
+  }
+
+  text-align: left;
+`;
+
+const ButtonContentWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+
+  > span:first-child {
+    flex: 1;
+  }
+
+  > svg {
+    margin-left: 4px;
+  }
+`;
 
 const UnstyledButton = styled(StyledButton)`
   background: none;
@@ -44,13 +59,6 @@ const UnstyledButton = styled(StyledButton)`
 
   :disabled {
     cursor: initial;
-  }
-`;
-
-const IconButton = styled(UnstyledButton)`
-  > * {
-    // gjør at children ikke gir ekstra plass til tekst
-    vertical-align: middle;
   }
 `;
 

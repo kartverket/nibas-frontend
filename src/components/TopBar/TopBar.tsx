@@ -18,9 +18,11 @@ const TopBar = () => {
         <img src={logo} />
         <span>{t("Nasjonal inndelingsbase")}</span>
         <SearchInput type="text" placeholder={t("Koordinater")} disabled />
-        <SearchIconButton variant="icon" disabled>
-          <InputSearchIcon />
-        </SearchIconButton>
+        <SearchIconButton
+          icon={<InputSearchIcon />}
+          disabled
+          variant="unstyled"
+        ></SearchIconButton>
       </LeftSide>
       <RightSide>
         {isAuthenticatedFunc() ? (
@@ -77,9 +79,8 @@ const SearchIconButton = styled(Button)`
   width: 24px;
 `;
 
-const InputSearchIcon = styled(SearchIcon)`  
+const InputSearchIcon = styled(SearchIcon)`
   width: 24px;
-}
 `;
 
 export default TopBar;

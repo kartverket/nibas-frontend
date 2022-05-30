@@ -26,13 +26,14 @@ type StyledButtonProps = {
 };
 
 const StyledButton = styled(Button).attrs(() => ({
-  variant: "icon",
+  variant: "unstyled",
 }))<StyledButtonProps>`
   display: block;
   margin: 8px 0;
   padding: 8px 0;
   width: 100%;
   z-index: 2;
+  text-align: center;
 
   border-top: 2px solid
     ${(props) => (props.active ? props.theme.colors.blue : "transparent")};

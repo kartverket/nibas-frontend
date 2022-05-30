@@ -23,7 +23,7 @@ type Props = {
   feature: Feature<Geometry>;
 };
 
-const MetadataContent = ({ feature }: Props) => {
+const GrenseMetadataGenerelt = ({ feature }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
   const type = properties.type;
   const metadata = properties.metadata as Metadata;
@@ -145,4 +145,4 @@ const Dates = ({ oppdateringsdato, datafangstdato }: DatesProps) => (
   </>
 );
 
-export default MetadataContent;
+export default GrenseMetadataGenerelt;

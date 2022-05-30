@@ -1,4 +1,4 @@
-import { forwardRef, useState } from "react";
+import { forwardRef, ReactElement, useState } from "react";
 import styled from "styled-components";
 import useLayerOpacity from "./useLayerOpacity";
 import Button from "components/form/Button";
@@ -9,6 +9,14 @@ import { ReactComponent as CogIcon } from "icons/cog.svg";
 import { ReactComponent as VisibilityIcon } from "icons/visibility.svg";
 import { ReactComponent as VisibilityOffIcon } from "icons/visibility_off.svg";
 import { MainMappedLayer, MappedLayer } from "utils/getLayersFromWMS";
+
+const getCaretIcon = (open: boolean) => {
+  if (open) {
+    return <CaretUpIcon aria-label="Lukk" />;
+  } else {
+    return <CaretDownIcon aria-label="Åpne" />;
+  }
+};
 
 type SharedProps = {
   indent: number;
@@ -49,18 +57,18 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
     const renderNameAndCaret = () => {
       // hvis hovedlag som kan dras på, vis annen musepeker på navnet
       if (props.isMainLayer && ref) {
+        let icon: ReactElement | undefined = undefined;
+        if (props.mappedLayer.layers.length > 0) {
+          icon = getCaretIcon(open);
+        }
+
         return (
-          <ClickableName variant="unstyled" onClick={() => setOpen(!open)}>
+          <ClickableName
+            variant="unstyled"
+            onClick={() => setOpen(!open)}
+            icon={icon}
+          >
             <DraggableName ref={ref}>{props.mappedLayer.title}</DraggableName>
-            {props.mappedLayer.layers.length > 0 && (
-              <>
-                {open ? (
-                  <CaretUpIcon aria-label="Lukk" />
-                ) : (
-                  <CaretDownIcon aria-label="Åpne" />
-                )}
-              </>
-            )}
           </ClickableName>
         );
       }
@@ -68,13 +76,12 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
       // hvis har sub-lag, la navnet være klikkbart for å åpne accordion
       if (props.mappedLayer.layers.length > 0) {
         return (
-          <ClickableName variant="unstyled" onClick={() => setOpen(!open)}>
+          <ClickableName
+            variant="unstyled"
+            icon={getCaretIcon(open)}
+            onClick={() => setOpen(!open)}
+          >
             <span>{props.mappedLayer.title}</span>
-            {open ? (
-              <CaretUpIcon aria-label="Lukke" />
-            ) : (
-              <CaretDownIcon aria-label="Åpne" />
-            )}
           </ClickableName>
         );
       }
@@ -125,13 +132,13 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
 BackgroundLayerAccordion.displayName = "BackgroundLayerAccordion";
 
 const IconButton = styled(Button).attrs(() => ({
-  variant: "icon",
+  variant: "unstyled",
 }))`
   margin-right: 8px;
 `;
 
 const PropertiesButton = styled(Button).attrs(() => ({
-  variant: "icon",
+  variant: "unstyled",
 }))`
   margin-left: 8px;
   color: ${({ theme }) => theme.colors.black};

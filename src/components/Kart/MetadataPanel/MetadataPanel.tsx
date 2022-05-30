@@ -16,21 +16,33 @@ const MetadataPanel = () => {
       {panelContext.content === "grensemetadata" && (
         <GrensePanel data={panelContext.data} />
       )}
-      <Button onClick={closePanel}>{t("action.Lukk")}</Button>
+      <div>
+        <Button onClick={closePanel}>{t("action.Lukk")}</Button>
+      </div>
     </Panel>
   );
 };
 
 const Panel = styled(KartInteractable)`
   grid-area: metadata;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-left: auto;
   border: 1px solid ${({ theme }) => theme.colors.grayLight};
   padding: 16px;
   overflow: auto;
-  max-height: 500px;
   border-radius: 3px;
+  height: 500px;
+
+  min-width: 500px;
+  width: 100%;
+  max-width: 1000px;
 
   @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
+    height: auto;
     max-height: 800px;
+    width: 600px;
   }
 
   > h3 {
