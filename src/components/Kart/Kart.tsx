@@ -1,9 +1,10 @@
 import { Suspense, useEffect, useRef } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import styled from "styled-components";
-import { map, overlayPopup } from "./constants";
+import { map } from "./constants";
 import ZoomControls from "./controls/ZoomControls";
 import MetadataPanel from "./MetadataPanel";
+import OverlayPopup from "./OverlayPopup";
 import SidebarPanels from "./SidebarPanels";
 import { updateGrenser } from "api/grenser";
 import CustomControl from "components/CustomControl";
@@ -22,23 +23,10 @@ initBakgrunnskartLayers();
 
 const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const overlayRef = useRef<HTMLDivElement>(null);
   const { tokenHolderFunc } = useAuthenticationFlow();
 
   useEditInteractions();
   useSelectInteraction();
-
-  useEffect(() => {
-    if (!overlayRef.current) return;
-
-    overlayPopup.setElement(overlayRef.current);
-
-    map.addOverlay(overlayPopup);
-
-    return () => {
-      map.removeOverlay(overlayPopup);
-    };
-  }, []);
 
   useEffect(() => {
     // mapRef kan egentlig ikke være null her,
@@ -75,9 +63,7 @@ const Kart = () => {
           <ZoomControls />
         </Suspense>
       </KartTarget>
-      <OlOverlay ref={overlayRef}>
-        <p>AAA</p>
-      </OlOverlay>
+      <OverlayPopup />
     </KartWrapper>
   );
 };
@@ -115,11 +101,6 @@ const KartOverlay = styled.div`
   position: absolute;
   pointer-events: none;
   z-index: 1;
-`;
-
-const OlOverlay = styled.div`
-  position: absolute;
-  background-color: white;
 `;
 
 export default Kart;

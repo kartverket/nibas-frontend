@@ -9,6 +9,8 @@ registerProjections();
 const initialCenter = fromLonLat([2.757933, 52.911491]);
 const initialZoom = 6;
 
+// referansene til DOM elementer på objektene under gjøres i Kart.tsx
+
 export const map = new Map({
   view: new View({
     zoom: initialZoom,
