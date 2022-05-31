@@ -1,7 +1,10 @@
 import { BakgrunnskartId } from "../../../hooks/layers/types";
 import { MainMappedLayer } from "../../../utils/getLayersFromWMS";
 import { getMatWFSFeatures } from "../../../utils/getMatrikkelWfsFeatures";
-import { getLayerIdFromMappedLayer } from "../../../utils/map/layers";
+import {
+  getLayerById,
+  getLayerIdFromMappedLayer,
+} from "../../../utils/map/layers";
 import { addFeaturesToSource } from "../../../utils/map/source";
 import BackgroundLayerAccordion from "../BackgroundLayer/BackgroundLayerAccordion";
 import useBackgroundLayerDND from "../BackgroundLayer/useBackgroundLayerDND";
@@ -54,5 +57,6 @@ export default WFSBackgroundLayer;
 const fetchMatrikkelWfsFeatures = async () => {
   const features = await getMatWFSFeatures();
   if (!features) return null;
+  getLayerById("matrikkelenWfs").getSource().clear();
   addFeaturesToSource("matrikkelenWfs", features);
 };

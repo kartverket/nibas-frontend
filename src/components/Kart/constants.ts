@@ -1,3 +1,4 @@
+import { Overlay } from "ol";
 import Map from "ol/Map";
 import { fromLonLat } from "ol/proj";
 import View from "ol/View";
@@ -18,4 +19,9 @@ export const map = new Map({
   controls: [],
   overlays: [],
   keyboardEventTarget: window.document,
+});
+
+export const overlayPopup = new Overlay({
+  // offset: [10, -10],
+  positioning: "bottom-left",
 });

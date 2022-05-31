@@ -31,7 +31,7 @@ module.exports = function (app) {
   );
 
   app.use(
-    createProxyMiddleware("/geoservergeo/wfs/MATRIKKEL", {
+    createProxyMiddleware("/geoservergeo/wfs/matrikkel", {
       target: "https://prodtest.matrikkel.no",
       changeOrigin: true,
       headers: {

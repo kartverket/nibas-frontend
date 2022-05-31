@@ -19,6 +19,7 @@ type Props = {
 };
 
 const GrensePanel = ({ data }: Props) => {
+  console.log(data);
   let tabs: string[];
 
   const showReferanser =

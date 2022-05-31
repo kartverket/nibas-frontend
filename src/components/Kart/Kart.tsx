@@ -1,7 +1,7 @@
 import { Suspense, useEffect, useRef } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import styled from "styled-components";
-import { map } from "./constants";
+import { map, overlayPopup } from "./constants";
 import ZoomControls from "./controls/ZoomControls";
 import MetadataPanel from "./MetadataPanel";
 import SidebarPanels from "./SidebarPanels";
@@ -22,10 +22,23 @@ initBakgrunnskartLayers();
 
 const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
   const { tokenHolderFunc } = useAuthenticationFlow();
 
   useEditInteractions();
   useSelectInteraction();
+
+  useEffect(() => {
+    if (!overlayRef.current) return;
+
+    overlayPopup.setElement(overlayRef.current);
+
+    map.addOverlay(overlayPopup);
+
+    return () => {
+      map.removeOverlay(overlayPopup);
+    };
+  }, []);
 
   useEffect(() => {
     // mapRef kan egentlig ikke være null her,
@@ -47,27 +60,37 @@ const Kart = () => {
   };
 
   return (
-    <KartTarget ref={mapRef}>
-      <Suspense fallback="More loading...">
-        <KartOverlay>
-          <SidebarPanels />
-          <MetadataPanel />
-        </KartOverlay>
+    <KartWrapper>
+      <KartTarget ref={mapRef}>
+        <Suspense fallback="More loading...">
+          <KartOverlay>
+            <SidebarPanels />
+            <MetadataPanel />
+          </KartOverlay>
 
-        <CustomControl>
-          <button onClick={saveDraft}>Lagre endringer</button>
-        </CustomControl>
+          <CustomControl>
+            <button onClick={saveDraft}>Lagre endringer</button>
+          </CustomControl>
 
-        <ZoomControls />
-      </Suspense>
-    </KartTarget>
+          <ZoomControls />
+        </Suspense>
+      </KartTarget>
+      <OlOverlay ref={overlayRef}>
+        <p>AAA</p>
+      </OlOverlay>
+    </KartWrapper>
   );
 };
 
-const KartTarget = styled.div`
+const KartWrapper = styled.div`
   grid-area: map;
   position: relative;
   margin-left: -2px;
+`;
+
+const KartTarget = styled.div`
+  width: 100%;
+  height: 100%;
 
   .ol-control {
     text-align: center;
@@ -92,6 +115,11 @@ const KartOverlay = styled.div`
   position: absolute;
   pointer-events: none;
   z-index: 1;
+`;
+
+const OlOverlay = styled.div`
+  position: absolute;
+  background-color: white;
 `;
 
 export default Kart;

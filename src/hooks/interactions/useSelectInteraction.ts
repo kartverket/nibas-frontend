@@ -1,9 +1,20 @@
 import { useEffect, useState } from "react";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
+import LineString from "ol/geom/LineString";
 import { Select } from "ol/interaction";
-import { map } from "components/Kart/constants";
+import { map, overlayPopup } from "components/Kart/constants";
 import { useMetadataPanel } from "contexts/MetadataPanelContext";
+
+const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
+  const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
+
+  if (coordinates.length < 2) return;
+
+  const middle = Math.floor((coordinates.length - 1) / 2);
+
+  return coordinates[middle];
+};
 
 const useSelectInteraction = () => {
   const [features, setFeatures] = useState<Feature<Geometry>[]>([]);
@@ -25,9 +36,16 @@ const useSelectInteraction = () => {
 
   useEffect(() => {
     if (features.length === 1) {
-      openPanel({ content: "grensemetadata", data: features[0] });
+      const selectedFeature = features[0] as Feature<LineString>;
+
+      if (selectedFeature.getId()?.toString().includes("TEIGGRENSEWFS")) {
+        overlayPopup.setPosition(getOverlayPosition(selectedFeature));
+      } else {
+        openPanel({ content: "grensemetadata", data: features[0] });
+      }
     } else {
       closePanel();
+      overlayPopup.setPosition(undefined);
     }
   }, [features, openPanel, closePanel]);
 
