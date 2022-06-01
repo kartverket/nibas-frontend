@@ -24,6 +24,10 @@ export const map = new Map({
 });
 
 export const overlayPopup = new Overlay({
-  // offset: [10, -10],
-  positioning: "bottom-left",
+  autoPan: {
+    animation: {
+      duration: 250,
+    },
+  },
+  offset: [0, 0],
 });

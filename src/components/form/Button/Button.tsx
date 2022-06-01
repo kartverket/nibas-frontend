@@ -60,6 +60,10 @@ const UnstyledButton = styled(StyledButton)`
   :disabled {
     cursor: initial;
   }
+
+  svg {
+    margin: 0;
+  }
 `;
 
 export default Button;

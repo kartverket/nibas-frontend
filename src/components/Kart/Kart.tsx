@@ -26,7 +26,7 @@ const Kart = () => {
   const { tokenHolderFunc } = useAuthenticationFlow();
 
   useEditInteractions();
-  useSelectInteraction();
+  const selectedFeatures = useSelectInteraction();
 
   useEffect(() => {
     // mapRef kan egentlig ikke være null her,
@@ -61,9 +61,9 @@ const Kart = () => {
           </CustomControl>
 
           <ZoomControls />
+          <OverlayPopup selectedFeatures={selectedFeatures} />
         </Suspense>
       </KartTarget>
-      <OverlayPopup />
     </KartWrapper>
   );
 };

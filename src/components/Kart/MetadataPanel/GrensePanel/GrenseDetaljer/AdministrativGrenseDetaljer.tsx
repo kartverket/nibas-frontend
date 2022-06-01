@@ -127,13 +127,13 @@ const AdministrativGrenseDetaljer = ({ feature }: Props) => {
         <RadioTitle>{t("metadata.Omtvistet")}</RadioTitle>
         <Checkbox
           type="radio"
-          label="Ja"
+          label={t("Ja")}
           {...register("omtvistet", { disabled })}
           value="Ja"
         />
         <Checkbox
           type="radio"
-          label="Nei"
+          label={t("Nei")}
           {...register("omtvistet", { disabled })}
           value="Nei"
         />

@@ -32,7 +32,9 @@ const ZoomControls = () => {
   );
 };
 
-const ZoomButton = styled(Button)`
+const ZoomButton = styled(Button).attrs(() => ({
+  variant: "unstyled",
+}))`
   position: absolute;
   border-radius: 8px;
   background-color: white;

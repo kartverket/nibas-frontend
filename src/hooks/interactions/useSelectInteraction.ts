@@ -39,9 +39,11 @@ const useSelectInteraction = () => {
       const selectedFeature = features[0] as Feature<LineString>;
 
       if (selectedFeature.getId()?.toString().includes("TEIGGRENSEWFS")) {
+        closePanel();
         overlayPopup.setPosition(getOverlayPosition(selectedFeature));
       } else {
-        openPanel({ content: "grensemetadata", data: features[0] });
+        overlayPopup.setPosition(undefined);
+        openPanel({ content: "grensemetadata", data: selectedFeature });
       }
     } else {
       closePanel();
