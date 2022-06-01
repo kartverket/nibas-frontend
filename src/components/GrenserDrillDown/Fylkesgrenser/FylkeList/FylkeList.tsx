@@ -3,6 +3,7 @@ import ApiGrense from "../../ApiGrense";
 import { useEditGrenser } from "../../EditGrenserContext";
 import useNibasApi from "hooks/useNibasApi";
 import useOnlyDisplayEditingGrenser from "hooks/useOnlyDisplayEditingGrenser";
+import { sortGrenserAlphabetically } from "utils/language/language";
 
 type Props = {
   onlyDisplayEditing?: boolean;
@@ -13,8 +14,9 @@ const FylkeList = ({ onlyDisplayEditing = false }: Props) => {
 
   const { setObjectValue, values } = useEditGrenser("fylke");
 
+  const sortedFylker = sortGrenserAlphabetically(fylker);
   const filteredFylker = useOnlyDisplayEditingGrenser(
-    fylker,
+    sortedFylker,
     values,
     onlyDisplayEditing
   );

@@ -4,6 +4,7 @@ import { useEditGrenser } from "components/GrenserDrillDown/EditGrenserContext";
 import useNibasApi from "hooks/useNibasApi";
 import useOnlyDisplayEditingGrenser from "hooks/useOnlyDisplayEditingGrenser";
 import { GrenseRef } from "types/api";
+import { sortGrenserAlphabetically } from "utils/language/language";
 
 type Props = {
   fylke: GrenseRef;
@@ -16,8 +17,9 @@ const KommuneList = ({ fylke, onlyDisplayEditing = false }: Props) => {
   });
 
   const { setObjectValue, values } = useEditGrenser("kommune");
+  const sortedKommuner = sortGrenserAlphabetically(kommuner);
   const filteredKommuner = useOnlyDisplayEditingGrenser(
-    kommuner,
+    sortedKommuner,
     values,
     onlyDisplayEditing
   );

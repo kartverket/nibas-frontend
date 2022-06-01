@@ -1,4 +1,4 @@
-import type { Spraak } from "types/api";
+import type { GrenseRef, Spraak } from "types/api";
 
 export const getNavnInSpraak = (
   spraak: Spraak[] | string,
@@ -14,3 +14,11 @@ export const getNavnInSpraak = (
     "Ingen oversettelse"
   );
 };
+
+export const sortGrenserAlphabetically = (grenser?: GrenseRef[]) =>
+  grenser?.sort((a, b) =>
+    getNavnInSpraak(a.navn, "nor").localeCompare(
+      getNavnInSpraak(b.navn, "nor"),
+      "nb"
+    )
+  );
