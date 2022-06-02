@@ -2,8 +2,14 @@ import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import Stroke from "ol/style/Stroke";
+import Circle from "ol/style/Circle";
 import Style from "ol/style/Style";
 import { bakgrunnskartSources } from "hooks/sources/syncSources";
+import Fill from "ol/style/Fill";
+import MultiPoint from "ol/geom/MultiPoint";
+import LineString from "ol/geom/LineString";
+import { Feature } from "ol";
+import Point from "ol/geom/Point";
 
 const createTileLayerFromBakgrunnskartSource = (
   id: keyof typeof bakgrunnskartSources
@@ -42,6 +48,23 @@ const defaultStyles = new Style({
   }),
 });
 
+const pointStyle = new Style({
+  image: new Circle({
+    radius: 3,
+    fill: new Fill({
+      color: "#FF00FF",
+    }),
+  }),
+  geometry: (feature) => {
+    // return the coordinates of the first ring of the polygon
+    const coordinates = (feature as Feature<LineString>)
+      .getGeometry()
+      ?.getCoordinates();
+    console.log(coordinates);
+    return new MultiPoint(coordinates ?? []);
+  },
+});
+
 export const grenserLayers = {
   // ingen source betyr at source settes async
   fylker: new VectorLayer({ source: new VectorSource(), style: defaultStyles }),
@@ -59,10 +82,13 @@ export const grenserLayers = {
   }),
   edit: new VectorLayer({
     source: new VectorSource(),
-    style: new Style({
-      stroke: new Stroke({
-        color: "#FF00FF",
+    style: [
+      new Style({
+        stroke: new Stroke({
+          color: "#FF00FF",
+        }),
       }),
-    }),
+      // pointStyle,
+    ],
   }),
 };
