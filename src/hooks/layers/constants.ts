@@ -1,15 +1,8 @@
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import Stroke from "ol/style/Stroke";
-import Circle from "ol/style/Circle";
-import Style from "ol/style/Style";
 import { bakgrunnskartSources } from "hooks/sources/syncSources";
-import Fill from "ol/style/Fill";
-import MultiPoint from "ol/geom/MultiPoint";
-import LineString from "ol/geom/LineString";
-import { Feature } from "ol";
-import Point from "ol/geom/Point";
+import { defaultStyle, editStyle, pointStyle } from "utils/map/layerStyles";
 
 const createTileLayerFromBakgrunnskartSource = (
   id: keyof typeof bakgrunnskartSources
@@ -42,53 +35,26 @@ export const bakgrunnskartLayers = {
   matrikkelenWfs: new VectorLayer({ source: new VectorSource() }),
 };
 
-const defaultStyles = new Style({
-  stroke: new Stroke({
-    color: "#0062FF",
-  }),
-});
-
-const pointStyle = new Style({
-  image: new Circle({
-    radius: 3,
-    fill: new Fill({
-      color: "#FF00FF",
-    }),
-  }),
-  geometry: (feature) => {
-    // return the coordinates of the first ring of the polygon
-    const coordinates = (feature as Feature<LineString>)
-      .getGeometry()
-      ?.getCoordinates();
-    console.log(coordinates);
-    return new MultiPoint(coordinates ?? []);
-  },
-});
-
 export const grenserLayers = {
   // ingen source betyr at source settes async
-  fylker: new VectorLayer({ source: new VectorSource(), style: defaultStyles }),
+  fylker: new VectorLayer({
+    source: new VectorSource(),
+    style: [defaultStyle, pointStyle],
+  }),
   kommuner: new VectorLayer({
     source: new VectorSource(),
-    style: defaultStyles,
+    style: [defaultStyle, pointStyle],
   }),
   nasjoner: new VectorLayer({
     source: new VectorSource(),
-    style: defaultStyles,
+    style: [defaultStyle, pointStyle],
   }),
   grunnkretser: new VectorLayer({
     source: new VectorSource(),
-    style: defaultStyles,
+    style: [defaultStyle, pointStyle],
   }),
   edit: new VectorLayer({
     source: new VectorSource(),
-    style: [
-      new Style({
-        stroke: new Stroke({
-          color: "#FF00FF",
-        }),
-      }),
-      // pointStyle,
-    ],
+    style: [editStyle, pointStyle],
   }),
 };

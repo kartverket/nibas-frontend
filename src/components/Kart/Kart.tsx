@@ -14,29 +14,6 @@ import {
   initBakgrunnskartLayers,
   initGrenserLayers,
 } from "utils/map/layers";
-import Style from "ol/style/Style";
-import Circle from "ol/style/Circle";
-import Fill from "ol/style/Fill";
-import { Feature } from "ol";
-import LineString from "ol/geom/LineString";
-import MultiPoint from "ol/geom/MultiPoint";
-
-const pointStyle = new Style({
-  image: new Circle({
-    radius: 3,
-    fill: new Fill({
-      color: "#FF00FF",
-    }),
-  }),
-  geometry: (feature) => {
-    // return the coordinates of the first ring of the polygon
-    const coordinates = (feature as Feature<LineString>)
-      .getGeometry()
-      ?.getCoordinates();
-    console.log(coordinates);
-    return new MultiPoint(coordinates ?? []);
-  },
-});
 
 // dette må skje utenfor komponenten siden React kjører dypere useEffects
 // før de lenger opp i treet, så lag er ikke definert når de trengs lenger ned
@@ -79,23 +56,6 @@ const Kart = () => {
 
         <CustomControl>
           <button onClick={saveDraft}>Lagre endringer</button>
-        </CustomControl>
-
-        <CustomControl>
-          <button
-            onClick={() => {
-              const layer = getLayerById("edit");
-              const currentStyle = layer.getStyle() as Style[];
-
-              if (currentStyle.length > 1) {
-                layer.setStyle([currentStyle[0]]);
-              } else {
-                layer.setStyle([currentStyle[0], pointStyle]);
-              }
-            }}
-          >
-            Points
-          </button>
         </CustomControl>
 
         <ZoomControls />
