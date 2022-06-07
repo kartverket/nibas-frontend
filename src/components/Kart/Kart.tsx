@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { map } from "./constants";
 import ZoomControls from "./controls/ZoomControls";
 import MetadataPanel from "./MetadataPanel";
+import OverlayPopup from "./OverlayPopup";
 import SidebarPanels from "./SidebarPanels";
 import { updateGrenser } from "api/grenser";
 import CustomControl from "components/CustomControl";
@@ -25,7 +26,7 @@ const Kart = () => {
   const { tokenHolderFunc } = useAuthenticationFlow();
 
   useEditInteractions();
-  useSelectInteraction();
+  const selectedFeatures = useSelectInteraction();
 
   useEffect(() => {
     // mapRef kan egentlig ikke være null her,
@@ -47,27 +48,35 @@ const Kart = () => {
   };
 
   return (
-    <KartTarget ref={mapRef}>
-      <Suspense fallback="More loading...">
-        <KartOverlay>
-          <SidebarPanels />
-          <MetadataPanel />
-        </KartOverlay>
+    <KartWrapper>
+      <KartTarget ref={mapRef}>
+        <Suspense fallback="More loading...">
+          <KartOverlay>
+            <SidebarPanels />
+            <MetadataPanel />
+          </KartOverlay>
 
-        <CustomControl>
-          <button onClick={saveDraft}>Lagre endringer</button>
-        </CustomControl>
+          <CustomControl>
+            <button onClick={saveDraft}>Lagre endringer</button>
+          </CustomControl>
 
-        <ZoomControls />
-      </Suspense>
-    </KartTarget>
+          <ZoomControls />
+          <OverlayPopup selectedFeatures={selectedFeatures} />
+        </Suspense>
+      </KartTarget>
+    </KartWrapper>
   );
 };
 
-const KartTarget = styled.div`
+const KartWrapper = styled.div`
   grid-area: map;
   position: relative;
   margin-left: -2px;
+`;
+
+const KartTarget = styled.div`
+  width: 100%;
+  height: 100%;
 
   .ol-control {
     text-align: center;

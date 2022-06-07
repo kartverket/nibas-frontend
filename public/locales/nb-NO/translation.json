@@ -65,5 +65,7 @@
     "Slett {{ item }}": "Slett {{ item }}",
     "Legg til {{ item }}": "Legg til {{ item }}",
     "Ny {{ item }}": "Ny {{ item }}"
-  }
+  },
+  "Ja": "Ja",
+  "Nei": "Nei"
 }

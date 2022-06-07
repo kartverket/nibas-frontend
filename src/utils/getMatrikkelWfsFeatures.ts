@@ -34,11 +34,11 @@ const createWfsRequest = (extent: number[]): Node => {
     srsName: "EPSG:25833",
     featureNS: "http://www.statkart.no/matrikkel",
     featurePrefix: "matrikkel",
-    featureTypes: ["TEIGWFS"],
+    featureTypes: ["TEIGGRENSEWFS"],
     outputFormat: "application/json",
     // count: 500,
     bbox: extent,
-    geometryName: "FLATE",
+    geometryName: "KURVE",
   });
 };
 
