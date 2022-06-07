@@ -3,8 +3,6 @@ import { Modify, Snap } from "ol/interaction";
 import Style from "ol/style/Style";
 import { map } from "components/Kart/constants";
 import { getLayerById, getVectorLayers } from "utils/map/layers";
-import { pointerMove } from "ol/events/condition";
-import { useMetadataPanel } from "contexts/MetadataPanelContext";
 
 const useEditInteractions = () => {
   useEffect(() => {
