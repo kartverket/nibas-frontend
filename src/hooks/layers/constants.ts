@@ -1,9 +1,13 @@
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import Stroke from "ol/style/Stroke";
-import Style from "ol/style/Style";
 import { bakgrunnskartSources } from "hooks/sources/syncSources";
+import {
+  defaultStyle,
+  editStyle,
+  editPointStyle,
+  defaultPointStyle,
+} from "utils/map/layerStyles";
 
 const createTileLayerFromBakgrunnskartSource = (
   id: keyof typeof bakgrunnskartSources
@@ -36,33 +40,26 @@ export const bakgrunnskartLayers = {
   matrikkelenWfs: new VectorLayer({ source: new VectorSource() }),
 };
 
-const defaultStyles = new Style({
-  stroke: new Stroke({
-    color: "#0062FF",
-  }),
-});
-
 export const grenserLayers = {
   // ingen source betyr at source settes async
-  fylker: new VectorLayer({ source: new VectorSource(), style: defaultStyles }),
+  fylker: new VectorLayer({
+    source: new VectorSource(),
+    style: [defaultStyle, defaultPointStyle],
+  }),
   kommuner: new VectorLayer({
     source: new VectorSource(),
-    style: defaultStyles,
+    style: [defaultStyle, defaultPointStyle],
   }),
   nasjoner: new VectorLayer({
     source: new VectorSource(),
-    style: defaultStyles,
+    style: [defaultStyle, defaultPointStyle],
   }),
   grunnkretser: new VectorLayer({
     source: new VectorSource(),
-    style: defaultStyles,
+    style: [defaultStyle, defaultPointStyle],
   }),
   edit: new VectorLayer({
     source: new VectorSource(),
-    style: new Style({
-      stroke: new Stroke({
-        color: "#FF00FF",
-      }),
-    }),
+    style: [editStyle, editPointStyle],
   }),
 };

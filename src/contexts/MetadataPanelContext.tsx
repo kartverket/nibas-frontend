@@ -11,6 +11,7 @@ type Panel = GrenseMetadataPanel;
 
 export type MetadataPanelContextValue = {
   panelContext: Panel | null;
+  isOpen: boolean;
   openPanel: (newPanelContext: Panel) => void;
   closePanel: () => void;
 };
@@ -33,7 +34,9 @@ export const MetadataPanelProvider: React.FC = ({ children }) => {
     setPanelContext(null);
   }, []);
 
-  const value = { panelContext, openPanel, closePanel };
+  const isOpen = !!panelContext;
+
+  const value = { panelContext, openPanel, closePanel, isOpen };
 
   return (
     <MetadataPanelContext.Provider value={value}>
