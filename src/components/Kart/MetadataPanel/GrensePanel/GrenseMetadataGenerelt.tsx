@@ -96,7 +96,9 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
         {screenWidth < theme.dimensions.lg && (
           <Part>
             <Dates
-              oppdateringsdato={metadata?.common?.oppdateringsdato}
+              oppdateringsdato={
+                metadata?.common?.sporingsinformasjon.oppdateringsdato
+              }
               datafangstdato={metadata?.common?.datafangstdato}
             />
           </Part>
@@ -113,7 +115,9 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
       {screenWidth >= theme.dimensions.lg && (
         <Part>
           <Dates
-            oppdateringsdato={metadata?.common?.oppdateringsdato}
+            oppdateringsdato={
+              metadata?.common?.sporingsinformasjon.oppdateringsdato
+            }
             datafangstdato={metadata?.common?.datafangstdato}
           />
         </Part>

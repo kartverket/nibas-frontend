@@ -27,10 +27,12 @@ export const mockGeoJsonFeatureResponse: GeoJSONFeatureCollection = {
             gyldigFra: "2020-06-16",
             gyldigTil: "2020-06-17",
             informasjon: "Informasjon",
-            oppdateringsdato: "2020-06-18",
             opphav: "Opphav",
             fastsettingstype: undefined,
             grensestatus: undefined,
+            sporingsinformasjon: {
+              oppdateringsdato: "2020-06-18",
+            },
           },
           commonGrense: {
             posisjonskvalitet: {
