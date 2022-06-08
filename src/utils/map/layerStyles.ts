@@ -9,8 +9,8 @@ import Stroke from "ol/style/Stroke";
 import Style from "ol/style/Style";
 import { map } from "components/Kart/constants";
 
-const pointFunction = (feature: Feature<Geometry> | RenderFeature) => {
-  // vis punkter når zoomet langt nok inn
+const getPointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
+  // hent punkter når zoomet langt nok inn
   const zoom = map.getView().getZoom() ?? 0;
 
   if (zoom < 13) return;
@@ -40,7 +40,7 @@ export const editPointStyle = new Style({
       color: "#FF00FF",
     }),
   }),
-  geometry: pointFunction,
+  geometry: getPointsOnFeature,
 });
 
 export const defaultPointStyle = new Style({
@@ -50,5 +50,5 @@ export const defaultPointStyle = new Style({
       color: "#0062FF",
     }),
   }),
-  geometry: pointFunction,
+  geometry: getPointsOnFeature,
 });
