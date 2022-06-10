@@ -5,12 +5,12 @@ import GrunnkretsList from "../Grunnkretser/GrunnkretsList";
 import KommuneList from "../Kommunegrenser/KommuneList";
 import MainLayer from "components/Bakgrunnskart/MainLayer";
 import { useBakgrunnskart } from "contexts/BakgrunnskartContext";
+import useFylker from "hooks/inndelinger/useFylker";
 import { BakgrunnskartId } from "hooks/layers/types";
-import useNibasApi from "hooks/useNibasApi";
 
 const AktiveKartlag = () => {
   const { t } = useTranslation();
-  const { data: fylker } = useNibasApi("/v1/fylker");
+  const { fylker } = useFylker();
   const { visibleLayers } = useBakgrunnskart();
 
   const openLayers = Object.keys(visibleLayers).filter(

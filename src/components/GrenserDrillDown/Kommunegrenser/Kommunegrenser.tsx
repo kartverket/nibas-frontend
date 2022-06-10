@@ -3,14 +3,14 @@ import styled from "styled-components";
 import ListItemAccordion from "../ListItemAccordion";
 import KommuneList from "./KommuneList";
 import { UnstyledList } from "components/UnstyledList";
-import useNibasApi from "hooks/useNibasApi";
+import useFylker from "hooks/inndelinger/useFylker";
 import {
   getNavnInSpraak,
   sortGrenserAlphabetically,
 } from "utils/language/language";
 
 const Kommunegrenser = () => {
-  const { data: fylker } = useNibasApi("/v1/fylker");
+  const { fylker } = useFylker();
   const sortedFylker = sortGrenserAlphabetically(fylker);
   const { t } = useTranslation();
 

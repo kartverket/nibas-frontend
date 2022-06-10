@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import ApiGrense from "../../ApiGrense";
 import { useEditGrenser } from "contexts/EditGrenserContext";
-import useNibasApi from "hooks/useNibasApi";
+import useFylker from "hooks/inndelinger/useFylker";
 import useOnlyDisplayEditingGrenser from "hooks/useOnlyDisplayEditingGrenser";
 import { sortGrenserAlphabetically } from "utils/language/language";
 
@@ -10,7 +10,7 @@ type Props = {
 };
 
 const FylkeList = ({ onlyDisplayEditing = false }: Props) => {
-  const { data: fylker, error } = useNibasApi("/v1/fylker");
+  const { fylker, error } = useFylker();
 
   const { values } = useEditGrenser("fylke");
 
