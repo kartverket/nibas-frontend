@@ -3,14 +3,12 @@ import ApiGrense from "components/GrenserDrillDown/ApiGrense";
 import { useEditGrenser } from "contexts/EditGrenserContext/EditGrenserContext";
 import useGrunnkretser from "hooks/inndelinger/useGrunnkretser";
 import useOnlyDisplayEditingGrenser from "hooks/useOnlyDisplayEditingGrenser";
-import { KommuneRef } from "types/api";
 
 type Props = {
-  kommune: KommuneRef;
   onlyDisplayEditing?: boolean;
 };
 
-const GrunnkretsList = ({ kommune, onlyDisplayEditing = false }: Props) => {
+const GrunnkretsList = ({ onlyDisplayEditing = false }: Props) => {
   const { grunnkretser } = useGrunnkretser();
   const { values } = useEditGrenser("grunnkrets");
   const filteredGrunnkretser = useOnlyDisplayEditingGrenser(
