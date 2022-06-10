@@ -1,5 +1,6 @@
 import { render, screen } from "test/test-utils";
 import ApiGrense from "./ApiGrense";
+import { EditGrenserProvider } from "contexts/EditGrenserContext";
 
 const defaultProps: React.ComponentProps<typeof ApiGrense> = {
   featuresUrl: "/",
@@ -8,14 +9,16 @@ const defaultProps: React.ComponentProps<typeof ApiGrense> = {
     navn: [{ navn: "Grense", spraak: "nor" }],
     href: "href",
   },
-  grenseValue: { editing: false, visible: false },
-  setGrenseValue: jest.fn(),
   type: "fylke",
 };
 
 describe("ApiGrense", () => {
   it("should render name in Norwegian", () => {
-    render(<ApiGrense {...defaultProps} />);
+    render(
+      <EditGrenserProvider>
+        <ApiGrense {...defaultProps} />
+      </EditGrenserProvider>
+    );
 
     expect(screen.getByText(/grense/i)).toBeInTheDocument();
   });
