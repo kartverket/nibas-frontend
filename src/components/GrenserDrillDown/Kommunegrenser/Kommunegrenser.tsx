@@ -4,22 +4,18 @@ import ListItemAccordion from "../ListItemAccordion";
 import KommuneList from "./KommuneList";
 import { UnstyledList } from "components/UnstyledList";
 import useFylker from "hooks/inndelinger/useFylker";
-import {
-  getNavnInSpraak,
-  sortGrenserAlphabetically,
-} from "utils/language/language";
+import { getNavnInSpraak } from "utils/language/language";
 
 const Kommunegrenser = () => {
   const { fylker } = useFylker();
-  const sortedFylker = sortGrenserAlphabetically(fylker);
   const { t } = useTranslation();
 
   return (
     <ListItemAccordion title={t("inndelinger.Kommunegrenser")}>
       <div>
-        {sortedFylker ? (
+        {fylker ? (
           <List>
-            {sortedFylker.map((fylke) => (
+            {fylker.map((fylke) => (
               <ListItemAccordion
                 key={fylke.id}
                 title={getNavnInSpraak(fylke.navn, "nor")}
