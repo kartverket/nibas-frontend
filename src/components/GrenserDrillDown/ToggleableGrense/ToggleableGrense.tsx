@@ -3,7 +3,7 @@ import Geometry from "ol/geom/Geometry";
 import styled from "styled-components";
 import Checkbox from "components/Checkbox";
 import Button from "components/form/Button";
-import { EditingType, ObjectValue } from "contexts/EditGrenserContext";
+import { EditingType } from "contexts/EditGrenserContext";
 import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
 import { GrenseId } from "hooks/layers/types";
 import { ReactComponent as EditIcon } from "icons/edit.svg";
@@ -20,8 +20,6 @@ export const layerIdByGrenseType: Record<EditingType, GrenseId> = {
 
 type Props<T extends GrenseRef> = {
   grense: T;
-  setObjectValue: (objectKey: string, value: ObjectValue) => void;
-  objectValue: ObjectValue | undefined;
   title: string;
   type: EditingType;
   features: Feature<Geometry>[] | null;
@@ -29,8 +27,6 @@ type Props<T extends GrenseRef> = {
 
 const ToggleableGrense = <T extends GrenseRef>({
   grense,
-  setObjectValue,
-  objectValue = {},
   title,
   type,
   features,

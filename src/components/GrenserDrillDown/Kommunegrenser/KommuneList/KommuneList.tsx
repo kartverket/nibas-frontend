@@ -13,7 +13,7 @@ type Props = {
 const KommuneList = ({ fylke, onlyDisplayEditing = false }: Props) => {
   const { kommuner, error } = useKommuner(fylke.id);
 
-  const { setObjectValue, values } = useEditGrenser("kommune");
+  const { values } = useEditGrenser("kommune");
   const filteredKommuner = useOnlyDisplayEditingGrenser(
     kommuner,
     values,
@@ -30,8 +30,6 @@ const KommuneList = ({ fylke, onlyDisplayEditing = false }: Props) => {
         <ApiGrense
           key={kommune.id}
           grense={kommune}
-          grenseValue={values[kommune.id]}
-          setGrenseValue={setObjectValue}
           featuresUrl={`/v1/kommuner/${kommune.id}/grenser`}
           type="kommune"
         />

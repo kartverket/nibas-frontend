@@ -12,7 +12,7 @@ type Props = {
 const FylkeList = ({ onlyDisplayEditing = false }: Props) => {
   const { data: fylker, error } = useNibasApi("/v1/fylker");
 
-  const { setObjectValue, values } = useEditGrenser("fylke");
+  const { values } = useEditGrenser("fylke");
 
   const sortedFylker = sortGrenserAlphabetically(fylker);
   const filteredFylker = useOnlyDisplayEditingGrenser(
@@ -31,8 +31,6 @@ const FylkeList = ({ onlyDisplayEditing = false }: Props) => {
         <ApiGrense
           key={fylke.id}
           grense={fylke}
-          grenseValue={values[fylke.id]}
-          setGrenseValue={setObjectValue}
           featuresUrl={`/v1/fylker/${fylke.id}/grenser`}
           type="fylke"
         />
