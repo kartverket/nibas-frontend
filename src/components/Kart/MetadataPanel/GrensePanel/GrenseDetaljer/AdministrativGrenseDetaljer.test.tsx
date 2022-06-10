@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "test/test-utils";
 import { ReactNode } from "react";
 import AdministrativGrenseDetaljer from "./AdministrativGrenseDetaljer";
-import { EditGrenserProvider } from "components/GrenserDrillDown/EditGrenserContext";
+import { EditGrenserProvider } from "contexts/EditGrenserContext";
 import { mockBasicFeature } from "mocks/handlers/responses";
 
 const defaultProps: React.ComponentProps<typeof AdministrativGrenseDetaljer> = {

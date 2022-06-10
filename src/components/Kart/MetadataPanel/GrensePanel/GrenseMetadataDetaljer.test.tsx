@@ -1,7 +1,7 @@
 import { render } from "test/test-utils";
 import { ReactNode } from "react";
 import GrenseMetadataDetaljer from "./GrenseMetadataDetaljer";
-import { EditGrenserProvider } from "components/GrenserDrillDown/EditGrenserContext";
+import { EditGrenserProvider } from "contexts/EditGrenserContext";
 import { mockBasicFeature } from "mocks/handlers/responses";
 import { FeatureProperties } from "types/api";
 

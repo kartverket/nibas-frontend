@@ -1,8 +1,8 @@
 import { render, screen } from "test/test-utils";
 import { ReactNode } from "react";
 import userEvent from "@testing-library/user-event";
-import { EditGrenserProvider } from "../EditGrenserContext";
 import Fylkesgrenser from "./Fylkesgrenser";
+import { EditGrenserProvider } from "contexts/EditGrenserContext";
 
 const renderWithProvider = (ui: ReactNode) =>
   render(<EditGrenserProvider>{ui}</EditGrenserProvider>);

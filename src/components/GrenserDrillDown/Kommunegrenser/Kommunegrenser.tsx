@@ -3,23 +3,19 @@ import styled from "styled-components";
 import ListItemAccordion from "../ListItemAccordion";
 import KommuneList from "./KommuneList";
 import { UnstyledList } from "components/UnstyledList";
-import useNibasApi from "hooks/useNibasApi";
-import {
-  getNavnInSpraak,
-  sortGrenserAlphabetically,
-} from "utils/language/language";
+import useFylker from "hooks/inndelinger/useFylker";
+import { getNavnInSpraak } from "utils/language/language";
 
 const Kommunegrenser = () => {
-  const { data: fylker } = useNibasApi("/v1/fylker");
-  const sortedFylker = sortGrenserAlphabetically(fylker);
+  const { fylker } = useFylker();
   const { t } = useTranslation();
 
   return (
     <ListItemAccordion title={t("inndelinger.Kommunegrenser")}>
       <div>
-        {sortedFylker ? (
+        {fylker ? (
           <List>
-            {sortedFylker.map((fylke) => (
+            {fylker.map((fylke) => (
               <ListItemAccordion
                 key={fylke.id}
                 title={getNavnInSpraak(fylke.navn, "nor")}

@@ -1,5 +1,6 @@
 import { render, screen } from "test/test-utils";
 import ToggleableGrense from "./ToggleableGrense";
+import { EditGrenserContext, ObjectValue } from "contexts/EditGrenserContext";
 import { mockBasicFeature } from "mocks/handlers/responses";
 
 const defaultProps: React.ComponentProps<typeof ToggleableGrense> = {
@@ -13,8 +14,6 @@ const defaultProps: React.ComponentProps<typeof ToggleableGrense> = {
       },
     ],
   },
-  objectValue: { editing: false, visible: false },
-  setObjectValue: jest.fn(),
   title: "Grense",
   type: "fylke",
   features: [mockBasicFeature],
@@ -24,9 +23,25 @@ beforeEach(() => {
   jest.clearAllMocks();
 });
 
+const renderWithProvider = (
+  ui: React.ReactNode,
+  objectValue: ObjectValue = { editing: false, visible: false }
+) => {
+  render(
+    <EditGrenserContext.Provider
+      value={{
+        editingObject: { fylke: { "1": objectValue } },
+        setObjectValue: jest.fn(),
+      }}
+    >
+      {ui}
+    </EditGrenserContext.Provider>
+  );
+};
+
 describe("ToggleableGrense", () => {
   it("should show eye closed and unchecked checkbox when objectValue is undefined", () => {
-    render(<ToggleableGrense {...defaultProps} objectValue={undefined} />);
+    renderWithProvider(<ToggleableGrense {...defaultProps} />);
 
     expect(screen.getByText(defaultProps.title)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Usynlig" })).toBeInTheDocument();
@@ -36,12 +51,10 @@ describe("ToggleableGrense", () => {
   });
 
   it("should show open eye and checked checkbox when objectValue values are true", () => {
-    render(
-      <ToggleableGrense
-        {...defaultProps}
-        objectValue={{ editing: true, visible: true }}
-      />
-    );
+    renderWithProvider(<ToggleableGrense {...defaultProps} />, {
+      editing: true,
+      visible: true,
+    });
 
     expect(screen.getByText(defaultProps.title)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Synlig" })).toBeInTheDocument();

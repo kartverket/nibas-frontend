@@ -1,19 +1,11 @@
 import React, { createContext, useContext, useState } from "react";
-
-export type EditingType = "fylke" | "kommune" | "nasjon" | "grunnkrets";
-export type ObjectValue = {
-  editing?: boolean;
-  visible?: boolean;
-};
-
-export type GrenseDictionary = Record<string, ObjectValue>;
-export type EditingObject = Partial<Record<EditingType, GrenseDictionary>>;
+import { EditingObject, EditingType, ObjectValue } from "./types";
 
 export type EditGrenserContextValue = {
   editingObject: EditingObject;
   setObjectValue: (
     type: EditingType,
-    name: string,
+    grenseId: string,
     values?: ObjectValue
   ) => void;
 };
@@ -30,14 +22,14 @@ export const EditGrenserProvider: React.FC = ({ children }) => {
 
   const setObjectValue = (
     type: EditingType,
-    name: string,
+    grenseId: string,
     values: ObjectValue = {}
   ) => {
     setEditingObject({
       ...editingObject,
       [type]: {
         ...editingObject[type],
-        [name]: values,
+        [grenseId]: values,
       },
     });
   };
@@ -76,8 +68,8 @@ export const useEditGrenser = (grenseType: EditingType) => {
   const { editingObject, setObjectValue } = context;
 
   const values = editingObject[grenseType] ?? {};
-  const setObjectValueForType = (name: string, newValues: ObjectValue) =>
-    setObjectValue(grenseType, name, newValues);
+  const setObjectValueForType = (grenseId: string, newValues: ObjectValue) =>
+    setObjectValue(grenseType, grenseId, newValues);
 
   return {
     values,

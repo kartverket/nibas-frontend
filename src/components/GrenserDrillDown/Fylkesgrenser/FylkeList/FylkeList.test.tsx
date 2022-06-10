@@ -2,7 +2,7 @@ import { render, screen } from "test/test-utils";
 import { ReactNode } from "react";
 import userEvent from "@testing-library/user-event";
 import FylkeList from "./FylkeList";
-import { EditGrenserProvider } from "components/GrenserDrillDown/EditGrenserContext";
+import { EditGrenserProvider } from "contexts/EditGrenserContext";
 
 const renderWithProvider = (ui: ReactNode) =>
   render(<EditGrenserProvider>{ui}</EditGrenserProvider>);

@@ -1,9 +1,9 @@
 import { render, screen } from "test/test-utils";
 import { ReactNode } from "react";
 import userEvent from "@testing-library/user-event";
-import { EditGrenserProvider } from "./EditGrenserContext";
 import GrenserDrillDown from "./GrenserDrillDown";
 import { BakgrunnskartContext } from "contexts/BakgrunnskartContext";
+import { EditGrenserProvider } from "contexts/EditGrenserContext";
 import { SidebarPanelContext } from "contexts/SidebarPanelContext";
 
 const renderWithProvider = (ui: ReactNode) =>

@@ -1,22 +1,20 @@
 import styled from "styled-components";
 import ApiGrense from "../../ApiGrense";
-import { useEditGrenser } from "../../EditGrenserContext";
-import useNibasApi from "hooks/useNibasApi";
+import { useEditGrenser } from "contexts/EditGrenserContext";
+import useFylker from "hooks/inndelinger/useFylker";
 import useOnlyDisplayEditingGrenser from "hooks/useOnlyDisplayEditingGrenser";
-import { sortGrenserAlphabetically } from "utils/language/language";
 
 type Props = {
   onlyDisplayEditing?: boolean;
 };
 
 const FylkeList = ({ onlyDisplayEditing = false }: Props) => {
-  const { data: fylker, error } = useNibasApi("/v1/fylker");
+  const { fylker, error } = useFylker();
 
-  const { setObjectValue, values } = useEditGrenser("fylke");
+  const { values } = useEditGrenser("fylke");
 
-  const sortedFylker = sortGrenserAlphabetically(fylker);
   const filteredFylker = useOnlyDisplayEditingGrenser(
-    sortedFylker,
+    fylker,
     values,
     onlyDisplayEditing
   );
@@ -31,8 +29,6 @@ const FylkeList = ({ onlyDisplayEditing = false }: Props) => {
         <ApiGrense
           key={fylke.id}
           grense={fylke}
-          grenseValue={values[fylke.id]}
-          setGrenseValue={setObjectValue}
           featuresUrl={`/v1/fylker/${fylke.id}/grenser`}
           type="fylke"
         />
