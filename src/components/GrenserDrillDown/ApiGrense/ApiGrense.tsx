@@ -1,7 +1,8 @@
-import { useCallback } from "react";
-import { EditingType, ObjectValue } from "../EditGrenserContext";
+import { useCallback, useEffect } from "react";
 import ToggleableGrense from "../ToggleableGrense";
 import useApiGrense from "./useApiGrense";
+import { EditingType, ObjectValue } from "contexts/EditGrenserContext";
+import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
 import { GrenseRef } from "types/api";
 import { getNavnInSpraak } from "utils/language/language";
 
@@ -24,6 +25,14 @@ const ApiGrense = <T extends GrenseRef>({
     featuresUrl,
     grenseValue?.editing || grenseValue?.visible
   );
+  const { value } = useEditGrense(type, grense.id, features);
+
+  useEffect(() => {
+    const { visible } = value;
+    if (features || !visible) return;
+
+    fetchFeatures();
+  }, [value, features, fetchFeatures]);
 
   const navn = getNavnInSpraak(grense.navn, "nor");
 

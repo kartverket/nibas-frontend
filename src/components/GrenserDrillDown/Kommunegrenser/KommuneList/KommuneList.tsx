@@ -1,10 +1,9 @@
 import styled from "styled-components";
 import ApiGrense from "components/GrenserDrillDown/ApiGrense";
-import { useEditGrenser } from "components/GrenserDrillDown/EditGrenserContext";
-import useNibasApi from "hooks/useNibasApi";
+import { useEditGrenser } from "contexts/EditGrenserContext";
+import useKommuner from "hooks/inndelinger/useKommuner";
 import useOnlyDisplayEditingGrenser from "hooks/useOnlyDisplayEditingGrenser";
 import { GrenseRef } from "types/api";
-import { sortGrenserAlphabetically } from "utils/language/language";
 
 type Props = {
   fylke: GrenseRef;
@@ -12,14 +11,11 @@ type Props = {
 };
 
 const KommuneList = ({ fylke, onlyDisplayEditing = false }: Props) => {
-  const { data: kommuner, error } = useNibasApi("/v1/kommuner", {
-    fylkeid: fylke.id,
-  });
+  const { kommuner, error } = useKommuner(fylke.id);
 
   const { setObjectValue, values } = useEditGrenser("kommune");
-  const sortedKommuner = sortGrenserAlphabetically(kommuner);
   const filteredKommuner = useOnlyDisplayEditingGrenser(
-    sortedKommuner,
+    kommuner,
     values,
     onlyDisplayEditing
   );

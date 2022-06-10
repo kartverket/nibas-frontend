@@ -1,4 +1,4 @@
-import { useEditGrenser } from "components/GrenserDrillDown/EditGrenserContext";
+import { useEditGrenser } from "contexts/EditGrenserContext";
 import { FeatureProperties } from "types/api";
 
 export const editingTypeByKontekstType = {

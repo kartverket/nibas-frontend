@@ -1,7 +1,7 @@
 import { FC } from "react";
 import ThirdPartyProviders from "./ThirdPartyProviders";
-import { EditGrenserProvider } from "components/GrenserDrillDown/EditGrenserContext";
 import { BakgrunnskartProvider } from "contexts/BakgrunnskartContext";
+import { EditGrenserProvider } from "contexts/EditGrenserContext";
 import { MetadataPanelProvider } from "contexts/MetadataPanelContext";
 import { SidebarPanelProvider } from "contexts/SidebarPanelContext";
 

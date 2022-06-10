@@ -1,8 +1,8 @@
 import { render, screen } from "test/test-utils";
 import { ReactNode } from "react";
-import { EditGrenserContext } from "../EditGrenserContext";
 import AktiveKartlag from "./AktiveKartlag";
 import { BakgrunnskartContext } from "contexts/BakgrunnskartContext";
+import { EditGrenserContext } from "contexts/EditGrenserContext";
 
 const renderWithProvider = (ui: ReactNode) =>
   render(
@@ -56,7 +56,7 @@ describe("AktiveKartlag", () => {
             {
               layers: [],
               queryable: true,
-              sourceId: "grunnkretser",
+              sourceId: "grunnkretserWMS",
               title: "Grunnkretser",
               id: "Grunnkretser",
             },

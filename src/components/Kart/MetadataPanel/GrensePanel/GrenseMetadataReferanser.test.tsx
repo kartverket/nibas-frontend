@@ -2,7 +2,7 @@ import { render, screen, within } from "test/test-utils";
 import { ReactNode } from "react";
 import userEvent from "@testing-library/user-event";
 import GrenseMetadataReferanser from "./GrenseMetadataReferanser";
-import { EditGrenserProvider } from "components/GrenserDrillDown/EditGrenserContext";
+import { EditGrenserProvider } from "contexts/EditGrenserContext";
 import { mockBasicFeature } from "mocks/handlers/responses";
 
 const defaultProps: React.ComponentProps<typeof GrenseMetadataReferanser> = {

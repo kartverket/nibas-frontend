@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { GrenseDictionary } from "components/GrenserDrillDown/EditGrenserContext";
+import { GrenseDictionary } from "contexts/EditGrenserContext";
 import { GrenseRef } from "types/api";
 
 const useOnlyDisplayEditingGrenser = (
