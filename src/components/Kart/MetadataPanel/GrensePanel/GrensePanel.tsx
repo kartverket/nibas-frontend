@@ -15,14 +15,14 @@ const showReferanserByGrenseType: Record<string, boolean> = {
 };
 
 type Props = {
-  data: Feature<Geometry>;
+  feature: Feature<Geometry>;
 };
 
-const GrensePanel = ({ data }: Props) => {
+const GrensePanel = ({ feature }: Props) => {
   let tabs: string[];
 
   const showReferanser =
-    showReferanserByGrenseType[data.getProperties().type as string];
+    showReferanserByGrenseType[feature.getProperties().type as string];
 
   if (showReferanser) {
     tabs = [
@@ -36,19 +36,19 @@ const GrensePanel = ({ data }: Props) => {
   }
 
   return (
-    <Tabs key={data.getId()} tabTransKeys={tabs}>
+    <Tabs key={feature.getId()} tabTransKeys={tabs}>
       <div>
         <h3>Linje metadata</h3>
-        <GrenseMetadataGenerelt feature={data} />
+        <GrenseMetadataGenerelt feature={feature} />
       </div>
       <div>
         <h3>Detaljer</h3>
-        <GrenseMetadataDetaljer feature={data} />
+        <GrenseMetadataDetaljer feature={feature} />
       </div>
       {showReferanser && (
         <div>
           <h3>Dokumentasjonsreferanser</h3>
-          <GrenseMetadataReferanser feature={data} />
+          <GrenseMetadataReferanser feature={feature} />
         </div>
       )}
     </Tabs>

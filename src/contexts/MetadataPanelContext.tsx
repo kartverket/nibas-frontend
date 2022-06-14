@@ -7,7 +7,12 @@ type GrenseMetadataPanel = {
   data: Feature<Geometry>;
 };
 
-type Panel = GrenseMetadataPanel;
+type GrunnkretserPanel = {
+  content: "grunnkretser";
+  data: string; // kommuneid / kommunenummer
+};
+
+type Panel = GrenseMetadataPanel | GrunnkretserPanel;
 
 export type MetadataPanelContextValue = {
   panelContext: Panel | null;
