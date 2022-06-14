@@ -3,6 +3,7 @@ import Button from "components/form/Button";
 import { useEditGrenser } from "contexts/EditGrenserContext";
 import { useMetadataPanel } from "contexts/MetadataPanelContext";
 import useGrunnkretsgrenser from "hooks/inndelinger/useGrunnkretsgrenser";
+import { ReactComponent as EditIcon } from "icons/edit.svg";
 import { ReactComponent as VisibilityIcon } from "icons/visibility.svg";
 import { ReactComponent as VisibilityOffIcon } from "icons/visibility_off.svg";
 import { KommuneRef } from "types/api";
@@ -25,10 +26,17 @@ const Kommune = ({ kommune }: Props) => {
     openPanel({ content: "grunnkretser", data: kommune.id });
   };
 
+  const toggleGrunnkretser = () => {
+    setObjectValue(kommune.id, {
+      ...values[kommune.id],
+      visible: !values[kommune.id]?.visible,
+    });
+  };
+
   return (
     <KommuneWrapper>
       <Button
-        onClick={() => openGrunnkretserPanel()}
+        onClick={toggleGrunnkretser}
         variant="unstyled"
         icon={
           values[kommune.id]?.visible ? (
@@ -39,6 +47,11 @@ const Kommune = ({ kommune }: Props) => {
         }
       ></Button>
       <Title>{getNavnInSpraak(kommune.navn, "nor")}</Title>
+      <Button
+        icon={<EditIcon />}
+        variant="unstyled"
+        onClick={openGrunnkretserPanel}
+      />
     </KommuneWrapper>
   );
 };

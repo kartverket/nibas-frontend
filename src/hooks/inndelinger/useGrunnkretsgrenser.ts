@@ -6,14 +6,17 @@ import { useEditGrenseValue } from "contexts/EditGrenserContext/EditGrenserConte
 import { GrunnkretsRef } from "types/api";
 import { sortGrenserAlphabetically } from "utils/language/language";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
-import { addFeaturesToSource } from "utils/map/source";
+import {
+  addFeaturesToSource,
+  removeFeaturesFromSourceByIds,
+} from "utils/map/source";
 import { fetcherWithToken } from "utils/swr";
 
 const mapGrunnkretserToIds = (grunnkretser?: GrunnkretsRef[]) =>
   grunnkretser?.map((grunnkrets) => grunnkrets.id);
 
 const grunnkretserByKommuneFetcher = async (
-  url: string, // må has med for SWR key caching
+  key: string, // må has med for SWR key caching
   grunnkretsIds: string[],
   token: string | undefined
 ) => {
@@ -24,9 +27,7 @@ const grunnkretserByKommuneFetcher = async (
     return grenser;
   });
 
-  const allGrenser = await Promise.all(grunnkretsFeaturesPromises);
-
-  return allGrenser;
+  return Promise.all(grunnkretsFeaturesPromises);
 };
 
 const useGrunnkretsgrenser = (kommuneId: string) => {
@@ -45,9 +46,9 @@ const useGrunnkretsgrenser = (kommuneId: string) => {
     }
   );
 
-  const { data: grunnkretsGrenserGeoJson } = useSWR(
+  const { data: grunnkretsgrenserGeoJsons } = useSWR(
     [
-      `/v1/grunnkretser/{id}/grenser`,
+      `grunnkretserByKommune/${kommuneId}`,
       mapGrunnkretserToIds(grunnkretserByKommune),
       tokenHolderFunc()?.token,
     ],
@@ -55,15 +56,21 @@ const useGrunnkretsgrenser = (kommuneId: string) => {
   );
 
   useEffect(() => {
-    if (!grunnkretsGrenserGeoJson) return;
+    if (!grunnkretsgrenserGeoJsons) return;
 
-    const featuresFromGeoJson = grunnkretsGrenserGeoJson.map(
+    const featuresFromGeoJson = grunnkretsgrenserGeoJsons.map(
       getFeaturesFromGeoJson
     );
     featuresFromGeoJson.forEach((features) => {
       addFeaturesToSource("grunnkretser", features);
     });
-  }, [grunnkretsGrenserGeoJson]);
+
+    return () => {
+      featuresFromGeoJson.forEach((features) => {
+        removeFeaturesFromSourceByIds("grunnkretser", features);
+      });
+    };
+  }, [grunnkretsgrenserGeoJsons]);
 
   return {
     grunnkretser: sortGrenserAlphabetically(grunnkretserByKommune),
