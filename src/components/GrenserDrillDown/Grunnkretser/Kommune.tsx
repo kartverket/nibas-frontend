@@ -18,9 +18,11 @@ const Kommune = ({ kommune }: Props) => {
   const { openPanel } = useMetadataPanel();
   useGrunnkretsgrenser(kommune.id);
 
+  const kommuneValues = values[kommune.id] ?? {};
+
   const openGrunnkretserPanel = () => {
     setObjectValue(kommune.id, {
-      ...values[kommune.id],
+      ...kommuneValues,
       visible: true,
     });
     openPanel({ content: "grunnkretser", data: kommune.id });
@@ -28,8 +30,8 @@ const Kommune = ({ kommune }: Props) => {
 
   const toggleGrunnkretser = () => {
     setObjectValue(kommune.id, {
-      ...values[kommune.id],
-      visible: !values[kommune.id]?.visible,
+      ...kommuneValues,
+      visible: !kommuneValues.visible,
     });
   };
 
@@ -39,13 +41,13 @@ const Kommune = ({ kommune }: Props) => {
         onClick={toggleGrunnkretser}
         variant="unstyled"
         icon={
-          values[kommune.id]?.visible ? (
+          kommuneValues.visible ? (
             <VisibilityIcon aria-label="Synlig" />
           ) : (
             <VisibilityOffIcon aria-label="Usynlig" />
           )
         }
-      ></Button>
+      />
       <Title>{getNavnInSpraak(kommune.navn, "nor")}</Title>
       <Button
         icon={<EditIcon />}

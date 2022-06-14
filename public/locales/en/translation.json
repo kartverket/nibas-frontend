@@ -66,5 +66,12 @@
     "Ny {{ item }}": "__STRING_NOT_TRANSLATED__"
   },
   "Ja": "__STRING_NOT_TRANSLATED__",
-  "Nei": "__STRING_NOT_TRANSLATED__"
+  "Nei": "__STRING_NOT_TRANSLATED__",
+  "{{ kommuneNavn }} kommune": "__STRING_NOT_TRANSLATED__",
+  "tabell": {
+    "Navn": "__STRING_NOT_TRANSLATED__"
+  },
+  "grunnkrets": {
+    "Grunnkretsnummer": "__STRING_NOT_TRANSLATED__"
+  }
 }

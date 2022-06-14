@@ -67,5 +67,12 @@
     "Ny {{ item }}": "Ny {{ item }}"
   },
   "Ja": "Ja",
-  "Nei": "Nei"
+  "Nei": "Nei",
+  "{{ kommuneNavn }} kommune": "{{ kommuneNavn }} kommune",
+  "tabell": {
+    "Navn": "Navn"
+  },
+  "grunnkrets": {
+    "Grunnkretsnummer": "Grunnkretsnummer"
+  }
 }
