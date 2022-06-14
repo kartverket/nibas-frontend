@@ -76,3 +76,22 @@ export const useEditGrenser = (grenseType: EditingType) => {
     setObjectValue: setObjectValueForType,
   };
 };
+
+export const useEditGrenseValue = (
+  grenseType: EditingType,
+  grenseId: string
+) => {
+  const context = useContext(EditGrenserContext);
+
+  if (!context) {
+    throw new Error(
+      "useEditGrenseValue must be used within a EditGrenserProvider"
+    );
+  }
+
+  const { editingObject } = context;
+  const values = editingObject[grenseType] ?? {};
+  const value = values[grenseId] ?? {};
+
+  return value;
+};

@@ -23,7 +23,7 @@ const AktiveKartlag = () => {
       {fylker?.map((fylke) => (
         <KommuneList key={fylke.id} onlyDisplayEditing fylke={fylke} />
       ))}
-      <GrunnkretsList onlyDisplayEditing />
+      {/* <GrunnkretsList onlyDisplayEditing /> */}
 
       <ActiveBackgroundLayers>
         {t("Aktive bakgrunnskart")}
