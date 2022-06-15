@@ -1,4 +1,5 @@
 import { components, paths } from "./api-gen";
+import { EditingType } from "contexts/EditGrenserContext";
 
 export type Spraak = {
   navn: string;
@@ -20,7 +21,12 @@ export type CoordinateSequenceFactory =
 export type Dokref = components["schemas"]["Dokref"];
 export type Envelope = components["schemas"]["Envelope"];
 export type FeatureCollection = components["schemas"]["FeatureCollection"];
-export type FeatureProperties = components["schemas"]["FeatureProperties"];
+export type FeatureProperties = components["schemas"]["FeatureProperties"] & {
+  inndelingerKontekst: {
+    id: string;
+    type: EditingType;
+  };
+};
 export type FylkeRef = components["schemas"]["FylkeRef"];
 export type FylkeRequest = components["schemas"]["FylkeRequest"];
 export type FylkeResponse = components["schemas"]["FylkeResponse"];
