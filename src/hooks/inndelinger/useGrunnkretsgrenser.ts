@@ -1,31 +1,29 @@
-import { useEffect } from "react";
+import { useMemo } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
+import { Feature } from "ol";
+import Geometry from "ol/geom/Geometry";
 import useSWR from "swr";
 import useNibasApi from "../useNibasApi";
-import { useEditGrenseValue } from "contexts/EditGrenserContext/EditGrenserContext";
+import { useEditGrenseValue } from "contexts/EditGrenserContext";
+import { LayerId } from "hooks/layers/types";
+import useAsyncFeatures from "hooks/useAsyncFeatures";
 import { GrunnkretsRef } from "types/api";
-import { sortGrenserAlphabetically } from "utils/language/language";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
-import {
-  addFeaturesToSource,
-  removeFeaturesFromSourceByIds,
-} from "utils/map/source";
+import { removeFeaturesFromSourceByIds } from "utils/map/source";
 import { fetcherWithToken } from "utils/swr";
 
 const mapGrunnkretserToIds = (grunnkretser?: GrunnkretsRef[]) =>
   grunnkretser?.map((grunnkrets) => grunnkrets.id);
 
+// fetch alle grunnkretsgrenser i en kommune
 const grunnkretserByKommuneFetcher = async (
-  key: string, // må has med for SWR key caching
   grunnkretsIds: string[],
   token: string | undefined
 ) => {
-  const grunnkretsFeaturesPromises = grunnkretsIds.map(async (grunnkretsId) => {
-    const grenseUrl = `/v1/grunnkretser/${grunnkretsId}/grenser`;
-    const grenser = await fetcherWithToken(grenseUrl, token);
-
-    return grenser;
-  });
+  const grunnkretsFeaturesPromises: Promise<string>[] = grunnkretsIds.map(
+    async (grunnkretsId) =>
+      fetcherWithToken(`/v1/grunnkretser/${grunnkretsId}/grenser`, token)
+  );
 
   return Promise.all(grunnkretsFeaturesPromises);
 };
@@ -47,33 +45,39 @@ const useGrunnkretsgrenser = (kommuneId: string) => {
   );
 
   const { data: grunnkretsgrenserGeoJsons } = useSWR(
-    [
-      `grunnkretserByKommune/${kommuneId}`,
-      mapGrunnkretserToIds(grunnkretserByKommune),
-      tokenHolderFunc()?.token,
-    ],
+    [mapGrunnkretserToIds(grunnkretserByKommune), tokenHolderFunc()?.token],
     grunnkretserByKommuneFetcher
   );
 
-  useEffect(() => {
-    if (!grunnkretsgrenserGeoJsons) return;
+  const allFeatures = useMemo(() => {
+    if (!grunnkretsgrenserGeoJsons) return null;
 
-    const featuresFromGeoJson = grunnkretsgrenserGeoJsons.map(
-      getFeaturesFromGeoJson
-    );
-    featuresFromGeoJson.forEach((features) => {
-      addFeaturesToSource("grunnkretser", features);
+    const features: Feature<Geometry>[] = [];
+
+    grunnkretsgrenserGeoJsons?.forEach((geoJson) => {
+      getFeaturesFromGeoJson(geoJson).forEach((feature) => {
+        features.push(feature);
+      });
     });
 
-    return () => {
-      featuresFromGeoJson.forEach((features) => {
-        removeFeaturesFromSourceByIds("grunnkretser", features);
-      });
-    };
+    return features;
   }, [grunnkretsgrenserGeoJsons]);
 
+  const setLayerToAddTo = useAsyncFeatures(allFeatures);
+
+  const addGrunnkretserToLayer = (layerId: LayerId) => {
+    setLayerToAddTo(layerId);
+  };
+
+  const removeGrunnkretserFromLayer = (layerId: LayerId) => {
+    if (!allFeatures) return;
+
+    removeFeaturesFromSourceByIds(layerId, allFeatures);
+  };
+
   return {
-    grunnkretser: sortGrenserAlphabetically(grunnkretserByKommune),
+    addGrunnkretserToLayer,
+    removeGrunnkretserFromLayer,
   };
 };
 

@@ -1,14 +1,11 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { EditGrenserContext } from "./EditGrenserContext";
 import { EditingType } from "./types";
 import { layerIdByGrenseType } from "components/GrenserDrillDown/ToggleableGrense/ToggleableGrense";
-import { LayerId } from "hooks/layers/types";
-import {
-  addFeaturesToSource,
-  removeFeaturesFromSourceByIds,
-} from "utils/map/source";
+import useAsyncFeatures from "hooks/useAsyncFeatures";
+import { removeFeaturesFromSourceByIds } from "utils/map/source";
 
 export const useEditGrense = (
   grenseType: EditingType,
@@ -21,18 +18,9 @@ export const useEditGrense = (
     throw new Error("useEditGrense must be used within a EditGrenserProvider");
   }
 
-  const [layerToAddTo, setLayerToAddTo] = useState<LayerId | null>(null);
-
   const { editingObject, setObjectValue } = context;
   const value = editingObject[grenseType]?.[grenseId] ?? {};
-
-  // sett features inn i layer når features har blitt hentet
-  useEffect(() => {
-    if (!layerToAddTo || !features) return;
-
-    addFeaturesToSource(layerToAddTo, features);
-    setLayerToAddTo(null);
-  }, [layerToAddTo, features]);
+  const setLayerToAddTo = useAsyncFeatures(features);
 
   const toggleVisible = () => {
     const newObjectValue = {
