@@ -16,7 +16,7 @@ type Props = {
 
 const Kommune = ({ kommune }: Props) => {
   const { values, setObjectValue } = useEditGrenser("grunnkrets");
-  const { openPanel } = useMetadataPanel();
+  const { openPanel, closePanel } = useMetadataPanel();
   const { addGrunnkretserToLayer, removeGrunnkretserFromLayer } =
     useGrunnkretsgrenser(kommune.id);
 
@@ -24,13 +24,17 @@ const Kommune = ({ kommune }: Props) => {
 
   const openGrunnkretserPanel = () => {
     setObjectValue(kommune.id, {
-      ...kommuneValues,
       visible: true,
+      editing: true,
     });
     openPanel({ content: "grunnkretser", data: kommune.id });
 
     // hvis ikke endret fra før, endre nå
     if (!kommuneValues.editing) {
+      if (kommuneValues.visible) {
+        removeGrunnkretserFromLayer("grunnkretser");
+      }
+
       addGrunnkretserToLayer("edit");
     }
   };
@@ -38,8 +42,8 @@ const Kommune = ({ kommune }: Props) => {
   const toggleGrunnkretser = () => {
     const newVisible = !kommuneValues.visible;
     setObjectValue(kommune.id, {
-      ...kommuneValues,
       visible: newVisible,
+      editing: false,
     });
 
     const layerId: LayerId = kommuneValues.editing ? "edit" : "grunnkretser";
@@ -49,6 +53,7 @@ const Kommune = ({ kommune }: Props) => {
     } else {
       // hvis ikke lenger skal være synlig
       removeGrunnkretserFromLayer(layerId);
+      closePanel();
     }
   };
 
