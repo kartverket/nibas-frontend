@@ -3,9 +3,23 @@ on:
   push:
     branches-ignore: master
 
+env:
+  image_name: nibas-frontend
+  registry: ghcr.io
+  registry_path: kartverket
+
 jobs:
   build:
-    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    needs: build
+    runs-on: ${{ matrix.environment }}
+    environment: ${{ matrix.environment }}
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: ["atkv1-dev"]
 
     steps:
       - name: checkout code
