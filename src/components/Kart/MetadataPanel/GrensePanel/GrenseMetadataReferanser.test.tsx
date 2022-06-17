@@ -15,15 +15,15 @@ const renderWithProvider = (ui: ReactNode) =>
 const testFieldArray = (groupName: string | RegExp) => {
   renderWithProvider(<GrenseMetadataReferanser {...defaultProps} />);
 
-  const dokumentlenkerGroup = screen.getByRole("group", {
+  const group = screen.getByRole("group", {
     name: groupName,
   });
-  const newUrlInput = within(dokumentlenkerGroup).getByRole("textbox", {
+  const newUrlInput = within(group).getByRole("textbox", {
     name: /ny {{ item }}/i,
   });
   userEvent.type(newUrlInput, "Ny lenke{enter}");
 
-  const addButton = within(dokumentlenkerGroup).getByRole("button", {
+  const addButton = within(group).getByRole("button", {
     name: /legg til/i,
   });
   userEvent.type(newUrlInput, "Lenke uten enter");
