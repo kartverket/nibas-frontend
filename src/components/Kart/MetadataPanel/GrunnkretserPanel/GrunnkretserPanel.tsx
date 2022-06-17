@@ -28,7 +28,7 @@ const GrunnkretserPanel = ({ kommuneId }: Props) => {
     <div>
       <PanelTitle>
         {t("{{ kommuneNavn }} kommune", {
-          kommuneNavn: getNavnInSpraak(kommune?.administrativenhetnavn, "nor"),
+          kommuneNavn: getNavnInSpraak(kommune.administrativenhetnavn, "nor"),
         })}
       </PanelTitle>
       <PanelTitle>{t("inndelinger.Grunnkretser")}</PanelTitle>

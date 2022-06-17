@@ -2,8 +2,11 @@ import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import {
   AdministrativGrenseMetadata,
   FylkeRef,
+  GrunnkretsRef,
+  GrunnkretsResponse,
   KodelisteRespons,
   KommuneRef,
+  KommuneResponse,
 } from "types/api";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 
@@ -119,6 +122,63 @@ export const mockFylker = [
     href: "http://localhost:8080/v1/fylker/2",
   },
 ] as FylkeRef[];
+
+export const mockDetailedKommune: KommuneResponse = {
+  administrativenhetnavn: [
+    {
+      navn: "Malvik",
+      spraak: "nor",
+    },
+  ],
+  features: mockGeoJsonFeatureResponse,
+  id: "1",
+  kommunenummer: {
+    id: "a379eb0a-7bae-4fc9-ab07-cf0c7a28bdb7",
+    kodeverdi: 12345678,
+  },
+  lokalid: "12345678",
+  navnerom: "Navnerom",
+  oppdateringsdato: "2022-12-31",
+  samiskforvaltningsomraade: false,
+};
+
+export const mockGrunnkrets1: GrunnkretsRef = {
+  id: "1",
+  href: "",
+  navn: "Mosekollen øst",
+};
+
+export const mockGrunnkrets2: GrunnkretsRef = {
+  id: "2",
+  href: "",
+  navn: "Dåsvatn",
+};
+
+export const mockDetailedGrunnkrets1: GrunnkretsResponse = {
+  features: mockGeoJsonFeatureResponse,
+  grunnkretsnummer: "12345678",
+  id: "1",
+  identifikasjon: {
+    lokalid: "lokalid",
+    navnerom: "navnerom",
+    versjonid: "versjonId",
+  },
+  kommunenummer: "a379eb0a-7bae-4fc9-ab07-cf0c7a28bdb7",
+  navn: "Mosekollen øst",
+};
+
+export const mockDetailedGrunnkrets2: GrunnkretsResponse = {
+  features: mockGeoJsonFeatureResponse,
+  grunnkretsnummer: "12345679",
+  id: "2",
+  identifikasjon: {
+    lokalid: "lokalid",
+    navnerom: "navnerom",
+    versjonid: "versjonId",
+  },
+  kommunenummer: "a379eb0a-7bae-4fc9-ab07-cf0c7a28bdb7",
+  navn: "Dåsvatn",
+};
 
 export const mockKommuner = [
   {

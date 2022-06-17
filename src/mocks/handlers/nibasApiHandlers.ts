@@ -8,6 +8,11 @@ import {
   mockActuatorResponse,
   mockNoeyaktighetsklasseResponse,
   mockTerrengdetaljResponse,
+  mockDetailedKommune,
+  mockDetailedGrunnkrets1,
+  mockGrunnkrets1,
+  mockGrunnkrets2,
+  mockDetailedGrunnkrets2,
 } from "./responses";
 
 export const nibasApiHandlers: RestHandler[] = [
@@ -37,5 +42,25 @@ export const nibasApiHandlers: RestHandler[] = [
   }),
   rest.get("/v1/kodeliste/noeyaktighetsklasser", (req, res, ctx) => {
     return res(ctx.status(200), ctx.json(mockNoeyaktighetsklasseResponse));
+  }),
+  rest.get("/v1/kommuner/:id", (req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(mockDetailedKommune));
+  }),
+  rest.get("/v1/grunnkretser", (req, res, ctx) => {
+    const kommunenummer = req.url.searchParams
+      .get("kommunenummer")
+      ?.toLowerCase();
+
+    if (kommunenummer === "a379eb0a-7bae-4fc9-ab07-cf0c7a28bdb7") {
+      return res(ctx.status(200), ctx.json([mockGrunnkrets1, mockGrunnkrets2]));
+    }
+
+    return res(ctx.status(200), ctx.json([]));
+  }),
+  rest.get("/v1/grunnkretser/1", (req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(mockDetailedGrunnkrets1));
+  }),
+  rest.get("/v1/grunnkretser/2", (req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(mockDetailedGrunnkrets2));
   }),
 ];
