@@ -5,7 +5,7 @@ on:
 
 permissions:
   id-token: write
-  contents: 'read'
+  contents: "read"
 
 env:
   image_name: nibas-frontend
@@ -43,6 +43,12 @@ jobs:
           npm audit --production
           npm run build --if-present
           npm test
+
+      - name: Verify API types are up to date
+        run: |
+          npm run update-api-types:remote-pathless -- --output ./new-types.ts
+          cmp src/types/api-gen.ts ./new-types.ts
+          rm ./new-types.ts
 
       - name: Remove npmrc with secret
         run: |
@@ -91,7 +97,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        environment: ['atkv1-dev']
+        environment: ["atkv1-dev"]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -99,21 +105,21 @@ jobs:
       # Fetch environment variables and set for subsequent steps
       - name: read .env
         uses: c-py/action-dotenv-to-setenv@v3
-        with: 
+        with:
           env-file: .github/workflows/.env.${{matrix.environment}}
-        
+
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
 
       - name: Get JWT
         id: githubtoken
-        uses: magic7s/expose-jwt-action@v0.1.1 
+        uses: magic7s/expose-jwt-action@v0.1.1
 
       - run: |
           echo "TF_VAR_GITHUB_TOKEN=${{ steps.githubtoken.outputs.jwt }}" >> $GITHUB_ENV
-          
+
       # Authenticate with google cloud serviceaccount to have permissions in cluster.
-      # Variabel project_id må settes til kubernetesprosjektet her.   
+      # Variabel project_id må settes til kubernetesprosjektet her.
       - id: auth
         name: Authenticate to GCP
         uses: google-github-actions/auth@v0
