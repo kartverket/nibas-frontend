@@ -13,7 +13,6 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    needs: build
     runs-on: ${{ matrix.environment }}
     environment: ${{ matrix.environment }}
     strategy:
