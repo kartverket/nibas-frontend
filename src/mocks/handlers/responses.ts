@@ -75,12 +75,14 @@ export const mockGeoJsonFeatureResponse: GeoJSONFeatureCollection = {
           omtvistet: false,
         } as AdministrativGrenseMetadata,
         kontekstEgenskaper: {
-          id: "064fdcd8-6123-478f-9976-171d14481277",
-          type: "FYLKE",
           retningMedKlokken: true,
           rekkefoelge: 0,
           flateIndeks: 0,
           hullIndeks: null,
+        },
+        inndelingerKontekst: {
+          id: "9b4ab6bb-878f-472a-9243-64e2bdc48b8b",
+          type: "fylke",
         },
       },
       geometry: {
