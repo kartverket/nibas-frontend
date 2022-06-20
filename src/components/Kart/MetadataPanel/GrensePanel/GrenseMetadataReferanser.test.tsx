@@ -2,15 +2,34 @@ import { render, screen, within } from "test/test-utils";
 import { ReactNode } from "react";
 import userEvent from "@testing-library/user-event";
 import GrenseMetadataReferanser from "./GrenseMetadataReferanser";
-import { EditGrenserProvider } from "contexts/EditGrenserContext";
+import {
+  EditGrenserContext,
+  EditGrenserProvider,
+} from "contexts/EditGrenserContext";
 import { mockBasicFeature } from "mocks/handlers/responses";
 
 const defaultProps: React.ComponentProps<typeof GrenseMetadataReferanser> = {
   feature: mockBasicFeature,
 };
 
-const renderWithProvider = (ui: ReactNode) =>
-  render(<EditGrenserProvider>{ui}</EditGrenserProvider>);
+const renderWithProvider = (ui: ReactNode, disabled = false) =>
+  render(
+    <EditGrenserContext.Provider
+      value={{
+        editingObject: {
+          fylke: {
+            "1": {
+              visible: true,
+              editing: !disabled,
+            },
+          },
+        },
+        setObjectValue: jest.fn(),
+      }}
+    >
+      {ui}
+    </EditGrenserContext.Provider>
+  );
 
 const testFieldArray = (groupName: string | RegExp) => {
   renderWithProvider(<GrenseMetadataReferanser {...defaultProps} />);
@@ -58,6 +77,24 @@ describe("GrenseMetadataReferanser", () => {
     expect(
       screen.getByRole("link", { name: /internref/i })
     ).toBeInTheDocument();
+  });
+
+  it("should disable form fields if not editing", () => {
+    renderWithProvider(<GrenseMetadataReferanser {...defaultProps} />, true);
+
+    expect(
+      screen.getByRole("textbox", { name: /Rettskilde-ID/i })
+    ).toBeDisabled();
+    expect(
+      screen.getByRole("textbox", { name: /Fastsettingsmyndighet/i })
+    ).toBeDisabled();
+    expect(screen.getByRole("textbox", { name: /Hjemmel/i })).toBeDisabled();
+    expect(
+      screen.getByRole("textbox", { name: /Rettskildetittel/i })
+    ).toBeDisabled();
+    expect(
+      screen.getByRole("textbox", { name: /Fastsettingsdato/i })
+    ).toBeDisabled();
   });
 
   it("should add new dokumentlenke on enter and Legg til button click", () => {

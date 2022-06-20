@@ -81,7 +81,8 @@ export const mockGeoJsonFeatureResponse: GeoJSONFeatureCollection = {
           hullIndeks: null,
         },
         inndelingerKontekst: {
-          id: "9b4ab6bb-878f-472a-9243-64e2bdc48b8b",
+          // vis til Vestfold og Telemark
+          id: "1",
           type: "fylke",
         },
       },
