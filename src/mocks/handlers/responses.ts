@@ -149,12 +149,14 @@ export const mockGrunnkrets1: GrunnkretsRef = {
   id: "1",
   href: "",
   navn: "Mosekollen øst",
+  grunnkretsnummer: "12345678",
 };
 
 export const mockGrunnkrets2: GrunnkretsRef = {
   id: "2",
   href: "",
   navn: "Dåsvatn",
+  grunnkretsnummer: "12345679",
 };
 
 export const mockDetailedGrunnkrets1: GrunnkretsResponse = {

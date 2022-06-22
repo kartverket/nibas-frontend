@@ -1,15 +1,16 @@
 import React, { createContext, useCallback, useContext, useState } from "react";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
+import { KommuneRef } from "types/api";
 
 type GrenseMetadataPanel = {
   content: "grensemetadata";
-  data: Feature<Geometry>;
+  feature: Feature<Geometry>;
 };
 
 type GrunnkretserPanel = {
   content: "grunnkretser";
-  data: string; // kommuneid / kommunenummer
+  kommune: KommuneRef; // kommuneid / kommunenummer
 };
 
 type Panel = GrenseMetadataPanel | GrunnkretserPanel;

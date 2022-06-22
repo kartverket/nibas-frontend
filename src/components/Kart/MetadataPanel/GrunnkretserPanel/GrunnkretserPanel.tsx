@@ -1,24 +1,20 @@
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import GrunnkretsRow from "./GrunnkretsRow";
 import useNibasApi from "hooks/useNibasApi";
+import { KommuneRef } from "types/api";
 import { getNavnInSpraak } from "utils/language/language";
 
 type Props = {
-  kommuneId: string;
+  kommune: KommuneRef;
 };
 
-const GrunnkretserPanel = ({ kommuneId }: Props) => {
+const GrunnkretserPanel = ({ kommune }: Props) => {
   const { t } = useTranslation();
-  // denne blir unødvendig når vi kan hente grunnkretser med kommuneId i stedet
-  const { data: kommune } = useNibasApi("/v1/kommuner/{id}", {
-    id: kommuneId,
-  });
 
   const { data: grunnkretserByKommune } = useNibasApi(
-    kommune ? "/v1/grunnkretser" : null,
+    kommune ? "/v1/kommuner/{id}/grunnkretser" : null,
     {
-      kommunenummer: kommune?.kommunenummer.id,
+      id: kommune.id,
     }
   );
 
@@ -28,7 +24,7 @@ const GrunnkretserPanel = ({ kommuneId }: Props) => {
     <div>
       <PanelTitle>
         {t("{{ kommuneNavn }} kommune", {
-          kommuneNavn: getNavnInSpraak(kommune.administrativenhetnavn, "nor"),
+          kommuneNavn: getNavnInSpraak(kommune.navn, "nor"),
         })}
       </PanelTitle>
       <PanelTitle>{t("inndelinger.Grunnkretser")}</PanelTitle>
@@ -41,7 +37,10 @@ const GrunnkretserPanel = ({ kommuneId }: Props) => {
         </thead>
         <tbody>
           {grunnkretserByKommune?.map((grunnkrets) => (
-            <GrunnkretsRow key={grunnkrets.id} grunnkrets={grunnkrets} />
+            <tr key={grunnkrets.id}>
+              <td>{getNavnInSpraak(grunnkrets.navn, "nor")}</td>
+              <td>{grunnkrets.grunnkretsnummer}</td>
+            </tr>
           ))}
         </tbody>
       </GrunnkretsTable>

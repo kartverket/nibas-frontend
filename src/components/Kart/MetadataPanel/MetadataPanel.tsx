@@ -15,10 +15,10 @@ const MetadataPanel = () => {
   return (
     <Panel>
       {panelContext.content === "grensemetadata" && (
-        <GrensePanel feature={panelContext.data} />
+        <GrensePanel feature={panelContext.feature} />
       )}
       {panelContext.content === "grunnkretser" && (
-        <GrunnkretserPanel kommuneId={panelContext.data} />
+        <GrunnkretserPanel kommune={panelContext.kommune} />
       )}
       <div>
         <Button onClick={closePanel}>{t("action.Lukk")}</Button>

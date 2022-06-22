@@ -27,7 +27,7 @@ const Kommune = ({ kommune }: Props) => {
       visible: true,
       editing: true,
     });
-    openPanel({ content: "grunnkretser", data: kommune.id });
+    openPanel({ content: "grunnkretser", kommune });
 
     // hvis ikke endret fra før, endre nå
     if (!kommuneValues.editing) {

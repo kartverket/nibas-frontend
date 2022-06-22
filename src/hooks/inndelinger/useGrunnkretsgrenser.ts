@@ -32,15 +32,10 @@ const useGrunnkretsgrenser = (kommuneId: string) => {
   const { visible } = useEditGrenseValue("grunnkrets", kommuneId);
   const { tokenHolderFunc } = useAuthenticationFlow();
 
-  // denne blir unødvendig når vi kan hende grunnkretser med kommuneId i stedet
-  const { data: kommune } = useNibasApi(visible ? "/v1/kommuner/{id}" : null, {
-    id: kommuneId,
-  });
-
   const { data: grunnkretserByKommune } = useNibasApi(
-    kommune ? "/v1/grunnkretser" : null,
+    visible ? "/v1/kommuner/{id}/grunnkretser" : null,
     {
-      kommunenummer: kommune?.kommunenummer.id,
+      id: kommuneId,
     }
   );
 
