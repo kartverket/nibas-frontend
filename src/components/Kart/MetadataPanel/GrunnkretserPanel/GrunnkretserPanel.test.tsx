@@ -1,12 +1,13 @@
 import { render, screen, waitFor } from "test/test-utils";
 import GrunnkretserPanel from "./GrunnkretserPanel";
+import { mockKommuner } from "mocks/handlers/responses";
 
 const defaultProps: React.ComponentProps<typeof GrunnkretserPanel> = {
-  kommuneId: "1",
+  kommune: mockKommuner[0],
 };
 
 describe("GrunnkretserPanel", () => {
-  it("should render kommunes grunnkrets in table", async () => {
+  it("should render kommunes grunnkretser in table", async () => {
     render(<GrunnkretserPanel {...defaultProps} />);
 
     expect(await screen.findByRole("table")).toBeInTheDocument();
