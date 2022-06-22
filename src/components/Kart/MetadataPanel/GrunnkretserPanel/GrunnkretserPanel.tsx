@@ -15,7 +15,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
   const { t } = useTranslation();
 
   const { data: grunnkretserByKommune } = useNibasApi(
-    kommune ? "/v1/kommuner/{id}/grunnkretser" : null,
+    "/v1/kommuner/{id}/grunnkretser",
     {
       id: kommune.id,
     }
@@ -31,22 +31,24 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
         })}
       </PanelTitle>
       <PanelTitle>{t("inndelinger.Grunnkretser")}</PanelTitle>
-      <GrunnkretsTable>
-        <thead>
-          <tr>
-            <th>{t("tabell.Navn")}</th>
-            <th>{t("grunnkrets.Grunnkretsnummer")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sortedGrunnkretser?.map((grunnkrets) => (
-            <tr key={grunnkrets.id}>
-              <td>{getNavnInSpraak(grunnkrets.navn, "nor")}</td>
-              <td>{grunnkrets.grunnkretsnummer}</td>
+      {sortedGrunnkretser && (
+        <GrunnkretsTable>
+          <thead>
+            <tr>
+              <th>{t("tabell.Navn")}</th>
+              <th>{t("grunnkrets.Grunnkretsnummer")}</th>
             </tr>
-          ))}
-        </tbody>
-      </GrunnkretsTable>
+          </thead>
+          <tbody>
+            {sortedGrunnkretser.map((grunnkrets) => (
+              <tr key={grunnkrets.id}>
+                <td>{getNavnInSpraak(grunnkrets.navn, "nor")}</td>
+                <td>{grunnkrets.grunnkretsnummer}</td>
+              </tr>
+            ))}
+          </tbody>
+        </GrunnkretsTable>
+      )}
     </div>
   );
 };
