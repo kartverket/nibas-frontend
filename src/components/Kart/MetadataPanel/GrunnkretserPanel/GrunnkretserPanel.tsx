@@ -2,7 +2,10 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import useNibasApi from "hooks/useNibasApi";
 import { KommuneRef } from "types/api";
-import { getNavnInSpraak } from "utils/language/language";
+import {
+  getNavnInSpraak,
+  sortGrenserAlphabetically,
+} from "utils/language/language";
 
 type Props = {
   kommune: KommuneRef;
@@ -18,7 +21,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
     }
   );
 
-  if (!kommune) return null;
+  const sortedGrunnkretser = sortGrenserAlphabetically(grunnkretserByKommune);
 
   return (
     <div>
@@ -36,7 +39,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
           </tr>
         </thead>
         <tbody>
-          {grunnkretserByKommune?.map((grunnkrets) => (
+          {sortedGrunnkretser?.map((grunnkrets) => (
             <tr key={grunnkrets.id}>
               <td>{getNavnInSpraak(grunnkrets.navn, "nor")}</td>
               <td>{grunnkrets.grunnkretsnummer}</td>
