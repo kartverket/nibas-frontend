@@ -43,7 +43,7 @@ const useSelectInteraction = () => {
         overlayPopup.setPosition(getOverlayPosition(selectedFeature));
       } else {
         overlayPopup.setPosition(undefined);
-        openPanel({ content: "grensemetadata", data: selectedFeature });
+        openPanel({ content: "grensemetadata", feature: selectedFeature });
       }
     } else {
       closePanel();

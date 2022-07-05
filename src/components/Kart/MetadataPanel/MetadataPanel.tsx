@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { KartInteractable } from "../KartInteractable";
 import GrensePanel from "./GrensePanel";
+import GrunnkretserPanel from "./GrunnkretserPanel";
 import Button from "components/form/Button";
 import { useMetadataPanel } from "contexts/MetadataPanelContext";
 
@@ -14,7 +15,10 @@ const MetadataPanel = () => {
   return (
     <Panel>
       {panelContext.content === "grensemetadata" && (
-        <GrensePanel data={panelContext.data} />
+        <GrensePanel feature={panelContext.feature} />
+      )}
+      {panelContext.content === "grunnkretser" && (
+        <GrunnkretserPanel kommune={panelContext.kommune} />
       )}
       <div>
         <Button onClick={closePanel}>{t("action.Lukk")}</Button>

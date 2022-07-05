@@ -10,16 +10,16 @@ export const editingTypeByKontekstType = {
 
 const useIsMetadataDisabled = (properties: FeatureProperties) => {
   const { values } = useEditGrenser(
-    editingTypeByKontekstType[properties.kontekstEgenskaper?.type ?? "FYLKE"]
+    properties.inndelingerKontekst?.type ?? "fylke"
   );
 
-  const featureKontekstId = properties.kontekstEgenskaper?.id;
+  const featureKontekstId = properties.inndelingerKontekst?.id;
 
   if (!featureKontekstId) return true;
 
   const value = values[featureKontekstId];
 
-  return (value?.visible && !value?.editing) ?? false;
+  return (value?.visible && !value?.editing) ?? true;
 };
 
 export default useIsMetadataDisabled;

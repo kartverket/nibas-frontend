@@ -48,15 +48,15 @@ type ResponseType<Path extends ApiPath> = paths[Path] extends {
  * @returns Resultatet fra useSWR(url)
  */
 const useNibasApi = <Path extends ApiPath>(
-  url: Path,
+  url: Path | null,
   params?: GetParameters<Path>
 ) => {
   const { tokenHolderFunc } = useAuthenticationFlow();
 
-  let modifiedUrl: string = url;
+  let modifiedUrl: string | null = url;
 
   // gå gjennom alle parametere til Path og bytt de ut i urlen
-  if (params) {
+  if (params && modifiedUrl !== null) {
     const pathRegex = /{(\w+)}/i;
     const paramKeys = Object.keys(params);
     let pathParams = "";

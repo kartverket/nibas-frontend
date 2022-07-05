@@ -64,6 +64,10 @@ export interface paths {
     /** Henter en gitt historisk revisjon av en kommune */
     get: operations["hentKommuneRevisjon"];
   };
+  "/v1/kommuner/{id}/grunnkretser": {
+    /** Henter alle grunnkretser som tilhører en kommune. */
+    get: operations["hentKommunesGrunnkretser"];
+  };
   "/v1/kommuner/{id}/grenser": {
     /** Henter grensene til en kommune med gitt id */
     get: operations["hentGrenser_1"];
@@ -95,10 +99,6 @@ export interface paths {
   "/v1/kodeliste/fastsettingstyper": {
     get: operations["fetchFastsettingstyper"];
   };
-  "/v1/grunnkretser": {
-    /** Henter alle grunnkretser i Nasjonal inndelingsbase. */
-    get: operations["hentAlle_2"];
-  };
   "/v1/grunnkretser/{id}/revisjoner": {
     /** Henter historiske revisjoner til en grunnkrets med gitt id */
     get: operations["hentGrunnkretsRevisjoner"];
@@ -111,93 +111,21 @@ export interface paths {
     /** Henter grensene til en grunnkrets med gitt id */
     get: operations["hentGrenser_2"];
   };
-  "/v1/grenser/territorialgrenser/{id}": {
-    /** Henter territorialgrense med gitt id */
-    get: operations["hentTerritorialsgrense"];
+  "/v1/grenser/{id}": {
+    /** Henter grense med gitt id */
+    get: operations["hentGrense"];
   };
-  "/v1/grenser/territorialgrenser/{id}/revisjoner": {
-    /** Henter historiske revisjoner for territorialgrense med gitt id */
-    get: operations["hentTerritorialgrenseRevisjoner"];
+  "/v1/grenser/{id}/revisjoner": {
+    /** Henter historiske revisjoner for grense med gitt id */
+    get: operations["hentGrenseRevisjoner"];
   };
-  "/v1/grenser/territorialgrenser/{id}/revisjoner/{revisjon}": {
-    /** Henter gitt historisk revisjon for gitt territorialgrense */
-    get: operations["hentTerritorialgrenseRevisjon"];
-  };
-  "/v1/grenser/riksgrenser/{id}": {
-    /** Henter riksgrense med gitt id */
-    get: operations["hentRiksgrense"];
-  };
-  "/v1/grenser/riksgrenser/{id}/revisjoner": {
-    /** Henter historiske revisjoner for riksgrense med gitt id */
-    get: operations["hentRiksgrenseRevisjoner"];
-  };
-  "/v1/grenser/riksgrenser/{id}/revisjoner/{revisjon}": {
-    /** Henter gitt historisk revisjon for gitt riksgrense */
-    get: operations["hentRiksgrenseRevisjon"];
-  };
-  "/v1/grenser/kommunegrenser/{id}": {
-    /** Henter kommunegrense med gitt id */
-    get: operations["hentKommunegrense"];
-  };
-  "/v1/grenser/kommunegrenser/{id}/revisjoner": {
-    /** Henter historiske revisjoner for kommunegrense med gitt id */
-    get: operations["hentKommunegrenseRevisjoner"];
-  };
-  "/v1/grenser/kommunegrenser/{id}/revisjoner/{revisjon}": {
-    /** Henter gitt historisk revisjon for gitt kommunegrense */
-    get: operations["hentKommunegrenseRevisjon"];
-  };
-  "/v1/grenser/grunnkretsgrenser/{id}": {
-    /** Henter grunnkretsgrense med gitt id */
-    get: operations["hentGrunnkretsgrense"];
-  };
-  "/v1/grenser/grunnkretsgrenser/{id}/revisjoner": {
-    /** Henter historiske revisjoner for grunnkretsgrense med gitt id */
-    get: operations["hentGrunnkretsgrenseRevisjoner"];
-  };
-  "/v1/grenser/grunnkretsgrenser/{id}/revisjoner/{revisjon}": {
-    /** Henter gitt historisk revisjon for gitt grunnkretsgrense */
-    get: operations["hentGrunnkretsgrenseRevisjon"];
-  };
-  "/v1/grenser/fylkesgrenser/{id}": {
-    /** Henter fylkesgrense med gitt id */
-    get: operations["hentFylkesgrense"];
-  };
-  "/v1/grenser/fylkesgrenser/{id}/revisjoner": {
-    /** Henter historiske revisjoner for fylkesgrense med gitt id */
-    get: operations["hentFylkesgrenseRevisjoner"];
-  };
-  "/v1/grenser/fylkesgrenser/{id}/revisjoner/{revisjon}": {
-    /** Henter gitt historisk revisjon for gitt fylkesgrense */
-    get: operations["hentFylkesgrenseRevisjon"];
-  };
-  "/v1/grenser/delomraadegrenser/{id}": {
-    /** Henter delområdegrense med gitt id */
-    get: operations["hentDelomraadegrense"];
-  };
-  "/v1/grenser/delomraadegrenser/{id}/revisjoner": {
-    /** Henter historiske revisjoner for delområdegrense med gitt id */
-    get: operations["hentDelomraadegrenseRevisjoner"];
-  };
-  "/v1/grenser/delomraadegrenser/{id}/revisjoner/{revisjon}": {
-    /** Henter gitt historisk revisjon for gitt delområdegrense */
-    get: operations["hentDelomraadegrenseRevisjon"];
-  };
-  "/v1/grenser/avtaltavgrensningslinjer/{id}": {
-    /** Henter avtalt avgrensningslinje med gitt id */
-    get: operations["hentAvtaltavgrensningslinje"];
-  };
-  "/v1/grenser/avtaltavgrensningslinjer/{id}/revisjoner": {
-    /** Henter historiske revisjoner for avtalt avgrensningslinje med gitt id */
-    get: operations["hentAvtaltavgrensningslinjeRevisjoner"];
-  };
-  "/v1/grenser/avtaltavgrensningslinjer/{id}/revisjoner/{revisjon}": {
-    /** Henter gitt historisk revisjon for gitt avtalt avgrensningslinje */
-    get: operations["hentAvtaltavgrensningslinjeRevisjon"];
+  "/v1/grenser/{id}/revisjoner/{revisjon}": {
+    /** Henter gitt historisk revisjon for gitt grense */
+    get: operations["hentGrenseRevisjon"];
   };
   "/v1/fylker": {
     /** Henter alle fylker i Nasjonal inndelingsbase. */
-    get: operations["hentAlle_3"];
+    get: operations["hentAlle_2"];
   };
   "/v1/fylker/{id}/revisjoner": {
     /** Henter historiske revisjoner til et fylke med gitt id */
@@ -372,6 +300,12 @@ export interface components {
       metadata?: components["schemas"]["Metadata"];
       kontekstEgenskaper?: components["schemas"]["KontekstEgenskaper"];
     };
+    /** @description Metadata for en flate (felles for nasjon, fylke, kommune og grunnkrets) */
+    FlateMetadata: components["schemas"]["Metadata"] & {
+      common?: components["schemas"]["CommonMetadata"];
+    } & {
+      common: unknown;
+    };
     /** @description Geometrien til denne featuren. */
     Geometry: {
       envelope?: components["schemas"]["Geometry"];
@@ -381,11 +315,11 @@ export interface components {
       length?: number;
       empty?: boolean;
       valid?: boolean;
-      /** Format: int32 */
-      dimension?: number;
       simple?: boolean;
       /** Format: int32 */
       srid?: number;
+      /** Format: int32 */
+      dimension?: number;
       geometryType?: string;
       /** Format: int32 */
       numGeometries?: number;
@@ -458,7 +392,7 @@ export interface components {
        * @description Hvilken kontekst geometrien skal sees i
        * @enum {string}
        */
-      type?: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS";
+      type?: "GRUNNKRETS" | "STEMMEKRETS";
       /** @description Angir om grensen skal leses med klokken for å danne flate. */
       retningMedKlokken: boolean;
       /**
@@ -521,13 +455,13 @@ export interface components {
       userData?: { [key: string]: unknown };
       coordinates?: components["schemas"]["Coordinate"][];
       empty?: boolean;
-      /** Format: int32 */
-      dimension?: number;
       /** Format: double */
       x?: number;
       /** Format: double */
       y?: number;
       simple?: boolean;
+      /** Format: int32 */
+      dimension?: number;
       geometryType?: string;
       coordinateSequence?: components["schemas"]["CoordinateSequence"];
       coordinate?: components["schemas"]["Coordinate"];
@@ -605,7 +539,7 @@ export interface components {
       /** @description Angir hvem som endret data på objektet sist. */
       endretAv?: string;
     };
-    /** @description Spesifikk metadata for en statistisk grense (grunnkrets/delområde). Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Diagram/Index/EAID_A3C68E12_E409_42c0_937D_6C1B62351E42 */
+    /** @description Spesifikk metadata for en statistisk grense (grunnkrets/delområde). Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Objekttype/Index/EAID_374BE5B3_5F8B_498a_8F53_9CCA72619C36 */
     StatistiskgrenseMetadata: components["schemas"]["Metadata"] & {
       common?: components["schemas"]["CommonMetadata"];
       commonGrense?: components["schemas"]["CommonGrenseMetadata"];
@@ -776,6 +710,17 @@ export interface components {
       /** @description URL til full representasjon av kommunen */
       href: string;
     };
+    /** @description En referanse til en grunnkrets */
+    GrunnkretsRef: {
+      /** @description ID-en til grunnkretser */
+      id: string;
+      /** @description Navnet på grunnkretser */
+      navn: string;
+      /** @description URL til full representasjon av grunnkretsen */
+      href: string;
+      /** @description Nummeret til grunnkretsen */
+      grunnkretsnummer: string;
+    };
     /** @description Liste av kodeliste-elementer. */
     KodelisteItem: {
       /** @description Id til kodeliste-innslaget. */
@@ -800,15 +745,6 @@ export interface components {
         | "GRENSESTATUS";
       /** @description Liste av kodeliste-elementer. */
       items: components["schemas"]["KodelisteItem"][];
-    };
-    /** @description En referanse til en grunnkrets */
-    GrunnkretsRef: {
-      /** @description ID-en til grunnkretser */
-      id: string;
-      /** @description Navnet på grunnkretser */
-      navn: string;
-      /** @description URL til full representasjon av grunnkretsen */
-      href: string;
     };
     /** @description En referanse til et fylke */
     FylkeRef: {
@@ -1021,6 +957,11 @@ export interface operations {
     };
   };
   importer: {
+    parameters: {
+      query: {
+        fylker?: string[];
+      };
+    };
     responses: {
       /** OK */
       200: {
@@ -1186,6 +1127,23 @@ export interface operations {
       };
     };
   };
+  /** Henter alle grunnkretser som tilhører en kommune. */
+  hentKommunesGrunnkretser: {
+    parameters: {
+      path: {
+        /** ID til kommunen man vil hente grunnkretsene til */
+        id: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["GrunnkretsRef"][];
+        };
+      };
+    };
+  };
   /** Henter grensene til en kommune med gitt id */
   hentGrenser_1: {
     parameters: {
@@ -1299,23 +1257,6 @@ export interface operations {
       };
     };
   };
-  /** Henter alle grunnkretser i Nasjonal inndelingsbase. */
-  hentAlle_2: {
-    parameters: {
-      query: {
-        /** Valgfri kommunenummer til en kommune for å filtrere grunnkretser innenfor en kommune */
-        kommunenummer?: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["GrunnkretsRef"][];
-        };
-      };
-    };
-  };
   /** Henter historiske revisjoner til en grunnkrets med gitt id */
   hentGrunnkretsRevisjoner: {
     parameters: {
@@ -1381,11 +1322,11 @@ export interface operations {
       };
     };
   };
-  /** Henter territorialgrense med gitt id */
-  hentTerritorialsgrense: {
+  /** Henter grense med gitt id */
+  hentGrense: {
     parameters: {
       path: {
-        /** ID-en til territorialgrensen man vil hente */
+        /** ID-en til grensen man vil hente */
         id: string;
       };
     };
@@ -1404,11 +1345,11 @@ export interface operations {
       };
     };
   };
-  /** Henter historiske revisjoner for territorialgrense med gitt id */
-  hentTerritorialgrenseRevisjoner: {
+  /** Henter historiske revisjoner for grense med gitt id */
+  hentGrenseRevisjoner: {
     parameters: {
       path: {
-        /** ID-en til territorialgrensen man vil hente */
+        /** ID-en til grensen man vil hente */
         id: string;
       };
     };
@@ -1421,401 +1362,11 @@ export interface operations {
       };
     };
   };
-  /** Henter gitt historisk revisjon for gitt territorialgrense */
-  hentTerritorialgrenseRevisjon: {
+  /** Henter gitt historisk revisjon for gitt grense */
+  hentGrenseRevisjon: {
     parameters: {
       path: {
-        /** ID til territorialgrensen man vil hente */
-        id: string;
-        /** ID til revisjonen man vil hente */
-        revisjon: number;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["Feature"];
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "*/*": components["schemas"]["Feature"];
-        };
-      };
-    };
-  };
-  /** Henter riksgrense med gitt id */
-  hentRiksgrense: {
-    parameters: {
-      path: {
-        /** ID-en til riksgrensen man vil hente */
-        id: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["Feature"];
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "*/*": components["schemas"]["Feature"];
-        };
-      };
-    };
-  };
-  /** Henter historiske revisjoner for riksgrense med gitt id */
-  hentRiksgrenseRevisjoner: {
-    parameters: {
-      path: {
-        /** ID-en til riksgrensen man vil hente */
-        id: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["RevisjonRef"][];
-        };
-      };
-    };
-  };
-  /** Henter gitt historisk revisjon for gitt riksgrense */
-  hentRiksgrenseRevisjon: {
-    parameters: {
-      path: {
-        /** ID til riksgrense man vil hente */
-        id: string;
-        /** ID til revisjonen man vil hente */
-        revisjon: number;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["Feature"];
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "*/*": components["schemas"]["Feature"];
-        };
-      };
-    };
-  };
-  /** Henter kommunegrense med gitt id */
-  hentKommunegrense: {
-    parameters: {
-      path: {
-        /** ID-en til kommunegrensen man vil hente */
-        id: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["Feature"];
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "*/*": components["schemas"]["Feature"];
-        };
-      };
-    };
-  };
-  /** Henter historiske revisjoner for kommunegrense med gitt id */
-  hentKommunegrenseRevisjoner: {
-    parameters: {
-      path: {
-        /** ID-en til kommunegrensen man vil hente */
-        id: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["RevisjonRef"][];
-        };
-      };
-    };
-  };
-  /** Henter gitt historisk revisjon for gitt kommunegrense */
-  hentKommunegrenseRevisjon: {
-    parameters: {
-      path: {
-        /** ID til kommunegrensen man vil hente */
-        id: string;
-        /** ID til revisjonen man vil hente */
-        revisjon: number;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["Feature"];
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "*/*": components["schemas"]["Feature"];
-        };
-      };
-    };
-  };
-  /** Henter grunnkretsgrense med gitt id */
-  hentGrunnkretsgrense: {
-    parameters: {
-      path: {
-        /** ID-en til grunnkretsgrensen man vil hente */
-        id: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["Feature"];
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "*/*": components["schemas"]["Feature"];
-        };
-      };
-    };
-  };
-  /** Henter historiske revisjoner for grunnkretsgrense med gitt id */
-  hentGrunnkretsgrenseRevisjoner: {
-    parameters: {
-      path: {
-        /** ID-en til grunnkretsgrensen man vil hente */
-        id: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["RevisjonRef"][];
-        };
-      };
-    };
-  };
-  /** Henter gitt historisk revisjon for gitt grunnkretsgrense */
-  hentGrunnkretsgrenseRevisjon: {
-    parameters: {
-      path: {
-        /** ID til grunnkretsgrensen man vil hente */
-        id: string;
-        /** ID til revisjonen man vil hente */
-        revisjon: number;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["Feature"];
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "*/*": components["schemas"]["Feature"];
-        };
-      };
-    };
-  };
-  /** Henter fylkesgrense med gitt id */
-  hentFylkesgrense: {
-    parameters: {
-      path: {
-        /** ID-en til fylkesgrensen man vil hente */
-        id: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["Feature"];
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "*/*": components["schemas"]["Feature"];
-        };
-      };
-    };
-  };
-  /** Henter historiske revisjoner for fylkesgrense med gitt id */
-  hentFylkesgrenseRevisjoner: {
-    parameters: {
-      path: {
-        /** ID-en til fylkesgrensen man vil hente */
-        id: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["RevisjonRef"][];
-        };
-      };
-    };
-  };
-  /** Henter gitt historisk revisjon for gitt fylkesgrense */
-  hentFylkesgrenseRevisjon: {
-    parameters: {
-      path: {
-        /** ID til fylkesgrensen man vil hente */
-        id: string;
-        /** ID til revisjonen man vil hente */
-        revisjon: number;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["Feature"];
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "*/*": components["schemas"]["Feature"];
-        };
-      };
-    };
-  };
-  /** Henter delområdegrense med gitt id */
-  hentDelomraadegrense: {
-    parameters: {
-      path: {
-        /** ID-en til delområdegrensen man vil hente */
-        id: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["Feature"];
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "*/*": components["schemas"]["Feature"];
-        };
-      };
-    };
-  };
-  /** Henter historiske revisjoner for delområdegrense med gitt id */
-  hentDelomraadegrenseRevisjoner: {
-    parameters: {
-      path: {
-        /** ID-en til delområdegrensen man vil hente */
-        id: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["RevisjonRef"][];
-        };
-      };
-    };
-  };
-  /** Henter gitt historisk revisjon for gitt delområdegrense */
-  hentDelomraadegrenseRevisjon: {
-    parameters: {
-      path: {
-        /** ID til delområdegrensen man vil hente */
-        id: string;
-        /** ID til revisjonen man vil hente */
-        revisjon: number;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["Feature"];
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "*/*": components["schemas"]["Feature"];
-        };
-      };
-    };
-  };
-  /** Henter avtalt avgrensningslinje med gitt id */
-  hentAvtaltavgrensningslinje: {
-    parameters: {
-      path: {
-        /** ID-en til fylket man vil hente */
-        id: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["Feature"];
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "*/*": components["schemas"]["Feature"];
-        };
-      };
-    };
-  };
-  /** Henter historiske revisjoner for avtalt avgrensningslinje med gitt id */
-  hentAvtaltavgrensningslinjeRevisjoner: {
-    parameters: {
-      path: {
-        /** ID-en til den avtale avgrensningslinjen man vil hente */
-        id: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["RevisjonRef"][];
-        };
-      };
-    };
-  };
-  /** Henter gitt historisk revisjon for gitt avtalt avgrensningslinje */
-  hentAvtaltavgrensningslinjeRevisjon: {
-    parameters: {
-      path: {
-        /** ID til avtaltavgrensningslinje man vil hente */
+        /** ID til grensen man vil hente */
         id: string;
         /** ID til revisjonen man vil hente */
         revisjon: number;
@@ -1837,7 +1388,7 @@ export interface operations {
     };
   };
   /** Henter alle fylker i Nasjonal inndelingsbase. */
-  hentAlle_3: {
+  hentAlle_2: {
     responses: {
       /** Successful operation */
       200: {
