@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
@@ -57,6 +57,18 @@ const useGrunnkretsgrenser = (kommuneId: string) => {
 
     return features;
   }, [grunnkretsgrenserGeoJsons]);
+
+  useEffect(() => {
+    allFeatures?.forEach((feature) => {
+      feature.setProperties({
+        ...feature.getProperties(),
+        inndelingerKontekst: {
+          id: kommuneId,
+          type: "grunnkrets",
+        },
+      });
+    });
+  }, [allFeatures, kommuneId]);
 
   const setLayerToAddTo = useAsyncFeatures(allFeatures);
 

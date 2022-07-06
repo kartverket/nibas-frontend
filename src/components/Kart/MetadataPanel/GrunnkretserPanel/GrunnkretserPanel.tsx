@@ -80,7 +80,7 @@ const GrunnkretsTable = styled.table`
     tr {
       background-color: ${({ theme }) => theme.colors.blueLight};
 
-      &:nth-child(2) {
+      &:nth-child(2n) {
         background-color: ${({ theme }) => theme.colors.white};
       }
 
