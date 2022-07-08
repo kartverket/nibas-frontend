@@ -17,7 +17,7 @@ const MetadataPanel = () => {
       {panelContext.content === "grensemetadata" && (
         <GrensePanel feature={panelContext.feature} />
       )}
-      {panelContext.content === "grunnkretser" && (
+      {panelContext.content === "grunnkrets" && (
         <GrunnkretserPanel kommune={panelContext.kommune} />
       )}
       <div>
