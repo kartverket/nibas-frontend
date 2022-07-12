@@ -5,28 +5,31 @@ import Geometry from "ol/geom/Geometry";
 import useSWR from "swr";
 import useNibasApi from "../useNibasApi";
 import { useEditGrenseValue } from "contexts/EditGrenserContext";
+import { Kretstype } from "contexts/InndelingerKretsContext";
 import { LayerId } from "hooks/layers/types";
 import useAsyncFeatures from "hooks/useAsyncFeatures";
-import { GrunnkretsRef, KretsRef } from "types/api";
+import { KretsRef } from "types/api";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 import { removeFeaturesFromSourceByIds } from "utils/map/source";
 import { fetcherWithToken } from "utils/swr";
-import { Kretstype } from "contexts/InndelingerKretsContext";
 
 const mapGrunnkretserToIds = (kretser?: KretsRef[]) =>
   kretser?.map((krets) => krets.id);
 
-// fetch alle grunnkretsgrenser i en kommune
-const grunnkretserByKommuneFetcher = async (
-  grunnkretsIds: string[],
-  token: string | undefined
+// fetch alle kretsgrenser i en kommune
+const kretserByKommuneFetcher = async (
+  kretsIds: string[],
+  token: string | undefined,
+  type: Kretstype
 ) => {
-  const grunnkretsFeaturesPromises: Promise<string>[] = grunnkretsIds.map(
-    async (grunnkretsId) =>
-      fetcherWithToken(`/v1/grunnkretser/${grunnkretsId}/grenser`, token)
+  const typeUrl = type === "grunnkrets" ? "grunnkretser" : "stemmekretser";
+
+  const kretsFeaturesPromises: Promise<string>[] = kretsIds.map(
+    async (kretsId) =>
+      fetcherWithToken(`/v1/${typeUrl}/${kretsId}/grenser`, token)
   );
 
-  return Promise.all(grunnkretsFeaturesPromises);
+  return Promise.all(kretsFeaturesPromises);
 };
 
 const getKretserByKommuneUrl = (type: Kretstype) => {
@@ -50,8 +53,8 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   );
 
   const { data: grenserGeoJsons } = useSWR(
-    [mapGrunnkretserToIds(kretserByKommune), tokenHolderFunc()?.token],
-    grunnkretserByKommuneFetcher
+    [mapGrunnkretserToIds(kretserByKommune), tokenHolderFunc()?.token, type],
+    kretserByKommuneFetcher
   );
 
   const allFeatures = useMemo(() => {
