@@ -7,13 +7,14 @@ import useNibasApi from "../useNibasApi";
 import { useEditGrenseValue } from "contexts/EditGrenserContext";
 import { LayerId } from "hooks/layers/types";
 import useAsyncFeatures from "hooks/useAsyncFeatures";
-import { GrunnkretsRef } from "types/api";
+import { GrunnkretsRef, KretsRef } from "types/api";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 import { removeFeaturesFromSourceByIds } from "utils/map/source";
 import { fetcherWithToken } from "utils/swr";
+import { Kretstype } from "contexts/InndelingerKretsContext";
 
-const mapGrunnkretserToIds = (grunnkretser?: GrunnkretsRef[]) =>
-  grunnkretser?.map((grunnkrets) => grunnkrets.id);
+const mapGrunnkretserToIds = (kretser?: KretsRef[]) =>
+  kretser?.map((krets) => krets.id);
 
 // fetch alle grunnkretsgrenser i en kommune
 const grunnkretserByKommuneFetcher = async (
@@ -28,35 +29,44 @@ const grunnkretserByKommuneFetcher = async (
   return Promise.all(grunnkretsFeaturesPromises);
 };
 
-const useGrunnkretsgrenser = (kommuneId: string) => {
-  const { visible } = useEditGrenseValue("grunnkrets", kommuneId);
+const getKretserByKommuneUrl = (type: Kretstype) => {
+  if (type === "grunnkrets") {
+    return "/v1/kommuner/{id}/grunnkretser";
+  }
+
+  // her må det være stemmekrets
+  return "/v1/kommuner/{id}/stemmekretser";
+};
+
+const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
+  const { visible } = useEditGrenseValue(type, kommuneId);
   const { tokenHolderFunc } = useAuthenticationFlow();
 
-  const { data: grunnkretserByKommune } = useNibasApi(
-    visible ? "/v1/kommuner/{id}/grunnkretser" : null,
+  const { data: kretserByKommune } = useNibasApi(
+    visible ? getKretserByKommuneUrl(type) : null,
     {
       id: kommuneId,
     }
   );
 
-  const { data: grunnkretsgrenserGeoJsons } = useSWR(
-    [mapGrunnkretserToIds(grunnkretserByKommune), tokenHolderFunc()?.token],
+  const { data: grenserGeoJsons } = useSWR(
+    [mapGrunnkretserToIds(kretserByKommune), tokenHolderFunc()?.token],
     grunnkretserByKommuneFetcher
   );
 
   const allFeatures = useMemo(() => {
-    if (!grunnkretsgrenserGeoJsons) return null;
+    if (!grenserGeoJsons) return null;
 
     const features: Feature<Geometry>[] = [];
 
-    grunnkretsgrenserGeoJsons?.forEach((geoJson) => {
+    grenserGeoJsons?.forEach((geoJson) => {
       getFeaturesFromGeoJson(geoJson).forEach((feature) => {
         features.push(feature);
       });
     });
 
     return features;
-  }, [grunnkretsgrenserGeoJsons]);
+  }, [grenserGeoJsons]);
 
   useEffect(() => {
     allFeatures?.forEach((feature) => {
@@ -64,28 +74,28 @@ const useGrunnkretsgrenser = (kommuneId: string) => {
         ...feature.getProperties(),
         inndelingerKontekst: {
           id: kommuneId,
-          type: "grunnkrets",
+          type,
         },
       });
     });
-  }, [allFeatures, kommuneId]);
+  }, [allFeatures, kommuneId, type]);
 
   const setLayerToAddTo = useAsyncFeatures(allFeatures);
 
-  const addGrunnkretserToLayer = (layerId: LayerId) => {
+  const addKretserToLayer = (layerId: LayerId) => {
     setLayerToAddTo(layerId);
   };
 
-  const removeGrunnkretserFromLayer = (layerId: LayerId) => {
+  const removeKretserFromLayer = (layerId: LayerId) => {
     if (!allFeatures) return;
 
     removeFeaturesFromSourceByIds(layerId, allFeatures);
   };
 
   return {
-    addGrunnkretserToLayer,
-    removeGrunnkretserFromLayer,
+    addKretserToLayer,
+    removeKretserFromLayer,
   };
 };
 
-export default useGrunnkretsgrenser;
+export default useKretsgrenser;

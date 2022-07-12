@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
+import KommuneList from "../Kretser/KommuneList";
 import ListItemAccordion from "../ListItemAccordion";
-import KommuneList from "./KommuneList";
 import { UnstyledList } from "components/UnstyledList";
 import { InndelingerKretsProvider } from "contexts/InndelingerKretsContext";
 import useFylker from "hooks/inndelinger/useFylker";

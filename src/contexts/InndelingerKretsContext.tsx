@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useEditGrenser } from "./EditGrenserContext";
 import { useMetadataPanel } from "./MetadataPanelContext";
-import useGrunnkretsgrenser from "hooks/inndelinger/useGrunnkretsgrenser";
+import useKretsgrenser from "hooks/inndelinger/useKretsgrenser";
 import { LayerId } from "hooks/layers/types";
 import { KommuneRef } from "types/api";
 
-type Kretstype = "grunnkrets" | "stemmekrets";
+export type Kretstype = "grunnkrets" | "stemmekrets";
 
 const layerIdByKretstype: Record<Kretstype, LayerId> = {
   grunnkrets: "grunnkretser",
@@ -60,8 +60,10 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
 
   const { values, setObjectValue } = useEditGrenser(currentKretstype);
   const { openPanel, closePanel } = useMetadataPanel();
-  const { addGrunnkretserToLayer, removeGrunnkretserFromLayer } =
-    useGrunnkretsgrenser(kommune.id);
+  const { addKretserToLayer, removeKretserFromLayer } = useKretsgrenser(
+    kommune.id,
+    currentKretstype
+  );
 
   const kommuneValues = values[kommune.id] ?? {};
 
@@ -75,10 +77,10 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
     // hvis ikke endret fra før, endre nå
     if (!kommuneValues.editing) {
       if (kommuneValues.visible) {
-        removeGrunnkretserFromLayer(layerIdByKretstype[currentKretstype]);
+        removeKretserFromLayer(layerIdByKretstype[currentKretstype]);
       }
 
-      addGrunnkretserToLayer("edit");
+      addKretserToLayer("edit");
     }
   };
 
@@ -94,10 +96,10 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
       : layerIdByKretstype[currentKretstype];
 
     if (newVisible) {
-      addGrunnkretserToLayer(layerIdByKretstype[currentKretstype]);
+      addKretserToLayer(layerIdByKretstype[currentKretstype]);
     } else {
       // hvis ikke lenger skal være synlig
-      removeGrunnkretserFromLayer(layerId);
+      removeKretserFromLayer(layerId);
       closePanel();
     }
   };
