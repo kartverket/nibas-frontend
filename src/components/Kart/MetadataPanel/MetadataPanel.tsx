@@ -5,6 +5,7 @@ import GrensePanel from "./GrensePanel";
 import GrunnkretserPanel from "./GrunnkretserPanel";
 import Button from "components/form/Button";
 import { useMetadataPanel } from "contexts/MetadataPanelContext";
+import StemmekretserPanel from "./StemmekretserPanel";
 
 const MetadataPanel = () => {
   const { t } = useTranslation();
@@ -19,6 +20,9 @@ const MetadataPanel = () => {
       )}
       {panelContext.content === "grunnkrets" && (
         <GrunnkretserPanel kommune={panelContext.kommune} />
+      )}
+      {panelContext.content === "stemmekrets" && (
+        <StemmekretserPanel kommune={panelContext.kommune} />
       )}
       <div>
         <Button onClick={closePanel}>{t("action.Lukk")}</Button>

@@ -71,5 +71,5 @@ export type Metadata =
   | GrunnlinjeMetadata
   | RiksgrenseMetadata
   | TerritorialgrenseMetadata;
-export type GrenseRef = FylkeRef | KommuneRef | GrunnkretsRef;
 export type KretsRef = GrunnkretsRef | StemmekretsRef;
+export type GrenseRef = FylkeRef | KommuneRef | KretsRef;
