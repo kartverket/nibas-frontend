@@ -1,11 +1,11 @@
+import { useTranslation } from "react-i18next";
+import styled from "styled-components";
+import KommuneList from "../Kretser/KommuneList";
+import ListItemAccordion from "../ListItemAccordion";
 import { UnstyledList } from "components/UnstyledList";
 import { InndelingerKretsProvider } from "contexts/InndelingerKretsContext";
 import useFylker from "hooks/inndelinger/useFylker";
-import { useTranslation } from "react-i18next";
-import styled from "styled-components";
 import { getNavnInSpraak } from "utils/language/language";
-import KommuneList from "../Kretser/KommuneList";
-import ListItemAccordion from "../ListItemAccordion";
 
 const Stemmekretser = () => {
   const { fylker } = useFylker();

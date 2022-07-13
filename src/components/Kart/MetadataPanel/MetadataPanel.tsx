@@ -3,9 +3,9 @@ import styled from "styled-components";
 import { KartInteractable } from "../KartInteractable";
 import GrensePanel from "./GrensePanel";
 import GrunnkretserPanel from "./GrunnkretserPanel";
+import StemmekretserPanel from "./StemmekretserPanel";
 import Button from "components/form/Button";
 import { useMetadataPanel } from "contexts/MetadataPanelContext";
-import StemmekretserPanel from "./StemmekretserPanel";
 
 const MetadataPanel = () => {
   const { t } = useTranslation();
