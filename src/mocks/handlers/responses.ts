@@ -264,8 +264,8 @@ export const mockStemmekrets1: StemmekretsResponse = {
     versjonid: undefined,
   },
   kommunenummer: "c416fb1d-2124-4f71-8dfc-859c55feb437",
-  tellekretsnummer: undefined,
-  tellekretsnavn: undefined,
+  tellekretsnummer: "tellekretsnr1",
+  tellekretsnavn: "tellekretsnavn1",
   valgdistriktsnummer: "14",
   features: mockGeoJsonFeatureResponse,
 };
@@ -280,8 +280,8 @@ export const mockStemmekrets2: StemmekretsResponse = {
     versjonid: undefined,
   },
   kommunenummer: "ec64ba19-fb37-44d4-b579-407897f871ee",
-  tellekretsnummer: undefined,
-  tellekretsnavn: undefined,
+  tellekretsnummer: "tellekretsnr2",
+  tellekretsnavn: "tellekretsnavn2",
   valgdistriktsnummer: "16",
   features: mockGeoJsonFeatureResponse,
 };

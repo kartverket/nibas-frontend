@@ -26,6 +26,12 @@ describe("StemmekretserPanel", () => {
       await screen.findByRole("cell", { name: /16/i })
     ).toBeInTheDocument();
     expect(
+      await screen.findByRole("cell", { name: /tellekretsnr1/i })
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByRole("cell", { name: /tellekretsnavn1/i })
+    ).toBeInTheDocument();
+    expect(
       await screen.findByRole("cell", { name: /undredal/i })
     ).toBeInTheDocument();
     expect(
@@ -33,6 +39,12 @@ describe("StemmekretserPanel", () => {
     ).toBeInTheDocument();
     expect(
       await screen.findByRole("cell", { name: /14/i })
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByRole("cell", { name: /tellekretsnr2/i })
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByRole("cell", { name: /tellekretsnavn2/i })
     ).toBeInTheDocument();
   });
 });
