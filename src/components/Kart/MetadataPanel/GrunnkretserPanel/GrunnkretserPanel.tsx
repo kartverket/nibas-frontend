@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
+import { KretsTable } from "../KretsTable";
 import useNibasApi from "hooks/useNibasApi";
 import { KommuneRef } from "types/api";
 import {
@@ -32,7 +33,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
       </PanelTitle>
       <PanelTitle>{t("inndelinger.Grunnkretser")}</PanelTitle>
       {sortedGrunnkretser && (
-        <GrunnkretsTable>
+        <KretsTable>
           <thead>
             <tr>
               <th>{t("tabell.Navn")}</th>
@@ -47,7 +48,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
               </tr>
             ))}
           </tbody>
-        </GrunnkretsTable>
+        </KretsTable>
       )}
     </div>
   );
@@ -56,40 +57,6 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
 const PanelTitle = styled.h3`
   margin: 0;
   margin-bottom: 8px;
-`;
-
-const GrunnkretsTable = styled.table`
-  border-spacing: 0;
-  border: none;
-  width: 100%;
-
-  thead {
-    text-transform: uppercase;
-    text-align: left;
-    color: ${({ theme }) => theme.colors.gray};
-    font-size: 16px;
-
-    th {
-      border-bottom: 1px solid ${({ theme }) => theme.colors.black};
-      padding-left: 8px;
-      padding-bottom: 8px;
-    }
-  }
-
-  tbody {
-    tr {
-      background-color: ${({ theme }) => theme.colors.blueLight};
-
-      &:nth-child(2n) {
-        background-color: ${({ theme }) => theme.colors.white};
-      }
-
-      td {
-        padding: 8px;
-        font-size: 14px;
-      }
-    }
-  }
 `;
 
 export default GrunnkretserPanel;
