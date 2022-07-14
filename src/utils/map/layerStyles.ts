@@ -33,11 +33,27 @@ export const editStyle = new Style({
   }),
 });
 
+export const dirtyStyle = new Style({
+  stroke: new Stroke({
+    color: "#30FF00",
+  }),
+});
+
 export const editPointStyle = new Style({
   image: new Circle({
     radius: 3,
     fill: new Fill({
       color: "#FF00FF",
+    }),
+  }),
+  geometry: getPointsOnFeature,
+});
+
+export const dirtyPointStyle = new Style({
+  image: new Circle({
+    radius: 3,
+    fill: new Fill({
+      color: "#30FF00",
     }),
   }),
   geometry: getPointsOnFeature,
