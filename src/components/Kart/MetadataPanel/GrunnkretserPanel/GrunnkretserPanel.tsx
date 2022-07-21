@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import EditRow from "./EditRow";
+import Button from "components/form/Button";
 import useNibasApi from "hooks/useNibasApi";
+import { ReactComponent as CaretDown } from "icons/caretdown.svg";
+import { ReactComponent as CaretUp } from "icons/caretup.svg";
 import { GrunnkretsRef, KommuneRef } from "types/api";
 import {
   getNavnInSpraak,
@@ -71,7 +74,17 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                   <td>{getNavnInSpraak(grunnkrets.navn, "nor")}</td>
                   <td>{grunnkrets.grunnkretsnummer}</td>
                   <td>
-                    <button onClick={() => toggleRow(grunnkrets)}>Endre</button>
+                    <Button
+                      variant="unstyled"
+                      onClick={() => toggleRow(grunnkrets)}
+                      icon={
+                        openRows.includes(grunnkrets.id) ? (
+                          <CaretUp />
+                        ) : (
+                          <CaretDown />
+                        )
+                      }
+                    />
                   </td>
                 </KretsRow>
                 {openRows.includes(grunnkrets.id) && (
