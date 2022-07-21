@@ -14,7 +14,7 @@ import { getNavnInSpraak } from "utils/language/language";
 
 type Props = {
   grunnkrets: GrunnkretsRef;
-  postSubmit: () => void;
+  postSubmit: (grunnkretsId: string) => void;
 };
 
 type Inputs = {
@@ -57,7 +57,7 @@ const EditRow = ({ grunnkrets, postSubmit }: Props) => {
     );
 
     mutate();
-    postSubmit();
+    postSubmit(grunnkrets.id);
   });
 
   return (

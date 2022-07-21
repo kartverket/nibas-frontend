@@ -9,6 +9,13 @@ import {
   sortGrenserAlphabetically,
 } from "utils/language/language";
 
+const removeIdFromList = (id: string, list: string[]) => {
+  const newOpenRows = list.slice();
+  newOpenRows.splice(newOpenRows.indexOf(id));
+
+  return newOpenRows;
+};
+
 type Props = {
   kommune: KommuneRef;
 };
@@ -28,16 +35,16 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
 
   const toggleRow = (grunnkrets: GrunnkretsRef) => {
     if (openRows.includes(grunnkrets.id)) {
-      const newOpenRows = openRows.slice();
-      newOpenRows.splice(newOpenRows.indexOf(grunnkrets.id));
-      setOpenRows(newOpenRows);
+      setOpenRows(removeIdFromList(grunnkrets.id, openRows));
     } else {
       setOpenRows([...openRows, grunnkrets.id]);
     }
   };
 
-  const postGrunnkretsUpdate = () => {
+  const postGrunnkretsUpdate = (grunnkretsId: string) => {
+    // oppdater lista etter oppdateringen er gjort i backend
     mutate();
+    setOpenRows(removeIdFromList(grunnkretsId, openRows));
   };
 
   return (
