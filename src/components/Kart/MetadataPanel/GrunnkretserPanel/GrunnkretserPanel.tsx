@@ -1,24 +1,18 @@
-import React, { useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { KretsTable } from "../KretsTable";
+import useAccordionRows from "../useAccordionRow";
 import EditRow from "./EditRow";
 import Button from "components/form/Button";
 import useNibasApi from "hooks/useNibasApi";
 import { ReactComponent as CaretDown } from "icons/caretdown.svg";
 import { ReactComponent as CaretUp } from "icons/caretup.svg";
-import { GrunnkretsRef, KommuneRef } from "types/api";
+import { KommuneRef } from "types/api";
 import {
   getNavnInSpraak,
   sortGrenserAlphabetically,
 } from "utils/language/language";
-
-const removeIdFromList = (id: string, list: string[]) => {
-  const newOpenRows = list.slice();
-  newOpenRows.splice(newOpenRows.indexOf(id));
-
-  return newOpenRows;
-};
 
 type Props = {
   kommune: KommuneRef;
@@ -26,7 +20,7 @@ type Props = {
 
 const GrunnkretserPanel = ({ kommune }: Props) => {
   const { t } = useTranslation();
-  const [openRows, setOpenRows] = useState<string[]>([]);
+  const { isOpen, toggleRow, closeRow } = useAccordionRows();
 
   const { data: grunnkretserByKommune, mutate } = useNibasApi(
     "/v1/kommuner/{id}/grunnkretser",
@@ -37,18 +31,10 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
 
   const sortedGrunnkretser = sortGrenserAlphabetically(grunnkretserByKommune);
 
-  const toggleRow = (grunnkrets: GrunnkretsRef) => {
-    if (openRows.includes(grunnkrets.id)) {
-      setOpenRows(removeIdFromList(grunnkrets.id, openRows));
-    } else {
-      setOpenRows([...openRows, grunnkrets.id]);
-    }
-  };
-
   const postGrunnkretsUpdate = (grunnkretsId: string) => {
     // oppdater lista etter oppdateringen er gjort i backend
     mutate();
-    setOpenRows(removeIdFromList(grunnkretsId, openRows));
+    closeRow(grunnkretsId);
   };
 
   return (
@@ -77,18 +63,12 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                   <td>
                     <Button
                       variant="unstyled"
-                      onClick={() => toggleRow(grunnkrets)}
-                      icon={
-                        openRows.includes(grunnkrets.id) ? (
-                          <CaretUp />
-                        ) : (
-                          <CaretDown />
-                        )
-                      }
+                      onClick={() => toggleRow(grunnkrets.id)}
+                      icon={isOpen(grunnkrets.id) ? <CaretUp /> : <CaretDown />}
                     />
                   </td>
                 </KretsRow>
-                {openRows.includes(grunnkrets.id) && (
+                {isOpen(grunnkrets.id) && (
                   <EditRow
                     grunnkrets={grunnkrets}
                     postSubmit={postGrunnkretsUpdate}
