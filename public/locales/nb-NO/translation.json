@@ -74,5 +74,11 @@
   },
   "grunnkrets": {
     "Grunnkretsnummer": "Grunnkretsnummer"
+  },
+  "stemmekrets": {
+    "Stemmekretsnummer": "Stemmekretsnummer",
+    "Valgdistriktsnummer": "Valgdistriktsnummer",
+    "Tellekretsnavn": "Tellekretsnavn",
+    "Tellekretsnummer": "Tellekretsnummer"
   }
 }

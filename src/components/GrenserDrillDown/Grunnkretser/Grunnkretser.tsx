@@ -1,8 +1,9 @@
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
+import KommuneList from "../Kretser/KommuneList";
 import ListItemAccordion from "../ListItemAccordion";
-import KommuneList from "./KommuneList";
 import { UnstyledList } from "components/UnstyledList";
+import { InndelingerKretsProvider } from "contexts/InndelingerKretsContext";
 import useFylker from "hooks/inndelinger/useFylker";
 import { getNavnInSpraak } from "utils/language/language";
 
@@ -12,7 +13,7 @@ const Grunnkretser = () => {
 
   return (
     <ListItemAccordion title={t("inndelinger.Grunnkretser")}>
-      <div>
+      <InndelingerKretsProvider kretstype="grunnkrets">
         {fylker ? (
           <List>
             {fylker.map((fylke) => (
@@ -27,7 +28,7 @@ const Grunnkretser = () => {
         ) : (
           <p>{t("Henter fylker")}...</p>
         )}
-      </div>
+      </InndelingerKretsProvider>
     </ListItemAccordion>
   );
 };

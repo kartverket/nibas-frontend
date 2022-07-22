@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { KartInteractable } from "../KartInteractable";
 import GrensePanel from "./GrensePanel";
 import GrunnkretserPanel from "./GrunnkretserPanel";
+import StemmekretserPanel from "./StemmekretserPanel";
 import Button from "components/form/Button";
 import { useMetadataPanel } from "contexts/MetadataPanelContext";
 
@@ -17,8 +18,11 @@ const MetadataPanel = () => {
       {panelContext.content === "grensemetadata" && (
         <GrensePanel feature={panelContext.feature} />
       )}
-      {panelContext.content === "grunnkretser" && (
+      {panelContext.content === "grunnkrets" && (
         <GrunnkretserPanel kommune={panelContext.kommune} />
+      )}
+      {panelContext.content === "stemmekrets" && (
+        <StemmekretserPanel kommune={panelContext.kommune} />
       )}
       <div>
         <Button onClick={closePanel}>{t("action.Lukk")}</Button>

@@ -7,6 +7,8 @@ import {
   KodelisteRespons,
   KommuneRef,
   KommuneResponse,
+  StemmekretsRef,
+  StemmekretsResponse,
 } from "types/api";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 
@@ -237,4 +239,49 @@ export const mockActuatorResponse = {
   application: {
     version: "1.2.3",
   },
+};
+
+export const mockStemmekretser: StemmekretsRef[] = [
+  {
+    id: "1",
+    navn: "Undredal",
+    href: "http://localhost:8080/v1/stemmekretser/1",
+  },
+  {
+    id: "2",
+    navn: "Slemfjord",
+    href: "http://localhost:8080/v1/stemmekretser/2",
+  },
+];
+
+export const mockStemmekrets1: StemmekretsResponse = {
+  id: "1",
+  stemmekretsnavn: "Undredal",
+  stemmekretsnummer: "05",
+  identifikasjon: {
+    lokalid: "c1fac231-e9ae-404e-bf09-adf0c15cf948",
+    navnerom: "https://data.geonorge.no/sosi/administrativeenheter",
+    versjonid: undefined,
+  },
+  kommunenummer: "c416fb1d-2124-4f71-8dfc-859c55feb437",
+  tellekretsnummer: "tellekretsnr1",
+  tellekretsnavn: "tellekretsnavn1",
+  valgdistriktsnummer: "14",
+  features: mockGeoJsonFeatureResponse,
+};
+
+export const mockStemmekrets2: StemmekretsResponse = {
+  id: "2",
+  stemmekretsnavn: "Slemfjord",
+  stemmekretsnummer: "12",
+  identifikasjon: {
+    lokalid: "c63f68f5-bef8-4e8c-bc0f-1b3e41ea1c0c",
+    navnerom: "https://data.geonorge.no/sosi/administrativeenheter",
+    versjonid: undefined,
+  },
+  kommunenummer: "ec64ba19-fb37-44d4-b579-407897f871ee",
+  tellekretsnummer: "tellekretsnr2",
+  tellekretsnavn: "tellekretsnavn2",
+  valgdistriktsnummer: "16",
+  features: mockGeoJsonFeatureResponse,
 };
