@@ -20,7 +20,7 @@ type Props = {
 
 const GrunnkretserPanel = ({ kommune }: Props) => {
   const { t } = useTranslation();
-  const { isOpen, toggleRow, closeRow } = useAccordionRows();
+  const { isRowOpen, toggleRow, closeRow } = useAccordionRows();
 
   const { data: grunnkretserByKommune, mutate } = useNibasApi(
     "/v1/kommuner/{id}/grunnkretser",
@@ -51,7 +51,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
             <tr>
               <th>{t("tabell.Navn")}</th>
               <th>{t("grunnkrets.Grunnkretsnummer")}</th>
-              <th>Endre</th>
+              <th>{t("Endre")}</th>
             </tr>
           </thead>
           <tbody>
@@ -64,11 +64,13 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                     <Button
                       variant="unstyled"
                       onClick={() => toggleRow(grunnkrets.id)}
-                      icon={isOpen(grunnkrets.id) ? <CaretUp /> : <CaretDown />}
+                      icon={
+                        isRowOpen(grunnkrets.id) ? <CaretUp /> : <CaretDown />
+                      }
                     />
                   </td>
                 </KretsRow>
-                {isOpen(grunnkrets.id) && (
+                {isRowOpen(grunnkrets.id) && (
                   <EditRow
                     grunnkrets={grunnkrets}
                     postSubmit={postGrunnkretsUpdate}

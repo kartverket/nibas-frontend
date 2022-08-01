@@ -22,12 +22,12 @@ const useAccordionRows = () => {
     }
   };
 
-  const isOpen = (id: string) => openRows.includes(id);
+  const isRowOpen = (id: string) => openRows.includes(id);
 
   return {
     closeRow,
     toggleRow,
-    isOpen,
+    isRowOpen,
   };
 };
 
