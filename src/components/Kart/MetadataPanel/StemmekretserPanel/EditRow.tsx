@@ -15,7 +15,6 @@ import {
 type Inputs = {
   stemmekretsnavn: string;
   stemmekretsnummer: string;
-  valgdistriktsnummer: string;
   tellekretsnavn: string;
   tellekretsnummer: string;
 };
@@ -25,9 +24,9 @@ const fromFormToRequest = (
   stemmekrets: StemmekretsResponse
 ): StemmekretsRequest => ({
   identifikasjon: stemmekrets.identifikasjon,
+  valgdistriktsnummer: stemmekrets.valgdistriktsnummer,
   stemmekretsnavn: data.stemmekretsnavn,
   stemmekretsnummer: data.stemmekretsnummer,
-  valgdistriktsnummer: data.valgdistriktsnummer,
   tellekretsnavn: data.tellekretsnavn,
   tellekretsnummer: data.tellekretsnummer,
 });
@@ -55,7 +54,6 @@ const EditRow = ({ stemmekrets, postSubmit }: Props) => {
     setValue("stemmekretsnummer", fullStemmekrets.stemmekretsnummer);
     setValue("tellekretsnavn", fullStemmekrets.tellekretsnavn ?? "");
     setValue("tellekretsnummer", fullStemmekrets.tellekretsnummer ?? "");
-    setValue("valgdistriktsnummer", fullStemmekrets.valgdistriktsnummer ?? "");
   }, [fullStemmekrets, setValue]);
 
   const onSubmit = handleSubmit(async (data) => {
@@ -78,9 +76,6 @@ const EditRow = ({ stemmekrets, postSubmit }: Props) => {
       </td>
       <td>
         <Input {...register("stemmekretsnummer")} />
-      </td>
-      <td>
-        <Input {...register("valgdistriktsnummer")} />
       </td>
       <td>
         <Input {...register("tellekretsnavn")} />
