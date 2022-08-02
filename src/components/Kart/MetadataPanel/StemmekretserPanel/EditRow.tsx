@@ -35,14 +35,13 @@ const fromFormToRequest = (
 type Props = {
   stemmekrets: StemmekretsRef;
   postSubmit: (StemmekretsId: string) => void;
-  isOpen: boolean;
 };
 
-const EditRow = ({ stemmekrets, postSubmit, isOpen }: Props) => {
+const EditRow = ({ stemmekrets, postSubmit }: Props) => {
   const { t } = useTranslation();
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { data: fullStemmekrets, mutate } = useNibasApi(
-    isOpen ? "/v1/stemmekretser/{id}" : null,
+    "/v1/stemmekretser/{id}",
     {
       id: stemmekrets.id,
     }
@@ -71,8 +70,6 @@ const EditRow = ({ stemmekrets, postSubmit, isOpen }: Props) => {
     mutate();
     postSubmit(stemmekrets.id);
   });
-
-  if (!isOpen) return <AccordionRow />;
 
   return (
     <AccordionRow>

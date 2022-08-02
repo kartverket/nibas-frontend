@@ -63,11 +63,12 @@ const StemmekretserPanel = ({ kommune }: Props) => {
                   toggleRow={toggleRow}
                   isRowOpen={isRowOpen}
                 />
-                <EditRow
-                  stemmekrets={stemmekrets}
-                  postSubmit={postStemmekretsUpdate}
-                  isOpen={isRowOpen(stemmekrets.id)}
-                />
+                {isRowOpen(stemmekrets.id) && (
+                  <EditRow
+                    stemmekrets={stemmekrets}
+                    postSubmit={postStemmekretsUpdate}
+                  />
+                )}
               </React.Fragment>
             ))}
           </tbody>
