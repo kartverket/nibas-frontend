@@ -34,7 +34,7 @@ const fromFormToRequest = (
 
 type Props = {
   stemmekrets: StemmekretsRef;
-  postSubmit: (StemmekretsId: string) => void;
+  postSubmit: (stemmekretsId: string) => void;
 };
 
 const EditRow = ({ stemmekrets, postSubmit }: Props) => {

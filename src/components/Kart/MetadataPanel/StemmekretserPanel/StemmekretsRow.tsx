@@ -29,7 +29,13 @@ const StemmekretsRow = ({ id, toggleRow, isRowOpen }: Props) => {
         <Button
           variant="unstyled"
           onClick={() => toggleRow(stemmekrets.id)}
-          icon={isRowOpen(stemmekrets.id) ? <CaretUp /> : <CaretDown />}
+          icon={
+            isRowOpen(stemmekrets.id) ? (
+              <CaretUp aria-label="Lukk redigering av stemmekrets" />
+            ) : (
+              <CaretDown aria-label="Åpne redigering av stemmekrets" />
+            )
+          }
         />
       </td>
     </KretsRow>
