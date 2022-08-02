@@ -14,7 +14,7 @@ const MetadataPanel = () => {
   if (!panelContext) return null;
 
   return (
-    <Panel>
+    <MetadataPanelWrapper>
       {panelContext.content === "grensemetadata" && (
         <GrensePanel feature={panelContext.feature} />
       )}
@@ -27,11 +27,11 @@ const MetadataPanel = () => {
       <div>
         <Button onClick={closePanel}>{t("action.Lukk")}</Button>
       </div>
-    </Panel>
+    </MetadataPanelWrapper>
   );
 };
 
-const Panel = styled(KartInteractable)`
+export const MetadataPanelWrapper = styled(KartInteractable)`
   grid-area: metadata;
   display: flex;
   flex-direction: column;
@@ -46,12 +46,6 @@ const Panel = styled(KartInteractable)`
   min-width: 500px;
   width: 100%;
   max-width: 1000px;
-
-  @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
-    height: auto;
-    max-height: 800px;
-    width: 600px;
-  }
 
   > h3 {
     margin-top: 0;

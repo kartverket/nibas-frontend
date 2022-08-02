@@ -19,6 +19,7 @@ type StemmekretserPanel = {
 };
 
 type Panel = GrenseMetadataPanel | GrunnkretserPanel | StemmekretserPanel;
+export type PanelContent = Panel["content"];
 
 export type MetadataPanelContextValue = {
   panelContext: Panel | null;
