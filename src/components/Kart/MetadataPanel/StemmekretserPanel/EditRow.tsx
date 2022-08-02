@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { updateStemmekrets } from "api/enheter";
 import Button from "components/form/Button";
@@ -34,12 +35,14 @@ const fromFormToRequest = (
 type Props = {
   stemmekrets: StemmekretsRef;
   postSubmit: (StemmekretsId: string) => void;
+  isOpen: boolean;
 };
 
-const EditRow = ({ stemmekrets, postSubmit }: Props) => {
+const EditRow = ({ stemmekrets, postSubmit, isOpen }: Props) => {
+  const { t } = useTranslation();
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { data: fullStemmekrets, mutate } = useNibasApi(
-    "/v1/stemmekretser/{id}",
+    isOpen ? "/v1/stemmekretser/{id}" : null,
     {
       id: stemmekrets.id,
     }
@@ -69,22 +72,36 @@ const EditRow = ({ stemmekrets, postSubmit }: Props) => {
     postSubmit(stemmekrets.id);
   });
 
+  if (!isOpen) return <AccordionRow />;
+
   return (
     <AccordionRow>
-      <td>
-        <Input {...register("stemmekretsnavn")} />
-      </td>
-      <td>
-        <Input {...register("stemmekretsnummer")} />
-      </td>
-      <td>
-        <Input {...register("tellekretsnavn")} />
-      </td>
-      <td>
-        <Input {...register("tellekretsnummer")} />
-      </td>
-      <td>
-        <Button onClick={onSubmit}>Lagre</Button>
+      <td colSpan={6}>
+        <InputsWrapper>
+          <BlockLabel>
+            {t("stemmekrets.Stemmekretsnummer")}
+            <Input {...register("stemmekretsnummer")} />
+          </BlockLabel>
+
+          <BlockLabel>
+            {t("tabell.Navn")}
+            <Input {...register("stemmekretsnavn")} />
+          </BlockLabel>
+        </InputsWrapper>
+
+        <InputsWrapper>
+          <BlockLabel>
+            {t("stemmekrets.Tellekretsnummer")}
+            <Input {...register("tellekretsnummer")} />
+          </BlockLabel>
+
+          <BlockLabel>
+            {t("stemmekrets.Tellekretsnavn")}
+            <Input {...register("tellekretsnavn")} />
+          </BlockLabel>
+        </InputsWrapper>
+
+        <Button onClick={onSubmit}>{t("action.Lagre")}</Button>
       </td>
     </AccordionRow>
   );
@@ -93,12 +110,38 @@ const EditRow = ({ stemmekrets, postSubmit }: Props) => {
 const AccordionRow = styled.tr`
   background-color: ${({ theme }) => theme.colors.blueLight};
 
-  &:nth-child(2n - 1) {
-    background-color: ${({ theme }) => theme.colors.white};
-  }
-
   td {
     padding: 8px;
+  }
+`;
+
+const BlockLabel = styled.label`
+  &:last-child {
+    margin-left: 16px;
+  }
+
+  input {
+    width: 100%;
+  }
+
+  margin-bottom: 16px;
+`;
+
+const InputsWrapper = styled.div`
+  display: flex;
+  width: 80%;
+  margin: auto;
+
+  > ${BlockLabel} {
+    width: 100%;
+
+    &:first-child {
+      flex: 1;
+    }
+
+    &:last-child {
+      flex: 3;
+    }
   }
 `;
 
