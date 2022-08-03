@@ -3,7 +3,7 @@ import { Modify, Snap } from "ol/interaction";
 import Style from "ol/style/Style";
 import { map } from "components/Kart/constants";
 import { getLayerById, getVectorLayers } from "utils/map/layers";
-import { dirtyPointStyle, dirtyStyle } from "utils/map/layerStyles";
+import { dirtyStyles, editStyles } from "utils/map/layerStyles";
 
 const useEditInteractions = () => {
   const [dirtyFeatureIds, setDirtyFeatureIds] = useState<string[]>([]);
@@ -17,6 +17,16 @@ const useEditInteractions = () => {
       return prevDirtyFeatureIds;
     });
   }, []);
+
+  const clearDirtyFeatures = useCallback(() => {
+    const source = getLayerById("edit").getSource();
+
+    dirtyFeatureIds.forEach((id) => {
+      source.getFeatureById(id).setStyle(editStyles);
+    });
+
+    setDirtyFeatureIds([]);
+  }, [dirtyFeatureIds]);
 
   useEffect(() => {
     const vectorLayers = getVectorLayers();
@@ -48,7 +58,7 @@ const useEditInteractions = () => {
         getLayerById("edit")
           .getSource()
           .getFeatureById(featureId)
-          .setStyle([dirtyStyle, dirtyPointStyle]);
+          .setStyle(dirtyStyles);
       });
     });
 
@@ -66,7 +76,7 @@ const useEditInteractions = () => {
     };
   }, [updateDirtyFeatureIds]);
 
-  return dirtyFeatureIds;
+  return { dirtyFeatureIds, clearDirtyFeatures };
 };
 
 export default useEditInteractions;
