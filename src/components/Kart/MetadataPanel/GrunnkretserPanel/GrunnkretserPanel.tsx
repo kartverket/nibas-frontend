@@ -64,7 +64,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
             <tr>
               <th>{t("tabell.Navn")}</th>
               <th>{t("grunnkrets.Grunnkretsnummer")}</th>
-              <th>Endre</th>
+              <th>{t("action.Endre")}</th>
             </tr>
           </thead>
           <tbody>
