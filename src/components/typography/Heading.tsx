@@ -10,7 +10,7 @@ type Props = {
   className?: string; // styled-components className
 };
 
-const getClassName = (tag: Tag, size: Size) => {
+const getKvibClassName = (tag: Tag, size: Size) => {
   let className = "heading__";
 
   switch (tag) {
@@ -53,7 +53,7 @@ const getClassName = (tag: Tag, size: Size) => {
 };
 
 const Heading: React.FC<Props> = ({ tag, size, className, children }) => {
-  const kvibClassName = getClassName(tag, size);
+  const kvibClassName = getKvibClassName(tag, size);
 
   const fullClassName = `${kvibClassName} ${className ?? ""}`;
 
