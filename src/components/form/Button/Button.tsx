@@ -12,7 +12,7 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const getKvibClassName = (variant: Variant, size: Size) => {
-  let className = "button__blue--";
+  let className = "button button__blue--";
 
   switch (variant) {
     case "primary": {
