@@ -1,3 +1,5 @@
+@import '@kartverket/kvib/main.css';
+
 body {
   height: 100vh;
   margin: 0;
