@@ -102,7 +102,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
   );
 };
 
-const PanelTitle = styled.h3`
+const PanelTitle = styled.h2`
   margin: 0;
   margin-bottom: 8px;
 `;

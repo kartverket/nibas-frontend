@@ -38,16 +38,16 @@ const GrensePanel = ({ feature }: Props) => {
   return (
     <Tabs key={feature.getId()} tabTransKeys={tabs}>
       <div>
-        <h3>Linje metadata</h3>
+        <h2>Linje metadata</h2>
         <GrenseMetadataGenerelt feature={feature} />
       </div>
       <div>
-        <h3>Detaljer</h3>
+        <h2>Detaljer</h2>
         <GrenseMetadataDetaljer feature={feature} />
       </div>
       {showReferanser && (
         <div>
-          <h3>Dokumentasjonsreferanser</h3>
+          <h2>Dokumentasjonsreferanser</h2>
           <GrenseMetadataReferanser feature={feature} />
         </div>
       )}

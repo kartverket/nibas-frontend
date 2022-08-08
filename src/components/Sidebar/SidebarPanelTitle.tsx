@@ -29,7 +29,7 @@ const TitleWrapper = styled.div`
   align-items: center;
 `;
 
-const StyledTitle = styled.h3`
+const StyledTitle = styled.h2`
   margin: 0;
 `;
 

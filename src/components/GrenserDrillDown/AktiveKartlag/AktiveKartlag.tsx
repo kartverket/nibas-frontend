@@ -38,7 +38,7 @@ const AktiveKartlag = () => {
   );
 };
 
-const ActiveBackgroundLayers = styled.h4`
+const ActiveBackgroundLayers = styled.h3`
   margin: 8px 0 0;
   border-bottom: 4px solid ${({ theme }) => theme.colors.blueDark};
 `;
