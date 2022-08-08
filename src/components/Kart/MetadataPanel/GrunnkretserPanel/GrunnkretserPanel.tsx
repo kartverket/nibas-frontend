@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import EditRow from "./EditRow";
 import Button from "components/form/Button";
+import Heading from "components/typography/Heading";
 import useNibasApi from "hooks/useNibasApi";
 import { ReactComponent as CaretDown } from "icons/caretdown.svg";
 import { ReactComponent as CaretUp } from "icons/caretup.svg";
@@ -52,12 +53,14 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
 
   return (
     <div>
-      <PanelTitle>
+      <PanelTitle tag="h2" size="xs">
         {t("{{ kommuneNavn }} kommune", {
           kommuneNavn: getNavnInSpraak(kommune.navn, "nor"),
         })}
       </PanelTitle>
-      <PanelTitle>{t("inndelinger.Grunnkretser")}</PanelTitle>
+      <PanelTitle tag="h2" size="xs">
+        {t("inndelinger.Grunnkretser")}
+      </PanelTitle>
       {sortedGrunnkretser && (
         <GrunnkretsTable>
           <thead>
@@ -102,7 +105,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
   );
 };
 
-const PanelTitle = styled.h2`
+const PanelTitle = styled(Heading)`
   margin: 0;
   margin-bottom: 8px;
 `;
