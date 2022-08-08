@@ -4,10 +4,10 @@ import styled from "styled-components";
 type Props = InputHTMLAttributes<HTMLInputElement>;
 
 const Input = forwardRef<HTMLInputElement, Props>(function Input(props, ref) {
-  return <Wrapper {...props} ref={ref} />;
+  return <StyledInput {...props} ref={ref} />;
 });
 
-const Wrapper = styled.input`
+const StyledInput = styled.input`
   padding: 8px;
   font-size: 14px;
   border-width: 1px;
