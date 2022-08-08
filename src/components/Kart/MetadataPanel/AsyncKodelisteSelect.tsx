@@ -8,7 +8,7 @@ type Props = {
   kodeliste: KodelisteRespons | undefined;
 };
 
-const AsyncKodelisteSelect = (
+const AsyncKodelisteSelectInner = (
   { label, kodeliste }: Props,
   ref: React.ForwardedRef<HTMLSelectElement>
 ) => {
@@ -27,6 +27,8 @@ const AsyncKodelisteSelect = (
   );
 };
 
+const AsyncKodelisteSelect = forwardRef(AsyncKodelisteSelectInner);
+
 AsyncKodelisteSelect.displayName = "AsyncKodelisteSelect";
 
-export default forwardRef(AsyncKodelisteSelect);
+export default AsyncKodelisteSelect;
