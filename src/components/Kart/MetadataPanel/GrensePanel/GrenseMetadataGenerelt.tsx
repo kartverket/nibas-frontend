@@ -2,6 +2,7 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components";
+import AsyncKodelisteSelect from "../AsyncKodelisteSelect";
 import {
   BlockLabel,
   Container,
@@ -69,17 +70,11 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
           </DateWrapper>
         </Part>
         <Part>
-          <BlockLabel>
-            {t("metadata.Målemetode")}
-            <Select {...register("maalemetode", { disabled })}>
-              <option value="">---</option>
-              {maalemetodeKoder?.map((kodeItem) => (
-                <option key={kodeItem.id} value={kodeItem.id}>
-                  {kodeItem.label}
-                </option>
-              ))}
-            </Select>
-          </BlockLabel>
+          <AsyncKodelisteSelect
+            kodeliste={maalemetodeKoder}
+            label={t("metadata.Målemetode")}
+            {...register("maalemetode", { disabled })}
+          />
           <BlockLabel>
             {t("metadata.Nøyaktighet")}
             <Input

@@ -14,11 +14,11 @@ type Params<T extends FieldValues> = {
   property: FieldPath<T>;
   setValue: UseFormSetValue<T>;
   kodelisteUrl: KodelistePath;
-  itemId: string | undefined;
+  initialItemId: string | undefined;
 };
 
 const useAsyncKodeliste = <T extends FieldValues>(params: Params<T>) => {
-  const { kodelisteUrl, setValue, itemId, property } = params;
+  const { kodelisteUrl, setValue, initialItemId, property } = params;
 
   const { data: kodeliste } = useNibasApi(kodelisteUrl);
 
@@ -27,7 +27,7 @@ const useAsyncKodeliste = <T extends FieldValues>(params: Params<T>) => {
     if (!kodeliste) return;
 
     const selectedKodelisteItem = kodeliste.items.find(
-      (kode) => kode.id === itemId
+      (kode) => kode.id === initialItemId
     );
 
     if (!selectedKodelisteItem) return;
@@ -36,7 +36,7 @@ const useAsyncKodeliste = <T extends FieldValues>(params: Params<T>) => {
       property,
       selectedKodelisteItem.id as UnpackNestedValue<PathValue<T, Path<T>>>
     );
-  }, [kodeliste, setValue, itemId, property]);
+  }, [kodeliste, setValue, initialItemId, property]);
 
   return kodeliste;
 };
