@@ -1,18 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Snap } from "ol/interaction";
-import { ModifyEvent } from "ol/interaction/Modify";
 import { modify } from "./constants";
+import useDirtyStyles from "./useDirtyStyles";
 import useFeatureHistory from "./useFeatureHistory";
 import { map } from "components/Kart/constants";
-import { editSource } from "hooks/layers/constants";
 import { getVectorLayers } from "utils/map/layers";
-import { dirtyStyles, editStyles } from "utils/map/layerStyles";
 
 const useEditInteractions = () => {
   const featureHistory = useFeatureHistory();
-  const [featureIdsWithDirtyStyle, setFeatureIdsWithDirtyStyle] = useState<
-    string[]
-  >([]);
+  useDirtyStyles(featureHistory.dirtyFeatureIds);
 
   useEffect(() => {
     const vectorLayers = getVectorLayers();
@@ -39,45 +35,6 @@ const useEditInteractions = () => {
       });
     };
   }, []);
-
-  useEffect(() => {
-    // sett style på de endrede featurene på modifyend
-    // dette funker ikke på modifystart, så gjøres når brukeren slipper musa
-    const setDirtyStyleOnEditedFeature = () => {
-      featureHistory.dirtyFeatureIds.forEach((featureId) => {
-        editSource.getFeatureById(featureId).setStyle(dirtyStyles);
-        setFeatureIdsWithDirtyStyle((prevIds) => [...prevIds, featureId]);
-      });
-    };
-
-    modify.on("modifyend", setDirtyStyleOnEditedFeature);
-
-    return () => {
-      modify.un("modifyend", setDirtyStyleOnEditedFeature);
-    };
-  }, [featureHistory.dirtyFeatureIds]);
-
-  useEffect(() => {
-    // finn hvilke features som har hatt dirty style, men ikke
-    // lenger regnes som dirty i history
-    const featuresToResetStyle = featureIdsWithDirtyStyle.filter(
-      (styleId) => !featureHistory.dirtyFeatureIds.includes(styleId)
-    );
-
-    if (featuresToResetStyle.length === 0) return;
-
-    const newFeatureIdsWithDirtyStyle = featureIdsWithDirtyStyle.slice();
-
-    // disse skal nå få tilbake sin vanlige style, og fjernes fra lista
-    featuresToResetStyle.forEach((featureId) => {
-      editSource.getFeatureById(featureId).setStyle(editStyles);
-      newFeatureIdsWithDirtyStyle.splice(
-        newFeatureIdsWithDirtyStyle.indexOf(featureId)
-      );
-    });
-
-    setFeatureIdsWithDirtyStyle(newFeatureIdsWithDirtyStyle);
-  }, [featureHistory.dirtyFeatureIds, featureIdsWithDirtyStyle]);
 
   return {
     ...featureHistory,
