@@ -20,20 +20,29 @@ import { Coordinate } from "ol/coordinate";
 ]
 */
 // en entry har en før og en etter koordinatliste
-type Entry = Record<string, Coordinate[]>;
+// om andre elementet er null har det ikke en etter-state, som vil si den fortsatt dragges
+type BeforeAfterCoordinates = [Coordinate[], Coordinate[] | null];
+type Entry = Record<string, BeforeAfterCoordinates>;
 type Entries = Entry[];
 type FeatureHistory = {
   index: number;
   entries: Entries;
 };
 
-const setFeatureCoordinatesForEntry = (entry: Entry) => {
+const setFeatureCoordinatesForEntry = (
+  entry: Entry,
+  direction: "from" | "to"
+) => {
   Object.keys(entry).forEach((featureId) => {
     const lineString = editSource
       .getFeatureById(featureId)
       .getGeometry() as LineString;
 
-    lineString.setCoordinates(entry[featureId]);
+    const coordinates = entry[featureId][direction === "from" ? 0 : 1];
+
+    if (!coordinates) return;
+
+    lineString.setCoordinates(coordinates);
   });
 };
 
@@ -46,6 +55,7 @@ const useFeatureHistory = () => {
   const dirtyFeatureIds = useMemo(
     () =>
       history.entries.reduce<string[]>((accumulator, entry, currentIndex) => {
+        if (history.index === 0) return accumulator;
         // dirty features avhenger av hvilken index vi er på for å vise
         // de nåværende endrede featurene
         if (currentIndex >= history.index) return accumulator;
@@ -53,6 +63,10 @@ const useFeatureHistory = () => {
         const featureIdsChangedInIteration = Object.keys(entry);
 
         featureIdsChangedInIteration.forEach((featureId) => {
+          if (entry[featureId][1] === null) {
+            return accumulator;
+          }
+
           if (!accumulator.includes(featureId)) {
             accumulator.push(featureId);
           }
@@ -65,7 +79,7 @@ const useFeatureHistory = () => {
 
   useEffect(() => {
     const addCurrentCoordinatesToHistory = (e: ModifyEvent) => {
-      const newEntries: Record<string, number[][]> = {};
+      const newEntry: Entry = {};
 
       e.features.forEach((featureLike) => {
         const featureId = featureLike.getId();
@@ -77,8 +91,8 @@ const useFeatureHistory = () => {
 
         if (!initialCoordinates) return;
 
-        newEntries[featureId] = initialCoordinates;
-        console.log("New entries", newEntries);
+        newEntry[featureId] = [initialCoordinates, null];
+        console.log("New entries", newEntry);
       });
 
       setHistory((prevHistory) => {
@@ -88,12 +102,37 @@ const useFeatureHistory = () => {
         console.log("History up to index", historyUpToIndex);
         return {
           index: newIndex,
-          entries: [...historyUpToIndex, newEntries],
+          entries: [...historyUpToIndex, newEntry],
         };
       });
     };
 
     modify.on("modifystart", addCurrentCoordinatesToHistory);
+    modify.on("modifyend", (e) => {
+      e.features.forEach((featureLike) => {
+        const featureId = featureLike.getId();
+
+        if (!featureId) return;
+
+        const geometry = featureLike.getGeometry() as LineString;
+        const newCoordinates = geometry.getCoordinates();
+
+        if (!newCoordinates) return;
+
+        setHistory((prevHistory) => {
+          const newEntries = prevHistory.entries.slice();
+          const newestEntry = newEntries[prevHistory.index - 1];
+          const featureCoordinates = newestEntry[featureId][0];
+          newestEntry[featureId] = [featureCoordinates, newCoordinates];
+
+          console.log("New entries on modifyend", newEntries);
+          return {
+            index: prevHistory.index,
+            entries: newEntries,
+          };
+        });
+      });
+    });
 
     return () => {
       modify.un("modifystart", addCurrentCoordinatesToHistory);
@@ -121,20 +160,6 @@ const useFeatureHistory = () => {
 
     if (index === 0 || entries.length === 0) return;
 
-    if (index === entries.length) {
-      // hvis første undo, legg til features sånn de ser ut nå i history
-      const newEntries: Record<string, number[][]> = {};
-      dirtyFeatureIds.forEach((featureId) => {
-        const lineString = editSource
-          .getFeatureById(featureId)
-          .getGeometry() as LineString;
-
-        newEntries[featureId] = lineString.getCoordinates();
-      });
-
-      entries.push(newEntries);
-    }
-
     const newIndex = index - 1;
 
     console.log("New index", newIndex);
@@ -142,7 +167,7 @@ const useFeatureHistory = () => {
     for (let i = history.entries.length - 1; i >= newIndex; i--) {
       console.log("i", i);
       const entry = history.entries[i];
-      setFeatureCoordinatesForEntry(entry);
+      setFeatureCoordinatesForEntry(entry, "from");
     }
 
     setHistory({
@@ -164,7 +189,7 @@ const useFeatureHistory = () => {
       console.log("i", i);
       const entry = history.entries[i];
       console.log("Entry to apply", entry);
-      setFeatureCoordinatesForEntry(entry);
+      setFeatureCoordinatesForEntry(entry, "to");
     }
 
     setHistory({
