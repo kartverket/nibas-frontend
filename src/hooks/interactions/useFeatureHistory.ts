@@ -5,6 +5,7 @@ import { modify } from "./constants";
 import { editSource } from "hooks/layers/constants";
 import { editStyles } from "utils/map/layerStyles";
 import { Coordinate } from "ol/coordinate";
+import { FeatureLike } from "ol/Feature";
 
 // liste med features og deres nye koordinater per endring,
 // hvor 0 er eldst og n er nyeste versjon
@@ -46,6 +47,13 @@ const setFeatureCoordinatesForEntry = (
   });
 };
 
+const getInfoFromFeature = (featureLike: FeatureLike) => {
+  const featureId = featureLike.getId();
+  const geometry = featureLike.getGeometry() as LineString;
+
+  return { coordinates: geometry.getCoordinates(), featureId };
+};
+
 const useFeatureHistory = () => {
   const [history, setHistory] = useState<FeatureHistory>({
     index: 0,
@@ -82,22 +90,20 @@ const useFeatureHistory = () => {
       const newEntry: Entry = {};
 
       e.features.forEach((featureLike) => {
-        const featureId = featureLike.getId();
+        const { featureId, coordinates } = getInfoFromFeature(featureLike);
 
-        if (!featureId) return;
+        if (!featureId || !coordinates) return;
 
-        const geometry = featureLike.getGeometry() as LineString;
-        const initialCoordinates = geometry.getCoordinates();
-
-        if (!initialCoordinates) return;
-
-        newEntry[featureId] = [initialCoordinates, null];
+        newEntry[featureId] = [coordinates, null];
         console.log("New entries", newEntry);
       });
 
       setHistory((prevHistory) => {
         const newIndex = prevHistory.index + 1;
-        const historyUpToIndex = prevHistory.entries.slice(0, newIndex);
+        const historyUpToIndex = prevHistory.entries.slice(
+          0,
+          prevHistory.index
+        );
 
         console.log("History up to index", historyUpToIndex);
         return {
@@ -108,22 +114,22 @@ const useFeatureHistory = () => {
     };
 
     modify.on("modifystart", addCurrentCoordinatesToHistory);
-    modify.on("modifyend", (e) => {
+  }, []);
+
+  useEffect(() => {
+    const updateToCoordinate = (e: ModifyEvent) => {
       e.features.forEach((featureLike) => {
-        const featureId = featureLike.getId();
+        const { featureId, coordinates } = getInfoFromFeature(featureLike);
 
-        if (!featureId) return;
-
-        const geometry = featureLike.getGeometry() as LineString;
-        const newCoordinates = geometry.getCoordinates();
-
-        if (!newCoordinates) return;
+        if (!featureId || !coordinates) return;
 
         setHistory((prevHistory) => {
+          console.log("prev history in modifyend", prevHistory);
           const newEntries = prevHistory.entries.slice();
           const newestEntry = newEntries[prevHistory.index - 1];
+          console.log("Newest entry", newestEntry);
           const featureCoordinates = newestEntry[featureId][0];
-          newestEntry[featureId] = [featureCoordinates, newCoordinates];
+          newestEntry[featureId] = [featureCoordinates, coordinates];
 
           console.log("New entries on modifyend", newEntries);
           return {
@@ -132,11 +138,9 @@ const useFeatureHistory = () => {
           };
         });
       });
-    });
-
-    return () => {
-      modify.un("modifystart", addCurrentCoordinatesToHistory);
     };
+
+    modify.on("modifyend", updateToCoordinate);
   }, []);
 
   const clearHistory = () => {
@@ -164,7 +168,7 @@ const useFeatureHistory = () => {
 
     console.log("New index", newIndex);
 
-    for (let i = history.entries.length - 1; i >= newIndex; i--) {
+    for (let i = newIndex; i > newIndex - 1; i--) {
       console.log("i", i);
       const entry = history.entries[i];
       setFeatureCoordinatesForEntry(entry, "from");
