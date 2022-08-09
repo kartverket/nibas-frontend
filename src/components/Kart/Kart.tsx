@@ -25,7 +25,7 @@ const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const { tokenHolderFunc } = useAuthenticationFlow();
 
-  const { dirtyFeatureIds, clearHistory, undo } = useEditInteractions();
+  const { dirtyFeatureIds, clearHistory, undo, redo } = useEditInteractions();
   const selectedFeatures = useSelectInteraction();
 
   useEffect(() => {
@@ -64,7 +64,12 @@ const Kart = () => {
             <button onClick={saveDraft}>Lagre endringer</button>
           </CustomControl>
           <CustomControl>
-            <button onClick={undo}>Angre</button>
+            <button onClick={undo} disabled={dirtyFeatureIds.length === 0}>
+              Undo
+            </button>
+          </CustomControl>
+          <CustomControl>
+            <button onClick={redo}>Redo</button>
           </CustomControl>
 
           <ZoomControls />

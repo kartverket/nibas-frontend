@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
+import { Coordinate } from "ol/coordinate";
+import { FeatureLike } from "ol/Feature";
 import LineString from "ol/geom/LineString";
 import { ModifyEvent } from "ol/interaction/Modify";
 import { modify } from "./constants";
 import { editSource } from "hooks/layers/constants";
 import { editStyles } from "utils/map/layerStyles";
-import { Coordinate } from "ol/coordinate";
-import { FeatureLike } from "ol/Feature";
 
 // liste med features og deres nye koordinater per endring,
 // hvor 0 er eldst og n er nyeste versjon
@@ -63,19 +63,19 @@ const useFeatureHistory = () => {
   const dirtyFeatureIds = useMemo(
     () =>
       history.entries.reduce<string[]>((accumulator, entry, currentIndex) => {
-        if (history.index === 0) return accumulator;
         // dirty features avhenger av hvilken index vi er på for å vise
         // de nåværende endrede featurene
-        if (currentIndex >= history.index) return accumulator;
+        if (history.index === 0 || currentIndex >= history.index)
+          return accumulator;
 
-        const featureIdsChangedInIteration = Object.keys(entry);
+        const featureIdsChangedInEntry = Object.keys(entry);
 
-        featureIdsChangedInIteration.forEach((featureId) => {
-          if (entry[featureId][1] === null) {
-            return accumulator;
-          }
-
-          if (!accumulator.includes(featureId)) {
+        featureIdsChangedInEntry.forEach((featureId) => {
+          // hvis to-koordinatene ikke er satt er ikke featuren dirty enda
+          if (
+            entry[featureId][1] !== null &&
+            !accumulator.includes(featureId)
+          ) {
             accumulator.push(featureId);
           }
         });
@@ -95,7 +95,6 @@ const useFeatureHistory = () => {
         if (!featureId || !coordinates) return;
 
         newEntry[featureId] = [coordinates, null];
-        console.log("New entries", newEntry);
       });
 
       setHistory((prevHistory) => {
@@ -105,7 +104,6 @@ const useFeatureHistory = () => {
           prevHistory.index
         );
 
-        console.log("History up to index", historyUpToIndex);
         return {
           index: newIndex,
           entries: [...historyUpToIndex, newEntry],
@@ -124,14 +122,11 @@ const useFeatureHistory = () => {
         if (!featureId || !coordinates) return;
 
         setHistory((prevHistory) => {
-          console.log("prev history in modifyend", prevHistory);
           const newEntries = prevHistory.entries.slice();
           const newestEntry = newEntries[prevHistory.index - 1];
-          console.log("Newest entry", newestEntry);
           const featureCoordinates = newestEntry[featureId][0];
           newestEntry[featureId] = [featureCoordinates, coordinates];
 
-          console.log("New entries on modifyend", newEntries);
           return {
             index: prevHistory.index,
             entries: newEntries,
@@ -154,10 +149,6 @@ const useFeatureHistory = () => {
     });
   };
 
-  useEffect(() => {
-    console.log(history);
-  }, [history]);
-
   const undo = () => {
     const { index } = history;
     const entries = history.entries.slice();
@@ -166,10 +157,7 @@ const useFeatureHistory = () => {
 
     const newIndex = index - 1;
 
-    console.log("New index", newIndex);
-
     for (let i = newIndex; i > newIndex - 1; i--) {
-      console.log("i", i);
       const entry = history.entries[i];
       setFeatureCoordinatesForEntry(entry, "from");
     }
@@ -185,14 +173,10 @@ const useFeatureHistory = () => {
 
     if (index >= entries.length) return;
 
-    console.log("Current index before redo", index);
-
     const newIndex = index + 1;
 
     for (let i = index; i < newIndex; i++) {
-      console.log("i", i);
       const entry = history.entries[i];
-      console.log("Entry to apply", entry);
       setFeatureCoordinatesForEntry(entry, "to");
     }
 
