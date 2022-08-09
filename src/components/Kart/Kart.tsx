@@ -25,7 +25,7 @@ const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const { tokenHolderFunc } = useAuthenticationFlow();
 
-  const { dirtyFeatureIds, clearDirtyFeatures } = useEditInteractions();
+  const { dirtyFeatureIds, clearHistory } = useEditInteractions();
   const selectedFeatures = useSelectInteraction();
 
   useEffect(() => {
@@ -48,7 +48,7 @@ const Kart = () => {
     );
 
     await updateGrenser(editedFeatures, tokenHolderFunc()?.token);
-    clearDirtyFeatures();
+    clearHistory();
   };
 
   return (

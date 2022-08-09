@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import LineString from "ol/geom/LineString";
 import { Modify, Snap } from "ol/interaction";
 import { ModifyEvent } from "ol/interaction/Modify";
 import Style from "ol/style/Style";
 import { map } from "components/Kart/constants";
 import { editSource } from "hooks/layers/constants";
-import { getLayerById, getVectorLayers } from "utils/map/layers";
+import { getVectorLayers } from "utils/map/layers";
 import { dirtyStyles, editStyles } from "utils/map/layerStyles";
 
 const modify = new Modify({
@@ -13,31 +13,11 @@ const modify = new Modify({
   style: new Style({}), // fjerne sirkel som kommer når man hoverer feature
 });
 
+// liste med koordinater, hvor 0 er eldst og n er nyeste versjon
 type FeatureHistory = Record<string, number[][][]>;
 
 const useEditInteractions = () => {
-  const [dirtyFeatureIds, setDirtyFeatureIds] = useState<string[]>([]);
   const [history, setHistory] = useState<FeatureHistory>({});
-
-  const updateDirtyFeatureIds = useCallback((featureId: string) => {
-    setDirtyFeatureIds((prevDirtyFeatureIds) => {
-      if (!prevDirtyFeatureIds.includes(featureId)) {
-        return [...prevDirtyFeatureIds, featureId];
-      }
-
-      return prevDirtyFeatureIds;
-    });
-  }, []);
-
-  const clearDirtyFeatures = useCallback(() => {
-    const source = getLayerById("edit").getSource();
-
-    dirtyFeatureIds.forEach((id) => {
-      source.getFeatureById(id).setStyle(editStyles);
-    });
-
-    setDirtyFeatureIds([]);
-  }, [dirtyFeatureIds]);
 
   useEffect(() => {
     const vectorLayers = getVectorLayers();
@@ -88,7 +68,7 @@ const useEditInteractions = () => {
     };
 
     modify.on("modifystart", addInitialFeaturesToHistory);
-  }, [history]);
+  }, []);
 
   useEffect(() => {
     const addCoordinatesToHistory = (e: ModifyEvent) => {
@@ -96,10 +76,6 @@ const useEditInteractions = () => {
         const featureId = featureLike.getId();
 
         if (!featureId) return;
-
-        updateDirtyFeatureIds(featureId as string);
-
-        editSource.getFeatureById(featureId).setStyle(dirtyStyles);
 
         const geometry = featureLike.getGeometry() as LineString;
         const newCoordinates = geometry.getCoordinates();
@@ -114,13 +90,40 @@ const useEditInteractions = () => {
     };
 
     modify.on("modifyend", addCoordinatesToHistory);
-  }, [updateDirtyFeatureIds]);
+  }, []);
+
+  useEffect(() => {
+    const setDirtyStyleOnEditedFeature = (e: ModifyEvent) => {
+      e.features.forEach((featureLike) => {
+        const featureId = featureLike.getId();
+
+        if (!featureId) return;
+
+        editSource.getFeatureById(featureId).setStyle(dirtyStyles);
+      });
+    };
+
+    modify.on("modifyend", setDirtyStyleOnEditedFeature);
+  }, []);
 
   useEffect(() => {
     console.log(history);
   }, [history]);
 
-  return { dirtyFeatureIds, clearDirtyFeatures };
+  const dirtyFeatureIds = useMemo(() => Object.keys(history), [history]);
+
+  const clearHistory = () => {
+    Object.keys(history).forEach((featureId) => {
+      editSource.getFeatureById(featureId).setStyle(editStyles);
+    });
+
+    setHistory({});
+  };
+
+  return {
+    dirtyFeatureIds,
+    clearHistory,
+  };
 };
 
 export default useEditInteractions;
