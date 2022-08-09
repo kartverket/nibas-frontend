@@ -72,15 +72,7 @@ const Button = forwardRef<HTMLButtonElement, Props>(
 
 Button.displayName = "Button";
 
-const StyledButton = styled.button`
-  // kvib sin disabled funker ikke, så vi legger den inn selv
-  :disabled {
-    background-color: var(--gray_light);
-    color: var(--gray_dark);
-    outline-style: solid;
-    outline-color: var(--gray_dark);
-  }
-`;
+const StyledButton = styled.button``;
 
 const UnstyledButton = styled(StyledButton)`
   background: none;
