@@ -4,6 +4,7 @@ import { ModifyEvent } from "ol/interaction/Modify";
 import { modify } from "./constants";
 import { editSource } from "hooks/layers/constants";
 import { editStyles } from "utils/map/layerStyles";
+import { Coordinate } from "ol/coordinate";
 
 // liste med features og deres nye koordinater per endring,
 // hvor 0 er eldst og n er nyeste versjon
@@ -18,18 +19,36 @@ import { editStyles } from "utils/map/layerStyles";
   }
 ]
 */
-type FeatureHistory = Record<string, number[][]>[];
+// en entry har en før og en etter koordinatliste
+type Entry = Record<string, Coordinate[]>;
+type Entries = Entry[];
+type FeatureHistory = {
+  index: number;
+  entries: Entries;
+};
+
+const setFeatureCoordinatesForEntry = (entry: Entry) => {
+  Object.keys(entry).forEach((featureId) => {
+    const lineString = editSource
+      .getFeatureById(featureId)
+      .getGeometry() as LineString;
+
+    lineString.setCoordinates(entry[featureId]);
+  });
+};
 
 const useFeatureHistory = () => {
-  const [history, setHistory] = useState<FeatureHistory>([]);
-  const [index, setIndex] = useState(0);
+  const [history, setHistory] = useState<FeatureHistory>({
+    index: 0,
+    entries: [],
+  });
 
   const dirtyFeatureIds = useMemo(
     () =>
-      history.reduce<string[]>((accumulator, entry, currentIndex) => {
+      history.entries.reduce<string[]>((accumulator, entry, currentIndex) => {
         // dirty features avhenger av hvilken index vi er på for å vise
         // de nåværende endrede featurene
-        if (currentIndex >= index) return accumulator;
+        if (currentIndex >= history.index) return accumulator;
 
         const featureIdsChangedInIteration = Object.keys(entry);
 
@@ -41,31 +60,36 @@ const useFeatureHistory = () => {
 
         return accumulator;
       }, []),
-    [history, index]
+    [history]
   );
 
   useEffect(() => {
     const addCurrentCoordinatesToHistory = (e: ModifyEvent) => {
+      const newEntries: Record<string, number[][]> = {};
+
       e.features.forEach((featureLike) => {
         const featureId = featureLike.getId();
 
         if (!featureId) return;
 
-        setHistory((prevHistory) => {
-          const geometry = featureLike.getGeometry() as LineString;
-          const initialCoordinates = geometry.getCoordinates();
+        const geometry = featureLike.getGeometry() as LineString;
+        const initialCoordinates = geometry.getCoordinates();
 
-          if (!initialCoordinates) return prevHistory;
+        if (!initialCoordinates) return;
 
-          const historyUpToIndex = prevHistory.slice(0, index);
+        newEntries[featureId] = initialCoordinates;
+        console.log("New entries", newEntries);
+      });
 
-          return [
-            ...historyUpToIndex,
-            {
-              [featureId]: initialCoordinates,
-            },
-          ];
-        });
+      setHistory((prevHistory) => {
+        const newIndex = prevHistory.index + 1;
+        const historyUpToIndex = prevHistory.entries.slice(0, newIndex);
+
+        console.log("History up to index", historyUpToIndex);
+        return {
+          index: newIndex,
+          entries: [...historyUpToIndex, newEntries],
+        };
       });
     };
 
@@ -74,53 +98,86 @@ const useFeatureHistory = () => {
     return () => {
       modify.un("modifystart", addCurrentCoordinatesToHistory);
     };
-  }, [index]);
-
-  useEffect(() => {
-    console.log("Current index", index);
-  }, [index]);
-
-  useEffect(() => {
-    console.log(history);
-    if (history.length === 0) return;
-
-    setIndex(history.length);
-  }, [history]);
+  }, []);
 
   const clearHistory = () => {
     dirtyFeatureIds.forEach((featureId) => {
       editSource.getFeatureById(featureId).setStyle(editStyles);
     });
 
-    setHistory([]);
+    setHistory({
+      entries: [],
+      index: 0,
+    });
   };
 
+  useEffect(() => {
+    console.log(history);
+  }, [history]);
+
   const undo = () => {
-    if (index === 0 || history.length === 0) return;
+    const { index } = history;
+    const entries = history.entries.slice();
 
-    const newIndex = index - 1;
-    setIndex(newIndex);
+    if (index === 0 || entries.length === 0) return;
 
-    console.log("New index", newIndex);
-
-    for (let i = history.length - 1; i >= newIndex; i--) {
-      console.log("i", i);
-      const entry = history[i];
-      console.log("entry", entry);
-
-      Object.keys(entry).forEach((featureId) => {
+    if (index === entries.length) {
+      // hvis første undo, legg til features sånn de ser ut nå i history
+      const newEntries: Record<string, number[][]> = {};
+      dirtyFeatureIds.forEach((featureId) => {
         const lineString = editSource
           .getFeatureById(featureId)
           .getGeometry() as LineString;
-        lineString.setCoordinates(entry[featureId]);
+
+        newEntries[featureId] = lineString.getCoordinates();
       });
+
+      entries.push(newEntries);
     }
+
+    const newIndex = index - 1;
+
+    console.log("New index", newIndex);
+
+    for (let i = history.entries.length - 1; i >= newIndex; i--) {
+      console.log("i", i);
+      const entry = history.entries[i];
+      setFeatureCoordinatesForEntry(entry);
+    }
+
+    setHistory({
+      entries,
+      index: newIndex,
+    });
+  };
+
+  const redo = () => {
+    const { index, entries } = history;
+
+    if (index >= entries.length) return;
+
+    console.log("Current index before redo", index);
+
+    const newIndex = index + 1;
+
+    for (let i = index; i < newIndex; i++) {
+      console.log("i", i);
+      const entry = history.entries[i];
+      console.log("Entry to apply", entry);
+      setFeatureCoordinatesForEntry(entry);
+    }
+
+    setHistory({
+      entries,
+      index: newIndex,
+    });
   };
 
   return {
     dirtyFeatureIds,
     clearHistory,
     undo,
+    redo,
   };
 };
 
