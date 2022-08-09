@@ -57,8 +57,10 @@ const useFeatureHistory = () => {
 
           if (!initialCoordinates) return prevHistory;
 
+          const historyUpToIndex = prevHistory.slice(0, index);
+
           return [
-            ...prevHistory,
+            ...historyUpToIndex,
             {
               [featureId]: initialCoordinates,
             },
@@ -72,7 +74,7 @@ const useFeatureHistory = () => {
     return () => {
       modify.un("modifystart", addCurrentCoordinatesToHistory);
     };
-  }, []);
+  }, [index]);
 
   useEffect(() => {
     console.log("Current index", index);
