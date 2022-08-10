@@ -103,9 +103,11 @@ const useFeatureHistory = () => {
           prevHistory.index
         );
 
+        historyUpToIndex.push(newEntry);
+
         return {
           index: newIndex,
-          entries: [...historyUpToIndex, newEntry],
+          entries: historyUpToIndex,
         };
       });
     };
