@@ -1,3 +1,5 @@
+@import '@kartverket/kvib/main.css';
+
 body {
   height: 100vh;
   margin: 0;
@@ -6,6 +8,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
 }
 
 code {

@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { updateGrunnkrets } from "api/enheter";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
+import Label from "components/form/Label";
 import useNibasApi from "hooks/useNibasApi";
 import {
   GrunnkretsRef,
@@ -90,7 +91,7 @@ const AccordionRow = styled.tr`
   }
 `;
 
-const BlockLabel = styled.label`
+const BlockLabel = styled(Label)`
   &:last-child {
     margin-left: 16px;
   }

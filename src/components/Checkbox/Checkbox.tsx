@@ -1,5 +1,6 @@
 import { forwardRef, InputHTMLAttributes } from "react";
 import styled, { css } from "styled-components";
+import Label from "components/form/Label";
 
 type Props = InputHTMLAttributes<HTMLInputElement> & {
   label: React.ReactNode;
@@ -80,7 +81,7 @@ const DefaultCheckbox = styled.input`
   width: 0;
 `;
 
-const Wrapper = styled.label<{ disabled: boolean }>`
+const Wrapper = styled(Label)<{ disabled: boolean }>`
   display: inline-block;
   position: relative;
   padding-left: 24px;

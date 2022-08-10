@@ -63,7 +63,9 @@ const Kart = () => {
           </KartOverlay>
 
           <CustomControl>
-            <button onClick={saveDraft}>Lagre endringer</button>
+            <Button onClick={saveDraft} disabled={dirtyFeatureIds.length === 0}>
+              Lagre endringer
+            </Button>
           </CustomControl>
           <CustomControl>
             <Button onClick={undo} disabled={dirtyFeatureIds.length === 0}>
