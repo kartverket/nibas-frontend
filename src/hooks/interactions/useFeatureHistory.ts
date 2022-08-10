@@ -5,14 +5,14 @@ import LineString from "ol/geom/LineString";
 import { ModifyEvent } from "ol/interaction/Modify";
 import { modify } from "./constants";
 import { editSource } from "hooks/layers/constants";
-import { editStyles } from "utils/map/layerStyles";
 
 // liste med features og deres nye koordinater per endring,
 // hvor 0 er eldst og n er nyeste versjon
 /*
 [
   {
-    feature123: [[1, 2], [2, 5]]
+    // fra [[1, 2], [2, 5]], til [[0, 0], [2, 5]]
+    feature123: [[[1, 2], [2, 5]], [[0, 0], [2, 5]]]
   },
   {
     feature123: [[1, 2], [4, 8]],
@@ -97,6 +97,8 @@ const useFeatureHistory = () => {
         newEntry[featureId] = [coordinates, null];
       });
 
+      // når ny entry legges til, forsikre om at den tar kun opp til index
+      // da kan vi lage ny historie hvis vi har gått tilbake i tid tidligere
       setHistory((prevHistory) => {
         const newIndex = prevHistory.index + 1;
         const historyUpToIndex = prevHistory.entries.slice(
@@ -139,27 +141,23 @@ const useFeatureHistory = () => {
   }, []);
 
   const clearHistory = () => {
-    dirtyFeatureIds.forEach((featureId) => {
-      editSource.getFeatureById(featureId).setStyle(editStyles);
-    });
-
     setHistory({
       entries: [],
       index: 0,
     });
   };
 
-  const undo = () => {
-    const { index } = history;
-    const entries = history.entries.slice();
+  const revert = (amount: number) => {
+    const { index, entries } = history;
 
     if (index === 0 || entries.length === 0) return;
 
-    const newIndex = index - 1;
+    const newIndex = index - (amount > index ? index : amount);
 
+    // gå bakover til nye indexen og sett koordinater for alle features
+    // frem til nye index
     for (let i = newIndex; i > newIndex - 1; i--) {
-      const entry = history.entries[i];
-      setFeatureCoordinatesForEntry(entry, "from");
+      setFeatureCoordinatesForEntry(history.entries[i], "from");
     }
 
     setHistory({
@@ -168,22 +166,30 @@ const useFeatureHistory = () => {
     });
   };
 
-  const redo = () => {
+  const reapply = (amount: number) => {
     const { index, entries } = history;
 
     if (index >= entries.length) return;
 
-    const newIndex = index + 1;
+    const newIndex =
+      index + amount > entries.length ? entries.length : index + amount;
 
     for (let i = index; i < newIndex; i++) {
-      const entry = history.entries[i];
-      setFeatureCoordinatesForEntry(entry, "to");
+      setFeatureCoordinatesForEntry(history.entries[i], "to");
     }
 
     setHistory({
       entries,
       index: newIndex,
     });
+  };
+
+  const undo = () => {
+    revert(1);
+  };
+
+  const redo = () => {
+    reapply(1);
   };
 
   return {
