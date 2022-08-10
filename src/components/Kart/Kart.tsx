@@ -8,6 +8,7 @@ import OverlayPopup from "./OverlayPopup";
 import SidebarPanels from "./SidebarPanels";
 import { updateGrenser } from "api/grenser";
 import CustomControl from "components/CustomControl";
+import Button from "components/form/Button";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
 import useSelectInteraction from "hooks/interactions/useSelectInteraction";
 import {
@@ -25,7 +26,8 @@ const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const { tokenHolderFunc } = useAuthenticationFlow();
 
-  const { dirtyFeatureIds, clearHistory, undo, redo } = useEditInteractions();
+  const { dirtyFeatureIds, clearHistory, undo, redo, canRedo } =
+    useEditInteractions();
   const selectedFeatures = useSelectInteraction();
 
   useEffect(() => {
@@ -64,12 +66,14 @@ const Kart = () => {
             <button onClick={saveDraft}>Lagre endringer</button>
           </CustomControl>
           <CustomControl>
-            <button onClick={undo} disabled={dirtyFeatureIds.length === 0}>
+            <Button onClick={undo} disabled={dirtyFeatureIds.length === 0}>
               Undo
-            </button>
+            </Button>
           </CustomControl>
           <CustomControl>
-            <button onClick={redo}>Redo</button>
+            <Button onClick={redo} disabled={!canRedo}>
+              Redo
+            </Button>
           </CustomControl>
 
           <ZoomControls />

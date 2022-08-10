@@ -192,11 +192,14 @@ const useFeatureHistory = () => {
     reapply(1);
   };
 
+  const canRedo = history.index < history.entries.length;
+
   return {
     dirtyFeatureIds,
     clearHistory,
     undo,
     redo,
+    canRedo,
   };
 };
 
