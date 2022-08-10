@@ -15,8 +15,9 @@ import { editSource } from "hooks/layers/constants";
     feature123: [[[1, 2], [2, 5]], [[0, 0], [2, 5]]]
   },
   {
-    feature123: [[1, 2], [4, 8]],
-    feature456: [[5, 6], [-1, 5]]
+    // disse har begynt å dragges, men ikke er sluppet enda
+    feature123: [[[1, 2], [4, 8]], null],
+    feature456: [[[5, 6], [-1, 5]], null]
   }
 ]
 */
@@ -24,10 +25,9 @@ import { editSource } from "hooks/layers/constants";
 // om andre elementet er null har det ikke en etter-state, som vil si den fortsatt dragges
 type BeforeAfterCoordinates = [Coordinate[], Coordinate[] | null];
 type Entry = Record<string, BeforeAfterCoordinates>;
-type Entries = Entry[];
 type FeatureHistory = {
   index: number;
-  entries: Entries;
+  entries: Entry[];
 };
 
 const setFeatureCoordinatesForEntry = (
@@ -62,26 +62,23 @@ const useFeatureHistory = () => {
 
   const dirtyFeatureIds = useMemo(
     () =>
-      history.entries.reduce<string[]>((accumulator, entry, currentIndex) => {
-        // dirty features avhenger av hvilken index vi er på for å vise
-        // de nåværende endrede featurene
-        if (history.index === 0 || currentIndex >= history.index)
+      history.entries
+        .slice(0, history.index)
+        .reduce<string[]>((accumulator, entry) => {
+          const featureIdsChangedInEntry = Object.keys(entry);
+
+          featureIdsChangedInEntry.forEach((featureId) => {
+            // hvis to-koordinatene ikke er satt er ikke featuren dirty enda
+            if (
+              entry[featureId][1] !== null &&
+              !accumulator.includes(featureId)
+            ) {
+              accumulator.push(featureId);
+            }
+          });
+
           return accumulator;
-
-        const featureIdsChangedInEntry = Object.keys(entry);
-
-        featureIdsChangedInEntry.forEach((featureId) => {
-          // hvis to-koordinatene ikke er satt er ikke featuren dirty enda
-          if (
-            entry[featureId][1] !== null &&
-            !accumulator.includes(featureId)
-          ) {
-            accumulator.push(featureId);
-          }
-        });
-
-        return accumulator;
-      }, []),
+        }, []),
     [history]
   );
 
