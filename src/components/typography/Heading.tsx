@@ -10,47 +10,7 @@ type Props = {
   className?: string; // styled-components className
 };
 
-const getKvibClassName = (tag: Tag, size: Size) => {
-  let className = "heading__";
-
-  switch (tag) {
-    case "h1": {
-      className += "h1";
-      break;
-    }
-    case "h2": {
-      className += "h2";
-      break;
-    }
-    case "h3": {
-      className += "h3";
-      break;
-    }
-  }
-
-  className += "--";
-
-  switch (size) {
-    case "xs": {
-      className += "xs";
-      break;
-    }
-    case "s": {
-      className += "s";
-      break;
-    }
-    case "m": {
-      className += "m";
-      break;
-    }
-    case "l": {
-      className += "l";
-      break;
-    }
-  }
-
-  return className;
-};
+const getKvibClassName = (tag: Tag, size: Size) => `heading__${tag}--${size}`;
 
 const Heading: React.FC<Props> = ({ tag, size, className, children }) => {
   const kvibClassName = getKvibClassName(tag, size);
