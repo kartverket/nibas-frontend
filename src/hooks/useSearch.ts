@@ -5,10 +5,6 @@ const useSearch = () => {
   const timer = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    console.log("Searched string", searchValue);
-  }, [searchValue]);
-
-  useEffect(() => {
     if (timer.current) {
       clearTimeout(timer.current);
       timer.current = null;
