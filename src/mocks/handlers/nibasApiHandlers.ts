@@ -1,58 +1,60 @@
 import { rest } from "msw";
 import type { RestHandler } from "msw";
-import {
-  mockGeoJsonFeatureResponse,
-  mockFylker,
-  mockKommuner,
-  mockMaalemetodeResponse,
-  mockActuatorResponse,
-  mockNoeyaktighetsklasseResponse,
-  mockTerrengdetaljResponse,
-  mockDetailedKommune,
-  mockDetailedGrunnkrets1,
-  mockGrunnkrets1,
-  mockGrunnkrets2,
-  mockDetailedGrunnkrets2,
-} from "./responses";
+import * as mocks from "./responses";
 
 export const nibasApiHandlers: RestHandler[] = [
   rest.get("/v1/fylker", (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mockFylker));
+    return res(ctx.status(200), ctx.json(mocks.mockFylker));
   }),
   rest.get("/v1/kommuner", (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mockKommuner));
+    return res(ctx.status(200), ctx.json(mocks.mockKommuner));
   }),
   rest.get("v1/kommuner/:id/grenser", (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mockGeoJsonFeatureResponse));
+    return res(ctx.status(200), ctx.json(mocks.mockGeoJsonFeatureResponse));
   }),
   rest.get("/v1/fylker/:fylkeId/grenser", (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mockGeoJsonFeatureResponse));
+    return res(ctx.status(200), ctx.json(mocks.mockGeoJsonFeatureResponse));
   }),
   rest.get("/v1/kodeliste/maalemetode-koder", (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mockMaalemetodeResponse));
+    return res(ctx.status(200), ctx.json(mocks.mockMaalemetodeResponse));
   }),
   rest.post("/v1/grenser", (req, res, ctx) => {
     return res(ctx.status(200));
   }),
   rest.get("/actuator/info", (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mockActuatorResponse));
+    return res(ctx.status(200), ctx.json(mocks.mockActuatorResponse));
   }),
   rest.get("/v1/kodeliste/terrengdetaljkoder", (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mockTerrengdetaljResponse));
+    return res(ctx.status(200), ctx.json(mocks.mockTerrengdetaljResponse));
   }),
   rest.get("/v1/kodeliste/noeyaktighetsklasser", (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mockNoeyaktighetsklasseResponse));
+    return res(
+      ctx.status(200),
+      ctx.json(mocks.mockNoeyaktighetsklasseResponse)
+    );
   }),
   rest.get("/v1/kommuner/:id", (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mockDetailedKommune));
+    return res(ctx.status(200), ctx.json(mocks.mockDetailedKommune));
   }),
   rest.get("/v1/kommuner/:id/grunnkretser", (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json([mockGrunnkrets1, mockGrunnkrets2]));
+    return res(
+      ctx.status(200),
+      ctx.json([mocks.mockGrunnkrets1, mocks.mockGrunnkrets2])
+    );
   }),
   rest.get("/v1/grunnkretser/1", (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mockDetailedGrunnkrets1));
+    return res(ctx.status(200), ctx.json(mocks.mockDetailedGrunnkrets1));
   }),
   rest.get("/v1/grunnkretser/2", (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mockDetailedGrunnkrets2));
+    return res(ctx.status(200), ctx.json(mocks.mockDetailedGrunnkrets2));
+  }),
+  rest.get("/v1/kommuner/:id/stemmekretser", (req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(mocks.mockStemmekretser));
+  }),
+  rest.get("/v1/stemmekretser/1", (req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(mocks.mockStemmekrets1));
+  }),
+  rest.get("/v1/stemmekretser/2", (req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(mocks.mockStemmekrets2));
   }),
 ];

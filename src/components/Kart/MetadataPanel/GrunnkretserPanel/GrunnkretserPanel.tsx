@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
+import { KretsTable } from "../KretsTable";
 import { BlockLabel } from "../metadataComponents";
 import EditRow from "./EditRow";
 import Button from "components/form/Button";
@@ -87,7 +88,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
         {t("inndelinger.Grunnkretser")}
       </PanelTitle>
       {filteredGrunnkretser && (
-        <GrunnkretsTable>
+        <KretsTable>
           <thead>
             <tr>
               <th>{t("tabell.Navn")}</th>
@@ -124,7 +125,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
               </React.Fragment>
             ))}
           </tbody>
-        </GrunnkretsTable>
+        </KretsTable>
       )}
     </div>
   );
@@ -136,40 +137,6 @@ const PanelTitle = styled(Heading)`
 `;
 
 const KretsRow = styled.tr``;
-
-const GrunnkretsTable = styled.table`
-  border-spacing: 0;
-  border: none;
-  width: 100%;
-
-  thead {
-    text-transform: uppercase;
-    text-align: left;
-    color: ${({ theme }) => theme.colors.gray};
-    font-size: 16px;
-
-    th {
-      border-bottom: 1px solid ${({ theme }) => theme.colors.black};
-      padding-left: 8px;
-      padding-bottom: 8px;
-    }
-  }
-
-  tbody {
-    ${KretsRow} {
-      background-color: ${({ theme }) => theme.colors.blueLight};
-
-      &:nth-child(2n) {
-        background-color: ${({ theme }) => theme.colors.white};
-      }
-
-      td {
-        padding: 8px;
-        font-size: 14px;
-      }
-    }
-  }
-`;
 
 const SmallerBlockLabel = styled(BlockLabel)`
   max-width: 400px;

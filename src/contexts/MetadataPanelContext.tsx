@@ -9,11 +9,16 @@ type GrenseMetadataPanel = {
 };
 
 type GrunnkretserPanel = {
-  content: "grunnkretser";
-  kommune: KommuneRef; // kommuneid / kommunenummer
+  content: "grunnkrets";
+  kommune: KommuneRef;
 };
 
-type Panel = GrenseMetadataPanel | GrunnkretserPanel;
+type StemmekretserPanel = {
+  content: "stemmekrets";
+  kommune: KommuneRef;
+};
+
+type Panel = GrenseMetadataPanel | GrunnkretserPanel | StemmekretserPanel;
 
 export type MetadataPanelContextValue = {
   panelContext: Panel | null;

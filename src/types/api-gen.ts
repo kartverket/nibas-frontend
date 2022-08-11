@@ -4,26 +4,32 @@
  */
 
 export interface paths {
+  "/v1/stemmekretser/{id}": {
+    /** Henter stemmekrets med gitt id */
+    get: operations["hentEn"];
+    /** Oppdaterer angitt stemmekrets. Returnerer den oppdaterte stemmekretsen */
+    put: operations["oppdaterStemmekrets"];
+  };
   "/v1/nasjoner/{id}": {
     /** Henter nasjon med gitt id */
-    get: operations["hentEn"];
+    get: operations["hentEn_1"];
     put: operations["oppdaterNasjon"];
   };
   "/v1/kommuner/{id}": {
     /** Henter kommune med gitt id */
-    get: operations["hentEn_1"];
+    get: operations["hentEn_2"];
     /** Oppdaterer angitt kommune. Returnerer den oppdaterte kommunen */
     put: operations["oppdaterKommune"];
   };
   "/v1/grunnkretser/{id}": {
     /** Henter grunnkrets med gitt id */
-    get: operations["hentEn_2"];
+    get: operations["hentEn_3"];
     /** Oppdaterer angitt grunnkrets. Returnerer den oppdaterte grunnkretsen */
     put: operations["oppdaterGrunnkrets"];
   };
   "/v1/fylker/{id}": {
     /** Henter fylke med gitt id */
-    get: operations["hentEn_3"];
+    get: operations["hentEn_4"];
     put: operations["oppdaterFylke"];
   };
   "/v1/admin/kodelister/invalidate": {
@@ -36,9 +42,25 @@ export interface paths {
   "/v1/grenser": {
     post: operations["lagreGrenser"];
   };
+  "/v1/stemmekretser": {
+    /** Henter alle stemmekretser i Nasjonal inndelingsbase. */
+    get: operations["hentAlle"];
+  };
+  "/v1/stemmekretser/{id}/revisjoner": {
+    /** Henter historiske revisjoner til en stemmekrets med gitt id */
+    get: operations["hentStemmekretsRevisjoner"];
+  };
+  "/v1/stemmekretser/{id}/revisjoner/{revisjon}": {
+    /** Henter en gitt historisk revisjon av en stemmekrets */
+    get: operations["hentStemmekretsRevisjon"];
+  };
+  "/v1/stemmekretser/{id}/grenser": {
+    /** Henter grensene til en stemmekrets med gitt id */
+    get: operations["hentGrenser"];
+  };
   "/v1/nasjoner": {
     /** Henter alle nasjoner i Nasjonal inndelingsbase. */
-    get: operations["hentAlle"];
+    get: operations["hentAlle_1"];
   };
   "/v1/nasjoner/{id}/revisjoner": {
     /** Henter historiske revisjoner til en nasjon med gitt id */
@@ -50,11 +72,15 @@ export interface paths {
   };
   "/v1/nasjoner/{id}/grenser": {
     /** Henter grensene til en nasjon med gitt id */
-    get: operations["hentGrenser"];
+    get: operations["hentGrenser_1"];
   };
   "/v1/kommuner": {
     /** Henter alle kommuner i Nasjonal inndelingsbase. */
-    get: operations["hentAlle_1"];
+    get: operations["hentAlle_2"];
+  };
+  "/v1/kommuner/{id}/stemmekretser": {
+    /** Henter alle stemmekretser som tilhører en kommune. */
+    get: operations["hentKommunesStemmekretser"];
   };
   "/v1/kommuner/{id}/revisjoner": {
     /** Henter historiske revisjoner til en kommune med gitt id */
@@ -70,7 +96,7 @@ export interface paths {
   };
   "/v1/kommuner/{id}/grenser": {
     /** Henter grensene til en kommune med gitt id */
-    get: operations["hentGrenser_1"];
+    get: operations["hentGrenser_2"];
   };
   "/v1/kodeliste/terrengdetaljkoder": {
     get: operations["fetchTerrengdetaljkoder"];
@@ -109,7 +135,7 @@ export interface paths {
   };
   "/v1/grunnkretser/{id}/grenser": {
     /** Henter grensene til en grunnkrets med gitt id */
-    get: operations["hentGrenser_2"];
+    get: operations["hentGrenser_3"];
   };
   "/v1/grenser/{id}": {
     /** Henter grense med gitt id */
@@ -125,7 +151,7 @@ export interface paths {
   };
   "/v1/fylker": {
     /** Henter alle fylker i Nasjonal inndelingsbase. */
-    get: operations["hentAlle_2"];
+    get: operations["hentAlle_3"];
   };
   "/v1/fylker/{id}/revisjoner": {
     /** Henter historiske revisjoner til et fylke med gitt id */
@@ -137,26 +163,36 @@ export interface paths {
   };
   "/v1/fylker/{id}/grenser": {
     /** Henter grensene til et fylke med gitt id */
-    get: operations["hentGrenser_3"];
+    get: operations["hentGrenser_4"];
   };
 }
 
 export interface components {
   schemas: {
-    /** @description Representasjon av et navn */
-    AdministrativEnhetNavn: {
-      /** @description Navnet på en administrativ enhet */
-      navn: string;
-      /** @description Språkkoden til det administrative navnet */
-      spraak: string;
-    };
-    NasjonRequest: {
-      /** @description Navnene til nasjonen */
-      administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
-      /** @description LokalId for angitt nasjon */
+    /** @description Unik identifikasjon av et objekt */
+    Identifikasjon: {
+      /** @description Lokal id som identifiserer geometrien. Dette er en globalt unik id. */
       lokalid: string;
-      /** @description Navnerommet for nasjonen */
+      /** @description Navnerom som unikt identifiserer datakilden til objektet, starter med to bokstavs kode jfr ISO 3166. */
       navnerom: string;
+      /** @description Identifikasjon av en spesiell versjon av et geografisk objekt (instans), maksimum lengde på 25 karakterer. */
+      versjonid?: string;
+    };
+    /** @description Representasjon av en stemmekrets */
+    StemmekretsRequest: {
+      /** @description Stemmekretsnummeret til stemmekretsen */
+      stemmekretsnummer?: string;
+      identifikasjon: components["schemas"]["Identifikasjon"];
+      /** @description Stemmekretsnavnet til stemmekretsen */
+      stemmekretsnavn?: string;
+      /** @description Tellekretsnummeret til stemmekretsen */
+      tellekretsnummer?: string;
+      /** @description Tellekretsnavnet til stemmekretsen */
+      tellekretsnavn?: string;
+      /** @description Valgdistriktsnummeret til stemmekretsen */
+      valgdistriktsnummer?: string;
+      /** @description Kommunenummeret stemmekretsen tilhører til */
+      kommunenummer?: string;
     };
     /** @description Spesfikk metadata for en administrativ grense (fylkes/kommunegrense). Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Objekttype/Index/EAID_5142EDBA_4226_4ca3_924D_EECEFD216D1A */
     AdministrativGrenseMetadata: components["schemas"]["Metadata"] & {
@@ -226,9 +262,9 @@ export interface components {
       /** Format: double */
       z?: number;
       valid?: boolean;
-      coordinate?: components["schemas"]["Coordinate"];
       /** Format: double */
       m?: number;
+      coordinate?: components["schemas"]["Coordinate"];
     };
     CoordinateSequence: {
       /** Format: int32 */
@@ -266,6 +302,8 @@ export interface components {
       /** Format: double */
       width?: number;
       /** Format: double */
+      area?: number;
+      /** Format: double */
       minX?: number;
       /** Format: double */
       maxX?: number;
@@ -273,8 +311,6 @@ export interface components {
       minY?: number;
       /** Format: double */
       maxY?: number;
-      /** Format: double */
-      area?: number;
       /** Format: double */
       height?: number;
     };
@@ -316,15 +352,15 @@ export interface components {
       empty?: boolean;
       valid?: boolean;
       simple?: boolean;
+      coordinate?: components["schemas"]["Coordinate"];
       /** Format: int32 */
       srid?: number;
+      geometryType?: string;
       /** Format: int32 */
       dimension?: number;
-      geometryType?: string;
       /** Format: int32 */
       numGeometries?: number;
       precisionModel?: components["schemas"]["PrecisionModel"];
-      coordinate?: components["schemas"]["Coordinate"];
       coordinates?: components["schemas"]["Coordinate"][];
       /** Format: int32 */
       numPoints?: number;
@@ -357,15 +393,6 @@ export interface components {
       commonGrense: unknown;
       dokumentasjonsreferanser: unknown;
       maritimeGrenser: unknown;
-    };
-    /** @description Unik identifikasjon av et objekt */
-    Identifikasjon: {
-      /** @description Lokal id som identifiserer geometrien. Dette er en globalt unik id. */
-      lokalid: string;
-      /** @description Navnerom som unikt identifiserer datakilden til objektet, starter med to bokstavs kode jfr ISO 3166. */
-      navnerom: string;
-      /** @description Identifikasjon av en spesiell versjon av et geografisk objekt (instans), maksimum lengde på 25 karakterer. */
-      versjonid?: string;
     };
     /** @description Klassifikasjon av stedfestingsnøyaktighet på grenser, og er basert på dårligste nøyaktighet til grensepunktene til grensen. */
     KodelisteEntry: {
@@ -437,18 +464,6 @@ export interface components {
     Metadata: {
       discriminator: string;
     };
-    /** @description Representasjon av en nasjon */
-    NasjonResponse: {
-      /** @description ID-en til nasjonen */
-      id: string;
-      /** @description Liste over navn til nasjonen */
-      administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
-      /** @description LokalID til nasjonen */
-      lokalid: string;
-      /** @description Navnerommet til nasjonen */
-      navnerom: string;
-      features: components["schemas"]["FeatureCollection"];
-    };
     Point: {
       envelope?: components["schemas"]["Geometry"];
       factory?: components["schemas"]["GeometryFactory"];
@@ -460,16 +475,16 @@ export interface components {
       /** Format: double */
       y?: number;
       simple?: boolean;
+      coordinate?: components["schemas"]["Coordinate"];
+      geometryType?: string;
       /** Format: int32 */
       dimension?: number;
-      geometryType?: string;
-      coordinateSequence?: components["schemas"]["CoordinateSequence"];
-      coordinate?: components["schemas"]["Coordinate"];
       /** Format: int32 */
       numPoints?: number;
       boundary?: components["schemas"]["Geometry"];
       /** Format: int32 */
       boundaryDimension?: number;
+      coordinateSequence?: components["schemas"]["CoordinateSequence"];
       /** Format: double */
       length?: number;
       valid?: boolean;
@@ -551,6 +566,25 @@ export interface components {
       foelgerTerrengdetalj: unknown;
       noeyaktighetsklasse: unknown;
     };
+    /** @description Representasjon av en stemmekrets */
+    StemmekretsResponse: {
+      /** @description ID-en til stemmekretsen */
+      id: string;
+      /** @description Navnet på stemmekretsen */
+      stemmekretsnavn: string;
+      /** @description Stemmekretsnummeret til stemmekretsen */
+      stemmekretsnummer: string;
+      identifikasjon: components["schemas"]["Identifikasjon"];
+      /** @description Kommunenummeret til stemmekretsen */
+      kommunenummer: string;
+      /** @description Tellekretsnummer til stemmekretsen */
+      tellekretsnummer?: string;
+      /** @description Tellekretsnavn til stemmekretsen */
+      tellekretsnavn?: string;
+      /** @description Valgdistriktsnummer til stemmekretsen */
+      valgdistriktsnummer?: string;
+      features: components["schemas"]["FeatureCollection"];
+    };
     /** @description Organisasjon som er ansvarlig for opprettholdelse av grensa. */
     TekstHolder: {
       /** @description ID for elementet. */
@@ -577,6 +611,33 @@ export interface components {
       maritimeGrenser: unknown;
     };
     Type: { [key: string]: unknown };
+    /** @description Representasjon av et navn */
+    AdministrativEnhetNavn: {
+      /** @description Navnet på en administrativ enhet */
+      navn: string;
+      /** @description Språkkoden til det administrative navnet */
+      spraak: string;
+    };
+    NasjonRequest: {
+      /** @description Navnene til nasjonen */
+      administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
+      /** @description LokalId for angitt nasjon */
+      lokalid: string;
+      /** @description Navnerommet for nasjonen */
+      navnerom: string;
+    };
+    /** @description Representasjon av en nasjon */
+    NasjonResponse: {
+      /** @description ID-en til nasjonen */
+      id: string;
+      /** @description Liste over navn til nasjonen */
+      administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
+      /** @description LokalID til nasjonen */
+      lokalid: string;
+      /** @description Navnerommet til nasjonen */
+      navnerom: string;
+      features: components["schemas"]["FeatureCollection"];
+    };
     /** @description Representasjon av en kommune */
     KommuneRequest: {
       /** @description Navnene til kommunen */
@@ -672,13 +733,13 @@ export interface components {
        */
       kodeverdi: number;
     };
-    /** @description En referanse til en nasjon */
-    NasjonRef: {
-      /** @description ID-en til nasjonen */
+    /** @description En referanse til en stemmekrets */
+    StemmekretsRef: {
+      /** @description ID-en til stemmekretsen */
       id: string;
-      /** @description Liste over navn til nasjonen */
-      navn: components["schemas"]["AdministrativEnhetNavn"][];
-      /** @description URL til full representasjon av nasjonen */
+      /** @description Navnet på stemmekretsen */
+      navn: string;
+      /** @description URL til full representasjon av stemmekrets */
       href: string;
     };
     /** @description En referanse til en historisk revisjon av en administrativ enhet */
@@ -699,6 +760,15 @@ export interface components {
        */
       revisjonStatus: "NY" | "ENDRET" | "SLETTET";
       /** @description Referanse til hvor den historiske revisjonen kan finnes */
+      href: string;
+    };
+    /** @description En referanse til en nasjon */
+    NasjonRef: {
+      /** @description ID-en til nasjonen */
+      id: string;
+      /** @description Liste over navn til nasjonen */
+      navn: components["schemas"]["AdministrativEnhetNavn"][];
+      /** @description URL til full representasjon av nasjonen */
       href: string;
     };
     /** @description En referanse til en kommune */
@@ -759,8 +829,59 @@ export interface components {
 }
 
 export interface operations {
-  /** Henter nasjon med gitt id */
+  /** Henter stemmekrets med gitt id */
   hentEn: {
+    parameters: {
+      path: {
+        /** ID-en til stemmekretsen man vil hente */
+        id: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["StemmekretsResponse"];
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["StemmekretsResponse"];
+        };
+      };
+    };
+  };
+  /** Oppdaterer angitt stemmekrets. Returnerer den oppdaterte stemmekretsen */
+  oppdaterStemmekrets: {
+    parameters: {
+      path: {
+        /** ID til stemmekretsen man vil oppdatere */
+        id: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["StemmekretsResponse"];
+        };
+      };
+      /** Bad request. Check the request body and path */
+      400: {
+        content: {
+          "application/json": components["schemas"]["StemmekretsResponse"];
+        };
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["StemmekretsRequest"];
+      };
+    };
+  };
+  /** Henter nasjon med gitt id */
+  hentEn_1: {
     parameters: {
       path: {
         /** ID-en til nasjonen man vil hente */
@@ -804,7 +925,7 @@ export interface operations {
     };
   };
   /** Henter kommune med gitt id */
-  hentEn_1: {
+  hentEn_2: {
     parameters: {
       path: {
         /** ID-en til kommunen man vil hente */
@@ -855,7 +976,7 @@ export interface operations {
     };
   };
   /** Henter grunnkrets med gitt id */
-  hentEn_2: {
+  hentEn_3: {
     parameters: {
       path: {
         /** ID-en til grunnkretsen man vil hente */
@@ -906,7 +1027,7 @@ export interface operations {
     };
   };
   /** Henter fylke med gitt id */
-  hentEn_3: {
+  hentEn_4: {
     parameters: {
       path: {
         /** ID-en til fylket man vil hente */
@@ -992,8 +1113,90 @@ export interface operations {
       };
     };
   };
-  /** Henter alle nasjoner i Nasjonal inndelingsbase. */
+  /** Henter alle stemmekretser i Nasjonal inndelingsbase. */
   hentAlle: {
+    parameters: {
+      query: {
+        /** Valgfri kommune-ID til en kommune for å filtrere stemmekretser innenfor en kommune */
+        kommuneid?: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["StemmekretsRef"][];
+        };
+      };
+    };
+  };
+  /** Henter historiske revisjoner til en stemmekrets med gitt id */
+  hentStemmekretsRevisjoner: {
+    parameters: {
+      path: {
+        /** ID-en til stemmekretsen man vil hente */
+        id: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["RevisjonRef"][];
+        };
+      };
+    };
+  };
+  /** Henter en gitt historisk revisjon av en stemmekrets */
+  hentStemmekretsRevisjon: {
+    parameters: {
+      path: {
+        /** ID-en til stemmekrets man vil hente */
+        id: string;
+        /** ID til revisjonen man vil hente */
+        revisjon: number;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["StemmekretsResponse"];
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["StemmekretsResponse"];
+        };
+      };
+    };
+  };
+  /** Henter grensene til en stemmekrets med gitt id */
+  hentGrenser: {
+    parameters: {
+      path: {
+        /** ID-en til stemmekretsen man vil hente */
+        id: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["FeatureCollection"];
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["FeatureCollection"];
+        };
+      };
+    };
+  };
+  /** Henter alle nasjoner i Nasjonal inndelingsbase. */
+  hentAlle_1: {
     responses: {
       /** Successful operation */
       200: {
@@ -1046,7 +1249,7 @@ export interface operations {
     };
   };
   /** Henter grensene til en nasjon med gitt id */
-  hentGrenser: {
+  hentGrenser_1: {
     parameters: {
       path: {
         /** ID-en til nasjonen man vil hente */
@@ -1069,7 +1272,7 @@ export interface operations {
     };
   };
   /** Henter alle kommuner i Nasjonal inndelingsbase. */
-  hentAlle_1: {
+  hentAlle_2: {
     parameters: {
       query: {
         /** Valgfri id til et fylke for å filtrere kommuner innenfor et fylke */
@@ -1081,6 +1284,23 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["KommuneRef"][];
+        };
+      };
+    };
+  };
+  /** Henter alle stemmekretser som tilhører en kommune. */
+  hentKommunesStemmekretser: {
+    parameters: {
+      path: {
+        /** ID til kommunen man vil hente stemmekretsene til */
+        id: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["StemmekretsRef"][];
         };
       };
     };
@@ -1145,7 +1365,7 @@ export interface operations {
     };
   };
   /** Henter grensene til en kommune med gitt id */
-  hentGrenser_1: {
+  hentGrenser_2: {
     parameters: {
       path: {
         /** ID-en til kommunen man vil hente */
@@ -1300,7 +1520,7 @@ export interface operations {
     };
   };
   /** Henter grensene til en grunnkrets med gitt id */
-  hentGrenser_2: {
+  hentGrenser_3: {
     parameters: {
       path: {
         /** ID-en til grunnkretsen man vil hente */
@@ -1388,7 +1608,7 @@ export interface operations {
     };
   };
   /** Henter alle fylker i Nasjonal inndelingsbase. */
-  hentAlle_2: {
+  hentAlle_3: {
     responses: {
       /** Successful operation */
       200: {
@@ -1441,7 +1661,7 @@ export interface operations {
     };
   };
   /** Henter grensene til et fylke med gitt id */
-  hentGrenser_3: {
+  hentGrenser_4: {
     parameters: {
       path: {
         /** ID-en til fylket man vil hente */

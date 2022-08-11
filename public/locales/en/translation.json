@@ -74,5 +74,11 @@
   },
   "grunnkrets": {
     "Grunnkretsnummer": "__STRING_NOT_TRANSLATED__"
+  },
+  "stemmekrets": {
+    "Stemmekretsnummer": "__STRING_NOT_TRANSLATED__",
+    "Valgdistriktsnummer": "__STRING_NOT_TRANSLATED__",
+    "Tellekretsnavn": "__STRING_NOT_TRANSLATED__",
+    "Tellekretsnummer": "__STRING_NOT_TRANSLATED__"
   }
 }
