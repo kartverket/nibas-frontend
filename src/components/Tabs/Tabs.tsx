@@ -37,25 +37,28 @@ const Tabs = ({ children, tabTransKeys }: Props) => {
   );
 };
 
-const TabsWrapper = styled.div`
-  border-bottom: 4px solid ${({ theme }) => theme.colors.blueDark};
-`;
+const TabsWrapper = styled.div``;
 
 const TabButton = styled(Button).attrs(() => ({
   variant: "unstyled",
 }))<{ selected: boolean }>`
-  border: 2px solid ${({ theme }) => theme.colors.blueDark};
   border-bottom: none;
-  margin-right: 8px;
-  padding: 4px 8px;
-  border-radius: 4px 4px 0 0;
-  transition: 0.1s all;
+  padding: 8px;
+  transition: 0.1s border-bottom;
+  border-bottom: 2px solid transparent;
+
+  &:hover {
+    border-bottom: 2px solid ${({ theme }) => theme.colors.blueLight};
+  }
 
   ${({ selected }) =>
     selected &&
     css`
-      background-color: ${({ theme }) => theme.colors.blueDark};
-      color: white;
+      border-bottom: 2px solid ${({ theme }) => theme.colors.blueDark};
+
+      &:hover {
+        border-bottom: 2px solid ${({ theme }) => theme.colors.blueDark};
+      }
     `}
 `;
 

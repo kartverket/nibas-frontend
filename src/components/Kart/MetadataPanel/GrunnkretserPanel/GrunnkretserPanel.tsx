@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
+import { BlockLabel } from "../metadataComponents";
 import EditRow from "./EditRow";
 import Button from "components/form/Button";
+import Input from "components/form/Input";
 import Heading from "components/typography/Heading";
 import useNibasApi from "hooks/useNibasApi";
+import useSearch from "hooks/useSearch";
 import { ReactComponent as CaretDown } from "icons/caretdown.svg";
 import { ReactComponent as CaretUp } from "icons/caretup.svg";
 import { GrunnkretsRef, KommuneRef } from "types/api";
@@ -28,6 +31,8 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
   const { t } = useTranslation();
   const [openRows, setOpenRows] = useState<string[]>([]);
 
+  const { inputValue, setInputValue, searchValue } = useSearch();
+
   const { data: grunnkretserByKommune, mutate } = useNibasApi(
     "/v1/kommuner/{id}/grunnkretser",
     {
@@ -35,7 +40,20 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
     }
   );
 
-  const sortedGrunnkretser = sortGrenserAlphabetically(grunnkretserByKommune);
+  const sortedGrunnkretser = useMemo(
+    () => sortGrenserAlphabetically(grunnkretserByKommune),
+    [grunnkretserByKommune]
+  );
+
+  const filteredGrunnkretser = useMemo(() => {
+    if (!searchValue) return sortedGrunnkretser;
+
+    return sortedGrunnkretser?.filter(
+      (grunnkrets) =>
+        grunnkrets.grunnkretsnummer.includes(searchValue) ||
+        grunnkrets.navn.toLowerCase().includes(searchValue.toLowerCase())
+    );
+  }, [searchValue, sortedGrunnkretser]);
 
   const toggleRow = (grunnkrets: GrunnkretsRef) => {
     if (openRows.includes(grunnkrets.id)) {
@@ -58,10 +76,17 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
           kommuneNavn: getNavnInSpraak(kommune.navn, "nor"),
         })}
       </PanelTitle>
+      <SmallerBlockLabel>
+        {t("sidebar.Søk")}
+        <Input
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+        />
+      </SmallerBlockLabel>
       <PanelTitle tag="h2" size="xs">
         {t("inndelinger.Grunnkretser")}
       </PanelTitle>
-      {sortedGrunnkretser && (
+      {filteredGrunnkretser && (
         <GrunnkretsTable>
           <thead>
             <tr>
@@ -71,7 +96,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
             </tr>
           </thead>
           <tbody>
-            {sortedGrunnkretser.map((grunnkrets) => (
+            {filteredGrunnkretser.map((grunnkrets) => (
               <React.Fragment key={grunnkrets.id}>
                 <KretsRow>
                   <td>{getNavnInSpraak(grunnkrets.navn, "nor")}</td>
@@ -144,6 +169,10 @@ const GrunnkretsTable = styled.table`
       }
     }
   }
+`;
+
+const SmallerBlockLabel = styled(BlockLabel)`
+  max-width: 400px;
 `;
 
 export default GrunnkretserPanel;

@@ -6,16 +6,17 @@ import { KodelisteRespons } from "types/api";
 type Props = {
   label: string;
   kodeliste: KodelisteRespons | undefined;
+  disabled?: boolean;
 };
 
 const AsyncKodelisteSelectInner = (
-  { label, kodeliste }: Props,
+  { label, kodeliste, disabled }: Props,
   ref: React.ForwardedRef<HTMLSelectElement>
 ) => {
   return (
     <BlockLabel>
       {label}
-      <Select ref={ref}>
+      <Select ref={ref} disabled={disabled}>
         <option value="">---</option>
         {kodeliste?.items.map((kodeItem) => (
           <option key={kodeItem.id} value={kodeItem.id}>
