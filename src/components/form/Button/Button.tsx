@@ -1,22 +1,70 @@
 import { ButtonHTMLAttributes, forwardRef } from "react";
 import styled from "styled-components";
 
+type Size = "xs" | "sm" | "l";
+
+type Variant = "unstyled" | "primary" | "secondary" | "tertiary";
+
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: "unstyled";
+  size?: Size;
+  variant?: Variant;
   icon?: React.ReactElement;
 };
 
+const getKvibClassName = (variant: Variant, size: Size) => {
+  let className = "button button__blue--";
+
+  switch (variant) {
+    case "primary": {
+      className += "primary";
+      break;
+    }
+    case "secondary": {
+      className += "secondary";
+      break;
+    }
+    case "tertiary": {
+      className += "tertiary";
+      break;
+    }
+  }
+
+  className += " button--";
+
+  switch (size) {
+    case "xs": {
+      className += "xs";
+      break;
+    }
+    case "sm": {
+      className += "sm";
+      break;
+    }
+    case "l": {
+      className += "l";
+      break;
+    }
+  }
+
+  return className;
+};
+
 const Button = forwardRef<HTMLButtonElement, Props>(
-  ({ variant, children, icon, ...props }, ref) => {
+  ({ variant = "primary", size = "xs", children, icon, ...props }, ref) => {
     const ButtonWrapper =
       variant === "unstyled" ? UnstyledButton : StyledButton;
 
+    const kvibClassName = getKvibClassName(variant, size);
+
+    const className =
+      variant === "unstyled"
+        ? props.className
+        : `${kvibClassName} ${props.className ?? ""}`;
+
     return (
-      <ButtonWrapper {...props} ref={ref}>
-        <ButtonContentWrapper>
-          {children && <span>{children}</span>}
-          {icon}
-        </ButtonContentWrapper>
+      <ButtonWrapper {...props} ref={ref} className={className}>
+        {children && <span>{children}</span>}
+        {icon}
       </ButtonWrapper>
     );
   }
@@ -24,29 +72,7 @@ const Button = forwardRef<HTMLButtonElement, Props>(
 
 Button.displayName = "Button";
 
-const StyledButton = styled.button`
-  * {
-    // gjør at children ikke gir ekstra plass til tekst
-    vertical-align: middle;
-  }
-
-  text-align: left;
-`;
-
-const ButtonContentWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-
-  > span:first-child {
-    flex: 1;
-  }
-
-  > svg {
-    margin-left: 4px;
-  }
-`;
+const StyledButton = styled.button``;
 
 const UnstyledButton = styled(StyledButton)`
   background: none;
@@ -56,9 +82,19 @@ const UnstyledButton = styled(StyledButton)`
   font: inherit;
   cursor: pointer;
   outline: inherit;
+  text-align: left;
+
+  * {
+    // gjør at children ikke gir ekstra plass til tekst
+    vertical-align: middle;
+  }
 
   :disabled {
     cursor: initial;
+    background-color: var(--gray_light);
+    color: var(--gray_dark);
+    outline-style: solid;
+    outline-color: var(--gray_dark);
   }
 
   svg {

@@ -1,9 +1,10 @@
 {
   "name": "nibas-klient",
-  "version": "0.1.29",
+  "version": "0.1.34",
   "private": true,
   "dependencies": {
     "@kartverket/frontend-aut-lib": "0.0.20",
+    "@kartverket/kvib": "^0.0.33",
     "http-proxy-middleware": "~2.0.1",
     "i18next": "^21.6.14",
     "i18next-http-backend": "^1.4.0",

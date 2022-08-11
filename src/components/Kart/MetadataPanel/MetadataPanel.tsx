@@ -53,7 +53,7 @@ const Panel = styled(KartInteractable)`
     width: 600px;
   }
 
-  > h3 {
+  > h2 {
     margin-top: 0;
     margin-bottom: 16px;
   }

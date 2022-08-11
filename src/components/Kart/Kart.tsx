@@ -8,6 +8,7 @@ import OverlayPopup from "./OverlayPopup";
 import SidebarPanels from "./SidebarPanels";
 import { updateGrenser } from "api/grenser";
 import CustomControl from "components/CustomControl";
+import Button from "components/form/Button";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
 import useSelectInteraction from "hooks/interactions/useSelectInteraction";
 import {
@@ -25,7 +26,7 @@ const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const { tokenHolderFunc } = useAuthenticationFlow();
 
-  useEditInteractions();
+  const { dirtyFeatureIds, clearDirtyFeatures } = useEditInteractions();
   const selectedFeatures = useSelectInteraction();
 
   useEffect(() => {
@@ -43,8 +44,12 @@ const Kart = () => {
   const saveDraft = async () => {
     const editLayer = getLayerById("edit");
     const editFeatures = editLayer.getSource().getFeatures();
+    const editedFeatures = editFeatures.filter((feature) =>
+      dirtyFeatureIds.includes((feature.getId() as string) ?? "")
+    );
 
-    updateGrenser(editFeatures, tokenHolderFunc()?.token);
+    await updateGrenser(editedFeatures, tokenHolderFunc()?.token);
+    clearDirtyFeatures();
   };
 
   return (
@@ -57,7 +62,9 @@ const Kart = () => {
           </KartOverlay>
 
           <CustomControl>
-            <button onClick={saveDraft}>Lagre endringer</button>
+            <Button onClick={saveDraft} disabled={dirtyFeatureIds.length === 0}>
+              Lagre endringer
+            </Button>
           </CustomControl>
 
           <ZoomControls />

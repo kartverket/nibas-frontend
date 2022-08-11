@@ -64,7 +64,8 @@
     "Ny referanse": "Ny referanse",
     "Slett {{ item }}": "Slett {{ item }}",
     "Legg til {{ item }}": "Legg til {{ item }}",
-    "Ny {{ item }}": "Ny {{ item }}"
+    "Ny {{ item }}": "Ny {{ item }}",
+    "Endre": "Endre"
   },
   "Ja": "Ja",
   "Nei": "Nei",

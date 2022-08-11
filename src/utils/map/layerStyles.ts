@@ -21,19 +21,25 @@ const getPointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
   return new MultiPoint(coordinates ?? []);
 };
 
-export const defaultStyle = new Style({
+const defaultStyle = new Style({
   stroke: new Stroke({
     color: "#0062FF",
   }),
 });
 
-export const editStyle = new Style({
+const editStyle = new Style({
   stroke: new Stroke({
     color: "#FF00FF",
   }),
 });
 
-export const editPointStyle = new Style({
+const dirtyStyle = new Style({
+  stroke: new Stroke({
+    color: "#30FF00",
+  }),
+});
+
+const editPointStyle = new Style({
   image: new Circle({
     radius: 3,
     fill: new Fill({
@@ -43,7 +49,17 @@ export const editPointStyle = new Style({
   geometry: getPointsOnFeature,
 });
 
-export const defaultPointStyle = new Style({
+const dirtyPointStyle = new Style({
+  image: new Circle({
+    radius: 3,
+    fill: new Fill({
+      color: "#30FF00",
+    }),
+  }),
+  geometry: getPointsOnFeature,
+});
+
+const defaultPointStyle = new Style({
   image: new Circle({
     radius: 3,
     fill: new Fill({
@@ -52,3 +68,7 @@ export const defaultPointStyle = new Style({
   }),
   geometry: getPointsOnFeature,
 });
+
+export const defaultStyles = [defaultStyle, defaultPointStyle];
+export const editStyles = [editStyle, editPointStyle];
+export const dirtyStyles = [dirtyStyle, dirtyPointStyle];

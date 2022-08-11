@@ -1,5 +1,6 @@
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useTranslation } from "react-i18next";
+import Button from "components/form/Button";
 
 /**
  * Eksempel som rendrer en login eller logout-knapp basert på om man er autentisert.
@@ -12,12 +13,12 @@ export default function AuthenticationButton() {
   const { t } = useTranslation();
 
   const loginButton = (
-    <button onClick={() => handleAuthenticateFunc("/")}>
+    <Button onClick={() => handleAuthenticateFunc("/")}>
       {t("auth.Login")}
-    </button>
+    </Button>
   );
   const logoutButton = (
-    <button onClick={handleLogoutFunc}>{t("auth.Logout")}</button>
+    <Button onClick={handleLogoutFunc}>{t("auth.Logout")}</Button>
   );
 
   return isAuthenticatedFunc() ? logoutButton : loginButton;
