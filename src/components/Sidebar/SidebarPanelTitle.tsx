@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import Button from "components/form/Button";
+import Heading from "components/typography/Heading";
 import { ReactComponent as CaretLeft } from "icons/caretleft.svg";
 
 type Props = {
@@ -10,7 +11,9 @@ type Props = {
 const SidebarPanelTitle = ({ title, closePanel }: Props) => {
   return (
     <TitleWrapper>
-      <StyledTitle>{title}</StyledTitle>
+      <StyledTitle tag="h2" size="xs">
+        {title}
+      </StyledTitle>
       <CloseButton
         icon={<CaretLeft aria-label={`Lukk ${title}`} />}
         onClick={closePanel}
@@ -29,7 +32,7 @@ const TitleWrapper = styled.div`
   align-items: center;
 `;
 
-const StyledTitle = styled.h3`
+const StyledTitle = styled(Heading)`
   margin: 0;
 `;
 

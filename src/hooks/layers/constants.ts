@@ -2,12 +2,7 @@ import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { bakgrunnskartSources } from "hooks/sources/syncSources";
-import {
-  defaultStyle,
-  editStyle,
-  editPointStyle,
-  defaultPointStyle,
-} from "utils/map/layerStyles";
+import { defaultStyles, editStyles } from "utils/map/layerStyles";
 
 const createTileLayerFromBakgrunnskartSource = (
   id: keyof typeof bakgrunnskartSources
@@ -44,26 +39,26 @@ export const grenserLayers = {
   // ingen source betyr at source settes async
   fylker: new VectorLayer({
     source: new VectorSource(),
-    style: [defaultStyle, defaultPointStyle],
+    style: defaultStyles,
   }),
   kommuner: new VectorLayer({
     source: new VectorSource(),
-    style: [defaultStyle, defaultPointStyle],
+    style: defaultStyles,
   }),
   nasjoner: new VectorLayer({
     source: new VectorSource(),
-    style: [defaultStyle, defaultPointStyle],
+    style: defaultStyles,
   }),
   grunnkretser: new VectorLayer({
     source: new VectorSource(),
-    style: [defaultStyle, defaultPointStyle],
+    style: defaultStyles,
   }),
   stemmekretser: new VectorLayer({
     source: new VectorSource(),
-    style: [defaultStyle, defaultPointStyle],
+    style: defaultStyles,
   }),
   edit: new VectorLayer({
     source: new VectorSource(),
-    style: [editStyle, editPointStyle],
+    style: editStyles,
   }),
 };

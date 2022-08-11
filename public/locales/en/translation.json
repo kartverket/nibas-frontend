@@ -63,7 +63,8 @@
     "Slett": "__STRING_NOT_TRANSLATED__",
     "Slett {{ item }}": "__STRING_NOT_TRANSLATED__",
     "Legg til {{ item }}": "__STRING_NOT_TRANSLATED__",
-    "Ny {{ item }}": "__STRING_NOT_TRANSLATED__"
+    "Ny {{ item }}": "__STRING_NOT_TRANSLATED__",
+    "Endre": "__STRING_NOT_TRANSLATED__"
   },
   "Ja": "__STRING_NOT_TRANSLATED__",
   "Nei": "__STRING_NOT_TRANSLATED__",

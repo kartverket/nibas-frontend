@@ -47,7 +47,7 @@ export const MetadataPanelWrapper = styled(KartInteractable)`
   width: 100%;
   max-width: 1000px;
 
-  > h3 {
+  > h2 {
     margin-top: 0;
     margin-bottom: 16px;
   }

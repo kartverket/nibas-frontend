@@ -1,9 +1,11 @@
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { updateGrunnkrets } from "api/enheter";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
+import Label from "components/form/Label";
 import useNibasApi from "hooks/useNibasApi";
 import {
   GrunnkretsRef,
@@ -32,6 +34,7 @@ const fromFormToRequest = (
 });
 
 const EditRow = ({ grunnkrets, postSubmit }: Props) => {
+  const { t } = useTranslation();
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { data: fullGrunnkrets, mutate } = useNibasApi(
     "/v1/grunnkretser/{id}",
@@ -62,13 +65,18 @@ const EditRow = ({ grunnkrets, postSubmit }: Props) => {
 
   return (
     <AccordionRow>
-      <td>
-        <Input {...register("navn")} />
-      </td>
-      <td>
-        <Input {...register("grunnkretsnummer")} />
-      </td>
-      <td>
+      <td colSpan={3}>
+        <InputsWrapper>
+          <BlockLabel>
+            {t("tabell.Navn")}
+            <Input {...register("navn")} />
+          </BlockLabel>
+          <BlockLabel>
+            {t("grunnkrets.Grunnkretsnummer")}
+            <Input {...register("grunnkretsnummer")} />
+          </BlockLabel>
+        </InputsWrapper>
+
         <Button onClick={onSubmit}>Lagre</Button>
       </td>
     </AccordionRow>
@@ -78,12 +86,38 @@ const EditRow = ({ grunnkrets, postSubmit }: Props) => {
 const AccordionRow = styled.tr`
   background-color: ${({ theme }) => theme.colors.blueLight};
 
-  &:nth-child(2n - 1) {
-    background-color: ${({ theme }) => theme.colors.white};
-  }
-
   td {
     padding: 8px;
+  }
+`;
+
+const BlockLabel = styled(Label)`
+  &:last-child {
+    margin-left: 16px;
+  }
+
+  input {
+    width: 100%;
+  }
+
+  margin-bottom: 16px;
+`;
+
+const InputsWrapper = styled.div`
+  display: flex;
+  width: 80%;
+  margin: auto;
+
+  > ${BlockLabel} {
+    width: 100%;
+
+    &:first-child {
+      flex: 2;
+    }
+
+    &:last-child {
+      flex: 1;
+    }
   }
 `;
 

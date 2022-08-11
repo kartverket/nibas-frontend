@@ -29,7 +29,7 @@ const GrenserDrillDown = () => {
   return (
     <Panel>
       <Tabs
-        tabTransKeys={["inndelinger.Grenser", "inndelinger.Aktive kartlag"]}
+        tabTransKeys={["sidebar.Inndelinger", "inndelinger.Aktive kartlag"]}
       >
         <div>
           <SidebarPanelTitle
