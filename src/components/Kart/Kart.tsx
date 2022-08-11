@@ -6,6 +6,7 @@ import ZoomControls from "./controls/ZoomControls";
 import MetadataPanel from "./MetadataPanel";
 import OverlayPopup from "./OverlayPopup";
 import SidebarPanels from "./SidebarPanels";
+import Toolbar from "./Toolbar";
 import { updateGrenser } from "api/grenser";
 import CustomControl from "components/CustomControl";
 import Button from "components/form/Button";
@@ -59,6 +60,7 @@ const Kart = () => {
           <KartOverlay>
             <SidebarPanels />
             <MetadataPanel />
+            <Toolbar />
           </KartOverlay>
 
           <CustomControl>
@@ -94,15 +96,15 @@ const KartOverlay = styled.div`
   display: grid;
 
   @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
-    grid-template-columns: 1fr auto;
-    grid-template-areas: "panel metadata";
+    grid-template-columns: auto auto 1fr;
+    grid-template-areas: "panel toolbar metadata";
   }
 
-  grid-template-rows: 3fr auto;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto auto 1fr;
+  grid-template-rows: 1fr auto;
   grid-template-areas:
-    "panel ."
-    "panel metadata";
+    "panel toolbar ."
+    "panel metadata metadata";
   width: 100%;
   height: 100%;
   position: absolute;

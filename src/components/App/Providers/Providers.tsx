@@ -4,16 +4,19 @@ import { BakgrunnskartProvider } from "contexts/BakgrunnskartContext";
 import { EditGrenserProvider } from "contexts/EditGrenserContext";
 import { MetadataPanelProvider } from "contexts/MetadataPanelContext";
 import { SidebarPanelProvider } from "contexts/SidebarPanelContext";
+import { ToolbarProvider } from "contexts/ToolbarContext";
 
 const Providers: FC = ({ children }) => {
   return (
     <ThirdPartyProviders>
       <SidebarPanelProvider>
-        <MetadataPanelProvider>
-          <EditGrenserProvider>
-            <BakgrunnskartProvider>{children}</BakgrunnskartProvider>
-          </EditGrenserProvider>
-        </MetadataPanelProvider>
+        <ToolbarProvider>
+          <MetadataPanelProvider>
+            <EditGrenserProvider>
+              <BakgrunnskartProvider>{children}</BakgrunnskartProvider>
+            </EditGrenserProvider>
+          </MetadataPanelProvider>
+        </ToolbarProvider>
       </SidebarPanelProvider>
     </ThirdPartyProviders>
   );
