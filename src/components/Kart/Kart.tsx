@@ -27,7 +27,8 @@ const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const { tokenHolderFunc } = useAuthenticationFlow();
 
-  const { dirtyFeatureIds, clearDirtyFeatures } = useEditInteractions();
+  const { dirtyFeatureIds, clearHistory, undo, redo, canRedo } =
+    useEditInteractions();
   const selectedFeatures = useSelectInteraction();
 
   useEffect(() => {
@@ -50,7 +51,7 @@ const Kart = () => {
     );
 
     await updateGrenser(editedFeatures, tokenHolderFunc()?.token);
-    clearDirtyFeatures();
+    clearHistory();
   };
 
   return (
@@ -66,6 +67,16 @@ const Kart = () => {
           <CustomControl>
             <Button onClick={saveDraft} disabled={dirtyFeatureIds.length === 0}>
               Lagre endringer
+            </Button>
+          </CustomControl>
+          <CustomControl>
+            <Button onClick={undo} disabled={dirtyFeatureIds.length === 0}>
+              Undo
+            </Button>
+          </CustomControl>
+          <CustomControl>
+            <Button onClick={redo} disabled={!canRedo}>
+              Redo
             </Button>
           </CustomControl>
 
