@@ -6,27 +6,18 @@ import React, {
   useState,
 } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import { Feature } from "ol";
-import LineString from "ol/geom/LineString";
+import { EditContextType, ToolbarContextValue, ToolbarDraft } from "./types";
 import { updateGrenser } from "api/grenser";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
 
-type EditContextType = "grense";
-
-type Draft = {
-  grense: Record<string, Feature<LineString>>;
-};
-
-export type ToolbarContextValue = {
-  draft: Draft;
-  setDraft: React.Dispatch<React.SetStateAction<Draft>>;
-};
-
-const emptyDraft: Draft = {
+const emptyDraft: ToolbarDraft = {
   grense: {},
 };
 
-const ToolbarContext = createContext<ToolbarContextValue | undefined>(
+/**
+ * @deprecated Ikke bruk utenfor ToolbarContext.tsx, bruk heller useToolbar eller useToolbarSave
+ */
+export const ToolbarContext = createContext<ToolbarContextValue | undefined>(
   undefined
 );
 
@@ -65,7 +56,7 @@ export const useToolbar = () => {
 
   const save = async () => {
     const savePromises = Object.keys(draft).map(async (t) => {
-      const type = t as keyof Draft;
+      const type = t as keyof ToolbarDraft;
 
       switch (type) {
         case "grense": {
@@ -105,7 +96,7 @@ export const useToolbarSave = <T extends EditContextType>(contextType: T) => {
   const { setDraft } = context;
 
   const updateSubDraft = useCallback(
-    (id: string, value: Draft[T][string]) =>
+    (id: string, value: ToolbarDraft[T][string]) =>
       setDraft((prevDraft) => ({
         ...prevDraft,
         [contextType]: {
