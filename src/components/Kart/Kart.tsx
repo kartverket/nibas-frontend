@@ -1,5 +1,4 @@
 import { Suspense, useEffect, useRef } from "react";
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import styled from "styled-components";
 import { map } from "./constants";
 import ZoomControls from "./controls/ZoomControls";
@@ -7,16 +6,8 @@ import MetadataPanel from "./MetadataPanel";
 import OverlayPopup from "./OverlayPopup";
 import SidebarPanels from "./SidebarPanels";
 import Toolbar from "./Toolbar";
-import { updateGrenser } from "api/grenser";
-import CustomControl from "components/CustomControl";
-import Button from "components/form/Button";
-import useEditInteractions from "hooks/interactions/useEditInteractions";
 import useSelectInteraction from "hooks/interactions/useSelectInteraction";
-import {
-  getLayerById,
-  initBakgrunnskartLayers,
-  initGrenserLayers,
-} from "utils/map/layers";
+import { initBakgrunnskartLayers, initGrenserLayers } from "utils/map/layers";
 
 // dette må skje utenfor komponenten siden React kjører dypere useEffects
 // før de lenger opp i treet, så lag er ikke definert når de trengs lenger ned
@@ -25,10 +16,7 @@ initBakgrunnskartLayers();
 
 const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const { tokenHolderFunc } = useAuthenticationFlow();
 
-  const { dirtyFeatureIds, clearHistory, undo, redo, canRedo } =
-    useEditInteractions();
   const selectedFeatures = useSelectInteraction();
 
   useEffect(() => {
@@ -43,17 +31,6 @@ const Kart = () => {
     };
   }, []);
 
-  const saveDraft = async () => {
-    const editLayer = getLayerById("edit");
-    const editFeatures = editLayer.getSource().getFeatures();
-    const editedFeatures = editFeatures.filter((feature) =>
-      dirtyFeatureIds.includes((feature.getId() as string) ?? "")
-    );
-
-    await updateGrenser(editedFeatures, tokenHolderFunc()?.token);
-    clearHistory();
-  };
-
   return (
     <KartWrapper>
       <KartTarget ref={mapRef}>
@@ -63,22 +40,6 @@ const Kart = () => {
             <MetadataPanel />
             <Toolbar />
           </KartOverlay>
-
-          <CustomControl>
-            <Button onClick={saveDraft} disabled={dirtyFeatureIds.length === 0}>
-              Lagre endringer
-            </Button>
-          </CustomControl>
-          <CustomControl>
-            <Button onClick={undo} disabled={dirtyFeatureIds.length === 0}>
-              Undo
-            </Button>
-          </CustomControl>
-          <CustomControl>
-            <Button onClick={redo} disabled={!canRedo}>
-              Redo
-            </Button>
-          </CustomControl>
 
           <ZoomControls />
           <OverlayPopup selectedFeatures={selectedFeatures} />

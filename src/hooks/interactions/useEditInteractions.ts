@@ -8,6 +8,7 @@ import { getVectorLayers } from "utils/map/layers";
 
 const useEditInteractions = () => {
   const featureHistory = useFeatureHistory();
+
   useDirtyStyles(featureHistory.dirtyFeatureIds);
 
   useEffect(() => {
