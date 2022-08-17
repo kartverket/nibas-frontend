@@ -4,6 +4,7 @@ import GrenseMetadataDetaljer from "./GrenseMetadataDetaljer";
 import GrenseMetadataGenerelt from "./GrenseMetadataGenerelt";
 import GrenseMetadataReferanser from "./GrenseMetadataReferanser";
 import Tabs from "components/Tabs";
+import Heading from "components/typography/Heading";
 
 const showReferanserByGrenseType: Record<string, boolean> = {
   Territorialgrense: true,
@@ -38,16 +39,22 @@ const GrensePanel = ({ feature }: Props) => {
   return (
     <Tabs key={feature.getId()} tabTransKeys={tabs}>
       <div>
-        <h3>Linje metadata</h3>
+        <Heading size="xs" tag="h2">
+          Linje metadata
+        </Heading>
         <GrenseMetadataGenerelt feature={feature} />
       </div>
       <div>
-        <h3>Detaljer</h3>
+        <Heading size="xs" tag="h2">
+          Detaljer
+        </Heading>
         <GrenseMetadataDetaljer feature={feature} />
       </div>
       {showReferanser && (
         <div>
-          <h3>Dokumentasjonsreferanser</h3>
+          <Heading size="xs" tag="h2">
+            Dokumentasjonsreferanser
+          </Heading>
           <GrenseMetadataReferanser feature={feature} />
         </div>
       )}

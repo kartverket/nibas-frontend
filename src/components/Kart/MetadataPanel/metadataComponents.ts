@@ -1,4 +1,5 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
+import Label from "components/form/Label";
 
 export const Container = styled.div`
   display: flex;
@@ -28,10 +29,6 @@ export const Part = styled.div`
   }
 `;
 
-const MetadataTitleStyles = css`
-  font-size: 14px;
-`;
-
 export const MetadataValue = styled.p`
   margin: 0;
   margin-bottom: 8px;
@@ -39,14 +36,12 @@ export const MetadataValue = styled.p`
 
 export const MetadataText = styled.p`
   margin: 0;
-  ${MetadataTitleStyles};
+  font-size: 14px;
 `;
 
-export const BlockLabel = styled.label`
+export const BlockLabel = styled(Label)`
   display: block;
   margin-bottom: 8px;
-
-  ${MetadataTitleStyles};
 
   > * {
     margin-top: 4px;

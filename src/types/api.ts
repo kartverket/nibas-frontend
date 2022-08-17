@@ -69,6 +69,16 @@ export type StatistiskGrenseMetadata =
 
 // custom typer basert på api doc
 export type ApiPath = keyof paths;
+export type KodelistePath =
+  | "/v1/kodeliste/terrengdetaljkoder"
+  | "/v1/kodeliste/noeyaktighetsklasser"
+  | "/v1/kodeliste/maalemetode-koder"
+  | "/v1/kodeliste/landkoder"
+  | "/v1/kodeliste/kommunenumre"
+  | "/v1/kodeliste/grensetyper"
+  | "/v1/kodeliste/grensestatuser"
+  | "/v1/kodeliste/fylkesnumre"
+  | "/v1/kodeliste/fastsettingstyper";
 export type Metadata =
   | AvtaltAvgrensningslinjeMetadata
   | AdministrativGrenseMetadata

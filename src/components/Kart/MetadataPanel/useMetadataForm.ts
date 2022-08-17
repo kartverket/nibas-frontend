@@ -1,10 +1,9 @@
-import { useEffect } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { useForm } from "react-hook-form";
+import useAsyncKodeliste from "./useAsyncKodeliste";
 import { updateGrenser } from "api/grenser";
-import useNibasApi from "hooks/useNibasApi";
 import { Metadata } from "types/api";
 
 type Inputs = {
@@ -41,10 +40,6 @@ const getUpdatedMetadata = (data: Inputs, oldMetadata: Metadata) =>
   } as Metadata);
 
 const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
-  const { data: maalemetodeKoder } = useNibasApi(
-    "/v1/kodeliste/maalemetode-koder"
-  );
-
   const { register, handleSubmit, setValue } = useForm<Inputs>({
     defaultValues: {
       informasjon: metadata?.common?.informasjon,
@@ -58,23 +53,12 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
 
   const { tokenHolderFunc } = useAuthenticationFlow();
 
-  // oppdater målemetode tekstfelt når kodene er hentet
-  useEffect(() => {
-    if (!maalemetodeKoder) return;
-
-    const selectedMaalemetode = maalemetodeKoder.items.find(
-      (kode) =>
-        kode.id === metadata.commonGrense?.posisjonskvalitet?.maalemetode.id
-    );
-
-    if (!selectedMaalemetode) return;
-
-    setValue("maalemetode", selectedMaalemetode.id);
-  }, [
-    maalemetodeKoder,
+  const maalemetodeKoder = useAsyncKodeliste({
+    property: "maalemetode",
     setValue,
-    metadata.commonGrense?.posisjonskvalitet?.maalemetode,
-  ]);
+    kodelisteUrl: "/v1/kodeliste/maalemetode-koder",
+    initialItemId: metadata.commonGrense?.posisjonskvalitet?.maalemetode.id,
+  });
 
   const onSubmit = handleSubmit((data) => {
     const oldProperties = feature.getProperties();
@@ -90,7 +74,7 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
   return {
     register,
     onSubmit,
-    maalemetodeKoder: maalemetodeKoder?.items,
+    maalemetodeKoder,
   };
 };
 
