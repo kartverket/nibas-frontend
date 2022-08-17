@@ -1,5 +1,17 @@
 import styled from "styled-components";
 
+export const KretsRow = styled.tr`
+  &:first-child {
+    td {
+      border-top: none;
+    }
+  }
+
+  td {
+    border-top: 1px solid ${({ theme }) => theme.colors.gray};
+  }
+`;
+
 export const KretsTable = styled.table`
   border-spacing: 0;
   border: none;
@@ -19,17 +31,13 @@ export const KretsTable = styled.table`
   }
 
   tbody {
-    tr {
+    ${KretsRow} {
       background-color: ${({ theme }) => theme.colors.blueLight};
+    }
 
-      &:nth-child(2n) {
-        background-color: ${({ theme }) => theme.colors.white};
-      }
-
-      td {
-        padding: 8px;
-        font-size: 14px;
-      }
+    td {
+      padding: 8px;
+      font-size: 14px;
     }
   }
 `;

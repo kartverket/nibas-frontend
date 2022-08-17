@@ -1,8 +1,9 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { KretsTable } from "../KretsTable";
 import { BlockLabel } from "../metadataComponents";
+import useAccordionRows from "../useAccordionRow";
 import EditRow from "./EditRow";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
@@ -11,18 +12,11 @@ import useNibasApi from "hooks/useNibasApi";
 import useSearch from "hooks/useSearch";
 import { ReactComponent as CaretDown } from "icons/caretdown.svg";
 import { ReactComponent as CaretUp } from "icons/caretup.svg";
-import { GrunnkretsRef, KommuneRef } from "types/api";
+import { KommuneRef } from "types/api";
 import {
   getNavnInSpraak,
   sortGrenserAlphabetically,
 } from "utils/language/language";
-
-const removeIdFromList = (id: string, list: string[]) => {
-  const newOpenRows = list.slice();
-  newOpenRows.splice(newOpenRows.indexOf(id));
-
-  return newOpenRows;
-};
 
 type Props = {
   kommune: KommuneRef;
@@ -30,7 +24,7 @@ type Props = {
 
 const GrunnkretserPanel = ({ kommune }: Props) => {
   const { t } = useTranslation();
-  const [openRows, setOpenRows] = useState<string[]>([]);
+  const { isRowOpen, toggleRow, closeRow } = useAccordionRows();
 
   const { inputValue, setInputValue, searchValue } = useSearch();
 
@@ -56,18 +50,10 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
     );
   }, [searchValue, sortedGrunnkretser]);
 
-  const toggleRow = (grunnkrets: GrunnkretsRef) => {
-    if (openRows.includes(grunnkrets.id)) {
-      setOpenRows(removeIdFromList(grunnkrets.id, openRows));
-    } else {
-      setOpenRows([...openRows, grunnkrets.id]);
-    }
-  };
-
   const postGrunnkretsUpdate = (grunnkretsId: string) => {
     // oppdater lista etter oppdateringen er gjort i backend
     mutate();
-    setOpenRows(removeIdFromList(grunnkretsId, openRows));
+    closeRow(grunnkretsId);
   };
 
   return (
@@ -105,18 +91,14 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                   <td>
                     <Button
                       variant="unstyled"
-                      onClick={() => toggleRow(grunnkrets)}
+                      onClick={() => toggleRow(grunnkrets.id)}
                       icon={
-                        openRows.includes(grunnkrets.id) ? (
-                          <CaretUp />
-                        ) : (
-                          <CaretDown />
-                        )
+                        isRowOpen(grunnkrets.id) ? <CaretUp /> : <CaretDown />
                       }
                     />
                   </td>
                 </KretsRow>
-                {openRows.includes(grunnkrets.id) && (
+                {isRowOpen(grunnkrets.id) && (
                   <EditRow
                     grunnkrets={grunnkrets}
                     postSubmit={postGrunnkretsUpdate}
