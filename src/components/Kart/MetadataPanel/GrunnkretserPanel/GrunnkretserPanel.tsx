@@ -4,10 +4,11 @@ import styled from "styled-components";
 import EditRow from "./EditRow";
 import Button from "components/form/Button";
 import Heading from "components/typography/Heading";
+import { useToolbarSave } from "contexts/ToolbarContext";
 import useNibasApi from "hooks/useNibasApi";
 import { ReactComponent as CaretDown } from "icons/caretdown.svg";
 import { ReactComponent as CaretUp } from "icons/caretup.svg";
-import { GrunnkretsRef, KommuneRef } from "types/api";
+import { GrunnkretsRef, GrunnkretsRequest, KommuneRef } from "types/api";
 import {
   getNavnInSpraak,
   sortGrenserAlphabetically,
@@ -28,12 +29,14 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
   const { t } = useTranslation();
   const [openRows, setOpenRows] = useState<string[]>([]);
 
-  const { data: grunnkretserByKommune, mutate } = useNibasApi(
+  const { data: grunnkretserByKommune } = useNibasApi(
     "/v1/kommuner/{id}/grunnkretser",
     {
       id: kommune.id,
     }
   );
+
+  const { updateDraft } = useToolbarSave("grunnkrets");
 
   const sortedGrunnkretser = sortGrenserAlphabetically(grunnkretserByKommune);
 
@@ -45,10 +48,20 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
     }
   };
 
-  const postGrunnkretsUpdate = (grunnkretsId: string) => {
-    // oppdater lista etter oppdateringen er gjort i backend
-    mutate();
-    setOpenRows(removeIdFromList(grunnkretsId, openRows));
+  //
+  // const postGrunnkretsUpdate = (grunnkretsId: string) => {
+  //   // oppdater lista etter oppdateringen er gjort i backend
+  //   mutate();
+  //   setOpenRows(removeIdFromList(grunnkretsId, openRows));
+  // };
+
+  const updateDraftForGrunnkrets = (
+    id: string,
+    grunnkrets: GrunnkretsRequest
+  ) => {
+    updateDraft(kommune.id, {
+      [id]: grunnkrets,
+    });
   };
 
   return (
@@ -93,7 +106,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                 {openRows.includes(grunnkrets.id) && (
                   <EditRow
                     grunnkrets={grunnkrets}
-                    postSubmit={postGrunnkretsUpdate}
+                    updateDraft={updateDraftForGrunnkrets}
                   />
                 )}
               </React.Fragment>

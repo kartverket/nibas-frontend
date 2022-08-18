@@ -6,12 +6,15 @@ import React, {
   useState,
 } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
+import { useSWRConfig } from "swr";
 import { EditContextType, ToolbarContextValue, ToolbarDraft } from "./types";
+import { updateGrunnkrets } from "api/enheter";
 import { updateGrenser } from "api/grenser";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
 
 const emptyDraft: ToolbarDraft = {
   grense: {},
+  grunnkrets: {},
 };
 
 /**
@@ -42,6 +45,7 @@ export const useToolbar = () => {
   }
 
   const { draft, setDraft } = context;
+  const { mutate } = useSWRConfig();
   const { dirtyFeatureIds, clearHistory, undo, redo } = useEditInteractions();
 
   const { tokenHolderFunc } = useAuthenticationFlow();
@@ -55,12 +59,17 @@ export const useToolbar = () => {
   }, [draft]);
 
   const save = async () => {
+    const token = tokenHolderFunc()?.token;
+
     const savePromises = Object.keys(draft).map(async (t) => {
       const type = t as keyof ToolbarDraft;
 
       switch (type) {
         case "grense": {
           const features = Object.values(draft.grense);
+
+          if (features.length === 0) return;
+
           console.log("Draft features", features);
           console.log("Dirty feature ids", dirtyFeatureIds);
           const editedFeatures = features.filter((feature) =>
@@ -68,9 +77,39 @@ export const useToolbar = () => {
           );
 
           clearHistory();
-          return updateGrenser(editedFeatures, tokenHolderFunc()?.token);
+
+          return updateGrenser(editedFeatures, token);
+        }
+        case "grunnkrets": {
+          const kommuneIds = Object.keys(draft.grunnkrets);
+
+          const promises = kommuneIds.map(async (kommuneId) => {
+            const grunnkretserDraft = draft.grunnkrets[kommuneId];
+
+            const grunnkretserPromises = Object.keys(grunnkretserDraft).map(
+              async (grunnkretsId) => {
+                await updateGrunnkrets(
+                  grunnkretserDraft[grunnkretsId],
+                  grunnkretsId,
+                  token
+                );
+
+                return mutate([`/v1/grunnkretser/${grunnkretsId}`, token]);
+              }
+            );
+
+            await Promise.all(grunnkretserPromises);
+
+            return mutate([`/v1/kommuner/${kommuneId}/grunnkretser`, token]);
+          });
+
+          return Promise.all(promises);
         }
       }
+
+      // sikre at vi har håndtert alle cases i switch
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const _: never = type;
     });
 
     await Promise.all(savePromises);

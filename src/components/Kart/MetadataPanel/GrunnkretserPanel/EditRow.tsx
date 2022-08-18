@@ -1,9 +1,6 @@
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { updateGrunnkrets } from "api/enheter";
-import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Label from "components/form/Label";
 import useNibasApi from "hooks/useNibasApi";
@@ -16,7 +13,7 @@ import { getNavnInSpraak } from "utils/language/language";
 
 type Props = {
   grunnkrets: GrunnkretsRef;
-  postSubmit: (grunnkretsId: string) => void;
+  updateDraft: (id: string, grunnkrets: GrunnkretsRequest) => void;
 };
 
 type Inputs = {
@@ -33,35 +30,31 @@ const fromFormToRequest = (
   grunnkretsnummer: data.grunnkretsnummer,
 });
 
-const EditRow = ({ grunnkrets, postSubmit }: Props) => {
+const EditRow = ({ grunnkrets, updateDraft }: Props) => {
   const { t } = useTranslation();
-  const { tokenHolderFunc } = useAuthenticationFlow();
-  const { data: fullGrunnkrets, mutate } = useNibasApi(
-    "/v1/grunnkretser/{id}",
-    {
-      id: grunnkrets.id,
-    }
-  );
+  const { data: fullGrunnkrets } = useNibasApi("/v1/grunnkretser/{id}", {
+    id: grunnkrets.id,
+  });
 
-  const { register, handleSubmit } = useForm<Inputs>({
+  const { register, getValues } = useForm<Inputs>({
     defaultValues: {
       grunnkretsnummer: grunnkrets.grunnkretsnummer,
       navn: getNavnInSpraak(grunnkrets.navn, "nor"),
     },
   });
 
-  const onSubmit = handleSubmit(async (data) => {
+  const updateDraftOnBlur = () => {
     if (!fullGrunnkrets) return;
 
-    await updateGrunnkrets(
-      fromFormToRequest(data, fullGrunnkrets),
-      grunnkrets.id,
-      tokenHolderFunc()?.token
+    updateDraft(
+      fullGrunnkrets.id,
+      fromFormToRequest(getValues(), fullGrunnkrets)
     );
+  };
 
-    mutate();
-    postSubmit(grunnkrets.id);
-  });
+  const registerOptions = {
+    onBlur: updateDraftOnBlur,
+  };
 
   return (
     <AccordionRow>
@@ -69,15 +62,13 @@ const EditRow = ({ grunnkrets, postSubmit }: Props) => {
         <InputsWrapper>
           <BlockLabel>
             {t("grunnkrets.Grunnkretsnummer")}
-            <Input {...register("grunnkretsnummer")} />
+            <Input {...register("grunnkretsnummer", registerOptions)} />
           </BlockLabel>
           <BlockLabel>
             {t("tabell.Navn")}
-            <Input {...register("navn")} />
+            <Input {...register("navn", registerOptions)} />
           </BlockLabel>
         </InputsWrapper>
-
-        <Button onClick={onSubmit}>Lagre</Button>
       </td>
     </AccordionRow>
   );
