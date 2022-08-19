@@ -1,10 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { Coordinate } from "ol/coordinate";
-import { FeatureLike } from "ol/Feature";
+import Feature, { FeatureLike } from "ol/Feature";
 import LineString from "ol/geom/LineString";
 import { ModifyEvent } from "ol/interaction/Modify";
 import { modify } from "./constants";
+import { useToolbarSave } from "contexts/ToolbarContext";
 import { editSource } from "hooks/layers/constants";
+import useHistory, { HistoryEntry } from "hooks/useHistory";
+import { getLayerById } from "utils/map/layers";
 
 // liste med features og deres nye koordinater per endring,
 // hvor 0 er eldst og n er nyeste versjon
@@ -24,14 +27,9 @@ import { editSource } from "hooks/layers/constants";
 // en entry har en før og en etter koordinatliste
 // om andre elementet er null har det ikke en etter-state, som vil si den fortsatt dragges
 type BeforeAfterCoordinates = [Coordinate[], Coordinate[] | null];
-type Entry = Record<string, BeforeAfterCoordinates>;
-type FeatureHistory = {
-  index: number;
-  entries: Entry[];
-};
 
 const setFeatureCoordinatesForEntry = (
-  entry: Entry,
+  entry: HistoryEntry<BeforeAfterCoordinates>,
   direction: "from" | "to"
 ) => {
   Object.keys(entry).forEach((featureId) => {
@@ -47,6 +45,13 @@ const setFeatureCoordinatesForEntry = (
   });
 };
 
+const onUndo = (entry: HistoryEntry<BeforeAfterCoordinates>) => {
+  setFeatureCoordinatesForEntry(entry, "from");
+};
+const onRedo = (entry: HistoryEntry<BeforeAfterCoordinates>) => {
+  setFeatureCoordinatesForEntry(entry, "to");
+};
+
 const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
   const geometry = featureLike.getGeometry() as LineString;
@@ -55,10 +60,12 @@ const getInfoFromFeature = (featureLike: FeatureLike) => {
 };
 
 const useFeatureHistory = () => {
-  const [history, setHistory] = useState<FeatureHistory>({
-    index: 0,
-    entries: [],
+  const { clearHistory, history, redo, setHistory, undo } = useHistory({
+    onRedo,
+    onUndo,
   });
+
+  const { updateDraft } = useToolbarSave("grense");
 
   const dirtyFeatureIds = useMemo(
     () =>
@@ -84,7 +91,7 @@ const useFeatureHistory = () => {
 
   useEffect(() => {
     const addCurrentCoordinatesToHistory = (e: ModifyEvent) => {
-      const newEntry: Entry = {};
+      const newEntry: HistoryEntry<BeforeAfterCoordinates> = {};
 
       e.features.forEach((featureLike) => {
         const { featureId, coordinates } = getInfoFromFeature(featureLike);
@@ -113,7 +120,7 @@ const useFeatureHistory = () => {
     };
 
     modify.on("modifystart", addCurrentCoordinatesToHistory);
-  }, []);
+  }, [setHistory]);
 
   useEffect(() => {
     const updateToCoordinate = (e: ModifyEvent) => {
@@ -133,72 +140,22 @@ const useFeatureHistory = () => {
             entries: newEntries,
           };
         });
+
+        const feature = getLayerById("edit")
+          .getSource()
+          .getFeatureById(featureId);
+        updateDraft(featureId as string, feature as Feature<LineString>);
       });
     };
 
     modify.on("modifyend", updateToCoordinate);
-  }, []);
-
-  const clearHistory = () => {
-    setHistory({
-      entries: [],
-      index: 0,
-    });
-  };
-
-  const revert = (amount: number) => {
-    const { index, entries } = history;
-
-    if (index === 0 || entries.length === 0) return;
-
-    const newIndex = index - (amount > index ? index : amount);
-
-    // gå bakover til nye indexen og sett koordinater for alle features
-    // frem til nye index
-    for (let i = newIndex; i > newIndex - 1; i--) {
-      setFeatureCoordinatesForEntry(history.entries[i], "from");
-    }
-
-    setHistory({
-      entries,
-      index: newIndex,
-    });
-  };
-
-  const reapply = (amount: number) => {
-    const { index, entries } = history;
-
-    if (index >= entries.length) return;
-
-    const newIndex =
-      index + amount > entries.length ? entries.length : index + amount;
-
-    for (let i = index; i < newIndex; i++) {
-      setFeatureCoordinatesForEntry(history.entries[i], "to");
-    }
-
-    setHistory({
-      entries,
-      index: newIndex,
-    });
-  };
-
-  const undo = () => {
-    revert(1);
-  };
-
-  const redo = () => {
-    reapply(1);
-  };
-
-  const canRedo = history.index < history.entries.length;
+  }, [updateDraft, setHistory]);
 
   return {
     dirtyFeatureIds,
     clearHistory,
-    undo,
-    redo,
-    canRedo,
+    undo: history.entries.length > 0 && history.index > 0 ? undo : undefined,
+    redo: history.index < history.entries.length ? redo : undefined,
   };
 };
 
