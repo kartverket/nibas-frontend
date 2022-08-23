@@ -9,13 +9,22 @@ import React, {
 } from "react";
 import { EditContextType, ToolbarContextValue, HistoryEntry } from "./types";
 import useSaveHandlers from "./useSaveHandlers";
+import { setFeatureCoordinatesForEntry } from "./utils";
 
 const onUndo = (entry: HistoryEntry) => {
-  // a
+  switch (entry.type) {
+    case "grense": {
+      return setFeatureCoordinatesForEntry(entry, "from");
+    }
+  }
 };
 
 const onRedo = (entry: HistoryEntry) => {
-  // b
+  switch (entry.type) {
+    case "grense": {
+      return setFeatureCoordinatesForEntry(entry, "to");
+    }
+  }
 };
 
 /**
@@ -145,9 +154,16 @@ export const useToolbarSave = <T extends EditContextType>(contextType: T) => {
     [history, setHistory]
   );
 
+  const updateLatestEntry = useCallback(
+    (updatedEntry: HistoryEntry) =>
+      updateEntry(history.index - 1, updatedEntry),
+    [history, updateEntry]
+  );
+
   return {
     addEntry,
     updateEntry,
+    updateLatestEntry,
     dirtyFeatureIds,
     history,
   };

@@ -1,24 +1,34 @@
+import { EditingType } from "contexts/EditGrenserContext";
 import useHistory, { History } from "hooks/useHistory";
 import { Feature } from "ol";
 import LineString from "ol/geom/LineString";
-import { FeatureProperties, GrunnkretsRequest } from "types/api";
+import { FeatureProperties, GrunnkretsRequest, Metadata } from "types/api";
 
 export type EditContextType = "grense" | "grunnkrets" | "metadata";
+
+export type HistoryChange<T> = {
+  id: string;
+  from: T;
+  to: T | null;
+};
 
 export type BaseHistoryEntry<
   Type extends EditContextType,
   Model extends unknown
 > = {
   type: Type;
-  changes: {
-    id: string;
-    from: Model;
-    to: Model | null;
-  }[];
+  changes: HistoryChange<Model>[];
 };
 
 export type GrenseEntry = BaseHistoryEntry<"grense", number[][]>;
-export type MetadataEntry = BaseHistoryEntry<"metadata", FeatureProperties>;
+export type MetadataEntry = BaseHistoryEntry<
+  "metadata",
+  {
+    value: Metadata;
+    type: EditingType;
+    id: string;
+  }
+>;
 export type GrunnkretsEntry = BaseHistoryEntry<
   "grunnkrets",
   GrunnkretsRequest
