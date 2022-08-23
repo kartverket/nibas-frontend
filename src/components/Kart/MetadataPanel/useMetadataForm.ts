@@ -82,38 +82,18 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
 
   useEffect(() => {
     const updateFormOnPropertyChange = (e: ObjectEvent) => {
-      console.log((e.target as Feature<LineString>).getProperties());
-      // pain
-      setValue(
-        "informasjon",
-        (e.target as Feature<LineString>).getProperties().metadata?.common
-          ?.informasjon ?? ""
-      );
-      setValue(
-        "grenseType",
-        (e.target as Feature<LineString>).getProperties().metadata
-          ?.discriminator ?? ""
-      );
+      const newMetadata = (e.target as Feature<LineString>).getProperties()
+        .metadata as Metadata;
+
+      setValue("informasjon", newMetadata?.common?.informasjon ?? "");
+      setValue("grenseType", newMetadata?.discriminator ?? "");
       setValue(
         "noeyaktighet",
-        (e.target as Feature<LineString>).getProperties().metadata?.commonGrense
-          ?.posisjonskvalitet?.noeyaktighet ?? ""
+        newMetadata?.commonGrense?.posisjonskvalitet?.noeyaktighet ?? 0
       );
-      setValue(
-        "opphav",
-        (e.target as Feature<LineString>).getProperties().metadata?.common
-          ?.opphav ?? ""
-      );
-      setValue(
-        "gyldigFra",
-        (e.target as Feature<LineString>).getProperties().metadata?.common
-          ?.gyldigFra ?? ""
-      );
-      setValue(
-        "gyldigTil",
-        (e.target as Feature<LineString>).getProperties().metadata?.common
-          ?.gyldigTil ?? ""
-      );
+      setValue("opphav", newMetadata?.common?.opphav ?? "");
+      setValue("gyldigFra", newMetadata?.common?.gyldigFra ?? "");
+      setValue("gyldigTil", newMetadata?.common?.gyldigTil ?? "");
     };
 
     feature.on("propertychange", updateFormOnPropertyChange);
