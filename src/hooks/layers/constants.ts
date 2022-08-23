@@ -35,6 +35,8 @@ export const bakgrunnskartLayers = {
   matrikkelenWfs: new VectorLayer({ source: new VectorSource() }),
 };
 
+export const editSource = new VectorSource();
+
 export const grenserLayers = {
   // ingen source betyr at source settes async
   fylker: new VectorLayer({
@@ -58,7 +60,7 @@ export const grenserLayers = {
     style: defaultStyles,
   }),
   edit: new VectorLayer({
-    source: new VectorSource(),
+    source: editSource,
     style: editStyles,
   }),
 };
