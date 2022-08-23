@@ -4,7 +4,9 @@ import Geometry from "ol/geom/Geometry";
 import { useForm } from "react-hook-form";
 import useAsyncKodeliste from "./useAsyncKodeliste";
 import { updateGrenser } from "api/grenser";
-import { Metadata } from "types/api";
+import { FeatureProperties, Metadata } from "types/api";
+import { useCallback } from "react";
+import { useToolbarSave } from "contexts/ToolbarContext";
 
 type Inputs = {
   grenseType: string;
@@ -40,7 +42,12 @@ const getUpdatedMetadata = (data: Inputs, oldMetadata: Metadata) =>
   } as Metadata);
 
 const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
-  const { register, handleSubmit, setValue } = useForm<Inputs>({
+  const {
+    register,
+    setValue,
+    formState: { isDirty },
+    getValues,
+  } = useForm<Inputs>({
     defaultValues: {
       informasjon: metadata?.common?.informasjon,
       grenseType: metadata?.discriminator,
@@ -51,8 +58,6 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
     },
   });
 
-  const { tokenHolderFunc } = useAuthenticationFlow();
-
   const maalemetodeKoder = useAsyncKodeliste({
     property: "maalemetode",
     setValue,
@@ -60,21 +65,22 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
     initialItemId: metadata.commonGrense?.posisjonskvalitet?.maalemetode.id,
   });
 
-  const onSubmit = handleSubmit((data) => {
-    const oldProperties = feature.getProperties();
-
+  const writeMetadataToFeature = () => {
+    const properties = feature.getProperties() as FeatureProperties;
     feature.setProperties({
-      ...oldProperties,
-      metadata: getUpdatedMetadata(data, oldProperties.metadata),
+      ...properties,
+      metadata: getUpdatedMetadata(
+        getValues(),
+        properties.metadata as Metadata
+      ),
     });
-
-    updateGrenser([feature], tokenHolderFunc()?.token);
-  });
+  };
 
   return {
     register,
-    onSubmit,
     maalemetodeKoder,
+    isDirty,
+    writeMetadataToFeature,
   };
 };
 

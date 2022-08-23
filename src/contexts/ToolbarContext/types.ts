@@ -21,14 +21,7 @@ export type BaseHistoryEntry<
 };
 
 export type GrenseEntry = BaseHistoryEntry<"grense", number[][]>;
-export type MetadataEntry = BaseHistoryEntry<
-  "metadata",
-  {
-    value: Metadata;
-    type: EditingType;
-    id: string;
-  }
->;
+export type MetadataEntry = BaseHistoryEntry<"metadata", Metadata>;
 export type GrunnkretsEntry = BaseHistoryEntry<
   "grunnkrets",
   GrunnkretsRequest
