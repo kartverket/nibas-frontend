@@ -1,16 +1,21 @@
+import useHistory, { History } from "hooks/useHistory";
 import React, {
   createContext,
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
-import { EditContextType, ToolbarContextValue, ToolbarDraft } from "./types";
+import { EditContextType, ToolbarContextValue, HistoryEntry } from "./types";
 import useSaveHandlers from "./useSaveHandlers";
 
-const emptyDraft: ToolbarDraft = {
-  grense: {},
-  grunnkrets: {},
+const onUndo = (entry: HistoryEntry) => {
+  // a
+};
+
+const onRedo = (entry: HistoryEntry) => {
+  // b
 };
 
 /**
@@ -21,11 +26,31 @@ export const ToolbarContext = createContext<ToolbarContextValue | undefined>(
 );
 
 export const ToolbarProvider: React.FC = ({ children }) => {
-  const [draft, setDraft] = useState(emptyDraft);
+  const historyValue = useHistory({
+    onUndo,
+    onRedo,
+  });
+
+  const dirtyFeatureIds = useMemo(
+    () =>
+      historyValue.history.entries
+        .slice(0, historyValue.history.index)
+        .filter((entry) => entry.type === "grense" || entry.type === "metadata")
+        .reduce<string[]>((accumulator, entry) => {
+          entry.changes.forEach((change) => {
+            if (change.to && !accumulator.includes(change.id)) {
+              accumulator.push(change.id);
+            }
+          });
+
+          return accumulator;
+        }, []),
+    [historyValue.history]
+  );
 
   const value = {
-    draft,
-    setDraft,
+    ...historyValue,
+    dirtyFeatureIds,
   };
 
   return (
@@ -40,21 +65,19 @@ export const useToolbar = () => {
     throw new Error("useToolbar must be used within a ToolbarContext");
   }
 
-  const { draft, setDraft } = context;
+  const { clearHistory, history, redo, setHistory, undo } = context;
 
-  const { saveGrunnkretser, saveGrenser, undo, redo } = useSaveHandlers(draft);
+  const { saveGrunnkretser, saveGrenser } = useSaveHandlers(history);
 
-  const canSave = Object.keys(draft).some(
-    (type) => Object.keys(draft[type as EditContextType]).length > 0
-  );
+  const canSave = history.entries.length > 0 && history.index > 0;
 
   useEffect(() => {
-    console.log(draft);
-  }, [draft]);
+    console.log(history);
+  }, [history]);
 
   const save = async () => {
-    const savePromises = Object.keys(draft).map(async (t) => {
-      const type = t as keyof ToolbarDraft;
+    const savePromises = history.entries.map(async (entry) => {
+      const type = entry.type;
 
       switch (type) {
         case "grense": {
@@ -62,6 +85,9 @@ export const useToolbar = () => {
         }
         case "grunnkrets": {
           return saveGrunnkretser();
+        }
+        case "metadata": {
+          return;
         }
       }
 
@@ -72,14 +98,17 @@ export const useToolbar = () => {
 
     await Promise.all(savePromises);
 
-    setDraft(emptyDraft);
+    clearHistory();
   };
 
   return {
     canSave,
     save,
-    undo,
-    redo,
+    undo: history.index > 0 ? undo : undefined,
+    redo:
+      history.entries.length > 0 && history.index < history.entries.length
+        ? redo
+        : undefined,
   };
 };
 
@@ -90,22 +119,37 @@ export const useToolbarSave = <T extends EditContextType>(contextType: T) => {
     throw new Error("useToolbarSave must be used within a ToolbarContext");
   }
 
-  const { setDraft } = context;
+  const { history, setHistory, dirtyFeatureIds } = context;
 
-  const updateSubDraft = useCallback(
-    (id: string, value: ToolbarDraft[T][string]) =>
-      setDraft((prevDraft) => ({
-        ...prevDraft,
-        [contextType]: {
-          ...prevDraft[contextType],
-          [id]: value,
-        },
-      })),
-    [setDraft, contextType]
+  const addEntry = useCallback(
+    (entry: HistoryEntry) => {
+      setHistory((prevHistory) => ({
+        index: prevHistory.index + 1,
+        entries: [...prevHistory.entries, entry],
+      }));
+    },
+    [setHistory]
+  );
+
+  const updateEntry = useCallback(
+    (index: number, updatedEntry: HistoryEntry) => {
+      const newHistory = {
+        index: history.index,
+        entries: history.entries.slice(),
+      };
+
+      newHistory.entries[index] = updatedEntry;
+
+      setHistory(newHistory);
+    },
+    [history, setHistory]
   );
 
   return {
-    updateDraft: updateSubDraft,
+    addEntry,
+    updateEntry,
+    dirtyFeatureIds,
+    history,
   };
 };
 

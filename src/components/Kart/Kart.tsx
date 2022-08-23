@@ -6,6 +6,7 @@ import MetadataPanel from "./MetadataPanel";
 import OverlayPopup from "./OverlayPopup";
 import SidebarPanels from "./SidebarPanels";
 import Toolbar from "./Toolbar";
+import useEditInteractions from "hooks/interactions/useEditInteractions";
 import useSelectInteraction from "hooks/interactions/useSelectInteraction";
 import { initBakgrunnskartLayers, initGrenserLayers } from "utils/map/layers";
 
@@ -18,6 +19,7 @@ const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
 
   const selectedFeatures = useSelectInteraction();
+  useEditInteractions();
 
   useEffect(() => {
     // mapRef kan egentlig ikke være null her,

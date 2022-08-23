@@ -2,14 +2,30 @@ import { useEffect } from "react";
 import { Snap } from "ol/interaction";
 import { modify } from "./constants";
 import useDirtyStyles from "./useDirtyStyles";
-import useFeatureHistory from "./useFeatureHistory";
 import { map } from "components/Kart/constants";
 import { getVectorLayers } from "utils/map/layers";
+import {
+  GrenseEntry,
+  BaseHistoryEntry,
+  useToolbar,
+  useToolbarSave,
+} from "contexts/ToolbarContext";
+import { ModifyEvent } from "ol/interaction/Modify";
+import { FeatureLike } from "ol/Feature";
+import LineString from "ol/geom/LineString";
+
+const getInfoFromFeature = (featureLike: FeatureLike) => {
+  const featureId = featureLike.getId();
+  const geometry = featureLike.getGeometry() as LineString;
+
+  return { coordinates: geometry.getCoordinates(), featureId };
+};
 
 const useEditInteractions = () => {
-  const featureHistory = useFeatureHistory();
+  const { dirtyFeatureIds, addEntry, updateEntry, history } =
+    useToolbarSave("grense");
 
-  useDirtyStyles(featureHistory.dirtyFeatureIds);
+  useDirtyStyles(dirtyFeatureIds);
 
   useEffect(() => {
     const vectorLayers = getVectorLayers();
@@ -37,9 +53,66 @@ const useEditInteractions = () => {
     };
   }, []);
 
-  return {
-    ...featureHistory,
-  };
+  useEffect(() => {
+    const addCurrentCoordinatesToHistory = (e: ModifyEvent) => {
+      console.log("Running modifu start");
+      const newEntry: GrenseEntry = {
+        type: "grense",
+        changes: [],
+      };
+
+      e.features.forEach((featureLike) => {
+        const { featureId, coordinates } = getInfoFromFeature(featureLike);
+
+        if (!featureId || !coordinates) return;
+
+        newEntry.changes.push({
+          id: featureId as string,
+          from: coordinates,
+          to: null,
+        });
+      });
+
+      addEntry(newEntry);
+    };
+
+    modify.on("modifystart", addCurrentCoordinatesToHistory);
+
+    return () => {
+      modify.un("modifystart", addCurrentCoordinatesToHistory);
+    };
+  }, [addEntry]);
+
+  useEffect(() => {
+    const updateToCoordinate = (e: ModifyEvent) => {
+      console.log("Updating coordinate");
+      // legger til riktig type entry i modifystart, så dette skal være safe
+      const previousEntry = history.entries[history.index - 1] as GrenseEntry;
+
+      e.features.forEach((featureLike) => {
+        const { featureId, coordinates } = getInfoFromFeature(featureLike);
+
+        if (!featureId || !coordinates) return;
+
+        updateEntry(history.index - 1, {
+          ...previousEntry,
+          changes: previousEntry.changes.map((entry) => {
+            if (entry.id === featureId && entry.to === null) {
+              entry.to = coordinates;
+            }
+
+            return entry;
+          }),
+        });
+      });
+    };
+
+    modify.on("modifyend", updateToCoordinate);
+
+    return () => {
+      modify.un("modifyend", updateToCoordinate);
+    };
+  }, [history, updateEntry]);
 };
 
 export default useEditInteractions;

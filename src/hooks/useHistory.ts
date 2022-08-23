@@ -1,15 +1,14 @@
 import { useState } from "react";
 
 // dictionary med itemId som key, og ny verdi som T
-export type HistoryEntry<T> = Record<string, T>;
 export type History<T> = {
   index: number;
-  entries: HistoryEntry<T>[];
+  entries: T[];
 };
 
 type Options<T> = {
-  onUndo: (entry: HistoryEntry<T>) => void;
-  onRedo: (entry: HistoryEntry<T>) => void;
+  onUndo: (entry: T) => void;
+  onRedo: (entry: T) => void;
 };
 
 const useHistory = <T extends unknown>({ onUndo, onRedo }: Options<T>) => {

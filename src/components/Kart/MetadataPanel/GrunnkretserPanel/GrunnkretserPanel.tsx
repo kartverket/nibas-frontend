@@ -36,7 +36,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
     }
   );
 
-  const { updateDraft } = useToolbarSave("grunnkrets");
+  const { addEntry } = useToolbarSave("grunnkrets");
 
   const sortedGrunnkretser = sortGrenserAlphabetically(grunnkretserByKommune);
 
@@ -59,8 +59,16 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
     id: string,
     grunnkrets: GrunnkretsRequest
   ) => {
-    updateDraft(kommune.id, {
-      [id]: grunnkrets,
+    addEntry({
+      type: "grunnkrets",
+      kommuneId: kommune.id,
+      changes: [
+        {
+          from: grunnkrets,
+          to: grunnkrets,
+          id,
+        },
+      ],
     });
   };
 

@@ -1,63 +1,103 @@
 import { useCallback } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useSWRConfig } from "swr";
-import { ToolbarDraft } from "./types";
+import { GrenseEntry, GrunnkretsEntry, HistoryEntry } from "./types";
 import { updateGrunnkrets } from "api/enheter";
 import { updateGrenser } from "api/grenser";
-import useEditInteractions from "hooks/interactions/useEditInteractions";
+import { History } from "hooks/useHistory";
+import { getLayerById } from "utils/map/layers";
+import { GrunnkretsRequest } from "types/api";
 
-const useSaveHandlers = (draft: ToolbarDraft) => {
+const getSaveGrunnkretserObject = (history: History<HistoryEntry>) => {
+  return history.entries
+    .slice(0, history.index)
+    .filter((entry) => entry.type === "grunnkrets")
+    .reduce((acc, entry) => {
+      // overskriv gamle ids med de nyere endringene
+      const grunnkretsEntry = entry as GrunnkretsEntry;
+      grunnkretsEntry.changes.forEach((change) => {
+        if (!change.to) return acc;
+
+        acc = {
+          ...acc,
+          [grunnkretsEntry.kommuneId]: {
+            ...(acc[grunnkretsEntry.kommuneId] ?? {}),
+            [change.id]: change.to,
+          },
+        };
+      });
+
+      return acc;
+    }, {} as Record<string, Record<string, GrunnkretsRequest>>);
+};
+
+const getSaveGrenserObject = (history: History<HistoryEntry>) => {
+  return history.entries
+    .slice(0, history.index)
+    .filter((entry) => entry.type === "grense")
+    .reduce((acc, entry) => {
+      const grenseEntry = entry as GrenseEntry;
+      grenseEntry.changes.forEach((change) => {
+        if (!change.to) return acc;
+
+        acc = {
+          ...acc,
+          [change.id]: change.to,
+        };
+      });
+
+      return acc;
+    }, {} as Record<string, number[][]>);
+};
+
+const useSaveHandlers = (history: History<HistoryEntry>) => {
   const { mutate } = useSWRConfig();
-  const { dirtyFeatureIds, clearHistory, undo, redo } = useEditInteractions();
 
   const { tokenHolderFunc } = useAuthenticationFlow();
   const token = tokenHolderFunc()?.token;
 
   const saveGrunnkretser = useCallback(() => {
-    const kommuneIds = Object.keys(draft.grunnkrets);
+    const grunnkretsByIdByKommuneId = getSaveGrunnkretserObject(history);
+    const kommuneIds = Object.keys(grunnkretsByIdByKommuneId);
 
     const promises = kommuneIds.map(async (kommuneId) => {
-      const grunnkretserDraft = draft.grunnkrets[kommuneId];
-
-      const grunnkretserPromises = Object.keys(grunnkretserDraft).map(
+      const grunnkretserBykommuneId = grunnkretsByIdByKommuneId[kommuneId];
+      const innerPromises = Object.keys(grunnkretserBykommuneId).map(
         async (grunnkretsId) => {
           await updateGrunnkrets(
-            grunnkretserDraft[grunnkretsId],
+            grunnkretserBykommuneId[grunnkretsId],
             grunnkretsId,
             token
           );
-
           return mutate([`/v1/grunnkretser/${grunnkretsId}`, token]);
         }
       );
 
-      await Promise.all(grunnkretserPromises);
+      await Promise.all(innerPromises);
 
       return mutate([`/v1/kommuner/${kommuneId}/grunnkretser`, token]);
     });
 
     return Promise.all(promises);
-  }, [draft.grunnkrets, mutate, token]);
+  }, [history, mutate, token]);
 
   const saveGrenser = useCallback(() => {
-    const features = Object.values(draft.grense);
+    const featureIds = Object.keys(getSaveGrenserObject(history));
+    const editedFeatures = getLayerById("edit")
+      .getSource()
+      .getFeatures()
+      .filter((feature) =>
+        featureIds.includes((feature.getId() as string) ?? "")
+      );
 
-    if (features.length === 0) return;
-
-    const editedFeatures = features.filter((feature) =>
-      dirtyFeatureIds.includes((feature.getId() as string) ?? "")
-    );
-
-    clearHistory();
+    if (editedFeatures.length === 0) return;
 
     return updateGrenser(editedFeatures, token);
-  }, [clearHistory, dirtyFeatureIds, draft.grense, token]);
+  }, [history, token]);
 
   return {
     saveGrenser,
     saveGrunnkretser,
-    undo,
-    redo,
   };
 };
 
