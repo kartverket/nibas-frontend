@@ -5,8 +5,10 @@ import { useForm } from "react-hook-form";
 import useAsyncKodeliste from "./useAsyncKodeliste";
 import { updateGrenser } from "api/grenser";
 import { FeatureProperties, Metadata } from "types/api";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useToolbarSave } from "contexts/ToolbarContext";
+import LineString from "ol/geom/LineString";
+import { ObjectEvent } from "ol/Object";
 
 type Inputs = {
   grenseType: string;
@@ -41,6 +43,15 @@ const getUpdatedMetadata = (data: Inputs, oldMetadata: Metadata) =>
     },
   } as Metadata);
 
+const getFormFromApiMetadata = (metadata: Metadata) => ({
+  informasjon: metadata?.common?.informasjon,
+  grenseType: metadata?.discriminator,
+  noeyaktighet: metadata?.commonGrense?.posisjonskvalitet?.noeyaktighet,
+  opphav: metadata?.common?.opphav,
+  gyldigFra: metadata?.common?.gyldigFra,
+  gyldigTil: metadata?.common?.gyldigTil,
+});
+
 const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
   const {
     register,
@@ -48,14 +59,7 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
     formState: { isDirty },
     getValues,
   } = useForm<Inputs>({
-    defaultValues: {
-      informasjon: metadata?.common?.informasjon,
-      grenseType: metadata?.discriminator,
-      noeyaktighet: metadata?.commonGrense?.posisjonskvalitet?.noeyaktighet,
-      opphav: metadata?.common?.opphav,
-      gyldigFra: metadata?.common?.gyldigFra,
-      gyldigTil: metadata?.common?.gyldigTil,
-    },
+    defaultValues: getFormFromApiMetadata(metadata),
   });
 
   const maalemetodeKoder = useAsyncKodeliste({
@@ -75,6 +79,49 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
       ),
     });
   };
+
+  useEffect(() => {
+    const updateFormOnPropertyChange = (e: ObjectEvent) => {
+      console.log((e.target as Feature<LineString>).getProperties());
+      // pain
+      setValue(
+        "informasjon",
+        (e.target as Feature<LineString>).getProperties().metadata?.common
+          ?.informasjon ?? ""
+      );
+      setValue(
+        "grenseType",
+        (e.target as Feature<LineString>).getProperties().metadata
+          ?.discriminator ?? ""
+      );
+      setValue(
+        "noeyaktighet",
+        (e.target as Feature<LineString>).getProperties().metadata?.commonGrense
+          ?.posisjonskvalitet?.noeyaktighet ?? ""
+      );
+      setValue(
+        "opphav",
+        (e.target as Feature<LineString>).getProperties().metadata?.common
+          ?.opphav ?? ""
+      );
+      setValue(
+        "gyldigFra",
+        (e.target as Feature<LineString>).getProperties().metadata?.common
+          ?.gyldigFra ?? ""
+      );
+      setValue(
+        "gyldigTil",
+        (e.target as Feature<LineString>).getProperties().metadata?.common
+          ?.gyldigTil ?? ""
+      );
+    };
+
+    feature.on("propertychange", updateFormOnPropertyChange);
+
+    return () => {
+      feature.un("propertychange", updateFormOnPropertyChange);
+    };
+  }, [feature, setValue]);
 
   return {
     register,

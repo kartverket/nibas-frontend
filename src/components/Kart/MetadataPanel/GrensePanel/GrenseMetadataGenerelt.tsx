@@ -20,7 +20,7 @@ import Select from "components/form/Select";
 import useScreenWidth from "hooks/useScreenWidth";
 import { Metadata, FeatureProperties } from "types/api";
 import { MetadataEntry, useToolbarSave } from "contexts/ToolbarContext";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import LineString from "ol/geom/LineString";
 import { dirtyStyles } from "utils/map/layerStyles";
 
@@ -38,7 +38,8 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
 
   const { addEntry } = useToolbarSave("metadata");
 
-  const updateDraftOnBlur = () => {
+  const updateDraftOnBlur = (e: React.FocusEvent) => {
+    console.log(e);
     const id = feature.getId();
 
     if (!id) return;

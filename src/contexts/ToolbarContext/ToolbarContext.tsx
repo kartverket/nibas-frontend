@@ -9,12 +9,18 @@ import React, {
 } from "react";
 import { EditContextType, ToolbarContextValue, HistoryEntry } from "./types";
 import useSaveHandlers from "./useSaveHandlers";
-import { setFeatureCoordinatesForEntry } from "./utils";
+import {
+  setFeatureCoordinatesForEntry,
+  setFeatureMetadataForEntry,
+} from "./utils";
 
 const onUndo = (entry: HistoryEntry) => {
   switch (entry.type) {
     case "grense": {
       return setFeatureCoordinatesForEntry(entry, "from");
+    }
+    case "metadata": {
+      return setFeatureMetadataForEntry(entry, "from");
     }
   }
 };
@@ -23,6 +29,9 @@ const onRedo = (entry: HistoryEntry) => {
   switch (entry.type) {
     case "grense": {
       return setFeatureCoordinatesForEntry(entry, "to");
+    }
+    case "metadata": {
+      return setFeatureMetadataForEntry(entry, "to");
     }
   }
 };

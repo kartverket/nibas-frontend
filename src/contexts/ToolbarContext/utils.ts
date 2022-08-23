@@ -1,5 +1,5 @@
 import LineString from "ol/geom/LineString";
-import { GrenseEntry } from "./types";
+import { GrenseEntry, MetadataEntry } from "./types";
 import { editSource } from "hooks/layers/constants";
 
 export const setFeatureCoordinatesForEntry = (
@@ -16,5 +16,20 @@ export const setFeatureCoordinatesForEntry = (
     if (!coordinates) return;
 
     lineString.setCoordinates(coordinates);
+  });
+};
+
+export const setFeatureMetadataForEntry = (
+  entry: MetadataEntry,
+  direction: "from" | "to"
+) => {
+  entry.changes.forEach((change) => {
+    const feature = editSource.getFeatureById(change.id);
+
+    const metadata = change[direction];
+
+    if (!metadata) return;
+
+    feature.setProperties({ ...feature.getProperties(), metadata });
   });
 };
