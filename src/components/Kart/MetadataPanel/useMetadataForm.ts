@@ -3,9 +3,12 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import LineString from "ol/geom/LineString";
 import { ObjectEvent } from "ol/Object";
-import { useForm } from "react-hook-form";
+import { Path, useForm } from "react-hook-form";
 import useAsyncKodeliste from "./useAsyncKodeliste";
-import { updateFeatureWithNewMetadata } from "./utils";
+import {
+  addMetadataEntryFromFeature,
+  updateFeatureWithNewMetadata,
+} from "./utils";
 import { useToolbarSave } from "contexts/ToolbarContext";
 import { Metadata } from "types/api";
 
@@ -61,14 +64,14 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
     defaultValues: getFormFromApiMetadata(metadata),
   });
 
-  const { addEntry } = useToolbarSave("metadata");
-
   const maalemetodeKoder = useAsyncKodeliste({
     property: "maalemetode",
     setValue,
     kodelisteUrl: "/v1/kodeliste/maalemetode-koder",
     initialItemId: metadata.commonGrense?.posisjonskvalitet?.maalemetode.id,
   });
+
+  const { addEntry } = useToolbarSave("metadata");
 
   useEffect(() => {
     const updateFormOnPropertyChange = (e: ObjectEvent) => {
@@ -94,27 +97,14 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
   }, [feature, setValue]);
 
   const updateDraftFromFeature = () => {
-    const id = feature.getId();
-
-    if (!id) return;
-
-    const oldMetadata = feature.getProperties().metadata as Metadata;
-
-    updateFeatureWithNewMetadata(
+    addMetadataEntryFromFeature(
       feature as Feature<LineString>,
-      getUpdatedMetadata(getValues(), oldMetadata)
+      addEntry,
+      getUpdatedMetadata(
+        getValues(),
+        feature.getProperties().metadata as Metadata
+      )
     );
-
-    addEntry({
-      type: "metadata",
-      changes: [
-        {
-          id: id as string,
-          from: oldMetadata,
-          to: feature.getProperties().metadata as Metadata,
-        },
-      ],
-    });
   };
 
   return {

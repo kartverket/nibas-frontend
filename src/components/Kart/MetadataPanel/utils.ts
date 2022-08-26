@@ -1,5 +1,6 @@
 import { Feature } from "ol";
 import LineString from "ol/geom/LineString";
+import { MetadataEntry } from "contexts/ToolbarContext";
 import { FeatureProperties, Metadata } from "types/api";
 
 export const getDateInFriendlyString = (dateString?: string) => {
@@ -18,5 +19,30 @@ export const updateFeatureWithNewMetadata = (
   feature.setProperties({
     ...properties,
     metadata: newMetadata,
+  });
+};
+
+export const addMetadataEntryFromFeature = (
+  feature: Feature<LineString>,
+  addEntry: (entry: MetadataEntry) => void,
+  updatedMetadata: Metadata
+) => {
+  const id = feature.getId();
+
+  if (!id) return;
+
+  const oldMetadata = feature.getProperties().metadata as Metadata;
+
+  updateFeatureWithNewMetadata(feature as Feature<LineString>, updatedMetadata);
+
+  addEntry({
+    type: "metadata",
+    changes: [
+      {
+        id: id as string,
+        from: oldMetadata,
+        to: feature.getProperties().metadata as Metadata,
+      },
+    ],
   });
 };
