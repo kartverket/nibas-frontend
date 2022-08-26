@@ -1,14 +1,13 @@
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
+import { useEffect } from "react";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
-import { useForm } from "react-hook-form";
-import useAsyncKodeliste from "./useAsyncKodeliste";
-import { updateGrenser } from "api/grenser";
-import { FeatureProperties, Metadata } from "types/api";
-import { useCallback, useEffect } from "react";
-import { useToolbarSave } from "contexts/ToolbarContext";
 import LineString from "ol/geom/LineString";
 import { ObjectEvent } from "ol/Object";
+import { useForm } from "react-hook-form";
+import useAsyncKodeliste from "./useAsyncKodeliste";
+import { updateFeatureWithNewMetadata } from "./utils";
+import { useToolbarSave } from "contexts/ToolbarContext";
+import { Metadata } from "types/api";
 
 type Inputs = {
   grenseType: string;
@@ -62,23 +61,14 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
     defaultValues: getFormFromApiMetadata(metadata),
   });
 
+  const { addEntry } = useToolbarSave("metadata");
+
   const maalemetodeKoder = useAsyncKodeliste({
     property: "maalemetode",
     setValue,
     kodelisteUrl: "/v1/kodeliste/maalemetode-koder",
     initialItemId: metadata.commonGrense?.posisjonskvalitet?.maalemetode.id,
   });
-
-  const writeMetadataToFeature = () => {
-    const properties = feature.getProperties() as FeatureProperties;
-    feature.setProperties({
-      ...properties,
-      metadata: getUpdatedMetadata(
-        getValues(),
-        properties.metadata as Metadata
-      ),
-    });
-  };
 
   useEffect(() => {
     const updateFormOnPropertyChange = (e: ObjectEvent) => {
@@ -103,11 +93,35 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
     };
   }, [feature, setValue]);
 
+  const updateDraftFromFeature = () => {
+    const id = feature.getId();
+
+    if (!id) return;
+
+    const oldMetadata = feature.getProperties().metadata as Metadata;
+
+    updateFeatureWithNewMetadata(
+      feature as Feature<LineString>,
+      getUpdatedMetadata(getValues(), oldMetadata)
+    );
+
+    addEntry({
+      type: "metadata",
+      changes: [
+        {
+          id: id as string,
+          from: oldMetadata,
+          to: feature.getProperties().metadata as Metadata,
+        },
+      ],
+    });
+  };
+
   return {
     register,
     maalemetodeKoder,
     isDirty,
-    writeMetadataToFeature,
+    updateDraftFromFeature,
   };
 };
 

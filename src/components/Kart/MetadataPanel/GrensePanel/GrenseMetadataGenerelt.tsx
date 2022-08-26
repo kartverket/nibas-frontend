@@ -14,15 +14,10 @@ import {
 import useIsMetadataDisabled from "../useIsMetadataDisabled";
 import useMetadataForm from "../useMetadataForm";
 import { getDateInFriendlyString } from "../utils";
-import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
 import useScreenWidth from "hooks/useScreenWidth";
 import { Metadata, FeatureProperties } from "types/api";
-import { MetadataEntry, useToolbarSave } from "contexts/ToolbarContext";
-import React, { useEffect } from "react";
-import LineString from "ol/geom/LineString";
-import { dirtyStyles } from "utils/map/layerStyles";
 
 type Props = {
   feature: Feature<Geometry>;
@@ -33,32 +28,8 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
   const type = properties.type;
   const metadata = properties.metadata as Metadata;
 
-  const { register, maalemetodeKoder, writeMetadataToFeature } =
+  const { register, maalemetodeKoder, updateDraftFromFeature } =
     useMetadataForm(metadata, feature);
-
-  const { addEntry } = useToolbarSave("metadata");
-
-  const updateDraftOnBlur = (e: React.FocusEvent) => {
-    console.log(e);
-    const id = feature.getId();
-
-    if (!id) return;
-
-    const oldMetadata = feature.clone().getProperties().metadata as Metadata;
-
-    writeMetadataToFeature();
-
-    addEntry({
-      type: "metadata",
-      changes: [
-        {
-          id: id as string,
-          from: oldMetadata,
-          to: feature.getProperties().metadata as Metadata,
-        },
-      ],
-    });
-  };
 
   const screenWidth = useScreenWidth();
   const theme = useTheme();
@@ -66,7 +37,7 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
 
   const disabled = useIsMetadataDisabled(properties);
 
-  const formOptions = { disabled, onBlur: updateDraftOnBlur };
+  const formOptions = { disabled, onBlur: updateDraftFromFeature };
 
   return (
     <form>
