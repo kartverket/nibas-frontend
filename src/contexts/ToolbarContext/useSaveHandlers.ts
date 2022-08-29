@@ -34,7 +34,7 @@ const getSaveGrunnkretserObject = (history: History<HistoryEntry>) => {
 const getSaveGrenserObject = (history: History<HistoryEntry>) => {
   return history.entries
     .slice(0, history.index)
-    .filter((entry) => entry.type === "grense")
+    .filter((entry) => entry.type === "grense" || entry.type === "metadata")
     .reduce((acc, entry) => {
       const grenseEntry = entry as GrenseEntry;
       grenseEntry.changes.forEach((change) => {
@@ -81,7 +81,7 @@ const useSaveHandlers = (history: History<HistoryEntry>) => {
     return Promise.all(promises);
   }, [history, mutate, token]);
 
-  const saveGrenser = useCallback(() => {
+  const saveGrenserAndMetadata = useCallback(() => {
     const featureIds = Object.keys(getSaveGrenserObject(history));
     const editedFeatures = getLayerById("edit")
       .getSource()
@@ -96,7 +96,7 @@ const useSaveHandlers = (history: History<HistoryEntry>) => {
   }, [history, token]);
 
   return {
-    saveGrenser,
+    saveGrenserAndMetadata,
     saveGrunnkretser,
   };
 };

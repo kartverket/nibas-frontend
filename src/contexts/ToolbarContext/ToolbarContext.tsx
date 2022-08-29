@@ -85,7 +85,7 @@ export const useToolbar = () => {
 
   const { clearHistory, history, redo, setHistory, undo } = context;
 
-  const { saveGrunnkretser, saveGrenser } = useSaveHandlers(history);
+  const { saveGrunnkretser, saveGrenserAndMetadata } = useSaveHandlers(history);
 
   const canSave = history.entries.length > 0 && history.index > 0;
 
@@ -98,14 +98,12 @@ export const useToolbar = () => {
       const type = entry.type;
 
       switch (type) {
+        case "metadata":
         case "grense": {
-          return saveGrenser();
+          return saveGrenserAndMetadata();
         }
         case "grunnkrets": {
           return saveGrunnkretser();
-        }
-        case "metadata": {
-          return;
         }
       }
 
