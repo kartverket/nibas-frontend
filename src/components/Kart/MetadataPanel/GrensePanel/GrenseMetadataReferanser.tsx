@@ -1,15 +1,17 @@
-import { useState } from "react";
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
+import { useEffect, useState } from "react";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
+import LineString from "ol/geom/LineString";
+import { ObjectEvent } from "ol/Object";
 import { Control, useFieldArray, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { BlockLabel, Container, Part } from "../metadataComponents";
 import useIsMetadataDisabled from "../useIsMetadataDisabled";
-import { updateGrenser } from "api/grenser";
+import { addMetadataEntryFromFeature } from "../utils";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
+import { useToolbarSave } from "contexts/ToolbarContext";
 import { ReactComponent as Minus } from "icons/minus.svg";
 import { ReactComponent as Pluss } from "icons/pluss.svg";
 import { Dokref, FeatureProperties, Metadata } from "types/api";
@@ -79,13 +81,20 @@ const mapFromFormToApi = (data: Inputs): Dokref[] => {
 type FieldArrayProps = {
   control: Control<Inputs>;
   itemName: string;
+  updateDraft: () => void;
   disabled: boolean;
   name:
     | `dokrefs.${number}.dokumentlenker`
     | `dokrefs.${number}.internReferanserKartverket`;
 };
 
-const FieldArray = ({ control, name, itemName, disabled }: FieldArrayProps) => {
+const FieldArray = ({
+  control,
+  name,
+  itemName,
+  disabled,
+  updateDraft,
+}: FieldArrayProps) => {
   const { t } = useTranslation();
   const [newLenke, setNewLenke] = useState("");
   const { fields, append, remove } = useFieldArray({
@@ -105,6 +114,7 @@ const FieldArray = ({ control, name, itemName, disabled }: FieldArrayProps) => {
 
     append({ beskrivelse: newLenke });
     setNewLenke("");
+    updateDraft();
   };
 
   return (
@@ -150,13 +160,12 @@ type Props = {
 };
 
 const GrenseMetadataReferanser = ({ feature }: Props) => {
-  const { tokenHolderFunc } = useAuthenticationFlow();
   const { t } = useTranslation();
 
   const properties = feature.getProperties() as FeatureProperties;
   const dokrefs = (properties.metadata as Metadata).dokumentasjonsreferanser;
 
-  const { register, handleSubmit, control } = useForm<Inputs>({
+  const { register, control, setValue, getValues } = useForm<Inputs>({
     defaultValues: { dokrefs: mapFromApiToForm(dokrefs) },
   });
   const { append, fields, remove } = useFieldArray({
@@ -164,24 +173,43 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
     name: "dokrefs",
   });
 
-  const disabled = useIsMetadataDisabled(properties);
+  const { addEntry } = useToolbarSave("metadata");
 
-  const onSubmit = handleSubmit((data) => {
-    const newProperties: FeatureProperties = {
-      ...properties,
-      metadata: {
-        ...properties.metadata,
-        dokumentasjonsreferanser: mapFromFormToApi(data),
-      } as Metadata,
+  useEffect(() => {
+    const updateFormOnPropertyChange = (e: ObjectEvent) => {
+      const newMetadata = (e.target as Feature<LineString>).getProperties()
+        .metadata as Metadata;
+
+      setValue(
+        "dokrefs",
+        mapFromApiToForm(newMetadata.dokumentasjonsreferanser)
+      );
     };
 
-    feature.setProperties(newProperties);
+    feature.on("propertychange", updateFormOnPropertyChange);
 
-    updateGrenser([feature], tokenHolderFunc()?.token);
-  });
+    return () => {
+      feature.un("propertychange", updateFormOnPropertyChange);
+    };
+  }, [feature, setValue]);
+
+  const updateDraftFromFeature = () => {
+    const metadata = feature.getProperties().metadata as Metadata;
+    addMetadataEntryFromFeature(feature as Feature<LineString>, addEntry, {
+      ...metadata,
+      dokumentasjonsreferanser: mapFromFormToApi(getValues()),
+    });
+  };
+
+  const disabled = useIsMetadataDisabled(properties);
+
+  const formOptions = {
+    disabled,
+    onBlur: updateDraftFromFeature,
+  };
 
   return (
-    <form onSubmit={onSubmit}>
+    <form>
       {fields.map((field, i) => (
         <DokRefWrapper key={field.id}>
           <Container>
@@ -189,13 +217,13 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
               <BlockLabel>
                 {t("metadata.Rettskildetittel")}
                 <Input
-                  {...register(`dokrefs.${i}.rettskildeTittel`, { disabled })}
+                  {...register(`dokrefs.${i}.rettskildeTittel`, formOptions)}
                 />
               </BlockLabel>
               <BlockLabel>
                 {t("metadata.Rettskilde-ID")}
                 <Input
-                  {...register(`dokrefs.${i}.rettskildeId`, { disabled })}
+                  {...register(`dokrefs.${i}.rettskildeId`, formOptions)}
                 />
               </BlockLabel>
             </Part>
@@ -211,7 +239,7 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
               <BlockLabel>
                 {t("metadata.Fastsettingsdato")}
                 <Input
-                  {...register(`dokrefs.${i}.fastsettingsdato`, { disabled })}
+                  {...register(`dokrefs.${i}.fastsettingsdato`, formOptions)}
                   type="date"
                   role="textbox"
                 />
@@ -220,7 +248,7 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
             <Part>
               <BlockLabel>
                 {t("metadata.Hjemmel")}
-                <Input {...register(`dokrefs.${i}.hjemmel`, { disabled })} />
+                <Input {...register(`dokrefs.${i}.hjemmel`, formOptions)} />
               </BlockLabel>
             </Part>
           </Container>
@@ -229,12 +257,14 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
             name={`dokrefs.${i}.dokumentlenker`}
             itemName={t("metadata.Dokumentlenker")}
             disabled={disabled}
+            updateDraft={updateDraftFromFeature}
           />
           <FieldArray
             control={control}
             name={`dokrefs.${i}.internReferanserKartverket`}
             itemName={t("metadata.Internreferanser")}
             disabled={disabled}
+            updateDraft={updateDraftFromFeature}
           />
 
           <Button onClick={() => remove(i)} disabled={disabled}>
@@ -262,9 +292,6 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
         {t("action.Ny {{ item }}", {
           item: t("metadata.Referanse").toLowerCase(),
         })}
-      </Button>
-      <Button type="submit" disabled={disabled}>
-        {t("action.Lagre")}
       </Button>
     </form>
   );
