@@ -1,12 +1,17 @@
 import { useCallback } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useSWRConfig } from "swr";
-import { GrenseEntry, GrunnkretsEntry, HistoryEntry } from "./types";
-import { updateGrunnkrets } from "api/enheter";
+import {
+  GrenseEntry,
+  GrunnkretsEntry,
+  HistoryEntry,
+  StemmekretsEntry,
+} from "./types";
+import { updateGrunnkrets, updateStemmekrets } from "api/enheter";
 import { updateGrenser } from "api/grenser";
 import { History } from "hooks/useHistory";
 import { getLayerById } from "utils/map/layers";
-import { GrunnkretsRequest } from "types/api";
+import { GrunnkretsRequest, StemmekretsRequest } from "types/api";
 
 const getSaveGrunnkretserObject = (history: History<HistoryEntry>) => {
   return history.entries
@@ -29,6 +34,29 @@ const getSaveGrunnkretserObject = (history: History<HistoryEntry>) => {
 
       return acc;
     }, {} as Record<string, Record<string, GrunnkretsRequest>>);
+};
+
+const getSaveStemmekretserObject = (history: History<HistoryEntry>) => {
+  return history.entries
+    .slice(0, history.index)
+    .filter((entry) => entry.type === "stemmekrets")
+    .reduce((acc, entry) => {
+      // overskriv gamle ids med de nyere endringene
+      const stemmekretsEntry = entry as StemmekretsEntry;
+      stemmekretsEntry.changes.forEach((change) => {
+        if (!change.to) return acc;
+
+        acc = {
+          ...acc,
+          [stemmekretsEntry.kommuneId]: {
+            ...(acc[stemmekretsEntry.kommuneId] ?? {}),
+            [change.id]: change.to,
+          },
+        };
+      });
+
+      return acc;
+    }, {} as Record<string, Record<string, StemmekretsRequest>>);
 };
 
 const getSaveGrenserObject = (history: History<HistoryEntry>) => {
@@ -95,9 +123,35 @@ const useSaveHandlers = (history: History<HistoryEntry>) => {
     return updateGrenser(editedFeatures, token);
   }, [history, token]);
 
+  const saveStemmekretser = useCallback(() => {
+    const stemmekretsByIdByKommuneId = getSaveStemmekretserObject(history);
+    const kommuneIds = Object.keys(stemmekretsByIdByKommuneId);
+
+    const promises = kommuneIds.map(async (kommuneId) => {
+      const stemmekretserBykommuneId = stemmekretsByIdByKommuneId[kommuneId];
+      const innerPromises = Object.keys(stemmekretserBykommuneId).map(
+        async (stemmekretsId) => {
+          await updateStemmekrets(
+            stemmekretserBykommuneId[stemmekretsId],
+            stemmekretsId,
+            token
+          );
+          return mutate([`/v1/stemmekretser/${stemmekretsId}`, token]);
+        }
+      );
+
+      await Promise.all(innerPromises);
+
+      return mutate([`/v1/kommuner/${kommuneId}/stemmekretser`, token]);
+    });
+
+    return Promise.all(promises);
+  }, [history, mutate, token]);
+
   return {
     saveGrenserAndMetadata,
     saveGrunnkretser,
+    saveStemmekretser,
   };
 };
 

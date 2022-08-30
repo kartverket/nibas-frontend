@@ -1,10 +1,11 @@
-import { EditingType } from "contexts/EditGrenserContext";
-import useHistory, { History } from "hooks/useHistory";
-import { Feature } from "ol";
-import LineString from "ol/geom/LineString";
-import { FeatureProperties, GrunnkretsRequest, Metadata } from "types/api";
+import { History } from "hooks/useHistory";
+import { GrunnkretsRequest, Metadata, StemmekretsRequest } from "types/api";
 
-export type EditContextType = "grense" | "grunnkrets" | "metadata";
+export type EditContextType =
+  | "grense"
+  | "grunnkrets"
+  | "metadata"
+  | "stemmekrets";
 
 export type HistoryChange<T> = {
   id: string;
@@ -28,9 +29,21 @@ export type GrunnkretsEntry = BaseHistoryEntry<
 > & {
   kommuneId: string;
 };
+export type StemmekretsEntry = BaseHistoryEntry<
+  "stemmekrets",
+  StemmekretsRequest
+> & {
+  kommuneId: string;
+};
+
+export type KretsHistoryEntry = GrunnkretsEntry | StemmekretsEntry;
 
 // endringer skal kunne gjøres i bulk, feks et punkt på to features endrer to features i en entry
-export type HistoryEntry = GrenseEntry | MetadataEntry | GrunnkretsEntry;
+export type HistoryEntry =
+  | GrenseEntry
+  | MetadataEntry
+  | GrunnkretsEntry
+  | StemmekretsEntry;
 
 export type ToolbarContextValue = {
   clearHistory: () => void;

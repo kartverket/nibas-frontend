@@ -1,11 +1,9 @@
-import { useEffect } from "react";
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { updateStemmekrets } from "api/enheter";
-import Button from "components/form/Button";
 import Input from "components/form/Input";
+import { StemmekretsEntry, useToolbarSave } from "contexts/ToolbarContext";
 import useNibasApi from "hooks/useNibasApi";
 import {
   StemmekretsRef,
@@ -34,20 +32,20 @@ const fromFormToRequest = (
 
 type Props = {
   stemmekrets: StemmekretsRef;
-  postSubmit: (stemmekretsId: string) => void;
+  kommuneId: string;
 };
 
-const EditRow = ({ stemmekrets, postSubmit }: Props) => {
+const EditRow = ({ stemmekrets, kommuneId }: Props) => {
   const { t } = useTranslation();
-  const { tokenHolderFunc } = useAuthenticationFlow();
-  const { data: fullStemmekrets, mutate } = useNibasApi(
-    "/v1/stemmekretser/{id}",
-    {
-      id: stemmekrets.id,
-    }
-  );
+  const { data: fullStemmekrets } = useNibasApi("/v1/stemmekretser/{id}", {
+    id: stemmekrets.id,
+  });
 
-  const { register, handleSubmit, setValue } = useForm<Inputs>();
+  const { register, setValue, getValues } = useForm<Inputs>();
+
+  const { addEntry } = useToolbarSave("grunnkrets");
+
+  const previousValues = useRef<Inputs>(getValues());
 
   useEffect(() => {
     if (!fullStemmekrets) return;
@@ -56,20 +54,80 @@ const EditRow = ({ stemmekrets, postSubmit }: Props) => {
     setValue("stemmekretsnummer", fullStemmekrets.stemmekretsnummer);
     setValue("tellekretsnavn", fullStemmekrets.tellekretsnavn ?? "");
     setValue("tellekretsnummer", fullStemmekrets.tellekretsnummer ?? "");
-  }, [fullStemmekrets, setValue]);
 
-  const onSubmit = handleSubmit(async (data) => {
+    previousValues.current = getValues();
+  }, [fullStemmekrets, setValue, getValues]);
+
+  useEffect(() => {
+    const undoGrunnkrets = ((e: CustomEvent) => {
+      const entry = e.detail.entry as StemmekretsEntry;
+
+      const changeForThisId = entry.changes.find(
+        (change) => change.id === fullStemmekrets?.id
+      );
+
+      if (!changeForThisId) return;
+
+      setValue("stemmekretsnavn", changeForThisId.from.stemmekretsnavn ?? "");
+      setValue(
+        "stemmekretsnummer",
+        changeForThisId.from.stemmekretsnummer ?? ""
+      );
+      setValue("tellekretsnavn", changeForThisId.from.tellekretsnavn ?? "");
+      setValue("tellekretsnummer", changeForThisId.from.tellekretsnummer ?? "");
+    }) as EventListener;
+
+    document.addEventListener("stemmekretsUndo", undoGrunnkrets);
+
+    return () => {
+      document.removeEventListener("stemmekretsUndo", undoGrunnkrets);
+    };
+  }, [fullStemmekrets?.id, setValue]);
+
+  useEffect(() => {
+    const redoGrunnkrets = ((e: CustomEvent) => {
+      const entry = e.detail.entry as StemmekretsEntry;
+
+      const changeForThisId = entry.changes.find(
+        (change) => change.id === fullStemmekrets?.id
+      );
+
+      if (!changeForThisId || !changeForThisId.to) return;
+
+      setValue("stemmekretsnavn", changeForThisId.to.stemmekretsnavn ?? "");
+      setValue("stemmekretsnummer", changeForThisId.to.stemmekretsnummer ?? "");
+      setValue("tellekretsnavn", changeForThisId.to.tellekretsnavn ?? "");
+      setValue("tellekretsnummer", changeForThisId.to.tellekretsnummer ?? "");
+    }) as EventListener;
+
+    document.addEventListener("stemmekretsRedo", redoGrunnkrets);
+
+    return () => {
+      document.removeEventListener("stemmekretsRedo", redoGrunnkrets);
+    };
+  }, [fullStemmekrets?.id, setValue]);
+
+  const addStemmekretsEntry = () => {
     if (!fullStemmekrets) return;
 
-    await updateStemmekrets(
-      fromFormToRequest(data, fullStemmekrets),
-      stemmekrets.id,
-      tokenHolderFunc()?.token
-    );
+    addEntry({
+      type: "stemmekrets",
+      kommuneId,
+      changes: [
+        {
+          from: fromFormToRequest(previousValues.current, fullStemmekrets),
+          to: fromFormToRequest(getValues(), fullStemmekrets),
+          id: fullStemmekrets.id,
+        },
+      ],
+    });
 
-    mutate();
-    postSubmit(stemmekrets.id);
-  });
+    previousValues.current = getValues();
+  };
+
+  const formOptions = {
+    onBlur: addStemmekretsEntry,
+  };
 
   return (
     <AccordionRow>
@@ -77,28 +135,26 @@ const EditRow = ({ stemmekrets, postSubmit }: Props) => {
         <InputsWrapper>
           <BlockLabel>
             {t("stemmekrets.Stemmekretsnummer")}
-            <Input {...register("stemmekretsnummer")} />
+            <Input {...register("stemmekretsnummer", formOptions)} />
           </BlockLabel>
 
           <BlockLabel>
             {t("tabell.Navn")}
-            <Input {...register("stemmekretsnavn")} />
+            <Input {...register("stemmekretsnavn", formOptions)} />
           </BlockLabel>
         </InputsWrapper>
 
         <InputsWrapper>
           <BlockLabel>
             {t("stemmekrets.Tellekretsnummer")}
-            <Input {...register("tellekretsnummer")} />
+            <Input {...register("tellekretsnummer", formOptions)} />
           </BlockLabel>
 
           <BlockLabel>
             {t("stemmekrets.Tellekretsnavn")}
-            <Input {...register("tellekretsnavn")} />
+            <Input {...register("tellekretsnavn", formOptions)} />
           </BlockLabel>
         </InputsWrapper>
-
-        <Button onClick={onSubmit}>{t("action.Lagre")}</Button>
       </td>
     </AccordionRow>
   );

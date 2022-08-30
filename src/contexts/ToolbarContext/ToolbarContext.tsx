@@ -13,9 +13,12 @@ import {
   setFeatureMetadataForEntry,
 } from "./utils";
 import useHistory from "hooks/useHistory";
+import { ensureAllCasesCovered } from "utils/typeHelpers";
 
 const onUndo = (entry: HistoryEntry) => {
-  switch (entry.type) {
+  const { type } = entry;
+
+  switch (type) {
     case "grense": {
       return setFeatureCoordinatesForEntry(entry, "from");
     }
@@ -29,11 +32,22 @@ const onUndo = (entry: HistoryEntry) => {
         })
       );
     }
+    case "stemmekrets": {
+      return document.dispatchEvent(
+        new CustomEvent("stemmekretsUndo", {
+          detail: { entry },
+        })
+      );
+    }
   }
+
+  ensureAllCasesCovered(type);
 };
 
 const onRedo = (entry: HistoryEntry) => {
-  switch (entry.type) {
+  const { type } = entry;
+
+  switch (type) {
     case "grense": {
       return setFeatureCoordinatesForEntry(entry, "to");
     }
@@ -47,7 +61,16 @@ const onRedo = (entry: HistoryEntry) => {
         })
       );
     }
+    case "stemmekrets": {
+      return document.dispatchEvent(
+        new CustomEvent("stemmekretsRedo", {
+          detail: { entry },
+        })
+      );
+    }
   }
+
+  ensureAllCasesCovered(type);
 };
 
 /**
@@ -91,7 +114,8 @@ export const useToolbar = () => {
 
   const { clearHistory, history, redo, setHistory, undo } = context;
 
-  const { saveGrunnkretser, saveGrenserAndMetadata } = useSaveHandlers(history);
+  const { saveGrunnkretser, saveGrenserAndMetadata, saveStemmekretser } =
+    useSaveHandlers(history);
 
   const canSave = history.entries.length > 0 && history.index > 0;
 
@@ -101,7 +125,7 @@ export const useToolbar = () => {
 
   const save = async () => {
     const savePromises = history.entries.map(async (entry) => {
-      const type = entry.type;
+      const { type } = entry;
 
       switch (type) {
         case "metadata":
@@ -111,11 +135,12 @@ export const useToolbar = () => {
         case "grunnkrets": {
           return saveGrunnkretser();
         }
+        case "stemmekrets": {
+          return saveStemmekretser();
+        }
       }
 
-      // sikre at vi har håndtert alle cases i switch
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const _: never = type;
+      ensureAllCasesCovered(type);
     });
 
     await Promise.all(savePromises);
