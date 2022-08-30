@@ -118,12 +118,12 @@ const EditRow = ({ grunnkrets, kommuneId }: Props) => {
       <td colSpan={3}>
         <InputsWrapper>
           <BlockLabel>
-            {t("grunnkrets.Grunnkretsnummer")}
-            <Input {...register("grunnkretsnummer", registerOptions)} />
-          </BlockLabel>
-          <BlockLabel>
             {t("tabell.Navn")}
             <Input {...register("navn", registerOptions)} />
+          </BlockLabel>
+          <BlockLabel>
+            {t("grunnkrets.Grunnkretsnummer")}
+            <Input {...register("grunnkretsnummer", registerOptions)} />
           </BlockLabel>
         </InputsWrapper>
       </td>
@@ -160,11 +160,11 @@ const InputsWrapper = styled.div`
     width: 100%;
 
     &:first-child {
-      flex: 1;
+      flex: 2;
     }
 
     &:last-child {
-      flex: 3;
+      flex: 1;
     }
   }
 `;

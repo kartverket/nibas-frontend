@@ -1,11 +1,13 @@
 import { Suspense, useEffect, useRef } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { map } from "./constants";
 import ZoomControls from "./controls/ZoomControls";
 import MetadataPanel from "./MetadataPanel";
+import { MetadataPanelWrapper } from "./MetadataPanel/MetadataPanel";
 import OverlayPopup from "./OverlayPopup";
 import SidebarPanels from "./SidebarPanels";
 import Toolbar from "./Toolbar";
+import { PanelContent, useMetadataPanel } from "contexts/MetadataPanelContext";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
 import useSelectInteraction from "hooks/interactions/useSelectInteraction";
 import { initBakgrunnskartLayers, initGrenserLayers } from "utils/map/layers";
@@ -17,6 +19,7 @@ initBakgrunnskartLayers();
 
 const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
+  const { panelContext } = useMetadataPanel();
 
   const selectedFeatures = useSelectInteraction();
   useEditInteractions();
@@ -37,7 +40,7 @@ const Kart = () => {
     <KartWrapper>
       <KartTarget ref={mapRef}>
         <Suspense fallback="More loading...">
-          <KartOverlay>
+          <KartOverlay content={panelContext?.content}>
             <SidebarPanels />
             <MetadataPanel />
             <Toolbar />
@@ -66,7 +69,9 @@ const KartTarget = styled.div`
   }
 `;
 
-const KartOverlay = styled.div`
+const KartOverlay = styled.div<{
+  content?: PanelContent;
+}>`
   display: grid;
 
   @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
@@ -84,6 +89,25 @@ const KartOverlay = styled.div`
   position: absolute;
   pointer-events: none;
   z-index: 1;
+
+  /* Flytt grensemetadata til høyre side på stor skjerm */
+  ${({ content }) => {
+    if (content === "grensemetadata")
+      return css`
+        @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
+          grid-template-columns: 1fr auto;
+          grid-template-areas: "panel metadata";
+        }
+
+        ${MetadataPanelWrapper} {
+          @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
+            height: auto;
+            max-height: 800px;
+            width: 600px;
+          }
+        }
+      `;
+  }}
 `;
 
 export default Kart;

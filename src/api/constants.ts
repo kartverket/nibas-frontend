@@ -5,4 +5,5 @@ export const endpointByEditingType: Record<EditingType, string> = {
   grunnkrets: "grunnkretser",
   kommune: "kommuner",
   nasjon: "nasjoner",
+  stemmekrets: "stemmekretser",
 };

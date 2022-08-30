@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { KartInteractable } from "../KartInteractable";
 import GrensePanel from "./GrensePanel";
 import GrunnkretserPanel from "./GrunnkretserPanel";
+import StemmekretserPanel from "./StemmekretserPanel";
 import Button from "components/form/Button";
 import { useMetadataPanel } from "contexts/MetadataPanelContext";
 
@@ -13,21 +14,24 @@ const MetadataPanel = () => {
   if (!panelContext) return null;
 
   return (
-    <Panel>
+    <MetadataPanelWrapper>
       {panelContext.content === "grensemetadata" && (
         <GrensePanel feature={panelContext.feature} />
       )}
-      {panelContext.content === "grunnkretser" && (
+      {panelContext.content === "grunnkrets" && (
         <GrunnkretserPanel kommune={panelContext.kommune} />
+      )}
+      {panelContext.content === "stemmekrets" && (
+        <StemmekretserPanel kommune={panelContext.kommune} />
       )}
       <div>
         <Button onClick={closePanel}>{t("action.Lukk")}</Button>
       </div>
-    </Panel>
+    </MetadataPanelWrapper>
   );
 };
 
-const Panel = styled(KartInteractable)`
+export const MetadataPanelWrapper = styled(KartInteractable)`
   grid-area: metadata;
   display: flex;
   flex-direction: column;
@@ -42,12 +46,6 @@ const Panel = styled(KartInteractable)`
   min-width: 500px;
   width: 100%;
   max-width: 1000px;
-
-  @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
-    height: auto;
-    max-height: 800px;
-    width: 600px;
-  }
 
   > h2 {
     margin-top: 0;

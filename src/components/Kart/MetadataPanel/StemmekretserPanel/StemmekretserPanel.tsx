@@ -1,0 +1,86 @@
+import React from "react";
+import { useTranslation } from "react-i18next";
+import styled from "styled-components";
+import { KretsTable } from "../KretsTable";
+import useAccordionRows from "../useAccordionRow";
+import EditRow from "./EditRow";
+import StemmekretsRow from "./StemmekretsRow";
+import useNibasApi from "hooks/useNibasApi";
+import { KommuneRef } from "types/api";
+import {
+  getNavnInSpraak,
+  sortGrenserAlphabetically,
+} from "utils/language/language";
+
+type Props = {
+  kommune: KommuneRef;
+};
+
+const StemmekretserPanel = ({ kommune }: Props) => {
+  const { t } = useTranslation();
+  const { isRowOpen, toggleRow, closeRow } = useAccordionRows();
+
+  const { data: stemmekretserByKommune, mutate } = useNibasApi(
+    "/v1/kommuner/{id}/stemmekretser",
+    {
+      id: kommune.id,
+    }
+  );
+
+  const sortedStemmekretser = sortGrenserAlphabetically(stemmekretserByKommune);
+
+  const postStemmekretsUpdate = (id: string) => {
+    // a
+    mutate();
+    closeRow(id);
+  };
+
+  return (
+    <div>
+      <PanelTitle>
+        {t("{{ kommuneNavn }} kommune", {
+          kommuneNavn: getNavnInSpraak(kommune.navn, "nor"),
+        })}
+      </PanelTitle>
+      <PanelTitle>{t("inndelinger.Stemmekretser")}</PanelTitle>
+      {sortedStemmekretser && (
+        <KretsTable>
+          <thead>
+            <tr>
+              <th>{t("tabell.Navn")}</th>
+              <th>{t("stemmekrets.Stemmekretsnummer")}</th>
+              <th>{t("stemmekrets.Valgdistriktsnummer")}</th>
+              <th>{t("stemmekrets.Tellekretsnavn")}</th>
+              <th>{t("stemmekrets.Tellekretsnummer")}</th>
+              <th>{t("Endre")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sortedStemmekretser.map((stemmekrets) => (
+              <React.Fragment key={stemmekrets.id}>
+                <StemmekretsRow
+                  id={stemmekrets.id}
+                  toggleRow={toggleRow}
+                  isRowOpen={isRowOpen}
+                />
+                {isRowOpen(stemmekrets.id) && (
+                  <EditRow
+                    stemmekrets={stemmekrets}
+                    postSubmit={postStemmekretsUpdate}
+                  />
+                )}
+              </React.Fragment>
+            ))}
+          </tbody>
+        </KretsTable>
+      )}
+    </div>
+  );
+};
+
+const PanelTitle = styled.h3`
+  margin: 0;
+  margin-bottom: 8px;
+`;
+
+export default StemmekretserPanel;

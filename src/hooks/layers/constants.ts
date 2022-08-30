@@ -55,6 +55,10 @@ export const grenserLayers = {
     source: new VectorSource(),
     style: defaultStyles,
   }),
+  stemmekretser: new VectorLayer({
+    source: new VectorSource(),
+    style: defaultStyles,
+  }),
   edit: new VectorLayer({
     source: editSource,
     style: editStyles,

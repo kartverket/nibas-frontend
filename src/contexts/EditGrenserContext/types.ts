@@ -1,4 +1,9 @@
-export type EditingType = "fylke" | "kommune" | "nasjon" | "grunnkrets";
+export type EditingType =
+  | "fylke"
+  | "kommune"
+  | "nasjon"
+  | "grunnkrets"
+  | "stemmekrets";
 export type ObjectValue = {
   editing?: boolean;
   visible?: boolean;
