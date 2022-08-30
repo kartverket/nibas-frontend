@@ -1,18 +1,18 @@
-import useHistory, { History } from "hooks/useHistory";
 import React, {
   createContext,
   useCallback,
   useContext,
   useEffect,
   useMemo,
-  useState,
 } from "react";
 import { EditContextType, ToolbarContextValue, HistoryEntry } from "./types";
 import useSaveHandlers from "./useSaveHandlers";
 import {
+  getDirtyIdsFromEntries,
   setFeatureCoordinatesForEntry,
   setFeatureMetadataForEntry,
 } from "./utils";
+import useHistory from "hooks/useHistory";
 
 const onUndo = (entry: HistoryEntry) => {
   switch (entry.type) {
@@ -21,6 +21,13 @@ const onUndo = (entry: HistoryEntry) => {
     }
     case "metadata": {
       return setFeatureMetadataForEntry(entry, "from");
+    }
+    case "grunnkrets": {
+      return document.dispatchEvent(
+        new CustomEvent("grunnkretsUndo", {
+          detail: { entry },
+        })
+      );
     }
   }
 };
@@ -32,6 +39,13 @@ const onRedo = (entry: HistoryEntry) => {
     }
     case "metadata": {
       return setFeatureMetadataForEntry(entry, "to");
+    }
+    case "grunnkrets": {
+      return document.dispatchEvent(
+        new CustomEvent("grunnkretsRedo", {
+          detail: { entry },
+        })
+      );
     }
   }
 };
@@ -54,15 +68,7 @@ export const ToolbarProvider: React.FC = ({ children }) => {
       historyValue.history.entries
         .slice(0, historyValue.history.index)
         .filter((entry) => entry.type === "grense" || entry.type === "metadata")
-        .reduce<string[]>((accumulator, entry) => {
-          entry.changes.forEach((change) => {
-            if (change.to && !accumulator.includes(change.id)) {
-              accumulator.push(change.id);
-            }
-          });
-
-          return accumulator;
-        }, []),
+        .reduce<string[]>(getDirtyIdsFromEntries, []),
     [historyValue.history]
   );
 

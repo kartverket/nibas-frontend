@@ -4,11 +4,10 @@ import styled from "styled-components";
 import EditRow from "./EditRow";
 import Button from "components/form/Button";
 import Heading from "components/typography/Heading";
-import { useToolbarSave } from "contexts/ToolbarContext";
 import useNibasApi from "hooks/useNibasApi";
 import { ReactComponent as CaretDown } from "icons/caretdown.svg";
 import { ReactComponent as CaretUp } from "icons/caretup.svg";
-import { GrunnkretsRef, GrunnkretsRequest, KommuneRef } from "types/api";
+import { GrunnkretsRef, KommuneRef } from "types/api";
 import {
   getNavnInSpraak,
   sortGrenserAlphabetically,
@@ -36,8 +35,6 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
     }
   );
 
-  const { addEntry } = useToolbarSave("grunnkrets");
-
   const sortedGrunnkretser = sortGrenserAlphabetically(grunnkretserByKommune);
 
   const toggleRow = (grunnkrets: GrunnkretsRef) => {
@@ -54,23 +51,6 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
   //   mutate();
   //   setOpenRows(removeIdFromList(grunnkretsId, openRows));
   // };
-
-  const updateDraftForGrunnkrets = (
-    id: string,
-    grunnkrets: GrunnkretsRequest
-  ) => {
-    addEntry({
-      type: "grunnkrets",
-      kommuneId: kommune.id,
-      changes: [
-        {
-          from: grunnkrets,
-          to: grunnkrets,
-          id,
-        },
-      ],
-    });
-  };
 
   return (
     <div>
@@ -112,10 +92,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                   </td>
                 </KretsRow>
                 {openRows.includes(grunnkrets.id) && (
-                  <EditRow
-                    grunnkrets={grunnkrets}
-                    updateDraft={updateDraftForGrunnkrets}
-                  />
+                  <EditRow grunnkrets={grunnkrets} kommuneId={kommune.id} />
                 )}
               </React.Fragment>
             ))}

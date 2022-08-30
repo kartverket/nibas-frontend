@@ -1,8 +1,10 @@
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import Input from "components/form/Input";
 import Label from "components/form/Label";
+import { GrunnkretsEntry, useToolbarSave } from "contexts/ToolbarContext";
 import useNibasApi from "hooks/useNibasApi";
 import {
   GrunnkretsRef,
@@ -13,7 +15,7 @@ import { getNavnInSpraak } from "utils/language/language";
 
 type Props = {
   grunnkrets: GrunnkretsRef;
-  updateDraft: (id: string, grunnkrets: GrunnkretsRequest) => void;
+  kommuneId: string;
 };
 
 type Inputs = {
@@ -30,30 +32,85 @@ const fromFormToRequest = (
   grunnkretsnummer: data.grunnkretsnummer,
 });
 
-const EditRow = ({ grunnkrets, updateDraft }: Props) => {
+const EditRow = ({ grunnkrets, kommuneId }: Props) => {
   const { t } = useTranslation();
   const { data: fullGrunnkrets } = useNibasApi("/v1/grunnkretser/{id}", {
     id: grunnkrets.id,
   });
 
-  const { register, getValues } = useForm<Inputs>({
+  const { register, getValues, setValue } = useForm<Inputs>({
     defaultValues: {
       grunnkretsnummer: grunnkrets.grunnkretsnummer,
       navn: getNavnInSpraak(grunnkrets.navn, "nor"),
     },
   });
 
-  const updateDraftOnBlur = () => {
+  const previousValues = useRef<Inputs>(getValues());
+
+  const { addEntry } = useToolbarSave("grunnkrets");
+
+  useEffect(() => {
+    const undoGrunnkrets = ((e: CustomEvent) => {
+      const entry = e.detail.entry as GrunnkretsEntry;
+
+      const changeForThisId = entry.changes.find(
+        (change) => change.id === fullGrunnkrets?.id
+      );
+
+      if (!changeForThisId) return;
+
+      setValue("grunnkretsnummer", changeForThisId.from.grunnkretsnummer);
+      setValue("navn", changeForThisId.from.navn);
+    }) as EventListener;
+
+    document.addEventListener("grunnkretsUndo", undoGrunnkrets);
+
+    return () => {
+      document.removeEventListener("grunnkretsUndo", undoGrunnkrets);
+    };
+  }, [fullGrunnkrets?.id, setValue]);
+
+  useEffect(() => {
+    const redoGrunnkrets = ((e: CustomEvent) => {
+      const entry = e.detail.entry as GrunnkretsEntry;
+
+      const changeForThisId = entry.changes.find(
+        (change) => change.id === fullGrunnkrets?.id
+      );
+
+      if (!changeForThisId || !changeForThisId.to) return;
+
+      setValue("grunnkretsnummer", changeForThisId.to.grunnkretsnummer);
+      setValue("navn", changeForThisId.to.navn);
+    }) as EventListener;
+
+    document.addEventListener("grunnkretsRedo", redoGrunnkrets);
+
+    return () => {
+      document.removeEventListener("grunnkretsRedo", redoGrunnkrets);
+    };
+  }, [fullGrunnkrets?.id, setValue]);
+
+  const addGrunnkretsEntry = () => {
     if (!fullGrunnkrets) return;
 
-    updateDraft(
-      fullGrunnkrets.id,
-      fromFormToRequest(getValues(), fullGrunnkrets)
-    );
+    addEntry({
+      type: "grunnkrets",
+      kommuneId,
+      changes: [
+        {
+          from: fromFormToRequest(previousValues.current, fullGrunnkrets),
+          to: fromFormToRequest(getValues(), fullGrunnkrets),
+          id: fullGrunnkrets.id,
+        },
+      ],
+    });
+
+    previousValues.current = getValues();
   };
 
   const registerOptions = {
-    onBlur: updateDraftOnBlur,
+    onBlur: addGrunnkretsEntry,
   };
 
   return (
