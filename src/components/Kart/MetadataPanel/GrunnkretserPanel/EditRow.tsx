@@ -1,10 +1,11 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import Input from "components/form/Input";
 import Label from "components/form/Label";
 import { GrunnkretsEntry, useToolbarSave } from "contexts/ToolbarContext";
+import useKretsToolbarSync from "contexts/ToolbarContext/useGrunnkretsToolbarSync";
 import useNibasApi from "hooks/useNibasApi";
 import {
   GrunnkretsRef,
@@ -49,47 +50,20 @@ const EditRow = ({ grunnkrets, kommuneId }: Props) => {
 
   const { addEntry } = useToolbarSave("grunnkrets");
 
-  useEffect(() => {
-    const undoGrunnkrets = ((e: CustomEvent) => {
-      const entry = e.detail.entry as GrunnkretsEntry;
+  const setFormValues = useCallback(
+    (change: GrunnkretsEntry["changes"][number], direction: "to" | "from") => {
+      setValue("grunnkretsnummer", change[direction]?.grunnkretsnummer ?? "");
+      setValue("navn", change[direction]?.navn ?? "");
+    },
+    [setValue]
+  );
 
-      const changeForThisId = entry.changes.find(
-        (change) => change.id === fullGrunnkrets?.id
-      );
-
-      if (!changeForThisId) return;
-
-      setValue("grunnkretsnummer", changeForThisId.from.grunnkretsnummer);
-      setValue("navn", changeForThisId.from.navn);
-    }) as EventListener;
-
-    document.addEventListener("grunnkretsUndo", undoGrunnkrets);
-
-    return () => {
-      document.removeEventListener("grunnkretsUndo", undoGrunnkrets);
-    };
-  }, [fullGrunnkrets?.id, setValue]);
-
-  useEffect(() => {
-    const redoGrunnkrets = ((e: CustomEvent) => {
-      const entry = e.detail.entry as GrunnkretsEntry;
-
-      const changeForThisId = entry.changes.find(
-        (change) => change.id === fullGrunnkrets?.id
-      );
-
-      if (!changeForThisId || !changeForThisId.to) return;
-
-      setValue("grunnkretsnummer", changeForThisId.to.grunnkretsnummer);
-      setValue("navn", changeForThisId.to.navn);
-    }) as EventListener;
-
-    document.addEventListener("grunnkretsRedo", redoGrunnkrets);
-
-    return () => {
-      document.removeEventListener("grunnkretsRedo", redoGrunnkrets);
-    };
-  }, [fullGrunnkrets?.id, setValue]);
+  useKretsToolbarSync<GrunnkretsEntry>({
+    kretsId: fullGrunnkrets?.id,
+    redoEventKey: "grunnkretsRedo",
+    undoEventKey: "grunnkretsUndo",
+    setFormValues,
+  });
 
   const addGrunnkretsEntry = () => {
     if (!fullGrunnkrets) return;

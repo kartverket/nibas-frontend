@@ -1,9 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import Input from "components/form/Input";
 import { StemmekretsEntry, useToolbarSave } from "contexts/ToolbarContext";
+import useKretsToolbarSync from "contexts/ToolbarContext/useGrunnkretsToolbarSync";
 import useNibasApi from "hooks/useNibasApi";
 import {
   StemmekretsRef,
@@ -58,54 +59,22 @@ const EditRow = ({ stemmekrets, kommuneId }: Props) => {
     previousValues.current = getValues();
   }, [fullStemmekrets, setValue, getValues]);
 
-  useEffect(() => {
-    const undoGrunnkrets = ((e: CustomEvent) => {
-      const entry = e.detail.entry as StemmekretsEntry;
+  const setFormValues = useCallback(
+    (change: StemmekretsEntry["changes"][number], direction: "to" | "from") => {
+      setValue("stemmekretsnavn", change[direction]?.stemmekretsnavn ?? "");
+      setValue("stemmekretsnummer", change[direction]?.stemmekretsnummer ?? "");
+      setValue("tellekretsnavn", change[direction]?.tellekretsnavn ?? "");
+      setValue("tellekretsnummer", change[direction]?.tellekretsnummer ?? "");
+    },
+    [setValue]
+  );
 
-      const changeForThisId = entry.changes.find(
-        (change) => change.id === fullStemmekrets?.id
-      );
-
-      if (!changeForThisId) return;
-
-      setValue("stemmekretsnavn", changeForThisId.from.stemmekretsnavn ?? "");
-      setValue(
-        "stemmekretsnummer",
-        changeForThisId.from.stemmekretsnummer ?? ""
-      );
-      setValue("tellekretsnavn", changeForThisId.from.tellekretsnavn ?? "");
-      setValue("tellekretsnummer", changeForThisId.from.tellekretsnummer ?? "");
-    }) as EventListener;
-
-    document.addEventListener("stemmekretsUndo", undoGrunnkrets);
-
-    return () => {
-      document.removeEventListener("stemmekretsUndo", undoGrunnkrets);
-    };
-  }, [fullStemmekrets?.id, setValue]);
-
-  useEffect(() => {
-    const redoGrunnkrets = ((e: CustomEvent) => {
-      const entry = e.detail.entry as StemmekretsEntry;
-
-      const changeForThisId = entry.changes.find(
-        (change) => change.id === fullStemmekrets?.id
-      );
-
-      if (!changeForThisId || !changeForThisId.to) return;
-
-      setValue("stemmekretsnavn", changeForThisId.to.stemmekretsnavn ?? "");
-      setValue("stemmekretsnummer", changeForThisId.to.stemmekretsnummer ?? "");
-      setValue("tellekretsnavn", changeForThisId.to.tellekretsnavn ?? "");
-      setValue("tellekretsnummer", changeForThisId.to.tellekretsnummer ?? "");
-    }) as EventListener;
-
-    document.addEventListener("stemmekretsRedo", redoGrunnkrets);
-
-    return () => {
-      document.removeEventListener("stemmekretsRedo", redoGrunnkrets);
-    };
-  }, [fullStemmekrets?.id, setValue]);
+  useKretsToolbarSync<StemmekretsEntry>({
+    kretsId: fullStemmekrets?.id,
+    redoEventKey: "stemmekretsRedo",
+    undoEventKey: "stemmekretsUndo",
+    setFormValues,
+  });
 
   const addStemmekretsEntry = () => {
     if (!fullStemmekrets) return;
