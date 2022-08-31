@@ -48,7 +48,7 @@ const EditRow = ({ grunnkrets, kommuneId }: Props) => {
 
   const previousValues = useRef<Inputs>(getValues());
 
-  const { addEntry } = useToolbarSave("grunnkrets");
+  const { addEntry } = useToolbarSave();
 
   const setFormValues = useCallback(
     (change: GrunnkretsEntry["changes"][number], direction: "to" | "from") => {

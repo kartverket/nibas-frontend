@@ -10,8 +10,8 @@ import {
 import { updateGrunnkrets, updateStemmekrets } from "api/enheter";
 import { updateGrenser } from "api/grenser";
 import { History } from "hooks/useHistory";
-import { getLayerById } from "utils/map/layers";
 import { GrunnkretsRequest, StemmekretsRequest } from "types/api";
+import { getLayerById } from "utils/map/layers";
 
 const getSaveGrunnkretserObject = (history: History<HistoryEntry>) => {
   return history.entries

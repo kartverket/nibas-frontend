@@ -44,7 +44,7 @@ const EditRow = ({ stemmekrets, kommuneId }: Props) => {
 
   const { register, setValue, getValues } = useForm<Inputs>();
 
-  const { addEntry } = useToolbarSave("grunnkrets");
+  const { addEntry } = useToolbarSave();
 
   const previousValues = useRef<Inputs>(getValues());
 

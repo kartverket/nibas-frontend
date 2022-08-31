@@ -3,12 +3,9 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import LineString from "ol/geom/LineString";
 import { ObjectEvent } from "ol/Object";
-import { Path, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import useAsyncKodeliste from "./useAsyncKodeliste";
-import {
-  addMetadataEntryFromFeature,
-  updateFeatureWithNewMetadata,
-} from "./utils";
+import { addMetadataEntryFromFeature } from "./utils";
 import { useToolbarSave } from "contexts/ToolbarContext";
 import { Metadata } from "types/api";
 
@@ -71,7 +68,7 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
     initialItemId: metadata.commonGrense?.posisjonskvalitet?.maalemetode.id,
   });
 
-  const { addEntry } = useToolbarSave("metadata");
+  const { addEntry } = useToolbarSave();
 
   useEffect(() => {
     const updateFormOnPropertyChange = (e: ObjectEvent) => {

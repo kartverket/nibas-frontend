@@ -1,18 +1,13 @@
 import { useEffect } from "react";
+import { FeatureLike } from "ol/Feature";
+import LineString from "ol/geom/LineString";
 import { Snap } from "ol/interaction";
+import { ModifyEvent } from "ol/interaction/Modify";
 import { modify } from "./constants";
 import useDirtyStyles from "./useDirtyStyles";
 import { map } from "components/Kart/constants";
+import { GrenseEntry, useToolbarSave } from "contexts/ToolbarContext";
 import { getVectorLayers } from "utils/map/layers";
-import {
-  GrenseEntry,
-  BaseHistoryEntry,
-  useToolbar,
-  useToolbarSave,
-} from "contexts/ToolbarContext";
-import { ModifyEvent } from "ol/interaction/Modify";
-import { FeatureLike } from "ol/Feature";
-import LineString from "ol/geom/LineString";
 
 const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
@@ -22,8 +17,7 @@ const getInfoFromFeature = (featureLike: FeatureLike) => {
 };
 
 const useEditInteractions = () => {
-  const { dirtyFeatureIds, addEntry, updateEntry, history } =
-    useToolbarSave("grense");
+  const { dirtyFeatureIds, addEntry, updateEntry, history } = useToolbarSave();
 
   useDirtyStyles(dirtyFeatureIds);
 
@@ -55,7 +49,6 @@ const useEditInteractions = () => {
 
   useEffect(() => {
     const addCurrentCoordinatesToHistory = (e: ModifyEvent) => {
-      console.log("Running modifu start");
       const newEntry: GrenseEntry = {
         type: "grense",
         changes: [],
@@ -85,7 +78,6 @@ const useEditInteractions = () => {
 
   useEffect(() => {
     const updateToCoordinate = (e: ModifyEvent) => {
-      console.log("Updating coordinate");
       // legger til riktig type entry i modifystart, så dette skal være safe
       const previousEntry = history.entries[history.index - 1] as GrenseEntry;
 

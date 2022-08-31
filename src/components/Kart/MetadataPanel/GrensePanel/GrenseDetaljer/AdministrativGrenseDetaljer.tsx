@@ -53,7 +53,7 @@ const AdministrativGrenseDetaljer = ({ feature }: Props) => {
     kodelisteUrl: "/v1/kodeliste/noeyaktighetsklasser",
   });
 
-  const { addEntry } = useToolbarSave("metadata");
+  const { addEntry } = useToolbarSave();
 
   useEffect(() => {
     const updateFormOnPropertyChange = (e: ObjectEvent) => {

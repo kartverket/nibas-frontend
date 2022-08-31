@@ -1,11 +1,5 @@
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-} from "react";
-import { EditContextType, ToolbarContextValue, HistoryEntry } from "./types";
+import React, { createContext, useCallback, useContext, useMemo } from "react";
+import { ToolbarContextValue, HistoryEntry } from "./types";
 import useSaveHandlers from "./useSaveHandlers";
 import {
   getDirtyIdsFromEntries,
@@ -112,16 +106,12 @@ export const useToolbar = () => {
     throw new Error("useToolbar must be used within a ToolbarContext");
   }
 
-  const { clearHistory, history, redo, setHistory, undo } = context;
+  const { clearHistory, history, redo, undo } = context;
 
   const { saveGrunnkretser, saveGrenserAndMetadata, saveStemmekretser } =
     useSaveHandlers(history);
 
   const canSave = history.entries.length > 0 && history.index > 0;
-
-  useEffect(() => {
-    console.log(history);
-  }, [history]);
 
   const save = async () => {
     const savePromises = history.entries.map(async (entry) => {
@@ -159,7 +149,7 @@ export const useToolbar = () => {
   };
 };
 
-export const useToolbarSave = <T extends EditContextType>(contextType: T) => {
+export const useToolbarSave = () => {
   const context = useContext(ToolbarContext);
 
   if (!context) {
@@ -206,5 +196,3 @@ export const useToolbarSave = <T extends EditContextType>(contextType: T) => {
     history,
   };
 };
-
-// lang scroll på vindu i stor skjerm

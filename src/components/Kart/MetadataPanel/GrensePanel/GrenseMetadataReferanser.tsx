@@ -173,7 +173,7 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
     name: "dokrefs",
   });
 
-  const { addEntry } = useToolbarSave("metadata");
+  const { addEntry } = useToolbarSave();
 
   useEffect(() => {
     const updateFormOnPropertyChange = (e: ObjectEvent) => {

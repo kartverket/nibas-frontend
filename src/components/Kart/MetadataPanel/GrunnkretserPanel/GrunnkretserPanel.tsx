@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { KretsTable } from "../KretsTable";
@@ -25,10 +25,10 @@ type Props = {
 const GrunnkretserPanel = ({ kommune }: Props) => {
   const { t } = useTranslation();
 
-  const { isRowOpen, toggleRow, closeRow } = useAccordionRows();
+  const { isRowOpen, toggleRow } = useAccordionRows();
   const { inputValue, setInputValue, searchValue } = useSearch();
 
-  const { data: grunnkretserByKommune, mutate } = useNibasApi(
+  const { data: grunnkretserByKommune } = useNibasApi(
     "/v1/kommuner/{id}/grunnkretser",
     {
       id: kommune.id,
@@ -49,13 +49,6 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
         grunnkrets.navn.toLowerCase().includes(searchValue.toLowerCase())
     );
   }, [searchValue, sortedGrunnkretser]);
-
-  //
-  // const postGrunnkretsUpdate = (grunnkretsId: string) => {
-  //   // oppdater lista etter oppdateringen er gjort i backend
-  //   mutate();
-  //   setOpenRows(removeIdFromList(grunnkretsId, openRows));
-  // };
 
   return (
     <div>
