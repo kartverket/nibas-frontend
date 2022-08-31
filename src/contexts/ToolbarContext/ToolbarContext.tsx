@@ -172,7 +172,7 @@ export const useToolbarSave = <T extends EditContextType>(contextType: T) => {
     (entry: HistoryEntry) => {
       setHistory((prevHistory) => ({
         index: prevHistory.index + 1,
-        entries: [...prevHistory.entries, entry],
+        entries: [...prevHistory.entries.slice(0, prevHistory.index), entry],
       }));
     },
     [setHistory]
