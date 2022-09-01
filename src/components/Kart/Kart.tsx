@@ -74,11 +74,6 @@ const KartOverlay = styled.div<{
 }>`
   display: grid;
 
-  @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
-    grid-template-columns: auto auto 1fr;
-    grid-template-areas: "panel toolbar metadata";
-  }
-
   grid-template-columns: auto auto 1fr;
   grid-template-rows: 1fr auto;
   grid-template-areas:
@@ -95,8 +90,9 @@ const KartOverlay = styled.div<{
     if (content === "grensemetadata")
       return css`
         @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
-          grid-template-columns: 1fr auto;
-          grid-template-areas: "panel metadata";
+          grid-template-columns: auto auto 1fr auto;
+          grid-template-areas: "panel toolbar . metadata";
+          grid-template-rows: 100%;
         }
 
         ${MetadataPanelWrapper} {
