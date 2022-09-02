@@ -112,15 +112,10 @@ const FieldArray = ({
   const onAdd = () => {
     if (!newLenke) return;
 
-    console.log("Appending", newLenke);
     append({ beskrivelse: newLenke });
-    console.log("Clearing");
     setNewLenke("");
-    console.log("Updating draft");
     updateDraft();
   };
-
-  console.log(fields);
 
   return (
     <FieldArrayWrapper>
@@ -184,16 +179,6 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
     const updateFormOnPropertyChange = (e: ObjectEvent) => {
       const newMetadata = (e.target as Feature<LineString>).getProperties()
         .metadata as Metadata;
-
-      console.log(
-        "new metadata",
-        newMetadata.dokumentasjonsreferanser?.[0]?.dokumentlenker
-      );
-
-      console.log(
-        "Setting form to",
-        mapFromApiToForm(newMetadata.dokumentasjonsreferanser)[0].dokumentlenker
-      );
 
       setValue(
         "dokrefs",
