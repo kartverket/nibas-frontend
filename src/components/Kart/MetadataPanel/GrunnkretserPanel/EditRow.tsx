@@ -5,7 +5,7 @@ import styled from "styled-components";
 import Input from "components/form/Input";
 import Label from "components/form/Label";
 import { GrunnkretsEntry, useToolbarSave } from "contexts/ToolbarContext";
-import useKretsToolbarSync from "contexts/ToolbarContext/useGrunnkretsToolbarSync";
+import useKretsToolbarSync from "contexts/ToolbarContext/useKretsToolbarSync";
 import useNibasApi from "hooks/useNibasApi";
 import {
   GrunnkretsRef,

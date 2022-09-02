@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import Input from "components/form/Input";
 import { StemmekretsEntry, useToolbarSave } from "contexts/ToolbarContext";
-import useKretsToolbarSync from "contexts/ToolbarContext/useGrunnkretsToolbarSync";
+import useKretsToolbarSync from "contexts/ToolbarContext/useKretsToolbarSync";
 import useNibasApi from "hooks/useNibasApi";
 import {
   StemmekretsRef,
