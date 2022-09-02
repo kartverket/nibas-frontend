@@ -3,13 +3,18 @@ import { ReactNode } from "react";
 import GrenseMetadataGenerelt from "./GrenseMetadataGenerelt";
 import { EditGrenserProvider } from "contexts/EditGrenserContext";
 import { mockBasicFeature } from "mocks/handlers/responses";
+import { ToolbarProvider } from "contexts/ToolbarContext";
 
 const defaultProps: React.ComponentProps<typeof GrenseMetadataGenerelt> = {
   feature: mockBasicFeature,
 };
 
 const renderWithProvider = (ui: ReactNode) =>
-  render(<EditGrenserProvider>{ui}</EditGrenserProvider>);
+  render(
+    <EditGrenserProvider>
+      <ToolbarProvider>{ui}</ToolbarProvider>
+    </EditGrenserProvider>
+  );
 
 describe("GrenseMetadataGenerelt", () => {
   it("should display data from feature properties", async () => {

@@ -8,6 +8,7 @@ import {
 } from "contexts/BakgrunnskartContext";
 import { MetadataPanelProvider } from "contexts/MetadataPanelContext";
 import { SidebarPanelProvider } from "contexts/SidebarPanelContext";
+import { ToolbarProvider } from "contexts/ToolbarContext";
 
 const renderWithProvider = (
   ui: ReactNode,
@@ -23,7 +24,7 @@ const renderWithProvider = (
     <SidebarPanelProvider>
       <MetadataPanelProvider>
         <BakgrunnskartContext.Provider value={providerProps}>
-          {ui}
+          <ToolbarProvider>{ui}</ToolbarProvider>
         </BakgrunnskartContext.Provider>
       </MetadataPanelProvider>
     </SidebarPanelProvider>

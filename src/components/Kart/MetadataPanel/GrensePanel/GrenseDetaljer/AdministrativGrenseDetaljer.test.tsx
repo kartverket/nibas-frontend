@@ -2,6 +2,7 @@ import { render, screen, waitFor } from "test/test-utils";
 import { ReactNode } from "react";
 import AdministrativGrenseDetaljer from "./AdministrativGrenseDetaljer";
 import { EditGrenserProvider } from "contexts/EditGrenserContext";
+import { ToolbarProvider } from "contexts/ToolbarContext";
 import { mockBasicFeature } from "mocks/handlers/responses";
 
 const defaultProps: React.ComponentProps<typeof AdministrativGrenseDetaljer> = {
@@ -9,7 +10,11 @@ const defaultProps: React.ComponentProps<typeof AdministrativGrenseDetaljer> = {
 };
 
 const renderWithProvider = (ui: ReactNode) =>
-  render(<EditGrenserProvider>{ui}</EditGrenserProvider>);
+  render(
+    <EditGrenserProvider>
+      <ToolbarProvider>{ui}</ToolbarProvider>
+    </EditGrenserProvider>
+  );
 
 describe("AdministrativGrenseDetaljer", () => {
   it("should display data from feature properties", async () => {

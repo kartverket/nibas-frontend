@@ -3,6 +3,7 @@ import { ReactNode } from "react";
 import userEvent from "@testing-library/user-event";
 import GrenseMetadataReferanser from "./GrenseMetadataReferanser";
 import { EditGrenserContext } from "contexts/EditGrenserContext";
+import { ToolbarProvider } from "contexts/ToolbarContext";
 import { mockBasicFeature } from "mocks/handlers/responses";
 
 const defaultProps: React.ComponentProps<typeof GrenseMetadataReferanser> = {
@@ -24,7 +25,7 @@ const renderWithProvider = (ui: ReactNode, disabled = false) =>
         setObjectValue: jest.fn(),
       }}
     >
-      {ui}
+      <ToolbarProvider>{ui}</ToolbarProvider>
     </EditGrenserContext.Provider>
   );
 
