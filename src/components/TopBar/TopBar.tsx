@@ -77,6 +77,10 @@ const SearchInput = styled(Input)`
 const SearchIconButton = styled(Button)`
   margin-left: -48px;
   width: 24px;
+
+  :disabled {
+    outline-style: inherit;
+  }
 `;
 
 const InputSearchIcon = styled(SearchIcon)`
