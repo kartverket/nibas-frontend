@@ -1,16 +1,15 @@
-import { useEffect } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { BlockLabel, Container, Part } from "../../metadataComponents";
+import AsyncKodelisteSelect from "../../AsyncKodelisteSelect";
+import { Container, Part } from "../../metadataComponents";
+import useAsyncKodeliste from "../../useAsyncKodeliste";
 import useIsMetadataDisabled from "../../useIsMetadataDisabled";
 import { updateGrenser } from "api/grenser";
 import Button from "components/form/Button";
-import Select from "components/form/Select";
-import useNibasApi from "hooks/useNibasApi";
 import { FeatureProperties, StatistiskGrenseMetadata } from "types/api";
 
 type Inputs = {
@@ -36,36 +35,19 @@ const StemmekretsgrenseDetaljer = ({ feature }: Props) => {
     },
   });
 
-  const { data: terrengdetaljkoder } = useNibasApi(
-    "/v1/kodeliste/terrengdetaljkoder"
-  );
-  const { data: noeyaktighetsklassekoder } = useNibasApi(
-    "/v1/kodeliste/noeyaktighetsklasser"
-  );
+  const foelgerTerrengdetaljKodeliste = useAsyncKodeliste({
+    initialItemId: metadata.foelgerTerrengdetalj?.id,
+    kodelisteUrl: "/v1/kodeliste/terrengdetaljkoder",
+    property: "foelgerTerrengdetalj",
+    setValue,
+  });
 
-  useEffect(() => {
-    if (!terrengdetaljkoder) return;
-
-    const selectedFoelgerTerrengdetaljkode = terrengdetaljkoder.items.find(
-      (kode) => kode.id === metadata.foelgerTerrengdetalj?.id
-    );
-
-    if (!selectedFoelgerTerrengdetaljkode) return;
-
-    setValue("foelgerTerrengdetalj", selectedFoelgerTerrengdetaljkode.id);
-  }, [terrengdetaljkoder, setValue, metadata.foelgerTerrengdetalj?.id]);
-
-  useEffect(() => {
-    if (!noeyaktighetsklassekoder) return;
-
-    const selectedNoeyaktighetsklassekode = noeyaktighetsklassekoder.items.find(
-      (kode) => kode.id === metadata.noeyaktighetsklasse?.id
-    );
-
-    if (!selectedNoeyaktighetsklassekode) return;
-
-    setValue("noeyaktighetsklasse", selectedNoeyaktighetsklassekode.id);
-  }, [noeyaktighetsklassekoder, setValue, metadata.noeyaktighetsklasse?.id]);
+  const noeyaktighetsklasseKodeliste = useAsyncKodeliste({
+    initialItemId: metadata.noeyaktighetsklasse?.id,
+    kodelisteUrl: "/v1/kodeliste/noeyaktighetsklasser",
+    property: "noeyaktighetsklasse",
+    setValue,
+  });
 
   const onSubmit = handleSubmit((data) => {
     const newProperties: FeatureProperties = {
@@ -92,30 +74,18 @@ const StemmekretsgrenseDetaljer = ({ feature }: Props) => {
     <form onSubmit={onSubmit}>
       <TwoPartsContainer>
         <Part>
-          <BlockLabel>
-            {t("metadata.Følger terrengdetalj")}
-            <Select {...register("foelgerTerrengdetalj", { disabled })}>
-              <option value="">---</option>
-              {terrengdetaljkoder?.items.map((kodeItem) => (
-                <option key={kodeItem.id} value={kodeItem.id}>
-                  {kodeItem.label}
-                </option>
-              ))}
-            </Select>
-          </BlockLabel>
+          <AsyncKodelisteSelect
+            kodeliste={foelgerTerrengdetaljKodeliste}
+            label={t("metadata.Følger terrengdetalj")}
+            {...register("foelgerTerrengdetalj", { disabled })}
+          />
         </Part>
         <Part>
-          <BlockLabel>
-            {t("metadata.Nøyaktighetsklasse")}
-            <Select {...register("noeyaktighetsklasse", { disabled })}>
-              <option value="">---</option>
-              {noeyaktighetsklassekoder?.items.map((kodeItem) => (
-                <option key={kodeItem.id} value={kodeItem.id}>
-                  {kodeItem.label}
-                </option>
-              ))}
-            </Select>
-          </BlockLabel>
+          <AsyncKodelisteSelect
+            kodeliste={noeyaktighetsklasseKodeliste}
+            label={t("metadata.Nøyaktighetsklasse")}
+            {...register("noeyaktighetsklasse", { disabled })}
+          />
         </Part>
       </TwoPartsContainer>
 
