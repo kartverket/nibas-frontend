@@ -126,7 +126,7 @@ jobs:
         run: gcloud container hub memberships get-credentials ${{ matrix.environment }} --verbosity debug
         # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
       - name: Setup Terraform
-        uses: BlackDark/setup-terraform@proxy-custom-pkg
+        uses: hashicorp/setup-terraform@v1
         with:
           terraform_wrapper: false
 
