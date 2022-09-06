@@ -127,7 +127,6 @@ const BlockLabel = styled.label`
 const InputsWrapper = styled.div`
   display: flex;
   width: 80%;
-  margin: auto;
 
   > ${BlockLabel} {
     width: 100%;
