@@ -12,11 +12,12 @@ import useNibasApi from "hooks/useNibasApi";
 import useSearch from "hooks/useSearch";
 import { ReactComponent as CaretDown } from "icons/caretdown.svg";
 import { ReactComponent as CaretUp } from "icons/caretup.svg";
-import { KommuneRef } from "types/api";
+import { GrunnkretsRef, KommuneRef } from "types/api";
 import {
   getNavnInSpraak,
   sortGrenserAlphabetically,
 } from "utils/language/language";
+import { useUtkast } from "contexts/UtkastContext";
 
 type Props = {
   kommune: KommuneRef;
@@ -40,15 +41,22 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
     [grunnkretserByKommune]
   );
 
-  const filteredGrunnkretser = useMemo(() => {
-    if (!searchValue) return sortedGrunnkretser;
+  console.log("Before utkast", sortedGrunnkretser);
+  const utkastGrunnkretser = useUtkast(
+    sortedGrunnkretser,
+    "grunnkretser"
+  ) as GrunnkretsRef[];
+  console.log("After utkast", utkastGrunnkretser);
 
-    return sortedGrunnkretser?.filter(
+  const filteredGrunnkretser = useMemo(() => {
+    if (!searchValue) return utkastGrunnkretser;
+
+    return utkastGrunnkretser?.filter(
       (grunnkrets) =>
         grunnkrets.grunnkretsnummer.includes(searchValue) ||
         grunnkrets.navn.toLowerCase().includes(searchValue.toLowerCase())
     );
-  }, [searchValue, sortedGrunnkretser]);
+  }, [searchValue, utkastGrunnkretser]);
 
   const postGrunnkretsUpdate = (grunnkretsId: string) => {
     // oppdater lista etter oppdateringen er gjort i backend
