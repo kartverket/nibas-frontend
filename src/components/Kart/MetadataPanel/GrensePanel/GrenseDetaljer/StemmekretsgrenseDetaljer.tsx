@@ -96,13 +96,7 @@ const StemmekretsgrenseDetaljer = ({ feature }: Props) => {
 
 const TwoPartsContainer = styled(Container)`
   @media (max-width: ${({ theme }) => theme.dimensions.lgPx}) {
-    ${Part}:first-child {
-      margin-right: 8px;
-    }
-
-    ${Part}:last-child {
-      margin-left: 8px;
-    }
+    gap: 16px;
   }
 `;
 
