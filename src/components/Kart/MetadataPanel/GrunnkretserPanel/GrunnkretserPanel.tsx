@@ -17,7 +17,7 @@ import {
   getNavnInSpraak,
   sortGrenserAlphabetically,
 } from "utils/language/language";
-import { useUtkast } from "contexts/UtkastContext";
+import { useUtkastApply } from "contexts/UtkastContext";
 
 type Props = {
   kommune: KommuneRef;
@@ -42,7 +42,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
   );
 
   console.log("Before utkast", sortedGrunnkretser);
-  const utkastGrunnkretser = useUtkast(
+  const utkastGrunnkretser = useUtkastApply(
     sortedGrunnkretser,
     "grunnkretser"
   ) as GrunnkretsRef[];

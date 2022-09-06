@@ -4,6 +4,7 @@ import { BakgrunnskartProvider } from "contexts/BakgrunnskartContext";
 import { EditGrenserProvider } from "contexts/EditGrenserContext";
 import { MetadataPanelProvider } from "contexts/MetadataPanelContext";
 import { SidebarPanelProvider } from "contexts/SidebarPanelContext";
+import { UtkastProvider } from "contexts/UtkastContext";
 
 const Providers: FC = ({ children }) => {
   return (
@@ -11,7 +12,9 @@ const Providers: FC = ({ children }) => {
       <SidebarPanelProvider>
         <MetadataPanelProvider>
           <EditGrenserProvider>
-            <BakgrunnskartProvider>{children}</BakgrunnskartProvider>
+            <BakgrunnskartProvider>
+              <UtkastProvider>{children}</UtkastProvider>
+            </BakgrunnskartProvider>
           </EditGrenserProvider>
         </MetadataPanelProvider>
       </SidebarPanelProvider>

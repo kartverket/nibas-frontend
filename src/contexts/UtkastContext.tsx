@@ -1,3 +1,5 @@
+import { createContext, useContext, useEffect, useState } from "react";
+import { useMatch } from "react-router-dom";
 import { GrunnkretsRequest } from "types/api";
 
 const grunnkretsUtkast: GrunnkretsRequest = {
@@ -10,7 +12,7 @@ const grunnkretsUtkast: GrunnkretsRequest = {
   navn: "Mock grunnkrets",
 };
 
-type Context = Record<string, Record<string, any>>;
+type Utkast = Record<string, Record<string, any>>;
 
 type Response = {
   id: string;
@@ -19,12 +21,6 @@ type Response = {
 // utkastet per ID må byttes ut med de nye verdiene på lagring
 // det er kun den siste versjonen av en request som skal brukes,
 // de andre er unødvendige
-
-const utkast: Context = {
-  grunnkretser: {
-    "db1f6e5e-6bac-4d79-87ff-2d3d43e61844": grunnkretsUtkast,
-  },
-};
 
 const applyUtkast = <T extends Response>(
   entity: T,
@@ -45,10 +41,62 @@ const applyUtkast = <T extends Response>(
   return entity;
 };
 
-export const useUtkast = <T extends Response | Response[] | undefined>(
+type UtkastContextValue = {
+  utkast: Utkast;
+};
+
+/**
+ * Bruk heller UtkastProvider i koden
+ */
+export const UtkastContext = createContext<UtkastContextValue | undefined>(
+  undefined
+);
+
+export const UtkastProvider: React.FC = ({ children }) => {
+  const [utkast, setUtkast] = useState<Utkast>({});
+
+  const utkastId = useMatch("/:utkastId")?.params.utkastId;
+  console.log(utkastId);
+
+  useEffect(() => {
+    if (!utkastId) return;
+
+    // hent utkast for id på URL
+    // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
+
+    setTimeout(() => {
+      console.log("Fetched utkast", {
+        grunnkretser: {
+          "db1f6e5e-6bac-4d79-87ff-2d3d43e61844": grunnkretsUtkast,
+        },
+      });
+      setUtkast({
+        grunnkretser: {
+          "db1f6e5e-6bac-4d79-87ff-2d3d43e61844": grunnkretsUtkast,
+        },
+      });
+    }, 250);
+  }, [utkastId]);
+
+  const value = { utkast };
+
+  return (
+    <UtkastContext.Provider value={value}>{children}</UtkastContext.Provider>
+  );
+};
+
+export const useUtkastApply = <T extends Response | Response[] | undefined>(
   entity: T,
   type: string
 ) => {
+  const context = useContext(UtkastContext);
+
+  if (!context) {
+    throw new Error("useUtkast must be used within a UtkastProvider");
+  }
+
+  const { utkast } = context;
+
   if (!entity) return;
 
   const utkastSlice = utkast[type];
