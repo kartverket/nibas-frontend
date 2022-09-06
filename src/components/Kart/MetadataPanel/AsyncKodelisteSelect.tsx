@@ -1,22 +1,22 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, SelectHTMLAttributes } from "react";
 import { BlockLabel } from "./metadataComponents";
 import Select from "components/form/Select";
 import { KodelisteRespons } from "types/api";
 
-type Props = {
+type Props = SelectHTMLAttributes<HTMLSelectElement> & {
   label: string;
   kodeliste: KodelisteRespons | undefined;
   disabled?: boolean;
 };
 
 const AsyncKodelisteSelectInner = (
-  { label, kodeliste, disabled }: Props,
+  { label, kodeliste, ...selectProps }: Props,
   ref: React.ForwardedRef<HTMLSelectElement>
 ) => {
   return (
     <BlockLabel>
       {label}
-      <Select ref={ref} disabled={disabled}>
+      <Select ref={ref} {...selectProps}>
         <option value="">---</option>
         {kodeliste?.items.map((kodeItem) => (
           <option key={kodeItem.id} value={kodeItem.id}>
