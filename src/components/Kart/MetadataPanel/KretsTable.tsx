@@ -1,6 +1,8 @@
 import styled from "styled-components";
 
 export const KretsRow = styled.tr`
+  cursor: pointer;
+
   &:first-child {
     td {
       border-top: none;

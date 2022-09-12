@@ -19,7 +19,7 @@ const StemmekretsRow = ({ id, toggleRow, isRowOpen }: Props) => {
   if (!stemmekrets) return null;
 
   return (
-    <KretsRow>
+    <KretsRow onClick={() => toggleRow(stemmekrets.id)}>
       <td>{getNavnInSpraak(stemmekrets.stemmekretsnavn, "nor")}</td>
       <td>{stemmekrets.stemmekretsnummer}</td>
       <td>{stemmekrets.valgdistriktsnummer}</td>
