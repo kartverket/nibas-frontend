@@ -2,8 +2,10 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { useEditGrenser } from "./EditGrenserContext";
 import { useMetadataPanel } from "./MetadataPanelContext";
 import useKretsgrenser from "hooks/inndelinger/useKretsgrenser";
+import { editSource } from "hooks/layers/constants";
 import { LayerId } from "hooks/layers/types";
-import { KommuneRef } from "types/api";
+import { FeatureProperties, KommuneRef } from "types/api";
+import { removeFeaturesFromSourceByIds } from "utils/map/source";
 
 export type Kretstype = "grunnkrets" | "stemmekrets";
 
@@ -58,7 +60,8 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
 
   const { currentKretstype } = context;
 
-  const { values, setObjectValue } = useEditGrenser(currentKretstype);
+  const { values, setObjectValue, setMultipleValues } =
+    useEditGrenser(currentKretstype);
   const { openPanel, closePanel } = useMetadataPanel();
   const { addKretserToLayer, removeKretserFromLayer } = useKretsgrenser(
     kommune.id,
@@ -69,12 +72,38 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
 
   const toggleEditKretser = () => {
     const newEditing = !kommuneValues.editing;
-    setObjectValue(kommune.id, {
-      visible: !kommuneValues.visible,
-      editing: newEditing,
-    });
+    const newValues = {
+      ...values,
+      [kommune.id]: {
+        visible: !kommuneValues.visible,
+        editing: newEditing,
+      },
+    };
 
     if (newEditing) {
+      Object.keys(values).forEach((kommuneId) => {
+        if (kommuneId === kommune.id) return;
+
+        // fjern features til kretsene som var endret før klikk
+        if (newValues[kommuneId]?.visible && newValues[kommuneId]?.editing) {
+          const featuresToRemove = editSource
+            .getFeatures()
+            .filter((feature) => {
+              const { type, id } = (
+                feature.getProperties() as FeatureProperties
+              ).inndelingerKontekst;
+              return type === currentKretstype && id === kommuneId;
+            });
+
+          removeFeaturesFromSourceByIds("edit", featuresToRemove);
+        }
+
+        newValues[kommuneId] = {
+          visible: false,
+          editing: false,
+        };
+      });
+
       openPanel({ content: currentKretstype, kommune });
 
       // hvis ikke endret fra før, endre nå
@@ -87,6 +116,8 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
       removeKretserFromLayer("edit");
       closePanel();
     }
+
+    setMultipleValues(newValues);
   };
 
   const toggleKretser = () => {
