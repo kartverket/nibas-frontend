@@ -1,9 +1,12 @@
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
+import { useEffect } from "react";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
+import LineString from "ol/geom/LineString";
+import { ObjectEvent } from "ol/Object";
 import { useForm } from "react-hook-form";
 import useAsyncKodeliste from "./useAsyncKodeliste";
-import { updateGrenser } from "api/grenser";
+import { addMetadataEntryFromFeature } from "./utils";
+import { useToolbarSave } from "contexts/ToolbarContext";
 import { Metadata } from "types/api";
 
 type Inputs = {
@@ -39,19 +42,24 @@ const getUpdatedMetadata = (data: Inputs, oldMetadata: Metadata) =>
     },
   } as Metadata);
 
-const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
-  const { register, handleSubmit, setValue } = useForm<Inputs>({
-    defaultValues: {
-      informasjon: metadata?.common?.informasjon,
-      grenseType: metadata?.discriminator,
-      noeyaktighet: metadata?.commonGrense?.posisjonskvalitet?.noeyaktighet,
-      opphav: metadata?.common?.opphav,
-      gyldigFra: metadata?.common?.gyldigFra,
-      gyldigTil: metadata?.common?.gyldigTil,
-    },
-  });
+const getFormFromApiMetadata = (metadata: Metadata) => ({
+  informasjon: metadata?.common?.informasjon,
+  grenseType: metadata?.discriminator,
+  noeyaktighet: metadata?.commonGrense?.posisjonskvalitet?.noeyaktighet,
+  opphav: metadata?.common?.opphav,
+  gyldigFra: metadata?.common?.gyldigFra,
+  gyldigTil: metadata?.common?.gyldigTil,
+});
 
-  const { tokenHolderFunc } = useAuthenticationFlow();
+const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
+  const {
+    register,
+    setValue,
+    formState: { isDirty },
+    getValues,
+  } = useForm<Inputs>({
+    defaultValues: getFormFromApiMetadata(metadata),
+  });
 
   const maalemetodeKoder = useAsyncKodeliste({
     property: "maalemetode",
@@ -60,21 +68,47 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
     initialItemId: metadata.commonGrense?.posisjonskvalitet?.maalemetode.id,
   });
 
-  const onSubmit = handleSubmit((data) => {
-    const oldProperties = feature.getProperties();
+  const { addEntry } = useToolbarSave();
 
-    feature.setProperties({
-      ...oldProperties,
-      metadata: getUpdatedMetadata(data, oldProperties.metadata),
-    });
+  useEffect(() => {
+    const updateFormOnPropertyChange = (e: ObjectEvent) => {
+      const newMetadata = (e.target as Feature<LineString>).getProperties()
+        .metadata as Metadata;
 
-    updateGrenser([feature], tokenHolderFunc()?.token);
-  });
+      setValue("informasjon", newMetadata?.common?.informasjon ?? "");
+      setValue("grenseType", newMetadata?.discriminator ?? "");
+      setValue(
+        "noeyaktighet",
+        newMetadata?.commonGrense?.posisjonskvalitet?.noeyaktighet ?? 0
+      );
+      setValue("opphav", newMetadata?.common?.opphav ?? "");
+      setValue("gyldigFra", newMetadata?.common?.gyldigFra ?? "");
+      setValue("gyldigTil", newMetadata?.common?.gyldigTil ?? "");
+    };
+
+    feature.on("propertychange", updateFormOnPropertyChange);
+
+    return () => {
+      feature.un("propertychange", updateFormOnPropertyChange);
+    };
+  }, [feature, setValue]);
+
+  const updateDraftFromFeature = () => {
+    addMetadataEntryFromFeature(
+      feature as Feature<LineString>,
+      addEntry,
+      getUpdatedMetadata(
+        getValues(),
+        feature.getProperties().metadata as Metadata
+      )
+    );
+  };
 
   return {
     register,
-    onSubmit,
     maalemetodeKoder,
+    isDirty,
+    updateDraftFromFeature,
   };
 };
 

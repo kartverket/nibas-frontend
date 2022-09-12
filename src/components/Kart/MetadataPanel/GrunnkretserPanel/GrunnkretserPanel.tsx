@@ -24,11 +24,11 @@ type Props = {
 
 const GrunnkretserPanel = ({ kommune }: Props) => {
   const { t } = useTranslation();
-  const { isRowOpen, toggleRow, closeRow } = useAccordionRows();
 
+  const { isRowOpen, toggleRow } = useAccordionRows();
   const { inputValue, setInputValue, searchValue } = useSearch();
 
-  const { data: grunnkretserByKommune, mutate } = useNibasApi(
+  const { data: grunnkretserByKommune } = useNibasApi(
     "/v1/kommuner/{id}/grunnkretser",
     {
       id: kommune.id,
@@ -49,12 +49,6 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
         grunnkrets.navn.toLowerCase().includes(searchValue.toLowerCase())
     );
   }, [searchValue, sortedGrunnkretser]);
-
-  const postGrunnkretsUpdate = (grunnkretsId: string) => {
-    // oppdater lista etter oppdateringen er gjort i backend
-    mutate();
-    closeRow(grunnkretsId);
-  };
 
   return (
     <div>
@@ -99,10 +93,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                   </td>
                 </KretsRow>
                 {isRowOpen(grunnkrets.id) && (
-                  <EditRow
-                    grunnkrets={grunnkrets}
-                    postSubmit={postGrunnkretsUpdate}
-                  />
+                  <EditRow grunnkrets={grunnkrets} kommuneId={kommune.id} />
                 )}
               </React.Fragment>
             ))}

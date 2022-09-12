@@ -6,6 +6,11 @@ export type Spraak = {
   spraak: string;
 };
 
+export type InndelingerKontekst = {
+  id: string;
+  type: EditingType;
+};
+
 // renaming av typer fra generert api doc
 export type AdministrativEnhetNavn =
   components["schemas"]["AdministrativEnhetNavn"];
@@ -22,10 +27,7 @@ export type Dokref = components["schemas"]["Dokref"];
 export type Envelope = components["schemas"]["Envelope"];
 export type FeatureCollection = components["schemas"]["FeatureCollection"];
 export type FeatureProperties = components["schemas"]["FeatureProperties"] & {
-  inndelingerKontekst: {
-    id: string;
-    type: EditingType;
-  };
+  inndelingerKontekst: InndelingerKontekst;
 };
 export type FylkeRef = components["schemas"]["FylkeRef"];
 export type FylkeRequest = components["schemas"]["FylkeRequest"];

@@ -1,5 +1,4 @@
 import { Suspense, useEffect, useRef } from "react";
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import styled, { css } from "styled-components";
 import { map } from "./constants";
 import ZoomControls from "./controls/ZoomControls";
@@ -7,17 +6,11 @@ import MetadataPanel from "./MetadataPanel";
 import { MetadataPanelWrapper } from "./MetadataPanel/MetadataPanel";
 import OverlayPopup from "./OverlayPopup";
 import SidebarPanels from "./SidebarPanels";
-import { updateGrenser } from "api/grenser";
-import CustomControl from "components/CustomControl";
-import Button from "components/form/Button";
+import Toolbar from "./Toolbar";
 import { PanelContent, useMetadataPanel } from "contexts/MetadataPanelContext";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
 import useSelectInteraction from "hooks/interactions/useSelectInteraction";
-import {
-  getLayerById,
-  initBakgrunnskartLayers,
-  initGrenserLayers,
-} from "utils/map/layers";
+import { initBakgrunnskartLayers, initGrenserLayers } from "utils/map/layers";
 
 // dette må skje utenfor komponenten siden React kjører dypere useEffects
 // før de lenger opp i treet, så lag er ikke definert når de trengs lenger ned
@@ -26,12 +19,10 @@ initBakgrunnskartLayers();
 
 const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const { tokenHolderFunc } = useAuthenticationFlow();
   const { panelContext } = useMetadataPanel();
 
-  const { dirtyFeatureIds, clearHistory, undo, redo, canRedo } =
-    useEditInteractions();
   const selectedFeatures = useSelectInteraction();
+  useEditInteractions();
 
   useEffect(() => {
     // mapRef kan egentlig ikke være null her,
@@ -45,17 +36,6 @@ const Kart = () => {
     };
   }, []);
 
-  const saveDraft = async () => {
-    const editLayer = getLayerById("edit");
-    const editFeatures = editLayer.getSource().getFeatures();
-    const editedFeatures = editFeatures.filter((feature) =>
-      dirtyFeatureIds.includes((feature.getId() as string) ?? "")
-    );
-
-    await updateGrenser(editedFeatures, tokenHolderFunc()?.token);
-    clearHistory();
-  };
-
   return (
     <KartWrapper>
       <KartTarget ref={mapRef}>
@@ -63,23 +43,8 @@ const Kart = () => {
           <KartOverlay content={panelContext?.content}>
             <SidebarPanels />
             <MetadataPanel />
+            <Toolbar />
           </KartOverlay>
-
-          <CustomControl>
-            <Button onClick={saveDraft} disabled={dirtyFeatureIds.length === 0}>
-              Lagre endringer
-            </Button>
-          </CustomControl>
-          <CustomControl>
-            <Button onClick={undo} disabled={dirtyFeatureIds.length === 0}>
-              Undo
-            </Button>
-          </CustomControl>
-          <CustomControl>
-            <Button onClick={redo} disabled={!canRedo}>
-              Redo
-            </Button>
-          </CustomControl>
 
           <ZoomControls />
           <OverlayPopup selectedFeatures={selectedFeatures} />
@@ -109,11 +74,11 @@ const KartOverlay = styled.div<{
 }>`
   display: grid;
 
-  grid-template-rows: 3fr auto;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto auto 1fr;
+  grid-template-rows: 1fr auto;
   grid-template-areas:
-    "panel ."
-    "panel metadata";
+    "panel toolbar ."
+    "panel metadata metadata";
   width: 100%;
   height: 100%;
   position: absolute;
@@ -125,8 +90,9 @@ const KartOverlay = styled.div<{
     if (content === "grensemetadata")
       return css`
         @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
-          grid-template-columns: 1fr auto;
-          grid-template-areas: "panel metadata";
+          grid-template-columns: auto auto 1fr auto;
+          grid-template-areas: "panel toolbar . metadata";
+          grid-template-rows: 100%;
         }
 
         ${MetadataPanelWrapper} {

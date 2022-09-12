@@ -1,6 +1,8 @@
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
+import { useEffect } from "react";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
+import LineString from "ol/geom/LineString";
+import { ObjectEvent } from "ol/Object";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
@@ -8,9 +10,9 @@ import AsyncKodelisteSelect from "../../AsyncKodelisteSelect";
 import { Container, Part } from "../../metadataComponents";
 import useAsyncKodeliste from "../../useAsyncKodeliste";
 import useIsMetadataDisabled from "../../useIsMetadataDisabled";
-import { updateGrenser } from "api/grenser";
+import { addMetadataEntryFromFeature } from "../../utils";
 import Checkbox from "components/Checkbox";
-import Button from "components/form/Button";
+import { useToolbarSave } from "contexts/ToolbarContext";
 import { AdministrativGrenseMetadata, FeatureProperties } from "types/api";
 
 type Inputs = {
@@ -24,16 +26,15 @@ type Props = {
 };
 
 const AdministrativGrenseDetaljer = ({ feature }: Props) => {
-  const { tokenHolderFunc } = useAuthenticationFlow();
   const { t } = useTranslation();
 
   const properties = feature.getProperties() as FeatureProperties;
   const metadata = properties.metadata as AdministrativGrenseMetadata;
 
-  const { register, handleSubmit, setValue } = useForm<Inputs>({
+  const { register, setValue, getValues } = useForm<Inputs>({
     defaultValues: {
-      foelgerTerrengdetalj: metadata.foelgerTerrengdetalj?.id,
-      noeyaktighetsklasse: metadata.noeyaktighetsklasse?.id,
+      foelgerTerrengdetalj: metadata.foelgerTerrengdetalj?.id ?? "",
+      noeyaktighetsklasse: metadata.noeyaktighetsklasse?.id ?? "",
       omtvistet: metadata.omtvistet ? "Ja" : "Nei",
     },
   });
@@ -52,43 +53,68 @@ const AdministrativGrenseDetaljer = ({ feature }: Props) => {
     kodelisteUrl: "/v1/kodeliste/noeyaktighetsklasser",
   });
 
-  const onSubmit = handleSubmit((data) => {
-    const newProperties: FeatureProperties = {
-      ...properties,
-      metadata: {
-        ...properties.metadata,
-        foelgerTerrengdetalj: {
-          id: data.foelgerTerrengdetalj,
-        },
-        noeyaktighetsklasse: {
-          id: data.noeyaktighetsklasse,
-        },
-        omtvistet: data.omtvistet === "Ja",
-      } as AdministrativGrenseMetadata,
+  const { addEntry } = useToolbarSave();
+
+  useEffect(() => {
+    const updateFormOnPropertyChange = (e: ObjectEvent) => {
+      const newMetadata = (e.target as Feature<LineString>).getProperties()
+        .metadata as AdministrativGrenseMetadata;
+
+      setValue(
+        "foelgerTerrengdetalj",
+        newMetadata?.foelgerTerrengdetalj?.id ?? ""
+      );
+      setValue(
+        "noeyaktighetsklasse",
+        newMetadata?.noeyaktighetsklasse?.id ?? ""
+      );
+      setValue("omtvistet", newMetadata.omtvistet ? "Ja" : "Nei");
     };
 
-    feature.setProperties(newProperties);
+    feature.on("propertychange", updateFormOnPropertyChange);
 
-    updateGrenser([feature], tokenHolderFunc()?.token);
-  });
+    return () => {
+      feature.un("propertychange", updateFormOnPropertyChange);
+    };
+  }, [feature, setValue]);
+
+  const updateDraftFromFeature = () => {
+    const { foelgerTerrengdetalj, noeyaktighetsklasse, omtvistet } =
+      getValues();
+    addMetadataEntryFromFeature(feature as Feature<LineString>, addEntry, {
+      ...properties.metadata,
+      foelgerTerrengdetalj: {
+        id: foelgerTerrengdetalj,
+      },
+      noeyaktighetsklasse: {
+        id: noeyaktighetsklasse,
+      },
+      omtvistet: omtvistet === "Ja",
+    } as AdministrativGrenseMetadata);
+  };
 
   const disabled = useIsMetadataDisabled(properties);
 
+  const inputOptions = {
+    onBlur: updateDraftFromFeature,
+    disabled,
+  };
+
   return (
-    <form onSubmit={onSubmit}>
+    <form>
       <TwoPartsContainer>
         <Part>
           <AsyncKodelisteSelect
             label={t("metadata.Følger terrengdetalj")}
             kodeliste={terrengdetaljkoder}
-            {...register("foelgerTerrengdetalj", { disabled })}
+            {...register("foelgerTerrengdetalj", inputOptions)}
           />
         </Part>
         <Part>
           <AsyncKodelisteSelect
             label={t("metadata.Nøyaktighetsklasse")}
             kodeliste={noeyaktighetsklassekoder}
-            {...register("noeyaktighetsklasse", { disabled })}
+            {...register("noeyaktighetsklasse", inputOptions)}
           />
         </Part>
       </TwoPartsContainer>
@@ -98,18 +124,16 @@ const AdministrativGrenseDetaljer = ({ feature }: Props) => {
         <Checkbox
           type="radio"
           label={t("Ja")}
-          {...register("omtvistet", { disabled })}
+          {...register("omtvistet", inputOptions)}
           value="Ja"
         />
         <Checkbox
           type="radio"
           label={t("Nei")}
-          {...register("omtvistet", { disabled })}
+          {...register("omtvistet", inputOptions)}
           value="Nei"
         />
       </div>
-
-      <Button type="submit">{t("action.Lagre")}</Button>
     </form>
   );
 };
