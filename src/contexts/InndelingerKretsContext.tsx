@@ -67,20 +67,25 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
 
   const kommuneValues = values[kommune.id] ?? {};
 
-  const openKretserPanel = () => {
+  const toggleEditKretser = () => {
+    const newEditing = !kommuneValues.editing;
     setObjectValue(kommune.id, {
-      visible: true,
-      editing: true,
+      visible: !kommuneValues.visible,
+      editing: newEditing,
     });
-    openPanel({ content: currentKretstype, kommune });
 
-    // hvis ikke endret fra før, endre nå
-    if (!kommuneValues.editing) {
+    if (newEditing) {
+      openPanel({ content: currentKretstype, kommune });
+
+      // hvis ikke endret fra før, endre nå
       if (kommuneValues.visible) {
         removeKretserFromLayer(layerIdByKretstype[currentKretstype]);
       }
 
       addKretserToLayer("edit");
+    } else {
+      removeKretserFromLayer("edit");
+      closePanel();
     }
   };
 
@@ -105,7 +110,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
   };
 
   return {
-    openKretserPanel,
+    toggleEditKretser,
     toggleKretser,
     kommuneValues,
   };
