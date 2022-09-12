@@ -4,6 +4,7 @@ import GrenseMetadataDetaljer from "./GrenseMetadataDetaljer";
 import { EditGrenserProvider } from "contexts/EditGrenserContext";
 import { mockBasicFeature } from "mocks/handlers/responses";
 import { FeatureProperties } from "types/api";
+import { ToolbarProvider } from "contexts/ToolbarContext";
 
 const getClonedFeatureWithGrenseType = (grenseType: string) => {
   const featureCopy = mockBasicFeature.clone();
@@ -17,7 +18,11 @@ const getClonedFeatureWithGrenseType = (grenseType: string) => {
 };
 
 const renderWithProvider = (ui: ReactNode) =>
-  render(<EditGrenserProvider>{ui}</EditGrenserProvider>);
+  render(
+    <EditGrenserProvider>
+      <ToolbarProvider>{ui}</ToolbarProvider>
+    </EditGrenserProvider>
+  );
 
 describe("GrenseMetadataDetaljer", () => {
   it("should render when feature type is Kommunegrense", () => {

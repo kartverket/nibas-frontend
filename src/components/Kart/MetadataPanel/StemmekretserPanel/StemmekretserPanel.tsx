@@ -18,9 +18,9 @@ type Props = {
 
 const StemmekretserPanel = ({ kommune }: Props) => {
   const { t } = useTranslation();
-  const { isRowOpen, toggleRow, closeRow } = useAccordionRows();
+  const { isRowOpen, toggleRow } = useAccordionRows();
 
-  const { data: stemmekretserByKommune, mutate } = useNibasApi(
+  const { data: stemmekretserByKommune } = useNibasApi(
     "/v1/kommuner/{id}/stemmekretser",
     {
       id: kommune.id,
@@ -28,12 +28,6 @@ const StemmekretserPanel = ({ kommune }: Props) => {
   );
 
   const sortedStemmekretser = sortGrenserAlphabetically(stemmekretserByKommune);
-
-  const postStemmekretsUpdate = (id: string) => {
-    // a
-    mutate();
-    closeRow(id);
-  };
 
   return (
     <div>
@@ -64,10 +58,7 @@ const StemmekretserPanel = ({ kommune }: Props) => {
                   isRowOpen={isRowOpen}
                 />
                 {isRowOpen(stemmekrets.id) && (
-                  <EditRow
-                    stemmekrets={stemmekrets}
-                    postSubmit={postStemmekretsUpdate}
-                  />
+                  <EditRow stemmekrets={stemmekrets} kommuneId={kommune.id} />
                 )}
               </React.Fragment>
             ))}

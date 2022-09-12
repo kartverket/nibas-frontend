@@ -1,6 +1,7 @@
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import AdministrativGrenseDetaljer from "./GrenseDetaljer/AdministrativGrenseDetaljer";
+import StemmekretsgrenseDetaljer from "./GrenseDetaljer/StemmekretsgrenseDetaljer";
 import { FeatureProperties } from "types/api";
 
 type Props = {
@@ -15,6 +16,10 @@ const GrenseMetadataDetaljer = ({ feature }: Props) => {
     properties.type === "Kommunegrense"
   ) {
     return <AdministrativGrenseDetaljer feature={feature} />;
+  }
+
+  if (properties.type === "Stemmekretsgrense") {
+    return <StemmekretsgrenseDetaljer feature={feature} />;
   }
 
   return null;

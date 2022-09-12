@@ -1,15 +1,20 @@
 import { render, screen, waitFor } from "test/test-utils";
+import { ReactNode } from "react";
 import userEvent from "@testing-library/user-event";
 import StemmekretserPanel from "./StemmekretserPanel";
+import { ToolbarProvider } from "contexts/ToolbarContext";
 import { mockKommuner } from "mocks/handlers/responses";
 
 const defaultProps: React.ComponentProps<typeof StemmekretserPanel> = {
   kommune: mockKommuner[0],
 };
 
+const renderWithProvider = (ui: ReactNode) =>
+  render(<ToolbarProvider>{ui}</ToolbarProvider>);
+
 describe("StemmekretserPanel", () => {
   it("should render kommunes stemmekretser in table", async () => {
-    render(<StemmekretserPanel {...defaultProps} />);
+    renderWithProvider(<StemmekretserPanel {...defaultProps} />);
 
     expect(await screen.findByRole("table")).toBeInTheDocument();
 
@@ -50,13 +55,13 @@ describe("StemmekretserPanel", () => {
   });
 
   it("should not render editrow when accordion is closed", async () => {
-    render(<StemmekretserPanel {...defaultProps} />);
+    renderWithProvider(<StemmekretserPanel {...defaultProps} />);
 
     expect(await screen.findAllByRole("cell")).toHaveLength(12); // 2x 6 celler
   });
 
   it("should render EditRow on Caret toggle", async () => {
-    render(<StemmekretserPanel {...defaultProps} />);
+    renderWithProvider(<StemmekretserPanel {...defaultProps} />);
 
     userEvent.click(
       (

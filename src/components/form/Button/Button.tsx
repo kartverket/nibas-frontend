@@ -11,43 +11,8 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
   icon?: React.ReactElement;
 };
 
-const getKvibClassName = (variant: Variant, size: Size) => {
-  let className = "button button__blue--";
-
-  switch (variant) {
-    case "primary": {
-      className += "primary";
-      break;
-    }
-    case "secondary": {
-      className += "secondary";
-      break;
-    }
-    case "tertiary": {
-      className += "tertiary";
-      break;
-    }
-  }
-
-  className += " button--";
-
-  switch (size) {
-    case "xs": {
-      className += "xs";
-      break;
-    }
-    case "sm": {
-      className += "sm";
-      break;
-    }
-    case "l": {
-      className += "l";
-      break;
-    }
-  }
-
-  return className;
-};
+const getKvibClassName = (variant: Variant, size: Size) =>
+  `button button__blue--${variant} button--${size}`;
 
 const Button = forwardRef<HTMLButtonElement, Props>(
   ({ variant = "primary", size = "xs", children, icon, ...props }, ref) => {

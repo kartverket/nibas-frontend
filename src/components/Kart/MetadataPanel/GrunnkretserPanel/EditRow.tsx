@@ -1,11 +1,11 @@
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
+import { useCallback, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { updateGrunnkrets } from "api/enheter";
-import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Label from "components/form/Label";
+import { GrunnkretsEntry, useToolbarSave } from "contexts/ToolbarContext";
+import useKretsToolbarSync from "contexts/ToolbarContext/useKretsToolbarSync";
 import useNibasApi from "hooks/useNibasApi";
 import {
   GrunnkretsRef,
@@ -16,7 +16,7 @@ import { getNavnInSpraak } from "utils/language/language";
 
 type Props = {
   grunnkrets: GrunnkretsRef;
-  postSubmit: (grunnkretsId: string) => void;
+  kommuneId: string;
 };
 
 type Inputs = {
@@ -33,35 +33,59 @@ const fromFormToRequest = (
   grunnkretsnummer: data.grunnkretsnummer,
 });
 
-const EditRow = ({ grunnkrets, postSubmit }: Props) => {
+const EditRow = ({ grunnkrets, kommuneId }: Props) => {
   const { t } = useTranslation();
-  const { tokenHolderFunc } = useAuthenticationFlow();
-  const { data: fullGrunnkrets, mutate } = useNibasApi(
-    "/v1/grunnkretser/{id}",
-    {
-      id: grunnkrets.id,
-    }
-  );
+  const { data: fullGrunnkrets } = useNibasApi("/v1/grunnkretser/{id}", {
+    id: grunnkrets.id,
+  });
 
-  const { register, handleSubmit } = useForm<Inputs>({
+  const { register, getValues, setValue } = useForm<Inputs>({
     defaultValues: {
       grunnkretsnummer: grunnkrets.grunnkretsnummer,
       navn: getNavnInSpraak(grunnkrets.navn, "nor"),
     },
   });
 
-  const onSubmit = handleSubmit(async (data) => {
+  const previousValues = useRef<Inputs>(getValues());
+
+  const { addEntry } = useToolbarSave();
+
+  const setFormValues = useCallback(
+    (change: GrunnkretsEntry["changes"][number], direction: "to" | "from") => {
+      setValue("grunnkretsnummer", change[direction]?.grunnkretsnummer ?? "");
+      setValue("navn", change[direction]?.navn ?? "");
+    },
+    [setValue]
+  );
+
+  useKretsToolbarSync<GrunnkretsEntry>({
+    kretsId: fullGrunnkrets?.id,
+    redoEventKey: "grunnkretsRedo",
+    undoEventKey: "grunnkretsUndo",
+    setFormValues,
+  });
+
+  const addGrunnkretsEntry = () => {
     if (!fullGrunnkrets) return;
 
-    await updateGrunnkrets(
-      fromFormToRequest(data, fullGrunnkrets),
-      grunnkrets.id,
-      tokenHolderFunc()?.token
-    );
+    addEntry({
+      type: "grunnkrets",
+      kommuneId,
+      changes: [
+        {
+          from: fromFormToRequest(previousValues.current, fullGrunnkrets),
+          to: fromFormToRequest(getValues(), fullGrunnkrets),
+          id: fullGrunnkrets.id,
+        },
+      ],
+    });
 
-    mutate();
-    postSubmit(grunnkrets.id);
-  });
+    previousValues.current = getValues();
+  };
+
+  const registerOptions = {
+    onBlur: addGrunnkretsEntry,
+  };
 
   return (
     <AccordionRow>
@@ -69,15 +93,13 @@ const EditRow = ({ grunnkrets, postSubmit }: Props) => {
         <InputsWrapper>
           <BlockLabel>
             {t("tabell.Navn")}
-            <Input {...register("navn")} />
+            <Input {...register("navn", registerOptions)} />
           </BlockLabel>
           <BlockLabel>
             {t("grunnkrets.Grunnkretsnummer")}
-            <Input {...register("grunnkretsnummer")} />
+            <Input {...register("grunnkretsnummer", registerOptions)} />
           </BlockLabel>
         </InputsWrapper>
-
-        <Button onClick={onSubmit}>Lagre</Button>
       </td>
     </AccordionRow>
   );

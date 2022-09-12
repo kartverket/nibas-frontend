@@ -14,7 +14,6 @@ import {
 import useIsMetadataDisabled from "../useIsMetadataDisabled";
 import useMetadataForm from "../useMetadataForm";
 import { getDateInFriendlyString } from "../utils";
-import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
 import useScreenWidth from "hooks/useScreenWidth";
@@ -29,10 +28,8 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
   const type = properties.type;
   const metadata = properties.metadata as Metadata;
 
-  const { register, onSubmit, maalemetodeKoder } = useMetadataForm(
-    metadata,
-    feature
-  );
+  const { register, maalemetodeKoder, updateDraftFromFeature } =
+    useMetadataForm(metadata, feature);
 
   const screenWidth = useScreenWidth();
   const theme = useTheme();
@@ -40,8 +37,10 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
 
   const disabled = useIsMetadataDisabled(properties);
 
+  const formOptions = { disabled, onBlur: updateDraftFromFeature };
+
   return (
-    <form onSubmit={onSubmit}>
+    <form>
       <Container>
         <Part>
           <BlockLabel>
@@ -56,7 +55,7 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
               <Input
                 type="date"
                 role="textbox"
-                {...register("gyldigFra", { disabled })}
+                {...register("gyldigFra", formOptions)}
               />
             </BlockLabel>
             <BlockLabel>
@@ -64,7 +63,7 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
               <Input
                 type="date"
                 role="textbox"
-                {...register("gyldigTil", { disabled })}
+                {...register("gyldigTil", formOptions)}
               />
             </BlockLabel>
           </DateWrapper>
@@ -73,15 +72,15 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
           <AsyncKodelisteSelect
             kodeliste={maalemetodeKoder}
             label={t("metadata.Målemetode")}
-            {...register("maalemetode", { disabled })}
+            {...register("maalemetode", formOptions)}
           />
           <BlockLabel>
             {t("metadata.Nøyaktighet")}
             <Input
               type="number"
               {...register("noeyaktighet", {
+                ...formOptions,
                 valueAsNumber: true,
-                disabled,
                 min: 0,
                 max: 1_000_000,
               })}
@@ -101,11 +100,11 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
       </Container>
       <BlockLabel>
         {t("metadata.Informasjon")}
-        <Input {...register("informasjon", { disabled })} />
+        <Input {...register("informasjon", formOptions)} />
       </BlockLabel>
       <BlockLabel>
         {t("metadata.Opphav")}
-        <Input {...register("opphav", { disabled })} />
+        <Input {...register("opphav", formOptions)} />
       </BlockLabel>
       {screenWidth >= theme.dimensions.lg && (
         <Part>
@@ -117,7 +116,6 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
           />
         </Part>
       )}
-      <Button type="submit">{t("action.Lagre")}</Button>
     </form>
   );
 };

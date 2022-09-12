@@ -6,6 +6,11 @@ export type Spraak = {
   spraak: string;
 };
 
+export type InndelingerKontekst = {
+  id: string;
+  type: EditingType;
+};
+
 // renaming av typer fra generert api doc
 export type AdministrativEnhetNavn =
   components["schemas"]["AdministrativEnhetNavn"];
@@ -22,10 +27,7 @@ export type Dokref = components["schemas"]["Dokref"];
 export type Envelope = components["schemas"]["Envelope"];
 export type FeatureCollection = components["schemas"]["FeatureCollection"];
 export type FeatureProperties = components["schemas"]["FeatureProperties"] & {
-  inndelingerKontekst: {
-    id: string;
-    type: EditingType;
-  };
+  inndelingerKontekst: InndelingerKontekst;
 };
 export type FylkeRef = components["schemas"]["FylkeRef"];
 export type FylkeRequest = components["schemas"]["FylkeRequest"];
@@ -62,6 +64,10 @@ export type StatistiskgrenseMetadata =
 export type StemmekretsRef = components["schemas"]["StemmekretsRef"];
 export type StemmekretsResponse = components["schemas"]["StemmekretsResponse"];
 export type StemmekretsRequest = components["schemas"]["StemmekretsRequest"];
+export type StatistiskGrenseMetadata =
+  components["schemas"]["StatistiskgrenseMetadata"] & {
+    dokumentasjonsreferanser: undefined;
+  };
 
 // custom typer basert på api doc
 export type ApiPath = keyof paths;
@@ -80,6 +86,7 @@ export type Metadata =
   | AdministrativGrenseMetadata
   | GrunnlinjeMetadata
   | RiksgrenseMetadata
-  | TerritorialgrenseMetadata;
+  | TerritorialgrenseMetadata
+  | StatistiskGrenseMetadata;
 export type KretsRef = GrunnkretsRef | StemmekretsRef;
 export type GrenseRef = FylkeRef | KommuneRef | KretsRef;
