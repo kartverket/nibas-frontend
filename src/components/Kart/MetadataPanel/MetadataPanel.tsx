@@ -37,11 +37,17 @@ export const MetadataPanelWrapper = styled(KartInteractable)`
   flex-direction: column;
   justify-content: space-between;
   margin-left: auto;
-  border: 1px solid ${({ theme }) => theme.colors.grayLight};
   padding: 16px;
   overflow: auto;
   border-radius: 3px;
   height: 500px;
+  border: 2px solid ${({ theme }) => theme.colors.blue};
+  border-bottom: none;
+  border-right: none;
+
+  @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
+    border-bottom: 2px solid ${({ theme }) => theme.colors.blue};
+  }
 
   min-width: 500px;
   width: 100%;

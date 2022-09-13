@@ -79,7 +79,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
           <tbody>
             {filteredGrunnkretser.map((grunnkrets) => (
               <React.Fragment key={grunnkrets.id}>
-                <KretsRow>
+                <KretsRow onClick={() => toggleRow(grunnkrets.id)}>
                   <td>{getNavnInSpraak(grunnkrets.navn, "nor")}</td>
                   <td>{grunnkrets.grunnkretsnummer}</td>
                   <td>
@@ -109,7 +109,9 @@ const PanelTitle = styled(Heading)`
   margin-bottom: 8px;
 `;
 
-const KretsRow = styled.tr``;
+const KretsRow = styled.tr`
+  cursor: pointer;
+`;
 
 const SmallerBlockLabel = styled(BlockLabel)`
   max-width: 400px;

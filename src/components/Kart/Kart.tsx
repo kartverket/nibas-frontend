@@ -97,8 +97,8 @@ const KartOverlay = styled.div<{
 
         ${MetadataPanelWrapper} {
           @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
-            height: auto;
-            max-height: 800px;
+            height: fit-content;
+            max-height: 900px;
             width: 600px;
           }
         }
