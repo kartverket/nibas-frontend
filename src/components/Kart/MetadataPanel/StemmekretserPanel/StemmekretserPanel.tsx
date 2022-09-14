@@ -11,7 +11,7 @@ import {
   getNavnInSpraak,
   sortGrenserAlphabetically,
 } from "utils/language/language";
-import { useUtkastApply } from "contexts/UtkastContext";
+import { useUtkastEntity } from "contexts/UtkastContext";
 
 type Props = {
   kommune: KommuneRef;
@@ -30,7 +30,7 @@ const StemmekretserPanel = ({ kommune }: Props) => {
 
   const sortedStemmekretser = sortGrenserAlphabetically(stemmekretserByKommune);
 
-  const utkastStemmekretser = useUtkastApply(
+  const utkastStemmekretser = useUtkastEntity(
     sortedStemmekretser,
     "stemmekretser"
   ) as StemmekretsRef[] | undefined;

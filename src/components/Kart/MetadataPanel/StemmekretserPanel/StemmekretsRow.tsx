@@ -4,7 +4,7 @@ import useNibasApi from "hooks/useNibasApi";
 import { ReactComponent as CaretDown } from "icons/caretdown.svg";
 import { ReactComponent as CaretUp } from "icons/caretup.svg";
 import { getNavnInSpraak } from "utils/language/language";
-import { useUtkastApply } from "contexts/UtkastContext";
+import { useUtkastEntity } from "contexts/UtkastContext";
 import { StemmekretsResponse } from "types/api";
 
 type Props = {
@@ -18,7 +18,7 @@ const StemmekretsRow = ({ id, toggleRow, isRowOpen }: Props) => {
     id,
   });
 
-  const utkastStemmekrets = useUtkastApply(stemmekrets, "stemmekretser") as
+  const utkastStemmekrets = useUtkastEntity(stemmekrets, "stemmekretser") as
     | StemmekretsResponse
     | undefined;
 

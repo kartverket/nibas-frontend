@@ -221,7 +221,7 @@ type Entity = Response | Response[] | undefined;
 // det er kun den siste versjonen av en request som skal brukes,
 // de andre er unødvendige
 
-const combineEntity = <T extends Response>(
+const getCombinedEntity = <T extends Response>(
   entity: T,
   utkastSlice: Utkast[EntityUtkastType]
 ) => {
@@ -294,10 +294,10 @@ const applyNonFeatureUtkast = <T extends Response | Response[]>(
       };
     });
   } else if (Array.isArray(entity)) {
-    return entity.map((e) => combineEntity(e, featuresSlice));
+    return entity.map((e) => getCombinedEntity(e, featuresSlice));
   }
 
-  return combineEntity(entity, featuresSlice);
+  return getCombinedEntity(entity, featuresSlice);
 };
 
 const applyFeatureUtkast = (
@@ -347,14 +347,14 @@ export const UtkastProvider: React.FC = ({ children }) => {
   );
 };
 
-export const useUtkastApply = <T extends Entity>(
+export const useUtkastEntity = <T extends Entity>(
   entity: T,
   type: EntityUtkastType
 ) => {
   const context = useContext(UtkastContext);
 
   if (!context) {
-    throw new Error("useUtkastApply must be used within a UtkastProvider");
+    throw new Error("useUtkastEntity must be used within a UtkastProvider");
   }
 
   const { utkast } = context;

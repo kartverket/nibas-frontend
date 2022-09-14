@@ -11,7 +11,7 @@ import {
   StemmekretsRequest,
   StemmekretsResponse,
 } from "types/api";
-import { useUtkastApply } from "contexts/UtkastContext";
+import { useUtkastEntity } from "contexts/UtkastContext";
 
 type Inputs = {
   stemmekretsnavn: string;
@@ -43,9 +43,10 @@ const EditRow = ({ stemmekrets, kommuneId }: Props) => {
     id: stemmekrets.id,
   });
 
-  const utkastStemmekrets = useUtkastApply(fullStemmekrets, "stemmekretser") as
-    | StemmekretsResponse
-    | undefined;
+  const utkastStemmekrets = useUtkastEntity(
+    fullStemmekrets,
+    "stemmekretser"
+  ) as StemmekretsResponse | undefined;
 
   const { register, setValue, getValues } = useForm<Inputs>();
 
