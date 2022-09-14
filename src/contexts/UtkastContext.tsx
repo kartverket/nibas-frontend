@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
+import { GeoJSONFeature, GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { useMatch } from "react-router-dom";
 import { GrunnkretsRequest, StemmekretsRequest } from "types/api";
 
@@ -27,26 +27,196 @@ const stemmekretsUtkast: StemmekretsRequest = {
   valgdistriktsnummer: "12345678",
 };
 
+const grenserUtkast: GeoJSONFeatureCollection = {
+  type: "FeatureCollection",
+  features: [
+    {
+      type: "Feature",
+      geometry: {
+        type: "LineString",
+        coordinates: [
+          [284142.48, 7029641.48],
+          [282128.90227058844, 7030481.795570342],
+          [285008.31, 7031415.44],
+          [284480.57, 7032018.86],
+          [284476.07, 7032023.09],
+          [284473.77, 7032025.27],
+        ],
+      },
+      properties: {
+        type: "Kommunegrense",
+        metadata: {
+          discriminator: "AdministrativGrenseMetadata",
+          common: {
+            identifikasjon: {
+              lokalid: "7bb1e90c-7915-49e8-8506-2d89fc2303c4",
+              navnerom: "https://data.geonorge.no/sosi/administrativeenheter",
+              versjonid: null,
+            },
+            datafangstdato: null,
+            gyldigFra: null,
+            gyldigTil: null,
+            informasjon: null,
+            sporingsinformasjon: {
+              oppdateringsdato: "2022-08-29",
+              endretAv: null,
+            },
+            opphav: null,
+          },
+          commonGrense: {
+            posisjonskvalitet: null,
+            grensestatus: {
+              id: null,
+              href: "http://localhost:8080/v1/kodeliste/grensestatuser",
+            },
+            fastsettingstype: {
+              id: null,
+              href: "http://localhost:8080/v1/kodeliste/fastsettingstyper",
+            },
+          },
+          dokumentasjonsreferanser: [],
+          foelgerTerrengdetalj: {
+            id: null,
+            href: "http://localhost:8080/v1/kodeliste/terrengdetaljkoder",
+          },
+          noeyaktighetsklasse: {
+            id: "MiddelsNøyaktigeOgTransformerteMålinger",
+            href: "http://localhost:8080/v1/kodeliste/noeyaktighetsklasser",
+          },
+          omtvistet: false,
+        },
+        kontekstEgenskaper: {
+          id: "38a3afc0-58af-4b1a-aeee-9026348e73f2",
+          type: "STEMMEKRETS",
+          retningMedKlokken: false,
+          rekkefoelge: 15,
+          flateIndeks: 1,
+          hullIndeks: null,
+        },
+        inndelingerKontekst: {
+          id: "ca6224b8-1cab-483e-9d67-cf6cd7f5fe98",
+          type: "stemmekrets",
+        },
+      },
+      id: "64ab9c01-75cb-4ed9-a9b9-c43ae7bf3a29",
+    },
+    {
+      type: "Feature",
+      geometry: {
+        type: "LineString",
+        coordinates: [
+          [284142.48, 7029641.48],
+          [284139.32, 7029556.97],
+          [284137.52, 7029524.46],
+          [284138.51, 7029516.36],
+          [281342.3118297125, 7028704.683833549],
+          [284177.12, 7029243.76],
+          [284238.42, 7029085.47],
+          [284271.51, 7029002.17],
+          [284297.52, 7028936.87],
+          [284348.32, 7028808.66],
+          [284454.92, 7028630.47],
+          [284512.73, 7028534.17],
+          [284526.72, 7028510.27],
+          [284569.32, 7028439.78],
+          [284647.43, 7028309.77],
+          [284747.43, 7028155.97],
+          [284852.63, 7028003.78],
+          [285391.93, 7027448.38],
+          [285391.93, 7027448.38],
+          [285472.13, 7027366.87],
+          [285655.74, 7027179.93],
+        ],
+      },
+      properties: {
+        type: "Kommunegrense",
+        metadata: {
+          discriminator: "AdministrativGrenseMetadata",
+          common: {
+            identifikasjon: {
+              lokalid: "a56feab2-c028-47c9-a156-87893200ce4e",
+              navnerom: "https://data.geonorge.no/sosi/administrativeenheter",
+              versjonid: null,
+            },
+            datafangstdato: null,
+            gyldigFra: null,
+            gyldigTil: null,
+            informasjon: null,
+            sporingsinformasjon: {
+              oppdateringsdato: "2022-09-05",
+              endretAv: "DUMMY",
+            },
+            opphav: null,
+          },
+          commonGrense: {
+            posisjonskvalitet: null,
+            grensestatus: {
+              id: null,
+              href: "http://localhost:8080/v1/kodeliste/grensestatuser",
+            },
+            fastsettingstype: {
+              id: null,
+              href: "http://localhost:8080/v1/kodeliste/fastsettingstyper",
+            },
+          },
+          dokumentasjonsreferanser: [],
+          foelgerTerrengdetalj: {
+            id: "VKA",
+            href: "http://localhost:8080/v1/kodeliste/terrengdetaljkoder",
+          },
+          noeyaktighetsklasse: {
+            id: "SkisserteGrenser",
+            href: "http://localhost:8080/v1/kodeliste/noeyaktighetsklasser",
+          },
+          omtvistet: true,
+        },
+        kontekstEgenskaper: {
+          id: "38a3afc0-58af-4b1a-aeee-9026348e73f2",
+          type: "STEMMEKRETS",
+          retningMedKlokken: true,
+          rekkefoelge: 0,
+          flateIndeks: 1,
+          hullIndeks: null,
+        },
+        inndelingerKontekst: {
+          id: "ca6224b8-1cab-483e-9d67-cf6cd7f5fe98",
+          type: "stemmekrets",
+        },
+      },
+      id: "e009d6bc-1cbc-4307-bf2d-e79bb06004a3",
+    },
+  ],
+};
+
 const mockUtkast: Utkast = {
   grunnkretser: {
     "db1f6e5e-6bac-4d79-87ff-2d3d43e61844": grunnkretsUtkast,
   },
-  stemmmekretser: {
+  stemmekretser: {
     "38a3afc0-58af-4b1a-aeee-9026348e73f2": stemmekretsUtkast,
   },
+  grenser: [grenserUtkast],
 };
 
 type Utkast = {
   grunnkretser?: Record<string, GrunnkretsRequest>;
-  stemmmekretser?: Record<string, StemmekretsRequest>;
-  grenser?: Record<string, GeoJSONFeatureCollection>;
+  stemmekretser?: Record<string, StemmekretsRequest>;
+  grenser?: GeoJSONFeatureCollection[];
 };
 
+type NewUtkastType = "stemmekretser" | "grunnkretser";
+type FeatureUtkastType = "grenser";
 type UtkastType = keyof Utkast;
 
 type Response = {
   id: string;
 };
+
+type UtkastContextValue = {
+  utkast: Utkast;
+};
+
+type Entity = Response | Response[] | undefined;
 
 // utkastet per ID må byttes ut med de nye verdiene på lagring
 // det er kun den siste versjonen av en request som skal brukes,
@@ -54,7 +224,7 @@ type Response = {
 
 const combine = <T extends Response>(
   entity: T,
-  utkastSlice: Utkast[UtkastType]
+  utkastSlice: Utkast[NewUtkastType]
 ) => {
   if (!utkastSlice) return entity;
 
@@ -67,16 +237,51 @@ const combine = <T extends Response>(
   } as T;
 };
 
-const applyUtkast = <T extends Response | Response[]>(
+const combineFeatures = (
+  featureCollection: GeoJSONFeatureCollection,
+  featuresSlice: Utkast[FeatureUtkastType]
+) => {
+  if (!featuresSlice) return featureCollection;
+
+  return featureCollection.features.reduce(
+    (accumulator: GeoJSONFeature[], feature: GeoJSONFeature) => {
+      const featureCollectionWithUtkast = featuresSlice.find((collection) =>
+        collection.features.find((f: GeoJSONFeature) => f.id === feature.id)
+      );
+      console.log(featureCollectionWithUtkast);
+
+      if (!featureCollectionWithUtkast) {
+        accumulator.push(feature);
+        return accumulator;
+      }
+
+      const featureInUtkast = featureCollectionWithUtkast.features.find(
+        (f: GeoJSONFeature) => f.id === feature.id
+      );
+
+      console.log("Feature in utkast", featureInUtkast);
+      if (featureInUtkast) {
+        accumulator.push(featureInUtkast);
+      } else {
+        accumulator.push(feature);
+      }
+
+      return accumulator;
+    },
+    []
+  );
+};
+
+const applyNonFeatureUtkast = <T extends Response | Response[]>(
   entity: T,
   utkast: Utkast,
-  type: UtkastType
+  type: NewUtkastType
 ) => {
   const utkastSlice = utkast[type];
 
   if (!utkastSlice) return entity;
 
-  if (Array.isArray(entity) && type === "stemmmekretser") {
+  if (Array.isArray(entity) && type === "stemmekretser") {
     // navn på stemmekrets har forskjellig field på StemmekretsRef og StemmekretsRequest
 
     console.log("applying utkast to stemmekretsref array");
@@ -96,8 +301,20 @@ const applyUtkast = <T extends Response | Response[]>(
   return combine(entity, utkastSlice);
 };
 
-type UtkastContextValue = {
-  utkast: Utkast;
+const applyFeatureUtkast = (
+  featureCollection: GeoJSONFeatureCollection,
+  utkast: Utkast
+) => {
+  const featuresSlice = utkast.grenser;
+  const newFeatures = combineFeatures(featureCollection, featuresSlice);
+
+  featureCollection.features = newFeatures;
+
+  console.log("Features with utkast applied", featureCollection);
+
+  return {
+    ...featureCollection,
+  };
 };
 
 /**
@@ -132,23 +349,43 @@ export const UtkastProvider: React.FC = ({ children }) => {
   );
 };
 
-export const useUtkastApply = <T extends Response | Response[] | undefined>(
+export const useUtkastApply = <T extends Entity>(
   entity: T,
-  type: UtkastType
+  type: NewUtkastType
 ) => {
   const context = useContext(UtkastContext);
 
   if (!context) {
-    throw new Error("useUtkast must be used within a UtkastProvider");
+    throw new Error("useUtkastApply must be used within a UtkastProvider");
   }
 
   const { utkast } = context;
 
   if (!entity) return;
 
-  const utkastSlice = utkast[type];
+  return applyNonFeatureUtkast(entity, utkast, type);
+};
 
-  console.log("Utkast slice", utkastSlice);
+export const useUtkastFeature = (
+  featureCollection: GeoJSONFeatureCollection | GeoJSONFeatureCollection[]
+) => {
+  const context = useContext(UtkastContext);
 
-  return applyUtkast(entity, utkast, type);
+  if (!context) {
+    throw new Error(
+      "useUtkastGrenseApply must be used within a UtkastProvider"
+    );
+  }
+
+  const { utkast } = context;
+
+  if (!featureCollection) return;
+
+  if (Array.isArray(featureCollection)) {
+    return featureCollection.map((collection) =>
+      applyFeatureUtkast(collection, utkast)
+    );
+  }
+
+  return applyFeatureUtkast(featureCollection, utkast);
 };
