@@ -4,6 +4,8 @@ import useNibasApi from "hooks/useNibasApi";
 import { ReactComponent as CaretDown } from "icons/caretdown.svg";
 import { ReactComponent as CaretUp } from "icons/caretup.svg";
 import { getNavnInSpraak } from "utils/language/language";
+import { useUtkastApply } from "contexts/UtkastContext";
+import { StemmekretsResponse } from "types/api";
 
 type Props = {
   id: string;
@@ -16,21 +18,25 @@ const StemmekretsRow = ({ id, toggleRow, isRowOpen }: Props) => {
     id,
   });
 
-  if (!stemmekrets) return null;
+  const utkastStemmekrets = useUtkastApply(stemmekrets, "stemmmekretser") as
+    | StemmekretsResponse
+    | undefined;
+
+  if (!utkastStemmekrets) return null;
 
   return (
     <KretsRow>
-      <td>{getNavnInSpraak(stemmekrets.stemmekretsnavn, "nor")}</td>
-      <td>{stemmekrets.stemmekretsnummer}</td>
-      <td>{stemmekrets.valgdistriktsnummer}</td>
-      <td>{stemmekrets.tellekretsnavn}</td>
-      <td>{stemmekrets.tellekretsnummer}</td>
+      <td>{getNavnInSpraak(utkastStemmekrets.stemmekretsnavn, "nor")}</td>
+      <td>{utkastStemmekrets.stemmekretsnummer}</td>
+      <td>{utkastStemmekrets.valgdistriktsnummer}</td>
+      <td>{utkastStemmekrets.tellekretsnavn}</td>
+      <td>{utkastStemmekrets.tellekretsnummer}</td>
       <td>
         <Button
           variant="unstyled"
-          onClick={() => toggleRow(stemmekrets.id)}
+          onClick={() => toggleRow(utkastStemmekrets.id)}
           icon={
-            isRowOpen(stemmekrets.id) ? (
+            isRowOpen(utkastStemmekrets.id) ? (
               <CaretUp aria-label="Lukk redigering av stemmekrets" />
             ) : (
               <CaretDown aria-label="Åpne redigering av stemmekrets" />

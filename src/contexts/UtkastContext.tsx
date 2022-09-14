@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { useMatch } from "react-router-dom";
-import { GrunnkretsRequest } from "types/api";
+import { GrunnkretsRequest, StemmekretsRequest } from "types/api";
 
 const grunnkretsUtkast: GrunnkretsRequest = {
   grunnkretsnummer: "12345678",
@@ -12,7 +13,36 @@ const grunnkretsUtkast: GrunnkretsRequest = {
   navn: "Mock grunnkrets",
 };
 
-type Utkast = Record<string, Record<string, any>>;
+const stemmekretsUtkast: StemmekretsRequest = {
+  stemmekretsnavn: "SNEISEN 2.0",
+  stemmekretsnummer: "10",
+  identifikasjon: {
+    lokalid: "ae914f4b-dbdc-4e08-9f8a-0b5e4457ae9f",
+    navnerom: "https://data.geonorge.no/sosi/administrativeenheter",
+    versjonid: undefined,
+  },
+  kommunenummer: "a4400206-5903-4eff-9c36-4d2d37683caa",
+  tellekretsnummer: "Et nytt nummer",
+  tellekretsnavn: "Nytt navn",
+  valgdistriktsnummer: "12345678",
+};
+
+const mockUtkast: Utkast = {
+  grunnkretser: {
+    "db1f6e5e-6bac-4d79-87ff-2d3d43e61844": grunnkretsUtkast,
+  },
+  stemmmekretser: {
+    "38a3afc0-58af-4b1a-aeee-9026348e73f2": stemmekretsUtkast,
+  },
+};
+
+type Utkast = {
+  grunnkretser?: Record<string, GrunnkretsRequest>;
+  stemmmekretser?: Record<string, StemmekretsRequest>;
+  grenser?: Record<string, GeoJSONFeatureCollection>;
+};
+
+type UtkastType = keyof Utkast;
 
 type Response = {
   id: string;
@@ -22,23 +52,48 @@ type Response = {
 // det er kun den siste versjonen av en request som skal brukes,
 // de andre er unødvendige
 
-const applyUtkast = <T extends Response>(
+const combine = <T extends Response>(
   entity: T,
-  utkastSlice: any | undefined
+  utkastSlice: Utkast[UtkastType]
 ) => {
-  // spread utkast på originale typen for å overskrive verdier
-  const utkastForEntity = utkastSlice[entity.id];
+  if (!utkastSlice) return entity;
 
+  const utkastForEntity = utkastSlice[entity.id];
   console.log("Utkast for entity", utkastForEntity);
 
-  if (utkastForEntity) {
-    return {
-      ...entity,
-      ...utkastForEntity,
-    } as T;
+  return {
+    ...entity,
+    ...utkastForEntity,
+  } as T;
+};
+
+const applyUtkast = <T extends Response | Response[]>(
+  entity: T,
+  utkast: Utkast,
+  type: UtkastType
+) => {
+  const utkastSlice = utkast[type];
+
+  if (!utkastSlice) return entity;
+
+  if (Array.isArray(entity) && type === "stemmmekretser") {
+    // navn på stemmekrets har forskjellig field på StemmekretsRef og StemmekretsRequest
+
+    console.log("applying utkast to stemmekretsref array");
+    return entity.map((e) => {
+      const utkastForEntity = utkast[type]?.[e.id];
+
+      return {
+        ...e,
+        ...utkastForEntity,
+        navn: utkastForEntity?.stemmekretsnavn,
+      };
+    });
+  } else if (Array.isArray(entity)) {
+    return entity.map((e) => combine(e, utkastSlice));
   }
 
-  return entity;
+  return combine(entity, utkastSlice);
 };
 
 type UtkastContextValue = {
@@ -65,16 +120,8 @@ export const UtkastProvider: React.FC = ({ children }) => {
     // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
     setTimeout(() => {
-      console.log("Fetched utkast", {
-        grunnkretser: {
-          "db1f6e5e-6bac-4d79-87ff-2d3d43e61844": grunnkretsUtkast,
-        },
-      });
-      setUtkast({
-        grunnkretser: {
-          "db1f6e5e-6bac-4d79-87ff-2d3d43e61844": grunnkretsUtkast,
-        },
-      });
+      console.log("Fetched utkast", mockUtkast);
+      setUtkast(mockUtkast);
     }, 250);
   }, [utkastId]);
 
@@ -87,7 +134,7 @@ export const UtkastProvider: React.FC = ({ children }) => {
 
 export const useUtkastApply = <T extends Response | Response[] | undefined>(
   entity: T,
-  type: string
+  type: UtkastType
 ) => {
   const context = useContext(UtkastContext);
 
@@ -103,10 +150,5 @@ export const useUtkastApply = <T extends Response | Response[] | undefined>(
 
   console.log("Utkast slice", utkastSlice);
 
-  if (Array.isArray(entity)) {
-    console.log("Entity is an array", entity);
-    return entity.map((e) => applyUtkast(e, utkastSlice));
-  }
-
-  return applyUtkast(entity, utkastSlice);
+  return applyUtkast(entity, utkast, type);
 };
