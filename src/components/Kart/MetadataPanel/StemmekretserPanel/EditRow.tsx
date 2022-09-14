@@ -43,10 +43,9 @@ const EditRow = ({ stemmekrets, kommuneId }: Props) => {
     id: stemmekrets.id,
   });
 
-  const utkastStemmekrets = useUtkastApply(
-    fullStemmekrets,
-    "stemmmekretser"
-  ) as StemmekretsResponse | undefined;
+  const utkastStemmekrets = useUtkastApply(fullStemmekrets, "stemmekretser") as
+    | StemmekretsResponse
+    | undefined;
 
   const { register, setValue, getValues } = useForm<Inputs>();
 
