@@ -204,9 +204,8 @@ type Utkast = {
   grenser?: GeoJSONFeatureCollection[];
 };
 
-type NewUtkastType = "stemmekretser" | "grunnkretser";
+type EntityUtkastType = "stemmekretser" | "grunnkretser";
 type FeatureUtkastType = "grenser";
-type UtkastType = keyof Utkast;
 
 type Response = {
   id: string;
@@ -222,9 +221,9 @@ type Entity = Response | Response[] | undefined;
 // det er kun den siste versjonen av en request som skal brukes,
 // de andre er unødvendige
 
-const combine = <T extends Response>(
+const combineEntity = <T extends Response>(
   entity: T,
-  utkastSlice: Utkast[NewUtkastType]
+  utkastSlice: Utkast[EntityUtkastType]
 ) => {
   if (!utkastSlice) return entity;
 
@@ -237,7 +236,7 @@ const combine = <T extends Response>(
   } as T;
 };
 
-const combineFeatures = (
+const getCombinedFeatures = (
   featureCollection: GeoJSONFeatureCollection,
   featuresSlice: Utkast[FeatureUtkastType]
 ) => {
@@ -275,11 +274,11 @@ const combineFeatures = (
 const applyNonFeatureUtkast = <T extends Response | Response[]>(
   entity: T,
   utkast: Utkast,
-  type: NewUtkastType
+  type: EntityUtkastType
 ) => {
-  const utkastSlice = utkast[type];
+  const featuresSlice = utkast[type];
 
-  if (!utkastSlice) return entity;
+  if (!featuresSlice) return entity;
 
   if (Array.isArray(entity) && type === "stemmekretser") {
     // navn på stemmekrets har forskjellig field på StemmekretsRef og StemmekretsRequest
@@ -295,10 +294,10 @@ const applyNonFeatureUtkast = <T extends Response | Response[]>(
       };
     });
   } else if (Array.isArray(entity)) {
-    return entity.map((e) => combine(e, utkastSlice));
+    return entity.map((e) => combineEntity(e, featuresSlice));
   }
 
-  return combine(entity, utkastSlice);
+  return combineEntity(entity, featuresSlice);
 };
 
 const applyFeatureUtkast = (
@@ -306,14 +305,13 @@ const applyFeatureUtkast = (
   utkast: Utkast
 ) => {
   const featuresSlice = utkast.grenser;
-  const newFeatures = combineFeatures(featureCollection, featuresSlice);
-
-  featureCollection.features = newFeatures;
+  const newFeatures = getCombinedFeatures(featureCollection, featuresSlice);
 
   console.log("Features with utkast applied", featureCollection);
 
   return {
     ...featureCollection,
+    features: newFeatures,
   };
 };
 
@@ -351,7 +349,7 @@ export const UtkastProvider: React.FC = ({ children }) => {
 
 export const useUtkastApply = <T extends Entity>(
   entity: T,
-  type: NewUtkastType
+  type: EntityUtkastType
 ) => {
   const context = useContext(UtkastContext);
 
