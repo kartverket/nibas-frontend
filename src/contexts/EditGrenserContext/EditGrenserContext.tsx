@@ -1,8 +1,16 @@
 import React, { createContext, useContext, useState } from "react";
-import { EditingObject, EditingType, ObjectValue } from "./types";
+import {
+  EditingObject,
+  EditingType,
+  GrenseDictionary,
+  ObjectValue,
+} from "./types";
 
 export type EditGrenserContextValue = {
   editingObject: EditingObject;
+  setEditingObject: React.Dispatch<
+    React.SetStateAction<Partial<Record<EditingType, GrenseDictionary>>>
+  >;
   setObjectValue: (
     type: EditingType,
     grenseId: string,
@@ -36,6 +44,7 @@ export const EditGrenserProvider: React.FC = ({ children }) => {
 
   const value = {
     editingObject,
+    setEditingObject,
     setObjectValue,
   };
 
@@ -65,15 +74,22 @@ export const useEditGrenser = (grenseType: EditingType) => {
     throw new Error("useEditGrenser must be used within a EditGrenserProvider");
   }
 
-  const { editingObject, setObjectValue } = context;
+  const { editingObject, setObjectValue, setEditingObject } = context;
 
   const values = editingObject[grenseType] ?? {};
   const setObjectValueForType = (grenseId: string, newValues: ObjectValue) =>
     setObjectValue(grenseType, grenseId, newValues);
+  const setMultipleValues = (newDictionary: GrenseDictionary) => {
+    setEditingObject({
+      ...editingObject,
+      [grenseType]: newDictionary,
+    });
+  };
 
   return {
     values,
     setObjectValue: setObjectValueForType,
+    setMultipleValues,
   };
 };
 

@@ -12,7 +12,7 @@ type Props = {
 };
 
 const Kommune = ({ kommune }: Props) => {
-  const { kommuneValues, openKretserPanel, toggleKretser } =
+  const { kommuneValues, toggleEditKretser, toggleKretser } =
     useInndelingerKrets(kommune);
 
   return (
@@ -28,11 +28,14 @@ const Kommune = ({ kommune }: Props) => {
           )
         }
       />
-      <Title>{getNavnInSpraak(kommune.navn, "nor")}</Title>
-      <Button
+      <Title editing={kommuneValues.editing}>
+        {getNavnInSpraak(kommune.navn, "nor")}
+      </Title>
+      <EditButton
+        editing={kommuneValues.editing}
         icon={<EditIcon />}
         variant="unstyled"
-        onClick={openKretserPanel}
+        onClick={toggleEditKretser}
       />
     </KommuneWrapper>
   );
@@ -44,10 +47,21 @@ const KommuneWrapper = styled.div`
   margin: 8px 0;
 `;
 
-const Title = styled.p`
+const Title = styled.p<{ editing?: boolean }>`
   margin: 0;
   margin-left: 8px;
   flex: 1;
+
+  ${({ editing }) => editing && "font-weight: bold"};
+`;
+
+const EditButton = styled(Button)<{ editing?: boolean }>`
+  ${({ editing, theme }) =>
+    editing &&
+    `
+    background-color: ${theme.colors.blue};
+    color: white;
+  `};
 `;
 
 export default Kommune;

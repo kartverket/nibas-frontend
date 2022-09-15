@@ -59,7 +59,7 @@ const Sidebar = () => {
 
 const StyledSidebar = styled.div`
   grid-area: sidebar;
-  width: 60px;
+  width: 80px;
   position: relative;
   display: flex;
   flex-direction: column;
