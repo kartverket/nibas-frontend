@@ -1,4 +1,4 @@
-import { GeoJSONFeature, GeoJSONFeatureCollection } from "ol/format/GeoJSON";
+import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { GrunnkretsRequest, StemmekretsRequest } from "types/api";
 
 export type Utkast = {

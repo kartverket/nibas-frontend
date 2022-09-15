@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { useMatch } from "react-router-dom";
-import { mockUtkast } from "./constants";
 import {
   EntityUtkastType,
   Utkast,
@@ -9,10 +8,14 @@ import {
   UtkastEntity,
 } from "./types";
 import { applyFeatureUtkast, applyNonFeatureUtkast } from "./utils";
+import useNibasApi from "hooks/useNibasApi";
+import { ApiPath } from "types/api";
 
 // utkastet per ID må byttes ut med de nye verdiene på lagring
 // det er kun den siste versjonen av en request som skal brukes,
 // de andre er unødvendige
+
+// down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
 /**
  * Bruk heller UtkastProvider i koden
@@ -25,19 +28,23 @@ export const UtkastProvider: React.FC = ({ children }) => {
   const [utkast, setUtkast] = useState<Utkast>({});
 
   const utkastId = useMatch("/:utkastId")?.params.utkastId;
-  console.log(utkastId);
+  // endepunktet finnes ikke enda, så vi må trikse det til litt frem til det gjør det
+  // må denne være swrimmutable?
+  const apiUtkast = useNibasApi(
+    utkastId ? ("/v1/utkast/{id}" as ApiPath) : null,
+    {
+      id: utkastId,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ).data as any;
 
   useEffect(() => {
-    if (!utkastId) return;
+    console.log("Fetched utkast from api", apiUtkast);
+    if (!apiUtkast) return;
 
-    // hent utkast for id på URL
-    // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
-
-    setTimeout(() => {
-      console.log("Fetched utkast", mockUtkast);
-      setUtkast(mockUtkast);
-    }, 250);
-  }, [utkastId]);
+    setUtkast(apiUtkast);
+  }, [apiUtkast]);
 
   const value = { utkast };
 
