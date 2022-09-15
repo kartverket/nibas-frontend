@@ -1,5 +1,6 @@
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import useSWR from "swr";
+import { BareFetcher, PublicConfiguration } from "swr/dist/types";
 import { ApiPath } from "types/api";
 import { paths } from "types/api-gen";
 import { fetcherWithToken } from "utils/swr";
@@ -45,11 +46,22 @@ type ResponseType<Path extends ApiPath> = paths[Path] extends {
  * Hjelpehook for å gjøre det lettere å kjøre API-kall til nibas APIet
  * @param url Url for data
  * @param params Parametere som skal sendes med requesten, enten path eller query parametere
+ * @param swrOptions Options til swr hooken
  * @returns Resultatet fra useSWR(url)
  */
 const useNibasApi = <Path extends ApiPath>(
   url: Path | null,
-  params?: GetParameters<Path>
+  params?: GetParameters<Path>,
+  swrOptions?:
+    | Partial<
+        PublicConfiguration<
+          ResponseType<Path>,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          any,
+          BareFetcher<ResponseType<Path>>
+        >
+      >
+    | undefined
 ) => {
   const { tokenHolderFunc } = useAuthenticationFlow();
 
@@ -94,7 +106,8 @@ const useNibasApi = <Path extends ApiPath>(
 
   return useSWR<ResponseType<Path>>(
     [modifiedUrl, tokenHolderFunc()?.token],
-    fetcherWithToken
+    fetcherWithToken,
+    swrOptions
   );
 };
 
