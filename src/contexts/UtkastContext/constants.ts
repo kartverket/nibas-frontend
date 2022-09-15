@@ -1,6 +1,5 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { GeoJSONFeature, GeoJSONFeatureCollection } from "ol/format/GeoJSON";
-import { useMatch } from "react-router-dom";
+import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
+import { Utkast } from "./types";
 import { GrunnkretsRequest, StemmekretsRequest } from "types/api";
 
 const grunnkretsUtkast: GrunnkretsRequest = {
@@ -56,12 +55,12 @@ const grenserUtkast: GeoJSONFeatureCollection = {
             datafangstdato: null,
             gyldigFra: null,
             gyldigTil: null,
-            informasjon: null,
+            informasjon: "Dette er et utkast av informasjon",
             sporingsinformasjon: {
               oppdateringsdato: "2022-08-29",
               endretAv: null,
             },
-            opphav: null,
+            opphav: "Utkast opphav",
           },
           commonGrense: {
             posisjonskvalitet: null,
@@ -188,7 +187,7 @@ const grenserUtkast: GeoJSONFeatureCollection = {
   ],
 };
 
-const mockUtkast: Utkast = {
+export const mockUtkast: Utkast = {
   grunnkretser: {
     "db1f6e5e-6bac-4d79-87ff-2d3d43e61844": grunnkretsUtkast,
   },
@@ -196,194 +195,4 @@ const mockUtkast: Utkast = {
     "38a3afc0-58af-4b1a-aeee-9026348e73f2": stemmekretsUtkast,
   },
   grenser: [grenserUtkast],
-};
-
-type Utkast = {
-  grunnkretser?: Record<string, GrunnkretsRequest>;
-  stemmekretser?: Record<string, StemmekretsRequest>;
-  grenser?: GeoJSONFeatureCollection[];
-};
-
-type EntityUtkastType = "stemmekretser" | "grunnkretser";
-type FeatureUtkastType = "grenser";
-
-type Response = {
-  id: string;
-};
-
-type UtkastContextValue = {
-  utkast: Utkast;
-};
-
-type Entity = Response | Response[] | undefined;
-
-// utkastet per ID må byttes ut med de nye verdiene på lagring
-// det er kun den siste versjonen av en request som skal brukes,
-// de andre er unødvendige
-
-const getCombinedEntity = <T extends Response>(
-  entity: T,
-  utkastSlice: Utkast[EntityUtkastType]
-) => {
-  if (!utkastSlice) return entity;
-
-  const utkastForEntity = utkastSlice[entity.id];
-  console.log("Utkast for entity", utkastForEntity);
-
-  return {
-    ...entity,
-    ...utkastForEntity,
-  } as T;
-};
-
-const getCombinedFeatures = (
-  featureCollection: GeoJSONFeatureCollection,
-  featuresSlice: Utkast[FeatureUtkastType]
-) => {
-  if (!featuresSlice) return featureCollection;
-
-  return featureCollection.features.reduce(
-    (accumulator: GeoJSONFeature[], feature: GeoJSONFeature) => {
-      const featureCollectionWithUtkast = featuresSlice.find((collection) =>
-        collection.features.find((f: GeoJSONFeature) => f.id === feature.id)
-      );
-      console.log(featureCollectionWithUtkast);
-
-      if (!featureCollectionWithUtkast) {
-        accumulator.push(feature);
-        return accumulator;
-      }
-
-      const featureInUtkast = featureCollectionWithUtkast.features.find(
-        (f: GeoJSONFeature) => f.id === feature.id
-      );
-
-      console.log("Feature in utkast", featureInUtkast);
-      if (featureInUtkast) {
-        accumulator.push(featureInUtkast);
-      } else {
-        accumulator.push(feature);
-      }
-
-      return accumulator;
-    },
-    []
-  );
-};
-
-const applyNonFeatureUtkast = <T extends Response | Response[]>(
-  entity: T,
-  utkast: Utkast,
-  type: EntityUtkastType
-) => {
-  const featuresSlice = utkast[type];
-
-  if (!featuresSlice) return entity;
-
-  if (Array.isArray(entity) && type === "stemmekretser") {
-    // navn på stemmekrets har forskjellig field på StemmekretsRef og StemmekretsRequest
-
-    console.log("applying utkast to stemmekretsref array");
-    return entity.map((e) => {
-      const utkastForEntity = utkast[type]?.[e.id];
-
-      return {
-        ...e,
-        ...utkastForEntity,
-        navn: utkastForEntity?.stemmekretsnavn,
-      };
-    });
-  } else if (Array.isArray(entity)) {
-    return entity.map((e) => getCombinedEntity(e, featuresSlice));
-  }
-
-  return getCombinedEntity(entity, featuresSlice);
-};
-
-const applyFeatureUtkast = (
-  featureCollection: GeoJSONFeatureCollection,
-  utkast: Utkast
-) => {
-  const featuresSlice = utkast.grenser;
-  const newFeatures = getCombinedFeatures(featureCollection, featuresSlice);
-
-  console.log("Features with utkast applied", featureCollection);
-
-  return {
-    ...featureCollection,
-    features: newFeatures,
-  };
-};
-
-/**
- * Bruk heller UtkastProvider i koden
- */
-export const UtkastContext = createContext<UtkastContextValue | undefined>(
-  undefined
-);
-
-export const UtkastProvider: React.FC = ({ children }) => {
-  const [utkast, setUtkast] = useState<Utkast>({});
-
-  const utkastId = useMatch("/:utkastId")?.params.utkastId;
-  console.log(utkastId);
-
-  useEffect(() => {
-    if (!utkastId) return;
-
-    // hent utkast for id på URL
-    // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
-
-    setTimeout(() => {
-      console.log("Fetched utkast", mockUtkast);
-      setUtkast(mockUtkast);
-    }, 250);
-  }, [utkastId]);
-
-  const value = { utkast };
-
-  return (
-    <UtkastContext.Provider value={value}>{children}</UtkastContext.Provider>
-  );
-};
-
-export const useUtkastEntity = <T extends Entity>(
-  entity: T,
-  type: EntityUtkastType
-) => {
-  const context = useContext(UtkastContext);
-
-  if (!context) {
-    throw new Error("useUtkastEntity must be used within a UtkastProvider");
-  }
-
-  const { utkast } = context;
-
-  if (!entity) return;
-
-  return applyNonFeatureUtkast(entity, utkast, type);
-};
-
-export const useUtkastFeature = (
-  featureCollection: GeoJSONFeatureCollection | GeoJSONFeatureCollection[]
-) => {
-  const context = useContext(UtkastContext);
-
-  if (!context) {
-    throw new Error(
-      "useUtkastGrenseApply must be used within a UtkastProvider"
-    );
-  }
-
-  const { utkast } = context;
-
-  if (!featureCollection) return;
-
-  if (Array.isArray(featureCollection)) {
-    return featureCollection.map((collection) =>
-      applyFeatureUtkast(collection, utkast)
-    );
-  }
-
-  return applyFeatureUtkast(featureCollection, utkast);
 };
