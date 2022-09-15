@@ -29,13 +29,18 @@ export const UtkastProvider: React.FC = ({ children }) => {
 
   const utkastId = useMatch("/:utkastId")?.params.utkastId;
   // endepunktet finnes ikke enda, så vi må trikse det til litt frem til det gjør det
-  // må denne være swrimmutable?
   const apiUtkast = useNibasApi(
     utkastId ? ("/v1/utkast/{id}" as ApiPath) : null,
     {
       id: utkastId,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any
+    } as any,
+    {
+      shouldRetryOnError: false,
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ).data as any;
 
