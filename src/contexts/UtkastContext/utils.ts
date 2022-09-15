@@ -26,33 +26,29 @@ const getCombinedFeatures = (
 ) => {
   if (!featuresSlice) return featureCollection.features;
 
-  return featureCollection.features.reduce(
-    (accumulator: GeoJSONFeature[], feature: GeoJSONFeature) => {
-      // gå gjennom utkast-collectionene og finn det som berører current feature
-      const featureCollectionWithUtkast = featuresSlice.find((collection) =>
-        collection.features.find((f: GeoJSONFeature) => f.id === feature.id)
-      );
+  return featureCollection.features.map((feature: GeoJSONFeature) => {
+    // denne finner bare første lagring hvor featuren er endret
+    // dette funker hvis vi fjerner gamle versjoner av endrede features
+    // på lagring
+    const featureCollectionWithUtkast = featuresSlice.find((collection) =>
+      collection.features.find((f: GeoJSONFeature) => f.id === feature.id)
+    );
 
-      if (!featureCollectionWithUtkast) {
-        accumulator.push(feature);
-        return accumulator;
-      }
+    if (!featureCollectionWithUtkast) {
+      return feature;
+    }
 
-      // gå gjennom utkastet med endrede features og hent nye featuren
-      const featureInUtkast = featureCollectionWithUtkast.features.find(
-        (f: GeoJSONFeature) => f.id === feature.id
-      );
+    // gå gjennom utkastet med endrede features og hent nye featuren
+    const featureInUtkast = featureCollectionWithUtkast.features.find(
+      (f: GeoJSONFeature) => f.id === feature.id
+    );
 
-      if (featureInUtkast) {
-        accumulator.push(featureInUtkast);
-      } else {
-        accumulator.push(feature);
-      }
-
-      return accumulator;
-    },
-    []
-  );
+    if (featureInUtkast) {
+      return featureInUtkast;
+    } else {
+      return feature;
+    }
+  });
 };
 
 export const applyNonFeatureUtkast = <
@@ -62,9 +58,9 @@ export const applyNonFeatureUtkast = <
   utkast: Utkast,
   type: EntityUtkastType
 ) => {
-  const featuresSlice = utkast[type];
+  const utkastSlice = utkast[type];
 
-  if (!featuresSlice) return entity;
+  if (!utkastSlice) return entity;
 
   if (Array.isArray(entity) && type === "stemmekretser") {
     // navn på stemmekrets har forskjellig field på StemmekretsRef og StemmekretsRequest
@@ -79,10 +75,10 @@ export const applyNonFeatureUtkast = <
       };
     });
   } else if (Array.isArray(entity)) {
-    return entity.map((e) => getCombinedEntity(e, featuresSlice));
+    return entity.map((e) => getCombinedEntity(e, utkastSlice));
   }
 
-  return getCombinedEntity(entity, featuresSlice);
+  return getCombinedEntity(entity, utkastSlice);
 };
 
 export const applyFeatureUtkast = (
