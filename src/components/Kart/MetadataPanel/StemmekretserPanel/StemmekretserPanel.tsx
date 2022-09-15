@@ -5,13 +5,13 @@ import { KretsTable } from "../KretsTable";
 import useAccordionRows from "../useAccordionRow";
 import EditRow from "./EditRow";
 import StemmekretsRow from "./StemmekretsRow";
+import { useUtkastEntity } from "contexts/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
 import { KommuneRef, StemmekretsRef } from "types/api";
 import {
   getNavnInSpraak,
   sortGrenserAlphabetically,
 } from "utils/language/language";
-import { useUtkastEntity } from "contexts/UtkastContext";
 
 type Props = {
   kommune: KommuneRef;

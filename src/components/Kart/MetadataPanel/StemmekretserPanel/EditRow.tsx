@@ -5,13 +5,13 @@ import styled from "styled-components";
 import Input from "components/form/Input";
 import { StemmekretsEntry, useToolbarSave } from "contexts/ToolbarContext";
 import useKretsToolbarSync from "contexts/ToolbarContext/useKretsToolbarSync";
+import { useUtkastEntity } from "contexts/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
 import {
   StemmekretsRef,
   StemmekretsRequest,
   StemmekretsResponse,
 } from "types/api";
-import { useUtkastEntity } from "contexts/UtkastContext";
 
 type Inputs = {
   stemmekretsnavn: string;

@@ -1,11 +1,11 @@
 import { KretsRow } from "../KretsTable";
 import Button from "components/form/Button";
+import { useUtkastEntity } from "contexts/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
 import { ReactComponent as CaretDown } from "icons/caretdown.svg";
 import { ReactComponent as CaretUp } from "icons/caretup.svg";
-import { getNavnInSpraak } from "utils/language/language";
-import { useUtkastEntity } from "contexts/UtkastContext";
 import { StemmekretsResponse } from "types/api";
+import { getNavnInSpraak } from "utils/language/language";
 
 type Props = {
   id: string;

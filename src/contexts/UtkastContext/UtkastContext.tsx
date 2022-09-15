@@ -40,7 +40,6 @@ export const UtkastProvider: React.FC = ({ children }) => {
   ).data as any;
 
   useEffect(() => {
-    console.log("Fetched utkast from api", apiUtkast);
     if (!apiUtkast) return;
 
     setUtkast(apiUtkast);

@@ -13,7 +13,6 @@ const getCombinedEntity = <T extends UtkastResponse>(
   if (!utkastSlice) return entity;
 
   const utkastForEntity = utkastSlice[entity.id];
-  console.log("Utkast for entity", utkastForEntity);
 
   return {
     ...entity,
@@ -33,7 +32,6 @@ const getCombinedFeatures = (
       const featureCollectionWithUtkast = featuresSlice.find((collection) =>
         collection.features.find((f: GeoJSONFeature) => f.id === feature.id)
       );
-      console.log(featureCollectionWithUtkast);
 
       if (!featureCollectionWithUtkast) {
         accumulator.push(feature);
@@ -45,7 +43,6 @@ const getCombinedFeatures = (
         (f: GeoJSONFeature) => f.id === feature.id
       );
 
-      console.log("Feature in utkast", featureInUtkast);
       if (featureInUtkast) {
         accumulator.push(featureInUtkast);
       } else {
@@ -72,7 +69,6 @@ export const applyNonFeatureUtkast = <
   if (Array.isArray(entity) && type === "stemmekretser") {
     // navn på stemmekrets har forskjellig field på StemmekretsRef og StemmekretsRequest
 
-    console.log("applying utkast to stemmekretsref array");
     return entity.map((e) => {
       const utkastForEntity = utkast[type]?.[e.id];
 
@@ -95,11 +91,6 @@ export const applyFeatureUtkast = (
 ) => {
   const featuresSlice = utkast.grenser;
   const newFeatures = getCombinedFeatures(featureCollection, featuresSlice);
-
-  console.log("New feature collection with utkast applied", {
-    ...featureCollection,
-    features: newFeatures,
-  });
 
   return {
     ...featureCollection,

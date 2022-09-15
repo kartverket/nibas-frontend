@@ -2,10 +2,10 @@ import { useCallback, useMemo, useState } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import useSWRImmutable from "swr/immutable";
+import { useUtkastFeature } from "contexts/UtkastContext";
 import { geoJsonToSource } from "utils/map/geoJson";
 import { getLayerById } from "utils/map/layers";
 import { fetcherWithToken } from "utils/swr";
-import { useUtkastFeature } from "contexts/UtkastContext";
 
 const useApiGrense = (featuresUrl: string, shouldFetchInitially = false) => {
   const [shouldFetch, setShouldFetch] = useState(shouldFetchInitially);

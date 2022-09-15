@@ -8,6 +8,7 @@ import EditRow from "./EditRow";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Heading from "components/typography/Heading";
+import { useUtkastEntity } from "contexts/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
 import useSearch from "hooks/useSearch";
 import { ReactComponent as CaretDown } from "icons/caretdown.svg";
@@ -17,7 +18,6 @@ import {
   getNavnInSpraak,
   sortGrenserAlphabetically,
 } from "utils/language/language";
-import { useUtkastEntity } from "contexts/UtkastContext";
 
 type Props = {
   kommune: KommuneRef;
@@ -41,12 +41,10 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
     [grunnkretserByKommune]
   );
 
-  console.log("Before utkast", sortedGrunnkretser);
   const utkastGrunnkretser = useUtkastEntity(
     sortedGrunnkretser,
     "grunnkretser"
   ) as GrunnkretsRef[] | undefined;
-  console.log("After utkast", utkastGrunnkretser);
 
   const filteredGrunnkretser = useMemo(() => {
     if (!searchValue) return utkastGrunnkretser;
