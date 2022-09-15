@@ -1,6 +1,7 @@
 import { render, screen } from "test/test-utils";
 import ApiGrense from "./ApiGrense";
 import { EditGrenserProvider } from "contexts/EditGrenserContext";
+import { UtkastContext } from "contexts/UtkastContext";
 
 const defaultProps: React.ComponentProps<typeof ApiGrense> = {
   featuresUrl: "/",
@@ -16,7 +17,9 @@ describe("ApiGrense", () => {
   it("should render name in Norwegian", () => {
     render(
       <EditGrenserProvider>
-        <ApiGrense {...defaultProps} />
+        <UtkastContext.Provider value={{ utkast: {} }}>
+          <ApiGrense {...defaultProps} />
+        </UtkastContext.Provider>
       </EditGrenserProvider>
     );
 

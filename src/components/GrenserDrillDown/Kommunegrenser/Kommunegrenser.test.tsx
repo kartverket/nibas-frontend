@@ -3,9 +3,16 @@ import { ReactNode } from "react";
 import userEvent from "@testing-library/user-event";
 import Kommunegrenser from "./Kommunegrenser";
 import { EditGrenserProvider } from "contexts/EditGrenserContext/EditGrenserContext";
+import { UtkastContext } from "contexts/UtkastContext";
 
 const renderWithProvider = (ui: ReactNode) =>
-  render(<EditGrenserProvider>{ui}</EditGrenserProvider>);
+  render(
+    <EditGrenserProvider>
+      <UtkastContext.Provider value={{ utkast: {} }}>
+        {ui}
+      </UtkastContext.Provider>
+    </EditGrenserProvider>
+  );
 
 describe("Kommunegrenser", () => {
   it("should show fylker and kommuner on Kommuner accordion click", async () => {
