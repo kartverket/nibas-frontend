@@ -25,7 +25,7 @@ const getCombinedFeatures = (
   featureCollection: GeoJSONFeatureCollection,
   featuresSlice: Utkast[FeatureUtkastType]
 ) => {
-  if (!featuresSlice) return featureCollection;
+  if (!featuresSlice) return featureCollection.features;
 
   return featureCollection.features.reduce(
     (accumulator: GeoJSONFeature[], feature: GeoJSONFeature) => {
@@ -96,7 +96,10 @@ export const applyFeatureUtkast = (
   const featuresSlice = utkast.grenser;
   const newFeatures = getCombinedFeatures(featureCollection, featuresSlice);
 
-  console.log("Features with utkast applied", featureCollection);
+  console.log("New feature collection with utkast applied", {
+    ...featureCollection,
+    features: newFeatures,
+  });
 
   return {
     ...featureCollection,
