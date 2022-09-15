@@ -28,6 +28,7 @@ export const UtkastProvider: React.FC = ({ children }) => {
   const [utkast, setUtkast] = useState<Utkast>({});
 
   const utkastId = useMatch("/:utkastId")?.params.utkastId;
+
   // endepunktet finnes ikke enda, så vi må trikse det til litt frem til det gjør det
   const apiUtkast = useNibasApi(
     utkastId ? ("/v1/utkast/{id}" as ApiPath) : null,

@@ -56,6 +56,7 @@ const useNibasApi = <Path extends ApiPath>(
     | Partial<
         PublicConfiguration<
           ResponseType<Path>,
+          // responstypen til options bruker visst any, så da gjør vi det og
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           any,
           BareFetcher<ResponseType<Path>>
