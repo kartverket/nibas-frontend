@@ -3,6 +3,7 @@ import { ReactNode } from "react";
 import AktiveKartlag from "./AktiveKartlag";
 import { BakgrunnskartContext } from "contexts/BakgrunnskartContext";
 import { EditGrenserContext } from "contexts/EditGrenserContext";
+import { UtkastContext } from "contexts/UtkastContext";
 
 const renderWithProvider = (ui: ReactNode) =>
   render(
@@ -15,7 +16,9 @@ const renderWithProvider = (ui: ReactNode) =>
         setObjectValue: jest.fn(),
       }}
     >
-      {ui}
+      <UtkastContext.Provider value={{ utkast: {} }}>
+        {ui}
+      </UtkastContext.Provider>
     </EditGrenserContext.Provider>
   );
 
@@ -62,7 +65,7 @@ describe("AktiveKartlag", () => {
             },
           ],
           moveLayer: jest.fn(),
-          orderedLayerIds: ["administrativeGrenser", "grunnkretser"],
+          orderedLayerIds: ["administrativeGrenser", "grunnkretserWMS"],
           toggleLayerVisibility: jest.fn(),
           visibleLayers: {
             administrativeGrenser: true,

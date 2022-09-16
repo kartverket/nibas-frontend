@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import useSWRImmutable from "swr/immutable";
+import { useUtkastFeature } from "contexts/UtkastContext";
 import { geoJsonToSource } from "utils/map/geoJson";
 import { getLayerById } from "utils/map/layers";
 import { fetcherWithToken } from "utils/swr";
@@ -15,10 +16,12 @@ const useApiGrense = (featuresUrl: string, shouldFetchInitially = false) => {
     fetcherWithToken
   );
 
-  const features = useMemo(() => {
-    if (!geoJson) return null;
+  const utkastGeoJson = useUtkastFeature(geoJson);
 
-    const geoJsonFeatures = geoJsonToSource(geoJson).getFeatures();
+  const features = useMemo(() => {
+    if (!utkastGeoJson) return null;
+
+    const geoJsonFeatures = geoJsonToSource(utkastGeoJson).getFeatures();
 
     // sjekk om features allerede ligger i kartet
     // hvis featurene er annerledes enn vanlig, så ligger de endrede featurene i edit-laget
@@ -35,7 +38,7 @@ const useApiGrense = (featuresUrl: string, shouldFetchInitially = false) => {
     }
 
     return geoJsonFeatures;
-  }, [geoJson]);
+  }, [utkastGeoJson]);
 
   const fetchFeatures = useCallback(() => {
     setShouldFetch(true);

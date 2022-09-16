@@ -5,8 +5,9 @@ import { KretsTable } from "../KretsTable";
 import useAccordionRows from "../useAccordionRow";
 import EditRow from "./EditRow";
 import StemmekretsRow from "./StemmekretsRow";
+import { useUtkastEntity } from "contexts/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
-import { KommuneRef } from "types/api";
+import { KommuneRef, StemmekretsRef } from "types/api";
 import {
   getNavnInSpraak,
   sortGrenserAlphabetically,
@@ -29,6 +30,11 @@ const StemmekretserPanel = ({ kommune }: Props) => {
 
   const sortedStemmekretser = sortGrenserAlphabetically(stemmekretserByKommune);
 
+  const utkastStemmekretser = useUtkastEntity(
+    sortedStemmekretser,
+    "stemmekretser"
+  ) as StemmekretsRef[] | undefined;
+
   return (
     <div>
       <PanelTitle>
@@ -37,7 +43,7 @@ const StemmekretserPanel = ({ kommune }: Props) => {
         })}
       </PanelTitle>
       <PanelTitle>{t("inndelinger.Stemmekretser")}</PanelTitle>
-      {sortedStemmekretser && (
+      {utkastStemmekretser && (
         <KretsTable>
           <thead>
             <tr>
@@ -50,7 +56,7 @@ const StemmekretserPanel = ({ kommune }: Props) => {
             </tr>
           </thead>
           <tbody>
-            {sortedStemmekretser.map((stemmekrets) => (
+            {utkastStemmekretser.map((stemmekrets) => (
               <React.Fragment key={stemmekrets.id}>
                 <StemmekretsRow
                   id={stemmekrets.id}

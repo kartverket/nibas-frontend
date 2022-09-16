@@ -1,11 +1,13 @@
 import { useEffect, useMemo } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { Feature } from "ol";
+import { GeoJSONFeature } from "ol/format/GeoJSON";
 import Geometry from "ol/geom/Geometry";
 import useSWR from "swr";
 import useNibasApi from "../useNibasApi";
 import { useEditGrenseValue } from "contexts/EditGrenserContext";
 import { Kretstype } from "contexts/InndelingerKretsContext";
+import { useUtkastFeature } from "contexts/UtkastContext";
 import { LayerId } from "hooks/layers/types";
 import useAsyncFeatures from "hooks/useAsyncFeatures";
 import { KretsRef } from "types/api";
@@ -57,19 +59,18 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     kretserByKommuneFetcher
   );
 
+  const utkastGeoJsons = useUtkastFeature(grenserGeoJsons);
+
   const allFeatures = useMemo(() => {
-    if (!grenserGeoJsons) return null;
+    if (!utkastGeoJsons) return null;
 
-    const features: Feature<Geometry>[] = [];
-
-    grenserGeoJsons?.forEach((geoJson) => {
-      getFeaturesFromGeoJson(geoJson).forEach((feature) => {
-        features.push(feature);
-      });
-    });
+    const features: Feature<Geometry>[] =
+      utkastGeoJsons?.flatMap((geoJson: GeoJSONFeature) =>
+        getFeaturesFromGeoJson(geoJson)
+      ) ?? [];
 
     return features;
-  }, [grenserGeoJsons]);
+  }, [utkastGeoJsons]);
 
   useEffect(() => {
     allFeatures?.forEach((feature) => {

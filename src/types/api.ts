@@ -19,12 +19,7 @@ export type AdministrativGrenseMetadata =
 export type AvtaltAvgrensningslinjeMetadata =
   components["schemas"]["AvtaltAvgrensningslinjeMetadata"];
 export type CommonMetadata = components["schemas"]["CommonMetadata"];
-export type Coordinate = components["schemas"]["Coordinate"];
-export type CoordinateSequence = components["schemas"]["CoordinateSequence"];
-export type CoordinateSequenceFactory =
-  components["schemas"]["CoordinateSequenceFactory"];
 export type Dokref = components["schemas"]["Dokref"];
-export type Envelope = components["schemas"]["Envelope"];
 export type FeatureCollection = components["schemas"]["FeatureCollection"];
 export type FeatureProperties = components["schemas"]["FeatureProperties"] & {
   inndelingerKontekst: InndelingerKontekst;
@@ -49,11 +44,9 @@ export type NasjonRef = components["schemas"]["NasjonRef"];
 export type NasjonRequest = components["schemas"]["NasjonRequest"];
 export type NasjonResponse = components["schemas"]["NasjonResponse"];
 export type Posisjonskvalitet = components["schemas"]["Posisjonskvalitet"];
-export type PrecisionModel = components["schemas"]["PrecisionModel"];
 export type RiksgrenseMetadata = components["schemas"]["RiksgrenseMetadata"];
 export type TerritorialgrenseMetadata =
   components["schemas"]["TerritorialgrenseMetadata"];
-export type Type = components["schemas"]["Type"];
 export type CommonGrenseMetadata =
   components["schemas"]["CommonGrenseMetadata"];
 export type GrunnkretsRef = components["schemas"]["GrunnkretsRef"];

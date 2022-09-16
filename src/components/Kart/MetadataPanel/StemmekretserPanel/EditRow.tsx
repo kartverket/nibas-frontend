@@ -5,6 +5,7 @@ import styled from "styled-components";
 import Input from "components/form/Input";
 import { StemmekretsEntry, useToolbarSave } from "contexts/ToolbarContext";
 import useKretsToolbarSync from "contexts/ToolbarContext/useKretsToolbarSync";
+import { useUtkastEntity } from "contexts/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
 import {
   StemmekretsRef,
@@ -42,6 +43,11 @@ const EditRow = ({ stemmekrets, kommuneId }: Props) => {
     id: stemmekrets.id,
   });
 
+  const utkastStemmekrets = useUtkastEntity(
+    fullStemmekrets,
+    "stemmekretser"
+  ) as StemmekretsResponse | undefined;
+
   const { register, setValue, getValues } = useForm<Inputs>();
 
   const { addEntry } = useToolbarSave();
@@ -49,15 +55,15 @@ const EditRow = ({ stemmekrets, kommuneId }: Props) => {
   const previousValues = useRef<Inputs>(getValues());
 
   useEffect(() => {
-    if (!fullStemmekrets) return;
+    if (!utkastStemmekrets) return;
 
-    setValue("stemmekretsnavn", fullStemmekrets.stemmekretsnavn);
-    setValue("stemmekretsnummer", fullStemmekrets.stemmekretsnummer);
-    setValue("tellekretsnavn", fullStemmekrets.tellekretsnavn ?? "");
-    setValue("tellekretsnummer", fullStemmekrets.tellekretsnummer ?? "");
+    setValue("stemmekretsnavn", utkastStemmekrets.stemmekretsnavn);
+    setValue("stemmekretsnummer", utkastStemmekrets.stemmekretsnummer);
+    setValue("tellekretsnavn", utkastStemmekrets.tellekretsnavn ?? "");
+    setValue("tellekretsnummer", utkastStemmekrets.tellekretsnummer ?? "");
 
     previousValues.current = getValues();
-  }, [fullStemmekrets, setValue, getValues]);
+  }, [utkastStemmekrets, setValue, getValues]);
 
   const setFormValues = useCallback(
     (change: StemmekretsEntry["changes"][number], direction: "to" | "from") => {
@@ -70,23 +76,23 @@ const EditRow = ({ stemmekrets, kommuneId }: Props) => {
   );
 
   useKretsToolbarSync<StemmekretsEntry>({
-    kretsId: fullStemmekrets?.id,
+    kretsId: utkastStemmekrets?.id,
     redoEventKey: "stemmekretsRedo",
     undoEventKey: "stemmekretsUndo",
     setFormValues,
   });
 
   const addStemmekretsEntry = () => {
-    if (!fullStemmekrets) return;
+    if (!utkastStemmekrets) return;
 
     addEntry({
       type: "stemmekrets",
       kommuneId,
       changes: [
         {
-          from: fromFormToRequest(previousValues.current, fullStemmekrets),
-          to: fromFormToRequest(getValues(), fullStemmekrets),
-          id: fullStemmekrets.id,
+          from: fromFormToRequest(previousValues.current, utkastStemmekrets),
+          to: fromFormToRequest(getValues(), utkastStemmekrets),
+          id: utkastStemmekrets.id,
         },
       ],
     });

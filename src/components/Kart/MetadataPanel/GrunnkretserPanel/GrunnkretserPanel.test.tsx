@@ -1,6 +1,25 @@
 import { render, screen, waitFor } from "test/test-utils";
+import { ReactNode } from "react";
 import GrunnkretserPanel from "./GrunnkretserPanel";
+import { UtkastContext } from "contexts/UtkastContext";
 import { mockKommuner } from "mocks/handlers/responses";
+import { GrunnkretsRequest } from "types/api";
+
+const renderWithProvider = (
+  ui: ReactNode,
+  data: Record<string, GrunnkretsRequest> = {}
+) =>
+  render(
+    <UtkastContext.Provider
+      value={{
+        utkast: {
+          grunnkretser: data,
+        },
+      }}
+    >
+      {ui}
+    </UtkastContext.Provider>
+  );
 
 const defaultProps: React.ComponentProps<typeof GrunnkretserPanel> = {
   kommune: mockKommuner[0],
@@ -8,7 +27,7 @@ const defaultProps: React.ComponentProps<typeof GrunnkretserPanel> = {
 
 describe("GrunnkretserPanel", () => {
   it("should render kommunes grunnkretser in table", async () => {
-    render(<GrunnkretserPanel {...defaultProps} />);
+    renderWithProvider(<GrunnkretserPanel {...defaultProps} />);
 
     expect(await screen.findByRole("table")).toBeInTheDocument();
 
@@ -27,6 +46,27 @@ describe("GrunnkretserPanel", () => {
     ).toBeInTheDocument();
     expect(
       await screen.findByRole("cell", { name: /12345679/i })
+    ).toBeInTheDocument();
+  });
+
+  it("should apply utkast correctly", async () => {
+    renderWithProvider(<GrunnkretserPanel {...defaultProps} />, {
+      "1": {
+        grunnkretsnummer: "87654321",
+        navn: "Mosekollen vest",
+        identifikasjon: {
+          lokalid: "lokalid",
+          navnerom: "navnerom",
+          versjonid: "versjonId",
+        },
+      },
+    });
+
+    expect(
+      await screen.findByRole("cell", { name: /mosekollen vest/i })
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByRole("cell", { name: /87654321/i })
     ).toBeInTheDocument();
   });
 });

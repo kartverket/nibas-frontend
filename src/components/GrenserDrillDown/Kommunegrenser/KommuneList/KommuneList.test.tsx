@@ -2,6 +2,7 @@ import { render, screen } from "test/test-utils";
 import React from "react";
 import KommuneList from "./KommuneList";
 import { EditGrenserProvider } from "contexts/EditGrenserContext";
+import { UtkastContext } from "contexts/UtkastContext";
 
 const defaultProps: React.ComponentProps<typeof KommuneList> = {
   fylke: {
@@ -15,7 +16,9 @@ describe("KommuneList", () => {
   it("should render two kommuner from API request", async () => {
     render(
       <EditGrenserProvider>
-        <KommuneList {...defaultProps} />
+        <UtkastContext.Provider value={{ utkast: {} }}>
+          <KommuneList {...defaultProps} />
+        </UtkastContext.Provider>
       </EditGrenserProvider>
     );
 

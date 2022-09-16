@@ -3,9 +3,16 @@ import { ReactNode } from "react";
 import userEvent from "@testing-library/user-event";
 import FylkeList from "./FylkeList";
 import { EditGrenserProvider } from "contexts/EditGrenserContext";
+import { UtkastContext } from "contexts/UtkastContext";
 
 const renderWithProvider = (ui: ReactNode) =>
-  render(<EditGrenserProvider>{ui}</EditGrenserProvider>);
+  render(
+    <EditGrenserProvider>
+      <UtkastContext.Provider value={{ utkast: {} }}>
+        {ui}
+      </UtkastContext.Provider>
+    </EditGrenserProvider>
+  );
 
 describe("FylkeList", () => {
   it("should render two names from fylker", async () => {
