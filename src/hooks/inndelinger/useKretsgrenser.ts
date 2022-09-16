@@ -64,13 +64,10 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   const allFeatures = useMemo(() => {
     if (!utkastGeoJsons) return null;
 
-    const features: Feature<Geometry>[] = [];
-
-    utkastGeoJsons?.forEach((geoJson: GeoJSONFeature) => {
-      getFeaturesFromGeoJson(geoJson).forEach((feature) => {
-        features.push(feature);
-      });
-    });
+    const features: Feature<Geometry>[] =
+      utkastGeoJsons?.flatMap((geoJson: GeoJSONFeature) =>
+        getFeaturesFromGeoJson(geoJson)
+      ) ?? [];
 
     return features;
   }, [utkastGeoJsons]);
