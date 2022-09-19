@@ -32,7 +32,7 @@ const StemmekretserPanel = ({ kommune }: Props) => {
 
   const utkastStemmekretser = useUtkastEntity(
     sortedStemmekretser,
-    "stemmekretsEndringer"
+    "stemmekretsendringer"
   ) as StemmekretsRef[] | undefined;
 
   return (

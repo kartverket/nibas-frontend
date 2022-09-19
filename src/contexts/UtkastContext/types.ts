@@ -3,13 +3,13 @@ import { GrunnkretsRequest, StemmekretsRequest } from "types/api";
 import { WithId } from "types/common";
 
 export type Utkast = {
-  grunnkretsEndringer?: WithId<GrunnkretsRequest>[];
-  stemmekretsEndringer?: WithId<StemmekretsRequest>[];
-  grenser?: GeoJSONFeatureCollection[];
+  grunnkretsendringer?: WithId<GrunnkretsRequest>[];
+  stemmekretsendringer?: WithId<StemmekretsRequest>[];
+  endredeFeatures?: GeoJSONFeatureCollection[];
 };
 
-export type EntityUtkastType = "grunnkretsEndringer" | "stemmekretsEndringer";
-export type FeatureUtkastType = "grenser";
+export type EntityUtkastType = "grunnkretsendringer" | "stemmekretsendringer";
+export type FeatureUtkastType = "endredeFeatures";
 
 export type UtkastResponse = {
   id: string;

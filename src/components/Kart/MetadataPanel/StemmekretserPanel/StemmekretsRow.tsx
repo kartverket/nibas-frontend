@@ -20,7 +20,7 @@ const StemmekretsRow = ({ id, toggleRow, isRowOpen }: Props) => {
 
   const utkastStemmekrets = useUtkastEntity(
     stemmekrets,
-    "stemmekretsEndringer"
+    "stemmekretsendringer"
   ) as StemmekretsResponse | undefined;
 
   if (!utkastStemmekrets) return null;
