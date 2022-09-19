@@ -8,11 +8,17 @@ import {
 
 const getCombinedEntity = <T extends UtkastResponse>(
   entity: T,
-  utkastSlice: Utkast[EntityUtkastType]
+  utkastChanges: Utkast[EntityUtkastType]
 ) => {
-  if (!utkastSlice) return entity;
+  if (!utkastChanges) return entity;
 
-  const utkastForEntity = utkastSlice[entity.id];
+  // https://github.com/microsoft/TypeScript/issues/33591
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const utkastForEntity = (utkastChanges as any[]).find(
+    (requestWithId) => requestWithId.id === entity.id
+  ) as typeof utkastChanges[number];
+
+  if (!utkastForEntity) return entity;
 
   return {
     ...entity,
@@ -62,11 +68,15 @@ export const applyNonFeatureUtkast = <
 
   if (!utkastSlice) return entity;
 
-  if (Array.isArray(entity) && type === "stemmekretser") {
+  if (Array.isArray(entity) && type === "stemmekretsEndringer") {
     // navn på stemmekrets har forskjellig field på StemmekretsRef og StemmekretsRequest
 
     return entity.map((e) => {
-      const utkastForEntity = utkast[type]?.[e.id];
+      const utkastForEntity = utkast[type]?.find(
+        (change) => change.id === e.id
+      );
+
+      if (!utkastForEntity) return e;
 
       return {
         ...e,

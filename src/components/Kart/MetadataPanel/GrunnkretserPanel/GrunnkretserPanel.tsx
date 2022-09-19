@@ -43,7 +43,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
 
   const utkastGrunnkretser = useUtkastEntity(
     sortedGrunnkretser,
-    "grunnkretser"
+    "grunnkretsEndringer"
   ) as GrunnkretsRef[] | undefined;
 
   const filteredGrunnkretser = useMemo(() => {
