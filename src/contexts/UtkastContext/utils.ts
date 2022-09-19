@@ -62,7 +62,7 @@ export const applyNonFeatureUtkast = <
 
   if (!utkastSlice) return entity;
 
-  if (Array.isArray(entity) && type === "stemmekretser") {
+  if (Array.isArray(entity) && type === "stemmekretsendringer") {
     // navn på stemmekrets har forskjellig field på StemmekretsRef og StemmekretsRequest
 
     return entity.map((e) => {
@@ -85,7 +85,7 @@ export const applyFeatureUtkast = (
   featureCollection: GeoJSONFeatureCollection,
   utkast: Utkast
 ) => {
-  const featuresSlice = utkast.grenser;
+  const featuresSlice = utkast.endredeFeatures;
   const newFeatures = getCombinedFeatures(featureCollection, featuresSlice);
 
   return {
