@@ -1,15 +1,14 @@
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { GrunnkretsRequest, StemmekretsRequest } from "types/api";
-import { WithId } from "types/common";
 
 export type Utkast = {
-  grunnkretsendringer?: WithId<GrunnkretsRequest>[];
-  stemmekretsendringer?: WithId<StemmekretsRequest>[];
-  endredeFeatures?: GeoJSONFeatureCollection[];
+  grunnkretser?: Record<string, GrunnkretsRequest>;
+  stemmekretser?: Record<string, StemmekretsRequest>;
+  grenser?: GeoJSONFeatureCollection[];
 };
 
-export type EntityUtkastType = "grunnkretsendringer" | "stemmekretsendringer";
-export type FeatureUtkastType = "endredeFeatures";
+export type EntityUtkastType = "stemmekretser" | "grunnkretser";
+export type FeatureUtkastType = "grenser";
 
 export type UtkastResponse = {
   id: string;

@@ -8,17 +8,11 @@ import {
 
 const getCombinedEntity = <T extends UtkastResponse>(
   entity: T,
-  utkastChanges: Utkast[EntityUtkastType]
+  utkastSlice: Utkast[EntityUtkastType]
 ) => {
-  if (!utkastChanges) return entity;
+  if (!utkastSlice) return entity;
 
-  // https://github.com/microsoft/TypeScript/issues/33591
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const utkastForEntity = (utkastChanges as any[]).find(
-    (requestWithId) => requestWithId.id === entity.id
-  ) as typeof utkastChanges[number];
-
-  if (!utkastForEntity) return entity;
+  const utkastForEntity = utkastSlice[entity.id];
 
   return {
     ...entity,
@@ -68,15 +62,11 @@ export const applyNonFeatureUtkast = <
 
   if (!utkastSlice) return entity;
 
-  if (Array.isArray(entity) && type === "stemmekretsendringer") {
+  if (Array.isArray(entity) && type === "stemmekretser") {
     // navn på stemmekrets har forskjellig field på StemmekretsRef og StemmekretsRequest
 
     return entity.map((e) => {
-      const utkastForEntity = utkast[type]?.find(
-        (change) => change.id === e.id
-      );
-
-      if (!utkastForEntity) return e;
+      const utkastForEntity = utkast[type]?.[e.id];
 
       return {
         ...e,
@@ -95,7 +85,7 @@ export const applyFeatureUtkast = (
   featureCollection: GeoJSONFeatureCollection,
   utkast: Utkast
 ) => {
-  const featuresSlice = utkast.endredeFeatures;
+  const featuresSlice = utkast.grenser;
   const newFeatures = getCombinedFeatures(featureCollection, featuresSlice);
 
   return {
