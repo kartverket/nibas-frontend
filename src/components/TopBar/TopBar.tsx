@@ -42,7 +42,7 @@ const TopBar = () => {
 
 const Wrapper = styled.div`
   grid-area: topbar;
-  height: 70px;
+  height: 90px;
   display: flex;
 `;
 
