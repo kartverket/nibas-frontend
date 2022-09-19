@@ -16,6 +16,7 @@ export type UtkastResponse = {
 
 export type UtkastContextValue = {
   utkast: Utkast;
+  hasChanges: boolean;
 };
 
 export type UtkastEntity = UtkastResponse | UtkastResponse[] | undefined;

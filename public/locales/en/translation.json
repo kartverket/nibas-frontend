@@ -65,7 +65,8 @@
     "Slett {{ item }}": "__STRING_NOT_TRANSLATED__",
     "Legg til {{ item }}": "__STRING_NOT_TRANSLATED__",
     "Ny {{ item }}": "__STRING_NOT_TRANSLATED__",
-    "Endre": "__STRING_NOT_TRANSLATED__"
+    "Endre": "__STRING_NOT_TRANSLATED__",
+    "Lagre som": "__STRING_NOT_TRANSLATED__"
   },
   "Ja": "__STRING_NOT_TRANSLATED__",
   "Nei": "__STRING_NOT_TRANSLATED__",
@@ -82,5 +83,12 @@
     "Tellekretsnavn": "__STRING_NOT_TRANSLATED__",
     "Tellekretsnummer": "__STRING_NOT_TRANSLATED__"
   },
-  "Endre": "__STRING_NOT_TRANSLATED__"
+  "Endre": "__STRING_NOT_TRANSLATED__",
+  "utkast": {
+    "Ikke definert": "__STRING_NOT_TRANSLATED__",
+    "Vedtatt grenseendring": "__STRING_NOT_TRANSLATED__",
+    "Vedtatt sammenslåing": "__STRING_NOT_TRANSLATED__",
+    "Navn på utkast": "__STRING_NOT_TRANSLATED__",
+    "Type utkast": "__STRING_NOT_TRANSLATED__"
+  }
 }

@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { useMatch } from "react-router-dom";
 import {
@@ -51,24 +51,30 @@ export const UtkastProvider: React.FC = ({ children }) => {
     setUtkast(apiUtkast);
   }, [apiUtkast]);
 
-  const value = { utkast };
+  const hasChanges = useMemo(() => Object.keys(utkast).length > 0, [utkast]);
+
+  const value = { utkast, hasChanges };
 
   return (
     <UtkastContext.Provider value={value}>{children}</UtkastContext.Provider>
   );
 };
 
+export const useUtkast = () => {
+  const context = useContext(UtkastContext);
+
+  if (!context) {
+    throw new Error("useUtkast must be used within a UtkastProvider");
+  }
+
+  return context;
+};
+
 export const useUtkastEntity = <T extends UtkastEntity>(
   entity: T,
   type: EntityUtkastType
 ) => {
-  const context = useContext(UtkastContext);
-
-  if (!context) {
-    throw new Error("useUtkastEntity must be used within a UtkastProvider");
-  }
-
-  const { utkast } = context;
+  const { utkast } = useUtkast();
 
   if (!entity) return;
 
@@ -78,15 +84,7 @@ export const useUtkastEntity = <T extends UtkastEntity>(
 export const useUtkastFeature = (
   featureCollection: GeoJSONFeatureCollection | GeoJSONFeatureCollection[]
 ) => {
-  const context = useContext(UtkastContext);
-
-  if (!context) {
-    throw new Error(
-      "useUtkastGrenseApply must be used within a UtkastProvider"
-    );
-  }
-
-  const { utkast } = context;
+  const { utkast } = useUtkast();
 
   if (!featureCollection) return;
 

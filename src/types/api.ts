@@ -61,6 +61,8 @@ export type StatistiskGrenseMetadata =
   components["schemas"]["StatistiskgrenseMetadata"] & {
     dokumentasjonsreferanser: undefined;
   };
+export type UtkastRequest = components["schemas"]["UtkastRequest"];
+export type UtkastType = UtkastRequest["endringstype"];
 
 // custom typer basert på api doc
 export type ApiPath = keyof paths;
