@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { KretsTable } from "../KretsTable";
+import { KretsTable, KretsTableWrapper } from "../KretsTable";
 import { BlockLabel } from "../metadataComponents";
 import useAccordionRows from "../useAccordionRow";
 import EditRow from "./EditRow";
@@ -57,7 +57,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
   }, [searchValue, utkastGrunnkretser]);
 
   return (
-    <div>
+    <>
       <PanelTitle tag="h2" size="xs">
         {t("{{ kommuneNavn }} kommune", {
           kommuneNavn: getNavnInSpraak(kommune.navn, "nor"),
@@ -74,39 +74,41 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
         {t("inndelinger.Grunnkretser")}
       </PanelTitle>
       {filteredGrunnkretser && (
-        <KretsTable>
-          <thead>
-            <tr>
-              <th>{t("tabell.Navn")}</th>
-              <th>{t("grunnkrets.Grunnkretsnummer")}</th>
-              <th>{t("action.Endre")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredGrunnkretser.map((grunnkrets) => (
-              <React.Fragment key={grunnkrets.id}>
-                <KretsRow onClick={() => toggleRow(grunnkrets.id)}>
-                  <td>{getNavnInSpraak(grunnkrets.navn, "nor")}</td>
-                  <td>{grunnkrets.grunnkretsnummer}</td>
-                  <td>
-                    <Button
-                      variant="unstyled"
-                      onClick={() => toggleRow(grunnkrets.id)}
-                      icon={
-                        isRowOpen(grunnkrets.id) ? <CaretUp /> : <CaretDown />
-                      }
-                    />
-                  </td>
-                </KretsRow>
-                {isRowOpen(grunnkrets.id) && (
-                  <EditRow grunnkrets={grunnkrets} kommuneId={kommune.id} />
-                )}
-              </React.Fragment>
-            ))}
-          </tbody>
-        </KretsTable>
+        <KretsTableWrapper>
+          <KretsTable>
+            <thead>
+              <tr>
+                <th>{t("tabell.Navn")}</th>
+                <th>{t("grunnkrets.Grunnkretsnummer")}</th>
+                <th>{t("action.Endre")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredGrunnkretser.map((grunnkrets) => (
+                <React.Fragment key={grunnkrets.id}>
+                  <KretsRow onClick={() => toggleRow(grunnkrets.id)}>
+                    <td>{getNavnInSpraak(grunnkrets.navn, "nor")}</td>
+                    <td>{grunnkrets.grunnkretsnummer}</td>
+                    <td>
+                      <Button
+                        variant="unstyled"
+                        onClick={() => toggleRow(grunnkrets.id)}
+                        icon={
+                          isRowOpen(grunnkrets.id) ? <CaretUp /> : <CaretDown />
+                        }
+                      />
+                    </td>
+                  </KretsRow>
+                  {isRowOpen(grunnkrets.id) && (
+                    <EditRow grunnkrets={grunnkrets} kommuneId={kommune.id} />
+                  )}
+                </React.Fragment>
+              ))}
+            </tbody>
+          </KretsTable>
+        </KretsTableWrapper>
       )}
-    </div>
+    </>
   );
 };
 

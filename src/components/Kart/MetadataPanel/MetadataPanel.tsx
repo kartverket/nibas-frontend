@@ -38,7 +38,6 @@ export const MetadataPanelWrapper = styled(KartInteractable)`
   justify-content: space-between;
   margin-left: auto;
   padding: 16px;
-  overflow: auto;
   border-radius: 3px;
   height: 500px;
   border: 2px solid ${({ theme }) => theme.colors.blue};
