@@ -42,7 +42,7 @@ const TopBar = () => {
 
 const Wrapper = styled.div`
   grid-area: topbar;
-  height: 90px;
+  height: 70px;
   display: flex;
 `;
 
@@ -63,7 +63,9 @@ const LeftSide = styled.div`
 
 const RightSide = styled.div`
   margin-right: 16px;
-
+  display: flex;
+  align-items: center;
+  justify-content: right;
   p {
     margin: 8px 0;
   }
