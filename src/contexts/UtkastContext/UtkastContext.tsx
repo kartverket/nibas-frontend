@@ -1,15 +1,9 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext } from "react";
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { useMatch } from "react-router-dom";
-import {
-  EntityUtkastType,
-  Utkast,
-  UtkastContextValue,
-  UtkastEntity,
-} from "./types";
+import { EntityUtkastType, UtkastContextValue, UtkastEntity } from "./types";
 import { applyFeatureUtkast, applyNonFeatureUtkast } from "./utils";
 import useNibasApi from "hooks/useNibasApi";
-import { ApiPath } from "types/api";
 
 // utkastet per ID må byttes ut med de nye verdiene på lagring
 // det er kun den siste versjonen av en request som skal brukes,
@@ -25,35 +19,25 @@ export const UtkastContext = createContext<UtkastContextValue | undefined>(
 );
 
 export const UtkastProvider: React.FC = ({ children }) => {
-  const [utkast, setUtkast] = useState<Utkast>({});
-
   const utkastId = useMatch("/:utkastId")?.params.utkastId;
 
-  // endepunktet finnes ikke enda, så vi må trikse det til litt frem til det gjør det
-  const apiUtkast = useNibasApi(
-    utkastId ? ("/v1/utkast/{id}" as ApiPath) : null,
+  const { data: utkast } = useNibasApi(
+    utkastId ? "/v1/utkast/{id}" : null,
     {
-      id: utkastId,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any,
+      // id blir ikke brukt før den er truthy, så vi kan trygt si at den
+      // ikke er null her
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      id: utkastId!,
+    },
     {
       shouldRetryOnError: false,
       revalidateIfStale: false,
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ).data as any;
+  );
 
-  useEffect(() => {
-    if (!apiUtkast) return;
-
-    setUtkast(apiUtkast);
-  }, [apiUtkast]);
-
-  const hasChanges = useMemo(() => Object.keys(utkast).length > 0, [utkast]);
-
-  const value = { utkast, hasChanges };
+  const value = { utkast };
 
   return (
     <UtkastContext.Provider value={value}>{children}</UtkastContext.Provider>
@@ -76,7 +60,7 @@ export const useUtkastEntity = <T extends UtkastEntity>(
 ) => {
   const { utkast } = useUtkast();
 
-  if (!entity) return;
+  if (!entity || !utkast) return entity;
 
   return applyNonFeatureUtkast(entity, utkast, type);
 };
@@ -86,7 +70,7 @@ export const useUtkastFeature = (
 ) => {
   const { utkast } = useUtkast();
 
-  if (!featureCollection) return;
+  if (!featureCollection || !utkast) return featureCollection;
 
   if (Array.isArray(featureCollection)) {
     return featureCollection.map((collection) =>

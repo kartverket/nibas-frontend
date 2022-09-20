@@ -1,17 +1,10 @@
+import { useState } from "react";
 import styled from "styled-components";
 import { KartInteractable } from "../KartInteractable";
-import Button from "components/form/Button";
-import { useToolbar } from "contexts/ToolbarContext";
-import { useUtkast } from "contexts/UtkastContext";
 import CreateUtkastToolbar from "./CreateUtkastToolbar";
-import { useState } from "react";
 import DefaultToolbar from "./DefaultToolbar";
 
 const Toolbar = () => {
-  const { utkast, hasChanges } = useUtkast();
-  console.log(utkast);
-  console.log(hasChanges);
-
   const [createUtkastOpen, setCreateUtkastOpen] = useState(false);
 
   return (

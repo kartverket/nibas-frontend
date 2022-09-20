@@ -1,22 +1,14 @@
-import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
-import { GrunnkretsRequest, StemmekretsRequest } from "types/api";
-
-export type Utkast = {
-  grunnkretsendringer?: Record<string, GrunnkretsRequest>;
-  stemmekretsendringer?: Record<string, StemmekretsRequest>;
-  endredeFeatures?: GeoJSONFeatureCollection[];
-};
+import { UtkastResponse } from "types/api";
 
 export type EntityUtkastType = "stemmekretsendringer" | "grunnkretsendringer";
-export type FeatureUtkastType = "endredeFeatures";
+export type FeatureUtkastType = "featureEndringer";
 
-export type UtkastResponse = {
+export type ResponseWithId = {
   id: string;
 };
 
 export type UtkastContextValue = {
-  utkast: Utkast;
-  hasChanges: boolean;
+  utkast: UtkastResponse | undefined;
 };
 
-export type UtkastEntity = UtkastResponse | UtkastResponse[] | undefined;
+export type UtkastEntity = ResponseWithId | ResponseWithId[] | undefined;

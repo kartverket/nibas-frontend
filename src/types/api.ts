@@ -62,7 +62,7 @@ export type StatistiskGrenseMetadata =
     dokumentasjonsreferanser: undefined;
   };
 export type UtkastRequest = components["schemas"]["UtkastRequest"];
-export type UtkastType = UtkastRequest["endringstype"];
+export type UtkastResponse = components["schemas"]["UtkastResponse"];
 
 // custom typer basert på api doc
 export type ApiPath = keyof paths;
@@ -85,3 +85,5 @@ export type Metadata =
   | StatistiskGrenseMetadata;
 export type KretsRef = GrunnkretsRef | StemmekretsRef;
 export type GrenseRef = FylkeRef | KommuneRef | KretsRef;
+export type UtkastType = UtkastRequest["endringstype"];
+export type UtkastOperasjoner = UtkastResponse["operasjoner"];

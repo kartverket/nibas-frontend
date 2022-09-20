@@ -2,16 +2,17 @@ import { GeoJSONFeature, GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import {
   EntityUtkastType,
   FeatureUtkastType,
-  Utkast,
-  UtkastResponse,
+  UtkastEntity,
+  ResponseWithId,
 } from "./types";
+import { UtkastResponse } from "types/api";
 
-const getCombinedEntity = <T extends UtkastResponse>(
+const getCombinedEntity = <T extends ResponseWithId>(
   entity: T,
-  utkastSlice: Utkast[EntityUtkastType]
+  utkastSlice: NonNullable<
+    UtkastResponse["operasjoner"]["metadataendringer"][EntityUtkastType]
+  >
 ) => {
-  if (!utkastSlice) return entity;
-
   const utkastForEntity = utkastSlice[entity.id];
 
   return {
@@ -22,7 +23,7 @@ const getCombinedEntity = <T extends UtkastResponse>(
 
 const getCombinedFeatures = (
   featureCollection: GeoJSONFeatureCollection,
-  featuresSlice: Utkast[FeatureUtkastType]
+  featuresSlice: UtkastResponse["operasjoner"][FeatureUtkastType]
 ) => {
   if (!featuresSlice) return featureCollection.features;
 
@@ -51,14 +52,12 @@ const getCombinedFeatures = (
   });
 };
 
-export const applyNonFeatureUtkast = <
-  T extends UtkastResponse | UtkastResponse[]
->(
+export const applyNonFeatureUtkast = <T extends NonNullable<UtkastEntity>>(
   entity: T,
-  utkast: Utkast,
+  utkast: UtkastResponse,
   type: EntityUtkastType
 ) => {
-  const utkastSlice = utkast[type];
+  const utkastSlice = utkast.operasjoner.metadataendringer[type];
 
   if (!utkastSlice) return entity;
 
@@ -66,7 +65,8 @@ export const applyNonFeatureUtkast = <
     // navn på stemmekrets har forskjellig field på StemmekretsRef og StemmekretsRequest
 
     return entity.map((e) => {
-      const utkastForEntity = utkast[type]?.[e.id];
+      const utkastForEntity =
+        utkast.operasjoner.metadataendringer[type]?.[e.id];
 
       return {
         ...e,
@@ -83,9 +83,9 @@ export const applyNonFeatureUtkast = <
 
 export const applyFeatureUtkast = (
   featureCollection: GeoJSONFeatureCollection,
-  utkast: Utkast
+  utkast: UtkastResponse
 ) => {
-  const featuresSlice = utkast.endredeFeatures;
+  const featuresSlice = utkast.operasjoner.featureEndringer;
   const newFeatures = getCombinedFeatures(featureCollection, featuresSlice);
 
   return {

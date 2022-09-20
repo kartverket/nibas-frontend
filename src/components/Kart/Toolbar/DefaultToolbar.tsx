@@ -1,10 +1,6 @@
-import styled from "styled-components";
-import { KartInteractable } from "../KartInteractable";
 import Button from "components/form/Button";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext";
-import CreateUtkastToolbar from "./CreateUtkastToolbar";
-import { useState } from "react";
 
 type Props = {
   openCreateUtkast: () => void;
@@ -12,16 +8,16 @@ type Props = {
 
 const DefaultToolbar = ({ openCreateUtkast }: Props) => {
   const { canSave, save, undo, redo } = useToolbar();
-  const { hasChanges } = useUtkast();
+  const { utkast } = useUtkast();
 
   return (
     <div>
-      {hasChanges && (
+      {utkast && (
         <Button onClick={save} disabled={!canSave}>
           Lagre
         </Button>
       )}
-      {!hasChanges && (
+      {!utkast && (
         <Button onClick={openCreateUtkast} disabled={!canSave}>
           Lagre som
         </Button>
