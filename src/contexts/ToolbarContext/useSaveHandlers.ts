@@ -4,16 +4,15 @@ import { useSWRConfig } from "swr";
 import {
   GrenseEntry,
   GrunnkretsEntry,
-  HistoryEntry,
   StemmekretsEntry,
+  ToolbarHistory,
 } from "./types";
 import { updateGrunnkrets, updateStemmekrets } from "api/enheter";
 import { updateGrenser } from "api/grenser";
-import { History } from "hooks/useHistory";
 import { GrunnkretsRequest, StemmekretsRequest } from "types/api";
 import { getLayerById } from "utils/map/layers";
 
-const getSaveGrunnkretserObject = (history: History<HistoryEntry>) => {
+const getSaveGrunnkretserObject = (history: ToolbarHistory) => {
   return history.entries
     .slice(0, history.index)
     .filter((entry) => entry.type === "grunnkrets")
@@ -36,7 +35,7 @@ const getSaveGrunnkretserObject = (history: History<HistoryEntry>) => {
     }, {} as Record<string, Record<string, GrunnkretsRequest>>);
 };
 
-const getSaveStemmekretserObject = (history: History<HistoryEntry>) => {
+const getSaveStemmekretserObject = (history: ToolbarHistory) => {
   return history.entries
     .slice(0, history.index)
     .filter((entry) => entry.type === "stemmekrets")
@@ -59,7 +58,7 @@ const getSaveStemmekretserObject = (history: History<HistoryEntry>) => {
     }, {} as Record<string, Record<string, StemmekretsRequest>>);
 };
 
-const getSaveGrenserObject = (history: History<HistoryEntry>) => {
+const getSaveGrenserObject = (history: ToolbarHistory) => {
   return history.entries
     .slice(0, history.index)
     .filter((entry) => entry.type === "grense" || entry.type === "metadata")
@@ -78,7 +77,7 @@ const getSaveGrenserObject = (history: History<HistoryEntry>) => {
     }, {} as Record<string, number[][]>);
 };
 
-const useSaveHandlers = (history: History<HistoryEntry>) => {
+const useSaveHandlers = (history: ToolbarHistory) => {
   const { mutate } = useSWRConfig();
 
   const { tokenHolderFunc } = useAuthenticationFlow();
