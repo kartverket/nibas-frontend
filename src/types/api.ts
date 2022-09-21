@@ -63,6 +63,9 @@ export type StatistiskGrenseMetadata =
   };
 export type UtkastRequest = components["schemas"]["UtkastRequest"];
 export type UtkastResponse = components["schemas"]["UtkastResponse"];
+export type UtkastMetadataendringer =
+  components["schemas"]["Metadataendringer"];
+export type UtkastGrenseendringer = components["schemas"]["Grenseendringer"];
 
 // custom typer basert på api doc
 export type ApiPath = keyof paths;

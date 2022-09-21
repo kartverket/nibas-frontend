@@ -668,6 +668,39 @@ export interface components {
        */
       kodeverdi: number;
     };
+    /** @description Representasjon av endringer på grensegeometri. */
+    Grenseendringer: {
+      /** @description Endringer på features. */
+      endredeFeatures?: components["schemas"]["FeatureCollection"][];
+    };
+    /** @description Representasjon av endringer på metadata. */
+    Metadataendringer: {
+      /** @description Endringer på nasjon. */
+      nasjonsendringer?: {
+        [key: string]: components["schemas"]["NasjonRequest"];
+      };
+      /** @description Endringer på fylke. */
+      fylkesendringer?: {
+        [key: string]: components["schemas"]["FylkeRequest"];
+      };
+      /** @description Endringer på kommune. */
+      kommuneendringer?: {
+        [key: string]: components["schemas"]["KommuneRequest"];
+      };
+      /** @description Endringer på grunnkrets. */
+      grunnkretsendringer?: {
+        [key: string]: components["schemas"]["GrunnkretsRequest"];
+      };
+      /** @description Endringer på stemmekrets. */
+      stemmekretsendringer?: {
+        [key: string]: components["schemas"]["StemmekretsRequest"];
+      };
+    };
+    /** @description Representasjon av operasjoner/handlinger som er utført i klienten. */
+    Operasjoner: {
+      metadataendringer?: components["schemas"]["Metadataendringer"];
+      grenseendringer?: components["schemas"]["Grenseendringer"];
+    };
     /** @description Utkastet som ønskes opprettet */
     UtkastRequest: {
       /** @description Arbeidsnavnet til utkastet. */
@@ -678,38 +711,8 @@ export interface components {
        * Format: date
        * @description Tidspunktet utkastet skal være gyldig fra.
        */
-      gyldigFra: string;
-      operasjoner: {
-        metadataendringer: {
-          /** @description Liste av endringer på nasjon. */
-          nasjonsendringer?: Record<
-            string,
-            components["schemas"]["NasjonRequest"]
-          >;
-          /** @description Liste av endringer på fylke. */
-          fylkesendringer?: Record<
-            string,
-            components["schemas"]["FylkeRequest"]
-          >;
-          /** @description Liste av endringer på kommune. */
-          kommuneendringer?: Record<
-            string,
-            components["schemas"]["KommuneRequest"]
-          >;
-          /** @description Liste av endringer på grunnkrets. */
-          grunnkretsendringer?: Record<
-            string,
-            components["schemas"]["GrunnkretsRequest"]
-          >;
-          /** @description Liste av endringer på stemmekrets. */
-          stemmekretsendringer?: Record<
-            string,
-            components["schemas"]["StemmekretsRequest"]
-          >;
-        };
-        /** @description Liste av endringer på grenser. */
-        featureEndringer?: components["schemas"]["FeatureCollection"][];
-      };
+      gyldigFra?: string;
+      operasjoner: components["schemas"]["Operasjoner"];
     };
     /** @description Representasjon av audit info for et objekt. */
     AuditInfoResponse: {
@@ -736,43 +739,13 @@ export interface components {
        * @description Tidspunktet utkastet skal være gyldig fra.
        */
       gyldigFra: string;
-      operasjoner: {
-        metadataendringer: {
-          /** @description Liste av endringer på nasjon. */
-          nasjonsendringer?: Record<
-            string,
-            components["schemas"]["NasjonRequest"]
-          >;
-          /** @description Liste av endringer på fylke. */
-          fylkesendringer?: Record<
-            string,
-            components["schemas"]["FylkeRequest"]
-          >;
-          /** @description Liste av endringer på kommune. */
-          kommuneendringer?: Record<
-            string,
-            components["schemas"]["KommuneRequest"]
-          >;
-          /** @description Liste av endringer på grunnkrets. */
-          grunnkretsendringer?: Record<
-            string,
-            components["schemas"]["GrunnkretsRequest"]
-          >;
-          /** @description Liste av endringer på stemmekrets. */
-          stemmekretsendringer?: Record<
-            string,
-            components["schemas"]["StemmekretsRequest"]
-          >;
-        };
-        /** @description Liste av endringer på grenser. */
-        featureEndringer?: components["schemas"]["FeatureCollection"][];
-      };
       /**
        * Format: date-time
        * @description Da utkastet ble opprettet.
        */
       opprettetDato: string;
       auditInfoResponse: components["schemas"]["AuditInfoResponse"];
+      operasjoner: components["schemas"]["Operasjoner"];
     };
     /** @description En referanse til en historisk revisjon av en administrativ enhet */
     RevisjonRef: {
