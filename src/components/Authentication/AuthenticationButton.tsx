@@ -6,7 +6,7 @@ import Button from "components/form/Button";
  * Eksempel som rendrer en login eller logout-knapp basert på om man er autentisert.
  * Henter ut isAuthenticated-funksjonen, samt login og logout-funksjonene fra useAuthenticationFlow-hook.
  */
-export default function AuthenticationButton() {
+export const AuthenticationButton = () => {
   const { isAuthenticatedFunc, handleAuthenticateFunc, handleLogoutFunc } =
     useAuthenticationFlow();
 
@@ -22,4 +22,6 @@ export default function AuthenticationButton() {
   );
 
   return isAuthenticatedFunc() ? logoutButton : loginButton;
-}
+};
+
+export default AuthenticationButton;

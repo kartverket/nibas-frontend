@@ -1,6 +1,5 @@
-export const fetcher = <T extends unknown>(
-  ...args: Parameters<typeof fetch>
-): Promise<T> => fetch(...args).then((res) => res.json());
+export const fetcher = <T>(...args: Parameters<typeof fetch>): Promise<T> =>
+  fetch(...args).then((res) => res.json());
 
 export const fetcherWithToken = async (url: string | null, token?: string) => {
   if (!url) return;
