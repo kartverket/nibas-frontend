@@ -13,7 +13,6 @@ import { historyToUtkastOperations } from "contexts/UtkastContext/utils";
 import { Translation } from "i18n";
 
 const translateKeysByEndringsType: Record<string, string> = {
-  "Ikke definert": "utkast.Ikke definert",
   "Vedtatt grensejustering": "utkast.Vedtatt grensejustering",
   "Vedtatt sammenslåing": "utkast.Vedtatt sammenslåing",
   Retting: "utkast.Retting",
@@ -30,7 +29,7 @@ type Props = {
 const CreateUtkastToolbar = ({ closeCreateUtkast }: Props) => {
   const { t } = useTranslation();
   const [utkastName, setUtkastName] = useState("");
-  const [utkastType, setUtkastType] = useState("IKKE_DEFINERT");
+  const [utkastType, setUtkastType] = useState("");
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { history, clearHistory } = useToolbar();
   const navigate = useNavigate();
@@ -70,6 +69,9 @@ const CreateUtkastToolbar = ({ closeCreateUtkast }: Props) => {
           value={utkastType}
           onChange={(e) => setUtkastType(e.target.value)}
         >
+          <option value="" disabled>
+            ---
+          </option>
           {Object.keys(translateKeysByEndringsType).map((type) => (
             <option key={type} value={type}>
               {t(translateKeysByEndringsType[type] as Translation)}
@@ -81,7 +83,9 @@ const CreateUtkastToolbar = ({ closeCreateUtkast }: Props) => {
       <Button onClick={closeCreateUtkast} variant="secondary">
         {t("action.Lukk")}
       </Button>
-      <Button onClick={createUtkast}>{t("action.Lagre som")}</Button>
+      <Button onClick={createUtkast} disabled={utkastType === ""}>
+        {t("action.Lagre som")}
+      </Button>
     </Wrapper>
   );
 };
