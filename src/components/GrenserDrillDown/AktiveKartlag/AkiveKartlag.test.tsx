@@ -14,9 +14,10 @@ const renderWithProvider = (ui: ReactNode) =>
           kommune: { 2: { editing: true, visible: true } },
         },
         setObjectValue: jest.fn(),
+        setEditingObject: jest.fn(),
       }}
     >
-      <UtkastContext.Provider value={{ utkast: {} }}>
+      <UtkastContext.Provider value={{ utkast: undefined }}>
         {ui}
       </UtkastContext.Provider>
     </EditGrenserContext.Provider>

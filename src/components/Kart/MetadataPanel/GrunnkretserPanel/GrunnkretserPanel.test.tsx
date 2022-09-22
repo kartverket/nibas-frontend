@@ -13,8 +13,12 @@ const renderWithProvider = (
     <UtkastContext.Provider
       value={{
         utkast: {
-          grunnkretser: data,
-        },
+          operasjoner: {
+            metadataendringer: {
+              grunnkretsendringer: data,
+            },
+          },
+        } as any, // ikke interessert i andre felter
       }}
     >
       {ui}

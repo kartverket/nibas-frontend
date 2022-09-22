@@ -17,7 +17,17 @@ const renderWithProvider = (
 ) =>
   render(
     <ToolbarProvider>
-      <UtkastContext.Provider value={{ utkast: { stemmekretser: utkastData } }}>
+      <UtkastContext.Provider
+        value={{
+          utkast: {
+            operasjoner: {
+              metadataendringer: {
+                stemmekretsendringer: utkastData,
+              },
+            },
+          } as any, // ikke interessert i andre felter
+        }}
+      >
         {ui}
       </UtkastContext.Provider>
     </ToolbarProvider>

@@ -9,6 +9,7 @@ import {
 import { MetadataPanelProvider } from "contexts/MetadataPanelContext";
 import { SidebarPanelProvider } from "contexts/SidebarPanelContext";
 import { ToolbarProvider } from "contexts/ToolbarContext";
+import { UtkastContext } from "contexts/UtkastContext";
 
 const renderWithProvider = (
   ui: ReactNode,
@@ -24,7 +25,11 @@ const renderWithProvider = (
     <SidebarPanelProvider>
       <MetadataPanelProvider>
         <BakgrunnskartContext.Provider value={providerProps}>
-          <ToolbarProvider>{ui}</ToolbarProvider>
+          <ToolbarProvider>
+            <UtkastContext.Provider value={{ utkast: undefined }}>
+              {ui}
+            </UtkastContext.Provider>
+          </ToolbarProvider>
         </BakgrunnskartContext.Provider>
       </MetadataPanelProvider>
     </SidebarPanelProvider>
