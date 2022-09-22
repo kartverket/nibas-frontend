@@ -1,19 +1,26 @@
+import { useState } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
+import { BlockLabel } from "../MetadataPanel/metadataComponents";
+import { createUtkast as createApiUtkast } from "api/utkast";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
+import { useToolbar } from "contexts/ToolbarContext";
+import { historyToUtkastOperations } from "contexts/UtkastContext/utils";
 import { Translation } from "i18n";
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
-import styled from "styled-components";
-import { UtkastType } from "types/api";
-import { BlockLabel } from "../MetadataPanel/metadataComponents";
-import { createUtkast as createApiUtkast } from "api/utkast";
 
-const utkastTypesToString: Record<UtkastType, string> = {
-  IKKE_DEFINERT: "utkast.Ikke definert",
-  VEDTATT_GRENSEENDRING: "utkast.Vedtatt grenseendring",
-  VEDTATT_SAMMENSLAAING: "utkast.Vedtatt sammenslåing",
+const translateKeysByEndringsType: Record<string, string> = {
+  "Ikke definert": "utkast.Ikke definert",
+  "Vedtatt grensejustering": "utkast.Vedtatt grensejustering",
+  "Vedtatt sammenslåing": "utkast.Vedtatt sammenslåing",
+  Retting: "utkast.Retting",
+  "Vedtatt deling": "utkast.Vedtatt deling",
+  Fastsetting: "utkast.Fastsetting",
+  Navneendring: "utkast.Navneendring",
+  Nummerendring: "utkast.Nummerendring",
 };
 
 type Props = {
@@ -23,17 +30,29 @@ type Props = {
 const CreateUtkastToolbar = ({ closeCreateUtkast }: Props) => {
   const { t } = useTranslation();
   const [utkastName, setUtkastName] = useState("");
-  const [utkastType, setUtkastType] = useState<UtkastType>("IKKE_DEFINERT");
+  const [utkastType, setUtkastType] = useState("IKKE_DEFINERT");
   const { tokenHolderFunc } = useAuthenticationFlow();
+  const { history, clearHistory } = useToolbar();
+  const navigate = useNavigate();
 
   const createUtkast = async () => {
-    // const response = await createApiUtkast(
-    //   {
-    //     navn: utkastName,
-    //     endringstype: utkastType,
-    //   },
-    //   tokenHolderFunc()?.token
-    // );
+    const response = await createApiUtkast(
+      {
+        navn: utkastName,
+        endringstype: utkastType,
+        operasjoner: historyToUtkastOperations(history),
+      },
+      tokenHolderFunc()?.token
+    );
+
+    if (response.status !== 201) throw new Error("Test");
+
+    const json = await response.json();
+    const utkastId = json.id;
+
+    closeCreateUtkast();
+    clearHistory();
+    navigate(`/${utkastId}`);
   };
 
   return (
@@ -49,11 +68,11 @@ const CreateUtkastToolbar = ({ closeCreateUtkast }: Props) => {
         {t("utkast.Type utkast")}
         <Select
           value={utkastType}
-          onChange={(e) => setUtkastType(e.target.value as UtkastType)}
+          onChange={(e) => setUtkastType(e.target.value)}
         >
-          {Object.keys(utkastTypesToString).map((type) => (
+          {Object.keys(translateKeysByEndringsType).map((type) => (
             <option key={type} value={type}>
-              {t(utkastTypesToString[type as UtkastType] as Translation)}
+              {t(translateKeysByEndringsType[type] as Translation)}
             </option>
           ))}
         </Select>

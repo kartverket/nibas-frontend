@@ -88,5 +88,4 @@ export type Metadata =
   | StatistiskGrenseMetadata;
 export type KretsRef = GrunnkretsRef | StemmekretsRef;
 export type GrenseRef = FylkeRef | KommuneRef | KretsRef;
-export type UtkastType = UtkastRequest["endringstype"];
 export type UtkastOperasjoner = UtkastResponse["operasjoner"];

@@ -86,8 +86,13 @@
   "Endre": "__STRING_NOT_TRANSLATED__",
   "utkast": {
     "Ikke definert": "__STRING_NOT_TRANSLATED__",
-    "Vedtatt grenseendring": "__STRING_NOT_TRANSLATED__",
+    "Vedtatt grensejustering": "__STRING_NOT_TRANSLATED__",
     "Vedtatt sammenslåing": "__STRING_NOT_TRANSLATED__",
+    "Retting": "__STRING_NOT_TRANSLATED__",
+    "Vedtatt deling": "__STRING_NOT_TRANSLATED__",
+    "Fastsetting": "__STRING_NOT_TRANSLATED__",
+    "Navneendring": "__STRING_NOT_TRANSLATED__",
+    "Nummerendring": "__STRING_NOT_TRANSLATED__",
     "Navn på utkast": "__STRING_NOT_TRANSLATED__",
     "Type utkast": "__STRING_NOT_TRANSLATED__"
   }

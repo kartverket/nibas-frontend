@@ -86,8 +86,13 @@
   "Endre": "Endre",
   "utkast": {
     "Ikke definert": "Ikke definert",
-    "Vedtatt grenseendring": "Vedtatt grenseendring",
+    "Vedtatt grensejustering": "Vedtatt grensejustering",
     "Vedtatt sammenslåing": "Vedtatt sammenslåing",
+    "Retting": "Retting",
+    "Vedtatt deling": "Vedtatt deling",
+    "Fastsetting": "Fastsetting",
+    "Navneendring": "Navneendring",
+    "Nummerendring": "Nummerendring",
     "Navn på utkast": "Navn på utkast",
     "Type utkast": "Type utkast"
   }

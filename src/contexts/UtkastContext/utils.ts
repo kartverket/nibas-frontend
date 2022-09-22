@@ -1,10 +1,16 @@
 import { GeoJSONFeature, GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { EntityUtkastType, UtkastEntity, ResponseWithId } from "./types";
+import { ToolbarHistory } from "contexts/ToolbarContext";
 import {
   UtkastGrenseendringer,
   UtkastMetadataendringer,
+  UtkastOperasjoner,
   UtkastResponse,
 } from "types/api";
+import { editSource } from "hooks/layers/constants";
+import { Feature } from "ol";
+import LineString from "ol/geom/LineString";
+import { featuresToGeoJson } from "utils/map/geoJson";
 
 const getCombinedEntity = <T extends ResponseWithId>(
   entity: T,
@@ -92,4 +98,94 @@ export const applyFeatureUtkast = (
     ...featureCollection,
     features: newFeatures,
   };
+};
+
+export const historyToUtkastOperations = (
+  history: ToolbarHistory,
+  previousUtkast?: UtkastResponse
+) => {
+  console.log(history);
+  const utkastOperations: UtkastOperasjoner = {
+    metadataendringer: {},
+    grenseendringer: {},
+    ...(previousUtkast?.operasjoner ?? {}),
+  };
+
+  const mutateUrls: string[] = [];
+  const editedFeatures: Feature<LineString>[] = [];
+
+  history.entries.forEach((entry) => {
+    switch (entry.type) {
+      case "grunnkrets": {
+        if (!utkastOperations.metadataendringer?.grunnkretsendringer) {
+          utkastOperations.metadataendringer = {
+            ...utkastOperations.metadataendringer,
+            grunnkretsendringer: {},
+          };
+        }
+
+        mutateUrls.push(entry.kommuneId);
+
+        entry.changes.forEach((change) => {
+          if (
+            !change.to ||
+            !utkastOperations.metadataendringer?.grunnkretsendringer
+          )
+            return;
+
+          utkastOperations.metadataendringer.grunnkretsendringer[change.id] =
+            change.to;
+        });
+        break;
+      }
+      case "stemmekrets": {
+        if (!utkastOperations.metadataendringer?.stemmekretsendringer) {
+          utkastOperations.metadataendringer = {
+            ...utkastOperations.metadataendringer,
+            stemmekretsendringer: {},
+          };
+        }
+
+        mutateUrls.push(entry.kommuneId);
+
+        entry.changes.forEach((change) => {
+          if (
+            !change.to ||
+            !utkastOperations.metadataendringer?.stemmekretsendringer
+          )
+            return;
+
+          utkastOperations.metadataendringer.stemmekretsendringer[change.id] =
+            change.to;
+        });
+        break;
+      }
+      case "grense":
+      case "metadata": {
+        entry.changes.forEach((change) => {
+          if (!change.to) return;
+
+          const feature = editSource.getFeatureById(
+            change.id
+          ) as Feature<LineString>;
+
+          editedFeatures.push(feature);
+        });
+        break;
+      }
+    }
+  });
+
+  if (!utkastOperations.grenseendringer && editedFeatures.length > 0) {
+    utkastOperations.grenseendringer = {
+      endredeFeatures: ([] as GeoJSONFeatureCollection[]).concat(
+        previousUtkast?.operasjoner.grenseendringer?.endredeFeatures ?? [],
+        featuresToGeoJson(editedFeatures)
+      ),
+    };
+  }
+
+  console.log("Created utkast operations", utkastOperations);
+
+  return utkastOperations;
 };
