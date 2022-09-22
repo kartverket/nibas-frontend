@@ -13,10 +13,7 @@ export type HistoryChange<T> = {
   to: T | null;
 };
 
-export type BaseHistoryEntry<
-  Type extends EditContextType,
-  Model extends unknown
-> = {
+export type BaseHistoryEntry<Type extends EditContextType, Model> = {
   type: Type;
   changes: HistoryChange<Model>[];
 };

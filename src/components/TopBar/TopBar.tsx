@@ -1,7 +1,7 @@
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import AuthenticationButton from "../Authentication/AuthenticationButton";
+import { AuthenticationButton } from "../Authentication/AuthenticationButton";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
 import { ReactComponent as SearchIcon } from "icons/search.svg";
