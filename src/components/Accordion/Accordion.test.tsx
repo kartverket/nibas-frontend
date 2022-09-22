@@ -1,5 +1,4 @@
 import { render, screen } from "test/test-utils";
-import userEvent from "@testing-library/user-event";
 import Accordion from "./Accordion";
 
 describe("Accordion", () => {
@@ -13,17 +12,17 @@ describe("Accordion", () => {
     expect(screen.queryByText("Children")).not.toBeInTheDocument();
   });
 
-  it("should show and hide children after clicking caret", () => {
-    render(
+  it("should show and hide children after clicking caret", async () => {
+    const { user } = render(
       <Accordion title="Title">
         <span>Children</span>
       </Accordion>
     );
 
-    userEvent.click(screen.getByRole("button", { name: /title åpne/i }));
+    await user.click(screen.getByRole("button", { name: /title åpne/i }));
     expect(screen.getByText("Children")).toBeInTheDocument();
 
-    userEvent.click(screen.getByRole("button", { name: /title lukk/i }));
+    await user.click(screen.getByRole("button", { name: /title lukk/i }));
     expect(screen.queryByText("Children")).not.toBeInTheDocument();
   });
 });

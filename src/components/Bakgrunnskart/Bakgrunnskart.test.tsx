@@ -1,6 +1,5 @@
 import { render, screen } from "test/test-utils";
 import { ReactNode } from "react";
-import userEvent from "@testing-library/user-event";
 import Bakgrunnskart from "./Bakgrunnskart";
 import { BakgrunnskartProvider } from "contexts/BakgrunnskartContext";
 import { SidebarPanelContext } from "contexts/SidebarPanelContext";
@@ -33,12 +32,12 @@ describe("Bakgrunnskart", () => {
   });
 
   it("should open bakgrunnskart panel on bakgrunsskart button click", async () => {
-    renderWithProvider(<Bakgrunnskart />);
+    const { user } = renderWithProvider(<Bakgrunnskart />);
 
     const bakgrunnskartButton = screen.getByRole("button", {
       name: /sidebar.kartlag/i,
     });
-    userEvent.click(bakgrunnskartButton);
+    await user.click(bakgrunnskartButton);
 
     expect(
       screen.getByRole("heading", { name: /sidebar.kartlag/i })
@@ -53,12 +52,12 @@ describe("Bakgrunnskart", () => {
   });
 
   it("should toggle visibility of WMS layer on eye click", async () => {
-    renderWithProvider(<Bakgrunnskart />);
+    const { user } = renderWithProvider(<Bakgrunnskart />);
 
     const bakgrunnskartButton = screen.getByRole("button", {
       name: /sidebar.kartlag/i,
     });
-    userEvent.click(bakgrunnskartButton);
+    await user.click(bakgrunnskartButton);
 
     const showLayerButton = await screen.findByRole(
       "button",
@@ -69,23 +68,23 @@ describe("Bakgrunnskart", () => {
         timeout: 3000,
       }
     );
-    userEvent.click(showLayerButton);
+    await user.click(showLayerButton);
 
     const hideLayerButton = await screen.findByRole("button", {
       name: /skjul Administrative enheter WMS versjon 2/i,
     });
-    userEvent.click(hideLayerButton);
+    await user.click(hideLayerButton);
 
     expect(showLayerButton).toBeInTheDocument();
   });
 
   it("should toggle visibility of WMTS layer on eye click", async () => {
-    renderWithProvider(<Bakgrunnskart />);
+    const { user } = renderWithProvider(<Bakgrunnskart />);
 
     const bakgrunnskartButton = screen.getByRole("button", {
       name: /sidebar.kartlag/i,
     });
-    userEvent.click(bakgrunnskartButton);
+    await user.click(bakgrunnskartButton);
 
     const showLayerButton = await screen.findByRole(
       "button",
@@ -94,12 +93,12 @@ describe("Bakgrunnskart", () => {
       },
       { timeout: 3000 }
     );
-    userEvent.click(showLayerButton);
+    await user.click(showLayerButton);
 
     const hideLayerButton = await screen.findByRole("button", {
       name: /skjul Nibcache_UTM33_EUREF89_v2/i,
     });
-    userEvent.click(hideLayerButton);
+    await user.click(hideLayerButton);
 
     expect(showLayerButton).toBeInTheDocument();
   });

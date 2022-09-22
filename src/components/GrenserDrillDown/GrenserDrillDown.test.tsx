@@ -1,6 +1,5 @@
 import { render, screen } from "test/test-utils";
 import { ReactNode } from "react";
-import userEvent from "@testing-library/user-event";
 import GrenserDrillDown from "./GrenserDrillDown";
 import { BakgrunnskartContext } from "contexts/BakgrunnskartContext";
 import { EditGrenserProvider } from "contexts/EditGrenserContext";
@@ -57,8 +56,8 @@ describe("GrenserDrillDown", () => {
     expect(screen.getByText(/svalbardområdet/i)).toBeInTheDocument();
   });
 
-  it("should open aktive kartlag on aktive kartlag tab click", () => {
-    renderWithProvider(
+  it("should open aktive kartlag on aktive kartlag tab click", async () => {
+    const { user } = renderWithProvider(
       <BakgrunnskartContext.Provider
         value={{
           mappedLayers: [],
@@ -74,7 +73,7 @@ describe("GrenserDrillDown", () => {
       </BakgrunnskartContext.Provider>
     );
 
-    userEvent.click(screen.getByRole("button", { name: /aktive kartlag/i }));
+    await user.click(screen.getByRole("button", { name: /aktive kartlag/i }));
 
     expect(
       screen.getByRole("heading", { name: /aktive kartlag/i })

@@ -1,6 +1,5 @@
 import { render, screen } from "test/test-utils";
 import { ReactNode } from "react";
-import userEvent from "@testing-library/user-event";
 import PageLayout from "./PageLayout";
 import {
   BakgrunnskartContext,
@@ -37,32 +36,32 @@ const renderWithProvider = (
 
 describe("PageLayout", () => {
   describe("Sidebar", () => {
-    it("should close panel on same sidebar button click", () => {
-      renderWithProvider(<PageLayout />);
+    it("should close panel on same sidebar button click", async () => {
+      const { user } = renderWithProvider(<PageLayout />);
 
       const bakgrunnskartButton = screen.getByRole("button", {
         name: /kartlag/i,
       });
-      userEvent.click(bakgrunnskartButton);
-      userEvent.click(bakgrunnskartButton);
+      await user.click(bakgrunnskartButton);
+      await user.click(bakgrunnskartButton);
 
       expect(
         screen.queryByRole("heading", { name: /bakgrunnskart/i })
       ).not.toBeInTheDocument();
     });
 
-    it("should close other panels if another sidebar panel is opened", () => {
-      renderWithProvider(<PageLayout />);
+    it("should close other panels if another sidebar panel is opened", async () => {
+      const { user } = renderWithProvider(<PageLayout />);
 
       const bakgrunnskartButton = screen.getByRole("button", {
         name: /sidebar.kartlag/i,
       });
-      userEvent.click(bakgrunnskartButton);
+      await user.click(bakgrunnskartButton);
 
       const nibasButton = screen.getByRole("button", {
         name: /sidebar.inndelinger/i,
       });
-      userEvent.click(nibasButton);
+      await user.click(nibasButton);
 
       expect(
         screen.getByRole("heading", { name: /sidebar.inndelinger/i })
@@ -72,18 +71,18 @@ describe("PageLayout", () => {
       ).not.toBeInTheDocument();
     });
 
-    it("should close panel on left caret button click", () => {
-      renderWithProvider(<PageLayout />);
+    it("should close panel on left caret button click", async () => {
+      const { user } = renderWithProvider(<PageLayout />);
 
       const inndelingerButton = screen.getByRole("button", {
         name: /sidebar.inndelinger/i,
       });
-      userEvent.click(inndelingerButton);
+      await user.click(inndelingerButton);
 
       const closeButton = screen.getByRole("button", {
         name: /lukk sidebar.inndelinger/i,
       });
-      userEvent.click(closeButton);
+      await user.click(closeButton);
 
       expect(
         screen.queryByRole("heading", { name: /sidebar.inndelinger/i })
