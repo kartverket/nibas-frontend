@@ -1,15 +1,21 @@
+import { Feature } from "ol";
 import { GeoJSONFeature, GeoJSONFeatureCollection } from "ol/format/GeoJSON";
+import LineString from "ol/geom/LineString";
 import { EntityUtkastType, UtkastEntity, ResponseWithId } from "./types";
-import { ToolbarHistory } from "contexts/ToolbarContext";
+import {
+  GrenseEntry,
+  GrunnkretsEntry,
+  MetadataEntry,
+  StemmekretsEntry,
+  ToolbarHistory,
+} from "contexts/ToolbarContext";
+import { editSource } from "hooks/layers/constants";
 import {
   UtkastGrenseendringer,
   UtkastMetadataendringer,
   UtkastOperasjoner,
   UtkastResponse,
 } from "types/api";
-import { editSource } from "hooks/layers/constants";
-import { Feature } from "ol";
-import LineString from "ol/geom/LineString";
 import { featuresToGeoJson } from "utils/map/geoJson";
 
 const getCombinedEntity = <T extends ResponseWithId>(
@@ -100,83 +106,92 @@ export const applyFeatureUtkast = (
   };
 };
 
+const reduceMetadataOperations = (
+  utkastOperations: UtkastOperasjoner,
+  entry: GrunnkretsEntry | StemmekretsEntry
+) => {
+  switch (entry.type) {
+    case "grunnkrets": {
+      return addKretsChangeToOperations(
+        utkastOperations,
+        entry,
+        "grunnkretsendringer"
+      );
+    }
+    case "stemmekrets": {
+      return addKretsChangeToOperations(
+        utkastOperations,
+        entry,
+        "stemmekretsendringer"
+      );
+    }
+  }
+};
+
+const reduceGrenseOperations = (
+  editedFeatures: Feature<LineString>[],
+  entry: GrenseEntry | MetadataEntry
+) => {
+  entry.changes.forEach((change) => {
+    if (!change.to) return editedFeatures;
+
+    const feature = editSource.getFeatureById(change.id) as Feature<LineString>;
+
+    editedFeatures.push(feature);
+  });
+
+  return editedFeatures;
+};
+
+const addKretsChangeToOperations = (
+  operations: UtkastOperasjoner,
+  entry: GrunnkretsEntry | StemmekretsEntry,
+  endringerKey: "grunnkretsendringer" | "stemmekretsendringer"
+) => {
+  if (!operations.metadataendringer?.[endringerKey]) {
+    operations.metadataendringer = {
+      ...operations.metadataendringer,
+      [endringerKey]: {},
+    };
+  }
+
+  entry.changes.forEach((change) => {
+    if (change.to && operations.metadataendringer?.[endringerKey]) {
+      // vi legger til keyen i steget over, så dette er safe
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      operations.metadataendringer[endringerKey]![change.id] = change.to;
+    }
+  });
+
+  return operations;
+};
+
 export const historyToUtkastOperations = (
   history: ToolbarHistory,
   previousUtkast?: UtkastResponse
 ) => {
-  console.log(history);
-  const utkastOperations: UtkastOperasjoner = {
+  const historyToCurrentIndex = history.entries.slice(0, history.index);
+
+  // hent grenseendringer og gjør endringene om til en liste av features
+  const editedFeatures = (
+    historyToCurrentIndex.filter(
+      (entry) => entry.type === "grense" || entry.type === "metadata"
+    ) as (GrenseEntry | MetadataEntry)[]
+  ).reduce(reduceGrenseOperations, [] as Feature<LineString>[]);
+
+  // hent endringer på enheter og gjør endringene om til utkastoperasjoner
+  const utkastOperations = (
+    historyToCurrentIndex.filter(
+      (entry) => entry.type !== "grense" && entry.type !== "metadata"
+    ) as (GrunnkretsEntry | StemmekretsEntry)[]
+  ).reduce(reduceMetadataOperations, {
     metadataendringer: {},
     grenseendringer: {},
     ...(previousUtkast?.operasjoner ?? {}),
-  };
+  } as UtkastOperasjoner);
 
-  const mutateUrls: string[] = [];
-  const editedFeatures: Feature<LineString>[] = [];
-
-  history.entries.forEach((entry) => {
-    switch (entry.type) {
-      case "grunnkrets": {
-        if (!utkastOperations.metadataendringer?.grunnkretsendringer) {
-          utkastOperations.metadataendringer = {
-            ...utkastOperations.metadataendringer,
-            grunnkretsendringer: {},
-          };
-        }
-
-        mutateUrls.push(entry.kommuneId);
-
-        entry.changes.forEach((change) => {
-          if (
-            !change.to ||
-            !utkastOperations.metadataendringer?.grunnkretsendringer
-          )
-            return;
-
-          utkastOperations.metadataendringer.grunnkretsendringer[change.id] =
-            change.to;
-        });
-        break;
-      }
-      case "stemmekrets": {
-        if (!utkastOperations.metadataendringer?.stemmekretsendringer) {
-          utkastOperations.metadataendringer = {
-            ...utkastOperations.metadataendringer,
-            stemmekretsendringer: {},
-          };
-        }
-
-        mutateUrls.push(entry.kommuneId);
-
-        entry.changes.forEach((change) => {
-          if (
-            !change.to ||
-            !utkastOperations.metadataendringer?.stemmekretsendringer
-          )
-            return;
-
-          utkastOperations.metadataendringer.stemmekretsendringer[change.id] =
-            change.to;
-        });
-        break;
-      }
-      case "grense":
-      case "metadata": {
-        entry.changes.forEach((change) => {
-          if (!change.to) return;
-
-          const feature = editSource.getFeatureById(
-            change.id
-          ) as Feature<LineString>;
-
-          editedFeatures.push(feature);
-        });
-        break;
-      }
-    }
-  });
-
-  if (!utkastOperations.grenseendringer && editedFeatures.length > 0) {
+  // hvis det er noen endringer, slå sammen tidligere endringer og nye endringer til ny liste
+  if (editedFeatures.length > 0) {
     utkastOperations.grenseendringer = {
       endredeFeatures: ([] as GeoJSONFeatureCollection[]).concat(
         previousUtkast?.operasjoner.grenseendringer?.endredeFeatures ?? [],
@@ -184,8 +199,6 @@ export const historyToUtkastOperations = (
       ),
     };
   }
-
-  console.log("Created utkast operations", utkastOperations);
 
   return utkastOperations;
 };
