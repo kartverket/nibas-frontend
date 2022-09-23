@@ -9,6 +9,7 @@ import {
   KommuneResponse,
   StemmekretsRef,
   StemmekretsResponse,
+  UtkastResponse,
 } from "types/api";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 
@@ -284,4 +285,36 @@ export const mockStemmekrets2: StemmekretsResponse = {
   tellekretsnavn: "tellekretsnavn2",
   valgdistriktsnummer: "16",
   features: mockGeoJsonFeatureResponse,
+};
+
+export const mockUtkast: UtkastResponse = {
+  navn: "Mock utkast",
+  endringstype: "Retting",
+  gyldigFra: "2022-12-31",
+  id: "1",
+  status: "Ikke publisert",
+  opprettetDato: "2022-01-01",
+  auditInfoResponse: {
+    endretAv: "Meg",
+    oppdateringsdato: "2022-06-01",
+  },
+  operasjoner: {
+    metadataendringer: {
+      grunnkretsendringer: {
+        "1": {
+          ...mockDetailedGrunnkrets1,
+          navn: "Utkast grunnkrets",
+        },
+      },
+      stemmekretsendringer: {
+        "1": {
+          ...mockStemmekrets1,
+          stemmekretsnavn: "Utkast stemmekrets",
+        },
+      },
+    },
+    grenseendringer: {
+      endredeFeatures: [mockGeoJsonFeatureResponse],
+    },
+  },
 };

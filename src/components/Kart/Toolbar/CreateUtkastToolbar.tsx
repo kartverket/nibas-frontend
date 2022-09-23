@@ -35,6 +35,7 @@ const CreateUtkastToolbar = ({ closeCreateUtkast }: Props) => {
   const navigate = useNavigate();
 
   const createUtkast = async () => {
+    // TODO: Her må det legges til noe feilmelding til brukeren :)
     const response = await createApiUtkast(
       {
         navn: utkastName,
@@ -44,7 +45,7 @@ const CreateUtkastToolbar = ({ closeCreateUtkast }: Props) => {
       tokenHolderFunc()?.token
     );
 
-    if (response.status !== 201) throw new Error("Test");
+    if (response.status !== 201) throw new Error("Status ikke riktig");
 
     const json = await response.json();
     const utkastId = json.id;
