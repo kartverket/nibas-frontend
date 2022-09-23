@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import Button from "components/form/Button";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext";
@@ -7,6 +8,7 @@ type Props = {
 };
 
 const DefaultToolbar = ({ openCreateUtkast }: Props) => {
+  const { t } = useTranslation();
   const { canSave, save, undo, redo } = useToolbar();
   const { utkast } = useUtkast();
 
@@ -14,19 +16,19 @@ const DefaultToolbar = ({ openCreateUtkast }: Props) => {
     <div>
       {utkast && (
         <Button onClick={save} disabled={!canSave}>
-          Lagre
+          {t("action.Lagre")}
         </Button>
       )}
       {!utkast && (
         <Button onClick={openCreateUtkast} disabled={!canSave}>
-          Lagre som
+          {t("action.Lagre som")}
         </Button>
       )}
       <Button onClick={undo} disabled={!undo}>
-        Undo
+        {t("action.Undo")}
       </Button>
       <Button onClick={redo} disabled={!redo}>
-        Redo
+        {t("action.Redo")}
       </Button>
     </div>
   );

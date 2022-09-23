@@ -93,7 +93,7 @@ describe("Toolbar", () => {
     // denne skal egentlig bli disabled, men det er via clearHistory() som endrer context state
     expect(
       await screen.findByRole("button", {
-        name: "Lagre",
+        name: "action.Lagre",
       })
     ).toBeInTheDocument();
   });
