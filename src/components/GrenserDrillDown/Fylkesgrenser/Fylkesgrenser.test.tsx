@@ -1,6 +1,5 @@
 import { render, screen } from "test/test-utils";
 import { ReactNode } from "react";
-import userEvent from "@testing-library/user-event";
 import Fylkesgrenser from "./Fylkesgrenser";
 import { EditGrenserProvider } from "contexts/EditGrenserContext";
 import { UtkastContext } from "contexts/UtkastContext";
@@ -8,7 +7,7 @@ import { UtkastContext } from "contexts/UtkastContext";
 const renderWithProvider = (ui: ReactNode) =>
   render(
     <EditGrenserProvider>
-      <UtkastContext.Provider value={{ utkast: {} }}>
+      <UtkastContext.Provider value={{ utkast: undefined }}>
         {ui}
       </UtkastContext.Provider>
     </EditGrenserProvider>
@@ -16,12 +15,12 @@ const renderWithProvider = (ui: ReactNode) =>
 
 describe("Fylkesgrenser", () => {
   it("should show fylker on Fylker accordion click", async () => {
-    renderWithProvider(<Fylkesgrenser />);
+    const { user } = renderWithProvider(<Fylkesgrenser />);
 
     const fylkesGrenserAccordionButton = screen.getByRole("button", {
       name: /inndelinger.fylkesgrenser/i,
     });
-    userEvent.click(fylkesGrenserAccordionButton);
+    await user.click(fylkesGrenserAccordionButton);
 
     expect(
       await screen.findByText(/vestfold og telemark/i)

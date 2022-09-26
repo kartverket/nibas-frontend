@@ -1,5 +1,4 @@
 import { render, screen } from "test/test-utils";
-import userEvent from "@testing-library/user-event";
 import SubBackgroundLayer from "./SubBackgroundLayer";
 
 const defaultProps: React.ComponentProps<typeof SubBackgroundLayer> = {
@@ -28,29 +27,29 @@ const defaultProps: React.ComponentProps<typeof SubBackgroundLayer> = {
 };
 
 describe("SubBackgroundLayer", () => {
-  it("should render sublayers for each sublayer on caret click", () => {
-    render(<SubBackgroundLayer {...defaultProps} />);
+  it("should render sublayers for each sublayer on caret click", async () => {
+    const { user } = render(<SubBackgroundLayer {...defaultProps} />);
 
     const caret = screen.getByRole("button", {
       name: /sublag åpne/i,
     });
-    userEvent.click(caret);
+    await user.click(caret);
 
     expect(screen.getByText(/subsublag1/i)).toBeInTheDocument();
     expect(screen.getByText(/subsublag2/i)).toBeInTheDocument();
   });
 
-  it("should open and close eye correctly", () => {
-    render(<SubBackgroundLayer {...defaultProps} />);
+  it("should open and close eye correctly", async () => {
+    const { user } = render(<SubBackgroundLayer {...defaultProps} />);
 
     const closedEye = screen.getByRole("button", { name: /vis sublag/i });
-    userEvent.click(closedEye);
+    await user.click(closedEye);
 
     const openEye = screen.getByRole("button", { name: /skjul sublag/i });
 
     expect(openEye).toBeInTheDocument();
 
-    userEvent.click(openEye);
+    await user.click(openEye);
 
     expect(closedEye).toBeInTheDocument();
   });

@@ -1,23 +1,23 @@
+import { useState } from "react";
 import styled from "styled-components";
 import { KartInteractable } from "../KartInteractable";
-import Button from "components/form/Button";
-import { useToolbar } from "contexts/ToolbarContext";
+import CreateUtkastToolbar from "./CreateUtkastToolbar";
+import DefaultToolbar from "./DefaultToolbar";
 
 const Toolbar = () => {
-  const { canSave, save, undo, redo } = useToolbar();
+  const [createUtkastOpen, setCreateUtkastOpen] = useState(false);
 
   return (
     <ToolbarArea>
       <ToolbarWrapper>
-        <Button onClick={save} disabled={!canSave}>
-          Lagre
-        </Button>
-        <Button onClick={undo} disabled={!undo}>
-          Undo
-        </Button>
-        <Button onClick={redo} disabled={!redo}>
-          Redo
-        </Button>
+        {createUtkastOpen && (
+          <CreateUtkastToolbar
+            closeCreateUtkast={() => setCreateUtkastOpen(false)}
+          />
+        )}
+        {!createUtkastOpen && (
+          <DefaultToolbar openCreateUtkast={() => setCreateUtkastOpen(true)} />
+        )}
       </ToolbarWrapper>
     </ToolbarArea>
   );
@@ -32,6 +32,7 @@ const ToolbarWrapper = styled(KartInteractable)`
   margin-top: 30px;
   padding: 8px;
   border: 2px solid ${({ theme }) => theme.colors.blue};
+  padding: 16px;
 `;
 
 export default Toolbar;

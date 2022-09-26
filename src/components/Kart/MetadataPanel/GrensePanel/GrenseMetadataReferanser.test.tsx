@@ -1,6 +1,5 @@
 import { render, screen, within } from "test/test-utils";
 import { ReactNode } from "react";
-import userEvent from "@testing-library/user-event";
 import GrenseMetadataReferanser from "./GrenseMetadataReferanser";
 import { EditGrenserContext } from "contexts/EditGrenserContext";
 import { ToolbarProvider } from "contexts/ToolbarContext";
@@ -30,8 +29,10 @@ const renderWithProvider = (ui: ReactNode, disabled = false) =>
     </EditGrenserContext.Provider>
   );
 
-const testFieldArray = (groupName: string | RegExp) => {
-  renderWithProvider(<GrenseMetadataReferanser {...defaultProps} />);
+const testFieldArray = async (groupName: string | RegExp) => {
+  const { user } = renderWithProvider(
+    <GrenseMetadataReferanser {...defaultProps} />
+  );
 
   const dokumentlenkerGroup = screen.getByRole("group", {
     name: groupName,
@@ -39,13 +40,13 @@ const testFieldArray = (groupName: string | RegExp) => {
   const newUrlInput = within(dokumentlenkerGroup).getByRole("textbox", {
     name: /ny {{ item }}/i,
   });
-  userEvent.type(newUrlInput, "Ny lenke{enter}");
+  await user.type(newUrlInput, "Ny lenke{enter}");
 
   const addButton = within(dokumentlenkerGroup).getByRole("button", {
     name: /legg til/i,
   });
-  userEvent.type(newUrlInput, "Lenke uten enter");
-  userEvent.click(addButton);
+  await user.type(newUrlInput, "Lenke uten enter");
+  await user.click(addButton);
 
   expect(
     within(dokumentlenkerGroup).getByRole("link", { name: /ny lenke/i })
@@ -100,11 +101,11 @@ describe("GrenseMetadataReferanser", () => {
 
   // veldig liten bit av koden som ikke går gjennom test, men verifisert at det
   // funker i klienten. Leit, men bør ikke bruke mer tid på det
-  it.skip("should add new dokumentlenke on enter and Legg til button click", () => {
-    testFieldArray(/dokumentlenker/i);
+  it.skip("should add new dokumentlenke on enter and Legg til button click", async () => {
+    await testFieldArray(/dokumentlenker/i);
   });
 
-  it.skip("should add new internreferanse on enter and Legg til button click", () => {
-    testFieldArray(/internreferanse/i);
+  it.skip("should add new internreferanse on enter and Legg til button click", async () => {
+    await testFieldArray(/internreferanse/i);
   });
 });

@@ -1,6 +1,5 @@
 import { render, screen } from "test/test-utils";
 import { ReactNode } from "react";
-import userEvent from "@testing-library/user-event";
 import Sidebar from "./Sidebar";
 import { SidebarPanelProvider } from "contexts/SidebarPanelContext";
 import { defaultTheme } from "style/theme";
@@ -25,11 +24,11 @@ describe("Sidebar", () => {
     expect(utkastButton).toBeInTheDocument();
   });
 
-  it("should turn button blue when panel is open", () => {
-    renderWithProvider(<Sidebar />);
+  it("should turn button blue when panel is open", async () => {
+    const { user } = renderWithProvider(<Sidebar />);
 
     const nibasButton = screen.getByRole("button", { name: /inndelinger/i });
-    userEvent.click(nibasButton);
+    await user.click(nibasButton);
 
     expect(nibasButton).toHaveStyle(`color: ${defaultTheme.colors.blue}`);
   });

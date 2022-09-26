@@ -1,6 +1,5 @@
 import { render, screen } from "test/test-utils";
 import { ReactNode } from "react";
-import userEvent from "@testing-library/user-event";
 import FylkeList from "./FylkeList";
 import { EditGrenserProvider } from "contexts/EditGrenserContext";
 import { UtkastContext } from "contexts/UtkastContext";
@@ -8,7 +7,7 @@ import { UtkastContext } from "contexts/UtkastContext";
 const renderWithProvider = (ui: ReactNode) =>
   render(
     <EditGrenserProvider>
-      <UtkastContext.Provider value={{ utkast: {} }}>
+      <UtkastContext.Provider value={{ utkast: undefined }}>
         {ui}
       </UtkastContext.Provider>
     </EditGrenserProvider>
@@ -23,7 +22,7 @@ describe("FylkeList", () => {
   });
 
   it("should open eye on eye click", async () => {
-    renderWithProvider(<FylkeList />);
+    const { user } = renderWithProvider(<FylkeList />);
 
     const closedEyes = await screen.findAllByRole("button", {
       name: "Usynlig",
@@ -32,7 +31,7 @@ describe("FylkeList", () => {
       name: "Synlig",
     });
 
-    userEvent.click(closedEyes[0]);
+    await user.click(closedEyes[0]);
 
     const openEye = screen.getByRole("button", { name: "Synlig" });
     expect(openEye).toBeInTheDocument();
@@ -40,25 +39,25 @@ describe("FylkeList", () => {
   });
 
   it("should open eye and check checkbox on checkbox click", async () => {
-    renderWithProvider(<FylkeList />);
+    const { user } = renderWithProvider(<FylkeList />);
 
     const checkbox = await screen.findByRole("checkbox", {
       name: /agder/i,
     });
-    userEvent.click(checkbox);
+    await user.click(checkbox);
 
     expect(checkbox).toBeChecked();
     expect(screen.getByRole("button", { name: "Synlig" })).toBeInTheDocument();
   });
 
   it("should close both eye and uncheck checkbox when checkbox is checked", async () => {
-    renderWithProvider(<FylkeList />);
+    const { user } = renderWithProvider(<FylkeList />);
 
     const checkbox = await screen.findByRole("checkbox", {
       name: /agder/i,
     });
-    userEvent.click(checkbox);
-    userEvent.click(checkbox);
+    await user.click(checkbox);
+    await user.click(checkbox);
 
     expect(checkbox).not.toBeChecked();
     expect(

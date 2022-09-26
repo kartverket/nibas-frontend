@@ -140,6 +140,8 @@ export const useToolbar = () => {
 
   return {
     canSave,
+    history,
+    clearHistory,
     save,
     undo: history.index > 0 ? undo : undefined,
     redo:
