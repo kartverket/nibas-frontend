@@ -5,3 +5,4 @@ export {
   useUtkastEntity,
   useUtkastFeature,
 } from "./UtkastContext";
+export { default as useUpdateUtkast } from "./useUpdateUtkast";
