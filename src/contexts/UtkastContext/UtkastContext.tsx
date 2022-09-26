@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useMemo } from "react";
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { useMatch } from "react-router-dom";
 import { EntityUtkastType, UtkastContextValue, UtkastEntity } from "./types";
@@ -60,9 +60,11 @@ export const useUtkastEntity = <T extends UtkastEntity>(
 ) => {
   const { utkast } = useUtkast();
 
-  if (!entity || !utkast) return entity;
+  return useMemo(() => {
+    if (!entity || !utkast) return entity;
 
-  return applyNonFeatureUtkast(entity, utkast, type);
+    return applyNonFeatureUtkast(entity, utkast, type);
+  }, [entity, utkast, type]);
 };
 
 export const useUtkastFeature = (
@@ -70,13 +72,15 @@ export const useUtkastFeature = (
 ) => {
   const { utkast } = useUtkast();
 
-  if (!featureCollection || !utkast) return featureCollection;
+  return useMemo(() => {
+    if (!featureCollection || !utkast) return featureCollection;
 
-  if (Array.isArray(featureCollection)) {
-    return featureCollection.map((collection) =>
-      applyFeatureUtkast(collection, utkast)
-    );
-  }
+    if (Array.isArray(featureCollection)) {
+      return featureCollection.map((collection) =>
+        applyFeatureUtkast(collection, utkast)
+      );
+    }
 
-  return applyFeatureUtkast(featureCollection, utkast);
+    return applyFeatureUtkast(featureCollection, utkast);
+  }, [featureCollection, utkast]);
 };
