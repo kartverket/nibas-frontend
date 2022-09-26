@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useMemo } from "react";
+import { createContext, useContext, useMemo } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { useMatch } from "react-router-dom";
@@ -58,8 +58,6 @@ export const UtkastProvider: React.FC = ({ children }) => {
       gyldigFra: utkast.gyldigFra,
       operasjoner,
     };
-
-    console.log("New utkast", updatedUtkast);
 
     await mutate(
       updateApiUtkast(utkast.id, updatedUtkast, tokenHolderFunc()?.token)

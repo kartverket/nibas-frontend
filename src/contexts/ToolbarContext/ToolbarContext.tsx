@@ -1,6 +1,5 @@
 import React, { createContext, useCallback, useContext, useMemo } from "react";
 import { ToolbarContextValue, HistoryEntry } from "./types";
-import useSaveHandlers from "./useSaveHandlers";
 import {
   getDirtyIdsFromEntries,
   setFeatureCoordinatesForEntry,
@@ -112,41 +111,12 @@ export const useToolbar = () => {
 export const useToolbarActions = () => {
   const { clearHistory, history, redo, undo } = useToolbar();
 
-  const { saveGrunnkretser, saveGrenserAndMetadata, saveStemmekretser } =
-    useSaveHandlers(history);
-
   const canSave = history.entries.length > 0 && history.index > 0;
-
-  const save = async () => {
-    const savePromises = history.entries.map(async (entry) => {
-      const { type } = entry;
-
-      switch (type) {
-        case "metadata":
-        case "grense": {
-          return saveGrenserAndMetadata();
-        }
-        case "grunnkrets": {
-          return saveGrunnkretser();
-        }
-        case "stemmekrets": {
-          return saveStemmekretser();
-        }
-      }
-
-      ensureAllCasesCovered(type);
-    });
-
-    await Promise.all(savePromises);
-
-    clearHistory();
-  };
 
   return {
     canSave,
     history,
     clearHistory,
-    save,
     undo: history.index > 0 ? undo : undefined,
     redo:
       history.entries.length > 0 && history.index < history.entries.length
