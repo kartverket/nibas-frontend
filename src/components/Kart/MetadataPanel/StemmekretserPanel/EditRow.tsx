@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import Input from "components/form/Input";
-import { StemmekretsEntry, useToolbarSave } from "contexts/ToolbarContext";
+import { StemmekretsEntry, useToolbarSaving } from "contexts/ToolbarContext";
 import useKretsToolbarSync from "contexts/ToolbarContext/useKretsToolbarSync";
 import { useUtkastEntity } from "contexts/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
@@ -50,7 +50,7 @@ const EditRow = ({ stemmekrets, kommuneId }: Props) => {
 
   const { register, setValue, getValues } = useForm<Inputs>();
 
-  const { addEntry } = useToolbarSave();
+  const { addEntry } = useToolbarSaving();
 
   const previousValues = useRef<Inputs>(getValues());
 

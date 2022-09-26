@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import Button from "components/form/Button";
-import { useToolbar } from "contexts/ToolbarContext";
+import { useToolbarActions } from "contexts/ToolbarContext";
 import { useUtkast, useUpdateUtkast } from "contexts/UtkastContext";
 
 type Props = {
@@ -9,7 +9,7 @@ type Props = {
 
 const DefaultToolbar = ({ openCreateUtkast }: Props) => {
   const { t } = useTranslation();
-  const { canSave, undo, redo, history } = useToolbar();
+  const { canSave, undo, redo, history } = useToolbarActions();
   const { utkast } = useUtkast();
 
   const updateUtkast = useUpdateUtkast(history, utkast);

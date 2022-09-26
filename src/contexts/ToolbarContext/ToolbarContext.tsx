@@ -68,7 +68,7 @@ const onRedo = (entry: HistoryEntry) => {
 };
 
 /**
- * @deprecated Ikke bruk utenfor ToolbarContext.tsx, bruk heller useToolbar eller useToolbarSave
+ * @deprecated Ikke bruk utenfor ToolbarContext.tsx, bruk heller useToolbar eller useToolbarSaving
  */
 export const ToolbarContext = createContext<ToolbarContextValue | undefined>(
   undefined
@@ -106,7 +106,11 @@ export const useToolbar = () => {
     throw new Error("useToolbar must be used within a ToolbarContext");
   }
 
-  const { clearHistory, history, redo, undo } = context;
+  return context;
+};
+
+export const useToolbarActions = () => {
+  const { clearHistory, history, redo, undo } = useToolbar();
 
   const { saveGrunnkretser, saveGrenserAndMetadata, saveStemmekretser } =
     useSaveHandlers(history);
@@ -151,14 +155,8 @@ export const useToolbar = () => {
   };
 };
 
-export const useToolbarSave = () => {
-  const context = useContext(ToolbarContext);
-
-  if (!context) {
-    throw new Error("useToolbarSave must be used within a ToolbarContext");
-  }
-
-  const { history, setHistory, dirtyFeatureIds } = context;
+export const useToolbarSaving = () => {
+  const { history, setHistory, dirtyFeatureIds } = useToolbar();
 
   const addEntry = useCallback(
     (entry: HistoryEntry) => {

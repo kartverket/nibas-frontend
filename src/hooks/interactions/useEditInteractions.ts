@@ -6,7 +6,7 @@ import { ModifyEvent } from "ol/interaction/Modify";
 import { modify } from "./constants";
 import useDirtyStyles from "./useDirtyStyles";
 import { map } from "components/Kart/constants";
-import { GrenseEntry, useToolbarSave } from "contexts/ToolbarContext";
+import { GrenseEntry, useToolbarSaving } from "contexts/ToolbarContext";
 import { getVectorLayers } from "utils/map/layers";
 
 const getInfoFromFeature = (featureLike: FeatureLike) => {
@@ -17,7 +17,8 @@ const getInfoFromFeature = (featureLike: FeatureLike) => {
 };
 
 const useEditInteractions = () => {
-  const { dirtyFeatureIds, addEntry, updateEntry, history } = useToolbarSave();
+  const { dirtyFeatureIds, addEntry, updateEntry, history } =
+    useToolbarSaving();
 
   useDirtyStyles(dirtyFeatureIds);
 
