@@ -9,6 +9,7 @@ export type ResponseWithId = {
 
 export type UtkastContextValue = {
   utkast: UtkastResponse | undefined;
+  updateUtkastWithHistory: () => Promise<unknown>;
 };
 
 export type UtkastEntity = ResponseWithId | ResponseWithId[] | undefined;

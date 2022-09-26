@@ -19,17 +19,6 @@ export const updateUtkast = async (
   utkast: UtkastRequest,
   token: string | undefined
 ) => {
-  return {
-    id,
-    ...utkast,
-    status: "Test",
-    auditInfoResponse: {
-      endretAv: "Meg",
-      oppdateringsdato: "2022-12-31",
-    },
-    opprettetDato: "2022-01-01",
-  } as UtkastResponse;
-
   const response = await fetch(`v1/utkast/${id}`, {
     method: "PUT",
     body: JSON.stringify(utkast),
