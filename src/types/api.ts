@@ -66,6 +66,10 @@ export type UtkastResponse = components["schemas"]["UtkastResponse"];
 export type UtkastMetadataendringer =
   components["schemas"]["Metadataendringer"];
 export type UtkastGrenseendringer = components["schemas"]["Grenseendringer"];
+export type UtkastRef = {
+  navn: string;
+  id: string;
+};
 
 // custom typer basert på api doc
 export type ApiPath = keyof paths;
