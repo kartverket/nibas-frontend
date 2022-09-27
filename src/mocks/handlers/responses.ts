@@ -314,7 +314,10 @@ export const mockUtkast: UtkastResponse = {
       },
     },
     grenseendringer: {
-      endredeFeatures: [mockGeoJsonFeatureResponse],
+      endredeFeatures: {
+        "9b4ab6bb-878f-472a-9243-64e2bdc48b8b":
+          mockGeoJsonFeatureResponse.features[0],
+      },
     },
   },
 };
