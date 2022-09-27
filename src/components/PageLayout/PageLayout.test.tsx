@@ -25,7 +25,9 @@ const renderWithProvider = (
       <MetadataPanelProvider>
         <BakgrunnskartContext.Provider value={providerProps}>
           <ToolbarProvider>
-            <UtkastContext.Provider value={{ utkast: undefined }}>
+            <UtkastContext.Provider
+              value={{ utkast: undefined, updateUtkastWithHistory: jest.fn() }}
+            >
               {ui}
             </UtkastContext.Provider>
           </ToolbarProvider>

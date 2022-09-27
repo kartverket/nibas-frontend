@@ -7,7 +7,9 @@ import { UtkastContext } from "contexts/UtkastContext";
 const renderWithProvider = (ui: ReactNode) =>
   render(
     <EditGrenserProvider>
-      <UtkastContext.Provider value={{ utkast: undefined }}>
+      <UtkastContext.Provider
+        value={{ utkast: undefined, updateUtkastWithHistory: jest.fn() }}
+      >
         {ui}
       </UtkastContext.Provider>
     </EditGrenserProvider>

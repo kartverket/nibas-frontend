@@ -25,6 +25,7 @@ const renderWithProvider = (
               },
             },
           } as any, // ikke interessert i andre felter
+          updateUtkastWithHistory: jest.fn(),
         }}
       >
         {ui}
