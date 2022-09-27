@@ -11,7 +11,7 @@ type Options<T> = {
   onRedo: (entry: T) => void;
 };
 
-const useHistory = <T extends unknown>({ onUndo, onRedo }: Options<T>) => {
+const useHistory = <T>({ onUndo, onRedo }: Options<T>) => {
   const [history, setHistory] = useState<History<T>>({
     index: 0,
     entries: [],

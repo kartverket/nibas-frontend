@@ -43,3 +43,7 @@ export const KretsTable = styled.table`
     }
   }
 `;
+
+export const KretsTableWrapper = styled.div`
+  overflow-y: auto;
+`;

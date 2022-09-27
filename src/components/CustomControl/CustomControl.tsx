@@ -23,9 +23,12 @@ const CustomControl: React.FC = ({ children }) => {
   if (!singleChild || !React.isValidElement(singleChild)) return null;
 
   // legg på ref på vår ene child
-  return React.cloneElement(singleChild, {
-    ref: element,
-  });
+  return React.cloneElement(
+    singleChild as React.ReactElement<{ ref: React.Ref<React.ReactNode> }>,
+    {
+      ref: element,
+    }
+  );
 };
 
 export default CustomControl;

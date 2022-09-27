@@ -3,8 +3,6 @@ import MainBackgroundLayer from "./MainBackgroundLayer";
 
 const defaultProps: React.ComponentProps<typeof MainBackgroundLayer> = {
   index: 0,
-  mainLayerName: "Hovedlag",
-  mainLayerSourceId: "administrativeGrenser",
   mappedLayer: {
     layers: [
       {
