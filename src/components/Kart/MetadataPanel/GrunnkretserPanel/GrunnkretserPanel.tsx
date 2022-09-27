@@ -8,6 +8,7 @@ import EditRow from "./EditRow";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Heading from "components/typography/Heading";
+import { useInndelingerKrets } from "contexts/InndelingerKretsContext";
 import { useUtkastEntity } from "contexts/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
 import useSearch from "hooks/useSearch";
@@ -25,6 +26,7 @@ type Props = {
 
 const GrunnkretserPanel = ({ kommune }: Props) => {
   const { t } = useTranslation();
+  const { toggleEditKretser } = useInndelingerKrets(kommune);
 
   const { isRowOpen, toggleRow } = useAccordionRows();
   const { inputValue, setInputValue, searchValue } = useSearch();
@@ -108,6 +110,9 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
           </KretsTable>
         </KretsTableWrapper>
       )}
+      <div>
+        <Button onClick={toggleEditKretser}>{t("action.Lukk")}</Button>
+      </div>
     </>
   );
 };

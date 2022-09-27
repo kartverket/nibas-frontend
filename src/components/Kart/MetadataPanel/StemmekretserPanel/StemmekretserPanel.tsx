@@ -5,6 +5,8 @@ import { KretsTable, KretsTableWrapper } from "../KretsTable";
 import useAccordionRows from "../useAccordionRow";
 import EditRow from "./EditRow";
 import StemmekretsRow from "./StemmekretsRow";
+import Button from "components/form/Button";
+import { useInndelingerKrets } from "contexts/InndelingerKretsContext";
 import { useUtkastEntity } from "contexts/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
 import { KommuneRef, StemmekretsRef } from "types/api";
@@ -27,6 +29,8 @@ const StemmekretserPanel = ({ kommune }: Props) => {
       id: kommune.id,
     }
   );
+
+  const { toggleEditKretser } = useInndelingerKrets(kommune);
 
   const sortedStemmekretser = sortGrenserAlphabetically(stemmekretserByKommune);
 
@@ -73,6 +77,9 @@ const StemmekretserPanel = ({ kommune }: Props) => {
           </KretsTable>
         </KretsTableWrapper>
       )}
+      <div>
+        <Button onClick={toggleEditKretser}>{t("action.Lukk")}</Button>
+      </div>
     </>
   );
 };
