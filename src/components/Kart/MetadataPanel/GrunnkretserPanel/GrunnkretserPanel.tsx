@@ -8,7 +8,7 @@ import EditRow from "./EditRow";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Heading from "components/typography/Heading";
-import { useInndelingerKrets } from "contexts/InndelingerKretsContext";
+import { InndelingerKretsProvider, useInndelingerKrets } from "contexts/InndelingerKretsContext";
 import { useUtkastEntity } from "contexts/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
 import useSearch from "hooks/useSearch";
@@ -113,7 +113,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
       <div>
         <Button onClick={toggleEditKretser}>{t("action.Lukk")}</Button>
       </div>
-    </>
+      </>
   );
 };
 
