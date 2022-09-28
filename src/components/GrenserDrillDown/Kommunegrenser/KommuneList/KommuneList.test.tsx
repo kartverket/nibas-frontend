@@ -16,7 +16,7 @@ describe("KommuneList", () => {
   it("should render two kommuner from API request", async () => {
     render(
       <EditGrenserProvider>
-        <UtkastContext.Provider value={{ utkast: {} }}>
+        <UtkastContext.Provider value={{ utkast: undefined }}>
           <KommuneList {...defaultProps} />
         </UtkastContext.Provider>
       </EditGrenserProvider>
