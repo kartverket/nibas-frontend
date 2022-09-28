@@ -17,7 +17,7 @@ describe("ApiGrense", () => {
   it("should render name in Norwegian", () => {
     render(
       <EditGrenserProvider>
-        <UtkastContext.Provider value={{ utkast: {} }}>
+        <UtkastContext.Provider value={{ utkast: undefined }}>
           <ApiGrense {...defaultProps} />
         </UtkastContext.Provider>
       </EditGrenserProvider>
