@@ -1,6 +1,5 @@
 import { render, screen, waitFor } from "test/test-utils";
 import { ReactNode } from "react";
-import userEvent from "@testing-library/user-event";
 import StemmekretserPanel from "./StemmekretserPanel";
 import { ToolbarProvider } from "contexts/ToolbarContext";
 import { UtkastContext } from "contexts/UtkastContext";
@@ -17,7 +16,17 @@ const renderWithProvider = (
 ) =>
   render(
     <ToolbarProvider>
-      <UtkastContext.Provider value={{ utkast: { stemmekretser: utkastData } }}>
+      <UtkastContext.Provider
+        value={{
+          utkast: {
+            operasjoner: {
+              metadataendringer: {
+                stemmekretsendringer: utkastData,
+              },
+            },
+          } as any, // ikke interessert i andre felter
+        }}
+      >
         {ui}
       </UtkastContext.Provider>
     </ToolbarProvider>
@@ -72,9 +81,11 @@ describe("StemmekretserPanel", () => {
   });
 
   it("should render EditRow on Caret toggle", async () => {
-    renderWithProvider(<StemmekretserPanel {...defaultProps} />);
+    const { user } = renderWithProvider(
+      <StemmekretserPanel {...defaultProps} />
+    );
 
-    userEvent.click(
+    await user.click(
       (
         await screen.findAllByRole("button", {
           name: /Åpne redigering av stemmekrets/i,

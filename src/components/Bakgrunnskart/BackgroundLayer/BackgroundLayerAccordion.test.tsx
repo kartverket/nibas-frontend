@@ -1,5 +1,4 @@
 import { render, screen } from "test/test-utils";
-import userEvent from "@testing-library/user-event";
 import BackgroundLayerAccordion from "./BackgroundLayerAccordion";
 
 const defaultProps: React.ComponentProps<typeof BackgroundLayerAccordion> = {
@@ -50,13 +49,13 @@ describe("BackgroundLayerAccordion", () => {
     expect(caret).toBeInTheDocument();
   });
 
-  it("should open children on caret click", () => {
-    render(<BackgroundLayerAccordion {...defaultProps} />);
+  it("should open children on caret click", async () => {
+    const { user } = render(<BackgroundLayerAccordion {...defaultProps} />);
 
     const caret = screen.getByRole("button", {
       name: /layertitle åpne/i,
     });
-    userEvent.click(caret);
+    await user.click(caret);
 
     expect(
       screen.getByRole("button", {

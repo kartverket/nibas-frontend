@@ -65,7 +65,10 @@
     "Slett {{ item }}": "Slett {{ item }}",
     "Legg til {{ item }}": "Legg til {{ item }}",
     "Ny {{ item }}": "Ny {{ item }}",
-    "Endre": "Endre"
+    "Endre": "Endre",
+    "Lagre som": "Lagre som",
+    "Undo": "Undo",
+    "Redo": "Redo"
   },
   "Ja": "Ja",
   "Nei": "Nei",
@@ -82,5 +85,17 @@
     "Tellekretsnavn": "Tellekretsnavn",
     "Tellekretsnummer": "Tellekretsnummer"
   },
-  "Endre": "Endre"
+  "Endre": "Endre",
+  "utkast": {
+    "Ikke definert": "Ikke definert",
+    "Vedtatt grensejustering": "Vedtatt grensejustering",
+    "Vedtatt sammenslåing": "Vedtatt sammenslåing",
+    "Retting": "Retting",
+    "Vedtatt deling": "Vedtatt deling",
+    "Fastsetting": "Fastsetting",
+    "Navneendring": "Navneendring",
+    "Nummerendring": "Nummerendring",
+    "Navn på utkast": "Navn på utkast",
+    "Type utkast": "Type utkast"
+  }
 }

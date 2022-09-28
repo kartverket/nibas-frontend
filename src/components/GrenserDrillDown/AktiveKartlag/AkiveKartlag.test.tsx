@@ -17,7 +17,7 @@ const renderWithProvider = (ui: ReactNode) =>
         setEditingObject: jest.fn(),
       }}
     >
-      <UtkastContext.Provider value={{ utkast: {} }}>
+      <UtkastContext.Provider value={{ utkast: undefined }}>
         {ui}
       </UtkastContext.Provider>
     </EditGrenserContext.Provider>

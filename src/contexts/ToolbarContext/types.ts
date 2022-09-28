@@ -42,11 +42,13 @@ export type HistoryEntry =
   | GrunnkretsEntry
   | StemmekretsEntry;
 
+export type ToolbarHistory = History<HistoryEntry>;
+
 export type ToolbarContextValue = {
   clearHistory: () => void;
   undo: () => void;
   redo: () => void;
-  history: History<HistoryEntry>;
+  history: ToolbarHistory;
   setHistory: React.Dispatch<React.SetStateAction<History<HistoryEntry>>>;
   dirtyFeatureIds: string[];
 };

@@ -18,9 +18,10 @@ const StemmekretsRow = ({ id, toggleRow, isRowOpen }: Props) => {
     id,
   });
 
-  const utkastStemmekrets = useUtkastEntity(stemmekrets, "stemmekretser") as
-    | StemmekretsResponse
-    | undefined;
+  const utkastStemmekrets = useUtkastEntity(
+    stemmekrets,
+    "stemmekretsendringer"
+  ) as StemmekretsResponse | undefined;
 
   if (!utkastStemmekrets) return null;
 

@@ -1,5 +1,4 @@
 import { render, screen } from "test/test-utils";
-import userEvent from "@testing-library/user-event";
 import MainBackgroundLayer from "./MainBackgroundLayer";
 
 const defaultProps: React.ComponentProps<typeof MainBackgroundLayer> = {
@@ -30,13 +29,13 @@ const defaultProps: React.ComponentProps<typeof MainBackgroundLayer> = {
 };
 
 describe("MainBackgroundLayer", () => {
-  it("should render sublayers for each sublayer on caret click", () => {
-    render(<MainBackgroundLayer {...defaultProps} />);
+  it("should render sublayers for each sublayer on caret click", async () => {
+    const { user } = render(<MainBackgroundLayer {...defaultProps} />);
 
     const caret = screen.getByRole("button", {
       name: /hovedlag åpne/i,
     });
-    userEvent.click(caret);
+    await user.click(caret);
 
     expect(screen.getByText(/sublag1/i)).toBeInTheDocument();
     expect(screen.getByText(/sublag2/i)).toBeInTheDocument();
