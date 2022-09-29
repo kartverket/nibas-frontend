@@ -13,7 +13,7 @@ const DefaultToolbar = ({ openCreateUtkast }: Props) => {
   const { utkast } = useUtkast();
 
   return (
-    <div>
+    <>
       {utkast && (
         <Button onClick={save} disabled={!canSave}>
           {t("action.Lagre")}
@@ -30,7 +30,7 @@ const DefaultToolbar = ({ openCreateUtkast }: Props) => {
       <Button onClick={redo} disabled={!redo}>
         {t("action.Redo")}
       </Button>
-    </div>
+    </>
   );
 };
 
