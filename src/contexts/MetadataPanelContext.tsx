@@ -43,7 +43,6 @@ export const MetadataPanelProvider: React.FC = ({ children }) => {
   }, []);
 
   const closePanel = useCallback(() => {
-    //removeKretserFromLayer(kretstype)
     setPanelContext(null);
   }, []);
 
