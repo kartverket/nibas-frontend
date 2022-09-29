@@ -1,0 +1,111 @@
+import { ReactNode } from "react";
+import Modal from "react-modal";
+import styled from "styled-components";
+import Button from "components/form/Button";
+
+Modal.setAppElement("#root");
+
+const OverlayStyle = styled.div`
+  z-index: 10;
+  animation: Fade 0.5s;
+  background: #000a !important;
+
+  @keyframes Fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+`;
+
+const ModalStyle = styled.div`
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 20rem;
+  border: 1px solid blue;
+  background: white;
+
+  overflow-y: scroll;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  animation: Enter 0.5s cubic-bezier(0.75, 0, 0.25, 1.5);
+  outline: none;
+
+  @keyframes Enter {
+    from {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+`;
+
+const Header = styled.div<{ type: StatusType }>`
+  padding: 1rem;
+  text-align: center;
+  color: ${(props) => props.type && StatusColors[props.type].color};
+  background: ${(props) => props.type && StatusColors[props.type].background};
+`;
+
+const Content = styled.div`
+  padding: 1.5rem;
+`;
+
+const CloseButton = styled(Button)`
+  margin: 1rem;
+  align-self: flex-end;
+`;
+
+type StatusType = "positive" | "negative" | "warning" | "info";
+
+const StatusText: Record<StatusType, string> = {
+  positive: "Ting er på stell :D",
+  negative: "Det har skjedd en feil :(",
+  warning: "Varsel til brukern ;)",
+  info: "Tips",
+};
+
+const StatusColors: Record<StatusType, { background: string; color: string }> =
+  {
+    positive: { background: "var(--green)", color: "white" },
+    negative: { background: "var(--red_dark)", color: "white" },
+    warning: { background: "var(--yellow)", color: "black" },
+    info: { background: "var(--blue_hover)", color: "white" },
+  };
+
+type Props = {
+  type: StatusType;
+  children: ReactNode;
+  isOpen: boolean;
+  onClose: () => void;
+};
+
+const Feedback = ({ type, children, isOpen, onClose }: Props) => (
+  <Modal
+    isOpen={isOpen}
+    onRequestClose={onClose}
+    className="_"
+    contentElement={(props, contentChildren) => (
+      <ModalStyle {...props}>{contentChildren}</ModalStyle>
+    )}
+    overlayElement={(props, overlayChildren) => (
+      <OverlayStyle {...props}>{overlayChildren}</OverlayStyle>
+    )}
+  >
+    <Header type={type}>{StatusText[type]}</Header>
+    <Content>{children}</Content>
+    <CloseButton onClick={() => onClose()}>Lukk</CloseButton>
+  </Modal>
+);
+
+export default Feedback;
