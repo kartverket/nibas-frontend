@@ -1,15 +1,13 @@
-import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { KartInteractable } from "../KartInteractable";
 import GrensePanel from "./GrensePanel";
 import GrunnkretserPanel from "./GrunnkretserPanel";
 import StemmekretserPanel from "./StemmekretserPanel";
-import Button from "components/form/Button";
+import { InndelingerKretsProvider } from "contexts/InndelingerKretsContext";
 import { useMetadataPanel } from "contexts/MetadataPanelContext";
 
 const MetadataPanel = () => {
-  const { t } = useTranslation();
-  const { panelContext, closePanel } = useMetadataPanel();
+  const { panelContext } = useMetadataPanel();
 
   if (!panelContext) return null;
 
@@ -19,14 +17,15 @@ const MetadataPanel = () => {
         <GrensePanel feature={panelContext.feature} />
       )}
       {panelContext.content === "grunnkrets" && (
-        <GrunnkretserPanel kommune={panelContext.kommune} />
+        <InndelingerKretsProvider kretstype={"grunnkrets"}>
+          <GrunnkretserPanel kommune={panelContext.kommune} />
+        </InndelingerKretsProvider>
       )}
       {panelContext.content === "stemmekrets" && (
-        <StemmekretserPanel kommune={panelContext.kommune} />
+        <InndelingerKretsProvider kretstype={"stemmekrets"}>
+          <StemmekretserPanel kommune={panelContext.kommune} />
+        </InndelingerKretsProvider>
       )}
-      <div>
-        <Button onClick={closePanel}>{t("action.Lukk")}</Button>
-      </div>
     </MetadataPanelWrapper>
   );
 };
