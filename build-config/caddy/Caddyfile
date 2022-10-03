@@ -33,7 +33,7 @@ reverse_proxy /geoservergeo/wfs/matrikkel {$MATRIKKELEN_WFS_URL} {
     header_up Authorization "Basic {$MATRIKKELEN_WFS_CREDENTIALS}"
 }
 
-try_files {path} /src/index.html
+try_files {path} /srv/index.html
 
 # Start filserveren
 file_server
