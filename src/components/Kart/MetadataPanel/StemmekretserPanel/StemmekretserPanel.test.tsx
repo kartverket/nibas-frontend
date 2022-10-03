@@ -5,6 +5,10 @@ import { ToolbarProvider } from "contexts/ToolbarContext";
 import { UtkastContext } from "contexts/UtkastContext";
 import { mockKommuner } from "mocks/handlers/responses";
 import { StemmekretsRequest } from "types/api";
+import { EditGrenserProvider } from "contexts/EditGrenserContext";
+import { MetadataPanelWrapper } from "../MetadataPanel";
+import { MetadataPanelProvider } from "contexts/MetadataPanelContext";
+import { InndelingerKretsProvider } from "contexts/InndelingerKretsContext";
 
 const defaultProps: React.ComponentProps<typeof StemmekretserPanel> = {
   kommune: mockKommuner[0],
@@ -28,7 +32,13 @@ const renderWithProvider = (
           updateUtkastWithHistory: jest.fn(),
         }}
       >
-        {ui}
+        <EditGrenserProvider>
+          <MetadataPanelProvider>
+            <InndelingerKretsProvider kretstype={"stemmekrets"}>
+              {ui}
+            </InndelingerKretsProvider>
+          </MetadataPanelProvider>
+        </EditGrenserProvider>
       </UtkastContext.Provider>
     </ToolbarProvider>
   );

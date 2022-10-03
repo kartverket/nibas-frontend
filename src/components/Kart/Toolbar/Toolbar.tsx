@@ -28,9 +28,10 @@ const ToolbarArea = styled.div`
 `;
 
 const ToolbarWrapper = styled(KartInteractable)`
+  display: flex;
+  gap: 0.5rem;
   margin-left: 30px;
   margin-top: 30px;
-  padding: 8px;
   border: 2px solid ${({ theme }) => theme.colors.blue};
   padding: 16px;
 `;

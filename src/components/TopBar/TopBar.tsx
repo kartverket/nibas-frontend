@@ -4,8 +4,8 @@ import styled from "styled-components";
 import { AuthenticationButton } from "../Authentication/AuthenticationButton";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
+import Logo from "components/Logo/Logo";
 import { ReactComponent as SearchIcon } from "icons/search.svg";
-import logo from "images/logo.png";
 
 const TopBar = () => {
   const { isAuthenticatedFunc, tokenHolderFunc } = useAuthenticationFlow();
@@ -15,7 +15,7 @@ const TopBar = () => {
   return (
     <Wrapper>
       <LeftSide>
-        <img src={logo} />
+        <Logo />
         <span>{t("Nasjonal inndelingsbase")}</span>
         <SearchInput type="text" placeholder={t("Koordinater")} disabled />
         <SearchIconButton
@@ -42,33 +42,25 @@ const TopBar = () => {
 
 const Wrapper = styled.div`
   grid-area: topbar;
-  height: 70px;
   display: flex;
+  padding: 0.5rem 1rem 0.5rem 0;
 `;
 
 const LeftSide = styled.div`
   display: flex;
+  gap: 1rem;
   align-items: center;
   flex: 1;
 
-  > * {
-    margin-right: 16px;
-    margin-top: 8px;
-  }
-
-  > img {
-    margin-top: -8px;
+  & > * + * {
+    margin-top: 1rem;
   }
 `;
 
 const RightSide = styled.div`
-  margin-right: 16px;
   display: flex;
   align-items: center;
-  justify-content: right;
-  p {
-    margin: 8px 0;
-  }
+  gap: 1rem;
 `;
 
 const SearchInput = styled(Input)`
