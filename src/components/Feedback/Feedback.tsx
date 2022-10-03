@@ -6,9 +6,11 @@ import Button from "components/form/Button";
 Modal.setAppElement("#root");
 
 const OverlayStyle = styled.div`
+  position: fixed;
+  inset: 0;
   z-index: 10;
   animation: Fade 0.5s;
-  background: #000a !important;
+  background: #000a;
 
   @keyframes Fade {
     from {
@@ -29,8 +31,8 @@ const ModalStyle = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 20rem;
-  border: 1px solid blue;
+  max-width: 320px;
+  border: 1px solid ${({ theme }) => theme.colors.blue};
   background: white;
 
   overflow-y: scroll;
@@ -51,18 +53,18 @@ const ModalStyle = styled.div`
 `;
 
 const Header = styled.div<{ type: StatusType }>`
-  padding: 1rem;
+  padding: 16px;
   text-align: center;
   color: ${(props) => props.type && StatusColors[props.type].color};
   background: ${(props) => props.type && StatusColors[props.type].background};
 `;
 
 const Content = styled.div`
-  padding: 1.5rem;
+  padding: 24px;
 `;
 
 const CloseButton = styled(Button)`
-  margin: 1rem;
+  margin: 16px;
   align-self: flex-end;
 `;
 
@@ -95,6 +97,7 @@ const Feedback = ({ type, children, isOpen, onClose }: Props) => (
     isOpen={isOpen}
     onRequestClose={onClose}
     className="_"
+    overlayClassName="_"
     contentElement={(props, contentChildren) => (
       <ModalStyle {...props}>{contentChildren}</ModalStyle>
     )}
