@@ -4,6 +4,9 @@ import GrunnkretserPanel from "./GrunnkretserPanel";
 import { UtkastContext } from "contexts/UtkastContext";
 import { mockKommuner } from "mocks/handlers/responses";
 import { GrunnkretsRequest } from "types/api";
+import { InndelingerKretsProvider } from "contexts/InndelingerKretsContext";
+import { EditGrenserProvider } from "contexts/EditGrenserContext";
+import { MetadataPanelProvider } from "contexts/MetadataPanelContext";
 
 const renderWithProvider = (
   ui: ReactNode,
@@ -22,7 +25,13 @@ const renderWithProvider = (
         updateUtkastWithHistory: jest.fn(),
       }}
     >
-      {ui}
+      <EditGrenserProvider>
+        <MetadataPanelProvider>
+          <InndelingerKretsProvider kretstype={"grunnkrets"}>
+            {ui}
+          </InndelingerKretsProvider>
+        </MetadataPanelProvider>
+      </EditGrenserProvider>
     </UtkastContext.Provider>
   );
 
