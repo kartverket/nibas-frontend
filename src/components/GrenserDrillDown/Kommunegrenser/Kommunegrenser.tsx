@@ -1,3 +1,4 @@
+import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import ListItemAccordion from "../ListItemAccordion";
@@ -5,13 +6,11 @@ import KommuneList from "./KommuneList";
 import { UnstyledList } from "components/UnstyledList";
 import useFylker from "hooks/inndelinger/useFylker";
 import { getNavnInSpraak } from "utils/language/language";
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 
 const Kommunegrenser = () => {
   const { fylker } = useFylker();
   const { t } = useTranslation();
   const { isAuthenticatedFunc } = useAuthenticationFlow();
-
 
   return (
     <ListItemAccordion title={t("inndelinger.Kommunegrenser")}>
@@ -28,12 +27,11 @@ const Kommunegrenser = () => {
             ))}
           </List>
         ) : (
-          <p>{ isAuthenticatedFunc() ? (
-            t("Henter fylker")
-          ) : ( 
-            t("Logg inn for å se listen")
-          )
-          }</p>
+          <p>
+            {isAuthenticatedFunc()
+              ? t("Henter fylker")
+              : t("Logg inn for å se listen")}
+          </p>
         )}
       </div>
     </ListItemAccordion>
