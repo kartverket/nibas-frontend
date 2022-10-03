@@ -42,7 +42,7 @@ handle_path /logout {
     try_files {path} /index.tsx
 }
 
-handle_path / {
+handle_path /* {
     try_files {path} /index.tsx
 }
 
