@@ -21,7 +21,7 @@
     "Aktive kartlag": "Aktive kartlag",
     "Grenser": "Grenser"
   },
-  "Henter fylker": "Henter fylker",
+  "Henter fylker": "Henter fylker...",
   "Koordinater": "Koordinater",
   "auth": {
     "Login": "Logg inn",
@@ -97,5 +97,6 @@
     "Nummerendring": "Nummerendring",
     "Navn på utkast": "Navn på utkast",
     "Type utkast": "Type utkast"
-  }
+  },
+  "Logg inn for å se listen": "Logg inn for å se listen"
 }
