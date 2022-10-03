@@ -1,6 +1,5 @@
 import React, { createContext, useCallback, useContext, useMemo } from "react";
 import { ToolbarContextValue, HistoryEntry } from "./types";
-import useSaveHandlers from "./useSaveHandlers";
 import {
   getDirtyIdsFromEntries,
   setFeatureCoordinatesForEntry,
@@ -68,7 +67,7 @@ const onRedo = (entry: HistoryEntry) => {
 };
 
 /**
- * @deprecated Ikke bruk utenfor ToolbarContext.tsx, bruk heller useToolbar eller useToolbarSave
+ * @deprecated Ikke bruk utenfor ToolbarContext.tsx, bruk heller useToolbar eller useToolbarSaving
  */
 export const ToolbarContext = createContext<ToolbarContextValue | undefined>(
   undefined
@@ -106,43 +105,18 @@ export const useToolbar = () => {
     throw new Error("useToolbar must be used within a ToolbarContext");
   }
 
-  const { clearHistory, history, redo, undo } = context;
+  return context;
+};
 
-  const { saveGrunnkretser, saveGrenserAndMetadata, saveStemmekretser } =
-    useSaveHandlers(history);
+export const useToolbarActions = () => {
+  const { clearHistory, history, redo, undo } = useToolbar();
 
   const canSave = history.entries.length > 0 && history.index > 0;
-
-  const save = async () => {
-    const savePromises = history.entries.map(async (entry) => {
-      const { type } = entry;
-
-      switch (type) {
-        case "metadata":
-        case "grense": {
-          return saveGrenserAndMetadata();
-        }
-        case "grunnkrets": {
-          return saveGrunnkretser();
-        }
-        case "stemmekrets": {
-          return saveStemmekretser();
-        }
-      }
-
-      ensureAllCasesCovered(type);
-    });
-
-    await Promise.all(savePromises);
-
-    clearHistory();
-  };
 
   return {
     canSave,
     history,
     clearHistory,
-    save,
     undo: history.index > 0 ? undo : undefined,
     redo:
       history.entries.length > 0 && history.index < history.entries.length
@@ -151,14 +125,8 @@ export const useToolbar = () => {
   };
 };
 
-export const useToolbarSave = () => {
-  const context = useContext(ToolbarContext);
-
-  if (!context) {
-    throw new Error("useToolbarSave must be used within a ToolbarContext");
-  }
-
-  const { history, setHistory, dirtyFeatureIds } = context;
+export const useToolbarSaving = () => {
+  const { history, setHistory, dirtyFeatureIds } = useToolbar();
 
   const addEntry = useCallback(
     (entry: HistoryEntry) => {

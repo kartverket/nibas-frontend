@@ -11,7 +11,7 @@ import useIsMetadataDisabled from "../useIsMetadataDisabled";
 import { addMetadataEntryFromFeature } from "../utils";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
-import { useToolbarSave } from "contexts/ToolbarContext";
+import { useToolbarSaving } from "contexts/ToolbarContext";
 import { ReactComponent as Minus } from "icons/minus.svg";
 import { ReactComponent as Pluss } from "icons/pluss.svg";
 import { Dokref, FeatureProperties, Metadata } from "types/api";
@@ -173,7 +173,7 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
     name: "dokrefs",
   });
 
-  const { addEntry } = useToolbarSave();
+  const { addEntry } = useToolbarSaving();
 
   useEffect(() => {
     const updateFormOnPropertyChange = (e: ObjectEvent) => {

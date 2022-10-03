@@ -16,7 +16,7 @@ import {
   UtkastOperasjoner,
   UtkastResponse,
 } from "types/api";
-import { featuresToGeoJson } from "utils/map/geoJson";
+import { featureToGeoJson } from "utils/map/geoJson";
 
 const getCombinedEntity = <T extends ResponseWithId>(
   entity: T,
@@ -36,29 +36,9 @@ const getCombinedFeatures = (
   featureCollection: GeoJSONFeatureCollection,
   featuresSlice: NonNullable<UtkastGrenseendringer["endredeFeatures"]>
 ) => {
-  return featureCollection.features.map((feature: GeoJSONFeature) => {
-    // denne finner bare første lagring hvor featuren er endret
-    // dette funker hvis vi fjerner gamle versjoner av endrede features
-    // på lagring
-    const featureCollectionWithUtkast = featuresSlice.find((collection) =>
-      collection.features.find((f: GeoJSONFeature) => f.id === feature.id)
-    );
-
-    if (!featureCollectionWithUtkast) {
-      return feature;
-    }
-
-    // gå gjennom utkastet med endrede features og hent nye featuren
-    const featureInUtkast = featureCollectionWithUtkast.features.find(
-      (f: GeoJSONFeature) => f.id === feature.id
-    );
-
-    if (featureInUtkast) {
-      return featureInUtkast;
-    } else {
-      return feature;
-    }
-  });
+  return featureCollection.features.map(
+    (feature: GeoJSONFeature) => featuresSlice[feature.id] ?? feature
+  );
 };
 
 export const applyNonFeatureUtkast = <T extends NonNullable<UtkastEntity>>(
@@ -129,7 +109,7 @@ const reduceMetadataOperations = (
 };
 
 const reduceGrenseOperations = (
-  editedFeatures: Feature<LineString>[],
+  editedFeatures: Record<string, GeoJSONFeature>,
   entry: GrenseEntry | MetadataEntry
 ) => {
   entry.changes.forEach((change) => {
@@ -137,7 +117,11 @@ const reduceGrenseOperations = (
 
     const feature = editSource.getFeatureById(change.id) as Feature<LineString>;
 
-    editedFeatures.push(feature);
+    const featureId = feature.getId();
+
+    if (!featureId) return editedFeatures;
+
+    editedFeatures[featureId] = featureToGeoJson(feature);
   });
 
   return editedFeatures;
@@ -177,7 +161,7 @@ export const historyToUtkastOperations = (
     historyToCurrentIndex.filter(
       (entry) => entry.type === "grense" || entry.type === "metadata"
     ) as (GrenseEntry | MetadataEntry)[]
-  ).reduce(reduceGrenseOperations, [] as Feature<LineString>[]);
+  ).reduce(reduceGrenseOperations, {} as Record<string, GeoJSONFeature>);
 
   // hent endringer på enheter og gjør endringene om til utkastoperasjoner
   const utkastOperations = (
@@ -191,12 +175,12 @@ export const historyToUtkastOperations = (
   } as UtkastOperasjoner);
 
   // hvis det er noen endringer, slå sammen tidligere endringer og nye endringer til ny liste
-  if (editedFeatures.length > 0) {
+  if (Object.keys(editedFeatures).length > 0) {
     utkastOperations.grenseendringer = {
-      endredeFeatures: ([] as GeoJSONFeatureCollection[]).concat(
-        previousUtkast?.operasjoner.grenseendringer?.endredeFeatures ?? [],
-        featuresToGeoJson(editedFeatures)
-      ),
+      endredeFeatures: {
+        ...utkastOperations.grenseendringer?.endredeFeatures,
+        ...editedFeatures,
+      },
     };
   }
 

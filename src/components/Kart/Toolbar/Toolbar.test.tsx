@@ -17,7 +17,11 @@ const renderWithProvider = (
       <ToolbarContext.Provider
         value={{ history: toolbarHistory, clearHistory: jest.fn() } as any}
       >
-        <UtkastContext.Provider value={{ utkast }}>{ui}</UtkastContext.Provider>
+        <UtkastContext.Provider
+          value={{ utkast, updateUtkastWithHistory: jest.fn() }}
+        >
+          {ui}
+        </UtkastContext.Provider>
       </ToolbarContext.Provider>
     </BrowserRouter>
   );

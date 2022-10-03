@@ -1,7 +1,8 @@
 export {
   ToolbarProvider,
   useToolbar,
-  useToolbarSave,
+  useToolbarActions,
+  useToolbarSaving,
   ToolbarContext,
 } from "./ToolbarContext";
 export * from "./types";

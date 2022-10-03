@@ -1,9 +1,17 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useMemo } from "react";
+import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { useMatch } from "react-router-dom";
 import { EntityUtkastType, UtkastContextValue, UtkastEntity } from "./types";
-import { applyFeatureUtkast, applyNonFeatureUtkast } from "./utils";
+import {
+  applyFeatureUtkast,
+  applyNonFeatureUtkast,
+  historyToUtkastOperations,
+} from "./utils";
+import { updateUtkast as updateApiUtkast } from "api/utkast";
+import { useToolbar } from "contexts/ToolbarContext";
 import useNibasApi from "hooks/useNibasApi";
+import { UtkastRequest } from "types/api";
 
 // utkastet per ID må byttes ut med de nye verdiene på lagring
 // det er kun den siste versjonen av en request som skal brukes,
@@ -19,9 +27,11 @@ export const UtkastContext = createContext<UtkastContextValue | undefined>(
 );
 
 export const UtkastProvider: React.FC = ({ children }) => {
+  const { history, clearHistory } = useToolbar();
+  const { tokenHolderFunc } = useAuthenticationFlow();
   const utkastId = useMatch("/:utkastId")?.params.utkastId;
 
-  const { data: utkast } = useNibasApi(
+  const { data: utkast, mutate } = useNibasApi(
     utkastId ? "/v1/utkast/{id}" : null,
     {
       // id blir ikke brukt før den er truthy, så vi kan trygt si at den
@@ -37,7 +47,26 @@ export const UtkastProvider: React.FC = ({ children }) => {
     }
   );
 
-  const value = { utkast };
+  const updateUtkastWithHistory = async () => {
+    if (!utkast) return;
+
+    const operasjoner = historyToUtkastOperations(history, utkast);
+
+    const updatedUtkast: UtkastRequest = {
+      endringstype: utkast.endringstype,
+      navn: utkast.navn,
+      gyldigFra: utkast.gyldigFra,
+      operasjoner,
+    };
+
+    await mutate(
+      updateApiUtkast(utkast.id, updatedUtkast, tokenHolderFunc()?.token)
+    );
+
+    clearHistory();
+  };
+
+  const value = { utkast, updateUtkastWithHistory };
 
   return (
     <UtkastContext.Provider value={value}>{children}</UtkastContext.Provider>
@@ -60,9 +89,11 @@ export const useUtkastEntity = <T extends UtkastEntity>(
 ) => {
   const { utkast } = useUtkast();
 
-  if (!entity || !utkast) return entity;
+  return useMemo(() => {
+    if (!entity || !utkast) return entity;
 
-  return applyNonFeatureUtkast(entity, utkast, type);
+    return applyNonFeatureUtkast(entity, utkast, type);
+  }, [entity, utkast, type]);
 };
 
 export const useUtkastFeature = (
@@ -70,13 +101,15 @@ export const useUtkastFeature = (
 ) => {
   const { utkast } = useUtkast();
 
-  if (!featureCollection || !utkast) return featureCollection;
+  return useMemo(() => {
+    if (!featureCollection || !utkast) return featureCollection;
 
-  if (Array.isArray(featureCollection)) {
-    return featureCollection.map((collection) =>
-      applyFeatureUtkast(collection, utkast)
-    );
-  }
+    if (Array.isArray(featureCollection)) {
+      return featureCollection.map((collection) =>
+        applyFeatureUtkast(collection, utkast)
+      );
+    }
 
-  return applyFeatureUtkast(featureCollection, utkast);
+    return applyFeatureUtkast(featureCollection, utkast);
+  }, [featureCollection, utkast]);
 };

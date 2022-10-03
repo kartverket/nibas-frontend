@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import Input from "components/form/Input";
 import Label from "components/form/Label";
-import { GrunnkretsEntry, useToolbarSave } from "contexts/ToolbarContext";
+import { GrunnkretsEntry, useToolbarSaving } from "contexts/ToolbarContext";
 import useKretsToolbarSync from "contexts/ToolbarContext/useKretsToolbarSync";
 import useNibasApi from "hooks/useNibasApi";
 import {
@@ -48,7 +48,7 @@ const EditRow = ({ grunnkrets, kommuneId }: Props) => {
 
   const previousValues = useRef<Inputs>(getValues());
 
-  const { addEntry } = useToolbarSave();
+  const { addEntry } = useToolbarSaving();
 
   const setFormValues = useCallback(
     (change: GrunnkretsEntry["changes"][number], direction: "to" | "from") => {

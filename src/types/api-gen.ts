@@ -4,6 +4,12 @@
  */
 
 export interface paths {
+  "/v1/utkast/{id}": {
+    /** Henter utkast med gitt id */
+    get: operations["hentUtkast"];
+    /** Oppdaterer angitt utkast. Returnerer oppdatert utkast. */
+    put: operations["oppdaterUtkast"];
+  };
   "/v1/stemmekretser/{id}": {
     /** Henter stemmekrets med gitt id */
     get: operations["hentStemmekrets"];
@@ -42,10 +48,6 @@ export interface paths {
   };
   "/v1/grenser": {
     post: operations["lagreGrenser"];
-  };
-  "/v1/utkast/{id}": {
-    /** Henter utkast med gitt id */
-    get: operations["hentUtkast"];
   };
   "/v1/stemmekretser/{id}/revisjoner": {
     /** Henter historiske revisjoner til en stemmekrets med gitt id */
@@ -185,30 +187,12 @@ export interface paths {
 
 export interface components {
   schemas: {
-    /** @description Angir om grensen følger grunnkretsgrense og i så fall hvilken grunnkretsgrense */
-    Identifikasjon: {
-      /** @description Lokal id som identifiserer geometrien. Dette er en globalt unik id. */
-      lokalid: string;
-      /** @description Navnerom som unikt identifiserer datakilden til objektet, starter med to bokstavs kode jfr ISO 3166. */
-      navnerom: string;
-      /** @description Identifikasjon av en spesiell versjon av et geografisk objekt (instans), maksimum lengde på 25 karakterer. */
-      versjonid?: string;
-    };
-    /** @description Representasjon av en stemmekrets */
-    StemmekretsRequest: {
-      /** @description Stemmekretsnummeret til stemmekretsen */
-      stemmekretsnummer?: string;
-      identifikasjon: components["schemas"]["Identifikasjon"];
-      /** @description Stemmekretsnavnet til stemmekretsen */
-      stemmekretsnavn?: string;
-      /** @description Tellekretsnummeret til stemmekretsen */
-      tellekretsnummer?: string;
-      /** @description Tellekretsnavnet til stemmekretsen */
-      tellekretsnavn?: string;
-      /** @description Valgdistriktsnummeret til stemmekretsen */
-      valgdistriktsnummer?: string;
-      /** @description Kommunenummeret stemmekretsen tilhører til */
-      kommunenummer?: string;
+    /** @description Representasjon av et navn */
+    AdministrativEnhetNavn: {
+      /** @description Navnet på en administrativ enhet */
+      navn: string;
+      /** @description Språkkoden til det administrative navnet */
+      spraak: string;
     };
     /** @description Spesfikk metadata for en administrativ grense (fylkes/kommunegrense). Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Objekttype/Index/EAID_5142EDBA_4226_4ca3_924D_EECEFD216D1A */
     AdministrativGrenseMetadata: components["schemas"]["Metadata"] & {
@@ -301,13 +285,6 @@ export interface components {
       properties: components["schemas"]["FeatureProperties"];
       geometry: components["schemas"]["Geometry"];
     };
-    /** @description Geometrien til grunnkretsen, dvs representasjonspunkt og flaten */
-    FeatureCollection: {
-      /** @description Toppnivå for geojson-strukturen, definert av en konstant med navn type og verdi FeatureCollection */
-      type: string;
-      /** @description Liste av features som holder på dataene */
-      features: components["schemas"]["Feature"][];
-    };
     /** @description Egenskaper som beskriver en gitt feature (properties-objektet i geojson-strukturen) */
     FeatureProperties: {
       /** @description Avhengig av hva slags feature man har kan dette være enten grensetype eller geometri-type (posisjon eller flate) */
@@ -321,9 +298,35 @@ export interface components {
     } & {
       common: unknown;
     };
+    /** @description Endringer på fylke. */
+    FylkeRequest: {
+      /** @description Navnene til fylket */
+      administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
+      /** @description LokalId for angitt fylke */
+      lokalid: string;
+      /** @description Navnerommet for fylket */
+      navnerom: string;
+      /** @description UUID til fylkesnummeret */
+      fylkesnummerId: string;
+      /** @description Angir om fylket er et samisk forvaltningsområde */
+      samiskforvaltningsomraade: boolean;
+    };
     /** @description Geometry-typene vi støtter i NIBAS. */
     Geometry: {
       type: string;
+    };
+    /** @description Representasjon av endringer på grensegeometri. */
+    Grenseendringer: {
+      /** @description Endringer på features. */
+      endredeFeatures?: { [key: string]: components["schemas"]["Feature"] };
+    };
+    /** @description Representasjon av en grunnkrets */
+    GrunnkretsRequest: {
+      /** @description Navnet på grunnkretsen */
+      navn: string;
+      /** @description Grunnkretsnummeret til grunnkretsen */
+      grunnkretsnummer: string;
+      identifikasjon: components["schemas"]["Identifikasjon"];
     };
     /** @description Spesifikk metadata for en Grunnlinje. Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Diagram/Index/EAID_EEECEE48_B3FA_4807_AAE4_B30B63BC28E1 */
     GrunnlinjeMetadata: components["schemas"]["Metadata"] & {
@@ -339,12 +342,34 @@ export interface components {
       dokumentasjonsreferanser: unknown;
       maritimeGrenser: unknown;
     };
+    /** @description Angir om grensen følger grunnkretsgrense og i så fall hvilken grunnkretsgrense */
+    Identifikasjon: {
+      /** @description Lokal id som identifiserer geometrien. Dette er en globalt unik id. */
+      lokalid: string;
+      /** @description Navnerom som unikt identifiserer datakilden til objektet, starter med to bokstavs kode jfr ISO 3166. */
+      navnerom: string;
+      /** @description Identifikasjon av en spesiell versjon av et geografisk objekt (instans), maksimum lengde på 25 karakterer. */
+      versjonid?: string;
+    };
     /** @description Klassifikasjon av stedfestingsnøyaktighet på grenser, og er basert på dårligste nøyaktighet til grensepunktene til grensen. */
     KodelisteEntry: {
       /** @description Id for kodeliste-innslaget. */
       id?: string;
       /** @description Lenke til kodelista. */
       href: string;
+    };
+    /** @description Representasjon av en kommune */
+    KommuneRequest: {
+      /** @description Navnene til kommunen */
+      administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
+      /** @description LokalId for angitt kommune */
+      lokalid: string;
+      /** @description Navnerommet for kommunen */
+      navnerom?: string;
+      /** @description UUID til kommunenummeret */
+      kommunenummerId: string;
+      /** @description Angir om kommunen er et samisk forvaltningsområde */
+      samiskforvaltningsomraade: boolean;
     };
     /** @description Representasjon av et kommunenummer */
     Kommunenummer: {
@@ -422,6 +447,29 @@ export interface components {
     Metadata: {
       discriminator: string;
     };
+    /** @description Representasjon av endringer på metadata. */
+    Metadataendringer: {
+      /** @description Endringer på nasjon. */
+      nasjonsendringer?: {
+        [key: string]: components["schemas"]["NasjonRequest"];
+      };
+      /** @description Endringer på fylke. */
+      fylkesendringer?: {
+        [key: string]: components["schemas"]["FylkeRequest"];
+      };
+      /** @description Endringer på kommune. */
+      kommuneendringer?: {
+        [key: string]: components["schemas"]["KommuneRequest"];
+      };
+      /** @description Endringer på grunnkrets. */
+      grunnkretsendringer?: {
+        [key: string]: components["schemas"]["GrunnkretsRequest"];
+      };
+      /** @description Endringer på stemmekrets. */
+      stemmekretsendringer?: {
+        [key: string]: components["schemas"]["StemmekretsRequest"];
+      };
+    };
     /** @description Wrapper-objekt rundt et JTS MultiPolygon. */
     MultiPolygon: components["schemas"]["Geometry"] & {
       /** @description Geometriens type. Diskriminator. */
@@ -434,6 +482,20 @@ export interface components {
       coordinates: unknown;
       srid: unknown;
       type: unknown;
+    };
+    /** @description Endringer på nasjon. */
+    NasjonRequest: {
+      /** @description Navnene til nasjonen */
+      administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
+      /** @description LokalId for angitt nasjon */
+      lokalid: string;
+      /** @description Navnerommet for nasjonen */
+      navnerom: string;
+    };
+    /** @description Representasjon av operasjoner/handlinger som er utført i klienten. */
+    Operasjoner: {
+      metadataendringer?: components["schemas"]["Metadataendringer"];
+      grenseendringer?: components["schemas"]["Grenseendringer"];
     };
     /** @description Wrapper-objekt rundt en JTS Point. */
     Point: components["schemas"]["Geometry"] & {
@@ -503,23 +565,20 @@ export interface components {
       noeyaktighetsklasse: unknown;
     };
     /** @description Representasjon av en stemmekrets */
-    StemmekretsResponse: {
-      /** @description ID-en til stemmekretsen */
-      id: string;
-      /** @description Navnet på stemmekretsen */
-      stemmekretsnavn: string;
+    StemmekretsRequest: {
       /** @description Stemmekretsnummeret til stemmekretsen */
-      stemmekretsnummer: string;
+      stemmekretsnummer?: string;
       identifikasjon: components["schemas"]["Identifikasjon"];
-      /** @description Kommunenummeret til stemmekretsen */
-      kommunenummer: string;
-      /** @description Tellekretsnummer til stemmekretsen */
+      /** @description Stemmekretsnavnet til stemmekretsen */
+      stemmekretsnavn?: string;
+      /** @description Tellekretsnummeret til stemmekretsen */
       tellekretsnummer?: string;
-      /** @description Tellekretsnavn til stemmekretsen */
+      /** @description Tellekretsnavnet til stemmekretsen */
       tellekretsnavn?: string;
-      /** @description Valgdistriktsnummer til stemmekretsen */
+      /** @description Valgdistriktsnummeret til stemmekretsen */
       valgdistriktsnummer?: string;
-      features: components["schemas"]["FeatureCollection"];
+      /** @description Kommunenummeret stemmekretsen tilhører til */
+      kommunenummer?: string;
     };
     /** @description Organisasjon som er ansvarlig for opprettholdelse av grensa. */
     TekstHolder: {
@@ -545,161 +604,6 @@ export interface components {
       commonGrense: unknown;
       dokumentasjonsreferanser: unknown;
       maritimeGrenser: unknown;
-    };
-    /** @description Representasjon av et navn */
-    AdministrativEnhetNavn: {
-      /** @description Navnet på en administrativ enhet */
-      navn: string;
-      /** @description Språkkoden til det administrative navnet */
-      spraak: string;
-    };
-    NasjonRequest: {
-      /** @description Navnene til nasjonen */
-      administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
-      /** @description LokalId for angitt nasjon */
-      lokalid: string;
-      /** @description Navnerommet for nasjonen */
-      navnerom: string;
-    };
-    /** @description Representasjon av en nasjon */
-    NasjonResponse: {
-      /** @description ID-en til nasjonen */
-      id: string;
-      /** @description Liste over navn til nasjonen */
-      administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
-      /** @description LokalID til nasjonen */
-      lokalid: string;
-      /** @description Navnerommet til nasjonen */
-      navnerom: string;
-      features: components["schemas"]["FeatureCollection"];
-    };
-    /** @description Representasjon av en kommune */
-    KommuneRequest: {
-      /** @description Navnene til kommunen */
-      administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
-      /** @description LokalId for angitt kommune */
-      lokalid: string;
-      /** @description Navnerommet for kommunen */
-      navnerom?: string;
-      /** @description UUID til kommunenummeret */
-      kommunenummerId: string;
-      /** @description Angir om kommunen er et samisk forvaltningsområde */
-      samiskforvaltningsomraade: boolean;
-    };
-    KommuneResponse: {
-      /** @description ID-en til kommunen */
-      id: string;
-      /** @description Liste over navn til kommunen */
-      administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
-      /** @description LokalIDen til kommunen */
-      lokalid: string;
-      /** @description Navnerommet til kommunen */
-      navnerom: string;
-      kommunenummer: components["schemas"]["Kommunenummer"];
-      /** @description Angir om kommunen er et samisk forvaltningsområde eller ikke */
-      samiskforvaltningsomraade: boolean;
-      /**
-       * Format: date
-       * @description Angir når denne kommunen ble sist oppdatert
-       */
-      oppdateringsdato: string;
-      features: components["schemas"]["FeatureCollection"];
-    };
-    /** @description Representasjon av en grunnkrets */
-    GrunnkretsRequest: {
-      /** @description Navnet på grunnkretsen */
-      navn: string;
-      /** @description Grunnkretsnummeret til grunnkretsen */
-      grunnkretsnummer: string;
-      identifikasjon: components["schemas"]["Identifikasjon"];
-    };
-    /** @description Representasjon av en grunnkrets */
-    GrunnkretsResponse: {
-      /** @description ID-en til grunnkretsen */
-      id: string;
-      /** @description Navnet på grunnkretsen */
-      navn: string;
-      /** @description Grunnkretsnummeret til grunnkretsen */
-      grunnkretsnummer: string;
-      identifikasjon: components["schemas"]["Identifikasjon"];
-      /** @description Kommunenummeret til grunnkretsen */
-      kommunenummer: string;
-      features: components["schemas"]["FeatureCollection"];
-    };
-    FylkeRequest: {
-      /** @description Navnene til fylket */
-      administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
-      /** @description LokalId for angitt fylke */
-      lokalid: string;
-      /** @description Navnerommet for fylket */
-      navnerom: string;
-      /** @description UUID til fylkesnummeret */
-      fylkesnummerId: string;
-      /** @description Angir om fylket er et samisk forvaltningsområde */
-      samiskforvaltningsomraade: boolean;
-    };
-    /** @description Representasjon av et fylke */
-    FylkeResponse: {
-      /** @description ID-en til fylket */
-      id: string;
-      /** @description Liste over navn til fylket */
-      administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
-      /** @description LokalIDen til fylket */
-      lokalid: string;
-      /** @description Navnerommet til fylket */
-      navnerom: string;
-      fylkesnummer: components["schemas"]["Fylkesnummer"];
-      /** @description Angir om fylket er et samisk forvaltningsområde eller ikke */
-      samiskforvaltningsomraade: boolean;
-      /**
-       * Format: date
-       * @description Angir når dette fylket ble sist oppdatert
-       */
-      oppdateringsdato: string;
-      features: components["schemas"]["FeatureCollection"];
-    };
-    /** @description Representasjon av et fylkesnummer */
-    Fylkesnummer: {
-      /** @description Unik UUID for fylkesnummeret */
-      id: string;
-      /**
-       * Format: int32
-       * @description Det faktiske fylkesnummeret
-       */
-      kodeverdi: number;
-    };
-    /** @description Representasjon av endringer på grensegeometri. */
-    Grenseendringer: {
-      /** @description Endringer på features. */
-      endredeFeatures?: components["schemas"]["FeatureCollection"][];
-    };
-    /** @description Representasjon av endringer på metadata. */
-    Metadataendringer: {
-      /** @description Endringer på nasjon. */
-      nasjonsendringer?: {
-        [key: string]: components["schemas"]["NasjonRequest"];
-      };
-      /** @description Endringer på fylke. */
-      fylkesendringer?: {
-        [key: string]: components["schemas"]["FylkeRequest"];
-      };
-      /** @description Endringer på kommune. */
-      kommuneendringer?: {
-        [key: string]: components["schemas"]["KommuneRequest"];
-      };
-      /** @description Endringer på grunnkrets. */
-      grunnkretsendringer?: {
-        [key: string]: components["schemas"]["GrunnkretsRequest"];
-      };
-      /** @description Endringer på stemmekrets. */
-      stemmekretsendringer?: {
-        [key: string]: components["schemas"]["StemmekretsRequest"];
-      };
-    };
-    /** @description Representasjon av operasjoner/handlinger som er utført i klienten. */
-    Operasjoner: {
-      metadataendringer?: components["schemas"]["Metadataendringer"];
-      grenseendringer?: components["schemas"]["Grenseendringer"];
     };
     /** @description Utkastet som ønskes opprettet */
     UtkastRequest: {
@@ -746,6 +650,106 @@ export interface components {
       opprettetDato: string;
       auditInfoResponse: components["schemas"]["AuditInfoResponse"];
       operasjoner: components["schemas"]["Operasjoner"];
+    };
+    /** @description Geometrien til grunnkretsen, dvs representasjonspunkt og flaten */
+    FeatureCollection: {
+      /** @description Toppnivå for geojson-strukturen, definert av en konstant med navn type og verdi FeatureCollection */
+      type: string;
+      /** @description Liste av features som holder på dataene */
+      features: components["schemas"]["Feature"][];
+    };
+    /** @description Representasjon av en stemmekrets */
+    StemmekretsResponse: {
+      /** @description ID-en til stemmekretsen */
+      id: string;
+      /** @description Navnet på stemmekretsen */
+      stemmekretsnavn: string;
+      /** @description Stemmekretsnummeret til stemmekretsen */
+      stemmekretsnummer: string;
+      identifikasjon: components["schemas"]["Identifikasjon"];
+      /** @description Kommunenummeret til stemmekretsen */
+      kommunenummer: string;
+      /** @description Tellekretsnummer til stemmekretsen */
+      tellekretsnummer?: string;
+      /** @description Tellekretsnavn til stemmekretsen */
+      tellekretsnavn?: string;
+      /** @description Valgdistriktsnummer til stemmekretsen */
+      valgdistriktsnummer?: string;
+      features: components["schemas"]["FeatureCollection"];
+    };
+    /** @description Representasjon av en nasjon */
+    NasjonResponse: {
+      /** @description ID-en til nasjonen */
+      id: string;
+      /** @description Liste over navn til nasjonen */
+      administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
+      /** @description LokalID til nasjonen */
+      lokalid: string;
+      /** @description Navnerommet til nasjonen */
+      navnerom: string;
+      features: components["schemas"]["FeatureCollection"];
+    };
+    KommuneResponse: {
+      /** @description ID-en til kommunen */
+      id: string;
+      /** @description Liste over navn til kommunen */
+      administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
+      /** @description LokalIDen til kommunen */
+      lokalid: string;
+      /** @description Navnerommet til kommunen */
+      navnerom: string;
+      kommunenummer: components["schemas"]["Kommunenummer"];
+      /** @description Angir om kommunen er et samisk forvaltningsområde eller ikke */
+      samiskforvaltningsomraade: boolean;
+      /**
+       * Format: date
+       * @description Angir når denne kommunen ble sist oppdatert
+       */
+      oppdateringsdato: string;
+      features: components["schemas"]["FeatureCollection"];
+    };
+    /** @description Representasjon av en grunnkrets */
+    GrunnkretsResponse: {
+      /** @description ID-en til grunnkretsen */
+      id: string;
+      /** @description Navnet på grunnkretsen */
+      navn: string;
+      /** @description Grunnkretsnummeret til grunnkretsen */
+      grunnkretsnummer: string;
+      identifikasjon: components["schemas"]["Identifikasjon"];
+      /** @description Kommunenummeret til grunnkretsen */
+      kommunenummer: string;
+      features: components["schemas"]["FeatureCollection"];
+    };
+    /** @description Representasjon av et fylke */
+    FylkeResponse: {
+      /** @description ID-en til fylket */
+      id: string;
+      /** @description Liste over navn til fylket */
+      administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
+      /** @description LokalIDen til fylket */
+      lokalid: string;
+      /** @description Navnerommet til fylket */
+      navnerom: string;
+      fylkesnummer: components["schemas"]["Fylkesnummer"];
+      /** @description Angir om fylket er et samisk forvaltningsområde eller ikke */
+      samiskforvaltningsomraade: boolean;
+      /**
+       * Format: date
+       * @description Angir når dette fylket ble sist oppdatert
+       */
+      oppdateringsdato: string;
+      features: components["schemas"]["FeatureCollection"];
+    };
+    /** @description Representasjon av et fylkesnummer */
+    Fylkesnummer: {
+      /** @description Unik UUID for fylkesnummeret */
+      id: string;
+      /**
+       * Format: int32
+       * @description Det faktiske fylkesnummeret
+       */
+      kodeverdi: number;
     };
     /** @description En referanse til en historisk revisjon av en administrativ enhet */
     RevisjonRef: {
@@ -843,6 +847,57 @@ export interface components {
 }
 
 export interface operations {
+  /** Henter utkast med gitt id */
+  hentUtkast: {
+    parameters: {
+      path: {
+        /** ID-en til utkastet man vil hente */
+        id: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["UtkastResponse"];
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["UtkastResponse"];
+        };
+      };
+    };
+  };
+  /** Oppdaterer angitt utkast. Returnerer oppdatert utkast. */
+  oppdaterUtkast: {
+    parameters: {
+      path: {
+        /** ID til utkastet man vil oppdatere */
+        id: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["UtkastResponse"];
+        };
+      };
+      /** Bad request. Check the request body and path */
+      400: {
+        content: {
+          "application/json": components["schemas"]["UtkastResponse"];
+        };
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UtkastRequest"];
+      };
+    };
+  };
   /** Henter stemmekrets med gitt id */
   hentStemmekrets: {
     parameters: {
@@ -1117,29 +1172,6 @@ export interface operations {
     requestBody: {
       content: {
         "application/json": components["schemas"]["FeatureCollection"];
-      };
-    };
-  };
-  /** Henter utkast med gitt id */
-  hentUtkast: {
-    parameters: {
-      path: {
-        /** ID-en til utkastet man vil hente */
-        id: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["UtkastResponse"];
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "application/json": components["schemas"]["UtkastResponse"];
-        };
       };
     };
   };

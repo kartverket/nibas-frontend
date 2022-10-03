@@ -12,7 +12,7 @@ import useAsyncKodeliste from "../../useAsyncKodeliste";
 import useIsMetadataDisabled from "../../useIsMetadataDisabled";
 import { addMetadataEntryFromFeature } from "../../utils";
 import Checkbox from "components/Checkbox";
-import { useToolbarSave } from "contexts/ToolbarContext";
+import { useToolbarSaving } from "contexts/ToolbarContext";
 import { AdministrativGrenseMetadata, FeatureProperties } from "types/api";
 
 type Inputs = {
@@ -53,7 +53,7 @@ const AdministrativGrenseDetaljer = ({ feature }: Props) => {
     kodelisteUrl: "/v1/kodeliste/noeyaktighetsklasser",
   });
 
-  const { addEntry } = useToolbarSave();
+  const { addEntry } = useToolbarSaving();
 
   useEffect(() => {
     const updateFormOnPropertyChange = (e: ObjectEvent) => {
