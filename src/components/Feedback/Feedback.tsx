@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import Modal from "react-modal";
 import styled from "styled-components";
 import Button from "components/form/Button";
@@ -63,19 +64,14 @@ const Content = styled.div`
   padding: 24px;
 `;
 
-const CloseButton = styled(Button)`
-  margin: 16px;
+const Buttons = styled.div`
+  display: flex;
   align-self: flex-end;
+  margin: 16px;
+  gap: 16px;
 `;
 
 type StatusType = "positive" | "negative" | "warning" | "info";
-
-const StatusText: Record<StatusType, string> = {
-  positive: "Ting er på stell :D",
-  negative: "Det har skjedd en feil :(",
-  warning: "Varsel til brukern ;)",
-  info: "Tips",
-};
 
 const StatusColors: Record<StatusType, { background: string; color: string }> =
   {
@@ -87,28 +83,51 @@ const StatusColors: Record<StatusType, { background: string; color: string }> =
 
 type Props = {
   type: StatusType;
+  title: string;
   children: ReactNode;
   isOpen: boolean;
   onClose: () => void;
+  onContinue?: () => void;
 };
 
-const Feedback = ({ type, children, isOpen, onClose }: Props) => (
-  <Modal
-    isOpen={isOpen}
-    onRequestClose={onClose}
-    className="_"
-    overlayClassName="_"
-    contentElement={(props, contentChildren) => (
-      <ModalStyle {...props}>{contentChildren}</ModalStyle>
-    )}
-    overlayElement={(props, overlayChildren) => (
-      <OverlayStyle {...props}>{overlayChildren}</OverlayStyle>
-    )}
-  >
-    <Header type={type}>{StatusText[type]}</Header>
-    <Content>{children}</Content>
-    <CloseButton onClick={() => onClose()}>Lukk</CloseButton>
-  </Modal>
-);
+const Feedback = ({
+  type,
+  title,
+  children,
+  isOpen,
+  onClose,
+  onContinue,
+}: Props) => {
+  const { t } = useTranslation();
 
+  return (
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onClose}
+      className="_"
+      overlayClassName="_"
+      contentElement={(props, contentChildren) => (
+        <ModalStyle {...props}>{contentChildren}</ModalStyle>
+      )}
+      overlayElement={(props, overlayChildren) => (
+        <OverlayStyle {...props}>{overlayChildren}</OverlayStyle>
+      )}
+    >
+      <Header type={type}>{title}</Header>
+      <Content>{children}</Content>
+      <Buttons>
+        {onContinue ? (
+          <>
+            <Button variant="tertiary" onClick={onClose}>
+              {t("action.Avbryt")}
+            </Button>
+            <Button onClick={onContinue}>{t("action.Fortsett")}</Button>
+          </>
+        ) : (
+          <Button onClick={onClose}>{t("action.Lukk")}</Button>
+        )}
+      </Buttons>
+    </Modal>
+  );
+};
 export default Feedback;
