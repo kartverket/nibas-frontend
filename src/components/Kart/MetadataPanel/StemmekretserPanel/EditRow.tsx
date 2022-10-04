@@ -26,7 +26,7 @@ const fromFormToRequest = (
 ): StemmekretsRequest => ({
   identifikasjon: stemmekrets.identifikasjon,
   valgdistriktsnummer: stemmekrets.valgdistriktsnummer,
-  version: (stemmekrets as any).version + 1,
+  version: (stemmekrets as any).version,
   stemmekretsnavn: data.stemmekretsnavn,
   stemmekretsnummer: data.stemmekretsnummer,
   tellekretsnavn: data.tellekretsnavn,
