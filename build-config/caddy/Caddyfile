@@ -5,38 +5,53 @@
 # Starter applikasjonen på port 8080
 :{$PORT}
 
-# Proxy kall til /v1/* til nibas-backend i test
-reverse_proxy /v1/* {$BACKEND_HOST}
-reverse_proxy /actuator/info {$BACKEND_HOST}
-
-# Proxy kall til /api/auth til aut-idporten-modulen
-reverse_proxy /api/auth/* {$AUT-IDPORTEN-URL} {
-    header_up Host {upstream_hostport}
+@backendUrls {
+    path /v1/*
+    path /actuator/info
 }
 
-# Legg på brukernavn og passord når klient skal hente ticket 
-# til de låste bakgrunnskartene
-rewrite /skbaatts/req ?{query}&brukerid={$BAAT_USERNAME}&passord={$BAAT_PASSWORD}&retformat=s
-reverse_proxy /skbaatts/req https://baat.geonorge.no
+handle @backendUrls {
+    # Proxy kall til /v1/* til nibas-backend i test
+    reverse_proxy {$BACKEND_HOST}
+}
+
+handle /api/auth/* {
+    # Proxy kall til /api/auth til aut-idporten-modulen
+    reverse_proxy {$AUT-IDPORTEN-URL} {
+        header_up Host {upstream_hostport}
+    }
+}
+
+handle /skbaatts/req {
+    # Legg på brukernavn og passord når klient skal hente ticket 
+    # til de låste bakgrunnskartene
+    rewrite * ?{query}&brukerid={$BAAT_USERNAME}&passord={$BAAT_PASSWORD}&retformat=s
+    reverse_proxy https://baat.geonorge.no
+}
 
 # Send alle bakgrunnskart til geonorge for å unngå CORS error
 @laasteBakgrunnskart {
     path /skwms1/wms.nib
     path /skwms1/wms.ecc_enc
 }
-reverse_proxy @laasteBakgrunnskart https://wms.geonorge.no
 
-# Matrikkelen WFS-tjeneste
-reverse_proxy /geoservergeo/wfs/matrikkel {$MATRIKKELEN_WFS_URL} {
-    header_up Host {upstream_hostport}
-    header_up X-Forwarded-Host {host}
-    header_up Authorization "Basic {$MATRIKKELEN_WFS_CREDENTIALS}"
+handle @laasteBakgrunnskart {
+    reverse_proxy https://wms.geonorge.no
 }
 
-handle_path /* {
+handle /geoservergeo/wfs/matrikkel {
+    # Matrikkelen WFS-tjeneste
+    reverse_proxy {$MATRIKKELEN_WFS_URL} {
+        header_up Host {upstream_hostport}
+        header_up X-Forwarded-Host {host}
+        header_up Authorization "Basic {$MATRIKKELEN_WFS_CREDENTIALS}"
+    }
+}
+
+handle {
     root * /srv
     try_files {path} /index.html
-}
 
-# Start filserveren
-file_server
+    # Start filserveren
+    file_server
+}
