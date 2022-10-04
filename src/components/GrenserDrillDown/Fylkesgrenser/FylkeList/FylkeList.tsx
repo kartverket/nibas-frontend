@@ -1,9 +1,9 @@
+import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import ApiGrense from "../../ApiGrense";
 import { useEditGrenser } from "contexts/EditGrenserContext";
 import useFylker from "hooks/inndelinger/useFylker";
 import useOnlyDisplayEditingGrenser from "hooks/useOnlyDisplayEditingGrenser";
-import { useTranslation } from "react-i18next";
 
 type Props = {
   onlyDisplayEditing?: boolean;
