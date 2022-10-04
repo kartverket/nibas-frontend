@@ -5,7 +5,8 @@ metadata:
   namespace: nibas
 spec:
   selector:
-    istio: ingressgateway # use Istio default gateway implementation
+    istio: ingressgateway # only internal ingress
+    ingress: internal
   servers:
   - port:
       number: 80
