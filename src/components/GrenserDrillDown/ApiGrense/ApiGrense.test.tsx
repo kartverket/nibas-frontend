@@ -7,7 +7,7 @@ const defaultProps: React.ComponentProps<typeof ApiGrense> = {
   featuresUrl: "/",
   grense: {
     id: "1",
-    navn: [{ navn: "Grense", spraak: "nor" }],
+    navn: [{ navn: "Grense", spraak: "nor", version: 1 }],
     href: "href",
   },
   type: "fylke",

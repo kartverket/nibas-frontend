@@ -10,34 +10,6 @@ export interface paths {
     /** Oppdaterer angitt utkast. Returnerer oppdatert utkast. */
     put: operations["oppdaterUtkast"];
   };
-  "/v1/stemmekretser/{id}": {
-    /** Henter stemmekrets med gitt id */
-    get: operations["hentStemmekrets"];
-    /** Oppdaterer angitt stemmekrets. Returnerer den oppdaterte stemmekretsen */
-    put: operations["oppdaterStemmekrets"];
-  };
-  "/v1/nasjoner/{id}": {
-    /** Henter nasjon med gitt id */
-    get: operations["hentNasjon"];
-    put: operations["oppdaterNasjon"];
-  };
-  "/v1/kommuner/{id}": {
-    /** Henter kommune med gitt id */
-    get: operations["hentKommune"];
-    /** Oppdaterer angitt kommune. Returnerer den oppdaterte kommunen */
-    put: operations["oppdaterKommune"];
-  };
-  "/v1/grunnkretser/{id}": {
-    /** Henter grunnkrets med gitt id */
-    get: operations["hentGrunnkrets"];
-    /** Oppdaterer angitt grunnkrets. Returnerer den oppdaterte grunnkretsen */
-    put: operations["oppdaterGrunnkrets"];
-  };
-  "/v1/fylker/{id}": {
-    /** Henter fylke med gitt id */
-    get: operations["hentFylke"];
-    put: operations["oppdaterFylke"];
-  };
   "/v1/admin/kodelister/invalidate": {
     /** Invaliderer kodeliste-cache slik at kodelister refreshes. */
     put: operations["invalidateKodelisteCache"];
@@ -46,8 +18,13 @@ export interface paths {
     /** Oppretter et utkast og returnerer id. */
     post: operations["opprettUtkast"];
   };
-  "/v1/grenser": {
-    post: operations["lagreGrenser"];
+  "/v1/utkast/{id}/publiser": {
+    /** Publiserer utkastet med gitt id. */
+    post: operations["publiserUtkast"];
+  };
+  "/v1/stemmekretser/{id}": {
+    /** Henter stemmekrets med gitt id */
+    get: operations["hentStemmekrets"];
   };
   "/v1/stemmekretser/{id}/revisjoner": {
     /** Henter historiske revisjoner til en stemmekrets med gitt id */
@@ -65,6 +42,10 @@ export interface paths {
     /** Henter alle nasjoner i Nasjonal inndelingsbase. */
     get: operations["hentNasjoner"];
   };
+  "/v1/nasjoner/{id}": {
+    /** Henter nasjon med gitt id */
+    get: operations["hentNasjon"];
+  };
   "/v1/nasjoner/{id}/revisjoner": {
     /** Henter historiske revisjoner til en nasjon med gitt id */
     get: operations["hentNasjonRevisjoner"];
@@ -80,6 +61,10 @@ export interface paths {
   "/v1/kommuner": {
     /** Henter alle kommuner i Nasjonal inndelingsbase. */
     get: operations["hentKommuner"];
+  };
+  "/v1/kommuner/{id}": {
+    /** Henter kommune med gitt id */
+    get: operations["hentKommune"];
   };
   "/v1/kommuner/{id}/stemmekretser": {
     get: operations["hentKommunesStemmekretser"];
@@ -127,6 +112,10 @@ export interface paths {
   "/v1/kodeliste/fastsettingstyper": {
     get: operations["fetchFastsettingstyper"];
   };
+  "/v1/grunnkretser/{id}": {
+    /** Henter grunnkrets med gitt id */
+    get: operations["hentGrunnkrets"];
+  };
   "/v1/grunnkretser/{id}/revisjoner": {
     /** Henter historiske revisjoner til en grunnkrets med gitt id */
     get: operations["hentGrunnkretsRevisjoner"];
@@ -154,6 +143,10 @@ export interface paths {
   "/v1/fylker": {
     /** Henter alle fylker i Nasjonal inndelingsbase. */
     get: operations["hentFylker"];
+  };
+  "/v1/fylker/{id}": {
+    /** Henter fylke med gitt id */
+    get: operations["hentFylke"];
   };
   "/v1/fylker/{id}/revisjoner": {
     /** Henter historiske revisjoner til et fylke med gitt id */
@@ -193,6 +186,11 @@ export interface components {
       navn: string;
       /** @description Språkkoden til det administrative navnet */
       spraak: string;
+      /**
+       * Format: int32
+       * @description Teknisk versjon for å støtte samhandling og redigering
+       */
+      version: number;
     };
     /** @description Spesfikk metadata for en administrativ grense (fylkes/kommunegrense). Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Objekttype/Index/EAID_5142EDBA_4226_4ca3_924D_EECEFD216D1A */
     AdministrativGrenseMetadata: components["schemas"]["Metadata"] & {
@@ -242,7 +240,7 @@ export interface components {
        * Format: date
        * @description Tidspunktet når objektet oppstod i den virkelige verden
        */
-      gyldigFra?: string;
+      gyldigFra: string;
       /**
        * Format: date
        * @description Tidspunktet når objektet opphørte å eksistere i den virkelige verden
@@ -289,8 +287,18 @@ export interface components {
     FeatureProperties: {
       /** @description Avhengig av hva slags feature man har kan dette være enten grensetype eller geometri-type (posisjon eller flate) */
       type: string;
+      /**
+       * Format: int32
+       * @description Koordinatsystemet. Defaulter til 25833.
+       */
+      srid: number;
       metadata?: components["schemas"]["Metadata"];
       kontekstEgenskaper?: components["schemas"]["KontekstEgenskaper"];
+      /**
+       * Format: int32
+       * @description Teknisk versjon for å støtte samhandling og redigering
+       */
+      version: number;
     };
     /** @description Metadata for en flate (felles for nasjon, fylke, kommune og grunnkrets) */
     FlateMetadata: components["schemas"]["Metadata"] & {
@@ -310,6 +318,11 @@ export interface components {
       fylkesnummerId: string;
       /** @description Angir om fylket er et samisk forvaltningsområde */
       samiskforvaltningsomraade: boolean;
+      /**
+       * Format: int32
+       * @description Teknisk versjon for å støtte samhandling og redigering
+       */
+      version: number;
     };
     /** @description Geometry-typene vi støtter i NIBAS. */
     Geometry: {
@@ -327,6 +340,11 @@ export interface components {
       /** @description Grunnkretsnummeret til grunnkretsen */
       grunnkretsnummer: string;
       identifikasjon: components["schemas"]["Identifikasjon"];
+      /**
+       * Format: int32
+       * @description Teknisk versjon for å støtte samhandling og redigering
+       */
+      version: number;
     };
     /** @description Spesifikk metadata for en Grunnlinje. Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Diagram/Index/EAID_EEECEE48_B3FA_4807_AAE4_B30B63BC28E1 */
     GrunnlinjeMetadata: components["schemas"]["Metadata"] & {
@@ -370,6 +388,11 @@ export interface components {
       kommunenummerId: string;
       /** @description Angir om kommunen er et samisk forvaltningsområde */
       samiskforvaltningsomraade: boolean;
+      /**
+       * Format: int32
+       * @description Teknisk versjon for å støtte samhandling og redigering
+       */
+      version: number;
     };
     /** @description Representasjon av et kommunenummer */
     Kommunenummer: {
@@ -419,13 +442,10 @@ export interface components {
     LineString: components["schemas"]["Geometry"] & {
       /** @description Geometriens type. Diskriminator. */
       type?: string;
-      /** @description Koordinatsystemet. Defaulter til 25833. */
-      srid?: string;
       /** @description Liste av (x og y som liste). */
       coordinates?: number[][];
     } & {
       coordinates: unknown;
-      srid: unknown;
       type: unknown;
     };
     /** @description Metadata-egenskaper for maritim grense. */
@@ -474,13 +494,10 @@ export interface components {
     MultiPolygon: components["schemas"]["Geometry"] & {
       /** @description Geometriens type. Diskriminator. */
       type?: string;
-      /** @description Koordinatsystemet. Defaulter til 25833. */
-      srid?: string;
       /** @description Liste av polygonenes liste av LinearRings som igjen har liste av koordinater som er liste av x og y. */
       coordinates?: number[][][][];
     } & {
       coordinates: unknown;
-      srid: unknown;
       type: unknown;
     };
     /** @description Endringer på nasjon. */
@@ -491,6 +508,11 @@ export interface components {
       lokalid: string;
       /** @description Navnerommet for nasjonen */
       navnerom: string;
+      /**
+       * Format: int32
+       * @description Teknisk versjon for å støtte samhandling og redigering
+       */
+      version: number;
     };
     /** @description Representasjon av operasjoner/handlinger som er utført i klienten. */
     Operasjoner: {
@@ -501,13 +523,10 @@ export interface components {
     Point: components["schemas"]["Geometry"] & {
       /** @description Geometriens type. Diskriminator. */
       type?: string;
-      /** @description Koordinatsystemet. Defaulter til 25833. */
-      srid?: string;
       /** @description X og y som liste. */
       coordinates?: number[];
     } & {
       coordinates: unknown;
-      srid: unknown;
       type: unknown;
     };
     /** @description Beskrivelse av kvaliteten på stedfestingen */
@@ -579,6 +598,11 @@ export interface components {
       valgdistriktsnummer?: string;
       /** @description Kommunenummeret stemmekretsen tilhører til */
       kommunenummer?: string;
+      /**
+       * Format: int32
+       * @description Teknisk versjon for å støtte samhandling og redigering
+       */
+      version: number;
     };
     /** @description Organisasjon som er ansvarlig for opprettholdelse av grensa. */
     TekstHolder: {
@@ -617,6 +641,179 @@ export interface components {
        */
       gyldigFra?: string;
       operasjoner: components["schemas"]["Operasjoner"];
+      /**
+       * Format: int32
+       * @description Teknisk versjon for å støtte samhandling og redigering
+       */
+      version: number;
+    };
+    ApiErrorResponse: {
+      /**
+       * @description HttpStatus for responsen.
+       * @enum {string}
+       */
+      httpStatus:
+        | "100 CONTINUE"
+        | "101 SWITCHING_PROTOCOLS"
+        | "102 PROCESSING"
+        | "103 CHECKPOINT"
+        | "200 OK"
+        | "201 CREATED"
+        | "202 ACCEPTED"
+        | "203 NON_AUTHORITATIVE_INFORMATION"
+        | "204 NO_CONTENT"
+        | "205 RESET_CONTENT"
+        | "206 PARTIAL_CONTENT"
+        | "207 MULTI_STATUS"
+        | "208 ALREADY_REPORTED"
+        | "226 IM_USED"
+        | "300 MULTIPLE_CHOICES"
+        | "301 MOVED_PERMANENTLY"
+        | "302 FOUND"
+        | "302 MOVED_TEMPORARILY"
+        | "303 SEE_OTHER"
+        | "304 NOT_MODIFIED"
+        | "305 USE_PROXY"
+        | "307 TEMPORARY_REDIRECT"
+        | "308 PERMANENT_REDIRECT"
+        | "400 BAD_REQUEST"
+        | "401 UNAUTHORIZED"
+        | "402 PAYMENT_REQUIRED"
+        | "403 FORBIDDEN"
+        | "404 NOT_FOUND"
+        | "405 METHOD_NOT_ALLOWED"
+        | "406 NOT_ACCEPTABLE"
+        | "407 PROXY_AUTHENTICATION_REQUIRED"
+        | "408 REQUEST_TIMEOUT"
+        | "409 CONFLICT"
+        | "410 GONE"
+        | "411 LENGTH_REQUIRED"
+        | "412 PRECONDITION_FAILED"
+        | "413 PAYLOAD_TOO_LARGE"
+        | "413 REQUEST_ENTITY_TOO_LARGE"
+        | "414 URI_TOO_LONG"
+        | "414 REQUEST_URI_TOO_LONG"
+        | "415 UNSUPPORTED_MEDIA_TYPE"
+        | "416 REQUESTED_RANGE_NOT_SATISFIABLE"
+        | "417 EXPECTATION_FAILED"
+        | "418 I_AM_A_TEAPOT"
+        | "419 INSUFFICIENT_SPACE_ON_RESOURCE"
+        | "420 METHOD_FAILURE"
+        | "421 DESTINATION_LOCKED"
+        | "422 UNPROCESSABLE_ENTITY"
+        | "423 LOCKED"
+        | "424 FAILED_DEPENDENCY"
+        | "425 TOO_EARLY"
+        | "426 UPGRADE_REQUIRED"
+        | "428 PRECONDITION_REQUIRED"
+        | "429 TOO_MANY_REQUESTS"
+        | "431 REQUEST_HEADER_FIELDS_TOO_LARGE"
+        | "451 UNAVAILABLE_FOR_LEGAL_REASONS"
+        | "500 INTERNAL_SERVER_ERROR"
+        | "501 NOT_IMPLEMENTED"
+        | "502 BAD_GATEWAY"
+        | "503 SERVICE_UNAVAILABLE"
+        | "504 GATEWAY_TIMEOUT"
+        | "505 HTTP_VERSION_NOT_SUPPORTED"
+        | "506 VARIANT_ALSO_NEGOTIATES"
+        | "507 INSUFFICIENT_STORAGE"
+        | "508 LOOP_DETECTED"
+        | "509 BANDWIDTH_LIMIT_EXCEEDED"
+        | "510 NOT_EXTENDED"
+        | "511 NETWORK_AUTHENTICATION_REQUIRED";
+      /** @description Beskrivelse av hva som har gått galt. */
+      melding?: string;
+    };
+    ConflictResponse: {
+      /**
+       * @description HttpStatus for responsen.
+       * @enum {string}
+       */
+      httpStatus:
+        | "100 CONTINUE"
+        | "101 SWITCHING_PROTOCOLS"
+        | "102 PROCESSING"
+        | "103 CHECKPOINT"
+        | "200 OK"
+        | "201 CREATED"
+        | "202 ACCEPTED"
+        | "203 NON_AUTHORITATIVE_INFORMATION"
+        | "204 NO_CONTENT"
+        | "205 RESET_CONTENT"
+        | "206 PARTIAL_CONTENT"
+        | "207 MULTI_STATUS"
+        | "208 ALREADY_REPORTED"
+        | "226 IM_USED"
+        | "300 MULTIPLE_CHOICES"
+        | "301 MOVED_PERMANENTLY"
+        | "302 FOUND"
+        | "302 MOVED_TEMPORARILY"
+        | "303 SEE_OTHER"
+        | "304 NOT_MODIFIED"
+        | "305 USE_PROXY"
+        | "307 TEMPORARY_REDIRECT"
+        | "308 PERMANENT_REDIRECT"
+        | "400 BAD_REQUEST"
+        | "401 UNAUTHORIZED"
+        | "402 PAYMENT_REQUIRED"
+        | "403 FORBIDDEN"
+        | "404 NOT_FOUND"
+        | "405 METHOD_NOT_ALLOWED"
+        | "406 NOT_ACCEPTABLE"
+        | "407 PROXY_AUTHENTICATION_REQUIRED"
+        | "408 REQUEST_TIMEOUT"
+        | "409 CONFLICT"
+        | "410 GONE"
+        | "411 LENGTH_REQUIRED"
+        | "412 PRECONDITION_FAILED"
+        | "413 PAYLOAD_TOO_LARGE"
+        | "413 REQUEST_ENTITY_TOO_LARGE"
+        | "414 URI_TOO_LONG"
+        | "414 REQUEST_URI_TOO_LONG"
+        | "415 UNSUPPORTED_MEDIA_TYPE"
+        | "416 REQUESTED_RANGE_NOT_SATISFIABLE"
+        | "417 EXPECTATION_FAILED"
+        | "418 I_AM_A_TEAPOT"
+        | "419 INSUFFICIENT_SPACE_ON_RESOURCE"
+        | "420 METHOD_FAILURE"
+        | "421 DESTINATION_LOCKED"
+        | "422 UNPROCESSABLE_ENTITY"
+        | "423 LOCKED"
+        | "424 FAILED_DEPENDENCY"
+        | "425 TOO_EARLY"
+        | "426 UPGRADE_REQUIRED"
+        | "428 PRECONDITION_REQUIRED"
+        | "429 TOO_MANY_REQUESTS"
+        | "431 REQUEST_HEADER_FIELDS_TOO_LARGE"
+        | "451 UNAVAILABLE_FOR_LEGAL_REASONS"
+        | "500 INTERNAL_SERVER_ERROR"
+        | "501 NOT_IMPLEMENTED"
+        | "502 BAD_GATEWAY"
+        | "503 SERVICE_UNAVAILABLE"
+        | "504 GATEWAY_TIMEOUT"
+        | "505 HTTP_VERSION_NOT_SUPPORTED"
+        | "506 VARIANT_ALSO_NEGOTIATES"
+        | "507 INSUFFICIENT_STORAGE"
+        | "508 LOOP_DETECTED"
+        | "509 BANDWIDTH_LIMIT_EXCEEDED"
+        | "510 NOT_EXTENDED"
+        | "511 NETWORK_AUTHENTICATION_REQUIRED";
+      /** @description Identifikatoren til objektet som er utdatert. */
+      id: string;
+      /** @description Typen til objektet som er utdatert. */
+      type: string;
+      /**
+       * Format: int32
+       * @description Versjon som prøves å oppdateres.
+       */
+      versjon: number;
+      /**
+       * Format: int32
+       * @description Versjon som er gjeldende for objektet nå.
+       */
+      gjeldendeVersjon: number;
+      /** @description Beskrivelse av hva som har gått galt. */
+      melding?: string;
     };
     /** @description Representasjon av audit info for et objekt. */
     AuditInfoResponse: {
@@ -650,6 +847,11 @@ export interface components {
       opprettetDato: string;
       auditInfoResponse: components["schemas"]["AuditInfoResponse"];
       operasjoner: components["schemas"]["Operasjoner"];
+      /**
+       * Format: int32
+       * @description Teknisk versjon for å støtte samhandling og redigering
+       */
+      version: number;
     };
     /** @description Geometrien til grunnkretsen, dvs representasjonspunkt og flaten */
     FeatureCollection: {
@@ -676,80 +878,6 @@ export interface components {
       /** @description Valgdistriktsnummer til stemmekretsen */
       valgdistriktsnummer?: string;
       features: components["schemas"]["FeatureCollection"];
-    };
-    /** @description Representasjon av en nasjon */
-    NasjonResponse: {
-      /** @description ID-en til nasjonen */
-      id: string;
-      /** @description Liste over navn til nasjonen */
-      administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
-      /** @description LokalID til nasjonen */
-      lokalid: string;
-      /** @description Navnerommet til nasjonen */
-      navnerom: string;
-      features: components["schemas"]["FeatureCollection"];
-    };
-    KommuneResponse: {
-      /** @description ID-en til kommunen */
-      id: string;
-      /** @description Liste over navn til kommunen */
-      administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
-      /** @description LokalIDen til kommunen */
-      lokalid: string;
-      /** @description Navnerommet til kommunen */
-      navnerom: string;
-      kommunenummer: components["schemas"]["Kommunenummer"];
-      /** @description Angir om kommunen er et samisk forvaltningsområde eller ikke */
-      samiskforvaltningsomraade: boolean;
-      /**
-       * Format: date
-       * @description Angir når denne kommunen ble sist oppdatert
-       */
-      oppdateringsdato: string;
-      features: components["schemas"]["FeatureCollection"];
-    };
-    /** @description Representasjon av en grunnkrets */
-    GrunnkretsResponse: {
-      /** @description ID-en til grunnkretsen */
-      id: string;
-      /** @description Navnet på grunnkretsen */
-      navn: string;
-      /** @description Grunnkretsnummeret til grunnkretsen */
-      grunnkretsnummer: string;
-      identifikasjon: components["schemas"]["Identifikasjon"];
-      /** @description Kommunenummeret til grunnkretsen */
-      kommunenummer: string;
-      features: components["schemas"]["FeatureCollection"];
-    };
-    /** @description Representasjon av et fylke */
-    FylkeResponse: {
-      /** @description ID-en til fylket */
-      id: string;
-      /** @description Liste over navn til fylket */
-      administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
-      /** @description LokalIDen til fylket */
-      lokalid: string;
-      /** @description Navnerommet til fylket */
-      navnerom: string;
-      fylkesnummer: components["schemas"]["Fylkesnummer"];
-      /** @description Angir om fylket er et samisk forvaltningsområde eller ikke */
-      samiskforvaltningsomraade: boolean;
-      /**
-       * Format: date
-       * @description Angir når dette fylket ble sist oppdatert
-       */
-      oppdateringsdato: string;
-      features: components["schemas"]["FeatureCollection"];
-    };
-    /** @description Representasjon av et fylkesnummer */
-    Fylkesnummer: {
-      /** @description Unik UUID for fylkesnummeret */
-      id: string;
-      /**
-       * Format: int32
-       * @description Det faktiske fylkesnummeret
-       */
-      kodeverdi: number;
     };
     /** @description En referanse til en historisk revisjon av en administrativ enhet */
     RevisjonRef: {
@@ -780,6 +908,23 @@ export interface components {
       /** @description URL til full representasjon av nasjonen */
       href: string;
     };
+    /** @description Representasjon av en nasjon */
+    NasjonResponse: {
+      /** @description ID-en til nasjonen */
+      id: string;
+      /** @description Liste over navn til nasjonen */
+      administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
+      /** @description LokalID til nasjonen */
+      lokalid: string;
+      /** @description Navnerommet til nasjonen */
+      navnerom: string;
+      features: components["schemas"]["FeatureCollection"];
+      /**
+       * Format: int32
+       * @description Teknisk versjon for å støtte samhandling og redigering
+       */
+      version: number;
+    };
     /** @description En referanse til en kommune */
     KommuneRef: {
       /** @description ID-en til kommunen */
@@ -788,6 +933,30 @@ export interface components {
       navn: components["schemas"]["AdministrativEnhetNavn"][];
       /** @description URL til full representasjon av kommunen */
       href: string;
+    };
+    KommuneResponse: {
+      /** @description ID-en til kommunen */
+      id: string;
+      /** @description Liste over navn til kommunen */
+      administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
+      /** @description LokalIDen til kommunen */
+      lokalid: string;
+      /** @description Navnerommet til kommunen */
+      navnerom: string;
+      kommunenummer: components["schemas"]["Kommunenummer"];
+      /** @description Angir om kommunen er et samisk forvaltningsområde eller ikke */
+      samiskforvaltningsomraade: boolean;
+      /**
+       * Format: date
+       * @description Angir når denne kommunen ble sist oppdatert
+       */
+      oppdateringsdato: string;
+      features: components["schemas"]["FeatureCollection"];
+      /**
+       * Format: int32
+       * @description Teknisk versjon for å støtte samhandling og redigering
+       */
+      version: number;
     };
     /** @description En referanse til en stemmekrets */
     StemmekretsRef: {
@@ -834,6 +1003,19 @@ export interface components {
       /** @description Liste av kodeliste-elementer. */
       items: components["schemas"]["KodelisteItem"][];
     };
+    /** @description Representasjon av en grunnkrets */
+    GrunnkretsResponse: {
+      /** @description ID-en til grunnkretsen */
+      id: string;
+      /** @description Navnet på grunnkretsen */
+      navn: string;
+      /** @description Grunnkretsnummeret til grunnkretsen */
+      grunnkretsnummer: string;
+      identifikasjon: components["schemas"]["Identifikasjon"];
+      /** @description Kommunenummeret til grunnkretsen */
+      kommunenummer: string;
+      features: components["schemas"]["FeatureCollection"];
+    };
     /** @description En referanse til et fylke */
     FylkeRef: {
       /** @description ID-en til fylket */
@@ -842,6 +1024,41 @@ export interface components {
       navn: components["schemas"]["AdministrativEnhetNavn"][];
       /** @description URL til full representasjon av fylket */
       href: string;
+    };
+    /** @description Representasjon av et fylke */
+    FylkeResponse: {
+      /** @description ID-en til fylket */
+      id: string;
+      /** @description Liste over navn til fylket */
+      administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
+      /** @description LokalIDen til fylket */
+      lokalid: string;
+      /** @description Navnerommet til fylket */
+      navnerom: string;
+      fylkesnummer: components["schemas"]["Fylkesnummer"];
+      /** @description Angir om fylket er et samisk forvaltningsområde eller ikke */
+      samiskforvaltningsomraade: boolean;
+      /**
+       * Format: date
+       * @description Angir når dette fylket ble sist oppdatert
+       */
+      oppdateringsdato: string;
+      features: components["schemas"]["FeatureCollection"];
+      /**
+       * Format: int32
+       * @description Teknisk versjon for å støtte samhandling og redigering
+       */
+      version: number;
+    };
+    /** @description Representasjon av et fylkesnummer */
+    Fylkesnummer: {
+      /** @description Unik UUID for fylkesnummeret */
+      id: string;
+      /**
+       * Format: int32
+       * @description Det faktiske fylkesnummeret
+       */
+      kodeverdi: number;
     };
   };
 }
@@ -865,7 +1082,7 @@ export interface operations {
       /** Not Found */
       404: {
         content: {
-          "application/json": components["schemas"]["UtkastResponse"];
+          "application/json": components["schemas"]["ApiErrorResponse"];
         };
       };
     };
@@ -885,257 +1102,22 @@ export interface operations {
           "application/json": components["schemas"]["UtkastResponse"];
         };
       };
-      /** Bad request. Check the request body and path */
-      400: {
+      /** Not Found */
+      404: {
         content: {
-          "application/json": components["schemas"]["UtkastResponse"];
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** Conflict */
+      409: {
+        content: {
+          "application/json": components["schemas"]["ConflictResponse"][];
         };
       };
     };
     requestBody: {
       content: {
         "application/json": components["schemas"]["UtkastRequest"];
-      };
-    };
-  };
-  /** Henter stemmekrets med gitt id */
-  hentStemmekrets: {
-    parameters: {
-      path: {
-        /** ID-en til stemmekretsen man vil hente */
-        id: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["StemmekretsResponse"];
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "application/json": components["schemas"]["StemmekretsResponse"];
-        };
-      };
-    };
-  };
-  /** Oppdaterer angitt stemmekrets. Returnerer den oppdaterte stemmekretsen */
-  oppdaterStemmekrets: {
-    parameters: {
-      path: {
-        /** ID til stemmekretsen man vil oppdatere */
-        id: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["StemmekretsResponse"];
-        };
-      };
-      /** Bad request. Check the request body and path */
-      400: {
-        content: {
-          "application/json": components["schemas"]["StemmekretsResponse"];
-        };
-      };
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["StemmekretsRequest"];
-      };
-    };
-  };
-  /** Henter nasjon med gitt id */
-  hentNasjon: {
-    parameters: {
-      path: {
-        /** ID-en til nasjonen man vil hente */
-        id: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["NasjonRef"];
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "application/json": components["schemas"]["NasjonResponse"];
-        };
-      };
-    };
-  };
-  oppdaterNasjon: {
-    parameters: {
-      path: {
-        /** ID til nasjonen man vil oppdatere */
-        id: string;
-      };
-    };
-    responses: {
-      /** OK */
-      200: {
-        content: {
-          "application/json": components["schemas"]["NasjonResponse"];
-        };
-      };
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["NasjonRequest"];
-      };
-    };
-  };
-  /** Henter kommune med gitt id */
-  hentKommune: {
-    parameters: {
-      path: {
-        /** ID-en til kommunen man vil hente */
-        id: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["KommuneResponse"];
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "application/json": components["schemas"]["KommuneResponse"];
-        };
-      };
-    };
-  };
-  /** Oppdaterer angitt kommune. Returnerer den oppdaterte kommunen */
-  oppdaterKommune: {
-    parameters: {
-      path: {
-        /** ID til kommunen man vil oppdatere */
-        id: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["KommuneResponse"];
-        };
-      };
-      /** Bad request. Check the request body and path */
-      400: {
-        content: {
-          "application/json": components["schemas"]["KommuneResponse"];
-        };
-      };
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["KommuneRequest"];
-      };
-    };
-  };
-  /** Henter grunnkrets med gitt id */
-  hentGrunnkrets: {
-    parameters: {
-      path: {
-        /** ID-en til grunnkretsen man vil hente */
-        id: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["GrunnkretsResponse"];
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "application/json": components["schemas"]["GrunnkretsResponse"];
-        };
-      };
-    };
-  };
-  /** Oppdaterer angitt grunnkrets. Returnerer den oppdaterte grunnkretsen */
-  oppdaterGrunnkrets: {
-    parameters: {
-      path: {
-        /** ID til grunnkretsen man vil oppdatere */
-        id: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["GrunnkretsResponse"];
-        };
-      };
-      /** Bad request. Check the request body and path */
-      400: {
-        content: {
-          "application/json": components["schemas"]["GrunnkretsResponse"];
-        };
-      };
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["GrunnkretsRequest"];
-      };
-    };
-  };
-  /** Henter fylke med gitt id */
-  hentFylke: {
-    parameters: {
-      path: {
-        /** ID-en til fylket man vil hente */
-        id: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["FylkeRef"];
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "application/json": components["schemas"]["FylkeResponse"];
-        };
-      };
-    };
-  };
-  oppdaterFylke: {
-    parameters: {
-      path: {
-        /** ID til fylket man vil oppdatere */
-        id: string;
-      };
-    };
-    responses: {
-      /** OK */
-      200: {
-        content: {
-          "application/json": components["schemas"]["FylkeResponse"];
-        };
-      };
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["FylkeRequest"];
       };
     };
   };
@@ -1162,16 +1144,57 @@ export interface operations {
       };
     };
   };
-  lagreGrenser: {
+  /** Publiserer utkastet med gitt id. */
+  publiserUtkast: {
+    parameters: {
+      path: {
+        /** ID-en til utkastet man vil publisere */
+        id: string;
+      };
+    };
     responses: {
       /** Successful operation */
       200: unknown;
-      /** Bad request */
-      400: unknown;
+      /** Bad request. Check the request body and path */
+      400: {
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** Conflict */
+      409: {
+        content: {
+          "application/json": components["schemas"]["ConflictResponse"][];
+        };
+      };
     };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["FeatureCollection"];
+  };
+  /** Henter stemmekrets med gitt id */
+  hentStemmekrets: {
+    parameters: {
+      path: {
+        /** ID-en til stemmekretsen man vil hente */
+        id: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["StemmekretsResponse"];
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["StemmekretsResponse"];
+        };
       };
     };
   };
@@ -1247,6 +1270,29 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["NasjonRef"][];
+        };
+      };
+    };
+  };
+  /** Henter nasjon med gitt id */
+  hentNasjon: {
+    parameters: {
+      path: {
+        /** ID-en til nasjonen man vil hente */
+        id: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["NasjonRef"];
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["NasjonResponse"];
         };
       };
     };
@@ -1329,6 +1375,29 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["KommuneRef"][];
+        };
+      };
+    };
+  };
+  /** Henter kommune med gitt id */
+  hentKommune: {
+    parameters: {
+      path: {
+        /** ID-en til kommunen man vil hente */
+        id: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["KommuneResponse"];
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["KommuneResponse"];
         };
       };
     };
@@ -1521,6 +1590,29 @@ export interface operations {
       };
     };
   };
+  /** Henter grunnkrets med gitt id */
+  hentGrunnkrets: {
+    parameters: {
+      path: {
+        /** ID-en til grunnkretsen man vil hente */
+        id: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["GrunnkretsResponse"];
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["GrunnkretsResponse"];
+        };
+      };
+    };
+  };
   /** Henter historiske revisjoner til en grunnkrets med gitt id */
   hentGrunnkretsRevisjoner: {
     parameters: {
@@ -1658,6 +1750,29 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["FylkeRef"][];
+        };
+      };
+    };
+  };
+  /** Henter fylke med gitt id */
+  hentFylke: {
+    parameters: {
+      path: {
+        /** ID-en til fylket man vil hente */
+        id: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["FylkeRef"];
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["FylkeResponse"];
         };
       };
     };

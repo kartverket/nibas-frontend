@@ -64,6 +64,7 @@ export const UtkastProvider: React.FC = ({ children }) => {
       navn: utkast.navn,
       gyldigFra: utkast.gyldigFra,
       operasjoner,
+      version: utkast.version + 1,
     };
 
     await mutate(
