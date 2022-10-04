@@ -1,7 +1,11 @@
-import { Link, useMatch } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
+import { Link, useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { publishUtkast } from "api/utkast";
 import Button from "components/form/Button";
-import { ReactComponent as EditIcon } from "icons/edit.svg";
+import useNibasApi from "hooks/useNibasApi";
+import { ReactComponent as PublishIcon } from "icons/pluss.svg";
 import { ReactComponent as CancelIcon } from "icons/visibility_off.svg";
 import { UtkastRef } from "types/api";
 
@@ -11,10 +15,28 @@ type Props = {
 
 const UtkastItem = ({ utkast }: Props) => {
   const utkastId = useMatch("/:utkastId")?.params.utkastId;
+  const [shouldPublish, setShouldPublish] = useState(false);
+  const { data: fullUtkast } = useNibasApi(
+    shouldPublish ? "/v1/utkast/{id}" : null,
+    {
+      id: utkast.id,
+    }
+  );
+  const { tokenHolderFunc } = useAuthenticationFlow();
+  const navigate = useNavigate();
 
-  const publishUtkast = () => {
-    // a
-  };
+  useEffect(() => {
+    if (!fullUtkast) return;
+
+    const publish = async () => {
+      await publishUtkast(fullUtkast.id, fullUtkast, tokenHolderFunc()?.token);
+
+      setShouldPublish(false);
+      navigate("/");
+    };
+
+    publish();
+  }, [fullUtkast, tokenHolderFunc, navigate]);
 
   return (
     <ListItem>
@@ -32,8 +54,8 @@ const UtkastItem = ({ utkast }: Props) => {
           </Link>
         </UnstyledButton>
       )}
-      <UnstyledButton onClick={publishUtkast}>
-        <EditIcon />
+      <UnstyledButton onClick={() => setShouldPublish(true)}>
+        <PublishIcon />
       </UnstyledButton>
     </ListItem>
   );

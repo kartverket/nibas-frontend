@@ -6,8 +6,8 @@ const UtkastList = () => {
   // const { data: utkasts } = useNibasApi("/v1/utkast");
   const utkasts: UtkastRef[] = [
     {
-      id: "896e4241-7e84-4728-87e0-4f039ef671ba",
-      navn: "Malvik got hands",
+      id: "2b43e304-2515-4ceb-bdf7-f44c4fa726e6",
+      navn: "Malvik more hair",
     },
     {
       id: "456",

@@ -32,3 +32,18 @@ export const updateUtkast = async (
 
   return json as UtkastResponse;
 };
+
+export const publishUtkast = async (
+  id: string,
+  utkast: UtkastRequest,
+  token: string | undefined
+) => {
+  return fetch(`v1/utkast/${id}/publiser`, {
+    method: "POST",
+    body: JSON.stringify(utkast),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + token,
+    },
+  });
+};
