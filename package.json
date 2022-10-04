@@ -1,6 +1,6 @@
 {
   "name": "nibas-klient",
-  "version": "0.1.62",
+  "version": "0.1.63",
   "private": true,
   "dependencies": {
     "@kartverket/frontend-aut-lib": "0.0.21",
