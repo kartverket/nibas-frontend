@@ -34,7 +34,7 @@ reverse_proxy /geoservergeo/wfs/matrikkel {$MATRIKKELEN_WFS_URL} {
 }
 
 handle_path /* {
-    try_files {path} /index.html
+    try_files {path} /index.tsx
 }
 
 # Start filserveren
