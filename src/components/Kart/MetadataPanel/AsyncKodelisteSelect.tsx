@@ -20,7 +20,11 @@ const AsyncKodelisteSelectInner = (
         <option value="">---</option>
         {kodeliste?.items.map((kodeItem) => (
           <option key={kodeItem.id} value={kodeItem.id}>
-            {kodeItem.label.replace(/([a-z])([A-Z])/g, "$1 $2")}
+            {kodeItem.label
+              .replace(/([a-z])([A-Z])/g, "$1 $2")
+              .replace(/([æøå])([ÆØÅ])/g, "$1 $2")
+              .replace(/([a-z])([ÆØÅ])/g, "$1 $2")
+              .replace(/([æøå])([A-Z])/g, "$1 $2")}
           </option>
         ))}
       </Select>
