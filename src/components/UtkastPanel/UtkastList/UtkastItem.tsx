@@ -85,49 +85,59 @@ const UtkastItem = ({ utkast }: Props) => {
       </ItemWrapper>
       {isPublishOpen && (
         <UtkastItemExpanded>
-          <form onSubmit={onSubmit}>
+          <ButtonsAndGyldigFra>
             <BlockLabel>
-              {t("utkast.Navn på utkast")}
-              <Input {...register("navn")} />
+              {t("metadata.Gyldig fra")}
+              <Input
+                {...register("gyldigFra", { disabled: true })}
+                role="textbox"
+                type="date"
+              />
             </BlockLabel>
-            <BlockLabel>
-              {t("utkast.Type utkast")}
-              <Select {...register("endringsType")}>
-                {Object.keys(translateKeysByEndringsType).map((type) => (
-                  <option key={type} value={type}>
-                    {t(translateKeysByEndringsType[type] as Translation)}
-                  </option>
-                ))}
-              </Select>
-            </BlockLabel>
-            {/* <BlockLabel>
-            {t("Kommentar")}
-            <Input {...register("kommentar")} />
-          </BlockLabel> */}
-            <ButtonsAndGyldigFra>
-              <BlockLabel>
-                {t("metadata.Gyldig fra")}
-                <Input {...register("gyldigFra")} role="textbox" type="date" />
-              </BlockLabel>
-              <Buttons>
-                <CancelButton onClick={() => setIsPublishOpen(false)}>
-                  {t("action.Avbryt")}
-                </CancelButton>
-                <Button type="submit">{t("action.Publiser")}</Button>
-              </Buttons>
-            </ButtonsAndGyldigFra>
-          </form>
+            <Buttons>
+              <CancelButton onClick={() => setIsPublishOpen(false)}>
+                {t("action.Avbryt")}
+              </CancelButton>
+              <Button type="submit">{t("action.Publiser")}</Button>
+            </Buttons>
+          </ButtonsAndGyldigFra>
         </UtkastItemExpanded>
       )}
       {utkastActive && !isPublishOpen && (
-        <EditingUtkast>
-          <EditingUtkastText>
-            {t("utkast.Du er nå i redigeringsmodus av dette utkastet")}
-          </EditingUtkastText>
-          <CancelButton>
-            <Link to="">{t("action.Avbryt redigering")}</Link>
-          </CancelButton>
-        </EditingUtkast>
+        <UtkastItemExpanded>
+          <BlockLabel>
+            {t("utkast.Navn på utkast")}
+            <Input {...register("navn")} />
+          </BlockLabel>
+          <BlockLabel>
+            {t("utkast.Type utkast")}
+            <Select {...register("endringsType")}>
+              {Object.keys(translateKeysByEndringsType).map((type) => (
+                <option key={type} value={type}>
+                  {t(translateKeysByEndringsType[type] as Translation)}
+                </option>
+              ))}
+            </Select>
+          </BlockLabel>
+          {/* <BlockLabel>
+            {t("Kommentar")}
+            <Input {...register("kommentar")} />
+          </BlockLabel> */}
+          <ButtonsAndGyldigFra>
+            <BlockLabel>
+              {t("metadata.Gyldig fra")}
+              <Input {...register("gyldigFra")} role="textbox" type="date" />
+            </BlockLabel>
+          </ButtonsAndGyldigFra>
+          <Center>
+            <EditingUtkastText>
+              {t("utkast.Du er nå i redigeringsmodus av dette utkastet")}
+            </EditingUtkastText>
+            <CancelButton>
+              <Link to="">{t("action.Avbryt redigering")}</Link>
+            </CancelButton>
+          </Center>
+        </UtkastItemExpanded>
       )}
     </ListItem>
   );
@@ -160,6 +170,7 @@ const UtkastItemExpanded = styled.div`
 const EditingUtkastText = styled.p`
   margin: 0;
   margin-bottom: 8px;
+  margin-top: 16px;
   font-style: italic;
   font-size: 14px;
 `;
@@ -189,7 +200,7 @@ const ButtonsAndGyldigFra = styled.div`
   }
 `;
 
-const EditingUtkast = styled(UtkastItemExpanded)`
+const Center = styled.div`
   text-align: center;
 `;
 
