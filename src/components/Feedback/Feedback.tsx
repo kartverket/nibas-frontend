@@ -4,8 +4,6 @@ import Modal from "react-modal";
 import styled from "styled-components";
 import Button from "components/form/Button";
 
-Modal.setAppElement("#root");
-
 const OverlayStyle = styled.div`
   position: fixed;
   inset: 0;
