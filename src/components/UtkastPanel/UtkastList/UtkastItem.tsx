@@ -115,12 +115,9 @@ const UtkastItem = ({ utkast }: Props) => {
               <Input {...register("gyldigFra")} role="textbox" type="date" />
             </BlockLabel>
             <Buttons>
-              <Button
-                onClick={() => setIsPublishOpen(false)}
-                variant="secondary"
-              >
+              <CancelButton onClick={() => setIsPublishOpen(false)}>
                 {t("action.Avbryt")}
-              </Button>
+              </CancelButton>
               <Button type="submit">{t("action.Publiser")}</Button>
             </Buttons>
           </ButtonsAndGyldigFra>
@@ -177,6 +174,14 @@ const ButtonsAndGyldigFra = styled.div`
       width: 120px;
     }
   }
+`;
+
+const CancelButton = styled(Button).attrs(() => ({
+  variant: "teriary",
+}))`
+  background-color: ${({ theme }) => theme.colors.grayLight};
+  border: none;
+  color: ${({ theme }) => theme.colors.blue};
 `;
 
 const UnstyledButton = styled(Button).attrs(() => ({
