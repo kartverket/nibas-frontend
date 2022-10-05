@@ -68,7 +68,9 @@
     "Endre": "Endre",
     "Lagre som": "Lagre som",
     "Undo": "Undo",
-    "Redo": "Redo"
+    "Redo": "Redo",
+    "Publiser": "Publiser",
+    "Avbryt": "Avbryt"
   },
   "Ja": "Ja",
   "Nei": "Nei",
@@ -97,5 +99,6 @@
     "Nummerendring": "Nummerendring",
     "Navn på utkast": "Navn på utkast",
     "Type utkast": "Type utkast"
-  }
+  },
+  "Kommentar": "Kommentar"
 }

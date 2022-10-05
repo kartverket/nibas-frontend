@@ -10,17 +10,6 @@ import Input from "components/form/Input";
 import Select from "components/form/Select";
 import { useToolbar } from "contexts/ToolbarContext";
 import { historyToUtkastOperations } from "contexts/UtkastContext/utils";
-import { Translation } from "i18n";
-
-const translateKeysByEndringsType: Record<string, string> = {
-  "Vedtatt grensejustering": "utkast.Vedtatt grensejustering",
-  "Vedtatt sammenslåing": "utkast.Vedtatt sammenslåing",
-  Retting: "utkast.Retting",
-  "Vedtatt deling": "utkast.Vedtatt deling",
-  Fastsetting: "utkast.Fastsetting",
-  Navneendring: "utkast.Navneendring",
-  Nummerendring: "utkast.Nummerendring",
-};
 
 type Props = {
   closeCreateUtkast: () => void;
@@ -74,11 +63,6 @@ const CreateUtkastToolbar = ({ closeCreateUtkast }: Props) => {
           <option value="" disabled>
             ---
           </option>
-          {Object.keys(translateKeysByEndringsType).map((type) => (
-            <option key={type} value={type}>
-              {t(translateKeysByEndringsType[type] as Translation)}
-            </option>
-          ))}
         </Select>
       </BlockLabel>
 
