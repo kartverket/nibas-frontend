@@ -12,7 +12,7 @@ const getChangeForId = <EntryType extends KretsHistoryEntry>(
     | undefined;
 
 type Parameters<EntryType extends KretsHistoryEntry> = {
-  kretsId: string | undefined;
+  entityId: string | undefined;
   setFormValues: (
     change: EntryType["changes"][number],
     direction: "to" | "from"
@@ -21,47 +21,47 @@ type Parameters<EntryType extends KretsHistoryEntry> = {
   redoEventKey: string;
 };
 
-const useKretsToolbarSync = <EntryType extends KretsHistoryEntry>({
-  kretsId,
+const useToolbarFormSync = <EntryType extends KretsHistoryEntry>({
+  entityId,
   undoEventKey,
   redoEventKey,
   setFormValues,
 }: Parameters<EntryType>) => {
   useEffect(() => {
-    const undoKrets = ((e: CustomEvent) => {
+    const undo = ((e: CustomEvent) => {
       const entry = e.detail.entry as EntryType;
 
-      const changeForThisId = getChangeForId(entry, kretsId);
+      const changeForThisId = getChangeForId(entry, entityId);
 
       if (!changeForThisId) return;
 
       setFormValues(changeForThisId, "from");
     }) as EventListener;
 
-    document.addEventListener(undoEventKey, undoKrets);
+    document.addEventListener(undoEventKey, undo);
 
     return () => {
-      document.removeEventListener(undoEventKey, undoKrets);
+      document.removeEventListener(undoEventKey, undo);
     };
-  }, [kretsId, setFormValues, undoEventKey]);
+  }, [entityId, setFormValues, undoEventKey]);
 
   useEffect(() => {
-    const redoKrets = ((e: CustomEvent) => {
+    const redo = ((e: CustomEvent) => {
       const entry = e.detail.entry as EntryType;
 
-      const changeForThisId = getChangeForId(entry, kretsId);
+      const changeForThisId = getChangeForId(entry, entityId);
 
       if (!changeForThisId) return;
 
       setFormValues(changeForThisId, "to");
     }) as EventListener;
 
-    document.addEventListener(redoEventKey, redoKrets);
+    document.addEventListener(redoEventKey, redo);
 
     return () => {
-      document.removeEventListener(redoEventKey, redoKrets);
+      document.removeEventListener(redoEventKey, redo);
     };
-  }, [kretsId, redoEventKey, setFormValues]);
+  }, [entityId, redoEventKey, setFormValues]);
 };
 
-export default useKretsToolbarSync;
+export default useToolbarFormSync;

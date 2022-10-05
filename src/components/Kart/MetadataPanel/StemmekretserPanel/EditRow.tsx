@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import Input from "components/form/Input";
 import { StemmekretsEntry, useToolbarSaving } from "contexts/ToolbarContext";
-import useKretsToolbarSync from "contexts/ToolbarContext/useKretsToolbarSync";
+import useKretsToolbarSync from "contexts/ToolbarContext/useToolbarFormSync";
 import { useUtkastEntity } from "contexts/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
 import {
@@ -77,7 +77,7 @@ const EditRow = ({ stemmekrets, kommuneId }: Props) => {
   );
 
   useKretsToolbarSync<StemmekretsEntry>({
-    kretsId: utkastStemmekrets?.id,
+    entityId: utkastStemmekrets?.id,
     redoEventKey: "stemmekretsRedo",
     undoEventKey: "stemmekretsUndo",
     setFormValues,
