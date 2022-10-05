@@ -25,7 +25,7 @@ const PageLayout = () => {
           <Sidebar />
           <Feedback
             type="negative"
-            title="Noe galt har skjedd"
+            title="Det har skjedd en feil"
             isOpen={errorFeedback !== ""}
             onClose={() => setErrorFeedback("")}
           >
