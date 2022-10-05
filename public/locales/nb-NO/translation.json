@@ -70,7 +70,8 @@
     "Undo": "Undo",
     "Redo": "Redo",
     "Publiser": "Publiser",
-    "Avbryt": "Avbryt"
+    "Avbryt": "Avbryt",
+    "Avbryt redigering": "Avbryt redigering"
   },
   "Ja": "Ja",
   "Nei": "Nei",
@@ -98,7 +99,8 @@
     "Navneendring": "Navneendring",
     "Nummerendring": "Nummerendring",
     "Navn på utkast": "Navn på utkast",
-    "Type utkast": "Type utkast"
+    "Type utkast": "Type utkast",
+    "Du er nå i redigeringsmodus av dette utkastet": "Du er nå i redigeringsmodus av dette utkastet. Alle endringer du gjør i inndelingene og kartet vil bli lagret på dette utkastet når du klikker på \"Lagre\"-knappen øverst på skjermen."
   },
   "Kommentar": "Kommentar"
 }

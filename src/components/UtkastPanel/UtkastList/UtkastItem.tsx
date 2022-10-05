@@ -12,8 +12,8 @@ import { BlockLabel } from "components/Kart/MetadataPanel/metadataComponents";
 import { translateKeysByEndringsType } from "contexts/UtkastContext/constants";
 import useNibasApi from "hooks/useNibasApi";
 import { Translation } from "i18n";
+import { ReactComponent as EditIcon } from "icons/edit.svg";
 import { ReactComponent as PublishIcon } from "icons/pluss.svg";
-import { ReactComponent as CancelIcon } from "icons/visibility_off.svg";
 import { UtkastRef } from "types/api";
 
 type Inputs = {
@@ -68,60 +68,66 @@ const UtkastItem = ({ utkast }: Props) => {
     navigate("/");
   });
 
+  const utkastActive = utkastId === utkast.id;
+
   return (
     <ListItem>
       <ItemWrapper>
-        <UtkastName>
-          {utkastId === utkast.id ? (
-            <span>{utkast.navn}</span>
-          ) : (
-            <Link to={`/${utkast.id}`}>{utkast.navn}</Link>
-          )}
-        </UtkastName>
-        {utkastId === utkast.id && (
-          <UnstyledButton>
-            <Link to="">
-              <CancelIcon />
-            </Link>
-          </UnstyledButton>
-        )}
+        <UtkastName>{utkast.navn}</UtkastName>
         <UnstyledButton onClick={() => setIsPublishOpen(true)}>
           <PublishIcon />
         </UnstyledButton>
+        <UnstyledButton>
+          <Link to={`/${utkast.id}`}>
+            <EditIcon />
+          </Link>
+        </UnstyledButton>
       </ItemWrapper>
       {isPublishOpen && (
-        <PublishForm onSubmit={onSubmit}>
-          <BlockLabel>
-            {t("utkast.Navn på utkast")}
-            <Input {...register("navn")} />
-          </BlockLabel>
-          <BlockLabel>
-            {t("utkast.Type utkast")}
-            <Select {...register("endringsType")}>
-              {Object.keys(translateKeysByEndringsType).map((type) => (
-                <option key={type} value={type}>
-                  {t(translateKeysByEndringsType[type] as Translation)}
-                </option>
-              ))}
-            </Select>
-          </BlockLabel>
-          {/* <BlockLabel>
+        <UtkastItemExpanded>
+          <form onSubmit={onSubmit}>
+            <BlockLabel>
+              {t("utkast.Navn på utkast")}
+              <Input {...register("navn")} />
+            </BlockLabel>
+            <BlockLabel>
+              {t("utkast.Type utkast")}
+              <Select {...register("endringsType")}>
+                {Object.keys(translateKeysByEndringsType).map((type) => (
+                  <option key={type} value={type}>
+                    {t(translateKeysByEndringsType[type] as Translation)}
+                  </option>
+                ))}
+              </Select>
+            </BlockLabel>
+            {/* <BlockLabel>
             {t("Kommentar")}
             <Input {...register("kommentar")} />
           </BlockLabel> */}
-          <ButtonsAndGyldigFra>
-            <BlockLabel>
-              {t("metadata.Gyldig fra")}
-              <Input {...register("gyldigFra")} role="textbox" type="date" />
-            </BlockLabel>
-            <Buttons>
-              <CancelButton onClick={() => setIsPublishOpen(false)}>
-                {t("action.Avbryt")}
-              </CancelButton>
-              <Button type="submit">{t("action.Publiser")}</Button>
-            </Buttons>
-          </ButtonsAndGyldigFra>
-        </PublishForm>
+            <ButtonsAndGyldigFra>
+              <BlockLabel>
+                {t("metadata.Gyldig fra")}
+                <Input {...register("gyldigFra")} role="textbox" type="date" />
+              </BlockLabel>
+              <Buttons>
+                <CancelButton onClick={() => setIsPublishOpen(false)}>
+                  {t("action.Avbryt")}
+                </CancelButton>
+                <Button type="submit">{t("action.Publiser")}</Button>
+              </Buttons>
+            </ButtonsAndGyldigFra>
+          </form>
+        </UtkastItemExpanded>
+      )}
+      {utkastActive && !isPublishOpen && (
+        <EditingUtkast>
+          <EditingUtkastText>
+            {t("utkast.Du er nå i redigeringsmodus av dette utkastet")}
+          </EditingUtkastText>
+          <CancelButton>
+            <Link to="">{t("action.Avbryt redigering")}</Link>
+          </CancelButton>
+        </EditingUtkast>
       )}
     </ListItem>
   );
@@ -145,10 +151,17 @@ const UtkastName = styled.p`
   margin: 0;
 `;
 
-const PublishForm = styled.form`
+const UtkastItemExpanded = styled.div`
   border-top: 2px solid ${({ theme }) => theme.colors.black};
   background-color: ${({ theme }) => theme.colors.grayLight};
   padding: 32px 16px;
+`;
+
+const EditingUtkastText = styled.p`
+  margin: 0;
+  margin-bottom: 8px;
+  font-style: italic;
+  font-size: 14px;
 `;
 
 const Buttons = styled.div`
@@ -174,6 +187,10 @@ const ButtonsAndGyldigFra = styled.div`
       width: 120px;
     }
   }
+`;
+
+const EditingUtkast = styled(UtkastItemExpanded)`
+  text-align: center;
 `;
 
 const CancelButton = styled(Button).attrs(() => ({
