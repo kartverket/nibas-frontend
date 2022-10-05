@@ -9,7 +9,9 @@ import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
 import { useToolbar } from "contexts/ToolbarContext";
+import { translateKeysByEndringsType } from "contexts/UtkastContext/constants";
 import { historyToUtkastOperations } from "contexts/UtkastContext/utils";
+import { Translation } from "i18n";
 
 type Props = {
   closeCreateUtkast: () => void;
@@ -63,6 +65,11 @@ const CreateUtkastToolbar = ({ closeCreateUtkast }: Props) => {
           <option value="" disabled>
             ---
           </option>
+          {Object.keys(translateKeysByEndringsType).map((type) => (
+            <option key={type} value={type}>
+              {t(translateKeysByEndringsType[type] as Translation)}
+            </option>
+          ))}
         </Select>
       </BlockLabel>
 
