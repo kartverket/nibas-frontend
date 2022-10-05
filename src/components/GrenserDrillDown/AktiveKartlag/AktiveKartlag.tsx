@@ -7,10 +7,10 @@ import Heading from "components/typography/Heading";
 import { useBakgrunnskart } from "contexts/BakgrunnskartContext";
 import useFylker from "hooks/inndelinger/useFylker";
 import { BakgrunnskartId } from "hooks/layers/types";
+import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
 
 const AktiveKartlag = () => {
   const { t } = useTranslation();
-  const { fylker } = useFylker();
   const { visibleLayers } = useBakgrunnskart();
 
   const openLayers = Object.keys(visibleLayers).filter(
@@ -19,11 +19,6 @@ const AktiveKartlag = () => {
 
   return (
     <div>
-      <FylkeList onlyDisplayEditing />
-      {fylker?.map((fylke) => (
-        <KommuneList key={fylke.id} onlyDisplayEditing fylke={fylke} />
-      ))}
-
       <ActiveBackgroundLayers tag="h3" size="xs">
         {t("Aktive bakgrunnskart")}
       </ActiveBackgroundLayers>
