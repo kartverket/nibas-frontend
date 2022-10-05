@@ -1,17 +1,39 @@
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import styled from "styled-components";
+import { SWRConfig } from "swr";
+import Feedback from "components/Feedback/Feedback";
 import Kart from "components/Kart";
 import Sidebar from "components/Sidebar";
 import TopBar from "components/TopBar";
 
 const PageLayout = () => {
+  const [errorFeedback, setErrorFeedback] = useState("");
+
   return (
     <Grid>
-      <Suspense fallback="Loading...">
-        <TopBar />
-        <Sidebar />
-      </Suspense>
-      <Kart />
+      <SWRConfig
+        value={{
+          onError: (error) => {
+            if (error.status >= 500) {
+              setErrorFeedback(error.message);
+            }
+          },
+        }}
+      >
+        <Suspense fallback="Loading...">
+          <TopBar />
+          <Sidebar />
+          <Feedback
+            type="negative"
+            title="Det har skjedd en feil"
+            isOpen={errorFeedback !== ""}
+            onClose={() => setErrorFeedback("")}
+          >
+            {errorFeedback}
+          </Feedback>
+        </Suspense>
+        <Kart />
+      </SWRConfig>
     </Grid>
   );
 };

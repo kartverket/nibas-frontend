@@ -4,8 +4,6 @@ import Modal from "react-modal";
 import styled from "styled-components";
 import Button from "components/form/Button";
 
-Modal.setAppElement("#root");
-
 const OverlayStyle = styled.div`
   position: fixed;
   inset: 0;
@@ -44,11 +42,11 @@ const ModalStyle = styled.div`
   @keyframes Enter {
     from {
       opacity: 0;
-      transform: scale(0.5);
+      transform: translate(-50%, -50%) scale(0.5);
     }
     to {
       opacity: 1;
-      transform: scale(1);
+      transform: translate(-50%, -50%) scale(1);
     }
   }
 `;
