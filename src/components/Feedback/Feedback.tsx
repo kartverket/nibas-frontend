@@ -44,11 +44,11 @@ const ModalStyle = styled.div`
   @keyframes Enter {
     from {
       opacity: 0;
-      transform: scale(0.5);
+      transform: translate(-50%, -50%) scale(0.5);
     }
     to {
       opacity: 1;
-      transform: scale(1);
+      transform: translate(-50%, -50%) scale(1);
     }
   }
 `;
