@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import ApiGrense from "../../ApiGrense";
 import { useEditGrenser } from "contexts/EditGrenserContext";
@@ -12,6 +13,7 @@ const FylkeList = ({ onlyDisplayEditing = false }: Props) => {
   const { fylker, error } = useFylker();
 
   const { values } = useEditGrenser("fylke");
+  const { t } = useTranslation();
 
   const filteredFylker = useOnlyDisplayEditingGrenser(
     fylker,
@@ -19,7 +21,7 @@ const FylkeList = ({ onlyDisplayEditing = false }: Props) => {
     onlyDisplayEditing
   );
 
-  if (error) return <p>Fikk ikke hentet fylker</p>;
+  if (error) return <p>{t("Logg inn for å se listen")}</p>;
 
   if (!filteredFylker) return null;
 
