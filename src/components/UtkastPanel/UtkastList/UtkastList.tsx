@@ -1,19 +1,9 @@
 import UtkastItem from "./UtkastItem";
 import { UnstyledList } from "components/UnstyledList";
-import { UtkastRef } from "types/api";
+import useNibasApi from "hooks/useNibasApi";
 
 const UtkastList = () => {
-  // const { data: utkasts } = useNibasApi("/v1/utkast");
-  const utkasts: UtkastRef[] = [
-    {
-      id: "896e4241-7e84-4728-87e0-4f039ef671ba",
-      navn: "Malvik got hands",
-    },
-    {
-      id: "456",
-      navn: "Utkast 2",
-    },
-  ];
+  const { data: utkasts } = useNibasApi("/v1/utkast");
 
   if (!utkasts) return null;
 
