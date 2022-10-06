@@ -1,11 +1,6 @@
+import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
 import { History } from "hooks/useHistory";
 import { GrunnkretsRequest, Metadata, StemmekretsRequest } from "types/api";
-
-export type EditContextType =
-  | "grense"
-  | "grunnkrets"
-  | "metadata"
-  | "stemmekrets";
 
 export type HistoryChange<T> = {
   id: string;
@@ -13,7 +8,7 @@ export type HistoryChange<T> = {
   to: T | null;
 };
 
-export type BaseHistoryEntry<Type extends EditContextType, Model> = {
+export type BaseHistoryEntry<Type extends string, Model> = {
   type: Type;
   changes: HistoryChange<Model>[];
 };
@@ -32,6 +27,10 @@ export type StemmekretsEntry = BaseHistoryEntry<
 > & {
   kommuneId: string;
 };
+export type UtkastEntry = BaseHistoryEntry<
+  "utkast",
+  UtkastRequestWithoutOperations
+>;
 
 export type KretsHistoryEntry = GrunnkretsEntry | StemmekretsEntry;
 
@@ -40,7 +39,10 @@ export type HistoryEntry =
   | GrenseEntry
   | MetadataEntry
   | GrunnkretsEntry
-  | StemmekretsEntry;
+  | StemmekretsEntry
+  | UtkastEntry;
+
+export type EditContextType = HistoryEntry["type"];
 
 export type ToolbarHistory = History<HistoryEntry>;
 

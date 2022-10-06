@@ -114,7 +114,7 @@ export const ButtonsAndGyldigFra = styled.div`
     input {
       display: block;
       margin-bottom: 0;
-      width: 120px;
+      width: 130px;
     }
   }
 `;

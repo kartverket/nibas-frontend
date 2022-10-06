@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -8,9 +8,13 @@ import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
 import { BlockLabel } from "components/Kart/MetadataPanel/metadataComponents";
+import { useToolbarSaving, UtkastEntry } from "contexts/ToolbarContext";
+import useToolbarFormSync from "contexts/ToolbarContext/useToolbarFormSync";
 import { translateKeysByEndringsType } from "contexts/UtkastContext/constants";
+import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
 import useNibasApi from "hooks/useNibasApi";
 import { Translation } from "i18n";
+import { UtkastResponse } from "types/api";
 
 type Inputs = {
   navn: string;
@@ -19,16 +23,31 @@ type Inputs = {
   // kommentar: string;
 };
 
+const fromFormToRequest = (
+  form: Inputs,
+  utkast: UtkastResponse
+): UtkastRequestWithoutOperations => ({
+  ...utkast,
+  navn: form.navn,
+  gyldigFra: form.gyldigFra,
+  endringstype: form.endringsType,
+  version: utkast.version,
+});
+
 type Props = {
   utkastId: string;
 };
 
 const UtkastItemActive = ({ utkastId }: Props) => {
   const { t } = useTranslation();
-  const { register, setValue } = useForm<Inputs>();
+  const { register, setValue, getValues } = useForm<Inputs>();
   const { data: fullUtkast } = useNibasApi("/v1/utkast/{id}", {
     id: utkastId,
   });
+
+  const previousValues = useRef<Inputs>(getValues());
+
+  const { addEntry } = useToolbarSaving();
 
   useEffect(() => {
     if (!fullUtkast) return;
@@ -39,17 +58,56 @@ const UtkastItemActive = ({ utkastId }: Props) => {
 
     // når vi får støtte for feltet
     // setValue("kommentar", fullUtkast.kommentar);
-  }, [fullUtkast, setValue]);
+
+    previousValues.current = getValues();
+  }, [fullUtkast, setValue, getValues]);
+
+  const setFormValues = useCallback(
+    (change: UtkastEntry["changes"][number], direction: "to" | "from") => {
+      setValue("navn", change[direction]?.navn ?? "");
+      setValue("endringsType", change[direction]?.endringstype ?? "");
+      setValue("gyldigFra", change[direction]?.gyldigFra ?? "");
+    },
+    [setValue]
+  );
+
+  useToolbarFormSync<UtkastEntry>({
+    entityId: utkastId,
+    undoEventKey: "utkastUndo",
+    redoEventKey: "utkastRedo",
+    setFormValues,
+  });
+
+  const addUtkastEntry = () => {
+    if (!fullUtkast) return;
+
+    addEntry({
+      type: "utkast",
+      changes: [
+        {
+          from: fromFormToRequest(previousValues.current, fullUtkast),
+          to: fromFormToRequest(getValues(), fullUtkast),
+          id: fullUtkast.id,
+        },
+      ],
+    });
+
+    previousValues.current = getValues();
+  };
+
+  const registerOptions = {
+    onBlur: addUtkastEntry,
+  };
 
   return (
     <UtkastItemExpanded>
       <BlockLabel>
         {t("utkast.Navn på utkast")}
-        <Input {...register("navn")} />
+        <Input {...register("navn", registerOptions)} />
       </BlockLabel>
       <BlockLabel>
         {t("utkast.Type utkast")}
-        <Select {...register("endringsType")}>
+        <Select {...register("endringsType", registerOptions)}>
           {Object.keys(translateKeysByEndringsType).map((type) => (
             <option key={type} value={type}>
               {t(translateKeysByEndringsType[type] as Translation)}
@@ -64,7 +122,11 @@ const UtkastItemActive = ({ utkastId }: Props) => {
       <ButtonsAndGyldigFra>
         <BlockLabel>
           {t("metadata.Gyldig fra")}
-          <Input {...register("gyldigFra")} role="textbox" type="date" />
+          <Input
+            {...register("gyldigFra", registerOptions)}
+            role="textbox"
+            type="date"
+          />
         </BlockLabel>
       </ButtonsAndGyldigFra>
       <Center>
