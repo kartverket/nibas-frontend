@@ -100,5 +100,7 @@
     "Navn på utkast": "__STRING_NOT_TRANSLATED__",
     "Type utkast": "__STRING_NOT_TRANSLATED__"
   },
-  "Logg inn for å se listen": "__STRING_NOT_TRANSLATED__"
+  "Logg inn for å se listen": "__STRING_NOT_TRANSLATED__",
+  "Kartlag": "__STRING_NOT_TRANSLATED__",
+  "Aktive kartlag": "__STRING_NOT_TRANSLATED__"
 }

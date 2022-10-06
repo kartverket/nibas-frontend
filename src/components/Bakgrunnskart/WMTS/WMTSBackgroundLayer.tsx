@@ -20,6 +20,7 @@ type Props = {
   toggleLayerVisibility: () => void;
   index: number;
   moveLayer?: (direction: "up" | "down", layerId: BakgrunnskartId) => void;
+  isAktiveKartlag?: boolean;
 };
 
 const WMTSBackgroundLayer = ({
@@ -28,6 +29,7 @@ const WMTSBackgroundLayer = ({
   toggleLayerVisibility,
   index,
   moveLayer,
+  isAktiveKartlag,
 }: Props) => {
   // vi må manuelt oppdatere state når synlighet endres,
   // siden openlayers ikke rerendrer UIet vårt
@@ -53,6 +55,7 @@ const WMTSBackgroundLayer = ({
       onVisibilityClick={toggleLayerVisibility}
       visible={visible}
       ref={moveLayer ? ref : null}
+      isAktiveKartlag={isAktiveKartlag}
     >
       <>
         {mappedLayer.layers.map((subLayer) => (

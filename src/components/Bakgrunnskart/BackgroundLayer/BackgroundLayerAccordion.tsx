@@ -5,7 +5,6 @@ import Button from "components/form/Button";
 import Slider from "components/form/Slider";
 import { ReactComponent as CaretDownIcon } from "icons/caretdown.svg";
 import { ReactComponent as CaretUpIcon } from "icons/caretup.svg";
-import { ReactComponent as CogIcon } from "icons/cog.svg";
 import { ReactComponent as VisibilityIcon } from "icons/visibility.svg";
 import { ReactComponent as VisibilityOffIcon } from "icons/visibility_off.svg";
 import { MainMappedLayer, MappedLayer } from "utils/getLayersFromWMS";
@@ -22,6 +21,8 @@ type SharedProps = {
   indent: number;
   onVisibilityClick: () => void;
   visible: boolean;
+  propertiesVisible?: boolean;
+  isAktiveKartlag?: boolean;
   children: React.ReactNode;
 };
 
@@ -46,9 +47,16 @@ type Props = MainLayerProps | SubLayerProps;
 
 const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
   (props, ref) => {
-    const { indent, visible, onVisibilityClick, children } = props;
+    const {
+      indent,
+      visible,
+      onVisibilityClick,
+      propertiesVisible,
+      isAktiveKartlag,
+      children,
+    } = props;
     const [open, setOpen] = useState(false);
-    const [propertiesVisible, setPropertiesVisible] = useState(false);
+    //const [propertiesVisible, setPropertiesVisible] = useState(prop);
     const { opacity, onSliderChange } = useLayerOpacity({
       mappedLayer: props.mappedLayer,
       isMainLayer: props.isMainLayer,
@@ -93,26 +101,39 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
     return (
       <div>
         <Wrapper indent={indent}>
-          <IconButton onClick={onVisibilityClick}>
-            {visible ? (
-              <VisibilityIcon aria-label={`Skjul ${props.mappedLayer.title}`} />
-            ) : (
-              <VisibilityOffIcon
-                aria-label={`Vis ${props.mappedLayer.title}`}
-              />
-            )}
-          </IconButton>
+          {
+            <IconButton onClick={onVisibilityClick}>
+              {visible ? (
+                <VisibilityIcon
+                  aria-label={`Skjul ${props.mappedLayer.title}`}
+                />
+              ) : (
+                <VisibilityOffIcon
+                  aria-label={`Vis ${props.mappedLayer.title}`}
+                />
+              )}
+            </IconButton>
+          }
           {renderNameAndCaret()}
-          {props.isMainLayer && (
+          {propertiesVisible && (
+            <div>
+              <Slider
+                min={0}
+                max={100}
+                value={opacity ?? 100}
+                onChange={onSliderChange}
+              />
+            </div>
+          )}
+          {/* {props.isMainLayer && (
             <PropertiesButton
               onClick={() => setPropertiesVisible(!propertiesVisible)}
             >
               <CogIcon />
             </PropertiesButton>
-          )}
+          )} */}
         </Wrapper>
-
-        {propertiesVisible && (
+        {isAktiveKartlag && (
           <div>
             <Slider
               min={0}
@@ -122,7 +143,6 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
             />
           </div>
         )}
-
         {open && children}
       </div>
     );

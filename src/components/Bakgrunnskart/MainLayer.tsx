@@ -10,9 +10,15 @@ type Props = {
   layerId: BakgrunnskartId;
   index: number;
   canDrag?: boolean;
+  isAktiveKartlag?: boolean;
 };
 
-const MainLayer = ({ layerId, index, canDrag = true }: Props) => {
+const MainLayer = ({
+  layerId,
+  index,
+  canDrag = true,
+  isAktiveKartlag,
+}: Props) => {
   const layer = bakgrunnskartLayers[layerId];
   const { mappedLayers, moveLayer, toggleLayerVisibility, visibleLayers } =
     useBakgrunnskart();
@@ -29,6 +35,7 @@ const MainLayer = ({ layerId, index, canDrag = true }: Props) => {
         toggleLayerVisibility={() => toggleLayerVisibility(layerId)}
         index={index}
         moveLayer={canDrag ? moveLayer : undefined}
+        isAktiveKartlag={isAktiveKartlag}
       />
     );
   }
@@ -41,6 +48,7 @@ const MainLayer = ({ layerId, index, canDrag = true }: Props) => {
         toggleLayerVisibility={() => toggleLayerVisibility(layerId)}
         index={index}
         moveLayer={canDrag ? moveLayer : undefined}
+        isAktiveKartlag={isAktiveKartlag}
       />
     );
   }
@@ -53,6 +61,7 @@ const MainLayer = ({ layerId, index, canDrag = true }: Props) => {
         toggleLayerVisibility={() => toggleLayerVisibility(layerId)}
         index={index}
         moveLayer={canDrag ? moveLayer : undefined}
+        isAktiveKartlag={isAktiveKartlag}
       />
     );
   }

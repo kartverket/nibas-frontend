@@ -10,6 +10,7 @@ type Props = {
   toggleLayerVisibility: () => void;
   visible: boolean;
   moveLayer?: (direction: "up" | "down", layerId: BakgrunnskartId) => void;
+  isAktiveKartlag?: boolean;
 };
 
 const MainBackgroundLayer = ({
@@ -18,6 +19,7 @@ const MainBackgroundLayer = ({
   toggleLayerVisibility,
   index,
   moveLayer,
+  isAktiveKartlag,
 }: Props) => {
   const ref = useBackgroundLayerDND(index, mappedLayer, moveLayer);
 
@@ -30,6 +32,7 @@ const MainBackgroundLayer = ({
       onVisibilityClick={toggleLayerVisibility}
       ref={moveLayer ? ref : null}
       isMainLayer
+      isAktiveKartlag={isAktiveKartlag}
     >
       <>
         {mappedLayer.layers.map((layer) => (
