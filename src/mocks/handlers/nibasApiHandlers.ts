@@ -1,7 +1,7 @@
 import { rest } from "msw";
 import type { RestHandler } from "msw";
 import * as mocks from "./responses";
-import { UtkastResponse } from "types/api";
+import { UtkastRef, UtkastResponse } from "types/api";
 
 export const nibasApiHandlers: RestHandler[] = [
   rest.get("/v1/fylker", (req, res, ctx) => {
@@ -63,5 +63,11 @@ export const nibasApiHandlers: RestHandler[] = [
   }),
   rest.get("/v1/utkast/utkast-id", (req, res, ctx) => {
     return res(ctx.status(200), ctx.json<UtkastResponse>(mocks.mockUtkast));
+  }),
+  rest.get("/v1/utkast", (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json<UtkastRef[]>([mocks.mockUtkastRef1, mocks.mockUtkastRef2])
+    );
   }),
 ];

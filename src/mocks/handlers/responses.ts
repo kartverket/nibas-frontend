@@ -9,6 +9,7 @@ import {
   KommuneResponse,
   StemmekretsRef,
   StemmekretsResponse,
+  UtkastRef,
   UtkastResponse,
 } from "types/api";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
@@ -325,4 +326,16 @@ export const mockUtkast: UtkastResponse = {
       },
     },
   },
+};
+
+export const mockUtkastRef1: UtkastRef = {
+  href: "",
+  id: "1",
+  navn: "Mock utkast",
+};
+
+export const mockUtkastRef2: UtkastRef = {
+  href: "",
+  id: "2",
+  navn: "Et nytt utkast",
 };
