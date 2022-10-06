@@ -59,9 +59,9 @@ export const nibasApiHandlers: RestHandler[] = [
     return res(ctx.status(200), ctx.json(mocks.mockStemmekrets2));
   }),
   rest.post("/v1/utkast", (req, res, ctx) => {
-    return res(ctx.status(201), ctx.json({ id: "utkast-id" }));
+    return res(ctx.status(201), ctx.json({ id: "1" }));
   }),
-  rest.get("/v1/utkast/utkast-id", (req, res, ctx) => {
+  rest.get("/v1/utkast/1", (req, res, ctx) => {
     return res(ctx.status(200), ctx.json<UtkastResponse>(mocks.mockUtkast));
   }),
   rest.get("/v1/utkast", (req, res, ctx) => {

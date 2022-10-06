@@ -34,11 +34,11 @@ const UtkastItem = ({ utkast }: Props) => {
       <ItemWrapper>
         <UtkastName>{utkast.navn}</UtkastName>
         <UnstyledButton onClick={() => setIsPublishOpen(true)}>
-          <PublishIcon />
+          <PublishIcon aria-label={`Publiser ${utkast.navn}`} />
         </UnstyledButton>
         <UnstyledButton>
           <Link to={`/${utkast.id}`}>
-            <EditIcon />
+            <EditIcon aria-label={`Aktiver ${utkast.navn}`} />
           </Link>
         </UnstyledButton>
       </ItemWrapper>
