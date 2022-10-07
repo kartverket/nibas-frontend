@@ -21,7 +21,7 @@
     "Aktive kartlag": "Aktive kartlag",
     "Grenser": "Grenser"
   },
-  "Henter fylker": "Henter fylker",
+  "Henter fylker": "Henter fylker...",
   "Koordinater": "Koordinater",
   "auth": {
     "Login": "Logg inn",
@@ -59,6 +59,8 @@
   "action": {
     "Lagre": "Lagre",
     "Lukk": "Lukk",
+    "Fortsett": "Fortsett",
+    "Avbryt": "Avbryt",
     "Legg til": "Legg til",
     "Slett": "Slett",
     "Ny referanse": "Ny referanse",
@@ -70,7 +72,6 @@
     "Undo": "Undo",
     "Redo": "Redo",
     "Publiser": "Publiser",
-    "Avbryt": "Avbryt",
     "Avbryt redigering": "Avbryt redigering"
   },
   "Ja": "Ja",
@@ -102,5 +103,6 @@
     "Type utkast": "Type utkast",
     "Du er nå i redigeringsmodus av dette utkastet": "Du er nå i redigeringsmodus av dette utkastet. Alle endringer du gjør i inndelingene og kartet vil bli lagret på dette utkastet når du klikker på \"Lagre\"-knappen øverst på skjermen."
   },
-  "Kommentar": "Kommentar"
+  "Kommentar": "Kommentar",
+  "Logg inn for å se listen": "Logg inn for å se listen"
 }
