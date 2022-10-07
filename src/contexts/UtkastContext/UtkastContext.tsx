@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo } from "react";
+import { createContext, useContext, useEffect, useMemo } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { useMatch } from "react-router-dom";
@@ -46,6 +46,13 @@ export const UtkastProvider: React.FC = ({ children }) => {
       revalidateOnReconnect: false,
     }
   );
+
+  useEffect(() => {
+    // fjern utkast hvis utkastid ikke er i url
+    if (utkast && !utkastId) {
+      mutate();
+    }
+  });
 
   const updateUtkastWithHistory = async () => {
     if (!utkast) return;

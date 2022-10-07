@@ -43,6 +43,8 @@ export interface paths {
     put: operations["invalidateKodelisteCache"];
   };
   "/v1/utkast": {
+    /** Henter alle aktive/ikke-publiserte utkast i NIBAS. */
+    get: operations["hentAktiveUtkast"];
     /** Oppretter et utkast og returnerer id. */
     post: operations["opprettUtkast"];
   };
@@ -651,6 +653,15 @@ export interface components {
       auditInfoResponse: components["schemas"]["AuditInfoResponse"];
       operasjoner: components["schemas"]["Operasjoner"];
     };
+    /** @description En referanse til et utkast */
+    UtkastRef: {
+      /** @description ID-en til utkastet */
+      id: string;
+      /** @description Navnet på utkastet */
+      navn: string;
+      /** @description URL til full representasjon av utkastet. */
+      href: string;
+    };
     /** @description Geometrien til grunnkretsen, dvs representasjonspunkt og flaten */
     FeatureCollection: {
       /** @description Toppnivå for geojson-strukturen, definert av en konstant med navn type og verdi FeatureCollection */
@@ -946,6 +957,17 @@ export interface operations {
     requestBody: {
       content: {
         "application/json": components["schemas"]["StemmekretsRequest"];
+      };
+    };
+  };
+  /** Henter alle aktive/ikke-publiserte utkast i NIBAS. */
+  hentAktiveUtkast: {
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["UtkastRef"][];
+        };
       };
     };
   };
