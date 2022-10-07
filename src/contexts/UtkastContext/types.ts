@@ -1,4 +1,4 @@
-import { UtkastRequest, UtkastResponse } from "types/api";
+import { OppdaterUtkastRequest, UtkastResponse } from "types/api";
 
 export type EntityUtkastType = "stemmekretsendringer" | "grunnkretsendringer";
 export type FeatureUtkastType = "featureEndringer";
@@ -12,6 +12,9 @@ export type UtkastContextValue = {
   updateUtkastWithHistory: () => Promise<unknown>;
 };
 
-export type UtkastRequestWithoutOperations = Omit<UtkastRequest, "operasjoner">;
+export type UtkastRequestWithoutOperations = Omit<
+  OppdaterUtkastRequest,
+  "operasjoner"
+>;
 
 export type UtkastEntity = ResponseWithId | ResponseWithId[] | undefined;
