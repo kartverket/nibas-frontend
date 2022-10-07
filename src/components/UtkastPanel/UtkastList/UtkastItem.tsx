@@ -8,6 +8,7 @@ import Input from "components/form/Input";
 import { BlockLabel } from "components/Kart/MetadataPanel/metadataComponents";
 import useNibasApi from "hooks/useNibasApi";
 import { ReactComponent as EditIcon } from "icons/edit.svg";
+import { ReactComponent as DeleteIcon } from "icons/minus.svg";
 import { ReactComponent as PublishIcon } from "icons/pluss.svg";
 import { UtkastRef } from "types/api";
 
@@ -17,6 +18,7 @@ type Props = {
 
 const UtkastItem = ({ utkast }: Props) => {
   const [isPublishOpen, setIsPublishOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   const { t } = useTranslation();
   const utkastId = useMatch("/:utkastId")?.params.utkastId;
@@ -35,6 +37,9 @@ const UtkastItem = ({ utkast }: Props) => {
         <UtkastName>{utkast.navn}</UtkastName>
         <UnstyledButton onClick={() => setIsPublishOpen(true)}>
           <PublishIcon aria-label={`Publiser ${utkast.navn}`} />
+        </UnstyledButton>
+        <UnstyledButton onClick={() => setIsDeleteOpen(true)}>
+          <DeleteIcon aria-label={`Forkast ${utkast.navn}`} />
         </UnstyledButton>
         <UnstyledButton>
           <Link to={`/${utkast.id}`}>
@@ -58,7 +63,19 @@ const UtkastItem = ({ utkast }: Props) => {
               <CancelButton onClick={() => setIsPublishOpen(false)}>
                 {t("action.Avbryt")}
               </CancelButton>
-              <Button type="submit">{t("action.Publiser")}</Button>
+              <Button>{t("action.Publiser")}</Button>
+            </Buttons>
+          </ButtonsAndGyldigFra>
+        </UtkastItemExpanded>
+      )}
+      {isDeleteOpen && (
+        <UtkastItemExpanded>
+          <ButtonsAndGyldigFra>
+            <Buttons>
+              <CancelButton onClick={() => setIsDeleteOpen(false)}>
+                {t("action.Avbryt")}
+              </CancelButton>
+              <Button>{t("action.Forkast")}</Button>
             </Buttons>
           </ButtonsAndGyldigFra>
         </UtkastItemExpanded>
