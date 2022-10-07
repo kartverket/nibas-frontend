@@ -7,6 +7,26 @@ import { UtkastContext, UtkastProvider } from "contexts/UtkastContext";
 import { mockDetailedGrunnkrets1 } from "mocks/handlers/responses";
 import { UtkastResponse } from "types/api";
 
+const mockToolbarHistory: ToolbarHistory = {
+  index: 1,
+  entries: [
+    {
+      type: "grunnkrets",
+      kommuneId: "1",
+      changes: [
+        {
+          from: mockDetailedGrunnkrets1,
+          to: {
+            ...mockDetailedGrunnkrets1,
+            navn: "Ny grunnkrets!",
+          },
+          id: mockDetailedGrunnkrets1.id,
+        },
+      ],
+    },
+  ],
+};
+
 const renderWithProvider = (
   ui: ReactNode,
   utkast?: UtkastResponse,
@@ -32,25 +52,7 @@ const renderWithUtkastProvider = (ui: ReactNode) =>
       <ToolbarContext.Provider
         value={
           {
-            history: {
-              index: 1,
-              entries: [
-                {
-                  type: "grunnkrets",
-                  kommuneId: "1",
-                  changes: [
-                    {
-                      from: mockDetailedGrunnkrets1,
-                      to: {
-                        ...mockDetailedGrunnkrets1,
-                        navn: "Ny grunnkrets!",
-                      },
-                      id: mockDetailedGrunnkrets1.id,
-                    },
-                  ],
-                },
-              ],
-            },
+            history: mockToolbarHistory,
             clearHistory: jest.fn(),
           } as any
         }
@@ -61,8 +63,16 @@ const renderWithUtkastProvider = (ui: ReactNode) =>
   );
 
 describe("Toolbar", () => {
-  it("should display Lagre som button if no utkast", () => {
+  it("should not display toolbar if user cannot save", () => {
     renderWithProvider(<Toolbar />);
+
+    expect(
+      screen.queryByRole("button", { name: /lagre som/i })
+    ).not.toBeInTheDocument();
+  });
+
+  it("should display Lagre som button if no utkast", () => {
+    renderWithUtkastProvider(<Toolbar />);
 
     expect(
       screen.getByRole("button", { name: /lagre som/i })
@@ -70,7 +80,11 @@ describe("Toolbar", () => {
   });
 
   it("should display Lagre button if utkast exists", () => {
-    renderWithProvider(<Toolbar />, { navn: "Test" } as any); // utkast trenger bare ikke være undefined
+    renderWithProvider(
+      <Toolbar />,
+      { navn: "Test" } as any,
+      mockToolbarHistory
+    ); // utkast trenger bare ikke være undefined
 
     expect(screen.getByRole("button", { name: /lagre/i })).toBeInTheDocument();
   });
