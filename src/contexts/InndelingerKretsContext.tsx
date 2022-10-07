@@ -75,7 +75,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
     const newValues = {
       ...values,
       [kommune.id]: {
-        visible: !kommuneValues.visible,
+        visible: newEditing,
         editing: newEditing,
       },
     };
