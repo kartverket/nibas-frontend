@@ -29,7 +29,7 @@ const fromFormToRequest = (
   grunnkrets: GrunnkretsResponse
 ): GrunnkretsRequest => ({
   identifikasjon: grunnkrets.identifikasjon,
-  version: (grunnkrets as any).version,
+  version: grunnkrets.version,
   navn: data.navn,
   grunnkretsnummer: data.grunnkretsnummer,
 });
