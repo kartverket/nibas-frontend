@@ -11,6 +11,11 @@ import {
 } from "contexts/ToolbarContext";
 import { editSource } from "hooks/layers/constants";
 import {
+  FylkeRequest,
+  GrunnkretsRequest,
+  KommuneRequest,
+  NasjonRequest,
+  StemmekretsRequest,
   UtkastGrenseendringer,
   UtkastMetadataendringer,
   UtkastOperasjoner,
@@ -132,18 +137,9 @@ const addKretsChangeToOperations = (
   entry: GrunnkretsEntry | StemmekretsEntry,
   endringerKey: "grunnkretsendringer" | "stemmekretsendringer"
 ) => {
-  if (!operations.metadataendringer?.[endringerKey]) {
-    operations.metadataendringer = {
-      ...operations.metadataendringer,
-      [endringerKey]: {},
-    };
-  }
-
   entry.changes.forEach((change) => {
-    if (change.to && operations.metadataendringer?.[endringerKey]) {
-      // vi legger til keyen i steget over, så dette er safe
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      operations.metadataendringer[endringerKey]![change.id] = change.to;
+    if (change.to && operations.metadataendringer[endringerKey]) {
+      operations.metadataendringer[endringerKey][change.id] = change.to;
     }
   });
 
@@ -168,11 +164,15 @@ export const historyToUtkastOperations = (
     historyToCurrentIndex.filter(
       (entry) => entry.type !== "grense" && entry.type !== "metadata"
     ) as (GrunnkretsEntry | StemmekretsEntry)[]
-  ).reduce(reduceMetadataOperations, {
-    metadataendringer: {},
-    grenseendringer: {},
-    ...(previousUtkast?.operasjoner ?? {}),
-  } as UtkastOperasjoner);
+  ).reduce(
+    reduceMetadataOperations,
+    createUtkastOperations({
+      ...{
+        ...previousUtkast?.operasjoner.grenseendringer,
+        ...previousUtkast?.operasjoner.metadataendringer,
+      },
+    })
+  ) as UtkastOperasjoner;
 
   // hvis det er noen endringer, slå sammen tidligere endringer og nye endringer til ny liste
   if (Object.keys(editedFeatures).length > 0) {
@@ -186,3 +186,30 @@ export const historyToUtkastOperations = (
 
   return utkastOperations;
 };
+
+export const createUtkastOperations = ({
+  endredeFeatures = {},
+  fylkesendringer = {},
+  grunnkretsendringer = {},
+  kommuneendringer = {},
+  nasjonsendringer = {},
+  stemmekretsendringer = {},
+}: {
+  endredeFeatures?: Record<string, GeoJSONFeature>;
+  fylkesendringer?: Record<string, FylkeRequest>;
+  grunnkretsendringer?: Record<string, GrunnkretsRequest>;
+  kommuneendringer?: Record<string, KommuneRequest>;
+  nasjonsendringer?: Record<string, NasjonRequest>;
+  stemmekretsendringer?: Record<string, StemmekretsRequest>;
+}): UtkastOperasjoner => ({
+  grenseendringer: {
+    endredeFeatures,
+  },
+  metadataendringer: {
+    fylkesendringer,
+    grunnkretsendringer,
+    kommuneendringer,
+    nasjonsendringer,
+    stemmekretsendringer,
+  },
+});
