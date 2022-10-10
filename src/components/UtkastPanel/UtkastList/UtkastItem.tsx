@@ -5,7 +5,7 @@ import { Link, useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useSWRConfig } from "swr";
 import UtkastItemActive from "./UtkastItemActive";
-import { publishUtkast } from "api/utkast";
+import { deleteUtkast as deleteApiUtkast, publishUtkast } from "api/utkast";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
 import { BlockLabel } from "components/Kart/MetadataPanel/metadataComponents";
@@ -43,8 +43,20 @@ const UtkastItem = ({ utkast }: Props) => {
     await publishUtkast(utkast.id, fullUtkast, tokenHolderFunc()?.token);
 
     await mutate(["/v1/utkast", tokenHolderFunc()?.token]);
-    navigate("/");
+
+    if (utkastActive) {
+      navigate("/");
+    }
+
     // TODO: Modal/toast om at utkastet er publisert?
+  };
+
+  const deleteUtkast = async () => {
+    if (!fullUtkast) return;
+
+    await deleteApiUtkast(utkast.id, tokenHolderFunc()?.token);
+
+    await mutate(["/v1/utkast", tokenHolderFunc()?.token]);
   };
 
   return (
@@ -91,7 +103,7 @@ const UtkastItem = ({ utkast }: Props) => {
               <CancelButton onClick={() => setIsDeleteOpen(false)}>
                 {t("action.Avbryt")}
               </CancelButton>
-              <Button>{t("action.Forkast")}</Button>
+              <Button onClick={deleteUtkast}>{t("action.Forkast")}</Button>
             </Buttons>
           </ButtonsAndGyldigFra>
         </UtkastItemExpanded>
