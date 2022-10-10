@@ -168,6 +168,7 @@ export const mockGrunnkrets2: GrunnkretsRef = {
 export const mockDetailedGrunnkrets1: GrunnkretsResponse = {
   features: mockGeoJsonFeatureResponse,
   grunnkretsnummer: "12345678",
+  version: 1,
   id: "1",
   identifikasjon: {
     lokalid: "lokalid",
@@ -181,6 +182,7 @@ export const mockDetailedGrunnkrets1: GrunnkretsResponse = {
 export const mockDetailedGrunnkrets2: GrunnkretsResponse = {
   features: mockGeoJsonFeatureResponse,
   grunnkretsnummer: "12345679",
+  version: 1,
   id: "2",
   identifikasjon: {
     lokalid: "lokalid",
@@ -260,6 +262,7 @@ export const mockStemmekretser: StemmekretsRef[] = [
 
 export const mockStemmekrets1: StemmekretsResponse = {
   id: "1",
+  version: 1,
   stemmekretsnavn: "Undredal",
   stemmekretsnummer: "05",
   identifikasjon: {
@@ -276,6 +279,7 @@ export const mockStemmekrets1: StemmekretsResponse = {
 
 export const mockStemmekrets2: StemmekretsResponse = {
   id: "2",
+  version: 1,
   stemmekretsnavn: "Slemfjord",
   stemmekretsnummer: "12",
   identifikasjon: {

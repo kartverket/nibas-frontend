@@ -33,7 +33,6 @@ const CreateUtkastToolbar = ({ closeCreateUtkast }: Props) => {
         navn: utkastName,
         endringstype: utkastType,
         operasjoner: historyToUtkastOperations(history),
-        version: 1,
       },
       tokenHolderFunc()?.token
     );
