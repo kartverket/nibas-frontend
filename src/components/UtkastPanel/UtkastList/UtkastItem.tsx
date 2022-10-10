@@ -1,8 +1,11 @@
 import { useState } from "react";
+import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useTranslation } from "react-i18next";
-import { Link, useMatch } from "react-router-dom";
+import { Link, useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { useSWRConfig } from "swr";
 import UtkastItemActive from "./UtkastItemActive";
+import { publishUtkast } from "api/utkast";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
 import { BlockLabel } from "components/Kart/MetadataPanel/metadataComponents";
@@ -28,8 +31,21 @@ const UtkastItem = ({ utkast }: Props) => {
       id: utkast.id,
     }
   );
+  const { tokenHolderFunc } = useAuthenticationFlow();
+  const { mutate } = useSWRConfig();
+  const navigate = useNavigate();
 
   const utkastActive = utkastId === utkast.id;
+
+  const publish = async () => {
+    if (!fullUtkast) return;
+
+    await publishUtkast(utkast.id, fullUtkast, tokenHolderFunc()?.token);
+
+    await mutate(["/v1/utkast", tokenHolderFunc()?.token]);
+    navigate("/");
+    // TODO: Modal/toast om at utkastet er publisert?
+  };
 
   return (
     <ListItem>
@@ -53,7 +69,7 @@ const UtkastItem = ({ utkast }: Props) => {
             <BlockLabel>
               {t("metadata.Gyldig fra")}
               <Input
-                value={fullUtkast?.gyldigFra}
+                value={fullUtkast?.gyldigFra ?? ""}
                 disabled
                 role="textbox"
                 type="date"
@@ -63,7 +79,7 @@ const UtkastItem = ({ utkast }: Props) => {
               <CancelButton onClick={() => setIsPublishOpen(false)}>
                 {t("action.Avbryt")}
               </CancelButton>
-              <Button>{t("action.Publiser")}</Button>
+              <Button onClick={publish}>{t("action.Publiser")}</Button>
             </Buttons>
           </ButtonsAndGyldigFra>
         </UtkastItemExpanded>
