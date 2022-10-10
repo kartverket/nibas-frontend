@@ -105,9 +105,7 @@ describe("Toolbar", () => {
 
     await user.click(screen.getByRole("button", { name: /lagre som/i }));
 
-    await waitFor(() =>
-      expect(window.location.pathname).toContain("/utkast-id")
-    );
+    await waitFor(() => expect(window.location.pathname).toContain("/1"));
     // denne skal egentlig bli disabled, men det er via clearHistory() som endrer context state
     expect(
       await screen.findByRole("button", {
