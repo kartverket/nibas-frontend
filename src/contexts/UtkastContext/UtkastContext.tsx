@@ -17,7 +17,7 @@ import {
 import { updateUtkast as updateApiUtkast } from "api/utkast";
 import { HistoryChange, useToolbar } from "contexts/ToolbarContext";
 import useNibasApi from "hooks/useNibasApi";
-import { UtkastRequest } from "types/api";
+import { OppdaterUtkastRequest } from "types/api";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
@@ -63,7 +63,7 @@ export const UtkastProvider: React.FC = ({ children }) => {
 
     const operasjoner = historyToUtkastOperations(history, utkast);
 
-    const updatedUtkast: UtkastRequest = {
+    const updatedUtkast: OppdaterUtkastRequest = {
       endringstype: utkast.endringstype,
       navn: utkast.navn,
       gyldigFra: utkast.gyldigFra,

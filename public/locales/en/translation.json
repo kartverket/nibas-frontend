@@ -59,6 +59,8 @@
   "action": {
     "Lagre": "__STRING_NOT_TRANSLATED__",
     "Lukk": "__STRING_NOT_TRANSLATED__",
+    "Fortsett": "__STRING_NOT_TRANSLATED__",
+    "Avbryt": "__STRING_NOT_TRANSLATED__",
     "Legg til": "__STRING_NOT_TRANSLATED__",
     "Slett": "__STRING_NOT_TRANSLATED__",
     "Ny referanse": "__STRING_NOT_TRANSLATED__",
@@ -70,7 +72,6 @@
     "Undo": "__STRING_NOT_TRANSLATED__",
     "Redo": "__STRING_NOT_TRANSLATED__",
     "Publiser": "__STRING_NOT_TRANSLATED__",
-    "Avbryt": "__STRING_NOT_TRANSLATED__",
     "Avbryt redigering": "__STRING_NOT_TRANSLATED__",
     "Forkast": "__STRING_NOT_TRANSLATED__"
   },
@@ -103,5 +104,6 @@
     "Type utkast": "__STRING_NOT_TRANSLATED__",
     "Du er nå i redigeringsmodus av dette utkastet": "__STRING_NOT_TRANSLATED__"
   },
-  "Kommentar": "__STRING_NOT_TRANSLATED__"
+  "Kommentar": "__STRING_NOT_TRANSLATED__",
+  "Logg inn for å se listen": "__STRING_NOT_TRANSLATED__"
 }

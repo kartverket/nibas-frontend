@@ -1,6 +1,10 @@
 export const fetcher = <T>(...args: Parameters<typeof fetch>): Promise<T> =>
   fetch(...args).then((res) => res.json());
 
+interface ResponseError extends Error {
+  status?: number;
+}
+
 export const fetcherWithToken = async (url: string | null, token?: string) => {
   if (!url) return;
 
@@ -9,7 +13,9 @@ export const fetcherWithToken = async (url: string | null, token?: string) => {
   });
 
   if (!res.ok) {
-    throw new Error("Fikk ikke hentet data.");
+    const error: ResponseError = new Error("Fikk ikke hentet data.");
+    error.status = res.status;
+    throw error;
   }
 
   return res.json();

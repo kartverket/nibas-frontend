@@ -150,7 +150,7 @@ const TwoPartsContainer = styled(Container)`
   }
 
   ${Part}:last-child {
-    margin-left: 8px;
+    margin-right: 8px;
   }
 `;
 
