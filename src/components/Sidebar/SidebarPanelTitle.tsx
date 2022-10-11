@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Button from "components/form/Button";
+import Icon from "components/Icon";
 import Heading from "components/typography/Heading";
-import { ReactComponent as CaretLeft } from "icons/caretleft.svg";
 
 type Props = {
   closePanel: () => void;
@@ -15,10 +15,10 @@ const SidebarPanelTitle = ({ title, closePanel }: Props) => {
         {title}
       </StyledTitle>
       <CloseButton
-        icon={<CaretLeft aria-label={`Lukk ${title}`} />}
+        icon={<Icon icon="chevron_left" aria-label={`Lukk ${title}`} />}
         onClick={closePanel}
         variant="unstyled"
-      ></CloseButton>
+      />
     </TitleWrapper>
   );
 };
@@ -37,9 +37,8 @@ const StyledTitle = styled(Heading)`
 `;
 
 const CloseButton = styled(Button)`
-  svg {
-    width: 36px;
-    height: 36px;
+  > span {
+    font-size: 36px;
   }
 `;
 

@@ -20,7 +20,6 @@ type Inputs = {
   navn: string;
   gyldigFra: string;
   endringsType: string;
-  // kommentar: string;
 };
 
 const fromFormToRequest = (
@@ -55,9 +54,6 @@ const UtkastItemActive = ({ utkastId }: Props) => {
     setValue("navn", fullUtkast.navn);
     setValue("endringsType", fullUtkast.endringstype);
     setValue("gyldigFra", fullUtkast.gyldigFra);
-
-    // når vi får støtte for feltet
-    // setValue("kommentar", fullUtkast.kommentar);
 
     previousValues.current = getValues();
   }, [fullUtkast, setValue, getValues]);
@@ -115,10 +111,6 @@ const UtkastItemActive = ({ utkastId }: Props) => {
           ))}
         </Select>
       </BlockLabel>
-      {/* <BlockLabel>
-            {t("Kommentar")}
-            <Input {...register("kommentar")} />
-          </BlockLabel> */}
       <ButtonsAndGyldigFra>
         <BlockLabel>
           {t("metadata.Gyldig fra")}

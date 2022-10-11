@@ -1,9 +1,8 @@
 import { KretsRow } from "../KretsTable";
 import Button from "components/form/Button";
+import Icon from "components/Icon";
 import { useUtkastEntity } from "contexts/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
-import { ReactComponent as CaretDown } from "icons/caretdown.svg";
-import { ReactComponent as CaretUp } from "icons/caretup.svg";
 import { StemmekretsResponse } from "types/api";
 import { getNavnInSpraak } from "utils/language/language";
 
@@ -38,9 +37,15 @@ const StemmekretsRow = ({ id, toggleRow, isRowOpen }: Props) => {
           onClick={() => toggleRow(utkastStemmekrets.id)}
           icon={
             isRowOpen(utkastStemmekrets.id) ? (
-              <CaretUp aria-label="Lukk redigering av stemmekrets" />
+              <Icon
+                icon="expand_less"
+                aria-label="Lukk redigering av stemmekrets"
+              />
             ) : (
-              <CaretDown aria-label="Åpne redigering av stemmekrets" />
+              <Icon
+                icon="expand_more"
+                aria-label="Åpne redigering av stemmekrets"
+              />
             )
           }
         />

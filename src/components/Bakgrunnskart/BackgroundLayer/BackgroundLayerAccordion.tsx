@@ -3,18 +3,14 @@ import styled from "styled-components";
 import useLayerOpacity from "./useLayerOpacity";
 import Button from "components/form/Button";
 import Slider from "components/form/Slider";
-import { ReactComponent as CaretDownIcon } from "icons/caretdown.svg";
-import { ReactComponent as CaretUpIcon } from "icons/caretup.svg";
-import { ReactComponent as CogIcon } from "icons/cog.svg";
-import { ReactComponent as VisibilityIcon } from "icons/visibility.svg";
-import { ReactComponent as VisibilityOffIcon } from "icons/visibility_off.svg";
+import Icon from "components/Icon";
 import { MainMappedLayer, MappedLayer } from "utils/getLayersFromWMS";
 
 const getCaretIcon = (open: boolean) => {
   if (open) {
-    return <CaretUpIcon aria-label="Lukk" />;
+    return <Icon icon="expand_less" aria-label="Lukk" />;
   } else {
-    return <CaretDownIcon aria-label="Åpne" />;
+    return <Icon icon="expand_more" aria-label="Åpne" />;
   }
 };
 
@@ -95,9 +91,13 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
         <Wrapper indent={indent}>
           <IconButton onClick={onVisibilityClick}>
             {visible ? (
-              <VisibilityIcon aria-label={`Skjul ${props.mappedLayer.title}`} />
+              <Icon
+                icon="visibility"
+                aria-label={`Skjul ${props.mappedLayer.title}`}
+              />
             ) : (
-              <VisibilityOffIcon
+              <Icon
+                icon="visibility_off"
                 aria-label={`Vis ${props.mappedLayer.title}`}
               />
             )}
@@ -107,7 +107,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
             <PropertiesButton
               onClick={() => setPropertiesVisible(!propertiesVisible)}
             >
-              <CogIcon />
+              <Icon icon="edit" />
             </PropertiesButton>
           )}
         </Wrapper>
