@@ -135,10 +135,12 @@ export const mockDetailedKommune: KommuneResponse = {
     {
       navn: "Malvik",
       spraak: "nor",
+      version: 1,
     },
   ],
   features: mockGeoJsonFeatureResponse,
   id: "1",
+  version: 1,
   kommunenummer: {
     id: "a379eb0a-7bae-4fc9-ab07-cf0c7a28bdb7",
     kodeverdi: 12345678,
@@ -166,6 +168,7 @@ export const mockGrunnkrets2: GrunnkretsRef = {
 export const mockDetailedGrunnkrets1: GrunnkretsResponse = {
   features: mockGeoJsonFeatureResponse,
   grunnkretsnummer: "12345678",
+  version: 1,
   id: "1",
   identifikasjon: {
     lokalid: "lokalid",
@@ -179,6 +182,7 @@ export const mockDetailedGrunnkrets1: GrunnkretsResponse = {
 export const mockDetailedGrunnkrets2: GrunnkretsResponse = {
   features: mockGeoJsonFeatureResponse,
   grunnkretsnummer: "12345679",
+  version: 1,
   id: "2",
   identifikasjon: {
     lokalid: "lokalid",
@@ -258,6 +262,7 @@ export const mockStemmekretser: StemmekretsRef[] = [
 
 export const mockStemmekrets1: StemmekretsResponse = {
   id: "1",
+  version: 1,
   stemmekretsnavn: "Undredal",
   stemmekretsnummer: "05",
   identifikasjon: {
@@ -274,6 +279,7 @@ export const mockStemmekrets1: StemmekretsResponse = {
 
 export const mockStemmekrets2: StemmekretsResponse = {
   id: "2",
+  version: 1,
   stemmekretsnavn: "Slemfjord",
   stemmekretsnummer: "12",
   identifikasjon: {
@@ -295,6 +301,7 @@ export const mockUtkast: UtkastResponse = {
   id: "1",
   status: "Ikke publisert",
   opprettetDato: "2022-01-01",
+  version: 1,
   auditInfoResponse: {
     endretAv: "Meg",
     oppdateringsdato: "2022-06-01",
@@ -305,12 +312,14 @@ export const mockUtkast: UtkastResponse = {
         "1": {
           ...mockDetailedGrunnkrets1,
           navn: "Utkast grunnkrets",
+          version: 2,
         },
       },
       stemmekretsendringer: {
         "1": {
           ...mockStemmekrets1,
           stemmekretsnavn: "Utkast stemmekrets",
+          version: 2,
         },
       },
     },

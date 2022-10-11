@@ -5,7 +5,7 @@ import styled from "styled-components";
 import Input from "components/form/Input";
 import Label from "components/form/Label";
 import { GrunnkretsEntry, useToolbarSaving } from "contexts/ToolbarContext";
-import useKretsToolbarSync from "contexts/ToolbarContext/useKretsToolbarSync";
+import useKretsToolbarSync from "contexts/ToolbarContext/useToolbarFormSync";
 import useNibasApi from "hooks/useNibasApi";
 import {
   GrunnkretsRef,
@@ -29,6 +29,7 @@ const fromFormToRequest = (
   grunnkrets: GrunnkretsResponse
 ): GrunnkretsRequest => ({
   identifikasjon: grunnkrets.identifikasjon,
+  version: grunnkrets.version,
   navn: data.navn,
   grunnkretsnummer: data.grunnkretsnummer,
 });
@@ -59,7 +60,7 @@ const EditRow = ({ grunnkrets, kommuneId }: Props) => {
   );
 
   useKretsToolbarSync<GrunnkretsEntry>({
-    kretsId: fullGrunnkrets?.id,
+    entityId: fullGrunnkrets?.id,
     redoEventKey: "grunnkretsRedo",
     undoEventKey: "grunnkretsUndo",
     setFormValues,

@@ -2,20 +2,22 @@ import { createContext, useContext, useEffect, useMemo } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { useMatch } from "react-router-dom";
-import { EntityUtkastType, UtkastContextValue, UtkastEntity } from "./types";
+import { useSWRConfig } from "swr";
+import {
+  EntityUtkastType,
+  UtkastContextValue,
+  UtkastEntity,
+  UtkastRequestWithoutOperations,
+} from "./types";
 import {
   applyFeatureUtkast,
   applyNonFeatureUtkast,
   historyToUtkastOperations,
 } from "./utils";
 import { updateUtkast as updateApiUtkast } from "api/utkast";
-import { useToolbar } from "contexts/ToolbarContext";
+import { HistoryChange, useToolbar } from "contexts/ToolbarContext";
 import useNibasApi from "hooks/useNibasApi";
-import { UtkastRequest } from "types/api";
-
-// utkastet per ID må byttes ut med de nye verdiene på lagring
-// det er kun den siste versjonen av en request som skal brukes,
-// de andre er unødvendige
+import { OppdaterUtkastRequest } from "types/api";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
@@ -30,6 +32,8 @@ export const UtkastProvider: React.FC = ({ children }) => {
   const { history, clearHistory } = useToolbar();
   const { tokenHolderFunc } = useAuthenticationFlow();
   const utkastId = useMatch("/:utkastId")?.params.utkastId;
+
+  const { mutate: globalMutate } = useSWRConfig();
 
   const { data: utkast, mutate } = useNibasApi(
     utkastId ? "/v1/utkast/{id}" : null,
@@ -59,16 +63,33 @@ export const UtkastProvider: React.FC = ({ children }) => {
 
     const operasjoner = historyToUtkastOperations(history, utkast);
 
-    const updatedUtkast: UtkastRequest = {
+    const updatedUtkast: OppdaterUtkastRequest = {
       endringstype: utkast.endringstype,
       navn: utkast.navn,
       gyldigFra: utkast.gyldigFra,
       operasjoner,
+      version: utkast.version,
     };
+    const utkastEntry = history.entries
+      .slice(0, history.index)
+      .find((entry) => entry.changes.some((change) => change.id === utkast.id));
+
+    if (utkastEntry) {
+      const change = (
+        utkastEntry.changes as HistoryChange<UtkastRequestWithoutOperations>[]
+      ).find((c) => c.id === utkast.id);
+
+      if (change?.to) {
+        updatedUtkast.endringstype = change.to.endringstype;
+        updatedUtkast.navn = change.to.navn;
+        updatedUtkast.gyldigFra = change.to.gyldigFra;
+      }
+    }
 
     await mutate(
       updateApiUtkast(utkast.id, updatedUtkast, tokenHolderFunc()?.token)
     );
+    await globalMutate(["/v1/utkast", tokenHolderFunc()?.token]);
 
     clearHistory();
   };
