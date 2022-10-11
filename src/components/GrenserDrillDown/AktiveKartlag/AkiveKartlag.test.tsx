@@ -15,6 +15,7 @@ const renderWithProvider = (ui: ReactNode) =>
         },
         setObjectValue: jest.fn(),
         setEditingObject: jest.fn(),
+        resetEditingObject: jest.fn(),
       }}
     >
       <UtkastContext.Provider
