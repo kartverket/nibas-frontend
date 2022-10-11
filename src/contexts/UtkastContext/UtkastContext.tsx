@@ -16,9 +16,11 @@ import {
 } from "./utils";
 import { updateUtkast as updateApiUtkast } from "api/utkast";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
+import { useMetadataPanel } from "contexts/MetadataPanelContext";
 import { HistoryChange, useToolbar } from "contexts/ToolbarContext";
 import useNibasApi from "hooks/useNibasApi";
 import { OppdaterUtkastRequest } from "types/api";
+import { resetMapView } from "utils/map";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
@@ -34,6 +36,7 @@ export const UtkastProvider: React.FC = ({ children }) => {
   const { tokenHolderFunc } = useAuthenticationFlow();
   const utkastId = useMatch("/:utkastId")?.params.utkastId;
   const { resetEditingObject } = useEditAllGrenser();
+  const { closePanel } = useMetadataPanel();
 
   const { mutate: globalMutate } = useSWRConfig();
 
@@ -54,13 +57,17 @@ export const UtkastProvider: React.FC = ({ children }) => {
   );
 
   useEffect(() => {
+    resetEditingObject();
+    closePanel();
+    resetMapView();
+  }, [resetEditingObject, closePanel, utkastId]);
+
+  useEffect(() => {
     // fjern utkast hvis utkastid ikke er i url
     if (utkast && !utkastId) {
       mutate();
     }
-
-    resetEditingObject();
-  }, [utkast, utkastId, mutate, resetEditingObject]);
+  }, [utkast, utkastId, mutate]);
 
   const updateUtkastWithHistory = async () => {
     if (!utkast) return;
