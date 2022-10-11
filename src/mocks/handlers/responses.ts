@@ -1,4 +1,5 @@
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
+import { createUtkastOperations } from "contexts/UtkastContext/utils";
 import {
   AdministrativGrenseMetadata,
   FylkeRef,
@@ -306,30 +307,26 @@ export const mockUtkast: UtkastResponse = {
     endretAv: "Meg",
     oppdateringsdato: "2022-06-01",
   },
-  operasjoner: {
-    metadataendringer: {
-      grunnkretsendringer: {
-        "1": {
-          ...mockDetailedGrunnkrets1,
-          navn: "Utkast grunnkrets",
-          version: 2,
-        },
-      },
-      stemmekretsendringer: {
-        "1": {
-          ...mockStemmekrets1,
-          stemmekretsnavn: "Utkast stemmekrets",
-          version: 2,
-        },
+  operasjoner: createUtkastOperations({
+    grunnkretsendringer: {
+      "1": {
+        ...mockDetailedGrunnkrets1,
+        navn: "Utkast grunnkrets",
+        version: 2,
       },
     },
-    grenseendringer: {
-      endredeFeatures: {
-        "9b4ab6bb-878f-472a-9243-64e2bdc48b8b":
-          mockGeoJsonFeatureResponse.features[0],
+    stemmekretsendringer: {
+      "1": {
+        ...mockStemmekrets1,
+        stemmekretsnavn: "Utkast stemmekrets",
+        version: 2,
       },
     },
-  },
+    endredeFeatures: {
+      "9b4ab6bb-878f-472a-9243-64e2bdc48b8b":
+        mockGeoJsonFeatureResponse.features[0],
+    },
+  }),
 };
 
 export const mockUtkastRef1: UtkastRef = {
