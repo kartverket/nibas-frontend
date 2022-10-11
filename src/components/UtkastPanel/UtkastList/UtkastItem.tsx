@@ -67,11 +67,9 @@ const UtkastItem = ({ utkast }: Props) => {
         <UnstyledButton onClick={() => setIsDeleteOpen(true)}>
           <DeleteIcon aria-label={`Forkast ${utkast.navn}`} />
         </UnstyledButton>
-        <UnstyledButton>
-          <Link to={`/${utkast.id}`}>
-            <Icon icon="edit" aria-label={`Aktiver ${utkast.navn}`} />
-          </Link>
-        </UnstyledButton>
+        <Link to={`/${utkast.id}`}>
+          <Icon icon="edit" aria-label={`Aktiver ${utkast.navn}`} />
+        </Link>
       </ItemWrapper>
       {isPublishOpen && (
         <UtkastItemExpanded>
