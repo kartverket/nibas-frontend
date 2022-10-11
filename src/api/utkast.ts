@@ -1,7 +1,11 @@
-import { UtkastRequest, UtkastResponse } from "types/api";
+import {
+  OppdaterUtkastRequest,
+  OpprettUtkastRequest,
+  UtkastResponse,
+} from "types/api";
 
 export const createUtkast = async (
-  utkast: UtkastRequest,
+  utkast: OpprettUtkastRequest,
   token: string | undefined
 ) => {
   return fetch(`v1/utkast`, {
@@ -16,7 +20,7 @@ export const createUtkast = async (
 
 export const updateUtkast = async (
   id: string,
-  utkast: UtkastRequest,
+  utkast: OppdaterUtkastRequest,
   token: string | undefined
 ) => {
   const response = await fetch(`v1/utkast/${id}`, {
@@ -31,4 +35,19 @@ export const updateUtkast = async (
   const json = await response.json();
 
   return json as UtkastResponse;
+};
+
+export const publishUtkast = async (
+  id: string,
+  utkast: OppdaterUtkastRequest,
+  token: string | undefined
+) => {
+  return fetch(`v1/utkast/${id}/publiser`, {
+    method: "POST",
+    body: JSON.stringify(utkast),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + token,
+    },
+  });
 };

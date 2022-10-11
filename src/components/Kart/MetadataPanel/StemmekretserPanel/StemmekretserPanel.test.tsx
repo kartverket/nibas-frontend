@@ -121,6 +121,7 @@ describe("StemmekretserPanel", () => {
         tellekretsnummer: "Nytt tellekretsnummer",
         tellekretsnavn: "tellekretsnavn1",
         valgdistriktsnummer: "14",
+        version: 1,
       },
     });
 

@@ -68,6 +68,7 @@ describe("GrunnkretserPanel", () => {
       "1": {
         grunnkretsnummer: "87654321",
         navn: "Mosekollen vest",
+        version: 1,
         identifikasjon: {
           lokalid: "lokalid",
           navnerom: "navnerom",

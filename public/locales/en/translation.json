@@ -70,7 +70,9 @@
     "Endre": "__STRING_NOT_TRANSLATED__",
     "Lagre som": "__STRING_NOT_TRANSLATED__",
     "Undo": "__STRING_NOT_TRANSLATED__",
-    "Redo": "__STRING_NOT_TRANSLATED__"
+    "Redo": "__STRING_NOT_TRANSLATED__",
+    "Publiser": "__STRING_NOT_TRANSLATED__",
+    "Avbryt redigering": "__STRING_NOT_TRANSLATED__"
   },
   "Ja": "__STRING_NOT_TRANSLATED__",
   "Nei": "__STRING_NOT_TRANSLATED__",
@@ -98,9 +100,11 @@
     "Navneendring": "__STRING_NOT_TRANSLATED__",
     "Nummerendring": "__STRING_NOT_TRANSLATED__",
     "Navn på utkast": "__STRING_NOT_TRANSLATED__",
-    "Type utkast": "__STRING_NOT_TRANSLATED__"
+    "Type utkast": "__STRING_NOT_TRANSLATED__",
+    "Du er nå i redigeringsmodus av dette utkastet": "__STRING_NOT_TRANSLATED__"
   },
   "Logg inn for å se listen": "__STRING_NOT_TRANSLATED__",
   "Kartlag": "__STRING_NOT_TRANSLATED__",
-  "Aktive kartlag": "__STRING_NOT_TRANSLATED__"
+  "Aktive kartlag": "__STRING_NOT_TRANSLATED__",
+  "Kommentar": "__STRING_NOT_TRANSLATED__"
 }

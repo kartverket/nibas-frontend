@@ -11,6 +11,7 @@ const defaultProps: React.ComponentProps<typeof ToggleableGrense> = {
       {
         navn: "",
         spraak: "",
+        version: 1,
       },
     ],
   },

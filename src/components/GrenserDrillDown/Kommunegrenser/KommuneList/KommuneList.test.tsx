@@ -7,7 +7,7 @@ import { UtkastContext } from "contexts/UtkastContext";
 const defaultProps: React.ComponentProps<typeof KommuneList> = {
   fylke: {
     id: "2",
-    navn: [{ navn: "Fylke", spraak: "nor" }],
+    navn: [{ navn: "Fylke", spraak: "nor", version: 1 }],
     href: "href1",
   },
 };

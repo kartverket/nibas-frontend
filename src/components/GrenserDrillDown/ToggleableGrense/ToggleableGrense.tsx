@@ -3,12 +3,10 @@ import Geometry from "ol/geom/Geometry";
 import styled from "styled-components";
 import Checkbox from "components/Checkbox";
 import Button from "components/form/Button";
+import Icon from "components/Icon";
 import { EditingType } from "contexts/EditGrenserContext";
 import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
 import { GrenseId } from "hooks/layers/types";
-import { ReactComponent as EditIcon } from "icons/edit.svg";
-import { ReactComponent as VisibilityIcon } from "icons/visibility.svg";
-import { ReactComponent as VisibilityOffIcon } from "icons/visibility_off.svg";
 import { GrenseRef } from "types/api";
 
 export const layerIdByGrenseType: Record<EditingType, GrenseId> = {
@@ -49,9 +47,9 @@ const ToggleableGrense = <T extends GrenseRef>({
         variant="unstyled"
         icon={
           value.visible ? (
-            <VisibilityIcon aria-label="Synlig" />
+            <Icon icon="visibility" aria-label="Synlig" />
           ) : (
-            <VisibilityOffIcon aria-label="Usynlig" />
+            <Icon icon="visibility_off" aria-label="Usynlig" />
           )
         }
       ></Button>
@@ -61,11 +59,7 @@ const ToggleableGrense = <T extends GrenseRef>({
         checked={value.editing ?? false}
         onChange={toggleEditing}
       />
-      <Button
-        icon={<ColoredInfo />}
-        onClick={openInfo}
-        variant="unstyled"
-      ></Button>
+      <Button icon={<ColoredInfo />} onClick={openInfo} variant="unstyled" />
     </Wrapper>
   );
 };
@@ -85,7 +79,9 @@ const StyledCheckbox = styled(Checkbox)`
   margin-left: 4px;
 `;
 
-const ColoredInfo = styled(EditIcon)`
+const ColoredInfo = styled(Icon).attrs(() => ({
+  icon: "edit",
+}))`
   color: ${({ theme }) => theme.colors.blue};
 `;
 

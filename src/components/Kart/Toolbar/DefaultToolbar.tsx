@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { ToolbarWrapper } from "./components";
 import Button from "components/form/Button";
 import { useToolbarActions } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext";
@@ -12,8 +13,10 @@ const DefaultToolbar = ({ openCreateUtkast }: Props) => {
   const { canSave, undo, redo } = useToolbarActions();
   const { utkast, updateUtkastWithHistory } = useUtkast();
 
+  if (!canSave && !undo && !redo) return null;
+
   return (
-    <>
+    <ToolbarWrapper>
       {utkast && (
         <Button onClick={updateUtkastWithHistory} disabled={!canSave}>
           {t("action.Lagre")}
@@ -30,7 +33,7 @@ const DefaultToolbar = ({ openCreateUtkast }: Props) => {
       <Button onClick={redo} disabled={!redo}>
         {t("action.Redo")}
       </Button>
-    </>
+    </ToolbarWrapper>
   );
 };
 

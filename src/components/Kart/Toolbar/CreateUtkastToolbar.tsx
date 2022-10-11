@@ -4,23 +4,15 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { BlockLabel } from "../MetadataPanel/metadataComponents";
+import { ToolbarWrapper } from "./components";
 import { createUtkast as createApiUtkast } from "api/utkast";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
 import { useToolbar } from "contexts/ToolbarContext";
+import { translateKeysByEndringsType } from "contexts/UtkastContext/constants";
 import { historyToUtkastOperations } from "contexts/UtkastContext/utils";
 import { Translation } from "i18n";
-
-const translateKeysByEndringsType: Record<string, string> = {
-  "Vedtatt grensejustering": "utkast.Vedtatt grensejustering",
-  "Vedtatt sammenslåing": "utkast.Vedtatt sammenslåing",
-  Retting: "utkast.Retting",
-  "Vedtatt deling": "utkast.Vedtatt deling",
-  Fastsetting: "utkast.Fastsetting",
-  Navneendring: "utkast.Navneendring",
-  Nummerendring: "utkast.Nummerendring",
-};
 
 type Props = {
   closeCreateUtkast: () => void;
@@ -56,38 +48,40 @@ const CreateUtkastToolbar = ({ closeCreateUtkast }: Props) => {
   };
 
   return (
-    <Wrapper>
-      <BlockLabel>
-        {t("utkast.Navn på utkast")}
-        <Input
-          value={utkastName}
-          onChange={(e) => setUtkastName(e.target.value)}
-        />
-      </BlockLabel>
-      <BlockLabel>
-        {t("utkast.Type utkast")}
-        <Select
-          value={utkastType}
-          onChange={(e) => setUtkastType(e.target.value)}
-        >
-          <option value="" disabled>
-            ---
-          </option>
-          {Object.keys(translateKeysByEndringsType).map((type) => (
-            <option key={type} value={type}>
-              {t(translateKeysByEndringsType[type] as Translation)}
+    <ToolbarWrapper>
+      <Wrapper>
+        <BlockLabel>
+          {t("utkast.Navn på utkast")}
+          <Input
+            value={utkastName}
+            onChange={(e) => setUtkastName(e.target.value)}
+          />
+        </BlockLabel>
+        <BlockLabel>
+          {t("utkast.Type utkast")}
+          <Select
+            value={utkastType}
+            onChange={(e) => setUtkastType(e.target.value)}
+          >
+            <option value="" disabled>
+              ---
             </option>
-          ))}
-        </Select>
-      </BlockLabel>
+            {Object.keys(translateKeysByEndringsType).map((type) => (
+              <option key={type} value={type}>
+                {t(translateKeysByEndringsType[type] as Translation)}
+              </option>
+            ))}
+          </Select>
+        </BlockLabel>
 
-      <Button onClick={closeCreateUtkast} variant="secondary">
-        {t("action.Lukk")}
-      </Button>
-      <Button onClick={createUtkast} disabled={utkastType === ""}>
-        {t("action.Lagre som")}
-      </Button>
-    </Wrapper>
+        <Button onClick={closeCreateUtkast} variant="secondary">
+          {t("action.Lukk")}
+        </Button>
+        <Button onClick={createUtkast} disabled={utkastType === ""}>
+          {t("action.Lagre som")}
+        </Button>
+      </Wrapper>
+    </ToolbarWrapper>
   );
 };
 

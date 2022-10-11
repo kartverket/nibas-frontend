@@ -32,6 +32,13 @@ const onUndo = (entry: HistoryEntry) => {
         })
       );
     }
+    case "utkast": {
+      return document.dispatchEvent(
+        new CustomEvent("utkastUndo", {
+          detail: { entry },
+        })
+      );
+    }
   }
 
   ensureAllCasesCovered(type);
@@ -57,6 +64,13 @@ const onRedo = (entry: HistoryEntry) => {
     case "stemmekrets": {
       return document.dispatchEvent(
         new CustomEvent("stemmekretsRedo", {
+          detail: { entry },
+        })
+      );
+    }
+    case "utkast": {
+      return document.dispatchEvent(
+        new CustomEvent("utkastRedo", {
           detail: { entry },
         })
       );

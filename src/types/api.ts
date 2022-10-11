@@ -61,8 +61,12 @@ export type StatistiskGrenseMetadata =
   components["schemas"]["StatistiskgrenseMetadata"] & {
     dokumentasjonsreferanser: undefined;
   };
-export type UtkastRequest = components["schemas"]["UtkastRequest"];
+export type OpprettUtkastRequest =
+  components["schemas"]["OpprettUtkastRequest"];
+export type OppdaterUtkastRequest =
+  components["schemas"]["OppdaterUtkastRequest"];
 export type UtkastResponse = components["schemas"]["UtkastResponse"];
+export type UtkastRef = components["schemas"]["UtkastRef"];
 export type UtkastMetadataendringer =
   components["schemas"]["Metadataendringer"];
 export type UtkastGrenseendringer = components["schemas"]["Grenseendringer"];

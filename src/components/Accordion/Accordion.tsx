@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import Button from "components/form/Button";
-import { ReactComponent as CaretDownIcon } from "icons/caretdown.svg";
-import { ReactComponent as CaretUpIcon } from "icons/caretup.svg";
+import Icon from "components/Icon";
 
 type Props = {
   title: string;
@@ -24,9 +23,9 @@ const Accordion: React.FC<Props> = ({
         <IconSpacer>
           <span>{title}</span>
           {open ? (
-            <CaretUpIcon aria-label="Lukk" />
+            <Icon icon="expand_less" aria-label="Lukk" />
           ) : (
-            <CaretDownIcon aria-label="Åpne" />
+            <Icon icon="expand_more" aria-label="Åpne" />
           )}
         </IconSpacer>
       </TitleWrapperButton>
