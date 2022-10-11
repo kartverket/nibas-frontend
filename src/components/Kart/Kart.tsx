@@ -8,6 +8,7 @@ import OverlayPopup from "./OverlayPopup";
 import SidebarPanels from "./SidebarPanels";
 import Toolbar from "./Toolbar";
 import { PanelContent, useMetadataPanel } from "contexts/MetadataPanelContext";
+import { useUtkast } from "contexts/UtkastContext";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
 import useSelectInteraction from "hooks/interactions/useSelectInteraction";
 import { initBakgrunnskartLayers, initGrenserLayers } from "utils/map/layers";
@@ -20,6 +21,7 @@ initBakgrunnskartLayers();
 const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const { panelContext } = useMetadataPanel();
+  const { utkast } = useUtkast();
 
   const selectedFeatures = useSelectInteraction();
   useEditInteractions();
@@ -37,7 +39,7 @@ const Kart = () => {
   }, []);
 
   return (
-    <KartWrapper>
+    <KartWrapper utkastActive={!!utkast}>
       <KartTarget ref={mapRef}>
         <Suspense fallback="More loading...">
           <KartOverlay content={panelContext?.content}>
@@ -54,10 +56,21 @@ const Kart = () => {
   );
 };
 
-const KartWrapper = styled.div`
+const KartWrapper = styled.div<{ utkastActive: boolean }>`
   grid-area: map;
   position: relative;
-  margin-left: -2px;
+  margin-left: -5px;
+
+  ${({ utkastActive }) => {
+    if (utkastActive) {
+      return css`
+        margin-left: -5px;
+        border-top: 3px solid ${({ theme }) => theme.colors.redDark};
+        border-right: 3px solid ${({ theme }) => theme.colors.redDark};
+        border-bottom: 3px solid ${({ theme }) => theme.colors.redDark};
+      `;
+    }
+  }}
 `;
 
 const KartTarget = styled.div`
