@@ -1,4 +1,6 @@
-type Props = {
+import { HTMLAttributes } from "react";
+
+type Props = HTMLAttributes<HTMLSpanElement> & {
   icon: string;
   filled?: boolean;
   className?: string;
@@ -7,7 +9,7 @@ type Props = {
 // finn ikon herifra
 // https://kartverket.github.io/kvib/designsystems/designTokens/designsystems/designtokens/ikoner
 
-const Icon = ({ icon, className, filled }: Props) => {
+const Icon = ({ icon, className, filled, ...props }: Props) => {
   let fullClassName = "material-symbols-outlined";
 
   if (filled) {
@@ -18,7 +20,11 @@ const Icon = ({ icon, className, filled }: Props) => {
     fullClassName += ` ${className}`;
   }
 
-  return <span className={fullClassName}>{icon}</span>;
+  return (
+    <span className={fullClassName} {...props}>
+      {icon}
+    </span>
+  );
 };
 
 export default Icon;
