@@ -7,6 +7,7 @@ import { MetadataPanelWrapper } from "./MetadataPanel/MetadataPanel";
 import OverlayPopup from "./OverlayPopup";
 import SidebarPanels from "./SidebarPanels";
 import Toolbar from "./Toolbar";
+import UtkastTab from "./UtkastTab";
 import { PanelContent, useMetadataPanel } from "contexts/MetadataPanelContext";
 import { useUtkast } from "contexts/UtkastContext";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
@@ -42,11 +43,7 @@ const Kart = () => {
     <KartWrapper utkastActive={!!utkast}>
       <KartTarget ref={mapRef}>
         <Suspense fallback="More loading...">
-          {utkast && (
-            <UtkastTab>
-              <span>{utkast.navn}</span>
-            </UtkastTab>
-          )}
+          <UtkastTab />
           <KartOverlay content={panelContext?.content}>
             <SidebarPanels />
             <MetadataPanel />
@@ -84,20 +81,6 @@ const KartTarget = styled.div`
   .ol-control {
     text-align: center;
   }
-`;
-
-const UtkastTab = styled.div`
-  position: absolute;
-  top: -36px;
-  height: 36px;
-  left: 60%;
-  width: auto;
-  display: flex;
-  align-items: center;
-  background-color: ${({ theme }) => theme.colors.redDark};
-  padding: 0 16px;
-  font-size: 16px;
-  color: white;
 `;
 
 const KartOverlay = styled.div<{
