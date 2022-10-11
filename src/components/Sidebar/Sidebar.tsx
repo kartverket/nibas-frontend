@@ -2,10 +2,7 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import useSWR from "swr";
 import SidebarButton from "./SidebarButton";
-import { ReactComponent as DraftsIcon } from "icons/drafts.svg";
-import { ReactComponent as InndelingerIcon } from "icons/inndelinger.svg";
-import { ReactComponent as MapIcon } from "icons/map.svg";
-import { ReactComponent as SearchIcon } from "icons/search.svg";
+import Icon from "components/Icon";
 import { fetcher } from "utils/swr";
 
 type ActuatorResponse = {
@@ -30,22 +27,22 @@ const Sidebar = () => {
         <SidebarButton
           title={t("sidebar.Inndelinger")}
           panel="inndelinger"
-          icon={<InndelingerIcon width={36} height={36} />}
+          icon={<SidebarIcon icon="space_dashboard" />}
         />
         <SidebarButton
           title={t("sidebar.Søk")}
           panel="soek"
-          icon={<SearchIcon width={36} height={36} />}
+          icon={<SidebarIcon icon="search" />}
         />
         <SidebarButton
           title={t("sidebar.Kartlag")}
           panel="kartlag"
-          icon={<MapIcon width={36} height={36} />}
+          icon={<SidebarIcon icon="map" />}
         />
         <SidebarButton
           title={t("sidebar.Utkast")}
           panel="utkast"
-          icon={<DraftsIcon width={36} height={36} />}
+          icon={<SidebarIcon icon="description" />}
         />
       </ButtonsWrapper>
 
@@ -82,6 +79,10 @@ const Versions = styled.div`
 const Version = styled.p`
   margin: 8px 0;
   font-size: 12px;
+`;
+
+const SidebarIcon = styled(Icon)`
+  font-size: 42px;
 `;
 
 export default Sidebar;

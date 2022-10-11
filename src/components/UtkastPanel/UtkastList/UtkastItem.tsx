@@ -8,10 +8,9 @@ import UtkastItemActive from "./UtkastItemActive";
 import { publishUtkast } from "api/utkast";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
+import Icon from "components/Icon";
 import { BlockLabel } from "components/Kart/MetadataPanel/metadataComponents";
 import useNibasApi from "hooks/useNibasApi";
-import { ReactComponent as EditIcon } from "icons/edit.svg";
-import { ReactComponent as PublishIcon } from "icons/pluss.svg";
 import { UtkastRef } from "types/api";
 
 type Props = {
@@ -54,7 +53,7 @@ const UtkastItem = ({ utkast }: Props) => {
         </UnstyledButton>
         <UnstyledButton>
           <Link to={`/${utkast.id}`}>
-            <EditIcon aria-label={`Aktiver ${utkast.navn}`} />
+            <Icon icon="edit" aria-label={`Aktiver ${utkast.navn}`} />
           </Link>
         </UnstyledButton>
       </ItemWrapper>
@@ -146,5 +145,11 @@ const CancelButton = styled(Button).attrs(() => ({
 const UnstyledButton = styled(Button).attrs(() => ({
   variant: "unstyled",
 }))``;
+
+const PublishIcon = styled(Icon).attrs(() => ({
+  icon: "done",
+}))`
+  color: ${({ theme }) => theme.colors.green};
+`;
 
 export default UtkastItem;
