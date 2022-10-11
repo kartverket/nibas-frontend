@@ -1,9 +1,7 @@
 import styled from "styled-components";
 import Button from "components/form/Button";
+import Icon from "components/Icon";
 import { useInndelingerKrets } from "contexts/InndelingerKretsContext";
-import { ReactComponent as EditIcon } from "icons/edit.svg";
-import { ReactComponent as VisibilityIcon } from "icons/visibility.svg";
-import { ReactComponent as VisibilityOffIcon } from "icons/visibility_off.svg";
 import { KommuneRef } from "types/api";
 import { getNavnInSpraak } from "utils/language/language";
 
@@ -22,9 +20,9 @@ const Kommune = ({ kommune }: Props) => {
         variant="unstyled"
         icon={
           kommuneValues.visible ? (
-            <VisibilityIcon aria-label="Synlig" />
+            <Icon icon="visibility" aria-label="Synlig" />
           ) : (
-            <VisibilityOffIcon aria-label="Usynlig" />
+            <Icon icon="visibility_off" aria-label="Usynlig" />
           )
         }
       />
@@ -33,7 +31,7 @@ const Kommune = ({ kommune }: Props) => {
       </Title>
       <EditButton
         editing={kommuneValues.editing}
-        icon={<EditIcon />}
+        icon={<Icon icon="edit" />}
         variant="unstyled"
         onClick={toggleEditKretser}
       />

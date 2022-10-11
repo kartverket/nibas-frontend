@@ -1,8 +1,7 @@
 import { Link, useMatch } from "react-router-dom";
 import styled from "styled-components";
 import Button from "components/form/Button";
-import { ReactComponent as EditIcon } from "icons/edit.svg";
-import { ReactComponent as CancelIcon } from "icons/visibility_off.svg";
+import Icon from "components/Icon";
 import { UtkastRef } from "types/api";
 
 type Props = {
@@ -28,12 +27,12 @@ const UtkastItem = ({ utkast }: Props) => {
       {utkastId === utkast.id && (
         <UnstyledButton>
           <Link to="">
-            <CancelIcon />
+            <Icon icon="close" />
           </Link>
         </UnstyledButton>
       )}
       <UnstyledButton onClick={publishUtkast}>
-        <EditIcon />
+        <Icon icon="done" />
       </UnstyledButton>
     </ListItem>
   );

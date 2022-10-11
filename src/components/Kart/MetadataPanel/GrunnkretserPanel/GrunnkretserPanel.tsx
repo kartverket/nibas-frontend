@@ -7,13 +7,12 @@ import useAccordionRows from "../useAccordionRow";
 import EditRow from "./EditRow";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
+import Icon from "components/Icon";
 import Heading from "components/typography/Heading";
 import { useInndelingerKrets } from "contexts/InndelingerKretsContext";
 import { useUtkastEntity } from "contexts/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
 import useSearch from "hooks/useSearch";
-import { ReactComponent as CaretDown } from "icons/caretdown.svg";
-import { ReactComponent as CaretUp } from "icons/caretup.svg";
 import { GrunnkretsRef, KommuneRef } from "types/api";
 import {
   getNavnInSpraak,
@@ -96,7 +95,11 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                         variant="unstyled"
                         onClick={() => toggleRow(grunnkrets.id)}
                         icon={
-                          isRowOpen(grunnkrets.id) ? <CaretUp /> : <CaretDown />
+                          isRowOpen(grunnkrets.id) ? (
+                            <Icon icon="expand_less" />
+                          ) : (
+                            <Icon icon="expand_more" />
+                          )
                         }
                       />
                     </td>
