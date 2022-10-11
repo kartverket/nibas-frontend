@@ -42,6 +42,11 @@ const Kart = () => {
     <KartWrapper utkastActive={!!utkast}>
       <KartTarget ref={mapRef}>
         <Suspense fallback="More loading...">
+          {utkast && (
+            <UtkastTab>
+              <span>{utkast.navn}</span>
+            </UtkastTab>
+          )}
           <KartOverlay content={panelContext?.content}>
             <SidebarPanels />
             <MetadataPanel />
@@ -64,7 +69,6 @@ const KartWrapper = styled.div<{ utkastActive: boolean }>`
   ${({ utkastActive }) => {
     if (utkastActive) {
       return css`
-        margin-left: -5px;
         border-top: 3px solid ${({ theme }) => theme.colors.redDark};
         border-right: 3px solid ${({ theme }) => theme.colors.redDark};
         border-bottom: 3px solid ${({ theme }) => theme.colors.redDark};
@@ -80,6 +84,20 @@ const KartTarget = styled.div`
   .ol-control {
     text-align: center;
   }
+`;
+
+const UtkastTab = styled.div`
+  position: absolute;
+  top: -36px;
+  height: 36px;
+  left: 60%;
+  width: auto;
+  display: flex;
+  align-items: center;
+  background-color: ${({ theme }) => theme.colors.redDark};
+  padding: 0 16px;
+  font-size: 16px;
+  color: white;
 `;
 
 const KartOverlay = styled.div<{
