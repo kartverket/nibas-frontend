@@ -93,7 +93,10 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   const removeKretserFromLayer = (layerId: LayerId) => {
     if (!allFeatures) return;
 
-    removeFeaturesFromSourceByIds(layerId, allFeatures);
+    removeFeaturesFromSourceByIds(
+      layerId,
+      allFeatures.map((feature) => feature.getId()?.toString() ?? "")
+    );
   };
 
   return {
