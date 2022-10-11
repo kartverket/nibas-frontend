@@ -99,3 +99,9 @@ export const isVectorLayer = (
 ): layer is VectorLayer<GeometryVectorSource> => {
   return layer instanceof VectorLayer;
 };
+
+export const removeAllFeatures = () => {
+  Object.values(grenserLayers).forEach((layer) => {
+    layer.getSource().clear();
+  });
+};

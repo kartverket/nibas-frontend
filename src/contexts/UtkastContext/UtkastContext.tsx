@@ -15,10 +15,10 @@ import {
   historyToUtkastOperations,
 } from "./utils";
 import { updateUtkast as updateApiUtkast } from "api/utkast";
+import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { HistoryChange, useToolbar } from "contexts/ToolbarContext";
 import useNibasApi from "hooks/useNibasApi";
 import { OppdaterUtkastRequest } from "types/api";
-import { useEditAllGrenser } from "contexts/EditGrenserContext";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
