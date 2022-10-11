@@ -1,10 +1,26 @@
-import React, { createContext, useContext, useState } from "react";
+import { layerIdByGrenseType } from "components/GrenserDrillDown/ToggleableGrense/ToggleableGrense";
+import { Feature } from "ol";
+import LineString from "ol/geom/LineString";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { FeatureProperties } from "types/api";
+import { getLayerById, removeAllFeatures } from "utils/map/layers";
+import {
+  mapFeatureToFeatureId,
+  removeFeaturesFromSourceByIds,
+} from "utils/map/source";
 import {
   EditingObject,
   EditingType,
   GrenseDictionary,
   ObjectValue,
 } from "./types";
+import { getFeaturesIdsByInndelingerKontekst } from "./utils";
 
 export type EditGrenserContextValue = {
   editingObject: EditingObject;
@@ -16,6 +32,7 @@ export type EditGrenserContextValue = {
     grenseId: string,
     values?: ObjectValue
   ) => void;
+  resetEditingObject: () => void;
 };
 
 /**
@@ -42,10 +59,59 @@ export const EditGrenserProvider: React.FC = ({ children }) => {
     });
   };
 
+  const resetEditingObject = useCallback(() => {
+    setEditingObject((prevEditingObject) => {
+      const editFeatureIdsToRemove: string[] = [];
+
+      Object.keys(prevEditingObject).forEach((et) => {
+        const featureIdsToRemove: string[] = [];
+        const editingType = et as EditingType;
+
+        const grenseDictionary = prevEditingObject[editingType] ?? {};
+
+        Object.keys(grenseDictionary).forEach((id) => {
+          const value = grenseDictionary[id];
+          const layerId = layerIdByGrenseType[editingType];
+
+          if (value.editing) {
+            const featureIdsForEntity = getFeaturesIdsByInndelingerKontekst(
+              "edit",
+              editingType,
+              id
+            );
+            editFeatureIdsToRemove.push(...featureIdsForEntity);
+          } else if (value.visible) {
+            const featureIdsForEntity = getFeaturesIdsByInndelingerKontekst(
+              layerId,
+              editingType,
+              id
+            );
+            featureIdsToRemove.push(...featureIdsForEntity);
+          }
+        });
+
+        console.log(
+          `Removing features from ${editingType}`,
+          featureIdsToRemove
+        );
+        removeFeaturesFromSourceByIds(
+          layerIdByGrenseType[editingType],
+          featureIdsToRemove
+        );
+      });
+
+      console.log(`Removing features from edit`, editFeatureIdsToRemove);
+      removeFeaturesFromSourceByIds("edit", editFeatureIdsToRemove);
+
+      return {};
+    });
+  }, []);
+
   const value = {
     editingObject,
     setEditingObject,
     setObjectValue,
+    resetEditingObject,
   };
 
   return (

@@ -18,6 +18,7 @@ import { updateUtkast as updateApiUtkast } from "api/utkast";
 import { HistoryChange, useToolbar } from "contexts/ToolbarContext";
 import useNibasApi from "hooks/useNibasApi";
 import { OppdaterUtkastRequest } from "types/api";
+import { useEditAllGrenser } from "contexts/EditGrenserContext";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
@@ -32,6 +33,7 @@ export const UtkastProvider: React.FC = ({ children }) => {
   const { history, clearHistory } = useToolbar();
   const { tokenHolderFunc } = useAuthenticationFlow();
   const utkastId = useMatch("/:utkastId")?.params.utkastId;
+  const { resetEditingObject } = useEditAllGrenser();
 
   const { mutate: globalMutate } = useSWRConfig();
 
@@ -56,7 +58,9 @@ export const UtkastProvider: React.FC = ({ children }) => {
     if (utkast && !utkastId) {
       mutate();
     }
-  });
+
+    resetEditingObject();
+  }, [utkast, utkastId, mutate, resetEditingObject]);
 
   const updateUtkastWithHistory = async () => {
     if (!utkast) return;
