@@ -11,9 +11,8 @@ import useIsMetadataDisabled from "../useIsMetadataDisabled";
 import { addMetadataEntryFromFeature } from "../utils";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
+import Icon from "components/Icon";
 import { useToolbarSaving } from "contexts/ToolbarContext";
-import { ReactComponent as Minus } from "icons/minus.svg";
-import { ReactComponent as Pluss } from "icons/pluss.svg";
 import { Dokref, FeatureProperties, Metadata } from "types/api";
 
 type Value = {
@@ -127,7 +126,7 @@ const FieldArray = ({
           </a>
           <div>
             <Button
-              icon={<Minus />}
+              icon={<Icon icon="remove" />}
               onClick={() => remove(nestedIndex)}
               disabled={disabled}
             >
@@ -147,7 +146,7 @@ const FieldArray = ({
             disabled={disabled}
           />
         </BlockLabel>
-        <Button onClick={onAdd} disabled={!newLenke} icon={<Pluss />}>
+        <Button onClick={onAdd} disabled={!newLenke} icon={<Icon icon="add" />}>
           {t("action.Legg til")}
         </Button>
       </div>

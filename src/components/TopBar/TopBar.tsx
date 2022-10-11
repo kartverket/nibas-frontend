@@ -2,10 +2,9 @@ import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { AuthenticationButton } from "../Authentication/AuthenticationButton";
-import Button from "components/form/Button";
 import Input from "components/form/Input";
+import Icon from "components/Icon";
 import Logo from "components/Logo/Logo";
-import { ReactComponent as SearchIcon } from "icons/search.svg";
 
 const TopBar = () => {
   const { isAuthenticatedFunc, tokenHolderFunc } = useAuthenticationFlow();
@@ -18,11 +17,7 @@ const TopBar = () => {
         <Logo />
         <span>{t("Nasjonal inndelingsbase")}</span>
         <SearchInput type="text" placeholder={t("Koordinater")} disabled />
-        <SearchIconButton
-          icon={<InputSearchIcon />}
-          disabled
-          variant="unstyled"
-        ></SearchIconButton>
+        <SearchIcon />
       </LeftSide>
       <RightSide>
         {isAuthenticatedFunc() ? (
@@ -68,17 +63,10 @@ const SearchInput = styled(Input)`
   min-width: 200px;
 `;
 
-const SearchIconButton = styled(Button)`
+const SearchIcon = styled(Icon).attrs(() => ({
+  icon: "search",
+}))`
   margin-left: -48px;
-  width: 24px;
-
-  :disabled {
-    outline-style: inherit;
-  }
-`;
-
-const InputSearchIcon = styled(SearchIcon)`
-  width: 24px;
 `;
 
 export default TopBar;

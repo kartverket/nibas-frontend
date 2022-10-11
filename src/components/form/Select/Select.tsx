@@ -1,6 +1,6 @@
 import { forwardRef, SelectHTMLAttributes } from "react";
 import styled from "styled-components";
-import CaretDownIcon from "icons/caretdown.svg";
+import Icon from "components/Icon";
 
 type Props = SelectHTMLAttributes<HTMLSelectElement>;
 
@@ -11,6 +11,7 @@ const Select = forwardRef<HTMLSelectElement, Props>(function Select(
   return (
     <SelectWrapper>
       <SelectInput {...props} ref={ref}></SelectInput>
+      <SelectCaret />
     </SelectWrapper>
   );
 });
@@ -56,6 +57,16 @@ const SelectInput = styled.select`
   }
 `;
 
+const SelectCaret = styled(Icon).attrs(() => ({
+  icon: "expand_more",
+}))`
+  font-size: 24px;
+  top: 7px;
+  right: 7px;
+  position: absolute;
+  pointer-events: none;
+`;
+
 const SelectWrapper = styled.div`
   position: relative;
 
@@ -69,18 +80,9 @@ const SelectWrapper = styled.div`
       }
     }
 
-    &::after {
+    ${SelectCaret} {
       color: ${({ theme }) => theme.colors.redErrorText};
     }
-  }
-
-  &::after {
-    content: url("${CaretDownIcon}");
-    font-size: 24px;
-    top: 7px;
-    right: 10px;
-    position: absolute;
-    pointer-events: none;
   }
 `;
 
