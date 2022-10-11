@@ -5,7 +5,6 @@ import { KretsTable, KretsTableWrapper } from "../KretsTable";
 import useAccordionRows from "../useAccordionRow";
 import EditRow from "./EditRow";
 import StemmekretsRow from "./StemmekretsRow";
-import Button from "components/form/Button";
 import { useInndelingerKrets } from "contexts/InndelingerKretsContext";
 import { useUtkastEntity } from "contexts/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
@@ -14,6 +13,7 @@ import {
   getNavnInSpraak,
   sortGrenserAlphabetically,
 } from "utils/language/language";
+import { ClosePanelButton } from "../ClosePanelButton";
 
 type Props = {
   kommune: KommuneRef;
@@ -46,6 +46,7 @@ const StemmekretserPanel = ({ kommune }: Props) => {
           kommuneNavn: getNavnInSpraak(kommune.navn, "nor"),
         })}
       </PanelTitle>
+      <ClosePanelButton onClose={toggleEditKretser} />
       <PanelTitle>{t("inndelinger.Stemmekretser")}</PanelTitle>
       {utkastStemmekretser && (
         <KretsTableWrapper>
@@ -77,9 +78,6 @@ const StemmekretserPanel = ({ kommune }: Props) => {
           </KretsTable>
         </KretsTableWrapper>
       )}
-      <div>
-        <Button onClick={toggleEditKretser}>{t("action.Lukk")}</Button>
-      </div>
     </>
   );
 };
