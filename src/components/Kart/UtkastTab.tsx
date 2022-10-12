@@ -15,10 +15,12 @@ const UtkastTab = () => {
   );
 };
 
+const tabHeight = 36;
+
 const Wrapper = styled.div`
   position: absolute;
-  top: -36px;
-  height: 36px;
+  top: -${tabHeight}px;
+  height: ${tabHeight}px;
   left: 60%;
   width: auto;
   display: flex;

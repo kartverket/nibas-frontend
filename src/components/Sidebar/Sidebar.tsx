@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import useSWR from "swr";
 import SidebarButton from "./SidebarButton";
 import Icon from "components/Icon";
@@ -67,15 +67,10 @@ const StyledSidebar = styled.div<{ utkastActive: boolean }>`
   justify-content: space-between;
   padding-top: 80px;
 
-  border-top: 3px solid
+  border: 3px solid
     ${({ theme, utkastActive }) =>
       utkastActive ? theme.colors.redDark : "transparent"};
-  border-left: 3px solid
-    ${({ theme, utkastActive }) =>
-      utkastActive ? theme.colors.redDark : "transparent"};
-  border-bottom: 3px solid
-    ${({ theme, utkastActive }) =>
-      utkastActive ? theme.colors.redDark : "transparent"};
+  border-right: none;
 `;
 
 const ButtonsWrapper = styled.div`
