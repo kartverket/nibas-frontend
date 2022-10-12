@@ -65,6 +65,7 @@ const WMTSBackgroundLayer = ({
             sourceId={mappedLayer.sourceId}
             activeSubLayer={activeSubLayer}
             updateActiveSubLayer={updateActiveSubLayer}
+            isAktivtKartlag={isAktiveKartlag}
           />
         ))}
       </>

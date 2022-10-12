@@ -8,6 +8,7 @@ type Props = {
   subLayer: MappedLayer;
   sourceId: BakgrunnskartId;
   activeSubLayer: string;
+  isAktivtKartlag?: boolean;
   updateActiveSubLayer: () => void;
 };
 
@@ -15,6 +16,7 @@ const WMTSSubLayer = ({
   subLayer,
   sourceId,
   activeSubLayer,
+  isAktivtKartlag,
   updateActiveSubLayer,
 }: Props) => {
   const onSubLayerClick = () => {
@@ -31,6 +33,10 @@ const WMTSSubLayer = ({
 
     updateActiveSubLayer();
   };
+
+  if (isAktivtKartlag && activeSubLayer != subLayer.id) {
+    return null;
+  }
 
   return (
     <BackgroundLayerAccordion
