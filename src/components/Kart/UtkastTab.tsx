@@ -10,7 +10,7 @@ const UtkastTab = () => {
 
   return (
     <Wrapper>
-      <span>{t("redigeringsmodus")}</span>
+      <span>{t("Redigeringsmodus")}</span>
     </Wrapper>
   );
 };

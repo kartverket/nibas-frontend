@@ -21,7 +21,7 @@ const DefaultToolbar = ({ openCreateUtkast }: Props) => {
       <ToolbarWrapperWithName>
         {utkast && (
           <p>
-            {t("redigerer")}: <strong>{utkast.navn}</strong>
+            {t("Redigerer")}: <strong>{utkast.navn}</strong>
           </p>
         )}
         <Buttons>
