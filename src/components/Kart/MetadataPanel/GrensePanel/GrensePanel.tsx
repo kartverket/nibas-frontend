@@ -5,6 +5,8 @@ import GrenseMetadataGenerelt from "./GrenseMetadataGenerelt";
 import GrenseMetadataReferanser from "./GrenseMetadataReferanser";
 import Tabs from "components/Tabs";
 import Heading from "components/typography/Heading";
+import { useMetadataPanel } from "contexts/MetadataPanelContext";
+import { ClosePanelButton } from "components/Kart/MetadataPanel/ClosePanelButton";
 
 const showReferanserByGrenseType: Record<string, boolean> = {
   Territorialgrense: true,
@@ -21,6 +23,7 @@ type Props = {
 
 const GrensePanel = ({ feature }: Props) => {
   let tabs: string[];
+  const { closePanel } = useMetadataPanel();
 
   const showReferanser =
     showReferanserByGrenseType[feature.getProperties().type as string];
@@ -37,28 +40,31 @@ const GrensePanel = ({ feature }: Props) => {
   }
 
   return (
-    <Tabs key={feature.getId()} tabTransKeys={tabs}>
-      <div>
-        <Heading size="xs" tag="h2">
-          Linje metadata
-        </Heading>
-        <GrenseMetadataGenerelt feature={feature} />
-      </div>
-      <div>
-        <Heading size="xs" tag="h2">
-          Detaljer
-        </Heading>
-        <GrenseMetadataDetaljer feature={feature} />
-      </div>
-      {showReferanser && (
+    <>
+      <ClosePanelButton onClose={closePanel} />
+      <Tabs key={feature.getId()} tabTransKeys={tabs}>
         <div>
           <Heading size="xs" tag="h2">
-            Dokumentasjonsreferanser
+            Linje metadata
           </Heading>
-          <GrenseMetadataReferanser feature={feature} />
+          <GrenseMetadataGenerelt feature={feature} />
         </div>
-      )}
-    </Tabs>
+        <div>
+          <Heading size="xs" tag="h2">
+            Detaljer
+          </Heading>
+          <GrenseMetadataDetaljer feature={feature} />
+        </div>
+        {showReferanser && (
+          <div>
+            <Heading size="xs" tag="h2">
+              Dokumentasjonsreferanser
+            </Heading>
+            <GrenseMetadataReferanser feature={feature} />
+          </div>
+        )}
+      </Tabs>
+    </>
   );
 };
 
