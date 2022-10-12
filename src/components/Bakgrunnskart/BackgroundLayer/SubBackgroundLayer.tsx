@@ -37,6 +37,7 @@ type Props = {
   indent: number;
   mainLayerSourceId: BakgrunnskartId;
   mainLayerName: string;
+  isAktivtKartlag?: boolean;
 };
 
 const SubBackgroundLayer = ({
@@ -44,6 +45,7 @@ const SubBackgroundLayer = ({
   indent,
   mainLayerSourceId,
   mainLayerName,
+  isAktivtKartlag,
 }: Props) => {
   const [visible, setVisible] = useState(false);
 
@@ -109,6 +111,10 @@ const SubBackgroundLayer = ({
 
     setVisible(!visible);
   };
+
+  if (!visible && isAktivtKartlag) {
+    return <div />;
+  }
 
   return (
     <BackgroundLayerAccordion

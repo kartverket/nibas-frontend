@@ -28,6 +28,7 @@ const Bakgrunnskart = () => {
           layerId={id as BakgrunnskartId}
           index={i}
           isAktiveKartlag={true}
+          canDrag={true}
         />
       ))}
       <ActiveBackgroundLayers tag="h3" size="xs">

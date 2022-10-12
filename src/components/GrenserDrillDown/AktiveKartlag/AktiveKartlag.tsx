@@ -27,7 +27,7 @@ const AktiveKartlag = () => {
           key={id}
           layerId={id as BakgrunnskartId}
           index={i}
-          canDrag={false}
+          canDrag={true}
         />
       ))}
     </div>

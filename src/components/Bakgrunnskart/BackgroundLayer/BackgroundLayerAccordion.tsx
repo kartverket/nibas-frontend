@@ -95,6 +95,29 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
       return <span>{props.mappedLayer.title}</span>;
     };
 
+    if (isAktiveKartlag) {
+      return (
+        <div>
+          <DraggableLayer>
+            <span>
+              <Icon icon="reorder" aria-label={`Bytt rekkefølge på kartlag`} />
+              <span>{props.mappedLayer.title}</span>
+            </span>
+            <span>
+              <Slider
+                min={0}
+                max={100}
+                value={opacity ?? 100}
+                onChange={onSliderChange}
+              />
+              <Icon icon="remove" aria-label={`Fjern fra aktive kartlag`} />
+            </span>
+          </DraggableLayer>
+          {children}
+        </div>
+      );
+    }
+
     return (
       <div>
         <Wrapper indent={indent}>
@@ -122,13 +145,6 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
               />
             </div>
           )}
-          {/* {props.isMainLayer && (
-            <PropertiesButton
-              onClick={() => setPropertiesVisible(!propertiesVisible)}
-            >
-              <Icon icon="edit" />
-            </PropertiesButton>
-          )} */}
         </Wrapper>
         {isAktiveKartlag && (
           <div>
@@ -185,6 +201,34 @@ const ClickableName = styled(Button)`
 
 const DraggableName = styled.span`
   cursor: move;
+`;
+
+const DraggableLayer = styled.span`
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  margin: 8px 0;
+  cursor: move;
+
+  > :first-child {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: left;
+  }
+
+  > span {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: right;
+
+    > :first-child {
+      margin-right: 8px;
+    }
+  }
 `;
 
 export default BackgroundLayerAccordion;
