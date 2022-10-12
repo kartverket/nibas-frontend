@@ -45,11 +45,8 @@ export const EditGrenserProvider: React.FC = ({ children }) => {
   };
 
   const resetEditingObject = useCallback(() => {
-    setEditingObject(() => {
-      removeAllFeatures();
-
-      return {};
-    });
+    removeAllFeatures();
+    setEditingObject({});
   }, []);
 
   const value = {

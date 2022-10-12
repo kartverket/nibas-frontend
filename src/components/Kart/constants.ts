@@ -9,16 +9,14 @@ registerProjections();
 export const initialMapCenter = fromLonLat([2.757933, 52.911491]);
 export const initialMapZoom = 6;
 
-const view = new View({
-  zoom: initialMapZoom,
-  center: initialMapCenter,
-  projection: "EPSG:25833",
-});
-
 // referansene til DOM elementer på objektene under gjøres i Kart.tsx
 
 export const map = new Map({
-  view,
+  view: new View({
+    zoom: initialMapZoom,
+    center: initialMapCenter,
+    projection: "EPSG:25833",
+  }),
   layers: [],
   controls: [],
   overlays: [],
