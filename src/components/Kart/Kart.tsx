@@ -40,7 +40,7 @@ const Kart = () => {
   }, []);
 
   return (
-    <KartWrapper utkastActive={!!utkast}>
+    <KartWrapper>
       <KartTarget ref={mapRef}>
         <Suspense fallback="More loading...">
           <UtkastTab />
@@ -48,6 +48,7 @@ const Kart = () => {
             <SidebarPanels />
             <MetadataPanel />
             <Toolbar />
+            <UtkastBorder utkastActive={!!utkast} />
           </KartOverlay>
 
           <ZoomControls />
@@ -58,20 +59,26 @@ const Kart = () => {
   );
 };
 
-const KartWrapper = styled.div<{ utkastActive: boolean }>`
+const KartWrapper = styled.div`
   grid-area: map;
   position: relative;
   margin-left: -5px;
+`;
 
-  ${({ utkastActive }) => {
-    if (utkastActive) {
-      return css`
-        border-top: 3px solid ${({ theme }) => theme.colors.redDark};
-        border-right: 3px solid ${({ theme }) => theme.colors.redDark};
-        border-bottom: 3px solid ${({ theme }) => theme.colors.redDark};
-      `;
-    }
-  }}
+const UtkastBorder = styled.div<{ utkastActive: boolean }>`
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  pointer-events: none;
+
+  ${({ utkastActive }) =>
+    utkastActive &&
+    css`
+      border: 3px solid ${({ theme }) => theme.colors.redDark};
+      border-left-color: transparent;
+    `}
 `;
 
 const KartTarget = styled.div`
