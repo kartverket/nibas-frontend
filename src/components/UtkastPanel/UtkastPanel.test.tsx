@@ -1,3 +1,5 @@
+import { EditGrenserProvider } from "contexts/EditGrenserContext";
+import { MetadataPanelProvider } from "contexts/MetadataPanelContext";
 import { SidebarPanelContext } from "contexts/SidebarPanelContext";
 import { ReactNode } from "react";
 import { BrowserRouter } from "react-router-dom";
@@ -10,7 +12,9 @@ const renderWithProvider = (ui: ReactNode) =>
       <SidebarPanelContext.Provider
         value={{ openPanels: { utkast: true } as any } as any}
       >
-        {ui}
+        <EditGrenserProvider>
+          <MetadataPanelProvider>{ui}</MetadataPanelProvider>
+        </EditGrenserProvider>
       </SidebarPanelContext.Provider>
     </BrowserRouter>
   );
