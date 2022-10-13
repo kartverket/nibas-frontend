@@ -60,6 +60,12 @@ Vi bruker [react-i18next](https://react.i18next.com/) for å oversette tekster i
 
 For å legge til ny tekst skriver du inn `t("Din nye tekst")`, som vil gi en feilmelding hvis den ikke finnes. Da må du kjøre `npm run scan-translations` for å få `i18next-scanner` til å plukke opp og legge til den nye nøklen i oversettelsesfilene. Dette vil fjerne erroren fra TypeScript, men du må likevel oppdatere strengen i de endrede oversettelsesfilene.
 
+### Feature toggles
+
+Noen funksjoner er låst bak feature toggles. Hvilke feature toggles som er aktive kan ses i `components/FeatureToggle/FeatureToggle.tsx`. Disse henter verdien sin fra `.env`-filer, slik at det er mulig å overskrive lokalt hvilke verdier togglene har. En `.env.local`-fil vil overskrive det som finnes i `.env`, slik at du slipper å være redd for å commite testendringer.
+
+Det finnes flere typer `.env`-filer, som står beskrevet i [create-react-app](https://create-react-app.dev/docs/adding-custom-environment-variables/#what-other-env-files-can-be-used) sin dokumentasjon.
+
 ## Docker
 
 Bygge image

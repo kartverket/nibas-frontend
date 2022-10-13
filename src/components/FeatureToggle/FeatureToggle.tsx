@@ -1,43 +1,52 @@
 import React from "react";
 
-const featureToggles = {
-  "delete-utkast": false,
-  "test-feature-2": true,
-  "test-feature-3": false,
+// du kan override lokal verdi ved å opprette key i .env.local
+const getDevValue = (envKey: string) => {
+  return process.env[envKey] === "true";
 };
 
-type FeatureToggleKeys = keyof typeof featureToggles;
+type Environment = "prod" | "test" | "dev";
 
-export const featureEnabled = (key: FeatureToggleKeys): boolean =>
-  featureToggles[key];
+const environmentByUrl: Record<string, Environment> = {
+  localhost: "dev",
+  "nibas.dev.skip.statkart.no": "test",
+};
+
+type Keys = "forkast-utkast";
+
+const featureToggles: Record<Keys, Record<Environment, boolean>> = {
+  "forkast-utkast": {
+    prod: false,
+    test: false,
+    dev: getDevValue("REACT_APP_FEATURE_FORKAST_UTKAST"),
+  },
+};
+
+export const featureEnabled = (key: Keys): boolean => {
+  const { hostname } = window.location;
+  const environment = environmentByUrl[hostname];
+
+  if (!environment) return false;
+
+  return !!featureToggles[key][environment];
+};
+
+// Da kan vi bruke feks Unleash som har samme navn på hook
+export const useFlag = (key: Keys) => {
+  return featureEnabled(key);
+};
 
 type Props = {
-  key: FeatureToggleKeys;
+  key: Keys;
   children: React.ReactElement;
 };
 
-export const FeatureToggle = ({ key, children }: Props) => {
+const FeatureToggle = ({ key, children }: Props) => {
   if (featureEnabled(key)) {
     return children;
   }
+
   return null;
 };
 
-/*
- Eksempel på hvordan den kan brukes
- */
-
-const MyComponent = () => {
-  if (!featureEnabled("test-feature-2")) {
-    return null;
-  }
-
-  return (
-    <div>
-      <p>En test</p>
-      <FeatureToggle key={"test-feature-3"}>
-        <p>Feature is enabled!</p>
-      </FeatureToggle>
-    </div>
-  );
-};
+export default FeatureToggle;
