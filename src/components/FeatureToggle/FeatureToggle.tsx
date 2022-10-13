@@ -28,7 +28,7 @@ export const featureEnabled = (key: Keys): boolean => {
 
   if (!environment) return false;
 
-  return !!featureToggles[key][environment];
+  return featureToggles[key][environment];
 };
 
 // Da kan vi bruke feks Unleash som har samme navn på hook
