@@ -6,13 +6,19 @@ import { SidebarPanelProvider } from "contexts/SidebarPanelContext";
 import { ToolbarProvider } from "contexts/ToolbarContext";
 import { UtkastProvider } from "contexts/UtkastContext";
 import { defaultTheme } from "style/theme";
+import { EditGrenserProvider } from "contexts/EditGrenserContext";
+import { MetadataPanelProvider } from "contexts/MetadataPanelContext";
 
 const renderWithProvider = (ui: ReactNode) =>
   render(
     <BrowserRouter>
       <SidebarPanelProvider>
         <ToolbarProvider>
-          <UtkastProvider>{ui}</UtkastProvider>
+          <EditGrenserProvider>
+            <MetadataPanelProvider>
+              <UtkastProvider>{ui}</UtkastProvider>
+            </MetadataPanelProvider>
+          </EditGrenserProvider>
         </ToolbarProvider>
       </SidebarPanelProvider>
     </BrowserRouter>
