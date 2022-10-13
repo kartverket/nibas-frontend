@@ -30,7 +30,7 @@ describe("UtkastItem", () => {
     const { user } = renderWithProvider(<UtkastItem {...defaultProps} />);
 
     await user.click(
-      screen.getByRole("link", { name: /aktiver mock utkast/i })
+      screen.getByRole("button", { name: /aktiver mock utkast/i })
     );
 
     const cancelButton = await screen.findByRole("button", {
