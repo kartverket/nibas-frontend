@@ -41,16 +41,12 @@ export const addFeaturesToSource = (
 
 export const removeFeaturesFromSourceByIds = (
   sourceId: LayerId,
-  features: Feature<Geometry>[]
+  featureIds: string[]
 ) => {
   const layer = getLayerById(sourceId) as VectorLayer<GeometryVectorSource>;
   const source = layer.getSource();
 
-  const removeFeature = (feature: Feature<Geometry>) => {
-    const featureId = feature.getId();
-
-    if (!featureId) return;
-
+  const removeFeature = (featureId: string) => {
     const featureToRemove = source.getFeatureById(featureId);
 
     if (!featureToRemove) return null;
@@ -71,7 +67,7 @@ export const removeFeaturesFromSourceByIds = (
     }
   };
 
-  features.forEach(removeFeature);
+  featureIds.forEach(removeFeature);
 };
 
 export const getWMTSOptions = async (
@@ -86,3 +82,6 @@ export const getWMTSOptions = async (
 
   return optionsFromCapabilities(result, optionsConfig);
 };
+
+export const mapFeatureToFeatureId = (feature: Feature<Geometry>) =>
+  feature.getId()?.toString() ?? "";

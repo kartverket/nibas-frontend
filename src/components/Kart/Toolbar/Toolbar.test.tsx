@@ -2,6 +2,8 @@ import { render, screen, waitFor } from "test/test-utils";
 import { ReactNode } from "react";
 import { BrowserRouter } from "react-router-dom";
 import Toolbar from "./Toolbar";
+import { EditGrenserProvider } from "contexts/EditGrenserContext";
+import { MetadataPanelProvider } from "contexts/MetadataPanelContext";
 import { ToolbarContext, ToolbarHistory } from "contexts/ToolbarContext";
 import { UtkastContext, UtkastProvider } from "contexts/UtkastContext";
 import { mockDetailedGrunnkrets1 } from "mocks/handlers/responses";
@@ -37,11 +39,15 @@ const renderWithProvider = (
       <ToolbarContext.Provider
         value={{ history: toolbarHistory, clearHistory: jest.fn() } as any}
       >
-        <UtkastContext.Provider
-          value={{ utkast, updateUtkastWithHistory: jest.fn() }}
-        >
-          {ui}
-        </UtkastContext.Provider>
+        <EditGrenserProvider>
+          <MetadataPanelProvider>
+            <UtkastContext.Provider
+              value={{ utkast, updateUtkastWithHistory: jest.fn() }}
+            >
+              {ui}
+            </UtkastContext.Provider>
+          </MetadataPanelProvider>
+        </EditGrenserProvider>
       </ToolbarContext.Provider>
     </BrowserRouter>
   );
@@ -57,7 +63,11 @@ const renderWithUtkastProvider = (ui: ReactNode) =>
           } as any
         }
       >
-        <UtkastProvider>{ui}</UtkastProvider>
+        <EditGrenserProvider>
+          <MetadataPanelProvider>
+            <UtkastProvider>{ui}</UtkastProvider>
+          </MetadataPanelProvider>
+        </EditGrenserProvider>
       </ToolbarContext.Provider>
     </BrowserRouter>
   );
