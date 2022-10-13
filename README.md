@@ -62,9 +62,7 @@ For å legge til ny tekst skriver du inn `t("Din nye tekst")`, som vil gi en fei
 
 ### Feature toggles
 
-Noen funksjoner er låst bak feature toggles. Hvilke feature toggles som er aktive kan ses i `components/FeatureToggle/FeatureToggle.tsx`. Disse henter verdien sin fra `.env`-filer, slik at det er mulig å overskrive lokalt hvilke verdier togglene har. En `.env.local`-fil vil overskrive det som finnes i `.env`, slik at du slipper å være redd for å commite testendringer.
-
-Det finnes flere typer `.env`-filer, som står beskrevet i [create-react-app](https://create-react-app.dev/docs/adding-custom-environment-variables/#what-other-env-files-can-be-used) sin dokumentasjon.
+Noen funksjoner er låst bak feature toggles. Hvilke feature toggles som er aktive kan ses i `components/FeatureToggle/FeatureToggle.tsx`. Disse har hardkodede nøkler som brukes i komponenten og hooken i samme fil, som sjekker basert på hvilken URL du befinner deg på. Den lokale/dev variabelen er mulig å overstyre i en `.env.local`-fil, for å slippe å risikere å commite en ny verdi hvis du ikke skal det. Her følges convention `REACT_APP_FEATURE_` som prefix før din key i all caps, for eksempel `REACT_APP_FEATURE_FORKAST_UTKAST`.
 
 ## Docker
 
