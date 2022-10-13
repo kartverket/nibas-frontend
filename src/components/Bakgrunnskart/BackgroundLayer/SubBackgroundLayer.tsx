@@ -4,6 +4,7 @@ import { bakgrunnskartLayers } from "../../../hooks/layers/constants";
 import BackgroundLayerAccordion from "./BackgroundLayerAccordion";
 import { BakgrunnskartId } from "hooks/layers/types";
 import { MappedLayer } from "utils/getLayersFromWMS";
+import { useBakgrunnskart } from "contexts/BakgrunnskartContext";
 
 const getLayersStringToReplace = (
   layersInParams: string,
@@ -48,6 +49,8 @@ const SubBackgroundLayer = ({
   isAktivtKartlag,
 }: Props) => {
   const [visible, setVisible] = useState(false);
+
+  const { toggleLayerVisibility, visibleLayers } = useBakgrunnskart();
 
   useEffect(() => {
     const isSubLayerVisible = () => {
@@ -108,7 +111,18 @@ const SubBackgroundLayer = ({
 
   const onVisibilityClick = () => {
     updateSourceParams();
+    const source = bakgrunnskartLayers[
+      mainLayerSourceId
+    ].getSource() as TileWMS;
+    const layersInParams = source.getParams().LAYERS as string;
 
+    const isMainLayerVisible = visibleLayers[mainLayerSourceId];
+    console.log(layersInParams);
+    if (layersInParams && !isMainLayerVisible) {
+      toggleLayerVisibility(mainLayerSourceId);
+    } else if (layersInParams === mainLayerName && isMainLayerVisible) {
+      toggleLayerVisibility(mainLayerSourceId);
+    }
     setVisible(!visible);
   };
 
