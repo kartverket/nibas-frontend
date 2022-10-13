@@ -7,13 +7,38 @@ import { renderWithProviders, TestProviderValues } from "./test-providers";
 
 // https://testing-library.com/docs/react-testing-library/setup/#custom-render
 
+type Options = RenderOptions & TestProviderValues;
+
 const customRender = (
   ui: ReactNode,
-  options: RenderOptions = {},
-  providerValues?: TestProviderValues
+  options: Options = {}
 ): RenderResult & { user: UserEvent } => {
   const user = userEvent.setup();
-  return { user, ...render(renderWithProviders(ui, providerValues), options) };
+
+  const {
+    BakgrunnskartProvider,
+    EditGrenserProvider,
+    MetadataPanelProvider,
+    SidebarPanelProvider,
+    ToolbarProvider,
+    UtkastProvider,
+    ...rltOptions
+  } = options;
+
+  return {
+    user,
+    ...render(
+      renderWithProviders(ui, {
+        BakgrunnskartProvider,
+        EditGrenserProvider,
+        MetadataPanelProvider,
+        SidebarPanelProvider,
+        ToolbarProvider,
+        UtkastProvider,
+      }),
+      rltOptions
+    ),
+  };
 };
 
 export * from "@testing-library/react";
