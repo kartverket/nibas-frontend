@@ -31,6 +31,7 @@ const MetadataPanel = () => {
 };
 
 export const MetadataPanelWrapper = styled(KartInteractable)`
+  position: relative;
   grid-area: metadata;
   display: flex;
   flex-direction: column;
