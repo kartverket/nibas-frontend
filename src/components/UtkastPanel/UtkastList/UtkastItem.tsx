@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useTranslation } from "react-i18next";
-import { Link, useMatch, useNavigate } from "react-router-dom";
+import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useSWRConfig } from "swr";
 import UtkastItemActive from "./UtkastItemActive";
@@ -12,6 +12,9 @@ import Icon from "components/Icon";
 import { BlockLabel } from "components/Kart/MetadataPanel/metadataComponents";
 import useNibasApi from "hooks/useNibasApi";
 import { UtkastRef } from "types/api";
+import { useEditAllGrenser } from "contexts/EditGrenserContext";
+import { useMetadataPanel } from "contexts/MetadataPanelContext";
+import { resetMapView } from "utils/map";
 
 type Props = {
   utkast: UtkastRef;
@@ -22,6 +25,9 @@ const UtkastItem = ({ utkast }: Props) => {
 
   const { t } = useTranslation();
   const utkastId = useMatch("/:utkastId")?.params.utkastId;
+
+  const { resetEditingObject } = useEditAllGrenser();
+  const { closePanel } = useMetadataPanel();
   const { data: fullUtkast } = useNibasApi(
     isPublishOpen ? "/v1/utkast/{id}" : null,
     {
@@ -44,6 +50,13 @@ const UtkastItem = ({ utkast }: Props) => {
     // TODO: Modal/toast om at utkastet er publisert?
   };
 
+  const changeUtkast = (url: string) => {
+    navigate(`/${url}`);
+    resetEditingObject();
+    closePanel();
+    resetMapView();
+  };
+
   return (
     <ListItem>
       <ItemWrapper>
@@ -51,10 +64,8 @@ const UtkastItem = ({ utkast }: Props) => {
         <UnstyledButton onClick={() => setIsPublishOpen(true)}>
           <PublishIcon aria-label={`Publiser ${utkast.navn}`} />
         </UnstyledButton>
-        <UnstyledButton>
-          <Link to={`/${utkast.id}`}>
-            <Icon icon="edit" aria-label={`Aktiver ${utkast.navn}`} />
-          </Link>
+        <UnstyledButton onClick={() => changeUtkast(utkast.id)}>
+          <Icon icon="edit" aria-label={`Aktiver ${utkast.navn}`} />
         </UnstyledButton>
       </ItemWrapper>
       {isPublishOpen && (
@@ -79,7 +90,7 @@ const UtkastItem = ({ utkast }: Props) => {
         </UtkastItemExpanded>
       )}
       {utkastActive && !isPublishOpen && (
-        <UtkastItemActive utkastId={utkast.id} />
+        <UtkastItemActive utkastId={utkast.id} changeUtkast={changeUtkast} />
       )}
     </ListItem>
   );
