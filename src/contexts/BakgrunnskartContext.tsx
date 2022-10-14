@@ -37,16 +37,15 @@ export const BakgrunnskartProvider: React.FC = ({ children }) => {
     let isMounted = true;
 
     const updateMappedLayers = async () => {
-      const mappedLayerPromises: Promise<MainMappedLayer | null>[] = [];
+      const mappedLayerPromises = Object.values(bakgrunnskartLayers).map(
+        (layer) => {
+          if (isVectorLayer(layer)) {
+            return mapVectorLayer();
+          }
 
-      Object.values(bakgrunnskartLayers).forEach((layer) => {
-        if (isVectorLayer(layer)) {
-          mappedLayerPromises.push(mapVectorLayer());
-          return;
+          return getSubLayersFromWMSSource(layer.getSource());
         }
-
-        mappedLayerPromises.push(getSubLayersFromWMSSource(layer.getSource()));
-      });
+      );
 
       const layers = await Promise.all(mappedLayerPromises);
 
