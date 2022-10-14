@@ -1,18 +1,44 @@
 /* eslint-disable import/export */
-import { ReactElement } from "react";
+import { ReactNode } from "react";
 import { render, RenderOptions, RenderResult } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { UserEvent } from "@testing-library/user-event/dist/types/setup/setup";
-import ThirdPartyProviders from "components/App/Providers/ThirdPartyProviders";
+import { renderWithProviders, TestProviderValues } from "./test-providers";
 
 // https://testing-library.com/docs/react-testing-library/setup/#custom-render
 
+type Options = RenderOptions & TestProviderValues;
+
 const customRender = (
-  ui: ReactElement,
-  options: RenderOptions = {}
+  ui: ReactNode,
+  options: Options = {}
 ): RenderResult & { user: UserEvent } => {
   const user = userEvent.setup();
-  return { user, ...render(ui, { wrapper: ThirdPartyProviders, ...options }) };
+
+  const {
+    BakgrunnskartProvider,
+    EditGrenserProvider,
+    MetadataPanelProvider,
+    SidebarPanelProvider,
+    ToolbarProvider,
+    UtkastProvider,
+    ...rltOptions
+  } = options;
+
+  return {
+    user,
+    ...render(
+      renderWithProviders(ui, {
+        BakgrunnskartProvider,
+        EditGrenserProvider,
+        MetadataPanelProvider,
+        SidebarPanelProvider,
+        ToolbarProvider,
+        UtkastProvider,
+      }),
+      rltOptions
+    ),
+  };
 };
 
 export * from "@testing-library/react";

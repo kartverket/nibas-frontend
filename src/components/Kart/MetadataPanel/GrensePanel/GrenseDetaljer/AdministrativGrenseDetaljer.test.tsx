@@ -1,24 +1,14 @@
 import { render, screen, waitFor } from "test/test-utils";
-import { ReactNode } from "react";
 import AdministrativGrenseDetaljer from "./AdministrativGrenseDetaljer";
-import { EditGrenserProvider } from "contexts/EditGrenserContext";
-import { ToolbarProvider } from "contexts/ToolbarContext";
 import { mockBasicFeature } from "mocks/handlers/responses";
 
 const defaultProps: React.ComponentProps<typeof AdministrativGrenseDetaljer> = {
   feature: mockBasicFeature,
 };
 
-const renderWithProvider = (ui: ReactNode) =>
-  render(
-    <EditGrenserProvider>
-      <ToolbarProvider>{ui}</ToolbarProvider>
-    </EditGrenserProvider>
-  );
-
 describe("AdministrativGrenseDetaljer", () => {
   it("should display data from feature properties", async () => {
-    renderWithProvider(<AdministrativGrenseDetaljer {...defaultProps} />);
+    render(<AdministrativGrenseDetaljer {...defaultProps} />);
 
     expect(screen.getByRole("radio", { name: "Ja" })).not.toBeChecked();
     expect(screen.getByRole("radio", { name: "Nei" })).toBeChecked();

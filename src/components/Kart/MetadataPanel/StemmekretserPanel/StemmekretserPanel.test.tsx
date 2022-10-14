@@ -1,13 +1,8 @@
 import { render, screen, waitFor } from "test/test-utils";
 import { ReactNode } from "react";
 import StemmekretserPanel from "./StemmekretserPanel";
-import { ToolbarProvider } from "contexts/ToolbarContext";
-import { UtkastContext } from "contexts/UtkastContext";
 import { mockKommuner } from "mocks/handlers/responses";
 import { StemmekretsRequest } from "types/api";
-import { EditGrenserProvider } from "contexts/EditGrenserContext";
-import { MetadataPanelWrapper } from "../MetadataPanel";
-import { MetadataPanelProvider } from "contexts/MetadataPanelContext";
 import { InndelingerKretsProvider } from "contexts/InndelingerKretsContext";
 
 const defaultProps: React.ComponentProps<typeof StemmekretserPanel> = {
@@ -19,28 +14,21 @@ const renderWithProvider = (
   utkastData: Record<string, StemmekretsRequest> = {}
 ) =>
   render(
-    <ToolbarProvider>
-      <UtkastContext.Provider
-        value={{
-          utkast: {
-            operasjoner: {
-              metadataendringer: {
-                stemmekretsendringer: utkastData,
-              },
+    <InndelingerKretsProvider kretstype={"stemmekrets"}>
+      {ui}
+    </InndelingerKretsProvider>,
+    {
+      UtkastProvider: {
+        utkast: {
+          operasjoner: {
+            metadataendringer: {
+              stemmekretsendringer: utkastData,
             },
-          } as any, // ikke interessert i andre felter
-          updateUtkastWithHistory: jest.fn(),
-        }}
-      >
-        <EditGrenserProvider>
-          <MetadataPanelProvider>
-            <InndelingerKretsProvider kretstype={"stemmekrets"}>
-              {ui}
-            </InndelingerKretsProvider>
-          </MetadataPanelProvider>
-        </EditGrenserProvider>
-      </UtkastContext.Provider>
-    </ToolbarProvider>
+          },
+        } as any, // ikke interessert i andre felter
+        updateUtkastWithHistory: jest.fn(),
+      },
+    }
   );
 
 describe("StemmekretserPanel", () => {

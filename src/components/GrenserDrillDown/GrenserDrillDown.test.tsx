@@ -3,25 +3,20 @@ import { ReactNode } from "react";
 import GrenserDrillDown from "./GrenserDrillDown";
 import { BakgrunnskartContext } from "contexts/BakgrunnskartContext";
 import { EditGrenserProvider } from "contexts/EditGrenserContext";
-import { SidebarPanelContext } from "contexts/SidebarPanelContext";
 
 const renderWithProvider = (ui: ReactNode) =>
-  render(
-    <SidebarPanelContext.Provider
-      value={{
-        openPanels: {
-          inndelinger: true,
-          kartlag: false,
-          soek: false,
-          utkast: false,
-        },
-        setPanel: jest.fn(),
-        togglePanel: jest.fn(),
-      }}
-    >
-      {ui}
-    </SidebarPanelContext.Provider>
-  );
+  render(ui, {
+    SidebarPanelProvider: {
+      openPanels: {
+        inndelinger: true,
+        kartlag: false,
+        soek: false,
+        utkast: false,
+      },
+      setPanel: jest.fn(),
+      togglePanel: jest.fn(),
+    },
+  });
 
 describe("GrenserDrillDown", () => {
   it("should not renderWithProvider when not visible", () => {

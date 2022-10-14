@@ -1,30 +1,16 @@
 import { render, screen } from "test/test-utils";
-import { ReactNode } from "react";
 import FylkeList from "./FylkeList";
-import { EditGrenserProvider } from "contexts/EditGrenserContext";
-import { UtkastContext } from "contexts/UtkastContext";
-
-const renderWithProvider = (ui: ReactNode) =>
-  render(
-    <EditGrenserProvider>
-      <UtkastContext.Provider
-        value={{ utkast: undefined, updateUtkastWithHistory: jest.fn() }}
-      >
-        {ui}
-      </UtkastContext.Provider>
-    </EditGrenserProvider>
-  );
 
 describe("FylkeList", () => {
   it("should render two names from fylker", async () => {
-    renderWithProvider(<FylkeList />);
+    render(<FylkeList />);
 
     expect(await screen.findByText("Vestfold og Telemark")).toBeInTheDocument();
     expect(await screen.findByText("Agder")).toBeInTheDocument();
   });
 
   it("should open eye on eye click", async () => {
-    const { user } = renderWithProvider(<FylkeList />);
+    const { user } = render(<FylkeList />);
 
     const closedEyes = await screen.findAllByRole("button", {
       name: "Usynlig",
@@ -41,7 +27,7 @@ describe("FylkeList", () => {
   });
 
   it("should open eye and check checkbox on checkbox click", async () => {
-    const { user } = renderWithProvider(<FylkeList />);
+    const { user } = render(<FylkeList />);
 
     const checkbox = await screen.findByRole("checkbox", {
       name: /agder/i,
@@ -53,7 +39,7 @@ describe("FylkeList", () => {
   });
 
   it("should close both eye and uncheck checkbox when checkbox is checked", async () => {
-    const { user } = renderWithProvider(<FylkeList />);
+    const { user } = render(<FylkeList />);
 
     const checkbox = await screen.findByRole("checkbox", {
       name: /agder/i,

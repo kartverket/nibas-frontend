@@ -1,20 +1,20 @@
 import { render, screen, waitFor } from "test/test-utils";
 import { ReactNode } from "react";
 import GrunnkretserPanel from "./GrunnkretserPanel";
-import { UtkastContext } from "contexts/UtkastContext";
 import { mockKommuner } from "mocks/handlers/responses";
 import { GrunnkretsRequest } from "types/api";
 import { InndelingerKretsProvider } from "contexts/InndelingerKretsContext";
-import { EditGrenserProvider } from "contexts/EditGrenserContext";
-import { MetadataPanelProvider } from "contexts/MetadataPanelContext";
 
 const renderWithProvider = (
   ui: ReactNode,
   data: Record<string, GrunnkretsRequest> = {}
 ) =>
   render(
-    <UtkastContext.Provider
-      value={{
+    <InndelingerKretsProvider kretstype={"grunnkrets"}>
+      {ui}
+    </InndelingerKretsProvider>,
+    {
+      UtkastProvider: {
         utkast: {
           operasjoner: {
             metadataendringer: {
@@ -23,16 +23,8 @@ const renderWithProvider = (
           },
         } as any, // ikke interessert i andre felter
         updateUtkastWithHistory: jest.fn(),
-      }}
-    >
-      <EditGrenserProvider>
-        <MetadataPanelProvider>
-          <InndelingerKretsProvider kretstype={"grunnkrets"}>
-            {ui}
-          </InndelingerKretsProvider>
-        </MetadataPanelProvider>
-      </EditGrenserProvider>
-    </UtkastContext.Provider>
+      },
+    }
   );
 
 const defaultProps: React.ComponentProps<typeof GrunnkretserPanel> = {
