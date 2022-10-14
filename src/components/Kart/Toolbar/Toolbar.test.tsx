@@ -1,9 +1,7 @@
 import { render, screen, waitFor } from "test/test-utils";
 import { ReactNode } from "react";
-import { BrowserRouter } from "react-router-dom";
 import Toolbar from "./Toolbar";
-import { ToolbarContext, ToolbarHistory } from "contexts/ToolbarContext";
-import { UtkastContext, UtkastProvider } from "contexts/UtkastContext";
+import { ToolbarHistory } from "contexts/ToolbarContext";
 import { mockDetailedGrunnkrets1 } from "mocks/handlers/responses";
 import { UtkastResponse } from "types/api";
 
@@ -32,35 +30,21 @@ const renderWithProvider = (
   utkast?: UtkastResponse,
   toolbarHistory: ToolbarHistory = { entries: [], index: 0 }
 ) =>
-  render(
-    <BrowserRouter>
-      <ToolbarContext.Provider
-        value={{ history: toolbarHistory, clearHistory: jest.fn() } as any}
-      >
-        <UtkastContext.Provider
-          value={{ utkast, updateUtkastWithHistory: jest.fn() }}
-        >
-          {ui}
-        </UtkastContext.Provider>
-      </ToolbarContext.Provider>
-    </BrowserRouter>
-  );
+  render(ui, {
+    ToolbarProvider: {
+      history: toolbarHistory,
+      clearHistory: jest.fn(),
+    } as any,
+    UtkastProvider: { utkast, updateUtkastWithHistory: jest.fn() },
+  });
 
 const renderWithUtkastProvider = (ui: ReactNode) =>
-  render(
-    <BrowserRouter>
-      <ToolbarContext.Provider
-        value={
-          {
-            history: mockToolbarHistory,
-            clearHistory: jest.fn(),
-          } as any
-        }
-      >
-        <UtkastProvider>{ui}</UtkastProvider>
-      </ToolbarContext.Provider>
-    </BrowserRouter>
-  );
+  render(ui, {
+    ToolbarProvider: {
+      history: mockToolbarHistory,
+      clearHistory: jest.fn(),
+    } as any,
+  });
 
 describe("Toolbar", () => {
   it("should not display toolbar if user cannot save", () => {
@@ -84,7 +68,7 @@ describe("Toolbar", () => {
       <Toolbar />,
       { navn: "Test" } as any,
       mockToolbarHistory
-    ); // utkast trenger bare ikke være undefined
+    );
 
     expect(screen.getByRole("button", { name: /lagre/i })).toBeInTheDocument();
   });

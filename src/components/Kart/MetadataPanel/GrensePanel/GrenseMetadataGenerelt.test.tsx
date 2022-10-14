@@ -1,24 +1,14 @@
 import { render, screen, waitFor } from "test/test-utils";
-import { ReactNode } from "react";
 import GrenseMetadataGenerelt from "./GrenseMetadataGenerelt";
-import { EditGrenserProvider } from "contexts/EditGrenserContext";
 import { mockBasicFeature } from "mocks/handlers/responses";
-import { ToolbarProvider } from "contexts/ToolbarContext";
 
 const defaultProps: React.ComponentProps<typeof GrenseMetadataGenerelt> = {
   feature: mockBasicFeature,
 };
 
-const renderWithProvider = (ui: ReactNode) =>
-  render(
-    <EditGrenserProvider>
-      <ToolbarProvider>{ui}</ToolbarProvider>
-    </EditGrenserProvider>
-  );
-
 describe("GrenseMetadataGenerelt", () => {
   it("should display data from feature properties", async () => {
-    renderWithProvider(<GrenseMetadataGenerelt {...defaultProps} />);
+    render(<GrenseMetadataGenerelt {...defaultProps} />);
 
     expect(screen.getByRole("textbox", { name: /informasjon/i })).toHaveValue(
       "Informasjon"

@@ -1,40 +1,17 @@
 import { render, screen } from "test/test-utils";
 import { ReactNode } from "react";
 import PageLayout from "./PageLayout";
-import {
-  BakgrunnskartContext,
-  BakgrunnskartContextValue,
-} from "contexts/BakgrunnskartContext";
-import { MetadataPanelProvider } from "contexts/MetadataPanelContext";
-import { SidebarPanelProvider } from "contexts/SidebarPanelContext";
-import { ToolbarProvider } from "contexts/ToolbarContext";
-import { UtkastContext } from "contexts/UtkastContext";
 
-const renderWithProvider = (
-  ui: ReactNode,
-  providerProps: BakgrunnskartContextValue = {
-    mappedLayers: [],
-    moveLayer: jest.fn(),
-    orderedLayerIds: [],
-    toggleLayerVisibility: jest.fn(),
-    visibleLayers: {} as any,
-  }
-) =>
-  render(
-    <SidebarPanelProvider>
-      <MetadataPanelProvider>
-        <BakgrunnskartContext.Provider value={providerProps}>
-          <ToolbarProvider>
-            <UtkastContext.Provider
-              value={{ utkast: undefined, updateUtkastWithHistory: jest.fn() }}
-            >
-              {ui}
-            </UtkastContext.Provider>
-          </ToolbarProvider>
-        </BakgrunnskartContext.Provider>
-      </MetadataPanelProvider>
-    </SidebarPanelProvider>
-  );
+const renderWithProvider = (ui: ReactNode) =>
+  render(ui, {
+    BakgrunnskartProvider: {
+      mappedLayers: [],
+      moveLayer: jest.fn(),
+      orderedLayerIds: [],
+      toggleLayerVisibility: jest.fn(),
+      visibleLayers: {} as any,
+    },
+  });
 
 describe("PageLayout", () => {
   describe("Sidebar", () => {
