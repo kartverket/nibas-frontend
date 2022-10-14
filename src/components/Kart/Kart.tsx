@@ -7,7 +7,9 @@ import { MetadataPanelWrapper } from "./MetadataPanel/MetadataPanel";
 import OverlayPopup from "./OverlayPopup";
 import SidebarPanels from "./SidebarPanels";
 import Toolbar from "./Toolbar";
+import UtkastTab from "./UtkastTab";
 import { PanelContent, useMetadataPanel } from "contexts/MetadataPanelContext";
+import { useUtkast } from "contexts/UtkastContext";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
 import useSelectInteraction from "hooks/interactions/useSelectInteraction";
 import { initBakgrunnskartLayers, initGrenserLayers } from "utils/map/layers";
@@ -20,6 +22,7 @@ initBakgrunnskartLayers();
 const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const { panelContext } = useMetadataPanel();
+  const { utkast } = useUtkast();
 
   const selectedFeatures = useSelectInteraction();
   useEditInteractions();
@@ -40,10 +43,12 @@ const Kart = () => {
     <KartWrapper>
       <KartTarget ref={mapRef}>
         <Suspense fallback="More loading...">
+          <UtkastTab />
           <KartOverlay content={panelContext?.content}>
             <SidebarPanels />
             <MetadataPanel />
             <Toolbar />
+            <UtkastBorder utkastActive={!!utkast} />
           </KartOverlay>
 
           <ZoomControls />
@@ -57,7 +62,23 @@ const Kart = () => {
 const KartWrapper = styled.div`
   grid-area: map;
   position: relative;
-  margin-left: -2px;
+  margin-left: -5px;
+`;
+
+const UtkastBorder = styled.div<{ utkastActive: boolean }>`
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  pointer-events: none;
+
+  ${({ utkastActive }) =>
+    utkastActive &&
+    css`
+      border: 3px solid ${({ theme }) => theme.colors.redDark};
+      border-left-color: transparent;
+    `}
 `;
 
 const KartTarget = styled.div`

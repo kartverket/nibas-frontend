@@ -18,6 +18,7 @@ import {
   getNavnInSpraak,
   sortGrenserAlphabetically,
 } from "utils/language/language";
+import { ClosePanelButton } from "components/Kart/MetadataPanel/ClosePanelButton";
 
 type Props = {
   kommune: KommuneRef;
@@ -64,6 +65,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
           kommuneNavn: getNavnInSpraak(kommune.navn, "nor"),
         })}
       </PanelTitle>
+      <ClosePanelButton onClose={toggleEditKretser} />
       <SmallerBlockLabel>
         {t("sidebar.Søk")}
         <Input
@@ -113,9 +115,6 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
           </KretsTable>
         </KretsTableWrapper>
       )}
-      <div>
-        <Button onClick={toggleEditKretser}>{t("action.Lukk")}</Button>
-      </div>
     </>
   );
 };

@@ -3,6 +3,7 @@ import styled from "styled-components";
 import useSWR from "swr";
 import SidebarButton from "./SidebarButton";
 import Icon from "components/Icon";
+import { useUtkast } from "contexts/UtkastContext";
 import { fetcher } from "utils/swr";
 
 type ActuatorResponse = {
@@ -21,8 +22,10 @@ const Sidebar = () => {
 
   const { t } = useTranslation();
 
+  const { utkast } = useUtkast();
+
   return (
-    <StyledSidebar>
+    <StyledSidebar utkastActive={!!utkast}>
       <ButtonsWrapper>
         <SidebarButton
           title={t("sidebar.Inndelinger")}
@@ -54,7 +57,7 @@ const Sidebar = () => {
   );
 };
 
-const StyledSidebar = styled.div`
+const StyledSidebar = styled.div<{ utkastActive: boolean }>`
   grid-area: sidebar;
   width: 80px;
   position: relative;
@@ -62,10 +65,17 @@ const StyledSidebar = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  margin-top: 80px;
+  padding-top: 80px;
+
+  border: 3px solid
+    ${({ theme, utkastActive }) =>
+      utkastActive ? theme.colors.redDark : "transparent"};
+  border-right: none;
 `;
 
 const ButtonsWrapper = styled.div`
+  margin-left: -6px;
+  margin-right: 0px;
   width: 100%;
   display: flex;
   flex-direction: column;

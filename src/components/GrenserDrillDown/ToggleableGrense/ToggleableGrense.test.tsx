@@ -34,6 +34,7 @@ const renderWithProvider = (
         editingObject: { fylke: { "1": objectValue } },
         setObjectValue: jest.fn(),
         setEditingObject: jest.fn(),
+        resetEditingObject: jest.fn(),
       }}
     >
       {ui}

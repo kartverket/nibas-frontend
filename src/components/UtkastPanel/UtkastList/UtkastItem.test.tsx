@@ -2,9 +2,11 @@ import { render, screen } from "test/test-utils";
 import { ReactNode } from "react";
 import { BrowserRouter } from "react-router-dom";
 import UtkastItem from "./UtkastItem";
+import { EditGrenserProvider } from "contexts/EditGrenserContext";
 import { ToolbarProvider } from "contexts/ToolbarContext";
 import { UtkastProvider } from "contexts/UtkastContext";
 import { mockUtkastRef1 } from "mocks/handlers/responses";
+import { MetadataPanelProvider } from "contexts/MetadataPanelContext";
 
 const defaultProps: React.ComponentProps<typeof UtkastItem> = {
   utkast: mockUtkastRef1,
@@ -14,7 +16,11 @@ const renderWithProvider = (ui: ReactNode) =>
   render(
     <BrowserRouter>
       <ToolbarProvider>
-        <UtkastProvider>{ui}</UtkastProvider>
+        <EditGrenserProvider>
+          <MetadataPanelProvider>
+            <UtkastProvider>{ui}</UtkastProvider>
+          </MetadataPanelProvider>
+        </EditGrenserProvider>
       </ToolbarProvider>
     </BrowserRouter>
   );
@@ -24,7 +30,7 @@ describe("UtkastItem", () => {
     const { user } = renderWithProvider(<UtkastItem {...defaultProps} />);
 
     await user.click(
-      screen.getByRole("link", { name: /aktiver mock utkast/i })
+      screen.getByRole("button", { name: /aktiver mock utkast/i })
     );
 
     const cancelButton = await screen.findByRole("button", {

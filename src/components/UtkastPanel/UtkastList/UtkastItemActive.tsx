@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { ButtonsAndGyldigFra, UtkastItemExpanded } from "./UtkastItem";
 import Button from "components/form/Button";
@@ -35,9 +34,10 @@ const fromFormToRequest = (
 
 type Props = {
   utkastId: string;
+  changeUtkast: (url: string) => void;
 };
 
-const UtkastItemActive = ({ utkastId }: Props) => {
+const UtkastItemActive = ({ utkastId, changeUtkast }: Props) => {
   const { t } = useTranslation();
   const { register, setValue, getValues } = useForm<Inputs>();
   const { data: fullUtkast } = useNibasApi("/v1/utkast/{id}", {
@@ -125,8 +125,8 @@ const UtkastItemActive = ({ utkastId }: Props) => {
         <EditingUtkastText>
           {t("utkast.Du er nå i redigeringsmodus av dette utkastet")}
         </EditingUtkastText>
-        <CancelButton>
-          <Link to="">{t("action.Avbryt redigering")}</Link>
+        <CancelButton onClick={() => changeUtkast("")}>
+          {t("action.Avbryt redigering")}
         </CancelButton>
       </Center>
     </UtkastItemExpanded>
