@@ -63,9 +63,7 @@ type ProviderName = keyof typeof defaultProviderMap;
 
 export const renderWithProviders = (
   ui: ReactNode,
-  providerValues: TestProviderValues = {
-    BakgrunnskartProvider: false,
-  }
+  providerValues: TestProviderValues = {}
 ) => {
   // BakgrunnskartProvider lager kvalme i testene våre, så den er default av
   if (providerValues.BakgrunnskartProvider === undefined) {
