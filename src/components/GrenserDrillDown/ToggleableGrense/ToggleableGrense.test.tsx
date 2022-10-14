@@ -28,18 +28,14 @@ const renderWithProvider = (
   ui: React.ReactNode,
   objectValue: ObjectValue = { editing: false, visible: false }
 ) => {
-  render(
-    <EditGrenserContext.Provider
-      value={{
-        editingObject: { fylke: { "1": objectValue } },
-        setObjectValue: jest.fn(),
-        setEditingObject: jest.fn(),
-        resetEditingObject: jest.fn(),
-      }}
-    >
-      {ui}
-    </EditGrenserContext.Provider>
-  );
+  render(ui, {
+    EditGrenserProvider: {
+      editingObject: { fylke: { "1": objectValue } },
+      setObjectValue: jest.fn(),
+      setEditingObject: jest.fn(),
+      resetEditingObject: jest.fn(),
+    },
+  });
 };
 
 describe("ToggleableGrense", () => {

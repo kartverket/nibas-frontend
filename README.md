@@ -60,6 +60,10 @@ Vi bruker [react-i18next](https://react.i18next.com/) for å oversette tekster i
 
 For å legge til ny tekst skriver du inn `t("Din nye tekst")`, som vil gi en feilmelding hvis den ikke finnes. Da må du kjøre `npm run scan-translations` for å få `i18next-scanner` til å plukke opp og legge til den nye nøklen i oversettelsesfilene. Dette vil fjerne erroren fra TypeScript, men du må likevel oppdatere strengen i de endrede oversettelsesfilene.
 
+### Feature toggles
+
+Noen funksjoner er låst bak feature toggles. Hvilke feature toggles som er aktive kan ses i `components/FeatureToggle/FeatureToggle.tsx`. Disse har hardkodede nøkler som brukes i komponenten og hooken i samme fil, som sjekker basert på hvilken URL du befinner deg på. Den lokale/dev variabelen er mulig å overstyre i en `.env.local`-fil, for å slippe å risikere å commite en ny verdi hvis du ikke skal det. Her følges convention `REACT_APP_FEATURE_` som prefix før din key i all caps, for eksempel `REACT_APP_FEATURE_FORKAST_UTKAST`.
+
 ## Docker
 
 Bygge image

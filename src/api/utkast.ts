@@ -51,3 +51,13 @@ export const publishUtkast = async (
     },
   });
 };
+
+export const deleteUtkast = (utkastId: string, token: string | undefined) => {
+  return fetch(`v1/utkast/${utkastId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + token,
+    },
+  });
+};

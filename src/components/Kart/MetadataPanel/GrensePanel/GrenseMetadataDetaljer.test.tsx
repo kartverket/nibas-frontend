@@ -1,10 +1,7 @@
 import { render } from "test/test-utils";
-import { ReactNode } from "react";
 import GrenseMetadataDetaljer from "./GrenseMetadataDetaljer";
-import { EditGrenserProvider } from "contexts/EditGrenserContext";
 import { mockBasicFeature } from "mocks/handlers/responses";
 import { FeatureProperties } from "types/api";
-import { ToolbarProvider } from "contexts/ToolbarContext";
 
 const getClonedFeatureWithGrenseType = (grenseType: string) => {
   const featureCopy = mockBasicFeature.clone();
@@ -17,26 +14,15 @@ const getClonedFeatureWithGrenseType = (grenseType: string) => {
   return featureCopy;
 };
 
-const renderWithProvider = (ui: ReactNode) =>
-  render(
-    <EditGrenserProvider>
-      <ToolbarProvider>{ui}</ToolbarProvider>
-    </EditGrenserProvider>
-  );
-
 describe("GrenseMetadataDetaljer", () => {
   it("should render when feature type is Kommunegrense", () => {
     const kommunegrenseFeature =
       getClonedFeatureWithGrenseType("Kommunegrense");
-    renderWithProvider(
-      <GrenseMetadataDetaljer feature={kommunegrenseFeature} />
-    );
+    render(<GrenseMetadataDetaljer feature={kommunegrenseFeature} />);
   });
 
   it("should render when feature type is Fylkesgrense", () => {
     const fylkesgrenseFeature = getClonedFeatureWithGrenseType("Fylkesgrense");
-    renderWithProvider(
-      <GrenseMetadataDetaljer feature={fylkesgrenseFeature} />
-    );
+    render(<GrenseMetadataDetaljer feature={fylkesgrenseFeature} />);
   });
 });

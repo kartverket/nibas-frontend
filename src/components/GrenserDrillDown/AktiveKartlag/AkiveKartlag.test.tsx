@@ -2,29 +2,19 @@ import { render, screen } from "test/test-utils";
 import { ReactNode } from "react";
 import AktiveKartlag from "./AktiveKartlag";
 import { BakgrunnskartContext } from "contexts/BakgrunnskartContext";
-import { EditGrenserContext } from "contexts/EditGrenserContext";
-import { UtkastContext } from "contexts/UtkastContext";
 
 const renderWithProvider = (ui: ReactNode) =>
-  render(
-    <EditGrenserContext.Provider
-      value={{
-        editingObject: {
-          fylke: { 1: { editing: true, visible: true } },
-          kommune: { 2: { editing: true, visible: true } },
-        },
-        setObjectValue: jest.fn(),
-        setEditingObject: jest.fn(),
-        resetEditingObject: jest.fn(),
-      }}
-    >
-      <UtkastContext.Provider
-        value={{ utkast: undefined, updateUtkastWithHistory: jest.fn() }}
-      >
-        {ui}
-      </UtkastContext.Provider>
-    </EditGrenserContext.Provider>
-  );
+  render(ui, {
+    EditGrenserProvider: {
+      editingObject: {
+        fylke: { 1: { editing: true, visible: true } },
+        kommune: { 2: { editing: true, visible: true } },
+      },
+      setObjectValue: jest.fn(),
+      setEditingObject: jest.fn(),
+      resetEditingObject: jest.fn(),
+    },
+  });
 
 describe("AktiveKartlag", () => {
   it("should render selected fylker and kommuner", async () => {

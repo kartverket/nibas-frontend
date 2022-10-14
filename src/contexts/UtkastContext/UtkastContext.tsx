@@ -72,6 +72,7 @@ export const UtkastProvider: React.FC = ({ children }) => {
     };
     const utkastEntry = history.entries
       .slice(0, history.index)
+      .reverse() // siste entry inneholder alle endringene på utkastet
       .find((entry) => entry.changes.some((change) => change.id === utkast.id));
 
     if (utkastEntry) {
