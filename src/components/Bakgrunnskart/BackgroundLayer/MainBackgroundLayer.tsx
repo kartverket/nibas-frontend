@@ -23,18 +23,18 @@ const MainBackgroundLayer = ({
   const ref = useBackgroundLayerDND(index, mappedLayer, moveLayer);
 
   return (
-    <BackgroundLayerAccordion
-      key={mappedLayer.title}
-      mappedLayer={mappedLayer}
-      indent={0}
-      visible={visible}
-      onVisibilityClick={toggleLayerVisibility}
-      ref={moveLayer ? ref : null}
-      isMainLayer
-    >
-      <>
-        {mappedLayer.layers.map((layer) => (
-          <BakgrunnskartProvider>
+    <BakgrunnskartProvider>
+      <BackgroundLayerAccordion
+        key={mappedLayer.title}
+        mappedLayer={mappedLayer}
+        indent={0}
+        visible={visible}
+        onVisibilityClick={toggleLayerVisibility}
+        ref={moveLayer ? ref : null}
+        isMainLayer
+      >
+        <>
+          {mappedLayer.layers.map((layer) => (
             <SubBackgroundLayer
               key={layer.title}
               mappedLayer={layer}
@@ -42,10 +42,10 @@ const MainBackgroundLayer = ({
               mainLayerName={mappedLayer.id ?? ""}
               indent={1}
             />
-          </BakgrunnskartProvider>
-        ))}
-      </>
-    </BackgroundLayerAccordion>
+          ))}
+        </>
+      </BackgroundLayerAccordion>
+    </BakgrunnskartProvider>
   );
 };
 
