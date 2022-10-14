@@ -15,6 +15,7 @@ import { UtkastRef } from "types/api";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useMetadataPanel } from "contexts/MetadataPanelContext";
 import { resetMapView } from "utils/map";
+import { useFlag } from "components/FeatureToggle";
 
 type Props = {
   utkast: UtkastRef;
@@ -30,7 +31,7 @@ const UtkastItem = ({ utkast }: Props) => {
   const { resetEditingObject } = useEditAllGrenser();
   const { closePanel } = useMetadataPanel();
   const { data: fullUtkast } = useNibasApi(
-    isPublishOpen ? "/v1/utkast/{id}" : null,
+    isPublishOpen || isDeleteOpen ? "/v1/utkast/{id}" : null,
     {
       id: utkast.id,
     }
@@ -61,6 +62,10 @@ const UtkastItem = ({ utkast }: Props) => {
     await deleteApiUtkast(utkast.id, tokenHolderFunc()?.token);
 
     await mutate(["/v1/utkast", tokenHolderFunc()?.token]);
+
+    if (utkastId === utkast.id) {
+      navigate("/");
+    }
   };
 
   const changeUtkast = (url: string) => {
@@ -70,6 +75,8 @@ const UtkastItem = ({ utkast }: Props) => {
     resetMapView();
   };
 
+  const isForkastEnabled = useFlag("forkast-utkast");
+
   return (
     <ListItem>
       <ItemWrapper>
@@ -77,9 +84,11 @@ const UtkastItem = ({ utkast }: Props) => {
         <UnstyledButton onClick={() => setIsPublishOpen(true)}>
           <PublishIcon aria-label={`Publiser ${utkast.navn}`} />
         </UnstyledButton>
-        <UnstyledButton onClick={() => setIsDeleteOpen(true)}>
-          <DeleteIcon aria-label={`Forkast ${utkast.navn}`} />
-        </UnstyledButton>
+        {isForkastEnabled && (
+          <UnstyledButton onClick={() => setIsDeleteOpen(true)}>
+            <DeleteIcon aria-label={`Forkast ${utkast.navn}`} />
+          </UnstyledButton>
+        )}
         <UnstyledButton onClick={() => changeUtkast(utkast.id)}>
           <Icon icon="edit" aria-label={`Aktiver ${utkast.navn}`} />
         </UnstyledButton>
@@ -117,7 +126,7 @@ const UtkastItem = ({ utkast }: Props) => {
           </ButtonsAndGyldigFra>
         </UtkastItemExpanded>
       )}
-      {utkastActive && !isPublishOpen && (
+      {utkastActive && !isPublishOpen && !isDeleteOpen && (
         <UtkastItemActive utkastId={utkast.id} changeUtkast={changeUtkast} />
       )}
     </ListItem>
