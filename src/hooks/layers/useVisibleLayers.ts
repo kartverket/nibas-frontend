@@ -8,7 +8,7 @@ type Action =
   | { type: "setLayerVisibility"; layerId: BakgrunnskartId; visible: boolean }
   | { type: "toggleLayerVisibility"; layerId: BakgrunnskartId };
 
-// TODO optional med action creators, litt subjektivtx
+// TODO optional med action creators, litt subjektivt
 export const setLayerVisibility = (
   layerId: BakgrunnskartId,
   visible: boolean

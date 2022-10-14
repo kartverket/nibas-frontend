@@ -4,10 +4,7 @@ import { bakgrunnskartLayers } from "../../../hooks/layers/constants";
 import BackgroundLayerAccordion from "./BackgroundLayerAccordion";
 import { BakgrunnskartId } from "hooks/layers/types";
 import { MappedLayer } from "utils/getLayersFromWMS";
-import {
-  BakgrunnskartProvider,
-  useBakgrunnskart,
-} from "contexts/BakgrunnskartContext";
+import { useBakgrunnskart } from "contexts/BakgrunnskartContext";
 
 const getLayersStringToReplace = (
   layersInParams: string,
@@ -127,27 +124,25 @@ const SubBackgroundLayer = ({
   };
 
   return (
-    <BakgrunnskartProvider>
-      <BackgroundLayerAccordion
-        key={mappedLayer.title}
-        mappedLayer={mappedLayer}
-        indent={indent}
-        visible={visible}
-        onVisibilityClick={onVisibilityClick}
-      >
-        <>
-          {mappedLayer.layers.map((layer) => (
-            <SubBackgroundLayer
-              key={layer.title}
-              mappedLayer={layer}
-              mainLayerSourceId={mainLayerSourceId}
-              mainLayerName={mainLayerName}
-              indent={indent + 1}
-            />
-          ))}
-        </>
-      </BackgroundLayerAccordion>
-    </BakgrunnskartProvider>
+    <BackgroundLayerAccordion
+      key={mappedLayer.title}
+      mappedLayer={mappedLayer}
+      indent={indent}
+      visible={visible}
+      onVisibilityClick={onVisibilityClick}
+    >
+      <>
+        {mappedLayer.layers.map((layer) => (
+          <SubBackgroundLayer
+            key={layer.title}
+            mappedLayer={layer}
+            mainLayerSourceId={mainLayerSourceId}
+            mainLayerName={mainLayerName}
+            indent={indent + 1}
+          />
+        ))}
+      </>
+    </BackgroundLayerAccordion>
   );
 };
 
