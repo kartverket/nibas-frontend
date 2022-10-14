@@ -88,7 +88,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     });
   }, [allFeatures, kommuneId, type]);
 
-  const setLayerToAddTo = useAsyncFeatures(allFeatures, grenseValue);
+  const setLayerToAddTo = useAsyncFeatures(allFeatures, !!grenseValue?.editing);
 
   const addKretserToLayer = (layerId: LayerId) => {
     setLayerToAddTo(layerId);

@@ -23,7 +23,7 @@ export const useEditGrense = (
 
   const { editingObject, setObjectValue } = context;
   const value = editingObject[grenseType]?.[grenseId] ?? {};
-  const setLayerToAddTo = useAsyncFeatures(features, value);
+  const setLayerToAddTo = useAsyncFeatures(features, !!value?.editing);
 
   const toggleVisible = () => {
     const newObjectValue = {

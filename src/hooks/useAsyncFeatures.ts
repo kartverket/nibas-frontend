@@ -4,7 +4,6 @@ import Geometry from "ol/geom/Geometry";
 import { LayerId } from "./layers/types";
 import { addFeaturesToSource } from "utils/map/source";
 import { zoomToFeatures } from "utils/map";
-import { ObjectValue } from "contexts/EditGrenserContext";
 
 /**
  * Hook for å sette features som kommer async inn i en layer sin source. Venter til features
@@ -13,7 +12,7 @@ import { ObjectValue } from "contexts/EditGrenserContext";
  */
 const useAsyncFeatures = (
   features: Feature<Geometry>[] | null,
-  objectValue: ObjectValue
+  shouldZoomToFeatures: boolean
 ) => {
   const [layerToAddTo, setLayerToAddTo] = useState<LayerId | null>(null);
 
@@ -24,10 +23,10 @@ const useAsyncFeatures = (
     addFeaturesToSource(layerToAddTo, features);
     setLayerToAddTo(null);
 
-    if (objectValue?.editing) {
+    if (shouldZoomToFeatures) {
       zoomToFeatures(features);
     }
-  }, [layerToAddTo, features, objectValue?.editing]);
+  }, [layerToAddTo, features, shouldZoomToFeatures]);
 
   return setLayerToAddTo;
 };
