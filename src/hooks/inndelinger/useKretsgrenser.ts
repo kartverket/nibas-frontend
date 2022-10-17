@@ -12,10 +12,7 @@ import { LayerId } from "hooks/layers/types";
 import useAsyncFeatures from "hooks/useAsyncFeatures";
 import { KretsRef } from "types/api";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
-import {
-  removeFeaturesFromSourceByIds,
-  mapFeatureToFeatureId,
-} from "utils/map/source";
+import { removeFeaturesFromSourceByIds, getFeatureId } from "utils/map/source";
 import { fetcherWithToken } from "utils/swr";
 
 const mapGrunnkretserToIds = (kretser?: KretsRef[]) =>
@@ -96,10 +93,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   const removeKretserFromLayer = (layerId: LayerId) => {
     if (!allFeatures) return;
 
-    removeFeaturesFromSourceByIds(
-      layerId,
-      allFeatures.map(mapFeatureToFeatureId)
-    );
+    removeFeaturesFromSourceByIds(layerId, allFeatures.map(getFeatureId));
   };
 
   return {
