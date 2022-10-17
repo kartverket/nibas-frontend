@@ -1,6 +1,7 @@
 import React from "react";
 
 // du kan override lokal verdi ved å opprette key i .env.local
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getDevValue = (envKey: string) => {
   return process.env[envKey] === "true";
 };
@@ -12,15 +13,9 @@ const environmentByUrl: Record<string, Environment> = {
   "nibas.dev.skip.statkart.no": "test",
 };
 
-type Keys = "forkast-utkast";
+type Keys = string;
 
-const featureToggles: Record<Keys, Record<Environment, boolean>> = {
-  "forkast-utkast": {
-    prod: true,
-    test: true,
-    dev: getDevValue("REACT_APP_FEATURE_FORKAST_UTKAST"),
-  },
-};
+const featureToggles: Record<Keys, Record<Environment, boolean>> = {};
 
 export const featureEnabled = (key: Keys): boolean => {
   const { hostname } = window.location;
