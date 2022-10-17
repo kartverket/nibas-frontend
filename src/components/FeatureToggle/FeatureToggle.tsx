@@ -16,8 +16,8 @@ type Keys = "forkast-utkast";
 
 const featureToggles: Record<Keys, Record<Environment, boolean>> = {
   "forkast-utkast": {
-    prod: false,
-    test: false,
+    prod: true,
+    test: true,
     dev: getDevValue("REACT_APP_FEATURE_FORKAST_UTKAST"),
   },
 };
