@@ -28,7 +28,17 @@ const defaultProps: React.ComponentProps<typeof SubBackgroundLayer> = {
 };
 
 const renderWithProvider = (ui: ReactNode) =>
-  render(ui, { BakgrunnskartProvider: true });
+  render(ui, {
+    BakgrunnskartProvider: {
+      visibleLayers: { administrativeGrenser: true } as any,
+      toggleLayerVisibility: jest.fn(),
+      mappedLayers: [
+        { ...defaultProps.mappedLayer, sourceId: "administrativeGrenser" },
+      ],
+      moveLayer: jest.fn(),
+      orderedLayerIds: ["administrativeGrenser"],
+    },
+  });
 
 describe("SubBackgroundLayer", () => {
   it("should render sublayers for each sublayer on caret click", async () => {
@@ -43,6 +53,7 @@ describe("SubBackgroundLayer", () => {
 
     expect(screen.getByText(/subsublag1/i)).toBeInTheDocument();
     expect(screen.getByText(/subsublag2/i)).toBeInTheDocument();
+    await new Promise(process.nextTick);
   });
 
   it("should open and close eye correctly", async () => {
@@ -60,11 +71,13 @@ describe("SubBackgroundLayer", () => {
     await user.click(openEye);
 
     expect(closedEye).toBeInTheDocument();
+    await new Promise(process.nextTick);
   });
 
-  it("should display name of mapped layer", () => {
+  it("should display name of mapped layer", async () => {
     renderWithProvider(<SubBackgroundLayer {...defaultProps} />);
 
-    expect(screen.getByText(/sublag/i)).toBeInTheDocument();
+    expect(await screen.findByText(/sublag/i)).toBeInTheDocument();
+    await new Promise(process.nextTick);
   });
 });

@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import { renderWithProviders } from "test/test-providers";
 import { render, screen } from "test/test-utils";
 import MainBackgroundLayer from "./MainBackgroundLayer";
 
@@ -31,7 +30,17 @@ const defaultProps: React.ComponentProps<typeof MainBackgroundLayer> = {
 };
 
 const renderWithProvider = (ui: ReactNode) =>
-  render(ui, { BakgrunnskartProvider: true });
+  render(ui, {
+    BakgrunnskartProvider: {
+      visibleLayers: { administrativeGrenser: true } as any,
+      toggleLayerVisibility: jest.fn(),
+      mappedLayers: [
+        { ...defaultProps.mappedLayer, sourceId: "administrativeGrenser" },
+      ],
+      moveLayer: jest.fn(),
+      orderedLayerIds: ["administrativeGrenser"],
+    },
+  });
 
 describe("MainBackgroundLayer", () => {
   it("should render sublayers for each sublayer on caret click", async () => {
@@ -46,11 +55,14 @@ describe("MainBackgroundLayer", () => {
 
     expect(screen.getByText(/sublag1/i)).toBeInTheDocument();
     expect(screen.getByText(/sublag2/i)).toBeInTheDocument();
+
+    await new Promise(process.nextTick);
   });
 
-  it("should display name of mapped layer", () => {
+  it("should display name of mapped layer", async () => {
     renderWithProvider(<MainBackgroundLayer {...defaultProps} />);
 
-    expect(screen.getByText(/hovedlag/i)).toBeInTheDocument();
+    expect(await screen.findByText(/hovedlag/i)).toBeInTheDocument();
+    await new Promise(process.nextTick);
   });
 });
