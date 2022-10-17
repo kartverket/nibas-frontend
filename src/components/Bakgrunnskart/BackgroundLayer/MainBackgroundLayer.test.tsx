@@ -55,14 +55,11 @@ describe("MainBackgroundLayer", () => {
 
     expect(screen.getByText(/sublag1/i)).toBeInTheDocument();
     expect(screen.getByText(/sublag2/i)).toBeInTheDocument();
-
-    await new Promise(process.nextTick);
   });
 
-  it("should display name of mapped layer", async () => {
+  it("should display name of mapped layer", () => {
     renderWithProvider(<MainBackgroundLayer {...defaultProps} />);
 
-    expect(await screen.findByText(/hovedlag/i)).toBeInTheDocument();
-    await new Promise(process.nextTick);
+    expect(screen.getByText(/hovedlag/i)).toBeInTheDocument();
   });
 });
