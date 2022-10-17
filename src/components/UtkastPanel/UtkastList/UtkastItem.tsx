@@ -1,17 +1,20 @@
 import { useState } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useTranslation } from "react-i18next";
-import { Link, useMatch, useNavigate } from "react-router-dom";
+import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useSWRConfig } from "swr";
 import UtkastItemActive from "./UtkastItemActive";
-import { publishUtkast } from "api/utkast";
+import { deleteUtkast as deleteApiUtkast, publishUtkast } from "api/utkast";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Icon from "components/Icon";
 import { BlockLabel } from "components/Kart/MetadataPanel/metadataComponents";
 import useNibasApi from "hooks/useNibasApi";
 import { UtkastRef } from "types/api";
+import { useEditAllGrenser } from "contexts/EditGrenserContext";
+import { useMetadataPanel } from "contexts/MetadataPanelContext";
+import { resetMapView } from "utils/map";
 
 type Props = {
   utkast: UtkastRef;
@@ -19,11 +22,15 @@ type Props = {
 
 const UtkastItem = ({ utkast }: Props) => {
   const [isPublishOpen, setIsPublishOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   const { t } = useTranslation();
   const utkastId = useMatch("/:utkastId")?.params.utkastId;
+
+  const { resetEditingObject } = useEditAllGrenser();
+  const { closePanel } = useMetadataPanel();
   const { data: fullUtkast } = useNibasApi(
-    isPublishOpen ? "/v1/utkast/{id}" : null,
+    isPublishOpen || isDeleteOpen ? "/v1/utkast/{id}" : null,
     {
       id: utkast.id,
     }
@@ -40,8 +47,31 @@ const UtkastItem = ({ utkast }: Props) => {
     await publishUtkast(utkast.id, fullUtkast, tokenHolderFunc()?.token);
 
     await mutate(["/v1/utkast", tokenHolderFunc()?.token]);
-    navigate("/");
+
+    if (utkastActive) {
+      navigate("/");
+    }
+
     // TODO: Modal/toast om at utkastet er publisert?
+  };
+
+  const deleteUtkast = async () => {
+    if (!fullUtkast) return;
+
+    await deleteApiUtkast(utkast.id, tokenHolderFunc()?.token);
+
+    await mutate(["/v1/utkast", tokenHolderFunc()?.token]);
+
+    if (utkastId === utkast.id) {
+      navigate("/");
+    }
+  };
+
+  const changeUtkast = (url: string) => {
+    navigate(`/${url}`);
+    resetEditingObject();
+    closePanel();
+    resetMapView();
   };
 
   return (
@@ -51,10 +81,11 @@ const UtkastItem = ({ utkast }: Props) => {
         <UnstyledButton onClick={() => setIsPublishOpen(true)}>
           <PublishIcon aria-label={`Publiser ${utkast.navn}`} />
         </UnstyledButton>
-        <UnstyledButton>
-          <Link to={`/${utkast.id}`}>
-            <Icon icon="edit" aria-label={`Aktiver ${utkast.navn}`} />
-          </Link>
+        <UnstyledButton onClick={() => setIsDeleteOpen(true)}>
+          <DeleteIcon aria-label={`Forkast ${utkast.navn}`} />
+        </UnstyledButton>
+        <UnstyledButton onClick={() => changeUtkast(utkast.id)}>
+          <Icon icon="edit" aria-label={`Aktiver ${utkast.navn}`} />
         </UnstyledButton>
       </ItemWrapper>
       {isPublishOpen && (
@@ -78,8 +109,20 @@ const UtkastItem = ({ utkast }: Props) => {
           </ButtonsAndGyldigFra>
         </UtkastItemExpanded>
       )}
-      {utkastActive && !isPublishOpen && (
-        <UtkastItemActive utkastId={utkast.id} />
+      {isDeleteOpen && (
+        <UtkastItemExpanded>
+          <ButtonsAndGyldigFra>
+            <Buttons>
+              <CancelButton onClick={() => setIsDeleteOpen(false)}>
+                {t("action.Avbryt")}
+              </CancelButton>
+              <Button onClick={deleteUtkast}>{t("action.Forkast")}</Button>
+            </Buttons>
+          </ButtonsAndGyldigFra>
+        </UtkastItemExpanded>
+      )}
+      {utkastActive && !isPublishOpen && !isDeleteOpen && (
+        <UtkastItemActive utkastId={utkast.id} changeUtkast={changeUtkast} />
       )}
     </ListItem>
   );
@@ -150,6 +193,14 @@ const PublishIcon = styled(Icon).attrs(() => ({
   icon: "done",
 }))`
   color: ${({ theme }) => theme.colors.green};
+  margin-right: 8px;
+`;
+
+const DeleteIcon = styled(Icon).attrs(() => ({
+  icon: "close",
+}))`
+  color: ${({ theme }) => theme.colors.redErrorText};
+  margin-right: 8px;
 `;
 
 export default UtkastItem;

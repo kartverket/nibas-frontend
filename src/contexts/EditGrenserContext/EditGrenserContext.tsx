@@ -1,10 +1,11 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useCallback, useContext, useState } from "react";
 import {
   EditingObject,
   EditingType,
   GrenseDictionary,
   ObjectValue,
 } from "./types";
+import { removeAllFeatures } from "utils/map/layers";
 
 export type EditGrenserContextValue = {
   editingObject: EditingObject;
@@ -16,6 +17,7 @@ export type EditGrenserContextValue = {
     grenseId: string,
     values?: ObjectValue
   ) => void;
+  resetEditingObject: () => void;
 };
 
 /**
@@ -42,10 +44,16 @@ export const EditGrenserProvider: React.FC = ({ children }) => {
     });
   };
 
+  const resetEditingObject = useCallback(() => {
+    removeAllFeatures();
+    setEditingObject({});
+  }, []);
+
   const value = {
     editingObject,
     setEditingObject,
     setObjectValue,
+    resetEditingObject,
   };
 
   return (

@@ -31,7 +31,7 @@ export type MetadataPanelContextValue = {
 /**
  * Bruk heller MetadataPanelProvider i koden
  */
-const MetadataPanelContext = createContext<
+export const MetadataPanelContext = createContext<
   MetadataPanelContextValue | undefined
 >(undefined);
 

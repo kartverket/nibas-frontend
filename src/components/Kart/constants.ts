@@ -6,15 +6,15 @@ import { registerProjections } from "utils/map/projections";
 
 registerProjections();
 
-const initialCenter = fromLonLat([2.757933, 52.911491]);
-const initialZoom = 6;
+export const initialMapCenter = fromLonLat([2.757933, 52.911491]);
+export const initialMapZoom = 6;
 
 // referansene til DOM elementer på objektene under gjøres i Kart.tsx
 
 export const map = new Map({
   view: new View({
-    zoom: initialZoom,
-    center: initialCenter,
+    zoom: initialMapZoom,
+    center: initialMapCenter,
     projection: "EPSG:25833",
   }),
   layers: [],

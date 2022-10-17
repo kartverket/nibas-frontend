@@ -1,19 +1,15 @@
-import { SidebarPanelContext } from "contexts/SidebarPanelContext";
 import { ReactNode } from "react";
-import { BrowserRouter } from "react-router-dom";
 import { render, screen } from "test/test-utils";
 import UtkastPanel from "./UtkastPanel";
 
 const renderWithProvider = (ui: ReactNode) =>
-  render(
-    <BrowserRouter>
-      <SidebarPanelContext.Provider
-        value={{ openPanels: { utkast: true } as any } as any}
-      >
-        {ui}
-      </SidebarPanelContext.Provider>
-    </BrowserRouter>
-  );
+  render(ui, {
+    SidebarPanelProvider: {
+      openPanels: { utkast: true } as any,
+      setPanel: jest.fn(),
+      togglePanel: jest.fn(),
+    },
+  });
 
 describe("UtkastPanel", () => {
   it("should render list of utkasts", async () => {

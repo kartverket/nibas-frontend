@@ -1,30 +1,17 @@
 import { render, screen } from "test/test-utils";
-import { ReactNode } from "react";
-import { BrowserRouter } from "react-router-dom";
 import UtkastItem from "./UtkastItem";
-import { ToolbarProvider } from "contexts/ToolbarContext";
-import { UtkastProvider } from "contexts/UtkastContext";
 import { mockUtkastRef1 } from "mocks/handlers/responses";
 
 const defaultProps: React.ComponentProps<typeof UtkastItem> = {
   utkast: mockUtkastRef1,
 };
 
-const renderWithProvider = (ui: ReactNode) =>
-  render(
-    <BrowserRouter>
-      <ToolbarProvider>
-        <UtkastProvider>{ui}</UtkastProvider>
-      </ToolbarProvider>
-    </BrowserRouter>
-  );
-
 describe("UtkastItem", () => {
   it("should set utkast as active on pen click", async () => {
-    const { user } = renderWithProvider(<UtkastItem {...defaultProps} />);
+    const { user } = render(<UtkastItem {...defaultProps} />);
 
     await user.click(
-      screen.getByRole("link", { name: /aktiver mock utkast/i })
+      screen.getByRole("button", { name: /aktiver mock utkast/i })
     );
 
     const cancelButton = await screen.findByRole("button", {
@@ -49,7 +36,7 @@ describe("UtkastItem", () => {
   });
 
   it("should open publishing on publish icon button click", async () => {
-    const { user } = renderWithProvider(<UtkastItem {...defaultProps} />);
+    const { user } = render(<UtkastItem {...defaultProps} />);
 
     await user.click(
       screen.getByRole("button", { name: /publiser mock utkast/i })

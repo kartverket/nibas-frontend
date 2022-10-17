@@ -1,8 +1,6 @@
 import { render, screen, within } from "test/test-utils";
 import { ReactNode } from "react";
 import GrenseMetadataReferanser from "./GrenseMetadataReferanser";
-import { EditGrenserContext } from "contexts/EditGrenserContext";
-import { ToolbarProvider } from "contexts/ToolbarContext";
 import { mockBasicFeature } from "mocks/handlers/responses";
 
 const defaultProps: React.ComponentProps<typeof GrenseMetadataReferanser> = {
@@ -10,24 +8,21 @@ const defaultProps: React.ComponentProps<typeof GrenseMetadataReferanser> = {
 };
 
 const renderWithProvider = (ui: ReactNode, disabled = false) =>
-  render(
-    <EditGrenserContext.Provider
-      value={{
-        editingObject: {
-          fylke: {
-            "1": {
-              visible: true,
-              editing: !disabled,
-            },
+  render(ui, {
+    EditGrenserProvider: {
+      editingObject: {
+        fylke: {
+          "1": {
+            visible: true,
+            editing: !disabled,
           },
         },
-        setObjectValue: jest.fn(),
-        setEditingObject: jest.fn()
-      }}
-    >
-      <ToolbarProvider>{ui}</ToolbarProvider>
-    </EditGrenserContext.Provider>
-  );
+      },
+      setObjectValue: jest.fn(),
+      setEditingObject: jest.fn(),
+      resetEditingObject: jest.fn(),
+    },
+  });
 
 const testFieldArray = async (groupName: string | RegExp) => {
   const { user } = renderWithProvider(

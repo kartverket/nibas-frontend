@@ -5,7 +5,10 @@ import useKretsgrenser from "hooks/inndelinger/useKretsgrenser";
 import { editSource } from "hooks/layers/constants";
 import { LayerId } from "hooks/layers/types";
 import { FeatureProperties, KommuneRef } from "types/api";
-import { removeFeaturesFromSourceByIds } from "utils/map/source";
+import {
+  mapFeatureToFeatureId,
+  removeFeaturesFromSourceByIds,
+} from "utils/map/source";
 
 export type Kretstype = "grunnkrets" | "stemmekrets";
 
@@ -86,16 +89,17 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
 
         // fjern features til kretsene som var endret før klikk
         if (newValues[kommuneId]?.visible && newValues[kommuneId]?.editing) {
-          const featuresToRemove = editSource
+          const featureIdsToRemove = editSource
             .getFeatures()
             .filter((feature) => {
               const { type, id } = (
                 feature.getProperties() as FeatureProperties
               ).inndelingerKontekst;
               return type === currentKretstype && id === kommuneId;
-            });
+            })
+            .map(mapFeatureToFeatureId);
 
-          removeFeaturesFromSourceByIds("edit", featuresToRemove);
+          removeFeaturesFromSourceByIds("edit", featureIdsToRemove);
         }
 
         newValues[kommuneId] = {

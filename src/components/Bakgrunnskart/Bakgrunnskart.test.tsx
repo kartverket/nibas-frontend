@@ -1,26 +1,21 @@
 import { render, screen } from "test/test-utils";
 import { ReactNode } from "react";
 import Bakgrunnskart from "./Bakgrunnskart";
-import { BakgrunnskartProvider } from "contexts/BakgrunnskartContext";
-import { SidebarPanelContext } from "contexts/SidebarPanelContext";
 
 const renderWithProvider = (ui: ReactNode, visible = true) =>
-  render(
-    <SidebarPanelContext.Provider
-      value={{
-        openPanels: {
-          inndelinger: false,
-          kartlag: visible,
-          soek: false,
-          utkast: false,
-        },
-        setPanel: jest.fn(),
-        togglePanel: jest.fn(),
-      }}
-    >
-      <BakgrunnskartProvider>{ui}</BakgrunnskartProvider>
-    </SidebarPanelContext.Provider>
-  );
+  render(ui, {
+    SidebarPanelProvider: {
+      openPanels: {
+        inndelinger: false,
+        kartlag: visible,
+        soek: false,
+        utkast: false,
+      },
+      setPanel: jest.fn(),
+      togglePanel: jest.fn(),
+    },
+    BakgrunnskartProvider: true,
+  });
 
 describe("Bakgrunnskart", () => {
   it("should not render when not visible", () => {
