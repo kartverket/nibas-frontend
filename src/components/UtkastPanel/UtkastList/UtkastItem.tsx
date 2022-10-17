@@ -15,7 +15,6 @@ import { UtkastRef } from "types/api";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useMetadataPanel } from "contexts/MetadataPanelContext";
 import { resetMapView } from "utils/map";
-import { useFlag } from "components/FeatureToggle";
 
 type Props = {
   utkast: UtkastRef;
@@ -75,8 +74,6 @@ const UtkastItem = ({ utkast }: Props) => {
     resetMapView();
   };
 
-  const isForkastEnabled = useFlag("forkast-utkast");
-
   return (
     <ListItem>
       <ItemWrapper>
@@ -84,11 +81,9 @@ const UtkastItem = ({ utkast }: Props) => {
         <UnstyledButton onClick={() => setIsPublishOpen(true)}>
           <PublishIcon aria-label={`Publiser ${utkast.navn}`} />
         </UnstyledButton>
-        {isForkastEnabled && (
-          <UnstyledButton onClick={() => setIsDeleteOpen(true)}>
-            <DeleteIcon aria-label={`Forkast ${utkast.navn}`} />
-          </UnstyledButton>
-        )}
+        <UnstyledButton onClick={() => setIsDeleteOpen(true)}>
+          <DeleteIcon aria-label={`Forkast ${utkast.navn}`} />
+        </UnstyledButton>
         <UnstyledButton onClick={() => changeUtkast(utkast.id)}>
           <Icon icon="edit" aria-label={`Aktiver ${utkast.navn}`} />
         </UnstyledButton>
