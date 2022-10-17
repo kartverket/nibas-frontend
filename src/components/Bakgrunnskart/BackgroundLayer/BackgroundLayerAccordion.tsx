@@ -53,7 +53,6 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
       children,
     } = props;
     const [open, setOpen] = useState(false);
-    //const [propertiesVisible, setPropertiesVisible] = useState(prop);
     const { opacity, onSliderChange } = useLayerOpacity({
       mappedLayer: props.mappedLayer,
       isMainLayer: props.isMainLayer,
@@ -61,7 +60,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
 
     const renderNameAndCaret = () => {
       // hvis hovedlag som kan dras på, vis annen musepeker på navnet
-      if (props.isMainLayer && ref) {
+      if (props.isMainLayer && ref && isAktiveKartlag) {
         let icon: ReactElement | undefined = undefined;
         if (props.mappedLayer.layers.length > 0) {
           icon = getCaretIcon(open);
@@ -98,11 +97,16 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
     if (isAktiveKartlag) {
       return (
         <div>
-          <DraggableLayer>
-            <span>
-              <Icon icon="reorder" aria-label={`Bytt rekkefølge på kartlag`} />
-              <span>{props.mappedLayer.title}</span>
-            </span>
+          <AktivtKartlagWrapper>
+            <DraggableLayer ref={ref}>
+              <span>
+                <Icon
+                  icon="reorder"
+                  aria-label={`Bytt rekkefølge på kartlag`}
+                />
+                <DraggableName>{props.mappedLayer.title}</DraggableName>
+              </span>
+            </DraggableLayer>
             <span>
               <Slider
                 min={0}
@@ -110,9 +114,13 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
                 value={opacity ?? 100}
                 onChange={onSliderChange}
               />
-              <Icon icon="remove" aria-label={`Fjern fra aktive kartlag`} />
+              <Icon
+                icon="remove"
+                aria-label={`Fjern fra aktive kartlag`}
+                onClick={onVisibilityClick}
+              />
             </span>
-          </DraggableLayer>
+          </AktivtKartlagWrapper>
           {children}
         </div>
       );
@@ -204,13 +212,15 @@ const DraggableName = styled.span`
 `;
 
 const DraggableLayer = styled.span`
+  cursor: move;
+`;
+
+const AktivtKartlagWrapper = styled.div`
   display: flex;
   flex: 1;
   align-items: center;
   justify-content: space-between;
   margin: 8px 0;
-  cursor: move;
-
   > :first-child {
     flex: 1;
     display: flex;
@@ -224,6 +234,7 @@ const DraggableLayer = styled.span`
     flex-direction: row;
     align-items: center;
     justify-content: right;
+    cursor: pointer;
 
     > :first-child {
       margin-right: 8px;
