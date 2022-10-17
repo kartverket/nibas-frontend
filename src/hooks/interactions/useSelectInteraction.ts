@@ -5,6 +5,7 @@ import LineString from "ol/geom/LineString";
 import { Select } from "ol/interaction";
 import { map, overlayPopup } from "components/Kart/constants";
 import { useMetadataPanel } from "contexts/MetadataPanelContext";
+import { selectStyles } from "utils/map/layerStyles";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -21,7 +22,7 @@ const useSelectInteraction = () => {
   const { openPanel, closePanel } = useMetadataPanel();
 
   useEffect(() => {
-    const select = new Select({ hitTolerance: 5 });
+    const select = new Select({ hitTolerance: 5, style: selectStyles });
 
     select.on("select", () => {
       setFeatures(select.getFeatures().getArray().slice());
