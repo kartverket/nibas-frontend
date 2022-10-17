@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+import { renderWithProviders } from "test/test-providers";
 import { render, screen } from "test/test-utils";
 import MainBackgroundLayer from "./MainBackgroundLayer";
 
@@ -28,9 +30,14 @@ const defaultProps: React.ComponentProps<typeof MainBackgroundLayer> = {
   visible: false,
 };
 
+const renderWithProvider = (ui: ReactNode) =>
+  render(ui, { BakgrunnskartProvider: true });
+
 describe("MainBackgroundLayer", () => {
   it("should render sublayers for each sublayer on caret click", async () => {
-    const { user } = render(<MainBackgroundLayer {...defaultProps} />);
+    const { user } = renderWithProvider(
+      <MainBackgroundLayer {...defaultProps} />
+    );
 
     const caret = screen.getByRole("button", {
       name: /hovedlag åpne/i,
@@ -42,7 +49,7 @@ describe("MainBackgroundLayer", () => {
   });
 
   it("should display name of mapped layer", () => {
-    render(<MainBackgroundLayer {...defaultProps} />);
+    renderWithProvider(<MainBackgroundLayer {...defaultProps} />);
 
     expect(screen.getByText(/hovedlag/i)).toBeInTheDocument();
   });
