@@ -3,6 +3,8 @@ import {
   initialMapZoom,
   map,
 } from "components/Kart/constants";
+import { Feature } from "ol";
+import Geometry from "ol/geom/Geometry";
 
 export const resetMapView = () => {
   const view = map.getView();
@@ -10,6 +12,44 @@ export const resetMapView = () => {
   view.animate({
     zoom: initialMapZoom,
     center: initialMapCenter,
+    duration: 500,
+  });
+};
+
+const calculateFeaturesExtent = (features: Feature<Geometry>[]) => {
+  const extent = features.reduce<number[] | null>((acc, feature) => {
+    const featureExtent = feature.getGeometry()?.getExtent();
+
+    if (!featureExtent) return acc;
+
+    if (!acc) {
+      return [
+        featureExtent[0],
+        featureExtent[1],
+        featureExtent[2],
+        featureExtent[3],
+      ];
+    }
+
+    return [
+      Math.min(acc[0], featureExtent[0]),
+      Math.min(acc[1], featureExtent[1]),
+      Math.max(acc[2], featureExtent[2]),
+      Math.max(acc[3], featureExtent[3]),
+    ];
+  }, null);
+
+  return extent;
+};
+
+export const zoomToFeatures = (features: Feature<Geometry>[]) => {
+  const extent = calculateFeaturesExtent(features);
+
+  if (!extent) return;
+
+  const view = map.getView();
+  view.fit(extent, {
+    padding: [200, 200, 200, 200],
     duration: 500,
   });
 };

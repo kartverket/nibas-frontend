@@ -44,7 +44,8 @@ const getKretserByKommuneUrl = (type: Kretstype) => {
 };
 
 const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
-  const { visible } = useEditGrenseValue(type, kommuneId);
+  const grenseValue = useEditGrenseValue(type, kommuneId);
+  const { visible } = grenseValue;
   const { tokenHolderFunc } = useAuthenticationFlow();
 
   const { data: kretserByKommune } = useNibasApi(
@@ -84,7 +85,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     });
   }, [allFeatures, kommuneId, type]);
 
-  const setLayerToAddTo = useAsyncFeatures(allFeatures);
+  const setLayerToAddTo = useAsyncFeatures(allFeatures, !!grenseValue?.editing);
 
   const addKretserToLayer = (layerId: LayerId) => {
     setLayerToAddTo(layerId);
