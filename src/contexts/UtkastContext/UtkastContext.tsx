@@ -35,8 +35,10 @@ export const UtkastProvider: React.FC = ({ children }) => {
 
   const { mutate: globalMutate } = useSWRConfig();
 
+  const isValidUtkastId = utkastId && utkastId !== "authenticated";
+
   const { data: utkast, mutate } = useNibasApi(
-    utkastId ? "/v1/utkast/{id}" : null,
+    isValidUtkastId ? "/v1/utkast/{id}" : null,
     {
       // id blir ikke brukt før den er truthy, så vi kan trygt si at den
       // ikke er null her
