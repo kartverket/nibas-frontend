@@ -18,7 +18,6 @@ type SharedProps = {
   indent: number;
   onVisibilityClick: () => void;
   visible: boolean;
-  propertiesVisible?: boolean;
   isAktiveKartlag?: boolean;
   children: React.ReactNode;
 };
@@ -44,14 +43,8 @@ type Props = MainLayerProps | SubLayerProps;
 
 const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
   (props, ref) => {
-    const {
-      indent,
-      visible,
-      onVisibilityClick,
-      propertiesVisible,
-      isAktiveKartlag,
-      children,
-    } = props;
+    const { indent, visible, onVisibilityClick, isAktiveKartlag, children } =
+      props;
     const [open, setOpen] = useState(false);
     const { opacity, onSliderChange } = useLayerOpacity({
       mappedLayer: props.mappedLayer,
@@ -129,41 +122,23 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
     return (
       <div>
         <Wrapper indent={indent}>
-          <IconButton onClick={onVisibilityClick}>
-            {visible ? (
-              <Icon
-                icon="visibility"
-                aria-label={`Skjul ${props.mappedLayer.title}`}
-              />
-            ) : (
-              <Icon
-                icon="visibility_off"
-                aria-label={`Vis ${props.mappedLayer.title}`}
-              />
-            )}
-          </IconButton>
           {renderNameAndCaret()}
-          {propertiesVisible && (
-            <div>
-              <Slider
-                min={0}
-                max={100}
-                value={opacity ?? 100}
-                onChange={onSliderChange}
-              />
-            </div>
+          {props.mappedLayer.layers.length == 0 && (
+            <IconButton onClick={onVisibilityClick}>
+              {visible ? (
+                <Icon
+                  icon="remove"
+                  aria-label={`Skjul ${props.mappedLayer.title}`}
+                />
+              ) : (
+                <Icon
+                  icon="add"
+                  aria-label={`Vis ${props.mappedLayer.title}`}
+                />
+              )}
+            </IconButton>
           )}
         </Wrapper>
-        {isAktiveKartlag && (
-          <div>
-            <Slider
-              min={0}
-              max={100}
-              value={opacity ?? 100}
-              onChange={onSliderChange}
-            />
-          </div>
-        )}
         {open && children}
       </div>
     );
@@ -174,9 +149,7 @@ BackgroundLayerAccordion.displayName = "BackgroundLayerAccordion";
 
 const IconButton = styled(Button).attrs(() => ({
   variant: "unstyled",
-}))`
-  margin-right: 8px;
-`;
+}))``;
 
 const PropertiesButton = styled(Button).attrs(() => ({
   variant: "unstyled",
