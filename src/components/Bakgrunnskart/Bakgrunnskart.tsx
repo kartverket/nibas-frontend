@@ -12,8 +12,6 @@ const Bakgrunnskart = () => {
   const { isOpen: visible, togglePanel } = useSidebarPanel("kartlag");
   const { orderedLayerIds, visibleLayers } = useBakgrunnskart();
 
-  console.log("Bakgrunnskart", visibleLayers);
-
   if (!visible) return null;
 
   return (

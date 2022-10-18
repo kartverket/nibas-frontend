@@ -29,7 +29,6 @@ export const BakgrunnskartProvider: React.FC = ({ children }) => {
 
   const { visibleLayers, moveLayer, toggleLayerVisibility } =
     useVisibleLayers();
-  console.log("BakgrunnskartProvider", visibleLayers);
   const { orderedLayerIds } = useOrderedLayers();
 
   useEffect(() => {

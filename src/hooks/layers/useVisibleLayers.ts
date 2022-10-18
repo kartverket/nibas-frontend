@@ -27,16 +27,11 @@ const useVisibleLayers = () => {
   };
 
   const moveLayer = (direction: "up" | "down", layerId: BakgrunnskartId) => {
-    console.log("moveLayer!");
     const indexDifference = direction === "up" ? 1 : -1;
-
     const index = visibleLayers.indexOf(layerId);
-
-    const newZIndexes = visibleLayers as BakgrunnskartId[];
+    const newZIndexes = [...visibleLayers];
     newZIndexes.splice(index, 1);
     newZIndexes.splice(index + indexDifference, 0, layerId);
-
-    console.log(newZIndexes);
 
     setVisibleLayers(newZIndexes);
   };
