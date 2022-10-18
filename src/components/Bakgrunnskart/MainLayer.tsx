@@ -13,12 +13,7 @@ type Props = {
   isAktiveKartlag?: boolean;
 };
 
-const MainLayer = ({
-  layerId,
-  index,
-  canDrag = true,
-  isAktiveKartlag,
-}: Props) => {
+const MainLayer = ({ layerId, index, canDrag, isAktiveKartlag }: Props) => {
   const layer = bakgrunnskartLayers[layerId];
   const { mappedLayers, moveLayer, toggleLayerVisibility, visibleLayers } =
     useBakgrunnskart();
@@ -31,7 +26,7 @@ const MainLayer = ({
     return (
       <MainBackgroundLayer
         mappedLayer={mappedLayer}
-        visible={visibleLayers[layerId]}
+        visible={visibleLayers.includes(layerId)}
         toggleLayerVisibility={() => toggleLayerVisibility(layerId)}
         index={index}
         moveLayer={canDrag ? moveLayer : undefined}
@@ -44,7 +39,7 @@ const MainLayer = ({
     return (
       <WMTSBackgroundLayer
         mappedLayer={mappedLayer}
-        visible={visibleLayers[layerId]}
+        visible={visibleLayers.includes(layerId)}
         toggleLayerVisibility={() => toggleLayerVisibility(layerId)}
         index={index}
         moveLayer={canDrag ? moveLayer : undefined}
@@ -57,7 +52,7 @@ const MainLayer = ({
     return (
       <WFSBackgroundLayer
         mappedLayer={mappedLayer}
-        visible={visibleLayers[layerId]}
+        visible={visibleLayers.includes(layerId)}
         toggleLayerVisibility={() => toggleLayerVisibility(layerId)}
         index={index}
         moveLayer={canDrag ? moveLayer : undefined}

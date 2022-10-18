@@ -116,7 +116,7 @@ const SubBackgroundLayer = ({
     ].getSource() as TileWMS;
     const layersInParams = source.getParams().LAYERS as string;
 
-    const isMainLayerVisible = visibleLayers[mainLayerSourceId];
+    const isMainLayerVisible = visibleLayers.includes(mainLayerSourceId);
 
     if (layersInParams && !isMainLayerVisible) {
       toggleLayerVisibility(mainLayerSourceId);
@@ -137,6 +137,7 @@ const SubBackgroundLayer = ({
       indent={indent}
       visible={visible}
       onVisibilityClick={onVisibilityClick}
+      isAktiveKartlag={isAktivtKartlag}
     >
       <>
         {mappedLayer.layers.map((layer) => (
@@ -146,6 +147,7 @@ const SubBackgroundLayer = ({
             mainLayerSourceId={mainLayerSourceId}
             mainLayerName={mainLayerName}
             indent={indent + 1}
+            isAktivtKartlag={isAktivtKartlag}
           />
         ))}
       </>

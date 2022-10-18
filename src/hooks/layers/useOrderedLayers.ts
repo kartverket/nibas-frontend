@@ -25,21 +25,8 @@ const useOrderedLayers = () => {
     });
   }, [orderedLayerIds]);
 
-  const moveLayer = (direction: "up" | "down", layerId: BakgrunnskartId) => {
-    const indexDifference = direction === "up" ? 1 : -1;
-
-    const index = orderedLayerIds.indexOf(layerId);
-
-    const newZIndexes = [...orderedLayerIds];
-    newZIndexes.splice(index, 1);
-    newZIndexes.splice(index + indexDifference, 0, layerId);
-
-    setOrderedLayerIds(newZIndexes);
-  };
-
   return {
     orderedLayerIds,
-    moveLayer,
   };
 };
 

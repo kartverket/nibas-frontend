@@ -5,7 +5,6 @@ import { SidebarPanel } from "components/Sidebar/SidebarPanel";
 import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
 import { useBakgrunnskart } from "contexts/BakgrunnskartContext";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
-import { BakgrunnskartId } from "hooks/layers/types";
 import Heading from "components/typography/Heading";
 
 const Bakgrunnskart = () => {
@@ -13,34 +12,27 @@ const Bakgrunnskart = () => {
   const { isOpen: visible, togglePanel } = useSidebarPanel("kartlag");
   const { orderedLayerIds, visibleLayers } = useBakgrunnskart();
 
-  if (!visible) return null;
+  console.log("Bakgrunnskart", visibleLayers);
 
-  const openLayers = Object.keys(visibleLayers).filter(
-    (id) => visibleLayers[id as BakgrunnskartId]
-  );
+  if (!visible) return null;
 
   return (
     <Panel>
       <SidebarPanelTitle closePanel={togglePanel} title={t("Aktive kartlag")} />
-      {openLayers.map((id, i) => (
+      {visibleLayers.map((id, i) => (
         <MainLayer
           key={id}
-          layerId={id as BakgrunnskartId}
+          layerId={id}
           index={i}
           isAktiveKartlag={true}
           canDrag={true}
         />
       ))}
-      <ActiveBackgroundLayers tag="h3" size="xs">
+      <BackgroundLayersHeading tag="h3" size="xs">
         {t("sidebar.Kartlag")}
-      </ActiveBackgroundLayers>
+      </BackgroundLayersHeading>
       {orderedLayerIds.map((layerId, index) => (
-        <MainLayer
-          key={layerId}
-          layerId={layerId}
-          index={index}
-          canDrag={true}
-        />
+        <MainLayer key={layerId} layerId={layerId} index={index} />
       ))}
     </Panel>
   );
@@ -50,7 +42,7 @@ const Panel = styled(SidebarPanel)`
   margin-top: 180px;
 `;
 
-const ActiveBackgroundLayers = styled(Heading)`
+const BackgroundLayersHeading = styled(Heading)`
   margin: 8px 0 0;
   border-bottom: 2px solid ${({ theme }) => theme.colors.grayLight};
 `;

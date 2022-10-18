@@ -1,70 +1,47 @@
-import { useEffect, useReducer } from "react";
+import { useEffect, useState } from "react";
 import { bakgrunnskartLayers } from "./constants";
 import { BakgrunnskartId } from "./types";
 import { getLayerById } from "utils/map/layers";
 
-export type VisibleLayers = Record<BakgrunnskartId, boolean>;
-type Action =
-  | { type: "setLayerVisibility"; layerId: BakgrunnskartId; visible: boolean }
-  | { type: "toggleLayerVisibility"; layerId: BakgrunnskartId };
-
-// TODO optional med action creators, litt subjektivt
-export const setLayerVisibility = (
-  layerId: BakgrunnskartId,
-  visible: boolean
-): Action => ({
-  type: "setLayerVisibility",
-  layerId,
-  visible,
-});
-export const toggleLayerVisibility = (layerId: BakgrunnskartId): Action => ({
-  type: "toggleLayerVisibility",
-  layerId,
-});
-
-const visibleLayersReducer = (state: VisibleLayers, action: Action) => {
-  switch (action.type) {
-    case "setLayerVisibility": {
-      return {
-        ...state,
-        [action.layerId]: action.visible,
-      };
-    }
-    case "toggleLayerVisibility": {
-      return {
-        ...state,
-        [action.layerId]: !state[action.layerId],
-      };
-    }
-  }
-};
-
-// lag er by default usynlige
-const getInitialVisibility = () => {
-  return Object.keys(bakgrunnskartLayers).reduce(
-    (acc, layerId) => ({
-      ...acc,
-      [layerId]: false,
-    }),
-    {} as VisibleLayers
-  );
-};
-
 const useVisibleLayers = () => {
-  const [visibleLayers, dispatch] = useReducer(visibleLayersReducer, {
-    ...getInitialVisibility(),
-    cachetjenester: true,
-  });
+  const [visibleLayers, setVisibleLayers] = useState<BakgrunnskartId[]>([
+    "cachetjenester" as BakgrunnskartId,
+  ]);
 
   // sett synlighet til layer i map til ny verdi
   useEffect(() => {
-    Object.keys(visibleLayers).forEach((layerId) => {
+    for (const layerId of Object.keys(bakgrunnskartLayers)) {
       const layer = getLayerById(layerId as BakgrunnskartId);
-      layer?.setVisible(visibleLayers[layerId as BakgrunnskartId]);
-    });
+      const visibility = visibleLayers.includes(layerId as BakgrunnskartId);
+      layer?.setVisible(visibility);
+    }
   }, [visibleLayers]);
 
-  return { visibleLayers, dispatch };
+  const toggleLayerVisibility = (layerId: BakgrunnskartId) => {
+    const visible = visibleLayers.includes(layerId);
+    if (visible) {
+      setVisibleLayers(visibleLayers.filter((vl) => vl !== layerId));
+    } else {
+      setVisibleLayers([layerId, ...visibleLayers]);
+    }
+  };
+
+  const moveLayer = (direction: "up" | "down", layerId: BakgrunnskartId) => {
+    console.log("moveLayer!");
+    const indexDifference = direction === "up" ? 1 : -1;
+
+    const index = visibleLayers.indexOf(layerId);
+
+    const newZIndexes = visibleLayers as BakgrunnskartId[];
+    newZIndexes.splice(index, 1);
+    newZIndexes.splice(index + indexDifference, 0, layerId);
+
+    console.log(newZIndexes);
+
+    setVisibleLayers(newZIndexes);
+  };
+
+  return { visibleLayers, moveLayer, toggleLayerVisibility };
 };
 
 export default useVisibleLayers;

@@ -65,7 +65,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
             onClick={() => setOpen(!open)}
             icon={icon}
           >
-            <DraggableName ref={ref}>{props.mappedLayer.title}</DraggableName>
+            <DraggableName>{props.mappedLayer.title}</DraggableName>
           </ClickableName>
         );
       }
@@ -101,17 +101,21 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
               </span>
             </DraggableLayer>
             <span>
-              <Slider
-                min={0}
-                max={100}
-                value={opacity ?? 100}
-                onChange={onSliderChange}
-              />
-              <Icon
-                icon="remove"
-                aria-label={`Fjern fra aktive kartlag`}
-                onClick={onVisibilityClick}
-              />
+              {props.isMainLayer && (
+                <Slider
+                  min={0}
+                  max={100}
+                  value={opacity ?? 100}
+                  onChange={onSliderChange}
+                />
+              )}
+              {props.mappedLayer.layers.length == 0 && (
+                <Icon
+                  icon="remove"
+                  aria-label={`Fjern fra aktive kartlag`}
+                  onClick={onVisibilityClick}
+                />
+              )}
             </span>
           </AktivtKartlagWrapper>
           {children}
