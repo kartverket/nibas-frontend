@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { render, screen } from "test/test-utils";
 import SubBackgroundLayer from "./SubBackgroundLayer";
 
@@ -26,9 +27,24 @@ const defaultProps: React.ComponentProps<typeof SubBackgroundLayer> = {
   },
 };
 
+const renderWithProvider = (ui: ReactNode) =>
+  render(ui, {
+    BakgrunnskartProvider: {
+      visibleLayers: { administrativeGrenser: true } as any,
+      toggleLayerVisibility: jest.fn(),
+      mappedLayers: [
+        { ...defaultProps.mappedLayer, sourceId: "administrativeGrenser" },
+      ],
+      moveLayer: jest.fn(),
+      orderedLayerIds: ["administrativeGrenser"],
+    },
+  });
+
 describe("SubBackgroundLayer", () => {
   it("should render sublayers for each sublayer on caret click", async () => {
-    const { user } = render(<SubBackgroundLayer {...defaultProps} />);
+    const { user } = renderWithProvider(
+      <SubBackgroundLayer {...defaultProps} />
+    );
 
     const caret = screen.getByRole("button", {
       name: /sublag åpne/i,
@@ -40,7 +56,9 @@ describe("SubBackgroundLayer", () => {
   });
 
   it("should open and close eye correctly", async () => {
-    const { user } = render(<SubBackgroundLayer {...defaultProps} />);
+    const { user } = renderWithProvider(
+      <SubBackgroundLayer {...defaultProps} />
+    );
 
     const closedEye = screen.getByRole("button", { name: /vis sublag/i });
     await user.click(closedEye);
@@ -55,7 +73,7 @@ describe("SubBackgroundLayer", () => {
   });
 
   it("should display name of mapped layer", () => {
-    render(<SubBackgroundLayer {...defaultProps} />);
+    renderWithProvider(<SubBackgroundLayer {...defaultProps} />);
 
     expect(screen.getByText(/sublag/i)).toBeInTheDocument();
   });

@@ -117,7 +117,7 @@ const SubBackgroundLayer = ({
     const layersInParams = source.getParams().LAYERS as string;
 
     const isMainLayerVisible = visibleLayers[mainLayerSourceId];
-    console.log(layersInParams);
+
     if (layersInParams && !isMainLayerVisible) {
       toggleLayerVisibility(mainLayerSourceId);
     } else if (layersInParams === mainLayerName && isMainLayerVisible) {

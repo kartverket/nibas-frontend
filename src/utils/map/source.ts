@@ -83,5 +83,5 @@ export const getWMTSOptions = async (
   return optionsFromCapabilities(result, optionsConfig);
 };
 
-export const mapFeatureToFeatureId = (feature: Feature<Geometry>) =>
+export const getFeatureId = (feature: Feature<Geometry>) =>
   feature.getId()?.toString() ?? "";
