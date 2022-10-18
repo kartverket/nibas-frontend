@@ -18,6 +18,7 @@ import { updateUtkast as updateApiUtkast } from "api/utkast";
 import { HistoryChange, useToolbar } from "contexts/ToolbarContext";
 import useNibasApi from "hooks/useNibasApi";
 import { OppdaterUtkastRequest } from "types/api";
+import { invalidUtkastIds } from "./constants";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
@@ -35,7 +36,7 @@ export const UtkastProvider: React.FC = ({ children }) => {
 
   const { mutate: globalMutate } = useSWRConfig();
 
-  const isValidUtkastId = utkastId && utkastId !== "authenticated";
+  const isValidUtkastId = utkastId && !invalidUtkastIds.includes(utkastId);
 
   const { data: utkast, mutate } = useNibasApi(
     isValidUtkastId ? "/v1/utkast/{id}" : null,

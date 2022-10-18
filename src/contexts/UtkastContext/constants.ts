@@ -7,3 +7,5 @@ export const translateKeysByEndringsType: Record<string, string> = {
   Navneendring: "utkast.Navneendring",
   Nummerendring: "utkast.Nummerendring",
 };
+
+export const invalidUtkastIds = ["authenticated", "logout"];
