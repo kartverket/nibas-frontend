@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
-import { useMatch } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { useSWRConfig } from "swr";
 import {
   EntityUtkastType,
@@ -31,7 +31,8 @@ export const UtkastContext = createContext<UtkastContextValue | undefined>(
 export const UtkastProvider: React.FC = ({ children }) => {
   const { history, clearHistory } = useToolbar();
   const { tokenHolderFunc } = useAuthenticationFlow();
-  const utkastId = useMatch("/:utkastId")?.params.utkastId;
+  const [searchParams] = useSearchParams();
+  const utkastId = searchParams.get("utkast");
 
   const { mutate: globalMutate } = useSWRConfig();
 

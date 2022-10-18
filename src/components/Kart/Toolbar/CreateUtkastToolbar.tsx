@@ -44,7 +44,7 @@ const CreateUtkastToolbar = ({ closeCreateUtkast }: Props) => {
 
     closeCreateUtkast();
     clearHistory();
-    navigate(`/${utkastId}`);
+    navigate(`?utkast=${utkastId}`);
   };
 
   return (

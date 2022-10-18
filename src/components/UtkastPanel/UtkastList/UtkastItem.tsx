@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useTranslation } from "react-i18next";
-import { useMatch, useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import styled from "styled-components";
 import { useSWRConfig } from "swr";
 import UtkastItemActive from "./UtkastItemActive";
@@ -25,7 +25,8 @@ const UtkastItem = ({ utkast }: Props) => {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   const { t } = useTranslation();
-  const utkastId = useMatch("/:utkastId")?.params.utkastId;
+  const [searchParams] = useSearchParams();
+  const utkastId = searchParams.get("utkast");
 
   const { resetEditingObject } = useEditAllGrenser();
   const { closePanel } = useMetadataPanel();
@@ -67,8 +68,8 @@ const UtkastItem = ({ utkast }: Props) => {
     }
   };
 
-  const changeUtkast = (url: string) => {
-    navigate(`/${url}`);
+  const changeUtkast = (id?: string) => {
+    navigate(id ? `?utkast=${id}` : "/");
     resetEditingObject();
     closePanel();
     resetMapView();
