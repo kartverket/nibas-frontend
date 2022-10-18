@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import styled from "styled-components";
 import { useSWRConfig } from "swr";
 import UtkastItemActive from "./UtkastItemActive";
@@ -26,7 +26,7 @@ const UtkastItem = ({ utkast }: Props) => {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   const { t } = useTranslation();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const utkastId = searchParams.get("utkast");
 
   const { resetEditingObject } = useEditAllGrenser();
@@ -39,7 +39,6 @@ const UtkastItem = ({ utkast }: Props) => {
   );
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { mutate } = useSWRConfig();
-  const navigate = useNavigate();
 
   const utkastActive = utkastId === utkast.id;
 
@@ -51,7 +50,7 @@ const UtkastItem = ({ utkast }: Props) => {
     await mutate(["/v1/utkast", tokenHolderFunc()?.token]);
 
     if (utkastActive) {
-      navigate("/");
+      setSearchParams({});
     }
 
     // TODO: Modal/toast om at utkastet er publisert?
@@ -64,13 +63,17 @@ const UtkastItem = ({ utkast }: Props) => {
 
     await mutate(["/v1/utkast", tokenHolderFunc()?.token]);
 
-    if (utkastId === utkast.id) {
-      navigate("/");
+    if (utkastActive) {
+      setSearchParams({});
     }
   };
 
   const changeUtkast = (id?: string) => {
-    navigate(id ? `?utkast=${id}` : "/");
+    if (id) {
+      setSearchParams({ utkast: id });
+    } else {
+      setSearchParams({});
+    }
     resetEditingObject();
     closePanel();
     resetMapView();
