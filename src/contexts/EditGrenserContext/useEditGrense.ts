@@ -5,10 +5,7 @@ import { EditGrenserContext } from "./EditGrenserContext";
 import { EditingType } from "./types";
 import { layerIdByGrenseType } from "components/GrenserDrillDown/ToggleableGrense/ToggleableGrense";
 import useAsyncFeatures from "hooks/useAsyncFeatures";
-import {
-  mapFeatureToFeatureId,
-  removeFeaturesFromSourceByIds,
-} from "utils/map/source";
+import { getFeatureId, removeFeaturesFromSourceByIds } from "utils/map/source";
 
 export const useEditGrense = (
   grenseType: EditingType,
@@ -39,15 +36,9 @@ export const useEditGrense = (
       if (!features) return;
 
       if (newObjectValue?.editing) {
-        removeFeaturesFromSourceByIds(
-          "edit",
-          features.map(mapFeatureToFeatureId)
-        );
+        removeFeaturesFromSourceByIds("edit", features.map(getFeatureId));
       } else {
-        removeFeaturesFromSourceByIds(
-          layerId,
-          features.map(mapFeatureToFeatureId)
-        );
+        removeFeaturesFromSourceByIds(layerId, features.map(getFeatureId));
       }
     } else if (newObjectValue?.editing) {
       // hvis editing skal features legges tilbake til edit-laget
@@ -80,17 +71,11 @@ export const useEditGrense = (
       if (!value?.visible || !features) return;
 
       const layerId = layerIdByGrenseType[grenseType];
-      removeFeaturesFromSourceByIds(
-        layerId,
-        features.map(mapFeatureToFeatureId)
-      );
+      removeFeaturesFromSourceByIds(layerId, features.map(getFeatureId));
     } else if (!newObjectValue.editing) {
       if (!features) return;
 
-      removeFeaturesFromSourceByIds(
-        "edit",
-        features.map(mapFeatureToFeatureId)
-      );
+      removeFeaturesFromSourceByIds("edit", features.map(getFeatureId));
     }
   };
 

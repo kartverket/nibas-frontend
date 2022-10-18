@@ -24,8 +24,8 @@ const Kart = () => {
   const { panelContext } = useMetadataPanel();
   const { utkast } = useUtkast();
 
-  const selectedFeatures = useSelectInteraction();
   useEditInteractions();
+  const selectedFeatures = useSelectInteraction();
 
   useEffect(() => {
     // mapRef kan egentlig ikke være null her,
