@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import styled from "styled-components";
 import { BlockLabel } from "../MetadataPanel/metadataComponents";
 import { ToolbarWrapper } from "./components";
@@ -24,7 +24,7 @@ const CreateUtkastToolbar = ({ closeCreateUtkast }: Props) => {
   const [utkastType, setUtkastType] = useState("");
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { history, clearHistory } = useToolbar();
-  const navigate = useNavigate();
+  const setSearchParams = useSearchParams()[1];
 
   const createUtkast = async () => {
     // TODO: Her må det legges til noe feilmelding til brukeren :)
@@ -44,7 +44,7 @@ const CreateUtkastToolbar = ({ closeCreateUtkast }: Props) => {
 
     closeCreateUtkast();
     clearHistory();
-    navigate(`?utkast=${utkastId}`);
+    setSearchParams({ utkast: utkastId });
   };
 
   return (
