@@ -126,7 +126,7 @@ const UtkastItemActive = ({ utkastId, changeUtkast }: Props) => {
           {t("utkast.Du er nå i redigeringsmodus av dette utkastet")}
         </EditingUtkastText>
         <CancelButton onClick={() => changeUtkast("")}>
-          {t("action.Avbryt redigering")}
+          {t("action.Avslutt redigering")}
         </CancelButton>
       </Center>
     </UtkastItemExpanded>

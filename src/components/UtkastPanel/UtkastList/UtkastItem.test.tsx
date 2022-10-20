@@ -15,7 +15,7 @@ describe("UtkastItem", () => {
     );
 
     const cancelButton = await screen.findByRole("button", {
-      name: "action.Avbryt redigering",
+      name: "action.Avslutt redigering",
     });
 
     expect(cancelButton).toBeInTheDocument();
