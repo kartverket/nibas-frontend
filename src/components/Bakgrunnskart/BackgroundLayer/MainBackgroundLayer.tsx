@@ -42,7 +42,7 @@ const MainBackgroundLayer = ({
             mainLayerSourceId={mappedLayer.sourceId}
             mainLayerName={mappedLayer.id ?? ""}
             indent={1}
-            isAktivtKartlag={isAktiveKartlag}
+            isAktiveKartlag={isAktiveKartlag}
           />
         ))}
       </>

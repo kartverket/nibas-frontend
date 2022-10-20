@@ -38,7 +38,7 @@ type Props = {
   indent: number;
   mainLayerSourceId: BakgrunnskartId;
   mainLayerName: string;
-  isAktivtKartlag?: boolean;
+  isAktiveKartlag?: boolean;
 };
 
 const SubBackgroundLayer = ({
@@ -46,7 +46,7 @@ const SubBackgroundLayer = ({
   indent,
   mainLayerSourceId,
   mainLayerName,
-  isAktivtKartlag,
+  isAktiveKartlag,
 }: Props) => {
   const [visible, setVisible] = useState(false);
 
@@ -126,9 +126,9 @@ const SubBackgroundLayer = ({
     setVisible(!visible);
   };
 
-  if (!visible && isAktivtKartlag) {
-    return <div />;
-  }
+  // if (isAktiveKartlag && !visible && props.mappedLayer.layers.length > 0) {
+  //   return <div />;
+  // }
 
   return (
     <BackgroundLayerAccordion
@@ -137,7 +137,7 @@ const SubBackgroundLayer = ({
       indent={indent}
       visible={visible}
       onVisibilityClick={onVisibilityClick}
-      isAktiveKartlag={isAktivtKartlag}
+      isAktiveKartlag={isAktiveKartlag}
     >
       <>
         {mappedLayer.layers.map((layer) => (
@@ -147,7 +147,7 @@ const SubBackgroundLayer = ({
             mainLayerSourceId={mainLayerSourceId}
             mainLayerName={mainLayerName}
             indent={indent + 1}
-            isAktivtKartlag={isAktivtKartlag}
+            isAktiveKartlag={isAktiveKartlag}
           />
         ))}
       </>

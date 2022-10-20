@@ -45,6 +45,7 @@ const WMTSSubLayer = ({
       mappedLayer={subLayer}
       onVisibilityClick={onSubLayerClick}
       visible={activeSubLayer === subLayer.id}
+      isAktiveKartlag={isAktivtKartlag}
     >
       {null}
     </BackgroundLayerAccordion>

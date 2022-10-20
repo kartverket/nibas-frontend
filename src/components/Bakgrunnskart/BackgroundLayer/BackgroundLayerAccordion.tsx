@@ -90,39 +90,42 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
     if (isAktiveKartlag) {
       return (
         <div>
-          <AktivtKartlagWrapper>
-            <DraggableLayer ref={ref}>
+          {(props.isMainLayer ||
+            (props.mappedLayer.layers.length === 0 && visible)) && (
+            <AktivtKartlagWrapper>
+              <DraggableLayer ref={ref}>
+                <span>
+                  {props.isMainLayer && (
+                    <Icon
+                      icon="reorder"
+                      aria-label={`Bytt rekkefølge på kartlag`}
+                    />
+                  )}
+                  <DraggableName>{props.mappedLayer.title}</DraggableName>
+                </span>
+              </DraggableLayer>
               <span>
-                <Icon
-                  icon="reorder"
-                  aria-label={`Bytt rekkefølge på kartlag`}
-                />
-                <DraggableName>{props.mappedLayer.title}</DraggableName>
+                {props.isMainLayer ? (
+                  <Slider
+                    min={0}
+                    max={100}
+                    value={opacity ?? 100}
+                    onChange={onSliderChange}
+                  />
+                ) : (
+                  <Icon
+                    icon="remove"
+                    aria-label={`Fjern fra aktive kartlag`}
+                    onClick={onVisibilityClick}
+                  />
+                )}
               </span>
-            </DraggableLayer>
-            <span>
-              {props.isMainLayer && (
-                <Slider
-                  min={0}
-                  max={100}
-                  value={opacity ?? 100}
-                  onChange={onSliderChange}
-                />
-              )}
-              {props.mappedLayer.layers.length == 0 && (
-                <Icon
-                  icon="remove"
-                  aria-label={`Fjern fra aktive kartlag`}
-                  onClick={onVisibilityClick}
-                />
-              )}
-            </span>
-          </AktivtKartlagWrapper>
+            </AktivtKartlagWrapper>
+          )}
           {children}
         </div>
       );
     }
-
     return (
       <div>
         <Wrapper indent={indent}>
@@ -154,13 +157,6 @@ BackgroundLayerAccordion.displayName = "BackgroundLayerAccordion";
 const IconButton = styled(Button).attrs(() => ({
   variant: "unstyled",
 }))``;
-
-const PropertiesButton = styled(Button).attrs(() => ({
-  variant: "unstyled",
-}))`
-  margin-left: 8px;
-  color: ${({ theme }) => theme.colors.black};
-`;
 
 const Wrapper = styled.div<{ indent: number }>`
   display: flex;
