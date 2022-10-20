@@ -65,7 +65,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
             onClick={() => setOpen(!open)}
             icon={icon}
           >
-            <DraggableName>{props.mappedLayer.title}</DraggableName>
+            <span>{props.mappedLayer.title}</span>
           </ClickableName>
         );
       }
@@ -87,10 +87,45 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
       return <span>{props.mappedLayer.title}</span>;
     };
 
+    const renderAktivtMainLayer = () => {
+      return (
+        <DraggableLayer>
+          <AktivtMainLayerWrapper>
+            <Icon icon="reorder" aria-label={`Bytt rekkefølge på kartlag`} />
+            <span>{props.mappedLayer.title}</span>
+            <div>
+              <Slider
+                min={0}
+                max={100}
+                value={opacity ?? 100}
+                onChange={onSliderChange}
+                className="aktivtkartlagSlider"
+              />
+            </div>
+          </AktivtMainLayerWrapper>
+        </DraggableLayer>
+      );
+    };
+
+    const renderAktivtSubLayer = () => {
+      return (
+        <AktivtSubLayerWrapper indent={indent}>
+          <span>{props.mappedLayer.title}</span>
+          <Icon
+            icon="remove"
+            aria-label={`Fjern fra aktive kartlag`}
+            onClick={onVisibilityClick}
+          />
+        </AktivtSubLayerWrapper>
+      );
+    };
+
     if (isAktiveKartlag) {
       return (
         <div>
-          {(props.isMainLayer ||
+          {props.isMainLayer ? renderAktivtMainLayer() : renderAktivtSubLayer()}
+
+          {/* {(props.isMainLayer ||
             (props.mappedLayer.layers.length === 0 && visible)) && (
             <AktivtKartlagWrapper>
               <DraggableLayer ref={ref}>
@@ -101,27 +136,27 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
                       aria-label={`Bytt rekkefølge på kartlag`}
                     />
                   )}
-                  <DraggableName>{props.mappedLayer.title}</DraggableName>
+                  <span>{props.mappedLayer.title}</span>
+                </span>
+                <span>
+                  {props.isMainLayer ? (
+                    <Slider
+                      min={0}
+                      max={100}
+                      value={opacity ?? 100}
+                      onChange={onSliderChange}
+                    />
+                  ) : (
+                    <Icon
+                      icon="remove"
+                      aria-label={`Fjern fra aktive kartlag`}
+                      onClick={onVisibilityClick}
+                    />
+                  )}
                 </span>
               </DraggableLayer>
-              <span>
-                {props.isMainLayer ? (
-                  <Slider
-                    min={0}
-                    max={100}
-                    value={opacity ?? 100}
-                    onChange={onSliderChange}
-                  />
-                ) : (
-                  <Icon
-                    icon="remove"
-                    aria-label={`Fjern fra aktive kartlag`}
-                    onClick={onVisibilityClick}
-                  />
-                )}
-              </span>
             </AktivtKartlagWrapper>
-          )}
+          )} */}
           {children}
         </div>
       );
@@ -166,6 +201,10 @@ const Wrapper = styled.div<{ indent: number }>`
   > span {
     flex: 1;
   }
+
+  > div {
+    width: 50%;
+  }
 `;
 
 const ClickableName = styled(Button)`
@@ -180,12 +219,39 @@ const ClickableName = styled(Button)`
   }
 `;
 
-const DraggableName = styled.span`
+const DraggableLayer = styled.span`
   cursor: move;
 `;
 
-const DraggableLayer = styled.span`
-  cursor: move;
+const AktivtMainLayerWrapper = styled.div`
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  margin: 8px 0;
+  > :first-child {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: left;
+  }
+
+  > span {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: right;
+    cursor: pointer;
+  }
+`;
+
+const AktivtSubLayerWrapper = styled.div<{ indent: number }>`
+  margin-left: 32px;
+  display: flex;
+  flex-direction: row;
+  align-items: left;
+  justify-content: space-between;
 `;
 
 const AktivtKartlagWrapper = styled.div`
