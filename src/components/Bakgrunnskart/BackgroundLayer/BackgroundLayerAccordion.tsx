@@ -89,10 +89,12 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
 
     const renderAktivtMainLayer = () => {
       return (
-        <DraggableLayer>
+        <DraggableLayer ref={ref}>
           <AktivtMainLayerWrapper>
-            <Icon icon="reorder" aria-label={`Bytt rekkefølge på kartlag`} />
-            <span>{props.mappedLayer.title}</span>
+            <div>
+              <Icon icon="reorder" aria-label={`Bytt rekkefølge på kartlag`} />
+              <span>{props.mappedLayer.title}</span>
+            </div>
             <div>
               <Slider
                 min={0}
@@ -108,59 +110,31 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
     };
 
     const renderAktivtSubLayer = () => {
-      return (
-        <AktivtSubLayerWrapper indent={indent}>
-          <span>{props.mappedLayer.title}</span>
-          <Icon
-            icon="remove"
-            aria-label={`Fjern fra aktive kartlag`}
-            onClick={onVisibilityClick}
-          />
-        </AktivtSubLayerWrapper>
-      );
+      if (visible && props.mappedLayer.layers.length === 0) {
+        return (
+          <AktivtSubLayerWrapper indent={indent}>
+            <span>{props.mappedLayer.title}</span>
+            <Icon
+              icon="remove"
+              aria-label={`Fjern fra aktive kartlag`}
+              onClick={onVisibilityClick}
+            />
+          </AktivtSubLayerWrapper>
+        );
+      }
+
+      return;
     };
 
     if (isAktiveKartlag) {
       return (
         <div>
           {props.isMainLayer ? renderAktivtMainLayer() : renderAktivtSubLayer()}
-
-          {/* {(props.isMainLayer ||
-            (props.mappedLayer.layers.length === 0 && visible)) && (
-            <AktivtKartlagWrapper>
-              <DraggableLayer ref={ref}>
-                <span>
-                  {props.isMainLayer && (
-                    <Icon
-                      icon="reorder"
-                      aria-label={`Bytt rekkefølge på kartlag`}
-                    />
-                  )}
-                  <span>{props.mappedLayer.title}</span>
-                </span>
-                <span>
-                  {props.isMainLayer ? (
-                    <Slider
-                      min={0}
-                      max={100}
-                      value={opacity ?? 100}
-                      onChange={onSliderChange}
-                    />
-                  ) : (
-                    <Icon
-                      icon="remove"
-                      aria-label={`Fjern fra aktive kartlag`}
-                      onClick={onVisibilityClick}
-                    />
-                  )}
-                </span>
-              </DraggableLayer>
-            </AktivtKartlagWrapper>
-          )} */}
           {children}
         </div>
       );
     }
+
     return (
       <div>
         <Wrapper indent={indent}>
@@ -227,7 +201,7 @@ const AktivtMainLayerWrapper = styled.div`
   display: flex;
   flex: 1;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
   margin: 8px 0;
   > :first-child {
     flex: 1;
@@ -235,14 +209,14 @@ const AktivtMainLayerWrapper = styled.div`
     flex-direction: row;
     align-items: center;
     justify-content: left;
-  }
 
-  > span {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: right;
-    cursor: pointer;
+    > :first-child {
+      margin-right: 4px;
+      margin-left: 4px;
+    }
+  }
+  div:nth-child(2) {
+    width: 100px;
   }
 `;
 
@@ -252,33 +226,6 @@ const AktivtSubLayerWrapper = styled.div<{ indent: number }>`
   flex-direction: row;
   align-items: left;
   justify-content: space-between;
-`;
-
-const AktivtKartlagWrapper = styled.div`
-  display: flex;
-  flex: 1;
-  align-items: center;
-  justify-content: space-between;
-  margin: 8px 0;
-  > :first-child {
-    flex: 1;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: left;
-  }
-
-  > span {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: right;
-    cursor: pointer;
-
-    > :first-child {
-      margin-right: 8px;
-    }
-  }
 `;
 
 export default BackgroundLayerAccordion;
