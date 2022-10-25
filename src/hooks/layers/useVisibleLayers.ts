@@ -10,11 +10,16 @@ const useVisibleLayers = () => {
 
   // sett synlighet til layer i map til ny verdi
   useEffect(() => {
-    for (const layerId of Object.keys(bakgrunnskartLayers)) {
-      const layer = getLayerById(layerId as BakgrunnskartId);
-      const visibility = visibleLayers.includes(layerId as BakgrunnskartId);
-      layer?.setVisible(visibility);
+    for (const bakgrunnsLayer of Object.keys(bakgrunnskartLayers)) {
+      const layer = getLayerById(bakgrunnsLayer as BakgrunnskartId);
+      layer?.setVisible(false);
     }
+
+    visibleLayers.forEach((layerId, i) => {
+      const layer = getLayerById(layerId as BakgrunnskartId);
+      layer?.setVisible(true);
+      layer.setZIndex(-i - 1);
+    });
   }, [visibleLayers]);
 
   const toggleLayerVisibility = (layerId: BakgrunnskartId) => {
