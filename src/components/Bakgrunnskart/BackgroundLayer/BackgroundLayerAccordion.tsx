@@ -53,7 +53,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
 
     const renderNameAndCaret = () => {
       // hvis hovedlag som kan dras på, vis annen musepeker på navnet
-      if (props.isMainLayer && ref && isAktiveKartlag) {
+      if (props.isMainLayer && ref) {
         let icon: ReactElement | undefined = undefined;
         if (props.mappedLayer.layers.length > 0) {
           icon = getCaretIcon(open);
@@ -65,7 +65,11 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
             onClick={() => setOpen(!open)}
             icon={icon}
           >
-            <span>{props.mappedLayer.title}</span>
+            {visible && props.mappedLayer.layers.length === 0 ? (
+              <span>{props.mappedLayer.title}</span>
+            ) : (
+              <span>{props.mappedLayer.title}</span>
+            )}
           </ClickableName>
         );
       }
@@ -101,7 +105,6 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
                 max={100}
                 value={opacity ?? 100}
                 onChange={onSliderChange}
-                className="aktivtkartlagSlider"
               />
             </div>
           </AktivtMainLayerWrapper>
@@ -112,7 +115,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
     const renderAktivtSubLayer = () => {
       if (visible && props.mappedLayer.layers.length === 0) {
         return (
-          <AktivtSubLayerWrapper indent={indent}>
+          <AktivtSubLayerWrapper>
             <span>{props.mappedLayer.title}</span>
             <Icon
               icon="remove"
@@ -141,12 +144,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
           {renderNameAndCaret()}
           {props.mappedLayer.layers.length == 0 && (
             <IconButton onClick={onVisibilityClick}>
-              {visible ? (
-                <Icon
-                  icon="remove"
-                  aria-label={`Skjul ${props.mappedLayer.title}`}
-                />
-              ) : (
+              {!visible && (
                 <Icon
                   icon="add"
                   aria-label={`Vis ${props.mappedLayer.title}`}
@@ -181,6 +179,10 @@ const Wrapper = styled.div<{ indent: number }>`
   }
 `;
 
+const AktivtKartlagName = styled.span<{ visible: boolean }>`
+  color: ${({ theme }) => theme.colors.grayLight};
+`;
+
 const ClickableName = styled(Button)`
   display: flex;
   justify-content: space-between;
@@ -207,7 +209,7 @@ const AktivtMainLayerWrapper = styled.div`
     flex: 1;
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: unset;
     justify-content: left;
 
     > :first-child {
@@ -217,11 +219,12 @@ const AktivtMainLayerWrapper = styled.div`
   }
   div:nth-child(2) {
     width: 100px;
+    margin-left: 4px;
   }
 `;
 
-const AktivtSubLayerWrapper = styled.div<{ indent: number }>`
-  margin-left: 32px;
+const AktivtSubLayerWrapper = styled.div`
+  margin-left: 38px;
   display: flex;
   flex-direction: row;
   align-items: left;
