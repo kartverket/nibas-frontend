@@ -126,10 +126,6 @@ const SubBackgroundLayer = ({
     setVisible(!visible);
   };
 
-  // if (isAktiveKartlag && !visible && props.mappedLayer.layers.length > 0) {
-  //   return <div />;
-  // }
-
   return (
     <BackgroundLayerAccordion
       key={mappedLayer.title}

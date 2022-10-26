@@ -6,21 +6,15 @@ import Slider from "components/form/Slider";
 import Icon from "components/Icon";
 import { MainMappedLayer, MappedLayer } from "utils/getLayersFromWMS";
 
-const getCaretIcon = (open: boolean) => {
-  if (open) {
-    return (
-      <IconButton open={open}>
-        <Icon icon="expand_less" aria-label="Lukk" />
-      </IconButton>
-    );
-  } else {
-    return (
-      <IconButton open={open}>
-        <Icon icon="expand_more" aria-label="Åpne" />
-      </IconButton>
-    );
-  }
-};
+const getCaretIcon = (open: boolean) => (
+  <IconButton open={open}>
+    {open ? (
+      <Icon icon="expand_less" aria-label="Lukk" />
+    ) : (
+      <Icon icon="expand_more" aria-label="Åpne" />
+    )}
+  </IconButton>
+);
 
 type SharedProps = {
   indent: number;
@@ -133,14 +127,14 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
             <Icon icon="reorder" aria-label={`Bytt rekkefølge på kartlag`} />
             <span>{props.mappedLayer.title}</span>
           </DraggableLayer>
-          <div>
+          <AktivtKartlagSlider>
             <Slider
               min={0}
               max={100}
               value={opacity ?? 100}
               onChange={onSliderChange}
             />
-          </div>
+          </AktivtKartlagSlider>
         </AktivtMainLayerWrapper>
       );
     };
@@ -245,6 +239,24 @@ const ClickableName = styled(Button)<{ open: boolean; isMainLayer?: boolean }>`
 
 const DraggableLayer = styled.span`
   cursor: move;
+
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: unset;
+  justify-content: left;
+
+  > :first-child {
+    margin-right: 4px;
+    margin-left: 4px;
+  }
+`;
+
+const AktivtKartlagSlider = styled.div`
+  width: 100px;
+  margin-left: 4px;
+  margin-right: 8px;
+  margin-bottom: 6px;
 `;
 
 const AktivtMainLayerWrapper = styled.div`
@@ -254,25 +266,6 @@ const AktivtMainLayerWrapper = styled.div`
   margin: 8px 0;
   background-color: ${({ theme }) => theme.colors.blueLight};
   padding: 6px;
-
-  > :first-child {
-    flex: 1;
-    display: flex;
-    flex-direction: row;
-    align-items: unset;
-    justify-content: left;
-
-    > :first-child {
-      margin-right: 4px;
-      margin-left: 4px;
-    }
-  }
-  div:nth-child(2) {
-    width: 100px;
-    margin-left: 4px;
-    margin-right: 8px;
-    margin-bottom: 6px;
-  }
 `;
 
 const AktivtSubLayerWrapper = styled.div`
