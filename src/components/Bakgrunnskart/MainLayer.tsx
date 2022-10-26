@@ -19,7 +19,6 @@ const MainLayer = ({ layerId, index, canDrag, isAktiveKartlag }: Props) => {
     useBakgrunnskart();
 
   const mappedLayer = mappedLayers.find((ml) => ml.sourceId === layerId);
-
   if (!mappedLayer) return null;
 
   if (isWMSLayer(layer)) {

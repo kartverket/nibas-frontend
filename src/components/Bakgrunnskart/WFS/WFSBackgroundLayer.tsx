@@ -1,4 +1,3 @@
-import Slider from "components/form/Slider";
 import { BakgrunnskartId } from "../../../hooks/layers/types";
 import { MainMappedLayer } from "../../../utils/getLayersFromWMS";
 import { getMatWFSFeatures } from "../../../utils/getMatrikkelWfsFeatures";

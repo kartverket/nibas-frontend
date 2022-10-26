@@ -8,9 +8,17 @@ import { MainMappedLayer, MappedLayer } from "utils/getLayersFromWMS";
 
 const getCaretIcon = (open: boolean) => {
   if (open) {
-    return <Icon icon="expand_less" aria-label="Lukk" />;
+    return (
+      <IconButton open={open}>
+        <Icon icon="expand_less" aria-label="Lukk" />
+      </IconButton>
+    );
   } else {
-    return <Icon icon="expand_more" aria-label="Åpne" />;
+    return (
+      <IconButton open={open}>
+        <Icon icon="expand_more" aria-label="Åpne" />
+      </IconButton>
+    );
   }
 };
 
@@ -61,15 +69,27 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
 
         return (
           <ClickableName
-            variant="unstyled"
             onClick={() => setOpen(!open)}
             icon={icon}
+            open={open}
+            isMainLayer={props.isMainLayer}
           >
-            {visible && props.mappedLayer.layers.length === 0 ? (
-              <span>{props.mappedLayer.title}</span>
-            ) : (
-              <span>{props.mappedLayer.title}</span>
-            )}
+            <span>{props.mappedLayer.title}</span>
+          </ClickableName>
+        );
+      }
+
+      //hvis hovedlag og åpent legg på bakgrunnsfarge
+      if (props.isMainLayer) {
+        return (
+          <ClickableName
+            variant="unstyled"
+            icon={getCaretIcon(open)}
+            onClick={() => setOpen(!open)}
+            open={open}
+            isMainLayer={props.isMainLayer}
+          >
+            <span>{props.mappedLayer.title}</span>
           </ClickableName>
         );
       }
@@ -81,6 +101,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
             variant="unstyled"
             icon={getCaretIcon(open)}
             onClick={() => setOpen(!open)}
+            open={open}
           >
             <span>{props.mappedLayer.title}</span>
           </ClickableName>
@@ -88,27 +109,43 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
       }
 
       // ellers bare render tittelen til sub-laget
-      return <span>{props.mappedLayer.title}</span>;
+      return (
+        <AktivtSubKartlagName activeLayer={visible}>
+          {props.mappedLayer.title}
+          <IconButton
+            onClick={onVisibilityClick}
+            activeMainLayer={!visible}
+            open={open}
+          >
+            {!visible ? (
+              <Icon icon="add" aria-label={`Vis ${props.mappedLayer.title}`} />
+            ) : (
+              <Icon
+                icon="remove"
+                aria-label={`Vis ${props.mappedLayer.title}`}
+              />
+            )}
+          </IconButton>
+        </AktivtSubKartlagName>
+      );
     };
 
     const renderAktivtMainLayer = () => {
       return (
-        <DraggableLayer ref={ref}>
-          <AktivtMainLayerWrapper>
-            <div>
-              <Icon icon="reorder" aria-label={`Bytt rekkefølge på kartlag`} />
-              <span>{props.mappedLayer.title}</span>
-            </div>
-            <div>
-              <Slider
-                min={0}
-                max={100}
-                value={opacity ?? 100}
-                onChange={onSliderChange}
-              />
-            </div>
-          </AktivtMainLayerWrapper>
-        </DraggableLayer>
+        <AktivtMainLayerWrapper>
+          <DraggableLayer ref={ref}>
+            <Icon icon="reorder" aria-label={`Bytt rekkefølge på kartlag`} />
+            <span>{props.mappedLayer.title}</span>
+          </DraggableLayer>
+          <div>
+            <Slider
+              min={0}
+              max={100}
+              value={opacity ?? 100}
+              onChange={onSliderChange}
+            />
+          </div>
+        </AktivtMainLayerWrapper>
       );
     };
 
@@ -117,11 +154,9 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
         return (
           <AktivtSubLayerWrapper>
             <span>{props.mappedLayer.title}</span>
-            <Icon
-              icon="remove"
-              aria-label={`Fjern fra aktive kartlag`}
-              onClick={onVisibilityClick}
-            />
+            <IconButton onClick={onVisibilityClick}>
+              <Icon icon="remove" aria-label={`Fjern fra aktive kartlag`} />
+            </IconButton>
           </AktivtSubLayerWrapper>
         );
       }
@@ -140,19 +175,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
 
     return (
       <div>
-        <Wrapper indent={indent}>
-          {renderNameAndCaret()}
-          {props.mappedLayer.layers.length == 0 && (
-            <IconButton onClick={onVisibilityClick}>
-              {!visible && (
-                <Icon
-                  icon="add"
-                  aria-label={`Vis ${props.mappedLayer.title}`}
-                />
-              )}
-            </IconButton>
-          )}
-        </Wrapper>
+        <Wrapper indent={indent}>{renderNameAndCaret()}</Wrapper>
         {open && children}
       </div>
     );
@@ -161,9 +184,31 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
 
 BackgroundLayerAccordion.displayName = "BackgroundLayerAccordion";
 
+type IconButtonProps = {
+  activeMainLayer?: boolean;
+  open?: boolean;
+  background?: boolean;
+};
+
 const IconButton = styled(Button).attrs(() => ({
   variant: "unstyled",
-}))``;
+}))<IconButtonProps>`
+  color: ${({ activeMainLayer, theme, open }) => {
+    if (open) {
+      return theme.colors.white;
+    }
+
+    return theme.colors.gray;
+  }};
+
+  background-color: ${({ open, theme }) =>
+    open ? theme.colors.blueDark : theme.colors.white};
+  cursor: pointer;
+
+  align-items: stretch;
+  height: 100%;
+  padding: 0 4px;
+`;
 
 const Wrapper = styled.div<{ indent: number }>`
   display: flex;
@@ -179,11 +224,15 @@ const Wrapper = styled.div<{ indent: number }>`
   }
 `;
 
-const AktivtKartlagName = styled.span<{ visible: boolean }>`
-  color: ${({ theme }) => theme.colors.grayLight};
+const AktivtSubKartlagName = styled.span<{ activeLayer?: boolean }>`
+  color: ${({ activeLayer, theme }) =>
+    activeLayer ? theme.colors.gray : theme.colors.black};
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
 `;
 
-const ClickableName = styled(Button)`
+const ClickableName = styled(Button)<{ open: boolean; isMainLayer?: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -192,6 +241,9 @@ const ClickableName = styled(Button)`
   > :first-child {
     flex: 1;
     text-align: left;
+    padding: 6px;
+    background-color: ${({ open, isMainLayer, theme }) =>
+      open && isMainLayer ? theme.colors.blueLight : theme.colors.white};
   }
 `;
 
@@ -201,10 +253,12 @@ const DraggableLayer = styled.span`
 
 const AktivtMainLayerWrapper = styled.div`
   display: flex;
-  flex: 1;
   align-items: center;
   justify-content: space-around;
   margin: 8px 0;
+  background-color: ${({ theme }) => theme.colors.blueLight};
+  padding: 6px;
+
   > :first-child {
     flex: 1;
     display: flex;
@@ -220,6 +274,8 @@ const AktivtMainLayerWrapper = styled.div`
   div:nth-child(2) {
     width: 100px;
     margin-left: 4px;
+    margin-right: 8px;
+    margin-bottom: 6px;
   }
 `;
 
