@@ -112,11 +112,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
       return (
         <AktivtSubKartlagName activeLayer={visible}>
           {props.mappedLayer.title}
-          <IconButton
-            onClick={onVisibilityClick}
-            activeMainLayer={!visible}
-            open={open}
-          >
+          <IconButton onClick={onVisibilityClick} open={open}>
             {!visible ? (
               <Icon icon="add" aria-label={`Vis ${props.mappedLayer.title}`} />
             ) : (
@@ -193,7 +189,7 @@ type IconButtonProps = {
 const IconButton = styled(Button).attrs(() => ({
   variant: "unstyled",
 }))<IconButtonProps>`
-  color: ${({ activeMainLayer, theme, open }) => {
+  color: ${({ theme, open }) => {
     if (open) {
       return theme.colors.white;
     }
