@@ -70,6 +70,7 @@ export type UtkastRef = components["schemas"]["UtkastRef"];
 export type UtkastMetadataendringer =
   components["schemas"]["Metadataendringer"];
 export type UtkastGrenseendringer = components["schemas"]["Grenseendringer"];
+export type Point = components["schemas"]["Point"];
 
 // custom typer basert på api doc
 export type ApiPath = keyof paths;
