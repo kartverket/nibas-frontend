@@ -281,6 +281,7 @@ const AktivtSubLayerWrapper = styled.div`
   flex-direction: row;
   align-items: left;
   justify-content: space-between;
+  padding: 4px 0;
 `;
 
 export default BackgroundLayerAccordion;
