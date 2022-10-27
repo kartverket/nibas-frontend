@@ -9,7 +9,7 @@ const renderWithProvider = (ui: ReactNode) =>
       moveLayer: jest.fn(),
       orderedLayerIds: [],
       toggleLayerVisibility: jest.fn(),
-      visibleLayers: {} as any,
+      visibleLayers: [],
     },
   });
 
