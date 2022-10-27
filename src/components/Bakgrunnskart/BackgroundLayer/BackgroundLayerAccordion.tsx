@@ -112,7 +112,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
             ) : (
               <Icon
                 icon="remove"
-                aria-label={`Vis ${props.mappedLayer.title}`}
+                aria-label={`Fjern ${props.mappedLayer.title}`}
               />
             )}
           </IconButton>
@@ -145,7 +145,10 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
           <AktivtSubLayerWrapper>
             <span>{props.mappedLayer.title}</span>
             <IconButton onClick={onVisibilityClick}>
-              <Icon icon="remove" aria-label={`Fjern fra aktive kartlag`} />
+              <Icon
+                icon="remove"
+                aria-label={`Fjern ${props.mappedLayer.title} fra aktive kartlag`}
+              />
             </IconButton>
           </AktivtSubLayerWrapper>
         );
