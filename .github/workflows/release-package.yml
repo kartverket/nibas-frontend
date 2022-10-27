@@ -150,7 +150,7 @@ jobs:
       - name: Terraform apply
         run: terraform apply -input=false -auto-approve
 
-deploy-test:
+  deploy-test:
     needs: build
     permissions:
       id-token: write
