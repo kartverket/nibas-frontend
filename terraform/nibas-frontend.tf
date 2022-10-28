@@ -85,8 +85,7 @@ resource "kubernetes_manifest" "nibas_frontend_application" {
         outbound = {
           rules = [
             {
-              application = "aut-idporten"
-              namespace   = "aut"
+              application = "nibas-backend"
             }
           ]
 
@@ -99,6 +98,9 @@ resource "kubernetes_manifest" "nibas_frontend_application" {
             },
             {
               host = "wms.geonorge.no"
+            },
+            {
+              host = "aut-idporten.${var.ENVIRONMENT}.skip.statkart.no"
             }
           ]
         }
