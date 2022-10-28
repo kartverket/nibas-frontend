@@ -2,16 +2,7 @@ import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { bakgrunnskartSources } from "hooks/sources/syncSources";
-import {
-  defaultStyles,
-  editStyles,
-  getDefaultStyles,
-  getEditStyles,
-  getPointOverlayStyle,
-} from "utils/map/layerStyles";
-import RenderFeature from "ol/render/Feature";
-import { Feature } from "ol";
-import Geometry from "ol/geom/Geometry";
+import { getDefaultStyles, getEditStyles } from "utils/map/layerStyles";
 
 const createTileLayerFromBakgrunnskartSource = (
   id: keyof typeof bakgrunnskartSources

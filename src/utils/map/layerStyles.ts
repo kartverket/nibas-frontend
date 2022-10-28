@@ -157,7 +157,6 @@ export const getPointOverlayStyle = (
     }),
     geometry: () => {
       const zoom = map.getView().getZoom() ?? 0;
-      console.log(zoom);
 
       if (!(feature.getGeometry() instanceof Point) || zoom < 12) {
         return;

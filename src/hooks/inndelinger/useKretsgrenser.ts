@@ -11,7 +11,11 @@ import { LayerId } from "hooks/layers/types";
 import useAsyncFeatures from "hooks/useAsyncFeatures";
 import { GrunnkretsResponse, KretsRef, StemmekretsResponse } from "types/api";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
-import { removeFeaturesFromSourceByIds, getFeatureId } from "utils/map/source";
+import {
+  removeFeaturesFromSourceByIds,
+  getFeatureId,
+  getRepresentasjonspunktId,
+} from "utils/map/source";
 import { fetcherWithToken } from "utils/swr";
 import { isPoint } from "types/geometry";
 
@@ -47,20 +51,15 @@ const representasjonspunkterFetcher = async (
   token: string | undefined,
   type: Kretstype
 ) => {
-  console.log("RepresentasjonspunkterFetcher");
   const typeUrl = endpointByKretstype[type];
 
   const representasjonspunkterPromises = kretsIds.map(async (kretsId) => {
-    console.log("Fetching for krets", kretsId);
     const krets = (await fetcherWithToken(
       `v1/${typeUrl}/${kretsId}`,
       token
     )) as KretsResponse<typeof typeUrl>;
-    console.log("Response", krets);
 
     if (!krets) return;
-
-    console.log("Fetched krets", krets);
 
     // features[0] = krets representasjonspunkt
     const feature = krets.features.features?.[0];
@@ -70,7 +69,7 @@ const representasjonspunkterFetcher = async (
 
     const featureWithId = {
       ...feature,
-      id: `${krets.id}-representasjonspunkt`,
+      id: getRepresentasjonspunktId(kretsId),
       properties: {
         ...feature.properties,
         name:
@@ -81,8 +80,6 @@ const representasjonspunkterFetcher = async (
           (krets as GrunnkretsResponse).grunnkretsnummer,
       },
     };
-
-    console.log("Feature with id", featureWithId);
 
     return featureWithId;
   });
@@ -136,7 +133,6 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
 
   const allFeatures = useMemo(() => {
     if (!utkastGeoJsons || !utkastRepresentasjonspunkter) return null;
-    console.log("utkastrepresentasjonspunkter", utkastRepresentasjonspunkter);
 
     const features: Feature<Geometry>[] = utkastGeoJsons
       .flatMap(getFeaturesFromGeoJson)
@@ -146,7 +142,6 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   }, [utkastGeoJsons, utkastRepresentasjonspunkter]);
 
   useEffect(() => {
-    console.log("all features", allFeatures);
     allFeatures?.forEach((feature) => {
       feature.setProperties({
         ...feature.getProperties(),
