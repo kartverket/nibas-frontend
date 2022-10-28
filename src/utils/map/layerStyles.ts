@@ -152,13 +152,18 @@ export const getPointOverlayStyle = (
       backgroundFill: new Fill({
         color: [255, 255, 255, 0.5],
       }),
+      textBaseline: "middle",
+      textAlign: "center",
     }),
     geometry: () => {
-      if (feature.getGeometry() instanceof Point) {
-        return feature.getGeometry();
+      const zoom = map.getView().getZoom() ?? 0;
+      console.log(zoom);
+
+      if (!(feature.getGeometry() instanceof Point) || zoom < 12) {
+        return;
       }
 
-      return;
+      return feature.getGeometry();
     },
   });
 };
