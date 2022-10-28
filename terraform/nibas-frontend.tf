@@ -32,6 +32,10 @@ resource "kubernetes_manifest" "nibas_frontend_application" {
 
       env = [
         {
+          name  = "BACKEND_HOST"
+          value = var.BACKEND_HOST
+        },
+        {
           name  = "BAAT_USERNAME"
           value = data.vault_generic_secret.nibas-baat-bruker.data["username"]
         },
