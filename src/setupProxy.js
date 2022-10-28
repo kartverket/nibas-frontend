@@ -11,7 +11,7 @@ module.exports = function (app) {
   app.use(
     createProxyMiddleware("/api/auth/", {
       // bytt ut med lokalt kjørende aut-idporten evt.
-      target: "http://aut-idporten.dev.skip.statkart.no",
+      target: "http://aut-idporten.aut",
       changeOrigin: true,
     })
   );
