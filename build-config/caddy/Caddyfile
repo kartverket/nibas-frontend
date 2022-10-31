@@ -19,7 +19,9 @@ handle @backendUrls {
 
 handle /api/auth/* {
     # Proxy kall til /api/auth til aut-idporten-modulen
-    reverse_proxy {$AUT_IDPORTEN}
+    reverse_proxy {$AUT_IDPORTEN} {
+        header_up Host {upstream_hostport}
+    }
 }
 
 handle /skbaatts/req {

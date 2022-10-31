@@ -82,6 +82,10 @@ resource "kubernetes_manifest" "nibas_frontend_application" {
           rules = [
             {
               application = "nibas-backend"
+            },
+            {
+              application = "aut-idporten",
+              namespace = "aut"
             }
           ]
 
@@ -94,9 +98,6 @@ resource "kubernetes_manifest" "nibas_frontend_application" {
             },
             {
               host = "wms.geonorge.no"
-            },
-            {
-              host = "aut-idporten.${var.ENVIRONMENT}.skip.statkart.no"
             },
             {
               host = "openwms.statkart.no"
