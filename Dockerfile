@@ -5,7 +5,7 @@ COPY /build /srv
 
 ENV PORT=8080
 ENV BACKEND_HOST=nibas-backend:8080
-ENV AUT_IDPORTEN=aut-idporten
+ENV AUT_IDPORTEN=aut-idporten.dev.skip.statkart.no
 RUN apk --no-cache add curl tzdata
 RUN addgroup -g 1242 nibas; \
   adduser -u 1242 -D -G nibas nibas

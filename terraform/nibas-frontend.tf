@@ -46,10 +46,6 @@ resource "kubernetes_manifest" "nibas_frontend_application" {
         {
           name  = "MATRIKKELEN_WFS_URL"
           value = data.vault_generic_secret.matrikkelen-wfs-service.data["url"]
-        },
-        {
-          name  = "AUT-IDPORTEN-URL"
-          value = data.vault_generic_secret.aut-idporten-service.data["url"]
         }
       ]
       strategy = { type = "RollingUpdate" }
