@@ -12,7 +12,9 @@
 
 handle @backendUrls {
     # Proxy kall til /v1/* til nibas-backend i test
-    reverse_proxy {$BACKEND_HOST}
+    reverse_proxy {$BACKEND_HOST} {
+        header_up Host {upstream_hostport}
+    }
 }
 
 handle /api/auth/* {
