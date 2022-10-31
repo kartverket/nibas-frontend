@@ -61,17 +61,16 @@ const representasjonspunkterFetcher = async (
 
     if (!krets) return;
 
-    // features[0] = krets representasjonspunkt
-    const feature = krets.features.features?.[0];
-    const pointGeometry = feature.geometry;
+    const kretsRepresentasjonspunktFeature = krets.features.features?.[0];
+    const pointGeometry = kretsRepresentasjonspunktFeature.geometry;
 
     if (!isPoint(pointGeometry) || !pointGeometry.coordinates) return;
 
     const featureWithId = {
-      ...feature,
+      ...kretsRepresentasjonspunktFeature,
       id: getRepresentasjonspunktId(kretsId),
       properties: {
-        ...feature.properties,
+        ...kretsRepresentasjonspunktFeature.properties,
         name:
           (krets as StemmekretsResponse).stemmekretsnavn ||
           (krets as GrunnkretsResponse).navn,
