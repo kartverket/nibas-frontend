@@ -85,7 +85,7 @@ resource "kubernetes_manifest" "nibas_frontend_application" {
             },
             {
               application = "aut-idporten",
-              namespace = "aut"
+              namespace   = "aut"
             }
           ]
 
