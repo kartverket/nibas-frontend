@@ -4,12 +4,14 @@ import Icon from "components/Icon";
 import { useInndelingerKrets } from "contexts/InndelingerKretsContext";
 import { KommuneRef } from "types/api";
 import { getNavnInSpraak } from "utils/language/language";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   kommune: KommuneRef;
 };
 
 const Kommune = ({ kommune }: Props) => {
+  const { t } = useTranslation();
   const { kommuneValues, toggleEditKretser, toggleKretser } =
     useInndelingerKrets(kommune);
 
@@ -26,15 +28,14 @@ const Kommune = ({ kommune }: Props) => {
           )
         }
       />
-      <Title editing={kommuneValues.editing}>
+      <Title editing={kommuneValues.editing} onClick={toggleKretser}>
         {getNavnInSpraak(kommune.navn, "nor")}
       </Title>
-      <EditButton
-        editing={kommuneValues.editing}
-        icon={<Icon icon="edit" />}
-        variant="unstyled"
-        onClick={toggleEditKretser}
-      />
+      <LinkButton onClick={toggleEditKretser}>
+        {kommuneValues.editing
+          ? t("action.Avslutt redigering")
+          : t("action.Rediger")}
+      </LinkButton>
     </KommuneWrapper>
   );
 };
@@ -42,24 +43,29 @@ const Kommune = ({ kommune }: Props) => {
 const KommuneWrapper = styled.div`
   display: flex;
   align-items: center;
-  margin: 8px 0;
 `;
 
-const Title = styled.p<{ editing?: boolean }>`
+const Title = styled(Button).attrs(() => ({
+  variant: "unstyled",
+}))<{ editing?: boolean }>`
   margin: 0;
   margin-left: 8px;
   flex: 1;
+  padding: 8px 0;
 
   ${({ editing }) => editing && "font-weight: bold"};
 `;
 
-const EditButton = styled(Button)<{ editing?: boolean }>`
-  ${({ editing, theme }) =>
-    editing &&
-    `
-    background-color: ${theme.colors.blue};
-    color: white;
-  `};
+const LinkButton = styled(Button).attrs(() => ({
+  variant: "unstyled",
+}))`
+  color: ${({ theme }) => theme.colors.blue};
+  text-decoration: underline;
+  text-underline-offset: 4px;
+
+  &:disabled {
+    background: none;
+  }
 `;
 
 export default Kommune;
