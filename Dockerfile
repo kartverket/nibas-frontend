@@ -4,7 +4,7 @@ FROM caddy:2-alpine
 COPY /build /srv
 
 ENV PORT=8080
-ENV BACKEND_HOST=nibas-backend:8080
+ENV BACKEND_HOST=http://nibas-backend:8080
 ENV AUT_IDPORTEN=aut-idporten
 RUN apk --no-cache add curl tzdata
 RUN addgroup -g 1242 nibas; \
