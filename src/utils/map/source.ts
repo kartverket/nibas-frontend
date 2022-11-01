@@ -85,3 +85,6 @@ export const getWMTSOptions = async (
 
 export const getFeatureId = (feature: Feature<Geometry>) =>
   feature.getId()?.toString() ?? "";
+
+export const getRepresentasjonspunktId = (entityId: string) =>
+  `${entityId}-representasjonspunkt`;
