@@ -36,7 +36,9 @@ const DefaultToolbar = ({ openCreateUtkast }: Props) => {
 
   const promptWarning = () => {
     setWarningFeedback(
-      "Utkastet er ikke publisert enda.\nVil du fullføre det senere, eller publiser emed en gang?"
+      t(
+        "Utkastet er ikke publisert enda. Vil du fullføre det senere, eller publisere med en gang?"
+      )
     );
   };
 
