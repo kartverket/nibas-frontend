@@ -27,6 +27,9 @@ export const KretsTable = styled.table`
 
     th {
       border-bottom: 1px solid ${({ theme }) => theme.colors.black};
+      position: sticky;
+      top: 0;
+      background: ${({ theme }) => theme.colors.white};
       padding-left: 8px;
       padding-bottom: 8px;
     }
