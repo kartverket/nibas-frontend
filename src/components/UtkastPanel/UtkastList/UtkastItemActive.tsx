@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
@@ -14,6 +14,7 @@ import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
 import useNibasApi from "hooks/useNibasApi";
 import { Translation } from "i18n";
 import { UtkastResponse } from "types/api";
+import Feedback from "components/Feedback/Feedback";
 
 type Inputs = {
   navn: string;
@@ -43,6 +44,7 @@ const UtkastItemActive = ({ utkastId, changeUtkast }: Props) => {
   const { data: fullUtkast } = useNibasApi("/v1/utkast/{id}", {
     id: utkastId,
   });
+  const [warningFeedback, setWarningFeedback] = useState("");
 
   const previousValues = useRef<Inputs>(getValues());
 
@@ -91,6 +93,12 @@ const UtkastItemActive = ({ utkastId, changeUtkast }: Props) => {
     previousValues.current = getValues();
   };
 
+  const promptWarning = () => {
+    setWarningFeedback(
+      "Utkastet er ikke publisert enda.\nVil du fullføre det senere, eller publisere med en gang?"
+    );
+  };
+
   const registerOptions = {
     onBlur: addUtkastEntry,
   };
@@ -125,10 +133,19 @@ const UtkastItemActive = ({ utkastId, changeUtkast }: Props) => {
         <EditingUtkastText>
           {t("utkast.Du er nå i redigeringsmodus av dette utkastet")}
         </EditingUtkastText>
-        <CancelButton onClick={() => changeUtkast("")}>
+        <CancelButton onClick={() => promptWarning()}>
           {t("action.Avslutt redigering")}
         </CancelButton>
       </Center>
+      <Feedback
+        type="warning"
+        title="Advarsel"
+        isOpen={warningFeedback !== ""}
+        onClose={() => setWarningFeedback("")}
+        onContinue={() => changeUtkast("")}
+      >
+        {warningFeedback}
+      </Feedback>
     </UtkastItemExpanded>
   );
 };

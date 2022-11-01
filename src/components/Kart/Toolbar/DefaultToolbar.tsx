@@ -8,6 +8,8 @@ import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useMetadataPanel } from "contexts/MetadataPanelContext";
 import { resetMapView } from "utils/map";
 import { useSearchParams } from "react-router-dom";
+import { useState } from "react";
+import Feedback from "components/Feedback/Feedback";
 
 type Props = {
   openCreateUtkast: () => void;
@@ -20,14 +22,22 @@ const DefaultToolbar = ({ openCreateUtkast }: Props) => {
   const { resetEditingObject } = useEditAllGrenser();
   const { closePanel } = useMetadataPanel();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [warningFeedback, setWarningFeedback] = useState("");
 
   if (!canSave && !undo && !redo) return null;
 
   const closeUtkast = () => {
+    setWarningFeedback("");
     setSearchParams({});
     resetEditingObject();
     closePanel();
     resetMapView();
+  };
+
+  const promptWarning = () => {
+    setWarningFeedback(
+      "Utkastet er ikke publisert enda.\nVil du fullføre det senere, eller publiser emed en gang?"
+    );
   };
 
   return (
@@ -56,12 +66,21 @@ const DefaultToolbar = ({ openCreateUtkast }: Props) => {
             {t("action.Redo")}
           </Button>
           {utkast && (
-            <CloseUtkastButton variant="unstyled" onClick={closeUtkast}>
+            <CloseUtkastButton variant="unstyled" onClick={promptWarning}>
               <span>{"Lukk utkast"}</span>
             </CloseUtkastButton>
           )}
         </Buttons>
       </ToolbarWrapperWithName>
+      <Feedback
+        type="warning"
+        title="Advarsel"
+        isOpen={warningFeedback !== ""}
+        onClose={() => setWarningFeedback("")}
+        onContinue={() => closeUtkast()}
+      >
+        {warningFeedback}
+      </Feedback>
     </div>
   );
 };
