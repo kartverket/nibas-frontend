@@ -46,10 +46,6 @@ resource "kubernetes_manifest" "nibas_frontend_application" {
         {
           name  = "MATRIKKELEN_WFS_URL"
           value = data.vault_generic_secret.matrikkelen-wfs-service.data["url"]
-        },
-        {
-          name  = "AUT-IDPORTEN-URL"
-          value = data.vault_generic_secret.aut-idporten-service.data["url"]
         }
       ]
       strategy = { type = "RollingUpdate" }
@@ -86,6 +82,10 @@ resource "kubernetes_manifest" "nibas_frontend_application" {
           rules = [
             {
               application = "nibas-backend"
+            },
+            {
+              application = "aut-idporten",
+              namespace   = "aut"
             }
           ]
 
@@ -98,9 +98,6 @@ resource "kubernetes_manifest" "nibas_frontend_application" {
             },
             {
               host = "wms.geonorge.no"
-            },
-            {
-              host = "aut-idporten.${var.ENVIRONMENT}.skip.statkart.no"
             },
             {
               host = "openwms.statkart.no"

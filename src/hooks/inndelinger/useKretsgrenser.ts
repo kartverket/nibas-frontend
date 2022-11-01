@@ -18,6 +18,7 @@ import {
 } from "utils/map/source";
 import { fetcherWithToken } from "utils/swr";
 import { isPoint } from "types/geometry";
+import { isNotNullOrUndefined } from "types/common";
 
 const endpointByKretstype = {
   grunnkrets: "grunnkretser",
@@ -83,7 +84,11 @@ const representasjonspunkterFetcher = async (
     return featureWithId;
   });
 
-  return Promise.all(representasjonspunkterPromises);
+  const representasjonspunktFeatures = await Promise.all(
+    representasjonspunkterPromises
+  );
+
+  return representasjonspunktFeatures.filter(isNotNullOrUndefined);
 };
 
 const getKretserByKommuneUrl = (type: Kretstype) => {
@@ -128,17 +133,16 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   );
 
   const utkastGeoJsons = useUtkastFeature(grenserGeoJsons);
-  const utkastRepresentasjonspunkter = useUtkastFeature(representasjonspunkter);
 
   const allFeatures = useMemo(() => {
-    if (!utkastGeoJsons || !utkastRepresentasjonspunkter) return null;
+    if (!utkastGeoJsons || !representasjonspunkter) return null;
 
     const features: Feature<Geometry>[] = utkastGeoJsons
       .flatMap(getFeaturesFromGeoJson)
-      .concat(utkastRepresentasjonspunkter.flatMap(getFeaturesFromGeoJson));
+      .concat(representasjonspunkter.flatMap(getFeaturesFromGeoJson));
 
     return features;
-  }, [utkastGeoJsons, utkastRepresentasjonspunkter]);
+  }, [utkastGeoJsons, representasjonspunkter]);
 
   useEffect(() => {
     allFeatures?.forEach((feature) => {
