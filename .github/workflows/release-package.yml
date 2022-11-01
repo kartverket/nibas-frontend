@@ -1,7 +1,7 @@
 name: nibas-frontend
 on:
   push:
-    branches: TS-540
+    branches: master
 
 permissions:
   id-token: write
@@ -97,7 +97,7 @@ jobs:
       service_account: nibas-deploy@nibas-dev-075c.iam.gserviceaccount.com
       vault_role: nibas-frontend-read-role
       project_id: kubernetes-dev-94b9
-      deploy_on: 'refs/heads/TS-540'
+      deploy_on: 'refs/heads/master'
 
   deploy-test:
     needs: build
@@ -118,4 +118,4 @@ jobs:
       service_account: nibas-deploy@nibas-test-36cb.iam.gserviceaccount.com
       vault_role: nibas-frontend-read-role
       project_id: kubernetes-test-94f6
-      deploy_on: 'refs/heads/TS-540'
+      deploy_on: 'refs/heads/master'
