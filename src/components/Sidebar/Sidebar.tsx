@@ -18,7 +18,7 @@ const Sidebar = () => {
     fetcher
   );
   const backendVersion = actuator?.application.version ?? "---";
-  const frontendVersion = process.env.REACT_APP_VERSION;
+  const frontendVersion = process.env.REACT_APP_VERSION ?? "VERSION-NOT-SET";
 
   const { t } = useTranslation();
 
