@@ -94,3 +94,4 @@ For å få låste bakgrunnskart til å fungere lokalt må du også få tak i bru
 
 passord: password01
 pin: 12345
+
