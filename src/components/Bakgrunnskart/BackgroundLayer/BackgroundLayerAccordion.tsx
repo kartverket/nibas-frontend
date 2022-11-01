@@ -157,6 +157,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
       return;
     };
 
+    //aktivekartlag-liste burde på sikt trekkes ut i egen komponent
     if (isAktiveKartlag) {
       return (
         <div>

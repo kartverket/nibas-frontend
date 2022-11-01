@@ -23,30 +23,29 @@ const defaultProps: React.ComponentProps<typeof BackgroundLayerAccordion> = {
 
 describe("BackgroundLayerAccordion", () => {
   it("should render plus icon if not visible", async () => {
-    const { user } = render(<BackgroundLayerAccordion {...defaultProps} />);
-
-    const caret = screen.getByRole("button", {
-      name: /layertitle åpne/i,
-    });
-    await user.click(caret);
+    render(
+      <BackgroundLayerAccordion
+        {...defaultProps}
+        mappedLayer={{ layers: [], queryable: true, title: "No sub layers" }}
+      />
+    );
 
     expect(
-      screen.getByRole("button", { name: /vis sub layer/i })
+      screen.getByRole("button", { name: /vis No sub layers/i })
     ).toBeInTheDocument();
   });
 
   it("should render minus icon if visible", async () => {
-    const { user } = render(
-      <BackgroundLayerAccordion {...defaultProps} visible />
+    render(
+      <BackgroundLayerAccordion
+        {...defaultProps}
+        visible
+        mappedLayer={{ layers: [], queryable: true, title: "No sub layers" }}
+      />
     );
 
-    const caret = screen.getByRole("button", {
-      name: /layertitle åpne/i,
-    });
-    await user.click(caret);
-
     expect(
-      screen.getByRole("button", { name: /vis sub layer/i })
+      screen.getByRole("button", { name: /fjern No sub layers/i })
     ).toBeInTheDocument();
   });
 
@@ -93,12 +92,10 @@ describe("BackgroundLayerAccordion", () => {
   });
 
   it("should render sublayers if aktivt kartlag", () => {
-    render(
-      <BackgroundLayerAccordion {...defaultProps} isAktiveKartlag={true} />
-    );
+    render(<BackgroundLayerAccordion {...defaultProps} isAktiveKartlag />);
 
     const caret = screen.queryByRole("button", {
-      name: /fjern sub layers fra aktive kartlag/i,
+      name: /fjern SubLayerTitle fra aktive kartlag/i,
     });
 
     expect(caret).not.toBeInTheDocument();
