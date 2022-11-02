@@ -9,6 +9,8 @@ export interface paths {
     get: operations["hentUtkast"];
     /** Oppdaterer angitt utkast. Returnerer oppdatert utkast. */
     put: operations["oppdaterUtkast"];
+    /** Forkast angitt utkast. */
+    delete: operations["forkastUtkast"];
   };
   "/v1/admin/kodelister/invalidate": {
     /** Invaliderer kodeliste-cache slik at kodelister refreshes. */
@@ -400,11 +402,8 @@ export interface components {
     Kommunenummer: {
       /** @description Unik UUID for kommunenummeret */
       id: string;
-      /**
-       * Format: int32
-       * @description Det faktiske kommunenummeret
-       */
-      kodeverdi?: number;
+      /** @description Det faktiske kommunenummeret */
+      kodeverdi: string;
     };
     /** @description Egenskaper som beskriver konteksten som grensen sees i. */
     KontekstEgenskaper: {
@@ -886,8 +885,7 @@ export interface components {
       /** @description Stemmekretsnummeret til stemmekretsen */
       stemmekretsnummer: string;
       identifikasjon: components["schemas"]["Identifikasjon"];
-      /** @description Kommunenummeret til stemmekretsen */
-      kommunenummer: string;
+      kommunenummer: components["schemas"]["Kommunenummer"];
       /** @description Tellekretsnummer til stemmekretsen */
       tellekretsnummer?: string;
       /** @description Tellekretsnavn til stemmekretsen */
@@ -1034,8 +1032,7 @@ export interface components {
       /** @description Grunnkretsnummeret til grunnkretsen */
       grunnkretsnummer: string;
       identifikasjon: components["schemas"]["Identifikasjon"];
-      /** @description Kommunenummeret til grunnkretsen */
-      kommunenummer: string;
+      kommunenummer: components["schemas"]["Kommunenummer"];
       features: components["schemas"]["FeatureCollection"];
       /**
        * Format: int32
@@ -1145,6 +1142,25 @@ export interface operations {
     requestBody: {
       content: {
         "application/json": components["schemas"]["OppdaterUtkastRequest"];
+      };
+    };
+  };
+  /** Forkast angitt utkast. */
+  forkastUtkast: {
+    parameters: {
+      path: {
+        /** ID til utkastet man vil slette */
+        id: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: unknown;
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
       };
     };
   };

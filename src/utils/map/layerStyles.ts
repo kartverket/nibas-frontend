@@ -8,6 +8,8 @@ import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
 import Style from "ol/style/Style";
 import { map } from "components/Kart/constants";
+import Text from "ol/style/Text";
+import Point from "ol/geom/Point";
 
 const getPointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
   // hent punkter når zoomet langt nok inn
@@ -70,7 +72,7 @@ const defaultPointStyle = new Style({
 });
 
 const getDefaultSelectStyle = () => {
-  const styles: Record<string, Style | Style[]> = {};
+  const styles: Record<string, Style[]> = {};
   const white = [255, 255, 255, 1];
   const blue = [0, 153, 255, 1];
   const width = 3;
@@ -134,10 +136,51 @@ const selectPointStyle = new Style({
   geometry: getPointsOnFeature,
 });
 
+export const getPointOverlayStyle = (
+  feature: Feature<Geometry> | RenderFeature
+) => {
+  if (!feature.get("name") || !feature.get("number")) return new Style();
+
+  return new Style({
+    text: new Text({
+      text: `${feature.get("name")}\n${feature.get("number")}`,
+      font: "12px Arial,sans-serif",
+      fill: new Fill({
+        color: "#000",
+      }),
+      padding: [5, 5, 5, 5],
+      backgroundFill: new Fill({
+        color: [255, 255, 255, 0.5],
+      }),
+      textBaseline: "middle",
+      textAlign: "center",
+    }),
+    geometry: () => {
+      const zoom = map.getView().getZoom() ?? 0;
+
+      if (!(feature.getGeometry() instanceof Point) || zoom < 12) {
+        return;
+      }
+
+      return feature.getGeometry();
+    },
+  });
+};
+
+type StyleFunction = (feature: Feature<Geometry> | RenderFeature) => Style[];
+
+export const getDefaultStyles: StyleFunction = (feature) => {
+  return [defaultStyle, defaultPointStyle, getPointOverlayStyle(feature)];
+};
+
+export const getEditStyles: StyleFunction = (feature) => {
+  return [editStyle, editPointStyle, getPointOverlayStyle(feature)];
+};
+
 export const defaultStyles = [defaultStyle, defaultPointStyle];
 export const editStyles = [editStyle, editPointStyle];
 export const dirtyStyles = [dirtyStyle, dirtyPointStyle];
 export const selectStyles = [
-  ...(getDefaultSelectStyle().LineString as Style[]),
+  ...getDefaultSelectStyle().LineString,
   selectPointStyle,
 ];
