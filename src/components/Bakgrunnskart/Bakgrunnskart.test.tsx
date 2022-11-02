@@ -47,7 +47,7 @@ describe("Bakgrunnskart", () => {
     let mainLayerTexts = screen.getAllByText(
       "Administrative enheter WMS versjon 2"
     );
-    let subLayerTexts = screen.getAllByText("Kommuner");
+    const subLayerTexts = screen.getAllByText("Kommuner");
     let subsubLayerTexts = screen.getAllByText("Kommuner historisk");
 
     expect(mainLayerTexts).toHaveLength(2);
@@ -68,6 +68,7 @@ describe("Bakgrunnskart", () => {
     expect(subsubLayerTexts).toHaveLength(1);
   });
 
+  //https://kartverket.atlassian.net/browse/TS-597
   it.skip("should add two sublayers to aktive kartlag", async () => {
     const { user } = renderWithProvider(<Bakgrunnskart />);
 
@@ -99,7 +100,7 @@ describe("Bakgrunnskart", () => {
     );
 
     expect(screen.getAllByText("Kommuner historisk")).toHaveLength(2);
-    //https://kartverket.atlassian.net/browse/TS-597
+    //Feiler herfra:
     expect(screen.getAllByText("Kommuner gjeldene")).toHaveLength(2);
     expect(screen.getAllByText("Kommuner framtidig")).toHaveLength(2);
 

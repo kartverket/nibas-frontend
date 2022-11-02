@@ -102,7 +102,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
         );
       }
 
-      // ellers bare render tittelen til et aktivt sub-laget
+      // ellers bare render tittelen til et aktivt sub-lag
       return (
         <AktivtSubKartlagName activeLayer={visible}>
           {props.mappedLayer.title}
