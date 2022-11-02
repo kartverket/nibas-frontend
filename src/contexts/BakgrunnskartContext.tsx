@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { bakgrunnskartLayers } from "hooks/layers/constants";
 import { BakgrunnskartId } from "hooks/layers/types";
-import useOrderedLayers from "hooks/layers/useOrderedLayers";
 import useVisibleLayers from "hooks/layers/useVisibleLayers";
 import getSubLayersFromWMSSource, {
   MainMappedLayer,
@@ -13,7 +12,6 @@ export type BakgrunnskartContextValue = {
   mappedLayers: MainMappedLayer[];
   visibleLayers: BakgrunnskartId[];
   toggleLayerVisibility: (layerId: BakgrunnskartId) => void;
-  orderedLayerIds: BakgrunnskartId[];
   moveLayer: (direction: "up" | "down", layerId: BakgrunnskartId) => void;
 };
 
@@ -29,7 +27,6 @@ export const BakgrunnskartProvider: React.FC = ({ children }) => {
 
   const { visibleLayers, moveLayer, toggleLayerVisibility } =
     useVisibleLayers();
-  const { orderedLayerIds } = useOrderedLayers();
 
   useEffect(() => {
     let isMounted = true;
@@ -68,7 +65,6 @@ export const BakgrunnskartProvider: React.FC = ({ children }) => {
     visibleLayers,
     toggleLayerVisibility,
     moveLayer,
-    orderedLayerIds,
   };
 
   return (
