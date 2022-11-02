@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { ToolbarWrapper } from "./components";
 import Button from "components/form/Button";
-import { useToolbarActions } from "contexts/ToolbarContext";
+import { useToolbar, useToolbarActions } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext";
 import Feedback from "components/Feedback/Feedback";
 import useFeedback from "hooks/useFeedback";
@@ -14,10 +14,11 @@ type Props = {
 const DefaultToolbar = ({ openCreateUtkast }: Props) => {
   const { t } = useTranslation();
   const { canSave, undo, redo } = useToolbarActions();
+  const { history } = useToolbar();
   const { utkast, updateUtkastWithHistory, closeUtkast } = useUtkast();
   const { openFeedback, isOpen, closeFeedback, feedbackContent } = useFeedback(
     t(
-      "Utkastet er ikke publisert enda. Vil du fullføre det senere, eller publisere med en gang?"
+      "Utkastet ditt har endringer som ikke er lagret. Dersom du lukker utkastet nå, vil disse endringene forkastes. Er du sikker på at du vil fortsette?"
     )
   );
 
@@ -49,7 +50,14 @@ const DefaultToolbar = ({ openCreateUtkast }: Props) => {
             {t("action.Redo")}
           </Button>
           {utkast && (
-            <CloseUtkastButton variant="unstyled" onClick={openFeedback}>
+            <CloseUtkastButton
+              variant="unstyled"
+              onClick={
+                history.entries.length > 0 && history.index > 0
+                  ? openFeedback
+                  : closeUtkast
+              }
+            >
               <span>{"Lukk utkast"}</span>
             </CloseUtkastButton>
           )}
