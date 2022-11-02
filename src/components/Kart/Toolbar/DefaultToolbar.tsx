@@ -4,7 +4,6 @@ import { ToolbarWrapper } from "./components";
 import Button from "components/form/Button";
 import { useToolbarActions } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext";
-import { useState } from "react";
 import Feedback from "components/Feedback/Feedback";
 import useFeedback from "hooks/useFeedback";
 
