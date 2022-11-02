@@ -7,13 +7,13 @@ import Icon from "components/Icon";
 import { MainMappedLayer, MappedLayer } from "utils/getLayersFromWMS";
 
 const getCaretIcon = (open: boolean) => (
-  <IconButton open={open}>
+  <Caret open={open}>
     {open ? (
       <Icon icon="expand_less" aria-label="Lukk" />
     ) : (
       <Icon icon="expand_more" aria-label="Åpne" />
     )}
-  </IconButton>
+  </Caret>
 );
 
 type SharedProps = {
@@ -102,11 +102,11 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
         );
       }
 
-      // ellers bare render tittelen til sub-laget
+      // ellers bare render tittelen til et aktivt sub-laget
       return (
         <AktivtSubKartlagName activeLayer={visible}>
           {props.mappedLayer.title}
-          <IconButton onClick={onVisibilityClick} open={open}>
+          <IconButton onClick={onVisibilityClick}>
             {visible ? (
               <Icon
                 icon="remove"
@@ -144,7 +144,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
 
     const renderAktivtSubLayer = () => {
       if (!visible || props.mappedLayer.layers.length > 0) return;
-      
+
       return (
         <AktivtSubLayerWrapper>
           <span>{props.mappedLayer.title}</span>
@@ -179,30 +179,25 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
 
 BackgroundLayerAccordion.displayName = "BackgroundLayerAccordion";
 
-type IconButtonProps = {
-  activeMainLayer?: boolean;
-  open?: boolean;
-  background?: boolean;
-};
-
 const IconButton = styled(Button).attrs(() => ({
   variant: "unstyled",
-}))<IconButtonProps>`
-  color: ${({ theme, open }) => {
-    if (open) {
-      return theme.colors.white;
-    }
-
-    return theme.colors.gray;
-  }};
-
-  background-color: ${({ open, theme }) =>
-    open ? theme.colors.blueDark : theme.colors.white};
+}))`
+  color: ${({ theme }) => theme.colors.gray};
   cursor: pointer;
 
-  align-items: stretch;
+  padding: 0 4px;
+`;
+
+const Caret = styled.div<{ open: boolean }>`
+  color: ${({ theme, open }) =>
+    open ? theme.colors.white : theme.colors.gray};
+  background-color: ${({ open, theme }) =>
+    open ? theme.colors.blueDark : theme.colors.white};
+
   height: 100%;
   padding: 0 4px;
+  align-items: center;
+  display: flex;
 `;
 
 const Wrapper = styled.div<{ indent: number }>`
