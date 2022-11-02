@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import Button from "components/form/Button";
+import Button, { LinkButton } from "components/form/Button";
 import Icon from "components/Icon";
 import { useInndelingerKrets } from "contexts/InndelingerKretsContext";
 import { KommuneRef } from "types/api";
@@ -54,18 +54,6 @@ const Title = styled(Button).attrs(() => ({
   padding: 8px 0;
 
   ${({ editing }) => editing && "font-weight: bold"};
-`;
-
-const LinkButton = styled(Button).attrs(() => ({
-  variant: "unstyled",
-}))`
-  color: ${({ theme }) => theme.colors.blue};
-  text-decoration: underline;
-  text-underline-offset: 4px;
-
-  &:disabled {
-    background: none;
-  }
 `;
 
 export default Kommune;
