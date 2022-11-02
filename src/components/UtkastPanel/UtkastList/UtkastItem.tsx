@@ -124,7 +124,7 @@ const UtkastItem = ({ utkast }: Props) => {
         </UtkastItemExpanded>
       )}
       {utkastActive && !isPublishOpen && !isDeleteOpen && (
-        <UtkastItemActive utkastId={utkast.id} changeUtkast={changeUtkast} />
+        <UtkastItemActive utkastId={utkast.id} />
       )}
     </ListItem>
   );

@@ -6,6 +6,7 @@ import { useToolbarActions } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext";
 import { useState } from "react";
 import Feedback from "components/Feedback/Feedback";
+import useFeedback from "hooks/useFeedback";
 
 type Props = {
   openCreateUtkast: () => void;
@@ -15,17 +16,13 @@ const DefaultToolbar = ({ openCreateUtkast }: Props) => {
   const { t } = useTranslation();
   const { canSave, undo, redo } = useToolbarActions();
   const { utkast, updateUtkastWithHistory, closeUtkast } = useUtkast();
-  const [warningFeedback, setWarningFeedback] = useState("");
+  const { openFeedback, isOpen, closeFeedback, feedbackContent } = useFeedback(
+    t(
+      "Utkastet er ikke publisert enda. Vil du fullføre det senere, eller publisere med en gang?"
+    )
+  );
 
   if (!canSave && !undo && !redo) return null;
-
-  const promptWarning = () => {
-    setWarningFeedback(
-      t(
-        "Utkastet er ikke publisert enda. Vil du fullføre det senere, eller publisere med en gang?"
-      )
-    );
-  };
 
   return (
     <div>
@@ -53,7 +50,7 @@ const DefaultToolbar = ({ openCreateUtkast }: Props) => {
             {t("action.Redo")}
           </Button>
           {utkast && (
-            <CloseUtkastButton variant="unstyled" onClick={promptWarning}>
+            <CloseUtkastButton variant="unstyled" onClick={openFeedback}>
               <span>{"Lukk utkast"}</span>
             </CloseUtkastButton>
           )}
@@ -62,14 +59,11 @@ const DefaultToolbar = ({ openCreateUtkast }: Props) => {
       <Feedback
         type="warning"
         title="Advarsel"
-        isOpen={warningFeedback !== ""}
-        onClose={() => setWarningFeedback("")}
-        onContinue={() => {
-          setWarningFeedback("");
-          closeUtkast();
-        }}
+        isOpen={isOpen}
+        onClose={closeFeedback}
+        onContinue={closeUtkast}
       >
-        {warningFeedback}
+        {feedbackContent}
       </Feedback>
     </div>
   );
