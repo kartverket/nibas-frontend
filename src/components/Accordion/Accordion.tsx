@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { ReactNode, useState } from "react";
 import styled from "styled-components";
 import Button from "components/form/Button";
 import Icon from "components/Icon";
 
 type Props = {
-  title: string;
+  title: ReactNode;
   className?: string;
   initialOpen?: boolean;
 };

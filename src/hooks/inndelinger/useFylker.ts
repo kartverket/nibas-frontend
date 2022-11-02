@@ -1,8 +1,10 @@
 import useNibasApi from "../useNibasApi";
 import { sortGrenserAlphabetically } from "utils/language/language";
 
-const useFylker = () => {
-  const { data: fylker, ...rest } = useNibasApi("/v1/fylker");
+const useFylker = (shouldFetch = true) => {
+  const { data: fylker, ...rest } = useNibasApi(
+    shouldFetch ? "/v1/fylker" : null
+  );
   const sortedFylker = sortGrenserAlphabetically(fylker);
 
   return {
