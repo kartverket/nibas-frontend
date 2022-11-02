@@ -18,12 +18,7 @@ const Kommunegrenser = () => {
         {fylker ? (
           <List>
             {fylker.map((fylke) => (
-              <ListItemAccordion
-                key={fylke.id}
-                title={getNavnInSpraak(fylke.navn, "nor")}
-              >
-                <KommuneList fylke={fylke} />
-              </ListItemAccordion>
+              <KommuneList key={fylke.id} fylke={fylke} />
             ))}
           </List>
         ) : (
