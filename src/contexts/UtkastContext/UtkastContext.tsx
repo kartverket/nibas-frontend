@@ -118,16 +118,12 @@ export const UtkastProvider: React.FC = ({ children }) => {
 
 export const useUtkast = () => {
   const context = useContext(UtkastContext);
-  const { history } = useToolbar();
 
   if (!context) {
     throw new Error("useUtkast must be used within a UtkastProvider");
   }
 
-  const redigeringsmodus =
-    history.entries.length > 0 || context.utkast?.id != null;
-
-  return { ...context, redigeringsmodus };
+  return context;
 };
 
 export const useUtkastEntity = <T extends UtkastEntity>(

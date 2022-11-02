@@ -49,7 +49,7 @@ const DefaultToolbar = ({ openCreateUtkast }: Props) => {
             {t("action.Redo")}
           </Button>
           <CloseUtkastButton variant="unstyled" onClick={openFeedback}>
-            {t("action.Close Utkast")}
+            {t("action.Lukk Utkast")}
           </CloseUtkastButton>
         </Buttons>
       </ToolbarWrapperWithName>
