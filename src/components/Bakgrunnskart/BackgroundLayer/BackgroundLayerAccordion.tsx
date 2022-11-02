@@ -107,13 +107,13 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
         <AktivtSubKartlagName activeLayer={visible}>
           {props.mappedLayer.title}
           <IconButton onClick={onVisibilityClick} open={open}>
-            {!visible ? (
-              <Icon icon="add" aria-label={`Vis ${props.mappedLayer.title}`} />
-            ) : (
+            {visible ? (
               <Icon
                 icon="remove"
                 aria-label={`Fjern ${props.mappedLayer.title}`}
               />
+            ) : (
+              <Icon icon="add" aria-label={`Vis ${props.mappedLayer.title}`} />
             )}
           </IconButton>
         </AktivtSubKartlagName>
@@ -124,7 +124,10 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
       return (
         <AktivtMainLayerWrapper>
           <DraggableLayer ref={ref}>
-            <Icon icon="reorder" aria-label={`Bytt rekkefølge på kartlag`} />
+            <Icon
+              icon="reorder"
+              aria-label={`Bytt rekkefølge på kartlag ${props.mappedLayer.title}`}
+            />
             <span>{props.mappedLayer.title}</span>
           </DraggableLayer>
           <AktivtKartlagSlider>
