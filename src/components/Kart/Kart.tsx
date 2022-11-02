@@ -22,7 +22,7 @@ initBakgrunnskartLayers();
 const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const { panelContext } = useMetadataPanel();
-  const { utkast } = useUtkast();
+  const { redigeringsmodus } = useUtkast();
 
   useEditInteractions();
   const selectedFeatures = useSelectInteraction();
@@ -48,7 +48,7 @@ const Kart = () => {
             <SidebarPanels />
             <MetadataPanel />
             <Toolbar />
-            <UtkastBorder utkastActive={!!utkast} />
+            <UtkastBorder utkastActive={redigeringsmodus} />
           </KartOverlay>
 
           <ZoomControls />

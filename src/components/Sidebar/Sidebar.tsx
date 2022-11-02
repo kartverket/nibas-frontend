@@ -22,10 +22,10 @@ const Sidebar = () => {
 
   const { t } = useTranslation();
 
-  const { utkast } = useUtkast();
+  const { redigeringsmodus } = useUtkast();
 
   return (
-    <StyledSidebar utkastActive={!!utkast}>
+    <StyledSidebar utkastActive={redigeringsmodus}>
       <ButtonsWrapper>
         <SidebarButton
           title={t("sidebar.Inndelinger")}

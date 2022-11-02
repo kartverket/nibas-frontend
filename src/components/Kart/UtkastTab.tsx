@@ -4,9 +4,9 @@ import { useUtkast } from "contexts/UtkastContext";
 
 const UtkastTab = () => {
   const { t } = useTranslation();
-  const { utkast } = useUtkast();
+  const { redigeringsmodus } = useUtkast();
 
-  if (!utkast) return null;
+  if (!redigeringsmodus) return null;
 
   return (
     <Wrapper>
