@@ -144,7 +144,7 @@ export const mockDetailedKommune: KommuneResponse = {
   version: 1,
   kommunenummer: {
     id: "a379eb0a-7bae-4fc9-ab07-cf0c7a28bdb7",
-    kodeverdi: 12345678,
+    kodeverdi: "12345678",
   },
   lokalid: "12345678",
   navnerom: "Navnerom",
@@ -176,7 +176,7 @@ export const mockDetailedGrunnkrets1: GrunnkretsResponse = {
     navnerom: "navnerom",
     versjonid: "versjonId",
   },
-  kommunenummer: "a379eb0a-7bae-4fc9-ab07-cf0c7a28bdb7",
+  kommunenummer: { id: "a379eb0a-7bae-4fc9-ab07-cf0c7a28bdb7", kodeverdi: "1" },
   navn: "Mosekollen øst",
 };
 
@@ -190,7 +190,7 @@ export const mockDetailedGrunnkrets2: GrunnkretsResponse = {
     navnerom: "navnerom",
     versjonid: "versjonId",
   },
-  kommunenummer: "a379eb0a-7bae-4fc9-ab07-cf0c7a28bdb7",
+  kommunenummer: { id: "a379eb0a-7bae-4fc9-ab07-cf0c7a28bdb7", kodeverdi: "1" },
   navn: "Dåsvatn",
 };
 
@@ -271,7 +271,7 @@ export const mockStemmekrets1: StemmekretsResponse = {
     navnerom: "https://data.geonorge.no/sosi/administrativeenheter",
     versjonid: undefined,
   },
-  kommunenummer: "c416fb1d-2124-4f71-8dfc-859c55feb437",
+  kommunenummer: { id: "c416fb1d-2124-4f71-8dfc-859c55feb437", kodeverdi: "1" },
   tellekretsnummer: "tellekretsnr1",
   tellekretsnavn: "tellekretsnavn1",
   valgdistriktsnummer: "14",
@@ -288,7 +288,7 @@ export const mockStemmekrets2: StemmekretsResponse = {
     navnerom: "https://data.geonorge.no/sosi/administrativeenheter",
     versjonid: undefined,
   },
-  kommunenummer: "ec64ba19-fb37-44d4-b579-407897f871ee",
+  kommunenummer: { id: "ec64ba19-fb37-44d4-b579-407897f871ee", kodeverdi: "2" },
   tellekretsnummer: "tellekretsnr2",
   tellekretsnavn: "tellekretsnavn2",
   valgdistriktsnummer: "16",
@@ -320,6 +320,7 @@ export const mockUtkast: UtkastResponse = {
         ...mockStemmekrets1,
         stemmekretsnavn: "Utkast stemmekrets",
         version: 2,
+        kommunenummer: mockStemmekrets1.kommunenummer.kodeverdi,
       },
     },
     endredeFeatures: {

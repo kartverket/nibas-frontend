@@ -14,6 +14,9 @@ import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
 import useNibasApi from "hooks/useNibasApi";
 import { Translation } from "i18n";
 import { UtkastResponse } from "types/api";
+import Feedback from "components/Feedback/Feedback";
+import useFeedback from "hooks/useFeedback";
+import { useUtkast } from "contexts/UtkastContext";
 
 type Inputs = {
   navn: string;
@@ -34,15 +37,20 @@ const fromFormToRequest = (
 
 type Props = {
   utkastId: string;
-  changeUtkast: (url: string) => void;
 };
 
-const UtkastItemActive = ({ utkastId, changeUtkast }: Props) => {
+const UtkastItemActive = ({ utkastId }: Props) => {
   const { t } = useTranslation();
   const { register, setValue, getValues } = useForm<Inputs>();
+  const { closeUtkast } = useUtkast();
   const { data: fullUtkast } = useNibasApi("/v1/utkast/{id}", {
     id: utkastId,
   });
+  const { openFeedback, isOpen, closeFeedback, feedbackContent } = useFeedback(
+    t(
+      "Utkastet er ikke publisert enda. Vil du fullføre det senere, eller publisere med en gang?"
+    )
+  );
 
   const previousValues = useRef<Inputs>(getValues());
 
@@ -125,10 +133,19 @@ const UtkastItemActive = ({ utkastId, changeUtkast }: Props) => {
         <EditingUtkastText>
           {t("utkast.Du er nå i redigeringsmodus av dette utkastet")}
         </EditingUtkastText>
-        <CancelButton onClick={() => changeUtkast("")}>
-          {t("action.Avbryt redigering")}
+        <CancelButton onClick={openFeedback}>
+          {t("action.Avslutt redigering")}
         </CancelButton>
       </Center>
+      <Feedback
+        type="warning"
+        title="Advarsel"
+        isOpen={isOpen}
+        onClose={closeFeedback}
+        onContinue={closeUtkast}
+      >
+        {feedbackContent}
+      </Feedback>
     </UtkastItemExpanded>
   );
 };

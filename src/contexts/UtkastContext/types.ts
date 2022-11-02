@@ -10,6 +10,7 @@ export type ResponseWithId = {
 export type UtkastContextValue = {
   utkast: UtkastResponse | undefined;
   updateUtkastWithHistory: () => Promise<unknown>;
+  closeUtkast: () => void;
 };
 
 export type UtkastRequestWithoutOperations = Omit<

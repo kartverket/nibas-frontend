@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useTranslation } from "react-i18next";
-import { useMatch, useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import styled from "styled-components";
 import { useSWRConfig } from "swr";
 import UtkastItemActive from "./UtkastItemActive";
@@ -25,7 +25,8 @@ const UtkastItem = ({ utkast }: Props) => {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   const { t } = useTranslation();
-  const utkastId = useMatch("/:utkastId")?.params.utkastId;
+  const [searchParams, setSearchParams] = useSearchParams();
+  const utkastId = searchParams.get("utkast");
 
   const { resetEditingObject } = useEditAllGrenser();
   const { closePanel } = useMetadataPanel();
@@ -37,7 +38,6 @@ const UtkastItem = ({ utkast }: Props) => {
   );
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { mutate } = useSWRConfig();
-  const navigate = useNavigate();
 
   const utkastActive = utkastId === utkast.id;
 
@@ -49,10 +49,8 @@ const UtkastItem = ({ utkast }: Props) => {
     await mutate(["/v1/utkast", tokenHolderFunc()?.token]);
 
     if (utkastActive) {
-      navigate("/");
+      setSearchParams({});
     }
-
-    // TODO: Modal/toast om at utkastet er publisert?
   };
 
   const deleteUtkast = async () => {
@@ -62,13 +60,17 @@ const UtkastItem = ({ utkast }: Props) => {
 
     await mutate(["/v1/utkast", tokenHolderFunc()?.token]);
 
-    if (utkastId === utkast.id) {
-      navigate("/");
+    if (utkastActive) {
+      setSearchParams({});
     }
   };
 
-  const changeUtkast = (url: string) => {
-    navigate(`/${url}`);
+  const changeUtkast = (id?: string) => {
+    if (id) {
+      setSearchParams({ utkast: id });
+    } else {
+      setSearchParams({});
+    }
     resetEditingObject();
     closePanel();
     resetMapView();
@@ -122,7 +124,7 @@ const UtkastItem = ({ utkast }: Props) => {
         </UtkastItemExpanded>
       )}
       {utkastActive && !isPublishOpen && !isDeleteOpen && (
-        <UtkastItemActive utkastId={utkast.id} changeUtkast={changeUtkast} />
+        <UtkastItemActive utkastId={utkast.id} />
       )}
     </ListItem>
   );

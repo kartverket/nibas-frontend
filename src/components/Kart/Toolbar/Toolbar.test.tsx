@@ -35,7 +35,11 @@ const renderWithProvider = (
       history: toolbarHistory,
       clearHistory: jest.fn(),
     } as any,
-    UtkastProvider: { utkast, updateUtkastWithHistory: jest.fn() },
+    UtkastProvider: {
+      utkast,
+      updateUtkastWithHistory: jest.fn(),
+      closeUtkast: jest.fn(),
+    },
   });
 
 const renderWithUtkastProvider = (ui: ReactNode) =>
@@ -89,12 +93,13 @@ describe("Toolbar", () => {
 
     await user.click(screen.getByRole("button", { name: /lagre som/i }));
 
-    await waitFor(() => expect(window.location.pathname).toContain("/1"));
+    await waitFor(() => expect(window.location.search).toContain("?utkast=1"));
     // denne skal egentlig bli disabled, men det er via clearHistory() som endrer context state
     expect(
       await screen.findByRole("button", {
         name: "action.Lagre",
       })
     ).toBeInTheDocument();
+    expect(await screen.findByText(/Mock utkast/i)).toBeInTheDocument();
   });
 });

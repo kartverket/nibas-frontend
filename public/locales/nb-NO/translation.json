@@ -72,7 +72,7 @@
     "Undo": "Undo",
     "Redo": "Redo",
     "Publiser": "Publiser",
-    "Avbryt redigering": "Avbryt redigering",
+    "Avslutt redigering": "Avslutt redigering",
     "Forkast": "Forkast"
   },
   "Ja": "Ja",
@@ -106,6 +106,9 @@
   },
   "Aktive kartlag": "Aktive kartlag",
   "Logg inn for å se listen": "Logg inn for å se listen",
+  "Redigeringsmodus": "Redigeringsmodus",
   "Redigerer": "Redigerer",
-  "Redigeringsmodus": "Redigeringsmodus"
+  "Utkastet er ikke publisert enda": {
+    " Vil du fullføre det senere, eller publisere med en gang?": "Utkastet er ikke publisert enda. Vil du fullføre det senere, eller publisere med en gang?"
+  }
 }
