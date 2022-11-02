@@ -30,13 +30,12 @@ const defaultProps: React.ComponentProps<typeof SubBackgroundLayer> = {
 const renderWithProvider = (ui: ReactNode) =>
   render(ui, {
     BakgrunnskartProvider: {
-      visibleLayers: { administrativeGrenser: true } as any,
+      visibleLayers: ["administrativeGrenser"],
       toggleLayerVisibility: jest.fn(),
       mappedLayers: [
         { ...defaultProps.mappedLayer, sourceId: "administrativeGrenser" },
       ],
       moveLayer: jest.fn(),
-      orderedLayerIds: ["administrativeGrenser"],
     },
   });
 
@@ -60,16 +59,21 @@ describe("SubBackgroundLayer", () => {
       <SubBackgroundLayer {...defaultProps} />
     );
 
-    const closedEye = screen.getByRole("button", { name: /vis sublag/i });
-    await user.click(closedEye);
+    const caret = screen.getByRole("button", {
+      name: /sublag åpne/i,
+    });
+    await user.click(caret);
 
-    const openEye = screen.getByRole("button", { name: /skjul sublag/i });
+    const addIcon = screen.getByRole("button", { name: /vis subsublag1/i });
 
-    expect(openEye).toBeInTheDocument();
+    await user.click(addIcon);
 
-    await user.click(openEye);
+    const minusIcon = screen.getByRole("button", { name: /fjern subsublag1/i });
 
-    expect(closedEye).toBeInTheDocument();
+    expect(minusIcon).toBeInTheDocument();
+
+    await user.click(minusIcon);
+    expect(addIcon).toBeInTheDocument();
   });
 
   it("should display name of mapped layer", () => {

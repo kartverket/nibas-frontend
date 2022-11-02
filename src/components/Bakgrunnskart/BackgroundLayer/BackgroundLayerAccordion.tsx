@@ -6,18 +6,21 @@ import Slider from "components/form/Slider";
 import Icon from "components/Icon";
 import { MainMappedLayer, MappedLayer } from "utils/getLayersFromWMS";
 
-const getCaretIcon = (open: boolean) => {
-  if (open) {
-    return <Icon icon="expand_less" aria-label="Lukk" />;
-  } else {
-    return <Icon icon="expand_more" aria-label="Åpne" />;
-  }
-};
+const getCaretIcon = (open: boolean) => (
+  <Caret open={open}>
+    {open ? (
+      <Icon icon="expand_less" aria-label="Lukk" />
+    ) : (
+      <Icon icon="expand_more" aria-label="Åpne" />
+    )}
+  </Caret>
+);
 
 type SharedProps = {
   indent: number;
   onVisibilityClick: () => void;
   visible: boolean;
+  isAktiveKartlag?: boolean;
   children: React.ReactNode;
 };
 
@@ -42,9 +45,9 @@ type Props = MainLayerProps | SubLayerProps;
 
 const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
   (props, ref) => {
-    const { indent, visible, onVisibilityClick, children } = props;
+    const { indent, visible, onVisibilityClick, isAktiveKartlag, children } =
+      props;
     const [open, setOpen] = useState(false);
-    const [propertiesVisible, setPropertiesVisible] = useState(false);
     const { opacity, onSliderChange } = useLayerOpacity({
       mappedLayer: props.mappedLayer,
       isMainLayer: props.isMainLayer,
@@ -60,11 +63,27 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
 
         return (
           <ClickableName
-            variant="unstyled"
             onClick={() => setOpen(!open)}
             icon={icon}
+            open={open}
+            isMainLayer={props.isMainLayer}
           >
-            <DraggableName ref={ref}>{props.mappedLayer.title}</DraggableName>
+            <span>{props.mappedLayer.title}</span>
+          </ClickableName>
+        );
+      }
+
+      //hvis hovedlag og åpent legg på bakgrunnsfarge
+      if (props.isMainLayer) {
+        return (
+          <ClickableName
+            variant="unstyled"
+            icon={getCaretIcon(open)}
+            onClick={() => setOpen(!open)}
+            open={open}
+            isMainLayer={props.isMainLayer}
+          >
+            <span>{props.mappedLayer.title}</span>
           </ClickableName>
         );
       }
@@ -76,53 +95,82 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
             variant="unstyled"
             icon={getCaretIcon(open)}
             onClick={() => setOpen(!open)}
+            open={open}
           >
             <span>{props.mappedLayer.title}</span>
           </ClickableName>
         );
       }
 
-      // ellers bare render tittelen til sub-laget
-      return <span>{props.mappedLayer.title}</span>;
-    };
-
-    return (
-      <div>
-        <Wrapper indent={indent}>
+      // ellers bare render tittelen til et aktivt sub-lag
+      return (
+        <AktivtSubKartlagName activeLayer={visible}>
+          {props.mappedLayer.title}
           <IconButton onClick={onVisibilityClick}>
             {visible ? (
               <Icon
-                icon="visibility"
-                aria-label={`Skjul ${props.mappedLayer.title}`}
+                icon="remove"
+                aria-label={`Fjern ${props.mappedLayer.title}`}
               />
             ) : (
-              <Icon
-                icon="visibility_off"
-                aria-label={`Vis ${props.mappedLayer.title}`}
-              />
+              <Icon icon="add" aria-label={`Vis ${props.mappedLayer.title}`} />
             )}
           </IconButton>
-          {renderNameAndCaret()}
-          {props.isMainLayer && (
-            <PropertiesButton
-              onClick={() => setPropertiesVisible(!propertiesVisible)}
-            >
-              <Icon icon="edit" />
-            </PropertiesButton>
-          )}
-        </Wrapper>
+        </AktivtSubKartlagName>
+      );
+    };
 
-        {propertiesVisible && (
-          <div>
+    const renderAktivtMainLayer = () => {
+      return (
+        <AktivtMainLayerWrapper>
+          <DraggableLayer ref={ref}>
+            <Icon
+              icon="reorder"
+              aria-label={`Bytt rekkefølge på kartlag ${props.mappedLayer.title}`}
+            />
+            <span>{props.mappedLayer.title}</span>
+          </DraggableLayer>
+          <AktivtKartlagSlider>
             <Slider
               min={0}
               max={100}
               value={opacity ?? 100}
               onChange={onSliderChange}
             />
-          </div>
-        )}
+          </AktivtKartlagSlider>
+        </AktivtMainLayerWrapper>
+      );
+    };
 
+    const renderAktivtSubLayer = () => {
+      if (!visible || props.mappedLayer.layers.length > 0) return;
+
+      return (
+        <AktivtSubLayerWrapper>
+          <span>{props.mappedLayer.title}</span>
+          <IconButton onClick={onVisibilityClick}>
+            <Icon
+              icon="remove"
+              aria-label={`Fjern ${props.mappedLayer.title} fra aktive kartlag`}
+            />
+          </IconButton>
+        </AktivtSubLayerWrapper>
+      );
+    };
+
+    //aktivekartlag-liste burde på sikt trekkes ut i egen komponent
+    if (isAktiveKartlag) {
+      return (
+        <div>
+          {props.isMainLayer ? renderAktivtMainLayer() : renderAktivtSubLayer()}
+          {children}
+        </div>
+      );
+    }
+
+    return (
+      <div>
+        <Wrapper indent={indent}>{renderNameAndCaret()}</Wrapper>
         {open && children}
       </div>
     );
@@ -134,14 +182,22 @@ BackgroundLayerAccordion.displayName = "BackgroundLayerAccordion";
 const IconButton = styled(Button).attrs(() => ({
   variant: "unstyled",
 }))`
-  margin-right: 8px;
+  color: ${({ theme }) => theme.colors.gray};
+  cursor: pointer;
+
+  padding: 0 4px;
 `;
 
-const PropertiesButton = styled(Button).attrs(() => ({
-  variant: "unstyled",
-}))`
-  margin-left: 8px;
-  color: ${({ theme }) => theme.colors.black};
+const Caret = styled.div<{ open: boolean }>`
+  color: ${({ theme, open }) =>
+    open ? theme.colors.white : theme.colors.gray};
+  background-color: ${({ open, theme }) =>
+    open ? theme.colors.blueDark : theme.colors.white};
+
+  height: 100%;
+  padding: 0 4px;
+  align-items: center;
+  display: flex;
 `;
 
 const Wrapper = styled.div<{ indent: number }>`
@@ -152,9 +208,21 @@ const Wrapper = styled.div<{ indent: number }>`
   > span {
     flex: 1;
   }
+
+  > div {
+    width: 50%;
+  }
 `;
 
-const ClickableName = styled(Button)`
+const AktivtSubKartlagName = styled.span<{ activeLayer?: boolean }>`
+  color: ${({ activeLayer, theme }) =>
+    activeLayer ? theme.colors.gray : theme.colors.black};
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+`;
+
+const ClickableName = styled(Button)<{ open: boolean; isMainLayer?: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -163,11 +231,50 @@ const ClickableName = styled(Button)`
   > :first-child {
     flex: 1;
     text-align: left;
+    padding: 6px;
+    background-color: ${({ open, isMainLayer, theme }) =>
+      open && isMainLayer ? theme.colors.blueLight : theme.colors.white};
   }
 `;
 
-const DraggableName = styled.span`
+const DraggableLayer = styled.span`
   cursor: move;
+
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: unset;
+  justify-content: left;
+
+  > :first-child {
+    margin-right: 4px;
+    margin-left: 4px;
+  }
+`;
+
+const AktivtKartlagSlider = styled.div`
+  width: 100px;
+  margin-left: 4px;
+  margin-right: 8px;
+  margin-bottom: 6px;
+`;
+
+const AktivtMainLayerWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin: 8px 0;
+  background-color: ${({ theme }) => theme.colors.blueLight};
+  padding: 6px;
+`;
+
+const AktivtSubLayerWrapper = styled.div`
+  margin-left: 38px;
+  display: flex;
+  flex-direction: row;
+  align-items: left;
+  justify-content: space-between;
+  padding: 4px 0;
 `;
 
 export default BackgroundLayerAccordion;

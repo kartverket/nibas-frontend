@@ -10,25 +10,26 @@ type Props = {
   layerId: BakgrunnskartId;
   index: number;
   canDrag?: boolean;
+  isAktiveKartlag?: boolean;
 };
 
-const MainLayer = ({ layerId, index, canDrag = true }: Props) => {
+const MainLayer = ({ layerId, index, canDrag, isAktiveKartlag }: Props) => {
   const layer = bakgrunnskartLayers[layerId];
   const { mappedLayers, moveLayer, toggleLayerVisibility, visibleLayers } =
     useBakgrunnskart();
 
   const mappedLayer = mappedLayers.find((ml) => ml.sourceId === layerId);
-
   if (!mappedLayer) return null;
 
   if (isWMSLayer(layer)) {
     return (
       <MainBackgroundLayer
         mappedLayer={mappedLayer}
-        visible={visibleLayers[layerId]}
+        visible={visibleLayers.includes(layerId)}
         toggleLayerVisibility={() => toggleLayerVisibility(layerId)}
         index={index}
         moveLayer={canDrag ? moveLayer : undefined}
+        isAktiveKartlag={isAktiveKartlag}
       />
     );
   }
@@ -37,10 +38,11 @@ const MainLayer = ({ layerId, index, canDrag = true }: Props) => {
     return (
       <WMTSBackgroundLayer
         mappedLayer={mappedLayer}
-        visible={visibleLayers[layerId]}
+        visible={visibleLayers.includes(layerId)}
         toggleLayerVisibility={() => toggleLayerVisibility(layerId)}
         index={index}
         moveLayer={canDrag ? moveLayer : undefined}
+        isAktiveKartlag={isAktiveKartlag}
       />
     );
   }
@@ -49,10 +51,11 @@ const MainLayer = ({ layerId, index, canDrag = true }: Props) => {
     return (
       <WFSBackgroundLayer
         mappedLayer={mappedLayer}
-        visible={visibleLayers[layerId]}
+        visible={visibleLayers.includes(layerId)}
         toggleLayerVisibility={() => toggleLayerVisibility(layerId)}
         index={index}
         moveLayer={canDrag ? moveLayer : undefined}
+        isAktiveKartlag={isAktiveKartlag}
       />
     );
   }

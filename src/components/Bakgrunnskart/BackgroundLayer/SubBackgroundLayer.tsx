@@ -38,6 +38,7 @@ type Props = {
   indent: number;
   mainLayerSourceId: BakgrunnskartId;
   mainLayerName: string;
+  isAktiveKartlag?: boolean;
 };
 
 const SubBackgroundLayer = ({
@@ -45,6 +46,7 @@ const SubBackgroundLayer = ({
   indent,
   mainLayerSourceId,
   mainLayerName,
+  isAktiveKartlag,
 }: Props) => {
   const [visible, setVisible] = useState(false);
 
@@ -114,7 +116,8 @@ const SubBackgroundLayer = ({
     ].getSource() as TileWMS;
     const layersInParams = source.getParams().LAYERS as string;
 
-    const isMainLayerVisible = visibleLayers[mainLayerSourceId];
+    const isMainLayerVisible = visibleLayers.includes(mainLayerSourceId);
+
     if (layersInParams && !isMainLayerVisible) {
       toggleLayerVisibility(mainLayerSourceId);
     } else if (layersInParams === mainLayerName && isMainLayerVisible) {
@@ -130,6 +133,7 @@ const SubBackgroundLayer = ({
       indent={indent}
       visible={visible}
       onVisibilityClick={onVisibilityClick}
+      isAktiveKartlag={isAktiveKartlag}
     >
       <>
         {mappedLayer.layers.map((layer) => (
@@ -139,6 +143,7 @@ const SubBackgroundLayer = ({
             mainLayerSourceId={mainLayerSourceId}
             mainLayerName={mainLayerName}
             indent={indent + 1}
+            isAktiveKartlag={isAktiveKartlag}
           />
         ))}
       </>
