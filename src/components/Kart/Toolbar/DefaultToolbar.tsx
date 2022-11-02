@@ -14,7 +14,8 @@ type Props = {
 const DefaultToolbar = ({ openCreateUtkast }: Props) => {
   const { t } = useTranslation();
   const { canSave, undo, redo } = useToolbarActions();
-  const { utkast, updateUtkastWithHistory, closeUtkast } = useUtkast();
+  const { utkast, updateUtkastWithHistory, closeUtkast, redigeringsmodus } =
+    useUtkast();
   const { openFeedback, isOpen, closeFeedback, feedbackContent } = useFeedback(
     t(
       "Utkastet er ikke publisert enda. Vil du fullføre det senere, eller publisere med en gang?"
@@ -48,9 +49,9 @@ const DefaultToolbar = ({ openCreateUtkast }: Props) => {
           <Button onClick={redo} disabled={!redo}>
             {t("action.Redo")}
           </Button>
-          {utkast && (
+          {redigeringsmodus && (
             <CloseUtkastButton variant="unstyled" onClick={openFeedback}>
-              <span>{"Lukk utkast"}</span>
+              {t("action.Close Utkast")}
             </CloseUtkastButton>
           )}
         </Buttons>

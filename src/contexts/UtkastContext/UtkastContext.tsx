@@ -106,6 +106,7 @@ export const UtkastProvider: React.FC = ({ children }) => {
     resetEditingObject();
     closePanel();
     resetMapView();
+    clearHistory();
   };
 
   const value = { utkast, updateUtkastWithHistory, closeUtkast };
