@@ -140,21 +140,19 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
     };
 
     const renderAktivtSubLayer = () => {
-      if (visible && props.mappedLayer.layers.length === 0) {
-        return (
-          <AktivtSubLayerWrapper>
-            <span>{props.mappedLayer.title}</span>
-            <IconButton onClick={onVisibilityClick}>
-              <Icon
-                icon="remove"
-                aria-label={`Fjern ${props.mappedLayer.title} fra aktive kartlag`}
-              />
-            </IconButton>
-          </AktivtSubLayerWrapper>
-        );
-      }
-
-      return;
+      if (!visible || props.mappedLayer.layers.length > 0) return;
+      
+      return (
+        <AktivtSubLayerWrapper>
+          <span>{props.mappedLayer.title}</span>
+          <IconButton onClick={onVisibilityClick}>
+            <Icon
+              icon="remove"
+              aria-label={`Fjern ${props.mappedLayer.title} fra aktive kartlag`}
+            />
+          </IconButton>
+        </AktivtSubLayerWrapper>
+      );
     };
 
     //aktivekartlag-liste burde på sikt trekkes ut i egen komponent
