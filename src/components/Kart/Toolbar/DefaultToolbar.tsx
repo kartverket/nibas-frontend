@@ -21,14 +21,12 @@ const DefaultToolbar = ({ openCreateUtkast }: Props) => {
   const { utkast, updateUtkastWithHistory } = useUtkast();
   const { resetEditingObject } = useEditAllGrenser();
   const { closePanel } = useMetadataPanel();
-  const [searchParams, setSearchParams] = useSearchParams();
   const [warningFeedback, setWarningFeedback] = useState("");
 
   if (!canSave && !undo && !redo) return null;
 
   const closeUtkast = () => {
     setWarningFeedback("");
-    setSearchParams({});
     resetEditingObject();
     closePanel();
     resetMapView();

@@ -51,8 +51,6 @@ const UtkastItem = ({ utkast }: Props) => {
     if (utkastActive) {
       setSearchParams({});
     }
-
-    // TODO: Modal/toast om at utkastet er publisert?
   };
 
   const deleteUtkast = async () => {
