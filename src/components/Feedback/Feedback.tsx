@@ -67,6 +67,10 @@ const Buttons = styled.div`
   align-self: flex-end;
   margin: 16px;
   gap: 16px;
+
+  > button {
+    height: 100%;
+  }
 `;
 
 type StatusType = "positive" | "negative" | "warning" | "info";
@@ -86,6 +90,8 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   onContinue?: () => void;
+  closeText?: string;
+  continueText?: string;
 };
 
 const Feedback = ({
@@ -95,6 +101,8 @@ const Feedback = ({
   isOpen,
   onClose,
   onContinue,
+  closeText,
+  continueText,
 }: Props) => {
   const { t } = useTranslation();
 
@@ -122,12 +130,16 @@ const Feedback = ({
         {onContinue ? (
           <>
             <Button variant="tertiary" onClick={onClose}>
-              {t("action.Avbryt")}
+              {closeText ? closeText : t("action.Avbryt")}
             </Button>
-            <Button onClick={closeAndContinue}>{t("action.Fortsett")}</Button>
+            <Button onClick={closeAndContinue}>
+              {continueText ? continueText : t("action.Fortsett")}
+            </Button>
           </>
         ) : (
-          <Button onClick={onClose}>{t("action.Lukk")}</Button>
+          <Button onClick={onClose}>
+            {closeText ? closeText : t("action.Lukk")}
+          </Button>
         )}
       </Buttons>
     </Modal>
