@@ -7,7 +7,6 @@ import { useUtkast } from "contexts/UtkastContext";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useMetadataPanel } from "contexts/MetadataPanelContext";
 import { resetMapView } from "utils/map";
-import { useSearchParams } from "react-router-dom";
 import { useState } from "react";
 import Feedback from "components/Feedback/Feedback";
 
