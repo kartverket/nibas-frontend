@@ -4,9 +4,6 @@ import { ToolbarWrapper } from "./components";
 import Button from "components/form/Button";
 import { useToolbarActions } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext";
-import { useEditAllGrenser } from "contexts/EditGrenserContext";
-import { useMetadataPanel } from "contexts/MetadataPanelContext";
-import { resetMapView } from "utils/map";
 import { useState } from "react";
 import Feedback from "components/Feedback/Feedback";
 
@@ -17,19 +14,10 @@ type Props = {
 const DefaultToolbar = ({ openCreateUtkast }: Props) => {
   const { t } = useTranslation();
   const { canSave, undo, redo } = useToolbarActions();
-  const { utkast, updateUtkastWithHistory } = useUtkast();
-  const { resetEditingObject } = useEditAllGrenser();
-  const { closePanel } = useMetadataPanel();
+  const { utkast, updateUtkastWithHistory, closeUtkast } = useUtkast();
   const [warningFeedback, setWarningFeedback] = useState("");
 
   if (!canSave && !undo && !redo) return null;
-
-  const closeUtkast = () => {
-    setWarningFeedback("");
-    resetEditingObject();
-    closePanel();
-    resetMapView();
-  };
 
   const promptWarning = () => {
     setWarningFeedback(
@@ -76,7 +64,10 @@ const DefaultToolbar = ({ openCreateUtkast }: Props) => {
         title="Advarsel"
         isOpen={warningFeedback !== ""}
         onClose={() => setWarningFeedback("")}
-        onContinue={() => closeUtkast()}
+        onContinue={() => {
+          setWarningFeedback("");
+          closeUtkast();
+        }}
       >
         {warningFeedback}
       </Feedback>
