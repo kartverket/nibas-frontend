@@ -4,6 +4,8 @@ import { ToolbarWrapper } from "./components";
 import Button from "components/form/Button";
 import { useToolbarActions } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext";
+import Feedback from "components/Feedback/Feedback";
+import useFeedback from "hooks/useFeedback";
 
 type Props = {
   openCreateUtkast: () => void;
@@ -12,7 +14,12 @@ type Props = {
 const DefaultToolbar = ({ openCreateUtkast }: Props) => {
   const { t } = useTranslation();
   const { canSave, undo, redo } = useToolbarActions();
-  const { utkast, updateUtkastWithHistory } = useUtkast();
+  const { utkast, updateUtkastWithHistory, closeUtkast } = useUtkast();
+  const { openFeedback, isOpen, closeFeedback, feedbackContent } = useFeedback(
+    t(
+      "Utkastet er ikke publisert enda. Vil du fullføre det senere, eller publisere med en gang?"
+    )
+  );
 
   if (!canSave && !undo && !redo) return null;
 
@@ -41,8 +48,22 @@ const DefaultToolbar = ({ openCreateUtkast }: Props) => {
           <Button onClick={redo} disabled={!redo}>
             {t("action.Redo")}
           </Button>
+          {utkast && (
+            <CloseUtkastButton variant="unstyled" onClick={openFeedback}>
+              <span>{"Lukk utkast"}</span>
+            </CloseUtkastButton>
+          )}
         </Buttons>
       </ToolbarWrapperWithName>
+      <Feedback
+        type="warning"
+        title="Advarsel"
+        isOpen={isOpen}
+        onClose={closeFeedback}
+        onContinue={closeUtkast}
+      >
+        {feedbackContent}
+      </Feedback>
     </div>
   );
 };
@@ -58,6 +79,15 @@ const ToolbarWrapperWithName = styled(ToolbarWrapper)`
 const Buttons = styled.div`
   display: flex;
   gap: 0.5rem;
+`;
+
+const CloseUtkastButton = styled(Button)`
+  padding: 0 16px;
+  > span {
+    color: ${({ theme }) => theme.colors.blue};
+    font-weight: bold;
+    text-decoration: underline;
+  }
 `;
 
 export default DefaultToolbar;

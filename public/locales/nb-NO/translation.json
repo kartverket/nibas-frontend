@@ -107,5 +107,8 @@
   "Kommentar": "Kommentar",
   "Logg inn for å se listen": "Logg inn for å se listen",
   "Redigeringsmodus": "Redigeringsmodus",
-  "Redigerer": "Redigerer"
+  "Redigerer": "Redigerer",
+  "Utkastet er ikke publisert enda": {
+    " Vil du fullføre det senere, eller publisere med en gang?": "Utkastet er ikke publisert enda. Vil du fullføre det senere, eller publisere med en gang?"
+  }
 }

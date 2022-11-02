@@ -27,6 +27,7 @@ const renderWithProvider = (
           },
         } as any, // ikke interessert i andre felter
         updateUtkastWithHistory: jest.fn(),
+        closeUtkast: jest.fn(),
       },
     }
   );

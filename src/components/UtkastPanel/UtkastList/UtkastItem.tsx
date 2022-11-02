@@ -51,8 +51,6 @@ const UtkastItem = ({ utkast }: Props) => {
     if (utkastActive) {
       setSearchParams({});
     }
-
-    // TODO: Modal/toast om at utkastet er publisert?
   };
 
   const deleteUtkast = async () => {
@@ -126,7 +124,7 @@ const UtkastItem = ({ utkast }: Props) => {
         </UtkastItemExpanded>
       )}
       {utkastActive && !isPublishOpen && !isDeleteOpen && (
-        <UtkastItemActive utkastId={utkast.id} changeUtkast={changeUtkast} />
+        <UtkastItemActive utkastId={utkast.id} />
       )}
     </ListItem>
   );
