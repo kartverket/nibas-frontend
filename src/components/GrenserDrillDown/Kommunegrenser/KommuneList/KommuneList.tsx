@@ -3,7 +3,7 @@ import ApiGrense from "components/GrenserDrillDown/ApiGrense";
 import useKommuner from "hooks/inndelinger/useKommuner";
 import { GrenseRef } from "types/api";
 import useKommunegrenser from "hooks/inndelinger/useKommunegrenser";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ListItemAccordion from "components/GrenserDrillDown/ListItemAccordion";
 import { getNavnInSpraak } from "utils/language/language";
 import { LinkButton } from "components/form/Button";
@@ -24,8 +24,13 @@ const KommuneList = ({ fylke }: Props) => {
     kommunegrenser
   );
 
+  useEffect(() => {
+    if (value.editing) {
+      setShouldFetch(true);
+    }
+  }, [value.editing]);
+
   const editKommunegrenser = () => {
-    setShouldFetch(!shouldFetch);
     toggleEditing();
   };
 

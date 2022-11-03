@@ -2,7 +2,7 @@ import { LinkButton } from "components/form/Button";
 import Loader from "components/Loader";
 import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
 import useFylkesgrenser from "hooks/inndelinger/useFylkesgrenser";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import ListItemAccordion from "../ListItemAccordion";
@@ -12,19 +12,28 @@ const Fylkesgrenser = () => {
   const { t } = useTranslation();
   const [shouldFetch, setShouldFetch] = useState(false);
   const { fylkesgrenser, isFetching } = useFylkesgrenser(shouldFetch);
-  const x = useEditGrense("fylke", "fylke", fylkesgrenser);
+  const { value, toggleEditing } = useEditGrense(
+    "fylke",
+    "fylke",
+    fylkesgrenser
+  );
   console.log(fylkesgrenser);
 
+  useEffect(() => {
+    if (value.editing) {
+      setShouldFetch(true);
+    }
+  }, [value.editing]);
+
   const editFylkesgrenser = () => {
-    setShouldFetch(!shouldFetch);
-    x.toggleEditing();
+    toggleEditing();
   };
 
   return (
     <ListItemAccordion
       subButton={
         <LinkButton onClick={editFylkesgrenser}>
-          {x.value.editing ? "Stopp redigering" : "Rediger fylkesgrenser"}
+          {value.editing ? "Stopp redigering" : "Rediger fylkesgrenser"}
         </LinkButton>
       }
       title={
