@@ -7,7 +7,11 @@ import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
 import { BlockLabel } from "components/Kart/MetadataPanel/metadataComponents";
-import { useToolbarSaving, UtkastEntry } from "contexts/ToolbarContext";
+import {
+  useToolbarActions,
+  useToolbarSaving,
+  UtkastEntry,
+} from "contexts/ToolbarContext";
 import useToolbarFormSync from "contexts/ToolbarContext/useToolbarFormSync";
 import { translateKeysByEndringsType } from "contexts/UtkastContext/constants";
 import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
@@ -43,18 +47,19 @@ const UtkastItemActive = ({ utkastId }: Props) => {
   const { t } = useTranslation();
   const { register, setValue, getValues } = useForm<Inputs>();
   const { closeUtkast } = useUtkast();
+
   const { data: fullUtkast } = useNibasApi("/v1/utkast/{id}", {
     id: utkastId,
   });
   const { openFeedback, isOpen, closeFeedback, feedbackContent } = useFeedback(
     t(
-      "Utkastet er ikke publisert enda. Vil du fullføre det senere, eller publisere med en gang?"
+      "Utkastet ditt har endringer som ikke er lagret. Dersom du lukker utkastet nå, vil disse endringene forkastes. Er du sikker på at du vil fortsette?"
     )
   );
-
   const previousValues = useRef<Inputs>(getValues());
 
   const { addEntry } = useToolbarSaving();
+  const { canSave } = useToolbarActions();
 
   useEffect(() => {
     if (!fullUtkast) return;
@@ -133,7 +138,7 @@ const UtkastItemActive = ({ utkastId }: Props) => {
         <EditingUtkastText>
           {t("utkast.Du er nå i redigeringsmodus av dette utkastet")}
         </EditingUtkastText>
-        <CancelButton onClick={openFeedback}>
+        <CancelButton onClick={canSave ? openFeedback : closeUtkast}>
           {t("action.Avslutt redigering")}
         </CancelButton>
       </Center>
@@ -143,6 +148,8 @@ const UtkastItemActive = ({ utkastId }: Props) => {
         isOpen={isOpen}
         onClose={closeFeedback}
         onContinue={closeUtkast}
+        closeText={t("Fortsett redigering")}
+        continueText={t("Forkast endringer")}
       >
         {feedbackContent}
       </Feedback>

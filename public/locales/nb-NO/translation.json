@@ -111,5 +111,14 @@
   "Redigerer": "Redigerer",
   "Utkastet er ikke publisert enda": {
     " Vil du fullføre det senere, eller publisere med en gang?": "Utkastet er ikke publisert enda. Vil du fullføre det senere, eller publisere med en gang?"
-  }
+  },
+  "Lukk likevel": "Lukk likevel",
+  "Fortsett redigering": "Fortsett redigering",
+  "Forkast endringer og lukk": "Forkast endringer og lukk",
+  "Utkastet ditt har endringer som ikke er lagret": {
+    " Dersom du lukker utkastet nå, vil disse endringene forkastes": {
+      " Er du sikker på at du vil fortsette?": "Utkastet ditt har endringer som ikke er lagret. Dersom du lukker utkastet nå, vil disse endringene forkastes. Er du sikker på at du vil fortsette?"
+    }
+  },
+  "Forkast endringer": "Forkast endringer"
 }
