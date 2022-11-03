@@ -58,7 +58,7 @@ const DefaultToolbar = ({ openCreateUtkast }: Props) => {
                   : closeUtkast
               }
             >
-              <span>{"Lukk utkast"}</span>
+              {t("action.Lukk Utkast")}
             </CloseUtkastButton>
           )}
         </Buttons>

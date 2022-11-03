@@ -20,7 +20,7 @@ const useDirtyStyles = (dirtyFeatureIds: string[]) => {
 
     // disse skal nå få tilbake sin vanlige style, og fjernes fra lista
     featuresIdsToGetEditStyle.forEach((featureId) => {
-      editSource.getFeatureById(featureId).setStyle(editStyles);
+      editSource.getFeatureById(featureId)?.setStyle(editStyles);
       newFeatureIdsWithDirtyStyle.splice(
         newFeatureIdsWithDirtyStyle.indexOf(featureId)
       );
