@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import AktiveKartlag from "./AktiveKartlag";
 import Delomrader from "./Delomrader";
 import Fylkesgrenser from "./Fylkesgrenser";
 import GestligeInndelinger from "./GestligeInndelinger";
@@ -15,7 +14,6 @@ import Svalbardomradet from "./Svalbardomraadet";
 import Accordion from "components/Accordion";
 import { SidebarPanel } from "components/Sidebar/SidebarPanel";
 import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
-import Tabs from "components/Tabs";
 import { UnstyledList } from "components/UnstyledList";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 
@@ -28,37 +26,23 @@ const GrenserDrillDown = () => {
 
   return (
     <Panel>
-      <Tabs
-        tabTransKeys={["sidebar.Inndelinger", "inndelinger.Aktive kartlag"]}
-      >
-        <div>
-          <SidebarPanelTitle
-            closePanel={togglePanel}
-            title={t("sidebar.Inndelinger")}
-          />
-          <UnstyledList>
-            <Riksgrenser />
-            <Fylkesgrenser />
-            <Kommunegrenser />
-            <Stemmekretser />
-            <Skolekretser />
-            <Grunnkretser />
-            <Delomrader />
-            <Postnummeromraader />
-            <GestligeInndelinger />
-            <MaritimeGrenser />
-            <Svalbardomradet />
-          </UnstyledList>
-        </div>
-        <div>
-          <SidebarPanelTitle
-            closePanel={togglePanel}
-            title={t("inndelinger.Aktive kartlag")}
-          />
-
-          <AktiveKartlag />
-        </div>
-      </Tabs>
+      <SidebarPanelTitle
+        closePanel={togglePanel}
+        title={t("sidebar.Inndelinger")}
+      />
+      <UnstyledList>
+        <Riksgrenser />
+        <Fylkesgrenser />
+        <Kommunegrenser />
+        <Stemmekretser />
+        <Skolekretser />
+        <Grunnkretser />
+        <Delomrader />
+        <Postnummeromraader />
+        <GestligeInndelinger />
+        <MaritimeGrenser />
+        <Svalbardomradet />
+      </UnstyledList>
     </Panel>
   );
 };

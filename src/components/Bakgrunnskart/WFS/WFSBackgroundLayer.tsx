@@ -15,6 +15,7 @@ type Props = {
   toggleLayerVisibility: () => void;
   index: number;
   moveLayer?: (direction: "up" | "down", layerId: BakgrunnskartId) => void;
+  isAktiveKartlag?: boolean;
 };
 
 const WFSBackgroundLayer = ({
@@ -23,6 +24,7 @@ const WFSBackgroundLayer = ({
   toggleLayerVisibility,
   index,
   moveLayer,
+  isAktiveKartlag,
 }: Props) => {
   const ref = useBackgroundLayerDND(index, mappedLayer, moveLayer);
 
@@ -46,6 +48,7 @@ const WFSBackgroundLayer = ({
       onVisibilityClick={onVisibilityClick}
       visible={visible}
       ref={moveLayer ? ref : null}
+      isAktiveKartlag={isAktiveKartlag}
     >
       {null}
     </BackgroundLayerAccordion>

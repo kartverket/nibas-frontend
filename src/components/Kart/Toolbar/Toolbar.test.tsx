@@ -35,7 +35,11 @@ const renderWithProvider = (
       history: toolbarHistory,
       clearHistory: jest.fn(),
     } as any,
-    UtkastProvider: { utkast, updateUtkastWithHistory: jest.fn() },
+    UtkastProvider: {
+      utkast,
+      updateUtkastWithHistory: jest.fn(),
+      closeUtkast: jest.fn(),
+    },
   });
 
 const renderWithUtkastProvider = (ui: ReactNode) =>

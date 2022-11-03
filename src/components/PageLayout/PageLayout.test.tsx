@@ -7,9 +7,8 @@ const renderWithProvider = (ui: ReactNode) =>
     BakgrunnskartProvider: {
       mappedLayers: [],
       moveLayer: jest.fn(),
-      orderedLayerIds: [],
       toggleLayerVisibility: jest.fn(),
-      visibleLayers: {} as any,
+      visibleLayers: [],
     },
   });
 

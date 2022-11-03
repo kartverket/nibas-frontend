@@ -50,28 +50,4 @@ describe("GrenserDrillDown", () => {
     expect(screen.getByText(/maritime grenser/i)).toBeInTheDocument();
     expect(screen.getByText(/svalbardområdet/i)).toBeInTheDocument();
   });
-
-  it("should open aktive kartlag on aktive kartlag tab click", async () => {
-    const { user } = renderWithProvider(
-      <BakgrunnskartContext.Provider
-        value={{
-          mappedLayers: [],
-          moveLayer: jest.fn(),
-          orderedLayerIds: [],
-          toggleLayerVisibility: jest.fn(),
-          visibleLayers: {} as any,
-        }}
-      >
-        <EditGrenserProvider>
-          <GrenserDrillDown />
-        </EditGrenserProvider>
-      </BakgrunnskartContext.Provider>
-    );
-
-    await user.click(screen.getByRole("button", { name: /aktive kartlag/i }));
-
-    expect(
-      screen.getByRole("heading", { name: /aktive kartlag/i })
-    ).toBeInTheDocument();
-  });
 });

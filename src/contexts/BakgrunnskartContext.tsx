@@ -1,11 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { bakgrunnskartLayers } from "hooks/layers/constants";
 import { BakgrunnskartId } from "hooks/layers/types";
-import useOrderedLayers from "hooks/layers/useOrderedLayers";
-import useVisibleLayers, {
-  toggleLayerVisibility,
-  VisibleLayers,
-} from "hooks/layers/useVisibleLayers";
+import useVisibleLayers from "hooks/layers/useVisibleLayers";
 import getSubLayersFromWMSSource, {
   MainMappedLayer,
 } from "utils/getLayersFromWMS";
@@ -14,9 +10,8 @@ import { isVectorLayer } from "utils/map/layers";
 
 export type BakgrunnskartContextValue = {
   mappedLayers: MainMappedLayer[];
-  visibleLayers: VisibleLayers;
+  visibleLayers: BakgrunnskartId[];
   toggleLayerVisibility: (layerId: BakgrunnskartId) => void;
-  orderedLayerIds: BakgrunnskartId[];
   moveLayer: (direction: "up" | "down", layerId: BakgrunnskartId) => void;
 };
 
@@ -30,8 +25,8 @@ export const BakgrunnskartContext = createContext<
 export const BakgrunnskartProvider: React.FC = ({ children }) => {
   const [mappedLayers, setMappedLayers] = useState<MainMappedLayer[]>([]);
 
-  const { visibleLayers, dispatch } = useVisibleLayers();
-  const { moveLayer, orderedLayerIds } = useOrderedLayers();
+  const { visibleLayers, moveLayer, toggleLayerVisibility } =
+    useVisibleLayers();
 
   useEffect(() => {
     let isMounted = true;
@@ -68,10 +63,8 @@ export const BakgrunnskartProvider: React.FC = ({ children }) => {
   const value = {
     mappedLayers,
     visibleLayers,
-    toggleLayerVisibility: (layerId: BakgrunnskartId) =>
-      dispatch(toggleLayerVisibility(layerId)),
+    toggleLayerVisibility,
     moveLayer,
-    orderedLayerIds,
   };
 
   return (

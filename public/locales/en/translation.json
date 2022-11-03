@@ -105,8 +105,11 @@
     "Type utkast": "__STRING_NOT_TRANSLATED__",
     "Du er nå i redigeringsmodus av dette utkastet": "__STRING_NOT_TRANSLATED__"
   },
-  "Kommentar": "__STRING_NOT_TRANSLATED__",
+  "Aktive kartlag": "__STRING_NOT_TRANSLATED__",
   "Logg inn for å se listen": "__STRING_NOT_TRANSLATED__",
   "Redigeringsmodus": "__STRING_NOT_TRANSLATED__",
-  "Redigerer": "__STRING_NOT_TRANSLATED__"
+  "Redigerer": "__STRING_NOT_TRANSLATED__",
+  "Utkastet er ikke publisert enda": {
+    " Vil du fullføre det senere, eller publisere med en gang?": "__STRING_NOT_TRANSLATED__"
+  }
 }

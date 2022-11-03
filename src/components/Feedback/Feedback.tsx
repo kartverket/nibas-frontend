@@ -98,6 +98,11 @@ const Feedback = ({
 }: Props) => {
   const { t } = useTranslation();
 
+  const closeAndContinue = () => {
+    onClose();
+    onContinue?.();
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -119,7 +124,7 @@ const Feedback = ({
             <Button variant="tertiary" onClick={onClose}>
               {t("action.Avbryt")}
             </Button>
-            <Button onClick={onContinue}>{t("action.Fortsett")}</Button>
+            <Button onClick={closeAndContinue}>{t("action.Fortsett")}</Button>
           </>
         ) : (
           <Button onClick={onClose}>{t("action.Lukk")}</Button>

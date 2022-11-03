@@ -26,75 +26,102 @@ describe("Bakgrunnskart", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("should open bakgrunnskart panel on bakgrunsskart button click", async () => {
+  it("should add sublayer to list on plus click", async () => {
     const { user } = renderWithProvider(<Bakgrunnskart />);
 
-    const bakgrunnskartButton = screen.getByRole("button", {
-      name: /sidebar.kartlag/i,
+    const openMainButton = await screen.findByRole("button", {
+      name: /Administrative enheter WMS versjon 2 åpne/i,
     });
-    await user.click(bakgrunnskartButton);
+    await user.click(openMainButton);
 
-    expect(
-      screen.getByRole("heading", { name: /sidebar.kartlag/i })
-    ).toBeInTheDocument();
-    expect(
-      await screen.findByText(
-        "Administrative enheter WMS versjon 2",
-        undefined,
-        { timeout: 3000 }
-      )
-    ).toBeInTheDocument();
+    const openSubButton = await screen.findByRole("button", {
+      name: /Kommuner åpne/i,
+    });
+    await user.click(openSubButton);
+
+    const addButton = await screen.findByRole("button", {
+      name: /vis Kommuner historisk/i,
+    });
+    await user.click(addButton);
+
+    let mainLayerTexts = screen.getAllByText(
+      "Administrative enheter WMS versjon 2"
+    );
+    const subLayerTexts = screen.getAllByText("Kommuner");
+    let subsubLayerTexts = screen.getAllByText("Kommuner historisk");
+
+    expect(mainLayerTexts).toHaveLength(2);
+    expect(subLayerTexts).toHaveLength(1);
+    expect(subsubLayerTexts).toHaveLength(2);
+
+    const removeButton = await screen.findByRole("button", {
+      name: /Fjern Kommuner historisk fra aktive kartlag/i,
+    });
+    await user.click(removeButton);
+
+    mainLayerTexts = screen.getAllByText(
+      "Administrative enheter WMS versjon 2"
+    );
+    subsubLayerTexts = screen.getAllByText("Kommuner historisk");
+
+    expect(mainLayerTexts).toHaveLength(1);
+    expect(subsubLayerTexts).toHaveLength(1);
   });
 
-  it("should toggle visibility of WMS layer on eye click", async () => {
+  //https://kartverket.atlassian.net/browse/TS-597
+  it.skip("should add two sublayers to aktive kartlag", async () => {
     const { user } = renderWithProvider(<Bakgrunnskart />);
 
-    const bakgrunnskartButton = screen.getByRole("button", {
-      name: /sidebar.kartlag/i,
+    const openMainButton = await screen.findByRole("button", {
+      name: /Administrative enheter WMS versjon 2 åpne/i,
     });
-    await user.click(bakgrunnskartButton);
+    await user.click(openMainButton);
 
-    const showLayerButton = await screen.findByRole(
-      "button",
-      {
-        name: /vis Administrative enheter WMS versjon 2/i,
-      },
-      {
-        timeout: 3000,
-      }
+    const openSubButton = await screen.findByRole("button", {
+      name: /Kommuner åpne/i,
+    });
+    await user.click(openSubButton);
+
+    const addButton = await screen.findByRole("button", {
+      name: /vis Kommuner historisk/i,
+    });
+    await user.click(addButton);
+
+    await user.click(
+      screen.getByRole("button", {
+        name: /vis Kommuner gjeldene/i,
+      })
     );
-    await user.click(showLayerButton);
 
-    const hideLayerButton = await screen.findByRole("button", {
-      name: /skjul Administrative enheter WMS versjon 2/i,
-    });
-    await user.click(hideLayerButton);
-
-    expect(showLayerButton).toBeInTheDocument();
-  });
-
-  it("should toggle visibility of WMTS layer on eye click", async () => {
-    const { user } = renderWithProvider(<Bakgrunnskart />);
-
-    const bakgrunnskartButton = screen.getByRole("button", {
-      name: /sidebar.kartlag/i,
-    });
-    await user.click(bakgrunnskartButton);
-
-    const showLayerButton = await screen.findByRole(
-      "button",
-      {
-        name: /vis Nibcache_UTM33_EUREF89_v2/i,
-      },
-      { timeout: 3000 }
+    await user.click(
+      screen.getByRole("button", {
+        name: /vis Kommuner framtidig/i,
+      })
     );
-    await user.click(showLayerButton);
 
-    const hideLayerButton = await screen.findByRole("button", {
-      name: /skjul Nibcache_UTM33_EUREF89_v2/i,
-    });
-    await user.click(hideLayerButton);
+    expect(screen.getAllByText("Kommuner historisk")).toHaveLength(2);
+    //Feiler herfra:
+    expect(screen.getAllByText("Kommuner gjeldene")).toHaveLength(2);
+    expect(screen.getAllByText("Kommuner framtidig")).toHaveLength(2);
 
-    expect(showLayerButton).toBeInTheDocument();
+    await user.click(
+      screen.getByRole("button", {
+        name: /Fjern Kommuner historisk fra aktive kartlag/i,
+      })
+    );
+    await user.click(
+      screen.getByRole("button", {
+        name: /Fjern Kommuner gjeldene fra aktive kartlag/i,
+      })
+    );
+    await user.click(
+      screen.getByRole("button", {
+        name: /Fjern Kommuner framtidig fra aktive kartlag/i,
+      })
+    );
+
+    expect(screen.getAllByText("Kommuner historisk")).toHaveLength(1);
+    expect(screen.getAllByText("Kommuner gjeldene")).toHaveLength(1);
+    expect(screen.getAllByText("Kommuner framtidig")).toHaveLength(1);
   });
 });
