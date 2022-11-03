@@ -8,7 +8,7 @@ import Input from "components/form/Input";
 import Select from "components/form/Select";
 import { BlockLabel } from "components/Kart/MetadataPanel/metadataComponents";
 import {
-  useToolbar,
+  useToolbarActions,
   useToolbarSaving,
   UtkastEntry,
 } from "contexts/ToolbarContext";
@@ -47,6 +47,7 @@ const UtkastItemActive = ({ utkastId }: Props) => {
   const { t } = useTranslation();
   const { register, setValue, getValues } = useForm<Inputs>();
   const { closeUtkast } = useUtkast();
+
   const { data: fullUtkast } = useNibasApi("/v1/utkast/{id}", {
     id: utkastId,
   });
@@ -58,7 +59,7 @@ const UtkastItemActive = ({ utkastId }: Props) => {
   const previousValues = useRef<Inputs>(getValues());
 
   const { addEntry } = useToolbarSaving();
-  const { history } = useToolbar();
+  const { canSave } = useToolbarActions();
 
   useEffect(() => {
     if (!fullUtkast) return;
@@ -137,13 +138,7 @@ const UtkastItemActive = ({ utkastId }: Props) => {
         <EditingUtkastText>
           {t("utkast.Du er nå i redigeringsmodus av dette utkastet")}
         </EditingUtkastText>
-        <CancelButton
-          onClick={
-            history.entries.length > 0 && history.index > 0
-              ? openFeedback
-              : closeUtkast
-          }
-        >
+        <CancelButton onClick={canSave ? openFeedback : closeUtkast}>
           {t("action.Avslutt redigering")}
         </CancelButton>
       </Center>

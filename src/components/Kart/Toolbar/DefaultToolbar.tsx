@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { ToolbarWrapper } from "./components";
 import Button from "components/form/Button";
-import { useToolbar, useToolbarActions } from "contexts/ToolbarContext";
+import { useToolbarActions } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext";
 import Feedback from "components/Feedback/Feedback";
 import useFeedback from "hooks/useFeedback";
@@ -14,7 +14,6 @@ type Props = {
 const DefaultToolbar = ({ openCreateUtkast }: Props) => {
   const { t } = useTranslation();
   const { canSave, undo, redo } = useToolbarActions();
-  const { history } = useToolbar();
   const { utkast, updateUtkastWithHistory, closeUtkast } = useUtkast();
   const { openFeedback, isOpen, closeFeedback, feedbackContent } = useFeedback(
     t(
@@ -52,11 +51,7 @@ const DefaultToolbar = ({ openCreateUtkast }: Props) => {
 
           <CloseUtkastButton
             variant="unstyled"
-            onClick={
-              history.entries.length > 0 && history.index > 0
-                ? openFeedback
-                : closeUtkast
-            }
+            onClick={canSave ? openFeedback : closeUtkast}
           >
             {t("action.Lukk Utkast")}
           </CloseUtkastButton>
