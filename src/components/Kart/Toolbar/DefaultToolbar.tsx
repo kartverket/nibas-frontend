@@ -69,6 +69,8 @@ const DefaultToolbar = ({ openCreateUtkast }: Props) => {
         isOpen={isOpen}
         onClose={closeFeedback}
         onContinue={closeUtkast}
+        closeText={t("Fortsett redigering")}
+        continueText={t("Forkast endringer")}
       >
         {feedbackContent}
       </Feedback>

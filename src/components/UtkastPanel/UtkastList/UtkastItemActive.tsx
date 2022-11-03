@@ -154,7 +154,7 @@ const UtkastItemActive = ({ utkastId }: Props) => {
         onClose={closeFeedback}
         onContinue={closeUtkast}
         closeText={t("Fortsett redigering")}
-        continueText={t("Forkast endringer og lukk")}
+        continueText={t("Forkast endringer")}
       >
         {feedbackContent}
       </Feedback>
