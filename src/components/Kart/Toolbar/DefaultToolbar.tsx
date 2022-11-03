@@ -49,18 +49,17 @@ const DefaultToolbar = ({ openCreateUtkast }: Props) => {
           <Button onClick={redo} disabled={!redo}>
             {t("action.Redo")}
           </Button>
-          {utkast && (
-            <CloseUtkastButton
-              variant="unstyled"
-              onClick={
-                history.entries.length > 0 && history.index > 0
-                  ? openFeedback
-                  : closeUtkast
-              }
-            >
-              {t("action.Lukk Utkast")}
-            </CloseUtkastButton>
-          )}
+
+          <CloseUtkastButton
+            variant="unstyled"
+            onClick={
+              history.entries.length > 0 && history.index > 0
+                ? openFeedback
+                : closeUtkast
+            }
+          >
+            {t("action.Lukk Utkast")}
+          </CloseUtkastButton>
         </Buttons>
       </ToolbarWrapperWithName>
       <Feedback
