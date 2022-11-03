@@ -4,10 +4,9 @@ import useKommuner from "hooks/inndelinger/useKommuner";
 import { GrenseRef } from "types/api";
 import useKommunegrenser from "hooks/inndelinger/useKommunegrenser";
 import { useEffect, useState } from "react";
-import ListItemAccordion from "components/GrenserDrillDown/ListItemAccordion";
 import { getNavnInSpraak } from "utils/language/language";
-import { LinkButton } from "components/form/Button";
 import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
+import EditableGrenseAccordion from "components/GrenserDrillDown/EditableGrenseAccordion";
 
 type Props = {
   fylke: GrenseRef;
@@ -16,36 +15,29 @@ type Props = {
 const KommuneList = ({ fylke }: Props) => {
   const { kommuner, error } = useKommuner(fylke.id);
   const [shouldFetch, setShouldFetch] = useState(false);
-  const { kommunegrenser } = useKommunegrenser(fylke.id, shouldFetch);
-  console.log(kommunegrenser);
-  const { value, toggleEditing } = useEditGrense(
-    "kommune",
+  const { kommunegrenser, isFetching } = useKommunegrenser(
     fylke.id,
-    kommunegrenser
+    shouldFetch
   );
+  const { value } = useEditGrense("kommune", fylke.id, kommunegrenser);
 
   useEffect(() => {
-    if (value.editing) {
+    if (value.editing || value.visible) {
       setShouldFetch(true);
     }
-  }, [value.editing]);
-
-  const editKommunegrenser = () => {
-    toggleEditing();
-  };
+  }, [value]);
 
   if (error) return <p>Fikk ikke hentet kommuner</p>;
 
   if (!kommuner) return null;
 
   return (
-    <ListItemAccordion
+    <EditableGrenseAccordion
+      features={kommunegrenser}
+      grenseId={fylke.id}
+      grenseType="kommune"
+      isFetching={isFetching}
       title={getNavnInSpraak(fylke.navn, "nor")}
-      subButton={
-        <LinkButton onClick={editKommunegrenser}>
-          {value.editing ? "Stopp redigering" : "Rediger kommunegrenser"}
-        </LinkButton>
-      }
     >
       <Wrapper>
         {kommuner.map((kommune) => (
@@ -57,7 +49,7 @@ const KommuneList = ({ fylke }: Props) => {
           />
         ))}
       </Wrapper>
-    </ListItemAccordion>
+    </EditableGrenseAccordion>
   );
 };
 
