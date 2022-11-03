@@ -1,8 +1,6 @@
 import styled from "styled-components";
 import ApiGrense from "components/GrenserDrillDown/ApiGrense";
-import { useEditGrenser } from "contexts/EditGrenserContext";
 import useKommuner from "hooks/inndelinger/useKommuner";
-import useOnlyDisplayEditingGrenser from "hooks/useOnlyDisplayEditingGrenser";
 import { GrenseRef } from "types/api";
 import useKommunegrenser from "hooks/inndelinger/useKommunegrenser";
 import { useState } from "react";
@@ -13,10 +11,9 @@ import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
 
 type Props = {
   fylke: GrenseRef;
-  onlyDisplayEditing?: boolean;
 };
 
-const KommuneList = ({ fylke, onlyDisplayEditing = false }: Props) => {
+const KommuneList = ({ fylke }: Props) => {
   const { kommuner, error } = useKommuner(fylke.id);
   const [shouldFetch, setShouldFetch] = useState(false);
   const { kommunegrenser } = useKommunegrenser(fylke.id, shouldFetch);
@@ -27,13 +24,6 @@ const KommuneList = ({ fylke, onlyDisplayEditing = false }: Props) => {
     kommunegrenser
   );
 
-  const { values } = useEditGrenser("kommune");
-  const filteredKommuner = useOnlyDisplayEditingGrenser(
-    kommuner,
-    values,
-    onlyDisplayEditing
-  );
-
   const editKommunegrenser = () => {
     setShouldFetch(!shouldFetch);
     toggleEditing();
@@ -41,7 +31,7 @@ const KommuneList = ({ fylke, onlyDisplayEditing = false }: Props) => {
 
   if (error) return <p>Fikk ikke hentet kommuner</p>;
 
-  if (!filteredKommuner) return null;
+  if (!kommuner) return null;
 
   return (
     <ListItemAccordion
@@ -53,7 +43,7 @@ const KommuneList = ({ fylke, onlyDisplayEditing = false }: Props) => {
       }
     >
       <Wrapper>
-        {filteredKommuner.map((kommune) => (
+        {kommuner.map((kommune) => (
           <ApiGrense
             key={kommune.id}
             grense={kommune}

@@ -5,7 +5,6 @@ import ListItemAccordion from "../ListItemAccordion";
 import KommuneList from "./KommuneList";
 import { UnstyledList } from "components/UnstyledList";
 import useFylker from "hooks/inndelinger/useFylker";
-import { getNavnInSpraak } from "utils/language/language";
 
 const Kommunegrenser = () => {
   const { fylker } = useFylker();
