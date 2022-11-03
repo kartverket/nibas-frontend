@@ -1,12 +1,12 @@
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { useUtkast } from "contexts/UtkastContext";
+import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
 
 const UtkastTab = () => {
   const { t } = useTranslation();
-  const { utkast } = useUtkast();
+  const { redigeringsmodusAktiv } = useRedigeringsmodus();
 
-  if (!utkast) return null;
+  if (!redigeringsmodusAktiv) return null;
 
   return (
     <Wrapper>
