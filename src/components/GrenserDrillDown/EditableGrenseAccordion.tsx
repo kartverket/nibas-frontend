@@ -50,7 +50,7 @@ const EditableGrenseAccordion: FC<Props> = ({
           </Button>
           <div>
             <LinkButton onClick={toggleEditing}>
-              {value.editing ? "Stopp redigering" : "Rediger fylkesgrenser"}
+              {value.editing ? "Stopp redigering" : `Rediger grenser`}
             </LinkButton>
           </div>
         </TextContent>
