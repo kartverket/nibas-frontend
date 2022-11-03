@@ -34,7 +34,6 @@ const ModalStyle = styled.div`
   border: 1px solid ${({ theme }) => theme.colors.blue};
   background: white;
 
-  overflow-y: scroll;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   animation: Enter 0.5s cubic-bezier(0.75, 0, 0.25, 1.5);
   outline: none;
