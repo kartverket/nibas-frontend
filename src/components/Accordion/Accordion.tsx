@@ -33,9 +33,9 @@ const Accordion: React.FC<Props> = ({
           onClick={() => setOpen(!open)}
           icon={
             open ? (
-              <Icon icon="expand_less" aria-label="Lukk" />
+              <Icon icon="expand_less" aria-label={`Lukk ${title}`} />
             ) : (
-              <Icon icon="expand_more" aria-label="Åpne" />
+              <Icon icon="expand_more" aria-label={`Åpne ${title}`} />
             )
           }
         />
@@ -48,10 +48,6 @@ const Accordion: React.FC<Props> = ({
 
 const Wrapper = styled.div`
   margin: 8px 0;
-`;
-
-const TitleWrapperButton = styled(Button)`
-  width: 100%;
 `;
 
 const ChildrenWrapper = styled.div`
