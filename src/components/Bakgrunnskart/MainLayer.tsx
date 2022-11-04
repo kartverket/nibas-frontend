@@ -15,8 +15,14 @@ type Props = {
 
 const MainLayer = ({ layerId, index, canDrag, isAktiveKartlag }: Props) => {
   const layer = bakgrunnskartLayers[layerId];
-  const { mappedLayers, moveLayer, toggleLayerVisibility, visibleLayers } =
-    useBakgrunnskart();
+  const {
+    mappedLayers,
+    moveLayer,
+    toggleLayerVisibility,
+    toggleSubLayerVisibility,
+    visibleLayers,
+    visibleSubLayers,
+  } = useBakgrunnskart();
 
   const mappedLayer = mappedLayers.find((ml) => ml.sourceId === layerId);
   if (!mappedLayer) return null;
@@ -27,9 +33,11 @@ const MainLayer = ({ layerId, index, canDrag, isAktiveKartlag }: Props) => {
         mappedLayer={mappedLayer}
         visible={visibleLayers.includes(layerId)}
         toggleLayerVisibility={() => toggleLayerVisibility(layerId)}
+        toggleSubLayerVisibility={toggleSubLayerVisibility}
         index={index}
         moveLayer={canDrag ? moveLayer : undefined}
         isAktiveKartlag={isAktiveKartlag}
+        visibleSubLayers={visibleSubLayers}
       />
     );
   }

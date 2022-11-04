@@ -18,7 +18,7 @@ const getCaretIcon = (open: boolean) => (
 
 type SharedProps = {
   indent: number;
-  onVisibilityClick: () => void;
+  onVisibilityClick: (layerId: string) => void;
   visible: boolean;
   isAktiveKartlag?: boolean;
   children: React.ReactNode;
@@ -106,7 +106,10 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
       return (
         <AktivtSubKartlagName activeLayer={visible}>
           {props.mappedLayer.title}
-          <IconButton onClick={onVisibilityClick} open={open}>
+          <IconButton
+            onClick={() => onVisibilityClick(props.mappedLayer.title)}
+            open={open}
+          >
             {!visible ? (
               <Icon icon="add" aria-label={`Vis ${props.mappedLayer.title}`} />
             ) : (
@@ -144,7 +147,9 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
         return (
           <AktivtSubLayerWrapper>
             <span>{props.mappedLayer.title}</span>
-            <IconButton onClick={onVisibilityClick}>
+            <IconButton
+              onClick={() => onVisibilityClick(props.mappedLayer.title)}
+            >
               <Icon
                 icon="remove"
                 aria-label={`Fjern ${props.mappedLayer.title} fra aktive kartlag`}

@@ -39,6 +39,7 @@ type Props = {
   mainLayerSourceId: BakgrunnskartId;
   mainLayerName: string;
   isAktiveKartlag?: boolean;
+  toggleSubLayerVisibility: (layerId: string) => void;
 };
 
 const SubBackgroundLayer = ({
@@ -47,6 +48,7 @@ const SubBackgroundLayer = ({
   mainLayerSourceId,
   mainLayerName,
   isAktiveKartlag,
+  toggleSubLayerVisibility,
 }: Props) => {
   const [visible, setVisible] = useState(false);
 
@@ -109,7 +111,7 @@ const SubBackgroundLayer = ({
     source.updateParams({ LAYERS: newParamsLayerString });
   };
 
-  const onVisibilityClick = () => {
+  const onVisibilityClick = (layerId: string) => {
     updateSourceParams();
     const source = bakgrunnskartLayers[
       mainLayerSourceId
@@ -123,6 +125,7 @@ const SubBackgroundLayer = ({
     } else if (layersInParams === mainLayerName && isMainLayerVisible) {
       toggleLayerVisibility(mainLayerSourceId);
     }
+    toggleSubLayerVisibility(layerId);
     setVisible(!visible);
   };
 
@@ -144,6 +147,7 @@ const SubBackgroundLayer = ({
             mainLayerName={mainLayerName}
             indent={indent + 1}
             isAktiveKartlag={isAktiveKartlag}
+            toggleSubLayerVisibility={toggleSubLayerVisibility}
           />
         ))}
       </>
