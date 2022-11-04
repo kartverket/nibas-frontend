@@ -53,27 +53,31 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
       isMainLayer: props.isMainLayer,
     });
 
+    const getAddRemove = () => (
+      <IconButton onClick={onVisibilityClick}>
+        {visible ? (
+          <Icon icon="remove" aria-label={`Fjern ${props.mappedLayer.title}`} />
+        ) : (
+          <Icon icon="add" aria-label={`Vis ${props.mappedLayer.title}`} />
+        )}
+      </IconButton>
+    );
     const renderNameAndCaret = () => {
-      // hvis hovedlag som kan dras på, vis annen musepeker på navnet
-      if (props.isMainLayer && ref) {
-        let icon: ReactElement | undefined = undefined;
-        if (props.mappedLayer.layers.length > 0) {
-          icon = getCaretIcon(open);
-        }
-
+      // hvis hovedlag uten barn
+      if (props.isMainLayer && props.mappedLayer.layers.length === 0) {
         return (
           <ClickableName
-            onClick={() => setOpen(!open)}
-            icon={icon}
-            open={open}
+            variant="unstyled"
             isMainLayer={props.isMainLayer}
+            open={false}
+            icon={getAddRemove()}
           >
             <span>{props.mappedLayer.title}</span>
           </ClickableName>
         );
       }
 
-      //hvis hovedlag og åpent legg på bakgrunnsfarge
+      // hvis hovedlag og åpent legg på bakgrunnsfarge
       if (props.isMainLayer) {
         return (
           <ClickableName
@@ -106,16 +110,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
       return (
         <AktivtSubKartlagName activeLayer={visible}>
           {props.mappedLayer.title}
-          <IconButton onClick={onVisibilityClick}>
-            {visible ? (
-              <Icon
-                icon="remove"
-                aria-label={`Fjern ${props.mappedLayer.title}`}
-              />
-            ) : (
-              <Icon icon="add" aria-label={`Vis ${props.mappedLayer.title}`} />
-            )}
-          </IconButton>
+          <IconButton onClick={onVisibilityClick}>{getAddRemove()}</IconButton>
         </AktivtSubKartlagName>
       );
     };
