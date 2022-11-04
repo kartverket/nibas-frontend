@@ -77,21 +77,6 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
         );
       }
 
-      // hvis hovedlag og åpent legg på bakgrunnsfarge
-      if (props.isMainLayer) {
-        return (
-          <ClickableName
-            variant="unstyled"
-            icon={getCaretIcon(open)}
-            onClick={() => setOpen(!open)}
-            open={open}
-            isMainLayer={props.isMainLayer}
-          >
-            <span>{props.mappedLayer.title}</span>
-          </ClickableName>
-        );
-      }
-
       // hvis har sub-lag, la navnet være klikkbart for å åpne accordion
       if (props.mappedLayer.layers.length > 0) {
         return (
@@ -100,6 +85,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
             icon={getCaretIcon(open)}
             onClick={() => setOpen(!open)}
             open={open}
+            isMainLayer={props.isMainLayer}
           >
             <span>{props.mappedLayer.title}</span>
           </ClickableName>
