@@ -1,4 +1,4 @@
-import { forwardRef, ReactElement, useState } from "react";
+import { forwardRef, useState } from "react";
 import styled from "styled-components";
 import useLayerOpacity from "./useLayerOpacity";
 import Button from "components/form/Button";
@@ -54,13 +54,13 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
     });
 
     const getAddRemove = () => (
-      <IconButton onClick={onVisibilityClick}>
+      <AddRemove>
         {visible ? (
           <Icon icon="remove" aria-label={`Fjern ${props.mappedLayer.title}`} />
         ) : (
           <Icon icon="add" aria-label={`Vis ${props.mappedLayer.title}`} />
         )}
-      </IconButton>
+      </AddRemove>
     );
     const renderNameAndCaret = () => {
       // hvis hovedlag uten barn
@@ -92,12 +92,12 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
         );
       }
 
-      // ellers bare render tittelen til et aktivt sub-lag
+      // ellers bare render tittelen til et sub-lag
       return (
-        <AktivtSubKartlagName activeLayer={visible}>
+        <SubKartlagName activeLayer={visible}>
           {props.mappedLayer.title}
-          <IconButton onClick={onVisibilityClick}>{getAddRemove()}</IconButton>
-        </AktivtSubKartlagName>
+          <AddRemove onClick={onVisibilityClick}>{getAddRemove()}</AddRemove>
+        </SubKartlagName>
       );
     };
 
@@ -129,12 +129,12 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
       return (
         <AktivtSubLayerWrapper>
           <span>{props.mappedLayer.title}</span>
-          <IconButton onClick={onVisibilityClick}>
+          <AddRemove onClick={onVisibilityClick}>
             <Icon
               icon="remove"
               aria-label={`Fjern ${props.mappedLayer.title} fra aktive kartlag`}
             />
-          </IconButton>
+          </AddRemove>
         </AktivtSubLayerWrapper>
       );
     };
@@ -160,9 +160,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
 
 BackgroundLayerAccordion.displayName = "BackgroundLayerAccordion";
 
-const IconButton = styled(Button).attrs(() => ({
-  variant: "unstyled",
-}))`
+const AddRemove = styled.div`
   color: ${({ theme }) => theme.colors.gray};
   cursor: pointer;
 
@@ -195,7 +193,7 @@ const Wrapper = styled.div<{ indent: number }>`
   }
 `;
 
-const AktivtSubKartlagName = styled.span<{ activeLayer?: boolean }>`
+const SubKartlagName = styled.span<{ activeLayer?: boolean }>`
   color: ${({ activeLayer, theme }) =>
     activeLayer ? theme.colors.gray : theme.colors.black};
   display: flex;
