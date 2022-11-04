@@ -54,7 +54,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
     });
 
     const getAddRemove = () => (
-      <AddRemove>
+      <AddRemove onClick={onVisibilityClick}>
         {visible ? (
           <Icon icon="remove" aria-label={`Fjern ${props.mappedLayer.title}`} />
         ) : (
@@ -164,7 +164,7 @@ const AddRemove = styled.div`
   color: ${({ theme }) => theme.colors.gray};
   cursor: pointer;
 
-  padding: 0 4px;
+  padding: 0 2px;
 `;
 
 const Caret = styled.div<{ open: boolean }>`
