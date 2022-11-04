@@ -18,7 +18,7 @@ const getCaretIcon = (open: boolean) => (
 
 type SharedProps = {
   indent: number;
-  onVisibilityClick: () => void;
+  onVisibilityClick: (layerId: string) => void;
   visible: boolean;
   isAktiveKartlag?: boolean;
   children: React.ReactNode;

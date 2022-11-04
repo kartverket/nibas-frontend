@@ -8,18 +8,22 @@ type Props = {
   mappedLayer: MainMappedLayer;
   index: number;
   toggleLayerVisibility: () => void;
+  toggleSubLayerVisibility: (layerId: string) => void;
   visible: boolean;
   moveLayer?: (direction: "up" | "down", layerId: BakgrunnskartId) => void;
   isAktiveKartlag?: boolean;
+  visibleSubLayers: string[];
 };
 
 const MainBackgroundLayer = ({
   mappedLayer,
   visible,
   toggleLayerVisibility,
+  toggleSubLayerVisibility,
   index,
   moveLayer,
   isAktiveKartlag,
+  visibleSubLayers,
 }: Props) => {
   const ref = useBackgroundLayerDND(index, mappedLayer, moveLayer);
 
@@ -35,16 +39,21 @@ const MainBackgroundLayer = ({
       isAktiveKartlag={isAktiveKartlag}
     >
       <>
-        {mappedLayer.layers.map((layer) => (
-          <SubBackgroundLayer
-            key={layer.title}
-            mappedLayer={layer}
-            mainLayerSourceId={mappedLayer.sourceId}
-            mainLayerName={mappedLayer.id ?? ""}
-            indent={1}
-            isAktiveKartlag={isAktiveKartlag}
-          />
-        ))}
+        {mappedLayer.layers
+          .filter((layer) =>
+            isAktiveKartlag ? visibleSubLayers.includes(layer.title) : true
+          )
+          .map((layer) => (
+            <SubBackgroundLayer
+              key={layer.title}
+              mappedLayer={layer}
+              mainLayerSourceId={mappedLayer.sourceId}
+              mainLayerName={mappedLayer.id ?? ""}
+              indent={1}
+              toggleSubLayerVisibility={toggleSubLayerVisibility}
+              isAktiveKartlag={isAktiveKartlag}
+            />
+          ))}
       </>
     </BackgroundLayerAccordion>
   );

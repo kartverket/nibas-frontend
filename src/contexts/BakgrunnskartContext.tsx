@@ -7,11 +7,15 @@ import getSubLayersFromWMSSource, {
 } from "utils/getLayersFromWMS";
 import { mapVectorLayer } from "utils/getMatrikkelWfsFeatures";
 import { isVectorLayer } from "utils/map/layers";
+import useVisibleSubLayers from "hooks/layers/useVisibleSubLayers";
 
 export type BakgrunnskartContextValue = {
   mappedLayers: MainMappedLayer[];
   visibleLayers: BakgrunnskartId[];
+  visibleSubLayers: string[];
   toggleLayerVisibility: (layerId: BakgrunnskartId) => void;
+  toggleSubLayerVisibility: (layerId: string) => void;
+
   moveLayer: (direction: "up" | "down", layerId: BakgrunnskartId) => void;
 };
 
@@ -27,6 +31,7 @@ export const BakgrunnskartProvider: React.FC = ({ children }) => {
 
   const { visibleLayers, moveLayer, toggleLayerVisibility } =
     useVisibleLayers();
+  const { visibleSubLayers, toggleSubLayerVisibility } = useVisibleSubLayers();
 
   useEffect(() => {
     let isMounted = true;
@@ -63,7 +68,9 @@ export const BakgrunnskartProvider: React.FC = ({ children }) => {
   const value = {
     mappedLayers,
     visibleLayers,
+    visibleSubLayers,
     toggleLayerVisibility,
+    toggleSubLayerVisibility,
     moveLayer,
   };
 
