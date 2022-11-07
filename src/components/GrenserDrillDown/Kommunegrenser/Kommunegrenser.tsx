@@ -5,7 +5,6 @@ import ListItemAccordion from "../ListItemAccordion";
 import KommuneList from "./KommuneList";
 import { UnstyledList } from "components/UnstyledList";
 import useFylker from "hooks/inndelinger/useFylker";
-import { getNavnInSpraak } from "utils/language/language";
 
 const Kommunegrenser = () => {
   const { fylker } = useFylker();
@@ -18,12 +17,7 @@ const Kommunegrenser = () => {
         {fylker ? (
           <List>
             {fylker.map((fylke) => (
-              <ListItemAccordion
-                key={fylke.id}
-                title={getNavnInSpraak(fylke.navn, "nor")}
-              >
-                <KommuneList fylke={fylke} />
-              </ListItemAccordion>
+              <KommuneList key={fylke.id} fylke={fylke} />
             ))}
           </List>
         ) : (
