@@ -7,6 +7,7 @@ import Tabs from "components/Tabs";
 import Heading from "components/typography/Heading";
 import { useMetadataPanel } from "contexts/MetadataPanelContext";
 import { ClosePanelButton } from "components/Kart/MetadataPanel/ClosePanelButton";
+import styled from "styled-components";
 
 const showReferanserByGrenseType: Record<string, boolean> = {
   Territorialgrense: true,
@@ -41,8 +42,8 @@ const GrensePanel = ({ feature }: Props) => {
 
   return (
     <>
-      <ClosePanelButton onClose={closePanel} />
-      <Tabs key={feature.getId()} tabTransKeys={tabs}>
+      <ClosePanelButton onClose={() => closePanel("grensemetadata")} />
+      <StickyTabs key={feature.getId()} tabTransKeys={tabs}>
         <div>
           <Heading size="xs" tag="h2">
             Linje metadata
@@ -63,9 +64,13 @@ const GrensePanel = ({ feature }: Props) => {
             <GrenseMetadataReferanser feature={feature} />
           </div>
         )}
-      </Tabs>
+      </StickyTabs>
     </>
   );
 };
+
+const StickyTabs = styled(Tabs)`
+  /* position: sticky; */
+`;
 
 export default GrensePanel;

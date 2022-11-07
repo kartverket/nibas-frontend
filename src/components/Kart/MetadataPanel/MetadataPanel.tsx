@@ -7,32 +7,38 @@ import { InndelingerKretsProvider } from "contexts/InndelingerKretsContext";
 import { useMetadataPanel } from "contexts/MetadataPanelContext";
 
 const MetadataPanel = () => {
-  const { panelContext } = useMetadataPanel();
-
-  if (!panelContext) return null;
+  const { panelContext, kretserContext } = useMetadataPanel();
 
   return (
-    <MetadataPanelWrapper>
-      {panelContext.content === "grensemetadata" && (
-        <GrensePanel feature={panelContext.feature} />
+    <>
+      {panelContext?.type === "grensemetadata" && (
+        <MetadataPanelWrapper key="grensemetadata" gridArea="metadata">
+          <GrensePanel feature={panelContext.feature} />
+        </MetadataPanelWrapper>
       )}
-      {panelContext.content === "grunnkrets" && (
-        <InndelingerKretsProvider kretstype={"grunnkrets"}>
-          <GrunnkretserPanel kommune={panelContext.kommune} />
-        </InndelingerKretsProvider>
+      {kretserContext?.type === "grunnkrets" && (
+        <MetadataPanelWrapper key="grensemetadata" gridArea="kretser">
+          <InndelingerKretsProvider kretstype="grunnkrets">
+            <GrunnkretserPanel kommune={kretserContext.kommune} />
+          </InndelingerKretsProvider>
+        </MetadataPanelWrapper>
       )}
-      {panelContext.content === "stemmekrets" && (
-        <InndelingerKretsProvider kretstype={"stemmekrets"}>
-          <StemmekretserPanel kommune={panelContext.kommune} />
-        </InndelingerKretsProvider>
+      {kretserContext?.type === "stemmekrets" && (
+        <MetadataPanelWrapper key="grensemetadata" gridArea="kretser">
+          <InndelingerKretsProvider kretstype="stemmekrets">
+            <StemmekretserPanel kommune={kretserContext.kommune} />
+          </InndelingerKretsProvider>
+        </MetadataPanelWrapper>
       )}
-    </MetadataPanelWrapper>
+    </>
   );
 };
 
-export const MetadataPanelWrapper = styled(KartInteractable)`
+export const MetadataPanelWrapper = styled(KartInteractable)<{
+  gridArea: "metadata" | "kretser";
+}>`
   position: relative;
-  grid-area: metadata;
+  grid-area: ${({ gridArea }) => gridArea};
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -43,10 +49,11 @@ export const MetadataPanelWrapper = styled(KartInteractable)`
   border: 2px solid ${({ theme }) => theme.colors.blue};
   border-bottom: none;
   border-right: none;
+  overflow-y: auto;
 
-  @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
+  /* @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
     border-bottom: 2px solid ${({ theme }) => theme.colors.blue};
-  }
+  } */
 
   min-width: 500px;
   width: 100%;

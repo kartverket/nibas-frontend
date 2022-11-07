@@ -36,7 +36,7 @@ export const UtkastProvider: React.FC = ({ children }) => {
   const { tokenHolderFunc } = useAuthenticationFlow();
   const [searchParams, setSearchParams] = useSearchParams();
   const { resetEditingObject } = useEditAllGrenser();
-  const { closePanel } = useMetadataPanel();
+  const { closePanels } = useMetadataPanel();
   const utkastId = searchParams.get("utkast");
 
   const { mutate: globalMutate } = useSWRConfig();
@@ -104,7 +104,7 @@ export const UtkastProvider: React.FC = ({ children }) => {
   const closeUtkast = () => {
     setSearchParams({});
     resetEditingObject();
-    closePanel();
+    closePanels();
     resetMapView();
     clearHistory();
   };

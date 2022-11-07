@@ -8,7 +8,7 @@ import OverlayPopup from "./OverlayPopup";
 import SidebarPanels from "./SidebarPanels";
 import Toolbar from "./Toolbar";
 import UtkastTab from "./UtkastTab";
-import { PanelContent, useMetadataPanel } from "contexts/MetadataPanelContext";
+import { PanelType, useMetadataPanel } from "contexts/MetadataPanelContext";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
 import useSelectInteraction from "hooks/interactions/useSelectInteraction";
 import { initBakgrunnskartLayers, initGrenserLayers } from "utils/map/layers";
@@ -44,7 +44,7 @@ const Kart = () => {
       <KartTarget ref={mapRef}>
         <Suspense fallback="More loading...">
           <UtkastTab />
-          <KartOverlay content={panelContext?.content}>
+          <KartOverlay content={panelContext?.type}>
             <SidebarPanels />
             <MetadataPanel />
             <Toolbar />
@@ -91,7 +91,7 @@ const KartTarget = styled.div`
 `;
 
 const KartOverlay = styled.div<{
-  content?: PanelContent;
+  content?: PanelType;
 }>`
   display: grid;
 
@@ -99,15 +99,17 @@ const KartOverlay = styled.div<{
   grid-template-rows: 1fr auto;
   grid-template-areas:
     "panel toolbar ."
-    "panel metadata metadata";
+    "panel metadata metadata"
+    "panel kretser kretser";
   width: 100%;
   height: 100%;
   position: absolute;
   pointer-events: none;
   z-index: 1;
+  overflow: hidden;
 
   /* Flytt grensemetadata til høyre side på stor skjerm */
-  ${({ content }) => {
+  /* ${({ content }) => {
     if (content === "grensemetadata")
       return css`
         @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
@@ -124,7 +126,7 @@ const KartOverlay = styled.div<{
           }
         }
       `;
-  }}
+  }} */
 `;
 
 export default Kart;

@@ -4,28 +4,31 @@ import Geometry from "ol/geom/Geometry";
 import { KommuneRef } from "types/api";
 
 type GrenseMetadataPanel = {
-  content: "grensemetadata";
+  type: "grensemetadata";
   feature: Feature<Geometry>;
 };
 
 type GrunnkretserPanel = {
-  content: "grunnkrets";
+  type: "grunnkrets";
   kommune: KommuneRef;
 };
 
 type StemmekretserPanel = {
-  content: "stemmekrets";
+  type: "stemmekrets";
   kommune: KommuneRef;
 };
 
+type KretserPanel = GrunnkretserPanel | StemmekretserPanel;
 type Panel = GrenseMetadataPanel | GrunnkretserPanel | StemmekretserPanel;
-export type PanelContent = Panel["content"];
+export type PanelType = Panel["type"];
 
 export type MetadataPanelContextValue = {
   panelContext: Panel | null;
-  isOpen: boolean;
-  openPanel: (newPanelContext: Panel) => void;
-  closePanel: () => void;
+  kretserContext: Panel | null;
+  isOpen: (panel: PanelType) => boolean;
+  openPanel: (panel: Panel) => void;
+  closePanel: (panel: PanelType) => void;
+  closePanels: () => void;
 };
 
 /**
@@ -36,19 +39,50 @@ export const MetadataPanelContext = createContext<
 >(undefined);
 
 export const MetadataPanelProvider: React.FC = ({ children }) => {
-  const [panelContext, setPanelContext] = useState<Panel | null>(null);
+  const [panelContext, setPanelContext] = useState<GrenseMetadataPanel | null>(
+    null
+  );
+  const [kretserContext, setKretserContext] = useState<KretserPanel | null>(
+    null
+  );
 
-  const openPanel = useCallback((newPanelContext: Panel) => {
-    setPanelContext(newPanelContext);
+  const openPanel = useCallback((panel: Panel) => {
+    if (panel.type === "grunnkrets" || panel.type === "stemmekrets") {
+      setKretserContext(panel);
+    } else {
+      setPanelContext(panel);
+    }
   }, []);
 
-  const closePanel = useCallback(() => {
+  const closePanel = useCallback((panel: PanelType) => {
+    if (panel === "grunnkrets" || panel === "stemmekrets") {
+      setKretserContext(null);
+    } else {
+      setPanelContext(null);
+    }
+  }, []);
+
+  const closePanels = useCallback(() => {
     setPanelContext(null);
+    setKretserContext(null);
   }, []);
 
-  const isOpen = !!panelContext;
+  const isOpen = (panel: PanelType) => {
+    if (panel === "grunnkrets" || panel === "stemmekrets") {
+      return kretserContext !== null;
+    } else {
+      return panelContext !== null;
+    }
+  };
 
-  const value = { panelContext, openPanel, closePanel, isOpen };
+  const value = {
+    panelContext,
+    kretserContext,
+    openPanel,
+    closePanel,
+    isOpen,
+    closePanels,
+  };
 
   return (
     <MetadataPanelContext.Provider value={value}>

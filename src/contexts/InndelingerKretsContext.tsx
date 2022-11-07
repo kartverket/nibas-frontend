@@ -105,7 +105,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
         };
       });
 
-      openPanel({ content: currentKretstype, kommune });
+      openPanel({ type: currentKretstype, kommune });
 
       // hvis ikke endret fra før, endre nå
       if (kommuneValues.visible) {
@@ -115,7 +115,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
       addKretserToLayer("edit");
     } else {
       removeKretserFromLayer("edit");
-      closePanel();
+      closePanel(currentKretstype);
     }
 
     setMultipleValues(newValues);
@@ -137,7 +137,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
     } else {
       // hvis ikke lenger skal være synlig
       removeKretserFromLayer(layerId);
-      closePanel();
+      closePanel(currentKretstype);
     }
   };
 
