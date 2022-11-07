@@ -4,6 +4,7 @@ type Color = "blue" | "green" | "white";
 
 type Props = {
   color?: Color;
+  "aria-label"?: string;
 };
 
 const getKvibClassName = (color: Color) => {
@@ -23,10 +24,17 @@ const getKvibClassName = (color: Color) => {
   }
 };
 
-const Loader = ({ color = "blue" }: Props) => {
+const Loader = ({ color = "blue", ...props }: Props) => {
   const className = getKvibClassName(color);
 
-  return <LoaderWrapper className={className} />;
+  return (
+    <LoaderWrapper
+      role="alert"
+      aria-live="polite"
+      aria-label={props["aria-label"]}
+      className={className}
+    />
+  );
 };
 
 const LoaderWrapper = styled.div`

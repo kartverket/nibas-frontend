@@ -39,9 +39,9 @@ const EditableGrenseAccordion: FC<Props> = ({
       <Header>
         <VisibilityButton onClick={toggleVisible}>
           {value.visible ? (
-            <Icon icon="visibility" />
+            <Icon icon="visibility" aria-label={`Skjul ${title}`} />
           ) : (
-            <Icon icon="visibility_off" />
+            <Icon icon="visibility_off" aria-label={`Vis ${title}`} />
           )}
         </VisibilityButton>
         <TextContent>
@@ -54,15 +54,15 @@ const EditableGrenseAccordion: FC<Props> = ({
             </LinkButton>
           </div>
         </TextContent>
-        {isFetching && <Loader />}
+        {isFetching && <Loader aria-label={`Henter ${title}`} />}
         <Button
           variant="unstyled"
           onClick={accordion.toggle}
           icon={
             accordion.isVisible ? (
-              <Icon icon="expand_less" aria-label="Lukk" />
+              <Icon icon="expand_less" aria-label={`Lukk ${title}`} />
             ) : (
-              <Icon icon="expand_more" aria-label="Åpne" />
+              <Icon icon="expand_more" aria-label={`Åpne ${title}`} />
             )
           }
         />
