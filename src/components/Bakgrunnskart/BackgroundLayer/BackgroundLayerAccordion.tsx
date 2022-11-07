@@ -150,10 +150,10 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
     //aktivekartlag-liste burde på sikt trekkes ut i egen komponent
     if (isAktiveKartlag) {
       return (
-        <AktivtKartlag mainLayer={props.isMainLayer}>
+        <div>
           {props.isMainLayer ? renderAktivtMainLayer() : renderAktivtSubLayer()}
           {children}
-        </AktivtKartlag>
+        </div>
       );
     }
 
@@ -267,6 +267,7 @@ const AktivtMainLayerWrapper = styled.div`
   margin: 8px 0;
   padding: 6px 0;
   font-weight: bold;
+  padding-top: 16px;
 `;
 
 const AktivtSubLayerWrapper = styled.div`
