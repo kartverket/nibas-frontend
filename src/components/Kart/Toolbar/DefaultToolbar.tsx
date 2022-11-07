@@ -17,7 +17,7 @@ const DefaultToolbar = ({ openCreateUtkast }: Props) => {
   const { utkast, updateUtkastWithHistory, closeUtkast } = useUtkast();
   const { openFeedback, isOpen, closeFeedback, feedbackContent } = useFeedback(
     t(
-      "Utkastet er ikke publisert enda. Vil du fullføre det senere, eller publisere med en gang?"
+      "Utkastet ditt har endringer som ikke er lagret. Dersom du lukker utkastet nå, vil disse endringene forkastes. Er du sikker på at du vil fortsette?"
     )
   );
 
@@ -48,11 +48,13 @@ const DefaultToolbar = ({ openCreateUtkast }: Props) => {
           <Button onClick={redo} disabled={!redo}>
             {t("action.Redo")}
           </Button>
-          {utkast && (
-            <CloseUtkastButton variant="unstyled" onClick={openFeedback}>
-              <span>{"Lukk utkast"}</span>
-            </CloseUtkastButton>
-          )}
+
+          <CloseUtkastButton
+            variant="unstyled"
+            onClick={canSave ? openFeedback : closeUtkast}
+          >
+            {t("action.Lukk Utkast")}
+          </CloseUtkastButton>
         </Buttons>
       </ToolbarWrapperWithName>
       <Feedback
@@ -61,6 +63,8 @@ const DefaultToolbar = ({ openCreateUtkast }: Props) => {
         isOpen={isOpen}
         onClose={closeFeedback}
         onContinue={closeUtkast}
+        closeText={t("Fortsett redigering")}
+        continueText={t("Forkast endringer")}
       >
         {feedbackContent}
       </Feedback>

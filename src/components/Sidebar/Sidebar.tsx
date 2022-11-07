@@ -3,8 +3,8 @@ import styled from "styled-components";
 import useSWR from "swr";
 import SidebarButton from "./SidebarButton";
 import Icon from "components/Icon";
-import { useUtkast } from "contexts/UtkastContext";
 import { fetcher } from "utils/swr";
+import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
 
 type ActuatorResponse = {
   application: {
@@ -22,10 +22,10 @@ const Sidebar = () => {
 
   const { t } = useTranslation();
 
-  const { utkast } = useUtkast();
+  const { redigeringsmodusAktiv } = useRedigeringsmodus();
 
   return (
-    <StyledSidebar utkastActive={!!utkast}>
+    <StyledSidebar utkastActive={redigeringsmodusAktiv}>
       <ButtonsWrapper>
         <SidebarButton
           title={t("sidebar.Inndelinger")}

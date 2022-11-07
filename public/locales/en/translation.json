@@ -74,7 +74,8 @@
     "Publiser": "__STRING_NOT_TRANSLATED__",
     "Avslutt redigering": "__STRING_NOT_TRANSLATED__",
     "Forkast": "__STRING_NOT_TRANSLATED__",
-    "Rediger": "__STRING_NOT_TRANSLATED__"
+    "Rediger": "__STRING_NOT_TRANSLATED__",
+    "Lukk Utkast": "__STRING_NOT_TRANSLATED__"
   },
   "Ja": "__STRING_NOT_TRANSLATED__",
   "Nei": "__STRING_NOT_TRANSLATED__",
@@ -111,5 +112,14 @@
   "Redigerer": "__STRING_NOT_TRANSLATED__",
   "Utkastet er ikke publisert enda": {
     " Vil du fullføre det senere, eller publisere med en gang?": "__STRING_NOT_TRANSLATED__"
-  }
+  },
+  "Lukk likevel": "__STRING_NOT_TRANSLATED__",
+  "Fortsett redigering": "__STRING_NOT_TRANSLATED__",
+  "Forkast endringer og lukk": "__STRING_NOT_TRANSLATED__",
+  "Utkastet ditt har endringer som ikke er lagret": {
+    " Dersom du lukker utkastet nå, vil disse endringene forkastes": {
+      " Er du sikker på at du vil fortsette?": "__STRING_NOT_TRANSLATED__"
+    }
+  },
+  "Forkast endringer": "__STRING_NOT_TRANSLATED__"
 }
