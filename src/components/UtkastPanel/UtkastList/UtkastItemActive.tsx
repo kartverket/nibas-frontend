@@ -7,13 +7,20 @@ import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
 import { BlockLabel } from "components/Kart/MetadataPanel/metadataComponents";
-import { useToolbarSaving, UtkastEntry } from "contexts/ToolbarContext";
+import {
+  useToolbarActions,
+  useToolbarSaving,
+  UtkastEntry,
+} from "contexts/ToolbarContext";
 import useToolbarFormSync from "contexts/ToolbarContext/useToolbarFormSync";
 import { translateKeysByEndringsType } from "contexts/UtkastContext/constants";
 import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
 import useNibasApi from "hooks/useNibasApi";
 import { Translation } from "i18n";
 import { UtkastResponse } from "types/api";
+import Feedback from "components/Feedback/Feedback";
+import useFeedback from "hooks/useFeedback";
+import { useUtkast } from "contexts/UtkastContext";
 
 type Inputs = {
   navn: string;
@@ -34,19 +41,25 @@ const fromFormToRequest = (
 
 type Props = {
   utkastId: string;
-  changeUtkast: (url: string) => void;
 };
 
-const UtkastItemActive = ({ utkastId, changeUtkast }: Props) => {
+const UtkastItemActive = ({ utkastId }: Props) => {
   const { t } = useTranslation();
   const { register, setValue, getValues } = useForm<Inputs>();
+  const { closeUtkast } = useUtkast();
+
   const { data: fullUtkast } = useNibasApi("/v1/utkast/{id}", {
     id: utkastId,
   });
-
+  const { openFeedback, isOpen, closeFeedback, feedbackContent } = useFeedback(
+    t(
+      "Utkastet ditt har endringer som ikke er lagret. Dersom du lukker utkastet nå, vil disse endringene forkastes. Er du sikker på at du vil fortsette?"
+    )
+  );
   const previousValues = useRef<Inputs>(getValues());
 
   const { addEntry } = useToolbarSaving();
+  const { canSave } = useToolbarActions();
 
   useEffect(() => {
     if (!fullUtkast) return;
@@ -125,10 +138,21 @@ const UtkastItemActive = ({ utkastId, changeUtkast }: Props) => {
         <EditingUtkastText>
           {t("utkast.Du er nå i redigeringsmodus av dette utkastet")}
         </EditingUtkastText>
-        <CancelButton onClick={() => changeUtkast("")}>
-          {t("action.Avbryt redigering")}
+        <CancelButton onClick={canSave ? openFeedback : closeUtkast}>
+          {t("action.Avslutt redigering")}
         </CancelButton>
       </Center>
+      <Feedback
+        type="warning"
+        title="Advarsel"
+        isOpen={isOpen}
+        onClose={closeFeedback}
+        onContinue={closeUtkast}
+        closeText={t("Fortsett redigering")}
+        continueText={t("Forkast endringer")}
+      >
+        {feedbackContent}
+      </Feedback>
     </UtkastItemExpanded>
   );
 };

@@ -34,7 +34,6 @@ const ModalStyle = styled.div`
   border: 1px solid ${({ theme }) => theme.colors.blue};
   background: white;
 
-  overflow-y: scroll;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   animation: Enter 0.5s cubic-bezier(0.75, 0, 0.25, 1.5);
   outline: none;
@@ -67,6 +66,10 @@ const Buttons = styled.div`
   align-self: flex-end;
   margin: 16px;
   gap: 16px;
+
+  > button {
+    height: 100%;
+  }
 `;
 
 type StatusType = "positive" | "negative" | "warning" | "info";
@@ -86,6 +89,8 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   onContinue?: () => void;
+  closeText?: string;
+  continueText?: string;
 };
 
 const Feedback = ({
@@ -95,8 +100,15 @@ const Feedback = ({
   isOpen,
   onClose,
   onContinue,
+  closeText,
+  continueText,
 }: Props) => {
   const { t } = useTranslation();
+
+  const closeAndContinue = () => {
+    onClose();
+    onContinue?.();
+  };
 
   return (
     <Modal
@@ -117,12 +129,16 @@ const Feedback = ({
         {onContinue ? (
           <>
             <Button variant="tertiary" onClick={onClose}>
-              {t("action.Avbryt")}
+              {closeText ? closeText : t("action.Avbryt")}
             </Button>
-            <Button onClick={onContinue}>{t("action.Fortsett")}</Button>
+            <Button onClick={closeAndContinue}>
+              {continueText ? continueText : t("action.Fortsett")}
+            </Button>
           </>
         ) : (
-          <Button onClick={onClose}>{t("action.Lukk")}</Button>
+          <Button onClick={onClose}>
+            {closeText ? closeText : t("action.Lukk")}
+          </Button>
         )}
       </Buttons>
     </Modal>

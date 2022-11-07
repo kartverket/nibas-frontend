@@ -5,11 +5,15 @@ import { ThemeProvider } from "styled-components";
 import { SWRConfig } from "swr";
 import { defaultTheme } from "style/theme";
 
+const swrGlobalConfig = {
+  revalidateOnFocus: false,
+};
+
 const ThirdPartyProviders: FC = ({ children }) => {
   return (
     <DndProvider backend={HTML5Backend}>
       <ThemeProvider theme={defaultTheme}>
-        <SWRConfig>{children}</SWRConfig>
+        <SWRConfig value={swrGlobalConfig}>{children}</SWRConfig>
       </ThemeProvider>
     </DndProvider>
   );

@@ -36,7 +36,6 @@ const renderWithProvider = (ui: ReactNode) =>
         { ...defaultProps.mappedLayer, sourceId: "administrativeGrenser" },
       ],
       moveLayer: jest.fn(),
-      orderedLayerIds: ["administrativeGrenser"],
     },
   });
 

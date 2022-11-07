@@ -9,10 +9,10 @@ import SidebarPanels from "./SidebarPanels";
 import Toolbar from "./Toolbar";
 import UtkastTab from "./UtkastTab";
 import { PanelContent, useMetadataPanel } from "contexts/MetadataPanelContext";
-import { useUtkast } from "contexts/UtkastContext";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
 import useSelectInteraction from "hooks/interactions/useSelectInteraction";
 import { initBakgrunnskartLayers, initGrenserLayers } from "utils/map/layers";
+import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
 
 // dette må skje utenfor komponenten siden React kjører dypere useEffects
 // før de lenger opp i treet, så lag er ikke definert når de trengs lenger ned
@@ -22,7 +22,7 @@ initBakgrunnskartLayers();
 const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const { panelContext } = useMetadataPanel();
-  const { utkast } = useUtkast();
+  const { redigeringsmodusAktiv } = useRedigeringsmodus();
 
   useEditInteractions();
   const selectedFeatures = useSelectInteraction();
@@ -48,7 +48,7 @@ const Kart = () => {
             <SidebarPanels />
             <MetadataPanel />
             <Toolbar />
-            <UtkastBorder utkastActive={!!utkast} />
+            <UtkastBorder utkastActive={redigeringsmodusAktiv} />
           </KartOverlay>
 
           <ZoomControls />

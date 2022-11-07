@@ -6,11 +6,13 @@ import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
 import { useBakgrunnskart } from "contexts/BakgrunnskartContext";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import Heading from "components/typography/Heading";
+import { bakgrunnskartLayers } from "hooks/layers/constants";
+import { BakgrunnskartId } from "hooks/layers/types";
 
 const Bakgrunnskart = () => {
   const { t } = useTranslation();
   const { isOpen: visible, togglePanel } = useSidebarPanel("kartlag");
-  const { orderedLayerIds, visibleLayers } = useBakgrunnskart();
+  const { visibleLayers } = useBakgrunnskart();
 
   if (!visible) return null;
 
@@ -29,8 +31,13 @@ const Bakgrunnskart = () => {
       <BackgroundLayersHeading tag="h3" size="xs">
         {t("sidebar.Kartlag")}
       </BackgroundLayersHeading>
-      {orderedLayerIds.map((layerId, index) => (
-        <MainLayer key={layerId} layerId={layerId} index={index} />
+
+      {Object.keys(bakgrunnskartLayers).map((layerId, index) => (
+        <MainLayer
+          key={layerId}
+          layerId={layerId as BakgrunnskartId}
+          index={index}
+        />
       ))}
     </Panel>
   );

@@ -16,13 +16,17 @@ export const sourceToGeoJson = (source: GeometryVectorSource | undefined) => {
   });
 };
 
-export const getFeaturesFromGeoJson = (json: string) => {
+export const getFeaturesFromGeoJson = (
+  json: GeoJSONFeature | GeoJSONFeatureCollection
+) => {
   return geoJson.readFeatures(json, {
     dataProjection: "EPSG:25833",
   });
 };
 
-export const geoJsonToSource = (json: string) => {
+export const geoJsonToSource = (
+  json: GeoJSONFeature | GeoJSONFeatureCollection
+) => {
   return new VectorSource({
     features: getFeaturesFromGeoJson(json),
   });

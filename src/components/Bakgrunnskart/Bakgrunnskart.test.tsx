@@ -68,7 +68,7 @@ describe("Bakgrunnskart", () => {
     expect(subsubLayerTexts).toHaveLength(1);
   });
 
-  it.skip("should add two sublayers to aktive kartlag", async () => {
+  it("should add two sublayers to aktive kartlag", async () => {
     const { user } = renderWithProvider(<Bakgrunnskart />);
 
     const openMainButton = await screen.findByRole("button", {
@@ -99,7 +99,6 @@ describe("Bakgrunnskart", () => {
     );
 
     expect(screen.getAllByText("Kommuner historisk")).toHaveLength(2);
-    //https://kartverket.atlassian.net/browse/TS-597
     expect(screen.getAllByText("Kommuner gjeldene")).toHaveLength(2);
     expect(screen.getAllByText("Kommuner framtidig")).toHaveLength(2);
 

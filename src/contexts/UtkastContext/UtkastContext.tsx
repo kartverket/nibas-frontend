@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
-import { useMatch } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { useSWRConfig } from "swr";
 import {
   EntityUtkastType,
@@ -18,6 +18,9 @@ import { updateUtkast as updateApiUtkast } from "api/utkast";
 import { HistoryChange, useToolbar } from "contexts/ToolbarContext";
 import useNibasApi from "hooks/useNibasApi";
 import { OppdaterUtkastRequest } from "types/api";
+import { resetMapView } from "utils/map";
+import { useEditAllGrenser } from "contexts/EditGrenserContext";
+import { useMetadataPanel } from "contexts/MetadataPanelContext";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
@@ -31,7 +34,10 @@ export const UtkastContext = createContext<UtkastContextValue | undefined>(
 export const UtkastProvider: React.FC = ({ children }) => {
   const { history, clearHistory } = useToolbar();
   const { tokenHolderFunc } = useAuthenticationFlow();
-  const utkastId = useMatch("/:utkastId")?.params.utkastId;
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { resetEditingObject } = useEditAllGrenser();
+  const { closePanel } = useMetadataPanel();
+  const utkastId = searchParams.get("utkast");
 
   const { mutate: globalMutate } = useSWRConfig();
 
@@ -95,7 +101,15 @@ export const UtkastProvider: React.FC = ({ children }) => {
     clearHistory();
   };
 
-  const value = { utkast, updateUtkastWithHistory };
+  const closeUtkast = () => {
+    setSearchParams({});
+    resetEditingObject();
+    closePanel();
+    resetMapView();
+    clearHistory();
+  };
+
+  const value = { utkast, updateUtkastWithHistory, closeUtkast };
 
   return (
     <UtkastContext.Provider value={value}>{children}</UtkastContext.Provider>

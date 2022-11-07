@@ -7,13 +7,13 @@ import Icon from "components/Icon";
 import { MainMappedLayer, MappedLayer } from "utils/getLayersFromWMS";
 
 const getCaretIcon = (open: boolean) => (
-  <IconButton open={open}>
+  <Caret open={open}>
     {open ? (
       <Icon icon="expand_less" aria-label="Lukk" />
     ) : (
       <Icon icon="expand_more" aria-label="Åpne" />
     )}
-  </IconButton>
+  </Caret>
 );
 
 type SharedProps = {
@@ -101,22 +101,20 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
           </ClickableName>
         );
       }
-
-      // ellers bare render tittelen til sub-laget
+      // ellers bare render tittelen til et aktivt sub-lag
       return (
         <AktivtSubKartlagName activeLayer={visible}>
           {props.mappedLayer.title}
           <IconButton
             onClick={() => onVisibilityClick(props.mappedLayer.title)}
-            open={open}
           >
-            {!visible ? (
-              <Icon icon="add" aria-label={`Vis ${props.mappedLayer.title}`} />
-            ) : (
+            {visible ? (
               <Icon
                 icon="remove"
                 aria-label={`Fjern ${props.mappedLayer.title}`}
               />
+            ) : (
+              <Icon icon="add" aria-label={`Vis ${props.mappedLayer.title}`} />
             )}
           </IconButton>
         </AktivtSubKartlagName>
@@ -127,7 +125,10 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
       return (
         <AktivtMainLayerWrapper>
           <DraggableLayer ref={ref}>
-            <Icon icon="reorder" aria-label={`Bytt rekkefølge på kartlag`} />
+            <Icon
+              icon="reorder"
+              aria-label={`Bytt rekkefølge på kartlag ${props.mappedLayer.title}`}
+            />
             <span>{props.mappedLayer.title}</span>
           </DraggableLayer>
           <AktivtKartlagSlider>
@@ -143,23 +144,21 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
     };
 
     const renderAktivtSubLayer = () => {
-      if (visible && props.mappedLayer.layers.length === 0) {
-        return (
-          <AktivtSubLayerWrapper>
-            <span>{props.mappedLayer.title}</span>
-            <IconButton
-              onClick={() => onVisibilityClick(props.mappedLayer.title)}
-            >
-              <Icon
-                icon="remove"
-                aria-label={`Fjern ${props.mappedLayer.title} fra aktive kartlag`}
-              />
-            </IconButton>
-          </AktivtSubLayerWrapper>
-        );
-      }
+      if (!visible || props.mappedLayer.layers.length > 0) return;
 
-      return;
+      return (
+        <AktivtSubLayerWrapper>
+          <span>{props.mappedLayer.title}</span>
+          <IconButton
+            onClick={() => onVisibilityClick(props.mappedLayer.title)}
+          >
+            <Icon
+              icon="remove"
+              aria-label={`Fjern ${props.mappedLayer.title} fra aktive kartlag`}
+            />
+          </IconButton>
+        </AktivtSubLayerWrapper>
+      );
     };
 
     //aktivekartlag-liste burde på sikt trekkes ut i egen komponent
@@ -183,30 +182,25 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
 
 BackgroundLayerAccordion.displayName = "BackgroundLayerAccordion";
 
-type IconButtonProps = {
-  activeMainLayer?: boolean;
-  open?: boolean;
-  background?: boolean;
-};
-
 const IconButton = styled(Button).attrs(() => ({
   variant: "unstyled",
-}))<IconButtonProps>`
-  color: ${({ theme, open }) => {
-    if (open) {
-      return theme.colors.white;
-    }
-
-    return theme.colors.gray;
-  }};
-
-  background-color: ${({ open, theme }) =>
-    open ? theme.colors.blueDark : theme.colors.white};
+}))`
+  color: ${({ theme }) => theme.colors.gray};
   cursor: pointer;
 
-  align-items: stretch;
+  padding: 0 4px;
+`;
+
+const Caret = styled.div<{ open: boolean }>`
+  color: ${({ theme, open }) =>
+    open ? theme.colors.white : theme.colors.gray};
+  background-color: ${({ open, theme }) =>
+    open ? theme.colors.blueDark : theme.colors.white};
+
   height: 100%;
   padding: 0 4px;
+  align-items: center;
+  display: flex;
 `;
 
 const Wrapper = styled.div<{ indent: number }>`
