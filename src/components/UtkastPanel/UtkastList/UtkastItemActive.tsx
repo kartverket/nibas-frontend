@@ -6,7 +6,7 @@ import { ButtonsAndGyldigFra, UtkastItemExpanded } from "./UtkastItem";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
-import { BlockLabel } from "components/Kart/MetadataPanel/metadataComponents";
+import { BlockLabel } from "components/Kart/OverlayPanels/metadataComponents";
 import { useToolbarSaving, UtkastEntry } from "contexts/ToolbarContext";
 import useToolbarFormSync from "contexts/ToolbarContext/useToolbarFormSync";
 import { translateKeysByEndringsType } from "contexts/UtkastContext/constants";

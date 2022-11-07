@@ -3,7 +3,7 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { KommuneRef } from "types/api";
 
-type GrenseMetadataPanel = {
+type GrenseOverlayPanels = {
   type: "grensemetadata";
   feature: Feature<Geometry>;
 };
@@ -19,10 +19,10 @@ type StemmekretserPanel = {
 };
 
 type KretserPanel = GrunnkretserPanel | StemmekretserPanel;
-type Panel = GrenseMetadataPanel | GrunnkretserPanel | StemmekretserPanel;
+type Panel = GrenseOverlayPanels | GrunnkretserPanel | StemmekretserPanel;
 export type PanelType = Panel["type"];
 
-export type MetadataPanelContextValue = {
+export type OverlayPanelsContextValue = {
   panelContext: Panel | null;
   kretserContext: Panel | null;
   isOpen: (panel: PanelType) => boolean;
@@ -32,14 +32,14 @@ export type MetadataPanelContextValue = {
 };
 
 /**
- * Bruk heller MetadataPanelProvider i koden
+ * Bruk heller OverlayPanelsProvider i koden
  */
-export const MetadataPanelContext = createContext<
-  MetadataPanelContextValue | undefined
+export const OverlayPanelsContext = createContext<
+  OverlayPanelsContextValue | undefined
 >(undefined);
 
-export const MetadataPanelProvider: React.FC = ({ children }) => {
-  const [panelContext, setPanelContext] = useState<GrenseMetadataPanel | null>(
+export const OverlayPanelsProvider: React.FC = ({ children }) => {
+  const [panelContext, setPanelContext] = useState<GrenseOverlayPanels | null>(
     null
   );
   const [kretserContext, setKretserContext] = useState<KretserPanel | null>(
@@ -85,18 +85,18 @@ export const MetadataPanelProvider: React.FC = ({ children }) => {
   };
 
   return (
-    <MetadataPanelContext.Provider value={value}>
+    <OverlayPanelsContext.Provider value={value}>
       {children}
-    </MetadataPanelContext.Provider>
+    </OverlayPanelsContext.Provider>
   );
 };
 
-export const useMetadataPanel = () => {
-  const context = useContext(MetadataPanelContext);
+export const userOverlayPanels = () => {
+  const context = useContext(OverlayPanelsContext);
 
   if (!context) {
     throw new Error(
-      "useMetadataPanel must be used within a MetadataPanelContext"
+      "useOverlayPanels must be used within a OverlayPanelsContext"
     );
   }
 

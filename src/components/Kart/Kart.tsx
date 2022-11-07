@@ -2,13 +2,13 @@ import { Suspense, useEffect, useRef } from "react";
 import styled, { css } from "styled-components";
 import { map } from "./constants";
 import ZoomControls from "./controls/ZoomControls";
-import MetadataPanel from "./MetadataPanel";
-import { MetadataPanelWrapper } from "./MetadataPanel/MetadataPanel";
+import OverlayPanels from "./OverlayPanels";
+import { OverlayPanelWrapper } from "./OverlayPanels/OverlayPanels";
 import OverlayPopup from "./OverlayPopup";
 import SidebarPanels from "./SidebarPanels";
 import Toolbar from "./Toolbar";
 import UtkastTab from "./UtkastTab";
-import { PanelType, useMetadataPanel } from "contexts/MetadataPanelContext";
+import { PanelType, userOverlayPanels } from "contexts/OverlayPanelsContext";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
 import useSelectInteraction from "hooks/interactions/useSelectInteraction";
 import { initBakgrunnskartLayers, initGrenserLayers } from "utils/map/layers";
@@ -21,7 +21,7 @@ initBakgrunnskartLayers();
 
 const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const { panelContext } = useMetadataPanel();
+  const { panelContext } = userOverlayPanels();
   const { redigeringsmodusAktiv } = useRedigeringsmodus();
 
   useEditInteractions();
@@ -46,7 +46,7 @@ const Kart = () => {
           <UtkastTab />
           <KartOverlay content={panelContext?.type}>
             <SidebarPanels />
-            <MetadataPanel />
+            <OverlayPanels />
             <Toolbar />
             <UtkastBorder utkastActive={redigeringsmodusAktiv} />
           </KartOverlay>
@@ -118,7 +118,7 @@ const KartOverlay = styled.div<{
           grid-template-rows: 100%;
         }
 
-        ${MetadataPanelWrapper} {
+        ${OverlayPanelWrapper} {
           @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
             height: fit-content;
             max-height: 900px;

@@ -4,7 +4,7 @@ import Geometry from "ol/geom/Geometry";
 import LineString from "ol/geom/LineString";
 import { Select } from "ol/interaction";
 import { map, overlayPopup } from "components/Kart/constants";
-import { useMetadataPanel } from "contexts/MetadataPanelContext";
+import { userOverlayPanels } from "contexts/OverlayPanelsContext";
 import { dirtyStyles, selectStyles } from "utils/map/layerStyles";
 import Style from "ol/style/Style";
 import { getFeatureId } from "utils/map/source";
@@ -23,7 +23,7 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 const useSelectInteraction = () => {
   const { dirtyFeatureIds } = useToolbar();
   const [features, setFeatures] = useState<Feature<Geometry>[]>([]);
-  const { openPanel, closePanels } = useMetadataPanel();
+  const { openPanel, closePanels } = userOverlayPanels();
 
   useEffect(() => {
     const select = new Select({ hitTolerance: 5, style: null });

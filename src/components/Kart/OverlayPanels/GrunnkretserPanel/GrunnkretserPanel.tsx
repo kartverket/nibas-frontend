@@ -18,7 +18,7 @@ import {
   getNavnInSpraak,
   sortGrenserAlphabetically,
 } from "utils/language/language";
-import { ClosePanelButton } from "components/Kart/MetadataPanel/ClosePanelButton";
+import { ClosePanelButton } from "components/Kart/OverlayPanels/ClosePanelButton";
 
 type Props = {
   kommune: KommuneRef;

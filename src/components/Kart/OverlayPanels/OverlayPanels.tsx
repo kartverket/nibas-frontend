@@ -4,37 +4,37 @@ import GrensePanel from "./GrensePanel";
 import GrunnkretserPanel from "./GrunnkretserPanel";
 import StemmekretserPanel from "./StemmekretserPanel";
 import { InndelingerKretsProvider } from "contexts/InndelingerKretsContext";
-import { useMetadataPanel } from "contexts/MetadataPanelContext";
+import { userOverlayPanels } from "contexts/OverlayPanelsContext";
 
-const MetadataPanel = () => {
-  const { panelContext, kretserContext } = useMetadataPanel();
+const OverlayPanels = () => {
+  const { panelContext, kretserContext } = userOverlayPanels();
 
   return (
     <>
       {panelContext?.type === "grensemetadata" && (
-        <MetadataPanelWrapper key="grensemetadata" gridArea="metadata">
+        <OverlayPanelWrapper key="grensemetadata" gridArea="metadata">
           <GrensePanel feature={panelContext.feature} />
-        </MetadataPanelWrapper>
+        </OverlayPanelWrapper>
       )}
       {kretserContext?.type === "grunnkrets" && (
-        <MetadataPanelWrapper key="grensemetadata" gridArea="kretser">
+        <OverlayPanelWrapper key="grensemetadata" gridArea="kretser">
           <InndelingerKretsProvider kretstype="grunnkrets">
             <GrunnkretserPanel kommune={kretserContext.kommune} />
           </InndelingerKretsProvider>
-        </MetadataPanelWrapper>
+        </OverlayPanelWrapper>
       )}
       {kretserContext?.type === "stemmekrets" && (
-        <MetadataPanelWrapper key="grensemetadata" gridArea="kretser">
+        <OverlayPanelWrapper key="grensemetadata" gridArea="kretser">
           <InndelingerKretsProvider kretstype="stemmekrets">
             <StemmekretserPanel kommune={kretserContext.kommune} />
           </InndelingerKretsProvider>
-        </MetadataPanelWrapper>
+        </OverlayPanelWrapper>
       )}
     </>
   );
 };
 
-export const MetadataPanelWrapper = styled(KartInteractable)<{
+export const OverlayPanelWrapper = styled(KartInteractable)<{
   gridArea: "metadata" | "kretser";
 }>`
   position: relative;
@@ -65,4 +65,4 @@ export const MetadataPanelWrapper = styled(KartInteractable)<{
   }
 `;
 
-export default MetadataPanel;
+export default OverlayPanels;
