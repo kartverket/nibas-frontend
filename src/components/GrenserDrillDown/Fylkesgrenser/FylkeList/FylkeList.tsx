@@ -1,33 +1,20 @@
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import ApiGrense from "../../ApiGrense";
-import { useEditGrenser } from "contexts/EditGrenserContext";
 import useFylker from "hooks/inndelinger/useFylker";
-import useOnlyDisplayEditingGrenser from "hooks/useOnlyDisplayEditingGrenser";
 
-type Props = {
-  onlyDisplayEditing?: boolean;
-};
-
-const FylkeList = ({ onlyDisplayEditing = false }: Props) => {
+const FylkeList = () => {
   const { fylker, error } = useFylker();
 
-  const { values } = useEditGrenser("fylke");
   const { t } = useTranslation();
-
-  const filteredFylker = useOnlyDisplayEditingGrenser(
-    fylker,
-    values,
-    onlyDisplayEditing
-  );
 
   if (error) return <p>{t("Logg inn for å se listen")}</p>;
 
-  if (!filteredFylker) return null;
+  if (!fylker) return null;
 
   return (
     <Wrapper>
-      {filteredFylker.map((fylke) => (
+      {fylker.map((fylke) => (
         <ApiGrense
           key={fylke.id}
           grense={fylke}
