@@ -14,6 +14,7 @@ import {
   sortGrenserAlphabetically,
 } from "utils/language/language";
 import { ClosePanelButton } from "../ClosePanelButton";
+import { OverlayPanelWrapper } from "../metadataComponents";
 
 type Props = {
   kommune: KommuneRef;
@@ -40,7 +41,7 @@ const StemmekretserPanel = ({ kommune }: Props) => {
   ) as StemmekretsRef[] | undefined;
 
   return (
-    <>
+    <OverlayPanelWrapper key="stemmekrets" gridArea="kretser">
       <PanelTitle>
         {t("{{ kommuneNavn }} kommune", {
           kommuneNavn: getNavnInSpraak(kommune.navn, "nor"),
@@ -78,7 +79,7 @@ const StemmekretserPanel = ({ kommune }: Props) => {
           </KretsTable>
         </KretsTableWrapper>
       )}
-    </>
+    </OverlayPanelWrapper>
   );
 };
 

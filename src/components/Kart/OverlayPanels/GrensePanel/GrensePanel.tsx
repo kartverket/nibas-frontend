@@ -41,9 +41,8 @@ const GrensePanel = ({ feature }: Props) => {
   }
 
   return (
-    <>
-      <ClosePanelButton onClose={() => closePanel("grensemetadata")} />
-      <StickyTabs key={feature.getId()} tabTransKeys={tabs}>
+    <OverlayPanelWrapper key="grensemetadata" gridArea="metadata">
+        <Tabs key={feature.getId()} tabTransKeys={tabs}>
         <div>
           <Heading size="xs" tag="h2">
             Linje metadata
@@ -64,8 +63,7 @@ const GrensePanel = ({ feature }: Props) => {
             <GrenseMetadataReferanser feature={feature} />
           </div>
         )}
-      </StickyTabs>
-    </>
+    </OverlayPanelWrapper>
   );
 };
 

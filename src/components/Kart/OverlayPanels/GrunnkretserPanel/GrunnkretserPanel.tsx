@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { KretsTable, KretsTableWrapper } from "../KretsTable";
-import { BlockLabel } from "../metadataComponents";
+import { BlockLabel, OverlayPanelWrapper } from "../metadataComponents";
 import useAccordionRows from "../useAccordionRow";
 import EditRow from "./EditRow";
 import Button from "components/form/Button";
@@ -59,7 +59,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
   }, [searchValue, utkastGrunnkretser]);
 
   return (
-    <>
+    <OverlayPanelWrapper key="grunnkrets" gridArea="kretser">
       <PanelTitle tag="h2" size="xs">
         {t("{{ kommuneNavn }} kommune", {
           kommuneNavn: getNavnInSpraak(kommune.navn, "nor"),
@@ -115,7 +115,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
           </KretsTable>
         </KretsTableWrapper>
       )}
-    </>
+    </OverlayPanelWrapper>
   );
 };
 
