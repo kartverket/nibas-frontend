@@ -70,9 +70,9 @@ const StemmekretserPanel = ({ kommune }: Props) => {
         onClick={() => toggleMinimizePanel("stemmekrets")}
         icon={
           kretserContext?.isMinimized ? (
-            <Icon icon="add" />
+            <Icon icon="expand_less" />
           ) : (
-            <Icon icon="remove" />
+            <Icon icon="expand_more" />
           )
         }
       />

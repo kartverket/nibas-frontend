@@ -60,9 +60,9 @@ const GrensePanel = ({ feature }: Props) => {
         onClick={() => toggleMinimizePanel("grensemetadata")}
         icon={
           panelContext?.isMinimized ? (
-            <Icon icon="add" />
+            <Icon icon="expand_less" />
           ) : (
-            <Icon icon="remove" />
+            <Icon icon="expand_more" />
           )
         }
       />

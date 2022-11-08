@@ -90,9 +90,9 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
         onClick={() => toggleMinimizePanel("grunnkrets")}
         icon={
           kretserContext?.isMinimized ? (
-            <Icon icon="add" />
+            <Icon icon="expand_less" />
           ) : (
-            <Icon icon="remove" />
+            <Icon icon="expand_more" />
           )
         }
       />
