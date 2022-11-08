@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useEditGrenser } from "./EditGrenserContext";
-import { userOverlayPanels } from "./OverlayPanelsContext";
+import { useOverlayPanels } from "./OverlayPanelsContext";
 import useKretsgrenser from "hooks/inndelinger/useKretsgrenser";
 import { editSource } from "hooks/layers/constants";
 import { LayerId } from "hooks/layers/types";
@@ -62,7 +62,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
 
   const { values, setObjectValue, setMultipleValues } =
     useEditGrenser(currentKretstype);
-  const { openPanel, closePanel } = userOverlayPanels();
+  const { openPanel, closePanel } = useOverlayPanels();
   const { addKretserToLayer, removeKretserFromLayer } = useKretsgrenser(
     kommune.id,
     currentKretstype

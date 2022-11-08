@@ -4,10 +4,10 @@ import GrensePanel from "./GrensePanel";
 import GrunnkretserPanel from "./GrunnkretserPanel";
 import StemmekretserPanel from "./StemmekretserPanel";
 import { InndelingerKretsProvider } from "contexts/InndelingerKretsContext";
-import { userOverlayPanels } from "contexts/OverlayPanelsContext";
+import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 
 const OverlayPanels = () => {
-  const { panelContext, kretserContext } = userOverlayPanels();
+  const { panelContext, kretserContext } = useOverlayPanels();
 
   return (
     <>
@@ -17,14 +17,14 @@ const OverlayPanels = () => {
         </OverlayPanelWrapper>
       )}
       {kretserContext?.type === "grunnkrets" && (
-        <OverlayPanelWrapper key="grensemetadata" gridArea="kretser">
+        <OverlayPanelWrapper key="grunnkrets" gridArea="kretser">
           <InndelingerKretsProvider kretstype="grunnkrets">
             <GrunnkretserPanel kommune={kretserContext.kommune} />
           </InndelingerKretsProvider>
         </OverlayPanelWrapper>
       )}
       {kretserContext?.type === "stemmekrets" && (
-        <OverlayPanelWrapper key="grensemetadata" gridArea="kretser">
+        <OverlayPanelWrapper key="stemmekrets" gridArea="kretser">
           <InndelingerKretsProvider kretstype="stemmekrets">
             <StemmekretserPanel kommune={kretserContext.kommune} />
           </InndelingerKretsProvider>

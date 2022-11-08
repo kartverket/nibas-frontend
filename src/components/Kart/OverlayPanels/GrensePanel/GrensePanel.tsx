@@ -5,7 +5,7 @@ import GrenseMetadataGenerelt from "./GrenseMetadataGenerelt";
 import GrenseMetadataReferanser from "./GrenseMetadataReferanser";
 import Tabs from "components/Tabs";
 import Heading from "components/typography/Heading";
-import { userOverlayPanels } from "contexts/OverlayPanelsContext";
+import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 import { ClosePanelButton } from "components/Kart/OverlayPanels/ClosePanelButton";
 import styled from "styled-components";
 
@@ -24,7 +24,7 @@ type Props = {
 
 const GrensePanel = ({ feature }: Props) => {
   let tabs: string[];
-  const { closePanel } = userOverlayPanels();
+  const { closePanel } = useOverlayPanels();
 
   const showReferanser =
     showReferanserByGrenseType[feature.getProperties().type as string];

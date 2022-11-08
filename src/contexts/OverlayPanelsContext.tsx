@@ -91,7 +91,7 @@ export const OverlayPanelsProvider: React.FC = ({ children }) => {
   );
 };
 
-export const userOverlayPanels = () => {
+export const useOverlayPanels = () => {
   const context = useContext(OverlayPanelsContext);
 
   if (!context) {

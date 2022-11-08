@@ -13,7 +13,7 @@ import { BlockLabel } from "components/Kart/OverlayPanels/metadataComponents";
 import useNibasApi from "hooks/useNibasApi";
 import { UtkastRef } from "types/api";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
-import { userOverlayPanels } from "contexts/OverlayPanelsContext";
+import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 import { resetMapView } from "utils/map";
 
 type Props = {
@@ -29,7 +29,7 @@ const UtkastItem = ({ utkast }: Props) => {
   const utkastId = searchParams.get("utkast");
 
   const { resetEditingObject } = useEditAllGrenser();
-  const { closePanels } = userOverlayPanels();
+  const { closePanels } = useOverlayPanels();
   const { data: fullUtkast } = useNibasApi(
     isPublishOpen || isDeleteOpen ? "/v1/utkast/{id}" : null,
     {

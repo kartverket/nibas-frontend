@@ -8,7 +8,7 @@ import OverlayPopup from "./OverlayPopup";
 import SidebarPanels from "./SidebarPanels";
 import Toolbar from "./Toolbar";
 import UtkastTab from "./UtkastTab";
-import { PanelType, userOverlayPanels } from "contexts/OverlayPanelsContext";
+import { PanelType, useOverlayPanels } from "contexts/OverlayPanelsContext";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
 import useSelectInteraction from "hooks/interactions/useSelectInteraction";
 import { initBakgrunnskartLayers, initGrenserLayers } from "utils/map/layers";
@@ -21,7 +21,7 @@ initBakgrunnskartLayers();
 
 const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const { panelContext } = userOverlayPanels();
+  const { panelContext } = useOverlayPanels();
   const { redigeringsmodusAktiv } = useRedigeringsmodus();
 
   useEditInteractions();
