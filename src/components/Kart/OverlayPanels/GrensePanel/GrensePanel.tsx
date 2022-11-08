@@ -6,9 +6,6 @@ import GrenseMetadataReferanser from "./GrenseMetadataReferanser";
 import Tabs from "components/Tabs";
 import Heading from "components/typography/Heading";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
-import { ClosePanelButton } from "components/Kart/OverlayPanels/ClosePanelButton";
-import styled from "styled-components";
-import Button from "components/form/Button";
 import Icon from "components/Icon";
 import { HeaderButton, OverlayPanelWrapper } from "../metadataComponents";
 
@@ -49,7 +46,6 @@ const GrensePanel = ({ feature }: Props) => {
       gridArea="metadata"
       minimized={panelContext?.isMinimized ?? false}
     >
-      {/* <ClosePanelButton onClose={() => closePanel("grensemetadata")} /> */}
       <HeaderButton
         right={0}
         icon={<Icon icon="close" />}

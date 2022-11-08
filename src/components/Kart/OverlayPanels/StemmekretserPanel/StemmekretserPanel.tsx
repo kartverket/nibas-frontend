@@ -13,7 +13,6 @@ import {
   getNavnInSpraak,
   sortGrenserAlphabetically,
 } from "utils/language/language";
-import { ClosePanelButton } from "../ClosePanelButton";
 import { HeaderButton, OverlayPanelWrapper } from "../metadataComponents";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 import Icon from "components/Icon";
