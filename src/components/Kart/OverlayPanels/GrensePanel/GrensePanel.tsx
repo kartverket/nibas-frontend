@@ -10,7 +10,7 @@ import { ClosePanelButton } from "components/Kart/OverlayPanels/ClosePanelButton
 import styled from "styled-components";
 import Button from "components/form/Button";
 import Icon from "components/Icon";
-import { OverlayPanelWrapper } from "../metadataComponents";
+import { HeaderButton, OverlayPanelWrapper } from "../metadataComponents";
 
 const showReferanserByGrenseType: Record<string, boolean> = {
   Territorialgrense: true,
@@ -57,6 +57,7 @@ const GrensePanel = ({ feature }: Props) => {
       />
       <HeaderButton
         right={50}
+        onClick={() => toggleMinimizePanel("grensemetadata")}
         icon={
           panelContext?.isMinimized ? (
             <Icon icon="add" />
@@ -64,9 +65,12 @@ const GrensePanel = ({ feature }: Props) => {
             <Icon icon="remove" />
           )
         }
-        onClick={() => toggleMinimizePanel("grensemetadata")}
       />
-      {!panelContext?.isMinimized && (
+      {panelContext?.isMinimized ? (
+        <Heading size="xs" tag="h2">
+          Linje metadata
+        </Heading>
+      ) : (
         <Tabs key={feature.getId()} tabTransKeys={tabs}>
           <div>
             <Heading size="xs" tag="h2">
@@ -93,19 +97,5 @@ const GrensePanel = ({ feature }: Props) => {
     </OverlayPanelWrapper>
   );
 };
-
-const HeaderButton = styled(Button).attrs(() => ({
-  variant: "unstyled",
-}))<{ right: number }>`
-  position: absolute;
-  top: 0;
-  right: ${({ right }) => right}px;
-  margin: 16px;
-  color: ${({ theme }) => theme.colors.blueDark};
-
-  > span {
-    font-size: 36px;
-  }
-`;
 
 export default GrensePanel;

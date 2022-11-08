@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import Label from "components/form/Label";
 import { KartInteractable } from "../KartInteractable";
+import Heading from "components/typography/Heading";
+import Button from "components/form/Button";
 
 export const Container = styled.div`
   display: flex;
@@ -95,8 +97,24 @@ export const OverlayPanelWrapper = styled(KartInteractable)<{
   width: 100%;
   max-width: 1000px;
 
-  > h2 {
-    margin-top: 0;
+  transition: height 0.4s ease-in-out;
+
+  > ${Heading} {
+    margin-top: 8px;
     margin-bottom: 16px;
+  }
+`;
+
+export const HeaderButton = styled(Button).attrs(() => ({
+  variant: "unstyled",
+}))<{ right: number }>`
+  position: absolute;
+  top: 0;
+  right: ${({ right }) => right}px;
+  margin: 16px;
+  color: ${({ theme }) => theme.colors.blueDark};
+
+  > span {
+    font-size: 36px;
   }
 `;
