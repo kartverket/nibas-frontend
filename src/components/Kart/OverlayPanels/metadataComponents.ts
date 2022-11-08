@@ -71,6 +71,7 @@ export const DateWrapper = styled(Part)`
 
 export const OverlayPanelWrapper = styled(KartInteractable)<{
   gridArea: "metadata" | "kretser";
+  minimized?: boolean;
 }>`
   position: relative;
   grid-area: ${({ gridArea }) => gridArea};
@@ -80,7 +81,7 @@ export const OverlayPanelWrapper = styled(KartInteractable)<{
   margin-left: auto;
   padding: 16px;
   border-radius: 3px;
-  height: 500px;
+  height: ${({ minimized }) => (minimized ? 72 : 500)}px;
   border: 2px solid ${({ theme }) => theme.colors.blue};
   border-bottom: none;
   border-right: none;

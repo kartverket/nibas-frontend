@@ -8,6 +8,9 @@ import Heading from "components/typography/Heading";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 import { ClosePanelButton } from "components/Kart/OverlayPanels/ClosePanelButton";
 import styled from "styled-components";
+import Button from "components/form/Button";
+import Icon from "components/Icon";
+import { OverlayPanelWrapper } from "../metadataComponents";
 
 const showReferanserByGrenseType: Record<string, boolean> = {
   Territorialgrense: true,
@@ -24,7 +27,7 @@ type Props = {
 
 const GrensePanel = ({ feature }: Props) => {
   let tabs: string[];
-  const { closePanel } = useOverlayPanels();
+  const { closePanel, toggleMinimizePanel, panelContext } = useOverlayPanels();
 
   const showReferanser =
     showReferanserByGrenseType[feature.getProperties().type as string];
@@ -41,34 +44,68 @@ const GrensePanel = ({ feature }: Props) => {
   }
 
   return (
-    <OverlayPanelWrapper key="grensemetadata" gridArea="metadata">
+    <OverlayPanelWrapper
+      key="grensemetadata"
+      gridArea="metadata"
+      minimized={panelContext?.isMinimized ?? false}
+    >
+      {/* <ClosePanelButton onClose={() => closePanel("grensemetadata")} /> */}
+      <HeaderButton
+        right={0}
+        icon={<Icon icon="close" />}
+        onClick={() => closePanel("grensemetadata")}
+      />
+      <HeaderButton
+        right={50}
+        icon={
+          panelContext?.isMinimized ? (
+            <Icon icon="add" />
+          ) : (
+            <Icon icon="remove" />
+          )
+        }
+        onClick={() => toggleMinimizePanel("grensemetadata")}
+      />
+      {!panelContext?.isMinimized && (
         <Tabs key={feature.getId()} tabTransKeys={tabs}>
-        <div>
-          <Heading size="xs" tag="h2">
-            Linje metadata
-          </Heading>
-          <GrenseMetadataGenerelt feature={feature} />
-        </div>
-        <div>
-          <Heading size="xs" tag="h2">
-            Detaljer
-          </Heading>
-          <GrenseMetadataDetaljer feature={feature} />
-        </div>
-        {showReferanser && (
           <div>
             <Heading size="xs" tag="h2">
-              Dokumentasjonsreferanser
+              Linje metadata
             </Heading>
-            <GrenseMetadataReferanser feature={feature} />
+            <GrenseMetadataGenerelt feature={feature} />
           </div>
-        )}
+          <div>
+            <Heading size="xs" tag="h2">
+              Detaljer
+            </Heading>
+            <GrenseMetadataDetaljer feature={feature} />
+          </div>
+          {showReferanser && (
+            <div>
+              <Heading size="xs" tag="h2">
+                Dokumentasjonsreferanser
+              </Heading>
+              <GrenseMetadataReferanser feature={feature} />
+            </div>
+          )}
+        </Tabs>
+      )}
     </OverlayPanelWrapper>
   );
 };
 
-const StickyTabs = styled(Tabs)`
-  /* position: sticky; */
+const HeaderButton = styled(Button).attrs(() => ({
+  variant: "unstyled",
+}))<{ right: number }>`
+  position: absolute;
+  top: 0;
+  right: ${({ right }) => right}px;
+  margin: 16px;
+  color: ${({ theme }) => theme.colors.blueDark};
+
+  > span {
+    font-size: 36px;
+  }
 `;
 
 export default GrensePanel;

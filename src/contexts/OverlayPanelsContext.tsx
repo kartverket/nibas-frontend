@@ -6,16 +6,19 @@ import { KommuneRef } from "types/api";
 type GrenseOverlayPanels = {
   type: "grensemetadata";
   feature: Feature<Geometry>;
+  isMinimized?: boolean;
 };
 
 type GrunnkretserPanel = {
   type: "grunnkrets";
   kommune: KommuneRef;
+  isMinimized?: boolean;
 };
 
 type StemmekretserPanel = {
   type: "stemmekrets";
   kommune: KommuneRef;
+  isMinimized?: boolean;
 };
 
 type KretserPanel = GrunnkretserPanel | StemmekretserPanel;
@@ -29,6 +32,7 @@ export type OverlayPanelsContextValue = {
   openPanel: (panel: Panel) => void;
   closePanel: (panel: PanelType) => void;
   closePanels: () => void;
+  toggleMinimizePanel: (panel: PanelType) => void;
 };
 
 /**
@@ -67,13 +71,38 @@ export const OverlayPanelsProvider: React.FC = ({ children }) => {
     setKretserContext(null);
   }, []);
 
-  const isOpen = (panel: PanelType) => {
+  const isOpen = useCallback(
+    (panel: PanelType) => {
+      if (panel === "grunnkrets" || panel === "stemmekrets") {
+        return kretserContext !== null;
+      } else {
+        return panelContext !== null;
+      }
+    },
+    [kretserContext, panelContext]
+  );
+
+  const toggleMinimizePanel = useCallback((panel: PanelType) => {
     if (panel === "grunnkrets" || panel === "stemmekrets") {
-      return kretserContext !== null;
+      setKretserContext((prev) => {
+        if (!prev) return null;
+
+        return {
+          ...prev,
+          isMinimized: !prev?.isMinimized,
+        };
+      });
     } else {
-      return panelContext !== null;
+      setPanelContext((prev) => {
+        if (!prev) return null;
+
+        return {
+          ...prev,
+          isMinimized: !prev?.isMinimized,
+        };
+      });
     }
-  };
+  }, []);
 
   const value = {
     panelContext,
@@ -82,6 +111,7 @@ export const OverlayPanelsProvider: React.FC = ({ children }) => {
     closePanel,
     isOpen,
     closePanels,
+    toggleMinimizePanel,
   };
 
   return (

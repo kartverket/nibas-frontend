@@ -3,7 +3,6 @@ import styled, { css } from "styled-components";
 import { map } from "./constants";
 import ZoomControls from "./controls/ZoomControls";
 import OverlayPanels from "./OverlayPanels";
-import { OverlayPanelWrapper } from "./OverlayPanels/OverlayPanels";
 import OverlayPopup from "./OverlayPopup";
 import SidebarPanels from "./SidebarPanels";
 import Toolbar from "./Toolbar";
@@ -107,26 +106,6 @@ const KartOverlay = styled.div<{
   pointer-events: none;
   z-index: 1;
   overflow: hidden;
-
-  /* Flytt grensemetadata til høyre side på stor skjerm */
-  /* ${({ content }) => {
-    if (content === "grensemetadata")
-      return css`
-        @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
-          grid-template-columns: auto auto 1fr auto;
-          grid-template-areas: "panel toolbar . metadata";
-          grid-template-rows: 100%;
-        }
-
-        ${OverlayPanelWrapper} {
-          @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
-            height: fit-content;
-            max-height: 900px;
-            width: 600px;
-          }
-        }
-      `;
-  }} */
 `;
 
 export default Kart;

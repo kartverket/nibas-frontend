@@ -23,7 +23,7 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 const useSelectInteraction = () => {
   const { dirtyFeatureIds } = useToolbar();
   const [features, setFeatures] = useState<Feature<Geometry>[]>([]);
-  const { openPanel, closePanels } = useOverlayPanels();
+  const { openPanel, closePanel } = useOverlayPanels();
 
   useEffect(() => {
     const select = new Select({ hitTolerance: 5, style: null });
@@ -44,17 +44,17 @@ const useSelectInteraction = () => {
       const selectedFeature = features[0] as Feature<LineString>;
 
       if (selectedFeature.getId()?.toString().includes("TEIGGRENSEWFS")) {
-        closePanels();
+        closePanel("grensemetadata");
         overlayPopup.setPosition(getOverlayPosition(selectedFeature));
       } else {
         overlayPopup.setPosition(undefined);
         openPanel({ type: "grensemetadata", feature: selectedFeature });
       }
     } else {
-      closePanels();
+      closePanel("grensemetadata");
       overlayPopup.setPosition(undefined);
     }
-  }, [features, openPanel, closePanels]);
+  }, [features, openPanel, closePanel]);
 
   useEffect(() => {
     const previousStylesByFeatureId: Record<string, Style[]> = {};
