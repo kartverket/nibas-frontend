@@ -22,7 +22,6 @@ import {
   getNavnInSpraak,
   sortGrenserAlphabetically,
 } from "utils/language/language";
-import { ClosePanelButton } from "components/Kart/OverlayPanels/ClosePanelButton";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 
 type Props = {
@@ -80,7 +79,11 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
       <HeaderButton
         right={0}
         icon={<Icon icon="close" />}
-        onClick={() => closePanel("grensemetadata")}
+        onClick={() => {
+          closePanel("grunnkrets");
+          closePanel("grensemetadata");
+          toggleEditKretser();
+        }}
       />
       <HeaderButton
         right={50}
