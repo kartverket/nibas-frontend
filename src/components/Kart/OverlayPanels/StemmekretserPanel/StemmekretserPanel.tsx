@@ -76,45 +76,38 @@ const StemmekretserPanel = ({ kommune }: Props) => {
         }
       />
 
-      {!kretserContext?.isMinimized && (
-        <>
-          <PanelTitle tag="h2" size="xs">
-            {t("inndelinger.Stemmekretser")}
-          </PanelTitle>
-          {utkastStemmekretser && (
-            <KretsTableWrapper>
-              <KretsTable>
-                <thead>
-                  <tr>
-                    <th>{t("tabell.Navn")}</th>
-                    <th>{t("stemmekrets.Stemmekretsnummer")}</th>
-                    <th>{t("stemmekrets.Valgdistriktsnummer")}</th>
-                    <th>{t("stemmekrets.Tellekretsnavn")}</th>
-                    <th>{t("stemmekrets.Tellekretsnummer")}</th>
-                    <th>{t("Endre")}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {utkastStemmekretser.map((stemmekrets) => (
-                    <React.Fragment key={stemmekrets.id}>
-                      <StemmekretsRow
-                        id={stemmekrets.id}
-                        toggleRow={toggleRow}
-                        isRowOpen={isRowOpen}
-                      />
-                      {isRowOpen(stemmekrets.id) && (
-                        <EditRow
-                          stemmekrets={stemmekrets}
-                          kommuneId={kommune.id}
-                        />
-                      )}
-                    </React.Fragment>
-                  ))}
-                </tbody>
-              </KretsTable>
-            </KretsTableWrapper>
-          )}
-        </>
+      <PanelTitle tag="h2" size="xs">
+        {t("inndelinger.Stemmekretser")}
+      </PanelTitle>
+      {utkastStemmekretser && (
+        <KretsTableWrapper>
+          <KretsTable>
+            <thead>
+              <tr>
+                <th>{t("tabell.Navn")}</th>
+                <th>{t("stemmekrets.Stemmekretsnummer")}</th>
+                <th>{t("stemmekrets.Valgdistriktsnummer")}</th>
+                <th>{t("stemmekrets.Tellekretsnavn")}</th>
+                <th>{t("stemmekrets.Tellekretsnummer")}</th>
+                <th>{t("Endre")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {utkastStemmekretser.map((stemmekrets) => (
+                <React.Fragment key={stemmekrets.id}>
+                  <StemmekretsRow
+                    id={stemmekrets.id}
+                    toggleRow={toggleRow}
+                    isRowOpen={isRowOpen}
+                  />
+                  {isRowOpen(stemmekrets.id) && (
+                    <EditRow stemmekrets={stemmekrets} kommuneId={kommune.id} />
+                  )}
+                </React.Fragment>
+              ))}
+            </tbody>
+          </KretsTable>
+        </KretsTableWrapper>
       )}
     </OverlayPanelWrapper>
   );

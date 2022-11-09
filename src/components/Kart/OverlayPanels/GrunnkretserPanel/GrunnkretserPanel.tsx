@@ -96,61 +96,54 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
           )
         }
       />
-      {!kretserContext?.isMinimized && (
-        <>
-          <SmallerBlockLabel>
-            {t("sidebar.Søk")}
-            <Input
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-            />
-          </SmallerBlockLabel>
-          <PanelTitle tag="h2" size="xs">
-            {t("inndelinger.Grunnkretser")}
-          </PanelTitle>
-          {filteredGrunnkretser && (
-            <KretsTableWrapper>
-              <KretsTable>
-                <thead>
-                  <tr>
-                    <th>{t("tabell.Navn")}</th>
-                    <th>{t("grunnkrets.Grunnkretsnummer")}</th>
-                    <th>{t("action.Endre")}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredGrunnkretser.map((grunnkrets) => (
-                    <React.Fragment key={grunnkrets.id}>
-                      <KretsRow onClick={() => toggleRow(grunnkrets.id)}>
-                        <td>{getNavnInSpraak(grunnkrets.navn, "nor")}</td>
-                        <td>{grunnkrets.grunnkretsnummer}</td>
-                        <td>
-                          <Button
-                            variant="unstyled"
-                            onClick={() => toggleRow(grunnkrets.id)}
-                            icon={
-                              isRowOpen(grunnkrets.id) ? (
-                                <Icon icon="expand_less" />
-                              ) : (
-                                <Icon icon="expand_more" />
-                              )
-                            }
-                          />
-                        </td>
-                      </KretsRow>
-                      {isRowOpen(grunnkrets.id) && (
-                        <EditRow
-                          grunnkrets={grunnkrets}
-                          kommuneId={kommune.id}
-                        />
-                      )}
-                    </React.Fragment>
-                  ))}
-                </tbody>
-              </KretsTable>
-            </KretsTableWrapper>
-          )}
-        </>
+      <SmallerBlockLabel>
+        {t("sidebar.Søk")}
+        <Input
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+        />
+      </SmallerBlockLabel>
+      <PanelTitle tag="h2" size="xs">
+        {t("inndelinger.Grunnkretser")}
+      </PanelTitle>
+      {filteredGrunnkretser && (
+        <KretsTableWrapper>
+          <KretsTable>
+            <thead>
+              <tr>
+                <th>{t("tabell.Navn")}</th>
+                <th>{t("grunnkrets.Grunnkretsnummer")}</th>
+                <th>{t("action.Endre")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredGrunnkretser.map((grunnkrets) => (
+                <React.Fragment key={grunnkrets.id}>
+                  <KretsRow onClick={() => toggleRow(grunnkrets.id)}>
+                    <td>{getNavnInSpraak(grunnkrets.navn, "nor")}</td>
+                    <td>{grunnkrets.grunnkretsnummer}</td>
+                    <td>
+                      <Button
+                        variant="unstyled"
+                        onClick={() => toggleRow(grunnkrets.id)}
+                        icon={
+                          isRowOpen(grunnkrets.id) ? (
+                            <Icon icon="expand_less" />
+                          ) : (
+                            <Icon icon="expand_more" />
+                          )
+                        }
+                      />
+                    </td>
+                  </KretsRow>
+                  {isRowOpen(grunnkrets.id) && (
+                    <EditRow grunnkrets={grunnkrets} kommuneId={kommune.id} />
+                  )}
+                </React.Fragment>
+              ))}
+            </tbody>
+          </KretsTable>
+        </KretsTableWrapper>
       )}
     </OverlayPanelWrapper>
   );
