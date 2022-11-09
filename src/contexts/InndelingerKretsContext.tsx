@@ -62,7 +62,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
 
   const { values, setObjectValue, setMultipleValues } =
     useEditGrenser(currentKretstype);
-  const { openPanel, closePanels } = useOverlayPanels();
+  const { openPanel, closePanels, closePanel } = useOverlayPanels();
   const { addKretserToLayer, removeKretserFromLayer } = useKretsgrenser(
     kommune.id,
     currentKretstype
@@ -99,10 +99,13 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
           removeFeaturesFromSourceByIds("edit", featureIdsToRemove);
         }
 
-        newValues[kommuneId] = {
-          visible: false,
-          editing: false,
-        };
+        // hvis tidligere endret, fjern editing og visible
+        if (newValues[kommuneId]?.editing) {
+          newValues[kommuneId] = {
+            visible: false,
+            editing: false,
+          };
+        }
       });
 
       openPanel({ type: currentKretstype, kommune });
@@ -125,7 +128,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
     const newVisible = !kommuneValues.visible;
     setObjectValue(kommune.id, {
       visible: newVisible,
-      editing: false,
+      editing: kommuneValues.editing,
     });
 
     const layerId: LayerId = kommuneValues.editing
@@ -133,11 +136,14 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
       : layerIdByKretstype[currentKretstype];
 
     if (newVisible) {
-      addKretserToLayer(layerIdByKretstype[currentKretstype]);
+      addKretserToLayer(layerId);
     } else {
       // hvis ikke lenger skal være synlig
       removeKretserFromLayer(layerId);
-      closePanels();
+
+      if (!kommuneValues.editing) {
+        closePanel("grensemetadata");
+      }
     }
   };
 
