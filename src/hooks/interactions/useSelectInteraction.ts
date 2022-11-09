@@ -4,7 +4,7 @@ import Geometry from "ol/geom/Geometry";
 import LineString from "ol/geom/LineString";
 import { Select } from "ol/interaction";
 import { map, overlayPopup } from "components/Kart/constants";
-import { useMetadataPanel } from "contexts/MetadataPanelContext";
+import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 import { dirtyStyles, selectStyles } from "utils/map/layerStyles";
 import Style from "ol/style/Style";
 import { getFeatureId } from "utils/map/source";
@@ -23,7 +23,7 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 const useSelectInteraction = () => {
   const { dirtyFeatureIds } = useToolbar();
   const [features, setFeatures] = useState<Feature<Geometry>[]>([]);
-  const { openPanel, closePanel } = useMetadataPanel();
+  const { openPanel, closePanel } = useOverlayPanels();
 
   useEffect(() => {
     const select = new Select({ hitTolerance: 5, style: null });
@@ -44,14 +44,14 @@ const useSelectInteraction = () => {
       const selectedFeature = features[0] as Feature<LineString>;
 
       if (selectedFeature.getId()?.toString().includes("TEIGGRENSEWFS")) {
-        closePanel();
+        closePanel("grensemetadata");
         overlayPopup.setPosition(getOverlayPosition(selectedFeature));
       } else {
         overlayPopup.setPosition(undefined);
-        openPanel({ content: "grensemetadata", feature: selectedFeature });
+        openPanel({ type: "grensemetadata", feature: selectedFeature });
       }
     } else {
-      closePanel();
+      closePanel("grensemetadata");
       overlayPopup.setPosition(undefined);
     }
   }, [features, openPanel, closePanel]);

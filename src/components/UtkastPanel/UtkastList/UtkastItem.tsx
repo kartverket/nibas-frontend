@@ -9,11 +9,11 @@ import { deleteUtkast as deleteApiUtkast, publishUtkast } from "api/utkast";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Icon from "components/Icon";
-import { BlockLabel } from "components/Kart/MetadataPanel/metadataComponents";
+import { BlockLabel } from "components/Kart/OverlayPanels/metadataComponents";
 import useNibasApi from "hooks/useNibasApi";
 import { UtkastRef } from "types/api";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
-import { useMetadataPanel } from "contexts/MetadataPanelContext";
+import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 import { resetMapView } from "utils/map";
 
 type Props = {
@@ -29,7 +29,7 @@ const UtkastItem = ({ utkast }: Props) => {
   const utkastId = searchParams.get("utkast");
 
   const { resetEditingObject } = useEditAllGrenser();
-  const { closePanel } = useMetadataPanel();
+  const { closePanels } = useOverlayPanels();
   const { data: fullUtkast } = useNibasApi(
     isPublishOpen || isDeleteOpen ? "/v1/utkast/{id}" : null,
     {
@@ -72,7 +72,7 @@ const UtkastItem = ({ utkast }: Props) => {
       setSearchParams({});
     }
     resetEditingObject();
-    closePanel();
+    closePanels();
     resetMapView();
   };
 

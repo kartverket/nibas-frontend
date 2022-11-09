@@ -20,7 +20,7 @@ import useNibasApi from "hooks/useNibasApi";
 import { OppdaterUtkastRequest } from "types/api";
 import { resetMapView } from "utils/map";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
-import { useMetadataPanel } from "contexts/MetadataPanelContext";
+import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
@@ -36,7 +36,7 @@ export const UtkastProvider: React.FC = ({ children }) => {
   const { tokenHolderFunc } = useAuthenticationFlow();
   const [searchParams, setSearchParams] = useSearchParams();
   const { resetEditingObject } = useEditAllGrenser();
-  const { closePanel } = useMetadataPanel();
+  const { closePanels } = useOverlayPanels();
   const utkastId = searchParams.get("utkast");
 
   const { mutate: globalMutate } = useSWRConfig();
@@ -104,7 +104,7 @@ export const UtkastProvider: React.FC = ({ children }) => {
   const closeUtkast = () => {
     setSearchParams({});
     resetEditingObject();
-    closePanel();
+    closePanels();
     resetMapView();
     clearHistory();
   };

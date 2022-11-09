@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useEditGrenser } from "./EditGrenserContext";
-import { useMetadataPanel } from "./MetadataPanelContext";
+import { useOverlayPanels } from "./OverlayPanelsContext";
 import useKretsgrenser from "hooks/inndelinger/useKretsgrenser";
 import { editSource } from "hooks/layers/constants";
 import { LayerId } from "hooks/layers/types";
@@ -62,7 +62,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
 
   const { values, setObjectValue, setMultipleValues } =
     useEditGrenser(currentKretstype);
-  const { openPanel, closePanel } = useMetadataPanel();
+  const { openPanel, closePanels } = useOverlayPanels();
   const { addKretserToLayer, removeKretserFromLayer } = useKretsgrenser(
     kommune.id,
     currentKretstype
@@ -105,7 +105,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
         };
       });
 
-      openPanel({ content: currentKretstype, kommune });
+      openPanel({ type: currentKretstype, kommune });
 
       // hvis ikke endret fra før, endre nå
       if (kommuneValues.visible) {
@@ -115,7 +115,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
       addKretserToLayer("edit");
     } else {
       removeKretserFromLayer("edit");
-      closePanel();
+      closePanels();
     }
 
     setMultipleValues(newValues);
@@ -137,7 +137,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
     } else {
       // hvis ikke lenger skal være synlig
       removeKretserFromLayer(layerId);
-      closePanel();
+      closePanels();
     }
   };
 

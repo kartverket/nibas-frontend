@@ -3,7 +3,7 @@ import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import styled from "styled-components";
-import { BlockLabel } from "../MetadataPanel/metadataComponents";
+import { BlockLabel } from "../OverlayPanels/metadataComponents";
 import { ToolbarWrapper } from "./components";
 import { createUtkast as createApiUtkast } from "api/utkast";
 import Button from "components/form/Button";
