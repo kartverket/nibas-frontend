@@ -62,7 +62,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
 
   const { values, setObjectValue, setMultipleValues } =
     useEditGrenser(currentKretstype);
-  const { openPanel, closePanel } = useOverlayPanels();
+  const { openPanel, closePanels } = useOverlayPanels();
   const { addKretserToLayer, removeKretserFromLayer } = useKretsgrenser(
     kommune.id,
     currentKretstype
@@ -115,7 +115,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
       addKretserToLayer("edit");
     } else {
       removeKretserFromLayer("edit");
-      closePanel(currentKretstype);
+      closePanels();
     }
 
     setMultipleValues(newValues);
@@ -137,7 +137,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
     } else {
       // hvis ikke lenger skal være synlig
       removeKretserFromLayer(layerId);
-      closePanel(currentKretstype);
+      closePanels();
     }
   };
 

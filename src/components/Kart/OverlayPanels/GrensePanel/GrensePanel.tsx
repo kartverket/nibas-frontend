@@ -40,6 +40,41 @@ const GrensePanel = ({ feature }: Props) => {
     tabs = ["metadata.Generelt", "metadata.Detaljer", "metadata.Historikk"];
   }
 
+  const getTabsOrMinimizedHeading = () => {
+    if (panelContext?.isMinimized) {
+      return (
+        <Heading size="xs" tag="h2">
+          Linje metadata
+        </Heading>
+      );
+    }
+
+    return (
+      <Tabs key={feature.getId()} tabTransKeys={tabs}>
+        <div>
+          <Heading size="xs" tag="h2">
+            Linje metadata
+          </Heading>
+          <GrenseMetadataGenerelt feature={feature} />
+        </div>
+        <div>
+          <Heading size="xs" tag="h2">
+            Detaljer
+          </Heading>
+          <GrenseMetadataDetaljer feature={feature} />
+        </div>
+        {showReferanser && (
+          <div>
+            <Heading size="xs" tag="h2">
+              Dokumentasjonsreferanser
+            </Heading>
+            <GrenseMetadataReferanser feature={feature} />
+          </div>
+        )}
+      </Tabs>
+    );
+  };
+
   return (
     <OverlayPanelWrapper
       key="grensemetadata"
@@ -62,34 +97,7 @@ const GrensePanel = ({ feature }: Props) => {
           )
         }
       />
-      {panelContext?.isMinimized ? (
-        <Heading size="xs" tag="h2">
-          Linje metadata
-        </Heading>
-      ) : (
-        <Tabs key={feature.getId()} tabTransKeys={tabs}>
-          <div>
-            <Heading size="xs" tag="h2">
-              Linje metadata
-            </Heading>
-            <GrenseMetadataGenerelt feature={feature} />
-          </div>
-          <div>
-            <Heading size="xs" tag="h2">
-              Detaljer
-            </Heading>
-            <GrenseMetadataDetaljer feature={feature} />
-          </div>
-          {showReferanser && (
-            <div>
-              <Heading size="xs" tag="h2">
-                Dokumentasjonsreferanser
-              </Heading>
-              <GrenseMetadataReferanser feature={feature} />
-            </div>
-          )}
-        </Tabs>
-      )}
+      {getTabsOrMinimizedHeading()}
     </OverlayPanelWrapper>
   );
 };
