@@ -86,7 +86,7 @@ jobs:
       terraform_workspace: dev
       terraform_option_1: -var-file=variables/dev.tfvars
       terraform_option_2: var=NIBAS_FRONTEND_VERSION=${{ needs.build.outputs.new_tag }}
-      terraform_backend_config: -backend-config=backend/dev.gcs.tfbackend
+      terraform_init_option_1: -backend-config=backend/dev.gcs.tfbackend
       working_directory: terraform
       auth_project_number: 747318126147
       service_account: nibas-deploy@nibas-dev-075c.iam.gserviceaccount.com
@@ -108,7 +108,7 @@ jobs:
       terraform_workspace: test
       terraform_option_1: -var-file=variables/test.tfvars
       terraform_option_2: -var=NIBAS_FRONTEND_VERSION=${{ needs.build.outputs.new_tag }}
-      terraform_backend_config: -backend-config=backend/test.gcs.tfbackend
+      terraform_init_option_1: -backend-config=backend/test.gcs.tfbackend
       working_directory: terraform
       auth_project_number: 747318126147
       service_account: nibas-deploy@nibas-test-36cb.iam.gserviceaccount.com
