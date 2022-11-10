@@ -1,5 +1,6 @@
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import useFylker from "hooks/inndelinger/useFylker";
+import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
 import { useEffect, useMemo, useState } from "react";
 import useSWRImmutable from "swr/immutable";
 import { FeatureCollection } from "types/api";
@@ -53,6 +54,8 @@ const useFylkesgrenser = (shouldFetch: boolean) => {
 
     return geoJsonFeatures.flatMap(getFeaturesFromGeoJson);
   }, [geoJsonFeatures]);
+
+  useAddInndelingerKontekst(features, "fylke", "fylker");
 
   return { fylkesgrenser: features, isFetching };
 };
