@@ -13,6 +13,7 @@ import {
   GrunnkretsResponse,
 } from "types/api";
 import { getNavnInSpraak } from "utils/language/language";
+import get from "lodash.get";
 
 type Props = {
   grunnkrets: GrunnkretsRef;
@@ -40,7 +41,12 @@ const EditRow = ({ grunnkrets, kommuneId }: Props) => {
     id: grunnkrets.id,
   });
 
-  const { register, getValues, setValue } = useForm<Inputs>({
+  const {
+    register,
+    getValues,
+    setValue,
+    formState: { dirtyFields },
+  } = useForm<Inputs>({
     defaultValues: {
       grunnkretsnummer: grunnkrets.grunnkretsnummer,
       navn: getNavnInSpraak(grunnkrets.navn, "nor"),
@@ -66,8 +72,12 @@ const EditRow = ({ grunnkrets, kommuneId }: Props) => {
     setFormValues,
   });
 
-  const addGrunnkretsEntry = () => {
+  const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     if (!fullGrunnkrets) return;
+
+    const isDirty = get(dirtyFields, e.target.name);
+
+    if (!isDirty) return;
 
     addEntry({
       type: "grunnkrets",
@@ -85,7 +95,7 @@ const EditRow = ({ grunnkrets, kommuneId }: Props) => {
   };
 
   const registerOptions = {
-    onBlur: addGrunnkretsEntry,
+    onBlur,
   };
 
   return (
