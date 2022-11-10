@@ -21,6 +21,7 @@ import { UtkastResponse } from "types/api";
 import Feedback from "components/Feedback/Feedback";
 import useFeedback from "hooks/useFeedback";
 import { useUtkast } from "contexts/UtkastContext";
+import get from "lodash.get";
 
 type Inputs = {
   navn: string;
@@ -45,7 +46,12 @@ type Props = {
 
 const UtkastItemActive = ({ utkastId }: Props) => {
   const { t } = useTranslation();
-  const { register, setValue, getValues } = useForm<Inputs>();
+  const {
+    register,
+    setValue,
+    getValues,
+    formState: { dirtyFields },
+  } = useForm<Inputs>();
   const { closeUtkast } = useUtkast();
 
   const { data: fullUtkast } = useNibasApi("/v1/utkast/{id}", {
@@ -87,8 +93,12 @@ const UtkastItemActive = ({ utkastId }: Props) => {
     setFormValues,
   });
 
-  const addUtkastEntry = () => {
+  const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     if (!fullUtkast) return;
+
+    const isDirty = get(dirtyFields, e.target.name);
+
+    if (!isDirty) return;
 
     addEntry({
       type: "utkast",
@@ -105,7 +115,7 @@ const UtkastItemActive = ({ utkastId }: Props) => {
   };
 
   const registerOptions = {
-    onBlur: addUtkastEntry,
+    onBlur,
   };
 
   return (
