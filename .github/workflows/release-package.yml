@@ -110,7 +110,7 @@ jobs:
       terraform_option_2: -var=NIBAS_FRONTEND_VERSION=${{ needs.build.outputs.new_tag }}
       terraform_init_option_1: -backend-config=backend/test.gcs.tfbackend
       working_directory: terraform
-      auth_project_number: 747318126147
+      auth_project_number: 935702487708
       service_account: nibas-deploy@nibas-test-36cb.iam.gserviceaccount.com
       vault_role: nibas-frontend-read-role
       project_id: kubernetes-test-94f6
