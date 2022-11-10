@@ -9,12 +9,11 @@ import styled from "styled-components";
 import AsyncKodelisteSelect from "../../AsyncKodelisteSelect";
 import { Container, Part } from "../../metadataComponents";
 import useAsyncKodeliste from "../../useAsyncKodeliste";
-import useIsMetadataDisabled from "../../useIsMetadataDisabled";
 import { addMetadataEntryFromFeature } from "../../utils";
 import Checkbox from "components/Checkbox";
 import { useToolbarSaving } from "contexts/ToolbarContext";
 import { AdministrativGrenseMetadata, FeatureProperties } from "types/api";
-import get from "lodash.get";
+import useMetadataInputOptions from "hooks/useMetadataInputOptions";
 
 type Inputs = {
   foelgerTerrengdetalj: string;
@@ -99,19 +98,11 @@ const AdministrativGrenseDetaljer = ({ feature }: Props) => {
     } as AdministrativGrenseMetadata);
   };
 
-  const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    const isDirty = get(dirtyFields, e.target.name);
-    if (!isDirty) return;
-
-    updateDraftFromFeature();
-  };
-
-  const disabled = useIsMetadataDisabled(properties);
-
-  const inputOptions = {
-    onBlur,
-    disabled,
-  };
+  const inputOptions = useMetadataInputOptions({
+    dirtyFields,
+    properties,
+    updateDraftFromFeature,
+  });
 
   return (
     <form>
