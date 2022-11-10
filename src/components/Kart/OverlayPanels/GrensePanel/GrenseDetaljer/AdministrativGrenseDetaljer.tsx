@@ -14,6 +14,7 @@ import { addMetadataEntryFromFeature } from "../../utils";
 import Checkbox from "components/Checkbox";
 import { useToolbarSaving } from "contexts/ToolbarContext";
 import { AdministrativGrenseMetadata, FeatureProperties } from "types/api";
+import get from "lodash.get";
 
 type Inputs = {
   foelgerTerrengdetalj: string;
@@ -31,7 +32,12 @@ const AdministrativGrenseDetaljer = ({ feature }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
   const metadata = properties.metadata as AdministrativGrenseMetadata;
 
-  const { register, setValue, getValues } = useForm<Inputs>({
+  const {
+    register,
+    setValue,
+    getValues,
+    formState: { dirtyFields },
+  } = useForm<Inputs>({
     defaultValues: {
       foelgerTerrengdetalj: metadata.foelgerTerrengdetalj?.id ?? "",
       noeyaktighetsklasse: metadata.noeyaktighetsklasse?.id ?? "",
@@ -93,10 +99,17 @@ const AdministrativGrenseDetaljer = ({ feature }: Props) => {
     } as AdministrativGrenseMetadata);
   };
 
+  const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const isDirty = get(dirtyFields, e.target.name);
+    if (!isDirty) return;
+
+    updateDraftFromFeature();
+  };
+
   const disabled = useIsMetadataDisabled(properties);
 
   const inputOptions = {
-    onBlur: updateDraftFromFeature,
+    onBlur,
     disabled,
   };
 

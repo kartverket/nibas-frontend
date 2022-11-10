@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { FocusEvent, useEffect, useState } from "react";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import LineString from "ol/geom/LineString";
@@ -14,6 +14,7 @@ import Input from "components/form/Input";
 import Icon from "components/Icon";
 import { useToolbarSaving } from "contexts/ToolbarContext";
 import { Dokref, FeatureProperties, Metadata } from "types/api";
+import get from "lodash.get";
 
 type Value = {
   beskrivelse: string;
@@ -164,7 +165,13 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
   const dokrefs = (properties.metadata as Metadata).dokumentasjonsreferanser;
 
-  const { register, control, setValue, getValues } = useForm<Inputs>({
+  const {
+    register,
+    control,
+    setValue,
+    getValues,
+    formState: { dirtyFields },
+  } = useForm<Inputs>({
     defaultValues: { dokrefs: mapFromApiToForm(dokrefs) },
   });
   const { append, fields, remove } = useFieldArray({
@@ -200,11 +207,18 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
     });
   };
 
+  const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const isDirty = get(dirtyFields, e.target.name);
+    if (!isDirty) return;
+
+    updateDraftFromFeature();
+  };
+
   const disabled = useIsMetadataDisabled(properties);
 
   const formOptions = {
     disabled,
-    onBlur: updateDraftFromFeature,
+    onBlur,
   };
 
   return (

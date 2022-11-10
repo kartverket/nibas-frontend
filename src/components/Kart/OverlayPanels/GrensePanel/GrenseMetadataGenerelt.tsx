@@ -18,6 +18,7 @@ import Input from "components/form/Input";
 import Select from "components/form/Select";
 import useScreenWidth from "hooks/useScreenWidth";
 import { Metadata, FeatureProperties } from "types/api";
+import get from "lodash.get";
 
 type Props = {
   feature: Feature<Geometry>;
@@ -28,7 +29,7 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
   const type = properties.type;
   const metadata = properties.metadata as Metadata;
 
-  const { register, maalemetodeKoder, updateDraftFromFeature } =
+  const { register, maalemetodeKoder, updateDraftFromFeature, dirtyFields } =
     useMetadataForm(metadata, feature);
 
   const screenWidth = useScreenWidth();
@@ -37,7 +38,14 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
 
   const disabled = useIsMetadataDisabled(properties);
 
-  const formOptions = { disabled, onBlur: updateDraftFromFeature };
+  const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const isDirty = get(dirtyFields, e.target.name);
+    if (!isDirty) return;
+
+    updateDraftFromFeature();
+  };
+
+  const formOptions = { disabled, onBlur };
 
   return (
     <form>
