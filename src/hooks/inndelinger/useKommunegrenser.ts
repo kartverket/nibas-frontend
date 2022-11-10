@@ -1,4 +1,5 @@
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
+import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
 import { useEffect, useMemo, useState } from "react";
 import useSWRImmutable from "swr/immutable";
 import { FeatureCollection } from "types/api";
@@ -54,6 +55,8 @@ const useKommunegrenser = (fylkeId: string, shouldFetch: boolean) => {
 
     return geoJsonFeatures.flatMap(getFeaturesFromGeoJson);
   }, [geoJsonFeatures]);
+
+  useAddInndelingerKontekst(features, "kommune", fylkeId);
 
   return { kommunegrenser: features, isFetching };
 };
