@@ -80,7 +80,7 @@ jobs:
       id-token: write
       pull-requests: write
       contents: read
-    uses: kartverket/github-workflows/.github/workflows/run-terraform.yml@v3.0.1
+    uses: kartverket/github-workflows/.github/workflows/run-terraform.yml@test-vault-env-var
     with:
       runner: atkv1-dev
       environment: dev
@@ -102,7 +102,7 @@ jobs:
       id-token: write
       pull-requests: write
       contents: read
-    uses: kartverket/github-workflows/.github/workflows/run-terraform.yml@v3.0.1
+    uses: kartverket/github-workflows/.github/workflows/run-terraform.yml@test-vault-env-var
     with:
       runner: atkv1-test
       environment: test
