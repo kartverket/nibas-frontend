@@ -55,7 +55,7 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
   const {
     register,
     setValue,
-    formState: { isDirty },
+    formState: { isDirty, dirtyFields },
     getValues,
   } = useForm<Inputs>({
     defaultValues: getFormFromApiMetadata(metadata),
@@ -109,6 +109,7 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
     maalemetodeKoder,
     isDirty,
     updateDraftFromFeature,
+    dirtyFields,
   };
 };
 
