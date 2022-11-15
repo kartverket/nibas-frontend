@@ -168,10 +168,6 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
 
 BackgroundLayerAccordion.displayName = "BackgroundLayerAccordion";
 
-const AktivtKartlag = styled.div<{ mainLayer?: boolean }>`
-  padding-bottom: ${({ mainLayer }) => (mainLayer ? 16 : 0)}px;
-`;
-
 const AddRemove = styled.div<{ visible: boolean; aktivtKartlag: boolean }>`
   cursor: pointer;
 
