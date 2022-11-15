@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { KretsTable, KretsTableWrapper } from "../KretsTable";
+import { KretsRow, KretsTable, KretsTableWrapper } from "../KretsTable";
 import {
   BlockLabel,
   HeaderButton,
@@ -23,6 +23,7 @@ import {
   sortGrenserAlphabetically,
 } from "utils/language/language";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
+import FutureChangesTable from "./FutureChangesTable";
 
 type Props = {
   kommune: KommuneRef;
@@ -33,6 +34,8 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
   const { toggleEditKretser } = useInndelingerKrets(kommune);
 
   const { isRowOpen, toggleRow } = useAccordionRows();
+  const { isRowOpen: isFutureChangesOpen, toggleRow: toggleFutureChangesRow } =
+    useAccordionRows();
   const { inputValue, setInputValue, searchValue } = useSearch();
 
   const { toggleMinimizePanel, kretserContext, closePanel } =
@@ -113,7 +116,8 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
               <tr>
                 <th>{t("tabell.Navn")}</th>
                 <th>{t("grunnkrets.Grunnkretsnummer")}</th>
-                <th>{t("action.Endre")}</th>
+                <th></th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -122,6 +126,22 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                   <KretsRow onClick={() => toggleRow(grunnkrets.id)}>
                     <td>{getNavnInSpraak(grunnkrets.navn, "nor")}</td>
                     <td>{grunnkrets.grunnkretsnummer}</td>
+                    <td>
+                      <Button
+                        variant="unstyled"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleFutureChangesRow(grunnkrets.id);
+                        }}
+                        icon={
+                          isFutureChangesOpen(grunnkrets.id) ? (
+                            <Icon icon="published_with_changes" />
+                          ) : (
+                            <Icon icon="schedule" />
+                          )
+                        }
+                      />
+                    </td>
                     <td>
                       <Button
                         variant="unstyled"
@@ -139,6 +159,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                   {isRowOpen(grunnkrets.id) && (
                     <EditRow grunnkrets={grunnkrets} kommuneId={kommune.id} />
                   )}
+                  {isFutureChangesOpen(grunnkrets.id) && <FutureChangesTable />}
                 </React.Fragment>
               ))}
             </tbody>
@@ -152,10 +173,6 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
 const PanelTitle = styled(Heading)`
   margin: 0;
   margin-bottom: 8px;
-`;
-
-const KretsRow = styled.tr`
-  cursor: pointer;
 `;
 
 const SmallerBlockLabel = styled(BlockLabel)`

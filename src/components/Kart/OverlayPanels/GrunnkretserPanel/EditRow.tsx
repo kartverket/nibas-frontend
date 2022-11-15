@@ -100,7 +100,7 @@ const EditRow = ({ grunnkrets, kommuneId }: Props) => {
 
   return (
     <AccordionRow>
-      <td colSpan={3}>
+      <td colSpan={4}>
         <InputsWrapper>
           <BlockLabel>
             {t("tabell.Navn")}
