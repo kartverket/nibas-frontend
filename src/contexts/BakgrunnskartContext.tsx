@@ -1,21 +1,24 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { bakgrunnskartLayers } from "hooks/layers/constants";
 import { BakgrunnskartId } from "hooks/layers/types";
-import useVisibleLayers from "hooks/layers/useVisibleLayers";
+import useVisibleLayers, { VisibleLayer } from "hooks/layers/useVisibleLayers";
 import getSubLayersFromWMSSource, {
   MainMappedLayer,
+  MappedLayer,
 } from "utils/getLayersFromWMS";
 import { mapVectorLayer } from "utils/getMatrikkelWfsFeatures";
 import { isVectorLayer } from "utils/map/layers";
-import useVisibleSubLayers from "hooks/layers/useVisibleSubLayers";
 
 export type BakgrunnskartContextValue = {
   mappedLayers: MainMappedLayer[];
-  visibleLayers: BakgrunnskartId[];
-  visibleSubLayers: string[];
-  toggleLayerVisibility: (layerId: BakgrunnskartId) => void;
-  toggleSubLayerVisibility: (layerId: string) => void;
-
+  visibleLayers: VisibleLayer[];
+  toggleLayerVisibility: (layerId: BakgrunnskartId, subLayer?: string) => void;
+  layerIsVisible: (layerId: BakgrunnskartId) => boolean;
+  subLayerIsVisible: (mainLayer: BakgrunnskartId, subLayer: string) => boolean;
+  recursiveIsVisible: (
+    mainLayer: BakgrunnskartId,
+    layer: MappedLayer
+  ) => boolean;
   moveLayer: (direction: "up" | "down", layerId: BakgrunnskartId) => void;
 };
 
@@ -29,9 +32,14 @@ export const BakgrunnskartContext = createContext<
 export const BakgrunnskartProvider: React.FC = ({ children }) => {
   const [mappedLayers, setMappedLayers] = useState<MainMappedLayer[]>([]);
 
-  const { visibleLayers, moveLayer, toggleLayerVisibility } =
-    useVisibleLayers();
-  const { visibleSubLayers, toggleSubLayerVisibility } = useVisibleSubLayers();
+  const {
+    visibleLayers,
+    moveLayer,
+    toggleLayerVisibility,
+    layerIsVisible,
+    subLayerIsVisible,
+    recursiveIsVisible,
+  } = useVisibleLayers();
 
   useEffect(() => {
     let isMounted = true;
@@ -68,10 +76,11 @@ export const BakgrunnskartProvider: React.FC = ({ children }) => {
   const value = {
     mappedLayers,
     visibleLayers,
-    visibleSubLayers,
     toggleLayerVisibility,
-    toggleSubLayerVisibility,
+    layerIsVisible,
+    subLayerIsVisible,
     moveLayer,
+    recursiveIsVisible,
   };
 
   return (

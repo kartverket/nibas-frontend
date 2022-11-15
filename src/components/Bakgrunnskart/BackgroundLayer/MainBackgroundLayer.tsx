@@ -3,29 +3,27 @@ import SubBackgroundLayer from "./SubBackgroundLayer";
 import useBackgroundLayerDND from "./useBackgroundLayerDND";
 import { BakgrunnskartId } from "hooks/layers/types";
 import { MainMappedLayer } from "utils/getLayersFromWMS";
+import { useBakgrunnskart } from "contexts/BakgrunnskartContext";
 
 type Props = {
   mappedLayer: MainMappedLayer;
   index: number;
   toggleLayerVisibility: () => void;
-  toggleSubLayerVisibility: (layerId: string) => void;
   visible: boolean;
   moveLayer?: (direction: "up" | "down", layerId: BakgrunnskartId) => void;
   isAktiveKartlag?: boolean;
-  visibleSubLayers: string[];
 };
 
 const MainBackgroundLayer = ({
   mappedLayer,
   visible,
   toggleLayerVisibility,
-  toggleSubLayerVisibility,
   index,
   moveLayer,
   isAktiveKartlag,
-  visibleSubLayers,
 }: Props) => {
   const ref = useBackgroundLayerDND(index, mappedLayer, moveLayer);
+  const { recursiveIsVisible } = useBakgrunnskart();
 
   return (
     <BackgroundLayerAccordion
@@ -41,7 +39,9 @@ const MainBackgroundLayer = ({
       <>
         {mappedLayer.layers
           .filter((layer) =>
-            isAktiveKartlag ? visibleSubLayers.includes(layer.title) : true
+            isAktiveKartlag
+              ? recursiveIsVisible(mappedLayer.sourceId, layer)
+              : true
           )
           .map((layer) => (
             <SubBackgroundLayer
@@ -50,7 +50,6 @@ const MainBackgroundLayer = ({
               mainLayerSourceId={mappedLayer.sourceId}
               mainLayerName={mappedLayer.id ?? ""}
               indent={1}
-              toggleSubLayerVisibility={toggleSubLayerVisibility}
               isAktiveKartlag={isAktiveKartlag}
             />
           ))}

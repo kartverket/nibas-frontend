@@ -26,18 +26,17 @@ const defaultProps: React.ComponentProps<typeof MainBackgroundLayer> = {
   },
   moveLayer: jest.fn(),
   toggleLayerVisibility: jest.fn(),
-  toggleSubLayerVisibility: jest.fn(),
   visible: false,
-  visibleSubLayers: ["Sublag"],
 };
 
 const renderWithProvider = (ui: ReactNode) =>
   render(ui, {
     BakgrunnskartProvider: {
       visibleLayers: { administrativeGrenser: true } as any,
-      visibleSubLayers: ["Sublag"],
+      layerIsVisible: jest.fn(),
+      subLayerIsVisible: jest.fn(),
       toggleLayerVisibility: jest.fn(),
-      toggleSubLayerVisibility: jest.fn(),
+      recursiveIsVisible: jest.fn(),
       mappedLayers: [
         { ...defaultProps.mappedLayer, sourceId: "administrativeGrenser" },
       ],

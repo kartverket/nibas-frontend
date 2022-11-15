@@ -19,10 +19,10 @@ const Bakgrunnskart = () => {
   return (
     <Panel>
       <SidebarPanelTitle closePanel={togglePanel} title={t("Aktive kartlag")} />
-      {visibleLayers.map((id, i) => (
+      {visibleLayers.map((layer, i) => (
         <MainLayer
-          key={id}
-          layerId={id}
+          key={layer.mainLayer}
+          layerId={layer.mainLayer}
           index={i}
           isAktiveKartlag={true}
           canDrag={true}
