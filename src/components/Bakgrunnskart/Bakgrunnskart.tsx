@@ -31,6 +31,7 @@ const Bakgrunnskart = () => {
       <BackgroundLayersHeading tag="h3" size="xs">
         {t("sidebar.Kartlag")}
       </BackgroundLayersHeading>
+
       {Object.keys(bakgrunnskartLayers).map((layerId, index) => (
         <MainLayer
           key={layerId}
