@@ -1,4 +1,5 @@
 import React from "react";
+import styled from "styled-components";
 
 type Tag = "h1" | "h2" | "h3";
 
@@ -30,4 +31,4 @@ const Heading: React.FC<Props> = ({ tag, size, className, children }) => {
   return null;
 };
 
-export default Heading;
+export default styled(Heading)``;

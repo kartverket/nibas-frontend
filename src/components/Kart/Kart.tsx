@@ -2,13 +2,12 @@ import { Suspense, useEffect, useRef } from "react";
 import styled, { css } from "styled-components";
 import { map } from "./constants";
 import ZoomControls from "./controls/ZoomControls";
-import MetadataPanel from "./MetadataPanel";
-import { MetadataPanelWrapper } from "./MetadataPanel/MetadataPanel";
+import OverlayPanels from "./OverlayPanels";
 import OverlayPopup from "./OverlayPopup";
 import SidebarPanels from "./SidebarPanels";
 import Toolbar from "./Toolbar";
 import UtkastTab from "./UtkastTab";
-import { PanelContent, useMetadataPanel } from "contexts/MetadataPanelContext";
+import { PanelType, useOverlayPanels } from "contexts/OverlayPanelsContext";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
 import useSelectInteraction from "hooks/interactions/useSelectInteraction";
 import { initBakgrunnskartLayers, initGrenserLayers } from "utils/map/layers";
@@ -21,7 +20,7 @@ initBakgrunnskartLayers();
 
 const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const { panelContext } = useMetadataPanel();
+  const { panelContext } = useOverlayPanels();
   const { redigeringsmodusAktiv } = useRedigeringsmodus();
 
   useEditInteractions();
@@ -44,9 +43,9 @@ const Kart = () => {
       <KartTarget ref={mapRef}>
         <Suspense fallback="More loading...">
           <UtkastTab />
-          <KartOverlay content={panelContext?.content}>
+          <KartOverlay content={panelContext?.type}>
             <SidebarPanels />
-            <MetadataPanel />
+            <OverlayPanels />
             <Toolbar />
             <UtkastBorder utkastActive={redigeringsmodusAktiv} />
           </KartOverlay>
@@ -91,7 +90,7 @@ const KartTarget = styled.div`
 `;
 
 const KartOverlay = styled.div<{
-  content?: PanelContent;
+  content?: PanelType;
 }>`
   display: grid;
 
@@ -99,32 +98,14 @@ const KartOverlay = styled.div<{
   grid-template-rows: 1fr auto;
   grid-template-areas:
     "panel toolbar ."
-    "panel metadata metadata";
+    "panel metadata metadata"
+    "panel kretser kretser";
   width: 100%;
   height: 100%;
   position: absolute;
   pointer-events: none;
   z-index: 1;
-
-  /* Flytt grensemetadata til høyre side på stor skjerm */
-  ${({ content }) => {
-    if (content === "grensemetadata")
-      return css`
-        @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
-          grid-template-columns: auto auto 1fr auto;
-          grid-template-areas: "panel toolbar . metadata";
-          grid-template-rows: 100%;
-        }
-
-        ${MetadataPanelWrapper} {
-          @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
-            height: fit-content;
-            max-height: 900px;
-            width: 600px;
-          }
-        }
-      `;
-  }}
+  overflow: hidden;
 `;
 
 export default Kart;

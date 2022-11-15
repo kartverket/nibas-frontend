@@ -9,11 +9,11 @@ import styled from "styled-components";
 import AsyncKodelisteSelect from "../../AsyncKodelisteSelect";
 import { Container, Part } from "../../metadataComponents";
 import useAsyncKodeliste from "../../useAsyncKodeliste";
-import useIsMetadataDisabled from "../../useIsMetadataDisabled";
 import { addMetadataEntryFromFeature } from "../../utils";
 import Checkbox from "components/Checkbox";
 import { useToolbarSaving } from "contexts/ToolbarContext";
 import { AdministrativGrenseMetadata, FeatureProperties } from "types/api";
+import useMetadataInputOptions from "hooks/useMetadataInputOptions";
 
 type Inputs = {
   foelgerTerrengdetalj: string;
@@ -31,7 +31,12 @@ const AdministrativGrenseDetaljer = ({ feature }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
   const metadata = properties.metadata as AdministrativGrenseMetadata;
 
-  const { register, setValue, getValues } = useForm<Inputs>({
+  const {
+    register,
+    setValue,
+    getValues,
+    formState: { dirtyFields },
+  } = useForm<Inputs>({
     defaultValues: {
       foelgerTerrengdetalj: metadata.foelgerTerrengdetalj?.id ?? "",
       noeyaktighetsklasse: metadata.noeyaktighetsklasse?.id ?? "",
@@ -93,12 +98,11 @@ const AdministrativGrenseDetaljer = ({ feature }: Props) => {
     } as AdministrativGrenseMetadata);
   };
 
-  const disabled = useIsMetadataDisabled(properties);
-
-  const inputOptions = {
-    onBlur: updateDraftFromFeature,
-    disabled,
-  };
+  const inputOptions = useMetadataInputOptions({
+    dirtyFields,
+    properties,
+    updateDraftFromFeature,
+  });
 
   return (
     <form>

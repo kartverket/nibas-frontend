@@ -13,7 +13,10 @@ import {
   getNavnInSpraak,
   sortGrenserAlphabetically,
 } from "utils/language/language";
-import { ClosePanelButton } from "../ClosePanelButton";
+import { HeaderButton, OverlayPanelWrapper } from "../metadataComponents";
+import { useOverlayPanels } from "contexts/OverlayPanelsContext";
+import Icon from "components/Icon";
+import Heading from "components/typography/Heading";
 
 type Props = {
   kommune: KommuneRef;
@@ -30,6 +33,8 @@ const StemmekretserPanel = ({ kommune }: Props) => {
     }
   );
 
+  const { toggleMinimizePanel, kretserContext, closePanel } =
+    useOverlayPanels();
   const { toggleEditKretser } = useInndelingerKrets(kommune);
 
   const sortedStemmekretser = sortGrenserAlphabetically(stemmekretserByKommune);
@@ -40,14 +45,40 @@ const StemmekretserPanel = ({ kommune }: Props) => {
   ) as StemmekretsRef[] | undefined;
 
   return (
-    <>
-      <PanelTitle>
+    <OverlayPanelWrapper
+      key="stemmekrets"
+      gridArea="kretser"
+      minimized={kretserContext?.isMinimized}
+    >
+      <PanelTitle tag="h2" size="xs">
         {t("{{ kommuneNavn }} kommune", {
           kommuneNavn: getNavnInSpraak(kommune.navn, "nor"),
         })}
       </PanelTitle>
-      <ClosePanelButton onClose={toggleEditKretser} />
-      <PanelTitle>{t("inndelinger.Stemmekretser")}</PanelTitle>
+      <HeaderButton
+        right={0}
+        icon={<Icon icon="close" />}
+        onClick={() => {
+          closePanel("stemmekrets");
+          closePanel("grensemetadata");
+          toggleEditKretser();
+        }}
+      />
+      <HeaderButton
+        right={50}
+        onClick={() => toggleMinimizePanel("stemmekrets")}
+        icon={
+          kretserContext?.isMinimized ? (
+            <Icon icon="expand_less" />
+          ) : (
+            <Icon icon="expand_more" />
+          )
+        }
+      />
+
+      <PanelTitle tag="h2" size="xs">
+        {t("inndelinger.Stemmekretser")}
+      </PanelTitle>
       {utkastStemmekretser && (
         <KretsTableWrapper>
           <KretsTable>
@@ -78,11 +109,11 @@ const StemmekretserPanel = ({ kommune }: Props) => {
           </KretsTable>
         </KretsTableWrapper>
       )}
-    </>
+    </OverlayPanelWrapper>
   );
 };
 
-const PanelTitle = styled.h3`
+const PanelTitle = styled(Heading)`
   margin: 0;
   margin-bottom: 8px;
 `;

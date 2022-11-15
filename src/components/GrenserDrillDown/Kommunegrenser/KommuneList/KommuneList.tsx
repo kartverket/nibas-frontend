@@ -1,40 +1,55 @@
 import styled from "styled-components";
 import ApiGrense from "components/GrenserDrillDown/ApiGrense";
-import { useEditGrenser } from "contexts/EditGrenserContext";
 import useKommuner from "hooks/inndelinger/useKommuner";
-import useOnlyDisplayEditingGrenser from "hooks/useOnlyDisplayEditingGrenser";
 import { GrenseRef } from "types/api";
+import useKommunegrenser from "hooks/inndelinger/useKommunegrenser";
+import { useEffect, useState } from "react";
+import { getNavnInSpraak } from "utils/language/language";
+import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
+import EditableGrenseAccordion from "components/GrenserDrillDown/EditableGrenseAccordion";
 
 type Props = {
   fylke: GrenseRef;
-  onlyDisplayEditing?: boolean;
 };
 
-const KommuneList = ({ fylke, onlyDisplayEditing = false }: Props) => {
+const KommuneList = ({ fylke }: Props) => {
   const { kommuner, error } = useKommuner(fylke.id);
-
-  const { values } = useEditGrenser("kommune");
-  const filteredKommuner = useOnlyDisplayEditingGrenser(
-    kommuner,
-    values,
-    onlyDisplayEditing
+  const [shouldFetch, setShouldFetch] = useState(false);
+  const { kommunegrenser, isFetching } = useKommunegrenser(
+    fylke.id,
+    shouldFetch
   );
+  const { value } = useEditGrense("kommune", fylke.id, kommunegrenser);
+
+  useEffect(() => {
+    if (value.editing || value.visible) {
+      setShouldFetch(true);
+    }
+  }, [value]);
 
   if (error) return <p>Fikk ikke hentet kommuner</p>;
 
-  if (!filteredKommuner) return null;
+  if (!kommuner) return null;
 
   return (
-    <Wrapper>
-      {filteredKommuner.map((kommune) => (
-        <ApiGrense
-          key={kommune.id}
-          grense={kommune}
-          featuresUrl={`/v1/kommuner/${kommune.id}/grenser`}
-          type="kommune"
-        />
-      ))}
-    </Wrapper>
+    <EditableGrenseAccordion
+      features={kommunegrenser}
+      grenseId={fylke.id}
+      grenseType="kommune"
+      isFetching={isFetching}
+      title={getNavnInSpraak(fylke.navn, "nor")}
+    >
+      <Wrapper>
+        {kommuner.map((kommune) => (
+          <ApiGrense
+            key={kommune.id}
+            grense={kommune}
+            featuresUrl={`/v1/kommuner/${kommune.id}/grenser`}
+            type="kommune"
+          />
+        ))}
+      </Wrapper>
+    </EditableGrenseAccordion>
   );
 };
 

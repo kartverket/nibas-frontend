@@ -7,9 +7,10 @@ import { Translation } from "i18n";
 type Props = {
   children: React.ReactNode;
   tabTransKeys: string[];
+  className?: string;
 };
 
-const Tabs = ({ children, tabTransKeys }: Props) => {
+const Tabs = ({ children, tabTransKeys, className }: Props) => {
   const { t } = useTranslation();
   const [selectedTab, setSelectedTab] = useState<number>(0);
 
@@ -18,7 +19,7 @@ const Tabs = ({ children, tabTransKeys }: Props) => {
   };
 
   return (
-    <div>
+    <div className={className}>
       <TabsWrapper>
         {tabTransKeys.map((tabTransKey, index) => (
           <TabButton

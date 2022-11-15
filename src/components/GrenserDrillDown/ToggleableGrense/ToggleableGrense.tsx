@@ -1,13 +1,13 @@
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import styled from "styled-components";
-import Checkbox from "components/Checkbox";
-import Button from "components/form/Button";
+import Button, { LinkButton } from "components/form/Button";
 import Icon from "components/Icon";
 import { EditingType } from "contexts/EditGrenserContext";
 import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
 import { GrenseId } from "hooks/layers/types";
 import { GrenseRef } from "types/api";
+import { useTranslation } from "react-i18next";
 
 export const layerIdByGrenseType: Record<EditingType, GrenseId> = {
   fylke: "fylker",
@@ -30,11 +30,8 @@ const ToggleableGrense = <T extends GrenseRef>({
   type,
   features,
 }: Props<T>) => {
-  const { value, toggleVisible, toggleEditing } = useEditGrense(
-    type,
-    grense.id,
-    features
-  );
+  const { t } = useTranslation();
+  const { value, toggleVisible } = useEditGrense(type, grense.id, features);
 
   const openInfo = () => {
     // todo
@@ -52,14 +49,11 @@ const ToggleableGrense = <T extends GrenseRef>({
             <Icon icon="visibility_off" aria-label="Usynlig" />
           )
         }
-      ></Button>
-      <StyledCheckbox
-        label={title}
-        type="checkbox"
-        checked={value.editing ?? false}
-        onChange={toggleEditing}
       />
-      <Button icon={<ColoredInfo />} onClick={openInfo} variant="unstyled" />
+      <Title onClick={toggleVisible}>{title}</Title>
+      <LinkButton onClick={openInfo} disabled title="Kommer snart!">
+        {value.editing ? t("action.Avslutt redigering") : t("action.Rediger")}
+      </LinkButton>
     </Wrapper>
   );
 };
@@ -67,22 +61,14 @@ const ToggleableGrense = <T extends GrenseRef>({
 const Wrapper = styled.div`
   display: flex;
   align-items: center;
-  margin: 8px 0;
-
-  > label {
-    flex: 1;
-  }
+  margin: 16px 0;
 `;
 
-const StyledCheckbox = styled(Checkbox)`
-  margin-bottom: 0;
-  margin-left: 4px;
-`;
-
-const ColoredInfo = styled(Icon).attrs(() => ({
-  icon: "edit",
+const Title = styled(Button).attrs(() => ({
+  variant: "unstyled",
 }))`
-  color: ${({ theme }) => theme.colors.blue};
+  flex: 1;
+  margin-left: 8px;
 `;
 
 export default ToggleableGrense;

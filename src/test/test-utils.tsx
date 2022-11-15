@@ -18,7 +18,7 @@ const customRender = (
   const {
     BakgrunnskartProvider,
     EditGrenserProvider,
-    MetadataPanelProvider,
+    OverlayPanelsProvider,
     SidebarPanelProvider,
     ToolbarProvider,
     UtkastProvider,
@@ -31,7 +31,7 @@ const customRender = (
       renderWithProviders(ui, {
         BakgrunnskartProvider,
         EditGrenserProvider,
-        MetadataPanelProvider,
+        OverlayPanelsProvider,
         SidebarPanelProvider,
         ToolbarProvider,
         UtkastProvider,

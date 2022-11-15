@@ -2,7 +2,11 @@ import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { KretsTable, KretsTableWrapper } from "../KretsTable";
-import { BlockLabel } from "../metadataComponents";
+import {
+  BlockLabel,
+  HeaderButton,
+  OverlayPanelWrapper,
+} from "../metadataComponents";
 import useAccordionRows from "../useAccordionRow";
 import EditRow from "./EditRow";
 import Button from "components/form/Button";
@@ -18,7 +22,7 @@ import {
   getNavnInSpraak,
   sortGrenserAlphabetically,
 } from "utils/language/language";
-import { ClosePanelButton } from "components/Kart/MetadataPanel/ClosePanelButton";
+import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 
 type Props = {
   kommune: KommuneRef;
@@ -30,6 +34,9 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
 
   const { isRowOpen, toggleRow } = useAccordionRows();
   const { inputValue, setInputValue, searchValue } = useSearch();
+
+  const { toggleMinimizePanel, kretserContext, closePanel } =
+    useOverlayPanels();
 
   const { data: grunnkretserByKommune } = useNibasApi(
     "/v1/kommuner/{id}/grunnkretser",
@@ -59,13 +66,36 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
   }, [searchValue, utkastGrunnkretser]);
 
   return (
-    <>
+    <OverlayPanelWrapper
+      key="grunnkrets"
+      gridArea="kretser"
+      minimized={kretserContext?.isMinimized}
+    >
       <PanelTitle tag="h2" size="xs">
         {t("{{ kommuneNavn }} kommune", {
           kommuneNavn: getNavnInSpraak(kommune.navn, "nor"),
         })}
       </PanelTitle>
-      <ClosePanelButton onClose={toggleEditKretser} />
+      <HeaderButton
+        right={0}
+        icon={<Icon icon="close" />}
+        onClick={() => {
+          closePanel("grunnkrets");
+          closePanel("grensemetadata");
+          toggleEditKretser();
+        }}
+      />
+      <HeaderButton
+        right={50}
+        onClick={() => toggleMinimizePanel("grunnkrets")}
+        icon={
+          kretserContext?.isMinimized ? (
+            <Icon icon="expand_less" />
+          ) : (
+            <Icon icon="expand_more" />
+          )
+        }
+      />
       <SmallerBlockLabel>
         {t("sidebar.Søk")}
         <Input
@@ -115,7 +145,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
           </KretsTable>
         </KretsTableWrapper>
       )}
-    </>
+    </OverlayPanelWrapper>
   );
 };
 

@@ -1,4 +1,5 @@
 import { HTMLAttributes } from "react";
+import styled from "styled-components";
 
 type Props = HTMLAttributes<HTMLSpanElement> & {
   icon: string;
@@ -27,4 +28,4 @@ const Icon = ({ icon, className, filled, ...props }: Props) => {
   );
 };
 
-export default Icon;
+export default styled(Icon)``;

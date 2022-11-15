@@ -5,8 +5,9 @@ import GrenseMetadataGenerelt from "./GrenseMetadataGenerelt";
 import GrenseMetadataReferanser from "./GrenseMetadataReferanser";
 import Tabs from "components/Tabs";
 import Heading from "components/typography/Heading";
-import { useMetadataPanel } from "contexts/MetadataPanelContext";
-import { ClosePanelButton } from "components/Kart/MetadataPanel/ClosePanelButton";
+import { useOverlayPanels } from "contexts/OverlayPanelsContext";
+import Icon from "components/Icon";
+import { HeaderButton, OverlayPanelWrapper } from "../metadataComponents";
 
 const showReferanserByGrenseType: Record<string, boolean> = {
   Territorialgrense: true,
@@ -23,7 +24,7 @@ type Props = {
 
 const GrensePanel = ({ feature }: Props) => {
   let tabs: string[];
-  const { closePanel } = useMetadataPanel();
+  const { closePanel, toggleMinimizePanel, panelContext } = useOverlayPanels();
 
   const showReferanser =
     showReferanserByGrenseType[feature.getProperties().type as string];
@@ -39,9 +40,16 @@ const GrensePanel = ({ feature }: Props) => {
     tabs = ["metadata.Generelt", "metadata.Detaljer", "metadata.Historikk"];
   }
 
-  return (
-    <>
-      <ClosePanelButton onClose={closePanel} />
+  const getTabsOrMinimizedHeading = () => {
+    if (panelContext?.isMinimized) {
+      return (
+        <Heading size="xs" tag="h2">
+          Linje metadata
+        </Heading>
+      );
+    }
+
+    return (
       <Tabs key={feature.getId()} tabTransKeys={tabs}>
         <div>
           <Heading size="xs" tag="h2">
@@ -64,7 +72,33 @@ const GrensePanel = ({ feature }: Props) => {
           </div>
         )}
       </Tabs>
-    </>
+    );
+  };
+
+  return (
+    <OverlayPanelWrapper
+      key="grensemetadata"
+      gridArea="metadata"
+      minimized={panelContext?.isMinimized ?? false}
+    >
+      <HeaderButton
+        right={0}
+        icon={<Icon icon="close" />}
+        onClick={() => closePanel("grensemetadata")}
+      />
+      <HeaderButton
+        right={50}
+        onClick={() => toggleMinimizePanel("grensemetadata")}
+        icon={
+          panelContext?.isMinimized ? (
+            <Icon icon="expand_less" />
+          ) : (
+            <Icon icon="expand_more" />
+          )
+        }
+      />
+      {getTabsOrMinimizedHeading()}
+    </OverlayPanelWrapper>
   );
 };
 

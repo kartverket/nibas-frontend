@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useEditGrenser } from "./EditGrenserContext";
-import { useMetadataPanel } from "./MetadataPanelContext";
+import { useOverlayPanels } from "./OverlayPanelsContext";
 import useKretsgrenser from "hooks/inndelinger/useKretsgrenser";
 import { editSource } from "hooks/layers/constants";
 import { LayerId } from "hooks/layers/types";
@@ -62,7 +62,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
 
   const { values, setObjectValue, setMultipleValues } =
     useEditGrenser(currentKretstype);
-  const { openPanel, closePanel } = useMetadataPanel();
+  const { openPanel, closePanels, closePanel } = useOverlayPanels();
   const { addKretserToLayer, removeKretserFromLayer } = useKretsgrenser(
     kommune.id,
     currentKretstype
@@ -99,13 +99,16 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
           removeFeaturesFromSourceByIds("edit", featureIdsToRemove);
         }
 
-        newValues[kommuneId] = {
-          visible: false,
-          editing: false,
-        };
+        // hvis tidligere endret, fjern editing og visible
+        if (newValues[kommuneId]?.editing) {
+          newValues[kommuneId] = {
+            visible: false,
+            editing: false,
+          };
+        }
       });
 
-      openPanel({ content: currentKretstype, kommune });
+      openPanel({ type: currentKretstype, kommune });
 
       // hvis ikke endret fra før, endre nå
       if (kommuneValues.visible) {
@@ -115,7 +118,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
       addKretserToLayer("edit");
     } else {
       removeKretserFromLayer("edit");
-      closePanel();
+      closePanels();
     }
 
     setMultipleValues(newValues);
@@ -125,7 +128,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
     const newVisible = !kommuneValues.visible;
     setObjectValue(kommune.id, {
       visible: newVisible,
-      editing: false,
+      editing: kommuneValues.editing,
     });
 
     const layerId: LayerId = kommuneValues.editing
@@ -133,11 +136,14 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
       : layerIdByKretstype[currentKretstype];
 
     if (newVisible) {
-      addKretserToLayer(layerIdByKretstype[currentKretstype]);
+      addKretserToLayer(layerId);
     } else {
       // hvis ikke lenger skal være synlig
       removeKretserFromLayer(layerId);
-      closePanel();
+
+      if (!kommuneValues.editing) {
+        closePanel("grensemetadata");
+      }
     }
   };
 

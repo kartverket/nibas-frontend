@@ -2,7 +2,7 @@ import { FC } from "react";
 import ThirdPartyProviders from "./ThirdPartyProviders";
 import { BakgrunnskartProvider } from "contexts/BakgrunnskartContext";
 import { EditGrenserProvider } from "contexts/EditGrenserContext";
-import { MetadataPanelProvider } from "contexts/MetadataPanelContext";
+import { OverlayPanelsProvider } from "contexts/OverlayPanelsContext";
 import { SidebarPanelProvider } from "contexts/SidebarPanelContext";
 import { ToolbarProvider } from "contexts/ToolbarContext";
 import { UtkastProvider } from "contexts/UtkastContext";
@@ -12,13 +12,13 @@ const Providers: FC = ({ children }) => {
     <ThirdPartyProviders>
       <SidebarPanelProvider>
         <ToolbarProvider>
-          <MetadataPanelProvider>
+          <OverlayPanelsProvider>
             <EditGrenserProvider>
               <BakgrunnskartProvider>
                 <UtkastProvider>{children}</UtkastProvider>
               </BakgrunnskartProvider>
             </EditGrenserProvider>
-          </MetadataPanelProvider>
+          </OverlayPanelsProvider>
         </ToolbarProvider>
       </SidebarPanelProvider>
     </ThirdPartyProviders>

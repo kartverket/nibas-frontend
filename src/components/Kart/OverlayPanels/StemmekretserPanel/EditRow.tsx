@@ -12,6 +12,7 @@ import {
   StemmekretsRequest,
   StemmekretsResponse,
 } from "types/api";
+import get from "lodash.get";
 
 type Inputs = {
   stemmekretsnavn: string;
@@ -49,7 +50,12 @@ const EditRow = ({ stemmekrets, kommuneId }: Props) => {
     "stemmekretsendringer"
   ) as StemmekretsResponse | undefined;
 
-  const { register, setValue, getValues } = useForm<Inputs>();
+  const {
+    register,
+    setValue,
+    getValues,
+    formState: { dirtyFields },
+  } = useForm<Inputs>();
 
   const { addEntry } = useToolbarSaving();
 
@@ -83,8 +89,12 @@ const EditRow = ({ stemmekrets, kommuneId }: Props) => {
     setFormValues,
   });
 
-  const addStemmekretsEntry = () => {
+  const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     if (!utkastStemmekrets) return;
+
+    const isDirty = get(dirtyFields, e.target.name);
+
+    if (!isDirty) return;
 
     addEntry({
       type: "stemmekrets",
@@ -102,7 +112,7 @@ const EditRow = ({ stemmekrets, kommuneId }: Props) => {
   };
 
   const formOptions = {
-    onBlur: addStemmekretsEntry,
+    onBlur,
   };
 
   return (

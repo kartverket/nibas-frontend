@@ -10,10 +10,10 @@ import {
   EditGrenserContextValue,
 } from "contexts/EditGrenserContext";
 import {
-  MetadataPanelProvider,
-  MetadataPanelContext,
-  MetadataPanelContextValue,
-} from "contexts/MetadataPanelContext";
+  OverlayPanelsProvider,
+  OverlayPanelsContext,
+  OverlayPanelsContextValue,
+} from "contexts/OverlayPanelsContext";
 import {
   SidebarPanelProvider,
   SidebarPanelContext,
@@ -35,7 +35,7 @@ import { BrowserRouter } from "react-router-dom";
 const defaultProviderMap = {
   BakgrunnskartProvider,
   EditGrenserProvider,
-  MetadataPanelProvider,
+  OverlayPanelsProvider,
   SidebarPanelProvider,
   ToolbarProvider,
   UtkastProvider,
@@ -44,7 +44,7 @@ const defaultProviderMap = {
 const contextMap = {
   BakgrunnskartProvider: BakgrunnskartContext.Provider,
   EditGrenserProvider: EditGrenserContext.Provider,
-  MetadataPanelProvider: MetadataPanelContext.Provider,
+  OverlayPanelsProvider: OverlayPanelsContext.Provider,
   SidebarPanelProvider: SidebarPanelContext.Provider,
   ToolbarProvider: ToolbarContext.Provider,
   UtkastProvider: UtkastContext.Provider,
@@ -53,7 +53,7 @@ const contextMap = {
 export type TestProviderValues = {
   BakgrunnskartProvider?: BakgrunnskartContextValue | boolean;
   EditGrenserProvider?: EditGrenserContextValue | boolean;
-  MetadataPanelProvider?: MetadataPanelContextValue | boolean;
+  OverlayPanelsProvider?: OverlayPanelsContextValue | boolean;
   SidebarPanelProvider?: SidebarPanelContextValue | boolean;
   ToolbarProvider?: ToolbarContextValue | boolean;
   UtkastProvider?: UtkastContextValue | boolean;

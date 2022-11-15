@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
@@ -19,6 +19,7 @@ import {
 import { fetcherWithToken } from "utils/swr";
 import { isPoint } from "types/geometry";
 import { isNotNullOrUndefined } from "types/common";
+import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
 
 const endpointByKretstype = {
   grunnkrets: "grunnkretser",
@@ -144,17 +145,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     return features;
   }, [utkastGeoJsons, representasjonspunkter]);
 
-  useEffect(() => {
-    allFeatures?.forEach((feature) => {
-      feature.setProperties({
-        ...feature.getProperties(),
-        inndelingerKontekst: {
-          id: kommuneId,
-          type,
-        },
-      });
-    });
-  }, [allFeatures, kommuneId, type]);
+  useAddInndelingerKontekst(allFeatures, type, kommuneId);
 
   const setLayerToAddTo = useAsyncFeatures(allFeatures, !!grenseValue?.editing);
 

@@ -39,7 +39,6 @@ type Props = {
   mainLayerSourceId: BakgrunnskartId;
   mainLayerName: string;
   isAktiveKartlag?: boolean;
-  toggleSubLayerVisibility: (layerId: string) => void;
 };
 
 const SubBackgroundLayer = ({
@@ -48,11 +47,11 @@ const SubBackgroundLayer = ({
   mainLayerSourceId,
   mainLayerName,
   isAktiveKartlag,
-  toggleSubLayerVisibility,
 }: Props) => {
   const [visible, setVisible] = useState(false);
 
-  const { toggleLayerVisibility, visibleLayers } = useBakgrunnskart();
+  const { toggleLayerVisibility, visibleLayers, recursiveIsVisible } =
+    useBakgrunnskart();
 
   useEffect(() => {
     const isSubLayerVisible = () => {
@@ -118,14 +117,15 @@ const SubBackgroundLayer = ({
     ].getSource() as TileWMS;
     const layersInParams = source.getParams().LAYERS as string;
 
-    const isMainLayerVisible = visibleLayers.includes(mainLayerSourceId);
+    const isMainLayerVisible = visibleLayers.find(
+      (visibleLayer) => visibleLayer.mainLayer === layerId
+    );
 
     if (layersInParams && !isMainLayerVisible) {
-      toggleLayerVisibility(mainLayerSourceId);
+      toggleLayerVisibility(mainLayerSourceId, mappedLayer.title);
     } else if (layersInParams === mainLayerName && isMainLayerVisible) {
-      toggleLayerVisibility(mainLayerSourceId);
+      toggleLayerVisibility(mainLayerSourceId, mappedLayer.title);
     }
-    toggleSubLayerVisibility(layerId);
     setVisible(!visible);
   };
 
@@ -139,17 +139,22 @@ const SubBackgroundLayer = ({
       isAktiveKartlag={isAktiveKartlag}
     >
       <>
-        {mappedLayer.layers.map((layer) => (
-          <SubBackgroundLayer
-            key={layer.title}
-            mappedLayer={layer}
-            mainLayerSourceId={mainLayerSourceId}
-            mainLayerName={mainLayerName}
-            indent={indent + 1}
-            isAktiveKartlag={isAktiveKartlag}
-            toggleSubLayerVisibility={toggleSubLayerVisibility}
-          />
-        ))}
+        {mappedLayer.layers
+          .filter((layer) =>
+            isAktiveKartlag
+              ? recursiveIsVisible(mainLayerSourceId, layer)
+              : true
+          )
+          .map((layer) => (
+            <SubBackgroundLayer
+              key={layer.title}
+              mappedLayer={layer}
+              mainLayerSourceId={mainLayerSourceId}
+              mainLayerName={mainLayerName}
+              indent={indent + 1}
+              isAktiveKartlag={isAktiveKartlag}
+            />
+          ))}
       </>
     </BackgroundLayerAccordion>
   );

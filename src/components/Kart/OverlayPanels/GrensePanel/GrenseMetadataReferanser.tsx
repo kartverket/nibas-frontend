@@ -7,13 +7,13 @@ import { Control, useFieldArray, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { BlockLabel, Container, Part } from "../metadataComponents";
-import useIsMetadataDisabled from "../useIsMetadataDisabled";
 import { addMetadataEntryFromFeature } from "../utils";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Icon from "components/Icon";
 import { useToolbarSaving } from "contexts/ToolbarContext";
 import { Dokref, FeatureProperties, Metadata } from "types/api";
+import useMetadataInputOptions from "hooks/useMetadataInputOptions";
 
 type Value = {
   beskrivelse: string;
@@ -164,7 +164,13 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
   const dokrefs = (properties.metadata as Metadata).dokumentasjonsreferanser;
 
-  const { register, control, setValue, getValues } = useForm<Inputs>({
+  const {
+    register,
+    control,
+    setValue,
+    getValues,
+    formState: { dirtyFields },
+  } = useForm<Inputs>({
     defaultValues: { dokrefs: mapFromApiToForm(dokrefs) },
   });
   const { append, fields, remove } = useFieldArray({
@@ -200,12 +206,11 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
     });
   };
 
-  const disabled = useIsMetadataDisabled(properties);
-
-  const formOptions = {
-    disabled,
-    onBlur: updateDraftFromFeature,
-  };
+  const inputOptions = useMetadataInputOptions({
+    dirtyFields,
+    properties,
+    updateDraftFromFeature,
+  });
 
   return (
     <form>
@@ -216,13 +221,13 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
               <BlockLabel>
                 {t("metadata.Rettskildetittel")}
                 <Input
-                  {...register(`dokrefs.${i}.rettskildeTittel`, formOptions)}
+                  {...register(`dokrefs.${i}.rettskildeTittel`, inputOptions)}
                 />
               </BlockLabel>
               <BlockLabel>
                 {t("metadata.Rettskilde-ID")}
                 <Input
-                  {...register(`dokrefs.${i}.rettskildeId`, formOptions)}
+                  {...register(`dokrefs.${i}.rettskildeId`, inputOptions)}
                 />
               </BlockLabel>
             </Part>
@@ -232,14 +237,14 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
                 <Input
                   {...register(
                     `dokrefs.${i}.fastsettingsmyndighet`,
-                    formOptions
+                    inputOptions
                   )}
                 />
               </BlockLabel>
               <BlockLabel>
                 {t("metadata.Fastsettingsdato")}
                 <Input
-                  {...register(`dokrefs.${i}.fastsettingsdato`, formOptions)}
+                  {...register(`dokrefs.${i}.fastsettingsdato`, inputOptions)}
                   type="date"
                   role="textbox"
                 />
@@ -248,7 +253,7 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
             <Part>
               <BlockLabel>
                 {t("metadata.Hjemmel")}
-                <Input {...register(`dokrefs.${i}.hjemmel`, formOptions)} />
+                <Input {...register(`dokrefs.${i}.hjemmel`, inputOptions)} />
               </BlockLabel>
             </Part>
           </Container>
@@ -256,18 +261,18 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
             control={control}
             name={`dokrefs.${i}.dokumentlenker`}
             itemName={t("metadata.Dokumentlenker")}
-            disabled={disabled}
+            disabled={inputOptions.disabled}
             updateDraft={updateDraftFromFeature}
           />
           <FieldArray
             control={control}
             name={`dokrefs.${i}.internReferanserKartverket`}
             itemName={t("metadata.Internreferanser")}
-            disabled={disabled}
+            disabled={inputOptions.disabled}
             updateDraft={updateDraftFromFeature}
           />
 
-          <Button onClick={() => remove(i)} disabled={disabled}>
+          <Button onClick={() => remove(i)} disabled={inputOptions.disabled}>
             {t("action.Slett {{ item }}", {
               item: t("metadata.Referanse").toLowerCase(),
             })}
@@ -276,7 +281,7 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
       ))}
       <Button
         type="button"
-        disabled={disabled}
+        disabled={inputOptions.disabled}
         onClick={() =>
           append({
             dokumentlenker: [],
