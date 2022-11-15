@@ -128,7 +128,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
     };
 
     const renderAktivtSubLayer = () => {
-      if (visible && props.mappedLayer.layers.length > 0) {
+      if (visible && props.mappedLayer.layers.length === 0) {
         return (
           <AktivtSubLayerWrapper>
             <span>{props.mappedLayer.title}</span>

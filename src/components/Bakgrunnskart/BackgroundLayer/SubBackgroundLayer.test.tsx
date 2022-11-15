@@ -25,7 +25,6 @@ const defaultProps: React.ComponentProps<typeof SubBackgroundLayer> = {
     title: "Sublag",
     id: "Sublag",
   },
-  toggleSubLayerVisibility: jest.fn(),
 };
 
 const renderWithProvider = (ui: ReactNode) =>
