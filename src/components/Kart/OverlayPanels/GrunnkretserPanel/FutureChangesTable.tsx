@@ -1,24 +1,41 @@
 import useNibasApi from "hooks/useNibasApi";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
+import { GrunnkretsRef, GrunnkretsResponse } from "types/api";
 
-const FutureChangesTable = () => {
+type Props = {
+  grunnkretsRef: GrunnkretsRef;
+};
+
+const FutureChangesTable = ({ grunnkretsRef }: Props) => {
   const { t } = useTranslation();
+  const { data: fullGrunnkrets } = useNibasApi("/v1/grunnkretser/{id}", {
+    id: grunnkretsRef.id,
+  });
   // const { data: futureChanges } = useNibasApi("/v1/grunnkretser/{id}/framtidige-endringer");
   const futureChanges = [
     {
+      ...(fullGrunnkrets ?? {
+        id: "0",
+      }),
+      oppdatert: "2021-01-01",
+      type: "Retting",
+      gyldigFra: "2022-01-01",
+      gyldigTil: "2022-04-01",
+    },
+    {
       id: "1",
       grunnkretsnummer: "12345678",
-      grunnkretsnavn: "Grunnkrets 1",
+      navn: "Grunnkrets 1",
       oppdatert: "2022-01-01",
       type: "Kvalitetsheving",
-      gyldigFra: "2022-01-01",
+      gyldigFra: "2022-04-01",
       gyldigTil: "2022-07-01",
     },
     {
       id: "2",
       grunnkretsnummer: "87654321",
-      grunnkretsnavn: "Grunnkrets 1, men 2",
+      navn: "Grunnkrets 1, men 2",
       oppdatert: "2022-07-01",
       type: "Kvalitetsheving",
       gyldigFra: "2022-07-01",
@@ -44,7 +61,7 @@ const FutureChangesTable = () => {
             {futureChanges.map((futureChange) => (
               <tr key={futureChange.id}>
                 <td>{futureChange.grunnkretsnummer}</td>
-                <td>{futureChange.grunnkretsnavn}</td>
+                <td>{futureChange.navn}</td>
                 <td>{futureChange.oppdatert}</td>
                 <td>{futureChange.type}</td>
                 <td>{futureChange.gyldigFra}</td>

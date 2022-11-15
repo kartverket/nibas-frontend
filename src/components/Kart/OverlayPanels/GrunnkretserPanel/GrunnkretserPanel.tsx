@@ -159,7 +159,9 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                   {isRowOpen(grunnkrets.id) && (
                     <EditRow grunnkrets={grunnkrets} kommuneId={kommune.id} />
                   )}
-                  {isFutureChangesOpen(grunnkrets.id) && <FutureChangesTable />}
+                  {isFutureChangesOpen(grunnkrets.id) && (
+                    <FutureChangesTable grunnkretsRef={grunnkrets} />
+                  )}
                 </React.Fragment>
               ))}
             </tbody>
