@@ -1,4 +1,4 @@
-import { forwardRef, ReactElement, useState } from "react";
+import { forwardRef, useState } from "react";
 import styled from "styled-components";
 import useLayerOpacity from "./useLayerOpacity";
 import Button from "components/form/Button";
@@ -53,35 +53,27 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
       isMainLayer: props.isMainLayer,
     });
 
+    const getAddRemove = (aktivtKartlag: boolean) => (
+      <AddRemove
+        onClick={() => onVisibilityClick(props.mappedLayer.title)}
+        aktivtKartlag={aktivtKartlag}
+        visible={visible}
+      >
+        {visible ? (
+          <Icon icon="remove" aria-label={`Fjern ${props.mappedLayer.title}`} />
+        ) : (
+          <Icon icon="add" aria-label={`Vis ${props.mappedLayer.title}`} />
+        )}
+      </AddRemove>
+    );
     const renderNameAndCaret = () => {
-      // hvis hovedlag som kan dras på, vis annen musepeker på navnet
-      if (props.isMainLayer && ref) {
-        let icon: ReactElement | undefined = undefined;
-        if (props.mappedLayer.layers.length > 0) {
-          icon = getCaretIcon(open);
-        }
-
-        return (
-          <ClickableName
-            onClick={() => setOpen(!open)}
-            icon={icon}
-            open={open}
-            isMainLayer={props.isMainLayer}
-          >
-            <span>{props.mappedLayer.title}</span>
-          </ClickableName>
-        );
-      }
-
-      //hvis hovedlag og åpent legg på bakgrunnsfarge
-      if (props.isMainLayer) {
+      // hvis hovedlag uten barn
+      if (props.isMainLayer && props.mappedLayer.layers.length === 0) {
         return (
           <ClickableName
             variant="unstyled"
-            icon={getCaretIcon(open)}
-            onClick={() => setOpen(!open)}
-            open={open}
-            isMainLayer={props.isMainLayer}
+            open={false}
+            icon={getAddRemove(false)}
           >
             <span>{props.mappedLayer.title}</span>
           </ClickableName>
@@ -96,29 +88,19 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
             icon={getCaretIcon(open)}
             onClick={() => setOpen(!open)}
             open={open}
+            dropDown={true}
           >
             <span>{props.mappedLayer.title}</span>
           </ClickableName>
         );
       }
 
-      // ellers bare render tittelen til et aktivt sub-lag
+      // ellers bare render tittelen til et sub-lag
       return (
-        <AktivtSubKartlagName activeLayer={visible}>
+        <SubKartlagName activeLayer={visible}>
           {props.mappedLayer.title}
-          <IconButton
-            onClick={() => onVisibilityClick(props.mappedLayer.title)}
-          >
-            {visible ? (
-              <Icon
-                icon="remove"
-                aria-label={`Fjern ${props.mappedLayer.title}`}
-              />
-            ) : (
-              <Icon icon="add" aria-label={`Vis ${props.mappedLayer.title}`} />
-            )}
-          </IconButton>
-        </AktivtSubKartlagName>
+          {getAddRemove(false)}
+        </SubKartlagName>
       );
     };
 
@@ -140,26 +122,33 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
               onChange={onSliderChange}
             />
           </AktivtKartlagSlider>
+          {getAddRemove(true)}
         </AktivtMainLayerWrapper>
       );
     };
 
     const renderAktivtSubLayer = () => {
-      if (!visible || props.mappedLayer.layers.length > 0) return;
+      //if (!visible || props.mappedLayer.layers.length > 0) return;
+      console.log("Sublayer: " + props.mappedLayer.title);
+      console.log("Visible: " + visible);
 
-      return (
-        <AktivtSubLayerWrapper>
-          <span>{props.mappedLayer.title}</span>
-          <IconButton
-            onClick={() => onVisibilityClick(props.mappedLayer.title)}
-          >
-            <Icon
-              icon="remove"
-              aria-label={`Fjern ${props.mappedLayer.title} fra aktive kartlag`}
-            />
-          </IconButton>
-        </AktivtSubLayerWrapper>
-      );
+      if (visible && props.mappedLayer.layers.length === 0) {
+        return (
+          <AktivtSubLayerWrapper>
+            <span>{props.mappedLayer.title}</span>
+            <AddRemove
+              onClick={() => onVisibilityClick(props.mappedLayer.title)}
+              aktivtKartlag={true}
+              visible={visible}
+            >
+              <Icon
+                icon="remove"
+                aria-label={`Fjern ${props.mappedLayer.title} fra aktive kartlag`}
+              />
+            </AddRemove>
+          </AktivtSubLayerWrapper>
+        );
+      }
     };
 
     //aktivekartlag-liste burde på sikt trekkes ut i egen komponent
@@ -183,23 +172,29 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
 
 BackgroundLayerAccordion.displayName = "BackgroundLayerAccordion";
 
-const IconButton = styled(Button).attrs(() => ({
-  variant: "unstyled",
-}))`
-  color: ${({ theme }) => theme.colors.gray};
+const AktivtKartlag = styled.div<{ mainLayer?: boolean }>`
+  padding-bottom: ${({ mainLayer }) => (mainLayer ? 16 : 0)}px;
+`;
+
+const AddRemove = styled.div<{ visible: boolean; aktivtKartlag: boolean }>`
   cursor: pointer;
 
-  padding: 0 4px;
+  color: ${({ theme, visible, aktivtKartlag }) =>
+    visible && !aktivtKartlag ? theme.colors.gray : theme.colors.blueDark};
+
+  padding: 0 12px;
+  opacity: ${({ visible, aktivtKartlag }) =>
+    visible && !aktivtKartlag ? 0.4 : 1};
 `;
 
 const Caret = styled.div<{ open: boolean }>`
   color: ${({ theme, open }) =>
-    open ? theme.colors.white : theme.colors.gray};
+    open ? theme.colors.white : theme.colors.blueDark};
   background-color: ${({ open, theme }) =>
     open ? theme.colors.blueDark : theme.colors.white};
 
   height: 100%;
-  padding: 0 4px;
+  padding: 0 12px;
   align-items: center;
   display: flex;
 `;
@@ -207,7 +202,7 @@ const Caret = styled.div<{ open: boolean }>`
 const Wrapper = styled.div<{ indent: number }>`
   display: flex;
   margin: 8px 0;
-  margin-left: ${({ indent }) => indent * 16}px;
+  margin-left: ${({ indent }) => indent * 36}px;
 
   > span {
     flex: 1;
@@ -218,15 +213,18 @@ const Wrapper = styled.div<{ indent: number }>`
   }
 `;
 
-const AktivtSubKartlagName = styled.span<{ activeLayer?: boolean }>`
+const SubKartlagName = styled.span<{ activeLayer?: boolean }>`
   color: ${({ activeLayer, theme }) =>
     activeLayer ? theme.colors.gray : theme.colors.black};
   display: flex;
   justify-content: space-between;
-  padding: 4px 0;
+  padding: 8px 0;
 `;
 
-const ClickableName = styled(Button)<{ open: boolean; isMainLayer?: boolean }>`
+const ClickableName = styled(Button)<{
+  open: boolean;
+  dropDown?: boolean;
+}>`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -236,8 +234,11 @@ const ClickableName = styled(Button)<{ open: boolean; isMainLayer?: boolean }>`
     flex: 1;
     text-align: left;
     padding: 6px;
-    background-color: ${({ open, isMainLayer, theme }) =>
-      open && isMainLayer ? theme.colors.blueLight : theme.colors.white};
+    background-color: ${({ open, dropDown, theme }) =>
+      open && dropDown ? theme.colors.blueLight : theme.colors.white};
+    padding-top: ${({ dropDown }) => (dropDown ? 16 : 0)}px;
+    padding-bottom: ${({ dropDown }) => (dropDown ? 16 : 0)}px;
+    padding-left: 16px;
   }
 `;
 
@@ -251,15 +252,15 @@ const DraggableLayer = styled.span`
   justify-content: left;
 
   > :first-child {
-    margin-right: 4px;
+    margin-right: 8px;
     margin-left: 4px;
   }
 `;
 
 const AktivtKartlagSlider = styled.div`
-  width: 100px;
+  width: 64px;
   margin-left: 4px;
-  margin-right: 8px;
+  margin-right: 20px;
   margin-bottom: 6px;
 `;
 
@@ -268,8 +269,9 @@ const AktivtMainLayerWrapper = styled.div`
   align-items: center;
   justify-content: space-around;
   margin: 8px 0;
-  background-color: ${({ theme }) => theme.colors.blueLight};
-  padding: 6px;
+  padding: 6px 0;
+  font-weight: bold;
+  padding-top: 16px;
 `;
 
 const AktivtSubLayerWrapper = styled.div`
