@@ -42,43 +42,39 @@ const useVisibleLayers = () => {
       (visibleLayer) => visibleLayer.mainLayer === layerId
     );
 
-    const subLayerVisible = layer?.subLayers.includes(subLayer);
-
     if (!layer) {
-      setVisibleLayers([
-        { mainLayer: layerId, subLayers: [subLayer] },
-        ...visibleLayers,
-      ]);
+      addNewMainLayer(layerId, subLayer);
       return;
     }
+    const visible = layer?.subLayers.includes(subLayer);
+    const index = visibleLayers.findIndex((vl) => vl.mainLayer === layerId);
+
     //treffer når du skal fjerne et sublag
-    if (subLayerVisible) {
+    if (visible) {
       if (layer.subLayers.length === 1) {
         setVisibleLayers(visibleLayers.filter((vl) => vl !== layer));
         return;
       }
-      const filteredSublayers = layer.subLayers.filter((sl) => sl !== subLayer);
-      const index = visibleLayers.findIndex((vl) => vl.mainLayer === layerId);
       setVisibleLayers([
         ...visibleLayers.slice(0, index),
-        { mainLayer: layerId, subLayers: filteredSublayers },
+        {
+          mainLayer: layerId,
+          subLayers: layer.subLayers.filter((sl) => sl !== subLayer),
+        },
         ...visibleLayers.slice(index + 1),
       ]);
-    } else if (layer && !subLayerVisible) {
+    } else if (layer && !visible) {
       //skal treffe når man skal legge til sublag på et eksisterende aktivt hovedlag
-
-      const newSublayers = layer.subLayers.concat(subLayer);
-      const index = visibleLayers.findIndex((vl) => vl.mainLayer === layerId);
       setVisibleLayers([
         ...visibleLayers.slice(0, index),
-        { mainLayer: layerId, subLayers: newSublayers },
+        { mainLayer: layerId, subLayers: layer.subLayers.concat(subLayer) },
         ...visibleLayers.slice(index + 1),
       ]);
     }
   };
 
   const toggleLayerWithOutSublayer = (layerId: BakgrunnskartId) => {
-    let layer = visibleLayers.find(
+    const layer = visibleLayers.find(
       (visibleLayer) => visibleLayer.mainLayer === layerId
     );
 
@@ -87,23 +83,22 @@ const useVisibleLayers = () => {
     if (visible) {
       setVisibleLayers(visibleLayers.filter((vl) => vl !== layer));
     } else {
-      layer = { mainLayer: layerId, subLayers: [] };
-      setVisibleLayers([layer, ...visibleLayers]);
+      setVisibleLayers([
+        { mainLayer: layerId, subLayers: [] },
+        ...visibleLayers,
+      ]);
     }
   };
 
-  const layerIsVisible = (layerId: BakgrunnskartId) => {
-    return visibleLayers.some(
-      (visibleLayer) => visibleLayer.mainLayer === layerId
-    );
-  };
-
-  const subLayerIsVisible = (mainLayer: BakgrunnskartId, subLayer: string) => {
-    return visibleLayers.some(
-      (visibleLayer) =>
-        visibleLayer.mainLayer === mainLayer &&
-        visibleLayer.subLayers.includes(subLayer)
-    );
+  const addNewMainLayer = (mainLayer: BakgrunnskartId, subLayer?: string) => {
+    if (!subLayer) {
+      toggleLayerWithOutSublayer(mainLayer);
+      return;
+    }
+    setVisibleLayers([
+      { mainLayer: mainLayer, subLayers: [subLayer] },
+      ...visibleLayers,
+    ]);
   };
 
   const moveLayer = (direction: "up" | "down", layerId: BakgrunnskartId) => {
@@ -126,7 +121,13 @@ const useVisibleLayers = () => {
     mainLayer: BakgrunnskartId,
     layer: MappedLayer
   ): boolean => {
-    if (subLayerIsVisible(mainLayer, layer.title)) {
+    if (
+      visibleLayers.some(
+        (visibleLayer) =>
+          visibleLayer.mainLayer === mainLayer &&
+          visibleLayer.subLayers.includes(layer.title)
+      )
+    ) {
       return true;
     }
     if (layer.layers.length > 0) {
@@ -143,8 +144,6 @@ const useVisibleLayers = () => {
     visibleLayers,
     moveLayer,
     toggleLayerVisibility,
-    layerIsVisible,
-    subLayerIsVisible,
     recursiveIsVisible,
   };
 };

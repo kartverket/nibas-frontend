@@ -34,8 +34,6 @@ const renderWithProvider = (ui: ReactNode) =>
         { mainLayer: "administrativeGrenser", subLayers: ["Subsublag1"] },
       ],
       toggleLayerVisibility: jest.fn(),
-      layerIsVisible: jest.fn(),
-      subLayerIsVisible: jest.fn(),
       recursiveIsVisible: jest.fn(),
       mappedLayers: [
         { ...defaultProps.mappedLayer, sourceId: "administrativeGrenser" },

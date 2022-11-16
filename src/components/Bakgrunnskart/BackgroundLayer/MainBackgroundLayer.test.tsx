@@ -33,8 +33,6 @@ const renderWithProvider = (ui: ReactNode) =>
   render(ui, {
     BakgrunnskartProvider: {
       visibleLayers: { administrativeGrenser: true } as any,
-      layerIsVisible: jest.fn(),
-      subLayerIsVisible: jest.fn(),
       toggleLayerVisibility: jest.fn(),
       recursiveIsVisible: jest.fn(),
       mappedLayers: [
