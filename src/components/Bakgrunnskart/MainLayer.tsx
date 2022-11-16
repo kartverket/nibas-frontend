@@ -15,13 +15,8 @@ type Props = {
 
 const MainLayer = ({ layerId, index, canDrag, isAktiveKartlag }: Props) => {
   const layer = bakgrunnskartLayers[layerId];
-  const {
-    mappedLayers,
-    moveLayer,
-    toggleLayerVisibility,
-    visibleLayers,
-    layerIsVisible,
-  } = useBakgrunnskart();
+  const { mappedLayers, moveLayer, toggleLayerVisibility, layerIsVisible } =
+    useBakgrunnskart();
 
   const mappedLayer = mappedLayers.find((ml) => ml.sourceId === layerId);
   if (!mappedLayer) return null;
