@@ -47,7 +47,7 @@ describe("Bakgrunnskart", () => {
     let mainLayerTexts = screen.getAllByText(
       "Administrative enheter WMS versjon 2"
     );
-    let subLayerTexts = screen.getAllByText("Kommuner");
+    const subLayerTexts = screen.getAllByText("Kommuner");
     let subsubLayerTexts = screen.getAllByText("Kommuner historisk");
 
     expect(mainLayerTexts).toHaveLength(2);
@@ -82,13 +82,13 @@ describe("Bakgrunnskart", () => {
     await user.click(openSubButton);
 
     const addButton = await screen.findByRole("button", {
-      name: /vis Kommuner historisk/i,
+      name: /Vis Kommuner historisk/i,
     });
     await user.click(addButton);
 
     await user.click(
       screen.getByRole("button", {
-        name: /vis Kommuner gjeldene/i,
+        name: /Vis Kommuner gjeldene/i,
       })
     );
 

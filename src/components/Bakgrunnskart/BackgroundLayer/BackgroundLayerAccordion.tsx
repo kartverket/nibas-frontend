@@ -168,7 +168,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
 
 BackgroundLayerAccordion.displayName = "BackgroundLayerAccordion";
 
-const AddRemove = styled.div<{ visible: boolean; aktivtKartlag: boolean }>`
+const AddRemove = styled(Button)<{ visible: boolean; aktivtKartlag: boolean }>`
   cursor: pointer;
 
   color: ${({ theme, visible, aktivtKartlag }) =>
