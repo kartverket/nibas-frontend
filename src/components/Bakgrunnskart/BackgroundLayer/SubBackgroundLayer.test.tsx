@@ -30,8 +30,12 @@ const defaultProps: React.ComponentProps<typeof SubBackgroundLayer> = {
 const renderWithProvider = (ui: ReactNode) =>
   render(ui, {
     BakgrunnskartProvider: {
-      visibleLayers: ["administrativeGrenser"],
+      visibleLayers: [
+        { mainLayer: "administrativeGrenser", subLayers: ["Subsublag1"] },
+      ],
       toggleLayerVisibility: jest.fn(),
+      recursiveIsVisible: jest.fn(),
+      layerIsVisible: jest.fn(),
       mappedLayers: [
         { ...defaultProps.mappedLayer, sourceId: "administrativeGrenser" },
       ],

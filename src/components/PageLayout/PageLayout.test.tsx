@@ -8,6 +8,8 @@ const renderWithProvider = (ui: ReactNode) =>
       mappedLayers: [],
       moveLayer: jest.fn(),
       toggleLayerVisibility: jest.fn(),
+      recursiveIsVisible: jest.fn(),
+      layerIsVisible: jest.fn(),
       visibleLayers: [],
     },
   });

@@ -1,17 +1,23 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { bakgrunnskartLayers } from "hooks/layers/constants";
 import { BakgrunnskartId } from "hooks/layers/types";
-import useVisibleLayers from "hooks/layers/useVisibleLayers";
+import useVisibleLayers, { VisibleLayer } from "hooks/layers/useVisibleLayers";
 import getSubLayersFromWMSSource, {
   MainMappedLayer,
+  MappedLayer,
 } from "utils/getLayersFromWMS";
 import { mapVectorLayer } from "utils/getMatrikkelWfsFeatures";
 import { isVectorLayer } from "utils/map/layers";
 
 export type BakgrunnskartContextValue = {
   mappedLayers: MainMappedLayer[];
-  visibleLayers: BakgrunnskartId[];
-  toggleLayerVisibility: (layerId: BakgrunnskartId) => void;
+  visibleLayers: VisibleLayer[];
+  toggleLayerVisibility: (layerId: BakgrunnskartId, subLayer?: string) => void;
+  layerIsVisible: (layerId: BakgrunnskartId) => boolean;
+  recursiveIsVisible: (
+    mainLayer: BakgrunnskartId,
+    layer: MappedLayer
+  ) => boolean;
   moveLayer: (direction: "up" | "down", layerId: BakgrunnskartId) => void;
 };
 
@@ -25,8 +31,13 @@ export const BakgrunnskartContext = createContext<
 export const BakgrunnskartProvider: React.FC = ({ children }) => {
   const [mappedLayers, setMappedLayers] = useState<MainMappedLayer[]>([]);
 
-  const { visibleLayers, moveLayer, toggleLayerVisibility } =
-    useVisibleLayers();
+  const {
+    visibleLayers,
+    moveLayer,
+    toggleLayerVisibility,
+    recursiveIsVisible,
+    layerIsVisible,
+  } = useVisibleLayers();
 
   useEffect(() => {
     let isMounted = true;
@@ -65,6 +76,8 @@ export const BakgrunnskartProvider: React.FC = ({ children }) => {
     visibleLayers,
     toggleLayerVisibility,
     moveLayer,
+    recursiveIsVisible,
+    layerIsVisible,
   };
 
   return (
