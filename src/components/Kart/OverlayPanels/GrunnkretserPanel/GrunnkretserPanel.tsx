@@ -127,19 +127,13 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                     <td>{getNavnInSpraak(grunnkrets.navn, "nor")}</td>
                     <td>{grunnkrets.grunnkretsnummer}</td>
                     <td>
-                      <Button
-                        variant="unstyled"
+                      <FutureChangesButton
+                        isOpen={isFutureChangesOpen(grunnkrets.id)}
                         onClick={(e) => {
                           e.stopPropagation();
                           toggleFutureChangesRow(grunnkrets.id);
                         }}
-                        icon={
-                          isFutureChangesOpen(grunnkrets.id) ? (
-                            <Icon icon="published_with_changes" />
-                          ) : (
-                            <Icon icon="schedule" />
-                          )
-                        }
+                        icon={<Icon icon="schedule" />}
                       />
                     </td>
                     <td>
@@ -179,6 +173,16 @@ const PanelTitle = styled(Heading)`
 
 const SmallerBlockLabel = styled(BlockLabel)`
   max-width: 400px;
+`;
+
+const FutureChangesButton = styled(Button).attrs(() => ({
+  variant: "unstyled",
+}))<{ isOpen: boolean }>`
+  border-radius: 50%;
+  padding: 5px;
+
+  background-color: ${({ isOpen, theme }) => isOpen && theme.colors.blueDark};
+  color: ${({ isOpen, theme }) => isOpen && theme.colors.white};
 `;
 
 export default GrunnkretserPanel;
