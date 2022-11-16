@@ -101,6 +101,20 @@ const useVisibleLayers = () => {
     ]);
   };
 
+  const layerIsVisible = (layerId: BakgrunnskartId) => {
+    return visibleLayers.some(
+      (visibleLayer) => visibleLayer.mainLayer === layerId
+    );
+  };
+
+  const subLayerIsVisible = (mainLayer: BakgrunnskartId, subLayer: string) => {
+    return visibleLayers.some(
+      (visibleLayer) =>
+        visibleLayer.mainLayer === mainLayer &&
+        visibleLayer.subLayers.includes(subLayer)
+    );
+  };
+
   const moveLayer = (direction: "up" | "down", layerId: BakgrunnskartId) => {
     const layer = visibleLayers.find(
       (visibleLayer) => visibleLayer.mainLayer === layerId
@@ -121,13 +135,7 @@ const useVisibleLayers = () => {
     mainLayer: BakgrunnskartId,
     layer: MappedLayer
   ): boolean => {
-    if (
-      visibleLayers.some(
-        (visibleLayer) =>
-          visibleLayer.mainLayer === mainLayer &&
-          visibleLayer.subLayers.includes(layer.title)
-      )
-    ) {
+    if (subLayerIsVisible(mainLayer, layer.title)) {
       return true;
     }
     if (layer.layers.length > 0) {
@@ -145,6 +153,7 @@ const useVisibleLayers = () => {
     moveLayer,
     toggleLayerVisibility,
     recursiveIsVisible,
+    layerIsVisible,
   };
 };
 

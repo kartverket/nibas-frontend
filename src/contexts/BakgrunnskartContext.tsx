@@ -13,6 +13,7 @@ export type BakgrunnskartContextValue = {
   mappedLayers: MainMappedLayer[];
   visibleLayers: VisibleLayer[];
   toggleLayerVisibility: (layerId: BakgrunnskartId, subLayer?: string) => void;
+  layerIsVisible: (layerId: BakgrunnskartId) => boolean;
   recursiveIsVisible: (
     mainLayer: BakgrunnskartId,
     layer: MappedLayer
@@ -35,6 +36,7 @@ export const BakgrunnskartProvider: React.FC = ({ children }) => {
     moveLayer,
     toggleLayerVisibility,
     recursiveIsVisible,
+    layerIsVisible,
   } = useVisibleLayers();
 
   useEffect(() => {
@@ -75,6 +77,7 @@ export const BakgrunnskartProvider: React.FC = ({ children }) => {
     toggleLayerVisibility,
     moveLayer,
     recursiveIsVisible,
+    layerIsVisible,
   };
 
   return (
