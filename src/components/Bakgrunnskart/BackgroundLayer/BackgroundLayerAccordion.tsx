@@ -58,6 +58,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
         onClick={() => onVisibilityClick(props.mappedLayer.title)}
         aktivtKartlag={aktivtKartlag}
         visible={visible}
+        variant="unstyled"
       >
         {visible ? (
           <Icon icon="remove" aria-label={`Fjern ${props.mappedLayer.title}`} />
@@ -136,6 +137,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
               onClick={() => onVisibilityClick(props.mappedLayer.title)}
               aktivtKartlag={true}
               visible={visible}
+              variant="unstyled"
             >
               <Icon
                 icon="remove"
