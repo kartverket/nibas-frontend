@@ -26,6 +26,10 @@ const featureToggles: Record<Keys, Record<Environment, boolean>> = {
 export const featureEnabled = (key: Keys): boolean => {
   const { hostname } = window.location;
   const environment = environmentByUrl[hostname];
+  const { NODE_ENV } = process.env;
+
+  // skru på alle toggles i test, for å sikre at tester kjører
+  if (NODE_ENV === "test") return true;
 
   if (!environment) return false;
 
