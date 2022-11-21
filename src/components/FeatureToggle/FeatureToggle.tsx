@@ -13,9 +13,15 @@ const environmentByUrl: Record<string, Environment> = {
   "nibas.dev.skip.statkart.no": "test",
 };
 
-type Keys = string;
+type Keys = "grunnkrets-fremtidige-endringer";
 
-const featureToggles: Record<Keys, Record<Environment, boolean>> = {};
+const featureToggles: Record<Keys, Record<Environment, boolean>> = {
+  "grunnkrets-fremtidige-endringer": {
+    prod: false,
+    test: false,
+    dev: getDevValue("REACT_APP_GRUNNKRETS_FREMTIDIGE_ENDRINGER"),
+  },
+};
 
 export const featureEnabled = (key: Keys): boolean => {
   const { hostname } = window.location;

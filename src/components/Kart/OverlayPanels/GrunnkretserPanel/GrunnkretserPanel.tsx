@@ -24,6 +24,7 @@ import {
 } from "utils/language/language";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 import FutureChangesTable from "./FutureChangesTable";
+import { useFlag } from "components/FeatureToggle";
 
 type Props = {
   kommune: KommuneRef;
@@ -67,6 +68,8 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
         grunnkrets.navn.toLowerCase().includes(searchValue.toLowerCase())
     );
   }, [searchValue, utkastGrunnkretser]);
+
+  const showFremtidigeEndringer = useFlag("grunnkrets-fremtidige-endringer");
 
   return (
     <OverlayPanelWrapper
@@ -116,7 +119,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
               <tr>
                 <th>{t("tabell.Navn")}</th>
                 <th>{t("grunnkrets.Grunnkretsnummer")}</th>
-                <th></th>
+                {showFremtidigeEndringer && <th></th>}
                 <th></th>
               </tr>
             </thead>
@@ -126,16 +129,18 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                   <KretsRow onClick={() => toggleRow(grunnkrets.id)}>
                     <td>{getNavnInSpraak(grunnkrets.navn, "nor")}</td>
                     <td>{grunnkrets.grunnkretsnummer}</td>
-                    <td>
-                      <FutureChangesButton
-                        isOpen={isFutureChangesOpen(grunnkrets.id)}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleFutureChangesRow(grunnkrets.id);
-                        }}
-                        icon={<Icon icon="schedule" />}
-                      />
-                    </td>
+                    {showFremtidigeEndringer && (
+                      <td>
+                        <FutureChangesButton
+                          isOpen={isFutureChangesOpen(grunnkrets.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleFutureChangesRow(grunnkrets.id);
+                          }}
+                          icon={<Icon icon="schedule" />}
+                        />
+                      </td>
+                    )}
                     <td>
                       <Button
                         variant="unstyled"
@@ -153,9 +158,10 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                   {isRowOpen(grunnkrets.id) && (
                     <EditRow grunnkrets={grunnkrets} kommuneId={kommune.id} />
                   )}
-                  {isFutureChangesOpen(grunnkrets.id) && (
-                    <FutureChangesTable grunnkretsRef={grunnkrets} />
-                  )}
+                  {showFremtidigeEndringer &&
+                    isFutureChangesOpen(grunnkrets.id) && (
+                      <FutureChangesTable grunnkretsRef={grunnkrets} />
+                    )}
                 </React.Fragment>
               ))}
             </tbody>
