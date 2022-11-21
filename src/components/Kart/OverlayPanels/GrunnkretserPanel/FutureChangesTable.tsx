@@ -1,14 +1,12 @@
 import useNibasApi from "hooks/useNibasApi";
-import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { GrunnkretsRef, GrunnkretsResponse } from "types/api";
+import { GrunnkretsRef } from "types/api";
 
 type Props = {
   grunnkretsRef: GrunnkretsRef;
 };
 
 const FutureChangesTable = ({ grunnkretsRef }: Props) => {
-  const { t } = useTranslation();
   const { data: fullGrunnkrets } = useNibasApi("/v1/grunnkretser/{id}", {
     id: grunnkretsRef.id,
   });
