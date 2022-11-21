@@ -152,17 +152,10 @@ export const historyToUtkastOperations = (
 ) => {
   const historyToCurrentIndex = history.entries.slice(0, history.index);
 
-  // hent grenseendringer og gjør endringene om til en liste av features
-  const editedFeatures = (
-    historyToCurrentIndex.filter(
-      (entry) => entry.type === "grense" || entry.type === "metadata"
-    ) as (GrenseEntry | MetadataEntry)[]
-  ).reduce(reduceGrenseOperations, {} as Record<string, GeoJSONFeature>);
-
   // hent endringer på enheter og gjør endringene om til utkastoperasjoner
   const utkastOperations = (
     historyToCurrentIndex.filter(
-      (entry) => entry.type !== "grense" && entry.type !== "metadata"
+      (entry) => entry.type === "stemmekrets" || entry.type === "grunnkrets"
     ) as (GrunnkretsEntry | StemmekretsEntry)[]
   ).reduce(
     reduceMetadataOperations,
@@ -173,6 +166,13 @@ export const historyToUtkastOperations = (
       },
     })
   ) as UtkastOperasjoner;
+
+  // hent grenseendringer og gjør endringene om til en liste av features
+  const editedFeatures = (
+    historyToCurrentIndex.filter(
+      (entry) => entry.type === "grense" || entry.type === "metadata"
+    ) as (GrenseEntry | MetadataEntry)[]
+  ).reduce(reduceGrenseOperations, {} as Record<string, GeoJSONFeature>);
 
   // hvis det er noen endringer, slå sammen tidligere endringer og nye endringer til ny liste
   if (Object.keys(editedFeatures).length > 0) {
