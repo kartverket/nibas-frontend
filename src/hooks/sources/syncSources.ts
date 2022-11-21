@@ -118,7 +118,7 @@ export const bakgrunnskartSources = {
     "adm_enheter_V2_WMS"
   ),
   stedsnavn: createTileWMS(
-    "http://openwms.statkart.no/skwms1/wms.stedsnavnenkel",
+    "https://openwms.statkart.no/skwms1/wms.stedsnavnenkel",
     "stedsnavnenkel"
   ),
   cachetjenester: new WMTS(cachetjenesterConfig),
