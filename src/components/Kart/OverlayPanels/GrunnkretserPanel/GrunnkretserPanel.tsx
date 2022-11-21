@@ -137,6 +137,12 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                             e.stopPropagation();
                             toggleFutureChangesRow(grunnkrets.id);
                           }}
+                          aria-label={`${
+                            isFutureChangesOpen(grunnkrets.id) ? "Skjul" : "Vis"
+                          } fremtidige endringer for ${getNavnInSpraak(
+                            grunnkrets.navn,
+                            "nor"
+                          )}`}
                           icon={<Icon icon="schedule" />}
                         />
                       </td>

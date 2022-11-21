@@ -22,7 +22,7 @@ const FutureChangesTable = ({ grunnkretsRef }: Props) => {
       gyldigTil: "2022-04-01",
     },
     {
-      id: "1",
+      id: "endrng-1",
       grunnkretsnummer: "12345678",
       navn: "Grunnkrets 1",
       oppdatert: "2022-01-01",
@@ -31,7 +31,7 @@ const FutureChangesTable = ({ grunnkretsRef }: Props) => {
       gyldigTil: "2022-07-01",
     },
     {
-      id: "2",
+      id: "endring-2",
       grunnkretsnummer: "87654321",
       navn: "Grunnkrets 1, men 2",
       oppdatert: "2022-07-01",
