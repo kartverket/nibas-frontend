@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { KretsRow, KretsTable, KretsTableWrapper } from "../KretsTable";
@@ -17,7 +17,7 @@ import { useInndelingerKrets } from "contexts/InndelingerKretsContext";
 import { useUtkastEntity } from "contexts/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
 import useSearch from "hooks/useSearch";
-import { GrunnkretsRef, KommuneRef } from "types/api";
+import { GrunnkretsRef, GrunnkretsResponse, KommuneRef } from "types/api";
 import {
   getNavnInSpraak,
   sortGrenserAlphabetically,
@@ -68,6 +68,28 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
         grunnkrets.navn.toLowerCase().includes(searchValue.toLowerCase())
     );
   }, [searchValue, utkastGrunnkretser]);
+
+  const headers = [
+    "Grunnkretsnummer",
+    "Grunnkrets",
+    "Oppdatert",
+    "Type",
+    "Gyldig fra",
+    "Gyldig til",
+  ];
+
+  const getFutureChangesRows = useCallback(
+    (futureChanges: GrunnkretsResponse[]) =>
+      futureChanges.map((grunnkrets) => [
+        grunnkrets.grunnkretsnummer,
+        grunnkrets.navn,
+        (grunnkrets as any).oppdatert ?? "2020-01-01",
+        (grunnkrets as any).type ?? "Retting",
+        (grunnkrets as any).gyldigFra ?? "2022-01-01",
+        (grunnkrets as any).gyldigTil ?? "2022-01-01",
+      ]),
+    []
+  );
 
   const showFremtidigeEndringer = useFlag("grunnkrets-fremtidige-endringer");
 
@@ -166,7 +188,12 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                   )}
                   {showFremtidigeEndringer &&
                     isFutureChangesOpen(grunnkrets.id) && (
-                      <FutureChangesTable grunnkretsRef={grunnkrets} />
+                      <FutureChangesTable
+                        grunnkretsRef={grunnkrets}
+                        futureChangesUrl="/v1/grunnkretser/{id}"
+                        headers={headers}
+                        getRows={getFutureChangesRows}
+                      />
                     )}
                 </React.Fragment>
               ))}

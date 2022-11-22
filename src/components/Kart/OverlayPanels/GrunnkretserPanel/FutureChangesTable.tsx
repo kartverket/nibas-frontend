@@ -1,12 +1,25 @@
 import useNibasApi from "hooks/useNibasApi";
 import styled from "styled-components";
-import { GrunnkretsRef } from "types/api";
+import {
+  ApiPath,
+  GrunnkretsRef,
+  GrunnkretsResponse,
+  StemmekretsResponse,
+} from "types/api";
 
 type Props = {
   grunnkretsRef: GrunnkretsRef;
+  futureChangesUrl: ApiPath;
+  headers: string[];
+  getRows: (futureChanges: GrunnkretsResponse[]) => string[][];
 };
 
-const FutureChangesTable = ({ grunnkretsRef }: Props) => {
+const FutureChangesTable = ({
+  grunnkretsRef,
+  futureChangesUrl,
+  headers,
+  getRows,
+}: Props) => {
   const { data: fullGrunnkrets } = useNibasApi("/v1/grunnkretser/{id}", {
     id: grunnkretsRef.id,
   });
@@ -41,29 +54,27 @@ const FutureChangesTable = ({ grunnkretsRef }: Props) => {
     },
   ];
 
+  if (!fullGrunnkrets) return null;
+
+  const rows = getRows([fullGrunnkrets]);
+
   return (
     <tr>
       <TableData colSpan={4}>
         <Table>
           <thead>
             <tr>
-              <th>Grunnkretsnummer</th>
-              <th>Grunnkrets</th>
-              <th>Oppdatert</th>
-              <th>Type</th>
-              <th>Gyldig fra</th>
-              <th>Gyldig til</th>
+              {headers.map((header) => (
+                <th key={header}>{header}</th>
+              ))}
             </tr>
           </thead>
           <tbody>
-            {futureChanges.map((futureChange) => (
-              <tr key={futureChange.id}>
-                <td>{futureChange.grunnkretsnummer}</td>
-                <td>{futureChange.navn}</td>
-                <td>{futureChange.oppdatert}</td>
-                <td>{futureChange.type}</td>
-                <td>{futureChange.gyldigFra}</td>
-                <td>{futureChange.gyldigTil}</td>
+            {rows.map((row, i) => (
+              <tr key={row[i]}>
+                {headers.map((header, j) => (
+                  <td key={`${row[j]}-${j}`}>{row[j]}</td>
+                ))}
               </tr>
             ))}
           </tbody>
