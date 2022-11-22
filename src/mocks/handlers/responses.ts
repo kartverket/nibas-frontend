@@ -147,7 +147,6 @@ export const mockDetailedKommune: KommuneResponse = {
     kodeverdi: "12345678",
   },
   lokalid: "12345678",
-  navnerom: "Navnerom",
   oppdateringsdato: "2022-12-31",
   samiskforvaltningsomraade: false,
 };
@@ -173,8 +172,6 @@ export const mockDetailedGrunnkrets1: GrunnkretsResponse = {
   id: "1",
   identifikasjon: {
     lokalid: "lokalid",
-    navnerom: "navnerom",
-    versjonid: "versjonId",
   },
   kommunenummer: { id: "a379eb0a-7bae-4fc9-ab07-cf0c7a28bdb7", kodeverdi: "1" },
   navn: "Mosekollen øst",
@@ -187,8 +184,6 @@ export const mockDetailedGrunnkrets2: GrunnkretsResponse = {
   id: "2",
   identifikasjon: {
     lokalid: "lokalid",
-    navnerom: "navnerom",
-    versjonid: "versjonId",
   },
   kommunenummer: { id: "a379eb0a-7bae-4fc9-ab07-cf0c7a28bdb7", kodeverdi: "1" },
   navn: "Dåsvatn",
@@ -268,8 +263,6 @@ export const mockStemmekrets1: StemmekretsResponse = {
   stemmekretsnummer: "05",
   identifikasjon: {
     lokalid: "c1fac231-e9ae-404e-bf09-adf0c15cf948",
-    navnerom: "https://data.geonorge.no/sosi/administrativeenheter",
-    versjonid: undefined,
   },
   kommunenummer: { id: "c416fb1d-2124-4f71-8dfc-859c55feb437", kodeverdi: "1" },
   tellekretsnummer: "tellekretsnr1",
@@ -285,8 +278,6 @@ export const mockStemmekrets2: StemmekretsResponse = {
   stemmekretsnummer: "12",
   identifikasjon: {
     lokalid: "c63f68f5-bef8-4e8c-bc0f-1b3e41ea1c0c",
-    navnerom: "https://data.geonorge.no/sosi/administrativeenheter",
-    versjonid: undefined,
   },
   kommunenummer: { id: "ec64ba19-fb37-44d4-b579-407897f871ee", kodeverdi: "2" },
   tellekretsnummer: "tellekretsnr2",
