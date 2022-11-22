@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Providers from "./Providers";
 import PageLayout from "components/PageLayout";
 import Landing from "components/Landing/Landing";
+import { Suspense } from "react";
 
 /**
  * Definerer 3 verdier i konfigurasjonen. Disse brukes av biblioteket forskjellige steder i flyten.
@@ -26,21 +27,23 @@ const App = () => {
     useConfigureAuthFlow(authFlowProps);
 
   return (
-    <Router>
-      <Routes>
-        {redirectAfterLogon}
-        {redirectAfterLogout}
-        <Route path="/landing" element={<Landing />} />
-        <Route
-          index
-          element={
-            <Providers>
-              <PageLayout />
-            </Providers>
-          }
-        />
-      </Routes>
-    </Router>
+    <Suspense fallback="Loading...">
+      <Router>
+        <Routes>
+          {redirectAfterLogon}
+          {redirectAfterLogout}
+          <Route path="/landing" element={<Landing />} />
+          <Route
+            index
+            element={
+              <Providers>
+                <PageLayout />
+              </Providers>
+            }
+          />
+        </Routes>
+      </Router>
+    </Suspense>
   );
 };
 
