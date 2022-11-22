@@ -64,8 +64,14 @@ const Landing = () => {
       <Logo />
       <Card onClick={() => handleAuthenticateFunc("/")}>
         <div>
-          <CardHeading>{t("auth.login")}</CardHeading>
-          <CardParagraph>{t("auth.availability")}</CardParagraph>
+          <CardHeading>
+            {t("auth.Logg inn i Nasjonal inndelingsbase")}
+          </CardHeading>
+          <CardParagraph>
+            {t(
+              "auth.Denne tjenesten er kun tilgjengelig for autoriserte brukere"
+            )}
+          </CardParagraph>
         </div>
         <Arrow />
       </Card>
