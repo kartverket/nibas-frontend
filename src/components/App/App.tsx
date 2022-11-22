@@ -1,5 +1,6 @@
 import {
   ConfigureAuthFlowProps,
+  useAuthenticationFlow,
   useConfigureAuthFlow,
 } from "@kartverket/frontend-aut-lib";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
@@ -26,19 +27,26 @@ const App = () => {
   const [redirectAfterLogon, redirectAfterLogout]: JSX.Element[] =
     useConfigureAuthFlow(authFlowProps);
 
+  const { isAuthenticatedFunc } = useAuthenticationFlow();
+  const { hostname } = window.location;
+  const isLocalhost = hostname === "localhost";
+
   return (
     <Suspense fallback="Loading...">
       <Router>
         <Routes>
           {redirectAfterLogon}
           {redirectAfterLogout}
-          <Route path="/landing" element={<Landing />} />
           <Route
             index
             element={
-              <Providers>
-                <PageLayout />
-              </Providers>
+              isLocalhost || isAuthenticatedFunc() ? (
+                <Providers>
+                  <PageLayout />
+                </Providers>
+              ) : (
+                <Landing />
+              )
             }
           />
         </Routes>

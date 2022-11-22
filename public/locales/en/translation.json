@@ -27,15 +27,9 @@
     "Login": "__STRING_NOT_TRANSLATED__",
     "Logout": "__STRING_NOT_TRANSLATED__",
     "Logget inn som {{ personId }}": "__STRING_NOT_TRANSLATED__",
-    "Ikke logget inn": "__STRING_NOT_TRANSLATED__"
-  },
-  "landing": {
-    "login": "__STRING_NOT_TRANSLATED__",
-    "login_test": "__STRING_NOT_TRANSLATED__",
-    "test": "__STRING_NOT_TRANSLATED__",
-    "availability": "__STRING_NOT_TRANSLATED__",
-    "access": "__STRING_NOT_TRANSLATED__",
-    "contact": "__STRING_NOT_TRANSLATED__"
+    "Ikke logget inn": "__STRING_NOT_TRANSLATED__",
+    "Logg inn i Nasjonal inndelingsbase": "__STRING_NOT_TRANSLATED__",
+    "Denne tjenesten er kun tilgjengelig for autoriserte brukere": "__STRING_NOT_TRANSLATED__"
   },
   "metadata": {
     "Generelt": "Generelt",

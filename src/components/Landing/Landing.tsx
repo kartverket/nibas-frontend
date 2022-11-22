@@ -55,17 +55,6 @@ const CardParagraph = styled.p`
   margin: 0.25em 0 0;
 `;
 
-const ErrorCard = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  width: 100%;
-  padding: 18px;
-  line-height: 1.5;
-  color: var(--white);
-  background: var(--red_error_message);
-`;
-
 const Landing = () => {
   const { handleAuthenticateFunc } = useAuthenticationFlow();
   const { t } = useTranslation();
@@ -80,20 +69,6 @@ const Landing = () => {
         </div>
         <Arrow />
       </Card>
-      <Card>
-        <div>
-          <CardHeading>{t("landing.login_test")}</CardHeading>
-          <CardParagraph>{t("landing.test")}</CardParagraph>
-        </div>
-        <Arrow />
-      </Card>
-      <ErrorCard>
-        <Icon icon="error" />
-        <div>
-          <b>{t("landing.access")}</b>
-          <CardParagraph>{t("landing.contact")}</CardParagraph>
-        </div>
-      </ErrorCard>
     </Container>
   );
 };
