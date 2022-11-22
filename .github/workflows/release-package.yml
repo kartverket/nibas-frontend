@@ -135,7 +135,7 @@ jobs:
       deploy_on: "refs/heads/TS-629-legge-pa-attestering-nibas-frontend"
       image_url: ghcr.io/kartverket/nibas-frontend:${{ needs.build.outputs.new_tag }} # the image created by build job
 
-    security-scans:
+  security-scans:
     needs: build
     name: Security Scans
     permissions:
