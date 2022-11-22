@@ -29,6 +29,14 @@
     "Logget inn som {{ personId }}": "Logget inn som {{ personId }}",
     "Ikke logget inn": "Ikke logget inn"
   },
+  "landing": {
+    "login": "Logg inn i Nasjonal inndelingsbase",
+    "login_test": "Logg inn som testbruker",
+    "test": "Brukes kun til testformål.",
+    "availability": "Denne tjenesten er kun tilgjengelig for autoriserte brukere.",
+    "access": "Du har ikke tilgang til å se inndelingsbasen.",
+    "contact": "Vennligst kontakt Kartverket hvis du mener dette er en feil."
+  },
   "metadata": {
     "Generelt": "Generelt",
     "Detaljer": "Detaljer",

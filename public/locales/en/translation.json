@@ -29,6 +29,14 @@
     "Logget inn som {{ personId }}": "__STRING_NOT_TRANSLATED__",
     "Ikke logget inn": "__STRING_NOT_TRANSLATED__"
   },
+  "landing": {
+    "login": "__STRING_NOT_TRANSLATED__",
+    "login_test": "__STRING_NOT_TRANSLATED__",
+    "test": "__STRING_NOT_TRANSLATED__",
+    "availability": "__STRING_NOT_TRANSLATED__",
+    "access": "__STRING_NOT_TRANSLATED__",
+    "contact": "__STRING_NOT_TRANSLATED__"
+  },
   "metadata": {
     "Generelt": "Generelt",
     "Detaljer": "Detaljer",

@@ -1,6 +1,8 @@
 import Icon from "components/Icon";
 import { VerticalLogo } from "components/Logo/Logo";
 import styled from "styled-components";
+import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
+import { useTranslation } from "react-i18next";
 
 const Container = styled.main`
   display: grid;
@@ -65,25 +67,31 @@ const ErrorCard = styled.div`
 `;
 
 const Landing = () => {
+  const { handleAuthenticateFunc } = useAuthenticationFlow();
+  const { t } = useTranslation();
+
   return (
     <Container>
       <Logo />
+      <Card onClick={() => handleAuthenticateFunc("/")}>
+        <div>
+          <CardHeading>{t("landing.login")}</CardHeading>
+          <CardParagraph>{t("landing.availability")}</CardParagraph>
+        </div>
+        <Arrow />
+      </Card>
       <Card>
         <div>
-          <CardHeading>Logg inn i Nasjonal inndelingsbase</CardHeading>
-          <CardParagraph>
-            Denne tjenesten er kun tilgjengelig for autoriserte brukere.
-          </CardParagraph>
+          <CardHeading>{t("landing.login_test")}</CardHeading>
+          <CardParagraph>{t("landing.test")}</CardParagraph>
         </div>
         <Arrow />
       </Card>
       <ErrorCard>
         <Icon icon="error" />
         <div>
-          <b>Du har ikke tilgang til å se inndelingsbasen.</b>
-          <CardParagraph>
-            Vennligst kontakt Kartverket hvis du mener dette er en feil.
-          </CardParagraph>
+          <b>{t("landing.access")}</b>
+          <CardParagraph>{t("landing.contact")}</CardParagraph>
         </div>
       </ErrorCard>
     </Container>
