@@ -134,3 +134,18 @@ jobs:
       project_id: kubernetes-test-94f6
       deploy_on: "refs/heads/TS-629-legge-pa-attestering-nibas-frontend"
       image_url: ghcr.io/kartverket/nibas-frontend:${{ needs.build.outputs.new_tag }} # the image created by build job
+
+    security-scans:
+    needs: build
+    name: Security Scans
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      actions: read
+      security-events: write
+    uses: kartverket/github-workflows/.github/workflows/run-security-scans.yml@v3.0.3
+    with:
+      auth_project_number: 747318126147
+      service_account: nibas-deploy@nibas-dev-075c.iam.gserviceaccount.com
+      image_url: ghcr.io/kartverket/nibas-frontend:${{ needs.build.outputs.new_tag }}
