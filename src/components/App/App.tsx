@@ -2,9 +2,10 @@ import {
   ConfigureAuthFlowProps,
   useConfigureAuthFlow,
 } from "@kartverket/frontend-aut-lib";
-import { BrowserRouter as Router, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Providers from "./Providers";
 import PageLayout from "components/PageLayout";
+import Landing from "components/Landing/Landing";
 
 /**
  * Definerer 3 verdier i konfigurasjonen. Disse brukes av biblioteket forskjellige steder i flyten.
@@ -26,12 +27,18 @@ const App = () => {
 
   return (
     <Router>
-      <Providers>
-        <PageLayout />
-      </Providers>
       <Routes>
         {redirectAfterLogon}
         {redirectAfterLogout}
+        <Route path="/landing" element={<Landing />} />
+        <Route
+          index
+          element={
+            <Providers>
+              <PageLayout />
+            </Providers>
+          }
+        />
       </Routes>
     </Router>
   );
