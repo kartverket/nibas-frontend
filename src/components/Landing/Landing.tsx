@@ -64,8 +64,8 @@ const Landing = () => {
       <Logo />
       <Card onClick={() => handleAuthenticateFunc("/")}>
         <div>
-          <CardHeading>{t("landing.login")}</CardHeading>
-          <CardParagraph>{t("landing.availability")}</CardParagraph>
+          <CardHeading>{t("auth.login")}</CardHeading>
+          <CardParagraph>{t("auth.availability")}</CardParagraph>
         </div>
         <Arrow />
       </Card>
