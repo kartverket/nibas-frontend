@@ -4,6 +4,27 @@ import FutureChangesTable from "./FutureChangesTable";
 
 const defaultProps: React.ComponentProps<typeof FutureChangesTable> = {
   grunnkretsRef: mockGrunnkrets1,
+  futureChangesUrl: "/v1/grunnkretser/{id}",
+  headers: [
+    "Navn",
+    "Grunnkretsnummer",
+    "Oppdatert",
+    "Type",
+    "Gyldig fra",
+    "Gyldig til",
+  ],
+  getRows: (futureChanges) => {
+    return futureChanges.map((futureChange) => {
+      return [
+        futureChange.navn,
+        futureChange.grunnkretsnummer,
+        (futureChange as any).oppdatert,
+        (futureChange as any).type,
+        (futureChange as any).gyldigFra,
+        (futureChange as any).gyldigTil,
+      ];
+    });
+  },
 };
 
 describe("FutureChangesTable", () => {
