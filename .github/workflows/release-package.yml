@@ -2,7 +2,7 @@ name: nibas-frontend
 on:
   push:
     branches:
-      - TS-628-legge-pa-attestering-av-images-backend
+      - TS-629-legge-pa-attestering-nibas-frontend
 
 permissions:
   id-token: write
@@ -108,6 +108,7 @@ jobs:
       vault_role: nibas-frontend-read-role
       project_id: kubernetes-dev-94b9
       deploy_on: "refs/heads/master"
+      image_url: ghcr.io/kartverket/nibas-frontend:${{ needs.build.outputs.new_tag }} # the image created by build job
 
   deploy-test:
     needs: build
@@ -129,4 +130,5 @@ jobs:
       service_account: nibas-deploy@nibas-test-36cb.iam.gserviceaccount.com
       vault_role: nibas-frontend-read-role
       project_id: kubernetes-test-94f6
-      deploy_on: "refs/heads/TS-628-legge-pa-attestering-av-images-backend"
+      deploy_on: "refs/heads/TS-629-legge-pa-attestering-nibas-frontend"
+      image_url: ghcr.io/kartverket/nibas-frontend:${{ needs.build.outputs.new_tag }} # the image created by build job
