@@ -19,7 +19,7 @@ export const KretsTable = styled.table`
   border: none;
   width: 100%;
 
-  thead {
+  > thead {
     text-transform: uppercase;
     text-align: left;
     color: ${({ theme }) => theme.colors.gray};
@@ -35,14 +35,14 @@ export const KretsTable = styled.table`
     }
   }
 
-  tbody {
-    ${KretsRow} {
+  > tbody {
+    > ${KretsRow} {
       background-color: ${({ theme }) => theme.colors.blueLight};
-    }
 
-    td {
-      padding: 8px;
-      font-size: 14px;
+      > td {
+        padding: 8px;
+        font-size: 14px;
+      }
     }
   }
 `;

@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { KretsTable, KretsTableWrapper } from "../KretsTable";
+import { KretsRow, KretsTable, KretsTableWrapper } from "../KretsTable";
 import {
   BlockLabel,
   HeaderButton,
@@ -23,6 +23,8 @@ import {
   sortGrenserAlphabetically,
 } from "utils/language/language";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
+import FutureChangesTable from "./FutureChangesTable";
+import { useFlag } from "components/FeatureToggle";
 
 type Props = {
   kommune: KommuneRef;
@@ -33,6 +35,8 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
   const { toggleEditKretser } = useInndelingerKrets(kommune);
 
   const { isRowOpen, toggleRow } = useAccordionRows();
+  const { isRowOpen: isFutureChangesOpen, toggleRow: toggleFutureChangesRow } =
+    useAccordionRows();
   const { inputValue, setInputValue, searchValue } = useSearch();
 
   const { toggleMinimizePanel, kretserContext, closePanel } =
@@ -64,6 +68,8 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
         grunnkrets.navn.toLowerCase().includes(searchValue.toLowerCase())
     );
   }, [searchValue, utkastGrunnkretser]);
+
+  const showFremtidigeEndringer = useFlag("grunnkrets-fremtidige-endringer");
 
   return (
     <OverlayPanelWrapper
@@ -113,7 +119,8 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
               <tr>
                 <th>{t("tabell.Navn")}</th>
                 <th>{t("grunnkrets.Grunnkretsnummer")}</th>
-                <th>{t("action.Endre")}</th>
+                {showFremtidigeEndringer && <th></th>}
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -122,6 +129,24 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                   <KretsRow onClick={() => toggleRow(grunnkrets.id)}>
                     <td>{getNavnInSpraak(grunnkrets.navn, "nor")}</td>
                     <td>{grunnkrets.grunnkretsnummer}</td>
+                    {showFremtidigeEndringer && (
+                      <td>
+                        <FutureChangesButton
+                          isOpen={isFutureChangesOpen(grunnkrets.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleFutureChangesRow(grunnkrets.id);
+                          }}
+                          aria-label={`${
+                            isFutureChangesOpen(grunnkrets.id) ? "Skjul" : "Vis"
+                          } fremtidige endringer for ${getNavnInSpraak(
+                            grunnkrets.navn,
+                            "nor"
+                          )}`}
+                          icon={<Icon icon="schedule" />}
+                        />
+                      </td>
+                    )}
                     <td>
                       <Button
                         variant="unstyled"
@@ -139,6 +164,10 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                   {isRowOpen(grunnkrets.id) && (
                     <EditRow grunnkrets={grunnkrets} kommuneId={kommune.id} />
                   )}
+                  {showFremtidigeEndringer &&
+                    isFutureChangesOpen(grunnkrets.id) && (
+                      <FutureChangesTable grunnkretsRef={grunnkrets} />
+                    )}
                 </React.Fragment>
               ))}
             </tbody>
@@ -154,12 +183,19 @@ const PanelTitle = styled(Heading)`
   margin-bottom: 8px;
 `;
 
-const KretsRow = styled.tr`
-  cursor: pointer;
-`;
-
 const SmallerBlockLabel = styled(BlockLabel)`
   max-width: 400px;
+`;
+
+const FutureChangesButton = styled(Button).attrs(() => ({
+  variant: "unstyled",
+}))<{ isOpen: boolean }>`
+  border-radius: 50%;
+  padding: 5px;
+
+  background-color: ${({ isOpen, theme }) => isOpen && theme.colors.blueDark};
+  color: ${({ isOpen, theme }) => isOpen && theme.colors.white};
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 `;
 
 export default GrunnkretserPanel;

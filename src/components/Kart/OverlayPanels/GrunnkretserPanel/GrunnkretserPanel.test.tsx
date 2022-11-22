@@ -77,4 +77,26 @@ describe("GrunnkretserPanel", () => {
       await screen.findByRole("cell", { name: /87654321/i })
     ).toBeInTheDocument();
   });
+
+  it("should toggle future changes table when clicking future changes icon", async () => {
+    const { user } = renderWithProvider(
+      <GrunnkretserPanel {...defaultProps} />
+    );
+
+    await user.click(
+      screen.getByRole("button", {
+        name: /vis fremtidige endringer for mosekollen øst/i,
+      })
+    );
+
+    expect(screen.getAllByRole("table")).toHaveLength(2);
+
+    await user.click(
+      screen.getByRole("button", {
+        name: /skjul fremtidige endringer for mosekollen øst/i,
+      })
+    );
+
+    expect(screen.getAllByRole("table")).toHaveLength(1);
+  });
 });

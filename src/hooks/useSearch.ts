@@ -10,6 +10,8 @@ const useSearch = () => {
       timer.current = null;
     }
 
+    if (!inputValue) return;
+
     timer.current = setTimeout(() => {
       setSearchValue(inputValue);
       timer.current = null;
