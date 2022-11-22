@@ -22,6 +22,10 @@ export interface paths {
     /** Oppretter et utkast og returnerer id. */
     post: operations["opprettUtkast"];
   };
+  "/v1/utkast/{id}/resolved": {
+    /** Publiserer utkastet for resolvet konflikt. */
+    post: operations["resolveConflictForFramtidigeVersjoner"];
+  };
   "/v1/utkast/{id}/publiser": {
     /** Publiserer utkastet med gitt id. */
     post: operations["publiserUtkast"];
@@ -316,8 +320,6 @@ export interface components {
       administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
       /** @description LokalId for angitt fylke */
       lokalid: string;
-      /** @description Navnerommet for fylket */
-      navnerom: string;
       /** @description UUID til fylkesnummeret */
       fylkesnummerId: string;
       /** @description Angir om fylket er et samisk forvaltningsområde */
@@ -368,10 +370,6 @@ export interface components {
     Identifikasjon: {
       /** @description Lokal id som identifiserer geometrien. Dette er en globalt unik id. */
       lokalid: string;
-      /** @description Navnerom som unikt identifiserer datakilden til objektet, starter med to bokstavs kode jfr ISO 3166. */
-      navnerom: string;
-      /** @description Identifikasjon av en spesiell versjon av et geografisk objekt (instans), maksimum lengde på 25 karakterer. */
-      versjonid?: string;
     };
     /** @description Klassifikasjon av stedfestingsnøyaktighet på grenser, og er basert på dårligste nøyaktighet til grensepunktene til grensen. */
     KodelisteEntry: {
@@ -386,8 +384,6 @@ export interface components {
       administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
       /** @description LokalId for angitt kommune */
       lokalid: string;
-      /** @description Navnerommet for kommunen */
-      navnerom?: string;
       /** @description UUID til kommunenummeret */
       kommunenummerId: string;
       /** @description Angir om kommunen er et samisk forvaltningsområde */
@@ -505,8 +501,6 @@ export interface components {
       administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
       /** @description LokalId for angitt nasjon */
       lokalid: string;
-      /** @description Navnerommet for nasjonen */
-      navnerom: string;
       /**
        * Format: int32
        * @description Teknisk versjon for å støtte samhandling og redigering
@@ -646,7 +640,26 @@ export interface components {
       dokumentasjonsreferanser: unknown;
       maritimeGrenser: unknown;
     };
+    /** @description Feil som har oppstått pga optimistisk lås. */
     ConflictResponse: {
+      /** @description Identifikatoren til objektet som er utdatert. */
+      id: string;
+      /** @description Typen til objektet som er utdatert. */
+      type: string;
+      /**
+       * Format: int32
+       * @description Versjon som prøves å oppdateres.
+       */
+      versjon: number;
+      /**
+       * Format: int32
+       * @description Versjon som er gjeldende for objektet nå.
+       */
+      gjeldendeVersjon: number;
+      /** @description Beskrivelse av hva som har gått galt. */
+      melding?: string;
+    };
+    ConflictResponseWrapper: {
       /**
        * @description HttpStatus for responsen.
        * @enum {string}
@@ -720,22 +733,28 @@ export interface components {
         | "509 BANDWIDTH_LIMIT_EXCEEDED"
         | "510 NOT_EXTENDED"
         | "511 NETWORK_AUTHENTICATION_REQUIRED";
-      /** @description Identifikatoren til objektet som er utdatert. */
-      id: string;
-      /** @description Typen til objektet som er utdatert. */
+      /** @description Feil som har oppstått pga optimistisk lås. */
+      optimisticLockExceptions: components["schemas"]["ConflictResponse"][];
+      framtidigVersjonConflict?: components["schemas"]["FramtidigVersjonConflict"];
+    };
+    /** @description Feil som har oppstått pga at det fantes rader med nyere gyldighet. */
+    FramtidigVersjonConflict: {
+      id: components["schemas"]["ObjektIdentifikator"];
+      /** @description Typen til objektet som ble forsøkt oppdatert. */
       type: string;
-      /**
-       * Format: int32
-       * @description Versjon som prøves å oppdateres.
-       */
-      versjon: number;
-      /**
-       * Format: int32
-       * @description Versjon som er gjeldende for objektet nå.
-       */
-      gjeldendeVersjon: number;
+      /** @description Identifikator til objekt(et/ene) som har en nyere gyldigFra-dato og er i konflikt med endringen. */
+      affectedIds: components["schemas"]["ObjektIdentifikator"][];
       /** @description Beskrivelse av hva som har gått galt. */
       melding?: string;
+    };
+    Lokalid: {
+      value: string;
+    };
+    /** @description Identifikator til objekt(et/ene) som har en nyere gyldigFra-dato og er i konflikt med endringen. */
+    ObjektIdentifikator: {
+      lokalid: components["schemas"]["Lokalid"];
+      /** Format: date */
+      gyldigFra: string;
     };
     ApiErrorResponse: {
       /**
@@ -860,6 +879,23 @@ export interface components {
       endringstype: string;
       operasjoner: components["schemas"]["Operasjoner"];
     };
+    /** @description Representasjon for resolved konflikt. */
+    ConflictResolved: {
+      lokalid: components["schemas"]["Lokalid"];
+      /** @description Resolvede endringer på grunnkrets. */
+      grunnkretsRequests: components["schemas"]["GrunnkretsRequestResolved"][];
+    };
+    /** @description Representasjon av en resolvet konflikt for en endring på Grunnkrets. */
+    GrunnkretsRequestResolved: {
+      /**
+       * Format: date
+       * @description Tidspunktet utkastet skal være gyldig fra.
+       */
+      gyldigFra: string;
+      /** @description Typen endring utkastet representerer. */
+      endringstype: string;
+      grunnkretsRequest: components["schemas"]["GrunnkretsRequest"];
+    };
     /** @description En referanse til et utkast */
     UtkastRef: {
       /** @description ID-en til utkastet */
@@ -936,8 +972,6 @@ export interface components {
       administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
       /** @description LokalID til nasjonen */
       lokalid: string;
-      /** @description Navnerommet til nasjonen */
-      navnerom: string;
       features: components["schemas"]["FeatureCollection"];
       /**
        * Format: int32
@@ -961,8 +995,6 @@ export interface components {
       administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
       /** @description LokalIDen til kommunen */
       lokalid: string;
-      /** @description Navnerommet til kommunen */
-      navnerom: string;
       kommunenummer: components["schemas"]["Kommunenummer"];
       /** @description Angir om kommunen er et samisk forvaltningsområde eller ikke */
       samiskforvaltningsomraade: boolean;
@@ -1057,8 +1089,6 @@ export interface components {
       administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
       /** @description LokalIDen til fylket */
       lokalid: string;
-      /** @description Navnerommet til fylket */
-      navnerom: string;
       fylkesnummer: components["schemas"]["Fylkesnummer"];
       /** @description Angir om fylket er et samisk forvaltningsområde eller ikke */
       samiskforvaltningsomraade: boolean;
@@ -1135,7 +1165,7 @@ export interface operations {
       /** Conflict */
       409: {
         content: {
-          "application/json": components["schemas"]["ConflictResponse"][];
+          "application/json": components["schemas"]["ConflictResponseWrapper"];
         };
       };
     };
@@ -1198,6 +1228,42 @@ export interface operations {
       };
     };
   };
+  /** Publiserer utkastet for resolvet konflikt. */
+  resolveConflictForFramtidigeVersjoner: {
+    parameters: {
+      path: {
+        /** ID-en til utkastet man har resolvet konflikt for og vil publisere */
+        id: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: unknown;
+      /** Bad request. Check the request body and path */
+      400: {
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** Conflict */
+      409: {
+        content: {
+          "application/json": components["schemas"]["ConflictResponseWrapper"];
+        };
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ConflictResolved"];
+      };
+    };
+  };
   /** Publiserer utkastet med gitt id. */
   publiserUtkast: {
     parameters: {
@@ -1224,7 +1290,7 @@ export interface operations {
       /** Conflict */
       409: {
         content: {
-          "application/json": components["schemas"]["ConflictResponse"][];
+          "application/json": components["schemas"]["ConflictResponseWrapper"];
         };
       };
     };
