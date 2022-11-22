@@ -64,8 +64,6 @@ describe("GrunnkretserPanel", () => {
         version: 1,
         identifikasjon: {
           lokalid: "lokalid",
-          navnerom: "navnerom",
-          versjonid: "versjonId",
         },
       },
     });
