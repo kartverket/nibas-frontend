@@ -3,7 +3,9 @@ import { render, screen } from "test/test-utils";
 import { GrunnkretsResponse } from "types/api";
 import FutureChangesTable, { TableRow } from "./FutureChangesTable";
 
-const defaultProps: React.ComponentProps<typeof FutureChangesTable> = {
+const defaultProps: React.ComponentProps<
+  typeof FutureChangesTable<GrunnkretsResponse>
+> = {
   id: mockGrunnkrets1.id,
   futureChangesUrl: "/v1/grunnkretser/{lokalid}/framtidigeversjoner",
   headers: [
@@ -14,24 +16,22 @@ const defaultProps: React.ComponentProps<typeof FutureChangesTable> = {
     "Gyldig fra",
     "Gyldig til",
   ],
-  getRows: ((futureChanges: GrunnkretsResponse[]) => {
+  getRows: (futureChanges: GrunnkretsResponse[]) => {
     return futureChanges.map(
       (futureChange) =>
-        [
-          {
-            id: "1",
-            cells: [
-              futureChange.navn,
-              futureChange.grunnkretsnummer,
-              futureChange.oppdateringsdato,
-              (futureChange as any).type,
-              futureChange.gyldighet.gyldigFra,
-              futureChange.gyldighet.gyldigTil,
-            ],
-          },
-        ] as TableRow[]
+        ({
+          id: "1",
+          cells: [
+            futureChange.navn,
+            futureChange.grunnkretsnummer,
+            futureChange.oppdateringsdato,
+            (futureChange as any).type,
+            futureChange.gyldighet.gyldigFra,
+            futureChange.gyldighet.gyldigTil,
+          ],
+        } as TableRow)
     );
-  }) as any,
+  },
 };
 
 describe("FutureChangesTable", () => {
