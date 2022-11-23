@@ -146,7 +146,7 @@ jobs:
       image_url: ${{ needs.build.outputs.image_url}}
 
   deploy-test:
-    needs: build
+    needs: [build, security-scans]
     permissions:
       id-token: write
       pull-requests: write
