@@ -23,7 +23,7 @@ import {
   sortGrenserAlphabetically,
 } from "utils/language/language";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
-import FutureChangesTable from "./FutureChangesTable";
+import FutureChangesTable, { TableRow } from "./FutureChangesTable";
 import { useFlag } from "components/FeatureToggle";
 
 type Props = {
@@ -79,15 +79,18 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
   ];
 
   const getFutureChangesRows = useCallback(
-    (futureChanges: GrunnkretsResponse[]) =>
-      futureChanges.map((grunnkrets) => [
-        grunnkrets.grunnkretsnummer,
-        grunnkrets.navn,
-        (grunnkrets as any).oppdatert ?? "2020-01-01",
-        (grunnkrets as any).type ?? "Retting",
-        (grunnkrets as any).gyldigFra ?? "2022-01-01",
-        (grunnkrets as any).gyldigTil ?? "2022-01-01",
-      ]),
+    (futureChanges: GrunnkretsResponse[]): TableRow[] =>
+      futureChanges.map((grunnkrets) => ({
+        id: grunnkrets.id,
+        cells: [
+          grunnkrets.grunnkretsnummer,
+          grunnkrets.navn,
+          (grunnkrets as any).oppdatert ?? "2020-01-01",
+          (grunnkrets as any).type ?? "Retting",
+          (grunnkrets as any).gyldigFra ?? "2022-01-01",
+          (grunnkrets as any).gyldigTil ?? "2022-01-01",
+        ],
+      })),
     []
   );
 

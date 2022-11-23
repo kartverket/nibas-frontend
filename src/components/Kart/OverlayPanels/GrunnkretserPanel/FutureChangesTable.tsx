@@ -1,4 +1,5 @@
 import useNibasApi from "hooks/useNibasApi";
+import { useMemo } from "react";
 import styled from "styled-components";
 import {
   ApiPath,
@@ -7,11 +8,16 @@ import {
   StemmekretsResponse,
 } from "types/api";
 
+export type TableRow = {
+  id: string;
+  cells: string[];
+};
+
 type Props = {
   grunnkretsRef: GrunnkretsRef;
   futureChangesUrl: ApiPath;
   headers: string[];
-  getRows: (futureChanges: GrunnkretsResponse[]) => string[][];
+  getRows: (futureChanges: GrunnkretsResponse[]) => TableRow[];
 };
 
 const FutureChangesTable = ({
@@ -24,39 +30,13 @@ const FutureChangesTable = ({
     id: grunnkretsRef.id,
   });
   // const { data: futureChanges } = useNibasApi("/v1/grunnkretser/{id}/framtidige-endringer");
-  const futureChanges = [
-    {
-      ...(fullGrunnkrets ?? {
-        id: "0",
-      }),
-      oppdatert: "2021-01-01",
-      type: "Retting",
-      gyldigFra: "2022-01-01",
-      gyldigTil: "2022-04-01",
-    },
-    {
-      id: "endrng-1",
-      grunnkretsnummer: "12345678",
-      navn: "Grunnkrets 1",
-      oppdatert: "2022-01-01",
-      type: "Kvalitetsheving",
-      gyldigFra: "2022-04-01",
-      gyldigTil: "2022-07-01",
-    },
-    {
-      id: "endring-2",
-      grunnkretsnummer: "87654321",
-      navn: "Grunnkrets 1, men 2",
-      oppdatert: "2022-07-01",
-      type: "Kvalitetsheving",
-      gyldigFra: "2022-07-01",
-      gyldigTil: "2022-12-31",
-    },
-  ];
 
-  if (!fullGrunnkrets) return null;
+  const rows = useMemo(
+    () => (fullGrunnkrets ? getRows([fullGrunnkrets]) : null),
+    [fullGrunnkrets, getRows]
+  );
 
-  const rows = getRows([fullGrunnkrets]);
+  if (!rows) return null;
 
   return (
     <tr>
@@ -70,10 +50,10 @@ const FutureChangesTable = ({
             </tr>
           </thead>
           <tbody>
-            {rows.map((row, i) => (
-              <tr key={row[i]}>
-                {headers.map((header, j) => (
-                  <td key={`${row[j]}-${j}`}>{row[j]}</td>
+            {rows.map((row) => (
+              <tr key={row.id}>
+                {row.cells.map((cell) => (
+                  <td key={`${row.id}-${cell}`}>{cell}</td>
                 ))}
               </tr>
             ))}

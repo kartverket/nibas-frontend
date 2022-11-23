@@ -15,14 +15,17 @@ const defaultProps: React.ComponentProps<typeof FutureChangesTable> = {
   ],
   getRows: (futureChanges) => {
     return futureChanges.map((futureChange) => {
-      return [
-        futureChange.navn,
-        futureChange.grunnkretsnummer,
-        (futureChange as any).oppdatert,
-        (futureChange as any).type,
-        (futureChange as any).gyldigFra,
-        (futureChange as any).gyldigTil,
-      ];
+      return {
+        id: "1",
+        cells: [
+          futureChange.navn,
+          futureChange.grunnkretsnummer,
+          (futureChange as any).oppdatert,
+          (futureChange as any).type,
+          (futureChange as any).gyldigFra,
+          (futureChange as any).gyldigTil,
+        ],
+      };
     });
   },
 };

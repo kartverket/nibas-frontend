@@ -87,7 +87,7 @@ describe("GrunnkretserPanel", () => {
       })
     );
 
-    expect(screen.getAllByRole("table")).toHaveLength(2);
+    await waitFor(() => expect(screen.getAllByRole("table")).toHaveLength(2));
 
     await user.click(
       screen.getByRole("button", {
