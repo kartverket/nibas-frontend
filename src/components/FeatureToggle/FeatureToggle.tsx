@@ -16,8 +16,8 @@ const environmentByUrl: Record<string, Environment> = {
 // denne utvides etterhvert som vi får flere flagg
 // noe som `type Keys = "flagg1" | "flagg2" | ...`
 // features som skal fjernes kan slettes fra denne listen
-// hvis det ikke er noen keys skal Keys være av typen `string`
-type Keys = string;
+// hvis det ikke er noen keys skal Keys være av typen `never`
+type Keys = never;
 
 const featureToggles: Record<Keys, Record<Environment, boolean>> = {};
 

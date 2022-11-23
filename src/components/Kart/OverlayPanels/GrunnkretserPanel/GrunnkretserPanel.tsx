@@ -23,7 +23,6 @@ import {
 } from "utils/language/language";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 import FutureChangesTable, { TableRow } from "./FutureChangesTable";
-import { useFlag } from "components/FeatureToggle";
 import {
   FutureChangesTableData,
   ToggleableKretsButton,
@@ -97,8 +96,6 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
     []
   );
 
-  const showFremtidigeEndringer = useFlag("grunnkrets-fremtidige-endringer");
-
   return (
     <OverlayPanelWrapper
       key="grunnkrets"
@@ -147,7 +144,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
               <tr>
                 <th>{t("tabell.Navn")}</th>
                 <th>{t("grunnkrets.Grunnkretsnummer")}</th>
-                {showFremtidigeEndringer && <th></th>}
+                <th></th>
                 <th></th>
               </tr>
             </thead>
@@ -157,24 +154,22 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                   <KretsRow onClick={() => toggleRow(grunnkrets.id)}>
                     <td>{getNavnInSpraak(grunnkrets.navn, "nor")}</td>
                     <td>{grunnkrets.grunnkretsnummer}</td>
-                    {showFremtidigeEndringer && (
-                      <td>
-                        <ToggleableKretsButton
-                          isOpen={isFutureChangesOpen(grunnkrets.id)}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleFutureChangesRow(grunnkrets.id);
-                          }}
-                          aria-label={`${
-                            isFutureChangesOpen(grunnkrets.id) ? "Skjul" : "Vis"
-                          } fremtidige endringer for ${getNavnInSpraak(
-                            grunnkrets.navn,
-                            "nor"
-                          )}`}
-                          icon={<Icon icon="schedule" />}
-                        />
-                      </td>
-                    )}
+                    <td>
+                      <ToggleableKretsButton
+                        isOpen={isFutureChangesOpen(grunnkrets.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleFutureChangesRow(grunnkrets.id);
+                        }}
+                        aria-label={`${
+                          isFutureChangesOpen(grunnkrets.id) ? "Skjul" : "Vis"
+                        } fremtidige endringer for ${getNavnInSpraak(
+                          grunnkrets.navn,
+                          "nor"
+                        )}`}
+                        icon={<Icon icon="schedule" />}
+                      />
+                    </td>
                     <td>
                       <ToggleableKretsButton
                         isOpen={isRowOpen(grunnkrets.id)}
@@ -189,22 +184,23 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                       />
                     </td>
                   </KretsRow>
+
                   {isRowOpen(grunnkrets.id) && (
                     <EditRow grunnkrets={grunnkrets} kommuneId={kommune.id} />
                   )}
-                  {showFremtidigeEndringer &&
-                    isFutureChangesOpen(grunnkrets.id) && (
-                      <tr>
-                        <FutureChangesTableData colSpan={4}>
-                          <FutureChangesTable
-                            id={grunnkrets.id}
-                            futureChangesUrl="/v1/grunnkretser/{lokalid}/framtidigeversjoner"
-                            headers={headers}
-                            getRows={getFutureChangesRows}
-                          />
-                        </FutureChangesTableData>
-                      </tr>
-                    )}
+
+                  {isFutureChangesOpen(grunnkrets.id) && (
+                    <tr>
+                      <FutureChangesTableData colSpan={4}>
+                        <FutureChangesTable
+                          id={grunnkrets.id}
+                          futureChangesUrl="/v1/grunnkretser/{lokalid}/framtidigeversjoner"
+                          headers={headers}
+                          getRows={getFutureChangesRows}
+                        />
+                      </FutureChangesTableData>
+                    </tr>
+                  )}
                 </React.Fragment>
               ))}
             </tbody>
