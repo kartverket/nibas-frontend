@@ -27,6 +27,7 @@ import {
   FutureChangesTableData,
   ToggleableKretsButton,
 } from "../kretserComponents";
+import FutureChangesButton from "../FutureChangesButton";
 
 type Props = {
   kommune: KommuneRef;
@@ -159,19 +160,11 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                     <td>{grunnkrets.grunnkretsnummer}</td>
                     <td>
                       {shouldShowFutureChangesButton(grunnkrets) && (
-                        <ToggleableKretsButton
+                        <FutureChangesButton
+                          id={grunnkrets.id}
                           isOpen={isFutureChangesOpen(grunnkrets.id)}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleFutureChangesRow(grunnkrets.id);
-                          }}
-                          aria-label={`${
-                            isFutureChangesOpen(grunnkrets.id) ? "Skjul" : "Vis"
-                          } fremtidige endringer for ${getNavnInSpraak(
-                            grunnkrets.navn,
-                            "nor"
-                          )}`}
-                          icon={<Icon icon="timelapse" />}
+                          toggleRow={toggleFutureChangesRow}
+                          name={grunnkrets.navn}
                         />
                       )}
                     </td>
