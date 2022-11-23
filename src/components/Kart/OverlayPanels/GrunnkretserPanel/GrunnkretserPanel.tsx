@@ -1,7 +1,12 @@
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { KretsRow, KretsTable, KretsTableWrapper } from "../KretsTable";
+import {
+  ButtonCell,
+  KretsRow,
+  KretsTable,
+  KretsTableWrapper,
+} from "../KretsTable";
 import {
   BlockLabel,
   HeaderButton,
@@ -83,17 +88,20 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
 
   const getFutureChangesRows = useCallback(
     (futureChanges: GrunnkretsResponse[]): TableRow[] =>
-      futureChanges.map((grunnkrets) => ({
-        id: grunnkrets.id,
-        cells: [
-          grunnkrets.grunnkretsnummer,
-          grunnkrets.navn,
-          grunnkrets.oppdateringsdato,
-          (grunnkrets as any).type ?? "Retting",
-          grunnkrets.gyldighet.gyldigFra,
-          grunnkrets.gyldighet.gyldigTil,
-        ],
-      })),
+      futureChanges.map(
+        (grunnkrets) =>
+          ({
+            id: grunnkrets.id,
+            cells: [
+              grunnkrets.grunnkretsnummer,
+              grunnkrets.navn,
+              grunnkrets.oppdateringsdato,
+              grunnkrets.endringstype ?? "---",
+              grunnkrets.gyldighet.gyldigFra,
+              grunnkrets.gyldighet.gyldigTil,
+            ],
+          } as TableRow)
+      ),
     []
   );
 
@@ -158,7 +166,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                   <KretsRow onClick={() => toggleRow(grunnkrets.id)}>
                     <td>{getNavnInSpraak(grunnkrets.navn, "nor")}</td>
                     <td>{grunnkrets.grunnkretsnummer}</td>
-                    <td>
+                    <ButtonCell>
                       {shouldShowFutureChangesButton(grunnkrets) && (
                         <FutureChangesButton
                           krets={grunnkrets}
@@ -166,8 +174,8 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                           toggleRow={toggleFutureChangesRow}
                         />
                       )}
-                    </td>
-                    <td>
+                    </ButtonCell>
+                    <ButtonCell>
                       <ToggleableKretsButton
                         isOpen={isRowOpen(grunnkrets.id)}
                         onClick={() => toggleRow(grunnkrets.id)}
@@ -179,7 +187,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                           )
                         }
                       />
-                    </td>
+                    </ButtonCell>
                   </KretsRow>
 
                   {isRowOpen(grunnkrets.id) && (
