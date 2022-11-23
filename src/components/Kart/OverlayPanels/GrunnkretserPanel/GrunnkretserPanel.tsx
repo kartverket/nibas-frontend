@@ -161,10 +161,9 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                     <td>
                       {shouldShowFutureChangesButton(grunnkrets) && (
                         <FutureChangesButton
-                          id={grunnkrets.id}
+                          krets={grunnkrets}
                           isOpen={isFutureChangesOpen(grunnkrets.id)}
                           toggleRow={toggleFutureChangesRow}
-                          name={grunnkrets.navn}
                         />
                       )}
                     </td>

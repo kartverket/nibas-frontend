@@ -1,28 +1,52 @@
 import Icon from "components/Icon";
+import styled from "styled-components";
+import { GrunnkretsRef, KretsRef } from "types/api";
 import { getNavnInSpraak } from "utils/language/language";
 import { ToggleableKretsButton } from "./kretserComponents";
 
-type Props = {
-  id: string;
-  isOpen: boolean;
-  toggleRow: (id: string) => void;
-  name: string;
+const isGrunnkretsRef = (krets: KretsRef): krets is GrunnkretsRef => {
+  return (krets as GrunnkretsRef).grunnkretsnummer !== undefined;
 };
 
-const FutureChangesButton = ({ isOpen, toggleRow, name, id }: Props) => {
+type Props = {
+  krets: KretsRef;
+  isOpen: boolean;
+  toggleRow: (id: string) => void;
+};
+
+const FutureChangesButton = ({ isOpen, toggleRow, krets }: Props) => {
   return (
     <ToggleableKretsButton
       isOpen={isOpen}
       onClick={(e) => {
         e.stopPropagation();
-        toggleRow(id);
+        toggleRow(krets.id);
       }}
       aria-label={`${
         isOpen ? "Skjul" : "Vis"
-      } fremtidige endringer for ${getNavnInSpraak(name, "nor")}`}
+      } fremtidige endringer for ${getNavnInSpraak(krets.navn, "nor")}`}
       icon={<Icon icon="timelapse" />}
-    />
+    >
+      {isGrunnkretsRef(krets) && (
+        <Badge>{krets.antallFramtidigeVersjoner}</Badge>
+      )}
+    </ToggleableKretsButton>
   );
 };
+
+const Badge = styled.span`
+  position: absolute;
+  display: inline-block;
+  font-size: 11px;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  text-align: center;
+  background-color: ${({ theme }) => theme.colors.green};
+  color: ${({ theme }) => theme.colors.white};
+  right: 2px;
+  top: 2px;
+  pointer-events: none;
+`;
 
 export default FutureChangesButton;

@@ -4,6 +4,7 @@ import styled from "styled-components";
 export const ToggleableKretsButton = styled(Button).attrs(() => ({
   variant: "unstyled",
 }))<{ isOpen: boolean }>`
+  position: relative;
   border-radius: 50%;
   padding: 5px;
 
