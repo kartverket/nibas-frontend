@@ -6,7 +6,7 @@ on:
 
 permissions:
   id-token: write
-  contents: 'read'
+  contents: "read"
 
 env:
   image_name: nibas-frontend
@@ -22,6 +22,7 @@ jobs:
 
     outputs:
       new_tag: ${{ steps.tag_version.outputs.new_tag }}
+      image_url: ${{ steps.setOutput.outputs.image_url }}
 
     steps:
       - name: checkout code
@@ -71,13 +72,48 @@ jobs:
           push: true
           tags: ${{ env.registry }}/${{ github.repository }}:${{ steps.tag_version.outputs.new_tag }},${{ env.registry }}/${{ github.repository }}:latest
 
+      - name: Set output with build values
+        id: setOutput
+        # Note: The image url is output in both `registry/repository:tag` and `registry/repository@digest` formats
+        run: |
+          echo "image_url=${{ env.registry }}/${{ github.repository }}@${{ steps.build.outputs.digest }}" >> $GITHUB_OUTPUT
+
+  set-variables:
+    runs-on: ubuntu-latest
+    outputs:
+      dev_auth_project_number: ${{ steps.set-dev-variables.outputs.dev_auth_project_number }}
+      dev_service_account: ${{ steps.set-dev-variables.outputs.dev_service_account }}
+    steps:
+      - name: Set dev variables
+        id: set-dev-variables
+        run: |
+          echo "dev_auth_project_number=747318126147" >> $GITHUB_OUTPUT
+          echo "dev_service_account=nibas-deploy@nibas-dev-075c.iam.gserviceaccount.com" >> $GITHUB_OUTPUT
+
+  post-build-attest:
+    needs: [build, set-variables]
+    name: Authentication and Attestation of Build
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      actions: read
+      security-events: write
+      statuses: write
+    uses: kartverket/github-workflows/.github/workflows/post-build-attest.yml@v3.0.3
+    with:
+      auth_project_number: ${{ needs.set-variables.outputs.dev_auth_project_number}}
+      service_account: ${{ needs.set-variables.outputs.dev_service_account}}
+      image_url: ghcr.io/kartverket/nibas-frontend:${{ needs.build.outputs.new_tag }} # the image created by build job
+
   deploy-dev:
-    needs: build
+    needs: [build, set-variables]
     permissions:
       id-token: write
       pull-requests: write
       contents: read
-    uses: kartverket/github-workflows/.github/workflows/run-terraform.yml@v3.0.2
+      packages: write
+    uses: kartverket/github-workflows/.github/workflows/run-terraform.yml@v3.0.3
     with:
       runner: atkv1-dev
       environment: dev
@@ -87,19 +123,36 @@ jobs:
       terraform_option_2: -var=NIBAS_FRONTEND_VERSION=${{ needs.build.outputs.new_tag }}
       terraform_init_option_1: -backend-config=backend/dev.gcs.tfbackend
       working_directory: terraform
-      auth_project_number: 747318126147
-      service_account: nibas-deploy@nibas-dev-075c.iam.gserviceaccount.com
+      auth_project_number: ${{ needs.set-variables.outputs.dev_auth_project_number}}
+      service_account: ${{ needs.set-variables.outputs.dev_service_account}}
       vault_role: nibas-frontend-read-role
       project_id: kubernetes-dev-94b9
-      deploy_on: 'refs/heads/master'
+      deploy_on: "refs/heads/master"
+      image_url: ${{ needs.build.outputs.image_url}} # the image created by build job
+
+  security-scans:
+    needs: [build, set-variables]
+    name: Security Scans
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      actions: read
+      security-events: write
+    uses: kartverket/github-workflows/.github/workflows/run-security-scans.yml@v3.0.3
+    with:
+      auth_project_number: ${{ needs.set-variables.outputs.dev_auth_project_number}}
+      service_account: ${{ needs.set-variables.outputs.dev_service_account}}
+      image_url: ${{ needs.build.outputs.image_url}}
 
   deploy-test:
-    needs: build
+    needs: [build, security-scans]
     permissions:
       id-token: write
       pull-requests: write
       contents: read
-    uses: kartverket/github-workflows/.github/workflows/run-terraform.yml@v3.0.2
+      packages: write
+    uses: kartverket/github-workflows/.github/workflows/run-terraform.yml@v3.0.3
     with:
       runner: atkv1-test
       environment: test
@@ -113,4 +166,6 @@ jobs:
       service_account: nibas-deploy@nibas-test-36cb.iam.gserviceaccount.com
       vault_role: nibas-frontend-read-role
       project_id: kubernetes-test-94f6
-      deploy_on: 'refs/heads/master'
+      deploy_on: "refs/heads/master"
+      image_url: ${{ needs.build.outputs.image_url}} # the image created by build job
+
