@@ -11,3 +11,10 @@ export const ToggleableKretsButton = styled(Button).attrs(() => ({
   color: ${({ isOpen, theme }) => isOpen && theme.colors.white};
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 `;
+
+export const FutureChangesTableData = styled.td`
+  border-top: 2px solid ${({ theme }) => theme.colors.gray};
+  background-color: ${({ theme }) => theme.colors.grayLight};
+  width: 100%;
+  padding: 32px 16px;
+`;

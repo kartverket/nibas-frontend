@@ -35,37 +35,26 @@ const FutureChangesTable = <
   if (!rows) return null;
 
   return (
-    <tr>
-      <TableData colSpan={4}>
-        <Table>
-          <thead>
-            <tr>
-              {headers.map((header) => (
-                <th key={header}>{header}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row) => (
-              <tr key={row.id}>
-                {row.cells.map((cell) => (
-                  <td key={`${row.id}-${cell}`}>{cell}</td>
-                ))}
-              </tr>
+    <Table>
+      <thead>
+        <tr>
+          {headers.map((header) => (
+            <th key={header}>{header}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((row, i) => (
+          <tr key={i}>
+            {row.cells.map((cell) => (
+              <td key={`${row.id}-${cell}`}>{cell}</td>
             ))}
-          </tbody>
-        </Table>
-      </TableData>
-    </tr>
+          </tr>
+        ))}
+      </tbody>
+    </Table>
   );
 };
-
-const TableData = styled.td`
-  border-top: 2px solid ${({ theme }) => theme.colors.gray};
-  background-color: ${({ theme }) => theme.colors.grayLight};
-  width: 100%;
-  padding: 32px 16px;
-`;
 
 const Table = styled.table`
   width: 100%;

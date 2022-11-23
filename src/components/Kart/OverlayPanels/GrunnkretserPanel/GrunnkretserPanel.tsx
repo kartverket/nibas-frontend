@@ -24,7 +24,10 @@ import {
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 import FutureChangesTable, { TableRow } from "./FutureChangesTable";
 import { useFlag } from "components/FeatureToggle";
-import { ToggleableKretsButton } from "../kretserComponents";
+import {
+  FutureChangesTableData,
+  ToggleableKretsButton,
+} from "../kretserComponents";
 
 type Props = {
   kommune: KommuneRef;
@@ -191,12 +194,16 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                   )}
                   {showFremtidigeEndringer &&
                     isFutureChangesOpen(grunnkrets.id) && (
-                      <FutureChangesTable
-                        id={grunnkrets.id}
-                        futureChangesUrl="/v1/grunnkretser/{lokalid}/framtidigeversjoner"
-                        headers={headers}
-                        getRows={getFutureChangesRows as any}
-                      />
+                      <tr>
+                        <FutureChangesTableData colSpan={4}>
+                          <FutureChangesTable
+                            id={grunnkrets.id}
+                            futureChangesUrl="/v1/grunnkretser/{lokalid}/framtidigeversjoner"
+                            headers={headers}
+                            getRows={getFutureChangesRows}
+                          />
+                        </FutureChangesTableData>
+                      </tr>
                     )}
                 </React.Fragment>
               ))}
