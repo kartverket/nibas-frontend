@@ -25,7 +25,7 @@ const defaultProps: React.ComponentProps<
             futureChange.navn,
             futureChange.grunnkretsnummer,
             futureChange.oppdateringsdato,
-            (futureChange as any).type,
+            futureChange.endringstype,
             futureChange.gyldighet.gyldigFra,
             futureChange.gyldighet.gyldigTil,
           ],

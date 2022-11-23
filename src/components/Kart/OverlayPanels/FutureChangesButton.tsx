@@ -37,15 +37,16 @@ const FutureChangesButton = ({ isOpen, toggleRow, krets }: Props) => {
 const Badge = styled.span`
   position: absolute;
   display: inline-block;
-  font-size: 11px;
+  font-size: 12px;
   border-radius: 50%;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   text-align: center;
-  background-color: ${({ theme }) => theme.colors.green};
+  padding-top: 1px;
+  background-color: ${({ theme }) => theme.colors.redErrorText};
   color: ${({ theme }) => theme.colors.white};
-  right: 2px;
-  top: 2px;
+  right: 1px;
+  top: 1px;
   pointer-events: none;
 `;
 
