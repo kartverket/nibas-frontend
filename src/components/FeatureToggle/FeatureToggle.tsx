@@ -13,15 +13,13 @@ const environmentByUrl: Record<string, Environment> = {
   "nibas.dev.skip.statkart.no": "test",
 };
 
-type Keys = "grunnkrets-fremtidige-endringer";
+// denne utvides etterhvert som vi får flere flagg
+// noe som `type Keys = "flagg1" | "flagg2" | ...`
+// features som skal fjernes kan slettes fra denne listen
+// hvis det ikke er noen keys skal Keys være av typen `string`
+type Keys = string;
 
-const featureToggles: Record<Keys, Record<Environment, boolean>> = {
-  "grunnkrets-fremtidige-endringer": {
-    prod: false,
-    test: false,
-    dev: getDevValue("REACT_APP_GRUNNKRETS_FREMTIDIGE_ENDRINGER"),
-  },
-};
+const featureToggles: Record<Keys, Record<Environment, boolean>> = {};
 
 export const featureEnabled = (key: Keys): boolean => {
   const { hostname } = window.location;
