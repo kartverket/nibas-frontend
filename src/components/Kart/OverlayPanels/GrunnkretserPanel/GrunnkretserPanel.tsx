@@ -9,7 +9,6 @@ import {
 } from "../metadataComponents";
 import useAccordionRows from "../useAccordionRow";
 import EditRow from "./EditRow";
-import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Icon from "components/Icon";
 import Heading from "components/typography/Heading";
@@ -86,10 +85,10 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
         cells: [
           grunnkrets.grunnkretsnummer,
           grunnkrets.navn,
-          (grunnkrets as any).oppdatert ?? "2020-01-01",
+          grunnkrets.oppdateringsdato,
           (grunnkrets as any).type ?? "Retting",
-          (grunnkrets as any).gyldigFra ?? "2022-01-01",
-          (grunnkrets as any).gyldigTil ?? "2022-01-01",
+          grunnkrets.gyldighet.gyldigFra,
+          grunnkrets.gyldighet.gyldigTil,
         ],
       })),
     []
@@ -194,9 +193,9 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                     isFutureChangesOpen(grunnkrets.id) && (
                       <FutureChangesTable
                         id={grunnkrets.id}
-                        futureChangesUrl="/v1/grunnkretser/{id}"
+                        futureChangesUrl="/v1/grunnkretser/{lokalid}/framtidigeversjoner"
                         headers={headers}
-                        getRows={getFutureChangesRows}
+                        getRows={getFutureChangesRows as any}
                       />
                     )}
                 </React.Fragment>

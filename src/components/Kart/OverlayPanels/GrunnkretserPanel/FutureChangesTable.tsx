@@ -1,41 +1,35 @@
-import Button from "components/form/Button";
 import useNibasApi from "hooks/useNibasApi";
 import { useMemo } from "react";
 import styled from "styled-components";
-import {
-  ApiPath,
-  GrunnkretsRef,
-  GrunnkretsResponse,
-  StemmekretsResponse,
-} from "types/api";
+import { GrunnkretsResponse, StemmekretsResponse } from "types/api";
 
 export type TableRow = {
   id: string;
   cells: string[];
 };
 
-type Props<T> = {
+type Props<T extends GrunnkretsResponse | StemmekretsResponse> = {
   id: string;
-  futureChangesUrl: ApiPath;
+  futureChangesUrl: "/v1/grunnkretser/{lokalid}/framtidigeversjoner";
   headers: string[];
   getRows: (futureChanges: T[]) => TableRow[];
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-const FutureChangesTable = <T extends unknown>({
+const FutureChangesTable = <
+  T extends GrunnkretsResponse | StemmekretsResponse
+>({
   id,
   futureChangesUrl,
   headers,
   getRows,
 }: Props<T>) => {
-  const { data: fullGrunnkrets } = useNibasApi("/v1/grunnkretser/{id}", {
-    id,
+  const { data: futureChanges } = useNibasApi(futureChangesUrl, {
+    lokalid: id,
   });
-  // const { data: futureChanges } = useNibasApi("/v1/grunnkretser/{id}/framtidige-endringer");
 
   const rows = useMemo(
-    () => (fullGrunnkrets ? getRows([fullGrunnkrets as any]) : null),
-    [fullGrunnkrets, getRows]
+    () => (futureChanges ? getRows(futureChanges as T[]) : null),
+    [futureChanges, getRows]
   );
 
   if (!rows) return null;
