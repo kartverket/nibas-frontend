@@ -2,7 +2,7 @@ name: nibas-frontend
 on:
   push:
     branches:
-      - master
+      - TS-629-legge-pa-attestering-nibas-frontend
 
 permissions:
   id-token: write
@@ -22,6 +22,7 @@ jobs:
 
     outputs:
       new_tag: ${{ steps.tag_version.outputs.new_tag }}
+      image_url: ${{ steps.setOutput.outputs.image_url }}
 
     steps:
       - name: checkout code
@@ -71,6 +72,12 @@ jobs:
           push: true
           tags: ${{ env.registry }}/${{ github.repository }}:${{ steps.tag_version.outputs.new_tag }},${{ env.registry }}/${{ github.repository }}:latest
 
+      - name: Set output with build values
+        id: setOutput
+        # Note: The image url is output in both `registry/repository:tag` and `registry/repository@digest` formats
+        run: |
+          echo "image_url=${{ env.registry }}/${{ github.repository }}@${{ steps.build.outputs.digest }}" >> $GITHUB_OUTPUT
+
   post-build-attest:
     needs: build
     name: Authentication and Attestation of Build
@@ -109,7 +116,7 @@ jobs:
       vault_role: nibas-frontend-read-role
       project_id: kubernetes-dev-94b9
       deploy_on: "refs/heads/master"
-      image_url: ghcr.io/kartverket/nibas-frontend:${{ needs.build.outputs.new_tag }} # the image created by build job
+      image_url: ${{ needs.build.outputs.image_url}} # the image created by build job
 
   deploy-test:
     needs: build
@@ -132,8 +139,8 @@ jobs:
       service_account: nibas-deploy@nibas-test-36cb.iam.gserviceaccount.com
       vault_role: nibas-frontend-read-role
       project_id: kubernetes-test-94f6
-      deploy_on: "refs/heads/master"
-      image_url: ghcr.io/kartverket/nibas-frontend:${{ needs.build.outputs.new_tag }} # the image created by build job
+      deploy_on: "refs/heads/TS-629-legge-pa-attestering-nibas-frontend"
+      image_url: ${{ needs.build.outputs.image_url}} # the image created by build job
 
   security-scans:
     needs: build
@@ -148,4 +155,4 @@ jobs:
     with:
       auth_project_number: 747318126147
       service_account: nibas-deploy@nibas-dev-075c.iam.gserviceaccount.com
-      image_url: ghcr.io/kartverket/nibas-frontend:${{ needs.build.outputs.new_tag }}
+      image_url: ${{ needs.build.outputs.image_url}}
