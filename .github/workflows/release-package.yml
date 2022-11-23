@@ -78,8 +78,20 @@ jobs:
         run: |
           echo "image_url=${{ env.registry }}/${{ github.repository }}@${{ steps.build.outputs.digest }}" >> $GITHUB_OUTPUT
 
+  set-variables:
+    runs-on: ubuntu-latest
+    outputs:
+      dev_auth_project_number: ${{ steps.set-dev-variables.outputs.dev_auth_project_number }}
+      dev_service_account: ${{ steps.set-dev-variables.outputs.dev_service_account }}
+    steps:
+      - name: Set dev variables
+        id: set-dev-variables
+        run: |
+          echo "dev_auth_project_number=747318126147" >> $GITHUB_OUTPUT
+          echo "dev_service_account=nibas-deploy@nibas-dev-075c.iam.gserviceaccount.com" >> $GITHUB_OUTPUT
+
   post-build-attest:
-    needs: build
+    needs: [build, set-variables]
     name: Authentication and Attestation of Build
     permissions:
       contents: read
@@ -90,12 +102,12 @@ jobs:
       statuses: write
     uses: kartverket/github-workflows/.github/workflows/post-build-attest.yml@v3.0.3
     with:
-      auth_project_number: 747318126147
-      service_account: nibas-deploy@nibas-dev-075c.iam.gserviceaccount.com
+      auth_project_number: ${{ needs.set-variables.outputs.dev_auth_project_number}}
+      service_account: ${{ needs.set-variables.outputs.dev_service_account}}
       image_url: ghcr.io/kartverket/nibas-frontend:${{ needs.build.outputs.new_tag }} # the image created by build job
 
   deploy-dev:
-    needs: build
+    needs: [build, set-variables]
     permissions:
       id-token: write
       pull-requests: write
@@ -111,12 +123,27 @@ jobs:
       terraform_option_2: -var=NIBAS_FRONTEND_VERSION=${{ needs.build.outputs.new_tag }}
       terraform_init_option_1: -backend-config=backend/dev.gcs.tfbackend
       working_directory: terraform
-      auth_project_number: 747318126147
-      service_account: nibas-deploy@nibas-dev-075c.iam.gserviceaccount.com
+      auth_project_number: ${{ needs.set-variables.outputs.dev_auth_project_number}}
+      service_account: ${{ needs.set-variables.outputs.dev_service_account}}
       vault_role: nibas-frontend-read-role
       project_id: kubernetes-dev-94b9
       deploy_on: "refs/heads/master"
       image_url: ${{ needs.build.outputs.image_url}} # the image created by build job
+
+  security-scans:
+    needs: [build, set-variables]
+    name: Security Scans
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      actions: read
+      security-events: write
+    uses: kartverket/github-workflows/.github/workflows/run-security-scans.yml@v3.0.3
+    with:
+      auth_project_number: ${{ needs.set-variables.outputs.dev_auth_project_number}}
+      service_account: ${{ needs.set-variables.outputs.dev_service_account}}
+      image_url: ${{ needs.build.outputs.image_url}}
 
   deploy-test:
     needs: build
@@ -142,17 +169,3 @@ jobs:
       deploy_on: "refs/heads/TS-629-legge-pa-attestering-nibas-frontend"
       image_url: ${{ needs.build.outputs.image_url}} # the image created by build job
 
-  security-scans:
-    needs: build
-    name: Security Scans
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-      actions: read
-      security-events: write
-    uses: kartverket/github-workflows/.github/workflows/run-security-scans.yml@v3.0.3
-    with:
-      auth_project_number: 747318126147
-      service_account: nibas-deploy@nibas-dev-075c.iam.gserviceaccount.com
-      image_url: ${{ needs.build.outputs.image_url}}
