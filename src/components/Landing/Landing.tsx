@@ -4,6 +4,30 @@ import styled from "styled-components";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useTranslation } from "react-i18next";
 
+const Landing = () => {
+  const { handleAuthenticateFunc } = useAuthenticationFlow();
+  const { t } = useTranslation();
+
+  return (
+    <Container>
+      <Logo />
+      <Card onClick={() => handleAuthenticateFunc("/")}>
+        <div>
+          <CardHeading>
+            {t("auth.Logg inn i Nasjonal inndelingsbase")}
+          </CardHeading>
+          <CardParagraph>
+            {t(
+              "auth.Denne tjenesten er kun tilgjengelig for autoriserte brukere"
+            )}
+          </CardParagraph>
+        </div>
+        <Arrow />
+      </Card>
+    </Container>
+  );
+};
+
 const Container = styled.main`
   display: grid;
   justify-content: center;
@@ -54,29 +78,5 @@ const CardHeading = styled.h2`
 const CardParagraph = styled.p`
   margin: 0.25em 0 0;
 `;
-
-const Landing = () => {
-  const { handleAuthenticateFunc } = useAuthenticationFlow();
-  const { t } = useTranslation();
-
-  return (
-    <Container>
-      <Logo />
-      <Card onClick={() => handleAuthenticateFunc("/")}>
-        <div>
-          <CardHeading>
-            {t("auth.Logg inn i Nasjonal inndelingsbase")}
-          </CardHeading>
-          <CardParagraph>
-            {t(
-              "auth.Denne tjenesten er kun tilgjengelig for autoriserte brukere"
-            )}
-          </CardParagraph>
-        </div>
-        <Arrow />
-      </Card>
-    </Container>
-  );
-};
 
 export default Landing;
