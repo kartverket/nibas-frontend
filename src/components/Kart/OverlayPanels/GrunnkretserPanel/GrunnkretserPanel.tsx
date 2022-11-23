@@ -25,6 +25,7 @@ import {
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 import FutureChangesTable, { TableRow } from "./FutureChangesTable";
 import { useFlag } from "components/FeatureToggle";
+import { ToggleableKretsButton } from "../kretserComponents";
 
 type Props = {
   kommune: KommuneRef;
@@ -156,7 +157,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                     <td>{grunnkrets.grunnkretsnummer}</td>
                     {showFremtidigeEndringer && (
                       <td>
-                        <FutureChangesButton
+                        <ToggleableKretsButton
                           isOpen={isFutureChangesOpen(grunnkrets.id)}
                           onClick={(e) => {
                             e.stopPropagation();
@@ -173,8 +174,8 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                       </td>
                     )}
                     <td>
-                      <Button
-                        variant="unstyled"
+                      <ToggleableKretsButton
+                        isOpen={isRowOpen(grunnkrets.id)}
                         onClick={() => toggleRow(grunnkrets.id)}
                         icon={
                           isRowOpen(grunnkrets.id) ? (
@@ -192,7 +193,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                   {showFremtidigeEndringer &&
                     isFutureChangesOpen(grunnkrets.id) && (
                       <FutureChangesTable
-                        grunnkretsRef={grunnkrets}
+                        id={grunnkrets.id}
                         futureChangesUrl="/v1/grunnkretser/{id}"
                         headers={headers}
                         getRows={getFutureChangesRows}
@@ -215,17 +216,6 @@ const PanelTitle = styled(Heading)`
 
 const SmallerBlockLabel = styled(BlockLabel)`
   max-width: 400px;
-`;
-
-const FutureChangesButton = styled(Button).attrs(() => ({
-  variant: "unstyled",
-}))<{ isOpen: boolean }>`
-  border-radius: 50%;
-  padding: 5px;
-
-  background-color: ${({ isOpen, theme }) => isOpen && theme.colors.blueDark};
-  color: ${({ isOpen, theme }) => isOpen && theme.colors.white};
-  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 `;
 
 export default GrunnkretserPanel;

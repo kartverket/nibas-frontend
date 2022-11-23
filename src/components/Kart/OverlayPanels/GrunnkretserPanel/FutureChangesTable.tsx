@@ -1,3 +1,4 @@
+import Button from "components/form/Button";
 import useNibasApi from "hooks/useNibasApi";
 import { useMemo } from "react";
 import styled from "styled-components";
@@ -13,26 +14,27 @@ export type TableRow = {
   cells: string[];
 };
 
-type Props = {
-  grunnkretsRef: GrunnkretsRef;
+type Props<T> = {
+  id: string;
   futureChangesUrl: ApiPath;
   headers: string[];
-  getRows: (futureChanges: GrunnkretsResponse[]) => TableRow[];
+  getRows: (futureChanges: T[]) => TableRow[];
 };
 
-const FutureChangesTable = ({
-  grunnkretsRef,
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
+const FutureChangesTable = <T extends unknown>({
+  id,
   futureChangesUrl,
   headers,
   getRows,
-}: Props) => {
+}: Props<T>) => {
   const { data: fullGrunnkrets } = useNibasApi("/v1/grunnkretser/{id}", {
-    id: grunnkretsRef.id,
+    id,
   });
   // const { data: futureChanges } = useNibasApi("/v1/grunnkretser/{id}/framtidige-endringer");
 
   const rows = useMemo(
-    () => (fullGrunnkrets ? getRows([fullGrunnkrets]) : null),
+    () => (fullGrunnkrets ? getRows([fullGrunnkrets as any]) : null),
     [fullGrunnkrets, getRows]
   );
 
