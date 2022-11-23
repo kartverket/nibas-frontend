@@ -181,6 +181,7 @@ export const mockDetailedGrunnkrets1: GrunnkretsResponse = {
     gyldigTil: "2020-06-17",
   },
   oppdateringsdato: "2022-12-31",
+  endringstype: "Retting",
 };
 
 export const mockDetailedGrunnkrets2: GrunnkretsResponse = {
@@ -197,6 +198,7 @@ export const mockDetailedGrunnkrets2: GrunnkretsResponse = {
     gyldigTil: "2020-06-17",
   },
   oppdateringsdato: "2022-12-31",
+  endringstype: "Retting",
 };
 
 export const mockKommuner = [

@@ -1071,6 +1071,8 @@ export interface components {
        * @description Siste oppdateringstidspunkt for objektet
        */
       oppdateringsdato: string;
+      /** @description Typen endring som ble gjort på objektet */
+      endringstype: string;
       features: components["schemas"]["FeatureCollection"];
       /**
        * Format: int32
