@@ -1,9 +1,10 @@
 import { mockGrunnkrets1 } from "mocks/handlers/responses";
 import { render, screen } from "test/test-utils";
+import { GrunnkretsResponse } from "types/api";
 import FutureChangesTable from "./FutureChangesTable";
 
 const defaultProps: React.ComponentProps<typeof FutureChangesTable> = {
-  grunnkretsRef: mockGrunnkrets1,
+  id: "1",
   futureChangesUrl: "/v1/grunnkretser/{id}",
   headers: [
     "Navn",
@@ -13,7 +14,7 @@ const defaultProps: React.ComponentProps<typeof FutureChangesTable> = {
     "Gyldig fra",
     "Gyldig til",
   ],
-  getRows: (futureChanges) => {
+  getRows: (futureChanges: any[]) => {
     return futureChanges.map((futureChange) => {
       return {
         id: "1",
