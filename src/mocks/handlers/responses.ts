@@ -156,7 +156,7 @@ export const mockGrunnkrets1: GrunnkretsRef = {
   href: "",
   navn: "Mosekollen øst",
   grunnkretsnummer: "12345678",
-  antallFramtidigeVersjoner: 0,
+  antallFramtidigeVersjoner: 1,
 };
 
 export const mockGrunnkrets2: GrunnkretsRef = {
