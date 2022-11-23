@@ -96,6 +96,9 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
     []
   );
 
+  const shouldShowFutureChangesButton = (grunnkrets: GrunnkretsRef) =>
+    grunnkrets.antallFramtidigeVersjoner > 0;
+
   return (
     <OverlayPanelWrapper
       key="grunnkrets"
@@ -155,20 +158,22 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                     <td>{getNavnInSpraak(grunnkrets.navn, "nor")}</td>
                     <td>{grunnkrets.grunnkretsnummer}</td>
                     <td>
-                      <ToggleableKretsButton
-                        isOpen={isFutureChangesOpen(grunnkrets.id)}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleFutureChangesRow(grunnkrets.id);
-                        }}
-                        aria-label={`${
-                          isFutureChangesOpen(grunnkrets.id) ? "Skjul" : "Vis"
-                        } fremtidige endringer for ${getNavnInSpraak(
-                          grunnkrets.navn,
-                          "nor"
-                        )}`}
-                        icon={<Icon icon="schedule" />}
-                      />
+                      {shouldShowFutureChangesButton(grunnkrets) && (
+                        <ToggleableKretsButton
+                          isOpen={isFutureChangesOpen(grunnkrets.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleFutureChangesRow(grunnkrets.id);
+                          }}
+                          aria-label={`${
+                            isFutureChangesOpen(grunnkrets.id) ? "Skjul" : "Vis"
+                          } fremtidige endringer for ${getNavnInSpraak(
+                            grunnkrets.navn,
+                            "nor"
+                          )}`}
+                          icon={<Icon icon="timelapse" />}
+                        />
+                      )}
                     </td>
                     <td>
                       <ToggleableKretsButton
