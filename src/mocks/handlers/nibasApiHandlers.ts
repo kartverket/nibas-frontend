@@ -1,7 +1,12 @@
 import { rest } from "msw";
 import type { RestHandler } from "msw";
 import * as mocks from "./responses";
-import { GrunnkretsResponse, UtkastRef, UtkastResponse } from "types/api";
+import {
+  GrunnkretsResponse,
+  StemmekretsResponse,
+  UtkastRef,
+  UtkastResponse,
+} from "types/api";
 
 export const nibasApiHandlers: RestHandler[] = [
   rest.get("/v1/fylker", (req, res, ctx) => {
@@ -73,19 +78,15 @@ export const nibasApiHandlers: RestHandler[] = [
   rest.get("/v1/grunnkretser/1/framtidigeversjoner", (req, res, ctx) => {
     return res(
       ctx.status(200),
-      ctx.json<GrunnkretsResponse[]>([
-        mocks.mockDetailedGrunnkrets1,
-        {
-          ...mocks.mockDetailedGrunnkrets1,
-          navn: "Mosekollen vest",
-          grunnkretsnummer: "12345679",
-        },
-        {
-          ...mocks.mockDetailedGrunnkrets1,
-          navn: "Mosekollen nord",
-          grunnkretsnummer: "87654321",
-        },
-      ])
+      ctx.json<GrunnkretsResponse[]>(mocks.mockGrunnkretserFramtidigeEndringer)
+    );
+  }),
+  rest.get("/v1/stemmekretser/1/framtidigeversjoner", (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json<StemmekretsResponse[]>(
+        mocks.mockStemmekretserFramtidigeEndringer
+      )
     );
   }),
 ];

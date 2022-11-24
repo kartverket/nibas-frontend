@@ -344,3 +344,31 @@ export const mockUtkastRef2: UtkastRef = {
   id: "2",
   navn: "Et nytt utkast",
 };
+
+export const mockGrunnkretserFramtidigeEndringer: GrunnkretsResponse[] = [
+  mockDetailedGrunnkrets1,
+  {
+    ...mockDetailedGrunnkrets1,
+    navn: "Mosekollen vest",
+    grunnkretsnummer: "12345679",
+  },
+  {
+    ...mockDetailedGrunnkrets1,
+    navn: "Mosekollen nord",
+    grunnkretsnummer: "87654321",
+  },
+];
+
+export const mockStemmekretserFramtidigeEndringer: StemmekretsResponse[] = [
+  mockStemmekrets1,
+  {
+    ...mockStemmekrets1,
+    stemmekretsnavn: "Hundredal",
+    stemmekretsnummer: "07",
+  },
+  {
+    ...mockStemmekrets1,
+    stemmekretsnavn: "To-hundredal",
+    stemmekretsnummer: "70",
+  },
+];
