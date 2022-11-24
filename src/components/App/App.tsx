@@ -1,10 +1,13 @@
 import {
   ConfigureAuthFlowProps,
+  useAuthenticationFlow,
   useConfigureAuthFlow,
 } from "@kartverket/frontend-aut-lib";
-import { BrowserRouter as Router, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Providers from "./Providers";
 import PageLayout from "components/PageLayout";
+import Landing from "components/Landing/Landing";
+import { Suspense } from "react";
 
 /**
  * Definerer 3 verdier i konfigurasjonen. Disse brukes av biblioteket forskjellige steder i flyten.
@@ -24,16 +27,31 @@ const App = () => {
   const [redirectAfterLogon, redirectAfterLogout]: JSX.Element[] =
     useConfigureAuthFlow(authFlowProps);
 
+  const { isAuthenticatedFunc } = useAuthenticationFlow();
+  const { hostname } = window.location;
+  const isLocalhost = hostname === "localhost";
+
   return (
-    <Router>
-      <Providers>
-        <PageLayout />
-      </Providers>
-      <Routes>
-        {redirectAfterLogon}
-        {redirectAfterLogout}
-      </Routes>
-    </Router>
+    <Suspense fallback="Loading...">
+      <Router>
+        <Routes>
+          {redirectAfterLogon}
+          {redirectAfterLogout}
+          <Route
+            index
+            element={
+              isLocalhost || isAuthenticatedFunc() ? (
+                <Providers>
+                  <PageLayout />
+                </Providers>
+              ) : (
+                <Landing />
+              )
+            }
+          />
+        </Routes>
+      </Router>
+    </Suspense>
   );
 };
 

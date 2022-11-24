@@ -1,4 +1,4 @@
-import { Suspense, useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import { SWRConfig } from "swr";
 import Feedback from "components/Feedback/Feedback";
@@ -20,18 +20,16 @@ const PageLayout = () => {
           },
         }}
       >
-        <Suspense fallback="Loading...">
-          <TopBar />
-          <Sidebar />
-          <Feedback
-            type="negative"
-            title="Det har skjedd en feil"
-            isOpen={errorFeedback !== ""}
-            onClose={() => setErrorFeedback("")}
-          >
-            {errorFeedback}
-          </Feedback>
-        </Suspense>
+        <TopBar />
+        <Sidebar />
+        <Feedback
+          type="negative"
+          title="Det har skjedd en feil"
+          isOpen={errorFeedback !== ""}
+          onClose={() => setErrorFeedback("")}
+        >
+          {errorFeedback}
+        </Feedback>
         <Kart />
       </SWRConfig>
     </Grid>
