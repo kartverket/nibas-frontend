@@ -71,10 +71,11 @@ const StemmekretserPanel = ({ kommune }: Props) => {
           stemmekrets.tellekretsnavn,
           stemmekrets.tellekretsnummer,
           stemmekrets.valgdistriktsnummer,
-          (stemmekrets as any).oppdatert ?? "2020-01-01",
-          (stemmekrets as any).type ?? "Retting",
-          (stemmekrets as any).gyldigFra ?? "2022-01-01",
-          (stemmekrets as any).gyldigTil ?? "2022-01-01",
+          // Kan utkommenteres når APIet støtter dette
+          // (stemmekrets as any).oppdatert ?? "2020-01-01",
+          // (stemmekrets as any).type ?? "Retting",
+          // (stemmekrets as any).gyldigFra ?? "2022-01-01",
+          // (stemmekrets as any).gyldigTil ?? "2022-01-01",
         ],
       })),
     []
@@ -126,14 +127,14 @@ const StemmekretserPanel = ({ kommune }: Props) => {
                 <th>{t("stemmekrets.Tellekretsnavn")}</th>
                 <th>{t("stemmekrets.Tellekretsnummer")}</th>
                 <th>{/* fremtidige endringer-knapp */}</th>
-                <th>{t("Endre")}</th>
+                <th>{/* dropdown-knapp */}</th>
               </tr>
             </thead>
             <tbody>
               {utkastStemmekretser.map((stemmekrets) => (
                 <React.Fragment key={stemmekrets.id}>
                   <StemmekretsRow
-                    id={stemmekrets.id}
+                    stemmekretsRef={stemmekrets}
                     toggleRow={toggleRow}
                     isRowOpen={isRowOpen}
                     isFutureChangesOpen={isFutureChangesOpen(stemmekrets.id)}
