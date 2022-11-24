@@ -156,6 +156,7 @@ export const mockGrunnkrets1: GrunnkretsRef = {
   href: "",
   navn: "Mosekollen øst",
   grunnkretsnummer: "12345678",
+  antallFramtidigeVersjoner: 1,
 };
 
 export const mockGrunnkrets2: GrunnkretsRef = {
@@ -163,6 +164,7 @@ export const mockGrunnkrets2: GrunnkretsRef = {
   href: "",
   navn: "Dåsvatn",
   grunnkretsnummer: "12345679",
+  antallFramtidigeVersjoner: 0,
 };
 
 export const mockDetailedGrunnkrets1: GrunnkretsResponse = {
@@ -173,8 +175,13 @@ export const mockDetailedGrunnkrets1: GrunnkretsResponse = {
   identifikasjon: {
     lokalid: "lokalid",
   },
-  kommunenummer: { id: "a379eb0a-7bae-4fc9-ab07-cf0c7a28bdb7", kodeverdi: "1" },
   navn: "Mosekollen øst",
+  gyldighet: {
+    gyldigFra: "2020-06-16",
+    gyldigTil: "2020-06-17",
+  },
+  oppdateringsdato: "2022-12-31",
+  endringstype: "Retting",
 };
 
 export const mockDetailedGrunnkrets2: GrunnkretsResponse = {
@@ -185,8 +192,13 @@ export const mockDetailedGrunnkrets2: GrunnkretsResponse = {
   identifikasjon: {
     lokalid: "lokalid",
   },
-  kommunenummer: { id: "a379eb0a-7bae-4fc9-ab07-cf0c7a28bdb7", kodeverdi: "1" },
   navn: "Dåsvatn",
+  gyldighet: {
+    gyldigFra: "2020-06-16",
+    gyldigTil: "2020-06-17",
+  },
+  oppdateringsdato: "2022-12-31",
+  endringstype: "Retting",
 };
 
 export const mockKommuner = [

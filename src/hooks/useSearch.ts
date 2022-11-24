@@ -14,6 +14,13 @@ const useSearch = () => {
       setSearchValue((prevValue) => (prevValue ? inputValue : prevValue));
       timer.current = null;
     }, 300);
+
+    return () => {
+      if (timer.current) {
+        clearTimeout(timer.current);
+        timer.current = null;
+      }
+    };
   }, [inputValue]);
 
   return {

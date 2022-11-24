@@ -1,7 +1,12 @@
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { KretsRow, KretsTable, KretsTableWrapper } from "../KretsTable";
+import {
+  ButtonCell,
+  KretsRow,
+  KretsTable,
+  KretsTableWrapper,
+} from "../KretsTable";
 import {
   BlockLabel,
   HeaderButton,
@@ -9,7 +14,6 @@ import {
 } from "../metadataComponents";
 import useAccordionRows from "../useAccordionRow";
 import EditRow from "./EditRow";
-import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Icon from "components/Icon";
 import Heading from "components/typography/Heading";
@@ -24,8 +28,11 @@ import {
 } from "utils/language/language";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 import FutureChangesTable, { TableRow } from "./FutureChangesTable";
-import { useFlag } from "components/FeatureToggle";
-import { ToggleableKretsButton } from "../kretserComponents";
+import {
+  FutureChangesTableData,
+  ToggleableKretsButton,
+} from "../kretserComponents";
+import FutureChangesButton from "../FutureChangesButton";
 
 type Props = {
   kommune: KommuneRef;
@@ -81,21 +88,25 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
 
   const getFutureChangesRows = useCallback(
     (futureChanges: GrunnkretsResponse[]): TableRow[] =>
-      futureChanges.map((grunnkrets) => ({
-        id: grunnkrets.id,
-        cells: [
-          grunnkrets.grunnkretsnummer,
-          grunnkrets.navn,
-          (grunnkrets as any).oppdatert ?? "2020-01-01",
-          (grunnkrets as any).type ?? "Retting",
-          (grunnkrets as any).gyldigFra ?? "2022-01-01",
-          (grunnkrets as any).gyldigTil ?? "2022-01-01",
-        ],
-      })),
+      futureChanges.map(
+        (grunnkrets) =>
+          ({
+            id: grunnkrets.id,
+            cells: [
+              grunnkrets.grunnkretsnummer,
+              grunnkrets.navn,
+              grunnkrets.oppdateringsdato,
+              grunnkrets.endringstype ?? "---",
+              grunnkrets.gyldighet.gyldigFra,
+              grunnkrets.gyldighet.gyldigTil,
+            ],
+          } as TableRow)
+      ),
     []
   );
 
-  const showFremtidigeEndringer = useFlag("grunnkrets-fremtidige-endringer");
+  const shouldShowFutureChangesButton = (grunnkrets: GrunnkretsRef) =>
+    grunnkrets.antallFramtidigeVersjoner > 0;
 
   return (
     <OverlayPanelWrapper
@@ -145,7 +156,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
               <tr>
                 <th>{t("tabell.Navn")}</th>
                 <th>{t("grunnkrets.Grunnkretsnummer")}</th>
-                {showFremtidigeEndringer && <th></th>}
+                <th></th>
                 <th></th>
               </tr>
             </thead>
@@ -155,25 +166,16 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                   <KretsRow onClick={() => toggleRow(grunnkrets.id)}>
                     <td>{getNavnInSpraak(grunnkrets.navn, "nor")}</td>
                     <td>{grunnkrets.grunnkretsnummer}</td>
-                    {showFremtidigeEndringer && (
-                      <td>
-                        <ToggleableKretsButton
+                    <ButtonCell>
+                      {shouldShowFutureChangesButton(grunnkrets) && (
+                        <FutureChangesButton
+                          krets={grunnkrets}
                           isOpen={isFutureChangesOpen(grunnkrets.id)}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleFutureChangesRow(grunnkrets.id);
-                          }}
-                          aria-label={`${
-                            isFutureChangesOpen(grunnkrets.id) ? "Skjul" : "Vis"
-                          } fremtidige endringer for ${getNavnInSpraak(
-                            grunnkrets.navn,
-                            "nor"
-                          )}`}
-                          icon={<Icon icon="schedule" />}
+                          toggleRow={toggleFutureChangesRow}
                         />
-                      </td>
-                    )}
-                    <td>
+                      )}
+                    </ButtonCell>
+                    <ButtonCell>
                       <ToggleableKretsButton
                         isOpen={isRowOpen(grunnkrets.id)}
                         onClick={() => toggleRow(grunnkrets.id)}
@@ -185,20 +187,25 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                           )
                         }
                       />
-                    </td>
+                    </ButtonCell>
                   </KretsRow>
+
                   {isRowOpen(grunnkrets.id) && (
                     <EditRow grunnkrets={grunnkrets} kommuneId={kommune.id} />
                   )}
-                  {showFremtidigeEndringer &&
-                    isFutureChangesOpen(grunnkrets.id) && (
-                      <FutureChangesTable
-                        id={grunnkrets.id}
-                        futureChangesUrl="/v1/grunnkretser/{id}"
-                        headers={headers}
-                        getRows={getFutureChangesRows}
-                      />
-                    )}
+
+                  {isFutureChangesOpen(grunnkrets.id) && (
+                    <tr>
+                      <FutureChangesTableData colSpan={4}>
+                        <FutureChangesTable
+                          id={grunnkrets.id}
+                          futureChangesUrl="/v1/grunnkretser/{lokalid}/framtidigeversjoner"
+                          headers={headers}
+                          getRows={getFutureChangesRows}
+                        />
+                      </FutureChangesTableData>
+                    </tr>
+                  )}
                 </React.Fragment>
               ))}
             </tbody>

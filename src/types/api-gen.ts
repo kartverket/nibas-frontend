@@ -120,17 +120,13 @@ export interface paths {
   "/v1/kodeliste/fastsettingstyper": {
     get: operations["fetchFastsettingstyper"];
   };
+  "/v1/grunnkretser/{lokalid}/framtidigeversjoner": {
+    /** Returnerer en liste av nåværende Grunnkrets og eventuelt publiserte framtidige versjoner som matcher lokalid. */
+    get: operations["hentFramtidigeVersjonerForGrunnkrets"];
+  };
   "/v1/grunnkretser/{id}": {
     /** Henter grunnkrets med gitt id */
     get: operations["hentGrunnkrets"];
-  };
-  "/v1/grunnkretser/{id}/revisjoner": {
-    /** Henter historiske revisjoner til en grunnkrets med gitt id */
-    get: operations["hentGrunnkretsRevisjoner"];
-  };
-  "/v1/grunnkretser/{id}/revisjoner/{revisjon}": {
-    /** Henter en gitt historisk revisjon av en grunnkrets */
-    get: operations["hentGrunnkretsRevisjon"];
   };
   "/v1/grunnkretser/{id}/grenser": {
     /** Henter grensene til en grunnkrets med gitt id */
@@ -640,22 +636,91 @@ export interface components {
       dokumentasjonsreferanser: unknown;
       maritimeGrenser: unknown;
     };
+    ApiErrorResponse: {
+      /**
+       * @description HttpStatus for responsen.
+       * @enum {string}
+       */
+      httpStatus:
+        | "100 CONTINUE"
+        | "101 SWITCHING_PROTOCOLS"
+        | "102 PROCESSING"
+        | "103 CHECKPOINT"
+        | "200 OK"
+        | "201 CREATED"
+        | "202 ACCEPTED"
+        | "203 NON_AUTHORITATIVE_INFORMATION"
+        | "204 NO_CONTENT"
+        | "205 RESET_CONTENT"
+        | "206 PARTIAL_CONTENT"
+        | "207 MULTI_STATUS"
+        | "208 ALREADY_REPORTED"
+        | "226 IM_USED"
+        | "300 MULTIPLE_CHOICES"
+        | "301 MOVED_PERMANENTLY"
+        | "302 FOUND"
+        | "302 MOVED_TEMPORARILY"
+        | "303 SEE_OTHER"
+        | "304 NOT_MODIFIED"
+        | "305 USE_PROXY"
+        | "307 TEMPORARY_REDIRECT"
+        | "308 PERMANENT_REDIRECT"
+        | "400 BAD_REQUEST"
+        | "401 UNAUTHORIZED"
+        | "402 PAYMENT_REQUIRED"
+        | "403 FORBIDDEN"
+        | "404 NOT_FOUND"
+        | "405 METHOD_NOT_ALLOWED"
+        | "406 NOT_ACCEPTABLE"
+        | "407 PROXY_AUTHENTICATION_REQUIRED"
+        | "408 REQUEST_TIMEOUT"
+        | "409 CONFLICT"
+        | "410 GONE"
+        | "411 LENGTH_REQUIRED"
+        | "412 PRECONDITION_FAILED"
+        | "413 PAYLOAD_TOO_LARGE"
+        | "413 REQUEST_ENTITY_TOO_LARGE"
+        | "414 URI_TOO_LONG"
+        | "414 REQUEST_URI_TOO_LONG"
+        | "415 UNSUPPORTED_MEDIA_TYPE"
+        | "416 REQUESTED_RANGE_NOT_SATISFIABLE"
+        | "417 EXPECTATION_FAILED"
+        | "418 I_AM_A_TEAPOT"
+        | "419 INSUFFICIENT_SPACE_ON_RESOURCE"
+        | "420 METHOD_FAILURE"
+        | "421 DESTINATION_LOCKED"
+        | "422 UNPROCESSABLE_ENTITY"
+        | "423 LOCKED"
+        | "424 FAILED_DEPENDENCY"
+        | "425 TOO_EARLY"
+        | "426 UPGRADE_REQUIRED"
+        | "428 PRECONDITION_REQUIRED"
+        | "429 TOO_MANY_REQUESTS"
+        | "431 REQUEST_HEADER_FIELDS_TOO_LARGE"
+        | "451 UNAVAILABLE_FOR_LEGAL_REASONS"
+        | "500 INTERNAL_SERVER_ERROR"
+        | "501 NOT_IMPLEMENTED"
+        | "502 BAD_GATEWAY"
+        | "503 SERVICE_UNAVAILABLE"
+        | "504 GATEWAY_TIMEOUT"
+        | "505 HTTP_VERSION_NOT_SUPPORTED"
+        | "506 VARIANT_ALSO_NEGOTIATES"
+        | "507 INSUFFICIENT_STORAGE"
+        | "508 LOOP_DETECTED"
+        | "509 BANDWIDTH_LIMIT_EXCEEDED"
+        | "510 NOT_EXTENDED"
+        | "511 NETWORK_AUTHENTICATION_REQUIRED";
+      /** @description Beskrivelse av hva som har gått galt. */
+      melding?: string;
+    };
     /** @description Feil som har oppstått pga optimistisk lås. */
     ConflictResponse: {
       /** @description Identifikatoren til objektet som er utdatert. */
       id: string;
       /** @description Typen til objektet som er utdatert. */
       type: string;
-      /**
-       * Format: int32
-       * @description Versjon som prøves å oppdateres.
-       */
-      versjon: number;
-      /**
-       * Format: int32
-       * @description Versjon som er gjeldende for objektet nå.
-       */
-      gjeldendeVersjon: number;
+      /** @description Identifikator til objekt(et/ene) som har en nyere gyldigFra-dato og er i konflikt med endringen. */
+      affectedIds: components["schemas"]["ObjektIdentifikator"][];
       /** @description Beskrivelse av hva som har gått galt. */
       melding?: string;
     };
@@ -756,83 +821,6 @@ export interface components {
       /** Format: date */
       gyldigFra: string;
     };
-    ApiErrorResponse: {
-      /**
-       * @description HttpStatus for responsen.
-       * @enum {string}
-       */
-      httpStatus:
-        | "100 CONTINUE"
-        | "101 SWITCHING_PROTOCOLS"
-        | "102 PROCESSING"
-        | "103 CHECKPOINT"
-        | "200 OK"
-        | "201 CREATED"
-        | "202 ACCEPTED"
-        | "203 NON_AUTHORITATIVE_INFORMATION"
-        | "204 NO_CONTENT"
-        | "205 RESET_CONTENT"
-        | "206 PARTIAL_CONTENT"
-        | "207 MULTI_STATUS"
-        | "208 ALREADY_REPORTED"
-        | "226 IM_USED"
-        | "300 MULTIPLE_CHOICES"
-        | "301 MOVED_PERMANENTLY"
-        | "302 FOUND"
-        | "302 MOVED_TEMPORARILY"
-        | "303 SEE_OTHER"
-        | "304 NOT_MODIFIED"
-        | "305 USE_PROXY"
-        | "307 TEMPORARY_REDIRECT"
-        | "308 PERMANENT_REDIRECT"
-        | "400 BAD_REQUEST"
-        | "401 UNAUTHORIZED"
-        | "402 PAYMENT_REQUIRED"
-        | "403 FORBIDDEN"
-        | "404 NOT_FOUND"
-        | "405 METHOD_NOT_ALLOWED"
-        | "406 NOT_ACCEPTABLE"
-        | "407 PROXY_AUTHENTICATION_REQUIRED"
-        | "408 REQUEST_TIMEOUT"
-        | "409 CONFLICT"
-        | "410 GONE"
-        | "411 LENGTH_REQUIRED"
-        | "412 PRECONDITION_FAILED"
-        | "413 PAYLOAD_TOO_LARGE"
-        | "413 REQUEST_ENTITY_TOO_LARGE"
-        | "414 URI_TOO_LONG"
-        | "414 REQUEST_URI_TOO_LONG"
-        | "415 UNSUPPORTED_MEDIA_TYPE"
-        | "416 REQUESTED_RANGE_NOT_SATISFIABLE"
-        | "417 EXPECTATION_FAILED"
-        | "418 I_AM_A_TEAPOT"
-        | "419 INSUFFICIENT_SPACE_ON_RESOURCE"
-        | "420 METHOD_FAILURE"
-        | "421 DESTINATION_LOCKED"
-        | "422 UNPROCESSABLE_ENTITY"
-        | "423 LOCKED"
-        | "424 FAILED_DEPENDENCY"
-        | "425 TOO_EARLY"
-        | "426 UPGRADE_REQUIRED"
-        | "428 PRECONDITION_REQUIRED"
-        | "429 TOO_MANY_REQUESTS"
-        | "431 REQUEST_HEADER_FIELDS_TOO_LARGE"
-        | "451 UNAVAILABLE_FOR_LEGAL_REASONS"
-        | "500 INTERNAL_SERVER_ERROR"
-        | "501 NOT_IMPLEMENTED"
-        | "502 BAD_GATEWAY"
-        | "503 SERVICE_UNAVAILABLE"
-        | "504 GATEWAY_TIMEOUT"
-        | "505 HTTP_VERSION_NOT_SUPPORTED"
-        | "506 VARIANT_ALSO_NEGOTIATES"
-        | "507 INSUFFICIENT_STORAGE"
-        | "508 LOOP_DETECTED"
-        | "509 BANDWIDTH_LIMIT_EXCEEDED"
-        | "510 NOT_EXTENDED"
-        | "511 NETWORK_AUTHENTICATION_REQUIRED";
-      /** @description Beskrivelse av hva som har gått galt. */
-      melding?: string;
-    };
     /** @description Representasjon av audit info for et objekt. */
     AuditInfoResponse: {
       /**
@@ -905,7 +893,7 @@ export interface components {
       /** @description URL til full representasjon av utkastet. */
       href: string;
     };
-    /** @description Geometrien til grunnkretsen, dvs representasjonspunkt og flaten */
+    /** @description Geometrien til kretsen, dvs representasjonspunkt og flaten */
     FeatureCollection: {
       /** @description Toppnivå for geojson-strukturen, definert av en konstant med navn type og verdi FeatureCollection */
       type: string;
@@ -1029,6 +1017,11 @@ export interface components {
       href: string;
       /** @description Nummeret til grunnkretsen */
       grunnkretsnummer: string;
+      /**
+       * Format: int32
+       * @description Antall publiserte framtidige gyldige versjoner.
+       */
+      antallFramtidigeVersjoner: number;
     };
     /** @description Liste av kodeliste-elementer. */
     KodelisteItem: {
@@ -1059,18 +1052,38 @@ export interface components {
     GrunnkretsResponse: {
       /** @description ID-en til grunnkretsen */
       id: string;
+      identifikasjon: components["schemas"]["Identifikasjon"];
       /** @description Navnet på grunnkretsen */
       navn: string;
       /** @description Grunnkretsnummeret til grunnkretsen */
       grunnkretsnummer: string;
-      identifikasjon: components["schemas"]["Identifikasjon"];
-      kommunenummer: components["schemas"]["Kommunenummer"];
+      gyldighet: components["schemas"]["GyldighetResponse"];
+      /**
+       * Format: date
+       * @description Siste oppdateringstidspunkt for objektet
+       */
+      oppdateringsdato: string;
+      /** @description Typen endring som ble gjort på objektet */
+      endringstype: string;
       features: components["schemas"]["FeatureCollection"];
       /**
        * Format: int32
        * @description Teknisk versjon for å støtte samhandling og redigering
        */
       version: number;
+    };
+    /** @description Gyldighetsintervall for objektet */
+    GyldighetResponse: {
+      /**
+       * Format: date
+       * @description Tidspunktet objektet er gyldig fra
+       */
+      gyldigFra: string;
+      /**
+       * Format: date
+       * @description Tidspunktet objektet er gyldig til. Kan være tomt/løpende.
+       */
+      gyldigTil?: string;
     };
     /** @description En referanse til et fylke */
     FylkeRef: {
@@ -1113,6 +1126,17 @@ export interface components {
        * @description Det faktiske fylkesnummeret
        */
       kodeverdi: number;
+    };
+    /** @description Representasjon av en krets. Response-type kun for Matrikkelen. Kan være grunnkrets, stemmekrets etc. */
+    KretsResponse: {
+      /** @description Lokalid-en til kretsen. */
+      id: string;
+      /** @description Navnet på kretsen. */
+      navn: string;
+      /** @description Nummeret til kretsen. */
+      nummer: string;
+      kommunenummer: components["schemas"]["Kommunenummer"];
+      features: components["schemas"]["FeatureCollection"];
     };
   };
 }
@@ -1710,6 +1734,23 @@ export interface operations {
       };
     };
   };
+  /** Returnerer en liste av nåværende Grunnkrets og eventuelt publiserte framtidige versjoner som matcher lokalid. */
+  hentFramtidigeVersjonerForGrunnkrets: {
+    parameters: {
+      path: {
+        /** LokalID-en til grunnkretsen man vil hente versjoner for */
+        lokalid: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["GrunnkretsResponse"][];
+        };
+      };
+    };
+  };
   /** Henter grunnkrets med gitt id */
   hentGrunnkrets: {
     parameters: {
@@ -1717,47 +1758,9 @@ export interface operations {
         /** ID-en til grunnkretsen man vil hente */
         id: string;
       };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["GrunnkretsResponse"];
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "application/json": components["schemas"]["GrunnkretsResponse"];
-        };
-      };
-    };
-  };
-  /** Henter historiske revisjoner til en grunnkrets med gitt id */
-  hentGrunnkretsRevisjoner: {
-    parameters: {
-      path: {
-        /** ID-en til grunnkretsen man vil hente */
-        id: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["RevisjonRef"][];
-        };
-      };
-    };
-  };
-  /** Henter en gitt historisk revisjon av en grunnkrets */
-  hentGrunnkretsRevisjon: {
-    parameters: {
-      path: {
-        /** ID-en til grunnkretsen man vil hente */
-        id: string;
-        /** ID til revisjonen man vil hente */
-        revisjon: number;
+      query: {
+        /** Eventuell Gyldig Dato for grunnkrets (default = datens dato */
+        gyldigDato?: string;
       };
     };
     responses: {
@@ -1781,6 +1784,10 @@ export interface operations {
       path: {
         /** ID-en til grunnkretsen man vil hente */
         id: string;
+      };
+      query: {
+        /** Eventuell Gyldig Dato for grunnkrets (default = datens dato */
+        gyldigDato?: string;
       };
     };
     responses: {
@@ -1974,13 +1981,13 @@ export interface operations {
       /** Successful operation */
       200: {
         content: {
-          "application/json": components["schemas"]["StemmekretsResponse"][];
+          "application/json": components["schemas"]["KretsResponse"][];
         };
       };
       /** Not Found */
       404: {
         content: {
-          "application/json": components["schemas"]["StemmekretsResponse"][];
+          "application/json": components["schemas"]["KretsResponse"][];
         };
       };
     };
@@ -1997,13 +2004,13 @@ export interface operations {
       /** Successful operation */
       200: {
         content: {
-          "application/json": components["schemas"]["StemmekretsResponse"][];
+          "application/json": components["schemas"]["KretsResponse"][];
         };
       };
       /** Not Found */
       404: {
         content: {
-          "application/json": components["schemas"]["StemmekretsResponse"][];
+          "application/json": components["schemas"]["KretsResponse"][];
         };
       };
     };
@@ -2020,13 +2027,13 @@ export interface operations {
       /** Successful operation */
       200: {
         content: {
-          "application/json": components["schemas"]["GrunnkretsResponse"][];
+          "application/json": components["schemas"]["KretsResponse"][];
         };
       };
       /** Not Found */
       404: {
         content: {
-          "application/json": components["schemas"]["GrunnkretsResponse"][];
+          "application/json": components["schemas"]["KretsResponse"][];
         };
       };
     };
@@ -2043,13 +2050,13 @@ export interface operations {
       /** Successful operation */
       200: {
         content: {
-          "application/json": components["schemas"]["GrunnkretsResponse"][];
+          "application/json": components["schemas"]["KretsResponse"][];
         };
       };
       /** Not Found */
       404: {
         content: {
-          "application/json": components["schemas"]["GrunnkretsResponse"][];
+          "application/json": components["schemas"]["KretsResponse"][];
         };
       };
     };

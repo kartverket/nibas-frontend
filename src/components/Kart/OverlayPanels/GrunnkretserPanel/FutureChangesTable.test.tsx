@@ -1,11 +1,13 @@
 import { mockGrunnkrets1 } from "mocks/handlers/responses";
 import { render, screen } from "test/test-utils";
 import { GrunnkretsResponse } from "types/api";
-import FutureChangesTable from "./FutureChangesTable";
+import FutureChangesTable, { TableRow } from "./FutureChangesTable";
 
-const defaultProps: React.ComponentProps<typeof FutureChangesTable> = {
-  id: "1",
-  futureChangesUrl: "/v1/grunnkretser/{id}",
+const defaultProps: React.ComponentProps<
+  typeof FutureChangesTable<GrunnkretsResponse>
+> = {
+  id: mockGrunnkrets1.id,
+  futureChangesUrl: "/v1/grunnkretser/{lokalid}/framtidigeversjoner",
   headers: [
     "Navn",
     "Grunnkretsnummer",
@@ -14,26 +16,27 @@ const defaultProps: React.ComponentProps<typeof FutureChangesTable> = {
     "Gyldig fra",
     "Gyldig til",
   ],
-  getRows: (futureChanges: any[]) => {
-    return futureChanges.map((futureChange) => {
-      return {
-        id: "1",
-        cells: [
-          futureChange.navn,
-          futureChange.grunnkretsnummer,
-          (futureChange as any).oppdatert,
-          (futureChange as any).type,
-          (futureChange as any).gyldigFra,
-          (futureChange as any).gyldigTil,
-        ],
-      };
-    });
+  getRows: (futureChanges: GrunnkretsResponse[]) => {
+    return futureChanges.map(
+      (futureChange) =>
+        ({
+          id: "1",
+          cells: [
+            futureChange.navn,
+            futureChange.grunnkretsnummer,
+            futureChange.oppdateringsdato,
+            futureChange.endringstype,
+            futureChange.gyldighet.gyldigFra,
+            futureChange.gyldighet.gyldigTil,
+          ],
+        } as TableRow)
+    );
   },
 };
 
 describe("FutureChangesTable", () => {
   // fiks etter https://kartverket.atlassian.net/browse/TS-573
-  it.skip("should list all future changes for a grunnkrets", async () => {
+  it("should list all future changes for a grunnkrets", async () => {
     render(<FutureChangesTable {...defaultProps} />);
 
     expect(await screen.findByRole("table")).toBeInTheDocument();
