@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
@@ -20,6 +21,7 @@ import Heading from "components/typography/Heading";
 import FutureChangesTable, {
   TableRow,
 } from "../GrunnkretserPanel/FutureChangesTable";
+import { FutureChangesTableData } from "../kretserComponents";
 
 type Props = {
   kommune: KommuneRef;
@@ -72,10 +74,10 @@ const StemmekretserPanel = ({ kommune }: Props) => {
           stemmekrets.tellekretsnummer,
           stemmekrets.valgdistriktsnummer,
           // Kan utkommenteres når APIet støtter dette
-          // (stemmekrets as any).oppdatert ?? "2020-01-01",
-          // (stemmekrets as any).type ?? "Retting",
-          // (stemmekrets as any).gyldigFra ?? "2022-01-01",
-          // (stemmekrets as any).gyldigTil ?? "2022-01-01",
+          (stemmekrets as any).oppdatert ?? "2020-01-01",
+          (stemmekrets as any).type ?? "Retting",
+          (stemmekrets as any).gyldigFra ?? "2022-01-01",
+          (stemmekrets as any).gyldigTil ?? "2022-01-01",
         ],
       })),
     []
@@ -144,12 +146,16 @@ const StemmekretserPanel = ({ kommune }: Props) => {
                     <EditRow stemmekrets={stemmekrets} kommuneId={kommune.id} />
                   )}
                   {isFutureChangesOpen(stemmekrets.id) && (
-                    <FutureChangesTable
-                      id={stemmekrets.id}
-                      headers={headers}
-                      getRows={getFutureChangesRows}
-                      futureChangesUrl="/v1/grunnkretser/{lokalid}/framtidigeversjoner"
-                    />
+                    <tr>
+                      <FutureChangesTableData colSpan={7}>
+                        <FutureChangesTable
+                          id={stemmekrets.id}
+                          headers={headers}
+                          getRows={getFutureChangesRows}
+                          futureChangesUrl="/v1/grunnkretser/{lokalid}/framtidigeversjoner"
+                        />
+                      </FutureChangesTableData>
+                    </tr>
                   )}
                 </React.Fragment>
               ))}
