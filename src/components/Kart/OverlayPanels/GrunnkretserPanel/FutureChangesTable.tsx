@@ -1,84 +1,60 @@
 import useNibasApi from "hooks/useNibasApi";
+import { useMemo } from "react";
 import styled from "styled-components";
-import { GrunnkretsRef } from "types/api";
+import { GrunnkretsResponse, StemmekretsResponse } from "types/api";
 
-type Props = {
-  grunnkretsRef: GrunnkretsRef;
+export type TableRow = {
+  id: string;
+  cells: string[];
 };
 
-const FutureChangesTable = ({ grunnkretsRef }: Props) => {
-  const { data: fullGrunnkrets } = useNibasApi("/v1/grunnkretser/{id}", {
-    id: grunnkretsRef.id,
+type Props<T extends GrunnkretsResponse | StemmekretsResponse> = {
+  id: string;
+  futureChangesUrl: "/v1/grunnkretser/{lokalid}/framtidigeversjoner";
+  headers: string[];
+  getRows: (futureChanges: T[]) => TableRow[];
+};
+
+const FutureChangesTable = <
+  T extends GrunnkretsResponse | StemmekretsResponse
+>({
+  id,
+  futureChangesUrl,
+  headers,
+  getRows,
+}: Props<T>) => {
+  const { data: futureChanges } = useNibasApi(futureChangesUrl, {
+    lokalid: id,
   });
-  // const { data: futureChanges } = useNibasApi("/v1/grunnkretser/{id}/framtidige-endringer");
-  const futureChanges = [
-    {
-      ...(fullGrunnkrets ?? {
-        id: "0",
-      }),
-      oppdatert: "2021-01-01",
-      type: "Retting",
-      gyldigFra: "2022-01-01",
-      gyldigTil: "2022-04-01",
-    },
-    {
-      id: "endrng-1",
-      grunnkretsnummer: "12345678",
-      navn: "Grunnkrets 1",
-      oppdatert: "2022-01-01",
-      type: "Kvalitetsheving",
-      gyldigFra: "2022-04-01",
-      gyldigTil: "2022-07-01",
-    },
-    {
-      id: "endring-2",
-      grunnkretsnummer: "87654321",
-      navn: "Grunnkrets 1, men 2",
-      oppdatert: "2022-07-01",
-      type: "Kvalitetsheving",
-      gyldigFra: "2022-07-01",
-      gyldigTil: "2022-12-31",
-    },
-  ];
+
+  const rows = useMemo(
+    () => (futureChanges ? getRows(futureChanges as T[]) : null),
+    [futureChanges, getRows]
+  );
+
+  if (!rows) return null;
 
   return (
-    <tr>
-      <TableData colSpan={4}>
-        <Table>
-          <thead>
-            <tr>
-              <th>Grunnkretsnummer</th>
-              <th>Grunnkrets</th>
-              <th>Oppdatert</th>
-              <th>Type</th>
-              <th>Gyldig fra</th>
-              <th>Gyldig til</th>
-            </tr>
-          </thead>
-          <tbody>
-            {futureChanges.map((futureChange) => (
-              <tr key={futureChange.id}>
-                <td>{futureChange.grunnkretsnummer}</td>
-                <td>{futureChange.navn}</td>
-                <td>{futureChange.oppdatert}</td>
-                <td>{futureChange.type}</td>
-                <td>{futureChange.gyldigFra}</td>
-                <td>{futureChange.gyldigTil}</td>
-              </tr>
+    <Table>
+      <thead>
+        <tr>
+          {headers.map((header) => (
+            <th key={header}>{header}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((row, i) => (
+          <tr key={i}>
+            {row.cells.map((cell) => (
+              <td key={`${row.id}-${cell}`}>{cell}</td>
             ))}
-          </tbody>
-        </Table>
-      </TableData>
-    </tr>
+          </tr>
+        ))}
+      </tbody>
+    </Table>
   );
 };
-
-const TableData = styled.td`
-  border-top: 2px solid ${({ theme }) => theme.colors.gray};
-  background-color: ${({ theme }) => theme.colors.grayLight};
-  width: 100%;
-  padding: 32px 16px;
-`;
 
 const Table = styled.table`
   width: 100%;

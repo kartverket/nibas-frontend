@@ -10,12 +10,17 @@ const useSearch = () => {
       timer.current = null;
     }
 
-    if (!inputValue) return;
-
     timer.current = setTimeout(() => {
-      setSearchValue(inputValue);
+      setSearchValue((prevValue) => (prevValue ? inputValue : prevValue));
       timer.current = null;
     }, 300);
+
+    return () => {
+      if (timer.current) {
+        clearTimeout(timer.current);
+        timer.current = null;
+      }
+    };
   }, [inputValue]);
 
   return {

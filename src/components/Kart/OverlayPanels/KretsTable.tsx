@@ -50,3 +50,8 @@ export const KretsTable = styled.table`
 export const KretsTableWrapper = styled.div`
   overflow-y: auto;
 `;
+
+export const ButtonCell = styled.td`
+  width: 1%;
+  white-space: nowrap;
+`;

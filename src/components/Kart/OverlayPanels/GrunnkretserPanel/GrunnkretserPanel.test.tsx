@@ -64,8 +64,6 @@ describe("GrunnkretserPanel", () => {
         version: 1,
         identifikasjon: {
           lokalid: "lokalid",
-          navnerom: "navnerom",
-          versjonid: "versjonId",
         },
       },
     });
@@ -89,7 +87,7 @@ describe("GrunnkretserPanel", () => {
       })
     );
 
-    expect(screen.getAllByRole("table")).toHaveLength(2);
+    await waitFor(() => expect(screen.getAllByRole("table")).toHaveLength(2));
 
     await user.click(
       screen.getByRole("button", {
