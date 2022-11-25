@@ -190,5 +190,5 @@ jobs:
       service_account: nibas-deploy@nibas-prod-732a.iam.gserviceaccount.com
       project_id: kubernetes-prod-e4a2
       deploy_on: "refs/heads/TS-643-legge-ut-nibas-frontend-i-prod"
-      vault_role: nibas-backend-write-role
+      vault_role: nibas-frontend-read-role
       image_url: ${{ needs.build.outputs.image_url }}
