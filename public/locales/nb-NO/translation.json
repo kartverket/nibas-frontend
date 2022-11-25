@@ -27,7 +27,9 @@
     "Login": "Logg inn",
     "Logout": "Logg ut",
     "Logget inn som {{ personId }}": "Logget inn som {{ personId }}",
-    "Ikke logget inn": "Ikke logget inn"
+    "Ikke logget inn": "Ikke logget inn",
+    "Logg inn i Nasjonal inndelingsbase": "Logg inn i Nasjonal inndelingsbase",
+    "Denne tjenesten er kun tilgjengelig for autoriserte brukere": "Denne tjenesten er kun tilgjengelig for autoriserte brukere."
   },
   "metadata": {
     "Generelt": "Generelt",

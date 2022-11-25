@@ -52,6 +52,6 @@ export const KretsTableWrapper = styled.div`
 `;
 
 export const ButtonCell = styled.td`
-  width: 1px;
+  width: 1%;
   white-space: nowrap;
 `;
