@@ -1,4 +1,9 @@
-import React, { createContext, useCallback, useContext, useMemo } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+} from "react";
 import { ToolbarContextValue, HistoryEntry } from "./types";
 import {
   getDirtyIdsFromEntries,
@@ -88,19 +93,27 @@ export const ToolbarContext = createContext<ToolbarContextValue | undefined>(
 );
 
 export const ToolbarProvider: React.FC = ({ children }) => {
+  const [dirtyFeatureIds, setDirtyFeatureIds] = React.useState<string[]>([]);
   const historyValue = useHistory({
     onUndo,
     onRedo,
   });
 
-  const dirtyFeatureIds = useMemo(
-    () =>
-      historyValue.history.entries
-        .slice(0, historyValue.history.index)
-        .filter((entry) => entry.type === "grense" || entry.type === "metadata")
-        .reduce<string[]>(getDirtyIdsFromEntries, []),
-    [historyValue.history]
-  );
+  useEffect(() => {
+    const newValues = historyValue.history.entries
+      .slice(0, historyValue.history.index)
+      .filter((entry) => entry.type === "grense" || entry.type === "metadata")
+      .reduce<string[]>(getDirtyIdsFromEntries, []);
+
+    setDirtyFeatureIds((prevIds) => {
+      // trenger ikke ny state hvis det ikke er noen nye verdier
+      if (newValues.length === prevIds.length) {
+        return prevIds;
+      }
+
+      return newValues;
+    });
+  }, [historyValue.history]);
 
   const value = {
     ...historyValue,
