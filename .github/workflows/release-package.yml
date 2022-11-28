@@ -2,7 +2,7 @@ name: nibas-frontend
 on:
   push:
     branches:
-      - TS-643-legge-ut-nibas-frontend-i-prod
+      - master
 
 permissions:
   id-token: write
@@ -189,6 +189,6 @@ jobs:
       auth_project_number: 468770754406
       service_account: nibas-deploy@nibas-prod-732a.iam.gserviceaccount.com
       project_id: kubernetes-prod-e4a2
-      deploy_on: "refs/heads/TS-643-legge-ut-nibas-frontend-i-prod"
+      deploy_on: "refs/heads/master"
       vault_role: nibas-frontend-read-role
       image_url: ${{ needs.build.outputs.image_url }}
