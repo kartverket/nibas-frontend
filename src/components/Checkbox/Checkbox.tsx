@@ -4,7 +4,7 @@ import Label from "components/form/Label";
 
 type Props = InputHTMLAttributes<HTMLInputElement> & {
   label: React.ReactNode;
-  type: "radio" | "checkbox";
+  type?: "radio" | "checkbox";
 };
 
 const Checkbox = forwardRef<HTMLInputElement, Props>(function Checkbox(
@@ -15,7 +15,7 @@ const Checkbox = forwardRef<HTMLInputElement, Props>(function Checkbox(
     <Wrapper disabled={!!props.disabled} className={className}>
       {label}
       <DefaultCheckbox {...props} ref={ref} />
-      <CustomCheckbox type={props.type} />
+      <CustomCheckbox type={props.type ?? "checkbox"} />
     </Wrapper>
   );
 });
