@@ -1,3 +1,5 @@
+import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
+import { resolveUtkastConflict } from "api/utkast";
 import Checkbox from "components/Checkbox";
 import { CustomModalWrapper, ModalOverlay } from "components/Feedback/Feedback";
 import Button from "components/form/Button";
@@ -16,24 +18,24 @@ import {
 import ReactModal from "react-modal";
 import styled from "styled-components";
 import {
-  ConflictResponse,
+  ConflictResolved,
   FramtidigVersjonConflict,
   GrunnkretsRequest,
-  GrunnkretsResponse,
-  TypedConflictResponse,
   UtkastResponse,
 } from "types/api";
 
 ReactModal.setAppElement("#root");
 
+type GrunnkretsFormData = {
+  grunnkretsnummer: string;
+  navn: string;
+  endringstype: string;
+  gyldigFra: string;
+  confirmed: boolean;
+};
+
 type Inputs = {
-  grunnkretser: {
-    grunnkretsnummer: string;
-    navn: string;
-    endringstype: string;
-    gyldigFra: string;
-    confirmed: boolean;
-  }[];
+  grunnkretser: GrunnkretsFormData[];
 };
 
 type Props<T> = {
@@ -57,6 +59,7 @@ const UtkastConflictModal = <T extends GrunnkretsRequest>({
       lokalid: current.identifikasjon.lokalid,
     }
   );
+  const { tokenHolderFunc } = useAuthenticationFlow();
 
   const { control, register, setValue, handleSubmit, watch } = useForm<Inputs>({
     defaultValues: {
@@ -69,7 +72,51 @@ const UtkastConflictModal = <T extends GrunnkretsRequest>({
   });
 
   const submit = handleSubmit((data) => {
+    const getGrunnkretsRequest = (grunnkretsFormData: GrunnkretsFormData) => {
+      const futureVersion = futureVersions?.find(
+        (fv) => fv.gyldighet.gyldigFra === grunnkretsFormData.gyldigFra
+      );
+
+      return {
+        identifikasjon: {
+          lokalid: current.identifikasjon.lokalid,
+        },
+        grunnkretsnummer: grunnkretsFormData.grunnkretsnummer,
+        version: futureVersion?.version,
+        navn: grunnkretsFormData.navn,
+        endringstype: grunnkretsFormData.endringstype,
+        gyldigFra: grunnkretsFormData.gyldigFra,
+      } as GrunnkretsRequest;
+    };
+
     console.log(data);
+    const resolvedConflict: ConflictResolved = {
+      lokalid: {
+        value: current.identifikasjon.lokalid,
+      },
+      grunnkretsRequests: data.grunnkretser
+        .map((g) => ({
+          endringstype: g.endringstype,
+          gyldigFra: g.gyldigFra,
+          grunnkretsRequest: getGrunnkretsRequest(g),
+        }))
+        .concat({
+          endringstype: utkast.endringstype,
+          gyldigFra: utkast.gyldigFra,
+          grunnkretsRequest: current,
+        }),
+    };
+
+    console.log(resolvedConflict);
+
+    resolveUtkastConflict(
+      utkast.id,
+      resolvedConflict,
+      tokenHolderFunc()?.token
+    ).then((response) => {
+      console.log(response);
+      onNext();
+    });
   });
 
   useEffect(() => {
@@ -253,6 +300,7 @@ const Buttons = styled.div`
 const Row = styled.tr<{ confirmed?: boolean }>`
   background-color: ${(props) =>
     props.confirmed ? props.theme.colors.greenLight : "transparent"};
+  transition: background-color 0.2s ease-in-out;
 
   td {
     padding: 16px;

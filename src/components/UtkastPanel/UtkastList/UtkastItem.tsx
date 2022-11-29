@@ -48,6 +48,14 @@ const UtkastItem = ({ utkast }: Props) => {
 
   const utkastActive = utkastId === utkast.id;
 
+  const cleanUpUtkast = () => {
+    mutate(["/v1/utkast", tokenHolderFunc()?.token]);
+
+    if (utkastActive) {
+      setSearchParams({});
+    }
+  };
+
   const publish = async () => {
     if (!fullUtkast) return;
 
@@ -60,11 +68,7 @@ const UtkastItem = ({ utkast }: Props) => {
     if (!response) return;
 
     if (response.status === 200) {
-      await mutate(["/v1/utkast", tokenHolderFunc()?.token]);
-
-      if (utkastActive) {
-        setSearchParams({});
-      }
+      cleanUpUtkast();
     } else if (response.status === 409) {
       const wrapper = (await response.json()) as ConflictResponseWrapper;
 
@@ -135,6 +139,8 @@ const UtkastItem = ({ utkast }: Props) => {
               utkastId={utkast.id}
               conflictResponse={conflictResponse}
               onCancel={() => setConflictResponse(null)}
+              close={() => setConflictResponse(null)}
+              onResolved={cleanUpUtkast}
             />
           )}
         </UtkastItemExpanded>

@@ -15,9 +15,17 @@ type Props = {
   utkastId: string;
   conflictResponse: FramtidigVersjonConflict;
   onCancel: () => void;
+  close: () => void;
+  onResolved: () => void;
 };
 
-const UtkastConflicts = ({ utkastId, conflictResponse, onCancel }: Props) => {
+const UtkastConflicts = ({
+  utkastId,
+  conflictResponse,
+  onCancel,
+  onResolved,
+  close,
+}: Props) => {
   const [newRequests, setNewRequests] = useState<GrunnkretsRequest[]>([]);
   const [conflictIndex, setConflictIndex] = useState(0);
 
@@ -27,8 +35,7 @@ const UtkastConflicts = ({ utkastId, conflictResponse, onCancel }: Props) => {
 
   const currentItem =
     utkast?.operasjoner.metadataendringer.grunnkretsendringer[
-      // currentConflict.id
-      "9a3cc5ad-ad88-4c8a-ac48-7944dad035cf"
+      conflictResponse.id.lokalid.value
     ];
 
   // const resolveConflicts = () => {
@@ -50,8 +57,8 @@ const UtkastConflicts = ({ utkastId, conflictResponse, onCancel }: Props) => {
       conflictResponse={conflictResponse}
       current={currentItem}
       utkast={utkast}
-      onNext={() => setConflictIndex(conflictIndex + 1)}
       onCancel={onCancel}
+      onNext={onResolved}
     />
   );
 };
