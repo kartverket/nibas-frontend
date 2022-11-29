@@ -1,26 +1,40 @@
 import { KretsRow } from "../KretsTable";
-import Button from "components/form/Button";
 import Icon from "components/Icon";
 import { useUtkastEntity } from "contexts/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
-import { StemmekretsResponse } from "types/api";
+import { StemmekretsRef, StemmekretsResponse } from "types/api";
 import { getNavnInSpraak } from "utils/language/language";
+import { ToggleableKretsButton } from "../kretserComponents";
+import FutureChangesButton from "../FutureChangesButton";
+import { useFlag } from "components/FeatureToggle";
 
 type Props = {
-  id: string;
+  stemmekretsRef: StemmekretsRef;
   toggleRow: (id: string) => void;
   isRowOpen: (id: string) => boolean;
+  toggleFutureChangesRow: (id: string) => void;
+  isFutureChangesOpen: boolean;
 };
 
-const StemmekretsRow = ({ id, toggleRow, isRowOpen }: Props) => {
+const StemmekretsRow = ({
+  stemmekretsRef,
+  toggleRow,
+  isRowOpen,
+  toggleFutureChangesRow,
+  isFutureChangesOpen,
+}: Props) => {
   const { data: stemmekrets } = useNibasApi("/v1/stemmekretser/{id}", {
-    id,
+    id: stemmekretsRef.id,
   });
 
   const utkastStemmekrets = useUtkastEntity(
     stemmekrets,
     "stemmekretsendringer"
   ) as StemmekretsResponse | undefined;
+
+  const isFremtidigeEndringerActive = useFlag(
+    "fremtidige-endringer-stemmekretser"
+  );
 
   if (!utkastStemmekrets) return null;
 
@@ -32,8 +46,17 @@ const StemmekretsRow = ({ id, toggleRow, isRowOpen }: Props) => {
       <td>{utkastStemmekrets.tellekretsnavn}</td>
       <td>{utkastStemmekrets.tellekretsnummer}</td>
       <td>
-        <Button
-          variant="unstyled"
+        {isFremtidigeEndringerActive && (
+          <FutureChangesButton
+            isOpen={isFutureChangesOpen}
+            krets={stemmekretsRef}
+            toggleRow={toggleFutureChangesRow}
+          />
+        )}
+      </td>
+      <td>
+        <ToggleableKretsButton
+          isOpen={isRowOpen(utkastStemmekrets.id)}
           onClick={() => toggleRow(utkastStemmekrets.id)}
           icon={
             isRowOpen(utkastStemmekrets.id) ? (

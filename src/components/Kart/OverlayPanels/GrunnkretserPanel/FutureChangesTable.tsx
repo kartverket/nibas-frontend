@@ -5,7 +5,7 @@ import { GrunnkretsResponse, StemmekretsResponse } from "types/api";
 
 export type TableRow = {
   id: string;
-  cells: string[];
+  cells: (string | undefined)[];
 };
 
 type Props<T extends GrunnkretsResponse | StemmekretsResponse> = {
@@ -47,7 +47,7 @@ const FutureChangesTable = <
         {rows.map((row, i) => (
           <tr key={i}>
             {row.cells.map((cell) => (
-              <td key={`${row.id}-${cell}`}>{cell}</td>
+              <td key={`${row.id}-${cell}`}>{cell ?? "---"}</td>
             ))}
           </tr>
         ))}

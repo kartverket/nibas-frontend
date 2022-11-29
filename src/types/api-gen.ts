@@ -719,16 +719,8 @@ export interface components {
       id: string;
       /** @description Typen til objektet som er utdatert. */
       type: string;
-      /**
-       * Format: int32
-       * @description Versjon som prøves å oppdateres.
-       */
-      versjon: number;
-      /**
-       * Format: int32
-       * @description Versjon som er gjeldende for objektet nå.
-       */
-      gjeldendeVersjon: number;
+      /** @description Identifikator til objekt(et/ene) som har en nyere gyldigFra-dato og er i konflikt med endringen. */
+      affectedIds: components["schemas"]["ObjektIdentifikator"][];
       /** @description Beskrivelse av hva som har gått galt. */
       melding?: string;
     };

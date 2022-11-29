@@ -117,7 +117,7 @@ const EditRow = ({ stemmekrets, kommuneId }: Props) => {
 
   return (
     <AccordionRow>
-      <td colSpan={6}>
+      <td colSpan={7}>
         <InputsWrapper>
           <BlockLabel>
             {t("stemmekrets.Stemmekretsnummer")}
