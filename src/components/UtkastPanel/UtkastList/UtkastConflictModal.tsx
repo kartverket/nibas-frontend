@@ -1,10 +1,18 @@
+import Checkbox from "components/Checkbox";
 import { CustomModalWrapper, ModalOverlay } from "components/Feedback/Feedback";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
+import { ButtonCell } from "components/Kart/OverlayPanels/KretsTable";
 import Heading from "components/typography/Heading";
 import useNibasApi from "hooks/useNibasApi";
 import { useEffect } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import {
+  FieldArrayWithId,
+  useFieldArray,
+  useForm,
+  UseFormRegister,
+  UseFormWatch,
+} from "react-hook-form";
 import ReactModal from "react-modal";
 import styled from "styled-components";
 import {
@@ -24,6 +32,7 @@ type Inputs = {
     navn: string;
     endringstype: string;
     gyldigFra: string;
+    confirmed: boolean;
   }[];
 };
 
@@ -49,7 +58,7 @@ const UtkastConflictModal = <T extends GrunnkretsRequest>({
     }
   );
 
-  const { control, register, setValue, handleSubmit } = useForm<Inputs>({
+  const { control, register, setValue, handleSubmit, watch } = useForm<Inputs>({
     defaultValues: {
       grunnkretser: [],
     },
@@ -78,9 +87,14 @@ const UtkastConflictModal = <T extends GrunnkretsRequest>({
         navn: futureVersion.navn,
         endringstype: futureVersion.endringstype,
         gyldigFra: futureVersion.gyldighet.gyldigFra,
+        confirmed: false,
       }))
     );
   }, [futureVersions, setValue, utkast.gyldigFra]);
+
+  const allConfirmed = watch("grunnkretser").every(
+    (grunnkrets) => grunnkrets.confirmed
+  );
 
   console.log(conflictResponse);
   console.log("futureVersions", futureVersions);
@@ -108,7 +122,7 @@ const UtkastConflictModal = <T extends GrunnkretsRequest>({
       <Heading tag="h2" size="xs">
         Endringer i dette utkastet
       </Heading>
-      <table>
+      <Table>
         <thead>
           <tr>
             <th>Grunnkretsnummer</th>
@@ -118,51 +132,106 @@ const UtkastConflictModal = <T extends GrunnkretsRequest>({
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <Row>
             <td>{current.grunnkretsnummer}</td>
             <td>{current.navn}</td>
             <td>{utkast.endringstype}</td>
             <td>{utkast.gyldigFra}</td>
-          </tr>
+          </Row>
         </tbody>
-      </table>
+      </Table>
       <Heading tag="h2" size="xs">
         Fremtidig endring i konflikt
       </Heading>
-      <table>
+      <Table cellSpacing={0}>
         <thead>
           <tr>
             <th>Grunnkretsnummer</th>
             <th>Grunnkrets</th>
             <th>Type</th>
             <th>Gyldig fra</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
           {fields.map((field, index) => (
-            <tr key={field.id}>
-              <td>
-                <Input
-                  {...register(`grunnkretser.${index}.grunnkretsnummer`)}
-                />
-              </td>
-              <td>
-                <Input {...register(`grunnkretser.${index}.navn`)} />
-              </td>
-              <td>{field.endringstype}</td>
-              <td>{field.gyldigFra}</td>
-            </tr>
+            <FutureChangeRow
+              key={field.id}
+              field={field}
+              index={index}
+              register={register}
+              watch={watch}
+            />
+            // <tr key={field.id}>
+            //   <td>
+            //     <Input
+            //       {...register(`grunnkretser.${index}.grunnkretsnummer`)}
+            //     />
+            //   </td>
+            //   <td>
+            //     <Input {...register(`grunnkretser.${index}.navn`)} />
+            //   </td>
+            //   <td>{field.endringstype}</td>
+            //   <td>{field.gyldigFra}</td>
+            //   <ButtonCell>
+            //     <Checkbox
+            //       type="checkbox"
+            //       label="Bekreft"
+            //       {...register(`grunnkretser.${index}.confirmed`)}
+            //     />
+            //   </ButtonCell>
+            // </tr>
           ))}
         </tbody>
-      </table>
+      </Table>
 
       <Buttons>
         <Button variant="secondary" onClick={onCancel}>
           Avbryt
         </Button>
-        <Button onClick={submit}>Publiser</Button>
+        <Button onClick={submit} disabled={!allConfirmed}>
+          Publiser
+        </Button>
       </Buttons>
     </ReactModal>
+  );
+};
+
+type FutureChangeRowProps = {
+  register: UseFormRegister<Inputs>;
+  field: FieldArrayWithId<Inputs, "grunnkretser", "id">;
+  index: number;
+  watch: UseFormWatch<Inputs>;
+};
+
+const FutureChangeRow = ({
+  field,
+  register,
+  index,
+  watch,
+}: FutureChangeRowProps) => {
+  const confirmed = watch(`grunnkretser.${index}.confirmed`);
+
+  console.log(confirmed);
+
+  return (
+    <Row key={field.id} confirmed={confirmed}>
+      <td>
+        <Input {...register(`grunnkretser.${index}.grunnkretsnummer`)} />
+      </td>
+      <td>
+        <Input {...register(`grunnkretser.${index}.navn`)} />
+      </td>
+      <td>{field.endringstype}</td>
+      <td>{field.gyldigFra}</td>
+      <ButtonCell>
+        <Checkbox
+          type="checkbox"
+          label="Bekreft"
+          {...register(`grunnkretser.${index}.confirmed`)}
+        />
+      </ButtonCell>
+    </Row>
   );
 };
 
@@ -178,6 +247,31 @@ const Buttons = styled.div`
 
   button {
     margin-left: 8px;
+  }
+`;
+
+const Row = styled.tr<{ confirmed?: boolean }>`
+  background-color: ${(props) =>
+    props.confirmed ? props.theme.colors.greenLight : "transparent"};
+
+  td {
+    padding: 16px;
+    border-bottom: 1px solid ${(props) => props.theme.colors.grayLight};
+  }
+
+  label {
+    margin-bottom: 0;
+    margin-right: 0;
+  }
+`;
+
+const Table = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    text-align: left;
+    padding: 8px 16px;
   }
 `;
 
