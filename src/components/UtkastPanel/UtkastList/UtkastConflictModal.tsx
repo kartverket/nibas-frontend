@@ -7,20 +7,15 @@ import Input from "components/form/Input";
 import { ButtonCell } from "components/Kart/OverlayPanels/KretsTable";
 import Heading from "components/typography/Heading";
 import useNibasApi from "hooks/useNibasApi";
-import { useEffect } from "react";
-import {
-  FieldArrayWithId,
-  useFieldArray,
-  useForm,
-  UseFormRegister,
-  UseFormWatch,
-} from "react-hook-form";
+import { useEffect, useMemo } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
 import ReactModal from "react-modal";
 import styled from "styled-components";
 import {
   ConflictResolved,
   FramtidigVersjonConflict,
   GrunnkretsRequest,
+  GrunnkretsResponse,
   UtkastResponse,
 } from "types/api";
 
@@ -38,6 +33,27 @@ type Inputs = {
   grunnkretser: GrunnkretsFormData[];
 };
 
+const getGrunnkretsRequest = (
+  grunnkretsFormData: GrunnkretsFormData,
+  futureVersions: GrunnkretsResponse[],
+  current: GrunnkretsRequest
+) => {
+  const futureVersion = futureVersions?.find(
+    (fv) => fv.gyldighet.gyldigFra === grunnkretsFormData.gyldigFra
+  );
+
+  return {
+    identifikasjon: {
+      lokalid: current.identifikasjon.lokalid,
+    },
+    grunnkretsnummer: grunnkretsFormData.grunnkretsnummer,
+    version: futureVersion?.version,
+    navn: grunnkretsFormData.navn,
+    endringstype: grunnkretsFormData.endringstype,
+    gyldigFra: grunnkretsFormData.gyldigFra,
+  } as GrunnkretsRequest;
+};
+
 type Props<T> = {
   conflictResponse: FramtidigVersjonConflict;
   current: T;
@@ -53,12 +69,23 @@ const UtkastConflictModal = <T extends GrunnkretsRequest>({
   onNext,
   onCancel,
 }: Props<T>) => {
-  const { data: futureVersions, error } = useNibasApi(
+  const { data: futureVersions } = useNibasApi(
     "/v1/grunnkretser/{lokalid}/framtidigeversjoner",
     {
       lokalid: current.identifikasjon.lokalid,
     }
   );
+
+  const conflictedFutureVersions = useMemo(
+    () =>
+      futureVersions?.filter((fv) =>
+        conflictResponse.affectedIds.some(
+          (id) => id.gyldigFra === fv.gyldighet.gyldigFra
+        )
+      ),
+    [futureVersions, conflictResponse.affectedIds]
+  );
+
   const { tokenHolderFunc } = useAuthenticationFlow();
 
   const { control, register, setValue, handleSubmit, watch } = useForm<Inputs>({
@@ -71,25 +98,9 @@ const UtkastConflictModal = <T extends GrunnkretsRequest>({
     name: "grunnkretser",
   });
 
-  const submit = handleSubmit((data) => {
-    const getGrunnkretsRequest = (grunnkretsFormData: GrunnkretsFormData) => {
-      const futureVersion = futureVersions?.find(
-        (fv) => fv.gyldighet.gyldigFra === grunnkretsFormData.gyldigFra
-      );
+  const submit = handleSubmit(async (data) => {
+    if (!conflictedFutureVersions) return;
 
-      return {
-        identifikasjon: {
-          lokalid: current.identifikasjon.lokalid,
-        },
-        grunnkretsnummer: grunnkretsFormData.grunnkretsnummer,
-        version: futureVersion?.version,
-        navn: grunnkretsFormData.navn,
-        endringstype: grunnkretsFormData.endringstype,
-        gyldigFra: grunnkretsFormData.gyldigFra,
-      } as GrunnkretsRequest;
-    };
-
-    console.log(data);
     const resolvedConflict: ConflictResolved = {
       lokalid: {
         value: current.identifikasjon.lokalid,
@@ -98,7 +109,11 @@ const UtkastConflictModal = <T extends GrunnkretsRequest>({
         .map((g) => ({
           endringstype: g.endringstype,
           gyldigFra: g.gyldigFra,
-          grunnkretsRequest: getGrunnkretsRequest(g),
+          grunnkretsRequest: getGrunnkretsRequest(
+            g,
+            conflictedFutureVersions,
+            current
+          ),
         }))
         .concat({
           endringstype: utkast.endringstype,
@@ -107,20 +122,17 @@ const UtkastConflictModal = <T extends GrunnkretsRequest>({
         }),
     };
 
-    console.log(resolvedConflict);
-
-    resolveUtkastConflict(
+    await resolveUtkastConflict(
       utkast.id,
       resolvedConflict,
       tokenHolderFunc()?.token
-    ).then((response) => {
-      console.log(response);
-      onNext();
-    });
+    );
+
+    onNext();
   });
 
   useEffect(() => {
-    const futureVersionsFromGyldigFra = futureVersions?.filter(
+    const futureVersionsFromGyldigFra = conflictedFutureVersions?.filter(
       (futureVersion) =>
         new Date(futureVersion.gyldighet.gyldigFra) > new Date(utkast.gyldigFra)
     );
@@ -137,14 +149,13 @@ const UtkastConflictModal = <T extends GrunnkretsRequest>({
         confirmed: false,
       }))
     );
-  }, [futureVersions, setValue, utkast.gyldigFra]);
+  }, [conflictedFutureVersions, setValue, utkast.gyldigFra]);
 
-  const allConfirmed = watch("grunnkretser").every(
-    (grunnkrets) => grunnkrets.confirmed
-  );
+  const getIsConfirmed = (index: number) =>
+    watch(`grunnkretser.${index}.confirmed`);
 
-  console.log(conflictResponse);
-  console.log("futureVersions", futureVersions);
+  const getIsAllConfirmed = () =>
+    watch("grunnkretser").every((grunnkrets) => grunnkrets.confirmed);
 
   return (
     <ReactModal
@@ -202,32 +213,25 @@ const UtkastConflictModal = <T extends GrunnkretsRequest>({
         </thead>
         <tbody>
           {fields.map((field, index) => (
-            <FutureChangeRow
-              key={field.id}
-              field={field}
-              index={index}
-              register={register}
-              watch={watch}
-            />
-            // <tr key={field.id}>
-            //   <td>
-            //     <Input
-            //       {...register(`grunnkretser.${index}.grunnkretsnummer`)}
-            //     />
-            //   </td>
-            //   <td>
-            //     <Input {...register(`grunnkretser.${index}.navn`)} />
-            //   </td>
-            //   <td>{field.endringstype}</td>
-            //   <td>{field.gyldigFra}</td>
-            //   <ButtonCell>
-            //     <Checkbox
-            //       type="checkbox"
-            //       label="Bekreft"
-            //       {...register(`grunnkretser.${index}.confirmed`)}
-            //     />
-            //   </ButtonCell>
-            // </tr>
+            <Row key={field.id} confirmed={getIsConfirmed(index)}>
+              <td>
+                <Input
+                  {...register(`grunnkretser.${index}.grunnkretsnummer`)}
+                />
+              </td>
+              <td>
+                <Input {...register(`grunnkretser.${index}.navn`)} />
+              </td>
+              <td>{field.endringstype}</td>
+              <td>{field.gyldigFra}</td>
+              <ButtonCell>
+                <Checkbox
+                  type="checkbox"
+                  label="Bekreft"
+                  {...register(`grunnkretser.${index}.confirmed`)}
+                />
+              </ButtonCell>
+            </Row>
           ))}
         </tbody>
       </Table>
@@ -236,49 +240,11 @@ const UtkastConflictModal = <T extends GrunnkretsRequest>({
         <Button variant="secondary" onClick={onCancel}>
           Avbryt
         </Button>
-        <Button onClick={submit} disabled={!allConfirmed}>
+        <Button onClick={submit} disabled={!getIsAllConfirmed()}>
           Publiser
         </Button>
       </Buttons>
     </ReactModal>
-  );
-};
-
-type FutureChangeRowProps = {
-  register: UseFormRegister<Inputs>;
-  field: FieldArrayWithId<Inputs, "grunnkretser", "id">;
-  index: number;
-  watch: UseFormWatch<Inputs>;
-};
-
-const FutureChangeRow = ({
-  field,
-  register,
-  index,
-  watch,
-}: FutureChangeRowProps) => {
-  const confirmed = watch(`grunnkretser.${index}.confirmed`);
-
-  console.log(confirmed);
-
-  return (
-    <Row key={field.id} confirmed={confirmed}>
-      <td>
-        <Input {...register(`grunnkretser.${index}.grunnkretsnummer`)} />
-      </td>
-      <td>
-        <Input {...register(`grunnkretser.${index}.navn`)} />
-      </td>
-      <td>{field.endringstype}</td>
-      <td>{field.gyldigFra}</td>
-      <ButtonCell>
-        <Checkbox
-          type="checkbox"
-          label="Bekreft"
-          {...register(`grunnkretser.${index}.confirmed`)}
-        />
-      </ButtonCell>
-    </Row>
   );
 };
 
