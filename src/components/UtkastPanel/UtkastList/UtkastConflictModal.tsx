@@ -249,7 +249,8 @@ const UtkastConflictModal = <T extends GrunnkretsRequest>({
 };
 
 const ModalWrapper = styled(CustomModalWrapper)`
-  max-width: 90%;
+  min-width: 900px;
+  max-width: 1200px;
   padding: 40px;
 `;
 
