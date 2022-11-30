@@ -77,7 +77,6 @@ export const mockGeoJsonFeatureResponse: GeoJSONFeatureCollection = {
           ],
           foelgerTerrengdetalj: { id: "IKA", href: "" },
           noeyaktighetsklasse: { id: "IngenNøyaktighet", href: "" },
-          omtvistet: false,
         } as AdministrativGrenseMetadata,
         kontekstEgenskaper: {
           retningMedKlokken: true,
@@ -307,7 +306,6 @@ export const mockUtkast: UtkastResponse = {
   opprettetDato: "2022-01-01",
   version: 1,
   auditInfoResponse: {
-    endretAv: "Meg",
     oppdateringsdato: "2022-06-01",
   },
   operasjoner: createUtkastOperations({
