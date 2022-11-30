@@ -19,7 +19,9 @@ import {
   UtkastResponse,
 } from "types/api";
 
-ReactModal.setAppElement("#root");
+if (process.env.NODE_ENV !== "test") {
+  ReactModal.setAppElement("#root");
+}
 
 type GrunnkretsFormData = {
   grunnkretsnummer: string;
