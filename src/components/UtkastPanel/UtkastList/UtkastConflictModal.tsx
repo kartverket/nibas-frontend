@@ -134,16 +134,11 @@ const UtkastConflictModal = <T extends GrunnkretsRequest>({
   });
 
   useEffect(() => {
-    const futureVersionsFromGyldigFra = conflictedFutureVersions?.filter(
-      (futureVersion) =>
-        new Date(futureVersion.gyldighet.gyldigFra) > new Date(utkast.gyldigFra)
-    );
-
-    if (!futureVersionsFromGyldigFra) return;
+    if (!conflictedFutureVersions) return;
 
     setValue(
       "grunnkretser",
-      futureVersionsFromGyldigFra.map((futureVersion) => ({
+      conflictedFutureVersions.map((futureVersion) => ({
         grunnkretsnummer: futureVersion.grunnkretsnummer,
         navn: futureVersion.navn,
         endringstype: futureVersion.endringstype,
@@ -231,6 +226,7 @@ const UtkastConflictModal = <T extends GrunnkretsRequest>({
                   type="checkbox"
                   label="Bekreft"
                   {...register(`grunnkretser.${index}.confirmed`)}
+                  aria-label={`Bekreft grunnkrets ${index + 1}`}
                 />
               </ButtonCell>
             </Row>

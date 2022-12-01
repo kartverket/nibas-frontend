@@ -75,16 +75,8 @@ export const nibasApiHandlers: RestHandler[] = [
       ctx.status(200),
       ctx.json<GrunnkretsResponse[]>([
         mocks.mockDetailedGrunnkrets1,
-        {
-          ...mocks.mockDetailedGrunnkrets1,
-          navn: "Mosekollen vest",
-          grunnkretsnummer: "12345679",
-        },
-        {
-          ...mocks.mockDetailedGrunnkrets1,
-          navn: "Mosekollen nord",
-          grunnkretsnummer: "87654321",
-        },
+        mocks.mockFutureGrunnkrets1_1,
+        mocks.mockFutureGrunnkrets1_2,
       ])
     );
   }),
