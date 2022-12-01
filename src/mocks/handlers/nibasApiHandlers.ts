@@ -1,7 +1,12 @@
 import { rest } from "msw";
 import type { RestHandler } from "msw";
 import * as mocks from "./responses";
-import { GrunnkretsResponse, UtkastRef, UtkastResponse } from "types/api";
+import {
+  ConflictResponseWrapper,
+  GrunnkretsResponse,
+  UtkastRef,
+  UtkastResponse,
+} from "types/api";
 
 export const nibasApiHandlers: RestHandler[] = [
   rest.get("/v1/fylker", (req, res, ctx) => {
@@ -69,6 +74,24 @@ export const nibasApiHandlers: RestHandler[] = [
       ctx.status(200),
       ctx.json<UtkastRef[]>([mocks.mockUtkastRef1, mocks.mockUtkastRef2])
     );
+  }),
+  rest.post("/v1/utkast/1/publiser", (req, res, ctx) => {
+    const scenario = req.url.searchParams.get("scenario");
+
+    // Sad path
+    if (scenario === "conflict") {
+      return res(
+        ctx.status(409),
+        ctx.json<ConflictResponseWrapper>({
+          httpStatus: "409 CONFLICT",
+          optimisticLockExceptions: [],
+          framtidigVersjonConflict: mocks.mockFremtidigEndringConflictResponse,
+        })
+      );
+    }
+
+    // Happy path
+    return res(ctx.status(200));
   }),
   rest.get("/v1/grunnkretser/1/framtidigeversjoner", (req, res, ctx) => {
     return res(

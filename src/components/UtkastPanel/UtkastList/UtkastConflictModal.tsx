@@ -163,18 +163,24 @@ const UtkastConflictModal = <T extends GrunnkretsRequest>({
       contentElement={(props, contentChildren) => (
         <ModalWrapper {...props}>{contentChildren}</ModalWrapper>
       )}
+      aria={{
+        labelledby: "conflict-modal-header",
+        describedby: "conflict-modal-description",
+      }}
       className="_"
       overlayClassName="_"
     >
-      <Heading tag="h2" size="xs">
+      <Heading tag="h2" size="xs" id="conflict-modal-header">
         Konflikt mellom fremtidige endringer
       </Heading>
-      <p>
-        Endringer du gjorde i dette utkastet har ført til at en annen publisert
-        endring må dobbelsjekkes.
-      </p>
-      <p>Dobbeltsjekk feltene i endringen nedenfor før du publiserer.</p>
-      <Heading tag="h2" size="xs">
+      <div id="conflict-modal-description">
+        <p>
+          Endringer du gjorde i dette utkastet har ført til at en annen
+          publisert endring må dobbelsjekkes.
+        </p>
+        <p>Dobbeltsjekk feltene i endringen nedenfor før du publiserer.</p>
+      </div>
+      <Heading tag="h3" size="xs">
         Endringer i dette utkastet
       </Heading>
       <Table>
@@ -195,7 +201,7 @@ const UtkastConflictModal = <T extends GrunnkretsRequest>({
           </Row>
         </tbody>
       </Table>
-      <Heading tag="h2" size="xs">
+      <Heading tag="h3" size="xs">
         Fremtidig endring i konflikt
       </Heading>
       <Table cellSpacing={0}>
