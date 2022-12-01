@@ -1,6 +1,12 @@
-import { render, screen, waitFor } from "test/test-utils";
+import { render, screen } from "test/test-utils";
 import UtkastItem from "./UtkastItem";
-import { mockUtkastRef1 } from "mocks/handlers/responses";
+import {
+  mockFremtidigEndringConflictResponse,
+  mockUtkastRef1,
+} from "mocks/handlers/responses";
+import { server } from "mocks/server";
+import { rest } from "msw";
+import { ConflictResponseWrapper } from "types/api";
 
 const defaultProps: React.ComponentProps<typeof UtkastItem> = {
   utkast: mockUtkastRef1,
@@ -56,9 +62,17 @@ describe("UtkastItem", () => {
   });
 
   it("should open conflict modal on conflict response", async () => {
-    const originalFetch = window.fetch;
-    window["fetch"] = jest.fn((url, options) =>
-      originalFetch(`${url}?scenario=conflict`, options)
+    server.use(
+      rest.post("/v1/utkast/1/publiser", (req, res, ctx) =>
+        res.once(
+          ctx.status(409),
+          ctx.json<ConflictResponseWrapper>({
+            httpStatus: "409 CONFLICT",
+            optimisticLockExceptions: [],
+            framtidigVersjonConflict: mockFremtidigEndringConflictResponse,
+          })
+        )
+      )
     );
 
     const { user } = render(<UtkastItem {...defaultProps} />);
