@@ -4,6 +4,7 @@ import * as mocks from "./responses";
 import {
   ConflictResponseWrapper,
   GrunnkretsResponse,
+  StemmekretsResponse,
   UtkastRef,
   UtkastResponse,
 } from "types/api";
@@ -96,11 +97,15 @@ export const nibasApiHandlers: RestHandler[] = [
   rest.get("/v1/grunnkretser/1/framtidigeversjoner", (req, res, ctx) => {
     return res(
       ctx.status(200),
-      ctx.json<GrunnkretsResponse[]>([
-        mocks.mockDetailedGrunnkrets1,
-        mocks.mockFutureGrunnkrets1_1,
-        mocks.mockFutureGrunnkrets1_2,
-      ])
+      ctx.json<GrunnkretsResponse[]>(mocks.mockGrunnkretserFramtidigeEndringer)
+    );
+  }),
+  rest.get("/v1/stemmekretser/1/framtidigeversjoner", (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json<StemmekretsResponse[]>(
+        mocks.mockStemmekretserFramtidigeEndringer
+      )
     );
   }),
 ];

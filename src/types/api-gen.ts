@@ -93,12 +93,6 @@ export interface paths {
     /** Henter grensene til en kommune med gitt id */
     get: operations["hentGrenserForKommune"];
   };
-  "/v1/kodeliste/terrengdetaljkoder": {
-    get: operations["fetchTerrengdetaljkoder"];
-  };
-  "/v1/kodeliste/noeyaktighetsklasser": {
-    get: operations["fetchNoeyaktighetsklasser"];
-  };
   "/v1/kodeliste/maalemetode-koder": {
     get: operations["fetchMaalemetodeKoder"];
   };
@@ -111,14 +105,8 @@ export interface paths {
   "/v1/kodeliste/grensetyper": {
     get: operations["fetchGrensetyper"];
   };
-  "/v1/kodeliste/grensestatuser": {
-    get: operations["fetchGrensestatuskoder"];
-  };
   "/v1/kodeliste/fylkesnumre": {
     get: operations["fetchFylkesnumre"];
-  };
-  "/v1/kodeliste/fastsettingstyper": {
-    get: operations["fetchFastsettingstyper"];
   };
   "/v1/grunnkretser/{lokalid}/framtidigeversjoner": {
     /** Returnerer en liste av nåværende Grunnkrets og eventuelt publiserte framtidige versjoner som matcher lokalid. */
@@ -202,16 +190,10 @@ export interface components {
       commonGrense?: components["schemas"]["CommonGrenseMetadata"];
       /** @description Henviser til fastsettings- eller lovinformasjon. */
       dokumentasjonsreferanser?: components["schemas"]["Dokref"][];
-      foelgerTerrengdetalj?: components["schemas"]["KodelisteEntry"];
-      noeyaktighetsklasse?: components["schemas"]["KodelisteEntry"];
-      /** @description Angir om grensen er omtvistet, eller det er tvil om forløpet. */
-      omtvistet?: boolean;
     } & {
       common: unknown;
       commonGrense: unknown;
       dokumentasjonsreferanser: unknown;
-      foelgerTerrengdetalj: unknown;
-      noeyaktighetsklasse: unknown;
     };
     /** @description Spesifikk metadata for en AvtaltAvgrensningslinje. Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Diagram/Index/EAID_EEECEE48_B3FA_4807_AAE4_B30B63BC28E1 */
     AvtaltAvgrensningslinjeMetadata: components["schemas"]["Metadata"] & {
@@ -219,18 +201,14 @@ export interface components {
       commonGrense?: components["schemas"]["CommonGrenseMetadata"];
       /** @description Henviser til fastsettings- eller lovinformasjon. */
       dokumentasjonsreferanser?: components["schemas"]["Dokref"][];
-      maritimeGrenser?: components["schemas"]["MaritimeGrenserMetadata"];
     } & {
       common: unknown;
       commonGrense: unknown;
       dokumentasjonsreferanser: unknown;
-      maritimeGrenser: unknown;
     };
     /** @description Felles metadata-egenskaper for grenser. */
     CommonGrenseMetadata: {
       posisjonskvalitet?: components["schemas"]["Posisjonskvalitet"];
-      grensestatus: components["schemas"]["KodelisteEntry"];
-      fastsettingstype: components["schemas"]["KodelisteEntry"];
     };
     /** @description Felles metadata-egenskaper. */
     CommonMetadata: {
@@ -354,20 +332,17 @@ export interface components {
       commonGrense?: components["schemas"]["CommonGrenseMetadata"];
       /** @description Henviser til fastsettings- eller lovinformasjon. */
       dokumentasjonsreferanser?: components["schemas"]["Dokref"][];
-      maritimeGrenser?: components["schemas"]["MaritimeGrenserMetadata"];
-      kommunenummer?: components["schemas"]["Kommunenummer"];
     } & {
       common: unknown;
       commonGrense: unknown;
       dokumentasjonsreferanser: unknown;
-      maritimeGrenser: unknown;
     };
-    /** @description Angir om grensen følger grunnkretsgrense og i så fall hvilken grunnkretsgrense */
+    /** @description Unik identifikasjon av et objekt */
     Identifikasjon: {
       /** @description Lokal id som identifiserer geometrien. Dette er en globalt unik id. */
       lokalid: string;
     };
-    /** @description Klassifikasjon av stedfestingsnøyaktighet på grenser, og er basert på dårligste nøyaktighet til grensepunktene til grensen. */
+    /** @description Metode for måling i grunnriss (x,y), og høyde (z) når metoden er den samme som ved måling i grunnriss. */
     KodelisteEntry: {
       /** @description Id for kodeliste-innslaget. */
       id?: string;
@@ -389,13 +364,6 @@ export interface components {
        * @description Teknisk versjon for å støtte samhandling og redigering
        */
       version: number;
-    };
-    /** @description Representasjon av et kommunenummer */
-    Kommunenummer: {
-      /** @description Unik UUID for kommunenummeret */
-      id: string;
-      /** @description Det faktiske kommunenummeret */
-      kodeverdi: string;
     };
     /** @description Egenskaper som beskriver konteksten som grensen sees i. */
     KontekstEgenskaper: {
@@ -424,13 +392,6 @@ export interface components {
        */
       hullIndeks?: number;
     };
-    /** @description Angivelse av hvilke land grensa er knyttet til Merknad: Alfanumerisk kode (ISO 3166-1 alpha-2) for land som definert i ISO 3166. */
-    Landkoder: {
-      /** @description Liste av valgte landkode-ids. */
-      ids: string[];
-      /** @description Peker til landkoder-kodeliste. */
-      href: string;
-    };
     /** @description Wrapper-objekt rundt en JTS LineString. */
     LineString: components["schemas"]["Geometry"] & {
       /** @description Geometriens type. Diskriminator. */
@@ -440,21 +401,6 @@ export interface components {
     } & {
       coordinates: unknown;
       type: unknown;
-    };
-    /** @description Metadata-egenskaper for maritim grense. */
-    MaritimeGrenserMetadata: {
-      /** @description Organisasjon som er ansvarlig for opprettholdelse av grensa. */
-      ansvarligeMyndigheter: components["schemas"]["TekstHolder"][];
-      /** @description Navn på område som loven gjelder for, eller område som grensa er beregnet fra. */
-      gjelderOmraade?: string;
-      /**
-       * Format: date
-       * @description Tidspunktet for når koordinatene er transformert fra originalt koordinatsystem.
-       */
-      transformasjonsdato?: string;
-      /** @description Begrep knyttet til yttergrensa for virkeområdet, som oftest angitt i lov eller forskrift. */
-      virkeomraadenavn?: string;
-      land: components["schemas"]["Landkoder"];
     };
     /** @description Diverse metadata-felter fra sosi-modellen. */
     Metadata: {
@@ -551,22 +497,10 @@ export interface components {
       commonGrense?: components["schemas"]["CommonGrenseMetadata"];
       /** @description Henviser til fastsettings- eller lovinformasjon. */
       dokumentasjonsreferanser?: components["schemas"]["Dokref"][];
-      foelgerTerrengdetalj?: components["schemas"]["KodelisteEntry"];
-      /** @description Angivelse om stedfestingen (koordinatene) er kontrollert og funnet i orden (verifisert). */
-      stedfestingVerifisert?: boolean;
-      /** @description Organisasjon(er) som er ansvarlig for opprettholdelse av grensa. */
-      ansvarligeMyndigheter?: components["schemas"]["TekstHolder"][];
-      /**
-       * Format: double
-       * @description Bredde av området på begge sider av riksgrensen som er ryddet for vegetasjon høyere enn 0,5 m.
-       */
-      grensegateBredde?: number;
     } & {
-      ansvarligeMyndigheter: unknown;
       common: unknown;
       commonGrense: unknown;
       dokumentasjonsreferanser: unknown;
-      foelgerTerrengdetalj: unknown;
     };
     /** @description Holder på informasjon om endring av objektet. */
     Sporingsinformasjon: {
@@ -575,20 +509,14 @@ export interface components {
        * @description Dato for siste endring på objektdataene
        */
       oppdateringsdato: string;
-      /** @description Angir hvem som endret data på objektet sist. */
-      endretAv?: string;
     };
     /** @description Spesifikk metadata for en statistisk grense (grunnkrets/delområde). Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Objekttype/Index/EAID_374BE5B3_5F8B_498a_8F53_9CCA72619C36 */
     StatistiskgrenseMetadata: components["schemas"]["Metadata"] & {
       common?: components["schemas"]["CommonMetadata"];
       commonGrense?: components["schemas"]["CommonGrenseMetadata"];
-      foelgerTerrengdetalj?: components["schemas"]["KodelisteEntry"];
-      noeyaktighetsklasse?: components["schemas"]["KodelisteEntry"];
     } & {
       common: unknown;
       commonGrense: unknown;
-      foelgerTerrengdetalj: unknown;
-      noeyaktighetsklasse: unknown;
     };
     /** @description Representasjon av en stemmekrets */
     StemmekretsRequest: {
@@ -611,7 +539,7 @@ export interface components {
        */
       version: number;
     };
-    /** @description Organisasjon som er ansvarlig for opprettholdelse av grensa. */
+    /** @description Henvisning til saksdokument i Kartverkets eget arkiv. */
     TekstHolder: {
       /** @description ID for elementet. */
       id?: string;
@@ -624,17 +552,10 @@ export interface components {
       commonGrense?: components["schemas"]["CommonGrenseMetadata"];
       /** @description Henviser til fastsettings- eller lovinformasjon. */
       dokumentasjonsreferanser?: components["schemas"]["Dokref"][];
-      maritimeGrenser?: components["schemas"]["MaritimeGrenserMetadata"];
-      /**
-       * Format: date
-       * @description Tidspunktet for når koordinatene er utregnet.
-       */
-      beregningsdato?: string;
     } & {
       common: unknown;
       commonGrense: unknown;
       dokumentasjonsreferanser: unknown;
-      maritimeGrenser: unknown;
     };
     ApiErrorResponse: {
       /**
@@ -836,8 +757,6 @@ export interface components {
        * @description Da objektet sist ble oppdatert.
        */
       oppdateringsdato: string;
-      /** @description Den som sist endret objektet. */
-      endretAv: string;
     };
     /** @description Representasjon av utkast */
     UtkastResponse: {
@@ -907,6 +826,13 @@ export interface components {
       type: string;
       /** @description Liste av features som holder på dataene */
       features: components["schemas"]["Feature"][];
+    };
+    /** @description Representasjon av et kommunenummer */
+    Kommunenummer: {
+      /** @description Unik UUID for kommunenummeret */
+      id: string;
+      /** @description Det faktiske kommunenummeret */
+      kodeverdi: string;
     };
     /** @description Representasjon av en stemmekrets */
     StemmekretsResponse: {
@@ -1072,7 +998,7 @@ export interface components {
        */
       oppdateringsdato: string;
       /** @description Typen endring som ble gjort på objektet */
-      endringstype: string;
+      endringstype?: string;
       features: components["schemas"]["FeatureCollection"];
       /**
        * Format: int32
@@ -1652,26 +1578,6 @@ export interface operations {
       };
     };
   };
-  fetchTerrengdetaljkoder: {
-    responses: {
-      /** OK */
-      200: {
-        content: {
-          "application/json": components["schemas"]["KodelisteRespons"];
-        };
-      };
-    };
-  };
-  fetchNoeyaktighetsklasser: {
-    responses: {
-      /** OK */
-      200: {
-        content: {
-          "application/json": components["schemas"]["KodelisteRespons"];
-        };
-      };
-    };
-  };
   fetchMaalemetodeKoder: {
     responses: {
       /** OK */
@@ -1712,27 +1618,7 @@ export interface operations {
       };
     };
   };
-  fetchGrensestatuskoder: {
-    responses: {
-      /** OK */
-      200: {
-        content: {
-          "application/json": components["schemas"]["KodelisteRespons"];
-        };
-      };
-    };
-  };
   fetchFylkesnumre: {
-    responses: {
-      /** OK */
-      200: {
-        content: {
-          "application/json": components["schemas"]["KodelisteRespons"];
-        };
-      };
-    };
-  };
-  fetchFastsettingstyper: {
     responses: {
       /** OK */
       200: {
@@ -1768,7 +1654,7 @@ export interface operations {
       };
       query: {
         /** Eventuell Gyldig Dato for grunnkrets (default = datens dato */
-        gyldigDato?: string;
+        gyldighetsdato?: string;
       };
     };
     responses: {

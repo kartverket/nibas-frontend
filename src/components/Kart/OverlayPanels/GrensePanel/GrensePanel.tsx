@@ -1,6 +1,5 @@
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
-import GrenseMetadataDetaljer from "./GrenseMetadataDetaljer";
 import GrenseMetadataGenerelt from "./GrenseMetadataGenerelt";
 import GrenseMetadataReferanser from "./GrenseMetadataReferanser";
 import Tabs from "components/Tabs";
@@ -30,14 +29,9 @@ const GrensePanel = ({ feature }: Props) => {
     showReferanserByGrenseType[feature.getProperties().type as string];
 
   if (showReferanser) {
-    tabs = [
-      "metadata.Generelt",
-      "metadata.Detaljer",
-      "metadata.Referanser",
-      "metadata.Historikk",
-    ];
+    tabs = ["metadata.Generelt", "metadata.Referanser", "metadata.Historikk"];
   } else {
-    tabs = ["metadata.Generelt", "metadata.Detaljer", "metadata.Historikk"];
+    tabs = ["metadata.Generelt", "metadata.Historikk"];
   }
 
   const getTabsOrMinimizedHeading = () => {
@@ -56,12 +50,6 @@ const GrensePanel = ({ feature }: Props) => {
             Linje metadata
           </Heading>
           <GrenseMetadataGenerelt feature={feature} />
-        </div>
-        <div>
-          <Heading size="xs" tag="h2">
-            Detaljer
-          </Heading>
-          <GrenseMetadataDetaljer feature={feature} />
         </div>
         {showReferanser && (
           <div>

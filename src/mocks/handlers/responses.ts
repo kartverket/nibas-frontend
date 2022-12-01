@@ -79,7 +79,6 @@ export const mockGeoJsonFeatureResponse: GeoJSONFeatureCollection = {
           ],
           foelgerTerrengdetalj: { id: "IKA", href: "" },
           noeyaktighetsklasse: { id: "IngenNøyaktighet", href: "" },
-          omtvistet: false,
         } as AdministrativGrenseMetadata,
         kontekstEgenskaper: {
           retningMedKlokken: true,
@@ -318,7 +317,6 @@ export const mockUtkast: UtkastResponse = {
   opprettetDato: "2022-01-01",
   version: 1,
   auditInfoResponse: {
-    endretAv: "Meg",
     oppdateringsdato: "2022-06-01",
   },
   operasjoner: createUtkastOperations({
@@ -399,3 +397,23 @@ export const mockFremtidigEndringConflictResponse: FramtidigVersjonConflict = {
   type: "Grunnkrets",
   melding: "Konflikt",
 };
+
+export const mockGrunnkretserFramtidigeEndringer: GrunnkretsResponse[] = [
+  mockDetailedGrunnkrets1,
+  mockFutureGrunnkrets1_1,
+  mockFutureGrunnkrets1_2,
+];
+
+export const mockStemmekretserFramtidigeEndringer: StemmekretsResponse[] = [
+  mockStemmekrets1,
+  {
+    ...mockStemmekrets1,
+    stemmekretsnavn: "Hundredal",
+    stemmekretsnummer: "07",
+  },
+  {
+    ...mockStemmekrets1,
+    stemmekretsnavn: "To-hundredal",
+    stemmekretsnummer: "70",
+  },
+];

@@ -77,7 +77,7 @@ describe("StemmekretserPanel", () => {
   it("should not render editrow when accordion is closed", async () => {
     renderWithProvider(<StemmekretserPanel {...defaultProps} />);
 
-    expect(await screen.findAllByRole("cell")).toHaveLength(12); // 2x 6 celler
+    expect(await screen.findAllByRole("cell")).toHaveLength(14); // 2x 7 celler
   });
 
   it("should render EditRow on Caret toggle", async () => {
@@ -93,7 +93,7 @@ describe("StemmekretserPanel", () => {
       )[0]
     );
 
-    expect(await screen.findAllByRole("cell")).toHaveLength(13); // 2x 6 celler + 1 editrow
+    expect(await screen.findAllByRole("cell")).toHaveLength(15); // 2x 7 celler + 1 editrow
   });
 
   it("should render with utkast applied", async () => {
@@ -118,5 +118,28 @@ describe("StemmekretserPanel", () => {
     expect(
       await screen.findByRole("cell", { name: /nytt tellekretsnummer/i })
     ).toBeInTheDocument();
+  });
+
+  // må få ferdig API-endepunkt først
+  it.skip("should toggle future changes table when clicking future changes icon", async () => {
+    const { user } = renderWithProvider(
+      <StemmekretserPanel {...defaultProps} />
+    );
+
+    await user.click(
+      screen.getByRole("button", {
+        name: /vis fremtidige endringer for slemfjord/i,
+      })
+    );
+
+    await waitFor(() => expect(screen.getAllByRole("table")).toHaveLength(2));
+
+    await user.click(
+      screen.getByRole("button", {
+        name: /skjul fremtidige endringer for slemfjord/i,
+      })
+    );
+
+    expect(screen.getAllByRole("table")).toHaveLength(1);
   });
 });

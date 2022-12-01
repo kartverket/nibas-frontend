@@ -17,9 +17,17 @@ const environmentByUrl: Record<string, Environment> = {
 // noe som `type Keys = "flagg1" | "flagg2" | ...`
 // features som skal fjernes kan slettes fra denne listen
 // hvis det ikke er noen keys skal Keys være av typen `never`
-type Keys = never;
+type Keys = "fremtidige-endringer-stemmekretser";
 
-const featureToggles: Record<Keys, Record<Environment, boolean>> = {};
+const featureToggles: Record<Keys, Record<Environment, boolean>> = {
+  "fremtidige-endringer-stemmekretser": {
+    prod: false,
+    test: false,
+    dev: getDevValue(
+      "REACT_APP_FEATURE_TOGGLE_FREMTIDIGE_ENDRINGER_STEMMEKRETSER"
+    ),
+  },
+};
 
 export const featureEnabled = (key: Keys): boolean => {
   const { hostname } = window.location;

@@ -170,7 +170,7 @@ jobs:
       image_url: ${{ needs.build.outputs.image_url}} # the image created by build job
 
   deploy-prod:
-    needs: [build, post-build-attest, security-scans] #, deploy-test]
+    needs: [build, post-build-attest, security-scans, deploy-test]
     name: Deploy to prod
     permissions:
       id-token: write

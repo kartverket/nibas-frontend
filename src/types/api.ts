@@ -38,8 +38,6 @@ export type KommuneResponse = components["schemas"]["KommuneResponse"];
 export type Kommunenummer = components["schemas"]["Kommunenummer"];
 export type KontekstEgenskaper = components["schemas"]["KontekstEgenskaper"];
 export type Land = components["schemas"]["TekstHolder"];
-export type MaritimeGrenserMetadata =
-  components["schemas"]["MaritimeGrenserMetadata"];
 export type NasjonRef = components["schemas"]["NasjonRef"];
 export type NasjonRequest = components["schemas"]["NasjonRequest"];
 export type NasjonResponse = components["schemas"]["NasjonResponse"];
@@ -81,15 +79,11 @@ export type ConflictResolved = components["schemas"]["ConflictResolved"];
 // custom typer basert på api doc
 export type ApiPath = keyof paths;
 export type KodelistePath =
-  | "/v1/kodeliste/terrengdetaljkoder"
-  | "/v1/kodeliste/noeyaktighetsklasser"
   | "/v1/kodeliste/maalemetode-koder"
   | "/v1/kodeliste/landkoder"
   | "/v1/kodeliste/kommunenumre"
   | "/v1/kodeliste/grensetyper"
-  | "/v1/kodeliste/grensestatuser"
-  | "/v1/kodeliste/fylkesnumre"
-  | "/v1/kodeliste/fastsettingstyper";
+  | "/v1/kodeliste/fylkesnumre";
 export type Metadata =
   | AvtaltAvgrensningslinjeMetadata
   | AdministrativGrenseMetadata

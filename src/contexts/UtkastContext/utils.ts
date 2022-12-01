@@ -15,6 +15,7 @@ import {
   GrunnkretsRequest,
   KommuneRequest,
   NasjonRequest,
+  StemmekretsRef,
   StemmekretsRequest,
   UtkastGrenseendringer,
   UtkastMetadataendringer,
@@ -65,7 +66,7 @@ export const applyNonFeatureUtkast = <T extends NonNullable<UtkastEntity>>(
       return {
         ...e,
         ...utkastForEntity,
-        navn: utkastForEntity?.stemmekretsnavn,
+        navn: utkastForEntity?.stemmekretsnavn ?? (e as StemmekretsRef).navn,
       };
     });
   } else if (Array.isArray(entity)) {

@@ -141,7 +141,7 @@ const UtkastConflictModal = <T extends GrunnkretsRequest>({
       conflictedFutureVersions.map((futureVersion) => ({
         grunnkretsnummer: futureVersion.grunnkretsnummer,
         navn: futureVersion.navn,
-        endringstype: futureVersion.endringstype,
+        endringstype: futureVersion.endringstype ?? "---",
         gyldigFra: futureVersion.gyldighet.gyldigFra,
         confirmed: false,
       }))
