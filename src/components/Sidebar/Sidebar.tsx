@@ -33,11 +33,6 @@ const Sidebar = () => {
           icon={<SidebarIcon icon="space_dashboard" />}
         />
         <SidebarButton
-          title={t("sidebar.Søk")}
-          panel="soek"
-          icon={<SidebarIcon icon="search" />}
-        />
-        <SidebarButton
           title={t("sidebar.Kartlag")}
           panel="kartlag"
           icon={<SidebarIcon icon="map" />}

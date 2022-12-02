@@ -16,8 +16,6 @@ const TopBar = () => {
       <LeftSide>
         <Logo />
         <span>{t("Nasjonal inndelingsbase")}</span>
-        <SearchInput type="text" placeholder={t("Koordinater")} disabled />
-        <SearchIcon />
       </LeftSide>
       <RightSide>
         {isAuthenticatedFunc() ? (
