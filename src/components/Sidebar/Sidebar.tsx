@@ -69,7 +69,7 @@ const StyledSidebar = styled.div<{ utkastActive: boolean }>`
 `;
 
 const ButtonsWrapper = styled.div`
-  margin-left: -6px;
+  /* margin-left: 6px; */
   margin-right: 0px;
   width: 100%;
   display: flex;

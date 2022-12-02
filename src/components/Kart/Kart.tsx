@@ -61,7 +61,6 @@ const Kart = () => {
 const KartWrapper = styled.div`
   grid-area: map;
   position: relative;
-  margin-left: -5px;
 `;
 
 const UtkastBorder = styled.div<{ utkastActive: boolean }>`

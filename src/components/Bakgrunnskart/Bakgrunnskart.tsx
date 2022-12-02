@@ -43,9 +43,7 @@ const Bakgrunnskart = () => {
   );
 };
 
-const Panel = styled(SidebarPanel)`
-  margin-top: 180px;
-`;
+const Panel = styled(SidebarPanel)``;
 
 const BackgroundLayersHeading = styled(Heading)`
   margin: 8px 0 0;
