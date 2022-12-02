@@ -56,15 +56,4 @@ const RightSide = styled.div`
   gap: 1rem;
 `;
 
-const SearchInput = styled(Input)`
-  width: 30%;
-  min-width: 200px;
-`;
-
-const SearchIcon = styled(Icon).attrs(() => ({
-  icon: "search",
-}))`
-  margin-left: -48px;
-`;
-
 export default TopBar;
