@@ -190,6 +190,7 @@ const UtkastConflictModal = <T extends GrunnkretsRequest>({
             <th>Grunnkrets</th>
             <th>Type</th>
             <th>Gyldig fra</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -198,6 +199,9 @@ const UtkastConflictModal = <T extends GrunnkretsRequest>({
             <td>{current.navn}</td>
             <td>{utkast.endringstype}</td>
             <td>{utkast.gyldigFra}</td>
+            <ButtonCell>
+              <HiddenCheckbox type="checkbox" label="Bekreft" />
+            </ButtonCell>
           </Row>
         </tbody>
       </Table>
@@ -276,6 +280,10 @@ const Row = styled.tr<{ confirmed?: boolean }>`
   td {
     padding: 16px;
     border-bottom: 1px solid ${(props) => props.theme.colors.grayLight};
+    // de blir ikke faktisk 200px, men de blir like på tvers av tabeller 🤷‍♀️
+    width: 200px;
+    min-width: 200px;
+    max-width: 200px;
   }
 
   label {
@@ -287,11 +295,16 @@ const Row = styled.tr<{ confirmed?: boolean }>`
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
+  table-layout: "fixed";
 
   th {
     text-align: left;
     padding: 8px 16px;
   }
+`;
+
+const HiddenCheckbox = styled(Checkbox)`
+  visibility: hidden;
 `;
 
 export default UtkastConflictModal;
