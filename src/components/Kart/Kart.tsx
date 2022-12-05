@@ -75,7 +75,7 @@ const UtkastBorder = styled.div<{ utkastActive: boolean }>`
   ${({ utkastActive }) =>
     utkastActive &&
     css`
-      border: 3px solid ${({ theme }) => theme.colors.redDark};
+      border: 3px solid var(--red_dark);
       border-left-color: transparent;
     `}
 `;

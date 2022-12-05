@@ -23,7 +23,7 @@ const StyledSlider = styled.input.attrs(() => ({
   appearance: none;
   width: 100%; /* Full-width */
   height: 4px; /* Specified height */
-  background: ${({ theme }) => theme.colors.blueDark}; /* Grey background */
+  background: var(--blue_dark); /* Grey background */
   outline: none; /* Remove outline */
 
   /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
@@ -32,14 +32,13 @@ const StyledSlider = styled.input.attrs(() => ({
     border-radius: 50%;
     width: 18px; /* Set a specific slider handle width */
     height: 18px; /* Slider handle height */
-    background-color: ${({ theme }) =>
-      theme.colors.white}; /* Green background-color */
-    border: 1px solid ${({ theme }) => theme.colors.blueDark};
+    background-color: var(--white) /* Green background-color */
+    border: 1px solid var(--blue_dark);
     cursor: pointer; /* Cursor on hover */
     transition: 0.2 all;
 
     :hover {
-      background-color: ${({ theme }) => theme.colors.blueDark};
+      background-color: var(--blue_dark);
     }
   }
 
@@ -47,14 +46,13 @@ const StyledSlider = styled.input.attrs(() => ({
     border-radius: 50%;
     width: 18px; /* Set a specific slider handle width */
     height: 18px; /* Slider handle height */
-    background-color: ${({ theme }) =>
-      theme.colors.white}; /* Green background-color */
-    border: 3px solid ${({ theme }) => theme.colors.blueDark};
+    background-color: var(--white); /* Green background-color */
+    border: 3px solid var(--blue_dark);
     cursor: pointer; /* Cursor on hover */
     transition: 0.2 all;
 
     :hover {
-      background-color: ${({ theme }) => theme.colors.blueDark};
+      background-color: var(--blue_dark);
     }
   }
 `;

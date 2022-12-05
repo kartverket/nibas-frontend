@@ -36,24 +36,23 @@ const StyledButton = styled(Button).attrs(() => ({
   text-align: center;
 
   border-top: 2px solid
-    ${(props) => (props.active ? props.theme.colors.blue : "transparent")};
+    ${(props) => (props.active ? "var(--blue" : "transparent")};
   border-bottom: 2px solid
-    ${(props) => (props.active ? props.theme.colors.blue : "transparent")};
+    ${(props) => (props.active ? "var(--blue" : "transparent")};
   border-right: 2px solid
-    ${(props) => (props.active ? props.theme.colors.white : "transparent")};
-  color: ${({ active, theme }) =>
-    active ? theme.colors.blue : theme.colors.black};
+    ${(props) => (props.active ? "var(--white" : "transparent")};
+  color: ${({ active }) => (active ? "var(--blue)" : "var(--black)")};
 
   :hover {
-    border-color: ${({ theme }) => theme.colors.blue};
-    border-right-color: ${({ theme }) => theme.colors.white};
+    border-color: var(--blue);
+    border-right-color: var(--white);
   }
 `;
 
 const SidebarButtonTitle = styled.p`
   margin: 0;
   font-size: 11px;
-  color: ${({ theme }) => theme.colors.blue};
+  color: var(--blue);
 `;
 
 const Wrapper = styled.div`

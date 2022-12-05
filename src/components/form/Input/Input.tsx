@@ -12,20 +12,20 @@ const StyledInput = styled.input`
   font-size: 14px;
   border-width: 1px;
   border-radius: 3px;
-  border: 1px solid ${({ theme }) => theme.colors.black};
-  background-color: ${({ theme }) => theme.colors.white};
+  border: 1px solid var(--black);
+  background-color: var(--white);
 
   &:active,
   &:focus {
-    border-color: ${({ theme }) => theme.colors.blue};
-    box-shadow: inset 0 0 2px ${({ theme }) => theme.colors.blue};
+    border-color: var(--blue);
+    box-shadow: inset 0 0 2px var(--blue);
     outline: 0;
   }
 
   &:disabled {
-    background-color: ${({ theme }) => theme.colors.grayLight};
-    border-color: ${({ theme }) => theme.colors.gray1};
-    color: ${({ theme }) => theme.colors.gray2};
+    background-color: var(--gray_light);
+    border-color: var(--gray_dark);
+    color: var(--gray_dark);
     opacity: 0.7;
 
     &:active,

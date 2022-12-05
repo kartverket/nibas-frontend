@@ -18,8 +18,8 @@ const Select = forwardRef<HTMLSelectElement, Props>(function Select(
 
 const SelectInput = styled.select`
   appearance: none;
-  border: 1px solid ${({ theme }) => theme.colors.black};
-  background-color: ${({ theme }) => theme.colors.white};
+  border: 1px solid var(--black);
+  background-color: var(--white);
   border-radius: 3px;
   padding: 8px 44px 8px 8px;
   margin: 0;
@@ -29,25 +29,25 @@ const SelectInput = styled.select`
 
   option {
     &:nth-child(even) {
-      background-color: ${({ theme }) => theme.colors.blueLight};
+      background-color: var(--blue_light);
     }
   }
 
   &:hover {
-    border-color: ${({ theme }) => theme.colors.blue};
+    border-color: var(--blue);
   }
 
   &:active,
   &:focus {
-    border-color: ${({ theme }) => theme.colors.blue};
-    box-shadow: inset 0 0 2px ${({ theme }) => theme.colors.blue};
+    border-color: var(--blue);
+    box-shadow: inset 0 0 2px var(--blue);
     outline: 0;
   }
 
   &:disabled {
-    background-color: ${({ theme }) => theme.colors.grayLight};
-    border-color: ${({ theme }) => theme.colors.gray1};
-    color: ${({ theme }) => theme.colors.gray2};
+    background-color: var(--gray_light);
+    border-color: var(--gray_dark);
+    color: var(--gray_dark);
     opacity: 0.7;
 
     &:active,
@@ -72,16 +72,16 @@ const SelectWrapper = styled.div`
 
   &.invalid {
     select {
-      border-color: ${({ theme }) => theme.colors.redErrorText};
+      border-color: var(--red_error_message);
 
       &:active,
       &:focus {
-        box-shadow: inset 0 0 2px ${({ theme }) => theme.colors.redErrorText};
+        box-shadow: inset 0 0 2px var(--red_error_message);
       }
     }
 
     ${SelectCaret} {
-      color: ${({ theme }) => theme.colors.redErrorText};
+      color: var(--red_error_message);
     }
   }
 `;

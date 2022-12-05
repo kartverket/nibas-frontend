@@ -173,8 +173,8 @@ BackgroundLayerAccordion.displayName = "BackgroundLayerAccordion";
 const AddRemove = styled(Button)<{ visible: boolean; aktivtKartlag: boolean }>`
   cursor: pointer;
 
-  color: ${({ theme, visible, aktivtKartlag }) =>
-    visible && !aktivtKartlag ? theme.colors.gray : theme.colors.blueDark};
+  color: ${({ visible, aktivtKartlag }) =>
+    visible && !aktivtKartlag ? "var(--gray)" : "var(--blue_dark)"};
 
   padding: 0 12px;
   opacity: ${({ visible, aktivtKartlag }) =>
@@ -182,10 +182,9 @@ const AddRemove = styled(Button)<{ visible: boolean; aktivtKartlag: boolean }>`
 `;
 
 const Caret = styled.div<{ open: boolean }>`
-  color: ${({ theme, open }) =>
-    open ? theme.colors.white : theme.colors.blueDark};
-  background-color: ${({ open, theme }) =>
-    open ? theme.colors.blueDark : theme.colors.white};
+  color: ${({ open }) => (open ? "var(--white)" : "var(--blue_dark)")};
+  background-color: ${({ open }) =>
+    open ? "var(--blue_dark)" : "var(--white)"};
 
   height: 100%;
   padding: 0 12px;
@@ -208,8 +207,7 @@ const Wrapper = styled.div<{ indent: number }>`
 `;
 
 const SubKartlagName = styled.span<{ activeLayer?: boolean }>`
-  color: ${({ activeLayer, theme }) =>
-    activeLayer ? theme.colors.gray : theme.colors.black};
+  color: ${({ activeLayer }) => (activeLayer ? "var(--gray)" : "var(--black)")};
   display: flex;
   justify-content: space-between;
   padding: 8px 0;
@@ -228,8 +226,8 @@ const ClickableName = styled(Button)<{
     flex: 1;
     text-align: left;
     padding: 6px;
-    background-color: ${({ open, dropDown, theme }) =>
-      open && dropDown ? theme.colors.blueLight : theme.colors.white};
+    background-color: ${({ open, dropDown }) =>
+      open && dropDown ? "var(--blue_light)" : "var(--white)"};
     padding-top: ${({ dropDown }) => (dropDown ? 16 : 0)}px;
     padding-bottom: ${({ dropDown }) => (dropDown ? 16 : 0)}px;
     padding-left: 16px;

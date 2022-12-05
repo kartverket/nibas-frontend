@@ -5,7 +5,7 @@ export const SidebarPanel = styled(KartInteractable)`
   min-height: 400px;
   max-height: 80%;
   width: 440px;
-  border: 2px solid ${({ theme }) => theme.colors.blue};
+  border: 2px solid var(--blue);
   padding: 8px 16px;
   overflow: auto;
 `;

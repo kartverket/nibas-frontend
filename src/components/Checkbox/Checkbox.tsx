@@ -25,7 +25,7 @@ const Checkmark = css`
   top: 1px;
   width: 7px;
   height: 11px;
-  border: solid ${({ theme }) => theme.colors.white};
+  border: solid var(--white);
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
 `;
@@ -36,7 +36,7 @@ const RadioFill = css`
   width: 11px;
   height: 11px;
   border-radius: 50%;
-  background: ${({ theme }) => theme.colors.blueDark};
+  background: var(--blue_dark);
 `;
 
 // TODO: Random farge basert på label?
@@ -48,9 +48,9 @@ const CustomCheckbox = styled.span<{ type: "radio" | "checkbox" }>`
   left: 0;
   height: 17px;
   width: 17px;
-  background-color: ${({ theme }) => theme.colors.white};
+  background-color: var(--white);
   border-radius: ${({ type }) => (type === "radio" ? "50%" : "2px")};
-  border: 1px solid ${({ theme }) => theme.colors.blueDark};
+  border: 1px solid var(--blue_dark);
   transition: 0.1s background-color;
   margin-top: 1px;
 
@@ -91,7 +91,7 @@ const Wrapper = styled(Label)<{ disabled: boolean }>`
   user-select: none;
 
   :hover ${DefaultCheckbox} ~ ${CustomCheckbox} {
-    background-color: ${({ theme }) => theme.colors.grayLight};
+    background-color: var(--gray_light);
   }
 
   // når checked, vis checkmark/radio fill
@@ -104,11 +104,11 @@ const Wrapper = styled(Label)<{ disabled: boolean }>`
   // radio specific styles
   ${DefaultCheckbox}[type="radio"] {
     :disabled ~ ${CustomCheckbox} {
-      background-color: ${({ theme }) => theme.colors.grayLight};
-      border-color: ${({ theme }) => theme.colors.gray};
+      background-color: var(--gray_light);
+      border-color: var(--gray);
 
       :after {
-        background-color: ${({ theme }) => theme.colors.gray};
+        background-color: var(--gray);
       }
     }
   }
@@ -116,19 +116,19 @@ const Wrapper = styled(Label)<{ disabled: boolean }>`
   // checkbox specific styles
   ${DefaultCheckbox}[type="checkbox"] {
     :checked ~ ${CustomCheckbox} {
-      background-color: ${({ theme }) => theme.colors.blueDark};
+      background-color: var(--blue_dark);
     }
 
     :disabled ~ ${CustomCheckbox} {
-      background-color: ${({ theme }) => theme.colors.grayLight};
+      background-color: var(--gray_light);
     }
 
     :checked:disabled ~ ${CustomCheckbox} {
-      background-color: ${({ theme }) => theme.colors.gray};
+      background-color: var(--gray);
 
       :after {
         background-color: inherit;
-        border-color: ${({ theme }) => theme.colors.grayLight};
+        border-color: var(--gray_light);
       }
     }
   }

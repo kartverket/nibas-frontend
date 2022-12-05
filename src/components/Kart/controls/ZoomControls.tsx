@@ -37,8 +37,8 @@ const ZoomButton = styled(Button).attrs(() => ({
   position: absolute;
   border-radius: 8px;
   background-color: white;
-  border: 1px solid ${({ theme }) => theme.colors.blue};
-  color: ${({ theme }) => theme.colors.blue};
+  border: 1px solid var(--blue);
+  color: var(--blue);
   padding: 8px;
 `;
 

@@ -149,8 +149,8 @@ const UtkastName = styled.p`
 `;
 
 export const UtkastItemExpanded = styled.div`
-  border-top: 2px solid ${({ theme }) => theme.colors.black};
-  background-color: ${({ theme }) => theme.colors.grayLight};
+  border-top: 2px solid var(--black);
+  background-color: var(--gray_light);
   padding: 32px 16px;
 `;
 
@@ -182,9 +182,9 @@ export const ButtonsAndGyldigFra = styled.div`
 const CancelButton = styled(Button).attrs(() => ({
   variant: "teriary",
 }))`
-  background-color: ${({ theme }) => theme.colors.grayLight};
+  background-color: var(--gray_light);
   border: none;
-  color: ${({ theme }) => theme.colors.blue};
+  color: var(--blue);
 `;
 
 const UnstyledButton = styled(Button).attrs(() => ({
@@ -194,14 +194,14 @@ const UnstyledButton = styled(Button).attrs(() => ({
 const PublishIcon = styled(Icon).attrs(() => ({
   icon: "done",
 }))`
-  color: ${({ theme }) => theme.colors.green};
+  color: var(--green);
   margin-right: 8px;
 `;
 
 const DeleteIcon = styled(Icon).attrs(() => ({
   icon: "close",
 }))`
-  color: ${({ theme }) => theme.colors.redErrorText};
+  color: var(--red_error_message);
   margin-right: 8px;
 `;
 

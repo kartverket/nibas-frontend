@@ -1,5 +1,9 @@
 @import "@kvib/css/main.css";
 
+:root {
+  --screenBreakXxl: 1700px; /* Eget breakpoint utenfor KVIB */
+}
+
 body {
   height: 100vh;
   margin: 0;

@@ -1,7 +1,6 @@
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "styled-components";
 import AsyncKodelisteSelect from "../AsyncKodelisteSelect";
 import {
   BlockLabel,
@@ -15,9 +14,9 @@ import useMetadataForm from "../useMetadataForm";
 import { getDateInFriendlyString } from "../utils";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
-import useScreenWidth from "hooks/useScreenWidth";
 import { Metadata, FeatureProperties } from "types/api";
 import useMetadataInputOptions from "hooks/useMetadataInputOptions";
+import styled from "styled-components";
 
 type Props = {
   feature: Feature<Geometry>;
@@ -31,8 +30,6 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
   const { register, maalemetodeKoder, updateDraftFromFeature, dirtyFields } =
     useMetadataForm(metadata, feature);
 
-  const screenWidth = useScreenWidth();
-  const theme = useTheme();
   const { t } = useTranslation();
 
   const inputOptions = useMetadataInputOptions({
@@ -89,16 +86,14 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
             />
           </BlockLabel>
         </Part>
-        {screenWidth < theme.dimensions.lg && (
-          <Part>
-            <Dates
-              oppdateringsdato={
-                metadata?.common?.sporingsinformasjon.oppdateringsdato
-              }
-              datafangstdato={metadata?.common?.datafangstdato}
-            />
-          </Part>
-        )}
+        <SmallPart>
+          <Dates
+            oppdateringsdato={
+              metadata?.common?.sporingsinformasjon.oppdateringsdato
+            }
+            datafangstdato={metadata?.common?.datafangstdato}
+          />
+        </SmallPart>
       </Container>
       <BlockLabel>
         {t("metadata.Informasjon")}
@@ -108,16 +103,14 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
         {t("metadata.Opphav")}
         <Input {...register("opphav", inputOptions)} />
       </BlockLabel>
-      {screenWidth >= theme.dimensions.lg && (
-        <Part>
-          <Dates
-            oppdateringsdato={
-              metadata?.common?.sporingsinformasjon.oppdateringsdato
-            }
-            datafangstdato={metadata?.common?.datafangstdato}
-          />
-        </Part>
-      )}
+      <LargePart>
+        <Dates
+          oppdateringsdato={
+            metadata?.common?.sporingsinformasjon.oppdateringsdato
+          }
+          datafangstdato={metadata?.common?.datafangstdato}
+        />
+      </LargePart>
     </form>
   );
 };
@@ -145,3 +138,15 @@ const Dates = ({ oppdateringsdato, datafangstdato }: DatesProps) => (
 );
 
 export default GrenseMetadataGenerelt;
+
+const LargePart = styled(Part)`
+  @media (max-width: var(--screenBreakXxl)) {
+    display: none;
+  }
+`;
+
+const SmallPart = styled(Part)`
+  @media (min-width: var(--screenBreakXxl)) {
+    display: none;
+  }
+`;

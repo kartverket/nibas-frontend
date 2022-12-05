@@ -68,8 +68,7 @@ const StyledSidebar = styled.div<{ utkastActive: boolean }>`
   padding-top: 80px;
 
   border: 3px solid
-    ${({ theme, utkastActive }) =>
-      utkastActive ? theme.colors.redDark : "transparent"};
+    ${({ utkastActive }) => (utkastActive ? "var(--red_dark)" : "transparent")};
   border-right: none;
 `;
 

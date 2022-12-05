@@ -49,7 +49,7 @@ const Panel = styled(SidebarPanel)`
 
 const BackgroundLayersHeading = styled(Heading)`
   margin: 8px 0 0;
-  border-bottom: 2px solid ${({ theme }) => theme.colors.grayLight};
+  border-bottom: 2px solid var(--gray_light);
 `;
 
 export default Bakgrunnskart;
