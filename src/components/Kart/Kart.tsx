@@ -1,5 +1,5 @@
 import { Suspense, useEffect, useRef } from "react";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import { map } from "./constants";
 import ZoomControls from "./controls/ZoomControls";
 import OverlayPanels from "./OverlayPanels";
@@ -61,6 +61,11 @@ const Kart = () => {
 const KartWrapper = styled.div`
   grid-area: map;
   position: relative;
+  border: 3px solid var(--gray_light);
+  height: calc(100% - 6px);
+  width: calc(100% - 6px);
+  border-right-width: 0;
+  border-bottom-width: 0;
 `;
 
 const UtkastBorder = styled.div<{ utkastActive: boolean }>`
@@ -70,13 +75,6 @@ const UtkastBorder = styled.div<{ utkastActive: boolean }>`
   bottom: 0;
   right: 0;
   pointer-events: none;
-
-  ${({ utkastActive }) =>
-    utkastActive &&
-    css`
-      border: 3px solid ${({ theme }) => theme.colors.redDark};
-      border-left-color: transparent;
-    `}
 `;
 
 const KartTarget = styled.div`

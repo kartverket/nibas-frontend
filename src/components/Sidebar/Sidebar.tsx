@@ -21,11 +21,10 @@ const Sidebar = () => {
   const frontendVersion = process.env.REACT_APP_VERSION ?? "VERSION-NOT-SET";
 
   const { t } = useTranslation();
-
   const { redigeringsmodusAktiv } = useRedigeringsmodus();
 
   return (
-    <StyledSidebar utkastActive={redigeringsmodusAktiv}>
+    <StyledSidebar activeUtkast={redigeringsmodusAktiv}>
       <ButtonsWrapper>
         <SidebarButton
           title={t("sidebar.Inndelinger")}
@@ -52,24 +51,21 @@ const Sidebar = () => {
   );
 };
 
-const StyledSidebar = styled.div<{ utkastActive: boolean }>`
+const StyledSidebar = styled.div<{ activeUtkast: boolean }>`
   grid-area: sidebar;
-  width: 80px;
+  width: 100px;
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
   padding-top: 80px;
-
-  border: 3px solid
-    ${({ theme, utkastActive }) =>
-      utkastActive ? theme.colors.redDark : "transparent"};
+  padding-left: ${({ activeUtkast }) => (activeUtkast ? 6 : 0)}px;
   border-right: none;
+  overflow: hidden;
 `;
 
 const ButtonsWrapper = styled.div`
-  /* margin-left: 6px; */
   margin-right: 0px;
   width: 100%;
   display: flex;

@@ -19,16 +19,18 @@ const tabHeight = 36;
 
 const Wrapper = styled.div`
   position: absolute;
-  top: -${tabHeight}px;
+  top: 14px;
   height: ${tabHeight}px;
-  left: 60%;
+  right: 17px;
   width: auto;
   display: flex;
   align-items: center;
-  background-color: ${({ theme }) => theme.colors.redDark};
+  background-color: ${({ theme }) => theme.colors.yellowLight};
+  border: 2px solid #ffbf00;
   padding: 0 16px;
   font-size: 16px;
-  color: white;
+  color: black;
+  z-index: 9;
 `;
 
 export default UtkastTab;

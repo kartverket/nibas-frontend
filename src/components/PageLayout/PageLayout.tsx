@@ -5,12 +5,15 @@ import Feedback from "components/Feedback/Feedback";
 import Kart from "components/Kart";
 import Sidebar from "components/Sidebar";
 import TopBar from "components/TopBar";
+import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
+import { closestOnCircle } from "ol/coordinate";
 
 const PageLayout = () => {
   const [errorFeedback, setErrorFeedback] = useState("");
+  const { redigeringsmodusAktiv } = useRedigeringsmodus();
 
   return (
-    <Grid>
+    <Grid utkastActive={redigeringsmodusAktiv}>
       <SWRConfig
         value={{
           onError: (error) => {
@@ -38,7 +41,7 @@ const PageLayout = () => {
   );
 };
 
-const Grid = styled.div`
+const Grid = styled.div<{ utkastActive: boolean }>`
   height: 100%;
   display: grid;
   grid-template-columns: auto 1fr;
@@ -46,6 +49,17 @@ const Grid = styled.div`
   grid-template-areas:
     ". topbar"
     "sidebar map";
+
+  &::after {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    border: 6px solid
+      ${({ utkastActive }) => (utkastActive ? "#ffbf00" : "transparent")};
+    z-index: -99999;
+  }
 `;
 
 export default PageLayout;

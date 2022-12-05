@@ -2,8 +2,6 @@ import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { AuthenticationButton } from "../Authentication/AuthenticationButton";
-import Input from "components/form/Input";
-import Icon from "components/Icon";
 import Logo from "components/Logo/Logo";
 
 const TopBar = () => {
@@ -37,6 +35,7 @@ const Wrapper = styled.div`
   grid-area: topbar;
   display: flex;
   padding: 0.5rem 1rem 0.5rem 0;
+  height: 88px;
 `;
 
 const LeftSide = styled.div`

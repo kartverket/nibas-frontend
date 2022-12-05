@@ -35,12 +35,12 @@ const StyledButton = styled(Button).attrs(() => ({
 }))<StyledButtonProps>`
   display: block;
   margin: 8px 0;
-  padding: 8px 0;
+  padding: 8px 6px 8px 0;
   width: 100%;
   z-index: 2;
   text-align: center;
-  border-left: ${({ active }) => (active ? 2 : 0)}px solid
-    ${({ theme }) => theme.colors.blueDark};
+  border-left: 5px solid
+    ${({ active, theme }) => (active ? theme.colors.blueDark : "transparent")};
 
   color: ${({ active, theme }) =>
     active ? theme.colors.blue : theme.colors.black};
@@ -55,7 +55,7 @@ const StyledButton = styled(Button).attrs(() => ({
     font-weight: ${({ active }) => (active ? 600 : 400)};
   }
 
-  :focus {
+  :focus-visible {
     box-shadow: 0px 0px 0px 2px ${({ theme }) => theme.colors.blueDark} inset;
   }
 `;
