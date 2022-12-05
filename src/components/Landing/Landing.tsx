@@ -44,26 +44,31 @@ const Logo = styled(VerticalLogo)`
   margin-bottom: 30px;
 `;
 
-const Card = styled.div`
+const Card = styled.button`
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: relative;
   width: 100%;
   padding: 42px;
-  border: 2px solid transparent;
-  background: white;
+  border: 0;
+  background: var(--blue_dark);
+  color: var(--white);
   box-shadow: 0px 3px 19px 0px rgba(0, 0, 0, 0.06);
-  transition: border 0.1s;
+  transition: background 0.1s;
   cursor: pointer;
 
   &:hover {
-    border-color: var(--blue);
+    background-color: var(--blue);
+  }
+
+  &:focus {
+    outline-offset: 3px;
+    outline: 3px solid var(--blue_dark);
   }
 `;
 
 const Arrow = styled(Icon).attrs({ icon: "arrow_forward_ios" })`
-  color: var(--blue);
   transition: transform 0.1s;
 
   ${Card}:hover & {
@@ -77,6 +82,7 @@ const CardHeading = styled.h2`
 
 const CardParagraph = styled.p`
   margin: 0.25em 0 0;
+  padding-left: 0.5em;
 `;
 
 export default Landing;
