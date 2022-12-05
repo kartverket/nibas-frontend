@@ -53,8 +53,9 @@ const Card = styled.button`
   padding: 42px;
   border: 0;
   background: var(--blue_dark);
+  color: var(--white);
   box-shadow: 0px 3px 19px 0px rgba(0, 0, 0, 0.06);
-  transition: border 0.1s;
+  transition: background 0.1s;
   cursor: pointer;
 
   &:hover {
@@ -62,12 +63,12 @@ const Card = styled.button`
   }
 
   &:focus {
-    box-shadow: 0 0 0 3px var(--white), 0 0 0 6px var(--blue_dark);
+    outline-offset: 3px;
+    outline: 3px solid var(--blue_dark);
   }
 `;
 
 const Arrow = styled(Icon).attrs({ icon: "arrow_forward_ios" })`
-  color: var(--white);
   transition: transform 0.1s;
 
   ${Card}:hover & {
@@ -77,12 +78,10 @@ const Arrow = styled(Icon).attrs({ icon: "arrow_forward_ios" })`
 
 const CardHeading = styled.h2`
   margin: 0 0 0.25em;
-  color: var(--white);
 `;
 
 const CardParagraph = styled.p`
   margin: 0.25em 0 0;
-  color: var(--white);
   padding-left: 0.5em;
 `;
 
