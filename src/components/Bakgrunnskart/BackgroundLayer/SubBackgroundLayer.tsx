@@ -4,6 +4,7 @@ import BackgroundLayerAccordion from "./BackgroundLayerAccordion";
 import { BakgrunnskartId } from "hooks/layers/types";
 import { MappedLayer } from "utils/getLayersFromWMS";
 import { useBakgrunnskart } from "contexts/BakgrunnskartContext";
+import { useMemo } from "react";
 
 const getLayersStringToReplace = (
   layersInParams: string,
@@ -49,10 +50,15 @@ const SubBackgroundLayer = ({
 }: Props) => {
   const { toggleLayerVisibility, visibleLayers, recursiveIsVisible } =
     useBakgrunnskart();
-  const visible = visibleLayers.some(
-    (vl) =>
-      vl.mainLayer === mainLayerSourceId &&
-      vl.subLayers.some((sl) => sl === mappedLayer.title)
+
+  const subBackgroundLayerIsVisible = useMemo(
+    () =>
+      visibleLayers.some(
+        (vl) =>
+          vl.mainLayer === mainLayerSourceId &&
+          vl.subLayers.includes(mappedLayer.title)
+      ),
+    [visibleLayers, mainLayerSourceId, mappedLayer.title]
   );
 
   const updateSourceParams = () => {
@@ -66,7 +72,7 @@ const SubBackgroundLayer = ({
 
     let newParamsLayerString = "";
 
-    if (visible) {
+    if (subBackgroundLayerIsVisible) {
       const replaceString = getLayersStringToReplace(
         layersInParams,
         mappedLayerId
@@ -120,7 +126,7 @@ const SubBackgroundLayer = ({
       key={mappedLayer.title}
       mappedLayer={mappedLayer}
       indent={indent}
-      visible={visible}
+      visible={subBackgroundLayerIsVisible}
       onVisibilityClick={onVisibilityClick}
       isAktiveKartlag={isAktiveKartlag}
     >
