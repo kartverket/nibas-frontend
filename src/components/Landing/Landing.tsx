@@ -3,6 +3,7 @@ import { VerticalLogo } from "components/Logo/Logo";
 import styled from "styled-components";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useTranslation } from "react-i18next";
+import Button from "components/form/Button";
 
 const Landing = () => {
   const { handleAuthenticateFunc } = useAuthenticationFlow();
@@ -51,19 +52,23 @@ const Card = styled.button`
   position: relative;
   width: 100%;
   padding: 42px;
-  border: 2px solid var(--blue);
-  background: white;
+  border: 0;
+  background: var(--blue_dark);
   box-shadow: 0px 3px 19px 0px rgba(0, 0, 0, 0.06);
   transition: border 0.1s;
   cursor: pointer;
 
   &:hover {
-    background-color: var(--blue_light);
+    background-color: var(--blue);
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 3px var(--white), 0 0 0 6px var(--blue_dark);
   }
 `;
 
 const Arrow = styled(Icon).attrs({ icon: "arrow_forward_ios" })`
-  color: var(--blue);
+  color: var(--white);
   transition: transform 0.1s;
 
   ${Card}:hover & {
@@ -73,10 +78,13 @@ const Arrow = styled(Icon).attrs({ icon: "arrow_forward_ios" })`
 
 const CardHeading = styled.h2`
   margin: 0 0 0.25em;
+  color: var(--white);
 `;
 
 const CardParagraph = styled.p`
   margin: 0.25em 0 0;
+  color: var(--white);
+  padding-left: 0.5em;
 `;
 
 export default Landing;
