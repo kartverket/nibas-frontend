@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { ChangeEvent, useCallback, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
@@ -13,6 +13,7 @@ import {
   StemmekretsResponse,
 } from "types/api";
 import get from "lodash.get";
+import useTimer from "hooks/useTimer";
 
 type Inputs = {
   stemmekretsnavn: string;
@@ -44,6 +45,7 @@ const EditRow = ({ stemmekrets, kommuneId }: Props) => {
   const { data: fullStemmekrets } = useNibasApi("/v1/stemmekretser/{id}", {
     id: stemmekrets.id,
   });
+  const { startTimer, clearTimer } = useTimer();
 
   const utkastStemmekrets = useUtkastEntity(
     fullStemmekrets,
@@ -89,30 +91,34 @@ const EditRow = ({ stemmekrets, kommuneId }: Props) => {
     setFormValues,
   });
 
-  const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    clearTimer();
+
     if (!utkastStemmekrets) return;
 
     const isDirty = get(dirtyFields, e.target.name);
 
     if (!isDirty) return;
 
-    addEntry({
-      type: "stemmekrets",
-      kommuneId,
-      changes: [
-        {
-          from: fromFormToRequest(previousValues.current, utkastStemmekrets),
-          to: fromFormToRequest(getValues(), utkastStemmekrets),
-          id: utkastStemmekrets.id,
-        },
-      ],
-    });
+    startTimer(() => {
+      addEntry({
+        type: "stemmekrets",
+        kommuneId,
+        changes: [
+          {
+            from: fromFormToRequest(previousValues.current, utkastStemmekrets),
+            to: fromFormToRequest(getValues(), utkastStemmekrets),
+            id: utkastStemmekrets.id,
+          },
+        ],
+      });
 
-    previousValues.current = getValues();
+      previousValues.current = getValues();
+    }, 700);
   };
 
   const formOptions = {
-    onBlur,
+    onChange,
   };
 
   return (
