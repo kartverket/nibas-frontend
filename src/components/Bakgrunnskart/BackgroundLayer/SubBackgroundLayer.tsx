@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import TileWMS from "ol/source/TileWMS";
 import { bakgrunnskartLayers } from "../../../hooks/layers/constants";
 import BackgroundLayerAccordion from "./BackgroundLayerAccordion";
@@ -48,25 +47,13 @@ const SubBackgroundLayer = ({
   mainLayerName,
   isAktiveKartlag,
 }: Props) => {
-  const [visible, setVisible] = useState(false);
-
   const { toggleLayerVisibility, visibleLayers, recursiveIsVisible } =
     useBakgrunnskart();
-
-  useEffect(() => {
-    const isSubLayerVisible = () => {
-      const source = bakgrunnskartLayers[
-        mainLayerSourceId
-      ].getSource() as TileWMS;
-      const layersInParams = source.getParams().LAYERS as string;
-
-      if (!mappedLayer.id) return false;
-
-      return layersInParams.includes(mappedLayer.id);
-    };
-
-    setVisible(isSubLayerVisible());
-  }, [mainLayerSourceId, mappedLayer.id, mappedLayer]);
+  const visible = visibleLayers.some(
+    (vl) =>
+      vl.mainLayer === mainLayerSourceId &&
+      vl.subLayers.some((sl) => sl === mappedLayer.title)
+  );
 
   const updateSourceParams = () => {
     const source = bakgrunnskartLayers[
@@ -126,7 +113,6 @@ const SubBackgroundLayer = ({
     } else if (layersInParams === mainLayerName && isMainLayerVisible) {
       toggleLayerVisibility(mainLayerSourceId, mappedLayer.title);
     }
-    setVisible(!visible);
   };
 
   return (
