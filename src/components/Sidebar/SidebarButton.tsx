@@ -36,11 +36,11 @@ const StyledButton = styled(Button).attrs(() => ({
   text-align: center;
 
   border-top: 2px solid
-    ${(props) => (props.active ? "var(--blue" : "transparent")};
+    ${(props) => (props.active ? "var(--blue)" : "transparent")};
   border-bottom: 2px solid
-    ${(props) => (props.active ? "var(--blue" : "transparent")};
+    ${(props) => (props.active ? "var(--blue)" : "transparent")};
   border-right: 2px solid
-    ${(props) => (props.active ? "var(--white" : "transparent")};
+    ${(props) => (props.active ? "var(--white)" : "transparent")};
   color: ${({ active }) => (active ? "var(--blue)" : "var(--black)")};
 
   :hover {
