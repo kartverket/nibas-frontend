@@ -3,7 +3,6 @@ import { VerticalLogo } from "components/Logo/Logo";
 import styled from "styled-components";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useTranslation } from "react-i18next";
-import Button from "components/form/Button";
 
 const Landing = () => {
   const { handleAuthenticateFunc } = useAuthenticationFlow();
