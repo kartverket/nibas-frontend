@@ -2,8 +2,10 @@ import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { createUtkastOperations } from "contexts/UtkastContext/utils";
 import {
   AdministrativGrenseMetadata,
+  FramtidigVersjonConflict,
   FylkeRef,
   GrunnkretsRef,
+  GrunnkretsRequest,
   GrunnkretsResponse,
   KodelisteRespons,
   KommuneRef,
@@ -172,12 +174,12 @@ export const mockDetailedGrunnkrets1: GrunnkretsResponse = {
   version: 1,
   id: "1",
   identifikasjon: {
-    lokalid: "lokalid",
+    lokalid: "1",
   },
   navn: "Mosekollen øst",
   gyldighet: {
-    gyldigFra: "2020-06-16",
-    gyldigTil: "2020-06-17",
+    gyldigFra: "2022-01-01",
+    gyldigTil: "2022-07-01",
   },
   oppdateringsdato: "2022-12-31",
   endringstype: "Retting",
@@ -189,7 +191,7 @@ export const mockDetailedGrunnkrets2: GrunnkretsResponse = {
   version: 1,
   id: "2",
   identifikasjon: {
-    lokalid: "lokalid",
+    lokalid: "2",
   },
   navn: "Dåsvatn",
   gyldighet: {
@@ -198,6 +200,15 @@ export const mockDetailedGrunnkrets2: GrunnkretsResponse = {
   },
   oppdateringsdato: "2022-12-31",
   endringstype: "Retting",
+};
+
+export const mockGrunnkretsRequest: GrunnkretsRequest = {
+  navn: "Mosekollen øst",
+  grunnkretsnummer: "12345678",
+  identifikasjon: {
+    lokalid: "1",
+  },
+  version: 1,
 };
 
 export const mockKommuner = [
@@ -300,7 +311,7 @@ export const mockStemmekrets2: StemmekretsResponse = {
 export const mockUtkast: UtkastResponse = {
   navn: "Mock utkast",
   endringstype: "Retting",
-  gyldigFra: "2022-12-31",
+  gyldigFra: "2022-06-01",
   id: "1",
   status: "Ikke publisert",
   opprettetDato: "2022-01-01",
@@ -343,18 +354,54 @@ export const mockUtkastRef2: UtkastRef = {
   navn: "Et nytt utkast",
 };
 
+export const mockFutureGrunnkrets1_1: GrunnkretsResponse = {
+  ...mockDetailedGrunnkrets1,
+  navn: "Mosekollen vest",
+  grunnkretsnummer: "12345679",
+  gyldighet: {
+    gyldigFra: "2022-04-01",
+    gyldigTil: "2022-07-01",
+  },
+};
+
+export const mockFutureGrunnkrets1_2: GrunnkretsResponse = {
+  ...mockDetailedGrunnkrets1,
+  navn: "Mosekollen nord",
+  grunnkretsnummer: "87654321",
+  gyldighet: {
+    gyldigFra: "2022-07-01",
+  },
+};
+
+export const mockFremtidigEndringConflictResponse: FramtidigVersjonConflict = {
+  id: {
+    lokalid: {
+      value: "1",
+    },
+    gyldigFra: mockDetailedGrunnkrets1.gyldighet.gyldigFra,
+  },
+  affectedIds: [
+    {
+      lokalid: {
+        value: "1",
+      },
+      gyldigFra: mockFutureGrunnkrets1_1.gyldighet.gyldigFra,
+    },
+    {
+      lokalid: {
+        value: "1",
+      },
+      gyldigFra: mockFutureGrunnkrets1_2.gyldighet.gyldigFra,
+    },
+  ],
+  type: "Grunnkrets",
+  melding: "Konflikt",
+};
+
 export const mockGrunnkretserFramtidigeEndringer: GrunnkretsResponse[] = [
   mockDetailedGrunnkrets1,
-  {
-    ...mockDetailedGrunnkrets1,
-    navn: "Mosekollen vest",
-    grunnkretsnummer: "12345679",
-  },
-  {
-    ...mockDetailedGrunnkrets1,
-    navn: "Mosekollen nord",
-    grunnkretsnummer: "87654321",
-  },
+  mockFutureGrunnkrets1_1,
+  mockFutureGrunnkrets1_2,
 ];
 
 export const mockStemmekretserFramtidigeEndringer: StemmekretsResponse[] = [

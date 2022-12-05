@@ -4,7 +4,7 @@ import Modal from "react-modal";
 import styled from "styled-components";
 import Button from "components/form/Button";
 
-const OverlayStyle = styled.div`
+export const ModalOverlay = styled.div`
   position: fixed;
   inset: 0;
   z-index: 10;
@@ -21,7 +21,7 @@ const OverlayStyle = styled.div`
   }
 `;
 
-const ModalStyle = styled.div`
+export const CustomModalWrapper = styled.div`
   position: relative;
   top: 50%;
   left: 50%;
@@ -117,10 +117,10 @@ const Feedback = ({
       className="_"
       overlayClassName="_"
       contentElement={(props, contentChildren) => (
-        <ModalStyle {...props}>{contentChildren}</ModalStyle>
+        <CustomModalWrapper {...props}>{contentChildren}</CustomModalWrapper>
       )}
       overlayElement={(props, overlayChildren) => (
-        <OverlayStyle {...props}>{overlayChildren}</OverlayStyle>
+        <ModalOverlay {...props}>{overlayChildren}</ModalOverlay>
       )}
     >
       <Header type={type}>{title}</Header>
