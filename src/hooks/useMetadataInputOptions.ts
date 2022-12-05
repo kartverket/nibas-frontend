@@ -1,6 +1,8 @@
 import useIsMetadataDisabled from "components/Kart/OverlayPanels/useIsMetadataDisabled";
 import get from "lodash.get";
+import { ChangeEvent } from "react";
 import { FeatureProperties } from "types/api";
+import useTimer from "./useTimer";
 
 type Options<T> = {
   dirtyFields: T;
@@ -13,18 +15,22 @@ const useMetadataInputOptions = <T>({
   properties,
   updateDraftFromFeature,
 }: Options<T>) => {
-  const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+  const { startTimer, clearTimer } = useTimer();
+
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    clearTimer();
+
     const isDirty = get(dirtyFields, e.target.name);
     if (!isDirty) return;
 
-    updateDraftFromFeature();
+    startTimer(updateDraftFromFeature, 700);
   };
 
   const disabled = useIsMetadataDisabled(properties);
 
   return {
     disabled,
-    onBlur,
+    onChange,
   };
 };
 

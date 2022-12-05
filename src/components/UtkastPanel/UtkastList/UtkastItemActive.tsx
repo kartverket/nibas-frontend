@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { ChangeEvent, useCallback, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
@@ -22,6 +22,7 @@ import Feedback from "components/Feedback/Feedback";
 import useFeedback from "hooks/useFeedback";
 import { useUtkast } from "contexts/UtkastContext";
 import get from "lodash.get";
+import useTimer from "hooks/useTimer";
 
 type Inputs = {
   navn: string;
@@ -63,6 +64,7 @@ const UtkastItemActive = ({ utkastId }: Props) => {
     )
   );
   const previousValues = useRef<Inputs>(getValues());
+  const { startTimer, clearTimer } = useTimer();
 
   const { addEntry } = useToolbarSaving();
   const { canSave } = useToolbarActions();
@@ -93,29 +95,35 @@ const UtkastItemActive = ({ utkastId }: Props) => {
     setFormValues,
   });
 
-  const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    clearTimer();
+
     if (!fullUtkast) return;
 
     const isDirty = get(dirtyFields, e.target.name);
 
     if (!isDirty) return;
 
-    addEntry({
-      type: "utkast",
-      changes: [
-        {
-          from: fromFormToRequest(previousValues.current, fullUtkast),
-          to: fromFormToRequest(getValues(), fullUtkast),
-          id: fullUtkast.id,
-        },
-      ],
-    });
+    startTimer(
+      () =>
+        addEntry({
+          type: "utkast",
+          changes: [
+            {
+              from: fromFormToRequest(previousValues.current, fullUtkast),
+              to: fromFormToRequest(getValues(), fullUtkast),
+              id: fullUtkast.id,
+            },
+          ],
+        }),
+      700
+    );
 
     previousValues.current = getValues();
   };
 
   const registerOptions = {
-    onBlur,
+    onChange,
   };
 
   return (

@@ -14,6 +14,7 @@ import {
 } from "types/api";
 import { getNavnInSpraak } from "utils/language/language";
 import get from "lodash.get";
+import useTimer from "hooks/useTimer";
 
 type Props = {
   grunnkrets: GrunnkretsRef;
@@ -40,6 +41,7 @@ const EditRow = ({ grunnkrets, kommuneId }: Props) => {
   const { data: fullGrunnkrets } = useNibasApi("/v1/grunnkretser/{id}", {
     id: grunnkrets.id,
   });
+  const { startTimer, clearTimer } = useTimer();
 
   const {
     register,
@@ -72,30 +74,36 @@ const EditRow = ({ grunnkrets, kommuneId }: Props) => {
     setFormValues,
   });
 
-  const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+  const onChange = (e: React.FocusEvent<HTMLInputElement>) => {
+    clearTimer();
+
     if (!fullGrunnkrets) return;
 
     const isDirty = get(dirtyFields, e.target.name);
 
     if (!isDirty) return;
 
-    addEntry({
-      type: "grunnkrets",
-      kommuneId,
-      changes: [
-        {
-          from: fromFormToRequest(previousValues.current, fullGrunnkrets),
-          to: fromFormToRequest(getValues(), fullGrunnkrets),
-          id: fullGrunnkrets.id,
-        },
-      ],
-    });
+    startTimer(
+      () =>
+        addEntry({
+          type: "grunnkrets",
+          kommuneId,
+          changes: [
+            {
+              from: fromFormToRequest(previousValues.current, fullGrunnkrets),
+              to: fromFormToRequest(getValues(), fullGrunnkrets),
+              id: fullGrunnkrets.id,
+            },
+          ],
+        }),
+      700
+    );
 
     previousValues.current = getValues();
   };
 
   const registerOptions = {
-    onBlur,
+    onChange,
   };
 
   return (
