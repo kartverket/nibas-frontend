@@ -214,7 +214,7 @@ export interface components {
     CommonMetadata: {
       identifikasjon: components["schemas"]["Identifikasjon"];
       /**
-       * Format: date
+       * Format: date-time
        * @description Dato når objektet siste gang ble registrert/observert/målt i terrenget
        */
       datafangstdato?: string;
@@ -505,7 +505,7 @@ export interface components {
     /** @description Holder på informasjon om endring av objektet. */
     Sporingsinformasjon: {
       /**
-       * Format: date
+       * Format: date-time
        * @description Dato for siste endring på objektdataene
        */
       oppdateringsdato: string;
@@ -753,7 +753,7 @@ export interface components {
     /** @description Representasjon av audit info for et objekt. */
     AuditInfoResponse: {
       /**
-       * Format: date
+       * Format: date-time
        * @description Da objektet sist ble oppdatert.
        */
       oppdateringsdato: string;
@@ -921,7 +921,7 @@ export interface components {
       /** @description Angir om kommunen er et samisk forvaltningsområde eller ikke */
       samiskforvaltningsomraade: boolean;
       /**
-       * Format: date
+       * Format: date-time
        * @description Angir når denne kommunen ble sist oppdatert
        */
       oppdateringsdato: string;
@@ -993,7 +993,7 @@ export interface components {
       grunnkretsnummer: string;
       gyldighet: components["schemas"]["GyldighetResponse"];
       /**
-       * Format: date
+       * Format: date-time
        * @description Siste oppdateringstidspunkt for objektet
        */
       oppdateringsdato: string;
@@ -1040,7 +1040,7 @@ export interface components {
       /** @description Angir om fylket er et samisk forvaltningsområde eller ikke */
       samiskforvaltningsomraade: boolean;
       /**
-       * Format: date
+       * Format: date-time
        * @description Angir når dette fylket ble sist oppdatert
        */
       oppdateringsdato: string;
