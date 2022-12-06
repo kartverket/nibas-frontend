@@ -53,11 +53,11 @@ const SubBackgroundLayer = ({
 
   const subBackgroundLayerIsVisible = useMemo(
     () =>
-      visibleLayers.some(
+      visibleLayers.find(
         (vl) =>
           vl.mainLayer === mainLayerSourceId &&
           vl.subLayers.includes(mappedLayer.title)
-      ),
+      ) !== undefined,
     [visibleLayers, mainLayerSourceId, mappedLayer.title]
   );
 
