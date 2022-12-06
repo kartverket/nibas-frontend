@@ -51,15 +51,16 @@ const SubBackgroundLayer = ({
   const { toggleLayerVisibility, visibleLayers, recursiveIsVisible } =
     useBakgrunnskart();
 
-  const subBackgroundLayerIsVisible = useMemo(
-    () =>
-      visibleLayers.find(
-        (vl) =>
-          vl.mainLayer === mainLayerSourceId &&
-          vl.subLayers.includes(mappedLayer.title)
-      ) !== undefined,
-    [visibleLayers, mainLayerSourceId, mappedLayer.title]
-  );
+  let subBackgroundLayerIsVisible = false;
+  for (const layer of visibleLayers) {
+    if (layer.mainLayer === mainLayerSourceId) {
+      for (const sublayer of layer.subLayers) {
+        if (sublayer === mappedLayer.title) {
+          subBackgroundLayerIsVisible = true;
+        }
+      }
+    }
+  }
 
   const updateSourceParams = () => {
     const source = bakgrunnskartLayers[
