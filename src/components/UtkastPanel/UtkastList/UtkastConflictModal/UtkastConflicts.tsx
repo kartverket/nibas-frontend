@@ -1,6 +1,6 @@
 import useNibasApi from "hooks/useNibasApi";
 import { FramtidigVersjonConflict } from "types/api";
-import UtkastConflictModal from "./UtkastConflictModal";
+import UtkastConflictModal from ".";
 
 type Props = {
   utkastId: string;

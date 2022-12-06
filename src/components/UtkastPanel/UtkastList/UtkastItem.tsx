@@ -19,7 +19,7 @@ import {
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 import { resetMapView } from "utils/map";
-import UtkastConflicts from "./UtkastConflicts";
+import UtkastConflicts from "./UtkastConflictModal/UtkastConflicts";
 
 type Props = {
   utkast: UtkastRef;
