@@ -140,8 +140,10 @@ const Dates = ({ oppdateringsdato, datafangstdato }: DatesProps) => (
 export default GrenseMetadataGenerelt;
 
 const LargePart = styled(Part)`
-  @media (max-width: var(--screenBreakXxl)) {
-    display: none;
+  display: none;
+
+  @media (min-width: var(--screenBreakXxl)) {
+    display: unset;
   }
 `;
 
