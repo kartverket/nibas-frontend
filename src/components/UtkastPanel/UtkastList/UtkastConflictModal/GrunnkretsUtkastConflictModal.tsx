@@ -1,60 +1,21 @@
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import { resolveUtkastConflict } from "api/utkast";
 import Checkbox from "components/Checkbox";
 import { CustomModalWrapper, ModalOverlay } from "components/Feedback/Feedback";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
 import { ButtonCell } from "components/Kart/OverlayPanels/KretsTable";
 import Heading from "components/typography/Heading";
-import useNibasApi from "hooks/useNibasApi";
-import { useEffect, useMemo } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
 import ReactModal from "react-modal";
 import styled from "styled-components";
 import {
-  ConflictResolved,
   FramtidigVersjonConflict,
   GrunnkretsRequest,
-  GrunnkretsResponse,
   UtkastResponse,
 } from "types/api";
+import useGrunnkretsConflictModal from "./useGrunnkretsConflictModal";
 
 if (process.env.NODE_ENV !== "test") {
   ReactModal.setAppElement("#root");
 }
-
-type GrunnkretsFormData = {
-  grunnkretsnummer: string;
-  navn: string;
-  endringstype: string;
-  gyldigFra: string;
-  confirmed: boolean;
-};
-
-type Inputs = {
-  grunnkretser: GrunnkretsFormData[];
-};
-
-const getGrunnkretsRequest = (
-  grunnkretsFormData: GrunnkretsFormData,
-  futureVersions: GrunnkretsResponse[],
-  current: GrunnkretsRequest
-) => {
-  const futureVersion = futureVersions?.find(
-    (fv) => fv.gyldighet.gyldigFra === grunnkretsFormData.gyldigFra
-  );
-
-  return {
-    identifikasjon: {
-      lokalid: current.identifikasjon.lokalid,
-    },
-    grunnkretsnummer: grunnkretsFormData.grunnkretsnummer,
-    version: futureVersion?.version,
-    navn: grunnkretsFormData.navn,
-    endringstype: grunnkretsFormData.endringstype,
-    gyldigFra: grunnkretsFormData.gyldigFra,
-  } as GrunnkretsRequest;
-};
 
 type Props<T> = {
   conflictResponse: FramtidigVersjonConflict;
@@ -64,95 +25,20 @@ type Props<T> = {
   onCancel: () => void;
 };
 
-const UtkastConflictModal = <T extends GrunnkretsRequest>({
+const GrunnkretsUtkastConflictModal = <T extends GrunnkretsRequest>({
   conflictResponse,
   current,
   utkast,
   onNext,
   onCancel,
 }: Props<T>) => {
-  const { data: futureVersions } = useNibasApi(
-    "/v1/grunnkretser/{lokalid}/framtidigeversjoner",
-    {
-      lokalid: current.identifikasjon.lokalid,
-    }
-  );
-
-  const conflictedFutureVersions = useMemo(
-    () =>
-      futureVersions?.filter((fv) =>
-        conflictResponse.affectedIds.some(
-          (id) => id.gyldigFra === fv.gyldighet.gyldigFra
-        )
-      ),
-    [futureVersions, conflictResponse.affectedIds]
-  );
-
-  const { tokenHolderFunc } = useAuthenticationFlow();
-
-  const { control, register, setValue, handleSubmit, watch } = useForm<Inputs>({
-    defaultValues: {
-      grunnkretser: [],
-    },
-  });
-  const { fields } = useFieldArray({
-    control,
-    name: "grunnkretser",
-  });
-
-  const submit = handleSubmit(async (data) => {
-    if (!conflictedFutureVersions) return;
-
-    const resolvedConflict: ConflictResolved = {
-      lokalid: {
-        value: current.identifikasjon.lokalid,
-      },
-      grunnkretsRequests: data.grunnkretser
-        .map((g) => ({
-          endringstype: g.endringstype,
-          gyldigFra: g.gyldigFra,
-          grunnkretsRequest: getGrunnkretsRequest(
-            g,
-            conflictedFutureVersions,
-            current
-          ),
-        }))
-        .concat({
-          endringstype: utkast.endringstype,
-          gyldigFra: utkast.gyldigFra,
-          grunnkretsRequest: current,
-        }),
-    };
-
-    await resolveUtkastConflict(
-      utkast.id,
-      resolvedConflict,
-      tokenHolderFunc()?.token
-    );
-
-    onNext();
-  });
-
-  useEffect(() => {
-    if (!conflictedFutureVersions) return;
-
-    setValue(
-      "grunnkretser",
-      conflictedFutureVersions.map((futureVersion) => ({
-        grunnkretsnummer: futureVersion.grunnkretsnummer,
-        navn: futureVersion.navn,
-        endringstype: futureVersion.endringstype ?? "---",
-        gyldigFra: futureVersion.gyldighet.gyldigFra,
-        confirmed: false,
-      }))
-    );
-  }, [conflictedFutureVersions, setValue, utkast.gyldigFra]);
-
-  const getIsConfirmed = (index: number) =>
-    watch(`grunnkretser.${index}.confirmed`);
-
-  const getIsAllConfirmed = () =>
-    watch("grunnkretser").every((grunnkrets) => grunnkrets.confirmed);
+  const { fields, getIsAllConfirmed, getIsConfirmed, register, submit } =
+    useGrunnkretsConflictModal({
+      conflictResponse,
+      grunnkrets: current,
+      utkast,
+      onNext,
+    });
 
   return (
     <ReactModal
@@ -307,4 +193,4 @@ const HiddenCheckbox = styled(Checkbox)`
   visibility: hidden;
 `;
 
-export default UtkastConflictModal;
+export default GrunnkretsUtkastConflictModal;

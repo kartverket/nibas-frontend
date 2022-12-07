@@ -112,6 +112,10 @@ export interface paths {
     /** Returnerer en liste av nåværende Grunnkrets og eventuelt publiserte framtidige versjoner som matcher lokalid. */
     get: operations["hentFramtidigeVersjonerForGrunnkrets"];
   };
+  "/v1/stemmekretser/{lokalid}/framtidigeversjoner": {
+    /** Returnerer en liste av nåværende Grunnkrets og eventuelt publiserte framtidige versjoner som matcher lokalid. */
+    get: operations["hentFramtidigeVersjonerForStemmekrets"];
+  };
   "/v1/grunnkretser/{id}": {
     /** Henter grunnkrets med gitt id */
     get: operations["hentGrunnkrets"];
@@ -799,6 +803,8 @@ export interface components {
       lokalid: components["schemas"]["Lokalid"];
       /** @description Resolvede endringer på grunnkrets. */
       grunnkretsRequests: components["schemas"]["GrunnkretsRequestResolved"][];
+      /** @description Resolvede endringer på grunnkrets. */
+      stemmekretsRequests: components["schemas"]["StemmekretsRequestResolved"][];
     };
     /** @description Representasjon av en resolvet konflikt for en endring på Grunnkrets. */
     GrunnkretsRequestResolved: {
@@ -810,6 +816,17 @@ export interface components {
       /** @description Typen endring utkastet representerer. */
       endringstype: string;
       grunnkretsRequest: components["schemas"]["GrunnkretsRequest"];
+    };
+    /** @description Representasjon av en resolvet konflikt for en endring på Grunnkrets. */
+    StemmekretsRequestResolved: {
+      /**
+       * Format: date
+       * @description Tidspunktet utkastet skal være gyldig fra.
+       */
+      gyldigFra: string;
+      /** @description Typen endring utkastet representerer. */
+      endringstype: string;
+      stemmekretsRequest: components["schemas"]["StemmekretsRequest"];
     };
     /** @description En referanse til et utkast */
     UtkastRef: {
@@ -844,6 +861,7 @@ export interface components {
       stemmekretsnummer: string;
       identifikasjon: components["schemas"]["Identifikasjon"];
       kommunenummer: components["schemas"]["Kommunenummer"];
+      gyldighet: components["schemas"]["GyldighetResponse"];
       /** @description Tellekretsnummer til stemmekretsen */
       tellekretsnummer?: string;
       /** @description Tellekretsnavn til stemmekretsen */
@@ -1641,6 +1659,23 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["GrunnkretsResponse"][];
+        };
+      };
+    };
+  };
+  /** Returnerer en liste av nåværende Grunnkrets og eventuelt publiserte framtidige versjoner som matcher lokalid. */
+  hentFramtidigeVersjonerForStemmekrets: {
+    parameters: {
+      path: {
+        /** LokalID-en til grunnkretsen man vil hente versjoner for */
+        lokalid: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["StemmekretsResponse"][];
         };
       };
     };

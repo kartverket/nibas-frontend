@@ -1,6 +1,11 @@
 import useNibasApi from "hooks/useNibasApi";
-import { FramtidigVersjonConflict } from "types/api";
-import UtkastConflictModal from ".";
+import {
+  FramtidigVersjonConflict,
+  GrunnkretsRequest,
+  UtkastMetadataendringer,
+} from "types/api";
+import GrunnkretsUtkastConflictModal from ".";
+import { metadataendringerKeyByConflictType } from "./constants";
 
 type Props = {
   utkastId: string;
@@ -21,22 +26,33 @@ const UtkastConflicts = ({
     id: utkastId,
   });
 
+  console.log(conflictResponse);
+
+  const metadataendringerKey = metadataendringerKeyByConflictType[
+    conflictResponse.type
+  ] as keyof UtkastMetadataendringer;
+
   const currentItem =
-    utkast?.operasjoner.metadataendringer.grunnkretsendringer[
+    utkast?.operasjoner.metadataendringer[metadataendringerKey]?.[
       conflictResponse.id.lokalid.value
     ];
 
+  console.log(currentItem);
+
   if (!utkast || !currentItem) return null;
 
-  return (
-    <UtkastConflictModal
-      conflictResponse={conflictResponse}
-      current={currentItem}
-      utkast={utkast}
-      onCancel={onCancel}
-      onNext={onResolved}
-    />
-  );
+  if (conflictResponse.type === "GRUNNKRETS")
+    return (
+      <GrunnkretsUtkastConflictModal
+        conflictResponse={conflictResponse}
+        current={currentItem as GrunnkretsRequest}
+        utkast={utkast}
+        onCancel={onCancel}
+        onNext={onResolved}
+      />
+    );
+
+  return null;
 };
 
 export default UtkastConflicts;

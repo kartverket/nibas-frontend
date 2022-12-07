@@ -1,1 +1,1 @@
-export { default } from "./UtkastConflictModal";
+export { default } from "./GrunnkretsUtkastConflictModal";
