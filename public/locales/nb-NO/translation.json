@@ -29,7 +29,13 @@
     "Logget inn som {{ personId }}": "Logget inn som {{ personId }}",
     "Ikke logget inn": "Ikke logget inn",
     "Logg inn i Nasjonal inndelingsbase": "Logg inn i Nasjonal inndelingsbase",
-    "Denne tjenesten er kun tilgjengelig for autoriserte brukere": "Denne tjenesten er kun tilgjengelig for autoriserte brukere."
+    "Denne tjenesten er kun tilgjengelig for autoriserte brukere": "Denne tjenesten er kun tilgjengelig for autoriserte brukere.",
+    "feil": {
+      "generellFeilTittel": "En feil skjedde ved pålogging.",
+      "generellFeilTekst": "Det skjedde en uventet feil under påloggingen. Du kan forsøke å laste siden på nytt, eller logge ut og forsøke å logge inn på nytt. Om feilen vedvarer er det fint om du tar kontakt med Kartverket.",
+      "ikkeAutorisertTittel": "Du har ikke tilgang til å se inndelingsbasen.",
+      "ikkeAutorisertTekst": "Vennlist kontakt Kartverket hvis du mener dette er en feil."
+    }
   },
   "metadata": {
     "Generelt": "Generelt",
