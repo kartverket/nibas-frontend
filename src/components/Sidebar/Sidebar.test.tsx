@@ -7,14 +7,12 @@ describe("Sidebar", () => {
     render(<Sidebar />);
 
     const nibasButton = screen.getByRole("button", { name: /inndelinger/i });
-    const sokButton = screen.getByRole("button", { name: /søk/i });
     const bakgrunnskartButton = screen.getByRole("button", {
       name: /kartlag/i,
     });
     const utkastButton = screen.getByRole("button", { name: /utkast/i });
 
     expect(nibasButton).toBeInTheDocument();
-    expect(sokButton).toBeInTheDocument();
     expect(bakgrunnskartButton).toBeInTheDocument();
     expect(utkastButton).toBeInTheDocument();
   });
