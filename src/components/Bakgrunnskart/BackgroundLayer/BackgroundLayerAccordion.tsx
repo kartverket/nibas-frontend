@@ -110,7 +110,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
         <AktivtMainLayerWrapper>
           <DraggableLayer ref={ref}>
             <Icon
-              icon="reorder"
+              icon="format_line_spacing"
               aria-label={`Bytt rekkefølge på kartlag ${props.mappedLayer.title}`}
             />
             <span>{props.mappedLayer.title}</span>
