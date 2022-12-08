@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { render, screen } from "test/test-utils";
 import MainBackgroundLayer from "./MainBackgroundLayer";
+import { BakgrunnskartProvider } from "contexts/BakgrunnskartContext";
 
 const defaultProps: React.ComponentProps<typeof MainBackgroundLayer> = {
   index: 0,
@@ -30,18 +31,7 @@ const defaultProps: React.ComponentProps<typeof MainBackgroundLayer> = {
 };
 
 const renderWithProvider = (ui: ReactNode) =>
-  render(ui, {
-    BakgrunnskartProvider: {
-      visibleLayers: { administrativeGrenser: true } as any,
-      toggleLayerVisibility: jest.fn(),
-      recursiveIsVisible: jest.fn(),
-      layerIsVisible: jest.fn(),
-      mappedLayers: [
-        { ...defaultProps.mappedLayer, sourceId: "administrativeGrenser" },
-      ],
-      moveLayer: jest.fn(),
-    },
-  });
+  render(<BakgrunnskartProvider>{ui}</BakgrunnskartProvider>);
 
 describe("MainBackgroundLayer", () => {
   it("should render sublayers for each sublayer on caret click", async () => {
