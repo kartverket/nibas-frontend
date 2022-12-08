@@ -38,7 +38,7 @@ const ToggleableGrense = <T extends GrenseRef>({
   };
 
   return (
-    <Wrapper>
+    <Wrapper visible={value.visible ? true : false}>
       <Button
         onClick={toggleVisible}
         variant="unstyled"
@@ -50,25 +50,53 @@ const ToggleableGrense = <T extends GrenseRef>({
           )
         }
       />
-      <Title onClick={toggleVisible}>{title}</Title>
+      <Title>{title}</Title>
       <LinkButton onClick={openInfo} disabled title="Kommer snart!">
         {value.editing ? t("action.Avslutt redigering") : t("action.Rediger")}
       </LinkButton>
     </Wrapper>
   );
 };
-
-const Wrapper = styled.div`
-  display: flex;
-  align-items: center;
-  margin: 16px 0;
-`;
-
-const Title = styled(Button).attrs(() => ({
-  variant: "unstyled",
-}))`
+const Title = styled.div`
   flex: 1;
   margin-left: 8px;
+  cursor: default;
+`;
+
+const Wrapper = styled.div<{ visible: boolean }>`
+  display: flex;
+  align-items: center;
+  margin: 16px 0 0 24px;
+
+  > :first-child {
+    color: ${({ theme, visible }) =>
+      visible ? theme.colors.white : theme.colors.blueDark};
+    padding: 8px;
+    border-radius: 50%;
+    background: ${({ theme, visible }) =>
+      visible ? theme.colors.blueDark : "transparent"};
+
+    &:hover {
+      background: ${({ theme }) => theme.colors.blueLight};
+      color: ${({ theme }) => theme.colors.blueDark};
+    }
+
+    &:focus-visible {
+      outline: 2px solid ${({ theme }) => theme.colors.blueDark};
+      outline-offset: 2px;
+    }
+  }
+
+  ${LinkButton} {
+    &:hover:enabled {
+      text-decoration: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid ${({ theme }) => theme.colors.blueDark};
+      outline-offset: 2px;
+    }
+  }
 `;
 
 export default ToggleableGrense;

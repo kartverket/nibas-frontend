@@ -30,14 +30,16 @@ const EditableGrenseAccordion: FC<Props> = ({
     grenseId,
     features
   );
-  // console.log(fylkesgrenser);
 
   const accordion = useVisibility();
 
   return (
     <ListItem>
       <Header>
-        <VisibilityButton onClick={toggleVisible}>
+        <VisibilityButton
+          onClick={toggleVisible}
+          visible={value.visible ? true : false}
+        >
           {value.visible ? (
             <Icon icon="visibility" aria-label={`Skjul ${title}`} />
           ) : (
@@ -45,9 +47,7 @@ const EditableGrenseAccordion: FC<Props> = ({
           )}
         </VisibilityButton>
         <TextContent>
-          <Button variant="unstyled" onClick={accordion.toggle}>
-            {title}
-          </Button>
+          <div>{title}</div>
           <div>
             <LinkButton onClick={toggleEditing}>
               {value.editing ? "Stopp redigering" : `Rediger grenser`}
@@ -55,32 +55,58 @@ const EditableGrenseAccordion: FC<Props> = ({
           </div>
         </TextContent>
         {isFetching && <Loader aria-label={`Henter ${title}`} />}
-        <Button
+        <CaretButton
           variant="unstyled"
           onClick={accordion.toggle}
           icon={
             accordion.isVisible ? (
-              <Icon icon="expand_less" aria-label={`Lukk ${title}`} />
+              <CaretIcon
+                visible={accordion.isVisible ? true : false}
+                icon="expand_less"
+                aria-label={`Lukk ${title}`}
+              />
             ) : (
-              <Icon icon="expand_more" aria-label={`Åpne ${title}`} />
+              <CaretIcon
+                visible={accordion.isVisible ? true : false}
+                icon="expand_more"
+                aria-label={`Åpne ${title}`}
+              />
             )
           }
         />
       </Header>
-
       {accordion.isVisible && children}
     </ListItem>
   );
 };
 
 const ListItem = styled.li`
-  margin: 16px 0;
+  margin: 16px 0 0 8px;
+`;
+
+const CaretButton = styled(Button)`
+  &:focus-visible {
+    outline: 3px solid ${({ theme }) => theme.colors.blueDark};
+    outline-offset: 2px;
+  }
 `;
 
 const TextContent = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
+
+  > :nth-child(2) {
+    ${LinkButton} {
+      &:hover {
+        text-decoration: none;
+      }
+
+      &:focus-visible {
+        outline: 3px solid ${({ theme }) => theme.colors.blueDark};
+      }
+    }
+  }
 `;
 
 const Header = styled.div`
@@ -88,10 +114,39 @@ const Header = styled.div`
   align-items: center;
 `;
 
+const CaretIcon = styled(Icon)<{ visible: boolean }>`
+  color: ${({ theme, visible }) =>
+    visible ? theme.colors.white : theme.colors.blueDark};
+  background: ${({ theme, visible }) =>
+    visible ? theme.colors.blueDark : "transparent"};
+  padding: 16px 12px;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.blueDark};
+    color: ${({ theme }) => theme.colors.white};
+  }
+`;
+
 const VisibilityButton = styled(Button).attrs(() => ({
   variant: "unstyled",
-}))`
+}))<{ visible: boolean }>`
   margin-right: 16px;
+  color: ${({ theme, visible }) =>
+    visible ? theme.colors.white : theme.colors.blueDark};
+  background: ${({ theme, visible }) =>
+    visible ? theme.colors.blueDark : "transparent"};
+  padding: 8px;
+  border-radius: 50%;
+  height: 100%;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.blueDark};
+    background: ${({ theme }) => theme.colors.blueLight};
+  }
+  &:focus-visible {
+    outline: 3px solid ${({ theme }) => theme.colors.blueDark};
+    outline-offset: 2px;
+  }
 `;
 
 export default EditableGrenseAccordion;

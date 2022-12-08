@@ -25,8 +25,7 @@ const Wrapper = styled.div`
   width: auto;
   display: flex;
   align-items: center;
-  background-color: ${({ theme }) => theme.colors.yellowLight};
-  border: 2px solid #ffbf00;
+  background-color: #ffbf00;
   padding: 0 16px;
   font-size: 16px;
   color: black;

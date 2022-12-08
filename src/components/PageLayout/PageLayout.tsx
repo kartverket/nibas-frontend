@@ -6,7 +6,6 @@ import Kart from "components/Kart";
 import Sidebar from "components/Sidebar";
 import TopBar from "components/TopBar";
 import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
-import { closestOnCircle } from "ol/coordinate";
 
 const PageLayout = () => {
   const [errorFeedback, setErrorFeedback] = useState("");

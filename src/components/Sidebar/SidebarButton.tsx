@@ -45,6 +45,9 @@ const StyledButton = styled(Button).attrs(() => ({
   color: ${({ active, theme }) =>
     active ? theme.colors.blue : theme.colors.black};
 
+  background-color: ${({ active, theme }) =>
+    active ? theme.colors.blueLight : "transparent"};
+
   :hover {
     background-color: ${({ theme }) => theme.colors.blueLight};
   }
