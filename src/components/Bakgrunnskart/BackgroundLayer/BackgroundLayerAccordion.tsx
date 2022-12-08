@@ -176,9 +176,21 @@ const AddRemove = styled(Button)<{ visible: boolean; aktivtKartlag: boolean }>`
   color: ${({ theme, visible, aktivtKartlag }) =>
     visible && !aktivtKartlag ? theme.colors.gray : theme.colors.blueDark};
 
-  padding: 0 12px;
+  margin: 0 8px;
   opacity: ${({ visible, aktivtKartlag }) =>
     visible && !aktivtKartlag ? 0.4 : 1};
+  border-radius: 50%;
+  padding: 4px;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.blueLight};
+    color: ${({ theme }) => theme.colors.blueDark};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.blueDark};
+    outline-offset: 2px;
+  }
 `;
 
 const Caret = styled.div<{ open: boolean }>`
@@ -191,6 +203,11 @@ const Caret = styled.div<{ open: boolean }>`
   padding: 0 12px;
   align-items: center;
   display: flex;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.blueDark};
+    color: ${({ theme }) => theme.colors.white};
+  }
 `;
 
 const Wrapper = styled.div<{ indent: number }>`
@@ -212,7 +229,7 @@ const SubKartlagName = styled.span<{ activeLayer?: boolean }>`
     activeLayer ? theme.colors.gray : theme.colors.black};
   display: flex;
   justify-content: space-between;
-  padding: 8px 0;
+  padding: 8px 0 8px 16px;
 `;
 
 const ClickableName = styled(Button)<{
@@ -233,6 +250,33 @@ const ClickableName = styled(Button)<{
     padding-top: ${({ dropDown }) => (dropDown ? 16 : 0)}px;
     padding-bottom: ${({ dropDown }) => (dropDown ? 16 : 0)}px;
     padding-left: 16px;
+    border-left: 3px solid
+      ${({ theme, open }) => (open ? theme.colors.blueDark : "transparent")};
+    background: ${({ open, theme }) =>
+      open ? theme.colors.blueLight : theme.colors.white};
+  }
+
+  > :nth-child(2) {
+    background: ${({ open, theme }) =>
+      open ? theme.colors.blueDark : theme.colors.white};
+    color: ${({ open, theme }) =>
+      open ? theme.colors.white : theme.colors.blueDark};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.blueDark};
+    outline-offset: 2px;
+  }
+
+  &:hover {
+    > :first-child {
+      background: ${({ theme }) => theme.colors.blueLight};
+    }
+
+    > :nth-child(2) {
+      background: ${({ theme }) => theme.colors.blueDark};
+      color: ${({ theme }) => theme.colors.white};
+    }
   }
 `;
 
@@ -247,7 +291,25 @@ const DraggableLayer = styled.span`
 
   > :first-child {
     margin-right: 8px;
-    margin-left: 4px;
+
+    height: 100%;
+    padding: 5px;
+  }
+
+  &:hover {
+    ${Icon} {
+      color: ${({ theme }) => theme.colors.blueDark};
+      background: ${({ theme }) => theme.colors.blueLight};
+      border-radius: 50%;
+    }
+  }
+
+  &:active {
+    ${Icon} {
+      color: ${({ theme }) => theme.colors.white};
+      background: ${({ theme }) => theme.colors.blueDark};
+      border-radius: 50%;
+    }
   }
 `;
 
@@ -256,6 +318,13 @@ const AktivtKartlagSlider = styled.div`
   margin-left: 4px;
   margin-right: 20px;
   margin-bottom: 6px;
+
+  > :first-child {
+    &:focus-visible {
+      outline: 2px solid ${({ theme }) => theme.colors.blueDark};
+      outline-offset: 8px;
+    }
+  }
 `;
 
 const AktivtMainLayerWrapper = styled.div`
@@ -274,7 +343,7 @@ const AktivtSubLayerWrapper = styled.div`
   flex-direction: row;
   align-items: left;
   justify-content: space-between;
-  padding: 4px 0;
+  padding: 4px 0 4px 4px;
 `;
 
 export default BackgroundLayerAccordion;
