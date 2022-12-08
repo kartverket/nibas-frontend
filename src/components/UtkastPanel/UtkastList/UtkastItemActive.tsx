@@ -21,7 +21,7 @@ import { UtkastResponse } from "types/api";
 import Feedback from "components/Feedback/Feedback";
 import useFeedback from "hooks/useFeedback";
 import { useUtkast } from "contexts/UtkastContext";
-import get from "lodash.get";
+import useTimer from "hooks/useTimer";
 
 type Inputs = {
   navn: string;
@@ -46,12 +46,7 @@ type Props = {
 
 const UtkastItemActive = ({ utkastId }: Props) => {
   const { t } = useTranslation();
-  const {
-    register,
-    setValue,
-    getValues,
-    formState: { dirtyFields },
-  } = useForm<Inputs>();
+  const { register, setValue, getValues } = useForm<Inputs>();
   const { closeUtkast } = useUtkast();
 
   const { data: fullUtkast } = useNibasApi("/v1/utkast/{id}", {
@@ -63,6 +58,7 @@ const UtkastItemActive = ({ utkastId }: Props) => {
     )
   );
   const previousValues = useRef<Inputs>(getValues());
+  const { startTimer, clearTimer } = useTimer();
 
   const { addEntry } = useToolbarSaving();
   const { canSave } = useToolbarActions();
@@ -93,29 +89,31 @@ const UtkastItemActive = ({ utkastId }: Props) => {
     setFormValues,
   });
 
-  const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+  const onChange = () => {
+    clearTimer();
+
     if (!fullUtkast) return;
 
-    const isDirty = get(dirtyFields, e.target.name);
-
-    if (!isDirty) return;
-
-    addEntry({
-      type: "utkast",
-      changes: [
-        {
-          from: fromFormToRequest(previousValues.current, fullUtkast),
-          to: fromFormToRequest(getValues(), fullUtkast),
-          id: fullUtkast.id,
-        },
-      ],
-    });
+    startTimer(
+      () =>
+        addEntry({
+          type: "utkast",
+          changes: [
+            {
+              from: fromFormToRequest(previousValues.current, fullUtkast),
+              to: fromFormToRequest(getValues(), fullUtkast),
+              id: fullUtkast.id,
+            },
+          ],
+        }),
+      700
+    );
 
     previousValues.current = getValues();
   };
 
   const registerOptions = {
-    onBlur,
+    onChange,
   };
 
   return (

@@ -11,7 +11,11 @@ import Input from "components/form/Input";
 import Icon from "components/Icon";
 import { BlockLabel } from "components/Kart/OverlayPanels/metadataComponents";
 import useNibasApi from "hooks/useNibasApi";
-import { UtkastRef } from "types/api";
+import {
+  ConflictResponseWrapper,
+  FramtidigVersjonConflict,
+  UtkastRef,
+} from "types/api";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 import { resetMapView } from "utils/map";
@@ -19,6 +23,7 @@ import useFeedback from "hooks/useFeedback";
 import { useToolbarActions } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext";
 import Feedback from "components/Feedback/Feedback";
+import UtkastConflicts from "./UtkastConflicts";
 
 type Props = {
   utkast: UtkastRef;
@@ -27,6 +32,8 @@ type Props = {
 const UtkastItem = ({ utkast }: Props) => {
   const [isPublishOpen, setIsPublishOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [conflictResponse, setConflictResponse] =
+    useState<FramtidigVersjonConflict | null>(null);
 
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -52,15 +59,33 @@ const UtkastItem = ({ utkast }: Props) => {
 
   const utkastActive = utkastId === utkast.id;
 
-  const publish = async () => {
-    if (!fullUtkast) return;
-
-    await publishUtkast(utkast.id, fullUtkast, tokenHolderFunc()?.token);
-
-    await mutate(["/v1/utkast", tokenHolderFunc()?.token]);
+  const cleanUpUtkast = () => {
+    mutate(["/v1/utkast", tokenHolderFunc()?.token]);
 
     if (utkastActive) {
       setSearchParams({});
+    }
+  };
+
+  const publish = async () => {
+    if (!fullUtkast) return;
+
+    const response = await publishUtkast(
+      utkast.id,
+      fullUtkast,
+      tokenHolderFunc()?.token
+    );
+
+    if (!response) return;
+
+    if (response.status === 200) {
+      cleanUpUtkast();
+    } else if (response.status === 409) {
+      const wrapper = (await response.json()) as ConflictResponseWrapper;
+
+      if (!wrapper.framtidigVersjonConflict) return;
+
+      setConflictResponse(wrapper.framtidigVersjonConflict);
     }
   };
 
@@ -159,6 +184,15 @@ const UtkastItem = ({ utkast }: Props) => {
               <Button onClick={publish}>{t("action.Publiser")}</Button>
             </Buttons>
           </ButtonsAndGyldigFra>
+          {conflictResponse && (
+            <UtkastConflicts
+              utkastId={utkast.id}
+              conflictResponse={conflictResponse}
+              onCancel={() => setConflictResponse(null)}
+              close={() => setConflictResponse(null)}
+              onResolved={cleanUpUtkast}
+            />
+          )}
         </UtkastItemExpanded>
       )}
       {isDeleteOpen && (
