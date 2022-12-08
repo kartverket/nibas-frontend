@@ -108,7 +108,6 @@ const UtkastItem = ({ utkast }: Props) => {
   const openCloseUtkast = () => {
     if (!isPublishOpen && !isDeleteOpen) {
       if (canSave) {
-        console.log("there is changes to save!!!!");
         openFeedback();
       } else {
         closeUtkast();
