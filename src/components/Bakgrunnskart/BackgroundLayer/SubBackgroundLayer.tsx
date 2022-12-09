@@ -48,19 +48,17 @@ const SubBackgroundLayer = ({
   mainLayerName,
   isAktiveKartlag,
 }: Props) => {
-  const { toggleLayerVisibility, visibleLayers, recursiveIsVisible } =
-    useBakgrunnskart();
+  const {
+    toggleLayerVisibility,
+    visibleLayers,
+    subLayerIsVisible,
+    recursiveIsVisible,
+  } = useBakgrunnskart();
 
-  let subBackgroundLayerIsVisible = false;
-  for (const layer of visibleLayers) {
-    if (layer.mainLayer === mainLayerSourceId) {
-      for (const sublayer of layer.subLayers) {
-        if (sublayer === mappedLayer.title) {
-          subBackgroundLayerIsVisible = true;
-        }
-      }
-    }
-  }
+  const subBackgroundLayerIsVisible = useMemo(
+    () => subLayerIsVisible(mainLayerSourceId, mappedLayer.title),
+    [mainLayerSourceId, mappedLayer.title, subLayerIsVisible]
+  );
 
   const updateSourceParams = () => {
     const source = bakgrunnskartLayers[
