@@ -63,6 +63,7 @@ const NameContent = styled.div<{ open: boolean }>`
   border-left: 3px solid
     ${({ theme, open }) => (open ? theme.colors.blueDark : "transparent")};
   width: 100%;
+  transition: background 0.1s;
 `;
 
 const CaretIcon = styled(Icon)<{ open: boolean }>`
@@ -75,6 +76,7 @@ const CaretIcon = styled(Icon)<{ open: boolean }>`
   padding: 16px 12px;
   align-items: center;
   display: flex;
+  transition: background 0.1s;
 `;
 
 const Wrapper = styled.div`
@@ -96,13 +98,11 @@ const ButtonWrapper = styled(Button).attrs(() => ({
   &:hover {
     ${CaretIcon} {
       background: ${({ theme }) => theme.colors.blueDark};
-      transition: background 0ms;
       color: ${({ theme }) => theme.colors.white};
     }
 
     ${NameContent} {
       background: ${({ theme }) => theme.colors.blueLight};
-      transition: background 0.1s;
     }
   }
 
