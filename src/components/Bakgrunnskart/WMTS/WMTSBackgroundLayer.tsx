@@ -1,18 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
-import WMTS from "ol/source/WMTS";
 import BackgroundLayerAccordion from "../BackgroundLayer/BackgroundLayerAccordion";
 import useBackgroundLayerDND from "../BackgroundLayer/useBackgroundLayerDND";
 import WMTSSubLayer from "./WMTSSubLayer";
 import { BakgrunnskartId } from "hooks/layers/types";
 import { MainMappedLayer } from "utils/getLayersFromWMS";
-import { getLayerById } from "utils/map/layers";
-
-const getActiveSubLayer = (sourceId: BakgrunnskartId) => {
-  const layer = getLayerById(sourceId);
-  const source = layer.getSource() as WMTS;
-
-  return source.getLayer();
-};
+import { useMemo } from "react";
+import { useBakgrunnskart } from "contexts/BakgrunnskartContext";
 
 type Props = {
   mappedLayer: MainMappedLayer;
@@ -26,33 +18,23 @@ type Props = {
 const WMTSBackgroundLayer = ({
   mappedLayer,
   visible,
-  toggleLayerVisibility,
   index,
   moveLayer,
   isAktiveKartlag,
 }: Props) => {
-  // vi må manuelt oppdatere state når synlighet endres,
-  // siden openlayers ikke rerendrer UIet vårt
-  const [activeSubLayer, setActiveSubLayer] = useState("");
-
+  const { toggleLayerVisibility } = useBakgrunnskart();
   const ref = useBackgroundLayerDND(index, mappedLayer, moveLayer);
 
-  const updateActiveSubLayer = useCallback(() => {
-    const newActiveSubLayer = getActiveSubLayer(mappedLayer.sourceId);
-
-    setActiveSubLayer(newActiveSubLayer);
-  }, [mappedLayer.sourceId]);
-
-  useEffect(() => {
-    updateActiveSubLayer();
-  }, [updateActiveSubLayer]);
+  const onVisibilityClick = () => {
+    toggleLayerVisibility(mappedLayer.sourceId, mappedLayer.title);
+  };
 
   return (
     <BackgroundLayerAccordion
       isMainLayer
       indent={0}
       mappedLayer={mappedLayer}
-      onVisibilityClick={toggleLayerVisibility}
+      onVisibilityClick={onVisibilityClick}
       visible={visible}
       ref={moveLayer ? ref : null}
       isAktiveKartlag={isAktiveKartlag}
@@ -63,8 +45,6 @@ const WMTSBackgroundLayer = ({
             key={subLayer.title}
             subLayer={subLayer}
             sourceId={mappedLayer.sourceId}
-            activeSubLayer={activeSubLayer}
-            updateActiveSubLayer={updateActiveSubLayer}
             isAktivtKartlag={isAktiveKartlag}
           />
         ))}
