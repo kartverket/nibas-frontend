@@ -144,7 +144,7 @@ const useGrunnkretsConflictModal = ({
   return {
     fields,
     register,
-    submit,
+    submit: getIsAllConfirmed() ? submit : undefined,
     getIsConfirmed,
     getIsAllConfirmed,
   };

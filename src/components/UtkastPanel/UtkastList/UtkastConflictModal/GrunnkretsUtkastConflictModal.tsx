@@ -1,9 +1,6 @@
 import Checkbox from "components/Checkbox";
-import { CustomModalWrapper, ModalOverlay } from "components/Feedback/Feedback";
-import Button from "components/form/Button";
 import Input from "components/form/Input";
 import { ButtonCell } from "components/Kart/OverlayPanels/KretsTable";
-import Heading from "components/typography/Heading";
 import ReactModal from "react-modal";
 import styled from "styled-components";
 import {
@@ -12,6 +9,7 @@ import {
   UtkastResponse,
 } from "types/api";
 import useGrunnkretsConflictModal from "./useGrunnkretsConflictModal";
+import UtkastConflictModal from "./UtkastConflictModal";
 
 if (process.env.NODE_ENV !== "test") {
   ReactModal.setAppElement("#root");
@@ -32,7 +30,7 @@ const GrunnkretsUtkastConflictModal = <T extends GrunnkretsRequest>({
   onNext,
   onCancel,
 }: Props<T>) => {
-  const { fields, getIsAllConfirmed, getIsConfirmed, register, submit } =
+  const { fields, getIsConfirmed, register, submit } =
     useGrunnkretsConflictModal({
       conflictResponse,
       grunnkrets: current,
@@ -40,123 +38,47 @@ const GrunnkretsUtkastConflictModal = <T extends GrunnkretsRequest>({
       onNext,
     });
 
+  const currentItem = {
+    Grunnkretsnummer: current.grunnkretsnummer,
+    Grunnkrets: current.navn,
+    Type: utkast.endringstype,
+    "Gyldig fra": utkast.gyldigFra,
+  };
+
+  const columns = Object.keys(currentItem);
+
   return (
-    <ReactModal
-      isOpen
-      overlayElement={(props, overlayChildren) => (
-        <ModalOverlay {...props}>{overlayChildren}</ModalOverlay>
-      )}
-      contentElement={(props, contentChildren) => (
-        <ModalWrapper {...props}>{contentChildren}</ModalWrapper>
-      )}
-      aria={{
-        labelledby: "conflict-modal-header",
-        describedby: "conflict-modal-description",
-      }}
-      className="_"
-      overlayClassName="_"
+    <UtkastConflictModal
+      current={currentItem}
+      columns={columns}
+      onCancel={onCancel}
+      submit={submit}
     >
-      <Heading tag="h2" size="xs" id="conflict-modal-header">
-        Konflikt mellom fremtidige endringer
-      </Heading>
-      <div id="conflict-modal-description">
-        <p>
-          Endringer du gjorde i dette utkastet har ført til at en annen
-          publisert endring må dobbelsjekkes.
-        </p>
-        <p>Dobbeltsjekk feltene i endringen nedenfor før du publiserer.</p>
-      </div>
-      <Heading tag="h3" size="xs">
-        Endringer i dette utkastet
-      </Heading>
-      <Table>
-        <thead>
-          <tr>
-            <th>Grunnkretsnummer</th>
-            <th>Grunnkrets</th>
-            <th>Type</th>
-            <th>Gyldig fra</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <Row>
-            <td>{current.grunnkretsnummer}</td>
-            <td>{current.navn}</td>
-            <td>{utkast.endringstype}</td>
-            <td>{utkast.gyldigFra}</td>
+      <tbody>
+        {fields.map((field, index) => (
+          <Row key={field.id} confirmed={getIsConfirmed(index)}>
+            <td>
+              <Input {...register(`grunnkretser.${index}.grunnkretsnummer`)} />
+            </td>
+            <td>
+              <Input {...register(`grunnkretser.${index}.navn`)} />
+            </td>
+            <td>{field.endringstype}</td>
+            <td>{field.gyldigFra}</td>
             <ButtonCell>
-              <HiddenCheckbox type="checkbox" label="Bekreft" />
+              <Checkbox
+                type="checkbox"
+                label="Bekreft"
+                {...register(`grunnkretser.${index}.confirmed`)}
+                aria-label={`Bekreft grunnkrets ${index + 1}`}
+              />
             </ButtonCell>
           </Row>
-        </tbody>
-      </Table>
-      <Heading tag="h3" size="xs">
-        Fremtidig endring i konflikt
-      </Heading>
-      <Table cellSpacing={0}>
-        <thead>
-          <tr>
-            <th>Grunnkretsnummer</th>
-            <th>Grunnkrets</th>
-            <th>Type</th>
-            <th>Gyldig fra</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {fields.map((field, index) => (
-            <Row key={field.id} confirmed={getIsConfirmed(index)}>
-              <td>
-                <Input
-                  {...register(`grunnkretser.${index}.grunnkretsnummer`)}
-                />
-              </td>
-              <td>
-                <Input {...register(`grunnkretser.${index}.navn`)} />
-              </td>
-              <td>{field.endringstype}</td>
-              <td>{field.gyldigFra}</td>
-              <ButtonCell>
-                <Checkbox
-                  type="checkbox"
-                  label="Bekreft"
-                  {...register(`grunnkretser.${index}.confirmed`)}
-                  aria-label={`Bekreft grunnkrets ${index + 1}`}
-                />
-              </ButtonCell>
-            </Row>
-          ))}
-        </tbody>
-      </Table>
-
-      <Buttons>
-        <Button variant="secondary" onClick={onCancel}>
-          Avbryt
-        </Button>
-        <Button onClick={submit} disabled={!getIsAllConfirmed()}>
-          Publiser
-        </Button>
-      </Buttons>
-    </ReactModal>
+        ))}
+      </tbody>
+    </UtkastConflictModal>
   );
 };
-
-const ModalWrapper = styled(CustomModalWrapper)`
-  min-width: 900px;
-  max-width: 1200px;
-  padding: 40px;
-`;
-
-const Buttons = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 16px;
-
-  button {
-    margin-left: 8px;
-  }
-`;
 
 const Row = styled.tr<{ confirmed?: boolean }>`
   background-color: ${(props) =>
@@ -176,21 +98,6 @@ const Row = styled.tr<{ confirmed?: boolean }>`
     margin-bottom: 0;
     margin-right: 0;
   }
-`;
-
-const Table = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: "fixed";
-
-  th {
-    text-align: left;
-    padding: 8px 16px;
-  }
-`;
-
-const HiddenCheckbox = styled(Checkbox)`
-  visibility: hidden;
 `;
 
 export default GrunnkretsUtkastConflictModal;
