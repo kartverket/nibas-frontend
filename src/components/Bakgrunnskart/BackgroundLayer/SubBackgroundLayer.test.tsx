@@ -61,9 +61,7 @@ describe("SubBackgroundLayer", () => {
 
     const addIcon = screen.getByRole("button", { name: /vis subsublag2/i });
 
-    await act(async () => {
-      await user.click(addIcon);
-    });
+    await user.click(addIcon);
 
     const minusIcon = screen.getByRole("button", { name: /fjern subsublag2/i });
 
