@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
-import { render, screen } from "test/test-utils";
+import { act, render, screen } from "test/test-utils";
 import SubBackgroundLayer from "./SubBackgroundLayer";
+import { BakgrunnskartProvider } from "contexts/BakgrunnskartContext";
 
 const defaultProps: React.ComponentProps<typeof SubBackgroundLayer> = {
   indent: 0,
@@ -28,20 +29,7 @@ const defaultProps: React.ComponentProps<typeof SubBackgroundLayer> = {
 };
 
 const renderWithProvider = (ui: ReactNode) =>
-  render(ui, {
-    BakgrunnskartProvider: {
-      visibleLayers: [
-        { mainLayer: "administrativeGrenser", subLayers: ["Subsublag1"] },
-      ],
-      toggleLayerVisibility: jest.fn(),
-      recursiveIsVisible: jest.fn(),
-      layerIsVisible: jest.fn(),
-      mappedLayers: [
-        { ...defaultProps.mappedLayer, sourceId: "administrativeGrenser" },
-      ],
-      moveLayer: jest.fn(),
-    },
-  });
+  render(<BakgrunnskartProvider>{ui}</BakgrunnskartProvider>);
 
 describe("SubBackgroundLayer", () => {
   it("should render sublayers for each sublayer on caret click", async () => {
@@ -52,7 +40,10 @@ describe("SubBackgroundLayer", () => {
     const caret = screen.getByRole("button", {
       name: /sublag åpne/i,
     });
-    await user.click(caret);
+
+    await act(async () => {
+      await user.click(caret);
+    });
 
     expect(screen.getByText(/subsublag1/i)).toBeInTheDocument();
     expect(screen.getByText(/subsublag2/i)).toBeInTheDocument();
@@ -68,11 +59,11 @@ describe("SubBackgroundLayer", () => {
     });
     await user.click(caret);
 
-    const addIcon = screen.getByRole("button", { name: /vis subsublag1/i });
+    const addIcon = screen.getByRole("button", { name: /vis subsublag2/i });
 
     await user.click(addIcon);
 
-    const minusIcon = screen.getByRole("button", { name: /fjern subsublag1/i });
+    const minusIcon = screen.getByRole("button", { name: /fjern subsublag2/i });
 
     expect(minusIcon).toBeInTheDocument();
 

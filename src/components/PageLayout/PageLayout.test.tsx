@@ -10,6 +10,7 @@ const renderWithProvider = (ui: ReactNode) =>
       toggleLayerVisibility: jest.fn(),
       recursiveIsVisible: jest.fn(),
       layerIsVisible: jest.fn(),
+      subLayerIsVisible: jest.fn(),
       visibleLayers: [],
     },
   });
