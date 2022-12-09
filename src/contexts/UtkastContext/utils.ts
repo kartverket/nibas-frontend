@@ -23,6 +23,7 @@ import {
   UtkastResponse,
 } from "types/api";
 import { featureToGeoJson } from "utils/map/geoJson";
+import { getIdFromEntity } from "utils/api";
 
 const getCombinedEntity = <T extends ResponseWithId>(
   entity: T,
@@ -30,7 +31,7 @@ const getCombinedEntity = <T extends ResponseWithId>(
     NonNullable<UtkastMetadataendringer>[EntityUtkastType]
   >
 ) => {
-  const utkastForEntity = utkastSlice[entity.id];
+  const utkastForEntity = utkastSlice[getIdFromEntity(entity)];
 
   return {
     ...entity,
@@ -61,7 +62,7 @@ export const applyNonFeatureUtkast = <T extends NonNullable<UtkastEntity>>(
 
     return entity.map((e) => {
       const utkastForEntity =
-        utkast.operasjoner.metadataendringer?.[type]?.[e.id];
+        utkast.operasjoner.metadataendringer?.[type]?.[getIdFromEntity(e)];
 
       return {
         ...e,

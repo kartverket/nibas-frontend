@@ -6,7 +6,7 @@ import FutureChangesTable, { TableRow } from "./FutureChangesTable";
 const defaultProps: React.ComponentProps<
   typeof FutureChangesTable<GrunnkretsResponse>
 > = {
-  id: mockGrunnkrets1.id,
+  id: mockGrunnkrets1.id.lokalid.value,
   futureChangesUrl: "/v1/grunnkretser/{lokalid}/framtidigeversjoner",
   headers: [
     "Navn",

@@ -1,5 +1,6 @@
 import useNibasApi from "hooks/useNibasApi";
 import { FramtidigVersjonConflict } from "types/api";
+import { getIdFromEntity } from "utils/api";
 import UtkastConflictModal from "./UtkastConflictModal";
 
 type Props = {
@@ -23,7 +24,7 @@ const UtkastConflicts = ({
 
   const currentItem =
     utkast?.operasjoner.metadataendringer.grunnkretsendringer[
-      conflictResponse.id.lokalid.value
+      getIdFromEntity(conflictResponse)
     ];
 
   if (!utkast || !currentItem) return null;

@@ -7,6 +7,7 @@ import { getNavnInSpraak } from "utils/language/language";
 import { ToggleableKretsButton } from "../kretserComponents";
 import FutureChangesButton from "../FutureChangesButton";
 import { useFlag } from "components/FeatureToggle";
+import { getIdFromEntity } from "utils/api";
 
 type Props = {
   stemmekretsRef: StemmekretsRef;
@@ -23,8 +24,9 @@ const StemmekretsRow = ({
   toggleFutureChangesRow,
   isFutureChangesOpen,
 }: Props) => {
+  const stemmekretsId = getIdFromEntity(stemmekretsRef);
   const { data: stemmekrets } = useNibasApi("/v1/stemmekretser/{id}", {
-    id: stemmekretsRef.id,
+    id: stemmekretsId,
   });
 
   const utkastStemmekrets = useUtkastEntity(
@@ -39,7 +41,7 @@ const StemmekretsRow = ({
   if (!utkastStemmekrets) return null;
 
   return (
-    <KretsRow onClick={() => toggleRow(utkastStemmekrets.id)}>
+    <KretsRow onClick={() => toggleRow(stemmekretsId)}>
       <td>{getNavnInSpraak(utkastStemmekrets.stemmekretsnavn, "nor")}</td>
       <td>{utkastStemmekrets.stemmekretsnummer}</td>
       <td>{utkastStemmekrets.valgdistriktsnummer}</td>
@@ -56,10 +58,10 @@ const StemmekretsRow = ({
       </td>
       <td>
         <ToggleableKretsButton
-          isOpen={isRowOpen(utkastStemmekrets.id)}
-          onClick={() => toggleRow(utkastStemmekrets.id)}
+          isOpen={isRowOpen(stemmekretsId)}
+          onClick={() => toggleRow(stemmekretsId)}
           icon={
-            isRowOpen(utkastStemmekrets.id) ? (
+            isRowOpen(stemmekretsId) ? (
               <Icon
                 icon="expand_less"
                 aria-label="Lukk redigering av stemmekrets"

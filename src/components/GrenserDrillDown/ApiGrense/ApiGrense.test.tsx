@@ -4,9 +4,13 @@ import ApiGrense from "./ApiGrense";
 const defaultProps: React.ComponentProps<typeof ApiGrense> = {
   featuresUrl: "/",
   grense: {
-    id: "1",
+    id: {
+      gyldigFra: "",
+      lokalid: { value: "1" },
+    },
     navn: [{ navn: "Grense", spraak: "nor", version: 1 }],
     href: "href",
+    antallFramtidigeVersjoner: 0,
   },
   type: "fylke",
 };

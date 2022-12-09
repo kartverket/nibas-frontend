@@ -5,7 +5,12 @@ import { mockBasicFeature } from "mocks/handlers/responses";
 
 const defaultProps: React.ComponentProps<typeof ToggleableGrense> = {
   grense: {
-    id: "1",
+    id: {
+      gyldigFra: "",
+      lokalid: {
+        value: "1",
+      },
+    },
     href: "",
     navn: [
       {
@@ -14,6 +19,7 @@ const defaultProps: React.ComponentProps<typeof ToggleableGrense> = {
         version: 1,
       },
     ],
+    antallFramtidigeVersjoner: 0,
   },
   title: "Grense",
   type: "fylke",

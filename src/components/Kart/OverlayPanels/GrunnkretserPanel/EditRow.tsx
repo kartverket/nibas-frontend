@@ -14,6 +14,7 @@ import {
 } from "types/api";
 import { getNavnInSpraak } from "utils/language/language";
 import useTimer from "hooks/useTimer";
+import { getIdFromEntity } from "utils/api";
 
 type Props = {
   grunnkrets: GrunnkretsRef;
@@ -29,16 +30,19 @@ const fromFormToRequest = (
   data: Inputs,
   grunnkrets: GrunnkretsResponse
 ): GrunnkretsRequest => ({
-  identifikasjon: grunnkrets.identifikasjon,
+  identifikasjon: {
+    lokalid: getIdFromEntity(grunnkrets),
+  },
   version: grunnkrets.version,
   navn: data.navn,
   grunnkretsnummer: data.grunnkretsnummer,
 });
 
 const EditRow = ({ grunnkrets, kommuneId }: Props) => {
+  const grunnkretsId = getIdFromEntity(grunnkrets);
   const { t } = useTranslation();
   const { data: fullGrunnkrets } = useNibasApi("/v1/grunnkretser/{id}", {
-    id: grunnkrets.id,
+    id: grunnkretsId,
   });
   const { startTimer, clearTimer } = useTimer();
 
@@ -62,7 +66,7 @@ const EditRow = ({ grunnkrets, kommuneId }: Props) => {
   );
 
   useKretsToolbarSync<GrunnkretsEntry>({
-    entityId: fullGrunnkrets?.id,
+    entityId: grunnkretsId,
     redoEventKey: "grunnkretsRedo",
     undoEventKey: "grunnkretsUndo",
     setFormValues,
@@ -82,7 +86,7 @@ const EditRow = ({ grunnkrets, kommuneId }: Props) => {
             {
               from: fromFormToRequest(previousValues.current, fullGrunnkrets),
               to: fromFormToRequest(getValues(), fullGrunnkrets),
-              id: fullGrunnkrets.id,
+              id: grunnkretsId,
             },
           ],
         }),

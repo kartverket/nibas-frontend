@@ -5,6 +5,7 @@ import { EditingType } from "contexts/EditGrenserContext";
 import { useEditGrenseValue } from "contexts/EditGrenserContext/EditGrenserContext";
 import { GrenseRef } from "types/api";
 import { getNavnInSpraak } from "utils/language/language";
+import { getIdFromEntity } from "utils/api";
 
 type Props<T> = {
   grense: T;
@@ -17,7 +18,8 @@ const ApiGrense = <T extends GrenseRef>({
   type,
   featuresUrl,
 }: Props<T>) => {
-  const { editing, visible } = useEditGrenseValue(type, grense.id);
+  const grenseId = getIdFromEntity(grense);
+  const { editing, visible } = useEditGrenseValue(type, grenseId);
   const { features, fetchFeatures } = useApiGrense(
     featuresUrl,
     editing || visible
@@ -28,12 +30,12 @@ const ApiGrense = <T extends GrenseRef>({
       feature.setProperties({
         ...feature.getProperties(),
         inndelingerKontekst: {
-          id: grense.id,
+          id: grenseId,
           type,
         },
       });
     });
-  }, [features, grense.id, type]);
+  }, [features, grenseId, type]);
 
   useEffect(() => {
     if (features || !visible) return;

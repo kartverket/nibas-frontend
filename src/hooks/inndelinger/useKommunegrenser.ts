@@ -3,6 +3,7 @@ import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
 import { useEffect, useMemo, useState } from "react";
 import useSWRImmutable from "swr/immutable";
 import { FeatureCollection } from "types/api";
+import { getIdFromEntity } from "utils/api";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 import { fetcherWithToken } from "utils/swr";
 import useKommuner from "./useKommuner";
@@ -31,7 +32,7 @@ const kommunegrenserFetcher = async (
 const useKommunegrenser = (fylkeId: string, shouldFetch: boolean) => {
   const [isFetching, setIsFetching] = useState(false);
   const { kommuner } = useKommuner(fylkeId, shouldFetch);
-  const kommuneIds = kommuner?.map((kommune) => kommune.id) ?? [];
+  const kommuneIds = kommuner?.map(getIdFromEntity) ?? [];
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { data: geoJsonFeatures } = useSWRImmutable(
     shouldFetch ? [kommuneIds, tokenHolderFunc()?.token] : null,

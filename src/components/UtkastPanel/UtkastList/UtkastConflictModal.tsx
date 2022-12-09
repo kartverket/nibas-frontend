@@ -18,6 +18,7 @@ import {
   GrunnkretsResponse,
   UtkastResponse,
 } from "types/api";
+import { getIdFromEntity } from "utils/api";
 
 if (process.env.NODE_ENV !== "test") {
   ReactModal.setAppElement("#root");
@@ -46,7 +47,7 @@ const getGrunnkretsRequest = (
 
   return {
     identifikasjon: {
-      lokalid: current.identifikasjon.lokalid,
+      lokalid: getIdFromEntity(current),
     },
     grunnkretsnummer: grunnkretsFormData.grunnkretsnummer,
     version: futureVersion?.version,
@@ -74,7 +75,7 @@ const UtkastConflictModal = <T extends GrunnkretsRequest>({
   const { data: futureVersions } = useNibasApi(
     "/v1/grunnkretser/{lokalid}/framtidigeversjoner",
     {
-      lokalid: current.identifikasjon.lokalid,
+      lokalid: getIdFromEntity(current),
     }
   );
 
@@ -105,7 +106,7 @@ const UtkastConflictModal = <T extends GrunnkretsRequest>({
 
     const resolvedConflict: ConflictResolved = {
       lokalid: {
-        value: current.identifikasjon.lokalid,
+        value: getIdFromEntity(current),
       },
       grunnkretsRequests: data.grunnkretser
         .map((g) => ({

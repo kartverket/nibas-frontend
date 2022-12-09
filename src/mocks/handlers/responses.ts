@@ -111,7 +111,12 @@ export const mockBasicFeature = getFeaturesFromGeoJson(
 
 export const mockFylker = [
   {
-    id: "1",
+    id: {
+      gyldigFra: "2022-01-01",
+      lokalid: {
+        value: "1",
+      },
+    },
     navn: [
       {
         navn: "Vestfold og Telemark",
@@ -121,7 +126,12 @@ export const mockFylker = [
     href: "http://localhost:8080/v1/fylker/1",
   },
   {
-    id: "2",
+    id: {
+      gyldigFra: "2022-01-01",
+      lokalid: {
+        value: "2",
+      },
+    },
     navn: [
       {
         navn: "Agder",
@@ -141,40 +151,30 @@ export const mockDetailedKommune: KommuneResponse = {
     },
   ],
   features: mockGeoJsonFeatureResponse,
-  id: "1",
+  id: {
+    gyldigFra: "2022-01-01",
+    lokalid: {
+      value: "1",
+    },
+  },
   version: 1,
   kommunenummer: {
     id: "a379eb0a-7bae-4fc9-ab07-cf0c7a28bdb7",
     kodeverdi: "12345678",
   },
-  lokalid: "12345678",
   oppdateringsdato: "2022-12-31",
   samiskforvaltningsomraade: false,
-};
-
-export const mockGrunnkrets1: GrunnkretsRef = {
-  id: "1",
-  href: "",
-  navn: "Mosekollen øst",
-  grunnkretsnummer: "12345678",
-  antallFramtidigeVersjoner: 1,
-};
-
-export const mockGrunnkrets2: GrunnkretsRef = {
-  id: "2",
-  href: "",
-  navn: "Dåsvatn",
-  grunnkretsnummer: "12345679",
-  antallFramtidigeVersjoner: 0,
 };
 
 export const mockDetailedGrunnkrets1: GrunnkretsResponse = {
   features: mockGeoJsonFeatureResponse,
   grunnkretsnummer: "12345678",
   version: 1,
-  id: "1",
-  identifikasjon: {
-    lokalid: "1",
+  id: {
+    gyldigFra: "2022-01-01",
+    lokalid: {
+      value: "1",
+    },
   },
   navn: "Mosekollen øst",
   gyldighet: {
@@ -189,9 +189,11 @@ export const mockDetailedGrunnkrets2: GrunnkretsResponse = {
   features: mockGeoJsonFeatureResponse,
   grunnkretsnummer: "12345679",
   version: 1,
-  id: "2",
-  identifikasjon: {
-    lokalid: "2",
+  id: {
+    gyldigFra: "2022-06-16",
+    lokalid: {
+      value: "2",
+    },
   },
   navn: "Dåsvatn",
   gyldighet: {
@@ -200,6 +202,32 @@ export const mockDetailedGrunnkrets2: GrunnkretsResponse = {
   },
   oppdateringsdato: "2022-12-31",
   endringstype: "Retting",
+};
+
+export const mockGrunnkrets1: GrunnkretsRef = {
+  id: {
+    gyldigFra: mockDetailedGrunnkrets1.gyldighet.gyldigFra,
+    lokalid: {
+      value: mockDetailedGrunnkrets1.id.lokalid.value,
+    },
+  },
+  href: "",
+  navn: "Mosekollen øst",
+  grunnkretsnummer: "12345678",
+  antallFramtidigeVersjoner: 1,
+};
+
+export const mockGrunnkrets2: GrunnkretsRef = {
+  id: {
+    gyldigFra: mockDetailedGrunnkrets2.gyldighet.gyldigFra,
+    lokalid: {
+      value: mockDetailedGrunnkrets2.id.lokalid.value,
+    },
+  },
+  href: "",
+  navn: "Dåsvatn",
+  grunnkretsnummer: "12345679",
+  antallFramtidigeVersjoner: 0,
 };
 
 export const mockGrunnkretsRequest: GrunnkretsRequest = {
@@ -213,12 +241,22 @@ export const mockGrunnkretsRequest: GrunnkretsRequest = {
 
 export const mockKommuner = [
   {
-    id: "1",
+    id: {
+      gyldigFra: "2022-01-01",
+      lokalid: {
+        value: "1",
+      },
+    },
     navn: [{ navn: "Malvik", spraak: "nor" }],
     href: "http://localhost:8080/v1/kommuner/1",
   },
   {
-    id: "2",
+    id: {
+      gyldigFra: "2022-01-01",
+      lokalid: {
+        value: "2",
+      },
+    },
     navn: [
       {
         navn: "Giske",
@@ -265,27 +303,16 @@ export const mockActuatorResponse = {
   },
 };
 
-export const mockStemmekretser: StemmekretsRef[] = [
-  {
-    id: "1",
-    navn: "Undredal",
-    href: "http://localhost:8080/v1/stemmekretser/1",
-  },
-  {
-    id: "2",
-    navn: "Slemfjord",
-    href: "http://localhost:8080/v1/stemmekretser/2",
-  },
-];
-
 export const mockStemmekrets1: StemmekretsResponse = {
-  id: "1",
+  id: {
+    gyldigFra: "2022-06-16",
+    lokalid: {
+      value: "1",
+    },
+  },
   version: 1,
   stemmekretsnavn: "Undredal",
   stemmekretsnummer: "05",
-  identifikasjon: {
-    lokalid: "c1fac231-e9ae-404e-bf09-adf0c15cf948",
-  },
   kommunenummer: { id: "c416fb1d-2124-4f71-8dfc-859c55feb437", kodeverdi: "1" },
   tellekretsnummer: "tellekretsnr1",
   tellekretsnavn: "tellekretsnavn1",
@@ -294,19 +321,46 @@ export const mockStemmekrets1: StemmekretsResponse = {
 };
 
 export const mockStemmekrets2: StemmekretsResponse = {
-  id: "2",
+  id: {
+    gyldigFra: "2022-06-16",
+    lokalid: {
+      value: "2",
+    },
+  },
   version: 1,
   stemmekretsnavn: "Slemfjord",
   stemmekretsnummer: "12",
-  identifikasjon: {
-    lokalid: "c63f68f5-bef8-4e8c-bc0f-1b3e41ea1c0c",
-  },
   kommunenummer: { id: "ec64ba19-fb37-44d4-b579-407897f871ee", kodeverdi: "2" },
   tellekretsnummer: "tellekretsnr2",
   tellekretsnavn: "tellekretsnavn2",
   valgdistriktsnummer: "16",
   features: mockGeoJsonFeatureResponse,
 };
+
+export const mockStemmekretser: StemmekretsRef[] = [
+  {
+    id: {
+      gyldigFra: mockStemmekrets1.id.gyldigFra,
+      lokalid: {
+        value: mockStemmekrets1.id.lokalid.value,
+      },
+    },
+    navn: "Undredal",
+    href: "http://localhost:8080/v1/stemmekretser/1",
+    antallFramtidigeVersjoner: 0,
+  },
+  {
+    id: {
+      gyldigFra: mockStemmekrets2.id.gyldigFra,
+      lokalid: {
+        value: mockStemmekrets2.id.lokalid.value,
+      },
+    },
+    navn: "Slemfjord",
+    href: "http://localhost:8080/v1/stemmekretser/2",
+    antallFramtidigeVersjoner: 0,
+  },
+];
 
 export const mockUtkast: UtkastResponse = {
   navn: "Mock utkast",
@@ -325,6 +379,9 @@ export const mockUtkast: UtkastResponse = {
         ...mockDetailedGrunnkrets1,
         navn: "Utkast grunnkrets",
         version: 2,
+        identifikasjon: {
+          lokalid: mockDetailedGrunnkrets1.id.lokalid.value,
+        },
       },
     },
     stemmekretsendringer: {
@@ -333,6 +390,9 @@ export const mockUtkast: UtkastResponse = {
         stemmekretsnavn: "Utkast stemmekrets",
         version: 2,
         kommunenummer: mockStemmekrets1.kommunenummer.kodeverdi,
+        identifikasjon: {
+          lokalid: mockStemmekrets1.id.lokalid.value,
+        },
       },
     },
     endredeFeatures: {
