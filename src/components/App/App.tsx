@@ -1,6 +1,5 @@
 import {
   ConfigureAuthFlowProps,
-  useAuthenticationFlow,
   useConfigureAuthFlow,
 } from "@kartverket/frontend-aut-lib";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
@@ -8,6 +7,11 @@ import Providers from "./Providers";
 import PageLayout from "components/PageLayout";
 import Landing from "components/Landing/Landing";
 import { Suspense } from "react";
+import {
+  AuthorizationStatus,
+  useAuthorization,
+} from "../Authentication/AuthHooks";
+import { FullPageLoader } from "./AppLoader";
 
 /**
  * Definerer 3 verdier i konfigurasjonen. Disse brukes av biblioteket forskjellige steder i flyten.
@@ -26,33 +30,38 @@ const App = () => {
    */
   const [redirectAfterLogon, redirectAfterLogout]: JSX.Element[] =
     useConfigureAuthFlow(authFlowProps);
-
-  const { isAuthenticatedFunc } = useAuthenticationFlow();
-  const { hostname } = window.location;
-  const isLocalhost = hostname === "localhost";
-
   return (
-    <Suspense fallback="Loading...">
+    <Suspense fallback={<FullPageLoader />}>
       <Router>
         <Routes>
           {redirectAfterLogon}
           {redirectAfterLogout}
-          <Route
-            index
-            element={
-              isLocalhost || isAuthenticatedFunc() ? (
-                <Providers>
-                  <PageLayout />
-                </Providers>
-              ) : (
-                <Landing />
-              )
-            }
-          />
+          <Route index element={<PageElement />} />
         </Routes>
       </Router>
     </Suspense>
   );
+};
+
+const PageElement = () => {
+  const { status } = useAuthorization();
+  const { hostname } = window.location;
+  const isLocalhost = hostname === "localhost";
+  const isAuthorized = status === AuthorizationStatus.AUTHORIZED;
+
+  if (isLocalhost || isAuthorized) {
+    return (
+      <Providers>
+        <PageLayout />
+      </Providers>
+    );
+  }
+
+  if (status == AuthorizationStatus.PENDING) {
+    return <FullPageLoader />;
+  }
+
+  return <Landing />;
 };
 
 export default App;
