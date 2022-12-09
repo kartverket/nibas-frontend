@@ -31,7 +31,9 @@ const defaultProps: React.ComponentProps<typeof MainBackgroundLayer> = {
 };
 
 const renderWithProvider = (ui: ReactNode) =>
-  render(<BakgrunnskartProvider>{ui}</BakgrunnskartProvider>);
+  render(ui, { 
+    BakgrunnskartProvider: true
+  });
 
 describe("MainBackgroundLayer", () => {
   it("should render sublayers for each sublayer on caret click", async () => {
