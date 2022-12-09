@@ -3,7 +3,6 @@ import useBackgroundLayerDND from "../BackgroundLayer/useBackgroundLayerDND";
 import WMTSSubLayer from "./WMTSSubLayer";
 import { BakgrunnskartId } from "hooks/layers/types";
 import { MainMappedLayer } from "utils/getLayersFromWMS";
-import { useMemo } from "react";
 import { useBakgrunnskart } from "contexts/BakgrunnskartContext";
 
 type Props = {

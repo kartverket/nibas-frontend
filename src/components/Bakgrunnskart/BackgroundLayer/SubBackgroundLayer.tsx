@@ -48,12 +48,8 @@ const SubBackgroundLayer = ({
   mainLayerName,
   isAktiveKartlag,
 }: Props) => {
-  const {
-    toggleLayerVisibility,
-    visibleLayers,
-    subLayerIsVisible,
-    recursiveIsVisible,
-  } = useBakgrunnskart();
+  const { toggleLayerVisibility, subLayerIsVisible, recursiveIsVisible } =
+    useBakgrunnskart();
 
   const subBackgroundLayerIsVisible = useMemo(
     () => subLayerIsVisible(mainLayerSourceId, mappedLayer.title),
@@ -102,22 +98,9 @@ const SubBackgroundLayer = ({
     source.updateParams({ LAYERS: newParamsLayerString });
   };
 
-  const onVisibilityClick = (layerId: string) => {
+  const onVisibilityClick = () => {
     updateSourceParams();
-    const source = bakgrunnskartLayers[
-      mainLayerSourceId
-    ].getSource() as TileWMS;
-    const layersInParams = source.getParams().LAYERS as string;
-
-    const isMainLayerVisible = visibleLayers.find(
-      (visibleLayer) => visibleLayer.mainLayer === layerId
-    );
-
-    if (layersInParams && !isMainLayerVisible) {
-      toggleLayerVisibility(mainLayerSourceId, mappedLayer.title);
-    } else if (layersInParams === mainLayerName && isMainLayerVisible) {
-      toggleLayerVisibility(mainLayerSourceId, mappedLayer.title);
-    }
+    toggleLayerVisibility(mainLayerSourceId, mappedLayer.title);
   };
 
   return (
