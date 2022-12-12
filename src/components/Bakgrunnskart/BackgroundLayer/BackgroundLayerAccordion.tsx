@@ -58,7 +58,6 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
         onClick={() => onVisibilityClick(props.mappedLayer.title)}
         aktivtKartlag={aktivtKartlag}
         visible={visible}
-        variant="unstyled"
       >
         {visible ? (
           <Icon icon="remove" aria-label={`Fjern ${props.mappedLayer.title}`} />
@@ -71,13 +70,12 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
       // hvis hovedlag uten barn
       if (props.isMainLayer && props.mappedLayer.layers.length === 0) {
         return (
-          <ClickableName
-            variant="unstyled"
-            open={false}
+          <AddableLayer
+            onClick={() => onVisibilityClick(props.mappedLayer.title)}
             icon={getAddRemove(false)}
           >
             <span>{props.mappedLayer.title}</span>
-          </ClickableName>
+          </AddableLayer>
         );
       }
 
@@ -98,10 +96,13 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
 
       // ellers bare render tittelen til et sub-lag
       return (
-        <SubKartlagName activeLayer={visible}>
+        <AddableLayer
+          activeLayer={visible}
+          onClick={() => onVisibilityClick(props.mappedLayer.title)}
+          icon={getAddRemove(false)}
+        >
           {props.mappedLayer.title}
-          {getAddRemove(false)}
-        </SubKartlagName>
+        </AddableLayer>
       );
     };
 
@@ -123,7 +124,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
               onChange={onSliderChange}
             />
           </AktivtKartlagSlider>
-          {getAddRemove(true)}
+          <RemoveAktivtKartlag variant="unstyled" icon={getAddRemove(true)} />
         </AktivtMainLayerWrapper>
       );
     };
@@ -131,19 +132,11 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
     const renderAktivtSubLayer = () => {
       if (visible && props.mappedLayer.layers.length === 0) {
         return (
-          <AktivtSubLayerWrapper>
+          <AktivtSubLayerWrapper
+            icon={getAddRemove(true)}
+            onClick={() => onVisibilityClick(props.mappedLayer.title)}
+          >
             <span>{props.mappedLayer.title}</span>
-            <AddRemove
-              onClick={() => onVisibilityClick(props.mappedLayer.title)}
-              aktivtKartlag={true}
-              visible={visible}
-              variant="unstyled"
-            >
-              <Icon
-                icon="remove"
-                aria-label={`Fjern ${props.mappedLayer.title} fra aktive kartlag`}
-              />
-            </AddRemove>
           </AktivtSubLayerWrapper>
         );
       }
@@ -170,7 +163,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
 
 BackgroundLayerAccordion.displayName = "BackgroundLayerAccordion";
 
-const AddRemove = styled(Button)<{ visible: boolean; aktivtKartlag: boolean }>`
+const AddRemove = styled.div<{ visible: boolean; aktivtKartlag: boolean }>`
   cursor: pointer;
 
   color: ${({ theme, visible, aktivtKartlag }) =>
@@ -182,14 +175,23 @@ const AddRemove = styled(Button)<{ visible: boolean; aktivtKartlag: boolean }>`
   border-radius: 50%;
   padding: 4px;
 
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.blueDark};
+    outline-offset: 2px;
+  }
+
   &:hover {
     background: ${({ theme }) => theme.colors.blueLight};
     color: ${({ theme }) => theme.colors.blueDark};
   }
+`;
 
+const RemoveAktivtKartlag = styled(Button)`
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.blueDark};
-    outline-offset: 2px;
+    ${AddRemove} {
+      outline: 2px solid ${({ theme }) => theme.colors.blueDark};
+      outline-offset: 2px;
+    }
   }
 `;
 
@@ -224,14 +226,6 @@ const Wrapper = styled.div<{ indent: number }>`
   }
 `;
 
-const SubKartlagName = styled.span<{ activeLayer?: boolean }>`
-  color: ${({ activeLayer, theme }) =>
-    activeLayer ? theme.colors.gray : theme.colors.black};
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 0 8px 16px;
-`;
-
 const ClickableName = styled(Button)<{
   open: boolean;
   dropDown?: boolean;
@@ -256,13 +250,6 @@ const ClickableName = styled(Button)<{
       open ? theme.colors.blueLight : theme.colors.white};
   }
 
-  > :nth-child(2) {
-    background: ${({ open, theme }) =>
-      open ? theme.colors.blueDark : theme.colors.white};
-    color: ${({ open, theme }) =>
-      open ? theme.colors.white : theme.colors.blueDark};
-  }
-
   &:focus-visible {
     outline: 2px solid ${({ theme }) => theme.colors.blueDark};
     outline-offset: 2px;
@@ -273,7 +260,7 @@ const ClickableName = styled(Button)<{
       background: ${({ theme }) => theme.colors.blueLight};
     }
 
-    > :nth-child(2) {
+    ${Caret} {
       background: ${({ theme }) => theme.colors.blueDark};
       color: ${({ theme }) => theme.colors.white};
     }
@@ -337,13 +324,58 @@ const AktivtMainLayerWrapper = styled.div`
   padding-top: 16px;
 `;
 
-const AktivtSubLayerWrapper = styled.div`
-  margin-left: 38px;
-  display: flex;
-  flex-direction: row;
-  align-items: left;
+const AktivtSubLayerWrapper = styled(Button).attrs(() => ({
+  variant: "unstyled",
+}))`
+  align-items: center;
   justify-content: space-between;
-  padding: 4px 0 4px 4px;
+  padding: 4px 0 4px 42px;
+  display: flex;
+  width: 100%;
+
+  > :first-child {
+    text-align: left;
+    flex: 1;
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.blueDark};
+    outline-offset: 8px;
+  }
+
+  &:hover {
+    ${AddRemove} {
+      color: ${({ theme }) => theme.colors.white};
+      background: ${({ theme }) => theme.colors.blueDark};
+    }
+  }
+`;
+
+const AddableLayer = styled(Button).attrs(() => ({
+  variant: "unstyled",
+}))<{ activeLayer?: boolean }>`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
+  padding: 6px 0 6px 6px;
+
+  > :first-child {
+    flex: 1;
+    text-align: left;
+  }
+
+  &:hover {
+    ${AddRemove} {
+      background: ${({ theme }) => theme.colors.blueLight};
+      color: ${({ theme }) => theme.colors.blueDark};
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.blueDark};
+    outline-offset: 2px;
+  }
 `;
 
 export default BackgroundLayerAccordion;
