@@ -5,7 +5,7 @@ import KommuneList from "./KommuneList";
 const defaultProps: React.ComponentProps<typeof KommuneList> = {
   fylke: {
     id: {
-      gyldigFra: "",
+      gyldighetsdato: "",
       lokalid: { value: "2" },
     },
     navn: [{ navn: "Fylke", spraak: "nor", version: 1 }],

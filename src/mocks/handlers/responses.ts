@@ -112,7 +112,7 @@ export const mockBasicFeature = getFeaturesFromGeoJson(
 export const mockFylker = [
   {
     id: {
-      gyldigFra: "2022-01-01",
+      gyldighetsdato: "2022-01-01",
       lokalid: {
         value: "1",
       },
@@ -124,10 +124,11 @@ export const mockFylker = [
       },
     ],
     href: "http://localhost:8080/v1/fylker/1",
+    antallFramtidigeVersjoner: 0,
   },
   {
     id: {
-      gyldigFra: "2022-01-01",
+      gyldighetsdato: "2022-01-01",
       lokalid: {
         value: "2",
       },
@@ -139,6 +140,7 @@ export const mockFylker = [
       },
     ],
     href: "http://localhost:8080/v1/fylker/2",
+    antallFramtidigeVersjoner: 0,
   },
 ] as FylkeRef[];
 
@@ -152,7 +154,7 @@ export const mockDetailedKommune: KommuneResponse = {
   ],
   features: mockGeoJsonFeatureResponse,
   id: {
-    gyldigFra: "2022-01-01",
+    gyldighetsdato: "2022-01-01",
     lokalid: {
       value: "1",
     },
@@ -171,7 +173,7 @@ export const mockDetailedGrunnkrets1: GrunnkretsResponse = {
   grunnkretsnummer: "12345678",
   version: 1,
   id: {
-    gyldigFra: "2022-01-01",
+    gyldighetsdato: "2022-01-01",
     lokalid: {
       value: "1",
     },
@@ -190,7 +192,7 @@ export const mockDetailedGrunnkrets2: GrunnkretsResponse = {
   grunnkretsnummer: "12345679",
   version: 1,
   id: {
-    gyldigFra: "2022-06-16",
+    gyldighetsdato: "2022-06-16",
     lokalid: {
       value: "2",
     },
@@ -206,7 +208,7 @@ export const mockDetailedGrunnkrets2: GrunnkretsResponse = {
 
 export const mockGrunnkrets1: GrunnkretsRef = {
   id: {
-    gyldigFra: mockDetailedGrunnkrets1.gyldighet.gyldigFra,
+    gyldighetsdato: mockDetailedGrunnkrets1.gyldighet.gyldigFra,
     lokalid: {
       value: mockDetailedGrunnkrets1.id.lokalid.value,
     },
@@ -219,7 +221,7 @@ export const mockGrunnkrets1: GrunnkretsRef = {
 
 export const mockGrunnkrets2: GrunnkretsRef = {
   id: {
-    gyldigFra: mockDetailedGrunnkrets2.gyldighet.gyldigFra,
+    gyldighetsdato: mockDetailedGrunnkrets2.gyldighet.gyldigFra,
     lokalid: {
       value: mockDetailedGrunnkrets2.id.lokalid.value,
     },
@@ -242,17 +244,18 @@ export const mockGrunnkretsRequest: GrunnkretsRequest = {
 export const mockKommuner = [
   {
     id: {
-      gyldigFra: "2022-01-01",
+      gyldighetsdato: "2022-01-01",
       lokalid: {
         value: "1",
       },
     },
     navn: [{ navn: "Malvik", spraak: "nor" }],
     href: "http://localhost:8080/v1/kommuner/1",
+    antallFramtidigeVersjoner: 0,
   },
   {
     id: {
-      gyldigFra: "2022-01-01",
+      gyldighetsdato: "2022-01-01",
       lokalid: {
         value: "2",
       },
@@ -264,6 +267,7 @@ export const mockKommuner = [
       },
     ],
     href: "http://localhost:8080/v1/kommuner/2",
+    antallFramtidigeVersjoner: 0,
   },
 ] as KommuneRef[];
 
@@ -305,7 +309,7 @@ export const mockActuatorResponse = {
 
 export const mockStemmekrets1: StemmekretsResponse = {
   id: {
-    gyldigFra: "2022-06-16",
+    gyldighetsdato: "2022-06-16",
     lokalid: {
       value: "1",
     },
@@ -322,7 +326,7 @@ export const mockStemmekrets1: StemmekretsResponse = {
 
 export const mockStemmekrets2: StemmekretsResponse = {
   id: {
-    gyldigFra: "2022-06-16",
+    gyldighetsdato: "2022-06-16",
     lokalid: {
       value: "2",
     },
@@ -340,7 +344,7 @@ export const mockStemmekrets2: StemmekretsResponse = {
 export const mockStemmekretser: StemmekretsRef[] = [
   {
     id: {
-      gyldigFra: mockStemmekrets1.id.gyldigFra,
+      gyldighetsdato: mockStemmekrets1.id.gyldighetsdato,
       lokalid: {
         value: mockStemmekrets1.id.lokalid.value,
       },
@@ -351,7 +355,7 @@ export const mockStemmekretser: StemmekretsRef[] = [
   },
   {
     id: {
-      gyldigFra: mockStemmekrets2.id.gyldigFra,
+      gyldighetsdato: mockStemmekrets2.id.gyldighetsdato,
       lokalid: {
         value: mockStemmekrets2.id.lokalid.value,
       },
@@ -438,20 +442,20 @@ export const mockFremtidigEndringConflictResponse: FramtidigVersjonConflict = {
     lokalid: {
       value: "1",
     },
-    gyldigFra: mockDetailedGrunnkrets1.gyldighet.gyldigFra,
+    gyldighetsdato: mockDetailedGrunnkrets1.gyldighet.gyldigFra,
   },
   affectedIds: [
     {
       lokalid: {
         value: "1",
       },
-      gyldigFra: mockFutureGrunnkrets1_1.gyldighet.gyldigFra,
+      gyldighetsdato: mockDetailedGrunnkrets1.gyldighet.gyldigFra,
     },
     {
       lokalid: {
         value: "1",
       },
-      gyldigFra: mockFutureGrunnkrets1_2.gyldighet.gyldigFra,
+      gyldighetsdato: mockDetailedGrunnkrets1.gyldighet.gyldigFra,
     },
   ],
   type: "Grunnkrets",

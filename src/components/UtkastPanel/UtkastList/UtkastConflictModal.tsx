@@ -83,7 +83,7 @@ const UtkastConflictModal = <T extends GrunnkretsRequest>({
     () =>
       futureVersions?.filter((fv) =>
         conflictResponse.affectedIds.some(
-          (id) => id.gyldigFra === fv.gyldighet.gyldigFra
+          (id) => id.gyldighetsdato === fv.gyldighet.gyldigFra
         )
       ),
     [futureVersions, conflictResponse.affectedIds]

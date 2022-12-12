@@ -5,7 +5,7 @@ const defaultProps: React.ComponentProps<typeof ApiGrense> = {
   featuresUrl: "/",
   grense: {
     id: {
-      gyldigFra: "",
+      gyldighetsdato: "",
       lokalid: { value: "1" },
     },
     navn: [{ navn: "Grense", spraak: "nor", version: 1 }],
