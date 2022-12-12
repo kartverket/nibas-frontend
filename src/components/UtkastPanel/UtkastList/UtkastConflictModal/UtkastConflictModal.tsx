@@ -12,14 +12,14 @@ if (process.env.NODE_ENV !== "test") {
 }
 
 type Props = {
-  current: Record<string, string>;
+  currentRow: string[];
   columns: string[];
   onCancel: () => void;
   submit?: () => void;
 };
 
 const UtkastConflictModal: FC<Props> = ({
-  current,
+  currentRow,
   onCancel,
   submit,
   columns,
@@ -65,8 +65,8 @@ const UtkastConflictModal: FC<Props> = ({
         </thead>
         <tbody>
           <Row>
-            {Object.keys(current).map((key) => (
-              <td key={key}>{current[key]}</td>
+            {currentRow.map((row, i) => (
+              <td key={i}>{row}</td>
             ))}
             <ButtonCell>
               <HiddenCheckbox type="checkbox" label="Bekreft" />

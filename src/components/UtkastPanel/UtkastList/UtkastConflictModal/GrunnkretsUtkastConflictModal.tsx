@@ -38,18 +38,18 @@ const GrunnkretsUtkastConflictModal = <T extends GrunnkretsRequest>({
       onNext,
     });
 
-  const currentItem = {
-    Grunnkretsnummer: current.grunnkretsnummer,
-    Grunnkrets: current.navn,
-    Type: utkast.endringstype,
-    "Gyldig fra": utkast.gyldigFra,
-  };
+  const currentRow = [
+    current.grunnkretsnummer,
+    current.navn,
+    utkast.endringstype,
+    utkast.gyldigFra,
+  ];
 
-  const columns = Object.keys(currentItem);
+  const columns = ["Grunnkretsnummer", "Grunnkrets", "Type", "Gyldig fra"];
 
   return (
     <UtkastConflictModal
-      current={currentItem}
+      currentRow={currentRow}
       columns={columns}
       onCancel={onCancel}
       submit={submit}
