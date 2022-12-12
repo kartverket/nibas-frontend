@@ -66,6 +66,7 @@ describe("BackgroundLayerAccordion", () => {
     const caret = screen.getByRole("button", {
       name: /layertitle åpne/i,
     });
+
     await user.click(caret);
 
     expect(

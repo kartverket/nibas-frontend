@@ -1,7 +1,6 @@
 import { ReactNode } from "react";
 import { render, screen } from "test/test-utils";
 import MainBackgroundLayer from "./MainBackgroundLayer";
-import { BakgrunnskartProvider } from "contexts/BakgrunnskartContext";
 
 const defaultProps: React.ComponentProps<typeof MainBackgroundLayer> = {
   index: 0,
@@ -31,8 +30,18 @@ const defaultProps: React.ComponentProps<typeof MainBackgroundLayer> = {
 };
 
 const renderWithProvider = (ui: ReactNode) =>
-  render(ui, { 
-    BakgrunnskartProvider: true
+  render(ui, {
+    BakgrunnskartProvider: {
+      visibleLayers: { administrativeGrenser: true } as never,
+      toggleLayerVisibility: jest.fn(),
+      recursiveIsVisible: jest.fn(() => true),
+      layerIsVisible: jest.fn(() => true),
+      mappedLayers: [
+        { ...defaultProps.mappedLayer, sourceId: "administrativeGrenser" },
+      ],
+      moveLayer: jest.fn(),
+      subLayerIsVisible: jest.fn(),
+    },
   });
 
 describe("MainBackgroundLayer", () => {

@@ -1,8 +1,6 @@
 import { render, screen } from "test/test-utils";
 import { ReactNode } from "react";
 import GrenserDrillDown from "./GrenserDrillDown";
-import { BakgrunnskartContext } from "contexts/BakgrunnskartContext";
-import { EditGrenserProvider } from "contexts/EditGrenserContext";
 
 const renderWithProvider = (ui: ReactNode) =>
   render(ui, {
