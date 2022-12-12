@@ -2,24 +2,38 @@ import { useContext } from "react";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { EditGrenserContext } from "./EditGrenserContext";
-import { EditingType } from "./types";
+import { EditingType, ObjectValue } from "./types";
 import { layerIdByGrenseType } from "components/GrenserDrillDown/ToggleableGrense/ToggleableGrense";
 import useAsyncFeatures from "hooks/useAsyncFeatures";
 import { getFeatureId, removeFeaturesFromSourceByIds } from "utils/map/source";
+
+export const useEditGrenseValue = (
+  grenseType: EditingType,
+  grenseId: string
+) => {
+  const context = useContext(EditGrenserContext);
+
+  if (!context) {
+    throw new Error(
+      "useIsEditingGrense must be used within a EditGrenserProvider"
+    );
+  }
+
+  const value = context.editingObject[grenseType]?.[grenseId] ?? {};
+
+  const setValue = (newValue: ObjectValue) => {
+    context.setObjectValue(grenseType, grenseId, newValue);
+  };
+
+  return { value, setValue };
+};
 
 export const useEditGrense = (
   grenseType: EditingType,
   grenseId: string,
   features: Feature<Geometry>[] | null
 ) => {
-  const context = useContext(EditGrenserContext);
-
-  if (!context) {
-    throw new Error("useEditGrense must be used within a EditGrenserProvider");
-  }
-
-  const { editingObject, setObjectValue } = context;
-  const value = editingObject[grenseType]?.[grenseId] ?? {};
+  const { value, setValue } = useEditGrenseValue(grenseType, grenseId);
   const setLayerToAddTo = useAsyncFeatures(features, !!value?.editing);
 
   const toggleVisible = () => {
@@ -28,7 +42,7 @@ export const useEditGrense = (
       visible: !value.visible,
     };
 
-    setObjectValue(grenseType, grenseId, newObjectValue);
+    setValue(newObjectValue);
 
     const layerId = layerIdByGrenseType[grenseType];
 
@@ -61,7 +75,7 @@ export const useEditGrense = (
       newObjectValue.visible = !newObjectValue.visible;
     }
 
-    setObjectValue(grenseType, grenseId, newObjectValue);
+    setValue(newObjectValue);
 
     if (newObjectValue.visible) {
       // legg til i edit fordi dette er etter checkbox click

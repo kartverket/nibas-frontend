@@ -23,6 +23,7 @@ describe("PageLayout", () => {
       const bakgrunnskartButton = screen.getByRole("button", {
         name: /kartlag/i,
       });
+
       await user.click(bakgrunnskartButton);
       await user.click(bakgrunnskartButton);
 

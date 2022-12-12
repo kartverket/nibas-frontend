@@ -60,11 +60,10 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
         visible={visible}
         variant="unstyled"
       >
-        {visible ? (
-          <Icon icon="remove" aria-label={`Fjern ${props.mappedLayer.title}`} />
-        ) : (
-          <Icon icon="add" aria-label={`Vis ${props.mappedLayer.title}`} />
-        )}
+        <AddRemoveIcon
+          title={props.mappedLayer.title}
+          type={visible ? "REMOVE" : "ADD"}
+        />
       </AddRemove>
     );
     const renderNameAndCaret = () => {
@@ -73,8 +72,14 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
         return (
           <ClickableName
             variant="unstyled"
+            onClick={onVisibilityClick}
             open={false}
-            icon={getAddRemove(false)}
+            icon={
+              <AddRemoveIcon
+                title={props.mappedLayer.title}
+                type={visible ? "REMOVE" : "ADD"}
+              />
+            }
           >
             <span>{props.mappedLayer.title}</span>
           </ClickableName>
@@ -170,13 +175,26 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
 
 BackgroundLayerAccordion.displayName = "BackgroundLayerAccordion";
 
+type AddRemoveIconProps = {
+  title: string;
+  type: "ADD" | "REMOVE";
+};
+
+const AddRemoveIcon = ({ title, type }: AddRemoveIconProps) => {
+  switch (type) {
+    case "ADD":
+      return <BlueIcon icon="add" aria-label={`Vis ${title}`} />;
+    case "REMOVE":
+      return <BlueIcon icon="remove" aria-label={`Fjern ${title}`} />;
+  }
+};
+
 const AddRemove = styled(Button)<{ visible: boolean; aktivtKartlag: boolean }>`
   cursor: pointer;
 
   color: ${({ theme, visible, aktivtKartlag }) =>
     visible && !aktivtKartlag ? theme.colors.gray : theme.colors.blueDark};
 
-  padding: 0 12px;
   opacity: ${({ visible, aktivtKartlag }) =>
     visible && !aktivtKartlag ? 0.4 : 1};
 `;
@@ -191,6 +209,11 @@ const Caret = styled.div<{ open: boolean }>`
   padding: 0 12px;
   align-items: center;
   display: flex;
+`;
+
+const BlueIcon = styled(Icon)`
+  padding: 0 12px;
+  color: var(--blue_dark);
 `;
 
 const Wrapper = styled.div<{ indent: number }>`
