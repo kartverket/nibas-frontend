@@ -1,4 +1,4 @@
-import { act, render, screen } from "test/test-utils";
+import { render, screen } from "test/test-utils";
 import Sidebar from "./Sidebar";
 import { defaultTheme } from "style/theme";
 
@@ -21,9 +21,7 @@ describe("Sidebar", () => {
     const { user } = render(<Sidebar />);
 
     const nibasButton = screen.getByRole("button", { name: /inndelinger/i });
-    await act(async () => {
-      await user.click(nibasButton);
-    });
+    await user.click(nibasButton);
 
     expect(nibasButton).toHaveStyle(`color: ${defaultTheme.colors.blue}`);
   });

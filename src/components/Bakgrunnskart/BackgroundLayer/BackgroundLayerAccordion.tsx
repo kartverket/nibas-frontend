@@ -18,7 +18,7 @@ const getCaretIcon = (open: boolean) => (
 
 type SharedProps = {
   indent: number;
-  onVisibilityClick: (layerId: string) => void;
+  onVisibilityClick: () => void;
   visible: boolean;
   isAktiveKartlag?: boolean;
   children: React.ReactNode;
@@ -55,15 +55,14 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
 
     const getAddRemove = (aktivtKartlag: boolean) => (
       <AddRemove
-        onClick={() => onVisibilityClick(props.mappedLayer.title)}
+        onClick={onVisibilityClick}
         aktivtKartlag={aktivtKartlag}
         visible={visible}
       >
-        {visible ? (
-          <Icon icon="remove" aria-label={`Fjern ${props.mappedLayer.title}`} />
-        ) : (
-          <Icon icon="add" aria-label={`Vis ${props.mappedLayer.title}`} />
-        )}
+        <AddRemoveIcon
+          title={props.mappedLayer.title}
+          type={visible ? "REMOVE" : "ADD"}
+        />
       </AddRemove>
     );
     const renderNameAndCaret = () => {
@@ -71,8 +70,13 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
       if (props.isMainLayer && props.mappedLayer.layers.length === 0) {
         return (
           <AddableLayer
-            onClick={() => onVisibilityClick(props.mappedLayer.title)}
-            icon={getAddRemove(false)}
+            onClick={() => onVisibilityClick()}
+            icon={
+              <AddRemoveIcon
+                title={props.mappedLayer.title}
+                type={visible ? "REMOVE" : "ADD"}
+              />
+            }
           >
             <span>{props.mappedLayer.title}</span>
           </AddableLayer>
@@ -98,7 +102,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
       return (
         <AddableLayer
           activeLayer={visible}
-          onClick={() => onVisibilityClick(props.mappedLayer.title)}
+          onClick={() => onVisibilityClick()}
           icon={getAddRemove(false)}
         >
           {props.mappedLayer.title}
@@ -134,7 +138,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
         return (
           <AktivtSubLayerWrapper
             icon={getAddRemove(true)}
-            onClick={() => onVisibilityClick(props.mappedLayer.title)}
+            onClick={() => onVisibilityClick()}
           >
             <span>{props.mappedLayer.title}</span>
           </AktivtSubLayerWrapper>
@@ -162,6 +166,20 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
 );
 
 BackgroundLayerAccordion.displayName = "BackgroundLayerAccordion";
+
+type AddRemoveIconProps = {
+  title: string;
+  type: "ADD" | "REMOVE";
+};
+
+const AddRemoveIcon = ({ title, type }: AddRemoveIconProps) => {
+  switch (type) {
+    case "ADD":
+      return <BlueIcon icon="add" aria-label={`Vis ${title}`} />;
+    case "REMOVE":
+      return <BlueIcon icon="remove" aria-label={`Fjern ${title}`} />;
+  }
+};
 
 const AddRemove = styled.div<{ visible: boolean; aktivtKartlag: boolean }>`
   cursor: pointer;
@@ -210,6 +228,11 @@ const Caret = styled.div<{ open: boolean }>`
     background: ${({ theme }) => theme.colors.blueDark};
     color: ${({ theme }) => theme.colors.white};
   }
+`;
+
+const BlueIcon = styled(Icon)`
+  padding: 0 12px;
+  color: var(--blue_dark);
 `;
 
 const Wrapper = styled.div<{ indent: number }>`

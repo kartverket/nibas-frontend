@@ -13,7 +13,7 @@ const TopBar = () => {
     <Wrapper>
       <LeftSide>
         <Logo />
-        <span>{t("Nasjonal inndelingsbase")}</span>
+        <Sidetittel>{t("Nasjonal inndelingsbase")}</Sidetittel>
       </LeftSide>
       <RightSide>
         {isAuthenticatedFunc() ? (
@@ -30,6 +30,13 @@ const TopBar = () => {
     </Wrapper>
   );
 };
+
+const Sidetittel = styled.h1`
+  padding: 0;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 300;
+`;
 
 const Wrapper = styled.div`
   grid-area: topbar;
