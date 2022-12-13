@@ -10,21 +10,31 @@ import { getNavnInSpraak } from "utils/language/language";
 import useStemmekretsConflictModal from "./useStemmekretsConflictModal";
 import UtkastConflictModal, { ConflictTableRow } from "./UtkastConflictModal";
 
-type Props<T> = {
+const columns = [
+  "Stemmekrets",
+  "Stemmekretsnummer",
+  "Valgdistriktsnummer",
+  "Tellekretsnavn",
+  "Tellekretsnummer",
+  "Endringstype",
+  "Gyldig fra",
+];
+
+type Props = {
   conflictResponse: FramtidigVersjonConflict;
-  current: T;
+  current: StemmekretsRequest;
   utkast: UtkastResponse;
   onNext: () => void;
   onCancel: () => void;
 };
 
-const StemmekretsUtkastConflictModal = <T extends StemmekretsRequest>({
+const StemmekretsUtkastConflictModal = ({
   conflictResponse,
   current,
   utkast,
   onNext,
   onCancel,
-}: Props<T>) => {
+}: Props) => {
   const { fields, getIsConfirmed, register, submit } =
     useStemmekretsConflictModal({
       conflictResponse,
@@ -41,16 +51,6 @@ const StemmekretsUtkastConflictModal = <T extends StemmekretsRequest>({
     current.tellekretsnummer ?? "---",
     utkast.endringstype,
     utkast.gyldigFra,
-  ];
-
-  const columns = [
-    "Stemmekrets",
-    "Stemmekretsnummer",
-    "Valgdistriktsnummer",
-    "Tellekretsnavn",
-    "Tellekretsnummer",
-    "Endringstype",
-    "Gyldig fra",
   ];
 
   return (

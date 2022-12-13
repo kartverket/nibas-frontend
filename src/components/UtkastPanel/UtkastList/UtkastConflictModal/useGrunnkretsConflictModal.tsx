@@ -133,7 +133,7 @@ const useGrunnkretsConflictModal = ({
         confirmed: false,
       }))
     );
-  }, [conflictedFutureVersions, setValue, utkast.gyldigFra]);
+  }, [conflictedFutureVersions, setValue]);
 
   const getIsConfirmed = (index: number) =>
     watch(`grunnkretser.${index}.confirmed`);

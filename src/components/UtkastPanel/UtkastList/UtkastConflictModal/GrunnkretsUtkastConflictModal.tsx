@@ -1,7 +1,6 @@
 import Checkbox from "components/Checkbox";
 import Input from "components/form/Input";
 import { ButtonCell } from "components/Kart/OverlayPanels/KretsTable";
-import ReactModal from "react-modal";
 import {
   FramtidigVersjonConflict,
   GrunnkretsRequest,
@@ -10,25 +9,23 @@ import {
 import useGrunnkretsConflictModal from "./useGrunnkretsConflictModal";
 import UtkastConflictModal, { ConflictTableRow } from "./UtkastConflictModal";
 
-if (process.env.NODE_ENV !== "test") {
-  ReactModal.setAppElement("#root");
-}
+const columns = ["Grunnkretsnummer", "Grunnkrets", "Type", "Gyldig fra"];
 
-type Props<T> = {
+type Props = {
   conflictResponse: FramtidigVersjonConflict;
-  current: T;
+  current: GrunnkretsRequest;
   utkast: UtkastResponse;
   onNext: () => void;
   onCancel: () => void;
 };
 
-const GrunnkretsUtkastConflictModal = <T extends GrunnkretsRequest>({
+const GrunnkretsUtkastConflictModal = ({
   conflictResponse,
   current,
   utkast,
   onNext,
   onCancel,
-}: Props<T>) => {
+}: Props) => {
   const { fields, getIsConfirmed, register, submit } =
     useGrunnkretsConflictModal({
       conflictResponse,
@@ -43,8 +40,6 @@ const GrunnkretsUtkastConflictModal = <T extends GrunnkretsRequest>({
     utkast.endringstype,
     utkast.gyldigFra,
   ];
-
-  const columns = ["Grunnkretsnummer", "Grunnkrets", "Type", "Gyldig fra"];
 
   return (
     <UtkastConflictModal

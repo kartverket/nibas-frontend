@@ -100,11 +100,11 @@ const useStemmekretsConflictModal = ({
         value: stemmekrets.identifikasjon.lokalid,
       },
       stemmekretsRequests: data.stemmekretser
-        .map((g) => ({
-          endringstype: g.endringstype,
-          gyldigFra: g.gyldigFra,
+        .map((s) => ({
+          endringstype: s.endringstype,
+          gyldigFra: s.gyldigFra,
           stemmekretsRequest: getStemmekretsRequest(
-            g,
+            s,
             conflictedFutureVersions as StemmekretsResponse[],
             stemmekrets
           ),
@@ -142,7 +142,7 @@ const useStemmekretsConflictModal = ({
         confirmed: false,
       }))
     );
-  }, [conflictedFutureVersions, setValue, utkast.gyldigFra]);
+  }, [conflictedFutureVersions, setValue]);
 
   const getIsConfirmed = (index: number) =>
     watch(`stemmekretser.${index}.confirmed`);
