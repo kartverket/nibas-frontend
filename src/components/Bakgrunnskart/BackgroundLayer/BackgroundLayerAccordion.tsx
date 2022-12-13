@@ -71,12 +71,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
         return (
           <AddableLayer
             onClick={() => onVisibilityClick()}
-            icon={
-              <AddRemoveIcon
-                title={props.mappedLayer.title}
-                type={visible ? "REMOVE" : "ADD"}
-              />
-            }
+            icon={getAddRemove(false)}
           >
             <span>{props.mappedLayer.title}</span>
           </AddableLayer>
@@ -175,9 +170,9 @@ type AddRemoveIconProps = {
 const AddRemoveIcon = ({ title, type }: AddRemoveIconProps) => {
   switch (type) {
     case "ADD":
-      return <BlueIcon icon="add" aria-label={`Vis ${title}`} />;
+      return <Icon icon="add" aria-label={`Vis ${title}`} />;
     case "REMOVE":
-      return <BlueIcon icon="remove" aria-label={`Fjern ${title}`} />;
+      return <Icon icon="remove" aria-label={`Fjern ${title}`} />;
   }
 };
 
@@ -228,11 +223,6 @@ const Caret = styled.div<{ open: boolean }>`
     background: ${({ theme }) => theme.colors.blueDark};
     color: ${({ theme }) => theme.colors.white};
   }
-`;
-
-const BlueIcon = styled(Icon)`
-  padding: 0 12px;
-  color: var(--blue_dark);
 `;
 
 const Wrapper = styled.div<{ indent: number }>`
@@ -368,8 +358,8 @@ const AktivtSubLayerWrapper = styled(Button).attrs(() => ({
 
   &:hover {
     ${AddRemove} {
-      color: ${({ theme }) => theme.colors.white};
-      background: ${({ theme }) => theme.colors.blueDark};
+      color: ${({ theme }) => theme.colors.blueDark};
+      background: ${({ theme }) => theme.colors.blueLight};
     }
   }
 `;
