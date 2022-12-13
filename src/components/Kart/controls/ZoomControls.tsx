@@ -1,8 +1,7 @@
 import styled from "styled-components";
 import { map } from "../constants";
-import CustomControl from "components/CustomControl";
-import Button from "components/form/Button";
 import Icon from "components/Icon";
+import ControlButton from "./ControlButton";
 
 const ZoomControls = () => {
   const zoom = (difference: number) => {
@@ -14,42 +13,17 @@ const ZoomControls = () => {
   };
 
   return (
-    <>
-      <CustomControl>
-        <PlusZoomButton
-          icon={<Icon icon="zoom_in" />}
-          onClick={() => zoom(1)}
-        />
-      </CustomControl>
-      <CustomControl>
-        <MinusZoomButton
-          icon={<Icon icon="zoom_out" />}
-          onClick={() => zoom(-1)}
-        />
-      </CustomControl>
-    </>
+    <ControlGrid>
+      <ControlButton icon={<Icon icon="zoom_in" />} onClick={() => zoom(1)} />
+      <ControlButton icon={<Icon icon="zoom_out" />} onClick={() => zoom(-1)} />
+    </ControlGrid>
   );
 };
 
-const ZoomButton = styled(Button).attrs(() => ({
-  variant: "unstyled",
-}))`
-  position: absolute;
-  border-radius: 8px;
-  background-color: white;
-  border: 1px solid ${({ theme }) => theme.colors.blue};
-  color: ${({ theme }) => theme.colors.blue};
-  padding: 8px;
-`;
-
-const PlusZoomButton = styled(ZoomButton)`
-  bottom: 24px;
-  right: 80px;
-`;
-
-const MinusZoomButton = styled(ZoomButton)`
-  bottom: 24px;
-  right: 24px;
+const ControlGrid = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
 `;
 
 export default ZoomControls;
