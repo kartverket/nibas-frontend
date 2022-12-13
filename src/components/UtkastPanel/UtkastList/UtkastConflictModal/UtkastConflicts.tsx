@@ -2,10 +2,12 @@ import useNibasApi from "hooks/useNibasApi";
 import {
   FramtidigVersjonConflict,
   GrunnkretsRequest,
+  StemmekretsRequest,
   UtkastMetadataendringer,
 } from "types/api";
 import GrunnkretsUtkastConflictModal from ".";
 import { metadataendringerKeyByConflictType } from "./constants";
+import StemmekretsUtkastConflictModal from "./StemmekretsUtkastConflictModal";
 
 type Props = {
   utkastId: string;
@@ -46,6 +48,17 @@ const UtkastConflicts = ({
       <GrunnkretsUtkastConflictModal
         conflictResponse={conflictResponse}
         current={currentItem as GrunnkretsRequest}
+        utkast={utkast}
+        onCancel={onCancel}
+        onNext={onResolved}
+      />
+    );
+
+  if (conflictResponse.type === "STEMMEKRETS")
+    return (
+      <StemmekretsUtkastConflictModal
+        conflictResponse={conflictResponse}
+        current={currentItem as StemmekretsRequest}
         utkast={utkast}
         onCancel={onCancel}
         onNext={onResolved}

@@ -137,7 +137,21 @@ const UtkastItem = ({ utkast }: Props) => {
           {conflictResponse && (
             <UtkastConflicts
               utkastId={utkast.id}
-              conflictResponse={conflictResponse}
+              // conflictResponse={conflictResponse}
+              conflictResponse={{
+                affectedIds: [
+                  {
+                    gyldigFra: "2022-12-31",
+                    lokalid: { value: "865a2151-96d2-47f5-b6b7-369f6e77b79d" },
+                  },
+                ],
+                id: {
+                  gyldigFra: "2022-12-19",
+                  lokalid: { value: "865a2151-96d2-47f5-b6b7-369f6e77b79d" },
+                },
+                type: "STEMMEKRETS",
+                melding: "Konflikt på stemmekrets",
+              }}
               onCancel={() => setConflictResponse(null)}
               close={() => setConflictResponse(null)}
               onResolved={cleanUpUtkast}

@@ -866,6 +866,8 @@ export interface components {
       tellekretsnummer?: string;
       /** @description Tellekretsnavn til stemmekretsen */
       tellekretsnavn?: string;
+      /** @description Typen endring som ble gjort på objektet */
+      endringstype?: string;
       /** @description Valgdistriktsnummer til stemmekretsen */
       valgdistriktsnummer?: string;
       features: components["schemas"]["FeatureCollection"];

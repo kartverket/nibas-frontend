@@ -54,7 +54,7 @@ const UtkastConflictModal: FC<Props> = ({
       <Heading tag="h3" size="xs">
         Endringer i dette utkastet
       </Heading>
-      <Table>
+      <Table cellSpacing={0}>
         <thead>
           <tr>
             {columns.map((column) => (
@@ -117,6 +117,15 @@ const Buttons = styled.div`
   }
 `;
 
+const Table = styled.table`
+  width: 100%;
+
+  th {
+    text-align: left;
+    padding: 8px;
+  }
+`;
+
 export const ConflictTableRow = styled.tr<{
   confirmed?: boolean;
   numColumns?: number;
@@ -126,28 +135,26 @@ export const ConflictTableRow = styled.tr<{
   transition: background-color 0.2s ease-in-out;
 
   td {
-    padding: 16px;
+    padding: 16px 8px;
     border-bottom: 1px solid ${(props) => props.theme.colors.grayLight};
     // de blir ikke faktisk 200px, men de blir like på tvers av tabeller 🤷‍♀️
     width: calc(100% / ${(props) => props.numColumns || 1});
     min-width: calc(100% / ${(props) => props.numColumns || 1});
     max-width: calc(100% / ${(props) => props.numColumns || 1});
+
+    > input {
+      width: 100%;
+    }
+  }
+
+  ${ButtonCell} {
+    width: 1%;
+    white-space: nowrap;
   }
 
   label {
     margin-bottom: 0;
     margin-right: 0;
-  }
-`;
-
-const Table = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: "fixed";
-
-  th {
-    text-align: left;
-    padding: 8px 16px;
   }
 `;
 
