@@ -1,5 +1,6 @@
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { resolveUtkastConflict } from "api/utkast";
+import useNibasApi from "hooks/useNibasApi";
 import { useEffect, useMemo } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import {
@@ -62,39 +63,11 @@ const useStemmekretsConflictModal = ({
   utkast,
   onNext,
 }: Props) => {
-  // const { data: futureVersions } = useNibasApi(
-  //   "/v1/stemmekretser/{lokalid}/framtidigeversjoner",
-  //   {
-  //     lokalid: stemmekrets.identifikasjon.lokalid,
-  //   }
-  // );
-
-  const futureVersions = useMemo(
-    () => [
-      {
-        id: "865a2151-96d2-47f5-b6b7-369f6e77b79d",
-        stemmekretsnavn: "BREIDABLIK",
-        stemmekretsnummer: "3",
-        identifikasjon: {
-          lokalid: "47a0c8ff-27fe-4a7c-813b-049c28a266ce",
-        },
-        kommunenummer: {
-          id: "3e1c542c-10af-4571-bb32-188279f00e9e",
-          kodeverdi: "1106",
-        },
-        tellekretsnummer: undefined,
-        tellekretsnavn: undefined,
-        valgdistriktsnummer: "11",
-        features: {},
-        version: 2,
-        gyldighet: {
-          gyldigFra: "2022-12-31",
-          gyldigTil: "2023-01-01",
-        },
-        endringstype: "Navneendring",
-      } as StemmekretsResponse,
-    ],
-    []
+  const { data: futureVersions } = useNibasApi(
+    "/v1/stemmekretser/{lokalid}/framtidigeversjoner",
+    {
+      lokalid: stemmekrets.identifikasjon.lokalid,
+    }
   );
 
   const conflictedFutureVersions = useMemo(

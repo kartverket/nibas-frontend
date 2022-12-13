@@ -137,7 +137,7 @@ export const ConflictTableRow = styled.tr<{
   td {
     padding: 16px 8px;
     border-bottom: 1px solid ${(props) => props.theme.colors.grayLight};
-    // de blir ikke faktisk 200px, men de blir like på tvers av tabeller 🤷‍♀️
+    // de blir ikke faktisk like store, men de blir like store på tvers av tabeller og det ser nice ut 🤷‍♀️
     width: calc(100% / ${(props) => props.numColumns || 1});
     min-width: calc(100% / ${(props) => props.numColumns || 1});
     max-width: calc(100% / ${(props) => props.numColumns || 1});
@@ -145,11 +145,6 @@ export const ConflictTableRow = styled.tr<{
     > input {
       width: 100%;
     }
-  }
-
-  ${ButtonCell} {
-    width: 1%;
-    white-space: nowrap;
   }
 
   label {
