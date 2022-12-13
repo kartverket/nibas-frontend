@@ -64,14 +64,14 @@ const UtkastConflictModal: FC<Props> = ({
           </tr>
         </thead>
         <tbody>
-          <Row>
+          <ConflictTableRow numColumns={currentRow.length}>
             {currentRow.map((row, i) => (
               <td key={i}>{row}</td>
             ))}
             <ButtonCell>
               <HiddenCheckbox type="checkbox" label="Bekreft" />
             </ButtonCell>
-          </Row>
+          </ConflictTableRow>
         </tbody>
       </Table>
       <Heading tag="h3" size="xs">
@@ -103,7 +103,7 @@ const UtkastConflictModal: FC<Props> = ({
 
 const ModalWrapper = styled(CustomModalWrapper)`
   min-width: 900px;
-  max-width: 1200px;
+  max-width: 1500px;
   padding: 40px;
 `;
 
@@ -117,7 +117,10 @@ const Buttons = styled.div`
   }
 `;
 
-const Row = styled.tr<{ confirmed?: boolean }>`
+export const ConflictTableRow = styled.tr<{
+  confirmed?: boolean;
+  numColumns?: number;
+}>`
   background-color: ${(props) =>
     props.confirmed ? props.theme.colors.greenLight : "transparent"};
   transition: background-color 0.2s ease-in-out;
@@ -126,9 +129,9 @@ const Row = styled.tr<{ confirmed?: boolean }>`
     padding: 16px;
     border-bottom: 1px solid ${(props) => props.theme.colors.grayLight};
     // de blir ikke faktisk 200px, men de blir like på tvers av tabeller 🤷‍♀️
-    width: 200px;
-    min-width: 200px;
-    max-width: 200px;
+    width: calc(100% / ${(props) => props.numColumns || 1});
+    min-width: calc(100% / ${(props) => props.numColumns || 1});
+    max-width: calc(100% / ${(props) => props.numColumns || 1});
   }
 
   label {
