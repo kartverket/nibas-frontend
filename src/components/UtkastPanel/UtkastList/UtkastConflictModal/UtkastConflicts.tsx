@@ -28,8 +28,6 @@ const UtkastConflicts = ({
     id: utkastId,
   });
 
-  console.log(conflictResponse);
-
   const metadataendringerKey = metadataendringerKeyByConflictType[
     conflictResponse.type
   ] as keyof UtkastMetadataendringer;
@@ -38,8 +36,6 @@ const UtkastConflicts = ({
     utkast?.operasjoner.metadataendringer[metadataendringerKey]?.[
       conflictResponse.id.lokalid.value
     ];
-
-  console.log(currentItem);
 
   if (!utkast || !currentItem) return null;
 
