@@ -19,7 +19,12 @@ import {
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 import { resetMapView } from "utils/map";
+import useFeedback from "hooks/useFeedback";
+import { useToolbarActions } from "contexts/ToolbarContext";
+import { useUtkast } from "contexts/UtkastContext";
+import Feedback from "components/Feedback/Feedback";
 import UtkastConflicts from "./UtkastConflicts";
+import { Outline } from "style/mixins";
 
 type Props = {
   utkast: UtkastRef;
@@ -45,6 +50,13 @@ const UtkastItem = ({ utkast }: Props) => {
   );
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { mutate } = useSWRConfig();
+  const { openFeedback, isOpen, closeFeedback, feedbackContent } = useFeedback(
+    t(
+      "Utkastet ditt har endringer som ikke er lagret. Dersom du lukker utkastet nå, vil disse endringene forkastes. Er du sikker på at du vil fortsette?"
+    )
+  );
+  const { canSave } = useToolbarActions();
+  const { closeUtkast } = useUtkast();
 
   const utkastActive = utkastId === utkast.id;
 
@@ -101,18 +113,57 @@ const UtkastItem = ({ utkast }: Props) => {
     resetMapView();
   };
 
+  const openClosePublish = () => {
+    if (isPublishOpen) {
+      setIsPublishOpen(false);
+      return;
+    }
+    setIsPublishOpen(true);
+    setIsDeleteOpen(false);
+  };
+
+  const openCloseDelete = () => {
+    if (isDeleteOpen) {
+      setIsDeleteOpen(false);
+      return;
+    }
+    setIsPublishOpen(false);
+    setIsDeleteOpen(true);
+  };
+
+  const openCloseUtkast = () => {
+    if (!isPublishOpen && !isDeleteOpen) {
+      if (canSave) {
+        openFeedback();
+      } else {
+        closeUtkast();
+      }
+    }
+
+    if (utkastActive) {
+      setIsPublishOpen(false);
+      setIsDeleteOpen(false);
+      return;
+    }
+
+    changeUtkast(utkast.id);
+  };
+
   return (
     <ListItem>
-      <ItemWrapper>
+      <ItemWrapper active={utkastActive}>
         <UtkastName>{utkast.navn}</UtkastName>
-        <UnstyledButton onClick={() => setIsPublishOpen(true)}>
+        <UnstyledButton onClick={() => openClosePublish()}>
           <PublishIcon aria-label={`Publiser ${utkast.navn}`} />
         </UnstyledButton>
-        <UnstyledButton onClick={() => setIsDeleteOpen(true)}>
+        <UnstyledButton onClick={() => openCloseDelete()}>
           <DeleteIcon aria-label={`Forkast ${utkast.navn}`} />
         </UnstyledButton>
-        <UnstyledButton onClick={() => changeUtkast(utkast.id)}>
-          <Icon icon="edit" aria-label={`Aktiver ${utkast.navn}`} />
+        <UnstyledButton onClick={() => openCloseUtkast()}>
+          <EditIcon
+            active={utkastActive}
+            aria-label={`Aktiver ${utkast.navn}`}
+          />
         </UnstyledButton>
       </ItemWrapper>
       {isPublishOpen && (
@@ -160,17 +211,26 @@ const UtkastItem = ({ utkast }: Props) => {
       {utkastActive && !isPublishOpen && !isDeleteOpen && (
         <UtkastItemActive utkastId={utkast.id} />
       )}
+      <Feedback
+        type="warning"
+        title="Advarsel"
+        isOpen={isOpen}
+        onClose={closeFeedback}
+        onContinue={closeUtkast}
+        closeText={t("Fortsett redigering")}
+        continueText={t("Forkast endringer")}
+      >
+        {feedbackContent}
+      </Feedback>
     </ListItem>
   );
 };
 
-const ItemWrapper = styled.div`
-  margin-bottom: 8px;
+const ItemWrapper = styled.div<{ active: boolean }>`
   display: flex;
-
-  > :first-child {
-    flex: 1;
-  }
+  background: ${({ active, theme }) =>
+    active ? theme.colors.blueLight : "transparent"};
+  padding: 0 10px 0 0;
 `;
 
 const ListItem = styled.li`
@@ -179,7 +239,9 @@ const ListItem = styled.li`
 `;
 
 const UtkastName = styled.p`
-  margin: 0;
+  flex: 1;
+  padding: 4px;
+  padding-left: 16px;
 `;
 
 export const UtkastItemExpanded = styled.div`
@@ -199,7 +261,7 @@ export const ButtonsAndGyldigFra = styled.div`
   align-items: flex-end;
 
   .button:first-child {
-    margin-right: 4px;
+    margin-right: 14px;
   }
 
   label {
@@ -223,13 +285,30 @@ const CancelButton = styled(Button).attrs(() => ({
 
 const UnstyledButton = styled(Button).attrs(() => ({
   variant: "unstyled",
-}))``;
+}))`
+  &:focus-visible {
+    ${Icon} {
+      ${Outline}
+    }
+  }
+`;
 
 const PublishIcon = styled(Icon).attrs(() => ({
   icon: "done",
 }))`
   color: ${({ theme }) => theme.colors.green};
   margin-right: 8px;
+  border-radius: 50%;
+  padding: 4px;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.green};
+    color: ${({ theme }) => theme.colors.white};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.blueDark};
+  }
 `;
 
 const DeleteIcon = styled(Icon).attrs(() => ({
@@ -237,6 +316,29 @@ const DeleteIcon = styled(Icon).attrs(() => ({
 }))`
   color: ${({ theme }) => theme.colors.redErrorText};
   margin-right: 8px;
+  border-radius: 50%;
+  padding: 4px;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.redErrorText};
+    color: ${({ theme }) => theme.colors.white};
+  }
+`;
+
+const EditIcon = styled(Icon).attrs(() => ({
+  icon: "edit",
+}))<{ active: boolean }>`
+  color: ${({ theme, active }) =>
+    active ? theme.colors.white : theme.colors.blueDark};
+  margin-right: 8px;
+  border-radius: 50%;
+  padding: 4px;
+  background: ${({ theme, active }) =>
+    active ? theme.colors.blueDark : "transparent"};
+  &:hover {
+    background: ${({ theme }) => theme.colors.blueDark};
+    color: ${({ theme }) => theme.colors.white};
+  }
 `;
 
 export default UtkastItem;

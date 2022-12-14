@@ -2,8 +2,6 @@ import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { AuthenticationButton } from "../Authentication/AuthenticationButton";
-import Input from "components/form/Input";
-import Icon from "components/Icon";
 import Logo from "components/Logo/Logo";
 
 const TopBar = () => {
@@ -16,8 +14,6 @@ const TopBar = () => {
       <LeftSide>
         <Logo />
         <Sidetittel>{t("Nasjonal inndelingsbase")}</Sidetittel>
-        <SearchInput type="text" placeholder={t("Koordinater")} disabled />
-        <SearchIcon />
       </LeftSide>
       <RightSide>
         {isAuthenticatedFunc() ? (
@@ -45,7 +41,8 @@ const Sidetittel = styled.h1`
 const Wrapper = styled.div`
   grid-area: topbar;
   display: flex;
-  padding: 0.5rem 1rem 0.5rem 0;
+  padding: 14px 16px;
+  padding-left: 0;
 `;
 
 const LeftSide = styled.div`
@@ -63,17 +60,6 @@ const RightSide = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
-`;
-
-const SearchInput = styled(Input)`
-  width: 30%;
-  min-width: 200px;
-`;
-
-const SearchIcon = styled(Icon).attrs(() => ({
-  icon: "search",
-}))`
-  margin-left: -48px;
 `;
 
 export default TopBar;

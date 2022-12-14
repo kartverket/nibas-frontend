@@ -5,6 +5,7 @@ import Button from "components/form/Button";
 import Slider from "components/form/Slider";
 import Icon from "components/Icon";
 import { MainMappedLayer, MappedLayer } from "utils/getLayersFromWMS";
+import { Outline } from "style/mixins";
 
 const getCaretIcon = (open: boolean) => (
   <Caret open={open}>
@@ -58,7 +59,6 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
         onClick={onVisibilityClick}
         aktivtKartlag={aktivtKartlag}
         visible={visible}
-        variant="unstyled"
       >
         <AddRemoveIcon
           title={props.mappedLayer.title}
@@ -70,19 +70,15 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
       // hvis hovedlag uten barn
       if (props.isMainLayer && props.mappedLayer.layers.length === 0) {
         return (
-          <ClickableName
-            variant="unstyled"
-            onClick={onVisibilityClick}
-            open={false}
-            icon={
-              <AddRemoveIcon
-                title={props.mappedLayer.title}
-                type={visible ? "REMOVE" : "ADD"}
-              />
+          <AddableLayer
+            onClick={() => onVisibilityClick()}
+            icon={getAddRemove(false)}
+            aria-label={
+              (visible ? `Fjern` : `Vis`) + ` ${props.mappedLayer.title}`
             }
           >
             <span>{props.mappedLayer.title}</span>
-          </ClickableName>
+          </AddableLayer>
         );
       }
 
@@ -103,10 +99,16 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
 
       // ellers bare render tittelen til et sub-lag
       return (
-        <SubKartlagName activeLayer={visible}>
+        <AddableLayer
+          activeLayer={visible}
+          onClick={() => onVisibilityClick()}
+          icon={getAddRemove(false)}
+          aria-label={
+            (visible ? `Fjern` : `Vis`) + ` ${props.mappedLayer.title}`
+          }
+        >
           {props.mappedLayer.title}
-          {getAddRemove(false)}
-        </SubKartlagName>
+        </AddableLayer>
       );
     };
 
@@ -115,7 +117,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
         <AktivtMainLayerWrapper>
           <DraggableLayer ref={ref}>
             <Icon
-              icon="reorder"
+              icon="format_line_spacing"
               aria-label={`Bytt rekkefølge på kartlag ${props.mappedLayer.title}`}
             />
             <span>{props.mappedLayer.title}</span>
@@ -128,7 +130,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
               onChange={onSliderChange}
             />
           </AktivtKartlagSlider>
-          {getAddRemove(true)}
+          <RemoveAktivtKartlag variant="unstyled" icon={getAddRemove(true)} />
         </AktivtMainLayerWrapper>
       );
     };
@@ -136,19 +138,11 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
     const renderAktivtSubLayer = () => {
       if (visible && props.mappedLayer.layers.length === 0) {
         return (
-          <AktivtSubLayerWrapper>
+          <AktivtSubLayerWrapper
+            icon={getAddRemove(true)}
+            onClick={() => onVisibilityClick()}
+          >
             <span>{props.mappedLayer.title}</span>
-            <AddRemove
-              onClick={onVisibilityClick}
-              aktivtKartlag={true}
-              visible={visible}
-              variant="unstyled"
-            >
-              <Icon
-                icon="remove"
-                aria-label={`Fjern ${props.mappedLayer.title} fra aktive kartlag`}
-              />
-            </AddRemove>
           </AktivtSubLayerWrapper>
         );
       }
@@ -183,20 +177,40 @@ type AddRemoveIconProps = {
 const AddRemoveIcon = ({ title, type }: AddRemoveIconProps) => {
   switch (type) {
     case "ADD":
-      return <BlueIcon icon="add" aria-label={`Vis ${title}`} />;
+      return <Icon icon="add" aria-label={`Vis ${title}`} />;
     case "REMOVE":
-      return <BlueIcon icon="remove" aria-label={`Fjern ${title}`} />;
+      return <Icon icon="remove" aria-label={`Fjern ${title}`} />;
   }
 };
 
-const AddRemove = styled(Button)<{ visible: boolean; aktivtKartlag: boolean }>`
+const AddRemove = styled.div<{ visible: boolean; aktivtKartlag: boolean }>`
   cursor: pointer;
 
   color: ${({ theme, visible, aktivtKartlag }) =>
     visible && !aktivtKartlag ? theme.colors.gray : theme.colors.blueDark};
 
+  margin: 0 8px;
   opacity: ${({ visible, aktivtKartlag }) =>
     visible && !aktivtKartlag ? 0.4 : 1};
+  border-radius: 50%;
+  padding: 4px;
+
+  &:focus-visible {
+    ${Outline}
+  }
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.blueLight};
+    color: ${({ theme }) => theme.colors.blueDark};
+  }
+`;
+
+const RemoveAktivtKartlag = styled(Button)`
+  &:focus-visible {
+    ${AddRemove} {
+      ${Outline}
+    }
+  }
 `;
 
 const Caret = styled.div<{ open: boolean }>`
@@ -209,11 +223,11 @@ const Caret = styled.div<{ open: boolean }>`
   padding: 0 12px;
   align-items: center;
   display: flex;
-`;
 
-const BlueIcon = styled(Icon)`
-  padding: 0 12px;
-  color: var(--blue_dark);
+  &:hover {
+    background: ${({ theme }) => theme.colors.blueDark};
+    color: ${({ theme }) => theme.colors.white};
+  }
 `;
 
 const Wrapper = styled.div<{ indent: number }>`
@@ -228,14 +242,6 @@ const Wrapper = styled.div<{ indent: number }>`
   > div {
     width: 50%;
   }
-`;
-
-const SubKartlagName = styled.span<{ activeLayer?: boolean }>`
-  color: ${({ activeLayer, theme }) =>
-    activeLayer ? theme.colors.gray : theme.colors.black};
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 0;
 `;
 
 const ClickableName = styled(Button)<{
@@ -256,6 +262,25 @@ const ClickableName = styled(Button)<{
     padding-top: ${({ dropDown }) => (dropDown ? 16 : 0)}px;
     padding-bottom: ${({ dropDown }) => (dropDown ? 16 : 0)}px;
     padding-left: 16px;
+    border-left: 3px solid
+      ${({ theme, open }) => (open ? theme.colors.blueDark : "transparent")};
+    background: ${({ open, theme }) =>
+      open ? theme.colors.blueLight : theme.colors.white};
+  }
+
+  &:focus-visible {
+    ${Outline}
+  }
+
+  &:hover {
+    > :first-child {
+      background: ${({ theme }) => theme.colors.blueLight};
+    }
+
+    ${Caret} {
+      background: ${({ theme }) => theme.colors.blueDark};
+      color: ${({ theme }) => theme.colors.white};
+    }
   }
 `;
 
@@ -270,7 +295,25 @@ const DraggableLayer = styled.span`
 
   > :first-child {
     margin-right: 8px;
-    margin-left: 4px;
+
+    height: 100%;
+    padding: 5px;
+  }
+
+  &:hover {
+    ${Icon} {
+      color: ${({ theme }) => theme.colors.blueDark};
+      background: ${({ theme }) => theme.colors.blueLight};
+      border-radius: 50%;
+    }
+  }
+
+  &:active {
+    ${Icon} {
+      color: ${({ theme }) => theme.colors.white};
+      background: ${({ theme }) => theme.colors.blueDark};
+      border-radius: 50%;
+    }
   }
 `;
 
@@ -279,6 +322,12 @@ const AktivtKartlagSlider = styled.div`
   margin-left: 4px;
   margin-right: 20px;
   margin-bottom: 6px;
+
+  > :first-child {
+    &:focus-visible {
+      ${Outline}
+    }
+  }
 `;
 
 const AktivtMainLayerWrapper = styled.div`
@@ -291,13 +340,56 @@ const AktivtMainLayerWrapper = styled.div`
   padding-top: 16px;
 `;
 
-const AktivtSubLayerWrapper = styled.div`
-  margin-left: 38px;
-  display: flex;
-  flex-direction: row;
-  align-items: left;
+const AktivtSubLayerWrapper = styled(Button).attrs(() => ({
+  variant: "unstyled",
+}))`
+  align-items: center;
   justify-content: space-between;
-  padding: 4px 0;
+  padding: 4px 0 4px 42px;
+  display: flex;
+  width: 100%;
+
+  > :first-child {
+    text-align: left;
+    flex: 1;
+  }
+
+  &:focus-visible {
+    ${Outline}
+  }
+
+  &:hover {
+    ${AddRemove} {
+      color: ${({ theme }) => theme.colors.blueDark};
+      background: ${({ theme }) => theme.colors.blueLight};
+    }
+  }
+`;
+
+const AddableLayer = styled(Button).attrs(() => ({
+  variant: "unstyled",
+}))<{ activeLayer?: boolean }>`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
+  padding: 6px 0 6px 6px;
+
+  > :first-child {
+    flex: 1;
+    text-align: left;
+  }
+
+  &:hover {
+    ${AddRemove} {
+      background: ${({ theme }) => theme.colors.blueLight};
+      color: ${({ theme }) => theme.colors.blueDark};
+    }
+  }
+
+  &:focus-visible {
+    ${Outline}
+  }
 `;
 
 export default BackgroundLayerAccordion;

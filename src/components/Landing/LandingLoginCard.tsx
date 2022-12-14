@@ -2,6 +2,7 @@ import styled from "styled-components";
 import Icon from "../Icon/Icon";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useTranslation } from "react-i18next";
+import { Outline } from "style/mixins";
 
 export const LandingLoginCard = () => {
   const { handleAuthenticateFunc } = useAuthenticationFlow();
@@ -44,8 +45,7 @@ const Card = styled.button`
   }
 
   &:focus {
-    outline-offset: 3px;
-    outline: 3px solid var(--blue_dark);
+    ${Outline}
   }
 `;
 

@@ -15,20 +15,15 @@ const UtkastTab = () => {
   );
 };
 
-const tabHeight = 36;
-
 const Wrapper = styled.div`
   position: absolute;
-  top: -${tabHeight}px;
-  height: ${tabHeight}px;
-  left: 60%;
-  width: auto;
-  display: flex;
-  align-items: center;
-  background-color: ${({ theme }) => theme.colors.redDark};
-  padding: 0 16px;
+  top: 16px;
+  right: 16px;
+  background-color: var(--yellow_dark);
+  padding: 8px 16px;
   font-size: 16px;
-  color: white;
+  color: black;
+  z-index: 1;
 `;
 
 export default UtkastTab;

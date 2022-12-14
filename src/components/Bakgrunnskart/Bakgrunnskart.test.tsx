@@ -54,9 +54,10 @@ describe("Bakgrunnskart", () => {
     expect(subLayerTexts).toHaveLength(1);
     expect(subsubLayerTexts).toHaveLength(2);
 
-    const removeButton = await screen.findByRole("button", {
-      name: /Fjern Kommuner historisk fra aktive kartlag/i,
-    });
+    const removeButton = await screen.getAllByRole("button", {
+      name: /Fjern Kommuner historisk/i,
+    })[0];
+
     await user.click(removeButton);
 
     mainLayerTexts = screen.getAllByText(
@@ -103,19 +104,19 @@ describe("Bakgrunnskart", () => {
     expect(screen.getAllByText("Kommuner framtidig")).toHaveLength(2);
 
     await user.click(
-      screen.getByRole("button", {
-        name: /Fjern Kommuner historisk fra aktive kartlag/i,
-      })
+      screen.getAllByRole("button", {
+        name: /Fjern Kommuner historisk/i,
+      })[0]
     );
     await user.click(
-      screen.getByRole("button", {
-        name: /Fjern Kommuner gjeldene fra aktive kartlag/i,
-      })
+      screen.getAllByRole("button", {
+        name: /Fjern Kommuner gjeldene/i,
+      })[0]
     );
     await user.click(
-      screen.getByRole("button", {
-        name: /Fjern Kommuner framtidig fra aktive kartlag/i,
-      })
+      screen.getAllByRole("button", {
+        name: /Fjern Kommuner framtidig/i,
+      })[0]
     );
 
     expect(screen.getAllByText("Kommuner historisk")).toHaveLength(1);
