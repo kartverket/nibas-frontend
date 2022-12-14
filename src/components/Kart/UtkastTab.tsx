@@ -20,7 +20,6 @@ const Wrapper = styled.div`
   padding: 8px 16px;
   font-size: 16px;
   color: black;
-  z-index: 1;
 `;
 
 export default UtkastTab;
