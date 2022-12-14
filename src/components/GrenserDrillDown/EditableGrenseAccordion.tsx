@@ -47,7 +47,7 @@ const EditableGrenseAccordion: FC<Props> = ({
           )}
         </VisibilityButton>
         <TextContent>
-          <div>{title}</div>
+          <span>{title}</span>
           <div>
             <LinkButton onClick={toggleEditing}>
               {value.editing ? "Stopp redigering" : `Rediger grenser`}
@@ -95,6 +95,10 @@ const TextContent = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
+
+  > :first-child {
+    user-select: none;
+  }
 
   > :nth-child(2) {
     ${LinkButton} {

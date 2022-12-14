@@ -60,7 +60,7 @@ const ToggleableGrense = <T extends GrenseRef>({
 const Title = styled.div`
   flex: 1;
   margin-left: 8px;
-  cursor: default;
+  user-select: none;
 `;
 
 const Wrapper = styled.div<{ visible: boolean }>`

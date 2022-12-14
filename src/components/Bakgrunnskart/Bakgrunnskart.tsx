@@ -17,7 +17,7 @@ const Bakgrunnskart = () => {
   if (!visible) return null;
 
   return (
-    <Panel>
+    <SidebarPanel>
       <SidebarPanelTitle closePanel={togglePanel} title={t("Aktive kartlag")} />
       {visibleLayers.map((layer, i) => (
         <MainLayer
@@ -39,11 +39,9 @@ const Bakgrunnskart = () => {
           index={index}
         />
       ))}
-    </Panel>
+    </SidebarPanel>
   );
 };
-
-const Panel = styled(SidebarPanel)``;
 
 const BackgroundLayersHeading = styled(Heading)`
   margin: 8px 0 0;

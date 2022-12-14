@@ -239,7 +239,8 @@ const ListItem = styled.li`
 
 const UtkastName = styled.p`
   flex: 1;
-  padding: 4px 4px 4px 16px;
+  padding: 4px;
+  padding-left: 16px;
 `;
 
 export const UtkastItemExpanded = styled.div`
