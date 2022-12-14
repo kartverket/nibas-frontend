@@ -41,8 +41,8 @@ const Sidetittel = styled.h1`
 const Wrapper = styled.div`
   grid-area: topbar;
   display: flex;
-  padding: 0.5rem 1rem 0.5rem 0;
-  height: 88px;
+  padding: 14px 16px;
+  padding-left: 0;
 `;
 
 const LeftSide = styled.div`

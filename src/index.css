@@ -1,5 +1,9 @@
 @import "@kvib/css/main.css";
 
+:root {
+  --yellow_dark: #ffbf00;
+}
+
 body {
   height: 100vh;
   margin: 0;

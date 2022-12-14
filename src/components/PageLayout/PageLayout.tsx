@@ -56,7 +56,8 @@ const Grid = styled.div<{ utkastActive: boolean }>`
     width: 100vw;
     height: 100vh;
     border: 6px solid
-      ${({ utkastActive }) => (utkastActive ? "#ffbf00" : "transparent")};
+      ${({ utkastActive }) =>
+        utkastActive ? "var(--yellow_dark)" : "transparent"};
     z-index: -99999;
   }
 `;
