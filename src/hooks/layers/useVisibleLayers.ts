@@ -154,6 +154,7 @@ const useVisibleLayers = () => {
     toggleLayerVisibility,
     recursiveIsVisible,
     layerIsVisible,
+    subLayerIsVisible,
   };
 };
 

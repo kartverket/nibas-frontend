@@ -1,7 +1,6 @@
 import { Suspense, useEffect, useRef } from "react";
 import styled, { css } from "styled-components";
 import { map } from "./constants";
-import ZoomControls from "./controls/ZoomControls";
 import OverlayPanels from "./OverlayPanels";
 import OverlayPopup from "./OverlayPopup";
 import SidebarPanels from "./SidebarPanels";
@@ -12,6 +11,7 @@ import useEditInteractions from "hooks/interactions/useEditInteractions";
 import useSelectInteraction from "hooks/interactions/useSelectInteraction";
 import { initBakgrunnskartLayers, initGrenserLayers } from "utils/map/layers";
 import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
+import Controls from "./controls/Controls";
 
 // dette må skje utenfor komponenten siden React kjører dypere useEffects
 // før de lenger opp i treet, så lag er ikke definert når de trengs lenger ned
@@ -50,7 +50,7 @@ const Kart = () => {
             <UtkastBorder utkastActive={redigeringsmodusAktiv} />
           </KartOverlay>
 
-          <ZoomControls />
+          <Controls />
           <OverlayPopup selectedFeatures={selectedFeatures} />
         </Suspense>
       </KartTarget>

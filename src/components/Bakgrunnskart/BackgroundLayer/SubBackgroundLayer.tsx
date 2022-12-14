@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
 import TileWMS from "ol/source/TileWMS";
 import { bakgrunnskartLayers } from "../../../hooks/layers/constants";
 import BackgroundLayerAccordion from "./BackgroundLayerAccordion";
 import { BakgrunnskartId } from "hooks/layers/types";
 import { MappedLayer } from "utils/getLayersFromWMS";
 import { useBakgrunnskart } from "contexts/BakgrunnskartContext";
+import { useMemo } from "react";
 
 const getLayersStringToReplace = (
   layersInParams: string,
@@ -48,25 +48,13 @@ const SubBackgroundLayer = ({
   mainLayerName,
   isAktiveKartlag,
 }: Props) => {
-  const [visible, setVisible] = useState(false);
-
-  const { toggleLayerVisibility, visibleLayers, recursiveIsVisible } =
+  const { toggleLayerVisibility, subLayerIsVisible, recursiveIsVisible } =
     useBakgrunnskart();
 
-  useEffect(() => {
-    const isSubLayerVisible = () => {
-      const source = bakgrunnskartLayers[
-        mainLayerSourceId
-      ].getSource() as TileWMS;
-      const layersInParams = source.getParams().LAYERS as string;
-
-      if (!mappedLayer.id) return false;
-
-      return layersInParams.includes(mappedLayer.id);
-    };
-
-    setVisible(isSubLayerVisible());
-  }, [mainLayerSourceId, mappedLayer.id, mappedLayer]);
+  const subBackgroundLayerIsVisible = useMemo(
+    () => subLayerIsVisible(mainLayerSourceId, mappedLayer.title),
+    [mainLayerSourceId, mappedLayer.title, subLayerIsVisible]
+  );
 
   const updateSourceParams = () => {
     const source = bakgrunnskartLayers[
@@ -79,7 +67,7 @@ const SubBackgroundLayer = ({
 
     let newParamsLayerString = "";
 
-    if (visible) {
+    if (subBackgroundLayerIsVisible) {
       const replaceString = getLayersStringToReplace(
         layersInParams,
         mappedLayerId
@@ -110,23 +98,9 @@ const SubBackgroundLayer = ({
     source.updateParams({ LAYERS: newParamsLayerString });
   };
 
-  const onVisibilityClick = (layerId: string) => {
+  const onVisibilityClick = () => {
     updateSourceParams();
-    const source = bakgrunnskartLayers[
-      mainLayerSourceId
-    ].getSource() as TileWMS;
-    const layersInParams = source.getParams().LAYERS as string;
-
-    const isMainLayerVisible = visibleLayers.find(
-      (visibleLayer) => visibleLayer.mainLayer === layerId
-    );
-
-    if (layersInParams && !isMainLayerVisible) {
-      toggleLayerVisibility(mainLayerSourceId, mappedLayer.title);
-    } else if (layersInParams === mainLayerName && isMainLayerVisible) {
-      toggleLayerVisibility(mainLayerSourceId, mappedLayer.title);
-    }
-    setVisible(!visible);
+    toggleLayerVisibility(mainLayerSourceId, mappedLayer.title);
   };
 
   return (
@@ -134,7 +108,7 @@ const SubBackgroundLayer = ({
       key={mappedLayer.title}
       mappedLayer={mappedLayer}
       indent={indent}
-      visible={visible}
+      visible={subBackgroundLayerIsVisible}
       onVisibilityClick={onVisibilityClick}
       isAktiveKartlag={isAktiveKartlag}
     >

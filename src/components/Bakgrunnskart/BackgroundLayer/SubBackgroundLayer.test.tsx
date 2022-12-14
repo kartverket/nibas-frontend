@@ -30,9 +30,7 @@ const defaultProps: React.ComponentProps<typeof SubBackgroundLayer> = {
 const renderWithProvider = (ui: ReactNode) =>
   render(ui, {
     BakgrunnskartProvider: {
-      visibleLayers: [
-        { mainLayer: "administrativeGrenser", subLayers: ["Subsublag1"] },
-      ],
+      visibleLayers: { administrativeGrenser: true } as never,
       toggleLayerVisibility: jest.fn(),
       recursiveIsVisible: jest.fn(),
       layerIsVisible: jest.fn(),
@@ -40,11 +38,12 @@ const renderWithProvider = (ui: ReactNode) =>
         { ...defaultProps.mappedLayer, sourceId: "administrativeGrenser" },
       ],
       moveLayer: jest.fn(),
+      subLayerIsVisible: jest.fn(),
     },
   });
 
 describe("SubBackgroundLayer", () => {
-  it("should render sublayers for each sublayer on caret click", async () => {
+  it("should render sublayers for each open sublayer", async () => {
     const { user } = renderWithProvider(
       <SubBackgroundLayer {...defaultProps} />
     );
@@ -52,32 +51,11 @@ describe("SubBackgroundLayer", () => {
     const caret = screen.getByRole("button", {
       name: /sublag åpne/i,
     });
+
     await user.click(caret);
 
     expect(screen.getByText(/subsublag1/i)).toBeInTheDocument();
     expect(screen.getByText(/subsublag2/i)).toBeInTheDocument();
-  });
-
-  it("should open and close eye correctly", async () => {
-    const { user } = renderWithProvider(
-      <SubBackgroundLayer {...defaultProps} />
-    );
-
-    const caret = screen.getByRole("button", {
-      name: /sublag åpne/i,
-    });
-    await user.click(caret);
-
-    const addIcon = screen.getByRole("button", { name: /vis subsublag1/i });
-
-    await user.click(addIcon);
-
-    const minusIcon = screen.getByRole("button", { name: /fjern subsublag1/i });
-
-    expect(minusIcon).toBeInTheDocument();
-
-    await user.click(minusIcon);
-    expect(addIcon).toBeInTheDocument();
   });
 
   it("should display name of mapped layer", () => {
