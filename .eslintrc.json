@@ -55,9 +55,7 @@
     "react/prop-types": "off",
     "import/no-unresolved": "error",
     "import/no-named-as-default-member": "off",
-    "no-shadow": [
-      "warn",
-      { "builtinGlobals": false, "hoist": "functions", "allow": [] }
-    ]
+    "no-shadow": "off",
+    "@typescript-eslint/no-shadow": ["error"]
   }
 }

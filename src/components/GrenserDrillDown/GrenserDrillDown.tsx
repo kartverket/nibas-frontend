@@ -48,8 +48,6 @@ const GrenserDrillDown = () => {
 };
 
 const Panel = styled(SidebarPanel)`
-  margin-top: 30px;
-
   > ${Accordion} > div {
     margin-left: 16px;
   }

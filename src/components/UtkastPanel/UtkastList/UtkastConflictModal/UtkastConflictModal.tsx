@@ -9,6 +9,10 @@ import styled from "styled-components";
 
 if (process.env.NODE_ENV !== "test") {
   ReactModal.setAppElement("#root");
+} else {
+  // In tests we set it as en empty array to not get loads of warnings
+  // about forgetting to set app-element for the modal
+  ReactModal.setAppElement([] as never);
 }
 
 type Props = {

@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
@@ -21,7 +21,6 @@ import { UtkastResponse } from "types/api";
 import Feedback from "components/Feedback/Feedback";
 import useFeedback from "hooks/useFeedback";
 import { useUtkast } from "contexts/UtkastContext";
-import get from "lodash.get";
 import useTimer from "hooks/useTimer";
 
 type Inputs = {
@@ -47,12 +46,7 @@ type Props = {
 
 const UtkastItemActive = ({ utkastId }: Props) => {
   const { t } = useTranslation();
-  const {
-    register,
-    setValue,
-    getValues,
-    formState: { dirtyFields },
-  } = useForm<Inputs>();
+  const { register, setValue, getValues } = useForm<Inputs>();
   const { closeUtkast } = useUtkast();
 
   const { data: fullUtkast } = useNibasApi("/v1/utkast/{id}", {
@@ -95,14 +89,10 @@ const UtkastItemActive = ({ utkastId }: Props) => {
     setFormValues,
   });
 
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const onChange = () => {
     clearTimer();
 
     if (!fullUtkast) return;
-
-    const isDirty = get(dirtyFields, e.target.name);
-
-    if (!isDirty) return;
 
     startTimer(
       () =>

@@ -1,4 +1,4 @@
-import { act, render, screen } from "test/test-utils";
+import { render, screen } from "test/test-utils";
 import Sidebar from "./Sidebar";
 import { defaultTheme } from "style/theme";
 
@@ -7,14 +7,12 @@ describe("Sidebar", () => {
     render(<Sidebar />);
 
     const nibasButton = screen.getByRole("button", { name: /inndelinger/i });
-    const sokButton = screen.getByRole("button", { name: /søk/i });
     const bakgrunnskartButton = screen.getByRole("button", {
       name: /kartlag/i,
     });
     const utkastButton = screen.getByRole("button", { name: /utkast/i });
 
     expect(nibasButton).toBeInTheDocument();
-    expect(sokButton).toBeInTheDocument();
     expect(bakgrunnskartButton).toBeInTheDocument();
     expect(utkastButton).toBeInTheDocument();
   });
@@ -23,9 +21,7 @@ describe("Sidebar", () => {
     const { user } = render(<Sidebar />);
 
     const nibasButton = screen.getByRole("button", { name: /inndelinger/i });
-    await act(async () => {
-      await user.click(nibasButton);
-    });
+    await user.click(nibasButton);
 
     expect(nibasButton).toHaveStyle(`color: ${defaultTheme.colors.blue}`);
   });

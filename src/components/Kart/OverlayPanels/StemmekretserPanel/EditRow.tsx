@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
@@ -12,7 +12,6 @@ import {
   StemmekretsRequest,
   StemmekretsResponse,
 } from "types/api";
-import get from "lodash.get";
 import useTimer from "hooks/useTimer";
 
 type Inputs = {
@@ -52,12 +51,7 @@ const EditRow = ({ stemmekrets, kommuneId }: Props) => {
     "stemmekretsendringer"
   ) as StemmekretsResponse | undefined;
 
-  const {
-    register,
-    setValue,
-    getValues,
-    formState: { dirtyFields },
-  } = useForm<Inputs>();
+  const { register, setValue, getValues } = useForm<Inputs>();
 
   const { addEntry } = useToolbarSaving();
 
@@ -91,14 +85,10 @@ const EditRow = ({ stemmekrets, kommuneId }: Props) => {
     setFormValues,
   });
 
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const onChange = () => {
     clearTimer();
 
     if (!utkastStemmekrets) return;
-
-    const isDirty = get(dirtyFields, e.target.name);
-
-    if (!isDirty) return;
 
     startTimer(() => {
       addEntry({
