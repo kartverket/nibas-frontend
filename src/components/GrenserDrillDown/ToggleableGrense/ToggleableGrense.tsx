@@ -70,16 +70,15 @@ const Wrapper = styled.div<{ visible: boolean }>`
   margin: 16px 0 0 24px;
 
   > :first-child {
-    color: ${({ theme, visible }) =>
-      visible ? theme.colors.white : theme.colors.blueDark};
+    color: ${({ visible }) => (visible ? "var(--white)" : "var(--blue_dark)")};
     padding: 8px;
     border-radius: 50%;
-    background: ${({ theme, visible }) =>
-      visible ? theme.colors.blueDark : "transparent"};
+    background: ${({ visible }) =>
+      visible ? "var(--blue_dark)" : "transparent"};
 
     &:hover {
-      background: ${({ theme }) => theme.colors.blueLight};
-      color: ${({ theme }) => theme.colors.blueDark};
+      background: var(--blue_light);
+      color: var(--blue_dark);
     }
 
     &:focus-visible {

@@ -43,8 +43,8 @@ const Badge = styled.span`
   height: 18px;
   text-align: center;
   padding-top: 1px;
-  background-color: ${({ theme }) => theme.colors.redErrorText};
-  color: ${({ theme }) => theme.colors.white};
+  background-color: var(--red_error_message);
+  color: var(--white);
   right: 1px;
   top: 1px;
   pointer-events: none;

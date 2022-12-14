@@ -107,7 +107,7 @@ const TextContent = styled.div`
       }
 
       &:focus-visible {
-        outline: 3px solid ${({ theme }) => theme.colors.blueDark};
+        outline: 3px solid var(--blue_dark);
       }
     }
   }
@@ -119,15 +119,14 @@ const Header = styled.div`
 `;
 
 const CaretIcon = styled(Icon)<{ visible: boolean }>`
-  color: ${({ theme, visible }) =>
-    visible ? theme.colors.white : theme.colors.blueDark};
-  background: ${({ theme, visible }) =>
-    visible ? theme.colors.blueDark : "transparent"};
+  color: ${({ visible }) => (visible ? "var(--white)" : "var(--blue_dark)")};
+  background: ${({ visible }) =>
+    visible ? "var(--blue_dark)" : "transparent"};
   padding: 16px 12px;
 
   &:hover {
-    background: ${({ theme }) => theme.colors.blueDark};
-    color: ${({ theme }) => theme.colors.white};
+    background: var(--blue_dark);
+    color: var(--white);
   }
 `;
 
@@ -135,17 +134,16 @@ const VisibilityButton = styled(Button).attrs(() => ({
   variant: "unstyled",
 }))<{ visible: boolean }>`
   margin-right: 16px;
-  color: ${({ theme, visible }) =>
-    visible ? theme.colors.white : theme.colors.blueDark};
-  background: ${({ theme, visible }) =>
-    visible ? theme.colors.blueDark : "transparent"};
+  color: ${({ visible }) => (visible ? "var(--white)" : "var(--blue_dark)")};
+  background: ${({ visible }) =>
+    visible ? "var(--blue_dark)" : "transparent"};
   padding: 8px;
   border-radius: 50%;
   height: 100%;
 
   &:hover {
-    color: ${({ theme }) => theme.colors.blueDark};
-    background: ${({ theme }) => theme.colors.blueLight};
+    color: var(--blue_dark);
+    background: var(--blue_light);
   }
   &:focus-visible {
     ${Outline}

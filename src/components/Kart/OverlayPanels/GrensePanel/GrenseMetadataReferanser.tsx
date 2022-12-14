@@ -316,7 +316,7 @@ const FieldTitle = styled.legend`
 `;
 
 const DokRefWrapper = styled.div`
-  border-top: 2px solid ${({ theme }) => theme.colors.gray};
+  border-top: 2px solid var(--gray);
   margin-top: 16px;
   padding-top: 8px;
   margin-bottom: 16px;

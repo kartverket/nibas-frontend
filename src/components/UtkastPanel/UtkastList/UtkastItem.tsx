@@ -228,8 +228,7 @@ const UtkastItem = ({ utkast }: Props) => {
 
 const ItemWrapper = styled.div<{ active: boolean }>`
   display: flex;
-  background: ${({ active, theme }) =>
-    active ? theme.colors.blueLight : "transparent"};
+  background: ${({ active }) => (active ? "var(--blue_light)" : "transparent")};
   padding: 0 10px 0 0;
 `;
 
@@ -245,8 +244,8 @@ const UtkastName = styled.p`
 `;
 
 export const UtkastItemExpanded = styled.div`
-  border-top: 2px solid ${({ theme }) => theme.colors.black};
-  background-color: ${({ theme }) => theme.colors.grayLight};
+  border-top: 2px solid var(--black);
+  background-color: var(--gray_light);
   padding: 32px 16px;
 `;
 
@@ -278,9 +277,9 @@ export const ButtonsAndGyldigFra = styled.div`
 const CancelButton = styled(Button).attrs(() => ({
   variant: "teriary",
 }))`
-  background-color: ${({ theme }) => theme.colors.grayLight};
+  background-color: var(--gray_light);
   border: none;
-  color: ${({ theme }) => theme.colors.blue};
+  color: var(--blue);
 `;
 
 const UnstyledButton = styled(Button).attrs(() => ({
@@ -296,48 +295,46 @@ const UnstyledButton = styled(Button).attrs(() => ({
 const PublishIcon = styled(Icon).attrs(() => ({
   icon: "done",
 }))`
-  color: ${({ theme }) => theme.colors.green};
+  color: var(--green);
   margin-right: 8px;
   border-radius: 50%;
   padding: 4px;
 
   &:hover {
-    background: ${({ theme }) => theme.colors.green};
-    color: ${({ theme }) => theme.colors.white};
+    background: var(--green);
+    color: var(--white);
   }
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.blueDark};
+    outline: 2px solid var(--blue_dark);
   }
 `;
 
 const DeleteIcon = styled(Icon).attrs(() => ({
   icon: "close",
 }))`
-  color: ${({ theme }) => theme.colors.redErrorText};
+  color: var(--red_error_message);
   margin-right: 8px;
   border-radius: 50%;
   padding: 4px;
 
   &:hover {
-    background: ${({ theme }) => theme.colors.redErrorText};
-    color: ${({ theme }) => theme.colors.white};
+    background: var(--red_error_message);
+    color: var(--white);
   }
 `;
 
 const EditIcon = styled(Icon).attrs(() => ({
   icon: "edit",
 }))<{ active: boolean }>`
-  color: ${({ theme, active }) =>
-    active ? theme.colors.white : theme.colors.blueDark};
+  color: ${({ active }) => (active ? "var(--white)" : "var(--blue_dark)")};
   margin-right: 8px;
   border-radius: 50%;
   padding: 4px;
-  background: ${({ theme, active }) =>
-    active ? theme.colors.blueDark : "transparent"};
+  background: ${({ active }) => (active ? "var(--blue_dark)" : "transparent")};
   &:hover {
-    background: ${({ theme }) => theme.colors.blueDark};
-    color: ${({ theme }) => theme.colors.white};
+    background: var(--blue_dark);
+    color: var(--white);
   }
 `;
 

@@ -278,12 +278,12 @@ const Buttons = styled.div`
 
 const Row = styled.tr<{ confirmed?: boolean }>`
   background-color: ${(props) =>
-    props.confirmed ? props.theme.colors.greenLight : "transparent"};
+    props.confirmed ? "var(--green_light)" : "transparent"};
   transition: background-color 0.2s ease-in-out;
 
   td {
     padding: 16px;
-    border-bottom: 1px solid ${(props) => props.theme.colors.grayLight};
+    border-bottom: 1px solid var(--gray_light);
     // de blir ikke faktisk 200px, men de blir like på tvers av tabeller 🤷‍♀️
     width: 200px;
     min-width: 200px;

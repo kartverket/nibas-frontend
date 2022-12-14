@@ -10,7 +10,7 @@ export const KretsRow = styled.tr`
   }
 
   td {
-    border-top: 1px solid ${({ theme }) => theme.colors.gray};
+    border-top: 1px solid var(--gray);
   }
 `;
 
@@ -22,14 +22,14 @@ export const KretsTable = styled.table`
   > thead {
     text-transform: uppercase;
     text-align: left;
-    color: ${({ theme }) => theme.colors.gray};
+    color: var(--gray);
     font-size: 16px;
 
     th {
-      border-bottom: 1px solid ${({ theme }) => theme.colors.black};
+      border-bottom: 1px solid var(--black);
       position: sticky;
       top: 0;
-      background: ${({ theme }) => theme.colors.white};
+      background: var(--white);
       padding-left: 8px;
       padding-bottom: 8px;
     }
@@ -37,7 +37,7 @@ export const KretsTable = styled.table`
 
   > tbody {
     > ${KretsRow} {
-      background-color: ${({ theme }) => theme.colors.blueLight};
+      background-color: var(--blue_light);
 
       > td {
         padding: 8px;

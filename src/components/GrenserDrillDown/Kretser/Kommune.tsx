@@ -46,8 +46,7 @@ const KommuneWrapper = styled.div<{ editing?: boolean }>`
 
   ${LinkButton} {
     ${({ editing }) => editing && "font-weight: bold"};
-    color: ${({ editing, theme }) =>
-      editing ? theme.colors.blueDark : theme.colors.blue};
+    color: ${({ editing }) => (editing ? "var(--blue_dark)" : "var(--blue)")};
 
     &:hover {
       text-decoration: none;
@@ -60,13 +59,13 @@ const KommuneWrapper = styled.div<{ editing?: boolean }>`
 `;
 
 const VisibilityButton = styled(Button)`
-  color: ${({ theme }) => theme.colors.blueDark};
+  color: var(--blue_dark);
   border-radius: 50%;
   padding: 8px;
 
   &:hover {
-    color: ${({ theme }) => theme.colors.white};
-    background: ${({ theme }) => theme.colors.blueDark};
+    color: var(--white);
+    background: var(--blue_dark);
   }
 
   &:focus-visible {

@@ -31,7 +31,7 @@ export const CustomModalWrapper = styled.div`
   flex-direction: column;
   width: 100%;
   max-width: 320px;
-  border: 1px solid ${({ theme }) => theme.colors.blue};
+  border: 1px solid var(--blue);
   background: white;
 
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
