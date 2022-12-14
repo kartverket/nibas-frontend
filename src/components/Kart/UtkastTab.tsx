@@ -16,9 +16,6 @@ const UtkastTab = () => {
 };
 
 const Wrapper = styled.div`
-  position: absolute;
-  top: 16px;
-  right: 16px;
   background-color: var(--yellow_dark);
   padding: 8px 16px;
   font-size: 16px;
