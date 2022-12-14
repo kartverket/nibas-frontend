@@ -164,13 +164,7 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
   const dokrefs = (properties.metadata as Metadata).dokumentasjonsreferanser;
 
-  const {
-    register,
-    control,
-    setValue,
-    getValues,
-    formState: { dirtyFields },
-  } = useForm<Inputs>({
+  const { register, control, setValue, getValues } = useForm<Inputs>({
     defaultValues: { dokrefs: mapFromApiToForm(dokrefs) },
   });
   const { append, fields, remove } = useFieldArray({
@@ -207,7 +201,6 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
   };
 
   const inputOptions = useMetadataInputOptions({
-    dirtyFields,
     properties,
     updateDraftFromFeature,
   });

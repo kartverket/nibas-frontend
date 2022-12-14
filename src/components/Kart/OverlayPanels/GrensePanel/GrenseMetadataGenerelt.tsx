@@ -27,13 +27,12 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
   const type = properties.type;
   const metadata = properties.metadata as Metadata;
 
-  const { register, maalemetodeKoder, updateDraftFromFeature, dirtyFields } =
+  const { register, maalemetodeKoder, updateDraftFromFeature } =
     useMetadataForm(metadata, feature);
 
   const { t } = useTranslation();
 
   const inputOptions = useMetadataInputOptions({
-    dirtyFields,
     properties,
     updateDraftFromFeature,
   });

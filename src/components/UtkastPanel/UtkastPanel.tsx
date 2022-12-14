@@ -20,7 +20,6 @@ const UtkastPanel = () => {
 };
 
 const Panel = styled(SidebarPanel)`
-  margin-top: 30px;
   min-height: 450px;
 `;
 

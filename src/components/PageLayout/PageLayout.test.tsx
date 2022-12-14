@@ -10,6 +10,7 @@ const renderWithProvider = (ui: ReactNode) =>
       toggleLayerVisibility: jest.fn(),
       recursiveIsVisible: jest.fn(),
       layerIsVisible: jest.fn(),
+      subLayerIsVisible: jest.fn(),
       visibleLayers: [],
     },
   });
@@ -22,6 +23,7 @@ describe("PageLayout", () => {
       const bakgrunnskartButton = screen.getByRole("button", {
         name: /kartlag/i,
       });
+
       await user.click(bakgrunnskartButton);
       await user.click(bakgrunnskartButton);
 

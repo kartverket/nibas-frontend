@@ -1,31 +1,43 @@
-import Icon from "components/Icon";
 import { VerticalLogo } from "components/Logo/Logo";
 import styled from "styled-components";
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useTranslation } from "react-i18next";
+import {
+  AuthorizationStatus,
+  useAuthorization,
+} from "../Authentication/AuthHooks";
+import { ErrorBox } from "./LandingErrorBox";
+import { LandingLoginCard } from "./LandingLoginCard";
 
-const Landing = () => {
-  const { handleAuthenticateFunc } = useAuthenticationFlow();
+const Landing = () => (
+  <Container>
+    <Logo />
+    <LandingBody />
+  </Container>
+);
+
+const LandingBody = () => {
+  const { status } = useAuthorization();
   const { t } = useTranslation();
 
-  return (
-    <Container>
-      <Logo />
-      <Card onClick={() => handleAuthenticateFunc("/")}>
-        <div>
-          <CardHeading>
-            {t("auth.Logg inn i Nasjonal inndelingsbase")}
-          </CardHeading>
-          <CardParagraph>
-            {t(
-              "auth.Denne tjenesten er kun tilgjengelig for autoriserte brukere"
-            )}
-          </CardParagraph>
-        </div>
-        <Arrow />
-      </Card>
-    </Container>
-  );
+  if (status === AuthorizationStatus.ERROR) {
+    return (
+      <ErrorBox
+        title={t("auth.feil.generellFeilTittel")}
+        text={t("auth.feil.generellFeilTekst")}
+      />
+    );
+  }
+
+  if (status === AuthorizationStatus.NOT_AUTHORIZED) {
+    return (
+      <ErrorBox
+        title={t("auth.feil.ikkeAutorisertTittel")}
+        text={t("auth.feil.ikkeAutorisertTekst")}
+      />
+    );
+  }
+
+  return <LandingLoginCard />;
 };
 
 const Container = styled.main`
@@ -42,41 +54,6 @@ const Container = styled.main`
 
 const Logo = styled(VerticalLogo)`
   margin-bottom: 30px;
-`;
-
-const Card = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
-  width: 100%;
-  padding: 42px;
-  border: 2px solid transparent;
-  background: white;
-  box-shadow: 0px 3px 19px 0px rgba(0, 0, 0, 0.06);
-  transition: border 0.1s;
-  cursor: pointer;
-
-  &:hover {
-    border-color: var(--blue);
-  }
-`;
-
-const Arrow = styled(Icon).attrs({ icon: "arrow_forward_ios" })`
-  color: var(--blue);
-  transition: transform 0.1s;
-
-  ${Card}:hover & {
-    transform: translateX(5px);
-  }
-`;
-
-const CardHeading = styled.h2`
-  margin: 0 0 0.25em;
-`;
-
-const CardParagraph = styled.p`
-  margin: 0.25em 0 0;
 `;
 
 export default Landing;

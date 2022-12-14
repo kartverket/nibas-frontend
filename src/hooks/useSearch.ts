@@ -11,7 +11,7 @@ const useSearch = () => {
     }
 
     timer.current = setTimeout(() => {
-      setSearchValue((prevValue) => (prevValue ? inputValue : prevValue));
+      setSearchValue(inputValue);
       timer.current = null;
     }, 300);
 

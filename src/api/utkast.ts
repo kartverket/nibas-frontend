@@ -1,4 +1,5 @@
 import {
+  ConflictResolved,
   OppdaterUtkastRequest,
   OpprettUtkastRequest,
   UtkastResponse,
@@ -55,6 +56,21 @@ export const publishUtkast = async (
 export const deleteUtkast = (utkastId: string, token: string | undefined) => {
   return fetch(`v1/utkast/${utkastId}`, {
     method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + token,
+    },
+  });
+};
+
+export const resolveUtkastConflict = (
+  utkastId: string,
+  resolvedConflict: ConflictResolved,
+  token: string | undefined
+) => {
+  return fetch(`v1/utkast/${utkastId}/resolved`, {
+    method: "POST",
+    body: JSON.stringify(resolvedConflict),
     headers: {
       "Content-Type": "application/json",
       Authorization: "Bearer " + token,

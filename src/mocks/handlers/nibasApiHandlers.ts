@@ -75,6 +75,9 @@ export const nibasApiHandlers: RestHandler[] = [
       ctx.json<UtkastRef[]>([mocks.mockUtkastRef1, mocks.mockUtkastRef2])
     );
   }),
+  rest.post("/v1/utkast/1/publiser", (req, res, ctx) => {
+    return res(ctx.status(200));
+  }),
   rest.get("/v1/grunnkretser/1/framtidigeversjoner", (req, res, ctx) => {
     return res(
       ctx.status(200),

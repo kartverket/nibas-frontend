@@ -25,34 +25,40 @@ type StyledButtonProps = {
   active: boolean;
 };
 
+const SidebarButtonTitle = styled.p`
+  margin: 0;
+  font-size: 11px;
+`;
+
 const StyledButton = styled(Button).attrs(() => ({
   variant: "unstyled",
 }))<StyledButtonProps>`
   display: block;
   margin: 8px 0;
-  padding: 8px 0;
+  padding: 8px 6px 8px 0;
   width: 100%;
   z-index: 2;
   text-align: center;
+  border-left: 5px solid
+    ${({ active }) => (active ? "var(--blue_dark)" : "transparent")};
 
-  border-top: 2px solid
-    ${(props) => (props.active ? "var(--blue)" : "transparent")};
-  border-bottom: 2px solid
-    ${(props) => (props.active ? "var(--blue)" : "transparent")};
-  border-right: 2px solid
-    ${(props) => (props.active ? "var(--white)" : "transparent")};
   color: ${({ active }) => (active ? "var(--blue)" : "var(--black)")};
 
-  :hover {
-    border-color: var(--blue);
-    border-right-color: var(--white);
-  }
-`;
+  background-color: ${({ active }) =>
+    active ? "var(--blue_light)" : "transparent"};
 
-const SidebarButtonTitle = styled.p`
-  margin: 0;
-  font-size: 11px;
-  color: var(--blue);
+  :hover {
+    background-color: var(--blue_light);
+  }
+
+  & ${SidebarButtonTitle} {
+    color: ${({ active }) => (active ? "var(--blue)" : "var(--black)")};
+    font-weight: ${({ active }) => (active ? 600 : 400)};
+  }
+
+  :focus-visible {
+    box-shadow: 0px 0px 0px 2px var(--blue_dark) inset;
+  }
 `;
 
 const Wrapper = styled.div`

@@ -15,7 +15,7 @@ const SidebarPanelTitle = ({ title, closePanel }: Props) => {
         {title}
       </StyledTitle>
       <CloseButton
-        icon={<Icon icon="chevron_left" aria-label={`Lukk ${title}`} />}
+        icon={<Icon icon="close" aria-label={`Lukk ${title}`} />}
         onClick={closePanel}
         variant="unstyled"
       />
@@ -27,6 +27,7 @@ const TitleWrapper = styled.div`
   margin-top: 8px;
   margin-bottom: 8px;
   border-bottom: 2px solid var(--gray_light);
+  padding: 0 3px 8px 0;
 
   display: flex;
   justify-content: space-between;
@@ -38,8 +39,20 @@ const StyledTitle = styled(Heading)`
 `;
 
 const CloseButton = styled(Button)`
+  border-radius: 50%;
+
   > span {
-    font-size: 36px;
+    font-size: 28px;
+    color: var(--blue_dark);
+    padding: 6px;
+    border-radius: 50%;
+
+    &:hover {
+      background-color: var(--blue_light);
+    }
+  }
+  &:focus-visible {
+    outline: 2px solid var(--blue_dark);
   }
 `;
 

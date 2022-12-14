@@ -3,22 +3,23 @@ import BackgroundLayerAccordion from "../BackgroundLayer/BackgroundLayerAccordio
 import { BakgrunnskartId } from "hooks/layers/types";
 import { MappedLayer } from "utils/getLayersFromWMS";
 import { getLayerById, isWMTSLayer } from "utils/map/layers";
+import { useBakgrunnskart } from "contexts/BakgrunnskartContext";
+import { useMemo } from "react";
 
 type Props = {
   subLayer: MappedLayer;
   sourceId: BakgrunnskartId;
-  activeSubLayer: string;
   isAktivtKartlag?: boolean;
-  updateActiveSubLayer: () => void;
 };
 
-const WMTSSubLayer = ({
-  subLayer,
-  sourceId,
-  activeSubLayer,
-  isAktivtKartlag,
-  updateActiveSubLayer,
-}: Props) => {
+const WMTSSubLayer = ({ subLayer, sourceId, isAktivtKartlag }: Props) => {
+  const { toggleLayerVisibility, subLayerIsVisible } = useBakgrunnskart();
+
+  const subBackgroundLayerIsVisible = useMemo(
+    () => subLayerIsVisible(sourceId, subLayer.title),
+    [sourceId, subLayer.title, subLayerIsVisible]
+  );
+
   const onSubLayerClick = () => {
     // hent originale sourcen med config
     // lag ny source basert på options med det nye laget
@@ -31,12 +32,8 @@ const WMTSSubLayer = ({
     newSource.set("config", source.get("config"));
     layer.setSource(newSource);
 
-    updateActiveSubLayer();
+    toggleLayerVisibility(sourceId, subLayer.title);
   };
-
-  if (isAktivtKartlag && activeSubLayer != subLayer.id) {
-    return null;
-  }
 
   return (
     <BackgroundLayerAccordion
@@ -44,7 +41,7 @@ const WMTSSubLayer = ({
       indent={1}
       mappedLayer={subLayer}
       onVisibilityClick={onSubLayerClick}
-      visible={activeSubLayer === subLayer.id}
+      visible={subBackgroundLayerIsVisible}
       isAktiveKartlag={isAktivtKartlag}
     >
       {null}
