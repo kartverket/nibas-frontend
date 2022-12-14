@@ -17,7 +17,7 @@ const Kommune = ({ kommune }: Props) => {
 
   return (
     <KommuneWrapper editing={kommuneValues.editing}>
-      <Button
+      <VisibilityButton
         onClick={toggleKretser}
         variant="unstyled"
         icon={
@@ -43,22 +43,6 @@ const KommuneWrapper = styled.div<{ editing?: boolean }>`
   align-items: center;
   padding: 8px;
 
-  > :first-child {
-    color: ${({ theme }) => theme.colors.blueDark};
-    border-radius: 50%;
-    padding: 8px;
-
-    &:hover {
-      color: ${({ theme }) => theme.colors.white};
-      background: ${({ theme }) => theme.colors.blueDark};
-    }
-
-    &:focus-visible {
-      outline: 2px solid ${({ theme }) => theme.colors.blueDark};
-      outline-offset: 2px;
-    }
-  }
-
   ${LinkButton} {
     ${({ editing }) => editing && "font-weight: bold"};
     color: ${({ editing, theme }) =>
@@ -72,6 +56,22 @@ const KommuneWrapper = styled.div<{ editing?: boolean }>`
       outline: 2px solid ${({ theme }) => theme.colors.blueDark};
       outline-offset: 2px;
     }
+  }
+`;
+
+const VisibilityButton = styled(Button)`
+  color: ${({ theme }) => theme.colors.blueDark};
+  border-radius: 50%;
+  padding: 8px;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.white};
+    background: ${({ theme }) => theme.colors.blueDark};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.blueDark};
+    outline-offset: 2px;
   }
 `;
 
