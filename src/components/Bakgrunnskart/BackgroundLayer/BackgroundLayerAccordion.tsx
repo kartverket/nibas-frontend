@@ -72,6 +72,9 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
           <AddableLayer
             onClick={() => onVisibilityClick()}
             icon={getAddRemove(false)}
+            aria-label={
+              (visible ? `Fjern` : `Vis`) + ` ${props.mappedLayer.title}`
+            }
           >
             <span>{props.mappedLayer.title}</span>
           </AddableLayer>
@@ -99,6 +102,9 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
           activeLayer={visible}
           onClick={() => onVisibilityClick()}
           icon={getAddRemove(false)}
+          aria-label={
+            (visible ? `Fjern` : `Vis`) + ` ${props.mappedLayer.title}`
+          }
         >
           {props.mappedLayer.title}
         </AddableLayer>
