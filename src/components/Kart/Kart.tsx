@@ -5,7 +5,6 @@ import OverlayPanels from "./OverlayPanels";
 import OverlayPopup from "./OverlayPopup";
 import SidebarPanels from "./SidebarPanels";
 import Toolbar from "./Toolbar";
-import UtkastTab from "./UtkastTab";
 import { PanelType, useOverlayPanels } from "contexts/OverlayPanelsContext";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
 import useSelectInteraction from "hooks/interactions/useSelectInteraction";
@@ -42,7 +41,6 @@ const Kart = () => {
     <KartWrapper>
       <KartTarget ref={mapRef}>
         <Suspense fallback="More loading...">
-          <UtkastTab />
           <KartOverlay content={panelContext?.type}>
             <SidebarPanels />
             <OverlayPanels />

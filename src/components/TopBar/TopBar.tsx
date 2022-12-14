@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { AuthenticationButton } from "../Authentication/AuthenticationButton";
 import Logo from "components/Logo/Logo";
+import UtkastTab from "components/Kart/UtkastTab";
 
 const TopBar = () => {
   const { isAuthenticatedFunc, tokenHolderFunc } = useAuthenticationFlow();
@@ -14,6 +15,7 @@ const TopBar = () => {
       <LeftSide>
         <Logo />
         <Sidetittel>{t("Nasjonal inndelingsbase")}</Sidetittel>
+        <UtkastTab />
       </LeftSide>
       <RightSide>
         {isAuthenticatedFunc() ? (
