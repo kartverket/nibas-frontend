@@ -8,6 +8,7 @@ import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
 import { GrenseId } from "hooks/layers/types";
 import { GrenseRef } from "types/api";
 import { useTranslation } from "react-i18next";
+import { Outline } from "style/mixins";
 
 export const layerIdByGrenseType: Record<EditingType, GrenseId> = {
   fylke: "fylker",
@@ -82,8 +83,7 @@ const Wrapper = styled.div<{ visible: boolean }>`
     }
 
     &:focus-visible {
-      outline: 2px solid ${({ theme }) => theme.colors.blueDark};
-      outline-offset: 2px;
+      ${Outline}
     }
   }
 
@@ -93,8 +93,7 @@ const Wrapper = styled.div<{ visible: boolean }>`
     }
 
     &:focus-visible {
-      outline: 2px solid ${({ theme }) => theme.colors.blueDark};
-      outline-offset: 2px;
+      ${Outline}
     }
   }
 `;

@@ -8,6 +8,7 @@ import useVisibility from "hooks/useVisibility";
 import { EditingType } from "contexts/EditGrenserContext";
 import LineString from "ol/geom/LineString";
 import { Feature } from "ol";
+import { Outline } from "style/mixins";
 
 type Props = {
   grenseType: EditingType;
@@ -86,8 +87,7 @@ const ListItem = styled.li`
 
 const CaretButton = styled(Button)`
   &:focus-visible {
-    outline: 3px solid ${({ theme }) => theme.colors.blueDark};
-    outline-offset: 2px;
+    ${Outline}
   }
 `;
 
@@ -148,8 +148,7 @@ const VisibilityButton = styled(Button).attrs(() => ({
     background: ${({ theme }) => theme.colors.blueLight};
   }
   &:focus-visible {
-    outline: 3px solid ${({ theme }) => theme.colors.blueDark};
-    outline-offset: 2px;
+    ${Outline}
   }
 `;
 

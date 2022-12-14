@@ -5,6 +5,7 @@ import Button from "components/form/Button";
 import Slider from "components/form/Slider";
 import Icon from "components/Icon";
 import { MainMappedLayer, MappedLayer } from "utils/getLayersFromWMS";
+import { Outline } from "style/mixins";
 
 const getCaretIcon = (open: boolean) => (
   <Caret open={open}>
@@ -195,8 +196,7 @@ const AddRemove = styled.div<{ visible: boolean; aktivtKartlag: boolean }>`
   padding: 4px;
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.blueDark};
-    outline-offset: 2px;
+    ${Outline}
   }
 
   &:hover {
@@ -208,8 +208,7 @@ const AddRemove = styled.div<{ visible: boolean; aktivtKartlag: boolean }>`
 const RemoveAktivtKartlag = styled(Button)`
   &:focus-visible {
     ${AddRemove} {
-      outline: 2px solid ${({ theme }) => theme.colors.blueDark};
-      outline-offset: 2px;
+      ${Outline}
     }
   }
 `;
@@ -270,8 +269,7 @@ const ClickableName = styled(Button)<{
   }
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.blueDark};
-    outline-offset: 2px;
+    ${Outline}
   }
 
   &:hover {
@@ -327,8 +325,7 @@ const AktivtKartlagSlider = styled.div`
 
   > :first-child {
     &:focus-visible {
-      outline: 2px solid ${({ theme }) => theme.colors.blueDark};
-      outline-offset: 8px;
+      ${Outline}
     }
   }
 `;
@@ -358,8 +355,7 @@ const AktivtSubLayerWrapper = styled(Button).attrs(() => ({
   }
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.blueDark};
-    outline-offset: 8px;
+    ${Outline}
   }
 
   &:hover {
@@ -392,8 +388,7 @@ const AddableLayer = styled(Button).attrs(() => ({
   }
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.blueDark};
-    outline-offset: 2px;
+    ${Outline}
   }
 `;
 

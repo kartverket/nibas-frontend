@@ -2,6 +2,7 @@ import React, { ReactNode, useState } from "react";
 import styled from "styled-components";
 import Button from "components/form/Button";
 import Icon from "components/Icon";
+import { Outline } from "style/mixins";
 
 type Props = {
   title: ReactNode;
@@ -107,8 +108,7 @@ const ButtonWrapper = styled(Button).attrs(() => ({
   }
 
   &:focus-visible {
-    outline: 3px solid ${({ theme }) => theme.colors.blueDark};
-    outline-offset: 2px;
+    ${Outline}
   }
 
   > :first-child {

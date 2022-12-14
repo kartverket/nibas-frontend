@@ -24,6 +24,7 @@ import { useToolbarActions } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext";
 import Feedback from "components/Feedback/Feedback";
 import UtkastConflicts from "./UtkastConflicts";
+import { Outline } from "style/mixins";
 
 type Props = {
   utkast: UtkastRef;
@@ -287,8 +288,7 @@ const UnstyledButton = styled(Button).attrs(() => ({
 }))`
   &:focus-visible {
     ${Icon} {
-      outline: 2px solid ${({ theme }) => theme.colors.blueDark};
-      outline-offset: 2px;
+      ${Outline}
     }
   }
 `;

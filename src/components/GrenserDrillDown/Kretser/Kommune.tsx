@@ -5,6 +5,7 @@ import { useInndelingerKrets } from "contexts/InndelingerKretsContext";
 import { KommuneRef } from "types/api";
 import { getNavnInSpraak } from "utils/language/language";
 import { useTranslation } from "react-i18next";
+import { Outline } from "style/mixins";
 
 type Props = {
   kommune: KommuneRef;
@@ -53,8 +54,7 @@ const KommuneWrapper = styled.div<{ editing?: boolean }>`
     }
 
     &:focus-visible {
-      outline: 2px solid ${({ theme }) => theme.colors.blueDark};
-      outline-offset: 2px;
+      ${Outline};
     }
   }
 `;
@@ -70,8 +70,7 @@ const VisibilityButton = styled(Button)`
   }
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.blueDark};
-    outline-offset: 2px;
+    ${Outline}
   }
 `;
 
