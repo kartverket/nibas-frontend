@@ -428,6 +428,12 @@ export const mockUtkastRef2: UtkastRef = {
 
 export const mockFutureGrunnkrets1_1: GrunnkretsResponse = {
   ...mockDetailedGrunnkrets1,
+  id: {
+    lokalid: {
+      value: mockDetailedGrunnkrets1.id.lokalid.value,
+    },
+    gyldighetsdato: "2022-04-01",
+  },
   navn: "Mosekollen vest",
   grunnkretsnummer: "12345679",
   gyldighet: {
@@ -438,6 +444,12 @@ export const mockFutureGrunnkrets1_1: GrunnkretsResponse = {
 
 export const mockFutureGrunnkrets1_2: GrunnkretsResponse = {
   ...mockDetailedGrunnkrets1,
+  id: {
+    lokalid: {
+      value: mockDetailedGrunnkrets1.id.lokalid.value,
+    },
+    gyldighetsdato: "2022-07-01",
+  },
   navn: "Mosekollen nord",
   grunnkretsnummer: "87654321",
   gyldighet: {
@@ -450,20 +462,20 @@ export const mockFremtidigEndringConflictResponse: FramtidigVersjonConflict = {
     lokalid: {
       value: "1",
     },
-    gyldighetsdato: mockDetailedGrunnkrets1.gyldighet.gyldigFra,
+    gyldighetsdato: mockDetailedGrunnkrets1.id.gyldighetsdato,
   },
   affectedIds: [
     {
       lokalid: {
         value: "1",
       },
-      gyldighetsdato: mockDetailedGrunnkrets1.gyldighet.gyldigFra,
+      gyldighetsdato: mockFutureGrunnkrets1_1.id.gyldighetsdato,
     },
     {
       lokalid: {
         value: "1",
       },
-      gyldighetsdato: mockDetailedGrunnkrets1.gyldighet.gyldigFra,
+      gyldighetsdato: mockFutureGrunnkrets1_2.id.gyldighetsdato,
     },
   ],
   type: "GRUNNKRETS",
