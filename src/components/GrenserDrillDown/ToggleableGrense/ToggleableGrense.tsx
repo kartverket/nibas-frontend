@@ -9,6 +9,7 @@ import { GrenseId } from "hooks/layers/types";
 import { GrenseRef } from "types/api";
 import { useTranslation } from "react-i18next";
 import { getIdFromEntity } from "utils/api";
+import { Outline } from "style/mixins";
 
 export const layerIdByGrenseType: Record<EditingType, GrenseId> = {
   fylke: "fylker",
@@ -43,7 +44,7 @@ const ToggleableGrense = <T extends GrenseRef>({
   };
 
   return (
-    <Wrapper>
+    <Wrapper visible={value.visible ? true : false}>
       <Button
         onClick={toggleVisible}
         variant="unstyled"
@@ -55,25 +56,50 @@ const ToggleableGrense = <T extends GrenseRef>({
           )
         }
       />
-      <Title onClick={toggleVisible}>{title}</Title>
+      <Title>{title}</Title>
       <LinkButton onClick={openInfo} disabled title="Kommer snart!">
         {value.editing ? t("action.Avslutt redigering") : t("action.Rediger")}
       </LinkButton>
     </Wrapper>
   );
 };
-
-const Wrapper = styled.div`
-  display: flex;
-  align-items: center;
-  margin: 16px 0;
-`;
-
-const Title = styled(Button).attrs(() => ({
-  variant: "unstyled",
-}))`
+const Title = styled.div`
   flex: 1;
   margin-left: 8px;
+  user-select: none;
+`;
+
+const Wrapper = styled.div<{ visible: boolean }>`
+  display: flex;
+  align-items: center;
+  margin: 16px 0 0 24px;
+
+  > :first-child {
+    color: ${({ visible }) => (visible ? "var(--white)" : "var(--blue_dark)")};
+    padding: 8px;
+    border-radius: 50%;
+    background: ${({ visible }) =>
+      visible ? "var(--blue_dark)" : "transparent"};
+
+    &:hover {
+      background: var(--blue_light);
+      color: var(--blue_dark);
+    }
+
+    &:focus-visible {
+      ${Outline}
+    }
+  }
+
+  ${LinkButton} {
+    &:hover:enabled {
+      text-decoration: none;
+    }
+
+    &:focus-visible {
+      ${Outline}
+    }
+  }
 `;
 
 export default ToggleableGrense;

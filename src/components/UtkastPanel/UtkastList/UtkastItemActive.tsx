@@ -180,9 +180,9 @@ const Center = styled.div`
 const CancelButton = styled(Button).attrs(() => ({
   variant: "teriary",
 }))`
-  background-color: ${({ theme }) => theme.colors.grayLight};
+  background-color: var(--gray_light);
   border: none;
-  color: ${({ theme }) => theme.colors.blue};
+  color: var(--blue);
 `;
 
 export default UtkastItemActive;

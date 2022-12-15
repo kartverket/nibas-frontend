@@ -51,7 +51,7 @@ type ResponseType<Path extends ApiPath> = paths[Path] extends {
  */
 const useNibasApi = <Path extends ApiPath>(
   url: Path | null,
-  params?: GetParameters<Path>,
+  params?: GetParameters<Path> | null,
   swrOptions?:
     | Partial<
         PublicConfiguration<

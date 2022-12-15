@@ -70,7 +70,7 @@ const UnstyledButton = styled(StyledButton)`
 export const LinkButton = styled(Button).attrs(() => ({
   variant: "unstyled",
 }))`
-  color: ${({ theme }) => theme.colors.blue};
+  color: var(--blue);
   text-decoration: underline;
   text-underline-offset: 4px;
 

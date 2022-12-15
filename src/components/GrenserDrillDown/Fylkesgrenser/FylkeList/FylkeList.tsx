@@ -28,7 +28,7 @@ const FylkeList = () => {
 };
 
 const Wrapper = styled.div`
-  margin-left: 8px;
+  margin-left: 24px;
 `;
 
 export default FylkeList;

@@ -1,27 +1,16 @@
-import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
 import useFylkesgrenser from "hooks/inndelinger/useFylkesgrenser";
-import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import FylkeList from "./FylkeList";
 import EditableGrenseAccordion from "../EditableGrenseAccordion";
 
 const Fylkesgrenser = () => {
   const { t } = useTranslation();
-  const [shouldFetch, setShouldFetch] = useState(false);
-  const { fylkesgrenser, isFetching } = useFylkesgrenser(shouldFetch);
-  const grenseId = "fylker";
-  const { value } = useEditGrense("fylke", grenseId, fylkesgrenser);
-
-  useEffect(() => {
-    if (value.editing || value.visible) {
-      setShouldFetch(true);
-    }
-  }, [value]);
+  const { fylkesgrenser, isFetching } = useFylkesgrenser();
 
   return (
     <EditableGrenseAccordion
       features={fylkesgrenser}
-      grenseId={grenseId}
+      grenseId="fylker"
       grenseType="fylke"
       isFetching={isFetching}
       title={t("inndelinger.Fylkesgrenser")}

@@ -8,7 +8,7 @@ export const Container = styled.div`
   display: flex;
   justify-content: flex-start;
 
-  @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
+  @media (min-width: var(--screenBreakXxl)) {
     flex-direction: column;
   }
 `;
@@ -22,7 +22,7 @@ export const Part = styled.div`
     margin: 0;
   }
 
-  @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
+  @media (min-width: var(--screenBreakXxl)) {
     margin: 8px 0;
 
     &:first-child,
@@ -84,14 +84,10 @@ export const OverlayPanelWrapper = styled(KartInteractable)<{
   padding: 16px;
   border-radius: 3px;
   height: ${({ minimized }) => (minimized ? 70 : 500)}px;
-  border: 2px solid ${({ theme }) => theme.colors.blue};
+  border: 2px solid var(--blue);
   border-bottom: none;
   border-right: none;
   overflow-y: auto;
-
-  /* @media (min-width: ${({ theme }) => theme.dimensions.lgPx}) {
-    border-bottom: 2px solid ${({ theme }) => theme.colors.blue};
-  } */
 
   min-width: 500px;
   width: 100%;
@@ -112,7 +108,7 @@ export const HeaderButton = styled(Button).attrs(() => ({
   top: 0;
   right: ${({ right }) => right}px;
   margin: 16px;
-  color: ${({ theme }) => theme.colors.blueDark};
+  color: var(--blue_dark);
 
   > span {
     font-size: 36px;

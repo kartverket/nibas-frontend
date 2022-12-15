@@ -17,7 +17,7 @@ const Bakgrunnskart = () => {
   if (!visible) return null;
 
   return (
-    <Panel>
+    <SidebarPanel>
       <SidebarPanelTitle closePanel={togglePanel} title={t("Aktive kartlag")} />
       {visibleLayers.map((layer, i) => (
         <MainLayer
@@ -39,17 +39,13 @@ const Bakgrunnskart = () => {
           index={index}
         />
       ))}
-    </Panel>
+    </SidebarPanel>
   );
 };
 
-const Panel = styled(SidebarPanel)`
-  margin-top: 180px;
-`;
-
 const BackgroundLayersHeading = styled(Heading)`
   margin: 8px 0 0;
-  border-bottom: 2px solid ${({ theme }) => theme.colors.grayLight};
+  border-bottom: 2px solid var(--gray_light);
 `;
 
 export default Bakgrunnskart;

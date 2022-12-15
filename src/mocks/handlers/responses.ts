@@ -322,6 +322,10 @@ export const mockStemmekrets1: StemmekretsResponse = {
   tellekretsnavn: "tellekretsnavn1",
   valgdistriktsnummer: "14",
   features: mockGeoJsonFeatureResponse,
+  gyldighet: {
+    gyldigFra: "2022-01-01",
+    gyldigTil: "2022-07-01",
+  },
 };
 
 export const mockStemmekrets2: StemmekretsResponse = {
@@ -339,6 +343,10 @@ export const mockStemmekrets2: StemmekretsResponse = {
   tellekretsnavn: "tellekretsnavn2",
   valgdistriktsnummer: "16",
   features: mockGeoJsonFeatureResponse,
+  gyldighet: {
+    gyldigFra: "2022-01-01",
+    gyldigTil: "2022-07-01",
+  },
 };
 
 export const mockStemmekretser: StemmekretsRef[] = [
@@ -458,7 +466,7 @@ export const mockFremtidigEndringConflictResponse: FramtidigVersjonConflict = {
       gyldighetsdato: mockDetailedGrunnkrets1.gyldighet.gyldigFra,
     },
   ],
-  type: "Grunnkrets",
+  type: "GRUNNKRETS",
   melding: "Konflikt",
 };
 

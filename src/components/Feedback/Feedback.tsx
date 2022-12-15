@@ -1,54 +1,11 @@
 import { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import Modal from "react-modal";
 import styled from "styled-components";
 import Button from "components/form/Button";
-
-export const ModalOverlay = styled.div`
-  position: fixed;
-  inset: 0;
-  z-index: 10;
-  animation: Fade 0.5s;
-  background: #000a;
-
-  @keyframes Fade {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-`;
-
-export const CustomModalWrapper = styled.div`
-  position: relative;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 320px;
-  border: 1px solid ${({ theme }) => theme.colors.blue};
-  background: white;
-
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  animation: Enter 0.5s cubic-bezier(0.75, 0, 0.25, 1.5);
-  outline: none;
-
-  @keyframes Enter {
-    from {
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(0.5);
-    }
-    to {
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(1);
-    }
-  }
-`;
+import Modal, {
+  CustomModalWrapper,
+  ModalOverlay,
+} from "components/Modal/Modal";
 
 const Header = styled.div<{ type: StatusType }>`
   padding: 16px;

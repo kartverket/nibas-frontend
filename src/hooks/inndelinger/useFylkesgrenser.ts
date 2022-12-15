@@ -7,6 +7,7 @@ import { FeatureCollection } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 import { fetcherWithToken } from "utils/swr";
+import { useEditGrenseValue } from "contexts/EditGrenserContext/useEditGrense";
 
 const fylkesgrenserFetcher = async (
   fylkeIds: string[],
@@ -28,7 +29,9 @@ const fylkesgrenserFetcher = async (
   return geoJsons.flatMap((geoJson) => geoJson.features);
 };
 
-const useFylkesgrenser = (shouldFetch: boolean) => {
+const useFylkesgrenser = () => {
+  const { value: editgrenseValue } = useEditGrenseValue("fylke", "fylker");
+  const shouldFetch = editgrenseValue.editing || editgrenseValue.visible;
   const [isFetching, setIsFetching] = useState(false);
   const { fylker } = useFylker(shouldFetch);
   const fylkeIds = fylker?.map(getIdFromEntity) ?? [];

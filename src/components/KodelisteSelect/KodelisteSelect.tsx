@@ -74,7 +74,7 @@ const Wrapper = styled.div`
 
 const LabelWrapper = styled.div`
   label {
-    color: ${(props) => props.theme.colors.gray1};
+    color: var(--gray_dark);
     display: inline-block;
     font-size: 14px;
     line-height: 20px;
