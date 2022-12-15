@@ -402,7 +402,7 @@ export const mockFremtidigEndringConflictResponse: FramtidigVersjonConflict = {
       gyldigFra: mockFutureGrunnkrets1_2.gyldighet.gyldigFra,
     },
   ],
-  type: "Grunnkrets",
+  type: "GRUNNKRETS",
   melding: "Konflikt",
 };
 

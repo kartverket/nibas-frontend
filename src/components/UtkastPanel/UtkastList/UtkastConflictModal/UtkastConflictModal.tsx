@@ -7,12 +7,12 @@ import { FC } from "react";
 import ReactModal from "react-modal";
 import styled from "styled-components";
 
-if (process.env.NODE_ENV !== "test") {
-  ReactModal.setAppElement("#root");
-} else {
+if (process.env.NODE_ENV === "test") {
   // In tests we set it as en empty array to not get loads of warnings
   // about forgetting to set app-element for the modal
   ReactModal.setAppElement([] as never);
+} else {
+  ReactModal.setAppElement("#root");
 }
 
 type Props = {
