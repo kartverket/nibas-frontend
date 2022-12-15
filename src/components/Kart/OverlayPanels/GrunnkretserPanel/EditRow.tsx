@@ -115,7 +115,7 @@ const EditRow = ({ grunnkrets, kommuneId }: Props) => {
 };
 
 const AccordionRow = styled.tr`
-  background-color: ${({ theme }) => theme.colors.blueLight};
+  background-color: var(--blue_light);
 
   td {
     padding: 8px;

@@ -2,6 +2,7 @@
 
 :root {
   --yellow_dark: #ffbf00;
+  --screenBreakXxl: 1700px; /* Eget breakpoint utenfor KVIB */
 }
 
 body {

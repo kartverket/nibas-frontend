@@ -186,8 +186,8 @@ const AddRemoveIcon = ({ title, type }: AddRemoveIconProps) => {
 const AddRemove = styled.div<{ visible: boolean; aktivtKartlag: boolean }>`
   cursor: pointer;
 
-  color: ${({ theme, visible, aktivtKartlag }) =>
-    visible && !aktivtKartlag ? theme.colors.gray : theme.colors.blueDark};
+  color: ${({ visible, aktivtKartlag }) =>
+    visible && !aktivtKartlag ? "var(--gray)" : "var(--blue_dark)"};
 
   margin: 0 8px;
   opacity: ${({ visible, aktivtKartlag }) =>
@@ -200,8 +200,8 @@ const AddRemove = styled.div<{ visible: boolean; aktivtKartlag: boolean }>`
   }
 
   &:hover {
-    background: ${({ theme }) => theme.colors.blueLight};
-    color: ${({ theme }) => theme.colors.blueDark};
+    background: var(--blue_light);
+    color: var(--blue_dark);
   }
 `;
 
@@ -214,10 +214,9 @@ const RemoveAktivtKartlag = styled(Button)`
 `;
 
 const Caret = styled.div<{ open: boolean }>`
-  color: ${({ theme, open }) =>
-    open ? theme.colors.white : theme.colors.blueDark};
-  background-color: ${({ open, theme }) =>
-    open ? theme.colors.blueDark : theme.colors.white};
+  color: ${({ open }) => (open ? "var(--white)" : "var(--blue_dark)")};
+  background-color: ${({ open }) =>
+    open ? "var(--blue_dark)" : "var(--white)"};
 
   height: 100%;
   padding: 0 12px;
@@ -225,8 +224,8 @@ const Caret = styled.div<{ open: boolean }>`
   display: flex;
 
   &:hover {
-    background: ${({ theme }) => theme.colors.blueDark};
-    color: ${({ theme }) => theme.colors.white};
+    background: var(--blue_dark);
+    color: var(--white);
   }
 `;
 
@@ -257,15 +256,14 @@ const ClickableName = styled(Button)<{
     flex: 1;
     text-align: left;
     padding: 6px;
-    background-color: ${({ open, dropDown, theme }) =>
-      open && dropDown ? theme.colors.blueLight : theme.colors.white};
+    background-color: ${({ open, dropDown }) =>
+      open && dropDown ? "var(--blue_light)" : "var(--white)"};
     padding-top: ${({ dropDown }) => (dropDown ? 16 : 0)}px;
     padding-bottom: ${({ dropDown }) => (dropDown ? 16 : 0)}px;
     padding-left: 16px;
     border-left: 3px solid
-      ${({ theme, open }) => (open ? theme.colors.blueDark : "transparent")};
-    background: ${({ open, theme }) =>
-      open ? theme.colors.blueLight : theme.colors.white};
+      ${({ open }) => (open ? "var(--blue_dark)" : "transparent")};
+    background: ${({ open }) => (open ? "var(--blue_light)" : "var(--white)")};
   }
 
   &:focus-visible {
@@ -274,12 +272,12 @@ const ClickableName = styled(Button)<{
 
   &:hover {
     > :first-child {
-      background: ${({ theme }) => theme.colors.blueLight};
+      background: var(--blue_light);
     }
 
     ${Caret} {
-      background: ${({ theme }) => theme.colors.blueDark};
-      color: ${({ theme }) => theme.colors.white};
+      background: var(--blue_dark);
+      color: var(--white);
     }
   }
 `;
@@ -302,16 +300,16 @@ const DraggableLayer = styled.span`
 
   &:hover {
     ${Icon} {
-      color: ${({ theme }) => theme.colors.blueDark};
-      background: ${({ theme }) => theme.colors.blueLight};
+      color: var(--blue_dark);
+      background: var(--blue_light);
       border-radius: 50%;
     }
   }
 
   &:active {
     ${Icon} {
-      color: ${({ theme }) => theme.colors.white};
-      background: ${({ theme }) => theme.colors.blueDark};
+      color: var(--white);
+      background: var(--blue_dark);
       border-radius: 50%;
     }
   }
@@ -360,8 +358,8 @@ const AktivtSubLayerWrapper = styled(Button).attrs(() => ({
 
   &:hover {
     ${AddRemove} {
-      color: ${({ theme }) => theme.colors.blueDark};
-      background: ${({ theme }) => theme.colors.blueLight};
+      color: var(--blue_dark);
+      background: var(--blue_light);
     }
   }
 `;
@@ -382,8 +380,8 @@ const AddableLayer = styled(Button).attrs(() => ({
 
   &:hover {
     ${AddRemove} {
-      background: ${({ theme }) => theme.colors.blueLight};
-      color: ${({ theme }) => theme.colors.blueDark};
+      background: var(--blue_light);
+      color: var(--blue_dark);
     }
   }
 

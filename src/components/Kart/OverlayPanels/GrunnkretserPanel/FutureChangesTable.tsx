@@ -58,14 +58,14 @@ const FutureChangesTable = <
 
 const Table = styled.table`
   width: 100%;
-  background-color: ${({ theme }) => theme.colors.white};
+  background-color: var(--white);
   border-spacing: 0;
 
   tr:first-child > td {
-    background-color: ${({ theme }) => theme.colors.greenLight};
+    background-color: var(--green_light);
 
     &:first-child {
-      border-left: 4px solid ${({ theme }) => theme.colors.green};
+      border-left: 4px solid var(--green);
     }
   }
 
@@ -75,7 +75,7 @@ const Table = styled.table`
   }
 
   th {
-    border-bottom: 1px solid ${({ theme }) => theme.colors.gray};
+    border-bottom: 1px solid var(--gray);
     text-align: left;
     font-weight: normal;
     padding: 8px 12px;
@@ -83,10 +83,10 @@ const Table = styled.table`
 
   td {
     padding: 8px;
-    color: ${({ theme }) => theme.colors.grayDark};
+    color: var(--gray_dark);
     border-left: 4px solid transparent;
     border-right: 4px solid transparent;
-    border-bottom: 2px solid ${({ theme }) => theme.colors.grayLight};
+    border-bottom: 2px solid var(--gray_light);
   }
 `;
 

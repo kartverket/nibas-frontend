@@ -57,22 +57,19 @@ const DropDown = styled.div`
 const NameContent = styled.div<{ open: boolean }>`
   display: flex;
   flex-direction: column;
-  background: ${({ open, theme }) =>
-    open ? theme.colors.blueLight : theme.colors.white};
+  background: ${({ open }) => (open ? "var(--blue_light)" : "var(--white)")};
   padding: 16px 0;
   padding-left: 16px;
   border-left: 3px solid
-    ${({ theme, open }) => (open ? theme.colors.blueDark : "transparent")};
+    ${({ open }) => (open ? "var(--blue_dark)" : "transparent")};
   width: 100%;
   transition: background 0.1s;
 `;
 
 const CaretIcon = styled(Icon)<{ open: boolean }>`
   height: 100%;
-  background: ${({ open, theme }) =>
-    open ? theme.colors.blueDark : theme.colors.white};
-  color: ${({ open, theme }) =>
-    open ? theme.colors.white : theme.colors.blueDark};
+  background: ${({ open }) => (open ? "var(--blue_dark)" : "var(--white)")};
+  color: ${({ open }) => (open ? "var(--white)" : "var(--blue_dark)")};
   height: 100%;
   padding: 16px 12px;
   align-items: center;
@@ -98,12 +95,12 @@ const ButtonWrapper = styled(Button).attrs(() => ({
 
   &:hover {
     ${CaretIcon} {
-      background: ${({ theme }) => theme.colors.blueDark};
-      color: ${({ theme }) => theme.colors.white};
+      background: var(--blue_dark);
+      color: var(--white);
     }
 
     ${NameContent} {
-      background: ${({ theme }) => theme.colors.blueLight};
+      background: var(--blue_light);
     }
   }
 

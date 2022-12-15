@@ -26,7 +26,7 @@ const SidebarPanelTitle = ({ title, closePanel }: Props) => {
 const TitleWrapper = styled.div`
   margin-top: 8px;
   margin-bottom: 8px;
-  border-bottom: 2px solid ${({ theme }) => theme.colors.grayLight};
+  border-bottom: 2px solid var(--gray_light);
   padding: 0 3px 8px 0;
 
   display: flex;
@@ -43,16 +43,16 @@ const CloseButton = styled(Button)`
 
   > span {
     font-size: 28px;
-    color: ${({ theme }) => theme.colors.blueDark};
+    color: var(--blue_dark);
     padding: 6px;
     border-radius: 50%;
 
     &:hover {
-      background-color: ${({ theme }) => theme.colors.blueLight};
+      background-color: var(--blue_light);
     }
   }
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.blueDark};
+    outline: 2px solid var(--blue_dark);
   }
 `;
 

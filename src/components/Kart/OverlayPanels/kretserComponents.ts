@@ -8,14 +8,14 @@ export const ToggleableKretsButton = styled(Button).attrs(() => ({
   border-radius: 50%;
   padding: 5px;
 
-  background-color: ${({ isOpen, theme }) => isOpen && theme.colors.blueDark};
-  color: ${({ isOpen, theme }) => isOpen && theme.colors.white};
+  background-color: ${({ isOpen }) => isOpen && "var(--blue_dark)"};
+  color: ${({ isOpen }) => isOpen && "var(--white)"};
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 `;
 
 export const FutureChangesTableData = styled.td`
-  border-top: 2px solid ${({ theme }) => theme.colors.gray};
-  background-color: ${({ theme }) => theme.colors.grayLight};
+  border-top: 2px solid var(--gray);
+  background-color: var(--gray_light);
   width: 100%;
   padding: 32px 16px;
 `;

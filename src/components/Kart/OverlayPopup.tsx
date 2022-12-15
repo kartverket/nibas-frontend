@@ -55,7 +55,7 @@ const OverlayPopup = ({ selectedFeatures }: Props) => {
 const Popup = styled.div`
   position: absolute;
   background-color: white;
-  border: 1px solid ${({ theme }) => theme.colors.grayLight};
+  border: 1px solid var(--gray_light);
   padding: 8px;
   border-radius: 3px;
 `;

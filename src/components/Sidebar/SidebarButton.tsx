@@ -40,26 +40,24 @@ const StyledButton = styled(Button).attrs(() => ({
   z-index: 2;
   text-align: center;
   border-left: 5px solid
-    ${({ active, theme }) => (active ? theme.colors.blueDark : "transparent")};
+    ${({ active }) => (active ? "var(--blue_dark)" : "transparent")};
 
-  color: ${({ active, theme }) =>
-    active ? theme.colors.blue : theme.colors.black};
+  color: ${({ active }) => (active ? "var(--blue)" : "var(--black)")};
 
-  background-color: ${({ active, theme }) =>
-    active ? theme.colors.blueLight : "transparent"};
+  background-color: ${({ active }) =>
+    active ? "var(--blue_light)" : "transparent"};
 
   :hover {
-    background-color: ${({ theme }) => theme.colors.blueLight};
+    background-color: var(--blue_light);
   }
 
   & ${SidebarButtonTitle} {
-    color: ${({ active, theme }) =>
-      active ? theme.colors.blue : theme.colors.black};
+    color: ${({ active }) => (active ? "var(--blue)" : "var(--black)")};
     font-weight: ${({ active }) => (active ? 600 : 400)};
   }
 
   :focus-visible {
-    box-shadow: 0px 0px 0px 2px ${({ theme }) => theme.colors.blueDark} inset;
+    box-shadow: 0px 0px 0px 2px var(--blue_dark) inset;
   }
 `;
 

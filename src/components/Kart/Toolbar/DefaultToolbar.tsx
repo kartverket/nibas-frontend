@@ -88,7 +88,7 @@ const Buttons = styled.div`
 const CloseUtkastButton = styled(Button)`
   padding: 0 16px;
   > span {
-    color: ${({ theme }) => theme.colors.blue};
+    color: var(--blue);
     font-weight: bold;
     text-decoration: underline;
   }

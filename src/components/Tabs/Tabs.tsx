@@ -49,16 +49,16 @@ const TabButton = styled(Button).attrs(() => ({
   border-bottom: 2px solid transparent;
 
   &:hover {
-    border-bottom: 2px solid ${({ theme }) => theme.colors.blueLight};
+    border-bottom: 2px solid var(--blue_light);
   }
 
   ${({ selected }) =>
     selected &&
     css`
-      border-bottom: 2px solid ${({ theme }) => theme.colors.blueDark};
+      border-bottom: 2px solid var(--blue_dark);
 
       &:hover {
-        border-bottom: 2px solid ${({ theme }) => theme.colors.blueDark};
+        border-bottom: 2px solid var(--blue_dark);
       }
     `}
 `;
