@@ -7,6 +7,7 @@ import Modal, {
 } from "components/Modal/Modal";
 import Heading from "components/typography/Heading";
 import { FC } from "react";
+import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 
 type Props = {
@@ -23,6 +24,8 @@ const UtkastConflictModal: FC<Props> = ({
   columns,
   children,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <Modal
       isOpen
@@ -40,17 +43,24 @@ const UtkastConflictModal: FC<Props> = ({
       overlayClassName="_"
     >
       <Heading tag="h2" size="xs" id="conflict-modal-header">
-        Konflikt mellom fremtidige endringer
+        {t("utkast.Konflikt mellom fremtidige endringer")}
       </Heading>
       <div id="conflict-modal-description">
         <p>
-          Endringer du gjorde i dette utkastet har ført til at en annen
-          publisert endring må dobbelsjekkes.
+          {t(
+            "utkast.Endringer du gjorde i dette utkastet har ført til at en annen publisert endring må dobbelsjekkes"
+          )}
+          .
         </p>
-        <p>Dobbeltsjekk feltene i endringen nedenfor før du publiserer.</p>
+        <p>
+          {t(
+            "utkast.Dobbeltsjekk feltene i endringen nedenfor før du publiserer"
+          )}
+          .
+        </p>
       </div>
       <Heading tag="h3" size="xs">
-        Endringer i dette utkastet
+        {t("utkast.Endringer i dette utkastet")}
       </Heading>
       <Table cellSpacing={0}>
         <thead>
@@ -73,7 +83,7 @@ const UtkastConflictModal: FC<Props> = ({
         </tbody>
       </Table>
       <Heading tag="h3" size="xs">
-        Fremtidig endring i konflikt
+        {t("utkast.Fremtidig endring i konflikt")}
       </Heading>
       <Table cellSpacing={0}>
         <thead>
@@ -89,10 +99,10 @@ const UtkastConflictModal: FC<Props> = ({
 
       <Buttons>
         <Button variant="secondary" onClick={onCancel}>
-          Avbryt
+          {t("action.Avbryt")}
         </Button>
         <Button onClick={submit} disabled={!submit}>
-          Publiser
+          {t("action.Publiser")}
         </Button>
       </Buttons>
     </Modal>

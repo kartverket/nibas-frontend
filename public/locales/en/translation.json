@@ -87,16 +87,19 @@
   "Nei": "__STRING_NOT_TRANSLATED__",
   "{{ kommuneNavn }} kommune": "__STRING_NOT_TRANSLATED__",
   "tabell": {
-    "Navn": "__STRING_NOT_TRANSLATED__"
+    "Navn": "__STRING_NOT_TRANSLATED__",
+    "Endringstype": "__STRING_NOT_TRANSLATED__"
   },
   "grunnkrets": {
-    "Grunnkretsnummer": "__STRING_NOT_TRANSLATED__"
+    "Grunnkretsnummer": "__STRING_NOT_TRANSLATED__",
+    "Grunnkrets": "__STRING_NOT_TRANSLATED__"
   },
   "stemmekrets": {
     "Stemmekretsnummer": "__STRING_NOT_TRANSLATED__",
     "Valgdistriktsnummer": "__STRING_NOT_TRANSLATED__",
     "Tellekretsnavn": "__STRING_NOT_TRANSLATED__",
-    "Tellekretsnummer": "__STRING_NOT_TRANSLATED__"
+    "Tellekretsnummer": "__STRING_NOT_TRANSLATED__",
+    "Stemmekrets": "__STRING_NOT_TRANSLATED__"
   },
   "Endre": "__STRING_NOT_TRANSLATED__",
   "utkast": {
@@ -110,7 +113,12 @@
     "Nummerendring": "__STRING_NOT_TRANSLATED__",
     "Navn på utkast": "__STRING_NOT_TRANSLATED__",
     "Type utkast": "__STRING_NOT_TRANSLATED__",
-    "Du er nå i redigeringsmodus av dette utkastet": "__STRING_NOT_TRANSLATED__"
+    "Du er nå i redigeringsmodus av dette utkastet": "__STRING_NOT_TRANSLATED__",
+    "Konflikt mellom fremtidige endringer": "__STRING_NOT_TRANSLATED__",
+    "Endringer du gjorde i dette utkastet har ført til at en annen publisert endring må dobbelsjekkes": "__STRING_NOT_TRANSLATED__",
+    "Dobbeltsjekk feltene i endringen nedenfor før du publiserer": "__STRING_NOT_TRANSLATED__",
+    "Endringer i dette utkastet": "__STRING_NOT_TRANSLATED__",
+    "Fremtidig endring i konflikt": "__STRING_NOT_TRANSLATED__"
   },
   "Aktive kartlag": "__STRING_NOT_TRANSLATED__",
   "Logg inn for å se listen": "__STRING_NOT_TRANSLATED__",

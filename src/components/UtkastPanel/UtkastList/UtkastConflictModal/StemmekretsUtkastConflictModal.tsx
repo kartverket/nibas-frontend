@@ -1,6 +1,7 @@
 import Checkbox from "components/Checkbox";
 import Input from "components/form/Input";
 import { ButtonCell } from "components/Kart/OverlayPanels/KretsTable";
+import { useTranslation } from "react-i18next";
 import {
   FramtidigVersjonConflict,
   StemmekretsRequest,
@@ -9,16 +10,6 @@ import {
 import { getNavnInSpraak } from "utils/language/language";
 import useStemmekretsConflictModal from "./useStemmekretsConflictModal";
 import UtkastConflictModal, { ConflictTableRow } from "./UtkastConflictModal";
-
-const columns = [
-  "Stemmekrets",
-  "Stemmekretsnummer",
-  "Valgdistriktsnummer",
-  "Tellekretsnavn",
-  "Tellekretsnummer",
-  "Endringstype",
-  "Gyldig fra",
-];
 
 type Props = {
   conflictResponse: FramtidigVersjonConflict;
@@ -35,6 +26,8 @@ const StemmekretsUtkastConflictModal = ({
   onNext,
   onCancel,
 }: Props) => {
+  const { t } = useTranslation();
+
   const { fields, getIsConfirmed, register, submit } =
     useStemmekretsConflictModal({
       conflictResponse,
@@ -51,6 +44,16 @@ const StemmekretsUtkastConflictModal = ({
     current.tellekretsnummer ?? "---",
     utkast.endringstype,
     utkast.gyldigFra,
+  ];
+
+  const columns = [
+    t("stemmekrets.Stemmekrets"),
+    t("stemmekrets.Stemmekretsnummer"),
+    t("stemmekrets.Valgdistriktsnummer"),
+    t("stemmekrets.Tellekretsnavn"),
+    t("stemmekrets.Tellekretsnummer"),
+    t("tabell.Endringstype"),
+    t("metadata.Gyldig fra"),
   ];
 
   return (
