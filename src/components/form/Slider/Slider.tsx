@@ -32,7 +32,7 @@ const StyledSlider = styled.input.attrs(() => ({
     border-radius: 50%;
     width: 18px; /* Set a specific slider handle width */
     height: 18px; /* Slider handle height */
-    background-color: var(--white) /* Green background-color */
+    background-color: var(--white); /* White background-color */
     border: 1px solid var(--blue_dark);
     cursor: pointer; /* Cursor on hover */
     transition: 0.2 all;
