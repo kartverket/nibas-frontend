@@ -69,12 +69,17 @@ const useHistory = <T>({ onUndo, onRedo }: Options<T>) => {
     reapply(1);
   };
 
+  const revertAll = () => {
+    revert(history.entries.length);
+  };
+
   return {
     clearHistory,
     undo,
     redo,
     history,
     setHistory,
+    revertAll,
   };
 };
 

@@ -1,19 +1,13 @@
 import Checkbox from "components/Checkbox";
-import { CustomModalWrapper, ModalOverlay } from "components/Feedback/Feedback";
 import Button from "components/form/Button";
 import { ButtonCell } from "components/Kart/OverlayPanels/KretsTable";
+import Modal, {
+  CustomModalWrapper,
+  ModalOverlay,
+} from "components/Modal/Modal";
 import Heading from "components/typography/Heading";
 import { FC } from "react";
-import ReactModal from "react-modal";
 import styled from "styled-components";
-
-if (process.env.NODE_ENV === "test") {
-  // In tests we set it as en empty array to not get loads of warnings
-  // about forgetting to set app-element for the modal
-  ReactModal.setAppElement([] as never);
-} else {
-  ReactModal.setAppElement("#root");
-}
 
 type Props = {
   currentRow: string[];
@@ -30,7 +24,7 @@ const UtkastConflictModal: FC<Props> = ({
   children,
 }) => {
   return (
-    <ReactModal
+    <Modal
       isOpen
       overlayElement={(props, overlayChildren) => (
         <ModalOverlay {...props}>{overlayChildren}</ModalOverlay>
@@ -101,7 +95,7 @@ const UtkastConflictModal: FC<Props> = ({
           Publiser
         </Button>
       </Buttons>
-    </ReactModal>
+    </Modal>
   );
 };
 
