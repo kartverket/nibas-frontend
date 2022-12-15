@@ -19,11 +19,11 @@ import {
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 import { resetMapView } from "utils/map";
+import UtkastConflicts from "./UtkastConflictModal/UtkastConflicts";
 import useFeedback from "hooks/useFeedback";
 import { useToolbarActions } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext";
 import Feedback from "components/Feedback/Feedback";
-import UtkastConflicts from "./UtkastConflicts";
 import { Outline } from "style/mixins";
 
 type Props = {
@@ -161,7 +161,7 @@ const UtkastItem = ({ utkast }: Props) => {
         </UnstyledButton>
         <UnstyledButton onClick={() => openCloseUtkast()}>
           <EditIcon
-            active={utkastActive}
+            $active={utkastActive}
             aria-label={`Aktiver ${utkast.navn}`}
           />
         </UnstyledButton>
@@ -326,12 +326,13 @@ const DeleteIcon = styled(Icon).attrs(() => ({
 
 const EditIcon = styled(Icon).attrs(() => ({
   icon: "edit",
-}))<{ active: boolean }>`
-  color: ${({ active }) => (active ? "var(--white)" : "var(--blue_dark)")};
+}))<{ $active: boolean }>`
+  color: ${({ $active }) => ($active ? "var(--white)" : "var(--blue_dark)")};
   margin-right: 8px;
   border-radius: 50%;
   padding: 4px;
-  background: ${({ active }) => (active ? "var(--blue_dark)" : "transparent")};
+  background: ${({ $active }) =>
+    $active ? "var(--blue_dark)" : "transparent"};
   &:hover {
     background: var(--blue_dark);
     color: var(--white);
