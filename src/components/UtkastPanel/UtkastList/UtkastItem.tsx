@@ -161,7 +161,7 @@ const UtkastItem = ({ utkast }: Props) => {
         </UnstyledButton>
         <UnstyledButton onClick={() => openCloseUtkast()}>
           <EditIcon
-            active={utkastActive}
+            $active={utkastActive}
             aria-label={`Aktiver ${utkast.navn}`}
           />
         </UnstyledButton>
@@ -326,12 +326,13 @@ const DeleteIcon = styled(Icon).attrs(() => ({
 
 const EditIcon = styled(Icon).attrs(() => ({
   icon: "edit",
-}))<{ active: boolean }>`
-  color: ${({ active }) => (active ? "var(--white)" : "var(--blue_dark)")};
+}))<{ $active: boolean }>`
+  color: ${({ $active }) => ($active ? "var(--white)" : "var(--blue_dark)")};
   margin-right: 8px;
   border-radius: 50%;
   padding: 4px;
-  background: ${({ active }) => (active ? "var(--blue_dark)" : "transparent")};
+  background: ${({ $active }) =>
+    $active ? "var(--blue_dark)" : "transparent"};
   &:hover {
     background: var(--blue_dark);
     color: var(--white);
