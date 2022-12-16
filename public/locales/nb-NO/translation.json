@@ -89,16 +89,19 @@
   "Nei": "Nei",
   "{{ kommuneNavn }} kommune": "{{ kommuneNavn }} kommune",
   "tabell": {
-    "Navn": "Navn"
+    "Navn": "Navn",
+    "Endringstype": "Endringstype"
   },
   "grunnkrets": {
-    "Grunnkretsnummer": "Grunnkretsnummer"
+    "Grunnkretsnummer": "Grunnkretsnummer",
+    "Grunnkrets": "Grunnkrets"
   },
   "stemmekrets": {
     "Stemmekretsnummer": "Stemmekretsnummer",
     "Valgdistriktsnummer": "Valgdistriktsnummer",
     "Tellekretsnavn": "Tellekretsnavn",
-    "Tellekretsnummer": "Tellekretsnummer"
+    "Tellekretsnummer": "Tellekretsnummer",
+    "Stemmekrets": "Stemmekrets"
   },
   "Endre": "Endre",
   "utkast": {
@@ -115,7 +118,12 @@
     "Du er nå i redigeringsmodus av dette utkastet": "Du er nå i redigeringsmodus av dette utkastet. Alle endringer du gjør i inndelingene og kartet vil bli lagret på dette utkastet når du klikker på \"Lagre\"-knappen øverst på skjermen.",
     "Endringstype": "Endringstype",
     "Gyldig fra": "Gyldig fra",
-    "Velg en endringstype fra listen": "Velg en endringstype fra listen"
+    "Velg en endringstype fra listen": "Velg en endringstype fra listen",
+    "Konflikt mellom fremtidige endringer": "Konflikt mellom fremtidige endringer",
+    "Endringer du gjorde i dette utkastet har ført til at en annen publisert endring må dobbelsjekkes": "Endringer du gjorde i dette utkastet har ført til at en annen publisert endring må dobbelsjekkes",
+    "Dobbeltsjekk feltene i endringen nedenfor før du publiserer": "Dobbeltsjekk feltene i endringen nedenfor før du publiserer",
+    "Endringer i dette utkastet": "Endringer i dette utkastet",
+    "Fremtidig endring i konflikt": "Fremtidig endring i konflikt"
   },
   "Aktive kartlag": "Aktive kartlag",
   "Logg inn for å se listen": "Logg inn for å se listen",

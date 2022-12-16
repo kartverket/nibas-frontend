@@ -61,7 +61,7 @@ describe("UtkastItem", () => {
     expect(gyldigFraInput).toHaveValue("2022-06-01");
   });
 
-  it("should open conflict modal on conflict response", async () => {
+  it("should open grunnkretsconflict modal on publish conflict", async () => {
     server.use(
       rest.post("/v1/utkast/1/publiser", (req, res, ctx) =>
         res.once(
@@ -87,7 +87,5 @@ describe("UtkastItem", () => {
         name: /Konflikt mellom fremtidige endringer/i,
       })
     ).toBeInTheDocument();
-
-    jest.restoreAllMocks();
   });
 });

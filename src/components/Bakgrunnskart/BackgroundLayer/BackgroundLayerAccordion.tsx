@@ -288,7 +288,7 @@ const DraggableLayer = styled.span`
   flex: 1;
   display: flex;
   flex-direction: row;
-  align-items: unset;
+  align-items: center;
   justify-content: left;
 
   > :first-child {

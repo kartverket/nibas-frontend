@@ -43,7 +43,7 @@ describe("StemmekretserPanel", () => {
       expect(screen.getAllByRole("row")).toHaveLength(3);
     });
     expect(
-      await screen.findByRole("cell", { name: /slemfjord/i })
+      await screen.findByRole("cell", { name: "Slemfjord" })
     ).toBeInTheDocument();
     expect(
       await screen.findByRole("cell", { name: /12/i })
@@ -58,7 +58,7 @@ describe("StemmekretserPanel", () => {
       await screen.findByRole("cell", { name: /tellekretsnavn1/i })
     ).toBeInTheDocument();
     expect(
-      await screen.findByRole("cell", { name: /undredal/i })
+      await screen.findByRole("cell", { name: "Undredal" })
     ).toBeInTheDocument();
     expect(
       await screen.findByRole("cell", { name: /05/i })
@@ -88,7 +88,7 @@ describe("StemmekretserPanel", () => {
     await user.click(
       (
         await screen.findAllByRole("button", {
-          name: /Åpne redigering av stemmekrets/i,
+          name: /Åpne redigering av Slemfjord/i,
         })
       )[0]
     );
@@ -113,7 +113,7 @@ describe("StemmekretserPanel", () => {
     });
 
     expect(
-      await screen.findByRole("cell", { name: /to-hundredal/i })
+      await screen.findByRole("cell", { name: "To-hundredal" })
     ).toBeInTheDocument();
     expect(
       await screen.findByRole("cell", { name: /nytt tellekretsnummer/i })

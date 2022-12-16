@@ -38,9 +38,11 @@ const StemmekretsRow = ({
 
   if (!utkastStemmekrets) return null;
 
+  const name = getNavnInSpraak(utkastStemmekrets.stemmekretsnavn, "nor");
+
   return (
     <KretsRow onClick={() => toggleRow(utkastStemmekrets.id)}>
-      <td>{getNavnInSpraak(utkastStemmekrets.stemmekretsnavn, "nor")}</td>
+      <td>{name}</td>
       <td>{utkastStemmekrets.stemmekretsnummer}</td>
       <td>{utkastStemmekrets.valgdistriktsnummer}</td>
       <td>{utkastStemmekrets.tellekretsnavn}</td>
@@ -62,12 +64,12 @@ const StemmekretsRow = ({
             isRowOpen(utkastStemmekrets.id) ? (
               <Icon
                 icon="expand_less"
-                aria-label="Lukk redigering av stemmekrets"
+                aria-label={`Lukk redigering av ${name}`}
               />
             ) : (
               <Icon
                 icon="expand_more"
-                aria-label="Åpne redigering av stemmekrets"
+                aria-label={`Åpne redigering av ${name}`}
               />
             )
           }
