@@ -62,9 +62,7 @@ describe("Toolbar", () => {
   it("should display Lagre som button if no utkast", () => {
     renderWithUtkastProvider(<Toolbar />);
 
-    expect(
-      screen.getByRole("button", { name: /lagre som/i })
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /lagre/i })).toBeInTheDocument();
   });
 
   it("should display Lagre button if utkast exists", () => {
@@ -80,24 +78,26 @@ describe("Toolbar", () => {
   it("should create utkast correctly and change url to apply it", async () => {
     const { user } = renderWithUtkastProvider(<Toolbar />);
 
-    await user.click(screen.getByRole("button", { name: /lagre som/i }));
+    await user.click(screen.getByRole("button", { name: /lagre/i }));
 
     await user.type(
       screen.getByRole("textbox", { name: /navn på utkast/i }),
       "Utkast 1"
     );
     await user.selectOptions(
-      screen.getByRole("combobox", { name: /type utkast/i }),
+      screen.getByRole("combobox", {
+        name: /velg en endringstype fra listen/i,
+      }),
       "Retting"
     );
 
-    await user.click(screen.getByRole("button", { name: /lagre som/i }));
+    await user.click(screen.getByRole("button", { name: /opprett/i }));
 
     await waitFor(() => expect(window.location.search).toContain("?utkast=1"));
     // denne skal egentlig bli disabled, men det er via clearHistory() som endrer context state
     expect(
       await screen.findByRole("button", {
-        name: "action.Lagre",
+        name: "action.Lagre utkast",
       })
     ).toBeInTheDocument();
     expect(await screen.findByText(/Mock utkast/i)).toBeInTheDocument();
