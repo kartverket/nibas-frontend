@@ -92,7 +92,8 @@
   },
   "grunnkrets": {
     "Grunnkretsnummer": "__STRING_NOT_TRANSLATED__",
-    "Grunnkrets": "__STRING_NOT_TRANSLATED__"
+    "Grunnkrets": "__STRING_NOT_TRANSLATED__",
+    "Søk": "__STRING_NOT_TRANSLATED__"
   },
   "stemmekrets": {
     "Stemmekretsnummer": "__STRING_NOT_TRANSLATED__",

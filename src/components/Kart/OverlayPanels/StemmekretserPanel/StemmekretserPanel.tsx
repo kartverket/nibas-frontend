@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
 import { KretsTable, KretsTableWrapper } from "../KretsTable";
 import useAccordionRows from "../useAccordionRow";
 import EditRow from "./EditRow";
@@ -14,10 +13,14 @@ import {
   getNavnInSpraak,
   sortGrenserAlphabetically,
 } from "utils/language/language";
-import { HeaderButton, OverlayPanelWrapper } from "../metadataComponents";
+import {
+  OverlayPanelWrapper,
+  PanelHeader,
+  PanelHeaderButton,
+  PanelTitle,
+} from "../metadataComponents";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 import Icon from "components/Icon";
-import Heading from "components/typography/Heading";
 import FutureChangesTable, {
   TableRow,
 } from "../GrunnkretserPanel/FutureChangesTable";
@@ -89,45 +92,41 @@ const StemmekretserPanel = ({ kommune }: Props) => {
       gridArea="kretser"
       minimized={kretserContext?.isMinimized}
     >
-      <PanelTitle tag="h2" size="xs">
-        {t("{{ kommuneNavn }} kommune", {
-          kommuneNavn: getNavnInSpraak(kommune.navn, "nor"),
-        })}
-      </PanelTitle>
-      <HeaderButton
-        right={0}
-        icon={<Icon icon="close" />}
-        onClick={() => {
-          closePanel("stemmekrets");
-          closePanel("grensemetadata");
-          toggleEditKretser();
-        }}
-      />
-      <HeaderButton
-        right={50}
-        onClick={() => toggleMinimizePanel("stemmekrets")}
-        icon={
-          kretserContext?.isMinimized ? (
-            <Icon icon="expand_less" />
-          ) : (
-            <Icon icon="expand_more" />
-          )
-        }
-      />
-
-      <PanelTitle tag="h2" size="xs">
-        {t("inndelinger.Stemmekretser")}
-      </PanelTitle>
+      <PanelHeader>
+        <PanelTitle tag="h2" size="xs">
+          {t("{{ kommuneNavn }} kommune", {
+            kommuneNavn: getNavnInSpraak(kommune.navn, "nor"),
+          })}
+        </PanelTitle>
+        <PanelHeaderButton
+          onClick={() => toggleMinimizePanel("stemmekrets")}
+          icon={
+            kretserContext?.isMinimized ? (
+              <Icon icon="expand_less" />
+            ) : (
+              <Icon icon="expand_more" />
+            )
+          }
+        />
+        <PanelHeaderButton
+          icon={<Icon icon="close" />}
+          onClick={() => {
+            closePanel("stemmekrets");
+            closePanel("grensemetadata");
+            toggleEditKretser();
+          }}
+        />
+      </PanelHeader>
       {utkastStemmekretser && (
         <KretsTableWrapper>
           <KretsTable>
             <thead>
               <tr>
-                <th>{t("tabell.Navn")}</th>
                 <th>{t("stemmekrets.Stemmekretsnummer")}</th>
-                <th>{t("stemmekrets.Valgdistriktsnummer")}</th>
+                <th>{t("tabell.Navn")}</th>
                 <th>{t("stemmekrets.Tellekretsnavn")}</th>
                 <th>{t("stemmekrets.Tellekretsnummer")}</th>
+                <th>{t("stemmekrets.Valgdistriktsnummer")}</th>
                 <th>{/* fremtidige endringer-knapp */}</th>
                 <th>{/* dropdown-knapp */}</th>
               </tr>
@@ -166,10 +165,5 @@ const StemmekretserPanel = ({ kommune }: Props) => {
     </OverlayPanelWrapper>
   );
 };
-
-const PanelTitle = styled(Heading)`
-  margin: 0;
-  margin-bottom: 8px;
-`;
 
 export default StemmekretserPanel;

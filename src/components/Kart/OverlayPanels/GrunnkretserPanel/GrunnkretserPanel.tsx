@@ -8,15 +8,15 @@ import {
   KretsTableWrapper,
 } from "../KretsTable";
 import {
-  BlockLabel,
-  HeaderButton,
   OverlayPanelWrapper,
+  PanelHeader,
+  PanelHeaderButton,
+  PanelTitle,
 } from "../metadataComponents";
 import useAccordionRows from "../useAccordionRow";
 import EditRow from "./EditRow";
 import Input from "components/form/Input";
 import Icon from "components/Icon";
-import Heading from "components/typography/Heading";
 import { useInndelingerKrets } from "contexts/InndelingerKretsContext";
 import { useUtkastEntity } from "contexts/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
@@ -114,48 +114,43 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
       gridArea="kretser"
       minimized={kretserContext?.isMinimized}
     >
-      <PanelTitle tag="h2" size="xs">
-        {t("{{ kommuneNavn }} kommune", {
-          kommuneNavn: getNavnInSpraak(kommune.navn, "nor"),
-        })}
-      </PanelTitle>
-      <HeaderButton
-        right={0}
-        icon={<Icon icon="close" />}
-        onClick={() => {
-          closePanel("grunnkrets");
-          closePanel("grensemetadata");
-          toggleEditKretser();
-        }}
-      />
-      <HeaderButton
-        right={50}
-        onClick={() => toggleMinimizePanel("grunnkrets")}
-        icon={
-          kretserContext?.isMinimized ? (
-            <Icon icon="expand_less" />
-          ) : (
-            <Icon icon="expand_more" />
-          )
-        }
-      />
-      <SmallerBlockLabel>
-        {t("sidebar.Søk")}
-        <Input
+      <PanelHeader>
+        <PanelTitle tag="h2" size="xs">
+          {t("{{ kommuneNavn }} kommune", {
+            kommuneNavn: getNavnInSpraak(kommune.navn, "nor"),
+          })}
+        </PanelTitle>
+        <PanelHeaderInput
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
+          placeholder={t("grunnkrets.Søk")}
         />
-      </SmallerBlockLabel>
-      <PanelTitle tag="h2" size="xs">
-        {t("inndelinger.Grunnkretser")}
-      </PanelTitle>
+        <PanelHeaderButton
+          onClick={() => toggleMinimizePanel("grunnkrets")}
+          icon={
+            kretserContext?.isMinimized ? (
+              <Icon icon="expand_less" />
+            ) : (
+              <Icon icon="expand_more" />
+            )
+          }
+        />
+        <PanelHeaderButton
+          icon={<Icon icon="close" />}
+          onClick={() => {
+            closePanel("grunnkrets");
+            closePanel("grensemetadata");
+            toggleEditKretser();
+          }}
+        />
+      </PanelHeader>
       {filteredGrunnkretser && (
         <KretsTableWrapper>
           <KretsTable>
             <thead>
               <tr>
-                <th>{t("tabell.Navn")}</th>
                 <th>{t("grunnkrets.Grunnkretsnummer")}</th>
+                <th>{t("tabell.Navn")}</th>
                 <th></th>
                 <th></th>
               </tr>
@@ -163,9 +158,9 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
             <tbody>
               {filteredGrunnkretser.map((grunnkrets) => (
                 <React.Fragment key={grunnkrets.id}>
-                  <KretsRow onClick={() => toggleRow(grunnkrets.id)}>
-                    <td>{getNavnInSpraak(grunnkrets.navn, "nor")}</td>
+                  <KretsRow isActive={isRowOpen(grunnkrets.id)}>
                     <td>{grunnkrets.grunnkretsnummer}</td>
+                    <td>{getNavnInSpraak(grunnkrets.navn, "nor")}</td>
                     <ButtonCell>
                       {shouldShowFutureChangesButton(grunnkrets) && (
                         <FutureChangesButton
@@ -179,13 +174,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                       <ToggleableKretsButton
                         isOpen={isRowOpen(grunnkrets.id)}
                         onClick={() => toggleRow(grunnkrets.id)}
-                        icon={
-                          isRowOpen(grunnkrets.id) ? (
-                            <Icon icon="expand_less" />
-                          ) : (
-                            <Icon icon="expand_more" />
-                          )
-                        }
+                        icon={<Icon icon="settings" />}
                       />
                     </ButtonCell>
                   </KretsRow>
@@ -216,13 +205,9 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
   );
 };
 
-const PanelTitle = styled(Heading)`
-  margin: 0;
-  margin-bottom: 8px;
-`;
-
-const SmallerBlockLabel = styled(BlockLabel)`
-  max-width: 400px;
+const PanelHeaderInput = styled(Input)`
+  width: 100%;
+  max-width: 300px;
 `;
 
 export default GrunnkretserPanel;

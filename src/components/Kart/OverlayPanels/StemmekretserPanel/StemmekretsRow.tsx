@@ -41,12 +41,12 @@ const StemmekretsRow = ({
   const name = getNavnInSpraak(utkastStemmekrets.stemmekretsnavn, "nor");
 
   return (
-    <KretsRow onClick={() => toggleRow(utkastStemmekrets.id)}>
-      <td>{name}</td>
+    <KretsRow isActive={isRowOpen(utkastStemmekrets.id)}>
       <td>{utkastStemmekrets.stemmekretsnummer}</td>
-      <td>{utkastStemmekrets.valgdistriktsnummer}</td>
+      <td>{name}</td>
       <td>{utkastStemmekrets.tellekretsnavn}</td>
       <td>{utkastStemmekrets.tellekretsnummer}</td>
+      <td>{utkastStemmekrets.valgdistriktsnummer}</td>
       <td>
         {isFremtidigeEndringerActive && (
           <FutureChangesButton
@@ -62,15 +62,9 @@ const StemmekretsRow = ({
           onClick={() => toggleRow(utkastStemmekrets.id)}
           icon={
             isRowOpen(utkastStemmekrets.id) ? (
-              <Icon
-                icon="expand_less"
-                aria-label={`Lukk redigering av ${name}`}
-              />
+              <Icon icon="settings" aria-label={`Lukk redigering av ${name}`} />
             ) : (
-              <Icon
-                icon="expand_more"
-                aria-label={`Åpne redigering av ${name}`}
-              />
+              <Icon icon="settings" aria-label={`Åpne redigering av ${name}`} />
             )
           }
         />

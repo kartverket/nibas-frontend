@@ -1,16 +1,34 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
-export const KretsRow = styled.tr`
-  cursor: pointer;
+export const KretsRow = styled.tr<{ isActive: boolean }>`
+  position: relative;
 
-  &:first-child {
-    td {
-      border-top: none;
-    }
+  ${({ isActive }) =>
+    isActive &&
+    css`
+      background: var(--blue_light);
+    `};
+
+  ::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    height: 100%;
+    width: 3px;
+    transition: background 0.1s;
+    ${({ isActive }) =>
+      isActive &&
+      css`
+        background: var(--blue_dark);
+      `};
+  }
+
+  :hover::after {
+    background: var(--blue_dark);
   }
 
   td {
-    border-top: 1px solid var(--gray);
+    border-bottom: 2px solid var(--gray_light);
   }
 `;
 
@@ -19,30 +37,22 @@ export const KretsTable = styled.table`
   border: none;
   width: 100%;
 
-  > thead {
-    text-transform: uppercase;
-    text-align: left;
-    color: var(--gray);
-    font-size: 16px;
-
-    th {
-      border-bottom: 1px solid var(--black);
-      position: sticky;
-      top: 0;
-      background: var(--white);
-      padding-left: 8px;
-      padding-bottom: 8px;
-    }
+  td,
+  th {
+    padding: 16px;
   }
 
-  > tbody {
-    > ${KretsRow} {
-      background-color: var(--blue_light);
+  > thead {
+    text-align: left;
+    font-size: 14px;
 
-      > td {
-        padding: 8px;
-        font-size: 14px;
-      }
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      font-weight: normal;
+      background: var(--white);
+      border-bottom: 1px solid var(--black);
     }
   }
 `;

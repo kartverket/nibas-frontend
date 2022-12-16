@@ -143,7 +143,7 @@ const EditRow = ({ stemmekrets, kommuneId }: Props) => {
 };
 
 const AccordionRow = styled.tr`
-  background-color: var(--blue_light);
+  background-color: var(--gray_light);
 
   td {
     padding: 8px;
