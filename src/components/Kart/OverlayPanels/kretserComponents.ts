@@ -15,6 +15,7 @@ export const ToggleableKretsButton = styled(Button).attrs(() => ({
 
   &:hover,
   &:focus-visible {
+    color: ${({ isOpen }) => !isOpen && "var(--blue_dark)"};
     background: ${({ isOpen }) => !isOpen && "var(--blue_light)"};
   }
 
