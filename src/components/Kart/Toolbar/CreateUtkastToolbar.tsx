@@ -58,7 +58,7 @@ const CreateUtkastToolbar = ({ closeCreateUtkast }: Props) => {
           />
         </BlockLabel>
         <BlockLabel>
-          {t("utkast.Endringstype")}
+          {t("utkast.Velg en endringstype fra listen")}
           <Select
             value={utkastType}
             onChange={(e) => setUtkastType(e.target.value)}
@@ -101,7 +101,7 @@ const ToolbarWrapperCreateUtkast = styled(ToolbarWrapper)`
   display: flex;
   flex-direction: coloumn;
   gap: 28px;
-  width: 363px;
+  width: 352px;
   margin-left: auto;
   margin-right: 0;
   margin-top: 0;
@@ -120,7 +120,7 @@ const Buttons = styled.div`
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  width: 300px;
+  width: 100%;
 
   .button {
     margin-bottom: 0;
