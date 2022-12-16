@@ -8,13 +8,11 @@ const Toolbar = () => {
 
   return (
     <ToolbarArea>
+      <DefaultToolbar openCreateUtkast={() => setCreateUtkastOpen(true)} />
       {createUtkastOpen && (
         <CreateUtkastToolbar
           closeCreateUtkast={() => setCreateUtkastOpen(false)}
         />
-      )}
-      {!createUtkastOpen && (
-        <DefaultToolbar openCreateUtkast={() => setCreateUtkastOpen(true)} />
       )}
     </ToolbarArea>
   );

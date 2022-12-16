@@ -82,7 +82,8 @@
     "Forkast": "Forkast",
     "Rediger": "Rediger",
     "Lukk Utkast": "Lukk utkast",
-    "Lagre utkast": "Lagre utkast"
+    "Lagre utkast": "Lagre utkast",
+    "Opprett": "Opprett"
   },
   "Ja": "Ja",
   "Nei": "Nei",
@@ -111,7 +112,9 @@
     "Nummerendring": "Nummerendring",
     "Navn på utkast": "Navn på utkast",
     "Type utkast": "Type utkast",
-    "Du er nå i redigeringsmodus av dette utkastet": "Du er nå i redigeringsmodus av dette utkastet. Alle endringer du gjør i inndelingene og kartet vil bli lagret på dette utkastet når du klikker på \"Lagre\"-knappen øverst på skjermen."
+    "Du er nå i redigeringsmodus av dette utkastet": "Du er nå i redigeringsmodus av dette utkastet. Alle endringer du gjør i inndelingene og kartet vil bli lagret på dette utkastet når du klikker på \"Lagre\"-knappen øverst på skjermen.",
+    "Endringstype": "Endringstype",
+    "Gyldig fra": "Gyldig fra"
   },
   "Aktive kartlag": "Aktive kartlag",
   "Logg inn for å se listen": "Logg inn for å se listen",

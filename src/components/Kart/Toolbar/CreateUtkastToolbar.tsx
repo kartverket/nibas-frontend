@@ -48,7 +48,7 @@ const CreateUtkastToolbar = ({ closeCreateUtkast }: Props) => {
   };
 
   return (
-    <ToolbarWrapper>
+    <ToolbarWrapperCreateUtkast>
       <Wrapper>
         <BlockLabel>
           {t("utkast.Navn på utkast")}
@@ -58,7 +58,7 @@ const CreateUtkastToolbar = ({ closeCreateUtkast }: Props) => {
           />
         </BlockLabel>
         <BlockLabel>
-          {t("utkast.Type utkast")}
+          {t("utkast.Endringstype")}
           <Select
             value={utkastType}
             onChange={(e) => setUtkastType(e.target.value)}
@@ -73,19 +73,55 @@ const CreateUtkastToolbar = ({ closeCreateUtkast }: Props) => {
             ))}
           </Select>
         </BlockLabel>
-
-        <Button onClick={closeCreateUtkast} variant="secondary">
-          {t("action.Lukk")}
-        </Button>
-        <Button onClick={createUtkast} disabled={utkastType === ""}>
-          {t("action.Lagre som")}
-        </Button>
+        <Buttons>
+          <CloseUtkastButton onClick={closeCreateUtkast} variant="unstyled">
+            {t("action.Avbryt")}
+          </CloseUtkastButton>
+          <Button onClick={createUtkast} disabled={utkastType === ""}>
+            {t("action.Opprett")}
+          </Button>
+        </Buttons>
       </Wrapper>
-    </ToolbarWrapper>
+    </ToolbarWrapperCreateUtkast>
   );
 };
 
+const CloseUtkastButton = styled(Button)`
+  padding: 0 16px;
+  color: var(--blue);
+  font-weight: bold;
+
+  &:hover {
+    text-decoration: underline;
+    text-underline-position: under;
+  }
+`;
+
+const ToolbarWrapperCreateUtkast = styled(ToolbarWrapper)`
+  display: flex;
+  flex-direction: coloumn;
+  gap: 28px;
+  width: 363px;
+  margin-left: auto;
+  margin-right: 0;
+  margin-top: 0;
+  border-top: 0;
+
+  p {
+    margin-top: 0;
+  }
+`;
+
+const Buttons = styled.div`
+  margin-left: auto;
+  margin-right: 0;
+`;
+
 const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+
   .button {
     margin-bottom: 0;
 

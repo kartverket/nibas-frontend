@@ -82,7 +82,8 @@
     "Forkast": "__STRING_NOT_TRANSLATED__",
     "Rediger": "__STRING_NOT_TRANSLATED__",
     "Lukk Utkast": "__STRING_NOT_TRANSLATED__",
-    "Lagre utkast": "__STRING_NOT_TRANSLATED__"
+    "Lagre utkast": "__STRING_NOT_TRANSLATED__",
+    "Opprett": "__STRING_NOT_TRANSLATED__"
   },
   "Ja": "__STRING_NOT_TRANSLATED__",
   "Nei": "__STRING_NOT_TRANSLATED__",
@@ -111,7 +112,9 @@
     "Nummerendring": "__STRING_NOT_TRANSLATED__",
     "Navn på utkast": "__STRING_NOT_TRANSLATED__",
     "Type utkast": "__STRING_NOT_TRANSLATED__",
-    "Du er nå i redigeringsmodus av dette utkastet": "__STRING_NOT_TRANSLATED__"
+    "Du er nå i redigeringsmodus av dette utkastet": "__STRING_NOT_TRANSLATED__",
+    "Endringstype": "__STRING_NOT_TRANSLATED__",
+    "Gyldig fra": "__STRING_NOT_TRANSLATED__"
   },
   "Aktive kartlag": "__STRING_NOT_TRANSLATED__",
   "Logg inn for å se listen": "__STRING_NOT_TRANSLATED__",
