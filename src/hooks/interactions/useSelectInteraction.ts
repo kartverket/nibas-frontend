@@ -9,6 +9,7 @@ import { dirtyStyles, selectStyles } from "utils/map/layerStyles";
 import Style from "ol/style/Style";
 import { getFeatureId } from "utils/map/source";
 import { useToolbar } from "contexts/ToolbarContext";
+import { click } from "ol/events/condition";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -26,7 +27,26 @@ const useSelectInteraction = () => {
   const { openPanel, closePanel } = useOverlayPanels();
 
   useEffect(() => {
-    const select = new Select({ hitTolerance: 5, style: null });
+    const select = new Select({
+      hitTolerance: 5,
+      style: null,
+      condition: (e) => {
+        if (!click(e)) return false;
+
+        const feature = map.getFeaturesAtPixel(e.pixel);
+
+        // skru av Select hvis det er en punkt som klikkes på
+        // når dette lages gjelder dette kun representasjonspunkt
+        if (
+          feature.length === 1 &&
+          feature[0].getGeometry()?.getType() === "Point"
+        ) {
+          return false;
+        }
+
+        return true;
+      },
+    });
 
     select.on("select", () => {
       setFeatures(select.getFeatures().getArray().slice());

@@ -9,7 +9,7 @@ export const modify = new Modify({
     const feature = editSource.getFeaturesAtCoordinate(e.coordinate);
 
     // skru av modify hvis det er en punkt som dras på
-    // når dette lages gjelder dette kun representaaasjonspunkt
+    // når dette lages gjelder dette kun representasjonspunkt
     if (
       feature.length === 1 &&
       feature[0].getGeometry()?.getType() === "Point"
