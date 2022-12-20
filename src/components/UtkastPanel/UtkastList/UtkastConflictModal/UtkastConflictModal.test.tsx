@@ -17,9 +17,7 @@ describe("UtkastConflictModal", () => {
   it("should show 2 rows for headers, 1 row for current item and 2 rows for conflicted items", async () => {
     render(<UtkastConflictModal {...defaultProps} />);
 
-    await waitFor(async () =>
-      expect(await screen.findAllByRole("row")).toHaveLength(5)
-    ); // 2 headers + 1 current + 2 future
+    await waitFor(() => expect(screen.getAllByRole("row")).toHaveLength(5)); // 2 headers + 1 current + 2 future
 
     expect(screen.getAllByRole("cell", { name: /retting/i })).toHaveLength(3);
 
@@ -52,7 +50,7 @@ describe("UtkastConflictModal", () => {
     const { user } = render(<UtkastConflictModal {...defaultProps} />);
 
     await waitFor(
-      async () => expect(await screen.findAllByRole("row")).toHaveLength(5) // 2 headers + 1 current + 2 future
+      () => expect(screen.getAllByRole("row")).toHaveLength(5) // 2 headers + 1 current + 2 future
     );
 
     const publishButton = screen.getByRole("button", { name: /publiser/i });

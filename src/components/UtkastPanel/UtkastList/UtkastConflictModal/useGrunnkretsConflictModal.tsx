@@ -10,6 +10,7 @@ import {
   GrunnkretsResponse,
   UtkastResponse,
 } from "types/api";
+import { getIdFromEntity } from "utils/api";
 
 type GrunnkretsFormData = {
   grunnkretsnummer: string;
@@ -68,7 +69,9 @@ const useGrunnkretsConflictModal = ({
     () =>
       futureVersions?.filter((fv) =>
         conflictResponse.affectedIds.some(
-          (affectedId) => affectedId.gyldigFra === fv.gyldighet.gyldigFra
+          (affectedId) =>
+            affectedId.lokalid.value === getIdFromEntity(fv) &&
+            affectedId.gyldighetsdato === fv.id.gyldighetsdato
         )
       ),
     [futureVersions, conflictResponse.affectedIds]
@@ -91,7 +94,7 @@ const useGrunnkretsConflictModal = ({
 
     const resolvedConflict: ConflictResolved = {
       lokalid: {
-        value: grunnkrets.identifikasjon.lokalid,
+        value: getIdFromEntity(grunnkrets),
       },
       grunnkretsRequests: data.grunnkretser
         .map((g) => ({

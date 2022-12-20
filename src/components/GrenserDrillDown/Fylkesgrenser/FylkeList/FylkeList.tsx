@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import ApiGrense from "../../ApiGrense";
 import useFylker from "hooks/inndelinger/useFylker";
+import { getIdFromEntity } from "utils/api";
 
 const FylkeList = () => {
   const { fylker, error } = useFylker();
@@ -16,9 +17,9 @@ const FylkeList = () => {
     <Wrapper>
       {fylker.map((fylke) => (
         <ApiGrense
-          key={fylke.id}
+          key={getIdFromEntity(fylke)}
           grense={fylke}
-          featuresUrl={`/v1/fylker/${fylke.id}/grenser`}
+          featuresUrl={`/v1/fylker/${getIdFromEntity(fylke)}/grenser`}
           type="fylke"
         />
       ))}

@@ -7,6 +7,7 @@ import { UnstyledList } from "components/UnstyledList";
 import { InndelingerKretsProvider } from "contexts/InndelingerKretsContext";
 import useFylker from "hooks/inndelinger/useFylker";
 import { getNavnInSpraak } from "utils/language/language";
+import { getIdFromEntity } from "utils/api";
 
 const Stemmekretser = () => {
   const { fylker } = useFylker();
@@ -20,7 +21,7 @@ const Stemmekretser = () => {
           <List>
             {fylker.map((fylke) => (
               <ListItemAccordion
-                key={fylke.id}
+                key={getIdFromEntity(fylke)}
                 title={getNavnInSpraak(fylke.navn, "nor")}
               >
                 <KommuneList fylke={fylke} />

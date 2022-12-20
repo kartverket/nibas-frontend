@@ -1,6 +1,7 @@
 import Icon from "components/Icon";
 import styled from "styled-components";
 import { GrunnkretsRef, KretsRef } from "types/api";
+import { getIdFromEntity } from "utils/api";
 import { getNavnInSpraak } from "utils/language/language";
 import { ToggleableKretsButton } from "./kretserComponents";
 
@@ -20,7 +21,7 @@ const FutureChangesButton = ({ isOpen, toggleRow, krets }: Props) => {
       isOpen={isOpen}
       onClick={(e) => {
         e.stopPropagation();
-        toggleRow(krets.id);
+        toggleRow(getIdFromEntity(krets));
       }}
       aria-label={`${
         isOpen ? "Skjul" : "Vis"

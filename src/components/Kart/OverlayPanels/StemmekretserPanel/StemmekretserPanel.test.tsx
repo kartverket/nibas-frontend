@@ -102,7 +102,7 @@ describe("StemmekretserPanel", () => {
         stemmekretsnavn: "To-hundredal",
         stemmekretsnummer: "05",
         identifikasjon: {
-          lokalid: "c1fac231-e9ae-404e-bf09-adf0c15cf948",
+          lokalid: "1",
         },
         kommunenummer: "c416fb1d-2124-4f71-8dfc-859c55feb437",
         tellekretsnummer: "Nytt tellekretsnummer",

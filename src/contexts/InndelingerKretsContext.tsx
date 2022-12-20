@@ -6,6 +6,7 @@ import { editSource } from "hooks/layers/constants";
 import { LayerId } from "hooks/layers/types";
 import { FeatureProperties, KommuneRef } from "types/api";
 import { getFeatureId, removeFeaturesFromSourceByIds } from "utils/map/source";
+import { getIdFromEntity } from "utils/api";
 
 export type Kretstype = "grunnkrets" | "stemmekrets";
 
@@ -50,6 +51,7 @@ export const InndelingerKretsProvider: React.FC<Props> = ({
 };
 
 export const useInndelingerKrets = (kommune: KommuneRef) => {
+  const kommuneId = getIdFromEntity(kommune);
   const context = useContext(InndelingerKretsContext);
 
   if (!context) {
@@ -64,25 +66,25 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
     useEditGrenser(currentKretstype);
   const { openPanel, closePanels, closePanel } = useOverlayPanels();
   const { addKretserToLayer, removeKretserFromLayer } = useKretsgrenser(
-    kommune.id,
+    kommuneId,
     currentKretstype
   );
 
-  const kommuneValues = values[kommune.id] ?? {};
+  const kommuneValues = values[kommuneId] ?? {};
 
   const toggleEditKretser = () => {
     const newEditing = !kommuneValues.editing;
     const newValues = {
       ...values,
-      [kommune.id]: {
+      [kommuneId]: {
         visible: newEditing,
         editing: newEditing,
       },
     };
 
     if (newEditing) {
-      Object.keys(values).forEach((kommuneId) => {
-        if (kommuneId === kommune.id) return;
+      Object.keys(values).forEach((kommuneIdInList) => {
+        if (kommuneId === kommuneIdInList) return;
 
         // fjern features til kretsene som var endret før klikk
         if (newValues[kommuneId]?.visible && newValues[kommuneId]?.editing) {
@@ -126,7 +128,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
 
   const toggleKretser = () => {
     const newVisible = !kommuneValues.visible;
-    setObjectValue(kommune.id, {
+    setObjectValue(kommuneId, {
       visible: newVisible,
       editing: kommuneValues.editing,
     });

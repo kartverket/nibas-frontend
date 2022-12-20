@@ -10,6 +10,7 @@ import {
   StemmekretsResponse,
   UtkastResponse,
 } from "types/api";
+import { getIdFromEntity } from "utils/api";
 
 type StemmekretsFormData = {
   stemmekretsnummer: string;
@@ -74,7 +75,9 @@ const useStemmekretsConflictModal = ({
     () =>
       futureVersions?.filter((fv) =>
         conflictResponse.affectedIds.some(
-          (affectedId) => affectedId.gyldigFra === fv.gyldighet.gyldigFra
+          (affectedId) =>
+            affectedId.lokalid.value === getIdFromEntity(fv) &&
+            affectedId.gyldighetsdato === fv.id.gyldighetsdato
         )
       ),
     [futureVersions, conflictResponse.affectedIds]
@@ -97,7 +100,7 @@ const useStemmekretsConflictModal = ({
 
     const resolvedConflict: ConflictResolved = {
       lokalid: {
-        value: stemmekrets.identifikasjon.lokalid,
+        value: getIdFromEntity(stemmekrets),
       },
       stemmekretsRequests: data.stemmekretser
         .map((s) => ({

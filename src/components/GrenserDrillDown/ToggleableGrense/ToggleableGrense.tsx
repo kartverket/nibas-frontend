@@ -8,6 +8,7 @@ import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
 import { GrenseId } from "hooks/layers/types";
 import { GrenseRef } from "types/api";
 import { useTranslation } from "react-i18next";
+import { getIdFromEntity } from "utils/api";
 import { Outline } from "style/mixins";
 
 export const layerIdByGrenseType: Record<EditingType, GrenseId> = {
@@ -32,7 +33,11 @@ const ToggleableGrense = <T extends GrenseRef>({
   features,
 }: Props<T>) => {
   const { t } = useTranslation();
-  const { value, toggleVisible } = useEditGrense(type, grense.id, features);
+  const { value, toggleVisible } = useEditGrense(
+    type,
+    getIdFromEntity(grense),
+    features
+  );
 
   const openInfo = () => {
     // todo

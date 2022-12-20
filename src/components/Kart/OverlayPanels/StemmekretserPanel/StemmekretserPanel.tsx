@@ -22,12 +22,14 @@ import FutureChangesTable, {
   TableRow,
 } from "../GrunnkretserPanel/FutureChangesTable";
 import { FutureChangesTableData } from "../kretserComponents";
+import { getIdFromEntity } from "utils/api";
 
 type Props = {
   kommune: KommuneRef;
 };
 
 const StemmekretserPanel = ({ kommune }: Props) => {
+  const kommuneId = getIdFromEntity(kommune);
   const { t } = useTranslation();
   const { isRowOpen, toggleRow } = useAccordionRows();
   const { isRowOpen: isFutureChangesOpen, toggleRow: toggleFutureChangesRow } =
@@ -36,7 +38,7 @@ const StemmekretserPanel = ({ kommune }: Props) => {
   const { data: stemmekretserByKommune } = useNibasApi(
     "/v1/kommuner/{id}/stemmekretser",
     {
-      id: kommune.id,
+      id: kommuneId,
     }
   );
 
@@ -66,7 +68,7 @@ const StemmekretserPanel = ({ kommune }: Props) => {
   const getFutureChangesRows = useCallback(
     (futureChanges: StemmekretsResponse[]): TableRow[] =>
       futureChanges.map((stemmekrets) => ({
-        id: stemmekrets.id,
+        id: getIdFromEntity(stemmekrets),
         cells: [
           stemmekrets.stemmekretsnummer,
           stemmekrets.stemmekretsnavn,
@@ -134,22 +136,24 @@ const StemmekretserPanel = ({ kommune }: Props) => {
             </thead>
             <tbody>
               {utkastStemmekretser.map((stemmekrets) => (
-                <React.Fragment key={stemmekrets.id}>
+                <React.Fragment key={getIdFromEntity(stemmekrets)}>
                   <StemmekretsRow
                     stemmekretsRef={stemmekrets}
                     toggleRow={toggleRow}
                     isRowOpen={isRowOpen}
-                    isFutureChangesOpen={isFutureChangesOpen(stemmekrets.id)}
+                    isFutureChangesOpen={isFutureChangesOpen(
+                      getIdFromEntity(stemmekrets)
+                    )}
                     toggleFutureChangesRow={toggleFutureChangesRow}
                   />
-                  {isRowOpen(stemmekrets.id) && (
-                    <EditRow stemmekrets={stemmekrets} kommuneId={kommune.id} />
+                  {isRowOpen(getIdFromEntity(stemmekrets)) && (
+                    <EditRow stemmekrets={stemmekrets} kommuneId={kommuneId} />
                   )}
-                  {isFutureChangesOpen(stemmekrets.id) && (
+                  {isFutureChangesOpen(getIdFromEntity(stemmekrets)) && (
                     <tr>
                       <FutureChangesTableData colSpan={7}>
                         <FutureChangesTable
-                          id={stemmekrets.id}
+                          id={getIdFromEntity(stemmekrets)}
                           headers={headers}
                           getRows={getFutureChangesRows}
                           futureChangesUrl="/v1/grunnkretser/{lokalid}/framtidigeversjoner"

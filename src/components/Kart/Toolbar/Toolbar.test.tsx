@@ -13,12 +13,23 @@ const mockToolbarHistory: ToolbarHistory = {
       kommuneId: "1",
       changes: [
         {
-          from: mockDetailedGrunnkrets1,
+          from: {
+            grunnkretsnummer: mockDetailedGrunnkrets1.grunnkretsnummer,
+            navn: mockDetailedGrunnkrets1.navn,
+            version: mockDetailedGrunnkrets1.version,
+            identifikasjon: {
+              lokalid: mockDetailedGrunnkrets1.id.lokalid.value,
+            },
+          },
           to: {
-            ...mockDetailedGrunnkrets1,
+            grunnkretsnummer: mockDetailedGrunnkrets1.grunnkretsnummer,
+            version: mockDetailedGrunnkrets1.version,
+            identifikasjon: {
+              lokalid: mockDetailedGrunnkrets1.id.lokalid.value,
+            },
             navn: "Ny grunnkrets!",
           },
-          id: mockDetailedGrunnkrets1.id,
+          id: mockDetailedGrunnkrets1.id.lokalid.value,
         },
       ],
     },

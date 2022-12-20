@@ -4,7 +4,11 @@ export type EntityUtkastType = "stemmekretsendringer" | "grunnkretsendringer";
 export type FeatureUtkastType = "featureEndringer";
 
 export type ResponseWithId = {
-  id: string;
+  id: {
+    lokalid: {
+      value: string;
+    };
+  };
 };
 
 export type UtkastContextValue = {

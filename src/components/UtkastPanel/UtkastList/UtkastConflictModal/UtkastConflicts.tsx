@@ -6,6 +6,7 @@ import {
   StemmekretsRequest,
   UtkastMetadataendringer,
 } from "types/api";
+import { getIdFromEntity } from "utils/api";
 import GrunnkretsUtkastConflictModal from ".";
 import { metadataendringerKeyByConflictType } from "./constants";
 import StemmekretsUtkastConflictModal from "./StemmekretsUtkastConflictModal";
@@ -35,7 +36,7 @@ const UtkastConflicts = ({
 
   const currentItem =
     utkast?.operasjoner.metadataendringer[metadataendringerKey]?.[
-      conflictResponse.id.lokalid.value
+      getIdFromEntity(conflictResponse)
     ];
 
   const isStemmekretsEnabled = useFlag("fremtidige-endringer-stemmekretser");
