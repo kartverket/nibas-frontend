@@ -13,7 +13,7 @@ const Toolbar = () => {
 
     const timeId = setTimeout(() => {
       setUtkastJustCreated(false);
-    }, 8000);
+    }, 5000);
 
     return () => {
       clearTimeout(timeId);

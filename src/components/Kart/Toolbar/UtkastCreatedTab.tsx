@@ -22,6 +22,23 @@ const Wrapper = styled.div`
   color: var(--white);
   width: 300px;
   box-shadow: 0 8px 6px -6px var(--gray);
+
+  animation: fadeInOut 5s ease-in-out;
+
+  @keyframes fadeInOut {
+    0% {
+      opacity: 0;
+    }
+    25% {
+      opacity: 1;
+    }
+    75% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
 `;
 
 export default UtkastCreatedTab;
