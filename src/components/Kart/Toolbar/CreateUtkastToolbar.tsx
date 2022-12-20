@@ -16,9 +16,10 @@ import { Translation } from "i18n";
 
 type Props = {
   closeCreateUtkast: () => void;
+  promptUtkast: () => void;
 };
 
-const CreateUtkastToolbar = ({ closeCreateUtkast }: Props) => {
+const CreateUtkastToolbar = ({ closeCreateUtkast, promptUtkast }: Props) => {
   const { t } = useTranslation();
   const [utkastName, setUtkastName] = useState("");
   const [utkastType, setUtkastType] = useState("");
@@ -43,8 +44,9 @@ const CreateUtkastToolbar = ({ closeCreateUtkast }: Props) => {
     const utkastId = json.id;
 
     closeCreateUtkast();
-    clearHistory();
     setSearchParams({ utkast: utkastId });
+    clearHistory();
+    promptUtkast();
   };
 
   return (
@@ -55,16 +57,17 @@ const CreateUtkastToolbar = ({ closeCreateUtkast }: Props) => {
           <Input
             value={utkastName}
             onChange={(e) => setUtkastName(e.target.value)}
+            placeholder="f.eks. Endring av stemmekrets i Froland"
           />
         </BlockLabel>
         <BlockLabel>
-          {t("utkast.Velg en endringstype fra listen")}
+          {t("utkast.Endringstype")}
           <Select
             value={utkastType}
             onChange={(e) => setUtkastType(e.target.value)}
           >
             <option value="" disabled>
-              ---
+              {t("utkast.Velg en endringstype fra listen")}
             </option>
             {Object.keys(translateKeysByEndringsType).map((type) => (
               <option key={type} value={type}>
@@ -77,7 +80,10 @@ const CreateUtkastToolbar = ({ closeCreateUtkast }: Props) => {
           <CloseUtkastButton onClick={closeCreateUtkast} variant="unstyled">
             {t("action.Avbryt")}
           </CloseUtkastButton>
-          <Button onClick={createUtkast} disabled={utkastType === ""}>
+          <Button
+            onClick={createUtkast}
+            disabled={utkastType === "" || utkastName === ""}
+          >
             {t("action.Opprett")}
           </Button>
         </Buttons>

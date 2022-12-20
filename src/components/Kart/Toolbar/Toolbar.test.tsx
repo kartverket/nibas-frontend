@@ -39,6 +39,7 @@ const renderWithProvider = (
       utkast,
       updateUtkastWithHistory: jest.fn(),
       closeUtkast: jest.fn(),
+      isValidating: false,
     },
   });
 

@@ -2,16 +2,32 @@ import { useState } from "react";
 import styled from "styled-components";
 import CreateUtkastToolbar from "./CreateUtkastToolbar";
 import DefaultToolbar from "./DefaultToolbar";
+import UtkastCreatedTab from "./UtkastCreatedTab";
 
 const Toolbar = () => {
   const [createUtkastOpen, setCreateUtkastOpen] = useState(false);
+  const [utkastJustCreated, setUtkastJustCreated] = useState(false);
+
+  const promptUtkast = () => {
+    setUtkastJustCreated(true);
+
+    const timeId = setTimeout(() => {
+      setUtkastJustCreated(false);
+    }, 8000);
+
+    return () => {
+      clearTimeout(timeId);
+    };
+  };
 
   return (
     <ToolbarArea>
       <DefaultToolbar openCreateUtkast={() => setCreateUtkastOpen(true)} />
+      {utkastJustCreated && <UtkastCreatedTab />}
       {createUtkastOpen && (
         <CreateUtkastToolbar
           closeCreateUtkast={() => setCreateUtkastOpen(false)}
+          promptUtkast={promptUtkast}
         />
       )}
     </ToolbarArea>
