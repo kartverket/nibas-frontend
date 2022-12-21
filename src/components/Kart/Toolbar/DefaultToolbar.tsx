@@ -41,7 +41,7 @@ const DefaultToolbar = ({ openCreateUtkast, utkastJustCreated }: Props) => {
             <Icon icon="redo" />
           </ButtonWithIcon>
         </Buttons>
-        <Seperator />
+        <Separator />
         <Buttons>
           {utkast && (
             <div>
@@ -108,7 +108,7 @@ const Buttons = styled.div`
   }
 `;
 
-const Seperator = styled.div`
+const Separator = styled.div`
   border-right: 1px solid var(--gray);
 `;
 

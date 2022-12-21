@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import Icon from "components/Icon";
 
 const UtkastCreatedTab = () => {
@@ -12,6 +12,25 @@ const UtkastCreatedTab = () => {
     </Wrapper>
   );
 };
+
+const fadeInFadeOutFromTop = keyframes`
+  0% {
+    opacity: 0;
+    margin-top: 0px;
+  }
+  15% {
+    opacity: 1;
+    margin-top: 16px;
+  } 
+  80% {
+    opacity: 1;
+    margin-top: 16px;
+  }
+  100% {
+    opacity: 0;
+    margin-top: 16px;
+  }
+`;
 
 const Wrapper = styled.div`
   display: flex;
@@ -26,26 +45,7 @@ const Wrapper = styled.div`
   gap: 12px;
   opacity: 0;
 
-  animation: fadeInOut 5s ease-in-out;
-
-  @keyframes fadeInOut {
-    0% {
-      opacity: 0;
-      margin-top: 0px;
-    }
-    15% {
-      opacity: 1;
-      margin-top: 16px;
-    }
-    80% {
-      opacity: 1;
-      margin-top: 16px;
-    }
-    100% {
-      opacity: 0;
-      margin-top: 16px;
-    }
-  }
+  animation: ${fadeInFadeOutFromTop} 5s ease-in-out;
 `;
 
 export default UtkastCreatedTab;
