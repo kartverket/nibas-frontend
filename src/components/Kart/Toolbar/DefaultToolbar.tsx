@@ -8,12 +8,14 @@ import Feedback from "components/Feedback/Feedback";
 import useFeedback from "hooks/useFeedback";
 import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
 import Icon from "components/Icon";
+import UtkastCreatedTab from "./UtkastCreatedTab";
 
 type Props = {
   openCreateUtkast: () => void;
+  utkastJustCreated: boolean;
 };
 
-const DefaultToolbar = ({ openCreateUtkast }: Props) => {
+const DefaultToolbar = ({ openCreateUtkast, utkastJustCreated }: Props) => {
   const { t } = useTranslation();
   const { canSave, undo, redo } = useToolbarActions();
   const { utkast, updateUtkastWithHistory, closeUtkast } = useUtkast();
@@ -51,7 +53,7 @@ const DefaultToolbar = ({ openCreateUtkast }: Props) => {
             variant="secondary"
             onClick={canSave ? openFeedback : closeUtkast}
           >
-            {t("action.Avslutt redigering")}
+            {t("action.Lukk utkast")}
           </Button>
           {utkast && (
             <Button onClick={updateUtkastWithHistory} disabled={!canSave}>
@@ -65,6 +67,7 @@ const DefaultToolbar = ({ openCreateUtkast }: Props) => {
           )}
         </Buttons>
       </ToolbarWrapperWithName>
+
       <Feedback
         type="warning"
         title="Advarsel"
@@ -76,6 +79,7 @@ const DefaultToolbar = ({ openCreateUtkast }: Props) => {
       >
         {feedbackContent}
       </Feedback>
+      {utkastJustCreated && <UtkastCreatedTab />}
     </div>
   );
 };

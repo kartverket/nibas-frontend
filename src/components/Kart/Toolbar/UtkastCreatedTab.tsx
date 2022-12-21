@@ -14,29 +14,36 @@ const UtkastCreatedTab = () => {
 };
 
 const Wrapper = styled.div`
+  display: flex;
+  align-items: center;
   background-color: var(--green);
-  padding: 8px 16px;
+  padding: 16px;
   margin-left: 30px;
-  margin-top: 16px;
   font-size: 16px;
   color: var(--white);
-  width: 300px;
+  width: calc(100% - 30px);
   box-shadow: 0 8px 6px -6px var(--gray);
+  gap: 12px;
+  opacity: 0;
 
   animation: fadeInOut 5s ease-in-out;
 
   @keyframes fadeInOut {
     0% {
       opacity: 0;
+      margin-top: 0px;
     }
-    25% {
+    15% {
       opacity: 1;
+      margin-top: 16px;
     }
-    75% {
+    80% {
       opacity: 1;
+      margin-top: 16px;
     }
     100% {
       opacity: 0;
+      margin-top: 16px;
     }
   }
 `;

@@ -22,8 +22,11 @@ const Toolbar = () => {
 
   return (
     <ToolbarArea>
-      <DefaultToolbar openCreateUtkast={() => setCreateUtkastOpen(true)} />
-      {utkastJustCreated && <UtkastCreatedTab />}
+      <DefaultToolbar
+        openCreateUtkast={() => setCreateUtkastOpen(true)}
+        utkastJustCreated={utkastJustCreated}
+      />
+
       {createUtkastOpen && (
         <CreateUtkastToolbar
           closeCreateUtkast={() => setCreateUtkastOpen(false)}
