@@ -41,7 +41,11 @@ export const UtkastProvider: React.FC = ({ children }) => {
 
   const { mutate: globalMutate } = useSWRConfig();
 
-  const { data: utkast, mutate } = useNibasApi(
+  const {
+    data: utkast,
+    mutate,
+    isValidating,
+  } = useNibasApi(
     utkastId ? "/v1/utkast/{id}" : null,
     {
       // id blir ikke brukt før den er truthy, så vi kan trygt si at den
@@ -109,7 +113,7 @@ export const UtkastProvider: React.FC = ({ children }) => {
     clearHistory();
   };
 
-  const value = { utkast, updateUtkastWithHistory, closeUtkast };
+  const value = { utkast, updateUtkastWithHistory, closeUtkast, isValidating };
 
   return (
     <UtkastContext.Provider value={value}>{children}</UtkastContext.Provider>

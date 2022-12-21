@@ -5,16 +5,32 @@ import DefaultToolbar from "./DefaultToolbar";
 
 const Toolbar = () => {
   const [createUtkastOpen, setCreateUtkastOpen] = useState(false);
+  const [utkastJustCreated, setUtkastJustCreated] = useState(false);
+
+  const promptUtkast = () => {
+    setUtkastJustCreated(true);
+
+    const timeId = setTimeout(() => {
+      setUtkastJustCreated(false);
+    }, 5000);
+
+    return () => {
+      clearTimeout(timeId);
+    };
+  };
 
   return (
     <ToolbarArea>
+      <DefaultToolbar
+        openCreateUtkast={() => setCreateUtkastOpen(true)}
+        utkastJustCreated={utkastJustCreated}
+      />
+
       {createUtkastOpen && (
         <CreateUtkastToolbar
           closeCreateUtkast={() => setCreateUtkastOpen(false)}
+          promptUtkast={promptUtkast}
         />
-      )}
-      {!createUtkastOpen && (
-        <DefaultToolbar openCreateUtkast={() => setCreateUtkastOpen(true)} />
       )}
     </ToolbarArea>
   );

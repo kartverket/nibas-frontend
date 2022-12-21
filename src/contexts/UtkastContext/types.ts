@@ -15,6 +15,7 @@ export type UtkastContextValue = {
   utkast: UtkastResponse | undefined;
   updateUtkastWithHistory: () => Promise<unknown>;
   closeUtkast: () => void;
+  isValidating: boolean;
 };
 
 export type UtkastRequestWithoutOperations = Omit<
