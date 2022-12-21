@@ -2,7 +2,6 @@ import { useState } from "react";
 import styled from "styled-components";
 import CreateUtkastToolbar from "./CreateUtkastToolbar";
 import DefaultToolbar from "./DefaultToolbar";
-import UtkastCreatedTab from "./UtkastCreatedTab";
 
 const Toolbar = () => {
   const [createUtkastOpen, setCreateUtkastOpen] = useState(false);
