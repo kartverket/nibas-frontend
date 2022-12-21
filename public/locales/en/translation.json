@@ -88,7 +88,8 @@
   "{{ kommuneNavn }} kommune": "__STRING_NOT_TRANSLATED__",
   "tabell": {
     "Navn": "__STRING_NOT_TRANSLATED__",
-    "Endringstype": "__STRING_NOT_TRANSLATED__"
+    "Endringstype": "__STRING_NOT_TRANSLATED__",
+    "Stemmekretsnavn": "__STRING_NOT_TRANSLATED__"
   },
   "grunnkrets": {
     "Grunnkretsnummer": "__STRING_NOT_TRANSLATED__",

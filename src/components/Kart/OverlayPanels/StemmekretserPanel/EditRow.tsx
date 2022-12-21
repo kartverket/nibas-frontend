@@ -121,7 +121,7 @@ const EditRow = ({ stemmekrets, kommuneId }: Props) => {
           </BlockLabel>
 
           <BlockLabel>
-            {t("tabell.Navn")}
+            {t("tabell.Stemmekretsnavn")}
             <Input {...register("stemmekretsnavn", formOptions)} />
           </BlockLabel>
         </InputsWrapper>

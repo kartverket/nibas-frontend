@@ -123,7 +123,7 @@ const StemmekretserPanel = ({ kommune }: Props) => {
             <thead>
               <tr>
                 <th>{t("stemmekrets.Stemmekretsnummer")}</th>
-                <th>{t("tabell.Navn")}</th>
+                <th>{t("tabell.Stemmekretsnavn")}</th>
                 <th>{t("stemmekrets.Tellekretsnavn")}</th>
                 <th>{t("stemmekrets.Tellekretsnummer")}</th>
                 <th>{t("stemmekrets.Valgdistriktsnummer")}</th>
