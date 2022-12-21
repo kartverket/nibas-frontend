@@ -87,7 +87,7 @@ describe("Toolbar", () => {
     );
     await user.selectOptions(
       screen.getByRole("combobox", {
-        name: /velg en endringstype fra listen/i,
+        name: /endringstype/i,
       }),
       "Retting"
     );

@@ -24,8 +24,6 @@ const DefaultToolbar = ({ openCreateUtkast }: Props) => {
     )
   );
 
-  // if (!canSave && !undo && !redo) return null;
-
   if (!redigeringsmodusAktiv) return null;
 
   return (
