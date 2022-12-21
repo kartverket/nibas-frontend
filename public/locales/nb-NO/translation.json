@@ -94,7 +94,8 @@
   "grunnkrets": {
     "Grunnkretsnummer": "Grunnkretsnummer",
     "Grunnkrets": "Grunnkrets",
-    "Søk": "Søk etter en grunnkrets"
+    "Søk": "Søk etter en grunnkrets",
+    "Grunnkretsnavn": "Grunnkretsnavn"
   },
   "stemmekrets": {
     "Stemmekretsnummer": "Stemmekretsnummer",

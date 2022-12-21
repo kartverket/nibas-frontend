@@ -150,7 +150,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
             <thead>
               <tr>
                 <th>{t("grunnkrets.Grunnkretsnummer")}</th>
-                <th>{t("tabell.Navn")}</th>
+                <th>{t("grunnkrets.Grunnkretsnavn")}</th>
                 <th></th>
                 <th></th>
               </tr>

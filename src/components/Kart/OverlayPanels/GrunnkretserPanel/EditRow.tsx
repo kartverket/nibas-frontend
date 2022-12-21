@@ -101,7 +101,7 @@ const EditRow = ({ grunnkrets, kommuneId }: Props) => {
       <td colSpan={4}>
         <InputsWrapper>
           <BlockLabel>
-            {t("tabell.Navn")}
+            {t("grunnkrets.Grunnkretsnavn")}
             <Input {...register("navn", registerOptions)} />
           </BlockLabel>
           <BlockLabel>
