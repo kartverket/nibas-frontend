@@ -1,4 +1,5 @@
 import Button from "components/form/Button";
+import { Outline } from "style/mixins";
 import styled from "styled-components";
 
 export const ToggleableKretsButton = styled(Button).attrs(() => ({
@@ -10,7 +11,17 @@ export const ToggleableKretsButton = styled(Button).attrs(() => ({
 
   background-color: ${({ isOpen }) => isOpen && "var(--blue_dark)"};
   color: ${({ isOpen }) => isOpen && "var(--white)"};
-  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  transition: background-color 0.2s, color 0.2s;
+
+  &:hover,
+  &:focus-visible {
+    color: ${({ isOpen }) => !isOpen && "var(--blue_dark)"};
+    background: ${({ isOpen }) => !isOpen && "var(--blue_light)"};
+  }
+
+  &:focus-visible {
+    ${Outline};
+  }
 `;
 
 export const FutureChangesTableData = styled.td`

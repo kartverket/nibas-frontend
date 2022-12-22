@@ -90,11 +90,14 @@
   "{{ kommuneNavn }} kommune": "{{ kommuneNavn }} kommune",
   "tabell": {
     "Navn": "Navn",
-    "Endringstype": "Endringstype"
+    "Endringstype": "Endringstype",
+    "Stemmekretsnavn": "Stemmekretsnavn"
   },
   "grunnkrets": {
     "Grunnkretsnummer": "Grunnkretsnummer",
-    "Grunnkrets": "Grunnkrets"
+    "Grunnkrets": "Grunnkrets",
+    "Søk": "Søk etter en grunnkrets",
+    "Grunnkretsnavn": "Grunnkretsnavn"
   },
   "stemmekrets": {
     "Stemmekretsnummer": "Stemmekretsnummer",

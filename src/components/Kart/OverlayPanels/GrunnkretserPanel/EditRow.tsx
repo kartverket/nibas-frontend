@@ -105,7 +105,7 @@ const EditRow = ({ grunnkrets, kommuneId }: Props) => {
       <td colSpan={4}>
         <InputsWrapper>
           <BlockLabel>
-            {t("tabell.Navn")}
+            {t("grunnkrets.Grunnkretsnavn")}
             <Input {...register("navn", registerOptions)} />
           </BlockLabel>
           <BlockLabel>
@@ -119,7 +119,7 @@ const EditRow = ({ grunnkrets, kommuneId }: Props) => {
 };
 
 const AccordionRow = styled.tr`
-  background-color: var(--blue_light);
+  background-color: var(--gray_light);
 
   td {
     padding: 8px;

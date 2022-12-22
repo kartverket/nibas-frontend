@@ -6,7 +6,10 @@ import Tabs from "components/Tabs";
 import Heading from "components/typography/Heading";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 import Icon from "components/Icon";
-import { HeaderButton, OverlayPanelWrapper } from "../metadataComponents";
+import {
+  AbsoluteHeaderButton,
+  OverlayPanelWrapper,
+} from "../metadataComponents";
 
 const showReferanserByGrenseType: Record<string, boolean> = {
   Territorialgrense: true,
@@ -69,12 +72,12 @@ const GrensePanel = ({ feature }: Props) => {
       gridArea="metadata"
       minimized={panelContext?.isMinimized ?? false}
     >
-      <HeaderButton
+      <AbsoluteHeaderButton
         right={0}
         icon={<Icon icon="close" />}
         onClick={() => closePanel("grensemetadata")}
       />
-      <HeaderButton
+      <AbsoluteHeaderButton
         right={50}
         onClick={() => toggleMinimizePanel("grensemetadata")}
         icon={

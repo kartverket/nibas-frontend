@@ -3,6 +3,7 @@ import Label from "components/form/Label";
 import { KartInteractable } from "../KartInteractable";
 import Heading from "components/typography/Heading";
 import Button from "components/form/Button";
+import { Outline } from "style/mixins";
 
 export const Container = styled.div`
   display: flex;
@@ -101,16 +102,43 @@ export const OverlayPanelWrapper = styled(KartInteractable)<{
   }
 `;
 
-export const HeaderButton = styled(Button).attrs(() => ({
+export const PanelHeader = styled.header`
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 8px 16px;
+  border-bottom: 2px solid var(--gray_light);
+`;
+
+export const PanelTitle = styled(Heading)`
+  margin: 0;
+  margin-right: auto;
+`;
+
+export const PanelHeaderButton = styled(Button).attrs(() => ({
   variant: "unstyled",
-}))<{ right: number }>`
-  position: absolute;
-  top: 0;
-  right: ${({ right }) => right}px;
-  margin: 16px;
+}))`
   color: var(--blue_dark);
+  border-radius: 50%;
+  transition: background 0.1s;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--blue_light);
+  }
+
+  &:focus-visible {
+    ${Outline};
+  }
 
   > span {
     font-size: 36px;
   }
+`;
+
+export const AbsoluteHeaderButton = styled(Button)<{ right: number }>`
+  position: absolute;
+  top: 0;
+  right: ${({ right }) => right}px;
+  margin: 16px;
 `;
