@@ -20,18 +20,25 @@ const PanControls = () => {
 
   return (
     <ControlGrid>
-      <UpButton icon={<Icon icon="expand_less" />} onClick={() => pan(0, 1)} />
+      <UpButton
+        icon={<Icon icon="expand_less" />}
+        onClick={() => pan(0, 1)}
+        aria-label="Flytt oppover på kartet"
+      />
       <RightButton
         icon={<Icon icon="chevron_right" />}
         onClick={() => pan(1, 0)}
+        aria-label="Flytt til høyre på kartet"
       />
       <DownButton
         icon={<Icon icon="expand_more" />}
         onClick={() => pan(0, -1)}
+        aria-label="Flytt nedover på kartet"
       />
       <LeftButton
         icon={<Icon icon="chevron_left" />}
         onClick={() => pan(-1, 0)}
+        aria-label="Flytt til venstre på kartet"
       />
     </ControlGrid>
   );
