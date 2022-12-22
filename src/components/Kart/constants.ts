@@ -2,6 +2,7 @@ import { Overlay } from "ol";
 import Map from "ol/Map";
 import { fromLonLat } from "ol/proj";
 import View from "ol/View";
+import { keyframes } from "styled-components";
 import { registerProjections } from "utils/map/projections";
 
 registerProjections();
@@ -31,3 +32,16 @@ export const overlayPopup = new Overlay({
   },
   offset: [0, 0],
 });
+
+export const moveInFromLeft = keyframes`
+0% {
+  margin-left: -500px;
+  z-index: -1;
+}
+99% {
+  z-index: -1;
+}
+100% {
+  margin-left: 0px;
+}
+`;

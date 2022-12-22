@@ -93,8 +93,8 @@ const KartOverlay = styled.div<{
   grid-template-rows: 1fr auto;
   grid-template-areas:
     "panel toolbar ."
-    "panel metadata metadata"
-    "panel kretser kretser";
+    "panel metadata ."
+    "panel kretser .";
   width: 100%;
   height: 100%;
   position: absolute;
