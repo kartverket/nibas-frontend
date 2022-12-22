@@ -159,8 +159,8 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
             </thead>
             <tbody>
               {filteredGrunnkretser.map((grunnkrets) => (
-                <React.Fragment key={grunnkrets.id}>
-                  <KretsRow isActive={isRowOpen(grunnkrets.id)}>
+                <React.Fragment key={getIdFromEntity(grunnkrets)}>
+                  <KretsRow isActive={isRowOpen(getIdFromEntity(grunnkrets))}>
                     <td>{grunnkrets.grunnkretsnummer}</td>
                     <td>{getNavnInSpraak(grunnkrets.navn, "nor")}</td>
                     <ButtonCell>
@@ -176,8 +176,8 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                     </ButtonCell>
                     <ButtonCell>
                       <ToggleableKretsButton
-                        isOpen={isRowOpen(grunnkrets.id)}
-                        onClick={() => toggleRow(grunnkrets.id)}
+                        isOpen={isRowOpen(getIdFromEntity(grunnkrets))}
+                        onClick={() => toggleRow(getIdFromEntity(grunnkrets))}
                         icon={<Icon icon="settings" />}
                       />
                     </ButtonCell>

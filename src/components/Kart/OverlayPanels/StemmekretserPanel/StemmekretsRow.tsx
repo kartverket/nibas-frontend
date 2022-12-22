@@ -43,7 +43,7 @@ const StemmekretsRow = ({
   const name = getNavnInSpraak(utkastStemmekrets.stemmekretsnavn, "nor");
 
   return (
-    <KretsRow isActive={isRowOpen(utkastStemmekrets.id)}>
+    <KretsRow isActive={isRowOpen(stemmekretsId)}>
       <td>{utkastStemmekrets.stemmekretsnummer}</td>
       <td>{name}</td>
       <td>{utkastStemmekrets.tellekretsnavn}</td>
@@ -63,7 +63,7 @@ const StemmekretsRow = ({
           isOpen={isRowOpen(stemmekretsId)}
           onClick={() => toggleRow(stemmekretsId)}
           icon={
-            isRowOpen(utkastStemmekrets.id) ? (
+            isRowOpen(stemmekretsId) ? (
               <Icon icon="settings" aria-label={`Lukk redigering av ${name}`} />
             ) : (
               <Icon icon="settings" aria-label={`Åpne redigering av ${name}`} />
