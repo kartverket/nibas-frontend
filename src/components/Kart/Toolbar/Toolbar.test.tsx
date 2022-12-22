@@ -13,12 +13,23 @@ const mockToolbarHistory: ToolbarHistory = {
       kommuneId: "1",
       changes: [
         {
-          from: mockDetailedGrunnkrets1,
+          from: {
+            grunnkretsnummer: mockDetailedGrunnkrets1.grunnkretsnummer,
+            navn: mockDetailedGrunnkrets1.navn,
+            version: mockDetailedGrunnkrets1.version,
+            identifikasjon: {
+              lokalid: mockDetailedGrunnkrets1.id.lokalid.value,
+            },
+          },
           to: {
-            ...mockDetailedGrunnkrets1,
+            grunnkretsnummer: mockDetailedGrunnkrets1.grunnkretsnummer,
+            version: mockDetailedGrunnkrets1.version,
+            identifikasjon: {
+              lokalid: mockDetailedGrunnkrets1.id.lokalid.value,
+            },
             navn: "Ny grunnkrets!",
           },
-          id: mockDetailedGrunnkrets1.id,
+          id: mockDetailedGrunnkrets1.id.lokalid.value,
         },
       ],
     },
@@ -39,6 +50,7 @@ const renderWithProvider = (
       utkast,
       updateUtkastWithHistory: jest.fn(),
       closeUtkast: jest.fn(),
+      isValidating: false,
     },
   });
 
@@ -62,9 +74,7 @@ describe("Toolbar", () => {
   it("should display Lagre som button if no utkast", () => {
     renderWithUtkastProvider(<Toolbar />);
 
-    expect(
-      screen.getByRole("button", { name: /lagre som/i })
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /lagre/i })).toBeInTheDocument();
   });
 
   it("should display Lagre button if utkast exists", () => {
@@ -80,24 +90,26 @@ describe("Toolbar", () => {
   it("should create utkast correctly and change url to apply it", async () => {
     const { user } = renderWithUtkastProvider(<Toolbar />);
 
-    await user.click(screen.getByRole("button", { name: /lagre som/i }));
+    await user.click(screen.getByRole("button", { name: /lagre/i }));
 
     await user.type(
       screen.getByRole("textbox", { name: /navn på utkast/i }),
       "Utkast 1"
     );
     await user.selectOptions(
-      screen.getByRole("combobox", { name: /type utkast/i }),
+      screen.getByRole("combobox", {
+        name: /endringstype/i,
+      }),
       "Retting"
     );
 
-    await user.click(screen.getByRole("button", { name: /lagre som/i }));
+    await user.click(screen.getByRole("button", { name: /opprett/i }));
 
     await waitFor(() => expect(window.location.search).toContain("?utkast=1"));
     // denne skal egentlig bli disabled, men det er via clearHistory() som endrer context state
     expect(
       await screen.findByRole("button", {
-        name: "action.Lagre",
+        name: "action.Lagre utkast",
       })
     ).toBeInTheDocument();
     expect(await screen.findByText(/Mock utkast/i)).toBeInTheDocument();

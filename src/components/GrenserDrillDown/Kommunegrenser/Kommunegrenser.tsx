@@ -5,6 +5,7 @@ import ListItemAccordion from "../ListItemAccordion";
 import KommuneList from "./KommuneList";
 import { UnstyledList } from "components/UnstyledList";
 import useFylker from "hooks/inndelinger/useFylker";
+import { getIdFromEntity } from "utils/api";
 
 const Kommunegrenser = () => {
   const { fylker } = useFylker();
@@ -17,7 +18,7 @@ const Kommunegrenser = () => {
         {fylker ? (
           <List>
             {fylker.map((fylke) => (
-              <KommuneList key={fylke.id} fylke={fylke} />
+              <KommuneList key={getIdFromEntity(fylke)} fylke={fylke} />
             ))}
           </List>
         ) : (

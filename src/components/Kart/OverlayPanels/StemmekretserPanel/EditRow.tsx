@@ -13,6 +13,7 @@ import {
   StemmekretsResponse,
 } from "types/api";
 import useTimer from "hooks/useTimer";
+import { getIdFromEntity } from "utils/api";
 
 type Inputs = {
   stemmekretsnavn: string;
@@ -25,7 +26,9 @@ const fromFormToRequest = (
   data: Inputs,
   stemmekrets: StemmekretsResponse
 ): StemmekretsRequest => ({
-  identifikasjon: stemmekrets.identifikasjon,
+  identifikasjon: {
+    lokalid: getIdFromEntity(stemmekrets),
+  },
   valgdistriktsnummer: stemmekrets.valgdistriktsnummer,
   version: stemmekrets.version,
   stemmekretsnavn: data.stemmekretsnavn,
@@ -40,9 +43,10 @@ type Props = {
 };
 
 const EditRow = ({ stemmekrets, kommuneId }: Props) => {
+  const stemmekretsId = getIdFromEntity(stemmekrets);
   const { t } = useTranslation();
   const { data: fullStemmekrets } = useNibasApi("/v1/stemmekretser/{id}", {
-    id: stemmekrets.id,
+    id: stemmekretsId,
   });
   const { startTimer, clearTimer } = useTimer();
 
@@ -79,7 +83,7 @@ const EditRow = ({ stemmekrets, kommuneId }: Props) => {
   );
 
   useKretsToolbarSync<StemmekretsEntry>({
-    entityId: utkastStemmekrets?.id,
+    entityId: stemmekretsId,
     redoEventKey: "stemmekretsRedo",
     undoEventKey: "stemmekretsUndo",
     setFormValues,
@@ -98,7 +102,7 @@ const EditRow = ({ stemmekrets, kommuneId }: Props) => {
           {
             from: fromFormToRequest(previousValues.current, utkastStemmekrets),
             to: fromFormToRequest(getValues(), utkastStemmekrets),
-            id: utkastStemmekrets.id,
+            id: stemmekretsId,
           },
         ],
       });

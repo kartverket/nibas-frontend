@@ -33,12 +33,14 @@ import {
   ToggleableKretsButton,
 } from "../kretserComponents";
 import FutureChangesButton from "../FutureChangesButton";
+import { getIdFromEntity } from "utils/api";
 
 type Props = {
   kommune: KommuneRef;
 };
 
 const GrunnkretserPanel = ({ kommune }: Props) => {
+  const kommuneId = getIdFromEntity(kommune);
   const { t } = useTranslation();
   const { toggleEditKretser } = useInndelingerKrets(kommune);
 
@@ -53,7 +55,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
   const { data: grunnkretserByKommune } = useNibasApi(
     "/v1/kommuner/{id}/grunnkretser",
     {
-      id: kommune.id,
+      id: kommuneId,
     }
   );
 
@@ -91,7 +93,7 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
       futureChanges.map(
         (grunnkrets) =>
           ({
-            id: grunnkrets.id,
+            id: getIdFromEntity(grunnkrets),
             cells: [
               grunnkrets.grunnkretsnummer,
               grunnkrets.navn,
@@ -165,7 +167,9 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                       {shouldShowFutureChangesButton(grunnkrets) && (
                         <FutureChangesButton
                           krets={grunnkrets}
-                          isOpen={isFutureChangesOpen(grunnkrets.id)}
+                          isOpen={isFutureChangesOpen(
+                            getIdFromEntity(grunnkrets)
+                          )}
                           toggleRow={toggleFutureChangesRow}
                         />
                       )}
@@ -179,15 +183,15 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                     </ButtonCell>
                   </KretsRow>
 
-                  {isRowOpen(grunnkrets.id) && (
-                    <EditRow grunnkrets={grunnkrets} kommuneId={kommune.id} />
+                  {isRowOpen(getIdFromEntity(grunnkrets)) && (
+                    <EditRow grunnkrets={grunnkrets} kommuneId={kommuneId} />
                   )}
 
-                  {isFutureChangesOpen(grunnkrets.id) && (
+                  {isFutureChangesOpen(getIdFromEntity(grunnkrets)) && (
                     <tr>
                       <FutureChangesTableData colSpan={4}>
                         <FutureChangesTable
-                          id={grunnkrets.id}
+                          id={getIdFromEntity(grunnkrets)}
                           futureChangesUrl="/v1/grunnkretser/{lokalid}/framtidigeversjoner"
                           headers={headers}
                           getRows={getFutureChangesRows}

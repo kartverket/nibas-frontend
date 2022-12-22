@@ -6,6 +6,6 @@ export const ToolbarWrapper = styled(KartInteractable)`
   gap: 0.5rem;
   margin-left: 30px;
   margin-top: 30px;
-  border: 2px solid var(--blue);
+  border: 2px solid var(--gray_light);
   padding: 16px;
 `;

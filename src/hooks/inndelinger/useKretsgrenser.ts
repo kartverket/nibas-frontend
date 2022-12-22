@@ -20,6 +20,7 @@ import { fetcherWithToken } from "utils/swr";
 import { isPoint } from "types/geometry";
 import { isNotNullOrUndefined } from "types/common";
 import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
+import { getIdFromEntity } from "utils/api";
 
 const endpointByKretstype = {
   grunnkrets: "grunnkretser",
@@ -30,7 +31,7 @@ type KretsResponse<T extends typeof endpointByKretstype[Kretstype]> =
   T extends "grunnkretser" ? GrunnkretsResponse : StemmekretsResponse;
 
 const mapGrunnkretserToIds = (kretser?: KretsRef[]) =>
-  kretser?.map((krets) => krets.id);
+  kretser?.map((krets) => getIdFromEntity(krets));
 
 // fetch alle kretsgrenser i en kommune
 const kretserByKommuneFetcher = async (

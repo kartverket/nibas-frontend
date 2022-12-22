@@ -16,9 +16,10 @@ import { Translation } from "i18n";
 
 type Props = {
   closeCreateUtkast: () => void;
+  promptUtkast: () => void;
 };
 
-const CreateUtkastToolbar = ({ closeCreateUtkast }: Props) => {
+const CreateUtkastToolbar = ({ closeCreateUtkast, promptUtkast }: Props) => {
   const { t } = useTranslation();
   const [utkastName, setUtkastName] = useState("");
   const [utkastType, setUtkastType] = useState("");
@@ -43,28 +44,30 @@ const CreateUtkastToolbar = ({ closeCreateUtkast }: Props) => {
     const utkastId = json.id;
 
     closeCreateUtkast();
-    clearHistory();
     setSearchParams({ utkast: utkastId });
+    clearHistory();
+    promptUtkast();
   };
 
   return (
-    <ToolbarWrapper>
+    <ToolbarWrapperCreateUtkast>
       <Wrapper>
         <BlockLabel>
           {t("utkast.Navn på utkast")}
           <Input
             value={utkastName}
             onChange={(e) => setUtkastName(e.target.value)}
+            placeholder="f.eks. Endring av stemmekrets i Froland"
           />
         </BlockLabel>
         <BlockLabel>
-          {t("utkast.Type utkast")}
+          {t("utkast.Endringstype")}
           <Select
             value={utkastType}
             onChange={(e) => setUtkastType(e.target.value)}
           >
             <option value="" disabled>
-              ---
+              {t("utkast.Velg en endringstype fra listen")}
             </option>
             {Object.keys(translateKeysByEndringsType).map((type) => (
               <option key={type} value={type}>
@@ -73,19 +76,58 @@ const CreateUtkastToolbar = ({ closeCreateUtkast }: Props) => {
             ))}
           </Select>
         </BlockLabel>
-
-        <Button onClick={closeCreateUtkast} variant="secondary">
-          {t("action.Lukk")}
-        </Button>
-        <Button onClick={createUtkast} disabled={utkastType === ""}>
-          {t("action.Lagre som")}
-        </Button>
+        <Buttons>
+          <CloseUtkastButton onClick={closeCreateUtkast} variant="unstyled">
+            {t("action.Avbryt")}
+          </CloseUtkastButton>
+          <Button
+            onClick={createUtkast}
+            disabled={utkastType === "" || utkastName === ""}
+          >
+            {t("action.Opprett")}
+          </Button>
+        </Buttons>
       </Wrapper>
-    </ToolbarWrapper>
+    </ToolbarWrapperCreateUtkast>
   );
 };
 
+const CloseUtkastButton = styled(Button)`
+  padding: 0 16px;
+  color: var(--blue);
+  font-weight: bold;
+
+  &:hover {
+    text-decoration: underline;
+    text-underline-position: under;
+  }
+`;
+
+const ToolbarWrapperCreateUtkast = styled(ToolbarWrapper)`
+  display: flex;
+  flex-direction: coloumn;
+  gap: 28px;
+  width: 352px;
+  margin-left: auto;
+  margin-right: 0;
+  margin-top: 0;
+  border-top: 0;
+
+  p {
+    margin-top: 0;
+  }
+`;
+
+const Buttons = styled.div`
+  margin-left: auto;
+  margin-right: 0;
+`;
+
 const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
   .button {
     margin-bottom: 0;
 

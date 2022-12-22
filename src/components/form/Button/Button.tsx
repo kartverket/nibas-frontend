@@ -37,7 +37,17 @@ const Button = forwardRef<HTMLButtonElement, Props>(
 
 Button.displayName = "Button";
 
-const StyledButton = styled.button``;
+const StyledButton = styled.button`
+  &:disabled {
+    cursor: not-allowed;
+    outline: 0;
+  }
+
+  &:disabled:hover {
+    background: var(--gray_light);
+    color: var(--gray_dark);
+  }
+`;
 
 const UnstyledButton = styled(StyledButton)`
   background: none;
@@ -60,6 +70,11 @@ const UnstyledButton = styled(StyledButton)`
     color: var(--gray_dark);
     outline-style: solid;
     outline-color: var(--gray_dark);
+  }
+
+  :disabled:hover {
+    background: var(--gray_light);
+    color: var(--gray_dark);
   }
 
   svg {

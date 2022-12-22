@@ -34,14 +34,6 @@ export interface paths {
     /** Henter stemmekrets med gitt id */
     get: operations["hentStemmekrets"];
   };
-  "/v1/stemmekretser/{id}/revisjoner": {
-    /** Henter historiske revisjoner til en stemmekrets med gitt id */
-    get: operations["hentStemmekretsRevisjoner"];
-  };
-  "/v1/stemmekretser/{id}/revisjoner/{revisjon}": {
-    /** Henter en gitt historisk revisjon av en stemmekrets */
-    get: operations["hentStemmekretsRevisjon"];
-  };
   "/v1/stemmekretser/{id}/grenser": {
     /** Henter grensene til en stemmekrets med gitt id */
     get: operations["hentGrenserForStemmekrets"];
@@ -53,14 +45,6 @@ export interface paths {
   "/v1/nasjoner/{id}": {
     /** Henter nasjon med gitt id */
     get: operations["hentNasjon"];
-  };
-  "/v1/nasjoner/{id}/revisjoner": {
-    /** Henter historiske revisjoner til en nasjon med gitt id */
-    get: operations["hentNasjonRevisjoner"];
-  };
-  "/v1/nasjoner/{id}/revisjoner/{revisjon}": {
-    /** Henter en gitt historisk revisjon av en nasjon */
-    get: operations["hentNasjonRevisjon"];
   };
   "/v1/nasjoner/{id}/grenser": {
     /** Henter grensene til en nasjon med gitt id */
@@ -76,14 +60,6 @@ export interface paths {
   };
   "/v1/kommuner/{id}/stemmekretser": {
     get: operations["hentKommunesStemmekretser"];
-  };
-  "/v1/kommuner/{id}/revisjoner": {
-    /** Henter historiske revisjoner til en kommune med gitt id */
-    get: operations["hentKommuneRevisjoner"];
-  };
-  "/v1/kommuner/{id}/revisjoner/{revisjon}": {
-    /** Henter en gitt historisk revisjon av en kommune */
-    get: operations["hentKommuneRevisjon"];
   };
   "/v1/kommuner/{id}/grunnkretser": {
     /** Henter alle grunnkretser som tilhører en kommune. */
@@ -128,14 +104,6 @@ export interface paths {
     /** Henter grense med gitt id */
     get: operations["hentGrense"];
   };
-  "/v1/grenser/{id}/revisjoner": {
-    /** Henter historiske revisjoner for grense med gitt id */
-    get: operations["hentGrenseRevisjoner"];
-  };
-  "/v1/grenser/{id}/revisjoner/{revisjon}": {
-    /** Henter gitt historisk revisjon for gitt grense */
-    get: operations["hentGrenseRevisjon"];
-  };
   "/v1/fylker": {
     /** Henter alle fylker i Nasjonal inndelingsbase. */
     get: operations["hentFylker"];
@@ -143,14 +111,6 @@ export interface paths {
   "/v1/fylker/{id}": {
     /** Henter fylke med gitt id */
     get: operations["hentFylke"];
-  };
-  "/v1/fylker/{id}/revisjoner": {
-    /** Henter historiske revisjoner til et fylke med gitt id */
-    get: operations["hentFylkesRevisjoner"];
-  };
-  "/v1/fylker/{id}/revisjoner/{revisjon}": {
-    /** Henter en gitt historisk revisjon av et fylke */
-    get: operations["hentFylkesRevisjon"];
   };
   "/v1/fylker/{id}/grenser": {
     /** Henter grensene til et fylke med gitt id */
@@ -375,8 +335,7 @@ export interface components {
     };
     /** @description Egenskaper som beskriver konteksten som grensen sees i. */
     KontekstEgenskaper: {
-      /** @description Id til objekt som det vises til i kontekst */
-      id?: string;
+      id?: components["schemas"]["ObjektIdentifikator"];
       /**
        * @description Hvilken kontekst geometrien skal sees i
        * @enum {string}
@@ -409,6 +368,9 @@ export interface components {
     } & {
       coordinates: unknown;
       type: unknown;
+    };
+    Lokalid: {
+      value: string;
     };
     /** @description Diverse metadata-felter fra sosi-modellen. */
     Metadata: {
@@ -456,6 +418,12 @@ export interface components {
        * @description Teknisk versjon for å støtte samhandling og redigering
        */
       version: number;
+    };
+    /** @description Id til objekt som det vises til i kontekst */
+    ObjektIdentifikator: {
+      lokalid: components["schemas"]["Lokalid"];
+      /** Format: date */
+      gyldighetsdato: string;
     };
     /** @description Representasjon av operasjoner/handlinger som er utført i klienten. */
     Operasjoner: {
@@ -672,15 +640,6 @@ export interface components {
       /** @description Beskrivelse av hva som har gått galt. */
       melding?: string;
     };
-    Lokalid: {
-      value: string;
-    };
-    /** @description Identifikator til objekt(et/ene) som har en nyere gyldigFra-dato og er i konflikt med endringen. */
-    ObjektIdentifikator: {
-      lokalid: components["schemas"]["Lokalid"];
-      /** Format: date */
-      gyldigFra: string;
-    };
     ApiErrorResponse: {
       /**
        * @description HttpStatus for responsen.
@@ -857,13 +816,11 @@ export interface components {
     };
     /** @description Representasjon av en stemmekrets */
     StemmekretsResponse: {
-      /** @description ID-en til stemmekretsen */
-      id: string;
+      id: components["schemas"]["ObjektIdentifikator"];
       /** @description Navnet på stemmekretsen */
       stemmekretsnavn: string;
       /** @description Stemmekretsnummeret til stemmekretsen */
       stemmekretsnummer: string;
-      identifikasjon: components["schemas"]["Identifikasjon"];
       kommunenummer: components["schemas"]["Kommunenummer"];
       gyldighet: components["schemas"]["GyldighetResponse"];
       /** @description Tellekretsnummer til stemmekretsen */
@@ -881,43 +838,24 @@ export interface components {
        */
       version: number;
     };
-    /** @description En referanse til en historisk revisjon av en administrativ enhet */
-    RevisjonRef: {
-      /**
-       * Format: int32
-       * @description IDen til den historiske revisjonen
-       */
-      revisjonId: number;
-      /**
-       * Format: date-time
-       * @description Når revisjonen ble opprettet
-       */
-      revisjonDato: string;
-      /**
-       * @description Angir status for hva som medførte en ny revisjon
-       * @enum {string}
-       */
-      revisjonStatus: "NY" | "ENDRET" | "SLETTET";
-      /** @description Referanse til hvor den historiske revisjonen kan finnes */
-      href: string;
-    };
     /** @description En referanse til en nasjon */
     NasjonRef: {
-      /** @description ID-en til nasjonen */
-      id: string;
+      id: components["schemas"]["ObjektIdentifikator"];
       /** @description Liste over navn til nasjonen */
       navn: components["schemas"]["AdministrativEnhetNavn"][];
       /** @description URL til full representasjon av nasjonen */
       href: string;
+      /**
+       * Format: int32
+       * @description Antall publiserte framtidige gyldige versjoner.
+       */
+      antallFramtidigeVersjoner: number;
     };
     /** @description Representasjon av en nasjon */
     NasjonResponse: {
-      /** @description ID-en til nasjonen */
-      id: string;
+      id: components["schemas"]["ObjektIdentifikator"];
       /** @description Liste over navn til nasjonen */
       administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
-      /** @description LokalID til nasjonen */
-      lokalid: string;
       features: components["schemas"]["FeatureCollection"];
       /**
        * Format: int32
@@ -927,20 +865,22 @@ export interface components {
     };
     /** @description En referanse til en kommune */
     KommuneRef: {
-      /** @description ID-en til kommunen */
-      id: string;
+      id: components["schemas"]["ObjektIdentifikator"];
       /** @description Liste over navn til kommunen */
       navn: components["schemas"]["AdministrativEnhetNavn"][];
       /** @description URL til full representasjon av kommunen */
       href: string;
+      /**
+       * Format: int32
+       * @description Antall publiserte framtidige gyldige versjoner.
+       */
+      antallFramtidigeVersjoner: number;
     };
+    /** @description Representasjon av en kommune */
     KommuneResponse: {
-      /** @description ID-en til kommunen */
-      id: string;
+      id: components["schemas"]["ObjektIdentifikator"];
       /** @description Liste over navn til kommunen */
       administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
-      /** @description LokalIDen til kommunen */
-      lokalid: string;
       kommunenummer: components["schemas"]["Kommunenummer"];
       /** @description Angir om kommunen er et samisk forvaltningsområde eller ikke */
       samiskforvaltningsomraade: boolean;
@@ -958,17 +898,20 @@ export interface components {
     };
     /** @description En referanse til en stemmekrets */
     StemmekretsRef: {
-      /** @description ID-en til stemmekretsen */
-      id: string;
+      id: components["schemas"]["ObjektIdentifikator"];
       /** @description Navnet på stemmekretsen */
       navn: string;
       /** @description URL til full representasjon av stemmekrets */
       href: string;
+      /**
+       * Format: int32
+       * @description Antall publiserte framtidige gyldige versjoner.
+       */
+      antallFramtidigeVersjoner: number;
     };
     /** @description En referanse til en grunnkrets */
     GrunnkretsRef: {
-      /** @description ID-en til grunnkretser */
-      id: string;
+      id: components["schemas"]["ObjektIdentifikator"];
       /** @description Navnet på grunnkretser */
       navn: string;
       /** @description URL til full representasjon av grunnkretsen */
@@ -1008,9 +951,7 @@ export interface components {
     };
     /** @description Representasjon av en grunnkrets */
     GrunnkretsResponse: {
-      /** @description ID-en til grunnkretsen */
-      id: string;
-      identifikasjon: components["schemas"]["Identifikasjon"];
+      id: components["schemas"]["ObjektIdentifikator"];
       /** @description Navnet på grunnkretsen */
       navn: string;
       /** @description Grunnkretsnummeret til grunnkretsen */
@@ -1045,21 +986,22 @@ export interface components {
     };
     /** @description En referanse til et fylke */
     FylkeRef: {
-      /** @description ID-en til fylket */
-      id: string;
+      id: components["schemas"]["ObjektIdentifikator"];
       /** @description Liste over navn til fylket */
       navn: components["schemas"]["AdministrativEnhetNavn"][];
       /** @description URL til full representasjon av fylket */
       href: string;
+      /**
+       * Format: int32
+       * @description Antall publiserte framtidige gyldige versjoner.
+       */
+      antallFramtidigeVersjoner: number;
     };
     /** @description Representasjon av et fylke */
     FylkeResponse: {
-      /** @description ID-en til fylket */
-      id: string;
+      id: components["schemas"]["ObjektIdentifikator"];
       /** @description Liste over navn til fylket */
       administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
-      /** @description LokalIDen til fylket */
-      lokalid: string;
       fylkesnummer: components["schemas"]["Fylkesnummer"];
       /** @description Angir om fylket er et samisk forvaltningsområde eller ikke */
       samiskforvaltningsomraade: boolean;
@@ -1288,47 +1230,9 @@ export interface operations {
         /** ID-en til stemmekretsen man vil hente */
         id: string;
       };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["StemmekretsResponse"];
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "application/json": components["schemas"]["StemmekretsResponse"];
-        };
-      };
-    };
-  };
-  /** Henter historiske revisjoner til en stemmekrets med gitt id */
-  hentStemmekretsRevisjoner: {
-    parameters: {
-      path: {
-        /** ID-en til stemmekretsen man vil hente */
-        id: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["RevisjonRef"][];
-        };
-      };
-    };
-  };
-  /** Henter en gitt historisk revisjon av en stemmekrets */
-  hentStemmekretsRevisjon: {
-    parameters: {
-      path: {
-        /** ID-en til stemmekrets man vil hente */
-        id: string;
-        /** ID til revisjonen man vil hente */
-        revisjon: number;
+      query: {
+        /** Eventuell gyldighetsdato for stemmekrets (default = dagens dato */
+        gyldighetsdato?: string;
       };
     };
     responses: {
@@ -1353,6 +1257,10 @@ export interface operations {
         /** ID-en til stemmekretsen man vil hente */
         id: string;
       };
+      query: {
+        /** Eventuell gyldighetsdato for stemmekrets (default = dagens dato */
+        gyldighetsdato?: string;
+      };
     };
     responses: {
       /** Successful operation */
@@ -1371,6 +1279,12 @@ export interface operations {
   };
   /** Henter alle nasjoner i Nasjonal inndelingsbase. */
   hentNasjoner: {
+    parameters: {
+      query: {
+        /** Eventuell gyldighetsdato for nasjonene (default = dagens dato */
+        gyldighetsdato?: string;
+      };
+    };
     responses: {
       /** Successful operation */
       200: {
@@ -1386,6 +1300,10 @@ export interface operations {
       path: {
         /** ID-en til nasjonen man vil hente */
         id: string;
+      };
+      query: {
+        /** Eventuell gyldighetsdato for nasjon (default = dagens dato */
+        gyldighetsdato?: string;
       };
     };
     responses: {
@@ -1403,54 +1321,16 @@ export interface operations {
       };
     };
   };
-  /** Henter historiske revisjoner til en nasjon med gitt id */
-  hentNasjonRevisjoner: {
-    parameters: {
-      path: {
-        /** ID-en til nasjonen man vil hente historiske revisjoner for */
-        id: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["RevisjonRef"][];
-        };
-      };
-    };
-  };
-  /** Henter en gitt historisk revisjon av en nasjon */
-  hentNasjonRevisjon: {
-    parameters: {
-      path: {
-        /** Id til nasjonen man vil hente */
-        id: string;
-        /** Id til revisjonen man vil hente */
-        revisjon: number;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["NasjonResponse"];
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "application/json": components["schemas"]["NasjonResponse"];
-        };
-      };
-    };
-  };
   /** Henter grensene til en nasjon med gitt id */
   hentGrenserForNasjon: {
     parameters: {
       path: {
         /** ID-en til nasjonen man vil hente */
         id: string;
+      };
+      query: {
+        /** Eventuell gyldighetsdato for nasjon (default = dagens dato */
+        gyldighetsdato?: string;
       };
     };
     responses: {
@@ -1474,6 +1354,8 @@ export interface operations {
       query: {
         /** Valgfri id til et fylke for å filtrere kommuner innenfor et fylke */
         fylkeid?: string;
+        /** Eventuell gyldighetsdato for kommune (default = dagens dato */
+        gyldighetsdato?: string;
       };
     };
     responses: {
@@ -1491,6 +1373,10 @@ export interface operations {
       path: {
         /** ID-en til kommunen man vil hente */
         id: string;
+      };
+      query: {
+        /** Eventuell gyldighetsdato for kommune (default = dagens dato */
+        gyldighetsdato?: string;
       };
     };
     responses: {
@@ -1514,6 +1400,10 @@ export interface operations {
         /** ID til kommunen man vil hente stemmekretsene til */
         id: string;
       };
+      query: {
+        /** Eventuell gyldighetsdato for kommune (default = dagens dato */
+        gyldighetsdato?: string;
+      };
     };
     responses: {
       /** OK */
@@ -1524,54 +1414,16 @@ export interface operations {
       };
     };
   };
-  /** Henter historiske revisjoner til en kommune med gitt id */
-  hentKommuneRevisjoner: {
-    parameters: {
-      path: {
-        /** ID-en til kommunen man vil hente historiske revisjoner for */
-        id: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["RevisjonRef"][];
-        };
-      };
-    };
-  };
-  /** Henter en gitt historisk revisjon av en kommune */
-  hentKommuneRevisjon: {
-    parameters: {
-      path: {
-        /** ID-en til kommunen man vil hente */
-        id: string;
-        /** ID til revisjonen man vil hente */
-        revisjon: number;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["KommuneResponse"];
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "application/json": components["schemas"]["KommuneResponse"];
-        };
-      };
-    };
-  };
   /** Henter alle grunnkretser som tilhører en kommune. */
   hentKommunesGrunnkretser: {
     parameters: {
       path: {
         /** ID til kommunen man vil hente grunnkretsene til */
         id: string;
+      };
+      query: {
+        /** Eventuell gyldighetsdato for kommune (default = dagens dato */
+        gyldighetsdato?: string;
       };
     };
     responses: {
@@ -1589,6 +1441,10 @@ export interface operations {
       path: {
         /** ID-en til kommunen man vil hente */
         id: string;
+      };
+      query: {
+        /** Eventuell gyldighetsdato for kommune (default = dagens dato */
+        gyldighetsdato?: string;
       };
     };
     responses: {
@@ -1698,7 +1554,7 @@ export interface operations {
         id: string;
       };
       query: {
-        /** Eventuell Gyldig Dato for grunnkrets (default = datens dato */
+        /** Eventuell gyldighetsdato for grunnkrets (default = dagens dato */
         gyldighetsdato?: string;
       };
     };
@@ -1725,8 +1581,8 @@ export interface operations {
         id: string;
       };
       query: {
-        /** Eventuell Gyldig Dato for grunnkrets (default = datens dato */
-        gyldigDato?: string;
+        /** Eventuell gyldighetsdato for grunnkrets (default = dagens dato */
+        gyldighetsdato?: string;
       };
     };
     responses: {
@@ -1751,47 +1607,9 @@ export interface operations {
         /** ID-en til grensen man vil hente */
         id: string;
       };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["Feature"];
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "*/*": components["schemas"]["Feature"];
-        };
-      };
-    };
-  };
-  /** Henter historiske revisjoner for grense med gitt id */
-  hentGrenseRevisjoner: {
-    parameters: {
-      path: {
-        /** ID-en til grensen man vil hente */
-        id: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["RevisjonRef"][];
-        };
-      };
-    };
-  };
-  /** Henter gitt historisk revisjon for gitt grense */
-  hentGrenseRevisjon: {
-    parameters: {
-      path: {
-        /** ID til grensen man vil hente */
-        id: string;
-        /** ID til revisjonen man vil hente */
-        revisjon: number;
+      query: {
+        /** Eventuell gyldighetsdato for grense (default = dagens dato */
+        gyldighetsdato?: string;
       };
     };
     responses: {
@@ -1811,6 +1629,12 @@ export interface operations {
   };
   /** Henter alle fylker i Nasjonal inndelingsbase. */
   hentFylker: {
+    parameters: {
+      query: {
+        /** Eventuell gyldighetsdato for fylkene (default = dagens dato */
+        gyldighetsdato?: string;
+      };
+    };
     responses: {
       /** Successful operation */
       200: {
@@ -1827,47 +1651,9 @@ export interface operations {
         /** ID-en til fylket man vil hente */
         id: string;
       };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["FylkeRef"];
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "application/json": components["schemas"]["FylkeResponse"];
-        };
-      };
-    };
-  };
-  /** Henter historiske revisjoner til et fylke med gitt id */
-  hentFylkesRevisjoner: {
-    parameters: {
-      path: {
-        /** ID-en til fylket man vil hente historiske revisjoner for */
-        id: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["RevisjonRef"][];
-        };
-      };
-    };
-  };
-  /** Henter en gitt historisk revisjon av et fylke */
-  hentFylkesRevisjon: {
-    parameters: {
-      path: {
-        /** ID-en til fylket man vil hente */
-        id: string;
-        /** ID til revisjonen man vil hente */
-        revisjon: number;
+      query: {
+        /** Eventuell gyldighetsdato for fylke (default = dagens dato */
+        gyldighetsdato?: string;
       };
     };
     responses: {
@@ -1891,6 +1677,10 @@ export interface operations {
       path: {
         /** ID-en til fylket man vil hente */
         id: string;
+      };
+      query: {
+        /** Eventuell gyldighetsdato for fylke (default = dagens dato */
+        gyldighetsdato?: string;
       };
     };
     responses: {

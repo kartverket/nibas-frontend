@@ -4,6 +4,7 @@ import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
 import { useEffect, useMemo, useState } from "react";
 import useSWRImmutable from "swr/immutable";
 import { FeatureCollection } from "types/api";
+import { getIdFromEntity } from "utils/api";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 import { fetcherWithToken } from "utils/swr";
 import { useEditGrenseValue } from "contexts/EditGrenserContext/useEditGrense";
@@ -33,7 +34,7 @@ const useFylkesgrenser = () => {
   const shouldFetch = editgrenseValue.editing || editgrenseValue.visible;
   const [isFetching, setIsFetching] = useState(false);
   const { fylker } = useFylker(shouldFetch);
-  const fylkeIds = fylker?.map((fylke) => fylke.id) ?? [];
+  const fylkeIds = fylker?.map(getIdFromEntity) ?? [];
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { data: geoJsonFeatures } = useSWRImmutable(
     shouldFetch ? [fylkeIds, tokenHolderFunc()?.token] : null,

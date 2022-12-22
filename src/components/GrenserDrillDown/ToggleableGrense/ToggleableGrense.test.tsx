@@ -1,11 +1,16 @@
 import { render, screen } from "test/test-utils";
 import ToggleableGrense from "./ToggleableGrense";
-import { EditGrenserContext, ObjectValue } from "contexts/EditGrenserContext";
+import { ObjectValue } from "contexts/EditGrenserContext";
 import { mockBasicFeature } from "mocks/handlers/responses";
 
 const defaultProps: React.ComponentProps<typeof ToggleableGrense> = {
   grense: {
-    id: "1",
+    id: {
+      gyldighetsdato: "",
+      lokalid: {
+        value: "1",
+      },
+    },
     href: "",
     navn: [
       {
@@ -14,6 +19,7 @@ const defaultProps: React.ComponentProps<typeof ToggleableGrense> = {
         version: 1,
       },
     ],
+    antallFramtidigeVersjoner: 0,
   },
   title: "Grense",
   type: "fylke",

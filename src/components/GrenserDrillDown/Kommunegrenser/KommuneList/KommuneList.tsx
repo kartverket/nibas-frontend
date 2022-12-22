@@ -7,19 +7,21 @@ import { useEffect, useState } from "react";
 import { getNavnInSpraak } from "utils/language/language";
 import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
 import EditableGrenseAccordion from "components/GrenserDrillDown/EditableGrenseAccordion";
+import { getIdFromEntity } from "utils/api";
 
 type Props = {
   fylke: GrenseRef;
 };
 
 const KommuneList = ({ fylke }: Props) => {
-  const { kommuner, error } = useKommuner(fylke.id);
+  const fylkeId = getIdFromEntity(fylke);
+  const { kommuner, error } = useKommuner(fylkeId);
   const [shouldFetch, setShouldFetch] = useState(false);
   const { kommunegrenser, isFetching } = useKommunegrenser(
-    fylke.id,
+    fylkeId,
     shouldFetch
   );
-  const { value } = useEditGrense("kommune", fylke.id, kommunegrenser);
+  const { value } = useEditGrense("kommune", fylkeId, kommunegrenser);
 
   useEffect(() => {
     if (value.editing || value.visible) {
@@ -34,7 +36,7 @@ const KommuneList = ({ fylke }: Props) => {
   return (
     <EditableGrenseAccordion
       features={kommunegrenser}
-      grenseId={fylke.id}
+      grenseId={fylkeId}
       grenseType="kommune"
       isFetching={isFetching}
       title={getNavnInSpraak(fylke.navn, "nor")}
@@ -42,9 +44,9 @@ const KommuneList = ({ fylke }: Props) => {
       <Wrapper>
         {kommuner.map((kommune) => (
           <ApiGrense
-            key={kommune.id}
+            key={getIdFromEntity(kommune)}
             grense={kommune}
-            featuresUrl={`/v1/kommuner/${kommune.id}/grenser`}
+            featuresUrl={`/v1/kommuner/${getIdFromEntity(kommune)}/grenser`}
             type="kommune"
           />
         ))}

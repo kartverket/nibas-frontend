@@ -81,7 +81,9 @@
     "Avslutt redigering": "__STRING_NOT_TRANSLATED__",
     "Forkast": "__STRING_NOT_TRANSLATED__",
     "Rediger": "__STRING_NOT_TRANSLATED__",
-    "Lukk Utkast": "__STRING_NOT_TRANSLATED__"
+    "Lagre utkast": "__STRING_NOT_TRANSLATED__",
+    "Opprett": "__STRING_NOT_TRANSLATED__",
+    "Lukk utkast": "__STRING_NOT_TRANSLATED__"
   },
   "Ja": "__STRING_NOT_TRANSLATED__",
   "Nei": "__STRING_NOT_TRANSLATED__",
@@ -117,6 +119,9 @@
     "Navn på utkast": "__STRING_NOT_TRANSLATED__",
     "Type utkast": "__STRING_NOT_TRANSLATED__",
     "Du er nå i redigeringsmodus av dette utkastet": "__STRING_NOT_TRANSLATED__",
+    "Endringstype": "__STRING_NOT_TRANSLATED__",
+    "Gyldig fra": "__STRING_NOT_TRANSLATED__",
+    "Velg en endringstype fra listen": "__STRING_NOT_TRANSLATED__",
     "Konflikt mellom fremtidige endringer": "__STRING_NOT_TRANSLATED__",
     "Endringer du gjorde i dette utkastet har ført til at en annen publisert endring må dobbelsjekkes": "__STRING_NOT_TRANSLATED__",
     "Dobbeltsjekk feltene i endringen nedenfor før du publiserer": "__STRING_NOT_TRANSLATED__",
@@ -138,5 +143,6 @@
       " Er du sikker på at du vil fortsette?": "__STRING_NOT_TRANSLATED__"
     }
   },
-  "Forkast endringer": "__STRING_NOT_TRANSLATED__"
+  "Forkast endringer": "__STRING_NOT_TRANSLATED__",
+  "Utkastet er opprettet": "__STRING_NOT_TRANSLATED__"
 }
