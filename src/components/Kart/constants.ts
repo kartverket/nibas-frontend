@@ -2,7 +2,6 @@ import { Overlay } from "ol";
 import Map from "ol/Map";
 import { fromLonLat } from "ol/proj";
 import View from "ol/View";
-import { keyframes } from "styled-components";
 import { registerProjections } from "utils/map/projections";
 
 registerProjections();
