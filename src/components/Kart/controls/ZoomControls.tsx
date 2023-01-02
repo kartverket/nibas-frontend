@@ -14,8 +14,16 @@ const ZoomControls = () => {
 
   return (
     <ControlGrid>
-      <ControlButton icon={<Icon icon="zoom_in" />} onClick={() => zoom(1)} />
-      <ControlButton icon={<Icon icon="zoom_out" />} onClick={() => zoom(-1)} />
+      <ControlButton
+        icon={<Icon icon="zoom_in" />}
+        onClick={() => zoom(1)}
+        aria-label={`Zoom inn på kartet`}
+      />
+      <ControlButton
+        icon={<Icon icon="zoom_out" />}
+        onClick={() => zoom(-1)}
+        aria-label={`Zoom ut på kartet`}
+      />
     </ControlGrid>
   );
 };
