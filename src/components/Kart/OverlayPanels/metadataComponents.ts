@@ -1,10 +1,9 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import Label from "components/form/Label";
 import { KartInteractable } from "../KartInteractable";
 import Heading from "components/typography/Heading";
 import Button from "components/form/Button";
 import { Outline } from "style/mixins";
-import { moveInFromLeft } from "../constants";
 
 export const Container = styled.div`
   display: flex;
@@ -73,6 +72,19 @@ export const DateWrapper = styled(Part)`
   }
 `;
 
+const moveInFromLeft = keyframes`
+0% {
+  transform: translateX(-100%);
+  z-index: -1;
+}
+99% {
+  z-index: -1;
+}
+100% {
+  transform: none; 
+}
+`;
+
 export const OverlayPanelWrapper = styled(KartInteractable)<{
   gridArea: "metadata" | "kretser";
   minimized?: boolean;
@@ -91,10 +103,7 @@ export const OverlayPanelWrapper = styled(KartInteractable)<{
   border-left: none;
   overflow-y: auto;
 
-  min-width: 500px;
-  width: calc(100vw - 406px);
-  max-width: 1000px;
-
+  width: 1000px;
   transition: height 0.4s ease-in-out;
   animation: ${moveInFromLeft} 0.5s ease-in-out;
 

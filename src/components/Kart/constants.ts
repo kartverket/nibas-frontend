@@ -32,16 +32,3 @@ export const overlayPopup = new Overlay({
   },
   offset: [0, 0],
 });
-
-export const moveInFromLeft = keyframes`
-0% {
-  margin-left: -500px;
-  z-index: -1;
-}
-99% {
-  z-index: -1;
-}
-100% {
-  margin-left: 0px;
-}
-`;

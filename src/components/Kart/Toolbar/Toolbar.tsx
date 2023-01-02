@@ -38,6 +38,7 @@ const Toolbar = () => {
 
 const ToolbarArea = styled.div`
   grid-area: toolbar;
+  justify-self: start;
 `;
 
 export default Toolbar;
