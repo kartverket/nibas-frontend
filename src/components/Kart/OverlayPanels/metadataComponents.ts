@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import Label from "components/form/Label";
 import { KartInteractable } from "../KartInteractable";
 import Heading from "components/typography/Heading";
@@ -72,6 +72,19 @@ export const DateWrapper = styled(Part)`
   }
 `;
 
+const moveInFromLeft = keyframes`
+0% {
+  transform: translateX(-100%);
+  z-index: -1;
+}
+99% {
+  z-index: -1;
+}
+100% {
+  transform: none; 
+}
+`;
+
 export const OverlayPanelWrapper = styled(KartInteractable)<{
   gridArea: "metadata" | "kretser";
   minimized?: boolean;
@@ -83,18 +96,16 @@ export const OverlayPanelWrapper = styled(KartInteractable)<{
   justify-content: flex-start;
   margin-left: auto;
   padding: 16px;
-  border-radius: 3px;
+  border-radius: 0 3px 3px 3px;
   height: ${({ minimized }) => (minimized ? 70 : 500)}px;
-  border: 2px solid var(--blue);
+  border: 4px solid var(--gray_light);
   border-bottom: none;
-  border-right: none;
+  border-left: none;
   overflow-y: auto;
 
-  min-width: 500px;
-  width: 100%;
-  max-width: 1000px;
-
+  width: 1000px;
   transition: height 0.4s ease-in-out;
+  animation: ${moveInFromLeft} 0.5s ease-in-out;
 
   > ${Heading} {
     margin-top: 8px;
@@ -136,9 +147,25 @@ export const PanelHeaderButton = styled(Button).attrs(() => ({
   }
 `;
 
-export const AbsoluteHeaderButton = styled(Button)<{ right: number }>`
+export const AbsoluteHeaderButton = styled(Button).attrs(() => ({
+  variant: "unstyled",
+}))<{ right: number }>`
   position: absolute;
   top: 0;
   right: ${({ right }) => right}px;
   margin: 16px;
+  color: var(--blue_dark);
+  border-radius: 50%;
+  &:hover,
+  &:focus-visible {
+    background: var(--blue_light);
+  }
+
+  &:focus-visible {
+    ${Outline};
+  }
+
+  > span {
+    font-size: 36px;
+  }
 `;
