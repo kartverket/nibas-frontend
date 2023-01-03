@@ -34,13 +34,16 @@ export const Part = styled.div`
 `;
 
 export const MetadataValue = styled.p`
-  margin: 0;
-  margin-bottom: 8px;
+  margin: 8px 0;
+  /* margin-bottom: 8px; */
+  font-size: 14px;
 `;
 
 export const MetadataText = styled.p`
-  margin: 0;
+  margin: 8px 0;
+  margin-right: 4px;
   font-size: 14px;
+  color: var(--gray);
 `;
 
 export const BlockLabel = styled(Label)`
@@ -177,4 +180,18 @@ export const AbsoluteHeaderButton = styled(Button).attrs(() => ({
   > span {
     font-size: 36px;
   }
+`;
+
+export const Separator = styled.div`
+  border-top: 2px solid var(--gray);
+  height: 1px;
+`;
+
+export const DateRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+export const Date = styled.div`
+  display: flex;
 `;

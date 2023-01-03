@@ -5,10 +5,13 @@ import AsyncKodelisteSelect from "../AsyncKodelisteSelect";
 import {
   BlockLabel,
   Container,
+  DateRow,
   InputRow,
   MetadataText,
   MetadataValue,
   Part,
+  Separator,
+  Date,
 } from "../metadataComponents";
 import useMetadataForm from "../useMetadataForm";
 import { getDateInFriendlyString } from "../utils";
@@ -43,9 +46,13 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
         <b>Grensetype</b>
         <span>{type}</span>
         <b>Gyldig fra</b>
-        <span>1048-948</span>
+        <span>
+          {getDateInFriendlyString(metadata?.common?.gyldigFra) ?? "--"}
+        </span>
         <b>Gyldig til</b>
-        <span>07-08-96</span>
+        <span>
+          {getDateInFriendlyString(metadata?.common?.gyldigTil) ?? "--"}
+        </span>
       </InformationWrapper>
       <form>
         <Container>
@@ -86,6 +93,13 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
           />
         </LargePart>
       </form>
+      <Separator />
+      <Dates
+        oppdateringsdato={
+          metadata?.common?.sporingsinformasjon.oppdateringsdato
+        }
+        datafangstdato={metadata?.common?.datafangstdato}
+      />
     </div>
   );
 };
@@ -97,18 +111,20 @@ type DatesProps = {
 
 const Dates = ({ oppdateringsdato, datafangstdato }: DatesProps) => (
   <>
-    <div>
-      <MetadataText>Oppdateringsdato</MetadataText>
-      <MetadataValue>
-        {getDateInFriendlyString(oppdateringsdato) ?? "---"}
-      </MetadataValue>
-    </div>
-    <div>
-      <MetadataText>Datafangstdato</MetadataText>
-      <MetadataValue>
-        {getDateInFriendlyString(datafangstdato) ?? "---"}
-      </MetadataValue>
-    </div>
+    <DateRow>
+      <Date>
+        <MetadataText>Datafangst</MetadataText>
+        <MetadataValue>
+          {getDateInFriendlyString(datafangstdato) ?? "--"}
+        </MetadataValue>
+      </Date>
+      <Date>
+        <MetadataText>Sist oppdatert</MetadataText>
+        <MetadataValue>
+          {getDateInFriendlyString(oppdateringsdato) ?? "--"}
+        </MetadataValue>
+      </Date>
+    </DateRow>
   </>
 );
 

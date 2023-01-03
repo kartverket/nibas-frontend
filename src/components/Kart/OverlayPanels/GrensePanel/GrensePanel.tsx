@@ -96,9 +96,10 @@ const GrensePanel = ({ feature }: Props) => {
   );
 };
 
-const Separator = styled.div<{ color?: string }>`
+const Separator = styled.div`
   border-top: 2px solid var(--gray_light);
   height: 1px;
   margin-bottom: 24px;
 `;
+
 export default GrensePanel;
