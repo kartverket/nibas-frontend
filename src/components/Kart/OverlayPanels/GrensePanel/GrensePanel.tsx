@@ -33,9 +33,9 @@ const GrensePanel = ({ feature }: Props) => {
     showReferanserByGrenseType[feature.getProperties().type as string];
 
   if (showReferanser) {
-    tabs = ["metadata.Generelt", "metadata.Referanser", "metadata.Historikk"];
+    tabs = ["metadata.Generelt", "metadata.Referanser"];
   } else {
-    tabs = ["metadata.Generelt", "metadata.Historikk"];
+    tabs = ["metadata.Generelt"];
   }
 
   const getTabsOrMinimizedHeading = () => {
