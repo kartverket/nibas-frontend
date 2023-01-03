@@ -16,7 +16,7 @@ describe("GrenseMetadataGenerelt", () => {
     expect(screen.getByRole("textbox", { name: /opphav/i })).toHaveValue(
       "Opphav"
     );
-    expect(screen.getByRole("textbox", { name: /gyldig fra/i })).toHaveValue(
+    expect(screen.getByRole("generic", { name: /gyldig fra/i })).toHaveValue(
       "2020-06-16"
     );
     expect(screen.getByRole("textbox", { name: /gyldig til/i })).toHaveValue(

@@ -42,57 +42,63 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
 
   return (
     <div>
-      <InformationWrapper>
-        <b>Grensetype</b>
-        <span>{type}</span>
-        <b>Gyldig fra</b>
-        <span>
-          {getDateInFriendlyString(metadata?.common?.gyldigFra) ?? "--"}
-        </span>
-        <b>Gyldig til</b>
-        <span>
-          {getDateInFriendlyString(metadata?.common?.gyldigTil) ?? "--"}
-        </span>
-      </InformationWrapper>
-      <form>
-        <Container>
-          <InputRow>
-            <AsyncKodelisteSelect
-              kodeliste={maalemetodeKoder}
-              label={t("metadata.Målemetode")}
-              {...register("maalemetode", inputOptions)}
-            />
+      <MetadataWrapper>
+        <FormWrapper>
+          <form>
+            <Container>
+              <InputRow>
+                <AsyncKodelisteSelect
+                  kodeliste={maalemetodeKoder}
+                  label={t("metadata.Målemetode")}
+                  {...register("maalemetode", inputOptions)}
+                />
+                <BlockLabel>
+                  {t("metadata.Nøyaktighet")}
+                  <Input
+                    type="number"
+                    {...register("noeyaktighet", {
+                      ...inputOptions,
+                      valueAsNumber: true,
+                      min: 0,
+                      max: 1_000_000,
+                    })}
+                  />
+                </BlockLabel>
+              </InputRow>
+            </Container>
             <BlockLabel>
-              {t("metadata.Nøyaktighet")}
-              <Input
-                type="number"
-                {...register("noeyaktighet", {
-                  ...inputOptions,
-                  valueAsNumber: true,
-                  min: 0,
-                  max: 1_000_000,
-                })}
-              />
+              {t("metadata.Opphav")}
+              <Input {...register("opphav", inputOptions)} />
             </BlockLabel>
-          </InputRow>
-        </Container>
-        <BlockLabel>
-          {t("metadata.Informasjon")}
-          <Textarea rows={4} {...register("informasjon", inputOptions)} />
-        </BlockLabel>
-        <BlockLabel>
-          {t("metadata.Opphav")}
-          <Input {...register("opphav", inputOptions)} />
-        </BlockLabel>
-        <LargePart>
-          <Dates
-            oppdateringsdato={
-              metadata?.common?.sporingsinformasjon.oppdateringsdato
-            }
-            datafangstdato={metadata?.common?.datafangstdato}
-          />
-        </LargePart>
-      </form>
+            <BlockLabel>
+              {t("metadata.Informasjon")}
+              <Textarea rows={4} {...register("informasjon", inputOptions)} />
+            </BlockLabel>
+
+            <LargePart>
+              <Dates
+                oppdateringsdato={
+                  metadata?.common?.sporingsinformasjon.oppdateringsdato
+                }
+                datafangstdato={metadata?.common?.datafangstdato}
+              />
+            </LargePart>
+          </form>
+        </FormWrapper>
+
+        <InformationWrapper>
+          <b>Grensetype</b>
+          <span>{type}</span>
+          <b>Gyldig fra</b>
+          <span>
+            {getDateInFriendlyString(metadata?.common?.gyldigFra) ?? "--"}
+          </span>
+          <b>Gyldig til</b>
+          <span>
+            {getDateInFriendlyString(metadata?.common?.gyldigTil) ?? "--"}
+          </span>
+        </InformationWrapper>
+      </MetadataWrapper>
       <Separator />
       <Dates
         oppdateringsdato={
@@ -108,6 +114,17 @@ type DatesProps = {
   oppdateringsdato?: string;
   datafangstdato?: string;
 };
+
+const MetadataWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+const FormWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  margin-right: 44px;
+`;
 
 const Dates = ({ oppdateringsdato, datafangstdato }: DatesProps) => (
   <>
@@ -139,8 +156,6 @@ const LargePart = styled(Part)`
 `;
 
 const InformationWrapper = styled.div`
-  width: 100%;
-  height: 100%;
   background: var(--gray_light);
   color: var(--black);
   display: grid;
@@ -149,4 +164,7 @@ const InformationWrapper = styled.div`
   font-size: 16px;
   grid-template-columns: auto 1fr;
   grid-gap: 6px 12px;
+  flex: 1;
+  width: 100%;
+  height: 100%;
 `;
