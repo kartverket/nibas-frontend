@@ -102,4 +102,8 @@ const Separator = styled.div`
   margin-bottom: 24px;
 `;
 
+const MinimizedHeading = styled(Heading)`
+  overflow: hidden;
+`;
+
 export default GrensePanel;
