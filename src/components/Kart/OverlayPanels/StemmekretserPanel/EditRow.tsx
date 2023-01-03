@@ -1,164 +1,71 @@
-import { useCallback, useEffect, useRef } from "react";
-import { useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import Input from "components/form/Input";
-import { StemmekretsEntry, useToolbarSaving } from "contexts/ToolbarContext";
-import useKretsToolbarSync from "contexts/ToolbarContext/useToolbarFormSync";
+import { StemmekretsRef, StemmekretsResponse } from "types/api";
+import Tabs from "components/Tabs";
+import MergeTab from "./MergeTab";
+import DetailsTab from "./DetailsTab";
 import { useUtkastEntity } from "contexts/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
-import {
-  StemmekretsRef,
-  StemmekretsRequest,
-  StemmekretsResponse,
-} from "types/api";
-import useTimer from "hooks/useTimer";
 import { getIdFromEntity } from "utils/api";
-
-type Inputs = {
-  stemmekretsnavn: string;
-  stemmekretsnummer: string;
-  tellekretsnavn: string;
-  tellekretsnummer: string;
-};
-
-const fromFormToRequest = (
-  data: Inputs,
-  stemmekrets: StemmekretsResponse
-): StemmekretsRequest => ({
-  identifikasjon: {
-    lokalid: getIdFromEntity(stemmekrets),
-  },
-  valgdistriktsnummer: stemmekrets.valgdistriktsnummer,
-  version: stemmekrets.version,
-  stemmekretsnavn: data.stemmekretsnavn,
-  stemmekretsnummer: data.stemmekretsnummer,
-  tellekretsnavn: data.tellekretsnavn,
-  tellekretsnummer: data.tellekretsnummer,
-});
 
 type Props = {
   stemmekrets: StemmekretsRef;
   kommuneId: string;
+  alleStemmekretser: {
+    stemmekretsnummer: string;
+    stemmekretsnavn: string;
+  }[];
 };
 
-const EditRow = ({ stemmekrets, kommuneId }: Props) => {
+const EditRow = ({ stemmekrets, kommuneId, alleStemmekretser }: Props) => {
   const stemmekretsId = getIdFromEntity(stemmekrets);
-  const { t } = useTranslation();
+
   const { data: fullStemmekrets } = useNibasApi("/v1/stemmekretser/{id}", {
     id: stemmekretsId,
   });
-  const { startTimer, clearTimer } = useTimer();
 
   const utkastStemmekrets = useUtkastEntity(
     fullStemmekrets,
     "stemmekretsendringer"
   ) as StemmekretsResponse | undefined;
 
-  const { register, setValue, getValues } = useForm<Inputs>();
-
-  const { addEntry } = useToolbarSaving();
-
-  const previousValues = useRef<Inputs>(getValues());
-
-  useEffect(() => {
-    if (!utkastStemmekrets) return;
-
-    setValue("stemmekretsnavn", utkastStemmekrets.stemmekretsnavn);
-    setValue("stemmekretsnummer", utkastStemmekrets.stemmekretsnummer);
-    setValue("tellekretsnavn", utkastStemmekrets.tellekretsnavn ?? "");
-    setValue("tellekretsnummer", utkastStemmekrets.tellekretsnummer ?? "");
-
-    previousValues.current = getValues();
-  }, [utkastStemmekrets, setValue, getValues]);
-
-  const setFormValues = useCallback(
-    (change: StemmekretsEntry["changes"][number], direction: "to" | "from") => {
-      setValue("stemmekretsnavn", change[direction]?.stemmekretsnavn ?? "");
-      setValue("stemmekretsnummer", change[direction]?.stemmekretsnummer ?? "");
-      setValue("tellekretsnavn", change[direction]?.tellekretsnavn ?? "");
-      setValue("tellekretsnummer", change[direction]?.tellekretsnummer ?? "");
-    },
-    [setValue]
-  );
-
-  useKretsToolbarSync<StemmekretsEntry>({
-    entityId: stemmekretsId,
-    redoEventKey: "stemmekretsRedo",
-    undoEventKey: "stemmekretsUndo",
-    setFormValues,
-  });
-
-  const onChange = () => {
-    clearTimer();
-
-    if (!utkastStemmekrets) return;
-
-    startTimer(() => {
-      addEntry({
-        type: "stemmekrets",
-        kommuneId,
-        changes: [
-          {
-            from: fromFormToRequest(previousValues.current, utkastStemmekrets),
-            to: fromFormToRequest(getValues(), utkastStemmekrets),
-            id: stemmekretsId,
-          },
-        ],
-      });
-
-      previousValues.current = getValues();
-    }, 700);
-  };
-
-  const formOptions = {
-    onChange,
-  };
-
   return (
     <AccordionRow>
       <td colSpan={7}>
-        <InputsWrapper>
-          <BlockLabel>
-            {t("stemmekrets.Stemmekretsnummer")}
-            <Input {...register("stemmekretsnummer", formOptions)} />
-          </BlockLabel>
-
-          <BlockLabel>
-            {t("tabell.Stemmekretsnavn")}
-            <Input {...register("stemmekretsnavn", formOptions)} />
-          </BlockLabel>
-        </InputsWrapper>
-
-        <InputsWrapper>
-          <BlockLabel>
-            {t("stemmekrets.Tellekretsnummer")}
-            <Input {...register("tellekretsnummer", formOptions)} />
-          </BlockLabel>
-
-          <BlockLabel>
-            {t("stemmekrets.Tellekretsnavn")}
-            <Input {...register("tellekretsnavn", formOptions)} />
-          </BlockLabel>
-        </InputsWrapper>
+        <Tabs tabTransKeys={["stemmekrets.Detaljer", "stemmekrets.Slå sammen"]}>
+          <DetailsTab
+            stemmekretsId={stemmekretsId}
+            kommuneId={kommuneId}
+            utkastStemmekrets={utkastStemmekrets}
+          />
+          <MergeTab
+            stemmekrets={utkastStemmekrets}
+            alleStemmekretser={alleStemmekretser}
+          />
+        </Tabs>
       </td>
     </AccordionRow>
   );
 };
 
 const AccordionRow = styled.tr`
-  background-color: var(--gray_light);
-
   td {
-    padding: 8px;
+    padding: 0;
   }
 `;
 
-const BlockLabel = styled.label`
-  &:last-child {
-    margin-left: 16px;
-  }
+export const Section = styled.div`
+  background-color: var(--gray_light);
+  padding: 30px 24px;
+`;
 
+export const ContrastSection = styled(Section)`
+  background: var(--green_light);
+  border: 2px solid var(--black);
+  border-left: none;
+  border-right: none;
+`;
+
+export const BlockLabel = styled.label`
   input {
     width: 100%;
   }
@@ -166,8 +73,9 @@ const BlockLabel = styled.label`
   margin-bottom: 16px;
 `;
 
-const InputsWrapper = styled.div`
+export const InputsWrapper = styled.div`
   display: flex;
+  gap: 16px;
   width: 80%;
 
   > ${BlockLabel} {
