@@ -72,6 +72,15 @@ export const DateWrapper = styled(Part)`
   }
 `;
 
+export const InputRow = styled(Part)`
+  display: flex;
+  gap: 20px;
+
+  > :first-child {
+    flex: 1;
+  }
+`;
+
 const moveInFromLeft = keyframes`
 0% {
   transform: translateX(-100%);

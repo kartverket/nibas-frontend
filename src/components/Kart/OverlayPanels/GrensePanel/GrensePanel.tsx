@@ -10,6 +10,7 @@ import {
   AbsoluteHeaderButton,
   OverlayPanelWrapper,
 } from "../metadataComponents";
+import styled from "styled-components";
 
 const showReferanserByGrenseType: Record<string, boolean> = {
   Territorialgrense: true,
@@ -41,7 +42,7 @@ const GrensePanel = ({ feature }: Props) => {
     if (panelContext?.isMinimized) {
       return (
         <Heading size="xs" tag="h2">
-          Linje metadata
+          Metadata for linje
         </Heading>
       );
     }
@@ -50,8 +51,9 @@ const GrensePanel = ({ feature }: Props) => {
       <Tabs key={feature.getId()} tabTransKeys={tabs}>
         <div>
           <Heading size="xs" tag="h2">
-            Linje metadata
+            Metadata for linje
           </Heading>
+          <Separator />
           <GrenseMetadataGenerelt feature={feature} />
         </div>
         {showReferanser && (
@@ -59,6 +61,7 @@ const GrensePanel = ({ feature }: Props) => {
             <Heading size="xs" tag="h2">
               Dokumentasjonsreferanser
             </Heading>
+            <Separator />
             <GrenseMetadataReferanser feature={feature} />
           </div>
         )}
@@ -93,4 +96,9 @@ const GrensePanel = ({ feature }: Props) => {
   );
 };
 
+const Separator = styled.div<{ color?: string }>`
+  border-top: 2px solid var(--gray_light);
+  height: 1px;
+  margin-bottom: 24px;
+`;
 export default GrensePanel;
