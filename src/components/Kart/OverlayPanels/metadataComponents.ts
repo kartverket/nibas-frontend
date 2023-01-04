@@ -35,7 +35,6 @@ export const Part = styled.div`
 
 export const MetadataValue = styled.p`
   margin: 8px 0;
-  /* margin-bottom: 8px; */
   font-size: 14px;
 `;
 
