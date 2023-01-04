@@ -17,7 +17,7 @@ const StyledTextarea = styled.textarea`
   border-radius: 3px;
   border: 1px solid var(--black);
   background-color: var(--white);
-  font-family: "Mulish";
+  font-family: inherit;
 
   &:active,
   &:focus {
