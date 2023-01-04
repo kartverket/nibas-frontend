@@ -13,7 +13,6 @@ const Textarea = forwardRef<HTMLTextAreaElement, Props>(function Textarea(
 const StyledTextarea = styled.textarea`
   padding: 8px;
   font-size: 14px;
-  border-width: 1px;
   border-radius: 3px;
   border: 1px solid var(--black);
   background-color: var(--white);
