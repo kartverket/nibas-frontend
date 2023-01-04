@@ -5,18 +5,21 @@ import AsyncKodelisteSelect from "../AsyncKodelisteSelect";
 import {
   BlockLabel,
   Container,
-  DateWrapper,
+  DateRow,
+  InputRow,
   MetadataText,
   MetadataValue,
   Part,
+  Separator,
+  Date,
 } from "../metadataComponents";
 import useMetadataForm from "../useMetadataForm";
 import { getDateInFriendlyString } from "../utils";
 import Input from "components/form/Input";
-import Select from "components/form/Select";
 import { Metadata, FeatureProperties } from "types/api";
 import useMetadataInputOptions from "hooks/useMetadataInputOptions";
 import styled from "styled-components";
+import Textarea from "components/form/Input/Textarea";
 
 type Props = {
   feature: Feature<Geometry>;
@@ -38,79 +41,72 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
   });
 
   return (
-    <form>
-      <Container>
-        <Part>
-          <BlockLabel>
-            {t("metadata.Grensetype")}
-            <Select disabled>
-              <option>{type}</option>
-            </Select>
-          </BlockLabel>
-          <DateWrapper>
+    <div>
+      <MetadataWrapper>
+        <FormWrapper>
+          <form>
+            <Container>
+              <InputRow>
+                <AsyncKodelisteSelect
+                  kodeliste={maalemetodeKoder}
+                  label={t("metadata.Målemetode")}
+                  {...register("maalemetode", inputOptions)}
+                />
+                <BlockLabel>
+                  {t("metadata.Nøyaktighet")}
+                  <Input
+                    type="number"
+                    {...register("noeyaktighet", {
+                      ...inputOptions,
+                      valueAsNumber: true,
+                      min: 0,
+                      max: 1_000_000,
+                    })}
+                  />
+                </BlockLabel>
+              </InputRow>
+            </Container>
             <BlockLabel>
-              {t("metadata.Gyldig fra")}
-              <Input
-                type="date"
-                role="textbox"
-                {...register("gyldigFra", inputOptions)}
-              />
+              {t("metadata.Opphav")}
+              <Input {...register("opphav", inputOptions)} />
             </BlockLabel>
             <BlockLabel>
-              {t("metadata.Gyldig til")}
-              <Input
-                type="date"
-                role="textbox"
-                {...register("gyldigTil", inputOptions)}
-              />
+              {t("metadata.Informasjon")}
+              <Textarea rows={4} {...register("informasjon", inputOptions)} />
             </BlockLabel>
-          </DateWrapper>
-        </Part>
-        <Part>
-          <AsyncKodelisteSelect
-            kodeliste={maalemetodeKoder}
-            label={t("metadata.Målemetode")}
-            {...register("maalemetode", inputOptions)}
-          />
-          <BlockLabel>
-            {t("metadata.Nøyaktighet")}
-            <Input
-              type="number"
-              {...register("noeyaktighet", {
-                ...inputOptions,
-                valueAsNumber: true,
-                min: 0,
-                max: 1_000_000,
-              })}
-            />
-          </BlockLabel>
-        </Part>
-        <SmallPart>
-          <Dates
-            oppdateringsdato={
-              metadata?.common?.sporingsinformasjon.oppdateringsdato
-            }
-            datafangstdato={metadata?.common?.datafangstdato}
-          />
-        </SmallPart>
-      </Container>
-      <BlockLabel>
-        {t("metadata.Informasjon")}
-        <Input {...register("informasjon", inputOptions)} />
-      </BlockLabel>
-      <BlockLabel>
-        {t("metadata.Opphav")}
-        <Input {...register("opphav", inputOptions)} />
-      </BlockLabel>
-      <LargePart>
-        <Dates
-          oppdateringsdato={
-            metadata?.common?.sporingsinformasjon.oppdateringsdato
-          }
-          datafangstdato={metadata?.common?.datafangstdato}
-        />
-      </LargePart>
-    </form>
+
+            <LargePart>
+              <Dates
+                oppdateringsdato={
+                  metadata?.common?.sporingsinformasjon.oppdateringsdato
+                }
+                datafangstdato={metadata?.common?.datafangstdato}
+              />
+            </LargePart>
+          </form>
+        </FormWrapper>
+
+        <InformationWrapper>
+          <b>Grensetype</b>
+          <span>{type}</span>
+          <b>Gyldig fra</b>
+          <span>
+            {getDateInFriendlyString(metadata?.common?.gyldigFra) ?? "--"}
+          </span>
+          <b>Gyldig til</b>
+          <span>
+            {getDateInFriendlyString(metadata?.common?.gyldigTil) ?? "--"}
+          </span>
+        </InformationWrapper>
+      </MetadataWrapper>
+      <Separator />
+      <Dates
+        oppdateringsdato={
+          metadata?.common?.sporingsinformasjon.oppdateringsdato
+        }
+        datafangstdato={metadata?.common?.datafangstdato}
+      />
+    </div>
   );
 };
 
@@ -119,20 +115,33 @@ type DatesProps = {
   datafangstdato?: string;
 };
 
+const MetadataWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+const FormWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  margin-right: 44px;
+`;
+
 const Dates = ({ oppdateringsdato, datafangstdato }: DatesProps) => (
   <>
-    <div>
-      <MetadataText>Oppdateringsdato</MetadataText>
-      <MetadataValue>
-        {getDateInFriendlyString(oppdateringsdato) ?? "---"}
-      </MetadataValue>
-    </div>
-    <div>
-      <MetadataText>Datafangstdato</MetadataText>
-      <MetadataValue>
-        {getDateInFriendlyString(datafangstdato) ?? "---"}
-      </MetadataValue>
-    </div>
+    <DateRow>
+      <Date>
+        <MetadataText>Datafangst</MetadataText>
+        <MetadataValue>
+          {getDateInFriendlyString(datafangstdato) ?? "--"}
+        </MetadataValue>
+      </Date>
+      <Date>
+        <MetadataText>Sist oppdatert</MetadataText>
+        <MetadataValue>
+          {getDateInFriendlyString(oppdateringsdato) ?? "--"}
+        </MetadataValue>
+      </Date>
+    </DateRow>
   </>
 );
 
@@ -146,8 +155,16 @@ const LargePart = styled(Part)`
   }
 `;
 
-const SmallPart = styled(Part)`
-  @media (min-width: var(--screenBreakXxl)) {
-    display: none;
-  }
+const InformationWrapper = styled.div`
+  background: var(--gray_light);
+  color: var(--black);
+  display: grid;
+  padding: 16px;
+  margin-bottom: 30px;
+  font-size: 16px;
+  grid-template-columns: auto 1fr;
+  grid-gap: 6px 12px;
+  flex: 1;
+  width: 100%;
+  height: 100%;
 `;

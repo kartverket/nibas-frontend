@@ -3,13 +3,15 @@ import Geometry from "ol/geom/Geometry";
 import GrenseMetadataGenerelt from "./GrenseMetadataGenerelt";
 import GrenseMetadataReferanser from "./GrenseMetadataReferanser";
 import Tabs from "components/Tabs";
-import Heading from "components/typography/Heading";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 import Icon from "components/Icon";
 import {
   AbsoluteHeaderButton,
   OverlayPanelWrapper,
+  PanelHeader,
+  PanelTitle,
 } from "../metadataComponents";
+import styled from "styled-components";
 
 const showReferanserByGrenseType: Record<string, boolean> = {
   Territorialgrense: true,
@@ -32,35 +34,39 @@ const GrensePanel = ({ feature }: Props) => {
     showReferanserByGrenseType[feature.getProperties().type as string];
 
   if (showReferanser) {
-    tabs = ["metadata.Generelt", "metadata.Referanser", "metadata.Historikk"];
+    tabs = ["metadata.Generelt", "metadata.Referanser"];
   } else {
-    tabs = ["metadata.Generelt", "metadata.Historikk"];
+    tabs = ["metadata.Generelt"];
   }
+
+  const getPanelHeader = (title: string) => {
+    return (
+      <PanelHeader borderBottom={false}>
+        <PanelTitle tag="h2" size="xs">
+          {title}
+        </PanelTitle>
+      </PanelHeader>
+    );
+  };
 
   const getTabsOrMinimizedHeading = () => {
     if (panelContext?.isMinimized) {
-      return (
-        <Heading size="xs" tag="h2">
-          Linje metadata
-        </Heading>
-      );
+      return getPanelHeader("Metadata for linje");
     }
 
     return (
       <Tabs key={feature.getId()} tabTransKeys={tabs}>
-        <div>
-          <Heading size="xs" tag="h2">
-            Linje metadata
-          </Heading>
+        <MetadataWrapper>
+          {getPanelHeader("Metadata for linje")}
+          <Separator />
           <GrenseMetadataGenerelt feature={feature} />
-        </div>
+        </MetadataWrapper>
         {showReferanser && (
-          <div>
-            <Heading size="xs" tag="h2">
-              Dokumentasjonsreferanser
-            </Heading>
+          <MetadataWrapper>
+            {getPanelHeader("Dokumentasjonsreferanser")}
+            <Separator />
             <GrenseMetadataReferanser feature={feature} />
-          </div>
+          </MetadataWrapper>
         )}
       </Tabs>
     );
@@ -92,5 +98,15 @@ const GrensePanel = ({ feature }: Props) => {
     </OverlayPanelWrapper>
   );
 };
+
+const Separator = styled.div`
+  border-top: 2px solid var(--gray_light);
+  height: 1px;
+  margin-bottom: 24px;
+`;
+
+const MetadataWrapper = styled.div`
+  margin-top: 16px;
+`;
 
 export default GrensePanel;

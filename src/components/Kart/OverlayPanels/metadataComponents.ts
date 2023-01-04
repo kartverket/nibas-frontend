@@ -34,13 +34,15 @@ export const Part = styled.div`
 `;
 
 export const MetadataValue = styled.p`
-  margin: 0;
-  margin-bottom: 8px;
+  margin: 8px 0;
+  font-size: 14px;
 `;
 
 export const MetadataText = styled.p`
-  margin: 0;
+  margin: 8px 0;
+  margin-right: 4px;
   font-size: 14px;
+  color: var(--gray);
 `;
 
 export const BlockLabel = styled(Label)`
@@ -69,6 +71,15 @@ export const DateWrapper = styled(Part)`
     &:last-child {
       margin-right: 0;
     }
+  }
+`;
+
+export const InputRow = styled(Part)`
+  display: flex;
+  gap: 20px;
+
+  > :first-child {
+    flex: 1;
   }
 `;
 
@@ -101,7 +112,6 @@ export const OverlayPanelWrapper = styled(KartInteractable)<{
   border: 4px solid var(--gray_light);
   border-bottom: none;
   border-left: none;
-  overflow-y: auto;
 
   width: 1000px;
   transition: height 0.4s ease-in-out;
@@ -113,12 +123,13 @@ export const OverlayPanelWrapper = styled(KartInteractable)<{
   }
 `;
 
-export const PanelHeader = styled.header`
+export const PanelHeader = styled.header<{ borderBottom?: boolean }>`
   display: flex;
   align-items: center;
   gap: 16px;
   padding: 8px 8px 16px;
-  border-bottom: 2px solid var(--gray_light);
+  border-bottom: ${({ borderBottom }) => (borderBottom ? 2 : 0)}px solid
+    var(--gray_light);
 `;
 
 export const PanelTitle = styled(Heading)`
@@ -153,7 +164,8 @@ export const AbsoluteHeaderButton = styled(Button).attrs(() => ({
   position: absolute;
   top: 0;
   right: ${({ right }) => right}px;
-  margin: 16px;
+  margin: 24px;
+  margin-top: 16px;
   color: var(--blue_dark);
   border-radius: 50%;
   &:hover,
@@ -168,4 +180,18 @@ export const AbsoluteHeaderButton = styled(Button).attrs(() => ({
   > span {
     font-size: 36px;
   }
+`;
+
+export const Separator = styled.div`
+  border-top: 2px solid var(--gray);
+  height: 1px;
+`;
+
+export const DateRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+export const Date = styled.div`
+  display: flex;
 `;
