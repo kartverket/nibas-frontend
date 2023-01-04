@@ -9,6 +9,9 @@ import Icon from "components/Icon";
 import {
   AbsoluteHeaderButton,
   OverlayPanelWrapper,
+  PanelHeader,
+  PanelHeaderButton,
+  PanelTitle,
 } from "../metadataComponents";
 import styled from "styled-components";
 
@@ -38,32 +41,34 @@ const GrensePanel = ({ feature }: Props) => {
     tabs = ["metadata.Generelt"];
   }
 
+  const getPanelHeader = (title: string) => {
+    return (
+      <PanelHeader borderBottom={false}>
+        <PanelTitle tag="h2" size="xs">
+          {title}
+        </PanelTitle>
+      </PanelHeader>
+    );
+  };
+
   const getTabsOrMinimizedHeading = () => {
     if (panelContext?.isMinimized) {
-      return (
-        <Heading size="xs" tag="h2">
-          Metadata for linje
-        </Heading>
-      );
+      return getPanelHeader("Metadata for linje");
     }
 
     return (
       <Tabs key={feature.getId()} tabTransKeys={tabs}>
-        <div>
-          <Heading size="xs" tag="h2">
-            Metadata for linje
-          </Heading>
+        <MetadataWrapper>
+          {getPanelHeader("Metadata for linje")}
           <Separator />
           <GrenseMetadataGenerelt feature={feature} />
-        </div>
+        </MetadataWrapper>
         {showReferanser && (
-          <div>
-            <Heading size="xs" tag="h2">
-              Dokumentasjonsreferanser
-            </Heading>
+          <MetadataWrapper>
+            {getPanelHeader("Dokumentasjonsreferanser")}
             <Separator />
             <GrenseMetadataReferanser feature={feature} />
-          </div>
+          </MetadataWrapper>
         )}
       </Tabs>
     );
@@ -102,8 +107,8 @@ const Separator = styled.div`
   margin-bottom: 24px;
 `;
 
-const MinimizedHeading = styled(Heading)`
-  overflow: hidden;
+const MetadataWrapper = styled.div`
+  margin-top: 16px;
 `;
 
 export default GrensePanel;

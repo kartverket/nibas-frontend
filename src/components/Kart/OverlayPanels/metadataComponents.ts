@@ -124,12 +124,13 @@ export const OverlayPanelWrapper = styled(KartInteractable)<{
   }
 `;
 
-export const PanelHeader = styled.header`
+export const PanelHeader = styled.header<{ borderBottom?: boolean }>`
   display: flex;
   align-items: center;
   gap: 16px;
   padding: 8px 8px 16px;
-  border-bottom: 2px solid var(--gray_light);
+  border-bottom: ${({ borderBottom }) => (borderBottom ? 2 : 0)}px solid
+    var(--gray_light);
 `;
 
 export const PanelTitle = styled(Heading)`
@@ -164,7 +165,8 @@ export const AbsoluteHeaderButton = styled(Button).attrs(() => ({
   position: absolute;
   top: 0;
   right: ${({ right }) => right}px;
-  margin: 16px;
+  margin: 24px;
+  margin-top: 16px;
   color: var(--blue_dark);
   border-radius: 50%;
   &:hover,
