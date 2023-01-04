@@ -3,14 +3,12 @@ import Geometry from "ol/geom/Geometry";
 import GrenseMetadataGenerelt from "./GrenseMetadataGenerelt";
 import GrenseMetadataReferanser from "./GrenseMetadataReferanser";
 import Tabs from "components/Tabs";
-import Heading from "components/typography/Heading";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 import Icon from "components/Icon";
 import {
   AbsoluteHeaderButton,
   OverlayPanelWrapper,
   PanelHeader,
-  PanelHeaderButton,
   PanelTitle,
 } from "../metadataComponents";
 import styled from "styled-components";
