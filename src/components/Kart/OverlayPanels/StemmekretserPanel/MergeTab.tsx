@@ -5,15 +5,12 @@ import Heading from "components/typography/Heading";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { StemmekretsResponse } from "types/api";
+import { StemmekretsRef, StemmekretsResponse } from "types/api";
 import { BlockLabel, ContrastSection, InputsWrapper, Section } from "./EditRow";
 
 type Props = {
   stemmekrets: StemmekretsResponse | undefined;
-  alleStemmekretser: {
-    stemmekretsnummer: string;
-    stemmekretsnavn: string;
-  }[];
+  alleStemmekretser: StemmekretsRef[];
 };
 
 const MergeTab = ({ stemmekrets, alleStemmekretser }: Props) => {
@@ -42,9 +39,9 @@ const MergeTab = ({ stemmekrets, alleStemmekretser }: Props) => {
           <label>{t("stemmekrets.Navn- eller nummer på stemmekrets")}</label>
           <Select>
             {alleStemmekretser.map((s) => (
-              <option key={s.stemmekretsnummer} value={s.stemmekretsnummer}>{`${
-                s.stemmekretsnummer
-              } - ${s.stemmekretsnavn.toLowerCase()}`}</option>
+              <option key={s.nummer} value={s.nummer}>{`${
+                s.nummer
+              } - ${s.navn.toLowerCase()}`}</option>
             ))}
           </Select>
           <span>

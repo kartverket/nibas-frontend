@@ -10,10 +10,7 @@ import { getIdFromEntity } from "utils/api";
 type Props = {
   stemmekrets: StemmekretsRef;
   kommuneId: string;
-  alleStemmekretser: {
-    stemmekretsnummer: string;
-    stemmekretsnavn: string;
-  }[];
+  alleStemmekretser: StemmekretsRef[];
 };
 
 const EditRow = ({ stemmekrets, kommuneId, alleStemmekretser }: Props) => {

@@ -56,14 +56,6 @@ const StemmekretserPanel = ({ kommune }: Props) => {
     "stemmekretsendringer"
   ) as StemmekretsRef[] | undefined;
 
-  // TODO: Dette gir ut feil type ID, men det kreves en større refaktorering for å skaffe stemmekretsnummer for alle stemmekretser i en kommune
-  // Det vil kreve et nytt endepunkt i backenden, men vil la oss forenkle dataflyten i frontenden en del
-  const alleStemmekretserLite =
-    utkastStemmekretser?.map((s) => ({
-      stemmekretsnummer: s.id.lokalid.value,
-      stemmekretsnavn: s.navn,
-    })) || [];
-
   const headers = [
     "Stemmekretsnummer",
     "Navn",
@@ -157,7 +149,11 @@ const StemmekretserPanel = ({ kommune }: Props) => {
                     <EditRow
                       stemmekrets={stemmekrets}
                       kommuneId={kommuneId}
-                      alleStemmekretser={alleStemmekretserLite}
+                      alleStemmekretser={
+                        utkastStemmekretser.filter(
+                          (s) => s.nummer !== stemmekrets.nummer
+                        ) || []
+                      }
                     />
                   )}
                   {isFutureChangesOpen(getIdFromEntity(stemmekrets)) && (
