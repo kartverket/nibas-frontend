@@ -42,10 +42,9 @@ const MergeTab = ({ stemmekrets, alleStemmekretser }: Props) => {
           <label>{t("stemmekrets.Navn- eller nummer på stemmekrets")}</label>
           <Select>
             {alleStemmekretser.map((s) => (
-              <option
-                key={s.stemmekretsnummer}
-                value={s.stemmekretsnummer}
-              >{`${s.stemmekretsnummer} - ${s.stemmekretsnavn}`}</option>
+              <option key={s.stemmekretsnummer} value={s.stemmekretsnummer}>{`${
+                s.stemmekretsnummer
+              } - ${s.stemmekretsnavn.toLowerCase()}`}</option>
             ))}
           </Select>
           <span>
@@ -94,6 +93,7 @@ const Dropdown = styled.div`
 
   select {
     margin: 0;
+    text-transform: capitalize;
   }
 
   & > span {
