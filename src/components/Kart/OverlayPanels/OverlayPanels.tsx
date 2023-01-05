@@ -3,12 +3,13 @@ import GrunnkretserPanel from "./GrunnkretserPanel";
 import StemmekretserPanel from "./StemmekretserPanel";
 import { InndelingerKretsProvider } from "contexts/InndelingerKretsContext";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
+import styled from "styled-components";
 
 const OverlayPanels = () => {
   const { panelContext, kretserContext } = useOverlayPanels();
 
   return (
-    <>
+    <OverlayPanelGridWrapper>
       {panelContext?.type === "grensemetadata" && (
         <GrensePanel feature={panelContext.feature} />
       )}
@@ -22,8 +23,13 @@ const OverlayPanels = () => {
           <StemmekretserPanel kommune={kretserContext.kommune} />
         </InndelingerKretsProvider>
       )}
-    </>
+    </OverlayPanelGridWrapper>
   );
 };
+
+const OverlayPanelGridWrapper = styled.div`
+  justify-self: flex-start;
+  grid-area: kretser;
+`;
 
 export default OverlayPanels;
