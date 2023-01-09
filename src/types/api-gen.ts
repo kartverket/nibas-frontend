@@ -901,6 +901,8 @@ export interface components {
       id: components["schemas"]["ObjektIdentifikator"];
       /** @description Navnet på stemmekretsen */
       navn: string;
+      /** @description Nummeret til stemmekretsen */
+      nummer: string;
       /** @description URL til full representasjon av stemmekrets */
       href: string;
       /**

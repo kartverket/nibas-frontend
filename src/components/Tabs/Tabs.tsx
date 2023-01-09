@@ -20,7 +20,7 @@ const Tabs = ({ children, tabTransKeys, className }: Props) => {
 
   return (
     <div className={className}>
-      <TabsWrapper>
+      <div>
         {tabTransKeys.map((tabTransKey, index) => (
           <TabButton
             key={tabTransKey}
@@ -30,7 +30,7 @@ const Tabs = ({ children, tabTransKeys, className }: Props) => {
             {t(tabTransKey as Translation)}
           </TabButton>
         ))}
-      </TabsWrapper>
+      </div>
       {React.Children.map(children, (child, index) =>
         selectedTab === index ? child : null
       )}
@@ -38,13 +38,11 @@ const Tabs = ({ children, tabTransKeys, className }: Props) => {
   );
 };
 
-const TabsWrapper = styled.div``;
-
 const TabButton = styled(Button).attrs(() => ({
   variant: "unstyled",
 }))<{ selected: boolean }>`
   border-bottom: none;
-  padding: 8px;
+  padding: 16px;
   transition: 0.1s border-bottom;
   border-bottom: 2px solid transparent;
 

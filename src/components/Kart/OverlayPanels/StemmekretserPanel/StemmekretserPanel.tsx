@@ -146,7 +146,15 @@ const StemmekretserPanel = ({ kommune }: Props) => {
                     toggleFutureChangesRow={toggleFutureChangesRow}
                   />
                   {isRowOpen(getIdFromEntity(stemmekrets)) && (
-                    <EditRow stemmekrets={stemmekrets} kommuneId={kommuneId} />
+                    <EditRow
+                      stemmekrets={stemmekrets}
+                      kommuneId={kommuneId}
+                      alleStemmekretser={
+                        utkastStemmekretser.filter(
+                          (s) => s.nummer !== stemmekrets.nummer
+                        ) || []
+                      }
+                    />
                   )}
                   {isFutureChangesOpen(getIdFromEntity(stemmekrets)) && (
                     <tr>
