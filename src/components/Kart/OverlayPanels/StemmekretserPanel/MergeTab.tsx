@@ -44,9 +44,6 @@ const MergeTab = ({ stemmekrets, alleStemmekretser }: Props) => {
               } - ${s.navn.toLowerCase()}`}</option>
             ))}
           </Select>
-          <span>
-            {t("stemmekrets.Du kan søke etter både navn og nummer på kretsen")}
-          </span>
         </Dropdown>
       </Section>
       <ContrastSection>
