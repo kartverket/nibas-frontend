@@ -103,7 +103,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
 
           removeFeaturesFromSourceByIds("edit", featureIdsToRemove);
         }
-        // hvis tidligere endret, fjern editing og visible -- dette skjønner jeg ikke
+        // hvis tidligere endret, fjern editing og visible
         if (newValues[kommuneIdInList]?.editing) {
           newValues[kommuneIdInList] = {
             visible: false,
