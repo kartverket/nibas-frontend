@@ -87,23 +87,25 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
         if (kommuneId === kommuneIdInList) return;
 
         // fjern features til kretsene som var endret før klikk
-        if (newValues[kommuneId]?.visible && newValues[kommuneId]?.editing) {
+        if (
+          newValues[kommuneIdInList]?.visible &&
+          newValues[kommuneIdInList]?.editing
+        ) {
           const featureIdsToRemove = editSource
             .getFeatures()
             .filter((feature) => {
               const { type, id } = (
                 feature.getProperties() as FeatureProperties
               ).inndelingerKontekst;
-              return type === currentKretstype && id === kommuneId;
+              return type === currentKretstype && id === kommuneIdInList;
             })
             .map(getFeatureId);
 
           removeFeaturesFromSourceByIds("edit", featureIdsToRemove);
         }
-
         // hvis tidligere endret, fjern editing og visible
-        if (newValues[kommuneId]?.editing) {
-          newValues[kommuneId] = {
+        if (newValues[kommuneIdInList]?.editing) {
+          newValues[kommuneIdInList] = {
             visible: false,
             editing: false,
           };
