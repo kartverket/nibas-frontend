@@ -73,9 +73,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
   const kommuneValues = values[kommuneId] ?? {};
 
   const toggleEditKretser = () => {
-    console.log(kommuneId);
     const newEditing = !kommuneValues.editing;
-    console.log("new editing " + newEditing);
     const newValues = {
       ...values,
       [kommuneId]: {
@@ -93,7 +91,6 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
           newValues[kommuneIdInList]?.visible &&
           newValues[kommuneIdInList]?.editing
         ) {
-          console.log("removing features");
           const featureIdsToRemove = editSource
             .getFeatures()
             .filter((feature) => {
