@@ -73,7 +73,9 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
   const kommuneValues = values[kommuneId] ?? {};
 
   const toggleEditKretser = () => {
+    console.log(kommuneId);
     const newEditing = !kommuneValues.editing;
+    console.log("new editing " + newEditing);
     const newValues = {
       ...values,
       [kommuneId]: {
@@ -100,10 +102,9 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
 
           removeFeaturesFromSourceByIds("edit", featureIdsToRemove);
         }
-
-        // hvis tidligere endret, fjern editing og visible
-        if (newValues[kommuneId]?.editing) {
-          newValues[kommuneId] = {
+        // hvis tidligere endret, fjern editing og visible -- dette skjønner jeg ikke
+        if (newValues[kommuneIdInList]?.editing) {
+          newValues[kommuneIdInList] = {
             visible: false,
             editing: false,
           };
