@@ -89,14 +89,18 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
         if (kommuneId === kommuneIdInList) return;
 
         // fjern features til kretsene som var endret før klikk
-        if (newValues[kommuneId]?.visible && newValues[kommuneId]?.editing) {
+        if (
+          newValues[kommuneIdInList]?.visible &&
+          newValues[kommuneIdInList]?.editing
+        ) {
+          console.log("removing features");
           const featureIdsToRemove = editSource
             .getFeatures()
             .filter((feature) => {
               const { type, id } = (
                 feature.getProperties() as FeatureProperties
               ).inndelingerKontekst;
-              return type === currentKretstype && id === kommuneId;
+              return type === currentKretstype && id === kommuneIdInList;
             })
             .map(getFeatureId);
 
