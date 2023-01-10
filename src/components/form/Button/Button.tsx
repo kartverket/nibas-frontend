@@ -12,7 +12,7 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const getKvibClassName = (variant: Variant, size: Size) =>
-  `button button__blue--${variant} button--${size}`;
+  `kv-button kv-button--${variant}--blue kv-button--${size}`;
 
 const Button = forwardRef<HTMLButtonElement, Props>(
   ({ variant = "primary", size = "xs", children, icon, ...props }, ref) => {
