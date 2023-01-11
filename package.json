@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@kartverket/frontend-aut-lib": "0.0.21",
-    "@kvib/css": "^2.0.0",
+    "@kvib/css": "^4.0.0",
     "@types/react-modal": "^3.13.1",
     "http-proxy-middleware": "~2.0.1",
     "i18next": "^21.6.14",

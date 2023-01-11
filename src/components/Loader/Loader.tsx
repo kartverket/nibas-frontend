@@ -7,32 +7,18 @@ type Props = {
   "aria-label"?: string;
 };
 
-const getKvibClassName = (color: Color) => {
-  const baseClassName = "loader loader--size";
-  switch (color) {
-    case "white": {
-      return `${baseClassName} white--loader loader--white`;
-    }
-
-    case "blue": {
-      return `${baseClassName} loader--blue`;
-    }
-
-    case "green": {
-      return `${baseClassName} loader--green`;
-    }
-  }
-};
+const getKvibClassName = (color: Color) =>
+  `kv-loader loader--size kv-loader--${color}`;
 
 const Loader = ({ color = "blue", ...props }: Props) => {
-  const className = getKvibClassName(color);
+  const kvibClassName = getKvibClassName(color);
 
   return (
     <LoaderWrapper
       role="alert"
       aria-live="polite"
       aria-label={props["aria-label"]}
-      className={className}
+      className={kvibClassName}
     />
   );
 };
