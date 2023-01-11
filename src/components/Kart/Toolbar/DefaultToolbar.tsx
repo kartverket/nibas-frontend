@@ -49,21 +49,21 @@ const DefaultToolbar = ({ openCreateUtkast, utkastJustCreated }: Props) => {
               {utkast.navn}
             </div>
           )}
-          <Button
+          <ToolbarKnapp
             variant="secondary"
             onClick={canSave ? openFeedback : closeUtkast}
           >
             {t("action.Lukk utkast")}
-          </Button>
+          </ToolbarKnapp>
           {utkast && (
-            <Button onClick={updateUtkastWithHistory} disabled={!canSave}>
+            <ToolbarKnapp onClick={updateUtkastWithHistory} disabled={!canSave}>
               {t("action.Lagre utkast")}
-            </Button>
+            </ToolbarKnapp>
           )}
           {!utkast && (
-            <Button onClick={openCreateUtkast} disabled={!canSave}>
+            <ToolbarKnapp onClick={openCreateUtkast} disabled={!canSave}>
               {t("action.Lagre utkast")}
-            </Button>
+            </ToolbarKnapp>
           )}
         </Buttons>
       </ToolbarWrapperWithName>
@@ -117,11 +117,15 @@ const UtkastIcon = styled(Icon)<{ cansave: boolean }>`
   padding-right: 6px;
 `;
 
-const ButtonWithIcon = styled(Button)<{ iconleft: boolean }>`
+const ToolbarKnapp = styled(Button)`
+  white-space: nowrap;
+`;
+
+const ButtonWithIcon = styled(ToolbarKnapp)<{ iconleft: boolean }>`
   display: flex;
   align-items: center;
 
-  > span {
+  span {
     display: flex;
     align-items: center;
 
