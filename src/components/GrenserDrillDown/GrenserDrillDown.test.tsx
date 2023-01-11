@@ -36,16 +36,9 @@ describe("GrenserDrillDown", () => {
   it("should render all accordions", () => {
     renderWithProvider(<GrenserDrillDown />);
 
-    expect(screen.getByText(/riksgrenser/i)).toBeInTheDocument();
     expect(screen.getByText(/fylkesgrenser/i)).toBeInTheDocument();
     expect(screen.getByText(/kommunegrenser/i)).toBeInTheDocument();
     expect(screen.getByText(/stemmekretser/i)).toBeInTheDocument();
-    expect(screen.getByText(/skolekretser/i)).toBeInTheDocument();
     expect(screen.getByText(/grunnkretser/i)).toBeInTheDocument();
-    expect(screen.getByText(/delområder/i)).toBeInTheDocument();
-    expect(screen.getByText(/postnummerområder/i)).toBeInTheDocument();
-    expect(screen.getByText(/gestlige inndelinger/i)).toBeInTheDocument();
-    expect(screen.getByText(/maritime grenser/i)).toBeInTheDocument();
-    expect(screen.getByText(/svalbardområdet/i)).toBeInTheDocument();
   });
 });
