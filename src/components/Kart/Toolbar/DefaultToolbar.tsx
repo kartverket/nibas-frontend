@@ -9,6 +9,7 @@ import useFeedback from "hooks/useFeedback";
 import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
 import Icon from "components/Icon";
 import UtkastCreatedTab from "./UtkastCreatedTab";
+import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 
 type Props = {
   openCreateUtkast: () => void;
@@ -25,6 +26,22 @@ const DefaultToolbar = ({ openCreateUtkast, utkastJustCreated }: Props) => {
       "Utkastet ditt har endringer som ikke er lagret. Dersom du lukker utkastet nå, vil disse endringene forkastes. Er du sikker på at du vil fortsette?"
     )
   );
+
+  const handleSave = () => {
+    if (!canSave) {
+      return;
+    }
+    if (utkast) {
+      updateUtkastWithHistory();
+    } else {
+      openCreateUtkast();
+    }
+  };
+
+  useKeyboardShortcut("save", handleSave);
+  useKeyboardShortcut("close", closeUtkast);
+  useKeyboardShortcut("undo", undo);
+  useKeyboardShortcut("redo", redo);
 
   if (!redigeringsmodusAktiv) return null;
 
@@ -55,16 +72,9 @@ const DefaultToolbar = ({ openCreateUtkast, utkastJustCreated }: Props) => {
           >
             {t("action.Lukk utkast")}
           </ToolbarKnapp>
-          {utkast && (
-            <ToolbarKnapp onClick={updateUtkastWithHistory} disabled={!canSave}>
-              {t("action.Lagre utkast")}
-            </ToolbarKnapp>
-          )}
-          {!utkast && (
-            <ToolbarKnapp onClick={openCreateUtkast} disabled={!canSave}>
-              {t("action.Lagre utkast")}
-            </ToolbarKnapp>
-          )}
+          <ToolbarKnapp onClick={handleSave} disabled={!canSave}>
+            {t("action.Lagre utkast")}
+          </ToolbarKnapp>
         </Buttons>
       </ToolbarWrapperWithName>
 
