@@ -37,10 +37,10 @@ const NewToolbar = () => {
 
   return (
     <Container>
-      <ModeButton icon="undo" ariaLabel="Angre handling">
+      <ModeButton icon="undo" ariaLabel="Angre handling" disabled>
         {t("action.Undo")}
       </ModeButton>
-      <ModeButton icon="redo" ariaLabel="Gjør om handling">
+      <ModeButton icon="redo" ariaLabel="Gjør om handling" disabled>
         {t("action.Redo")}
       </ModeButton>
       <Divider />

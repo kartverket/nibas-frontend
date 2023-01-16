@@ -11,6 +11,11 @@ const Container = styled.button<{ isActive: boolean }>`
   background: none;
   cursor: pointer;
 
+  &:disabled {
+    color: var(--gray);
+    cursor: not-allowed;
+  }
+
   &:focus-visible {
     outline: 2px solid var(--blue_dark);
     outline-offset: 2px;
@@ -23,7 +28,7 @@ const Container = styled.button<{ isActive: boolean }>`
     transition: background 0.15s, color 0.2s;
   }
 
-  &:hover > ${Icon} {
+  &:hover:not(:disabled) > ${Icon} {
     background: var(--blue_light);
     color: var(--black);
   }
@@ -46,6 +51,7 @@ type Props = {
   isActive?: boolean;
   children: ReactNode;
   onClick?: () => void;
+  disabled?: boolean;
 };
 
 const ModeButton = ({
@@ -54,9 +60,15 @@ const ModeButton = ({
   children,
   onClick,
   isActive = false,
+  disabled = false,
 }: Props) => {
   return (
-    <Container onClick={onClick} aria-label={ariaLabel} isActive={isActive}>
+    <Container
+      onClick={onClick}
+      aria-label={ariaLabel}
+      isActive={isActive}
+      disabled={disabled}
+    >
       <Icon icon={icon} />
       {children}
     </Container>
