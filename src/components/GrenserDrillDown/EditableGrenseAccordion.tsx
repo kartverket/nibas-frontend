@@ -39,7 +39,7 @@ const EditableGrenseAccordion: FC<Props> = ({
       <Header>
         <VisibilityButton
           onClick={toggleVisible}
-          visible={value.visible ? true : false}
+          $visible={value.visible ? true : false}
         >
           {value.visible ? (
             <Icon icon="visibility" aria-label={`Skjul ${title}`} />
@@ -62,13 +62,13 @@ const EditableGrenseAccordion: FC<Props> = ({
           icon={
             accordion.isVisible ? (
               <CaretIcon
-                visible={accordion.isVisible ? true : false}
+                $visible={accordion.isVisible ? true : false}
                 icon="expand_less"
                 aria-label={`Lukk ${title}`}
               />
             ) : (
               <CaretIcon
-                visible={accordion.isVisible ? true : false}
+                $visible={accordion.isVisible ? true : false}
                 icon="expand_more"
                 aria-label={`Åpne ${title}`}
               />
@@ -118,10 +118,10 @@ const Header = styled.div`
   align-items: center;
 `;
 
-const CaretIcon = styled(Icon)<{ visible: boolean }>`
-  color: ${({ visible }) => (visible ? "var(--white)" : "var(--blue_dark)")};
-  background: ${({ visible }) =>
-    visible ? "var(--blue_dark)" : "transparent"};
+const CaretIcon = styled(Icon)<{ $visible: boolean }>`
+  color: ${({ $visible }) => ($visible ? "var(--white)" : "var(--blue_dark)")};
+  background: ${({ $visible }) =>
+    $visible ? "var(--blue_dark)" : "transparent"};
   padding: 16px 12px;
 
   &:hover {
@@ -132,11 +132,11 @@ const CaretIcon = styled(Icon)<{ visible: boolean }>`
 
 const VisibilityButton = styled(Button).attrs(() => ({
   variant: "unstyled",
-}))<{ visible: boolean }>`
+}))<{ $visible: boolean }>`
   margin-right: 16px;
-  color: ${({ visible }) => (visible ? "var(--white)" : "var(--blue_dark)")};
-  background: ${({ visible }) =>
-    visible ? "var(--blue_dark)" : "transparent"};
+  color: ${({ $visible }) => ($visible ? "var(--white)" : "var(--blue_dark)")};
+  background: ${({ $visible }) =>
+    $visible ? "var(--blue_dark)" : "transparent"};
   padding: 8px;
   border-radius: 50%;
   height: 100%;
