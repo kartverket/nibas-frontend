@@ -114,6 +114,8 @@ const UtkastNavn = styled.h4`
 const BlockLabel = styled(Label)`
   display: flex;
   flex-direction: column;
+  gap: 2px;
+  color: var(--gray_dark);
 `;
 
 const Buttons = styled.div`
@@ -130,7 +132,7 @@ const Divider = styled.hr`
 const DividerVertical = styled(Divider)`
   width: 1px;
   height: 50px;
-  margin: 0;
+  margin: 0 4px;
 `;
 
 // TODO: endre navn på komponenten
