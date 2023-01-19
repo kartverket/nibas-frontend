@@ -34,18 +34,19 @@ const fadeInFadeOutFromTop = keyframes`
 `;
 
 const Wrapper = styled.div`
+  position: absolute;
+  right: 100%;
   display: flex;
   align-items: center;
   background-color: var(--green);
   padding: 16px;
-  margin-left: 30px;
+  margin-right: 16px;
   font-size: 16px;
   color: var(--white);
   width: calc(100% - 30px);
   box-shadow: 0 8px 6px -6px var(--gray);
   gap: 12px;
   opacity: 0;
-
   animation: ${fadeInFadeOutFromTop} 5s ease-in-out;
 `;
 

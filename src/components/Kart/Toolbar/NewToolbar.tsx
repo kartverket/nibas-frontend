@@ -34,6 +34,11 @@ const Container = styled.div`
   flex-direction: column;
   align-items: flex-end;
   gap: ${spacing}px;
+
+  pointer-events: none;
+  & > * {
+    pointer-events: all;
+  }
 `;
 
 const Frame = styled.div`
@@ -161,9 +166,11 @@ const NewToolbar = () => {
 
   const promptUtkast = () => {
     setUtkastJustCreated(true);
+    console.log("promptUtkast");
 
     const timeId = setTimeout(() => {
       setUtkastJustCreated(false);
+      console.log("promptUtkast expired");
     }, 5000);
 
     return () => {
@@ -251,9 +258,9 @@ const NewToolbar = () => {
                   </Button>
                 </Buttons>
               </UtkastFrame>
-              {utkastJustCreated && <UtkastCreatedTab />}
             </>
           )}
+          {utkastJustCreated && <UtkastCreatedTab />}
           <LagreFrame>
             {utkast ? (
               <>
