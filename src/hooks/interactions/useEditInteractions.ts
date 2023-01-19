@@ -13,6 +13,7 @@ import {
 import { getVectorLayers } from "utils/map/layers";
 import { editSource } from "hooks/layers/constants";
 import Style from "ol/style/Style";
+import { click } from "ol/events/condition";
 
 const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
@@ -25,7 +26,7 @@ const useEditInteractions = () => {
   const { dirtyFeatureIds, addEntry, updateEntry, history } =
     useToolbarSaving();
 
-  const { activePointMode } = useToolbar();
+  const { activePointMode, snapActive } = useToolbar();
 
   const modify = useMemo(
     () =>
@@ -35,6 +36,9 @@ const useEditInteractions = () => {
         insertVertexCondition: () => {
           return activePointMode === "add";
         },
+        deleteCondition: (mapBrowserEvent) => {
+          return activePointMode === "remove" && click(mapBrowserEvent);
+        },
       }),
     [activePointMode]
   );
@@ -42,30 +46,32 @@ const useEditInteractions = () => {
   useDirtyStyles(dirtyFeatureIds);
 
   useEffect(() => {
-    const vectorLayers = getVectorLayers();
-    const snaps: Snap[] = [];
+    if (snapActive) {
+      const vectorLayers = getVectorLayers();
+      const snaps: Snap[] = [];
 
-    vectorLayers.forEach((layer) => {
-      const source = layer.getSource();
+      vectorLayers.forEach((layer) => {
+        const source = layer.getSource();
 
-      const snap = new Snap({ source });
+        const snap = new Snap({ source });
 
-      snaps.push(snap);
-    });
-
-    map.addInteraction(modify);
-    // snaps må legges til etter modify og draw interactions
-    snaps.forEach((snap) => {
-      map.addInteraction(snap);
-    });
-
-    return () => {
-      map.removeInteraction(modify);
-      snaps.forEach((snap) => {
-        map.removeInteraction(snap);
+        snaps.push(snap);
       });
-    };
-  }, [modify]);
+
+      map.addInteraction(modify);
+      // snaps må legges til etter modify og draw interactions
+      snaps.forEach((snap) => {
+        map.addInteraction(snap);
+      });
+
+      return () => {
+        map.removeInteraction(modify);
+        snaps.forEach((snap) => {
+          map.removeInteraction(snap);
+        });
+      };
+    }
+  }, [modify, snapActive]);
 
   useEffect(() => {
     const addCurrentCoordinatesToHistory = (e: ModifyEvent) => {

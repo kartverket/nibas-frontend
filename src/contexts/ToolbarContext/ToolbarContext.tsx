@@ -100,7 +100,7 @@ export const ToolbarProvider: React.FC = ({ children }) => {
     onRedo,
   });
 
-  const [snapActive, setSnapActive] = useState(false);
+  const [snapActive, setSnapActive] = useState(true);
   const [activePointMode, setActivePointMode] =
     useState<ToolbarPointMode>(null);
   const togglePointMode = (pointMode: ToolbarPointMode) => {
