@@ -68,6 +68,7 @@
     "Fortsett": "__STRING_NOT_TRANSLATED__",
     "Avbryt": "__STRING_NOT_TRANSLATED__",
     "Legg til": "__STRING_NOT_TRANSLATED__",
+    "Fjern": "__STRING_NOT_TRANSLATED__",
     "Slett": "__STRING_NOT_TRANSLATED__",
     "Ny referanse": "__STRING_NOT_TRANSLATED__",
     "Slett {{ item }}": "__STRING_NOT_TRANSLATED__",
@@ -83,7 +84,11 @@
     "Rediger": "__STRING_NOT_TRANSLATED__",
     "Lagre utkast": "__STRING_NOT_TRANSLATED__",
     "Opprett": "__STRING_NOT_TRANSLATED__",
-    "Lukk utkast": "__STRING_NOT_TRANSLATED__"
+    "Lukk utkast": "__STRING_NOT_TRANSLATED__",
+    "Flytt": "__STRING_NOT_TRANSLATED__",
+    "Snap": "__STRING_NOT_TRANSLATED__",
+    "Zoom inn": "__STRING_NOT_TRANSLATED__",
+    "Zoom ut": "__STRING_NOT_TRANSLATED__"
   },
   "Ja": "__STRING_NOT_TRANSLATED__",
   "Nei": "__STRING_NOT_TRANSLATED__",

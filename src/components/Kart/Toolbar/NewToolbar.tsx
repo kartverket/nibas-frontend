@@ -151,13 +151,18 @@ const NewToolbar = () => {
   const { redigeringsmodusAktiv } = useRedigeringsmodus();
   const { canSave, undo, redo } = useToolbarActions();
 
+  const [moveActive, setMoveActive] = useState(false);
+  const [addActive, setAddActive] = useState(false);
+  const [removeActive, setRemoveActive] = useState(false);
+  const [snapActive, setSnapActive] = useState(false);
+
+  // TODO: flytt til egen utkast-komponent
   const { utkast, updateUtkastWithHistory, closeUtkast } = useUtkast();
   const { openFeedback, isOpen, closeFeedback, feedbackContent } = useFeedback(
     t(
       "Utkastet ditt har endringer som ikke er lagret. Dersom du lukker utkastet nå, vil disse endringene forkastes. Er du sikker på at du vil fortsette?"
     )
   );
-  // TODO: flytt til egen utkast-komponent
   const [utkastName, setUtkastName] = useState("");
   const [utkastType, setUtkastType] = useState("");
   const { tokenHolderFunc } = useAuthenticationFlow();
@@ -331,17 +336,37 @@ const NewToolbar = () => {
           {t("action.Redo")}
         </ModeButton>
         <Divider />
-        <ModeButton icon="map" ariaLabel="Flytt punkter">
-          Flytt
+        <ModeButton
+          icon="touch_app"
+          ariaLabel="Flytt punkter"
+          isActive={moveActive}
+          onClick={() => setMoveActive(!moveActive)}
+        >
+          {t("action.Flytt")}
         </ModeButton>
-        <ModeButton icon="map" ariaLabel="Legg til punkter">
-          Legg til
+        <ModeButton
+          icon="add_location_alt"
+          ariaLabel="Legg til punkter"
+          isActive={addActive}
+          onClick={() => setAddActive(!addActive)}
+        >
+          {t("action.Legg til")}
         </ModeButton>
-        <ModeButton icon="map" ariaLabel="Fjern punkter">
-          Fjern
+        <ModeButton
+          icon="wrong_location"
+          ariaLabel="Fjern punkter"
+          isActive={removeActive}
+          onClick={() => setRemoveActive(!removeActive)}
+        >
+          {t("action.Fjern")}
         </ModeButton>
-        <ModeButton icon="map" ariaLabel="Snap til bakgrunnskart">
-          Snap
+        <ModeButton
+          icon="merge"
+          ariaLabel="Snap til bakgrunnskart"
+          isActive={snapActive}
+          onClick={() => setSnapActive(!snapActive)}
+        >
+          {t("action.Snap")}
         </ModeButton>
         <Divider />
         <ModeButton
@@ -349,14 +374,14 @@ const NewToolbar = () => {
           onClick={() => zoom(1)}
           ariaLabel="Zoom inn på kartet"
         >
-          Zoom inn
+          {t("action.Zoom inn")}
         </ModeButton>
         <ModeButton
           icon="zoom_out"
           onClick={() => zoom(-1)}
           ariaLabel="Zoom ut på kartet"
         >
-          Zoom ut
+          {t("action.Zoom ut")}
         </ModeButton>
       </Frame>
     </Container>
