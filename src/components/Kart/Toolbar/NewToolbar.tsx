@@ -151,11 +151,6 @@ const NewToolbar = () => {
   const { redigeringsmodusAktiv } = useRedigeringsmodus();
   const { canSave, undo, redo } = useToolbarActions();
 
-  const [moveActive, setMoveActive] = useState(false);
-  const [addActive, setAddActive] = useState(false);
-  const [removeActive, setRemoveActive] = useState(false);
-  const [snapActive, setSnapActive] = useState(false);
-
   // TODO: flytt til egen utkast-komponent
   const { utkast, updateUtkastWithHistory, closeUtkast } = useUtkast();
   const { openFeedback, isOpen, closeFeedback, feedbackContent } = useFeedback(
@@ -166,7 +161,14 @@ const NewToolbar = () => {
   const [utkastName, setUtkastName] = useState("");
   const [utkastType, setUtkastType] = useState("");
   const { tokenHolderFunc } = useAuthenticationFlow();
-  const { history, clearHistory } = useToolbar();
+  const {
+    history,
+    clearHistory,
+    activePointMode,
+    togglePointMode,
+    snapActive,
+    setSnapActive,
+  } = useToolbar();
   const setSearchParams = useSearchParams()[1];
 
   const promptUtkast = () => {
@@ -337,24 +339,24 @@ const NewToolbar = () => {
         <ModeButton
           icon="touch_app"
           ariaLabel="Flytt punkter"
-          isActive={moveActive}
-          onClick={() => setMoveActive(!moveActive)}
+          isActive={activePointMode === "move"}
+          onClick={() => togglePointMode("move")}
         >
           {t("action.Flytt")}
         </ModeButton>
         <ModeButton
           icon="add_location_alt"
           ariaLabel="Legg til punkter"
-          isActive={addActive}
-          onClick={() => setAddActive(!addActive)}
+          isActive={activePointMode === "add"}
+          onClick={() => togglePointMode("add")}
         >
           {t("action.Legg til")}
         </ModeButton>
         <ModeButton
           icon="wrong_location"
           ariaLabel="Fjern punkter"
-          isActive={removeActive}
-          onClick={() => setRemoveActive(!removeActive)}
+          isActive={activePointMode === "remove"}
+          onClick={() => togglePointMode("remove")}
         >
           {t("action.Fjern")}
         </ModeButton>

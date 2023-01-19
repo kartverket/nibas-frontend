@@ -29,7 +29,7 @@ const Container = styled.button<{ isActive: boolean }>`
     transition: background 0.15s, color 0.2s;
   }
 
-  &:hover:not(:disabled) > ${Icon} {
+  &:hover:not(:disabled, :focus) > ${Icon} {
     background: var(--blue_light);
     color: var(--black);
   }

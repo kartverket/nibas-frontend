@@ -3,8 +3,9 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useState,
 } from "react";
-import { ToolbarContextValue, HistoryEntry } from "./types";
+import { ToolbarContextValue, HistoryEntry, ToolbarPointMode } from "./types";
 import {
   getDirtyIdsFromEntries,
   setFeatureCoordinatesForEntry,
@@ -99,6 +100,17 @@ export const ToolbarProvider: React.FC = ({ children }) => {
     onRedo,
   });
 
+  const [snapActive, setSnapActive] = useState(false);
+  const [activePointMode, setActivePointMode] =
+    useState<ToolbarPointMode>(null);
+  const togglePointMode = (pointMode: ToolbarPointMode) => {
+    if (pointMode === activePointMode) {
+      setActivePointMode(null);
+    } else {
+      setActivePointMode(pointMode);
+    }
+  };
+
   useEffect(() => {
     const newValues = historyValue.history.entries
       .slice(0, historyValue.history.index)
@@ -118,6 +130,10 @@ export const ToolbarProvider: React.FC = ({ children }) => {
   const value = {
     ...historyValue,
     dirtyFeatureIds,
+    activePointMode,
+    togglePointMode,
+    snapActive,
+    setSnapActive,
   };
 
   return (

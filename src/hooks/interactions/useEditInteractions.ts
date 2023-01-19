@@ -1,13 +1,18 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { FeatureLike } from "ol/Feature";
 import LineString from "ol/geom/LineString";
 import { Snap } from "ol/interaction";
-import { ModifyEvent } from "ol/interaction/Modify";
-import { modify } from "./constants";
+import Modify, { ModifyEvent } from "ol/interaction/Modify";
 import useDirtyStyles from "./useDirtyStyles";
 import { map } from "components/Kart/constants";
-import { GrenseEntry, useToolbarSaving } from "contexts/ToolbarContext";
+import {
+  GrenseEntry,
+  useToolbar,
+  useToolbarSaving,
+} from "contexts/ToolbarContext";
 import { getVectorLayers } from "utils/map/layers";
+import { editSource } from "hooks/layers/constants";
+import Style from "ol/style/Style";
 
 const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
@@ -19,6 +24,20 @@ const getInfoFromFeature = (featureLike: FeatureLike) => {
 const useEditInteractions = () => {
   const { dirtyFeatureIds, addEntry, updateEntry, history } =
     useToolbarSaving();
+
+  const { activePointMode } = useToolbar();
+
+  const modify = useMemo(
+    () =>
+      new Modify({
+        source: editSource,
+        style: new Style({}), // fjerne sirkel som by default dukker opp ved hover
+        insertVertexCondition: () => {
+          return activePointMode === "add";
+        },
+      }),
+    [activePointMode]
+  );
 
   useDirtyStyles(dirtyFeatureIds);
 
@@ -46,7 +65,7 @@ const useEditInteractions = () => {
         map.removeInteraction(snap);
       });
     };
-  }, []);
+  }, [modify]);
 
   useEffect(() => {
     const addCurrentCoordinatesToHistory = (e: ModifyEvent) => {
@@ -75,7 +94,7 @@ const useEditInteractions = () => {
     return () => {
       modify.un("modifystart", addCurrentCoordinatesToHistory);
     };
-  }, [addEntry]);
+  }, [addEntry, modify]);
 
   useEffect(() => {
     const updateToCoordinate = (e: ModifyEvent) => {
@@ -105,7 +124,7 @@ const useEditInteractions = () => {
     return () => {
       modify.un("modifyend", updateToCoordinate);
     };
-  }, [history, updateEntry]);
+  }, [history, updateEntry, modify]);
 };
 
 export default useEditInteractions;
