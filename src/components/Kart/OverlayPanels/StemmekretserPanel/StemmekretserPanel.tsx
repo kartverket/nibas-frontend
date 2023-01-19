@@ -78,11 +78,10 @@ const StemmekretserPanel = ({ kommune }: Props) => {
           stemmekrets.tellekretsnavn,
           stemmekrets.tellekretsnummer,
           stemmekrets.valgdistriktsnummer,
-          // Kan utkommenteres når APIet støtter dette
-          (stemmekrets as any).oppdatert ?? "2020-01-01",
-          (stemmekrets as any).type ?? "Retting",
-          (stemmekrets as any).gyldigFra ?? "2022-01-01",
-          (stemmekrets as any).gyldigTil ?? "2022-01-01",
+          stemmekrets.oppdateringsdato,
+          stemmekrets.endringstype,
+          stemmekrets.gyldighet.gyldigFra,
+          stemmekrets.gyldighet.gyldigTil,
         ],
       })),
     []
@@ -163,7 +162,7 @@ const StemmekretserPanel = ({ kommune }: Props) => {
                           id={getIdFromEntity(stemmekrets)}
                           headers={headers}
                           getRows={getFutureChangesRows}
-                          futureChangesUrl="/v1/grunnkretser/{lokalid}/framtidigeversjoner"
+                          futureChangesUrl="/v1/stemmekretser/{lokalid}/framtidigeversjoner"
                         />
                       </FutureChangesTableData>
                     </tr>

@@ -17,15 +17,13 @@ const environmentByUrl: Record<string, Environment> = {
 // noe som `type Keys = "flagg1" | "flagg2" | ...`
 // features som skal fjernes kan slettes fra denne listen
 // hvis det ikke er noen keys skal Keys være av typen `never`
-type Keys = "fremtidige-endringer-stemmekretser";
+type Keys = "EKSEMPEL_TOGGLE";
 
 const featureToggles: Record<Keys, Record<Environment, boolean>> = {
-  "fremtidige-endringer-stemmekretser": {
+  EKSEMPEL_TOGGLE: {
     prod: false,
     test: false,
-    dev: getDevValue(
-      "REACT_APP_FEATURE_TOGGLE_FREMTIDIGE_ENDRINGER_STEMMEKRETSER"
-    ),
+    dev: getDevValue("REACT_APP_FEATURE_TOGGLE_EKSEMPEL"),
   },
 };
 
