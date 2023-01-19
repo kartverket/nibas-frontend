@@ -2,6 +2,7 @@ import Icon from "components/Icon";
 import { ReactNode } from "react";
 import styled, { css } from "styled-components";
 
+// TODO: husk tooltip
 const Container = styled.button<{ isActive: boolean }>`
   display: flex;
   flex-direction: column;

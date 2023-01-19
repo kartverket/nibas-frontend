@@ -171,11 +171,9 @@ const NewToolbar = () => {
 
   const promptUtkast = () => {
     setUtkastJustCreated(true);
-    console.log("promptUtkast");
 
     const timeId = setTimeout(() => {
       setUtkastJustCreated(false);
-      console.log("promptUtkast expired");
     }, 5000);
 
     return () => {
@@ -361,7 +359,7 @@ const NewToolbar = () => {
           {t("action.Fjern")}
         </ModeButton>
         <ModeButton
-          icon="merge"
+          icon="magnet"
           ariaLabel="Snap til bakgrunnskart"
           isActive={snapActive}
           onClick={() => setSnapActive(!snapActive)}
