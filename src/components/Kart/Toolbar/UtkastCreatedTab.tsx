@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import styled, { keyframes } from "styled-components";
 import Icon from "components/Icon";
 
+// TODO: erstatt dette med en generell toast eller en annen løsning
 const UtkastCreatedTab = () => {
   const { t } = useTranslation();
 

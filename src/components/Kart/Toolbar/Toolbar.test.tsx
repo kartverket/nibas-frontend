@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "test/test-utils";
 import { ReactNode } from "react";
-import Toolbar from "./Toolbar";
+import Toolbar from "./NewToolbar";
 import { ToolbarHistory } from "contexts/ToolbarContext";
 import { mockDetailedGrunnkrets1 } from "mocks/handlers/responses";
 import { UtkastResponse } from "types/api";

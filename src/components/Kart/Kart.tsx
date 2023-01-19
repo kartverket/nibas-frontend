@@ -4,7 +4,6 @@ import { map } from "./constants";
 import OverlayPanels from "./OverlayPanels";
 import OverlayPopup from "./OverlayPopup";
 import SidebarPanels from "./SidebarPanels";
-import Toolbar from "./Toolbar";
 import { PanelType, useOverlayPanels } from "contexts/OverlayPanelsContext";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
 import useSelectInteraction from "hooks/interactions/useSelectInteraction";
@@ -44,7 +43,6 @@ const Kart = () => {
           <KartOverlay content={panelContext?.type}>
             <SidebarPanels />
             <OverlayPanels />
-            <Toolbar />
             <UtkastBorder utkastActive={redigeringsmodusAktiv} />
           </KartOverlay>
           <OverlayPopup selectedFeatures={selectedFeatures} />
@@ -91,7 +89,7 @@ const KartOverlay = styled.div<{
   grid-template-columns: auto auto 1fr;
   grid-template-rows: 1fr auto;
   grid-template-areas:
-    "panel toolbar ."
+    "panel . ."
     "panel metadata ."
     "panel kretser .";
   width: 100%;
