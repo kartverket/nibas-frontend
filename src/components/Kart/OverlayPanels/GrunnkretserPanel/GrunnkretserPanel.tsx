@@ -151,10 +151,14 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
           <KretsTable>
             <thead>
               <tr>
-                <th>{t("grunnkrets.Grunnkretsnummer")}</th>
-                <th>{t("grunnkrets.Grunnkretsnavn")}</th>
-                <th></th>
-                <th></th>
+                <GrunnkretsnummerColumn>
+                  {t("grunnkrets.Grunnkretsnummer")}
+                </GrunnkretsnummerColumn>
+                <GrunnkretsnavnColumn>
+                  {t("grunnkrets.Grunnkretsnavn")}
+                </GrunnkretsnavnColumn>
+                <Remainder />
+                <th />
               </tr>
             </thead>
             <tbody>
@@ -212,6 +216,18 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
 const PanelHeaderInput = styled(Input)`
   width: 100%;
   max-width: 300px;
+`;
+
+const GrunnkretsnummerColumn = styled.th`
+  width: 25%;
+`;
+
+const GrunnkretsnavnColumn = styled.th`
+  width: 25%;
+`;
+
+const Remainder = styled.th`
+  width: 100%;
 `;
 
 export default GrunnkretserPanel;

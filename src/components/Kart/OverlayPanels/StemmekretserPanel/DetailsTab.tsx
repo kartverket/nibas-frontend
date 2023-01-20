@@ -1,4 +1,4 @@
-import { BlockLabel, InputsWrapper, Section } from "./EditRow";
+import { BlockLabel, Section } from "./EditRow";
 import { useCallback, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -8,6 +8,7 @@ import useKretsToolbarSync from "contexts/ToolbarContext/useToolbarFormSync";
 import { StemmekretsRequest, StemmekretsResponse } from "types/api";
 import useTimer from "hooks/useTimer";
 import { getIdFromEntity } from "utils/api";
+import styled from "styled-components";
 
 type Inputs = {
   stemmekretsnavn: string;
@@ -103,32 +104,47 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
   };
 
   return (
-    <Section>
-      <InputsWrapper>
-        <BlockLabel>
-          {t("stemmekrets.Stemmekretsnummer")}
-          <Input {...register("stemmekretsnummer", formOptions)} />
-        </BlockLabel>
+    <DetailsSection>
+      <BlockLabel>
+        {t("stemmekrets.Stemmekretsnummer")}
+        <Input {...register("stemmekretsnummer", formOptions)} />
+      </BlockLabel>
 
-        <BlockLabel>
-          {t("tabell.Stemmekretsnavn")}
-          <Input {...register("stemmekretsnavn", formOptions)} />
-        </BlockLabel>
-      </InputsWrapper>
+      <BlockLabel>
+        {t("tabell.Stemmekretsnavn")}
+        <Input {...register("stemmekretsnavn", formOptions)} />
+      </BlockLabel>
 
-      <InputsWrapper>
-        <BlockLabel>
-          {t("stemmekrets.Tellekretsnummer")}
-          <Input {...register("tellekretsnummer", formOptions)} />
-        </BlockLabel>
+      <BlockLabel>
+        {t("stemmekrets.Tellekretsnummer")}
+        <Input {...register("tellekretsnummer", formOptions)} />
+      </BlockLabel>
 
-        <BlockLabel>
-          {t("stemmekrets.Tellekretsnavn")}
-          <Input {...register("tellekretsnavn", formOptions)} />
-        </BlockLabel>
-      </InputsWrapper>
-    </Section>
+      <BlockLabel>
+        {t("stemmekrets.Tellekretsnavn")}
+        <Input {...register("tellekretsnavn", formOptions)} />
+      </BlockLabel>
+    </DetailsSection>
   );
 };
+
+const DetailsSection = styled(Section)`
+  display: flex;
+  gap: 16px;
+  color: var(--gray_dark);
+
+  ${BlockLabel}:nth-child(1) {
+    width: 165px;
+  }
+  ${BlockLabel}:nth-child(2) {
+    width: 160px;
+  }
+  ${BlockLabel}:nth-child(3) {
+    width: 130px;
+  }
+  ${BlockLabel}:nth-child(4) {
+    width: 150px;
+  }
+`;
 
 export default DetailsTab;
