@@ -337,14 +337,6 @@ const NewToolbar = () => {
         </ModeButton>
         <Divider />
         <ModeButton
-          icon="touch_app"
-          ariaLabel="Flytt punkter"
-          isActive={activePointMode === "move"}
-          onClick={() => togglePointMode("move")}
-        >
-          {t("action.Flytt")}
-        </ModeButton>
-        <ModeButton
           icon="add_location_alt"
           ariaLabel="Legg til punkter"
           isActive={activePointMode === "add"}

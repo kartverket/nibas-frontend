@@ -32,7 +32,7 @@ const useEditInteractions = () => {
     () =>
       new Modify({
         source: editSource,
-        style: new Style({}), // fjerne sirkel som by default dukker opp ved hover
+        style: new Style({}), // TODO: fjern denne linjen så sirkel dukker opp
         insertVertexCondition: () => {
           return activePointMode === "add";
         },

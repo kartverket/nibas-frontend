@@ -46,7 +46,7 @@ export type EditContextType = HistoryEntry["type"];
 
 export type ToolbarHistory = History<HistoryEntry>;
 
-export type ToolbarPointMode = null | "move" | "add" | "remove";
+export type ToolbarPointMode = null | "add" | "remove";
 
 export type ToolbarContextValue = {
   clearHistory: () => void;
