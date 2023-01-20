@@ -6,7 +6,8 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { StemmekretsRef, StemmekretsResponse } from "types/api";
-import { BlockLabel, ContrastSection, InputsWrapper, Section } from "./EditRow";
+import { BlockLabel } from "../metadataComponents";
+import { Section, ContrastSection, InputsWrapper } from "./components";
 
 type Props = {
   stemmekrets: StemmekretsResponse | undefined;

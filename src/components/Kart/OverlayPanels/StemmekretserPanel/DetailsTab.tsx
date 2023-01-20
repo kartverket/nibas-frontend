@@ -1,4 +1,3 @@
-import { BlockLabel, Section } from "./EditRow";
 import { useCallback, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -9,6 +8,7 @@ import { StemmekretsRequest, StemmekretsResponse } from "types/api";
 import useTimer from "hooks/useTimer";
 import { getIdFromEntity } from "utils/api";
 import styled from "styled-components";
+import { BlockLabel, Section } from "./components";
 
 type Inputs = {
   stemmekretsnavn: string;
