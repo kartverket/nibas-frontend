@@ -37,6 +37,7 @@ const useEditInteractions = () => {
           return activePointMode === "add";
         },
         deleteCondition: (mapBrowserEvent) => {
+          // TODO: viktig, vi må finne et sted å legge dette til i history, hvis man angrer nå så forsvinner mange slettinger
           return activePointMode === "remove" && click(mapBrowserEvent);
         },
       }),
@@ -46,31 +47,31 @@ const useEditInteractions = () => {
   useDirtyStyles(dirtyFeatureIds);
 
   useEffect(() => {
+    const vectorLayers = getVectorLayers();
+    const snaps: Snap[] = [];
+
+    vectorLayers.forEach((layer) => {
+      const source = layer.getSource();
+
+      const snap = new Snap({ source });
+
+      snaps.push(snap);
+    });
+
+    map.addInteraction(modify);
+    // snaps må legges til etter modify og draw interactions
     if (snapActive) {
-      const vectorLayers = getVectorLayers();
-      const snaps: Snap[] = [];
-
-      vectorLayers.forEach((layer) => {
-        const source = layer.getSource();
-
-        const snap = new Snap({ source });
-
-        snaps.push(snap);
-      });
-
-      map.addInteraction(modify);
-      // snaps må legges til etter modify og draw interactions
       snaps.forEach((snap) => {
         map.addInteraction(snap);
       });
-
-      return () => {
-        map.removeInteraction(modify);
-        snaps.forEach((snap) => {
-          map.removeInteraction(snap);
-        });
-      };
     }
+
+    return () => {
+      map.removeInteraction(modify);
+      snaps.forEach((snap) => {
+        map.removeInteraction(snap);
+      });
+    };
   }, [modify, snapActive]);
 
   useEffect(() => {
