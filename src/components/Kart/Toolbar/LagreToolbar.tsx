@@ -1,11 +1,12 @@
-import Feedback from "components/Feedback/Feedback";
+import styled from "styled-components";
+import { useTranslation } from "react-i18next";
+
 import { useToolbarActions } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext";
 import useFeedback from "hooks/useFeedback";
-import { useTranslation } from "react-i18next";
-import styled from "styled-components";
+import Feedback from "components/Feedback/Feedback";
 import ModeButton from "./ModeButton";
-import { Frame } from "./Toolbar";
+import { Frame } from "./components";
 
 const LagreFrame = styled(Frame)`
   flex-direction: row;
@@ -43,14 +44,13 @@ type Props = {
 
 const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
   const { t } = useTranslation();
-
+  const { canSave } = useToolbarActions();
   const { utkast, updateUtkastWithHistory, closeUtkast } = useUtkast();
   const { openFeedback, isOpen, closeFeedback, feedbackContent } = useFeedback(
     t(
       "Utkastet ditt har endringer som ikke er lagret. Dersom du lukker utkastet nå, vil disse endringene forkastes. Er du sikker på at du vil fortsette?"
     )
   );
-  const { canSave } = useToolbarActions();
 
   return (
     <LagreFrame>
@@ -61,7 +61,6 @@ const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
             <UtkastNavn>{utkast.navn}</UtkastNavn>
           </UtkastInfo>
           <DividerVertical />
-
           <ModeButton
             icon="save"
             ariaLabel="Lagre utkast"
@@ -90,7 +89,6 @@ const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
           {t("action.Lagre")}
         </ModeButton>
       )}
-
       <Feedback
         type="warning"
         title="Advarsel"

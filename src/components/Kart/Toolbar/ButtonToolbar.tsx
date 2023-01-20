@@ -3,17 +3,16 @@ import { map } from "../constants";
 import { useTranslation } from "react-i18next";
 import { useToolbar, useToolbarActions } from "contexts/ToolbarContext";
 import styled from "styled-components";
-import { Frame } from "./Toolbar";
+import { Frame } from "./components";
 
 const Divider = styled.hr`
   width: 100%;
   border: 1px solid var(--gray_light);
 `;
+
 const ButtonToolbar = () => {
   const { t } = useTranslation();
-
   const { undo, redo } = useToolbarActions();
-
   const { activePointMode, togglePointMode, snapActive, setSnapActive } =
     useToolbar();
 
@@ -24,6 +23,7 @@ const ButtonToolbar = () => {
       duration: 250,
     });
   };
+
   return (
     <Frame>
       <ModeButton

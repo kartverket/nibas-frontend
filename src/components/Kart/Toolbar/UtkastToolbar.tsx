@@ -1,19 +1,19 @@
-import Input from "components/form/Input";
-import Select from "components/form/Select";
-import Heading from "components/typography/Heading";
-import styled from "styled-components";
-import { Translation } from "i18n";
-import Button from "components/form/Button";
-import { translateKeysByEndringsType } from "contexts/UtkastContext/constants";
-import Label from "components/form/Label";
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import { historyToUtkastOperations } from "contexts/UtkastContext/utils";
-import { useSearchParams } from "react-router-dom";
-import { createUtkast as createApiUtkast } from "api/utkast";
-import { toolbarBorderWidth, Frame, toolbarSpacing } from "./Toolbar";
 import { useState } from "react";
+import styled from "styled-components";
+import { useSearchParams } from "react-router-dom";
+import { Translation } from "i18n";
 import { useTranslation } from "react-i18next";
+import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useToolbar } from "contexts/ToolbarContext";
+import { translateKeysByEndringsType } from "contexts/UtkastContext/constants";
+import { historyToUtkastOperations } from "contexts/UtkastContext/utils";
+import { createUtkast as createApiUtkast } from "api/utkast";
+import Input from "components/form/Input";
+import Label from "components/form/Label";
+import Select from "components/form/Select";
+import Button from "components/form/Button";
+import Heading from "components/typography/Heading";
+import { Frame, toolbarBorderWidth, toolbarSpacing } from "./components";
 
 const UtkastFrame = styled(Frame)`
   position: absolute;
@@ -80,9 +80,7 @@ const UtkastToolbar = ({
   const [utkastName, setUtkastName] = useState("");
   const [utkastType, setUtkastType] = useState("");
   const { tokenHolderFunc } = useAuthenticationFlow();
-
   const { history, clearHistory } = useToolbar();
-
   const setSearchParams = useSearchParams()[1];
 
   const promptUtkast = () => {
