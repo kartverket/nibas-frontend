@@ -141,8 +141,6 @@ const DividerVertical = styled(Divider)`
 `;
 
 // TODO: endre navn på komponenten
-// TODO: maksgrense og minimumsgrense på zoom
-// TODO: ta en runde på translations, har sikkert glemt noe
 const NewToolbar = () => {
   const [createUtkastOpen, setCreateUtkastOpen] = useState(false);
   const [utkastJustCreated, setUtkastJustCreated] = useState(false);
@@ -204,8 +202,6 @@ const NewToolbar = () => {
     promptUtkast();
   };
 
-  // TODO: avklar om state skal overlappe eller ikke. Altså om man kan ha både fjern og legge til samtidig, hva med snap og flytt også?
-
   const zoom = (difference: number) => {
     const view = map.getView();
     view.animate({
@@ -222,7 +218,7 @@ const NewToolbar = () => {
             <>
               <UtkastFrame>
                 <Heading size="xs" tag="h3">
-                  Opprett et nytt utkast
+                  {t("utkast.Opprett et nytt utkast")}
                 </Heading>
                 <BlockLabel>
                   {t("utkast.Navn på utkast")}

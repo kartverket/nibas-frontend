@@ -32,7 +32,7 @@ const useEditInteractions = () => {
     () =>
       new Modify({
         source: editSource,
-        style: new Style({}), // TODO: fjern denne linjen så sirkel dukker opp
+        style: new Style({}), // TODO: bør kanskje fjernes for UX, gir en indikator på hva man velger
         insertVertexCondition: () => {
           return activePointMode === "add";
         },
