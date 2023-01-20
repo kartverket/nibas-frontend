@@ -140,8 +140,7 @@ const DividerVertical = styled(Divider)`
   margin: 0 4px;
 `;
 
-// TODO: endre navn på komponenten
-const NewToolbar = () => {
+const Toolbar = () => {
   const [createUtkastOpen, setCreateUtkastOpen] = useState(false);
   const [utkastJustCreated, setUtkastJustCreated] = useState(false);
   const { t } = useTranslation();
@@ -376,4 +375,4 @@ const NewToolbar = () => {
   );
 };
 
-export default NewToolbar;
+export default Toolbar;

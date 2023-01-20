@@ -9,7 +9,7 @@ import useEditInteractions from "hooks/interactions/useEditInteractions";
 import useSelectInteraction from "hooks/interactions/useSelectInteraction";
 import { initBakgrunnskartLayers, initGrenserLayers } from "utils/map/layers";
 import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
-import NewToolbar from "./Toolbar/NewToolbar";
+import Toolbar from "./Toolbar/Toolbar";
 
 // dette må skje utenfor komponenten siden React kjører dypere useEffects
 // før de lenger opp i treet, så lag er ikke definert når de trengs lenger ned
@@ -46,7 +46,7 @@ const Kart = () => {
             <UtkastBorder utkastActive={redigeringsmodusAktiv} />
           </KartOverlay>
           <OverlayPopup selectedFeatures={selectedFeatures} />
-          <NewToolbar />
+          <Toolbar />
         </Suspense>
       </KartTarget>
     </KartWrapper>
