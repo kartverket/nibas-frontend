@@ -3,7 +3,7 @@ import styled, { keyframes } from "styled-components";
 import Icon from "components/Icon";
 
 // TODO: erstatt dette med en generell toast eller en annen løsning
-const UtkastCreatedTab = () => {
+const UtkastToast = () => {
   const { t } = useTranslation();
 
   return (
@@ -50,4 +50,4 @@ const Wrapper = styled.div`
   animation: ${fadeInFadeOutFromTop} 5s ease-in-out;
 `;
 
-export default UtkastCreatedTab;
+export default UtkastToast;
