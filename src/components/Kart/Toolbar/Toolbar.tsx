@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
-
+import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import UtkastToast from "./UtkastToast";
 import UtkastToolbar from "./UtkastToolbar";
 import LagreToolbar from "./LagreToolbar";

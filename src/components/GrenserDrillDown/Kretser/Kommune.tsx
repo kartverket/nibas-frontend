@@ -21,6 +21,7 @@ const Kommune = ({ kommune }: Props) => {
       <VisibilityButton
         onClick={toggleKretser}
         variant="unstyled"
+        visible={kommuneValues.visible}
         icon={
           kommuneValues.visible ? (
             <Icon icon="visibility" aria-label="Synlig" />
@@ -58,14 +59,17 @@ const KommuneWrapper = styled.div<{ editing?: boolean }>`
   }
 `;
 
-const VisibilityButton = styled(Button)`
-  color: var(--blue_dark);
+const VisibilityButton = styled(Button)<{ visible?: boolean }>`
+  color: ${({ visible }) => (visible ? "var(--white)" : "var(--blue_dark)")};
+  background: ${({ visible }) =>
+    visible ? "var(--blue_dark)" : "transparent"};
+
   border-radius: 50%;
   padding: 8px;
 
   &:hover {
-    color: var(--white);
-    background: var(--blue_dark);
+    color: var(--blue_dark);
+    background: var(--blue_light);
   }
 
   &:focus-visible {

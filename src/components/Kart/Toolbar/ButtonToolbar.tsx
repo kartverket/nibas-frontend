@@ -1,9 +1,10 @@
-import ModeButton from "./ModeButton";
-import { map } from "../constants";
-import { useTranslation } from "react-i18next";
-import { useToolbar, useToolbarActions } from "contexts/ToolbarContext";
 import styled from "styled-components";
+import { useTranslation } from "react-i18next";
+import { map } from "../constants";
 import { Frame } from "./components";
+import ModeButton from "./ModeButton";
+import { useToolbar, useToolbarActions } from "contexts/ToolbarContext";
+import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 
 const Divider = styled.hr`
   width: 100%;
@@ -23,6 +24,9 @@ const ButtonToolbar = () => {
       duration: 250,
     });
   };
+
+  useKeyboardShortcut("undo", undo);
+  useKeyboardShortcut("redo", redo);
 
   return (
     <Frame>

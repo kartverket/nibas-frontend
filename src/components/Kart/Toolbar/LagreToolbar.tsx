@@ -7,6 +7,7 @@ import useFeedback from "hooks/useFeedback";
 import Feedback from "components/Feedback/Feedback";
 import ModeButton from "./ModeButton";
 import { Frame } from "./components";
+import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 
 const LagreFrame = styled(Frame)`
   flex-direction: row;
@@ -52,6 +53,20 @@ const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
     )
   );
 
+  const handleSave = () => {
+    if (!canSave) {
+      return;
+    }
+    if (utkast) {
+      updateUtkastWithHistory();
+    } else {
+      setCreateUtkastOpen(!createUtkastOpen);
+    }
+  };
+
+  useKeyboardShortcut("close", closeUtkast);
+  useKeyboardShortcut("save", handleSave);
+
   return (
     <LagreFrame>
       {utkast ? (
@@ -64,12 +79,11 @@ const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
           <ModeButton
             icon="save"
             ariaLabel="Lagre utkast"
-            onClick={updateUtkastWithHistory}
+            onClick={handleSave}
             disabled={!canSave}
           >
             {t("action.Lagre")}
           </ModeButton>
-
           <ModeButton
             icon="close"
             ariaLabel="Lukk utkast"
@@ -82,7 +96,7 @@ const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
         <ModeButton
           icon="save"
           ariaLabel="Lagre utkast"
-          onClick={() => setCreateUtkastOpen(!createUtkastOpen)}
+          onClick={handleSave}
           disabled={!canSave}
           isActive={createUtkastOpen}
         >
