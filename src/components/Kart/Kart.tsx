@@ -4,13 +4,12 @@ import { map } from "./constants";
 import OverlayPanels from "./OverlayPanels";
 import OverlayPopup from "./OverlayPopup";
 import SidebarPanels from "./SidebarPanels";
-import Toolbar from "./Toolbar";
 import { PanelType, useOverlayPanels } from "contexts/OverlayPanelsContext";
 import useEditInteractions from "hooks/interactions/useEditInteractions";
 import useSelectInteraction from "hooks/interactions/useSelectInteraction";
 import { initBakgrunnskartLayers, initGrenserLayers } from "utils/map/layers";
 import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
-import Controls from "./controls/Controls";
+import Toolbar from "./Toolbar/Toolbar";
 
 // dette må skje utenfor komponenten siden React kjører dypere useEffects
 // før de lenger opp i treet, så lag er ikke definert når de trengs lenger ned
@@ -44,12 +43,10 @@ const Kart = () => {
           <KartOverlay content={panelContext?.type}>
             <SidebarPanels />
             <OverlayPanels />
-            <Toolbar />
             <UtkastBorder utkastActive={redigeringsmodusAktiv} />
           </KartOverlay>
-
-          <Controls />
           <OverlayPopup selectedFeatures={selectedFeatures} />
+          <Toolbar />
         </Suspense>
       </KartTarget>
     </KartWrapper>
@@ -92,7 +89,7 @@ const KartOverlay = styled.div<{
   grid-template-columns: auto auto 1fr;
   grid-template-rows: 1fr auto;
   grid-template-areas:
-    "panel toolbar ."
+    "panel . ."
     "panel metadata ."
     "panel kretser .";
   width: 100%;

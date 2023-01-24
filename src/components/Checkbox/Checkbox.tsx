@@ -39,8 +39,6 @@ const RadioFill = css`
   background: var(--blue_dark);
 `;
 
-// TODO: Random farge basert på label?
-
 // https://www.w3schools.com/howto/howto_css_custom_checkbox.asp
 const CustomCheckbox = styled.span<{ type: "radio" | "checkbox" }>`
   position: absolute;

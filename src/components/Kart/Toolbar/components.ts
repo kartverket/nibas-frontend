@@ -1,11 +1,17 @@
 import styled from "styled-components";
-import { KartInteractable } from "../KartInteractable";
 
-export const ToolbarWrapper = styled(KartInteractable)`
+export const toolbarSpacing = 20;
+export const toolbarBorderWidth = 2;
+
+export const Frame = styled.div`
   display: flex;
-  gap: 0.5rem;
-  margin-left: 30px;
-  margin-top: 30px;
-  border: 2px solid var(--gray_light);
-  padding: 16px;
+  flex-direction: column;
+  gap: ${toolbarSpacing}px;
+
+  width: fit-content;
+  padding: 20px 12px;
+  border: ${toolbarBorderWidth}px solid var(--gray_light);
+  background: white;
+  border-radius: 10px;
+  box-shadow: 4px 4px 12px 0 rgba(0, 0, 0, 0.15);
 `;

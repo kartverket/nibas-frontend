@@ -68,6 +68,7 @@
     "Fortsett": "Fortsett",
     "Avbryt": "Avbryt",
     "Legg til": "Legg til",
+    "Fjern": "Fjern",
     "Slett": "Slett",
     "Ny referanse": "Ny referanse",
     "Slett {{ item }}": "Slett {{ item }}",
@@ -83,7 +84,11 @@
     "Rediger": "Rediger",
     "Lagre utkast": "Lagre utkast",
     "Opprett": "Opprett",
-    "Lukk utkast": "Lukk utkast"
+    "Lukk utkast": "Lukk utkast",
+    "Flytt": "Flytt",
+    "Snap": "Snap",
+    "Zoom inn": "Zoom inn",
+    "Zoom ut": "Zoom ut"
   },
   "Ja": "Ja",
   "Nei": "Nei",
@@ -133,7 +138,8 @@
     "Endringer du gjorde i dette utkastet har ført til at en annen publisert endring må dobbelsjekkes": "Endringer du gjorde i dette utkastet har ført til at en annen publisert endring må dobbelsjekkes",
     "Dobbeltsjekk feltene i endringen nedenfor før du publiserer": "Dobbeltsjekk feltene i endringen nedenfor før du publiserer",
     "Endringer i dette utkastet": "Endringer i dette utkastet",
-    "Fremtidig endring i konflikt": "Fremtidig endring i konflikt"
+    "Fremtidig endring i konflikt": "Fremtidig endring i konflikt",
+    "Opprett et nytt utkast": "Opprett et nytt utkast"
   },
   "Aktive kartlag": "Aktive kartlag",
   "Logg inn for å se listen": "Logg inn for å se listen",
