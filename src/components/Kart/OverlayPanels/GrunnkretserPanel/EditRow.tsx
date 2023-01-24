@@ -102,18 +102,19 @@ const EditRow = ({ grunnkrets, kommuneId }: Props) => {
 
   return (
     <AccordionRow>
-      <td colSpan={4}>
-        <InputsWrapper>
-          <BlockLabel>
-            {t("grunnkrets.Grunnkretsnavn")}
-            <Input {...register("navn", registerOptions)} />
-          </BlockLabel>
-          <BlockLabel>
-            {t("grunnkrets.Grunnkretsnummer")}
-            <Input {...register("grunnkretsnummer", registerOptions)} />
-          </BlockLabel>
-        </InputsWrapper>
+      <td>
+        <BlockLabel>
+          {t("grunnkrets.Grunnkretsnavn")}
+          <Input {...register("navn", registerOptions)} />
+        </BlockLabel>
       </td>
+      <td>
+        <BlockLabel>
+          {t("grunnkrets.Grunnkretsnummer")}
+          <Input {...register("grunnkretsnummer", registerOptions)} />
+        </BlockLabel>
+      </td>
+      <td colSpan={2} />
     </AccordionRow>
   );
 };
@@ -122,37 +123,18 @@ const AccordionRow = styled.tr`
   background-color: var(--gray_light);
 
   td {
-    padding: 8px;
+    padding: 16px;
   }
 `;
 
 const BlockLabel = styled(Label)`
-  &:last-child {
-    margin-left: 16px;
-  }
+  color: var(--gray_dark);
 
   input {
     width: 100%;
   }
 
   margin-bottom: 16px;
-`;
-
-const InputsWrapper = styled.div`
-  display: flex;
-  width: 80%;
-
-  > ${BlockLabel} {
-    width: 100%;
-
-    &:first-child {
-      flex: 2;
-    }
-
-    &:last-child {
-      flex: 1;
-    }
-  }
 `;
 
 export default EditRow;
