@@ -9,6 +9,8 @@ import useTimer from "hooks/useTimer";
 import { getIdFromEntity } from "utils/api";
 import styled from "styled-components";
 import { BlockLabel, Section } from "./components";
+import { editSource } from "hooks/layers/constants";
+import { getRepresentasjonspunktId } from "utils/map/source";
 
 type Inputs = {
   stemmekretsnavn: string;
@@ -83,19 +85,25 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
     if (!utkastStemmekrets) return;
 
     startTimer(() => {
+      const newValues = getValues();
       addEntry({
         type: "stemmekrets",
         kommuneId,
         changes: [
           {
             from: fromFormToRequest(previousValues.current, utkastStemmekrets),
-            to: fromFormToRequest(getValues(), utkastStemmekrets),
+            to: fromFormToRequest(newValues, utkastStemmekrets),
             id: stemmekretsId,
           },
         ],
       });
 
-      previousValues.current = getValues();
+      previousValues.current = newValues;
+      const feature = editSource.getFeatureById(
+        getRepresentasjonspunktId(stemmekretsId)
+      );
+      feature.set("name", newValues.stemmekretsnavn);
+      feature.set("number", newValues.stemmekretsnummer);
     }, 700);
   };
 
