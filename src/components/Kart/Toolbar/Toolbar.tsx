@@ -1,44 +1,54 @@
 import { useState } from "react";
 import styled from "styled-components";
-import CreateUtkastToolbar from "./CreateUtkastToolbar";
-import DefaultToolbar from "./DefaultToolbar";
+import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
+import UtkastToast from "./UtkastToast";
+import UtkastToolbar from "./UtkastToolbar";
+import LagreToolbar from "./LagreToolbar";
+import ButtonToolbar from "./ButtonToolbar";
+import { toolbarSpacing } from "./components";
+
+const Container = styled.div`
+  position: absolute;
+  top: ${toolbarSpacing}px;
+  right: ${toolbarSpacing}px;
+  z-index: 1;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: ${toolbarSpacing}px;
+
+  pointer-events: none;
+  & > * {
+    pointer-events: all;
+  }
+`;
 
 const Toolbar = () => {
   const [createUtkastOpen, setCreateUtkastOpen] = useState(false);
   const [utkastJustCreated, setUtkastJustCreated] = useState(false);
-
-  const promptUtkast = () => {
-    setUtkastJustCreated(true);
-
-    const timeId = setTimeout(() => {
-      setUtkastJustCreated(false);
-    }, 5000);
-
-    return () => {
-      clearTimeout(timeId);
-    };
-  };
+  const { redigeringsmodusAktiv } = useRedigeringsmodus();
 
   return (
-    <ToolbarArea>
-      <DefaultToolbar
-        openCreateUtkast={() => setCreateUtkastOpen(true)}
-        utkastJustCreated={utkastJustCreated}
-      />
-
-      {createUtkastOpen && (
-        <CreateUtkastToolbar
-          closeCreateUtkast={() => setCreateUtkastOpen(false)}
-          promptUtkast={promptUtkast}
-        />
+    <Container>
+      {redigeringsmodusAktiv && (
+        <>
+          {createUtkastOpen && (
+            <UtkastToolbar
+              setCreateUtkastOpen={setCreateUtkastOpen}
+              setUtkastJustCreated={setUtkastJustCreated}
+            />
+          )}
+          <LagreToolbar
+            createUtkastOpen={createUtkastOpen}
+            setCreateUtkastOpen={setCreateUtkastOpen}
+          />
+          {utkastJustCreated && <UtkastToast />}
+        </>
       )}
-    </ToolbarArea>
+      <ButtonToolbar />
+    </Container>
   );
 };
-
-const ToolbarArea = styled.div`
-  grid-area: toolbar;
-  justify-self: start;
-`;
 
 export default Toolbar;

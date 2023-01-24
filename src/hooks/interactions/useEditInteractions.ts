@@ -1,13 +1,19 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { FeatureLike } from "ol/Feature";
 import LineString from "ol/geom/LineString";
 import { Snap } from "ol/interaction";
-import { ModifyEvent } from "ol/interaction/Modify";
-import { modify } from "./constants";
+import Modify, { ModifyEvent } from "ol/interaction/Modify";
 import useDirtyStyles from "./useDirtyStyles";
 import { map } from "components/Kart/constants";
-import { GrenseEntry, useToolbarSaving } from "contexts/ToolbarContext";
+import {
+  GrenseEntry,
+  useToolbar,
+  useToolbarSaving,
+} from "contexts/ToolbarContext";
 import { getVectorLayers } from "utils/map/layers";
+import { editSource } from "hooks/layers/constants";
+import Style from "ol/style/Style";
+import { click } from "ol/events/condition";
 
 const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
@@ -19,6 +25,24 @@ const getInfoFromFeature = (featureLike: FeatureLike) => {
 const useEditInteractions = () => {
   const { dirtyFeatureIds, addEntry, updateEntry, history } =
     useToolbarSaving();
+
+  const { activePointMode, snapActive } = useToolbar();
+
+  const modify = useMemo(
+    () =>
+      new Modify({
+        source: editSource,
+        style: new Style({}), // TODO: bør kanskje fjernes for UX, gir en indikator på hva man velger
+        insertVertexCondition: () => {
+          return activePointMode === "add";
+        },
+        deleteCondition: (mapBrowserEvent) => {
+          // TODO: viktig, vi må finne et sted å legge dette til i history, hvis man angrer nå så forsvinner mange slettinger
+          return activePointMode === "remove" && click(mapBrowserEvent);
+        },
+      }),
+    [activePointMode]
+  );
 
   useDirtyStyles(dirtyFeatureIds);
 
@@ -36,9 +60,11 @@ const useEditInteractions = () => {
 
     map.addInteraction(modify);
     // snaps må legges til etter modify og draw interactions
-    snaps.forEach((snap) => {
-      map.addInteraction(snap);
-    });
+    if (snapActive) {
+      snaps.forEach((snap) => {
+        map.addInteraction(snap);
+      });
+    }
 
     return () => {
       map.removeInteraction(modify);
@@ -46,7 +72,7 @@ const useEditInteractions = () => {
         map.removeInteraction(snap);
       });
     };
-  }, []);
+  }, [modify, snapActive]);
 
   useEffect(() => {
     const addCurrentCoordinatesToHistory = (e: ModifyEvent) => {
@@ -75,7 +101,7 @@ const useEditInteractions = () => {
     return () => {
       modify.un("modifystart", addCurrentCoordinatesToHistory);
     };
-  }, [addEntry]);
+  }, [addEntry, modify]);
 
   useEffect(() => {
     const updateToCoordinate = (e: ModifyEvent) => {
@@ -105,7 +131,7 @@ const useEditInteractions = () => {
     return () => {
       modify.un("modifyend", updateToCoordinate);
     };
-  }, [history, updateEntry]);
+  }, [history, updateEntry, modify]);
 };
 
 export default useEditInteractions;
