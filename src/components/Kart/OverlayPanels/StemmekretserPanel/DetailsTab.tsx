@@ -9,6 +9,8 @@ import useTimer from "hooks/useTimer";
 import { getIdFromEntity } from "utils/api";
 import styled from "styled-components";
 import { BlockLabel, Section } from "./components";
+import { getRepresentasjonspunktId } from "utils/map/source";
+import { updateEditFeatureText } from "utils/map/layerStyles";
 
 type Inputs = {
   stemmekretsnavn: string;
@@ -62,12 +64,20 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
 
   const setFormValues = useCallback(
     (change: StemmekretsEntry["changes"][number], direction: "to" | "from") => {
-      setValue("stemmekretsnavn", change[direction]?.stemmekretsnavn ?? "");
-      setValue("stemmekretsnummer", change[direction]?.stemmekretsnummer ?? "");
+      const newName = change[direction]?.stemmekretsnavn;
+      const newNumber = change[direction]?.stemmekretsnummer;
+      setValue("stemmekretsnavn", newName ?? "");
+      setValue("stemmekretsnummer", newNumber ?? "");
       setValue("tellekretsnavn", change[direction]?.tellekretsnavn ?? "");
       setValue("tellekretsnummer", change[direction]?.tellekretsnummer ?? "");
+
+      updateEditFeatureText(
+        getRepresentasjonspunktId(stemmekretsId),
+        newName,
+        newNumber
+      );
     },
-    [setValue]
+    [setValue, stemmekretsId]
   );
 
   useKretsToolbarSync<StemmekretsEntry>({
@@ -83,19 +93,24 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
     if (!utkastStemmekrets) return;
 
     startTimer(() => {
+      const newValues = getValues();
       addEntry({
         type: "stemmekrets",
         kommuneId,
         changes: [
           {
             from: fromFormToRequest(previousValues.current, utkastStemmekrets),
-            to: fromFormToRequest(getValues(), utkastStemmekrets),
+            to: fromFormToRequest(newValues, utkastStemmekrets),
             id: stemmekretsId,
           },
         ],
       });
-
-      previousValues.current = getValues();
+      previousValues.current = newValues;
+      updateEditFeatureText(
+        getRepresentasjonspunktId(stemmekretsId),
+        newValues.stemmekretsnavn,
+        newValues.stemmekretsnummer
+      );
     }, 700);
   };
 

@@ -15,6 +15,8 @@ import {
 import { getNavnInSpraak } from "utils/language/language";
 import useTimer from "hooks/useTimer";
 import { getIdFromEntity } from "utils/api";
+import { updateEditFeatureText } from "utils/map/layerStyles";
+import { getRepresentasjonspunktId } from "utils/map/source";
 
 type Props = {
   grunnkrets: GrunnkretsRef;
@@ -59,10 +61,17 @@ const EditRow = ({ grunnkrets, kommuneId }: Props) => {
 
   const setFormValues = useCallback(
     (change: GrunnkretsEntry["changes"][number], direction: "to" | "from") => {
-      setValue("grunnkretsnummer", change[direction]?.grunnkretsnummer ?? "");
-      setValue("navn", change[direction]?.navn ?? "");
+      const newName = change[direction]?.navn;
+      const newNumber = change[direction]?.grunnkretsnummer;
+      setValue("navn", newName ?? "");
+      setValue("grunnkretsnummer", newNumber ?? "");
+      updateEditFeatureText(
+        getRepresentasjonspunktId(grunnkretsId),
+        newName,
+        newNumber
+      );
     },
-    [setValue]
+    [grunnkretsId, setValue]
   );
 
   useKretsToolbarSync<GrunnkretsEntry>({
@@ -77,23 +86,26 @@ const EditRow = ({ grunnkrets, kommuneId }: Props) => {
 
     if (!fullGrunnkrets) return;
 
-    startTimer(
-      () =>
-        addEntry({
-          type: "grunnkrets",
-          kommuneId,
-          changes: [
-            {
-              from: fromFormToRequest(previousValues.current, fullGrunnkrets),
-              to: fromFormToRequest(getValues(), fullGrunnkrets),
-              id: grunnkretsId,
-            },
-          ],
-        }),
-      700
-    );
-
-    previousValues.current = getValues();
+    startTimer(() => {
+      const newValues = getValues();
+      addEntry({
+        type: "grunnkrets",
+        kommuneId,
+        changes: [
+          {
+            from: fromFormToRequest(previousValues.current, fullGrunnkrets),
+            to: fromFormToRequest(newValues, fullGrunnkrets),
+            id: grunnkretsId,
+          },
+        ],
+      });
+      previousValues.current = newValues;
+      updateEditFeatureText(
+        getRepresentasjonspunktId(grunnkretsId),
+        newValues.navn,
+        newValues.grunnkretsnummer
+      );
+    }, 700);
   };
 
   const registerOptions = {
