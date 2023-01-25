@@ -61,10 +61,17 @@ const EditRow = ({ grunnkrets, kommuneId }: Props) => {
 
   const setFormValues = useCallback(
     (change: GrunnkretsEntry["changes"][number], direction: "to" | "from") => {
-      setValue("grunnkretsnummer", change[direction]?.grunnkretsnummer ?? "");
-      setValue("navn", change[direction]?.navn ?? "");
+      const newName = change[direction]?.navn;
+      const newNumber = change[direction]?.grunnkretsnummer;
+      setValue("navn", newName ?? "");
+      setValue("grunnkretsnummer", newNumber ?? "");
+      updateEditFeatureText(
+        getRepresentasjonspunktId(grunnkretsId),
+        newName,
+        newNumber
+      );
     },
-    [setValue]
+    [grunnkretsId, setValue]
   );
 
   useKretsToolbarSync<GrunnkretsEntry>({

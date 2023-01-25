@@ -64,12 +64,20 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
 
   const setFormValues = useCallback(
     (change: StemmekretsEntry["changes"][number], direction: "to" | "from") => {
-      setValue("stemmekretsnavn", change[direction]?.stemmekretsnavn ?? "");
-      setValue("stemmekretsnummer", change[direction]?.stemmekretsnummer ?? "");
+      const newName = change[direction]?.stemmekretsnavn;
+      const newNumber = change[direction]?.stemmekretsnummer;
+      setValue("stemmekretsnavn", newName ?? "");
+      setValue("stemmekretsnummer", newNumber ?? "");
       setValue("tellekretsnavn", change[direction]?.tellekretsnavn ?? "");
       setValue("tellekretsnummer", change[direction]?.tellekretsnummer ?? "");
+
+      updateEditFeatureText(
+        getRepresentasjonspunktId(stemmekretsId),
+        newName,
+        newNumber
+      );
     },
-    [setValue]
+    [setValue, stemmekretsId]
   );
 
   useKretsToolbarSync<StemmekretsEntry>({

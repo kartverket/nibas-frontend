@@ -188,10 +188,14 @@ export const selectStyles = [
 
 export const updateEditFeatureText = (
   featureId: string,
-  name: string,
-  number: string
+  name?: string,
+  number?: string
 ) => {
   const feature = editSource.getFeatureById(featureId);
-  feature.set("name", name);
-  feature.set("number", number);
+  if (name) {
+    feature.set("name", name);
+  }
+  if (number) {
+    feature.set("number", number);
+  }
 };
