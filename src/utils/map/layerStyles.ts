@@ -10,6 +10,7 @@ import Style from "ol/style/Style";
 import { map } from "components/Kart/constants";
 import Text from "ol/style/Text";
 import Point from "ol/geom/Point";
+import { editSource } from "hooks/layers/constants";
 
 const getPointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
   // hent punkter når zoomet langt nok inn
@@ -184,3 +185,13 @@ export const selectStyles = [
   ...getDefaultSelectStyle().LineString,
   selectPointStyle,
 ];
+
+export const updateEditFeatureText = (
+  featureId: string,
+  name: string,
+  number: string
+) => {
+  const feature = editSource.getFeatureById(featureId);
+  feature.set("name", name);
+  feature.set("number", number);
+};
