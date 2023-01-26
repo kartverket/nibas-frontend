@@ -15,6 +15,7 @@ import Style from "ol/style/Style";
 import { click } from "ol/events/condition";
 import { Collection, MapBrowserEvent } from "ol";
 import Geometry from "ol/geom/Geometry";
+import { editSource } from "hooks/layers/constants";
 
 const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
@@ -27,25 +28,25 @@ const useEditInteractions = () => {
   const { dirtyFeatureIds, addEntry, updateEntry, history } =
     useToolbarSaving();
 
-  const { activePointMode, snapActive } = useToolbar();
+  const { activePointMode, activeEditModes } = useToolbar();
 
   const collection = useMemo(() => new Collection<Feature<Geometry>>(), []);
+  const detachIsActive = activeEditModes.includes("detach");
 
   const modify = useMemo(
     () =>
       new Modify({
-        features: collection, // TODO: bør trolig bruke source hvis ikke løsrivingsmodus er skrudd på
-        //source: editSource,
+        source: detachIsActive ? undefined : editSource,
+        features: detachIsActive ? collection : undefined,
         style: new Style({}), // TODO: bør kanskje fjernes for UX, gir en indikator på hva man velger
         insertVertexCondition: () => {
           return activePointMode === "add";
         },
         deleteCondition: (mapBrowserEvent) => {
-          // TODO: viktig, vi må finne et sted å legge dette til i history, hvis man angrer nå så forsvinner mange slettinger
           return activePointMode === "remove" && click(mapBrowserEvent);
         },
       }),
-    [activePointMode, collection]
+    [activePointMode, collection, detachIsActive]
   );
 
   useDirtyStyles(dirtyFeatureIds);
@@ -64,7 +65,7 @@ const useEditInteractions = () => {
 
     map.addInteraction(modify);
     // snaps må legges til etter modify og draw interactions
-    if (snapActive) {
+    if (activeEditModes.includes("snap")) {
       snaps.forEach((snap) => {
         map.addInteraction(snap);
       });
@@ -72,23 +73,24 @@ const useEditInteractions = () => {
 
     const editLayer = getLayerById("edit");
 
-    // TODO: bare gjør denne jobben dersom et modus for løsriving er skrudd på
-    map.on("pointermove", (event: MapBrowserEvent<MouseEvent>) => {
-      if (!event.dragging) {
-        const features = map.getFeaturesAtPixel(event.pixel, {
-          layerFilter: (layer) => layer === editLayer,
-        });
-        if (
-          features.length &&
-          (collection.getLength() === 0 || collection.item(0) !== features[0])
-        ) {
-          if (features[0] instanceof Feature<Geometry>) {
-            collection.clear();
-            collection.push(features[0]);
+    if (activeEditModes.includes("detach")) {
+      map.on("pointermove", (event: MapBrowserEvent<MouseEvent>) => {
+        if (!event.dragging) {
+          const features = map.getFeaturesAtPixel(event.pixel, {
+            layerFilter: (layer) => layer === editLayer,
+          });
+          if (
+            features.length &&
+            (collection.getLength() === 0 || collection.item(0) !== features[0])
+          ) {
+            if (features[0] instanceof Feature<Geometry>) {
+              collection.clear();
+              collection.push(features[0]);
+            }
           }
         }
-      }
-    });
+      });
+    }
 
     return () => {
       map.removeInteraction(modify);
@@ -96,7 +98,7 @@ const useEditInteractions = () => {
         map.removeInteraction(snap);
       });
     };
-  }, [collection, modify, snapActive]);
+  }, [activeEditModes, collection, modify]);
 
   useEffect(() => {
     const addCurrentCoordinatesToHistory = (e: ModifyEvent) => {

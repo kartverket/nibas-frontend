@@ -9,12 +9,13 @@ import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts
 const Divider = styled.hr`
   width: 100%;
   border: 1px solid var(--gray_light);
+  margin: 0;
 `;
 
 const ButtonToolbar = () => {
   const { t } = useTranslation();
   const { undo, redo } = useToolbarActions();
-  const { activePointMode, togglePointMode, snapActive, setSnapActive } =
+  const { activePointMode, togglePointMode, activeEditModes, toggleEditMode } =
     useToolbar();
 
   const zoom = (difference: number) => {
@@ -63,11 +64,20 @@ const ButtonToolbar = () => {
       >
         {t("action.Fjern")}
       </ModeButton>
+      <Divider />
+      <ModeButton
+        icon="edit_location_alt"
+        ariaLabel="Løsriv punkter"
+        isActive={activeEditModes.includes("detach")}
+        onClick={() => toggleEditMode("detach")}
+      >
+        {t("action.Løsriv")}
+      </ModeButton>
       <ModeButton
         icon="magnet"
         ariaLabel="Snap til bakgrunnskart"
-        isActive={snapActive}
-        onClick={() => setSnapActive(!snapActive)}
+        isActive={activeEditModes.includes("snap")}
+        onClick={() => toggleEditMode("snap")}
       >
         {t("action.Snap")}
       </ModeButton>

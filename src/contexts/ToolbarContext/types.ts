@@ -47,6 +47,7 @@ export type EditContextType = HistoryEntry["type"];
 export type ToolbarHistory = History<HistoryEntry>;
 
 export type ToolbarPointMode = null | "add" | "remove";
+export type ToolbarEditMode = "snap" | "detach";
 
 export type ToolbarContextValue = {
   clearHistory: () => void;
@@ -57,6 +58,6 @@ export type ToolbarContextValue = {
   dirtyFeatureIds: string[];
   activePointMode: ToolbarPointMode;
   togglePointMode: (pointMode: ToolbarPointMode) => void;
-  snapActive: boolean;
-  setSnapActive: (snapActive: boolean) => void;
+  activeEditModes: ToolbarEditMode[];
+  toggleEditMode: (editMode: ToolbarEditMode) => void;
 };

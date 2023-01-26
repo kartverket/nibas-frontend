@@ -5,7 +5,12 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { ToolbarContextValue, HistoryEntry, ToolbarPointMode } from "./types";
+import {
+  ToolbarContextValue,
+  HistoryEntry,
+  ToolbarPointMode,
+  ToolbarEditMode,
+} from "./types";
 import {
   getDirtyIdsFromEntries,
   setFeatureCoordinatesForEntry,
@@ -100,9 +105,21 @@ export const ToolbarProvider: React.FC = ({ children }) => {
     onRedo,
   });
 
-  const [snapActive, setSnapActive] = useState(true);
+  const [activeEditModes, setActiveEditModes] = useState<ToolbarEditMode[]>([
+    "snap",
+  ]);
+
+  const toggleEditMode = (editMode: ToolbarEditMode) => {
+    if (activeEditModes.includes(editMode)) {
+      setActiveEditModes(activeEditModes.filter((em) => em !== editMode));
+    } else {
+      setActiveEditModes(activeEditModes.concat(editMode));
+    }
+  };
+
   const [activePointMode, setActivePointMode] =
     useState<ToolbarPointMode>(null);
+
   const togglePointMode = (pointMode: ToolbarPointMode) => {
     if (pointMode === activePointMode) {
       setActivePointMode(null);
@@ -132,8 +149,8 @@ export const ToolbarProvider: React.FC = ({ children }) => {
     dirtyFeatureIds,
     activePointMode,
     togglePointMode,
-    snapActive,
-    setSnapActive,
+    activeEditModes,
+    toggleEditMode,
   };
 
   return (
