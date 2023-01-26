@@ -45,6 +45,7 @@ const renderWithProvider = (
     ToolbarProvider: {
       history: toolbarHistory,
       clearHistory: jest.fn(),
+      activeEditModes: [],
     } as any,
     UtkastProvider: {
       utkast,
@@ -59,6 +60,7 @@ const renderWithUtkastProvider = (ui: ReactNode) =>
     ToolbarProvider: {
       history: mockToolbarHistory,
       clearHistory: jest.fn(),
+      activeEditModes: [],
     } as any,
   });
 
