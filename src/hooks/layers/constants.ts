@@ -2,7 +2,9 @@ import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { bakgrunnskartSources } from "hooks/sources/syncSources";
-import { getDefaultStyles, getEditStyles } from "utils/map/layerStyles";
+import { getPointOverlayStyle, grensetypeStyles } from "utils/map/layerStyles";
+import { StyleFunction } from "ol/style/Style";
+import { GrenseId } from "./types";
 
 const createTileLayerFromBakgrunnskartSource = (
   id: keyof typeof bakgrunnskartSources
@@ -37,30 +39,35 @@ export const bakgrunnskartLayers = {
 
 export const editSource = new VectorSource();
 
+const grenseStyle =
+  (grenseId: GrenseId): StyleFunction =>
+  (feature) =>
+    [...grensetypeStyles[grenseId], getPointOverlayStyle(feature)];
+
 export const grenserLayers = {
   // ingen source betyr at source settes async
   fylker: new VectorLayer({
     source: new VectorSource(),
-    style: getDefaultStyles,
+    style: grenseStyle("fylker"),
   }),
   kommuner: new VectorLayer({
     source: new VectorSource(),
-    style: getDefaultStyles,
+    style: grenseStyle("kommuner"),
   }),
   nasjoner: new VectorLayer({
     source: new VectorSource(),
-    style: getDefaultStyles,
+    style: grenseStyle("nasjoner"),
   }),
   grunnkretser: new VectorLayer({
     source: new VectorSource(),
-    style: getDefaultStyles,
+    style: grenseStyle("grunnkretser"),
   }),
   stemmekretser: new VectorLayer({
     source: new VectorSource(),
-    style: getDefaultStyles,
+    style: grenseStyle("stemmekretser"),
   }),
   edit: new VectorLayer({
     source: editSource,
-    style: getEditStyles,
+    style: grenseStyle("edit"),
   }),
 };

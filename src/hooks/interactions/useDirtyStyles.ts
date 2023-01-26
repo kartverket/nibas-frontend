@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { editSource } from "hooks/layers/constants";
-import { dirtyStyles, editStyles } from "utils/map/layerStyles";
+import { dirtyStyles, grensetypeStyles } from "utils/map/layerStyles";
 
 const useDirtyStyles = (dirtyFeatureIds: string[]) => {
   const [featureIdsWithDirtyStyle, setFeatureIdsWithDirtyStyle] = useState<
@@ -20,7 +20,7 @@ const useDirtyStyles = (dirtyFeatureIds: string[]) => {
 
     // disse skal nå få tilbake sin vanlige style, og fjernes fra lista
     featuresIdsToGetEditStyle.forEach((featureId) => {
-      editSource.getFeatureById(featureId)?.setStyle(editStyles);
+      editSource.getFeatureById(featureId)?.setStyle(grensetypeStyles["edit"]);
       newFeatureIdsWithDirtyStyle.splice(
         newFeatureIdsWithDirtyStyle.indexOf(featureId)
       );
