@@ -318,6 +318,7 @@ export const mockStemmekrets1: StemmekretsResponse = {
   stemmekretsnavn: "Undredal",
   stemmekretsnummer: "05",
   kommunenummer: { id: "c416fb1d-2124-4f71-8dfc-859c55feb437", kodeverdi: "1" },
+  oppdateringsdato: "2022-01-01",
   tellekretsnummer: "tellekretsnr1",
   tellekretsnavn: "tellekretsnavn1",
   valgdistriktsnummer: "14",
@@ -341,6 +342,7 @@ export const mockStemmekrets2: StemmekretsResponse = {
   kommunenummer: { id: "ec64ba19-fb37-44d4-b579-407897f871ee", kodeverdi: "2" },
   tellekretsnummer: "tellekretsnr2",
   tellekretsnavn: "tellekretsnavn2",
+  oppdateringsdato: "2022-01-01",
   valgdistriktsnummer: "16",
   features: mockGeoJsonFeatureResponse,
   gyldighet: {

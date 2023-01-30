@@ -10,7 +10,9 @@ export type TableRow = {
 
 type Props<T extends GrunnkretsResponse | StemmekretsResponse> = {
   id: string;
-  futureChangesUrl: "/v1/grunnkretser/{lokalid}/framtidigeversjoner";
+  futureChangesUrl:
+    | "/v1/grunnkretser/{lokalid}/framtidigeversjoner"
+    | "/v1/stemmekretser/{lokalid}/framtidigeversjoner";
   headers: string[];
   getRows: (futureChanges: T[]) => TableRow[];
 };
