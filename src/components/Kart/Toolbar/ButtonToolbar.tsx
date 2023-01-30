@@ -64,6 +64,14 @@ const ButtonToolbar = () => {
       >
         {t("action.Fjern")}
       </ModeButton>
+      <ModeButton
+        icon="location_off"
+        ariaLabel="Splitt punkter"
+        isActive={activePointMode === "split"}
+        onClick={() => togglePointMode("split")}
+      >
+        {t("action.Splitt")}
+      </ModeButton>
       <Divider />
       <ModeButton
         icon="edit_location_alt"

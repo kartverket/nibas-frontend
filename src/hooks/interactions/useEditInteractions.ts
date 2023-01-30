@@ -16,6 +16,7 @@ import { click } from "ol/events/condition";
 import { Collection, MapBrowserEvent } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { editSource } from "hooks/layers/constants";
+import { squaredDistance } from "ol/coordinate";
 
 const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
@@ -82,30 +83,75 @@ const useEditInteractions = () => {
   useEffect(() => {
     const editLayer = getLayerById("edit");
     const addFeaturesToCollection = (event: MapBrowserEvent<MouseEvent>) => {
-      if (!event.dragging) {
-        const features = map.getFeaturesAtPixel(event.pixel, {
-          layerFilter: (layer) => layer === editLayer,
-        });
-        if (
-          features.length &&
-          (collection.getLength() === 0 || collection.item(0) !== features[0])
-        ) {
-          if (features[0] instanceof Feature<Geometry>) {
-            collection.clear();
-            collection.push(features[0]);
+      if (activeEditModes.includes("detach")) {
+        if (!event.dragging) {
+          const features = map.getFeaturesAtPixel(event.pixel, {
+            layerFilter: (layer) => layer === editLayer,
+          });
+          if (
+            features.length &&
+            (collection.getLength() === 0 || collection.item(0) !== features[0])
+          ) {
+            if (features[0] instanceof Feature<Geometry>) {
+              collection.clear();
+              collection.push(features[0]);
+            }
           }
         }
       }
     };
 
-    if (activeEditModes.includes("detach")) {
-      map.on("pointermove", addFeaturesToCollection);
-    }
+    map.on("pointermove", addFeaturesToCollection);
 
     return () => {
       map.un("pointermove", addFeaturesToCollection);
     };
   }, [activeEditModes, collection]);
+
+  useEffect(() => {
+    const splitFeature = (event: MapBrowserEvent<MouseEvent>) => {
+      if (activePointMode === "split" && !event.dragging) {
+        const editLayer = getLayerById("edit");
+        const features = map.getFeaturesAtPixel(event.pixel, {
+          layerFilter: (layer) => layer === editLayer,
+          hitTolerance: 10,
+        });
+        // Forutsetter at man bare trykker på én feature
+        if (features[0] instanceof Feature<Geometry>) {
+          const geometry = features[0].getGeometry();
+          if (geometry instanceof LineString) {
+            const coordinates = geometry.getCoordinates();
+            const coordinatesWithDistance = coordinates.map((coord) => [
+              ...coord,
+              squaredDistance(coord, event.coordinate),
+            ]);
+            const nearestVertex = coordinatesWithDistance
+              .sort((a, b) => a[2] - b[2])
+              .map((cwd) => cwd.slice(0, -1))[0];
+            console.log("nearestVertex", nearestVertex);
+
+            // Det vi må gjøre nå er:
+            // 1. klone features[0]
+            // 2. modifisere begge features til å stoppe eller starte på punktet
+            // 3. fjerne den originale featuren fra kartet og legg til de to nye?
+            // 3-alt. ikke fjern den gamle, men oppdater kartet og legg til klonen
+            console.log(
+              "index til nærmeste koordinat",
+              coordinates.findIndex(
+                (v) => v[0] === nearestVertex[0] && v[1] === nearestVertex[1]
+              )
+            );
+          }
+        }
+      }
+    };
+
+    map.on("click", splitFeature);
+
+    return () => {
+      map.un("click", splitFeature);
+    };
+  }, [activePointMode]);
 
   useEffect(() => {
     const addCurrentCoordinatesToHistory = (e: ModifyEvent) => {
