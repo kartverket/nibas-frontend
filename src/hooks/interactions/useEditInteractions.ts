@@ -71,34 +71,41 @@ const useEditInteractions = () => {
       });
     }
 
-    const editLayer = getLayerById("edit");
-
-    if (activeEditModes.includes("detach")) {
-      map.on("pointermove", (event: MapBrowserEvent<MouseEvent>) => {
-        if (!event.dragging) {
-          const features = map.getFeaturesAtPixel(event.pixel, {
-            layerFilter: (layer) => layer === editLayer,
-          });
-          if (
-            features.length &&
-            (collection.getLength() === 0 || collection.item(0) !== features[0])
-          ) {
-            if (features[0] instanceof Feature<Geometry>) {
-              collection.clear();
-              collection.push(features[0]);
-            }
-          }
-        }
-      });
-    }
-
     return () => {
       map.removeInteraction(modify);
       snaps.forEach((snap) => {
         map.removeInteraction(snap);
       });
     };
-  }, [activeEditModes, collection, modify]);
+  }, [activeEditModes, modify]);
+
+  useEffect(() => {
+    const editLayer = getLayerById("edit");
+    const addFeaturesToCollection = (event: MapBrowserEvent<MouseEvent>) => {
+      if (!event.dragging) {
+        const features = map.getFeaturesAtPixel(event.pixel, {
+          layerFilter: (layer) => layer === editLayer,
+        });
+        if (
+          features.length &&
+          (collection.getLength() === 0 || collection.item(0) !== features[0])
+        ) {
+          if (features[0] instanceof Feature<Geometry>) {
+            collection.clear();
+            collection.push(features[0]);
+          }
+        }
+      }
+    };
+
+    if (activeEditModes.includes("detach")) {
+      map.on("pointermove", addFeaturesToCollection);
+    }
+
+    return () => {
+      map.un("pointermove", addFeaturesToCollection);
+    };
+  }, [activeEditModes, collection]);
 
   useEffect(() => {
     const addCurrentCoordinatesToHistory = (e: ModifyEvent) => {
