@@ -1,14 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import LineString from "ol/geom/LineString";
 import { Select } from "ol/interaction";
 import { map, overlayPopup } from "components/Kart/constants";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
-import { dirtyStyles, selectStyles } from "utils/map/layerStyles";
-import Style from "ol/style/Style";
-import { getFeatureId } from "utils/map/source";
-import { useToolbar } from "contexts/ToolbarContext";
+import { selectStyles } from "utils/map/layerStyles";
 import { click } from "ol/events/condition";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
@@ -22,42 +19,52 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 };
 
 const useSelectInteraction = () => {
-  const { dirtyFeatureIds } = useToolbar();
   const [features, setFeatures] = useState<Feature<Geometry>[]>([]);
   const { openPanel, closePanel } = useOverlayPanels();
 
+  const select = useMemo(
+    () =>
+      new Select({
+        hitTolerance: 20,
+        style: selectStyles,
+        condition: (e) => {
+          if (!click(e)) return false;
+
+          const feature = map.getFeaturesAtPixel(e.pixel);
+
+          // skru av Select hvis det er en punkt som klikkes på
+          // når dette lages gjelder dette kun representasjonspunkt
+          if (
+            feature.length === 1 &&
+            feature[0].getGeometry()?.getType() === "Point"
+          ) {
+            return false;
+          }
+          return true;
+        },
+      }),
+    []
+  );
+
   useEffect(() => {
-    const select = new Select({
-      hitTolerance: 5,
-      style: null,
-      condition: (e) => {
-        if (!click(e)) return false;
-
-        const feature = map.getFeaturesAtPixel(e.pixel);
-
-        // skru av Select hvis det er en punkt som klikkes på
-        // når dette lages gjelder dette kun representasjonspunkt
-        if (
-          feature.length === 1 &&
-          feature[0].getGeometry()?.getType() === "Point"
-        ) {
-          return false;
-        }
-
-        return true;
-      },
-    });
-
-    select.on("select", () => {
-      setFeatures(select.getFeatures().getArray().slice());
-    });
-
     map.addInteraction(select);
 
     return () => {
       map.removeInteraction(select);
     };
-  }, []);
+  }, [select]);
+
+  useEffect(() => {
+    const syncFeatures = () => {
+      setFeatures(select.getFeatures().getArray().slice());
+    };
+
+    select.on("select", syncFeatures);
+
+    return () => {
+      select.un("select", syncFeatures);
+    };
+  }, [select, features]);
 
   useEffect(() => {
     if (features.length === 1) {
@@ -76,28 +83,7 @@ const useSelectInteraction = () => {
     }
   }, [features, openPanel, closePanel]);
 
-  useEffect(() => {
-    const previousStylesByFeatureId: Record<string, Style[]> = {};
-
-    features.forEach((feature) => {
-      const featureId = getFeatureId(feature);
-      previousStylesByFeatureId[featureId] = feature.getStyle() as Style[];
-      feature.setStyle(selectStyles);
-    });
-
-    return () => {
-      features.forEach((feature) => {
-        const featureId = getFeatureId(feature);
-        if (dirtyFeatureIds.includes(featureId)) {
-          feature.setStyle(dirtyStyles);
-        } else {
-          feature.setStyle(previousStylesByFeatureId[featureId]);
-        }
-      });
-    };
-  }, [features, dirtyFeatureIds]);
-
-  return features;
+  return { selectedFeatures: features };
 };
 
 export default useSelectInteraction;

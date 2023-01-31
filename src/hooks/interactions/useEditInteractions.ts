@@ -111,6 +111,9 @@ const useEditInteractions = () => {
   useEffect(() => {
     const splitFeature = (event: MapBrowserEvent<MouseEvent>) => {
       if (activePointMode === "split" && !event.dragging) {
+        // Stopper propagering for å unngå selection når man skal splitte
+        event.stopPropagation();
+
         const editLayer = getLayerById("edit");
         const features = map.getFeaturesAtPixel(event.pixel, {
           layerFilter: (layer) => layer === editLayer,
@@ -121,36 +124,44 @@ const useEditInteractions = () => {
         if (feature instanceof Feature<Geometry>) {
           const geometry = feature.getGeometry() as LineString;
           const coordinates = geometry.getCoordinates();
-          const coordinatesWithDistance = coordinates.map((coord) => [
-            ...coord,
-            squaredDistance(coord, event.coordinate),
-          ]);
-          const nearestVertex = coordinatesWithDistance
-            .sort((a, b) => a[2] - b[2])
-            .map((cwd) => cwd.slice(0, -1))[0];
 
-          const nearestVertexIndex = coordinates.findIndex(
-            (v) => v[0] === nearestVertex[0] && v[1] === nearestVertex[1]
-          );
+          // Ikke vits å gjøre splitting med mindre du har en linje med minst tre punkter
+          if (coordinates.length > 2) {
+            const coordinatesWithDistance = coordinates.map((coord) => [
+              ...coord,
+              squaredDistance(coord, event.coordinate),
+            ]);
+            const nearestVertex = coordinatesWithDistance
+              .sort((a, b) => a[2] - b[2])
+              .map((cwd) => cwd.slice(0, -1))[0];
 
-          const clonedFeature = feature.clone();
-          const clonedGeometry = clonedFeature.getGeometry() as LineString;
-          const clonedCoordinates = clonedGeometry.getCoordinates();
+            const nearestVertexIndex = coordinates.findIndex(
+              (v) => v[0] === nearestVertex[0] && v[1] === nearestVertex[1]
+            );
 
-          const headCoordinates = coordinates.splice(0, nearestVertexIndex + 1);
-          const tailCoordinates = clonedCoordinates.splice(nearestVertexIndex);
+            const clonedFeature = feature.clone();
+            const clonedGeometry = clonedFeature.getGeometry() as LineString;
+            const clonedCoordinates = clonedGeometry.getCoordinates();
 
-          geometry.setCoordinates(headCoordinates);
-          clonedGeometry.setCoordinates(tailCoordinates);
+            const headCoordinates = coordinates.splice(
+              0,
+              nearestVertexIndex + 1
+            );
+            const tailCoordinates =
+              clonedCoordinates.splice(nearestVertexIndex);
 
-          feature.setGeometry(geometry);
-          clonedFeature.setGeometry(clonedGeometry);
+            geometry.setCoordinates(headCoordinates);
+            clonedGeometry.setCoordinates(tailCoordinates);
 
-          editLayer.getSource().addFeature(clonedFeature);
+            feature.setGeometry(geometry);
+            clonedFeature.setGeometry(clonedGeometry);
 
-          // TODO: den nye featuren ligger nå i kart, men ikke i history
-          // Typ det at vi endrer geometrien på featuren bør være en entry, sammen med den nye linjen
-          // select bør cleares når man splitter, litt knotete akkurat nå
+            editLayer.getSource().addFeature(clonedFeature);
+
+            // TODO: den nye featuren ligger nå i kart, men ikke i history
+            // Typ det at vi endrer geometrien på featuren bør være en entry, sammen med den nye linjen
+            // select bør cleares når man splitter, litt knotete akkurat nå
+          }
         }
       }
     };
