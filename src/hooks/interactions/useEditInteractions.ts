@@ -140,6 +140,7 @@ const useEditInteractions = () => {
             const clonedFeature = feature.clone();
             const clonedGeometry = clonedFeature.getGeometry() as LineString;
             const clonedCoordinates = clonedGeometry.getCoordinates();
+            clonedFeature.setId(`${feature.getId()}-clone`);
 
             const headCoordinates = coordinates.splice(
               0,
@@ -156,9 +157,26 @@ const useEditInteractions = () => {
 
             editLayer.getSource().addFeature(clonedFeature);
 
-            // TODO: den nye featuren ligger nå i kart, men ikke i history
-            // Typ det at vi endrer geometrien på featuren bør være en entry, sammen med den nye linjen
-            // select bør cleares når man splitter, litt knotete akkurat nå
+            const featureInfo = getInfoFromFeature(feature);
+            const clonedFeatureInfo = getInfoFromFeature(clonedFeature);
+            if (featureInfo.featureId && clonedFeatureInfo.featureId) {
+              // TODO: dette legges tilsynelatende bra til, men når man angrer er det bare klonen i kartet
+              addEntry({
+                type: "grense",
+                changes: [
+                  {
+                    id: featureInfo.featureId as string,
+                    from: coordinates,
+                    to: featureInfo.coordinates,
+                  },
+                  {
+                    id: clonedFeatureInfo.featureId as string,
+                    from: coordinates,
+                    to: clonedFeatureInfo.coordinates,
+                  },
+                ],
+              });
+            }
           }
         }
       }
@@ -169,7 +187,7 @@ const useEditInteractions = () => {
     return () => {
       map.un("click", splitFeature);
     };
-  }, [activePointMode]);
+  }, [activePointMode, addEntry]);
 
   useEffect(() => {
     const addCurrentCoordinatesToHistory = (e: ModifyEvent) => {
