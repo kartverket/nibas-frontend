@@ -35,7 +35,7 @@ const lineAndPointStyles = (color: string, dashed = false) => [
   }),
   new Style({
     image: new Circle({
-      radius: 3,
+      radius: 4,
       fill: new Fill({
         color,
       }),
