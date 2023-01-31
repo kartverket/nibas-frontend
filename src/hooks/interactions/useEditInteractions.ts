@@ -114,34 +114,43 @@ const useEditInteractions = () => {
         const editLayer = getLayerById("edit");
         const features = map.getFeaturesAtPixel(event.pixel, {
           layerFilter: (layer) => layer === editLayer,
-          hitTolerance: 10,
+          hitTolerance: 20,
         });
         // Forutsetter at man bare trykker på én feature
-        if (features[0] instanceof Feature<Geometry>) {
-          const geometry = features[0].getGeometry();
-          if (geometry instanceof LineString) {
-            const coordinates = geometry.getCoordinates();
-            const coordinatesWithDistance = coordinates.map((coord) => [
-              ...coord,
-              squaredDistance(coord, event.coordinate),
-            ]);
-            const nearestVertex = coordinatesWithDistance
-              .sort((a, b) => a[2] - b[2])
-              .map((cwd) => cwd.slice(0, -1))[0];
-            console.log("nearestVertex", nearestVertex);
+        const feature = features[0];
+        if (feature instanceof Feature<Geometry>) {
+          const geometry = feature.getGeometry() as LineString;
+          const coordinates = geometry.getCoordinates();
+          const coordinatesWithDistance = coordinates.map((coord) => [
+            ...coord,
+            squaredDistance(coord, event.coordinate),
+          ]);
+          const nearestVertex = coordinatesWithDistance
+            .sort((a, b) => a[2] - b[2])
+            .map((cwd) => cwd.slice(0, -1))[0];
 
-            // Det vi må gjøre nå er:
-            // 1. klone features[0]
-            // 2. modifisere begge features til å stoppe eller starte på punktet
-            // 3. fjerne den originale featuren fra kartet og legg til de to nye?
-            // 3-alt. ikke fjern den gamle, men oppdater kartet og legg til klonen
-            console.log(
-              "index til nærmeste koordinat",
-              coordinates.findIndex(
-                (v) => v[0] === nearestVertex[0] && v[1] === nearestVertex[1]
-              )
-            );
-          }
+          const nearestVertexIndex = coordinates.findIndex(
+            (v) => v[0] === nearestVertex[0] && v[1] === nearestVertex[1]
+          );
+
+          const clonedFeature = feature.clone();
+          const clonedGeometry = clonedFeature.getGeometry() as LineString;
+          const clonedCoordinates = clonedGeometry.getCoordinates();
+
+          const headCoordinates = coordinates.splice(0, nearestVertexIndex + 1);
+          const tailCoordinates = clonedCoordinates.splice(nearestVertexIndex);
+
+          geometry.setCoordinates(headCoordinates);
+          clonedGeometry.setCoordinates(tailCoordinates);
+
+          feature.setGeometry(geometry);
+          clonedFeature.setGeometry(clonedGeometry);
+
+          editLayer.getSource().addFeature(clonedFeature);
+
+          // TODO: den nye featuren ligger nå i kart, men ikke i history
+          // Typ det at vi endrer geometrien på featuren bør være en entry, sammen med den nye linjen
+          // select bør cleares når man splitter, litt knotete akkurat nå
         }
       }
     };
