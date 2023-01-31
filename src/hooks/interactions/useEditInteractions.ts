@@ -16,6 +16,7 @@ import { Collection, MapBrowserEvent } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { editSource } from "hooks/layers/constants";
 import { squaredDistance } from "ol/coordinate";
+import { addFeaturesToSource } from "utils/map/source";
 
 const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
@@ -152,15 +153,18 @@ const useEditInteractions = () => {
             geometry.setCoordinates(headCoordinates);
             clonedGeometry.setCoordinates(tailCoordinates);
 
-            feature.setGeometry(geometry);
-            clonedFeature.setGeometry(clonedGeometry);
-
-            editLayer.getSource().addFeature(clonedFeature);
+            addFeaturesToSource("edit", [clonedFeature]);
 
             const featureInfo = getInfoFromFeature(feature);
             const clonedFeatureInfo = getInfoFromFeature(clonedFeature);
             if (featureInfo.featureId && clonedFeatureInfo.featureId) {
               // TODO: dette legges tilsynelatende bra til, men når man angrer er det bare klonen i kartet
+              // TODO: hvilken type skal entry ha? hva er implikasjonene av det? alternativer:
+              // grense
+              // metadata
+              // grunnkrets
+              // stemmekrets
+              // utkast
               addEntry({
                 type: "grense",
                 changes: [
@@ -171,7 +175,7 @@ const useEditInteractions = () => {
                   },
                   {
                     id: clonedFeatureInfo.featureId as string,
-                    from: coordinates,
+                    from: [],
                     to: clonedFeatureInfo.coordinates,
                   },
                 ],
