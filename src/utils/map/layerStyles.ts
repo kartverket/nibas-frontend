@@ -52,7 +52,7 @@ export const grensetypeStyles: Record<GrenseId, Style[]> = {
   nasjoner: lineAndPointStyles("#FF5555"),
   grunnkretser: lineAndPointStyles("#65C97A"),
   stemmekretser: lineAndPointStyles("#5296D5"),
-  edit: lineAndPointStyles("#FF0000"),
+  edit: lineAndPointStyles("#FF5555"),
 };
 
 export const getPointOverlayStyle = (
