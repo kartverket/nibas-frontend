@@ -11,7 +11,6 @@ import {
   useToolbarSaving,
 } from "contexts/ToolbarContext";
 import { getLayerById, getVectorLayers } from "utils/map/layers";
-import Style from "ol/style/Style";
 import { click } from "ol/events/condition";
 import { Collection, MapBrowserEvent } from "ol";
 import Geometry from "ol/geom/Geometry";
@@ -39,7 +38,6 @@ const useEditInteractions = () => {
       new Modify({
         source: detachIsActive ? undefined : editSource,
         features: detachIsActive ? collection : undefined,
-        style: new Style({}), // TODO: bør kanskje fjernes for UX, gir en indikator på hva man velger
         insertVertexCondition: () => {
           return activePointMode === "add";
         },

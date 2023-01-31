@@ -6,7 +6,6 @@ import { Select } from "ol/interaction";
 import { map, overlayPopup } from "components/Kart/constants";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 import { selectStyles } from "utils/map/layerStyles";
-import { click } from "ol/events/condition";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -27,20 +26,8 @@ const useSelectInteraction = () => {
       new Select({
         hitTolerance: 20,
         style: selectStyles,
-        condition: (e) => {
-          if (!click(e)) return false;
-
-          const feature = map.getFeaturesAtPixel(e.pixel);
-
-          // skru av Select hvis det er en punkt som klikkes på
-          // når dette lages gjelder dette kun representasjonspunkt
-          if (
-            feature.length === 1 &&
-            feature[0].getGeometry()?.getType() === "Point"
-          ) {
-            return false;
-          }
-          return true;
+        filter: (feature) => {
+          return feature.getGeometry() instanceof LineString;
         },
       }),
     []
