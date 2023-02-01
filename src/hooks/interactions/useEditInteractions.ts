@@ -124,6 +124,9 @@ const useEditInteractions = () => {
           const geometry = feature.getGeometry() as LineString;
           const coordinates = geometry.getCoordinates();
 
+          // Siden OL-objekter er mutable og vi trenger dette til senere:
+          const originalCoordinates = [...coordinates];
+
           // Ikke vits å gjøre splitting med mindre du har en linje med minst tre punkter
           if (coordinates.length > 2) {
             const coordinatesWithDistance = coordinates.map((coord) => [
@@ -138,6 +141,7 @@ const useEditInteractions = () => {
               (v) => v[0] === nearestVertex[0] && v[1] === nearestVertex[1]
             );
 
+            // TODO: clone er trolig overivrig, må gå gjennom alle properties for å se hva som skal endres
             const clonedFeature = feature.clone();
             const clonedGeometry = clonedFeature.getGeometry() as LineString;
             const clonedCoordinates = clonedGeometry.getCoordinates();
@@ -165,12 +169,14 @@ const useEditInteractions = () => {
               // grunnkrets
               // stemmekrets
               // utkast
+              // TODO: det kan være klonen blir sendt til utkast selv om man angret en splittelse?
+              // typ må kanskje ta from og to på hele features fremfor bare koordinater
               addEntry({
                 type: "grense",
                 changes: [
                   {
                     id: featureInfo.featureId as string,
-                    from: coordinates,
+                    from: originalCoordinates,
                     to: featureInfo.coordinates,
                   },
                   {
