@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { ToolbarContextValue, HistoryEntry, ToolbarPointMode } from "./types";
 import {
-  getDirtyIdsFromEntries,
+  getFeatureIdsFromEntries,
   setFeatureCoordinatesForEntry,
   setFeatureMetadataForEntry,
 } from "./utils";
@@ -111,11 +111,12 @@ export const ToolbarProvider: React.FC = ({ children }) => {
     }
   };
 
+  //punkt for hvor det legges til dirty
   useEffect(() => {
     const newValues = historyValue.history.entries
       .slice(0, historyValue.history.index)
       .filter((entry) => entry.type === "grense" || entry.type === "metadata")
-      .reduce<string[]>(getDirtyIdsFromEntries, []);
+      .reduce<string[]>(getFeatureIdsFromEntries, []);
 
     setDirtyFeatureIds((prevIds) => {
       // trenger ikke ny state hvis det ikke er noen nye verdier
@@ -169,7 +170,13 @@ export const useToolbarActions = () => {
 };
 
 export const useToolbarSaving = () => {
-  const { history, setHistory, dirtyFeatureIds } = useToolbar();
+  const {
+    history,
+    utkastHistory,
+    setHistory,
+    setUtkastHistory,
+    dirtyFeatureIds,
+  } = useToolbar();
 
   const addEntry = useCallback(
     (entry: HistoryEntry) => {
@@ -177,8 +184,13 @@ export const useToolbarSaving = () => {
         index: prevHistory.index + 1,
         entries: [...prevHistory.entries.slice(0, prevHistory.index), entry],
       }));
+
+      setUtkastHistory((prevHistory) => ({
+        index: prevHistory.index + 1,
+        entries: [...prevHistory.entries.slice(0, prevHistory.index), entry],
+      }));
     },
-    [setHistory]
+    [setHistory, setUtkastHistory]
   );
 
   const updateEntry = useCallback(
@@ -191,8 +203,9 @@ export const useToolbarSaving = () => {
       newHistory.entries[index] = updatedEntry;
 
       setHistory(newHistory);
+      setUtkastHistory(newHistory);
     },
-    [history, setHistory]
+    [history, setHistory, setUtkastHistory]
   );
 
   const updateLatestEntry = useCallback(

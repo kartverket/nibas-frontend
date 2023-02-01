@@ -17,12 +17,33 @@ const useHistory = <T>({ onUndo, onRedo }: Options<T>) => {
     entries: [],
   });
 
+  const [utkastHistory, setUtkastHistory] = useState<History<T>>({
+    index: 0,
+    entries: [],
+  });
+
+  // useEffect(() => {
+  //   // Når history endrer seg, så legg til nye entrys i den, så slipper man å endre på det
+  //   //må det tas hensyn til at
+
+  // })[history];
+
   const clearHistory = () => {
     setHistory({
       entries: [],
       index: 0,
     });
   };
+
+  //Skal bare skje når man går ut av utkastet
+  const clearUtkastHistory = () => {
+    setUtkastHistory({
+      entries: [],
+      index: 0,
+    });
+  };
+
+  //når man skal sette når et utkast åpnes igjen, kan man bare sette det med setUtkastHistory
 
   const revert = (amount: number) => {
     const { index, entries } = history;
@@ -38,6 +59,11 @@ const useHistory = <T>({ onUndo, onRedo }: Options<T>) => {
     }
 
     setHistory({
+      entries,
+      index: newIndex,
+    });
+
+    setUtkastHistory({
       entries,
       index: newIndex,
     });
@@ -59,6 +85,11 @@ const useHistory = <T>({ onUndo, onRedo }: Options<T>) => {
       entries,
       index: newIndex,
     });
+
+    setUtkastHistory({
+      entries,
+      index: newIndex,
+    });
   };
 
   const undo = () => {
@@ -75,6 +106,9 @@ const useHistory = <T>({ onUndo, onRedo }: Options<T>) => {
     redo,
     history,
     setHistory,
+    utkastHistory,
+    setUtkastHistory,
+    clearUtkastHistory,
   };
 };
 

@@ -53,7 +53,9 @@ export type ToolbarContextValue = {
   undo: () => void;
   redo: () => void;
   history: ToolbarHistory;
+  utkastHistory: ToolbarHistory;
   setHistory: React.Dispatch<React.SetStateAction<History<HistoryEntry>>>;
+  setUtkastHistory: React.Dispatch<React.SetStateAction<History<HistoryEntry>>>;
   dirtyFeatureIds: string[];
   activePointMode: ToolbarPointMode;
   togglePointMode: (pointMode: ToolbarPointMode) => void;

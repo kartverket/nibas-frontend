@@ -1,13 +1,14 @@
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 
-import { useToolbarActions } from "contexts/ToolbarContext";
+import { HistoryEntry, useToolbarActions } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext";
 import useFeedback from "hooks/useFeedback";
 import Feedback from "components/Feedback/Feedback";
 import ModeButton from "./ModeButton";
 import { Frame } from "./components";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
+import { useState } from "react";
 
 const LagreFrame = styled(Frame)`
   flex-direction: row;
@@ -45,21 +46,30 @@ type Props = {
 
 const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
   const { t } = useTranslation();
-  const { canSave } = useToolbarActions();
+  const { canSave, history } = useToolbarActions();
   const { utkast, updateUtkastWithHistory, closeUtkast } = useUtkast();
   const { openFeedback, isOpen, closeFeedback, feedbackContent } = useFeedback(
     t(
       "Utkastet ditt har endringer som ikke er lagret. Dersom du lukker utkastet nå, vil disse endringene forkastes. Er du sikker på at du vil fortsette?"
     )
   );
+  const [lastSaved, setLastSaved] = useState<HistoryEntry>();
 
   const handleSave = () => {
     if (!canSave) {
       return;
     }
+    if (!(lastSaved === history.entries[history.index])) {
+      return;
+    }
+
     if (utkast) {
+      setLastSaved(history.entries[history.index]);
+
       updateUtkastWithHistory();
     } else {
+      setLastSaved(history.entries[history.index]);
+
       setCreateUtkastOpen(!createUtkastOpen);
     }
   };

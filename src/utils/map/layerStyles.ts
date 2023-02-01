@@ -181,6 +181,7 @@ export const getEditStyles: StyleFunction = (feature) => {
 export const defaultStyles = [defaultStyle, defaultPointStyle];
 export const editStyles = [editStyle, editPointStyle];
 export const dirtyStyles = [dirtyStyle, dirtyPointStyle];
+export const modifiedStyles = [dirtyStyle, dirtyPointStyle];
 export const selectStyles = [
   ...getDefaultSelectStyle().LineString,
   selectPointStyle,

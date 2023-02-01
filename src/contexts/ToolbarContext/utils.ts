@@ -34,7 +34,7 @@ export const setFeatureMetadataForEntry = (
   });
 };
 
-export const getDirtyIdsFromEntries = (
+export const getFeatureIdsFromEntries = (
   accumulator: string[],
   entry: HistoryEntry
 ) => {
