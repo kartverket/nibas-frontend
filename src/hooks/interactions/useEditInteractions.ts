@@ -17,6 +17,7 @@ import Geometry from "ol/geom/Geometry";
 import { editSource } from "hooks/layers/constants";
 import { squaredDistance } from "ol/coordinate";
 import { addFeaturesToSource } from "utils/map/source";
+import useSelectInteraction from "./useSelectInteraction";
 
 const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
@@ -28,17 +29,15 @@ const getInfoFromFeature = (featureLike: FeatureLike) => {
 const useEditInteractions = () => {
   const { dirtyFeatureIds, addEntry, updateEntry, history } =
     useToolbarSaving();
-
   const { activePointMode, activeEditModes } = useToolbar();
-
-  const collection = useMemo(() => new Collection<Feature<Geometry>>(), []);
   const detachIsActive = activeEditModes.includes("detach");
+  const { selectedFeatures } = useSelectInteraction();
 
   const modify = useMemo(
     () =>
       new Modify({
         source: detachIsActive ? undefined : editSource,
-        features: detachIsActive ? collection : undefined,
+        features: detachIsActive ? new Collection(selectedFeatures) : undefined,
         insertVertexCondition: () => {
           return activePointMode === "add";
         },
@@ -47,7 +46,7 @@ const useEditInteractions = () => {
         },
         pixelTolerance: 20,
       }),
-    [activePointMode, collection, detachIsActive]
+    [activePointMode, detachIsActive, selectedFeatures]
   );
 
   useDirtyStyles(dirtyFeatureIds);
@@ -79,34 +78,6 @@ const useEditInteractions = () => {
       });
     };
   }, [activeEditModes, modify]);
-
-  useEffect(() => {
-    const editLayer = getLayerById("edit");
-    const addFeaturesToCollection = (event: MapBrowserEvent<MouseEvent>) => {
-      if (activeEditModes.includes("detach")) {
-        if (!event.dragging) {
-          const features = map.getFeaturesAtPixel(event.pixel, {
-            layerFilter: (layer) => layer === editLayer,
-          });
-          if (
-            features.length &&
-            (collection.getLength() === 0 || collection.item(0) !== features[0])
-          ) {
-            if (features[0] instanceof Feature<Geometry>) {
-              collection.clear();
-              collection.push(features[0]);
-            }
-          }
-        }
-      }
-    };
-
-    map.on("pointermove", addFeaturesToCollection);
-
-    return () => {
-      map.un("pointermove", addFeaturesToCollection);
-    };
-  }, [activeEditModes, collection]);
 
   useEffect(() => {
     const splitFeature = (event: MapBrowserEvent<MouseEvent>) => {
@@ -163,13 +134,6 @@ const useEditInteractions = () => {
             const featureInfo = getInfoFromFeature(feature);
             const clonedFeatureInfo = getInfoFromFeature(clonedFeature);
             if (featureInfo.featureId && clonedFeatureInfo.featureId) {
-              // TODO: dette legges tilsynelatende bra til, men når man angrer er det bare klonen i kartet
-              // TODO: hvilken type skal entry ha? hva er implikasjonene av det? alternativer:
-              // grense
-              // metadata
-              // grunnkrets
-              // stemmekrets
-              // utkast
               // TODO: det kan være klonen blir sendt til utkast selv om man angret en splittelse?
               // typ må kanskje ta from og to på hele features fremfor bare koordinater
               addEntry({
