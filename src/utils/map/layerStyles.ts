@@ -11,6 +11,7 @@ import { map } from "components/Kart/constants";
 import Text from "ol/style/Text";
 import Point from "ol/geom/Point";
 import { editSource } from "hooks/layers/constants";
+import { GrenseId } from "hooks/layers/types";
 
 const getPointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
   // hent punkter når zoomet langt nok inn
@@ -24,118 +25,35 @@ const getPointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
   return new MultiPoint(coordinates ?? []);
 };
 
-const defaultStyle = new Style({
-  stroke: new Stroke({
-    color: "#0062FF",
-  }),
-});
-
-const editStyle = new Style({
-  stroke: new Stroke({
-    color: "#FF00FF",
-  }),
-});
-
-const dirtyStyle = new Style({
-  stroke: new Stroke({
-    color: "#30FF00",
-  }),
-});
-
-const editPointStyle = new Style({
-  image: new Circle({
-    radius: 3,
-    fill: new Fill({
-      color: "#FF00FF",
+const lineAndPointStyles = (color: string, dashed = false) => [
+  new Style({
+    stroke: new Stroke({
+      color,
+      lineDash: dashed ? [4, 6] : [],
+      width: dashed ? 2 : 1,
     }),
   }),
-  geometry: getPointsOnFeature,
-});
-
-const dirtyPointStyle = new Style({
-  image: new Circle({
-    radius: 3,
-    fill: new Fill({
-      color: "#30FF00",
-    }),
-  }),
-  geometry: getPointsOnFeature,
-});
-
-const defaultPointStyle = new Style({
-  image: new Circle({
-    radius: 3,
-    fill: new Fill({
-      color: "#0062FF",
-    }),
-  }),
-  geometry: getPointsOnFeature,
-});
-
-const getDefaultSelectStyle = () => {
-  const styles: Record<string, Style[]> = {};
-  const white = [255, 255, 255, 1];
-  const blue = [0, 153, 255, 1];
-  const width = 3;
-  styles["Polygon"] = [
-    new Style({
+  new Style({
+    image: new Circle({
+      radius: 4,
       fill: new Fill({
-        color: [255, 255, 255, 0.5],
+        color,
       }),
     }),
-  ];
-  styles["MultiPolygon"] = styles["Polygon"];
-  styles["LineString"] = [
-    new Style({
-      stroke: new Stroke({
-        color: white,
-        width: width + 2,
-      }),
-    }),
-    new Style({
-      stroke: new Stroke({
-        color: blue,
-        width: width,
-      }),
-    }),
-  ];
-  styles["MultiLineString"] = styles["LineString"];
-
-  styles["Circle"] = styles["Polygon"].concat(styles["LineString"]);
-
-  styles["Point"] = [
-    new Style({
-      image: new Circle({
-        radius: width * 2,
-        fill: new Fill({
-          color: blue,
-        }),
-        stroke: new Stroke({
-          color: white,
-          width: width / 2,
-        }),
-      }),
-      zIndex: Infinity,
-    }),
-  ];
-  styles["MultiPoint"] = styles["Point"];
-  styles["GeometryCollection"] = styles["Polygon"].concat(
-    styles["LineString"],
-    styles["Point"]
-  );
-
-  return styles;
-};
-
-const selectPointStyle = new Style({
-  image: new Circle({
-    radius: 3,
-    fill: new Fill({
-      color: [0, 153, 255, 1],
-    }),
+    geometry: getPointsOnFeature,
   }),
-  geometry: getPointsOnFeature,
-});
+];
+
+export const dirtyStyles = lineAndPointStyles("#000000", true);
+export const selectStyles = lineAndPointStyles("#000000");
+export const grensetypeStyles: Record<GrenseId, Style[]> = {
+  fylker: lineAndPointStyles("#D8833B"),
+  kommuner: lineAndPointStyles("#EA33F7"),
+  nasjoner: lineAndPointStyles("#FF5555"),
+  grunnkretser: lineAndPointStyles("#65C97A"),
+  stemmekretser: lineAndPointStyles("#5296D5"),
+  edit: lineAndPointStyles("#FF5555"),
+};
 
 export const getPointOverlayStyle = (
   feature: Feature<Geometry> | RenderFeature
@@ -167,24 +85,6 @@ export const getPointOverlayStyle = (
     },
   });
 };
-
-type StyleFunction = (feature: Feature<Geometry> | RenderFeature) => Style[];
-
-export const getDefaultStyles: StyleFunction = (feature) => {
-  return [defaultStyle, defaultPointStyle, getPointOverlayStyle(feature)];
-};
-
-export const getEditStyles: StyleFunction = (feature) => {
-  return [editStyle, editPointStyle, getPointOverlayStyle(feature)];
-};
-
-export const defaultStyles = [defaultStyle, defaultPointStyle];
-export const editStyles = [editStyle, editPointStyle];
-export const dirtyStyles = [dirtyStyle, dirtyPointStyle];
-export const selectStyles = [
-  ...getDefaultSelectStyle().LineString,
-  selectPointStyle,
-];
 
 export const updateEditFeatureText = (
   featureId: string,

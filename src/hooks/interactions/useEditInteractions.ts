@@ -40,6 +40,7 @@ const useEditInteractions = () => {
           // TODO: viktig, vi må finne et sted å legge dette til i history, hvis man angrer nå så forsvinner mange slettinger
           return activePointMode === "remove" && click(mapBrowserEvent);
         },
+        pixelTolerance: 20,
       }),
     [activePointMode]
   );
