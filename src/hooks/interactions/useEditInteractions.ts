@@ -45,6 +45,7 @@ const useEditInteractions = () => {
         deleteCondition: (mapBrowserEvent) => {
           return activePointMode === "remove" && click(mapBrowserEvent);
         },
+        pixelTolerance: 20,
       }),
     [activePointMode, collection, detachIsActive]
   );

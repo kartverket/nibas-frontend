@@ -1,7 +1,13 @@
-import { bakgrunnskartLayers, grenserLayers } from "./constants";
+import { bakgrunnskartLayers } from "./constants";
 
 export type BakgrunnskartId = keyof typeof bakgrunnskartLayers;
-export type GrenseId = keyof typeof grenserLayers;
+export type GrenseId =
+  | "fylker"
+  | "kommuner"
+  | "nasjoner"
+  | "grunnkretser"
+  | "stemmekretser"
+  | "edit";
 
 // denne iden brukes både til Sources og Layers
 export type LayerId = BakgrunnskartId | GrenseId;

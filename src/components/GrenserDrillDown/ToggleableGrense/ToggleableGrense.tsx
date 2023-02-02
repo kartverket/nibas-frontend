@@ -5,19 +5,10 @@ import Button, { LinkButton } from "components/form/Button";
 import Icon from "components/Icon";
 import { EditingType } from "contexts/EditGrenserContext";
 import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
-import { GrenseId } from "hooks/layers/types";
 import { GrenseRef } from "types/api";
 import { useTranslation } from "react-i18next";
 import { getIdFromEntity } from "utils/api";
 import { Outline } from "style/mixins";
-
-export const layerIdByGrenseType: Record<EditingType, GrenseId> = {
-  fylke: "fylker",
-  kommune: "kommuner",
-  nasjon: "nasjoner",
-  grunnkrets: "grunnkretser",
-  stemmekrets: "stemmekretser",
-};
 
 type Props<T extends GrenseRef> = {
   grense: T;
