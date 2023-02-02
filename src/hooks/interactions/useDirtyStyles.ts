@@ -2,12 +2,42 @@ import { useEffect, useState } from "react";
 import { editSource } from "hooks/layers/constants";
 import { dirtyStyles, editStyles } from "utils/map/layerStyles";
 
-const useDirtyStyles = (dirtyFeatureIds: string[]) => {
-  const [featureIdsWithDirtyStyle, setFeatureIdsWithDirtyStyle] = useState<
-    string[]
-  >([]);
+const useDirtyStyles = () => {
+  const [dirtyFeatureIds, setDirtyFeatureIds] = useState<string[]>([]);
+  const [savedDirtyFeatureIds, setSavedDirtyFeaturesIds] = useState<string[]>(
+    []
+  );
+  const [index, setIndex] = useState(0);
 
+  const addDirtyFeatureId = (featureIdToAdd: string) => {
+    console.log("");
+    editSource.getFeatureById(featureIdToAdd)?.setStyle(dirtyStyles);
+    setDirtyFeatureIds(dirtyFeatureIds.concat(featureIdToAdd));
+  };
+
+  const removeDirtyFeatureId = (featureIdToRemove: string) => {
+    setDirtyFeatureIds(
+      dirtyFeatureIds.filter((dfi) => dfi !== featureIdToRemove)
+    );
+    editSource.getFeatureById(featureIdToRemove)?.setStyle(editStyles);
+  };
+
+  const saveDirtyFeatures = () => {
+    setSavedDirtyFeaturesIds(savedDirtyFeatureIds.concat(dirtyFeatureIds));
+    setDirtyFeatureIds([]);
+  };
+
+  return {
+    dirtyFeatureIds,
+    addDirtyFeatureId,
+    removeDirtyFeatureId,
+    saveDirtyFeatures,
+  };
+
+  /*
   useEffect(() => {
+    //fjerner dirty-styles
+
     // finn hvilke features som har hatt dirty style, men ikke
     // lenger regnes som dirty i history
     const featuresIdsToGetEditStyle = featureIdsWithDirtyStyle.filter(
@@ -20,6 +50,7 @@ const useDirtyStyles = (dirtyFeatureIds: string[]) => {
 
     // disse skal nå få tilbake sin vanlige style, og fjernes fra lista
     featuresIdsToGetEditStyle.forEach((featureId) => {
+      console.log(featureId + " fjernes fra dirty");
       editSource.getFeatureById(featureId)?.setStyle(editStyles);
       newFeatureIdsWithDirtyStyle.splice(
         newFeatureIdsWithDirtyStyle.indexOf(featureId)
@@ -46,6 +77,7 @@ const useDirtyStyles = (dirtyFeatureIds: string[]) => {
 
     setFeatureIdsWithDirtyStyle(newFeatureIdsWithDirtyStyle);
   }, [dirtyFeatureIds, featureIdsWithDirtyStyle]);
+  */
 };
 
 export default useDirtyStyles;

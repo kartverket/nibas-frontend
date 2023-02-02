@@ -13,6 +13,8 @@ import {
 } from "./utils";
 import useHistory from "hooks/useHistory";
 import { ensureAllCasesCovered } from "utils/typeHelpers";
+import useDirtyStyles from "hooks/interactions/useDirtyStyles";
+import { remove } from "ol/array";
 
 const onUndo = (entry: HistoryEntry) => {
   const { type } = entry;
@@ -94,7 +96,9 @@ export const ToolbarContext = createContext<ToolbarContextValue | undefined>(
 );
 
 export const ToolbarProvider: React.FC = ({ children }) => {
-  const [dirtyFeatureIds, setDirtyFeatureIds] = React.useState<string[]>([]);
+  const { dirtyFeatureIds, addDirtyFeatureId, removeDirtyFeatureId } =
+    useDirtyStyles();
+
   const historyValue = useHistory({
     onUndo,
     onRedo,
@@ -118,19 +122,53 @@ export const ToolbarProvider: React.FC = ({ children }) => {
       .filter((entry) => entry.type === "grense" || entry.type === "metadata")
       .reduce<string[]>(getFeatureIdsFromEntries, []);
 
-    setDirtyFeatureIds((prevIds) => {
-      // trenger ikke ny state hvis det ikke er noen nye verdier
-      if (newValues.length === prevIds.length) {
-        return prevIds;
-      }
+    console.log("New values length", newValues.length);
+    console.log("Dirtyfeatureids length:", dirtyFeatureIds.length);
 
-      return newValues;
-    });
-  }, [historyValue.history]);
+    if (newValues.length === dirtyFeatureIds.length) return;
+
+    if (newValues.length === 0 && historyValue.history.utkastActive) {
+      return;
+    }
+
+    let changed = false;
+    for (const value of newValues) {
+      if (!dirtyFeatureIds.includes(value)) {
+        changed = true;
+        addDirtyFeatureId(value);
+      }
+    }
+    if (changed) return;
+    //denne fjerner etter lagring
+    for (const dirtyFeature of dirtyFeatureIds) {
+      if (!newValues.includes(dirtyFeature)) {
+        removeDirtyFeatureId(dirtyFeature);
+      }
+    }
+
+    // setDirtyFeatureIds((prevIds) => {
+    //   // trenger ikke ny state hvis det ikke er noen nye verdier
+    //   if (newValues.length === prevIds.length) {
+    //     return prevIds;
+    //   }
+
+    //   if (newValues.length === 0 && historyValue.history.utkastActive) {
+    //     return prevIds;
+    //   }
+
+    //   return newValues;
+    // });
+  }, [
+    addDirtyFeatureId,
+    dirtyFeatureIds,
+    historyValue.history.entries,
+    historyValue.history.index,
+    historyValue.history.utkastActive,
+    removeDirtyFeatureId,
+  ]);
 
   const value = {
     ...historyValue,
-    dirtyFeatureIds,
     activePointMode,
     togglePointMode,
     snapActive,
@@ -170,27 +208,17 @@ export const useToolbarActions = () => {
 };
 
 export const useToolbarSaving = () => {
-  const {
-    history,
-    utkastHistory,
-    setHistory,
-    setUtkastHistory,
-    dirtyFeatureIds,
-  } = useToolbar();
+  const { history, setHistory } = useToolbar();
 
   const addEntry = useCallback(
     (entry: HistoryEntry) => {
       setHistory((prevHistory) => ({
         index: prevHistory.index + 1,
         entries: [...prevHistory.entries.slice(0, prevHistory.index), entry],
-      }));
-
-      setUtkastHistory((prevHistory) => ({
-        index: prevHistory.index + 1,
-        entries: [...prevHistory.entries.slice(0, prevHistory.index), entry],
+        utkastActive: prevHistory.utkastActive,
       }));
     },
-    [setHistory, setUtkastHistory]
+    [setHistory]
   );
 
   const updateEntry = useCallback(
@@ -198,14 +226,14 @@ export const useToolbarSaving = () => {
       const newHistory = {
         index: history.index,
         entries: history.entries.slice(),
+        utkastActive: history.utkastActive,
       };
 
       newHistory.entries[index] = updatedEntry;
 
       setHistory(newHistory);
-      setUtkastHistory(newHistory);
     },
-    [history, setHistory, setUtkastHistory]
+    [history, setHistory]
   );
 
   const updateLatestEntry = useCallback(
@@ -218,7 +246,6 @@ export const useToolbarSaving = () => {
     addEntry,
     updateEntry,
     updateLatestEntry,
-    dirtyFeatureIds,
     history,
   };
 };

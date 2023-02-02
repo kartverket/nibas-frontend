@@ -34,12 +34,17 @@ const mockToolbarHistory: ToolbarHistory = {
       ],
     },
   ],
+  utkastActive: false,
 };
 
 const renderWithProvider = (
   ui: ReactNode,
   utkast?: UtkastResponse,
-  toolbarHistory: ToolbarHistory = { entries: [], index: 0 }
+  toolbarHistory: ToolbarHistory = {
+    entries: [],
+    index: 0,
+    utkastActive: false,
+  }
 ) =>
   render(ui, {
     ToolbarProvider: {

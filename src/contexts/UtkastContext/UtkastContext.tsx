@@ -25,9 +25,8 @@ import { OppdaterUtkastRequest } from "types/api";
 import { resetMapView } from "utils/map";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
-import { getFeatureIdsFromEntries } from "contexts/ToolbarContext/utils";
-import { editSource } from "hooks/layers/constants";
-import { modifiedStyles } from "utils/map/layerStyles";
+
+import useDirtyStyles from "hooks/interactions/useDirtyStyles";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
@@ -45,6 +44,7 @@ export const UtkastProvider: React.FC = ({ children }) => {
   const { resetEditingObject } = useEditAllGrenser();
   const { closePanels } = useOverlayPanels();
   const utkastId = searchParams.get("utkast");
+  const { saveDirtyFeatures } = useDirtyStyles();
 
   const { mutate: globalMutate } = useSWRConfig();
 
@@ -76,6 +76,7 @@ export const UtkastProvider: React.FC = ({ children }) => {
   }, [utkast, utkastId, mutate]);
 
   const updateUtkastWithHistory = async () => {
+    console.log("update utkast with history is happening");
     if (!utkast) return;
 
     const operasjoner = historyToUtkastOperations(history, utkast);
@@ -108,12 +109,8 @@ export const UtkastProvider: React.FC = ({ children }) => {
       updateApiUtkast(utkast.id, updatedUtkast, tokenHolderFunc()?.token)
     );
     await globalMutate(["/v1/utkast", tokenHolderFunc()?.token]);
-    const newChanges = [...history.entries];
-    const index = history.index;
-    clearHistory();
-    //her må jeg kalle på det så det skjer etter at de har gått fra å være i history til
-    //her må jeg legge å
-    colorModifiedFeatures(newChanges, index);
+    saveDirtyFeatures();
+    clearHistory(true);
   };
 
   const closeUtkast = () => {
@@ -121,34 +118,9 @@ export const UtkastProvider: React.FC = ({ children }) => {
     resetEditingObject();
     closePanels();
     resetMapView();
-    clearHistory();
+    clearHistory(false);
+
     //her må jeg legge inn at man endrer tilbake alle features
-  };
-
-  const colorModifiedFeatures = (
-    newHistoryEntries: HistoryEntry[],
-    index: number
-  ) => {
-    //henter ut featureIds for hver endringene
-    const newModifiedFeatureIds = newHistoryEntries
-      .slice(0, index)
-      .filter((entry) => entry.type === "grense" || entry.type === "metadata")
-      .reduce<string[]>(getFeatureIdsFromEntries, []);
-
-    // finn hvilke features som skal ha dirty style
-    // const featuresIdsToGetModifiedStyle = newModifiedFeatureIds.filter(
-    //   (styleId) => !newModifiedFeatureIds.includes(styleId)
-    // );
-
-    //returnerer om det ikke finnes noen nye endringer
-    if (newModifiedFeatureIds.length === 0) return;
-
-    //const newFeatureIdsWithModifiedStyle = featureIdsWithDirtyStyle.slice();
-
-    //modified
-    newModifiedFeatureIds.forEach((featureId) => {
-      editSource.getFeatureById(featureId).setStyle(modifiedStyles);
-    });
   };
 
   const value = { utkast, updateUtkastWithHistory, closeUtkast, isValidating };

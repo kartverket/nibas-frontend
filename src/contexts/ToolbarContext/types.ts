@@ -49,14 +49,11 @@ export type ToolbarHistory = History<HistoryEntry>;
 export type ToolbarPointMode = null | "add" | "remove";
 
 export type ToolbarContextValue = {
-  clearHistory: () => void;
+  clearHistory: (isUtkastActive: boolean) => void;
   undo: () => void;
   redo: () => void;
   history: ToolbarHistory;
-  utkastHistory: ToolbarHistory;
   setHistory: React.Dispatch<React.SetStateAction<History<HistoryEntry>>>;
-  setUtkastHistory: React.Dispatch<React.SetStateAction<History<HistoryEntry>>>;
-  dirtyFeatureIds: string[];
   activePointMode: ToolbarPointMode;
   togglePointMode: (pointMode: ToolbarPointMode) => void;
   snapActive: boolean;

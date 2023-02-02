@@ -8,8 +8,8 @@ import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 import { dirtyStyles, selectStyles } from "utils/map/layerStyles";
 import Style from "ol/style/Style";
 import { getFeatureId } from "utils/map/source";
-import { useToolbar } from "contexts/ToolbarContext";
 import { click } from "ol/events/condition";
+import useDirtyStyles from "./useDirtyStyles";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -22,7 +22,7 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 };
 
 const useSelectInteraction = () => {
-  const { dirtyFeatureIds } = useToolbar();
+  const { dirtyFeatureIds } = useDirtyStyles();
   const [features, setFeatures] = useState<Feature<Geometry>[]>([]);
   const { openPanel, closePanel } = useOverlayPanels();
 

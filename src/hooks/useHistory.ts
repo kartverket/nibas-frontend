@@ -4,6 +4,7 @@ import { useState } from "react";
 export type History<T> = {
   index: number;
   entries: T[];
+  utkastActive: boolean;
 };
 
 type Options<T> = {
@@ -15,38 +16,19 @@ const useHistory = <T>({ onUndo, onRedo }: Options<T>) => {
   const [history, setHistory] = useState<History<T>>({
     index: 0,
     entries: [],
+    utkastActive: false,
   });
 
-  const [utkastHistory, setUtkastHistory] = useState<History<T>>({
-    index: 0,
-    entries: [],
-  });
-
-  // useEffect(() => {
-  //   // Når history endrer seg, så legg til nye entrys i den, så slipper man å endre på det
-  //   //må det tas hensyn til at
-
-  // })[history];
-
-  const clearHistory = () => {
+  const clearHistory = (isUtkastActive: boolean) => {
     setHistory({
       entries: [],
       index: 0,
+      utkastActive: isUtkastActive,
     });
   };
-
-  //Skal bare skje når man går ut av utkastet
-  const clearUtkastHistory = () => {
-    setUtkastHistory({
-      entries: [],
-      index: 0,
-    });
-  };
-
-  //når man skal sette når et utkast åpnes igjen, kan man bare sette det med setUtkastHistory
 
   const revert = (amount: number) => {
-    const { index, entries } = history;
+    const { index, entries, utkastActive } = history;
 
     if (index === 0 || entries.length === 0) return;
 
@@ -61,16 +43,12 @@ const useHistory = <T>({ onUndo, onRedo }: Options<T>) => {
     setHistory({
       entries,
       index: newIndex,
-    });
-
-    setUtkastHistory({
-      entries,
-      index: newIndex,
+      utkastActive,
     });
   };
 
   const reapply = (amount: number) => {
-    const { index, entries } = history;
+    const { index, entries, utkastActive } = history;
 
     if (index >= entries.length) return;
 
@@ -84,11 +62,7 @@ const useHistory = <T>({ onUndo, onRedo }: Options<T>) => {
     setHistory({
       entries,
       index: newIndex,
-    });
-
-    setUtkastHistory({
-      entries,
-      index: newIndex,
+      utkastActive,
     });
   };
 
@@ -106,9 +80,6 @@ const useHistory = <T>({ onUndo, onRedo }: Options<T>) => {
     redo,
     history,
     setHistory,
-    utkastHistory,
-    setUtkastHistory,
-    clearUtkastHistory,
   };
 };
 
