@@ -6,7 +6,6 @@ import { StemmekretsRef, StemmekretsResponse } from "types/api";
 import { getNavnInSpraak } from "utils/language/language";
 import { ToggleableKretsButton } from "../kretserComponents";
 import FutureChangesButton from "../FutureChangesButton";
-import { useFlag } from "components/FeatureToggle";
 import { getIdFromEntity } from "utils/api";
 
 type Props = {
@@ -34,13 +33,12 @@ const StemmekretsRow = ({
     "stemmekretsendringer"
   ) as StemmekretsResponse | undefined;
 
-  const isFremtidigeEndringerActive = useFlag(
-    "fremtidige-endringer-stemmekretser"
-  );
-
   if (!utkastStemmekrets) return null;
 
   const name = getNavnInSpraak(utkastStemmekrets.stemmekretsnavn, "nor");
+
+  const shouldShowFutureChangesButton =
+    stemmekretsRef.antallFramtidigeVersjoner > 0;
 
   return (
     <KretsRow isActive={isRowOpen(stemmekretsId)}>
@@ -50,7 +48,7 @@ const StemmekretsRow = ({
       <td>{utkastStemmekrets.tellekretsnummer}</td>
       <td>{utkastStemmekrets.valgdistriktsnummer}</td>
       <td>
-        {isFremtidigeEndringerActive && (
+        {shouldShowFutureChangesButton && (
           <FutureChangesButton
             isOpen={isFutureChangesOpen}
             krets={stemmekretsRef}

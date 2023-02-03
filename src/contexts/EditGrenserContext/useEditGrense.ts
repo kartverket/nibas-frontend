@@ -3,9 +3,17 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { EditGrenserContext } from "./EditGrenserContext";
 import { EditingType, ObjectValue } from "./types";
-import { layerIdByGrenseType } from "components/GrenserDrillDown/ToggleableGrense/ToggleableGrense";
 import useAsyncFeatures from "hooks/useAsyncFeatures";
 import { getFeatureId, removeFeaturesFromSourceByIds } from "utils/map/source";
+import { GrenseId } from "hooks/layers/types";
+
+const layerIdByGrenseType: Record<EditingType, GrenseId> = {
+  fylke: "fylker",
+  kommune: "kommuner",
+  nasjon: "nasjoner",
+  grunnkrets: "grunnkretser",
+  stemmekrets: "stemmekretser",
+};
 
 export const useEditGrenseValue = (
   grenseType: EditingType,

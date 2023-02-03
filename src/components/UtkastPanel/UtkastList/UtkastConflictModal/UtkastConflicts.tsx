@@ -1,4 +1,3 @@
-import { useFlag } from "components/FeatureToggle";
 import useNibasApi from "hooks/useNibasApi";
 import {
   FramtidigVersjonConflict,
@@ -39,8 +38,6 @@ const UtkastConflicts = ({
       getIdFromEntity(conflictResponse)
     ];
 
-  const isStemmekretsEnabled = useFlag("fremtidige-endringer-stemmekretser");
-
   if (!utkast || !currentItem) return null;
 
   if (conflictResponse.type === "GRUNNKRETS")
@@ -54,7 +51,7 @@ const UtkastConflicts = ({
       />
     );
 
-  if (isStemmekretsEnabled && conflictResponse.type === "STEMMEKRETS")
+  if (conflictResponse.type === "STEMMEKRETS")
     return (
       <StemmekretsUtkastConflictModal
         conflictResponse={conflictResponse}

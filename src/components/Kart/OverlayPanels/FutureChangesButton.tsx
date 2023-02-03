@@ -1,13 +1,9 @@
 import Icon from "components/Icon";
 import styled from "styled-components";
-import { GrunnkretsRef, KretsRef } from "types/api";
+import { KretsRef } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { getNavnInSpraak } from "utils/language/language";
 import { ToggleableKretsButton } from "./kretserComponents";
-
-const isGrunnkretsRef = (krets: KretsRef): krets is GrunnkretsRef => {
-  return (krets as GrunnkretsRef).grunnkretsnummer !== undefined;
-};
 
 type Props = {
   krets: KretsRef;
@@ -28,9 +24,7 @@ const FutureChangesButton = ({ isOpen, toggleRow, krets }: Props) => {
       } fremtidige endringer for ${getNavnInSpraak(krets.navn, "nor")}`}
       icon={<Icon icon="timelapse" />}
     >
-      {isGrunnkretsRef(krets) && (
-        <Badge>{krets.antallFramtidigeVersjoner}</Badge>
-      )}
+      <Badge>{krets.antallFramtidigeVersjoner}</Badge>
     </ToggleableKretsButton>
   );
 };

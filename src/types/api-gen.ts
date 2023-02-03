@@ -30,6 +30,10 @@ export interface paths {
     /** Publiserer utkastet med gitt id. */
     post: operations["publiserUtkast"];
   };
+  "/v1/stemmekretser/{lokalid}/framtidigeversjoner": {
+    /** Returnerer en liste av nåværende Stemmekrets og eventuelt publiserte framtidige versjoner som matcher lokalid. */
+    get: operations["hentFramtidigeVersjonerForStemmekrets"];
+  };
   "/v1/stemmekretser/{id}": {
     /** Henter stemmekrets med gitt id */
     get: operations["hentStemmekrets"];
@@ -87,10 +91,6 @@ export interface paths {
   "/v1/grunnkretser/{lokalid}/framtidigeversjoner": {
     /** Returnerer en liste av nåværende Grunnkrets og eventuelt publiserte framtidige versjoner som matcher lokalid. */
     get: operations["hentFramtidigeVersjonerForGrunnkrets"];
-  };
-  "/v1/stemmekretser/{lokalid}/framtidigeversjoner": {
-    /** Returnerer en liste av nåværende Grunnkrets og eventuelt publiserte framtidige versjoner som matcher lokalid. */
-    get: operations["hentFramtidigeVersjonerForStemmekrets"];
   };
   "/v1/grunnkretser/{id}": {
     /** Henter grunnkrets med gitt id */
@@ -766,7 +766,7 @@ export interface components {
       lokalid: components["schemas"]["Lokalid"];
       /** @description Resolvede endringer på grunnkrets. */
       grunnkretsRequests: components["schemas"]["GrunnkretsRequestResolved"][];
-      /** @description Resolvede endringer på grunnkrets. */
+      /** @description Resolvede endringer på stemmekrets. */
       stemmekretsRequests: components["schemas"]["StemmekretsRequestResolved"][];
     };
     /** @description Representasjon av en resolvet konflikt for en endring på Grunnkrets. */
@@ -780,7 +780,7 @@ export interface components {
       endringstype: string;
       grunnkretsRequest: components["schemas"]["GrunnkretsRequest"];
     };
-    /** @description Representasjon av en resolvet konflikt for en endring på Grunnkrets. */
+    /** @description Representasjon av en resolvet konflikt for en endring på Stemmekrets. */
     StemmekretsRequestResolved: {
       /**
        * Format: date
@@ -807,6 +807,19 @@ export interface components {
       /** @description Liste av features som holder på dataene */
       features: components["schemas"]["Feature"][];
     };
+    /** @description Gyldighetsintervall for objektet */
+    GyldighetResponse: {
+      /**
+       * Format: date
+       * @description Tidspunktet objektet er gyldig fra
+       */
+      gyldigFra: string;
+      /**
+       * Format: date
+       * @description Tidspunktet objektet er gyldig til. Kan være tomt/løpende.
+       */
+      gyldigTil?: string;
+    };
     /** @description Representasjon av et kommunenummer */
     Kommunenummer: {
       /** @description Unik UUID for kommunenummeret */
@@ -817,18 +830,23 @@ export interface components {
     /** @description Representasjon av en stemmekrets */
     StemmekretsResponse: {
       id: components["schemas"]["ObjektIdentifikator"];
+      gyldighet: components["schemas"]["GyldighetResponse"];
+      /** @description Typen endring som ble gjort på objektet */
+      endringstype?: string;
+      /**
+       * Format: date-time
+       * @description Siste oppdateringstidspunkt for objektet
+       */
+      oppdateringsdato: string;
       /** @description Navnet på stemmekretsen */
       stemmekretsnavn: string;
       /** @description Stemmekretsnummeret til stemmekretsen */
       stemmekretsnummer: string;
       kommunenummer: components["schemas"]["Kommunenummer"];
-      gyldighet: components["schemas"]["GyldighetResponse"];
       /** @description Tellekretsnummer til stemmekretsen */
       tellekretsnummer?: string;
       /** @description Tellekretsnavn til stemmekretsen */
       tellekretsnavn?: string;
-      /** @description Typen endring som ble gjort på objektet */
-      endringstype?: string;
       /** @description Valgdistriktsnummer til stemmekretsen */
       valgdistriktsnummer?: string;
       features: components["schemas"]["FeatureCollection"];
@@ -972,19 +990,6 @@ export interface components {
        * @description Teknisk versjon for å støtte samhandling og redigering
        */
       version: number;
-    };
-    /** @description Gyldighetsintervall for objektet */
-    GyldighetResponse: {
-      /**
-       * Format: date
-       * @description Tidspunktet objektet er gyldig fra
-       */
-      gyldigFra: string;
-      /**
-       * Format: date
-       * @description Tidspunktet objektet er gyldig til. Kan være tomt/løpende.
-       */
-      gyldigTil?: string;
     };
     /** @description En referanse til et fylke */
     FylkeRef: {
@@ -1221,6 +1226,27 @@ export interface operations {
       409: {
         content: {
           "application/json": components["schemas"]["ConflictResponseWrapper"];
+        };
+      };
+    };
+  };
+  /** Returnerer en liste av nåværende Stemmekrets og eventuelt publiserte framtidige versjoner som matcher lokalid. */
+  hentFramtidigeVersjonerForStemmekrets: {
+    parameters: {
+      path: {
+        /** LokalID-en til stemmekretsen man vil hente versjoner for */
+        lokalid: string;
+      };
+      query: {
+        /** Eventuell gyldighetsdato for stemmekrets (default = dagens dato */
+        gyldighetsdato?: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["StemmekretsResponse"][];
         };
       };
     };
@@ -1521,29 +1547,16 @@ export interface operations {
         /** LokalID-en til grunnkretsen man vil hente versjoner for */
         lokalid: string;
       };
+      query: {
+        /** Eventuell gyldighetsdato for grunnkrets (default = dagens dato */
+        gyldighetsdato?: string;
+      };
     };
     responses: {
       /** Successful operation */
       200: {
         content: {
           "application/json": components["schemas"]["GrunnkretsResponse"][];
-        };
-      };
-    };
-  };
-  /** Returnerer en liste av nåværende Grunnkrets og eventuelt publiserte framtidige versjoner som matcher lokalid. */
-  hentFramtidigeVersjonerForStemmekrets: {
-    parameters: {
-      path: {
-        /** LokalID-en til grunnkretsen man vil hente versjoner for */
-        lokalid: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["StemmekretsResponse"][];
         };
       };
     };
