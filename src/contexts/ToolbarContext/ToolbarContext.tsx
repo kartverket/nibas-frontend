@@ -122,14 +122,10 @@ export const ToolbarProvider: React.FC = ({ children }) => {
 
   //punkt for hvor det legges til dirty
   useEffect(() => {
-    console.log("NY RUNDE");
     if (historyValue.history.entries.length === 0) {
-      console.log("history er tom, vi skal gjøre noe spesielt");
       if (historyValue.history.utkastActive && dirtyFeatureIds.length !== 0) {
-        console.log("Ting skal lagres");
         saveDirtyFeatureIds();
       }
-      console.log("history er tom, vi bare stopper uendelig løkke");
       return;
     }
 
@@ -145,14 +141,11 @@ export const ToolbarProvider: React.FC = ({ children }) => {
     setEditFeatures(editFeatures);
     setDirtyFeatures(dirtyFeatures);
   }, [
-    clearSavedDirtyFeatureIds,
     dirtyFeatureIds.length,
-    historyValue,
     historyValue.history.entries,
     historyValue.history.index,
     historyValue.history.utkastActive,
     saveDirtyFeatureIds,
-    savedDirtyFeatureIds.length,
     setDirtyFeatures,
     setEditFeatures,
   ]);
