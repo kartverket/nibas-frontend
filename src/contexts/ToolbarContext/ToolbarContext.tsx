@@ -100,6 +100,7 @@ export const ToolbarProvider: React.FC = ({ children }) => {
     setDirtyFeatures,
     setEditFeatures,
     saveDirtyFeatureIds,
+    savedDirtyFeatureIds,
     clearSavedDirtyFeatureIds,
   } = useDirtyStyles();
 
@@ -121,18 +122,14 @@ export const ToolbarProvider: React.FC = ({ children }) => {
 
   //punkt for hvor det legges til dirty
   useEffect(() => {
-    console.log("history har endret seg, kjør logikk");
+    console.log("NY RUNDE");
     if (historyValue.history.entries.length === 0) {
+      console.log("history er tom, vi skal gjøre noe spesielt");
       if (historyValue.history.utkastActive && dirtyFeatureIds.length !== 0) {
         console.log("Ting skal lagres");
         saveDirtyFeatureIds();
-        return;
       }
-      if (historyValue.history.utkastActive && dirtyFeatureIds.length !== 0) {
-        console.log("Ting skal forkastes");
-        clearSavedDirtyFeatureIds();
-        return;
-      }
+      console.log("history er tom, vi bare stopper uendelig løkke");
       return;
     }
 
@@ -147,33 +144,15 @@ export const ToolbarProvider: React.FC = ({ children }) => {
 
     setEditFeatures(editFeatures);
     setDirtyFeatures(dirtyFeatures);
-
-    /*
-    if (newValues.length === dirtyFeatureIds.length) return;
-    if (newValues.length === 0 && historyValue.history.utkastActive) return;
-
-    let changed = false;
-    for (const value of newValues) {
-      if (!dirtyFeatureIds.includes(value)) {
-        changed = true;
-        addDirtyFeatureId(value);
-      }
-    }
-    if (changed) return;
-    //denne fjerner etter lagring
-    for (const dirtyFeature of dirtyFeatureIds) {
-      if (!newValues.includes(dirtyFeature)) {
-        removeDirtyFeatureId(dirtyFeature);
-      }
-    }
-    */
   }, [
     clearSavedDirtyFeatureIds,
     dirtyFeatureIds.length,
+    historyValue,
     historyValue.history.entries,
     historyValue.history.index,
     historyValue.history.utkastActive,
     saveDirtyFeatureIds,
+    savedDirtyFeatureIds.length,
     setDirtyFeatures,
     setEditFeatures,
   ]);
@@ -181,6 +160,7 @@ export const ToolbarProvider: React.FC = ({ children }) => {
   const value = {
     ...historyValue,
     activePointMode,
+    clearDirtyStyles: clearSavedDirtyFeatureIds,
     togglePointMode,
     snapActive,
     setSnapActive,

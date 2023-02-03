@@ -10,8 +10,6 @@ const useDirtyStyles = () => {
 
   const setEditFeatures = (features: string[]) => {
     for (const featureId of features) {
-      console.log(featureId);
-      console.log("savedDirtyFeatureIds", savedDirtyFeatureIds);
       if (!savedDirtyFeatureIds.includes(featureId)) {
         editSource.getFeatureById(featureId)?.setStyle(editStyles);
       }
@@ -32,9 +30,8 @@ const useDirtyStyles = () => {
   };
 
   const clearSavedDirtyFeatureIds = () => {
-    console.log("skal cleare ALT");
-    console.log("skal cleare ALT", dirtyFeatureIds);
-    console.log("skal cleare ALT", savedDirtyFeatureIds);
+    console.log("skal cleare ALT, her er ny dirty", dirtyFeatureIds);
+    console.log("skal cleare ALT, her er saved dirty", savedDirtyFeatureIds);
     for (const featureId of dirtyFeatureIds) {
       console.log(editSource.getFeatureById(featureId));
       editSource.getFeatureById(featureId)?.setStyle(editStyles);
@@ -48,9 +45,6 @@ const useDirtyStyles = () => {
   };
 
   const saveDirtyFeatureIds = () => {
-    console.log("skal lagre dirty feature Ids");
-    console.log("dirtyFeatureIds", dirtyFeatureIds);
-    console.log("savedDirtyFeatureIds", savedDirtyFeatureIds);
     setSavedDirtyFeaturesIds(dirtyFeatureIds.concat(savedDirtyFeatureIds));
     setDirtyFeatureIds([]);
   };
@@ -77,6 +71,7 @@ const useDirtyStyles = () => {
     setDirtyFeatures,
     setEditFeatures,
     saveDirtyFeatureIds,
+    savedDirtyFeatureIds,
     clearSavedDirtyFeatureIds,
   };
 

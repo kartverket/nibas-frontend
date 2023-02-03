@@ -54,6 +54,7 @@ export type ToolbarContextValue = {
   redo: () => void;
   history: ToolbarHistory;
   setHistory: React.Dispatch<React.SetStateAction<History<HistoryEntry>>>;
+  clearDirtyStyles: () => void;
   activePointMode: ToolbarPointMode;
   togglePointMode: (pointMode: ToolbarPointMode) => void;
   snapActive: boolean;
