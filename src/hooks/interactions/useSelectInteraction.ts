@@ -22,7 +22,6 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 };
 
 const useSelectInteraction = () => {
-  const { dirtyFeatureIds } = useDirtyStyles();
   const [features, setFeatures] = useState<Feature<Geometry>[]>([]);
   const { openPanel, closePanel } = useOverlayPanels();
 
@@ -76,6 +75,7 @@ const useSelectInteraction = () => {
     }
   }, [features, openPanel, closePanel]);
 
+  /*
   useEffect(() => {
     const previousStylesByFeatureId: Record<string, Style[]> = {};
 
@@ -96,6 +96,7 @@ const useSelectInteraction = () => {
       });
     };
   }, [features, dirtyFeatureIds]);
+  */
 
   return features;
 };

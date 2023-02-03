@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import { editSource } from "hooks/layers/constants";
+import { useState } from "react";
 import { dirtyStyles, editStyles } from "utils/map/layerStyles";
 
 const useDirtyStyles = () => {
@@ -7,31 +7,77 @@ const useDirtyStyles = () => {
   const [savedDirtyFeatureIds, setSavedDirtyFeaturesIds] = useState<string[]>(
     []
   );
-  const [index, setIndex] = useState(0);
 
-  const addDirtyFeatureId = (featureIdToAdd: string) => {
-    console.log("");
-    editSource.getFeatureById(featureIdToAdd)?.setStyle(dirtyStyles);
-    setDirtyFeatureIds(dirtyFeatureIds.concat(featureIdToAdd));
-  };
-
-  const removeDirtyFeatureId = (featureIdToRemove: string) => {
+  const setEditFeatures = (features: string[]) => {
+    for (const featureId of features) {
+      console.log(featureId);
+      console.log("savedDirtyFeatureIds", savedDirtyFeatureIds);
+      if (!savedDirtyFeatureIds.includes(featureId)) {
+        editSource.getFeatureById(featureId)?.setStyle(editStyles);
+      }
+    }
     setDirtyFeatureIds(
-      dirtyFeatureIds.filter((dfi) => dfi !== featureIdToRemove)
+      dirtyFeatureIds.filter((dfi) => !features.includes(dfi))
     );
-    editSource.getFeatureById(featureIdToRemove)?.setStyle(editStyles);
   };
 
-  const saveDirtyFeatures = () => {
-    setSavedDirtyFeaturesIds(savedDirtyFeatureIds.concat(dirtyFeatureIds));
+  const setDirtyFeatures = (features: string[]) => {
+    for (const featureId of features) {
+      editSource.getFeatureById(featureId)?.setStyle(dirtyStyles);
+    }
+    for (const featureId of savedDirtyFeatureIds) {
+      editSource.getFeatureById(featureId)?.setStyle(dirtyStyles);
+    }
+    setDirtyFeatureIds(features);
+  };
+
+  const clearSavedDirtyFeatureIds = () => {
+    console.log("skal cleare ALT");
+    console.log("skal cleare ALT", dirtyFeatureIds);
+    console.log("skal cleare ALT", savedDirtyFeatureIds);
+    for (const featureId of dirtyFeatureIds) {
+      console.log(editSource.getFeatureById(featureId));
+      editSource.getFeatureById(featureId)?.setStyle(editStyles);
+    }
+    for (const featureId of savedDirtyFeatureIds) {
+      console.log(editSource.getFeatureById(featureId));
+      editSource.getFeatureById(featureId)?.setStyle(editStyles);
+    }
+    setSavedDirtyFeaturesIds([]);
     setDirtyFeatureIds([]);
   };
 
+  const saveDirtyFeatureIds = () => {
+    console.log("skal lagre dirty feature Ids");
+    console.log("dirtyFeatureIds", dirtyFeatureIds);
+    console.log("savedDirtyFeatureIds", savedDirtyFeatureIds);
+    setSavedDirtyFeaturesIds(dirtyFeatureIds.concat(savedDirtyFeatureIds));
+    setDirtyFeatureIds([]);
+  };
+
+  // const addDirtyFeatureId = (featureIdToAdd: string) => {
+  //   editSource.getFeatureById(featureIdToAdd)?.setStyle(dirtyStyles);
+  //   setDirtyFeatureIds(dirtyFeatureIds.concat(featureIdToAdd));
+  // };
+
+  // const removeDirtyFeatureId = (featureIdToRemove: string) => {
+  //   setDirtyFeatureIds(
+  //     dirtyFeatureIds.filter((dfi) => dfi !== featureIdToRemove)
+  //   );
+  //   editSource.getFeatureById(featureIdToRemove)?.setStyle(editStyles);
+  // };
+
+  // const saveDirtyFeatures = () => {
+  //   setSavedDirtyFeaturesIds(savedDirtyFeatureIds.concat(dirtyFeatureIds));
+  //   setDirtyFeatureIds([]);
+  // };
+
   return {
     dirtyFeatureIds,
-    addDirtyFeatureId,
-    removeDirtyFeatureId,
-    saveDirtyFeatures,
+    setDirtyFeatures,
+    setEditFeatures,
+    saveDirtyFeatureIds,
+    clearSavedDirtyFeatureIds,
   };
 
   /*

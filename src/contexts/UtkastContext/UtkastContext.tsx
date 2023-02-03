@@ -25,7 +25,6 @@ import { OppdaterUtkastRequest } from "types/api";
 import { resetMapView } from "utils/map";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
-
 import useDirtyStyles from "hooks/interactions/useDirtyStyles";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
@@ -44,9 +43,10 @@ export const UtkastProvider: React.FC = ({ children }) => {
   const { resetEditingObject } = useEditAllGrenser();
   const { closePanels } = useOverlayPanels();
   const utkastId = searchParams.get("utkast");
-  const { saveDirtyFeatures } = useDirtyStyles();
 
   const { mutate: globalMutate } = useSWRConfig();
+
+  const { clearSavedDirtyFeatureIds } = useDirtyStyles();
 
   const {
     data: utkast,
@@ -109,18 +109,15 @@ export const UtkastProvider: React.FC = ({ children }) => {
       updateApiUtkast(utkast.id, updatedUtkast, tokenHolderFunc()?.token)
     );
     await globalMutate(["/v1/utkast", tokenHolderFunc()?.token]);
-    saveDirtyFeatures();
     clearHistory(true);
   };
 
   const closeUtkast = () => {
     setSearchParams({});
+    clearHistory(false);
     resetEditingObject();
     closePanels();
     resetMapView();
-    clearHistory(false);
-
-    //her må jeg legge inn at man endrer tilbake alle features
   };
 
   const value = { utkast, updateUtkastWithHistory, closeUtkast, isValidating };

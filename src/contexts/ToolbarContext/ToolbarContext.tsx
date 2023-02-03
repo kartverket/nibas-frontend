@@ -14,7 +14,6 @@ import {
 import useHistory from "hooks/useHistory";
 import { ensureAllCasesCovered } from "utils/typeHelpers";
 import useDirtyStyles from "hooks/interactions/useDirtyStyles";
-import { remove } from "ol/array";
 
 const onUndo = (entry: HistoryEntry) => {
   const { type } = entry;
@@ -96,8 +95,13 @@ export const ToolbarContext = createContext<ToolbarContextValue | undefined>(
 );
 
 export const ToolbarProvider: React.FC = ({ children }) => {
-  const { dirtyFeatureIds, addDirtyFeatureId, removeDirtyFeatureId } =
-    useDirtyStyles();
+  const {
+    dirtyFeatureIds,
+    setDirtyFeatures,
+    setEditFeatures,
+    saveDirtyFeatureIds,
+    clearSavedDirtyFeatureIds,
+  } = useDirtyStyles();
 
   const historyValue = useHistory({
     onUndo,
@@ -117,19 +121,36 @@ export const ToolbarProvider: React.FC = ({ children }) => {
 
   //punkt for hvor det legges til dirty
   useEffect(() => {
-    const newValues = historyValue.history.entries
-      .slice(0, historyValue.history.index)
+    console.log("history har endret seg, kjør logikk");
+    if (historyValue.history.entries.length === 0) {
+      if (historyValue.history.utkastActive && dirtyFeatureIds.length !== 0) {
+        console.log("Ting skal lagres");
+        saveDirtyFeatureIds();
+        return;
+      }
+      if (historyValue.history.utkastActive && dirtyFeatureIds.length !== 0) {
+        console.log("Ting skal forkastes");
+        clearSavedDirtyFeatureIds();
+        return;
+      }
+      return;
+    }
+
+    const historyFeatures = historyValue.history.entries
       .filter((entry) => entry.type === "grense" || entry.type === "metadata")
       .reduce<string[]>(getFeatureIdsFromEntries, []);
 
-    console.log("New values length", newValues.length);
-    console.log("Dirtyfeatureids length:", dirtyFeatureIds.length);
+    const editFeatures = historyFeatures.slice(historyValue.history.index);
+    const dirtyFeatures = historyFeatures.slice(0, historyValue.history.index);
 
+    if (dirtyFeatureIds.length === dirtyFeatures.length) return;
+
+    setEditFeatures(editFeatures);
+    setDirtyFeatures(dirtyFeatures);
+
+    /*
     if (newValues.length === dirtyFeatureIds.length) return;
-
-    if (newValues.length === 0 && historyValue.history.utkastActive) {
-      return;
-    }
+    if (newValues.length === 0 && historyValue.history.utkastActive) return;
 
     let changed = false;
     for (const value of newValues) {
@@ -145,26 +166,16 @@ export const ToolbarProvider: React.FC = ({ children }) => {
         removeDirtyFeatureId(dirtyFeature);
       }
     }
-
-    // setDirtyFeatureIds((prevIds) => {
-    //   // trenger ikke ny state hvis det ikke er noen nye verdier
-    //   if (newValues.length === prevIds.length) {
-    //     return prevIds;
-    //   }
-
-    //   if (newValues.length === 0 && historyValue.history.utkastActive) {
-    //     return prevIds;
-    //   }
-
-    //   return newValues;
-    // });
+    */
   }, [
-    addDirtyFeatureId,
-    dirtyFeatureIds,
+    clearSavedDirtyFeatureIds,
+    dirtyFeatureIds.length,
     historyValue.history.entries,
     historyValue.history.index,
     historyValue.history.utkastActive,
-    removeDirtyFeatureId,
+    saveDirtyFeatureIds,
+    setDirtyFeatures,
+    setEditFeatures,
   ]);
 
   const value = {
