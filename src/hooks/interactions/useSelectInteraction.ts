@@ -5,7 +5,11 @@ import LineString from "ol/geom/LineString";
 import { Select } from "ol/interaction";
 import { map, overlayPopup } from "components/Kart/constants";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
+import { dirtyStyles, selectStyles } from "utils/map/layerStyles";
+import Style from "ol/style/Style";
+import { getFeatureId } from "utils/map/source";
 import { click } from "ol/events/condition";
+import useDirtyStyles from "./useDirtyStyles";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -18,6 +22,7 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 };
 
 const useSelectInteraction = () => {
+  const { dirtyFeatureIds, savedDirtyFeatureIds } = useDirtyStyles();
   const [features, setFeatures] = useState<Feature<Geometry>[]>([]);
   const { openPanel, closePanel } = useOverlayPanels();
 
@@ -70,6 +75,30 @@ const useSelectInteraction = () => {
       overlayPopup.setPosition(undefined);
     }
   }, [features, openPanel, closePanel]);
+
+  useEffect(() => {
+    const previousStylesByFeatureId: Record<string, Style[]> = {};
+
+    features.forEach((feature) => {
+      const featureId = getFeatureId(feature);
+      previousStylesByFeatureId[featureId] = feature.getStyle() as Style[];
+      feature.setStyle(selectStyles);
+    });
+
+    return () => {
+      features.forEach((feature) => {
+        const featureId = getFeatureId(feature);
+        if (
+          dirtyFeatureIds.includes(featureId) ||
+          savedDirtyFeatureIds.includes(featureId)
+        ) {
+          feature.setStyle(dirtyStyles);
+        } else {
+          feature.setStyle(previousStylesByFeatureId[featureId]);
+        }
+      });
+    };
+  }, [dirtyFeatureIds, features, savedDirtyFeatureIds]);
 
   return features;
 };
