@@ -100,7 +100,6 @@ export const ToolbarProvider: React.FC = ({ children }) => {
     setDirtyFeatures,
     setEditFeatures,
     saveDirtyFeatureIds,
-    savedDirtyFeatureIds,
     clearSavedDirtyFeatureIds,
   } = useDirtyStyles();
 

@@ -15,17 +15,12 @@ import {
   historyToUtkastOperations,
 } from "./utils";
 import { updateUtkast as updateApiUtkast } from "api/utkast";
-import {
-  HistoryChange,
-  HistoryEntry,
-  useToolbar,
-} from "contexts/ToolbarContext";
+import { HistoryChange, useToolbar } from "contexts/ToolbarContext";
 import useNibasApi from "hooks/useNibasApi";
 import { OppdaterUtkastRequest } from "types/api";
 import { resetMapView } from "utils/map";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
-import useDirtyStyles from "hooks/interactions/useDirtyStyles";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
@@ -74,7 +69,6 @@ export const UtkastProvider: React.FC = ({ children }) => {
   }, [utkast, utkastId, mutate]);
 
   const updateUtkastWithHistory = async () => {
-    console.log("update utkast with history is happening");
     if (!utkast) return;
 
     const operasjoner = historyToUtkastOperations(history, utkast);

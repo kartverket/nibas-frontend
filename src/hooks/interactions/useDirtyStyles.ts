@@ -50,7 +50,6 @@ const useDirtyStyles = () => {
     setDirtyFeatures,
     setEditFeatures,
     saveDirtyFeatureIds,
-    savedDirtyFeatureIds,
     clearSavedDirtyFeatureIds,
   };
 };
