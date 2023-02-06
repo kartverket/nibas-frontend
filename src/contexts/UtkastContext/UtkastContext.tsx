@@ -32,7 +32,7 @@ export const UtkastContext = createContext<UtkastContextValue | undefined>(
 );
 
 export const UtkastProvider: React.FC = ({ children }) => {
-  const { history, clearHistory } = useToolbar();
+  const { history, clearHistory, clearDirtyStyles } = useToolbar();
   const { tokenHolderFunc } = useAuthenticationFlow();
   const [searchParams, setSearchParams] = useSearchParams();
   const { resetEditingObject } = useEditAllGrenser();
@@ -101,16 +101,16 @@ export const UtkastProvider: React.FC = ({ children }) => {
       updateApiUtkast(utkast.id, updatedUtkast, tokenHolderFunc()?.token)
     );
     await globalMutate(["/v1/utkast", tokenHolderFunc()?.token]);
-
-    clearHistory();
+    clearHistory({ hasPreviouslySavedHistory: true });
   };
 
   const closeUtkast = () => {
+    resetMapView();
+    clearHistory({ hasPreviouslySavedHistory: false });
+    clearDirtyStyles();
     setSearchParams({});
     resetEditingObject();
     closePanels();
-    resetMapView();
-    clearHistory();
   };
 
   const value = { utkast, updateUtkastWithHistory, closeUtkast, isValidating };

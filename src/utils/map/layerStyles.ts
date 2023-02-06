@@ -44,6 +44,7 @@ const lineAndPointStyles = (color: string, dashed = false) => [
   }),
 ];
 
+export const editStyles = lineAndPointStyles("#FF5555");
 export const dirtyStyles = lineAndPointStyles("#000000", true);
 export const selectStyles = lineAndPointStyles("#000000");
 export const grensetypeStyles: Record<GrenseId, Style[]> = {
@@ -52,7 +53,7 @@ export const grensetypeStyles: Record<GrenseId, Style[]> = {
   nasjoner: lineAndPointStyles("#FF5555"),
   grunnkretser: lineAndPointStyles("#65C97A"),
   stemmekretser: lineAndPointStyles("#5296D5"),
-  edit: lineAndPointStyles("#FF5555"),
+  edit: editStyles,
 };
 
 export const getPointOverlayStyle = (

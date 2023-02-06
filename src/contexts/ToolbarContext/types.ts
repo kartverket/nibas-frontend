@@ -50,12 +50,16 @@ export type ToolbarPointMode = null | "add" | "remove" | "split";
 export type ToolbarEditMode = "snap" | "detach";
 
 export type ToolbarContextValue = {
-  clearHistory: () => void;
   undo: () => void;
   redo: () => void;
   history: ToolbarHistory;
   setHistory: React.Dispatch<React.SetStateAction<History<HistoryEntry>>>;
-  dirtyFeatureIds: string[];
+  clearHistory: ({
+    hasPreviouslySavedHistory,
+  }: {
+    hasPreviouslySavedHistory: boolean;
+  }) => void;
+  clearDirtyStyles: () => void;
   activePointMode: ToolbarPointMode;
   togglePointMode: (pointMode: ToolbarPointMode) => void;
   activeEditModes: ToolbarEditMode[];

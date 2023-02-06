@@ -3,7 +3,6 @@ import Feature, { FeatureLike } from "ol/Feature";
 import LineString from "ol/geom/LineString";
 import { Snap } from "ol/interaction";
 import Modify, { ModifyEvent } from "ol/interaction/Modify";
-import useDirtyStyles from "./useDirtyStyles";
 import { map } from "components/Kart/constants";
 import {
   GrenseEntry,
@@ -27,8 +26,7 @@ const getInfoFromFeature = (featureLike: FeatureLike) => {
 };
 
 const useEditInteractions = () => {
-  const { dirtyFeatureIds, addEntry, updateEntry, history } =
-    useToolbarSaving();
+  const { addEntry, updateEntry, history } = useToolbarSaving();
   const { activePointMode, activeEditModes } = useToolbar();
   const detachIsActive = activeEditModes.includes("detach");
   const { selectedFeatures } = useSelectInteraction();
@@ -48,8 +46,6 @@ const useEditInteractions = () => {
       }),
     [activePointMode, detachIsActive, selectedFeatures]
   );
-
-  useDirtyStyles(dirtyFeatureIds);
 
   useEffect(() => {
     const vectorLayers = getVectorLayers();
