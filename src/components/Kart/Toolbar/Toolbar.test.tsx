@@ -34,7 +34,7 @@ const mockToolbarHistory: ToolbarHistory = {
       ],
     },
   ],
-  utkastActive: false,
+  hasPreviouslySavedHistory: false,
 };
 
 const renderWithProvider = (
@@ -43,7 +43,7 @@ const renderWithProvider = (
   toolbarHistory: ToolbarHistory = {
     entries: [],
     index: 0,
-    utkastActive: false,
+    hasPreviouslySavedHistory: false,
   }
 ) =>
   render(ui, {

@@ -122,7 +122,10 @@ export const ToolbarProvider: React.FC = ({ children }) => {
   //punkt for hvor det legges til dirty
   useEffect(() => {
     if (historyValue.history.entries.length === 0) {
-      if (historyValue.history.utkastActive && dirtyFeatureIds.length !== 0) {
+      if (
+        historyValue.history.hasPreviouslySavedHistory &&
+        dirtyFeatureIds.length !== 0
+      ) {
         saveDirtyFeatureIds();
       }
       return;
@@ -143,7 +146,7 @@ export const ToolbarProvider: React.FC = ({ children }) => {
     dirtyFeatureIds.length,
     historyValue.history.entries,
     historyValue.history.index,
-    historyValue.history.utkastActive,
+    historyValue.history.hasPreviouslySavedHistory,
     saveDirtyFeatureIds,
     setDirtyFeatures,
     setEditFeatures,
@@ -198,7 +201,7 @@ export const useToolbarSaving = () => {
       setHistory((prevHistory) => ({
         index: prevHistory.index + 1,
         entries: [...prevHistory.entries.slice(0, prevHistory.index), entry],
-        utkastActive: prevHistory.utkastActive,
+        hasPreviouslySavedHistory: prevHistory.hasPreviouslySavedHistory,
       }));
     },
     [setHistory]
@@ -209,7 +212,7 @@ export const useToolbarSaving = () => {
       const newHistory = {
         index: history.index,
         entries: history.entries.slice(),
-        utkastActive: history.utkastActive,
+        hasPreviouslySavedHistory: history.hasPreviouslySavedHistory,
       };
 
       newHistory.entries[index] = updatedEntry;

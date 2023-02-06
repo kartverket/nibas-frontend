@@ -112,7 +112,7 @@ const UtkastToolbar = ({
 
     setCreateUtkastOpen(false);
     setSearchParams({ utkast: utkastId });
-    clearHistory(true);
+    clearHistory({ hasPreviouslySavedHistory: true });
     promptUtkast();
   };
 

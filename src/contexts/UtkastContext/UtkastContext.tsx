@@ -101,12 +101,12 @@ export const UtkastProvider: React.FC = ({ children }) => {
       updateApiUtkast(utkast.id, updatedUtkast, tokenHolderFunc()?.token)
     );
     await globalMutate(["/v1/utkast", tokenHolderFunc()?.token]);
-    clearHistory(true);
+    clearHistory({ hasPreviouslySavedHistory: true });
   };
 
   const closeUtkast = () => {
     resetMapView();
-    clearHistory(false);
+    clearHistory({ hasPreviouslySavedHistory: false });
     clearDirtyStyles();
     setSearchParams({});
     resetEditingObject();
