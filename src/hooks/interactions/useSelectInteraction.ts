@@ -8,8 +8,8 @@ import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 import { dirtyStyles, selectStyles } from "utils/map/layerStyles";
 import Style from "ol/style/Style";
 import { getFeatureId } from "utils/map/source";
-import { useToolbar } from "contexts/ToolbarContext";
 import { click } from "ol/events/condition";
+import useDirtyStyles from "./useDirtyStyles";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -22,7 +22,7 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 };
 
 const useSelectInteraction = () => {
-  const { dirtyFeatureIds } = useToolbar();
+  const { dirtyFeatureIds, savedDirtyFeatureIds } = useDirtyStyles();
   const [features, setFeatures] = useState<Feature<Geometry>[]>([]);
   const { openPanel, closePanel } = useOverlayPanels();
 
@@ -88,14 +88,17 @@ const useSelectInteraction = () => {
     return () => {
       features.forEach((feature) => {
         const featureId = getFeatureId(feature);
-        if (dirtyFeatureIds.includes(featureId)) {
+        if (
+          dirtyFeatureIds.includes(featureId) ||
+          savedDirtyFeatureIds.includes(featureId)
+        ) {
           feature.setStyle(dirtyStyles);
         } else {
           feature.setStyle(previousStylesByFeatureId[featureId]);
         }
       });
     };
-  }, [features, dirtyFeatureIds]);
+  }, [dirtyFeatureIds, features, savedDirtyFeatureIds]);
 
   return features;
 };

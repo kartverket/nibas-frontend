@@ -57,6 +57,7 @@ const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
     if (!canSave) {
       return;
     }
+
     if (utkast) {
       updateUtkastWithHistory();
     } else {

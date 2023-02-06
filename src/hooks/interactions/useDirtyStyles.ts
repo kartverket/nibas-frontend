@@ -1,51 +1,58 @@
-import { useEffect, useState } from "react";
 import { editSource } from "hooks/layers/constants";
-import { dirtyStyles, grensetypeStyles } from "utils/map/layerStyles";
+import { useState } from "react";
+import { dirtyStyles, editStyles } from "utils/map/layerStyles";
 
-const useDirtyStyles = (dirtyFeatureIds: string[]) => {
-  const [featureIdsWithDirtyStyle, setFeatureIdsWithDirtyStyle] = useState<
-    string[]
-  >([]);
+const useDirtyStyles = () => {
+  const [dirtyFeatureIds, setDirtyFeatureIds] = useState<string[]>([]);
+  const [savedDirtyFeatureIds, setSavedDirtyFeaturesIds] = useState<string[]>(
+    []
+  );
 
-  useEffect(() => {
-    // finn hvilke features som har hatt dirty style, men ikke
-    // lenger regnes som dirty i history
-    const featuresIdsToGetEditStyle = featureIdsWithDirtyStyle.filter(
-      (styleId) => !dirtyFeatureIds.includes(styleId)
+  const setEditFeatures = (features: string[]) => {
+    for (const featureId of features) {
+      if (!savedDirtyFeatureIds.includes(featureId)) {
+        editSource.getFeatureById(featureId)?.setStyle(editStyles);
+      }
+    }
+    setDirtyFeatureIds(
+      dirtyFeatureIds.filter((dfi) => !features.includes(dfi))
     );
+  };
 
-    if (featuresIdsToGetEditStyle.length === 0) return;
+  const setDirtyFeatures = (features: string[]) => {
+    for (const featureId of features) {
+      editSource.getFeatureById(featureId)?.setStyle(dirtyStyles);
+    }
+    for (const featureId of savedDirtyFeatureIds) {
+      editSource.getFeatureById(featureId)?.setStyle(dirtyStyles);
+    }
+    setDirtyFeatureIds(features);
+  };
 
-    const newFeatureIdsWithDirtyStyle = featureIdsWithDirtyStyle.slice();
+  const clearSavedDirtyFeatureIds = () => {
+    for (const featureId of dirtyFeatureIds) {
+      editSource.getFeatureById(featureId)?.setStyle(editStyles);
+    }
+    for (const featureId of savedDirtyFeatureIds) {
+      editSource.getFeatureById(featureId)?.setStyle(editStyles);
+    }
+    setSavedDirtyFeaturesIds([]);
+    setDirtyFeatureIds([]);
+  };
 
-    // disse skal nå få tilbake sin vanlige style, og fjernes fra lista
-    featuresIdsToGetEditStyle.forEach((featureId) => {
-      editSource.getFeatureById(featureId)?.setStyle(grensetypeStyles["edit"]);
-      newFeatureIdsWithDirtyStyle.splice(
-        newFeatureIdsWithDirtyStyle.indexOf(featureId)
-      );
-    });
+  const saveDirtyFeatureIds = () => {
+    setSavedDirtyFeaturesIds(dirtyFeatureIds.concat(savedDirtyFeatureIds));
+    setDirtyFeatureIds([]);
+  };
 
-    setFeatureIdsWithDirtyStyle(newFeatureIdsWithDirtyStyle);
-  }, [dirtyFeatureIds, featureIdsWithDirtyStyle]);
-
-  useEffect(() => {
-    // finn hvilke features som skal ha dirty style
-    const featuresIdsToGetDirtyStyle = dirtyFeatureIds.filter(
-      (styleId) => !featureIdsWithDirtyStyle.includes(styleId)
-    );
-
-    if (featuresIdsToGetDirtyStyle.length === 0) return;
-
-    const newFeatureIdsWithDirtyStyle = featureIdsWithDirtyStyle.slice();
-
-    featuresIdsToGetDirtyStyle.forEach((featureId) => {
-      editSource.getFeatureById(featureId).setStyle(dirtyStyles);
-      newFeatureIdsWithDirtyStyle.push(featureId);
-    });
-
-    setFeatureIdsWithDirtyStyle(newFeatureIdsWithDirtyStyle);
-  }, [dirtyFeatureIds, featureIdsWithDirtyStyle]);
+  return {
+    dirtyFeatureIds,
+    setDirtyFeatures,
+    setEditFeatures,
+    saveDirtyFeatureIds,
+    savedDirtyFeatureIds,
+    clearSavedDirtyFeatureIds,
+  };
 };
 
 export default useDirtyStyles;

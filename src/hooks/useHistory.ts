@@ -4,6 +4,7 @@ import { useState } from "react";
 export type History<T> = {
   index: number;
   entries: T[];
+  hasPreviouslySavedHistory: boolean;
 };
 
 type Options<T> = {
@@ -15,17 +16,23 @@ const useHistory = <T>({ onUndo, onRedo }: Options<T>) => {
   const [history, setHistory] = useState<History<T>>({
     index: 0,
     entries: [],
+    hasPreviouslySavedHistory: false,
   });
 
-  const clearHistory = () => {
+  const clearHistory = ({
+    hasPreviouslySavedHistory,
+  }: {
+    hasPreviouslySavedHistory: boolean;
+  }) => {
     setHistory({
       entries: [],
       index: 0,
+      hasPreviouslySavedHistory: hasPreviouslySavedHistory,
     });
   };
 
   const revert = (amount: number) => {
-    const { index, entries } = history;
+    const { index, entries, hasPreviouslySavedHistory } = history;
 
     if (index === 0 || entries.length === 0) return;
 
@@ -40,11 +47,12 @@ const useHistory = <T>({ onUndo, onRedo }: Options<T>) => {
     setHistory({
       entries,
       index: newIndex,
+      hasPreviouslySavedHistory,
     });
   };
 
   const reapply = (amount: number) => {
-    const { index, entries } = history;
+    const { index, entries, hasPreviouslySavedHistory } = history;
 
     if (index >= entries.length) return;
 
@@ -58,6 +66,7 @@ const useHistory = <T>({ onUndo, onRedo }: Options<T>) => {
     setHistory({
       entries,
       index: newIndex,
+      hasPreviouslySavedHistory,
     });
   };
 

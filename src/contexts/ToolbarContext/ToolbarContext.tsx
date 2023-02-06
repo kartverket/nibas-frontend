@@ -7,12 +7,13 @@ import React, {
 } from "react";
 import { ToolbarContextValue, HistoryEntry, ToolbarPointMode } from "./types";
 import {
-  getDirtyIdsFromEntries,
+  getFeatureIdsFromEntries,
   setFeatureCoordinatesForEntry,
   setFeatureMetadataForEntry,
 } from "./utils";
 import useHistory from "hooks/useHistory";
 import { ensureAllCasesCovered } from "utils/typeHelpers";
+import useDirtyStyles from "hooks/interactions/useDirtyStyles";
 
 const onUndo = (entry: HistoryEntry) => {
   const { type } = entry;
@@ -94,7 +95,14 @@ export const ToolbarContext = createContext<ToolbarContextValue | undefined>(
 );
 
 export const ToolbarProvider: React.FC = ({ children }) => {
-  const [dirtyFeatureIds, setDirtyFeatureIds] = React.useState<string[]>([]);
+  const {
+    dirtyFeatureIds,
+    setDirtyFeatures,
+    setEditFeatures,
+    saveDirtyFeatureIds,
+    clearSavedDirtyFeatureIds,
+  } = useDirtyStyles();
+
   const historyValue = useHistory({
     onUndo,
     onRedo,
@@ -111,26 +119,43 @@ export const ToolbarProvider: React.FC = ({ children }) => {
     }
   };
 
+  //punkt for hvor det legges til dirty
   useEffect(() => {
-    const newValues = historyValue.history.entries
-      .slice(0, historyValue.history.index)
-      .filter((entry) => entry.type === "grense" || entry.type === "metadata")
-      .reduce<string[]>(getDirtyIdsFromEntries, []);
-
-    setDirtyFeatureIds((prevIds) => {
-      // trenger ikke ny state hvis det ikke er noen nye verdier
-      if (newValues.length === prevIds.length) {
-        return prevIds;
+    if (historyValue.history.entries.length === 0) {
+      if (
+        historyValue.history.hasPreviouslySavedHistory &&
+        dirtyFeatureIds.length !== 0
+      ) {
+        saveDirtyFeatureIds();
       }
+      return;
+    }
 
-      return newValues;
-    });
-  }, [historyValue.history]);
+    const historyFeatures = historyValue.history.entries
+      .filter((entry) => entry.type === "grense" || entry.type === "metadata")
+      .reduce<string[]>(getFeatureIdsFromEntries, []);
+
+    const editFeatures = historyFeatures.slice(historyValue.history.index);
+    const dirtyFeatures = historyFeatures.slice(0, historyValue.history.index);
+
+    if (dirtyFeatureIds.length === dirtyFeatures.length) return;
+
+    setEditFeatures(editFeatures);
+    setDirtyFeatures(dirtyFeatures);
+  }, [
+    dirtyFeatureIds.length,
+    historyValue.history.entries,
+    historyValue.history.index,
+    historyValue.history.hasPreviouslySavedHistory,
+    saveDirtyFeatureIds,
+    setDirtyFeatures,
+    setEditFeatures,
+  ]);
 
   const value = {
     ...historyValue,
-    dirtyFeatureIds,
     activePointMode,
+    clearDirtyStyles: clearSavedDirtyFeatureIds,
     togglePointMode,
     snapActive,
     setSnapActive,
@@ -169,13 +194,14 @@ export const useToolbarActions = () => {
 };
 
 export const useToolbarSaving = () => {
-  const { history, setHistory, dirtyFeatureIds } = useToolbar();
+  const { history, setHistory } = useToolbar();
 
   const addEntry = useCallback(
     (entry: HistoryEntry) => {
       setHistory((prevHistory) => ({
         index: prevHistory.index + 1,
         entries: [...prevHistory.entries.slice(0, prevHistory.index), entry],
+        hasPreviouslySavedHistory: prevHistory.hasPreviouslySavedHistory,
       }));
     },
     [setHistory]
@@ -186,6 +212,7 @@ export const useToolbarSaving = () => {
       const newHistory = {
         index: history.index,
         entries: history.entries.slice(),
+        hasPreviouslySavedHistory: history.hasPreviouslySavedHistory,
       };
 
       newHistory.entries[index] = updatedEntry;
@@ -205,7 +232,6 @@ export const useToolbarSaving = () => {
     addEntry,
     updateEntry,
     updateLatestEntry,
-    dirtyFeatureIds,
     history,
   };
 };
