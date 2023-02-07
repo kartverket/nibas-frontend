@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { ButtonsAndGyldigFra, UtkastItemExpanded } from "./UtkastItem";
+import { UtkastItemExpanded } from "./UtkastItem";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
@@ -25,7 +25,6 @@ import useTimer from "hooks/useTimer";
 
 type Inputs = {
   navn: string;
-  gyldigFra: string;
   endringsType: string;
 };
 
@@ -35,7 +34,6 @@ const fromFormToRequest = (
 ): UtkastRequestWithoutOperations => ({
   ...utkast,
   navn: form.navn,
-  gyldigFra: form.gyldigFra,
   endringstype: form.endringsType,
   version: utkast.version,
 });
@@ -68,7 +66,6 @@ const UtkastItemActive = ({ utkastId }: Props) => {
 
     setValue("navn", fullUtkast.navn);
     setValue("endringsType", fullUtkast.endringstype);
-    setValue("gyldigFra", fullUtkast.gyldigFra);
 
     previousValues.current = getValues();
   }, [fullUtkast, setValue, getValues]);
@@ -77,7 +74,6 @@ const UtkastItemActive = ({ utkastId }: Props) => {
     (change: UtkastEntry["changes"][number], direction: "to" | "from") => {
       setValue("navn", change[direction]?.navn ?? "");
       setValue("endringsType", change[direction]?.endringstype ?? "");
-      setValue("gyldigFra", change[direction]?.gyldigFra ?? "");
     },
     [setValue]
   );
@@ -132,16 +128,6 @@ const UtkastItemActive = ({ utkastId }: Props) => {
           ))}
         </Select>
       </BlockLabel>
-      <ButtonsAndGyldigFra>
-        <BlockLabel>
-          {t("metadata.Gyldig fra")}
-          <Input
-            {...register("gyldigFra", registerOptions)}
-            role="textbox"
-            type="date"
-          />
-        </BlockLabel>
-      </ButtonsAndGyldigFra>
       <Center>
         <EditingUtkastText>
           {t("utkast.Du er nå i redigeringsmodus av dette utkastet")}

@@ -7,9 +7,7 @@ import { useSWRConfig } from "swr";
 import UtkastItemActive from "./UtkastItemActive";
 import { deleteUtkast as deleteApiUtkast, publishUtkast } from "api/utkast";
 import Button from "components/form/Button";
-import Input from "components/form/Input";
 import Icon from "components/Icon";
-import { BlockLabel } from "components/Kart/OverlayPanels/metadataComponents";
 import useNibasApi from "hooks/useNibasApi";
 import {
   ConflictResponseWrapper,
@@ -169,15 +167,6 @@ const UtkastItem = ({ utkast }: Props) => {
       {isPublishOpen && (
         <UtkastItemExpanded>
           <ButtonsAndGyldigFra>
-            <BlockLabel>
-              {t("metadata.Gyldig fra")}
-              <Input
-                value={fullUtkast?.gyldigFra ?? ""}
-                disabled
-                role="textbox"
-                type="date"
-              />
-            </BlockLabel>
             <Buttons>
               <CancelButton onClick={() => setIsPublishOpen(false)}>
                 {t("action.Avbryt")}
