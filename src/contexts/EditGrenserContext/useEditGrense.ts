@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
-import { EditGrenserContext } from "./EditGrenserContext";
+import { EditGrenserContext, useEditGrenser } from "./EditGrenserContext";
 import { EditingType, ObjectValue } from "./types";
 import useAsyncFeatures from "hooks/useAsyncFeatures";
 import { getFeatureId, removeFeaturesFromSourceByIds } from "utils/map/source";
@@ -41,6 +41,8 @@ export const useEditGrense = (
   grenseId: string,
   features: Feature<Geometry>[] | null
 ) => {
+  const { stopAllOtherEditing, resetEditingObject } =
+    useEditGrenser(grenseType);
   const { value, setValue } = useEditGrenseValue(grenseType, grenseId);
   const setLayerToAddTo = useAsyncFeatures(features, !!value?.editing);
 
@@ -72,6 +74,13 @@ export const useEditGrense = (
 
   const toggleEditing = async () => {
     const newObjectValue = { ...value };
+
+    // Denne fungerer ikke
+    // stopAllOtherEditing(grenseId);
+
+    // Dette er den faktiske "nuclear option"
+    // Den oppdaterer ikke sidemenyen.
+    resetEditingObject();
 
     newObjectValue.editing = !newObjectValue.editing;
 
