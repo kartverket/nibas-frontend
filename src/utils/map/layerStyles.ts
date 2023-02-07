@@ -30,7 +30,7 @@ const lineAndPointStyles = (color: string, dashed = false) => [
     stroke: new Stroke({
       color,
       lineDash: dashed ? [4, 6] : [],
-      width: dashed ? 2 : 1,
+      width: 2,
     }),
   }),
   new Style({
@@ -44,12 +44,12 @@ const lineAndPointStyles = (color: string, dashed = false) => [
   }),
 ];
 
-export const editStyles = lineAndPointStyles("#FF5555");
+export const editStyles = lineAndPointStyles("#EB48FB");
 export const dirtyStyles = lineAndPointStyles("#000000", true);
 export const selectStyles = lineAndPointStyles("#000000");
 export const grensetypeStyles: Record<GrenseId, Style[]> = {
-  fylker: lineAndPointStyles("#D8833B"),
-  kommuner: lineAndPointStyles("#EA33F7"),
+  fylker: lineAndPointStyles("#745FE8"),
+  kommuner: lineAndPointStyles("#FF7936"),
   nasjoner: lineAndPointStyles("#FF5555"),
   grunnkretser: lineAndPointStyles("#65C97A"),
   stemmekretser: lineAndPointStyles("#5296D5"),
