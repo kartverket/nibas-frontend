@@ -22,7 +22,7 @@ const Kart = () => {
   const { redigeringsmodusAktiv } = useRedigeringsmodus();
 
   useEditInteractions();
-  const selectedFeatures = useSelectInteraction();
+  const { selectedFeatures } = useSelectInteraction();
 
   useEffect(() => {
     // mapRef kan egentlig ikke være null her,

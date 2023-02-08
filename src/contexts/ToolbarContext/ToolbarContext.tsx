@@ -5,7 +5,12 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { ToolbarContextValue, HistoryEntry, ToolbarPointMode } from "./types";
+import {
+  ToolbarContextValue,
+  HistoryEntry,
+  ToolbarPointMode,
+  ToolbarEditMode,
+} from "./types";
 import {
   getFeatureIdsFromEntries,
   setFeatureCoordinatesForEntry,
@@ -108,9 +113,21 @@ export const ToolbarProvider: React.FC = ({ children }) => {
     onRedo,
   });
 
-  const [snapActive, setSnapActive] = useState(true);
+  const [activeEditModes, setActiveEditModes] = useState<ToolbarEditMode[]>([
+    "snap",
+  ]);
+
+  const toggleEditMode = (editMode: ToolbarEditMode) => {
+    if (activeEditModes.includes(editMode)) {
+      setActiveEditModes(activeEditModes.filter((em) => em !== editMode));
+    } else {
+      setActiveEditModes(activeEditModes.concat(editMode));
+    }
+  };
+
   const [activePointMode, setActivePointMode] =
     useState<ToolbarPointMode>(null);
+
   const togglePointMode = (pointMode: ToolbarPointMode) => {
     if (pointMode === activePointMode) {
       setActivePointMode(null);
@@ -119,7 +136,6 @@ export const ToolbarProvider: React.FC = ({ children }) => {
     }
   };
 
-  //punkt for hvor det legges til dirty
   useEffect(() => {
     if (historyValue.history.entries.length === 0) {
       if (
@@ -128,16 +144,22 @@ export const ToolbarProvider: React.FC = ({ children }) => {
       ) {
         saveDirtyFeatureIds();
       }
+      // Hvis det ikke er for å lagre, så er det for å forhindre uendelig løkke
       return;
     }
 
     const historyFeatures = historyValue.history.entries
       .filter((entry) => entry.type === "grense" || entry.type === "metadata")
-      .reduce<string[]>(getFeatureIdsFromEntries, []);
+      .reduce<string[][]>(getFeatureIdsFromEntries, []);
 
-    const editFeatures = historyFeatures.slice(historyValue.history.index);
-    const dirtyFeatures = historyFeatures.slice(0, historyValue.history.index);
+    const editFeatures = historyFeatures
+      .slice(historyValue.history.index)
+      .flatMap((id) => id);
+    const dirtyFeatures = historyFeatures
+      .slice(0, historyValue.history.index)
+      .flatMap((id) => id);
 
+    // For å forhindre uendelig løkke
     if (dirtyFeatureIds.length === dirtyFeatures.length) return;
 
     setEditFeatures(editFeatures);
@@ -157,8 +179,8 @@ export const ToolbarProvider: React.FC = ({ children }) => {
     activePointMode,
     clearDirtyStyles: clearSavedDirtyFeatureIds,
     togglePointMode,
-    snapActive,
-    setSnapActive,
+    activeEditModes,
+    toggleEditMode,
   };
 
   return (
