@@ -65,6 +65,14 @@ const ButtonToolbar = () => {
         {t("action.Fjern")}
       </ModeButton>
       <ModeButton
+        icon="edit_location_alt"
+        ariaLabel="Løsriv punkter"
+        isActive={activePointMode === "detach"}
+        onClick={() => togglePointMode("detach")}
+      >
+        {t("action.Løsriv")}
+      </ModeButton>
+      <ModeButton
         icon="location_off"
         ariaLabel="Splitt punkter"
         isActive={activePointMode === "split"}
@@ -73,14 +81,6 @@ const ButtonToolbar = () => {
         {t("action.Splitt")}
       </ModeButton>
       <Divider />
-      <ModeButton
-        icon="edit_location_alt"
-        ariaLabel="Løsriv punkter"
-        isActive={activeEditModes.includes("detach")}
-        onClick={() => toggleEditMode("detach")}
-      >
-        {t("action.Løsriv")}
-      </ModeButton>
       <ModeButton
         icon="magnet"
         ariaLabel="Snap til bakgrunnskart"

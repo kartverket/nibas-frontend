@@ -28,7 +28,7 @@ const getInfoFromFeature = (featureLike: FeatureLike) => {
 const useEditInteractions = () => {
   const { addEntry, updateEntry, history } = useToolbarSaving();
   const { activePointMode, activeEditModes } = useToolbar();
-  const detachIsActive = activeEditModes.includes("detach");
+  const detachIsActive = activePointMode === "detach";
   const { selectedFeatures } = useSelectInteraction();
 
   const modify = useMemo(
