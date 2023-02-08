@@ -140,11 +140,6 @@ const useEditInteractions = () => {
                     from: originalCoordinates,
                     to: featureInfo.coordinates,
                   },
-                ],
-              });
-              addEntry({
-                type: "grense",
-                changes: [
                   {
                     id: clonedFeatureInfo.featureId as string,
                     from: [],
