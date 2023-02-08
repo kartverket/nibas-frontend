@@ -64,22 +64,26 @@ const ButtonToolbar = () => {
       >
         {t("action.Fjern")}
       </ModeButton>
-      <ModeButton
-        icon="edit_location_alt"
-        ariaLabel="Løsriv punkter"
-        isActive={activePointMode === "detach"}
-        onClick={() => togglePointMode("detach")}
-      >
-        {t("action.Løsriv")}
-      </ModeButton>
-      <ModeButton
-        icon="location_off"
-        ariaLabel="Splitt punkter"
-        isActive={activePointMode === "split"}
-        onClick={() => togglePointMode("split")}
-      >
-        {t("action.Splitt")}
-      </ModeButton>
+      {false && (
+        <>
+          <ModeButton
+            icon="edit_location_alt"
+            ariaLabel="Løsriv punkter"
+            isActive={activePointMode === "detach"}
+            onClick={() => togglePointMode("detach")}
+          >
+            {t("action.Løsriv")}
+          </ModeButton>
+          <ModeButton
+            icon="location_off"
+            ariaLabel="Splitt punkter"
+            isActive={activePointMode === "split"}
+            onClick={() => togglePointMode("split")}
+          >
+            {t("action.Splitt")}
+          </ModeButton>
+        </>
+      )}
       <Divider />
       <ModeButton
         icon="magnet"
