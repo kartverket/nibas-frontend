@@ -1,11 +1,12 @@
-import React, { createContext, useCallback, useContext, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 import {
   EditingObject,
   EditingType,
   GrenseDictionary,
   ObjectValue,
 } from "./types";
-import { removeAllFeatures } from "utils/map/layers";
+import { getLayerById, removeAllFeatures } from "utils/map/layers";
+import { getFeatureId, removeFeaturesFromSourceByIds } from "utils/map/source";
 
 export type EditGrenserContextValue = {
   editingObject: EditingObject;
@@ -30,26 +31,24 @@ export const EditGrenserContext = createContext<
 export const EditGrenserProvider: React.FC = ({ children }) => {
   const [editingObject, setEditingObject] = useState<EditingObject>({});
 
-  console.log(editingObject);
-
   const setObjectValue = (
     type: EditingType,
     grenseId: string,
     values: ObjectValue = {}
   ) => {
-    setEditingObject({
-      ...editingObject,
+    setEditingObject((prevState) => ({
+      ...prevState,
       [type]: {
-        ...editingObject[type],
+        ...prevState[type],
         [grenseId]: values,
       },
-    });
+    }));
   };
 
-  const resetEditingObject = useCallback(() => {
+  const resetEditingObject = () => {
     removeAllFeatures();
     setEditingObject({});
-  }, []);
+  };
 
   const value = {
     editingObject,
@@ -84,12 +83,7 @@ export const useEditGrenser = (grenseType: EditingType) => {
     throw new Error("useEditGrenser must be used within a EditGrenserProvider");
   }
 
-  const {
-    editingObject,
-    setObjectValue,
-    setEditingObject,
-    resetEditingObject,
-  } = context;
+  const { editingObject, setObjectValue, setEditingObject } = context;
 
   const values = editingObject[grenseType] ?? {};
 
@@ -103,23 +97,27 @@ export const useEditGrenser = (grenseType: EditingType) => {
     });
   };
 
+  // TODO: denne tar rimelig lang tid å gå gjennom alle features, opptil flere sekunder
   const stopAllOtherEditing = (selectedGrenseId: string) => {
     for (const [grenseTypeId, grenseDictionary] of Object.entries(
       editingObject
     )) {
-      console.log(grenseTypeId);
       for (const [grenseId, grenseObject] of Object.entries(grenseDictionary)) {
-        console.log(grenseId);
-        console.log(grenseId === selectedGrenseId);
-        // Ingenting skjer når man kaller på dette.
+        const thisIsCurrentlyEditing = grenseId === selectedGrenseId;
         setObjectValue(grenseTypeId as EditingType, grenseId, {
-          visible: grenseObject.visible,
-          editing: grenseId === selectedGrenseId,
+          visible: grenseObject.editing
+            ? thisIsCurrentlyEditing
+            : grenseObject.visible,
+          editing: thisIsCurrentlyEditing,
         });
+        if (grenseObject.editing) {
+          removeFeaturesFromSourceByIds(
+            "edit",
+            getLayerById("edit").getSource().getFeatures().map(getFeatureId)
+          );
+        }
       }
     }
-    // Dette skal være "the nuclear option", og den gjør ingenting
-    // setEditingObject({});
   };
 
   return {
@@ -127,7 +125,6 @@ export const useEditGrenser = (grenseType: EditingType) => {
     setObjectValue: setObjectValueForType,
     setMultipleValues,
     stopAllOtherEditing,
-    resetEditingObject,
   };
 };
 

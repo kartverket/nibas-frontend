@@ -7,7 +7,7 @@ import useAsyncFeatures from "hooks/useAsyncFeatures";
 import { getFeatureId, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { GrenseId } from "hooks/layers/types";
 
-const layerIdByGrenseType: Record<EditingType, GrenseId> = {
+export const layerIdByGrenseType: Record<EditingType, GrenseId> = {
   fylke: "fylker",
   kommune: "kommuner",
   nasjon: "nasjoner",
@@ -41,8 +41,7 @@ export const useEditGrense = (
   grenseId: string,
   features: Feature<Geometry>[] | null
 ) => {
-  const { stopAllOtherEditing, resetEditingObject } =
-    useEditGrenser(grenseType);
+  const { stopAllOtherEditing } = useEditGrenser(grenseType);
   const { value, setValue } = useEditGrenseValue(grenseType, grenseId);
   const setLayerToAddTo = useAsyncFeatures(features, !!value?.editing);
 
@@ -75,12 +74,7 @@ export const useEditGrense = (
   const toggleEditing = async () => {
     const newObjectValue = { ...value };
 
-    // Denne fungerer ikke
-    // stopAllOtherEditing(grenseId);
-
-    // Dette er den faktiske "nuclear option"
-    // Den oppdaterer ikke sidemenyen.
-    resetEditingObject();
+    stopAllOtherEditing(grenseId);
 
     newObjectValue.editing = !newObjectValue.editing;
 
@@ -100,12 +94,10 @@ export const useEditGrense = (
 
       // hvis var synlig før editing ble true, fjern fra gamle layer
       if (!value?.visible || !features) return;
-
       const layerId = layerIdByGrenseType[grenseType];
       removeFeaturesFromSourceByIds(layerId, features.map(getFeatureId));
     } else if (!newObjectValue.editing) {
       if (!features) return;
-
       removeFeaturesFromSourceByIds("edit", features.map(getFeatureId));
     }
   };
