@@ -82,16 +82,12 @@ For å få låste bakgrunnskart til å fungere lokalt må du også få tak i bru
 
 ## Autentisering
 
-5 brukere har lov:
 
-21079408678
-21079408597
-21079408406
-21079408325
-21079408244
+### BankID
 
-### min-id
+Velg BankID, skriv inn personnummeret, deretter velg Bankid med kodebrikke.
 
-passord: password01
-pin: 12345
+Personnummer: 08089405603
+Engangskode: otp
+Passord: qwer1234
 
