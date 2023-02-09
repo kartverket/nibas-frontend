@@ -82,12 +82,24 @@ For å få låste bakgrunnskart til å fungere lokalt må du også få tak i bru
 
 ## Autentisering
 
+* Vær logget inn på enten kartverkets nett, VPN eller VDI.
+* Gå til et av testmiljøene
+  - Test: [nibas.test.skip.statkart.no](https://nibas.test.skip.statkart.no/)
+  - Dev: [nibas.dev.skip.statkart.no](https://nibas.dev.skip.statkart.no/)
+* Velg "Logg inn i Nasjonal inndelingsbase"
+* Logg inn med BankID
+  - Skriv inn personnummer
+  - Velg BankID med kodebrikke
+  - Skriv inn engangspassord
+  - Skriv inn passord
 
 ### BankID
 
-Velg BankID, skriv inn personnummeret, deretter velg Bankid med kodebrikke.
+Det er kun 1 gyldig bruker på testmiljøene.
 
 Personnummer: 08089405603
 Engangskode: otp
 Passord: qwer1234
 
+
+[Les mer om IDportens testbrukere.](https://docs.digdir.no/docs/idporten/idporten/idporten_testbrukere)
