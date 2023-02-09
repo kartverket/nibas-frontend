@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import { FeatureLike } from "ol/Feature";
+import Feature, { FeatureLike } from "ol/Feature";
 import LineString from "ol/geom/LineString";
 import { Snap } from "ol/interaction";
 import Modify, { ModifyEvent } from "ol/interaction/Modify";
@@ -9,10 +9,14 @@ import {
   useToolbar,
   useToolbarSaving,
 } from "contexts/ToolbarContext";
-import { getVectorLayers } from "utils/map/layers";
-import { editSource } from "hooks/layers/constants";
-import Style from "ol/style/Style";
+import { getLayerById, getVectorLayers } from "utils/map/layers";
 import { click } from "ol/events/condition";
+import { Collection, MapBrowserEvent } from "ol";
+import Geometry from "ol/geom/Geometry";
+import { editSource } from "hooks/layers/constants";
+import { squaredDistance } from "ol/coordinate";
+import { addFeaturesToSource } from "utils/map/source";
+import useSelectInteraction from "./useSelectInteraction";
 
 const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
@@ -23,24 +27,24 @@ const getInfoFromFeature = (featureLike: FeatureLike) => {
 
 const useEditInteractions = () => {
   const { addEntry, updateEntry, history } = useToolbarSaving();
-
-  const { activePointMode, snapActive } = useToolbar();
+  const { activePointMode, activeEditModes } = useToolbar();
+  const detachIsActive = activePointMode === "detach";
+  const { selectedFeatures } = useSelectInteraction();
 
   const modify = useMemo(
     () =>
       new Modify({
-        source: editSource,
-        style: new Style({}), // TODO: bør kanskje fjernes for UX, gir en indikator på hva man velger
+        source: detachIsActive ? undefined : editSource,
+        features: detachIsActive ? new Collection(selectedFeatures) : undefined,
         insertVertexCondition: () => {
           return activePointMode === "add";
         },
         deleteCondition: (mapBrowserEvent) => {
-          // TODO: viktig, vi må finne et sted å legge dette til i history, hvis man angrer nå så forsvinner mange slettinger
           return activePointMode === "remove" && click(mapBrowserEvent);
         },
         pixelTolerance: 20,
       }),
-    [activePointMode]
+    [activePointMode, detachIsActive, selectedFeatures]
   );
 
   useEffect(() => {
@@ -57,7 +61,7 @@ const useEditInteractions = () => {
 
     map.addInteraction(modify);
     // snaps må legges til etter modify og draw interactions
-    if (snapActive) {
+    if (activeEditModes.includes("snap")) {
       snaps.forEach((snap) => {
         map.addInteraction(snap);
       });
@@ -69,7 +73,92 @@ const useEditInteractions = () => {
         map.removeInteraction(snap);
       });
     };
-  }, [modify, snapActive]);
+  }, [activeEditModes, modify]);
+
+  useEffect(() => {
+    const splitFeature = (event: MapBrowserEvent<MouseEvent>) => {
+      if (activePointMode === "split" && !event.dragging) {
+        // Stopper propagering for å unngå selection når man skal splitte
+        event.stopPropagation();
+
+        const editLayer = getLayerById("edit");
+        const features = map.getFeaturesAtPixel(event.pixel, {
+          layerFilter: (layer) => layer === editLayer,
+          hitTolerance: 20,
+        });
+        // Forutsetter at man bare trykker på én feature
+        const feature = features[0];
+        if (feature instanceof Feature<Geometry>) {
+          const geometry = feature.getGeometry() as LineString;
+          const coordinates = geometry.getCoordinates();
+
+          // Siden OL-objekter er mutable og vi trenger dette til senere:
+          const originalCoordinates = [...coordinates];
+
+          // Ikke vits å gjøre splitting med mindre du har en linje med minst tre punkter
+          if (coordinates.length > 2) {
+            const coordinatesWithDistance = coordinates.map((coord) => [
+              ...coord,
+              squaredDistance(coord, event.coordinate),
+            ]);
+            const nearestVertex = coordinatesWithDistance
+              .sort((a, b) => a[2] - b[2])
+              .map((cwd) => cwd.slice(0, -1))[0];
+
+            const nearestVertexIndex = coordinates.findIndex(
+              (v) => v[0] === nearestVertex[0] && v[1] === nearestVertex[1]
+            );
+
+            // TODO: clone er trolig overivrig, må gå gjennom alle properties for å se hva som skal endres
+            const clonedFeature = feature.clone();
+            const clonedGeometry = clonedFeature.getGeometry() as LineString;
+            const clonedCoordinates = clonedGeometry.getCoordinates();
+            clonedFeature.setId(`${feature.getId()}-clone`);
+
+            const headCoordinates = coordinates.splice(
+              0,
+              nearestVertexIndex + 1
+            );
+            const tailCoordinates =
+              clonedCoordinates.splice(nearestVertexIndex);
+
+            geometry.setCoordinates(headCoordinates);
+            clonedGeometry.setCoordinates(tailCoordinates);
+
+            addFeaturesToSource("edit", [clonedFeature]);
+
+            const featureInfo = getInfoFromFeature(feature);
+            const clonedFeatureInfo = getInfoFromFeature(clonedFeature);
+            if (featureInfo.featureId && clonedFeatureInfo.featureId) {
+              // TODO: det kan være klonen blir sendt til utkast selv om man angret en splittelse?
+              // typ må kanskje ta from og to på hele features fremfor bare koordinater
+              addEntry({
+                type: "grense",
+                changes: [
+                  {
+                    id: featureInfo.featureId as string,
+                    from: originalCoordinates,
+                    to: featureInfo.coordinates,
+                  },
+                  {
+                    id: clonedFeatureInfo.featureId as string,
+                    from: [],
+                    to: clonedFeatureInfo.coordinates,
+                  },
+                ],
+              });
+            }
+          }
+        }
+      }
+    };
+
+    map.on("click", splitFeature);
+
+    return () => {
+      map.un("click", splitFeature);
+    };
+  }, [activePointMode, addEntry]);
 
   useEffect(() => {
     const addCurrentCoordinatesToHistory = (e: ModifyEvent) => {
