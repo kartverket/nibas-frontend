@@ -153,6 +153,7 @@ const StemmekretserPanel = ({ kommune }: Props) => {
                           (s) => s.nummer !== stemmekrets.nummer
                         ) || []
                       }
+                      toggleRow={toggleRow}
                     />
                   )}
                   {isFutureChangesOpen(getIdFromEntity(stemmekrets)) && (

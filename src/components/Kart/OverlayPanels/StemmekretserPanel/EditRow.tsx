@@ -11,9 +11,15 @@ type Props = {
   stemmekrets: StemmekretsRef;
   kommuneId: string;
   alleStemmekretser: StemmekretsRef[];
+  toggleRow: (id: string) => void;
 };
 
-const EditRow = ({ stemmekrets, kommuneId, alleStemmekretser }: Props) => {
+const EditRow = ({
+  stemmekrets,
+  kommuneId,
+  alleStemmekretser,
+  toggleRow,
+}: Props) => {
   const stemmekretsId = getIdFromEntity(stemmekrets);
 
   const { data: fullStemmekrets } = useNibasApi("/v1/stemmekretser/{id}", {
@@ -28,7 +34,7 @@ const EditRow = ({ stemmekrets, kommuneId, alleStemmekretser }: Props) => {
   return (
     <AccordionRow>
       <td colSpan={7}>
-        <Tabs tabTransKeys={["stemmekrets.Detaljer"]}>
+        <Tabs tabTransKeys={["stemmekrets.Detaljer", "stemmekrets.Slå sammen"]}>
           <DetailsTab
             stemmekretsId={stemmekretsId}
             kommuneId={kommuneId}
@@ -37,6 +43,7 @@ const EditRow = ({ stemmekrets, kommuneId, alleStemmekretser }: Props) => {
           <MergeTab
             stemmekrets={utkastStemmekrets}
             alleStemmekretser={alleStemmekretser}
+            toggleRow={() => toggleRow(stemmekretsId)}
           />
         </Tabs>
       </td>

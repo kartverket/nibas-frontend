@@ -8,13 +8,15 @@ import styled from "styled-components";
 import { StemmekretsRef, StemmekretsResponse } from "types/api";
 import { BlockLabel } from "../metadataComponents";
 import { Section, ContrastSection, InputsWrapper } from "./components";
+import { getIdFromEntity } from "utils/api";
 
 type Props = {
   stemmekrets: StemmekretsResponse | undefined;
   alleStemmekretser: StemmekretsRef[];
+  toggleRow: (id: string) => void;
 };
 
-const MergeTab = ({ stemmekrets, alleStemmekretser }: Props) => {
+const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   const { t } = useTranslation();
   const [stemmekretsnavn, setStemmekretsnavn] = useState(
     stemmekrets?.stemmekretsnavn
@@ -22,6 +24,8 @@ const MergeTab = ({ stemmekrets, alleStemmekretser }: Props) => {
   const [stemmekretsnummer, setStemmekretsnummer] = useState(
     stemmekrets?.stemmekretsnummer
   );
+
+  const stemmekretsId = stemmekrets ? getIdFromEntity(stemmekrets) : "";
 
   return (
     <div>
@@ -71,7 +75,9 @@ const MergeTab = ({ stemmekrets, alleStemmekretser }: Props) => {
       </ContrastSection>
       <Section>
         <Buttons>
-          <Button variant="tertiary">{t("action.Avbryt")}</Button>
+          <Button onClick={() => toggleRow(stemmekretsId)} variant="tertiary">
+            {t("action.Avbryt")}
+          </Button>
           <Button>{t("stemmekrets.Slå sammen")}</Button>
         </Buttons>
       </Section>
