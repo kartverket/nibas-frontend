@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
-import { EditGrenserContext } from "./EditGrenserContext";
+import { EditGrenserContext, useEditGrenser } from "./EditGrenserContext";
 import { EditingType, ObjectValue } from "./types";
 import useAsyncFeatures from "hooks/useAsyncFeatures";
 import { getFeatureId, removeFeaturesFromSourceByIds } from "utils/map/source";
@@ -41,6 +41,7 @@ export const useEditGrense = (
   grenseId: string,
   features: Feature<Geometry>[] | null
 ) => {
+  const { resetEditingObject } = useEditGrenser(grenseType);
   const { value, setValue } = useEditGrenseValue(grenseType, grenseId);
   const setLayerToAddTo = useAsyncFeatures(features, !!value?.editing);
 
@@ -73,6 +74,8 @@ export const useEditGrense = (
   const toggleEditing = async () => {
     const newObjectValue = { ...value };
 
+    resetEditingObject();
+
     newObjectValue.editing = !newObjectValue.editing;
 
     if (value.visible && !value.editing) {
@@ -91,12 +94,10 @@ export const useEditGrense = (
 
       // hvis var synlig før editing ble true, fjern fra gamle layer
       if (!value?.visible || !features) return;
-
       const layerId = layerIdByGrenseType[grenseType];
       removeFeaturesFromSourceByIds(layerId, features.map(getFeatureId));
     } else if (!newObjectValue.editing) {
       if (!features) return;
-
       removeFeaturesFromSourceByIds("edit", features.map(getFeatureId));
     }
   };
