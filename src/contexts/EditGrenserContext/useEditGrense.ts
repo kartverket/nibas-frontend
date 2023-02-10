@@ -41,7 +41,7 @@ export const useEditGrense = (
   grenseId: string,
   features: Feature<Geometry>[] | null
 ) => {
-  const { stopAllOtherEditing } = useEditGrenser(grenseType);
+  const { resetEditingObject } = useEditGrenser(grenseType);
   const { value, setValue } = useEditGrenseValue(grenseType, grenseId);
   const setLayerToAddTo = useAsyncFeatures(features, !!value?.editing);
 
@@ -74,7 +74,7 @@ export const useEditGrense = (
   const toggleEditing = async () => {
     const newObjectValue = { ...value };
 
-    stopAllOtherEditing(grenseId);
+    resetEditingObject();
 
     newObjectValue.editing = !newObjectValue.editing;
 

@@ -47,7 +47,7 @@ export const EditGrenserProvider: React.FC = ({ children }) => {
 
   const resetEditingObject = () => {
     removeAllFeatures();
-    setEditingObject({});
+    setEditingObject(() => ({}));
   };
 
   const value = {
@@ -83,7 +83,12 @@ export const useEditGrenser = (grenseType: EditingType) => {
     throw new Error("useEditGrenser must be used within a EditGrenserProvider");
   }
 
-  const { editingObject, setObjectValue, setEditingObject } = context;
+  const {
+    editingObject,
+    setObjectValue,
+    setEditingObject,
+    resetEditingObject,
+  } = context;
 
   const values = editingObject[grenseType] ?? {};
 
@@ -97,36 +102,11 @@ export const useEditGrenser = (grenseType: EditingType) => {
     }));
   };
 
-  // TODO: denne tar rimelig lang tid å gå gjennom alle features, opptil flere sekunder
-  const stopAllOtherEditing = (selectedGrenseId: string) => {
-    console.time("stopAllOtherEditing");
-    for (const [grenseTypeId, grenseDictionary] of Object.entries(
-      editingObject
-    )) {
-      for (const [grenseId, grenseObject] of Object.entries(grenseDictionary)) {
-        const thisIsCurrentlyEditing = grenseId === selectedGrenseId;
-        setObjectValue(grenseTypeId as EditingType, grenseId, {
-          visible: grenseObject.editing
-            ? thisIsCurrentlyEditing
-            : grenseObject.visible,
-          editing: thisIsCurrentlyEditing,
-        });
-        if (grenseObject.editing) {
-          removeFeaturesFromSourceByIds(
-            "edit",
-            getLayerById("edit").getSource().getFeatures().map(getFeatureId)
-          );
-        }
-      }
-    }
-    console.timeEnd("stopAllOtherEditing");
-  };
-
   return {
     values,
     setObjectValue: setObjectValueForType,
     setMultipleValues,
-    stopAllOtherEditing,
+    resetEditingObject,
   };
 };
 
