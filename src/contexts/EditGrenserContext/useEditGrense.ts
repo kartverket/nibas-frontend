@@ -7,7 +7,7 @@ import useAsyncFeatures from "hooks/useAsyncFeatures";
 import { getFeatureId, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { GrenseId } from "hooks/layers/types";
 
-export const layerIdByGrenseType: Record<EditingType, GrenseId> = {
+const layerIdByGrenseType: Record<EditingType, GrenseId> = {
   fylke: "fylker",
   kommune: "kommuner",
   nasjon: "nasjoner",

@@ -5,8 +5,7 @@ import {
   GrenseDictionary,
   ObjectValue,
 } from "./types";
-import { getLayerById, removeAllFeatures } from "utils/map/layers";
-import { getFeatureId, removeFeaturesFromSourceByIds } from "utils/map/source";
+import { removeAllFeatures } from "utils/map/layers";
 
 export type EditGrenserContextValue = {
   editingObject: EditingObject;
