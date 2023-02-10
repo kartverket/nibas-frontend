@@ -91,14 +91,15 @@ export const useEditGrenser = (grenseType: EditingType) => {
     setObjectValue(grenseType, grenseId, newValues);
 
   const setMultipleValues = (newDictionary: GrenseDictionary) => {
-    setEditingObject({
-      ...editingObject,
+    setEditingObject((prevEditingObject) => ({
+      ...prevEditingObject,
       [grenseType]: newDictionary,
-    });
+    }));
   };
 
   // TODO: denne tar rimelig lang tid å gå gjennom alle features, opptil flere sekunder
   const stopAllOtherEditing = (selectedGrenseId: string) => {
+    console.time("stopAllOtherEditing");
     for (const [grenseTypeId, grenseDictionary] of Object.entries(
       editingObject
     )) {
@@ -118,6 +119,7 @@ export const useEditGrenser = (grenseType: EditingType) => {
         }
       }
     }
+    console.timeEnd("stopAllOtherEditing");
   };
 
   return {
