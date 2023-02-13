@@ -17,7 +17,7 @@ import {
 import { updateUtkast as updateApiUtkast } from "api/utkast";
 import { HistoryChange, useToolbar } from "contexts/ToolbarContext";
 import useNibasApi from "hooks/useNibasApi";
-import { OppdaterUtkastRequest } from "types/api";
+import { OppdaterUtkastRequest, UtkastResponse } from "types/api";
 import { resetMapView } from "utils/map";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
@@ -144,10 +144,9 @@ export const useUtkastEntity = <T extends UtkastEntity>(
 };
 
 export const useUtkastFeature = (
-  featureCollection: GeoJSONFeatureCollection | GeoJSONFeatureCollection[]
+  featureCollection: GeoJSONFeatureCollection | GeoJSONFeatureCollection[],
+  utkast?: UtkastResponse
 ) => {
-  const { utkast } = useUtkast();
-
   return useMemo(() => {
     if (!featureCollection || !utkast) return featureCollection;
 

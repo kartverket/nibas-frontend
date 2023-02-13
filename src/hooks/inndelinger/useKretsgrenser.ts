@@ -6,7 +6,7 @@ import useSWR from "swr";
 import useNibasApi from "../useNibasApi";
 import { useEditGrenseValue } from "contexts/EditGrenserContext";
 import { Kretstype } from "contexts/InndelingerKretsContext";
-import { useUtkastFeature } from "contexts/UtkastContext";
+import { useUtkast, useUtkastFeature } from "contexts/UtkastContext";
 import { LayerId } from "hooks/layers/types";
 import useAsyncFeatures from "hooks/useAsyncFeatures";
 import { GrunnkretsResponse, KretsRef, StemmekretsResponse } from "types/api";
@@ -21,6 +21,7 @@ import { isPoint } from "types/geometry";
 import { isNotNullOrUndefined } from "types/common";
 import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
 import { getIdFromEntity } from "utils/api";
+import useDirtyStyles from "hooks/interactions/useDirtyStyles";
 
 const endpointByKretstype = {
   grunnkrets: "grunnkretser",
@@ -106,6 +107,8 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   const grenseValue = useEditGrenseValue(type, kommuneId);
   const { visible } = grenseValue;
   const { tokenHolderFunc } = useAuthenticationFlow();
+  const { utkast } = useUtkast();
+  const { setDirtyFeatures } = useDirtyStyles();
 
   const { data: kretserByKommune } = useNibasApi(
     visible ? getKretserByKommuneUrl(type) : null,
@@ -134,7 +137,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     representasjonspunkterFetcher
   );
 
-  const utkastGeoJsons = useUtkastFeature(grenserGeoJsons);
+  const utkastGeoJsons = useUtkastFeature(grenserGeoJsons, utkast);
 
   const allFeatures = useMemo(() => {
     if (!utkastGeoJsons || !representasjonspunkter) return null;
@@ -144,13 +147,28 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
       .concat(representasjonspunkter.flatMap(getFeaturesFromGeoJson));
 
     return features;
-  }, [utkastGeoJsons, representasjonspunkter]);
+  }, [representasjonspunkter, utkastGeoJsons]);
+
+  const applyDirtyStylesToUtkastFeatures = (features: Feature<Geometry>[]) => {
+    const featuresSlice = utkast?.operasjoner.grenseendringer?.endredeFeatures;
+    const dirtyFeatureIds: string[] = [];
+    if (features && featuresSlice) {
+      for (const feature of features) {
+        const id = feature.getId();
+        if (id && featuresSlice[id]) {
+          dirtyFeatureIds.push(id.toString());
+        }
+      }
+    }
+    setDirtyFeatures(dirtyFeatureIds);
+  };
 
   useAddInndelingerKontekst(allFeatures, type, kommuneId);
 
   const { addFeaturesToLayer } = useAsyncFeatures(
     allFeatures,
-    !!grenseValue?.editing
+    !!grenseValue?.editing,
+    () => applyDirtyStylesToUtkastFeatures(allFeatures ?? [])
   );
 
   const addKretserToLayer = (layerId: LayerId) => {
