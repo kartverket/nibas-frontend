@@ -28,7 +28,7 @@ const useAsyncFeatures = (
     }
   }, [layerToAddTo, features, shouldZoomToFeatures]);
 
-  return setLayerToAddTo;
+  return { addFeaturesToLayer: setLayerToAddTo };
 };
 
 export default useAsyncFeatures;

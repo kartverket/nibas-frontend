@@ -148,10 +148,13 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
 
   useAddInndelingerKontekst(allFeatures, type, kommuneId);
 
-  const setLayerToAddTo = useAsyncFeatures(allFeatures, !!grenseValue?.editing);
+  const { addFeaturesToLayer } = useAsyncFeatures(
+    allFeatures,
+    !!grenseValue?.editing
+  );
 
   const addKretserToLayer = (layerId: LayerId) => {
-    setLayerToAddTo(layerId);
+    addFeaturesToLayer(layerId);
   };
 
   const removeKretserFromLayer = (layerId: LayerId) => {

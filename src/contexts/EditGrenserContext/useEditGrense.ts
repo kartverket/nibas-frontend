@@ -43,7 +43,7 @@ export const useEditGrense = (
 ) => {
   const { resetEditingObject } = useEditGrenser(grenseType);
   const { value, setValue } = useEditGrenseValue(grenseType, grenseId);
-  const setLayerToAddTo = useAsyncFeatures(features, !!value?.editing);
+  const { addFeaturesToLayer } = useAsyncFeatures(features, !!value?.editing);
 
   const toggleVisible = () => {
     const newObjectValue = {
@@ -65,9 +65,9 @@ export const useEditGrense = (
       }
     } else if (newObjectValue?.editing) {
       // hvis editing skal features legges tilbake til edit-laget
-      setLayerToAddTo("edit");
+      addFeaturesToLayer("edit");
     } else {
-      setLayerToAddTo(layerId);
+      addFeaturesToLayer(layerId);
     }
   };
 
@@ -90,7 +90,7 @@ export const useEditGrense = (
 
     if (newObjectValue.visible) {
       // legg til i edit fordi dette er etter checkbox click
-      setLayerToAddTo("edit");
+      addFeaturesToLayer("edit");
 
       // hvis var synlig før editing ble true, fjern fra gamle layer
       if (!value?.visible || !features) return;

@@ -9,6 +9,7 @@ import { EditingType } from "contexts/EditGrenserContext";
 import LineString from "ol/geom/LineString";
 import { Feature } from "ol";
 import { Outline } from "style/mixins";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   grenseType: EditingType;
@@ -32,6 +33,8 @@ const EditableGrenseAccordion: FC<Props> = ({
     features
   );
 
+  const { t } = useTranslation();
+
   const accordion = useVisibility();
 
   return (
@@ -51,7 +54,9 @@ const EditableGrenseAccordion: FC<Props> = ({
           <span>{title}</span>
           <div>
             <LinkButton onClick={toggleEditing}>
-              {value.editing ? "Stopp redigering" : `Rediger grenser`}
+              {value.editing
+                ? t("action.Stopp redigering")
+                : t("action.Rediger grenser")}
             </LinkButton>
           </div>
         </TextContent>
