@@ -108,7 +108,11 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   const { visible } = grenseValue;
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { utkast } = useUtkast();
-  const { setDirtyFeatures } = useDirtyStyles();
+  // TODO: problemet her er at dette blir en instans av useDirtyStyles,
+  // det er ikke den samme dirtystyles v ibruker i toolbarcontext
+  // vi deler altså ikke state på tvers her, bare state-logikk
+  // for å gjøre det trenger vi en helt egen context?
+  const { saveUtkastDirtyFeatureIds } = useDirtyStyles();
 
   const { data: kretserByKommune } = useNibasApi(
     visible ? getKretserByKommuneUrl(type) : null,
@@ -160,7 +164,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
         }
       }
     }
-    setDirtyFeatures(dirtyFeatureIds);
+    saveUtkastDirtyFeatureIds(dirtyFeatureIds);
   };
 
   useAddInndelingerKontekst(allFeatures, type, kommuneId);

@@ -40,6 +40,13 @@ const useDirtyStyles = () => {
     setDirtyFeatureIds([]);
   };
 
+  const saveUtkastDirtyFeatureIds = (features: string[]) => {
+    setSavedDirtyFeaturesIds(features.concat(savedDirtyFeatureIds));
+    for (const featureId of features) {
+      editSource.getFeatureById(featureId)?.setStyle(dirtyStyles);
+    }
+  };
+
   const saveDirtyFeatureIds = () => {
     setSavedDirtyFeaturesIds(dirtyFeatureIds.concat(savedDirtyFeatureIds));
     setDirtyFeatureIds([]);
@@ -51,6 +58,7 @@ const useDirtyStyles = () => {
     setEditFeatures,
     saveDirtyFeatureIds,
     savedDirtyFeatureIds,
+    saveUtkastDirtyFeatureIds,
     clearSavedDirtyFeatureIds,
   };
 };
