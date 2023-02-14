@@ -20,12 +20,7 @@ const useDirtyStyles = () => {
   };
 
   const setDirtyFeatures = (features: string[]) => {
-    console.log(features);
     for (const featureId of features) {
-      // TODO: utvid denne til å også fargelegge utenfor editSource?
-      // skal trolig bare gjelde for lagrede utkastendringer...
-      // kanskje en tredje liste hadde vært gunstig, som vi bare fyller i useKretsgrenser
-      // så fargelegger den alt etter behov
       editSource.getFeatureById(featureId)?.setStyle(dirtyStyles);
     }
     for (const featureId of savedDirtyFeatureIds) {
