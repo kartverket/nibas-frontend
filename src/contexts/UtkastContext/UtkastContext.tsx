@@ -21,6 +21,7 @@ import { OppdaterUtkastRequest, UtkastResponse } from "types/api";
 import { resetMapView } from "utils/map";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
+import { removeAllFeatures } from "utils/map/layers";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
@@ -109,6 +110,7 @@ export const UtkastProvider: React.FC = ({ children }) => {
     clearHistory({ hasPreviouslySavedHistory: false });
     clearDirtyStyles();
     setSearchParams({});
+    removeAllFeatures();
     resetEditingObject();
     closePanels();
   };
