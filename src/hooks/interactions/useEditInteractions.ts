@@ -11,6 +11,7 @@ import { click } from "ol/events/condition";
 import { Collection } from "ol";
 import { editSource } from "hooks/layers/constants";
 import useSelectInteraction from "./useSelectInteraction";
+import { pixelTolerance } from "./constants";
 
 const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
@@ -35,7 +36,7 @@ const useEditInteractions = () => {
         deleteCondition: (mapBrowserEvent) => {
           return activePointMode === "remove" && click(mapBrowserEvent);
         },
-        pixelTolerance: 20,
+        pixelTolerance: pixelTolerance,
       }),
     [activePointMode, detachIsActive, selectedFeatures]
   );

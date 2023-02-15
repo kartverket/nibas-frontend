@@ -7,6 +7,7 @@ import { MapBrowserEvent } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { squaredDistance } from "ol/coordinate";
 import { addFeaturesToSource } from "utils/map/source";
+import { pixelTolerance } from "./constants";
 
 // TODO: denne koden er ikke i bruk og skal ombygges i fremtiden
 // vi måtte gå tilbake til scratch for å finne ut hva backenden vil ha fra frontenden
@@ -23,7 +24,7 @@ const useSplitInteraction = () => {
       const editLayer = getLayerById("edit");
       const features = map.getFeaturesAtPixel(event.pixel, {
         layerFilter: (layer) => layer === editLayer,
-        hitTolerance: 20,
+        hitTolerance: pixelTolerance,
       });
       // Forutsetter at man bare trykker på én feature
       const feature = features[0];
