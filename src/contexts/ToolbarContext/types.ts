@@ -47,7 +47,7 @@ export type EditContextType = HistoryEntry["type"];
 export type ToolbarHistory = History<HistoryEntry>;
 
 export type ToolbarPointMode = null | "add" | "remove" | "split" | "detach";
-export type ToolbarEditMode = "snap";
+export type ToolbarEditMode = "draw" | "snap";
 
 export type ToolbarContextValue = {
   undo: () => void;
