@@ -21,7 +21,7 @@ import { isPoint } from "types/geometry";
 import { isNotNullOrUndefined } from "types/common";
 import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
 import { getIdFromEntity } from "utils/api";
-import useDirtyStyles from "hooks/interactions/useDirtyStyles";
+import { useToolbar } from "contexts/ToolbarContext";
 
 const endpointByKretstype = {
   grunnkrets: "grunnkretser",
@@ -108,11 +108,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   const { visible } = grenseValue;
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { utkast } = useUtkast();
-  // TODO: problemet her er at dette blir en instans av useDirtyStyles,
-  // det er ikke den samme dirtystyles v ibruker i toolbarcontext
-  // vi deler altså ikke state på tvers her, bare state-logikk
-  // for å gjøre det trenger vi en helt egen context?
-  const { saveUtkastDirtyFeatureIds } = useDirtyStyles();
+  const { setAndSaveUtkastFeatures } = useToolbar();
 
   const { data: kretserByKommune } = useNibasApi(
     visible ? getKretserByKommuneUrl(type) : null,
@@ -154,6 +150,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   }, [representasjonspunkter, utkastGeoJsons]);
 
   const applyDirtyStylesToUtkastFeatures = (features: Feature<Geometry>[]) => {
+    console.log("applyDirtyStylesToUtkastFeatures");
     const featuresSlice = utkast?.operasjoner.grenseendringer?.endredeFeatures;
     const dirtyFeatureIds: string[] = [];
     if (features && featuresSlice) {
@@ -164,7 +161,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
         }
       }
     }
-    saveUtkastDirtyFeatureIds(dirtyFeatureIds);
+    setAndSaveUtkastFeatures(dirtyFeatureIds);
   };
 
   useAddInndelingerKontekst(allFeatures, type, kommuneId);

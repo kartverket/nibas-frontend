@@ -106,6 +106,7 @@ export const ToolbarProvider: React.FC = ({ children }) => {
     setEditFeatures,
     saveDirtyFeatureIds,
     clearSavedDirtyFeatureIds,
+    setAndSaveUtkastFeatures,
   } = useDirtyStyles();
 
   const historyValue = useHistory({
@@ -177,6 +178,7 @@ export const ToolbarProvider: React.FC = ({ children }) => {
   const value = {
     ...historyValue,
     activePointMode,
+    setAndSaveUtkastFeatures,
     clearDirtyStyles: clearSavedDirtyFeatureIds,
     togglePointMode,
     activeEditModes,

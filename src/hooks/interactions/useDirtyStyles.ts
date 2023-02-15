@@ -2,6 +2,7 @@ import { editSource } from "hooks/layers/constants";
 import { useState } from "react";
 import { dirtyStyles, editStyles } from "utils/map/layerStyles";
 
+// TODO: bør kanskje tydeliggjøres at denne bare bør brukes i ToolbarContext, kanskje legg den inn i den filen
 const useDirtyStyles = () => {
   const [dirtyFeatureIds, setDirtyFeatureIds] = useState<string[]>([]);
   const [savedDirtyFeatureIds, setSavedDirtyFeaturesIds] = useState<string[]>(
@@ -40,16 +41,16 @@ const useDirtyStyles = () => {
     setDirtyFeatureIds([]);
   };
 
-  const saveUtkastDirtyFeatureIds = (features: string[]) => {
-    setSavedDirtyFeaturesIds(features.concat(savedDirtyFeatureIds));
+  const saveDirtyFeatureIds = () => {
+    setSavedDirtyFeaturesIds([...savedDirtyFeatureIds, ...dirtyFeatureIds]);
+    setDirtyFeatureIds([]);
+  };
+
+  const setAndSaveUtkastFeatures = (features: string[]) => {
     for (const featureId of features) {
       editSource.getFeatureById(featureId)?.setStyle(dirtyStyles);
     }
-  };
-
-  const saveDirtyFeatureIds = () => {
-    setSavedDirtyFeaturesIds(dirtyFeatureIds.concat(savedDirtyFeatureIds));
-    setDirtyFeatureIds([]);
+    setSavedDirtyFeaturesIds([...savedDirtyFeatureIds, ...features]);
   };
 
   return {
@@ -58,8 +59,8 @@ const useDirtyStyles = () => {
     setEditFeatures,
     saveDirtyFeatureIds,
     savedDirtyFeatureIds,
-    saveUtkastDirtyFeatureIds,
     clearSavedDirtyFeatureIds,
+    setAndSaveUtkastFeatures,
   };
 };
 
