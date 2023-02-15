@@ -150,7 +150,6 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   }, [representasjonspunkter, utkastGeoJsons]);
 
   const applyDirtyStylesToUtkastFeatures = (features: Feature<Geometry>[]) => {
-    console.log("applyDirtyStylesToUtkastFeatures");
     const featuresSlice = utkast?.operasjoner.grenseendringer?.endredeFeatures;
     const dirtyFeatureIds: string[] = [];
     if (features && featuresSlice) {
