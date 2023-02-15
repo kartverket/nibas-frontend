@@ -5,7 +5,6 @@ import {
   GrenseDictionary,
   ObjectValue,
 } from "./types";
-import { removeAllFeatures } from "utils/map/layers";
 
 export type EditGrenserContextValue = {
   editingObject: EditingObject;
@@ -45,7 +44,6 @@ export const EditGrenserProvider: React.FC = ({ children }) => {
   };
 
   const resetEditingObject = () => {
-    removeAllFeatures();
     setEditingObject(() => ({}));
   };
 

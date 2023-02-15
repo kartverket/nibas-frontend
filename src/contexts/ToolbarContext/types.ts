@@ -59,6 +59,7 @@ export type ToolbarContextValue = {
   }: {
     hasPreviouslySavedHistory: boolean;
   }) => void;
+  setAndSaveUtkastFeatures: (features: string[]) => void;
   clearDirtyStyles: () => void;
   activePointMode: ToolbarPointMode;
   togglePointMode: (pointMode: ToolbarPointMode) => void;

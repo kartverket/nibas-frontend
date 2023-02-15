@@ -11,7 +11,8 @@ const parser = new WMTSCapabilities();
 
 export const addFeaturesToSource = (
   sourceId: LayerId,
-  features: Feature<Geometry>[]
+  features: Feature<Geometry>[],
+  callback?: () => void
 ) => {
   const layer = getLayerById(sourceId) as VectorLayer<GeometryVectorSource>;
   const source = layer.getSource();
@@ -37,6 +38,7 @@ export const addFeaturesToSource = (
   });
 
   source.addFeatures(newFeatures);
+  if (callback) callback();
 };
 
 export const removeFeaturesFromSourceByIds = (

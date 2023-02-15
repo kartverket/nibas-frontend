@@ -12,7 +12,8 @@ import { zoomToFeatures } from "utils/map";
  */
 const useAsyncFeatures = (
   features: Feature<Geometry>[] | null,
-  shouldZoomToFeatures: boolean
+  shouldZoomToFeatures: boolean,
+  callback?: () => void
 ) => {
   const [layerToAddTo, setLayerToAddTo] = useState<LayerId | null>(null);
 
@@ -20,15 +21,15 @@ const useAsyncFeatures = (
   useEffect(() => {
     if (!layerToAddTo || !features) return;
 
-    addFeaturesToSource(layerToAddTo, features);
+    addFeaturesToSource(layerToAddTo, features, callback);
     setLayerToAddTo(null);
 
     if (shouldZoomToFeatures) {
       zoomToFeatures(features);
     }
-  }, [layerToAddTo, features, shouldZoomToFeatures]);
+  }, [layerToAddTo, features, shouldZoomToFeatures, callback]);
 
-  return setLayerToAddTo;
+  return { addFeaturesToLayer: setLayerToAddTo };
 };
 
 export default useAsyncFeatures;
