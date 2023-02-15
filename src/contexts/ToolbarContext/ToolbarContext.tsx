@@ -51,6 +51,13 @@ const onUndo = (entry: HistoryEntry) => {
         })
       );
     }
+    case "stemmekretssammenslaaingsendring": {
+      return document.dispatchEvent(
+        new CustomEvent("stemmekretssammenslaaingsendringUndo", {
+          detail: { entry },
+        })
+      );
+    }
   }
 
   ensureAllCasesCovered(type);
@@ -83,6 +90,13 @@ const onRedo = (entry: HistoryEntry) => {
     case "utkast": {
       return document.dispatchEvent(
         new CustomEvent("utkastRedo", {
+          detail: { entry },
+        })
+      );
+    }
+    case "stemmekretssammenslaaingsendring": {
+      return document.dispatchEvent(
+        new CustomEvent("stemmekretssammenslaaingsendringRedo", {
           detail: { entry },
         })
       );

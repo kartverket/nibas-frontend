@@ -27,6 +27,12 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
 
   const stemmekretsId = stemmekrets ? getIdFromEntity(stemmekrets) : "";
 
+  const mergeStemmekrets = () => {
+    console.log("merging");
+
+    //her må det skje følgende:
+  };
+
   return (
     <div>
       <Section>
@@ -78,7 +84,9 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
           <Button onClick={() => toggleRow(stemmekretsId)} variant="tertiary">
             {t("action.Avbryt")}
           </Button>
-          <Button>{t("stemmekrets.Slå sammen")}</Button>
+          <Button onClick={mergeStemmekrets}>
+            {t("stemmekrets.Slå sammen")}
+          </Button>
         </Buttons>
       </Section>
     </div>

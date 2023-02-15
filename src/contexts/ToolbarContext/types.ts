@@ -1,6 +1,11 @@
 import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
 import { History } from "hooks/useHistory";
-import { GrunnkretsRequest, Metadata, StemmekretsRequest } from "types/api";
+import {
+  GrunnkretsRequest,
+  Metadata,
+  StemmekretsRequest,
+  StemmekretsSammenslaaingsendring,
+} from "types/api";
 
 export type HistoryChange<T> = {
   id: string;
@@ -32,6 +37,11 @@ export type UtkastEntry = BaseHistoryEntry<
   UtkastRequestWithoutOperations
 >;
 
+export type StemmekretsSammenslaaingsendringEntry = BaseHistoryEntry<
+  "stemmekretssammenslaaingsendring",
+  StemmekretsSammenslaaingsendring
+>;
+
 export type KretsHistoryEntry = GrunnkretsEntry | StemmekretsEntry;
 
 // endringer skal kunne gjøres i bulk, feks et punkt på to features endrer to features i en entry
@@ -40,7 +50,8 @@ export type HistoryEntry =
   | MetadataEntry
   | GrunnkretsEntry
   | StemmekretsEntry
-  | UtkastEntry;
+  | UtkastEntry
+  | StemmekretsSammenslaaingsendringEntry;
 
 export type EditContextType = HistoryEntry["type"];
 

@@ -7,6 +7,7 @@ import {
   GrunnkretsEntry,
   MetadataEntry,
   StemmekretsEntry,
+  StemmekretsSammenslaaingsendringEntry,
   ToolbarHistory,
 } from "contexts/ToolbarContext";
 import { editSource } from "hooks/layers/constants";
@@ -17,6 +18,7 @@ import {
   NasjonRequest,
   StemmekretsRef,
   StemmekretsRequest,
+  StemmekretsSammenslaaingsendring,
   UtkastGrenseendringer,
   UtkastMetadataendringer,
   UtkastOperasjoner,
@@ -134,6 +136,13 @@ const reduceGrenseOperations = (
   return editedFeatures;
 };
 
+const reduceStemmekretssammenslaingsOperations = (
+  operations: UtkastOperasjoner,
+  entry: StemmekretsSammenslaaingsendringEntry
+) => {
+  return addStemmekretsammenslaaingToOperations(operations, entry);
+};
+
 const addKretsChangeToOperations = (
   operations: UtkastOperasjoner,
   entry: GrunnkretsEntry | StemmekretsEntry,
@@ -142,6 +151,19 @@ const addKretsChangeToOperations = (
   entry.changes.forEach((change) => {
     if (change.to && operations.metadataendringer[endringerKey]) {
       operations.metadataendringer[endringerKey][change.id] = change.to;
+    }
+  });
+
+  return operations;
+};
+
+const addStemmekretsammenslaaingToOperations = (
+  operations: UtkastOperasjoner,
+  entry: StemmekretsSammenslaaingsendringEntry
+) => {
+  entry.changes.forEach((change) => {
+    if (change.to && operations.stemmekretsSammenslaaingsendring) {
+      operations.stemmekretsSammenslaaingsendring = change.to;
     }
   });
 
@@ -168,6 +190,37 @@ export const historyToUtkastOperations = (
       },
     })
   ) as UtkastOperasjoner;
+
+  //TO DO: hent endringer på sammenslåinger av stemmekretser og gjør om til utkastoperasjoner
+  //her må jeg gjøre noe på utkastOperations.stemmekretsSammenslaaingsendring
+  //hvorfor blir typen her feil?
+  // const sammenslaaingsOperations = (
+  //   historyToCurrentIndex.filter(
+  //     (entry) => entry.type === "stemmekretssammenslaaing"
+  //   ) as StemmekretsSammenslaaingsendringEntry[]
+  // ).reduce(
+  //   reduceStemmekretssammenslaingsOperations,
+  //   createUtkastOperations({
+  //     ...{
+  //       ...previousUtkast?.operasjoner.stemmekretsSammenslaaingsendring,
+  //     },
+  //   })
+  // ) as UtkastOperasjoner;
+
+  //vet ikke helt hva jeg skal gjøre her, må få hjelp til det i morgen
+  //Sånn jeg har fortstått det så er meningen med denne funksjonen at man skal få k
+  // const sammenslaaingsOperations = (
+  //   historyToCurrentIndex.filter(
+  //     (entry) => entry.type === "stemmekretssammenslaaingsendring"
+  //   ) as StemmekretsSammenslaaingsendringEntry[]
+  // ).reduce(
+  //   reduceStemmekretssammenslaingsOperations,
+  //   {} as StemmekretsSammenslaaingsendring); 
+   
+    //Her må jeg legge til sammenslåinger i utkastOperations
+  // if (Object.keys(sammenslaaingsOperations).length > 0) {
+  //   utkastOperations.stemmekretsSammenslaaingsendring
+  // }
 
   // hent grenseendringer og gjør endringene om til en liste av features
   const editedFeatures = (
@@ -196,6 +249,7 @@ export const createUtkastOperations = ({
   kommuneendringer = {},
   nasjonsendringer = {},
   stemmekretsendringer = {},
+  //stemmekretssammenslaaingsendringer = {},
 }: {
   endredeFeatures?: Record<string, GeoJSONFeature>;
   fylkesendringer?: Record<string, FylkeRequest>;
@@ -203,6 +257,7 @@ export const createUtkastOperations = ({
   kommuneendringer?: Record<string, KommuneRequest>;
   nasjonsendringer?: Record<string, NasjonRequest>;
   stemmekretsendringer?: Record<string, StemmekretsRequest>;
+  stemmekretssammenslaaingsendringer?: StemmekretsSammenslaaingsendring;
 }): UtkastOperasjoner => ({
   grenseendringer: {
     endredeFeatures,
@@ -214,4 +269,11 @@ export const createUtkastOperations = ({
     nasjonsendringer,
     stemmekretsendringer,
   },
+  // stemmekretsSammenslaaingsendring: {
+  //   stemmekretssammenslaaingsendringer,
+  // },
 });
+function as(reduceStemmekretssammenslaingsOperations: (operations: UtkastOperasjoner, entry: StemmekretsSammenslaaingsendringEntry) => { metadataendringer: { nasjonsendringer: { [key: string]: { administrativenhetnavn: { navn: string; spraak: string; version: number; }[]; lokalid: string; version: number; }; }; fylkesendringer: { ...; }; kommuneendringer: { ...; }; grunnkretsendringer: { ...; }; stemmekretsendringer: { ...; }; }; grenseendringer: { ...; }; stemmekretsSammenslaaingsendring?: { ...; } | undefined; }, arg1: {}, as: any, StemmekretsSammenslaaingsendring: any) {
+  throw new Error("Function not implemented.");
+}
+
