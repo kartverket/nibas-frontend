@@ -7,10 +7,13 @@ import { Feature } from "ol";
 import LineString from "ol/geom/LineString";
 import { useToolbarSaving } from "contexts/ToolbarContext";
 import { setEmptyFeatureProperties } from "utils/api";
+import { useEditAllGrenser } from "contexts/EditGrenserContext";
 
 // TODO: skru av evnen til å dra når man er i tegnemodus.
 const useDrawInteraction = () => {
   const { addEntry } = useToolbarSaving();
+  const { getCurrentEditingType } = useEditAllGrenser();
+  const editingType = getCurrentEditingType();
 
   const draw = useMemo(
     () =>
@@ -19,33 +22,34 @@ const useDrawInteraction = () => {
         type: "LineString",
         stopClick: true,
         snapTolerance: pixelTolerance, // TODO: denne fungerer ikke når man ønsker å ende linjen på et linje og lage nytt punkt
-        style: dirtyStyles, // TODO: style for å fjerne prikkmarkør, bruk dirtystyle også?
+        style: dirtyStyles,
+        condition: () => editingType !== null,
       }),
-    []
+    [editingType]
   );
 
   draw.on("drawend", (event) => {
     const feature = event.feature as Feature<LineString>;
-    setEmptyFeatureProperties(feature, "stemmekrets"); // TODO: hent riktig editingtype
 
-    const geometry = feature.getGeometry();
-    if (geometry) {
-      // TODO: per nå får man uendelig undos, fikser det med ny historytype senere ("grense" blir nok ikke riktig)
-      addEntry({
-        type: "grense",
-        changes: [
-          {
-            id: feature.getId() as string,
-            from: [],
-            to: geometry.getCoordinates(),
-          },
-        ],
-      });
+    // Denne vil i praksis alltid gå gjennom fordi vi må være i redigeringsmodus for å kunne tegne
+    if (editingType) {
+      setEmptyFeatureProperties(feature, editingType);
+      const geometry = feature.getGeometry();
+      if (geometry) {
+        // TODO: per nå får man uendelig undos, fikser det med ny historytype senere ("grense" blir nok ikke riktig)
+        addEntry({
+          type: "grense",
+          changes: [
+            {
+              id: feature.getId() as string,
+              from: [],
+              to: geometry.getCoordinates(),
+            },
+          ],
+        });
+      }
     }
   });
-  // TODO: select klikker fordi nye features ikke har noe metadata
-  // jeg bør lage en støttefunksjon et sted som gir meg en tom struktur
-
   // TODO: Ta en runde med backend på hva nye linjer skal ha av metadata
 
   // TODO: Nye linjer som starter i endepunkter (coordinates[0] eller coordinates[-1]) skal oppleves som en utvidelse

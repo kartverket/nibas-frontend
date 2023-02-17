@@ -17,6 +17,7 @@ export type EditGrenserContextValue = {
     values?: ObjectValue
   ) => void;
   resetEditingObject: () => void;
+  getCurrentEditingType: () => EditingType | null;
 };
 
 /**
@@ -47,11 +48,21 @@ export const EditGrenserProvider: React.FC = ({ children }) => {
     setEditingObject(() => ({}));
   };
 
+  const getCurrentEditingType = () => {
+    const currentlyEditingEntry = Object.entries(editingObject).find(
+      ([, dict]) => Object.values(dict).some((value) => value.editing === true)
+    );
+    return currentlyEditingEntry
+      ? (currentlyEditingEntry[0] as EditingType)
+      : null;
+  };
+
   const value = {
     editingObject,
     setEditingObject,
     setObjectValue,
     resetEditingObject,
+    getCurrentEditingType,
   };
 
   return (
