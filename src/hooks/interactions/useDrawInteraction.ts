@@ -9,7 +9,7 @@ import { useToolbarSaving } from "contexts/ToolbarContext";
 import { setEmptyFeatureProperties } from "utils/api";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 
-// TODO: skru av evnen til å dra når man er i tegnemodus.
+// TODO-lav: skru av evnen til å dra når man er i tegnemodus.
 const useDrawInteraction = () => {
   const { addEntry } = useToolbarSaving();
   const { getCurrentEditingType } = useEditAllGrenser();
@@ -21,7 +21,7 @@ const useDrawInteraction = () => {
         source: editSource,
         type: "LineString",
         stopClick: true,
-        snapTolerance: pixelTolerance, // TODO: denne fungerer ikke når man ønsker å ende linjen på et linje og lage nytt punkt
+        snapTolerance: pixelTolerance, // TODO-lav: denne snapper ikke når man ønsker å ende linjen på et linje og lage nytt punkt
         style: dirtyStyles,
         condition: () => editingType !== null,
       }),
@@ -31,12 +31,12 @@ const useDrawInteraction = () => {
   draw.on("drawend", (event) => {
     const feature = event.feature as Feature<LineString>;
 
-    // Denne vil i praksis alltid gå gjennom fordi vi må være i redigeringsmodus for å kunne tegne
+    // Denne vil i praksis alltid gå gjennom ettersom man må være i redigeringsmodus for å kunne tegne
     if (editingType) {
       setEmptyFeatureProperties(feature, editingType);
       const geometry = feature.getGeometry();
       if (geometry) {
-        // TODO: per nå får man uendelig undos, fikser det med ny historytype senere ("grense" blir nok ikke riktig)
+        // TODO-mid: per nå får man uendelig undos, fikser det med ny historytype senere ("grense" blir nok ikke riktig)
         addEntry({
           type: "grense",
           changes: [
@@ -50,10 +50,11 @@ const useDrawInteraction = () => {
       }
     }
   });
-  // TODO: Ta en runde med backend på hva nye linjer skal ha av metadata
-
-  // TODO: Nye linjer som starter i endepunkter (coordinates[0] eller coordinates[-1]) skal oppleves som en utvidelse
+  // TODO-mid: Verifiser hvor viktig dette er fordi denne er stor:
+  // Nye linjer som starter i endepunkter (coordinates[0] eller coordinates[-1]) skal oppleves som en utvidelse
   // utvidelser skal heller legge til koordinater på eksisterende linje, det er mulig edit-interaksjoner har noe for dette?
+
+  // TODO-høy: Ta en runde med backend på hva nye linjer skal ha av metadata
   return { draw };
 };
 
