@@ -56,6 +56,23 @@ export const grensetypeStyles: Record<GrenseId, Style[]> = {
   edit: editStyles,
 };
 
+export const getLayerStyle = (
+  feature: Feature<Geometry> | RenderFeature,
+  grenseId: GrenseId
+) => {
+  const editerbareGrensetyper = [
+    "Delområdegrense",
+    "Grunnkretsgrense",
+    "Stemmekretsgrense",
+  ];
+  const grensetype = feature.get("type");
+  if (grenseId == "edit" && !editerbareGrensetyper.includes(grensetype)) {
+    return selectStyles;
+  }
+
+  return grensetypeStyles[grenseId];
+};
+
 export const getPointOverlayStyle = (
   feature: Feature<Geometry> | RenderFeature
 ) => {

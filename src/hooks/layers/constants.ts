@@ -2,7 +2,11 @@ import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { bakgrunnskartSources } from "hooks/sources/syncSources";
-import { getPointOverlayStyle, grensetypeStyles } from "utils/map/layerStyles";
+import {
+  getPointOverlayStyle,
+  getLayerStyle,
+  grensetypeStyles,
+} from "utils/map/layerStyles";
 import { StyleFunction } from "ol/style/Style";
 import { GrenseId } from "./types";
 
@@ -42,7 +46,7 @@ export const editSource = new VectorSource();
 const grenseStyle =
   (grenseId: GrenseId): StyleFunction =>
   (feature) =>
-    [...grensetypeStyles[grenseId], getPointOverlayStyle(feature)];
+    [...getLayerStyle(feature, grenseId), getPointOverlayStyle(feature)];
 
 export const grenserLayers = {
   // ingen source betyr at source settes async
