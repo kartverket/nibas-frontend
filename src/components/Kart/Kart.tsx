@@ -44,9 +44,9 @@ const Kart = () => {
             <SidebarPanels />
             <OverlayPanels />
             <UtkastBorder utkastActive={redigeringsmodusAktiv} />
+            <Toolbar />
           </KartOverlay>
           <OverlayPopup selectedFeatures={selectedFeatures} />
-          <Toolbar />
         </Suspense>
       </KartTarget>
     </KartWrapper>
@@ -86,18 +86,17 @@ const KartOverlay = styled.div<{
 }>`
   display: grid;
 
-  grid-template-columns: auto auto 1fr;
+  grid-template-columns: 440px auto 120px;
   grid-template-rows: 1fr auto;
   grid-template-areas:
-    "panel . ."
-    "panel metadata ."
-    "panel kretser .";
+    "panel . toolbar"
+    "panel metadata toolbar"
+    "panel kretser toolbar";
   width: 100%;
   height: 100%;
   position: absolute;
   pointer-events: none;
   z-index: 1;
-  overflow: hidden;
 `;
 
 export default Kart;
