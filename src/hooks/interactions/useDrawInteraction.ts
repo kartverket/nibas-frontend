@@ -15,6 +15,7 @@ const useDrawInteraction = () => {
   const { getCurrentEditingType } = useEditAllGrenser();
   const editingType = getCurrentEditingType();
 
+  // TODO-lav: skru av det at man kan tegne fra hvor som helst på kartet, må starte på en eksisterende feature?
   const draw = useMemo(
     () =>
       new Draw({
@@ -53,6 +54,12 @@ const useDrawInteraction = () => {
   // TODO-mid: Verifiser hvor viktig dette er fordi denne er stor:
   // Nye linjer som starter i endepunkter (coordinates[0] eller coordinates[-1]) skal oppleves som en utvidelse
   // utvidelser skal heller legge til koordinater på eksisterende linje, det er mulig edit-interaksjoner har noe for dette?
+  // Dette utgår kanskje ettersom vi ikke har noen løse linjer som jeg vet om
+
+  // TODO-mid: Verifiser hvordan dette skal fungere
+  // Hvis jeg starter eller slutter en linje på en annen linje og da lager et nytt punkt, så skal det bli et nytt punkt på linjen også
+  // Dette blir altså noe jeg må sjekke og kjøre både ved drawstart og drawend
+  // Merk at dette må da også splitte linjen, og da er vi tilbake til å være avhengig av matrikkelalgoritmene
 
   // TODO-høy: Ta en runde med backend på hva nye linjer skal ha av metadata
   return { draw };
