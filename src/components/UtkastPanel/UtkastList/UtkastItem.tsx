@@ -23,7 +23,6 @@ import { useToolbarActions } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext";
 import Feedback from "components/Feedback/Feedback";
 import { Outline } from "style/mixins";
-import { removeAllFeatures } from "utils/map/layers";
 
 type Props = {
   utkast: UtkastRef;
