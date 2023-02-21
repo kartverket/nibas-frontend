@@ -13,11 +13,8 @@ const useIsMetadataDisabled = (properties: FeatureProperties) => {
 
   const value = values[featureKontekstId];
 
-  return (
-    ((value?.visible && !value?.editing) ||
-      !editableBorderTypes.includes(properties.type)) ??
-    true
-  );
+  const borderIsNotEditable = !editableBorderTypes.includes(properties.type);
+  return ((value?.visible && !value?.editing) || borderIsNotEditable) ?? true;
 };
 
 export default useIsMetadataDisabled;
