@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
+import { removeAllFeatures } from "utils/map/layers";
 import {
   EditingObject,
   EditingType,
@@ -16,7 +17,7 @@ export type EditGrenserContextValue = {
     grenseId: string,
     values?: ObjectValue
   ) => void;
-  resetEditingObject: () => void;
+  resetAndClearEditingLayer: () => void;
 };
 
 /**
@@ -43,7 +44,8 @@ export const EditGrenserProvider: React.FC = ({ children }) => {
     }));
   };
 
-  const resetEditingObject = () => {
+  const resetAndClearEditingLayer = () => {
+    removeAllFeatures();
     setEditingObject(() => ({}));
   };
 
@@ -51,7 +53,7 @@ export const EditGrenserProvider: React.FC = ({ children }) => {
     editingObject,
     setEditingObject,
     setObjectValue,
-    resetEditingObject,
+    resetAndClearEditingLayer,
   };
 
   return (
@@ -84,7 +86,7 @@ export const useEditGrenser = (grenseType: EditingType) => {
     editingObject,
     setObjectValue,
     setEditingObject,
-    resetEditingObject,
+    resetAndClearEditingLayer,
   } = context;
 
   const values = editingObject[grenseType] ?? {};
@@ -103,7 +105,7 @@ export const useEditGrenser = (grenseType: EditingType) => {
     values,
     setObjectValue: setObjectValueForType,
     setMultipleValues,
-    resetEditingObject,
+    resetAndClearEditingLayer,
   };
 };
 

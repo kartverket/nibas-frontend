@@ -62,8 +62,12 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
 
   const { currentKretstype } = context;
 
-  const { values, setObjectValue, setMultipleValues, resetEditingObject } =
-    useEditGrenser(currentKretstype);
+  const {
+    values,
+    setObjectValue,
+    setMultipleValues,
+    resetAndClearEditingLayer,
+  } = useEditGrenser(currentKretstype);
   const { openPanel, closePanels, closePanel } = useOverlayPanels();
   const { addKretserToLayer, removeKretserFromLayer } = useKretsgrenser(
     kommuneId,
@@ -82,7 +86,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
       },
     };
 
-    resetEditingObject();
+    resetAndClearEditingLayer();
 
     if (newEditing) {
       Object.keys(values).forEach((kommuneIdInList) => {
