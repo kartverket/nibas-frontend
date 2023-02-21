@@ -10,7 +10,7 @@ import Style from "ol/style/Style";
 import { map } from "components/Kart/constants";
 import Text from "ol/style/Text";
 import Point from "ol/geom/Point";
-import { editSource } from "hooks/layers/constants";
+import { editableBorderTypes, editSource } from "hooks/layers/constants";
 import { GrenseId } from "hooks/layers/types";
 
 const getPointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
@@ -48,11 +48,11 @@ export const editStyles = lineAndPointStyles("#EB48FB");
 export const dirtyStyles = lineAndPointStyles("#000000", true);
 export const selectStyles = lineAndPointStyles("#000000");
 export const grensetypeStyles: Record<GrenseId, Style[]> = {
-  fylker: lineAndPointStyles("#745FE8"),
-  kommuner: lineAndPointStyles("#FF7936"),
-  nasjoner: lineAndPointStyles("#FF5555"),
-  grunnkretser: lineAndPointStyles("#65C97A"),
-  stemmekretser: lineAndPointStyles("#5296D5"),
+  fylke: lineAndPointStyles("#745FE8"),
+  kommune: lineAndPointStyles("#FF7936"),
+  nasjon: lineAndPointStyles("#FF5555"),
+  grunnkrets: lineAndPointStyles("#65C97A"),
+  stemmekrets: lineAndPointStyles("#5296D5"),
   edit: editStyles,
 };
 
@@ -60,17 +60,16 @@ export const getLayerStyle = (
   feature: Feature<Geometry> | RenderFeature,
   grenseId: GrenseId
 ) => {
-  const editerbareGrensetyper = [
-    "Delområdegrense",
-    "Grunnkretsgrense",
-    "Stemmekretsgrense",
-  ];
-  const grensetype = feature.get("type");
-  if (grenseId == "edit" && !editerbareGrensetyper.includes(grensetype)) {
-    return selectStyles;
+  if (
+    grenseId == "edit" &&
+    !editableBorderTypes.includes(feature.get("type"))
+  ) {
+    const grensetype = feature.getProperties().inndelingerKontekst
+      .type as GrenseId;
+    return grensetypeStyles[grensetype];
+  } else {
+    return grensetypeStyles[grenseId];
   }
-
-  return grensetypeStyles[grenseId];
 };
 
 export const getPointOverlayStyle = (

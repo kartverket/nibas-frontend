@@ -13,7 +13,7 @@ import { getLayerById, getVectorLayers } from "utils/map/layers";
 import { click } from "ol/events/condition";
 import { Collection, MapBrowserEvent } from "ol";
 import Geometry from "ol/geom/Geometry";
-import { editSource } from "hooks/layers/constants";
+import { editableBorderTypes, editSource } from "hooks/layers/constants";
 import { squaredDistance } from "ol/coordinate";
 import { addFeaturesToSource } from "utils/map/source";
 import useSelectInteraction from "./useSelectInteraction";
@@ -31,21 +31,32 @@ const useEditInteractions = () => {
   const detachIsActive = activePointMode === "detach";
   const { selectedFeatures } = useSelectInteraction();
 
-  const modify = useMemo(
-    () =>
-      new Modify({
-        source: detachIsActive ? undefined : editSource,
-        features: detachIsActive ? new Collection(selectedFeatures) : undefined,
-        insertVertexCondition: () => {
-          return activePointMode === "add";
-        },
-        deleteCondition: (mapBrowserEvent) => {
-          return activePointMode === "remove" && click(mapBrowserEvent);
-        },
-        pixelTolerance: 20,
-      }),
-    [activePointMode, detachIsActive, selectedFeatures]
-  );
+  const modify = useMemo(() => {
+    const editLayer = getLayerById("edit");
+    return new Modify({
+      source: detachIsActive ? undefined : editSource,
+      features: detachIsActive ? new Collection(selectedFeatures) : undefined,
+      condition: (mapBrowserEvent) => {
+        const featuresAtPixel = map.getFeaturesAtPixel(mapBrowserEvent.pixel, {
+          layerFilter: (layer) => layer === editLayer,
+          hitTolerance: 20,
+        });
+        const feature = featuresAtPixel[0] as Feature<LineString>;
+        if (feature) {
+          return editableBorderTypes.includes(feature.get("type"));
+        }
+
+        return true;
+      },
+      insertVertexCondition: () => {
+        return activePointMode === "add";
+      },
+      deleteCondition: (mapBrowserEvent) => {
+        return activePointMode === "remove" && click(mapBrowserEvent);
+      },
+      pixelTolerance: 20,
+    });
+  }, [activePointMode, detachIsActive, selectedFeatures]);
 
   useEffect(() => {
     const vectorLayers = getVectorLayers();

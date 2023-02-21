@@ -2,11 +2,11 @@ import { bakgrunnskartLayers } from "./constants";
 
 export type BakgrunnskartId = keyof typeof bakgrunnskartLayers;
 export type GrenseId =
-  | "fylker"
-  | "kommuner"
-  | "nasjoner"
-  | "grunnkretser"
-  | "stemmekretser"
+  | "fylke"
+  | "kommune"
+  | "nasjon"
+  | "grunnkrets"
+  | "stemmekrets"
   | "edit";
 
 // denne iden brukes både til Sources og Layers

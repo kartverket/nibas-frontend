@@ -2,11 +2,7 @@ import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { bakgrunnskartSources } from "hooks/sources/syncSources";
-import {
-  getPointOverlayStyle,
-  getLayerStyle,
-  grensetypeStyles,
-} from "utils/map/layerStyles";
+import { getPointOverlayStyle, getLayerStyle } from "utils/map/layerStyles";
 import { StyleFunction } from "ol/style/Style";
 import { GrenseId } from "./types";
 
@@ -50,28 +46,34 @@ const grenseStyle =
 
 export const grenserLayers = {
   // ingen source betyr at source settes async
-  fylker: new VectorLayer({
+  fylke: new VectorLayer({
     source: new VectorSource(),
-    style: grenseStyle("fylker"),
+    style: grenseStyle("fylke"),
   }),
-  kommuner: new VectorLayer({
+  kommune: new VectorLayer({
     source: new VectorSource(),
-    style: grenseStyle("kommuner"),
+    style: grenseStyle("kommune"),
   }),
-  nasjoner: new VectorLayer({
+  nasjon: new VectorLayer({
     source: new VectorSource(),
-    style: grenseStyle("nasjoner"),
+    style: grenseStyle("nasjon"),
   }),
-  grunnkretser: new VectorLayer({
+  grunnkrets: new VectorLayer({
     source: new VectorSource(),
-    style: grenseStyle("grunnkretser"),
+    style: grenseStyle("grunnkrets"),
   }),
-  stemmekretser: new VectorLayer({
+  stemmekrets: new VectorLayer({
     source: new VectorSource(),
-    style: grenseStyle("stemmekretser"),
+    style: grenseStyle("stemmekrets"),
   }),
   edit: new VectorLayer({
     source: editSource,
     style: grenseStyle("edit"),
   }),
 };
+
+export const editableBorderTypes = [
+  "Delområdegrense",
+  "Grunnkretsgrense",
+  "Stemmekretsgrense",
+];

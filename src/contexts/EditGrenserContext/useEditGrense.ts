@@ -9,11 +9,11 @@ import { GrenseId } from "hooks/layers/types";
 import { removeAllFeatures } from "utils/map/layers";
 
 const layerIdByGrenseType: Record<EditingType, GrenseId> = {
-  fylke: "fylker",
-  kommune: "kommuner",
-  nasjon: "nasjoner",
-  grunnkrets: "grunnkretser",
-  stemmekrets: "stemmekretser",
+  fylke: "fylke",
+  kommune: "kommune",
+  nasjon: "nasjon",
+  grunnkrets: "grunnkrets",
+  stemmekrets: "stemmekrets",
 };
 
 export const useEditGrenseValue = (
