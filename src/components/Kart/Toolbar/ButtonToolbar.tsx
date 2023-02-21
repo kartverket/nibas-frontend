@@ -54,7 +54,6 @@ const ButtonToolbar = () => {
         ariaLabel="Legg til punkter"
         isActive={activePointMode === "add"}
         onClick={() => togglePointMode("add")}
-        disabled={activeEditModes.includes("draw")}
       >
         {t("action.Legg til")}
       </ModeButton>
@@ -63,7 +62,6 @@ const ButtonToolbar = () => {
         ariaLabel="Fjern punkter"
         isActive={activePointMode === "remove"}
         onClick={() => togglePointMode("remove")}
-        disabled={activeEditModes.includes("draw")}
       >
         {t("action.Fjern")}
       </ModeButton>
@@ -87,15 +85,6 @@ const ButtonToolbar = () => {
           </ModeButton>
         </>
       )}
-      <Divider />
-      <ModeButton
-        icon="draw"
-        ariaLabel="Tegn linjer"
-        isActive={activeEditModes.includes("draw")}
-        onClick={() => toggleEditMode("draw")}
-      >
-        {t("action.Tegn")}
-      </ModeButton>
       <Divider />
       <ModeButton
         icon="magnet"

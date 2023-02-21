@@ -40,7 +40,6 @@ const renderWithProvider = (
       setObjectValue: jest.fn(),
       setEditingObject: jest.fn(),
       resetEditingObject: jest.fn(),
-      getCurrentEditingType: jest.fn(),
     },
   });
 };

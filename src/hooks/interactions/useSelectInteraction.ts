@@ -6,7 +6,7 @@ import { Select } from "ol/interaction";
 import { map, overlayPopup } from "components/Kart/constants";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 import { selectStyles } from "utils/map/layerStyles";
-import { isNewFeature, pixelTolerance } from "./constants";
+import { pixelTolerance } from "./constants";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -63,10 +63,7 @@ const useSelectInteraction = () => {
         overlayPopup.setPosition(getOverlayPosition(selectedFeature));
       } else {
         overlayPopup.setPosition(undefined);
-        // TODO: midlertidig for å unngå refaktorering av select og metadata
-        if (!isNewFeature(selectedFeature)) {
-          openPanel({ type: "grensemetadata", feature: selectedFeature });
-        }
+        openPanel({ type: "grensemetadata", feature: selectedFeature });
       }
     } else {
       closePanel("grensemetadata");

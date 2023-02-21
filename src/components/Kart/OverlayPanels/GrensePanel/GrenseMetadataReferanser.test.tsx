@@ -21,7 +21,6 @@ const renderWithProvider = (ui: ReactNode, disabled = false) =>
       setObjectValue: jest.fn(),
       setEditingObject: jest.fn(),
       resetEditingObject: jest.fn(),
-      getCurrentEditingType: jest.fn(),
     },
   });
 
