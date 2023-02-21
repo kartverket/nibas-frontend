@@ -12,11 +12,12 @@ import {
 import { getLayerById, getVectorLayers } from "utils/map/layers";
 import { click } from "ol/events/condition";
 import { Collection, MapBrowserEvent } from "ol";
-import Geometry from "ol/geom/Geometry";
 import { editableBorderTypes, editSource } from "hooks/layers/constants";
 import { squaredDistance } from "ol/coordinate";
 import { addFeaturesToSource } from "utils/map/source";
 import useSelectInteraction from "./useSelectInteraction";
+import { createEditingStyle } from "ol/style/Style";
+import Geometry from "ol/geom/Geometry";
 
 const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
@@ -30,6 +31,7 @@ const useEditInteractions = () => {
   const { activePointMode, activeEditModes } = useToolbar();
   const detachIsActive = activePointMode === "detach";
   const { selectedFeatures } = useSelectInteraction();
+  const editingPointStyle = createEditingStyle()["Point"];
 
   const modify = useMemo(() => {
     const editLayer = getLayerById("edit");
@@ -55,8 +57,17 @@ const useEditInteractions = () => {
         return activePointMode === "remove" && click(mapBrowserEvent);
       },
       pixelTolerance: 20,
+      style: (feature) => {
+        // Feature i dette tilfellet er et punkt som holder en liste med features
+        const features = feature.get("features");
+
+        // Dersom det vi holder over er redigerbart så gir vi en prikkindikator
+        if (editableBorderTypes.includes(features[0].get("type"))) {
+          return editingPointStyle;
+        }
+      },
     });
-  }, [activePointMode, detachIsActive, selectedFeatures]);
+  }, [activePointMode, detachIsActive, editingPointStyle, selectedFeatures]);
 
   useEffect(() => {
     const vectorLayers = getVectorLayers();
