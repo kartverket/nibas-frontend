@@ -60,9 +60,10 @@ export const getLayerStyle = (
   feature: Feature<Geometry> | RenderFeature,
   grenseId: GrenseId
 ) => {
+  const borderIsNotEditable = !editableBorderTypes.includes(feature.get("type");
   if (
     grenseId == "edit" &&
-    !editableBorderTypes.includes(feature.get("type"))
+    borderIsNotEditable
   ) {
     const grensetype = feature.getProperties().inndelingerKontekst
       .type as GrenseId;

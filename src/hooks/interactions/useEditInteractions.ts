@@ -41,7 +41,7 @@ const useEditInteractions = () => {
           layerFilter: (layer) => layer === editLayer,
           hitTolerance: 20,
         });
-        const feature = featuresAtPixel[0] as Feature<LineString>;
+        const feature = featuresAtPixel[0];
         if (feature) {
           return editableBorderTypes.includes(feature.get("type"));
         }
