@@ -11,7 +11,6 @@ import { click } from "ol/events/condition";
 import { Collection } from "ol";
 import { editableBorderTypes, editSource } from "hooks/layers/constants";
 import useSelectInteraction from "./useSelectInteraction";
-import { createEditingStyle } from "ol/style/Style";
 import { pixelTolerance } from "./constants";
 import { getLayerById } from "utils/map/layers";
 import { map } from "components/Kart/constants";
@@ -27,7 +26,6 @@ const useEditInteractions = () => {
   const { activePointMode } = useToolbar();
   const detachIsActive = activePointMode === "detach";
   const { selectedFeatures } = useSelectInteraction();
-  const editingPointStyle = createEditingStyle()["Point"];
   const editLayer = getLayerById("edit");
 
   const modify = useMemo(
@@ -57,23 +55,8 @@ const useEditInteractions = () => {
         deleteCondition: (mapBrowserEvent) => {
           return activePointMode === "remove" && click(mapBrowserEvent);
         },
-        style: (feature) => {
-          // Feature i dette tilfellet er et punkt som holder en liste med features
-          const features = feature.get("features");
-
-          // Dersom det vi holder over er redigerbart så gir vi en prikkindikator
-          if (editableBorderTypes.includes(features[0].get("type"))) {
-            return editingPointStyle;
-          }
-        },
       }),
-    [
-      activePointMode,
-      detachIsActive,
-      editLayer,
-      editingPointStyle,
-      selectedFeatures,
-    ]
+    [activePointMode, detachIsActive, editLayer, selectedFeatures]
   );
 
   useEffect(() => {
