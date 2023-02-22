@@ -4,7 +4,7 @@ import {
   GrunnkretsRequest,
   Metadata,
   StemmekretsRequest,
-  StemmekretsSammenslaaingsendring,
+  StemmekretsSammenslaaingsendringRequest,
 } from "types/api";
 
 export type HistoryChange<T> = {
@@ -39,7 +39,7 @@ export type UtkastEntry = BaseHistoryEntry<
 
 export type StemmekretsSammenslaaingsendringEntry = BaseHistoryEntry<
   "stemmekretssammenslaaingsendring",
-  StemmekretsSammenslaaingsendring
+  StemmekretsSammenslaaingsendringRequest
 >;
 
 export type KretsHistoryEntry = GrunnkretsEntry | StemmekretsEntry;

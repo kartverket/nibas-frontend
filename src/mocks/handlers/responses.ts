@@ -363,6 +363,7 @@ export const mockStemmekretser: StemmekretsRef[] = [
     nummer: "05",
     href: "http://localhost:8080/v1/stemmekretser/1",
     antallFramtidigeVersjoner: 0,
+    version: 0,
   },
   {
     id: {
@@ -375,6 +376,7 @@ export const mockStemmekretser: StemmekretsRef[] = [
     nummer: "12",
     href: "http://localhost:8080/v1/stemmekretser/2",
     antallFramtidigeVersjoner: 0,
+    version: 0,
   },
 ];
 

@@ -18,7 +18,7 @@ import {
   NasjonRequest,
   StemmekretsRef,
   StemmekretsRequest,
-  StemmekretsSammenslaaingsendring,
+  StemmekretsSammenslaaingsendringRequest,
   UtkastGrenseendringer,
   UtkastMetadataendringer,
   UtkastOperasjoner,
@@ -215,9 +215,9 @@ export const historyToUtkastOperations = (
   //   ) as StemmekretsSammenslaaingsendringEntry[]
   // ).reduce(
   //   reduceStemmekretssammenslaingsOperations,
-  //   {} as StemmekretsSammenslaaingsendring); 
-   
-    //Her må jeg legge til sammenslåinger i utkastOperations
+  //   {} as StemmekretsSammenslaaingsendring);
+
+  //Her må jeg legge til sammenslåinger i utkastOperations
   // if (Object.keys(sammenslaaingsOperations).length > 0) {
   //   utkastOperations.stemmekretsSammenslaaingsendring
   // }
@@ -249,15 +249,15 @@ export const createUtkastOperations = ({
   kommuneendringer = {},
   nasjonsendringer = {},
   stemmekretsendringer = {},
-  //stemmekretssammenslaaingsendringer = {},
-}: {
+}: //stemmekretssammenslaaingsendringer = {},
+{
   endredeFeatures?: Record<string, GeoJSONFeature>;
   fylkesendringer?: Record<string, FylkeRequest>;
   grunnkretsendringer?: Record<string, GrunnkretsRequest>;
   kommuneendringer?: Record<string, KommuneRequest>;
   nasjonsendringer?: Record<string, NasjonRequest>;
   stemmekretsendringer?: Record<string, StemmekretsRequest>;
-  stemmekretssammenslaaingsendringer?: StemmekretsSammenslaaingsendring;
+  stemmekretssammenslaaingsendringer?: StemmekretsSammenslaaingsendringRequest;
 }): UtkastOperasjoner => ({
   grenseendringer: {
     endredeFeatures,
@@ -273,7 +273,3 @@ export const createUtkastOperations = ({
   //   stemmekretssammenslaaingsendringer,
   // },
 });
-function as(reduceStemmekretssammenslaingsOperations: (operations: UtkastOperasjoner, entry: StemmekretsSammenslaaingsendringEntry) => { metadataendringer: { nasjonsendringer: { [key: string]: { administrativenhetnavn: { navn: string; spraak: string; version: number; }[]; lokalid: string; version: number; }; }; fylkesendringer: { ...; }; kommuneendringer: { ...; }; grunnkretsendringer: { ...; }; stemmekretsendringer: { ...; }; }; grenseendringer: { ...; }; stemmekretsSammenslaaingsendring?: { ...; } | undefined; }, arg1: {}, as: any, StemmekretsSammenslaaingsendring: any) {
-  throw new Error("Function not implemented.");
-}
-

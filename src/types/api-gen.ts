@@ -961,6 +961,11 @@ export interface components {
        * @description Antall publiserte framtidige gyldige versjoner.
        */
       antallFramtidigeVersjoner: number;
+      /**
+       * Format: int32
+       * @description Teknisk versjon for å støtte samhandling og redigering
+       */
+      version: number;
     };
     /** @description En referanse til en grunnkrets */
     GrunnkretsRef: {

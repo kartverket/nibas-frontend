@@ -5,10 +5,16 @@ import Heading from "components/typography/Heading";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { StemmekretsRef, StemmekretsResponse } from "types/api";
+import {
+  StemmekretsRef,
+  StemmekretsResponse,
+  StemmekretsSammenslaaingsendringRequest,
+} from "types/api";
 import { BlockLabel } from "../metadataComponents";
 import { Section, ContrastSection, InputsWrapper } from "./components";
 import { getIdFromEntity } from "utils/api";
+import { useToolbarSaving } from "contexts/ToolbarContext";
+import useNibasApi from "hooks/useNibasApi";
 
 type Props = {
   stemmekrets: StemmekretsResponse | undefined;
@@ -18,19 +24,85 @@ type Props = {
 
 const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   const { t } = useTranslation();
+  const { addEntry } = useToolbarSaving();
   const [stemmekretsnavn, setStemmekretsnavn] = useState(
     stemmekrets?.stemmekretsnavn
   );
+
   const [stemmekretsnummer, setStemmekretsnummer] = useState(
     stemmekrets?.stemmekretsnummer
   );
 
+  const [
+    stemmekretsNummerTilSammenslaaing,
+    setStemmekretsNummerTilSammenslaaing,
+  ] = useState("");
+
   const stemmekretsId = stemmekrets ? getIdFromEntity(stemmekrets) : "";
+  const [stemmekretsIdTilSammenslaaing, setStemmekretsIdTilSammenslaaing] =
+    useState("");
+  // let fullStemmekretsTilSammenslaaing: StemmekretsResponse? = null;
+
+  const fromFormToRequest = (
+    stemmekretsRespons: StemmekretsResponse,
+    sammenslaaingsStemmekrets: StemmekretsRef,
+    to: boolean
+  ): StemmekretsSammenslaaingsendringRequest => ({
+    viderefoertStemmekrets: {
+      lokalId: stemmekretsRespons.id.lokalid.value,
+      version: stemmekretsRespons.version,
+    },
+    stemmekretserTilSammenslaaing: [
+      {
+        lokalId: sammenslaaingsStemmekrets.id.lokalid.value,
+        version: sammenslaaingsStemmekrets.version,
+      },
+    ],
+    stemmekretsNavn: stemmekretsRespons?.stemmekretsnavn,
+    stemmekretsNummer: stemmekretsRespons?.stemmekretsnummer,
+  });
+
+  const getStemmekretsByNummer = (nummer: string): StemmekretsRef[] => {
+    return alleStemmekretser.filter((krets) => krets.nummer === nummer);
+  };
 
   const mergeStemmekrets = () => {
     console.log("merging");
+    console.log(
+      "stemmekrets til sammenslaaing:",
+      stemmekretsNummerTilSammenslaaing
+    );
+    const stemmekretsTilSammenslaaingListe = getStemmekretsByNummer(
+      stemmekretsNummerTilSammenslaaing
+    );
+    setStemmekretsIdTilSammenslaaing(
+      stemmekretsTilSammenslaaingListe[0].id.lokalid.value
+    );
 
-    //her må det skje følgende:
+    console.log(
+      "stemmekrets",
+      getStemmekretsByNummer(stemmekretsNummerTilSammenslaaing)
+    );
+    if (stemmekretsTilSammenslaaingListe.length === 1 && stemmekrets) {
+      addEntry({
+        type: "stemmekretssammenslaaingsendring",
+        changes: [
+          {
+            from: fromFormToRequest(
+              stemmekrets,
+              stemmekretsTilSammenslaaingListe[0],
+              false
+            ),
+            to: fromFormToRequest(
+              stemmekrets,
+              stemmekretsTilSammenslaaingListe[0],
+              true
+            ),
+            id: stemmekretsId,
+          },
+        ],
+      });
+    }
   };
 
   return (
@@ -48,7 +120,14 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
         </p>
         <Dropdown>
           <label>{t("stemmekrets.Navn- eller nummer på stemmekrets")}</label>
-          <Select>
+          <Select
+            onChange={(e) =>
+              setStemmekretsNummerTilSammenslaaing(e.currentTarget.value)
+            }
+          >
+            <option value="" disabled selected>
+              {"Velg stemmekretsen du vil slå sammen med"}
+            </option>
             {alleStemmekretser.map((s) => (
               <option key={s.nummer} value={s.nummer}>{`${
                 s.nummer
