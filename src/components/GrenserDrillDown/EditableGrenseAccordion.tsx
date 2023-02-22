@@ -53,7 +53,11 @@ const EditableGrenseAccordion: FC<Props> = ({
         <TextContent>
           <span>{title}</span>
           <div>
-            <LinkButton onClick={toggleEditing}>
+            <LinkButton
+              onClick={toggleEditing}
+              disabled
+              title="Midlertidig utilgjengelig"
+            >
               {value.editing
                 ? t("action.Stopp redigering")
                 : t("action.Rediger grenser")}
