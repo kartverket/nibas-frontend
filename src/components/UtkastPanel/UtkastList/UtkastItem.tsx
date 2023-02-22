@@ -23,7 +23,6 @@ import { useToolbarActions } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext";
 import Feedback from "components/Feedback/Feedback";
 import { Outline } from "style/mixins";
-import { removeAllFeatures } from "utils/map/layers";
 
 type Props = {
   utkast: UtkastRef;
@@ -39,7 +38,7 @@ const UtkastItem = ({ utkast }: Props) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const utkastId = searchParams.get("utkast");
 
-  const { resetEditingObject } = useEditAllGrenser();
+  const { resetAndClearEditingLayer } = useEditAllGrenser();
   const { closePanels } = useOverlayPanels();
   const { data: fullUtkast } = useNibasApi(
     isPublishOpen || isDeleteOpen ? "/v1/utkast/{id}" : null,
@@ -107,8 +106,7 @@ const UtkastItem = ({ utkast }: Props) => {
     } else {
       setSearchParams({});
     }
-    resetEditingObject();
-    removeAllFeatures();
+    resetAndClearEditingLayer();
     closePanels();
     resetMapView();
   };

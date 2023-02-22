@@ -112,7 +112,7 @@ export const OverlayPanelWrapper = styled(KartInteractable)<{
   border-bottom: none;
   border-left: none;
 
-  width: 1000px;
+  max-width: 1000px;
   transition: height 0.4s ease-in-out;
   animation: ${moveInFromLeft} 0.5s ease-in-out;
 

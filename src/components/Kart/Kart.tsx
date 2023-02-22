@@ -5,8 +5,7 @@ import OverlayPanels from "./OverlayPanels";
 import OverlayPopup from "./OverlayPopup";
 import SidebarPanels from "./SidebarPanels";
 import { PanelType, useOverlayPanels } from "contexts/OverlayPanelsContext";
-import useEditInteractions from "hooks/interactions/useEditInteractions";
-import useSelectInteraction from "hooks/interactions/useSelectInteraction";
+import useInteractions from "hooks/interactions/useInteractions";
 import { initBakgrunnskartLayers, initGrenserLayers } from "utils/map/layers";
 import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
 import Toolbar from "./Toolbar/Toolbar";
@@ -20,9 +19,7 @@ const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const { panelContext } = useOverlayPanels();
   const { redigeringsmodusAktiv } = useRedigeringsmodus();
-
-  useEditInteractions();
-  const { selectedFeatures } = useSelectInteraction();
+  const { selectedFeatures } = useInteractions();
 
   useEffect(() => {
     // mapRef kan egentlig ikke være null her,
@@ -44,9 +41,9 @@ const Kart = () => {
             <SidebarPanels />
             <OverlayPanels />
             <UtkastBorder utkastActive={redigeringsmodusAktiv} />
+            <Toolbar />
           </KartOverlay>
           <OverlayPopup selectedFeatures={selectedFeatures} />
-          <Toolbar />
         </Suspense>
       </KartTarget>
     </KartWrapper>
@@ -86,18 +83,17 @@ const KartOverlay = styled.div<{
 }>`
   display: grid;
 
-  grid-template-columns: auto auto 1fr;
+  grid-template-columns: 440px auto 120px;
   grid-template-rows: 1fr auto;
   grid-template-areas:
-    "panel . ."
-    "panel metadata ."
-    "panel kretser .";
+    "panel . toolbar"
+    "panel metadata toolbar"
+    "panel kretser toolbar";
   width: 100%;
   height: 100%;
   position: absolute;
   pointer-events: none;
   z-index: 1;
-  overflow: hidden;
 `;
 
 export default Kart;

@@ -6,7 +6,6 @@ import { EditingType, ObjectValue } from "./types";
 import useAsyncFeatures from "hooks/useAsyncFeatures";
 import { getFeatureId, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { GrenseId } from "hooks/layers/types";
-import { removeAllFeatures } from "utils/map/layers";
 
 const layerIdByGrenseType: Record<EditingType, GrenseId> = {
   fylke: "fylke",
@@ -42,7 +41,7 @@ export const useEditGrense = (
   grenseId: string,
   features: Feature<Geometry>[] | null
 ) => {
-  const { resetEditingObject } = useEditGrenser(grenseType);
+  const { resetAndClearEditingLayer } = useEditGrenser(grenseType);
   const { value, setValue } = useEditGrenseValue(grenseType, grenseId);
   const { addFeaturesToLayer } = useAsyncFeatures(features, !!value?.editing);
 
@@ -75,8 +74,7 @@ export const useEditGrense = (
   const toggleEditing = async () => {
     const newObjectValue = { ...value };
 
-    removeAllFeatures();
-    resetEditingObject();
+    resetAndClearEditingLayer();
 
     newObjectValue.editing = !newObjectValue.editing;
 

@@ -6,6 +6,7 @@ import { Select } from "ol/interaction";
 import { map, overlayPopup } from "components/Kart/constants";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 import { selectStyles } from "utils/map/layerStyles";
+import { pixelTolerance } from "./constants";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -24,7 +25,7 @@ const useSelectInteraction = () => {
   const select = useMemo(
     () =>
       new Select({
-        hitTolerance: 20,
+        hitTolerance: pixelTolerance,
         style: selectStyles,
         filter: (feature) => {
           return feature.getGeometry() instanceof LineString;
