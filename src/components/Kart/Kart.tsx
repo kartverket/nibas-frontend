@@ -5,8 +5,7 @@ import OverlayPanels from "./OverlayPanels";
 import OverlayPopup from "./OverlayPopup";
 import SidebarPanels from "./SidebarPanels";
 import { PanelType, useOverlayPanels } from "contexts/OverlayPanelsContext";
-import useEditInteractions from "hooks/interactions/useEditInteractions";
-import useSelectInteraction from "hooks/interactions/useSelectInteraction";
+import useInteractions from "hooks/interactions/useInteractions";
 import { initBakgrunnskartLayers, initGrenserLayers } from "utils/map/layers";
 import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
 import Toolbar from "./Toolbar/Toolbar";
@@ -20,9 +19,7 @@ const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const { panelContext } = useOverlayPanels();
   const { redigeringsmodusAktiv } = useRedigeringsmodus();
-
-  useEditInteractions();
-  const { selectedFeatures } = useSelectInteraction();
+  const { selectedFeatures } = useInteractions();
 
   useEffect(() => {
     // mapRef kan egentlig ikke være null her,
