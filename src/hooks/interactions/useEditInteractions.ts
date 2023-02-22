@@ -9,9 +9,12 @@ import {
 } from "contexts/ToolbarContext";
 import { click } from "ol/events/condition";
 import { Collection } from "ol";
-import { editSource } from "hooks/layers/constants";
+import { editableBorderTypes, editSource } from "hooks/layers/constants";
 import useSelectInteraction from "./useSelectInteraction";
+import { createEditingStyle } from "ol/style/Style";
 import { pixelTolerance } from "./constants";
+import { getLayerById } from "utils/map/layers";
+import { map } from "components/Kart/constants";
 
 const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
@@ -24,21 +27,53 @@ const useEditInteractions = () => {
   const { activePointMode } = useToolbar();
   const detachIsActive = activePointMode === "detach";
   const { selectedFeatures } = useSelectInteraction();
+  const editingPointStyle = createEditingStyle()["Point"];
+  const editLayer = getLayerById("edit");
 
   const modify = useMemo(
     () =>
       new Modify({
         source: detachIsActive ? undefined : editSource,
         features: detachIsActive ? new Collection(selectedFeatures) : undefined,
+        pixelTolerance: pixelTolerance,
+        condition: (mapBrowserEvent) => {
+          const featuresAtPixel = map.getFeaturesAtPixel(
+            mapBrowserEvent.pixel,
+            {
+              layerFilter: (layer) => layer === editLayer,
+              hitTolerance: 20,
+            }
+          );
+          const feature = featuresAtPixel[0];
+          if (feature) {
+            return editableBorderTypes.includes(feature.get("type"));
+          }
+
+          return true;
+        },
         insertVertexCondition: () => {
           return activePointMode === "add";
         },
         deleteCondition: (mapBrowserEvent) => {
           return activePointMode === "remove" && click(mapBrowserEvent);
         },
-        pixelTolerance: pixelTolerance,
+        style: (feature) => {
+          // Feature i dette tilfellet er et punkt som holder en liste med features
+          const features = feature.get("features");
+
+          // Dersom det vi holder over er redigerbart så gir vi en prikkindikator
+          if (editableBorderTypes.includes(features[0].get("type"))) {
+            return editingPointStyle;
+          }
+        },
       }),
-    [activePointMode, detachIsActive, selectedFeatures]
+    [
+      activePointMode,
+      detachIsActive,
+      editLayer,
+      editingPointStyle,
+      selectedFeatures,
+    ]
   );
 
   useEffect(() => {

@@ -11,8 +11,8 @@ import { getIdFromEntity } from "utils/api";
 export type Kretstype = "grunnkrets" | "stemmekrets";
 
 const layerIdByKretstype: Record<Kretstype, LayerId> = {
-  grunnkrets: "grunnkretser",
-  stemmekrets: "stemmekretser",
+  grunnkrets: "grunnkrets",
+  stemmekrets: "stemmekrets",
 };
 
 export type InndelingerKretsContextValue = {
