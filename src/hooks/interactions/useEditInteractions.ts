@@ -3,7 +3,7 @@ import Feature, { FeatureLike } from "ol/Feature";
 import LineString from "ol/geom/LineString";
 import Modify, { ModifyEvent } from "ol/interaction/Modify";
 import { useToolbar, useToolbarSaving } from "contexts/ToolbarContext";
-import { click } from "ol/events/condition";
+import { click, primaryAction } from "ol/events/condition";
 import { Collection } from "ol";
 import { editableBorderTypes, editSource } from "hooks/layers/constants";
 import useSelectInteraction from "./useSelectInteraction";
@@ -43,7 +43,8 @@ const useEditInteractions = () => {
             return editableBorderTypes.includes(feature.get("type"));
           }
 
-          return true;
+          // Hvis vi ikke har en spesiell regel bruker vi default-condition
+          return primaryAction(mapBrowserEvent);
         },
         insertVertexCondition: () => {
           return activePointMode === "add";
@@ -59,13 +60,15 @@ const useEditInteractions = () => {
 
   useEffect(() => {
     const saveCoordinatesBeforeModification = (e: ModifyEvent) => {
-      e.features.forEach((featureLike) => {
-        if (featureLike instanceof Feature) {
-          const { featureId, coordinates } = getInfoFromFeature(featureLike);
-          if (!featureId || !coordinates) return;
-          featureLike.set(previousCoordinateKey, coordinates);
-        }
-      });
+      if (e.features) {
+        e.features.forEach((featureLike) => {
+          if (featureLike instanceof Feature) {
+            const { featureId, coordinates } = getInfoFromFeature(featureLike);
+            if (!featureId || !coordinates) return;
+            featureLike.set(previousCoordinateKey, coordinates);
+          }
+        });
+      }
     };
     modify.on("modifystart", saveCoordinatesBeforeModification);
 
@@ -76,24 +79,26 @@ const useEditInteractions = () => {
 
   useEffect(() => {
     const addModificationToHistory = (e: ModifyEvent) => {
-      e.features.forEach((featureLike) => {
-        if (featureLike instanceof Feature) {
-          const { featureId, coordinates } = getInfoFromFeature(featureLike);
-          if (!featureId || !coordinates) return;
+      if (e.features) {
+        e.features.forEach((featureLike) => {
+          if (featureLike instanceof Feature) {
+            const { featureId, coordinates } = getInfoFromFeature(featureLike);
+            if (!featureId || !coordinates) return;
 
-          addEntry({
-            type: "grense",
-            changes: [
-              {
-                id: featureId as string,
-                from: featureLike.get(previousCoordinateKey),
-                to: coordinates,
-              },
-            ],
-          });
-          featureLike.unset(previousCoordinateKey);
-        }
-      });
+            addEntry({
+              type: "grense",
+              changes: [
+                {
+                  id: featureId as string,
+                  from: featureLike.get(previousCoordinateKey),
+                  to: coordinates,
+                },
+              ],
+            });
+            featureLike.unset(previousCoordinateKey);
+          }
+        });
+      }
     };
 
     modify.on("modifyend", addModificationToHistory);
