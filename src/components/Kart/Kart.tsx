@@ -1,5 +1,5 @@
 import { Suspense, useEffect, useRef } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { map } from "./constants";
 import OverlayPanels from "./OverlayPanels";
 import OverlayPopup from "./OverlayPopup";
@@ -9,6 +9,7 @@ import useInteractions from "hooks/interactions/useInteractions";
 import { initBakgrunnskartLayers, initGrenserLayers } from "utils/map/layers";
 import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
 import Toolbar from "./Toolbar/Toolbar";
+import { useSidebarPanels } from "contexts/SidebarPanelContext";
 
 // dette må skje utenfor komponenten siden React kjører dypere useEffects
 // før de lenger opp i treet, så lag er ikke definert når de trengs lenger ned
@@ -20,6 +21,9 @@ const Kart = () => {
   const { panelContext } = useOverlayPanels();
   const { redigeringsmodusAktiv } = useRedigeringsmodus();
   const { selectedFeatures } = useInteractions();
+  const { openPanels } = useSidebarPanels();
+
+  const anySidebarOpen = Object.values(openPanels).includes(true);
 
   useEffect(() => {
     // mapRef kan egentlig ikke være null her,
@@ -37,7 +41,7 @@ const Kart = () => {
     <KartWrapper>
       <KartTarget ref={mapRef}>
         <Suspense fallback="More loading...">
-          <KartOverlay content={panelContext?.type}>
+          <KartOverlay panelOpen={anySidebarOpen} content={panelContext?.type}>
             <SidebarPanels />
             <OverlayPanels />
             <UtkastBorder utkastActive={redigeringsmodusAktiv} />
@@ -80,20 +84,35 @@ const KartTarget = styled.div`
 
 const KartOverlay = styled.div<{
   content?: PanelType;
+  panelOpen: boolean;
 }>`
   display: grid;
+  ${(props) =>
+    props.panelOpen ? gridTemplateWithPanel : gridTemplateWithoutPanel}
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+`;
 
+const gridTemplateWithPanel = css`
   grid-template-columns: 440px auto 120px;
   grid-template-rows: 1fr auto;
   grid-template-areas:
     "panel . toolbar"
     "panel metadata toolbar"
     "panel kretser toolbar";
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  pointer-events: none;
-  z-index: 1;
+`;
+
+const gridTemplateWithoutPanel = css`
+  grid-template-columns: auto 120px;
+  grid-template-rows: 1fr auto;
+  grid-template-areas:
+    ". toolbar"
+    "metadata toolbar"
+    "kretser toolbar";
 `;
 
 export default Kart;
