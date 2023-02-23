@@ -158,7 +158,7 @@ const UtkastItem = ({ utkast }: Props) => {
       : "transparent";
 
   return (
-    <ListItem>
+    <li>
       <ItemWrapper headerBackground={getColorFromUtkastAction()}>
         <UtkastName>{utkast.navn}</UtkastName>
         <UnstyledButton onClick={() => openClosePublish()}>
@@ -182,14 +182,12 @@ const UtkastItem = ({ utkast }: Props) => {
       </ItemWrapper>
       {isPublishOpen && (
         <UtkastItemExpanded>
-          <ButtonsAndGyldigFra>
-            <Buttons>
-              <CancelButton onClick={() => setIsPublishOpen(false)}>
-                {t("action.Avbryt")}
-              </CancelButton>
-              <Button onClick={publish}>{t("action.Publiser")}</Button>
-            </Buttons>
-          </ButtonsAndGyldigFra>
+          <Buttons>
+            <CancelButton onClick={() => setIsPublishOpen(false)}>
+              {t("action.Avbryt")}
+            </CancelButton>
+            <Button onClick={publish}>{t("action.Publiser")}</Button>
+          </Buttons>
           {conflictResponse && (
             <UtkastConflicts
               utkastId={utkast.id}
@@ -203,14 +201,12 @@ const UtkastItem = ({ utkast }: Props) => {
       )}
       {isDeleteOpen && (
         <UtkastItemExpanded>
-          <ButtonsAndGyldigFra>
-            <Buttons>
-              <CancelButton onClick={() => setIsDeleteOpen(false)}>
-                {t("action.Avbryt")}
-              </CancelButton>
-              <Button onClick={deleteUtkast}>{t("action.Forkast")}</Button>
-            </Buttons>
-          </ButtonsAndGyldigFra>
+          <Buttons>
+            <CancelButton onClick={() => setIsDeleteOpen(false)}>
+              {t("action.Avbryt")}
+            </CancelButton>
+            <Button onClick={deleteUtkast}>{t("action.Forkast")}</Button>
+          </Buttons>
         </UtkastItemExpanded>
       )}
       {utkastActive && !isPublishOpen && !isDeleteOpen && (
@@ -227,13 +223,9 @@ const UtkastItem = ({ utkast }: Props) => {
       >
         {feedbackContent}
       </Feedback>
-    </ListItem>
+    </li>
   );
 };
-
-const ListItem = styled.li`
-  border-bottom: 2px solid var(--gray_light);
-`;
 
 const ItemWrapper = styled.div<{ headerBackground: string }>`
   display: flex;
@@ -254,36 +246,15 @@ export const UtkastItemExpanded = styled.div`
 `;
 
 const Buttons = styled.div`
-  flex: 1;
-  text-align: right;
-`;
-
-export const ButtonsAndGyldigFra = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-
-  .button:first-child {
-    margin-right: 14px;
-  }
-
-  label {
-    margin-bottom: 1px;
-
-    input {
-      display: block;
-      margin-bottom: 0;
-      width: 130px;
-    }
-  }
+  justify-content: flex-end;
+  gap: 8px;
 `;
 
 const CancelButton = styled(Button).attrs(() => ({
-  variant: "teriary",
+  variant: "tertiary",
 }))`
-  background-color: var(--gray_light);
-  border: none;
-  color: var(--blue);
+  background: transparent;
 `;
 
 const UnstyledButton = styled(Button).attrs(() => ({

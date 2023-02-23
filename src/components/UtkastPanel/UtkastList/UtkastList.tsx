@@ -9,6 +9,12 @@ const List = styled(UnstyledList)`
   gap: 8px;
 `;
 
+const Divider = styled.hr`
+  width: 100%;
+  margin: 0;
+  border: 1px solid var(--gray_light);
+`;
+
 const UtkastList = () => {
   const { data: utkasts } = useNibasApi("/v1/utkast");
 
@@ -17,7 +23,10 @@ const UtkastList = () => {
   return (
     <List>
       {utkasts.map((utkast) => (
-        <UtkastItem key={utkast.id} utkast={utkast} />
+        <>
+          <UtkastItem key={utkast.id} utkast={utkast} />
+          <Divider />
+        </>
       ))}
     </List>
   );
