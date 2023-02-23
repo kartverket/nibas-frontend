@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import Feature, { FeatureLike } from "ol/Feature";
 import LineString from "ol/geom/LineString";
 import Modify, { ModifyEvent } from "ol/interaction/Modify";

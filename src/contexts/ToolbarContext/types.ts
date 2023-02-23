@@ -5,7 +5,7 @@ import { GrunnkretsRequest, Metadata, StemmekretsRequest } from "types/api";
 export type HistoryChange<T> = {
   id: string;
   from: T;
-  to: T | null;
+  to: T;
 };
 
 export type BaseHistoryEntry<Type extends string, Model> = {
