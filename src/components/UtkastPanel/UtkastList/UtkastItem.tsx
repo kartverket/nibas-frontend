@@ -162,21 +162,27 @@ const UtkastItem = ({ utkast }: Props) => {
       <ItemWrapper headerBackground={getColorFromUtkastAction()}>
         <UtkastName>{utkast.navn}</UtkastName>
         <UnstyledButton onClick={() => openClosePublish()}>
-          <PublishIcon
+          <ButtonIcon
+            icon="done"
             aria-label={`Publiser ${utkast.navn}`}
-            isActive={isPublishOpen}
+            $isActive={isPublishOpen}
+            $primaryColor="var(--green)"
           />
         </UnstyledButton>
         <UnstyledButton onClick={() => openCloseDelete()}>
-          <DeleteIcon
+          <ButtonIcon
+            icon="close"
             aria-label={`Forkast ${utkast.navn}`}
-            isActive={isDeleteOpen}
+            $isActive={isDeleteOpen}
+            $primaryColor="var(--red_error_message)"
           />
         </UnstyledButton>
         <UnstyledButton onClick={() => openCloseUtkast()}>
-          <EditIcon
-            isActive={utkastActive}
+          <ButtonIcon
+            icon="edit"
             aria-label={`Aktiver ${utkast.navn}`}
+            $isActive={utkastActive}
+            $primaryColor="var(--blue_dark)"
           />
         </UnstyledButton>
       </ItemWrapper>
@@ -267,40 +273,21 @@ const UnstyledButton = styled(Button).attrs(() => ({
   }
 `;
 
-const ButtonIcon = styled(Icon)<{ isActive: boolean }>`
+const ButtonIcon = styled(Icon)<{ $isActive: boolean; $primaryColor: string }>`
   border-radius: 50%;
   padding: 4px;
-  color: ${(props) =>
-    props.isActive ? "var(--white)" : "var(--button-icon-primary)"};
+  color: ${(props) => (props.$isActive ? "var(--white)" : props.$primaryColor)};
   background: ${(props) =>
-    props.isActive ? "var(--button-icon-primary)" : "transparent"};
+    props.$isActive ? props.$primaryColor : "transparent"};
 
   &:hover {
-    background: var(--button-icon-primary);
+    background: ${(props) => props.$primaryColor};
     color: var(--white);
   }
 
   &:focus-visible {
     outline: 2px solid var(--blue_dark);
   }
-`;
-
-const PublishIcon = styled(ButtonIcon).attrs(() => ({
-  icon: "done",
-}))`
-  --button-icon-primary: var(--green);
-`;
-
-const DeleteIcon = styled(ButtonIcon).attrs({
-  icon: "close",
-})`
-  --button-icon-primary: var(--red_error_message);
-`;
-
-const EditIcon = styled(ButtonIcon).attrs(() => ({
-  icon: "edit",
-}))`
-  --button-icon-primary: var(--blue_dark);
 `;
 
 export default UtkastItem;

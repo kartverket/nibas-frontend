@@ -2,6 +2,7 @@ import UtkastItem from "./UtkastItem";
 import { UnstyledList } from "components/UnstyledList";
 import useNibasApi from "hooks/useNibasApi";
 import styled from "styled-components";
+import { Fragment } from "react";
 
 const List = styled(UnstyledList)`
   display: flex;
@@ -23,10 +24,10 @@ const UtkastList = () => {
   return (
     <List>
       {utkasts.map((utkast) => (
-        <>
-          <UtkastItem key={utkast.id} utkast={utkast} />
+        <Fragment key={utkast.id}>
+          <UtkastItem utkast={utkast} />
           <Divider />
-        </>
+        </Fragment>
       ))}
     </List>
   );
