@@ -45,7 +45,7 @@ type Props = {
 const UtkastItemActive = ({ utkastId }: Props) => {
   const { t } = useTranslation();
   const { register, setValue, getValues } = useForm<Inputs>();
-  const { closeUtkast } = useUtkast();
+  const { closeUtkast, updateUtkastWithHistory } = useUtkast();
 
   const { data: fullUtkast } = useNibasApi("/v1/utkast/{id}", {
     id: utkastId,
@@ -60,6 +60,13 @@ const UtkastItemActive = ({ utkastId }: Props) => {
 
   const { addEntry } = useToolbarSaving();
   const { canSave } = useToolbarActions();
+
+  const handleSave = () => {
+    if (!canSave) {
+      return;
+    }
+    updateUtkastWithHistory();
+  };
 
   useEffect(() => {
     if (!fullUtkast) return;
@@ -128,14 +135,15 @@ const UtkastItemActive = ({ utkastId }: Props) => {
           ))}
         </Select>
       </BlockLabel>
-      <Center>
-        <EditingUtkastText>
-          {t("utkast.Du er nå i redigeringsmodus av dette utkastet")}
-        </EditingUtkastText>
+      <EditingUtkastText>
+        {t("utkast.Du er nå i redigeringsmodus av dette utkastet")}
+      </EditingUtkastText>
+      <Buttons>
         <CancelButton onClick={canSave ? openFeedback : closeUtkast}>
           {t("action.Avslutt redigering")}
         </CancelButton>
-      </Center>
+        <Button onClick={handleSave}>{t("action.Lagre")}</Button>
+      </Buttons>
       <Feedback
         type="warning"
         title="Advarsel"
@@ -157,17 +165,19 @@ const EditingUtkastText = styled.p`
   margin-top: 16px;
   font-style: italic;
   font-size: 14px;
-`;
-
-const Center = styled.div`
   text-align: center;
 `;
 
+const Buttons = styled.div`
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+`;
+
 const CancelButton = styled(Button).attrs(() => ({
-  variant: "teriary",
+  variant: "tertiary",
 }))`
-  background-color: var(--gray_light);
-  border: none;
+  background-color: transparent;
   color: var(--blue);
 `;
 

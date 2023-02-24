@@ -138,42 +138,62 @@ const UtkastItem = ({ utkast }: Props) => {
       }
     }
 
+    setIsPublishOpen(false);
+    setIsDeleteOpen(false);
+
     if (utkastActive) {
-      setIsPublishOpen(false);
-      setIsDeleteOpen(false);
       return;
     }
 
     changeUtkast(utkast.id);
   };
 
+  const getColorFromUtkastAction = () =>
+    isPublishOpen
+      ? "var(--green_light)"
+      : isDeleteOpen
+      ? "var(--pink)"
+      : utkastActive
+      ? "var(--blue_light)"
+      : "transparent";
+
   return (
-    <ListItem>
-      <ItemWrapper active={utkastActive}>
+    <li>
+      <ItemWrapper headerBackground={getColorFromUtkastAction()}>
         <UtkastName>{utkast.navn}</UtkastName>
         <UnstyledButton onClick={() => openClosePublish()}>
-          <PublishIcon aria-label={`Publiser ${utkast.navn}`} />
+          <ButtonIcon
+            icon="done"
+            aria-label={`Publiser ${utkast.navn}`}
+            $isActive={isPublishOpen}
+            $primaryColor="var(--green)"
+          />
         </UnstyledButton>
         <UnstyledButton onClick={() => openCloseDelete()}>
-          <DeleteIcon aria-label={`Forkast ${utkast.navn}`} />
+          <ButtonIcon
+            icon="close"
+            aria-label={`Forkast ${utkast.navn}`}
+            $isActive={isDeleteOpen}
+            $primaryColor="var(--red_error_message)"
+          />
         </UnstyledButton>
         <UnstyledButton onClick={() => openCloseUtkast()}>
-          <EditIcon
-            $active={utkastActive}
+          <ButtonIcon
+            icon="edit"
             aria-label={`Aktiver ${utkast.navn}`}
+            $isActive={utkastActive}
+            $primaryColor="var(--blue_dark)"
           />
         </UnstyledButton>
       </ItemWrapper>
       {isPublishOpen && (
         <UtkastItemExpanded>
-          <ButtonsAndGyldigFra>
-            <Buttons>
-              <CancelButton onClick={() => setIsPublishOpen(false)}>
-                {t("action.Avbryt")}
-              </CancelButton>
-              <Button onClick={publish}>{t("action.Publiser")}</Button>
-            </Buttons>
-          </ButtonsAndGyldigFra>
+          <Buttons>
+            <CancelButton onClick={() => setIsPublishOpen(false)}>
+              {t("action.Avbryt")}
+            </CancelButton>
+            <Button onClick={publish}>{t("action.Publiser")}</Button>
+          </Buttons>
           {conflictResponse && (
             <UtkastConflicts
               utkastId={utkast.id}
@@ -187,14 +207,12 @@ const UtkastItem = ({ utkast }: Props) => {
       )}
       {isDeleteOpen && (
         <UtkastItemExpanded>
-          <ButtonsAndGyldigFra>
-            <Buttons>
-              <CancelButton onClick={() => setIsDeleteOpen(false)}>
-                {t("action.Avbryt")}
-              </CancelButton>
-              <Button onClick={deleteUtkast}>{t("action.Forkast")}</Button>
-            </Buttons>
-          </ButtonsAndGyldigFra>
+          <Buttons>
+            <CancelButton onClick={() => setIsDeleteOpen(false)}>
+              {t("action.Avbryt")}
+            </CancelButton>
+            <Button onClick={deleteUtkast}>{t("action.Forkast")}</Button>
+          </Buttons>
         </UtkastItemExpanded>
       )}
       {utkastActive && !isPublishOpen && !isDeleteOpen && (
@@ -211,64 +229,38 @@ const UtkastItem = ({ utkast }: Props) => {
       >
         {feedbackContent}
       </Feedback>
-    </ListItem>
+    </li>
   );
 };
 
-const ItemWrapper = styled.div<{ active: boolean }>`
+const ItemWrapper = styled.div<{ headerBackground: string }>`
   display: flex;
-  background: ${({ active }) => (active ? "var(--blue_light)" : "transparent")};
-  padding: 0 10px 0 0;
+  background: ${(props) => props.headerBackground};
+  padding: 20px 24px;
+  gap: 8px;
+  align-items: center;
 `;
 
-const ListItem = styled.li`
-  margin-right: 8px;
-  margin-bottom: 8px;
-`;
-
-const UtkastName = styled.p`
+const UtkastName = styled.span`
   flex: 1;
-  padding: 4px;
-  padding-left: 16px;
 `;
 
 export const UtkastItemExpanded = styled.div`
   border-top: 2px solid var(--black);
   background-color: var(--gray_light);
-  padding: 32px 16px;
+  padding: 24px;
 `;
 
 const Buttons = styled.div`
-  flex: 1;
-  text-align: right;
-`;
-
-export const ButtonsAndGyldigFra = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-
-  .button:first-child {
-    margin-right: 14px;
-  }
-
-  label {
-    margin-bottom: 1px;
-
-    input {
-      display: block;
-      margin-bottom: 0;
-      width: 130px;
-    }
-  }
+  justify-content: flex-end;
+  gap: 8px;
 `;
 
 const CancelButton = styled(Button).attrs(() => ({
-  variant: "teriary",
+  variant: "tertiary",
 }))`
-  background-color: var(--gray_light);
-  border: none;
-  color: var(--blue);
+  background: transparent;
 `;
 
 const UnstyledButton = styled(Button).attrs(() => ({
@@ -281,50 +273,20 @@ const UnstyledButton = styled(Button).attrs(() => ({
   }
 `;
 
-const PublishIcon = styled(Icon).attrs(() => ({
-  icon: "done",
-}))`
-  color: var(--green);
-  margin-right: 8px;
+const ButtonIcon = styled(Icon)<{ $isActive: boolean; $primaryColor: string }>`
   border-radius: 50%;
   padding: 4px;
+  color: ${(props) => (props.$isActive ? "var(--white)" : props.$primaryColor)};
+  background: ${(props) =>
+    props.$isActive ? props.$primaryColor : "transparent"};
 
   &:hover {
-    background: var(--green);
+    background: ${(props) => props.$primaryColor};
     color: var(--white);
   }
 
   &:focus-visible {
     outline: 2px solid var(--blue_dark);
-  }
-`;
-
-const DeleteIcon = styled(Icon).attrs(() => ({
-  icon: "close",
-}))`
-  color: var(--red_error_message);
-  margin-right: 8px;
-  border-radius: 50%;
-  padding: 4px;
-
-  &:hover {
-    background: var(--red_error_message);
-    color: var(--white);
-  }
-`;
-
-const EditIcon = styled(Icon).attrs(() => ({
-  icon: "edit",
-}))<{ $active: boolean }>`
-  color: ${({ $active }) => ($active ? "var(--white)" : "var(--blue_dark)")};
-  margin-right: 8px;
-  border-radius: 50%;
-  padding: 4px;
-  background: ${({ $active }) =>
-    $active ? "var(--blue_dark)" : "transparent"};
-  &:hover {
-    background: var(--blue_dark);
-    color: var(--white);
   }
 `;
 
