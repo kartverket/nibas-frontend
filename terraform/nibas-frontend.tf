@@ -29,6 +29,18 @@ resource "kubernetes_manifest" "nibas_frontend_application" {
         targetCpuUtilization = 80
       }
 
+      # We need to make these folders writeable for caddy
+      # Since we don't use caddy for https/tls they don't need to be persisted between deploys
+      filesFrom = [
+        {
+          emptyDir  = "data"
+          mountPath = "/data"
+        },
+        {
+          emptyDir  = "config"
+          mountPath = "/config"
+        }
+      ]
 
       env = [
         {
