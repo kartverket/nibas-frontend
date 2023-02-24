@@ -136,39 +136,56 @@ const reduceGrenseOperations = (
   return editedFeatures;
 };
 
+//TO DO: Her må jeg fikse sånn at det legges til informasjon til StemmekretsRequest
+//Må legge til flere felter i StemmeRequest
+//Må nok ikke det likevel, alt ligger i stemmekretssammenslaingsendringentry!!
 const reduceStemmekretssammenslaingsOperations = (
-  operations: UtkastOperasjoner,
+  stemmekretssammenslaaingsOperations: StemmekretsSammenslaaingsendringRequest,
   entry: StemmekretsSammenslaaingsendringEntry
 ) => {
-  return addStemmekretsammenslaaingToOperations(operations, entry);
+  stemmekretssammenslaaingsOperations.stemmekretsnavn = entr;
+
+  return addStemmekretsammenslaaingToOperations(
+    stemmekretssammenslaaingsOperations,
+    entry
+  );
 };
 
 const addKretsChangeToOperations = (
-  operations: UtkastOperasjoner,
+  stemmekretssammenslaaingsOperations: UtkastOperasjoner,
   entry: GrunnkretsEntry | StemmekretsEntry,
   endringerKey: "grunnkretsendringer" | "stemmekretsendringer"
 ) => {
   entry.changes.forEach((change) => {
-    if (change.to && operations.metadataendringer[endringerKey]) {
-      operations.metadataendringer[endringerKey][change.id] = change.to;
+    if (
+      change.to &&
+      stemmekretssammenslaaingsOperations.metadataendringer[endringerKey]
+    ) {
+      stemmekretssammenslaaingsOperations.metadataendringer[endringerKey][
+        change.id
+      ] = change.to;
     }
   });
 
-  return operations;
+  return stemmekretssammenslaaingsOperations;
 };
 
-const addStemmekretsammenslaaingToOperations = (
-  operations: UtkastOperasjoner,
-  entry: StemmekretsSammenslaaingsendringEntry
-) => {
-  entry.changes.forEach((change) => {
-    if (change.to && operations.stemmekretsSammenslaaingsendring) {
-      operations.stemmekretsSammenslaaingsendring = change.to;
-    }
-  });
+// const addStemmekretsammenslaaingToOperations = (
+//   stemmekretssammenslaaingsOperations: StemmekretsRequest,
+//   entry: StemmekretsSammenslaaingsendringEntry
+// ) => {
+//   entry.changes.forEach((change) => {
+//     if (
+//       change.to &&
+//       stemmekretssammenslaaingsOperations.stemmekretsSammenslaaingsendring
+//     ) {
+//       stemmekretssammenslaaingsOperations.stemmekretsSammenslaaingsendring =
+//         change.to;
+//     }
+//   });
 
-  return operations;
-};
+//   return stemmekretssammenslaaingsOperations;
+// };
 
 export const historyToUtkastOperations = (
   history: ToolbarHistory,
@@ -207,20 +224,25 @@ export const historyToUtkastOperations = (
   //   })
   // ) as UtkastOperasjoner;
 
-  //vet ikke helt hva jeg skal gjøre her, må få hjelp til det i morgen
-  //Sånn jeg har fortstått det så er meningen med denne funksjonen at man skal få k
-  // const sammenslaaingsOperations = (
-  //   historyToCurrentIndex.filter(
-  //     (entry) => entry.type === "stemmekretssammenslaaingsendring"
-  //   ) as StemmekretsSammenslaaingsendringEntry[]
+  // Sånn jeg har fortstått det så er meningen med denne funksjonen at man skal få
+  //Hmm litt utfordrende hvordan logikken skal bli her
+  const sammenslaaingsOperations = (
+    historyToCurrentIndex.filter(
+      (entry) => entry.type === "stemmekretssammenslaaingsendring"
+    ) as StemmekretsSammenslaaingsendringEntry[]
+  ).reduce(
+    reduceStemmekretssammenslaingsOperations,
+    {} as StemmekretsRequest /* Må ha en type her men vet ikke helt hva det skal være hmm*/
+  );
   // ).reduce(
   //   reduceStemmekretssammenslaingsOperations,
-  //   {} as StemmekretsSammenslaaingsendring);
+  //   {} as StemmekretsSammenslaaingsendringRequest
+  // );
 
   //Her må jeg legge til sammenslåinger i utkastOperations
-  // if (Object.keys(sammenslaaingsOperations).length > 0) {
-  //   utkastOperations.stemmekretsSammenslaaingsendring
-  // }
+  if (Object.keys(sammenslaaingsOperations).length > 0) {
+    utkastOperations.stemmekretsSammenslaaingsendring;
+  }
 
   // hent grenseendringer og gjør endringene om til en liste av features
   const editedFeatures = (
@@ -249,8 +271,8 @@ export const createUtkastOperations = ({
   kommuneendringer = {},
   nasjonsendringer = {},
   stemmekretsendringer = {},
-}: //stemmekretssammenslaaingsendringer = {},
-{
+  stemmekretssammenslaaingsendringer,
+}: {
   endredeFeatures?: Record<string, GeoJSONFeature>;
   fylkesendringer?: Record<string, FylkeRequest>;
   grunnkretsendringer?: Record<string, GrunnkretsRequest>;
@@ -269,7 +291,5 @@ export const createUtkastOperations = ({
     nasjonsendringer,
     stemmekretsendringer,
   },
-  // stemmekretsSammenslaaingsendring: {
-  //   stemmekretssammenslaaingsendringer,
-  // },
+  stemmekretsSammenslaaingsendring: stemmekretssammenslaaingsendringer,
 });
