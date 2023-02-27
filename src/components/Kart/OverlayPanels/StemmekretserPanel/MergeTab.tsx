@@ -14,7 +14,6 @@ import { BlockLabel } from "../metadataComponents";
 import { Section, ContrastSection, InputsWrapper } from "./components";
 import { getIdFromEntity } from "utils/api";
 import { useToolbarSaving } from "contexts/ToolbarContext";
-import useNibasApi from "hooks/useNibasApi";
 
 type Props = {
   stemmekrets: StemmekretsResponse | undefined;
@@ -33,6 +32,11 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
     stemmekrets?.stemmekretsnummer
   );
 
+  const previousValues = {};
+  //stemmekretsnavn og nummer
+  //features til stemmekrets
+  //features til stemmekrets som skal slaas sammen med stemmekrets
+
   const [
     stemmekretsNummerTilSammenslaaing,
     setStemmekretsNummerTilSammenslaaing,
@@ -45,8 +49,7 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
 
   const fromFormToRequest = (
     stemmekretsRespons: StemmekretsResponse,
-    sammenslaaingsStemmekrets: StemmekretsRef,
-    to: boolean
+    sammenslaaingsStemmekrets: StemmekretsRef
   ): StemmekretsSammenslaaingsendringRequest => ({
     viderefoertStemmekrets: {
       lokalId: stemmekretsRespons.id.lokalid.value,
@@ -90,13 +93,11 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
           {
             from: fromFormToRequest(
               stemmekrets,
-              stemmekretsTilSammenslaaingListe[0],
-              false
+              stemmekretsTilSammenslaaingListe[0]
             ),
             to: fromFormToRequest(
               stemmekrets,
-              stemmekretsTilSammenslaaingListe[0],
-              true
+              stemmekretsTilSammenslaaingListe[0]
             ),
             id: stemmekretsId,
           },

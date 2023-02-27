@@ -136,19 +136,17 @@ const reduceGrenseOperations = (
   return editedFeatures;
 };
 
-//TO DO: Her må jeg fikse sånn at det legges til informasjon til StemmekretsRequest
-//Må legge til flere felter i StemmeRequest
-//Må nok ikke det likevel, alt ligger i stemmekretssammenslaingsendringentry!!
+//Her antar jeg at det bare er en entry i changes
 const reduceStemmekretssammenslaingsOperations = (
   stemmekretssammenslaaingsOperations: StemmekretsSammenslaaingsendringRequest,
   entry: StemmekretsSammenslaaingsendringEntry
-) => {
-  stemmekretssammenslaaingsOperations.stemmekretsnavn = entr;
+): StemmekretsSammenslaaingsendringRequest => {
+  entry.changes.forEach((change) => {
+    if (!change.to) return stemmekretssammenslaaingsOperations;
 
-  return addStemmekretsammenslaaingToOperations(
-    stemmekretssammenslaaingsOperations,
-    entry
-  );
+    stemmekretssammenslaaingsOperations = change.to;
+  });
+  return stemmekretssammenslaaingsOperations;
 };
 
 const addKretsChangeToOperations = (
@@ -169,23 +167,6 @@ const addKretsChangeToOperations = (
 
   return stemmekretssammenslaaingsOperations;
 };
-
-// const addStemmekretsammenslaaingToOperations = (
-//   stemmekretssammenslaaingsOperations: StemmekretsRequest,
-//   entry: StemmekretsSammenslaaingsendringEntry
-// ) => {
-//   entry.changes.forEach((change) => {
-//     if (
-//       change.to &&
-//       stemmekretssammenslaaingsOperations.stemmekretsSammenslaaingsendring
-//     ) {
-//       stemmekretssammenslaaingsOperations.stemmekretsSammenslaaingsendring =
-//         change.to;
-//     }
-//   });
-
-//   return stemmekretssammenslaaingsOperations;
-// };
 
 export const historyToUtkastOperations = (
   history: ToolbarHistory,
@@ -208,40 +189,19 @@ export const historyToUtkastOperations = (
     })
   ) as UtkastOperasjoner;
 
-  //TO DO: hent endringer på sammenslåinger av stemmekretser og gjør om til utkastoperasjoner
-  //her må jeg gjøre noe på utkastOperations.stemmekretsSammenslaaingsendring
-  //hvorfor blir typen her feil?
-  // const sammenslaaingsOperations = (
-  //   historyToCurrentIndex.filter(
-  //     (entry) => entry.type === "stemmekretssammenslaaing"
-  //   ) as StemmekretsSammenslaaingsendringEntry[]
-  // ).reduce(
-  //   reduceStemmekretssammenslaingsOperations,
-  //   createUtkastOperations({
-  //     ...{
-  //       ...previousUtkast?.operasjoner.stemmekretsSammenslaaingsendring,
-  //     },
-  //   })
-  // ) as UtkastOperasjoner;
-
-  // Sånn jeg har fortstått det så er meningen med denne funksjonen at man skal få
-  //Hmm litt utfordrende hvordan logikken skal bli her
   const sammenslaaingsOperations = (
     historyToCurrentIndex.filter(
       (entry) => entry.type === "stemmekretssammenslaaingsendring"
     ) as StemmekretsSammenslaaingsendringEntry[]
   ).reduce(
     reduceStemmekretssammenslaingsOperations,
-    {} as StemmekretsRequest /* Må ha en type her men vet ikke helt hva det skal være hmm*/
+    {} as StemmekretsSammenslaaingsendringRequest
   );
-  // ).reduce(
-  //   reduceStemmekretssammenslaingsOperations,
-  //   {} as StemmekretsSammenslaaingsendringRequest
-  // );
 
-  //Her må jeg legge til sammenslåinger i utkastOperations
+  //Antar her at det bare er en sammenslåing per utkast
   if (Object.keys(sammenslaaingsOperations).length > 0) {
-    utkastOperations.stemmekretsSammenslaaingsendring;
+    utkastOperations.stemmekretsSammenslaaingsendring =
+      sammenslaaingsOperations;
   }
 
   // hent grenseendringer og gjør endringene om til en liste av features
@@ -263,6 +223,10 @@ export const historyToUtkastOperations = (
 
   return utkastOperations;
 };
+
+// export const sammenslaaingToUtkastOperasjon = (stemmekrets, sammenslaingsstemmekrets, stemmekretsnavn, stemmekretsnummer) => {
+
+// };
 
 export const createUtkastOperations = ({
   endredeFeatures = {},
