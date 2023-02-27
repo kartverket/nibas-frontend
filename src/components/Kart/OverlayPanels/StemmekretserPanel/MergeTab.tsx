@@ -15,6 +15,8 @@ import { Section, ContrastSection, InputsWrapper } from "./components";
 import { getIdFromEntity } from "utils/api";
 import { useToolbarSaving } from "contexts/ToolbarContext";
 
+import CreateUtkastModal from "./CreateUtkastModal";
+
 type Props = {
   stemmekrets: StemmekretsResponse | undefined;
   alleStemmekretser: StemmekretsRef[];
@@ -24,6 +26,7 @@ type Props = {
 const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   const { t } = useTranslation();
   const { addEntry } = useToolbarSaving();
+  const [isCreateUtkastModalOpen, setIsCreateUtkastModalOpen] = useState(false);
   const [stemmekretsnavn, setStemmekretsnavn] = useState(
     stemmekrets?.stemmekretsnavn
   );
@@ -130,9 +133,9 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
               {"Velg stemmekretsen du vil slå sammen med"}
             </option>
             {alleStemmekretser.map((s) => (
-              <option key={s.nummer} value={s.nummer}>{`${
-                s.nummer
-              } - ${s.navn.toLowerCase()}`}</option>
+              <option key={s.nummer} value={s.nummer}>{`${s.nummer} - ${
+                s.navn.charAt(0).toUpperCase() + s.navn.toLowerCase().slice(1)
+              }`}</option>
             ))}
           </Select>
         </Dropdown>
@@ -164,11 +167,16 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
           <Button onClick={() => toggleRow(stemmekretsId)} variant="tertiary">
             {t("action.Avbryt")}
           </Button>
-          <Button onClick={mergeStemmekrets}>
+          <Button onClick={() => setIsCreateUtkastModalOpen(true)}>
             {t("stemmekrets.Slå sammen")}
           </Button>
         </Buttons>
       </Section>
+      <CreateUtkastModal
+        isCreateUtkastModalOpen={isCreateUtkastModalOpen}
+        setIsCreateUtkastModalOpen={setIsCreateUtkastModalOpen}
+        callback={mergeStemmekrets}
+      />
     </div>
   );
 };
@@ -182,7 +190,6 @@ const Dropdown = styled.div`
 
   select {
     margin: 0;
-    text-transform: capitalize;
   }
 
   & > span {
