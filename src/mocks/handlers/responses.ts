@@ -178,6 +178,10 @@ export const mockDetailedGrunnkrets1: GrunnkretsResponse = {
       value: "1",
     },
   },
+  kommunenummer: {
+    id: "12345",
+    kodeverdi: "4321",
+  },
   navn: "Mosekollen øst",
   gyldighet: {
     gyldigFra: "2022-01-01",
@@ -190,6 +194,10 @@ export const mockDetailedGrunnkrets1: GrunnkretsResponse = {
 export const mockDetailedGrunnkrets2: GrunnkretsResponse = {
   features: mockGeoJsonFeatureResponse,
   grunnkretsnummer: "12345679",
+  kommunenummer: {
+    id: "12345",
+    kodeverdi: "4321",
+  },
   version: 1,
   id: {
     gyldighetsdato: "2022-06-16",
@@ -213,6 +221,10 @@ export const mockGrunnkrets1: GrunnkretsRef = {
       value: mockDetailedGrunnkrets1.id.lokalid.value,
     },
   },
+  kommunenummer: {
+    id: "12345",
+    kodeverdi: "4321",
+  },
   href: "",
   navn: "Mosekollen øst",
   grunnkretsnummer: "12345678",
@@ -225,6 +237,10 @@ export const mockGrunnkrets2: GrunnkretsRef = {
     lokalid: {
       value: mockDetailedGrunnkrets2.id.lokalid.value,
     },
+  },
+  kommunenummer: {
+    id: "12345",
+    kodeverdi: "4321",
   },
   href: "",
   navn: "Dåsvatn",
@@ -359,6 +375,11 @@ export const mockStemmekretser: StemmekretsRef[] = [
         value: mockStemmekrets1.id.lokalid.value,
       },
     },
+
+    kommunenummer: {
+      id: "12345",
+      kodeverdi: "4321",
+    },
     navn: "Undredal",
     nummer: "05",
     href: "http://localhost:8080/v1/stemmekretser/1",
@@ -371,6 +392,10 @@ export const mockStemmekretser: StemmekretsRef[] = [
       lokalid: {
         value: mockStemmekrets2.id.lokalid.value,
       },
+    },
+    kommunenummer: {
+      id: "12345",
+      kodeverdi: "4321",
     },
     navn: "Slemfjord",
     nummer: "12",
