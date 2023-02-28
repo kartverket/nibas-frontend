@@ -28,17 +28,12 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   const { addEntry } = useToolbarSaving();
   const [isCreateUtkastModalOpen, setIsCreateUtkastModalOpen] = useState(false);
   const [stemmekretsnavn, setStemmekretsnavn] = useState(
-    stemmekrets?.stemmekretsnavn
+    stemmekrets ? stemmekrets.stemmekretsnavn : ""
   );
 
   const [stemmekretsnummer, setStemmekretsnummer] = useState(
-    stemmekrets?.stemmekretsnummer
+    stemmekrets ? stemmekrets.stemmekretsnummer : ""
   );
-
-  const previousValues = {};
-  //stemmekretsnavn og nummer
-  //features til stemmekrets
-  //features til stemmekrets som skal slaas sammen med stemmekrets
 
   const [
     stemmekretsNummerTilSammenslaaing,
@@ -64,8 +59,8 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
         version: sammenslaaingsStemmekrets.version,
       },
     ],
-    stemmekretsNavn: stemmekretsRespons?.stemmekretsnavn,
-    stemmekretsNummer: stemmekretsRespons?.stemmekretsnummer,
+    stemmekretsNavn: stemmekretsnavn,
+    stemmekretsNummer: stemmekretsnummer,
   });
 
   const getStemmekretsByNummer = (nummer: string): StemmekretsRef[] => {
