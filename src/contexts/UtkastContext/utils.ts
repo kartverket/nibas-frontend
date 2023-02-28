@@ -146,6 +146,7 @@ const reduceStemmekretssammenslaingsOperations = (
 
     stemmekretssammenslaaingsOperations = change.to;
   });
+  console.log("Stemmekretsoperasjoner:", stemmekretssammenslaaingsOperations);
   return stemmekretssammenslaaingsOperations;
 };
 
