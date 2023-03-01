@@ -2,7 +2,7 @@ import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
 import Heading from "components/typography/Heading";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import {
@@ -35,7 +35,7 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
 
   const { utkast } = useUtkast();
   const { updateUtkastWithHistory } = useUtkast();
-  const { clearHistory } = useToolbar();
+  const { history, clearHistory } = useToolbar();
 
   const [stemmekretsnummer, setStemmekretsnummer] = useState(
     stemmekrets ? stemmekrets.stemmekretsnummer : ""
@@ -70,6 +70,13 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
     return alleStemmekretser.filter((krets) => krets.nummer === nummer);
   };
 
+  useEffect(() => {
+    if (history.entries.length > 0) {
+      console.log(history.entries);
+      updateUtkastWithHistory();
+    }
+  }, [history, updateUtkastWithHistory]);
+
   const mergeStemmekrets = () => {
     const stemmekretsTilSammenslaaingListe = getStemmekretsByNummer(
       stemmekretsNummerTilSammenslaaing
@@ -93,9 +100,6 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
         ],
       });
     }
-
-    updateUtkastWithHistory();
-    clearHistory({ hasPreviouslySavedHistory: true });
   };
 
   const openCreateUtkastModal = () => {
@@ -171,7 +175,6 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
           </Button>
         </Buttons>
       </Section>
-      {/* TODO: må sette at create utkast modal ikke skal åpnes om man er i et utkast*/}
       <CreateUtkastModal
         isCreateUtkastModalOpen={isCreateUtkastModalOpen}
         setIsCreateUtkastModalOpen={setIsCreateUtkastModalOpen}
