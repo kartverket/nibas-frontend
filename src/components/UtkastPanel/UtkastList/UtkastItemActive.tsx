@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { ButtonsAndGyldigFra, UtkastItemExpanded } from "./UtkastItem";
+import { UtkastItemExpanded } from "./UtkastItem";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
@@ -25,7 +25,6 @@ import useTimer from "hooks/useTimer";
 
 type Inputs = {
   navn: string;
-  gyldigFra: string;
   endringsType: string;
 };
 
@@ -35,7 +34,6 @@ const fromFormToRequest = (
 ): UtkastRequestWithoutOperations => ({
   ...utkast,
   navn: form.navn,
-  gyldigFra: form.gyldigFra,
   endringstype: form.endringsType,
   version: utkast.version,
 });
@@ -47,7 +45,7 @@ type Props = {
 const UtkastItemActive = ({ utkastId }: Props) => {
   const { t } = useTranslation();
   const { register, setValue, getValues } = useForm<Inputs>();
-  const { closeUtkast } = useUtkast();
+  const { closeUtkast, updateUtkastWithHistory } = useUtkast();
 
   const { data: fullUtkast } = useNibasApi("/v1/utkast/{id}", {
     id: utkastId,
@@ -63,12 +61,18 @@ const UtkastItemActive = ({ utkastId }: Props) => {
   const { addEntry } = useToolbarSaving();
   const { canSave } = useToolbarActions();
 
+  const handleSave = () => {
+    if (!canSave) {
+      return;
+    }
+    updateUtkastWithHistory();
+  };
+
   useEffect(() => {
     if (!fullUtkast) return;
 
     setValue("navn", fullUtkast.navn);
     setValue("endringsType", fullUtkast.endringstype);
-    setValue("gyldigFra", fullUtkast.gyldigFra);
 
     previousValues.current = getValues();
   }, [fullUtkast, setValue, getValues]);
@@ -77,7 +81,6 @@ const UtkastItemActive = ({ utkastId }: Props) => {
     (change: UtkastEntry["changes"][number], direction: "to" | "from") => {
       setValue("navn", change[direction]?.navn ?? "");
       setValue("endringsType", change[direction]?.endringstype ?? "");
-      setValue("gyldigFra", change[direction]?.gyldigFra ?? "");
     },
     [setValue]
   );
@@ -132,24 +135,15 @@ const UtkastItemActive = ({ utkastId }: Props) => {
           ))}
         </Select>
       </BlockLabel>
-      <ButtonsAndGyldigFra>
-        <BlockLabel>
-          {t("metadata.Gyldig fra")}
-          <Input
-            {...register("gyldigFra", registerOptions)}
-            role="textbox"
-            type="date"
-          />
-        </BlockLabel>
-      </ButtonsAndGyldigFra>
-      <Center>
-        <EditingUtkastText>
-          {t("utkast.Du er nå i redigeringsmodus av dette utkastet")}
-        </EditingUtkastText>
+      <EditingUtkastText>
+        {t("utkast.Du er nå i redigeringsmodus av dette utkastet")}
+      </EditingUtkastText>
+      <Buttons>
         <CancelButton onClick={canSave ? openFeedback : closeUtkast}>
           {t("action.Avslutt redigering")}
         </CancelButton>
-      </Center>
+        <Button onClick={handleSave}>{t("action.Lagre")}</Button>
+      </Buttons>
       <Feedback
         type="warning"
         title="Advarsel"
@@ -171,17 +165,19 @@ const EditingUtkastText = styled.p`
   margin-top: 16px;
   font-style: italic;
   font-size: 14px;
-`;
-
-const Center = styled.div`
   text-align: center;
 `;
 
+const Buttons = styled.div`
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+`;
+
 const CancelButton = styled(Button).attrs(() => ({
-  variant: "teriary",
+  variant: "tertiary",
 }))`
-  background-color: var(--gray_light);
-  border: none;
+  background-color: transparent;
   color: var(--blue);
 `;
 

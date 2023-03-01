@@ -1,12 +1,6 @@
 import { useEditGrenser } from "contexts/EditGrenserContext";
 import { FeatureProperties } from "types/api";
-
-export const editingTypeByKontekstType = {
-  KOMMUNE: "kommune",
-  FYLKE: "fylke",
-  NASJON: "nasjon",
-  GRUNNKRETS: "grunnkrets",
-} as const;
+import { editableBorderTypes } from "hooks/layers/constants";
 
 const useIsMetadataDisabled = (properties: FeatureProperties) => {
   const { values } = useEditGrenser(
@@ -19,7 +13,8 @@ const useIsMetadataDisabled = (properties: FeatureProperties) => {
 
   const value = values[featureKontekstId];
 
-  return (value?.visible && !value?.editing) ?? true;
+  const borderIsNotEditable = !editableBorderTypes.includes(properties.type);
+  return ((value?.visible && !value?.editing) || borderIsNotEditable) ?? true;
 };
 
 export default useIsMetadataDisabled;

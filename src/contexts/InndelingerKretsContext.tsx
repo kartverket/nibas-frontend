@@ -11,8 +11,8 @@ import { getIdFromEntity } from "utils/api";
 export type Kretstype = "grunnkrets" | "stemmekrets";
 
 const layerIdByKretstype: Record<Kretstype, LayerId> = {
-  grunnkrets: "grunnkretser",
-  stemmekrets: "stemmekretser",
+  grunnkrets: "grunnkrets",
+  stemmekrets: "stemmekrets",
 };
 
 export type InndelingerKretsContextValue = {
@@ -62,8 +62,12 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
 
   const { currentKretstype } = context;
 
-  const { values, setObjectValue, setMultipleValues } =
-    useEditGrenser(currentKretstype);
+  const {
+    values,
+    setObjectValue,
+    setMultipleValues,
+    resetAndClearEditingLayer,
+  } = useEditGrenser(currentKretstype);
   const { openPanel, closePanels, closePanel } = useOverlayPanels();
   const { addKretserToLayer, removeKretserFromLayer } = useKretsgrenser(
     kommuneId,
@@ -81,6 +85,8 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
         editing: newEditing,
       },
     };
+
+    resetAndClearEditingLayer();
 
     if (newEditing) {
       Object.keys(values).forEach((kommuneIdInList) => {

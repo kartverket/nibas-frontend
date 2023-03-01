@@ -91,6 +91,11 @@ export const LinkButton = styled(Button).attrs(() => ({
 
   &:disabled {
     background: none;
+    cursor: not-allowed;
+
+    &:hover {
+      background: none;
+    }
   }
 `;
 

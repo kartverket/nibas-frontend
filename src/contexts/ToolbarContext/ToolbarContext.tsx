@@ -120,6 +120,7 @@ export const ToolbarProvider: React.FC = ({ children }) => {
     setEditFeatures,
     saveDirtyFeatureIds,
     clearSavedDirtyFeatureIds,
+    setAndSaveUtkastFeatures,
   } = useDirtyStyles();
 
   const historyValue = useHistory({
@@ -191,6 +192,7 @@ export const ToolbarProvider: React.FC = ({ children }) => {
   const value = {
     ...historyValue,
     activePointMode,
+    setAndSaveUtkastFeatures,
     clearDirtyStyles: clearSavedDirtyFeatureIds,
     togglePointMode,
     activeEditModes,
@@ -243,31 +245,8 @@ export const useToolbarSaving = () => {
     [setHistory]
   );
 
-  const updateEntry = useCallback(
-    (index: number, updatedEntry: HistoryEntry) => {
-      const newHistory = {
-        index: history.index,
-        entries: history.entries.slice(),
-        hasPreviouslySavedHistory: history.hasPreviouslySavedHistory,
-      };
-
-      newHistory.entries[index] = updatedEntry;
-
-      setHistory(newHistory);
-    },
-    [history, setHistory]
-  );
-
-  const updateLatestEntry = useCallback(
-    (updatedEntry: HistoryEntry) =>
-      updateEntry(history.index - 1, updatedEntry),
-    [history, updateEntry]
-  );
-
   return {
     addEntry,
-    updateEntry,
-    updateLatestEntry,
     history,
   };
 };

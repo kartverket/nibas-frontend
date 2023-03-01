@@ -12,6 +12,7 @@ const Divider = styled.hr`
   margin: 0;
 `;
 
+// TODO: vurder om punkt og linje-knapper bør skjules inntil man er i redigeringsmodus
 const ButtonToolbar = () => {
   const { t } = useTranslation();
   const { undo, redo } = useToolbarActions();

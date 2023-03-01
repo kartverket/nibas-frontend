@@ -82,16 +82,26 @@ For å få låste bakgrunnskart til å fungere lokalt må du også få tak i bru
 
 ## Autentisering
 
-5 brukere har lov:
+* Vær logget inn på enten kartverkets nett, VPN eller VDI.
+* Gå til et av testmiljøene
+  - Test: [nibas.test.skip.statkart.no](https://nibas.test.skip.statkart.no/)
+  - Dev: [nibas.dev.skip.statkart.no](https://nibas.dev.skip.statkart.no/)
+* Velg "Logg inn i Nasjonal inndelingsbase"
+* Anbefalt metode: logg inn med TestID 
+  - Oppgi personidentifikator fra en av de syntetiske brukerne her: [Testbrukere](https://kartverket.atlassian.net/wiki/spaces/TNIBAS/pages/534282277/Testbrukere)
+  - Dersom du får beskjed om å fylle inn mobil/epost er det bare å bruke et dummy-mobilnummer, eksempelvis 44556677
+* Det er også i en overgangsperiode mulig å logge inn med BankID
+  - Skriv inn personnummer
+  - Velg BankID med kodebrikke
+  - Skriv inn engangspassord
+  - Skriv inn passord
 
-21079408678
-21079408597
-21079408406
-21079408325
-21079408244
+### BankID
 
-### min-id
+Det er kun 1 gyldig bruker på testmiljøene.
 
-passord: password01
-pin: 12345
+Personnummer: 08089405603
+Engangskode: otp
+Passord: qwer1234
 
+[Les mer om IDportens testbrukere.](https://docs.digdir.no/docs/idporten/idporten/idporten_testbrukere)

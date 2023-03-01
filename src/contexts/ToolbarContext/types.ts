@@ -10,7 +10,7 @@ import {
 export type HistoryChange<T> = {
   id: string;
   from: T;
-  to: T | null;
+  to: T;
 };
 
 export type BaseHistoryEntry<Type extends string, Model> = {
@@ -70,6 +70,7 @@ export type ToolbarContextValue = {
   }: {
     hasPreviouslySavedHistory: boolean;
   }) => void;
+  setAndSaveUtkastFeatures: (features: string[]) => void;
   clearDirtyStyles: () => void;
   activePointMode: ToolbarPointMode;
   togglePointMode: (pointMode: ToolbarPointMode) => void;

@@ -7,6 +7,7 @@ import {
 import { server } from "mocks/server";
 import { rest } from "msw";
 import { ConflictResponseWrapper } from "types/api";
+import { waitFor } from "@testing-library/react";
 
 const defaultProps: React.ComponentProps<typeof UtkastItem> = {
   utkast: mockUtkastRef1,
@@ -23,21 +24,21 @@ describe("UtkastItem", () => {
     const cancelButton = await screen.findByRole("button", {
       name: "action.Avslutt redigering",
     });
-
     expect(cancelButton).toBeInTheDocument();
-    const utkastNameInput = await screen.findByRole("textbox", {
-      name: /navn på utkast/i,
-    });
+
+    await waitFor(async () =>
+      expect(
+        await screen.findByRole("textbox", {
+          name: /navn på utkast/i,
+        })
+      ).toHaveDisplayValue("Mock utkast")
+    );
+
     const typeSelect = await screen.findByRole("combobox", {
       name: /type utkast/i,
     });
-    const gyldigFraInput = await screen.findByRole("textbox", {
-      name: /gyldig fra/i,
-    });
 
-    expect(utkastNameInput).toHaveValue("Mock utkast");
     expect(typeSelect).toHaveValue("Retting");
-    expect(gyldigFraInput).toHaveValue("2022-06-01");
     expect(document.location.href).toContain(mockUtkastRef1.id);
   });
 
@@ -52,13 +53,7 @@ describe("UtkastItem", () => {
       name: "action.Publiser",
     });
 
-    const gyldigFraInput = await screen.findByRole("textbox", {
-      name: /gyldig fra/i,
-    });
-
     expect(publishButton).toBeEnabled();
-    expect(gyldigFraInput).toBeDisabled();
-    expect(gyldigFraInput).toHaveValue("2022-06-01");
   });
 
   it("should open grunnkretsconflict modal on publish conflict", async () => {

@@ -1,11 +1,11 @@
-import React, { createContext, useCallback, useContext, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
+import { removeAllFeatures } from "utils/map/layers";
 import {
   EditingObject,
   EditingType,
   GrenseDictionary,
   ObjectValue,
 } from "./types";
-import { removeAllFeatures } from "utils/map/layers";
 
 export type EditGrenserContextValue = {
   editingObject: EditingObject;
@@ -17,7 +17,7 @@ export type EditGrenserContextValue = {
     grenseId: string,
     values?: ObjectValue
   ) => void;
-  resetEditingObject: () => void;
+  resetAndClearEditingLayer: () => void;
 };
 
 /**
@@ -35,25 +35,25 @@ export const EditGrenserProvider: React.FC = ({ children }) => {
     grenseId: string,
     values: ObjectValue = {}
   ) => {
-    setEditingObject({
-      ...editingObject,
+    setEditingObject((prevState) => ({
+      ...prevState,
       [type]: {
-        ...editingObject[type],
+        ...prevState[type],
         [grenseId]: values,
       },
-    });
+    }));
   };
 
-  const resetEditingObject = useCallback(() => {
+  const resetAndClearEditingLayer = () => {
     removeAllFeatures();
-    setEditingObject({});
-  }, []);
+    setEditingObject(() => ({}));
+  };
 
   const value = {
     editingObject,
     setEditingObject,
     setObjectValue,
-    resetEditingObject,
+    resetAndClearEditingLayer,
   };
 
   return (
@@ -82,22 +82,30 @@ export const useEditGrenser = (grenseType: EditingType) => {
     throw new Error("useEditGrenser must be used within a EditGrenserProvider");
   }
 
-  const { editingObject, setObjectValue, setEditingObject } = context;
+  const {
+    editingObject,
+    setObjectValue,
+    setEditingObject,
+    resetAndClearEditingLayer,
+  } = context;
 
   const values = editingObject[grenseType] ?? {};
+
   const setObjectValueForType = (grenseId: string, newValues: ObjectValue) =>
     setObjectValue(grenseType, grenseId, newValues);
+
   const setMultipleValues = (newDictionary: GrenseDictionary) => {
-    setEditingObject({
-      ...editingObject,
+    setEditingObject((prevEditingObject) => ({
+      ...prevEditingObject,
       [grenseType]: newDictionary,
-    });
+    }));
   };
 
   return {
     values,
     setObjectValue: setObjectValueForType,
     setMultipleValues,
+    resetAndClearEditingLayer,
   };
 };
 

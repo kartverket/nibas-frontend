@@ -1,18 +1,18 @@
 import { useContext } from "react";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
-import { EditGrenserContext } from "./EditGrenserContext";
+import { EditGrenserContext, useEditGrenser } from "./EditGrenserContext";
 import { EditingType, ObjectValue } from "./types";
 import useAsyncFeatures from "hooks/useAsyncFeatures";
 import { getFeatureId, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { GrenseId } from "hooks/layers/types";
 
 const layerIdByGrenseType: Record<EditingType, GrenseId> = {
-  fylke: "fylker",
-  kommune: "kommuner",
-  nasjon: "nasjoner",
-  grunnkrets: "grunnkretser",
-  stemmekrets: "stemmekretser",
+  fylke: "fylke",
+  kommune: "kommune",
+  nasjon: "nasjon",
+  grunnkrets: "grunnkrets",
+  stemmekrets: "stemmekrets",
 };
 
 export const useEditGrenseValue = (
@@ -41,8 +41,9 @@ export const useEditGrense = (
   grenseId: string,
   features: Feature<Geometry>[] | null
 ) => {
+  const { resetAndClearEditingLayer } = useEditGrenser(grenseType);
   const { value, setValue } = useEditGrenseValue(grenseType, grenseId);
-  const setLayerToAddTo = useAsyncFeatures(features, !!value?.editing);
+  const { addFeaturesToLayer } = useAsyncFeatures(features, !!value?.editing);
 
   const toggleVisible = () => {
     const newObjectValue = {
@@ -64,14 +65,16 @@ export const useEditGrense = (
       }
     } else if (newObjectValue?.editing) {
       // hvis editing skal features legges tilbake til edit-laget
-      setLayerToAddTo("edit");
+      addFeaturesToLayer("edit");
     } else {
-      setLayerToAddTo(layerId);
+      addFeaturesToLayer(layerId);
     }
   };
 
   const toggleEditing = async () => {
     const newObjectValue = { ...value };
+
+    resetAndClearEditingLayer();
 
     newObjectValue.editing = !newObjectValue.editing;
 
@@ -87,16 +90,14 @@ export const useEditGrense = (
 
     if (newObjectValue.visible) {
       // legg til i edit fordi dette er etter checkbox click
-      setLayerToAddTo("edit");
+      addFeaturesToLayer("edit");
 
       // hvis var synlig før editing ble true, fjern fra gamle layer
       if (!value?.visible || !features) return;
-
       const layerId = layerIdByGrenseType[grenseType];
       removeFeaturesFromSourceByIds(layerId, features.map(getFeatureId));
     } else if (!newObjectValue.editing) {
       if (!features) return;
-
       removeFeaturesFromSourceByIds("edit", features.map(getFeatureId));
     }
   };
