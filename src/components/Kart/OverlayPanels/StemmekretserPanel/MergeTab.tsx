@@ -13,9 +13,11 @@ import {
 import { BlockLabel } from "../metadataComponents";
 import { Section, ContrastSection, InputsWrapper } from "./components";
 import { getIdFromEntity } from "utils/api";
-import { useToolbarSaving } from "contexts/ToolbarContext";
+import { useToolbar, useToolbarSaving } from "contexts/ToolbarContext";
 
 import CreateUtkastModal from "./CreateUtkastModal";
+import { useUtkast } from "contexts/UtkastContext";
+import { returnOrUpdate } from "ol/extent";
 
 type Props = {
   stemmekrets: StemmekretsResponse | undefined;
@@ -30,6 +32,10 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   const [stemmekretsnavn, setStemmekretsnavn] = useState(
     stemmekrets ? stemmekrets.stemmekretsnavn : ""
   );
+
+  const { utkast } = useUtkast();
+  const { updateUtkastWithHistory } = useUtkast();
+  const { clearHistory } = useToolbar();
 
   const [stemmekretsnummer, setStemmekretsnummer] = useState(
     stemmekrets ? stemmekrets.stemmekretsnummer : ""
@@ -87,6 +93,18 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
         ],
       });
     }
+
+    updateUtkastWithHistory();
+    clearHistory({ hasPreviouslySavedHistory: true });
+  };
+
+  const openCreateUtkastModal = () => {
+    if (utkast) {
+      return;
+    }
+    isCreateUtkastModalOpen
+      ? setIsCreateUtkastModalOpen(false)
+      : setIsCreateUtkastModalOpen(true);
   };
 
   return (
@@ -108,7 +126,6 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
             onChange={(e) =>
               setStemmekretsNummerTilSammenslaaing(e.currentTarget.value)
             }
-            // value={stemmekretsNummerTilSammenslaaing}
             defaultValue={"default"}
           >
             <option value={"default"} disabled>
@@ -149,11 +166,12 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
           <Button onClick={() => toggleRow(stemmekretsId)} variant="tertiary">
             {t("action.Avbryt")}
           </Button>
-          <Button onClick={() => setIsCreateUtkastModalOpen(true)}>
+          <Button onClick={() => openCreateUtkastModal()}>
             {t("stemmekrets.Slå sammen")}
           </Button>
         </Buttons>
       </Section>
+      {/* TODO: må sette at create utkast modal ikke skal åpnes om man er i et utkast*/}
       <CreateUtkastModal
         isCreateUtkastModalOpen={isCreateUtkastModalOpen}
         setIsCreateUtkastModalOpen={setIsCreateUtkastModalOpen}

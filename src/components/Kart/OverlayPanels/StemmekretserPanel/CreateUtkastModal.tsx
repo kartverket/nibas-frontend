@@ -61,10 +61,8 @@ const CreateUtkastModal = ({
   const [utkastName, setUtkastName] = useState("");
   const [utkastType, setUtkastType] = useState("");
   const { tokenHolderFunc } = useAuthenticationFlow();
-  const { history, clearHistory } = useToolbar();
+  const { history } = useToolbar();
   const setSearchParams = useSearchParams()[1];
-
-  const { updateUtkastWithHistory } = useUtkast();
 
   const createUtkast = async () => {
     const response = await createApiUtkast(
@@ -84,9 +82,6 @@ const CreateUtkastModal = ({
     setIsCreateUtkastModalOpen(false);
     setSearchParams({ utkast: utkastId });
 
-    updateUtkastWithHistory();
-
-    clearHistory({ hasPreviouslySavedHistory: true });
     callback();
   };
 
