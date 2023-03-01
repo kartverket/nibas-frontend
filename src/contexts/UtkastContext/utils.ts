@@ -136,7 +136,7 @@ const reduceGrenseOperations = (
   return editedFeatures;
 };
 
-//Her antar jeg at det bare er en entry i changes
+//Antas at det bare er en entry i changes
 const reduceStemmekretssammenslaingsOperations = (
   stemmekretssammenslaaingsOperations: StemmekretsSammenslaaingsendringRequest,
   entry: StemmekretsSammenslaaingsendringEntry
@@ -146,7 +146,6 @@ const reduceStemmekretssammenslaingsOperations = (
 
     stemmekretssammenslaaingsOperations = change.to;
   });
-  console.log("Stemmekretsoperasjoner:", stemmekretssammenslaaingsOperations);
   return stemmekretssammenslaaingsOperations;
 };
 
@@ -224,10 +223,6 @@ export const historyToUtkastOperations = (
 
   return utkastOperations;
 };
-
-// export const sammenslaaingToUtkastOperasjon = (stemmekrets, sammenslaingsstemmekrets, stemmekretsnavn, stemmekretsnummer) => {
-
-// };
 
 export const createUtkastOperations = ({
   endredeFeatures = {},
