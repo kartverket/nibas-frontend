@@ -41,9 +41,6 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   ] = useState("");
 
   const stemmekretsId = stemmekrets ? getIdFromEntity(stemmekrets) : "";
-  const [stemmekretsIdTilSammenslaaing, setStemmekretsIdTilSammenslaaing] =
-    useState("");
-  // let fullStemmekretsTilSammenslaaing: StemmekretsResponse? = null;
 
   const fromFormToRequest = (
     stemmekretsRespons: StemmekretsResponse,
@@ -68,22 +65,10 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   };
 
   const mergeStemmekrets = () => {
-    console.log("merging");
-    console.log(
-      "stemmekrets til sammenslaaing:",
-      stemmekretsNummerTilSammenslaaing
-    );
     const stemmekretsTilSammenslaaingListe = getStemmekretsByNummer(
       stemmekretsNummerTilSammenslaaing
     );
-    setStemmekretsIdTilSammenslaaing(
-      stemmekretsTilSammenslaaingListe[0].id.lokalid.value
-    );
 
-    console.log(
-      "stemmekrets",
-      getStemmekretsByNummer(stemmekretsNummerTilSammenslaaing)
-    );
     if (stemmekretsTilSammenslaaingListe.length === 1 && stemmekrets) {
       addEntry({
         type: "stemmekretssammenslaaingsendring",
@@ -123,8 +108,10 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
             onChange={(e) =>
               setStemmekretsNummerTilSammenslaaing(e.currentTarget.value)
             }
+            // value={stemmekretsNummerTilSammenslaaing}
+            defaultValue={"default"}
           >
-            <option value="" disabled selected>
+            <option value={"default"} disabled>
               {"Velg stemmekretsen du vil slå sammen med"}
             </option>
             {alleStemmekretser.map((s) => (

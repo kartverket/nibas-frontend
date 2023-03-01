@@ -15,6 +15,7 @@ import Button from "components/form/Button";
 import Heading from "components/typography/Heading";
 import Modal from "components/Modal";
 import { CustomModalWrapper, ModalOverlay } from "components/Modal/Modal";
+import { useUtkast } from "contexts/UtkastContext";
 
 const Frame = styled.div`
   display: flex;
@@ -63,6 +64,8 @@ const CreateUtkastModal = ({
   const { history, clearHistory } = useToolbar();
   const setSearchParams = useSearchParams()[1];
 
+  const { updateUtkastWithHistory } = useUtkast();
+
   const createUtkast = async () => {
     const response = await createApiUtkast(
       {
@@ -80,6 +83,9 @@ const CreateUtkastModal = ({
 
     setIsCreateUtkastModalOpen(false);
     setSearchParams({ utkast: utkastId });
+
+    updateUtkastWithHistory();
+
     clearHistory({ hasPreviouslySavedHistory: true });
     callback();
   };
