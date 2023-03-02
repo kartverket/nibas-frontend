@@ -27,17 +27,16 @@ type Props = {
 const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   const { t } = useTranslation();
   const { addEntry } = useToolbarSaving();
-  const [isCreateUtkastModalOpen, setIsCreateUtkastModalOpen] = useState(false);
-  const [stemmekretsnavn, setStemmekretsnavn] = useState(
-    stemmekrets ? stemmekrets.stemmekretsnavn : ""
-  );
-
-  const { utkast } = useUtkast();
-  const { updateUtkastWithHistory } = useUtkast();
+  const { utkast, updateUtkastWithHistory } = useUtkast();
   const { history } = useToolbar();
 
+  const [isCreateUtkastModalOpen, setIsCreateUtkastModalOpen] = useState(false);
+
+  const [stemmekretsnavn, setStemmekretsnavn] = useState(
+    stemmekrets?.stemmekretsnavn ?? ""
+  );
   const [stemmekretsnummer, setStemmekretsnummer] = useState(
-    stemmekrets ? stemmekrets.stemmekretsnummer : ""
+    stemmekrets?.stemmekretsnummer ?? ""
   );
 
   const [
@@ -69,6 +68,7 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
     return alleStemmekretser.filter((krets) => krets.nummer === nummer);
   };
 
+  //legger til history-entries med en gang de er laget, for å unngå sammenslåinger liggende i history
   useEffect(() => {
     if (history.entries.length > 0) {
       updateUtkastWithHistory();
@@ -131,7 +131,7 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
             defaultValue={"default"}
           >
             <option value={"default"} disabled>
-              {"Velg stemmekretsen du vil slå sammen med"}
+              {t("Velg stemmekretsen du vil slå sammen med")}
             </option>
             {alleStemmekretser.map((s) => (
               <option key={s.nummer} value={s.nummer}>{`${s.nummer} - ${

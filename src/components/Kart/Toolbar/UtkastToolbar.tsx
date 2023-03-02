@@ -124,7 +124,7 @@ const UtkastToolbar = ({
       <BlockLabel>
         {t("utkast.Navn på utkast")}
         <Input
-          placeholder="f.eks. Endring av stemmekrets i Froland"
+          placeholder={t("f.eks. Endring av stemmekrets i Froland")}
           value={utkastName}
           onChange={(e) => setUtkastName(e.target.value)}
         />

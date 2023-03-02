@@ -138,34 +138,29 @@ const reduceGrenseOperations = (
 
 //Antas at det bare er en entry i changes
 const reduceStemmekretssammenslaingsOperations = (
-  stemmekretssammenslaaingsOperations: StemmekretsSammenslaaingsendringRequest,
+  operations: StemmekretsSammenslaaingsendringRequest,
   entry: StemmekretsSammenslaaingsendringEntry
 ): StemmekretsSammenslaaingsendringRequest => {
   entry.changes.forEach((change) => {
-    if (!change.to) return stemmekretssammenslaaingsOperations;
+    if (!change.to) return operations;
 
-    stemmekretssammenslaaingsOperations = change.to;
+    operations = change.to;
   });
-  return stemmekretssammenslaaingsOperations;
+  return operations;
 };
 
 const addKretsChangeToOperations = (
-  stemmekretssammenslaaingsOperations: UtkastOperasjoner,
+  operations: UtkastOperasjoner,
   entry: GrunnkretsEntry | StemmekretsEntry,
   endringerKey: "grunnkretsendringer" | "stemmekretsendringer"
 ) => {
   entry.changes.forEach((change) => {
-    if (
-      change.to &&
-      stemmekretssammenslaaingsOperations.metadataendringer[endringerKey]
-    ) {
-      stemmekretssammenslaaingsOperations.metadataendringer[endringerKey][
-        change.id
-      ] = change.to;
+    if (change.to && operations.metadataendringer[endringerKey]) {
+      operations.metadataendringer[endringerKey][change.id] = change.to;
     }
   });
 
-  return stemmekretssammenslaaingsOperations;
+  return operations;
 };
 
 export const historyToUtkastOperations = (

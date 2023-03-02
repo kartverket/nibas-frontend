@@ -161,5 +161,11 @@
     }
   },
   "Forkast endringer": "Forkast endringer",
-  "Utkastet er opprettet": "Utkastet er opprettet"
+  "Utkastet er opprettet": "Utkastet er opprettet",
+  "f": {
+    "eks": {
+      " Endring av stemmekrets i Froland": "__STRING_NOT_TRANSLATED__"
+    }
+  },
+  "Velg stemmekretsen du vil slå sammen med": "__STRING_NOT_TRANSLATED__"
 }

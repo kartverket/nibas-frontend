@@ -72,7 +72,10 @@ const CreateUtkastModal = ({
       tokenHolderFunc()?.token
     );
 
-    if (response.status !== 201) throw new Error("Status ikke riktig");
+    if (response.status > 199 && response.status < 300)
+      throw new Error(
+        "Klarte ikke opprette utkast. Det ble returnert en feilkode ved opprettelse"
+      );
 
     const json = await response.json();
     const utkastId = json.id;
@@ -107,7 +110,7 @@ const CreateUtkastModal = ({
       <BlockLabel>
         {t("utkast.Navn på utkast")}
         <Input
-          placeholder="f.eks. Endring av stemmekrets i Froland"
+          placeholder={t("f.eks. Endring av stemmekrets i Froland")}
           value={utkastName}
           onChange={(e) => setUtkastName(e.target.value)}
         />

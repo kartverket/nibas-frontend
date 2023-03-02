@@ -119,7 +119,8 @@
     "Slå sammen stemmekretser": "__STRING_NOT_TRANSLATED__",
     "Hvilken stemmekrets ønsker du å slå sammen med": "__STRING_NOT_TRANSLATED__",
     "Navn- eller nummer på stemmekrets": "__STRING_NOT_TRANSLATED__",
-    "Detaljer om den sammenslåtte kretsen": "__STRING_NOT_TRANSLATED__"
+    "Detaljer om den sammenslåtte kretsen": "__STRING_NOT_TRANSLATED__",
+    "Stemmekretsnavn": "__STRING_NOT_TRANSLATED__"
   },
   "Endre": "__STRING_NOT_TRANSLATED__",
   "utkast": {
@@ -160,5 +161,11 @@
     }
   },
   "Forkast endringer": "__STRING_NOT_TRANSLATED__",
-  "Utkastet er opprettet": "__STRING_NOT_TRANSLATED__"
+  "Utkastet er opprettet": "__STRING_NOT_TRANSLATED__",
+  "f": {
+    "eks": {
+      " Endring av stemmekrets i Froland": "__STRING_NOT_TRANSLATED__"
+    }
+  },
+  "Velg stemmekretsen du vil slå sammen med": "__STRING_NOT_TRANSLATED__"
 }
