@@ -16,7 +16,7 @@ import Heading from "components/typography/Heading";
 import Modal from "components/Modal";
 import { CustomModalWrapper, ModalOverlay } from "components/Modal/Modal";
 
-const Frame = styled.div`
+const Frame = styled(CustomModalWrapper)`
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -27,7 +27,6 @@ const Frame = styled.div`
   background: white;
   border-radius: 10px;
   box-shadow: 4px 4px 12px 0 rgba(0, 0, 0, 0.15);
-
   width: 365px;
 `;
 
@@ -91,55 +90,53 @@ const CreateUtkastModal = ({
       className="_"
       overlayClassName="_"
       contentElement={(props, contentChildren) => (
-        <CustomModalWrapper {...props}>{contentChildren}</CustomModalWrapper>
+        <Frame {...props}>{contentChildren}</Frame>
       )}
       overlayElement={(props, overlayChildren) => (
         <ModalOverlay {...props}>{overlayChildren}</ModalOverlay>
       )}
     >
-      <Frame>
-        <Heading size="xs" tag="h3">
-          {t("utkast.Opprett et nytt utkast")}
-        </Heading>
-        <BlockLabel>
-          {t("utkast.Navn på utkast")}
-          <Input
-            placeholder="f.eks. Endring av stemmekrets i Froland"
-            value={utkastName}
-            onChange={(e) => setUtkastName(e.target.value)}
-          />
-        </BlockLabel>
-        <BlockLabel>
-          {t("utkast.Endringstype")}
-          <Select
-            value={utkastType}
-            onChange={(e) => setUtkastType(e.target.value)}
-          >
-            <option value="" disabled>
-              {t("utkast.Velg en endringstype fra listen")}
+      <Heading size="xs" tag="h3">
+        {t("utkast.Opprett et nytt utkast")}
+      </Heading>
+      <BlockLabel>
+        {t("utkast.Navn på utkast")}
+        <Input
+          placeholder="f.eks. Endring av stemmekrets i Froland"
+          value={utkastName}
+          onChange={(e) => setUtkastName(e.target.value)}
+        />
+      </BlockLabel>
+      <BlockLabel>
+        {t("utkast.Endringstype")}
+        <Select
+          value={utkastType}
+          onChange={(e) => setUtkastType(e.target.value)}
+        >
+          <option value="" disabled>
+            {t("utkast.Velg en endringstype fra listen")}
+          </option>
+          {Object.keys(translateKeysByEndringsType).map((type) => (
+            <option key={type} value={type}>
+              {t(translateKeysByEndringsType[type] as Translation)}
             </option>
-            {Object.keys(translateKeysByEndringsType).map((type) => (
-              <option key={type} value={type}>
-                {t(translateKeysByEndringsType[type] as Translation)}
-              </option>
-            ))}
-          </Select>
-        </BlockLabel>
-        <Buttons>
-          <Button
-            onClick={() => setIsCreateUtkastModalOpen(false)}
-            variant="tertiary"
-          >
-            {t("action.Avbryt")}
-          </Button>
-          <Button
-            onClick={createUtkast}
-            disabled={utkastType === "" || utkastName === ""}
-          >
-            {t("action.Opprett")}
-          </Button>
-        </Buttons>
-      </Frame>
+          ))}
+        </Select>
+      </BlockLabel>
+      <Buttons>
+        <Button
+          onClick={() => setIsCreateUtkastModalOpen(false)}
+          variant="tertiary"
+        >
+          {t("action.Avbryt")}
+        </Button>
+        <Button
+          onClick={createUtkast}
+          disabled={utkastType === "" || utkastName === ""}
+        >
+          {t("action.Opprett")}
+        </Button>
+      </Buttons>
     </Modal>
   );
 };
