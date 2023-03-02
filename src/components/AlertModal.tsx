@@ -2,20 +2,22 @@ import styled from "styled-components";
 import Button from "./form/Button";
 import CloseButton from "./form/Button/CloseButton";
 import Icon from "./Icon";
+import Modal from "./Modal";
+import { ModalContent } from "./Modal/Modal";
 
 const borderRadius = "12px";
 const border = "2px solid var(--gray_light)";
 
-const Container = styled.div`
-  background: var(--white);
+const ModalElement = styled(ModalContent)`
   width: 635px;
+  background: var(--white);
   box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.15);
   border-radius: ${borderRadius};
 `;
 
-const Content = styled.div`
+const Content = styled.div<{ hasBody: boolean }>`
   display: flex;
-  align-items: flex-start;
+  align-items: ${(props) => (props.hasBody ? "flex-start" : "center")};
   gap: 24px;
   padding: 24px;
   border: ${border};
@@ -39,8 +41,12 @@ const StatusIcon = styled(Icon).attrs((props) => ({
   background: ${(props) => props.background};
 `;
 
-const Title = styled.h3`
-  margin: 0;
+const Text = styled.div`
+  width: 100%;
+`;
+
+const Title = styled.h3<{ hasBody: boolean }>`
+  margin: ${(props) => (props.hasBody ? "6px 0 0" : "0")};
 `;
 
 const Body = styled.p`
@@ -58,7 +64,7 @@ const Buttons = styled.div`
   border-bottom-right-radius: ${borderRadius};
 `;
 
-type Status = "error" | "warning" | "info" | "success";
+type Status = "error" | "warning" | "info";
 
 type Action = {
   onClick: () => void;
@@ -69,12 +75,12 @@ type Props = {
   status: Status;
   title: string;
   body?: string;
+  isOpen: boolean;
   onClose: () => void;
   primaryAction?: Action;
   secondaryAction?: Action;
 };
 
-// TODO: fix
 const statusStyles: Record<Status, StatusStyle> = {
   error: {
     icon: "dangerous",
@@ -84,36 +90,32 @@ const statusStyles: Record<Status, StatusStyle> = {
   warning: {
     icon: "emergency_home",
     background: "var(--yellow_light)",
-    foreground: "var(--yellow_dark)",
+    foreground: "var(--yellow_darker)",
   },
   info: {
     icon: "help",
     background: "var(--blue_light)",
     foreground: "var(--blue_dark)",
   },
-  success: {
-    icon: "check_box",
-    background: "var(--green_light)",
-    foreground: "var(--green_dark)",
-  },
 };
 
-const Alert = ({
+const AlertModal = ({
   status,
   title,
   body,
+  isOpen,
   onClose,
   primaryAction,
   secondaryAction,
 }: Props) => {
   return (
-    <Container>
-      <Content>
+    <Modal isOpen={isOpen} onRequestClose={onClose} modalElement={ModalElement}>
+      <Content hasBody={body !== undefined}>
         <StatusIcon {...statusStyles[status]} />
-        <div>
-          <Title>{title}</Title>
+        <Text>
+          <Title hasBody={body !== undefined}>{title}</Title>
           {body && <Body>{body}</Body>}
-        </div>
+        </Text>
         <CloseButton onClick={onClose} />
       </Content>
       {(primaryAction || secondaryAction) && (
@@ -130,8 +132,8 @@ const Alert = ({
           )}
         </Buttons>
       )}
-    </Container>
+    </Modal>
   );
 };
 
-export default Alert;
+export default AlertModal;

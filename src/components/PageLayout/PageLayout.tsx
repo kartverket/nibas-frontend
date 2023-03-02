@@ -1,14 +1,16 @@
 import { Suspense, useState } from "react";
 import styled from "styled-components";
 import { SWRConfig } from "swr";
-import Feedback from "components/Feedback/Feedback";
 import Kart from "components/Kart";
 import Sidebar from "components/Sidebar";
 import TopBar from "components/TopBar";
 import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
+import AlertModal from "components/AlertModal";
+import { useTranslation } from "react-i18next";
 
 const PageLayout = () => {
-  const [errorFeedback, setErrorFeedback] = useState("");
+  const { t } = useTranslation();
+  const [isErrorActive, setIsErrorActive] = useState(false);
   const { redigeringsmodusAktiv } = useRedigeringsmodus();
 
   return (
@@ -17,7 +19,7 @@ const PageLayout = () => {
         value={{
           onError: (error) => {
             if (error.status >= 500) {
-              setErrorFeedback(error.message);
+              setIsErrorActive(true);
             }
           },
         }}
@@ -25,14 +27,17 @@ const PageLayout = () => {
         <Suspense fallback="Loading...">
           <TopBar />
           <Sidebar />
-          <Feedback
-            type="negative"
-            title="Det har skjedd en feil"
-            isOpen={errorFeedback !== ""}
-            onClose={() => setErrorFeedback("")}
-          >
-            {errorFeedback}
-          </Feedback>
+          <AlertModal
+            status="error"
+            title="Får ikke kontakt med systemet"
+            body="Vi får ikke kontakt med basen. Vennligst prøv igjen senere. Om feilen fortsetter, ta gjerne kontakt med Kartverket."
+            isOpen={isErrorActive}
+            onClose={() => setIsErrorActive(false)}
+            primaryAction={{
+              text: t("action.Lukk"),
+              onClick: () => setIsErrorActive(false),
+            }}
+          />
         </Suspense>
         <Kart />
       </SWRConfig>

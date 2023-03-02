@@ -18,10 +18,10 @@ import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
 import useNibasApi from "hooks/useNibasApi";
 import { Translation } from "i18n";
 import { UtkastResponse } from "types/api";
-import Feedback from "components/Feedback/Feedback";
-import useFeedback from "hooks/useFeedback";
+import useAlertModal from "hooks/useAlertModal";
 import { useUtkast } from "contexts/UtkastContext";
 import useTimer from "hooks/useTimer";
+import AlertModal from "components/AlertModal";
 
 type Inputs = {
   navn: string;
@@ -50,11 +50,13 @@ const UtkastItemActive = ({ utkastId }: Props) => {
   const { data: fullUtkast } = useNibasApi("/v1/utkast/{id}", {
     id: utkastId,
   });
-  const { openFeedback, isOpen, closeFeedback, feedbackContent } = useFeedback(
-    t(
-      "Utkastet ditt har endringer som ikke er lagret. Dersom du lukker utkastet nå, vil disse endringene forkastes. Er du sikker på at du vil fortsette?"
-    )
-  );
+
+  const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } =
+    useAlertModal(
+      t("utkast.ulagrede-endringer"),
+      t("utkast.ulagrede-endringer-utdypende")
+    );
+
   const previousValues = useRef<Inputs>(getValues());
   const { startTimer, clearTimer } = useTimer();
 
@@ -139,22 +141,26 @@ const UtkastItemActive = ({ utkastId }: Props) => {
         {t("utkast.Du er nå i redigeringsmodus av dette utkastet")}
       </EditingUtkastText>
       <Buttons>
-        <CancelButton onClick={canSave ? openFeedback : closeUtkast}>
+        <CancelButton onClick={canSave ? openModal : closeUtkast}>
           {t("action.Avslutt redigering")}
         </CancelButton>
         <Button onClick={handleSave}>{t("action.Lagre")}</Button>
       </Buttons>
-      <Feedback
-        type="warning"
-        title="Advarsel"
-        isOpen={isOpen}
-        onClose={closeFeedback}
-        onContinue={closeUtkast}
-        closeText={t("Fortsett redigering")}
-        continueText={t("Forkast endringer")}
-      >
-        {feedbackContent}
-      </Feedback>
+      <AlertModal
+        status="warning"
+        title={modalTitle}
+        body={modalBody}
+        isOpen={modalIsOpen}
+        onClose={closeModal}
+        secondaryAction={{
+          text: t("Forkast endringer"),
+          onClick: closeUtkast,
+        }}
+        primaryAction={{
+          text: t("Fortsett redigering"),
+          onClick: closeModal,
+        }}
+      />
     </UtkastItemExpanded>
   );
 };
