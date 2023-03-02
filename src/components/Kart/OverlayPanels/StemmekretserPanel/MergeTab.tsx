@@ -17,7 +17,6 @@ import { useToolbar, useToolbarSaving } from "contexts/ToolbarContext";
 
 import CreateUtkastModal from "./CreateUtkastModal";
 import { useUtkast } from "contexts/UtkastContext";
-import { returnOrUpdate } from "ol/extent";
 
 type Props = {
   stemmekrets: StemmekretsResponse | undefined;
@@ -35,7 +34,7 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
 
   const { utkast } = useUtkast();
   const { updateUtkastWithHistory } = useUtkast();
-  const { history, clearHistory } = useToolbar();
+  const { history } = useToolbar();
 
   const [stemmekretsnummer, setStemmekretsnummer] = useState(
     stemmekrets ? stemmekrets.stemmekretsnummer : ""
@@ -72,7 +71,6 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
 
   useEffect(() => {
     if (history.entries.length > 0) {
-      console.log(history.entries);
       updateUtkastWithHistory();
     }
   }, [history, updateUtkastWithHistory]);
