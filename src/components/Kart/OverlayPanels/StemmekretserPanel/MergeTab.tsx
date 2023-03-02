@@ -68,7 +68,7 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
     return alleStemmekretser.filter((krets) => krets.nummer === nummer);
   };
 
-  //legger til history-entries med en gang de er laget, for å unngå sammenslåinger liggende i history
+  //legger til history-entries med en gang de er laget, for å unngå at sammenslåinger blir liggende i history
   useEffect(() => {
     if (history.entries.length > 0) {
       updateUtkastWithHistory();
