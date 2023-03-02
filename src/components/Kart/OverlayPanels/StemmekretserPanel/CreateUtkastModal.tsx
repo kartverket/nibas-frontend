@@ -59,7 +59,7 @@ const CreateUtkastModal = ({
   const [utkastName, setUtkastName] = useState("");
   const [utkastType, setUtkastType] = useState("");
   const { tokenHolderFunc } = useAuthenticationFlow();
-  const { history } = useToolbar();
+  const { history, clearHistory } = useToolbar();
   const setSearchParams = useSearchParams()[1];
 
   const createUtkast = async () => {
@@ -81,6 +81,11 @@ const CreateUtkastModal = ({
     setSearchParams({ utkast: utkastId });
 
     callback();
+  };
+
+  const cancelCreateUtkast = () => {
+    clearHistory({ hasPreviouslySavedHistory: false });
+    setIsCreateUtkastModalOpen(false);
   };
 
   return (
@@ -124,10 +129,7 @@ const CreateUtkastModal = ({
         </Select>
       </BlockLabel>
       <Buttons>
-        <Button
-          onClick={() => setIsCreateUtkastModalOpen(false)}
-          variant="tertiary"
-        >
+        <Button onClick={() => cancelCreateUtkast()} variant="tertiary">
           {t("action.Avbryt")}
         </Button>
         <Button
