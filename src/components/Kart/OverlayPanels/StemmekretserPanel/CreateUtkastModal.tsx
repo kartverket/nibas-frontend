@@ -72,10 +72,11 @@ const CreateUtkastModal = ({
       tokenHolderFunc()?.token
     );
 
-    if (response.status > 199 && response.status < 300)
+    if (response.status < 200 && response.status > 299) {
       throw new Error(
         "Klarte ikke opprette utkast. Det ble returnert en feilkode ved opprettelse"
       );
+    }
 
     const json = await response.json();
     const utkastId = json.id;
