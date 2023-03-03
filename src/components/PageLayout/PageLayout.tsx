@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 
 const PageLayout = () => {
   const { t } = useTranslation();
-  const [isErrorActive, setIsErrorActive] = useState(false);
+  const [errorStatus, setErrorStatus] = useState(200);
   const { redigeringsmodusAktiv } = useRedigeringsmodus();
 
   return (
@@ -18,9 +18,7 @@ const PageLayout = () => {
       <SWRConfig
         value={{
           onError: (error) => {
-            if (error.status >= 500) {
-              setIsErrorActive(true);
-            }
+            setErrorStatus(error.status);
           },
         }}
       >
@@ -30,12 +28,12 @@ const PageLayout = () => {
           <AlertModal
             status="error"
             title="Får ikke kontakt med systemet"
-            body="Vi får ikke kontakt med basen. Vennligst prøv igjen senere. Om feilen fortsetter, ta gjerne kontakt med Kartverket."
-            isOpen={isErrorActive}
-            onClose={() => setIsErrorActive(false)}
+            body={`Vi får ikke kontakt med basen. Vennligst prøv igjen senere. Om feilen fortsetter, ta gjerne kontakt med Kartverket. Feilkode: ${errorStatus}`}
+            isOpen={errorStatus >= 400}
+            onClose={() => setErrorStatus(200)}
             primaryAction={{
               text: t("action.Lukk"),
-              onClick: () => setIsErrorActive(false),
+              onClick: () => setErrorStatus(200),
             }}
           />
         </Suspense>
