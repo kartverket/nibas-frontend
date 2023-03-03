@@ -62,7 +62,7 @@ describe("PageLayout", () => {
       await user.click(inndelingerButton);
 
       const closeButton = screen.getByRole("button", {
-        name: /lukk sidebar.inndelinger/i,
+        name: /lukk/i,
       });
       await user.click(closeButton);
 
