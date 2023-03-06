@@ -4,18 +4,17 @@ import {
   OpprettUtkastRequest,
   UtkastResponse,
 } from "types/api";
+import { fetcherWithToken } from "utils/swr";
 
 export const createUtkast = async (
   utkast: OpprettUtkastRequest,
   token: string | undefined
 ) => {
-  return fetch(`v1/utkast`, {
+  return await fetcherWithToken({
     method: "POST",
+    url: "v1/utkast",
     body: JSON.stringify(utkast),
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + token,
-    },
+    token,
   });
 };
 
@@ -23,57 +22,50 @@ export const updateUtkast = async (
   id: string,
   utkast: OppdaterUtkastRequest,
   token: string | undefined
-) => {
-  const response = await fetch(`v1/utkast/${id}`, {
+): Promise<UtkastResponse> => {
+  return await fetcherWithToken({
     method: "PUT",
+    url: `v1/utkast/${id}`,
     body: JSON.stringify(utkast),
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + token,
-    },
+    token,
   });
-
-  const json = await response.json();
-
-  return json as UtkastResponse;
 };
 
 export const publishUtkast = async (
   id: string,
   utkast: OppdaterUtkastRequest,
+  token: string | undefined,
+  errorCallback: (res: Response) => void
+) => {
+  return fetcherWithToken({
+    method: "POST",
+    url: `v1/utkast/${id}/publiser`,
+    body: JSON.stringify(utkast),
+    customErrorHandling: errorCallback,
+    token,
+  });
+};
+
+export const deleteUtkast = async (
+  utkastId: string,
   token: string | undefined
 ) => {
-  return fetch(`v1/utkast/${id}/publiser`, {
-    method: "POST",
-    body: JSON.stringify(utkast),
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + token,
-    },
-  });
-};
-
-export const deleteUtkast = (utkastId: string, token: string | undefined) => {
-  return fetch(`v1/utkast/${utkastId}`, {
+  return fetcherWithToken({
     method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + token,
-    },
+    url: `v1/utkast/${utkastId}`,
+    token,
   });
 };
 
-export const resolveUtkastConflict = (
+export const resolveUtkastConflict = async (
   utkastId: string,
   resolvedConflict: ConflictResolved,
   token: string | undefined
 ) => {
-  return fetch(`v1/utkast/${utkastId}/resolved`, {
+  return await fetcherWithToken({
+    url: `v1/utkast/${utkastId}/resolved`,
     method: "POST",
     body: JSON.stringify(resolvedConflict),
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + token,
-    },
+    token,
   });
 };

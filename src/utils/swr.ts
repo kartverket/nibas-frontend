@@ -5,20 +5,43 @@ interface ResponseError extends Error {
 // TODO:feilhåndtering for de som IKKE bruker denne
 // TODO: bruk fetcherWithToken alle steder vi kan, gjelder ikke geonorge og sånt
 
-// TODO: ta inn type, default get, frivillig
-// TODO: ta inn body, frivillig
-export const fetcherWithToken = async (url: string | null, token?: string) => {
-  if (!url) return;
+type FetcherProps = {
+  url: string;
+  method?: "GET" | "POST" | "PUT" | "DELETE";
+  body?: string;
+  token?: string;
+  customErrorHandling?: (res: Response) => void;
+};
 
-  // TODO: legg inn content type
+const defaultErrorHandling = (res: Response) => {
+  const error: ResponseError = new Error("Fikk ikke hentet data.");
+  error.status = res.status;
+  throw error;
+};
+
+export const fetcherWithToken = async ({
+  method = "GET",
+  url,
+  body,
+  token,
+  customErrorHandling,
+}: FetcherProps) => {
   const res = await fetch(url, {
-    headers: { Authorization: "Bearer " + token ?? "" },
+    method,
+    body,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
   });
 
+  // TODO: Bruk global kontekst?
   if (!res.ok) {
-    const error: ResponseError = new Error("Fikk ikke hentet data.");
-    error.status = res.status;
-    throw error;
+    if (customErrorHandling) {
+      customErrorHandling(res);
+    } else {
+      defaultErrorHandling(res);
+    }
   }
 
   return res.json();

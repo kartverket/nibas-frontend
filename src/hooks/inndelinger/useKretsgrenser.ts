@@ -44,7 +44,7 @@ const kretserByKommuneFetcher = async (
 
   const kretsFeaturesPromises: Promise<string>[] = kretsIds.map(
     async (kretsId) =>
-      fetcherWithToken(`/v1/${typeUrl}/${kretsId}/grenser`, token)
+      fetcherWithToken({ url: `/v1/${typeUrl}/${kretsId}/grenser`, token })
   );
 
   return Promise.all(kretsFeaturesPromises);
@@ -58,10 +58,10 @@ const representasjonspunkterFetcher = async (
   const typeUrl = endpointByKretstype[type];
 
   const representasjonspunkterPromises = kretsIds.map(async (kretsId) => {
-    const krets = (await fetcherWithToken(
-      `v1/${typeUrl}/${kretsId}`,
-      token
-    )) as KretsResponse<typeof typeUrl>;
+    const krets = (await fetcherWithToken({
+      url: `v1/${typeUrl}/${kretsId}`,
+      token,
+    })) as KretsResponse<typeof typeUrl>;
 
     if (!krets) return;
 

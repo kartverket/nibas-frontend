@@ -104,11 +104,7 @@ const UtkastToolbar = ({
       },
       tokenHolderFunc()?.token
     );
-
-    if (response.status !== 201) throw new Error("Status ikke riktig");
-
-    const json = await response.json();
-    const utkastId = json.id;
+    const utkastId = response.id;
 
     setCreateUtkastOpen(false);
     setSearchParams({ utkast: utkastId });
