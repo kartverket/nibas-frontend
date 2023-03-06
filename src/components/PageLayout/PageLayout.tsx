@@ -10,34 +10,37 @@ import { useTranslation } from "react-i18next";
 
 const PageLayout = () => {
   const { t } = useTranslation();
-  const [errorStatus, setErrorStatus] = useState(200);
+  const [receivedError, setReceivedError] = useState<string>("");
   const { redigeringsmodusAktiv } = useRedigeringsmodus();
 
+  // TODO: ERSTATT ERROR-GREIENE MED CONTEXT OG PROVIDER OG slikt.
   return (
     <Grid utkastActive={redigeringsmodusAktiv}>
       <SWRConfig
         value={{
+          fetcher: (url) => fetch(url).then((res) => res.json()),
           onError: (error) => {
-            setErrorStatus(error.status);
+            console.log("onError?");
+            setReceivedError(error.status);
           },
         }}
       >
         <Suspense fallback="Loading...">
           <TopBar />
           <Sidebar />
-          <AlertModal
-            status="error"
-            title="Får ikke kontakt med systemet"
-            body={`Vi får ikke kontakt med basen. Vennligst prøv igjen senere. Om feilen fortsetter, ta gjerne kontakt med Kartverket. Feilkode: ${errorStatus}`}
-            isOpen={errorStatus >= 400}
-            onClose={() => setErrorStatus(200)}
-            primaryAction={{
-              text: t("action.Lukk"),
-              onClick: () => setErrorStatus(200),
-            }}
-          />
         </Suspense>
         <Kart />
+        <AlertModal
+          status="error"
+          title="Får ikke kontakt med systemet"
+          body={`Vi får ikke kontakt med basen. Vennligst prøv igjen senere. Om feilen fortsetter, ta gjerne kontakt med Kartverket. Feilkode: ${receivedError}`}
+          isOpen={receivedError !== ""}
+          onClose={() => setReceivedError("")}
+          primaryAction={{
+            text: t("action.Lukk"),
+            onClick: () => setReceivedError(""),
+          }}
+        />
       </SWRConfig>
     </Grid>
   );
