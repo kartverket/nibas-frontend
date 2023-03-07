@@ -19,6 +19,7 @@ const defaultErrorHandling = (res: Response) => {
   throw error;
 };
 
+// TODO: Mistenker at det blir trøbbel når fetcherWithToken sendes inn til useSwr som en fetcher, vil props mappes riktig?
 export const fetcherWithToken = async ({
   method = "GET",
   url,
