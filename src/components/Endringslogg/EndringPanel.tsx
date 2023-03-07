@@ -6,8 +6,8 @@ import Icon from "../Icon";
 type EndringPanelProps = {
   tittel: string;
   endringer: {
-    fra: string;
-    til: string;
+    fra: string | null | undefined;
+    til: string | null | undefined;
   }[];
 };
 
@@ -23,9 +23,9 @@ export const EndringPanel = ({ tittel, endringer }: EndringPanelProps) => {
         {endringer.map(({ fra, til }, index) => (
           <EndringListItem key={index}>
             <>
-              <span>{fra}</span>
+              <TekstEllerTom tekst={fra} />
               <RightArrow />
-              <span>{til}</span>
+              <TekstEllerTom tekst={til} />
             </>
           </EndringListItem>
         ))}
@@ -34,9 +34,24 @@ export const EndringPanel = ({ tittel, endringer }: EndringPanelProps) => {
   );
 };
 
+type TekstEllerTomProps = {
+  tekst: string | null | undefined;
+};
+
+const TekstEllerTom = ({ tekst }: TekstEllerTomProps) => {
+  if (tekst == null || tekst.trim() === "") {
+    return <KursivTekst>(tom)</KursivTekst>;
+  }
+  return <span>{tekst.trim()}</span>;
+};
+
+const KursivTekst = styled.span`
+  font-style: italic;
+`;
+
 const EndringListItem = styled.li`
   margin: 12px 0;
-  font-size: 18px;
+  font-size: 20px;
 
   &:last-of-type {
     margin-bottom: 0;

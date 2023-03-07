@@ -52,9 +52,10 @@ export const useUtkastStemmekretsEndringer =
         );
       }
     }, [
-      lasterStemmekretser,
       stemmekretserMedEndringer,
       operasjoner,
+      kommuner,
+      lasterData,
       stemmekretser,
     ]);
 
