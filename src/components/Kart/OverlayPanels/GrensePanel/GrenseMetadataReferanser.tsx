@@ -10,7 +10,6 @@ import { BlockLabel, Container, Part } from "../metadataComponents";
 import { addMetadataEntryFromFeature } from "../utils";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
-import Icon from "components/Icon";
 import { useToolbarSaving } from "contexts/ToolbarContext";
 import { Dokref, FeatureProperties, Metadata } from "types/api";
 import useMetadataInputOptions from "hooks/useMetadataInputOptions";
@@ -126,7 +125,7 @@ const FieldArray = ({
           </a>
           <div>
             <Button
-              icon={<Icon icon="remove" />}
+              icon="remove"
               onClick={() => remove(nestedIndex)}
               disabled={disabled}
             >
@@ -146,7 +145,7 @@ const FieldArray = ({
             disabled={disabled}
           />
         </BlockLabel>
-        <Button onClick={onAdd} disabled={!newLenke} icon={<Icon icon="add" />}>
+        <Button onClick={onAdd} disabled={!newLenke} icon="add">
           {t("action.Legg til")}
         </Button>
       </div>

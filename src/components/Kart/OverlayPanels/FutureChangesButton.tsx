@@ -22,7 +22,7 @@ const FutureChangesButton = ({ isOpen, toggleRow, krets }: Props) => {
       aria-label={`${
         isOpen ? "Skjul" : "Vis"
       } fremtidige endringer for ${getNavnInSpraak(krets.navn, "nor")}`}
-      icon={<Icon icon="timelapse" />}
+      icon="timelapse"
     >
       <Badge>{krets.antallFramtidigeVersjoner}</Badge>
     </ToggleableKretsButton>

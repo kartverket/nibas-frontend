@@ -15,7 +15,7 @@ const SidebarPanelTitle = ({ title, closePanel }: Props) => {
         {title}
       </StyledTitle>
       <CloseButton
-        icon={<Icon icon="close" aria-label={`Lukk ${title}`} />}
+        icon="close" iconAriaLabel={`Lukk ${title}`}
         onClick={closePanel}
         variant="unstyled"
       />

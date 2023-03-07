@@ -80,19 +80,14 @@ const GrensePanel = ({ feature }: Props) => {
     >
       <AbsoluteHeaderButton
         right={0}
-        icon={<Icon icon="close" />}
+        icon="close"
+        iconAriaLabel="Lukk panel"
         onClick={() => closePanel("grensemetadata")}
       />
       <AbsoluteHeaderButton
         right={50}
         onClick={() => toggleMinimizePanel("grensemetadata")}
-        icon={
-          panelContext?.isMinimized ? (
-            <Icon icon="expand_less" />
-          ) : (
-            <Icon icon="expand_more" />
-          )
-        }
+        {...(panelContext?.isMinimized ? {icon: 'expand_less', iconAriaLabel: 'Utvid panel'} : {icon: 'expand_more', iconAriaLabel: 'Minimer panel'})}
       />
       {getTabsOrMinimizedHeading()}
     </OverlayPanelWrapper>

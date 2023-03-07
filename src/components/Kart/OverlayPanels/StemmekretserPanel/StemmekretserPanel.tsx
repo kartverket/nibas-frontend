@@ -101,16 +101,11 @@ const StemmekretserPanel = ({ kommune }: Props) => {
         </PanelTitle>
         <PanelHeaderButton
           onClick={() => toggleMinimizePanel("stemmekrets")}
-          icon={
-            kretserContext?.isMinimized ? (
-              <Icon icon="expand_less" />
-            ) : (
-              <Icon icon="expand_more" />
-            )
-          }
+          {...(kretserContext?.isMinimized ? {icon: 'expand_less', iconAriaLabel: 'Utvid panel'} : {icon: 'expand_more', iconAriaLabel: 'Minimer panel'})}
         />
         <PanelHeaderButton
-          icon={<Icon icon="close" />}
+          icon="close"
+          iconAriaLabel="Lukk panel"
           onClick={() => {
             closePanel("stemmekrets");
             closePanel("grensemetadata");

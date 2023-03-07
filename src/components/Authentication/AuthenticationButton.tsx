@@ -13,13 +13,14 @@ export const AuthenticationButton = () => {
   const { t } = useTranslation();
 
   const loginButton = (
-    <Button onClick={() => handleAuthenticateFunc("/")}>
+    <Button onClick={() => handleAuthenticateFunc("/") } variant="secondary" icon="login" iconDirection="left">
       {t("auth.Login")}
     </Button>
   );
   const logoutButton = (
-    <Button onClick={handleLogoutFunc}>{t("auth.Logout")}</Button>
+    <Button onClick={handleLogoutFunc} variant="secondary" icon="logout" iconDirection="left">{t("auth.Logout")}</Button>
   );
+  
 
   return isAuthenticatedFunc() ? logoutButton : loginButton;
 };

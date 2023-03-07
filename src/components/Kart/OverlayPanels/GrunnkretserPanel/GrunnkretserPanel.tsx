@@ -129,16 +129,11 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
         />
         <PanelHeaderButton
           onClick={() => toggleMinimizePanel("grunnkrets")}
-          icon={
-            kretserContext?.isMinimized ? (
-              <Icon icon="expand_less" />
-            ) : (
-              <Icon icon="expand_more" />
-            )
-          }
+          {...(kretserContext?.isMinimized ? {icon: 'expand_less', iconAriaLabel: 'Utvid panel'} : {icon: 'expand_more', iconAriaLabel: 'Minimer panel'})}
         />
         <PanelHeaderButton
-          icon={<Icon icon="close" />}
+          icon="close"
+          iconAriaLabel="Lukk panel"
           onClick={() => {
             closePanel("grunnkrets");
             closePanel("grensemetadata");
@@ -182,7 +177,8 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
                       <ToggleableKretsButton
                         isOpen={isRowOpen(getIdFromEntity(grunnkrets))}
                         onClick={() => toggleRow(getIdFromEntity(grunnkrets))}
-                        icon={<Icon icon="settings" />}
+                        icon="settings"
+                        iconAriaLabel="Innstillinger"
                       />
                     </ButtonCell>
                   </KretsRow>

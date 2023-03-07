@@ -6,6 +6,7 @@ import Slider from "components/form/Slider";
 import Icon from "components/Icon";
 import { MainMappedLayer, MappedLayer } from "utils/getLayersFromWMS";
 import { Outline } from "style/mixins";
+import AddableLayer from "./AddableLayer";
 
 const getCaretIcon = (open: boolean) => (
   <Caret open={open}>
@@ -73,7 +74,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
           <AddableLayer
             onClick={() => onVisibilityClick()}
             icon={getAddRemove(false)}
-            aria-label={
+            ariaLabel={
               (visible ? `Fjern` : `Vis`) + ` ${props.mappedLayer.title}`
             }
           >
@@ -364,30 +365,5 @@ const AktivtSubLayerWrapper = styled(Button).attrs(() => ({
   }
 `;
 
-const AddableLayer = styled(Button).attrs(() => ({
-  variant: "unstyled",
-}))<{ activeLayer?: boolean }>`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex: 1;
-  padding: 6px 0 6px 6px;
-
-  > :first-child {
-    flex: 1;
-    text-align: left;
-  }
-
-  &:hover {
-    ${AddRemove} {
-      background: var(--blue_light);
-      color: var(--blue_dark);
-    }
-  }
-
-  &:focus-visible {
-    ${Outline}
-  }
-`;
 
 export default BackgroundLayerAccordion;

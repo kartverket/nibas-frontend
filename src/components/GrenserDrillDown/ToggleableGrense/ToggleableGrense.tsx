@@ -39,13 +39,7 @@ const ToggleableGrense = <T extends GrenseRef>({
       <Button
         onClick={toggleVisible}
         variant="unstyled"
-        icon={
-          value.visible ? (
-            <Icon icon="visibility" aria-label="Synlig" />
-          ) : (
-            <Icon icon="visibility_off" aria-label="Usynlig" />
-          )
-        }
+        {...(value.visible ? {icon: 'visibility', iconAriaLabel: 'Synlig'} : {icon: 'visibility_off', iconAriaLabel: 'Usynlig'})}
       />
       <Title>{title}</Title>
       <LinkButton onClick={openInfo} disabled title="Kommer snart!">

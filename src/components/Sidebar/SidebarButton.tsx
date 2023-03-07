@@ -34,7 +34,7 @@ const StyledButton = styled(Button).attrs(() => ({
   variant: "unstyled",
 }))<StyledButtonProps>`
   display: block;
-  margin: 8px 0;
+  margin: 0 0 8px;
   padding: 8px 6px 8px 0;
   width: 100%;
   z-index: 2;

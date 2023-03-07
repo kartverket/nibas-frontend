@@ -10,6 +10,7 @@ import LineString from "ol/geom/LineString";
 import { Feature } from "ol";
 import { Outline } from "style/mixins";
 import { useTranslation } from "react-i18next";
+import CaretButton from "./CaretButton";
 
 type Props = {
   grenseType: EditingType;
@@ -42,13 +43,9 @@ const EditableGrenseAccordion: FC<Props> = ({
       <Header>
         <VisibilityButton
           onClick={toggleVisible}
+          {...(value.visible ? {icon: 'visibility', iconAriaLabel: `Skjul ${title}`} : {icon: 'visibility_off', iconAriaLabel: `Vis ${title}`})}
           $visible={value.visible ? true : false}
-        >
-          {value.visible ? (
-            <Icon icon="visibility" aria-label={`Skjul ${title}`} />
-          ) : (
-            <Icon icon="visibility_off" aria-label={`Vis ${title}`} />
-          )}
+          >
         </VisibilityButton>
         <TextContent>
           <span>{title}</span>
@@ -66,7 +63,6 @@ const EditableGrenseAccordion: FC<Props> = ({
         </TextContent>
         {isFetching && <Loader aria-label={`Henter ${title}`} />}
         <CaretButton
-          variant="unstyled"
           onClick={accordion.toggle}
           icon={
             accordion.isVisible ? (
@@ -94,11 +90,6 @@ const ListItem = styled.li`
   margin: 16px 0 0 8px;
 `;
 
-const CaretButton = styled(Button)`
-  &:focus-visible {
-    ${Outline}
-  }
-`;
 
 const TextContent = styled.div`
   flex: 1;

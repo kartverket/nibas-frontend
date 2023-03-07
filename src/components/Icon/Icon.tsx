@@ -36,7 +36,7 @@ const Icon = ({ icon, className, filled, ...props }: Props) => {
   let fullClassName = "material-symbols-outlined";
 
   if (filled) {
-    fullClassName += "material-symbols-outlined--filled";
+    fullClassName += " material-symbols-outlined--filled";
   }
 
   if (className) {

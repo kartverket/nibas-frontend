@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { AuthenticationButton } from "../Authentication/AuthenticationButton";
 import Logo from "components/Logo/Logo";
 import UtkastTab from "components/Kart/UtkastTab";
+import Icon from "components/Icon";
 
 const TopBar = () => {
   const { isAuthenticatedFunc, tokenHolderFunc } = useAuthenticationFlow();
@@ -18,20 +19,26 @@ const TopBar = () => {
         <UtkastTab />
       </LeftSide>
       <RightSide>
+      <LoginIcon icon="person" filled/>
         {isAuthenticatedFunc() ? (
-          <p>
+          <LoginText>
             {t(`auth.Logget inn som {{ personId }}`, {
               personId: tokenHolderFunc()?.personId,
             })}
-          </p>
+          </LoginText>
         ) : (
-          <p>{t("auth.Ikke logget inn")}</p>
+          <LoginText>{t("auth.Ikke logget inn")}</LoginText>
         )}
         <AuthenticationButton />
       </RightSide>
     </Wrapper>
   );
 };
+
+const LoginIcon = styled(Icon)`
+color: var(--blue_dark);
+margin-right: 8px;
+`
 
 const Sidetittel = styled.h1`
   padding: 0;
@@ -61,7 +68,10 @@ const LeftSide = styled.div`
 const RightSide = styled.div`
   display: flex;
   align-items: center;
-  gap: 1rem;
 `;
+
+const LoginText = styled.p`
+margin-right: 1rem;
+`
 
 export default TopBar;

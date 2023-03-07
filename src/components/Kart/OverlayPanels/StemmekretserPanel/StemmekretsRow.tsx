@@ -60,13 +60,8 @@ const StemmekretsRow = ({
         <ToggleableKretsButton
           isOpen={isRowOpen(stemmekretsId)}
           onClick={() => toggleRow(stemmekretsId)}
-          icon={
-            isRowOpen(stemmekretsId) ? (
-              <Icon icon="settings" aria-label={`Lukk redigering av ${name}`} />
-            ) : (
-              <Icon icon="settings" aria-label={`Åpne redigering av ${name}`} />
-            )
-          }
+          icon="settings"
+          {...(isRowOpen(stemmekretsId) ? {iconAriaLabel: `Lukk redigering av ${name}`} : {iconAriaLabel: `Åpne redigering av ${name}`})}
         />
       </td>
     </KretsRow>

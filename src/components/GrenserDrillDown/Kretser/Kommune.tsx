@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import Button, { LinkButton } from "components/form/Button";
-import Icon from "components/Icon";
 import { useInndelingerKrets } from "contexts/InndelingerKretsContext";
 import { KommuneRef } from "types/api";
 import { getNavnInSpraak } from "utils/language/language";
@@ -22,13 +21,7 @@ const Kommune = ({ kommune }: Props) => {
         onClick={toggleKretser}
         variant="unstyled"
         visible={kommuneValues.visible}
-        icon={
-          kommuneValues.visible ? (
-            <Icon icon="visibility" aria-label="Synlig" />
-          ) : (
-            <Icon icon="visibility_off" aria-label="Usynlig" />
-          )
-        }
+        {...(kommuneValues.visible ? {icon: 'visibility', iconAriaLabel: 'Synlig'} : {icon: 'visibility_off', iconAriaLabel: 'Usynlig'})}
       />
       <Title>{getNavnInSpraak(kommune.navn, "nor")}</Title>
       <LinkButton onClick={toggleEditKretser}>
