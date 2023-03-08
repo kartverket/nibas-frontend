@@ -3,7 +3,10 @@ import {
   StemmekretsEndring,
   Stemmekretsendringer,
 } from "components/Endringslogg/hooks/utkastEndringerTypes";
-import { EndringPanel } from "components/Endringslogg/EndringPanel";
+import {
+  EndringPanel,
+  GrenseEndringerPanel,
+} from "components/Endringslogg/EndringPanel";
 import { Seksjonsheader } from "./EndringsloggStyles";
 
 type EndringsloggStemmekretsendringerReturnType = {
@@ -40,7 +43,13 @@ export const EndringsloggStemmekretsendringer = ({
       />
       <EndringPanel
         tittel={t("utkast.endringslogg.endring.valgdistriktsnummer")}
-        endringer={endringer.valgdistriktsnummer}
+        endringer={addTellerkretanavnToEndringer(endringer.valgdistriktsnummer)}
+      />
+      <GrenseEndringerPanel
+        tittel={t("utkast.endringslogg.endring.grenseendringer")}
+        endringer={endringer.grensejusteringer.map(
+          (endring) => `${endring.stemmekretsnummer} ${endring.stemmekretsnavn}`
+        )}
       />
     </section>
   );

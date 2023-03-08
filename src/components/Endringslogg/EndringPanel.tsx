@@ -34,6 +34,33 @@ export const EndringPanel = ({ tittel, endringer }: EndringPanelProps) => {
   );
 };
 
+type GrenseEndringerPanelProps = {
+  tittel: string;
+  endringer: (string | null | undefined)[];
+};
+
+export const GrenseEndringerPanel = ({
+  tittel,
+  endringer,
+}: GrenseEndringerPanelProps) => {
+  if (endringer.length === 0) {
+    return null;
+  }
+
+  return (
+    <Panel>
+      <PanelHeading>{tittel}</PanelHeading>
+      <UnstyledList>
+        {endringer.map((tekst, index) => (
+          <EndringListItem key={index}>
+            <TekstEllerTom tekst={tekst} />
+          </EndringListItem>
+        ))}
+      </UnstyledList>
+    </Panel>
+  );
+};
+
 type TekstEllerTomProps = {
   tekst: string | null | undefined;
 };

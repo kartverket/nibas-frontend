@@ -153,7 +153,8 @@
         "stemmekretsnummer": "__STRING_NOT_TRANSLATED__",
         "tellekretsnavn": "__STRING_NOT_TRANSLATED__",
         "tellekretsnummer": "__STRING_NOT_TRANSLATED__",
-        "valgdistriktsnummer": "__STRING_NOT_TRANSLATED__"
+        "valgdistriktsnummer": "__STRING_NOT_TRANSLATED__",
+        "grenseendringer": "__STRING_NOT_TRANSLATED__"
       },
       "ingenEndringer": "__STRING_NOT_TRANSLATED__"
     }
