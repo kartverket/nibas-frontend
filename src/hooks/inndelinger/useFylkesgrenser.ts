@@ -14,7 +14,7 @@ const fylkesgrenserFetcher = async (
   token: string | undefined
 ) => {
   const promises: Promise<FeatureCollection>[] = fylkeIds.map(async (fylkeId) =>
-    fetcherWithToken({ url: `/v1/fylker/${fylkeId}/grenser`, token })
+    fetcherWithToken(`/v1/fylker/${fylkeId}/grenser`, token)
   );
 
   const settledPromises = await Promise.allSettled(promises);

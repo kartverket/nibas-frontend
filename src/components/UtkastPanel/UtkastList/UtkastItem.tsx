@@ -69,20 +69,23 @@ const UtkastItem = ({ utkast }: Props) => {
   const publish = async () => {
     if (!fullUtkast) return;
 
-    const errorHandling = async (res: Response) => {
-      const wrapper = (await res.json()) as ConflictResponseWrapper;
-      if (!wrapper.framtidigVersjonConflict) return;
-      setConflictResponse(wrapper.framtidigVersjonConflict);
-    };
-
-    await publishUtkast(
+    const response = await publishUtkast(
       utkast.id,
       fullUtkast,
-      tokenHolderFunc()?.token,
-      errorHandling
+      tokenHolderFunc()?.token
     );
 
-    cleanUpUtkast();
+    if (!response) return;
+
+    if (response.status === 200) {
+      cleanUpUtkast();
+    } else if (response.status === 409) {
+      const wrapper = (await response.json()) as ConflictResponseWrapper;
+
+      if (!wrapper.framtidigVersjonConflict) return;
+
+      setConflictResponse(wrapper.framtidigVersjonConflict);
+    }
   };
 
   const deleteUtkast = async () => {

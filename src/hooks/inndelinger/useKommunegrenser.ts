@@ -14,7 +14,7 @@ const kommunegrenserFetcher = async (
 ) => {
   const promises: Promise<FeatureCollection>[] = kommuneIds.map(
     async (kommuneId) =>
-      fetcherWithToken({ url: `/v1/kommuner/${kommuneId}/grenser`, token })
+      fetcherWithToken(`/v1/kommuner/${kommuneId}/grenser`, token)
   );
 
   const settledPromises = await Promise.allSettled(promises);
