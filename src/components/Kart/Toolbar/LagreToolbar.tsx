@@ -81,13 +81,15 @@ const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
             <UtkastNavn>{utkast.navn}</UtkastNavn>
           </UtkastInfo>
           <DividerVertical />
-          <ModeButton
-            icon="published_with_changes"
-            ariaLabel="Vis endringer"
-            onClick={() => setEndringsloggOpen(true)}
-          >
-            {t("action.VisEndringer")}
-          </ModeButton>
+          <FeatureToggle feature="UTKAST_ENDRINGSLOGG">
+            <ModeButton
+              icon="published_with_changes"
+              ariaLabel="Vis endringer"
+              onClick={() => setEndringsloggOpen(true)}
+            >
+              {t("action.VisEndringer")}
+            </ModeButton>
+          </FeatureToggle>
           <ModeButton
             icon="save"
             ariaLabel="Lagre utkast"
@@ -106,13 +108,15 @@ const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
         </>
       ) : (
         <>
-          <ModeButton
-            icon="published_with_changes"
-            ariaLabel="Vis endringer"
-            onClick={() => setEndringsloggOpen(true)}
-          >
-            {t("action.VisEndringer")}
-          </ModeButton>
+          <FeatureToggle feature="UTKAST_ENDRINGSLOGG">
+            <ModeButton
+              icon="published_with_changes"
+              ariaLabel="Vis endringer"
+              onClick={() => setEndringsloggOpen(true)}
+            >
+              {t("action.VisEndringer")}
+            </ModeButton>
+          </FeatureToggle>
           <ModeButton
             icon="save"
             ariaLabel="Lagre utkast"
