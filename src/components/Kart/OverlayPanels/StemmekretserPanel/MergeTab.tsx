@@ -2,26 +2,112 @@ import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
 import Heading from "components/typography/Heading";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { StemmekretsRef, StemmekretsResponse } from "types/api";
+import {
+  StemmekretsRef,
+  StemmekretsResponse,
+  StemmekretsSammenslaaingsendringRequest,
+} from "types/api";
 import { BlockLabel } from "../metadataComponents";
 import { Section, ContrastSection, InputsWrapper } from "./components";
+import { getIdFromEntity } from "utils/api";
+import { useToolbar, useToolbarSaving } from "contexts/ToolbarContext";
+
+import CreateUtkastModal from "./CreateUtkastModal";
+import { useUtkast } from "contexts/UtkastContext";
 
 type Props = {
   stemmekrets: StemmekretsResponse | undefined;
   alleStemmekretser: StemmekretsRef[];
+  toggleRow: (id: string) => void;
 };
 
-const MergeTab = ({ stemmekrets, alleStemmekretser }: Props) => {
+const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   const { t } = useTranslation();
+  const { addEntry } = useToolbarSaving();
+  const { utkast, updateUtkastWithHistory } = useUtkast();
+  const { history } = useToolbar();
+
+  const [isCreateUtkastModalOpen, setIsCreateUtkastModalOpen] = useState(false);
+
   const [stemmekretsnavn, setStemmekretsnavn] = useState(
-    stemmekrets?.stemmekretsnavn
+    stemmekrets?.stemmekretsnavn ?? ""
   );
   const [stemmekretsnummer, setStemmekretsnummer] = useState(
-    stemmekrets?.stemmekretsnummer
+    stemmekrets?.stemmekretsnummer ?? ""
   );
+
+  const [
+    stemmekretsNummerTilSammenslaaing,
+    setStemmekretsNummerTilSammenslaaing,
+  ] = useState("");
+
+  const stemmekretsId = stemmekrets ? getIdFromEntity(stemmekrets) : "";
+
+  const fromFormToRequest = (
+    stemmekretsRespons: StemmekretsResponse,
+    sammenslaaingsStemmekrets: StemmekretsRef
+  ): StemmekretsSammenslaaingsendringRequest => ({
+    viderefoertStemmekrets: {
+      lokalId: stemmekretsRespons.id.lokalid.value,
+      version: stemmekretsRespons.version,
+    },
+    stemmekretserTilSammenslaaing: [
+      {
+        lokalId: sammenslaaingsStemmekrets.id.lokalid.value,
+        version: sammenslaaingsStemmekrets.version,
+      },
+    ],
+    stemmekretsNavn: stemmekretsnavn,
+    stemmekretsNummer: stemmekretsnummer,
+  });
+
+  const getStemmekretsByNummer = (nummer: string): StemmekretsRef[] => {
+    return alleStemmekretser.filter((krets) => krets.nummer === nummer);
+  };
+
+  //legger til history-entries med en gang de er laget, for å unngå at sammenslåinger blir liggende i history
+  useEffect(() => {
+    if (history.entries.length > 0) {
+      updateUtkastWithHistory();
+    }
+  }, [history, updateUtkastWithHistory]);
+
+  const mergeStemmekrets = () => {
+    const stemmekretsTilSammenslaaingListe = getStemmekretsByNummer(
+      stemmekretsNummerTilSammenslaaing
+    );
+
+    if (stemmekretsTilSammenslaaingListe.length === 1 && stemmekrets) {
+      addEntry({
+        type: "stemmekretssammenslaaingsendring",
+        changes: [
+          {
+            from: fromFormToRequest(
+              stemmekrets,
+              stemmekretsTilSammenslaaingListe[0]
+            ),
+            to: fromFormToRequest(
+              stemmekrets,
+              stemmekretsTilSammenslaaingListe[0]
+            ),
+            id: stemmekretsId,
+          },
+        ],
+      });
+    }
+  };
+
+  const openCreateUtkastModal = () => {
+    if (utkast) {
+      return;
+    }
+    isCreateUtkastModalOpen
+      ? setIsCreateUtkastModalOpen(false)
+      : setIsCreateUtkastModalOpen(true);
+  };
 
   return (
     <div>
@@ -38,11 +124,19 @@ const MergeTab = ({ stemmekrets, alleStemmekretser }: Props) => {
         </p>
         <Dropdown>
           <label>{t("stemmekrets.Navn- eller nummer på stemmekrets")}</label>
-          <Select>
+          <Select
+            onChange={(e) =>
+              setStemmekretsNummerTilSammenslaaing(e.currentTarget.value)
+            }
+            defaultValue={"default"}
+          >
+            <option value={"default"} disabled>
+              {t("Velg stemmekretsen du vil slå sammen med")}
+            </option>
             {alleStemmekretser.map((s) => (
-              <option key={s.nummer} value={s.nummer}>{`${
-                s.nummer
-              } - ${s.navn.toLowerCase()}`}</option>
+              <option key={s.nummer} value={s.nummer}>{`${s.nummer} - ${
+                s.navn.charAt(0).toUpperCase() + s.navn.toLowerCase().slice(1)
+              }`}</option>
             ))}
           </Select>
         </Dropdown>
@@ -71,10 +165,19 @@ const MergeTab = ({ stemmekrets, alleStemmekretser }: Props) => {
       </ContrastSection>
       <Section>
         <Buttons>
-          <Button variant="tertiary">{t("action.Avbryt")}</Button>
-          <Button>{t("stemmekrets.Slå sammen")}</Button>
+          <Button onClick={() => toggleRow(stemmekretsId)} variant="tertiary">
+            {t("action.Avbryt")}
+          </Button>
+          <Button onClick={() => openCreateUtkastModal()}>
+            {t("stemmekrets.Slå sammen")}
+          </Button>
         </Buttons>
       </Section>
+      <CreateUtkastModal
+        isCreateUtkastModalOpen={isCreateUtkastModalOpen}
+        setIsCreateUtkastModalOpen={setIsCreateUtkastModalOpen}
+        callback={mergeStemmekrets}
+      />
     </div>
   );
 };
@@ -88,7 +191,6 @@ const Dropdown = styled.div`
 
   select {
     margin: 0;
-    text-transform: capitalize;
   }
 
   & > span {

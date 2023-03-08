@@ -13,46 +13,21 @@ import Label from "components/form/Label";
 import Select from "components/form/Select";
 import Button from "components/form/Button";
 import Heading from "components/typography/Heading";
-import { Frame, toolbarBorderWidth, toolbarSpacing } from "./components";
-import { useErrorHandling } from "contexts/ErrorHandlingContext";
+import Modal from "components/Modal";
+import { CustomModalWrapper, ModalOverlay } from "components/Modal/Modal";
 
-const UtkastFrame = styled(Frame)`
-  position: absolute;
-  right: 100%;
-  margin-right: ${toolbarSpacing}px;
+const Frame = styled(CustomModalWrapper)`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  width: fit-content;
+  padding: 20px 12px;
+  border: 2px solid var(--gray_light);
+  background: white;
+  border-radius: 10px;
+  box-shadow: 4px 4px 12px 0 rgba(0, 0, 0, 0.15);
   width: 365px;
-
-  ${Heading} {
-    margin: 0;
-  }
-
-  &::before {
-    position: absolute;
-    top: ${toolbarSpacing * 1.5}px;
-    left: 100%;
-
-    content: "";
-    display: block;
-    background: var(--gray_light);
-    width: ${toolbarSpacing * 0.75}px;
-    height: ${toolbarSpacing * 1.5}px;
-
-    clip-path: polygon(0 0, 100% 50%, 0 100%);
-  }
-
-  &::after {
-    position: absolute;
-    top: calc(${toolbarSpacing * 1.5}px + ${toolbarBorderWidth}px);
-    left: calc(100% - ${toolbarBorderWidth / 2}px);
-
-    content: "";
-    display: block;
-    background: white;
-    width: calc(${toolbarSpacing * 0.75}px - ${toolbarBorderWidth}px);
-    height: calc(${toolbarSpacing * 1.5}px - ${toolbarBorderWidth * 2}px);
-
-    clip-path: polygon(0 0, 100% 50%, 0 100%);
-  }
 `;
 
 const BlockLabel = styled(Label)`
@@ -69,13 +44,16 @@ const Buttons = styled.div`
 `;
 
 type Props = {
-  setUtkastJustCreated: (utkastJustCreated: boolean) => void;
-  setCreateUtkastOpen: (createUtkastOpen: boolean) => void;
+  isCreateUtkastModalOpen: boolean;
+  setIsCreateUtkastModalOpen: (isCreateUtkastModalOpen: boolean) => void;
+  callback: () => void;
 };
 
-const UtkastToolbar = ({
-  setUtkastJustCreated,
-  setCreateUtkastOpen,
+// TODO: midlertidig løsning for å opprette utkast inntil history er ferdigimplementert
+const CreateUtkastModal = ({
+  isCreateUtkastModalOpen,
+  setIsCreateUtkastModalOpen,
+  callback,
 }: Props) => {
   const { t } = useTranslation();
   const [utkastName, setUtkastName] = useState("");
@@ -83,19 +61,6 @@ const UtkastToolbar = ({
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { history, clearHistory } = useToolbar();
   const setSearchParams = useSearchParams()[1];
-  const { setError } = useErrorHandling();
-
-  const promptUtkast = () => {
-    setUtkastJustCreated(true);
-
-    const timeId = setTimeout(() => {
-      setUtkastJustCreated(false);
-    }, 5000);
-
-    return () => {
-      clearTimeout(timeId);
-    };
-  };
 
   const createUtkast = async () => {
     const response = await createApiUtkast(
@@ -107,24 +72,39 @@ const UtkastToolbar = ({
       tokenHolderFunc()?.token
     );
 
-    if (response.status > 400) {
-      setError({
-        title: "Opprettelse av utkast feilet",
-        body: `Feilkode: ${response.status}`,
-      });
+    if (response.status < 200 && response.status > 299) {
+      throw new Error(
+        "Klarte ikke opprette utkast. Det ble returnert en feilkode ved opprettelse"
+      );
     }
 
     const json = await response.json();
     const utkastId = json.id;
 
-    setCreateUtkastOpen(false);
+    setIsCreateUtkastModalOpen(false);
     setSearchParams({ utkast: utkastId });
-    clearHistory({ hasPreviouslySavedHistory: true });
-    promptUtkast();
+
+    callback();
+  };
+
+  const cancelCreateUtkast = () => {
+    clearHistory({ hasPreviouslySavedHistory: false });
+    setIsCreateUtkastModalOpen(false);
   };
 
   return (
-    <UtkastFrame>
+    <Modal
+      isOpen={isCreateUtkastModalOpen}
+      onRequestClose={() => setIsCreateUtkastModalOpen(false)}
+      className="_"
+      overlayClassName="_"
+      contentElement={(props, contentChildren) => (
+        <Frame {...props}>{contentChildren}</Frame>
+      )}
+      overlayElement={(props, overlayChildren) => (
+        <ModalOverlay {...props}>{overlayChildren}</ModalOverlay>
+      )}
+    >
       <Heading size="xs" tag="h3">
         {t("utkast.Opprett et nytt utkast")}
       </Heading>
@@ -153,7 +133,7 @@ const UtkastToolbar = ({
         </Select>
       </BlockLabel>
       <Buttons>
-        <Button onClick={() => setCreateUtkastOpen(false)} variant="tertiary">
+        <Button onClick={() => cancelCreateUtkast()} variant="tertiary">
           {t("action.Avbryt")}
         </Button>
         <Button
@@ -163,8 +143,8 @@ const UtkastToolbar = ({
           {t("action.Opprett")}
         </Button>
       </Buttons>
-    </UtkastFrame>
+    </Modal>
   );
 };
 
-export default UtkastToolbar;
+export default CreateUtkastModal;

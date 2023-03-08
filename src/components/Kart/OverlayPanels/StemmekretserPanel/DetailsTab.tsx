@@ -131,13 +131,13 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
       </BlockLabel>
 
       <BlockLabel>
-        {t("stemmekrets.Tellekretsnummer")}
-        <Input {...register("tellekretsnummer", formOptions)} />
+        {t("stemmekrets.Tellekretsnavn")}
+        <Input {...register("tellekretsnavn", formOptions)} />
       </BlockLabel>
 
       <BlockLabel>
-        {t("stemmekrets.Tellekretsnavn")}
-        <Input {...register("tellekretsnavn", formOptions)} />
+        {t("stemmekrets.Tellekretsnummer")}
+        <Input {...register("tellekretsnummer", formOptions)} />
       </BlockLabel>
     </DetailsSection>
   );

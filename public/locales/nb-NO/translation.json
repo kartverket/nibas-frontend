@@ -92,7 +92,8 @@
     "Zoom inn": "Zoom inn",
     "Zoom ut": "Zoom ut",
     "Løsriv": "Løsriv",
-    "Splitt": "Splitt"
+    "Splitt": "Splitt",
+    "VisEndringer": "Endringer"
   },
   "Ja": "Ja",
   "Nei": "Nei",
@@ -145,7 +146,20 @@
     "Fremtidig endring i konflikt": "Fremtidig endring i konflikt",
     "Opprett et nytt utkast": "Opprett et nytt utkast",
     "ulagrede-endringer": "Du har endringer i utkastet som ikke er lagret",
-    "ulagrede-endringer-utdypende": "Er du sikker på at du vil gå ut av utkastet? Dersom du lukker utkastet nå mister du alle ulagrede endringer."
+    "ulagrede-endringer-utdypende": "Er du sikker på at du vil gå ut av utkastet? Dersom du lukker utkastet nå mister du alle ulagrede endringer.",
+    "endringslogg": {
+      "header": "Endringer som har blitt gjort i dette utkastet",
+      "stemmekrets-tittel": "Stemmekretsendringer i {{ kommune }}",
+      "endring": {
+        "stemmekretsnavn": "Endring av stemmekretsnavn",
+        "stemmekretsnummer": "Endring av stemmekretsnummer",
+        "tellekretsnavn": "Endring av tellekretsnavn",
+        "tellekretsnummer": "Endring av tellekretsnummer",
+        "valgdistriktsnummer": "Endring av valgdistriktsnummer",
+        "grenseendringer": "Grensejusteringer"
+      },
+      "ingenEndringer": "Det er ingen endringer i dette utkastet"
+    }
   },
   "Aktive kartlag": "Aktive kartlag",
   "Logg inn for å se listen": "Logg inn for å se listen",
@@ -155,5 +169,11 @@
   "Fortsett redigering": "Fortsett redigering",
   "Forkast endringer og lukk": "Forkast endringer og lukk",
   "Forkast endringer": "Forkast endringer",
-  "Utkastet er opprettet": "Utkastet er opprettet"
+  "Utkastet er opprettet": "Utkastet er opprettet",
+  "f": {
+    "eks": {
+      " Endring av stemmekrets i Froland": "feks Endring av Stemmekrets i Froland"
+    }
+  },
+  "Velg stemmekretsen du vil slå sammen med": "Velg stemmekretsen du vil slå sammen med"
 }

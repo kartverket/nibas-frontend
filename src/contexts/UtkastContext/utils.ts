@@ -7,6 +7,7 @@ import {
   GrunnkretsEntry,
   MetadataEntry,
   StemmekretsEntry,
+  StemmekretsSammenslaaingsendringEntry,
   ToolbarHistory,
 } from "contexts/ToolbarContext";
 import { editSource } from "hooks/layers/constants";
@@ -17,6 +18,7 @@ import {
   NasjonRequest,
   StemmekretsRef,
   StemmekretsRequest,
+  StemmekretsSammenslaaingsendringRequest,
   UtkastGrenseendringer,
   UtkastMetadataendringer,
   UtkastOperasjoner,
@@ -134,6 +136,19 @@ const reduceGrenseOperations = (
   return editedFeatures;
 };
 
+//Antas at det bare er en entry i changes
+const reduceStemmekretssammenslaingsOperations = (
+  operations: StemmekretsSammenslaaingsendringRequest,
+  entry: StemmekretsSammenslaaingsendringEntry
+): StemmekretsSammenslaaingsendringRequest => {
+  entry.changes.forEach((change) => {
+    if (!change.to) return operations;
+
+    operations = change.to;
+  });
+  return operations;
+};
+
 const addKretsChangeToOperations = (
   operations: UtkastOperasjoner,
   entry: GrunnkretsEntry | StemmekretsEntry,
@@ -169,6 +184,21 @@ export const historyToUtkastOperations = (
     })
   ) as UtkastOperasjoner;
 
+  const sammenslaaingsOperations = (
+    historyToCurrentIndex.filter(
+      (entry) => entry.type === "stemmekretssammenslaaingsendring"
+    ) as StemmekretsSammenslaaingsendringEntry[]
+  ).reduce(
+    reduceStemmekretssammenslaingsOperations,
+    {} as StemmekretsSammenslaaingsendringRequest
+  );
+
+  //Antar her at det bare er en sammenslåing per utkast
+  if (Object.keys(sammenslaaingsOperations).length > 0) {
+    utkastOperations.stemmekretsSammenslaaingsendring =
+      sammenslaaingsOperations;
+  }
+
   // hent grenseendringer og gjør endringene om til en liste av features
   const editedFeatures = (
     historyToCurrentIndex.filter(
@@ -196,6 +226,7 @@ export const createUtkastOperations = ({
   kommuneendringer = {},
   nasjonsendringer = {},
   stemmekretsendringer = {},
+  stemmekretssammenslaaingsendringer,
 }: {
   endredeFeatures?: Record<string, GeoJSONFeature>;
   fylkesendringer?: Record<string, FylkeRequest>;
@@ -203,6 +234,7 @@ export const createUtkastOperations = ({
   kommuneendringer?: Record<string, KommuneRequest>;
   nasjonsendringer?: Record<string, NasjonRequest>;
   stemmekretsendringer?: Record<string, StemmekretsRequest>;
+  stemmekretssammenslaaingsendringer?: StemmekretsSammenslaaingsendringRequest;
 }): UtkastOperasjoner => ({
   grenseendringer: {
     endredeFeatures,
@@ -214,4 +246,5 @@ export const createUtkastOperations = ({
     nasjonsendringer,
     stemmekretsendringer,
   },
+  stemmekretsSammenslaaingsendring: stemmekretssammenslaaingsendringer,
 });

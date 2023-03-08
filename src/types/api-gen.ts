@@ -116,21 +116,33 @@ export interface paths {
     /** Henter grensene til et fylke med gitt id */
     get: operations["hentGrenserForFylke"];
   };
-  "/v1/ekstern/matrikkel/stemmekretser": {
+  "/v1/ekstern/stemmekretser": {
     /** Henter stemmekretser med gitte id-er */
     get: operations["hentStemmekretserForIds"];
   };
-  "/v1/ekstern/matrikkel/kommuner/{kommunenummer}/stemmekretser": {
+  "/v1/ekstern/stemmekretser/{id}": {
+    /** Henter stemmekrets med gitt id */
+    get: operations["hentStemmekrets_1"];
+  };
+  "/v1/ekstern/kommuner/{kommunenummer}/stemmekretser": {
     /** Henter alle stemmekretser for gitt kommunenummer */
     get: operations["hentAlleStemmekretserForKommune"];
   };
-  "/v1/ekstern/matrikkel/kommuner/{kommunenummer}/grunnkretser": {
+  "/v1/ekstern/kommuner/{kommunenummer}/grunnkretser": {
     /** Henter alle grunnkretser for gitt kommunenummer */
     get: operations["hentAlleGrunnkretserForKommune"];
   };
-  "/v1/ekstern/matrikkel/grunnkretser": {
+  "/v1/ekstern/kommuner/{id}": {
+    /** Henter kommune med gitt id */
+    get: operations["hentKommune_1"];
+  };
+  "/v1/ekstern/grunnkretser": {
     /** Henter grunnkretser med gitte id-er */
     get: operations["hentGrunnkretserForIds"];
+  };
+  "/v1/ekstern/fylker/{id}": {
+    /** Henter fylke med gitt id */
+    get: operations["hentFylke_1"];
   };
   "/v1/authz/status": {
     /** Henter status for autorisering */
@@ -310,6 +322,16 @@ export interface components {
       /** @description Lokal id som identifiserer geometrien. Dette er en globalt unik id. */
       lokalid: string;
     };
+    /** @description Identifikator av en stemmekrets eller grunnkrets */
+    IdentifikatorMedVersjon: {
+      /** @description LokalId for stemmekrets/grunnkretsen */
+      lokalId: string;
+      /**
+       * Format: int32
+       * @description Teknisk versjon for å støtte samhandling og redigering
+       */
+      version: number;
+    };
     /** @description Metode for måling i grunnriss (x,y), og høyde (z) når metoden er den samme som ved måling i grunnriss. */
     KodelisteEntry: {
       /** @description Id for kodeliste-innslaget. */
@@ -429,6 +451,7 @@ export interface components {
     Operasjoner: {
       metadataendringer: components["schemas"]["Metadataendringer"];
       grenseendringer: components["schemas"]["Grenseendringer"];
+      stemmekretsSammenslaaingsendring?: components["schemas"]["StemmekretsSammenslaaingsendringRequest"];
     };
     /** @description Representasjon for oppdatering av utkast */
     OppdaterUtkastRequest: {
@@ -515,6 +538,16 @@ export interface components {
        */
       version: number;
     };
+    /** @description Representasjon av sammenslåing av en stemmekrets med 1 eller flere andre stemmekretser i samme kommune */
+    StemmekretsSammenslaaingsendringRequest: {
+      viderefoertStemmekrets: components["schemas"]["IdentifikatorMedVersjon"];
+      /** @description Liste av identifikatorer som skal bli del av den videreførte stemmekretsen */
+      stemmekretserTilSammenslaaing: components["schemas"]["IdentifikatorMedVersjon"][];
+      /** @description Navnet til den sammenslåtte stemmekretsen */
+      stemmekretsNavn: string;
+      /** @description Stemmekretsnummeret til den sammenslåtte stemmekretsen */
+      stemmekretsNummer: string;
+    };
     /** @description Henvisning til saksdokument i Kartverkets eget arkiv. */
     TekstHolder: {
       /** @description ID for elementet. */
@@ -561,6 +594,7 @@ export interface components {
         | "100 CONTINUE"
         | "101 SWITCHING_PROTOCOLS"
         | "102 PROCESSING"
+        | "103 EARLY_HINTS"
         | "103 CHECKPOINT"
         | "200 OK"
         | "201 CREATED"
@@ -649,6 +683,7 @@ export interface components {
         | "100 CONTINUE"
         | "101 SWITCHING_PROTOCOLS"
         | "102 PROCESSING"
+        | "103 EARLY_HINTS"
         | "103 CHECKPOINT"
         | "200 OK"
         | "201 CREATED"
@@ -800,7 +835,7 @@ export interface components {
       /** @description URL til full representasjon av utkastet. */
       href: string;
     };
-    /** @description Geometrien til kretsen, dvs representasjonspunkt og flaten */
+    /** @description Geometrien til fylket. Ikke grenser */
     FeatureCollection: {
       /** @description Toppnivå for geojson-strukturen, definert av en konstant med navn type og verdi FeatureCollection */
       type: string;
@@ -888,6 +923,7 @@ export interface components {
       navn: components["schemas"]["AdministrativEnhetNavn"][];
       /** @description URL til full representasjon av kommunen */
       href: string;
+      kommunenummer: components["schemas"]["Kommunenummer"];
       /**
        * Format: int32
        * @description Antall publiserte framtidige gyldige versjoner.
@@ -923,11 +959,17 @@ export interface components {
       nummer: string;
       /** @description URL til full representasjon av stemmekrets */
       href: string;
+      kommunenummer: components["schemas"]["Kommunenummer"];
       /**
        * Format: int32
        * @description Antall publiserte framtidige gyldige versjoner.
        */
       antallFramtidigeVersjoner: number;
+      /**
+       * Format: int32
+       * @description Teknisk versjon for å støtte samhandling og redigering
+       */
+      version: number;
     };
     /** @description En referanse til en grunnkrets */
     GrunnkretsRef: {
@@ -936,6 +978,7 @@ export interface components {
       navn: string;
       /** @description URL til full representasjon av grunnkretsen */
       href: string;
+      kommunenummer: components["schemas"]["Kommunenummer"];
       /** @description Nummeret til grunnkretsen */
       grunnkretsnummer: string;
       /**
@@ -982,6 +1025,7 @@ export interface components {
        * @description Siste oppdateringstidspunkt for objektet
        */
       oppdateringsdato: string;
+      kommunenummer: components["schemas"]["Kommunenummer"];
       /** @description Typen endring som ble gjort på objektet */
       endringstype?: string;
       features: components["schemas"]["FeatureCollection"];
@@ -1718,7 +1762,9 @@ export interface operations {
     parameters: {
       query: {
         /** ID-ene til stemmekretsene man vil hente */
-        id: string[];
+        ids: string[];
+        /** Eventuell gyldighetsdato for stemmekrets (default = dagens dato */
+        gyldighetsdato?: string;
       };
     };
     responses: {
@@ -1736,12 +1782,43 @@ export interface operations {
       };
     };
   };
+  /** Henter stemmekrets med gitt id */
+  hentStemmekrets_1: {
+    parameters: {
+      path: {
+        /** ID-en til stemmekretsen man vil hente */
+        id: string;
+      };
+      query: {
+        /** Eventuell gyldighetsdato for stemmekrets (default = dagens dato */
+        gyldighetsdato?: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["StemmekretsResponse"];
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["StemmekretsResponse"];
+        };
+      };
+    };
+  };
   /** Henter alle stemmekretser for gitt kommunenummer */
   hentAlleStemmekretserForKommune: {
     parameters: {
       path: {
         /** Kommunenummer for kommune man ønsker å hente stemmekretsene til */
         kommunenummer: string;
+      };
+      query: {
+        /** Eventuell gyldighetsdato for kommune (default = dagens dato */
+        gyldighetsdato?: string;
       };
     };
     responses: {
@@ -1766,6 +1843,10 @@ export interface operations {
         /** Kommunenummer for kommune man ønsker å hente grunnkretsene til */
         kommunenummer: string;
       };
+      query: {
+        /** Eventuell gyldighetsdato for kommune (default = dagens dato */
+        gyldighetsdato?: string;
+      };
     };
     responses: {
       /** Successful operation */
@@ -1782,12 +1863,41 @@ export interface operations {
       };
     };
   };
+  /** Henter kommune med gitt id */
+  hentKommune_1: {
+    parameters: {
+      path: {
+        /** ID-en til kommunen man vil hente */
+        id: string;
+      };
+      query: {
+        /** Eventuell gyldighetsdato for kommune (default = dagens dato */
+        gyldighetsdato?: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["KommuneResponse"];
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["KommuneResponse"];
+        };
+      };
+    };
+  };
   /** Henter grunnkretser med gitte id-er */
   hentGrunnkretserForIds: {
     parameters: {
       query: {
         /** ID-ene til grunnkretsene man vil hente */
-        id: string[];
+        ids: string[];
+        /** Eventuell gyldighetsdato for grunnkrets (default = dagens dato */
+        gyldighetsdato?: string;
       };
     };
     responses: {
@@ -1801,6 +1911,33 @@ export interface operations {
       404: {
         content: {
           "application/json": components["schemas"]["KretsResponse"][];
+        };
+      };
+    };
+  };
+  /** Henter fylke med gitt id */
+  hentFylke_1: {
+    parameters: {
+      path: {
+        /** ID-en til fylket man vil hente */
+        id: string;
+      };
+      query: {
+        /** Eventuell gyldighetsdato for fylke (default = dagens dato */
+        gyldighetsdato?: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["FylkeResponse"];
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["FylkeResponse"];
         };
       };
     };

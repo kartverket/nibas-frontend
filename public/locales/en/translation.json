@@ -92,7 +92,8 @@
     "Zoom inn": "__STRING_NOT_TRANSLATED__",
     "Zoom ut": "__STRING_NOT_TRANSLATED__",
     "Løsriv": "__STRING_NOT_TRANSLATED__",
-    "Splitt": "__STRING_NOT_TRANSLATED__"
+    "Splitt": "__STRING_NOT_TRANSLATED__",
+    "VisEndringer": "__STRING_NOT_TRANSLATED__"
   },
   "Ja": "__STRING_NOT_TRANSLATED__",
   "Nei": "__STRING_NOT_TRANSLATED__",
@@ -119,7 +120,8 @@
     "Slå sammen stemmekretser": "__STRING_NOT_TRANSLATED__",
     "Hvilken stemmekrets ønsker du å slå sammen med": "__STRING_NOT_TRANSLATED__",
     "Navn- eller nummer på stemmekrets": "__STRING_NOT_TRANSLATED__",
-    "Detaljer om den sammenslåtte kretsen": "__STRING_NOT_TRANSLATED__"
+    "Detaljer om den sammenslåtte kretsen": "__STRING_NOT_TRANSLATED__",
+    "Stemmekretsnavn": "__STRING_NOT_TRANSLATED__"
   },
   "Endre": "__STRING_NOT_TRANSLATED__",
   "utkast": {
@@ -144,7 +146,20 @@
     "Fremtidig endring i konflikt": "__STRING_NOT_TRANSLATED__",
     "Opprett et nytt utkast": "__STRING_NOT_TRANSLATED__",
     "ulagrede-endringer": "__STRING_NOT_TRANSLATED__",
-    "ulagrede-endringer-utdypende": "__STRING_NOT_TRANSLATED__"
+    "ulagrede-endringer-utdypende": "__STRING_NOT_TRANSLATED__",
+    "endringslogg": {
+      "header": "__STRING_NOT_TRANSLATED__",
+      "stemmekrets-tittel": "__STRING_NOT_TRANSLATED__",
+      "endring": {
+        "stemmekretsnavn": "__STRING_NOT_TRANSLATED__",
+        "stemmekretsnummer": "__STRING_NOT_TRANSLATED__",
+        "tellekretsnavn": "__STRING_NOT_TRANSLATED__",
+        "tellekretsnummer": "__STRING_NOT_TRANSLATED__",
+        "valgdistriktsnummer": "__STRING_NOT_TRANSLATED__",
+        "grenseendringer": "__STRING_NOT_TRANSLATED__"
+      },
+      "ingenEndringer": "__STRING_NOT_TRANSLATED__"
+    }
   },
   "Aktive kartlag": "__STRING_NOT_TRANSLATED__",
   "Logg inn for å se listen": "__STRING_NOT_TRANSLATED__",
@@ -154,5 +169,11 @@
   "Fortsett redigering": "__STRING_NOT_TRANSLATED__",
   "Forkast endringer og lukk": "__STRING_NOT_TRANSLATED__",
   "Forkast endringer": "__STRING_NOT_TRANSLATED__",
-  "Utkastet er opprettet": "__STRING_NOT_TRANSLATED__"
+  "Utkastet er opprettet": "__STRING_NOT_TRANSLATED__",
+  "f": {
+    "eks": {
+      " Endring av stemmekrets i Froland": "__STRING_NOT_TRANSLATED__"
+    }
+  },
+  "Velg stemmekretsen du vil slå sammen med": "__STRING_NOT_TRANSLATED__"
 }

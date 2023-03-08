@@ -2,7 +2,7 @@ import React from "react";
 
 // du kan override lokal verdi ved å opprette key i .env.local
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getDevValue = (envKey: string) => {
+const getLocalEnvironmentOverride = (envKey: string) => {
   return process.env[envKey] === "true";
 };
 
@@ -10,20 +10,26 @@ type Environment = "prod" | "test" | "dev";
 
 const environmentByUrl: Record<string, Environment> = {
   localhost: "dev",
-  "nibas.dev.skip.statkart.no": "test",
+  "nibas.dev.skip.statkart.no": "dev",
+  "nibas.test.skip.statkart.no": "test",
 };
 
 // denne utvides etterhvert som vi får flere flagg
 // noe som `type Keys = "flagg1" | "flagg2" | ...`
 // features som skal fjernes kan slettes fra denne listen
 // hvis det ikke er noen keys skal Keys være av typen `never`
-type Keys = "EKSEMPEL_TOGGLE";
+type Keys = "EKSEMPEL_TOGGLE" | "UTKAST_ENDRINGSLOGG";
 
 const featureToggles: Record<Keys, Record<Environment, boolean>> = {
   EKSEMPEL_TOGGLE: {
     prod: false,
     test: false,
-    dev: getDevValue("REACT_APP_FEATURE_TOGGLE_EKSEMPEL"),
+    dev: getLocalEnvironmentOverride("REACT_APP_FEATURE_TOGGLE_EKSEMPEL"),
+  },
+  UTKAST_ENDRINGSLOGG: {
+    prod: false,
+    test: false,
+    dev: true,
   },
 };
 
@@ -46,12 +52,12 @@ export const useFlag = (key: Keys) => {
 };
 
 type Props = {
-  key: Keys;
+  feature: Keys;
   children: React.ReactElement;
 };
 
-const FeatureToggle = ({ key, children }: Props) => {
-  if (featureEnabled(key)) {
+const FeatureToggle = ({ feature, children }: Props) => {
+  if (featureEnabled(feature)) {
     return children;
   }
 
