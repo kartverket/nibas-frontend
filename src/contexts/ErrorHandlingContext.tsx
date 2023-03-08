@@ -5,7 +5,7 @@ type Error = {
   body: string;
 } | null;
 
-type ErrorHandlingContextValue = {
+export type ErrorHandlingContextValue = {
   error: Error;
   setError: (error: Error) => void;
 };
