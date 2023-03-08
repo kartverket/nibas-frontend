@@ -266,6 +266,10 @@ export const mockKommuner = [
       },
     },
     navn: [{ navn: "Malvik", spraak: "nor" }],
+    kommunenummer: {
+      id: "12345",
+      kodeverdi: "4321",
+    },
     href: "http://localhost:8080/v1/kommuner/1",
     antallFramtidigeVersjoner: 0,
   },
@@ -282,6 +286,10 @@ export const mockKommuner = [
         spraak: "nor",
       },
     ],
+    kommunenummer: {
+      id: "12345",
+      kodeverdi: "4321",
+    },
     href: "http://localhost:8080/v1/kommuner/2",
     antallFramtidigeVersjoner: 0,
   },

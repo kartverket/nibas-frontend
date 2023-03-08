@@ -154,9 +154,12 @@
         "tellekretsnavn": "Endring av tellekretsnavn",
         "tellekretsnummer": "Endring av tellekretsnummer",
         "valgdistriktsnummer": "Endring av valgdistriktsnummer",
-        "grenseendringer": "Grensejusteringer"
+        "grenseendringer": "Grensejusteringer",
+        "grunnkretsnavn": "Endringer av grunnkretsnavn",
+        "grunnkretsnummer": "Endringer av grunnkretsnummer"
       },
-      "ingenEndringer": "Det er ingen endringer i dette utkastet"
+      "ingenEndringer": "Det er ingen endringer i dette utkastet",
+      "grunnkrets-tittel": "Grunnkretsendringer i {{ kommune }}"
     }
   },
   "Aktive kartlag": "Aktive kartlag",

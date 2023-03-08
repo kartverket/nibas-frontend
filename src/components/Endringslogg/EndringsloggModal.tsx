@@ -4,6 +4,7 @@ import { ModalOverlay, CustomModalWrapper } from "components/Modal/Modal";
 import styled from "styled-components";
 import { EndringsloggStemmekretsendringer } from "components/Endringslogg/EndringsloggStemmekretsendringer";
 import { useUtkastEndringer } from "./hooks/useUtkastEndringer";
+import { EndringsloggGrunnkretsendringer } from "./EndringsloggGrunnkretsendringer";
 
 type EndringsloggModalProps = {
   isOpen: boolean;
@@ -15,7 +16,8 @@ export const EndringsloggModal = ({
   onClose,
 }: EndringsloggModalProps) => {
   const { t } = useTranslation();
-  const { harEndringer, stemmekretsendringer } = useUtkastEndringer();
+  const { harEndringer, stemmekretsendringer, grunnkretsendringer } =
+    useUtkastEndringer();
 
   // TODO: Blir endret i PR fra Anders
   return (
@@ -39,8 +41,16 @@ export const EndringsloggModal = ({
         {t("utkast.endringslogg.header")}
       </ModalHeader>
       {!harEndringer && <IngenEndringerMelding />}
+
       {stemmekretsendringer?.map((endringer) => (
         <EndringsloggStemmekretsendringer
+          endringer={endringer}
+          key={endringer.kommune.id}
+        />
+      ))}
+
+      {grunnkretsendringer?.map((endringer) => (
+        <EndringsloggGrunnkretsendringer
           endringer={endringer}
           key={endringer.kommune.id}
         />

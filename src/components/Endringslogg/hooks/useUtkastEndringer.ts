@@ -1,10 +1,15 @@
 import { useUtkastStemmekretsEndringer } from "./useUtkastStemmekretsEndringer";
-import { Stemmekretsendringer } from "./utkastEndringerTypes";
+import {
+  Grunnkretsendringer,
+  Stemmekretsendringer,
+} from "./utkastEndringerTypes";
+import { useUtkastGrunnkretsEndringer } from "./useUtkastGrunnkretsEndringer";
 
 type UseUtkastEndringerReturnType = {
   laster: boolean;
   harEndringer: boolean;
   stemmekretsendringer: Stemmekretsendringer[] | null;
+  grunnkretsendringer: Grunnkretsendringer[] | null;
 };
 
 export const useUtkastEndringer = (): UseUtkastEndringerReturnType => {
@@ -14,9 +19,16 @@ export const useUtkastEndringer = (): UseUtkastEndringerReturnType => {
     laster: lasterStemmekretsEndringer,
   } = useUtkastStemmekretsEndringer();
 
+  const {
+    endringer: grunnkretsEndringer,
+    harEndringer: harGrunnkretsEndringer,
+    laster: lasterGrunnkretsEndringer,
+  } = useUtkastGrunnkretsEndringer();
+
   return {
-    harEndringer: harStemmekretsEndringer,
-    laster: lasterStemmekretsEndringer,
+    harEndringer: harStemmekretsEndringer || harGrunnkretsEndringer,
+    laster: lasterStemmekretsEndringer || lasterGrunnkretsEndringer,
     stemmekretsendringer: stemmekretsEndringer,
+    grunnkretsendringer: grunnkretsEndringer,
   };
 };
