@@ -1,6 +1,5 @@
-import Modal from "components/Modal";
+import { Modal, ModalContent } from "components/Modal";
 import { useTranslation } from "react-i18next";
-import { ModalOverlay, CustomModalWrapper } from "components/Modal/Modal";
 import styled from "styled-components";
 import { EndringsloggStemmekretsendringer } from "components/Endringslogg/EndringsloggStemmekretsendringer";
 import { useUtkastEndringer } from "./hooks/useUtkastEndringer";
@@ -22,14 +21,7 @@ export const EndringsloggModal = ({
     <Modal
       isOpen={isOpen}
       onRequestClose={onClose}
-      overlayElement={(props, overlayChildren) => (
-        <ModalOverlay {...props}>{overlayChildren}</ModalOverlay>
-      )}
-      contentElement={(props, contentChildren) => (
-        <ModalWrapper {...props}>{contentChildren}</ModalWrapper>
-      )}
-      className="_"
-      overlayClassName="_"
+      modalElement={ModalElement}
       aria={{
         labelledby: "utkast-endringer-modal-header",
         describedby: "utkast-endringer-modal-description",
@@ -55,11 +47,13 @@ const IngenEndringerMelding = () => {
   return <div>{t("utkast.endringslogg.ingenEndringer")}</div>;
 };
 
-const ModalWrapper = styled(CustomModalWrapper)`
+const ModalElement = styled(ModalContent)`
   min-width: 800px;
   max-width: 1000px;
   padding: 40px;
   border-radius: 15px;
+  background: var(--white);
+  box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.15);
 `;
 
 const ModalHeader = styled.h2`

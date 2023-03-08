@@ -2,8 +2,7 @@ import styled from "styled-components";
 import Button from "./form/Button";
 import CloseButton from "./form/Button/CloseButton";
 import Icon from "./Icon";
-import Modal from "./Modal";
-import { ModalContent } from "./Modal/Modal";
+import { Modal, ModalContent } from "./Modal";
 
 const borderRadius = "12px";
 const border = "2px solid var(--gray_light)";

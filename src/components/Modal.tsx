@@ -15,7 +15,7 @@ type Props = ModalProps & {
   modalElement: FC;
 };
 
-const Modal = ({ children, modalElement, ...props }: Props) => {
+export const Modal = ({ children, modalElement, ...props }: Props) => {
   const ModalElement = modalElement;
 
   return (
@@ -71,5 +71,3 @@ export const ModalContent = styled.div`
     }
   }
 `;
-
-export default Modal;
