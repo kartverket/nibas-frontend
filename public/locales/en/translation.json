@@ -92,7 +92,8 @@
     "Zoom inn": "__STRING_NOT_TRANSLATED__",
     "Zoom ut": "__STRING_NOT_TRANSLATED__",
     "Løsriv": "__STRING_NOT_TRANSLATED__",
-    "Splitt": "__STRING_NOT_TRANSLATED__"
+    "Splitt": "__STRING_NOT_TRANSLATED__",
+    "VisEndringer": "__STRING_NOT_TRANSLATED__"
   },
   "Ja": "__STRING_NOT_TRANSLATED__",
   "Nei": "__STRING_NOT_TRANSLATED__",
@@ -143,7 +144,20 @@
     "Dobbeltsjekk feltene i endringen nedenfor før du publiserer": "__STRING_NOT_TRANSLATED__",
     "Endringer i dette utkastet": "__STRING_NOT_TRANSLATED__",
     "Fremtidig endring i konflikt": "__STRING_NOT_TRANSLATED__",
-    "Opprett et nytt utkast": "__STRING_NOT_TRANSLATED__"
+    "Opprett et nytt utkast": "__STRING_NOT_TRANSLATED__",
+    "endringslogg": {
+      "header": "__STRING_NOT_TRANSLATED__",
+      "stemmekrets-tittel": "__STRING_NOT_TRANSLATED__",
+      "endring": {
+        "stemmekretsnavn": "__STRING_NOT_TRANSLATED__",
+        "stemmekretsnummer": "__STRING_NOT_TRANSLATED__",
+        "tellekretsnavn": "__STRING_NOT_TRANSLATED__",
+        "tellekretsnummer": "__STRING_NOT_TRANSLATED__",
+        "valgdistriktsnummer": "__STRING_NOT_TRANSLATED__",
+        "grenseendringer": "__STRING_NOT_TRANSLATED__"
+      },
+      "ingenEndringer": "__STRING_NOT_TRANSLATED__"
+    }
   },
   "Aktive kartlag": "__STRING_NOT_TRANSLATED__",
   "Logg inn for å se listen": "__STRING_NOT_TRANSLATED__",

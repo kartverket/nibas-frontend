@@ -92,7 +92,8 @@
     "Zoom inn": "Zoom inn",
     "Zoom ut": "Zoom ut",
     "Løsriv": "Løsriv",
-    "Splitt": "Splitt"
+    "Splitt": "Splitt",
+    "VisEndringer": "Endringer"
   },
   "Ja": "Ja",
   "Nei": "Nei",
@@ -143,7 +144,20 @@
     "Dobbeltsjekk feltene i endringen nedenfor før du publiserer": "Dobbeltsjekk feltene i endringen nedenfor før du publiserer",
     "Endringer i dette utkastet": "Endringer i dette utkastet",
     "Fremtidig endring i konflikt": "Fremtidig endring i konflikt",
-    "Opprett et nytt utkast": "Opprett et nytt utkast"
+    "Opprett et nytt utkast": "Opprett et nytt utkast",
+    "endringslogg": {
+      "header": "Endringer som har blitt gjort i dette utkastet",
+      "stemmekrets-tittel": "Stemmekretsendringer i {{ kommune }}",
+      "endring": {
+        "stemmekretsnavn": "Endring av stemmekretsnavn",
+        "stemmekretsnummer": "Endring av stemmekretsnummer",
+        "tellekretsnavn": "Endring av tellekretsnavn",
+        "tellekretsnummer": "Endring av tellekretsnummer",
+        "valgdistriktsnummer": "Endring av valgdistriktsnummer",
+        "grenseendringer": "Grensejusteringer"
+      },
+      "ingenEndringer": "Det er ingen endringer i dette utkastet"
+    }
   },
   "Aktive kartlag": "Aktive kartlag",
   "Logg inn for å se listen": "Logg inn for å se listen",

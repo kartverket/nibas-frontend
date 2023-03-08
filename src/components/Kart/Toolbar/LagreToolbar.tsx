@@ -8,6 +8,9 @@ import Feedback from "components/Feedback/Feedback";
 import ModeButton from "./ModeButton";
 import { Frame } from "./components";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
+import { useState } from "react";
+import { EndringsloggModal } from "components/Endringslogg/EndringsloggModal";
+import FeatureToggle from "../../FeatureToggle";
 
 const LagreFrame = styled(Frame)`
   flex-direction: row;
@@ -46,6 +49,7 @@ type Props = {
 const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
   const { t } = useTranslation();
   const { canSave } = useToolbarActions();
+  const [endringsloggOpen, setEndringsloggOpen] = useState(false);
   const { utkast, updateUtkastWithHistory, closeUtkast } = useUtkast();
   const { openFeedback, isOpen, closeFeedback, feedbackContent } = useFeedback(
     t(
@@ -78,6 +82,13 @@ const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
           </UtkastInfo>
           <DividerVertical />
           <ModeButton
+            icon="published_with_changes"
+            ariaLabel="Vis endringer"
+            onClick={() => setEndringsloggOpen(true)}
+          >
+            {t("action.VisEndringer")}
+          </ModeButton>
+          <ModeButton
             icon="save"
             ariaLabel="Lagre utkast"
             onClick={handleSave}
@@ -94,16 +105,31 @@ const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
           </ModeButton>
         </>
       ) : (
-        <ModeButton
-          icon="save"
-          ariaLabel="Lagre utkast"
-          onClick={handleSave}
-          disabled={!canSave}
-          isActive={createUtkastOpen}
-        >
-          {t("action.Lagre")}
-        </ModeButton>
+        <>
+          <ModeButton
+            icon="published_with_changes"
+            ariaLabel="Vis endringer"
+            onClick={() => setEndringsloggOpen(true)}
+          >
+            {t("action.VisEndringer")}
+          </ModeButton>
+          <ModeButton
+            icon="save"
+            ariaLabel="Lagre utkast"
+            onClick={handleSave}
+            disabled={!canSave}
+            isActive={createUtkastOpen}
+          >
+            {t("action.Lagre")}
+          </ModeButton>
+        </>
       )}
+      <FeatureToggle feature="UTKAST_ENDRINGSLOGG">
+        <EndringsloggModal
+          isOpen={endringsloggOpen}
+          onClose={() => setEndringsloggOpen(false)}
+        />
+      </FeatureToggle>
       <Feedback
         type="warning"
         title="Advarsel"
