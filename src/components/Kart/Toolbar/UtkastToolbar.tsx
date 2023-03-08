@@ -14,6 +14,7 @@ import Select from "components/form/Select";
 import Button from "components/form/Button";
 import Heading from "components/typography/Heading";
 import { Frame, toolbarBorderWidth, toolbarSpacing } from "./components";
+import { useErrorHandling } from "contexts/ErrorHandlingContext";
 
 const UtkastFrame = styled(Frame)`
   position: absolute;
@@ -82,6 +83,7 @@ const UtkastToolbar = ({
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { history, clearHistory } = useToolbar();
   const setSearchParams = useSearchParams()[1];
+  const { setError } = useErrorHandling();
 
   const promptUtkast = () => {
     setUtkastJustCreated(true);
@@ -105,7 +107,12 @@ const UtkastToolbar = ({
       tokenHolderFunc()?.token
     );
 
-    if (response.status !== 201) throw new Error("Status ikke riktig");
+    if (response.status > 400) {
+      setError({
+        title: "Opprettelse av utkast feilet",
+        body: `Feilkode: ${response.status}`,
+      });
+    }
 
     const json = await response.json();
     const utkastId = json.id;

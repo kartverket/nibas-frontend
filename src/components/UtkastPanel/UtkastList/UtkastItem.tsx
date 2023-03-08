@@ -23,6 +23,7 @@ import { useToolbarActions } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext";
 import { Outline } from "style/mixins";
 import AlertModal from "components/AlertModal";
+import { useErrorHandling } from "contexts/ErrorHandlingContext";
 
 type Props = {
   utkast: UtkastRef;
@@ -55,6 +56,7 @@ const UtkastItem = ({ utkast }: Props) => {
     );
   const { canSave } = useToolbarActions();
   const { closeUtkast } = useUtkast();
+  const { setError } = useErrorHandling();
 
   const utkastActive = utkastId === utkast.id;
 
@@ -85,13 +87,24 @@ const UtkastItem = ({ utkast }: Props) => {
       if (!wrapper.framtidigVersjonConflict) return;
 
       setConflictResponse(wrapper.framtidigVersjonConflict);
+    } else if (response.status > 400) {
+      setError({
+        title: "Publisering av utkast feilet",
+        body: `Feilkode: ${response.status}`,
+      });
     }
   };
 
   const deleteUtkast = async () => {
     if (!fullUtkast) return;
 
-    await deleteApiUtkast(utkast.id, tokenHolderFunc()?.token);
+    const response = await deleteApiUtkast(utkast.id, tokenHolderFunc()?.token);
+    if (response.status > 400) {
+      setError({
+        title: "Sletting av utkast feilet",
+        body: `Feilkode: ${response.status}`,
+      });
+    }
 
     await mutate(["/v1/utkast", tokenHolderFunc()?.token]);
 

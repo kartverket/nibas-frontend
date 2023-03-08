@@ -1,4 +1,4 @@
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
 import styled from "styled-components";
 import { SWRConfig } from "swr";
 import Kart from "components/Kart";
@@ -7,21 +7,28 @@ import TopBar from "components/TopBar";
 import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
 import AlertModal from "components/AlertModal";
 import { useTranslation } from "react-i18next";
+import { useErrorHandling } from "contexts/ErrorHandlingContext";
 
 const PageLayout = () => {
   const { t } = useTranslation();
-  const [receivedError, setReceivedError] = useState<string>("");
   const { redigeringsmodusAktiv } = useRedigeringsmodus();
+  const { error, setError } = useErrorHandling();
 
-  // TODO: ERSTATT ERROR-GREIENE MED CONTEXT OG PROVIDER OG slikt.
   return (
     <Grid utkastActive={redigeringsmodusAktiv}>
       <SWRConfig
         value={{
           fetcher: (url) => fetch(url).then((res) => res.json()),
-          onError: (error) => {
-            console.log("onError?");
-            setReceivedError(error.status);
+          onError: (err) => {
+            // TODO: lar denne stå inntil vi ser hvor mye feilaktige errors som oppstår
+            // eslint-disable-next-line no-console
+            console.log("onError", err);
+            if (err.status > 400) {
+              setError({
+                title: "Får ikke kontakt med systemet",
+                body: `Vi får ikke kontakt med basen. Vennligst prøv igjen senere. Om feilen fortsetter, ta gjerne kontakt med Kartverket. Feilkode: ${err.status}`,
+              });
+            }
           },
         }}
       >
@@ -30,17 +37,19 @@ const PageLayout = () => {
           <Sidebar />
         </Suspense>
         <Kart />
-        <AlertModal
-          status="error"
-          title="Får ikke kontakt med systemet"
-          body={`Vi får ikke kontakt med basen. Vennligst prøv igjen senere. Om feilen fortsetter, ta gjerne kontakt med Kartverket. Feilkode: ${receivedError}`}
-          isOpen={receivedError !== ""}
-          onClose={() => setReceivedError("")}
-          primaryAction={{
-            text: t("action.Lukk"),
-            onClick: () => setReceivedError(""),
-          }}
-        />
+        {error && (
+          <AlertModal
+            status="error"
+            title={error.title}
+            body={error.body}
+            isOpen={true}
+            onClose={() => setError(null)}
+            primaryAction={{
+              text: t("action.Lukk"),
+              onClick: () => setError(null),
+            }}
+          />
+        )}
       </SWRConfig>
     </Grid>
   );
