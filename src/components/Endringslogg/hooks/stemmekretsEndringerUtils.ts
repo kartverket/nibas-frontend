@@ -108,8 +108,8 @@ const getEndringerAvType = (
       const gammelStemmekrets = findStemmekrets(id, alleStemmekretser);
       return {
         kretsEndret: gammelStemmekrets,
-        fra: gammelStemmekrets[type],
-        til: stemmekretsendringer?.[id]?.[type],
+        fra: gammelStemmekrets[type]?.trim() ?? "",
+        til: stemmekretsendringer?.[id]?.[type]?.trim() ?? "",
       };
     })
     .filter((endring) => endring.fra !== endring.til);

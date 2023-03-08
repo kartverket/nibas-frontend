@@ -1,8 +1,8 @@
 import { StemmekretsResponse } from "../../../types/api";
 
 export type Endring<T> = {
-  fra: string | null | undefined;
-  til: string | null | undefined;
+  fra: string;
+  til: string;
   kretsEndret: T;
 };
 

@@ -6,8 +6,8 @@ import Icon from "../Icon";
 type EndringPanelProps = {
   tittel: string;
   endringer: {
-    fra: string | null | undefined;
-    til: string | null | undefined;
+    fra: string;
+    til: string;
   }[];
 };
 
@@ -36,7 +36,7 @@ export const EndringPanel = ({ tittel, endringer }: EndringPanelProps) => {
 
 type GrenseEndringerPanelProps = {
   tittel: string;
-  endringer: (string | null | undefined)[];
+  endringer: string[];
 };
 
 export const GrenseEndringerPanel = ({
@@ -62,11 +62,11 @@ export const GrenseEndringerPanel = ({
 };
 
 type TekstEllerTomProps = {
-  tekst: string | null | undefined;
+  tekst: string;
 };
 
 const TekstEllerTom = ({ tekst }: TekstEllerTomProps) => {
-  if (tekst == null || tekst.trim() === "") {
+  if (tekst.trim() === "") {
     return <KursivTekst>(tom)</KursivTekst>;
   }
   return <span>{tekst.trim()}</span>;
