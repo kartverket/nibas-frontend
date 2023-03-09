@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { EndringsloggStemmekretsendringer } from "components/Endringslogg/EndringsloggStemmekretsendringer";
 import { useUtkastEndringer } from "./hooks/useUtkastEndringer";
 import { EndringsloggGrunnkretsendringer } from "./EndringsloggGrunnkretsendringer";
+import Loader from "components/Loader";
 
 type EndringsloggModalProps = {
   isOpen: boolean;
@@ -16,7 +17,7 @@ export const EndringsloggModal = ({
   onClose,
 }: EndringsloggModalProps) => {
   const { t } = useTranslation();
-  const { harEndringer, stemmekretsendringer, grunnkretsendringer } =
+  const { harEndringer, laster, stemmekretsendringer, grunnkretsendringer } =
     useUtkastEndringer();
 
   // TODO: Blir endret i PR fra Anders
@@ -40,6 +41,8 @@ export const EndringsloggModal = ({
       <ModalHeader id="utkast-endringer-modal-header">
         {t("utkast.endringslogg.header")}
       </ModalHeader>
+
+      {laster && <SentrertSpinner />}
       {!harEndringer && <IngenEndringerMelding />}
 
       {stemmekretsendringer?.map((endringer) => (
@@ -70,6 +73,10 @@ const ModalWrapper = styled(CustomModalWrapper)`
   max-width: 1000px;
   padding: 40px;
   border-radius: 15px;
+`;
+
+const SentrertSpinner = styled(Loader)`
+  margin: 40px auto;
 `;
 
 const ModalHeader = styled.h2`
