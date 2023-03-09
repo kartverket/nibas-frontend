@@ -8,7 +8,8 @@ import {
 
 export type OperasjonerOrNull = UtkastOperasjoner | null | undefined;
 export const getKretserMedGrensejusteringer = (
-  operasjoner: OperasjonerOrNull
+  operasjoner: OperasjonerOrNull,
+  type: "STEMMEKRETS" | "GRUNNKRETS"
 ): string[] => {
   const endredeFeaturesMap = operasjoner?.grenseendringer?.endredeFeatures;
 
@@ -21,9 +22,11 @@ export const getKretserMedGrensejusteringer = (
   ) as components["schemas"]["Feature"][];
 
   return removeNull(
-    endredeFeatures.map(
-      (feature) => feature.properties.kontekstEgenskaper?.id?.lokalid?.value
-    )
+    endredeFeatures
+      .filter((feature) => feature.properties.kontekstEgenskaper?.type === type)
+      .map(
+        (feature) => feature.properties.kontekstEgenskaper?.id?.lokalid?.value
+      )
   );
 };
 

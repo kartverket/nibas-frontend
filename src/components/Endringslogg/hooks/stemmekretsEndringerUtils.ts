@@ -31,7 +31,8 @@ export const getStemmekretserMedEndringer = (
   );
 
   const alleStemmekretserMedEndringer = getKretserMedGrensejusteringer(
-    operasjoner
+    operasjoner,
+    "STEMMEKRETS"
   ).concat(stemmekretserMedMetadataEndringer);
 
   return deduplicate(alleStemmekretserMedEndringer);
@@ -67,8 +68,10 @@ const getEndringerForKommune = (
   alleStemmekretser: StemmekretsResponse[],
   alleKommuner: KommuneRef[]
 ): Stemmekretsendringer => {
-  const stemmekretserMedGrensejusteringer =
-    getKretserMedGrensejusteringer(operasjoner);
+  const stemmekretserMedGrensejusteringer = getKretserMedGrensejusteringer(
+    operasjoner,
+    "STEMMEKRETS"
+  );
 
   const getEndringer = (type: StemmekretsEndringstype) =>
     getEndringerAvType(

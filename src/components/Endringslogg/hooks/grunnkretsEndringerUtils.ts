@@ -21,16 +21,17 @@ export const getGrunnkretserMedEndringer = (
 ): string[] => {
   const endringerResponse = operasjoner?.metadataendringer?.grunnkretsendringer;
 
-  if (endringerResponse == null || operasjoner == null) {
+  if (endringerResponse == null && operasjoner == null) {
     return [];
   }
 
   const grunnkretsMetadataEndringer = removeNull(
-    Object.keys(operasjoner?.metadataendringer?.grunnkretsendringer)
+    Object.keys(operasjoner?.metadataendringer?.grunnkretsendringer ?? {})
   );
 
   const alleGrunnkretserMedEndringer = getKretserMedGrensejusteringer(
-    operasjoner
+    operasjoner,
+    "GRUNNKRETS"
   ).concat(grunnkretsMetadataEndringer);
 
   return deduplicate(alleGrunnkretserMedEndringer);
@@ -65,8 +66,10 @@ const getEndringerForKommune = (
   alleGrunnkretser: GrunnkretsResponse[],
   alleKommuner: KommuneRef[]
 ): Grunnkretsendringer => {
-  const grunnkretserMedGrensejusteringer =
-    getKretserMedGrensejusteringer(operasjoner);
+  const grunnkretserMedGrensejusteringer = getKretserMedGrensejusteringer(
+    operasjoner,
+    "GRUNNKRETS"
+  );
 
   const getEndringer = (type: GrunnkretsEndringstype) =>
     getEndringerAvType(
