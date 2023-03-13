@@ -145,6 +145,8 @@
     "Endringer i dette utkastet": "Endringer i dette utkastet",
     "Fremtidig endring i konflikt": "Fremtidig endring i konflikt",
     "Opprett et nytt utkast": "Opprett et nytt utkast",
+    "ulagrede-endringer": "Du har endringer i utkastet som ikke er lagret",
+    "ulagrede-endringer-utdypende": "Er du sikker på at du vil gå ut av utkastet? Dersom du lukker utkastet nå mister du alle ulagrede endringer.",
     "endringslogg": {
       "header": "Endringer som har blitt gjort i dette utkastet",
       "stemmekrets-tittel": "Stemmekretsendringer i {{ kommune }}",
@@ -154,26 +156,21 @@
         "tellekretsnavn": "Endring av tellekretsnavn",
         "tellekretsnummer": "Endring av tellekretsnummer",
         "valgdistriktsnummer": "Endring av valgdistriktsnummer",
-        "grenseendringer": "Grensejusteringer"
+        "grenseendringer": "Grensejusteringer",
+        "grunnkretsnavn": "Endringer av grunnkretsnavn",
+        "grunnkretsnummer": "Endringer av grunnkretsnummer"
       },
-      "ingenEndringer": "Det er ingen endringer i dette utkastet"
+      "ingenEndringer": "Det er ingen endringer i dette utkastet",
+      "grunnkrets-tittel": "Grunnkretsendringer i {{ kommune }}"
     }
   },
   "Aktive kartlag": "Aktive kartlag",
   "Logg inn for å se listen": "Logg inn for å se listen",
   "Redigerer": "Redigerer",
   "Redigeringsmodus": "Redigeringsmodus",
-  "Utkastet er ikke publisert enda": {
-    " Vil du fullføre det senere, eller publisere med en gang?": "Utkastet er ikke publisert enda. Vil du fullføre det senere, eller publisere med en gang?"
-  },
   "Lukk likevel": "Lukk likevel",
   "Fortsett redigering": "Fortsett redigering",
   "Forkast endringer og lukk": "Forkast endringer og lukk",
-  "Utkastet ditt har endringer som ikke er lagret": {
-    " Dersom du lukker utkastet nå, vil disse endringene forkastes": {
-      " Er du sikker på at du vil fortsette?": "Utkastet ditt har endringer som ikke er lagret. Dersom du lukker utkastet nå, vil disse endringene forkastes. Er du sikker på at du vil fortsette?"
-    }
-  },
   "Forkast endringer": "Forkast endringer",
   "Utkastet er opprettet": "Utkastet er opprettet",
   "f": {

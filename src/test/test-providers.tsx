@@ -29,10 +29,16 @@ import {
   UtkastContext,
   UtkastContextValue,
 } from "contexts/UtkastContext";
+import {
+  ErrorHandlingContext,
+  ErrorHandlingContextValue,
+  ErrorHandlingProvider,
+} from "contexts/ErrorHandlingContext";
 import ThirdPartyProviders from "components/App/Providers/ThirdPartyProviders";
 import { BrowserRouter } from "react-router-dom";
 
 const defaultProviderMap = {
+  ErrorHandlingProvider,
   BakgrunnskartProvider,
   EditGrenserProvider,
   OverlayPanelsProvider,
@@ -42,6 +48,7 @@ const defaultProviderMap = {
 };
 
 const contextMap = {
+  ErrorHandlingProvider: ErrorHandlingContext.Provider,
   BakgrunnskartProvider: BakgrunnskartContext.Provider,
   EditGrenserProvider: EditGrenserContext.Provider,
   OverlayPanelsProvider: OverlayPanelsContext.Provider,
@@ -51,6 +58,7 @@ const contextMap = {
 };
 
 export type TestProviderValues = {
+  ErrorHandlingProvider?: ErrorHandlingContextValue | boolean;
   BakgrunnskartProvider?: BakgrunnskartContextValue | boolean;
   EditGrenserProvider?: EditGrenserContextValue | boolean;
   OverlayPanelsProvider?: OverlayPanelsContextValue | boolean;

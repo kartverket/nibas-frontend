@@ -21,6 +21,7 @@ import { OppdaterUtkastRequest, UtkastResponse } from "types/api";
 import { resetMapView } from "utils/map";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
+import { useErrorHandling } from "contexts/ErrorHandlingContext";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
@@ -38,6 +39,7 @@ export const UtkastProvider: React.FC = ({ children }) => {
   const { resetAndClearEditingLayer } = useEditAllGrenser();
   const { closePanels } = useOverlayPanels();
   const utkastId = searchParams.get("utkast");
+  const { setError } = useErrorHandling();
 
   const { mutate: globalMutate } = useSWRConfig();
 
@@ -97,11 +99,23 @@ export const UtkastProvider: React.FC = ({ children }) => {
       }
     }
 
-    await mutate(
-      updateApiUtkast(utkast.id, updatedUtkast, tokenHolderFunc()?.token)
+    const response = await updateApiUtkast(
+      utkast.id,
+      updatedUtkast,
+      tokenHolderFunc()?.token
     );
-    await globalMutate(["/v1/utkast", tokenHolderFunc()?.token]);
-    clearHistory({ hasPreviouslySavedHistory: true });
+
+    if (response.status > 200 && response.status < 300) {
+      const json = await response.json();
+      await mutate(json as UtkastResponse);
+      await globalMutate(["/v1/utkast", tokenHolderFunc()?.token]);
+      clearHistory({ hasPreviouslySavedHistory: true });
+    } else if (response.status > 400) {
+      setError({
+        title: "Oppdatering av utkast feilet",
+        body: `Feilkode: ${response.status}`,
+      });
+    }
   };
 
   const closeUtkast = () => {

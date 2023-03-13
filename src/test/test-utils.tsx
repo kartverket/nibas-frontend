@@ -16,6 +16,7 @@ const customRender = (
   const user = userEvent.setup();
 
   const {
+    ErrorHandlingProvider,
     BakgrunnskartProvider,
     EditGrenserProvider,
     OverlayPanelsProvider,
@@ -29,6 +30,7 @@ const customRender = (
     user,
     ...render(
       renderWithProviders(ui, {
+        ErrorHandlingProvider,
         BakgrunnskartProvider,
         EditGrenserProvider,
         OverlayPanelsProvider,

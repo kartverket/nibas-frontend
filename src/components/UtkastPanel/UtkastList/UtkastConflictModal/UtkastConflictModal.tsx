@@ -1,10 +1,7 @@
 import Checkbox from "components/Checkbox";
 import Button from "components/form/Button";
 import { ButtonCell } from "components/Kart/OverlayPanels/KretsTable";
-import Modal, {
-  CustomModalWrapper,
-  ModalOverlay,
-} from "components/Modal/Modal";
+import { Modal, ModalContent } from "components/Modal";
 import Heading from "components/typography/Heading";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
@@ -29,18 +26,11 @@ const UtkastConflictModal: FC<Props> = ({
   return (
     <Modal
       isOpen
-      overlayElement={(props, overlayChildren) => (
-        <ModalOverlay {...props}>{overlayChildren}</ModalOverlay>
-      )}
-      contentElement={(props, contentChildren) => (
-        <ModalWrapper {...props}>{contentChildren}</ModalWrapper>
-      )}
+      modalElement={ModalElement}
       aria={{
         labelledby: "conflict-modal-header",
         describedby: "conflict-modal-description",
       }}
-      className="_"
-      overlayClassName="_"
     >
       <Heading tag="h2" size="xs" id="conflict-modal-header">
         {t("utkast.Konflikt mellom fremtidige endringer")}
@@ -109,7 +99,13 @@ const UtkastConflictModal: FC<Props> = ({
   );
 };
 
-const ModalWrapper = styled(CustomModalWrapper)`
+const ModalElement = styled(ModalContent)`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border: 1px solid var(--blue);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background: var(--white);
   min-width: 900px;
   max-width: 1500px;
   padding: 40px;
