@@ -13,10 +13,9 @@ import Label from "components/form/Label";
 import Select from "components/form/Select";
 import Button from "components/form/Button";
 import Heading from "components/typography/Heading";
-import Modal from "components/Modal";
-import { CustomModalWrapper, ModalOverlay } from "components/Modal/Modal";
+import { Modal, ModalContent } from "components/Modal";
 
-const Frame = styled(CustomModalWrapper)`
+const ModalElement = styled(ModalContent)`
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -96,14 +95,7 @@ const CreateUtkastModal = ({
     <Modal
       isOpen={isCreateUtkastModalOpen}
       onRequestClose={() => setIsCreateUtkastModalOpen(false)}
-      className="_"
-      overlayClassName="_"
-      contentElement={(props, contentChildren) => (
-        <Frame {...props}>{contentChildren}</Frame>
-      )}
-      overlayElement={(props, overlayChildren) => (
-        <ModalOverlay {...props}>{overlayChildren}</ModalOverlay>
-      )}
+      modalElement={ModalElement}
     >
       <Heading size="xs" tag="h3">
         {t("utkast.Opprett et nytt utkast")}

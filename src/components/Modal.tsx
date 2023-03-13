@@ -1,3 +1,4 @@
+import { FC, ReactNode } from "react";
 import ReactModal, { Props as ModalProps } from "react-modal";
 import styled from "styled-components";
 
@@ -10,14 +11,31 @@ if (process.env.NODE_ENV === "test") {
 }
 
 type Props = ModalProps & {
-  children: React.ReactNode;
+  children: ReactNode;
+  modalElement: FC;
 };
 
-const Modal = ({ children, ...props }: Props) => {
-  return <ReactModal {...props}>{children}</ReactModal>;
+export const Modal = ({ children, modalElement, ...props }: Props) => {
+  const ModalElement = modalElement;
+
+  return (
+    <ReactModal
+      className="_"
+      overlayClassName="_"
+      contentElement={(contentProps, contentChildren) => (
+        <ModalElement {...contentProps}>{contentChildren}</ModalElement>
+      )}
+      overlayElement={(overlayProps, overlayChildren) => (
+        <ModalOverlay {...overlayProps}>{overlayChildren}</ModalOverlay>
+      )}
+      {...props}
+    >
+      {children}
+    </ReactModal>
+  );
 };
 
-export const ModalOverlay = styled.div`
+const ModalOverlay = styled.div`
   position: fixed;
   inset: 0;
   z-index: 10;
@@ -34,20 +52,11 @@ export const ModalOverlay = styled.div`
   }
 `;
 
-export const CustomModalWrapper = styled.div`
+export const ModalContent = styled.div`
   position: relative;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 320px;
-  border: 1px solid var(--blue);
-  background: white;
-
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   animation: Enter 0.5s cubic-bezier(0.75, 0, 0.25, 1.5);
   outline: none;
 
@@ -62,5 +71,3 @@ export const CustomModalWrapper = styled.div`
     }
   }
 `;
-
-export default Modal;

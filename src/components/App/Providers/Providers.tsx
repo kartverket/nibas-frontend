@@ -6,21 +6,24 @@ import { OverlayPanelsProvider } from "contexts/OverlayPanelsContext";
 import { SidebarPanelProvider } from "contexts/SidebarPanelContext";
 import { ToolbarProvider } from "contexts/ToolbarContext";
 import { UtkastProvider } from "contexts/UtkastContext";
+import { ErrorHandlingProvider } from "contexts/ErrorHandlingContext";
 
 const Providers: FC = ({ children }) => {
   return (
     <ThirdPartyProviders>
-      <SidebarPanelProvider>
-        <ToolbarProvider>
-          <OverlayPanelsProvider>
-            <EditGrenserProvider>
-              <BakgrunnskartProvider>
-                <UtkastProvider>{children}</UtkastProvider>
-              </BakgrunnskartProvider>
-            </EditGrenserProvider>
-          </OverlayPanelsProvider>
-        </ToolbarProvider>
-      </SidebarPanelProvider>
+      <ErrorHandlingProvider>
+        <SidebarPanelProvider>
+          <ToolbarProvider>
+            <OverlayPanelsProvider>
+              <EditGrenserProvider>
+                <BakgrunnskartProvider>
+                  <UtkastProvider>{children}</UtkastProvider>
+                </BakgrunnskartProvider>
+              </EditGrenserProvider>
+            </OverlayPanelsProvider>
+          </ToolbarProvider>
+        </SidebarPanelProvider>
+      </ErrorHandlingProvider>
     </ThirdPartyProviders>
   );
 };

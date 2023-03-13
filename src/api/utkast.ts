@@ -2,10 +2,9 @@ import {
   ConflictResolved,
   OppdaterUtkastRequest,
   OpprettUtkastRequest,
-  UtkastResponse,
 } from "types/api";
 
-export const createUtkast = async (
+export const createUtkast = (
   utkast: OpprettUtkastRequest,
   token: string | undefined
 ) => {
@@ -19,12 +18,12 @@ export const createUtkast = async (
   });
 };
 
-export const updateUtkast = async (
+export const updateUtkast = (
   id: string,
   utkast: OppdaterUtkastRequest,
   token: string | undefined
 ) => {
-  const response = await fetch(`v1/utkast/${id}`, {
+  return fetch(`v1/utkast/${id}`, {
     method: "PUT",
     body: JSON.stringify(utkast),
     headers: {
@@ -32,13 +31,9 @@ export const updateUtkast = async (
       Authorization: "Bearer " + token,
     },
   });
-
-  const json = await response.json();
-
-  return json as UtkastResponse;
 };
 
-export const publishUtkast = async (
+export const publishUtkast = (
   id: string,
   utkast: OppdaterUtkastRequest,
   token: string | undefined

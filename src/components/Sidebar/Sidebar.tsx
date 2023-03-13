@@ -3,7 +3,6 @@ import styled from "styled-components";
 import useSWR from "swr";
 import SidebarButton from "./SidebarButton";
 import Icon from "components/Icon";
-import { fetcher } from "utils/swr";
 import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
 
 type ActuatorResponse = {
@@ -13,10 +12,7 @@ type ActuatorResponse = {
 };
 
 const Sidebar = () => {
-  const { data: actuator } = useSWR<ActuatorResponse>(
-    "/actuator/info",
-    fetcher
-  );
+  const { data: actuator } = useSWR<ActuatorResponse>("/actuator/info");
   const backendVersion = actuator?.application.version ?? "---";
   const frontendVersion = process.env.REACT_APP_VERSION ?? "VERSION-NOT-SET";
 
