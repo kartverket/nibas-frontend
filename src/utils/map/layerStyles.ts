@@ -85,7 +85,7 @@ export const getPointOverlayStyle = (
         color: "#000",
       }),
       stroke: new Stroke({
-        color: '#fff',
+        color: "#FFF",
         width: 4,
       }),
       textBaseline: "middle",
