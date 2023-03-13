@@ -79,7 +79,7 @@ const UtkastItem = ({ utkast }: Props) => {
 
     if (!response) return;
 
-    if (response.status === 200) {
+    if (response.status > 200 && response.status < 300) {
       cleanUpUtkast();
     } else if (response.status === 409) {
       const wrapper = (await response.json()) as ConflictResponseWrapper;
@@ -99,17 +99,17 @@ const UtkastItem = ({ utkast }: Props) => {
     if (!fullUtkast) return;
 
     const response = await deleteApiUtkast(utkast.id, tokenHolderFunc()?.token);
-    if (response.status > 400) {
+    if (response.status > 200 && response.status < 300) {
+      await mutate(["/v1/utkast", tokenHolderFunc()?.token]);
+
+      if (utkastActive) {
+        setSearchParams({});
+      }
+    } else if (response.status > 400) {
       setError({
         title: "Sletting av utkast feilet",
         body: `Feilkode: ${response.status}`,
       });
-    }
-
-    await mutate(["/v1/utkast", tokenHolderFunc()?.token]);
-
-    if (utkastActive) {
-      setSearchParams({});
     }
   };
 

@@ -105,18 +105,17 @@ export const UtkastProvider: React.FC = ({ children }) => {
       tokenHolderFunc()?.token
     );
 
-    if (response.status > 400) {
+    if (response.status > 200 && response.status < 300) {
+      const json = await response.json();
+      await mutate(json as UtkastResponse);
+      await globalMutate(["/v1/utkast", tokenHolderFunc()?.token]);
+      clearHistory({ hasPreviouslySavedHistory: true });
+    } else if (response.status > 400) {
       setError({
         title: "Oppdatering av utkast feilet",
         body: `Feilkode: ${response.status}`,
       });
     }
-
-    const json = await response.json();
-
-    await mutate(json as UtkastResponse);
-    await globalMutate(["/v1/utkast", tokenHolderFunc()?.token]);
-    clearHistory({ hasPreviouslySavedHistory: true });
   };
 
   const closeUtkast = () => {

@@ -107,20 +107,21 @@ const UtkastToolbar = ({
       tokenHolderFunc()?.token
     );
 
+    if (response.status > 200 && response.status < 300) {
+      const json = await response.json();
+      const utkastId = json.id;
+
+      setCreateUtkastOpen(false);
+      setSearchParams({ utkast: utkastId });
+      clearHistory({ hasPreviouslySavedHistory: true });
+      promptUtkast();
+    }
     if (response.status > 400) {
       setError({
         title: "Opprettelse av utkast feilet",
         body: `Feilkode: ${response.status}`,
       });
     }
-
-    const json = await response.json();
-    const utkastId = json.id;
-
-    setCreateUtkastOpen(false);
-    setSearchParams({ utkast: utkastId });
-    clearHistory({ hasPreviouslySavedHistory: true });
-    promptUtkast();
   };
 
   return (
