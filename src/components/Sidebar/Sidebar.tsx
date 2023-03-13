@@ -59,7 +59,6 @@ const StyledSidebar = styled.div<{ activeUtkast: boolean }>`
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  padding-top: 80px;
   padding-left: ${({ activeUtkast }) => (activeUtkast ? 6 : 0)}px;
   border-right: none;
   overflow: hidden;
