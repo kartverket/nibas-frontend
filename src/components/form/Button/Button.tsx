@@ -45,9 +45,9 @@ const Button = forwardRef<HTMLButtonElement, Props>(
 
     return (
       <ButtonWrapper {...props} ref={ref} className={className}>
-        {iconDirection == "left" && icon && icon}
+        {iconDirection == "left" && icon}
         {children && <span>{children}</span>}
-        {iconDirection == "right" && icon && icon}
+        {iconDirection == "right" && icon}
       </ButtonWrapper>
     );
   }
