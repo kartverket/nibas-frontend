@@ -9,13 +9,13 @@ import {
 } from "components/Endringslogg/EndringPanel";
 import { Seksjonsheader } from "./EndringsloggStyles";
 
-type EndringsloggStemmekretsendringerReturnType = {
+type EndringsloggStemmekretsendringerProps = {
   endringer: Stemmekretsendringer;
 };
 
 export const EndringsloggStemmekretsendringer = ({
   endringer,
-}: EndringsloggStemmekretsendringerReturnType) => {
+}: EndringsloggStemmekretsendringerProps) => {
   const { t } = useTranslation();
 
   return (
@@ -60,8 +60,8 @@ function addStemmekretsnummerToEndringer(
 ): StemmekretsEndring[] {
   return endringer.map((endring) => ({
     ...endring,
-    fra: `${endring.kretsEndret.stemmekretsnummer ?? ""} ${endring.fra ?? ""}`,
-    til: `${endring.kretsEndret.stemmekretsnummer ?? ""} ${endring.til ?? ""}`,
+    fra: `${endring.kretsEndret.stemmekretsnummer ?? ""} ${endring.fra}`,
+    til: `${endring.kretsEndret.stemmekretsnummer ?? ""} ${endring.til}`,
   }));
 }
 
@@ -70,8 +70,8 @@ function addStemmekretsnavnToEndringer(
 ): StemmekretsEndring[] {
   return endringer.map((endring) => ({
     ...endring,
-    fra: `${endring.fra ?? ""} ${endring.kretsEndret.stemmekretsnavn ?? ""}`,
-    til: `${endring.til ?? ""} ${endring.kretsEndret.stemmekretsnavn ?? ""}`,
+    fra: `${endring.fra} ${endring.kretsEndret.stemmekretsnavn ?? ""}`,
+    til: `${endring.til} ${endring.kretsEndret.stemmekretsnavn ?? ""}`,
   }));
 }
 
@@ -80,8 +80,8 @@ function addTellekretsnummerToEndringer(
 ): StemmekretsEndring[] {
   return endringer.map((endring) => ({
     ...endring,
-    fra: `${endring.kretsEndret.tellekretsnummer ?? ""} ${endring.fra ?? ""}`,
-    til: `${endring.kretsEndret.tellekretsnummer ?? ""} ${endring.til ?? ""}`,
+    fra: `${endring.kretsEndret.tellekretsnummer ?? ""} ${endring.fra}`,
+    til: `${endring.kretsEndret.tellekretsnummer ?? ""} ${endring.til}`,
   }));
 }
 

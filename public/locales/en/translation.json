@@ -154,9 +154,12 @@
         "tellekretsnavn": "__STRING_NOT_TRANSLATED__",
         "tellekretsnummer": "__STRING_NOT_TRANSLATED__",
         "valgdistriktsnummer": "__STRING_NOT_TRANSLATED__",
-        "grenseendringer": "__STRING_NOT_TRANSLATED__"
+        "grenseendringer": "__STRING_NOT_TRANSLATED__",
+        "grunnkretsnavn": "__STRING_NOT_TRANSLATED__",
+        "grunnkretsnummer": "__STRING_NOT_TRANSLATED__"
       },
-      "ingenEndringer": "__STRING_NOT_TRANSLATED__"
+      "ingenEndringer": "__STRING_NOT_TRANSLATED__",
+      "grunnkrets-tittel": "__STRING_NOT_TRANSLATED__"
     }
   },
   "Aktive kartlag": "__STRING_NOT_TRANSLATED__",

@@ -4,14 +4,15 @@ type Color = "blue" | "green" | "white";
 
 type Props = {
   color?: Color;
+  className?: string;
   "aria-label"?: string;
 };
 
 const getKvibClassName = (color: Color) =>
   `kv-loader loader--size kv-loader--${color}`;
 
-const Loader = ({ color = "blue", ...props }: Props) => {
-  const kvibClassName = getKvibClassName(color);
+const Loader = ({ color = "blue", className = "", ...props }: Props) => {
+  const kvibClassName = `${getKvibClassName(color)} ${className}`;
 
   return (
     <LoaderWrapper
