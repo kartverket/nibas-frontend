@@ -14,11 +14,25 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
   iconDirection?: IconDirection;
 };
 
-const getKvibClassName = (variant: Variant, size: Size, iconDirection: IconDirection) =>
+const getKvibClassName = (
+  variant: Variant,
+  size: Size,
+  iconDirection: IconDirection
+) =>
   `kv-button kv-button--${variant}--blue kv-button--${size} kv-button__icon--${iconDirection}`;
 
 const Button = forwardRef<HTMLButtonElement, Props>(
-  ({ variant = "primary", size = "xs", children, icon, iconDirection = "right", ...props }, ref) => {
+  (
+    {
+      variant = "primary",
+      size = "xs",
+      children,
+      icon,
+      iconDirection = "right",
+      ...props
+    },
+    ref
+  ) => {
     const ButtonWrapper =
       variant === "unstyled" ? UnstyledButton : StyledButton;
 
@@ -31,9 +45,9 @@ const Button = forwardRef<HTMLButtonElement, Props>(
 
     return (
       <ButtonWrapper {...props} ref={ref} className={className}>
-        {(iconDirection == "left" && icon) && (icon)}
+        {iconDirection == "left" && icon && icon}
         {children && <span>{children}</span>}
-        {(iconDirection == "right" && icon) && (icon)}
+        {iconDirection == "right" && icon && icon}
       </ButtonWrapper>
     );
   }

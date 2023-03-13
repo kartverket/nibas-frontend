@@ -14,12 +14,26 @@ export const AuthenticationButton = () => {
   const { t } = useTranslation();
 
   const loginButton = (
-    <Button variant="secondary" aria-label="Logg inn" icon={<Icon icon="login" aria-label="" />} iconDirection="left" onClick={() => handleAuthenticateFunc("/")}>
+    <Button
+      variant="secondary"
+      aria-label="Logg inn"
+      icon={<Icon icon="login" aria-label="" />}
+      iconDirection="left"
+      onClick={() => handleAuthenticateFunc("/")}
+    >
       {t("auth.Login")}
     </Button>
   );
   const logoutButton = (
-    <Button variant="secondary" aria-label="Logg ut" icon={<Icon icon="logout" aria-label="" />} iconDirection="left" onClick={handleLogoutFunc}>{t("auth.Logout")}</Button>
+    <Button
+      variant="secondary"
+      aria-label="Logg ut"
+      icon={<Icon icon="logout" aria-label="" />}
+      iconDirection="left"
+      onClick={handleLogoutFunc}
+    >
+      {t("auth.Logout")}
+    </Button>
   );
 
   return isAuthenticatedFunc() ? logoutButton : loginButton;

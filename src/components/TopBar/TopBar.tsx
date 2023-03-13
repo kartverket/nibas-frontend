@@ -19,13 +19,13 @@ const TopBar = () => {
         <UtkastTab />
       </LeftSide>
       <RightSide>
-      <LoginIcon icon="person" filled/>
+        <LoginIcon icon="person" filled />
         {isAuthenticatedFunc() ? (
           <LoginText>
             {t(`auth.Logget inn som {{ personId }}`, {
               personId: tokenHolderFunc()?.personId,
             })}
-            </LoginText>
+          </LoginText>
         ) : (
           <LoginText>{t("auth.Ikke logget inn")}</LoginText>
         )}
@@ -66,12 +66,12 @@ const RightSide = styled.div`
 `;
 
 const LoginText = styled.p`
-margin-right: 1rem;
-`
+  margin-right: 1rem;
+`;
 
 const LoginIcon = styled(Icon)`
-color: var(--blue_dark);
-margin-right: 8px;
-`
+  color: var(--blue_dark);
+  margin-right: 8px;
+`;
 
 export default TopBar;
