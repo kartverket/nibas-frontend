@@ -80,13 +80,13 @@ export const getPointOverlayStyle = (
   return new Style({
     text: new Text({
       text: `${feature.get("name")}\n${feature.get("number")}`,
-      font: "12px Arial,sans-serif",
+      font: "11px sans-serif",
       fill: new Fill({
         color: "#000",
       }),
-      padding: [5, 5, 5, 5],
-      backgroundFill: new Fill({
-        color: [255, 255, 255, 0.5],
+      stroke: new Stroke({
+        color: '#fff',
+        width: 4,
       }),
       textBaseline: "middle",
       textAlign: "center",
