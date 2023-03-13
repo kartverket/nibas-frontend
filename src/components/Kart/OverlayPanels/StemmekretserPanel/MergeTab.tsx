@@ -17,6 +17,8 @@ import { useToolbar, useToolbarSaving } from "contexts/ToolbarContext";
 
 import CreateUtkastModal from "./CreateUtkastModal";
 import { useUtkast } from "contexts/UtkastContext";
+import UtkastToast from "components/Kart/Toolbar/UtkastToast";
+import useDirtyStyles from "hooks/interactions/useDirtyStyles";
 
 type Props = {
   stemmekrets: StemmekretsResponse | undefined;
@@ -29,8 +31,10 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   const { addEntry } = useToolbarSaving();
   const { utkast, updateUtkastWithHistory } = useUtkast();
   const { history } = useToolbar();
+  const { saveDirtyFeatureIds, setAndSaveUtkastFeatures } = useDirtyStyles();
 
   const [isCreateUtkastModalOpen, setIsCreateUtkastModalOpen] = useState(false);
+  const [utkastJustCreated, setUtkastJustCreated] = useState(false);
 
   const [stemmekretsnavn, setStemmekretsnavn] = useState(
     stemmekrets?.stemmekretsnavn ?? ""
@@ -75,7 +79,15 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
     }
   }, [history, updateUtkastWithHistory]);
 
+  const { data: StemmekretsReponse } = useNibasApi(
+    "/v1/stemmekretser/{id}/grenser",
+    {
+      lokalid: id,
+    }
+  );
+
   const mergeStemmekrets = () => {
+    promptUtkastJustCreated();
     const stemmekretsTilSammenslaaingListe = getStemmekretsByNummer(
       stemmekretsNummerTilSammenslaaing
     );
@@ -109,8 +121,21 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
       : setIsCreateUtkastModalOpen(true);
   };
 
+  const promptUtkastJustCreated = () => {
+    console.log("prompting it to be just created!!!");
+    setUtkastJustCreated(true);
+
+    const timeId = setTimeout(() => {
+      setUtkastJustCreated(false);
+    }, 5000);
+
+    return () => {
+      clearTimeout(timeId);
+    };
+  };
+
   return (
-    <div>
+    <>
       <Section>
         <SectionHeading>
           {t("stemmekrets.Slå sammen stemmekretser")}
@@ -178,7 +203,14 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
         setIsCreateUtkastModalOpen={setIsCreateUtkastModalOpen}
         callback={mergeStemmekrets}
       />
-    </div>
+      {utkastJustCreated && (
+        <UtkastToast
+          text={
+            "Utkastet er opprettet og sammenslåingen av Flosta og Myrdal er lagret"
+          }
+        />
+      )}
+    </>
   );
 };
 

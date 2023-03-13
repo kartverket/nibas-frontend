@@ -94,6 +94,19 @@ const representasjonspunkterFetcher = async (
   return representasjonspunktFeatures.filter(isNotNullOrUndefined);
 };
 
+// fetch alle kretsgrenser i en kommune
+const stemmekretsGrenserBySammenslaaingFetcher = async (
+  stemmekretsIds: string[],
+  token: string | undefined
+) => {
+  const kretsFeaturesPromises: Promise<string>[] = stemmekretsIds.map(
+    async (stemmekretsId) =>
+      fetcherWithToken(`/v1/stemmekretser/${stemmekretsId}/grenser`, token)
+  );
+
+  return Promise.all(kretsFeaturesPromises);
+};
+
 const getKretserByKommuneUrl = (type: Kretstype) => {
   if (type === "grunnkrets") {
     return "/v1/kommuner/{id}/grunnkretser";
@@ -160,7 +173,22 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
         }
       }
     }
+
+    const dirtySammenslaaingsFeatures =
+      applyDirtyStylesToUtkastFeatures(features);
+
     setAndSaveUtkastFeatures(dirtyFeatureIds);
+  };
+
+  const applyDirtyStylesToUtkastSammenslaainger = (
+    features: Feature<Geometry>[],
+    sammenslaaingsFeatures: Feature<Geometry>[]
+  ): string[] => {
+    const dirtyFeatureIds: string[] = [];
+    //const featuresSlice = utkast?.operasjoner.stemmekretsSammenslaaingsendring?.viderefoertStemmekrets
+
+    //hvor henter jeg inn features av en krets på en lokalid
+    return dirtyFeatureIds;
   };
 
   useAddInndelingerKontekst(allFeatures, type, kommuneId);

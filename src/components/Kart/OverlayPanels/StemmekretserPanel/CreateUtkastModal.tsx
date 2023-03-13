@@ -83,8 +83,8 @@ const CreateUtkastModal = ({
 
     setIsCreateUtkastModalOpen(false);
     setSearchParams({ utkast: utkastId });
-
     callback();
+    setIsCreateUtkastModalOpen(false);
   };
 
   const cancelCreateUtkast = () => {

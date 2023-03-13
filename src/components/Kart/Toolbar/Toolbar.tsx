@@ -1,11 +1,12 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
-import UtkastToast from "./UtkastToast";
 import UtkastToolbar from "./UtkastToolbar";
 import LagreToolbar from "./LagreToolbar";
 import ButtonToolbar from "./ButtonToolbar";
 import { toolbarSpacing } from "./components";
+import UtkastToast from "./UtkastToast";
+import { t } from "i18next";
 
 const Container = styled.div`
   position: absolute;
@@ -43,7 +44,9 @@ const Toolbar = () => {
             createUtkastOpen={createUtkastOpen}
             setCreateUtkastOpen={setCreateUtkastOpen}
           />
-          {utkastJustCreated && <UtkastToast />}
+          {utkastJustCreated && (
+            <UtkastToast text={t("Utkastet er opprettet")} />
+          )}
         </>
       )}
       <ButtonToolbar />

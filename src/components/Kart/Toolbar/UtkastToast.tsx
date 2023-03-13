@@ -1,15 +1,16 @@
-import { useTranslation } from "react-i18next";
 import styled, { keyframes } from "styled-components";
 import Icon from "components/Icon";
 
-// TODO: erstatt dette med en generell toast eller en annen løsning
-const UtkastToast = () => {
-  const { t } = useTranslation();
+type Props = {
+  text: string;
+};
 
+// TODO: erstatt dette med en generell toast eller en annen løsning
+const UtkastToast = ({ text }: Props) => {
   return (
     <Wrapper>
       <Icon icon="check" />
-      <span>{t("Utkastet er opprettet")}</span>
+      <span>{text}</span>
     </Wrapper>
   );
 };
