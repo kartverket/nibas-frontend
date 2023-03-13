@@ -1,10 +1,18 @@
 import { useTranslation } from "react-i18next";
-import { Grunnkretsendringer } from "components/Endringslogg/hooks/utkastEndringerTypes";
 import {
-  EndringPanel,
-  GrenseEndringerPanel,
-} from "components/Endringslogg/EndringPanel";
-import { Seksjonsheader } from "./EndringsloggStyles";
+  Grunnkretsendringer,
+  GrunnkretsMetadataEndring,
+} from "components/Endringslogg/hooks/utkastEndringerTypes";
+import {
+  EndringSection,
+  Endringsrad,
+  EndringsradListItem,
+  EndringstypeTag,
+  Seksjonsoverskrift,
+  Underoverskrift,
+} from "./EndringsloggComponents";
+import { GrunnkretsResponse } from "../../types/api";
+import { UnstyledList } from "../UnstyledList";
 
 type EndringsloggGrunnkretsendringerProps = {
   endringer: Grunnkretsendringer;
@@ -16,26 +24,86 @@ export const EndringsloggGrunnkretsendringer = ({
   const { t } = useTranslation();
 
   return (
-    <section>
-      <Seksjonsheader>
+    <EndringSection>
+      <Underoverskrift>
         {t("utkast.endringslogg.grunnkrets-tittel", {
-          kommune: endringer.kommune.navn,
+          kommune: `${endringer.kommune.nummer} ${endringer.kommune.navn}`,
         })}
-      </Seksjonsheader>
-      <EndringPanel
-        tittel={t("utkast.endringslogg.endring.grunnkretsnavn")}
-        endringer={endringer.navn}
+      </Underoverskrift>
+      <GrunnkretsGrensejusteringer
+        grendejusteringer={endringer.grensejusteringer}
       />
-      <EndringPanel
-        tittel={t("utkast.endringslogg.endring.grunnkretsnummer")}
-        endringer={endringer.grunnkretsnummer}
-      />
-      <GrenseEndringerPanel
-        tittel={t("utkast.endringslogg.endring.grenseendringer")}
-        endringer={endringer.grensejusteringer.map(
-          (endring) => `${endring.grunnkretsnummer} ${endring.navn}`
+      {endringer.metadataendringer.map((metadataendring) => (
+        <GrunnkretsMetadataEndringer
+          key={metadataendring.kretsEndret.id.lokalid.value}
+          metadataendring={metadataendring}
+        />
+      ))}
+    </EndringSection>
+  );
+};
+
+type GrunnkretsGrensejusteringerProps = {
+  grendejusteringer: GrunnkretsResponse[];
+};
+
+const GrunnkretsGrensejusteringer = ({
+  grendejusteringer,
+}: GrunnkretsGrensejusteringerProps) => {
+  const { t } = useTranslation();
+
+  if (grendejusteringer == null || grendejusteringer.length === 0) {
+    return null;
+  }
+
+  return (
+    <EndringSection>
+      <Seksjonsoverskrift>
+        {t("utkast.endringslogg.endring.grenseendringer")}
+      </Seksjonsoverskrift>
+      <UnstyledList>
+        {grendejusteringer.map((grensjustering) => (
+          <EndringsradListItem key={grensjustering.id.lokalid.value}>
+            {grensjustering.grunnkretsnummer} {grensjustering.navn}
+          </EndringsradListItem>
+        ))}
+      </UnstyledList>
+    </EndringSection>
+  );
+};
+
+type GrunnkretsMetadataEndringerProps = {
+  metadataendring: GrunnkretsMetadataEndring;
+};
+
+const GrunnkretsMetadataEndringer = ({
+  metadataendring,
+}: GrunnkretsMetadataEndringerProps) => {
+  const { t } = useTranslation();
+
+  return (
+    <EndringSection>
+      <Seksjonsoverskrift>
+        <span>
+          {metadataendring.kretsEndret.grunnkretsnummer}{" "}
+          {metadataendring.kretsEndret.navn}
+        </span>
+        <EndringstypeTag>{t("utkast.endringslogg.metadata")}</EndringstypeTag>
+      </Seksjonsoverskrift>
+      <UnstyledList>
+        {metadataendring.navn && (
+          <Endringsrad
+            tittel={t("utkast.endringslogg.endring.grunnkretsnavn")}
+            endring={metadataendring.navn}
+          />
         )}
-      />
-    </section>
+        {metadataendring.grunnkretsnummer && (
+          <Endringsrad
+            tittel={t("utkast.endringslogg.endring.grunnkretsnummer")}
+            endring={metadataendring.grunnkretsnummer}
+          />
+        )}
+      </UnstyledList>
+    </EndringSection>
   );
 };

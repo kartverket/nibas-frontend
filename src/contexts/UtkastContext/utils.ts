@@ -180,6 +180,8 @@ export const historyToUtkastOperations = (
       ...{
         ...previousUtkast?.operasjoner.grenseendringer,
         ...previousUtkast?.operasjoner.metadataendringer,
+        stemmekretssammenslaaingsendringer:
+          previousUtkast?.operasjoner.stemmekretsSammenslaaingsendring,
       },
     })
   ) as UtkastOperasjoner;
