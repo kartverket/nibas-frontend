@@ -22,6 +22,7 @@ import { resetMapView } from "utils/map";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
+import { statusCode } from "utils/api";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
@@ -105,12 +106,12 @@ export const UtkastProvider: React.FC = ({ children }) => {
       tokenHolderFunc()?.token
     );
 
-    if (response.status > 200 && response.status < 300) {
+    if (statusCode.isSuccessful(response.status)) {
       const json = await response.json();
       await mutate(json as UtkastResponse);
       await globalMutate(["/v1/utkast", tokenHolderFunc()?.token]);
       clearHistory({ hasPreviouslySavedHistory: true });
-    } else if (response.status >= 400) {
+    } else if (statusCode.isError(response.status)) {
       setError({
         title: "Oppdatering av utkast feilet",
         body: `Feilkode: ${response.status}`,

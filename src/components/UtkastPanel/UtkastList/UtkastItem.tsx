@@ -24,6 +24,7 @@ import { useUtkast } from "contexts/UtkastContext";
 import { Outline } from "style/mixins";
 import AlertModal from "components/AlertModal";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
+import { statusCode } from "utils/api";
 
 type Props = {
   utkast: UtkastRef;
@@ -79,7 +80,7 @@ const UtkastItem = ({ utkast }: Props) => {
 
     if (!response) return;
 
-    if (response.status > 200 && response.status < 300) {
+    if (statusCode.isSuccessful(response.status)) {
       cleanUpUtkast();
     } else if (response.status === 409) {
       const wrapper = (await response.json()) as ConflictResponseWrapper;
@@ -87,7 +88,7 @@ const UtkastItem = ({ utkast }: Props) => {
       if (!wrapper.framtidigVersjonConflict) return;
 
       setConflictResponse(wrapper.framtidigVersjonConflict);
-    } else if (response.status >= 400) {
+    } else if (statusCode.isError(response.status)) {
       setError({
         title: "Publisering av utkast feilet",
         body: `Feilkode: ${response.status}`,
@@ -99,13 +100,13 @@ const UtkastItem = ({ utkast }: Props) => {
     if (!fullUtkast) return;
 
     const response = await deleteApiUtkast(utkast.id, tokenHolderFunc()?.token);
-    if (response.status > 200 && response.status < 300) {
+    if (statusCode.isSuccessful(response.status)) {
       await mutate(["/v1/utkast", tokenHolderFunc()?.token]);
 
       if (utkastActive) {
         setSearchParams({});
       }
-    } else if (response.status >= 400) {
+    } else if (statusCode.isError(response.status)) {
       setError({
         title: "Sletting av utkast feilet",
         body: `Feilkode: ${response.status}`,

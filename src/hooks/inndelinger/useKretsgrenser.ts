@@ -16,11 +16,10 @@ import {
   getFeatureId,
   getRepresentasjonspunktId,
 } from "utils/map/source";
-import { fetcherWithToken } from "utils/swr";
+import { fetcherWithToken, getIdFromEntity } from "utils/api";
 import { isPoint } from "types/geometry";
 import { isNotNullOrUndefined } from "types/common";
 import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
-import { getIdFromEntity } from "utils/api";
 import { useToolbar } from "contexts/ToolbarContext";
 
 const endpointByKretstype = {

@@ -14,6 +14,7 @@ import Select from "components/form/Select";
 import Button from "components/form/Button";
 import Heading from "components/typography/Heading";
 import { Modal, ModalContent } from "components/Modal";
+import { statusCode } from "utils/api";
 
 const ModalElement = styled(ModalContent)`
   display: flex;
@@ -71,7 +72,7 @@ const CreateUtkastModal = ({
       tokenHolderFunc()?.token
     );
 
-    if (response.status < 200 && response.status > 299) {
+    if (statusCode.isError(response.status)) {
       throw new Error(
         "Klarte ikke opprette utkast. Det ble returnert en feilkode ved opprettelse"
       );

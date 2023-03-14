@@ -3,7 +3,7 @@ import useSWR from "swr";
 import { BareFetcher, PublicConfiguration } from "swr/dist/types";
 import { ApiPath } from "types/api";
 import { paths } from "types/api-gen";
-import { fetcherWithToken } from "utils/swr";
+import { fetcherWithToken } from "utils/api";
 
 // hvis pathen eksponererer et get-kall med path-parametere, returner typen til disse
 type GetPathParameters<T extends ApiPath> = paths[T] extends {
