@@ -116,7 +116,7 @@ const UtkastToolbar = ({
       clearHistory({ hasPreviouslySavedHistory: true });
       promptUtkast();
     }
-    if (response.status > 400) {
+    if (response.status >= 400) {
       setError({
         title: "Opprettelse av utkast feilet",
         body: `Feilkode: ${response.status}`,

@@ -87,7 +87,7 @@ const UtkastItem = ({ utkast }: Props) => {
       if (!wrapper.framtidigVersjonConflict) return;
 
       setConflictResponse(wrapper.framtidigVersjonConflict);
-    } else if (response.status > 400) {
+    } else if (response.status >= 400) {
       setError({
         title: "Publisering av utkast feilet",
         body: `Feilkode: ${response.status}`,
@@ -105,7 +105,7 @@ const UtkastItem = ({ utkast }: Props) => {
       if (utkastActive) {
         setSearchParams({});
       }
-    } else if (response.status > 400) {
+    } else if (response.status >= 400) {
       setError({
         title: "Sletting av utkast feilet",
         body: `Feilkode: ${response.status}`,
