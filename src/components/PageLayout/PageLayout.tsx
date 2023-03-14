@@ -23,7 +23,7 @@ const PageLayout = () => {
             // TODO: lar denne stå inntil vi ser hvor mye feilaktige errors som oppstår
             // eslint-disable-next-line no-console
             console.log("onError", err);
-            if (err.status > 400) {
+            if (err.status >= 400) {
               setError({
                 title: "Får ikke kontakt med systemet",
                 body: `Vi får ikke kontakt med basen. Vennligst prøv igjen senere. Om feilen fortsetter, ta gjerne kontakt med Kartverket. Feilkode: ${err.status}`,
