@@ -8,6 +8,7 @@ import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
 import AlertModal from "components/AlertModal";
 import { useTranslation } from "react-i18next";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
+import { statusCode } from "utils/api";
 
 const PageLayout = () => {
   const { t } = useTranslation();
@@ -23,7 +24,7 @@ const PageLayout = () => {
             // TODO: lar denne stå inntil vi ser hvor mye feilaktige errors som oppstår
             // eslint-disable-next-line no-console
             console.log("onError", err);
-            if (err.status >= 400) {
+            if (statusCode.isError(err.status)) {
               setError({
                 title: "Får ikke kontakt med systemet",
                 body: `Vi får ikke kontakt med basen. Vennligst prøv igjen senere. Om feilen fortsetter, ta gjerne kontakt med Kartverket. Feilkode: ${err.status}`,

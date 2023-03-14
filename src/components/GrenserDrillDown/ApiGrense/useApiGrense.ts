@@ -5,7 +5,7 @@ import useSWRImmutable from "swr/immutable";
 import { useUtkast, useUtkastFeature } from "contexts/UtkastContext";
 import { geoJsonToSource } from "utils/map/geoJson";
 import { getLayerById } from "utils/map/layers";
-import { fetcherWithToken } from "utils/swr";
+import { fetcherWithToken } from "utils/api";
 
 const useApiGrense = (featuresUrl: string, shouldFetchInitially = false) => {
   const [shouldFetch, setShouldFetch] = useState(shouldFetchInitially);

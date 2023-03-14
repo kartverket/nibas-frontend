@@ -3,9 +3,8 @@ import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
 import { useEffect, useMemo, useState } from "react";
 import useSWRImmutable from "swr/immutable";
 import { FeatureCollection } from "types/api";
-import { getIdFromEntity } from "utils/api";
+import { getIdFromEntity, fetcherWithToken } from "utils/api";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
-import { fetcherWithToken } from "utils/swr";
 import useKommuner from "./useKommuner";
 
 const kommunegrenserFetcher = async (

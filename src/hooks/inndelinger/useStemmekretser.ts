@@ -1,5 +1,5 @@
 import { StemmekretsResponse } from "../../types/api";
-import { fetcherWithToken } from "utils/swr";
+import { fetcherWithToken } from "utils/api";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import useSWRImmutable from "swr/immutable";
 
