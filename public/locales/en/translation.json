@@ -121,7 +121,11 @@
     "Hvilken stemmekrets ønsker du å slå sammen med": "__STRING_NOT_TRANSLATED__",
     "Navn- eller nummer på stemmekrets": "__STRING_NOT_TRANSLATED__",
     "Detaljer om den sammenslåtte kretsen": "__STRING_NOT_TRANSLATED__",
-    "Stemmekretsnavn": "__STRING_NOT_TRANSLATED__"
+    "Stemmekretsnavn": "__STRING_NOT_TRANSLATED__",
+    "utkast-sammenslaaing-alert": {
+      "tittel": "__STRING_NOT_TRANSLATED__",
+      "tekst": "__STRING_NOT_TRANSLATED__"
+    }
   },
   "Endre": "__STRING_NOT_TRANSLATED__",
   "utkast": {

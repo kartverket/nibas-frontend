@@ -121,7 +121,11 @@
     "Slå sammen stemmekretser": "Slå sammen stemmekretser",
     "Hvilken stemmekrets ønsker du å slå sammen med": "Hvilken stemmekrets ønsker du å slå sammen med",
     "Navn- eller nummer på stemmekrets": "Navn- eller nummer på stemmekrets",
-    "Detaljer om den sammenslåtte kretsen": "Detaljer om den sammenslåtte kretsen"
+    "Detaljer om den sammenslåtte kretsen": "Detaljer om den sammenslåtte kretsen",
+    "utkast-sammenslaaing-alert": {
+      "tittel": "Kan ikke slå sammen stemmekretser",
+      "tekst": "Kan ikke slå sammen stemmekretser i ett eksisterende utkast. Avslutt redigeringen før du gjør en sammenslåing."
+    }
   },
   "Endre": "Endre",
   "utkast": {

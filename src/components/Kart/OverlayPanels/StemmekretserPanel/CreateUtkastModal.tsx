@@ -15,6 +15,7 @@ import Button from "components/form/Button";
 import Heading from "components/typography/Heading";
 import { Modal, ModalContent } from "components/Modal";
 import { statusCode } from "utils/api";
+import { UtkastOperasjoner } from "../../../../types/api";
 
 const ModalElement = styled(ModalContent)`
   display: flex;
@@ -43,10 +44,17 @@ const Buttons = styled.div`
   justify-content: flex-end;
 `;
 
+export type CreateUtkastCallbackArgument = {
+  id: string;
+  navn: string;
+  endringstype: string;
+  operasjoner: UtkastOperasjoner;
+};
+
 type Props = {
   isCreateUtkastModalOpen: boolean;
   setIsCreateUtkastModalOpen: (isCreateUtkastModalOpen: boolean) => void;
-  callback: () => void;
+  callback: (newUtkast: CreateUtkastCallbackArgument) => void;
 };
 
 // TODO: midlertidig løsning for å opprette utkast inntil history er ferdigimplementert
@@ -63,12 +71,14 @@ const CreateUtkastModal = ({
   const setSearchParams = useSearchParams()[1];
 
   const createUtkast = async () => {
+    const nyttUtkast = {
+      navn: utkastName,
+      endringstype: utkastType,
+      operasjoner: historyToUtkastOperations(history),
+    };
+
     const response = await createApiUtkast(
-      {
-        navn: utkastName,
-        endringstype: utkastType,
-        operasjoner: historyToUtkastOperations(history),
-      },
+      nyttUtkast,
       tokenHolderFunc()?.token
     );
 
@@ -84,7 +94,7 @@ const CreateUtkastModal = ({
     setIsCreateUtkastModalOpen(false);
     setSearchParams({ utkast: utkastId });
 
-    callback();
+    callback({ ...nyttUtkast, id: utkastId });
   };
 
   const cancelCreateUtkast = () => {
