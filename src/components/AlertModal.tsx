@@ -14,14 +14,19 @@ const ModalElement = styled(ModalContent)`
   border-radius: ${borderRadius};
 `;
 
-const Content = styled.div<{ hasBody: boolean }>`
+const Header = styled.div<StatusStyle>`
   display: flex;
-  align-items: ${(props) => (props.hasBody ? "flex-start" : "center")};
-  gap: 24px;
-  padding: 24px;
+  align-items: center;
+  background: ${(props) => props.background};
+  padding: 16px 12px;
   border: ${border};
   border-top-left-radius: ${borderRadius};
   border-top-right-radius: ${borderRadius};
+  border-bottom: none;
+`;
+
+const Content = styled.div<{ hasBody: boolean }>`
+  padding: 24px;
 `;
 
 type StatusStyle = {
@@ -37,15 +42,6 @@ const StatusIcon = styled(Icon).attrs((props) => ({
   border-radius: 50%;
   padding: 6px;
   color: ${(props) => props.foreground};
-  background: ${(props) => props.background};
-`;
-
-const Text = styled.div`
-  width: 100%;
-`;
-
-const Title = styled.h3<{ hasBody: boolean }>`
-  margin: ${(props) => (props.hasBody ? "6px 0 0" : "0")};
 `;
 
 const Body = styled.p`
@@ -56,11 +52,15 @@ const Buttons = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  padding: 18px;
-  background: var(--gray_light);
+  padding: 16px;
   border: ${border};
   border-bottom-left-radius: ${borderRadius};
   border-bottom-right-radius: ${borderRadius};
+  border-top: none;
+`;
+
+const Close = styled(CloseButton)`
+  margin-left: auto;
 `;
 
 type Status = "error" | "warning" | "info";
@@ -109,13 +109,13 @@ const AlertModal = ({
 }: Props) => {
   return (
     <Modal isOpen={isOpen} onRequestClose={onClose} modalElement={ModalElement}>
-      <Content hasBody={body !== undefined}>
+      <Header {...statusStyles[status]}>
         <StatusIcon {...statusStyles[status]} />
-        <Text>
-          <Title hasBody={body !== undefined}>{title}</Title>
-          {body && <Body>{body}</Body>}
-        </Text>
-        <CloseButton onClick={onClose} />
+        <h3>{title}</h3>
+        <Close onClick={onClose} />
+      </Header>
+      <Content hasBody={body !== undefined}>
+        {body && <Body>{body}</Body>}
       </Content>
       {(primaryAction || secondaryAction) && (
         <Buttons>
