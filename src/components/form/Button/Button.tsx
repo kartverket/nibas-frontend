@@ -5,21 +5,38 @@ type Size = "xs" | "sm" | "l";
 
 type Variant = "unstyled" | "primary" | "secondary" | "tertiary";
 
+type IconDirection = "right" | "left";
+
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
   size?: Size;
   variant?: Variant;
   icon?: React.ReactElement;
+  iconDirection?: IconDirection;
 };
 
-const getKvibClassName = (variant: Variant, size: Size) =>
-  `kv-button kv-button--${variant}--blue kv-button--${size}`;
+const getKvibClassName = (
+  variant: Variant,
+  size: Size,
+  iconDirection: IconDirection
+) =>
+  `kv-button kv-button--${variant}--blue kv-button--${size} kv-button__icon--${iconDirection}`;
 
 const Button = forwardRef<HTMLButtonElement, Props>(
-  ({ variant = "primary", size = "xs", children, icon, ...props }, ref) => {
+  (
+    {
+      variant = "primary",
+      size = "xs",
+      children,
+      icon,
+      iconDirection = "right",
+      ...props
+    },
+    ref
+  ) => {
     const ButtonWrapper =
       variant === "unstyled" ? UnstyledButton : StyledButton;
 
-    const kvibClassName = getKvibClassName(variant, size);
+    const kvibClassName = getKvibClassName(variant, size, iconDirection);
 
     const className =
       variant === "unstyled"
@@ -28,8 +45,9 @@ const Button = forwardRef<HTMLButtonElement, Props>(
 
     return (
       <ButtonWrapper {...props} ref={ref} className={className}>
+        {iconDirection == "left" && icon}
         {children && <span>{children}</span>}
-        {icon}
+        {iconDirection == "right" && icon}
       </ButtonWrapper>
     );
   }
