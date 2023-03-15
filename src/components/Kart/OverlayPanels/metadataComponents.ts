@@ -1,5 +1,4 @@
 import styled, { keyframes } from "styled-components";
-import Label from "components/form/Label";
 import { KartInteractable } from "../KartInteractable";
 import Heading from "components/typography/Heading";
 import Button from "components/form/Button";
@@ -43,17 +42,6 @@ export const MetadataText = styled.p`
   margin-right: 4px;
   font-size: 14px;
   color: var(--gray);
-`;
-
-export const BlockLabel = styled(Label)`
-  display: block;
-  margin-bottom: 8px;
-
-  > * {
-    margin-top: 4px;
-    width: 100%;
-    margin-bottom: 8px;
-  }
 `;
 
 export const DateWrapper = styled(Part)`

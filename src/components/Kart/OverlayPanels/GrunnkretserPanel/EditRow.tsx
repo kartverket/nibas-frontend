@@ -115,16 +115,14 @@ const EditRow = ({ grunnkrets, kommuneId }: Props) => {
   return (
     <AccordionRow>
       <td>
-        <BlockLabel>
-          {t("grunnkrets.Grunnkretsnavn")}
+        <Label label={t("grunnkrets.Grunnkretsnavn")}>
           <Input {...register("navn", registerOptions)} />
-        </BlockLabel>
+        </Label>
       </td>
       <td>
-        <BlockLabel>
-          {t("grunnkrets.Grunnkretsnummer")}
+        <Label label={t("grunnkrets.Grunnkretsnummer")}>
           <Input {...register("grunnkretsnummer", registerOptions)} />
-        </BlockLabel>
+        </Label>
       </td>
       <td colSpan={2} />
     </AccordionRow>
@@ -135,18 +133,8 @@ const AccordionRow = styled.tr`
   background-color: var(--gray_light);
 
   td {
-    padding: 16px;
+    padding: 16px 16px 32px;
   }
-`;
-
-const BlockLabel = styled(Label)`
-  color: var(--gray_dark);
-
-  input {
-    width: 100%;
-  }
-
-  margin-bottom: 16px;
 `;
 
 export default EditRow;

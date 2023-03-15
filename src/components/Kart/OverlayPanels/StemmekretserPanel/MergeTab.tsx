@@ -10,7 +10,6 @@ import {
   StemmekretsResponse,
   StemmekretsSammenslaaingsendringRequest,
 } from "types/api";
-import { BlockLabel } from "../metadataComponents";
 import { Section, ContrastSection, InputsWrapper } from "./components";
 import { getIdFromEntity } from "utils/api";
 
@@ -19,6 +18,7 @@ import CreateUtkastModal, {
 } from "./CreateUtkastModal";
 import { useUtkast } from "contexts/UtkastContext";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
+import Label from "components/form/Label";
 
 type Props = {
   stemmekrets: StemmekretsResponse | undefined;
@@ -117,8 +117,7 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
           </Stemmekretsnavn>
           ?
         </p>
-        <Dropdown>
-          <label>{t("stemmekrets.Navn- eller nummer på stemmekrets")}</label>
+        <Dropdown label={t("stemmekrets.Navn- eller nummer på stemmekrets")}>
           <Select
             onChange={(e) =>
               setStemmekretsNummerTilSammenslaaing(e.currentTarget.value)
@@ -142,20 +141,18 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
         </SectionHeading>
         <br />
         <InputsWrapper>
-          <BlockLabel>
-            {t("stemmekrets.Stemmekretsnavn")}
+          <Label label={t("stemmekrets.Stemmekretsnavn")}>
             <Input
               value={stemmekretsnavn}
               onChange={(e) => setStemmekretsnavn(e.currentTarget.value)}
             />
-          </BlockLabel>
-          <BlockLabel>
-            {t("stemmekrets.Stemmekretsnummer")}
+          </Label>
+          <Label label={t("stemmekrets.Stemmekretsnummer")}>
             <Input
               value={stemmekretsnummer}
               onChange={(e) => setStemmekretsnummer(e.currentTarget.value)}
             />
-          </BlockLabel>
+          </Label>
         </InputsWrapper>
       </ContrastSection>
       <Section>
@@ -177,19 +174,12 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   );
 };
 
-const Dropdown = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+const Dropdown = styled(Label)`
   max-width: 400px;
   margin-top: 20px;
 
   select {
     margin: 0;
-  }
-
-  & > span {
-    font-size: 12px;
   }
 `;
 

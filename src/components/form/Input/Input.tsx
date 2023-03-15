@@ -1,11 +1,18 @@
 import { forwardRef, InputHTMLAttributes } from "react";
 import styled from "styled-components";
+import Label from "../Label";
 
-type Props = InputHTMLAttributes<HTMLInputElement>;
+type ValidationError = {
+  message: string;
+  showError: boolean;
+};
 
-const Input = forwardRef<HTMLInputElement, Props>(function Input(props, ref) {
-  return <StyledInput {...props} ref={ref} />;
-});
+type Props = {
+  label?: string;
+  validationError?: ValidationError;
+} & InputHTMLAttributes<HTMLInputElement>;
+
+const ContainerLabel = styled(Label)``;
 
 const StyledInput = styled.input`
   padding: 8px;
@@ -45,5 +52,21 @@ const StyledInput = styled.input`
     }
   }
 `;
+
+// TODO: stil
+const ErrorMessage = styled.span``;
+
+// TODO: fjern alle label-wrappers i koden, bare bruk label her i stedet
+// TODO: pass på at denne er i bruk overalt
+const Input = forwardRef<HTMLInputElement, Props>(function Input(props, ref) {
+  return (
+    <ContainerLabel className={props.className} label={props.label ?? ""}>
+      <StyledInput {...props} ref={ref} />
+      {props.validationError && (
+        <ErrorMessage>{props.validationError.message}</ErrorMessage>
+      )}
+    </ContainerLabel>
+  );
+});
 
 export default Input;

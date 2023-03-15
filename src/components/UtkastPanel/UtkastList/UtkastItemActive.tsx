@@ -6,7 +6,6 @@ import { UtkastItemExpanded } from "./UtkastItem";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
-import { BlockLabel } from "components/Kart/OverlayPanels/metadataComponents";
 import {
   useToolbarActions,
   useToolbarSaving,
@@ -22,6 +21,7 @@ import useAlertModal from "hooks/useAlertModal";
 import { useUtkast } from "contexts/UtkastContext";
 import useTimer from "hooks/useTimer";
 import AlertModal from "components/AlertModal";
+import Label from "components/form/Label";
 
 type Inputs = {
   navn: string;
@@ -123,12 +123,10 @@ const UtkastItemActive = ({ utkastId }: Props) => {
 
   return (
     <UtkastItemExpanded>
-      <BlockLabel>
-        {t("utkast.Navn på utkast")}
+      <Label label={t("utkast.Navn på utkast")}>
         <Input {...register("navn", registerOptions)} />
-      </BlockLabel>
-      <BlockLabel>
-        {t("utkast.Type utkast")}
+      </Label>
+      <Label label={t("utkast.Type utkast")}>
         <Select {...register("endringsType", registerOptions)}>
           {Object.keys(translateKeysByEndringsType).map((type) => (
             <option key={type} value={type}>
@@ -136,7 +134,7 @@ const UtkastItemActive = ({ utkastId }: Props) => {
             </option>
           ))}
         </Select>
-      </BlockLabel>
+      </Label>
       <EditingUtkastText>
         {t("utkast.Du er nå i redigeringsmodus av dette utkastet")}
       </EditingUtkastText>

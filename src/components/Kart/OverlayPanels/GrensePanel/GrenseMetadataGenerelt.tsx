@@ -3,7 +3,6 @@ import Geometry from "ol/geom/Geometry";
 import { useTranslation } from "react-i18next";
 import AsyncKodelisteSelect from "../AsyncKodelisteSelect";
 import {
-  BlockLabel,
   Container,
   DateRow,
   InputRow,
@@ -20,10 +19,29 @@ import { Metadata, FeatureProperties } from "types/api";
 import useMetadataInputOptions from "hooks/useMetadataInputOptions";
 import styled from "styled-components";
 import Textarea from "components/form/Input/Textarea";
+import Label from "components/form/Label";
 
 type Props = {
   feature: Feature<Geometry>;
 };
+
+const MetadataWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: 36px;
+  padding-bottom: 16px;
+`;
+
+const FormWrapper = styled.div`
+  display: flex;
+  width: 100%;
+`;
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
 
 const GrenseMetadataGenerelt = ({ feature }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
@@ -44,7 +62,7 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
     <div>
       <MetadataWrapper>
         <FormWrapper>
-          <form>
+          <Form>
             <Container>
               <InputRow>
                 <AsyncKodelisteSelect
@@ -52,8 +70,7 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
                   label={t("metadata.Målemetode")}
                   {...register("maalemetode", inputOptions)}
                 />
-                <BlockLabel>
-                  {t("metadata.Nøyaktighet")}
+                <Label label={t("metadata.Nøyaktighet")}>
                   <Input
                     type="number"
                     {...register("noeyaktighet", {
@@ -63,17 +80,15 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
                       max: 1_000_000,
                     })}
                   />
-                </BlockLabel>
+                </Label>
               </InputRow>
             </Container>
-            <BlockLabel>
-              {t("metadata.Opphav")}
+            <Label label={t("metadata.Opphav")}>
               <Input {...register("opphav", inputOptions)} />
-            </BlockLabel>
-            <BlockLabel>
-              {t("metadata.Informasjon")}
+            </Label>
+            <Label label={t("metadata.Informasjon")}>
               <Textarea rows={4} {...register("informasjon", inputOptions)} />
-            </BlockLabel>
+            </Label>
 
             <LargePart>
               <Dates
@@ -83,7 +98,7 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
                 datafangstdato={metadata?.common?.datafangstdato}
               />
             </LargePart>
-          </form>
+          </Form>
         </FormWrapper>
 
         <InformationWrapper>
@@ -114,17 +129,6 @@ type DatesProps = {
   oppdateringsdato?: string;
   datafangstdato?: string;
 };
-
-const MetadataWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-
-const FormWrapper = styled.div`
-  display: flex;
-  width: 100%;
-  margin-right: 44px;
-`;
 
 const Dates = ({ oppdateringsdato, datafangstdato }: DatesProps) => (
   <>

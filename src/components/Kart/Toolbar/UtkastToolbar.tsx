@@ -56,13 +56,6 @@ const UtkastFrame = styled(Frame)`
   }
 `;
 
-const BlockLabel = styled(Label)`
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  color: var(--gray_dark);
-`;
-
 const Buttons = styled.div`
   display: flex;
   gap: 16px;
@@ -129,16 +122,14 @@ const UtkastToolbar = ({
       <Heading size="xs" tag="h3">
         {t("utkast.Opprett et nytt utkast")}
       </Heading>
-      <BlockLabel>
-        {t("utkast.Navn på utkast")}
+      <Label label={t("utkast.Navn på utkast")}>
         <Input
           placeholder={t("f.eks. Endring av stemmekrets i Froland")}
           value={utkastName}
           onChange={(e) => setUtkastName(e.target.value)}
         />
-      </BlockLabel>
-      <BlockLabel>
-        {t("utkast.Endringstype")}
+      </Label>
+      <Label label={t("utkast.Endringstype")}>
         <Select
           value={utkastType}
           onChange={(e) => setUtkastType(e.target.value)}
@@ -152,7 +143,7 @@ const UtkastToolbar = ({
             </option>
           ))}
         </Select>
-      </BlockLabel>
+      </Label>
       <Buttons>
         <Button onClick={() => setCreateUtkastOpen(false)} variant="tertiary">
           {t("action.Avbryt")}

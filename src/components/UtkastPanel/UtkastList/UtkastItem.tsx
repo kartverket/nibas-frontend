@@ -264,6 +264,9 @@ const UtkastName = styled.span`
 `;
 
 export const UtkastItemExpanded = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   border-top: 2px solid var(--black);
   background-color: var(--gray_light);
   padding: 24px;
