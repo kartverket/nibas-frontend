@@ -71,38 +71,45 @@ export const UtkastProvider: React.FC = ({ children }) => {
     }
   }, [utkast, utkastId, mutate]);
 
-  const updateUtkastWithHistory = async () => {
-    if (!utkast) return;
+  const getUpdateUtkastRequestFromHistory =
+    (): OppdaterUtkastRequest | null => {
+      if (!utkast) return null;
 
-    const operasjoner = historyToUtkastOperations(history, utkast);
+      const operasjoner = historyToUtkastOperations(history, utkast);
 
-    const updatedUtkast: OppdaterUtkastRequest = {
-      endringstype: utkast.endringstype,
-      navn: utkast.navn,
-      gyldigFra: utkast.gyldigFra,
-      operasjoner,
-      version: utkast.version,
-    };
-    const utkastEntry = history.entries
-      .slice(0, history.index)
-      .reverse() // siste entry inneholder alle endringene på utkastet
-      .find((entry) => entry.changes.some((change) => change.id === utkast.id));
+      const updatedUtkast: OppdaterUtkastRequest = {
+        endringstype: utkast.endringstype,
+        navn: utkast.navn,
+        gyldigFra: utkast.gyldigFra,
+        operasjoner,
+        version: utkast.version,
+      };
+      const utkastEntry = history.entries
+        .slice(0, history.index)
+        .reverse() // siste entry inneholder alle endringene på utkastet
+        .find((entry) =>
+          entry.changes.some((change) => change.id === utkast.id)
+        );
 
-    if (utkastEntry) {
-      const change = (
-        utkastEntry.changes as HistoryChange<UtkastRequestWithoutOperations>[]
-      ).find((c) => c.id === utkast.id);
+      if (utkastEntry) {
+        const change = (
+          utkastEntry.changes as HistoryChange<UtkastRequestWithoutOperations>[]
+        ).find((c) => c.id === utkast.id);
 
-      if (change?.to) {
-        updatedUtkast.endringstype = change.to.endringstype;
-        updatedUtkast.navn = change.to.navn;
-        updatedUtkast.gyldigFra = change.to.gyldigFra;
+        if (change?.to) {
+          updatedUtkast.endringstype = change.to.endringstype;
+          updatedUtkast.navn = change.to.navn;
+          updatedUtkast.gyldigFra = change.to.gyldigFra;
+        }
       }
-    }
 
+      return updatedUtkast;
+    };
+
+  const updateUtkast = async (id: string, newUtkast: OppdaterUtkastRequest) => {
     const response = await updateApiUtkast(
-      utkast.id,
-      updatedUtkast,
+      id,
+      newUtkast,
       tokenHolderFunc()?.token
     );
 
@@ -119,6 +126,14 @@ export const UtkastProvider: React.FC = ({ children }) => {
     }
   };
 
+  const updateUtkastWithHistory = async () => {
+    const updatedUtkast = getUpdateUtkastRequestFromHistory();
+
+    if (!updatedUtkast || !utkast) return;
+
+    await updateUtkast(utkast.id, updatedUtkast);
+  };
+
   const closeUtkast = () => {
     resetMapView();
     clearHistory({ hasPreviouslySavedHistory: false });
@@ -128,7 +143,14 @@ export const UtkastProvider: React.FC = ({ children }) => {
     closePanels();
   };
 
-  const value = { utkast, updateUtkastWithHistory, closeUtkast, isValidating };
+  const value = {
+    utkast,
+    getUpdateUtkastRequestFromHistory,
+    updateUtkastWithHistory,
+    updateUtkast,
+    closeUtkast,
+    isValidating,
+  };
 
   return (
     <UtkastContext.Provider value={value}>{children}</UtkastContext.Provider>
