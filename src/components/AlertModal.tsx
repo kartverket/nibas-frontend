@@ -14,16 +14,6 @@ const ModalElement = styled(ModalContent)`
   border-radius: ${borderRadius};
 `;
 
-const Content = styled.div<{ hasBody: boolean }>`
-  display: flex;
-  align-items: ${(props) => (props.hasBody ? "flex-start" : "center")};
-  gap: 24px;
-  padding: 24px;
-  border: ${border};
-  border-top-left-radius: ${borderRadius};
-  border-top-right-radius: ${borderRadius};
-`;
-
 type StatusStyle = {
   icon: string;
   foreground: string;
@@ -34,21 +24,52 @@ const StatusIcon = styled(Icon).attrs((props) => ({
   icon: props.icon,
 }))<StatusStyle>`
   font-size: 36px;
-  border-radius: 50%;
-  padding: 6px;
   color: ${(props) => props.foreground};
+`;
+
+const Header = styled.div<StatusStyle>`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 24px;
   background: ${(props) => props.background};
+
+  border: ${border};
+  border-top-left-radius: ${borderRadius};
+  border-top-right-radius: ${borderRadius};
+  border-bottom: none;
 `;
 
-const Text = styled.div`
-  width: 100%;
+const Close = styled(CloseButton)`
+  margin-left: auto;
+
+  > span {
+    color: var(--black);
+
+    &:hover {
+      background-color: var(--gray_light);
+    }
+  }
 `;
 
-const Title = styled.h3<{ hasBody: boolean }>`
-  margin: ${(props) => (props.hasBody ? "6px 0 0" : "0")};
+const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+
+  border: ${border};
+  border-bottom-left-radius: ${borderRadius};
+  border-bottom-right-radius: ${borderRadius};
+  border-top: none;
 `;
 
-const Body = styled.p`
+const Title = styled.h3`
+  margin: 0;
+`;
+
+const Body = styled.div`
+  padding: 0 48px;
   color: var(--gray_dark);
 `;
 
@@ -56,11 +77,6 @@ const Buttons = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  padding: 18px;
-  background: var(--gray_light);
-  border: ${border};
-  border-bottom-left-radius: ${borderRadius};
-  border-bottom-right-radius: ${borderRadius};
 `;
 
 type Status = "error" | "warning" | "info";
@@ -109,28 +125,28 @@ const AlertModal = ({
 }: Props) => {
   return (
     <Modal isOpen={isOpen} onRequestClose={onClose} modalElement={ModalElement}>
-      <Content hasBody={body !== undefined}>
+      <Header {...statusStyles[status]}>
         <StatusIcon {...statusStyles[status]} />
-        <Text>
-          <Title hasBody={body !== undefined}>{title}</Title>
-          {body && <Body>{body}</Body>}
-        </Text>
-        <CloseButton onClick={onClose} />
+        <Title>{title}</Title>
+        <Close onClick={onClose} />
+      </Header>
+      <Content>
+        {body && <Body>{body}</Body>}
+        {(primaryAction || secondaryAction) && (
+          <Buttons>
+            {secondaryAction && (
+              <Button variant="secondary" onClick={secondaryAction.onClick}>
+                {secondaryAction.text}
+              </Button>
+            )}
+            {primaryAction && (
+              <Button variant="primary" onClick={primaryAction.onClick}>
+                {primaryAction.text}
+              </Button>
+            )}
+          </Buttons>
+        )}
       </Content>
-      {(primaryAction || secondaryAction) && (
-        <Buttons>
-          {secondaryAction && (
-            <Button variant="secondary" onClick={secondaryAction.onClick}>
-              {secondaryAction.text}
-            </Button>
-          )}
-          {primaryAction && (
-            <Button variant="primary" onClick={primaryAction.onClick}>
-              {primaryAction.text}
-            </Button>
-          )}
-        </Buttons>
-      )}
     </Modal>
   );
 };
