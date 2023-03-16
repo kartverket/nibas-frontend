@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import Input from "components/form/Input";
-import Label from "components/form/Label";
 import { GrunnkretsEntry, useToolbarSaving } from "contexts/ToolbarContext";
 import useKretsToolbarSync from "contexts/ToolbarContext/useToolbarFormSync";
 import useNibasApi from "hooks/useNibasApi";
@@ -115,14 +114,16 @@ const EditRow = ({ grunnkrets, kommuneId }: Props) => {
   return (
     <AccordionRow>
       <td>
-        <Label label={t("grunnkrets.Grunnkretsnavn")}>
-          <Input {...register("navn", registerOptions)} />
-        </Label>
+        <Input
+          label={t("grunnkrets.Grunnkretsnavn")}
+          {...register("navn", registerOptions)}
+        />
       </td>
       <td>
-        <Label label={t("grunnkrets.Grunnkretsnummer")}>
-          <Input {...register("grunnkretsnummer", registerOptions)} />
-        </Label>
+        <Input
+          label={t("grunnkrets.Grunnkretsnummer")}
+          {...register("grunnkretsnummer", registerOptions)}
+        />
       </td>
       <td colSpan={2} />
     </AccordionRow>

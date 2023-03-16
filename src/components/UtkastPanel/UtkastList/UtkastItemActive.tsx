@@ -21,7 +21,6 @@ import useAlertModal from "hooks/useAlertModal";
 import { useUtkast } from "contexts/UtkastContext";
 import useTimer from "hooks/useTimer";
 import AlertModal from "components/AlertModal";
-import Label from "components/form/Label";
 
 type Inputs = {
   navn: string;
@@ -123,18 +122,20 @@ const UtkastItemActive = ({ utkastId }: Props) => {
 
   return (
     <UtkastItemExpanded>
-      <Label label={t("utkast.Navn på utkast")}>
-        <Input {...register("navn", registerOptions)} />
-      </Label>
-      <Label label={t("utkast.Type utkast")}>
-        <Select {...register("endringsType", registerOptions)}>
-          {Object.keys(translateKeysByEndringsType).map((type) => (
-            <option key={type} value={type}>
-              {t(translateKeysByEndringsType[type] as Translation)}
-            </option>
-          ))}
-        </Select>
-      </Label>
+      <Input
+        label={t("utkast.Navn på utkast")}
+        {...register("navn", registerOptions)}
+      />
+      <Select
+        label={t("utkast.Type utkast")}
+        {...register("endringsType", registerOptions)}
+      >
+        {Object.keys(translateKeysByEndringsType).map((type) => (
+          <option key={type} value={type}>
+            {t(translateKeysByEndringsType[type] as Translation)}
+          </option>
+        ))}
+      </Select>
       <EditingUtkastText>
         {t("utkast.Du er nå i redigeringsmodus av dette utkastet")}
       </EditingUtkastText>
