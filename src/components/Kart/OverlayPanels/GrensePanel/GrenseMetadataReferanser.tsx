@@ -137,15 +137,14 @@ const FieldArray = ({
         </FieldWrapper>
       ))}
       <div>
-        <Label label={t("action.Ny {{ item }}", { item: "URL" })}>
-          <Input
-            value={newLenke}
-            onChange={(e) => setNewLenke(e.target.value)}
-            placeholder="URL"
-            onKeyPress={onKeyPress}
-            disabled={disabled}
-          />
-        </Label>
+        <Input
+          label={t("action.Ny {{ item }}", { item: "URL" })}
+          value={newLenke}
+          onChange={(e) => setNewLenke(e.target.value)}
+          placeholder="URL"
+          onKeyPress={onKeyPress}
+          disabled={disabled}
+        />
         <Button onClick={onAdd} disabled={!newLenke} icon={<Icon icon="add" />}>
           {t("action.Legg til")}
         </Button>
@@ -211,38 +210,35 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
         <DokRefWrapper key={field.id}>
           <Container>
             <Part>
-              <Label label={t("metadata.Rettskildetittel")}>
-                <Input
-                  {...register(`dokrefs.${i}.rettskildeTittel`, inputOptions)}
-                />
-              </Label>
-              <Label label={t("metadata.Rettskilde-ID")}>
-                <Input
-                  {...register(`dokrefs.${i}.rettskildeId`, inputOptions)}
-                />
-              </Label>
+              <Input
+                label={t("metadata.Rettskildetittel")}
+                {...register(`dokrefs.${i}.rettskildeTittel`, inputOptions)}
+              />
+              <Input
+                label={t("metadata.Rettskilde-ID")}
+                {...register(`dokrefs.${i}.rettskildeId`, inputOptions)}
+              />
             </Part>
             <Part>
-              <Label label={t("metadata.Fastsettingsmyndighet")}>
-                <Input
-                  {...register(
-                    `dokrefs.${i}.fastsettingsmyndighet`,
-                    inputOptions
-                  )}
-                />
-              </Label>
-              <Label label={t("metadata.Fastsettingsdato")}>
-                <Input
-                  {...register(`dokrefs.${i}.fastsettingsdato`, inputOptions)}
-                  type="date"
-                  role="textbox"
-                />
-              </Label>
+              <Input
+                label={t("metadata.Fastsettingsmyndighet")}
+                {...register(
+                  `dokrefs.${i}.fastsettingsmyndighet`,
+                  inputOptions
+                )}
+              />
+              <Input
+                label={t("metadata.Fastsettingsdato")}
+                {...register(`dokrefs.${i}.fastsettingsdato`, inputOptions)}
+                type="date"
+                role="textbox"
+              />
             </Part>
             <Part>
-              <Label label={t("metadata.Hjemmel")}>
-                <Input {...register(`dokrefs.${i}.hjemmel`, inputOptions)} />
-              </Label>
+              <Input
+                label={t("metadata.Hjemmel")}
+                {...register(`dokrefs.${i}.hjemmel`, inputOptions)}
+              />
             </Part>
           </Container>
           <FieldArray

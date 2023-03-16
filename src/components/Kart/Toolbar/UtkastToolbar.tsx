@@ -122,28 +122,26 @@ const UtkastToolbar = ({
       <Heading size="xs" tag="h3">
         {t("utkast.Opprett et nytt utkast")}
       </Heading>
-      <Label label={t("utkast.Navn på utkast")}>
-        <Input
-          placeholder={t("f.eks. Endring av stemmekrets i Froland")}
-          value={utkastName}
-          onChange={(e) => setUtkastName(e.target.value)}
-        />
-      </Label>
-      <Label label={t("utkast.Endringstype")}>
-        <Select
-          value={utkastType}
-          onChange={(e) => setUtkastType(e.target.value)}
-        >
-          <option value="" disabled>
-            {t("utkast.Velg en endringstype fra listen")}
+      <Input
+        label={t("utkast.Navn på utkast")}
+        placeholder={t("f.eks. Endring av stemmekrets i Froland")}
+        value={utkastName}
+        onChange={(e) => setUtkastName(e.target.value)}
+      />
+      <Select
+        label={t("utkast.Endringstype")}
+        value={utkastType}
+        onChange={(e) => setUtkastType(e.target.value)}
+      >
+        <option value="" disabled>
+          {t("utkast.Velg en endringstype fra listen")}
+        </option>
+        {Object.keys(translateKeysByEndringsType).map((type) => (
+          <option key={type} value={type}>
+            {t(translateKeysByEndringsType[type] as Translation)}
           </option>
-          {Object.keys(translateKeysByEndringsType).map((type) => (
-            <option key={type} value={type}>
-              {t(translateKeysByEndringsType[type] as Translation)}
-            </option>
-          ))}
-        </Select>
-      </Label>
+        ))}
+      </Select>
       <Buttons>
         <Button onClick={() => setCreateUtkastOpen(false)} variant="tertiary">
           {t("action.Avbryt")}

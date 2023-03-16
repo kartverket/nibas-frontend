@@ -70,25 +70,27 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
                   label={t("metadata.Målemetode")}
                   {...register("maalemetode", inputOptions)}
                 />
-                <Label label={t("metadata.Nøyaktighet")}>
-                  <Input
-                    type="number"
-                    {...register("noeyaktighet", {
-                      ...inputOptions,
-                      valueAsNumber: true,
-                      min: 0,
-                      max: 1_000_000,
-                    })}
-                  />
-                </Label>
+                <Input
+                  type="number"
+                  label={t("metadata.Nøyaktighet")}
+                  {...register("noeyaktighet", {
+                    ...inputOptions,
+                    valueAsNumber: true,
+                    min: 0,
+                    max: 1_000_000,
+                  })}
+                />
               </InputRow>
             </Container>
-            <Label label={t("metadata.Opphav")}>
-              <Input {...register("opphav", inputOptions)} />
-            </Label>
-            <Label label={t("metadata.Informasjon")}>
-              <Textarea rows={4} {...register("informasjon", inputOptions)} />
-            </Label>
+            <Input
+              {...register("opphav", inputOptions)}
+              label={t("metadata.Opphav")}
+            />
+            <Textarea
+              rows={4}
+              {...register("informasjon", inputOptions)}
+              label={t("metadata.Informasjon")}
+            />
 
             <LargePart>
               <Dates

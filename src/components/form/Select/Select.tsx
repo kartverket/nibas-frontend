@@ -1,18 +1,21 @@
 import { forwardRef, SelectHTMLAttributes } from "react";
 import styled from "styled-components";
 import Icon from "components/Icon";
+import Label from "../Label";
 
-type Props = SelectHTMLAttributes<HTMLSelectElement>;
+type Props = { label?: string } & SelectHTMLAttributes<HTMLSelectElement>;
 
 const Select = forwardRef<HTMLSelectElement, Props>(function Select(
   props,
   ref
 ) {
   return (
-    <SelectWrapper>
-      <SelectInput {...props} ref={ref}></SelectInput>
-      <SelectCaret />
-    </SelectWrapper>
+    <Label label={props.label ?? ""}>
+      <SelectWrapper>
+        <SelectInput {...props} ref={ref}></SelectInput>
+        <SelectCaret />
+      </SelectWrapper>
+    </Label>
   );
 });
 
