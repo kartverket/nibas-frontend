@@ -1,5 +1,6 @@
+import Icon from "components/Icon";
 import { forwardRef, InputHTMLAttributes } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import Label from "../Label";
 
 type ValidationError = {
@@ -12,24 +13,23 @@ type Props = {
   validationError?: ValidationError;
 } & InputHTMLAttributes<HTMLInputElement>;
 
-const StyledInput = styled.input`
-  padding: 8px;
-  font-size: 14px;
-  border-width: 1px;
-  border-radius: 3px;
-  border: 1px solid var(--black);
-  background-color: var(--white);
+const StyledInput = styled.input<{ isInvalid: boolean }>`
+  font-size: 16px;
+  padding: 16px;
+  border: 1px solid;
+  border-radius: 4px;
+  background: var(--white);
+  transition: border-color 0.1s, box-shadow 0.1s;
 
   &:active,
   &:focus {
     border-color: var(--blue);
-    box-shadow: inset 0 0 2px var(--blue);
+    box-shadow: inset 0 0 0 1px var(--blue);
     outline: 0;
   }
 
   &:disabled {
-    background-color: var(--gray_light);
-    border-color: var(--gray_dark);
+    background: var(--gray_light);
     color: var(--gray_dark);
     opacity: 0.7;
 
@@ -38,6 +38,13 @@ const StyledInput = styled.input`
       box-shadow: none;
     }
   }
+
+  ${(props) =>
+    props.isInvalid &&
+    css`
+      border-color: var(--red_error_message);
+      box-shadow: inset 0 0 0 1px var(--red_error_message);
+    `};
 
   // https://stackoverflow.com/questions/14946091/are-there-any-style-options-for-the-html5-date-picker
   &[type="date"] {
@@ -51,16 +58,37 @@ const StyledInput = styled.input`
   }
 `;
 
-// TODO: stil
-const ErrorMessage = styled.span``;
+const ErrorMessage = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--orange);
+  color: var(--red_error_message);
+  border: 1px solid;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: normal;
+  width: 100%;
 
-// TODO: pass på at denne er i bruk overalt
+  & > ${Icon} {
+    font-size: 18px;
+  }
+`;
+
 const Input = forwardRef<HTMLInputElement, Props>(function Input(props, ref) {
   return (
     <Label className={props.className} label={props.label ?? ""}>
-      <StyledInput {...props} ref={ref} />
-      {props.validationError && (
-        <ErrorMessage>{props.validationError.message}</ErrorMessage>
+      <StyledInput
+        {...props}
+        ref={ref}
+        isInvalid={props.validationError?.showError ?? false}
+      />
+      {props.validationError?.showError && (
+        <ErrorMessage>
+          <Icon icon="warning_amber" />
+          {props.validationError.message}
+        </ErrorMessage>
       )}
     </Label>
   );

@@ -95,7 +95,7 @@ export const OverlayPanelWrapper = styled(KartInteractable)<{
   justify-content: flex-start;
   padding: 16px;
   border-radius: 0 3px 3px 3px;
-  height: ${({ minimized }) => (minimized ? 70 : 500)}px;
+  height: ${({ minimized }) => (minimized ? 70 : 520)}px;
   border: 4px solid var(--gray_light);
   border-bottom: none;
   border-left: none;

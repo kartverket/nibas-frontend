@@ -129,34 +129,22 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
         {...register("stemmekretsnavn", formOptions)}
       />
       <Input
-        label={t("stemmekrets.Tellekretsnavn")}
-        {...register("tellekretsnavn", formOptions)}
-      />
-      <Input
         label={t("stemmekrets.Tellekretsnummer")}
         {...register("tellekretsnummer", formOptions)}
+      />
+      <Input
+        label={t("stemmekrets.Tellekretsnavn")}
+        {...register("tellekretsnavn", formOptions)}
       />
     </DetailsSection>
   );
 };
 
 const DetailsSection = styled(Section)`
-  display: flex;
-  gap: 16px;
+  display: grid;
+  grid-template-columns: 185px 350px;
+  gap: 30px 12px;
   color: var(--gray_dark);
-
-  & > *:nth-child(1) {
-    width: 165px;
-  }
-  & > *:nth-child(2) {
-    width: 160px;
-  }
-  & > *:nth-child(3) {
-    width: 130px;
-  }
-  & > *:nth-child(4) {
-    width: 150px;
-  }
 `;
 
 export default DetailsTab;

@@ -24,10 +24,10 @@ const SelectInput = styled.select`
   border: 1px solid var(--black);
   background-color: var(--white);
   border-radius: 3px;
-  padding: 8px 44px 8px 8px;
+  padding: 16px 44px 16px 8px;
   margin: 0;
   width: 100%;
-  font-size: 14px;
+  font-size: 16px;
 
   option {
     &:nth-child(even) {
@@ -62,10 +62,11 @@ const SelectInput = styled.select`
 const SelectCaret = styled(Icon).attrs(() => ({
   icon: "expand_more",
 }))`
-  font-size: 24px;
-  top: 7px;
-  right: 7px;
   position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translate(-50%, calc(-50% + 2px));
+  font-size: 24px;
   pointer-events: none;
 `;
 

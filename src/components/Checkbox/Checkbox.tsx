@@ -78,7 +78,6 @@ const DefaultCheckbox = styled.input`
   width: 0;
 `;
 
-// TODO: knytt denne sammen med generell label-komponent?
 const Container = styled.label<{ disabled: boolean }>`
   display: inline-block;
   position: relative;
