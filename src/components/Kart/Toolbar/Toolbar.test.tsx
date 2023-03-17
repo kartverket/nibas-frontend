@@ -55,6 +55,8 @@ const renderWithProvider = (
     UtkastProvider: {
       utkast,
       updateUtkastWithHistory: jest.fn(),
+      getUpdateUtkastRequestFromHistory: jest.fn(),
+      updateUtkast: jest.fn(),
       closeUtkast: jest.fn(),
       isValidating: false,
     },
@@ -87,7 +89,7 @@ describe("Toolbar", () => {
   it("should display Lagre button if utkast exists", () => {
     renderWithProvider(
       <Toolbar />,
-      { navn: "Test" } as any,
+      { navn: "Test", operasjoner: [] } as any,
       mockToolbarHistory
     );
 

@@ -14,6 +14,8 @@ import Select from "components/form/Select";
 import Button from "components/form/Button";
 import Heading from "components/typography/Heading";
 import { Frame, toolbarBorderWidth, toolbarSpacing } from "./components";
+import { useErrorHandling } from "contexts/ErrorHandlingContext";
+import { statusCode } from "utils/api";
 
 const UtkastFrame = styled(Frame)`
   position: absolute;
@@ -82,6 +84,7 @@ const UtkastToolbar = ({
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { history, clearHistory } = useToolbar();
   const setSearchParams = useSearchParams()[1];
+  const { setError } = useErrorHandling();
 
   const promptUtkast = () => {
     setUtkastJustCreated(true);
@@ -105,15 +108,20 @@ const UtkastToolbar = ({
       tokenHolderFunc()?.token
     );
 
-    if (response.status !== 201) throw new Error("Status ikke riktig");
+    if (statusCode.isSuccessful(response.status)) {
+      const json = await response.json();
+      const utkastId = json.id;
 
-    const json = await response.json();
-    const utkastId = json.id;
-
-    setCreateUtkastOpen(false);
-    setSearchParams({ utkast: utkastId });
-    clearHistory({ hasPreviouslySavedHistory: true });
-    promptUtkast();
+      setCreateUtkastOpen(false);
+      setSearchParams({ utkast: utkastId });
+      clearHistory({ hasPreviouslySavedHistory: true });
+      promptUtkast();
+    } else if (statusCode.isError(response.status)) {
+      setError({
+        title: "Opprettelse av utkast feilet",
+        body: `Feilkode: ${response.status}`,
+      });
+    }
   };
 
   return (

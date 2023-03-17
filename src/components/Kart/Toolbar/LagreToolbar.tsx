@@ -1,13 +1,15 @@
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
-
 import { useToolbarActions } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext";
-import useFeedback from "hooks/useFeedback";
-import Feedback from "components/Feedback/Feedback";
+import useAlertModal from "hooks/useAlertModal";
 import ModeButton from "./ModeButton";
 import { Frame } from "./components";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
+import AlertModal from "components/AlertModal";
+import { useState } from "react";
+import { EndringsloggModal } from "components/Endringslogg/EndringsloggModal";
+import FeatureToggle from "../../FeatureToggle";
 
 const LagreFrame = styled(Frame)`
   flex-direction: row;
@@ -46,12 +48,13 @@ type Props = {
 const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
   const { t } = useTranslation();
   const { canSave } = useToolbarActions();
+  const [endringsloggOpen, setEndringsloggOpen] = useState(false);
   const { utkast, updateUtkastWithHistory, closeUtkast } = useUtkast();
-  const { openFeedback, isOpen, closeFeedback, feedbackContent } = useFeedback(
-    t(
-      "Utkastet ditt har endringer som ikke er lagret. Dersom du lukker utkastet nå, vil disse endringene forkastes. Er du sikker på at du vil fortsette?"
-    )
-  );
+  const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } =
+    useAlertModal(
+      t("utkast.ulagrede-endringer"),
+      t("utkast.ulagrede-endringer-utdypende")
+    );
 
   const handleSave = () => {
     if (!canSave) {
@@ -77,6 +80,15 @@ const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
             <UtkastNavn>{utkast.navn}</UtkastNavn>
           </UtkastInfo>
           <DividerVertical />
+          <FeatureToggle feature="UTKAST_ENDRINGSLOGG">
+            <ModeButton
+              icon="published_with_changes"
+              ariaLabel="Vis endringer"
+              onClick={() => setEndringsloggOpen(true)}
+            >
+              {t("action.VisEndringer")}
+            </ModeButton>
+          </FeatureToggle>
           <ModeButton
             icon="save"
             ariaLabel="Lagre utkast"
@@ -88,33 +100,54 @@ const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
           <ModeButton
             icon="close"
             ariaLabel="Lukk utkast"
-            onClick={canSave ? openFeedback : closeUtkast}
+            onClick={canSave ? openModal : closeUtkast}
           >
             {t("action.Lukk")}
           </ModeButton>
         </>
       ) : (
-        <ModeButton
-          icon="save"
-          ariaLabel="Lagre utkast"
-          onClick={handleSave}
-          disabled={!canSave}
-          isActive={createUtkastOpen}
-        >
-          {t("action.Lagre")}
-        </ModeButton>
+        <>
+          <FeatureToggle feature="UTKAST_ENDRINGSLOGG">
+            <ModeButton
+              icon="published_with_changes"
+              ariaLabel="Vis endringer"
+              onClick={() => setEndringsloggOpen(true)}
+            >
+              {t("action.VisEndringer")}
+            </ModeButton>
+          </FeatureToggle>
+          <ModeButton
+            icon="save"
+            ariaLabel="Lagre utkast"
+            onClick={handleSave}
+            disabled={!canSave}
+            isActive={createUtkastOpen}
+          >
+            {t("action.Lagre")}
+          </ModeButton>
+        </>
       )}
-      <Feedback
-        type="warning"
-        title="Advarsel"
-        isOpen={isOpen}
-        onClose={closeFeedback}
-        onContinue={closeUtkast}
-        closeText={t("Fortsett redigering")}
-        continueText={t("Forkast endringer")}
-      >
-        {feedbackContent}
-      </Feedback>
+      <AlertModal
+        status="warning"
+        title={modalTitle}
+        body={modalBody}
+        isOpen={modalIsOpen}
+        onClose={closeModal}
+        secondaryAction={{
+          text: t("Forkast endringer"),
+          onClick: closeUtkast,
+        }}
+        primaryAction={{
+          text: t("Fortsett redigering"),
+          onClick: closeModal,
+        }}
+      />
+      <FeatureToggle feature="UTKAST_ENDRINGSLOGG">
+        <EndringsloggModal
+          isOpen={endringsloggOpen}
+          onClose={() => setEndringsloggOpen(false)}
+        />
+      </FeatureToggle>
     </LagreFrame>
   );
 };

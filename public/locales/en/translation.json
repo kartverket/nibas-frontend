@@ -92,7 +92,8 @@
     "Zoom inn": "__STRING_NOT_TRANSLATED__",
     "Zoom ut": "__STRING_NOT_TRANSLATED__",
     "Løsriv": "__STRING_NOT_TRANSLATED__",
-    "Splitt": "__STRING_NOT_TRANSLATED__"
+    "Splitt": "__STRING_NOT_TRANSLATED__",
+    "VisEndringer": "__STRING_NOT_TRANSLATED__"
   },
   "Ja": "__STRING_NOT_TRANSLATED__",
   "Nei": "__STRING_NOT_TRANSLATED__",
@@ -120,7 +121,11 @@
     "Hvilken stemmekrets ønsker du å slå sammen med": "__STRING_NOT_TRANSLATED__",
     "Navn- eller nummer på stemmekrets": "__STRING_NOT_TRANSLATED__",
     "Detaljer om den sammenslåtte kretsen": "__STRING_NOT_TRANSLATED__",
-    "Stemmekretsnavn": "__STRING_NOT_TRANSLATED__"
+    "Stemmekretsnavn": "__STRING_NOT_TRANSLATED__",
+    "utkast-sammenslaaing-alert": {
+      "tittel": "__STRING_NOT_TRANSLATED__",
+      "tekst": "__STRING_NOT_TRANSLATED__"
+    }
   },
   "Endre": "__STRING_NOT_TRANSLATED__",
   "utkast": {
@@ -143,23 +148,33 @@
     "Dobbeltsjekk feltene i endringen nedenfor før du publiserer": "__STRING_NOT_TRANSLATED__",
     "Endringer i dette utkastet": "__STRING_NOT_TRANSLATED__",
     "Fremtidig endring i konflikt": "__STRING_NOT_TRANSLATED__",
-    "Opprett et nytt utkast": "__STRING_NOT_TRANSLATED__"
+    "Opprett et nytt utkast": "__STRING_NOT_TRANSLATED__",
+    "ulagrede-endringer": "__STRING_NOT_TRANSLATED__",
+    "ulagrede-endringer-utdypende": "__STRING_NOT_TRANSLATED__",
+    "endringslogg": {
+      "header": "__STRING_NOT_TRANSLATED__",
+      "stemmekrets-tittel": "__STRING_NOT_TRANSLATED__",
+      "endring": {
+        "stemmekretsnavn": "__STRING_NOT_TRANSLATED__",
+        "stemmekretsnummer": "__STRING_NOT_TRANSLATED__",
+        "tellekretsnavn": "__STRING_NOT_TRANSLATED__",
+        "tellekretsnummer": "__STRING_NOT_TRANSLATED__",
+        "valgdistriktsnummer": "__STRING_NOT_TRANSLATED__",
+        "grenseendringer": "__STRING_NOT_TRANSLATED__",
+        "grunnkretsnavn": "__STRING_NOT_TRANSLATED__",
+        "grunnkretsnummer": "__STRING_NOT_TRANSLATED__"
+      },
+      "ingenEndringer": "__STRING_NOT_TRANSLATED__",
+      "grunnkrets-tittel": "__STRING_NOT_TRANSLATED__"
+    }
   },
   "Aktive kartlag": "__STRING_NOT_TRANSLATED__",
   "Logg inn for å se listen": "__STRING_NOT_TRANSLATED__",
   "Redigeringsmodus": "__STRING_NOT_TRANSLATED__",
   "Redigerer": "__STRING_NOT_TRANSLATED__",
-  "Utkastet er ikke publisert enda": {
-    " Vil du fullføre det senere, eller publisere med en gang?": "__STRING_NOT_TRANSLATED__"
-  },
   "Lukk likevel": "__STRING_NOT_TRANSLATED__",
   "Fortsett redigering": "__STRING_NOT_TRANSLATED__",
   "Forkast endringer og lukk": "__STRING_NOT_TRANSLATED__",
-  "Utkastet ditt har endringer som ikke er lagret": {
-    " Dersom du lukker utkastet nå, vil disse endringene forkastes": {
-      " Er du sikker på at du vil fortsette?": "__STRING_NOT_TRANSLATED__"
-    }
-  },
   "Forkast endringer": "__STRING_NOT_TRANSLATED__",
   "Utkastet er opprettet": "__STRING_NOT_TRANSLATED__",
   "f": {

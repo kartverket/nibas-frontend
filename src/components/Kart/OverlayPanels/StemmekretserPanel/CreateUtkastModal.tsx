@@ -13,10 +13,11 @@ import Label from "components/form/Label";
 import Select from "components/form/Select";
 import Button from "components/form/Button";
 import Heading from "components/typography/Heading";
-import Modal from "components/Modal";
-import { CustomModalWrapper, ModalOverlay } from "components/Modal/Modal";
+import { Modal, ModalContent } from "components/Modal";
+import { statusCode } from "utils/api";
+import { UtkastOperasjoner } from "../../../../types/api";
 
-const Frame = styled(CustomModalWrapper)`
+const ModalElement = styled(ModalContent)`
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -43,10 +44,17 @@ const Buttons = styled.div`
   justify-content: flex-end;
 `;
 
+export type CreateUtkastCallbackArgument = {
+  id: string;
+  navn: string;
+  endringstype: string;
+  operasjoner: UtkastOperasjoner;
+};
+
 type Props = {
   isCreateUtkastModalOpen: boolean;
   setIsCreateUtkastModalOpen: (isCreateUtkastModalOpen: boolean) => void;
-  callback: () => void;
+  callback: (newUtkast: CreateUtkastCallbackArgument) => void;
 };
 
 // TODO: midlertidig løsning for å opprette utkast inntil history er ferdigimplementert
@@ -63,16 +71,18 @@ const CreateUtkastModal = ({
   const setSearchParams = useSearchParams()[1];
 
   const createUtkast = async () => {
+    const nyttUtkast = {
+      navn: utkastName,
+      endringstype: utkastType,
+      operasjoner: historyToUtkastOperations(history),
+    };
+
     const response = await createApiUtkast(
-      {
-        navn: utkastName,
-        endringstype: utkastType,
-        operasjoner: historyToUtkastOperations(history),
-      },
+      nyttUtkast,
       tokenHolderFunc()?.token
     );
 
-    if (response.status < 200 && response.status > 299) {
+    if (statusCode.isError(response.status)) {
       throw new Error(
         "Klarte ikke opprette utkast. Det ble returnert en feilkode ved opprettelse"
       );
@@ -83,8 +93,7 @@ const CreateUtkastModal = ({
 
     setIsCreateUtkastModalOpen(false);
     setSearchParams({ utkast: utkastId });
-    callback();
-    setIsCreateUtkastModalOpen(false);
+    callback({ ...nyttUtkast, id: utkastId });
   };
 
   const cancelCreateUtkast = () => {
@@ -96,14 +105,7 @@ const CreateUtkastModal = ({
     <Modal
       isOpen={isCreateUtkastModalOpen}
       onRequestClose={() => setIsCreateUtkastModalOpen(false)}
-      className="_"
-      overlayClassName="_"
-      contentElement={(props, contentChildren) => (
-        <Frame {...props}>{contentChildren}</Frame>
-      )}
-      overlayElement={(props, overlayChildren) => (
-        <ModalOverlay {...props}>{overlayChildren}</ModalOverlay>
-      )}
+      modalElement={ModalElement}
     >
       <Heading size="xs" tag="h3">
         {t("utkast.Opprett et nytt utkast")}

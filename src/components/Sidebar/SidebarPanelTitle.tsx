@@ -1,7 +1,6 @@
 import styled from "styled-components";
-import Button from "components/form/Button";
-import Icon from "components/Icon";
 import Heading from "components/typography/Heading";
+import CloseButton from "components/form/Button/CloseButton";
 
 type Props = {
   closePanel: () => void;
@@ -14,11 +13,7 @@ const SidebarPanelTitle = ({ title, closePanel }: Props) => {
       <StyledTitle tag="h2" size="xs">
         {title}
       </StyledTitle>
-      <CloseButton
-        icon={<Icon icon="close" aria-label={`Lukk ${title}`} />}
-        onClick={closePanel}
-        variant="unstyled"
-      />
+      <CloseButton onClick={closePanel} />
     </TitleWrapper>
   );
 };
@@ -36,24 +31,6 @@ const TitleWrapper = styled.div`
 
 const StyledTitle = styled(Heading)`
   margin: 0;
-`;
-
-const CloseButton = styled(Button)`
-  border-radius: 50%;
-
-  > span {
-    font-size: 28px;
-    color: var(--blue_dark);
-    padding: 6px;
-    border-radius: 50%;
-
-    &:hover {
-      background-color: var(--blue_light);
-    }
-  }
-  &:focus-visible {
-    outline: 2px solid var(--blue_dark);
-  }
 `;
 
 export default SidebarPanelTitle;

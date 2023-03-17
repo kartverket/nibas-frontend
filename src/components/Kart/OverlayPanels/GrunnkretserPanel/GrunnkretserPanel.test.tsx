@@ -22,6 +22,8 @@ const renderWithProvider = (
             },
           },
         } as any, // ikke interessert i andre felter
+        getUpdateUtkastRequestFromHistory: jest.fn(),
+        updateUtkast: jest.fn(),
         updateUtkastWithHistory: jest.fn(),
         closeUtkast: jest.fn(),
         isValidating: false,

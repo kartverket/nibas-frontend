@@ -18,11 +18,13 @@ import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 import { resetMapView } from "utils/map";
 import UtkastConflicts from "./UtkastConflictModal/UtkastConflicts";
-import useFeedback from "hooks/useFeedback";
+import useAlertModal from "hooks/useAlertModal";
 import { useToolbarActions } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext";
-import Feedback from "components/Feedback/Feedback";
 import { Outline } from "style/mixins";
+import AlertModal from "components/AlertModal";
+import { useErrorHandling } from "contexts/ErrorHandlingContext";
+import { statusCode } from "utils/api";
 
 type Props = {
   utkast: UtkastRef;
@@ -48,13 +50,14 @@ const UtkastItem = ({ utkast }: Props) => {
   );
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { mutate } = useSWRConfig();
-  const { openFeedback, isOpen, closeFeedback, feedbackContent } = useFeedback(
-    t(
-      "Utkastet ditt har endringer som ikke er lagret. Dersom du lukker utkastet nå, vil disse endringene forkastes. Er du sikker på at du vil fortsette?"
-    )
-  );
+  const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } =
+    useAlertModal(
+      t("utkast.ulagrede-endringer"),
+      t("utkast.ulagrede-endringer-utdypende")
+    );
   const { canSave } = useToolbarActions();
   const { closeUtkast } = useUtkast();
+  const { setError } = useErrorHandling();
 
   const utkastActive = utkastId === utkast.id;
 
@@ -77,7 +80,7 @@ const UtkastItem = ({ utkast }: Props) => {
 
     if (!response) return;
 
-    if (response.status === 200) {
+    if (statusCode.isSuccessful(response.status)) {
       cleanUpUtkast();
     } else if (response.status === 409) {
       const wrapper = (await response.json()) as ConflictResponseWrapper;
@@ -85,18 +88,29 @@ const UtkastItem = ({ utkast }: Props) => {
       if (!wrapper.framtidigVersjonConflict) return;
 
       setConflictResponse(wrapper.framtidigVersjonConflict);
+    } else if (statusCode.isError(response.status)) {
+      setError({
+        title: "Publisering av utkast feilet",
+        body: `Feilkode: ${response.status}`,
+      });
     }
   };
 
   const deleteUtkast = async () => {
     if (!fullUtkast) return;
 
-    await deleteApiUtkast(utkast.id, tokenHolderFunc()?.token);
+    const response = await deleteApiUtkast(utkast.id, tokenHolderFunc()?.token);
+    if (statusCode.isSuccessful(response.status)) {
+      await mutate(["/v1/utkast", tokenHolderFunc()?.token]);
 
-    await mutate(["/v1/utkast", tokenHolderFunc()?.token]);
-
-    if (utkastActive) {
-      setSearchParams({});
+      if (utkastActive) {
+        setSearchParams({});
+      }
+    } else if (statusCode.isError(response.status)) {
+      setError({
+        title: "Sletting av utkast feilet",
+        body: `Feilkode: ${response.status}`,
+      });
     }
   };
 
@@ -132,7 +146,7 @@ const UtkastItem = ({ utkast }: Props) => {
   const openCloseUtkast = () => {
     if (!isPublishOpen && !isDeleteOpen) {
       if (canSave) {
-        openFeedback();
+        openModal();
       } else {
         closeUtkast();
       }
@@ -218,17 +232,21 @@ const UtkastItem = ({ utkast }: Props) => {
       {utkastActive && !isPublishOpen && !isDeleteOpen && (
         <UtkastItemActive utkastId={utkast.id} />
       )}
-      <Feedback
-        type="warning"
-        title="Advarsel"
-        isOpen={isOpen}
-        onClose={closeFeedback}
-        onContinue={closeUtkast}
-        closeText={t("Fortsett redigering")}
-        continueText={t("Forkast endringer")}
-      >
-        {feedbackContent}
-      </Feedback>
+      <AlertModal
+        status="warning"
+        title={modalTitle}
+        body={modalBody}
+        isOpen={modalIsOpen}
+        onClose={closeModal}
+        secondaryAction={{
+          text: t("Forkast endringer"),
+          onClick: closeUtkast,
+        }}
+        primaryAction={{
+          text: t("Fortsett redigering"),
+          onClick: closeModal,
+        }}
+      />
     </li>
   );
 };

@@ -1,7 +1,6 @@
 import { OppdaterUtkastRequest, UtkastResponse } from "types/api";
 
 export type EntityUtkastType = "stemmekretsendringer" | "grunnkretsendringer";
-export type FeatureUtkastType = "featureEndringer";
 
 export type ResponseWithId = {
   id: {
@@ -14,6 +13,11 @@ export type ResponseWithId = {
 export type UtkastContextValue = {
   utkast: UtkastResponse | undefined;
   updateUtkastWithHistory: () => Promise<unknown>;
+  updateUtkast: (
+    id: string,
+    newUtkast: OppdaterUtkastRequest
+  ) => Promise<unknown>;
+  getUpdateUtkastRequestFromHistory: () => OppdaterUtkastRequest | null;
   closeUtkast: () => void;
   isValidating: boolean;
 };

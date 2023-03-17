@@ -21,6 +21,8 @@ import { OppdaterUtkastRequest, UtkastResponse } from "types/api";
 import { resetMapView } from "utils/map";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
+import { useErrorHandling } from "contexts/ErrorHandlingContext";
+import { statusCode } from "utils/api";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
@@ -38,6 +40,7 @@ export const UtkastProvider: React.FC = ({ children }) => {
   const { resetAndClearEditingLayer } = useEditAllGrenser();
   const { closePanels } = useOverlayPanels();
   const utkastId = searchParams.get("utkast");
+  const { setError } = useErrorHandling();
 
   const { mutate: globalMutate } = useSWRConfig();
 
@@ -68,40 +71,67 @@ export const UtkastProvider: React.FC = ({ children }) => {
     }
   }, [utkast, utkastId, mutate]);
 
-  const updateUtkastWithHistory = async () => {
-    if (!utkast) return;
+  const getUpdateUtkastRequestFromHistory =
+    (): OppdaterUtkastRequest | null => {
+      if (!utkast) return null;
 
-    const operasjoner = historyToUtkastOperations(history, utkast);
+      const operasjoner = historyToUtkastOperations(history, utkast);
 
-    const updatedUtkast: OppdaterUtkastRequest = {
-      endringstype: utkast.endringstype,
-      navn: utkast.navn,
-      gyldigFra: utkast.gyldigFra,
-      operasjoner,
-      version: utkast.version,
-    };
-    const utkastEntry = history.entries
-      .slice(0, history.index)
-      .reverse() // siste entry inneholder alle endringene på utkastet
-      .find((entry) => entry.changes.some((change) => change.id === utkast.id));
+      const updatedUtkast: OppdaterUtkastRequest = {
+        endringstype: utkast.endringstype,
+        navn: utkast.navn,
+        gyldigFra: utkast.gyldigFra,
+        operasjoner,
+        version: utkast.version,
+      };
+      const utkastEntry = history.entries
+        .slice(0, history.index)
+        .reverse() // siste entry inneholder alle endringene på utkastet
+        .find((entry) =>
+          entry.changes.some((change) => change.id === utkast.id)
+        );
 
-    if (utkastEntry) {
-      const change = (
-        utkastEntry.changes as HistoryChange<UtkastRequestWithoutOperations>[]
-      ).find((c) => c.id === utkast.id);
+      if (utkastEntry) {
+        const change = (
+          utkastEntry.changes as HistoryChange<UtkastRequestWithoutOperations>[]
+        ).find((c) => c.id === utkast.id);
 
-      if (change?.to) {
-        updatedUtkast.endringstype = change.to.endringstype;
-        updatedUtkast.navn = change.to.navn;
-        updatedUtkast.gyldigFra = change.to.gyldigFra;
+        if (change?.to) {
+          updatedUtkast.endringstype = change.to.endringstype;
+          updatedUtkast.navn = change.to.navn;
+          updatedUtkast.gyldigFra = change.to.gyldigFra;
+        }
       }
-    }
 
-    await mutate(
-      updateApiUtkast(utkast.id, updatedUtkast, tokenHolderFunc()?.token)
+      return updatedUtkast;
+    };
+
+  const updateUtkast = async (id: string, newUtkast: OppdaterUtkastRequest) => {
+    const response = await updateApiUtkast(
+      id,
+      newUtkast,
+      tokenHolderFunc()?.token
     );
-    await globalMutate(["/v1/utkast", tokenHolderFunc()?.token]);
-    clearHistory({ hasPreviouslySavedHistory: true });
+
+    if (statusCode.isSuccessful(response.status)) {
+      const json = await response.json();
+      await mutate(json as UtkastResponse);
+      await globalMutate(["/v1/utkast", tokenHolderFunc()?.token]);
+      clearHistory({ hasPreviouslySavedHistory: true });
+    } else if (statusCode.isError(response.status)) {
+      setError({
+        title: "Oppdatering av utkast feilet",
+        body: `Feilkode: ${response.status}`,
+      });
+    }
+  };
+
+  const updateUtkastWithHistory = async () => {
+    const updatedUtkast = getUpdateUtkastRequestFromHistory();
+
+    if (!updatedUtkast || !utkast) return;
+
+    await updateUtkast(utkast.id, updatedUtkast);
   };
 
   const closeUtkast = () => {
@@ -113,7 +143,14 @@ export const UtkastProvider: React.FC = ({ children }) => {
     closePanels();
   };
 
-  const value = { utkast, updateUtkastWithHistory, closeUtkast, isValidating };
+  const value = {
+    utkast,
+    getUpdateUtkastRequestFromHistory,
+    updateUtkastWithHistory,
+    updateUtkast,
+    closeUtkast,
+    isValidating,
+  };
 
   return (
     <UtkastContext.Provider value={value}>{children}</UtkastContext.Provider>

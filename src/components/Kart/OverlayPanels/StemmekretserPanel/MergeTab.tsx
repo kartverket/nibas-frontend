@@ -2,7 +2,7 @@ import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
 import Heading from "components/typography/Heading";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import {
@@ -13,12 +13,14 @@ import {
 import { BlockLabel } from "../metadataComponents";
 import { Section, ContrastSection, InputsWrapper } from "./components";
 import { getIdFromEntity } from "utils/api";
-import { useToolbar, useToolbarSaving } from "contexts/ToolbarContext";
 
-import CreateUtkastModal from "./CreateUtkastModal";
+import CreateUtkastModal, {
+  CreateUtkastCallbackArgument,
+} from "./CreateUtkastModal";
 import { useUtkast } from "contexts/UtkastContext";
 import UtkastToast from "components/Kart/Toolbar/UtkastToast";
 import useDirtyStyles from "hooks/interactions/useDirtyStyles";
+import { useErrorHandling } from "contexts/ErrorHandlingContext";
 
 type Props = {
   stemmekrets: StemmekretsResponse | undefined;
@@ -28,10 +30,9 @@ type Props = {
 
 const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   const { t } = useTranslation();
-  const { addEntry } = useToolbarSaving();
-  const { utkast, updateUtkastWithHistory } = useUtkast();
-  const { history } = useToolbar();
-  const { saveDirtyFeatureIds, setAndSaveUtkastFeatures } = useDirtyStyles();
+
+  const { utkast, updateUtkast } = useUtkast();
+  const { setError } = useErrorHandling();
 
   const [isCreateUtkastModalOpen, setIsCreateUtkastModalOpen] = useState(false);
   const [utkastJustCreated, setUtkastJustCreated] = useState(false);
@@ -72,48 +73,35 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
     return alleStemmekretser.filter((krets) => krets.nummer === nummer);
   };
 
-  //legger til history-entries med en gang de er laget, for å unngå at sammenslåinger blir liggende i history
-  useEffect(() => {
-    if (history.entries.length > 0) {
-      updateUtkastWithHistory();
-    }
-  }, [history, updateUtkastWithHistory]);
-
-  const { data: StemmekretsReponse } = useNibasApi(
-    "/v1/stemmekretser/{id}/grenser",
-    {
-      lokalid: id,
-    }
-  );
-
-  const mergeStemmekrets = () => {
+  const mergeStemmekrets = (nyttUtkast: CreateUtkastCallbackArgument) => {
     promptUtkastJustCreated();
     const stemmekretsTilSammenslaaingListe = getStemmekretsByNummer(
       stemmekretsNummerTilSammenslaaing
     );
 
     if (stemmekretsTilSammenslaaingListe.length === 1 && stemmekrets) {
-      addEntry({
-        type: "stemmekretssammenslaaingsendring",
-        changes: [
-          {
-            from: fromFormToRequest(
-              stemmekrets,
-              stemmekretsTilSammenslaaingListe[0]
-            ),
-            to: fromFormToRequest(
-              stemmekrets,
-              stemmekretsTilSammenslaaingListe[0]
-            ),
-            id: stemmekretsId,
-          },
-        ],
-      });
+      const updateUtkastRequest = {
+        version: 1,
+        navn: nyttUtkast.navn,
+        endringstype: nyttUtkast.endringstype,
+        operasjoner: {
+          ...nyttUtkast.operasjoner,
+          stemmekretsSammenslaaingsendring: fromFormToRequest(
+            stemmekrets,
+            stemmekretsTilSammenslaaingListe[0]
+          ),
+        },
+      };
+      updateUtkast(nyttUtkast.id, updateUtkastRequest);
     }
   };
 
   const openCreateUtkastModal = () => {
     if (utkast) {
+      setError({
+        title: t("stemmekrets.utkast-sammenslaaing-alert.tittel"),
+        body: t("stemmekrets.utkast-sammenslaaing-alert.tekst"),
+      });
       return;
     }
     isCreateUtkastModalOpen
