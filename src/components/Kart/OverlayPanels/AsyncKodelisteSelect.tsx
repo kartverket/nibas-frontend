@@ -1,5 +1,4 @@
 import React, { forwardRef, SelectHTMLAttributes } from "react";
-import { BlockLabel } from "./metadataComponents";
 import Select from "components/form/Select";
 import { KodelisteRespons } from "types/api";
 
@@ -14,17 +13,14 @@ const AsyncKodelisteSelectInner = (
   ref: React.ForwardedRef<HTMLSelectElement>
 ) => {
   return (
-    <BlockLabel>
-      {label}
-      <Select ref={ref} {...selectProps}>
-        <option value="">---</option>
-        {kodeliste?.items.map((kodeItem) => (
-          <option key={kodeItem.id} value={kodeItem.id}>
-            {kodeItem.label.replace(/([a-zæøå])([A-ZÆØÅ])/g, "$1 $2")}
-          </option>
-        ))}
-      </Select>
-    </BlockLabel>
+    <Select ref={ref} {...selectProps} label={label}>
+      <option value="">---</option>
+      {kodeliste?.items.map((kodeItem) => (
+        <option key={kodeItem.id} value={kodeItem.id}>
+          {kodeItem.label.replace(/([a-zæøå])([A-ZÆØÅ])/g, "$1 $2")}
+        </option>
+      ))}
+    </Select>
   );
 };
 

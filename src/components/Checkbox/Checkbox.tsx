@@ -1,9 +1,8 @@
 import { forwardRef, InputHTMLAttributes } from "react";
 import styled, { css } from "styled-components";
-import Label from "components/form/Label";
 
 type Props = InputHTMLAttributes<HTMLInputElement> & {
-  label: React.ReactNode;
+  label: string;
   type?: "radio" | "checkbox";
 };
 
@@ -12,11 +11,11 @@ const Checkbox = forwardRef<HTMLInputElement, Props>(function Checkbox(
   ref
 ) {
   return (
-    <Wrapper disabled={!!props.disabled} className={className}>
+    <Container disabled={!!props.disabled} className={className}>
       {label}
       <DefaultCheckbox {...props} ref={ref} />
       <CustomCheckbox type={props.type ?? "checkbox"} />
-    </Wrapper>
+    </Container>
   );
 });
 
@@ -79,7 +78,7 @@ const DefaultCheckbox = styled.input`
   width: 0;
 `;
 
-const Wrapper = styled(Label)<{ disabled: boolean }>`
+const Container = styled.label<{ disabled: boolean }>`
   display: inline-block;
   position: relative;
   padding-left: 24px;

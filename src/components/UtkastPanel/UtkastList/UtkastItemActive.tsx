@@ -6,7 +6,6 @@ import { UtkastItemExpanded } from "./UtkastItem";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
-import { BlockLabel } from "components/Kart/OverlayPanels/metadataComponents";
 import {
   useToolbarActions,
   useToolbarSaving,
@@ -123,20 +122,20 @@ const UtkastItemActive = ({ utkastId }: Props) => {
 
   return (
     <UtkastItemExpanded>
-      <BlockLabel>
-        {t("utkast.Navn på utkast")}
-        <Input {...register("navn", registerOptions)} />
-      </BlockLabel>
-      <BlockLabel>
-        {t("utkast.Type utkast")}
-        <Select {...register("endringsType", registerOptions)}>
-          {Object.keys(translateKeysByEndringsType).map((type) => (
-            <option key={type} value={type}>
-              {t(translateKeysByEndringsType[type] as Translation)}
-            </option>
-          ))}
-        </Select>
-      </BlockLabel>
+      <Input
+        label={t("utkast.Navn på utkast")}
+        {...register("navn", registerOptions)}
+      />
+      <Select
+        label={t("utkast.Type utkast")}
+        {...register("endringsType", registerOptions)}
+      >
+        {Object.keys(translateKeysByEndringsType).map((type) => (
+          <option key={type} value={type}>
+            {t(translateKeysByEndringsType[type] as Translation)}
+          </option>
+        ))}
+      </Select>
       <EditingUtkastText>
         {t("utkast.Du er nå i redigeringsmodus av dette utkastet")}
       </EditingUtkastText>
