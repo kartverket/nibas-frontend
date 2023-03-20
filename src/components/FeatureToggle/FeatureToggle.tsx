@@ -28,7 +28,7 @@ const featureToggles: Record<Keys, Record<Environment, boolean>> = {
   },
   UTKAST_ENDRINGSLOGG: {
     prod: false,
-    test: false,
+    test: true,
     dev: true,
   },
 };

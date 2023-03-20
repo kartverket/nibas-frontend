@@ -152,20 +152,27 @@
     "ulagrede-endringer": "Du har endringer i utkastet som ikke er lagret",
     "ulagrede-endringer-utdypende": "Er du sikker på at du vil gå ut av utkastet? Dersom du lukker utkastet nå mister du alle ulagrede endringer.",
     "endringslogg": {
-      "header": "Endringer som har blitt gjort i dette utkastet",
-      "stemmekrets-tittel": "Stemmekretsendringer i {{ kommune }}",
+      "header": "Endringer i dette utkastet",
+      "stemmekrets-tittel": "Stemmekretser i {{ kommune }}",
       "endring": {
-        "stemmekretsnavn": "Endring av stemmekretsnavn",
-        "stemmekretsnummer": "Endring av stemmekretsnummer",
-        "tellekretsnavn": "Endring av tellekretsnavn",
-        "tellekretsnummer": "Endring av tellekretsnummer",
-        "valgdistriktsnummer": "Endring av valgdistriktsnummer",
+        "stemmekretsnavn": "Stemmekretsnavn",
+        "stemmekretsnummer": "Stemmekretsnummer",
+        "tellekretsnavn": "Tellekretsnavn",
+        "tellekretsnummer": "Tellekretsnummer",
+        "valgdistriktsnummer": "Valgdistriktsnummer",
         "grenseendringer": "Grensejusteringer",
-        "grunnkretsnavn": "Endringer av grunnkretsnavn",
-        "grunnkretsnummer": "Endringer av grunnkretsnummer"
+        "grunnkretsnavn": "Grunnkretsnavn",
+        "grunnkretsnummer": "Grunnkretsnummer",
+        "sammenslaaing": {
+          "tittel": "Sammenslåing",
+          "sammenslatt": "Sammenslått",
+          "stemmekretsnummer": "Stemmekretsnummer",
+          "stemmekretsnavn": "Stemmekretsnavn"
+        }
       },
       "ingenEndringer": "Det er ingen endringer i dette utkastet",
-      "grunnkrets-tittel": "Grunnkretsendringer i {{ kommune }}"
+      "grunnkrets-tittel": "Grunnkretser i {{ kommune }}",
+      "metadata": "Metadataendringer"
     }
   },
   "Aktive kartlag": "Aktive kartlag",

@@ -6,8 +6,9 @@ import {
 import { deduplicate, removeNull } from "utils/list-utils";
 import {
   GrunnkretsEndringstype,
-  GrunnkretsEndring,
   Grunnkretsendringer,
+  GrunnkretsMetadataEndring,
+  Endring,
 } from "./utkastEndringerTypes";
 import {
   findKrets,
@@ -37,26 +38,59 @@ export const getGrunnkretserMedEndringer = (
   return deduplicate(alleGrunnkretserMedEndringer);
 };
 
-const getEndringerAvType = (
+const getEndringAvTypeForId = (
   type: GrunnkretsEndringstype,
+  grunnkretsId: string,
+  operasjoner: UtkastOperasjoner,
+  alleGrunnkretser: GrunnkretsResponse[]
+): Endring | null => {
+  const gammelGrunnkrets = findKrets(grunnkretsId, alleGrunnkretser);
+  const nyVerdi =
+    operasjoner.metadataendringer.grunnkretsendringer?.[grunnkretsId]?.[
+      type
+    ]?.trim();
+
+  const gammelVerdi = gammelGrunnkrets[type]?.trim() ?? "";
+
+  if (gammelVerdi === nyVerdi || nyVerdi == null) {
+    return null;
+  }
+
+  return {
+    fra: gammelVerdi,
+    til: nyVerdi,
+  };
+};
+
+const harMetadataEndring = (
+  metadatEndring: GrunnkretsMetadataEndring
+): boolean => {
+  const fieldsToCheck = [metadatEndring.navn, metadatEndring.grunnkretsnummer];
+  return fieldsToCheck.some((field) => field != null);
+};
+
+const getMetadataEndringer = (
   grunnkretser: string[],
   operasjoner: UtkastOperasjoner,
   alleGrunnkretser: GrunnkretsResponse[]
-): GrunnkretsEndring[] => {
-  const grunnkretsendringer = operasjoner.metadataendringer.grunnkretsendringer;
-  const grunnkretserMedEndringAvGittType = grunnkretser.filter(
-    (id) => grunnkretsendringer?.[id]?.[type] != null
-  );
-  return grunnkretserMedEndringAvGittType
-    .map((id) => {
-      const gammelGrunnkrets = findKrets(id, alleGrunnkretser);
+): GrunnkretsMetadataEndring[] => {
+  return grunnkretser
+    .map((grunnkretsId) => {
+      const getEndringAvType = (type: GrunnkretsEndringstype) =>
+        getEndringAvTypeForId(
+          type,
+          grunnkretsId,
+          operasjoner,
+          alleGrunnkretser
+        );
+
       return {
-        kretsEndret: gammelGrunnkrets,
-        fra: gammelGrunnkrets[type],
-        til: grunnkretsendringer?.[id]?.[type],
+        kretsEndret: findKrets(grunnkretsId, alleGrunnkretser),
+        navn: getEndringAvType("navn"),
+        grunnkretsnummer: getEndringAvType("grunnkretsnummer"),
       };
     })
-    .filter((endring) => endring.fra !== endring.til);
+    .filter(harMetadataEndring);
 };
 
 const getEndringerForKommune = (
@@ -71,14 +105,6 @@ const getEndringerForKommune = (
     "GRUNNKRETS"
   );
 
-  const getEndringer = (type: GrunnkretsEndringstype) =>
-    getEndringerAvType(
-      type,
-      grunnkretserMedEndringer,
-      operasjoner,
-      alleGrunnkretser
-    );
-
   const kommune = alleKommuner.find(
     (kommuneRef) => kommuneRef.kommunenummer.id === kommuneId
   );
@@ -86,10 +112,14 @@ const getEndringerForKommune = (
   return {
     kommune: {
       id: kommune?.id.lokalid.value ?? "",
+      nummer: kommune?.kommunenummer.kodeverdi ?? "",
       navn: kommune?.navn[0].navn ?? "",
     },
-    navn: getEndringer("navn"),
-    grunnkretsnummer: getEndringer("grunnkretsnummer"),
+    metadataendringer: getMetadataEndringer(
+      grunnkretserMedEndringer,
+      operasjoner,
+      alleGrunnkretser
+    ),
     grensejusteringer: removeNull(
       grunnkretserMedEndringer
         .filter((id) => grunnkretserMedGrensejusteringer.includes(id))
