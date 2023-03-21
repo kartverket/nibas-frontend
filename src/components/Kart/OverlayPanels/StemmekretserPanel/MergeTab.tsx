@@ -19,8 +19,10 @@ import CreateUtkastModal, {
 } from "./CreateUtkastModal";
 import { useUtkast } from "contexts/UtkastContext";
 import UtkastToast from "components/Kart/Toolbar/UtkastToast";
-import useDirtyStyles from "hooks/interactions/useDirtyStyles";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
+import useKretsgrenser from "hooks/inndelinger/useKretsgrenser";
+import { useToolbar } from "contexts/ToolbarContext";
+import useNibasApi from "hooks/useNibasApi";
 
 type Props = {
   stemmekrets: StemmekretsResponse | undefined;
@@ -33,6 +35,13 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
 
   const { utkast, updateUtkast } = useUtkast();
   const { setError } = useErrorHandling();
+
+  const { addKretserToLayer, removeKretserFromLayer } = useKretsgrenser(
+    stemmekrets ? stemmekrets.kommunenummer.id : "",
+    "stemmekrets"
+  );
+
+  const { setAndSaveUtkastFeatures } = useToolbar();
 
   const [isCreateUtkastModalOpen, setIsCreateUtkastModalOpen] = useState(false);
   const [utkastJustCreated, setUtkastJustCreated] = useState(false);
@@ -50,6 +59,16 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   ] = useState("");
 
   const stemmekretsId = stemmekrets ? getIdFromEntity(stemmekrets) : "";
+
+  const stemmekretserGrenserUrl = "/v1/stemmekretser/{id}/grenser";
+
+  const { data: stemmekretsSammenslaaingsGrenser } = useNibasApi(
+    stemmekretserGrenserUrl,
+    {
+      id: stemmekrets ? stemmekrets.id.lokalid.value : "",
+      gyldighetsdato: stemmekrets?.id.gyldighetsdato,
+    }
+  );
 
   const fromFormToRequest = (
     stemmekretsRespons: StemmekretsResponse,
