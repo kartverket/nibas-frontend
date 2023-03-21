@@ -1,15 +1,11 @@
 import { GrunnkretsResponse, StemmekretsResponse } from "../../../types/api";
 
-export type Endring<T> = {
+export type Endring = {
   fra: string;
   til: string;
-  kretsEndret: T;
 };
 
-export type StemmekretsEndring = Endring<StemmekretsResponse>;
-export type GrunnkretsEndring = Endring<GrunnkretsResponse>;
-
-export type StemmekretsEndringstype =
+export type StemmekretsMetadataEndringstype =
   | "stemmekretsnavn"
   | "stemmekretsnummer"
   | "tellekretsnavn"
@@ -18,25 +14,48 @@ export type StemmekretsEndringstype =
 
 export type GrunnkretsEndringstype = "navn" | "grunnkretsnummer";
 
+export type StemmekretsMetadataEndring = {
+  kretsEndret: StemmekretsResponse;
+  stemmekretsnavn: Endring | null | undefined;
+  stemmekretsnummer: Endring | null | undefined;
+  tellekretsnummer: Endring | null | undefined;
+  tellekretsnavn: Endring | null | undefined;
+  valgdistriktsnummer: Endring | null | undefined;
+};
+
+export type GrunnkretsMetadataEndring = {
+  kretsEndret: GrunnkretsResponse;
+  navn: Endring | null | undefined;
+  grunnkretsnummer: Endring | null | undefined;
+};
+
 export type Stemmekretsendringer = {
   kommune: {
     id: string;
+    nummer: string;
     navn: string;
   };
-  stemmekretsnavn: StemmekretsEndring[];
-  stemmekretsnummer: StemmekretsEndring[];
-  tellekretsnummer: StemmekretsEndring[];
-  tellekretsnavn: StemmekretsEndring[];
-  valgdistriktsnummer: StemmekretsEndring[];
+  metadataendringer: StemmekretsMetadataEndring[];
   grensejusteringer: StemmekretsResponse[];
+  sammenslaaing: StemmekretsSammenslaaingEndring | null;
 };
 
 export type Grunnkretsendringer = {
   kommune: {
     id: string;
+    nummer: string;
     navn: string;
   };
-  navn: GrunnkretsEndring[];
-  grunnkretsnummer: GrunnkretsEndring[];
+  metadataendringer: GrunnkretsMetadataEndring[];
   grensejusteringer: GrunnkretsResponse[];
+};
+
+export type StemmekretsSammenslaaingEndring = {
+  viderefoertKrets: StemmekretsResponse;
+  nyttNavn: string;
+  nyttNummer: string;
+  gamleKretser: {
+    navn: string;
+    nummer: string;
+  }[];
 };

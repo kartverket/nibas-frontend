@@ -1,13 +1,18 @@
 import { forwardRef, TextareaHTMLAttributes } from "react";
 import styled from "styled-components";
+import Label from "../Label";
 
-type Props = TextareaHTMLAttributes<HTMLTextAreaElement>;
+type Props = { label?: string } & TextareaHTMLAttributes<HTMLTextAreaElement>;
 
 const Textarea = forwardRef<HTMLTextAreaElement, Props>(function Textarea(
   props,
   ref
 ) {
-  return <StyledTextarea {...props} ref={ref} />;
+  return (
+    <Label label={props.label ?? ""}>
+      <StyledTextarea {...props} ref={ref} />
+    </Label>
+  );
 });
 
 const StyledTextarea = styled.textarea`

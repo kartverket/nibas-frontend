@@ -10,10 +10,8 @@ import {
   StemmekretsResponse,
   StemmekretsSammenslaaingsendringRequest,
 } from "types/api";
-import { BlockLabel } from "../metadataComponents";
-import { Section, ContrastSection, InputsWrapper } from "./components";
+import { Section, ContrastSection } from "./components";
 import { getIdFromEntity } from "utils/api";
-
 import CreateUtkastModal, {
   CreateUtkastCallbackArgument,
 } from "./CreateUtkastModal";
@@ -154,24 +152,22 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
           </Stemmekretsnavn>
           ?
         </p>
-        <Dropdown>
-          <label>{t("stemmekrets.Navn- eller nummer på stemmekrets")}</label>
-          <Select
-            onChange={(e) =>
-              setStemmekretsNummerTilSammenslaaing(e.currentTarget.value)
-            }
-            defaultValue={"default"}
-          >
-            <option value={"default"} disabled>
-              {t("Velg stemmekretsen du vil slå sammen med")}
-            </option>
-            {alleStemmekretser.map((s) => (
-              <option key={s.nummer} value={s.nummer}>{`${s.nummer} - ${
-                s.navn.charAt(0).toUpperCase() + s.navn.toLowerCase().slice(1)
-              }`}</option>
-            ))}
-          </Select>
-        </Dropdown>
+        <StemmekretsSelect
+          onChange={(e) =>
+            setStemmekretsNummerTilSammenslaaing(e.currentTarget.value)
+          }
+          defaultValue={"default"}
+          label={t("stemmekrets.Navn- eller nummer på stemmekrets")}
+        >
+          <option value={"default"} disabled>
+            {t("Velg stemmekretsen du vil slå sammen med")}
+          </option>
+          {alleStemmekretser.map((s) => (
+            <option key={s.nummer} value={s.nummer}>{`${s.nummer} - ${
+              s.navn.charAt(0).toUpperCase() + s.navn.toLowerCase().slice(1)
+            }`}</option>
+          ))}
+        </StemmekretsSelect>
       </Section>
       <ContrastSection>
         <SectionHeading>
@@ -179,20 +175,16 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
         </SectionHeading>
         <br />
         <InputsWrapper>
-          <BlockLabel>
-            {t("stemmekrets.Stemmekretsnavn")}
-            <Input
-              value={stemmekretsnavn}
-              onChange={(e) => setStemmekretsnavn(e.currentTarget.value)}
-            />
-          </BlockLabel>
-          <BlockLabel>
-            {t("stemmekrets.Stemmekretsnummer")}
-            <Input
-              value={stemmekretsnummer}
-              onChange={(e) => setStemmekretsnummer(e.currentTarget.value)}
-            />
-          </BlockLabel>
+          <Input
+            label={t("stemmekrets.Stemmekretsnavn")}
+            value={stemmekretsnavn}
+            onChange={(e) => setStemmekretsnavn(e.currentTarget.value)}
+          />
+          <Input
+            label={t("stemmekrets.Stemmekretsnummer")}
+            value={stemmekretsnummer}
+            onChange={(e) => setStemmekretsnummer(e.currentTarget.value)}
+          />
         </InputsWrapper>
       </ContrastSection>
       <Section>
@@ -221,19 +213,12 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   );
 };
 
-const Dropdown = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+const StemmekretsSelect = styled(Select)`
   max-width: 400px;
   margin-top: 20px;
 
   select {
     margin: 0;
-  }
-
-  & > span {
-    font-size: 12px;
   }
 `;
 
@@ -249,6 +234,24 @@ const Buttons = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 20px;
+`;
+
+const InputsWrapper = styled.div`
+  display: flex;
+  gap: 16px;
+  width: 80%;
+
+  > * {
+    width: 100%;
+
+    &:first-child {
+      flex: 1;
+    }
+
+    &:last-child {
+      flex: 3;
+    }
+  }
 `;
 
 export default MergeTab;

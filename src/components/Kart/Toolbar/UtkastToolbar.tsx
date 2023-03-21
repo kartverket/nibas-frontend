@@ -9,7 +9,6 @@ import { translateKeysByEndringsType } from "contexts/UtkastContext/constants";
 import { historyToUtkastOperations } from "contexts/UtkastContext/utils";
 import { createUtkast as createApiUtkast } from "api/utkast";
 import Input from "components/form/Input";
-import Label from "components/form/Label";
 import Select from "components/form/Select";
 import Button from "components/form/Button";
 import Heading from "components/typography/Heading";
@@ -54,13 +53,6 @@ const UtkastFrame = styled(Frame)`
 
     clip-path: polygon(0 0, 100% 50%, 0 100%);
   }
-`;
-
-const BlockLabel = styled(Label)`
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  color: var(--gray_dark);
 `;
 
 const Buttons = styled.div`
@@ -129,30 +121,26 @@ const UtkastToolbar = ({
       <Heading size="xs" tag="h3">
         {t("utkast.Opprett et nytt utkast")}
       </Heading>
-      <BlockLabel>
-        {t("utkast.Navn på utkast")}
-        <Input
-          placeholder={t("f.eks. Endring av stemmekrets i Froland")}
-          value={utkastName}
-          onChange={(e) => setUtkastName(e.target.value)}
-        />
-      </BlockLabel>
-      <BlockLabel>
-        {t("utkast.Endringstype")}
-        <Select
-          value={utkastType}
-          onChange={(e) => setUtkastType(e.target.value)}
-        >
-          <option value="" disabled>
-            {t("utkast.Velg en endringstype fra listen")}
+      <Input
+        label={t("utkast.Navn på utkast")}
+        placeholder={t("f.eks. Endring av stemmekrets i Froland")}
+        value={utkastName}
+        onChange={(e) => setUtkastName(e.target.value)}
+      />
+      <Select
+        label={t("utkast.Endringstype")}
+        value={utkastType}
+        onChange={(e) => setUtkastType(e.target.value)}
+      >
+        <option value="" disabled>
+          {t("utkast.Velg en endringstype fra listen")}
+        </option>
+        {Object.keys(translateKeysByEndringsType).map((type) => (
+          <option key={type} value={type}>
+            {t(translateKeysByEndringsType[type] as Translation)}
           </option>
-          {Object.keys(translateKeysByEndringsType).map((type) => (
-            <option key={type} value={type}>
-              {t(translateKeysByEndringsType[type] as Translation)}
-            </option>
-          ))}
-        </Select>
-      </BlockLabel>
+        ))}
+      </Select>
       <Buttons>
         <Button onClick={() => setCreateUtkastOpen(false)} variant="tertiary">
           {t("action.Avbryt")}

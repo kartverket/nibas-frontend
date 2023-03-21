@@ -1,10 +1,11 @@
 import { Modal, ModalContent } from "components/Modal";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { EndringsloggStemmekretsendringer } from "components/Endringslogg/EndringsloggStemmekretsendringer";
 import { useUtkastEndringer } from "./hooks/useUtkastEndringer";
 import { EndringsloggGrunnkretsendringer } from "./EndringsloggGrunnkretsendringer";
 import Loader from "components/Loader";
+import { EndringsloggStemmekretsendringer } from "./EndringsloggStemmekretsendringer";
+import CloseButton from "../form/Button/CloseButton";
 
 type EndringsloggModalProps = {
   isOpen: boolean;
@@ -19,37 +20,43 @@ export const EndringsloggModal = ({
   const { harEndringer, laster, stemmekretsendringer, grunnkretsendringer } =
     useUtkastEndringer();
 
-  // TODO: Blir endret i PR fra Anders
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={onClose}
-      modalElement={ModalElement}
+      modalElement={ModalWrapper}
       aria={{
         labelledby: "utkast-endringer-modal-header",
         describedby: "utkast-endringer-modal-description",
       }}
     >
-      <ModalHeader id="utkast-endringer-modal-header">
-        {t("utkast.endringslogg.header")}
+      <ModalHeader>
+        <ModalTittel id="utkast-endringer-modal-header">
+          {t("utkast.endringslogg.header")}
+        </ModalTittel>
+        <CloseButton onClick={onClose} />
       </ModalHeader>
 
-      {laster && <SentrertSpinner />}
+      {laster && !stemmekretsendringer && !grunnkretsendringer && (
+        <SentrertSpinner />
+      )}
       {!harEndringer && <IngenEndringerMelding />}
 
-      {stemmekretsendringer?.map((endringer) => (
-        <EndringsloggStemmekretsendringer
-          endringer={endringer}
-          key={endringer.kommune.id}
-        />
-      ))}
+      <ScrollableContent>
+        {stemmekretsendringer?.map((endringer) => (
+          <EndringsloggStemmekretsendringer
+            endringer={endringer}
+            key={endringer.kommune.id}
+          />
+        ))}
 
-      {grunnkretsendringer?.map((endringer) => (
-        <EndringsloggGrunnkretsendringer
-          endringer={endringer}
-          key={endringer.kommune.id}
-        />
-      ))}
+        {grunnkretsendringer?.map((endringer) => (
+          <EndringsloggGrunnkretsendringer
+            endringer={endringer}
+            key={endringer.kommune.id}
+          />
+        ))}
+      </ScrollableContent>
     </Modal>
   );
 };
@@ -60,9 +67,8 @@ const IngenEndringerMelding = () => {
   return <div>{t("utkast.endringslogg.ingenEndringer")}</div>;
 };
 
-const ModalElement = styled(ModalContent)`
-  min-width: 800px;
-  max-width: 1000px;
+const ModalWrapper = styled(ModalContent)`
+  max-width: 700px;
   padding: 40px;
   border-radius: 15px;
   background: var(--white);
@@ -73,7 +79,19 @@ const SentrertSpinner = styled(Loader)`
   margin: 40px auto;
 `;
 
-const ModalHeader = styled.h2`
+const ScrollableContent = styled.section`
+  max-height: 70vh;
+  overflow-y: auto;
+`;
+
+const ModalTittel = styled.h2`
   margin: 0;
   font-size: 18px;
+`;
+
+const ModalHeader = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 `;

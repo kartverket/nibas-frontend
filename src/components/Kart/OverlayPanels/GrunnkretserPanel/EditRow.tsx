@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import Input from "components/form/Input";
-import Label from "components/form/Label";
 import { GrunnkretsEntry, useToolbarSaving } from "contexts/ToolbarContext";
 import useKretsToolbarSync from "contexts/ToolbarContext/useToolbarFormSync";
 import useNibasApi from "hooks/useNibasApi";
@@ -115,16 +114,16 @@ const EditRow = ({ grunnkrets, kommuneId }: Props) => {
   return (
     <AccordionRow>
       <td>
-        <BlockLabel>
-          {t("grunnkrets.Grunnkretsnavn")}
-          <Input {...register("navn", registerOptions)} />
-        </BlockLabel>
+        <Input
+          label={t("grunnkrets.Grunnkretsnavn")}
+          {...register("navn", registerOptions)}
+        />
       </td>
       <td>
-        <BlockLabel>
-          {t("grunnkrets.Grunnkretsnummer")}
-          <Input {...register("grunnkretsnummer", registerOptions)} />
-        </BlockLabel>
+        <Input
+          label={t("grunnkrets.Grunnkretsnummer")}
+          {...register("grunnkretsnummer", registerOptions)}
+        />
       </td>
       <td colSpan={2} />
     </AccordionRow>
@@ -135,18 +134,8 @@ const AccordionRow = styled.tr`
   background-color: var(--gray_light);
 
   td {
-    padding: 16px;
+    padding: 16px 16px 32px;
   }
-`;
-
-const BlockLabel = styled(Label)`
-  color: var(--gray_dark);
-
-  input {
-    width: 100%;
-  }
-
-  margin-bottom: 16px;
 `;
 
 export default EditRow;

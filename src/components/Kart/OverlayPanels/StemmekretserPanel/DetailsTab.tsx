@@ -8,7 +8,7 @@ import { StemmekretsRequest, StemmekretsResponse } from "types/api";
 import useTimer from "hooks/useTimer";
 import { getIdFromEntity } from "utils/api";
 import styled from "styled-components";
-import { BlockLabel, Section } from "./components";
+import { Section } from "./components";
 import { getRepresentasjonspunktId } from "utils/map/source";
 import { updateEditFeatureText } from "utils/map/layerStyles";
 
@@ -120,46 +120,31 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
 
   return (
     <DetailsSection>
-      <BlockLabel>
-        {t("stemmekrets.Stemmekretsnummer")}
-        <Input {...register("stemmekretsnummer", formOptions)} />
-      </BlockLabel>
-
-      <BlockLabel>
-        {t("tabell.Stemmekretsnavn")}
-        <Input {...register("stemmekretsnavn", formOptions)} />
-      </BlockLabel>
-
-      <BlockLabel>
-        {t("stemmekrets.Tellekretsnavn")}
-        <Input {...register("tellekretsnavn", formOptions)} />
-      </BlockLabel>
-
-      <BlockLabel>
-        {t("stemmekrets.Tellekretsnummer")}
-        <Input {...register("tellekretsnummer", formOptions)} />
-      </BlockLabel>
+      <Input
+        label={t("stemmekrets.Stemmekretsnummer")}
+        {...register("stemmekretsnummer", formOptions)}
+      />
+      <Input
+        label={t("tabell.Stemmekretsnavn")}
+        {...register("stemmekretsnavn", formOptions)}
+      />
+      <Input
+        label={t("stemmekrets.Tellekretsnummer")}
+        {...register("tellekretsnummer", formOptions)}
+      />
+      <Input
+        label={t("stemmekrets.Tellekretsnavn")}
+        {...register("tellekretsnavn", formOptions)}
+      />
     </DetailsSection>
   );
 };
 
 const DetailsSection = styled(Section)`
-  display: flex;
-  gap: 16px;
+  display: grid;
+  grid-template-columns: 185px 350px;
+  gap: 30px 12px;
   color: var(--gray_dark);
-
-  ${BlockLabel}:nth-child(1) {
-    width: 165px;
-  }
-  ${BlockLabel}:nth-child(2) {
-    width: 160px;
-  }
-  ${BlockLabel}:nth-child(3) {
-    width: 130px;
-  }
-  ${BlockLabel}:nth-child(4) {
-    width: 150px;
-  }
 `;
 
 export default DetailsTab;

@@ -6,7 +6,7 @@ import { ObjectEvent } from "ol/Object";
 import { Control, useFieldArray, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { BlockLabel, Container, Part } from "../metadataComponents";
+import { Container, Part } from "../metadataComponents";
 import { addMetadataEntryFromFeature } from "../utils";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
@@ -136,16 +136,14 @@ const FieldArray = ({
         </FieldWrapper>
       ))}
       <div>
-        <BlockLabel>
-          {t("action.Ny {{ item }}", { item: "URL" })}
-          <Input
-            value={newLenke}
-            onChange={(e) => setNewLenke(e.target.value)}
-            placeholder="URL"
-            onKeyPress={onKeyPress}
-            disabled={disabled}
-          />
-        </BlockLabel>
+        <Input
+          label={t("action.Ny {{ item }}", { item: "URL" })}
+          value={newLenke}
+          onChange={(e) => setNewLenke(e.target.value)}
+          placeholder="URL"
+          onKeyPress={onKeyPress}
+          disabled={disabled}
+        />
         <Button onClick={onAdd} disabled={!newLenke} icon={<Icon icon="add" />}>
           {t("action.Legg til")}
         </Button>
@@ -211,43 +209,35 @@ const GrenseMetadataReferanser = ({ feature }: Props) => {
         <DokRefWrapper key={field.id}>
           <Container>
             <Part>
-              <BlockLabel>
-                {t("metadata.Rettskildetittel")}
-                <Input
-                  {...register(`dokrefs.${i}.rettskildeTittel`, inputOptions)}
-                />
-              </BlockLabel>
-              <BlockLabel>
-                {t("metadata.Rettskilde-ID")}
-                <Input
-                  {...register(`dokrefs.${i}.rettskildeId`, inputOptions)}
-                />
-              </BlockLabel>
+              <Input
+                label={t("metadata.Rettskildetittel")}
+                {...register(`dokrefs.${i}.rettskildeTittel`, inputOptions)}
+              />
+              <Input
+                label={t("metadata.Rettskilde-ID")}
+                {...register(`dokrefs.${i}.rettskildeId`, inputOptions)}
+              />
             </Part>
             <Part>
-              <BlockLabel>
-                {t("metadata.Fastsettingsmyndighet")}
-                <Input
-                  {...register(
-                    `dokrefs.${i}.fastsettingsmyndighet`,
-                    inputOptions
-                  )}
-                />
-              </BlockLabel>
-              <BlockLabel>
-                {t("metadata.Fastsettingsdato")}
-                <Input
-                  {...register(`dokrefs.${i}.fastsettingsdato`, inputOptions)}
-                  type="date"
-                  role="textbox"
-                />
-              </BlockLabel>
+              <Input
+                label={t("metadata.Fastsettingsmyndighet")}
+                {...register(
+                  `dokrefs.${i}.fastsettingsmyndighet`,
+                  inputOptions
+                )}
+              />
+              <Input
+                label={t("metadata.Fastsettingsdato")}
+                {...register(`dokrefs.${i}.fastsettingsdato`, inputOptions)}
+                type="date"
+                role="textbox"
+              />
             </Part>
             <Part>
-              <BlockLabel>
-                {t("metadata.Hjemmel")}
-                <Input {...register(`dokrefs.${i}.hjemmel`, inputOptions)} />
-              </BlockLabel>
+              <Input
+                label={t("metadata.Hjemmel")}
+                {...register(`dokrefs.${i}.hjemmel`, inputOptions)}
+              />
             </Part>
           </Container>
           <FieldArray

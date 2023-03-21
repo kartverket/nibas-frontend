@@ -11,29 +11,3 @@ export const ContrastSection = styled(Section)`
   border-left: none;
   border-right: none;
 `;
-
-export const BlockLabel = styled.label`
-  input {
-    width: 100%;
-  }
-
-  margin-bottom: 16px;
-`;
-
-export const InputsWrapper = styled.div`
-  display: flex;
-  gap: 16px;
-  width: 80%;
-
-  > ${BlockLabel} {
-    width: 100%;
-
-    &:first-child {
-      flex: 1;
-    }
-
-    &:last-child {
-      flex: 3;
-    }
-  }
-`;
