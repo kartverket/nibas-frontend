@@ -11,6 +11,7 @@ import styled from "styled-components";
 import { Section } from "./components";
 import { getRepresentasjonspunktId } from "utils/map/source";
 import { updateEditFeatureText } from "utils/map/layerStyles";
+import { numberValidation, stringValidation } from "utils/validation";
 
 type Inputs = {
   stemmekretsnavn: string;
@@ -122,19 +123,75 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
     <DetailsSection>
       <Input
         label={t("stemmekrets.Stemmekretsnummer")}
-        {...register("stemmekretsnummer", formOptions)}
+        {...register("stemmekretsnummer", { ...formOptions })}
+        validationError={[
+          {
+            message: "Stemmekretsnummer kan ikke være tomt",
+            showError: stringValidation.isEmpty(getValues().stemmekretsnummer),
+          },
+          {
+            message: "Stemmekretsnummer må kun inneholde siffer (maks 4)",
+            showError:
+              stringValidation.isInteger(getValues().stemmekretsnummer) &&
+              parseInt(getValues().stemmekretsnummer) <= 9999,
+          },
+          {
+            message: "Stemmekretsnummer kan ikke være 0 eller et negativt tall",
+            showError: !numberValidation.isPositive(
+              parseInt(getValues().stemmekretsnummer)
+            ),
+          },
+          {
+            message: "Stemmekretsnummer må være unik for den bestemte kommunen",
+            showError: false, // TODO: krever egen håndtering
+          },
+        ]}
       />
       <Input
         label={t("tabell.Stemmekretsnavn")}
         {...register("stemmekretsnavn", formOptions)}
+        validationError={[
+          {
+            message: "Stemmekretsnavn kan ikke være tomt",
+            showError: stringValidation.isEmpty(getValues().stemmekretsnavn),
+          },
+        ]}
       />
       <Input
         label={t("stemmekrets.Tellekretsnummer")}
         {...register("tellekretsnummer", formOptions)}
+        validationError={[
+          {
+            message:
+              "Må ha både navn og nummer for tellekrets, eller ingen av delene",
+            showError:
+              !stringValidation.isEmpty(getValues().tellekretsnummer) &&
+              stringValidation.isEmpty(getValues().tellekretsnavn),
+          },
+          {
+            message: "Tellekretsnummer må være et tall",
+            showError: stringValidation.isInteger(getValues().tellekretsnummer),
+          },
+          {
+            message: "Tellekretsnummer kan ikke være 0 eller et negativt tall",
+            showError: !numberValidation.isPositive(
+              parseInt(getValues().tellekretsnummer)
+            ),
+          },
+        ]}
       />
       <Input
         label={t("stemmekrets.Tellekretsnavn")}
         {...register("tellekretsnavn", formOptions)}
+        validationError={[
+          {
+            message:
+              "Må ha både navn og nummer for tellekrets, eller ingen av delene",
+            showError:
+              stringValidation.isEmpty(getValues().tellekretsnummer) &&
+              !stringValidation.isEmpty(getValues().tellekretsnavn),
+          },
+        ]}
       />
     </DetailsSection>
   );
