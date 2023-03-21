@@ -6,11 +6,11 @@ import Label from "../Label";
 type Props = { label?: string } & SelectHTMLAttributes<HTMLSelectElement>;
 
 const Select = forwardRef<HTMLSelectElement, Props>(function Select(
-  props,
+  { className, ...props },
   ref
 ) {
   return (
-    <Label label={props.label ?? ""}>
+    <Label className={className} label={props.label ?? ""}>
       <SelectWrapper>
         <SelectInput {...props} ref={ref}></SelectInput>
         <SelectCaret />

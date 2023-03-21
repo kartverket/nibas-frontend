@@ -115,13 +115,24 @@
     "Tellekretsnavn": "__STRING_NOT_TRANSLATED__",
     "Tellekretsnummer": "__STRING_NOT_TRANSLATED__",
     "Stemmekrets": "__STRING_NOT_TRANSLATED__",
-    "Detaljer": "__STRING_NOT_TRANSLATED__",
-    "Slå sammen": "__STRING_NOT_TRANSLATED__",
-    "Slå sammen stemmekretser": "__STRING_NOT_TRANSLATED__",
-    "Hvilken stemmekrets ønsker du å slå sammen med": "__STRING_NOT_TRANSLATED__",
-    "Navn- eller nummer på stemmekrets": "__STRING_NOT_TRANSLATED__",
-    "Detaljer om den sammenslåtte kretsen": "__STRING_NOT_TRANSLATED__",
-    "Stemmekretsnavn": "__STRING_NOT_TRANSLATED__",
+    "tabs": {
+      "detaljer": "__STRING_NOT_TRANSLATED__",
+      "slaa-sammen": "__STRING_NOT_TRANSLATED__"
+    },
+    "sammenslaaing": {
+      "tittel": "__STRING_NOT_TRANSLATED__",
+      "undertittel": "__STRING_NOT_TRANSLATED__",
+      "label": "__STRING_NOT_TRANSLATED__",
+      "detaljer-tittel": "__STRING_NOT_TRANSLATED__",
+      "detaljer-label-stemmekretsnummer": "__STRING_NOT_TRANSLATED__",
+      "detaljer-label-stemmekretsnavn": "__STRING_NOT_TRANSLATED__",
+      "actions": {
+        "velg": "__STRING_NOT_TRANSLATED__",
+        "slaa-sammen": "__STRING_NOT_TRANSLATED__",
+        "avbryt": "__STRING_NOT_TRANSLATED__",
+        "legg-til-flere": "__STRING_NOT_TRANSLATED__"
+      }
+    },
     "utkast-sammenslaaing-alert": {
       "tittel": "__STRING_NOT_TRANSLATED__",
       "tekst": "__STRING_NOT_TRANSLATED__"
