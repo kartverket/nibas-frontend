@@ -6,12 +6,13 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import {
+  FeatureCollection,
   StemmekretsRef,
   StemmekretsResponse,
   StemmekretsSammenslaaingsendringRequest,
 } from "types/api";
 import { Section, ContrastSection } from "./components";
-import { getIdFromEntity } from "utils/api";
+import { fetcherWithToken, getIdFromEntity } from "utils/api";
 import CreateUtkastModal, {
   CreateUtkastCallbackArgument,
 } from "./CreateUtkastModal";
@@ -20,7 +21,7 @@ import UtkastToast from "components/Kart/Toolbar/UtkastToast";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import useKretsgrenser from "hooks/inndelinger/useKretsgrenser";
 import { useToolbar } from "contexts/ToolbarContext";
-import useNibasApi from "hooks/useNibasApi";
+import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 
 type Props = {
   stemmekrets: StemmekretsResponse | undefined;
@@ -33,6 +34,7 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
 
   const { utkast, updateUtkast } = useUtkast();
   const { setError } = useErrorHandling();
+  const { tokenHolderFunc } = useAuthenticationFlow();
 
   const { addKretserToLayer, removeKretserFromLayer } = useKretsgrenser(
     stemmekrets ? stemmekrets.kommunenummer.id : "",
@@ -58,15 +60,30 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
 
   const stemmekretsId = stemmekrets ? getIdFromEntity(stemmekrets) : "";
 
-  const stemmekretserGrenserUrl = "/v1/stemmekretser/{id}/grenser";
+  const stemmekretsgrenserFetcher = async (
+    stemmekretsIds: string[],
+    token: string | undefined
+  ) => {
+    const promises: Promise<FeatureCollection>[] = stemmekretsIds.map(
+      async (kretsId) =>
+        fetcherWithToken(`/v1/stemmekretser/${kretsId}/grenser`, token)
+    );
 
-  const { data: stemmekretsSammenslaaingsGrenser } = useNibasApi(
-    stemmekretserGrenserUrl,
-    {
-      id: stemmekrets ? stemmekrets.id.lokalid.value : "",
-      gyldighetsdato: stemmekrets?.id.gyldighetsdato,
-    }
-  );
+    const settledPromises = await Promise.allSettled(promises);
+
+    const features = settledPromises.reduce((acc, promise) => {
+      if (promise.status === "fulfilled") {
+        acc.push(promise.value);
+      }
+
+      return acc;
+    }, [] as FeatureCollection[]);
+
+    const featureIds = features
+      .flatMap((feature) => feature.features)
+      .map((feature) => feature.id);
+    return featureIds;
+  };
 
   const fromFormToRequest = (
     stemmekretsRespons: StemmekretsResponse,
@@ -90,6 +107,12 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
     return alleStemmekretser.filter((krets) => krets.nummer === nummer);
   };
 
+  const getOverlappingStemmekretsFeatureIds = (featureIds: string[]) => {
+    return featureIds.filter(
+      (featureId, index) => featureIds.indexOf(featureId) !== index
+    );
+  };
+
   const mergeStemmekrets = (nyttUtkast: CreateUtkastCallbackArgument) => {
     promptUtkastJustCreated();
     const stemmekretsTilSammenslaaingListe = getStemmekretsByNummer(
@@ -110,6 +133,30 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
         },
       };
       updateUtkast(nyttUtkast.id, updateUtkastRequest);
+      const sammenslaaingsStemmekretsIder =
+        stemmekretsTilSammenslaaingListe.map(
+          (stemmekretsRef) => stemmekretsRef.id.lokalid.value
+        );
+      sammenslaaingsStemmekretsIder.push(stemmekrets.id.lokalid.value);
+
+      const promiseArray = stemmekretsgrenserFetcher(
+        sammenslaaingsStemmekretsIder,
+        tokenHolderFunc()?.token
+      );
+      promiseArray.then((resolvedValue) => {
+        const stemmekretsFeatureIds: string[] = resolvedValue
+          ? resolvedValue.filter((x) => x !== undefined).map((x) => String(x))
+          : [];
+        const overlappingFeatureIds = getOverlappingStemmekretsFeatureIds(
+          stemmekretsFeatureIds
+        );
+
+        setAndSaveUtkastFeatures(
+          overlappingFeatureIds.length > 0
+            ? overlappingFeatureIds
+            : stemmekretsFeatureIds
+        );
+      });
     }
   };
 
