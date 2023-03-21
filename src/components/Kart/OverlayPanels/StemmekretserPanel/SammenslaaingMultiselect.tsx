@@ -48,7 +48,7 @@ export const SammenslaaingMultiselect = ({
             }
             onRemove={() => removeStemmekretsTilSammenslaaing(index)}
             stemmekretser={alleStemmekretser}
-            showRemoveButton={index < value.length - 1}
+            showRemoveButton={value.length > 1}
           />
         ))}
         <LeggTilFlerButton onClick={() => onChange([...value, ""])}>
