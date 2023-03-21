@@ -19,7 +19,6 @@ import CreateUtkastModal, {
 import { useUtkast } from "contexts/UtkastContext";
 import UtkastToast from "components/Kart/Toolbar/UtkastToast";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
-import useKretsgrenser from "hooks/inndelinger/useKretsgrenser";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 
@@ -35,13 +34,7 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   const { utkast, updateUtkast } = useUtkast();
   const { setError } = useErrorHandling();
   const { tokenHolderFunc } = useAuthenticationFlow();
-
-  const { addKretserToLayer, removeKretserFromLayer } = useKretsgrenser(
-    stemmekrets ? stemmekrets.kommunenummer.id : "",
-    "stemmekrets"
-  );
-
-  const { setAndSaveUtkastFeatures } = useToolbar();
+  const { setAndSaveSammenslaaingsFeatures } = useToolbar();
 
   const [isCreateUtkastModalOpen, setIsCreateUtkastModalOpen] = useState(false);
   const [utkastJustCreated, setUtkastJustCreated] = useState(false);
@@ -151,10 +144,9 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
           stemmekretsFeatureIds
         );
 
-        setAndSaveUtkastFeatures(
-          overlappingFeatureIds.length > 0
-            ? overlappingFeatureIds
-            : stemmekretsFeatureIds
+        setAndSaveSammenslaaingsFeatures(
+          stemmekretsFeatureIds,
+          overlappingFeatureIds
         );
       });
     }

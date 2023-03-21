@@ -25,12 +25,12 @@ const getPointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
   return new MultiPoint(coordinates ?? []);
 };
 
-const lineAndPointStyles = (color: string, dashed = false) => [
+const lineAndPointStyles = (color: string, dashed = false, thick = false) => [
   new Style({
     stroke: new Stroke({
       color,
       lineDash: dashed ? [4, 6] : [],
-      width: 2,
+      width: thick ? 5 : 2,
     }),
   }),
   new Style({
@@ -46,6 +46,12 @@ const lineAndPointStyles = (color: string, dashed = false) => [
 
 export const editStyles = lineAndPointStyles("#EB48FB");
 export const dirtyStyles = lineAndPointStyles("#000000", true);
+export const dirtySammenslaaingStyles = lineAndPointStyles("#FFBF00");
+export const dirtyOverlappingSammenslaaingStyles = lineAndPointStyles(
+  "#8A6C00",
+  true,
+  true
+);
 export const selectStyles = lineAndPointStyles("#000000");
 export const grensetypeStyles: Record<GrenseId, Style[]> = {
   fylke: lineAndPointStyles("#745FE8"),

@@ -1,6 +1,11 @@
 import { editSource } from "hooks/layers/constants";
 import { useState } from "react";
-import { dirtyStyles, editStyles } from "utils/map/layerStyles";
+import {
+  dirtyOverlappingSammenslaaingStyles,
+  dirtySammenslaaingStyles,
+  dirtyStyles,
+  editStyles,
+} from "utils/map/layerStyles";
 
 // TODO: bør kanskje tydeliggjøres at denne bare bør brukes i ToolbarContext, kanskje legg den inn i den filen
 const useDirtyStyles = () => {
@@ -8,6 +13,14 @@ const useDirtyStyles = () => {
   const [savedDirtyFeatureIds, setSavedDirtyFeaturesIds] = useState<string[]>(
     []
   );
+
+  const [savedDirtySammenslaaingsIds, setSavedDirtySammenslaaingsIds] =
+    useState<string[]>([]);
+
+  const [
+    savedOverlappingDirtySammenslaaingsIds,
+    setSavedOverlappingDirtySammenslaaingsIds,
+  ] = useState<string[]>([]);
 
   const setEditFeatures = (features: string[]) => {
     for (const featureId of features) {
@@ -39,6 +52,8 @@ const useDirtyStyles = () => {
     }
     setSavedDirtyFeaturesIds([]);
     setDirtyFeatureIds([]);
+    setSavedDirtySammenslaaingsIds([]);
+    setSavedOverlappingDirtySammenslaaingsIds([]);
   };
 
   const saveDirtyFeatureIds = () => {
@@ -53,6 +68,29 @@ const useDirtyStyles = () => {
     setSavedDirtyFeaturesIds([...savedDirtyFeatureIds, ...features]);
   };
 
+  const setAndSaveSammenslaaingsFeatures = (
+    stemmekretsFeatureIds: string[],
+    overlappingStemmekretsFeatureIds: string[]
+  ) => {
+    for (const featureId of stemmekretsFeatureIds) {
+      editSource.getFeatureById(featureId)?.setStyle(dirtySammenslaaingStyles);
+    }
+    for (const featureId of overlappingStemmekretsFeatureIds) {
+      editSource
+        .getFeatureById(featureId)
+        ?.setStyle(dirtyOverlappingSammenslaaingStyles);
+    }
+
+    setSavedDirtySammenslaaingsIds([
+      ...savedDirtySammenslaaingsIds,
+      ...stemmekretsFeatureIds,
+    ]);
+    setSavedOverlappingDirtySammenslaaingsIds([
+      ...savedDirtySammenslaaingsIds,
+      ...overlappingStemmekretsFeatureIds,
+    ]);
+  };
+
   return {
     dirtyFeatureIds,
     setDirtyFeatures,
@@ -61,6 +99,7 @@ const useDirtyStyles = () => {
     savedDirtyFeatureIds,
     clearSavedDirtyFeatureIds,
     setAndSaveUtkastFeatures,
+    setAndSaveSammenslaaingsFeatures,
   };
 };
 
