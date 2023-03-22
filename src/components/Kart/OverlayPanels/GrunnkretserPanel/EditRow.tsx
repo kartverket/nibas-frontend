@@ -115,14 +115,14 @@ const EditRow = ({ grunnkrets, kommuneId }: Props) => {
     <AccordionRow>
       <td>
         <Input
-          label={t("grunnkrets.Grunnkretsnavn")}
-          {...register("navn", registerOptions)}
+          label={t("grunnkrets.Grunnkretsnummer")}
+          {...register("grunnkretsnummer", registerOptions)}
         />
       </td>
       <td>
         <Input
-          label={t("grunnkrets.Grunnkretsnummer")}
-          {...register("grunnkretsnummer", registerOptions)}
+          label={t("grunnkrets.Grunnkretsnavn")}
+          {...register("navn", registerOptions)}
         />
       </td>
       <td colSpan={2} />
