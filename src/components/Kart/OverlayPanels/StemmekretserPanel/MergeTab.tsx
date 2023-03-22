@@ -21,6 +21,7 @@ import UtkastToast from "components/Kart/Toolbar/UtkastToast";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
+import { stemmekretsgrenserFetcher } from "api/stemmekrets";
 
 type Props = {
   stemmekrets: StemmekretsResponse | undefined;
@@ -52,31 +53,6 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   ] = useState("");
 
   const stemmekretsId = stemmekrets ? getIdFromEntity(stemmekrets) : "";
-
-  const stemmekretsgrenserFetcher = async (
-    stemmekretsIds: string[],
-    token: string | undefined
-  ) => {
-    const promises: Promise<FeatureCollection>[] = stemmekretsIds.map(
-      async (kretsId) =>
-        fetcherWithToken(`/v1/stemmekretser/${kretsId}/grenser`, token)
-    );
-
-    const settledPromises = await Promise.allSettled(promises);
-
-    const features = settledPromises.reduce((acc, promise) => {
-      if (promise.status === "fulfilled") {
-        acc.push(promise.value);
-      }
-
-      return acc;
-    }, [] as FeatureCollection[]);
-
-    const featureIds = features
-      .flatMap((feature) => feature.features)
-      .map((feature) => feature.id);
-    return featureIds;
-  };
 
   const fromFormToRequest = (
     stemmekretsRespons: StemmekretsResponse,

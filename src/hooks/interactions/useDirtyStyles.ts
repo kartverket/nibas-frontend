@@ -14,14 +14,6 @@ const useDirtyStyles = () => {
     []
   );
 
-  const [savedDirtySammenslaaingsIds, setSavedDirtySammenslaaingsIds] =
-    useState<string[]>([]);
-
-  const [
-    savedOverlappingDirtySammenslaaingsIds,
-    setSavedOverlappingDirtySammenslaaingsIds,
-  ] = useState<string[]>([]);
-
   const setEditFeatures = (features: string[]) => {
     for (const featureId of features) {
       if (!savedDirtyFeatureIds.includes(featureId)) {
@@ -52,8 +44,6 @@ const useDirtyStyles = () => {
     }
     setSavedDirtyFeaturesIds([]);
     setDirtyFeatureIds([]);
-    setSavedDirtySammenslaaingsIds([]);
-    setSavedOverlappingDirtySammenslaaingsIds([]);
   };
 
   const saveDirtyFeatureIds = () => {
@@ -80,15 +70,6 @@ const useDirtyStyles = () => {
         .getFeatureById(featureId)
         ?.setStyle(dirtyOverlappingSammenslaaingStyles);
     }
-
-    setSavedDirtySammenslaaingsIds([
-      ...savedDirtySammenslaaingsIds,
-      ...stemmekretsFeatureIds,
-    ]);
-    setSavedOverlappingDirtySammenslaaingsIds([
-      ...savedDirtySammenslaaingsIds,
-      ...overlappingStemmekretsFeatureIds,
-    ]);
   };
 
   return {
