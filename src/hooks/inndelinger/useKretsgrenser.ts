@@ -9,12 +9,7 @@ import { Kretstype } from "contexts/InndelingerKretsContext";
 import { useUtkast, useUtkastFeature } from "contexts/UtkastContext";
 import { LayerId } from "hooks/layers/types";
 import useAsyncFeatures from "hooks/useAsyncFeatures";
-import {
-  FeatureCollection,
-  GrunnkretsResponse,
-  KretsRef,
-  StemmekretsResponse,
-} from "types/api";
+import { GrunnkretsResponse, KretsRef, StemmekretsResponse } from "types/api";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 import {
   removeFeaturesFromSourceByIds,

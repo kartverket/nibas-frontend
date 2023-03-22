@@ -6,13 +6,12 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import {
-  FeatureCollection,
   StemmekretsRef,
   StemmekretsResponse,
   StemmekretsSammenslaaingsendringRequest,
 } from "types/api";
 import { Section, ContrastSection } from "./components";
-import { fetcherWithToken, getIdFromEntity } from "utils/api";
+import { getIdFromEntity } from "utils/api";
 import CreateUtkastModal, {
   CreateUtkastCallbackArgument,
 } from "./CreateUtkastModal";
@@ -142,7 +141,6 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   };
 
   const promptUtkastJustCreated = () => {
-    console.log("prompting it to be just created!!!");
     setUtkastJustCreated(true);
 
     const timeId = setTimeout(() => {
