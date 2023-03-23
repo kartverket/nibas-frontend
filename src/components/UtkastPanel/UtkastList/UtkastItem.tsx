@@ -10,6 +10,7 @@ import Button from "components/form/Button";
 import Icon from "components/Icon";
 import useNibasApi from "hooks/useNibasApi";
 import {
+  BadRequestResponse,
   ConflictResponseWrapper,
   FramtidigVersjonConflict,
   UtkastRef,
@@ -24,7 +25,7 @@ import { useUtkast } from "contexts/UtkastContext";
 import { Outline } from "style/mixins";
 import AlertModal from "components/AlertModal";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
-import { statusCode } from "utils/api";
+import { isGeometriError, statusCode } from "utils/api";
 
 type Props = {
   utkast: UtkastRef;
@@ -94,10 +95,22 @@ const UtkastItem = ({ utkast }: Props) => {
         });
       }
     } else if (statusCode.isError(response.status)) {
-      setError({
-        title: t("utkast.feil.publisering-feilet-tittel"),
-        body: t("utkast.feil.feilkode", { feilkode: response.status }),
-      });
+      const wrapper = (await response.json()) as BadRequestResponse;
+
+      if (isGeometriError(wrapper)) {
+        setError({
+          title: t("utkast.feil.feil-geometri-tittel"),
+          body: t("utkast.feil.feil-geometri-tekst", {
+            feilkode: response.status,
+            feiltype: wrapper.validationError,
+          }),
+        });
+      } else {
+        setError({
+          title: t("utkast.feil.publisering-feilet-tittel"),
+          body: t("utkast.feil.feilkode", { feilkode: response.status }),
+        });
+      }
     }
   };
 

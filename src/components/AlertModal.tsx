@@ -71,6 +71,7 @@ const Title = styled.h3`
 const Body = styled.div`
   padding: 0 48px;
   color: var(--gray_dark);
+  white-space: pre-line;
 `;
 
 const Buttons = styled.div`

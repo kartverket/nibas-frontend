@@ -179,7 +179,9 @@
       "utdatert-tekst": "Du har gjort endringer på en gammel versjon av en krets. Du må gjennomføre endringene på nytt i et nytt utkast.",
       "publisering-feilet-tittel": "Publisering av utkast feilet",
       "feilkode": "Feilkode: {{ feilkode }}",
-      "sletting-feilet-tittel": "Sletting av utkast feilet"
+      "sletting-feilet-tittel": "Sletting av utkast feilet",
+      "feil-geometri-tittel": "Feil på geometri",
+      "feil-geometri-tekst": "Utkastet inneholder ugyldig geometri. Vennligst rett opp i feilen og prøv igjen.\n\nFeiltype: {{ feiltype }}\nFeilkode: {{ feilkode }}"
     }
   },
   "Aktive kartlag": "Aktive kartlag",

@@ -1,3 +1,9 @@
+import {
+  ApiErrorResponse,
+  BadRequestResponse,
+  GeometriErrorResponse,
+} from "../types/api";
+
 type ApiEntity = {
   id: {
     lokalid: {
@@ -52,4 +58,17 @@ export const statusCode = {
   isClientError: (code: number) => code >= 400 && code < 500,
   isServerError: (code: number) => code >= 500 && code < 600,
   isError: (code: number) => code >= 400 && code < 600,
+};
+
+export const isGeometriError = (
+  error: BadRequestResponse
+): error is GeometriErrorResponse => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (error as any)?.geometryType != null;
+};
+
+export const isApiError = (
+  error: BadRequestResponse
+): error is ApiErrorResponse => {
+  return !isGeometriError(error);
 };

@@ -179,7 +179,9 @@
       "utdatert-tekst": "__STRING_NOT_TRANSLATED__",
       "publisering-feilet-tittel": "__STRING_NOT_TRANSLATED__",
       "feilkode": "__STRING_NOT_TRANSLATED__",
-      "sletting-feilet-tittel": "__STRING_NOT_TRANSLATED__"
+      "sletting-feilet-tittel": "__STRING_NOT_TRANSLATED__",
+      "feil-geometri-tittel": "__STRING_NOT_TRANSLATED__",
+      "feil-geometri-tekst": "__STRING_NOT_TRANSLATED__"
     }
   },
   "Aktive kartlag": "__STRING_NOT_TRANSLATED__",
