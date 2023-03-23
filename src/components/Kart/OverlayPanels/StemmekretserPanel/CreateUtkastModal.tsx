@@ -85,6 +85,7 @@ const CreateUtkastModal = ({
 
     setIsCreateUtkastModalOpen(false);
     setSearchParams({ utkast: utkastId });
+
     callback({ ...nyttUtkast, id: utkastId });
   };
 
