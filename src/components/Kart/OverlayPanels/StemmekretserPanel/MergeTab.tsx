@@ -16,7 +16,7 @@ import CreateUtkastModal, {
 } from "./CreateUtkastModal";
 import { useUtkast } from "contexts/UtkastContext";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
-import { removeNull } from "utils/list-utils";
+import { deduplicate, removeNull } from "utils/list-utils";
 import { SammenslaaingMultiselect } from "./SammenslaaingMultiselect";
 
 type Props = {
@@ -54,7 +54,7 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
       lokalId: stemmekretsRespons.id.lokalid.value,
       version: stemmekretsRespons.version,
     },
-    stemmekretserTilSammenslaaing: sammenslaaingsStemmekretser.map(
+    stemmekretserTilSammenslaaing: deduplicate(sammenslaaingsStemmekretser).map(
       (sammenslaaingsStemmekrets) => ({
         lokalId: sammenslaaingsStemmekrets.id.lokalid.value,
         version: sammenslaaingsStemmekrets.version,
