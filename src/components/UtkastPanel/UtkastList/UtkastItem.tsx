@@ -82,16 +82,21 @@ const UtkastItem = ({ utkast }: Props) => {
 
     if (statusCode.isSuccessful(response.status)) {
       cleanUpUtkast();
-    } else if (response.status === 409) {
+    } else if (statusCode.isConflict(response.status)) {
       const wrapper = (await response.json()) as ConflictResponseWrapper;
 
-      if (!wrapper.framtidigVersjonConflict) return;
-
-      setConflictResponse(wrapper.framtidigVersjonConflict);
+      if (wrapper.framtidigVersjonConflict) {
+        setConflictResponse(wrapper.framtidigVersjonConflict);
+      } else {
+        setError({
+          title: t("utkast.feil.utdatert-tittel"),
+          body: t("utkast.feil.utdatert-tekst"),
+        });
+      }
     } else if (statusCode.isError(response.status)) {
       setError({
-        title: "Publisering av utkast feilet",
-        body: `Feilkode: ${response.status}`,
+        title: t("utkast.feil.publisering-feilet-tittel"),
+        body: t("utkast.feil.feilkode", { feilkode: response.status }),
       });
     }
   };
@@ -108,8 +113,8 @@ const UtkastItem = ({ utkast }: Props) => {
       }
     } else if (statusCode.isError(response.status)) {
       setError({
-        title: "Sletting av utkast feilet",
-        body: `Feilkode: ${response.status}`,
+        title: t("utkast.feil.sletting-feilet-tittel"),
+        body: t("utkast.feil.feilkode", { feilkode: response.status }),
       });
     }
   };

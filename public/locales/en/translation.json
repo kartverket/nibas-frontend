@@ -173,6 +173,13 @@
       "ingenEndringer": "__STRING_NOT_TRANSLATED__",
       "grunnkrets-tittel": "__STRING_NOT_TRANSLATED__",
       "metadata": "__STRING_NOT_TRANSLATED__"
+    },
+    "feil": {
+      "utdatert-tittel": "__STRING_NOT_TRANSLATED__",
+      "utdatert-tekst": "__STRING_NOT_TRANSLATED__",
+      "publisering-feilet-tittel": "__STRING_NOT_TRANSLATED__",
+      "feilkode": "__STRING_NOT_TRANSLATED__",
+      "sletting-feilet-tittel": "__STRING_NOT_TRANSLATED__"
     }
   },
   "Aktive kartlag": "__STRING_NOT_TRANSLATED__",

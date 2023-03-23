@@ -173,6 +173,13 @@
       "ingenEndringer": "Det er ingen endringer i dette utkastet",
       "grunnkrets-tittel": "Grunnkretser i {{ kommune }}",
       "metadata": "Metadataendringer"
+    },
+    "feil": {
+      "utdatert-tittel": "Utkastet er utdatert",
+      "utdatert-tekst": "Du har gjort endringer på en gammel versjon av en krets. Du må gjennomføre endringene på nytt i et nytt utkast.",
+      "publisering-feilet-tittel": "Publisering av utkast feilet",
+      "feilkode": "Feilkode: {{ feilkode }}",
+      "sletting-feilet-tittel": "Sletting av utkast feilet"
     }
   },
   "Aktive kartlag": "Aktive kartlag",

@@ -47,6 +47,7 @@ export const fetcherWithToken = async (url: string | null, token?: string) => {
 export const statusCode = {
   isInformational: (code: number) => code >= 100 && code < 200,
   isSuccessful: (code: number) => code >= 200 && code < 300,
+  isConflict: (code: number) => code === 409,
   isRedirection: (code: number) => code >= 300 && code < 400,
   isClientError: (code: number) => code >= 400 && code < 500,
   isServerError: (code: number) => code >= 500 && code < 600,
