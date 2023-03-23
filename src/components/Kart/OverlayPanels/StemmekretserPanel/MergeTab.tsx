@@ -1,6 +1,5 @@
 import Button from "components/form/Button";
 import Input from "components/form/Input";
-import Select from "components/form/Select";
 import Heading from "components/typography/Heading";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -17,6 +16,8 @@ import CreateUtkastModal, {
 } from "./CreateUtkastModal";
 import { useUtkast } from "contexts/UtkastContext";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
+import { deduplicate, removeNull } from "utils/list-utils";
+import { SammenslaaingMultiselect } from "./SammenslaaingMultiselect";
 
 type Props = {
   stemmekrets: StemmekretsResponse | undefined;
@@ -41,38 +42,38 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   const [
     stemmekretsNummerTilSammenslaaing,
     setStemmekretsNummerTilSammenslaaing,
-  ] = useState("");
+  ] = useState([""]);
 
   const stemmekretsId = stemmekrets ? getIdFromEntity(stemmekrets) : "";
 
   const fromFormToRequest = (
     stemmekretsRespons: StemmekretsResponse,
-    sammenslaaingsStemmekrets: StemmekretsRef
+    sammenslaaingsStemmekretser: StemmekretsRef[]
   ): StemmekretsSammenslaaingsendringRequest => ({
     viderefoertStemmekrets: {
       lokalId: stemmekretsRespons.id.lokalid.value,
       version: stemmekretsRespons.version,
     },
-    stemmekretserTilSammenslaaing: [
-      {
+    stemmekretserTilSammenslaaing: deduplicate(sammenslaaingsStemmekretser).map(
+      (sammenslaaingsStemmekrets) => ({
         lokalId: sammenslaaingsStemmekrets.id.lokalid.value,
         version: sammenslaaingsStemmekrets.version,
-      },
-    ],
+      })
+    ),
     stemmekretsNavn: stemmekretsnavn,
     stemmekretsNummer: stemmekretsnummer,
   });
 
-  const getStemmekretsByNummer = (nummer: string): StemmekretsRef[] => {
-    return alleStemmekretser.filter((krets) => krets.nummer === nummer);
+  const getStemmekretsByNummer = (nummer: string): StemmekretsRef | null => {
+    return alleStemmekretser.find((krets) => krets.nummer === nummer) ?? null;
   };
 
   const mergeStemmekrets = (nyttUtkast: CreateUtkastCallbackArgument) => {
-    const stemmekretsTilSammenslaaingListe = getStemmekretsByNummer(
-      stemmekretsNummerTilSammenslaaing
+    const stemmekretsTilSammenslaaingListe = removeNull(
+      stemmekretsNummerTilSammenslaaing.map((s) => getStemmekretsByNummer(s))
     );
 
-    if (stemmekretsTilSammenslaaingListe.length === 1 && stemmekrets) {
+    if (stemmekretsTilSammenslaaingListe.length > 0 && stemmekrets) {
       const updateUtkastRequest = {
         version: 1,
         navn: nyttUtkast.navn,
@@ -81,7 +82,7 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
           ...nyttUtkast.operasjoner,
           stemmekretsSammenslaaingsendring: fromFormToRequest(
             stemmekrets,
-            stemmekretsTilSammenslaaingListe[0]
+            stemmekretsTilSammenslaaingListe
           ),
         },
       };
@@ -105,58 +106,43 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   return (
     <div>
       <Section>
-        <SectionHeading>
-          {t("stemmekrets.Slå sammen stemmekretser")}
-        </SectionHeading>
-        <p>
-          {t("stemmekrets.Hvilken stemmekrets ønsker du å slå sammen med")}{" "}
-          <Stemmekretsnavn>
-            {stemmekrets?.stemmekretsnavn.toLowerCase()}
-          </Stemmekretsnavn>
-          ?
-        </p>
-        <StemmekretsSelect
-          onChange={(e) =>
-            setStemmekretsNummerTilSammenslaaing(e.currentTarget.value)
-          }
-          defaultValue={"default"}
-          label={t("stemmekrets.Navn- eller nummer på stemmekrets")}
-        >
-          <option value={"default"} disabled>
-            {t("Velg stemmekretsen du vil slå sammen med")}
-          </option>
-          {alleStemmekretser.map((s) => (
-            <option key={s.nummer} value={s.nummer}>{`${s.nummer} - ${
-              s.navn.charAt(0).toUpperCase() + s.navn.toLowerCase().slice(1)
-            }`}</option>
-          ))}
-        </StemmekretsSelect>
+        <SectionHeading>{t("stemmekrets.sammenslaaing.tittel")}</SectionHeading>
+        <SammenslaaingMultiselect
+          stemmekretsnavn={stemmekrets?.stemmekretsnavn ?? ""}
+          onChange={(value) => setStemmekretsNummerTilSammenslaaing(value)}
+          value={stemmekretsNummerTilSammenslaaing}
+          alleStemmekretser={alleStemmekretser}
+        />
       </Section>
       <ContrastSection>
         <SectionHeading>
-          {t("stemmekrets.Detaljer om den sammenslåtte kretsen")}
+          {t("stemmekrets.sammenslaaing.detaljer-tittel")}
         </SectionHeading>
         <br />
         <InputsWrapper>
           <Input
-            label={t("stemmekrets.Stemmekretsnavn")}
-            value={stemmekretsnavn}
-            onChange={(e) => setStemmekretsnavn(e.currentTarget.value)}
-          />
-          <Input
-            label={t("stemmekrets.Stemmekretsnummer")}
+            label={t(
+              "stemmekrets.sammenslaaing.detaljer-label-stemmekretsnummer"
+            )}
             value={stemmekretsnummer}
             onChange={(e) => setStemmekretsnummer(e.currentTarget.value)}
+          />
+          <Input
+            label={t(
+              "stemmekrets.sammenslaaing.detaljer-label-stemmekretsnavn"
+            )}
+            value={stemmekretsnavn}
+            onChange={(e) => setStemmekretsnavn(e.currentTarget.value)}
           />
         </InputsWrapper>
       </ContrastSection>
       <Section>
         <Buttons>
           <Button onClick={() => toggleRow(stemmekretsId)} variant="tertiary">
-            {t("action.Avbryt")}
+            {t("stemmekrets.sammenslaaing.actions.avbryt")}
           </Button>
           <Button onClick={() => openCreateUtkastModal()}>
-            {t("stemmekrets.Slå sammen")}
+            {t("stemmekrets.sammenslaaing.actions.slaa-sammen")}
           </Button>
         </Buttons>
       </Section>
@@ -169,21 +155,8 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   );
 };
 
-const StemmekretsSelect = styled(Select)`
-  max-width: 400px;
-  margin-top: 20px;
-
-  select {
-    margin: 0;
-  }
-`;
-
 const SectionHeading = styled(Heading).attrs({ tag: "h3", size: "xs" })`
   margin: 0;
-`;
-
-const Stemmekretsnavn = styled.b`
-  text-transform: capitalize;
 `;
 
 const Buttons = styled.div`

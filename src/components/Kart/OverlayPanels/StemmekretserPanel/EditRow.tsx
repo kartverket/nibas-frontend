@@ -34,7 +34,12 @@ const EditRow = ({
   return (
     <AccordionRow>
       <td colSpan={7}>
-        <Tabs tabTransKeys={["stemmekrets.Detaljer", "stemmekrets.Slå sammen"]}>
+        <Tabs
+          tabTransKeys={[
+            "stemmekrets.tabs.detaljer",
+            "stemmekrets.tabs.slaa-sammen",
+          ]}
+        >
           <DetailsTab
             stemmekretsId={stemmekretsId}
             kommuneId={kommuneId}
