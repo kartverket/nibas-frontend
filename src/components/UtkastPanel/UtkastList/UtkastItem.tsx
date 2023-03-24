@@ -10,6 +10,7 @@ import Button from "components/form/Button";
 import Icon from "components/Icon";
 import useNibasApi from "hooks/useNibasApi";
 import {
+  BadRequestResponse,
   ConflictResponseWrapper,
   FramtidigVersjonConflict,
   UtkastRef,
@@ -24,7 +25,7 @@ import { useUtkast } from "contexts/UtkastContext";
 import { Outline } from "style/mixins";
 import AlertModal from "components/AlertModal";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
-import { statusCode } from "utils/api";
+import { isGeometriError, statusCode } from "utils/api";
 
 type Props = {
   utkast: UtkastRef;
@@ -82,17 +83,34 @@ const UtkastItem = ({ utkast }: Props) => {
 
     if (statusCode.isSuccessful(response.status)) {
       cleanUpUtkast();
-    } else if (response.status === 409) {
+    } else if (statusCode.isConflict(response.status)) {
       const wrapper = (await response.json()) as ConflictResponseWrapper;
 
-      if (!wrapper.framtidigVersjonConflict) return;
-
-      setConflictResponse(wrapper.framtidigVersjonConflict);
+      if (wrapper.framtidigVersjonConflict) {
+        setConflictResponse(wrapper.framtidigVersjonConflict);
+      } else {
+        setError({
+          title: t("utkast.feil.utdatert-tittel"),
+          body: t("utkast.feil.utdatert-tekst"),
+        });
+      }
     } else if (statusCode.isError(response.status)) {
-      setError({
-        title: "Publisering av utkast feilet",
-        body: `Feilkode: ${response.status}`,
-      });
+      const wrapper = (await response.json()) as BadRequestResponse;
+
+      if (isGeometriError(wrapper)) {
+        setError({
+          title: t("utkast.feil.feil-geometri-tittel"),
+          body: t("utkast.feil.feil-geometri-tekst", {
+            feilkode: response.status,
+            feiltype: wrapper.validationError,
+          }),
+        });
+      } else {
+        setError({
+          title: t("utkast.feil.publisering-feilet-tittel"),
+          body: t("utkast.feil.feilkode", { feilkode: response.status }),
+        });
+      }
     }
   };
 
@@ -108,8 +126,8 @@ const UtkastItem = ({ utkast }: Props) => {
       }
     } else if (statusCode.isError(response.status)) {
       setError({
-        title: "Sletting av utkast feilet",
-        body: `Feilkode: ${response.status}`,
+        title: t("utkast.feil.sletting-feilet-tittel"),
+        body: t("utkast.feil.feilkode", { feilkode: response.status }),
       });
     }
   };
