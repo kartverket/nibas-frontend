@@ -15,7 +15,6 @@ import CreateUtkastModal, {
   CreateUtkastCallbackArgument,
 } from "./CreateUtkastModal";
 import { useUtkast } from "contexts/UtkastContext";
-import UtkastToast from "components/Kart/Toolbar/UtkastToast";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
@@ -38,8 +37,6 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   const { setAndSaveSammenslaaingsFeatures } = useToolbar();
 
   const [isCreateUtkastModalOpen, setIsCreateUtkastModalOpen] = useState(false);
-  const [utkastJustCreated, setUtkastJustCreated] = useState(false);
-
   const [stemmekretsnavn, setStemmekretsnavn] = useState(
     stemmekrets?.stemmekretsnavn ?? ""
   );
@@ -188,13 +185,6 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
         setIsCreateUtkastModalOpen={setIsCreateUtkastModalOpen}
         callback={mergeStemmekrets}
       />
-      {utkastJustCreated && (
-        <UtkastToast
-          text={
-            "Utkastet er opprettet og sammenslåingen av Flosta og Myrdal er lagret"
-          }
-        />
-      )}
     </>
   );
 };
