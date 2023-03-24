@@ -90,14 +90,22 @@ const StemmekretsSammenslaaing = ({
     return null;
   }
 
+  const gamleKretser = [
+    {
+      navn: sammenslaaing.viderefoertKrets.stemmekretsnavn,
+      nummer: sammenslaaing.viderefoertKrets.stemmekretsnummer,
+    },
+    ...sammenslaaing.gamleKretser,
+  ];
+
   const endringNummer = {
     til: sammenslaaing.nyttNummer,
-    fra: sammenslaaing.gamleKretser.map((krets) => krets.nummer).join(", "),
+    fra: gamleKretser.map((krets) => krets.nummer).join(", "),
   };
 
   const endringNavn = {
-    til: sammenslaaing.nyttNummer,
-    fra: sammenslaaing.gamleKretser.map((krets) => krets.navn).join(", "),
+    til: sammenslaaing.nyttNavn,
+    fra: gamleKretser.map((krets) => krets.navn).join(", "),
   };
 
   return (
@@ -118,7 +126,7 @@ const StemmekretsSammenslaaing = ({
           </EndringsradLabel>
           <EndringsradEndring>
             <UnstyledList>
-              {sammenslaaing.gamleKretser.map((gammelKrets) => (
+              {gamleKretser.map((gammelKrets) => (
                 <li key={gammelKrets.nummer}>
                   <EndringTekst bold={true}>
                     {gammelKrets.nummer} {gammelKrets.navn}

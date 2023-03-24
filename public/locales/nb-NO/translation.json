@@ -116,12 +116,24 @@
     "Tellekretsnavn": "Tellekretsnavn",
     "Tellekretsnummer": "Tellekretsnummer",
     "Stemmekrets": "Stemmekrets",
-    "Detaljer": "Detaljer",
-    "Slå sammen": "Slå sammen",
-    "Slå sammen stemmekretser": "Slå sammen stemmekretser",
-    "Hvilken stemmekrets ønsker du å slå sammen med": "Hvilken stemmekrets ønsker du å slå sammen med",
-    "Navn- eller nummer på stemmekrets": "Navn- eller nummer på stemmekrets",
-    "Detaljer om den sammenslåtte kretsen": "Detaljer om den sammenslåtte kretsen",
+    "tabs": {
+      "detaljer": "Detaljer",
+      "slaa-sammen": "Slå sammen"
+    },
+    "sammenslaaing": {
+      "tittel": "Slå sammen stemmekretser",
+      "undertittel": "Hvilke stemmekretser ønsker du å slå sammen med",
+      "label": "Navn eller nummer på stemmekrets",
+      "detaljer-tittel": "Detaljer om den sammenslåtte kretsen",
+      "detaljer-label-stemmekretsnummer": "Stemmekretsnummer",
+      "detaljer-label-stemmekretsnavn": "Stemmekretsnavn",
+      "actions": {
+        "velg": "Velg stemmekretsen du vil slå sammen med",
+        "slaa-sammen": "Slå sammen",
+        "avbryt": "Avbryt",
+        "legg-til-flere": "Legg til flere sammenslåinger"
+      }
+    },
     "utkast-sammenslaaing-alert": {
       "tittel": "Kan ikke slå sammen stemmekretser",
       "tekst": "Du kan ikke gjøre en sammenslåing i et eksisterende utkast som har andre endringer. Avslutt redigeringen av dette utkastet før du gjennomfører sammenslåingen."
@@ -173,6 +185,15 @@
       "ingenEndringer": "Det er ingen endringer i dette utkastet",
       "grunnkrets-tittel": "Grunnkretser i {{ kommune }}",
       "metadata": "Metadataendringer"
+    },
+    "feil": {
+      "utdatert-tittel": "Utkastet er utdatert",
+      "utdatert-tekst": "Du har gjort endringer på en gammel versjon av en krets. Du må gjennomføre endringene på nytt i et nytt utkast.",
+      "publisering-feilet-tittel": "Publisering av utkast feilet",
+      "feilkode": "Feilkode: {{ feilkode }}",
+      "sletting-feilet-tittel": "Sletting av utkast feilet",
+      "feil-geometri-tittel": "Feil på geometri",
+      "feil-geometri-tekst": "Utkastet inneholder ugyldig geometri. Vennligst rett opp i feilen og prøv igjen.\n\nFeiltype: {{ feiltype }}\nFeilkode: {{ feilkode }}"
     }
   },
   "Aktive kartlag": "Aktive kartlag",
