@@ -83,8 +83,6 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   };
 
   const mergeStemmekrets = (nyttUtkast: CreateUtkastCallbackArgument) => {
-    promptUtkastJustCreated();
-
     const stemmekretsTilSammenslaaingListe = removeNull(
       stemmekretsNummerTilSammenslaaing.map((s) => getStemmekretsByNummer(s))
     );
@@ -140,18 +138,6 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
     isCreateUtkastModalOpen
       ? setIsCreateUtkastModalOpen(false)
       : setIsCreateUtkastModalOpen(true);
-  };
-
-  const promptUtkastJustCreated = () => {
-    setUtkastJustCreated(true);
-
-    const timeId = setTimeout(() => {
-      setUtkastJustCreated(false);
-    }, 5000);
-
-    return () => {
-      clearTimeout(timeId);
-    };
   };
 
   return (
