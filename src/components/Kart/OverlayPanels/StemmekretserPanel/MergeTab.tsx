@@ -24,6 +24,11 @@ type Props = {
   toggleRow: (id: string) => void;
 };
 
+// TODO: vi må bare bruke vår egen validering fordi feltene må kunne vite om andre felter
+// men vi har ikke tilgang til getvalues
+// så får håpe at det fungerer å legge en knapp for validering/lagring
+// også ikke validere live ellers
+// må kanskje håndtere valideringsmodus i input da? eller nei, bare legge til enda en ifvalidated
 const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   const { t } = useTranslation();
   const { utkast, updateUtkast } = useUtkast();

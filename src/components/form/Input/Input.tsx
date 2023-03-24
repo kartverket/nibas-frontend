@@ -77,7 +77,9 @@ const ErrorMessage = styled.div`
 `;
 
 const Input = forwardRef<HTMLInputElement, Props>(function Input(props, ref) {
-  const activeError = props.validationError?.find((ve) => ve.showError);
+  const activeError = props.validationError
+    ? props.validationError?.find((ve) => ve.showError)
+    : undefined;
 
   return (
     <Label className={props.className} label={props.label ?? ""}>
