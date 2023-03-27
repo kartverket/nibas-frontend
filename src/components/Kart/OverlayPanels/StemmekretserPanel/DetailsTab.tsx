@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useCallback, useEffect, useRef } from "react";
+import { FieldError, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import Input from "components/form/Input";
+import Input, { ValidationError } from "components/form/Input/Input";
 import { StemmekretsEntry, useToolbarSaving } from "contexts/ToolbarContext";
 import useKretsToolbarSync from "contexts/ToolbarContext/useToolbarFormSync";
 import { StemmekretsRequest, StemmekretsResponse } from "types/api";
-import useTimer from "hooks/useTimer";
 import { getIdFromEntity } from "utils/api";
 import styled from "styled-components";
 import { Section } from "./components";
@@ -21,7 +20,6 @@ type Inputs = {
   tellekretsnummer: string;
 };
 
-/*
 const fromFormToRequest = (
   data: Inputs,
   stemmekrets: StemmekretsResponse
@@ -36,7 +34,6 @@ const fromFormToRequest = (
   tellekretsnavn: data.tellekretsnavn,
   tellekretsnummer: data.tellekretsnummer,
 });
-*/
 
 type Props = {
   stemmekretsId: string;
@@ -46,12 +43,15 @@ type Props = {
 
 const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
   const { t } = useTranslation();
-  const { startTimer, clearTimer } = useTimer();
-  const { register, setValue, getValues } = useForm<Inputs>();
+  const {
+    register,
+    setValue,
+    getValues,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Inputs>();
   const { addEntry } = useToolbarSaving();
   const previousValues = useRef<Inputs>(getValues());
-
-  const [hasValidated, setHasValidated] = useState(false);
 
   useEffect(() => {
     if (!utkastStemmekrets) return;
@@ -89,9 +89,7 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
     setFormValues,
   });
 
-  const onChange = () => {
-    clearTimer();
-
+  const saveAndAddHistoryEntry = () => {
     if (!utkastStemmekrets) return;
 
     const newValues = getValues();
@@ -101,136 +99,99 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
       newValues.stemmekretsnavn,
       newValues.stemmekretsnummer
     );
-    setHasValidated(false);
 
-    // TODO: dette bør ikke skje før etter man har trykket på lagring, og da kan man kanskje ikke undoe uansett så er kanskje ikke vits med history her?
-    /*startTimer(() => {
-      addEntry({
-        type: "stemmekrets",
-        kommuneId,
-        changes: [
-          {
-            from: fromFormToRequest(previousValues.current, utkastStemmekrets),
-            to: fromFormToRequest(newValues, utkastStemmekrets),
-            id: stemmekretsId,
-          },
-        ],
-      });
-    }, 500);*/
+    addEntry({
+      type: "stemmekrets",
+      kommuneId,
+      changes: [
+        {
+          from: fromFormToRequest(previousValues.current, utkastStemmekrets),
+          to: fromFormToRequest(newValues, utkastStemmekrets),
+          id: stemmekretsId,
+        },
+      ],
+    });
   };
 
-  // TODO: denne utløser nå validering, men den bør faktisk "få svar tilbake" om valideringen var tommel opp eller ned
-  // slik at man kan vite om man skal gå videre med å lagre eller ikke
-  // føler vi trenger en helt annen løsning her egentlig
-  const onSubmit = () => {
-    setHasValidated(true);
+  // TODO: denne kjøres bare når det gitte feltet valideres, ikke når det andre valideres
+  const isTellekretsSynced = (lorem: string, ipsum: string) => {
+    // Denne skal oppføre seg som en XNOR, enten har begge en lengde eller ingen av dem
+    // TODO: bør kanskje kjøre trim før man sjekker lengde
+    return !lorem.length === !ipsum.length;
   };
 
-  const formOptions = {
-    onChange,
-  };
-
-  // Navn og nummer for tellekrets må alltid være i sync, hjelpefunksjon for å spare plass
-  const isTellekretsInvalid = (valueToBeValidated: "nummer" | "navn") => {
-    // TODO: denne fungerer ikke helt når jeg skal f.eks. sjekke om tellekretsnummer er et nummer
-    if (valueToBeValidated === "nummer") {
-      return (
-        stringValidation.isEmpty(getValues().tellekretsnummer) &&
-        !stringValidation.isEmpty(getValues().tellekretsnavn)
-      );
-    } else if (valueToBeValidated === "navn") {
-      return (
-        !stringValidation.isEmpty(getValues().tellekretsnummer) &&
-        stringValidation.isEmpty(getValues().tellekretsnavn)
-      );
+  const validationError = (error: FieldError | undefined) => {
+    if (error) {
+      return [
+        {
+          showError: error !== undefined,
+          message: error.message,
+        } as ValidationError,
+      ];
     }
-    return false;
   };
 
+  // TODO: mangler valgdistriktnummer?
+  // TODO: translations
+  // TODO: trekk valideringsfunksjoner (og kanskje alt av register-greier) ut av render-return
   return (
-    <DetailsSection>
+    <DetailsSection as="form" onSubmit={handleSubmit(saveAndAddHistoryEntry)}>
       <Input
         label={t("stemmekrets.Stemmekretsnummer")}
-        {...register("stemmekretsnummer", { ...formOptions })}
-        validationError={[
-          {
-            message: "Stemmekretsnummer kan ikke være tomt",
-            showError:
-              hasValidated &&
-              stringValidation.isEmpty(getValues().stemmekretsnummer),
+        {...register("stemmekretsnummer", {
+          required: "Stemmekretsnummer kan ikke være tomt",
+          validate: {
+            isLessThanFiveFigures: (value) =>
+              (stringValidation.isInteger(value) && value.length < 5) ||
+              "Stemmekretsnummer må kun inneholde siffer (maks 4)",
+            isPositive: (value) =>
+              numberValidation.isPositive(parseInt(value)) ||
+              "Stemmekretsnummer kan ikke være 0 eller et negativt tall",
+            isUnique: () =>
+              true ||
+              "Stemmekretsnummer må være unik for den bestemte kommunen", // TODO: krever egen håndtering
           },
-          {
-            message: "Stemmekretsnummer må kun inneholde siffer (maks 4)",
-            showError:
-              hasValidated &&
-              (!stringValidation.isInteger(getValues().stemmekretsnummer) ||
-                parseInt(getValues().stemmekretsnummer) > 9999),
-          },
-          {
-            message: "Stemmekretsnummer kan ikke være 0 eller et negativt tall",
-            showError:
-              hasValidated &&
-              !numberValidation.isPositive(
-                parseInt(getValues().stemmekretsnummer)
-              ),
-          },
-          {
-            message: "Stemmekretsnummer må være unik for den bestemte kommunen",
-            showError: hasValidated && false, // TODO: krever egen håndtering
-          },
-        ]}
+        })}
+        validationError={validationError(errors.stemmekretsnummer)}
       />
       <Input
         label={t("tabell.Stemmekretsnavn")}
-        {...register("stemmekretsnavn", formOptions)}
-        validationError={[
-          {
-            message: "Stemmekretsnavn kan ikke være tomt",
-            showError:
-              hasValidated &&
-              stringValidation.isEmpty(getValues().stemmekretsnavn),
-          },
-        ]}
+        {...register("stemmekretsnavn", {
+          required: "Stemmekretsnavn kan ikke være tomt",
+        })}
+        validationError={validationError(errors.stemmekretsnavn)}
       />
       <Input
         label={t("stemmekrets.Tellekretsnummer")}
-        {...register("tellekretsnummer", formOptions)}
-        validationError={[
-          {
-            message:
+        {...register("tellekretsnummer", {
+          validate: {
+            isTellekretsValid: (value) =>
+              isTellekretsSynced(value, getValues("tellekretsnavn")) ||
               "Må ha både navn og nummer for tellekrets, eller ingen av delene",
-            showError: hasValidated && isTellekretsInvalid("nummer"),
+            isNumber: (value) =>
+              isTellekretsSynced(value, getValues("tellekretsnavn")) ||
+              stringValidation.isInteger(value) ||
+              "Tellekretsnummer må være et tall",
+            isPositive: (value) =>
+              isTellekretsSynced(value, getValues("tellekretsnavn")) ||
+              numberValidation.isPositive(parseInt(value)) ||
+              "Tellekretsnummer kan ikke være 0 eller et negativt tall",
           },
-          {
-            message: "Tellekretsnummer må være et tall",
-            showError:
-              hasValidated &&
-              isTellekretsInvalid("nummer") &&
-              !stringValidation.isInteger(getValues().tellekretsnummer),
-          },
-          {
-            message: "Tellekretsnummer kan ikke være 0 eller et negativt tall",
-            showError:
-              hasValidated &&
-              isTellekretsInvalid("nummer") &&
-              !numberValidation.isPositive(
-                parseInt(getValues().tellekretsnummer)
-              ),
-          },
-        ]}
+        })}
+        validationError={validationError(errors.tellekretsnummer)}
       />
       <Input
         label={t("stemmekrets.Tellekretsnavn")}
-        {...register("tellekretsnavn", formOptions)}
-        validationError={[
-          {
-            message:
+        {...register("tellekretsnavn", {
+          validate: {
+            isTellekretsValid: (value) =>
+              isTellekretsSynced(value, getValues("tellekretsnummer")) ||
               "Må ha både navn og nummer for tellekrets, eller ingen av delene",
-            showError: hasValidated && isTellekretsInvalid("navn"),
           },
-        ]}
+        })}
+        validationError={validationError(errors.tellekretsnavn)}
       />
-      <Button onClick={onSubmit}>Lagre</Button>
+      <Button type="submit">Lagre</Button>
     </DetailsSection>
   );
 };

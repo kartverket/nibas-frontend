@@ -3,7 +3,7 @@ import { forwardRef, InputHTMLAttributes } from "react";
 import styled, { css } from "styled-components";
 import Label from "../Label";
 
-type ValidationError = {
+export type ValidationError = {
   message: string;
   showError: boolean;
 };
