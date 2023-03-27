@@ -45,7 +45,7 @@ const Toolbar = () => {
             setCreateUtkastOpen={setCreateUtkastOpen}
           />
           {utkastJustCreated && (
-            <UtkastToast text={t("Utkastet er opprettet")} />
+            <UtkastToast text={t("utkast.utkast-opprettet")} />
           )}
         </>
       )}
