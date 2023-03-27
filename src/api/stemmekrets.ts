@@ -14,6 +14,10 @@ export const stemmekretsgrenserFetcher = async (
 
   const featureIds = stemmekretsFeatures
     .flatMap((feature) => feature.features)
-    .map((feature) => feature.id);
+    .map((feature) => {
+      if (feature.id != null) {
+        return feature.id;
+      }
+    }) as string[];
   return featureIds;
 };
