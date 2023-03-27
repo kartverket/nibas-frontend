@@ -58,7 +58,7 @@ const StyledInput = styled.input<{ isInvalid: boolean }>`
   }
 `;
 
-const ErrorMessage = styled.div`
+export const ErrorMessage = styled.div`
   display: flex;
   align-items: center;
   gap: 4px;

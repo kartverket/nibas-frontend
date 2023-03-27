@@ -3,33 +3,62 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import Button from "../../../form/Button";
 import Select from "../../../form/Select";
-import { removeFromList, replaceInList } from "utils/list-utils";
 import Icon from "../../../Icon/Icon";
+import { useFieldArray, useFormContext } from "react-hook-form";
+import { SammenslaaingFormData } from "./SammanslaaingForm";
+import { ChangeEvent, forwardRef, InputHTMLAttributes } from "react";
+import { ErrorMessage, ValidationError } from "../../../form/Input/Input";
 
 type SammenslaaingMultiselectProps = {
   stemmekretsnavn: string;
   alleStemmekretser: StemmekretsRef[];
-  onChange: (stemmekretser: string[]) => unknown;
-  value: string[];
 };
 
 export const SammenslaaingMultiselect = ({
   stemmekretsnavn,
-  onChange,
-  value,
   alleStemmekretser,
 }: SammenslaaingMultiselectProps) => {
   const { t } = useTranslation();
+  const {
+    control,
+    register,
+    trigger,
+    getValues,
+    formState: { errors, isSubmitted },
+  } = useFormContext<SammenslaaingFormData>();
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "stemmekretsNummerTilSammenslaaing",
+  });
 
-  const removeStemmekretsTilSammenslaaing = (index: number) => {
-    onChange(removeFromList(index, value));
+  const triggerRevalidateOnChange = ({
+    onChange,
+    ...restProps
+  }: InputHTMLAttributes<HTMLSelectElement>) => {
+    return {
+      onChange: (e: ChangeEvent<HTMLSelectElement>) => {
+        if (onChange) {
+          onChange(e);
+        }
+        if (isSubmitted) {
+          trigger();
+        }
+      },
+      ...restProps,
+    };
   };
 
-  const updateStemmekretsTilSammenslaaing = (
-    index: number,
-    newValue: string
-  ) => {
-    onChange(replaceInList(index, newValue, value));
+  const multiselectValidator = {
+    validate: (value: string): string | boolean => {
+      const values = getValues("stemmekretsNummerTilSammenslaaing");
+      if (value.trim() === "" || value === "default") {
+        return t("stemmekrets.validering.multiselect.obligatorisk");
+      }
+      if (values.filter((v) => v.value === value).length > 1) {
+        return t("stemmekrets.validering.multiselect.unik");
+      }
+      return true;
+    },
   };
 
   return (
@@ -39,19 +68,29 @@ export const SammenslaaingMultiselect = ({
         <Stemmekretsnavn>{stemmekretsnavn}</Stemmekretsnavn>?
       </p>
       <MultiSelectWrapper>
-        {value.map((nummer, index) => (
-          <StemmekretsSelect
-            key={`${index} ${nummer}`}
-            value={nummer}
-            onChange={(newValue) =>
-              updateStemmekretsTilSammenslaaing(index, newValue)
-            }
-            onRemove={() => removeStemmekretsTilSammenslaaing(index)}
-            stemmekretser={alleStemmekretser}
-            showRemoveButton={value.length > 1}
-          />
-        ))}
-        <LeggTilFlerButton onClick={() => onChange([...value, ""])}>
+        {fields.map((field, index) => {
+          return (
+            <StemmekretsSelect
+              key={field.id}
+              {...triggerRevalidateOnChange(
+                register(
+                  `stemmekretsNummerTilSammenslaaing.${index}.value`,
+                  multiselectValidator
+                )
+              )}
+              onRemove={() => remove(index)}
+              stemmekretser={alleStemmekretser}
+              showRemoveButton={fields.length > 1}
+              validationError={{
+                showError: !!errors?.stemmekretsNummerTilSammenslaaing?.[index],
+                message:
+                  errors?.stemmekretsNummerTilSammenslaaing?.[index]?.value
+                    ?.message ?? "",
+              }}
+            />
+          );
+        })}
+        <LeggTilFlerButton onClick={() => append({ value: "default" })}>
           {t("stemmekrets.sammenslaaing.actions.legg-til-flere")}
         </LeggTilFlerButton>
       </MultiSelectWrapper>
@@ -60,52 +99,72 @@ export const SammenslaaingMultiselect = ({
 };
 
 type StemmekretsSelectProps = {
-  onChange: (value: string) => unknown;
   onRemove: () => unknown;
-  value: string | null;
   showRemoveButton: boolean;
   stemmekretser: StemmekretsRef[];
-};
+  validationError?: ValidationError;
+} & InputHTMLAttributes<HTMLSelectElement>;
 
-export const StemmekretsSelect = ({
-  onChange,
-  onRemove,
-  value,
-  stemmekretser,
-  showRemoveButton,
-}: StemmekretsSelectProps) => {
-  const { t } = useTranslation();
-  const selectedValue = value == null || value === "" ? "default" : value;
-
-  return (
-    <StemmekretsSelectWrapper>
-      <StemmekretsSelectStyle
-        onChange={(e) => onChange(e.currentTarget.value)}
-        value={selectedValue}
-        label={t("stemmekrets.sammenslaaing.label")}
-      >
-        <option value={"default"} disabled>
-          {t("stemmekrets.sammenslaaing.actions.velg")}
-        </option>
-        {stemmekretser.map((s) => (
-          <option key={s.nummer} value={s.nummer}>
-            {`${s.nummer} - ${s.navn}`}
+export const StemmekretsSelect = forwardRef<
+  HTMLDivElement,
+  StemmekretsSelectProps
+>(
+  (
+    {
+      onRemove,
+      stemmekretser,
+      showRemoveButton,
+      validationError,
+      ...inputProps
+    },
+    ref
+  ) => {
+    const { t } = useTranslation();
+    return (
+      <StemmekretsSelectWrapper ref={ref}>
+        <StemmekretsSelectStyle
+          {...inputProps}
+          defaultValue="default"
+          label={t("stemmekrets.sammenslaaing.label")}
+        >
+          <option value={"default"} disabled>
+            {t("stemmekrets.sammenslaaing.actions.velg")}
           </option>
-        ))}
-      </StemmekretsSelectStyle>
-      {showRemoveButton && (
-        <RemoveButton onClick={onRemove}>Fjern</RemoveButton>
-      )}
-    </StemmekretsSelectWrapper>
-  );
-};
+          {stemmekretser.map((s) => (
+            <option key={s.nummer} value={s.nummer}>
+              {`${s.nummer} - ${s.navn}`}
+            </option>
+          ))}
+        </StemmekretsSelectStyle>
+        {showRemoveButton && (
+          <RemoveButton onClick={onRemove}>Fjern</RemoveButton>
+        )}
+        {validationError?.showError && (
+          <StemmekretsErrorMessage>
+            <Icon icon="warning_amber" />
+            {validationError.message}
+          </StemmekretsErrorMessage>
+        )}
+      </StemmekretsSelectWrapper>
+    );
+  }
+);
+
+StemmekretsSelect.displayName = "StemmekretsSelect";
 
 const StemmekretsSelectWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
+  display: grid;
   align-items: center;
   gap: 10px;
-  margin-top: 20px;
+
+  grid-template-columns: 450px auto;
+  grid-template-areas:
+    "select fjern"
+    "error .";
+`;
+
+const StemmekretsErrorMessage = styled(ErrorMessage)`
+  grid-area: error;
 `;
 
 const Stemmekretsnavn = styled.span`
@@ -113,6 +172,7 @@ const Stemmekretsnavn = styled.span`
 `;
 
 const RemoveButton = styled(Button).attrs(() => ({ variant: "tertiary" }))`
+  grid-area: fjern;
   margin-top: 26px;
   background: transparent;
 
@@ -123,13 +183,16 @@ const RemoveButton = styled(Button).attrs(() => ({ variant: "tertiary" }))`
 
 const MultiSelectWrapper = styled.div`
   margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 `;
 
 const LeggTilFlerButton = styled(Button).attrs(() => ({
   icon: <Icon icon="add" />,
   variant: "secondary",
 }))`
-  margin-top: 20px;
+  margin-bottom: 8px;
   background: transparent;
 
   :hover {
@@ -138,5 +201,5 @@ const LeggTilFlerButton = styled(Button).attrs(() => ({
 `;
 
 const StemmekretsSelectStyle = styled(Select)`
-  max-width: 400px;
+  grid-area: select;
 `;
