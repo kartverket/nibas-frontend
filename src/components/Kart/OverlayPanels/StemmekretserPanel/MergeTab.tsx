@@ -98,19 +98,18 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
         },
       };
       updateUtkast(nyttUtkast.id, updateUtkastRequest);
-      const sammenslaaingsStemmekretsIder =
-        stemmekretsTilSammenslaaingListe.map(
-          (stemmekretsRef) => stemmekretsRef.id.lokalid.value
-        );
-      sammenslaaingsStemmekretsIder.push(stemmekrets.id.lokalid.value);
+      const sammenslaaingsStemmekretsIder = getStemmekretsIdList(
+        stemmekretsTilSammenslaaingListe
+      );
 
-      const promiseArray = stemmekretsgrenserFetcher(
+      stemmekretsgrenserFetcher(
         sammenslaaingsStemmekretsIder,
         tokenHolderFunc()?.token
-      );
-      promiseArray.then((resolvedValue) => {
+      ).then((resolvedValue) => {
         const stemmekretsFeatureIds: string[] = resolvedValue
-          ? resolvedValue.filter((x) => x !== undefined).map((x) => String(x))
+          ? resolvedValue
+              .filter((value) => value !== null)
+              .map((value) => String(value))
           : [];
         const overlappingFeatureIds = getOverlappingStemmekretsFeatureIds(
           stemmekretsFeatureIds
@@ -122,6 +121,19 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
         );
       });
     }
+  };
+
+  const getStemmekretsIdList = (
+    stemmekretserTilSammenslaaing: StemmekretsRef[]
+  ) => {
+    const stemmekretsIderTilSammenslaaing = stemmekretserTilSammenslaaing.map(
+      (stemmekretsRef) => stemmekretsRef.id.lokalid.value
+    );
+    if (stemmekrets) {
+      stemmekretsIderTilSammenslaaing.push(stemmekrets.id.lokalid.value);
+    }
+
+    return stemmekretsIderTilSammenslaaing;
   };
 
   const openCreateUtkastModal = () => {

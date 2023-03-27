@@ -10,17 +10,9 @@ export const stemmekretsgrenserFetcher = async (
       fetcherWithToken(`/v1/stemmekretser/${kretsId}/grenser`, token)
   );
 
-  const settledPromises = await Promise.allSettled(promises);
+  const stemmekretsFeatures = await Promise.all(promises);
 
-  const features = settledPromises.reduce((acc, promise) => {
-    if (promise.status === "fulfilled") {
-      acc.push(promise.value);
-    }
-
-    return acc;
-  }, [] as FeatureCollection[]);
-
-  const featureIds = features
+  const featureIds = stemmekretsFeatures
     .flatMap((feature) => feature.features)
     .map((feature) => feature.id);
   return featureIds;
