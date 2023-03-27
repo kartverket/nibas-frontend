@@ -108,7 +108,7 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
       ).then((resolvedValue) => {
         const stemmekretsFeatureIds: string[] = resolvedValue
           ? resolvedValue
-              .filter((value) => value !== null)
+              .filter((value) => value != null)
               .map((value) => String(value))
           : [];
         const overlappingFeatureIds = getOverlappingStemmekretsFeatureIds(
