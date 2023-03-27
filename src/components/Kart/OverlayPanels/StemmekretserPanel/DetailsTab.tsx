@@ -89,16 +89,12 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
     setFormValues,
   });
 
+  // TODO: skal denne lagre-lagre? i så fall opprette utkast?
+  // TODO: denne oppdaterer ikke data i stemmekretsradene
   const saveAndAddHistoryEntry = () => {
     if (!utkastStemmekrets) return;
 
     const newValues = getValues();
-    previousValues.current = newValues;
-    updateEditFeatureText(
-      getRepresentasjonspunktId(stemmekretsId),
-      newValues.stemmekretsnavn,
-      newValues.stemmekretsnummer
-    );
 
     addEntry({
       type: "stemmekrets",
@@ -111,6 +107,13 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
         },
       ],
     });
+
+    previousValues.current = newValues;
+    updateEditFeatureText(
+      getRepresentasjonspunktId(stemmekretsId),
+      newValues.stemmekretsnavn,
+      newValues.stemmekretsnummer
+    );
   };
 
   // TODO: denne kjøres bare når det gitte feltet valideres, ikke når det andre valideres
