@@ -194,7 +194,8 @@
       "sletting-feilet-tittel": "__STRING_NOT_TRANSLATED__",
       "feil-geometri-tittel": "__STRING_NOT_TRANSLATED__",
       "feil-geometri-tekst": "__STRING_NOT_TRANSLATED__"
-    }
+    },
+    "utkast-opprettet": "__STRING_NOT_TRANSLATED__"
   },
   "Aktive kartlag": "__STRING_NOT_TRANSLATED__",
   "Logg inn for å se listen": "__STRING_NOT_TRANSLATED__",
@@ -209,5 +210,8 @@
       " Endring av stemmekrets i Froland": "__STRING_NOT_TRANSLATED__"
     }
   },
-  "Velg stemmekretsen du vil slå sammen med": "__STRING_NOT_TRANSLATED__"
+  "Velg stemmekretsen du vil slå sammen med": "__STRING_NOT_TRANSLATED__",
+  "stemmekretssammenslaaing": {
+    "lagt-til-i-utkast": "__STRING_NOT_TRANSLATED__"
+  }
 }

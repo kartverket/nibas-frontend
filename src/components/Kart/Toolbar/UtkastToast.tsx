@@ -18,25 +18,31 @@ const UtkastToast = ({ text }: Props) => {
 const fadeInFadeOutFromTop = keyframes`
   0% {
     opacity: 0;
-    margin-top: 0px;
+    top: -50px;
   }
   15% {
     opacity: 1;
-    margin-top: 16px;
-  } 
-  80% {
+    top: 9%;
+  }
+  70% {
     opacity: 1;
-    margin-top: 16px;
+    top: 9%;
   }
   100% {
     opacity: 0;
-    margin-top: 16px;
+    top: 9%;
   }
 `;
 
 const Wrapper = styled.div`
-  position: absolute;
-  right: 100%;
+  inset: 0;
+  top: 9%;
+  height: 65px;
+  left: 50%;
+  transform: translateX(-50%);
+  position: fixed;
+
+  z-index: 10;
   display: flex;
   align-items: center;
   background-color: var(--green);
@@ -44,11 +50,11 @@ const Wrapper = styled.div`
   margin-right: 16px;
   font-size: 16px;
   color: var(--white);
-  width: calc(100% - 30px);
+  width: 500px;
   box-shadow: 0 8px 6px -6px var(--gray);
   gap: 12px;
   opacity: 0;
-  animation: ${fadeInFadeOutFromTop} 5s ease-in-out;
+  animation: ${fadeInFadeOutFromTop} 6s ease-in-out;
 `;
 
 export default UtkastToast;

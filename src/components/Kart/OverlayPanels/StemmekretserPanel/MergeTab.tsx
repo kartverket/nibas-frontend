@@ -21,6 +21,7 @@ import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { stemmekretsgrenserFetcher } from "api/stemmekrets";
 import { deduplicate, removeNull } from "utils/list-utils";
 import { SammenslaaingMultiselect } from "./SammenslaaingMultiselect";
+import UtkastToast from "components/Kart/Toolbar/UtkastToast";
 
 type Props = {
   stemmekrets: StemmekretsResponse | undefined;
@@ -43,6 +44,7 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   const [stemmekretsnummer, setStemmekretsnummer] = useState(
     stemmekrets?.stemmekretsnummer ?? ""
   );
+  const [utkastJustCreated, setUtkastJustCreated] = useState(false);
 
   const [
     stemmekretsNummerTilSammenslaaing,
@@ -121,6 +123,7 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
         );
       });
     }
+    promptUtkastJustCreated();
   };
 
   const getStemmekretsIdList = (
@@ -147,6 +150,18 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
     isCreateUtkastModalOpen
       ? setIsCreateUtkastModalOpen(false)
       : setIsCreateUtkastModalOpen(true);
+  };
+
+  const promptUtkastJustCreated = () => {
+    setUtkastJustCreated(true);
+
+    const timeId = setTimeout(() => {
+      setUtkastJustCreated(false);
+    }, 7000);
+
+    return () => {
+      clearTimeout(timeId);
+    };
   };
 
   return (
@@ -197,6 +212,9 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
         setIsCreateUtkastModalOpen={setIsCreateUtkastModalOpen}
         callback={mergeStemmekrets}
       />
+      {utkastJustCreated && (
+        <UtkastToast text={t("stemmekretssammenslaaing.lagt-til-i-utkast")} />
+      )}
     </>
   );
 };
