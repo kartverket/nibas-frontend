@@ -25,7 +25,11 @@ const getPointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
   return new MultiPoint(coordinates ?? []);
 };
 
-const lineAndPointStyles = (color: string, dashed = false) => [
+const lineAndPointStyles = (
+  color: string,
+  dashed = false,
+  pointsOnLine = true
+) => [
   new Style({
     stroke: new Stroke({
       color,
@@ -35,7 +39,7 @@ const lineAndPointStyles = (color: string, dashed = false) => [
   }),
   new Style({
     image: new Circle({
-      radius: 4,
+      radius: pointsOnLine ? 4 : 0,
       fill: new Fill({
         color,
       }),
@@ -44,15 +48,21 @@ const lineAndPointStyles = (color: string, dashed = false) => [
   }),
 ];
 
-export const editStyles = lineAndPointStyles("#EB48FB");
-export const dirtyStyles = lineAndPointStyles("#000000", true);
-export const selectStyles = lineAndPointStyles("#000000");
+export const editStyles = lineAndPointStyles("#000000");
+export const dirtyStyles = lineAndPointStyles("#B93D54", true);
+export const dirtySammenslaaingStyles = lineAndPointStyles("#1C8870");
+export const dirtyOverlappingSammenslaaingStyles = lineAndPointStyles(
+  "#B93D54",
+  true,
+  false
+);
+export const selectStyles = lineAndPointStyles("#EB48FB");
 export const grensetypeStyles: Record<GrenseId, Style[]> = {
-  fylke: lineAndPointStyles("#745FE8"),
-  kommune: lineAndPointStyles("#FF7936"),
-  nasjon: lineAndPointStyles("#FF5555"),
-  grunnkrets: lineAndPointStyles("#65C97A"),
-  stemmekrets: lineAndPointStyles("#5296D5"),
+  fylke: lineAndPointStyles("#186D9F"),
+  kommune: lineAndPointStyles("#4FB7C0"),
+  nasjon: lineAndPointStyles("#104C79"),
+  grunnkrets: lineAndPointStyles("#FFD34C"),
+  stemmekrets: lineAndPointStyles("#FCAE53"),
   edit: editStyles,
 };
 

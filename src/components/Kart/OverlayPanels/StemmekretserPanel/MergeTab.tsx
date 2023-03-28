@@ -16,6 +16,9 @@ import CreateUtkastModal, {
 } from "./CreateUtkastModal";
 import { useUtkast } from "contexts/UtkastContext";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
+import { useToolbar } from "contexts/ToolbarContext";
+import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
+import { stemmekretsgrenserFetcher } from "api/stemmekrets";
 import { deduplicate, removeNull } from "utils/list-utils";
 import { SammenslaaingMultiselect } from "./SammenslaaingMultiselect";
 
@@ -27,11 +30,13 @@ type Props = {
 
 const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   const { t } = useTranslation();
+
   const { utkast, updateUtkast } = useUtkast();
   const { setError } = useErrorHandling();
+  const { tokenHolderFunc } = useAuthenticationFlow();
+  const { setAndSaveSammenslaaingsFeatures } = useToolbar();
 
   const [isCreateUtkastModalOpen, setIsCreateUtkastModalOpen] = useState(false);
-
   const [stemmekretsnavn, setStemmekretsnavn] = useState(
     stemmekrets?.stemmekretsnavn ?? ""
   );
@@ -68,7 +73,13 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
     return alleStemmekretser.find((krets) => krets.nummer === nummer) ?? null;
   };
 
-  const mergeStemmekrets = (nyttUtkast: CreateUtkastCallbackArgument) => {
+  const getOverlappingStemmekretsFeatureIds = (featureIds: string[]) => {
+    return featureIds.filter(
+      (featureId, index) => featureIds.indexOf(featureId) !== index
+    );
+  };
+
+  const mergeStemmekrets = async (nyttUtkast: CreateUtkastCallbackArgument) => {
     const stemmekretsTilSammenslaaingListe = removeNull(
       stemmekretsNummerTilSammenslaaing.map((s) => getStemmekretsByNummer(s))
     );
@@ -87,7 +98,47 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
         },
       };
       updateUtkast(nyttUtkast.id, updateUtkastRequest);
+      const sammenslaaingsStemmekretsIder = getStemmekretsIdList(
+        stemmekretsTilSammenslaaingListe
+      );
+
+      const stemmekretsFeatureIds: string[] = await fetchStemmekretsgrenser(
+        sammenslaaingsStemmekretsIder
+      );
+      const overlappingFeatureIds = getOverlappingStemmekretsFeatureIds(
+        stemmekretsFeatureIds
+      );
+
+      setAndSaveSammenslaaingsFeatures(
+        stemmekretsFeatureIds,
+        overlappingFeatureIds
+      );
     }
+  };
+
+  const fetchStemmekretsgrenser = async (stemmekretsIder: string[]) => {
+    const stemmekretsgrenserResponse = await stemmekretsgrenserFetcher(
+      stemmekretsIder,
+      tokenHolderFunc()?.token
+    );
+    return stemmekretsgrenserResponse
+      ? stemmekretsgrenserResponse
+          .filter((value) => value != null)
+          .map((value) => String(value))
+      : [];
+  };
+
+  const getStemmekretsIdList = (
+    stemmekretserTilSammenslaaing: StemmekretsRef[]
+  ) => {
+    const stemmekretsIderTilSammenslaaing = stemmekretserTilSammenslaaing.map(
+      (stemmekretsRef) => stemmekretsRef.id.lokalid.value
+    );
+    if (stemmekrets) {
+      stemmekretsIderTilSammenslaaing.push(stemmekrets.id.lokalid.value);
+    }
+
+    return stemmekretsIderTilSammenslaaing;
   };
 
   const openCreateUtkastModal = () => {
@@ -104,7 +155,7 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   };
 
   return (
-    <div>
+    <>
       <Section>
         <SectionHeading>{t("stemmekrets.sammenslaaing.tittel")}</SectionHeading>
         <SammenslaaingMultiselect
@@ -151,7 +202,7 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
         setIsCreateUtkastModalOpen={setIsCreateUtkastModalOpen}
         callback={mergeStemmekrets}
       />
-    </div>
+    </>
   );
 };
 

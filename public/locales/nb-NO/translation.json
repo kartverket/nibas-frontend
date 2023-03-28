@@ -184,7 +184,8 @@
       },
       "ingenEndringer": "Det er ingen endringer i dette utkastet",
       "grunnkrets-tittel": "Grunnkretser i {{ kommune }}",
-      "metadata": "Metadataendringer"
+      "metadata": "Metadataendringer",
+      "utkast-opprettet": "Utkastet er opprettet"
     },
     "feil": {
       "utdatert-tittel": "Utkastet er utdatert",
@@ -204,7 +205,6 @@
   "Fortsett redigering": "Fortsett redigering",
   "Forkast endringer og lukk": "Forkast endringer og lukk",
   "Forkast endringer": "Forkast endringer",
-  "Utkastet er opprettet": "Utkastet er opprettet",
   "f": {
     "eks": {
       " Endring av stemmekrets i Froland": "feks Endring av Stemmekrets i Froland"

@@ -183,7 +183,8 @@
       },
       "ingenEndringer": "__STRING_NOT_TRANSLATED__",
       "grunnkrets-tittel": "__STRING_NOT_TRANSLATED__",
-      "metadata": "__STRING_NOT_TRANSLATED__"
+      "metadata": "__STRING_NOT_TRANSLATED__",
+      "utkast-opprettet": "__STRING_NOT_TRANSLATED__"
     },
     "feil": {
       "utdatert-tittel": "__STRING_NOT_TRANSLATED__",
@@ -203,7 +204,6 @@
   "Fortsett redigering": "__STRING_NOT_TRANSLATED__",
   "Forkast endringer og lukk": "__STRING_NOT_TRANSLATED__",
   "Forkast endringer": "__STRING_NOT_TRANSLATED__",
-  "Utkastet er opprettet": "__STRING_NOT_TRANSLATED__",
   "f": {
     "eks": {
       " Endring av stemmekrets i Froland": "__STRING_NOT_TRANSLATED__"

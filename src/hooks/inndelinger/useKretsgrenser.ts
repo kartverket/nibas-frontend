@@ -21,6 +21,7 @@ import { isPoint } from "types/geometry";
 import { isNotNullOrUndefined } from "types/common";
 import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
 import { useToolbar } from "contexts/ToolbarContext";
+import { stemmekretsgrenserFetcher } from "api/stemmekrets";
 
 const endpointByKretstype = {
   grunnkrets: "grunnkretser",
@@ -107,7 +108,15 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   const { visible } = grenseValue;
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { utkast } = useUtkast();
-  const { setAndSaveUtkastFeatures } = useToolbar();
+  const { setAndSaveUtkastFeatures, setAndSaveSammenslaaingsFeatures } =
+    useToolbar();
+
+  const { data: grunnkretserByKommune } = useNibasApi(
+    visible ? getKretserByKommuneUrl(type) : null,
+    {
+      id: kommuneId,
+    }
+  );
 
   const { data: kretserByKommune } = useNibasApi(
     visible ? getKretserByKommuneUrl(type) : null,
@@ -128,7 +137,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
 
   const { data: representasjonspunkter } = useSWR(
     [
-      mapGrunnkretserToIds(kretserByKommune),
+      mapGrunnkretserToIds(grunnkretserByKommune),
       tokenHolderFunc()?.token,
       type,
       "punkter",
@@ -148,6 +157,12 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     return features;
   }, [representasjonspunkter, utkastGeoJsons]);
 
+  const getOverlappingStemmekretsFeatureIds = (featureIds: string[]) => {
+    return featureIds.filter(
+      (featureId, index) => featureIds.indexOf(featureId) !== index
+    );
+  };
+
   const applyDirtyStylesToUtkastFeatures = (features: Feature<Geometry>[]) => {
     const featuresSlice = utkast?.operasjoner.grenseendringer?.endredeFeatures;
     const dirtyFeatureIds: string[] = [];
@@ -159,6 +174,39 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
         }
       }
     }
+    const sammenslaaing = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
+    const innlemmedeStemmekretsIder =
+      sammenslaaing?.stemmekretserTilSammenslaaing.map(
+        (stemmekrets) => stemmekrets.lokalId
+      );
+
+    let sammenslaaingsIder: string[] = [];
+    if (innlemmedeStemmekretsIder && sammenslaaing) {
+      sammenslaaingsIder = [
+        sammenslaaing.viderefoertStemmekrets.lokalId,
+        ...innlemmedeStemmekretsIder,
+      ];
+    }
+
+    const promiseStemmemkretsFeatureIds = stemmekretsgrenserFetcher(
+      sammenslaaingsIder,
+      tokenHolderFunc()?.token
+    );
+
+    promiseStemmemkretsFeatureIds.then((resolvedValue) => {
+      const stemmekretsFeatureIds: string[] = resolvedValue
+        ? resolvedValue.filter((x) => x !== undefined).map((x) => String(x))
+        : [];
+      const overlappingFeatureIds = getOverlappingStemmekretsFeatureIds(
+        stemmekretsFeatureIds
+      );
+
+      setAndSaveSammenslaaingsFeatures(
+        stemmekretsFeatureIds,
+        overlappingFeatureIds
+      );
+    });
+
     setAndSaveUtkastFeatures(dirtyFeatureIds);
   };
 

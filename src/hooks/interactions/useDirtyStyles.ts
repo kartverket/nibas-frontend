@@ -1,6 +1,11 @@
 import { editSource } from "hooks/layers/constants";
 import { useState } from "react";
-import { dirtyStyles, editStyles } from "utils/map/layerStyles";
+import {
+  dirtyOverlappingSammenslaaingStyles,
+  dirtySammenslaaingStyles,
+  dirtyStyles,
+  editStyles,
+} from "utils/map/layerStyles";
 
 // TODO: bør kanskje tydeliggjøres at denne bare bør brukes i ToolbarContext, kanskje legg den inn i den filen
 const useDirtyStyles = () => {
@@ -53,6 +58,20 @@ const useDirtyStyles = () => {
     setSavedDirtyFeaturesIds([...savedDirtyFeatureIds, ...features]);
   };
 
+  const setAndSaveSammenslaaingsFeatures = (
+    stemmekretsFeatureIds: string[],
+    overlappingStemmekretsFeatureIds: string[]
+  ) => {
+    for (const featureId of stemmekretsFeatureIds) {
+      editSource.getFeatureById(featureId)?.setStyle(dirtySammenslaaingStyles);
+    }
+    for (const featureId of overlappingStemmekretsFeatureIds) {
+      editSource
+        .getFeatureById(featureId)
+        ?.setStyle(dirtyOverlappingSammenslaaingStyles);
+    }
+  };
+
   return {
     dirtyFeatureIds,
     setDirtyFeatures,
@@ -61,6 +80,7 @@ const useDirtyStyles = () => {
     savedDirtyFeatureIds,
     clearSavedDirtyFeatureIds,
     setAndSaveUtkastFeatures,
+    setAndSaveSammenslaaingsFeatures,
   };
 };
 
