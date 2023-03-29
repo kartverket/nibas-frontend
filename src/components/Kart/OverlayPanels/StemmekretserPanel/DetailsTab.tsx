@@ -119,17 +119,6 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
     return !navn.length === !nummer.length;
   };
 
-  const validationError = (error: FieldError | undefined) => {
-    if (error) {
-      return [
-        {
-          showError: error !== undefined,
-          message: error.message,
-        } as ValidationError,
-      ];
-    }
-  };
-
   const validators = {
     stemmekretsnummer: {
       required: t("stemmekrets.validering.stemmekretsnummer.ikke-tomt"),
@@ -169,6 +158,15 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
           "Må ha både navn og nummer for tellekrets, eller ingen av delene",
       },
     },
+  };
+
+  const validationError = (error: FieldError | undefined) => {
+    if (error) {
+      return {
+        showError: error !== undefined,
+        message: error.message,
+      } as ValidationError;
+    }
   };
 
   // TODO: mangler valgdistriktnummer?

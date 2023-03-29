@@ -10,7 +10,7 @@ export type ValidationError = {
 
 type Props = {
   label?: string;
-  validationError?: ValidationError[];
+  validationError?: ValidationError;
 } & InputHTMLAttributes<HTMLInputElement>;
 
 const StyledInput = styled.input<{ isInvalid: boolean }>`
@@ -77,17 +77,17 @@ const ErrorMessage = styled.div`
 `;
 
 const Input = forwardRef<HTMLInputElement, Props>(function Input(props, ref) {
-  const activeError = props.validationError
-    ? props.validationError?.find((ve) => ve.showError)
-    : undefined;
-
   return (
     <Label className={props.className} label={props.label ?? ""}>
-      <StyledInput {...props} ref={ref} isInvalid={activeError !== undefined} />
-      {activeError && (
+      <StyledInput
+        {...props}
+        ref={ref}
+        isInvalid={props.validationError?.showError ?? false}
+      />
+      {props.validationError && (
         <ErrorMessage>
           <Icon icon="warning_amber" />
-          {activeError.message}
+          {props.validationError.message}
         </ErrorMessage>
       )}
     </Label>
