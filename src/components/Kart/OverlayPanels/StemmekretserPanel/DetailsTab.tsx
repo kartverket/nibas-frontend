@@ -130,63 +130,68 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
     }
   };
 
+  const validators = {
+    stemmekretsnummer: {
+      required: t("stemmekrets.validering.stemmekretsnummer.ikke-tomt"),
+      validate: {
+        isLessThanFiveFigures: (value: string) =>
+          (stringValidation.isInteger(value) && value.length < 5) ||
+          t("stemmekrets.validering.stemmekretsnummer.kun-siffer"),
+        isPositive: (value: string) =>
+          numberValidation.isPositive(parseInt(value)) ||
+          t("stemmekrets.validering.stemmekretsnummer.kun-positiv"),
+        isUnique: () =>
+          true || t("stemmekrets.validering.stemmekretsnummer.unik-i-kommune"), // TODO: krever egen håndtering
+      },
+    },
+    stemmekretsnavn: {
+      required: t("stemmekrets.validering.stemmekretsnavn.ikke-tomt"),
+    },
+    tellekretsnummer: {
+      validate: {
+        isTellekretsValid: (value: string) =>
+          isTellekretsSynced(getValues("tellekretsnavn"), value) ||
+          t("stemmekrets.validering.tellekretsnummer.både-eller-ingen"),
+        isNumber: (value: string) =>
+          isTellekretsSynced(getValues("tellekretsnavn"), value) ||
+          stringValidation.isInteger(value) ||
+          t("stemmekrets.validering.tellekretsnummer.kun-tall"),
+        isPositive: (value: string) =>
+          isTellekretsSynced(getValues("tellekretsnavn"), value) ||
+          numberValidation.isPositive(parseInt(value)) ||
+          t("stemmekrets.validering.tellekretsnummer.kun-positiv"),
+      },
+    },
+    tellekretsnavn: {
+      validate: {
+        isTellekretsValid: (value: string) =>
+          isTellekretsSynced(value, getValues("tellekretsnummer")) ||
+          "Må ha både navn og nummer for tellekrets, eller ingen av delene",
+      },
+    },
+  };
+
   // TODO: mangler valgdistriktnummer?
-  // TODO: trekk valideringsfunksjoner (og kanskje alt av register-greier) ut av render-return
   return (
     <DetailsSection as="form" onSubmit={handleSubmit(saveAndAddHistoryEntry)}>
       <Input
         label={t("stemmekrets.Stemmekretsnummer")}
-        {...register("stemmekretsnummer", {
-          required: t("stemmekrets.validering.stemmekretsnummer.ikke-tomt"),
-          validate: {
-            isLessThanFiveFigures: (value) =>
-              (stringValidation.isInteger(value) && value.length < 5) ||
-              t("stemmekrets.validering.stemmekretsnummer.kun-siffer"),
-            isPositive: (value) =>
-              numberValidation.isPositive(parseInt(value)) ||
-              t("stemmekrets.validering.stemmekretsnummer.kun-positiv"),
-            isUnique: () =>
-              true ||
-              t("stemmekrets.validering.stemmekretsnummer.unik-i-kommune"), // TODO: krever egen håndtering
-          },
-        })}
+        {...register("stemmekretsnummer", validators.stemmekretsnummer)}
         validationError={validationError(errors.stemmekretsnummer)}
       />
       <Input
         label={t("tabell.Stemmekretsnavn")}
-        {...register("stemmekretsnavn", {
-          required: t("stemmekrets.validering.stemmekretsnavn.ikke-tomt"),
-        })}
+        {...register("stemmekretsnavn", validators.stemmekretsnavn)}
         validationError={validationError(errors.stemmekretsnavn)}
       />
       <Input
         label={t("stemmekrets.Tellekretsnummer")}
-        {...register("tellekretsnummer", {
-          validate: {
-            isTellekretsValid: (value) =>
-              isTellekretsSynced(getValues("tellekretsnavn"), value) ||
-              t("stemmekrets.validering.tellekretsnummer.både-eller-ingen"),
-            isNumber: (value) =>
-              isTellekretsSynced(getValues("tellekretsnavn"), value) ||
-              stringValidation.isInteger(value) ||
-              t("stemmekrets.validering.tellekretsnummer.kun-tall"),
-            isPositive: (value) =>
-              isTellekretsSynced(getValues("tellekretsnavn"), value) ||
-              numberValidation.isPositive(parseInt(value)) ||
-              t("stemmekrets.validering.tellekretsnummer.kun-positiv"),
-          },
-        })}
+        {...register("tellekretsnummer", validators.tellekretsnummer)}
         validationError={validationError(errors.tellekretsnummer)}
       />
       <Input
         label={t("stemmekrets.Tellekretsnavn")}
-        {...register("tellekretsnavn", {
-          validate: {
-            isTellekretsValid: (value) =>
-              isTellekretsSynced(value, getValues("tellekretsnummer")) ||
-              "Må ha både navn og nummer for tellekrets, eller ingen av delene",
-          },
-        })}
+        {...register("tellekretsnavn", validators.tellekretsnavn)}
         validationError={validationError(errors.tellekretsnavn)}
       />
       <Button type="submit">{t("action.Lagre")}</Button>
