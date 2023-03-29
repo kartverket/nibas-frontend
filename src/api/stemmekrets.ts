@@ -1,5 +1,6 @@
 import { FeatureCollection } from "types/api";
 import { fetcherWithToken } from "utils/api";
+import { removeNull } from "utils/list-utils";
 
 export const stemmekretsgrenserFetcher = async (
   stemmekretsIds: string[],
@@ -12,12 +13,10 @@ export const stemmekretsgrenserFetcher = async (
 
   const stemmekretsFeatures = await Promise.all(promises);
 
-  const featureIds = stemmekretsFeatures
-    .flatMap((feature) => feature.features)
-    .map((feature) => {
-      if (feature.id != null) {
-        return feature.id;
-      }
-    }) as string[];
+  const featureIds = removeNull(
+    stemmekretsFeatures
+      .flatMap((feature) => feature.features)
+      .map((feature) => feature.id)
+  );
   return featureIds;
 };

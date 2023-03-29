@@ -81,7 +81,7 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
     );
   };
 
-  const mergeStemmekrets = (nyttUtkast: CreateUtkastCallbackArgument) => {
+  const mergeStemmekrets = async (nyttUtkast: CreateUtkastCallbackArgument) => {
     const stemmekretsTilSammenslaaingListe = removeNull(
       stemmekretsNummerTilSammenslaaing.map((s) => getStemmekretsByNummer(s))
     );
@@ -104,26 +104,44 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
         stemmekretsTilSammenslaaingListe
       );
 
-      stemmekretsgrenserFetcher(
-        sammenslaaingsStemmekretsIder,
-        tokenHolderFunc()?.token
-      ).then((resolvedValue) => {
-        const stemmekretsFeatureIds: string[] = resolvedValue
-          ? resolvedValue
-              .filter((value) => value != null)
-              .map((value) => String(value))
-          : [];
-        const overlappingFeatureIds = getOverlappingStemmekretsFeatureIds(
-          stemmekretsFeatureIds
-        );
+      const stemmekretsFeatureIds: string[] = await fetchStemmekretsgrenser(
+        sammenslaaingsStemmekretsIder
+      );
+      const overlappingFeatureIds = getOverlappingStemmekretsFeatureIds(
+        stemmekretsFeatureIds
+      );
 
-        setAndSaveSammenslaaingsFeatures(
-          stemmekretsFeatureIds,
-          overlappingFeatureIds
-        );
-      });
+      setAndSaveSammenslaaingsFeatures(
+        stemmekretsFeatureIds,
+        overlappingFeatureIds
+      );
     }
     promptUtkastJustCreated();
+  };
+
+  const getStemmekretsIdList = (
+    stemmekretserTilSammenslaaing: StemmekretsRef[]
+  ) => {
+    const stemmekretsIderTilSammenslaaing = stemmekretserTilSammenslaaing.map(
+      (stemmekretsRef) => stemmekretsRef.id.lokalid.value
+    );
+    if (stemmekrets) {
+      stemmekretsIderTilSammenslaaing.push(stemmekrets.id.lokalid.value);
+    }
+
+    return stemmekretsIderTilSammenslaaing;
+  };
+
+  const fetchStemmekretsgrenser = async (stemmekretsIder: string[]) => {
+    const stemmekretsgrenserResponse = await stemmekretsgrenserFetcher(
+      stemmekretsIder,
+      tokenHolderFunc()?.token
+    );
+    return stemmekretsgrenserResponse
+      ? stemmekretsgrenserResponse
+          .filter((value) => value != null)
+          .map((value) => String(value))
+      : [];
   };
 
   const getStemmekretsIdList = (
