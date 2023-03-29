@@ -10,7 +10,6 @@ import styled from "styled-components";
 import { Section } from "./components";
 import { getRepresentasjonspunktId } from "utils/map/source";
 import { updateEditFeatureText } from "utils/map/layerStyles";
-import { numberValidation, stringValidation } from "utils/validation";
 import Button from "components/form/Button";
 
 type Inputs = {
@@ -119,15 +118,17 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
     return !navn.length === !nummer.length;
   };
 
+  const isInteger = (s: string) => s.match(/^[0-9]+$/) !== null;
+
   const validators = {
     stemmekretsnummer: {
       required: t("stemmekrets.validering.stemmekretsnummer.ikke-tomt"),
       validate: {
         isLessThanFiveFigures: (value: string) =>
-          (stringValidation.isInteger(value) && value.length < 5) ||
+          (isInteger(value) && value.length < 5) ||
           t("stemmekrets.validering.stemmekretsnummer.kun-siffer"),
         isPositive: (value: string) =>
-          numberValidation.isPositive(parseInt(value)) ||
+          parseInt(value) > 0 ||
           t("stemmekrets.validering.stemmekretsnummer.kun-positiv"),
         isUnique: () =>
           true || t("stemmekrets.validering.stemmekretsnummer.unik-i-kommune"), // TODO: krever egen håndtering
@@ -143,11 +144,11 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
           t("stemmekrets.validering.tellekretsnummer.både-eller-ingen"),
         isNumber: (value: string) =>
           isTellekretsSynced(getValues("tellekretsnavn"), value) ||
-          stringValidation.isInteger(value) ||
+          isInteger(value) ||
           t("stemmekrets.validering.tellekretsnummer.kun-tall"),
         isPositive: (value: string) =>
           isTellekretsSynced(getValues("tellekretsnavn"), value) ||
-          numberValidation.isPositive(parseInt(value)) ||
+          parseInt(value) > 0 ||
           t("stemmekrets.validering.tellekretsnummer.kun-positiv"),
       },
     },
