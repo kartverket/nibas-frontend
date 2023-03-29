@@ -142,17 +142,17 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
       <Input
         label={t("stemmekrets.Stemmekretsnummer")}
         {...register("stemmekretsnummer", {
-          required: "Stemmekretsnummer kan ikke være tomt",
+          required: t("stemmekrets.validering.stemmekretsnummer.ikke-tomt"),
           validate: {
             isLessThanFiveFigures: (value) =>
               (stringValidation.isInteger(value) && value.length < 5) ||
-              "Stemmekretsnummer må kun inneholde siffer (maks 4)",
+              t("stemmekrets.validering.stemmekretsnummer.kun-siffer"),
             isPositive: (value) =>
               numberValidation.isPositive(parseInt(value)) ||
-              "Stemmekretsnummer kan ikke være 0 eller et negativt tall",
+              t("stemmekrets.validering.stemmekretsnummer.kun-positiv"),
             isUnique: () =>
               true ||
-              "Stemmekretsnummer må være unik for den bestemte kommunen", // TODO: krever egen håndtering
+              t("stemmekrets.validering.stemmekretsnummer.unik-i-kommune"), // TODO: krever egen håndtering
           },
         })}
         validationError={validationError(errors.stemmekretsnummer)}
@@ -160,7 +160,7 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
       <Input
         label={t("tabell.Stemmekretsnavn")}
         {...register("stemmekretsnavn", {
-          required: "Stemmekretsnavn kan ikke være tomt",
+          required: t("stemmekrets.validering.stemmekretsnavn.ikke-tomt"),
         })}
         validationError={validationError(errors.stemmekretsnavn)}
       />
@@ -170,15 +170,15 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
           validate: {
             isTellekretsValid: (value) =>
               isTellekretsSynced(value, getValues("tellekretsnavn")) ||
-              "Må ha både navn og nummer for tellekrets, eller ingen av delene",
+              t("stemmekrets.validering.tellekretsnummer.både-eller-ingen"),
             isNumber: (value) =>
               isTellekretsSynced(value, getValues("tellekretsnavn")) ||
               stringValidation.isInteger(value) ||
-              "Tellekretsnummer må være et tall",
+              t("stemmekrets.validering.tellekretsnummer.kun-tall"),
             isPositive: (value) =>
               isTellekretsSynced(value, getValues("tellekretsnavn")) ||
               numberValidation.isPositive(parseInt(value)) ||
-              "Tellekretsnummer kan ikke være 0 eller et negativt tall",
+              t("stemmekrets.validering.tellekretsnummer.kun-positiv"),
           },
         })}
         validationError={validationError(errors.tellekretsnummer)}
@@ -194,7 +194,7 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
         })}
         validationError={validationError(errors.tellekretsnavn)}
       />
-      <Button type="submit">Lagre</Button>
+      <Button type="submit">{t("action.Lagre")}</Button>
     </DetailsSection>
   );
 };

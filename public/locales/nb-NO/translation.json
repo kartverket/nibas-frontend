@@ -125,6 +125,22 @@
     "utkast-sammenslaaing-alert": {
       "tittel": "Kan ikke slå sammen stemmekretser",
       "tekst": "Du kan ikke gjøre en sammenslåing i et eksisterende utkast som har andre endringer. Avslutt redigeringen av dette utkastet før du gjennomfører sammenslåingen."
+    },
+    "validering": {
+      "stemmekretsnummer": {
+        "ikke-tomt": "Stemmekretsnummer kan ikke være tomt",
+        "kun-siffer": "Stemmekretsnummer må kun inneholde siffer (maks 4)",
+        "kun-positiv": "Stemmekretsnummer kan ikke være 0 eller et negativt tall",
+        "unik-i-kommune": "Stemmekretsnummer må være unik for den bestemte kommunen"
+      },
+      "stemmekretsnavn": {
+        "ikke-tomt": "Stemmekretsnavn kan ikke være tomt"
+      },
+      "tellekretsnummer": {
+        "både-eller-ingen": "Må ha både navn og nummer for tellekrets, eller ingen av delene",
+        "kun-tall": "Tellekretsnummer må være et tall",
+        "kun-positiv": "Tellekretsnummer kan ikke være 0 eller et negativt tall"
+      }
     }
   },
   "Endre": "Endre",
