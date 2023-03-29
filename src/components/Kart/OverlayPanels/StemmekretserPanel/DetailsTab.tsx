@@ -154,7 +154,7 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
       validate: {
         isTellekretsValid: (value: string) =>
           isTellekretsSynced(value, getValues("tellekretsnummer")) ||
-          "Må ha både navn og nummer for tellekrets, eller ingen av delene",
+          t("stemmekrets.validering.tellekretsnummer.både-eller-ingen"),
       },
     },
   };
