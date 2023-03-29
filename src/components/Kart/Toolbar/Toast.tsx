@@ -15,33 +15,33 @@ const Toast = ({ text }: Props) => {
   );
 };
 
+const topOffset = "125px";
+
 const fadeInFadeOutFromTop = keyframes`
   0% {
     opacity: 0;
-    top: -50px;
+    top: -${topOffset};
   }
   15% {
     opacity: 1;
-    top: 9%;
+    top: ${topOffset};
   }
   70% {
     opacity: 1;
-    top: 9%;
+    top: ${topOffset};
   }
   100% {
     opacity: 0;
-    top: 9%;
+    top: ${topOffset};
   }
 `;
 
 const Wrapper = styled.div`
-  inset: 0;
-  top: 9%;
+  top: ${topOffset};
   height: 65px;
   left: 50%;
   transform: translateX(-50%);
   position: fixed;
-
   z-index: 10;
   display: flex;
   align-items: center;
@@ -50,7 +50,7 @@ const Wrapper = styled.div`
   margin-right: 16px;
   font-size: 16px;
   color: var(--white);
-  width: 500px;
+  max-width: 600px;
   box-shadow: 0 8px 6px -6px var(--gray);
   gap: 12px;
   opacity: 0;
