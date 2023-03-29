@@ -89,8 +89,6 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
     setFormValues,
   });
 
-  // TODO: skal denne lagre-lagre? i så fall opprette utkast?
-  // TODO: denne oppdaterer ikke data i stemmekretsradene
   const saveAndAddHistoryEntry = () => {
     if (!utkastStemmekrets) return;
 
@@ -116,11 +114,9 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
     );
   };
 
-  // TODO: denne kjøres bare når det gitte feltet valideres, ikke når det andre valideres
-  const isTellekretsSynced = (lorem: string, ipsum: string) => {
-    // Denne skal oppføre seg som en XNOR, enten har begge en lengde eller ingen av dem
-    // TODO: bør kanskje kjøre trim før man sjekker lengde
-    return !lorem.length === !ipsum.length;
+  // Denne skal oppføre seg som en XNOR, enten har begge feltene innhold, eller ingen av dem
+  const isTellekretsSynced = (navn: string, nummer: string) => {
+    return !navn.length === !nummer.length;
   };
 
   const validationError = (error: FieldError | undefined) => {
@@ -135,7 +131,6 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
   };
 
   // TODO: mangler valgdistriktnummer?
-  // TODO: translations
   // TODO: trekk valideringsfunksjoner (og kanskje alt av register-greier) ut av render-return
   return (
     <DetailsSection as="form" onSubmit={handleSubmit(saveAndAddHistoryEntry)}>
@@ -169,14 +164,14 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
         {...register("tellekretsnummer", {
           validate: {
             isTellekretsValid: (value) =>
-              isTellekretsSynced(value, getValues("tellekretsnavn")) ||
+              isTellekretsSynced(getValues("tellekretsnavn"), value) ||
               t("stemmekrets.validering.tellekretsnummer.både-eller-ingen"),
             isNumber: (value) =>
-              isTellekretsSynced(value, getValues("tellekretsnavn")) ||
+              isTellekretsSynced(getValues("tellekretsnavn"), value) ||
               stringValidation.isInteger(value) ||
               t("stemmekrets.validering.tellekretsnummer.kun-tall"),
             isPositive: (value) =>
-              isTellekretsSynced(value, getValues("tellekretsnavn")) ||
+              isTellekretsSynced(getValues("tellekretsnavn"), value) ||
               numberValidation.isPositive(parseInt(value)) ||
               t("stemmekrets.validering.tellekretsnummer.kun-positiv"),
           },
