@@ -6,7 +6,7 @@ type Props = {
 };
 
 // TODO: erstatt dette med en generell toast eller en annen løsning
-const UtkastToast = ({ text }: Props) => {
+const Toast = ({ text }: Props) => {
   return (
     <Wrapper>
       <Icon icon="check" />
@@ -57,4 +57,4 @@ const Wrapper = styled.div`
   animation: ${fadeInFadeOutFromTop} 6s ease-in-out;
 `;
 
-export default UtkastToast;
+export default Toast;

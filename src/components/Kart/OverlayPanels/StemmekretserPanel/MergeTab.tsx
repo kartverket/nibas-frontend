@@ -21,7 +21,7 @@ import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { stemmekretsgrenserFetcher } from "api/stemmekrets";
 import { deduplicate, removeNull } from "utils/list-utils";
 import { SammenslaaingMultiselect } from "./SammenslaaingMultiselect";
-import UtkastToast from "components/Kart/Toolbar/UtkastToast";
+import Toast from "components/Kart/Toolbar/Toast";
 
 type Props = {
   stemmekrets: StemmekretsResponse | undefined;
@@ -218,7 +218,7 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
         callback={mergeStemmekrets}
       />
       {utkastJustCreated && (
-        <UtkastToast text={t("stemmekretssammenslaaing.lagt-til-i-utkast")} />
+        <Toast text={t("stemmekretssammenslaaing.lagt-til-i-utkast")} />
       )}
     </>
   );
