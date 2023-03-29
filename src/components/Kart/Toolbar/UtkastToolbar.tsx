@@ -81,13 +81,9 @@ const UtkastToolbar = ({
   const promptUtkast = () => {
     setUtkastJustCreated(true);
 
-    const timeId = setTimeout(() => {
+    setTimeout(() => {
       setUtkastJustCreated(false);
     }, 5000);
-
-    return () => {
-      clearTimeout(timeId);
-    };
   };
 
   const createUtkast = async () => {

@@ -160,13 +160,9 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   const promptUtkastJustCreated = () => {
     setUtkastJustCreated(true);
 
-    const timeId = setTimeout(() => {
+    setTimeout(() => {
       setUtkastJustCreated(false);
     }, 7000);
-
-    return () => {
-      clearTimeout(timeId);
-    };
   };
 
   return (
