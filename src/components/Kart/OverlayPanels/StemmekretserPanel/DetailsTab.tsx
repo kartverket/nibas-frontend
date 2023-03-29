@@ -1,16 +1,16 @@
 import { useCallback, useEffect, useRef } from "react";
-import { useForm } from "react-hook-form";
+import { FieldError, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import Input from "components/form/Input";
+import Input, { ValidationError } from "components/form/Input/Input";
 import { StemmekretsEntry, useToolbarSaving } from "contexts/ToolbarContext";
 import useKretsToolbarSync from "contexts/ToolbarContext/useToolbarFormSync";
 import { StemmekretsRequest, StemmekretsResponse } from "types/api";
-import useTimer from "hooks/useTimer";
 import { getIdFromEntity } from "utils/api";
 import styled from "styled-components";
 import { Section } from "./components";
 import { getRepresentasjonspunktId } from "utils/map/source";
 import { updateEditFeatureText } from "utils/map/layerStyles";
+import Button from "components/form/Button";
 
 type Inputs = {
   stemmekretsnavn: string;
@@ -42,13 +42,14 @@ type Props = {
 
 const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
   const { t } = useTranslation();
-
-  const { startTimer, clearTimer } = useTimer();
-
-  const { register, setValue, getValues } = useForm<Inputs>();
-
+  const {
+    register,
+    setValue,
+    getValues,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Inputs>();
   const { addEntry } = useToolbarSaving();
-
   const previousValues = useRef<Inputs>(getValues());
 
   useEffect(() => {
@@ -87,55 +88,109 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
     setFormValues,
   });
 
-  const onChange = () => {
-    clearTimer();
-
+  const saveAndAddHistoryEntry = () => {
     if (!utkastStemmekrets) return;
 
-    startTimer(() => {
-      const newValues = getValues();
-      addEntry({
-        type: "stemmekrets",
-        kommuneId,
-        changes: [
-          {
-            from: fromFormToRequest(previousValues.current, utkastStemmekrets),
-            to: fromFormToRequest(newValues, utkastStemmekrets),
-            id: stemmekretsId,
-          },
-        ],
-      });
-      previousValues.current = newValues;
-      updateEditFeatureText(
-        getRepresentasjonspunktId(stemmekretsId),
-        newValues.stemmekretsnavn,
-        newValues.stemmekretsnummer
-      );
-    }, 700);
+    const newValues = getValues();
+
+    addEntry({
+      type: "stemmekrets",
+      kommuneId,
+      changes: [
+        {
+          from: fromFormToRequest(previousValues.current, utkastStemmekrets),
+          to: fromFormToRequest(newValues, utkastStemmekrets),
+          id: stemmekretsId,
+        },
+      ],
+    });
+
+    previousValues.current = newValues;
+    updateEditFeatureText(
+      getRepresentasjonspunktId(stemmekretsId),
+      newValues.stemmekretsnavn,
+      newValues.stemmekretsnummer
+    );
   };
 
-  const formOptions = {
-    onChange,
+  // Denne skal oppføre seg som en XNOR, enten har begge feltene innhold, eller ingen av dem
+  const isTellekretsSynced = (navn: string, nummer: string) => {
+    return !navn.length === !nummer.length;
+  };
+
+  const isInteger = (s: string) => s.match(/^[0-9]+$/) !== null;
+
+  const validators = {
+    stemmekretsnummer: {
+      required: t("stemmekrets.validering.stemmekretsnummer.ikke-tomt"),
+      validate: {
+        isLessThanFiveFigures: (value: string) =>
+          (isInteger(value) && value.length < 5) ||
+          t("stemmekrets.validering.stemmekretsnummer.kun-siffer"),
+        isPositive: (value: string) =>
+          parseInt(value) > 0 ||
+          t("stemmekrets.validering.stemmekretsnummer.kun-positiv"),
+      },
+    },
+    stemmekretsnavn: {
+      required: t("stemmekrets.validering.stemmekretsnavn.ikke-tomt"),
+    },
+    tellekretsnummer: {
+      validate: {
+        isTellekretsValid: (value: string) =>
+          isTellekretsSynced(getValues("tellekretsnavn"), value) ||
+          t("stemmekrets.validering.tellekretsnummer.både-eller-ingen"),
+        isNumber: (value: string) =>
+          isTellekretsSynced(getValues("tellekretsnavn"), value) ||
+          isInteger(value) ||
+          t("stemmekrets.validering.tellekretsnummer.kun-tall"),
+        isPositive: (value: string) =>
+          isTellekretsSynced(getValues("tellekretsnavn"), value) ||
+          parseInt(value) > 0 ||
+          t("stemmekrets.validering.tellekretsnummer.kun-positiv"),
+      },
+    },
+    tellekretsnavn: {
+      validate: {
+        isTellekretsValid: (value: string) =>
+          isTellekretsSynced(value, getValues("tellekretsnummer")) ||
+          t("stemmekrets.validering.tellekretsnummer.både-eller-ingen"),
+      },
+    },
+  };
+
+  const validationError = (error: FieldError | undefined) => {
+    if (error) {
+      return {
+        showError: error !== undefined,
+        message: error.message,
+      } as ValidationError;
+    }
   };
 
   return (
-    <DetailsSection>
+    <DetailsSection as="form" onSubmit={handleSubmit(saveAndAddHistoryEntry)}>
       <Input
         label={t("stemmekrets.Stemmekretsnummer")}
-        {...register("stemmekretsnummer", formOptions)}
+        {...register("stemmekretsnummer", validators.stemmekretsnummer)}
+        validationError={validationError(errors.stemmekretsnummer)}
       />
       <Input
         label={t("tabell.Stemmekretsnavn")}
-        {...register("stemmekretsnavn", formOptions)}
+        {...register("stemmekretsnavn", validators.stemmekretsnavn)}
+        validationError={validationError(errors.stemmekretsnavn)}
       />
       <Input
         label={t("stemmekrets.Tellekretsnummer")}
-        {...register("tellekretsnummer", formOptions)}
+        {...register("tellekretsnummer", validators.tellekretsnummer)}
+        validationError={validationError(errors.tellekretsnummer)}
       />
       <Input
         label={t("stemmekrets.Tellekretsnavn")}
-        {...register("tellekretsnavn", formOptions)}
+        {...register("tellekretsnavn", validators.tellekretsnavn)}
+        validationError={validationError(errors.tellekretsnavn)}
       />
+      <Button type="submit">{t("action.Lagre")}</Button>
     </DetailsSection>
   );
 };

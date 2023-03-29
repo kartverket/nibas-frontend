@@ -136,6 +136,21 @@
     "utkast-sammenslaaing-alert": {
       "tittel": "__STRING_NOT_TRANSLATED__",
       "tekst": "__STRING_NOT_TRANSLATED__"
+    },
+    "validering": {
+      "stemmekretsnummer": {
+        "ikke-tomt": "__STRING_NOT_TRANSLATED__",
+        "kun-siffer": "__STRING_NOT_TRANSLATED__",
+        "kun-positiv": "__STRING_NOT_TRANSLATED__"
+      },
+      "stemmekretsnavn": {
+        "ikke-tomt": "__STRING_NOT_TRANSLATED__"
+      },
+      "tellekretsnummer": {
+        "både-eller-ingen": "__STRING_NOT_TRANSLATED__",
+        "kun-tall": "__STRING_NOT_TRANSLATED__",
+        "kun-positiv": "__STRING_NOT_TRANSLATED__"
+      }
     }
   },
   "Endre": "__STRING_NOT_TRANSLATED__",
