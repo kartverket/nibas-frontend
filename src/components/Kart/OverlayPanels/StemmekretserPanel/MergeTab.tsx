@@ -144,19 +144,6 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
       : [];
   };
 
-  const getStemmekretsIdList = (
-    stemmekretserTilSammenslaaing: StemmekretsRef[]
-  ) => {
-    const stemmekretsIderTilSammenslaaing = stemmekretserTilSammenslaaing.map(
-      (stemmekretsRef) => stemmekretsRef.id.lokalid.value
-    );
-    if (stemmekrets) {
-      stemmekretsIderTilSammenslaaing.push(stemmekrets.id.lokalid.value);
-    }
-
-    return stemmekretsIderTilSammenslaaing;
-  };
-
   const openCreateUtkastModal = () => {
     if (utkast) {
       setError({
