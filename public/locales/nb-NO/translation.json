@@ -195,7 +195,8 @@
       "sletting-feilet-tittel": "Sletting av utkast feilet",
       "feil-geometri-tittel": "Feil på geometri",
       "feil-geometri-tekst": "Utkastet inneholder ugyldig geometri. Vennligst rett opp i feilen og prøv igjen.\n\nFeiltype: {{ feiltype }}\nFeilkode: {{ feilkode }}"
-    }
+    },
+    "utkast-opprettet": "Utkastet er opprettet"
   },
   "Aktive kartlag": "Aktive kartlag",
   "Logg inn for å se listen": "Logg inn for å se listen",
@@ -210,5 +211,8 @@
       " Endring av stemmekrets i Froland": "feks Endring av Stemmekrets i Froland"
     }
   },
-  "Velg stemmekretsen du vil slå sammen med": "Velg stemmekretsen du vil slå sammen med"
+  "Velg stemmekretsen du vil slå sammen med": "Velg stemmekretsen du vil slå sammen med",
+  "stemmekretssammenslaaing": {
+    "lagt-til-i-utkast": "Utkast opprettet. Stemmekretssammenslåing lagret i utkastet."
+  }
 }

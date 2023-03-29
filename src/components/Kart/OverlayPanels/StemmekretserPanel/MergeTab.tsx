@@ -21,6 +21,7 @@ import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { stemmekretsgrenserFetcher } from "api/stemmekrets";
 import { deduplicate, removeNull } from "utils/list-utils";
 import { SammenslaaingMultiselect } from "./SammenslaaingMultiselect";
+import Toast from "components/Kart/Toolbar/Toast";
 
 type Props = {
   stemmekrets: StemmekretsResponse | undefined;
@@ -43,6 +44,7 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   const [stemmekretsnummer, setStemmekretsnummer] = useState(
     stemmekrets?.stemmekretsnummer ?? ""
   );
+  const [utkastJustCreated, setUtkastJustCreated] = useState(false);
 
   const [
     stemmekretsNummerTilSammenslaaing,
@@ -114,18 +116,7 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
         overlappingFeatureIds
       );
     }
-  };
-
-  const fetchStemmekretsgrenser = async (stemmekretsIder: string[]) => {
-    const stemmekretsgrenserResponse = await stemmekretsgrenserFetcher(
-      stemmekretsIder,
-      tokenHolderFunc()?.token
-    );
-    return stemmekretsgrenserResponse
-      ? stemmekretsgrenserResponse
-          .filter((value) => value != null)
-          .map((value) => String(value))
-      : [];
+    promptUtkastJustCreated();
   };
 
   const getStemmekretsIdList = (
@@ -141,6 +132,18 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
     return stemmekretsIderTilSammenslaaing;
   };
 
+  const fetchStemmekretsgrenser = async (stemmekretsIder: string[]) => {
+    const stemmekretsgrenserResponse = await stemmekretsgrenserFetcher(
+      stemmekretsIder,
+      tokenHolderFunc()?.token
+    );
+    return stemmekretsgrenserResponse
+      ? stemmekretsgrenserResponse
+          .filter((value) => value != null)
+          .map((value) => String(value))
+      : [];
+  };
+
   const openCreateUtkastModal = () => {
     if (utkast) {
       setError({
@@ -152,6 +155,14 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
     isCreateUtkastModalOpen
       ? setIsCreateUtkastModalOpen(false)
       : setIsCreateUtkastModalOpen(true);
+  };
+
+  const promptUtkastJustCreated = () => {
+    setUtkastJustCreated(true);
+
+    setTimeout(() => {
+      setUtkastJustCreated(false);
+    }, 7000);
   };
 
   return (
@@ -202,6 +213,9 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
         setIsCreateUtkastModalOpen={setIsCreateUtkastModalOpen}
         callback={mergeStemmekrets}
       />
+      {utkastJustCreated && (
+        <Toast text={t("stemmekretssammenslaaing.lagt-til-i-utkast")} />
+      )}
     </>
   );
 };

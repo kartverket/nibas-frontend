@@ -5,7 +5,7 @@ import UtkastToolbar from "./UtkastToolbar";
 import LagreToolbar from "./LagreToolbar";
 import ButtonToolbar from "./ButtonToolbar";
 import { toolbarSpacing } from "./components";
-import UtkastToast from "./UtkastToast";
+import Toast from "./Toast";
 import { t } from "i18next";
 
 const Container = styled.div`
@@ -44,9 +44,7 @@ const Toolbar = () => {
             createUtkastOpen={createUtkastOpen}
             setCreateUtkastOpen={setCreateUtkastOpen}
           />
-          {utkastJustCreated && (
-            <UtkastToast text={t("utkast.utkast-opprettet")} />
-          )}
+          {utkastJustCreated && <Toast text={t("utkast.utkast-opprettet")} />}
         </>
       )}
       <ButtonToolbar />
