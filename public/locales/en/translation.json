@@ -130,8 +130,7 @@
       "stemmekretsnummer": {
         "ikke-tomt": "__STRING_NOT_TRANSLATED__",
         "kun-siffer": "__STRING_NOT_TRANSLATED__",
-        "kun-positiv": "__STRING_NOT_TRANSLATED__",
-        "unik-i-kommune": "__STRING_NOT_TRANSLATED__"
+        "kun-positiv": "__STRING_NOT_TRANSLATED__"
       },
       "stemmekretsnavn": {
         "ikke-tomt": "__STRING_NOT_TRANSLATED__"

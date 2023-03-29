@@ -130,8 +130,7 @@
       "stemmekretsnummer": {
         "ikke-tomt": "Stemmekretsnummer kan ikke være tomt",
         "kun-siffer": "Stemmekretsnummer må kun inneholde siffer (maks 4)",
-        "kun-positiv": "Stemmekretsnummer kan ikke være 0 eller et negativt tall",
-        "unik-i-kommune": "Stemmekretsnummer må være unik for den bestemte kommunen"
+        "kun-positiv": "Stemmekretsnummer kan ikke være 0 eller et negativt tall"
       },
       "stemmekretsnavn": {
         "ikke-tomt": "Stemmekretsnavn kan ikke være tomt"

@@ -130,8 +130,6 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
         isPositive: (value: string) =>
           parseInt(value) > 0 ||
           t("stemmekrets.validering.stemmekretsnummer.kun-positiv"),
-        isUnique: () =>
-          true || t("stemmekrets.validering.stemmekretsnummer.unik-i-kommune"), // TODO: krever egen håndtering
       },
     },
     stemmekretsnavn: {
@@ -170,7 +168,6 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
     }
   };
 
-  // TODO: mangler valgdistriktnummer?
   return (
     <DetailsSection as="form" onSubmit={handleSubmit(saveAndAddHistoryEntry)}>
       <Input

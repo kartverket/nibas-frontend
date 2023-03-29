@@ -84,7 +84,7 @@ const Input = forwardRef<HTMLInputElement, Props>(function Input(props, ref) {
         ref={ref}
         isInvalid={props.validationError?.showError ?? false}
       />
-      {props.validationError && (
+      {props.validationError?.showError && (
         <ErrorMessage>
           <Icon icon="warning_amber" />
           {props.validationError.message}
