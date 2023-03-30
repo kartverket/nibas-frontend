@@ -16,6 +16,7 @@ import {
   groupEndringerByKommune,
   OperasjonerOrNull,
 } from "./endringerUtils";
+import { getNavnInSpraak } from "utils/language/language";
 
 export const getGrunnkretserMedEndringer = (
   operasjoner: OperasjonerOrNull
@@ -113,7 +114,7 @@ const getEndringerForKommune = (
     kommune: {
       id: kommune?.id.lokalid.value ?? "",
       nummer: kommune?.kommunenummer.kodeverdi ?? "",
-      navn: kommune?.navn[0].navn ?? "",
+      navn: getNavnInSpraak(kommune?.navn, "nor"),
     },
     metadataendringer: getMetadataEndringer(
       grunnkretserMedEndringer,
