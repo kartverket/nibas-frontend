@@ -22,6 +22,9 @@ import { stemmekretsgrenserFetcher } from "api/stemmekrets";
 import { deduplicate, removeNull } from "utils/list-utils";
 import { SammenslaaingMultiselect } from "./SammenslaaingMultiselect";
 import Toast from "components/Kart/Toolbar/Toast";
+import { useForm, FormProvider } from "react-hook-form";
+import { SammenslaaingFormData } from "./SammanslaaingForm";
+import Icon from "components/Icon/Icon";
 
 type Props = {
   stemmekrets: StemmekretsResponse | undefined;
@@ -38,18 +41,42 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   const { setAndSaveSammenslaaingsFeatures } = useToolbar();
 
   const [isCreateUtkastModalOpen, setIsCreateUtkastModalOpen] = useState(false);
-  const [stemmekretsnavn, setStemmekretsnavn] = useState(
-    stemmekrets?.stemmekretsnavn ?? ""
-  );
-  const [stemmekretsnummer, setStemmekretsnummer] = useState(
-    stemmekrets?.stemmekretsnummer ?? ""
-  );
   const [utkastJustCreated, setUtkastJustCreated] = useState(false);
 
-  const [
-    stemmekretsNummerTilSammenslaaing,
-    setStemmekretsNummerTilSammenslaaing,
-  ] = useState([""]);
+  const formMethods = useForm<SammenslaaingFormData>({
+    defaultValues: {
+      stemmekretsnavn: stemmekrets?.stemmekretsnavn ?? "",
+      stemmekretsnummer: stemmekrets?.stemmekretsnummer ?? "",
+      stemmekretsNummerTilSammenslaaing: [{ value: "default" }],
+    },
+  });
+
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    formState: { errors, isValid, isSubmitted },
+  } = formMethods;
+
+  const stemmekretsnavnValidator = {
+    required: t("stemmekrets.validering.stemmekretsnavn.obligatorisk"),
+  };
+
+  const stemmekretsnummerValidator = {
+    required: t("stemmekrets.validering.stemmekretsnummer.obligatorisk"),
+    pattern: {
+      value: /^\d+$/,
+      message: t("stemmekrets.validering.stemmekretsnummer.gyldig-nummer"),
+    },
+    minValue: {
+      value: 1,
+      message: t("stemmekrets.validering.stemmekretsnummer.gyldig-nummer"),
+    },
+    maxLength: {
+      value: 4,
+      message: t("stemmekrets.validering.stemmekretsnummer.for-kort"),
+    },
+  };
 
   const stemmekretsId = stemmekrets ? getIdFromEntity(stemmekrets) : "";
 
@@ -67,8 +94,8 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
         version: sammenslaaingsStemmekrets.version,
       })
     ),
-    stemmekretsNavn: stemmekretsnavn,
-    stemmekretsNummer: stemmekretsnummer,
+    stemmekretsNavn: getValues("stemmekretsnavn"),
+    stemmekretsNummer: getValues("stemmekretsnummer"),
   });
 
   const getStemmekretsByNummer = (nummer: string): StemmekretsRef | null => {
@@ -82,6 +109,10 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   };
 
   const mergeStemmekrets = async (nyttUtkast: CreateUtkastCallbackArgument) => {
+    const stemmekretsNummerTilSammenslaaing: string[] = getValues(
+      "stemmekretsNummerTilSammenslaaing"
+    ).map((s) => s.value);
+
     const stemmekretsTilSammenslaaingListe = removeNull(
       stemmekretsNummerTilSammenslaaing.map((s) => getStemmekretsByNummer(s))
     );
@@ -166,59 +197,87 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
   };
 
   return (
-    <>
-      <Section>
-        <SectionHeading>{t("stemmekrets.sammenslaaing.tittel")}</SectionHeading>
-        <SammenslaaingMultiselect
-          stemmekretsnavn={stemmekrets?.stemmekretsnavn ?? ""}
-          onChange={(value) => setStemmekretsNummerTilSammenslaaing(value)}
-          value={stemmekretsNummerTilSammenslaaing}
-          alleStemmekretser={alleStemmekretser}
+    <FormProvider {...formMethods}>
+      <form onSubmit={handleSubmit(openCreateUtkastModal)}>
+        <Section>
+          <SectionHeading>
+            {t("stemmekrets.sammenslaaing.tittel")}
+          </SectionHeading>
+          <SammenslaaingMultiselect
+            stemmekretsnavn={stemmekrets?.stemmekretsnavn ?? ""}
+            alleStemmekretser={alleStemmekretser}
+          />
+        </Section>
+        <ContrastSection>
+          <SectionHeading>
+            {t("stemmekrets.sammenslaaing.detaljer-tittel")}
+          </SectionHeading>
+          <br />
+          <InputsWrapper>
+            <Input
+              label={t(
+                "stemmekrets.sammenslaaing.detaljer-label-stemmekretsnummer"
+              )}
+              {...register("stemmekretsnummer", stemmekretsnummerValidator)}
+              validationError={{
+                showError: !!errors?.stemmekretsnummer,
+                message: errors.stemmekretsnummer?.message ?? "",
+              }}
+            />
+            <Input
+              label={t(
+                "stemmekrets.sammenslaaing.detaljer-label-stemmekretsnavn"
+              )}
+              {...register("stemmekretsnavn", stemmekretsnavnValidator)}
+              validationError={{
+                showError: !!errors.stemmekretsnavn,
+                message: errors.stemmekretsnavn?.message ?? "",
+              }}
+            />
+          </InputsWrapper>
+        </ContrastSection>
+        <Section>
+          <Buttons>
+            <Button onClick={() => toggleRow(stemmekretsId)} variant="tertiary">
+              {t("stemmekrets.sammenslaaing.actions.avbryt")}
+            </Button>
+            <Button type="submit">
+              {t("stemmekrets.sammenslaaing.actions.slaa-sammen")}
+            </Button>
+          </Buttons>
+          {!isValid && isSubmitted && (
+            <ErrorBox>
+              <Icon icon="warning_amber" />
+              {t("stemmekrets.validering.har-feil")}
+            </ErrorBox>
+          )}
+        </Section>
+        <CreateUtkastModal
+          isCreateUtkastModalOpen={isCreateUtkastModalOpen}
+          setIsCreateUtkastModalOpen={setIsCreateUtkastModalOpen}
+          callback={mergeStemmekrets}
         />
-      </Section>
-      <ContrastSection>
-        <SectionHeading>
-          {t("stemmekrets.sammenslaaing.detaljer-tittel")}
-        </SectionHeading>
-        <br />
-        <InputsWrapper>
-          <Input
-            label={t(
-              "stemmekrets.sammenslaaing.detaljer-label-stemmekretsnummer"
-            )}
-            value={stemmekretsnummer}
-            onChange={(e) => setStemmekretsnummer(e.currentTarget.value)}
-          />
-          <Input
-            label={t(
-              "stemmekrets.sammenslaaing.detaljer-label-stemmekretsnavn"
-            )}
-            value={stemmekretsnavn}
-            onChange={(e) => setStemmekretsnavn(e.currentTarget.value)}
-          />
-        </InputsWrapper>
-      </ContrastSection>
-      <Section>
-        <Buttons>
-          <Button onClick={() => toggleRow(stemmekretsId)} variant="tertiary">
-            {t("stemmekrets.sammenslaaing.actions.avbryt")}
-          </Button>
-          <Button onClick={() => openCreateUtkastModal()}>
-            {t("stemmekrets.sammenslaaing.actions.slaa-sammen")}
-          </Button>
-        </Buttons>
-      </Section>
-      <CreateUtkastModal
-        isCreateUtkastModalOpen={isCreateUtkastModalOpen}
-        setIsCreateUtkastModalOpen={setIsCreateUtkastModalOpen}
-        callback={mergeStemmekrets}
-      />
-      {utkastJustCreated && (
-        <Toast text={t("stemmekretssammenslaaing.lagt-til-i-utkast")} />
-      )}
-    </>
+        {utkastJustCreated && (
+          <Toast text={t("stemmekretssammenslaaing.lagt-til-i-utkast")} />
+        )}
+      </form>
+    </FormProvider>
   );
 };
+
+const ErrorBox = styled.div`
+  color: var(--red_error_message);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 16px;
+  gap: 6px;
+
+  .material-symbols-outlined {
+    font-size: inherit;
+    margin-top: 2px;
+  }
+`;
 
 const SectionHeading = styled(Heading).attrs({ tag: "h3", size: "xs" })`
   margin: 0;

@@ -139,13 +139,22 @@
       "tekst": "Du kan ikke gjøre en sammenslåing i et eksisterende utkast som har andre endringer. Avslutt redigeringen av dette utkastet før du gjennomfører sammenslåingen."
     },
     "validering": {
+      "har-feil": "Ett eller flere av feltene dine har feil",
+      "stemmekretsnavn": {
+        "obligatorisk": "Stemmekretsnavn er obligatorisk",
+        "ikke-tomt": "Stemmekretsnavn kan ikke være tomt"
+      },
       "stemmekretsnummer": {
+        "obligatorisk": "Stemmekretsnummer er obligatorisk",
+        "for-kort": "Stemmekretsnummeret kan ikke være lengre enn 4 tegn",
+        "gyldig-nummer": "Stemmekretsnummeret må være et gyldig positivt tall",
         "ikke-tomt": "Stemmekretsnummer kan ikke være tomt",
         "kun-siffer": "Stemmekretsnummer må kun inneholde siffer (maks 4)",
         "kun-positiv": "Stemmekretsnummer kan ikke være 0 eller et negativt tall"
       },
-      "stemmekretsnavn": {
-        "ikke-tomt": "Stemmekretsnavn kan ikke være tomt"
+      "multiselect": {
+        "obligatorisk": "Du må velge en stemmekrets",
+        "unik": "Du kan ikke velge samme krets flere ganger"
       },
       "tellekretsnummer": {
         "både-eller-ingen": "Må ha både navn og nummer for tellekrets, eller ingen av delene",

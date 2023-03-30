@@ -26,6 +26,7 @@ const Button = forwardRef<HTMLButtonElement, Props>(
     {
       variant = "primary",
       size = "xs",
+      type = "button",
       children,
       icon,
       iconDirection = "right",
@@ -44,7 +45,7 @@ const Button = forwardRef<HTMLButtonElement, Props>(
         : `${kvibClassName} ${props.className ?? ""}`;
 
     return (
-      <ButtonWrapper {...props} ref={ref} className={className}>
+      <ButtonWrapper {...props} type={type} ref={ref} className={className}>
         {iconDirection == "left" && icon}
         {children && <span>{children}</span>}
         {iconDirection == "right" && icon}

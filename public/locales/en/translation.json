@@ -138,13 +138,22 @@
       "tekst": "__STRING_NOT_TRANSLATED__"
     },
     "validering": {
+      "har-feil": "__STRING_NOT_TRANSLATED__",
+      "stemmekretsnavn": {
+        "obligatorisk": "__STRING_NOT_TRANSLATED__",
+        "ikke-tomt": "__STRING_NOT_TRANSLATED__",
+      },
       "stemmekretsnummer": {
+        "obligatorisk": "__STRING_NOT_TRANSLATED__",
+        "for-kort": "__STRING_NOT_TRANSLATED__",
+        "gyldig-nummer": "__STRING_NOT_TRANSLATED__",
         "ikke-tomt": "__STRING_NOT_TRANSLATED__",
         "kun-siffer": "__STRING_NOT_TRANSLATED__",
         "kun-positiv": "__STRING_NOT_TRANSLATED__"
       },
-      "stemmekretsnavn": {
-        "ikke-tomt": "__STRING_NOT_TRANSLATED__"
+      "multiselect": {
+        "obligatorisk": "__STRING_NOT_TRANSLATED__",
+        "unik": "__STRING_NOT_TRANSLATED__"
       },
       "tellekretsnummer": {
         "både-eller-ingen": "__STRING_NOT_TRANSLATED__",
