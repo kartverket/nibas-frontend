@@ -119,7 +119,7 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
     return !navn.length === !nummer.length;
   };
 
-  const isInteger = (s: string) => s.match(/^\d+$/) !== null;
+  const isInteger = (s: string) => s.match(/^-?\d+$/) !== null;
 
   const tellekretsValidateOnChange = () => {
     if (isSubmitted) {
@@ -131,7 +131,10 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
     stemmekretsnummer: {
       required: t("stemmekrets.validering.stemmekretsnummer.ikke-tomt"),
       validate: (stemmekretsnummer: string) => {
-        if (!isInteger(stemmekretsnummer) || stemmekretsnummer.length > 4) {
+        if (
+          !isInteger(stemmekretsnummer) ||
+          parseInt(stemmekretsnummer) > 9999
+        ) {
           return t("stemmekrets.validering.stemmekretsnummer.kun-siffer");
         }
         if (parseInt(stemmekretsnummer) <= 0) {
