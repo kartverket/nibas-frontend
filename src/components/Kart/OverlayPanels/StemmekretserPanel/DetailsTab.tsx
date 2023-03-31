@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
-import { FieldError, useForm } from "react-hook-form";
+import { FieldError, RegisterOptions, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import Input, { ValidationError } from "components/form/Input/Input";
 import { StemmekretsEntry, useToolbarSaving } from "contexts/ToolbarContext";
@@ -47,7 +47,8 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
     setValue,
     getValues,
     handleSubmit,
-    formState: { errors },
+    trigger,
+    formState: { errors, isSubmitted, isDirty },
   } = useForm<Inputs>();
   const { addEntry } = useToolbarSaving();
   const previousValues = useRef<Inputs>(getValues());
@@ -118,44 +119,62 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
     return !navn.length === !nummer.length;
   };
 
-  const isInteger = (s: string) => s.match(/^[0-9]+$/) !== null;
+  const isInteger = (s: string) => s.match(/^-?\d+$/) !== null;
 
-  const validators = {
+  const tellekretsValidateOnChange = () => {
+    if (isSubmitted) {
+      trigger();
+    }
+  };
+
+  const formOptions: Record<string, RegisterOptions> = {
     stemmekretsnummer: {
       required: t("stemmekrets.validering.stemmekretsnummer.ikke-tomt"),
-      validate: {
-        isLessThanFiveFigures: (value: string) =>
-          (isInteger(value) && value.length < 5) ||
-          t("stemmekrets.validering.stemmekretsnummer.kun-siffer"),
-        isPositive: (value: string) =>
-          parseInt(value) > 0 ||
-          t("stemmekrets.validering.stemmekretsnummer.kun-positiv"),
+      validate: (stemmekretsnummer: string) => {
+        if (
+          !isInteger(stemmekretsnummer) ||
+          parseInt(stemmekretsnummer) > 9999
+        ) {
+          return t("stemmekrets.validering.stemmekretsnummer.kun-siffer");
+        }
+        if (parseInt(stemmekretsnummer) <= 0) {
+          return t("stemmekrets.validering.stemmekretsnummer.kun-positiv");
+        }
+        return true;
       },
     },
     stemmekretsnavn: {
       required: t("stemmekrets.validering.stemmekretsnavn.ikke-tomt"),
     },
     tellekretsnummer: {
-      validate: {
-        isTellekretsValid: (value: string) =>
-          isTellekretsSynced(getValues("tellekretsnavn"), value) ||
-          t("stemmekrets.validering.tellekretsnummer.både-eller-ingen"),
-        isNumber: (value: string) =>
-          isTellekretsSynced(getValues("tellekretsnavn"), value) ||
-          isInteger(value) ||
-          t("stemmekrets.validering.tellekretsnummer.kun-tall"),
-        isPositive: (value: string) =>
-          isTellekretsSynced(getValues("tellekretsnavn"), value) ||
-          parseInt(value) > 0 ||
-          t("stemmekrets.validering.tellekretsnummer.kun-positiv"),
+      validate: (tellekretsnummer: string) => {
+        const tellekretsnavn = getValues("tellekretsnavn");
+
+        const isTellekretsEmpty =
+          tellekretsnummer.length === 0 && tellekretsnavn.length === 0;
+
+        if (!isTellekretsSynced(tellekretsnavn, tellekretsnummer)) {
+          return t("stemmekrets.validering.tellekretsnummer.både-eller-ingen");
+        }
+        if (!isTellekretsEmpty && !isInteger(tellekretsnummer)) {
+          return t("stemmekrets.validering.tellekretsnummer.kun-tall");
+        }
+        if (!isTellekretsEmpty && parseInt(tellekretsnummer) <= 0) {
+          return t("stemmekrets.validering.tellekretsnummer.kun-positiv");
+        }
+        return true;
       },
+      onChange: tellekretsValidateOnChange,
     },
     tellekretsnavn: {
-      validate: {
-        isTellekretsValid: (value: string) =>
-          isTellekretsSynced(value, getValues("tellekretsnummer")) ||
-          t("stemmekrets.validering.tellekretsnummer.både-eller-ingen"),
+      validate: (tellekretsnavn: string) => {
+        const tellekretsnummer = getValues("tellekretsnummer");
+        if (!isTellekretsSynced(tellekretsnavn, tellekretsnummer)) {
+          return t("stemmekrets.validering.tellekretsnummer.både-eller-ingen");
+        }
+        return true;
       },
+      onChange: tellekretsValidateOnChange,
     },
   };
 
@@ -172,25 +191,27 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
     <DetailsSection as="form" onSubmit={handleSubmit(saveAndAddHistoryEntry)}>
       <Input
         label={t("stemmekrets.Stemmekretsnummer")}
-        {...register("stemmekretsnummer", validators.stemmekretsnummer)}
+        {...register("stemmekretsnummer", formOptions.stemmekretsnummer)}
         validationError={validationError(errors.stemmekretsnummer)}
       />
       <Input
         label={t("tabell.Stemmekretsnavn")}
-        {...register("stemmekretsnavn", validators.stemmekretsnavn)}
+        {...register("stemmekretsnavn", formOptions.stemmekretsnavn)}
         validationError={validationError(errors.stemmekretsnavn)}
       />
       <Input
         label={t("stemmekrets.Tellekretsnummer")}
-        {...register("tellekretsnummer", validators.tellekretsnummer)}
+        {...register("tellekretsnummer", formOptions.tellekretsnummer)}
         validationError={validationError(errors.tellekretsnummer)}
       />
       <Input
         label={t("stemmekrets.Tellekretsnavn")}
-        {...register("tellekretsnavn", validators.tellekretsnavn)}
+        {...register("tellekretsnavn", formOptions.tellekretsnavn)}
         validationError={validationError(errors.tellekretsnavn)}
       />
-      <Button type="submit">{t("action.Lagre")}</Button>
+      <Button type="submit" disabled={!isDirty}>
+        {t("action.Lagre")}
+      </Button>
     </DetailsSection>
   );
 };
