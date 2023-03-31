@@ -112,8 +112,7 @@ const StemmekretsSammenslaaing = ({
     <EndringSection>
       <Seksjonsoverskrift>
         <span>
-          {sammenslaaing.viderefoertKrets.stemmekretsnummer}{" "}
-          {sammenslaaing.viderefoertKrets.stemmekretsnavn}
+          {sammenslaaing.nyttNummer} {sammenslaaing.nyttNavn}
         </span>
         <EndringstypeTag>
           {t("utkast.endringslogg.endring.sammenslaaing.tittel")}
@@ -162,12 +161,18 @@ const StemmekretsMetadataEndringer = ({
 }: StemmekretsMetadataEndringerProps) => {
   const { t } = useTranslation();
 
+  const navn =
+    metadataendring.stemmekretsnavn?.til ??
+    metadataendring.kretsEndret.stemmekretsnavn;
+  const nummer =
+    metadataendring.stemmekretsnummer?.til ??
+    metadataendring.kretsEndret.stemmekretsnummer;
+
   return (
     <EndringSection>
       <Seksjonsoverskrift>
         <span>
-          {metadataendring.kretsEndret.stemmekretsnummer}{" "}
-          {metadataendring.kretsEndret.stemmekretsnavn}
+          {navn} {nummer}
         </span>
         <EndringstypeTag>{t("utkast.endringslogg.metadata")}</EndringstypeTag>
       </Seksjonsoverskrift>
