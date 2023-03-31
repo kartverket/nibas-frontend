@@ -47,7 +47,8 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
     setValue,
     getValues,
     handleSubmit,
-    formState: { errors },
+    trigger,
+    formState: { errors, isSubmitted },
   } = useForm<Inputs>();
   const { addEntry } = useToolbarSaving();
   const previousValues = useRef<Inputs>(getValues());
@@ -120,7 +121,13 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
 
   const isInteger = (s: string) => s.match(/^[0-9]+$/) !== null;
 
-  const validators = {
+  const tellekretsValidateOnChange = () => {
+    if (isSubmitted) {
+      trigger();
+    }
+  };
+
+  const formOptions = {
     stemmekretsnummer: {
       required: t("stemmekrets.validering.stemmekretsnummer.ikke-tomt"),
       validate: {
@@ -141,14 +148,13 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
           isTellekretsSynced(getValues("tellekretsnavn"), value) ||
           t("stemmekrets.validering.tellekretsnummer.både-eller-ingen"),
         isNumber: (value: string) =>
-          isTellekretsSynced(getValues("tellekretsnavn"), value) ||
-          isInteger(value) ||
+          (getValues("tellekretsnavn").length && isInteger(value)) ||
           t("stemmekrets.validering.tellekretsnummer.kun-tall"),
         isPositive: (value: string) =>
-          isTellekretsSynced(getValues("tellekretsnavn"), value) ||
-          parseInt(value) > 0 ||
+          (getValues("tellekretsnavn").length && parseInt(value) > 0) ||
           t("stemmekrets.validering.tellekretsnummer.kun-positiv"),
       },
+      onChange: tellekretsValidateOnChange,
     },
     tellekretsnavn: {
       validate: {
@@ -156,6 +162,7 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
           isTellekretsSynced(value, getValues("tellekretsnummer")) ||
           t("stemmekrets.validering.tellekretsnummer.både-eller-ingen"),
       },
+      onChange: tellekretsValidateOnChange,
     },
   };
 
@@ -172,22 +179,22 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
     <DetailsSection as="form" onSubmit={handleSubmit(saveAndAddHistoryEntry)}>
       <Input
         label={t("stemmekrets.Stemmekretsnummer")}
-        {...register("stemmekretsnummer", validators.stemmekretsnummer)}
+        {...register("stemmekretsnummer", formOptions.stemmekretsnummer)}
         validationError={validationError(errors.stemmekretsnummer)}
       />
       <Input
         label={t("tabell.Stemmekretsnavn")}
-        {...register("stemmekretsnavn", validators.stemmekretsnavn)}
+        {...register("stemmekretsnavn", formOptions.stemmekretsnavn)}
         validationError={validationError(errors.stemmekretsnavn)}
       />
       <Input
         label={t("stemmekrets.Tellekretsnummer")}
-        {...register("tellekretsnummer", validators.tellekretsnummer)}
+        {...register("tellekretsnummer", formOptions.tellekretsnummer)}
         validationError={validationError(errors.tellekretsnummer)}
       />
       <Input
         label={t("stemmekrets.Tellekretsnavn")}
-        {...register("tellekretsnavn", validators.tellekretsnavn)}
+        {...register("tellekretsnavn", formOptions.tellekretsnavn)}
         validationError={validationError(errors.tellekretsnavn)}
       />
       <Button type="submit">{t("action.Lagre")}</Button>
