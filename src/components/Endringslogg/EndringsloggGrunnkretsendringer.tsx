@@ -80,9 +80,9 @@ const GrunnkretsMetadataEndringer = ({
   metadataendring,
 }: GrunnkretsMetadataEndringerProps) => {
   const { t } = useTranslation();
-  const navn = metadataendring.navn ?? metadataendring.kretsEndret.navn;
+  const navn = metadataendring.navn?.til ?? metadataendring.kretsEndret.navn;
   const nummer =
-    metadataendring.grunnkretsnummer ??
+    metadataendring.grunnkretsnummer?.til ??
     metadataendring.kretsEndret.grunnkretsnummer;
 
   return (
