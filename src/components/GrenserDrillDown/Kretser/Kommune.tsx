@@ -59,13 +59,14 @@ const Kommune = ({ kommune }: Props) => {
   //   return false;
   // };
 
-  const unsavedGrenseenderinger = () => {
-    history.entries.forEach((entry) => {
-      if (entry.type === "grense") {
-        entry.;
-      }
-    });
-  };
+  // const unsavedGrenseenderinger = () => {
+  //   history.entries.forEach((entry) => {
+  //     if (entry.type === "grense") {
+  //       entry.;
+  //     }
+  //   });
+  // };
+
   return (
     <>
       <KommuneWrapper editing={kommuneValues.editing}>
