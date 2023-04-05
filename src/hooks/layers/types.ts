@@ -9,6 +9,13 @@ export type GrenseId =
   | "stemmekrets"
   | "edit";
 
+export type GrenseType =
+  | "Kommunegrense"
+  | "Fylkegrense"
+  | "Territorialgrense"
+  | "Riksgrense"
+  | "Posisjon";
+
 // denne iden brukes både til Sources og Layers
 export type LayerId = BakgrunnskartId | GrenseId;
 

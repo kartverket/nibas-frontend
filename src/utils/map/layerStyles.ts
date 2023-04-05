@@ -11,7 +11,7 @@ import { map } from "components/Kart/constants";
 import Text from "ol/style/Text";
 import Point from "ol/geom/Point";
 import { editableBorderTypes, editSource } from "hooks/layers/constants";
-import { GrenseId } from "hooks/layers/types";
+import { GrenseId, GrenseType } from "hooks/layers/types";
 
 const getPointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
   // hent punkter når zoomet langt nok inn
@@ -74,11 +74,33 @@ export const getLayerStyle = (
     feature.get("type")
   );
   if (grenseId == "edit" && borderIsNotEditable) {
-    const grensetype = feature.getProperties().inndelingerKontekst
-      .type as GrenseId;
-    return grensetypeStyles[grensetype];
+    const grenseIdFromType = getGrenseIdFromType(
+      feature.getProperties().type as GrenseType
+    );
+
+    return grensetypeStyles[grenseIdFromType];
   } else {
     return grensetypeStyles[grenseId];
+  }
+};
+
+const getGrenseIdFromType = (grenseType: GrenseType): GrenseId => {
+  switch (grenseType) {
+    case "Fylkegrense": {
+      return "fylke";
+    }
+    case "Kommunegrense": {
+      return "kommune";
+    }
+    case "Posisjon": {
+      return "nasjon";
+    }
+    case "Territorialgrense": {
+      return "nasjon";
+    }
+    case "Riksgrense": {
+      return "nasjon";
+    }
   }
 };
 
