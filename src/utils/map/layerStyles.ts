@@ -86,7 +86,7 @@ export const getLayerStyle = (
 
 const getGrenseIdFromType = (grenseType: GrenseType): GrenseId => {
   switch (grenseType) {
-    case "Fylkegrense": {
+    case "Fylkesgrense": {
       return "fylke";
     }
     case "Kommunegrense": {
@@ -100,6 +100,24 @@ const getGrenseIdFromType = (grenseType: GrenseType): GrenseId => {
     }
     case "Riksgrense": {
       return "nasjon";
+    }
+    case "AvtaltAvgrensningslinje": {
+      return "nasjon";
+    }
+    case "Delområdegrense": {
+      return "grunnkrets"; //Her må det komme egen farge for delområde
+    }
+    case "Grunnlinje": {
+      return "nasjon";
+    }
+    case "LovVirkeområdeGrense": {
+      return "nasjon";
+    }
+    case "Grunnkretsgrense": {
+      return "grunnkrets";
+    }
+    case "Stemmekretsgrense": {
+      return "stemmekrets";
     }
   }
 };

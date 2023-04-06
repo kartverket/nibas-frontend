@@ -11,10 +11,16 @@ export type GrenseId =
 
 export type GrenseType =
   | "Kommunegrense"
-  | "Fylkegrense"
-  | "Territorialgrense"
+  | "Fylkesgrense"
   | "Riksgrense"
-  | "Posisjon";
+  | "AvtaltAvgrensningslinje"
+  | "Territorialgrense"
+  | "Grunnlinje"
+  | "LovVirkeområdeGrense"
+  | "Grunnkretsgrense"
+  | "Delområdegrense"
+  | "Posisjon"
+  | "Stemmekretsgrense";
 
 // denne iden brukes både til Sources og Layers
 export type LayerId = BakgrunnskartId | GrenseId;
