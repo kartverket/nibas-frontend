@@ -38,7 +38,7 @@ const lineAndPointStyles = ({
     stroke: new Stroke({
       color,
       lineDash: dashed ? [4, 6] : [],
-      width: 2,
+      width: dashed ? 3 : 2,
     }),
   }),
   new Style({
@@ -53,18 +53,18 @@ const lineAndPointStyles = ({
 ];
 
 export const grenseStyles = {
-  fylke: lineAndPointStyles({ color: "#186D9F" }),
-  kommune: lineAndPointStyles({ color: "#4FB7C0" }),
-  nasjon: lineAndPointStyles({ color: "#104C79" }),
-  grunnkrets: lineAndPointStyles({ color: "#FFD34C" }),
+  fylke: lineAndPointStyles({ color: "#B80058" }),
+  kommune: lineAndPointStyles({ color: "#008CF9" }),
+  nasjon: lineAndPointStyles({ color: "#EBAC23" }),
+  grunnkrets: lineAndPointStyles({ color: "#D163E6" }),
   delomraade: lineAndPointStyles({ color: "#FF9287" }),
-  stemmekrets: lineAndPointStyles({ color: "#FCAE53" }),
+  stemmekrets: lineAndPointStyles({ color: "#006E00" }),
   edit: lineAndPointStyles({ color: "#000000" }),
-  select: lineAndPointStyles({ color: "#EB48FB" }),
-  dirty: lineAndPointStyles({ color: "#B93D54", dashed: true }),
-  sammenslaaing: lineAndPointStyles({ color: "#1C8870" }),
+  select: lineAndPointStyles({ color: "#000000", dashed: true }),
+  dirty: lineAndPointStyles({ color: "#00A76C", dashed: true }),
+  sammenslaaing: lineAndPointStyles({ color: "#D163E6" }),
   sammenslaaingOverlapping: lineAndPointStyles({
-    color: "#B93D54",
+    color: "#D163E6",
     dashed: true,
     points: false,
   }),
@@ -81,8 +81,6 @@ const grenseStyleFromType = (grenseType: GrenseType): Style[] => {
     case "Posisjon":
     case "Territorialgrense":
     case "AvtaltAvgrensningslinje":
-    case "Grunnlinje":
-    case "LovVirkeområdeGrense":
     case "Riksgrense": {
       return grenseStyles.nasjon;
     }
