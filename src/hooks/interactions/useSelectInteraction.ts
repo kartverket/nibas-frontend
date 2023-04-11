@@ -5,7 +5,7 @@ import LineString from "ol/geom/LineString";
 import { Select } from "ol/interaction";
 import { map, overlayPopup } from "components/Kart/constants";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
-import { selectStyles } from "utils/map/layerStyles";
+import { grenseStyles } from "utils/map/layerStyles";
 import { pixelTolerance } from "./constants";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
@@ -26,7 +26,7 @@ const useSelectInteraction = () => {
     () =>
       new Select({
         hitTolerance: pixelTolerance,
-        style: selectStyles,
+        style: grenseStyles.select,
         filter: (feature) => {
           return feature.getGeometry() instanceof LineString;
         },

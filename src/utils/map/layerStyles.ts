@@ -11,7 +11,7 @@ import { map } from "components/Kart/constants";
 import Text from "ol/style/Text";
 import Point from "ol/geom/Point";
 import { editableBorderTypes, editSource } from "hooks/layers/constants";
-import { GrenseId } from "hooks/layers/types";
+import { GrenseId, GrenseType } from "hooks/layers/types";
 
 const getPointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
   // hent punkter når zoomet langt nok inn
@@ -25,21 +25,25 @@ const getPointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
   return new MultiPoint(coordinates ?? []);
 };
 
-const lineAndPointStyles = (
-  color: string,
+const lineAndPointStyles = ({
+  color,
   dashed = false,
-  pointsOnLine = true
-) => [
+  points = true,
+}: {
+  color: string;
+  dashed?: boolean;
+  points?: boolean;
+}) => [
   new Style({
     stroke: new Stroke({
       color,
       lineDash: dashed ? [4, 6] : [],
-      width: 2,
+      width: dashed ? 3 : 2,
     }),
   }),
   new Style({
     image: new Circle({
-      radius: pointsOnLine ? 4 : 0,
+      radius: points ? 4 : 0,
       fill: new Fill({
         color,
       }),
@@ -48,22 +52,57 @@ const lineAndPointStyles = (
   }),
 ];
 
-export const editStyles = lineAndPointStyles("#000000");
-export const dirtyStyles = lineAndPointStyles("#B93D54", true);
-export const dirtySammenslaaingStyles = lineAndPointStyles("#1C8870");
-export const dirtyOverlappingSammenslaaingStyles = lineAndPointStyles(
-  "#B93D54",
-  true,
-  false
-);
-export const selectStyles = lineAndPointStyles("#EB48FB");
-export const grensetypeStyles: Record<GrenseId, Style[]> = {
-  fylke: lineAndPointStyles("#186D9F"),
-  kommune: lineAndPointStyles("#4FB7C0"),
-  nasjon: lineAndPointStyles("#104C79"),
-  grunnkrets: lineAndPointStyles("#FFD34C"),
-  stemmekrets: lineAndPointStyles("#FCAE53"),
-  edit: editStyles,
+export const grenseStyles = {
+  fylke: lineAndPointStyles({ color: "#B80058" }),
+  kommune: lineAndPointStyles({ color: "#008CF9" }),
+  nasjon: lineAndPointStyles({ color: "#EBAC23" }),
+  grunnkrets: lineAndPointStyles({ color: "#D163E6" }),
+  delomraade: lineAndPointStyles({ color: "#FF9287" }),
+  stemmekrets: lineAndPointStyles({ color: "#006E00" }),
+  edit: lineAndPointStyles({ color: "#000000" }),
+  select: lineAndPointStyles({ color: "#000000", dashed: true }),
+  dirty: lineAndPointStyles({ color: "#00A76C", dashed: true }),
+  sammenslaaing: lineAndPointStyles({ color: "#D163E6" }),
+  sammenslaaingOverlapping: lineAndPointStyles({
+    color: "#D163E6",
+    dashed: true,
+    points: false,
+  }),
+};
+
+const grenseStyleFromType = (grenseType: GrenseType): Style[] => {
+  switch (grenseType) {
+    case "Fylkesgrense": {
+      return grenseStyles.fylke;
+    }
+    case "Kommunegrense": {
+      return grenseStyles.kommune;
+    }
+    case "Posisjon":
+    case "Territorialgrense":
+    case "AvtaltAvgrensningslinje":
+    case "Riksgrense": {
+      return grenseStyles.nasjon;
+    }
+    case "Delområdegrense": {
+      return grenseStyles.delomraade;
+    }
+    case "Grunnkretsgrense": {
+      return grenseStyles.grunnkrets;
+    }
+    case "Stemmekretsgrense": {
+      return grenseStyles.stemmekrets;
+    }
+  }
+};
+
+export const grenseStyleFromId: Record<GrenseId, Style[]> = {
+  fylke: grenseStyles.fylke,
+  kommune: grenseStyles.kommune,
+  nasjon: grenseStyles.nasjon,
+  grunnkrets: grenseStyles.grunnkrets,
+  stemmekrets: grenseStyles.stemmekrets,
+  edit: grenseStyles.edit,
 };
 
 export const getLayerStyle = (
@@ -74,11 +113,9 @@ export const getLayerStyle = (
     feature.get("type")
   );
   if (grenseId == "edit" && borderIsNotEditable) {
-    const grensetype = feature.getProperties().inndelingerKontekst
-      .type as GrenseId;
-    return grensetypeStyles[grensetype];
+    return grenseStyleFromType(feature.getProperties().type as GrenseType);
   } else {
-    return grensetypeStyles[grenseId];
+    return grenseStyleFromId[grenseId];
   }
 };
 
