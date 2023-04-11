@@ -25,11 +25,15 @@ const getPointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
   return new MultiPoint(coordinates ?? []);
 };
 
-const lineAndPointStyles = (
-  color: string,
+const lineAndPointStyles = ({
+  color,
   dashed = false,
-  pointsOnLine = true
-) => [
+  points = true,
+}: {
+  color: string;
+  dashed?: boolean;
+  points?: boolean;
+}) => [
   new Style({
     stroke: new Stroke({
       color,
@@ -39,7 +43,7 @@ const lineAndPointStyles = (
   }),
   new Style({
     image: new Circle({
-      radius: pointsOnLine ? 4 : 0,
+      radius: points ? 4 : 0,
       fill: new Fill({
         color,
       }),
@@ -48,22 +52,59 @@ const lineAndPointStyles = (
   }),
 ];
 
-export const editStyles = lineAndPointStyles("#000000");
-export const dirtyStyles = lineAndPointStyles("#B93D54", true);
-export const dirtySammenslaaingStyles = lineAndPointStyles("#1C8870");
-export const dirtyOverlappingSammenslaaingStyles = lineAndPointStyles(
-  "#B93D54",
-  true,
-  false
-);
-export const selectStyles = lineAndPointStyles("#EB48FB");
-export const grensetypeStyles: Record<GrenseId, Style[]> = {
-  fylke: lineAndPointStyles("#186D9F"),
-  kommune: lineAndPointStyles("#4FB7C0"),
-  nasjon: lineAndPointStyles("#104C79"),
-  grunnkrets: lineAndPointStyles("#FFD34C"),
-  stemmekrets: lineAndPointStyles("#FCAE53"),
-  edit: editStyles,
+export const grenseStyles = {
+  fylke: lineAndPointStyles({ color: "#186D9F" }),
+  kommune: lineAndPointStyles({ color: "#4FB7C0" }),
+  nasjon: lineAndPointStyles({ color: "#104C79" }),
+  grunnkrets: lineAndPointStyles({ color: "#FFD34C" }),
+  delomraade: lineAndPointStyles({ color: "#FF9287" }),
+  stemmekrets: lineAndPointStyles({ color: "#FCAE53" }),
+  edit: lineAndPointStyles({ color: "#000000" }),
+  select: lineAndPointStyles({ color: "#EB48FB" }),
+  dirty: lineAndPointStyles({ color: "#B93D54", dashed: true }),
+  sammenslaaing: lineAndPointStyles({ color: "#1C8870" }),
+  sammenslaaingOverlapping: lineAndPointStyles({
+    color: "#B93D54",
+    dashed: true,
+    points: false,
+  }),
+};
+
+const grenseStyleFromType = (grenseType: GrenseType): Style[] => {
+  switch (grenseType) {
+    case "Fylkesgrense": {
+      return grenseStyles.fylke;
+    }
+    case "Kommunegrense": {
+      return grenseStyles.kommune;
+    }
+    case "Posisjon":
+    case "Territorialgrense":
+    case "AvtaltAvgrensningslinje":
+    case "Grunnlinje":
+    case "LovVirkeområdeGrense":
+    case "Riksgrense": {
+      return grenseStyles.nasjon;
+    }
+    case "Delområdegrense": {
+      return grenseStyles.delomraade;
+    }
+    case "Grunnkretsgrense": {
+      return grenseStyles.grunnkrets;
+    }
+    case "Stemmekretsgrense": {
+      return grenseStyles.stemmekrets;
+    }
+  }
+};
+
+export const grenseStyleFromId: Record<GrenseId, Style[]> = {
+  fylke: grenseStyles.fylke,
+  kommune: grenseStyles.kommune,
+  nasjon: grenseStyles.nasjon,
+  grunnkrets: grenseStyles.grunnkrets,
+  stemmekrets: grenseStyles.stemmekrets,
+  edit: grenseStyles.edit,
 };
 
 export const getLayerStyle = (
@@ -74,51 +115,9 @@ export const getLayerStyle = (
     feature.get("type")
   );
   if (grenseId == "edit" && borderIsNotEditable) {
-    const grenseIdFromType = getGrenseIdFromType(
-      feature.getProperties().type as GrenseType
-    );
-
-    return grensetypeStyles[grenseIdFromType];
+    return grenseStyleFromType(feature.getProperties().type as GrenseType);
   } else {
-    return grensetypeStyles[grenseId];
-  }
-};
-
-const getGrenseIdFromType = (grenseType: GrenseType): GrenseId => {
-  switch (grenseType) {
-    case "Fylkesgrense": {
-      return "fylke";
-    }
-    case "Kommunegrense": {
-      return "kommune";
-    }
-    case "Posisjon": {
-      return "nasjon";
-    }
-    case "Territorialgrense": {
-      return "nasjon";
-    }
-    case "Riksgrense": {
-      return "nasjon";
-    }
-    case "AvtaltAvgrensningslinje": {
-      return "nasjon";
-    }
-    case "Delområdegrense": {
-      return "grunnkrets"; //Her må det komme egen farge for delområde
-    }
-    case "Grunnlinje": {
-      return "nasjon";
-    }
-    case "LovVirkeområdeGrense": {
-      return "nasjon";
-    }
-    case "Grunnkretsgrense": {
-      return "grunnkrets";
-    }
-    case "Stemmekretsgrense": {
-      return "stemmekrets";
-    }
+    return grenseStyleFromId[grenseId];
   }
 };
 
