@@ -49,22 +49,23 @@ const lineAndPointStyles = (
 ];
 
 export const editStyles = lineAndPointStyles("#000000");
-export const dirtyStyles = lineAndPointStyles("#B93D54", true);
-export const dirtySammenslaaingStyles = lineAndPointStyles("#1C8870");
+export const dirtyStyles = lineAndPointStyles("#00A76C", true);
+export const dirtySammenslaaingStyles = lineAndPointStyles("#D163E6");
 export const dirtyOverlappingSammenslaaingStyles = lineAndPointStyles(
-  "#B93D54",
+  "#D163E6",
   true,
   false
 );
-export const selectStyles = lineAndPointStyles("#EB48FB");
+export const selectStyles = lineAndPointStyles("#000000", true);
 export const grensetypeStyles: Record<GrenseId, Style[]> = {
-  fylke: lineAndPointStyles("#186D9F"),
-  kommune: lineAndPointStyles("#4FB7C0"),
-  nasjon: lineAndPointStyles("#104C79"),
-  grunnkrets: lineAndPointStyles("#FFD34C"),
-  stemmekrets: lineAndPointStyles("#FCAE53"),
+  fylke: lineAndPointStyles(" #B80058"),
+  kommune: lineAndPointStyles("#008CF9"),
+  nasjon: lineAndPointStyles("#EBAC23"),
+  grunnkrets: lineAndPointStyles("#D163E6"),
+  stemmekrets: lineAndPointStyles("#006E00"),
   edit: editStyles,
 };
+export const delområdegrenseStyles = lineAndPointStyles("#FF9287");
 
 export const getLayerStyle = (
   feature: Feature<Geometry> | RenderFeature,
@@ -106,12 +107,6 @@ const getGrenseIdFromType = (grenseType: GrenseType): GrenseId => {
     }
     case "Delområdegrense": {
       return "grunnkrets"; //Her må det komme egen farge for delområde
-    }
-    case "Grunnlinje": {
-      return "nasjon";
-    }
-    case "LovVirkeområdeGrense": {
-      return "nasjon";
     }
     case "Grunnkretsgrense": {
       return "grunnkrets";

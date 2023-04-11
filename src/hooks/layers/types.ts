@@ -15,8 +15,6 @@ export type GrenseType =
   | "Riksgrense"
   | "AvtaltAvgrensningslinje"
   | "Territorialgrense"
-  | "Grunnlinje"
-  | "LovVirkeområdeGrense"
   | "Grunnkretsgrense"
   | "Delområdegrense"
   | "Posisjon"
