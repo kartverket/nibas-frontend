@@ -55,8 +55,10 @@ const MergeTab = ({ stemmekrets, alleStemmekretser, toggleRow }: Props) => {
     register,
     handleSubmit,
     getValues,
-    formState: { errors, isValid, isSubmitted },
+    formState: { errors, isSubmitted },
   } = formMethods;
+
+  const isValid = Object.keys(errors).length === 0;
 
   const stemmekretsnavnValidator = {
     required: t("stemmekrets.validering.stemmekretsnavn.obligatorisk"),
