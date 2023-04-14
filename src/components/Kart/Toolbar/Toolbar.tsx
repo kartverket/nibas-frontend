@@ -9,20 +9,11 @@ import Toast from "./Toast";
 import { t } from "i18next";
 
 const Container = styled.div`
-  position: absolute;
-  top: ${toolbarSpacing}px;
-  right: ${toolbarSpacing}px;
-  z-index: 1;
-
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: ${toolbarSpacing}px;
-
-  pointer-events: none;
-  & > * {
-    pointer-events: all;
-  }
+  margin: 16px 16px 0 0; // TODO: temp løsning mens vi enda har sidebar
 `;
 
 const Toolbar = () => {

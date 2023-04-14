@@ -8,7 +8,7 @@ const OverlayPanels = () => {
   const { panelContext, kretserContext } = useOverlayPanels();
 
   return (
-    <>
+    <div>
       {panelContext?.type === "grensemetadata" && (
         <GrensePanel feature={panelContext.feature} />
       )}
@@ -22,7 +22,7 @@ const OverlayPanels = () => {
           <StemmekretserPanel kommune={kretserContext.kommune} />
         </InndelingerKretsProvider>
       )}
-    </>
+    </div>
   );
 };
 
