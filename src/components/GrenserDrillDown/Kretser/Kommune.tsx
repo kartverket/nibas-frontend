@@ -24,7 +24,7 @@ const Kommune = ({ kommune }: Props) => {
   const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } =
     useAlertModal(
       t("utkast.ulagrede-endringer"),
-      t("utkast.ulagrede-endringer-utdypende")
+      t("utkast.ulagrede-endringer-krets-utdypende")
     );
 
   const closeEditing = () => {
