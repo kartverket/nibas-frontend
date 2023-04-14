@@ -19,7 +19,7 @@ const Kommune = ({ kommune }: Props) => {
   const { kommuneValues, toggleEditKretser, toggleKretser } =
     useInndelingerKrets(kommune);
 
-  const { history } = useToolbar();
+  const { history, clearHistory } = useToolbar();
 
   const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } =
     useAlertModal(
@@ -29,43 +29,17 @@ const Kommune = ({ kommune }: Props) => {
 
   const closeEditing = () => {
     closeModal();
-    //her må jeg fjerne endringen som ligger i history
+    clearHistory({ hasPreviouslySavedHistory: true });
     toggleEditKretser();
   };
 
-  // const isKretserEditedWithoutSaving = (): boolean => {
-
-  //   //her må jeg gjøre en sjekk opp mot history :) /toolbar
-  //   console.log("Har endringer", harEndringer);
-  //   if (kommuneValues.editing && harEndringer) {
-  //     console.log("hmmm");
-  //     stemmekretsendringer?.forEach((endring) => {
-  //       console.log("ENdring:", endring.kommune.id);
-  //       console.log("Den jeg er i:", kommune.id.lokalid.value);
-  //       if (endring.kommune.id === kommune.id.lokalid.value) {
-  //         console.log("hello");
-  //         return true;
-  //       }
-  //     });
-
-  //     grunnkretsendringer?.forEach((endring) => {
-  //       if (endring.kommune.id === kommune.id.lokalid.value) {
-  //         console.log("hello");
-  //         return true;
-  //       }
-  //     });
-  //   }
-
-  //   return false;
-  // };
-
-  // const unsavedGrenseenderinger = () => {
-  //   history.entries.forEach((entry) => {
-  //     if (entry.type === "grense") {
-  //       entry.;
-  //     }
-  //   });
-  // };
+  const promptModal = () => {
+    if (history.entries.length > 0) {
+      openModal();
+    } else {
+      toggleEditKretser();
+    }
+  };
 
   return (
     <>
@@ -83,7 +57,7 @@ const Kommune = ({ kommune }: Props) => {
           }
         />
         <Title>{getNavnInSpraak(kommune.navn, "nor")}</Title>
-        <LinkButton onClick={openModal}>
+        <LinkButton onClick={promptModal}>
           {kommuneValues.editing
             ? t("action.Avslutt redigering")
             : t("action.Rediger")}
