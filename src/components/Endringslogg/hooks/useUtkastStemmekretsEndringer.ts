@@ -25,7 +25,6 @@ export const useUtkastStemmekretsEndringer =
 
     const { data: kommuner, isValidating: lasterKommuner } =
       useNibasApi("/v1/kommuner");
-
     const { history } = useToolbar();
     const operasjoner = useMemo(() => {
       return historyToUtkastOperations(history, utkast);

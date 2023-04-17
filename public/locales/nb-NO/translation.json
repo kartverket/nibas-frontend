@@ -220,7 +220,8 @@
       "feil-geometri-tittel": "Feil på geometri",
       "feil-geometri-tekst": "Utkastet inneholder ugyldig geometri. Vennligst rett opp i feilen og prøv igjen.\n\nFeiltype: {{ feiltype }}\nFeilkode: {{ feilkode }}"
     },
-    "utkast-opprettet": "Utkastet er opprettet"
+    "utkast-opprettet": "Utkastet er opprettet",
+    "ulagrede-endringer-krets-utdypende": "Er du sikker på at du vil avslutte redigering av denne kommunen? Dersom du avslutter redigering nå mister du alle ulagrede endringer."
   },
   "Aktive kartlag": "Aktive kartlag",
   "Logg inn for å se listen": "Logg inn for å se listen",
