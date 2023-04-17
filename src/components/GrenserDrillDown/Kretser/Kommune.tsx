@@ -33,7 +33,7 @@ const Kommune = ({ kommune }: Props) => {
     toggleEditKretser();
   };
 
-  const promptModal = () => {
+  const onAvsluttRedigeringClick = () => {
     if (history.entries.length > 0) {
       openModal();
     } else {
@@ -57,7 +57,7 @@ const Kommune = ({ kommune }: Props) => {
           }
         />
         <Title>{getNavnInSpraak(kommune.navn, "nor")}</Title>
-        <LinkButton onClick={promptModal}>
+        <LinkButton onClick={onAvsluttRedigeringClick}>
           {kommuneValues.editing
             ? t("action.Avslutt redigering")
             : t("action.Rediger")}
