@@ -53,12 +53,12 @@ const lineAndPointStyles = ({
 ];
 
 export const grenseStyles = {
-  fylke: lineAndPointStyles({ color: "#B80058" }),
-  kommune: lineAndPointStyles({ color: "#008CF9" }),
-  nasjon: lineAndPointStyles({ color: "#EBAC23" }),
-  grunnkrets: lineAndPointStyles({ color: "#D5954D6" }),
-  delomraade: lineAndPointStyles({ color: "#FF9287" }),
-  stemmekrets: lineAndPointStyles({ color: "#006E00" }),
+  fylke: lineAndPointStyles({ color: "#B92659" }),
+  kommune: lineAndPointStyles({ color: "#F15D4E" }),
+  nasjon: lineAndPointStyles({ color: "#91120A" }),
+  grunnkrets: lineAndPointStyles({ color: "#3E8DF6" }),
+  delomraade: lineAndPointStyles({ color: "#5952D2" }),
+  stemmekrets: lineAndPointStyles({ color: "#EBAB3B" }),
   edit: lineAndPointStyles({ color: "#000000" }),
   select: lineAndPointStyles({ color: "#000000", dashed: true }),
   dirty: lineAndPointStyles({ color: "#00A76C", dashed: true }),
