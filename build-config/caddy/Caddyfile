@@ -7,7 +7,6 @@
 
 @backendUrls {
     path /v1/*
-    path /actuator/info
 }
 
 handle @backendUrls {
