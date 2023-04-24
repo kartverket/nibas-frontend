@@ -1,21 +1,10 @@
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import useSWR from "swr";
 import SidebarButton from "./SidebarButton";
 import Icon from "components/Icon";
 import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
 
-type ActuatorResponse = {
-  application: {
-    version: string;
-  };
-};
-
 const Sidebar = () => {
-  const { data: actuator } = useSWR<ActuatorResponse>("/actuator/info");
-  const backendVersion = actuator?.application.version ?? "---";
-  const frontendVersion = process.env.REACT_APP_VERSION ?? "VERSION-NOT-SET";
-
   const { t } = useTranslation();
   const { redigeringsmodusAktiv } = useRedigeringsmodus();
 
@@ -38,11 +27,6 @@ const Sidebar = () => {
           icon={<SidebarIcon icon="description" />}
         />
       </ButtonsWrapper>
-
-      <Versions>
-        <Version>F: {frontendVersion}</Version>
-        <Version>B: {backendVersion}</Version>
-      </Versions>
     </StyledSidebar>
   );
 };
@@ -66,15 +50,6 @@ const ButtonsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-`;
-
-const Versions = styled.div`
-  text-align: center;
-`;
-
-const Version = styled.p`
-  margin: 8px 0;
-  font-size: 12px;
 `;
 
 const SidebarIcon = styled(Icon)`
