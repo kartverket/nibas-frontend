@@ -1,5 +1,4 @@
 import styled, { keyframes } from "styled-components";
-import { KartInteractable } from "../KartInteractable";
 import Heading from "components/typography/Heading";
 import Button from "components/form/Button";
 import { Outline } from "style/mixins";
@@ -84,10 +83,13 @@ const moveInFromLeft = keyframes`
 }
 `;
 
-export const OverlayPanelWrapper = styled(KartInteractable)<{
+export const OverlayPanelWrapper = styled.div<{
   gridArea: "metadata" | "kretser";
   minimized?: boolean;
 }>`
+  display: inline-block;
+  background-color: white;
+  pointer-events: auto;
   position: relative;
   grid-area: ${({ gridArea }) => gridArea};
   display: flex;
@@ -131,30 +133,6 @@ export const PanelHeaderButton = styled(Button).attrs(() => ({
   border-radius: 50%;
   transition: background 0.1s;
 
-  &:hover,
-  &:focus-visible {
-    background: var(--blue_light);
-  }
-
-  &:focus-visible {
-    ${Outline};
-  }
-
-  > span {
-    font-size: 36px;
-  }
-`;
-
-export const AbsoluteHeaderButton = styled(Button).attrs(() => ({
-  variant: "unstyled",
-}))<{ right: number }>`
-  position: absolute;
-  top: 0;
-  right: ${({ right }) => right}px;
-  margin: 24px;
-  margin-top: 16px;
-  color: var(--blue_dark);
-  border-radius: 50%;
   &:hover,
   &:focus-visible {
     background: var(--blue_light);

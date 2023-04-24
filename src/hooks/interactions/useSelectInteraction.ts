@@ -4,9 +4,10 @@ import Geometry from "ol/geom/Geometry";
 import LineString from "ol/geom/LineString";
 import { Select } from "ol/interaction";
 import { map, overlayPopup } from "components/Kart/constants";
-import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 import { grenseStyles } from "utils/map/layerStyles";
 import { pixelTolerance } from "./constants";
+import { useToolbar } from "contexts/ToolbarContext";
+import { useDataPanel } from "contexts/DataPanelContext";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -20,7 +21,8 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 
 const useSelectInteraction = () => {
   const [features, setFeatures] = useState<Feature<Geometry>[]>([]);
-  const { openPanel, closePanel } = useOverlayPanels();
+  const { activePointMode } = useToolbar();
+  const { setActiveDataPanel, setSelectedMetadata } = useDataPanel();
 
   const select = useMemo(
     () =>
@@ -28,10 +30,13 @@ const useSelectInteraction = () => {
         hitTolerance: pixelTolerance,
         style: grenseStyles.select,
         filter: (feature) => {
-          return feature.getGeometry() instanceof LineString;
+          if (activePointMode === "metadata") {
+            return feature.getGeometry() instanceof LineString;
+          }
+          return false;
         },
       }),
-    []
+    [activePointMode]
   );
 
   useEffect(() => {
@@ -59,17 +64,19 @@ const useSelectInteraction = () => {
       const selectedFeature = features[0] as Feature<LineString>;
 
       if (selectedFeature.getId()?.toString().includes("TEIGGRENSEWFS")) {
-        closePanel("grensemetadata");
+        // TODO: legge inn å lukke panel her?
+        // closePanel("grensemetadata");
         overlayPopup.setPosition(getOverlayPosition(selectedFeature));
       } else {
         overlayPopup.setPosition(undefined);
-        openPanel({ type: "grensemetadata", feature: selectedFeature });
+        setSelectedMetadata(selectedFeature);
+        setActiveDataPanel("metadata");
       }
     } else {
-      closePanel("grensemetadata");
       overlayPopup.setPosition(undefined);
+      setActiveDataPanel(null);
     }
-  }, [features, openPanel, closePanel]);
+  }, [features, setActiveDataPanel, setSelectedMetadata]);
 
   return { selectedFeatures: features };
 };

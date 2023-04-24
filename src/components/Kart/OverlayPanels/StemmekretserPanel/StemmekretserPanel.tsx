@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { KretsTable, KretsTableWrapper } from "../KretsTable";
@@ -113,7 +112,6 @@ const StemmekretserPanel = ({ kommune }: Props) => {
           icon={<Icon icon="close" />}
           onClick={() => {
             closePanel("stemmekrets");
-            closePanel("grensemetadata");
             toggleEditKretser();
           }}
         />

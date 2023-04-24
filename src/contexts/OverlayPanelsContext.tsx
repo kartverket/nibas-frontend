@@ -1,13 +1,5 @@
 import React, { createContext, useCallback, useContext, useState } from "react";
-import { Feature } from "ol";
-import Geometry from "ol/geom/Geometry";
 import { KommuneRef } from "types/api";
-
-type GrenseOverlayPanels = {
-  type: "grensemetadata";
-  feature: Feature<Geometry>;
-  isMinimized?: boolean;
-};
 
 type GrunnkretserPanel = {
   type: "grunnkrets";
@@ -22,11 +14,10 @@ type StemmekretserPanel = {
 };
 
 type KretserPanel = GrunnkretserPanel | StemmekretserPanel;
-type Panel = GrenseOverlayPanels | GrunnkretserPanel | StemmekretserPanel;
+type Panel = GrunnkretserPanel | StemmekretserPanel;
 export type PanelType = Panel["type"];
 
 export type OverlayPanelsContextValue = {
-  panelContext: Panel | null;
   kretserContext: Panel | null;
   isOpen: (panel: PanelType) => boolean;
   openPanel: (panel: Panel) => void;
@@ -43,9 +34,6 @@ export const OverlayPanelsContext = createContext<
 >(undefined);
 
 export const OverlayPanelsProvider: React.FC = ({ children }) => {
-  const [panelContext, setPanelContext] = useState<GrenseOverlayPanels | null>(
-    null
-  );
   const [kretserContext, setKretserContext] = useState<KretserPanel | null>(
     null
   );
@@ -53,21 +41,16 @@ export const OverlayPanelsProvider: React.FC = ({ children }) => {
   const openPanel = useCallback((panel: Panel) => {
     if (panel.type === "grunnkrets" || panel.type === "stemmekrets") {
       setKretserContext(panel);
-    } else {
-      setPanelContext(panel);
     }
   }, []);
 
   const closePanel = useCallback((panel: PanelType) => {
     if (panel === "grunnkrets" || panel === "stemmekrets") {
       setKretserContext(null);
-    } else {
-      setPanelContext(null);
     }
   }, []);
 
   const closePanels = useCallback(() => {
-    setPanelContext(null);
     setKretserContext(null);
   }, []);
 
@@ -75,11 +58,10 @@ export const OverlayPanelsProvider: React.FC = ({ children }) => {
     (panel: PanelType) => {
       if (panel === "grunnkrets" || panel === "stemmekrets") {
         return kretserContext !== null;
-      } else {
-        return panelContext !== null;
       }
+      return false;
     },
-    [kretserContext, panelContext]
+    [kretserContext]
   );
 
   const toggleMinimizePanel = useCallback((panel: PanelType) => {
@@ -92,20 +74,10 @@ export const OverlayPanelsProvider: React.FC = ({ children }) => {
           isMinimized: !prev?.isMinimized,
         };
       });
-    } else {
-      setPanelContext((prev) => {
-        if (!prev) return null;
-
-        return {
-          ...prev,
-          isMinimized: !prev?.isMinimized,
-        };
-      });
     }
   }, []);
 
   const value = {
-    panelContext,
     kretserContext,
     openPanel,
     closePanel,

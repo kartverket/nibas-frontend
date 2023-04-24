@@ -141,7 +141,6 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
           icon={<Icon icon="close" />}
           onClick={() => {
             closePanel("grunnkrets");
-            closePanel("grensemetadata");
             toggleEditKretser();
           }}
         />

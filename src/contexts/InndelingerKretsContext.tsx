@@ -68,7 +68,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
     setMultipleValues,
     resetAndClearEditingLayer,
   } = useEditGrenser(currentKretstype);
-  const { openPanel, closePanels, closePanel } = useOverlayPanels();
+  const { openPanel, closePanels } = useOverlayPanels();
   const { addKretserToLayer, removeKretserFromLayer } = useKretsgrenser(
     kommuneId,
     currentKretstype
@@ -150,10 +150,6 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
     } else {
       // hvis ikke lenger skal være synlig
       removeKretserFromLayer(layerId);
-
-      if (!kommuneValues.editing) {
-        closePanel("grensemetadata");
-      }
     }
   };
 

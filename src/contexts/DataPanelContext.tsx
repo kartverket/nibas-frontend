@@ -1,10 +1,15 @@
+import { Feature } from "ol";
+import LineString from "ol/geom/LineString";
 import React, { createContext, useContext, useState } from "react";
 
 type ActiveDataPanel = "metadata" | "grunnkrets" | "stemmekrets" | null;
+type SelectedMetadata = Feature<LineString> | null;
 
 export type DataPanelContextValue = {
   activeDataPanel: ActiveDataPanel;
   setActiveDataPanel: (activeDataPanel: ActiveDataPanel) => void;
+  selectedMetadata: SelectedMetadata;
+  setSelectedMetadata: (selectedMetadata: SelectedMetadata) => void;
 };
 
 export const DataPanelContext = createContext<
@@ -15,9 +20,14 @@ export const DataPanelProvider: React.FC = ({ children }) => {
   const [activeDataPanel, setActiveDataPanel] =
     useState<ActiveDataPanel>("metadata");
 
+  const [selectedMetadata, setSelectedMetadata] =
+    useState<SelectedMetadata>(null);
+
   const value = {
     activeDataPanel,
     setActiveDataPanel,
+    selectedMetadata,
+    setSelectedMetadata,
   };
 
   return (

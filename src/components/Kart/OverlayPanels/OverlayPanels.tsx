@@ -1,17 +1,13 @@
-import GrensePanel from "./GrensePanel";
 import GrunnkretserPanel from "./GrunnkretserPanel";
 import StemmekretserPanel from "./StemmekretserPanel";
 import { InndelingerKretsProvider } from "contexts/InndelingerKretsContext";
 import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 
 const OverlayPanels = () => {
-  const { panelContext, kretserContext } = useOverlayPanels();
+  const { kretserContext } = useOverlayPanels();
 
   return (
     <div>
-      {panelContext?.type === "grensemetadata" && (
-        <GrensePanel feature={panelContext.feature} />
-      )}
       {kretserContext?.type === "grunnkrets" && (
         <InndelingerKretsProvider kretstype="grunnkrets">
           <GrunnkretserPanel kommune={kretserContext.kommune} />

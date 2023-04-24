@@ -1,7 +1,9 @@
 import styled from "styled-components";
-import { KartInteractable } from "components/Kart/KartInteractable";
 
-export const SidebarPanel = styled(KartInteractable)`
+export const SidebarPanel = styled.div`
+  display: inline-block;
+  background-color: white;
+  pointer-events: auto;
   height: 100%;
   width: 440px;
   padding: 8px 16px;

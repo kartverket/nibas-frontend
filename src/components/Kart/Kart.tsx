@@ -1,12 +1,10 @@
 import { Suspense, useEffect, useRef } from "react";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import { map } from "./constants";
 import OverlayPopup from "./OverlayPopup";
 import SidebarPanels from "./SidebarPanels";
-import { PanelType, useOverlayPanels } from "contexts/OverlayPanelsContext";
 import useInteractions from "hooks/interactions/useInteractions";
 import { initBakgrunnskartLayers, initGrenserLayers } from "utils/map/layers";
-import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
 import Toolbar from "./Toolbar/Toolbar";
 import { useSidebarPanels } from "contexts/SidebarPanelContext";
 import OverlayPanels from "./OverlayPanels/OverlayPanels";
@@ -19,8 +17,6 @@ initBakgrunnskartLayers();
 
 const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const { panelContext } = useOverlayPanels();
-  const { redigeringsmodusAktiv } = useRedigeringsmodus();
   const { selectedFeatures } = useInteractions();
   const { openPanels } = useSidebarPanels();
 
@@ -42,7 +38,7 @@ const Kart = () => {
     <KartWrapper>
       <KartTarget ref={mapRef}>
         <Suspense fallback="More loading...">
-          <KartOverlay panelOpen={anySidebarOpen} content={panelContext?.type}>
+          <KartOverlay panelOpen={anySidebarOpen}>
             <SidebarPanels />
             <OverlayPanels />
             <DataPanels />
@@ -80,7 +76,6 @@ const KartTarget = styled.div`
 // krever bare litt hjernekraft.
 
 const KartOverlay = styled.div<{
-  content?: PanelType;
   panelOpen: boolean;
 }>`
   display: flex;

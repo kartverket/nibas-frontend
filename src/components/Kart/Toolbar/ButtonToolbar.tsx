@@ -65,6 +65,14 @@ const ButtonToolbar = () => {
       >
         {t("action.Fjern")}
       </ModeButton>
+      <ModeButton
+        icon="live_help"
+        ariaLabel="Se metadata"
+        isActive={activePointMode === "metadata"}
+        onClick={() => togglePointMode("metadata")}
+      >
+        Metadata
+      </ModeButton>
       {false && (
         <>
           <ModeButton
