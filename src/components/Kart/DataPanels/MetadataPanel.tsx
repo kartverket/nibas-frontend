@@ -5,10 +5,10 @@
 
 import { Panel, PanelHeader, PanelProps } from "./Panel";
 
-const MetadataPanel = ({ isOpen, className }: PanelProps) => {
+const MetadataPanel = ({ isOpen, className, onClose }: PanelProps) => {
   return (
     <Panel isOpen={isOpen} className={className}>
-      <PanelHeader>Metadata for grense</PanelHeader>
+      <PanelHeader onClose={onClose}>Metadata for grense</PanelHeader>
       mettadatta
     </Panel>
   );

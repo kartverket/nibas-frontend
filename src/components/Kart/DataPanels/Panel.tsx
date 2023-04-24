@@ -9,9 +9,10 @@ import styled from "styled-components";
 export type PanelProps = {
   isOpen: boolean;
   className?: string;
+  onClose: () => void;
 };
 
-export const Panel = styled.div<PanelProps>`
+export const Panel = styled.div<{ isOpen: boolean }>`
   margin: 16px 0;
   padding: 16px;
   background: white;
@@ -35,11 +36,14 @@ const PanelHeading = styled(Heading)`
   margin: 0;
 `;
 
-export const PanelHeader: React.FC = ({ children }) => (
+export const PanelHeader: React.FC<{ onClose: () => void }> = ({
+  children,
+  onClose,
+}) => (
   <PanelHeaderContainer>
     <PanelHeading size="l" tag="h3">
       {children}
     </PanelHeading>
-    <CloseButton />
+    <CloseButton onClick={onClose} />
   </PanelHeaderContainer>
 );
