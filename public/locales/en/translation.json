@@ -1,200 +1,28 @@
 {
-  "sidebar": {
-    "Inndelinger": "__STRING_NOT_TRANSLATED__",
-    "Søk": "__STRING_NOT_TRANSLATED__",
-    "Kartlag": "__STRING_NOT_TRANSLATED__",
-    "Utkast": "__STRING_NOT_TRANSLATED__"
-  },
-  "Nasjonal inndelingsbase": "__STRING_NOT_TRANSLATED__",
-  "inndelinger": {
-    "Delområder": "__STRING_NOT_TRANSLATED__",
-    "Fylkesgrenser": "__STRING_NOT_TRANSLATED__",
-    "Gestlige inndelinger": "__STRING_NOT_TRANSLATED__",
-    "Grunnkretser": "__STRING_NOT_TRANSLATED__",
-    "Kommunegrenser": "__STRING_NOT_TRANSLATED__",
-    "Maritime grenser": "__STRING_NOT_TRANSLATED__",
-    "Postnummerområder": "__STRING_NOT_TRANSLATED__",
-    "Riksgrenser": "__STRING_NOT_TRANSLATED__",
-    "Skolekretser": "__STRING_NOT_TRANSLATED__",
-    "Stemmekretser": "__STRING_NOT_TRANSLATED__",
-    "Svalbardområdet": "__STRING_NOT_TRANSLATED__",
-    "Aktive kartlag": "__STRING_NOT_TRANSLATED__",
-    "Grenser": "__STRING_NOT_TRANSLATED__"
-  },
-  "Henter fylker": "__STRING_NOT_TRANSLATED__",
-  "Koordinater": "__STRING_NOT_TRANSLATED__",
   "auth": {
     "Login": "__STRING_NOT_TRANSLATED__",
     "Logout": "__STRING_NOT_TRANSLATED__",
-    "Logget inn som {{ personId }}": "__STRING_NOT_TRANSLATED__",
-    "Ikke logget inn": "__STRING_NOT_TRANSLATED__",
-    "Logg inn i Nasjonal inndelingsbase": "__STRING_NOT_TRANSLATED__",
-    "Denne tjenesten er kun tilgjengelig for autoriserte brukere": "__STRING_NOT_TRANSLATED__",
     "feil": {
       "generellFeilTittel": "__STRING_NOT_TRANSLATED__",
       "generellFeilTekst": "__STRING_NOT_TRANSLATED__",
       "ikkeAutorisertTittel": "__STRING_NOT_TRANSLATED__",
       "ikkeAutorisertTekst": "__STRING_NOT_TRANSLATED__"
-    }
-  },
-  "metadata": {
-    "Generelt": "Generelt",
-    "Referanser": "Referanser",
-    "Historikk": "Historikk",
-    "Nøyaktighetsklasse": "__STRING_NOT_TRANSLATED__",
-    "Omtvistet": "__STRING_NOT_TRANSLATED__",
-    "Grensetype": "__STRING_NOT_TRANSLATED__",
-    "Gyldig fra": "__STRING_NOT_TRANSLATED__",
-    "Gyldig til": "__STRING_NOT_TRANSLATED__",
-    "Målemetode": "__STRING_NOT_TRANSLATED__",
-    "Nøyaktighet": "__STRING_NOT_TRANSLATED__",
-    "Informasjon": "__STRING_NOT_TRANSLATED__",
-    "Opphav": "__STRING_NOT_TRANSLATED__",
-    "Rettskilde-ID": "__STRING_NOT_TRANSLATED__",
-    "Rettskildetittel": "__STRING_NOT_TRANSLATED__",
-    "Fastsettingsmyndighet": "__STRING_NOT_TRANSLATED__",
-    "Fastsettingsdato": "__STRING_NOT_TRANSLATED__",
-    "Hjemmel": "__STRING_NOT_TRANSLATED__",
-    "Dokumentlenke": "__STRING_NOT_TRANSLATED__",
-    "Internreferanse": "__STRING_NOT_TRANSLATED__",
-    "Referanse": "__STRING_NOT_TRANSLATED__",
-    "Dokumentlenker": "__STRING_NOT_TRANSLATED__",
-    "Internreferanser": "__STRING_NOT_TRANSLATED__"
-  },
-  "Aktive bakgrunnskart": "__STRING_NOT_TRANSLATED__",
-  "action": {
-    "Lagre": "__STRING_NOT_TRANSLATED__",
-    "Lukk": "__STRING_NOT_TRANSLATED__",
-    "Fortsett": "__STRING_NOT_TRANSLATED__",
-    "Avbryt": "__STRING_NOT_TRANSLATED__",
-    "Legg til": "__STRING_NOT_TRANSLATED__",
-    "Fjern": "__STRING_NOT_TRANSLATED__",
-    "Slett": "__STRING_NOT_TRANSLATED__",
-    "Ny referanse": "__STRING_NOT_TRANSLATED__",
-    "Slett {{ item }}": "__STRING_NOT_TRANSLATED__",
-    "Legg til {{ item }}": "__STRING_NOT_TRANSLATED__",
-    "Ny {{ item }}": "__STRING_NOT_TRANSLATED__",
-    "Endre": "__STRING_NOT_TRANSLATED__",
-    "Lagre som": "__STRING_NOT_TRANSLATED__",
-    "Undo": "__STRING_NOT_TRANSLATED__",
-    "Redo": "__STRING_NOT_TRANSLATED__",
-    "Publiser": "__STRING_NOT_TRANSLATED__",
-    "Avslutt redigering": "__STRING_NOT_TRANSLATED__",
-    "Forkast": "__STRING_NOT_TRANSLATED__",
-    "Rediger": "__STRING_NOT_TRANSLATED__",
-    "Rediger grenser": "__STRING_NOT_TRANSLATED__",
-    "Stopp redigering": "__STRING_NOT_TRANSLATED__",
-    "Lagre utkast": "__STRING_NOT_TRANSLATED__",
-    "Opprett": "__STRING_NOT_TRANSLATED__",
-    "Lukk utkast": "__STRING_NOT_TRANSLATED__",
-    "Flytt": "__STRING_NOT_TRANSLATED__",
-    "Snap": "__STRING_NOT_TRANSLATED__",
-    "Zoom inn": "__STRING_NOT_TRANSLATED__",
-    "Zoom ut": "__STRING_NOT_TRANSLATED__",
-    "Løsriv": "__STRING_NOT_TRANSLATED__",
-    "Splitt": "__STRING_NOT_TRANSLATED__",
-    "VisEndringer": "__STRING_NOT_TRANSLATED__"
-  },
-  "Ja": "__STRING_NOT_TRANSLATED__",
-  "Nei": "__STRING_NOT_TRANSLATED__",
-  "{{ kommuneNavn }} kommune": "__STRING_NOT_TRANSLATED__",
-  "tabell": {
-    "Navn": "__STRING_NOT_TRANSLATED__",
-    "Endringstype": "__STRING_NOT_TRANSLATED__",
-    "Stemmekretsnavn": "__STRING_NOT_TRANSLATED__"
-  },
-  "grunnkrets": {
-    "Grunnkretsnummer": "__STRING_NOT_TRANSLATED__",
-    "Grunnkrets": "__STRING_NOT_TRANSLATED__",
-    "Søk": "__STRING_NOT_TRANSLATED__",
-    "Grunnkretsnavn": "__STRING_NOT_TRANSLATED__"
-  },
-  "stemmekrets": {
-    "Stemmekretsnummer": "__STRING_NOT_TRANSLATED__",
-    "Valgdistriktsnummer": "__STRING_NOT_TRANSLATED__",
-    "Tellekretsnavn": "__STRING_NOT_TRANSLATED__",
-    "Tellekretsnummer": "__STRING_NOT_TRANSLATED__",
-    "Stemmekrets": "__STRING_NOT_TRANSLATED__",
-    "tabs": {
-      "detaljer": "__STRING_NOT_TRANSLATED__",
-      "slaa-sammen": "__STRING_NOT_TRANSLATED__"
     },
-    "sammenslaaing": {
-      "tittel": "__STRING_NOT_TRANSLATED__",
-      "undertittel": "__STRING_NOT_TRANSLATED__",
-      "label": "__STRING_NOT_TRANSLATED__",
-      "detaljer-tittel": "__STRING_NOT_TRANSLATED__",
-      "detaljer-label-stemmekretsnummer": "__STRING_NOT_TRANSLATED__",
-      "detaljer-label-stemmekretsnavn": "__STRING_NOT_TRANSLATED__",
-      "actions": {
-        "velg": "__STRING_NOT_TRANSLATED__",
-        "slaa-sammen": "__STRING_NOT_TRANSLATED__",
-        "avbryt": "__STRING_NOT_TRANSLATED__",
-        "legg-til-flere": "__STRING_NOT_TRANSLATED__"
-      }
-    },
-    "utkast-sammenslaaing-alert": {
-      "tittel": "__STRING_NOT_TRANSLATED__",
-      "tekst": "__STRING_NOT_TRANSLATED__"
-    },
-    "validering": {
-      "har-feil": "__STRING_NOT_TRANSLATED__",
-      "stemmekretsnavn": {
-        "obligatorisk": "__STRING_NOT_TRANSLATED__",
-        "ikke-tomt": "__STRING_NOT_TRANSLATED__",
-      },
-      "stemmekretsnummer": {
-        "obligatorisk": "__STRING_NOT_TRANSLATED__",
-        "for-kort": "__STRING_NOT_TRANSLATED__",
-        "gyldig-nummer": "__STRING_NOT_TRANSLATED__",
-        "ikke-tomt": "__STRING_NOT_TRANSLATED__",
-        "kun-siffer": "__STRING_NOT_TRANSLATED__",
-        "kun-positiv": "__STRING_NOT_TRANSLATED__"
-      },
-      "multiselect": {
-        "obligatorisk": "__STRING_NOT_TRANSLATED__",
-        "unik": "__STRING_NOT_TRANSLATED__"
-      },
-      "tellekretsnummer": {
-        "både-eller-ingen": "__STRING_NOT_TRANSLATED__",
-        "kun-tall": "__STRING_NOT_TRANSLATED__",
-        "kun-positiv": "__STRING_NOT_TRANSLATED__"
-      }
-    }
+    "Logg inn i Nasjonal inndelingsbase": "__STRING_NOT_TRANSLATED__",
+    "Denne tjenesten er kun tilgjengelig for autoriserte brukere": "__STRING_NOT_TRANSLATED__",
+    "Logget inn som {{ personId }}": "__STRING_NOT_TRANSLATED__",
+    "Ikke logget inn": "__STRING_NOT_TRANSLATED__"
   },
-  "Endre": "__STRING_NOT_TRANSLATED__",
+  "Aktive kartlag": "__STRING_NOT_TRANSLATED__",
+  "sidebar": {
+    "Kartlag": "__STRING_NOT_TRANSLATED__",
+    "Inndelinger": "__STRING_NOT_TRANSLATED__",
+    "Utkast": "__STRING_NOT_TRANSLATED__"
+  },
   "utkast": {
-    "Ikke definert": "__STRING_NOT_TRANSLATED__",
-    "Vedtatt grensejustering": "__STRING_NOT_TRANSLATED__",
-    "Vedtatt sammenslåing": "__STRING_NOT_TRANSLATED__",
-    "Retting": "__STRING_NOT_TRANSLATED__",
-    "Vedtatt deling": "__STRING_NOT_TRANSLATED__",
-    "Fastsetting": "__STRING_NOT_TRANSLATED__",
-    "Navneendring": "__STRING_NOT_TRANSLATED__",
-    "Nummerendring": "__STRING_NOT_TRANSLATED__",
-    "Navn på utkast": "__STRING_NOT_TRANSLATED__",
-    "Type utkast": "__STRING_NOT_TRANSLATED__",
-    "Du er nå i redigeringsmodus av dette utkastet": "__STRING_NOT_TRANSLATED__",
-    "Endringstype": "__STRING_NOT_TRANSLATED__",
-    "Gyldig fra": "__STRING_NOT_TRANSLATED__",
-    "Velg en endringstype fra listen": "__STRING_NOT_TRANSLATED__",
-    "Konflikt mellom fremtidige endringer": "__STRING_NOT_TRANSLATED__",
-    "Endringer du gjorde i dette utkastet har ført til at en annen publisert endring må dobbelsjekkes": "__STRING_NOT_TRANSLATED__",
-    "Dobbeltsjekk feltene i endringen nedenfor før du publiserer": "__STRING_NOT_TRANSLATED__",
-    "Endringer i dette utkastet": "__STRING_NOT_TRANSLATED__",
-    "Fremtidig endring i konflikt": "__STRING_NOT_TRANSLATED__",
-    "Opprett et nytt utkast": "__STRING_NOT_TRANSLATED__",
-    "ulagrede-endringer": "__STRING_NOT_TRANSLATED__",
-    "ulagrede-endringer-utdypende": "__STRING_NOT_TRANSLATED__",
     "endringslogg": {
-      "header": "__STRING_NOT_TRANSLATED__",
-      "stemmekrets-tittel": "__STRING_NOT_TRANSLATED__",
+      "grunnkrets-tittel": "__STRING_NOT_TRANSLATED__",
       "endring": {
-        "stemmekretsnavn": "__STRING_NOT_TRANSLATED__",
-        "stemmekretsnummer": "__STRING_NOT_TRANSLATED__",
-        "tellekretsnavn": "__STRING_NOT_TRANSLATED__",
-        "tellekretsnummer": "__STRING_NOT_TRANSLATED__",
-        "valgdistriktsnummer": "__STRING_NOT_TRANSLATED__",
         "grenseendringer": "__STRING_NOT_TRANSLATED__",
         "grunnkretsnavn": "__STRING_NOT_TRANSLATED__",
         "grunnkretsnummer": "__STRING_NOT_TRANSLATED__",
@@ -203,39 +31,166 @@
           "sammenslatt": "__STRING_NOT_TRANSLATED__",
           "stemmekretsnummer": "__STRING_NOT_TRANSLATED__",
           "stemmekretsnavn": "__STRING_NOT_TRANSLATED__"
-        }
+        },
+        "stemmekretsnavn": "__STRING_NOT_TRANSLATED__",
+        "stemmekretsnummer": "__STRING_NOT_TRANSLATED__",
+        "tellekretsnavn": "__STRING_NOT_TRANSLATED__",
+        "tellekretsnummer": "__STRING_NOT_TRANSLATED__",
+        "valgdistriktsnummer": "__STRING_NOT_TRANSLATED__"
       },
-      "ingenEndringer": "__STRING_NOT_TRANSLATED__",
-      "grunnkrets-tittel": "__STRING_NOT_TRANSLATED__",
       "metadata": "__STRING_NOT_TRANSLATED__",
-      "utkast-opprettet": "__STRING_NOT_TRANSLATED__"
+      "header": "__STRING_NOT_TRANSLATED__",
+      "ingenEndringer": "__STRING_NOT_TRANSLATED__",
+      "stemmekrets-tittel": "__STRING_NOT_TRANSLATED__"
     },
+    "ulagrede-endringer-krets-utdypende": "__STRING_NOT_TRANSLATED__",
+    "Opprett et nytt utkast": "__STRING_NOT_TRANSLATED__",
+    "Navn på utkast": "__STRING_NOT_TRANSLATED__",
+    "Endringstype": "__STRING_NOT_TRANSLATED__",
+    "Velg en endringstype fra listen": "__STRING_NOT_TRANSLATED__",
+    "ulagrede-endringer": "__STRING_NOT_TRANSLATED__",
+    "ulagrede-endringer-utdypende": "__STRING_NOT_TRANSLATED__",
+    "utkast-opprettet": "__STRING_NOT_TRANSLATED__",
+    "Konflikt mellom fremtidige endringer": "__STRING_NOT_TRANSLATED__",
+    "Endringer du gjorde i dette utkastet har ført til at en annen publisert endring må dobbelsjekkes": "__STRING_NOT_TRANSLATED__",
+    "Dobbeltsjekk feltene i endringen nedenfor før du publiserer": "__STRING_NOT_TRANSLATED__",
+    "Endringer i dette utkastet": "__STRING_NOT_TRANSLATED__",
+    "Fremtidig endring i konflikt": "__STRING_NOT_TRANSLATED__",
     "feil": {
       "utdatert-tittel": "__STRING_NOT_TRANSLATED__",
       "utdatert-tekst": "__STRING_NOT_TRANSLATED__",
+      "feil-geometri-tittel": "__STRING_NOT_TRANSLATED__",
+      "feil-geometri-tekst": "__STRING_NOT_TRANSLATED__",
       "publisering-feilet-tittel": "__STRING_NOT_TRANSLATED__",
       "feilkode": "__STRING_NOT_TRANSLATED__",
-      "sletting-feilet-tittel": "__STRING_NOT_TRANSLATED__",
-      "feil-geometri-tittel": "__STRING_NOT_TRANSLATED__",
-      "feil-geometri-tekst": "__STRING_NOT_TRANSLATED__"
+      "sletting-feilet-tittel": "__STRING_NOT_TRANSLATED__"
     },
-    "utkast-opprettet": "__STRING_NOT_TRANSLATED__"
+    "Type utkast": "__STRING_NOT_TRANSLATED__",
+    "Du er nå i redigeringsmodus av dette utkastet": "__STRING_NOT_TRANSLATED__"
   },
-  "Aktive kartlag": "__STRING_NOT_TRANSLATED__",
+  "action": {
+    "Stopp redigering": "__STRING_NOT_TRANSLATED__",
+    "Rediger grenser": "__STRING_NOT_TRANSLATED__",
+    "Avslutt redigering": "__STRING_NOT_TRANSLATED__",
+    "Rediger": "__STRING_NOT_TRANSLATED__",
+    "Slett": "__STRING_NOT_TRANSLATED__",
+    "Ny {{ item }}": "__STRING_NOT_TRANSLATED__",
+    "Legg til": "__STRING_NOT_TRANSLATED__",
+    "Slett {{ item }}": "__STRING_NOT_TRANSLATED__",
+    "Avbryt": "__STRING_NOT_TRANSLATED__",
+    "Opprett": "__STRING_NOT_TRANSLATED__",
+    "Lagre": "__STRING_NOT_TRANSLATED__",
+    "Undo": "__STRING_NOT_TRANSLATED__",
+    "Redo": "__STRING_NOT_TRANSLATED__",
+    "Fjern": "__STRING_NOT_TRANSLATED__",
+    "Løsriv": "__STRING_NOT_TRANSLATED__",
+    "Splitt": "__STRING_NOT_TRANSLATED__",
+    "Snap": "__STRING_NOT_TRANSLATED__",
+    "Zoom inn": "__STRING_NOT_TRANSLATED__",
+    "Zoom ut": "__STRING_NOT_TRANSLATED__",
+    "VisEndringer": "__STRING_NOT_TRANSLATED__",
+    "Lukk": "__STRING_NOT_TRANSLATED__",
+    "Publiser": "__STRING_NOT_TRANSLATED__",
+    "Forkast": "__STRING_NOT_TRANSLATED__",
+    "Endre": "__STRING_NOT_TRANSLATED__"
+  },
   "Logg inn for å se listen": "__STRING_NOT_TRANSLATED__",
-  "Redigeringsmodus": "__STRING_NOT_TRANSLATED__",
-  "Redigerer": "__STRING_NOT_TRANSLATED__",
-  "Lukk likevel": "__STRING_NOT_TRANSLATED__",
-  "Fortsett redigering": "__STRING_NOT_TRANSLATED__",
-  "Forkast endringer og lukk": "__STRING_NOT_TRANSLATED__",
+  "inndelinger": {
+    "Fylkesgrenser": "__STRING_NOT_TRANSLATED__",
+    "Grunnkretser": "__STRING_NOT_TRANSLATED__",
+    "Kommunegrenser": "__STRING_NOT_TRANSLATED__",
+    "Stemmekretser": "__STRING_NOT_TRANSLATED__"
+  },
+  "Henter fylker": "__STRING_NOT_TRANSLATED__",
   "Forkast endringer": "__STRING_NOT_TRANSLATED__",
+  "Fortsett redigering": "__STRING_NOT_TRANSLATED__",
+  "metadata": {
+    "Målemetode": "__STRING_NOT_TRANSLATED__",
+    "Nøyaktighet": "__STRING_NOT_TRANSLATED__",
+    "Opphav": "__STRING_NOT_TRANSLATED__",
+    "Informasjon": "__STRING_NOT_TRANSLATED__",
+    "Rettskildetittel": "__STRING_NOT_TRANSLATED__",
+    "Rettskilde-ID": "__STRING_NOT_TRANSLATED__",
+    "Fastsettingsmyndighet": "__STRING_NOT_TRANSLATED__",
+    "Fastsettingsdato": "__STRING_NOT_TRANSLATED__",
+    "Hjemmel": "__STRING_NOT_TRANSLATED__",
+    "Dokumentlenker": "__STRING_NOT_TRANSLATED__",
+    "Internreferanser": "__STRING_NOT_TRANSLATED__",
+    "Referanse": "__STRING_NOT_TRANSLATED__",
+    "Nøyaktighetsklasse": "__STRING_NOT_TRANSLATED__",
+    "Omtvistet": "__STRING_NOT_TRANSLATED__",
+    "Gyldig fra": "__STRING_NOT_TRANSLATED__"
+  },
+  "grunnkrets": {
+    "Grunnkretsnummer": "__STRING_NOT_TRANSLATED__",
+    "Grunnkretsnavn": "__STRING_NOT_TRANSLATED__",
+    "Søk": "__STRING_NOT_TRANSLATED__",
+    "Grunnkrets": "__STRING_NOT_TRANSLATED__"
+  },
+  "{{ kommuneNavn }} kommune": "__STRING_NOT_TRANSLATED__",
   "f": {
     "eks": {
       " Endring av stemmekrets i Froland": "__STRING_NOT_TRANSLATED__"
     }
   },
-  "Velg stemmekretsen du vil slå sammen med": "__STRING_NOT_TRANSLATED__",
+  "stemmekrets": {
+    "validering": {
+      "stemmekretsnummer": {
+        "ikke-tomt": "__STRING_NOT_TRANSLATED__",
+        "kun-siffer": "__STRING_NOT_TRANSLATED__",
+        "kun-positiv": "__STRING_NOT_TRANSLATED__",
+        "obligatorisk": "__STRING_NOT_TRANSLATED__",
+        "gyldig-nummer": "__STRING_NOT_TRANSLATED__",
+        "for-kort": "__STRING_NOT_TRANSLATED__"
+      },
+      "stemmekretsnavn": {
+        "ikke-tomt": "__STRING_NOT_TRANSLATED__",
+        "obligatorisk": "__STRING_NOT_TRANSLATED__"
+      },
+      "tellekretsnummer": {
+        "både-eller-ingen": "__STRING_NOT_TRANSLATED__",
+        "kun-tall": "__STRING_NOT_TRANSLATED__",
+        "kun-positiv": "__STRING_NOT_TRANSLATED__"
+      },
+      "har-feil": "__STRING_NOT_TRANSLATED__",
+      "multiselect": {
+        "obligatorisk": "__STRING_NOT_TRANSLATED__",
+        "unik": "__STRING_NOT_TRANSLATED__"
+      }
+    },
+    "Stemmekretsnummer": "__STRING_NOT_TRANSLATED__",
+    "Tellekretsnummer": "__STRING_NOT_TRANSLATED__",
+    "Tellekretsnavn": "__STRING_NOT_TRANSLATED__",
+    "utkast-sammenslaaing-alert": {
+      "tittel": "__STRING_NOT_TRANSLATED__",
+      "tekst": "__STRING_NOT_TRANSLATED__"
+    },
+    "sammenslaaing": {
+      "tittel": "__STRING_NOT_TRANSLATED__",
+      "detaljer-tittel": "__STRING_NOT_TRANSLATED__",
+      "detaljer-label-stemmekretsnummer": "__STRING_NOT_TRANSLATED__",
+      "detaljer-label-stemmekretsnavn": "__STRING_NOT_TRANSLATED__",
+      "actions": {
+        "avbryt": "__STRING_NOT_TRANSLATED__",
+        "slaa-sammen": "__STRING_NOT_TRANSLATED__",
+        "legg-til-flere": "__STRING_NOT_TRANSLATED__",
+        "velg": "__STRING_NOT_TRANSLATED__"
+      },
+      "undertittel": "__STRING_NOT_TRANSLATED__",
+      "label": "__STRING_NOT_TRANSLATED__"
+    },
+    "Valgdistriktsnummer": "__STRING_NOT_TRANSLATED__",
+    "Stemmekrets": "__STRING_NOT_TRANSLATED__"
+  },
+  "tabell": {
+    "Stemmekretsnavn": "__STRING_NOT_TRANSLATED__",
+    "Endringstype": "__STRING_NOT_TRANSLATED__"
+  },
   "stemmekretssammenslaaing": {
     "lagt-til-i-utkast": "__STRING_NOT_TRANSLATED__"
-  }
+  },
+  "Ja": "__STRING_NOT_TRANSLATED__",
+  "Nei": "__STRING_NOT_TRANSLATED__",
+  "Redigeringsmodus": "__STRING_NOT_TRANSLATED__",
+  "Nasjonal inndelingsbase": "__STRING_NOT_TRANSLATED__"
 }

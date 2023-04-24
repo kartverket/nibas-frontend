@@ -210,7 +210,7 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
         validationError={validationError(errors.tellekretsnavn)}
       />
       <Button type="submit" disabled={!isDirty}>
-        {t("action.Lagre")}
+        {t("action.Endre")}
       </Button>
     </DetailsSection>
   );
