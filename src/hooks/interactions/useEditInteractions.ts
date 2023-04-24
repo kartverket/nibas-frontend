@@ -6,10 +6,10 @@ import { useToolbar, useToolbarSaving } from "contexts/ToolbarContext";
 import { click, primaryAction } from "ol/events/condition";
 import { Collection } from "ol";
 import { editableBorderTypes, editSource } from "hooks/layers/constants";
-import useSelectInteraction from "./useSelectInteraction";
 import { pixelTolerance } from "./constants";
 import { getLayerById } from "utils/map/layers";
 import { map } from "components/Kart/constants";
+import { useDataPanel } from "contexts/DataPanelContext";
 
 const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
@@ -20,15 +20,17 @@ const getInfoFromFeature = (featureLike: FeatureLike) => {
 const useEditInteractions = () => {
   const { addEntry } = useToolbarSaving();
   const { activePointMode } = useToolbar();
+  const { selectedFeature } = useDataPanel();
   const detachIsActive = activePointMode === "detach";
-  const { selectedFeatures } = useSelectInteraction();
   const editLayer = getLayerById("edit");
 
   const modify = useMemo(
     () =>
       new Modify({
         source: detachIsActive ? undefined : editSource,
-        features: detachIsActive ? new Collection(selectedFeatures) : undefined,
+        features: detachIsActive
+          ? new Collection(selectedFeature ? [selectedFeature] : [])
+          : undefined,
         pixelTolerance: pixelTolerance,
         condition: (mapBrowserEvent) => {
           const featuresAtPixel = map.getFeaturesAtPixel(
@@ -53,7 +55,7 @@ const useEditInteractions = () => {
           return activePointMode === "remove" && click(mapBrowserEvent);
         },
       }),
-    [activePointMode, detachIsActive, editLayer, selectedFeatures]
+    [activePointMode, detachIsActive, editLayer, selectedFeature]
   );
 
   const previousCoordinateKey = "previousCoordinates";

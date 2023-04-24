@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { Feature } from "ol";
-import Geometry from "ol/geom/Geometry";
 import LineString from "ol/geom/LineString";
 import { Select } from "ol/interaction";
 import { map, overlayPopup } from "components/Kart/constants";
@@ -20,9 +19,9 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 };
 
 const useSelectInteraction = () => {
-  const [features, setFeatures] = useState<Feature<Geometry>[]>([]);
   const { activePointMode } = useToolbar();
-  const { setActiveDataPanel, setSelectedMetadata } = useDataPanel();
+  const { setActiveDataPanel, selectedFeature, setSelectedFeature } =
+    useDataPanel();
 
   const select = useMemo(
     () =>
@@ -40,16 +39,22 @@ const useSelectInteraction = () => {
   );
 
   useEffect(() => {
-    map.addInteraction(select);
-
-    return () => {
-      map.removeInteraction(select);
-    };
-  }, [select]);
-
-  useEffect(() => {
     const syncFeatures = () => {
-      setFeatures(select.getFeatures().getArray().slice());
+      const clickedFeatures = select.getFeatures().getArray().slice();
+      if (clickedFeatures.length === 1) {
+        const clickedFeature = clickedFeatures[0];
+        setSelectedFeature(clickedFeature);
+
+        if (clickedFeature.getId()?.toString().includes("TEIGGRENSEWFS")) {
+          overlayPopup.setPosition(getOverlayPosition(clickedFeature));
+        } else {
+          overlayPopup.setPosition(undefined);
+          setActiveDataPanel("metadata");
+        }
+      } else if (clickedFeatures.length === 0) {
+        setActiveDataPanel(null);
+        overlayPopup.setPosition(undefined);
+      }
     };
 
     select.on("select", syncFeatures);
@@ -57,28 +62,15 @@ const useSelectInteraction = () => {
     return () => {
       select.un("select", syncFeatures);
     };
-  }, [select, features]);
+  }, [select, setActiveDataPanel, setSelectedFeature]);
 
   useEffect(() => {
-    if (features.length === 1) {
-      const selectedFeature = features[0] as Feature<LineString>;
-
-      if (selectedFeature.getId()?.toString().includes("TEIGGRENSEWFS")) {
-        // TODO: legge inn å lukke panel her?
-        // closePanel("grensemetadata");
-        overlayPopup.setPosition(getOverlayPosition(selectedFeature));
-      } else {
-        overlayPopup.setPosition(undefined);
-        setSelectedMetadata(selectedFeature);
-        setActiveDataPanel("metadata");
-      }
-    } else {
-      overlayPopup.setPosition(undefined);
-      setActiveDataPanel(null);
+    if (selectedFeature === null) {
+      select.getFeatures().clear();
     }
-  }, [features, setActiveDataPanel, setSelectedMetadata]);
+  }, [select, selectedFeature]);
 
-  return { selectedFeatures: features };
+  return { select };
 };
 
 export default useSelectInteraction;

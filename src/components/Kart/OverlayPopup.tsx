@@ -1,15 +1,11 @@
 import { useEffect, useRef } from "react";
-import Feature from "ol/Feature";
-import Geometry from "ol/geom/Geometry";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { map, overlayPopup } from "./constants";
+import { useDataPanel } from "contexts/DataPanelContext";
 
-type Props = {
-  selectedFeatures: Feature<Geometry>[];
-};
-
-const OverlayPopup = ({ selectedFeatures }: Props) => {
+const OverlayPopup = () => {
+  const { selectedFeature } = useDataPanel();
   const { t } = useTranslation();
   const overlayRef = useRef<HTMLDivElement>(null);
 
@@ -25,12 +21,11 @@ const OverlayPopup = ({ selectedFeatures }: Props) => {
     };
   }, []);
 
-  const properties =
-    selectedFeatures.length === 1 ? selectedFeatures[0].getProperties() : null;
+  const properties = selectedFeature?.getProperties();
 
   return (
     <Popup ref={overlayRef}>
-      {selectedFeatures.length === 1 && (
+      {selectedFeature && (
         <div>
           <Value>
             {t("metadata.Målemetode")}: {properties?.MALEMETODE ?? "---"}

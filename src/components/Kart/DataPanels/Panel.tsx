@@ -30,6 +30,7 @@ const PanelHeaderContainer = styled.div`
   justify-content: space-between;
   padding: 16px;
   border-bottom: 2px solid var(--gray_light);
+  margin-bottom: 16px;
 `;
 
 const PanelHeading = styled(Heading)`

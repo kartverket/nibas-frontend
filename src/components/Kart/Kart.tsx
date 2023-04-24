@@ -17,8 +17,10 @@ initBakgrunnskartLayers();
 
 const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const { selectedFeatures } = useInteractions();
   const { openPanels } = useSidebarPanels();
+
+  // Legger til interactions (modify, select, osv) på kartet
+  useInteractions();
 
   const anySidebarOpen = Object.values(openPanels).includes(true);
 
@@ -44,7 +46,7 @@ const Kart = () => {
             <DataPanels />
             <Toolbar />
           </KartOverlay>
-          <OverlayPopup selectedFeatures={selectedFeatures} />
+          <OverlayPopup />
         </Suspense>
       </KartTarget>
     </KartWrapper>

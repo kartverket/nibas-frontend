@@ -9,7 +9,7 @@ import useSplitInteraction from "./useSplitInteraction";
 
 const useInteractions = () => {
   const { modify } = useEditInteractions();
-  const { selectedFeatures } = useSelectInteraction();
+  const { select } = useSelectInteraction();
   const { activeEditModes } = useToolbar();
   const { split } = useSplitInteraction();
 
@@ -25,6 +25,7 @@ const useInteractions = () => {
 
     map.on("click", split);
     map.addInteraction(modify);
+    map.addInteraction(select);
 
     // snaps må legges til etter modify og draw interactions
     if (activeEditModes.includes("snap")) {
@@ -36,13 +37,12 @@ const useInteractions = () => {
     return () => {
       map.un("click", split);
       map.removeInteraction(modify);
+      map.removeInteraction(select);
       snaps.forEach((snap) => {
         map.removeInteraction(snap);
       });
     };
-  }, [activeEditModes, modify, split]);
-
-  return { selectedFeatures };
+  }, [activeEditModes, modify, select, split]);
 };
 
 export default useInteractions;

@@ -3,13 +3,13 @@ import LineString from "ol/geom/LineString";
 import React, { createContext, useContext, useState } from "react";
 
 type ActiveDataPanel = "metadata" | "grunnkrets" | "stemmekrets" | null;
-type SelectedMetadata = Feature<LineString> | null;
+type SelectedFeature = Feature<LineString> | null;
 
 export type DataPanelContextValue = {
   activeDataPanel: ActiveDataPanel;
   setActiveDataPanel: (activeDataPanel: ActiveDataPanel) => void;
-  selectedMetadata: SelectedMetadata;
-  setSelectedMetadata: (selectedMetadata: SelectedMetadata) => void;
+  selectedFeature: SelectedFeature;
+  setSelectedFeature: (selectedFeature: SelectedFeature) => void;
 };
 
 export const DataPanelContext = createContext<
@@ -17,17 +17,14 @@ export const DataPanelContext = createContext<
 >(undefined);
 
 export const DataPanelProvider: React.FC = ({ children }) => {
-  const [activeDataPanel, setActiveDataPanel] =
-    useState<ActiveDataPanel>("metadata");
-
-  const [selectedMetadata, setSelectedMetadata] =
-    useState<SelectedMetadata>(null);
+  const [activeDataPanel, setActiveDataPanel] = useState<ActiveDataPanel>(null);
+  const [selectedFeature, setSelectedFeature] = useState<SelectedFeature>(null);
 
   const value = {
     activeDataPanel,
     setActiveDataPanel,
-    selectedMetadata,
-    setSelectedMetadata,
+    selectedFeature,
+    setSelectedFeature,
   };
 
   return (

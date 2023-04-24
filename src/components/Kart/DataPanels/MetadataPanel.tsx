@@ -13,20 +13,28 @@ const grenseTypeWithReferanser = [
 ];
 
 const MetadataPanel = ({ isOpen, className, onClose }: PanelProps) => {
-  const { selectedMetadata } = useDataPanel();
+  const { selectedFeature, setSelectedFeature } = useDataPanel();
 
   const showReferanser = grenseTypeWithReferanser.includes(
-    selectedMetadata?.get("type") as string
+    selectedFeature?.get("type") as string
   );
 
+  // TODO: struktur på hvor referanser skal være
   return (
     <Panel isOpen={isOpen} className={className}>
-      <PanelHeader onClose={onClose}>Metadata for grense</PanelHeader>
-      {selectedMetadata && (
+      <PanelHeader
+        onClose={() => {
+          setSelectedFeature(null);
+          onClose();
+        }}
+      >
+        Metadata for grense
+      </PanelHeader>
+      {selectedFeature && (
         <>
-          <GrenseMetadataGenerelt feature={selectedMetadata} />
+          <GrenseMetadataGenerelt feature={selectedFeature} />
           {showReferanser && (
-            <GrenseMetadataReferanser feature={selectedMetadata} />
+            <GrenseMetadataReferanser feature={selectedFeature} />
           )}
         </>
       )}
