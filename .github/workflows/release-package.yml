@@ -97,7 +97,7 @@ jobs:
       pull-requests: write
       contents: read
       packages: write
-    uses: kartverket/github-workflows/.github/workflows/run-terraform.yml@v4.0.0
+    uses: kartverket/github-workflows/.github/workflows/run-terraform.yml@v4.0.1
     with:
       runner: atkv1-dev
       environment: dev
@@ -122,7 +122,7 @@ jobs:
       id-token: write
       actions: read
       security-events: write
-    uses: kartverket/github-workflows/.github/workflows/run-security-scans.yml@v4.0.0
+    uses: kartverket/github-workflows/.github/workflows/run-security-scans.yml@v4.0.1
     with:
       auth_project_number: ${{ needs.set-variables.outputs.dev_auth_project_number}}
       service_account: ${{ needs.set-variables.outputs.dev_service_account}}
@@ -135,7 +135,7 @@ jobs:
       pull-requests: write
       contents: read
       packages: write
-    uses: kartverket/github-workflows/.github/workflows/run-terraform.yml@v4.0.0
+    uses: kartverket/github-workflows/.github/workflows/run-terraform.yml@v4.0.1
     with:
       runner: atkv1-test
       environment: test
@@ -159,7 +159,7 @@ jobs:
       pull-requests: write
       contents: read
       packages: write
-    uses: kartverket/github-workflows/.github/workflows/run-terraform.yml@v4.0.0
+    uses: kartverket/github-workflows/.github/workflows/run-terraform.yml@v4.0.1
     with:
       runner: atkv1-prod
       environment: prod
