@@ -58,7 +58,7 @@ const Kommune = ({ kommune }: Props) => {
           }
         />
         <Title>{getNavnInSpraak(kommune.navn, "nor")}</Title>
-        <LinkButton onClick={onAvsluttRedigeringClick}>
+        <LinkButton onClick={onAvsluttRedigeringClick} disabled={lasterData}>
           {kommuneValues.editing
             ? t("action.Avslutt redigering")
             : t("action.Rediger")}
