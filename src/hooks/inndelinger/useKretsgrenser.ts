@@ -228,9 +228,12 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     removeFeaturesFromSourceByIds(layerId, allFeatures.map(getFeatureId));
   };
 
+  const lasterData = visible && !allFeatures;
+
   return {
     addKretserToLayer,
     removeKretserFromLayer,
+    lasterData,
   };
 };
 
