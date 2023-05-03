@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useEditGrenser } from "./EditGrenserContext";
-import { useOverlayPanels } from "./OverlayPanelsContext";
 import useKretsgrenser from "hooks/inndelinger/useKretsgrenser";
 import { editSource } from "hooks/layers/constants";
 import { LayerId } from "hooks/layers/types";
 import { FeatureProperties, KommuneRef } from "types/api";
 import { getFeatureId, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { getIdFromEntity } from "utils/api";
+import { useDataPanel } from "./DataPanelContext";
 
 export type Kretstype = "grunnkrets" | "stemmekrets";
 
@@ -68,7 +68,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
     setMultipleValues,
     resetAndClearEditingLayer,
   } = useEditGrenser(currentKretstype);
-  const { openPanel, closePanels } = useOverlayPanels();
+  const { setActiveDataPanel, setFlatedata } = useDataPanel();
   const { addKretserToLayer, removeKretserFromLayer } = useKretsgrenser(
     kommuneId,
     currentKretstype
@@ -118,7 +118,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
         }
       });
 
-      openPanel({ type: currentKretstype, kommune });
+      setFlatedata(kommune);
 
       // hvis ikke endret fra før, endre nå
       if (kommuneValues.visible) {
@@ -128,7 +128,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
       addKretserToLayer("edit");
     } else {
       removeKretserFromLayer("edit");
-      closePanels();
+      setActiveDataPanel(null);
     }
 
     setMultipleValues(newValues);

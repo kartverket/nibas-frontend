@@ -18,6 +18,7 @@ export type EditGrenserContextValue = {
     values?: ObjectValue
   ) => void;
   resetAndClearEditingLayer: () => void;
+  getCurrentlyEditingType: () => EditingType | null;
 };
 
 /**
@@ -44,6 +45,22 @@ export const EditGrenserProvider: React.FC = ({ children }) => {
     }));
   };
 
+  /**
+   * Går gjennom editingObject for å finne ut hva, om noe, som redigeres
+   * @returns Hvilken grensetype man er i redigeringsmodus for, eller null hvis det er ingenting
+   */
+  const getCurrentlyEditingType = () => {
+    const currentlyEditingType = Object.entries(editingObject).find(
+      ([, grensevalues]) =>
+        Object.values(grensevalues).some((grense) => grense.editing)
+    );
+
+    if (currentlyEditingType) {
+      return currentlyEditingType[0] as EditingType;
+    }
+    return null;
+  };
+
   const resetAndClearEditingLayer = () => {
     removeAllFeatures();
     setEditingObject(() => ({}));
@@ -54,6 +71,7 @@ export const EditGrenserProvider: React.FC = ({ children }) => {
     setEditingObject,
     setObjectValue,
     resetAndClearEditingLayer,
+    getCurrentlyEditingType,
   };
 
   return (

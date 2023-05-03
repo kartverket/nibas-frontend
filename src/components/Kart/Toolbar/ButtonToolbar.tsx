@@ -5,6 +5,8 @@ import { Frame } from "./components";
 import ModeButton from "./ModeButton";
 import { useToolbar, useToolbarActions } from "contexts/ToolbarContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
+import { useEditAllGrenser } from "contexts/EditGrenserContext";
+import { useDataPanel } from "contexts/DataPanelContext";
 
 const Divider = styled.hr`
   width: 100%;
@@ -18,6 +20,21 @@ const ButtonToolbar = () => {
   const { undo, redo } = useToolbarActions();
   const { activePointMode, togglePointMode, activeEditModes, toggleEditMode } =
     useToolbar();
+  const { getCurrentlyEditingType } = useEditAllGrenser();
+  const editingType = getCurrentlyEditingType() as string;
+  const { activeDataPanel, setActiveDataPanel } = useDataPanel();
+  const flatedetaljerIsAvailable =
+    editingType === "grunnkrets" || editingType === "stemmekrets";
+  const flatedetaljerIsActive =
+    activeDataPanel === "grunnkrets" || activeDataPanel === "stemmekrets";
+
+  const toggleFlatedetaljer = () => {
+    if (flatedetaljerIsActive) {
+      setActiveDataPanel(null);
+    } else if (flatedetaljerIsAvailable) {
+      setActiveDataPanel(editingType);
+    }
+  };
 
   const zoom = (difference: number) => {
     const view = map.getView();
@@ -73,6 +90,20 @@ const ButtonToolbar = () => {
       >
         Metadata
       </ModeButton>
+      <Divider />
+      {flatedetaljerIsAvailable && (
+        <>
+          <ModeButton
+            icon="feed"
+            ariaLabel="Vis flatedetaljer"
+            isActive={flatedetaljerIsActive}
+            onClick={toggleFlatedetaljer}
+          >
+            Flatedetaljer
+          </ModeButton>
+          <Divider />
+        </>
+      )}
       {false && (
         <>
           <ModeButton
@@ -93,7 +124,6 @@ const ButtonToolbar = () => {
           </ModeButton>
         </>
       )}
-      <Divider />
       <ModeButton
         icon="magnet"
         ariaLabel="Snap til bakgrunnskart"

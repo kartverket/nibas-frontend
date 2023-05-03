@@ -1,7 +1,6 @@
 import { render, screen, waitFor } from "test/test-utils";
 import { ReactNode } from "react";
 import GrunnkretserPanel from "./GrunnkretserPanel";
-import { mockKommuner } from "mocks/handlers/responses";
 import { GrunnkretsRequest } from "types/api";
 import { InndelingerKretsProvider } from "contexts/InndelingerKretsContext";
 
@@ -31,13 +30,9 @@ const renderWithProvider = (
     }
   );
 
-const defaultProps: React.ComponentProps<typeof GrunnkretserPanel> = {
-  kommune: mockKommuner[0],
-};
-
 describe("GrunnkretserPanel", () => {
   it("should render kommunes grunnkretser in table", async () => {
-    renderWithProvider(<GrunnkretserPanel {...defaultProps} />);
+    renderWithProvider(<GrunnkretserPanel />);
 
     expect(await screen.findByRole("table")).toBeInTheDocument();
 
@@ -60,7 +55,7 @@ describe("GrunnkretserPanel", () => {
   });
 
   it("should apply utkast correctly", async () => {
-    renderWithProvider(<GrunnkretserPanel {...defaultProps} />, {
+    renderWithProvider(<GrunnkretserPanel />, {
       "1": {
         grunnkretsnummer: "87654321",
         navn: "Mosekollen vest",
@@ -80,9 +75,7 @@ describe("GrunnkretserPanel", () => {
   });
 
   it("should toggle future changes table when clicking future changes icon", async () => {
-    const { user } = renderWithProvider(
-      <GrunnkretserPanel {...defaultProps} />
-    );
+    const { user } = renderWithProvider(<GrunnkretserPanel />);
 
     await user.click(
       screen.getByRole("button", {

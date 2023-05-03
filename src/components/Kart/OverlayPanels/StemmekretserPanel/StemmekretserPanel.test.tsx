@@ -1,13 +1,8 @@
 import { render, screen, waitFor } from "test/test-utils";
 import { ReactNode } from "react";
 import StemmekretserPanel from "./StemmekretserPanel";
-import { mockKommuner } from "mocks/handlers/responses";
 import { StemmekretsRequest } from "types/api";
 import { InndelingerKretsProvider } from "contexts/InndelingerKretsContext";
-
-const defaultProps: React.ComponentProps<typeof StemmekretserPanel> = {
-  kommune: mockKommuner[0],
-};
 
 const renderWithProvider = (
   ui: ReactNode,
@@ -37,7 +32,7 @@ const renderWithProvider = (
 
 describe("StemmekretserPanel", () => {
   it("should render kommunes stemmekretser in table", async () => {
-    renderWithProvider(<StemmekretserPanel {...defaultProps} />);
+    renderWithProvider(<StemmekretserPanel />);
 
     expect(await screen.findByRole("table")).toBeInTheDocument();
 
@@ -78,15 +73,13 @@ describe("StemmekretserPanel", () => {
   });
 
   it("should not render editrow when accordion is closed", async () => {
-    renderWithProvider(<StemmekretserPanel {...defaultProps} />);
+    renderWithProvider(<StemmekretserPanel />);
 
     expect(await screen.findAllByRole("cell")).toHaveLength(14); // 2x 7 celler
   });
 
   it("should render EditRow on Caret toggle", async () => {
-    const { user } = renderWithProvider(
-      <StemmekretserPanel {...defaultProps} />
-    );
+    const { user } = renderWithProvider(<StemmekretserPanel />);
 
     await user.click(
       (
@@ -100,7 +93,7 @@ describe("StemmekretserPanel", () => {
   });
 
   it("should render with utkast applied", async () => {
-    renderWithProvider(<StemmekretserPanel {...defaultProps} />, {
+    renderWithProvider(<StemmekretserPanel />, {
       "1": {
         stemmekretsnavn: "To-hundredal",
         stemmekretsnummer: "05",
@@ -125,9 +118,7 @@ describe("StemmekretserPanel", () => {
 
   // må få ferdig API-endepunkt først
   it.skip("should toggle future changes table when clicking future changes icon", async () => {
-    const { user } = renderWithProvider(
-      <StemmekretserPanel {...defaultProps} />
-    );
+    const { user } = renderWithProvider(<StemmekretserPanel />);
 
     await user.click(
       screen.getByRole("button", {

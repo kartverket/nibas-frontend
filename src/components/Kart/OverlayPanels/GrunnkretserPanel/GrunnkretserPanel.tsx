@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import {
@@ -10,23 +10,20 @@ import {
 import {
   OverlayPanelWrapper,
   PanelHeader,
-  PanelHeaderButton,
   PanelTitle,
 } from "../metadataComponents";
 import useAccordionRows from "../useAccordionRow";
 import EditRow from "./EditRow";
 import Input from "components/form/Input";
 import Icon from "components/Icon";
-import { useInndelingerKrets } from "contexts/InndelingerKretsContext";
 import { useUtkastEntity } from "contexts/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
 import useSearch from "hooks/useSearch";
-import { GrunnkretsRef, GrunnkretsResponse, KommuneRef } from "types/api";
+import { GrunnkretsRef, GrunnkretsResponse } from "types/api";
 import {
   getNavnInSpraak,
   sortGrenserAlphabetically,
 } from "utils/language/language";
-import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 import FutureChangesTable, { TableRow } from "./FutureChangesTable";
 import {
   FutureChangesTableData,
@@ -34,26 +31,19 @@ import {
 } from "../kretserComponents";
 import FutureChangesButton from "../FutureChangesButton";
 import { getIdFromEntity } from "utils/api";
+import { useDataPanel } from "contexts/DataPanelContext";
 
-type Props = {
-  kommune: KommuneRef;
-};
-
-const GrunnkretserPanel = ({ kommune }: Props) => {
-  const kommuneId = getIdFromEntity(kommune);
+const GrunnkretserPanel = () => {
+  const { flatedata } = useDataPanel();
+  const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
   const { t } = useTranslation();
-  const { toggleEditKretser } = useInndelingerKrets(kommune);
-
   const { isRowOpen, toggleRow } = useAccordionRows();
   const { isRowOpen: isFutureChangesOpen, toggleRow: toggleFutureChangesRow } =
     useAccordionRows();
   const { inputValue, setInputValue, searchValue } = useSearch();
 
-  const { toggleMinimizePanel, kretserContext, closePanel } =
-    useOverlayPanels();
-
   const { data: grunnkretserByKommune } = useNibasApi(
-    "/v1/kommuner/{id}/grunnkretser",
+    kommuneId ? "/v1/kommuner/{id}/grunnkretser" : null,
     {
       id: kommuneId,
     }
@@ -110,39 +100,22 @@ const GrunnkretserPanel = ({ kommune }: Props) => {
   const shouldShowFutureChangesButton = (grunnkrets: GrunnkretsRef) =>
     grunnkrets.antallFramtidigeVersjoner > 0;
 
+  if (!flatedata) {
+    return null;
+  }
+
   return (
-    <OverlayPanelWrapper
-      key="grunnkrets"
-      gridArea="kretser"
-      minimized={kretserContext?.isMinimized}
-    >
+    <OverlayPanelWrapper key="grunnkrets" gridArea="kretser">
       <PanelHeader>
         <PanelTitle tag="h2" size="xs">
           {t("{{ kommuneNavn }} kommune", {
-            kommuneNavn: getNavnInSpraak(kommune.navn, "nor"),
+            kommuneNavn: getNavnInSpraak(flatedata.navn, "nor"),
           })}
         </PanelTitle>
         <PanelHeaderInput
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           placeholder={t("grunnkrets.Søk")}
-        />
-        <PanelHeaderButton
-          onClick={() => toggleMinimizePanel("grunnkrets")}
-          icon={
-            kretserContext?.isMinimized ? (
-              <Icon icon="expand_less" />
-            ) : (
-              <Icon icon="expand_more" />
-            )
-          }
-        />
-        <PanelHeaderButton
-          icon={<Icon icon="close" />}
-          onClick={() => {
-            closePanel("grunnkrets");
-            toggleEditKretser();
-          }}
         />
       </PanelHeader>
       {filteredGrunnkretser && (

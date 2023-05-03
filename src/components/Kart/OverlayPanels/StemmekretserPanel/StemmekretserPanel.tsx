@@ -4,10 +4,9 @@ import { KretsTable, KretsTableWrapper } from "../KretsTable";
 import useAccordionRows from "../useAccordionRow";
 import EditRow from "./EditRow";
 import StemmekretsRow from "./StemmekretsRow";
-import { useInndelingerKrets } from "contexts/InndelingerKretsContext";
 import { useUtkastEntity } from "contexts/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
-import { KommuneRef, StemmekretsRef, StemmekretsResponse } from "types/api";
+import { StemmekretsRef, StemmekretsResponse } from "types/api";
 import {
   getNavnInSpraak,
   sortGrenserAlphabetically,
@@ -15,38 +14,30 @@ import {
 import {
   OverlayPanelWrapper,
   PanelHeader,
-  PanelHeaderButton,
   PanelTitle,
 } from "../metadataComponents";
-import { useOverlayPanels } from "contexts/OverlayPanelsContext";
-import Icon from "components/Icon";
 import FutureChangesTable, {
   TableRow,
 } from "../GrunnkretserPanel/FutureChangesTable";
 import { FutureChangesTableData } from "../kretserComponents";
 import { getIdFromEntity } from "utils/api";
+import { useDataPanel } from "contexts/DataPanelContext";
 
-type Props = {
-  kommune: KommuneRef;
-};
-
-const StemmekretserPanel = ({ kommune }: Props) => {
-  const kommuneId = getIdFromEntity(kommune);
+const StemmekretserPanel = () => {
   const { t } = useTranslation();
+  const { flatedata } = useDataPanel();
   const { isRowOpen, toggleRow } = useAccordionRows();
   const { isRowOpen: isFutureChangesOpen, toggleRow: toggleFutureChangesRow } =
     useAccordionRows();
 
+  const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
+
   const { data: stemmekretserByKommune } = useNibasApi(
-    "/v1/kommuner/{id}/stemmekretser",
+    kommuneId ? "/v1/kommuner/{id}/stemmekretser" : null,
     {
       id: kommuneId,
     }
   );
-
-  const { toggleMinimizePanel, kretserContext, closePanel } =
-    useOverlayPanels();
-  const { toggleEditKretser } = useInndelingerKrets(kommune);
 
   const sortedStemmekretser = sortGrenserAlphabetically(stemmekretserByKommune);
 
@@ -87,34 +78,13 @@ const StemmekretserPanel = ({ kommune }: Props) => {
   );
 
   return (
-    <OverlayPanelWrapper
-      key="stemmekrets"
-      gridArea="kretser"
-      minimized={kretserContext?.isMinimized}
-    >
+    <OverlayPanelWrapper key="stemmekrets" gridArea="kretser">
       <PanelHeader>
         <PanelTitle tag="h2" size="xs">
           {t("{{ kommuneNavn }} kommune", {
-            kommuneNavn: getNavnInSpraak(kommune.navn, "nor"),
+            kommuneNavn: getNavnInSpraak(flatedata?.navn, "nor"),
           })}
         </PanelTitle>
-        <PanelHeaderButton
-          onClick={() => toggleMinimizePanel("stemmekrets")}
-          icon={
-            kretserContext?.isMinimized ? (
-              <Icon icon="expand_less" />
-            ) : (
-              <Icon icon="expand_more" />
-            )
-          }
-        />
-        <PanelHeaderButton
-          icon={<Icon icon="close" />}
-          onClick={() => {
-            closePanel("stemmekrets");
-            toggleEditKretser();
-          }}
-        />
       </PanelHeader>
       {utkastStemmekretser && (
         <KretsTableWrapper>

@@ -7,7 +7,6 @@ import useInteractions from "hooks/interactions/useInteractions";
 import { initBakgrunnskartLayers, initGrenserLayers } from "utils/map/layers";
 import Toolbar from "./Toolbar/Toolbar";
 import { useSidebarPanels } from "contexts/SidebarPanelContext";
-import OverlayPanels from "./OverlayPanels/OverlayPanels";
 import DataPanels from "./DataPanels/DataPanels";
 
 // dette må skje utenfor komponenten siden React kjører dypere useEffects
@@ -42,7 +41,6 @@ const Kart = () => {
         <Suspense fallback="More loading...">
           <KartOverlay panelOpen={anySidebarOpen}>
             <SidebarPanels />
-            <OverlayPanels />
             <DataPanels />
             <Toolbar />
           </KartOverlay>
