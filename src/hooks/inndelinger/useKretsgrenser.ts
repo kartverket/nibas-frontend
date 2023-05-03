@@ -127,7 +127,12 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
 
   const { data: grenserGeoJsons } = useSWR(
     kretserByKommune
-      ? [mapGrunnkretserToIds(kretserByKommune), tokenHolderFunc()?.token, type]
+      ? [
+          mapGrunnkretserToIds(kretserByKommune),
+          tokenHolderFunc()?.token,
+          type,
+          "grenser",
+        ]
       : null,
     kretserByKommuneFetcher
   );
@@ -138,6 +143,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
           mapGrunnkretserToIds(grunnkretserByKommune),
           tokenHolderFunc()?.token,
           type,
+          "punkter",
         ]
       : null,
     representasjonspunkterFetcher
