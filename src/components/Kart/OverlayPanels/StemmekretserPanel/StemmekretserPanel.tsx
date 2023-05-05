@@ -1,21 +1,13 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { KretsTable, KretsTableWrapper } from "../KretsTable";
+import { KretsTable } from "../KretsTable";
 import useAccordionRows from "../useAccordionRow";
 import EditRow from "./EditRow";
 import StemmekretsRow from "./StemmekretsRow";
 import { useUtkastEntity } from "contexts/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
 import { StemmekretsRef, StemmekretsResponse } from "types/api";
-import {
-  getNavnInSpraak,
-  sortGrenserAlphabetically,
-} from "utils/language/language";
-import {
-  OverlayPanelWrapper,
-  PanelHeader,
-  PanelTitle,
-} from "../metadataComponents";
+import { sortGrenserAlphabetically } from "utils/language/language";
 import FutureChangesTable, {
   TableRow,
 } from "../GrunnkretserPanel/FutureChangesTable";
@@ -78,71 +70,62 @@ const StemmekretserPanel = () => {
   );
 
   return (
-    <OverlayPanelWrapper key="stemmekrets">
-      <PanelHeader>
-        <PanelTitle tag="h2" size="xs">
-          {t("{{ kommuneNavn }} kommune", {
-            kommuneNavn: getNavnInSpraak(flatedata?.navn, "nor"),
-          })}
-        </PanelTitle>
-      </PanelHeader>
+    <>
       {utkastStemmekretser && (
-        <KretsTableWrapper>
-          <KretsTable>
-            <thead>
-              <tr>
-                <th>{t("stemmekrets.Stemmekretsnummer")}</th>
-                <th>{t("tabell.Stemmekretsnavn")}</th>
-                <th>{t("stemmekrets.Tellekretsnavn")}</th>
-                <th>{t("stemmekrets.Tellekretsnummer")}</th>
-                <th>{t("stemmekrets.Valgdistriktsnummer")}</th>
-                <th>{/* fremtidige endringer-knapp */}</th>
-                <th>{/* dropdown-knapp */}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {utkastStemmekretser.map((stemmekrets) => (
-                <React.Fragment key={getIdFromEntity(stemmekrets)}>
-                  <StemmekretsRow
-                    stemmekretsRef={stemmekrets}
+        <KretsTable>
+          <thead>
+            <tr>
+              <th>{t("stemmekrets.Stemmekretsnummer")}</th>
+              <th>{t("tabell.Stemmekretsnavn")}</th>
+              <th>{t("stemmekrets.Tellekretsnavn")}</th>
+              <th>{t("stemmekrets.Tellekretsnummer")}</th>
+              <th>{t("stemmekrets.Valgdistriktsnummer")}</th>
+              <th>{/* fremtidige endringer-knapp */}</th>
+              <th>{/* dropdown-knapp */}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {utkastStemmekretser.map((stemmekrets) => (
+              <React.Fragment key={getIdFromEntity(stemmekrets)}>
+                <StemmekretsRow
+                  stemmekretsRef={stemmekrets}
+                  toggleRow={toggleRow}
+                  isRowOpen={isRowOpen}
+                  isFutureChangesOpen={isFutureChangesOpen(
+                    getIdFromEntity(stemmekrets)
+                  )}
+                  toggleFutureChangesRow={toggleFutureChangesRow}
+                />
+                {isRowOpen(getIdFromEntity(stemmekrets)) && (
+                  <EditRow
+                    stemmekrets={stemmekrets}
+                    kommuneId={kommuneId}
+                    alleStemmekretser={
+                      utkastStemmekretser.filter(
+                        (s) => s.nummer !== stemmekrets.nummer
+                      ) || []
+                    }
                     toggleRow={toggleRow}
-                    isRowOpen={isRowOpen}
-                    isFutureChangesOpen={isFutureChangesOpen(
-                      getIdFromEntity(stemmekrets)
-                    )}
-                    toggleFutureChangesRow={toggleFutureChangesRow}
                   />
-                  {isRowOpen(getIdFromEntity(stemmekrets)) && (
-                    <EditRow
-                      stemmekrets={stemmekrets}
-                      kommuneId={kommuneId}
-                      alleStemmekretser={
-                        utkastStemmekretser.filter(
-                          (s) => s.nummer !== stemmekrets.nummer
-                        ) || []
-                      }
-                      toggleRow={toggleRow}
-                    />
-                  )}
-                  {isFutureChangesOpen(getIdFromEntity(stemmekrets)) && (
-                    <tr>
-                      <FutureChangesTableData colSpan={7}>
-                        <FutureChangesTable
-                          id={getIdFromEntity(stemmekrets)}
-                          headers={headers}
-                          getRows={getFutureChangesRows}
-                          futureChangesUrl="/v1/stemmekretser/{lokalid}/framtidigeversjoner"
-                        />
-                      </FutureChangesTableData>
-                    </tr>
-                  )}
-                </React.Fragment>
-              ))}
-            </tbody>
-          </KretsTable>
-        </KretsTableWrapper>
+                )}
+                {isFutureChangesOpen(getIdFromEntity(stemmekrets)) && (
+                  <tr>
+                    <FutureChangesTableData colSpan={7}>
+                      <FutureChangesTable
+                        id={getIdFromEntity(stemmekrets)}
+                        headers={headers}
+                        getRows={getFutureChangesRows}
+                        futureChangesUrl="/v1/stemmekretser/{lokalid}/framtidigeversjoner"
+                      />
+                    </FutureChangesTableData>
+                  </tr>
+                )}
+              </React.Fragment>
+            ))}
+          </tbody>
+        </KretsTable>
       )}
-    </OverlayPanelWrapper>
+    </>
   );
 };
 

@@ -6,7 +6,6 @@ import { ObjectEvent } from "ol/Object";
 import { Control, useFieldArray, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { Container, Part } from "../metadataComponents";
 import { addMetadataEntryFromFeature } from "../utils";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
@@ -155,6 +154,34 @@ const FieldArray = ({
 type Props = {
   feature: Feature<Geometry>;
 };
+
+const Container = styled.div`
+  display: flex;
+  justify-content: flex-start;
+
+  @media (min-width: var(--screenBreakXxl)) {
+    flex-direction: column;
+  }
+`;
+
+const Part = styled.div`
+  flex: 1;
+  margin: 0 16px;
+
+  &:first-child,
+  &:last-child {
+    margin: 0;
+  }
+
+  @media (min-width: var(--screenBreakXxl)) {
+    margin: 8px 0;
+
+    &:first-child,
+    &:last-child {
+      margin: 8px 0;
+    }
+  }
+`;
 
 const GrenseMetadataReferanser = ({ feature }: Props) => {
   const { t } = useTranslation();

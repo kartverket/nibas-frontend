@@ -33,32 +33,19 @@ export const KretsRow = styled.tr<{ isActive: boolean }>`
 `;
 
 export const KretsTable = styled.table`
-  border-spacing: 0;
-  border: none;
   width: 100%;
+  border-spacing: 0;
 
   td,
   th {
     padding: 16px;
   }
 
-  > thead {
+  th {
+    font-weight: normal;
     text-align: left;
     font-size: 14px;
-
-    th {
-      position: sticky;
-      top: 0;
-      z-index: 1;
-      font-weight: normal;
-      background: var(--white);
-      border-bottom: 1px solid var(--black);
-    }
   }
-`;
-
-export const KretsTableWrapper = styled.div`
-  overflow-y: auto;
 `;
 
 export const ButtonCell = styled.td`

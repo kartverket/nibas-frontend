@@ -1,20 +1,9 @@
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import {
-  ButtonCell,
-  KretsRow,
-  KretsTable,
-  KretsTableWrapper,
-} from "../KretsTable";
-import {
-  OverlayPanelWrapper,
-  PanelHeader,
-  PanelTitle,
-} from "../metadataComponents";
+import { ButtonCell, KretsRow, KretsTable } from "../KretsTable";
 import useAccordionRows from "../useAccordionRow";
 import EditRow from "./EditRow";
-import Input from "components/form/Input";
 import Icon from "components/Icon";
 import { useUtkastEntity } from "contexts/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
@@ -105,90 +94,71 @@ const GrunnkretserPanel = () => {
   }
 
   return (
-    <OverlayPanelWrapper key="grunnkrets">
-      <PanelHeader>
-        <PanelTitle tag="h2" size="xs">
-          {t("{{ kommuneNavn }} kommune", {
-            kommuneNavn: getNavnInSpraak(flatedata.navn, "nor"),
-          })}
-        </PanelTitle>
-        <PanelHeaderInput
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          placeholder={t("grunnkrets.Søk")}
-        />
-      </PanelHeader>
+    <>
       {filteredGrunnkretser && (
-        <KretsTableWrapper>
-          <KretsTable>
-            <thead>
-              <tr>
-                <GrunnkretsnummerColumn>
-                  {t("grunnkrets.Grunnkretsnummer")}
-                </GrunnkretsnummerColumn>
-                <GrunnkretsnavnColumn>
-                  {t("grunnkrets.Grunnkretsnavn")}
-                </GrunnkretsnavnColumn>
-                <Remainder />
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {filteredGrunnkretser.map((grunnkrets) => (
-                <React.Fragment key={getIdFromEntity(grunnkrets)}>
-                  <KretsRow isActive={isRowOpen(getIdFromEntity(grunnkrets))}>
-                    <td>{grunnkrets.grunnkretsnummer}</td>
-                    <td>{getNavnInSpraak(grunnkrets.navn, "nor")}</td>
-                    <ButtonCell>
-                      {shouldShowFutureChangesButton(grunnkrets) && (
-                        <FutureChangesButton
-                          krets={grunnkrets}
-                          isOpen={isFutureChangesOpen(
-                            getIdFromEntity(grunnkrets)
-                          )}
-                          toggleRow={toggleFutureChangesRow}
-                        />
-                      )}
-                    </ButtonCell>
-                    <ButtonCell>
-                      <ToggleableKretsButton
-                        isOpen={isRowOpen(getIdFromEntity(grunnkrets))}
-                        onClick={() => toggleRow(getIdFromEntity(grunnkrets))}
-                        icon={<Icon icon="settings" />}
+        <KretsTable>
+          <thead>
+            <tr>
+              <GrunnkretsnummerColumn>
+                {t("grunnkrets.Grunnkretsnummer")}
+              </GrunnkretsnummerColumn>
+              <GrunnkretsnavnColumn>
+                {t("grunnkrets.Grunnkretsnavn")}
+              </GrunnkretsnavnColumn>
+              <Remainder />
+              <th />
+            </tr>
+          </thead>
+          <tbody>
+            {filteredGrunnkretser.map((grunnkrets) => (
+              <React.Fragment key={getIdFromEntity(grunnkrets)}>
+                <KretsRow isActive={isRowOpen(getIdFromEntity(grunnkrets))}>
+                  <td>{grunnkrets.grunnkretsnummer}</td>
+                  <td>{getNavnInSpraak(grunnkrets.navn, "nor")}</td>
+                  <ButtonCell>
+                    {shouldShowFutureChangesButton(grunnkrets) && (
+                      <FutureChangesButton
+                        krets={grunnkrets}
+                        isOpen={isFutureChangesOpen(
+                          getIdFromEntity(grunnkrets)
+                        )}
+                        toggleRow={toggleFutureChangesRow}
                       />
-                    </ButtonCell>
-                  </KretsRow>
+                    )}
+                  </ButtonCell>
+                  <ButtonCell>
+                    <ToggleableKretsButton
+                      isOpen={isRowOpen(getIdFromEntity(grunnkrets))}
+                      onClick={() => toggleRow(getIdFromEntity(grunnkrets))}
+                      icon={<Icon icon="settings" />}
+                    />
+                  </ButtonCell>
+                </KretsRow>
 
-                  {isRowOpen(getIdFromEntity(grunnkrets)) && (
-                    <EditRow grunnkrets={grunnkrets} kommuneId={kommuneId} />
-                  )}
+                {isRowOpen(getIdFromEntity(grunnkrets)) && (
+                  <EditRow grunnkrets={grunnkrets} kommuneId={kommuneId} />
+                )}
 
-                  {isFutureChangesOpen(getIdFromEntity(grunnkrets)) && (
-                    <tr>
-                      <FutureChangesTableData colSpan={4}>
-                        <FutureChangesTable
-                          id={getIdFromEntity(grunnkrets)}
-                          futureChangesUrl="/v1/grunnkretser/{lokalid}/framtidigeversjoner"
-                          headers={headers}
-                          getRows={getFutureChangesRows}
-                        />
-                      </FutureChangesTableData>
-                    </tr>
-                  )}
-                </React.Fragment>
-              ))}
-            </tbody>
-          </KretsTable>
-        </KretsTableWrapper>
+                {isFutureChangesOpen(getIdFromEntity(grunnkrets)) && (
+                  <tr>
+                    <FutureChangesTableData colSpan={4}>
+                      <FutureChangesTable
+                        id={getIdFromEntity(grunnkrets)}
+                        futureChangesUrl="/v1/grunnkretser/{lokalid}/framtidigeversjoner"
+                        headers={headers}
+                        getRows={getFutureChangesRows}
+                      />
+                    </FutureChangesTableData>
+                  </tr>
+                )}
+              </React.Fragment>
+            ))}
+          </tbody>
+        </KretsTable>
       )}
-    </OverlayPanelWrapper>
+    </>
   );
 };
-
-const PanelHeaderInput = styled(Input)`
-  width: 100%;
-  max-width: 300px;
-`;
 
 const GrunnkretsnummerColumn = styled.th`
   width: 25%;
