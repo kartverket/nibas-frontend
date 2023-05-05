@@ -86,6 +86,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
       },
     };
 
+    setActiveDataPanel(null);
     resetAndClearEditingLayer();
 
     if (newEditing) {

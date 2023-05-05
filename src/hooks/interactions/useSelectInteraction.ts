@@ -2,7 +2,7 @@ import { useEffect, useMemo } from "react";
 import { Feature } from "ol";
 import LineString from "ol/geom/LineString";
 import { Select } from "ol/interaction";
-import { map, overlayPopup } from "components/Kart/constants";
+import { overlayPopup } from "components/Kart/constants";
 import { grenseStyles } from "utils/map/layerStyles";
 import { pixelTolerance } from "./constants";
 import { useToolbar } from "contexts/ToolbarContext";

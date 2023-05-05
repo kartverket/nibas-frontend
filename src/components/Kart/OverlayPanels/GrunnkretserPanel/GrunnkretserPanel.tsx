@@ -29,7 +29,7 @@ const GrunnkretserPanel = () => {
   const { isRowOpen, toggleRow } = useAccordionRows();
   const { isRowOpen: isFutureChangesOpen, toggleRow: toggleFutureChangesRow } =
     useAccordionRows();
-  const { inputValue, setInputValue, searchValue } = useSearch();
+  const { searchValue } = useSearch();
 
   const { data: grunnkretserByKommune } = useNibasApi(
     kommuneId ? "/v1/kommuner/{id}/grunnkretser" : null,
