@@ -78,7 +78,7 @@ const StemmekretserPanel = () => {
   );
 
   return (
-    <OverlayPanelWrapper key="stemmekrets" gridArea="kretser">
+    <OverlayPanelWrapper key="stemmekrets">
       <PanelHeader>
         <PanelTitle tag="h2" size="xs">
           {t("{{ kommuneNavn }} kommune", {

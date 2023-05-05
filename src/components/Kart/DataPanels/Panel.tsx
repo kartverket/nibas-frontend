@@ -28,7 +28,7 @@ const PanelHeaderContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px;
+  padding-bottom: 8px;
   border-bottom: 2px solid var(--gray_light);
   margin-bottom: 16px;
 `;

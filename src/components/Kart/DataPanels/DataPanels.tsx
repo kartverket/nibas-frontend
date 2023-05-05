@@ -6,6 +6,8 @@ import { useDataPanel } from "contexts/DataPanelContext";
 // TODO: her vi bør bruke contexten for å avgjøre om noe skal vises eller ikke
 // viktig at noe ikke unmountes, bare skjules med css? for at state skal beholdes altså
 // mulig vi bare må mellomlagre state i context elns hvis det blir uu-problemer med tabbing osv
+
+// TODO: rename til OverlayPanels
 const DataPanels = () => {
   const { activeDataPanel, setActiveDataPanel } = useDataPanel();
 

@@ -1,34 +1,32 @@
+import styled from "styled-components";
+import { useTranslation } from "react-i18next";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
-import { useTranslation } from "react-i18next";
 import AsyncKodelisteSelect from "../AsyncKodelisteSelect";
-import {
-  Container,
-  DateRow,
-  InputRow,
-  MetadataText,
-  MetadataValue,
-  Part,
-  Separator,
-  Date,
-} from "../metadataComponents";
 import useMetadataForm from "../useMetadataForm";
 import { getDateInFriendlyString } from "../utils";
-import Input from "components/form/Input";
 import { Metadata, FeatureProperties } from "types/api";
 import useMetadataInputOptions from "hooks/useMetadataInputOptions";
-import styled from "styled-components";
+import Input from "components/form/Input";
 import Textarea from "components/form/Input/Textarea";
 
 type Props = {
   feature: Feature<Geometry>;
 };
 
-const MetadataWrapper = styled.div`
+const Container = styled.div`
   display: flex;
-  justify-content: space-between;
-  gap: 36px;
-  padding-bottom: 16px;
+  flex-direction: column;
+  gap: 24px;
+`;
+
+const InfoBox = styled.div`
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  padding: 20px 16px;
+  color: var(--black);
+  background: var(--gray_light);
 `;
 
 const FormWrapper = styled.div`
@@ -39,7 +37,17 @@ const FormWrapper = styled.div`
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 16px;
+`;
+
+const InputRow = styled.div`
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+`;
+
+const NumberInput = styled(Input)`
+  width: 120px;
 `;
 
 const GrenseMetadataGenerelt = ({ feature }: Props) => {
@@ -58,118 +66,61 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
   });
 
   return (
-    <div>
-      <MetadataWrapper>
-        <FormWrapper>
-          <Form>
-            <Container>
-              <InputRow>
-                <AsyncKodelisteSelect
-                  kodeliste={maalemetodeKoder}
-                  label={t("metadata.Målemetode")}
-                  {...register("maalemetode", inputOptions)}
-                />
-                <Input
-                  type="number"
-                  label={t("metadata.Nøyaktighet")}
-                  {...register("noeyaktighet", {
-                    ...inputOptions,
-                    valueAsNumber: true,
-                    min: 0,
-                    max: 1_000_000,
-                  })}
-                />
-              </InputRow>
-            </Container>
-            <Input
-              {...register("opphav", inputOptions)}
-              label={t("metadata.Opphav")}
+    <Container>
+      <InfoBox>
+        <b>Grensetype</b>
+        <span>{type}</span>
+        <b>Datofangst</b>
+        <span>
+          {getDateInFriendlyString(metadata?.common?.datafangstdato) ?? "--"}
+        </span>
+        <b>Sist oppdatert</b>
+        <span>
+          {getDateInFriendlyString(
+            metadata?.common?.sporingsinformasjon.oppdateringsdato
+          ) ?? "--"}
+        </span>
+        <b>Gyldig fra</b>
+        <span>
+          {getDateInFriendlyString(metadata?.common?.gyldigFra) ?? "--"}
+        </span>
+        <b>Gyldig til</b>
+        <span>
+          {getDateInFriendlyString(metadata?.common?.gyldigTil) ?? "--"}
+        </span>
+      </InfoBox>
+      <FormWrapper>
+        <Form>
+          <InputRow>
+            <AsyncKodelisteSelect
+              kodeliste={maalemetodeKoder}
+              label={t("metadata.Målemetode")}
+              {...register("maalemetode", inputOptions)}
             />
-            <Textarea
-              rows={4}
-              {...register("informasjon", inputOptions)}
-              label={t("metadata.Informasjon")}
+            <NumberInput
+              type="number"
+              label={t("metadata.Nøyaktighet")}
+              {...register("noeyaktighet", {
+                ...inputOptions,
+                valueAsNumber: true,
+                min: 0,
+                max: 1_000_000,
+              })}
             />
-
-            <LargePart>
-              <Dates
-                oppdateringsdato={
-                  metadata?.common?.sporingsinformasjon.oppdateringsdato
-                }
-                datafangstdato={metadata?.common?.datafangstdato}
-              />
-            </LargePart>
-          </Form>
-        </FormWrapper>
-
-        <InformationWrapper>
-          <b>Grensetype</b>
-          <span>{type}</span>
-          <b>Gyldig fra</b>
-          <span>
-            {getDateInFriendlyString(metadata?.common?.gyldigFra) ?? "--"}
-          </span>
-          <b>Gyldig til</b>
-          <span>
-            {getDateInFriendlyString(metadata?.common?.gyldigTil) ?? "--"}
-          </span>
-        </InformationWrapper>
-      </MetadataWrapper>
-      <Separator />
-      <Dates
-        oppdateringsdato={
-          metadata?.common?.sporingsinformasjon.oppdateringsdato
-        }
-        datafangstdato={metadata?.common?.datafangstdato}
-      />
-    </div>
+          </InputRow>
+          <Input
+            {...register("opphav", inputOptions)}
+            label={t("metadata.Opphav")}
+          />
+          <Textarea
+            rows={4}
+            {...register("informasjon", inputOptions)}
+            label={t("metadata.Informasjon")}
+          />
+        </Form>
+      </FormWrapper>
+    </Container>
   );
 };
 
-type DatesProps = {
-  oppdateringsdato?: string;
-  datafangstdato?: string;
-};
-
-const Dates = ({ oppdateringsdato, datafangstdato }: DatesProps) => (
-  <>
-    <DateRow>
-      <Date>
-        <MetadataText>Datafangst</MetadataText>
-        <MetadataValue>
-          {getDateInFriendlyString(datafangstdato) ?? "--"}
-        </MetadataValue>
-      </Date>
-      <Date>
-        <MetadataText>Sist oppdatert</MetadataText>
-        <MetadataValue>
-          {getDateInFriendlyString(oppdateringsdato) ?? "--"}
-        </MetadataValue>
-      </Date>
-    </DateRow>
-  </>
-);
-
 export default GrenseMetadataGenerelt;
-
-const LargePart = styled(Part)`
-  display: none;
-
-  @media (min-width: var(--screenBreakXxl)) {
-    display: unset;
-  }
-`;
-
-const InformationWrapper = styled.div`
-  background: var(--gray_light);
-  color: var(--black);
-  display: grid;
-  padding: 16px;
-  margin-bottom: 30px;
-  font-size: 16px;
-  grid-template-columns: auto 1fr;
-  grid-gap: 6px 12px;
-  flex: 1;
-  width: 100%;
-  height: 100%;
-`;

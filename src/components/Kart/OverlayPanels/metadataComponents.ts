@@ -83,21 +83,17 @@ const moveInFromLeft = keyframes`
 }
 `;
 
-export const OverlayPanelWrapper = styled.div<{
-  gridArea: "metadata" | "kretser";
-  minimized?: boolean;
-}>`
+export const OverlayPanelWrapper = styled.div`
   display: inline-block;
   background-color: white;
   pointer-events: auto;
   position: relative;
-  grid-area: ${({ gridArea }) => gridArea};
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   padding: 16px;
   border-radius: 0 3px 3px 3px;
-  height: ${({ minimized }) => (minimized ? 70 : 520)}px;
+  height: 100%;
   border: 4px solid var(--gray_light);
   border-bottom: none;
   border-left: none;

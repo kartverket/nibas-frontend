@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import {
@@ -105,7 +105,7 @@ const GrunnkretserPanel = () => {
   }
 
   return (
-    <OverlayPanelWrapper key="grunnkrets" gridArea="kretser">
+    <OverlayPanelWrapper key="grunnkrets">
       <PanelHeader>
         <PanelTitle tag="h2" size="xs">
           {t("{{ kommuneNavn }} kommune", {

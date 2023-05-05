@@ -20,6 +20,7 @@ export const DataPanelContext = createContext<
   DataPanelContextValue | undefined
 >(undefined);
 
+// TODO: rename til OverlayPanelsProvider (eventuelt entall)
 export const DataPanelProvider: React.FC = ({ children }) => {
   const [activeDataPanel, setActiveDataPanel] = useState<ActiveDataPanel>(null);
 
