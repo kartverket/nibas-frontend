@@ -2,7 +2,7 @@ name: nibas-frontend
 on:
   push:
     branches:
-      - legge-til-argocd
+      - master
 
 permissions:
   id-token: write
@@ -99,6 +99,7 @@ jobs:
       packages: write
     uses: kartverket/github-workflows/.github/workflows/run-terraform.yml@v4.0.0
     with:
+      destroy: true
       runner: atkv1-dev
       environment: dev
       kubernetes_cluster: atkv1-dev
@@ -111,7 +112,7 @@ jobs:
       service_account: ${{ needs.set-variables.outputs.dev_service_account}}
       vault_role: nibas-frontend-read-role
       project_id: kubernetes-dev-94b9
-      deploy_on: "refs/heads/legge-til-argocd"
+      deploy_on: "refs/heads/master"
 
   deploy-argo:
     needs: build
@@ -148,6 +149,7 @@ jobs:
       packages: write
     uses: kartverket/github-workflows/.github/workflows/run-terraform.yml@v4.0.0
     with:
+      destroy: true
       runner: atkv1-test
       environment: test
       kubernetes_cluster: atkv1-test
@@ -160,12 +162,13 @@ jobs:
       service_account: nibas-deploy@nibas-test-36cb.iam.gserviceaccount.com
       vault_role: nibas-frontend-read-role
       project_id: kubernetes-test-94f6
-      deploy_on: "refs/heads/legge-til-argocd"
+      deploy_on: "refs/heads/master"
 
   deploy-prod:
     needs: [build, security-scans, deploy-test]
     name: Deploy to prod
     permissions:
+      destroy: true
       id-token: write
       pull-requests: write
       contents: read
@@ -182,6 +185,6 @@ jobs:
       auth_project_number: 468770754406
       service_account: nibas-deploy@nibas-prod-732a.iam.gserviceaccount.com
       project_id: kubernetes-prod-e4a2
-      deploy_on: "refs/heads/legge-til-argocd"
+      deploy_on: "refs/heads/master"
       vault_role: nibas-frontend-read-role
 
