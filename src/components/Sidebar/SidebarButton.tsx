@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import Button from "components/form/Button";
 import { SidebarPanel, useSidebarPanel } from "contexts/SidebarPanelContext";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
 
 type Props = {
   title: string;
@@ -11,12 +12,14 @@ type Props = {
 const SidebarButton = ({ title, panel, icon }: Props) => {
   const { activeSidebarPanel, setActiveSidebarPanel, closeSidebar } =
     useSidebarPanel();
+  const { closeOverlay } = useOverlayPanel();
 
   const toggleSidebar = () => {
-    if (activeSidebarPanel) {
+    if (activeSidebarPanel === panel) {
       closeSidebar();
     } else {
       setActiveSidebarPanel(panel);
+      closeOverlay();
     }
   };
 

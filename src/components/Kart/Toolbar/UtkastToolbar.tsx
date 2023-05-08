@@ -12,47 +12,16 @@ import Input from "components/form/Input";
 import Select from "components/form/Select";
 import Button from "components/form/Button";
 import Heading from "components/typography/Heading";
-import { Frame, toolbarBorderWidth, toolbarSpacing } from "./components";
+import { Frame } from "./components";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
 
 const UtkastFrame = styled(Frame)`
   flex-direction: column;
-  position: absolute;
-  right: 100%;
-  margin-right: ${toolbarSpacing}px;
   width: 365px;
 
   ${Heading} {
     margin: 0;
-  }
-
-  &::before {
-    position: absolute;
-    top: ${toolbarSpacing * 1.5}px;
-    left: 100%;
-
-    content: "";
-    display: block;
-    background: var(--gray_light);
-    width: ${toolbarSpacing * 0.75}px;
-    height: ${toolbarSpacing * 1.5}px;
-
-    clip-path: polygon(0 0, 100% 50%, 0 100%);
-  }
-
-  &::after {
-    position: absolute;
-    top: calc(${toolbarSpacing * 1.5}px + ${toolbarBorderWidth}px);
-    left: calc(100% - ${toolbarBorderWidth / 2}px);
-
-    content: "";
-    display: block;
-    background: white;
-    width: calc(${toolbarSpacing * 0.75}px - ${toolbarBorderWidth}px);
-    height: calc(${toolbarSpacing * 1.5}px - ${toolbarBorderWidth * 2}px);
-
-    clip-path: polygon(0 0, 100% 50%, 0 100%);
   }
 `;
 

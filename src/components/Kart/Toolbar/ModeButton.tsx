@@ -6,6 +6,7 @@ import styled, { css } from "styled-components";
 const Container = styled.button<{ isActive: boolean }>`
   display: flex;
   flex-direction: column;
+  gap: 4px;
   align-items: center;
 
   border: none;
@@ -25,7 +26,6 @@ const Container = styled.button<{ isActive: boolean }>`
   & > ${Icon} {
     padding: 4px;
     border-radius: 8px;
-    margin-bottom: 4px;
     transition: background 0.15s, color 0.2s;
   }
 
@@ -50,7 +50,7 @@ type Props = {
   icon: string;
   ariaLabel: string;
   isActive?: boolean;
-  children: ReactNode;
+  children?: ReactNode;
   onClick?: () => void;
   disabled?: boolean;
 };

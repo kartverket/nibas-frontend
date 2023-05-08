@@ -13,7 +13,6 @@ import FeatureToggle from "../../FeatureToggle";
 
 const LagreFrame = styled(Frame)`
   justify-content: center;
-  width: 100%;
 `;
 
 const UtkastInfo = styled.div`
