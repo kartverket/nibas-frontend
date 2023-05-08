@@ -6,14 +6,17 @@ import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 
 const UtkastPanel = () => {
-  const { isOpen, togglePanel } = useSidebarPanel("utkast");
+  const { activeSidebarPanel, closeSidebar } = useSidebarPanel();
   const { t } = useTranslation();
 
-  if (!isOpen) return null;
+  if (activeSidebarPanel !== "utkast") return null;
 
   return (
     <Panel>
-      <SidebarPanelTitle closePanel={togglePanel} title={t("sidebar.Utkast")} />
+      <SidebarPanelTitle
+        closePanel={closeSidebar}
+        title={t("sidebar.Utkast")}
+      />
       <UtkastList />
     </Panel>
   );

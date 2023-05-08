@@ -4,22 +4,13 @@ import StemmekretsPanel from "./StemmekretsPanel/StemmekretsPanel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 
 const OverlayPanels = () => {
-  const { activeOverlayPanel, setActiveOverlayPanel } = useOverlayPanel();
+  const { activeOverlayPanel } = useOverlayPanel();
 
   return (
     <>
-      <MetadataPanel
-        isOpen={activeOverlayPanel === "metadata"}
-        onClose={() => setActiveOverlayPanel(null)}
-      />
-      <StemmekretsPanel
-        isOpen={activeOverlayPanel === "stemmekrets"}
-        onClose={() => setActiveOverlayPanel(null)}
-      />
-      <GrunnkretsPanel
-        isOpen={activeOverlayPanel === "grunnkrets"}
-        onClose={() => setActiveOverlayPanel(null)}
-      />
+      <MetadataPanel isOpen={activeOverlayPanel === "metadata"} />
+      <StemmekretsPanel isOpen={activeOverlayPanel === "stemmekrets"} />
+      <GrunnkretsPanel isOpen={activeOverlayPanel === "grunnkrets"} />
     </>
   );
 };

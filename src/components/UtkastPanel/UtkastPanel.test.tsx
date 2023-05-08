@@ -5,9 +5,9 @@ import UtkastPanel from "./UtkastPanel";
 const renderWithProvider = (ui: ReactNode) =>
   render(ui, {
     SidebarPanelProvider: {
-      openPanels: { utkast: true } as any,
-      setPanel: jest.fn(),
-      togglePanel: jest.fn(),
+      activeSidebarPanel: "utkast",
+      setActiveSidebarPanel: jest.fn(),
+      closeSidebar: jest.fn(),
     },
   });
 

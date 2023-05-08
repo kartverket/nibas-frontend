@@ -1,19 +1,11 @@
 import React, { createContext, useContext, useState } from "react";
 
-export type SidebarPanel = "inndelinger" | "kartlag" | "utkast";
-export type OpenSidebarPanels = Record<SidebarPanel, boolean>;
-
-const getClosedPanels = () =>
-  ({
-    inndelinger: false,
-    kartlag: false,
-    utkast: false,
-  } as OpenSidebarPanels);
+export type SidebarPanel = "inndelinger" | "kartlag" | "utkast" | null;
 
 export type SidebarPanelContextValue = {
-  openPanels: OpenSidebarPanels;
-  setPanel: (panel: SidebarPanel, value: boolean) => void;
-  togglePanel: (panel: SidebarPanel) => void;
+  activeSidebarPanel: SidebarPanel;
+  setActiveSidebarPanel: (panel: SidebarPanel) => void;
+  closeSidebar: () => void;
 };
 
 /**
@@ -24,21 +16,14 @@ export const SidebarPanelContext = createContext<
 >(undefined);
 
 export const SidebarPanelProvider: React.FC = ({ children }) => {
-  const [openPanels, setOpenPanels] = useState(getClosedPanels());
+  const [activeSidebarPanel, setActiveSidebarPanel] =
+    useState<SidebarPanel>(null);
 
-  const setPanel = (panel: SidebarPanel, value: boolean) => {
-    const newPanels = {
-      ...getClosedPanels(),
-      [panel]: value,
-    };
-
-    setOpenPanels(newPanels);
+  const closeSidebar = () => {
+    setActiveSidebarPanel(null);
   };
 
-  const togglePanel = (panel: SidebarPanel) =>
-    setPanel(panel, !openPanels[panel]);
-
-  const value = { openPanels, setPanel, togglePanel };
+  const value = { activeSidebarPanel, setActiveSidebarPanel, closeSidebar };
 
   return (
     <SidebarPanelContext.Provider value={value}>
@@ -47,24 +32,12 @@ export const SidebarPanelProvider: React.FC = ({ children }) => {
   );
 };
 
-export const useSidebarPanels = () => {
+export const useSidebarPanel = () => {
   const context = useContext(SidebarPanelContext);
-
   if (!context) {
     throw new Error(
-      "useSidebarPanels must be used within a SidebarPanelProvider"
+      "useSidebarPanel must be used within a SidebarPanelContext"
     );
   }
-
   return context;
-};
-
-export const useSidebarPanel = (panel: SidebarPanel) => {
-  const { openPanels, setPanel, togglePanel } = useSidebarPanels();
-
-  return {
-    isOpen: openPanels[panel],
-    setPanel: (value: boolean) => setPanel(panel, value),
-    togglePanel: () => togglePanel(panel),
-  };
 };

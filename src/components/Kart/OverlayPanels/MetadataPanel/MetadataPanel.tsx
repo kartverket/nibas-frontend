@@ -16,9 +16,6 @@ const grenseTypeWithReferanser = [
 const SidePanel = styled(Panel)`
   grid-area: metadata;
   max-width: 440px;
-  border-radius: unset;
-  border-top: none;
-  box-shadow: none;
 `;
 
 const Content = styled.div`
@@ -33,8 +30,9 @@ const Divider = styled.hr`
   margin: 0;
 `;
 
-const MetadataPanel = ({ isOpen, className, onClose }: PanelProps) => {
-  const { selectedFeature, setSelectedFeature } = useOverlayPanel();
+const MetadataPanel = ({ isOpen, className }: PanelProps) => {
+  const { selectedFeature, setSelectedFeature, closeOverlay } =
+    useOverlayPanel();
 
   const showReferanser = grenseTypeWithReferanser.includes(
     selectedFeature?.get("type") as string
@@ -45,7 +43,7 @@ const MetadataPanel = ({ isOpen, className, onClose }: PanelProps) => {
       <PanelHeader
         onClose={() => {
           setSelectedFeature(null);
-          onClose();
+          closeOverlay();
         }}
       >
         Metadata for grense

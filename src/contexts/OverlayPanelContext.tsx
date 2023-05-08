@@ -10,6 +10,7 @@ type Flatedata = KommuneRef | null;
 export type OverlayPanelContextValue = {
   activeOverlayPanel: ActiveOverlayPanel;
   setActiveOverlayPanel: (activeOverlayPanel: ActiveOverlayPanel) => void;
+  closeOverlay: () => void;
   selectedFeature: SelectedFeature;
   setSelectedFeature: (selectedFeature: SelectedFeature) => void;
   flatedata: Flatedata;
@@ -24,6 +25,10 @@ export const OverlayPanelProvider: React.FC = ({ children }) => {
   const [activeOverlayPanel, setActiveOverlayPanel] =
     useState<ActiveOverlayPanel>(null);
 
+  const closeOverlay = () => {
+    setActiveOverlayPanel(null);
+  };
+
   // Brukes kun til MetadataPanel for å avgjøre hvilken feature man skal se data til
   const [selectedFeature, setSelectedFeature] = useState<SelectedFeature>(null);
 
@@ -33,6 +38,7 @@ export const OverlayPanelProvider: React.FC = ({ children }) => {
   const value = {
     activeOverlayPanel,
     setActiveOverlayPanel,
+    closeOverlay,
     selectedFeature,
     setSelectedFeature,
     flatedata,

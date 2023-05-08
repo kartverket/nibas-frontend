@@ -7,7 +7,7 @@ import { grenseStyles } from "utils/map/layerStyles";
 import { pixelTolerance } from "./constants";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { useSidebarPanels } from "contexts/SidebarPanelContext";
+import { useSidebarPanel } from "contexts/SidebarPanelContext";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -23,6 +23,7 @@ const useSelectInteraction = () => {
   const { activePointMode } = useToolbar();
   const { setActiveOverlayPanel, selectedFeature, setSelectedFeature } =
     useOverlayPanel();
+  const { closeSidebar } = useSidebarPanel();
 
   const select = useMemo(
     () =>
@@ -51,7 +52,7 @@ const useSelectInteraction = () => {
         } else {
           overlayPopup.setPosition(undefined);
           setActiveOverlayPanel("metadata");
-          // TODO: lukk sidebar
+          closeSidebar();
         }
       } else if (clickedFeatures.length === 0) {
         setActiveOverlayPanel(null);
@@ -64,7 +65,7 @@ const useSelectInteraction = () => {
     return () => {
       select.un("select", syncFeatures);
     };
-  }, [select, setActiveOverlayPanel, setSelectedFeature]);
+  }, [closeSidebar, select, setActiveOverlayPanel, setSelectedFeature]);
 
   useEffect(() => {
     if (selectedFeature === null) {

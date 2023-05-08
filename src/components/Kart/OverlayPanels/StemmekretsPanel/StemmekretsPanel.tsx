@@ -16,9 +16,9 @@ import FutureChangesTable, {
 } from "../FutureChanges/FutureChangesTable";
 import { PanelProps, Panel, PanelHeader } from "../Panel";
 
-const StemmekretsPanel = ({ isOpen, className, onClose }: PanelProps) => {
+const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
   const { t } = useTranslation();
-  const { flatedata } = useOverlayPanel();
+  const { flatedata, closeOverlay } = useOverlayPanel();
   const { isRowOpen, toggleRow } = useAccordionRows();
   const { isRowOpen: isFutureChangesOpen, toggleRow: toggleFutureChangesRow } =
     useAccordionRows();
@@ -72,7 +72,7 @@ const StemmekretsPanel = ({ isOpen, className, onClose }: PanelProps) => {
 
   return (
     <Panel isOpen={isOpen} className={className}>
-      <PanelHeader onClose={onClose}>Endre kretsdetaljer</PanelHeader>
+      <PanelHeader onClose={closeOverlay}>Endre kretsdetaljer</PanelHeader>
       {utkastStemmekretser && (
         <KretsTable>
           <thead>

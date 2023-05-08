@@ -7,7 +7,6 @@ import styled from "styled-components";
 export type PanelProps = {
   isOpen: boolean;
   className?: string;
-  onClose: () => void;
 };
 
 export const Panel = styled.div<{ isOpen: boolean }>`

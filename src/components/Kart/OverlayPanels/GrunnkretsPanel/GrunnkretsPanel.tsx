@@ -27,8 +27,8 @@ import FutureChangesTable, {
 } from "../FutureChanges/FutureChangesTable";
 import { KretsTable, KretsRow, ButtonCell } from "../KretsTable";
 
-const GrunnkretsPanel = ({ isOpen, className, onClose }: PanelProps) => {
-  const { flatedata } = useOverlayPanel();
+const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
+  const { flatedata, closeOverlay } = useOverlayPanel();
   const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
   const { t } = useTranslation();
   const { isRowOpen, toggleRow } = useAccordionRows();
@@ -100,7 +100,7 @@ const GrunnkretsPanel = ({ isOpen, className, onClose }: PanelProps) => {
 
   return (
     <Panel isOpen={isOpen} className={className}>
-      <PanelHeader onClose={onClose}>Endre kretsdetaljer</PanelHeader>
+      <PanelHeader onClose={closeOverlay}>Endre kretsdetaljer</PanelHeader>
       {filteredGrunnkretser && (
         <KretsTable>
           <thead>

@@ -5,13 +5,9 @@ import GrenserDrillDown from "./GrenserDrillDown";
 const renderWithProvider = (ui: ReactNode) =>
   render(ui, {
     SidebarPanelProvider: {
-      openPanels: {
-        inndelinger: true,
-        kartlag: false,
-        utkast: false,
-      },
-      setPanel: jest.fn(),
-      togglePanel: jest.fn(),
+      activeSidebarPanel: "inndelinger",
+      setActiveSidebarPanel: jest.fn(),
+      closeSidebar: jest.fn(),
     },
   });
 

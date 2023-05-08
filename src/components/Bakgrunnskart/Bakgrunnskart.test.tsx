@@ -1,24 +1,24 @@
 import { render, screen } from "test/test-utils";
 import { ReactNode } from "react";
 import Bakgrunnskart from "./Bakgrunnskart";
+import { SidebarPanel } from "contexts/SidebarPanelContext";
 
-const renderWithProvider = (ui: ReactNode, visible = true) =>
+const renderWithProvider = (
+  ui: ReactNode,
+  activeSidebarPanel: SidebarPanel = "kartlag"
+) =>
   render(ui, {
     SidebarPanelProvider: {
-      openPanels: {
-        inndelinger: false,
-        kartlag: visible,
-        utkast: false,
-      },
-      setPanel: jest.fn(),
-      togglePanel: jest.fn(),
+      activeSidebarPanel,
+      setActiveSidebarPanel: jest.fn(),
+      closeSidebar: jest.fn(),
     },
     BakgrunnskartProvider: true,
   });
 
 describe("Bakgrunnskart", () => {
   it("should not render when not visible", () => {
-    renderWithProvider(<Bakgrunnskart />, false);
+    renderWithProvider(<Bakgrunnskart />, null);
 
     expect(
       screen.queryByRole("heading", { name: /sidebar.kartlag/i })
