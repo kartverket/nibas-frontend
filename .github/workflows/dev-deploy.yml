@@ -107,5 +107,12 @@ jobs:
       project_id: kubernetes-dev-94b9
       deploy_on: ${{ github.ref }}
 
-
- 
+  deploy-argo:
+    needs: build
+    uses: kartverket/smia-apps/.github/workflows/release-app.yml@main
+    with:
+      application: nibas-frontend
+      version: ${{ needs.build.outputs.image_tag }}
+      deploy_dev: true
+    secrets:
+      PAT_TOKEN: ${{ secrets.PAT_ARGOCD }}
