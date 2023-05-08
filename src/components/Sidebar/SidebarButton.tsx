@@ -9,13 +9,22 @@ type Props = {
 };
 
 const SidebarButton = ({ title, panel, icon }: Props) => {
-  const { activeSidebarPanel, setActiveSidebarPanel } = useSidebarPanel();
+  const { activeSidebarPanel, setActiveSidebarPanel, closeSidebar } =
+    useSidebarPanel();
+
+  const toggleSidebar = () => {
+    if (activeSidebarPanel) {
+      closeSidebar();
+    } else {
+      setActiveSidebarPanel(panel);
+    }
+  };
 
   return (
     <Wrapper>
       <StyledButton
         active={activeSidebarPanel === panel}
-        onClick={() => setActiveSidebarPanel(panel)}
+        onClick={toggleSidebar}
         title={title}
       >
         {icon}
