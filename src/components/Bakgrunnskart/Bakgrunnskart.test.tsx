@@ -8,7 +8,6 @@ const renderWithProvider = (ui: ReactNode, visible = true) =>
       openPanels: {
         inndelinger: false,
         kartlag: visible,
-        soek: false,
         utkast: false,
       },
       setPanel: jest.fn(),

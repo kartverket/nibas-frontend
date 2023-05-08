@@ -7,6 +7,7 @@ import { grenseStyles } from "utils/map/layerStyles";
 import { pixelTolerance } from "./constants";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { useSidebarPanels } from "contexts/SidebarPanelContext";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -50,6 +51,7 @@ const useSelectInteraction = () => {
         } else {
           overlayPopup.setPosition(undefined);
           setActiveOverlayPanel("metadata");
+          // TODO: lukk sidebar
         }
       } else if (clickedFeatures.length === 0) {
         setActiveOverlayPanel(null);

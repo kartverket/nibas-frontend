@@ -9,9 +9,13 @@ import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 
 const Divider = styled.hr`
-  width: 100%;
+  width: 1px;
   border: 1px solid var(--gray_light);
-  margin: 0;
+  margin: 0 4px;
+`;
+
+const Container = styled(Frame)`
+  padding: 16px 24px;
 `;
 
 // TODO: vurder om punkt og linje-knapper bør skjules inntil man er i redigeringsmodus
@@ -55,7 +59,7 @@ const ButtonToolbar = () => {
   useKeyboardShortcut("redo", redo);
 
   return (
-    <Frame>
+    <Container>
       <ModeButton
         icon="undo"
         ariaLabel="Angre handling"
@@ -154,7 +158,7 @@ const ButtonToolbar = () => {
       >
         {t("action.Zoom ut")}
       </ModeButton>
-    </Frame>
+    </Container>
   );
 };
 

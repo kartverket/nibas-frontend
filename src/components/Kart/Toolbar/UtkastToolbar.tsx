@@ -17,6 +17,7 @@ import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
 
 const UtkastFrame = styled(Frame)`
+  flex-direction: column;
   position: absolute;
   right: 100%;
   margin-right: ${toolbarSpacing}px;

@@ -1,3 +1,4 @@
+import styled from "styled-components";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { Panel, PanelHeader, PanelProps } from "../Panel";
 import MetadataGenerelt from "./MetadataGenerelt";
@@ -12,6 +13,26 @@ const grenseTypeWithReferanser = [
   "Grunnlinje",
 ];
 
+const SidePanel = styled(Panel)`
+  grid-area: metadata;
+  max-width: 440px;
+  border-radius: unset;
+  border-top: none;
+  box-shadow: none;
+`;
+
+const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const Divider = styled.hr`
+  width: 100%;
+  border: 1px solid var(--gray_light);
+  margin: 0;
+`;
+
 const MetadataPanel = ({ isOpen, className, onClose }: PanelProps) => {
   const { selectedFeature, setSelectedFeature } = useOverlayPanel();
 
@@ -20,7 +41,7 @@ const MetadataPanel = ({ isOpen, className, onClose }: PanelProps) => {
   );
 
   return (
-    <Panel isOpen={isOpen} className={className}>
+    <SidePanel isOpen={isOpen} className={className}>
       <PanelHeader
         onClose={() => {
           setSelectedFeature(null);
@@ -30,12 +51,17 @@ const MetadataPanel = ({ isOpen, className, onClose }: PanelProps) => {
         Metadata for grense
       </PanelHeader>
       {selectedFeature && (
-        <>
+        <Content>
           <MetadataGenerelt feature={selectedFeature} />
-          {showReferanser && <MetadataReferanser feature={selectedFeature} />}
-        </>
+          {showReferanser && (
+            <>
+              <Divider />
+              <MetadataReferanser feature={selectedFeature} />
+            </>
+          )}
+        </Content>
       )}
-    </Panel>
+    </SidePanel>
   );
 };
 

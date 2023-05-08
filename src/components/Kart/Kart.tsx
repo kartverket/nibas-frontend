@@ -6,7 +6,6 @@ import SidebarPanels from "./SidebarPanels";
 import useInteractions from "hooks/interactions/useInteractions";
 import { initBakgrunnskartLayers, initGrenserLayers } from "utils/map/layers";
 import Toolbar from "./Toolbar/Toolbar";
-import { useSidebarPanels } from "contexts/SidebarPanelContext";
 import OverlayPanels from "./OverlayPanels/OverlayPanels";
 
 // dette må skje utenfor komponenten siden React kjører dypere useEffects
@@ -16,12 +15,9 @@ initBakgrunnskartLayers();
 
 const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const { openPanels } = useSidebarPanels();
 
   // Legger til interactions (modify, select, osv) på kartet
   useInteractions();
-
-  const anySidebarOpen = Object.values(openPanels).includes(true);
 
   useEffect(() => {
     // mapRef kan egentlig ikke være null her,
@@ -39,7 +35,7 @@ const Kart = () => {
     <KartWrapper>
       <KartTarget ref={mapRef}>
         <Suspense fallback="More loading...">
-          <KartOverlay panelOpen={anySidebarOpen}>
+          <KartOverlay>
             <SidebarPanels />
             <OverlayPanels />
             <Toolbar />
@@ -75,11 +71,14 @@ const KartTarget = styled.div`
 // vi vil vel at kartet skal faktisk bli mindre når man har en sidebar, men da må vel KartTarget være inne i denne?
 // krever bare litt hjernekraft.
 
-const KartOverlay = styled.div<{
-  panelOpen: boolean;
-}>`
-  display: flex;
-  justify-content: space-between;
+const KartOverlay = styled.div`
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: 1fr auto;
+  justify-items: center;
+  grid-template-areas:
+    "sidebar overlay metadata"
+    "sidebar toolbar metadata";
   gap: 16px;
   width: 100%;
   height: 100%;

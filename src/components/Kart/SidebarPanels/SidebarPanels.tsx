@@ -15,6 +15,7 @@ const SidebarPanels = () => {
 
 const Wrapper = styled.div`
   grid-area: sidebar;
+  overflow: hidden;
 `;
 
 export default SidebarPanels;

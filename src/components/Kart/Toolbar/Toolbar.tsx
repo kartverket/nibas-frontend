@@ -9,11 +9,13 @@ import Toast from "./Toast";
 import { t } from "i18next";
 
 const Container = styled.div`
+  grid-area: toolbar;
+  align-self: end;
+  margin: 16px;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: ${toolbarSpacing}px;
-  margin: 16px 16px 0 0; // TODO: temp løsning mens vi enda har sidebar
 `;
 
 const Toolbar = () => {

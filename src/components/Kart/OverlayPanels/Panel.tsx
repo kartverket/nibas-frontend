@@ -11,7 +11,7 @@ export type PanelProps = {
 };
 
 export const Panel = styled.div<{ isOpen: boolean }>`
-  margin: 16px 0;
+  margin: 16px;
   padding: 0 16px;
   background: white;
   border: 2px solid var(--gray_light);
@@ -19,7 +19,6 @@ export const Panel = styled.div<{ isOpen: boolean }>`
   box-shadow: 4px 4px 12px 0 rgba(0, 0, 0, 0.15);
   width: 100%;
   max-width: 1000px;
-  max-height: 768px;
   overflow: auto;
   ${(props) => !props.isOpen && "display: none"}
 `;

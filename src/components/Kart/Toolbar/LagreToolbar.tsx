@@ -12,7 +12,6 @@ import { EndringsloggModal } from "components/Endringslogg/EndringsloggModal";
 import FeatureToggle from "../../FeatureToggle";
 
 const LagreFrame = styled(Frame)`
-  flex-direction: row;
   justify-content: center;
   width: 100%;
 `;
