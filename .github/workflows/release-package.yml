@@ -113,6 +113,17 @@ jobs:
       project_id: kubernetes-dev-94b9
       deploy_on: "refs/heads/master"
 
+  deploy-argo:
+    needs: build
+    uses: kartverket/smia-apps/.github/workflows/release-app.yml@main
+    with:
+      application: nibas-frontend
+      version: ${{ needs.build.outputs.new_tag }}
+      deploy_dev: true
+      deploy_test: true
+    secrets:
+      PAT_TOKEN: ${{ secrets.PAT_ARGOCD }}
+
   security-scans:
     needs: [build, set-variables]
     name: Security Scans
