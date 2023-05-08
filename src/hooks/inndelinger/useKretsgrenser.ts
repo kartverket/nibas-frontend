@@ -126,22 +126,26 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   );
 
   const { data: grenserGeoJsons } = useSWR(
-    [
-      mapGrunnkretserToIds(kretserByKommune),
-      tokenHolderFunc()?.token,
-      type,
-      "features",
-    ],
+    kretserByKommune
+      ? [
+          mapGrunnkretserToIds(kretserByKommune),
+          tokenHolderFunc()?.token,
+          type,
+          "grenser",
+        ]
+      : null,
     kretserByKommuneFetcher
   );
 
   const { data: representasjonspunkter } = useSWR(
-    [
-      mapGrunnkretserToIds(grunnkretserByKommune),
-      tokenHolderFunc()?.token,
-      type,
-      "punkter",
-    ],
+    grunnkretserByKommune
+      ? [
+          mapGrunnkretserToIds(grunnkretserByKommune),
+          tokenHolderFunc()?.token,
+          type,
+          "punkter",
+        ]
+      : null,
     representasjonspunkterFetcher
   );
 
@@ -228,9 +232,12 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     removeFeaturesFromSourceByIds(layerId, allFeatures.map(getFeatureId));
   };
 
+  const lasterData = visible && !allFeatures;
+
   return {
     addKretserToLayer,
     removeKretserFromLayer,
+    lasterData,
   };
 };
 

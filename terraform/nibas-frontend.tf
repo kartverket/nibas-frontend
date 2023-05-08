@@ -92,7 +92,12 @@ resource "kubernetes_manifest" "nibas_frontend_application" {
         outbound = {
           rules = [
             {
-              application = "nibas-backend"
+              application = "nibas-backend",
+              namespace   = "nibas"
+            },
+            {
+              application = "nibas-backend",
+              namespace   = "nibas-main"
             },
             {
               application = "aut-idporten",
@@ -118,5 +123,8 @@ resource "kubernetes_manifest" "nibas_frontend_application" {
 
       }
     }
+  }
+  field_manager {
+    force_conflicts = true
   }
 }

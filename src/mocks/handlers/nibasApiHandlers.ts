@@ -27,9 +27,6 @@ export const nibasApiHandlers: RestHandler[] = [
   rest.post("/v1/grenser", (req, res, ctx) => {
     return res(ctx.status(200));
   }),
-  rest.get("/actuator/info", (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mocks.mockActuatorResponse));
-  }),
   rest.get("/v1/kodeliste/terrengdetaljkoder", (req, res, ctx) => {
     return res(ctx.status(200), ctx.json(mocks.mockTerrengdetaljResponse));
   }),

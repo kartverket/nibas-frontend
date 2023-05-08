@@ -16,7 +16,7 @@ type Props = {
 
 const Kommune = ({ kommune }: Props) => {
   const { t } = useTranslation();
-  const { kommuneValues, toggleEditKretser, toggleKretser } =
+  const { kommuneValues, toggleEditKretser, toggleKretser, lasterData } =
     useInndelingerKrets(kommune);
 
   const { history, clearHistory } = useToolbar();
@@ -48,6 +48,7 @@ const Kommune = ({ kommune }: Props) => {
           onClick={toggleKretser}
           variant="unstyled"
           visible={kommuneValues.visible}
+          disabled={lasterData}
           icon={
             kommuneValues.visible ? (
               <Icon icon="visibility" aria-label="Synlig" />
@@ -57,7 +58,7 @@ const Kommune = ({ kommune }: Props) => {
           }
         />
         <Title>{getNavnInSpraak(kommune.navn, "nor")}</Title>
-        <LinkButton onClick={onAvsluttRedigeringClick}>
+        <LinkButton onClick={onAvsluttRedigeringClick} disabled={lasterData}>
           {kommuneValues.editing
             ? t("action.Avslutt redigering")
             : t("action.Rediger")}

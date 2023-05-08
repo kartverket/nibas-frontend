@@ -69,10 +69,8 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
     resetAndClearEditingLayer,
   } = useEditGrenser(currentKretstype);
   const { setActiveOverlayPanel, setFlatedata } = useOverlayPanel();
-  const { addKretserToLayer, removeKretserFromLayer } = useKretsgrenser(
-    kommuneId,
-    currentKretstype
-  );
+  const { addKretserToLayer, removeKretserFromLayer, lasterData } =
+    useKretsgrenser(kommuneId, currentKretstype);
 
   const kommuneValues = values[kommuneId] ?? {};
 
@@ -158,5 +156,6 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
     toggleEditKretser,
     toggleKretser,
     kommuneValues,
+    lasterData,
   };
 };
