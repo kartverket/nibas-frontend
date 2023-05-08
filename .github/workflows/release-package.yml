@@ -2,7 +2,7 @@ name: nibas-frontend
 on:
   push:
     branches:
-      - master
+      - legge-til-argocd
 
 permissions:
   id-token: write
@@ -111,7 +111,7 @@ jobs:
       service_account: ${{ needs.set-variables.outputs.dev_service_account}}
       vault_role: nibas-frontend-read-role
       project_id: kubernetes-dev-94b9
-      deploy_on: "refs/heads/master"
+      deploy_on: "refs/heads/legge-til-argocd"
 
   deploy-argo:
     needs: build
@@ -160,7 +160,7 @@ jobs:
       service_account: nibas-deploy@nibas-test-36cb.iam.gserviceaccount.com
       vault_role: nibas-frontend-read-role
       project_id: kubernetes-test-94f6
-      deploy_on: "refs/heads/master"
+      deploy_on: "refs/heads/legge-til-argocd"
 
   deploy-prod:
     needs: [build, security-scans, deploy-test]
@@ -182,6 +182,6 @@ jobs:
       auth_project_number: 468770754406
       service_account: nibas-deploy@nibas-prod-732a.iam.gserviceaccount.com
       project_id: kubernetes-prod-e4a2
-      deploy_on: "refs/heads/master"
+      deploy_on: "refs/heads/legge-til-argocd"
       vault_role: nibas-frontend-read-role
 
