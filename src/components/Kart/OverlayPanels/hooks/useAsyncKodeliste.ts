@@ -17,7 +17,7 @@ type Params<T extends FieldValues> = {
   initialItemId: string | undefined;
 };
 
-export const useAsyncKodeliste = <T extends FieldValues>(params: Params<T>) => {
+const useAsyncKodeliste = <T extends FieldValues>(params: Params<T>) => {
   const { kodelisteUrl, setValue, initialItemId, property } = params;
 
   const { data: kodeliste } = useNibasApi(kodelisteUrl);

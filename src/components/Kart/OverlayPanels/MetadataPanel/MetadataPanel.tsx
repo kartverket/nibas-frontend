@@ -12,14 +12,13 @@ const grenseTypeWithReferanser = [
   "Grunnlinje",
 ];
 
-const MetaOverlayPanel = ({ isOpen, className, onClose }: PanelProps) => {
+const MetadataPanel = ({ isOpen, className, onClose }: PanelProps) => {
   const { selectedFeature, setSelectedFeature } = useOverlayPanel();
 
   const showReferanser = grenseTypeWithReferanser.includes(
     selectedFeature?.get("type") as string
   );
 
-  // TODO: struktur på hvor referanser skal være
   return (
     <Panel isOpen={isOpen} className={className}>
       <PanelHeader
@@ -40,4 +39,4 @@ const MetaOverlayPanel = ({ isOpen, className, onClose }: PanelProps) => {
   );
 };
 
-export default MetaOverlayPanel;
+export default MetadataPanel;

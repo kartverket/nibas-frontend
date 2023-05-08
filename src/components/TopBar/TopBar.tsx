@@ -3,8 +3,8 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { AuthenticationButton } from "../Authentication/AuthenticationButton";
 import Logo from "components/Logo/Logo";
-import UtkastTab from "components/Kart/UtkastTab";
 import Icon from "components/Icon";
+import UtkastTab from "./UtkastTab";
 
 const TopBar = () => {
   const { isAuthenticatedFunc, tokenHolderFunc } = useAuthenticationFlow();

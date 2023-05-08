@@ -24,7 +24,7 @@ export const OverlayPanelProvider: React.FC = ({ children }) => {
   const [activeOverlayPanel, setActiveOverlayPanel] =
     useState<ActiveOverlayPanel>(null);
 
-  // Brukes kun til metaOverlayPanel for å avgjøre hvilken feature man skal se data til
+  // Brukes kun til MetadataPanel for å avgjøre hvilken feature man skal se data til
   const [selectedFeature, setSelectedFeature] = useState<SelectedFeature>(null);
 
   // Brukes kun til paneler for stemmekrets og grunnkrets

@@ -16,7 +16,7 @@ export const Panel = styled.div<{ isOpen: boolean }>`
   background: white;
   border: 2px solid var(--gray_light);
   border-radius: 12px;
-  box-shadow: 4px 4px 12px 0 rgba(0, 0, 0, 0.15); // TODO, sjekk figma
+  box-shadow: 4px 4px 12px 0 rgba(0, 0, 0, 0.15);
   width: 100%;
   max-width: 1000px;
   max-height: 768px;
