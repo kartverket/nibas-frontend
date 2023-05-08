@@ -1,9 +1,7 @@
-// TODO: wrapper og andre komponenter som de forskjellige panelene skal bruke
-// lurer på om det er komponenter her som kan brukes for sånt som toolbar, dropdown-greia for inndelinger og mer
-// tror vi bare må starte et sted
-
+import Button from "components/form/Button";
 import CloseButton from "components/form/Button/CloseButton";
 import Heading from "components/typography/Heading";
+import { Outline } from "style/mixins";
 import styled from "styled-components";
 
 export type PanelProps = {
@@ -54,3 +52,25 @@ export const PanelHeader: React.FC<{ onClose: () => void }> = ({
     <CloseButton onClick={onClose} />
   </PanelHeaderContainer>
 );
+
+export const ToggleableKretsButton = styled(Button).attrs(() => ({
+  variant: "unstyled",
+}))<{ isOpen: boolean }>`
+  position: relative;
+  border-radius: 50%;
+  padding: 5px;
+
+  background-color: ${({ isOpen }) => isOpen && "var(--blue_dark)"};
+  color: ${({ isOpen }) => isOpen && "var(--white)"};
+  transition: background-color 0.2s, color 0.2s;
+
+  &:hover,
+  &:focus-visible {
+    color: ${({ isOpen }) => !isOpen && "var(--blue_dark)"};
+    background: ${({ isOpen }) => !isOpen && "var(--blue_light)"};
+  }
+
+  &:focus-visible {
+    ${Outline};
+  }
+`;

@@ -1,4 +1,4 @@
-import useIsMetadataDisabled from "components/Kart/OverlayPanels/useIsMetadataDisabled";
+import useIsMetadataDisabled from "components/Kart/OverlayPanels/hooks/useIsMetadataDisabled";
 import { FeatureProperties } from "types/api";
 import useTimer from "./useTimer";
 

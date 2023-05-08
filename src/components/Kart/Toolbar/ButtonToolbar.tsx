@@ -6,7 +6,7 @@ import ModeButton from "./ModeButton";
 import { useToolbar, useToolbarActions } from "contexts/ToolbarContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
-import { useDataPanel } from "contexts/DataPanelContext";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
 
 const Divider = styled.hr`
   width: 100%;
@@ -22,17 +22,24 @@ const ButtonToolbar = () => {
     useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const editingType = getCurrentlyEditingType() as string;
-  const { activeDataPanel, setActiveDataPanel } = useDataPanel();
+  const { activeOverlayPanel, setActiveOverlayPanel } = useOverlayPanel();
   const flatedetaljerIsAvailable =
     editingType === "grunnkrets" || editingType === "stemmekrets";
   const flatedetaljerIsActive =
-    activeDataPanel === "grunnkrets" || activeDataPanel === "stemmekrets";
+    activeOverlayPanel === "grunnkrets" || activeOverlayPanel === "stemmekrets";
+
+  const toggleMetadata = () => {
+    togglePointMode("metadata");
+    if (activeOverlayPanel === "metadata") {
+      setActiveOverlayPanel(null);
+    }
+  };
 
   const toggleFlatedetaljer = () => {
     if (flatedetaljerIsActive) {
-      setActiveDataPanel(null);
+      setActiveOverlayPanel(null);
     } else if (flatedetaljerIsAvailable) {
-      setActiveDataPanel(editingType);
+      setActiveOverlayPanel(editingType);
     }
   };
 
@@ -86,7 +93,7 @@ const ButtonToolbar = () => {
         icon="live_help"
         ariaLabel="Se metadata"
         isActive={activePointMode === "metadata"}
-        onClick={() => togglePointMode("metadata")}
+        onClick={toggleMetadata}
       >
         Metadata
       </ModeButton>

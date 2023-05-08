@@ -10,10 +10,10 @@ import {
   EditGrenserContextValue,
 } from "contexts/EditGrenserContext";
 import {
-  DataPanelProvider,
-  DataPanelContext,
-  DataPanelContextValue,
-} from "contexts/DataPanelContext";
+  OverlayPanelProvider,
+  OverlayPanelContext,
+  OverlayPanelContextValue,
+} from "contexts/OverlayPanelContext";
 import {
   SidebarPanelProvider,
   SidebarPanelContext,
@@ -41,7 +41,7 @@ const defaultProviderMap = {
   ErrorHandlingProvider,
   BakgrunnskartProvider,
   EditGrenserProvider,
-  DataPanelProvider,
+  OverlayPanelProvider,
   SidebarPanelProvider,
   ToolbarProvider,
   UtkastProvider,
@@ -51,7 +51,7 @@ const contextMap = {
   ErrorHandlingProvider: ErrorHandlingContext.Provider,
   BakgrunnskartProvider: BakgrunnskartContext.Provider,
   EditGrenserProvider: EditGrenserContext.Provider,
-  DataPanelProvider: DataPanelContext.Provider,
+  OverlayPanelProvider: OverlayPanelContext.Provider,
   SidebarPanelProvider: SidebarPanelContext.Provider,
   ToolbarProvider: ToolbarContext.Provider,
   UtkastProvider: UtkastContext.Provider,
@@ -61,7 +61,7 @@ export type TestProviderValues = {
   ErrorHandlingProvider?: ErrorHandlingContextValue | boolean;
   BakgrunnskartProvider?: BakgrunnskartContextValue | boolean;
   EditGrenserProvider?: EditGrenserContextValue | boolean;
-  DataPanelProvider?: DataPanelContextValue | boolean;
+  OverlayPanelProvider?: OverlayPanelContextValue | boolean;
   SidebarPanelProvider?: SidebarPanelContextValue | boolean;
   ToolbarProvider?: ToolbarContextValue | boolean;
   UtkastProvider?: UtkastContextValue | boolean;

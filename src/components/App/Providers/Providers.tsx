@@ -6,13 +6,13 @@ import { SidebarPanelProvider } from "contexts/SidebarPanelContext";
 import { ToolbarProvider } from "contexts/ToolbarContext";
 import { UtkastProvider } from "contexts/UtkastContext";
 import { ErrorHandlingProvider } from "contexts/ErrorHandlingContext";
-import { DataPanelProvider } from "contexts/DataPanelContext";
+import { OverlayPanelProvider } from "contexts/OverlayPanelContext";
 
 const Providers: FC = ({ children }) => {
   return (
     <ThirdPartyProviders>
       <ErrorHandlingProvider>
-        <DataPanelProvider>
+        <OverlayPanelProvider>
           <SidebarPanelProvider>
             <ToolbarProvider>
               <EditGrenserProvider>
@@ -22,7 +22,7 @@ const Providers: FC = ({ children }) => {
               </EditGrenserProvider>
             </ToolbarProvider>
           </SidebarPanelProvider>
-        </DataPanelProvider>
+        </OverlayPanelProvider>
       </ErrorHandlingProvider>
     </ThirdPartyProviders>
   );

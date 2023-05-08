@@ -2,13 +2,13 @@ import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
-import AsyncKodelisteSelect from "../AsyncKodelisteSelect";
-import useMetadataForm from "../useMetadataForm";
-import { getDateInFriendlyString } from "../utils";
 import { Metadata, FeatureProperties } from "types/api";
 import useMetadataInputOptions from "hooks/useMetadataInputOptions";
 import Input from "components/form/Input";
 import Textarea from "components/form/Input/Textarea";
+import useMetadataForm from "components/Kart/OverlayPanels/hooks/useMetadataForm";
+import { getDateInFriendlyString } from "components/Kart/OverlayPanels/utils";
+import AsyncKodelisteSelect from "./AsyncKodelisteSelect";
 
 type Props = {
   feature: Feature<Geometry>;
@@ -29,11 +29,6 @@ const InfoBox = styled.div`
   background: var(--gray_light);
 `;
 
-const FormWrapper = styled.div`
-  display: flex;
-  width: 100%;
-`;
-
 const Form = styled.form`
   display: flex;
   flex-direction: column;
@@ -50,7 +45,7 @@ const NumberInput = styled(Input)`
   width: 120px;
 `;
 
-const GrenseMetadataGenerelt = ({ feature }: Props) => {
+const MetadataGenerelt = ({ feature }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
   const type = properties.type;
   const metadata = properties.metadata as Metadata;
@@ -89,38 +84,36 @@ const GrenseMetadataGenerelt = ({ feature }: Props) => {
           {getDateInFriendlyString(metadata?.common?.gyldigTil) ?? "--"}
         </span>
       </InfoBox>
-      <FormWrapper>
-        <Form>
-          <InputRow>
-            <AsyncKodelisteSelect
-              kodeliste={maalemetodeKoder}
-              label={t("metadata.Målemetode")}
-              {...register("maalemetode", inputOptions)}
-            />
-            <NumberInput
-              type="number"
-              label={t("metadata.Nøyaktighet")}
-              {...register("noeyaktighet", {
-                ...inputOptions,
-                valueAsNumber: true,
-                min: 0,
-                max: 1_000_000,
-              })}
-            />
-          </InputRow>
-          <Input
-            {...register("opphav", inputOptions)}
-            label={t("metadata.Opphav")}
+      <Form>
+        <InputRow>
+          <AsyncKodelisteSelect
+            kodeliste={maalemetodeKoder}
+            label={t("metadata.Målemetode")}
+            {...register("maalemetode", inputOptions)}
           />
-          <Textarea
-            rows={4}
-            {...register("informasjon", inputOptions)}
-            label={t("metadata.Informasjon")}
+          <NumberInput
+            type="number"
+            label={t("metadata.Nøyaktighet")}
+            {...register("noeyaktighet", {
+              ...inputOptions,
+              valueAsNumber: true,
+              min: 0,
+              max: 1_000_000,
+            })}
           />
-        </Form>
-      </FormWrapper>
+        </InputRow>
+        <Input
+          {...register("opphav", inputOptions)}
+          label={t("metadata.Opphav")}
+        />
+        <Textarea
+          rows={4}
+          {...register("informasjon", inputOptions)}
+          label={t("metadata.Informasjon")}
+        />
+      </Form>
     </Container>
   );
 };
 
-export default GrenseMetadataGenerelt;
+export default MetadataGenerelt;

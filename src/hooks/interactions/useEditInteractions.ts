@@ -9,7 +9,7 @@ import { editableBorderTypes, editSource } from "hooks/layers/constants";
 import { pixelTolerance } from "./constants";
 import { getLayerById } from "utils/map/layers";
 import { map } from "components/Kart/constants";
-import { useDataPanel } from "contexts/DataPanelContext";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
 
 const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
@@ -20,7 +20,7 @@ const getInfoFromFeature = (featureLike: FeatureLike) => {
 const useEditInteractions = () => {
   const { addEntry } = useToolbarSaving();
   const { activePointMode } = useToolbar();
-  const { selectedFeature } = useDataPanel();
+  const { selectedFeature } = useOverlayPanel();
   const detachIsActive = activePointMode === "detach";
   const editLayer = getLayerById("edit");
 

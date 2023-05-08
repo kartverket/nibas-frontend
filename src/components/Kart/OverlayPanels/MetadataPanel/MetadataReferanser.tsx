@@ -183,7 +183,7 @@ const Part = styled.div`
   }
 `;
 
-const GrenseMetadataReferanser = ({ feature }: Props) => {
+const MetadataReferanser = ({ feature }: Props) => {
   const { t } = useTranslation();
 
   const properties = feature.getProperties() as FeatureProperties;
@@ -349,4 +349,4 @@ const FieldArrayWrapper = styled.fieldset`
   margin-bottom: 16px;
 `;
 
-export default GrenseMetadataReferanser;
+export default MetadataReferanser;

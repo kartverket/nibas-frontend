@@ -4,7 +4,7 @@ import { useUtkastEntity } from "contexts/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
 import { StemmekretsRef, StemmekretsResponse } from "types/api";
 import { getNavnInSpraak } from "utils/language/language";
-import { ToggleableKretsButton } from "../kretserComponents";
+import { ToggleableKretsButton } from "../Panel";
 import FutureChangesButton from "../FutureChangesButton";
 import { getIdFromEntity } from "utils/api";
 

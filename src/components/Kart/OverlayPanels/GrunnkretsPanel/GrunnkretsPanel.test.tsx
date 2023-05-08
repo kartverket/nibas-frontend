@@ -1,8 +1,13 @@
 import { render, screen, waitFor } from "test/test-utils";
 import { ReactNode } from "react";
-import GrunnkretserPanel from "./GrunnkretserPanel";
+import GrunnkretsPanel from "./GrunnkretsPanel";
 import { GrunnkretsRequest } from "types/api";
 import { InndelingerKretsProvider } from "contexts/InndelingerKretsContext";
+
+const defaultProps: React.ComponentProps<typeof GrunnkretsPanel> = {
+  isOpen: true,
+  onClose: jest.fn(),
+};
 
 const renderWithProvider = (
   ui: ReactNode,
@@ -30,9 +35,9 @@ const renderWithProvider = (
     }
   );
 
-describe("GrunnkretserPanel", () => {
+describe("GrunnkretsPanel", () => {
   it("should render kommunes grunnkretser in table", async () => {
-    renderWithProvider(<GrunnkretserPanel />);
+    renderWithProvider(<GrunnkretsPanel {...defaultProps} />);
 
     expect(await screen.findByRole("table")).toBeInTheDocument();
 
@@ -55,7 +60,7 @@ describe("GrunnkretserPanel", () => {
   });
 
   it("should apply utkast correctly", async () => {
-    renderWithProvider(<GrunnkretserPanel />, {
+    renderWithProvider(<GrunnkretsPanel {...defaultProps} />, {
       "1": {
         grunnkretsnummer: "87654321",
         navn: "Mosekollen vest",
@@ -75,7 +80,7 @@ describe("GrunnkretserPanel", () => {
   });
 
   it("should toggle future changes table when clicking future changes icon", async () => {
-    const { user } = renderWithProvider(<GrunnkretserPanel />);
+    const { user } = renderWithProvider(<GrunnkretsPanel {...defaultProps} />);
 
     await user.click(
       screen.getByRole("button", {

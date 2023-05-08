@@ -1,14 +1,14 @@
 import { render, screen, waitFor } from "test/test-utils";
-import GrenseMetadataGenerelt from "./GrenseMetadataGenerelt";
+import MetadataGenerelt from "./MetadataGenerelt";
 import { mockBasicFeature } from "mocks/handlers/responses";
 
-const defaultProps: React.ComponentProps<typeof GrenseMetadataGenerelt> = {
+const defaultProps: React.ComponentProps<typeof MetadataGenerelt> = {
   feature: mockBasicFeature,
 };
 
-describe("GrenseMetadataGenerelt", () => {
+describe("MetadataGenerelt", () => {
   it("should display data from feature properties", async () => {
-    render(<GrenseMetadataGenerelt {...defaultProps} />);
+    render(<MetadataGenerelt {...defaultProps} />);
 
     expect(screen.getByRole("textbox", { name: /informasjon/i })).toHaveValue(
       "Informasjon"

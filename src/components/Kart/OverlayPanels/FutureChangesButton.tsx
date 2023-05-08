@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { KretsRef } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { getNavnInSpraak } from "utils/language/language";
-import { ToggleableKretsButton } from "./kretserComponents";
+import { ToggleableKretsButton } from "./Panel";
 
 type Props = {
   krets: KretsRef;

@@ -1,9 +1,9 @@
 import { render, screen, within } from "test/test-utils";
 import { ReactNode } from "react";
-import GrenseMetadataReferanser from "./GrenseMetadataReferanser";
+import MetadataReferanser from "./MetadataReferanser";
 import { mockBasicFeature } from "mocks/handlers/responses";
 
-const defaultProps: React.ComponentProps<typeof GrenseMetadataReferanser> = {
+const defaultProps: React.ComponentProps<typeof MetadataReferanser> = {
   feature: mockBasicFeature,
 };
 
@@ -26,9 +26,7 @@ const renderWithProvider = (ui: ReactNode, disabled = false) =>
   });
 
 const testFieldArray = async (groupName: string | RegExp) => {
-  const { user } = renderWithProvider(
-    <GrenseMetadataReferanser {...defaultProps} />
-  );
+  const { user } = renderWithProvider(<MetadataReferanser {...defaultProps} />);
 
   const dokumentlenkerGroup = screen.getByRole("group", {
     name: groupName,
@@ -52,9 +50,9 @@ const testFieldArray = async (groupName: string | RegExp) => {
   ).toBeInTheDocument();
 };
 
-describe("GrenseMetadataReferanser", () => {
+describe("MetadataReferanser", () => {
   it("should display data from feature properties", async () => {
-    renderWithProvider(<GrenseMetadataReferanser {...defaultProps} />);
+    renderWithProvider(<MetadataReferanser {...defaultProps} />);
 
     expect(screen.getByRole("textbox", { name: /Rettskilde-ID/i })).toHaveValue(
       "RID"
@@ -78,7 +76,7 @@ describe("GrenseMetadataReferanser", () => {
   });
 
   it("should disable form fields if not editing", () => {
-    renderWithProvider(<GrenseMetadataReferanser {...defaultProps} />, true);
+    renderWithProvider(<MetadataReferanser {...defaultProps} />, true);
 
     expect(
       screen.getByRole("textbox", { name: /Rettskilde-ID/i })

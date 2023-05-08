@@ -6,7 +6,7 @@ import { LayerId } from "hooks/layers/types";
 import { FeatureProperties, KommuneRef } from "types/api";
 import { getFeatureId, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { getIdFromEntity } from "utils/api";
-import { useDataPanel } from "./DataPanelContext";
+import { useOverlayPanel } from "./OverlayPanelContext";
 
 export type Kretstype = "grunnkrets" | "stemmekrets";
 
@@ -68,7 +68,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
     setMultipleValues,
     resetAndClearEditingLayer,
   } = useEditGrenser(currentKretstype);
-  const { setActiveDataPanel, setFlatedata } = useDataPanel();
+  const { setActiveOverlayPanel, setFlatedata } = useOverlayPanel();
   const { addKretserToLayer, removeKretserFromLayer } = useKretsgrenser(
     kommuneId,
     currentKretstype
@@ -86,7 +86,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
       },
     };
 
-    setActiveDataPanel(null);
+    setActiveOverlayPanel(null);
     resetAndClearEditingLayer();
 
     if (newEditing) {
@@ -129,7 +129,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
       addKretserToLayer("edit");
     } else {
       removeKretserFromLayer("edit");
-      setActiveDataPanel(null);
+      setActiveOverlayPanel(null);
     }
 
     setMultipleValues(newValues);

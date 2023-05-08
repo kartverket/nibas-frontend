@@ -5,7 +5,7 @@ import LineString from "ol/geom/LineString";
 import { ObjectEvent } from "ol/Object";
 import { useForm } from "react-hook-form";
 import useAsyncKodeliste from "./useAsyncKodeliste";
-import { addMetadataEntryFromFeature } from "./utils";
+import { addMetadataEntryFromFeature } from "../utils";
 import { useToolbarSaving } from "contexts/ToolbarContext";
 import { Metadata } from "types/api";
 

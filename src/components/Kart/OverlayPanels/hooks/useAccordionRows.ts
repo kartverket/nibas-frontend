@@ -3,11 +3,10 @@ import { useState } from "react";
 const removeIdFromList = (id: string, list: string[]) => {
   const newOpenRows = list.slice();
   newOpenRows.splice(newOpenRows.indexOf(id));
-
   return newOpenRows;
 };
 
-const useAccordionRows = () => {
+export const useAccordionRows = () => {
   const [openRows, setOpenRows] = useState<string[]>([]);
 
   const closeRow = (id: string) => {
@@ -30,5 +29,3 @@ const useAccordionRows = () => {
     isRowOpen,
   };
 };
-
-export default useAccordionRows;

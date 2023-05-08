@@ -2,10 +2,10 @@ import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { map, overlayPopup } from "./constants";
-import { useDataPanel } from "contexts/DataPanelContext";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
 
 const OverlayPopup = () => {
-  const { selectedFeature } = useDataPanel();
+  const { selectedFeature } = useOverlayPanel();
   const { t } = useTranslation();
   const overlayRef = useRef<HTMLDivElement>(null);
 

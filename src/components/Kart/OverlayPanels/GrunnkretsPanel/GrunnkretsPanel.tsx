@@ -1,9 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { ButtonCell, KretsRow, KretsTable } from "../KretsTable";
-import useAccordionRows from "../useAccordionRow";
-import EditRow from "./EditRow";
+import GrunnkretsRow from "./GrunnkretsRow";
 import Icon from "components/Icon";
 import { useUtkastEntity } from "contexts/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
@@ -13,17 +11,24 @@ import {
   getNavnInSpraak,
   sortGrenserAlphabetically,
 } from "utils/language/language";
-import FutureChangesTable, { TableRow } from "./FutureChangesTable";
-import {
-  FutureChangesTableData,
-  ToggleableKretsButton,
-} from "../kretserComponents";
 import FutureChangesButton from "../FutureChangesButton";
 import { getIdFromEntity } from "utils/api";
-import { useDataPanel } from "contexts/DataPanelContext";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import {
+  Panel,
+  PanelHeader,
+  PanelProps,
+  ToggleableKretsButton,
+} from "../Panel";
+import { useAccordionRows } from "../hooks/useAccordionRows";
+import FutureChangesTable, {
+  TableRow,
+  FutureChangesTableData,
+} from "../FutureChanges/FutureChangesTable";
+import { KretsTable, KretsRow, ButtonCell } from "../KretsTable";
 
-const GrunnkretserPanel = () => {
-  const { flatedata } = useDataPanel();
+const GrunnkretsPanel = ({ isOpen, className, onClose }: PanelProps) => {
+  const { flatedata } = useOverlayPanel();
   const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
   const { t } = useTranslation();
   const { isRowOpen, toggleRow } = useAccordionRows();
@@ -94,7 +99,8 @@ const GrunnkretserPanel = () => {
   }
 
   return (
-    <>
+    <Panel isOpen={isOpen} className={className}>
+      <PanelHeader onClose={onClose}>Endre kretsdetaljer</PanelHeader>
       {filteredGrunnkretser && (
         <KretsTable>
           <thead>
@@ -136,7 +142,10 @@ const GrunnkretserPanel = () => {
                 </KretsRow>
 
                 {isRowOpen(getIdFromEntity(grunnkrets)) && (
-                  <EditRow grunnkrets={grunnkrets} kommuneId={kommuneId} />
+                  <GrunnkretsRow
+                    grunnkrets={grunnkrets}
+                    kommuneId={kommuneId}
+                  />
                 )}
 
                 {isFutureChangesOpen(getIdFromEntity(grunnkrets)) && (
@@ -156,7 +165,7 @@ const GrunnkretserPanel = () => {
           </tbody>
         </KretsTable>
       )}
-    </>
+    </Panel>
   );
 };
 
@@ -172,4 +181,4 @@ const Remainder = styled.th`
   width: 100%;
 `;
 
-export default GrunnkretserPanel;
+export default GrunnkretsPanel;

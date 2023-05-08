@@ -6,7 +6,7 @@ import { overlayPopup } from "components/Kart/constants";
 import { grenseStyles } from "utils/map/layerStyles";
 import { pixelTolerance } from "./constants";
 import { useToolbar } from "contexts/ToolbarContext";
-import { useDataPanel } from "contexts/DataPanelContext";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -20,8 +20,8 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 
 const useSelectInteraction = () => {
   const { activePointMode } = useToolbar();
-  const { setActiveDataPanel, selectedFeature, setSelectedFeature } =
-    useDataPanel();
+  const { setActiveOverlayPanel, selectedFeature, setSelectedFeature } =
+    useOverlayPanel();
 
   const select = useMemo(
     () =>
@@ -49,10 +49,10 @@ const useSelectInteraction = () => {
           overlayPopup.setPosition(getOverlayPosition(clickedFeature));
         } else {
           overlayPopup.setPosition(undefined);
-          setActiveDataPanel("metadata");
+          setActiveOverlayPanel("metadata");
         }
       } else if (clickedFeatures.length === 0) {
-        setActiveDataPanel(null);
+        setActiveOverlayPanel(null);
         overlayPopup.setPosition(undefined);
       }
     };
@@ -62,7 +62,7 @@ const useSelectInteraction = () => {
     return () => {
       select.un("select", syncFeatures);
     };
-  }, [select, setActiveDataPanel, setSelectedFeature]);
+  }, [select, setActiveOverlayPanel, setSelectedFeature]);
 
   useEffect(() => {
     if (selectedFeature === null) {
