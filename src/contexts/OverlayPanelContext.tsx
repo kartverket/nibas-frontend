@@ -27,6 +27,7 @@ export const OverlayPanelProvider: React.FC = ({ children }) => {
 
   const closeOverlay = () => {
     setActiveOverlayPanel(null);
+    setSelectedFeature(null);
   };
 
   // Brukes kun til MetadataPanel for å avgjøre hvilken feature man skal se data til

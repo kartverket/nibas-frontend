@@ -3,12 +3,15 @@ import { useTranslation } from "react-i18next";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { Metadata, FeatureProperties } from "types/api";
-import useMetadataInputOptions from "hooks/useMetadataInputOptions";
 import Input from "components/form/Input";
 import Textarea from "components/form/Input/Textarea";
 import useMetadataForm from "components/Kart/OverlayPanels/hooks/useMetadataForm";
 import { getDateInFriendlyString } from "components/Kart/OverlayPanels/utils";
 import AsyncKodelisteSelect from "./AsyncKodelisteSelect";
+import { Divider } from "components/Divider";
+import Button from "components/form/Button/Button";
+import useIsMetadataDisabled from "../hooks/useIsMetadataDisabled";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
 
 type Props = {
   feature: Feature<Geometry>;
@@ -45,20 +48,34 @@ const NumberInput = styled(Input)`
   width: 120px;
 `;
 
+const Buttons = styled.div`
+  display: flex;
+  justify-content: end;
+  gap: 16px;
+`;
+
 const MetadataGenerelt = ({ feature }: Props) => {
+  const { closeOverlay } = useOverlayPanel();
+  const { t } = useTranslation();
   const properties = feature.getProperties() as FeatureProperties;
   const type = properties.type;
   const metadata = properties.metadata as Metadata;
 
-  const { register, maalemetodeKoder, updateDraftFromFeature } =
-    useMetadataForm(metadata, feature);
-
-  const { t } = useTranslation();
-
-  const inputOptions = useMetadataInputOptions({
-    properties,
+  const {
+    register,
+    handleSubmit,
+    maalemetodeKoder,
     updateDraftFromFeature,
-  });
+    isDirty,
+    reset,
+  } = useMetadataForm(metadata, feature);
+
+  const metadataIsDisabled = useIsMetadataDisabled(properties);
+
+  const onSubmit = () => {
+    updateDraftFromFeature();
+    reset({}, { keepValues: true });
+  };
 
   return (
     <Container>
@@ -84,18 +101,18 @@ const MetadataGenerelt = ({ feature }: Props) => {
           {getDateInFriendlyString(metadata?.common?.gyldigTil) ?? "--"}
         </span>
       </InfoBox>
-      <Form>
+      <Form onSubmit={handleSubmit(onSubmit)}>
         <InputRow>
           <AsyncKodelisteSelect
             kodeliste={maalemetodeKoder}
             label={t("metadata.Målemetode")}
-            {...register("maalemetode", inputOptions)}
+            {...register("maalemetode", { disabled: metadataIsDisabled })}
           />
           <NumberInput
             type="number"
             label={t("metadata.Nøyaktighet")}
             {...register("noeyaktighet", {
-              ...inputOptions,
+              disabled: metadataIsDisabled,
               valueAsNumber: true,
               min: 0,
               max: 1_000_000,
@@ -103,14 +120,30 @@ const MetadataGenerelt = ({ feature }: Props) => {
           />
         </InputRow>
         <Input
-          {...register("opphav", inputOptions)}
+          {...register("opphav", { disabled: metadataIsDisabled })}
           label={t("metadata.Opphav")}
         />
         <Textarea
           rows={4}
-          {...register("informasjon", inputOptions)}
+          {...register("informasjon", { disabled: metadataIsDisabled })}
           label={t("metadata.Informasjon")}
         />
+        <Divider />
+        <Buttons>
+          <Button
+            variant="tertiary"
+            onClick={() => {
+              reset({});
+              closeOverlay();
+            }}
+            disabled={metadataIsDisabled}
+          >
+            Avbryt
+          </Button>
+          <Button type="submit" disabled={!isDirty || metadataIsDisabled}>
+            Endre metadata
+          </Button>
+        </Buttons>
       </Form>
     </Container>
   );

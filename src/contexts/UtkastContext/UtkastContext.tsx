@@ -38,7 +38,7 @@ export const UtkastProvider: React.FC = ({ children }) => {
   const { tokenHolderFunc } = useAuthenticationFlow();
   const [searchParams, setSearchParams] = useSearchParams();
   const { resetAndClearEditingLayer } = useEditAllGrenser();
-  const { setActiveOverlayPanel } = useOverlayPanel();
+  const { closeOverlay } = useOverlayPanel();
   const utkastId = searchParams.get("utkast");
   const { setError } = useErrorHandling();
 
@@ -140,7 +140,7 @@ export const UtkastProvider: React.FC = ({ children }) => {
     clearDirtyStyles();
     setSearchParams({});
     resetAndClearEditingLayer();
-    setActiveOverlayPanel(null);
+    closeOverlay();
   };
 
   const value = {

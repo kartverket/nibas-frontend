@@ -10,6 +10,7 @@ import AlertModal from "components/AlertModal";
 import { useState } from "react";
 import { EndringsloggModal } from "components/Endringslogg/EndringsloggModal";
 import FeatureToggle from "../../FeatureToggle";
+import { DividerVertical } from "components/Divider";
 
 const LagreFrame = styled(Frame)`
   justify-content: center;
@@ -29,13 +30,6 @@ const UtkastNavn = styled.h4`
   color: var(--black);
   font-size: 14px;
   font-weight: normal;
-`;
-
-const DividerVertical = styled.hr`
-  width: 1px;
-  height: 50px;
-  border: 1px solid var(--gray_light);
-  margin: 0 4px;
 `;
 
 type Props = {

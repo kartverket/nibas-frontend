@@ -42,7 +42,7 @@ const UtkastItem = ({ utkast }: Props) => {
   const utkastId = searchParams.get("utkast");
 
   const { resetAndClearEditingLayer } = useEditAllGrenser();
-  const { setActiveOverlayPanel } = useOverlayPanel();
+  const { closeOverlay } = useOverlayPanel();
   const { data: fullUtkast } = useNibasApi(
     isPublishOpen || isDeleteOpen ? "/v1/utkast/{id}" : null,
     {
@@ -139,7 +139,7 @@ const UtkastItem = ({ utkast }: Props) => {
       setSearchParams({});
     }
     resetAndClearEditingLayer();
-    setActiveOverlayPanel(null);
+    closeOverlay();
     resetMapView();
   };
 
