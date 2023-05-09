@@ -16,6 +16,9 @@ const grenseTypeWithReferanser = [
 const SidePanel = styled(Panel)`
   grid-area: metadata;
   max-width: 440px;
+  border-radius: unset;
+  margin: 0;
+  border-top: none;
 `;
 
 const Content = styled.div`
