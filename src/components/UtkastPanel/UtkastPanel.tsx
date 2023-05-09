@@ -9,10 +9,8 @@ const UtkastPanel = () => {
   const { activeSidebarPanel, closeSidebar } = useSidebarPanel();
   const { t } = useTranslation();
 
-  if (activeSidebarPanel !== "utkast") return null;
-
   return (
-    <Panel>
+    <Panel isOpen={activeSidebarPanel === "utkast"}>
       <SidebarPanelTitle
         closePanel={closeSidebar}
         title={t("sidebar.Utkast")}

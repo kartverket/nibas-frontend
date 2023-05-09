@@ -14,10 +14,8 @@ const GrenserDrillDown = () => {
   const { t } = useTranslation();
   const { activeSidebarPanel, closeSidebar } = useSidebarPanel();
 
-  if (activeSidebarPanel !== "inndelinger") return null;
-
   return (
-    <Panel>
+    <Panel isOpen={activeSidebarPanel === "inndelinger"}>
       <SidebarPanelTitle
         closePanel={closeSidebar}
         title={t("sidebar.Inndelinger")}

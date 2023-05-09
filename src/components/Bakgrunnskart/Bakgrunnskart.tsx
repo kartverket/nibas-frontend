@@ -14,10 +14,8 @@ const Bakgrunnskart = () => {
   const { activeSidebarPanel, closeSidebar } = useSidebarPanel();
   const { visibleLayers } = useBakgrunnskart();
 
-  if (activeSidebarPanel !== "kartlag") return null;
-
   return (
-    <SidebarPanel>
+    <SidebarPanel isOpen={activeSidebarPanel === "kartlag"}>
       <SidebarPanelTitle
         closePanel={closeSidebar}
         title={t("Aktive kartlag")}
