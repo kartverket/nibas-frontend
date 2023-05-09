@@ -90,30 +90,6 @@ jobs:
           echo "dev_auth_project_number=747318126147" >> $GITHUB_OUTPUT
           echo "dev_service_account=nibas-deploy@nibas-dev-075c.iam.gserviceaccount.com" >> $GITHUB_OUTPUT
 
-  deploy-dev:
-    needs: [build, set-variables]
-    permissions:
-      id-token: write
-      pull-requests: write
-      contents: read
-      packages: write
-    uses: kartverket/github-workflows/.github/workflows/run-terraform.yml@v4.0.0
-    with:
-      destroy: true
-      runner: atkv1-dev
-      environment: dev
-      kubernetes_cluster: atkv1-dev
-      terraform_workspace: dev
-      terraform_option_1: -var-file=variables/dev.tfvars
-      terraform_option_2: -var=NIBAS_FRONTEND_VERSION=${{ needs.build.outputs.new_tag }}
-      terraform_init_option_1: -backend-config=backend/dev.gcs.tfbackend
-      working_directory: terraform
-      auth_project_number: ${{ needs.set-variables.outputs.dev_auth_project_number}}
-      service_account: ${{ needs.set-variables.outputs.dev_service_account}}
-      vault_role: nibas-frontend-read-role
-      project_id: kubernetes-dev-94b9
-      deploy_on: "refs/heads/master"
-
   deploy-argo:
     needs: build
     uses: kartverket/smia-apps/.github/workflows/release-app.yml@main
@@ -139,52 +115,4 @@ jobs:
       auth_project_number: ${{ needs.set-variables.outputs.dev_auth_project_number}}
       service_account: ${{ needs.set-variables.outputs.dev_service_account}}
       image_url: ${{ needs.build.outputs.image_url}}
-
-  deploy-test:
-    needs: [build, security-scans]
-    permissions:
-      id-token: write
-      pull-requests: write
-      contents: read
-      packages: write
-    uses: kartverket/github-workflows/.github/workflows/run-terraform.yml@v4.0.0
-    with:
-      destroy: true
-      runner: atkv1-test
-      environment: test
-      kubernetes_cluster: atkv1-test
-      terraform_workspace: test
-      terraform_option_1: -var-file=variables/test.tfvars
-      terraform_option_2: -var=NIBAS_FRONTEND_VERSION=${{ needs.build.outputs.new_tag }}
-      terraform_init_option_1: -backend-config=backend/test.gcs.tfbackend
-      working_directory: terraform
-      auth_project_number: 935702487708
-      service_account: nibas-deploy@nibas-test-36cb.iam.gserviceaccount.com
-      vault_role: nibas-frontend-read-role
-      project_id: kubernetes-test-94f6
-      deploy_on: "refs/heads/master"
-
-  deploy-prod:
-    needs: [build, security-scans, deploy-test]
-    name: Deploy to prod
-    permissions:
-      id-token: write
-      pull-requests: write
-      contents: read
-      packages: write
-    uses: kartverket/github-workflows/.github/workflows/run-terraform.yml@v4.0.0
-    with:
-      destroy: true
-      runner: atkv1-prod
-      environment: prod
-      kubernetes_cluster: atkv1-prod
-      terraform_option_1: -var-file=variables/prod.tfvars
-      terraform_option_2: -var=NIBAS_FRONTEND_VERSION=${{ needs.build.outputs.new_tag }}
-      terraform_init_option_1: -backend-config=backend/prod.gcs.tfbackend
-      working_directory: terraform
-      auth_project_number: 468770754406
-      service_account: nibas-deploy@nibas-prod-732a.iam.gserviceaccount.com
-      project_id: kubernetes-prod-e4a2
-      deploy_on: "refs/heads/master"
-      vault_role: nibas-frontend-read-role
 
