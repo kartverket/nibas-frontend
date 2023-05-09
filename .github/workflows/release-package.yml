@@ -168,13 +168,13 @@ jobs:
     needs: [build, security-scans, deploy-test]
     name: Deploy to prod
     permissions:
-      destroy: true
       id-token: write
       pull-requests: write
       contents: read
       packages: write
     uses: kartverket/github-workflows/.github/workflows/run-terraform.yml@v4.0.0
     with:
+      destroy: true
       runner: atkv1-prod
       environment: prod
       kubernetes_cluster: atkv1-prod
