@@ -99,6 +99,7 @@ jobs:
       packages: write
     uses: kartverket/github-workflows/.github/workflows/run-terraform.yml@v4.0.0
     with:
+      destroy: true
       runner: atkv1-dev
       environment: dev
       kubernetes_cluster: atkv1-dev
@@ -112,6 +113,17 @@ jobs:
       vault_role: nibas-frontend-read-role
       project_id: kubernetes-dev-94b9
       deploy_on: "refs/heads/master"
+
+  deploy-argo:
+    needs: build
+    uses: kartverket/smia-apps/.github/workflows/release-app.yml@main
+    with:
+      application: nibas-frontend
+      version: ${{ needs.build.outputs.new_tag }}
+      deploy_dev: true
+      deploy_test: true
+    secrets:
+      PAT_TOKEN: ${{ secrets.PAT_ARGOCD }}
 
   security-scans:
     needs: [build, set-variables]
@@ -137,6 +149,7 @@ jobs:
       packages: write
     uses: kartverket/github-workflows/.github/workflows/run-terraform.yml@v4.0.0
     with:
+      destroy: true
       runner: atkv1-test
       environment: test
       kubernetes_cluster: atkv1-test
@@ -155,6 +168,7 @@ jobs:
     needs: [build, security-scans, deploy-test]
     name: Deploy to prod
     permissions:
+      destroy: true
       id-token: write
       pull-requests: write
       contents: read
