@@ -21,8 +21,12 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 
 const useSelectInteraction = () => {
   const { activePointMode } = useToolbar();
-  const { setActiveOverlayPanel, selectedFeature, setSelectedFeature } =
-    useOverlayPanel();
+  const {
+    closeOverlay,
+    setActiveOverlayPanel,
+    selectedFeature,
+    setSelectedFeature,
+  } = useOverlayPanel();
   const { closeSidebar } = useSidebarPanel();
 
   const select = useMemo(
@@ -55,7 +59,7 @@ const useSelectInteraction = () => {
           closeSidebar();
         }
       } else if (clickedFeatures.length === 0) {
-        setActiveOverlayPanel(null);
+        closeOverlay();
         overlayPopup.setPosition(undefined);
       }
     };

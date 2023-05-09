@@ -7,6 +7,7 @@ import { useToolbar, useToolbarActions } from "contexts/ToolbarContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { Divider, DividerVertical } from "components/Divider";
 
 const Container = styled.div`
   display: flex;
@@ -15,18 +16,6 @@ const Container = styled.div`
 
 const Buttons = styled(Frame)`
   padding: 16px 24px;
-`;
-
-const DividerVertical = styled.hr`
-  width: 1px;
-  border: 1px solid var(--gray_light);
-  margin: 0;
-`;
-
-const Divider = styled.hr`
-  width: 100%;
-  border: 1px solid var(--gray_light);
-  margin: 0;
 `;
 
 const ZoomButtons = styled(Frame)`
@@ -43,7 +32,8 @@ const ButtonToolbar = () => {
     useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const editingType = getCurrentlyEditingType() as string;
-  const { activeOverlayPanel, setActiveOverlayPanel } = useOverlayPanel();
+  const { activeOverlayPanel, setActiveOverlayPanel, closeOverlay } =
+    useOverlayPanel();
   const flatedetaljerIsAvailable =
     editingType === "grunnkrets" || editingType === "stemmekrets";
   const flatedetaljerIsActive =
@@ -52,13 +42,13 @@ const ButtonToolbar = () => {
   const toggleMetadata = () => {
     togglePointMode("metadata");
     if (activeOverlayPanel === "metadata") {
-      setActiveOverlayPanel(null);
+      closeOverlay();
     }
   };
 
   const toggleFlatedetaljer = () => {
     if (flatedetaljerIsActive) {
-      setActiveOverlayPanel(null);
+      closeOverlay();
     } else if (flatedetaljerIsAvailable) {
       setActiveOverlayPanel(editingType);
     }

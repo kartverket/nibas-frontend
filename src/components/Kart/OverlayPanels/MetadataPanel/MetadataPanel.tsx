@@ -3,6 +3,7 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { Panel, PanelHeader, PanelProps } from "../Panel";
 import MetadataGenerelt from "./MetadataGenerelt";
 import MetadataReferanser from "./MetadataReferanser";
+import { Divider } from "components/Divider";
 
 const grenseTypeWithReferanser = [
   "Territorialgrense",
@@ -27,15 +28,8 @@ const Content = styled.div`
   gap: 1rem;
 `;
 
-const Divider = styled.hr`
-  width: 100%;
-  border: 1px solid var(--gray_light);
-  margin: 0;
-`;
-
 const MetadataPanel = ({ isOpen, className }: PanelProps) => {
-  const { selectedFeature, setSelectedFeature, closeOverlay } =
-    useOverlayPanel();
+  const { selectedFeature, closeOverlay } = useOverlayPanel();
 
   const showReferanser = grenseTypeWithReferanser.includes(
     selectedFeature?.get("type") as string
@@ -43,14 +37,7 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
 
   return (
     <SidePanel isOpen={isOpen} className={className}>
-      <PanelHeader
-        onClose={() => {
-          setSelectedFeature(null);
-          closeOverlay();
-        }}
-      >
-        Metadata for grense
-      </PanelHeader>
+      <PanelHeader onClose={closeOverlay}>Metadata for grense</PanelHeader>
       {selectedFeature && (
         <Content>
           <MetadataGenerelt feature={selectedFeature} />
