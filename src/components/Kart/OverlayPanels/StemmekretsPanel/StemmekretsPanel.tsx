@@ -34,6 +34,7 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
 
   const sortedStemmekretser = sortGrenserAlphabetically(stemmekretserByKommune);
 
+  // TODO: bruk useStemmekretser i stedet
   const utkastStemmekretser = useUtkastEntity(
     sortedStemmekretser,
     "stemmekretsendringer"
@@ -99,16 +100,7 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
                   toggleFutureChangesRow={toggleFutureChangesRow}
                 />
                 {isRowOpen(getIdFromEntity(stemmekrets)) && (
-                  <EditRow
-                    stemmekrets={stemmekrets}
-                    kommuneId={kommuneId}
-                    alleStemmekretser={
-                      utkastStemmekretser.filter(
-                        (s) => s.nummer !== stemmekrets.nummer
-                      ) || []
-                    }
-                    toggleRow={toggleRow}
-                  />
+                  <EditRow stemmekrets={stemmekrets} kommuneId={kommuneId} />
                 )}
                 {isFutureChangesOpen(getIdFromEntity(stemmekrets)) && (
                   <tr>

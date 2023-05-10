@@ -1,7 +1,5 @@
 import styled from "styled-components";
 import { StemmekretsRef, StemmekretsResponse } from "types/api";
-import Tabs from "components/Tabs";
-import MergeTab from "./MergeTab";
 import DetailsTab from "./DetailsTab";
 import { useUtkastEntity } from "contexts/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
@@ -10,16 +8,9 @@ import { getIdFromEntity } from "utils/api";
 type Props = {
   stemmekrets: StemmekretsRef;
   kommuneId: string;
-  alleStemmekretser: StemmekretsRef[];
-  toggleRow: (id: string) => void;
 };
 
-const EditRow = ({
-  stemmekrets,
-  kommuneId,
-  alleStemmekretser,
-  toggleRow,
-}: Props) => {
+const EditRow = ({ stemmekrets, kommuneId }: Props) => {
   const stemmekretsId = getIdFromEntity(stemmekrets);
 
   const { data: fullStemmekrets } = useNibasApi("/v1/stemmekretser/{id}", {
@@ -34,23 +25,11 @@ const EditRow = ({
   return (
     <AccordionRow>
       <td colSpan={7}>
-        <Tabs
-          tabTransKeys={[
-            "stemmekrets.tabs.detaljer",
-            "stemmekrets.tabs.slaa-sammen",
-          ]}
-        >
-          <DetailsTab
-            stemmekretsId={stemmekretsId}
-            kommuneId={kommuneId}
-            utkastStemmekrets={utkastStemmekrets}
-          />
-          <MergeTab
-            stemmekrets={utkastStemmekrets}
-            alleStemmekretser={alleStemmekretser}
-            toggleRow={() => toggleRow(stemmekretsId)}
-          />
-        </Tabs>
+        <DetailsTab
+          stemmekretsId={stemmekretsId}
+          kommuneId={kommuneId}
+          utkastStemmekrets={utkastStemmekrets}
+        />
       </td>
     </AccordionRow>
   );

@@ -77,8 +77,8 @@ const KartOverlay = styled.div`
   grid-template-rows: 1fr auto;
   justify-items: center;
   grid-template-areas:
-    "sidebar overlay metadata"
-    "sidebar toolbar metadata";
+    "sidebar overlay sidepanel"
+    "sidebar toolbar sidepanel";
   gap: 16px;
   width: 100%;
   height: 100%;

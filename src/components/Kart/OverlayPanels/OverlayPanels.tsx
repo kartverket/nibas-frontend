@@ -1,4 +1,5 @@
 import GrunnkretsPanel from "./GrunnkretsPanel/GrunnkretsPanel";
+import MergePanel from "./MergePanel/MergePanel";
 import MetadataPanel from "./MetadataPanel/MetadataPanel";
 import StemmekretsPanel from "./StemmekretsPanel/StemmekretsPanel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
@@ -8,9 +9,10 @@ const OverlayPanels = () => {
 
   return (
     <>
-      <MetadataPanel isOpen={activeOverlayPanel === "metadata"} />
       <StemmekretsPanel isOpen={activeOverlayPanel === "stemmekrets"} />
       <GrunnkretsPanel isOpen={activeOverlayPanel === "grunnkrets"} />
+      <MetadataPanel isOpen={activeOverlayPanel === "metadata"} />
+      <MergePanel isOpen={activeOverlayPanel === "sammenslåing"} />
     </>
   );
 };

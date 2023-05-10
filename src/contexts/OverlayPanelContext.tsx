@@ -3,7 +3,12 @@ import LineString from "ol/geom/LineString";
 import React, { createContext, useContext, useState } from "react";
 import { KommuneRef } from "types/api";
 
-type ActiveOverlayPanel = "metadata" | "grunnkrets" | "stemmekrets" | null;
+type ActiveOverlayPanel =
+  | "metadata"
+  | "grunnkrets"
+  | "stemmekrets"
+  | "sammenslåing"
+  | null;
 type SelectedFeature = Feature<LineString> | null;
 type Flatedata = KommuneRef | null;
 

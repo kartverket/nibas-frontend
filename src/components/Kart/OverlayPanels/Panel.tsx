@@ -22,6 +22,14 @@ export const Panel = styled.div<{ isOpen: boolean }>`
   ${(props) => !props.isOpen && "display: none"}
 `;
 
+export const SidePanel = styled(Panel)`
+  grid-area: sidepanel;
+  max-width: 440px;
+  border-radius: unset;
+  margin: 0;
+  border-top: none;
+`;
+
 const PanelHeaderContainer = styled.div`
   position: sticky;
   top: 0;

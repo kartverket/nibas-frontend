@@ -1,23 +1,23 @@
-import { StemmekretsRef } from "../../../../types/api";
+import { StemmekretsResponse } from "../../../../types/api";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import Button from "../../../form/Button";
-import Select from "../../../form/Select";
 import Icon from "../../../Icon/Icon";
 import { useFieldArray, useFormContext } from "react-hook-form";
-import { SammenslaaingFormData } from "./SammanslaaingForm";
-import { ChangeEvent, forwardRef, InputHTMLAttributes } from "react";
-import { ErrorMessage, ValidationError } from "../../../form/Input/Input";
+import { MergeFormData } from "./MergeForm";
+import { ChangeEvent, InputHTMLAttributes } from "react";
+import { MergeSelect } from "./MergeSelect";
 
-type SammenslaaingMultiselectProps = {
+type MergeMultiselectProps = {
   stemmekretsnavn: string;
-  alleStemmekretser: StemmekretsRef[];
+  alleStemmekretser: StemmekretsResponse[];
 };
 
-export const SammenslaaingMultiselect = ({
+// TODO: må filtrere ut stemmekretsen som allerede er valgt
+export const MergeMultiselect = ({
   stemmekretsnavn,
   alleStemmekretser,
-}: SammenslaaingMultiselectProps) => {
+}: MergeMultiselectProps) => {
   const { t } = useTranslation();
   const {
     control,
@@ -25,7 +25,7 @@ export const SammenslaaingMultiselect = ({
     trigger,
     getValues,
     formState: { errors, isSubmitted },
-  } = useFormContext<SammenslaaingFormData>();
+  } = useFormContext<MergeFormData>();
   const { fields, append, remove } = useFieldArray({
     control,
     name: "stemmekretsNummerTilSammenslaaing",
@@ -70,7 +70,7 @@ export const SammenslaaingMultiselect = ({
       <MultiSelectWrapper>
         {fields.map((field, index) => {
           return (
-            <StemmekretsSelect
+            <MergeSelect
               key={field.id}
               {...triggerRevalidateOnChange(
                 register(
@@ -98,87 +98,8 @@ export const SammenslaaingMultiselect = ({
   );
 };
 
-type StemmekretsSelectProps = {
-  onRemove: () => unknown;
-  showRemoveButton: boolean;
-  stemmekretser: StemmekretsRef[];
-  validationError?: ValidationError;
-} & InputHTMLAttributes<HTMLSelectElement>;
-
-export const StemmekretsSelect = forwardRef<
-  HTMLDivElement,
-  StemmekretsSelectProps
->(
-  (
-    {
-      onRemove,
-      stemmekretser,
-      showRemoveButton,
-      validationError,
-      ...inputProps
-    },
-    ref
-  ) => {
-    const { t } = useTranslation();
-    return (
-      <StemmekretsSelectWrapper ref={ref}>
-        <StemmekretsSelectStyle
-          {...inputProps}
-          defaultValue="default"
-          label={t("stemmekrets.sammenslaaing.label")}
-        >
-          <option value={"default"} disabled>
-            {t("stemmekrets.sammenslaaing.actions.velg")}
-          </option>
-          {stemmekretser.map((s) => (
-            <option key={s.nummer} value={s.nummer}>
-              {`${s.nummer} - ${s.navn}`}
-            </option>
-          ))}
-        </StemmekretsSelectStyle>
-        {showRemoveButton && (
-          <RemoveButton onClick={onRemove}>Fjern</RemoveButton>
-        )}
-        {validationError?.showError && (
-          <StemmekretsErrorMessage>
-            <Icon icon="warning_amber" />
-            {validationError.message}
-          </StemmekretsErrorMessage>
-        )}
-      </StemmekretsSelectWrapper>
-    );
-  }
-);
-
-StemmekretsSelect.displayName = "StemmekretsSelect";
-
-const StemmekretsSelectWrapper = styled.div`
-  display: grid;
-  align-items: center;
-  gap: 10px;
-
-  grid-template-columns: 450px auto;
-  grid-template-areas:
-    "select fjern"
-    "error .";
-`;
-
-const StemmekretsErrorMessage = styled(ErrorMessage)`
-  grid-area: error;
-`;
-
 const Stemmekretsnavn = styled.span`
   font-weight: 900;
-`;
-
-const RemoveButton = styled(Button).attrs(() => ({ variant: "tertiary" }))`
-  grid-area: fjern;
-  margin-top: 26px;
-  background: transparent;
-
-  :hover {
-    background: transparent;
-  }
 `;
 
 const MultiSelectWrapper = styled.div`
@@ -198,8 +119,4 @@ const LeggTilFlerButton = styled(Button).attrs(() => ({
   :hover {
     background: transparent;
   }
-`;
-
-const StemmekretsSelectStyle = styled(Select)`
-  grid-area: select;
 `;

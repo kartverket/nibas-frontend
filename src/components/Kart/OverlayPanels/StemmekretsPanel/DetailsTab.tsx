@@ -7,7 +7,6 @@ import useKretsToolbarSync from "contexts/ToolbarContext/useToolbarFormSync";
 import { StemmekretsRequest, StemmekretsResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import styled from "styled-components";
-import { Section } from "./components";
 import { getRepresentasjonspunktId } from "utils/map/source";
 import { updateEditFeatureText } from "utils/map/layerStyles";
 import Button from "components/form/Button";
@@ -216,7 +215,9 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
   );
 };
 
-const DetailsSection = styled(Section)`
+const DetailsSection = styled.div`
+  background-color: var(--gray_light);
+  padding: 30px 24px;
   display: grid;
   grid-template-columns: 185px 350px;
   gap: 30px 12px;

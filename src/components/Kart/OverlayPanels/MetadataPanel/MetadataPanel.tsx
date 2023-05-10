@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { Panel, PanelHeader, PanelProps } from "../Panel";
+import { PanelHeader, PanelProps, SidePanel } from "../Panel";
 import MetadataGenerelt from "./MetadataGenerelt";
 import MetadataReferanser from "./MetadataReferanser";
 import { Divider } from "components/Divider";
@@ -13,14 +13,6 @@ const grenseTypeWithReferanser = [
   "Riksgrense",
   "Grunnlinje",
 ];
-
-const SidePanel = styled(Panel)`
-  grid-area: metadata;
-  max-width: 440px;
-  border-radius: unset;
-  margin: 0;
-  border-top: none;
-`;
 
 const Content = styled.div`
   display: flex;

@@ -8,6 +8,7 @@ import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { Divider, DividerVertical } from "components/Divider";
+import { useSidebarPanel } from "contexts/SidebarPanelContext";
 
 const Container = styled.div`
   display: flex;
@@ -34,13 +35,17 @@ const ButtonToolbar = () => {
   const editingType = getCurrentlyEditingType() as string;
   const { activeOverlayPanel, setActiveOverlayPanel, closeOverlay } =
     useOverlayPanel();
+  const { closeSidebar } = useSidebarPanel();
   const flatedetaljerIsAvailable =
     editingType === "grunnkrets" || editingType === "stemmekrets";
   const flatedetaljerIsActive =
     activeOverlayPanel === "grunnkrets" || activeOverlayPanel === "stemmekrets";
+  const mergeIsAvailable = editingType === "stemmekrets";
+  const mergeIsActive = activeOverlayPanel === "sammenslåing";
 
   const toggleMetadata = () => {
     togglePointMode("metadata");
+
     if (activeOverlayPanel === "metadata") {
       closeOverlay();
     }
@@ -51,6 +56,15 @@ const ButtonToolbar = () => {
       closeOverlay();
     } else if (flatedetaljerIsAvailable) {
       setActiveOverlayPanel(editingType);
+    }
+  };
+
+  const toggleMergePanel = () => {
+    if (mergeIsActive) {
+      closeOverlay();
+    } else {
+      setActiveOverlayPanel("sammenslåing");
+      closeSidebar();
     }
   };
 
@@ -112,6 +126,16 @@ const ButtonToolbar = () => {
         <DividerVertical />
         {flatedetaljerIsAvailable && (
           <>
+            {mergeIsAvailable && (
+              <ModeButton
+                icon="merge"
+                ariaLabel="Slå sammen stemmekretser"
+                isActive={mergeIsActive}
+                onClick={toggleMergePanel}
+              >
+                Slå sammen
+              </ModeButton>
+            )}
             <ModeButton
               icon="feed"
               ariaLabel="Vis flatedetaljer"
