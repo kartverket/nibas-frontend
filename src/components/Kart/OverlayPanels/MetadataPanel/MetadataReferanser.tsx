@@ -6,7 +6,7 @@ import { ObjectEvent } from "ol/Object";
 import { Control, useFieldArray, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { addMetadataEntryFromFeature } from "../utils";
+import { addMetadataEntryFromFeature } from "./utils";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Icon from "components/Icon";

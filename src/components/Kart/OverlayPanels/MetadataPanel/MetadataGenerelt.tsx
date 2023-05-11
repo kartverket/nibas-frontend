@@ -6,7 +6,7 @@ import { Metadata, FeatureProperties } from "types/api";
 import Input from "components/form/Input";
 import Textarea from "components/form/Input/Textarea";
 import useMetadataForm from "components/Kart/OverlayPanels/hooks/useMetadataForm";
-import { getDateInFriendlyString } from "components/Kart/OverlayPanels/utils";
+import { getDateInFriendlyString } from "components/Kart/OverlayPanels/MetadataPanel/utils";
 import AsyncKodelisteSelect from "./AsyncKodelisteSelect";
 import { Divider } from "components/Divider";
 import Button from "components/form/Button/Button";

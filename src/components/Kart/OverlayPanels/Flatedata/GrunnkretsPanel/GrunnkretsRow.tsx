@@ -1,7 +1,6 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
 import Input from "components/form/Input";
 import { GrunnkretsEntry, useToolbarSaving } from "contexts/ToolbarContext";
 import useKretsToolbarSync from "contexts/ToolbarContext/useToolbarFormSync";
@@ -16,7 +15,11 @@ import useTimer from "hooks/useTimer";
 import { getIdFromEntity } from "utils/api";
 import { updateEditFeatureText } from "utils/map/layerStyles";
 import { getRepresentasjonspunktId } from "utils/map/source";
+import InputCell from "../InputCell";
+import { KretsRow } from "../KretsTable";
+import EditAndSaveButton from "../EditAndSaveButton";
 
+// TODO: ta inn en hel GrunnkretsResponse i stedet, må kanskje lage useGrunnkretser
 type Props = {
   grunnkrets: GrunnkretsRef;
   kommuneId: string;
@@ -40,8 +43,12 @@ const fromFormToRequest = (
 });
 
 const EditRow = ({ grunnkrets, kommuneId }: Props) => {
+  const [isEditing, setIsEditing] = useState(false);
   const grunnkretsId = getIdFromEntity(grunnkrets);
+
   const { t } = useTranslation();
+
+  // TODO: bytt ut de greiene her antageligvis
   const { data: fullGrunnkrets } = useNibasApi("/v1/grunnkretser/{id}", {
     id: grunnkretsId,
   });
@@ -112,30 +119,26 @@ const EditRow = ({ grunnkrets, kommuneId }: Props) => {
   };
 
   return (
-    <AccordionRow>
-      <td>
+    <KretsRow>
+      <InputCell data={grunnkrets.grunnkretsnummer} isEditing={isEditing}>
         <Input
           label={t("grunnkrets.Grunnkretsnummer")}
           {...register("grunnkretsnummer", registerOptions)}
         />
-      </td>
-      <td>
+      </InputCell>
+      <InputCell
+        data={getNavnInSpraak(grunnkrets.navn, "nor")}
+        isEditing={isEditing}
+      >
         <Input
           label={t("grunnkrets.Grunnkretsnavn")}
           {...register("navn", registerOptions)}
         />
-      </td>
-      <td colSpan={2} />
-    </AccordionRow>
+      </InputCell>
+      <td>{/* TOOD: hvorfor er det tomt her? */}</td>
+      <EditAndSaveButton isEditing={isEditing} setIsEditing={setIsEditing} />
+    </KretsRow>
   );
 };
-
-const AccordionRow = styled.tr`
-  background-color: var(--gray_light);
-
-  td {
-    padding: 16px 16px 32px;
-  }
-`;
 
 export default EditRow;

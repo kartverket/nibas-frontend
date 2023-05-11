@@ -1,7 +1,7 @@
-import GrunnkretsPanel from "./GrunnkretsPanel/GrunnkretsPanel";
+import GrunnkretsPanel from "./Flatedata/GrunnkretsPanel/GrunnkretsPanel";
 import MergePanel from "./MergePanel/MergePanel";
 import MetadataPanel from "./MetadataPanel/MetadataPanel";
-import StemmekretsPanel from "./StemmekretsPanel/StemmekretsPanel";
+import StemmekretsPanel from "./Flatedata/StemmekretsPanel/StemmekretsPanel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 
 const OverlayPanels = () => {

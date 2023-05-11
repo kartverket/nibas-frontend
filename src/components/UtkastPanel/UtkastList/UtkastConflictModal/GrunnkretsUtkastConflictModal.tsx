@@ -1,6 +1,6 @@
 import Checkbox from "components/Checkbox";
 import Input from "components/form/Input";
-import { ButtonCell } from "components/Kart/OverlayPanels/KretsTable";
+import { ButtonCell } from "components/Kart/OverlayPanels/Flatedata/KretsTable";
 import { useTranslation } from "react-i18next";
 import {
   FramtidigVersjonConflict,

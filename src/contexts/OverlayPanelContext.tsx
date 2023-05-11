@@ -27,6 +27,7 @@ export const OverlayPanelContext = createContext<
 >(undefined);
 
 export const OverlayPanelProvider: React.FC = ({ children }) => {
+  // TODO: vurder om vi skal eksponere en wrapper for setActiveOverlayPanel som lukker sidebar
   const [activeOverlayPanel, setActiveOverlayPanel] =
     useState<ActiveOverlayPanel>(null);
 

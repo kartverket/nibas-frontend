@@ -1,7 +1,5 @@
-import Button from "components/form/Button";
 import CloseButton from "components/form/Button/CloseButton";
 import Heading from "components/typography/Heading";
-import { Outline } from "style/mixins";
 import styled from "styled-components";
 
 export type PanelProps = {
@@ -17,7 +15,7 @@ export const Panel = styled.div<{ isOpen: boolean }>`
   border-radius: 12px;
   box-shadow: 4px 4px 12px 0 rgba(0, 0, 0, 0.15);
   width: 100%;
-  max-width: 1000px;
+  max-width: 1250px;
   overflow: auto;
   ${(props) => !props.isOpen && "display: none"}
 `;
@@ -58,25 +56,3 @@ export const PanelHeader: React.FC<{ onClose: () => void }> = ({
     <CloseButton onClick={onClose} />
   </PanelHeaderContainer>
 );
-
-export const ToggleableKretsButton = styled(Button).attrs(() => ({
-  variant: "unstyled",
-}))<{ isOpen: boolean }>`
-  position: relative;
-  border-radius: 50%;
-  padding: 5px;
-
-  background-color: ${({ isOpen }) => isOpen && "var(--blue_dark)"};
-  color: ${({ isOpen }) => isOpen && "var(--white)"};
-  transition: background-color 0.2s, color 0.2s;
-
-  &:hover,
-  &:focus-visible {
-    color: ${({ isOpen }) => !isOpen && "var(--blue_dark)"};
-    background: ${({ isOpen }) => !isOpen && "var(--blue_light)"};
-  }
-
-  &:focus-visible {
-    ${Outline};
-  }
-`;

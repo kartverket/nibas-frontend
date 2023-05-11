@@ -1,9 +1,10 @@
-import Icon from "components/Icon";
 import styled from "styled-components";
+import Icon from "components/Icon";
+import Button from "components/form/Button";
+import { Outline } from "style/mixins";
 import { KretsRef } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { getNavnInSpraak } from "utils/language/language";
-import { ToggleableKretsButton } from "./Panel";
 
 type Props = {
   krets: KretsRef;
@@ -28,6 +29,28 @@ const FutureChangesButton = ({ isOpen, toggleRow, krets }: Props) => {
     </ToggleableKretsButton>
   );
 };
+
+const ToggleableKretsButton = styled(Button).attrs(() => ({
+  variant: "unstyled",
+}))<{ isOpen: boolean }>`
+  position: relative;
+  border-radius: 50%;
+  padding: 5px;
+
+  background-color: ${({ isOpen }) => isOpen && "var(--blue_dark)"};
+  color: ${({ isOpen }) => isOpen && "var(--white)"};
+  transition: background-color 0.2s, color 0.2s;
+
+  &:hover,
+  &:focus-visible {
+    color: ${({ isOpen }) => !isOpen && "var(--blue_dark)"};
+    background: ${({ isOpen }) => !isOpen && "var(--blue_light)"};
+  }
+
+  &:focus-visible {
+    ${Outline};
+  }
+`;
 
 const Badge = styled.span`
   position: absolute;
