@@ -6,7 +6,6 @@ const Container = styled.label`
   flex-direction: column;
   gap: 8px;
   color: var(--black);
-  font-weight: 700;
 `;
 
 type Props = { label: string } & LabelHTMLAttributes<HTMLLabelElement>;

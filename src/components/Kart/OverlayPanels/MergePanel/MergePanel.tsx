@@ -26,11 +26,16 @@ import { deduplicate, removeNull } from "utils/list-utils";
 import { MergeMultiselect } from "./MergeMultiselect";
 import Select from "components/form/Select/Select";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
+import Heading from "components/typography/Heading";
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
   gap: 16px;
+`;
+
+const SectionHeading = styled(Heading)`
+  margin: 0;
 `;
 
 const InputsWrapper = styled.div`
@@ -155,10 +160,14 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
   });
 
   const mergeStemmekrets = async (nyttUtkast: CreateUtkastCallbackArgument) => {
-    const selectedStemmekrets = getValues("stemmekrets");
+    const selectedStemmekretsValue = getValues("stemmekrets");
     const stemmekretsNummerTilSammenslaaing: string[] = getValues(
       "stemmekretsNummerTilSammenslaaing"
     ).map((s) => s.value);
+
+    const selectedStemmekrets = getStemmekretsByNummer(
+      selectedStemmekretsValue
+    );
 
     const stemmekretsTilSammenslaaingListe = removeNull(
       stemmekretsNummerTilSammenslaaing.map((s) => getStemmekretsByNummer(s))
@@ -179,6 +188,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
       };
       updateUtkast(nyttUtkast.id, updateUtkastRequest);
       const sammenslaaingsStemmekretsIder = getStemmekretsIdList(
+        selectedStemmekrets,
         stemmekretsTilSammenslaaingListe
       );
 
@@ -211,9 +221,9 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
   };
 
   const getStemmekretsIdList = (
+    selectedStemmekrets: StemmekretsResponse,
     stemmekretserTilSammenslaaing: StemmekretsResponse[]
   ) => {
-    const selectedStemmekrets = getValues("stemmekrets");
     const stemmekretsIderTilSammenslaaing = stemmekretserTilSammenslaaing.map(
       (stemmekretsRef) => stemmekretsRef.id.lokalid.value
     );
@@ -246,27 +256,35 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
       {utkastStemmekretser && (
         <FormProvider {...formMethods}>
           <Form onSubmit={handleSubmit(openCreateUtkastModal)}>
-            <p>TODO: Hvilken stemmekrets skal brukes som utgangspunkt?</p>
-            <Select {...register("stemmekrets")} defaultValue="default">
+            <SectionHeading tag="h3" size="xs">
+              Hvilken stemmekrets skal brukes som utgangspunkt?
+            </SectionHeading>
+            <Select
+              {...register("stemmekrets")}
+              defaultValue="default"
+              label="Stemmekrets"
+            >
               <option value={"default"} disabled>
                 {t("stemmekrets.sammenslaaing.actions.velg")}
               </option>
               {utkastStemmekretser.map((stemmekrets) => (
                 <option
                   key={stemmekrets.id.lokalid.value}
-                  value={stemmekrets.id.lokalid.value}
+                  value={stemmekrets.stemmekretsnummer}
                 >
                   {`${stemmekrets.stemmekretsnummer} - ${stemmekrets.stemmekretsnavn}`}
                 </option>
               ))}
             </Select>
             <Divider />
-            <MergeMultiselect
-              stemmekretsnavn={getValues("stemmekrets.stemmekretsnavn") ?? ""}
-              alleStemmekretser={utkastStemmekretser}
-            />
+            <SectionHeading tag="h3" size="xs">
+              Hvilke stemmekretser ønsker du å slå sammen med denne kretsen?
+            </SectionHeading>
+            <MergeMultiselect alleStemmekretser={utkastStemmekretser} />
             <Divider />
-            <p>TODO: Hva skal den sammenslåtte stemmekretsen hete?</p>
+            <SectionHeading tag="h3" size="xs">
+              Hva skal den sammenslåtte stemmekretsen hete?
+            </SectionHeading>
             <InputsWrapper>
               <Input
                 label={t(

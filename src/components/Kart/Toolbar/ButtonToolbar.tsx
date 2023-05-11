@@ -25,6 +25,7 @@ const ZoomButtons = styled(Frame)`
   padding: 8px 4px;
 `;
 
+// TODO: en eller annen måte å skjule knapper under en "mer"-meny ved mindre skjerm
 // TODO: vurder om punkt og linje-knapper bør skjules inntil man er i redigeringsmodus
 const ButtonToolbar = () => {
   const { t } = useTranslation();

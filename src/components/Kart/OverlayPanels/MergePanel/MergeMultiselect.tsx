@@ -9,13 +9,11 @@ import { ChangeEvent, InputHTMLAttributes } from "react";
 import { MergeSelect } from "./MergeSelect";
 
 type MergeMultiselectProps = {
-  stemmekretsnavn: string;
   alleStemmekretser: StemmekretsResponse[];
 };
 
 // TODO: må filtrere ut stemmekretsen som allerede er valgt
 export const MergeMultiselect = ({
-  stemmekretsnavn,
   alleStemmekretser,
 }: MergeMultiselectProps) => {
   const { t } = useTranslation();
@@ -62,48 +60,35 @@ export const MergeMultiselect = ({
   };
 
   return (
-    <section>
-      <p>
-        {t("stemmekrets.sammenslaaing.undertittel")}{" "}
-        <Stemmekretsnavn>{stemmekretsnavn}</Stemmekretsnavn>?
-      </p>
-      <MultiSelectWrapper>
-        {fields.map((field, index) => {
-          return (
-            <MergeSelect
-              key={field.id}
-              {...triggerRevalidateOnChange(
-                register(
-                  `stemmekretsNummerTilSammenslaaing.${index}.value`,
-                  multiselectValidator
-                )
-              )}
-              onRemove={() => remove(index)}
-              stemmekretser={alleStemmekretser}
-              showRemoveButton={fields.length > 1}
-              validationError={{
-                showError: !!errors?.stemmekretsNummerTilSammenslaaing?.[index],
-                message:
-                  errors?.stemmekretsNummerTilSammenslaaing?.[index]?.value
-                    ?.message ?? "",
-              }}
-            />
-          );
-        })}
-        <LeggTilFlerButton onClick={() => append({ value: "default" })}>
-          {t("stemmekrets.sammenslaaing.actions.legg-til-flere")}
-        </LeggTilFlerButton>
-      </MultiSelectWrapper>
-    </section>
+    <MultiSelectWrapper>
+      {fields.map((field, index) => (
+        <MergeSelect
+          key={field.id}
+          {...triggerRevalidateOnChange(
+            register(
+              `stemmekretsNummerTilSammenslaaing.${index}.value`,
+              multiselectValidator
+            )
+          )}
+          onRemove={() => remove(index)}
+          stemmekretser={alleStemmekretser}
+          showRemoveButton={fields.length > 1}
+          validationError={{
+            showError: !!errors?.stemmekretsNummerTilSammenslaaing?.[index],
+            message:
+              errors?.stemmekretsNummerTilSammenslaaing?.[index]?.value
+                ?.message ?? "",
+          }}
+        />
+      ))}
+      <LeggTilFlerButton onClick={() => append({ value: "default" })}>
+        {t("stemmekrets.sammenslaaing.actions.legg-til-flere")}
+      </LeggTilFlerButton>
+    </MultiSelectWrapper>
   );
 };
 
-const Stemmekretsnavn = styled.span`
-  font-weight: 900;
-`;
-
 const MultiSelectWrapper = styled.div`
-  margin-top: 40px;
   display: flex;
   flex-direction: column;
   gap: 18px;
