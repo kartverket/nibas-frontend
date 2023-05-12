@@ -1,39 +1,30 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import GrunnkretsRow from "./GrunnkretsRow";
 import { useUtkastEntity } from "contexts/UtkastContext";
-import useNibasApi from "hooks/useNibasApi";
 import useSearch from "hooks/useSearch";
-import { GrunnkretsRef } from "types/api";
-import { sortGrenserAlphabetically } from "utils/language/language";
+import { GrunnkretsResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { Panel, PanelHeader, PanelProps } from "../../Panel";
 import { KretsTable } from "../KretsTable";
+import { useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 
 const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
-  const { flatedata, closeOverlay } = useOverlayPanel();
-  const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
   const { t } = useTranslation();
+  const { flatedata, closeOverlay } = useOverlayPanel();
   const { searchValue } = useSearch();
+  const [activeEditingGrunnkrets, setActiveEditingGrunnkrets] =
+    useState<GrunnkretsResponse | null>(null);
 
-  const { data: grunnkretserByKommune } = useNibasApi(
-    kommuneId ? "/v1/kommuner/{id}/grunnkretser" : null,
-    {
-      id: kommuneId,
-    }
-  );
-
-  const sortedGrunnkretser = useMemo(
-    () => sortGrenserAlphabetically(grunnkretserByKommune),
-    [grunnkretserByKommune]
-  );
-
+  // TODO: sorter etter navn eller nummer
+  const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
+  const { data: grunnkretserByKommune } = useKommuneGrunnkretser(kommuneId);
   const utkastGrunnkretser = useUtkastEntity(
-    sortedGrunnkretser,
+    grunnkretserByKommune,
     "grunnkretsendringer"
-  ) as GrunnkretsRef[] | undefined;
+  ) as GrunnkretsResponse[] | undefined;
 
   // TODO: sjekk om søk fortsatt skal være en greie
   const filteredGrunnkretser = useMemo(() => {
@@ -46,10 +37,14 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
     );
   }, [searchValue, utkastGrunnkretser]);
 
+  //const formMethods = useForm<Inputs>();
+  //const { handleSubmit, getValues } = formMethods;
+
   if (!flatedata) {
     return null;
   }
 
+  // TODO: legg til form her også
   // TODO: legg til fremtidige endringer igjen
   return (
     <Panel isOpen={isOpen} className={className}>
@@ -74,6 +69,13 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
                 key={getIdFromEntity(grunnkrets)}
                 grunnkrets={grunnkrets}
                 kommuneId={kommuneId}
+                isEditing={
+                  activeEditingGrunnkrets
+                    ? getIdFromEntity(grunnkrets) ===
+                      getIdFromEntity(activeEditingGrunnkrets)
+                    : false
+                }
+                setActiveEditingGrunnkrets={setActiveEditingGrunnkrets}
               />
             ))}
           </tbody>

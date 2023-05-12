@@ -1,29 +1,15 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef } from "react";
 import { useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import Input from "components/form/Input";
 import { GrunnkretsEntry, useToolbarSaving } from "contexts/ToolbarContext";
 import useKretsToolbarSync from "contexts/ToolbarContext/useToolbarFormSync";
-import useNibasApi from "hooks/useNibasApi";
-import {
-  GrunnkretsRef,
-  GrunnkretsRequest,
-  GrunnkretsResponse,
-} from "types/api";
+import { GrunnkretsRequest, GrunnkretsResponse } from "types/api";
 import { getNavnInSpraak } from "utils/language/language";
-import useTimer from "hooks/useTimer";
 import { getIdFromEntity } from "utils/api";
 import { updateEditFeatureText } from "utils/map/layerStyles";
 import { getRepresentasjonspunktId } from "utils/map/source";
 import InputCell from "../InputCell";
 import { KretsRow } from "../KretsTable";
 import EditAndSaveButton from "../EditAndSaveButton";
-
-// TODO: ta inn en hel GrunnkretsResponse i stedet, må kanskje lage useGrunnkretser
-type Props = {
-  grunnkrets: GrunnkretsRef;
-  kommuneId: string;
-};
 
 type Inputs = {
   navn: string;
@@ -42,17 +28,24 @@ const fromFormToRequest = (
   grunnkretsnummer: data.grunnkretsnummer,
 });
 
-const EditRow = ({ grunnkrets, kommuneId }: Props) => {
-  const [isEditing, setIsEditing] = useState(false);
+// TODO: ta inn en hel GrunnkretsResponse i stedet, må kanskje lage useGrunnkretser
+type Props = {
+  grunnkrets: GrunnkretsResponse;
+  kommuneId: string;
+  isEditing: boolean;
+  setActiveEditingGrunnkrets: (
+    activeEditingGrunnkrets: GrunnkretsResponse | null
+  ) => void;
+};
+
+const GrunnkretsRow = ({
+  grunnkrets,
+  kommuneId,
+  isEditing,
+  setActiveEditingGrunnkrets,
+}: Props) => {
   const grunnkretsId = getIdFromEntity(grunnkrets);
-
-  const { t } = useTranslation();
-
-  // TODO: bytt ut de greiene her antageligvis
-  const { data: fullGrunnkrets } = useNibasApi("/v1/grunnkretser/{id}", {
-    id: grunnkretsId,
-  });
-  const { startTimer, clearTimer } = useTimer();
+  const { addEntry } = useToolbarSaving();
 
   const { register, getValues, setValue } = useForm<Inputs>({
     defaultValues: {
@@ -62,9 +55,6 @@ const EditRow = ({ grunnkrets, kommuneId }: Props) => {
   });
 
   const previousValues = useRef<Inputs>(getValues());
-
-  const { addEntry } = useToolbarSaving();
-
   const setFormValues = useCallback(
     (change: GrunnkretsEntry["changes"][number], direction: "to" | "from") => {
       const newName = change[direction]?.navn;
@@ -88,57 +78,54 @@ const EditRow = ({ grunnkrets, kommuneId }: Props) => {
   });
 
   const onChange = () => {
-    clearTimer();
-
-    if (!fullGrunnkrets) return;
-
-    startTimer(() => {
-      const newValues = getValues();
-      addEntry({
-        type: "grunnkrets",
-        kommuneId,
-        changes: [
-          {
-            from: fromFormToRequest(previousValues.current, fullGrunnkrets),
-            to: fromFormToRequest(newValues, fullGrunnkrets),
-            id: grunnkretsId,
-          },
-        ],
-      });
-      previousValues.current = newValues;
-      updateEditFeatureText(
-        getRepresentasjonspunktId(grunnkretsId),
-        newValues.navn,
-        newValues.grunnkretsnummer
-      );
-    }, 700);
+    const newValues = getValues();
+    addEntry({
+      type: "grunnkrets",
+      kommuneId,
+      changes: [
+        {
+          from: fromFormToRequest(previousValues.current, grunnkrets),
+          to: fromFormToRequest(newValues, grunnkrets),
+          id: grunnkretsId,
+        },
+      ],
+    });
+    previousValues.current = newValues;
+    updateEditFeatureText(
+      getRepresentasjonspunktId(grunnkretsId),
+      newValues.navn,
+      newValues.grunnkretsnummer
+    );
   };
 
-  const registerOptions = {
-    onChange,
+  const toggleEditing = () => {
+    if (isEditing) {
+      setActiveEditingGrunnkrets(null);
+    } else {
+      setActiveEditingGrunnkrets(grunnkrets);
+    }
   };
 
   return (
     <KretsRow>
-      <InputCell data={grunnkrets.grunnkretsnummer} isEditing={isEditing}>
-        <Input
-          label={t("grunnkrets.Grunnkretsnummer")}
-          {...register("grunnkretsnummer", registerOptions)}
-        />
-      </InputCell>
       <InputCell
-        data={getNavnInSpraak(grunnkrets.navn, "nor")}
         isEditing={isEditing}
-      >
-        <Input
-          label={t("grunnkrets.Grunnkretsnavn")}
-          {...register("navn", registerOptions)}
-        />
-      </InputCell>
+        data={grunnkrets.grunnkretsnummer}
+        {...register("grunnkretsnummer")}
+      />
+      <InputCell
+        isEditing={isEditing}
+        data={getNavnInSpraak(grunnkrets.navn, "nor")}
+        {...register("navn")}
+      />
       <td>{/* TOOD: hvorfor er det tomt her? */}</td>
-      <EditAndSaveButton isEditing={isEditing} setIsEditing={setIsEditing} />
+      <EditAndSaveButton
+        isEditing={isEditing}
+        toggleEditing={toggleEditing}
+        onSubmit={() => console.log("TODO")}
+      />
     </KretsRow>
   );
 };
 
-export default EditRow;
+export default GrunnkretsRow;

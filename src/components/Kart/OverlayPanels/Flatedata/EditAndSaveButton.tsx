@@ -2,51 +2,57 @@ import Icon from "components/Icon";
 import Button from "components/form/Button";
 import styled from "styled-components";
 
-const EditButton = styled(Button)``;
+const EditButton = styled(Button)`
+  width: 100%;
+  white-space: nowrap;
+`;
 
 const SaveAndDiscard = styled.div`
   display: flex;
-  gap: 4px;
 `;
 
-const SaveButton = styled(Button)``;
+const SaveButton = styled(Button)`
+  width: 100%;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+`;
 
-const DiscardButton = styled(Button)``;
+const DiscardButton = styled(Button)`
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+`;
 
 type Props = {
   isEditing: boolean;
-  setIsEditing: (isEditing: boolean) => void;
+  onSubmit: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  toggleEditing: () => void;
 };
 
-const EditAndSaveButton = ({ isEditing, setIsEditing }: Props) => {
-  // TODO: håndter submit med react hook form, må sikekrt få inn noen props
-
-  return (
-    <td>
-      {isEditing ? (
-        <EditButton
-          aria-label="Åpne redigering"
-          onClick={() => setIsEditing(true)}
+const EditAndSaveButton = ({ isEditing, toggleEditing, onSubmit }: Props) => (
+  <td>
+    {isEditing ? (
+      <SaveAndDiscard>
+        <SaveButton
+          aria-label="Lagre endringer"
+          onClick={onSubmit}
+          icon={<Icon icon="save" />}
         >
-          Endre detaljer
-          <Icon icon="settings" />
-        </EditButton>
-      ) : (
-        <SaveAndDiscard>
-          <SaveButton aria-label="Lukk redigering">
-            Lagre endringer
-            <Icon icon="save" />
-          </SaveButton>
-          <DiscardButton
-            aria-label="Forkast endringer"
-            onClick={() => setIsEditing(false)}
-          >
-            <Icon icon="cross" />
-          </DiscardButton>
-        </SaveAndDiscard>
-      )}
-    </td>
-  );
-};
+          Lagre
+        </SaveButton>
+        <DiscardButton aria-label="Forkast endringer" onClick={toggleEditing}>
+          <Icon icon="close" />
+        </DiscardButton>
+      </SaveAndDiscard>
+    ) : (
+      <EditButton
+        aria-label="Åpne redigering"
+        onClick={toggleEditing}
+        icon={<Icon icon="settings" />}
+      >
+        Endre detaljer
+      </EditButton>
+    )}
+  </td>
+);
 
 export default EditAndSaveButton;

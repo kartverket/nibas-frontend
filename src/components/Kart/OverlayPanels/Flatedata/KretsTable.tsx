@@ -3,10 +3,12 @@ import styled from "styled-components";
 export const KretsTable = styled.table`
   width: 100%;
   border-spacing: 0;
+  table-layout: fixed;
 
   td,
   th {
     padding: 16px;
+    width: 100%;
   }
 
   th {
@@ -16,9 +18,10 @@ export const KretsTable = styled.table`
   }
 `;
 
-// TODO: sjekk om denne skal ha hover på samme måte som før
+// TODO: sjekk om denne skal ha hover på samme måte som før, må kanskje ha isActive igjen
 export const KretsRow = styled.tr`
   position: relative;
+  vertical-align: baseline;
 
   ::after {
     content: "";
