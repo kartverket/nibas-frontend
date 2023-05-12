@@ -3,7 +3,6 @@ import Button from "components/form/Button";
 import styled from "styled-components";
 
 const EditButton = styled(Button)`
-  width: 100%;
   white-space: nowrap;
 `;
 
@@ -24,11 +23,17 @@ const DiscardButton = styled(Button)`
 
 type Props = {
   isEditing: boolean;
+  canSave: boolean;
   onSubmit: (event: React.MouseEvent<HTMLButtonElement>) => void;
   toggleEditing: () => void;
 };
 
-const EditAndSaveButton = ({ isEditing, toggleEditing, onSubmit }: Props) => (
+const EditAndSaveButton = ({
+  isEditing,
+  toggleEditing,
+  canSave,
+  onSubmit,
+}: Props) => (
   <td>
     {isEditing ? (
       <SaveAndDiscard>
@@ -36,6 +41,7 @@ const EditAndSaveButton = ({ isEditing, toggleEditing, onSubmit }: Props) => (
           aria-label="Lagre endringer"
           onClick={onSubmit}
           icon={<Icon icon="save" />}
+          disabled={!canSave}
         >
           Lagre
         </SaveButton>

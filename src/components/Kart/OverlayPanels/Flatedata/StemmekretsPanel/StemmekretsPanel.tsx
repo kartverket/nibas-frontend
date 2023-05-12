@@ -12,13 +12,17 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
   const { t } = useTranslation();
   const { flatedata, closeOverlay } = useOverlayPanel();
 
-  // TODO: sorter etter navn eller nummer?
   const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
   const { data: stemmekretserByKommune } = useKommuneStemmekretser(kommuneId);
   const utkastStemmekretser = useUtkastEntity(
     stemmekretserByKommune,
     "stemmekretsendringer"
   ) as StemmekretsResponse[] | undefined;
+
+  const sortByStemmekretsnummer = (
+    a: StemmekretsResponse,
+    b: StemmekretsResponse
+  ) => parseInt(a.stemmekretsnummer) - parseInt(b.stemmekretsnummer);
 
   return (
     <Panel isOpen={isOpen} className={className}>
@@ -37,10 +41,7 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
           </thead>
           <tbody>
             {utkastStemmekretser
-              .sort(
-                (a, b) =>
-                  parseInt(a.stemmekretsnummer) - parseInt(b.stemmekretsnummer)
-              )
+              .sort(sortByStemmekretsnummer)
               .map((stemmekrets) => (
                 <StemmekretsRow
                   key={getIdFromEntity(stemmekrets)}

@@ -7,8 +7,12 @@ export const KretsTable = styled.table`
 
   td,
   th {
-    padding: 16px;
     width: 100%;
+    padding: 16px;
+
+    &:last-child {
+      width: 200px;
+    }
   }
 
   th {

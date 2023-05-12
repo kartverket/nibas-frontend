@@ -11,10 +11,16 @@ import { useTranslation } from "react-i18next";
 import { updateEditFeatureText } from "utils/map/layerStyles";
 import { getRepresentasjonspunktId } from "utils/map/source";
 import useKretsToolbarSync from "contexts/ToolbarContext/useToolbarFormSync";
-import { StemmekretsRowInputs } from "./utils";
+
+type StemmekretsInputs = {
+  stemmekretsnavn: string;
+  stemmekretsnummer: string;
+  tellekretsnavn: string;
+  tellekretsnummer: string;
+};
 
 const fromFormToRequest = (
-  data: StemmekretsRowInputs,
+  data: StemmekretsInputs,
   stemmekrets: StemmekretsResponse
 ): StemmekretsRequest => ({
   identifikasjon: {
@@ -40,6 +46,7 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
   const { addEntry } = useToolbarSaving();
   const [isEditing, setIsEditing] = useState(false);
 
+  // TODO: bør denne ta inn defaultValues, kan vi fjerne litt kluss da?
   const {
     register,
     setValue,
@@ -47,9 +54,9 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
     trigger,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitted },
-  } = useForm<StemmekretsRowInputs>();
-  const previousValues = useRef<StemmekretsRowInputs>(getValues());
+    formState: { errors, isSubmitted, isDirty },
+  } = useForm<StemmekretsInputs>();
+  const previousValues = useRef<StemmekretsInputs>(getValues());
 
   useEffect(() => {
     setValue("stemmekretsnavn", stemmekrets.stemmekretsnavn);
@@ -101,7 +108,6 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
 
   const formOptions: Record<string, RegisterOptions> = {
     stemmekretsnummer: {
-      value: stemmekrets.stemmekretsnummer,
       required: t("stemmekrets.validering.stemmekretsnummer.ikke-tomt"),
       validate: (stemmekretsnummer: string) => {
         if (
@@ -162,7 +168,6 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
 
   const saveAndAddHistoryEntry = () => {
     const newValues = getValues();
-
     addEntry({
       type: "stemmekrets",
       kommuneId,
@@ -174,14 +179,12 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
         },
       ],
     });
-
     previousValues.current = newValues;
     updateEditFeatureText(
       getRepresentasjonspunktId(stemmekretsId),
       newValues.stemmekretsnavn,
       newValues.stemmekretsnummer
     );
-
     toggleEditing();
   };
 
@@ -229,6 +232,7 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
       <EditAndSaveButton
         isEditing={isEditing}
         toggleEditing={toggleEditing}
+        canSave={isDirty}
         onSubmit={onSubmit}
       />
     </KretsRow>

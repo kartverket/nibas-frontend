@@ -100,7 +100,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
     register,
     handleSubmit,
     getValues,
-    formState: { errors, isSubmitted },
+    formState: { errors, isSubmitted, isDirty },
   } = formMethods;
 
   const isValid = Object.keys(errors).length === 0;
@@ -317,7 +317,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
               <Button onClick={closeOverlay} variant="tertiary">
                 {t("stemmekrets.sammenslaaing.actions.avbryt")}
               </Button>
-              <Button type="submit">
+              <Button type="submit" disabled={!isDirty}>
                 {t("stemmekrets.sammenslaaing.actions.slaa-sammen")}
               </Button>
             </Buttons>

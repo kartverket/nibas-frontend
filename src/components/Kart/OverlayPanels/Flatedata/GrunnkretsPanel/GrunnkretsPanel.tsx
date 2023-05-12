@@ -1,6 +1,5 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
 import GrunnkretsRow from "./GrunnkretsRow";
 import { useUtkastEntity } from "contexts/UtkastContext";
 import useSearch from "hooks/useSearch";
@@ -15,10 +14,7 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
   const { t } = useTranslation();
   const { flatedata, closeOverlay } = useOverlayPanel();
   const { searchValue } = useSearch();
-  const [activeEditingGrunnkrets, setActiveEditingGrunnkrets] =
-    useState<GrunnkretsResponse | null>(null);
 
-  // TODO: sorter etter navn eller nummer
   const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
   const { data: grunnkretserByKommune } = useKommuneGrunnkretser(kommuneId);
   const utkastGrunnkretser = useUtkastEntity(
@@ -26,7 +22,7 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
     "grunnkretsendringer"
   ) as GrunnkretsResponse[] | undefined;
 
-  // TODO: sjekk om søk fortsatt skal være en greie
+  // TODO: reintroduser søk
   const filteredGrunnkretser = useMemo(() => {
     if (!searchValue) return utkastGrunnkretser;
 
@@ -37,15 +33,11 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
     );
   }, [searchValue, utkastGrunnkretser]);
 
-  //const formMethods = useForm<Inputs>();
-  //const { handleSubmit, getValues } = formMethods;
+  const sortByGrunnkretsnummer = (
+    a: GrunnkretsResponse,
+    b: GrunnkretsResponse
+  ) => parseInt(a.grunnkretsnummer) - parseInt(b.grunnkretsnummer);
 
-  if (!flatedata) {
-    return null;
-  }
-
-  // TODO: legg til form her også
-  // TODO: legg til fremtidige endringer igjen
   return (
     <Panel isOpen={isOpen} className={className}>
       <PanelHeader onClose={closeOverlay}>Endre kretsdetaljer</PanelHeader>
@@ -53,49 +45,27 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
         <KretsTable>
           <thead>
             <tr>
-              <GrunnkretsnummerColumn>
-                {t("grunnkrets.Grunnkretsnummer")}
-              </GrunnkretsnummerColumn>
-              <GrunnkretsnavnColumn>
-                {t("grunnkrets.Grunnkretsnavn")}
-              </GrunnkretsnavnColumn>
-              <Remainder />
+              <th>{t("grunnkrets.Grunnkretsnummer")}</th>
+              <th>{t("grunnkrets.Grunnkretsnavn")}</th>
+              <th>{/* Tom plass for mellomrom */}</th>
               <th>{/* Tom plass for knapp i rader */}</th>
             </tr>
           </thead>
           <tbody>
-            {filteredGrunnkretser.map((grunnkrets) => (
-              <GrunnkretsRow
-                key={getIdFromEntity(grunnkrets)}
-                grunnkrets={grunnkrets}
-                kommuneId={kommuneId}
-                isEditing={
-                  activeEditingGrunnkrets
-                    ? getIdFromEntity(grunnkrets) ===
-                      getIdFromEntity(activeEditingGrunnkrets)
-                    : false
-                }
-                setActiveEditingGrunnkrets={setActiveEditingGrunnkrets}
-              />
-            ))}
+            {filteredGrunnkretser
+              .sort(sortByGrunnkretsnummer)
+              .map((grunnkrets) => (
+                <GrunnkretsRow
+                  key={getIdFromEntity(grunnkrets)}
+                  grunnkrets={grunnkrets}
+                  kommuneId={kommuneId}
+                />
+              ))}
           </tbody>
         </KretsTable>
       )}
     </Panel>
   );
 };
-
-// TODO: sjekk om de greiene her kan droppes, om det finnes en bedre løsning
-const GrunnkretsnummerColumn = styled.th`
-  width: 25%;
-`;
-
-const GrunnkretsnavnColumn = styled.th`
-  width: 25%;
-`;
-
-const Remainder = styled.th`
-  width: 100%;
-`;
 
 export default GrunnkretsPanel;
