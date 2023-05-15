@@ -6,8 +6,8 @@ const renderWithProvider = (ui: ReactNode) =>
   render(ui, {
     SidebarPanelProvider: {
       activeSidebarPanel: "inndelinger",
-      setActiveSidebarPanel: jest.fn(),
-      closeSidebar: jest.fn(),
+      openSidebarPanel: jest.fn(),
+      closeSidebarPanel: jest.fn(),
     },
   });
 

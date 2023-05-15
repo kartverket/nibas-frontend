@@ -12,7 +12,7 @@ import { useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 
 const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
   const { t } = useTranslation();
-  const { flatedata, closeOverlay } = useOverlayPanel();
+  const { flatedata, closeOverlayPanel } = useOverlayPanel();
   const { searchValue } = useSearch();
 
   const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
@@ -40,7 +40,7 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
 
   return (
     <Panel isOpen={isOpen} className={className}>
-      <PanelHeader onClose={closeOverlay}>Endre kretsdetaljer</PanelHeader>
+      <PanelHeader onClose={closeOverlayPanel}>Endre kretsdetaljer</PanelHeader>
       {filteredGrunnkretser && (
         <KretsTable>
           <thead>

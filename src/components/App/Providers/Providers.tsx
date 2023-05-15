@@ -12,8 +12,8 @@ const Providers: FC = ({ children }) => {
   return (
     <ThirdPartyProviders>
       <ErrorHandlingProvider>
-        <OverlayPanelProvider>
-          <SidebarPanelProvider>
+        <SidebarPanelProvider>
+          <OverlayPanelProvider>
             <ToolbarProvider>
               <EditGrenserProvider>
                 <BakgrunnskartProvider>
@@ -21,8 +21,8 @@ const Providers: FC = ({ children }) => {
                 </BakgrunnskartProvider>
               </EditGrenserProvider>
             </ToolbarProvider>
-          </SidebarPanelProvider>
-        </OverlayPanelProvider>
+          </OverlayPanelProvider>
+        </SidebarPanelProvider>
       </ErrorHandlingProvider>
     </ThirdPartyProviders>
   );

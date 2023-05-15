@@ -7,7 +7,6 @@ import { grenseStyles } from "utils/map/layerStyles";
 import { pixelTolerance } from "./constants";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { useSidebarPanel } from "contexts/SidebarPanelContext";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -22,13 +21,11 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 const useSelectInteraction = () => {
   const { activePointMode } = useToolbar();
   const {
-    closeOverlay,
-    setActiveOverlayPanel,
+    closeOverlayPanel,
+    openOverlayPanel,
     selectedFeature,
     setSelectedFeature,
   } = useOverlayPanel();
-  const { closeSidebar } = useSidebarPanel();
-
   const select = useMemo(
     () =>
       new Select({
@@ -55,11 +52,10 @@ const useSelectInteraction = () => {
           overlayPopup.setPosition(getOverlayPosition(clickedFeature));
         } else {
           overlayPopup.setPosition(undefined);
-          setActiveOverlayPanel("metadata");
-          closeSidebar();
+          openOverlayPanel("metadata");
         }
       } else if (clickedFeatures.length === 0) {
-        closeOverlay();
+        closeOverlayPanel();
         overlayPopup.setPosition(undefined);
       }
     };
@@ -69,13 +65,7 @@ const useSelectInteraction = () => {
     return () => {
       select.un("select", syncFeatures);
     };
-  }, [
-    closeOverlay,
-    closeSidebar,
-    select,
-    setActiveOverlayPanel,
-    setSelectedFeature,
-  ]);
+  }, [openOverlayPanel, closeOverlayPanel, select, setSelectedFeature]);
 
   useEffect(() => {
     if (selectedFeature === null) {

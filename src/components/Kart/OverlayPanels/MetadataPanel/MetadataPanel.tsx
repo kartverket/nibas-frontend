@@ -21,7 +21,7 @@ const Content = styled.div`
 `;
 
 const MetadataPanel = ({ isOpen, className }: PanelProps) => {
-  const { selectedFeature, closeOverlay } = useOverlayPanel();
+  const { selectedFeature, closeOverlayPanel } = useOverlayPanel();
 
   const showReferanser = grenseTypeWithReferanser.includes(
     selectedFeature?.get("type") as string
@@ -29,7 +29,7 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
 
   return (
     <SidePanel isOpen={isOpen} className={className}>
-      <PanelHeader onClose={closeOverlay}>Metadata for grense</PanelHeader>
+      <PanelHeader onClose={closeOverlayPanel}>Metadata for grense</PanelHeader>
       {selectedFeature && (
         <Content>
           <MetadataGenerelt feature={selectedFeature} />

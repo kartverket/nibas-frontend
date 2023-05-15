@@ -2,20 +2,16 @@ import { Feature } from "ol";
 import LineString from "ol/geom/LineString";
 import React, { createContext, useContext, useState } from "react";
 import { KommuneRef } from "types/api";
+import { useSidebarPanel } from "./SidebarPanelContext";
 
-type ActiveOverlayPanel =
-  | "metadata"
-  | "grunnkrets"
-  | "stemmekrets"
-  | "sammenslåing"
-  | null;
+type OverlayPanel = "metadata" | "grunnkrets" | "stemmekrets" | "sammenslåing";
 type SelectedFeature = Feature<LineString> | null;
 type Flatedata = KommuneRef | null;
 
 export type OverlayPanelContextValue = {
-  activeOverlayPanel: ActiveOverlayPanel;
-  setActiveOverlayPanel: (activeOverlayPanel: ActiveOverlayPanel) => void;
-  closeOverlay: () => void;
+  activeOverlayPanel: OverlayPanel | null;
+  openOverlayPanel: (overlayPanel: OverlayPanel) => void;
+  closeOverlayPanel: () => void;
   selectedFeature: SelectedFeature;
   setSelectedFeature: (selectedFeature: SelectedFeature) => void;
   flatedata: Flatedata;
@@ -27,11 +23,16 @@ export const OverlayPanelContext = createContext<
 >(undefined);
 
 export const OverlayPanelProvider: React.FC = ({ children }) => {
-  // TODO: vurder om vi skal eksponere en wrapper for setActiveOverlayPanel som lukker sidebar
+  const { closeSidebarPanel } = useSidebarPanel();
   const [activeOverlayPanel, setActiveOverlayPanel] =
-    useState<ActiveOverlayPanel>(null);
+    useState<OverlayPanel | null>(null);
 
-  const closeOverlay = () => {
+  const openOverlayPanel = (panelType: OverlayPanel) => {
+    setActiveOverlayPanel(panelType);
+    closeSidebarPanel();
+  };
+
+  const closeOverlayPanel = () => {
     setActiveOverlayPanel(null);
     setSelectedFeature(null);
   };
@@ -44,8 +45,8 @@ export const OverlayPanelProvider: React.FC = ({ children }) => {
 
   const value = {
     activeOverlayPanel,
-    setActiveOverlayPanel,
-    closeOverlay,
+    openOverlayPanel,
+    closeOverlayPanel,
     selectedFeature,
     setSelectedFeature,
     flatedata,

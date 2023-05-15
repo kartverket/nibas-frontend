@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useState } from "react";
 
-export type SidebarPanel = "inndelinger" | "kartlag" | "utkast" | null;
+export type SidebarPanel = "inndelinger" | "kartlag" | "utkast";
 
 export type SidebarPanelContextValue = {
-  activeSidebarPanel: SidebarPanel;
-  setActiveSidebarPanel: (panel: SidebarPanel) => void;
-  closeSidebar: () => void;
+  activeSidebarPanel: SidebarPanel | null;
+  openSidebarPanel: (panel: SidebarPanel) => void;
+  closeSidebarPanel: () => void;
 };
 
 /**
@@ -17,13 +17,21 @@ export const SidebarPanelContext = createContext<
 
 export const SidebarPanelProvider: React.FC = ({ children }) => {
   const [activeSidebarPanel, setActiveSidebarPanel] =
-    useState<SidebarPanel>(null);
+    useState<SidebarPanel | null>(null);
 
-  const closeSidebar = () => {
+  const openSidebarPanel = (sidebarPanel: SidebarPanel) => {
+    setActiveSidebarPanel(sidebarPanel);
+  };
+
+  const closeSidebarPanel = () => {
     setActiveSidebarPanel(null);
   };
 
-  const value = { activeSidebarPanel, setActiveSidebarPanel, closeSidebar };
+  const value = {
+    activeSidebarPanel,
+    openSidebarPanel,
+    closeSidebarPanel,
+  };
 
   return (
     <SidebarPanelContext.Provider value={value}>

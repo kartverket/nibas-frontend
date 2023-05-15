@@ -80,7 +80,7 @@ const Buttons = styled.div`
 const MergePanel = ({ isOpen, className }: PanelProps) => {
   const [isCreateUtkastModalOpen, setIsCreateUtkastModalOpen] = useState(false);
   const { t } = useTranslation();
-  const { flatedata, closeOverlay } = useOverlayPanel();
+  const { flatedata, closeOverlayPanel } = useOverlayPanel();
   const { setError } = useErrorHandling();
   const { utkast, updateUtkast } = useUtkast();
   const { tokenHolderFunc } = useAuthenticationFlow();
@@ -252,7 +252,9 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
   // TODO: avbryt bør resette form skikkelig
   return (
     <SidePanel isOpen={isOpen} className={className}>
-      <PanelHeader onClose={closeOverlay}>Slå sammen stemmekretser</PanelHeader>
+      <PanelHeader onClose={closeOverlayPanel}>
+        Slå sammen stemmekretser
+      </PanelHeader>
       {utkastStemmekretser && (
         <FormProvider {...formMethods}>
           <Form onSubmit={handleSubmit(openCreateUtkastModal)}>
@@ -314,7 +316,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
               </ErrorBox>
             )}
             <Buttons>
-              <Button onClick={closeOverlay} variant="tertiary">
+              <Button onClick={closeOverlayPanel} variant="tertiary">
                 {t("stemmekrets.sammenslaaing.actions.avbryt")}
               </Button>
               <Button type="submit" disabled={!isDirty}>

@@ -5,13 +5,13 @@ import { SidebarPanel } from "contexts/SidebarPanelContext";
 
 const renderWithProvider = (
   ui: ReactNode,
-  activeSidebarPanel: SidebarPanel = "kartlag"
+  activeSidebarPanel: SidebarPanel | null = "kartlag"
 ) =>
   render(ui, {
     SidebarPanelProvider: {
       activeSidebarPanel,
-      setActiveSidebarPanel: jest.fn(),
-      closeSidebar: jest.fn(),
+      openSidebarPanel: jest.fn(),
+      closeSidebarPanel: jest.fn(),
     },
     BakgrunnskartProvider: true,
   });

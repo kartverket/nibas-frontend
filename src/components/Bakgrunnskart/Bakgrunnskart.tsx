@@ -11,13 +11,13 @@ import { BakgrunnskartId } from "hooks/layers/types";
 
 const Bakgrunnskart = () => {
   const { t } = useTranslation();
-  const { activeSidebarPanel, closeSidebar } = useSidebarPanel();
+  const { activeSidebarPanel, closeSidebarPanel } = useSidebarPanel();
   const { visibleLayers } = useBakgrunnskart();
 
   return (
     <SidebarPanel isOpen={activeSidebarPanel === "kartlag"}>
       <SidebarPanelTitle
-        closePanel={closeSidebar}
+        closePanel={closeSidebarPanel}
         title={t("Aktive kartlag")}
       />
       {visibleLayers.map((layer, i) => (

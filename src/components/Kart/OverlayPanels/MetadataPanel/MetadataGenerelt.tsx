@@ -55,7 +55,7 @@ const Buttons = styled.div`
 `;
 
 const MetadataGenerelt = ({ feature }: Props) => {
-  const { closeOverlay } = useOverlayPanel();
+  const { closeOverlayPanel } = useOverlayPanel();
   const { t } = useTranslation();
   const properties = feature.getProperties() as FeatureProperties;
   const type = properties.type;
@@ -134,7 +134,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
             variant="tertiary"
             onClick={() => {
               reset({});
-              closeOverlay();
+              closeOverlayPanel();
             }}
             disabled={metadataIsDisabled}
           >

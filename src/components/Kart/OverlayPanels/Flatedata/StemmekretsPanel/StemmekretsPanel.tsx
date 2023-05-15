@@ -10,7 +10,7 @@ import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 
 const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
   const { t } = useTranslation();
-  const { flatedata, closeOverlay } = useOverlayPanel();
+  const { flatedata, closeOverlayPanel } = useOverlayPanel();
 
   const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
   const { data: stemmekretserByKommune } = useKommuneStemmekretser(kommuneId);
@@ -26,7 +26,7 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
 
   return (
     <Panel isOpen={isOpen} className={className}>
-      <PanelHeader onClose={closeOverlay}>Endre kretsdetaljer</PanelHeader>
+      <PanelHeader onClose={closeOverlayPanel}>Endre kretsdetaljer</PanelHeader>
       {utkastStemmekretser && (
         <KretsTable>
           <thead>

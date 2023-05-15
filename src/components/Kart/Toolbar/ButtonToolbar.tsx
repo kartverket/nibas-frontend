@@ -8,7 +8,6 @@ import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { Divider, DividerVertical } from "components/Divider";
-import { useSidebarPanel } from "contexts/SidebarPanelContext";
 
 const Container = styled.div`
   display: flex;
@@ -34,9 +33,8 @@ const ButtonToolbar = () => {
     useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const editingType = getCurrentlyEditingType() as string;
-  const { activeOverlayPanel, setActiveOverlayPanel, closeOverlay } =
+  const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } =
     useOverlayPanel();
-  const { closeSidebar } = useSidebarPanel();
   const flatedetaljerIsAvailable =
     editingType === "grunnkrets" || editingType === "stemmekrets";
   const flatedetaljerIsActive =
@@ -48,24 +46,23 @@ const ButtonToolbar = () => {
     togglePointMode("metadata");
 
     if (activeOverlayPanel === "metadata") {
-      closeOverlay();
+      closeOverlayPanel();
     }
   };
 
   const toggleFlatedetaljer = () => {
     if (flatedetaljerIsActive) {
-      closeOverlay();
+      closeOverlayPanel();
     } else if (flatedetaljerIsAvailable) {
-      setActiveOverlayPanel(editingType);
+      openOverlayPanel(editingType);
     }
   };
 
   const toggleMergePanel = () => {
     if (mergeIsActive) {
-      closeOverlay();
+      closeOverlayPanel();
     } else {
-      setActiveOverlayPanel("sammenslåing");
-      closeSidebar();
+      openOverlayPanel("sammenslåing");
     }
   };
 

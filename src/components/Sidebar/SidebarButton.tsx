@@ -10,16 +10,16 @@ type Props = {
 };
 
 const SidebarButton = ({ title, panel, icon }: Props) => {
-  const { activeSidebarPanel, setActiveSidebarPanel, closeSidebar } =
+  const { activeSidebarPanel, openSidebarPanel, closeSidebarPanel } =
     useSidebarPanel();
-  const { closeOverlay } = useOverlayPanel();
+  const { closeOverlayPanel } = useOverlayPanel();
 
   const toggleSidebar = () => {
     if (activeSidebarPanel === panel) {
-      closeSidebar();
+      closeSidebarPanel();
     } else {
-      setActiveSidebarPanel(panel);
-      closeOverlay();
+      openSidebarPanel(panel);
+      closeOverlayPanel();
     }
   };
 
