@@ -74,7 +74,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
 
   const onSubmit = () => {
     updateDraftFromFeature();
-    reset({}, { keepValues: true });
+    reset(undefined, { keepValues: true });
   };
 
   return (
@@ -133,7 +133,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
           <Button
             variant="tertiary"
             onClick={() => {
-              reset({});
+              reset();
               closeOverlayPanel();
             }}
             disabled={metadataIsDisabled}

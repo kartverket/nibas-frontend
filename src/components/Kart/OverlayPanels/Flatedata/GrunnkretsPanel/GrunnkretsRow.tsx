@@ -58,7 +58,6 @@ const GrunnkretsRow = ({ grunnkrets, kommuneId }: Props) => {
     previousValues.current = getValues();
   }, [getValues, setValue, grunnkrets]);
 
-  // TODO: Denne er nesten prikk lik stemmekrets, kan den trekkes ut?
   const setFormValues = useCallback(
     (change: GrunnkretsEntry["changes"][number], direction: "to" | "from") => {
       const newName = change[direction]?.navn;
@@ -84,7 +83,6 @@ const GrunnkretsRow = ({ grunnkrets, kommuneId }: Props) => {
     setFormValues,
   });
 
-  // TODO: Denne er nesten prikk lik stemmekrets, kan den trekkes ut?
   const saveAndAddHistoryEntry = () => {
     const newValues = getValues();
     addEntry({

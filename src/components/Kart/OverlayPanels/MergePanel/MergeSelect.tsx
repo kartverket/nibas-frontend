@@ -14,6 +14,7 @@ const MergeSelectWrapper = styled.div`
   grid-template-areas:
     "select fjern"
     "error .";
+  gap: 8px;
 `;
 
 const MergeSelectErrorMessage = styled(ErrorMessage)`

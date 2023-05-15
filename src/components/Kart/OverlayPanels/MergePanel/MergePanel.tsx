@@ -14,7 +14,6 @@ import { useState } from "react";
 import Input from "components/form/Input";
 import { Divider } from "components/Divider";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import Icon from "components/Icon";
 import Button from "components/form/Button";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useTranslation } from "react-i18next";
@@ -55,21 +54,6 @@ const InputsWrapper = styled.div`
   }
 `;
 
-// TODO: verifiser hvordan denne fungerer og om ikke integrert validering i input kan brukes
-const ErrorBox = styled.div`
-  color: var(--red_error_message);
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  margin-top: 16px;
-  gap: 6px;
-
-  .material-symbols-outlined {
-    font-size: inherit;
-    margin-top: 2px;
-  }
-`;
-
 const Buttons = styled.div`
   display: flex;
   justify-content: end;
@@ -100,10 +84,9 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
     register,
     handleSubmit,
     getValues,
-    formState: { errors, isSubmitted, isDirty },
+    reset,
+    formState: { errors, isDirty },
   } = formMethods;
-
-  const isValid = Object.keys(errors).length === 0;
 
   const stemmekretsnavnValidator = {
     required: t("stemmekrets.validering.stemmekretsnavn.obligatorisk"),
@@ -204,8 +187,8 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
         overlappingFeatureIds
       );
     }
-
-    // TODO: tilbakemelding til brukeren at utkast er opprettet
+    reset(undefined, { keepValues: true });
+    closeOverlayPanel();
   };
 
   const fetchStemmekretsgrenser = async (stemmekretsIder: string[]) => {
@@ -249,7 +232,6 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
       : setIsCreateUtkastModalOpen(true);
   };
 
-  // TODO: avbryt bør resette form skikkelig
   return (
     <SidePanel isOpen={isOpen} className={className}>
       <PanelHeader onClose={closeOverlayPanel}>
@@ -309,14 +291,14 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
                 }}
               />
             </InputsWrapper>
-            {!isValid && isSubmitted && (
-              <ErrorBox>
-                <Icon icon="warning_amber" />
-                {t("stemmekrets.validering.har-feil")}
-              </ErrorBox>
-            )}
             <Buttons>
-              <Button onClick={closeOverlayPanel} variant="tertiary">
+              <Button
+                onClick={() => {
+                  closeOverlayPanel();
+                  reset();
+                }}
+                variant="tertiary"
+              >
                 {t("stemmekrets.sammenslaaing.actions.avbryt")}
               </Button>
               <Button type="submit" disabled={!isDirty}>
