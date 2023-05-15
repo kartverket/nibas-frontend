@@ -39,14 +39,13 @@ type Props = {
   kommuneId: string;
 };
 
-// TODO: legg til fremtidige endringer igjen
+// TODO: legg til fremtidige endringer igjen, sjekk med Erlend for skisser
 const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
   const { t } = useTranslation();
   const stemmekretsId = getIdFromEntity(stemmekrets);
   const { addEntry } = useToolbarSaving();
   const [isEditing, setIsEditing] = useState(false);
 
-  // TODO: bør denne ta inn defaultValues, kan vi fjerne litt kluss da?
   const {
     register,
     setValue,
@@ -203,7 +202,7 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
   };
 
   return (
-    <KretsRow>
+    <KretsRow isActive={isEditing}>
       <InputCell
         isEditing={isEditing}
         data={getValues("stemmekretsnummer")}

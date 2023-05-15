@@ -9,11 +9,12 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { Panel, PanelHeader, PanelProps } from "../../Panel";
 import { KretsTable } from "../KretsTable";
 import { useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
+import Input from "components/form/Input";
 
 const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
   const { t } = useTranslation();
   const { flatedata, closeOverlayPanel } = useOverlayPanel();
-  const { searchValue } = useSearch();
+  const { searchValue, setInputValue } = useSearch();
 
   const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
   const { data: grunnkretserByKommune } = useKommuneGrunnkretser(kommuneId);
@@ -22,7 +23,6 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
     "grunnkretsendringer"
   ) as GrunnkretsResponse[] | undefined;
 
-  // TODO: reintroduser søk
   const filteredGrunnkretser = useMemo(() => {
     if (!searchValue) return utkastGrunnkretser;
 
@@ -48,7 +48,12 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
               <th>{t("grunnkrets.Grunnkretsnummer")}</th>
               <th>{t("grunnkrets.Grunnkretsnavn")}</th>
               <th>{/* Tom plass for mellomrom */}</th>
-              <th>{/* Tom plass for knapp i rader */}</th>
+              <th>
+                <Input
+                  placeholder="Søk på navn"
+                  onChange={(e) => setInputValue(e.currentTarget.value)}
+                />
+              </th>
             </tr>
           </thead>
           <tbody>

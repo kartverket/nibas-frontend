@@ -37,7 +37,6 @@ const GrunnkretsRow = ({ grunnkrets, kommuneId }: Props) => {
   const { addEntry } = useToolbarSaving();
   const [isEditing, setIsEditing] = useState(false);
 
-  // TODO: se hva stemmekrets bruker som mangler her
   const {
     register,
     getValues,
@@ -108,12 +107,6 @@ const GrunnkretsRow = ({ grunnkrets, kommuneId }: Props) => {
     toggleEditing();
   };
 
-  const onSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
-    // TODO: trengs kanskje ikke siden det ikke er en faktisk submit?
-    event.preventDefault();
-    handleSubmit(saveAndAddHistoryEntry)(event);
-  };
-
   const toggleEditing = () => {
     reset(previousValues.current);
     if (isEditing) {
@@ -124,7 +117,7 @@ const GrunnkretsRow = ({ grunnkrets, kommuneId }: Props) => {
   };
 
   return (
-    <KretsRow>
+    <KretsRow isActive={isEditing}>
       <InputCell
         isEditing={isEditing}
         data={getValues("grunnkretsnummer")}
@@ -135,12 +128,12 @@ const GrunnkretsRow = ({ grunnkrets, kommuneId }: Props) => {
         data={getValues("grunnkretsnavn")}
         {...register("grunnkretsnavn")}
       />
-      <td>{/* TOOD: hvorfor er det tomt her? */}</td>
+      <td>{/* Tom plass for mellomrom */}</td>
       <EditAndSaveButton
         isEditing={isEditing}
         toggleEditing={toggleEditing}
         canSave={isDirty}
-        onSubmit={onSubmit}
+        onSubmit={(event) => handleSubmit(saveAndAddHistoryEntry)(event)}
       />
     </KretsRow>
   );

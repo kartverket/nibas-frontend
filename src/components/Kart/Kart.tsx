@@ -66,11 +66,6 @@ const KartTarget = styled.div`
   }
 `;
 
-// TODO: denne må kanskje skrives litt om, usikker på hva som er best
-// bør nok ha en slags relativ posisjonering internt i denne
-// vi vil vel at kartet skal faktisk bli mindre når man har en sidebar, men da må vel KartTarget være inne i denne?
-// krever bare litt hjernekraft.
-
 const KartOverlay = styled.div`
   display: grid;
   grid-template-columns: auto 1fr auto;

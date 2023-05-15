@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 export const KretsTable = styled.table`
   width: 100%;
@@ -22,8 +22,7 @@ export const KretsTable = styled.table`
   }
 `;
 
-// TODO: sjekk om denne skal ha hover på samme måte som før, må kanskje ha isActive igjen
-export const KretsRow = styled.tr`
+export const KretsRow = styled.tr<{ isActive: boolean }>`
   position: relative;
   vertical-align: baseline;
 
@@ -34,6 +33,11 @@ export const KretsRow = styled.tr`
     height: 100%;
     width: 3px;
     transition: background 0.1s;
+    ${({ isActive }) =>
+      isActive &&
+      css`
+        background: var(--blue_dark);
+      `};
   }
 
   :hover::after {
