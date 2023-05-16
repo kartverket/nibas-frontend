@@ -10,7 +10,7 @@ import { getIdFromEntity } from "utils/api";
 import { FormProvider, useForm } from "react-hook-form";
 import { MergeFormData } from "./MergeForm";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Input from "components/form/Input";
 import { Divider } from "components/Divider";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
@@ -84,6 +84,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
     register,
     handleSubmit,
     getValues,
+    setValue,
     reset,
     formState: { errors, isDirty },
   } = formMethods;
@@ -108,15 +109,16 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
     },
   };
 
-  const getStemmekretsByNummer = (
-    nummer: string
-  ): StemmekretsResponse | null => {
-    return (
-      utkastStemmekretser?.find(
-        (krets) => krets.stemmekretsnummer === nummer
-      ) ?? null
-    );
-  };
+  const getStemmekretsByNummer = useCallback(
+    (nummer: string): StemmekretsResponse | null => {
+      return (
+        utkastStemmekretser?.find(
+          (krets) => krets.stemmekretsnummer === nummer
+        ) ?? null
+      );
+    },
+    [utkastStemmekretser]
+  );
 
   const getOverlappingStemmekretsFeatureIds = (featureIds: string[]) => {
     return featureIds.filter(
@@ -187,8 +189,8 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
         overlappingFeatureIds
       );
     }
-    reset(undefined, { keepValues: true });
     closeOverlayPanel();
+    reset();
   };
 
   const fetchStemmekretsgrenser = async (stemmekretsIder: string[]) => {
@@ -232,6 +234,14 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
       : setIsCreateUtkastModalOpen(true);
   };
 
+  // Oppdaterer stemmekretsnavn og stemmekretsnummer når valgt stemmekrets endres
+  const selectStemmekretsRegister = register("stemmekrets");
+  const updateDefaultValues = (value: string) => {
+    const selectedStemmekrets = getStemmekretsByNummer(value);
+    setValue("stemmekretsnavn", selectedStemmekrets?.stemmekretsnavn ?? "");
+    setValue("stemmekretsnummer", selectedStemmekrets?.stemmekretsnummer ?? "");
+  };
+
   return (
     <SidePanel isOpen={isOpen} className={className}>
       <PanelHeader onClose={closeOverlayPanel}>
@@ -244,21 +254,31 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
               Hvilken stemmekrets skal brukes som utgangspunkt?
             </SectionHeading>
             <Select
-              {...register("stemmekrets")}
+              {...selectStemmekretsRegister}
+              onChange={(e) => {
+                selectStemmekretsRegister.onChange(e);
+                updateDefaultValues(e.currentTarget.value);
+              }}
               defaultValue="default"
               label="Stemmekrets"
             >
               <option value={"default"} disabled>
                 {t("stemmekrets.sammenslaaing.actions.velg")}
               </option>
-              {utkastStemmekretser.map((stemmekrets) => (
-                <option
-                  key={stemmekrets.id.lokalid.value}
-                  value={stemmekrets.stemmekretsnummer}
-                >
-                  {`${stemmekrets.stemmekretsnummer} - ${stemmekrets.stemmekretsnavn}`}
-                </option>
-              ))}
+              {utkastStemmekretser
+                .sort(
+                  (a, b) =>
+                    parseInt(a.stemmekretsnummer) -
+                    parseInt(b.stemmekretsnummer)
+                )
+                .map((stemmekrets) => (
+                  <option
+                    key={stemmekrets.id.lokalid.value}
+                    value={stemmekrets.stemmekretsnummer}
+                  >
+                    {`${stemmekrets.stemmekretsnummer} - ${stemmekrets.stemmekretsnavn}`}
+                  </option>
+                ))}
             </Select>
             <Divider />
             <SectionHeading tag="h3" size="xs">

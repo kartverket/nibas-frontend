@@ -19,6 +19,7 @@ const SaveButton = styled(Button)`
 const DiscardButton = styled(Button)`
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
+  border: 1px solid var(--blue_dark);
 `;
 
 type Props = {

@@ -16,6 +16,7 @@ const Container = styled.div`
   display: flex;
   gap: ${toolbarSpacing}px;
   align-items: flex-end;
+  flex-wrap: wrap;
 `;
 
 const Stack = styled.div`
@@ -31,7 +32,6 @@ const Toolbar = () => {
 
   return (
     <Container>
-      <ButtonToolbar />
       {redigeringsmodusAktiv && (
         <Stack>
           {createUtkastOpen && (
@@ -47,6 +47,7 @@ const Toolbar = () => {
           {utkastJustCreated && <Toast text={t("utkast.utkast-opprettet")} />}
         </Stack>
       )}
+      <ButtonToolbar />
     </Container>
   );
 };
