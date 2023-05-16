@@ -1,10 +1,8 @@
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
 import Fylkesgrenser from "./Fylkesgrenser";
 import Grunnkretser from "./Grunnkretser";
 import Kommunegrenser from "./Kommunegrenser";
 import Stemmekretser from "./Stemmekretser";
-import Accordion from "components/Accordion";
 import { SidebarPanel } from "components/Sidebar/SidebarPanel";
 import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
 import { UnstyledList } from "components/UnstyledList";
@@ -15,7 +13,7 @@ const GrenserDrillDown = () => {
   const { activeSidebarPanel, closeSidebarPanel } = useSidebarPanel();
 
   return (
-    <Panel isOpen={activeSidebarPanel === "inndelinger"}>
+    <SidebarPanel isOpen={activeSidebarPanel === "inndelinger"}>
       <SidebarPanelTitle
         closePanel={closeSidebarPanel}
         title={t("sidebar.Inndelinger")}
@@ -26,14 +24,8 @@ const GrenserDrillDown = () => {
         <Stemmekretser />
         <Grunnkretser />
       </UnstyledList>
-    </Panel>
+    </SidebarPanel>
   );
 };
-
-const Panel = styled(SidebarPanel)`
-  > ${Accordion} > div {
-    margin-left: 16px;
-  }
-`;
 
 export default GrenserDrillDown;

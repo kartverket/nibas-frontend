@@ -1,11 +1,33 @@
 import CloseButton from "components/form/Button/CloseButton";
 import Heading from "components/typography/Heading";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 export type PanelProps = {
   isOpen: boolean;
   className?: string;
 };
+
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(-10%);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+`;
+
+const slideIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(25%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+`;
 
 export const Panel = styled.div<{ isOpen: boolean }>`
   margin: 16px;
@@ -17,7 +39,8 @@ export const Panel = styled.div<{ isOpen: boolean }>`
   width: 100%;
   max-width: 1250px;
   overflow: auto;
-  ${(props) => !props.isOpen && "display: none"}
+  ${(props) => !props.isOpen && "display: none"};
+  animation: ${fadeIn} 0.25s ease-in-out;
 `;
 
 export const SidePanel = styled(Panel)`
@@ -26,6 +49,7 @@ export const SidePanel = styled(Panel)`
   border-radius: unset;
   margin: 0;
   border-top: none;
+  animation: ${slideIn} 0.25s ease-in-out;
 `;
 
 const PanelHeaderContainer = styled.div`

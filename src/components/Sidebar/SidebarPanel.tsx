@@ -1,4 +1,15 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
+
+const slideIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(-25%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+`;
 
 export const SidebarPanel = styled.div<{ isOpen: boolean }>`
   display: inline-block;
@@ -10,4 +21,5 @@ export const SidebarPanel = styled.div<{ isOpen: boolean }>`
   border-right: 3px solid var(--gray_light);
   overflow: auto;
   ${(props) => !props.isOpen && "display: none"};
+  animation: ${slideIn} 0.25s ease-in-out;
 `;
