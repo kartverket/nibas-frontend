@@ -5,7 +5,6 @@ export const toolbarBorderWidth = 2;
 
 export const Frame = styled.div`
   display: flex;
-  flex-direction: column;
   gap: ${toolbarSpacing}px;
 
   width: fit-content;

@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useEditGrenser } from "./EditGrenserContext";
-import { useOverlayPanels } from "./OverlayPanelsContext";
 import useKretsgrenser from "hooks/inndelinger/useKretsgrenser";
 import { editSource } from "hooks/layers/constants";
 import { LayerId } from "hooks/layers/types";
 import { FeatureProperties, KommuneRef } from "types/api";
 import { getFeatureId, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { getIdFromEntity } from "utils/api";
+import { useOverlayPanel } from "./OverlayPanelContext";
 
 export type Kretstype = "grunnkrets" | "stemmekrets";
 
@@ -68,7 +68,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
     setMultipleValues,
     resetAndClearEditingLayer,
   } = useEditGrenser(currentKretstype);
-  const { openPanel, closePanels, closePanel } = useOverlayPanels();
+  const { setFlatedata, closeOverlayPanel } = useOverlayPanel();
   const { addKretserToLayer, removeKretserFromLayer, lasterData } =
     useKretsgrenser(kommuneId, currentKretstype);
 
@@ -84,6 +84,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
       },
     };
 
+    closeOverlayPanel();
     resetAndClearEditingLayer();
 
     if (newEditing) {
@@ -116,7 +117,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
         }
       });
 
-      openPanel({ type: currentKretstype, kommune });
+      setFlatedata(kommune);
 
       // hvis ikke endret fra før, endre nå
       if (kommuneValues.visible) {
@@ -126,7 +127,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
       addKretserToLayer("edit");
     } else {
       removeKretserFromLayer("edit");
-      closePanels();
+      closeOverlayPanel();
     }
 
     setMultipleValues(newValues);
@@ -148,10 +149,6 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
     } else {
       // hvis ikke lenger skal være synlig
       removeKretserFromLayer(layerId);
-
-      if (!kommuneValues.editing) {
-        closePanel("grensemetadata");
-      }
     }
   };
 

@@ -1,12 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { Feature } from "ol";
-import Geometry from "ol/geom/Geometry";
 import LineString from "ol/geom/LineString";
 import { Select } from "ol/interaction";
-import { map, overlayPopup } from "components/Kart/constants";
-import { useOverlayPanels } from "contexts/OverlayPanelsContext";
+import { overlayPopup } from "components/Kart/constants";
 import { grenseStyles } from "utils/map/layerStyles";
 import { pixelTolerance } from "./constants";
+import { useToolbar } from "contexts/ToolbarContext";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -19,32 +19,45 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 };
 
 const useSelectInteraction = () => {
-  const [features, setFeatures] = useState<Feature<Geometry>[]>([]);
-  const { openPanel, closePanel } = useOverlayPanels();
-
+  const { activePointMode } = useToolbar();
+  const {
+    closeOverlayPanel,
+    openOverlayPanel,
+    selectedFeature,
+    setSelectedFeature,
+  } = useOverlayPanel();
   const select = useMemo(
     () =>
       new Select({
         hitTolerance: pixelTolerance,
         style: grenseStyles.select,
         filter: (feature) => {
-          return feature.getGeometry() instanceof LineString;
+          if (activePointMode === "metadata") {
+            return feature.getGeometry() instanceof LineString;
+          }
+          return false;
         },
       }),
-    []
+    [activePointMode]
   );
 
   useEffect(() => {
-    map.addInteraction(select);
-
-    return () => {
-      map.removeInteraction(select);
-    };
-  }, [select]);
-
-  useEffect(() => {
     const syncFeatures = () => {
-      setFeatures(select.getFeatures().getArray().slice());
+      const clickedFeatures = select.getFeatures().getArray().slice();
+      if (clickedFeatures.length === 1) {
+        const clickedFeature = clickedFeatures[0];
+        setSelectedFeature(clickedFeature);
+
+        if (clickedFeature.getId()?.toString().includes("TEIGGRENSEWFS")) {
+          overlayPopup.setPosition(getOverlayPosition(clickedFeature));
+        } else {
+          overlayPopup.setPosition(undefined);
+          openOverlayPanel("metadata");
+        }
+      } else if (clickedFeatures.length === 0) {
+        closeOverlayPanel();
+        overlayPopup.setPosition(undefined);
+      }
     };
 
     select.on("select", syncFeatures);
@@ -52,26 +65,15 @@ const useSelectInteraction = () => {
     return () => {
       select.un("select", syncFeatures);
     };
-  }, [select, features]);
+  }, [openOverlayPanel, closeOverlayPanel, select, setSelectedFeature]);
 
   useEffect(() => {
-    if (features.length === 1) {
-      const selectedFeature = features[0] as Feature<LineString>;
-
-      if (selectedFeature.getId()?.toString().includes("TEIGGRENSEWFS")) {
-        closePanel("grensemetadata");
-        overlayPopup.setPosition(getOverlayPosition(selectedFeature));
-      } else {
-        overlayPopup.setPosition(undefined);
-        openPanel({ type: "grensemetadata", feature: selectedFeature });
-      }
-    } else {
-      closePanel("grensemetadata");
-      overlayPopup.setPosition(undefined);
+    if (selectedFeature === null) {
+      select.getFeatures().clear();
     }
-  }, [features, openPanel, closePanel]);
+  }, [select, selectedFeature]);
 
-  return { selectedFeatures: features };
+  return { select };
 };
 
 export default useSelectInteraction;

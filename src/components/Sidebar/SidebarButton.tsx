@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import Button from "components/form/Button";
 import { SidebarPanel, useSidebarPanel } from "contexts/SidebarPanelContext";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
 
 type Props = {
   title: string;
@@ -9,11 +10,26 @@ type Props = {
 };
 
 const SidebarButton = ({ title, panel, icon }: Props) => {
-  const { isOpen, togglePanel } = useSidebarPanel(panel);
+  const { activeSidebarPanel, openSidebarPanel, closeSidebarPanel } =
+    useSidebarPanel();
+  const { closeOverlayPanel } = useOverlayPanel();
+
+  const toggleSidebar = () => {
+    if (activeSidebarPanel === panel) {
+      closeSidebarPanel();
+    } else {
+      openSidebarPanel(panel);
+      closeOverlayPanel();
+    }
+  };
 
   return (
     <Wrapper>
-      <StyledButton active={isOpen} onClick={togglePanel} title={title}>
+      <StyledButton
+        active={activeSidebarPanel === panel}
+        onClick={toggleSidebar}
+        title={title}
+      >
         {icon}
         <SidebarButtonTitle>{title}</SidebarButtonTitle>
       </StyledButton>

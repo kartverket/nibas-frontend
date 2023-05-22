@@ -1,15 +1,12 @@
 import { Suspense, useEffect, useRef } from "react";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import { map } from "./constants";
-import OverlayPanels from "./OverlayPanels";
 import OverlayPopup from "./OverlayPopup";
 import SidebarPanels from "./SidebarPanels";
-import { PanelType, useOverlayPanels } from "contexts/OverlayPanelsContext";
 import useInteractions from "hooks/interactions/useInteractions";
 import { initBakgrunnskartLayers, initGrenserLayers } from "utils/map/layers";
-import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
 import Toolbar from "./Toolbar/Toolbar";
-import { useSidebarPanels } from "contexts/SidebarPanelContext";
+import OverlayPanels from "./OverlayPanels/OverlayPanels";
 
 // dette må skje utenfor komponenten siden React kjører dypere useEffects
 // før de lenger opp i treet, så lag er ikke definert når de trengs lenger ned
@@ -18,12 +15,9 @@ initBakgrunnskartLayers();
 
 const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const { panelContext } = useOverlayPanels();
-  const { redigeringsmodusAktiv } = useRedigeringsmodus();
-  const { selectedFeatures } = useInteractions();
-  const { openPanels } = useSidebarPanels();
 
-  const anySidebarOpen = Object.values(openPanels).includes(true);
+  // Legger til interactions (modify, select, osv) på kartet
+  useInteractions();
 
   useEffect(() => {
     // mapRef kan egentlig ikke være null her,
@@ -41,13 +35,12 @@ const Kart = () => {
     <KartWrapper>
       <KartTarget ref={mapRef}>
         <Suspense fallback="More loading...">
-          <KartOverlay panelOpen={anySidebarOpen} content={panelContext?.type}>
+          <KartOverlay>
             <SidebarPanels />
             <OverlayPanels />
-            <UtkastBorder utkastActive={redigeringsmodusAktiv} />
             <Toolbar />
           </KartOverlay>
-          <OverlayPopup selectedFeatures={selectedFeatures} />
+          <OverlayPopup />
         </Suspense>
       </KartTarget>
     </KartWrapper>
@@ -64,15 +57,6 @@ const KartWrapper = styled.div`
   border-bottom-width: 0;
 `;
 
-const UtkastBorder = styled.div<{ utkastActive: boolean }>`
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  pointer-events: none;
-`;
-
 const KartTarget = styled.div`
   width: 100%;
   height: 100%;
@@ -82,37 +66,25 @@ const KartTarget = styled.div`
   }
 `;
 
-const KartOverlay = styled.div<{
-  content?: PanelType;
-  panelOpen: boolean;
-}>`
+const KartOverlay = styled.div`
   display: grid;
-  ${(props) =>
-    props.panelOpen ? gridTemplateWithPanel : gridTemplateWithoutPanel}
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: 1fr auto;
+  justify-items: center;
+  grid-template-areas:
+    "sidebar overlay sidepanel"
+    "sidebar toolbar sidepanel";
+  gap: 16px;
   width: 100%;
   height: 100%;
   position: absolute;
-  pointer-events: none;
   z-index: 1;
   overflow: hidden;
-`;
+  pointer-events: none;
 
-const gridTemplateWithPanel = css`
-  grid-template-columns: 440px auto 120px;
-  grid-template-rows: 1fr auto;
-  grid-template-areas:
-    "panel . toolbar"
-    "panel metadata toolbar"
-    "panel kretser toolbar";
-`;
-
-const gridTemplateWithoutPanel = css`
-  grid-template-columns: auto 120px;
-  grid-template-rows: 1fr auto;
-  grid-template-areas:
-    ". toolbar"
-    "metadata toolbar"
-    "kretser toolbar";
+  & > * {
+    pointer-events: all;
+  }
 `;
 
 export default Kart;

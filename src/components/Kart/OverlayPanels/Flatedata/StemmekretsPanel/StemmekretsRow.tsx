@@ -1,18 +1,18 @@
-import { useCallback, useEffect, useRef } from "react";
-import { FieldError, RegisterOptions, useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import Input, { ValidationError } from "components/form/Input/Input";
-import { StemmekretsEntry, useToolbarSaving } from "contexts/ToolbarContext";
-import useKretsToolbarSync from "contexts/ToolbarContext/useToolbarFormSync";
+import { useCallback, useRef, useState, useEffect } from "react";
+import { KretsRow } from "../KretsTable";
 import { StemmekretsRequest, StemmekretsResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
-import styled from "styled-components";
-import { Section } from "./components";
-import { getRepresentasjonspunktId } from "utils/map/source";
+import EditAndSaveButton from "../EditAndSaveButton";
+import InputCell from "../InputCell";
+import { ValidationError } from "components/form/Input/Input";
+import { StemmekretsEntry, useToolbarSaving } from "contexts/ToolbarContext";
+import { RegisterOptions, FieldError, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { updateEditFeatureText } from "utils/map/layerStyles";
-import Button from "components/form/Button";
+import { getRepresentasjonspunktId } from "utils/map/source";
+import useKretsToolbarSync from "contexts/ToolbarContext/useToolbarFormSync";
 
-type Inputs = {
+type StemmekretsInputs = {
   stemmekretsnavn: string;
   stemmekretsnummer: string;
   tellekretsnavn: string;
@@ -20,7 +20,7 @@ type Inputs = {
 };
 
 const fromFormToRequest = (
-  data: Inputs,
+  data: StemmekretsInputs,
   stemmekrets: StemmekretsResponse
 ): StemmekretsRequest => ({
   identifikasjon: {
@@ -35,34 +35,35 @@ const fromFormToRequest = (
 });
 
 type Props = {
-  stemmekretsId: string;
+  stemmekrets: StemmekretsResponse;
   kommuneId: string;
-  utkastStemmekrets: StemmekretsResponse | undefined;
 };
 
-const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
+// TODO: legg til fremtidige endringer igjen, sjekk med Erlend for skisser
+const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
   const { t } = useTranslation();
+  const stemmekretsId = getIdFromEntity(stemmekrets);
+  const { addEntry } = useToolbarSaving();
+  const [isEditing, setIsEditing] = useState(false);
+
   const {
     register,
     setValue,
     getValues,
-    handleSubmit,
     trigger,
+    handleSubmit,
+    reset,
     formState: { errors, isSubmitted, isDirty },
-  } = useForm<Inputs>();
-  const { addEntry } = useToolbarSaving();
-  const previousValues = useRef<Inputs>(getValues());
+  } = useForm<StemmekretsInputs>();
+  const previousValues = useRef<StemmekretsInputs>(getValues());
 
   useEffect(() => {
-    if (!utkastStemmekrets) return;
-
-    setValue("stemmekretsnavn", utkastStemmekrets.stemmekretsnavn);
-    setValue("stemmekretsnummer", utkastStemmekrets.stemmekretsnummer);
-    setValue("tellekretsnavn", utkastStemmekrets.tellekretsnavn ?? "");
-    setValue("tellekretsnummer", utkastStemmekrets.tellekretsnummer ?? "");
-
+    setValue("stemmekretsnavn", stemmekrets.stemmekretsnavn);
+    setValue("stemmekretsnummer", stemmekrets.stemmekretsnummer);
+    setValue("tellekretsnavn", stemmekrets.tellekretsnavn ?? "");
+    setValue("tellekretsnummer", stemmekrets.tellekretsnummer ?? "");
     previousValues.current = getValues();
-  }, [utkastStemmekrets, setValue, getValues]);
+  }, [getValues, setValue, stemmekrets]);
 
   const setFormValues = useCallback(
     (change: StemmekretsEntry["changes"][number], direction: "to" | "from") => {
@@ -73,13 +74,15 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
       setValue("tellekretsnavn", change[direction]?.tellekretsnavn ?? "");
       setValue("tellekretsnummer", change[direction]?.tellekretsnummer ?? "");
 
+      previousValues.current = getValues();
+
       updateEditFeatureText(
         getRepresentasjonspunktId(stemmekretsId),
         newName,
         newNumber
       );
     },
-    [setValue, stemmekretsId]
+    [getValues, setValue, stemmekretsId]
   );
 
   useKretsToolbarSync<StemmekretsEntry>({
@@ -88,31 +91,6 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
     undoEventKey: "stemmekretsUndo",
     setFormValues,
   });
-
-  const saveAndAddHistoryEntry = () => {
-    if (!utkastStemmekrets) return;
-
-    const newValues = getValues();
-
-    addEntry({
-      type: "stemmekrets",
-      kommuneId,
-      changes: [
-        {
-          from: fromFormToRequest(previousValues.current, utkastStemmekrets),
-          to: fromFormToRequest(newValues, utkastStemmekrets),
-          id: stemmekretsId,
-        },
-      ],
-    });
-
-    previousValues.current = newValues;
-    updateEditFeatureText(
-      getRepresentasjonspunktId(stemmekretsId),
-      newValues.stemmekretsnavn,
-      newValues.stemmekretsnummer
-    );
-  };
 
   // Denne skal oppføre seg som en XNOR, enten har begge feltene innhold, eller ingen av dem
   const isTellekretsSynced = (navn: string, nummer: string) => {
@@ -187,40 +165,77 @@ const DetailsTab = ({ stemmekretsId, kommuneId, utkastStemmekrets }: Props) => {
     }
   };
 
+  const saveAndAddHistoryEntry = () => {
+    const newValues = getValues();
+    addEntry({
+      type: "stemmekrets",
+      kommuneId,
+      changes: [
+        {
+          from: fromFormToRequest(previousValues.current, stemmekrets),
+          to: fromFormToRequest(newValues, stemmekrets),
+          id: stemmekretsId,
+        },
+      ],
+    });
+    previousValues.current = newValues;
+    updateEditFeatureText(
+      getRepresentasjonspunktId(stemmekretsId),
+      newValues.stemmekretsnavn,
+      newValues.stemmekretsnummer
+    );
+    toggleEditing();
+  };
+
+  const onSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    handleSubmit(saveAndAddHistoryEntry)(event);
+  };
+
+  const toggleEditing = () => {
+    reset(previousValues.current);
+    if (isEditing) {
+      setIsEditing(false);
+    } else {
+      setIsEditing(true);
+    }
+  };
+
   return (
-    <DetailsSection as="form" onSubmit={handleSubmit(saveAndAddHistoryEntry)}>
-      <Input
-        label={t("stemmekrets.Stemmekretsnummer")}
-        {...register("stemmekretsnummer", formOptions.stemmekretsnummer)}
+    <KretsRow isActive={isEditing}>
+      <InputCell
+        isEditing={isEditing}
+        data={getValues("stemmekretsnummer")}
         validationError={validationError(errors.stemmekretsnummer)}
+        {...register("stemmekretsnummer", formOptions.stemmekretsnummer)}
       />
-      <Input
-        label={t("tabell.Stemmekretsnavn")}
-        {...register("stemmekretsnavn", formOptions.stemmekretsnavn)}
+      <InputCell
+        isEditing={isEditing}
+        data={getValues("stemmekretsnavn")}
         validationError={validationError(errors.stemmekretsnavn)}
+        {...register("stemmekretsnavn", formOptions.stemmekretsnavn)}
       />
-      <Input
-        label={t("stemmekrets.Tellekretsnummer")}
-        {...register("tellekretsnummer", formOptions.tellekretsnummer)}
-        validationError={validationError(errors.tellekretsnummer)}
-      />
-      <Input
-        label={t("stemmekrets.Tellekretsnavn")}
-        {...register("tellekretsnavn", formOptions.tellekretsnavn)}
+      <InputCell
+        isEditing={isEditing}
+        data={getValues("tellekretsnavn")}
         validationError={validationError(errors.tellekretsnavn)}
+        {...register("tellekretsnavn", formOptions.tellekretsnavn)}
       />
-      <Button type="submit" disabled={!isDirty}>
-        {t("action.Endre")}
-      </Button>
-    </DetailsSection>
+      <InputCell
+        isEditing={isEditing}
+        data={getValues("tellekretsnummer")}
+        validationError={validationError(errors.tellekretsnummer)}
+        {...register("tellekretsnummer", formOptions.tellekretsnummer)}
+      />
+      <td>{stemmekrets.valgdistriktsnummer ?? ""}</td>
+      <EditAndSaveButton
+        isEditing={isEditing}
+        toggleEditing={toggleEditing}
+        canSave={isDirty}
+        onSubmit={onSubmit}
+      />
+    </KretsRow>
   );
 };
 
-const DetailsSection = styled(Section)`
-  display: grid;
-  grid-template-columns: 185px 350px;
-  gap: 30px 12px;
-  color: var(--gray_dark);
-`;
-
-export default DetailsTab;
+export default StemmekretsRow;

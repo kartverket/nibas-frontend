@@ -16,7 +16,6 @@ import {
   UtkastRef,
 } from "types/api";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
-import { useOverlayPanels } from "contexts/OverlayPanelsContext";
 import { resetMapView } from "utils/map";
 import UtkastConflicts from "./UtkastConflictModal/UtkastConflicts";
 import useAlertModal from "hooks/useAlertModal";
@@ -26,6 +25,7 @@ import { Outline } from "style/mixins";
 import AlertModal from "components/AlertModal";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { isGeometriError, statusCode } from "utils/api";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
 
 type Props = {
   utkast: UtkastRef;
@@ -42,7 +42,7 @@ const UtkastItem = ({ utkast }: Props) => {
   const utkastId = searchParams.get("utkast");
 
   const { resetAndClearEditingLayer } = useEditAllGrenser();
-  const { closePanels } = useOverlayPanels();
+  const { closeOverlayPanel } = useOverlayPanel();
   const { data: fullUtkast } = useNibasApi(
     isPublishOpen || isDeleteOpen ? "/v1/utkast/{id}" : null,
     {
@@ -139,7 +139,7 @@ const UtkastItem = ({ utkast }: Props) => {
       setSearchParams({});
     }
     resetAndClearEditingLayer();
-    closePanels();
+    closeOverlayPanel();
     resetMapView();
   };
 

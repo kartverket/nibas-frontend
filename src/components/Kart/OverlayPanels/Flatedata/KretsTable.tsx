@@ -1,13 +1,30 @@
 import styled, { css } from "styled-components";
 
+export const KretsTable = styled.table`
+  width: 100%;
+  border-spacing: 0;
+  table-layout: fixed;
+
+  td,
+  th {
+    width: 100%;
+    padding: 16px;
+
+    &:last-child {
+      width: 200px;
+    }
+  }
+
+  th {
+    font-weight: normal;
+    text-align: left;
+    font-size: 14px;
+  }
+`;
+
 export const KretsRow = styled.tr<{ isActive: boolean }>`
   position: relative;
-
-  ${({ isActive }) =>
-    isActive &&
-    css`
-      background: var(--blue_light);
-    `};
+  vertical-align: baseline;
 
   ::after {
     content: "";
@@ -30,35 +47,6 @@ export const KretsRow = styled.tr<{ isActive: boolean }>`
   td {
     border-bottom: 2px solid var(--gray_light);
   }
-`;
-
-export const KretsTable = styled.table`
-  border-spacing: 0;
-  border: none;
-  width: 100%;
-
-  td,
-  th {
-    padding: 16px;
-  }
-
-  > thead {
-    text-align: left;
-    font-size: 14px;
-
-    th {
-      position: sticky;
-      top: 0;
-      z-index: 1;
-      font-weight: normal;
-      background: var(--white);
-      border-bottom: 1px solid var(--black);
-    }
-  }
-`;
-
-export const KretsTableWrapper = styled.div`
-  overflow-y: auto;
 `;
 
 export const ButtonCell = styled.td`

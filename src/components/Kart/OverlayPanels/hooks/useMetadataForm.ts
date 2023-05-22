@@ -5,7 +5,7 @@ import LineString from "ol/geom/LineString";
 import { ObjectEvent } from "ol/Object";
 import { useForm } from "react-hook-form";
 import useAsyncKodeliste from "./useAsyncKodeliste";
-import { addMetadataEntryFromFeature } from "./utils";
+import { addMetadataEntryFromFeature } from "../MetadataPanel/utils";
 import { useToolbarSaving } from "contexts/ToolbarContext";
 import { Metadata } from "types/api";
 
@@ -52,7 +52,14 @@ const getFormFromApiMetadata = (metadata: Metadata) => ({
 });
 
 const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
-  const { register, setValue, getValues } = useForm<Inputs>({
+  const {
+    register,
+    setValue,
+    getValues,
+    handleSubmit,
+    reset,
+    formState: { isDirty },
+  } = useForm<Inputs>({
     defaultValues: getFormFromApiMetadata(metadata),
   });
 
@@ -101,8 +108,11 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
 
   return {
     register,
+    handleSubmit,
     maalemetodeKoder,
     updateDraftFromFeature,
+    isDirty,
+    reset,
   };
 };
 

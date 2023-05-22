@@ -1,6 +1,6 @@
 import Checkbox from "components/Checkbox";
 import Button from "components/form/Button";
-import { ButtonCell } from "components/Kart/OverlayPanels/KretsTable";
+import { ButtonCell } from "components/Kart/OverlayPanels/Flatedata/KretsTable";
 import { Modal, ModalContent } from "components/Modal";
 import Heading from "components/typography/Heading";
 import { FC } from "react";

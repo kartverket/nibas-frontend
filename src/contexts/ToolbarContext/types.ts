@@ -57,7 +57,13 @@ export type EditContextType = HistoryEntry["type"];
 
 export type ToolbarHistory = History<HistoryEntry>;
 
-export type ToolbarPointMode = null | "add" | "remove" | "split" | "detach";
+export type ToolbarPointMode =
+  | null
+  | "add"
+  | "remove"
+  | "split"
+  | "detach"
+  | "metadata";
 export type ToolbarEditMode = "snap";
 
 export type ToolbarContextValue = {

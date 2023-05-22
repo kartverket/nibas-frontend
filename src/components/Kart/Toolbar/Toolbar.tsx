@@ -9,20 +9,20 @@ import Toast from "./Toast";
 import { t } from "i18next";
 
 const Container = styled.div`
-  position: absolute;
-  top: ${toolbarSpacing}px;
-  right: ${toolbarSpacing}px;
-  z-index: 1;
+  position: relative;
+  grid-area: toolbar;
+  align-self: end;
+  margin: 16px;
+  display: flex;
+  gap: ${toolbarSpacing}px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+`;
 
+const Stack = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
   gap: ${toolbarSpacing}px;
-
-  pointer-events: none;
-  & > * {
-    pointer-events: all;
-  }
 `;
 
 const Toolbar = () => {
@@ -33,7 +33,7 @@ const Toolbar = () => {
   return (
     <Container>
       {redigeringsmodusAktiv && (
-        <>
+        <Stack>
           {createUtkastOpen && (
             <UtkastToolbar
               setCreateUtkastOpen={setCreateUtkastOpen}
@@ -45,7 +45,7 @@ const Toolbar = () => {
             setCreateUtkastOpen={setCreateUtkastOpen}
           />
           {utkastJustCreated && <Toast text={t("utkast.utkast-opprettet")} />}
-        </>
+        </Stack>
       )}
       <ButtonToolbar />
     </Container>

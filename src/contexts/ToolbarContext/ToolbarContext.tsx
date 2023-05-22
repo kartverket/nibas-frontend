@@ -106,9 +106,6 @@ const onRedo = (entry: HistoryEntry) => {
   ensureAllCasesCovered(type);
 };
 
-/**
- * @deprecated Ikke bruk utenfor ToolbarContext.tsx, bruk heller useToolbar eller useToolbarSaving
- */
 export const ToolbarContext = createContext<ToolbarContextValue | undefined>(
   undefined
 );

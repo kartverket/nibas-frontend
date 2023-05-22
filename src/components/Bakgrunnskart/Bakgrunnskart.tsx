@@ -11,14 +11,15 @@ import { BakgrunnskartId } from "hooks/layers/types";
 
 const Bakgrunnskart = () => {
   const { t } = useTranslation();
-  const { isOpen: visible, togglePanel } = useSidebarPanel("kartlag");
+  const { activeSidebarPanel, closeSidebarPanel } = useSidebarPanel();
   const { visibleLayers } = useBakgrunnskart();
 
-  if (!visible) return null;
-
   return (
-    <SidebarPanel>
-      <SidebarPanelTitle closePanel={togglePanel} title={t("Aktive kartlag")} />
+    <SidebarPanel isOpen={activeSidebarPanel === "kartlag"}>
+      <SidebarPanelTitle
+        closePanel={closeSidebarPanel}
+        title={t("Aktive kartlag")}
+      />
       {visibleLayers.map((layer, i) => (
         <MainLayer
           key={layer.mainLayer}

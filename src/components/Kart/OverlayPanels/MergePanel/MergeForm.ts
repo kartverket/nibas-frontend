@@ -2,7 +2,8 @@ export type MultiselectValue = {
   value: string;
 };
 
-export type SammenslaaingFormData = {
+export type MergeFormData = {
+  stemmekrets: string;
   stemmekretsnavn: string;
   stemmekretsnummer: string;
   stemmekretsNummerTilSammenslaaing: MultiselectValue[];

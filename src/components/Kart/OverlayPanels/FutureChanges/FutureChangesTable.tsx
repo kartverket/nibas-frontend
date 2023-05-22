@@ -92,4 +92,11 @@ const Table = styled.table`
   }
 `;
 
+export const FutureChangesTableData = styled.td`
+  border-top: 2px solid var(--gray);
+  background-color: var(--gray_light);
+  width: 100%;
+  padding: 32px 16px;
+`;
+
 export default FutureChangesTable;
