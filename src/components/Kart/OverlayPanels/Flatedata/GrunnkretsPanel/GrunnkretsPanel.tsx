@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import GrunnkretsRow from "./GrunnkretsRow";
 import { useUtkastEntity } from "contexts/UtkastContext";
@@ -12,13 +12,13 @@ import { useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import Input from "components/form/Input";
 import SortHeader from "../SortHeader";
 import orderBy from "lodash.orderby";
-
-type SortProperty = "grunnkretsnummer" | "navn";
+import { useTableSort } from "../useTableSort";
 
 const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
-  const [sortProperty, setSortProperty] =
-    useState<SortProperty>("grunnkretsnummer");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const { sortProperty, sortOrder, sortHeaderProps } = useTableSort([
+    "grunnkretsnummer",
+    "navn",
+  ]);
   const { t } = useTranslation();
   const { flatedata, closeOverlayPanel } = useOverlayPanel();
   const { searchValue, setInputValue } = useSearch();
@@ -39,27 +39,6 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
         grunnkrets.navn.toLowerCase().includes(searchValue.toLowerCase())
     );
   }, [searchValue, utkastGrunnkretser]);
-
-  const onSort = (property: SortProperty) => {
-    if (property === sortProperty) {
-      if (sortOrder === "asc") {
-        setSortOrder("desc");
-      } else if (sortOrder === "desc") {
-        // Hvis man har trykket på en knapp tre ganger går vi tilbake til start
-        setSortProperty("grunnkretsnummer");
-        setSortOrder("asc");
-      }
-    } else {
-      setSortProperty(property);
-      setSortOrder("asc");
-    }
-  };
-
-  const sortHeaderProps = (property: SortProperty) => ({
-    onClick: () => onSort(property),
-    isActive: sortProperty === property,
-    isReversed: sortProperty === property && sortOrder === "desc",
-  });
 
   return (
     <Panel isOpen={isOpen} className={className}>

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { KretsTable } from "../KretsTable";
 import StemmekretsRow from "./StemmekretsRow";
@@ -10,18 +9,17 @@ import { PanelProps, Panel, PanelHeader } from "../../Panel";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import SortHeader from "../SortHeader";
 import orderBy from "lodash.orderby";
-
-type SortProperty =
-  | "stemmekretsnummer"
-  | "stemmekretsnavn"
-  | "tellekretsnavn"
-  | "tellekretsnummer"
-  | "valgdistriktsnummer";
+import { useTableSort } from "../useTableSort";
 
 const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
-  const [sortProperty, setSortProperty] =
-    useState<SortProperty>("stemmekretsnummer");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const { sortProperty, sortOrder, sortHeaderProps } = useTableSort([
+    "stemmekretsnummer",
+    "stemmekretsnavn",
+    "tellekretsnavn",
+    "tellekretsnummer",
+    "valgdistriktsnummer",
+  ]);
+
   const { t } = useTranslation();
   const { flatedata, closeOverlayPanel } = useOverlayPanel();
 
@@ -31,27 +29,6 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
     stemmekretserByKommune,
     "stemmekretsendringer"
   ) as StemmekretsResponse[] | undefined;
-
-  const onSort = (property: SortProperty) => {
-    if (property === sortProperty) {
-      if (sortOrder === "asc") {
-        setSortOrder("desc");
-      } else if (sortOrder === "desc") {
-        // Hvis man har trykket på en knapp tre ganger går vi tilbake til start
-        setSortProperty("stemmekretsnummer");
-        setSortOrder("asc");
-      }
-    } else {
-      setSortProperty(property);
-      setSortOrder("asc");
-    }
-  };
-
-  const sortHeaderProps = (property: SortProperty) => ({
-    onClick: () => onSort(property),
-    isActive: sortProperty === property,
-    isReversed: sortProperty === property && sortOrder === "desc",
-  });
 
   return (
     <Panel isOpen={isOpen} className={className}>
