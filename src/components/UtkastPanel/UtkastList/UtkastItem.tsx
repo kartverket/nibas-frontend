@@ -123,6 +123,7 @@ const UtkastItem = ({ utkast }: Props) => {
 
       if (utkastActive) {
         setSearchParams({});
+        resetAndClearEditingLayer();
       }
     } else if (statusCode.isError(response.status)) {
       setError({
