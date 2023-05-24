@@ -10,8 +10,15 @@ import { Panel, PanelHeader, PanelProps } from "../../Panel";
 import { KretsTable } from "../KretsTable";
 import { useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import Input from "components/form/Input";
+import SortHeader from "../SortHeader";
+import orderBy from "lodash.orderby";
+import { useTableSort } from "../useTableSort";
 
 const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
+  const { sortProperty, sortOrder, sortHeaderProps } = useTableSort([
+    "grunnkretsnummer",
+    "navn",
+  ]);
   const { t } = useTranslation();
   const { flatedata, closeOverlayPanel } = useOverlayPanel();
   const { searchValue, setInputValue } = useSearch();
@@ -33,11 +40,6 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
     );
   }, [searchValue, utkastGrunnkretser]);
 
-  const sortByGrunnkretsnummer = (
-    a: GrunnkretsResponse,
-    b: GrunnkretsResponse
-  ) => parseInt(a.grunnkretsnummer) - parseInt(b.grunnkretsnummer);
-
   return (
     <Panel isOpen={isOpen} className={className}>
       <PanelHeader onClose={closeOverlayPanel}>Endre kretsdetaljer</PanelHeader>
@@ -45,8 +47,12 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
         <KretsTable>
           <thead>
             <tr>
-              <th>{t("grunnkrets.Grunnkretsnummer")}</th>
-              <th>{t("grunnkrets.Grunnkretsnavn")}</th>
+              <SortHeader {...sortHeaderProps("grunnkretsnummer")}>
+                {t("grunnkrets.Grunnkretsnummer")}
+              </SortHeader>
+              <SortHeader {...sortHeaderProps("navn")}>
+                {t("grunnkrets.Grunnkretsnavn")}
+              </SortHeader>
               <th>{/* Tom plass for mellomrom */}</th>
               <th>
                 <Input
@@ -57,15 +63,15 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
             </tr>
           </thead>
           <tbody>
-            {filteredGrunnkretser
-              .sort(sortByGrunnkretsnummer)
-              .map((grunnkrets) => (
+            {orderBy(filteredGrunnkretser, sortProperty, sortOrder).map(
+              (grunnkrets) => (
                 <GrunnkretsRow
                   key={getIdFromEntity(grunnkrets)}
                   grunnkrets={grunnkrets}
                   kommuneId={kommuneId}
                 />
-              ))}
+              )
+            )}
           </tbody>
         </KretsTable>
       )}

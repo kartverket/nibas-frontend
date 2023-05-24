@@ -7,8 +7,19 @@ import { getIdFromEntity } from "utils/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { PanelProps, Panel, PanelHeader } from "../../Panel";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
+import SortHeader from "../SortHeader";
+import orderBy from "lodash.orderby";
+import { useTableSort } from "../useTableSort";
 
 const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
+  const { sortProperty, sortOrder, sortHeaderProps } = useTableSort([
+    "stemmekretsnummer",
+    "stemmekretsnavn",
+    "tellekretsnavn",
+    "tellekretsnummer",
+    "valgdistriktsnummer",
+  ]);
+
   const { t } = useTranslation();
   const { flatedata, closeOverlayPanel } = useOverlayPanel();
 
@@ -19,11 +30,6 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
     "stemmekretsendringer"
   ) as StemmekretsResponse[] | undefined;
 
-  const sortByStemmekretsnummer = (
-    a: StemmekretsResponse,
-    b: StemmekretsResponse
-  ) => parseInt(a.stemmekretsnummer) - parseInt(b.stemmekretsnummer);
-
   return (
     <Panel isOpen={isOpen} className={className}>
       <PanelHeader onClose={closeOverlayPanel}>Endre kretsdetaljer</PanelHeader>
@@ -31,24 +37,34 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
         <KretsTable>
           <thead>
             <tr>
-              <th>{t("stemmekrets.Stemmekretsnummer")}</th>
-              <th>{t("tabell.Stemmekretsnavn")}</th>
-              <th>{t("stemmekrets.Tellekretsnavn")}</th>
-              <th>{t("stemmekrets.Tellekretsnummer")}</th>
-              <th>{t("stemmekrets.Valgdistriktsnummer")}</th>
+              <SortHeader {...sortHeaderProps("stemmekretsnummer")}>
+                {t("stemmekrets.Stemmekretsnummer")}
+              </SortHeader>
+              <SortHeader {...sortHeaderProps("stemmekretsnavn")}>
+                {t("tabell.Stemmekretsnavn")}
+              </SortHeader>
+              <SortHeader {...sortHeaderProps("tellekretsnavn")}>
+                {t("stemmekrets.Tellekretsnavn")}
+              </SortHeader>
+              <SortHeader {...sortHeaderProps("tellekretsnummer")}>
+                {t("stemmekrets.Tellekretsnummer")}
+              </SortHeader>
+              <SortHeader {...sortHeaderProps("valgdistriktsnummer")}>
+                {t("stemmekrets.Valgdistriktsnummer")}
+              </SortHeader>
               <th>{/* Tom plass for knapp i rader */}</th>
             </tr>
           </thead>
           <tbody>
-            {utkastStemmekretser
-              .sort(sortByStemmekretsnummer)
-              .map((stemmekrets) => (
+            {orderBy(utkastStemmekretser, sortProperty, sortOrder).map(
+              (stemmekrets) => (
                 <StemmekretsRow
                   key={getIdFromEntity(stemmekrets)}
                   stemmekrets={stemmekrets}
                   kommuneId={kommuneId}
                 />
-              ))}
+              )
+            )}
           </tbody>
         </KretsTable>
       )}
