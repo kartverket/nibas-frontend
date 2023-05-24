@@ -78,8 +78,11 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
     "stemmekretsendringer"
   ) as StemmekretsResponse[] | undefined;
 
-  const formMethods = useForm<MergeFormData>();
-
+  const formMethods = useForm<MergeFormData>({
+    defaultValues: {
+      stemmekretsNummerTilSammenslaaing: [{ value: "default" }],
+    },
+  });
   const {
     register,
     handleSubmit,
