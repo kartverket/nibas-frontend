@@ -15,6 +15,12 @@ export const KretsTable = styled.table`
     }
   }
 
+  td {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
   th {
     font-weight: normal;
     text-align: left;
