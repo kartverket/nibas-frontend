@@ -81,6 +81,7 @@ export type ToolbarContextValue = {
     features: string[],
     overlappingFeatures: string[]
   ) => void;
+  dirtyFeatureIds: string[];
   clearDirtyStyles: () => void;
   activePointMode: ToolbarPointMode;
   togglePointMode: (pointMode: ToolbarPointMode) => void;
