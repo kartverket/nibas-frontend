@@ -4,12 +4,20 @@ import styled from "styled-components";
 
 const Container = styled(Button)<{ isActive: boolean }>`
   color: ${(props) => (props.isActive ? "var(--blue)" : "var(--gray_dark)")};
+  white-space: nowrap;
 
   &:hover {
-    color: var(--black);
+    color: ${(props) => (props.isActive ? "var(--blue)" : "var(--black)")};
 
     .material-symbols-outlined {
-      background: var(--gray_light);
+      background: ${(props) =>
+        props.isActive ? "var(--blue_light)" : "var(--gray_light)"};
+    }
+  }
+
+  &:active {
+    .material-symbols-outlined {
+      background: var(--blue_light);
     }
   }
 
