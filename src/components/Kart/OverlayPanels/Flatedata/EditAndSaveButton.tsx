@@ -41,12 +41,16 @@ const EditAndSaveButton = ({
         <SaveButton
           aria-label="Lagre endringer"
           onClick={onSubmit}
-          icon={<Icon icon="save" />}
+          icon={<Icon icon="edit" />}
           disabled={!canSave}
         >
-          Lagre
+          Endre
         </SaveButton>
-        <DiscardButton aria-label="Forkast endringer" onClick={toggleEditing}>
+        <DiscardButton
+          variant="secondary"
+          aria-label="Forkast endringer"
+          onClick={toggleEditing}
+        >
           <Icon icon="close" />
         </DiscardButton>
       </SaveAndDiscard>
