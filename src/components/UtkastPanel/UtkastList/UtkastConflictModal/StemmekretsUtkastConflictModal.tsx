@@ -40,8 +40,6 @@ const StemmekretsUtkastConflictModal = ({
     getNavnInSpraak(current.stemmekretsnavn, "nor") ?? "---",
     current.stemmekretsnummer ?? "---",
     current.valgdistriktsnummer ?? "---",
-    current.tellekretsnavn ?? "---",
-    current.tellekretsnummer ?? "---",
     utkast.endringstype,
     utkast.gyldigFra,
   ];
@@ -50,8 +48,6 @@ const StemmekretsUtkastConflictModal = ({
     t("stemmekrets.Stemmekrets"),
     t("stemmekrets.Stemmekretsnummer"),
     t("stemmekrets.Valgdistriktsnummer"),
-    t("stemmekrets.Tellekretsnavn"),
-    t("stemmekrets.Tellekretsnummer"),
     t("tabell.Endringstype"),
     t("metadata.Gyldig fra"),
   ];
@@ -82,12 +78,6 @@ const StemmekretsUtkastConflictModal = ({
               <Input
                 {...register(`stemmekretser.${index}.valgdistriktsnummer`)}
               />
-            </td>
-            <td>
-              <Input {...register(`stemmekretser.${index}.tellekretsnavn`)} />
-            </td>
-            <td>
-              <Input {...register(`stemmekretser.${index}.tellekretsnummer`)} />
             </td>
             <td>{field.endringstype}</td>
             <td>{field.gyldigFra}</td>

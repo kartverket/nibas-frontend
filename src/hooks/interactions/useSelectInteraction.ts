@@ -19,7 +19,7 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 };
 
 const useSelectInteraction = () => {
-  const { activePointMode } = useToolbar();
+  const { activePointMode, dirtyFeatureIds } = useToolbar();
   const {
     closeOverlayPanel,
     openOverlayPanel,
@@ -55,6 +55,9 @@ const useSelectInteraction = () => {
           openOverlayPanel("metadata");
         }
       } else if (clickedFeatures.length === 0) {
+        if (dirtyFeatureIds.includes(selectedFeature?.getId() as string)) {
+          selectedFeature?.setStyle(grenseStyles.dirty);
+        }
         closeOverlayPanel();
         overlayPopup.setPosition(undefined);
       }
@@ -65,7 +68,14 @@ const useSelectInteraction = () => {
     return () => {
       select.un("select", syncFeatures);
     };
-  }, [openOverlayPanel, closeOverlayPanel, select, setSelectedFeature]);
+  }, [
+    closeOverlayPanel,
+    dirtyFeatureIds,
+    openOverlayPanel,
+    select,
+    selectedFeature,
+    setSelectedFeature,
+  ]);
 
   useEffect(() => {
     if (selectedFeature === null) {

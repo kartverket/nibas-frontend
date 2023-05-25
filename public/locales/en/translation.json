@@ -34,8 +34,6 @@
         },
         "stemmekretsnavn": "__STRING_NOT_TRANSLATED__",
         "stemmekretsnummer": "__STRING_NOT_TRANSLATED__",
-        "tellekretsnavn": "__STRING_NOT_TRANSLATED__",
-        "tellekretsnummer": "__STRING_NOT_TRANSLATED__",
         "valgdistriktsnummer": "__STRING_NOT_TRANSLATED__"
       },
       "metadata": "__STRING_NOT_TRANSLATED__",
@@ -147,11 +145,6 @@
         "ikke-tomt": "__STRING_NOT_TRANSLATED__",
         "obligatorisk": "__STRING_NOT_TRANSLATED__"
       },
-      "tellekretsnummer": {
-        "både-eller-ingen": "__STRING_NOT_TRANSLATED__",
-        "kun-tall": "__STRING_NOT_TRANSLATED__",
-        "kun-positiv": "__STRING_NOT_TRANSLATED__"
-      },
       "har-feil": "__STRING_NOT_TRANSLATED__",
       "multiselect": {
         "obligatorisk": "__STRING_NOT_TRANSLATED__",
@@ -159,8 +152,6 @@
       }
     },
     "Stemmekretsnummer": "__STRING_NOT_TRANSLATED__",
-    "Tellekretsnummer": "__STRING_NOT_TRANSLATED__",
-    "Tellekretsnavn": "__STRING_NOT_TRANSLATED__",
     "utkast-sammenslaaing-alert": {
       "tittel": "__STRING_NOT_TRANSLATED__",
       "tekst": "__STRING_NOT_TRANSLATED__"

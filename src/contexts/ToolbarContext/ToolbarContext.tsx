@@ -192,6 +192,7 @@ export const ToolbarProvider: React.FC = ({ children }) => {
     activePointMode,
     setAndSaveUtkastFeatures,
     setAndSaveSammenslaaingsFeatures,
+    dirtyFeatureIds,
     clearDirtyStyles: clearSavedDirtyFeatureIds,
     togglePointMode,
     activeEditModes,
