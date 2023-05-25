@@ -126,7 +126,7 @@
       "detaljer-label-stemmekretsnummer": "Stemmekretsnummer",
       "detaljer-label-stemmekretsnavn": "Stemmekretsnavn",
       "actions": {
-        "velg": "Velg stemmekretsen du vil slå sammen med",
+        "velg": "Velg en stemmekrets fra listen",
         "slaa-sammen": "Slå sammen",
         "avbryt": "Avbryt",
         "legg-til-flere": "Legg til flere sammenslåinger"
