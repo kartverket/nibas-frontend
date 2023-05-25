@@ -14,7 +14,7 @@ const UtkastPanel = () => {
         closePanel={closeSidebarPanel}
         title={t("sidebar.Utkast")}
       />
-      <UtkastList />
+      {activeSidebarPanel === "utkast" && <UtkastList />}
     </SidebarPanel>
   );
 };
