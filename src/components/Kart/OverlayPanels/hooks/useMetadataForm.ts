@@ -113,6 +113,7 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
     updateDraftFromFeature,
     isDirty,
     reset,
+    getFormFromApiMetadata,
   };
 };
 

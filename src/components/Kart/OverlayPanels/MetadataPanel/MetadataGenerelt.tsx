@@ -12,6 +12,7 @@ import { Divider } from "components/Divider";
 import Button from "components/form/Button/Button";
 import useIsMetadataDisabled from "../hooks/useIsMetadataDisabled";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { useEffect } from "react";
 
 type Props = {
   feature: Feature<Geometry>;
@@ -68,7 +69,13 @@ const MetadataGenerelt = ({ feature }: Props) => {
     updateDraftFromFeature,
     isDirty,
     reset,
+    getFormFromApiMetadata,
   } = useMetadataForm(metadata, feature);
+
+  // Still tilbake til default-verdier dersom man bytter valgt feature
+  useEffect(() => {
+    reset(getFormFromApiMetadata(metadata));
+  }, [getFormFromApiMetadata, metadata, reset]);
 
   const metadataIsDisabled = useIsMetadataDisabled(properties);
 
