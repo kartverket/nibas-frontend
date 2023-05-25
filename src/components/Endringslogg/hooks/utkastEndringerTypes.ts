@@ -8,9 +8,7 @@ export type Endring = {
 export type StemmekretsMetadataEndringstype =
   | "stemmekretsnavn"
   | "stemmekretsnummer"
-  | "tellekretsnavn"
-  | "valgdistriktsnummer"
-  | "tellekretsnummer";
+  | "valgdistriktsnummer";
 
 export type GrunnkretsEndringstype = "navn" | "grunnkretsnummer";
 
@@ -18,8 +16,6 @@ export type StemmekretsMetadataEndring = {
   kretsEndret: StemmekretsResponse;
   stemmekretsnavn: Endring | null | undefined;
   stemmekretsnummer: Endring | null | undefined;
-  tellekretsnummer: Endring | null | undefined;
-  tellekretsnavn: Endring | null | undefined;
   valgdistriktsnummer: Endring | null | undefined;
 };
 

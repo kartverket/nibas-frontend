@@ -15,8 +15,6 @@ import { getIdFromEntity } from "utils/api";
 type StemmekretsFormData = {
   stemmekretsnummer: string;
   stemmekretsnavn: string;
-  tellekretsnummer: string;
-  tellekretsnavn: string;
   valgdistriktsnummer: string;
   endringstype: string;
   gyldigFra: string;
@@ -42,8 +40,6 @@ const getStemmekretsRequest = (
     },
     stemmekretsnummer: grunnkretsFormData.stemmekretsnummer,
     stemmekretsnavn: grunnkretsFormData.stemmekretsnavn,
-    tellekretsnavn: grunnkretsFormData.tellekretsnavn,
-    tellekretsnummer: grunnkretsFormData.tellekretsnummer,
     valgdistriktsnummer: grunnkretsFormData.valgdistriktsnummer,
     endringstype: grunnkretsFormData.endringstype,
     gyldigFra: grunnkretsFormData.gyldigFra,
@@ -138,8 +134,6 @@ const useStemmekretsConflictModal = ({
         stemmekretsnavn: futureVersion.stemmekretsnavn ?? "",
         stemmekretsnummer: futureVersion.stemmekretsnummer ?? "",
         valgdistriktsnummer: futureVersion.valgdistriktsnummer ?? "",
-        tellekretsnavn: futureVersion.tellekretsnavn ?? "",
-        tellekretsnummer: futureVersion.tellekretsnummer ?? "",
         endringstype: futureVersion.endringstype ?? "",
         gyldigFra: futureVersion.gyldighet.gyldigFra,
         confirmed: false,

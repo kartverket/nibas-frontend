@@ -189,18 +189,6 @@ const StemmekretsMetadataEndringer = ({
             endring={metadataendring.stemmekretsnummer}
           />
         )}
-        {metadataendring.tellekretsnavn && (
-          <Endringsrad
-            tittel={t("utkast.endringslogg.endring.tellekretsnavn")}
-            endring={metadataendring.tellekretsnavn}
-          />
-        )}
-        {metadataendring.tellekretsnummer && (
-          <Endringsrad
-            tittel={t("utkast.endringslogg.endring.tellekretsnummer")}
-            endring={metadataendring.tellekretsnummer}
-          />
-        )}
         {metadataendring.valgdistriktsnummer && (
           <Endringsrad
             tittel={t("utkast.endringslogg.endring.valgdistriktsnummer")}

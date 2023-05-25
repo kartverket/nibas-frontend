@@ -15,8 +15,6 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
   const { sortProperty, sortOrder, sortHeaderProps } = useTableSort([
     "stemmekretsnummer",
     "stemmekretsnavn",
-    "tellekretsnavn",
-    "tellekretsnummer",
     "valgdistriktsnummer",
   ]);
 
@@ -42,12 +40,6 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
               </SortHeader>
               <SortHeader {...sortHeaderProps("stemmekretsnavn")}>
                 {t("tabell.Stemmekretsnavn")}
-              </SortHeader>
-              <SortHeader {...sortHeaderProps("tellekretsnavn")}>
-                {t("stemmekrets.Tellekretsnavn")}
-              </SortHeader>
-              <SortHeader {...sortHeaderProps("tellekretsnummer")}>
-                {t("stemmekrets.Tellekretsnummer")}
               </SortHeader>
               <SortHeader {...sortHeaderProps("valgdistriktsnummer")}>
                 {t("stemmekrets.Valgdistriktsnummer")}

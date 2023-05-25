@@ -86,8 +86,6 @@ const harMetadataEndring = (
   const fieldsToCheck = [
     metadatEndring.stemmekretsnavn,
     metadatEndring.stemmekretsnummer,
-    metadatEndring.tellekretsnavn,
-    metadatEndring.tellekretsnummer,
     metadatEndring.valgdistriktsnummer,
   ];
 
@@ -113,8 +111,6 @@ const getMetadataEndringer = (
         kretsEndret: findKrets(stemmekretsId, alleStemmekretser),
         stemmekretsnavn: getEndringAvType("stemmekretsnavn"),
         stemmekretsnummer: getEndringAvType("stemmekretsnummer"),
-        tellekretsnavn: getEndringAvType("tellekretsnavn"),
-        tellekretsnummer: getEndringAvType("tellekretsnummer"),
         valgdistriktsnummer: getEndringAvType("valgdistriktsnummer"),
       };
     })

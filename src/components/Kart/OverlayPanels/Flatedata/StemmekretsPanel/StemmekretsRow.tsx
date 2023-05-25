@@ -15,8 +15,6 @@ import useKretsToolbarSync from "contexts/ToolbarContext/useToolbarFormSync";
 type StemmekretsInputs = {
   stemmekretsnavn: string;
   stemmekretsnummer: string;
-  tellekretsnavn: string;
-  tellekretsnummer: string;
 };
 
 const fromFormToRequest = (
@@ -30,8 +28,6 @@ const fromFormToRequest = (
   version: stemmekrets.version,
   stemmekretsnavn: data.stemmekretsnavn,
   stemmekretsnummer: data.stemmekretsnummer,
-  tellekretsnavn: data.tellekretsnavn,
-  tellekretsnummer: data.tellekretsnummer,
 });
 
 type Props = {
@@ -50,18 +46,15 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
     register,
     setValue,
     getValues,
-    trigger,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitted, isDirty },
+    formState: { errors, isDirty },
   } = useForm<StemmekretsInputs>();
   const previousValues = useRef<StemmekretsInputs>(getValues());
 
   useEffect(() => {
     setValue("stemmekretsnavn", stemmekrets.stemmekretsnavn);
     setValue("stemmekretsnummer", stemmekrets.stemmekretsnummer);
-    setValue("tellekretsnavn", stemmekrets.tellekretsnavn ?? "");
-    setValue("tellekretsnummer", stemmekrets.tellekretsnummer ?? "");
     previousValues.current = getValues();
   }, [getValues, setValue, stemmekrets]);
 
@@ -71,8 +64,6 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
       const newNumber = change[direction]?.stemmekretsnummer;
       setValue("stemmekretsnavn", newName ?? "");
       setValue("stemmekretsnummer", newNumber ?? "");
-      setValue("tellekretsnavn", change[direction]?.tellekretsnavn ?? "");
-      setValue("tellekretsnummer", change[direction]?.tellekretsnummer ?? "");
 
       previousValues.current = getValues();
 
@@ -92,18 +83,7 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
     setFormValues,
   });
 
-  // Denne skal oppføre seg som en XNOR, enten har begge feltene innhold, eller ingen av dem
-  const isTellekretsSynced = (navn: string, nummer: string) => {
-    return !navn.length === !nummer.length;
-  };
-
   const isInteger = (s: string) => s.match(/^-?\d+$/) !== null;
-
-  const tellekretsValidateOnChange = () => {
-    if (isSubmitted) {
-      trigger();
-    }
-  };
 
   const formOptions: Record<string, RegisterOptions> = {
     stemmekretsnummer: {
@@ -123,36 +103,6 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
     },
     stemmekretsnavn: {
       required: t("stemmekrets.validering.stemmekretsnavn.ikke-tomt"),
-    },
-    tellekretsnummer: {
-      validate: (tellekretsnummer: string) => {
-        const tellekretsnavn = getValues("tellekretsnavn");
-
-        const isTellekretsEmpty =
-          tellekretsnummer.length === 0 && tellekretsnavn.length === 0;
-
-        if (!isTellekretsSynced(tellekretsnavn, tellekretsnummer)) {
-          return t("stemmekrets.validering.tellekretsnummer.både-eller-ingen");
-        }
-        if (!isTellekretsEmpty && !isInteger(tellekretsnummer)) {
-          return t("stemmekrets.validering.tellekretsnummer.kun-tall");
-        }
-        if (!isTellekretsEmpty && parseInt(tellekretsnummer) <= 0) {
-          return t("stemmekrets.validering.tellekretsnummer.kun-positiv");
-        }
-        return true;
-      },
-      onChange: tellekretsValidateOnChange,
-    },
-    tellekretsnavn: {
-      validate: (tellekretsnavn: string) => {
-        const tellekretsnummer = getValues("tellekretsnummer");
-        if (!isTellekretsSynced(tellekretsnavn, tellekretsnummer)) {
-          return t("stemmekrets.validering.tellekretsnummer.både-eller-ingen");
-        }
-        return true;
-      },
-      onChange: tellekretsValidateOnChange,
     },
   };
 
@@ -214,18 +164,6 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
         data={getValues("stemmekretsnavn")}
         validationError={validationError(errors.stemmekretsnavn)}
         {...register("stemmekretsnavn", formOptions.stemmekretsnavn)}
-      />
-      <InputCell
-        isEditing={isEditing}
-        data={getValues("tellekretsnavn")}
-        validationError={validationError(errors.tellekretsnavn)}
-        {...register("tellekretsnavn", formOptions.tellekretsnavn)}
-      />
-      <InputCell
-        isEditing={isEditing}
-        data={getValues("tellekretsnummer")}
-        validationError={validationError(errors.tellekretsnummer)}
-        {...register("tellekretsnummer", formOptions.tellekretsnummer)}
       />
       <td>{stemmekrets.valgdistriktsnummer ?? ""}</td>
       <EditAndSaveButton
