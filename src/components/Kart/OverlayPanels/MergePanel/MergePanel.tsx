@@ -38,19 +38,12 @@ const SectionHeading = styled(Heading)`
 `;
 
 const InputsWrapper = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
   gap: 16px;
 
-  > * {
+  input {
     width: 100%;
-
-    &:first-child {
-      flex: 1;
-    }
-
-    &:last-child {
-      flex: 3;
-    }
   }
 `;
 
