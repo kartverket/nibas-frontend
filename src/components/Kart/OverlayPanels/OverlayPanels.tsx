@@ -3,6 +3,7 @@ import MergePanel from "./MergePanel/MergePanel";
 import MetadataPanel from "./MetadataPanel/MetadataPanel";
 import StemmekretsPanel from "./Flatedata/StemmekretsPanel/StemmekretsPanel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import KoordinaterPanel from "./KoordinaterPanel";
 
 const OverlayPanels = () => {
   const { activeOverlayPanel } = useOverlayPanel();
@@ -13,6 +14,7 @@ const OverlayPanels = () => {
       <GrunnkretsPanel isOpen={activeOverlayPanel === "grunnkrets"} />
       <MetadataPanel isOpen={activeOverlayPanel === "metadata"} />
       <MergePanel isOpen={activeOverlayPanel === "sammenslåing"} />
+      <KoordinaterPanel isOpen={activeOverlayPanel === "koordinater"} />
     </>
   );
 };

@@ -20,7 +20,7 @@ import { UtkastResponse } from "types/api";
 import useAlertModal from "hooks/useAlertModal";
 import { useUtkast } from "contexts/UtkastContext";
 import useTimer from "hooks/useTimer";
-import AlertModal from "components/AlertModal";
+import AlertModal from "components/Status/AlertModal";
 
 type Inputs = {
   navn: string;

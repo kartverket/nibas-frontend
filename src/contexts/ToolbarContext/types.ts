@@ -63,7 +63,8 @@ export type ToolbarPointMode =
   | "remove"
   | "split"
   | "detach"
-  | "metadata";
+  | "metadata"
+  | "koordinater";
 export type ToolbarEditMode = "snap";
 
 export type ToolbarContextValue = {

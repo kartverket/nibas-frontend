@@ -42,6 +42,14 @@ const ButtonToolbar = () => {
   const mergeIsAvailable = editingType === "stemmekrets";
   const mergeIsActive = activeOverlayPanel === "sammenslåing";
 
+  const toggleMove = () => {
+    togglePointMode("koordinater");
+
+    if (activeOverlayPanel === "koordinater") {
+      closeOverlayPanel();
+    }
+  };
+
   const toggleMetadata = () => {
     togglePointMode("metadata");
 
@@ -97,6 +105,14 @@ const ButtonToolbar = () => {
           {t("action.Redo")}
         </ModeButton>
         <DividerVertical />
+        <ModeButton
+          icon="ads_click"
+          ariaLabel="Flytt punkt med koordinater"
+          isActive={activePointMode === "koordinater"}
+          onClick={toggleMove}
+        >
+          {t("action.Flytt")}
+        </ModeButton>
         <ModeButton
           icon="add_location_alt"
           ariaLabel="Legg til punkter"

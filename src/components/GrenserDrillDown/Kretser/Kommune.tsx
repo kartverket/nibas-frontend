@@ -6,7 +6,7 @@ import { KommuneRef } from "types/api";
 import { getNavnInSpraak } from "utils/language/language";
 import { useTranslation } from "react-i18next";
 import { Outline } from "style/mixins";
-import AlertModal from "components/AlertModal";
+import AlertModal from "components/Status/AlertModal";
 import useAlertModal from "hooks/useAlertModal";
 import { useToolbar } from "contexts/ToolbarContext";
 

@@ -52,6 +52,16 @@ export const SidePanel = styled(Panel)`
   animation: ${slideIn} 0.25s ease-in-out;
 `;
 
+export const AbsolutePanel = styled(Panel)`
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: unset;
+  max-width: 450px;
+  height: fit-content;
+  animation: ${slideIn} 0.25s ease-in-out;
+`;
+
 const PanelHeaderContainer = styled.div`
   position: sticky;
   top: 0;
@@ -59,6 +69,7 @@ const PanelHeaderContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
   padding: 24px 8px 16px;
   background: var(--white);
   border-bottom: 2px solid var(--gray_light);

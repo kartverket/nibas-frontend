@@ -22,7 +22,7 @@ import useAlertModal from "hooks/useAlertModal";
 import { useToolbarActions } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext";
 import { Outline } from "style/mixins";
-import AlertModal from "components/AlertModal";
+import AlertModal from "components/Status/AlertModal";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { isGeometriError, statusCode } from "utils/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";

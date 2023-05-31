@@ -4,9 +4,15 @@ import React, { createContext, useContext, useState } from "react";
 import { KommuneRef } from "types/api";
 import { useSidebarPanel } from "./SidebarPanelContext";
 
-type OverlayPanel = "metadata" | "grunnkrets" | "stemmekrets" | "sammenslåing";
+type OverlayPanel =
+  | "metadata"
+  | "grunnkrets"
+  | "stemmekrets"
+  | "sammenslåing"
+  | "koordinater";
 type SelectedFeature = Feature<LineString> | null;
 type Flatedata = KommuneRef | null;
+type PunktKoordinater = [number, number] | null;
 
 export type OverlayPanelContextValue = {
   activeOverlayPanel: OverlayPanel | null;
@@ -16,6 +22,8 @@ export type OverlayPanelContextValue = {
   setSelectedFeature: (selectedFeature: SelectedFeature) => void;
   flatedata: Flatedata;
   setFlatedata: (flatedata: Flatedata) => void;
+  punktKoordinater: PunktKoordinater;
+  setPunktKoordinater: (punktKoordinater: PunktKoordinater) => void;
 };
 
 export const OverlayPanelContext = createContext<
@@ -43,6 +51,10 @@ export const OverlayPanelProvider: React.FC = ({ children }) => {
   // Brukes kun til paneler for stemmekrets og grunnkrets
   const [flatedata, setFlatedata] = useState<Flatedata>(null);
 
+  // Brukes kun til panelet for punktkoordinater
+  const [punktKoordinater, setPunktKoordinater] =
+    useState<PunktKoordinater>(null);
+
   const value = {
     activeOverlayPanel,
     openOverlayPanel,
@@ -51,6 +63,8 @@ export const OverlayPanelProvider: React.FC = ({ children }) => {
     setSelectedFeature,
     flatedata,
     setFlatedata,
+    punktKoordinater,
+    setPunktKoordinater,
   };
 
   return (
