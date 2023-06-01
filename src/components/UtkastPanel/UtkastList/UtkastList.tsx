@@ -4,12 +4,16 @@ import useNibasApi from "hooks/useNibasApi";
 import styled from "styled-components";
 import { Fragment } from "react";
 import { Divider } from "components/Divider";
+import { UtkastRef } from "../../../types/api";
 
 const List = styled(UnstyledList)`
   display: flex;
   flex-direction: column;
   gap: 8px;
 `;
+
+const sortUtkastByCreatedDesc = (a: UtkastRef, b: UtkastRef): number =>
+  b.opprettetDato.localeCompare(a.opprettetDato);
 
 const UtkastList = () => {
   const { data: utkasts } = useNibasApi("/v1/utkast");
@@ -18,7 +22,7 @@ const UtkastList = () => {
 
   return (
     <List>
-      {utkasts.map((utkast) => (
+      {utkasts.sort(sortUtkastByCreatedDesc).map((utkast) => (
         <Fragment key={utkast.id}>
           <UtkastItem utkast={utkast} />
           <Divider />
