@@ -64,7 +64,8 @@
       "sletting-feilet-tittel": "__STRING_NOT_TRANSLATED__"
     },
     "Type utkast": "__STRING_NOT_TRANSLATED__",
-    "Du er nå i redigeringsmodus av dette utkastet": "__STRING_NOT_TRANSLATED__"
+    "Du er nå i redigeringsmodus av dette utkastet": "__STRING_NOT_TRANSLATED__",
+    "opprettetDato": "__STRING_NOT_TRANSLATED__"
   },
   "action": {
     "Stopp redigering": "__STRING_NOT_TRANSLATED__",
