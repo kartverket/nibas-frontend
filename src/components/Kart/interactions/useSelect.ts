@@ -21,7 +21,7 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   return coordinates[middle];
 };
 
-const useSelectInteraction = () => {
+const useSelect = () => {
   const { activePointMode, dirtyFeatureIds } = useToolbar();
   const {
     closeOverlayPanel,
@@ -125,4 +125,4 @@ const useSelectInteraction = () => {
   return { select };
 };
 
-export default useSelectInteraction;
+export default useSelect;

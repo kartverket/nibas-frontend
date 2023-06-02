@@ -3,15 +3,15 @@ import { useToolbar } from "contexts/ToolbarContext";
 import { Snap } from "ol/interaction";
 import { useEffect } from "react";
 import { getVectorLayers } from "utils/map/layers";
-import useEditInteractions from "./useEditInteractions";
-import useSelectInteraction from "./useSelectInteraction";
-import useSplitInteraction from "./useSplitInteraction";
+import useModify from "./useModify";
+import useSelect from "./useSelect";
+import useSplit from "./useSplit";
 
 const useInteractions = () => {
-  const { modify } = useEditInteractions();
-  const { select } = useSelectInteraction();
+  const { modify } = useModify();
+  const { select } = useSelect();
   const { activeEditModes } = useToolbar();
-  const { split } = useSplitInteraction();
+  const { split } = useSplit();
 
   useEffect(() => {
     const vectorLayers = getVectorLayers();

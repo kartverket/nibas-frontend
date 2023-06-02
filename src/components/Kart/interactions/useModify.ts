@@ -17,7 +17,7 @@ const getInfoFromFeature = (featureLike: FeatureLike) => {
   return { coordinates: geometry.getCoordinates(), featureId };
 };
 
-const useEditInteractions = () => {
+const useModify = () => {
   const { addEntry } = useToolbarSaving();
   const { activePointMode } = useToolbar();
   const { selectedFeature } = useOverlayPanel();
@@ -113,4 +113,4 @@ const useEditInteractions = () => {
   return { modify };
 };
 
-export default useEditInteractions;
+export default useModify;

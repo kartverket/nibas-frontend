@@ -12,7 +12,7 @@ import { pixelTolerance } from "./constants";
 // TODO: denne koden er ikke i bruk og skal ombygges i fremtiden
 // vi måtte gå tilbake til scratch for å finne ut hva backenden vil ha fra frontenden
 // mye av koden vil nok overleve, men detaljene rundt hva klonen har av data vil nok endres
-const useSplitInteraction = () => {
+const useSplit = () => {
   const { addEntry } = useToolbarSaving();
   const { activePointMode } = useToolbar();
 
@@ -88,4 +88,4 @@ const useSplitInteraction = () => {
   return { split };
 };
 
-export default useSplitInteraction;
+export default useSplit;

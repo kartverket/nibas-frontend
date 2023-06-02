@@ -18,7 +18,7 @@ import {
 } from "./utils";
 import useHistory from "hooks/useHistory";
 import { ensureAllCasesCovered } from "utils/typeHelpers";
-import useDirtyStyles from "hooks/interactions/useDirtyStyles";
+import useDirtyStyles from "contexts/ToolbarContext/useDirtyStyles";
 
 const onUndo = (entry: HistoryEntry) => {
   const { type } = entry;
