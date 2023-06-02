@@ -26,6 +26,7 @@ import AlertModal from "components/AlertModal";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { isGeometriError, statusCode } from "utils/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import Toast from "components/Kart/Toolbar/Toast";
 
 type Props = {
   utkast: UtkastRef;
@@ -36,6 +37,7 @@ const UtkastItem = ({ utkast }: Props) => {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [conflictResponse, setConflictResponse] =
     useState<FramtidigVersjonConflict | null>(null);
+  const [utkastJustPublished, setUtkastJustPublished] = useState(false);
 
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -70,8 +72,12 @@ const UtkastItem = ({ utkast }: Props) => {
     }
   };
 
+  //her må jeg gjøre noe
   const publish = async () => {
-    if (!fullUtkast) return;
+    if (!fullUtkast) {
+      //tilbakemelding til brukeren om det ikke er et fullt utkast? finn ut hva fullUtkast betyr
+      return;
+    }
 
     const response = await publishUtkast(
       utkast.id,
@@ -82,6 +88,8 @@ const UtkastItem = ({ utkast }: Props) => {
     if (!response) return;
 
     if (statusCode.isSuccessful(response.status)) {
+      //her om det er suksess - så prompt at utkastet er publisert
+      promptPublished();
       cleanUpUtkast();
     } else if (statusCode.isConflict(response.status)) {
       const wrapper = (await response.json()) as ConflictResponseWrapper;
@@ -112,6 +120,16 @@ const UtkastItem = ({ utkast }: Props) => {
         });
       }
     }
+  };
+
+  const promptPublished = () => {
+    setUtkastJustPublished(true);
+    console.log("Publish = true");
+
+    setTimeout(() => {
+      console.log("Publish = false");
+      setUtkastJustPublished(false);
+    }, 5000);
   };
 
   const deleteUtkast = async () => {
@@ -266,6 +284,7 @@ const UtkastItem = ({ utkast }: Props) => {
           onClick: closeModal,
         }}
       />
+      {/* <Toast text={t("utkast.utkast-opprettet")} /> */}
     </li>
   );
 };

@@ -44,7 +44,7 @@ const Toolbar = () => {
             createUtkastOpen={createUtkastOpen}
             setCreateUtkastOpen={setCreateUtkastOpen}
           />
-          {utkastJustCreated && <Toast text={t("utkast.utkast-opprettet")} />}
+          {true && <Toast title="Erlend!" status="success" text="God helg!" />}
         </Stack>
       )}
       <ButtonToolbar />
