@@ -3,7 +3,6 @@ import LineString from "ol/geom/LineString";
 import React, { createContext, useContext, useState } from "react";
 import { KommuneRef } from "types/api";
 import { useSidebarPanel } from "./SidebarPanelContext";
-import Geometry from "ol/geom/Geometry";
 
 type OverlayPanel =
   | "metadata"
@@ -12,11 +11,11 @@ type OverlayPanel =
   | "sammenslåing"
   | "koordinater";
 type SelectedFeature = Feature<LineString> | null;
-type Flatedata = KommuneRef | null;
 export type SelectedPoint = {
   coordinates: [number, number];
-  features: Feature<Geometry>[];
+  features: Feature<LineString>[];
 } | null;
+type Flatedata = KommuneRef | null;
 
 export type OverlayPanelContextValue = {
   activeOverlayPanel: OverlayPanel | null;

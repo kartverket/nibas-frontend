@@ -53,7 +53,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
   const movePoint = () => {
     if (selectedPoint) {
       // getValues skal returnere et tall, men den returnerer string for en eller annen grunn
-      const newCoordinate: [number, number] = [
+      const newCoordinates: [number, number] = [
         +getValues("east"),
         +getValues("north"),
       ];
@@ -78,7 +78,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
 
         const updatedCoordinates = [
           ...headCoordinates,
-          newCoordinate,
+          newCoordinates,
           ...tailCoordinates,
         ];
         geometry.setCoordinates(updatedCoordinates);

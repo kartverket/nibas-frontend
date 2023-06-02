@@ -2,7 +2,6 @@ import { Feature, MapBrowserEvent } from "ol";
 import { map } from "../constants";
 import { getLayerById } from "utils/map/layers";
 import { pixelTolerance } from "./constants";
-import Geometry from "ol/geom/Geometry";
 import { useToolbar } from "contexts/ToolbarContext";
 import LineString from "ol/geom/LineString";
 import { squaredDistance } from "ol/coordinate";
@@ -15,10 +14,7 @@ const useSelectPoint = () => {
     useOverlayPanel();
 
   const selectPoint = (event: MapBrowserEvent<MouseEvent>) => {
-    // TODO: verifiser nytteverdien til denne
-
     if (activePointMode === "koordinater" && !event.dragging) {
-      // TODO: verifiser nytteverdien til denne
       event.stopPropagation();
 
       const editLayer = getLayerById("edit");
@@ -52,13 +48,15 @@ const useSelectPoint = () => {
           .sort((a, b) => a.distance - b.distance)
           .map((cwd) => cwd.coordinates)[0];
 
-        // TODO: synliggjør at noe blir valgt
+        // TODO: synliggjør at noe blir valgt, det er litt skummelt fordi man må være obs på alt av history og sånt
+        //       det blir egentlig enda en hook à la dirty styles, det kan være ryddigere enn å la openlayers styre det selv
+        //       vil det være nok overlapp til at de kan samles, eller er dirty unik siden den må hente fra utkast osv?
         setSelectedPoint({
           coordinates: [
             nearestVertexCoordinates[0],
             nearestVertexCoordinates[1],
           ],
-          features: features as Feature<Geometry>[],
+          features: features as Feature<LineString>[],
         });
 
         openOverlayPanel("koordinater");
