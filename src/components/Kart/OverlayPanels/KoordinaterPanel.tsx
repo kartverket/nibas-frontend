@@ -1,4 +1,4 @@
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { SelectedPoint, useOverlayPanel } from "contexts/OverlayPanelContext";
 import { PanelHeader, PanelProps, AbsolutePanel } from "./Panel";
 import Input from "components/form/Input/Input";
 import { useForm } from "react-hook-form";
@@ -6,7 +6,7 @@ import styled from "styled-components";
 import Button from "components/form/Button/Button";
 import LineString from "ol/geom/LineString";
 import { useEffect } from "react";
-import { useToolbarSaving } from "contexts/ToolbarContext";
+import { HistoryChange, useToolbarSaving } from "contexts/ToolbarContext";
 
 type KoordinaterFormData = {
   north: number;
@@ -27,17 +27,12 @@ const InputRow = styled.div`
 `;
 
 const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
-  const {
-    closeOverlayPanel,
-    selectedFeature,
-    punktKoordinater,
-    setPunktKoordinater,
-  } = useOverlayPanel();
+  const { closeOverlayPanel, selectedPoint } = useOverlayPanel();
   const { addEntry } = useToolbarSaving();
 
-  const defaultValues = (koordinater: number[] | null) => ({
-    east: koordinater ? koordinater[0] : undefined,
-    north: koordinater ? koordinater[1] : undefined,
+  const defaultValues = (koordinater: SelectedPoint) => ({
+    east: koordinater ? koordinater.coordinates[0] : undefined,
+    north: koordinater ? koordinater.coordinates[1] : undefined,
   });
 
   const {
@@ -47,53 +42,58 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
     reset,
     formState: { isDirty },
   } = useForm<KoordinaterFormData>({
-    defaultValues: defaultValues(punktKoordinater),
+    defaultValues: defaultValues(selectedPoint),
   });
 
   // Tilbakestill defaultverdier når man endrer valgt punkt
   useEffect(() => {
-    reset(defaultValues(punktKoordinater));
-  }, [punktKoordinater, reset]);
+    reset(defaultValues(selectedPoint));
+  }, [selectedPoint, reset]);
 
   const movePoint = () => {
-    if (selectedFeature && punktKoordinater) {
-      const featureId = selectedFeature.getId() as string;
-      const geometry = selectedFeature.getGeometry() as LineString;
-      const coordinates = geometry.getCoordinates();
-
-      // Siden OL-objekter er mutable og vi trenger dette til senere:
-      const originalCoordinates = [...coordinates];
-
-      const nearestVertexIndex = coordinates.findIndex(
-        (v) => v[0] === punktKoordinater[0] && v[1] === punktKoordinater[1]
-      );
-      const headCoordinates = coordinates.slice(0, nearestVertexIndex);
-      const tailCoordinates = coordinates.slice(nearestVertexIndex + 1);
-
+    if (selectedPoint) {
       // getValues skal returnere et tall, men den returnerer string for en eller annen grunn
       const newCoordinate: [number, number] = [
         +getValues("east"),
         +getValues("north"),
       ];
 
-      const updatedCoordinates = [
-        ...headCoordinates,
-        newCoordinate,
-        ...tailCoordinates,
-      ];
-      geometry.setCoordinates(updatedCoordinates);
-      selectedFeature.setGeometry(geometry);
-      setPunktKoordinater(newCoordinate);
+      const changes: HistoryChange<number[][]>[] = [];
+
+      for (const feature of selectedPoint.features) {
+        const featureId = feature.getId() as string;
+        const geometry = feature.getGeometry() as LineString;
+        const coordinates = geometry.getCoordinates();
+
+        // Siden OL-objekter er mutable og vi trenger dette til senere:
+        const originalCoordinates = [...coordinates];
+
+        const nearestVertexIndex = coordinates.findIndex(
+          (v) =>
+            v[0] === selectedPoint.coordinates[0] &&
+            v[1] === selectedPoint.coordinates[1]
+        );
+        const headCoordinates = coordinates.slice(0, nearestVertexIndex);
+        const tailCoordinates = coordinates.slice(nearestVertexIndex + 1);
+
+        const updatedCoordinates = [
+          ...headCoordinates,
+          newCoordinate,
+          ...tailCoordinates,
+        ];
+        geometry.setCoordinates(updatedCoordinates);
+        feature.setGeometry(geometry);
+
+        changes.push({
+          id: featureId,
+          from: originalCoordinates,
+          to: updatedCoordinates,
+        });
+      }
 
       addEntry({
         type: "grense",
-        changes: [
-          {
-            id: featureId,
-            from: originalCoordinates,
-            to: updatedCoordinates,
-          },
-        ],
+        changes,
       });
     }
   };

@@ -6,12 +6,14 @@ import { getVectorLayers } from "utils/map/layers";
 import useModify from "./useModify";
 import useSelect from "./useSelect";
 import useSplit from "./useSplit";
+import useSelectPoint from "./useSelectPoint";
 
 const useInteractions = () => {
   const { modify } = useModify();
   const { select } = useSelect();
   const { activeEditModes } = useToolbar();
   const { split } = useSplit();
+  const { selectPoint } = useSelectPoint();
 
   useEffect(() => {
     const vectorLayers = getVectorLayers();
@@ -23,7 +25,9 @@ const useInteractions = () => {
       snaps.push(snap);
     });
 
+    // Rekkefølgen her er potensielt viktig for at events skal avbryte hverandre i riktig rekkefølge
     map.on("click", split);
+    map.on("click", selectPoint);
     map.addInteraction(modify);
     map.addInteraction(select);
 
@@ -36,13 +40,14 @@ const useInteractions = () => {
 
     return () => {
       map.un("click", split);
+      map.un("click", selectPoint);
       map.removeInteraction(modify);
       map.removeInteraction(select);
       snaps.forEach((snap) => {
         map.removeInteraction(snap);
       });
     };
-  }, [activeEditModes, modify, select, split]);
+  }, [activeEditModes, modify, select, selectPoint, split]);
 };
 
 export default useInteractions;

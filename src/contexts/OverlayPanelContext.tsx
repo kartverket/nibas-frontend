@@ -3,6 +3,7 @@ import LineString from "ol/geom/LineString";
 import React, { createContext, useContext, useState } from "react";
 import { KommuneRef } from "types/api";
 import { useSidebarPanel } from "./SidebarPanelContext";
+import Geometry from "ol/geom/Geometry";
 
 type OverlayPanel =
   | "metadata"
@@ -12,7 +13,10 @@ type OverlayPanel =
   | "koordinater";
 type SelectedFeature = Feature<LineString> | null;
 type Flatedata = KommuneRef | null;
-type PunktKoordinater = [number, number] | null;
+export type SelectedPoint = {
+  coordinates: [number, number];
+  features: Feature<Geometry>[];
+} | null;
 
 export type OverlayPanelContextValue = {
   activeOverlayPanel: OverlayPanel | null;
@@ -20,10 +24,10 @@ export type OverlayPanelContextValue = {
   closeOverlayPanel: () => void;
   selectedFeature: SelectedFeature;
   setSelectedFeature: (selectedFeature: SelectedFeature) => void;
+  selectedPoint: SelectedPoint;
+  setSelectedPoint: (selectedPoint: SelectedPoint) => void;
   flatedata: Flatedata;
   setFlatedata: (flatedata: Flatedata) => void;
-  punktKoordinater: PunktKoordinater;
-  setPunktKoordinater: (punktKoordinater: PunktKoordinater) => void;
 };
 
 export const OverlayPanelContext = createContext<
@@ -45,15 +49,14 @@ export const OverlayPanelProvider: React.FC = ({ children }) => {
     setSelectedFeature(null);
   };
 
-  // Brukes kun til MetadataPanel for å avgjøre hvilken feature man skal se data til
+  // Brukes til MetadataPanel for å avgjøre hvilken feature man skal se data til
   const [selectedFeature, setSelectedFeature] = useState<SelectedFeature>(null);
+
+  // Brukes til KoordinaterPanel for å huske valgt punkt og hvilke features det tilhører
+  const [selectedPoint, setSelectedPoint] = useState<SelectedPoint>(null);
 
   // Brukes kun til paneler for stemmekrets og grunnkrets
   const [flatedata, setFlatedata] = useState<Flatedata>(null);
-
-  // Brukes kun til panelet for punktkoordinater
-  const [punktKoordinater, setPunktKoordinater] =
-    useState<PunktKoordinater>(null);
 
   const value = {
     activeOverlayPanel,
@@ -63,8 +66,8 @@ export const OverlayPanelProvider: React.FC = ({ children }) => {
     setSelectedFeature,
     flatedata,
     setFlatedata,
-    punktKoordinater,
-    setPunktKoordinater,
+    selectedPoint,
+    setSelectedPoint,
   };
 
   return (
