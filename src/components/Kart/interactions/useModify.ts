@@ -2,7 +2,11 @@ import { useEffect, useMemo } from "react";
 import Feature, { FeatureLike } from "ol/Feature";
 import LineString from "ol/geom/LineString";
 import Modify, { ModifyEvent } from "ol/interaction/Modify";
-import { useToolbar, useToolbarSaving } from "contexts/ToolbarContext";
+import {
+  HistoryChange,
+  useToolbar,
+  useToolbarSaving,
+} from "contexts/ToolbarContext";
 import { click, primaryAction } from "ol/events/condition";
 import { Collection } from "ol";
 import { editableBorderTypes, editSource } from "hooks/layers/constants";
@@ -82,23 +86,22 @@ const useModify = () => {
   useEffect(() => {
     const addModificationToHistory = (e: ModifyEvent) => {
       if (e.features) {
+        const changes: HistoryChange<number[][]>[] = [];
         e.features.forEach((featureLike) => {
           if (featureLike instanceof Feature) {
             const { featureId, coordinates } = getInfoFromFeature(featureLike);
             if (!featureId || !coordinates) return;
-
-            addEntry({
-              type: "grense",
-              changes: [
-                {
-                  id: featureId as string,
-                  from: featureLike.get(previousCoordinateKey),
-                  to: coordinates,
-                },
-              ],
+            changes.push({
+              id: featureId as string,
+              from: featureLike.get(previousCoordinateKey),
+              to: coordinates,
             });
             featureLike.unset(previousCoordinateKey);
           }
+        });
+        addEntry({
+          type: "grense",
+          changes,
         });
       }
     };
