@@ -6,11 +6,7 @@ import { UtkastItemExpanded } from "./UtkastItem";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
-import {
-  useToolbarActions,
-  useHistory,
-  UtkastEntry,
-} from "contexts/HistoryContext";
+import { useHistory, UtkastEntry } from "contexts/HistoryContext";
 import useToolbarFormSync from "contexts/HistoryContext/useToolbarFormSync";
 import { translateKeysByEndringsType } from "contexts/UtkastContext/constants";
 import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
@@ -21,6 +17,7 @@ import useAlertModal from "hooks/useAlertModal";
 import { useUtkast } from "contexts/UtkastContext";
 import useTimer from "hooks/useTimer";
 import AlertModal from "components/Status/AlertModal";
+import { useToolbar } from "contexts/ToolbarContext";
 
 type Inputs = {
   navn: string;
@@ -60,7 +57,7 @@ const UtkastItemActive = ({ utkastId }: Props) => {
   const { startTimer, clearTimer } = useTimer();
 
   const { addHistoryEntry } = useHistory();
-  const { canSave } = useToolbarActions();
+  const { canSave } = useToolbar();
 
   const handleSave = () => {
     if (!canSave) {

@@ -209,20 +209,3 @@ export const useHistory = () => {
 
   return context;
 };
-
-export const useToolbarActions = () => {
-  const { clearHistory, history, redo, undo } = useHistory();
-
-  const canSave = history.entries.length > 0 && history.index > 0;
-
-  return {
-    canSave,
-    history,
-    clearHistory,
-    undo: history.index > 0 ? undo : undefined,
-    redo:
-      history.entries.length > 0 && history.index < history.entries.length
-        ? redo
-        : undefined,
-  };
-};

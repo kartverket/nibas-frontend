@@ -1,7 +1,2 @@
-export {
-  HistoryProvider,
-  useHistory,
-  useToolbarActions,
-  HistoryContext,
-} from "./HistoryContext";
+export { HistoryProvider, useHistory, HistoryContext } from "./HistoryContext";
 export * from "./types";
