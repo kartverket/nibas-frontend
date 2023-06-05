@@ -9,7 +9,7 @@ import {
   StemmekretsEntry,
   StemmekretsSammenslaaingsendringEntry,
   ToolbarHistory,
-} from "contexts/ToolbarContext";
+} from "contexts/HistoryContext";
 import { editSource } from "hooks/layers/constants";
 import {
   FylkeRequest,

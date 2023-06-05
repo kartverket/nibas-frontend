@@ -15,7 +15,7 @@ import Input from "components/form/Input";
 import { Divider } from "components/Divider";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import Button from "components/form/Button";
-import { useToolbar } from "contexts/ToolbarContext";
+import { useHistory } from "contexts/HistoryContext";
 import { useTranslation } from "react-i18next";
 import CreateUtkastModal, {
   CreateUtkastCallbackArgument,
@@ -61,7 +61,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
   const { setError } = useErrorHandling();
   const { utkast, updateUtkast } = useUtkast();
   const { tokenHolderFunc } = useAuthenticationFlow();
-  const { setAndSaveSammenslaaingsFeatures } = useToolbar();
+  const { setAndSaveSammenslaaingsFeatures } = useHistory();
   const { data: stemmekretserByKommune } = useKommuneStemmekretser(
     flatedata ? getIdFromEntity(flatedata) : ""
   );

@@ -10,7 +10,7 @@ import { addMetadataEntryFromFeature } from "./utils";
 import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Icon from "components/Icon";
-import { useToolbarSaving } from "contexts/ToolbarContext";
+import { useHistory } from "contexts/HistoryContext";
 import { Dokref, FeatureProperties, Metadata } from "types/api";
 import useIsMetadataDisabled from "../hooks/useIsMetadataDisabled";
 
@@ -197,7 +197,7 @@ const MetadataReferanser = ({ feature }: Props) => {
     name: "dokrefs",
   });
 
-  const { addEntry } = useToolbarSaving();
+  const { addEntry } = useHistory();
 
   useEffect(() => {
     const updateFormOnPropertyChange = (e: ObjectEvent) => {

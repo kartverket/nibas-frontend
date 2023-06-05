@@ -4,7 +4,7 @@ import { Select } from "ol/interaction";
 import LineString from "ol/geom/LineString";
 import { overlayPopup } from "components/Kart/constants";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { useToolbar } from "contexts/ToolbarContext";
+import { useHistory } from "contexts/HistoryContext";
 import { grenseStyles } from "utils/map/layerStyles";
 import { pixelTolerance } from "./constants";
 
@@ -19,7 +19,7 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 };
 
 const useSelect = () => {
-  const { activePointMode, dirtyFeatureIds } = useToolbar();
+  const { activePointMode, dirtyFeatureIds } = useHistory();
   const {
     closeOverlayPanel,
     openOverlayPanel,

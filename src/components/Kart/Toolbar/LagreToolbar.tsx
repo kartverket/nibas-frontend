@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
-import { useToolbarActions } from "contexts/ToolbarContext";
+import { useToolbarActions } from "contexts/HistoryContext";
 import { useUtkast } from "contexts/UtkastContext";
 import useAlertModal from "hooks/useAlertModal";
 import ModeButton from "./ModeButton";

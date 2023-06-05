@@ -5,12 +5,12 @@ import { getIdFromEntity } from "utils/api";
 import EditAndSaveButton from "../EditAndSaveButton";
 import InputCell from "../InputCell";
 import { ValidationError } from "components/form/Input/Input";
-import { StemmekretsEntry, useToolbarSaving } from "contexts/ToolbarContext";
+import { StemmekretsEntry, useHistory } from "contexts/HistoryContext";
 import { RegisterOptions, FieldError, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { updateEditFeatureText } from "utils/map/layerStyles";
 import { getRepresentasjonspunktId } from "utils/map/source";
-import useKretsToolbarSync from "contexts/ToolbarContext/useToolbarFormSync";
+import useKretsToolbarSync from "contexts/HistoryContext/useToolbarFormSync";
 
 type StemmekretsInputs = {
   stemmekretsnavn: string;
@@ -39,7 +39,7 @@ type Props = {
 const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
   const { t } = useTranslation();
   const stemmekretsId = getIdFromEntity(stemmekrets);
-  const { addEntry } = useToolbarSaving();
+  const { addEntry } = useHistory();
   const [isEditing, setIsEditing] = useState(false);
 
   const {

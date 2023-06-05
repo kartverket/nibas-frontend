@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import { Outline } from "style/mixins";
 import AlertModal from "components/Status/AlertModal";
 import useAlertModal from "hooks/useAlertModal";
-import { useToolbar } from "contexts/ToolbarContext";
+import { useHistory } from "contexts/HistoryContext";
 
 type Props = {
   kommune: KommuneRef;
@@ -19,7 +19,7 @@ const Kommune = ({ kommune }: Props) => {
   const { kommuneValues, toggleEditKretser, toggleKretser, lasterData } =
     useInndelingerKrets(kommune);
 
-  const { history, clearHistory } = useToolbar();
+  const { history, clearHistory } = useHistory();
 
   const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } =
     useAlertModal(

@@ -1,5 +1,5 @@
 import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
-import { History } from "hooks/useHistory";
+import { History } from "contexts/HistoryContext/useHistoryState";
 import {
   GrunnkretsRequest,
   Metadata,
@@ -67,11 +67,11 @@ export type ToolbarPointMode =
   | "koordinater";
 export type ToolbarEditMode = "snap";
 
-export type ToolbarContextValue = {
+export type HistoryContextValue = {
+  addEntry: (entry: HistoryEntry) => void;
   undo: () => void;
   redo: () => void;
   history: ToolbarHistory;
-  setHistory: React.Dispatch<React.SetStateAction<History<HistoryEntry>>>;
   clearHistory: ({
     hasPreviouslySavedHistory,
   }: {

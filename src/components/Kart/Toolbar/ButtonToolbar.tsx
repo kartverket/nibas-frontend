@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { map } from "../constants";
 import { Frame, toolbarSpacing } from "./components";
 import ModeButton from "./ModeButton";
-import { useToolbar, useToolbarActions } from "contexts/ToolbarContext";
+import { useHistory, useToolbarActions } from "contexts/HistoryContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
@@ -30,7 +30,7 @@ const ButtonToolbar = () => {
   const { t } = useTranslation();
   const { undo, redo } = useToolbarActions();
   const { activePointMode, togglePointMode, activeEditModes, toggleEditMode } =
-    useToolbar();
+    useHistory();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const editingType = getCurrentlyEditingType() as string;
   const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } =

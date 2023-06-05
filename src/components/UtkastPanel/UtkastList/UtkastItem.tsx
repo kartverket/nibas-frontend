@@ -19,7 +19,7 @@ import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { resetMapView } from "utils/map";
 import UtkastConflicts from "./UtkastConflictModal/UtkastConflicts";
 import useAlertModal from "hooks/useAlertModal";
-import { useToolbarActions } from "contexts/ToolbarContext";
+import { useToolbarActions } from "contexts/HistoryContext";
 import { useUtkast } from "contexts/UtkastContext";
 import { Outline } from "style/mixins";
 import AlertModal from "components/Status/AlertModal";

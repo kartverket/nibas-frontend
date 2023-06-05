@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "test/test-utils";
 import { ReactNode } from "react";
 import Toolbar from "./Toolbar";
-import { ToolbarHistory } from "contexts/ToolbarContext";
+import { ToolbarHistory } from "contexts/HistoryContext";
 import { mockDetailedGrunnkrets1 } from "mocks/handlers/responses";
 import { UtkastResponse } from "types/api";
 
@@ -47,7 +47,7 @@ const renderWithProvider = (
   }
 ) =>
   render(ui, {
-    ToolbarProvider: {
+    HistoryProvider: {
       history: toolbarHistory,
       clearHistory: jest.fn(),
       activeEditModes: [],
@@ -64,7 +64,7 @@ const renderWithProvider = (
 
 const renderWithUtkastProvider = (ui: ReactNode) =>
   render(ui, {
-    ToolbarProvider: {
+    HistoryProvider: {
       history: mockToolbarHistory,
       clearHistory: jest.fn(),
       activeEditModes: [],

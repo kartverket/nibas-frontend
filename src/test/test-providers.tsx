@@ -20,10 +20,10 @@ import {
   SidebarPanelContextValue,
 } from "contexts/SidebarPanelContext";
 import {
-  ToolbarProvider,
-  ToolbarContext,
-  ToolbarContextValue,
-} from "contexts/ToolbarContext";
+  HistoryProvider,
+  HistoryContext,
+  HistoryContextValue,
+} from "contexts/HistoryContext";
 import {
   UtkastProvider,
   UtkastContext,
@@ -43,7 +43,7 @@ const defaultProviderMap = {
   EditGrenserProvider,
   SidebarPanelProvider,
   OverlayPanelProvider,
-  ToolbarProvider,
+  HistoryProvider,
   UtkastProvider,
 };
 
@@ -53,7 +53,7 @@ const contextMap = {
   EditGrenserProvider: EditGrenserContext.Provider,
   SidebarPanelProvider: SidebarPanelContext.Provider,
   OverlayPanelProvider: OverlayPanelContext.Provider,
-  ToolbarProvider: ToolbarContext.Provider,
+  HistoryProvider: HistoryContext.Provider,
   UtkastProvider: UtkastContext.Provider,
 };
 
@@ -63,7 +63,7 @@ export type TestProviderValues = {
   EditGrenserProvider?: EditGrenserContextValue | boolean;
   SidebarPanelProvider?: SidebarPanelContextValue | boolean;
   OverlayPanelProvider?: OverlayPanelContextValue | boolean;
-  ToolbarProvider?: ToolbarContextValue | boolean;
+  HistoryProvider?: HistoryContextValue | boolean;
   UtkastProvider?: UtkastContextValue | boolean;
 };
 

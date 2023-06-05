@@ -2,11 +2,7 @@ import { useEffect, useMemo } from "react";
 import Feature, { FeatureLike } from "ol/Feature";
 import LineString from "ol/geom/LineString";
 import Modify, { ModifyEvent } from "ol/interaction/Modify";
-import {
-  HistoryChange,
-  useToolbar,
-  useToolbarSaving,
-} from "contexts/ToolbarContext";
+import { HistoryChange, useHistory } from "contexts/HistoryContext";
 import { click, primaryAction } from "ol/events/condition";
 import { Collection } from "ol";
 import { editableBorderTypes, editSource } from "hooks/layers/constants";
@@ -22,8 +18,7 @@ const getInfoFromFeature = (featureLike: FeatureLike) => {
 };
 
 const useModify = () => {
-  const { addEntry } = useToolbarSaving();
-  const { activePointMode } = useToolbar();
+  const { addEntry, activePointMode } = useHistory();
   const { selectedFeature } = useOverlayPanel();
   const detachIsActive = activePointMode === "detach";
   const editLayer = getLayerById("edit");

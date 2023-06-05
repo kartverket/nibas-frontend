@@ -12,7 +12,7 @@ type Options<T> = {
   onRedo: (entry: T) => void;
 };
 
-const useHistory = <T>({ onUndo, onRedo }: Options<T>) => {
+const useHistoryState = <T>({ onUndo, onRedo }: Options<T>) => {
   const [history, setHistory] = useState<History<T>>({
     index: 0,
     entries: [],
@@ -79,12 +79,12 @@ const useHistory = <T>({ onUndo, onRedo }: Options<T>) => {
   };
 
   return {
+    history,
+    setHistory,
     clearHistory,
     undo,
     redo,
-    history,
-    setHistory,
   };
 };
 
-export default useHistory;
+export default useHistoryState;

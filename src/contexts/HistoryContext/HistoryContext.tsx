@@ -6,7 +6,7 @@ import React, {
   useState,
 } from "react";
 import {
-  ToolbarContextValue,
+  HistoryContextValue,
   HistoryEntry,
   ToolbarPointMode,
   ToolbarEditMode,
@@ -16,9 +16,9 @@ import {
   setFeatureCoordinatesForEntry,
   setFeatureMetadataForEntry,
 } from "./utils";
-import useHistory from "hooks/useHistory";
+import useHistoryState from "contexts/HistoryContext/useHistoryState";
 import { ensureAllCasesCovered } from "utils/typeHelpers";
-import useDirtyStyles from "contexts/ToolbarContext/useDirtyStyles";
+import useDirtyStyles from "contexts/HistoryContext/useDirtyStyles";
 
 const onUndo = (entry: HistoryEntry) => {
   const { type } = entry;
@@ -106,11 +106,11 @@ const onRedo = (entry: HistoryEntry) => {
   ensureAllCasesCovered(type);
 };
 
-export const ToolbarContext = createContext<ToolbarContextValue | undefined>(
+export const HistoryContext = createContext<HistoryContextValue | undefined>(
   undefined
 );
 
-export const ToolbarProvider: React.FC = ({ children }) => {
+export const HistoryProvider: React.FC = ({ children }) => {
   const {
     dirtyFeatureIds,
     setDirtyFeatures,
@@ -121,10 +121,21 @@ export const ToolbarProvider: React.FC = ({ children }) => {
     setAndSaveSammenslaaingsFeatures,
   } = useDirtyStyles();
 
-  const historyValue = useHistory({
+  const { history, setHistory, clearHistory, undo, redo } = useHistoryState({
     onUndo,
     onRedo,
   });
+
+  const addEntry = useCallback(
+    (entry: HistoryEntry) => {
+      setHistory((prevHistory) => ({
+        index: prevHistory.index + 1,
+        entries: [...prevHistory.entries.slice(0, prevHistory.index), entry],
+        hasPreviouslySavedHistory: prevHistory.hasPreviouslySavedHistory,
+      }));
+    },
+    [setHistory]
+  );
 
   const [activeEditModes, setActiveEditModes] = useState<ToolbarEditMode[]>([
     "snap",
@@ -150,26 +161,23 @@ export const ToolbarProvider: React.FC = ({ children }) => {
   };
 
   useEffect(() => {
-    if (historyValue.history.entries.length === 0) {
-      if (
-        historyValue.history.hasPreviouslySavedHistory &&
-        dirtyFeatureIds.length !== 0
-      ) {
+    if (history.entries.length === 0) {
+      if (history.hasPreviouslySavedHistory && dirtyFeatureIds.length !== 0) {
         saveDirtyFeatureIds();
       }
       // Hvis det ikke er for å lagre, så er det for å forhindre uendelig løkke
       return;
     }
 
-    const historyFeatures = historyValue.history.entries
+    const historyFeatures = history.entries
       .filter((entry) => entry.type === "grense" || entry.type === "metadata")
       .reduce<string[][]>(getFeatureIdsFromEntries, []);
 
     const editFeatures = historyFeatures
-      .slice(historyValue.history.index)
+      .slice(history.index)
       .flatMap((id) => id);
     const dirtyFeatures = historyFeatures
-      .slice(0, historyValue.history.index)
+      .slice(0, history.index)
       .flatMap((id) => id);
 
     // For å forhindre uendelig løkke
@@ -179,16 +187,20 @@ export const ToolbarProvider: React.FC = ({ children }) => {
     setDirtyFeatures(dirtyFeatures);
   }, [
     dirtyFeatureIds.length,
-    historyValue.history.entries,
-    historyValue.history.index,
-    historyValue.history.hasPreviouslySavedHistory,
+    history.entries,
+    history.index,
+    history.hasPreviouslySavedHistory,
     saveDirtyFeatureIds,
     setDirtyFeatures,
     setEditFeatures,
   ]);
 
   const value = {
-    ...historyValue,
+    history,
+    clearHistory,
+    undo,
+    redo,
+    addEntry,
     activePointMode,
     setAndSaveUtkastFeatures,
     setAndSaveSammenslaaingsFeatures,
@@ -200,22 +212,22 @@ export const ToolbarProvider: React.FC = ({ children }) => {
   };
 
   return (
-    <ToolbarContext.Provider value={value}>{children}</ToolbarContext.Provider>
+    <HistoryContext.Provider value={value}>{children}</HistoryContext.Provider>
   );
 };
 
-export const useToolbar = () => {
-  const context = useContext(ToolbarContext);
+export const useHistory = () => {
+  const context = useContext(HistoryContext);
 
   if (!context) {
-    throw new Error("useToolbar must be used within a ToolbarContext");
+    throw new Error("useHistory must be used within a HistoryContext");
   }
 
   return context;
 };
 
 export const useToolbarActions = () => {
-  const { clearHistory, history, redo, undo } = useToolbar();
+  const { clearHistory, history, redo, undo } = useHistory();
 
   const canSave = history.entries.length > 0 && history.index > 0;
 
@@ -228,25 +240,5 @@ export const useToolbarActions = () => {
       history.entries.length > 0 && history.index < history.entries.length
         ? redo
         : undefined,
-  };
-};
-
-export const useToolbarSaving = () => {
-  const { history, setHistory } = useToolbar();
-
-  const addEntry = useCallback(
-    (entry: HistoryEntry) => {
-      setHistory((prevHistory) => ({
-        index: prevHistory.index + 1,
-        entries: [...prevHistory.entries.slice(0, prevHistory.index), entry],
-        hasPreviouslySavedHistory: prevHistory.hasPreviouslySavedHistory,
-      }));
-    },
-    [setHistory]
-  );
-
-  return {
-    addEntry,
-    history,
   };
 };

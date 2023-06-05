@@ -1,7 +1,7 @@
 import Feature from "ol/Feature";
 import LineString from "ol/geom/LineString";
 import { map } from "components/Kart/constants";
-import { useToolbar, useToolbarSaving } from "contexts/ToolbarContext";
+import { useHistory } from "contexts/HistoryContext";
 import { getLayerById } from "utils/map/layers";
 import { MapBrowserEvent } from "ol";
 import Geometry from "ol/geom/Geometry";
@@ -13,8 +13,7 @@ import { pixelTolerance } from "./constants";
 // vi måtte gå tilbake til scratch for å finne ut hva backenden vil ha fra frontenden
 // mye av koden vil nok overleve, men detaljene rundt hva klonen har av data vil nok endres
 const useSplit = () => {
-  const { addEntry } = useToolbarSaving();
-  const { activePointMode } = useToolbar();
+  const { addEntry, activePointMode } = useHistory();
 
   const split = (event: MapBrowserEvent<MouseEvent>) => {
     if (activePointMode === "split" && !event.dragging) {

@@ -21,7 +21,7 @@ const customRender = (
     EditGrenserProvider,
     OverlayPanelProvider,
     SidebarPanelProvider,
-    ToolbarProvider,
+    HistoryProvider,
     UtkastProvider,
     ...rltOptions
   } = options;
@@ -35,7 +35,7 @@ const customRender = (
         EditGrenserProvider,
         OverlayPanelProvider,
         SidebarPanelProvider,
-        ToolbarProvider,
+        HistoryProvider,
         UtkastProvider,
       }),
       rltOptions

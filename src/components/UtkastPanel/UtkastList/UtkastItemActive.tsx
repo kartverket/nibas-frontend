@@ -8,10 +8,10 @@ import Input from "components/form/Input";
 import Select from "components/form/Select";
 import {
   useToolbarActions,
-  useToolbarSaving,
+  useHistory,
   UtkastEntry,
-} from "contexts/ToolbarContext";
-import useToolbarFormSync from "contexts/ToolbarContext/useToolbarFormSync";
+} from "contexts/HistoryContext";
+import useToolbarFormSync from "contexts/HistoryContext/useToolbarFormSync";
 import { translateKeysByEndringsType } from "contexts/UtkastContext/constants";
 import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
 import useNibasApi from "hooks/useNibasApi";
@@ -59,7 +59,7 @@ const UtkastItemActive = ({ utkastId }: Props) => {
   const previousValues = useRef<Inputs>(getValues());
   const { startTimer, clearTimer } = useTimer();
 
-  const { addEntry } = useToolbarSaving();
+  const { addEntry } = useHistory();
   const { canSave } = useToolbarActions();
 
   const handleSave = () => {

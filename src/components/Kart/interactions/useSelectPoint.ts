@@ -2,14 +2,14 @@ import { Feature, MapBrowserEvent } from "ol";
 import { map } from "../constants";
 import { getLayerById } from "utils/map/layers";
 import { pixelTolerance } from "./constants";
-import { useToolbar } from "contexts/ToolbarContext";
+import { useHistory } from "contexts/HistoryContext";
 import LineString from "ol/geom/LineString";
 import { squaredDistance } from "ol/coordinate";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { editableBorderTypes } from "hooks/layers/constants";
 
 const useSelectPoint = () => {
-  const { activePointMode } = useToolbar();
+  const { activePointMode } = useHistory();
   const { openOverlayPanel, closeOverlayPanel, setSelectedPoint } =
     useOverlayPanel();
 

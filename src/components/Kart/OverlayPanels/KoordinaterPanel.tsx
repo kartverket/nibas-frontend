@@ -6,7 +6,7 @@ import styled from "styled-components";
 import Button from "components/form/Button/Button";
 import LineString from "ol/geom/LineString";
 import { useEffect } from "react";
-import { HistoryChange, useToolbarSaving } from "contexts/ToolbarContext";
+import { HistoryChange, useHistory } from "contexts/HistoryContext";
 
 type KoordinaterFormData = {
   north: number;
@@ -28,7 +28,7 @@ const InputRow = styled.div`
 
 const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
   const { closeOverlayPanel, selectedPoint } = useOverlayPanel();
-  const { addEntry } = useToolbarSaving();
+  const { addEntry } = useHistory();
 
   const defaultValues = (koordinater: SelectedPoint) => ({
     east: koordinater ? koordinater.coordinates[0] : undefined,
