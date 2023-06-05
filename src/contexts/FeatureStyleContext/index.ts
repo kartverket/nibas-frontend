@@ -1,6 +1,6 @@
 export {
   FeatureStyleProvider,
   FeatureStyleContext,
-  FeatureStyleContextValue,
   useFeatureStyle,
 } from "./FeatureStyleContext";
+export * from "./types";

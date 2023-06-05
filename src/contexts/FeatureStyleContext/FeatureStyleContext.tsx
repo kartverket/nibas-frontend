@@ -2,16 +2,7 @@ import React, { createContext, useContext, useEffect } from "react";
 import useDirtyStyles from "./useDirtyStyles";
 import { useHistory } from "contexts/HistoryContext";
 import { getFeatureIdsFromEntries } from "./utils";
-
-export type FeatureStyleContextValue = {
-  setAndSaveUtkastFeatures: (features: string[]) => void;
-  setAndSaveSammenslaaingsFeatures: (
-    features: string[],
-    overlappingFeatures: string[]
-  ) => void;
-  dirtyFeatureIds: string[];
-  clearDirtyStyles: () => void;
-};
+import { FeatureStyleContextValue } from "./types";
 
 export const FeatureStyleContext = createContext<
   FeatureStyleContextValue | undefined
