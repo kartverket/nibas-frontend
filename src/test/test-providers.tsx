@@ -25,6 +25,16 @@ import {
   HistoryContextValue,
 } from "contexts/HistoryContext";
 import {
+  ToolbarProvider,
+  ToolbarContext,
+  ToolbarContextValue,
+} from "contexts/ToolbarContext";
+import {
+  FeatureStyleProvider,
+  FeatureStyleContext,
+  FeatureStyleContextValue,
+} from "contexts/FeatureStyleContext";
+import {
   UtkastProvider,
   UtkastContext,
   UtkastContextValue,
@@ -44,6 +54,8 @@ const defaultProviderMap = {
   SidebarPanelProvider,
   OverlayPanelProvider,
   HistoryProvider,
+  ToolbarProvider,
+  FeatureStyleProvider,
   UtkastProvider,
 };
 
@@ -54,6 +66,8 @@ const contextMap = {
   SidebarPanelProvider: SidebarPanelContext.Provider,
   OverlayPanelProvider: OverlayPanelContext.Provider,
   HistoryProvider: HistoryContext.Provider,
+  ToolbarProvider: ToolbarContext.Provider,
+  FeatureStyleProvider: FeatureStyleContext.Provider,
   UtkastProvider: UtkastContext.Provider,
 };
 
@@ -64,6 +78,8 @@ export type TestProviderValues = {
   SidebarPanelProvider?: SidebarPanelContextValue | boolean;
   OverlayPanelProvider?: OverlayPanelContextValue | boolean;
   HistoryProvider?: HistoryContextValue | boolean;
+  ToolbarProvider?: ToolbarContextValue | boolean;
+  FeatureStyleProvider?: FeatureStyleContextValue | boolean;
   UtkastProvider?: UtkastContextValue | boolean;
 };
 
