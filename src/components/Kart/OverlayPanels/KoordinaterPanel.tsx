@@ -1,4 +1,4 @@
-import { SelectedPoint, useOverlayPanel } from "contexts/OverlayPanelContext";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { PanelHeader, PanelProps, AbsolutePanel } from "./Panel";
 import Input from "components/form/Input/Input";
 import { useForm } from "react-hook-form";
@@ -7,6 +7,7 @@ import Button from "components/form/Button/Button";
 import LineString from "ol/geom/LineString";
 import { useEffect } from "react";
 import { HistoryChange, useHistory } from "contexts/HistoryContext";
+import { SelectedPoint, useFeatureStyle } from "contexts/FeatureStyleContext";
 
 type KoordinaterFormData = {
   north: number;
@@ -27,12 +28,13 @@ const InputRow = styled.div`
 `;
 
 const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
-  const { closeOverlayPanel, selectedPoint } = useOverlayPanel();
+  const { closeOverlayPanel } = useOverlayPanel();
+  const { selectedPoint, selectedFeatures } = useFeatureStyle();
   const { addHistoryEntry } = useHistory();
 
   const defaultValues = (koordinater: SelectedPoint) => ({
-    east: koordinater ? koordinater.coordinates[0] : undefined,
-    north: koordinater ? koordinater.coordinates[1] : undefined,
+    east: koordinater ? koordinater[0] : undefined,
+    north: koordinater ? koordinater[1] : undefined,
   });
 
   const {
@@ -60,7 +62,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
 
       const changes: HistoryChange<number[][]>[] = [];
 
-      for (const feature of selectedPoint.features) {
+      for (const feature of selectedFeatures) {
         const featureId = feature.getId() as string;
         const geometry = feature.getGeometry() as LineString;
         const coordinates = geometry.getCoordinates();
@@ -69,9 +71,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
         const originalCoordinates = [...coordinates];
 
         const nearestVertexIndex = coordinates.findIndex(
-          (v) =>
-            v[0] === selectedPoint.coordinates[0] &&
-            v[1] === selectedPoint.coordinates[1]
+          (v) => v[0] === selectedPoint[0] && v[1] === selectedPoint[1]
         );
         const headCoordinates = coordinates.slice(0, nearestVertexIndex);
         const tailCoordinates = coordinates.slice(nearestVertexIndex + 1);

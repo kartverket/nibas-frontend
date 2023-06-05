@@ -3,12 +3,21 @@ import useDirtyStyles from "./useDirtyStyles";
 import { useHistory } from "contexts/HistoryContext";
 import { getFeatureIdsFromEntries } from "./utils";
 import { FeatureStyleContextValue } from "./types";
+import { useSelectStyles } from "./useSelectStyles";
 
+// TODO: kanskje dropp style fra navnsettingen
 export const FeatureStyleContext = createContext<
   FeatureStyleContextValue | undefined
 >(undefined);
 
 export const FeatureStyleProvider: React.FC = ({ children }) => {
+  const {
+    selectedFeatures,
+    setSelectedFeatures,
+    selectedPoint,
+    selectPointOnFeature,
+    clearSelection,
+  } = useSelectStyles();
   const {
     dirtyFeatureIds,
     setDirtyFeatures,
@@ -57,6 +66,11 @@ export const FeatureStyleProvider: React.FC = ({ children }) => {
   ]);
 
   const value = {
+    selectedPoint,
+    selectedFeatures,
+    setSelectedFeatures,
+    clearSelection,
+    selectPointOnFeature,
     setAndSaveUtkastFeatures,
     setAndSaveSammenslaaingsFeatures,
     dirtyFeatureIds,

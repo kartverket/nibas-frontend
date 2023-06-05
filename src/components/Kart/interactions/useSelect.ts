@@ -22,13 +22,10 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 const useSelect = () => {
   const { dirtyFeatureIds } = useFeatureStyle();
   const { activePointMode } = useToolbar();
-  const {
-    closeOverlayPanel,
-    openOverlayPanel,
-    selectedFeature,
-    setSelectedFeature,
-  } = useOverlayPanel();
+  const { closeOverlayPanel, openOverlayPanel } = useOverlayPanel();
+  const { selectedFeatures, setSelectedFeatures } = useFeatureStyle();
 
+  // TODO: skriv vekk fra Select da vi stadig får bugs fra måten den resetter stil
   const select = useMemo(
     () =>
       new Select({
@@ -53,7 +50,7 @@ const useSelect = () => {
 
       if (clickedFeatures.length === 1) {
         const clickedFeature = clickedFeatures[0];
-        setSelectedFeature(clickedFeature);
+        setSelectedFeatures([clickedFeature]);
 
         if (clickedFeature.getId()?.toString().includes("TEIGGRENSEWFS")) {
           overlayPopup.setPosition(getOverlayPosition(clickedFeature));
@@ -62,8 +59,10 @@ const useSelect = () => {
           openOverlayPanel("metadata");
         }
       } else if (clickedFeatures.length === 0) {
-        if (dirtyFeatureIds.includes(selectedFeature?.getId() as string)) {
-          selectedFeature?.setStyle(grenseStyles.dirty);
+        for (const selectedFeature of selectedFeatures) {
+          if (dirtyFeatureIds.includes(selectedFeature.getId() as string)) {
+            selectedFeature.setStyle(grenseStyles.dirty);
+          }
         }
         overlayPopup.setPosition(undefined);
         closeOverlayPanel();
@@ -80,15 +79,16 @@ const useSelect = () => {
     dirtyFeatureIds,
     openOverlayPanel,
     select,
-    selectedFeature,
-    setSelectedFeature,
+    selectedFeatures,
+    setSelectedFeatures,
   ]);
 
+  // TODO: kan kuttes på sikt
   useEffect(() => {
-    if (selectedFeature === null) {
+    if (selectedFeatures.length === 0) {
       select.getFeatures().clear();
     }
-  }, [select, selectedFeature]);
+  }, [select, selectedFeatures]);
 
   return { select };
 };
