@@ -1,13 +1,11 @@
-import React, { createContext, useContext, useEffect } from "react";
+import React, { createContext, useContext } from "react";
 import { HistoryContextValue, HistoryEntry } from "./types";
 import {
-  getFeatureIdsFromEntries,
   setFeatureCoordinatesForEntry,
   setFeatureMetadataForEntry,
 } from "./utils";
 import useHistoryState from "contexts/HistoryContext/useHistoryState";
 import { ensureAllCasesCovered } from "utils/typeHelpers";
-import useDirtyStyles from "contexts/HistoryContext/useDirtyStyles";
 
 const onUndo = (entry: HistoryEntry) => {
   const { type } = entry;
@@ -100,56 +98,11 @@ export const HistoryContext = createContext<HistoryContextValue | undefined>(
 );
 
 export const HistoryProvider: React.FC = ({ children }) => {
-  const {
-    dirtyFeatureIds,
-    setDirtyFeatures,
-    setEditFeatures,
-    saveDirtyFeatureIds,
-    clearSavedDirtyFeatureIds,
-    setAndSaveUtkastFeatures,
-    setAndSaveSammenslaaingsFeatures,
-  } = useDirtyStyles();
-
   const { history, addHistoryEntry, clearHistory, undo, redo } =
     useHistoryState({
       onUndo,
       onRedo,
     });
-
-  useEffect(() => {
-    if (history.entries.length === 0) {
-      if (history.hasPreviouslySavedHistory && dirtyFeatureIds.length !== 0) {
-        saveDirtyFeatureIds();
-      }
-      // Hvis det ikke er for å lagre, så er det for å forhindre uendelig løkke
-      return;
-    }
-
-    const historyFeatures = history.entries
-      .filter((entry) => entry.type === "grense" || entry.type === "metadata")
-      .reduce<string[][]>(getFeatureIdsFromEntries, []);
-
-    const editFeatures = historyFeatures
-      .slice(history.index)
-      .flatMap((id) => id);
-    const dirtyFeatures = historyFeatures
-      .slice(0, history.index)
-      .flatMap((id) => id);
-
-    // For å forhindre uendelig løkke
-    if (dirtyFeatureIds.length === dirtyFeatures.length) return;
-
-    setEditFeatures(editFeatures);
-    setDirtyFeatures(dirtyFeatures);
-  }, [
-    dirtyFeatureIds.length,
-    history.entries,
-    history.index,
-    history.hasPreviouslySavedHistory,
-    saveDirtyFeatureIds,
-    setDirtyFeatures,
-    setEditFeatures,
-  ]);
 
   const value = {
     history,
@@ -157,10 +110,6 @@ export const HistoryProvider: React.FC = ({ children }) => {
     undo,
     redo,
     addHistoryEntry,
-    setAndSaveUtkastFeatures,
-    setAndSaveSammenslaaingsFeatures,
-    dirtyFeatureIds,
-    clearDirtyStyles: clearSavedDirtyFeatureIds,
   };
 
   return (

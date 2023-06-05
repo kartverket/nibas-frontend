@@ -71,11 +71,4 @@ export type HistoryContextValue = {
   }: {
     hasPreviouslySavedHistory: boolean;
   }) => void;
-  setAndSaveUtkastFeatures: (features: string[]) => void;
-  setAndSaveSammenslaaingsFeatures: (
-    features: string[],
-    overlappingFeatures: string[]
-  ) => void;
-  dirtyFeatureIds: string[];
-  clearDirtyStyles: () => void;
 };

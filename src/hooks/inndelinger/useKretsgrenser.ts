@@ -20,8 +20,8 @@ import { fetcherWithToken, getIdFromEntity } from "utils/api";
 import { isPoint } from "types/geometry";
 import { isNotNullOrUndefined } from "types/common";
 import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
-import { useHistory } from "contexts/HistoryContext";
 import { stemmekretsgrenserFetcher } from "api/stemmekrets";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 
 const endpointByKretstype = {
   grunnkrets: "grunnkretser",
@@ -109,7 +109,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { utkast } = useUtkast();
   const { setAndSaveUtkastFeatures, setAndSaveSammenslaaingsFeatures } =
-    useHistory();
+    useFeatureStyle();
 
   const { data: grunnkretserByKommune } = useNibasApi(
     visible ? getKretserByKommuneUrl(type) : null,
