@@ -28,7 +28,7 @@ const InputRow = styled.div`
 
 const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
   const { closeOverlayPanel, selectedPoint } = useOverlayPanel();
-  const { addEntry } = useHistory();
+  const { addHistoryEntry } = useHistory();
 
   const defaultValues = (koordinater: SelectedPoint) => ({
     east: koordinater ? koordinater.coordinates[0] : undefined,
@@ -91,7 +91,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
         });
       }
 
-      addEntry({
+      addHistoryEntry({
         type: "grense",
         changes,
       });

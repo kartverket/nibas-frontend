@@ -59,7 +59,7 @@ const UtkastItemActive = ({ utkastId }: Props) => {
   const previousValues = useRef<Inputs>(getValues());
   const { startTimer, clearTimer } = useTimer();
 
-  const { addEntry } = useHistory();
+  const { addHistoryEntry } = useHistory();
   const { canSave } = useToolbarActions();
 
   const handleSave = () => {
@@ -100,7 +100,7 @@ const UtkastItemActive = ({ utkastId }: Props) => {
 
     startTimer(
       () =>
-        addEntry({
+        addHistoryEntry({
           type: "utkast",
           changes: [
             {

@@ -13,7 +13,7 @@ import { pixelTolerance } from "./constants";
 // vi måtte gå tilbake til scratch for å finne ut hva backenden vil ha fra frontenden
 // mye av koden vil nok overleve, men detaljene rundt hva klonen har av data vil nok endres
 const useSplit = () => {
-  const { addEntry, activePointMode } = useHistory();
+  const { addHistoryEntry, activePointMode } = useHistory();
 
   const split = (event: MapBrowserEvent<MouseEvent>) => {
     if (activePointMode === "split" && !event.dragging) {
@@ -64,7 +64,7 @@ const useSplit = () => {
           addFeaturesToSource("edit", [clonedFeature]);
 
           if (featureId && clonedFeatureId) {
-            addEntry({
+            addHistoryEntry({
               type: "grense",
               changes: [
                 {

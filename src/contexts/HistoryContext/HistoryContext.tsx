@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   HistoryContextValue,
   HistoryEntry,
@@ -121,21 +115,11 @@ export const HistoryProvider: React.FC = ({ children }) => {
     setAndSaveSammenslaaingsFeatures,
   } = useDirtyStyles();
 
-  const { history, setHistory, clearHistory, undo, redo } = useHistoryState({
-    onUndo,
-    onRedo,
-  });
-
-  const addEntry = useCallback(
-    (entry: HistoryEntry) => {
-      setHistory((prevHistory) => ({
-        index: prevHistory.index + 1,
-        entries: [...prevHistory.entries.slice(0, prevHistory.index), entry],
-        hasPreviouslySavedHistory: prevHistory.hasPreviouslySavedHistory,
-      }));
-    },
-    [setHistory]
-  );
+  const { history, addHistoryEntry, clearHistory, undo, redo } =
+    useHistoryState({
+      onUndo,
+      onRedo,
+    });
 
   const [activeEditModes, setActiveEditModes] = useState<ToolbarEditMode[]>([
     "snap",
@@ -200,7 +184,7 @@ export const HistoryProvider: React.FC = ({ children }) => {
     clearHistory,
     undo,
     redo,
-    addEntry,
+    addHistoryEntry,
     activePointMode,
     setAndSaveUtkastFeatures,
     setAndSaveSammenslaaingsFeatures,

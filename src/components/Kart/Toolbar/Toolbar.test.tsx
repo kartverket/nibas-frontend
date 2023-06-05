@@ -1,11 +1,11 @@
 import { render, screen, waitFor } from "test/test-utils";
 import { ReactNode } from "react";
 import Toolbar from "./Toolbar";
-import { ToolbarHistory } from "contexts/HistoryContext";
+import { HistoryState } from "contexts/HistoryContext";
 import { mockDetailedGrunnkrets1 } from "mocks/handlers/responses";
 import { UtkastResponse } from "types/api";
 
-const mockToolbarHistory: ToolbarHistory = {
+const mockHistory: HistoryState = {
   index: 1,
   entries: [
     {
@@ -40,7 +40,7 @@ const mockToolbarHistory: ToolbarHistory = {
 const renderWithProvider = (
   ui: ReactNode,
   utkast?: UtkastResponse,
-  toolbarHistory: ToolbarHistory = {
+  history: HistoryState = {
     entries: [],
     index: 0,
     hasPreviouslySavedHistory: false,
@@ -48,7 +48,7 @@ const renderWithProvider = (
 ) =>
   render(ui, {
     HistoryProvider: {
-      history: toolbarHistory,
+      history: history,
       clearHistory: jest.fn(),
       activeEditModes: [],
     } as any,
@@ -65,7 +65,7 @@ const renderWithProvider = (
 const renderWithUtkastProvider = (ui: ReactNode) =>
   render(ui, {
     HistoryProvider: {
-      history: mockToolbarHistory,
+      history: mockHistory,
       clearHistory: jest.fn(),
       activeEditModes: [],
     } as any,
@@ -90,7 +90,7 @@ describe("Toolbar", () => {
     renderWithProvider(
       <Toolbar />,
       { navn: "Test", operasjoner: [] } as any,
-      mockToolbarHistory
+      mockHistory
     );
 
     expect(screen.getByRole("button", { name: /lagre/i })).toBeInTheDocument();

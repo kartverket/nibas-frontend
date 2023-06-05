@@ -18,7 +18,7 @@ const getInfoFromFeature = (featureLike: FeatureLike) => {
 };
 
 const useModify = () => {
-  const { addEntry, activePointMode } = useHistory();
+  const { addHistoryEntry, activePointMode } = useHistory();
   const { selectedFeature } = useOverlayPanel();
   const detachIsActive = activePointMode === "detach";
   const editLayer = getLayerById("edit");
@@ -94,7 +94,7 @@ const useModify = () => {
             featureLike.unset(previousCoordinateKey);
           }
         });
-        addEntry({
+        addHistoryEntry({
           type: "grense",
           changes,
         });
@@ -106,7 +106,7 @@ const useModify = () => {
     return () => {
       modify.un("modifyend", addModificationToHistory);
     };
-  }, [addEntry, modify]);
+  }, [addHistoryEntry, modify]);
 
   return { modify };
 };

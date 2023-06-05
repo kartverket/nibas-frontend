@@ -34,7 +34,7 @@ type Props = {
 
 const GrunnkretsRow = ({ grunnkrets, kommuneId }: Props) => {
   const grunnkretsId = getIdFromEntity(grunnkrets);
-  const { addEntry } = useHistory();
+  const { addHistoryEntry } = useHistory();
   const [isEditing, setIsEditing] = useState(false);
 
   const {
@@ -85,7 +85,7 @@ const GrunnkretsRow = ({ grunnkrets, kommuneId }: Props) => {
 
   const saveAndAddHistoryEntry = () => {
     const newValues = getValues();
-    addEntry({
+    addHistoryEntry({
       type: "grunnkrets",
       kommuneId,
       changes: [

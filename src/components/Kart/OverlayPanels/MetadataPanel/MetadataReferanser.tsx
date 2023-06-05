@@ -197,7 +197,7 @@ const MetadataReferanser = ({ feature }: Props) => {
     name: "dokrefs",
   });
 
-  const { addEntry } = useHistory();
+  const { addHistoryEntry } = useHistory();
 
   useEffect(() => {
     const updateFormOnPropertyChange = (e: ObjectEvent) => {
@@ -219,10 +219,14 @@ const MetadataReferanser = ({ feature }: Props) => {
 
   const updateDraftFromFeature = () => {
     const metadata = feature.getProperties().metadata as Metadata;
-    addMetadataEntryFromFeature(feature as Feature<LineString>, addEntry, {
-      ...metadata,
-      dokumentasjonsreferanser: mapFromFormToApi(getValues()),
-    });
+    addMetadataEntryFromFeature(
+      feature as Feature<LineString>,
+      addHistoryEntry,
+      {
+        ...metadata,
+        dokumentasjonsreferanser: mapFromFormToApi(getValues()),
+      }
+    );
   };
 
   const metadataIsDisabled = useIsMetadataDisabled(properties);

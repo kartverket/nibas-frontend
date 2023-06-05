@@ -1,11 +1,17 @@
 import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
-import { History } from "contexts/HistoryContext/useHistoryState";
 import {
   GrunnkretsRequest,
   Metadata,
   StemmekretsRequest,
   StemmekretsSammenslaaingsendringRequest,
 } from "types/api";
+
+// Obs: navnsetting for å unngå overlapp med innebygd History type
+export type HistoryState = {
+  index: number;
+  entries: HistoryEntry[];
+  hasPreviouslySavedHistory: boolean;
+};
 
 export type HistoryChange<T> = {
   id: string;
@@ -55,8 +61,6 @@ export type HistoryEntry =
 
 export type EditContextType = HistoryEntry["type"];
 
-export type ToolbarHistory = History<HistoryEntry>;
-
 export type ToolbarPointMode =
   | null
   | "add"
@@ -68,10 +72,10 @@ export type ToolbarPointMode =
 export type ToolbarEditMode = "snap";
 
 export type HistoryContextValue = {
-  addEntry: (entry: HistoryEntry) => void;
+  addHistoryEntry: (entry: HistoryEntry) => void;
   undo: () => void;
   redo: () => void;
-  history: ToolbarHistory;
+  history: HistoryState;
   clearHistory: ({
     hasPreviouslySavedHistory,
   }: {

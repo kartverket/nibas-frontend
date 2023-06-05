@@ -24,7 +24,7 @@ export const updateFeatureWithNewMetadata = (
 
 export const addMetadataEntryFromFeature = (
   feature: Feature<LineString>,
-  addEntry: (entry: MetadataEntry) => void,
+  addHistoryEntry: (entry: MetadataEntry) => void,
   updatedMetadata: Metadata
 ) => {
   const id = feature.getId();
@@ -35,7 +35,7 @@ export const addMetadataEntryFromFeature = (
 
   updateFeatureWithNewMetadata(feature as Feature<LineString>, updatedMetadata);
 
-  addEntry({
+  addHistoryEntry({
     type: "metadata",
     changes: [
       {

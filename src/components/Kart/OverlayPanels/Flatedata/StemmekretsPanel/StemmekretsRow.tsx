@@ -39,7 +39,7 @@ type Props = {
 const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
   const { t } = useTranslation();
   const stemmekretsId = getIdFromEntity(stemmekrets);
-  const { addEntry } = useHistory();
+  const { addHistoryEntry } = useHistory();
   const [isEditing, setIsEditing] = useState(false);
 
   const {
@@ -117,7 +117,7 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
 
   const saveAndAddHistoryEntry = () => {
     const newValues = getValues();
-    addEntry({
+    addHistoryEntry({
       type: "stemmekrets",
       kommuneId,
       changes: [

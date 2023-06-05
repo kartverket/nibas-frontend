@@ -70,7 +70,7 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
     initialItemId: metadata.commonGrense?.posisjonskvalitet?.maalemetode.id,
   });
 
-  const { addEntry } = useHistory();
+  const { addHistoryEntry } = useHistory();
 
   useEffect(() => {
     const updateFormOnPropertyChange = (e: ObjectEvent) => {
@@ -98,7 +98,7 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
   const updateDraftFromFeature = () => {
     addMetadataEntryFromFeature(
       feature as Feature<LineString>,
-      addEntry,
+      addHistoryEntry,
       getUpdatedMetadata(
         getValues(),
         feature.getProperties().metadata as Metadata
