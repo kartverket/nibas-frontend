@@ -7,6 +7,7 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useHistory } from "contexts/HistoryContext";
 import { grenseStyles } from "utils/map/layerStyles";
 import { pixelTolerance } from "./constants";
+import { useToolbar } from "contexts/ToolbarContext";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -19,7 +20,8 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 };
 
 const useSelect = () => {
-  const { activePointMode, dirtyFeatureIds } = useHistory();
+  const { dirtyFeatureIds } = useHistory();
+  const { activePointMode } = useToolbar();
   const {
     closeOverlayPanel,
     openOverlayPanel,

@@ -1,5 +1,4 @@
 import { map } from "components/Kart/constants";
-import { useHistory } from "contexts/HistoryContext";
 import { Snap } from "ol/interaction";
 import { useEffect } from "react";
 import { getVectorLayers } from "utils/map/layers";
@@ -7,11 +6,12 @@ import useModify from "./useModify";
 import useSelect from "./useSelect";
 import useSplit from "./useSplit";
 import useSelectPoint from "./useSelectPoint";
+import { useToolbar } from "contexts/ToolbarContext";
 
 const useInteractions = () => {
   const { modify } = useModify();
   const { select } = useSelect();
-  const { activeEditModes } = useHistory();
+  const { activeEditModes } = useToolbar();
   const { split } = useSplit();
   const { selectPoint } = useSelectPoint();
 

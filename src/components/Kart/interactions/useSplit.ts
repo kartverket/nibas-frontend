@@ -8,12 +8,14 @@ import Geometry from "ol/geom/Geometry";
 import { squaredDistance } from "ol/coordinate";
 import { addFeaturesToSource } from "utils/map/source";
 import { pixelTolerance } from "./constants";
+import { useToolbar } from "contexts/ToolbarContext";
 
 // TODO: denne koden er ikke i bruk og skal ombygges i fremtiden
 // vi måtte gå tilbake til scratch for å finne ut hva backenden vil ha fra frontenden
 // mye av koden vil nok overleve, men detaljene rundt hva klonen har av data vil nok endres
 const useSplit = () => {
-  const { addHistoryEntry, activePointMode } = useHistory();
+  const { addHistoryEntry } = useHistory();
+  const { activePointMode } = useToolbar();
 
   const split = (event: MapBrowserEvent<MouseEvent>) => {
     if (activePointMode === "split" && !event.dragging) {

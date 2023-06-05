@@ -1,10 +1,5 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import {
-  HistoryContextValue,
-  HistoryEntry,
-  ToolbarPointMode,
-  ToolbarEditMode,
-} from "./types";
+import React, { createContext, useContext, useEffect } from "react";
+import { HistoryContextValue, HistoryEntry } from "./types";
 import {
   getFeatureIdsFromEntries,
   setFeatureCoordinatesForEntry,
@@ -121,29 +116,6 @@ export const HistoryProvider: React.FC = ({ children }) => {
       onRedo,
     });
 
-  const [activeEditModes, setActiveEditModes] = useState<ToolbarEditMode[]>([
-    "snap",
-  ]);
-
-  const toggleEditMode = (editMode: ToolbarEditMode) => {
-    if (activeEditModes.includes(editMode)) {
-      setActiveEditModes(activeEditModes.filter((em) => em !== editMode));
-    } else {
-      setActiveEditModes(activeEditModes.concat(editMode));
-    }
-  };
-
-  const [activePointMode, setActivePointMode] =
-    useState<ToolbarPointMode>(null);
-
-  const togglePointMode = (pointMode: ToolbarPointMode) => {
-    if (pointMode === activePointMode) {
-      setActivePointMode(null);
-    } else {
-      setActivePointMode(pointMode);
-    }
-  };
-
   useEffect(() => {
     if (history.entries.length === 0) {
       if (history.hasPreviouslySavedHistory && dirtyFeatureIds.length !== 0) {
@@ -185,14 +157,10 @@ export const HistoryProvider: React.FC = ({ children }) => {
     undo,
     redo,
     addHistoryEntry,
-    activePointMode,
     setAndSaveUtkastFeatures,
     setAndSaveSammenslaaingsFeatures,
     dirtyFeatureIds,
     clearDirtyStyles: clearSavedDirtyFeatureIds,
-    togglePointMode,
-    activeEditModes,
-    toggleEditMode,
   };
 
   return (

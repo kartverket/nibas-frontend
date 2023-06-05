@@ -1,7 +1,22 @@
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { useHistory } from "./HistoryContext";
 
+type ToolbarEditMode = "snap";
+type ToolbarPointMode =
+  | null
+  | "add"
+  | "remove"
+  | "split"
+  | "detach"
+  | "metadata"
+  | "koordinater";
+
 export type ToolbarContextValue = {
+  activePointMode: ToolbarPointMode;
+  togglePointMode: (pointMode: ToolbarPointMode) => void;
+  activeEditModes: ToolbarEditMode[];
+  toggleEditMode: (editMode: ToolbarEditMode) => void;
+
   canSave: boolean;
   undo: (() => void) | undefined;
   redo: (() => void) | undefined;
@@ -14,10 +29,34 @@ export const ToolbarContext = createContext<ToolbarContextValue | undefined>(
 export const ToolbarProvider: React.FC = ({ children }) => {
   const { history, redo, undo } = useHistory();
 
-  const canSave = history.entries.length > 0 && history.index > 0;
+  const [activePointMode, setActivePointMode] =
+    useState<ToolbarPointMode>(null);
+  const [activeEditModes, setActiveEditModes] = useState<ToolbarEditMode[]>([
+    "snap",
+  ]);
+
+  const togglePointMode = (pointMode: ToolbarPointMode) => {
+    if (pointMode === activePointMode) {
+      setActivePointMode(null);
+    } else {
+      setActivePointMode(pointMode);
+    }
+  };
+
+  const toggleEditMode = (editMode: ToolbarEditMode) => {
+    if (activeEditModes.includes(editMode)) {
+      setActiveEditModes(activeEditModes.filter((em) => em !== editMode));
+    } else {
+      setActiveEditModes(activeEditModes.concat(editMode));
+    }
+  };
 
   const value = {
-    canSave,
+    activePointMode,
+    togglePointMode,
+    activeEditModes,
+    toggleEditMode,
+    canSave: history.entries.length > 0 && history.index > 0,
     undo: history.index > 0 ? undo : undefined,
     redo:
       history.entries.length > 0 && history.index < history.entries.length

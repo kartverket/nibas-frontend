@@ -10,6 +10,7 @@ import { pixelTolerance } from "./constants";
 import { getLayerById } from "utils/map/layers";
 import { map } from "components/Kart/constants";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { useToolbar } from "contexts/ToolbarContext";
 
 const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
@@ -18,7 +19,8 @@ const getInfoFromFeature = (featureLike: FeatureLike) => {
 };
 
 const useModify = () => {
-  const { addHistoryEntry, activePointMode } = useHistory();
+  const { addHistoryEntry } = useHistory();
+  const { activePointMode } = useToolbar();
   const { selectedFeature } = useOverlayPanel();
   const detachIsActive = activePointMode === "detach";
   const editLayer = getLayerById("edit");

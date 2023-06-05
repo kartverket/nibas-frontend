@@ -61,16 +61,6 @@ export type HistoryEntry =
 
 export type EditContextType = HistoryEntry["type"];
 
-export type ToolbarPointMode =
-  | null
-  | "add"
-  | "remove"
-  | "split"
-  | "detach"
-  | "metadata"
-  | "koordinater";
-export type ToolbarEditMode = "snap";
-
 export type HistoryContextValue = {
   addHistoryEntry: (entry: HistoryEntry) => void;
   undo: () => void;
@@ -88,8 +78,4 @@ export type HistoryContextValue = {
   ) => void;
   dirtyFeatureIds: string[];
   clearDirtyStyles: () => void;
-  activePointMode: ToolbarPointMode;
-  togglePointMode: (pointMode: ToolbarPointMode) => void;
-  activeEditModes: ToolbarEditMode[];
-  toggleEditMode: (editMode: ToolbarEditMode) => void;
 };
