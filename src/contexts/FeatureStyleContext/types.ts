@@ -1,9 +1,10 @@
 import { Feature } from "ol";
 import { Coordinate } from "ol/coordinate";
 import LineString from "ol/geom/LineString";
+import Point from "ol/geom/Point";
 
 export type SelectedFeatures = Feature<LineString>[];
-export type SelectedPoint = Coordinate | null;
+export type SelectedPoint = Feature<Point> | null;
 
 export type FeatureStyleContextValue = {
   selectedPoint: SelectedPoint;

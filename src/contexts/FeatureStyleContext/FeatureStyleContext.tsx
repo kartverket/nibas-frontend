@@ -13,9 +13,9 @@ export const FeatureStyleContext = createContext<
 
 export const FeatureStyleProvider: React.FC = ({ children }) => {
   const {
+    selectedPoint,
     selectFeatures,
     selectedFeatures,
-    selectedPoint,
     selectPointOnFeature,
     clearSelection,
   } = useSelectStyles();

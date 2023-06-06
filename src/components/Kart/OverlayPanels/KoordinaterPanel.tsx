@@ -8,6 +8,7 @@ import LineString from "ol/geom/LineString";
 import { useEffect } from "react";
 import { HistoryChange, useHistory } from "contexts/HistoryContext";
 import { SelectedPoint, useFeatureStyle } from "contexts/FeatureStyleContext";
+import Point from "ol/geom/Point";
 
 type KoordinaterFormData = {
   north: number;
@@ -32,10 +33,20 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
   const { selectedPoint, selectedFeatures } = useFeatureStyle();
   const { addHistoryEntry } = useHistory();
 
-  const defaultValues = (koordinater: SelectedPoint) => ({
-    east: koordinater ? koordinater[0] : undefined,
-    north: koordinater ? koordinater[1] : undefined,
-  });
+  const defaultValues = (punkt: SelectedPoint) => {
+    if (!punkt) {
+      return {
+        east: undefined,
+        north: undefined,
+      };
+    }
+    const geometry = punkt?.getGeometry() as Point;
+    const coordinates = geometry.getCoordinates();
+    return {
+      east: coordinates[0],
+      north: coordinates[1],
+    };
+  };
 
   const {
     register,
@@ -50,15 +61,14 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
   // Tilbakestill defaultverdier når man endrer valgt punkt
   useEffect(() => {
     reset(defaultValues(selectedPoint));
-  }, [selectedPoint, reset]);
+  }, [selectedPoint, reset, selectedFeatures]);
 
   const movePoint = () => {
     if (selectedPoint) {
       // getValues skal returnere et tall, men den returnerer string for en eller annen grunn
-      const newCoordinates: [number, number] = [
-        +getValues("east"),
-        +getValues("north"),
-      ];
+      const newCoordinates = [+getValues("east"), +getValues("north")];
+      const oldGeometry = selectedPoint.getGeometry() as Point;
+      const oldCoordinates = oldGeometry.getCoordinates();
 
       const changes: HistoryChange<number[][]>[] = [];
 
@@ -71,7 +81,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
         const originalCoordinates = [...coordinates];
 
         const nearestVertexIndex = coordinates.findIndex(
-          (v) => v[0] === selectedPoint[0] && v[1] === selectedPoint[1]
+          (v) => v[0] === oldCoordinates[0] && v[1] === oldCoordinates[1]
         );
         const headCoordinates = coordinates.slice(0, nearestVertexIndex);
         const tailCoordinates = coordinates.slice(nearestVertexIndex + 1);
@@ -82,6 +92,8 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
           ...tailCoordinates,
         ];
         geometry.setCoordinates(updatedCoordinates);
+
+        // TODO: trengs denne?
         feature.setGeometry(geometry);
 
         changes.push({
@@ -95,6 +107,9 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
         type: "grense",
         changes,
       });
+
+      const highlightGeometry = selectedPoint.getGeometry() as Point;
+      highlightGeometry.setCoordinates(newCoordinates);
     }
   };
 

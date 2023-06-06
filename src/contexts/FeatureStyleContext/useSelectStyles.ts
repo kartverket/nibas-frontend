@@ -1,24 +1,38 @@
 import { Feature } from "ol";
 import { Coordinate } from "ol/coordinate";
-import LineString from "ol/geom/LineString";
 import { useState } from "react";
-import { SelectedFeatures, SelectedPoint } from "./types";
-import { grenseStyles } from "utils/map/layerStyles";
+import { SelectedFeatures } from "./types";
+import { grenseStyles, selectedPointStyle } from "utils/map/layerStyles";
+import { addFeaturesToSource } from "utils/map/source";
+import Point from "ol/geom/Point";
+import { editSource } from "hooks/layers/constants";
 
-// TODO: hva skjer om man både har noe her og i dirty styles? antar kontekst fikser det.
-// TODO: mye testing med edge cases her, må være litt systematisk
 export const useSelectStyles = () => {
-  const [selectedPoint, setSelectedPoint] = useState<SelectedPoint>(null);
+  const [selectedPoint, setSelectedPoint] = useState<Feature<Point> | null>(
+    null
+  );
   const [selectedFeatures, setSelectedFeatures] = useState<SelectedFeatures>(
     []
   );
 
+  // TODO: det her jævla punktet må flyttes om det allerede finnes
   const selectPointOnFeature = (
     coordinate: Coordinate,
     features: SelectedFeatures
   ) => {
-    setSelectedPoint(coordinate);
-    setSelectedFeatures(features as Feature<LineString>[]);
+    selectFeatures(features);
+
+    if (selectedPoint) {
+      const geometry = selectedPoint.getGeometry() as Point;
+      geometry.setCoordinates(coordinate);
+    } else {
+      const geometry = new Point(coordinate);
+      const highlightPoint = new Feature(geometry);
+      highlightPoint.setId("temp-point-highlight");
+      highlightPoint.setStyle(selectedPointStyle);
+      editSource.addFeatures([highlightPoint]);
+      setSelectedPoint(highlightPoint);
+    }
   };
 
   const selectFeatures = (features: SelectedFeatures) => {
@@ -28,8 +42,10 @@ export const useSelectStyles = () => {
     setSelectedFeatures(features);
   };
 
-  // TODO: må huske å gjøre dette hvis featurene ikke skal være synlige eller redigeres lengre elns
   const clearSelection = () => {
+    if (selectedPoint) {
+      editSource.removeFeature(selectedPoint);
+    }
     setSelectedFeatures([]);
     setSelectedPoint(null);
   };
