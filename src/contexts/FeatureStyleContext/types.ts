@@ -8,8 +8,8 @@ export type SelectedPoint = Coordinate | null;
 export type FeatureStyleContextValue = {
   selectedPoint: SelectedPoint;
   selectedFeatures: SelectedFeatures;
-  setSelectedFeatures: (features: SelectedFeatures) => void;
   clearSelection: () => void;
+  selectFeatures: (features: SelectedFeatures) => void;
   selectPointOnFeature: (
     coordinate: Coordinate,
     features: SelectedFeatures

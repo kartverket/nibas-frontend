@@ -1,9 +1,10 @@
-import React, { createContext, useContext, useEffect } from "react";
+import React, { createContext, useContext, useEffect, useRef } from "react";
 import useDirtyStyles from "./useDirtyStyles";
 import { useHistory } from "contexts/HistoryContext";
 import { getFeatureIdsFromEntries } from "./utils";
 import { FeatureStyleContextValue } from "./types";
 import { useSelectStyles } from "./useSelectStyles";
+import { grenseStyles } from "utils/map/layerStyles";
 
 // TODO: kanskje dropp style fra navnsettingen
 export const FeatureStyleContext = createContext<
@@ -12,8 +13,8 @@ export const FeatureStyleContext = createContext<
 
 export const FeatureStyleProvider: React.FC = ({ children }) => {
   const {
+    selectFeatures,
     selectedFeatures,
-    setSelectedFeatures,
     selectedPoint,
     selectPointOnFeature,
     clearSelection,
@@ -27,8 +28,25 @@ export const FeatureStyleProvider: React.FC = ({ children }) => {
     setAndSaveUtkastFeatures,
     setAndSaveSammenslaaingsFeatures,
   } = useDirtyStyles();
-
   const { history } = useHistory();
+  const previousSelectedFeatures = useRef(selectedFeatures);
+
+  // Når en feature ikke er valgt lengre må vi avgjøre hvilken stil den skal ha
+  useEffect(() => {
+    const deselectedFeatures = previousSelectedFeatures.current.filter(
+      (psf) => !selectedFeatures.some((sf) => psf.getId() === sf.getId())
+    );
+
+    for (const feature of deselectedFeatures) {
+      if (dirtyFeatureIds.some((id) => id === feature.getId())) {
+        feature.setStyle(grenseStyles.dirty);
+      } else {
+        feature.setStyle();
+      }
+    }
+
+    previousSelectedFeatures.current = selectedFeatures;
+  }, [dirtyFeatureIds, selectedFeatures]);
 
   useEffect(() => {
     if (history.entries.length === 0) {
@@ -68,7 +86,7 @@ export const FeatureStyleProvider: React.FC = ({ children }) => {
   const value = {
     selectedPoint,
     selectedFeatures,
-    setSelectedFeatures,
+    selectFeatures,
     clearSelection,
     selectPointOnFeature,
     setAndSaveUtkastFeatures,

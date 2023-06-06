@@ -24,6 +24,7 @@ const useSelectPoint = () => {
         hitTolerance: pixelTolerance,
       });
 
+      // TODO: flytt closeoverlaypanel til en eller annen useeffect et sted?
       if (features.length === 0) {
         clearSelection();
         closeOverlayPanel();
