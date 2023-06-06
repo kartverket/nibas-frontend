@@ -3,9 +3,9 @@ import { Coordinate } from "ol/coordinate";
 import { useState } from "react";
 import { SelectedFeatures } from "./types";
 import { grenseStyles, selectedPointStyle } from "utils/map/layerStyles";
-import { addFeaturesToSource } from "utils/map/source";
 import Point from "ol/geom/Point";
 import { editSource } from "hooks/layers/constants";
+import { removeFeaturesFromSourceByIds } from "utils/map/source";
 
 export const useSelectStyles = () => {
   const [selectedPoint, setSelectedPoint] = useState<Feature<Point> | null>(
@@ -43,8 +43,7 @@ export const useSelectStyles = () => {
 
   const clearSelection = () => {
     if (selectedPoint) {
-      // TODO: får en console log error her
-      editSource.removeFeature(selectedPoint);
+      removeFeaturesFromSourceByIds("edit", [selectedPoint.getId() as string]);
     }
     setSelectedFeatures([]);
     setSelectedPoint(null);
