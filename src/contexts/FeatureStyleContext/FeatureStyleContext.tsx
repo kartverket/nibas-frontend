@@ -6,7 +6,6 @@ import { FeatureStyleContextValue } from "./types";
 import { useSelectStyles } from "./useSelectStyles";
 import { grenseStyles } from "utils/map/layerStyles";
 
-// TODO: kanskje dropp style fra navnsettingen
 export const FeatureStyleContext = createContext<
   FeatureStyleContextValue | undefined
 >(undefined);

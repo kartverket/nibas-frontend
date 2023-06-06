@@ -15,7 +15,6 @@ export const useSelectStyles = () => {
     []
   );
 
-  // TODO: det her jævla punktet må flyttes om det allerede finnes
   const selectPointOnFeature = (
     coordinate: Coordinate,
     features: SelectedFeatures
@@ -44,6 +43,7 @@ export const useSelectStyles = () => {
 
   const clearSelection = () => {
     if (selectedPoint) {
+      // TODO: får en console log error her
       editSource.removeFeature(selectedPoint);
     }
     setSelectedFeatures([]);
