@@ -457,12 +457,14 @@ export const mockUtkastRef1: UtkastRef = {
   href: "",
   id: "1",
   navn: "Mock utkast",
+  opprettetDato: "2022-06-01",
 };
 
 export const mockUtkastRef2: UtkastRef = {
   href: "",
   id: "2",
   navn: "Et nytt utkast",
+  opprettetDato: "2022-06-01",
 };
 
 export const mockFutureGrunnkrets1_1: GrunnkretsResponse = {
