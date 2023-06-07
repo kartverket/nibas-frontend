@@ -2,18 +2,15 @@ import { useEffect, useMemo } from "react";
 import Feature, { FeatureLike } from "ol/Feature";
 import LineString from "ol/geom/LineString";
 import Modify, { ModifyEvent } from "ol/interaction/Modify";
-import {
-  HistoryChange,
-  useToolbar,
-  useToolbarSaving,
-} from "contexts/ToolbarContext";
+import { HistoryChange, useHistory } from "contexts/HistoryContext";
 import { click, primaryAction } from "ol/events/condition";
 import { Collection } from "ol";
 import { editableBorderTypes, editSource } from "hooks/layers/constants";
 import { pixelTolerance } from "./constants";
 import { getLayerById } from "utils/map/layers";
 import { map } from "components/Kart/constants";
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { useToolbar } from "contexts/ToolbarContext";
+import { useFeatureStyle } from "contexts/FeatureStyleContext";
 
 const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
@@ -22,9 +19,9 @@ const getInfoFromFeature = (featureLike: FeatureLike) => {
 };
 
 const useModify = () => {
-  const { addEntry } = useToolbarSaving();
+  const { addHistoryEntry } = useHistory();
   const { activePointMode } = useToolbar();
-  const { selectedFeature } = useOverlayPanel();
+  const { selectedFeatures } = useFeatureStyle();
   const detachIsActive = activePointMode === "detach";
   const editLayer = getLayerById("edit");
 
@@ -32,9 +29,7 @@ const useModify = () => {
     () =>
       new Modify({
         source: detachIsActive ? undefined : editSource,
-        features: detachIsActive
-          ? new Collection(selectedFeature ? [selectedFeature] : [])
-          : undefined,
+        features: detachIsActive ? new Collection(selectedFeatures) : undefined,
         pixelTolerance: pixelTolerance,
         condition: (mapBrowserEvent) => {
           const featuresAtPixel = map.getFeaturesAtPixel(
@@ -59,7 +54,7 @@ const useModify = () => {
           return activePointMode === "remove" && click(mapBrowserEvent);
         },
       }),
-    [activePointMode, detachIsActive, editLayer, selectedFeature]
+    [activePointMode, detachIsActive, editLayer, selectedFeatures]
   );
 
   const previousCoordinateKey = "previousCoordinates";
@@ -99,7 +94,7 @@ const useModify = () => {
             featureLike.unset(previousCoordinateKey);
           }
         });
-        addEntry({
+        addHistoryEntry({
           type: "grense",
           changes,
         });
@@ -111,7 +106,7 @@ const useModify = () => {
     return () => {
       modify.un("modifyend", addModificationToHistory);
     };
-  }, [addEntry, modify]);
+  }, [addHistoryEntry, modify]);
 
   return { modify };
 };

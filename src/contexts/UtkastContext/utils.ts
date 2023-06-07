@@ -5,11 +5,11 @@ import { EntityUtkastType, UtkastEntity, ResponseWithId } from "./types";
 import {
   GrenseEntry,
   GrunnkretsEntry,
+  HistoryState,
   MetadataEntry,
   StemmekretsEntry,
   StemmekretsSammenslaaingsendringEntry,
-  ToolbarHistory,
-} from "contexts/ToolbarContext";
+} from "contexts/HistoryContext";
 import { editSource } from "hooks/layers/constants";
 import {
   FylkeRequest,
@@ -164,7 +164,7 @@ const addKretsChangeToOperations = (
 };
 
 export const historyToUtkastOperations = (
-  history: ToolbarHistory,
+  history: HistoryState,
   previousUtkast?: UtkastResponse
 ) => {
   const historyToCurrentIndex = history.entries.slice(0, history.index);

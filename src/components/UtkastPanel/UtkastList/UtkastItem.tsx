@@ -19,13 +19,13 @@ import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { resetMapView } from "utils/map";
 import UtkastConflicts from "./UtkastConflictModal/UtkastConflicts";
 import useAlertModal from "hooks/useAlertModal";
-import { useToolbarActions } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext";
 import { Outline } from "style/mixins";
 import AlertModal from "components/Status/AlertModal";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { isGeometriError, statusCode } from "utils/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { useToolbar } from "contexts/ToolbarContext";
 
 type Props = {
   utkast: UtkastRef;
@@ -56,7 +56,7 @@ const UtkastItem = ({ utkast }: Props) => {
       t("utkast.ulagrede-endringer"),
       t("utkast.ulagrede-endringer-utdypende")
     );
-  const { canSave } = useToolbarActions();
+  const { canSave } = useToolbar();
   const { closeUtkast } = useUtkast();
   const { setError } = useErrorHandling();
 

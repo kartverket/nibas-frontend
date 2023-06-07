@@ -15,7 +15,7 @@ import {
   historyToUtkastOperations,
 } from "./utils";
 import { updateUtkast as updateApiUtkast } from "api/utkast";
-import { HistoryChange, useToolbar } from "contexts/ToolbarContext";
+import { HistoryChange, useHistory } from "contexts/HistoryContext";
 import useNibasApi from "hooks/useNibasApi";
 import { OppdaterUtkastRequest, UtkastResponse } from "types/api";
 import { resetMapView } from "utils/map";
@@ -23,6 +23,7 @@ import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
@@ -34,7 +35,8 @@ export const UtkastContext = createContext<UtkastContextValue | undefined>(
 );
 
 export const UtkastProvider: React.FC = ({ children }) => {
-  const { history, clearHistory, clearDirtyStyles } = useToolbar();
+  const { history, clearHistory } = useHistory();
+  const { clearDirtyStyles } = useFeatureStyle();
   const { tokenHolderFunc } = useAuthenticationFlow();
   const [searchParams, setSearchParams] = useSearchParams();
   const { resetAndClearEditingLayer } = useEditAllGrenser();

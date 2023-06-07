@@ -1,8 +1,8 @@
-import { useToolbar } from "contexts/ToolbarContext";
+import { useHistory } from "contexts/HistoryContext";
 import { useUtkast } from "contexts/UtkastContext";
 
 export const useRedigeringsmodus = () => {
-  const { history } = useToolbar();
+  const { history } = useHistory();
   const { utkast, isValidating } = useUtkast();
 
   const redigeringsmodusAktiv =

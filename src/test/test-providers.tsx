@@ -20,10 +20,20 @@ import {
   SidebarPanelContextValue,
 } from "contexts/SidebarPanelContext";
 import {
+  HistoryProvider,
+  HistoryContext,
+  HistoryContextValue,
+} from "contexts/HistoryContext";
+import {
   ToolbarProvider,
   ToolbarContext,
   ToolbarContextValue,
 } from "contexts/ToolbarContext";
+import {
+  FeatureStyleProvider,
+  FeatureStyleContext,
+  FeatureStyleContextValue,
+} from "contexts/FeatureStyleContext";
 import {
   UtkastProvider,
   UtkastContext,
@@ -37,33 +47,40 @@ import {
 import ThirdPartyProviders from "components/App/Providers/ThirdPartyProviders";
 import { BrowserRouter } from "react-router-dom";
 
+// OBS! Rekkefølgen her må være den samme som i Providers.tsx
 const defaultProviderMap = {
   ErrorHandlingProvider,
-  BakgrunnskartProvider,
-  EditGrenserProvider,
+  HistoryProvider,
+  ToolbarProvider,
+  FeatureStyleProvider,
   SidebarPanelProvider,
   OverlayPanelProvider,
-  ToolbarProvider,
+  EditGrenserProvider,
+  BakgrunnskartProvider,
   UtkastProvider,
 };
 
 const contextMap = {
   ErrorHandlingProvider: ErrorHandlingContext.Provider,
-  BakgrunnskartProvider: BakgrunnskartContext.Provider,
-  EditGrenserProvider: EditGrenserContext.Provider,
+  HistoryProvider: HistoryContext.Provider,
+  ToolbarProvider: ToolbarContext.Provider,
+  FeatureStyleProvider: FeatureStyleContext.Provider,
   SidebarPanelProvider: SidebarPanelContext.Provider,
   OverlayPanelProvider: OverlayPanelContext.Provider,
-  ToolbarProvider: ToolbarContext.Provider,
+  EditGrenserProvider: EditGrenserContext.Provider,
+  BakgrunnskartProvider: BakgrunnskartContext.Provider,
   UtkastProvider: UtkastContext.Provider,
 };
 
 export type TestProviderValues = {
   ErrorHandlingProvider?: ErrorHandlingContextValue | boolean;
-  BakgrunnskartProvider?: BakgrunnskartContextValue | boolean;
-  EditGrenserProvider?: EditGrenserContextValue | boolean;
+  HistoryProvider?: HistoryContextValue | boolean;
+  ToolbarProvider?: ToolbarContextValue | boolean;
+  FeatureStyleProvider?: FeatureStyleContextValue | boolean;
   SidebarPanelProvider?: SidebarPanelContextValue | boolean;
   OverlayPanelProvider?: OverlayPanelContextValue | boolean;
-  ToolbarProvider?: ToolbarContextValue | boolean;
+  EditGrenserProvider?: EditGrenserContextValue | boolean;
+  BakgrunnskartProvider?: BakgrunnskartContextValue | boolean;
   UtkastProvider?: UtkastContextValue | boolean;
 };
 
