@@ -27,9 +27,9 @@ const useInteractions = () => {
 
     // Rekkefølgen her er potensielt viktig for at events skal avbryte hverandre i riktig rekkefølge
     map.on("click", split);
+    map.on("click", select);
     map.on("click", selectPoint);
     map.addInteraction(modify);
-    map.addInteraction(select);
 
     // snaps må legges til etter modify og draw interactions
     if (activeEditModes.includes("snap")) {
@@ -40,9 +40,9 @@ const useInteractions = () => {
 
     return () => {
       map.un("click", split);
+      map.un("click", select);
       map.un("click", selectPoint);
       map.removeInteraction(modify);
-      map.removeInteraction(select);
       snaps.forEach((snap) => {
         map.removeInteraction(snap);
       });

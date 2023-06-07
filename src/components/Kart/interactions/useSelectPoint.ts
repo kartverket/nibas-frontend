@@ -7,11 +7,12 @@ import { squaredDistance } from "ol/coordinate";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { editableBorderTypes } from "hooks/layers/constants";
 import { useToolbar } from "contexts/ToolbarContext";
+import { useFeatureStyle } from "contexts/FeatureStyleContext";
 
 const useSelectPoint = () => {
   const { activePointMode } = useToolbar();
-  const { openOverlayPanel, closeOverlayPanel, setSelectedPoint } =
-    useOverlayPanel();
+  const { openOverlayPanel, closeOverlayPanel } = useOverlayPanel();
+  const { selectPointOnFeature, clearSelection } = useFeatureStyle();
 
   const selectPoint = (event: MapBrowserEvent<MouseEvent>) => {
     if (activePointMode === "koordinater" && !event.dragging) {
@@ -24,7 +25,7 @@ const useSelectPoint = () => {
       });
 
       if (features.length === 0) {
-        setSelectedPoint(null);
+        clearSelection();
         closeOverlayPanel();
         return;
       }
@@ -48,16 +49,10 @@ const useSelectPoint = () => {
           .sort((a, b) => a.distance - b.distance)
           .map((cwd) => cwd.coordinates)[0];
 
-        // TODO: synliggjør at noe blir valgt, det er litt skummelt fordi man må være obs på alt av history og sånt
-        //       det blir egentlig enda en hook à la dirty styles, det kan være ryddigere enn å la openlayers styre det selv
-        //       vil det være nok overlapp til at de kan samles, eller er dirty unik siden den må hente fra utkast osv?
-        setSelectedPoint({
-          coordinates: [
-            nearestVertexCoordinates[0],
-            nearestVertexCoordinates[1],
-          ],
-          features: features as Feature<LineString>[],
-        });
+        selectPointOnFeature(
+          nearestVertexCoordinates,
+          features as Feature<LineString>[]
+        );
 
         openOverlayPanel("koordinater");
       }

@@ -52,6 +52,16 @@ const lineAndPointStyles = ({
   }),
 ];
 
+export const selectedPointStyle = new Style({
+  image: new Circle({
+    radius: 6,
+    stroke: new Stroke({ color: "#ffffff", width: 2 }),
+    fill: new Fill({ color: "#0099FF" }),
+  }),
+  fill: new Fill({ color: "#0099FF" }),
+  stroke: new Stroke({ color: "#ffffff" }),
+});
+
 export const grenseStyles = {
   fylke: lineAndPointStyles({ color: "#B92659" }),
   kommune: lineAndPointStyles({ color: "#F15D4E" }),

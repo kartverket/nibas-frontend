@@ -47,39 +47,40 @@ import {
 import ThirdPartyProviders from "components/App/Providers/ThirdPartyProviders";
 import { BrowserRouter } from "react-router-dom";
 
+// OBS! Rekkefølgen her må være den samme som i Providers.tsx
 const defaultProviderMap = {
   ErrorHandlingProvider,
-  BakgrunnskartProvider,
-  EditGrenserProvider,
-  SidebarPanelProvider,
-  OverlayPanelProvider,
   HistoryProvider,
   ToolbarProvider,
   FeatureStyleProvider,
+  SidebarPanelProvider,
+  OverlayPanelProvider,
+  EditGrenserProvider,
+  BakgrunnskartProvider,
   UtkastProvider,
 };
 
 const contextMap = {
   ErrorHandlingProvider: ErrorHandlingContext.Provider,
-  BakgrunnskartProvider: BakgrunnskartContext.Provider,
-  EditGrenserProvider: EditGrenserContext.Provider,
-  SidebarPanelProvider: SidebarPanelContext.Provider,
-  OverlayPanelProvider: OverlayPanelContext.Provider,
   HistoryProvider: HistoryContext.Provider,
   ToolbarProvider: ToolbarContext.Provider,
   FeatureStyleProvider: FeatureStyleContext.Provider,
+  SidebarPanelProvider: SidebarPanelContext.Provider,
+  OverlayPanelProvider: OverlayPanelContext.Provider,
+  EditGrenserProvider: EditGrenserContext.Provider,
+  BakgrunnskartProvider: BakgrunnskartContext.Provider,
   UtkastProvider: UtkastContext.Provider,
 };
 
 export type TestProviderValues = {
   ErrorHandlingProvider?: ErrorHandlingContextValue | boolean;
-  BakgrunnskartProvider?: BakgrunnskartContextValue | boolean;
-  EditGrenserProvider?: EditGrenserContextValue | boolean;
-  SidebarPanelProvider?: SidebarPanelContextValue | boolean;
-  OverlayPanelProvider?: OverlayPanelContextValue | boolean;
   HistoryProvider?: HistoryContextValue | boolean;
   ToolbarProvider?: ToolbarContextValue | boolean;
   FeatureStyleProvider?: FeatureStyleContextValue | boolean;
+  SidebarPanelProvider?: SidebarPanelContextValue | boolean;
+  OverlayPanelProvider?: OverlayPanelContextValue | boolean;
+  EditGrenserProvider?: EditGrenserContextValue | boolean;
+  BakgrunnskartProvider?: BakgrunnskartContextValue | boolean;
   UtkastProvider?: UtkastContextValue | boolean;
 };
 

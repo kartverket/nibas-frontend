@@ -1,94 +1,54 @@
-import { useEffect, useMemo } from "react";
-import { Feature } from "ol";
-import { Select } from "ol/interaction";
-import LineString from "ol/geom/LineString";
-import { overlayPopup } from "components/Kart/constants";
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { grenseStyles } from "utils/map/layerStyles";
-import { pixelTolerance } from "./constants";
 import { useToolbar } from "contexts/ToolbarContext";
+import { Feature, MapBrowserEvent } from "ol";
+import { pixelTolerance } from "./constants";
+import { map, overlayPopup } from "../constants";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
+import LineString from "ol/geom/LineString";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
-
   if (coordinates.length < 2) return;
-
   const middle = Math.floor((coordinates.length - 1) / 2);
-
   return coordinates[middle];
 };
 
 const useSelect = () => {
-  const { dirtyFeatureIds } = useFeatureStyle();
   const { activePointMode } = useToolbar();
-  const {
-    closeOverlayPanel,
-    openOverlayPanel,
-    selectedFeature,
-    setSelectedFeature,
-  } = useOverlayPanel();
+  const { selectFeatures, clearSelection } = useFeatureStyle();
+  const { closeOverlayPanel, openOverlayPanel } = useOverlayPanel();
 
-  const select = useMemo(
-    () =>
-      new Select({
+  const select = (event: MapBrowserEvent<MouseEvent>) => {
+    if (activePointMode === "metadata" && !event.dragging) {
+      event.stopPropagation();
+
+      const features = map.getFeaturesAtPixel(event.pixel, {
         hitTolerance: pixelTolerance,
-        style: grenseStyles.select,
-        filter: (feature) => {
-          if (activePointMode === "metadata") {
-            return feature.getGeometry() instanceof LineString;
-          }
-          return false;
-        },
-        toggleCondition: () => {
-          return false;
-        },
-      }),
-    [activePointMode]
-  );
+      });
 
-  useEffect(() => {
-    const syncFeatures = () => {
-      const clickedFeatures = select.getFeatures().getArray().slice();
+      // Filtrerer ut den blå prikken som indikerer hva man trykker på
+      const filteredFeatures = features.filter(
+        (feature) => feature.getGeometry() instanceof LineString
+      );
 
-      if (clickedFeatures.length === 1) {
-        const clickedFeature = clickedFeatures[0];
-        setSelectedFeature(clickedFeature);
-
-        if (clickedFeature.getId()?.toString().includes("TEIGGRENSEWFS")) {
-          overlayPopup.setPosition(getOverlayPosition(clickedFeature));
-        } else {
-          overlayPopup.setPosition(undefined);
-          openOverlayPanel("metadata");
-        }
-      } else if (clickedFeatures.length === 0) {
-        if (dirtyFeatureIds.includes(selectedFeature?.getId() as string)) {
-          selectedFeature?.setStyle(grenseStyles.dirty);
-        }
+      if (filteredFeatures.length === 0) {
         overlayPopup.setPosition(undefined);
         closeOverlayPanel();
+        clearSelection();
+        return;
       }
-    };
 
-    select.on("select", syncFeatures);
+      const clickedFeature = filteredFeatures[0] as Feature<LineString>;
+      selectFeatures([clickedFeature]);
 
-    return () => {
-      select.un("select", syncFeatures);
-    };
-  }, [
-    closeOverlayPanel,
-    dirtyFeatureIds,
-    openOverlayPanel,
-    select,
-    selectedFeature,
-    setSelectedFeature,
-  ]);
-
-  useEffect(() => {
-    if (selectedFeature === null) {
-      select.getFeatures().clear();
+      if (clickedFeature.getId()?.toString().includes("TEIGGRENSEWFS")) {
+        overlayPopup.setPosition(getOverlayPosition(clickedFeature));
+      } else {
+        overlayPopup.setPosition(undefined);
+        openOverlayPanel("metadata");
+      }
     }
-  }, [select, selectedFeature]);
+  };
 
   return { select };
 };

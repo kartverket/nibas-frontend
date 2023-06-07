@@ -9,8 +9,8 @@ import { editableBorderTypes, editSource } from "hooks/layers/constants";
 import { pixelTolerance } from "./constants";
 import { getLayerById } from "utils/map/layers";
 import { map } from "components/Kart/constants";
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
+import { useFeatureStyle } from "contexts/FeatureStyleContext";
 
 const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
@@ -21,7 +21,7 @@ const getInfoFromFeature = (featureLike: FeatureLike) => {
 const useModify = () => {
   const { addHistoryEntry } = useHistory();
   const { activePointMode } = useToolbar();
-  const { selectedFeature } = useOverlayPanel();
+  const { selectedFeatures } = useFeatureStyle();
   const detachIsActive = activePointMode === "detach";
   const editLayer = getLayerById("edit");
 
@@ -29,9 +29,7 @@ const useModify = () => {
     () =>
       new Modify({
         source: detachIsActive ? undefined : editSource,
-        features: detachIsActive
-          ? new Collection(selectedFeature ? [selectedFeature] : [])
-          : undefined,
+        features: detachIsActive ? new Collection(selectedFeatures) : undefined,
         pixelTolerance: pixelTolerance,
         condition: (mapBrowserEvent) => {
           const featuresAtPixel = map.getFeaturesAtPixel(
@@ -56,7 +54,7 @@ const useModify = () => {
           return activePointMode === "remove" && click(mapBrowserEvent);
         },
       }),
-    [activePointMode, detachIsActive, editLayer, selectedFeature]
+    [activePointMode, detachIsActive, editLayer, selectedFeatures]
   );
 
   const previousCoordinateKey = "previousCoordinates";
