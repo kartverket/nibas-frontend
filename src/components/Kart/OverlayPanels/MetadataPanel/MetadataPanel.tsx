@@ -32,10 +32,15 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
     selectedFeature?.get("type") as string
   );
 
+  const isWFSGrense = selectedFeature
+    ?.getId()
+    ?.toString()
+    .includes("TEIGGRENSEWFS");
+
   return (
     <SidePanel isOpen={isOpen} className={className}>
       <PanelHeader onClose={closeOverlayPanel}>Metadata for grense</PanelHeader>
-      {selectedFeature && (
+      {selectedFeature && !isWFSGrense && (
         <Content>
           <MetadataGenerelt feature={selectedFeature} />
           {showReferanser && (
