@@ -17,7 +17,7 @@ const getPointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
   // hent punkter når zoomet langt nok inn
   const zoom = map.getView().getZoom() ?? 0;
 
-  if (zoom < 13) return;
+  if (zoom < 11) return;
 
   const coordinates = (feature as Feature<LineString>)
     .getGeometry()
