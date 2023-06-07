@@ -25,6 +25,7 @@ const Form = styled.form`
 
 const InputRow = styled.div`
   display: flex;
+  width: 100%;
   gap: 16px;
 `;
 

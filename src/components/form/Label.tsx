@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 const Container = styled.label`
   display: flex;
+  min-width: 0;
   flex-direction: column;
   gap: 8px;
   color: var(--black);
