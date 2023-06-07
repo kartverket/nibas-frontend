@@ -1,8 +1,9 @@
 import styled from "styled-components";
-import Button from "./form/Button";
-import CloseButton from "./form/Button/CloseButton";
-import Icon from "./Icon";
-import { Modal, ModalContent } from "./Modal";
+import Button from "../form/Button";
+import CloseButton from "../form/Button/CloseButton";
+import Icon from "../Icon";
+import { Modal, ModalContent } from "../Modal";
+import { Status, StatusStyle, statusStyles } from "./common";
 
 const borderRadius = "12px";
 const border = "2px solid var(--gray_light)";
@@ -13,12 +14,6 @@ const ModalElement = styled(ModalContent)`
   box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.15);
   border-radius: ${borderRadius};
 `;
-
-type StatusStyle = {
-  icon: string;
-  foreground: string;
-  background: string;
-};
 
 const StatusIcon = styled(Icon).attrs((props) => ({
   icon: props.icon,
@@ -80,8 +75,6 @@ const Buttons = styled.div`
   gap: 10px;
 `;
 
-type Status = "error" | "warning" | "info";
-
 type Action = {
   onClick: () => void;
   text: string;
@@ -95,24 +88,6 @@ type Props = {
   onClose: () => void;
   primaryAction?: Action;
   secondaryAction?: Action;
-};
-
-const statusStyles: Record<Status, StatusStyle> = {
-  error: {
-    icon: "dangerous",
-    background: "var(--pink)",
-    foreground: "var(--red_error_message)",
-  },
-  warning: {
-    icon: "emergency_home",
-    background: "var(--yellow_light)",
-    foreground: "var(--yellow_darker)",
-  },
-  info: {
-    icon: "help",
-    background: "var(--blue_light)",
-    foreground: "var(--blue_dark)",
-  },
 };
 
 const AlertModal = ({

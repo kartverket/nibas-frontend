@@ -1,23 +1,28 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { HistoryState, HistoryEntry } from "./types";
 
-// dictionary med itemId som key, og ny verdi som T
-export type History<T> = {
-  index: number;
-  entries: T[];
-  hasPreviouslySavedHistory: boolean;
+type Options = {
+  onUndo: (entry: HistoryEntry) => void;
+  onRedo: (entry: HistoryEntry) => void;
 };
 
-type Options<T> = {
-  onUndo: (entry: T) => void;
-  onRedo: (entry: T) => void;
-};
-
-const useHistory = <T>({ onUndo, onRedo }: Options<T>) => {
-  const [history, setHistory] = useState<History<T>>({
+const useHistoryState = ({ onUndo, onRedo }: Options) => {
+  const [history, setHistory] = useState<HistoryState>({
     index: 0,
     entries: [],
     hasPreviouslySavedHistory: false,
   });
+
+  const addHistoryEntry = useCallback(
+    (entry: HistoryEntry) => {
+      setHistory((prevHistory) => ({
+        index: prevHistory.index + 1,
+        entries: [...prevHistory.entries.slice(0, prevHistory.index), entry],
+        hasPreviouslySavedHistory: prevHistory.hasPreviouslySavedHistory,
+      }));
+    },
+    [setHistory]
+  );
 
   const clearHistory = ({
     hasPreviouslySavedHistory,
@@ -79,12 +84,12 @@ const useHistory = <T>({ onUndo, onRedo }: Options<T>) => {
   };
 
   return {
+    history,
+    addHistoryEntry,
     clearHistory,
     undo,
     redo,
-    history,
-    setHistory,
   };
 };
 
-export default useHistory;
+export default useHistoryState;

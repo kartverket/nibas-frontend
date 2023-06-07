@@ -1,11 +1,17 @@
 import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
-import { History } from "hooks/useHistory";
 import {
   GrunnkretsRequest,
   Metadata,
   StemmekretsRequest,
   StemmekretsSammenslaaingsendringRequest,
 } from "types/api";
+
+// Obs: navnsetting for å unngå overlapp med innebygd History type
+export type HistoryState = {
+  index: number;
+  entries: HistoryEntry[];
+  hasPreviouslySavedHistory: boolean;
+};
 
 export type HistoryChange<T> = {
   id: string;
@@ -55,36 +61,14 @@ export type HistoryEntry =
 
 export type EditContextType = HistoryEntry["type"];
 
-export type ToolbarHistory = History<HistoryEntry>;
-
-export type ToolbarPointMode =
-  | null
-  | "add"
-  | "remove"
-  | "split"
-  | "detach"
-  | "metadata";
-export type ToolbarEditMode = "snap";
-
-export type ToolbarContextValue = {
+export type HistoryContextValue = {
+  addHistoryEntry: (entry: HistoryEntry) => void;
   undo: () => void;
   redo: () => void;
-  history: ToolbarHistory;
-  setHistory: React.Dispatch<React.SetStateAction<History<HistoryEntry>>>;
+  history: HistoryState;
   clearHistory: ({
     hasPreviouslySavedHistory,
   }: {
     hasPreviouslySavedHistory: boolean;
   }) => void;
-  setAndSaveUtkastFeatures: (features: string[]) => void;
-  setAndSaveSammenslaaingsFeatures: (
-    features: string[],
-    overlappingFeatures: string[]
-  ) => void;
-  dirtyFeatureIds: string[];
-  clearDirtyStyles: () => void;
-  activePointMode: ToolbarPointMode;
-  togglePointMode: (pointMode: ToolbarPointMode) => void;
-  activeEditModes: ToolbarEditMode[];
-  toggleEditMode: (editMode: ToolbarEditMode) => void;
 };

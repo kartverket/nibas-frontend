@@ -1,7 +1,7 @@
-import Icon from "components/Icon";
 import { forwardRef, InputHTMLAttributes } from "react";
 import styled, { css } from "styled-components";
 import Label from "../Label";
+import Message from "components/Status/Message";
 
 export type ValidationError = {
   message: string;
@@ -58,24 +58,6 @@ const StyledInput = styled.input<{ isInvalid: boolean }>`
   }
 `;
 
-export const ErrorMessage = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  background: var(--orange);
-  color: var(--red_error_message);
-  border: 1px solid;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: normal;
-  width: 100%;
-
-  & > ${Icon} {
-    font-size: 18px;
-  }
-`;
-
 const Input = forwardRef<HTMLInputElement, Props>(function Input(props, ref) {
   return (
     <Label className={props.className} label={props.label ?? ""}>
@@ -85,10 +67,7 @@ const Input = forwardRef<HTMLInputElement, Props>(function Input(props, ref) {
         isInvalid={props.validationError?.showError ?? false}
       />
       {props.validationError?.showError && (
-        <ErrorMessage>
-          <Icon icon="warning_amber" />
-          {props.validationError.message}
-        </ErrorMessage>
+        <Message status="error">{props.validationError.message}</Message>
       )}
     </Label>
   );

@@ -1,7 +1,7 @@
 import { useUtkast } from "contexts/UtkastContext";
 import { Grunnkretsendringer } from "./utkastEndringerTypes";
 import { useEffect, useMemo, useState } from "react";
-import { useToolbar } from "contexts/ToolbarContext";
+import { useHistory } from "contexts/HistoryContext";
 import { historyToUtkastOperations } from "contexts/UtkastContext/utils";
 import useNibasApi from "hooks/useNibasApi";
 import {
@@ -26,7 +26,7 @@ export const useUtkastGrunnkretsEndringer =
     const { data: kommuner, isValidating: lasterKommuner } =
       useNibasApi("/v1/kommuner");
 
-    const { history } = useToolbar();
+    const { history } = useHistory();
     const operasjoner = useMemo(() => {
       return historyToUtkastOperations(history, utkast);
     }, [history, utkast]);

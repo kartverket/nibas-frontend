@@ -1,5 +1,5 @@
 import LineString from "ol/geom/LineString";
-import { GrenseEntry, HistoryEntry, MetadataEntry } from "./types";
+import { GrenseEntry, MetadataEntry } from "./types";
 import { editSource } from "hooks/layers/constants";
 
 export const setFeatureCoordinatesForEntry = (
@@ -32,18 +32,4 @@ export const setFeatureMetadataForEntry = (
 
     feature.setProperties({ ...feature.getProperties(), metadata });
   });
-};
-
-export const getFeatureIdsFromEntries = (
-  accumulator: string[][],
-  entry: HistoryEntry
-) => {
-  const featureIds: string[] = [];
-  entry.changes.forEach((change) => {
-    if (change.to && !accumulator.some((value) => value.includes(change.id))) {
-      featureIds.push(change.id);
-    }
-  });
-  accumulator.push(featureIds);
-  return accumulator;
 };

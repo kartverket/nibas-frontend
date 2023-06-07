@@ -4,7 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import { Translation } from "i18n";
 import { useTranslation } from "react-i18next";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import { useToolbar } from "contexts/ToolbarContext";
+import { useHistory } from "contexts/HistoryContext";
 import { translateKeysByEndringsType } from "contexts/UtkastContext/constants";
 import { historyToUtkastOperations } from "contexts/UtkastContext/utils";
 import { createUtkast as createApiUtkast } from "api/utkast";
@@ -44,7 +44,7 @@ const UtkastToolbar = ({
   const [utkastName, setUtkastName] = useState("");
   const [utkastType, setUtkastType] = useState("");
   const { tokenHolderFunc } = useAuthenticationFlow();
-  const { history, clearHistory } = useToolbar();
+  const { history, clearHistory } = useHistory();
   const setSearchParams = useSearchParams()[1];
   const { setError } = useErrorHandling();
 

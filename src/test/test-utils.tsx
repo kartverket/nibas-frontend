@@ -17,11 +17,13 @@ const customRender = (
 
   const {
     ErrorHandlingProvider,
-    BakgrunnskartProvider,
-    EditGrenserProvider,
-    OverlayPanelProvider,
-    SidebarPanelProvider,
+    HistoryProvider,
     ToolbarProvider,
+    FeatureStyleProvider,
+    SidebarPanelProvider,
+    OverlayPanelProvider,
+    EditGrenserProvider,
+    BakgrunnskartProvider,
     UtkastProvider,
     ...rltOptions
   } = options;
@@ -31,11 +33,13 @@ const customRender = (
     ...render(
       renderWithProviders(ui, {
         ErrorHandlingProvider,
-        BakgrunnskartProvider,
-        EditGrenserProvider,
-        OverlayPanelProvider,
-        SidebarPanelProvider,
+        HistoryProvider,
         ToolbarProvider,
+        FeatureStyleProvider,
+        SidebarPanelProvider,
+        OverlayPanelProvider,
+        EditGrenserProvider,
+        BakgrunnskartProvider,
         UtkastProvider,
       }),
       rltOptions

@@ -1,19 +1,20 @@
-import { Feature } from "ol";
-import LineString from "ol/geom/LineString";
 import React, { createContext, useContext, useState } from "react";
 import { KommuneRef } from "types/api";
 import { useSidebarPanel } from "./SidebarPanelContext";
+import { useFeatureStyle } from "./FeatureStyleContext";
 
-type OverlayPanel = "metadata" | "grunnkrets" | "stemmekrets" | "sammenslåing";
-type SelectedFeature = Feature<LineString> | null;
+type OverlayPanel =
+  | "metadata"
+  | "grunnkrets"
+  | "stemmekrets"
+  | "sammenslåing"
+  | "koordinater";
 type Flatedata = KommuneRef | null;
 
 export type OverlayPanelContextValue = {
   activeOverlayPanel: OverlayPanel | null;
   openOverlayPanel: (overlayPanel: OverlayPanel) => void;
   closeOverlayPanel: () => void;
-  selectedFeature: SelectedFeature;
-  setSelectedFeature: (selectedFeature: SelectedFeature) => void;
   flatedata: Flatedata;
   setFlatedata: (flatedata: Flatedata) => void;
 };
@@ -24,6 +25,7 @@ export const OverlayPanelContext = createContext<
 
 export const OverlayPanelProvider: React.FC = ({ children }) => {
   const { closeSidebarPanel } = useSidebarPanel();
+  const { clearSelection } = useFeatureStyle();
   const [activeOverlayPanel, setActiveOverlayPanel] =
     useState<OverlayPanel | null>(null);
 
@@ -34,11 +36,8 @@ export const OverlayPanelProvider: React.FC = ({ children }) => {
 
   const closeOverlayPanel = () => {
     setActiveOverlayPanel(null);
-    setSelectedFeature(null);
+    clearSelection();
   };
-
-  // Brukes kun til MetadataPanel for å avgjøre hvilken feature man skal se data til
-  const [selectedFeature, setSelectedFeature] = useState<SelectedFeature>(null);
 
   // Brukes kun til paneler for stemmekrets og grunnkrets
   const [flatedata, setFlatedata] = useState<Flatedata>(null);
@@ -47,8 +46,6 @@ export const OverlayPanelProvider: React.FC = ({ children }) => {
     activeOverlayPanel,
     openOverlayPanel,
     closeOverlayPanel,
-    selectedFeature,
-    setSelectedFeature,
     flatedata,
     setFlatedata,
   };

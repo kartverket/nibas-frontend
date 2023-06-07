@@ -2,10 +2,10 @@ import { InputHTMLAttributes, forwardRef } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { StemmekretsResponse } from "types/api";
-import Icon from "components/Icon";
 import Button from "components/form/Button";
 import Select from "components/form/Select";
-import { ErrorMessage, ValidationError } from "components/form/Input/Input";
+import { ValidationError } from "components/form/Input/Input";
+import Message from "components/Status/Message";
 
 const MergeSelectWrapper = styled.div`
   display: grid;
@@ -17,7 +17,7 @@ const MergeSelectWrapper = styled.div`
   gap: 8px;
 `;
 
-const MergeSelectErrorMessage = styled(ErrorMessage)`
+const MergeSelectErrorMessage = styled(Message)`
   grid-area: error;
 `;
 
@@ -75,8 +75,7 @@ export const MergeSelect = forwardRef<HTMLDivElement, MergeSelectProps>(
           <RemoveButton onClick={onRemove}>Fjern</RemoveButton>
         )}
         {validationError?.showError && (
-          <MergeSelectErrorMessage>
-            <Icon icon="warning_amber" />
+          <MergeSelectErrorMessage status="error">
             {validationError.message}
           </MergeSelectErrorMessage>
         )}

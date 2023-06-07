@@ -49,26 +49,32 @@ export const grenserLayers = {
   fylke: new VectorLayer({
     source: new VectorSource(),
     style: grenseStyle("fylke"),
+    declutter: true,
   }),
   kommune: new VectorLayer({
     source: new VectorSource(),
     style: grenseStyle("kommune"),
+    declutter: true,
   }),
   nasjon: new VectorLayer({
     source: new VectorSource(),
     style: grenseStyle("nasjon"),
+    declutter: true,
   }),
   grunnkrets: new VectorLayer({
     source: new VectorSource(),
     style: grenseStyle("grunnkrets"),
+    declutter: true,
   }),
   stemmekrets: new VectorLayer({
     source: new VectorSource(),
     style: grenseStyle("stemmekrets"),
+    declutter: true,
   }),
   edit: new VectorLayer({
     source: editSource,
     style: grenseStyle("edit"),
+    declutter: true,
   }),
 };
 

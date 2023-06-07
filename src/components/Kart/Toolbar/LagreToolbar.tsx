@@ -1,16 +1,16 @@
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
-import { useToolbarActions } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext";
 import useAlertModal from "hooks/useAlertModal";
 import ModeButton from "./ModeButton";
 import { Frame } from "./components";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
-import AlertModal from "components/AlertModal";
+import AlertModal from "components/Status/AlertModal";
 import { useState } from "react";
 import { EndringsloggModal } from "components/Endringslogg/EndringsloggModal";
 import FeatureToggle from "../../FeatureToggle";
 import { DividerVertical } from "components/Divider";
+import { useToolbar } from "contexts/ToolbarContext";
 
 const LagreFrame = styled(Frame)`
   justify-content: center;
@@ -39,7 +39,7 @@ type Props = {
 
 const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
   const { t } = useTranslation();
-  const { canSave } = useToolbarActions();
+  const { canSave } = useToolbar();
   const [endringsloggOpen, setEndringsloggOpen] = useState(false);
   const { utkast, updateUtkastWithHistory, closeUtkast } = useUtkast();
   const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } =
