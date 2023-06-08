@@ -15,6 +15,7 @@ import Heading from "components/typography/Heading";
 import { Frame } from "./components";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
+import { ApiErrorResponse } from "../../../types/api";
 
 const UtkastFrame = styled(Frame)`
   flex-direction: column;
@@ -75,9 +76,10 @@ const UtkastToolbar = ({
       clearHistory({ hasPreviouslySavedHistory: true });
       promptUtkast();
     } else if (statusCode.isError(response.status)) {
+      const wrapper = (await response.json()) as ApiErrorResponse;
       setError({
-        title: "Opprettelse av utkast feilet",
-        body: `Feilkode: ${response.status}`,
+        ...wrapper.errorDescription,
+        errorCode: wrapper.errorCode,
       });
     }
   };

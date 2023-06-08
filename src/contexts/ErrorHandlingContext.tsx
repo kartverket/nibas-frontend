@@ -2,7 +2,9 @@ import React, { createContext, useContext, useState } from "react";
 
 type Error = {
   title: string;
-  body: string;
+  description: string;
+  additionalInfo?: string;
+  errorCode?: string;
 } | null;
 
 export type ErrorHandlingContextValue = {

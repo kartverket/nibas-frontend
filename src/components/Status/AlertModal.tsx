@@ -4,6 +4,7 @@ import CloseButton from "../form/Button/CloseButton";
 import Icon from "../Icon";
 import { Modal, ModalContent } from "../Modal";
 import { Status, StatusStyle, statusStyles } from "./common";
+import { useTranslation } from "react-i18next";
 
 const borderRadius = "12px";
 const border = "2px solid var(--gray_light)";
@@ -63,8 +64,17 @@ const Title = styled.h3`
   margin: 0;
 `;
 
-const Body = styled.div`
+const BodyText = styled.p`
   padding: 0 48px;
+  margin: 0;
+  color: var(--gray_dark);
+  white-space: pre-line;
+`;
+
+const BodyTextExtra = styled.p`
+  margin: 0;
+  padding: 0 48px;
+  font-style: italic;
   color: var(--gray_dark);
   white-space: pre-line;
 `;
@@ -83,7 +93,9 @@ type Action = {
 type Props = {
   status: Status;
   title: string;
-  body?: string;
+  description: string;
+  errorCode?: string;
+  additionalInfo?: string;
   isOpen: boolean;
   onClose: () => void;
   primaryAction?: Action;
@@ -93,12 +105,15 @@ type Props = {
 const AlertModal = ({
   status,
   title,
-  body,
+  description,
+  additionalInfo,
+  errorCode,
   isOpen,
   onClose,
   primaryAction,
   secondaryAction,
 }: Props) => {
+  const { t } = useTranslation();
   return (
     <Modal isOpen={isOpen} onRequestClose={onClose} modalElement={ModalElement}>
       <Header {...statusStyles[status]}>
@@ -107,7 +122,13 @@ const AlertModal = ({
         <Close onClick={onClose} />
       </Header>
       <Content>
-        {body && <Body>{body}</Body>}
+        <BodyText>{description}</BodyText>
+        {additionalInfo && <BodyTextExtra>{additionalInfo}</BodyTextExtra>}
+        {errorCode && (
+          <BodyTextExtra>
+            {t("alertmodal.errorcode", { feilkode: errorCode })}
+          </BodyTextExtra>
+        )}
         {(primaryAction || secondaryAction) && (
           <Buttons>
             {secondaryAction && (

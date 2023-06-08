@@ -17,7 +17,11 @@ import {
 import { updateUtkast as updateApiUtkast } from "api/utkast";
 import { HistoryChange, useHistory } from "contexts/HistoryContext";
 import useNibasApi from "hooks/useNibasApi";
-import { OppdaterUtkastRequest, UtkastResponse } from "types/api";
+import {
+  ApiErrorResponse,
+  OppdaterUtkastRequest,
+  UtkastResponse,
+} from "types/api";
 import { resetMapView } from "utils/map";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
@@ -121,9 +125,11 @@ export const UtkastProvider: React.FC = ({ children }) => {
       await globalMutate(["/v1/utkast", tokenHolderFunc()?.token]);
       clearHistory({ hasPreviouslySavedHistory: true });
     } else if (statusCode.isError(response.status)) {
+      const wrapper = (await response.json()) as ApiErrorResponse;
       setError({
         title: "Oppdatering av utkast feilet",
-        body: `Feilkode: ${response.status}`,
+        description: wrapper.errorDescription.description,
+        errorCode: wrapper.errorCode,
       });
     }
   };

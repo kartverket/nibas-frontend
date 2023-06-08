@@ -10,7 +10,7 @@ import Button from "components/form/Button";
 import Icon from "components/Icon";
 import useNibasApi from "hooks/useNibasApi";
 import {
-  BadRequestResponse,
+  ApiErrorResponse,
   ConflictResponseWrapper,
   FramtidigVersjonConflict,
   UtkastRef,
@@ -23,7 +23,7 @@ import { useUtkast } from "contexts/UtkastContext";
 import { Outline } from "style/mixins";
 import AlertModal from "components/Status/AlertModal";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
-import { isGeometriError, statusCode } from "utils/api";
+import { statusCode } from "utils/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { getDateInFriendlyString } from "components/Kart/OverlayPanels/MetadataPanel/utils";
@@ -92,26 +92,12 @@ const UtkastItem = ({ utkast }: Props) => {
       } else {
         setError({
           title: t("utkast.feil.utdatert-tittel"),
-          body: t("utkast.feil.utdatert-tekst"),
+          description: t("utkast.feil.utdatert-tekst"),
         });
       }
     } else if (statusCode.isError(response.status)) {
-      const wrapper = (await response.json()) as BadRequestResponse;
-
-      if (isGeometriError(wrapper)) {
-        setError({
-          title: t("utkast.feil.feil-geometri-tittel"),
-          body: t("utkast.feil.feil-geometri-tekst", {
-            feilkode: response.status,
-            feiltype: wrapper.validationError,
-          }),
-        });
-      } else {
-        setError({
-          title: t("utkast.feil.publisering-feilet-tittel"),
-          body: t("utkast.feil.feilkode", { feilkode: response.status }),
-        });
-      }
+      const wrapper = (await response.json()) as ApiErrorResponse;
+      setError({ ...wrapper.errorDescription, errorCode: wrapper.errorCode });
     }
   };
 
@@ -127,10 +113,8 @@ const UtkastItem = ({ utkast }: Props) => {
         resetAndClearEditingLayer();
       }
     } else if (statusCode.isError(response.status)) {
-      setError({
-        title: t("utkast.feil.sletting-feilet-tittel"),
-        body: t("utkast.feil.feilkode", { feilkode: response.status }),
-      });
+      const wrapper = (await response.json()) as ApiErrorResponse;
+      setError({ ...wrapper.errorDescription, errorCode: wrapper.errorCode });
     }
   };
 
@@ -262,7 +246,7 @@ const UtkastItem = ({ utkast }: Props) => {
       <AlertModal
         status="warning"
         title={modalTitle}
-        body={modalBody}
+        description={modalBody}
         isOpen={modalIsOpen}
         onClose={closeModal}
         secondaryAction={{
