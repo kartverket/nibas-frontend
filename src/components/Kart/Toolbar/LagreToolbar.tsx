@@ -122,7 +122,7 @@ const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
       <AlertModal
         status="warning"
         title={modalTitle}
-        body={modalBody}
+        description={modalBody}
         isOpen={modalIsOpen}
         onClose={closeModal}
         secondaryAction={{

@@ -232,5 +232,8 @@
   "Velg stemmekretsen du vil slå sammen med": "Velg stemmekretsen du vil slå sammen med",
   "stemmekretssammenslaaing": {
     "lagt-til-i-utkast": "Utkast opprettet. Stemmekretssammenslåing lagret i utkastet."
+  },
+  "alertmodal": {
+    "errorcode": "Feilkode: {{ feilkode }}"
   }
 }

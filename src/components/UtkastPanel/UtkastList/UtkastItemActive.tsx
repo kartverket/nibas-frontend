@@ -145,7 +145,7 @@ const UtkastItemActive = ({ utkastId }: Props) => {
       <AlertModal
         status="warning"
         title={modalTitle}
-        body={modalBody}
+        description={modalBody}
         isOpen={modalIsOpen}
         onClose={closeModal}
         secondaryAction={{

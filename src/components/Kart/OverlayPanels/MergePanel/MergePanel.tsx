@@ -221,7 +221,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
     if (utkast) {
       setError({
         title: t("stemmekrets.utkast-sammenslaaing-alert.tittel"),
-        body: t("stemmekrets.utkast-sammenslaaing-alert.tekst"),
+        description: t("stemmekrets.utkast-sammenslaaing-alert.tekst"),
       });
       return;
     }
