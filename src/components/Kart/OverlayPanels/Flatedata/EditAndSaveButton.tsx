@@ -12,6 +12,7 @@ const SaveAndDiscard = styled.div`
 
 const SaveButton = styled(Button)`
   width: 100%;
+  border-color: var(--blue);
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 `;
