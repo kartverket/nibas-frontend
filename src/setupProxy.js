@@ -1,11 +1,11 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { createProxyMiddleware } = require("http-proxy-middleware");
 
-const matWfsUsername = process.env.REACT_APP_MATRIKKELWFS_USERNAME;
-const matWfsPassword = process.env.REACT_APP_MATRIKKELWFS_PASSWORD;
+const matWfsUsername = import.meta.env.VITE_MATRIKKELWFS_USERNAME;
+const matWfsPassword = import.meta.env.VITE_MATRIKKELWFS_PASSWORD;
 
-const baatUsername = process.env.REACT_APP_BAAT_USERNAME;
-const baatPassword = process.env.REACT_APP_BAAT_PASSWORD;
+const baatUsername = import.meta.env.VITE_BAAT_USERNAME;
+const baatPassword = import.meta.env.VITE_BAAT_PASSWORD;
 
 module.exports = function (app) {
   app.use(

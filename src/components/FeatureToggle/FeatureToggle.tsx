@@ -3,7 +3,7 @@ import React from "react";
 // du kan override lokal verdi ved å opprette key i .env.local
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getLocalEnvironmentOverride = (envKey: string) => {
-  return process.env[envKey] === "true";
+  return import.meta.env[envKey] === "true";
 };
 
 type Environment = "prod" | "test" | "dev";
@@ -24,7 +24,7 @@ const featureToggles: Record<Keys, Record<Environment, boolean>> = {
   EKSEMPEL_TOGGLE: {
     prod: false,
     test: false,
-    dev: getLocalEnvironmentOverride("REACT_APP_FEATURE_TOGGLE_EKSEMPEL"),
+    dev: getLocalEnvironmentOverride("VITE_FEATURE_TOGGLE_EKSEMPEL"),
   },
   UTKAST_ENDRINGSLOGG: {
     prod: false,
@@ -36,7 +36,7 @@ const featureToggles: Record<Keys, Record<Environment, boolean>> = {
 export const featureEnabled = (key: Keys): boolean => {
   const { hostname } = window.location;
   const environment = environmentByUrl[hostname];
-  const { NODE_ENV } = process.env;
+  const { NODE_ENV } = import.meta.env;
 
   // skru på alle toggles i test, for å sikre at tester kjører
   if (NODE_ENV === "test") return true;

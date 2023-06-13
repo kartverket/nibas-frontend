@@ -28,7 +28,7 @@ const endpointByKretstype = {
   stemmekrets: "stemmekretser",
 } as const;
 
-type KretsResponse<T extends typeof endpointByKretstype[Kretstype]> =
+type KretsResponse<T extends (typeof endpointByKretstype)[Kretstype]> =
   T extends "grunnkretser" ? GrunnkretsResponse : StemmekretsResponse;
 
 const mapGrunnkretserToIds = (kretser?: KretsRef[]) =>

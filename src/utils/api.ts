@@ -28,7 +28,10 @@ interface ResponseError extends Error {
   status?: number;
 }
 
-export const fetcherWithToken = async (url: string | null, token?: string) => {
+export const fetcherWithToken = async ([url, token]: [
+  string | null,
+  string | undefined
+]) => {
   if (!url) return;
 
   const res = await fetch(url, {

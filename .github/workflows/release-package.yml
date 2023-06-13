@@ -51,7 +51,7 @@ jobs:
           npm run build --if-present
           npm test
         env:
-          REACT_APP_VERSION: ${{ steps.tag_version.outputs.new_version }}
+          VITE_VERSION: ${{ steps.tag_version.outputs.new_version }}
 
       - name: Remove npmrc with secret
         run: |
@@ -115,4 +115,3 @@ jobs:
       auth_project_number: ${{ needs.set-variables.outputs.dev_auth_project_number}}
       service_account: ${{ needs.set-variables.outputs.dev_service_account}}
       image_url: ${{ needs.build.outputs.image_url}}
-

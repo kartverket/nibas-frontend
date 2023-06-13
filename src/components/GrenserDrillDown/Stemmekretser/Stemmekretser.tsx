@@ -13,6 +13,7 @@ const Stemmekretser = () => {
   const { fylker } = useFylker();
   const { t } = useTranslation();
   const { isAuthenticatedFunc } = useAuthenticationFlow();
+  console.log("isauth", isAuthenticatedFunc());
 
   return (
     <ListItemAccordion title={t("inndelinger.Stemmekretser")}>
