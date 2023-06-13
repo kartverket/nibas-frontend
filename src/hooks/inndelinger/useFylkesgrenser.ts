@@ -8,12 +8,12 @@ import { getIdFromEntity, fetcherWithToken } from "utils/api";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 import { useEditGrenseValue } from "contexts/EditGrenserContext/useEditGrense";
 
-const fylkesgrenserFetcher = async (
-  fylkeIds: string[],
-  token: string | undefined
-) => {
+const fylkesgrenserFetcher = async ([fylkeIds, token]: [
+  string[],
+  string | undefined
+]) => {
   const promises: Promise<FeatureCollection>[] = fylkeIds.map(async (fylkeId) =>
-    fetcherWithToken(`/v1/fylker/${fylkeId}/grenser`, token)
+    fetcherWithToken([`/v1/fylker/${fylkeId}/grenser`, token])
   );
 
   const settledPromises = await Promise.allSettled(promises);

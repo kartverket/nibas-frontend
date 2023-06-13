@@ -4,12 +4,12 @@ import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import useSWRImmutable from "swr/immutable";
 import useNibasApi from "hooks/useNibasApi";
 
-const grunnkretsFetcher = async (
-  grunnkretsIds: string[],
-  token: string | undefined
-) => {
+const grunnkretsFetcher = async ([grunnkretsIds, token]: [
+  string[],
+  string | undefined
+]) => {
   const promises: Promise<GrunnkretsResponse>[] = grunnkretsIds.map(
-    async (id) => fetcherWithToken(`/v1/grunnkretser/${id}`, token)
+    async (id) => fetcherWithToken([`/v1/grunnkretser/${id}`, token])
   );
 
   return await Promise.all(promises);

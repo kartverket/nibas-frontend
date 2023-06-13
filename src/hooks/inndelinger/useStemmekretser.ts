@@ -4,12 +4,12 @@ import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import useSWRImmutable from "swr/immutable";
 import useNibasApi from "hooks/useNibasApi";
 
-const stemmekretserFetcher = async (
-  stemmekretsIds: string[],
-  token: string | undefined
-) => {
+const stemmekretserFetcher = async ([stemmekretsIds, token]: [
+  string[],
+  string | undefined
+]) => {
   const promises: Promise<StemmekretsResponse>[] = stemmekretsIds.map(
-    async (id) => fetcherWithToken(`/v1/stemmekretser/${id}`, token)
+    async (id) => fetcherWithToken([`/v1/stemmekretser/${id}`, token])
   );
 
   return await Promise.all(promises);
