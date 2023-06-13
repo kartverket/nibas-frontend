@@ -51,7 +51,17 @@ type ResponseType<Path extends ApiPath> = paths[Path] extends {
 const useNibasApi = <Path extends ApiPath>(
   url: Path | null,
   params?: GetParameters<Path> | null,
-  swrOptions?: any
+  swrOptions?:
+    | Partial<
+        SWRConfiguration<
+          ResponseType<Path>,
+          // responstypen til options bruker visst any, så da gjør vi det og
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          any,
+          BareFetcher<ResponseType<Path>>
+        >
+      >
+    | undefined
 ) => {
   const { tokenHolderFunc } = useAuthenticationFlow();
 
