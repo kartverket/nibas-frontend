@@ -29,7 +29,11 @@ export const BakgrunnskartContext = createContext<
   BakgrunnskartContextValue | undefined
 >(undefined);
 
-export const BakgrunnskartProvider: React.FC = ({ children }) => {
+export const BakgrunnskartProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [mappedLayers, setMappedLayers] = useState<MainMappedLayer[]>([]);
 
   const {
@@ -50,8 +54,10 @@ export const BakgrunnskartProvider: React.FC = ({ children }) => {
           if (isVectorLayer(layer)) {
             return mapVectorLayer();
           }
-
-          return getSubLayersFromWMSSource(layer.getSource());
+          const source = layer.getSource();
+          if (source) {
+            return getSubLayersFromWMSSource(source);
+          }
         }
       );
 

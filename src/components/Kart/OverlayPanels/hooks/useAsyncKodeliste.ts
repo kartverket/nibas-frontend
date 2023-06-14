@@ -4,7 +4,6 @@ import {
   FieldValues,
   Path,
   PathValue,
-  UnpackNestedValue,
   UseFormSetValue,
 } from "react-hook-form";
 import useNibasApi from "hooks/useNibasApi";
@@ -32,10 +31,7 @@ const useAsyncKodeliste = <T extends FieldValues>(params: Params<T>) => {
 
     if (!selectedKodelisteItem) return;
 
-    setValue(
-      property,
-      selectedKodelisteItem.id as UnpackNestedValue<PathValue<T, Path<T>>>
-    );
+    setValue(property, selectedKodelisteItem.id as PathValue<T, Path<T>>);
   }, [kodeliste, setValue, initialItemId, property]);
 
   return kodeliste;

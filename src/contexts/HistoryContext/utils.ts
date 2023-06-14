@@ -7,12 +7,11 @@ export const setFeatureCoordinatesForEntry = (
   direction: "from" | "to"
 ) => {
   entry.changes.forEach((change) => {
-    const lineString = editSource
-      .getFeatureById(change.id)
-      .getGeometry() as LineString;
+    const feature = editSource.getFeatureById(change.id);
+    if (!feature) return;
 
+    const lineString = feature.getGeometry() as LineString;
     const coordinates = change[direction];
-
     if (!coordinates) return;
 
     lineString.setCoordinates(coordinates);
@@ -25,6 +24,7 @@ export const setFeatureMetadataForEntry = (
 ) => {
   entry.changes.forEach((change) => {
     const feature = editSource.getFeatureById(change.id);
+    if (!feature) return;
 
     const metadata = change[direction];
 

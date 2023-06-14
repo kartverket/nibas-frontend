@@ -11,7 +11,6 @@ import useToolbarFormSync from "contexts/HistoryContext/useToolbarFormSync";
 import { translateKeysByEndringsType } from "contexts/UtkastContext/constants";
 import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
 import useNibasApi from "hooks/useNibasApi";
-import { Translation } from "i18n";
 import { UtkastResponse } from "types/api";
 import useAlertModal from "hooks/useAlertModal";
 import { useUtkast } from "contexts/UtkastContext";
@@ -127,9 +126,9 @@ const UtkastItemActive = ({ utkastId }: Props) => {
         label={t("utkast.Type utkast")}
         {...register("endringsType", registerOptions)}
       >
-        {Object.keys(translateKeysByEndringsType).map((type) => (
+        {translateKeysByEndringsType.map((type) => (
           <option key={type} value={type}>
-            {t(translateKeysByEndringsType[type] as Translation)}
+            {type}
           </option>
         ))}
       </Select>

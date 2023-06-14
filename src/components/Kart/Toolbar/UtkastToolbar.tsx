@@ -1,7 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { useSearchParams } from "react-router-dom";
-import { Translation } from "i18n";
 import { useTranslation } from "react-i18next";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useHistory } from "contexts/HistoryContext";
@@ -103,9 +102,9 @@ const UtkastToolbar = ({
         <option value="" disabled>
           {t("utkast.Velg en endringstype fra listen")}
         </option>
-        {Object.keys(translateKeysByEndringsType).map((type) => (
+        {translateKeysByEndringsType.map((type) => (
           <option key={type} value={type}>
-            {t(translateKeysByEndringsType[type] as Translation)}
+            {type}
           </option>
         ))}
       </Select>

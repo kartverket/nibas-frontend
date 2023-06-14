@@ -97,7 +97,11 @@ export const HistoryContext = createContext<HistoryContextValue | undefined>(
   undefined
 );
 
-export const HistoryProvider: React.FC = ({ children }) => {
+export const HistoryProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const { history, addHistoryEntry, clearHistory, undo, redo } =
     useHistoryState({
       onUndo,

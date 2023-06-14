@@ -1,4 +1,3 @@
-import { FC } from "react";
 import ThirdPartyProviders from "./ThirdPartyProviders";
 import { BakgrunnskartProvider } from "contexts/BakgrunnskartContext";
 import { EditGrenserProvider } from "contexts/EditGrenserContext";
@@ -10,7 +9,7 @@ import { OverlayPanelProvider } from "contexts/OverlayPanelContext";
 import { FeatureStyleProvider } from "contexts/FeatureStyleContext";
 import { ToolbarProvider } from "contexts/ToolbarContext";
 
-const Providers: FC = ({ children }) => {
+const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
     <ThirdPartyProviders>
       <ErrorHandlingProvider>

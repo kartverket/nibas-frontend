@@ -26,16 +26,19 @@ const useApiGrense = (featuresUrl: string, shouldFetchInitially = false) => {
 
     // sjekk om features allerede ligger i kartet
     // hvis featurene er annerledes enn vanlig, så ligger de endrede featurene i edit-laget
-    const allFeaturesInMap = getLayerById("edit").getSource().getFeatures();
+    const source = getLayerById("edit").getSource();
+    if (source) {
+      const allFeaturesInMap = source.getFeatures();
 
-    const featuresInMap = allFeaturesInMap.filter((feature) =>
-      geoJsonFeatures.some(
-        (apiFeature) => apiFeature.getId() === feature.getId()
-      )
-    );
+      const featuresInMap = allFeaturesInMap.filter((feature) =>
+        geoJsonFeatures.some(
+          (apiFeature) => apiFeature.getId() === feature.getId()
+        )
+      );
 
-    if (featuresInMap.length === geoJsonFeatures.length) {
-      return featuresInMap;
+      if (featuresInMap.length === geoJsonFeatures.length) {
+        return featuresInMap;
+      }
     }
 
     return geoJsonFeatures;

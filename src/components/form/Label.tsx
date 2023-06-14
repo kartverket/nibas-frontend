@@ -1,4 +1,4 @@
-import React, { LabelHTMLAttributes } from "react";
+import { LabelHTMLAttributes } from "react";
 import styled from "styled-components";
 
 const Container = styled.label`
@@ -11,7 +11,7 @@ const Container = styled.label`
 
 type Props = { label: string } & LabelHTMLAttributes<HTMLLabelElement>;
 
-const Label: React.FC<Props> = ({ label, className, children, ...props }) => {
+const Label = ({ label, className, children, ...props }: Props) => {
   return (
     <Container {...props} className={className}>
       {label}

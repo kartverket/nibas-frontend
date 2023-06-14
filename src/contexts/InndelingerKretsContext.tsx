@@ -28,12 +28,10 @@ export const InndelingerKretsContext = createContext<
 
 type Props = {
   kretstype: Kretstype;
+  children?: React.ReactNode;
 };
 
-export const InndelingerKretsProvider: React.FC<Props> = ({
-  children,
-  kretstype,
-}) => {
+export const InndelingerKretsProvider = ({ children, kretstype }: Props) => {
   const [currentKretstype, setCurrentKretstype] =
     useState<Kretstype>(kretstype);
 

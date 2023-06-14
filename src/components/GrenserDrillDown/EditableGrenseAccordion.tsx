@@ -2,31 +2,31 @@ import Button, { LinkButton } from "components/form/Button";
 import Icon from "components/Icon";
 import Loader from "components/Loader";
 import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
-import { FC } from "react";
 import styled from "styled-components";
 import useVisibility from "hooks/useVisibility";
 import { EditingType } from "contexts/EditGrenserContext";
-import LineString from "ol/geom/LineString";
 import { Feature } from "ol";
 import { Outline } from "style/mixins";
 import { useTranslation } from "react-i18next";
+import { Geometry } from "ol/geom";
 
 type Props = {
   grenseType: EditingType;
   grenseId: string;
-  features: Feature<LineString>[] | null;
+  features: Feature<Geometry>[] | null;
   isFetching: boolean;
   title: string;
+  children?: React.ReactNode;
 };
 
-const EditableGrenseAccordion: FC<Props> = ({
+const EditableGrenseAccordion = ({
   grenseId,
   grenseType,
   children,
   features,
   isFetching,
   title,
-}) => {
+}: Props) => {
   const { value, toggleEditing, toggleVisible } = useEditGrense(
     grenseType,
     grenseId,

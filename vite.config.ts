@@ -2,6 +2,7 @@ import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import viteTsconfigPaths from "vite-tsconfig-paths";
 import eslint from "vite-plugin-eslint";
+import { checker } from "vite-plugin-checker";
 
 export default defineConfig(({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
@@ -16,7 +17,14 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: "build",
     },
-    plugins: [react(), viteTsconfigPaths(), eslint()],
+    plugins: [
+      react(),
+      viteTsconfigPaths(),
+      eslint(),
+      checker({
+        typescript: true,
+      }),
+    ],
     server: {
       port: 3000,
       open: true,
