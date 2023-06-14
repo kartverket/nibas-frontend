@@ -9,8 +9,8 @@ const defaultProps: React.ComponentProps<typeof UtkastConflictModal> = {
   conflictResponse: mockFremtidigEndringConflictResponse,
   current: mockUtkast.operasjoner.metadataendringer.grunnkretsendringer["1"],
   utkast: mockUtkast,
-  onCancel: jest.fn(),
-  onNext: jest.fn(),
+  onCancel: vi.fn(),
+  onNext: vi.fn(),
 };
 
 describe("UtkastConflictModal", () => {

@@ -25,6 +25,11 @@ export default defineConfig(({ mode }) => {
         typescript: true,
       }),
     ],
+    test: {
+      globals: true,
+      environment: "jsdom",
+      setupFiles: "./src/test/test-setup.ts",
+    },
     server: {
       port: 3000,
       open: true,

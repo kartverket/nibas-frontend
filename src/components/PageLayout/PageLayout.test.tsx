@@ -6,11 +6,11 @@ const renderWithProvider = (ui: ReactNode) =>
   render(ui, {
     BakgrunnskartProvider: {
       mappedLayers: [],
-      moveLayer: jest.fn(),
-      toggleLayerVisibility: jest.fn(),
-      recursiveIsVisible: jest.fn(),
-      layerIsVisible: jest.fn(),
-      subLayerIsVisible: jest.fn(),
+      moveLayer: vi.fn(),
+      toggleLayerVisibility: vi.fn(),
+      recursiveIsVisible: vi.fn(),
+      layerIsVisible: vi.fn(),
+      subLayerIsVisible: vi.fn(),
       visibleLayers: [],
     },
   });

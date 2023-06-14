@@ -6,8 +6,8 @@ const renderWithProvider = (ui: ReactNode) =>
   render(ui, {
     SidebarPanelProvider: {
       activeSidebarPanel: "utkast",
-      openSidebarPanel: jest.fn(),
-      closeSidebarPanel: jest.fn(),
+      openSidebarPanel: vi.fn(),
+      closeSidebarPanel: vi.fn(),
     },
   });
 

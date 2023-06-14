@@ -17,7 +17,7 @@ const defaultProps: React.ComponentProps<typeof BackgroundLayerAccordion> = {
     title: "LayerTitle",
     id: "LayerName",
   },
-  onVisibilityClick: jest.fn(),
+  onVisibilityClick: vi.fn(),
   visible: false,
 };
 

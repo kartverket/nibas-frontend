@@ -49,15 +49,15 @@ const renderWithProvider = (
   render(ui, {
     HistoryProvider: {
       history: history,
-      clearHistory: jest.fn(),
+      clearHistory: vi.fn(),
       activeEditModes: [],
     } as any,
     UtkastProvider: {
       utkast,
-      updateUtkastWithHistory: jest.fn(),
-      getUpdateUtkastRequestFromHistory: jest.fn(),
-      updateUtkast: jest.fn(),
-      closeUtkast: jest.fn(),
+      updateUtkastWithHistory: vi.fn(),
+      getUpdateUtkastRequestFromHistory: vi.fn(),
+      updateUtkast: vi.fn(),
+      closeUtkast: vi.fn(),
       isValidating: false,
     },
   });
@@ -66,7 +66,7 @@ const renderWithUtkastProvider = (ui: ReactNode) =>
   render(ui, {
     HistoryProvider: {
       history: mockHistory,
-      clearHistory: jest.fn(),
+      clearHistory: vi.fn(),
       activeEditModes: [],
     } as any,
   });

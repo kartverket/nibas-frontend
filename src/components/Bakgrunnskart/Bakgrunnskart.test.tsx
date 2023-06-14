@@ -10,8 +10,8 @@ const renderWithProvider = (
   render(ui, {
     SidebarPanelProvider: {
       activeSidebarPanel,
-      openSidebarPanel: jest.fn(),
-      closeSidebarPanel: jest.fn(),
+      openSidebarPanel: vi.fn(),
+      closeSidebarPanel: vi.fn(),
     },
     BakgrunnskartProvider: true,
   });

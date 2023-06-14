@@ -31,14 +31,14 @@ const renderWithProvider = (ui: ReactNode) =>
   render(ui, {
     BakgrunnskartProvider: {
       visibleLayers: { administrativeGrenser: true } as never,
-      toggleLayerVisibility: jest.fn(),
-      recursiveIsVisible: jest.fn(),
-      layerIsVisible: jest.fn(),
+      toggleLayerVisibility: vi.fn(),
+      recursiveIsVisible: vi.fn(),
+      layerIsVisible: vi.fn(),
       mappedLayers: [
         { ...defaultProps.mappedLayer, sourceId: "administrativeGrenser" },
       ],
-      moveLayer: jest.fn(),
-      subLayerIsVisible: jest.fn(),
+      moveLayer: vi.fn(),
+      subLayerIsVisible: vi.fn(),
     },
   });
 
