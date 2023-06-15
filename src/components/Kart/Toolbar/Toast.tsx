@@ -1,21 +1,23 @@
-import styled, { keyframes } from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 import Icon from "components/Icon";
-import Heading from "components/typography/Heading";
 
 type Props = {
   title: string;
-  text: string;
+  text?: string;
   status: Status;
 };
 
 // TODO: erstatt dette med en generell toast eller en annen løsning
 const Toast = ({ text, status, title }: Props) => {
   return (
-    <Wrapper>
-      <ToastContent>
+    <Wrapper
+      foreground={statusStyles[status].foreground}
+      background={statusStyles[status].background}
+    >
+      <ToastContent hasDescription={text ? true : false}>
         <ToastIcon icon={statusStyles[status].icon} filled />
         <ToastTitle>{title}</ToastTitle>
-        <ToastDescription>{text}</ToastDescription>
+        {text && <ToastDescription>{text}</ToastDescription>}
       </ToastContent>
     </Wrapper>
   );
@@ -25,20 +27,23 @@ const topOffset = "125px";
 
 const fadeInFadeOutFromTop = keyframes`
   0% {
-    opacity: 1;
-    top: ${topOffset};
+    opacity: 0;
+    transform: translateY(-10%);
   }
-  15% {
+  10% {
     opacity: 1;
-    top: ${topOffset};
+    transform: none;
+ 
   }
-  70% {
+  80% {
     opacity: 1;
-    top: ${topOffset};
+    transform: none;
+
   }
   100% {
-    opacity: 1;
-    top: ${topOffset};
+    opacity: 0;
+    transform: none;
+
   }
 `;
 
@@ -73,11 +78,20 @@ const statusStyles: Record<Status, StatusStyle> = {
   },
 };
 
-const ToastContent = styled.div`
+const ToastContent = styled.div<{ hasDescription: boolean }>`
+  ${(props) =>
+    props.hasDescription
+      ? css`
+          grid-template-areas:
+            "icon title"
+            ". description";
+        `
+      : css`
+          grid-template-areas: "icon title";
+        `};
+
   display: grid;
-  grid-template-areas:
-    " icon title "
-    ". description ";
+
   flex-direction: column;
   grid-gap: 8px;
 `;
@@ -96,9 +110,8 @@ const ToastTitle = styled.span`
 const ToastDescription = styled.span`
   grid-area: description;
 `;
-//her må jeg ta inn det som er fra status
-//nå er det bare lagt inn det som er for grønn/success
-const Wrapper = styled.div`
+
+const Wrapper = styled.div<{ foreground: string; background: string }>`
   top: ${topOffset};
   left: 50%;
   transform: translateX(-50%);
@@ -106,18 +119,18 @@ const Wrapper = styled.div`
   z-index: 10;
   display: flex;
   align-items: center;
-  background-color: var(--green_light);
+  background-color: ${({ background }) => background};
   padding: 24px;
   margin-right: 16px;
   font-size: 16px;
-  color: var(--green_dark);
+  color: ${({ foreground }) => foreground};
   max-width: 600px;
   box-shadow: 0 20px 44px 10px rgba(122, 210, 150, 0.2);
   gap: 12px;
   opacity: 0;
-  animation: ${fadeInFadeOutFromTop} 50000s ease-in-out;
-  border: 2px solid var(--green_dark);
+  border: 2px solid ${({ foreground }) => foreground};
   border-radius: 8px;
+  animation: ${fadeInFadeOutFromTop} 5s ease-in-out;
 `;
 
 export default Toast;

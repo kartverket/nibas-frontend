@@ -11,6 +11,7 @@ import { waitFor } from "@testing-library/react";
 
 const defaultProps: React.ComponentProps<typeof UtkastItem> = {
   utkast: mockUtkastRef1,
+  setUtkastJustPublished: jest.fn(),
 };
 
 describe("UtkastItem", () => {
