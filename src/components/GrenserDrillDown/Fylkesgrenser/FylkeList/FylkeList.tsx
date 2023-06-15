@@ -9,7 +9,9 @@ const FylkeList = () => {
 
   const { t } = useTranslation();
 
-  if (error) return <p>{t("Logg inn for å se listen")}</p>;
+  if (error) {
+    return <p>{t("Logg inn for å se listen")}</p>;
+  }
 
   if (!fylker) return null;
 

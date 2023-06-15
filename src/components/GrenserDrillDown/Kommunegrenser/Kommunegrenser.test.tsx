@@ -6,12 +6,12 @@ describe("Kommunegrenser", () => {
     const { user } = render(<Kommunegrenser />);
 
     const kommuneGrenserAccordionButton = screen.getByRole("button", {
-      name: /åpne inndelinger.kommunegrenser/i,
+      name: "inndelinger.Kommunegrenser Åpne inndelinger.Kommunegrenser",
     });
     await user.click(kommuneGrenserAccordionButton);
 
     const agderAccordionButton = await screen.findByRole("button", {
-      name: /åpne agder/i,
+      name: "åpne agder",
     });
     await user.click(agderAccordionButton);
 

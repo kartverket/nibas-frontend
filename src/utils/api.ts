@@ -28,13 +28,26 @@ interface ResponseError extends Error {
   status?: number;
 }
 
+export const getUrlForPath = (path: string): string => {
+  const baseUrl = document.location.origin ?? "http://localhost:3000";
+
+  if (path.startsWith("http")) {
+    return path;
+  }
+
+  if (path.startsWith("/")) {
+    return baseUrl + path;
+  }
+  return `${baseUrl}/${path}`;
+};
+
 export const fetcherWithToken = async ([url, token]: [
   string | null,
   string | undefined
 ]) => {
   if (!url) return;
 
-  const res = await fetch(url, {
+  const res = await fetch(getUrlForPath(url), {
     headers: { Authorization: "Bearer " + token ?? "" },
   });
 
