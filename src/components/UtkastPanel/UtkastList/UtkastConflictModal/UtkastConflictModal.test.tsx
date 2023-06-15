@@ -19,30 +19,30 @@ describe("UtkastConflictModal", () => {
 
     await waitFor(() => expect(screen.getAllByRole("row")).toHaveLength(5)); // 2 headers + 1 current + 2 future
 
-    expect(screen.getAllByRole("cell", { name: /retting/i })).toHaveLength(3);
+    expect(screen.getAllByRole("cell", { name: "Retting" })).toHaveLength(3);
 
     expect(
-      screen.getByRole("cell", { name: /Utkast grunnkrets/i })
+      screen.getByRole("cell", { name: "Utkast grunnkrets" })
     ).toBeInTheDocument();
-    expect(screen.getByRole("cell", { name: /12345678/i })).toBeInTheDocument();
+    expect(screen.getByRole("cell", { name: "12345678" })).toBeInTheDocument();
     expect(
-      screen.getByRole("cell", { name: /2022-06-01/i })
-    ).toBeInTheDocument();
-
-    expect(
-      screen.getByRole("cell", { name: /mosekollen vest/i })
-    ).toBeInTheDocument();
-    expect(screen.getByRole("cell", { name: /12345679/i })).toBeInTheDocument();
-    expect(
-      screen.getByRole("cell", { name: /2022-04-01/i })
+      screen.getByRole("cell", { name: "2022-06-01" })
     ).toBeInTheDocument();
 
     expect(
-      screen.getByRole("cell", { name: /mosekollen nord/i })
+      screen.getByRole("cell", { name: "Mosekollen vest" })
     ).toBeInTheDocument();
-    expect(screen.getByRole("cell", { name: /87654321/i })).toBeInTheDocument();
+    expect(screen.getByRole("cell", { name: "12345679" })).toBeInTheDocument();
     expect(
-      screen.getByRole("cell", { name: /2022-07-01/i })
+      screen.getByRole("cell", { name: "2022-04-01" })
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByRole("cell", { name: "Mosekollen nord" })
+    ).toBeInTheDocument();
+    expect(screen.getByRole("cell", { name: "87654321" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("cell", { name: "2022-07-01" })
     ).toBeInTheDocument();
   });
 
@@ -53,17 +53,19 @@ describe("UtkastConflictModal", () => {
       () => expect(screen.getAllByRole("row")).toHaveLength(5) // 2 headers + 1 current + 2 future
     );
 
-    const publishButton = screen.getByRole("button", { name: /publiser/i });
+    const publishButton = screen.getByRole("button", {
+      name: "action.Publiser",
+    });
 
     expect(publishButton).toBeDisabled();
 
     await user.click(
-      screen.getByRole("checkbox", { name: /bekreft grunnkrets 1/i })
+      screen.getByRole("checkbox", { name: "Bekreft grunnkrets 1" })
     );
     expect(publishButton).toBeDisabled();
 
     await user.click(
-      screen.getByRole("checkbox", { name: /bekreft grunnkrets 2/i })
+      screen.getByRole("checkbox", { name: "Bekreft grunnkrets 2" })
     );
     expect(publishButton).toBeEnabled();
   });

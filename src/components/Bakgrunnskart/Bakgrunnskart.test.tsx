@@ -21,7 +21,7 @@ describe("Bakgrunnskart", () => {
     renderWithProvider(<Bakgrunnskart />, null);
 
     expect(
-      screen.queryByRole("heading", { name: /sidebar.kartlag/i })
+      screen.queryByRole("heading", { name: "sidebar.Kartlag" })
     ).not.toBeInTheDocument();
   });
 
@@ -29,17 +29,17 @@ describe("Bakgrunnskart", () => {
     const { user } = renderWithProvider(<Bakgrunnskart />);
 
     const openMainButton = await screen.findByRole("button", {
-      name: /Administrative enheter WMS versjon 2 åpne/i,
+      name: "Administrative enheter WMS versjon 2 Åpne",
     });
     await user.click(openMainButton);
 
     const openSubButton = await screen.findByRole("button", {
-      name: /Kommuner åpne/i,
+      name: "Kommuner Åpne",
     });
     await user.click(openSubButton);
 
     const addButton = await screen.findByRole("button", {
-      name: /vis Kommuner historisk/i,
+      name: "Vis Kommuner historisk",
     });
     await user.click(addButton);
 
@@ -54,7 +54,7 @@ describe("Bakgrunnskart", () => {
     expect(subsubLayerTexts).toHaveLength(2);
 
     const removeButton = await screen.getAllByRole("button", {
-      name: /Fjern Kommuner historisk/i,
+      name: "Fjern Kommuner historisk",
     })[0];
 
     await user.click(removeButton);
@@ -72,29 +72,29 @@ describe("Bakgrunnskart", () => {
     const { user } = renderWithProvider(<Bakgrunnskart />);
 
     const openMainButton = await screen.findByRole("button", {
-      name: /Administrative enheter WMS versjon 2 åpne/i,
+      name: "Administrative enheter WMS versjon 2 Åpne",
     });
     await user.click(openMainButton);
 
     const openSubButton = await screen.findByRole("button", {
-      name: /Kommuner åpne/i,
+      name: "Kommuner Åpne",
     });
     await user.click(openSubButton);
 
     const addButton = await screen.findByRole("button", {
-      name: /Vis Kommuner historisk/i,
+      name: "Vis Kommuner historisk",
     });
     await user.click(addButton);
 
     await user.click(
       screen.getByRole("button", {
-        name: /Vis Kommuner gjeldene/i,
+        name: "Vis Kommuner gjeldene",
       })
     );
 
     await user.click(
       screen.getByRole("button", {
-        name: /vis Kommuner framtidig/i,
+        name: "Vis Kommuner framtidig",
       })
     );
 
@@ -104,17 +104,17 @@ describe("Bakgrunnskart", () => {
 
     await user.click(
       screen.getAllByRole("button", {
-        name: /Fjern Kommuner historisk/i,
+        name: "Fjern Kommuner historisk",
       })[0]
     );
     await user.click(
       screen.getAllByRole("button", {
-        name: /Fjern Kommuner gjeldene/i,
+        name: "Fjern Kommuner gjeldene",
       })[0]
     );
     await user.click(
       screen.getAllByRole("button", {
-        name: /Fjern Kommuner framtidig/i,
+        name: "Fjern Kommuner framtidig",
       })[0]
     );
 

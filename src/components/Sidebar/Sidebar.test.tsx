@@ -5,11 +5,15 @@ describe("Sidebar", () => {
   it("should render four buttons", () => {
     render(<Sidebar />);
 
-    const nibasButton = screen.getByRole("button", { name: /inndelinger/i });
-    const bakgrunnskartButton = screen.getByRole("button", {
-      name: /kartlag/i,
+    const nibasButton = screen.getByRole("button", {
+      name: "space_dashboard sidebar.Inndelinger",
     });
-    const utkastButton = screen.getByRole("button", { name: /utkast/i });
+    const bakgrunnskartButton = screen.getByRole("button", {
+      name: "map sidebar.Kartlag",
+    });
+    const utkastButton = screen.getByRole("button", {
+      name: "description sidebar.Utkast",
+    });
 
     expect(nibasButton).toBeInTheDocument();
     expect(bakgrunnskartButton).toBeInTheDocument();

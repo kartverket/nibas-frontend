@@ -18,7 +18,7 @@ describe("UtkastItem", () => {
     const { user } = render(<UtkastItem {...defaultProps} />);
 
     await user.click(
-      screen.getByRole("button", { name: /aktiver mock utkast/i })
+      screen.getByRole("button", { name: "Aktiver Mock utkast" })
     );
 
     const cancelButton = await screen.findByRole("button", {
@@ -29,13 +29,13 @@ describe("UtkastItem", () => {
     await waitFor(async () =>
       expect(
         await screen.findByRole("textbox", {
-          name: /navn på utkast/i,
+          name: "utkast.Navn på utkast",
         })
       ).toHaveDisplayValue("Mock utkast")
     );
 
     const typeSelect = await screen.findByRole("combobox", {
-      name: /type utkast/i,
+      name: "utkast.Type utkast expand_more",
     });
 
     expect(typeSelect).toHaveValue("Retting");
@@ -46,7 +46,7 @@ describe("UtkastItem", () => {
     const { user } = render(<UtkastItem {...defaultProps} />);
 
     await user.click(
-      screen.getByRole("button", { name: /publiser mock utkast/i })
+      screen.getByRole("button", { name: "Publiser Mock utkast" })
     );
 
     const publishButton = await screen.findByRole("button", {
@@ -73,13 +73,13 @@ describe("UtkastItem", () => {
     const { user } = render(<UtkastItem {...defaultProps} />);
 
     await user.click(
-      screen.getByRole("button", { name: /publiser Mock utkast/i })
+      screen.getByRole("button", { name: "Publiser Mock utkast" })
     );
     await user.click(screen.getByRole("button", { name: "action.Publiser" }));
 
     expect(
       await screen.findByRole("dialog", {
-        name: /Konflikt mellom fremtidige endringer/i,
+        name: "utkast.Konflikt mellom fremtidige endringer",
       })
     ).toBeInTheDocument();
   });

@@ -49,18 +49,18 @@ describe("SubBackgroundLayer", () => {
     );
 
     const caret = screen.getByRole("button", {
-      name: /sublag åpne/i,
+      name: "Sublag Åpne",
     });
 
     await user.click(caret);
 
-    expect(screen.getByText(/subsublag1/i)).toBeInTheDocument();
-    expect(screen.getByText(/subsublag2/i)).toBeInTheDocument();
+    expect(screen.getByText("Subsublag1")).toBeInTheDocument();
+    expect(screen.getByText("Subsublag2")).toBeInTheDocument();
   });
 
   it("should display name of mapped layer", () => {
     renderWithProvider(<SubBackgroundLayer {...defaultProps} />);
 
-    expect(screen.getByText(/sublag/i)).toBeInTheDocument();
+    expect(screen.getByText("Sublag")).toBeInTheDocument();
   });
 });

@@ -76,14 +76,16 @@ describe("Toolbar", () => {
     renderWithProvider(<Toolbar />);
 
     expect(
-      screen.queryByRole("button", { name: /lagre som/i })
+      screen.queryByRole("button", { name: "Lagre utkast" })
     ).not.toBeInTheDocument();
   });
 
-  it("should display Lagre som button if no utkast", () => {
+  it("should display Lagre button if no utkast", () => {
     renderWithUtkastProvider(<Toolbar />);
 
-    expect(screen.getByRole("button", { name: /lagre/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Lagre utkast" })
+    ).toBeInTheDocument();
   });
 
   it("should display Lagre button if utkast exists", () => {
@@ -93,26 +95,29 @@ describe("Toolbar", () => {
       mockHistory
     );
 
-    expect(screen.getByRole("button", { name: /lagre/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Lagre utkast" })
+    ).toBeInTheDocument();
   });
 
   it("should create utkast correctly and change url to apply it", async () => {
     const { user } = renderWithUtkastProvider(<Toolbar />);
 
-    await user.click(screen.getByRole("button", { name: /lagre/i }));
+    await user.click(screen.getByRole("button", { name: "Lagre utkast" }));
 
     await user.type(
-      screen.getByRole("textbox", { name: /navn på utkast/i }),
+      screen.getByRole("textbox", { name: "utkast.Navn på utkast" }),
       "Utkast 1"
     );
+
     await user.selectOptions(
       screen.getByRole("combobox", {
-        name: /endringstype/i,
+        name: "utkast.Endringstype expand_more",
       }),
       "Retting"
     );
 
-    await user.click(screen.getByRole("button", { name: /opprett/i }));
+    await user.click(screen.getByRole("button", { name: "action.Opprett" }));
 
     await waitFor(() => expect(window.location.search).toContain("?utkast=1"));
     // denne skal egentlig bli disabled, men det er via clearHistory() som endrer context state
@@ -121,6 +126,6 @@ describe("Toolbar", () => {
         name: "Lagre utkast",
       })
     ).toBeInTheDocument();
-    expect(await screen.findByText(/Mock utkast/i)).toBeInTheDocument();
+    expect(await screen.findByText("Mock utkast")).toBeInTheDocument();
   });
 });

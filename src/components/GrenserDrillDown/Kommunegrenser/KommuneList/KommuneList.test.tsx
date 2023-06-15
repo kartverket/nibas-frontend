@@ -18,9 +18,7 @@ describe("KommuneList", () => {
   it("should render two kommuner from API request", async () => {
     const { user } = render(<KommuneList {...defaultProps} />);
 
-    await user.click(
-      await screen.findByRole("button", { name: /åpne fylke/i })
-    );
+    await user.click(await screen.findByRole("button", { name: "Åpne Fylke" }));
 
     expect(await screen.findByText("Malvik")).toBeInTheDocument();
     expect(await screen.findByText("Giske")).toBeInTheDocument();

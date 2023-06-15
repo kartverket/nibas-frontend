@@ -21,14 +21,14 @@ describe("PageLayout", () => {
       const { user } = renderWithProvider(<PageLayout />);
 
       const bakgrunnskartButton = screen.getByRole("button", {
-        name: /kartlag/i,
+        name: "map sidebar.Kartlag",
       });
 
       await user.click(bakgrunnskartButton);
       await user.click(bakgrunnskartButton);
 
       expect(
-        screen.queryByRole("heading", { name: /bakgrunnskart/i })
+        screen.queryByRole("heading", { name: "bakgrunnskart" })
       ).not.toBeInTheDocument();
     });
 
@@ -36,20 +36,20 @@ describe("PageLayout", () => {
       const { user } = renderWithProvider(<PageLayout />);
 
       const bakgrunnskartButton = screen.getByRole("button", {
-        name: /sidebar.kartlag/i,
+        name: "map sidebar.Kartlag",
       });
       await user.click(bakgrunnskartButton);
 
       const nibasButton = screen.getByRole("button", {
-        name: /sidebar.inndelinger/i,
+        name: "space_dashboard sidebar.Inndelinger",
       });
       await user.click(nibasButton);
 
       expect(
-        screen.getByRole("heading", { name: /sidebar.inndelinger/i })
+        screen.getByRole("heading", { name: "sidebar.Inndelinger" })
       ).toBeInTheDocument();
       expect(
-        screen.queryByRole("heading", { name: /sidebar.kartlag/i })
+        screen.queryByRole("heading", { name: "sidebar.Kartlag" })
       ).not.toBeInTheDocument();
     });
 
@@ -57,17 +57,17 @@ describe("PageLayout", () => {
       const { user } = renderWithProvider(<PageLayout />);
 
       const inndelingerButton = screen.getByRole("button", {
-        name: /sidebar.inndelinger/i,
+        name: "space_dashboard sidebar.Inndelinger",
       });
       await user.click(inndelingerButton);
 
       const closeButton = screen.getByRole("button", {
-        name: /lukk/i,
+        name: "Lukk",
       });
       await user.click(closeButton);
 
       expect(
-        screen.queryByRole("heading", { name: /sidebar.inndelinger/i })
+        screen.queryByRole("heading", { name: "sidebar.Inndelinger" })
       ).not.toBeInTheDocument();
     });
   });

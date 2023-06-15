@@ -31,7 +31,7 @@ describe("BackgroundLayerAccordion", () => {
     );
 
     expect(
-      screen.getByRole("button", { name: /vis No sub layers/i })
+      screen.getByRole("button", { name: "Vis No sub layers" })
     ).toBeInTheDocument();
   });
 
@@ -45,7 +45,7 @@ describe("BackgroundLayerAccordion", () => {
     );
 
     expect(
-      screen.getByRole("button", { name: /fjern No sub layers/i })
+      screen.getByRole("button", { name: "Fjern No sub layers" })
     ).toBeInTheDocument();
   });
 
@@ -53,10 +53,10 @@ describe("BackgroundLayerAccordion", () => {
     render(<BackgroundLayerAccordion {...defaultProps} />);
 
     const caret = screen.getByRole("button", {
-      name: /layertitle åpne/i,
+      name: "LayerTitle Åpne",
     });
 
-    expect(screen.queryByText(/sublayertitle/i)).not.toBeInTheDocument();
+    expect(screen.queryByText("sublayertitle")).not.toBeInTheDocument();
     expect(caret).toBeInTheDocument();
   });
 
@@ -64,17 +64,17 @@ describe("BackgroundLayerAccordion", () => {
     const { user } = render(<BackgroundLayerAccordion {...defaultProps} />);
 
     const caret = screen.getByRole("button", {
-      name: /layertitle åpne/i,
+      name: "LayerTitle Åpne",
     });
 
     await user.click(caret);
 
     expect(
       screen.getByRole("button", {
-        name: /layertitle lukk/i,
+        name: "LayerTitle Lukk",
       })
     ).toBeInTheDocument();
-    expect(screen.getByText(/child/i)).toBeInTheDocument();
+    expect(screen.getByText("Child")).toBeInTheDocument();
   });
 
   it("should not render caret if no sublayers", () => {
@@ -86,7 +86,7 @@ describe("BackgroundLayerAccordion", () => {
     );
 
     const caret = screen.queryByRole("button", {
-      name: /no sub layers åpne/i,
+      name: "no sub layers åpne",
     });
 
     expect(caret).not.toBeInTheDocument();
@@ -96,7 +96,7 @@ describe("BackgroundLayerAccordion", () => {
     render(<BackgroundLayerAccordion {...defaultProps} isAktiveKartlag />);
 
     const caret = screen.queryByRole("button", {
-      name: /fjern SubLayerTitle fra aktive kartlag/i,
+      name: "fjern SubLayerTitle fra aktive kartlag",
     });
 
     expect(caret).not.toBeInTheDocument();
