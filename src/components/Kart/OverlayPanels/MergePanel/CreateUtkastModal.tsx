@@ -101,13 +101,13 @@ const CreateUtkastModal = ({
         Opprett et nytt utkast
       </Heading>
       <Input
-        label={"Navn på utkast"}
-        placeholder={"f.eks. Endring av stemmekrets i Froland"}
+        label="Navn på utkast"
+        placeholder="f.eks. Endring av stemmekrets i Froland"
         value={utkastName}
         onChange={(e) => setUtkastName(e.target.value)}
       />
       <Select
-        label={"Endringstype"}
+        label="Endringstype"
         value={utkastType}
         onChange={(e) => setUtkastType(e.target.value)}
       >

@@ -59,7 +59,7 @@ export const MergeSelect = forwardRef<HTMLDivElement, MergeSelectProps>(
         defaultValue="default"
         label="Navn eller nummer på stemmekrets"
       >
-        <option value={"default"} disabled>
+        <option value="default" disabled>
           Velg en stemmekrets fra listen
         </option>
         {stemmekretser.map((s) => (

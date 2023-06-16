@@ -16,7 +16,7 @@ const Bakgrunnskart = () => {
     <SidebarPanel isOpen={activeSidebarPanel === "kartlag"}>
       <SidebarPanelTitle
         closePanel={closeSidebarPanel}
-        title={"Aktive kartlag"}
+        title="Aktive kartlag"
       />
       {visibleLayers.map((layer, i) => (
         <MainLayer

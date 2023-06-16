@@ -13,7 +13,7 @@ const Grunnkretser = () => {
   const { isAuthenticatedFunc } = useAuthenticationFlow();
 
   return (
-    <ListItemAccordion title={"Grunnkretser"}>
+    <ListItemAccordion title="Grunnkretser">
       <InndelingerKretsProvider kretstype="grunnkrets">
         {fylker ? (
           <List>

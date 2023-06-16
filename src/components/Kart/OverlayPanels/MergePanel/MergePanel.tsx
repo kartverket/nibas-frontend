@@ -257,7 +257,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
               defaultValue="default"
               label="Stemmekrets"
             >
-              <option value={"default"} disabled>
+              <option value="default" disabled>
                 Velg en stemmekrets fra listen
               </option>
               {utkastStemmekretser
@@ -286,7 +286,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
             </SectionHeading>
             <InputsWrapper>
               <Input
-                label={"Stemmekretsnummer"}
+                label="Stemmekretsnummer"
                 {...register("stemmekretsnummer", stemmekretsnummerValidator)}
                 validationError={{
                   showError: !!errors?.stemmekretsnummer,
@@ -294,7 +294,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
                 }}
               />
               <Input
-                label={"Stemmekretsnavn"}
+                label="Stemmekretsnavn"
                 {...register("stemmekretsnavn", stemmekretsnavnValidator)}
                 validationError={{
                   showError: !!errors.stemmekretsnavn,

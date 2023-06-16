@@ -88,7 +88,7 @@ const UtkastToolbar = ({
       </Heading>
       <Input
         label="Navn på utkast"
-        placeholder={"f.eks. Endring av stemmekrets i Froland"}
+        placeholder="f.eks. Endring av stemmekrets i Froland"
         value={utkastName}
         onChange={(e) => setUtkastName(e.target.value)}
       />

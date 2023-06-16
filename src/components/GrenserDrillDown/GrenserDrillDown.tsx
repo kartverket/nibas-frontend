@@ -12,7 +12,7 @@ const GrenserDrillDown = () => {
 
   return (
     <SidebarPanel isOpen={activeSidebarPanel === "inndelinger"}>
-      <SidebarPanelTitle closePanel={closeSidebarPanel} title={"Inndelinger"} />
+      <SidebarPanelTitle closePanel={closeSidebarPanel} title="Inndelinger" />
       <UnstyledList>
         <Fylkesgrenser />
         <Kommunegrenser />

@@ -134,7 +134,7 @@ const FieldArray = ({
       ))}
       <div>
         <Input
-          label={"Ny URL"}
+          label="Ny URL"
           value={newLenke}
           onChange={(e) => setNewLenke(e.target.value)}
           placeholder="URL"
