@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { useTranslation } from "react-i18next";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { Metadata, FeatureProperties } from "types/api";
@@ -57,7 +56,6 @@ const Buttons = styled.div`
 
 const MetadataGenerelt = ({ feature }: Props) => {
   const { closeOverlayPanel } = useOverlayPanel();
-  const { t } = useTranslation();
   const properties = feature.getProperties() as FeatureProperties;
   const type = properties.type;
   const metadata = properties.metadata as Metadata;
@@ -112,12 +110,12 @@ const MetadataGenerelt = ({ feature }: Props) => {
         <InputRow>
           <AsyncKodelisteSelect
             kodeliste={maalemetodeKoder}
-            label={t("metadata.Målemetode")}
+            label="Målemetode"
             {...register("maalemetode", { disabled: metadataIsDisabled })}
           />
           <NumberInput
             type="number"
-            label={t("metadata.Nøyaktighet")}
+            label="Nøyaktighet"
             {...register("noeyaktighet", {
               disabled: metadataIsDisabled,
               valueAsNumber: true,
@@ -128,12 +126,12 @@ const MetadataGenerelt = ({ feature }: Props) => {
         </InputRow>
         <Input
           {...register("opphav", { disabled: metadataIsDisabled })}
-          label={t("metadata.Opphav")}
+          label="Opphav"
         />
         <Textarea
           rows={4}
           {...register("informasjon", { disabled: metadataIsDisabled })}
-          label={t("metadata.Informasjon")}
+          label="Informasjon"
         />
         <Divider />
         <Buttons>

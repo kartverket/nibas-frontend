@@ -1,4 +1,3 @@
-import { useTranslation } from "react-i18next";
 import Fylkesgrenser from "./Fylkesgrenser";
 import Grunnkretser from "./Grunnkretser";
 import Kommunegrenser from "./Kommunegrenser";
@@ -9,15 +8,11 @@ import { UnstyledList } from "components/UnstyledList";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 
 const GrenserDrillDown = () => {
-  const { t } = useTranslation();
   const { activeSidebarPanel, closeSidebarPanel } = useSidebarPanel();
 
   return (
     <SidebarPanel isOpen={activeSidebarPanel === "inndelinger"}>
-      <SidebarPanelTitle
-        closePanel={closeSidebarPanel}
-        title={t("sidebar.Inndelinger")}
-      />
+      <SidebarPanelTitle closePanel={closeSidebarPanel} title={"Inndelinger"} />
       <UnstyledList>
         <Fylkesgrenser />
         <Kommunegrenser />

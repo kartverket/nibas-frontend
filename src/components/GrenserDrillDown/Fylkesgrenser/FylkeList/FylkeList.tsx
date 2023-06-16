@@ -1,4 +1,3 @@
-import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import ApiGrense from "../../ApiGrense";
 import useFylker from "hooks/inndelinger/useFylker";
@@ -6,11 +5,8 @@ import { getIdFromEntity } from "utils/api";
 
 const FylkeList = () => {
   const { fylker, error } = useFylker();
-
-  const { t } = useTranslation();
-
   if (error) {
-    return <p>{t("Logg inn for å se listen")}</p>;
+    return <p>Logg inn for å se listen</p>;
   }
 
   if (!fylker) return null;

@@ -4,7 +4,6 @@ import Geometry from "ol/geom/Geometry";
 import LineString from "ol/geom/LineString";
 import { ObjectEvent } from "ol/Object";
 import { Control, useFieldArray, useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { addMetadataEntryFromFeature } from "./utils";
 import Button from "components/form/Button";
@@ -93,7 +92,6 @@ const FieldArray = ({
   disabled,
   updateDraft,
 }: FieldArrayProps) => {
-  const { t } = useTranslation();
   const [newLenke, setNewLenke] = useState("");
   const { fields, append, remove } = useFieldArray({
     control,
@@ -129,14 +127,14 @@ const FieldArray = ({
               onClick={() => remove(nestedIndex)}
               disabled={disabled}
             >
-              {t("action.Slett")}
+              Slett
             </Button>
           </div>
         </FieldWrapper>
       ))}
       <div>
         <Input
-          label={t("action.Ny {{ item }}", { item: "URL" })}
+          label={"Ny URL"}
           value={newLenke}
           onChange={(e) => setNewLenke(e.target.value)}
           placeholder="URL"
@@ -144,7 +142,7 @@ const FieldArray = ({
           disabled={disabled}
         />
         <Button onClick={onAdd} disabled={!newLenke} icon={<Icon icon="add" />}>
-          {t("action.Legg til")}
+          Legg til
         </Button>
       </div>
     </FieldArrayWrapper>
@@ -184,8 +182,6 @@ const Part = styled.div`
 `;
 
 const MetadataReferanser = ({ feature }: Props) => {
-  const { t } = useTranslation();
-
   const properties = feature.getProperties() as FeatureProperties;
   const dokrefs = (properties.metadata as Metadata).dokumentasjonsreferanser;
 
@@ -238,14 +234,14 @@ const MetadataReferanser = ({ feature }: Props) => {
           <Container>
             <Part>
               <Input
-                label={t("metadata.Rettskildetittel")}
+                label="Rettskildetittel"
                 {...register(`dokrefs.${i}.rettskildeTittel`, {
                   onChange: updateDraftFromFeature,
                   disabled: metadataIsDisabled,
                 })}
               />
               <Input
-                label={t("metadata.Rettskilde-ID")}
+                label="Rettskilde-ID"
                 {...register(`dokrefs.${i}.rettskildeId`, {
                   onChange: updateDraftFromFeature,
                   disabled: metadataIsDisabled,
@@ -254,14 +250,14 @@ const MetadataReferanser = ({ feature }: Props) => {
             </Part>
             <Part>
               <Input
-                label={t("metadata.Fastsettingsmyndighet")}
+                label="Fastsettingsmyndighet"
                 {...register(`dokrefs.${i}.fastsettingsmyndighet`, {
                   onChange: updateDraftFromFeature,
                   disabled: metadataIsDisabled,
                 })}
               />
               <Input
-                label={t("metadata.Fastsettingsdato")}
+                label="Fastsettingsdato"
                 {...register(`dokrefs.${i}.fastsettingsdato`, {
                   onChange: updateDraftFromFeature,
                   disabled: metadataIsDisabled,
@@ -272,7 +268,7 @@ const MetadataReferanser = ({ feature }: Props) => {
             </Part>
             <Part>
               <Input
-                label={t("metadata.Hjemmel")}
+                label="Hjemmel"
                 {...register(`dokrefs.${i}.hjemmel`, {
                   onChange: updateDraftFromFeature,
                   disabled: metadataIsDisabled,
@@ -283,22 +279,20 @@ const MetadataReferanser = ({ feature }: Props) => {
           <FieldArray
             control={control}
             name={`dokrefs.${i}.dokumentlenker`}
-            itemName={t("metadata.Dokumentlenker")}
+            itemName="Dokumentlenker"
             disabled={metadataIsDisabled}
             updateDraft={updateDraftFromFeature}
           />
           <FieldArray
             control={control}
             name={`dokrefs.${i}.internReferanserKartverket`}
-            itemName={t("metadata.Internreferanser")}
+            itemName="Internreferanser"
             disabled={metadataIsDisabled}
             updateDraft={updateDraftFromFeature}
           />
 
           <Button onClick={() => remove(i)} disabled={metadataIsDisabled}>
-            {t("action.Slett {{ item }}", {
-              item: t("metadata.Referanse").toLowerCase(),
-            })}
+            Slett referanse
           </Button>
         </DokRefWrapper>
       ))}
@@ -317,9 +311,7 @@ const MetadataReferanser = ({ feature }: Props) => {
           })
         }
       >
-        {t("action.Ny {{ item }}", {
-          item: t("metadata.Referanse").toLowerCase(),
-        })}
+        Ny referanse
       </Button>
     </form>
   );

@@ -7,7 +7,6 @@ import useVisibility from "hooks/useVisibility";
 import { EditingType } from "contexts/EditGrenserContext";
 import { Feature } from "ol";
 import { Outline } from "style/mixins";
-import { useTranslation } from "react-i18next";
 import { Geometry } from "ol/geom";
 
 type Props = {
@@ -27,15 +26,12 @@ const EditableGrenseAccordion = ({
   isFetching,
   title,
 }: Props) => {
+  const accordion = useVisibility();
   const { value, toggleEditing, toggleVisible } = useEditGrense(
     grenseType,
     grenseId,
     features
   );
-
-  const { t } = useTranslation();
-
-  const accordion = useVisibility();
 
   return (
     <ListItem>
@@ -58,9 +54,7 @@ const EditableGrenseAccordion = ({
               disabled
               title="Midlertidig utilgjengelig"
             >
-              {value.editing
-                ? t("action.Stopp redigering")
-                : t("action.Rediger grenser")}
+              {value.editing ? "Stopp redigering" : "Rediger grenser"}
             </LinkButton>
           </div>
         </TextContent>

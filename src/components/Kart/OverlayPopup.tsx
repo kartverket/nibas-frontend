@@ -1,12 +1,10 @@
 import { useEffect, useRef } from "react";
-import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { map, overlayPopup } from "./constants";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 
 const OverlayPopup = () => {
   const { selectedFeatures } = useFeatureStyle();
-  const { t } = useTranslation();
   const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -31,19 +29,13 @@ const OverlayPopup = () => {
     <Popup ref={overlayRef}>
       {properties && (
         <div>
+          <Value>{`Målemetode: ${properties?.MALEMETODE ?? "---"}`}</Value>
+          <Value>{`Nøyaktighet: ${properties?.NOYAKTIGHET ?? "---"}`}</Value>
           <Value>
-            {t("metadata.Målemetode")}: {properties?.MALEMETODE ?? "---"}
+            {`Nøyaktighetsklasse: ${properties?.NOYAKTIGHETSKLASSE ?? "---"}`}
           </Value>
           <Value>
-            {t("metadata.Nøyaktighet")}: {properties?.NOYAKTIGHET ?? "---"}
-          </Value>
-          <Value>
-            {t("metadata.Nøyaktighetsklasse")}:{" "}
-            {properties?.NOYAKTIGHETSKLASSE ?? "---"}
-          </Value>
-          <Value>
-            {t("metadata.Omtvistet")}:{" "}
-            {properties?.OMTVISTET === 1 ? t("Ja") : t("Nei")}
+            {`Omtvistet: ${properties?.OMTVISTET === 1 ? "Ja" : "Nei"}`}
           </Value>
         </div>
       )}

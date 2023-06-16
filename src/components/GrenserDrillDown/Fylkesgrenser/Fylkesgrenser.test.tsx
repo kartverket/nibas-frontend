@@ -6,7 +6,7 @@ describe("Fylkesgrenser", () => {
     const { user } = render(<Fylkesgrenser />);
 
     const fylkesGrenserAccordionButton = screen.getByRole("button", {
-      name: "Åpne inndelinger.Fylkesgrenser",
+      name: "Åpne Fylkesgrenser",
     });
     await user.click(fylkesGrenserAccordionButton);
 
@@ -17,16 +17,14 @@ describe("Fylkesgrenser", () => {
   it("should toggle eye on eye click", async () => {
     const { user } = render(<Fylkesgrenser />);
 
-    await user.click(
-      screen.getByRole("button", { name: "Vis inndelinger.Fylkesgrenser" })
-    );
+    await user.click(screen.getByRole("button", { name: "Vis Fylkesgrenser" }));
 
     await user.click(
-      screen.getByRole("button", { name: "Skjul inndelinger.Fylkesgrenser" })
+      screen.getByRole("button", { name: "Skjul Fylkesgrenser" })
     );
 
     expect(
-      screen.getByRole("button", { name: "Vis inndelinger.Fylkesgrenser" })
+      screen.getByRole("button", { name: "Vis Fylkesgrenser" })
     ).toBeInTheDocument();
   });
 

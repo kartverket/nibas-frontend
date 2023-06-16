@@ -1,4 +1,3 @@
-import { useTranslation } from "react-i18next";
 import {
   Stemmekretsendringer,
   StemmekretsMetadataEndring,
@@ -24,29 +23,23 @@ type EndringsloggStemmekretsendringerProps = {
 
 export const EndringsloggStemmekretsendringer = ({
   endringer,
-}: EndringsloggStemmekretsendringerProps) => {
-  const { t } = useTranslation();
-
-  return (
-    <EndringSection>
-      <Underoverskrift>
-        {t("utkast.endringslogg.stemmekrets-tittel", {
-          kommune: `${endringer.kommune.nummer} ${endringer.kommune.navn}`,
-        })}
-      </Underoverskrift>
-      <StemmekretsGrensejusteringer
-        grendejusteringer={endringer.grensejusteringer}
+}: EndringsloggStemmekretsendringerProps) => (
+  <EndringSection>
+    <Underoverskrift>
+      {`Stemmekretser i ${endringer.kommune.nummer} ${endringer.kommune.navn}`}
+    </Underoverskrift>
+    <StemmekretsGrensejusteringer
+      grendejusteringer={endringer.grensejusteringer}
+    />
+    {endringer.metadataendringer.map((metadataendring) => (
+      <StemmekretsMetadataEndringer
+        key={metadataendring.kretsEndret.id.lokalid.value}
+        metadataendring={metadataendring}
       />
-      {endringer.metadataendringer.map((metadataendring) => (
-        <StemmekretsMetadataEndringer
-          key={metadataendring.kretsEndret.id.lokalid.value}
-          metadataendring={metadataendring}
-        />
-      ))}
-      <StemmekretsSammenslaaing sammenslaaing={endringer.sammenslaaing} />
-    </EndringSection>
-  );
-};
+    ))}
+    <StemmekretsSammenslaaing sammenslaaing={endringer.sammenslaaing} />
+  </EndringSection>
+);
 
 type StemmekretsGrensejusteringerProps = {
   grendejusteringer: StemmekretsResponse[];
@@ -55,17 +48,13 @@ type StemmekretsGrensejusteringerProps = {
 const StemmekretsGrensejusteringer = ({
   grendejusteringer,
 }: StemmekretsGrensejusteringerProps) => {
-  const { t } = useTranslation();
-
   if (grendejusteringer == null || grendejusteringer.length === 0) {
     return null;
   }
 
   return (
     <EndringSection>
-      <Seksjonsoverskrift>
-        {t("utkast.endringslogg.endring.grenseendringer")}
-      </Seksjonsoverskrift>
+      <Seksjonsoverskrift>Grensejusteringer</Seksjonsoverskrift>
       <UnstyledList>
         {grendejusteringer.map((grensjustering) => (
           <EndringsradListItem key={grensjustering.id.lokalid.value}>
@@ -84,8 +73,6 @@ type StemmekretsSammenslaaingProps = {
 const StemmekretsSammenslaaing = ({
   sammenslaaing,
 }: StemmekretsSammenslaaingProps) => {
-  const { t } = useTranslation();
-
   if (sammenslaaing == null) {
     return null;
   }
@@ -114,15 +101,11 @@ const StemmekretsSammenslaaing = ({
         <span>
           {sammenslaaing.nyttNummer} {sammenslaaing.nyttNavn}
         </span>
-        <EndringstypeTag>
-          {t("utkast.endringslogg.endring.sammenslaaing.tittel")}
-        </EndringstypeTag>
+        <EndringstypeTag>Sammenslåing</EndringstypeTag>
       </Seksjonsoverskrift>
       <UnstyledList>
         <EndringsradListItem>
-          <EndringsradLabel>
-            {t("utkast.endringslogg.endring.sammenslaaing.sammenslatt")}
-          </EndringsradLabel>
+          <EndringsradLabel>Sammenslått</EndringsradLabel>
           <EndringsradEndring>
             <UnstyledList>
               {gamleKretser.map((gammelKrets) => (
@@ -135,18 +118,8 @@ const StemmekretsSammenslaaing = ({
             </UnstyledList>
           </EndringsradEndring>
         </EndringsradListItem>
-        <Endringsrad
-          tittel={t(
-            "utkast.endringslogg.endring.sammenslaaing.stemmekretsnummer"
-          )}
-          endring={endringNummer}
-        />
-        <Endringsrad
-          tittel={t(
-            "utkast.endringslogg.endring.sammenslaaing.stemmekretsnavn"
-          )}
-          endring={endringNavn}
-        />
+        <Endringsrad tittel="Stemmekretsnummer" endring={endringNummer} />
+        <Endringsrad tittel="Stemmekretsnavn" endring={endringNavn} />
       </UnstyledList>
     </EndringSection>
   );
@@ -159,8 +132,6 @@ type StemmekretsMetadataEndringerProps = {
 const StemmekretsMetadataEndringer = ({
   metadataendring,
 }: StemmekretsMetadataEndringerProps) => {
-  const { t } = useTranslation();
-
   const navn =
     metadataendring.stemmekretsnavn?.til ??
     metadataendring.kretsEndret.stemmekretsnavn;
@@ -174,24 +145,24 @@ const StemmekretsMetadataEndringer = ({
         <span>
           {navn} {nummer}
         </span>
-        <EndringstypeTag>{t("utkast.endringslogg.metadata")}</EndringstypeTag>
+        <EndringstypeTag>Metadataendringer</EndringstypeTag>
       </Seksjonsoverskrift>
       <UnstyledList>
         {metadataendring.stemmekretsnavn && (
           <Endringsrad
-            tittel={t("utkast.endringslogg.endring.stemmekretsnavn")}
+            tittel="Stemmekretsnavn"
             endring={metadataendring.stemmekretsnavn}
           />
         )}
         {metadataendring.stemmekretsnummer && (
           <Endringsrad
-            tittel={t("utkast.endringslogg.endring.stemmekretsnummer")}
+            tittel="Stemmekretsnummer"
             endring={metadataendring.stemmekretsnummer}
           />
         )}
         {metadataendring.valgdistriktsnummer && (
           <Endringsrad
-            tittel={t("utkast.endringslogg.endring.valgdistriktsnummer")}
+            tittel="Valgdistriktsnummer"
             endring={metadataendring.valgdistriktsnummer}
           />
         )}

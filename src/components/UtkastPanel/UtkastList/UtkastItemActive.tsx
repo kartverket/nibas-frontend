@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { UtkastItemExpanded } from "./UtkastItem";
 import Button from "components/form/Button";
@@ -38,7 +37,6 @@ type Props = {
 };
 
 const UtkastItemActive = ({ utkastId }: Props) => {
-  const { t } = useTranslation();
   const { register, setValue, getValues } = useForm<Inputs>();
   const { closeUtkast, updateUtkastWithHistory } = useUtkast();
 
@@ -48,8 +46,8 @@ const UtkastItemActive = ({ utkastId }: Props) => {
 
   const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } =
     useAlertModal(
-      t("utkast.ulagrede-endringer"),
-      t("utkast.ulagrede-endringer-utdypende")
+      "Du har endringer i utkastet som ikke er lagret",
+      "Er du sikker på at du vil gå ut av utkastet? Dersom du lukker utkastet nå mister du alle ulagrede endringer."
     );
 
   const previousValues = useRef<Inputs>(getValues());
@@ -118,12 +116,9 @@ const UtkastItemActive = ({ utkastId }: Props) => {
 
   return (
     <UtkastItemExpanded>
-      <Input
-        label={t("utkast.Navn på utkast")}
-        {...register("navn", registerOptions)}
-      />
+      <Input label="Navn på utkast" {...register("navn", registerOptions)} />
       <Select
-        label={t("utkast.Type utkast")}
+        label="Type utkast"
         {...register("endringsType", registerOptions)}
       >
         {translateKeysByEndringsType.map((type) => (
@@ -133,13 +128,15 @@ const UtkastItemActive = ({ utkastId }: Props) => {
         ))}
       </Select>
       <EditingUtkastText>
-        {t("utkast.Du er nå i redigeringsmodus av dette utkastet")}
+        Du er nå i redigeringsmodus av dette utkastet. Alle endringer du gjør i
+        inndelingene og kartet vil bli lagret på dette utkastet når du klikker
+        på &quot;Lagre&quot;-knappen øverst på skjermen.
       </EditingUtkastText>
       <Buttons>
         <CancelButton onClick={canSave ? openModal : closeUtkast}>
-          {t("action.Avslutt redigering")}
+          Avslutt redigering
         </CancelButton>
-        <Button onClick={handleSave}>{t("action.Lagre")}</Button>
+        <Button onClick={handleSave}>Lagre</Button>
       </Buttons>
       <AlertModal
         status="warning"
@@ -148,11 +145,11 @@ const UtkastItemActive = ({ utkastId }: Props) => {
         isOpen={modalIsOpen}
         onClose={closeModal}
         secondaryAction={{
-          text: t("Forkast endringer"),
+          text: "Forkast endringer",
           onClick: closeUtkast,
         }}
         primaryAction={{
-          text: t("Fortsett redigering"),
+          text: "Fortsett redigering",
           onClick: closeModal,
         }}
       />

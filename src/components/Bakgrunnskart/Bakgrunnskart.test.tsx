@@ -21,7 +21,7 @@ describe("Bakgrunnskart", () => {
     renderWithProvider(<Bakgrunnskart />, null);
 
     expect(
-      screen.queryByRole("heading", { name: "sidebar.Kartlag" })
+      screen.queryByRole("heading", { name: "Kartlag" })
     ).not.toBeInTheDocument();
   });
 

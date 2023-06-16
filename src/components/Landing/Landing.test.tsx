@@ -29,13 +29,13 @@ describe("Landing", () => {
     render(<Landing />);
 
     expect(
-      await screen.findByText("auth.Logg inn i Nasjonal inndelingsbase")
+      await screen.findByText("Logg inn i Nasjonal inndelingsbase")
     ).toBeInTheDocument();
     expect(
-      await screen.queryByText("auth.feil.generellFeilTittel")
+      await screen.queryByText("En feil skjedde ved pålogging.")
     ).not.toBeInTheDocument();
     expect(
-      await screen.queryByText("auth.feil.ikkeAutorisertTittel")
+      await screen.queryByText("Du har ikke tilgang til å se inndelingsbasen.")
     ).not.toBeInTheDocument();
   });
 
@@ -46,7 +46,7 @@ describe("Landing", () => {
     render(<Landing />);
 
     expect(
-      await screen.findByText("auth.feil.ikkeAutorisertTittel")
+      await screen.findByText("Du har ikke tilgang til å se inndelingsbasen.")
     ).toBeInTheDocument();
   });
 
@@ -57,7 +57,7 @@ describe("Landing", () => {
     render(<Landing />);
 
     expect(
-      await screen.findByText("auth.feil.generellFeilTittel")
+      await screen.findByText("En feil skjedde ved pålogging.")
     ).toBeInTheDocument();
   });
 });

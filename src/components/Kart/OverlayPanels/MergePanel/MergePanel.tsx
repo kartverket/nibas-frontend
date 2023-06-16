@@ -15,7 +15,6 @@ import Input from "components/form/Input";
 import { Divider } from "components/Divider";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import Button from "components/form/Button";
-import { useTranslation } from "react-i18next";
 import CreateUtkastModal, {
   CreateUtkastCallbackArgument,
 } from "./CreateUtkastModal";
@@ -56,7 +55,6 @@ const Buttons = styled.div`
 
 const MergePanel = ({ isOpen, className }: PanelProps) => {
   const [isCreateUtkastModalOpen, setIsCreateUtkastModalOpen] = useState(false);
-  const { t } = useTranslation();
   const { flatedata, closeOverlayPanel } = useOverlayPanel();
   const { setError } = useErrorHandling();
   const { utkast, updateUtkast } = useUtkast();
@@ -86,22 +84,22 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
   } = formMethods;
 
   const stemmekretsnavnValidator = {
-    required: t("stemmekrets.validering.stemmekretsnavn.obligatorisk"),
+    required: "Stemmekretsnavn er obligatorisk",
   };
 
   const stemmekretsnummerValidator = {
-    required: t("stemmekrets.validering.stemmekretsnummer.obligatorisk"),
+    required: "Stemmekretsnummer er obligatorisk",
     pattern: {
       value: /^\d+$/,
-      message: t("stemmekrets.validering.stemmekretsnummer.gyldig-nummer"),
+      message: "Stemmekretsnummeret må være et gyldig positivt tall",
     },
     minValue: {
       value: 1,
-      message: t("stemmekrets.validering.stemmekretsnummer.gyldig-nummer"),
+      message: "Stemmekretsnummeret må være et gyldig positivt tall",
     },
     maxLength: {
       value: 4,
-      message: t("stemmekrets.validering.stemmekretsnummer.for-kort"),
+      message: "Stemmekretsnummeret kan ikke være lengre enn 4 tegn",
     },
   };
 
@@ -220,8 +218,9 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
   const openCreateUtkastModal = () => {
     if (utkast) {
       setError({
-        title: t("stemmekrets.utkast-sammenslaaing-alert.tittel"),
-        description: t("stemmekrets.utkast-sammenslaaing-alert.tekst"),
+        title: "Kan ikke slå sammen stemmekretser",
+        description:
+          "Du kan ikke gjøre en sammenslåing i et eksisterende utkast som har andre endringer. Avslutt redigeringen av dette utkastet før du gjennomfører sammenslåingen.",
       });
       return;
     }
@@ -259,7 +258,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
               label="Stemmekrets"
             >
               <option value={"default"} disabled>
-                {t("stemmekrets.sammenslaaing.actions.velg")}
+                Velg en stemmekrets fra listen
               </option>
               {utkastStemmekretser
                 .sort(
@@ -287,9 +286,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
             </SectionHeading>
             <InputsWrapper>
               <Input
-                label={t(
-                  "stemmekrets.sammenslaaing.detaljer-label-stemmekretsnummer"
-                )}
+                label={"Stemmekretsnummer"}
                 {...register("stemmekretsnummer", stemmekretsnummerValidator)}
                 validationError={{
                   showError: !!errors?.stemmekretsnummer,
@@ -297,9 +294,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
                 }}
               />
               <Input
-                label={t(
-                  "stemmekrets.sammenslaaing.detaljer-label-stemmekretsnavn"
-                )}
+                label={"Stemmekretsnavn"}
                 {...register("stemmekretsnavn", stemmekretsnavnValidator)}
                 validationError={{
                   showError: !!errors.stemmekretsnavn,
@@ -315,10 +310,10 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
                 }}
                 variant="tertiary"
               >
-                {t("stemmekrets.sammenslaaing.actions.avbryt")}
+                Avbryt
               </Button>
               <Button type="submit" disabled={!isDirty}>
-                {t("stemmekrets.sammenslaaing.actions.slaa-sammen")}
+                Slå sammen
               </Button>
             </Buttons>
             <CreateUtkastModal

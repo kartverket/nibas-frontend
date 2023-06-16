@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import styled from "styled-components";
 import { useSWRConfig } from "swr";
@@ -38,7 +37,6 @@ const UtkastItem = ({ utkast }: Props) => {
   const [conflictResponse, setConflictResponse] =
     useState<FramtidigVersjonConflict | null>(null);
 
-  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const utkastId = searchParams.get("utkast");
 
@@ -54,8 +52,8 @@ const UtkastItem = ({ utkast }: Props) => {
   const { mutate } = useSWRConfig();
   const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } =
     useAlertModal(
-      t("utkast.ulagrede-endringer"),
-      t("utkast.ulagrede-endringer-utdypende")
+      "Du har endringer i utkastet som ikke er lagret",
+      "Er du sikker på at du vil gå ut av utkastet? Dersom du lukker utkastet nå mister du alle ulagrede endringer."
     );
   const { canSave } = useToolbar();
   const { closeUtkast } = useUtkast();
@@ -91,8 +89,9 @@ const UtkastItem = ({ utkast }: Props) => {
         setConflictResponse(wrapper.framtidigVersjonConflict);
       } else {
         setError({
-          title: t("utkast.feil.utdatert-tittel"),
-          description: t("utkast.feil.utdatert-tekst"),
+          title: "Utkastet er utdatert",
+          description:
+            "Du har gjort endringer på en gammel versjon av en krets. Du må gjennomføre endringene på nytt i et nytt utkast.",
         });
       }
     } else if (statusCode.isError(response.status)) {
@@ -181,9 +180,7 @@ const UtkastItem = ({ utkast }: Props) => {
         <UtkastTekst>
           <UtkastName>{utkast.navn}</UtkastName>
           <UtkastOpprettetDato>
-            {t("utkast.opprettetDato", {
-              dato: getDateInFriendlyString(utkast.opprettetDato),
-            })}
+            {`Opprettet: ${getDateInFriendlyString(utkast.opprettetDato)}`}
           </UtkastOpprettetDato>
         </UtkastTekst>
         <UnstyledButton onClick={() => openClosePublish()}>
@@ -215,9 +212,9 @@ const UtkastItem = ({ utkast }: Props) => {
         <UtkastItemExpanded>
           <Buttons>
             <CancelButton onClick={() => setIsPublishOpen(false)}>
-              {t("action.Avbryt")}
+              Avbryt
             </CancelButton>
-            <Button onClick={publish}>{t("action.Publiser")}</Button>
+            <Button onClick={publish}>Publiser</Button>
           </Buttons>
           {conflictResponse && (
             <UtkastConflicts
@@ -234,9 +231,9 @@ const UtkastItem = ({ utkast }: Props) => {
         <UtkastItemExpanded>
           <Buttons>
             <CancelButton onClick={() => setIsDeleteOpen(false)}>
-              {t("action.Avbryt")}
+              Avbryt
             </CancelButton>
-            <Button onClick={deleteUtkast}>{t("action.Forkast")}</Button>
+            <Button onClick={deleteUtkast}>Forkast</Button>
           </Buttons>
         </UtkastItemExpanded>
       )}
@@ -250,11 +247,11 @@ const UtkastItem = ({ utkast }: Props) => {
         isOpen={modalIsOpen}
         onClose={closeModal}
         secondaryAction={{
-          text: t("Forkast endringer"),
+          text: "Forkast endringer",
           onClick: closeUtkast,
         }}
         primaryAction={{
-          text: t("Fortsett redigering"),
+          text: "Fortsett redigering",
           onClick: closeModal,
         }}
       />

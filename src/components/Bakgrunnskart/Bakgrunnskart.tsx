@@ -1,4 +1,3 @@
-import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import MainLayer from "./MainLayer";
 import { SidebarPanel } from "components/Sidebar/SidebarPanel";
@@ -10,7 +9,6 @@ import { bakgrunnskartLayers } from "hooks/layers/constants";
 import { BakgrunnskartId } from "hooks/layers/types";
 
 const Bakgrunnskart = () => {
-  const { t } = useTranslation();
   const { activeSidebarPanel, closeSidebarPanel } = useSidebarPanel();
   const { visibleLayers } = useBakgrunnskart();
 
@@ -18,7 +16,7 @@ const Bakgrunnskart = () => {
     <SidebarPanel isOpen={activeSidebarPanel === "kartlag"}>
       <SidebarPanelTitle
         closePanel={closeSidebarPanel}
-        title={t("Aktive kartlag")}
+        title={"Aktive kartlag"}
       />
       {visibleLayers.map((layer, i) => (
         <MainLayer
@@ -30,7 +28,7 @@ const Bakgrunnskart = () => {
         />
       ))}
       <BackgroundLayersHeading tag="h3" size="xs">
-        {t("sidebar.Kartlag")}
+        Kartlag
       </BackgroundLayersHeading>
 
       {Object.keys(bakgrunnskartLayers).map((layerId, index) => (

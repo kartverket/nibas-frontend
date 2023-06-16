@@ -24,16 +24,16 @@ describe("GrenserDrillDown", () => {
     renderWithProvider(<GrenserDrillDown />);
 
     expect(
-      screen.getByRole("heading", { name: "sidebar.Inndelinger" })
+      screen.getByRole("heading", { name: "Inndelinger" })
     ).toBeInTheDocument();
   });
 
   it("should render all accordions", () => {
     renderWithProvider(<GrenserDrillDown />);
 
-    expect(screen.getByText("inndelinger.Fylkesgrenser")).toBeInTheDocument();
-    expect(screen.getByText("inndelinger.Kommunegrenser")).toBeInTheDocument();
-    expect(screen.getByText("inndelinger.Stemmekretser")).toBeInTheDocument();
-    expect(screen.getByText("inndelinger.Grunnkretser")).toBeInTheDocument();
+    expect(screen.getByText("Fylkesgrenser")).toBeInTheDocument();
+    expect(screen.getByText("Kommunegrenser")).toBeInTheDocument();
+    expect(screen.getByText("Stemmekretser")).toBeInTheDocument();
+    expect(screen.getByText("Grunnkretser")).toBeInTheDocument();
   });
 });

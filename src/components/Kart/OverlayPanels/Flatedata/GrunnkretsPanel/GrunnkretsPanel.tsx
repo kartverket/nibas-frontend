@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { useTranslation } from "react-i18next";
 import GrunnkretsRow from "./GrunnkretsRow";
 import { useUtkastEntity } from "contexts/UtkastContext";
 import useSearch from "hooks/useSearch";
@@ -19,7 +18,6 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
     "grunnkretsnummer",
     "navn",
   ]);
-  const { t } = useTranslation();
   const { flatedata, closeOverlayPanel } = useOverlayPanel();
   const { searchValue, setInputValue } = useSearch();
 
@@ -48,10 +46,10 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
           <thead>
             <tr>
               <SortHeader {...sortHeaderProps("grunnkretsnummer")}>
-                {t("grunnkrets.Grunnkretsnummer")}
+                Grunnkretsnummer
               </SortHeader>
               <SortHeader {...sortHeaderProps("navn")}>
-                {t("grunnkrets.Grunnkretsnavn")}
+                Grunnkretsnavn
               </SortHeader>
               <th>{/* Tom plass for mellomrom */}</th>
               <th>
