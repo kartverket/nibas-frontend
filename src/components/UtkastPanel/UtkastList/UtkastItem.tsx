@@ -87,8 +87,6 @@ const UtkastItem = ({ utkast, setUtkastJustPublished }: Props) => {
     if (!response) return;
 
     if (statusCode.isSuccessful(response.status)) {
-      //her om det er suksess - så prompt at utkastet er publisert
-
       promptPublished();
       cleanUpUtkast();
     } else if (statusCode.isConflict(response.status)) {
