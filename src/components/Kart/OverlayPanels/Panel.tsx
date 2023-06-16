@@ -80,10 +80,12 @@ const PanelHeading = styled(Heading)`
   margin: 0;
 `;
 
-export const PanelHeader: React.FC<{ onClose: () => void }> = ({
-  children,
-  onClose,
-}) => (
+type PanelHeaderProps = {
+  onClose: () => void;
+  children: React.ReactNode;
+};
+
+export const PanelHeader = ({ children, onClose }: PanelHeaderProps) => (
   <PanelHeaderContainer>
     <PanelHeading size="l" tag="h3">
       {children}

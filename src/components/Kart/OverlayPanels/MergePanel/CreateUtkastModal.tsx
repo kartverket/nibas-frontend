@@ -1,7 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { useSearchParams } from "react-router-dom";
-import { Translation } from "i18n";
 import { useTranslation } from "react-i18next";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useHistory } from "contexts/HistoryContext";
@@ -104,7 +103,7 @@ const CreateUtkastModal = ({
         {t("utkast.Opprett et nytt utkast")}
       </Heading>
       <Input
-        label={t("utkast.Navn på utkast")}
+        label={t("utkast.Navn på utkast") as string}
         placeholder={t("f.eks. Endring av stemmekrets i Froland")}
         value={utkastName}
         onChange={(e) => setUtkastName(e.target.value)}
@@ -117,9 +116,9 @@ const CreateUtkastModal = ({
         <option value="" disabled>
           {t("utkast.Velg en endringstype fra listen")}
         </option>
-        {Object.keys(translateKeysByEndringsType).map((type) => (
+        {translateKeysByEndringsType.map((type) => (
           <option key={type} value={type}>
-            {t(translateKeysByEndringsType[type] as Translation)}
+            {type}
           </option>
         ))}
       </Select>

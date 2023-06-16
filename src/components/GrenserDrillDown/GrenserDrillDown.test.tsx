@@ -6,8 +6,8 @@ const renderWithProvider = (ui: ReactNode) =>
   render(ui, {
     SidebarPanelProvider: {
       activeSidebarPanel: "inndelinger",
-      openSidebarPanel: jest.fn(),
-      closeSidebarPanel: jest.fn(),
+      openSidebarPanel: vi.fn(),
+      closeSidebarPanel: vi.fn(),
     },
   });
 
@@ -16,7 +16,7 @@ describe("GrenserDrillDown", () => {
     renderWithProvider(<GrenserDrillDown />);
 
     expect(
-      screen.queryByRole("heading", { name: /grenser/i })
+      screen.queryByRole("heading", { name: "grenser" })
     ).not.toBeInTheDocument();
   });
 
@@ -24,16 +24,16 @@ describe("GrenserDrillDown", () => {
     renderWithProvider(<GrenserDrillDown />);
 
     expect(
-      screen.getByRole("heading", { name: /sidebar.inndelinger/i })
+      screen.getByRole("heading", { name: "sidebar.Inndelinger" })
     ).toBeInTheDocument();
   });
 
   it("should render all accordions", () => {
     renderWithProvider(<GrenserDrillDown />);
 
-    expect(screen.getByText(/fylkesgrenser/i)).toBeInTheDocument();
-    expect(screen.getByText(/kommunegrenser/i)).toBeInTheDocument();
-    expect(screen.getByText(/stemmekretser/i)).toBeInTheDocument();
-    expect(screen.getByText(/grunnkretser/i)).toBeInTheDocument();
+    expect(screen.getByText("inndelinger.Fylkesgrenser")).toBeInTheDocument();
+    expect(screen.getByText("inndelinger.Kommunegrenser")).toBeInTheDocument();
+    expect(screen.getByText("inndelinger.Stemmekretser")).toBeInTheDocument();
+    expect(screen.getByText("inndelinger.Grunnkretser")).toBeInTheDocument();
   });
 });

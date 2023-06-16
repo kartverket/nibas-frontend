@@ -1,4 +1,4 @@
-import React, { HTMLAttributes } from "react";
+import { HTMLAttributes } from "react";
 import styled from "styled-components";
 
 type Tag = "h1" | "h2" | "h3";
@@ -13,13 +13,7 @@ type Props = HTMLAttributes<HTMLHeadingElement> & {
 
 const getKvibClassName = (tag: Tag, size: Size) => `heading__${tag}--${size}`;
 
-const Heading: React.FC<Props> = ({
-  tag,
-  size,
-  className,
-  children,
-  ...props
-}) => {
+const Heading = ({ tag, size, className, children, ...props }: Props) => {
   const kvibClassName = getKvibClassName(tag, size);
 
   const fullClassName = `${kvibClassName} ${className ?? ""}`;

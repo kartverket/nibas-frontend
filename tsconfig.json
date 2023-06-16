@@ -8,7 +8,7 @@
       "hooks/*": ["hooks/*"],
       "api/*": ["api/*"]
     },
-    "target": "es5",
+    "target": "ES6",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -22,7 +22,9 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "types": ["vite/client", "vitest/globals"]
   },
+  "references": [{ "path": "./tsconfig.node.json" }],
   "include": ["src"]
 }

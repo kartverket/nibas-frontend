@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 const useSearch = () => {
   const [inputValue, setInputValue] = useState("");
   const [searchValue, setSearchValue] = useState("");
-  const timer = useRef<NodeJS.Timeout | null>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (timer.current) {

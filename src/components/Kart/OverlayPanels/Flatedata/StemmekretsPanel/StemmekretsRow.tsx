@@ -87,22 +87,28 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
 
   const formOptions: Record<string, RegisterOptions> = {
     stemmekretsnummer: {
-      required: t("stemmekrets.validering.stemmekretsnummer.ikke-tomt"),
+      required: t(
+        "stemmekrets.validering.stemmekretsnummer.ikke-tomt"
+      ) as string,
       validate: (stemmekretsnummer: string) => {
         if (
           !isInteger(stemmekretsnummer) ||
           parseInt(stemmekretsnummer) > 9999
         ) {
-          return t("stemmekrets.validering.stemmekretsnummer.kun-siffer");
+          return t(
+            "stemmekrets.validering.stemmekretsnummer.kun-siffer"
+          ) as string;
         }
         if (parseInt(stemmekretsnummer) <= 0) {
-          return t("stemmekrets.validering.stemmekretsnummer.kun-positiv");
+          return t(
+            "stemmekrets.validering.stemmekretsnummer.kun-positiv"
+          ) as string;
         }
         return true;
       },
     },
     stemmekretsnavn: {
-      required: t("stemmekrets.validering.stemmekretsnavn.ikke-tomt"),
+      required: t("stemmekrets.validering.stemmekretsnavn.ikke-tomt") as string,
     },
   };
 

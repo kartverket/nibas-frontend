@@ -43,24 +43,24 @@ describe("FutureChangesTable", () => {
     expect(screen.getAllByRole("row")).toHaveLength(4); // header, current row, 2 future changes
 
     expect(
-      await screen.findByRole("cell", { name: /mosekollen øst/i })
+      await screen.findByRole("cell", { name: "Mosekollen øst" })
     ).toBeInTheDocument();
     expect(
-      await screen.findByRole("cell", { name: /12345678/i })
-    ).toBeInTheDocument();
-
-    expect(
-      await screen.findByRole("cell", { name: /mosekollen vest/i })
-    ).toBeInTheDocument();
-    expect(
-      await screen.findByRole("cell", { name: /12345679/i })
+      await screen.findByRole("cell", { name: "12345678" })
     ).toBeInTheDocument();
 
     expect(
-      await screen.findByRole("cell", { name: /mosekollen nord/i })
+      await screen.findByRole("cell", { name: "Mosekollen vest" })
     ).toBeInTheDocument();
     expect(
-      await screen.findByRole("cell", { name: /87654321/i })
+      await screen.findByRole("cell", { name: "12345679" })
+    ).toBeInTheDocument();
+
+    expect(
+      await screen.findByRole("cell", { name: "Mosekollen nord" })
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByRole("cell", { name: "87654321" })
     ).toBeInTheDocument();
   });
 });

@@ -26,7 +26,11 @@ export const ToolbarContext = createContext<ToolbarContextValue | undefined>(
   undefined
 );
 
-export const ToolbarProvider: React.FC = ({ children }) => {
+export const ToolbarProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const { history, redo, undo } = useHistory();
 
   const [activePointMode, setActivePointMode] =

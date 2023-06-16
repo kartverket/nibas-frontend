@@ -15,7 +15,11 @@ export const SidebarPanelContext = createContext<
   SidebarPanelContextValue | undefined
 >(undefined);
 
-export const SidebarPanelProvider: React.FC = ({ children }) => {
+export const SidebarPanelProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [activeSidebarPanel, setActiveSidebarPanel] =
     useState<SidebarPanel | null>(null);
 

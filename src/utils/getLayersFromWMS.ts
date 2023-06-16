@@ -4,6 +4,7 @@ import TileWMS from "ol/source/TileWMS";
 import WMTS from "ol/source/WMTS";
 import { getTicketForTjeneste } from "./geonorgeTicket";
 import { BakgrunnskartId } from "hooks/layers/types";
+import { getUrlForPath } from "utils/api";
 
 const WMSParser = new WMSCapabilities();
 const WMTSParser = new WMTSCapabilities();
@@ -88,7 +89,7 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
     capabilitiesUrl = `${capabilitiesUrl}&ticket=${ticket}`;
   }
 
-  const response = await fetch(capabilitiesUrl);
+  const response = await fetch(getUrlForPath(capabilitiesUrl));
   const xml = await response.text();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

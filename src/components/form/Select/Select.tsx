@@ -12,7 +12,7 @@ const Select = forwardRef<HTMLSelectElement, Props>(function Select(
   return (
     <Label className={className} label={props.label ?? ""}>
       <SelectWrapper>
-        <SelectInput {...props} ref={ref}></SelectInput>
+        <SelectInput {...props} ref={ref} role="combobox"></SelectInput>
         <SelectCaret />
       </SelectWrapper>
     </Label>

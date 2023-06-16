@@ -28,7 +28,11 @@ export const EditGrenserContext = createContext<
   EditGrenserContextValue | undefined
 >(undefined);
 
-export const EditGrenserProvider: React.FC = ({ children }) => {
+export const EditGrenserProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [editingObject, setEditingObject] = useState<EditingObject>({});
 
   const setObjectValue = (

@@ -3,7 +3,6 @@ import Button from "components/form/Button";
 import { ButtonCell } from "components/Kart/OverlayPanels/Flatedata/KretsTable";
 import { Modal, ModalContent } from "components/Modal";
 import Heading from "components/typography/Heading";
-import { FC } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 
@@ -12,15 +11,16 @@ type Props = {
   columns: string[];
   onCancel: () => void;
   submit?: () => void;
+  children?: React.ReactNode;
 };
 
-const UtkastConflictModal: FC<Props> = ({
+const UtkastConflictModal = ({
   currentRow,
   onCancel,
   submit,
   columns,
   children,
-}) => {
+}: Props) => {
   const { t } = useTranslation();
 
   return (

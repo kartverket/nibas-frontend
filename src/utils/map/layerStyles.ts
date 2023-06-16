@@ -166,10 +166,12 @@ export const updateEditFeatureText = (
   number?: string
 ) => {
   const feature = editSource.getFeatureById(featureId);
-  if (name) {
-    feature.set("name", name);
-  }
-  if (number) {
-    feature.set("number", number);
+  if (feature) {
+    if (name) {
+      feature.set("name", name);
+    }
+    if (number) {
+      feature.set("number", number);
+    }
   }
 };

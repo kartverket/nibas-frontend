@@ -4,11 +4,11 @@ import { map } from "components/Kart/constants";
 import { useHistory } from "contexts/HistoryContext";
 import { getLayerById } from "utils/map/layers";
 import { MapBrowserEvent } from "ol";
-import Geometry from "ol/geom/Geometry";
 import { squaredDistance } from "ol/coordinate";
 import { addFeaturesToSource } from "utils/map/source";
 import { pixelTolerance } from "./constants";
 import { useToolbar } from "contexts/ToolbarContext";
+import { Geometry } from "ol/geom";
 
 // TODO: denne koden er ikke i bruk og skal ombygges i fremtiden
 // vi måtte gå tilbake til scratch for å finne ut hva backenden vil ha fra frontenden
@@ -28,9 +28,9 @@ const useSplit = () => {
         hitTolerance: pixelTolerance,
       });
       // Forutsetter at man bare trykker på én feature
-      const feature = features[0];
-      if (feature instanceof Feature<Geometry>) {
-        const geometry = feature.getGeometry() as LineString;
+      const feature = features[0] as Feature<Geometry>;
+      const geometry = feature.getGeometry();
+      if (geometry instanceof LineString) {
         const coordinates = geometry.getCoordinates();
         const featureId = feature.getId() as string;
 

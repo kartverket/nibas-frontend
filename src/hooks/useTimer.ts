@@ -1,7 +1,7 @@
 import { useRef } from "react";
 
 const useTimer = () => {
-  const timer = useRef<NodeJS.Timeout | null>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const clearTimer = () => {
     if (timer.current) {

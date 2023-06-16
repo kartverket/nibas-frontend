@@ -6,33 +6,27 @@ describe("Fylkesgrenser", () => {
     const { user } = render(<Fylkesgrenser />);
 
     const fylkesGrenserAccordionButton = screen.getByRole("button", {
-      name: /åpne inndelinger\.fylkesgrenser/i,
+      name: "Åpne inndelinger.Fylkesgrenser",
     });
     await user.click(fylkesGrenserAccordionButton);
 
-    expect(
-      await screen.findByText(/vestfold og telemark/i)
-    ).toBeInTheDocument();
-    expect(await screen.findByText(/agder/i)).toBeInTheDocument();
+    expect(await screen.findByText("Vestfold og Telemark")).toBeInTheDocument();
+    expect(await screen.findByText("Agder")).toBeInTheDocument();
   });
 
   it("should toggle eye on eye click", async () => {
     const { user } = render(<Fylkesgrenser />);
 
     await user.click(
-      screen.getByRole("button", { name: /vis inndelinger\.fylkesgrenser/i })
-    );
-
-    await waitForElementToBeRemoved(() =>
-      screen.getByRole("alert", { name: /henter inndelinger\.fylkesgrenser/i })
+      screen.getByRole("button", { name: "Vis inndelinger.Fylkesgrenser" })
     );
 
     await user.click(
-      screen.getByRole("button", { name: /skjul inndelinger\.fylkesgrenser/i })
+      screen.getByRole("button", { name: "Skjul inndelinger.Fylkesgrenser" })
     );
 
     expect(
-      screen.getByRole("button", { name: /vis inndelinger\.fylkesgrenser/i })
+      screen.getByRole("button", { name: "Vis inndelinger.Fylkesgrenser" })
     ).toBeInTheDocument();
   });
 
@@ -40,18 +34,18 @@ describe("Fylkesgrenser", () => {
   it("should toggle Rediger grenser on click", async () => {
     const { user } = render(<Fylkesgrenser />);
 
-    await user.click(screen.getByRole("button", { name: /rediger grenser/i }));
+    await user.click(screen.getByRole("button", { name: "rediger grenser" }));
 
     // ??? denne funker over, men ikke her av en eller annen grunn, funker i browser
     // await waitForElementToBeRemoved(() =>
-    //   screen.getByRole("alert", { name: /henter inndelinger\.fylkesgrenser/i })
+    //   screen.getByRole("alert", { name: "henter inndelinger\.fylkesgrenser" })
     // );
 
-    await user.click(screen.getByRole("button", { name: /stopp redigering/i }));
+    await user.click(screen.getByRole("button", { name: "stopp redigering" }));
 
     expect(
       await screen.findByRole("button", {
-        name: /rediger grenser/i,
+        name: "rediger grenser",
       })
     ).toBeInTheDocument();
   });

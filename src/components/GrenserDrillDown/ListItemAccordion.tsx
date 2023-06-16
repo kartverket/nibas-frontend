@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from "react";
+import { ReactNode, useState } from "react";
 import styled from "styled-components";
 import Button from "components/form/Button";
 import Icon from "components/Icon";
@@ -9,15 +9,16 @@ type Props = {
   className?: string;
   initialOpen?: boolean;
   subButton?: ReactNode;
+  children?: ReactNode;
 };
 
-const ListItemAccordion: React.FC<Props> = ({
+const ListItemAccordion = ({
   title,
   children,
   className,
   initialOpen,
   subButton,
-}) => {
+}: Props) => {
   const [open, setOpen] = useState(initialOpen ?? false);
 
   return (

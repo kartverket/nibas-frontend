@@ -8,7 +8,7 @@ export const stemmekretsgrenserFetcher = async (
 ) => {
   const promises: Promise<FeatureCollection>[] = stemmekretsIds.map(
     async (kretsId) =>
-      fetcherWithToken(`/v1/stemmekretser/${kretsId}/grenser`, token)
+      fetcherWithToken([`/v1/stemmekretser/${kretsId}/grenser`, token])
   );
 
   const stemmekretsFeatures = await Promise.all(promises);

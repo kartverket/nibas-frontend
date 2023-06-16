@@ -3,12 +3,13 @@ import {
   OppdaterUtkastRequest,
   OpprettUtkastRequest,
 } from "types/api";
+import { getUrlForPath } from "utils/api";
 
 export const createUtkast = (
   utkast: OpprettUtkastRequest,
   token: string | undefined
 ) => {
-  return fetch(`v1/utkast`, {
+  return fetch(getUrlForPath(`v1/utkast`), {
     method: "POST",
     body: JSON.stringify(utkast),
     headers: {
@@ -23,7 +24,7 @@ export const updateUtkast = (
   utkast: OppdaterUtkastRequest,
   token: string | undefined
 ) => {
-  return fetch(`v1/utkast/${id}`, {
+  return fetch(getUrlForPath(`v1/utkast/${id}`), {
     method: "PUT",
     body: JSON.stringify(utkast),
     headers: {
@@ -38,7 +39,7 @@ export const publishUtkast = (
   utkast: OppdaterUtkastRequest,
   token: string | undefined
 ) => {
-  return fetch(`v1/utkast/${id}/publiser`, {
+  return fetch(getUrlForPath(`v1/utkast/${id}/publiser`), {
     method: "POST",
     body: JSON.stringify(utkast),
     headers: {
@@ -49,7 +50,7 @@ export const publishUtkast = (
 };
 
 export const deleteUtkast = (utkastId: string, token: string | undefined) => {
-  return fetch(`v1/utkast/${utkastId}`, {
+  return fetch(getUrlForPath(`v1/utkast/${utkastId}`), {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -63,7 +64,7 @@ export const resolveUtkastConflict = (
   resolvedConflict: ConflictResolved,
   token: string | undefined
 ) => {
-  return fetch(`v1/utkast/${utkastId}/resolved`, {
+  return fetch(getUrlForPath(`v1/utkast/${utkastId}/resolved`), {
     method: "POST",
     body: JSON.stringify(resolvedConflict),
     headers: {

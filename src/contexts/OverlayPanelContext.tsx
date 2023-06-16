@@ -23,7 +23,11 @@ export const OverlayPanelContext = createContext<
   OverlayPanelContextValue | undefined
 >(undefined);
 
-export const OverlayPanelProvider: React.FC = ({ children }) => {
+export const OverlayPanelProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const { closeSidebarPanel } = useSidebarPanel();
   const { clearSelection } = useFeatureStyle();
   const [activeOverlayPanel, setActiveOverlayPanel] =

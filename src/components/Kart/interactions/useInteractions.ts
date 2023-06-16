@@ -21,8 +21,10 @@ const useInteractions = () => {
 
     vectorLayers.forEach((layer) => {
       const source = layer.getSource();
-      const snap = new Snap({ source });
-      snaps.push(snap);
+      if (source) {
+        const snap = new Snap({ source });
+        snaps.push(snap);
+      }
     });
 
     // Rekkefølgen her er potensielt viktig for at events skal avbryte hverandre i riktig rekkefølge

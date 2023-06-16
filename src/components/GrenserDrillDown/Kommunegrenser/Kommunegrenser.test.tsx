@@ -6,36 +6,34 @@ describe("Kommunegrenser", () => {
     const { user } = render(<Kommunegrenser />);
 
     const kommuneGrenserAccordionButton = screen.getByRole("button", {
-      name: /åpne inndelinger.kommunegrenser/i,
+      name: "inndelinger.Kommunegrenser Åpne inndelinger.Kommunegrenser",
     });
     await user.click(kommuneGrenserAccordionButton);
 
     const agderAccordionButton = await screen.findByRole("button", {
-      name: /åpne agder/i,
+      name: "Åpne Agder",
     });
     await user.click(agderAccordionButton);
 
-    expect(await screen.findByText(/malvik/i)).toBeInTheDocument();
-    expect(await screen.findByText(/giske/i)).toBeInTheDocument();
+    expect(await screen.findByText("Malvik")).toBeInTheDocument();
+    expect(await screen.findByText("Giske")).toBeInTheDocument();
   });
 
   it("should toggle eye on eye click", async () => {
     const { user } = render(<Kommunegrenser />);
 
     await user.click(
-      screen.getByRole("button", { name: /åpne inndelinger\.Kommunegrenser/i })
+      screen.getByRole("button", {
+        name: "inndelinger.Kommunegrenser Åpne inndelinger.Kommunegrenser",
+      })
     );
 
-    await user.click(screen.getByRole("button", { name: /vis agder/i }));
+    await user.click(screen.getByRole("button", { name: "Vis Agder" }));
 
-    await waitForElementToBeRemoved(() =>
-      screen.getByRole("alert", { name: /henter agder/i })
-    );
-
-    await user.click(screen.getByRole("button", { name: /skjul agder/i }));
+    await user.click(screen.getByRole("button", { name: "Skjul Agder" }));
 
     expect(
-      screen.getByRole("button", { name: /vis agder/i })
+      screen.getByRole("button", { name: "Vis Agder" })
     ).toBeInTheDocument();
   });
 
@@ -44,23 +42,23 @@ describe("Kommunegrenser", () => {
     const { user } = render(<Kommunegrenser />);
 
     await user.click(
-      screen.getByRole("button", { name: /åpne inndelinger\.Kommunegrenser/i })
+      screen.getByRole("button", { name: "åpne inndelinger\.Kommunegrenser" })
     );
 
     await user.click(
-      screen.getAllByRole("button", { name: /rediger grenser/i })[0]
+      screen.getAllByRole("button", { name: "rediger grenser" })[0]
     );
 
     // ??? denne funker over, men ikke her av en eller annen grunn, funker i browser
     // await waitForElementToBeRemoved(() =>
-    //   screen.getByRole("alert", { name: /henter inndelinger\.fylkesgrenser/i })
+    //   screen.getByRole("alert", { name: "henter inndelinger\.fylkesgrenser" })
     // );
 
-    await user.click(screen.getByRole("button", { name: /stopp redigering/i }));
+    await user.click(screen.getByRole("button", { name: "stopp redigering" }));
 
     expect(
       screen.queryByRole("button", {
-        name: /stopp redigering/i,
+        name: "stopp redigering",
       })
     ).not.toBeInTheDocument();
   });
