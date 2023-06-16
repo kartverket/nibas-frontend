@@ -79,6 +79,9 @@ const statusStyles: Record<Status, StatusStyle> = {
 };
 
 const ToastContent = styled.div<{ hasDescription: boolean }>`
+  display: grid;
+  grid-gap: 8px;
+
   ${(props) =>
     props.hasDescription
       ? css`
@@ -89,11 +92,6 @@ const ToastContent = styled.div<{ hasDescription: boolean }>`
       : css`
           grid-template-areas: "icon title";
         `};
-
-  display: grid;
-
-  flex-direction: column;
-  grid-gap: 8px;
 `;
 
 const ToastIcon = styled(Icon)`
