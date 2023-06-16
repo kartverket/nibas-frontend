@@ -31,8 +31,8 @@ describe("GrenserDrillDown", () => {
   it("should render all accordions", () => {
     renderWithProvider(<GrenserDrillDown />);
 
-    expect(screen.getByText("Fylkesgrenser")).toBeInTheDocument();
-    expect(screen.getByText("Kommunegrenser")).toBeInTheDocument();
+    expect(screen.getByText("Fylker")).toBeInTheDocument();
+    expect(screen.getByText("Kommuner")).toBeInTheDocument();
     expect(screen.getByText("Stemmekretser")).toBeInTheDocument();
     expect(screen.getByText("Grunnkretser")).toBeInTheDocument();
   });

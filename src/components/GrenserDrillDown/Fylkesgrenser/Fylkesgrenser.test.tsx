@@ -6,7 +6,7 @@ describe("Fylkesgrenser", () => {
     const { user } = render(<Fylkesgrenser />);
 
     const fylkesGrenserAccordionButton = screen.getByRole("button", {
-      name: "Åpne Fylkesgrenser",
+      name: "Åpne Fylker",
     });
     await user.click(fylkesGrenserAccordionButton);
 
@@ -17,35 +17,11 @@ describe("Fylkesgrenser", () => {
   it("should toggle eye on eye click", async () => {
     const { user } = render(<Fylkesgrenser />);
 
-    await user.click(screen.getByRole("button", { name: "Vis Fylkesgrenser" }));
-
-    await user.click(
-      screen.getByRole("button", { name: "Skjul Fylkesgrenser" })
-    );
+    await user.click(screen.getByRole("button", { name: "Vis Fylker" }));
+    await user.click(screen.getByRole("button", { name: "Skjul Fylker" }));
 
     expect(
-      screen.getByRole("button", { name: "Vis Fylkesgrenser" })
+      screen.getByRole("button", { name: "Vis Fylker" })
     ).toBeInTheDocument();
   });
-
-  /* TODO: Midlertidig skrudd av
-  it("should toggle Rediger grenser on click", async () => {
-    const { user } = render(<Fylkesgrenser />);
-
-    await user.click(screen.getByRole("button", { name: "rediger grenser" }));
-
-    // ??? denne funker over, men ikke her av en eller annen grunn, funker i browser
-    // await waitForElementToBeRemoved(() =>
-    //   screen.getByRole("alert", { name: "henter inndelinger\.fylkesgrenser" })
-    // );
-
-    await user.click(screen.getByRole("button", { name: "stopp redigering" }));
-
-    expect(
-      await screen.findByRole("button", {
-        name: "rediger grenser",
-      })
-    ).toBeInTheDocument();
-  });
-  */
 });

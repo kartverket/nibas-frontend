@@ -11,7 +11,7 @@ const Fylkesgrenser = () => {
       grenseId="fylker"
       grenseType="fylke"
       isFetching={isFetching}
-      title="Fylkesgrenser"
+      title="Fylker"
     >
       <FylkeList />
     </EditableGrenseAccordion>

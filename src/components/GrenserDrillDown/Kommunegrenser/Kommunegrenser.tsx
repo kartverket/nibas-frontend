@@ -11,7 +11,7 @@ const Kommunegrenser = () => {
   const { isAuthenticatedFunc } = useAuthenticationFlow();
 
   return (
-    <ListItemAccordion title="Kommunegrenser">
+    <ListItemAccordion title="Kommuner">
       <div>
         {fylker ? (
           <List>
