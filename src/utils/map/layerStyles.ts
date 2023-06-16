@@ -17,7 +17,7 @@ const getPointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
   // hent punkter når zoomet langt nok inn
   const zoom = map.getView().getZoom() ?? 0;
 
-  if (zoom < 13) return;
+  if (zoom < 11) return;
 
   const coordinates = (feature as Feature<LineString>)
     .getGeometry()
@@ -51,6 +51,16 @@ const lineAndPointStyles = ({
     geometry: getPointsOnFeature,
   }),
 ];
+
+export const selectedPointStyle = new Style({
+  image: new Circle({
+    radius: 6,
+    stroke: new Stroke({ color: "#ffffff", width: 2 }),
+    fill: new Fill({ color: "#0099FF" }),
+  }),
+  fill: new Fill({ color: "#0099FF" }),
+  stroke: new Stroke({ color: "#ffffff" }),
+});
 
 export const grenseStyles = {
   fylke: lineAndPointStyles({ color: "#B92659" }),

@@ -64,7 +64,8 @@
       "sletting-feilet-tittel": "__STRING_NOT_TRANSLATED__"
     },
     "Type utkast": "__STRING_NOT_TRANSLATED__",
-    "Du er nå i redigeringsmodus av dette utkastet": "__STRING_NOT_TRANSLATED__"
+    "Du er nå i redigeringsmodus av dette utkastet": "__STRING_NOT_TRANSLATED__",
+    "opprettetDato": "__STRING_NOT_TRANSLATED__"
   },
   "action": {
     "Stopp redigering": "__STRING_NOT_TRANSLATED__",
@@ -90,7 +91,8 @@
     "Lukk": "__STRING_NOT_TRANSLATED__",
     "Publiser": "__STRING_NOT_TRANSLATED__",
     "Forkast": "__STRING_NOT_TRANSLATED__",
-    "Endre": "__STRING_NOT_TRANSLATED__"
+    "Endre": "__STRING_NOT_TRANSLATED__",
+    "Flytt": "__STRING_NOT_TRANSLATED__"
   },
   "Logg inn for å se listen": "__STRING_NOT_TRANSLATED__",
   "inndelinger": {
@@ -183,5 +185,8 @@
   "Ja": "__STRING_NOT_TRANSLATED__",
   "Nei": "__STRING_NOT_TRANSLATED__",
   "Redigeringsmodus": "__STRING_NOT_TRANSLATED__",
-  "Nasjonal inndelingsbase": "__STRING_NOT_TRANSLATED__"
+  "Nasjonal inndelingsbase": "__STRING_NOT_TRANSLATED__",
+  "alertmodal": {
+    "errorcode": "__STRING_NOT_TRANSLATED__"
+  }
 }

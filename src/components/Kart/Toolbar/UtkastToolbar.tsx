@@ -4,7 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import { Translation } from "i18n";
 import { useTranslation } from "react-i18next";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import { useToolbar } from "contexts/ToolbarContext";
+import { useHistory } from "contexts/HistoryContext";
 import { translateKeysByEndringsType } from "contexts/UtkastContext/constants";
 import { historyToUtkastOperations } from "contexts/UtkastContext/utils";
 import { createUtkast as createApiUtkast } from "api/utkast";
@@ -15,6 +15,7 @@ import Heading from "components/typography/Heading";
 import { Frame } from "./components";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
+import { ApiErrorResponse } from "../../../types/api";
 
 const UtkastFrame = styled(Frame)`
   flex-direction: column;
@@ -44,7 +45,7 @@ const UtkastToolbar = ({
   const [utkastName, setUtkastName] = useState("");
   const [utkastType, setUtkastType] = useState("");
   const { tokenHolderFunc } = useAuthenticationFlow();
-  const { history, clearHistory } = useToolbar();
+  const { history, clearHistory } = useHistory();
   const setSearchParams = useSearchParams()[1];
   const { setError } = useErrorHandling();
 
@@ -75,9 +76,10 @@ const UtkastToolbar = ({
       clearHistory({ hasPreviouslySavedHistory: true });
       promptUtkast();
     } else if (statusCode.isError(response.status)) {
+      const wrapper = (await response.json()) as ApiErrorResponse;
       setError({
-        title: "Opprettelse av utkast feilet",
-        body: `Feilkode: ${response.status}`,
+        ...wrapper.errorDescription,
+        errorCode: wrapper.errorCode,
       });
     }
   };

@@ -77,10 +77,7 @@ export type FramtidigVersjonConflict =
 export type ConflictResponseWrapper =
   components["schemas"]["ConflictResponseWrapper"];
 export type ConflictResolved = components["schemas"]["ConflictResolved"];
-export type GeometriErrorResponse =
-  components["schemas"]["GeometriErrorResponse"];
 export type ApiErrorResponse = components["schemas"]["ApiErrorResponse"];
-export type BadRequestResponse = GeometriErrorResponse | ApiErrorResponse;
 
 // custom typer basert på api doc
 export type ApiPath = keyof paths;

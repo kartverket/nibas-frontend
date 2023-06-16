@@ -6,7 +6,7 @@ import { ObjectEvent } from "ol/Object";
 import { useForm } from "react-hook-form";
 import useAsyncKodeliste from "./useAsyncKodeliste";
 import { addMetadataEntryFromFeature } from "../MetadataPanel/utils";
-import { useToolbarSaving } from "contexts/ToolbarContext";
+import { useHistory } from "contexts/HistoryContext";
 import { Metadata } from "types/api";
 
 type Inputs = {
@@ -70,7 +70,7 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
     initialItemId: metadata.commonGrense?.posisjonskvalitet?.maalemetode.id,
   });
 
-  const { addEntry } = useToolbarSaving();
+  const { addHistoryEntry } = useHistory();
 
   useEffect(() => {
     const updateFormOnPropertyChange = (e: ObjectEvent) => {
@@ -98,7 +98,7 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
   const updateDraftFromFeature = () => {
     addMetadataEntryFromFeature(
       feature as Feature<LineString>,
-      addEntry,
+      addHistoryEntry,
       getUpdatedMetadata(
         getValues(),
         feature.getProperties().metadata as Metadata

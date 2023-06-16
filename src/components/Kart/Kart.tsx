@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { map } from "./constants";
 import OverlayPopup from "./OverlayPopup";
 import SidebarPanels from "./SidebarPanels";
-import useInteractions from "hooks/interactions/useInteractions";
+import useInteractions from "./interactions/useInteractions";
 import { initBakgrunnskartLayers, initGrenserLayers } from "utils/map/layers";
 import Toolbar from "./Toolbar/Toolbar";
 import OverlayPanels from "./OverlayPanels/OverlayPanels";

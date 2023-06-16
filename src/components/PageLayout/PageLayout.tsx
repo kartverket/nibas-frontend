@@ -5,10 +5,11 @@ import Kart from "components/Kart";
 import Sidebar from "components/Sidebar";
 import TopBar from "components/TopBar";
 import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
-import AlertModal from "components/AlertModal";
+import AlertModal from "components/Status/AlertModal";
 import { useTranslation } from "react-i18next";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
+import { ApiErrorResponse } from "../../types/api";
 
 const PageLayout = () => {
   const { t } = useTranslation();
@@ -25,9 +26,10 @@ const PageLayout = () => {
             // eslint-disable-next-line no-console
             console.log("onError", err);
             if (statusCode.isError(err.status)) {
+              const wrapper = err as ApiErrorResponse;
               setError({
-                title: "Får ikke kontakt med systemet",
-                body: `Vi får ikke kontakt med basen. Vennligst prøv igjen senere. Om feilen fortsetter, ta gjerne kontakt med Kartverket. Feilkode: ${err.status}`,
+                ...wrapper.errorDescription,
+                errorCode: wrapper.errorCode,
               });
             }
           },
@@ -42,7 +44,9 @@ const PageLayout = () => {
           <AlertModal
             status="error"
             title={error.title}
-            body={error.body}
+            description={error.description}
+            additionalInfo={error.additionalInfo}
+            errorCode={error.errorCode}
             isOpen={true}
             onClose={() => setError(null)}
             primaryAction={{

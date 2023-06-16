@@ -1,8 +1,10 @@
 import styled from "styled-components";
-import Button from "./form/Button";
-import CloseButton from "./form/Button/CloseButton";
-import Icon from "./Icon";
-import { Modal, ModalContent } from "./Modal";
+import Button from "../form/Button";
+import CloseButton from "../form/Button/CloseButton";
+import Icon from "../Icon";
+import { Modal, ModalContent } from "../Modal";
+import { Status, StatusStyle, statusStyles } from "./common";
+import { useTranslation } from "react-i18next";
 
 const borderRadius = "12px";
 const border = "2px solid var(--gray_light)";
@@ -13,12 +15,6 @@ const ModalElement = styled(ModalContent)`
   box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.15);
   border-radius: ${borderRadius};
 `;
-
-type StatusStyle = {
-  icon: string;
-  foreground: string;
-  background: string;
-};
 
 const StatusIcon = styled(Icon).attrs((props) => ({
   icon: props.icon,
@@ -68,8 +64,17 @@ const Title = styled.h3`
   margin: 0;
 `;
 
-const Body = styled.div`
+const BodyText = styled.p`
   padding: 0 48px;
+  margin: 0;
+  color: var(--gray_dark);
+  white-space: pre-line;
+`;
+
+const BodyTextExtra = styled.p`
+  margin: 0;
+  padding: 0 48px;
+  font-style: italic;
   color: var(--gray_dark);
   white-space: pre-line;
 `;
@@ -80,8 +85,6 @@ const Buttons = styled.div`
   gap: 10px;
 `;
 
-type Status = "error" | "warning" | "info";
-
 type Action = {
   onClick: () => void;
   text: string;
@@ -90,40 +93,27 @@ type Action = {
 type Props = {
   status: Status;
   title: string;
-  body?: string;
+  description: string;
+  errorCode?: string;
+  additionalInfo?: string;
   isOpen: boolean;
   onClose: () => void;
   primaryAction?: Action;
   secondaryAction?: Action;
 };
 
-const statusStyles: Record<Status, StatusStyle> = {
-  error: {
-    icon: "dangerous",
-    background: "var(--pink)",
-    foreground: "var(--red_error_message)",
-  },
-  warning: {
-    icon: "emergency_home",
-    background: "var(--yellow_light)",
-    foreground: "var(--yellow_darker)",
-  },
-  info: {
-    icon: "help",
-    background: "var(--blue_light)",
-    foreground: "var(--blue_dark)",
-  },
-};
-
 const AlertModal = ({
   status,
   title,
-  body,
+  description,
+  additionalInfo,
+  errorCode,
   isOpen,
   onClose,
   primaryAction,
   secondaryAction,
 }: Props) => {
+  const { t } = useTranslation();
   return (
     <Modal isOpen={isOpen} onRequestClose={onClose} modalElement={ModalElement}>
       <Header {...statusStyles[status]}>
@@ -132,7 +122,13 @@ const AlertModal = ({
         <Close onClick={onClose} />
       </Header>
       <Content>
-        {body && <Body>{body}</Body>}
+        <BodyText>{description}</BodyText>
+        {additionalInfo && <BodyTextExtra>{additionalInfo}</BodyTextExtra>}
+        {errorCode && (
+          <BodyTextExtra>
+            {t("alertmodal.errorcode", { feilkode: errorCode })}
+          </BodyTextExtra>
+        )}
         {(primaryAction || secondaryAction) && (
           <Buttons>
             {secondaryAction && (

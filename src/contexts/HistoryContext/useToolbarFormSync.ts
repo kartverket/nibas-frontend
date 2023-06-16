@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { KretsHistoryEntry, UtkastEntry } from "contexts/ToolbarContext";
+import { KretsHistoryEntry, UtkastEntry } from "contexts/HistoryContext";
 
 type FormEntry = KretsHistoryEntry | UtkastEntry;
 

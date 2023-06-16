@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { GrunnkretsEntry, useToolbarSaving } from "contexts/ToolbarContext";
-import useKretsToolbarSync from "contexts/ToolbarContext/useToolbarFormSync";
+import { GrunnkretsEntry, useHistory } from "contexts/HistoryContext";
+import useKretsToolbarSync from "contexts/HistoryContext/useToolbarFormSync";
 import { GrunnkretsRequest, GrunnkretsResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { updateEditFeatureText } from "utils/map/layerStyles";
@@ -34,7 +34,7 @@ type Props = {
 
 const GrunnkretsRow = ({ grunnkrets, kommuneId }: Props) => {
   const grunnkretsId = getIdFromEntity(grunnkrets);
-  const { addEntry } = useToolbarSaving();
+  const { addHistoryEntry } = useHistory();
   const [isEditing, setIsEditing] = useState(false);
 
   const {
@@ -85,7 +85,7 @@ const GrunnkretsRow = ({ grunnkrets, kommuneId }: Props) => {
 
   const saveAndAddHistoryEntry = () => {
     const newValues = getValues();
-    addEntry({
+    addHistoryEntry({
       type: "grunnkrets",
       kommuneId,
       changes: [

@@ -3,26 +3,32 @@ import ThirdPartyProviders from "./ThirdPartyProviders";
 import { BakgrunnskartProvider } from "contexts/BakgrunnskartContext";
 import { EditGrenserProvider } from "contexts/EditGrenserContext";
 import { SidebarPanelProvider } from "contexts/SidebarPanelContext";
-import { ToolbarProvider } from "contexts/ToolbarContext";
+import { HistoryProvider } from "contexts/HistoryContext";
 import { UtkastProvider } from "contexts/UtkastContext";
 import { ErrorHandlingProvider } from "contexts/ErrorHandlingContext";
 import { OverlayPanelProvider } from "contexts/OverlayPanelContext";
+import { FeatureStyleProvider } from "contexts/FeatureStyleContext";
+import { ToolbarProvider } from "contexts/ToolbarContext";
 
 const Providers: FC = ({ children }) => {
   return (
     <ThirdPartyProviders>
       <ErrorHandlingProvider>
-        <SidebarPanelProvider>
-          <OverlayPanelProvider>
-            <ToolbarProvider>
-              <EditGrenserProvider>
-                <BakgrunnskartProvider>
-                  <UtkastProvider>{children}</UtkastProvider>
-                </BakgrunnskartProvider>
-              </EditGrenserProvider>
-            </ToolbarProvider>
-          </OverlayPanelProvider>
-        </SidebarPanelProvider>
+        <HistoryProvider>
+          <ToolbarProvider>
+            <FeatureStyleProvider>
+              <SidebarPanelProvider>
+                <OverlayPanelProvider>
+                  <EditGrenserProvider>
+                    <BakgrunnskartProvider>
+                      <UtkastProvider>{children}</UtkastProvider>
+                    </BakgrunnskartProvider>
+                  </EditGrenserProvider>
+                </OverlayPanelProvider>
+              </SidebarPanelProvider>
+            </FeatureStyleProvider>
+          </ToolbarProvider>
+        </HistoryProvider>
       </ErrorHandlingProvider>
     </ThirdPartyProviders>
   );

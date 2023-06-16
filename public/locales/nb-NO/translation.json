@@ -8,10 +8,10 @@
   "Nasjonal inndelingsbase": "Nasjonal inndelingsbase",
   "inndelinger": {
     "Delområder": "Delområder",
-    "Fylkesgrenser": "Fylkesgrenser",
+    "Fylkesgrenser": "Fylker",
     "Gestlige inndelinger": "Gestlige inndelinger",
     "Grunnkretser": "Grunnkretser",
-    "Kommunegrenser": "Kommunegrenser",
+    "Kommunegrenser": "Kommuner",
     "Maritime grenser": "Maritime grenser",
     "Postnummerområder": "Postnummerområder",
     "Riksgrenser": "Riksgrenser",
@@ -87,7 +87,7 @@
     "Lagre utkast": "Lagre utkast",
     "Opprett": "Opprett",
     "Lukk utkast": "Lukk utkast",
-    "Flytt": "Flytt",
+    "Flytt": "Flytt punkt",
     "Snap": "Snap",
     "Zoom inn": "Zoom inn",
     "Zoom ut": "Zoom ut",
@@ -164,6 +164,7 @@
     "Retting": "Retting",
     "Vedtatt deling": "Vedtatt deling",
     "Fastsetting": "Fastsetting",
+    "Kvalitetsheving": "Kvalitetsheving",
     "Navneendring": "Navneendring",
     "Nummerendring": "Nummerendring",
     "Navn på utkast": "Navn på utkast",
@@ -212,7 +213,8 @@
       "feil-geometri-tekst": "Utkastet inneholder ugyldig geometri. Vennligst rett opp i feilen og prøv igjen.\n\nFeiltype: {{ feiltype }}\nFeilkode: {{ feilkode }}"
     },
     "utkast-opprettet": "Utkastet er opprettet",
-    "ulagrede-endringer-krets-utdypende": "Er du sikker på at du vil avslutte redigering av denne kommunen? Dersom du avslutter redigering nå mister du alle ulagrede endringer."
+    "ulagrede-endringer-krets-utdypende": "Er du sikker på at du vil avslutte redigering av denne kommunen? Dersom du avslutter redigering nå mister du alle ulagrede endringer.",
+    "opprettetDato": "Opprettet: {{ dato }}"
   },
   "Aktive kartlag": "Aktive kartlag",
   "Logg inn for å se listen": "Logg inn for å se listen",
@@ -230,5 +232,8 @@
   "Velg stemmekretsen du vil slå sammen med": "Velg stemmekretsen du vil slå sammen med",
   "stemmekretssammenslaaing": {
     "lagt-til-i-utkast": "Utkast opprettet. Stemmekretssammenslåing lagret i utkastet."
+  },
+  "alertmodal": {
+    "errorcode": "Feilkode: {{ feilkode }}"
   }
 }

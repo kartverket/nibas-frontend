@@ -15,7 +15,6 @@ import Input from "components/form/Input";
 import { Divider } from "components/Divider";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import Button from "components/form/Button";
-import { useToolbar } from "contexts/ToolbarContext";
 import { useTranslation } from "react-i18next";
 import CreateUtkastModal, {
   CreateUtkastCallbackArgument,
@@ -26,6 +25,7 @@ import { MergeMultiselect } from "./MergeMultiselect";
 import Select from "components/form/Select/Select";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import Heading from "components/typography/Heading";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 
 const Form = styled.form`
   display: flex;
@@ -61,7 +61,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
   const { setError } = useErrorHandling();
   const { utkast, updateUtkast } = useUtkast();
   const { tokenHolderFunc } = useAuthenticationFlow();
-  const { setAndSaveSammenslaaingsFeatures } = useToolbar();
+  const { setAndSaveSammenslaaingsFeatures } = useFeatureStyle();
   const { data: stemmekretserByKommune } = useKommuneStemmekretser(
     flatedata ? getIdFromEntity(flatedata) : ""
   );
@@ -221,7 +221,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
     if (utkast) {
       setError({
         title: t("stemmekrets.utkast-sammenslaaing-alert.tittel"),
-        body: t("stemmekrets.utkast-sammenslaaing-alert.tekst"),
+        description: t("stemmekrets.utkast-sammenslaaing-alert.tekst"),
       });
       return;
     }

@@ -3,11 +3,11 @@ import { useTranslation } from "react-i18next";
 import { map } from "../constants";
 import { Frame, toolbarSpacing } from "./components";
 import ModeButton from "./ModeButton";
-import { useToolbar, useToolbarActions } from "contexts/ToolbarContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { Divider, DividerVertical } from "components/Divider";
+import { useToolbar } from "contexts/ToolbarContext";
 
 const Container = styled.div`
   display: flex;
@@ -28,7 +28,7 @@ const ZoomButtons = styled(Frame)`
 // TODO: vurder om punkt og linje-knapper bør skjules inntil man er i redigeringsmodus
 const ButtonToolbar = () => {
   const { t } = useTranslation();
-  const { undo, redo } = useToolbarActions();
+  const { undo, redo } = useToolbar();
   const { activePointMode, togglePointMode, activeEditModes, toggleEditMode } =
     useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
@@ -41,6 +41,14 @@ const ButtonToolbar = () => {
     activeOverlayPanel === "grunnkrets" || activeOverlayPanel === "stemmekrets";
   const mergeIsAvailable = editingType === "stemmekrets";
   const mergeIsActive = activeOverlayPanel === "sammenslåing";
+
+  const toggleMove = () => {
+    togglePointMode("koordinater");
+
+    if (activeOverlayPanel === "koordinater") {
+      closeOverlayPanel();
+    }
+  };
 
   const toggleMetadata = () => {
     togglePointMode("metadata");
@@ -97,6 +105,14 @@ const ButtonToolbar = () => {
           {t("action.Redo")}
         </ModeButton>
         <DividerVertical />
+        <ModeButton
+          icon="ads_click"
+          ariaLabel="Flytt punkt med koordinater"
+          isActive={activePointMode === "koordinater"}
+          onClick={toggleMove}
+        >
+          {t("action.Flytt")}
+        </ModeButton>
         <ModeButton
           icon="add_location_alt"
           ariaLabel="Legg til punkter"
