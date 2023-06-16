@@ -1,4 +1,4 @@
-import { render, screen, waitForElementToBeRemoved } from "test/test-utils";
+import { render, screen } from "test/test-utils";
 import Fylkesgrenser from "./Fylkesgrenser";
 
 describe("Fylkesgrenser", () => {
