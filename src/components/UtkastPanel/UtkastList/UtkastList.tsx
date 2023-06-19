@@ -5,7 +5,6 @@ import styled from "styled-components";
 import { Fragment, useState } from "react";
 import { Divider } from "components/Divider";
 import Toast from "components/Kart/Toolbar/Toast";
-import { useTranslation } from "react-i18next";
 import { UtkastRef } from "../../../types/api";
 
 const List = styled(UnstyledList)`
