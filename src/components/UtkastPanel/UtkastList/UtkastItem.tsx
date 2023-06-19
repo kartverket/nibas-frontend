@@ -2,10 +2,10 @@ import { useState } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useSearchParams } from "react-router-dom";
 import styled from "styled-components";
+import { Button } from "@kvib/react";
 import { useSWRConfig } from "swr";
 import UtkastItemActive from "./UtkastItemActive";
 import { deleteUtkast as deleteApiUtkast, publishUtkast } from "api/utkast";
-import Button from "components/form/Button";
 import Icon from "components/Icon";
 import useNibasApi from "hooks/useNibasApi";
 import {
@@ -34,6 +34,8 @@ type Props = {
 const UtkastItem = ({ utkast }: Props) => {
   const [isPublishOpen, setIsPublishOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [publiserer, setPubliserer] = useState(false);
+  const [forkaster, setForkaster] = useState(false);
   const [conflictResponse, setConflictResponse] =
     useState<FramtidigVersjonConflict | null>(null);
 
@@ -71,12 +73,15 @@ const UtkastItem = ({ utkast }: Props) => {
 
   const publish = async () => {
     if (!fullUtkast) return;
+    setPubliserer(true);
 
     const response = await publishUtkast(
       utkast.id,
       fullUtkast,
       tokenHolderFunc()?.token
     );
+
+    setPubliserer(false);
 
     if (!response) return;
 
@@ -102,8 +107,10 @@ const UtkastItem = ({ utkast }: Props) => {
 
   const deleteUtkast = async () => {
     if (!fullUtkast) return;
+    setForkaster(true);
 
     const response = await deleteApiUtkast(utkast.id, tokenHolderFunc()?.token);
+    setForkaster(false);
     if (statusCode.isSuccessful(response.status)) {
       await mutate(["/v1/utkast", tokenHolderFunc()?.token]);
 
@@ -214,7 +221,9 @@ const UtkastItem = ({ utkast }: Props) => {
             <CancelButton onClick={() => setIsPublishOpen(false)}>
               Avbryt
             </CancelButton>
-            <Button onClick={publish}>Publiser</Button>
+            <Button colorScheme="blue" onClick={publish} isLoading={publiserer}>
+              Publiser
+            </Button>
           </Buttons>
           {conflictResponse && (
             <UtkastConflicts
@@ -233,7 +242,13 @@ const UtkastItem = ({ utkast }: Props) => {
             <CancelButton onClick={() => setIsDeleteOpen(false)}>
               Avbryt
             </CancelButton>
-            <Button onClick={deleteUtkast}>Forkast</Button>
+            <Button
+              colorScheme="blue"
+              onClick={deleteUtkast}
+              isLoading={forkaster}
+            >
+              Forkast
+            </Button>
           </Buttons>
         </UtkastItemExpanded>
       )}
@@ -303,8 +318,12 @@ const CancelButton = styled(Button).attrs(() => ({
 `;
 
 const UnstyledButton = styled(Button).attrs(() => ({
-  variant: "unstyled",
+  variant: "ghost",
 }))`
+  padding: 0 !important;
+  &:hover {
+    background: none !important;
+  }
   &:focus-visible {
     ${Icon} {
       ${Outline}
