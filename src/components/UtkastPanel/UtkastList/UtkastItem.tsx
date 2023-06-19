@@ -72,10 +72,8 @@ const UtkastItem = ({ utkast, setUtkastJustPublished }: Props) => {
     }
   };
 
-  //her må jeg gjøre noe
   const publish = async () => {
     if (!fullUtkast) {
-      //tilbakemelding til brukeren om det ikke er et fullt utkast? finn ut hva fullUtkast betyr
       return;
     }
 

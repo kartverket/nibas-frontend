@@ -19,7 +19,6 @@ const sortUtkastByCreatedDesc = (a: UtkastRef, b: UtkastRef): number =>
 
 const UtkastList = () => {
   const { data: utkasts } = useNibasApi("/v1/utkast");
-  const { t } = useTranslation();
   const [utkastJustPublished, setUtkastJustPublished] = useState(false);
 
   if (!utkasts) return null;
@@ -38,7 +37,7 @@ const UtkastList = () => {
         ))}
       </List>
       {utkastJustPublished && (
-        <Toast title={t("utkast.utkast-opprettet")} status={"success"} />
+        <Toast title="Utkast publisert!" status={"success"} />
       )}
     </>
   );

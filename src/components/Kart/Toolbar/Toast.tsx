@@ -1,5 +1,6 @@
 import styled, { css, keyframes } from "styled-components";
 import Icon from "components/Icon";
+import { Status, statusStyles } from "components/Status/common";
 
 type Props = {
   title: string;
@@ -13,6 +14,7 @@ const Toast = ({ text, status, title }: Props) => {
     <Wrapper
       foreground={statusStyles[status].foreground}
       background={statusStyles[status].background}
+      shadow={statusStyles[status].shadow}
     >
       <ToastContent hasDescription={text ? true : false}>
         <ToastIcon icon={statusStyles[status].icon} filled />
@@ -47,37 +49,6 @@ const fadeInFadeOutFromTop = keyframes`
   }
 `;
 
-type Status = "error" | "warning" | "info" | "success";
-
-type StatusStyle = {
-  icon: string;
-  foreground: string;
-  background: string;
-};
-
-const statusStyles: Record<Status, StatusStyle> = {
-  error: {
-    icon: "dangerous",
-    background: "var(--pink)",
-    foreground: "var(--red_error_message)",
-  },
-  warning: {
-    icon: "emergency_home",
-    background: "var(--yellow_light)",
-    foreground: "var(--yellow_darker)",
-  },
-  info: {
-    icon: "help",
-    background: "var(--blue_light)",
-    foreground: "var(--blue_dark)",
-  },
-  success: {
-    icon: "check_circle",
-    background: "var(--green_light)",
-    foreground: "var(--green_dark)",
-  },
-};
-
 const ToastContent = styled.div<{ hasDescription: boolean }>`
   display: grid;
   grid-gap: 8px;
@@ -109,7 +80,11 @@ const ToastDescription = styled.span`
   grid-area: description;
 `;
 
-const Wrapper = styled.div<{ foreground: string; background: string }>`
+const Wrapper = styled.div<{
+  foreground: string;
+  background: string;
+  shadow: string;
+}>`
   top: ${topOffset};
   left: 50%;
   transform: translateX(-50%);
