@@ -54,7 +54,7 @@ describe("UtkastConflictModal", () => {
     );
 
     const publishButton = screen.getByRole("button", {
-      name: "action.Publiser",
+      name: "Publiser",
     });
 
     expect(publishButton).toBeDisabled();

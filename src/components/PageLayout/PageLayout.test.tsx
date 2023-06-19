@@ -21,7 +21,7 @@ describe("PageLayout", () => {
       const { user } = renderWithProvider(<PageLayout />);
 
       const bakgrunnskartButton = screen.getByRole("button", {
-        name: "map sidebar.Kartlag",
+        name: "map Kartlag",
       });
 
       await user.click(bakgrunnskartButton);
@@ -36,20 +36,20 @@ describe("PageLayout", () => {
       const { user } = renderWithProvider(<PageLayout />);
 
       const bakgrunnskartButton = screen.getByRole("button", {
-        name: "map sidebar.Kartlag",
+        name: "map Kartlag",
       });
       await user.click(bakgrunnskartButton);
 
       const nibasButton = screen.getByRole("button", {
-        name: "space_dashboard sidebar.Inndelinger",
+        name: "space_dashboard Inndelinger",
       });
       await user.click(nibasButton);
 
       expect(
-        screen.getByRole("heading", { name: "sidebar.Inndelinger" })
+        screen.getByRole("heading", { name: "Inndelinger" })
       ).toBeInTheDocument();
       expect(
-        screen.queryByRole("heading", { name: "sidebar.Kartlag" })
+        screen.queryByRole("heading", { name: "Kartlag" })
       ).not.toBeInTheDocument();
     });
 
@@ -57,7 +57,7 @@ describe("PageLayout", () => {
       const { user } = renderWithProvider(<PageLayout />);
 
       const inndelingerButton = screen.getByRole("button", {
-        name: "space_dashboard sidebar.Inndelinger",
+        name: "space_dashboard Inndelinger",
       });
       await user.click(inndelingerButton);
 
@@ -67,7 +67,7 @@ describe("PageLayout", () => {
       await user.click(closeButton);
 
       expect(
-        screen.queryByRole("heading", { name: "sidebar.Inndelinger" })
+        screen.queryByRole("heading", { name: "Inndelinger" })
       ).not.toBeInTheDocument();
     });
   });

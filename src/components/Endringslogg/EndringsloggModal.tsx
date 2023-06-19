@@ -1,5 +1,4 @@
 import { Modal, ModalContent } from "components/Modal";
-import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { useUtkastEndringer } from "./hooks/useUtkastEndringer";
 import { EndringsloggGrunnkretsendringer } from "./EndringsloggGrunnkretsendringer";
@@ -16,7 +15,6 @@ export const EndringsloggModal = ({
   isOpen,
   onClose,
 }: EndringsloggModalProps) => {
-  const { t } = useTranslation();
   const { harEndringer, laster, stemmekretsendringer, grunnkretsendringer } =
     useUtkastEndringer();
 
@@ -32,7 +30,7 @@ export const EndringsloggModal = ({
     >
       <ModalHeader>
         <ModalTittel id="utkast-endringer-modal-header">
-          {t("utkast.endringslogg.header")}
+          Endringer i dette utkastet
         </ModalTittel>
         <CloseButton onClick={onClose} />
       </ModalHeader>
@@ -40,7 +38,7 @@ export const EndringsloggModal = ({
       {laster && !stemmekretsendringer && !grunnkretsendringer && (
         <SentrertSpinner />
       )}
-      {!harEndringer && <IngenEndringerMelding />}
+      {!harEndringer && <div>Det er ingen endringer i dette utkastet</div>}
 
       <ScrollableContent>
         {stemmekretsendringer?.map((endringer) => (
@@ -59,12 +57,6 @@ export const EndringsloggModal = ({
       </ScrollableContent>
     </Modal>
   );
-};
-
-const IngenEndringerMelding = () => {
-  const { t } = useTranslation();
-
-  return <div>{t("utkast.endringslogg.ingenEndringer")}</div>;
 };
 
 const ModalWrapper = styled(ModalContent)`

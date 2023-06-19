@@ -3,7 +3,6 @@ import Button from "components/form/Button";
 import { ButtonCell } from "components/Kart/OverlayPanels/Flatedata/KretsTable";
 import { Modal, ModalContent } from "components/Modal";
 import Heading from "components/typography/Heading";
-import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 
 type Props = {
@@ -20,84 +19,73 @@ const UtkastConflictModal = ({
   submit,
   columns,
   children,
-}: Props) => {
-  const { t } = useTranslation();
+}: Props) => (
+  <Modal
+    isOpen
+    modalElement={ModalElement}
+    aria={{
+      labelledby: "conflict-modal-header",
+      describedby: "conflict-modal-description",
+    }}
+  >
+    <Heading tag="h2" size="xs" id="conflict-modal-header">
+      Konflikt mellom fremtidige endringer
+    </Heading>
+    <div id="conflict-modal-description">
+      <p>
+        Endringer du gjorde i dette utkastet har ført til at en annen publisert
+        endring må dobbelsjekkes.
+      </p>
+      <p>Dobbeltsjekk feltene i endringen nedenfor før du publiserer.</p>
+    </div>
+    <Heading tag="h3" size="xs">
+      Endringer i dette utkastet
+    </Heading>
+    <Table cellSpacing={0}>
+      <thead>
+        <tr>
+          {columns.map((column) => (
+            <th key={column}>{column}</th>
+          ))}
+          <th>{/* Bekreft-knapp */}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ConflictTableRow numColumns={currentRow.length}>
+          {currentRow.map((row, i) => (
+            <td key={i}>{row}</td>
+          ))}
+          <ButtonCell>
+            <HiddenCheckbox type="checkbox" label="Bekreft" />
+          </ButtonCell>
+        </ConflictTableRow>
+      </tbody>
+    </Table>
+    <Heading tag="h3" size="xs">
+      Fremtidig endring i konflikt
+    </Heading>
+    <Table cellSpacing={0}>
+      <thead>
+        <tr>
+          {columns.map((column) => (
+            <th key={column}>{column}</th>
+          ))}
+          <th>{/* Bekreft-knapp */}</th>
+        </tr>
+      </thead>
+      {children}
+    </Table>
 
-  return (
-    <Modal
-      isOpen
-      modalElement={ModalElement}
-      aria={{
-        labelledby: "conflict-modal-header",
-        describedby: "conflict-modal-description",
-      }}
-    >
-      <Heading tag="h2" size="xs" id="conflict-modal-header">
-        {t("utkast.Konflikt mellom fremtidige endringer")}
-      </Heading>
-      <div id="conflict-modal-description">
-        <p>
-          {t(
-            "utkast.Endringer du gjorde i dette utkastet har ført til at en annen publisert endring må dobbelsjekkes"
-          )}
-          .
-        </p>
-        <p>
-          {t(
-            "utkast.Dobbeltsjekk feltene i endringen nedenfor før du publiserer"
-          )}
-          .
-        </p>
-      </div>
-      <Heading tag="h3" size="xs">
-        {t("utkast.Endringer i dette utkastet")}
-      </Heading>
-      <Table cellSpacing={0}>
-        <thead>
-          <tr>
-            {columns.map((column) => (
-              <th key={column}>{column}</th>
-            ))}
-            <th>{/* Bekreft-knapp */}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <ConflictTableRow numColumns={currentRow.length}>
-            {currentRow.map((row, i) => (
-              <td key={i}>{row}</td>
-            ))}
-            <ButtonCell>
-              <HiddenCheckbox type="checkbox" label="Bekreft" />
-            </ButtonCell>
-          </ConflictTableRow>
-        </tbody>
-      </Table>
-      <Heading tag="h3" size="xs">
-        {t("utkast.Fremtidig endring i konflikt")}
-      </Heading>
-      <Table cellSpacing={0}>
-        <thead>
-          <tr>
-            {columns.map((column) => (
-              <th key={column}>{column}</th>
-            ))}
-            <th>{/* Bekreft-knapp */}</th>
-          </tr>
-        </thead>
-        {children}
-      </Table>
-
-      <Buttons>
-        <Button variant="secondary" onClick={onCancel}>
-          {t("action.Avbryt")}
-        </Button>
-        <Button onClick={submit} disabled={!submit}>
-          {t("action.Publiser")}
-        </Button>
-      </Buttons>
-    </Modal>
-  );
-};
+    <Buttons>
+      <Button variant="secondary" onClick={onCancel}>
+        Avbryt
+      </Button>
+      <Button onClick={submit} disabled={!submit}>
+        Publiser
+      </Button>
+    </Buttons>
+  </Modal>
+);
 
 const ModalElement = styled(ModalContent)`
   display: flex;

@@ -106,18 +106,18 @@ describe("Toolbar", () => {
     await user.click(screen.getByRole("button", { name: "Lagre utkast" }));
 
     await user.type(
-      screen.getByRole("textbox", { name: "utkast.Navn på utkast" }),
+      screen.getByRole("textbox", { name: "Navn på utkast" }),
       "Utkast 1"
     );
 
     await user.selectOptions(
       screen.getByRole("combobox", {
-        name: "utkast.Endringstype expand_more",
+        name: "Endringstype expand_more",
       }),
       "Retting"
     );
 
-    await user.click(screen.getByRole("button", { name: "action.Opprett" }));
+    await user.click(screen.getByRole("button", { name: "Opprett" }));
 
     await waitFor(() => expect(window.location.search).toContain("?utkast=1"));
     // denne skal egentlig bli disabled, men det er via clearHistory() som endrer context state

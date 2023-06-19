@@ -1,4 +1,3 @@
-import { useTranslation } from "react-i18next";
 import {
   Grunnkretsendringer,
   GrunnkretsMetadataEndring,
@@ -21,14 +20,10 @@ type EndringsloggGrunnkretsendringerProps = {
 export const EndringsloggGrunnkretsendringer = ({
   endringer,
 }: EndringsloggGrunnkretsendringerProps) => {
-  const { t } = useTranslation();
-
   return (
     <EndringSection>
       <Underoverskrift>
-        {t("utkast.endringslogg.grunnkrets-tittel", {
-          kommune: `${endringer.kommune.nummer} ${endringer.kommune.navn}`,
-        })}
+        {`Grunnkretser i ${endringer.kommune.nummer} ${endringer.kommune.navn}`}
       </Underoverskrift>
       <GrunnkretsGrensejusteringer
         grendejusteringer={endringer.grensejusteringer}
@@ -50,17 +45,13 @@ type GrunnkretsGrensejusteringerProps = {
 const GrunnkretsGrensejusteringer = ({
   grendejusteringer,
 }: GrunnkretsGrensejusteringerProps) => {
-  const { t } = useTranslation();
-
   if (grendejusteringer == null || grendejusteringer.length === 0) {
     return null;
   }
 
   return (
     <EndringSection>
-      <Seksjonsoverskrift>
-        {t("utkast.endringslogg.endring.grenseendringer")}
-      </Seksjonsoverskrift>
+      <Seksjonsoverskrift>Grensejusteringer</Seksjonsoverskrift>
       <UnstyledList>
         {grendejusteringer.map((grensjustering) => (
           <EndringsradListItem key={grensjustering.id.lokalid.value}>
@@ -79,7 +70,6 @@ type GrunnkretsMetadataEndringerProps = {
 const GrunnkretsMetadataEndringer = ({
   metadataendring,
 }: GrunnkretsMetadataEndringerProps) => {
-  const { t } = useTranslation();
   const navn = metadataendring.navn?.til ?? metadataendring.kretsEndret.navn;
   const nummer =
     metadataendring.grunnkretsnummer?.til ??
@@ -91,18 +81,15 @@ const GrunnkretsMetadataEndringer = ({
         <span>
           {navn} {nummer}
         </span>
-        <EndringstypeTag>{t("utkast.endringslogg.metadata")}</EndringstypeTag>
+        <EndringstypeTag>Metadataendringer</EndringstypeTag>
       </Seksjonsoverskrift>
       <UnstyledList>
         {metadataendring.navn && (
-          <Endringsrad
-            tittel={t("utkast.endringslogg.endring.grunnkretsnavn")}
-            endring={metadataendring.navn}
-          />
+          <Endringsrad tittel="Grunnkretsnavn" endring={metadataendring.navn} />
         )}
         {metadataendring.grunnkretsnummer && (
           <Endringsrad
-            tittel={t("utkast.endringslogg.endring.grunnkretsnummer")}
+            tittel="Grunnkretsnummer"
             endring={metadataendring.grunnkretsnummer}
           />
         )}

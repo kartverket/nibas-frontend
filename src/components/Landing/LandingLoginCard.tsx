@@ -1,23 +1,17 @@
 import styled from "styled-components";
 import Icon from "../Icon/Icon";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import { useTranslation } from "react-i18next";
 import { Outline } from "style/mixins";
 
 export const LandingLoginCard = () => {
   const { handleAuthenticateFunc } = useAuthenticationFlow();
-  const { t } = useTranslation();
 
   return (
     <Card onClick={() => handleAuthenticateFunc("/")}>
       <div>
-        <CardHeading>
-          {t("auth.Logg inn i Nasjonal inndelingsbase")}
-        </CardHeading>
+        <CardHeading>Logg inn i Nasjonal inndelingsbase</CardHeading>
         <CardParagraph>
-          {t(
-            "auth.Denne tjenesten er kun tilgjengelig for autoriserte brukere"
-          )}
+          Denne tjenesten er kun tilgjengelig for autoriserte brukere
         </CardParagraph>
       </div>
       <Arrow />

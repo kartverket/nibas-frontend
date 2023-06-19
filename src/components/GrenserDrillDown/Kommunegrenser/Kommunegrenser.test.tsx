@@ -1,4 +1,4 @@
-import { render, screen, waitForElementToBeRemoved } from "test/test-utils";
+import { render, screen } from "test/test-utils";
 import Kommunegrenser from "./Kommunegrenser";
 
 describe("Kommunegrenser", () => {
@@ -6,7 +6,7 @@ describe("Kommunegrenser", () => {
     const { user } = render(<Kommunegrenser />);
 
     const kommuneGrenserAccordionButton = screen.getByRole("button", {
-      name: "inndelinger.Kommunegrenser Åpne inndelinger.Kommunegrenser",
+      name: "Kommuner Åpne Kommuner",
     });
     await user.click(kommuneGrenserAccordionButton);
 
@@ -24,43 +24,15 @@ describe("Kommunegrenser", () => {
 
     await user.click(
       screen.getByRole("button", {
-        name: "inndelinger.Kommunegrenser Åpne inndelinger.Kommunegrenser",
+        name: "Kommuner Åpne Kommuner",
       })
     );
 
     await user.click(screen.getByRole("button", { name: "Vis Agder" }));
-
     await user.click(screen.getByRole("button", { name: "Skjul Agder" }));
 
     expect(
       screen.getByRole("button", { name: "Vis Agder" })
     ).toBeInTheDocument();
   });
-
-  /* TODO: Midlertidig skrudd av
-  it("should toggle Rediger grenser on click", async () => {
-    const { user } = render(<Kommunegrenser />);
-
-    await user.click(
-      screen.getByRole("button", { name: "åpne inndelinger\.Kommunegrenser" })
-    );
-
-    await user.click(
-      screen.getAllByRole("button", { name: "rediger grenser" })[0]
-    );
-
-    // ??? denne funker over, men ikke her av en eller annen grunn, funker i browser
-    // await waitForElementToBeRemoved(() =>
-    //   screen.getByRole("alert", { name: "henter inndelinger\.fylkesgrenser" })
-    // );
-
-    await user.click(screen.getByRole("button", { name: "stopp redigering" }));
-
-    expect(
-      screen.queryByRole("button", {
-        name: "stopp redigering",
-      })
-    ).not.toBeInTheDocument();
-  });
-  */
 });

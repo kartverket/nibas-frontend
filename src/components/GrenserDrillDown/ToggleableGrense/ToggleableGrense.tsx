@@ -6,7 +6,6 @@ import Icon from "components/Icon";
 import { EditingType } from "contexts/EditGrenserContext";
 import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
 import { GrenseRef } from "types/api";
-import { useTranslation } from "react-i18next";
 import { getIdFromEntity } from "utils/api";
 import { Outline } from "style/mixins";
 
@@ -23,7 +22,6 @@ const ToggleableGrense = <T extends GrenseRef>({
   type,
   features,
 }: Props<T>) => {
-  const { t } = useTranslation();
   const { value, toggleVisible } = useEditGrense(
     type,
     getIdFromEntity(grense),
@@ -49,7 +47,7 @@ const ToggleableGrense = <T extends GrenseRef>({
       />
       <Title>{title}</Title>
       <LinkButton onClick={openInfo} disabled title="Kommer snart!">
-        {value.editing ? t("action.Avslutt redigering") : t("action.Rediger")}
+        {value.editing ? "Avslutt redigering" : "Rediger"}
       </LinkButton>
     </Wrapper>
   );

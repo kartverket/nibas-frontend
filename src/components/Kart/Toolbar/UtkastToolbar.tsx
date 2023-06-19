@@ -1,7 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { useSearchParams } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useHistory } from "contexts/HistoryContext";
 import { translateKeysByEndringsType } from "contexts/UtkastContext/constants";
@@ -40,7 +39,6 @@ const UtkastToolbar = ({
   setUtkastJustCreated,
   setCreateUtkastOpen,
 }: Props) => {
-  const { t } = useTranslation();
   const [utkastName, setUtkastName] = useState("");
   const [utkastType, setUtkastType] = useState("");
   const { tokenHolderFunc } = useAuthenticationFlow();
@@ -86,21 +84,21 @@ const UtkastToolbar = ({
   return (
     <UtkastFrame>
       <Heading size="xs" tag="h3">
-        {t("utkast.Opprett et nytt utkast")}
+        Opprett et nytt utkast
       </Heading>
       <Input
-        label={t("utkast.Navn på utkast")}
-        placeholder={t("f.eks. Endring av stemmekrets i Froland")}
+        label="Navn på utkast"
+        placeholder="f.eks. Endring av stemmekrets i Froland"
         value={utkastName}
         onChange={(e) => setUtkastName(e.target.value)}
       />
       <Select
-        label={t("utkast.Endringstype")}
+        label="Endringstype"
         value={utkastType}
         onChange={(e) => setUtkastType(e.target.value)}
       >
         <option value="" disabled>
-          {t("utkast.Velg en endringstype fra listen")}
+          Velg en endringstype fra listen
         </option>
         {translateKeysByEndringsType.map((type) => (
           <option key={type} value={type}>
@@ -110,13 +108,13 @@ const UtkastToolbar = ({
       </Select>
       <Buttons>
         <Button onClick={() => setCreateUtkastOpen(false)} variant="tertiary">
-          {t("action.Avbryt")}
+          Avbryt
         </Button>
         <Button
           onClick={createUtkast}
           disabled={utkastType === "" || utkastName === ""}
         >
-          {t("action.Opprett")}
+          Opprett
         </Button>
       </Buttons>
     </UtkastFrame>

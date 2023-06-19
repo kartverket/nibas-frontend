@@ -6,13 +6,13 @@ describe("Sidebar", () => {
     render(<Sidebar />);
 
     const nibasButton = screen.getByRole("button", {
-      name: "space_dashboard sidebar.Inndelinger",
+      name: "space_dashboard Inndelinger",
     });
     const bakgrunnskartButton = screen.getByRole("button", {
-      name: "map sidebar.Kartlag",
+      name: "map Kartlag",
     });
     const utkastButton = screen.getByRole("button", {
-      name: "description sidebar.Utkast",
+      name: "description Utkast",
     });
 
     expect(nibasButton).toBeInTheDocument();

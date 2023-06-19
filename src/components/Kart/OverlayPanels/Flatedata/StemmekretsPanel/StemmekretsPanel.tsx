@@ -1,4 +1,3 @@
-import { useTranslation } from "react-i18next";
 import { KretsTable } from "../KretsTable";
 import StemmekretsRow from "./StemmekretsRow";
 import { useUtkastEntity } from "contexts/UtkastContext";
@@ -18,7 +17,6 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
     "valgdistriktsnummer",
   ]);
 
-  const { t } = useTranslation();
   const { flatedata, closeOverlayPanel } = useOverlayPanel();
 
   const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
@@ -36,13 +34,13 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
           <thead>
             <tr>
               <SortHeader {...sortHeaderProps("stemmekretsnummer")}>
-                {t("stemmekrets.Stemmekretsnummer")}
+                Stemmekretsnummer
               </SortHeader>
               <SortHeader {...sortHeaderProps("stemmekretsnavn")}>
-                {t("tabell.Stemmekretsnavn")}
+                Stemmekretsnavn
               </SortHeader>
               <SortHeader {...sortHeaderProps("valgdistriktsnummer")}>
-                {t("stemmekrets.Valgdistriktsnummer")}
+                Valgdistriktsnummer
               </SortHeader>
               <th>{/* Tom plass for knapp i rader */}</th>
             </tr>

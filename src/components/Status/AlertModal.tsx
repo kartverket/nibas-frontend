@@ -4,7 +4,6 @@ import CloseButton from "../form/Button/CloseButton";
 import Icon from "../Icon";
 import { Modal, ModalContent } from "../Modal";
 import { Status, StatusStyle, statusStyles } from "./common";
-import { useTranslation } from "react-i18next";
 
 const borderRadius = "12px";
 const border = "2px solid var(--gray_light)";
@@ -112,40 +111,33 @@ const AlertModal = ({
   onClose,
   primaryAction,
   secondaryAction,
-}: Props) => {
-  const { t } = useTranslation();
-  return (
-    <Modal isOpen={isOpen} onRequestClose={onClose} modalElement={ModalElement}>
-      <Header {...statusStyles[status]}>
-        <StatusIcon {...statusStyles[status]} />
-        <Title>{title}</Title>
-        <Close onClick={onClose} />
-      </Header>
-      <Content>
-        <BodyText>{description}</BodyText>
-        {additionalInfo && <BodyTextExtra>{additionalInfo}</BodyTextExtra>}
-        {errorCode && (
-          <BodyTextExtra>
-            {t("alertmodal.errorcode", { feilkode: errorCode })}
-          </BodyTextExtra>
-        )}
-        {(primaryAction || secondaryAction) && (
-          <Buttons>
-            {secondaryAction && (
-              <Button variant="secondary" onClick={secondaryAction.onClick}>
-                {secondaryAction.text}
-              </Button>
-            )}
-            {primaryAction && (
-              <Button variant="primary" onClick={primaryAction.onClick}>
-                {primaryAction.text}
-              </Button>
-            )}
-          </Buttons>
-        )}
-      </Content>
-    </Modal>
-  );
-};
+}: Props) => (
+  <Modal isOpen={isOpen} onRequestClose={onClose} modalElement={ModalElement}>
+    <Header {...statusStyles[status]}>
+      <StatusIcon {...statusStyles[status]} />
+      <Title>{title}</Title>
+      <Close onClick={onClose} />
+    </Header>
+    <Content>
+      <BodyText>{description}</BodyText>
+      {additionalInfo && <BodyTextExtra>{additionalInfo}</BodyTextExtra>}
+      {errorCode && <BodyTextExtra>{`Feilkode ${errorCode}`}</BodyTextExtra>}
+      {(primaryAction || secondaryAction) && (
+        <Buttons>
+          {secondaryAction && (
+            <Button variant="secondary" onClick={secondaryAction.onClick}>
+              {secondaryAction.text}
+            </Button>
+          )}
+          {primaryAction && (
+            <Button variant="primary" onClick={primaryAction.onClick}>
+              {primaryAction.text}
+            </Button>
+          )}
+        </Buttons>
+      )}
+    </Content>
+  </Modal>
+);
 
 export default AlertModal;

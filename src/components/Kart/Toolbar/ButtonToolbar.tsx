@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { useTranslation } from "react-i18next";
 import { map } from "../constants";
 import { Frame, toolbarSpacing } from "./components";
 import ModeButton from "./ModeButton";
@@ -27,7 +26,6 @@ const ZoomButtons = styled(Frame)`
 // TODO: en eller annen måte å skjule knapper under en "mer"-meny ved mindre skjerm
 // TODO: vurder om punkt og linje-knapper bør skjules inntil man er i redigeringsmodus
 const ButtonToolbar = () => {
-  const { t } = useTranslation();
   const { undo, redo } = useToolbar();
   const { activePointMode, togglePointMode, activeEditModes, toggleEditMode } =
     useToolbar();
@@ -94,7 +92,7 @@ const ButtonToolbar = () => {
           onClick={undo}
           disabled={!undo}
         >
-          {t("action.Undo")}
+          Undo
         </ModeButton>
         <ModeButton
           icon="redo"
@@ -102,7 +100,7 @@ const ButtonToolbar = () => {
           onClick={redo}
           disabled={!redo}
         >
-          {t("action.Redo")}
+          Redo
         </ModeButton>
         <DividerVertical />
         <ModeButton
@@ -111,7 +109,7 @@ const ButtonToolbar = () => {
           isActive={activePointMode === "koordinater"}
           onClick={toggleMove}
         >
-          {t("action.Flytt")}
+          Flytt
         </ModeButton>
         <ModeButton
           icon="add_location_alt"
@@ -119,7 +117,7 @@ const ButtonToolbar = () => {
           isActive={activePointMode === "add"}
           onClick={() => togglePointMode("add")}
         >
-          {t("action.Legg til")}
+          Legg til
         </ModeButton>
         <ModeButton
           icon="wrong_location"
@@ -127,7 +125,7 @@ const ButtonToolbar = () => {
           isActive={activePointMode === "remove"}
           onClick={() => togglePointMode("remove")}
         >
-          {t("action.Fjern")}
+          Fjern
         </ModeButton>
         <ModeButton
           icon="live_help"
@@ -169,7 +167,7 @@ const ButtonToolbar = () => {
               isActive={activePointMode === "detach"}
               onClick={() => togglePointMode("detach")}
             >
-              {t("action.Løsriv")}
+              Løsriv
             </ModeButton>
             <ModeButton
               icon="location_off"
@@ -177,7 +175,7 @@ const ButtonToolbar = () => {
               isActive={activePointMode === "split"}
               onClick={() => togglePointMode("split")}
             >
-              {t("action.Splitt")}
+              Splitt
             </ModeButton>
           </>
         )}
@@ -187,7 +185,7 @@ const ButtonToolbar = () => {
           isActive={activeEditModes.includes("snap")}
           onClick={() => toggleEditMode("snap")}
         >
-          {t("action.Snap")}
+          Snap
         </ModeButton>
       </Buttons>
       <ZoomButtons>

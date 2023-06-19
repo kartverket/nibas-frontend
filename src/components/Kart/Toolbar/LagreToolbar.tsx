@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { useTranslation } from "react-i18next";
 import { useUtkast } from "contexts/UtkastContext";
 import useAlertModal from "hooks/useAlertModal";
 import ModeButton from "./ModeButton";
@@ -38,14 +37,13 @@ type Props = {
 };
 
 const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
-  const { t } = useTranslation();
   const { canSave } = useToolbar();
   const [endringsloggOpen, setEndringsloggOpen] = useState(false);
   const { utkast, updateUtkastWithHistory, closeUtkast } = useUtkast();
   const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } =
     useAlertModal(
-      t("utkast.ulagrede-endringer"),
-      t("utkast.ulagrede-endringer-utdypende")
+      "Du har endringer i utkastet som ikke er lagret",
+      "Er du sikker på at du vil gå ut av utkastet? Dersom du lukker utkastet nå mister du alle ulagrede endringer."
     );
 
   const handleSave = () => {
@@ -68,7 +66,7 @@ const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
       {utkast ? (
         <>
           <UtkastInfo>
-            <span>{t("utkast.Navn på utkast")}</span>
+            <span>Navn på utkast</span>
             <UtkastNavn>{utkast.navn}</UtkastNavn>
           </UtkastInfo>
           <DividerVertical />
@@ -78,7 +76,7 @@ const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
               ariaLabel="Vis endringer"
               onClick={() => setEndringsloggOpen(true)}
             >
-              {t("action.VisEndringer")}
+              Endringer
             </ModeButton>
           </FeatureToggle>
           <ModeButton
@@ -87,14 +85,14 @@ const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
             onClick={handleSave}
             disabled={!canSave}
           >
-            {t("action.Lagre")}
+            Lagre
           </ModeButton>
           <ModeButton
             icon="close"
             ariaLabel="Lukk utkast"
             onClick={canSave ? openModal : closeUtkast}
           >
-            {t("action.Lukk")}
+            Lukk
           </ModeButton>
         </>
       ) : (
@@ -105,7 +103,7 @@ const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
               ariaLabel="Vis endringer"
               onClick={() => setEndringsloggOpen(true)}
             >
-              {t("action.VisEndringer")}
+              Endringer
             </ModeButton>
           </FeatureToggle>
           <ModeButton
@@ -115,7 +113,7 @@ const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
             disabled={!canSave}
             isActive={createUtkastOpen}
           >
-            {t("action.Lagre")}
+            Lagre
           </ModeButton>
         </>
       )}
@@ -126,11 +124,11 @@ const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
         isOpen={modalIsOpen}
         onClose={closeModal}
         secondaryAction={{
-          text: t("Forkast endringer"),
+          text: "Forkast endringer",
           onClick: closeUtkast,
         }}
         primaryAction={{
-          text: t("Fortsett redigering"),
+          text: "Fortsett redigering",
           onClick: closeModal,
         }}
       />
