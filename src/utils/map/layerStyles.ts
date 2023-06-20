@@ -43,7 +43,7 @@ const lineAndPointStyles = ({
   }),
   new Style({
     image: new Circle({
-      radius: points ? 4 : 0,
+      radius: points ? 2.5 : 0,
       fill: new Fill({
         color,
       }),
