@@ -156,10 +156,6 @@ type Props = {
 const Container = styled.div`
   display: flex;
   justify-content: flex-start;
-
-  @media (min-width: var(--screenBreakXxl)) {
-    flex-direction: column;
-  }
 `;
 
 const Part = styled.div`
@@ -169,15 +165,6 @@ const Part = styled.div`
   &:first-child,
   &:last-child {
     margin: 0;
-  }
-
-  @media (min-width: var(--screenBreakXxl)) {
-    margin: 8px 0;
-
-    &:first-child,
-    &:last-child {
-      margin: 8px 0;
-    }
   }
 `;
 
