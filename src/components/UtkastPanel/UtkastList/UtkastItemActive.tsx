@@ -130,7 +130,7 @@ const UtkastItemActive = ({ utkastId }: Props) => {
       <EditingUtkastText>
         Du er nå i redigeringsmodus av dette utkastet. Alle endringer du gjør i
         inndelingene og kartet vil bli lagret på dette utkastet når du klikker
-        på &quot;Lagre&quot;-knappen øverst på skjermen.
+        på &quot;Lagre&quot;-knappen nederst på skjermen.
       </EditingUtkastText>
       <Buttons>
         <CancelButton onClick={canSave ? openModal : closeUtkast}>
