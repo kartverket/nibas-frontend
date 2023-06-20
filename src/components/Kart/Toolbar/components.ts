@@ -8,7 +8,7 @@ export const Frame = styled.div`
   gap: ${toolbarSpacing}px;
 
   width: fit-content;
-  padding: 20px 12px;
+  padding: 16px 12px;
   border: ${toolbarBorderWidth}px solid var(--gray_light);
   background: white;
   border-radius: 10px;

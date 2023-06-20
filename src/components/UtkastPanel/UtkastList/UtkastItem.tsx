@@ -221,7 +221,7 @@ const UtkastItem = ({ utkast }: Props) => {
             <CancelButton onClick={() => setIsPublishOpen(false)}>
               Avbryt
             </CancelButton>
-            <Button colorScheme="blue" onClick={publish} isLoading={publiserer}>
+            <Button onClick={publish} isLoading={publiserer}>
               Publiser
             </Button>
           </Buttons>

@@ -7,6 +7,7 @@ import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { Divider, DividerVertical } from "components/Divider";
 import { useToolbar } from "contexts/ToolbarContext";
+import ToolbarTooltip from "./ToolbarTooltip";
 
 const Container = styled.div`
   display: flex;
@@ -86,76 +87,95 @@ const ButtonToolbar = () => {
   return (
     <Container>
       <Buttons>
-        <ModeButton
-          icon="undo"
-          ariaLabel="Angre handling"
-          onClick={undo}
-          disabled={!undo}
+        <ToolbarTooltip text="Angrer forrige endring." shortcut="CTRL + Z">
+          <ModeButton
+            icon="undo"
+            ariaLabel="Angre handling"
+            onClick={undo}
+            disabled={!undo}
+          >
+            Undo
+          </ModeButton>
+        </ToolbarTooltip>
+        <ToolbarTooltip
+          text="Gjør om forrige angret handling"
+          shortcut="CTRL + SHIFT + Z"
         >
-          Undo
-        </ModeButton>
-        <ModeButton
-          icon="redo"
-          ariaLabel="Gjør om handling"
-          onClick={redo}
-          disabled={!redo}
-        >
-          Redo
-        </ModeButton>
+          <ModeButton
+            icon="redo"
+            ariaLabel="Gjør om handling"
+            onClick={redo}
+            disabled={!redo}
+          >
+            Redo
+          </ModeButton>
+        </ToolbarTooltip>
         <DividerVertical />
-        <ModeButton
-          icon="ads_click"
-          ariaLabel="Flytt punkt med koordinater"
-          isActive={activePointMode === "koordinater"}
-          onClick={toggleMove}
-        >
-          Flytt
-        </ModeButton>
-        <ModeButton
-          icon="add_location_alt"
-          ariaLabel="Legg til punkter"
-          isActive={activePointMode === "add"}
-          onClick={() => togglePointMode("add")}
-        >
-          Legg til
-        </ModeButton>
-        <ModeButton
-          icon="wrong_location"
-          ariaLabel="Fjern punkter"
-          isActive={activePointMode === "remove"}
-          onClick={() => togglePointMode("remove")}
-        >
-          Fjern
-        </ModeButton>
-        <ModeButton
-          icon="live_help"
-          ariaLabel="Se metadata"
-          isActive={activePointMode === "metadata"}
-          onClick={toggleMetadata}
-        >
-          Metadata
-        </ModeButton>
+        <ToolbarTooltip text="Flytt et punkt på kartet til konkrete koordinater">
+          <ModeButton
+            icon="ads_click"
+            ariaLabel="Flytt punkt med koordinater"
+            isActive={activePointMode === "koordinater"}
+            onClick={toggleMove}
+          >
+            Flytt
+          </ModeButton>
+        </ToolbarTooltip>
+        <ToolbarTooltip text="Legg til flere punkter på en grense.">
+          <ModeButton
+            icon="add_location_alt"
+            ariaLabel="Legg til punkter"
+            isActive={activePointMode === "add"}
+            onClick={() => togglePointMode("add")}
+          >
+            Legg til
+          </ModeButton>
+        </ToolbarTooltip>
+        <ToolbarTooltip text="Fjern et grensepunkt fra en grense.">
+          <ModeButton
+            icon="wrong_location"
+            ariaLabel="Fjern punkter"
+            isActive={activePointMode === "remove"}
+            onClick={() => togglePointMode("remove")}
+          >
+            Fjern
+          </ModeButton>
+        </ToolbarTooltip>
+        <ToolbarTooltip text="Se metadata for en grense. Trykk på grensen for å få opp panelet.">
+          <ModeButton
+            icon="live_help"
+            ariaLabel="Se metadata"
+            isActive={activePointMode === "metadata"}
+            onClick={toggleMetadata}
+          >
+            Metadata
+          </ModeButton>
+        </ToolbarTooltip>
         <DividerVertical />
         {flatedetaljerIsAvailable && (
           <>
             {mergeIsAvailable && (
-              <ModeButton
-                icon="merge"
-                ariaLabel="Slå sammen stemmekretser"
-                isActive={mergeIsActive}
-                onClick={toggleMergePanel}
-              >
-                Slå sammen
-              </ModeButton>
+              <ToolbarTooltip text="Slå sammen 2 stemmekretser.">
+                <ModeButton
+                  icon="merge"
+                  ariaLabel="Slå sammen stemmekretser"
+                  isActive={mergeIsActive}
+                  onClick={toggleMergePanel}
+                >
+                  Slå sammen
+                </ModeButton>
+              </ToolbarTooltip>
             )}
-            <ModeButton
-              icon="feed"
-              ariaLabel="Vis flatedetaljer"
-              isActive={flatedetaljerIsActive}
-              onClick={toggleFlatedetaljer}
-            >
-              Flatedetaljer
-            </ModeButton>
+            <ToolbarTooltip text="Vis og endre flatedetaljene">
+              <ModeButton
+                icon="feed"
+                ariaLabel="Vis flatedetaljer"
+                isActive={flatedetaljerIsActive}
+                onClick={toggleFlatedetaljer}
+              >
+                Flatedetaljer
+              </ModeButton>
+            </ToolbarTooltip>
             <DividerVertical />
           </>
         )}
@@ -179,27 +199,33 @@ const ButtonToolbar = () => {
             </ModeButton>
           </>
         )}
-        <ModeButton
-          icon="magnet"
-          ariaLabel="Snap til bakgrunnskart"
-          isActive={activeEditModes.includes("snap")}
-          onClick={() => toggleEditMode("snap")}
-        >
-          Snap
-        </ModeButton>
+        <ToolbarTooltip text="Skru av/på snapping mot bakgrunnskart.">
+          <ModeButton
+            icon="magnet"
+            ariaLabel="Snap til bakgrunnskart"
+            isActive={activeEditModes.includes("snap")}
+            onClick={() => toggleEditMode("snap")}
+          >
+            Snap
+          </ModeButton>
+        </ToolbarTooltip>
       </Buttons>
       <ZoomButtons>
-        <ModeButton
-          icon="zoom_in"
-          onClick={() => zoom(1)}
-          ariaLabel="Zoom inn på kartet"
-        />
+        <ToolbarTooltip text="Zoom inn på kartet">
+          <ModeButton
+            icon="zoom_in"
+            onClick={() => zoom(1)}
+            ariaLabel="Zoom inn på kartet"
+          />
+        </ToolbarTooltip>
         <Divider />
-        <ModeButton
-          icon="zoom_out"
-          onClick={() => zoom(-1)}
-          ariaLabel="Zoom ut på kartet"
-        />
+        <ToolbarTooltip text="Zoom ut fra kartet">
+          <ModeButton
+            icon="zoom_out"
+            onClick={() => zoom(-1)}
+            ariaLabel="Zoom ut på kartet"
+          />
+        </ToolbarTooltip>
       </ZoomButtons>
     </Container>
   );
