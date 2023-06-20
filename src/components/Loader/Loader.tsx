@@ -30,4 +30,9 @@ const LoaderWrapper = styled.div`
   height: 50px;
 `;
 
+export const SmallLoader = styled(Loader)`
+  height: 40px;
+  width: 40px;
+`;
+
 export default Loader;
