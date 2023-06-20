@@ -1,9 +1,9 @@
 import styled from "styled-components";
-import Loader from "../Loader";
+import { Spinner } from "@kvib/react";
 
 export const FullPageLoader = () => (
   <LoaderWrapper>
-    <Loader />
+    <Spinner size="xl" />
   </LoaderWrapper>
 );
 
@@ -12,9 +12,4 @@ const LoaderWrapper = styled.div`
   padding-top: 5rem;
   justify-content: center;
   align-items: center;
-
-  .loader {
-    height: 4rem;
-    width: 4rem;
-  }
 `;

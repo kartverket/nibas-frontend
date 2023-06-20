@@ -2,9 +2,9 @@ import { Modal, ModalContent } from "components/Modal";
 import styled from "styled-components";
 import { useUtkastEndringer } from "./hooks/useUtkastEndringer";
 import { EndringsloggGrunnkretsendringer } from "./EndringsloggGrunnkretsendringer";
-import Loader from "components/Loader";
 import { EndringsloggStemmekretsendringer } from "./EndringsloggStemmekretsendringer";
 import CloseButton from "../form/Button/CloseButton";
+import { Spinner } from "@kvib/react";
 
 type EndringsloggModalProps = {
   isOpen: boolean;
@@ -36,7 +36,9 @@ export const EndringsloggModal = ({
       </ModalHeader>
 
       {laster && !stemmekretsendringer && !grunnkretsendringer && (
-        <SentrertSpinner />
+        <SentrertSpinner>
+          <Spinner size="xl" />
+        </SentrertSpinner>
       )}
       {!harEndringer && <div>Det er ingen endringer i dette utkastet</div>}
 
@@ -67,8 +69,9 @@ const ModalWrapper = styled(ModalContent)`
   box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.15);
 `;
 
-const SentrertSpinner = styled(Loader)`
-  margin: 40px auto;
+const SentrertSpinner = styled.div`
+  display: flex;
+  justify-content: center;
 `;
 
 const ScrollableContent = styled.section`

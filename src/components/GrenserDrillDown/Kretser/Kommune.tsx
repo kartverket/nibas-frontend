@@ -8,7 +8,7 @@ import { Outline } from "style/mixins";
 import AlertModal from "components/Status/AlertModal";
 import useAlertModal from "hooks/useAlertModal";
 import { useHistory } from "contexts/HistoryContext";
-import { SmallLoader } from "../../Loader/Loader";
+import { Spinner } from "@kvib/react";
 
 type Props = {
   kommune: KommuneRef;
@@ -57,7 +57,7 @@ const Kommune = ({ kommune }: Props) => {
         />
         <Title>{getNavnInSpraak(kommune.navn, "nor")}</Title>
         {lasterData ? (
-          <SmallLoader />
+          <Spinner size="lg" />
         ) : (
           <LinkButton onClick={onAvsluttRedigeringClick}>
             {kommuneValues.editing ? "Avslutt redigering" : "Rediger"}
