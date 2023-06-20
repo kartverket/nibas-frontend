@@ -1,7 +1,7 @@
-import { KvibProvider } from "@kvib/react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { SWRConfig } from "swr";
+import { KvibProvider } from "@kvib/react";
 
 const swrGlobalConfig = {
   revalidateOnFocus: false,
@@ -9,11 +9,11 @@ const swrGlobalConfig = {
 
 const ThirdPartyProviders = ({ children }: { children: React.ReactNode }) => {
   return (
-    <KvibProvider>
-      <DndProvider backend={HTML5Backend}>
+    <DndProvider backend={HTML5Backend}>
+      <KvibProvider>
         <SWRConfig value={swrGlobalConfig}>{children}</SWRConfig>
-      </DndProvider>
-    </KvibProvider>
+      </KvibProvider>
+    </DndProvider>
   );
 };
 

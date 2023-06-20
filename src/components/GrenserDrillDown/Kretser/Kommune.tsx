@@ -8,6 +8,7 @@ import { Outline } from "style/mixins";
 import AlertModal from "components/Status/AlertModal";
 import useAlertModal from "hooks/useAlertModal";
 import { useHistory } from "contexts/HistoryContext";
+import { SmallLoader } from "../../Loader/Loader";
 
 type Props = {
   kommune: KommuneRef;
@@ -55,9 +56,13 @@ const Kommune = ({ kommune }: Props) => {
           }
         />
         <Title>{getNavnInSpraak(kommune.navn, "nor")}</Title>
-        <LinkButton onClick={onAvsluttRedigeringClick} disabled={lasterData}>
-          {kommuneValues.editing ? "Avslutt redigering" : "Rediger"}
-        </LinkButton>
+        {lasterData ? (
+          <SmallLoader />
+        ) : (
+          <LinkButton onClick={onAvsluttRedigeringClick}>
+            {kommuneValues.editing ? "Avslutt redigering" : "Rediger"}
+          </LinkButton>
+        )}
       </KommuneWrapper>
       <AlertModal
         status="warning"
