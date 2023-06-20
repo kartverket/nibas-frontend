@@ -101,21 +101,4 @@ const UnstyledButton = styled(StyledButton)`
   }
 `;
 
-export const LinkButton = styled(Button).attrs(() => ({
-  variant: "unstyled",
-}))`
-  color: var(--blue);
-  text-decoration: underline;
-  text-underline-offset: 4px;
-
-  &:disabled {
-    background: none;
-    cursor: not-allowed;
-
-    &:hover {
-      background: none;
-    }
-  }
-`;
-
 export default Button;

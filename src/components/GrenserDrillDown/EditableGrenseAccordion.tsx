@@ -51,7 +51,7 @@ const EditableGrenseAccordion = ({
           <div>
             <LinkButton
               onClick={toggleEditing}
-              disabled
+              isDisabled
               title="Midlertidig utilgjengelig"
             >
               {value.editing ? "Stopp redigering" : "Rediger grenser"}
