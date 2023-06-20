@@ -8,12 +8,12 @@ import { historyToUtkastOperations } from "contexts/UtkastContext/utils";
 import { createUtkast as createApiUtkast } from "api/utkast";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
-import Button from "components/form/Button";
 import Heading from "components/typography/Heading";
 import { Frame } from "./components";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
 import { ApiErrorResponse } from "../../../types/api";
+import { Button } from "@kvib/react";
 
 const UtkastFrame = styled(Frame)`
   flex-direction: column;
@@ -39,6 +39,7 @@ const UtkastToolbar = ({
   setUtkastJustCreated,
   setCreateUtkastOpen,
 }: Props) => {
+  const [createUtkastLoading, setCreateUtkastLoading] = useState(false);
   const [utkastName, setUtkastName] = useState("");
   const [utkastType, setUtkastType] = useState("");
   const { tokenHolderFunc } = useAuthenticationFlow();
@@ -55,6 +56,7 @@ const UtkastToolbar = ({
   };
 
   const createUtkast = async () => {
+    setCreateUtkastLoading(true);
     const response = await createApiUtkast(
       {
         navn: utkastName,
@@ -64,6 +66,7 @@ const UtkastToolbar = ({
       tokenHolderFunc()?.token
     );
 
+    setCreateUtkastLoading(false);
     if (statusCode.isSuccessful(response.status)) {
       const json = await response.json();
       const utkastId = json.id;
@@ -111,8 +114,10 @@ const UtkastToolbar = ({
           Avbryt
         </Button>
         <Button
+          colorScheme="blue"
           onClick={createUtkast}
           disabled={utkastType === "" || utkastName === ""}
+          isLoading={createUtkastLoading}
         >
           Opprett
         </Button>

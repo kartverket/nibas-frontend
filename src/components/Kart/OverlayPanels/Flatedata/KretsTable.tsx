@@ -30,9 +30,9 @@ export const KretsRow = styled.tr<{ isActive: boolean }>`
     content: "";
     position: absolute;
     left: 0;
+    top: 0;
     height: 100%;
     width: 3px;
-    transition: background 0.1s;
     ${({ isActive }) =>
       isActive &&
       css`
