@@ -1,9 +1,9 @@
 import styled from "styled-components";
-import Loader from "../Loader";
+import { Spinner } from "@kvib/react";
 
 export const FullPageLoader = () => (
   <LoaderWrapper>
-    <Loader />
+    <Spinner size="xl" color="blue" />
   </LoaderWrapper>
 );
 

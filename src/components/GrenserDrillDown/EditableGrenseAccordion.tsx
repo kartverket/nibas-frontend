@@ -1,6 +1,5 @@
 import Button, { LinkButton } from "components/form/Button";
 import Icon from "components/Icon";
-import Loader from "components/Loader";
 import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
 import styled from "styled-components";
 import useVisibility from "hooks/useVisibility";
@@ -8,6 +7,7 @@ import { EditingType } from "contexts/EditGrenserContext";
 import { Feature } from "ol";
 import { Outline } from "style/mixins";
 import { Geometry } from "ol/geom";
+import { Spinner } from "@kvib/react";
 
 type Props = {
   grenseType: EditingType;
@@ -58,7 +58,7 @@ const EditableGrenseAccordion = ({
             </LinkButton>
           </div>
         </TextContent>
-        {isFetching && <Loader aria-label={`Henter ${title}`} />}
+        {isFetching && <Spinner color="blue" />}
         <CaretButton
           variant="unstyled"
           onClick={accordion.toggle}
