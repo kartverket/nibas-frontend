@@ -1,8 +1,8 @@
+import { Heading } from "@kvib/react";
 import Checkbox from "components/Checkbox";
 import Button from "components/form/Button";
 import { ButtonCell } from "components/Kart/OverlayPanels/Flatedata/KretsTable";
 import { Modal, ModalContent } from "components/Modal";
-import Heading from "components/typography/Heading";
 import styled from "styled-components";
 
 type Props = {
@@ -28,7 +28,7 @@ const UtkastConflictModal = ({
       describedby: "conflict-modal-description",
     }}
   >
-    <Heading tag="h2" size="xs" id="conflict-modal-header">
+    <Heading as="h2" size="md" id="conflict-modal-header">
       Konflikt mellom fremtidige endringer
     </Heading>
     <div id="conflict-modal-description">
@@ -38,7 +38,7 @@ const UtkastConflictModal = ({
       </p>
       <p>Dobbeltsjekk feltene i endringen nedenfor før du publiserer.</p>
     </div>
-    <Heading tag="h3" size="xs">
+    <Heading as="h3" size="sm">
       Endringer i dette utkastet
     </Heading>
     <Table cellSpacing={0}>
@@ -61,7 +61,7 @@ const UtkastConflictModal = ({
         </ConflictTableRow>
       </tbody>
     </Table>
-    <Heading tag="h3" size="xs">
+    <Heading as="h3" size="sm">
       Fremtidig endring i konflikt
     </Heading>
     <Table cellSpacing={0}>

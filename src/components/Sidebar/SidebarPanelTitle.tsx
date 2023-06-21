@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import Heading from "components/typography/Heading";
 import CloseButton from "components/form/Button/CloseButton";
+import { Heading } from "@kvib/react";
 
 type Props = {
   closePanel: () => void;
@@ -10,9 +10,9 @@ type Props = {
 const SidebarPanelTitle = ({ title, closePanel }: Props) => {
   return (
     <TitleWrapper>
-      <StyledTitle tag="h2" size="xs">
+      <Heading as="h2" size="md">
         {title}
-      </StyledTitle>
+      </Heading>
       <CloseButton onClick={closePanel} />
     </TitleWrapper>
   );
@@ -27,10 +27,6 @@ const TitleWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-`;
-
-const StyledTitle = styled(Heading)`
-  margin: 0;
 `;
 
 export default SidebarPanelTitle;

@@ -23,8 +23,8 @@ import { deduplicate, removeNull } from "utils/list-utils";
 import { MergeMultiselect } from "./MergeMultiselect";
 import Select from "components/form/Select/Select";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
-import Heading from "components/typography/Heading";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
+import { Heading } from "@kvib/react";
 
 const Form = styled.form`
   display: flex;
@@ -32,18 +32,10 @@ const Form = styled.form`
   gap: 16px;
 `;
 
-const SectionHeading = styled(Heading)`
-  margin: 0;
-`;
-
 const InputsWrapper = styled.div`
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
-
-  input {
-    width: 100%;
-  }
 `;
 
 const Buttons = styled.div`
@@ -245,9 +237,9 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
       {utkastStemmekretser && (
         <FormProvider {...formMethods}>
           <Form onSubmit={handleSubmit(openCreateUtkastModal)}>
-            <SectionHeading tag="h3" size="xs">
+            <Heading as="h3" size="sm">
               Hvilken stemmekrets skal brukes som utgangspunkt?
-            </SectionHeading>
+            </Heading>
             <Select
               {...selectStemmekretsRegister}
               onChange={(e) => {
@@ -276,14 +268,14 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
                 ))}
             </Select>
             <Divider />
-            <SectionHeading tag="h3" size="xs">
+            <Heading as="h3" size="sm">
               Hvilke stemmekretser ønsker du å slå sammen med denne kretsen?
-            </SectionHeading>
+            </Heading>
             <MergeMultiselect alleStemmekretser={utkastStemmekretser} />
             <Divider />
-            <SectionHeading tag="h3" size="xs">
+            <Heading as="h3" size="sm">
               Hva skal den sammenslåtte stemmekretsen hete?
-            </SectionHeading>
+            </Heading>
             <InputsWrapper>
               <Input
                 label="Stemmekretsnummer"

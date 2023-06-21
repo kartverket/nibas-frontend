@@ -8,11 +8,10 @@ import { historyToUtkastOperations } from "contexts/UtkastContext/utils";
 import { createUtkast as createApiUtkast } from "api/utkast";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
-import Heading from "components/typography/Heading";
 import { Modal, ModalContent } from "components/Modal";
 import { statusCode } from "utils/api";
 import { UtkastOperasjoner } from "../../../../types/api";
-import { Button } from "@kvib/react";
+import { Button, Heading } from "@kvib/react";
 
 const ModalElement = styled(ModalContent)`
   display: flex;
@@ -100,7 +99,7 @@ const CreateUtkastModal = ({
       onRequestClose={() => setIsCreateUtkastModalOpen(false)}
       modalElement={ModalElement}
     >
-      <Heading size="xs" tag="h3">
+      <Heading size="xs" as="h3">
         Opprett et nytt utkast
       </Heading>
       <Input

@@ -8,20 +8,15 @@ import { historyToUtkastOperations } from "contexts/UtkastContext/utils";
 import { createUtkast as createApiUtkast } from "api/utkast";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
-import Heading from "components/typography/Heading";
 import { Frame } from "./components";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
 import { ApiErrorResponse } from "../../../types/api";
-import { Button } from "@kvib/react";
+import { Button, Heading } from "@kvib/react";
 
 const UtkastFrame = styled(Frame)`
   flex-direction: column;
   width: 365px;
-
-  ${Heading} {
-    margin: 0;
-  }
 `;
 
 const Buttons = styled.div`
@@ -86,7 +81,7 @@ const UtkastToolbar = ({
 
   return (
     <UtkastFrame>
-      <Heading size="xs" tag="h3">
+      <Heading size="sm" as="h3">
         Opprett et nytt utkast
       </Heading>
       <Input
