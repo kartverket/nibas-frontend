@@ -8,11 +8,11 @@ import { historyToUtkastOperations } from "contexts/UtkastContext/utils";
 import { createUtkast as createApiUtkast } from "api/utkast";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
-import Button from "components/form/Button";
 import Heading from "components/typography/Heading";
 import { Modal, ModalContent } from "components/Modal";
 import { statusCode } from "utils/api";
 import { UtkastOperasjoner } from "../../../../types/api";
+import { Button } from "@kvib/react";
 
 const ModalElement = styled(ModalContent)`
   display: flex;
@@ -53,6 +53,7 @@ const CreateUtkastModal = ({
   setIsCreateUtkastModalOpen,
   callback,
 }: Props) => {
+  const [oppretterUtkast, setOppretterUtkast] = useState(false);
   const [utkastName, setUtkastName] = useState("");
   const [utkastType, setUtkastType] = useState("");
   const { tokenHolderFunc } = useAuthenticationFlow();
@@ -60,6 +61,7 @@ const CreateUtkastModal = ({
   const setSearchParams = useSearchParams()[1];
 
   const createUtkast = async () => {
+    setOppretterUtkast(true);
     const nyttUtkast = {
       navn: utkastName,
       endringstype: utkastType,
@@ -71,6 +73,7 @@ const CreateUtkastModal = ({
       tokenHolderFunc()?.token
     );
 
+    setOppretterUtkast(false);
     if (statusCode.isError(response.status)) {
       throw new Error(
         "Klarte ikke opprette utkast. Det ble returnert en feilkode ved opprettelse"
@@ -125,8 +128,10 @@ const CreateUtkastModal = ({
           Avbryt
         </Button>
         <Button
+          colorScheme="blue"
           onClick={createUtkast}
           disabled={utkastType === "" || utkastName === ""}
+          isLoading={oppretterUtkast}
         >
           Opprett
         </Button>

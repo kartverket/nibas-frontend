@@ -4,7 +4,7 @@ import { useUtkastEndringer } from "./hooks/useUtkastEndringer";
 import { EndringsloggGrunnkretsendringer } from "./EndringsloggGrunnkretsendringer";
 import { EndringsloggStemmekretsendringer } from "./EndringsloggStemmekretsendringer";
 import CloseButton from "../form/Button/CloseButton";
-import { Spinner } from "@kvib/react";
+import { Skeleton } from "@kvib/react";
 
 type EndringsloggModalProps = {
   isOpen: boolean;
@@ -17,6 +17,9 @@ export const EndringsloggModal = ({
 }: EndringsloggModalProps) => {
   const { harEndringer, laster, stemmekretsendringer, grunnkretsendringer } =
     useUtkastEndringer();
+
+  const harLastetData =
+    !laster || !!stemmekretsendringer || !!grunnkretsendringer;
 
   return (
     <Modal
@@ -35,26 +38,19 @@ export const EndringsloggModal = ({
         <CloseButton onClick={onClose} />
       </ModalHeader>
 
-      {laster && !stemmekretsendringer && !grunnkretsendringer && (
-        <SentrertSpinner>
-          <Spinner size="xl" />
-        </SentrertSpinner>
-      )}
       {!harEndringer && <div>Det er ingen endringer i dette utkastet</div>}
 
       <ScrollableContent>
         {stemmekretsendringer?.map((endringer) => (
-          <EndringsloggStemmekretsendringer
-            endringer={endringer}
-            key={endringer.kommune.id}
-          />
+          <Skeleton key={endringer.kommune.id} isLoaded={harLastetData}>
+            <EndringsloggStemmekretsendringer endringer={endringer} />
+          </Skeleton>
         ))}
 
         {grunnkretsendringer?.map((endringer) => (
-          <EndringsloggGrunnkretsendringer
-            endringer={endringer}
-            key={endringer.kommune.id}
-          />
+          <Skeleton key={endringer.kommune.id} isLoaded={harLastetData}>
+            <EndringsloggGrunnkretsendringer endringer={endringer} />
+          </Skeleton>
         ))}
       </ScrollableContent>
     </Modal>
@@ -67,11 +63,6 @@ const ModalWrapper = styled(ModalContent)`
   border-radius: 15px;
   background: var(--white);
   box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.15);
-`;
-
-const SentrertSpinner = styled.div`
-  display: flex;
-  justify-content: center;
 `;
 
 const ScrollableContent = styled.section`

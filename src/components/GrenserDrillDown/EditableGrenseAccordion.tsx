@@ -58,7 +58,9 @@ const EditableGrenseAccordion = ({
             </LinkButton>
           </div>
         </TextContent>
-        {isFetching && <Spinner size="lg" aria-label={`Henter ${title}`} />}
+        {isFetching && (
+          <Spinner color="blue" size="lg" aria-label={`Henter ${title}`} />
+        )}
         <CaretButton
           variant="unstyled"
           onClick={accordion.toggle}

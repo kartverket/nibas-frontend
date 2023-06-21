@@ -320,9 +320,12 @@ const CancelButton = styled(Button).attrs(() => ({
 const UnstyledButton = styled(Button).attrs(() => ({
   variant: "ghost",
 }))`
-  padding: 0 !important;
-  &:hover {
-    background: none !important;
+  && {
+    padding: 0;
+  }
+
+  &&:hover {
+    background: none;
   }
   &:focus-visible {
     ${Icon} {
