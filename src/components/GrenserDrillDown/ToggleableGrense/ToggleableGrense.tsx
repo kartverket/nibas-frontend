@@ -1,13 +1,13 @@
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import styled from "styled-components";
-import Button, { LinkButton } from "components/form/Button";
 import Icon from "components/Icon";
 import { EditingType } from "contexts/EditGrenserContext";
 import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
 import { GrenseRef } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { Outline } from "style/mixins";
+import { Button, IconButton } from "@kvib/react";
 
 type Props<T extends GrenseRef> = {
   grense: T;
@@ -34,21 +34,26 @@ const ToggleableGrense = <T extends GrenseRef>({
 
   return (
     <Wrapper visible={value.visible ? true : false}>
-      <Button
+      <IconButton
         onClick={toggleVisible}
-        variant="unstyled"
+        aria-label={value.visible ? "Synlig" : "Usynlig"}
         icon={
           value.visible ? (
-            <Icon icon="visibility" aria-label="Synlig" />
+            <Icon icon="visibility" />
           ) : (
-            <Icon icon="visibility_off" aria-label="Usynlig" />
+            <Icon icon="visibility_off" />
           )
         }
       />
       <Title>{title}</Title>
-      <LinkButton onClick={openInfo} isDisabled title="Kommer snart!">
+      <Button
+        variant="link"
+        onClick={openInfo}
+        isDisabled
+        title="Kommer snart!"
+      >
         {value.editing ? "Avslutt redigering" : "Rediger"}
-      </LinkButton>
+      </Button>
     </Wrapper>
   );
 };
@@ -73,16 +78,6 @@ const Wrapper = styled.div<{ visible: boolean }>`
     &:hover {
       background: var(--blue_light);
       color: var(--blue_dark);
-    }
-
-    &:focus-visible {
-      ${Outline}
-    }
-  }
-
-  ${LinkButton} {
-    &:hover:enabled {
-      text-decoration: none;
     }
 
     &:focus-visible {

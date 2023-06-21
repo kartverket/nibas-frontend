@@ -14,7 +14,6 @@ import { useCallback, useState } from "react";
 import Input from "components/form/Input";
 import { Divider } from "components/Divider";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import Button from "components/form/Button";
 import CreateUtkastModal, {
   CreateUtkastCallbackArgument,
 } from "./CreateUtkastModal";
@@ -24,7 +23,7 @@ import { MergeMultiselect } from "./MergeMultiselect";
 import Select from "components/form/Select/Select";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import { Heading } from "@kvib/react";
+import { Button, Heading } from "@kvib/react";
 
 const Form = styled.form`
   display: flex;
@@ -296,15 +295,15 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
             </InputsWrapper>
             <Buttons>
               <Button
+                variant="ghost"
                 onClick={() => {
                   closeOverlayPanel();
                   reset();
                 }}
-                variant="tertiary"
               >
                 Avbryt
               </Button>
-              <Button type="submit" disabled={!isDirty}>
+              <Button type="submit" isDisabled={!isDirty}>
                 Slå sammen
               </Button>
             </Buttons>

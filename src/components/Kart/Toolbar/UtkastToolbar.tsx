@@ -105,13 +105,12 @@ const UtkastToolbar = ({
         ))}
       </Select>
       <Buttons>
-        <Button onClick={() => setCreateUtkastOpen(false)} variant="tertiary">
+        <Button onClick={() => setCreateUtkastOpen(false)} variant="ghost">
           Avbryt
         </Button>
         <Button
-          colorScheme="blue"
           onClick={createUtkast}
-          disabled={utkastType === "" || utkastName === ""}
+          isDisabled={utkastType === "" || utkastName === ""}
           isLoading={createUtkastLoading}
         >
           Opprett

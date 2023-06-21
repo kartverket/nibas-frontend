@@ -218,10 +218,10 @@ const UtkastItem = ({ utkast }: Props) => {
       {isPublishOpen && (
         <UtkastItemExpanded>
           <Buttons>
-            <CancelButton onClick={() => setIsPublishOpen(false)}>
+            <Button variant="ghost" onClick={() => setIsPublishOpen(false)}>
               Avbryt
-            </CancelButton>
-            <Button colorScheme="blue" onClick={publish} isLoading={publiserer}>
+            </Button>
+            <Button onClick={publish} isLoading={publiserer}>
               Publiser
             </Button>
           </Buttons>
@@ -239,14 +239,10 @@ const UtkastItem = ({ utkast }: Props) => {
       {isDeleteOpen && (
         <UtkastItemExpanded>
           <Buttons>
-            <CancelButton onClick={() => setIsDeleteOpen(false)}>
+            <Button variant="ghost" onClick={() => setIsDeleteOpen(false)}>
               Avbryt
-            </CancelButton>
-            <Button
-              colorScheme="blue"
-              onClick={deleteUtkast}
-              isLoading={forkaster}
-            >
+            </Button>
+            <Button onClick={deleteUtkast} isLoading={forkaster}>
               Forkast
             </Button>
           </Buttons>
@@ -309,12 +305,6 @@ const Buttons = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 8px;
-`;
-
-const CancelButton = styled(Button).attrs(() => ({
-  variant: "tertiary",
-}))`
-  background: transparent;
 `;
 
 const UnstyledButton = styled(Button).attrs(() => ({

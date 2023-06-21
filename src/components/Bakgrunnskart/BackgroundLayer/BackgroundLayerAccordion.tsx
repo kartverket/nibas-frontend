@@ -1,11 +1,11 @@
 import { forwardRef, useState } from "react";
 import styled from "styled-components";
 import useLayerOpacity from "./useLayerOpacity";
-import Button from "components/form/Button";
 import Slider from "components/form/Slider";
 import Icon from "components/Icon";
 import { MainMappedLayer, MappedLayer } from "utils/getLayersFromWMS";
 import { Outline } from "style/mixins";
+import { Button, IconButton } from "@kvib/react";
 
 const getCaretIcon = (open: boolean) => (
   <Caret open={open}>
@@ -72,11 +72,11 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
         return (
           <AddableLayer
             onClick={() => onVisibilityClick()}
-            icon={getAddRemove(false)}
             aria-label={
               (visible ? `Fjern` : `Vis`) + ` ${props.mappedLayer.title}`
             }
           >
+            {getAddRemove(false)}
             <span>{props.mappedLayer.title}</span>
           </AddableLayer>
         );
@@ -86,7 +86,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
       if (props.mappedLayer.layers.length > 0) {
         return (
           <ClickableName
-            variant="unstyled"
+            variant="ghost"
             icon={getCaretIcon(open)}
             onClick={() => setOpen(!open)}
             open={open}
@@ -102,11 +102,11 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
         <AddableLayer
           activeLayer={visible}
           onClick={() => onVisibilityClick()}
-          icon={getAddRemove(false)}
           aria-label={
             (visible ? `Fjern` : `Vis`) + ` ${props.mappedLayer.title}`
           }
         >
+          {getAddRemove(false)}
           {props.mappedLayer.title}
         </AddableLayer>
       );
@@ -130,7 +130,11 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
               onChange={onSliderChange}
             />
           </AktivtKartlagSlider>
-          <RemoveAktivtKartlag variant="unstyled" icon={getAddRemove(true)} />
+          <IconButton
+            variant="ghost"
+            aria-label="Fjern aktivt kartlag"
+            icon={getAddRemove(true)}
+          />
         </AktivtMainLayerWrapper>
       );
     };
@@ -138,10 +142,8 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
     const renderAktivtSubLayer = () => {
       if (visible && props.mappedLayer.layers.length === 0) {
         return (
-          <AktivtSubLayerWrapper
-            icon={getAddRemove(true)}
-            onClick={() => onVisibilityClick()}
-          >
+          <AktivtSubLayerWrapper onClick={() => onVisibilityClick()}>
+            {getAddRemove(true)}
             <span>{props.mappedLayer.title}</span>
           </AktivtSubLayerWrapper>
         );
@@ -205,14 +207,6 @@ const AddRemove = styled.div<{ visible: boolean; aktivtKartlag: boolean }>`
   }
 `;
 
-const RemoveAktivtKartlag = styled(Button)`
-  &:focus-visible {
-    ${AddRemove} {
-      ${Outline}
-    }
-  }
-`;
-
 const Caret = styled.div<{ open: boolean }>`
   color: ${({ open }) => (open ? "var(--white)" : "var(--blue_dark)")};
   background-color: ${({ open }) =>
@@ -243,10 +237,7 @@ const Wrapper = styled.div<{ indent: number }>`
   }
 `;
 
-const ClickableName = styled(Button)<{
-  open: boolean;
-  dropDown?: boolean;
-}>`
+const ClickableName = styled(Button)<{ open: boolean; dropDown?: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -338,9 +329,7 @@ const AktivtMainLayerWrapper = styled.div`
   padding-top: 16px;
 `;
 
-const AktivtSubLayerWrapper = styled(Button).attrs(() => ({
-  variant: "unstyled",
-}))`
+const AktivtSubLayerWrapper = styled.button`
   align-items: center;
   justify-content: space-between;
   padding: 4px 0 4px 42px;
@@ -364,9 +353,7 @@ const AktivtSubLayerWrapper = styled(Button).attrs(() => ({
   }
 `;
 
-const AddableLayer = styled(Button).attrs(() => ({
-  variant: "unstyled",
-}))<{ activeLayer?: boolean }>`
+const AddableLayer = styled.button<{ activeLayer?: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;

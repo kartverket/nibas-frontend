@@ -1,6 +1,5 @@
-import { Heading } from "@kvib/react";
+import { Button, Heading } from "@kvib/react";
 import Checkbox from "components/Checkbox";
-import Button from "components/form/Button";
 import { ButtonCell } from "components/Kart/OverlayPanels/Flatedata/KretsTable";
 import { Modal, ModalContent } from "components/Modal";
 import styled from "styled-components";
@@ -77,10 +76,10 @@ const UtkastConflictModal = ({
     </Table>
 
     <Buttons>
-      <Button variant="secondary" onClick={onCancel}>
+      <Button variant="outline" onClick={onCancel}>
         Avbryt
       </Button>
-      <Button onClick={submit} disabled={!submit}>
+      <Button onClick={submit} isDisabled={!submit}>
         Publiser
       </Button>
     </Buttons>

@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useUtkastEndringer } from "./hooks/useUtkastEndringer";
 import { EndringsloggGrunnkretsendringer } from "./EndringsloggGrunnkretsendringer";
 import { EndringsloggStemmekretsendringer } from "./EndringsloggStemmekretsendringer";
-import CloseButton from "../form/Button/CloseButton";
+import CloseButton from "../form/CloseButton";
 import { Skeleton } from "@kvib/react";
 
 type EndringsloggModalProps = {

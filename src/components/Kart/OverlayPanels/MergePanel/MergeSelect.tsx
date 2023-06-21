@@ -1,10 +1,10 @@
 import { InputHTMLAttributes, forwardRef } from "react";
 import styled from "styled-components";
 import { StemmekretsResponse } from "types/api";
-import Button from "components/form/Button";
 import Select from "components/form/Select";
 import { ValidationError } from "components/form/Input/Input";
 import Message from "components/Status/Message";
+import { Button } from "@kvib/react";
 
 const MergeSelectWrapper = styled.div`
   display: grid;
@@ -20,15 +20,9 @@ const MergeSelectErrorMessage = styled(Message)`
   grid-area: error;
 `;
 
-const RemoveButton = styled(Button).attrs(() => ({ variant: "tertiary" }))`
+const RemoveButton = styled(Button)`
   grid-area: fjern;
-  margin-top: 26px;
-  margin-left: 16px;
-  background: transparent;
-
-  :hover {
-    background: transparent;
-  }
+  margin-top: 32px;
 `;
 
 const MergeSelectStyle = styled(Select)`
@@ -69,7 +63,9 @@ export const MergeSelect = forwardRef<HTMLDivElement, MergeSelectProps>(
         ))}
       </MergeSelectStyle>
       {showRemoveButton && (
-        <RemoveButton onClick={onRemove}>Fjern</RemoveButton>
+        <RemoveButton variant="ghost" onClick={onRemove}>
+          Fjern
+        </RemoveButton>
       )}
       {validationError?.showError && (
         <MergeSelectErrorMessage status="error">

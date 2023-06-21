@@ -123,13 +123,12 @@ const CreateUtkastModal = ({
         ))}
       </Select>
       <Buttons>
-        <Button onClick={() => cancelCreateUtkast()} variant="tertiary">
+        <Button onClick={() => cancelCreateUtkast()} variant="ghost">
           Avbryt
         </Button>
         <Button
-          colorScheme="blue"
           onClick={createUtkast}
-          disabled={utkastType === "" || utkastName === ""}
+          isDisabled={utkastType === "" || utkastName === ""}
           isLoading={oppretterUtkast}
         >
           Opprett

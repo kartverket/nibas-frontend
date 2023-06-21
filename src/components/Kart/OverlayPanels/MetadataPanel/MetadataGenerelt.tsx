@@ -8,10 +8,10 @@ import useMetadataForm from "components/Kart/OverlayPanels/hooks/useMetadataForm
 import { getDateInFriendlyString } from "components/Kart/OverlayPanels/MetadataPanel/utils";
 import AsyncKodelisteSelect from "./AsyncKodelisteSelect";
 import { Divider } from "components/Divider";
-import Button from "components/form/Button/Button";
 import useIsMetadataDisabled from "../hooks/useIsMetadataDisabled";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useEffect } from "react";
+import { Button } from "@kvib/react";
 
 type Props = {
   feature: Feature<Geometry>;
@@ -136,16 +136,16 @@ const MetadataGenerelt = ({ feature }: Props) => {
         <Divider />
         <Buttons>
           <Button
-            variant="tertiary"
+            variant="ghost"
             onClick={() => {
               reset();
               closeOverlayPanel();
             }}
-            disabled={metadataIsDisabled}
+            isDisabled={metadataIsDisabled}
           >
             Avbryt
           </Button>
-          <Button type="submit" disabled={!isDirty || metadataIsDisabled}>
+          <Button type="submit" isDisabled={!isDirty || metadataIsDisabled}>
             Endre metadata
           </Button>
         </Buttons>

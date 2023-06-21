@@ -1,4 +1,3 @@
-import Button, { LinkButton } from "components/form/Button";
 import Icon from "components/Icon";
 import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
 import styled from "styled-components";
@@ -7,7 +6,7 @@ import { EditingType } from "contexts/EditGrenserContext";
 import { Feature } from "ol";
 import { Outline } from "style/mixins";
 import { Geometry } from "ol/geom";
-import { Spinner } from "@kvib/react";
+import { Button, IconButton, Spinner } from "@kvib/react";
 
 type Props = {
   grenseType: EditingType;
@@ -49,33 +48,33 @@ const EditableGrenseAccordion = ({
         <TextContent>
           <span>{title}</span>
           <div>
-            <LinkButton
+            <Button
+              variant="link"
               onClick={toggleEditing}
               isDisabled
               title="Midlertidig utilgjengelig"
             >
               {value.editing ? "Stopp redigering" : "Rediger grenser"}
-            </LinkButton>
+            </Button>
           </div>
         </TextContent>
         {isFetching && (
           <Spinner color="blue" size="lg" aria-label={`Henter ${title}`} />
         )}
-        <CaretButton
-          variant="unstyled"
+        <IconButton
+          variant="ghost"
           onClick={accordion.toggle}
+          aria-label={accordion.isVisible ? `Lukk ${title}` : `Åpne ${title}`}
           icon={
             accordion.isVisible ? (
               <CaretIcon
                 $visible={accordion.isVisible ? true : false}
                 icon="expand_less"
-                aria-label={`Lukk ${title}`}
               />
             ) : (
               <CaretIcon
                 $visible={accordion.isVisible ? true : false}
                 icon="expand_more"
-                aria-label={`Åpne ${title}`}
               />
             )
           }
@@ -90,12 +89,6 @@ const ListItem = styled.li`
   margin: 16px 0 0 8px;
 `;
 
-const CaretButton = styled(Button)`
-  &:focus-visible {
-    ${Outline}
-  }
-`;
-
 const TextContent = styled.div`
   flex: 1;
   display: flex;
@@ -103,18 +96,6 @@ const TextContent = styled.div`
 
   > :first-child {
     user-select: none;
-  }
-
-  > :nth-child(2) {
-    ${LinkButton} {
-      &:hover {
-        text-decoration: none;
-      }
-
-      &:focus-visible {
-        outline: 3px solid var(--blue_dark);
-      }
-    }
   }
 `;
 
@@ -135,23 +116,24 @@ const CaretIcon = styled(Icon)<{ $visible: boolean }>`
   }
 `;
 
-const VisibilityButton = styled(Button).attrs(() => ({
-  variant: "unstyled",
-}))<{ $visible: boolean }>`
-  margin-right: 16px;
-  color: ${({ $visible }) => ($visible ? "var(--white)" : "var(--blue_dark)")};
-  background: ${({ $visible }) =>
-    $visible ? "var(--blue_dark)" : "transparent"};
-  padding: 8px;
-  border-radius: 50%;
-  height: 100%;
+const VisibilityButton = styled(IconButton)<{ $visible: boolean }>`
+  && {
+    margin-right: 16px;
+    color: ${({ $visible }) =>
+      $visible ? "var(--white)" : "var(--blue_dark)"};
+    background: ${({ $visible }) =>
+      $visible ? "var(--blue_dark)" : "transparent"};
+    padding: 8px;
+    border-radius: 50%;
+    height: 100%;
 
-  &:hover {
-    color: var(--blue_dark);
-    background: var(--blue_light);
-  }
-  &:focus-visible {
-    ${Outline}
+    &:hover {
+      color: var(--blue_dark);
+      background: var(--blue_light);
+    }
+    &:focus-visible {
+      ${Outline}
+    }
   }
 `;
 
