@@ -79,7 +79,10 @@ const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
               Endringer
             </ModeButton>
           </ToolbarTooltip>
-          <ToolbarTooltip text="Lagre utkastet" shortcut="CTRL + S">
+          <ToolbarTooltip
+            text="Lagre endringene til utkastet"
+            shortcut="CTRL + S"
+          >
             <ModeButton
               icon="save"
               ariaLabel="Lagre utkast"
@@ -89,7 +92,10 @@ const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
               Lagre
             </ModeButton>
           </ToolbarTooltip>
-          <ToolbarTooltip text="Lukker utkastet." shortcut="CTRL + L">
+          <ToolbarTooltip
+            text="Avslutt redigering av utkastet."
+            shortcut="CTRL + L"
+          >
             <ModeButton
               icon="close"
               ariaLabel="Lukk utkast"
@@ -110,7 +116,7 @@ const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
               Endringer
             </ModeButton>
           </ToolbarTooltip>
-          <ToolbarTooltip text="Lagre utkastet" shortcut="CTRL + S">
+          <ToolbarTooltip text="Opprett et nytt utkast" shortcut="CTRL + S">
             <ModeButton
               icon="save"
               ariaLabel="Lagre utkast"

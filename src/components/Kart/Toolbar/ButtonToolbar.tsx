@@ -87,18 +87,18 @@ const ButtonToolbar = () => {
   return (
     <Container>
       <Buttons>
-        <ToolbarTooltip text="Angrer forrige endring." shortcut="CTRL + Z">
+        <ToolbarTooltip text="Angrer forrige endring" shortcut="CTRL + Z">
           <ModeButton
             icon="undo"
             ariaLabel="Angre handling"
             onClick={undo}
             disabled={!undo}
           >
-            Undo
+            Angre
           </ModeButton>
         </ToolbarTooltip>
         <ToolbarTooltip
-          text="Gjør om forrige angret handling"
+          text="Gjør handling likevel"
           shortcut="CTRL + SHIFT + Z"
         >
           <ModeButton
@@ -107,11 +107,11 @@ const ButtonToolbar = () => {
             onClick={redo}
             disabled={!redo}
           >
-            Redo
+            Gjør om
           </ModeButton>
         </ToolbarTooltip>
         <DividerVertical />
-        <ToolbarTooltip text="Flytt et punkt på kartet til konkrete koordinater">
+        <ToolbarTooltip text="Flytt et punkt ved bruk av koordinater">
           <ModeButton
             icon="ads_click"
             ariaLabel="Flytt punkt med koordinater"
@@ -121,7 +121,7 @@ const ButtonToolbar = () => {
             Flytt
           </ModeButton>
         </ToolbarTooltip>
-        <ToolbarTooltip text="Legg til flere punkter på en grense.">
+        <ToolbarTooltip text="Legg til ett eller flere punkter på en grense.">
           <ModeButton
             icon="add_location_alt"
             ariaLabel="Legg til punkter"
@@ -131,7 +131,7 @@ const ButtonToolbar = () => {
             Legg til
           </ModeButton>
         </ToolbarTooltip>
-        <ToolbarTooltip text="Fjern et grensepunkt fra en grense.">
+        <ToolbarTooltip text="Fjern ett eller flere punkter fra en grense.">
           <ModeButton
             icon="wrong_location"
             ariaLabel="Fjern punkter"
@@ -141,21 +141,21 @@ const ButtonToolbar = () => {
             Fjern
           </ModeButton>
         </ToolbarTooltip>
-        <ToolbarTooltip text="Se metadata for en grense. Trykk på grensen for å få opp panelet.">
+        <ToolbarTooltip text="Se og rediger informasjon om en grense. Trykk på grensen du ønsker å se informasjonen til.">
           <ModeButton
             icon="live_help"
-            ariaLabel="Se metadata"
+            ariaLabel="Se informasjon om grensen"
             isActive={activePointMode === "metadata"}
             onClick={toggleMetadata}
           >
-            Metadata
+            Grenseinfo
           </ModeButton>
         </ToolbarTooltip>
         <DividerVertical />
         {flatedetaljerIsAvailable && (
           <>
             {mergeIsAvailable && (
-              <ToolbarTooltip text="Slå sammen 2 stemmekretser.">
+              <ToolbarTooltip text="Slå sammen to eller flere stemmekretser.">
                 <ModeButton
                   icon="merge"
                   ariaLabel="Slå sammen stemmekretser"
@@ -166,14 +166,14 @@ const ButtonToolbar = () => {
                 </ModeButton>
               </ToolbarTooltip>
             )}
-            <ToolbarTooltip text="Vis og endre flatedetaljene">
+            <ToolbarTooltip text="Vis informasjon om flatene innenfor den gitte inndelingen">
               <ModeButton
                 icon="feed"
-                ariaLabel="Vis flatedetaljer"
+                ariaLabel="Vis informasjon om flatene"
                 isActive={flatedetaljerIsActive}
                 onClick={toggleFlatedetaljer}
               >
-                Flatedetaljer
+                Flateinfo
               </ModeButton>
             </ToolbarTooltip>
             <DividerVertical />
