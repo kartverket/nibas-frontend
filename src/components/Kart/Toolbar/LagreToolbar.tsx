@@ -7,9 +7,9 @@ import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts
 import AlertModal from "components/Status/AlertModal";
 import { useState } from "react";
 import { EndringsloggModal } from "components/Endringslogg/EndringsloggModal";
-import FeatureToggle from "../../FeatureToggle";
 import { DividerVertical } from "components/Divider";
 import { useToolbar } from "contexts/ToolbarContext";
+import ToolbarTooltip from "./ToolbarTooltip";
 
 const LagreFrame = styled(Frame)`
   justify-content: center;
@@ -70,7 +70,7 @@ const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
             <UtkastNavn>{utkast.navn}</UtkastNavn>
           </UtkastInfo>
           <DividerVertical />
-          <FeatureToggle feature="UTKAST_ENDRINGSLOGG">
+          <ToolbarTooltip text="Åpne en endringslogg med oppsummering av alle endringer i utkastet.">
             <ModeButton
               icon="published_with_changes"
               ariaLabel="Vis endringer"
@@ -78,26 +78,36 @@ const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
             >
               Endringer
             </ModeButton>
-          </FeatureToggle>
-          <ModeButton
-            icon="save"
-            ariaLabel="Lagre utkast"
-            onClick={handleSave}
-            disabled={!canSave}
+          </ToolbarTooltip>
+          <ToolbarTooltip
+            text="Lagre endringene til utkastet"
+            shortcut="CTRL + S"
           >
-            Lagre
-          </ModeButton>
-          <ModeButton
-            icon="close"
-            ariaLabel="Lukk utkast"
-            onClick={canSave ? openModal : closeUtkast}
+            <ModeButton
+              icon="save"
+              ariaLabel="Lagre utkast"
+              onClick={handleSave}
+              disabled={!canSave}
+            >
+              Lagre
+            </ModeButton>
+          </ToolbarTooltip>
+          <ToolbarTooltip
+            text="Avslutt redigering av utkastet."
+            shortcut="CTRL + L"
           >
-            Lukk
-          </ModeButton>
+            <ModeButton
+              icon="close"
+              ariaLabel="Lukk utkast"
+              onClick={canSave ? openModal : closeUtkast}
+            >
+              Lukk
+            </ModeButton>
+          </ToolbarTooltip>
         </>
       ) : (
         <>
-          <FeatureToggle feature="UTKAST_ENDRINGSLOGG">
+          <ToolbarTooltip text="Åpne en endringslogg med oppsummering av alle endringer i utkastet.">
             <ModeButton
               icon="published_with_changes"
               ariaLabel="Vis endringer"
@@ -105,16 +115,18 @@ const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
             >
               Endringer
             </ModeButton>
-          </FeatureToggle>
-          <ModeButton
-            icon="save"
-            ariaLabel="Lagre utkast"
-            onClick={handleSave}
-            disabled={!canSave}
-            isActive={createUtkastOpen}
-          >
-            Lagre
-          </ModeButton>
+          </ToolbarTooltip>
+          <ToolbarTooltip text="Opprett et nytt utkast" shortcut="CTRL + S">
+            <ModeButton
+              icon="save"
+              ariaLabel="Lagre utkast"
+              onClick={handleSave}
+              disabled={!canSave}
+              isActive={createUtkastOpen}
+            >
+              Lagre
+            </ModeButton>
+          </ToolbarTooltip>
         </>
       )}
       <AlertModal
@@ -132,12 +144,10 @@ const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
           onClick: closeModal,
         }}
       />
-      <FeatureToggle feature="UTKAST_ENDRINGSLOGG">
-        <EndringsloggModal
-          isOpen={endringsloggOpen}
-          onClose={() => setEndringsloggOpen(false)}
-        />
-      </FeatureToggle>
+      <EndringsloggModal
+        isOpen={endringsloggOpen}
+        onClose={() => setEndringsloggOpen(false)}
+      />
     </LagreFrame>
   );
 };
