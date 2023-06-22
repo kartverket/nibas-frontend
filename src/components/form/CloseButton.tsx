@@ -4,7 +4,8 @@ import { IconButton } from "@kvib/react";
 
 const CloseButton = styled(IconButton).attrs({
   variant: "ghost",
-  icon: <Icon icon="close" aria-label="Lukk" />,
+  "aria-label": "Lukk",
+  icon: <Icon icon="close" />,
 })`
   && {
     border-radius: 50%;

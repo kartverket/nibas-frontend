@@ -53,7 +53,7 @@ describe("BackgroundLayerAccordion", () => {
     render(<BackgroundLayerAccordion {...defaultProps} />);
 
     const caret = screen.getByRole("button", {
-      name: "LayerTitle Åpne",
+      name: "Åpne LayerTitle",
     });
 
     expect(screen.queryByText("sublayertitle")).not.toBeInTheDocument();
@@ -64,14 +64,14 @@ describe("BackgroundLayerAccordion", () => {
     const { user } = render(<BackgroundLayerAccordion {...defaultProps} />);
 
     const caret = screen.getByRole("button", {
-      name: "LayerTitle Åpne",
+      name: "Åpne LayerTitle",
     });
 
     await user.click(caret);
 
     expect(
       screen.getByRole("button", {
-        name: "LayerTitle Lukk",
+        name: "Lukk LayerTitle",
       })
     ).toBeInTheDocument();
     expect(screen.getByText("Child")).toBeInTheDocument();

@@ -38,13 +38,9 @@ const EditableGrenseAccordion = ({
         <VisibilityButton
           onClick={toggleVisible}
           $visible={value.visible ? true : false}
-        >
-          {value.visible ? (
-            <Icon icon="visibility" aria-label={`Skjul ${title}`} />
-          ) : (
-            <Icon icon="visibility_off" aria-label={`Vis ${title}`} />
-          )}
-        </VisibilityButton>
+          aria-label={value.visible ? `Skjul ${title}` : `Vis ${title}`}
+          icon={<Icon icon={value.visible ? "visibility" : "visibility_off"} />}
+        />
         <TextContent>
           <span>{title}</span>
           <div>
@@ -66,17 +62,10 @@ const EditableGrenseAccordion = ({
           onClick={accordion.toggle}
           aria-label={accordion.isVisible ? `Lukk ${title}` : `Åpne ${title}`}
           icon={
-            accordion.isVisible ? (
-              <CaretIcon
-                $visible={accordion.isVisible ? true : false}
-                icon="expand_less"
-              />
-            ) : (
-              <CaretIcon
-                $visible={accordion.isVisible ? true : false}
-                icon="expand_more"
-              />
-            )
+            <CaretIcon
+              icon={accordion.isVisible ? "expand_less" : "expand_more"}
+              $visible={accordion.isVisible ? true : false}
+            />
           }
         />
       </Header>

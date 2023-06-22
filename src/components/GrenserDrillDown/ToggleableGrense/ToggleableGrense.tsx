@@ -37,13 +37,7 @@ const ToggleableGrense = <T extends GrenseRef>({
       <IconButton
         onClick={toggleVisible}
         aria-label={value.visible ? "Synlig" : "Usynlig"}
-        icon={
-          value.visible ? (
-            <Icon icon="visibility" />
-          ) : (
-            <Icon icon="visibility_off" />
-          )
-        }
+        icon={<Icon icon={value.visible ? "visibility" : "visibility_off"} />}
       />
       <Title>{title}</Title>
       <Button

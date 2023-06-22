@@ -7,16 +7,6 @@ import { MainMappedLayer, MappedLayer } from "utils/getLayersFromWMS";
 import { Outline } from "style/mixins";
 import { Button, IconButton } from "@kvib/react";
 
-const getCaretIcon = (open: boolean) => (
-  <Caret open={open}>
-    {open ? (
-      <Icon icon="expand_less" aria-label="Lukk" />
-    ) : (
-      <Icon icon="expand_more" aria-label="Åpne" />
-    )}
-  </Caret>
-);
-
 type SharedProps = {
   indent: number;
   onVisibilityClick: () => void;
@@ -87,10 +77,19 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
         return (
           <ClickableName
             variant="ghost"
-            icon={getCaretIcon(open)}
+            rightIcon={
+              <Caret open={open}>
+                <Icon icon={open ? "expand_less" : "expand_more"} />
+              </Caret>
+            }
             onClick={() => setOpen(!open)}
             open={open}
             dropDown={true}
+            aria-label={
+              open
+                ? `Lukk ${props.mappedLayer.title}`
+                : `Åpne ${props.mappedLayer.title}`
+            }
           >
             <span>{props.mappedLayer.title}</span>
           </ClickableName>
