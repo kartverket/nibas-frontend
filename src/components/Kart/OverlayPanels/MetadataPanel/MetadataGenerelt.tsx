@@ -3,7 +3,6 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { Metadata, FeatureProperties } from "types/api";
 import Input from "components/form/Input";
-import Textarea from "components/form/Input/Textarea";
 import useMetadataForm from "components/Kart/OverlayPanels/hooks/useMetadataForm";
 import { getDateInFriendlyString } from "components/Kart/OverlayPanels/MetadataPanel/utils";
 import AsyncKodelisteSelect from "./AsyncKodelisteSelect";
@@ -11,7 +10,16 @@ import { Divider } from "components/Divider";
 import useIsMetadataDisabled from "../hooks/useIsMetadataDisabled";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useEffect } from "react";
-import { Button } from "@kvib/react";
+import {
+  Button,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  Textarea,
+} from "@kvib/react";
+import Label from "components/form/Label";
 
 type Props = {
   feature: Feature<Geometry>;
@@ -42,10 +50,6 @@ const InputRow = styled.div`
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 16px;
-`;
-
-const NumberInput = styled(Input)`
-  width: 120px;
 `;
 
 const Buttons = styled.div`
@@ -113,26 +117,33 @@ const MetadataGenerelt = ({ feature }: Props) => {
             label="Målemetode"
             {...register("maalemetode", { disabled: metadataIsDisabled })}
           />
-          <NumberInput
-            type="number"
-            label="Nøyaktighet"
-            {...register("noeyaktighet", {
-              disabled: metadataIsDisabled,
-              valueAsNumber: true,
-              min: 0,
-              max: 1_000_000,
-            })}
-          />
+          <Label label="Nøyaktighet">
+            <NumberInput>
+              <NumberInputField
+                {...register("noeyaktighet", {
+                  disabled: metadataIsDisabled,
+                  valueAsNumber: true,
+                  min: 0,
+                  max: 1_000_000,
+                })}
+              />
+              <NumberInputStepper>
+                <NumberIncrementStepper />
+                <NumberDecrementStepper />
+              </NumberInputStepper>
+            </NumberInput>
+          </Label>
         </InputRow>
         <Input
           {...register("opphav", { disabled: metadataIsDisabled })}
           label="Opphav"
         />
-        <Textarea
-          rows={4}
-          {...register("informasjon", { disabled: metadataIsDisabled })}
-          label="Informasjon"
-        />
+        <Label label="Informasjon">
+          <Textarea
+            rows={4}
+            {...register("informasjon", { disabled: metadataIsDisabled })}
+          />
+        </Label>
         <Divider />
         <Buttons>
           <Button

@@ -139,7 +139,7 @@ const FieldArray = ({
           onChange={(e) => setNewLenke(e.target.value)}
           placeholder="URL"
           onKeyPress={onKeyPress}
-          disabled={disabled}
+          isDisabled={disabled}
         />
         <Button
           onClick={onAdd}

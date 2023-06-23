@@ -20,10 +20,10 @@ import CreateUtkastModal, {
 import { stemmekretsgrenserFetcher } from "api/stemmekrets";
 import { deduplicate, removeNull } from "utils/list-utils";
 import { MergeMultiselect } from "./MergeMultiselect";
-import Select from "components/form/Select/Select";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import { Button, Heading } from "@kvib/react";
+import { Button, Heading, Select } from "@kvib/react";
+import Label from "components/form/Label";
 
 const Form = styled.form`
   display: flex;
@@ -239,33 +239,34 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
             <Heading as="h3" size="sm">
               Hvilken stemmekrets skal brukes som utgangspunkt?
             </Heading>
-            <Select
-              {...selectStemmekretsRegister}
-              onChange={(e) => {
-                selectStemmekretsRegister.onChange(e);
-                updateDefaultValues(e.currentTarget.value);
-              }}
-              defaultValue="default"
-              label="Stemmekrets"
-            >
-              <option value="default" disabled>
-                Velg en stemmekrets fra listen
-              </option>
-              {utkastStemmekretser
-                .sort(
-                  (a, b) =>
-                    parseInt(a.stemmekretsnummer) -
-                    parseInt(b.stemmekretsnummer)
-                )
-                .map((stemmekrets) => (
-                  <option
-                    key={stemmekrets.id.lokalid.value}
-                    value={stemmekrets.stemmekretsnummer}
-                  >
-                    {`${stemmekrets.stemmekretsnummer} - ${stemmekrets.stemmekretsnavn}`}
-                  </option>
-                ))}
-            </Select>
+            <Label label="Stemmekrets">
+              <Select
+                {...selectStemmekretsRegister}
+                onChange={(e) => {
+                  selectStemmekretsRegister.onChange(e);
+                  updateDefaultValues(e.currentTarget.value);
+                }}
+                defaultValue="default"
+              >
+                <option value="default" disabled>
+                  Velg en stemmekrets fra listen
+                </option>
+                {utkastStemmekretser
+                  .sort(
+                    (a, b) =>
+                      parseInt(a.stemmekretsnummer) -
+                      parseInt(b.stemmekretsnummer)
+                  )
+                  .map((stemmekrets) => (
+                    <option
+                      key={stemmekrets.id.lokalid.value}
+                      value={stemmekrets.stemmekretsnummer}
+                    >
+                      {`${stemmekrets.stemmekretsnummer} - ${stemmekrets.stemmekretsnavn}`}
+                    </option>
+                  ))}
+              </Select>
+            </Label>
             <Divider />
             <Heading as="h3" size="sm">
               Hvilke stemmekretser ønsker du å slå sammen med denne kretsen?

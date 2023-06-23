@@ -299,6 +299,11 @@ export const UtkastItemExpanded = styled.div`
   border-top: 2px solid var(--black);
   background-color: var(--gray_light);
   padding: 24px;
+
+  input,
+  select {
+    background: white;
+  }
 `;
 
 const Buttons = styled.div`

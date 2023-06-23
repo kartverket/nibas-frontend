@@ -3,9 +3,9 @@ import { styled } from "styled-components";
 import Icon from "../../../Icon/Icon";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { MergeFormData } from "./MergeForm";
-import { ChangeEvent, InputHTMLAttributes } from "react";
+import { ChangeEvent } from "react";
 import { MergeSelect } from "./MergeSelect";
-import { Button } from "@kvib/react";
+import { Button, SelectProps } from "@kvib/react";
 
 type MergeMultiselectProps = {
   alleStemmekretser: StemmekretsResponse[];
@@ -29,7 +29,7 @@ export const MergeMultiselect = ({
   const triggerRevalidateOnChange = ({
     onChange,
     ...restProps
-  }: InputHTMLAttributes<HTMLSelectElement>) => {
+  }: SelectProps) => {
     return {
       onChange: (e: ChangeEvent<HTMLSelectElement>) => {
         if (onChange) {

@@ -7,11 +7,11 @@ import { translateKeysByEndringsType } from "contexts/UtkastContext/constants";
 import { historyToUtkastOperations } from "contexts/UtkastContext/utils";
 import { createUtkast as createApiUtkast } from "api/utkast";
 import Input from "components/form/Input";
-import Select from "components/form/Select";
 import { Modal, ModalContent } from "components/Modal";
 import { statusCode } from "utils/api";
 import { UtkastOperasjoner } from "../../../../types/api";
-import { Button, Heading } from "@kvib/react";
+import { Button, Heading, Select } from "@kvib/react";
+import Label from "components/form/Label";
 
 const ModalElement = styled(ModalContent)`
   display: flex;
@@ -108,20 +108,19 @@ const CreateUtkastModal = ({
         value={utkastName}
         onChange={(e) => setUtkastName(e.target.value)}
       />
-      <Select
-        label="Endringstype"
-        value={utkastType}
-        onChange={(e) => setUtkastType(e.target.value)}
-      >
-        <option value="" disabled>
-          Velg en endringstype fra listen
-        </option>
-        {translateKeysByEndringsType.map((type) => (
-          <option key={type} value={type}>
-            {type}
-          </option>
-        ))}
-      </Select>
+      <Label label="Endringstype">
+        <Select
+          placeholder="Velg en endringstype fra listen"
+          value={utkastType}
+          onChange={(e) => setUtkastType(e.target.value)}
+        >
+          {translateKeysByEndringsType.map((type) => (
+            <option key={type} value={type}>
+              {type}
+            </option>
+          ))}
+        </Select>
+      </Label>
       <Buttons>
         <Button onClick={() => cancelCreateUtkast()} variant="ghost">
           Avbryt
