@@ -4,22 +4,22 @@ import Landing from "./Landing";
 let mockIsAuthenticated = false;
 let mockErrorStatusCode: number | null = null;
 
-jest.mock("@kartverket/frontend-aut-lib", () => {
+vi.mock("@kartverket/frontend-aut-lib", () => {
   return {
-    useAuthenticationFlow: jest.fn(() => ({
-      tokenHolderFunc: jest.fn(),
-      isAuthenticatedFunc: jest.fn(() => mockIsAuthenticated),
+    useAuthenticationFlow: vi.fn(() => ({
+      tokenHolderFunc: vi.fn(),
+      isAuthenticatedFunc: vi.fn(() => mockIsAuthenticated),
     })),
   };
 });
 
-jest.mock("hooks/useNibasApi", () =>
-  jest.fn(() => ({
+vi.mock("hooks/useNibasApi", () => ({
+  default: vi.fn(() => ({
     data: mockErrorStatusCode == null ? {} : null,
     error: mockErrorStatusCode == null ? null : { status: mockErrorStatusCode },
-    mutate: jest.fn(),
-  }))
-);
+    mutate: vi.fn(),
+  })),
+}));
 
 describe("Landing", () => {
   it("should render normally is not authenticated", async () => {
@@ -29,13 +29,13 @@ describe("Landing", () => {
     render(<Landing />);
 
     expect(
-      await screen.findByText("auth.Logg inn i Nasjonal inndelingsbase")
+      await screen.findByText("Logg inn i Nasjonal inndelingsbase")
     ).toBeInTheDocument();
     expect(
-      await screen.queryByText("auth.feil.generellFeilTittel")
+      await screen.queryByText("En feil skjedde ved pålogging.")
     ).not.toBeInTheDocument();
     expect(
-      await screen.queryByText("auth.feil.ikkeAutorisertTittel")
+      await screen.queryByText("Du har ikke tilgang til å se inndelingsbasen.")
     ).not.toBeInTheDocument();
   });
 
@@ -46,7 +46,7 @@ describe("Landing", () => {
     render(<Landing />);
 
     expect(
-      await screen.findByText("auth.feil.ikkeAutorisertTittel")
+      await screen.findByText("Du har ikke tilgang til å se inndelingsbasen.")
     ).toBeInTheDocument();
   });
 
@@ -57,7 +57,7 @@ describe("Landing", () => {
     render(<Landing />);
 
     expect(
-      await screen.findByText("auth.feil.generellFeilTittel")
+      await screen.findByText("En feil skjedde ved pålogging.")
     ).toBeInTheDocument();
   });
 });

@@ -27,7 +27,7 @@ const defaultProps: React.ComponentProps<typeof ToggleableGrense> = {
 };
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 });
 
 const renderWithProvider = (
@@ -37,10 +37,10 @@ const renderWithProvider = (
   render(ui, {
     EditGrenserProvider: {
       editingObject: { fylke: { "1": objectValue } },
-      setObjectValue: jest.fn(),
-      setEditingObject: jest.fn(),
-      resetAndClearEditingLayer: jest.fn(),
-      getCurrentlyEditingType: jest.fn(),
+      setObjectValue: vi.fn(),
+      setEditingObject: vi.fn(),
+      resetAndClearEditingLayer: vi.fn(),
+      getCurrentlyEditingType: vi.fn(),
     },
   });
 };

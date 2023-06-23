@@ -1,5 +1,4 @@
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import { useTranslation } from "react-i18next";
 import Button from "components/form/Button";
 import Icon from "components/Icon";
 
@@ -11,8 +10,6 @@ export const AuthenticationButton = () => {
   const { isAuthenticatedFunc, handleAuthenticateFunc, handleLogoutFunc } =
     useAuthenticationFlow();
 
-  const { t } = useTranslation();
-
   const loginButton = (
     <Button
       variant="secondary"
@@ -21,7 +18,7 @@ export const AuthenticationButton = () => {
       iconDirection="left"
       onClick={() => handleAuthenticateFunc("/")}
     >
-      {t("auth.Login")}
+      Logg inn
     </Button>
   );
   const logoutButton = (
@@ -32,7 +29,7 @@ export const AuthenticationButton = () => {
       iconDirection="left"
       onClick={handleLogoutFunc}
     >
-      {t("auth.Logout")}
+      Logg ut
     </Button>
   );
 

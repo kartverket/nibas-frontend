@@ -4,27 +4,25 @@ import Icon from "components/Icon";
 import { useInndelingerKrets } from "contexts/InndelingerKretsContext";
 import { KommuneRef } from "types/api";
 import { getNavnInSpraak } from "utils/language/language";
-import { useTranslation } from "react-i18next";
 import { Outline } from "style/mixins";
 import AlertModal from "components/Status/AlertModal";
 import useAlertModal from "hooks/useAlertModal";
 import { useHistory } from "contexts/HistoryContext";
+import { Spinner } from "@kvib/react";
 
 type Props = {
   kommune: KommuneRef;
 };
 
 const Kommune = ({ kommune }: Props) => {
-  const { t } = useTranslation();
+  const { history, clearHistory } = useHistory();
   const { kommuneValues, toggleEditKretser, toggleKretser, lasterData } =
     useInndelingerKrets(kommune);
 
-  const { history, clearHistory } = useHistory();
-
   const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } =
     useAlertModal(
-      t("utkast.ulagrede-endringer"),
-      t("utkast.ulagrede-endringer-krets-utdypende")
+      "Du har endringer i utkastet som ikke er lagret",
+      "Er du sikker på at du vil avslutte redigering av denne kommunen? Dersom du avslutter redigering nå mister du alle ulagrede endringer."
     );
 
   const closeEditing = () => {
@@ -58,11 +56,13 @@ const Kommune = ({ kommune }: Props) => {
           }
         />
         <Title>{getNavnInSpraak(kommune.navn, "nor")}</Title>
-        <LinkButton onClick={onAvsluttRedigeringClick} disabled={lasterData}>
-          {kommuneValues.editing
-            ? t("action.Avslutt redigering")
-            : t("action.Rediger")}
-        </LinkButton>
+        {lasterData ? (
+          <Spinner size="md" color="blue" />
+        ) : (
+          <LinkButton onClick={onAvsluttRedigeringClick}>
+            {kommuneValues.editing ? "Avslutt redigering" : "Rediger"}
+          </LinkButton>
+        )}
       </KommuneWrapper>
       <AlertModal
         status="warning"
@@ -71,11 +71,11 @@ const Kommune = ({ kommune }: Props) => {
         isOpen={modalIsOpen}
         onClose={closeModal}
         secondaryAction={{
-          text: t("Forkast endringer"),
+          text: "Forkast endringer",
           onClick: closeEditing,
         }}
         primaryAction={{
-          text: t("Fortsett redigering"),
+          text: "Fortsett redigering",
           onClick: closeModal,
         }}
       />

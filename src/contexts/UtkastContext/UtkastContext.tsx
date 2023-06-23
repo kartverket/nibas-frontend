@@ -38,7 +38,7 @@ export const UtkastContext = createContext<UtkastContextValue | undefined>(
   undefined
 );
 
-export const UtkastProvider: React.FC = ({ children }) => {
+export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const { history, clearHistory } = useHistory();
   const { clearDirtyStyles } = useFeatureStyle();
   const { tokenHolderFunc } = useAuthenticationFlow();

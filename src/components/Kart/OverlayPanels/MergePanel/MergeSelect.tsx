@@ -1,5 +1,4 @@
 import { InputHTMLAttributes, forwardRef } from "react";
-import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { StemmekretsResponse } from "types/api";
 import Button from "components/form/Button";
@@ -53,35 +52,32 @@ export const MergeSelect = forwardRef<HTMLDivElement, MergeSelectProps>(
       ...inputProps
     },
     ref
-  ) => {
-    const { t } = useTranslation();
-    return (
-      <MergeSelectWrapper ref={ref}>
-        <MergeSelectStyle
-          {...inputProps}
-          defaultValue="default"
-          label={t("stemmekrets.sammenslaaing.label")}
-        >
-          <option value={"default"} disabled>
-            {t("stemmekrets.sammenslaaing.actions.velg")}
+  ) => (
+    <MergeSelectWrapper ref={ref}>
+      <MergeSelectStyle
+        {...inputProps}
+        defaultValue="default"
+        label="Navn eller nummer på stemmekrets"
+      >
+        <option value="default" disabled>
+          Velg en stemmekrets fra listen
+        </option>
+        {stemmekretser.map((s) => (
+          <option key={s.stemmekretsnummer} value={s.stemmekretsnummer}>
+            {`${s.stemmekretsnummer} - ${s.stemmekretsnavn}`}
           </option>
-          {stemmekretser.map((s) => (
-            <option key={s.stemmekretsnummer} value={s.stemmekretsnummer}>
-              {`${s.stemmekretsnummer} - ${s.stemmekretsnavn}`}
-            </option>
-          ))}
-        </MergeSelectStyle>
-        {showRemoveButton && (
-          <RemoveButton onClick={onRemove}>Fjern</RemoveButton>
-        )}
-        {validationError?.showError && (
-          <MergeSelectErrorMessage status="error">
-            {validationError.message}
-          </MergeSelectErrorMessage>
-        )}
-      </MergeSelectWrapper>
-    );
-  }
+        ))}
+      </MergeSelectStyle>
+      {showRemoveButton && (
+        <RemoveButton onClick={onRemove}>Fjern</RemoveButton>
+      )}
+      {validationError?.showError && (
+        <MergeSelectErrorMessage status="error">
+          {validationError.message}
+        </MergeSelectErrorMessage>
+      )}
+    </MergeSelectWrapper>
+  )
 );
 
 MergeSelect.displayName = "MergeSelect";

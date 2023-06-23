@@ -37,7 +37,7 @@ jobs:
 
       - name: Determine image version hash
         id: git_hash
-        run: echo "git_hash=$(git rev-parse --short $GITHUB_SHA)" >> $GITHUB_OUTPUT      
+        run: echo "git_hash=$(git rev-parse --short $GITHUB_SHA)" >> $GITHUB_OUTPUT
 
       - name: Build and test
         run: |
@@ -46,7 +46,7 @@ jobs:
           npm run build --if-present
           npm test
         env:
-          REACT_APP_VERSION: ${{ github.ref_name }}
+          VITE_VERSION: ${{ github.ref_name }}
 
       - name: Remove npmrc with secret
         run: |

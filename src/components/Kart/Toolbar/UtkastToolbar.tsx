@@ -1,8 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { useSearchParams } from "react-router-dom";
-import { Translation } from "i18n";
-import { useTranslation } from "react-i18next";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useHistory } from "contexts/HistoryContext";
 import { translateKeysByEndringsType } from "contexts/UtkastContext/constants";
@@ -10,12 +8,12 @@ import { historyToUtkastOperations } from "contexts/UtkastContext/utils";
 import { createUtkast as createApiUtkast } from "api/utkast";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
-import Button from "components/form/Button";
 import Heading from "components/typography/Heading";
 import { Frame } from "./components";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
 import { ApiErrorResponse } from "../../../types/api";
+import { Button } from "@kvib/react";
 
 const UtkastFrame = styled(Frame)`
   flex-direction: column;
@@ -41,7 +39,7 @@ const UtkastToolbar = ({
   setUtkastJustCreated,
   setCreateUtkastOpen,
 }: Props) => {
-  const { t } = useTranslation();
+  const [createUtkastLoading, setCreateUtkastLoading] = useState(false);
   const [utkastName, setUtkastName] = useState("");
   const [utkastType, setUtkastType] = useState("");
   const { tokenHolderFunc } = useAuthenticationFlow();
@@ -58,6 +56,7 @@ const UtkastToolbar = ({
   };
 
   const createUtkast = async () => {
+    setCreateUtkastLoading(true);
     const response = await createApiUtkast(
       {
         navn: utkastName,
@@ -67,6 +66,7 @@ const UtkastToolbar = ({
       tokenHolderFunc()?.token
     );
 
+    setCreateUtkastLoading(false);
     if (statusCode.isSuccessful(response.status)) {
       const json = await response.json();
       const utkastId = json.id;
@@ -87,37 +87,39 @@ const UtkastToolbar = ({
   return (
     <UtkastFrame>
       <Heading size="xs" tag="h3">
-        {t("utkast.Opprett et nytt utkast")}
+        Opprett et nytt utkast
       </Heading>
       <Input
-        label={t("utkast.Navn på utkast")}
-        placeholder={t("f.eks. Endring av stemmekrets i Froland")}
+        label="Navn på utkast"
+        placeholder="f.eks. Endring av stemmekrets i Froland"
         value={utkastName}
         onChange={(e) => setUtkastName(e.target.value)}
       />
       <Select
-        label={t("utkast.Endringstype")}
+        label="Endringstype"
         value={utkastType}
         onChange={(e) => setUtkastType(e.target.value)}
       >
         <option value="" disabled>
-          {t("utkast.Velg en endringstype fra listen")}
+          Velg en endringstype fra listen
         </option>
-        {Object.keys(translateKeysByEndringsType).map((type) => (
+        {translateKeysByEndringsType.map((type) => (
           <option key={type} value={type}>
-            {t(translateKeysByEndringsType[type] as Translation)}
+            {type}
           </option>
         ))}
       </Select>
       <Buttons>
         <Button onClick={() => setCreateUtkastOpen(false)} variant="tertiary">
-          {t("action.Avbryt")}
+          Avbryt
         </Button>
         <Button
+          colorScheme="blue"
           onClick={createUtkast}
           disabled={utkastType === "" || utkastName === ""}
+          isLoading={createUtkastLoading}
         >
-          {t("action.Opprett")}
+          Opprett
         </Button>
       </Buttons>
     </UtkastFrame>

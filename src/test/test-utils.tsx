@@ -2,7 +2,6 @@
 import { ReactNode } from "react";
 import { render, RenderOptions, RenderResult } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { UserEvent } from "@testing-library/user-event/dist/types/setup/setup";
 import { renderWithProviders, TestProviderValues } from "./test-providers";
 
 // https://testing-library.com/docs/react-testing-library/setup/#custom-render
@@ -12,7 +11,7 @@ type Options = RenderOptions & TestProviderValues;
 const customRender = (
   ui: ReactNode,
   options: Options = {}
-): RenderResult & { user: UserEvent } => {
+): RenderResult & { user: ReturnType<typeof userEvent.setup> } => {
   const user = userEvent.setup();
 
   const {

@@ -19,6 +19,6 @@ describe("ApiGrense", () => {
   it("should render name in Norwegian", () => {
     render(<ApiGrense {...defaultProps} />);
 
-    expect(screen.getByText(/grense/i)).toBeInTheDocument();
+    expect(screen.getByText("Grense")).toBeInTheDocument();
   });
 });

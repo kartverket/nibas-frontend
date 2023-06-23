@@ -1,6 +1,5 @@
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import useSWR from "swr";
-import { BareFetcher, PublicConfiguration } from "swr/dist/types";
+import useSWR, { BareFetcher, SWRConfiguration } from "swr";
 import { ApiPath } from "types/api";
 import { paths } from "types/api-gen";
 import { fetcherWithToken } from "utils/api";
@@ -54,7 +53,7 @@ const useNibasApi = <Path extends ApiPath>(
   params?: GetParameters<Path> | null,
   swrOptions?:
     | Partial<
-        PublicConfiguration<
+        SWRConfiguration<
           ResponseType<Path>,
           // responstypen til options bruker visst any, så da gjør vi det og
           // eslint-disable-next-line @typescript-eslint/no-explicit-any

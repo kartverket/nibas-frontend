@@ -43,7 +43,7 @@ const lineAndPointStyles = ({
   }),
   new Style({
     image: new Circle({
-      radius: points ? 4 : 0,
+      radius: points ? 2.5 : 0,
       fill: new Fill({
         color,
       }),
@@ -166,10 +166,12 @@ export const updateEditFeatureText = (
   number?: string
 ) => {
   const feature = editSource.getFeatureById(featureId);
-  if (name) {
-    feature.set("name", name);
-  }
-  if (number) {
-    feature.set("number", number);
+  if (feature) {
+    if (name) {
+      feature.set("name", name);
+    }
+    if (number) {
+      feature.set("number", number);
+    }
   }
 };

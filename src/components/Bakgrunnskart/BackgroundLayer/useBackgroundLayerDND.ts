@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { DropTargetMonitor, useDrag, useDrop, XYCoord } from "react-dnd";
+import { useDrag, useDrop, XYCoord } from "react-dnd";
 import { BakgrunnskartId } from "hooks/layers/types";
 import { MainMappedLayer } from "utils/getLayersFromWMS";
 import { getLayerIdFromMappedLayer } from "utils/map/layers";
@@ -24,11 +24,11 @@ const useBackgroundLayerDND = (
   // https://codesandbox.io/s/github/react-dnd/react-dnd/tree/gh-pages/examples_hooks_ts/04-sortable/simple?from-embed=&file=/src/Card.tsx
   const [, drop] = useDrop({
     accept: "mainLayer",
-    hover(item: DragItem, monitor: DropTargetMonitor) {
+    hover(item, monitor) {
       if (!ref.current || !moveLayer) {
         return;
       }
-      const dragIndex = item.index;
+      const dragIndex = (item as DragItem).index;
       const hoverIndex = index;
 
       // Don't replace items with themselves
@@ -79,7 +79,7 @@ const useBackgroundLayerDND = (
       // Generally it's better to avoid mutations,
       // but it's good here for the sake of performance
       // to avoid expensive index searches.
-      item.index = hoverIndex;
+      (item as DragItem).index = hoverIndex;
     },
   });
 

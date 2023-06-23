@@ -16,7 +16,11 @@ export const ErrorHandlingContext = createContext<
   ErrorHandlingContextValue | undefined
 >(undefined);
 
-export const ErrorHandlingProvider: React.FC = ({ children }) => {
+export const ErrorHandlingProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [error, setError] = useState<Error>(null);
 
   const value = {

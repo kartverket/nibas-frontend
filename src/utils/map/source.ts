@@ -16,6 +16,7 @@ export const addFeaturesToSource = (
 ) => {
   const layer = getLayerById(sourceId) as VectorLayer<GeometryVectorSource>;
   const source = layer.getSource();
+  if (!source) return;
 
   const newFeatures: Feature<Geometry>[] = [];
 
@@ -47,6 +48,7 @@ export const removeFeaturesFromSourceByIds = (
 ) => {
   const layer = getLayerById(sourceId) as VectorLayer<GeometryVectorSource>;
   const source = layer.getSource();
+  if (!source) return;
 
   const removeFeature = (featureId: string) => {
     const featureToRemove = source.getFeatureById(featureId);

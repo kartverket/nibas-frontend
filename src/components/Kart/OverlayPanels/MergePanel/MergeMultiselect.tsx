@@ -1,5 +1,4 @@
 import { StemmekretsResponse } from "../../../../types/api";
-import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import Button from "../../../form/Button";
 import Icon from "../../../Icon/Icon";
@@ -15,7 +14,6 @@ type MergeMultiselectProps = {
 export const MergeMultiselect = ({
   alleStemmekretser,
 }: MergeMultiselectProps) => {
-  const { t } = useTranslation();
   const {
     control,
     register,
@@ -49,10 +47,10 @@ export const MergeMultiselect = ({
     validate: (value: string): string | boolean => {
       const values = getValues("stemmekretsNummerTilSammenslaaing");
       if (value.trim() === "" || value === "default") {
-        return t("stemmekrets.validering.multiselect.obligatorisk");
+        return "Du må velge en stemmekrets";
       }
       if (values.filter((v) => v.value === value).length > 1) {
-        return t("stemmekrets.validering.multiselect.unik");
+        return "Du kan ikke velge samme krets flere ganger";
       }
       return true;
     },
@@ -83,7 +81,7 @@ export const MergeMultiselect = ({
         />
       ))}
       <LeggTilFlerButton onClick={() => append({ value: "default" })}>
-        {t("stemmekrets.sammenslaaing.actions.legg-til-flere")}
+        Legg til flere sammenslåinger
       </LeggTilFlerButton>
     </MultiSelectWrapper>
   );

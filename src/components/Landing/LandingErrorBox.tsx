@@ -3,7 +3,6 @@ import { ReactElement, ReactNode } from "react";
 import Icon from "../Icon/Icon";
 import Button from "../form/Button";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import { useTranslation } from "react-i18next";
 
 type ErrorBoxProps = {
   title: string | ReactElement | ReactNode;
@@ -12,7 +11,6 @@ type ErrorBoxProps = {
 
 export const ErrorBox = ({ title, text }: ErrorBoxProps) => {
   const { handleLogoutFunc } = useAuthenticationFlow();
-  const { t } = useTranslation();
 
   return (
     <ErrorBoxWrapper>
@@ -22,7 +20,7 @@ export const ErrorBox = ({ title, text }: ErrorBoxProps) => {
         <ErrorText>{text}</ErrorText>
       </TextWrapper>
       <LogoutButton variant="tertiary" onClick={handleLogoutFunc}>
-        {t("auth.Logout")}
+        Logg ut
       </LogoutButton>
     </ErrorBoxWrapper>
   );

@@ -24,8 +24,8 @@ const defaultProps: React.ComponentProps<typeof MainBackgroundLayer> = {
     title: "Hovedlag",
     id: "Hovedlag",
   },
-  moveLayer: jest.fn(),
-  toggleLayerVisibility: jest.fn(),
+  moveLayer: vi.fn(),
+  toggleLayerVisibility: vi.fn(),
   visible: false,
 };
 
@@ -33,14 +33,14 @@ const renderWithProvider = (ui: ReactNode) =>
   render(ui, {
     BakgrunnskartProvider: {
       visibleLayers: { administrativeGrenser: true } as never,
-      toggleLayerVisibility: jest.fn(),
-      recursiveIsVisible: jest.fn(() => true),
-      layerIsVisible: jest.fn(() => true),
+      toggleLayerVisibility: vi.fn(),
+      recursiveIsVisible: vi.fn(() => true),
+      layerIsVisible: vi.fn(() => true),
       mappedLayers: [
         { ...defaultProps.mappedLayer, sourceId: "administrativeGrenser" },
       ],
-      moveLayer: jest.fn(),
-      subLayerIsVisible: jest.fn(),
+      moveLayer: vi.fn(),
+      subLayerIsVisible: vi.fn(),
     },
   });
 
@@ -51,17 +51,17 @@ describe("MainBackgroundLayer", () => {
     );
 
     const caret = screen.getByRole("button", {
-      name: /hovedlag åpne/i,
+      name: "Hovedlag Åpne",
     });
     await user.click(caret);
 
-    expect(screen.getByText(/sublag1/i)).toBeInTheDocument();
-    expect(screen.getByText(/sublag2/i)).toBeInTheDocument();
+    expect(screen.getByText("Sublag1")).toBeInTheDocument();
+    expect(screen.getByText("Sublag2")).toBeInTheDocument();
   });
 
   it("should display name of mapped layer", () => {
     renderWithProvider(<MainBackgroundLayer {...defaultProps} />);
 
-    expect(screen.getByText(/hovedlag/i)).toBeInTheDocument();
+    expect(screen.getByText("Hovedlag")).toBeInTheDocument();
   });
 });

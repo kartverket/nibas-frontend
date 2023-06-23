@@ -28,10 +28,35 @@ interface ResponseError extends Error {
   status?: number;
 }
 
-export const fetcherWithToken = async (url: string | null, token?: string) => {
+/**
+ * Gjør om en path til en fullstendig URI som kan brukes av fetch. Årsaken til dette
+ * er at om man kjører fetch på serveren (f.eks. i tester) så bruker man node-fetch
+ * som krever fullstendig URIer for å fungere. Default bruker den domener nettsiden er på
+ * som base-path, men fallbacker til localhost om `document.location` ikke er satt.
+ *
+ * @param path en path du ønsker å konvertere til full URI.
+ * @returns En string som er en gyldig URI for gitt path.
+ */
+export const getUrlForPath = (path: string): string => {
+  const baseUrl = document.location.origin ?? "http://localhost:3000";
+
+  if (path.startsWith("http")) {
+    return path;
+  }
+
+  if (path.startsWith("/")) {
+    return baseUrl + path;
+  }
+  return `${baseUrl}/${path}`;
+};
+
+export const fetcherWithToken = async ([url, token]: [
+  string | null,
+  string | undefined
+]) => {
   if (!url) return;
 
-  const res = await fetch(url, {
+  const res = await fetch(getUrlForPath(url), {
     headers: { Authorization: "Bearer " + token ?? "" },
   });
 

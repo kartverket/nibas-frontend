@@ -1,7 +1,6 @@
 import Checkbox from "components/Checkbox";
 import Input from "components/form/Input";
 import { ButtonCell } from "components/Kart/OverlayPanels/Flatedata/KretsTable";
-import { useTranslation } from "react-i18next";
 import {
   FramtidigVersjonConflict,
   StemmekretsRequest,
@@ -26,8 +25,6 @@ const StemmekretsUtkastConflictModal = ({
   onNext,
   onCancel,
 }: Props) => {
-  const { t } = useTranslation();
-
   const { fields, getIsConfirmed, register, submit } =
     useStemmekretsConflictModal({
       conflictResponse,
@@ -45,11 +42,11 @@ const StemmekretsUtkastConflictModal = ({
   ];
 
   const columns = [
-    t("stemmekrets.Stemmekrets"),
-    t("stemmekrets.Stemmekretsnummer"),
-    t("stemmekrets.Valgdistriktsnummer"),
-    t("tabell.Endringstype"),
-    t("metadata.Gyldig fra"),
+    "Stemmekrets",
+    "Stemmekretsnummer",
+    "Valgdistriktsnummer",
+    "Endringstype",
+    "Gyldig fra",
   ];
 
   return (

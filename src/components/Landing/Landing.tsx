@@ -1,6 +1,5 @@
 import { VerticalLogo } from "components/Logo/Logo";
 import styled from "styled-components";
-import { useTranslation } from "react-i18next";
 import {
   AuthorizationStatus,
   useAuthorization,
@@ -17,13 +16,11 @@ const Landing = () => (
 
 const LandingBody = () => {
   const { status } = useAuthorization();
-  const { t } = useTranslation();
-
   if (status === AuthorizationStatus.ERROR) {
     return (
       <ErrorBox
-        title={t("auth.feil.generellFeilTittel")}
-        text={t("auth.feil.generellFeilTekst")}
+        title="En feil skjedde ved pålogging."
+        text="Det skjedde en uventet feil under påloggingen. Du kan forsøke å laste siden på nytt, eller logge ut og forsøke å logge inn på nytt. Om feilen vedvarer er det fint om du tar kontakt med Kartverket."
       />
     );
   }
@@ -31,8 +28,8 @@ const LandingBody = () => {
   if (status === AuthorizationStatus.NOT_AUTHORIZED) {
     return (
       <ErrorBox
-        title={t("auth.feil.ikkeAutorisertTittel")}
-        text={t("auth.feil.ikkeAutorisertTekst")}
+        title="Du har ikke tilgang til å se inndelingsbasen."
+        text="Vennlist kontakt Kartverket hvis du mener dette er en feil."
       />
     );
   }

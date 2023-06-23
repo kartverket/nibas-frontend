@@ -1,5 +1,4 @@
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import KommuneList from "../Kretser/KommuneList";
 import ListItemAccordion from "../ListItemAccordion";
@@ -11,11 +10,10 @@ import { getIdFromEntity } from "utils/api";
 
 const Grunnkretser = () => {
   const { fylker } = useFylker();
-  const { t } = useTranslation();
   const { isAuthenticatedFunc } = useAuthenticationFlow();
 
   return (
-    <ListItemAccordion title={t("inndelinger.Grunnkretser")}>
+    <ListItemAccordion title="Grunnkretser">
       <InndelingerKretsProvider kretstype="grunnkrets">
         {fylker ? (
           <List>
@@ -31,8 +29,8 @@ const Grunnkretser = () => {
         ) : (
           <p>
             {isAuthenticatedFunc()
-              ? t("Henter fylker")
-              : t("Logg inn for å se listen")}
+              ? "Henter fylker..."
+              : "Logg inn for å se listen"}
           </p>
         )}
       </InndelingerKretsProvider>

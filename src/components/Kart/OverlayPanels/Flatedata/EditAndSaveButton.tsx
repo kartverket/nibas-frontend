@@ -1,26 +1,9 @@
 import Icon from "components/Icon";
-import Button from "components/form/Button";
 import styled from "styled-components";
+import { ButtonGroup, Button } from "@kvib/react";
 
 const EditButton = styled(Button)`
   white-space: nowrap;
-`;
-
-const SaveAndDiscard = styled.div`
-  display: flex;
-`;
-
-const SaveButton = styled(Button)`
-  width: 100%;
-  border-color: var(--blue);
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-`;
-
-const DiscardButton = styled(Button)`
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-  border: 1px solid var(--blue_dark);
 `;
 
 type Props = {
@@ -38,28 +21,31 @@ const EditAndSaveButton = ({
 }: Props) => (
   <td>
     {isEditing ? (
-      <SaveAndDiscard>
-        <SaveButton
+      <ButtonGroup isAttached={true} colorScheme="blue" size="md">
+        <Button
+          colorScheme="blue"
           aria-label="Lagre endringer"
           onClick={onSubmit}
-          icon={<Icon icon="edit" />}
+          leftIcon={<Icon icon="edit" />}
           disabled={!canSave}
         >
           Endre
-        </SaveButton>
-        <DiscardButton
-          variant="secondary"
+        </Button>
+        <Button
+          variant="outline"
           aria-label="Forkast endringer"
           onClick={toggleEditing}
         >
           <Icon icon="close" />
-        </DiscardButton>
-      </SaveAndDiscard>
+        </Button>
+      </ButtonGroup>
     ) : (
       <EditButton
+        size="md"
+        colorScheme="blue"
         aria-label="Åpne redigering"
         onClick={toggleEditing}
-        icon={<Icon icon="settings" />}
+        leftIcon={<Icon icon="settings" />}
       >
         Endre detaljer
       </EditButton>

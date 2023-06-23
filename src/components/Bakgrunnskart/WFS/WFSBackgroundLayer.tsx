@@ -60,6 +60,9 @@ export default WFSBackgroundLayer;
 const fetchMatrikkelWfsFeatures = async () => {
   const features = await getMatWFSFeatures();
   if (!features) return null;
-  getLayerById("matrikkelenWfs").getSource().clear();
+  const source = getLayerById("matrikkelenWfs").getSource();
+  if (source) {
+    source.clear();
+  }
   addFeaturesToSource("matrikkelenWfs", features);
 };

@@ -1,8 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { useSearchParams } from "react-router-dom";
-import { Translation } from "i18n";
-import { useTranslation } from "react-i18next";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useHistory } from "contexts/HistoryContext";
 import { translateKeysByEndringsType } from "contexts/UtkastContext/constants";
@@ -10,11 +8,11 @@ import { historyToUtkastOperations } from "contexts/UtkastContext/utils";
 import { createUtkast as createApiUtkast } from "api/utkast";
 import Input from "components/form/Input";
 import Select from "components/form/Select";
-import Button from "components/form/Button";
 import Heading from "components/typography/Heading";
 import { Modal, ModalContent } from "components/Modal";
 import { statusCode } from "utils/api";
 import { UtkastOperasjoner } from "../../../../types/api";
+import { Button } from "@kvib/react";
 
 const ModalElement = styled(ModalContent)`
   display: flex;
@@ -55,7 +53,7 @@ const CreateUtkastModal = ({
   setIsCreateUtkastModalOpen,
   callback,
 }: Props) => {
-  const { t } = useTranslation();
+  const [oppretterUtkast, setOppretterUtkast] = useState(false);
   const [utkastName, setUtkastName] = useState("");
   const [utkastType, setUtkastType] = useState("");
   const { tokenHolderFunc } = useAuthenticationFlow();
@@ -63,6 +61,7 @@ const CreateUtkastModal = ({
   const setSearchParams = useSearchParams()[1];
 
   const createUtkast = async () => {
+    setOppretterUtkast(true);
     const nyttUtkast = {
       navn: utkastName,
       endringstype: utkastType,
@@ -74,6 +73,7 @@ const CreateUtkastModal = ({
       tokenHolderFunc()?.token
     );
 
+    setOppretterUtkast(false);
     if (statusCode.isError(response.status)) {
       throw new Error(
         "Klarte ikke opprette utkast. Det ble returnert en feilkode ved opprettelse"
@@ -101,37 +101,39 @@ const CreateUtkastModal = ({
       modalElement={ModalElement}
     >
       <Heading size="xs" tag="h3">
-        {t("utkast.Opprett et nytt utkast")}
+        Opprett et nytt utkast
       </Heading>
       <Input
-        label={t("utkast.Navn på utkast")}
-        placeholder={t("f.eks. Endring av stemmekrets i Froland")}
+        label="Navn på utkast"
+        placeholder="f.eks. Endring av stemmekrets i Froland"
         value={utkastName}
         onChange={(e) => setUtkastName(e.target.value)}
       />
       <Select
-        label={t("utkast.Endringstype")}
+        label="Endringstype"
         value={utkastType}
         onChange={(e) => setUtkastType(e.target.value)}
       >
         <option value="" disabled>
-          {t("utkast.Velg en endringstype fra listen")}
+          Velg en endringstype fra listen
         </option>
-        {Object.keys(translateKeysByEndringsType).map((type) => (
+        {translateKeysByEndringsType.map((type) => (
           <option key={type} value={type}>
-            {t(translateKeysByEndringsType[type] as Translation)}
+            {type}
           </option>
         ))}
       </Select>
       <Buttons>
         <Button onClick={() => cancelCreateUtkast()} variant="tertiary">
-          {t("action.Avbryt")}
+          Avbryt
         </Button>
         <Button
+          colorScheme="blue"
           onClick={createUtkast}
           disabled={utkastType === "" || utkastName === ""}
+          isLoading={oppretterUtkast}
         >
-          {t("action.Opprett")}
+          Opprett
         </Button>
       </Buttons>
     </Modal>

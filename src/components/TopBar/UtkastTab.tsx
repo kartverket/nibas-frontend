@@ -1,16 +1,13 @@
-import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
 
 const UtkastTab = () => {
-  const { t } = useTranslation();
   const { redigeringsmodusAktiv } = useRedigeringsmodus();
-
   if (!redigeringsmodusAktiv) return null;
 
   return (
     <Wrapper>
-      <span>{t("Redigeringsmodus")}</span>
+      <span>Redigeringsmodus</span>
     </Wrapper>
   );
 };

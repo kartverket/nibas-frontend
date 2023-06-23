@@ -39,8 +39,8 @@ Når appen kjøres lokalt vil den benytte seg av `setupProxy.js` for å proxye r
 For de låste WMS-kartene er du nødt til å bruke din BAAT-bruker du får via geonorge sine sider. Det kan brukes slik:
 
 ```
-REACT_APP_BAAT_USERNAME=Ditt_BAAT_brukernavn
-REACT_APP_BAAT_PASSWORD=Ditt_BAAT_passord
+VITE_BAAT_USERNAME=Ditt_BAAT_brukernavn
+VITE_BAAT_PASSWORD=Ditt_BAAT_passord
 ```
 
 ### Linting
@@ -54,15 +54,9 @@ Types fra API blir generert ved `npm run update-api-types`. Videre blir disse ty
 
 Disse typene brukes i en hjelpehook `useApiSWR` for å få typen tilbake basert på URLen som hentes. (Per tid ikke mulig å bruke med parametere)
 
-### Oversetting av tekst
-
-Vi bruker [react-i18next](https://react.i18next.com/) for å oversette tekster i klienten.
-
-For å legge til ny tekst skriver du inn `t("Din nye tekst")`, som vil gi en feilmelding hvis den ikke finnes. Da må du kjøre `npm run scan-translations` for å få `i18next-scanner` til å plukke opp og legge til den nye nøklen i oversettelsesfilene. Dette vil fjerne erroren fra TypeScript, men du må likevel oppdatere strengen i de endrede oversettelsesfilene.
-
 ### Feature toggles
 
-Noen funksjoner er låst bak feature toggles. Hvilke feature toggles som er aktive kan ses i `components/FeatureToggle/FeatureToggle.tsx`. Disse har hardkodede nøkler som brukes i komponenten og hooken i samme fil, som sjekker basert på hvilken URL du befinner deg på. Den lokale/dev variabelen er mulig å overstyre i en `.env.local`-fil, for å slippe å risikere å commite en ny verdi hvis du ikke skal det. Her følges convention `REACT_APP_FEATURE_` som prefix før din key i all caps, for eksempel `REACT_APP_FEATURE_FORKAST_UTKAST`.
+Noen funksjoner er låst bak feature toggles. Hvilke feature toggles som er aktive kan ses i `components/FeatureToggle/FeatureToggle.tsx`. Disse har hardkodede nøkler som brukes i komponenten og hooken i samme fil, som sjekker basert på hvilken URL du befinner deg på. Den lokale/dev variabelen er mulig å overstyre i en `.env.local`-fil, for å slippe å risikere å commite en ny verdi hvis du ikke skal det. Her følges convention `VITE_FEATURE_` som prefix før din key i all caps, for eksempel `VITE_FEATURE_FORKAST_UTKAST`.
 
 ## Docker
 
@@ -82,15 +76,15 @@ For å få låste bakgrunnskart til å fungere lokalt må du også få tak i bru
 
 ## Autentisering
 
-* Vær logget inn på enten kartverkets nett, VPN eller VDI.
-* Gå til et av testmiljøene
+- Vær logget inn på enten kartverkets nett, VPN eller VDI.
+- Gå til et av testmiljøene
   - Test: [nibas.test.skip.statkart.no](https://nibas.test.skip.statkart.no/)
   - Dev: [nibas.dev.skip.statkart.no](https://nibas.dev.skip.statkart.no/)
-* Velg "Logg inn i Nasjonal inndelingsbase"
-* Anbefalt metode: logg inn med TestID 
+- Velg "Logg inn i Nasjonal inndelingsbase"
+- Anbefalt metode: logg inn med TestID
   - Oppgi personidentifikator fra en av de syntetiske brukerne her: [Testbrukere](https://kartverket.atlassian.net/wiki/spaces/TNIBAS/pages/534282277/Testbrukere)
   - Dersom du får beskjed om å fylle inn mobil/epost er det bare å bruke et dummy-mobilnummer, eksempelvis 44556677
-* Det er også i en overgangsperiode mulig å logge inn med BankID
+- Det er også i en overgangsperiode mulig å logge inn med BankID
   - Skriv inn personnummer
   - Velg BankID med kodebrikke
   - Skriv inn engangspassord

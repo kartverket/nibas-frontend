@@ -6,7 +6,6 @@ import LagreToolbar from "./LagreToolbar";
 import ButtonToolbar from "./ButtonToolbar";
 import { toolbarSpacing } from "./components";
 import Toast from "./Toast";
-import { t } from "i18next";
 
 const Container = styled.div`
   position: relative;
@@ -45,7 +44,7 @@ const Toolbar = () => {
             setCreateUtkastOpen={setCreateUtkastOpen}
           />
           {utkastJustCreated && (
-            <Toast title={t("utkast.utkast-opprettet")} status="success" />
+            <Toast title="Utkastet er opprettet" status="success" />
           )}
         </Stack>
       )}

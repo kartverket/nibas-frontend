@@ -7,7 +7,6 @@ import InputCell from "../InputCell";
 import { ValidationError } from "components/form/Input/Input";
 import { StemmekretsEntry, useHistory } from "contexts/HistoryContext";
 import { RegisterOptions, FieldError, useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
 import { updateEditFeatureText } from "utils/map/layerStyles";
 import { getRepresentasjonspunktId } from "utils/map/source";
 import useKretsToolbarSync from "contexts/HistoryContext/useToolbarFormSync";
@@ -37,7 +36,6 @@ type Props = {
 
 // TODO: legg til fremtidige endringer igjen, sjekk med Erlend for skisser
 const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
-  const { t } = useTranslation();
   const stemmekretsId = getIdFromEntity(stemmekrets);
   const { addHistoryEntry } = useHistory();
   const [isEditing, setIsEditing] = useState(false);
@@ -87,22 +85,22 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
 
   const formOptions: Record<string, RegisterOptions> = {
     stemmekretsnummer: {
-      required: t("stemmekrets.validering.stemmekretsnummer.ikke-tomt"),
+      required: "Stemmekretsnummer kan ikke være tomt",
       validate: (stemmekretsnummer: string) => {
         if (
           !isInteger(stemmekretsnummer) ||
           parseInt(stemmekretsnummer) > 9999
         ) {
-          return t("stemmekrets.validering.stemmekretsnummer.kun-siffer");
+          return "Stemmekretsnummer må kun inneholde siffer (maks 4)";
         }
         if (parseInt(stemmekretsnummer) <= 0) {
-          return t("stemmekrets.validering.stemmekretsnummer.kun-positiv");
+          return "Stemmekretsnummer kan ikke være 0 eller et negativt tall";
         }
         return true;
       },
     },
     stemmekretsnavn: {
-      required: t("stemmekrets.validering.stemmekretsnavn.ikke-tomt"),
+      required: "Stemmekretsnavn kan ikke være tomt",
     },
   };
 

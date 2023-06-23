@@ -1,5 +1,5 @@
 import useNibasApi from "hooks/useNibasApi";
-import { SWRConfiguration } from "swr/dist/types";
+import { SWRConfiguration } from "swr";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 
 export enum AuthorizationStatus {

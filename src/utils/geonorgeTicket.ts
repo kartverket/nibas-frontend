@@ -2,6 +2,7 @@
 // logge en del nå i starten, så kan det fjernes etter vi er helt sikker
 // på at det funker som tiltenkt
 import WMSCapabilities from "ol/format/WMSCapabilities";
+import { getUrlForPath } from "utils/api";
 
 const ticketPrefix = "ticket_";
 
@@ -25,7 +26,9 @@ export const getSrcWithTicket = async (tjenesteId: string, src: string) => {
 const fetchNewTicket = async (tjenesteId: string) => {
   if (!ticketConfigSetUpCorrectly) return "*";
 
-  const ticketResponse = await fetch(`/skbaatts/req?tjenesteid=${tjenesteId}`);
+  const ticketResponse = await fetch(
+    getUrlForPath(`/skbaatts/req?tjenesteid=${tjenesteId}`)
+  );
   return ticketResponse.text();
 };
 
@@ -72,7 +75,7 @@ const isTicketValid = async (ticket: string, src: string) => {
 
   const capabilitiesUrl = `${domain}?ticket=${ticket}&service=WMS&request=GetCapabilities`;
 
-  const response = await fetch(capabilitiesUrl);
+  const response = await fetch(getUrlForPath(capabilitiesUrl));
   const responseText = await response.text();
 
   const json = parser.read(responseText);

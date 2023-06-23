@@ -102,6 +102,9 @@ export const isVectorLayer = (
 
 export const removeAllFeatures = () => {
   Object.values(grenserLayers).forEach((layer) => {
-    layer.getSource().clear();
+    const source = layer.getSource();
+    if (source) {
+      source.clear();
+    }
   });
 };

@@ -10,7 +10,11 @@ export const FeatureStyleContext = createContext<
   FeatureStyleContextValue | undefined
 >(undefined);
 
-export const FeatureStyleProvider: React.FC = ({ children }) => {
+export const FeatureStyleProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const {
     selectedPoint,
     selectFeatures,

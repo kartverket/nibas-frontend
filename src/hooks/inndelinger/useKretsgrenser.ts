@@ -28,40 +28,40 @@ const endpointByKretstype = {
   stemmekrets: "stemmekretser",
 } as const;
 
-type KretsResponse<T extends typeof endpointByKretstype[Kretstype]> =
+type KretsResponse<T extends (typeof endpointByKretstype)[Kretstype]> =
   T extends "grunnkretser" ? GrunnkretsResponse : StemmekretsResponse;
 
 const mapGrunnkretserToIds = (kretser?: KretsRef[]) =>
   kretser?.map((krets) => getIdFromEntity(krets));
 
 // fetch alle kretsgrenser i en kommune
-const kretserByKommuneFetcher = async (
-  kretsIds: string[],
-  token: string | undefined,
-  type: Kretstype
-) => {
+const kretserByKommuneFetcher = async ([kretsIds, token, type]: [
+  string[],
+  string | undefined,
+  Kretstype
+]) => {
   const typeUrl = endpointByKretstype[type];
 
   const kretsFeaturesPromises: Promise<string>[] = kretsIds.map(
     async (kretsId) =>
-      fetcherWithToken(`/v1/${typeUrl}/${kretsId}/grenser`, token)
+      fetcherWithToken([`/v1/${typeUrl}/${kretsId}/grenser`, token])
   );
 
   return Promise.all(kretsFeaturesPromises);
 };
 
-const representasjonspunkterFetcher = async (
-  kretsIds: string[],
-  token: string | undefined,
-  type: Kretstype
-) => {
+const representasjonspunkterFetcher = async ([kretsIds, token, type]: [
+  string[],
+  string | undefined,
+  Kretstype
+]) => {
   const typeUrl = endpointByKretstype[type];
 
   const representasjonspunkterPromises = kretsIds.map(async (kretsId) => {
-    const krets = (await fetcherWithToken(
+    const krets = (await fetcherWithToken([
       `v1/${typeUrl}/${kretsId}`,
-      token
-    )) as KretsResponse<typeof typeUrl>;
+      token,
+    ])) as KretsResponse<typeof typeUrl>;
 
     if (!krets) return;
 
