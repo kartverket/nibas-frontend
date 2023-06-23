@@ -7,22 +7,20 @@ const CloseButton = styled(IconButton).attrs({
   "aria-label": "Lukk",
   icon: <Icon icon="close" />,
 })`
-  && {
+  border-radius: 50%;
+
+  > span {
+    font-size: 28px;
+    color: var(--blue_dark);
+    padding: 6px;
     border-radius: 50%;
 
-    > span {
-      font-size: 28px;
-      color: var(--blue_dark);
-      padding: 6px;
-      border-radius: 50%;
-
-      &:hover {
-        background-color: var(--blue_light);
-      }
+    &:hover {
+      background-color: var(--blue_light);
     }
-    &:focus-visible {
-      outline: 2px solid var(--blue_dark);
-    }
+  }
+  &:focus-visible {
+    outline: 2px solid var(--blue_dark);
   }
 `;
 

@@ -106,23 +106,20 @@ const CaretIcon = styled(Icon)<{ $visible: boolean }>`
 `;
 
 const VisibilityButton = styled(IconButton)<{ $visible: boolean }>`
-  && {
-    margin-right: 16px;
-    color: ${({ $visible }) =>
-      $visible ? "var(--white)" : "var(--blue_dark)"};
-    background: ${({ $visible }) =>
-      $visible ? "var(--blue_dark)" : "transparent"};
-    padding: 8px;
-    border-radius: 50%;
-    height: 100%;
+  margin-right: 16px;
+  color: ${({ $visible }) => ($visible ? "var(--white)" : "var(--blue_dark)")};
+  background: ${({ $visible }) =>
+    $visible ? "var(--blue_dark)" : "transparent"};
+  padding: 8px;
+  border-radius: 50%;
+  height: 100%;
 
-    &:hover {
-      color: var(--blue_dark);
-      background: var(--blue_light);
-    }
-    &:focus-visible {
-      ${Outline}
-    }
+  &:hover {
+    color: var(--blue_dark);
+    background: var(--blue_light);
+  }
+  &:focus-visible {
+    ${Outline}
   }
 `;
 

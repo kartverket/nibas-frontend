@@ -43,37 +43,34 @@ const SidebarButtonTitle = styled.p`
 `;
 
 const StyledButton = styled(Button)<{ isActivated: boolean }>`
-  && {
-    display: block;
-    height: unset;
-    margin: 0 0 8px;
-    padding: 8px 6px 8px 0;
-    width: 100%;
-    z-index: 2;
-    text-align: center;
-    border-radius: 0;
-    border-left: 5px solid
-      ${({ isActivated }) => (isActivated ? "var(--blue_dark)" : "transparent")};
+  display: block;
+  height: unset;
+  margin: 0 0 8px;
+  padding: 8px 6px 8px 0;
+  width: 100%;
+  z-index: 2;
+  text-align: center;
+  border-radius: 0;
+  border-left: 5px solid
+    ${({ isActivated }) => (isActivated ? "var(--blue_dark)" : "transparent")};
 
+  color: ${({ isActivated }) => (isActivated ? "var(--blue)" : "var(--black)")};
+
+  background-color: ${({ isActivated }) =>
+    isActivated ? "var(--blue_light)" : "transparent"};
+
+  :hover {
+    background-color: var(--blue_light);
+  }
+
+  & ${SidebarButtonTitle} {
     color: ${({ isActivated }) =>
       isActivated ? "var(--blue)" : "var(--black)"};
+    font-weight: ${({ isActivated }) => (isActivated ? 600 : 400)};
+  }
 
-    background-color: ${({ isActivated }) =>
-      isActivated ? "var(--blue_light)" : "transparent"};
-
-    :hover {
-      background-color: var(--blue_light);
-    }
-
-    & ${SidebarButtonTitle} {
-      color: ${({ isActivated }) =>
-        isActivated ? "var(--blue)" : "var(--black)"};
-      font-weight: ${({ isActivated }) => (isActivated ? 600 : 400)};
-    }
-
-    :focus-visible {
-      box-shadow: 0px 0px 0px 2px var(--blue_dark) inset;
-    }
+  :focus-visible {
+    box-shadow: 0px 0px 0px 2px var(--blue_dark) inset;
   }
 `;
 

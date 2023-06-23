@@ -310,9 +310,7 @@ const Buttons = styled.div`
 const UnstyledButton = styled(Button).attrs(() => ({
   variant: "ghost",
 }))`
-  && {
-    padding: 0;
-  }
+  padding: 0;
 
   &&:hover {
     background: none;

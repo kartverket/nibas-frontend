@@ -89,13 +89,11 @@ const KommuneWrapper = styled.div<{ editing?: boolean }>`
 `;
 
 const VisibilityButton = styled(IconButton)<{ visible?: boolean }>`
-  && {
-    color: ${({ visible }) => (visible ? "var(--white)" : "var(--blue_dark)")};
-    background: ${({ visible }) =>
-      visible ? "var(--blue_dark)" : "transparent"};
-    border-radius: 50%;
-    padding: 8px;
-  }
+  color: ${({ visible }) => (visible ? "var(--white)" : "var(--blue_dark)")};
+  background: ${({ visible }) =>
+    visible ? "var(--blue_dark)" : "transparent"};
+  border-radius: 50%;
+  padding: 8px;
 
   &:hover {
     color: var(--blue_dark);
