@@ -1,6 +1,6 @@
 import Icon from "components/Icon";
 import { styled } from "styled-components";
-import { ButtonGroup, Button } from "@kvib/react";
+import { ButtonGroup, Button, IconButton } from "@kvib/react";
 
 const EditButton = styled(Button)`
   white-space: nowrap;
@@ -30,13 +30,12 @@ const EditAndSaveButton = ({
         >
           Endre
         </Button>
-        <Button
+        <IconButton
           variant="outline"
           aria-label="Forkast endringer"
           onClick={toggleEditing}
-        >
-          <Icon icon="close" />
-        </Button>
+          icon={<Icon icon="close" />}
+        />
       </ButtonGroup>
     ) : (
       <EditButton

@@ -1,5 +1,5 @@
 import { forwardRef, InputHTMLAttributes } from "react";
-import styled, { css } from "styled-components";
+import { styled, css } from "styled-components";
 import Label from "../Label";
 import Message from "components/Status/Message";
 

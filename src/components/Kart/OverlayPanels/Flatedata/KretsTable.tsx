@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import { css, styled } from "styled-components";
 
 export const KretsTable = styled.table`
   width: 100%;
@@ -26,7 +26,7 @@ export const KretsRow = styled.tr<{ isActive: boolean }>`
   position: relative;
   vertical-align: baseline;
 
-  ::after {
+  &::after {
     content: "";
     position: absolute;
     left: 0;
