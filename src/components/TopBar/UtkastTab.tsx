@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
 
 const UtkastTab = () => {

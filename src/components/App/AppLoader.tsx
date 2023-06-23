@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { Spinner } from "@kvib/react";
 
 export const FullPageLoader = () => (

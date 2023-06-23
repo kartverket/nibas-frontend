@@ -40,7 +40,7 @@ export const KretsRow = styled.tr<{ isActive: boolean }>`
       `};
   }
 
-  :hover::after {
+  &:hover::after {
     background: var(--blue_dark);
   }
 

@@ -1,6 +1,6 @@
 import { Heading } from "@kvib/react";
 import CloseButton from "components/form/CloseButton";
-import styled, { keyframes } from "styled-components";
+import { styled, keyframes } from "styled-components";
 
 export type PanelProps = {
   isOpen: boolean;
@@ -86,6 +86,6 @@ export const PanelHeader = ({ children, onClose }: PanelHeaderProps) => (
     <Heading as="h3" size="md">
       {children}
     </Heading>
-    <CloseButton onClick={onClose} />
+    <CloseButton onClick={onClose} aria-label="Lukk" />
   </PanelHeaderContainer>
 );

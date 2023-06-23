@@ -1,5 +1,5 @@
 import { InputHTMLAttributes, forwardRef } from "react";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { StemmekretsResponse } from "types/api";
 import Select from "components/form/Select";
 import { ValidationError } from "components/form/Input/Input";

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { UtkastItemExpanded } from "./UtkastItem";
 import Input from "components/form/Input";
 import Select from "components/form/Select";

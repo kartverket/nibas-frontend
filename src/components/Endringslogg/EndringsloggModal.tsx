@@ -1,5 +1,5 @@
 import { Modal, ModalContent } from "components/Modal";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { useUtkastEndringer } from "./hooks/useUtkastEndringer";
 import { EndringsloggGrunnkretsendringer } from "./EndringsloggGrunnkretsendringer";
 import { EndringsloggStemmekretsendringer } from "./EndringsloggStemmekretsendringer";
@@ -35,7 +35,7 @@ export const EndringsloggModal = ({
         <ModalTittel id="utkast-endringer-modal-header">
           Endringer i dette utkastet
         </ModalTittel>
-        <CloseButton onClick={onClose} />
+        <CloseButton onClick={onClose} aria-label="Lukk" />
       </ModalHeader>
 
       {!harEndringer && <div>Det er ingen endringer i dette utkastet</div>}

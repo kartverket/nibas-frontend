@@ -1,5 +1,5 @@
 import { forwardRef, InputHTMLAttributes } from "react";
-import styled from "styled-components";
+import { styled } from "styled-components";
 
 type Props = InputHTMLAttributes<HTMLInputElement> & {
   min: number;
@@ -37,7 +37,7 @@ const StyledSlider = styled.input.attrs(() => ({
     cursor: pointer; /* Cursor on hover */
     transition: 0.2 all;
 
-    :hover {
+    &:hover {
       background-color: var(--blue_dark);
     }
   }
@@ -51,7 +51,7 @@ const StyledSlider = styled.input.attrs(() => ({
     cursor: pointer; /* Cursor on hover */
     transition: 0.2 all;
 
-    :hover {
+    &:hover {
       background-color: var(--blue_dark);
     }
   }

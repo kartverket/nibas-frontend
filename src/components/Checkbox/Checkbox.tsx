@@ -1,5 +1,5 @@
 import { forwardRef, InputHTMLAttributes } from "react";
-import styled, { css } from "styled-components";
+import { styled, css } from "styled-components";
 
 type Props = InputHTMLAttributes<HTMLInputElement> & {
   label: string;
@@ -51,7 +51,7 @@ const CustomCheckbox = styled.span<{ type: "radio" | "checkbox" }>`
   transition: 0.1s background-color;
   margin-top: 1px;
 
-  :after {
+  &:after {
     content: "";
     position: absolute;
     display: none;
@@ -87,24 +87,24 @@ const Container = styled.label<{ disabled: boolean }>`
   cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
   user-select: none;
 
-  :hover ${DefaultCheckbox} ~ ${CustomCheckbox} {
+  &:hover ${DefaultCheckbox} ~ ${CustomCheckbox} {
     background-color: var(--gray_light);
   }
 
   // når checked, vis checkmark/radio fill
   ${DefaultCheckbox}:checked ~ ${CustomCheckbox} {
-    :after {
+    &:after {
       display: block;
     }
   }
 
   // radio specific styles
   ${DefaultCheckbox}[type="radio"] {
-    :disabled ~ ${CustomCheckbox} {
+    &:disabled ~ ${CustomCheckbox} {
       background-color: var(--gray_light);
       border-color: var(--gray);
 
-      :after {
+      &:after {
         background-color: var(--gray);
       }
     }
@@ -112,18 +112,18 @@ const Container = styled.label<{ disabled: boolean }>`
 
   // checkbox specific styles
   ${DefaultCheckbox}[type="checkbox"] {
-    :checked ~ ${CustomCheckbox} {
+    &:checked ~ ${CustomCheckbox} {
       background-color: var(--blue_dark);
     }
 
-    :disabled ~ ${CustomCheckbox} {
+    &:disabled ~ ${CustomCheckbox} {
       background-color: var(--gray_light);
     }
 
-    :checked:disabled ~ ${CustomCheckbox} {
+    &:checked:disabled ~ ${CustomCheckbox} {
       background-color: var(--gray);
 
-      :after {
+      &:after {
         background-color: inherit;
         border-color: var(--gray_light);
       }

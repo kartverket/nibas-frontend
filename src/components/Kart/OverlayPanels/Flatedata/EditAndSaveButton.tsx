@@ -1,5 +1,5 @@
 import Icon from "components/Icon";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { ButtonGroup, Button } from "@kvib/react";
 
 const EditButton = styled(Button)`

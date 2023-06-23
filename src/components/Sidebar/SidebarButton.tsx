@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { SidebarPanel, useSidebarPanel } from "contexts/SidebarPanelContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { Button } from "@kvib/react";
@@ -59,7 +59,7 @@ const StyledButton = styled(Button)<{ isActivated: boolean }>`
   background-color: ${({ isActivated }) =>
     isActivated ? "var(--blue_light)" : "transparent"};
 
-  :hover {
+  &:hover {
     background-color: var(--blue_light);
   }
 
@@ -69,7 +69,7 @@ const StyledButton = styled(Button)<{ isActivated: boolean }>`
     font-weight: ${({ isActivated }) => (isActivated ? 600 : 400)};
   }
 
-  :focus-visible {
+  &:focus-visible {
     box-shadow: 0px 0px 0px 2px var(--blue_dark) inset;
   }
 `;

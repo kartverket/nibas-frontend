@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import ApiGrense from "../../ApiGrense";
 import useFylker from "hooks/inndelinger/useFylker";
 import { getIdFromEntity } from "utils/api";

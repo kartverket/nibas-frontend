@@ -4,7 +4,7 @@ import Geometry from "ol/geom/Geometry";
 import LineString from "ol/geom/LineString";
 import { ObjectEvent } from "ol/Object";
 import { Control, useFieldArray, useForm } from "react-hook-form";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { addMetadataEntryFromFeature } from "./utils";
 import Input from "components/form/Input";
 import Icon from "components/Icon";

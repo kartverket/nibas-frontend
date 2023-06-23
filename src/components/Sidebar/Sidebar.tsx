@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import SidebarButton from "./SidebarButton";
 import Icon from "components/Icon";
 import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";

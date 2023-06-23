@@ -1,5 +1,5 @@
 import { forwardRef, TextareaHTMLAttributes } from "react";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import Label from "../Label";
 
 type Props = { label?: string } & TextareaHTMLAttributes<HTMLTextAreaElement>;

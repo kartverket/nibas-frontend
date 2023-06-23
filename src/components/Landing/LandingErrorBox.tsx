@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { ReactElement, ReactNode } from "react";
 import Icon from "../Icon/Icon";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
@@ -14,7 +14,7 @@ export const ErrorBox = ({ title, text }: ErrorBoxProps) => {
 
   return (
     <ErrorBoxWrapper>
-      <ExclamationIcon />
+      <ExclamationIcon icon="info" />
       <TextWrapper>
         <ErrorTitle>{title}</ErrorTitle>
         <ErrorText>{text}</ErrorText>
@@ -44,7 +44,7 @@ const ErrorText = styled.p`
   margin: 0;
 `;
 
-const ExclamationIcon = styled(Icon).attrs({ icon: "info" })`
+const ExclamationIcon = styled(Icon)`
   font-size: 2rem;
 `;
 

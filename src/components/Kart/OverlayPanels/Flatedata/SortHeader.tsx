@@ -1,6 +1,6 @@
 import { Button } from "@kvib/react";
 import Icon from "components/Icon/Icon";
-import styled from "styled-components";
+import { styled } from "styled-components";
 
 const ClickableHeader = styled(Button)<{ isActivated: boolean }>`
   color: ${(props) => (props.isActivated ? "var(--blue)" : "var(--gray_dark)")};

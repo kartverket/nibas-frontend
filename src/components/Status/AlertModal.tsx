@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import CloseButton from "../form/CloseButton";
 import Icon from "../Icon";
 import { Modal, ModalContent } from "../Modal";
@@ -116,7 +116,7 @@ const AlertModal = ({
     <Header {...statusStyles[status]}>
       <StatusIcon {...statusStyles[status]} />
       <Title>{title}</Title>
-      <Close onClick={onClose} />
+      <Close onClick={onClose} aria-label="Lukk" />
     </Header>
     <Content>
       <BodyText>{description}</BodyText>

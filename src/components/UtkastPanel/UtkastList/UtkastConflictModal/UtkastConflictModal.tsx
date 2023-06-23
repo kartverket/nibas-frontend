@@ -2,7 +2,7 @@ import { Button, Heading } from "@kvib/react";
 import Checkbox from "components/Checkbox";
 import { ButtonCell } from "components/Kart/OverlayPanels/Flatedata/KretsTable";
 import { Modal, ModalContent } from "components/Modal";
-import styled from "styled-components";
+import { styled } from "styled-components";
 
 type Props = {
   currentRow: string[];

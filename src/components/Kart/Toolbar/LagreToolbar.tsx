@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { useUtkast } from "contexts/UtkastContext";
 import useAlertModal from "hooks/useAlertModal";
 import ModeButton from "./ModeButton";

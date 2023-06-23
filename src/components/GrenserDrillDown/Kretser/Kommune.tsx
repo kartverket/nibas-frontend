@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import Icon from "components/Icon";
 import { useInndelingerKrets } from "contexts/InndelingerKretsContext";
 import { KommuneRef } from "types/api";
@@ -46,12 +46,11 @@ const Kommune = ({ kommune }: Props) => {
           onClick={toggleKretser}
           visible={kommuneValues.visible}
           isDisabled={lasterData}
+          aria-label={kommuneValues.visible ? "Synlig" : "Usynlig"}
           icon={
-            kommuneValues.visible ? (
-              <Icon icon="visibility" aria-label="Synlig" />
-            ) : (
-              <Icon icon="visibility_off" aria-label="Usynlig" />
-            )
+            <Icon
+              icon={kommuneValues.visible ? "visibility" : "visibility_off"}
+            />
           }
         />
         <Title>{getNavnInSpraak(kommune.navn, "nor")}</Title>

@@ -1,5 +1,5 @@
 import { forwardRef, SelectHTMLAttributes } from "react";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import Icon from "components/Icon";
 import Label from "../Label";
 
@@ -13,7 +13,7 @@ const Select = forwardRef<HTMLSelectElement, Props>(function Select(
     <Label className={className} label={props.label ?? ""}>
       <SelectWrapper>
         <SelectInput {...props} ref={ref} role="combobox"></SelectInput>
-        <SelectCaret />
+        <SelectCaret icon="expand_more" />
       </SelectWrapper>
     </Label>
   );
@@ -59,9 +59,7 @@ const SelectInput = styled.select`
   }
 `;
 
-const SelectCaret = styled(Icon).attrs(() => ({
-  icon: "expand_more",
-}))`
+const SelectCaret = styled(Icon)`
   position: absolute;
   top: 50%;
   right: 0;
