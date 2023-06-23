@@ -1,5 +1,5 @@
 import { forwardRef, useState } from "react";
-import { styled } from "styled-components";
+import styled from "styled-components";
 import useLayerOpacity from "./useLayerOpacity";
 import Slider from "components/form/Slider";
 import Icon from "components/Icon";

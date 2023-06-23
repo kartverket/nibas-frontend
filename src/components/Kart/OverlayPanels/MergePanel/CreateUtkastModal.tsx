@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { styled } from "styled-components";
+import styled from "styled-components";
 import { useSearchParams } from "react-router-dom";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useHistory } from "contexts/HistoryContext";

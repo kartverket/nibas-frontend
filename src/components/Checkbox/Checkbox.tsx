@@ -1,5 +1,5 @@
 import { forwardRef, InputHTMLAttributes } from "react";
-import { styled, css } from "styled-components";
+import styled, { css } from "styled-components";
 
 type Props = InputHTMLAttributes<HTMLInputElement> & {
   label: string;

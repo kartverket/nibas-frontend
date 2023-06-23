@@ -14,19 +14,22 @@ type Props = {
 } & InputProps;
 
 // TODO: bytt ut med kvib via formcontrol osv
-const Input = forwardRef<HTMLInputElement, Props>(function Input(props, ref) {
-  return (
-    <Label className={props.className} label={props.label ?? ""}>
-      <KvibInput
-        ref={ref}
-        {...props}
-        isInvalid={props.validationError?.showError ?? false}
-      />
-      {props.validationError?.showError && (
-        <Message status="error">{props.validationError.message}</Message>
-      )}
-    </Label>
-  );
-});
+const InnerInput = (
+  { className, label, validationError, ...props }: Props,
+  ref: React.ForwardedRef<HTMLSelectElement>
+) => (
+  <Label className={className} label={label ?? ""}>
+    <KvibInput
+      ref={ref}
+      isInvalid={validationError?.showError ?? false}
+      {...props}
+    />
+    {validationError?.showError && (
+      <Message status="error">{validationError.message}</Message>
+    )}
+  </Label>
+);
 
-export default Input;
+const InputWithLabel = forwardRef(InnerInput);
+
+export default InputWithLabel;

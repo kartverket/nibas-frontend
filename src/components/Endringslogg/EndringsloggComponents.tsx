@@ -1,4 +1,4 @@
-import { styled } from "styled-components";
+import styled from "styled-components";
 import Icon from "../Icon/Icon";
 import { Endring } from "./hooks/utkastEndringerTypes";
 

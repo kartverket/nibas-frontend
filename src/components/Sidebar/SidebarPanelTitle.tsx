@@ -1,4 +1,4 @@
-import { styled } from "styled-components";
+import styled from "styled-components";
 import CloseButton from "components/form/CloseButton";
 import { Heading } from "@kvib/react";
 

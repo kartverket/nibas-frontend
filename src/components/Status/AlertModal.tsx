@@ -1,4 +1,4 @@
-import { styled } from "styled-components";
+import styled from "styled-components";
 import CloseButton from "../form/CloseButton";
 import Icon from "../Icon";
 import { Modal, ModalContent } from "../Modal";

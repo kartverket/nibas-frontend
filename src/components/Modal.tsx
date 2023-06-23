@@ -1,6 +1,6 @@
 import { FC, ReactNode } from "react";
 import ReactModal, { Props as ModalProps } from "react-modal";
-import { styled } from "styled-components";
+import styled from "styled-components";
 
 if (import.meta.env.NODE_ENV === "test") {
   // In tests we set it as en empty array to not get loads of warnings

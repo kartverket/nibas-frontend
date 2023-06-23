@@ -1,5 +1,5 @@
 import { LabelHTMLAttributes } from "react";
-import { styled } from "styled-components";
+import styled from "styled-components";
 
 const Container = styled.label`
   display: flex;

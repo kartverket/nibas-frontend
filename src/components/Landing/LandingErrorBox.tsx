@@ -1,4 +1,4 @@
-import { styled } from "styled-components";
+import styled from "styled-components";
 import { ReactElement, ReactNode } from "react";
 import Icon from "../Icon/Icon";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";

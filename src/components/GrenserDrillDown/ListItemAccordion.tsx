@@ -1,5 +1,5 @@
 import { ReactNode, useState } from "react";
-import { styled } from "styled-components";
+import styled from "styled-components";
 import Icon from "components/Icon";
 import { Outline } from "style/mixins";
 

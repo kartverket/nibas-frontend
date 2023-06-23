@@ -1,5 +1,5 @@
 import { Stack, Text, Tooltip, TooltipProps } from "@kvib/react";
-import { styled } from "styled-components";
+import styled from "styled-components";
 
 type BodyProps = {
   text: string;

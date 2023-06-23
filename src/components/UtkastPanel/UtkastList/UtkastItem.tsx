@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useSearchParams } from "react-router-dom";
-import { styled } from "styled-components";
+import styled from "styled-components";
 import { Button } from "@kvib/react";
 import { useSWRConfig } from "swr";
 import UtkastItemActive from "./UtkastItemActive";

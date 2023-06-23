@@ -1,4 +1,4 @@
-import { styled } from "styled-components";
+import styled from "styled-components";
 import Icon from "components/Icon";
 import { IconButton } from "@kvib/react";
 

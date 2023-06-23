@@ -1,6 +1,6 @@
 import { Heading } from "@kvib/react";
 import CloseButton from "components/form/CloseButton";
-import { styled, keyframes } from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 export type PanelProps = {
   isOpen: boolean;

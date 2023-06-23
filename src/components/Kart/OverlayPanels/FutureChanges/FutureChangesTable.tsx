@@ -1,6 +1,6 @@
 import useNibasApi from "hooks/useNibasApi";
 import { useMemo } from "react";
-import { styled } from "styled-components";
+import styled from "styled-components";
 import { GrunnkretsResponse, StemmekretsResponse } from "types/api";
 
 export type TableRow = {

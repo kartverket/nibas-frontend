@@ -1,5 +1,5 @@
 import { Modal, ModalContent } from "components/Modal";
-import { styled } from "styled-components";
+import styled from "styled-components";
 import { useUtkastEndringer } from "./hooks/useUtkastEndringer";
 import { EndringsloggGrunnkretsendringer } from "./EndringsloggGrunnkretsendringer";
 import { EndringsloggStemmekretsendringer } from "./EndringsloggStemmekretsendringer";

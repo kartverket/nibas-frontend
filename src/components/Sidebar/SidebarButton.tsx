@@ -1,4 +1,4 @@
-import { styled } from "styled-components";
+import styled from "styled-components";
 import { SidebarPanel, useSidebarPanel } from "contexts/SidebarPanelContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { Button } from "@kvib/react";
@@ -26,7 +26,7 @@ const SidebarButton = ({ title, panel, icon }: Props) => {
   return (
     <Wrapper>
       <StyledButton
-        isActivated={activeSidebarPanel === panel}
+        $isActivated={activeSidebarPanel === panel}
         onClick={toggleSidebar}
         title={title}
       >
@@ -42,7 +42,7 @@ const SidebarButtonTitle = styled.p`
   font-size: 11px;
 `;
 
-const StyledButton = styled(Button)<{ isActivated: boolean }>`
+const StyledButton = styled(Button)<{ $isActivated: boolean }>`
   display: block;
   height: unset;
   margin: 0 0 8px;
@@ -52,21 +52,22 @@ const StyledButton = styled(Button)<{ isActivated: boolean }>`
   text-align: center;
   border-radius: 0;
   border-left: 5px solid
-    ${({ isActivated }) => (isActivated ? "var(--blue_dark)" : "transparent")};
+    ${({ $isActivated }) => ($isActivated ? "var(--blue_dark)" : "transparent")};
 
-  color: ${({ isActivated }) => (isActivated ? "var(--blue)" : "var(--black)")};
+  color: ${({ $isActivated }) =>
+    $isActivated ? "var(--blue)" : "var(--black)"};
 
-  background-color: ${({ isActivated }) =>
-    isActivated ? "var(--blue_light)" : "transparent"};
+  background-color: ${({ $isActivated }) =>
+    $isActivated ? "var(--blue_light)" : "transparent"};
 
   &:hover {
     background-color: var(--blue_light);
   }
 
   & ${SidebarButtonTitle} {
-    color: ${({ isActivated }) =>
-      isActivated ? "var(--blue)" : "var(--black)"};
-    font-weight: ${({ isActivated }) => (isActivated ? 600 : 400)};
+    color: ${({ $isActivated }) =>
+      $isActivated ? "var(--blue)" : "var(--black)"};
+    font-weight: ${({ $isActivated }) => ($isActivated ? 600 : 400)};
   }
 
   &:focus-visible {

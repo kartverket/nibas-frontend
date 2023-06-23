@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { styled } from "styled-components";
+import styled from "styled-components";
 import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
 import UtkastToolbar from "./UtkastToolbar";
 import LagreToolbar from "./LagreToolbar";

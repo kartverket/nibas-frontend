@@ -1,5 +1,5 @@
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import { styled } from "styled-components";
+import styled from "styled-components";
 import { AuthenticationButton } from "../Authentication/AuthenticationButton";
 import Logo from "components/Logo/Logo";
 import Icon from "components/Icon";

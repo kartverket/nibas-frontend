@@ -1,5 +1,5 @@
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import { styled } from "styled-components";
+import styled from "styled-components";
 import KommuneList from "../Kretser/KommuneList";
 import ListItemAccordion from "../ListItemAccordion";
 import { UnstyledList } from "components/UnstyledList";

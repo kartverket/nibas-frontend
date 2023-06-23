@@ -1,4 +1,4 @@
-import { styled } from "styled-components";
+import styled from "styled-components";
 import Icon from "components/Icon";
 import { useInndelingerKrets } from "contexts/InndelingerKretsContext";
 import { KommuneRef } from "types/api";
@@ -44,7 +44,7 @@ const Kommune = ({ kommune }: Props) => {
         <VisibilityButton
           variant="ghost"
           onClick={toggleKretser}
-          visible={kommuneValues.visible}
+          $isVisible={kommuneValues.visible}
           isDisabled={lasterData}
           aria-label={kommuneValues.visible ? "Synlig" : "Usynlig"}
           icon={
@@ -87,10 +87,11 @@ const KommuneWrapper = styled.div<{ editing?: boolean }>`
   padding: 8px;
 `;
 
-const VisibilityButton = styled(IconButton)<{ visible?: boolean }>`
-  color: ${({ visible }) => (visible ? "var(--white)" : "var(--blue_dark)")};
-  background: ${({ visible }) =>
-    visible ? "var(--blue_dark)" : "transparent"};
+const VisibilityButton = styled(IconButton)<{ $isVisible?: boolean }>`
+  color: ${({ $isVisible }) =>
+    $isVisible ? "var(--white)" : "var(--blue_dark)"};
+  background: ${({ $isVisible }) =>
+    $isVisible ? "var(--blue_dark)" : "transparent"};
   border-radius: 50%;
   padding: 8px;
 

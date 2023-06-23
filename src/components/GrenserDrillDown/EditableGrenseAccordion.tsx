@@ -1,6 +1,6 @@
 import Icon from "components/Icon";
 import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
-import { styled } from "styled-components";
+import styled from "styled-components";
 import useVisibility from "hooks/useVisibility";
 import { EditingType } from "contexts/EditGrenserContext";
 import { Feature } from "ol";

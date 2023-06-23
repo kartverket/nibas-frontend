@@ -1,6 +1,6 @@
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
-import { styled } from "styled-components";
+import styled from "styled-components";
 import Icon from "components/Icon";
 import { EditingType } from "contexts/EditGrenserContext";
 import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
