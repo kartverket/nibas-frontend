@@ -1,17 +1,20 @@
+import { Button } from "@kvib/react";
 import Icon from "components/Icon/Icon";
-import Button from "components/form/Button";
 import styled from "styled-components";
 
-const Container = styled(Button)<{ isActive: boolean }>`
-  color: ${(props) => (props.isActive ? "var(--blue)" : "var(--gray_dark)")};
+const ClickableHeader = styled(Button)<{ $isActivated: boolean }>`
+  color: ${(props) =>
+    props.$isActivated ? "var(--blue)" : "var(--gray_dark)"};
   white-space: nowrap;
+  padding: 0;
 
   &:hover {
-    color: ${(props) => (props.isActive ? "var(--blue)" : "var(--black)")};
+    color: ${(props) => (props.$isActivated ? "var(--blue)" : "var(--black)")};
+    background: transparent;
 
     .material-symbols-outlined {
       background: ${(props) =>
-        props.isActive ? "var(--blue_light)" : "var(--gray_light)"};
+        props.$isActivated ? "var(--blue_light)" : "var(--gray_light)"};
     }
   }
 
@@ -24,25 +27,25 @@ const Container = styled(Button)<{ isActive: boolean }>`
   .material-symbols-outlined {
     border-radius: 4px;
     margin-left: 6px;
-    background: ${(props) => props.isActive && "var(--blue_light)"};
+    background: ${(props) => props.$isActivated && "var(--blue_light)"};
   }
 `;
 
 type Props = {
   children: React.ReactNode;
   onClick: () => void;
-  isActive: boolean;
+  isActivated: boolean;
   isReversed: boolean;
 };
 
-const SortHeader = ({ children, onClick, isActive, isReversed }: Props) => {
+const SortHeader = ({ children, onClick, isActivated, isReversed }: Props) => {
   return (
     <th>
-      <Container
-        isActive={isActive}
+      <ClickableHeader
+        variant="ghost"
+        $isActivated={isActivated}
         onClick={onClick}
-        variant="unstyled"
-        icon={
+        rightIcon={
           isReversed ? (
             <Icon icon="arrow_drop_up" />
           ) : (
@@ -51,7 +54,7 @@ const SortHeader = ({ children, onClick, isActive, isReversed }: Props) => {
         }
       >
         {children}
-      </Container>
+      </ClickableHeader>
     </th>
   );
 };

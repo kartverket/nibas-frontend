@@ -1,6 +1,5 @@
 import { ReactNode, useState } from "react";
 import styled from "styled-components";
-import Button from "components/form/Button";
 import Icon from "components/Icon";
 import { Outline } from "style/mixins";
 
@@ -53,6 +52,7 @@ const ListItemAccordion = ({
 const DropDown = styled.div`
   display: flex;
   justify-content: space-between;
+  text-align: left;
 `;
 
 const NameContent = styled.div<{ open: boolean }>`
@@ -87,9 +87,7 @@ const ChildrenWrapper = styled.div`
   padding-left: 24px;
 `;
 
-const ButtonWrapper = styled(Button).attrs(() => ({
-  variant: "unstyled",
-}))`
+const ButtonWrapper = styled.button`
   display: flex;
   width: 100%;
   flex-direction: column;

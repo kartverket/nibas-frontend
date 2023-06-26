@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import { ReactElement, ReactNode } from "react";
 import Icon from "../Icon/Icon";
-import Button from "../form/Button";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
+import { Button } from "@kvib/react";
 
 type ErrorBoxProps = {
   title: string | ReactElement | ReactNode;
@@ -14,12 +14,12 @@ export const ErrorBox = ({ title, text }: ErrorBoxProps) => {
 
   return (
     <ErrorBoxWrapper>
-      <ExclamationIcon />
+      <ExclamationIcon icon="info" />
       <TextWrapper>
         <ErrorTitle>{title}</ErrorTitle>
         <ErrorText>{text}</ErrorText>
       </TextWrapper>
-      <LogoutButton variant="tertiary" onClick={handleLogoutFunc}>
+      <LogoutButton variant="ghost" onClick={handleLogoutFunc}>
         Logg ut
       </LogoutButton>
     </ErrorBoxWrapper>
@@ -44,7 +44,7 @@ const ErrorText = styled.p`
   margin: 0;
 `;
 
-const ExclamationIcon = styled(Icon).attrs({ icon: "info" })`
+const ExclamationIcon = styled(Icon)`
   font-size: 2rem;
 `;
 

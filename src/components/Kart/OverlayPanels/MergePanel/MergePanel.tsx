@@ -14,17 +14,16 @@ import { useCallback, useState } from "react";
 import Input from "components/form/Input";
 import { Divider } from "components/Divider";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import Button from "components/form/Button";
 import CreateUtkastModal, {
   CreateUtkastCallbackArgument,
 } from "./CreateUtkastModal";
 import { stemmekretsgrenserFetcher } from "api/stemmekrets";
 import { deduplicate, removeNull } from "utils/list-utils";
 import { MergeMultiselect } from "./MergeMultiselect";
-import Select from "components/form/Select/Select";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
-import Heading from "components/typography/Heading";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
+import { Button, Heading, Select } from "@kvib/react";
+import Label from "components/form/Label";
 
 const Form = styled.form`
   display: flex;
@@ -32,18 +31,10 @@ const Form = styled.form`
   gap: 16px;
 `;
 
-const SectionHeading = styled(Heading)`
-  margin: 0;
-`;
-
 const InputsWrapper = styled.div`
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
-
-  input {
-    width: 100%;
-  }
 `;
 
 const Buttons = styled.div`
@@ -245,45 +236,46 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
       {utkastStemmekretser && (
         <FormProvider {...formMethods}>
           <Form onSubmit={handleSubmit(openCreateUtkastModal)}>
-            <SectionHeading tag="h3" size="xs">
+            <Heading as="h3" size="sm">
               Hvilken stemmekrets skal brukes som utgangspunkt?
-            </SectionHeading>
-            <Select
-              {...selectStemmekretsRegister}
-              onChange={(e) => {
-                selectStemmekretsRegister.onChange(e);
-                updateDefaultValues(e.currentTarget.value);
-              }}
-              defaultValue="default"
-              label="Stemmekrets"
-            >
-              <option value="default" disabled>
-                Velg en stemmekrets fra listen
-              </option>
-              {utkastStemmekretser
-                .sort(
-                  (a, b) =>
-                    parseInt(a.stemmekretsnummer) -
-                    parseInt(b.stemmekretsnummer)
-                )
-                .map((stemmekrets) => (
-                  <option
-                    key={stemmekrets.id.lokalid.value}
-                    value={stemmekrets.stemmekretsnummer}
-                  >
-                    {`${stemmekrets.stemmekretsnummer} - ${stemmekrets.stemmekretsnavn}`}
-                  </option>
-                ))}
-            </Select>
+            </Heading>
+            <Label label="Stemmekrets">
+              <Select
+                {...selectStemmekretsRegister}
+                onChange={(e) => {
+                  selectStemmekretsRegister.onChange(e);
+                  updateDefaultValues(e.currentTarget.value);
+                }}
+                defaultValue="default"
+              >
+                <option value="default" disabled>
+                  Velg en stemmekrets fra listen
+                </option>
+                {utkastStemmekretser
+                  .sort(
+                    (a, b) =>
+                      parseInt(a.stemmekretsnummer) -
+                      parseInt(b.stemmekretsnummer)
+                  )
+                  .map((stemmekrets) => (
+                    <option
+                      key={stemmekrets.id.lokalid.value}
+                      value={stemmekrets.stemmekretsnummer}
+                    >
+                      {`${stemmekrets.stemmekretsnummer} - ${stemmekrets.stemmekretsnavn}`}
+                    </option>
+                  ))}
+              </Select>
+            </Label>
             <Divider />
-            <SectionHeading tag="h3" size="xs">
+            <Heading as="h3" size="sm">
               Hvilke stemmekretser ønsker du å slå sammen med denne kretsen?
-            </SectionHeading>
+            </Heading>
             <MergeMultiselect alleStemmekretser={utkastStemmekretser} />
             <Divider />
-            <SectionHeading tag="h3" size="xs">
+            <Heading as="h3" size="sm">
               Hva skal den sammenslåtte stemmekretsen hete?
-            </SectionHeading>
+            </Heading>
             <InputsWrapper>
               <Input
                 label="Stemmekretsnummer"
@@ -304,15 +296,15 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
             </InputsWrapper>
             <Buttons>
               <Button
+                variant="ghost"
                 onClick={() => {
                   closeOverlayPanel();
                   reset();
                 }}
-                variant="tertiary"
               >
                 Avbryt
               </Button>
-              <Button type="submit" disabled={!isDirty}>
+              <Button type="submit" isDisabled={!isDirty}>
                 Slå sammen
               </Button>
             </Buttons>

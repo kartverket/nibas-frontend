@@ -3,12 +3,12 @@ import { PanelHeader, PanelProps, AbsolutePanel } from "./Panel";
 import Input from "components/form/Input/Input";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
-import Button from "components/form/Button/Button";
 import LineString from "ol/geom/LineString";
 import { useEffect } from "react";
 import { HistoryChange, useHistory } from "contexts/HistoryContext";
 import { SelectedPoint, useFeatureStyle } from "contexts/FeatureStyleContext";
 import Point from "ol/geom/Point";
+import { Button } from "@kvib/react";
 
 type KoordinaterFormData = {
   north: number;
@@ -124,11 +124,11 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
           <Input label="Nord" {...register("north")} />
           <Input label="Øst" {...register("east")} />
         </InputRow>
-        <Button type="submit" disabled={!isDirty}>
+        <Button type="submit" isDisabled={!isDirty}>
           Flytt punkt til koordinater
         </Button>
         <Button
-          variant="tertiary"
+          variant="ghost"
           onClick={() => {
             reset();
             closeOverlayPanel();

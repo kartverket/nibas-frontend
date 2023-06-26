@@ -6,12 +6,12 @@ import { ObjectEvent } from "ol/Object";
 import { Control, useFieldArray, useForm } from "react-hook-form";
 import styled from "styled-components";
 import { addMetadataEntryFromFeature } from "./utils";
-import Button from "components/form/Button";
 import Input from "components/form/Input";
 import Icon from "components/Icon";
 import { useHistory } from "contexts/HistoryContext";
 import { Dokref, FeatureProperties, Metadata } from "types/api";
 import useIsMetadataDisabled from "../hooks/useIsMetadataDisabled";
+import { Button } from "@kvib/react";
 
 type Value = {
   beskrivelse: string;
@@ -123,9 +123,9 @@ const FieldArray = ({
           </a>
           <div>
             <Button
-              icon={<Icon icon="remove" />}
+              rightIcon={<Icon icon="remove" />}
               onClick={() => remove(nestedIndex)}
-              disabled={disabled}
+              isDisabled={disabled}
             >
               Slett
             </Button>
@@ -139,9 +139,13 @@ const FieldArray = ({
           onChange={(e) => setNewLenke(e.target.value)}
           placeholder="URL"
           onKeyPress={onKeyPress}
-          disabled={disabled}
+          isDisabled={disabled}
         />
-        <Button onClick={onAdd} disabled={!newLenke} icon={<Icon icon="add" />}>
+        <Button
+          onClick={onAdd}
+          isDisabled={!newLenke}
+          rightIcon={<Icon icon="add" />}
+        >
           Legg til
         </Button>
       </div>
@@ -156,10 +160,6 @@ type Props = {
 const Container = styled.div`
   display: flex;
   justify-content: flex-start;
-
-  @media (min-width: var(--screenBreakXxl)) {
-    flex-direction: column;
-  }
 `;
 
 const Part = styled.div`
@@ -169,15 +169,6 @@ const Part = styled.div`
   &:first-child,
   &:last-child {
     margin: 0;
-  }
-
-  @media (min-width: var(--screenBreakXxl)) {
-    margin: 8px 0;
-
-    &:first-child,
-    &:last-child {
-      margin: 8px 0;
-    }
   }
 `;
 
@@ -291,14 +282,13 @@ const MetadataReferanser = ({ feature }: Props) => {
             updateDraft={updateDraftFromFeature}
           />
 
-          <Button onClick={() => remove(i)} disabled={metadataIsDisabled}>
+          <Button onClick={() => remove(i)} isDisabled={metadataIsDisabled}>
             Slett referanse
           </Button>
         </DokRefWrapper>
       ))}
       <Button
-        type="button"
-        disabled={metadataIsDisabled}
+        isDisabled={metadataIsDisabled}
         onClick={() =>
           append({
             dokumentlenker: [],

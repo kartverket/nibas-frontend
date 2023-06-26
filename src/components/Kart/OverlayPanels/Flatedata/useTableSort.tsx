@@ -23,7 +23,7 @@ export const useTableSort = (properties: string[]) => {
 
   const sortHeaderProps = (property: string) => ({
     onClick: () => onSort(property),
-    isActive: sortProperty === property,
+    isActivated: sortProperty === property,
     isReversed: sortProperty === property && sortOrder === "desc",
   });
 

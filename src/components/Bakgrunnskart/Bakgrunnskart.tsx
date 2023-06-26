@@ -1,12 +1,11 @@
-import styled from "styled-components";
 import MainLayer from "./MainLayer";
 import { SidebarPanel } from "components/Sidebar/SidebarPanel";
 import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
 import { useBakgrunnskart } from "contexts/BakgrunnskartContext";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
-import Heading from "components/typography/Heading";
 import { bakgrunnskartLayers } from "hooks/layers/constants";
 import { BakgrunnskartId } from "hooks/layers/types";
+import { Divider, Heading } from "@kvib/react";
 
 const Bakgrunnskart = () => {
   const { activeSidebarPanel, closeSidebarPanel } = useSidebarPanel();
@@ -27,10 +26,10 @@ const Bakgrunnskart = () => {
           canDrag={true}
         />
       ))}
-      <BackgroundLayersHeading tag="h3" size="xs">
+      <Heading as="h3" size="sm">
         Kartlag
-      </BackgroundLayersHeading>
-
+      </Heading>
+      <Divider />
       {Object.keys(bakgrunnskartLayers).map((layerId, index) => (
         <MainLayer
           key={layerId}
@@ -41,10 +40,5 @@ const Bakgrunnskart = () => {
     </SidebarPanel>
   );
 };
-
-const BackgroundLayersHeading = styled(Heading)`
-  margin: 8px 0 0;
-  border-bottom: 2px solid var(--gray_light);
-`;
 
 export default Bakgrunnskart;

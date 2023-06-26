@@ -1,9 +1,9 @@
 import styled from "styled-components";
-import Button from "../form/Button";
-import CloseButton from "../form/Button/CloseButton";
+import CloseButton from "../form/CloseButton";
 import Icon from "../Icon";
 import { Modal, ModalContent } from "../Modal";
 import { Status, StatusStyle, statusStyles } from "./common";
+import { Button } from "@kvib/react";
 
 const borderRadius = "12px";
 const border = "2px solid var(--gray_light)";
@@ -116,7 +116,7 @@ const AlertModal = ({
     <Header {...statusStyles[status]}>
       <StatusIcon {...statusStyles[status]} />
       <Title>{title}</Title>
-      <Close onClick={onClose} />
+      <Close onClick={onClose} aria-label="Lukk" />
     </Header>
     <Content>
       <BodyText>{description}</BodyText>
@@ -125,12 +125,12 @@ const AlertModal = ({
       {(primaryAction || secondaryAction) && (
         <Buttons>
           {secondaryAction && (
-            <Button variant="secondary" onClick={secondaryAction.onClick}>
+            <Button variant="outline" onClick={secondaryAction.onClick}>
               {secondaryAction.text}
             </Button>
           )}
           {primaryAction && (
-            <Button variant="primary" onClick={primaryAction.onClick}>
+            <Button onClick={primaryAction.onClick}>
               {primaryAction.text}
             </Button>
           )}

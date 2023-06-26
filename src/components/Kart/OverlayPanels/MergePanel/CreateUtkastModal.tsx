@@ -7,12 +7,11 @@ import { translateKeysByEndringsType } from "contexts/UtkastContext/constants";
 import { historyToUtkastOperations } from "contexts/UtkastContext/utils";
 import { createUtkast as createApiUtkast } from "api/utkast";
 import Input from "components/form/Input";
-import Select from "components/form/Select";
-import Heading from "components/typography/Heading";
 import { Modal, ModalContent } from "components/Modal";
 import { statusCode } from "utils/api";
 import { UtkastOperasjoner } from "../../../../types/api";
-import { Button } from "@kvib/react";
+import { Button, Heading, Select } from "@kvib/react";
+import Label from "components/form/Label";
 
 const ModalElement = styled(ModalContent)`
   display: flex;
@@ -100,7 +99,7 @@ const CreateUtkastModal = ({
       onRequestClose={() => setIsCreateUtkastModalOpen(false)}
       modalElement={ModalElement}
     >
-      <Heading size="xs" tag="h3">
+      <Heading size="xs" as="h3">
         Opprett et nytt utkast
       </Heading>
       <Input
@@ -109,28 +108,26 @@ const CreateUtkastModal = ({
         value={utkastName}
         onChange={(e) => setUtkastName(e.target.value)}
       />
-      <Select
-        label="Endringstype"
-        value={utkastType}
-        onChange={(e) => setUtkastType(e.target.value)}
-      >
-        <option value="" disabled>
-          Velg en endringstype fra listen
-        </option>
-        {translateKeysByEndringsType.map((type) => (
-          <option key={type} value={type}>
-            {type}
-          </option>
-        ))}
-      </Select>
+      <Label label="Endringstype">
+        <Select
+          placeholder="Velg en endringstype fra listen"
+          value={utkastType}
+          onChange={(e) => setUtkastType(e.target.value)}
+        >
+          {translateKeysByEndringsType.map((type) => (
+            <option key={type} value={type}>
+              {type}
+            </option>
+          ))}
+        </Select>
+      </Label>
       <Buttons>
-        <Button onClick={() => cancelCreateUtkast()} variant="tertiary">
+        <Button onClick={() => cancelCreateUtkast()} variant="ghost">
           Avbryt
         </Button>
         <Button
-          colorScheme="blue"
           onClick={createUtkast}
-          disabled={utkastType === "" || utkastName === ""}
+          isDisabled={utkastType === "" || utkastName === ""}
           isLoading={oppretterUtkast}
         >
           Opprett

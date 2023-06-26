@@ -1,21 +1,11 @@
 import { forwardRef, useState } from "react";
 import styled from "styled-components";
 import useLayerOpacity from "./useLayerOpacity";
-import Button from "components/form/Button";
 import Slider from "components/form/Slider";
 import Icon from "components/Icon";
 import { MainMappedLayer, MappedLayer } from "utils/getLayersFromWMS";
 import { Outline } from "style/mixins";
-
-const getCaretIcon = (open: boolean) => (
-  <Caret open={open}>
-    {open ? (
-      <Icon icon="expand_less" aria-label="Lukk" />
-    ) : (
-      <Icon icon="expand_more" aria-label="Åpne" />
-    )}
-  </Caret>
-);
+import { Button, IconButton } from "@kvib/react";
 
 type SharedProps = {
   indent: number;
@@ -60,24 +50,29 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
         aktivtKartlag={aktivtKartlag}
         visible={visible}
       >
-        <AddRemoveIcon
-          title={props.mappedLayer.title}
-          type={visible ? "REMOVE" : "ADD"}
+        <Icon
+          icon={visible ? "remove" : "add"}
+          aria-label={
+            visible
+              ? `Fjern ${props.mappedLayer.title}`
+              : `Vis ${props.mappedLayer.title}`
+          }
         />
       </AddRemove>
     );
+
     const renderNameAndCaret = () => {
       // hvis hovedlag uten barn
       if (props.isMainLayer && props.mappedLayer.layers.length === 0) {
         return (
           <AddableLayer
             onClick={() => onVisibilityClick()}
-            icon={getAddRemove(false)}
             aria-label={
               (visible ? `Fjern` : `Vis`) + ` ${props.mappedLayer.title}`
             }
           >
             <span>{props.mappedLayer.title}</span>
+            {getAddRemove(false)}
           </AddableLayer>
         );
       }
@@ -86,13 +81,20 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
       if (props.mappedLayer.layers.length > 0) {
         return (
           <ClickableName
-            variant="unstyled"
-            icon={getCaretIcon(open)}
+            variant="ghost"
             onClick={() => setOpen(!open)}
             open={open}
-            dropDown={true}
+            aria-label={
+              open
+                ? `Lukk ${props.mappedLayer.title}`
+                : `Åpne ${props.mappedLayer.title}`
+            }
           >
             <span>{props.mappedLayer.title}</span>
+
+            <Caret open={open}>
+              <Icon icon={open ? "expand_less" : "expand_more"} />
+            </Caret>
           </ClickableName>
         );
       }
@@ -102,12 +104,12 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
         <AddableLayer
           activeLayer={visible}
           onClick={() => onVisibilityClick()}
-          icon={getAddRemove(false)}
           aria-label={
             (visible ? `Fjern` : `Vis`) + ` ${props.mappedLayer.title}`
           }
         >
           {props.mappedLayer.title}
+          {getAddRemove(false)}
         </AddableLayer>
       );
     };
@@ -130,7 +132,11 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
               onChange={onSliderChange}
             />
           </AktivtKartlagSlider>
-          <RemoveAktivtKartlag variant="unstyled" icon={getAddRemove(true)} />
+          <AddRemoveIconButton
+            variant="ghost"
+            aria-label="Fjern aktivt kartlag"
+            icon={getAddRemove(true)}
+          />
         </AktivtMainLayerWrapper>
       );
     };
@@ -138,11 +144,9 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
     const renderAktivtSubLayer = () => {
       if (visible && props.mappedLayer.layers.length === 0) {
         return (
-          <AktivtSubLayerWrapper
-            icon={getAddRemove(true)}
-            onClick={() => onVisibilityClick()}
-          >
+          <AktivtSubLayerWrapper onClick={() => onVisibilityClick()}>
             <span>{props.mappedLayer.title}</span>
+            {getAddRemove(true)}
           </AktivtSubLayerWrapper>
         );
       }
@@ -169,23 +173,7 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
 
 BackgroundLayerAccordion.displayName = "BackgroundLayerAccordion";
 
-type AddRemoveIconProps = {
-  title: string;
-  type: "ADD" | "REMOVE";
-};
-
-const AddRemoveIcon = ({ title, type }: AddRemoveIconProps) => {
-  switch (type) {
-    case "ADD":
-      return <Icon icon="add" aria-label={`Vis ${title}`} />;
-    case "REMOVE":
-      return <Icon icon="remove" aria-label={`Fjern ${title}`} />;
-  }
-};
-
-const AddRemove = styled.div<{ visible: boolean; aktivtKartlag: boolean }>`
-  cursor: pointer;
-
+const AddRemove = styled.span<{ visible: boolean; aktivtKartlag: boolean }>`
   color: ${({ visible, aktivtKartlag }) =>
     visible && !aktivtKartlag ? "var(--gray)" : "var(--blue_dark)"};
 
@@ -193,7 +181,7 @@ const AddRemove = styled.div<{ visible: boolean; aktivtKartlag: boolean }>`
   opacity: ${({ visible, aktivtKartlag }) =>
     visible && !aktivtKartlag ? 0.4 : 1};
   border-radius: 50%;
-  padding: 4px;
+  padding: 8px 8px 4px;
 
   &:focus-visible {
     ${Outline}
@@ -205,23 +193,15 @@ const AddRemove = styled.div<{ visible: boolean; aktivtKartlag: boolean }>`
   }
 `;
 
-const RemoveAktivtKartlag = styled(Button)`
-  &:focus-visible {
-    ${AddRemove} {
-      ${Outline}
-    }
-  }
-`;
-
-const Caret = styled.div<{ open: boolean }>`
+const Caret = styled.span<{ open: boolean }>`
+  display: flex;
+  align-items: center;
+  height: 100%;
   color: ${({ open }) => (open ? "var(--white)" : "var(--blue_dark)")};
   background-color: ${({ open }) =>
     open ? "var(--blue_dark)" : "var(--white)"};
 
-  height: 100%;
-  padding: 0 12px;
-  align-items: center;
-  display: flex;
+  padding: 0 16px;
 
   &:hover {
     background: var(--blue_dark);
@@ -243,24 +223,23 @@ const Wrapper = styled.div<{ indent: number }>`
   }
 `;
 
-const ClickableName = styled(Button)<{
-  open: boolean;
-  dropDown?: boolean;
-}>`
+const ClickableName = styled(Button)<{ open: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex: 1;
+  border-radius: unset;
+  height: unset;
+  padding: 0;
+  color: inherit;
 
   > :first-child {
     flex: 1;
     text-align: left;
-    padding: 6px;
-    background-color: ${({ open, dropDown }) =>
-      open && dropDown ? "var(--blue_light)" : "var(--white)"};
-    padding-top: ${({ dropDown }) => (dropDown ? 16 : 0)}px;
-    padding-bottom: ${({ dropDown }) => (dropDown ? 16 : 0)}px;
-    padding-left: 16px;
+    padding: 16px;
+
+    background-color: ${({ open }) =>
+      open ? "var(--blue_light)" : "var(--white)"};
     border-left: 3px solid
       ${({ open }) => (open ? "var(--blue_dark)" : "transparent")};
     background: ${({ open }) => (open ? "var(--blue_light)" : "var(--white)")};
@@ -282,7 +261,7 @@ const ClickableName = styled(Button)<{
   }
 `;
 
-const DraggableLayer = styled.span`
+const DraggableLayer = styled.div`
   cursor: move;
 
   flex: 1;
@@ -328,6 +307,14 @@ const AktivtKartlagSlider = styled.div`
   }
 `;
 
+const AddRemoveIconButton = styled(IconButton)`
+  width: unset;
+
+  &:hover {
+    background: none;
+  }
+`;
+
 const AktivtMainLayerWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -338,9 +325,7 @@ const AktivtMainLayerWrapper = styled.div`
   padding-top: 16px;
 `;
 
-const AktivtSubLayerWrapper = styled(Button).attrs(() => ({
-  variant: "unstyled",
-}))`
+const AktivtSubLayerWrapper = styled.button`
   align-items: center;
   justify-content: space-between;
   padding: 4px 0 4px 42px;
@@ -364,19 +349,13 @@ const AktivtSubLayerWrapper = styled(Button).attrs(() => ({
   }
 `;
 
-const AddableLayer = styled(Button).attrs(() => ({
-  variant: "unstyled",
-}))<{ activeLayer?: boolean }>`
+const AddableLayer = styled.button<{ activeLayer?: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex: 1;
   padding: 6px 0 6px 6px;
-
-  > :first-child {
-    flex: 1;
-    text-align: left;
-  }
+  text-align: left;
 
   &:hover {
     ${AddRemove} {

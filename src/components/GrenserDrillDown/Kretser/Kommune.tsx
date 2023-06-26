@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import Button, { LinkButton } from "components/form/Button";
 import Icon from "components/Icon";
 import { useInndelingerKrets } from "contexts/InndelingerKretsContext";
 import { KommuneRef } from "types/api";
@@ -8,7 +7,7 @@ import { Outline } from "style/mixins";
 import AlertModal from "components/Status/AlertModal";
 import useAlertModal from "hooks/useAlertModal";
 import { useHistory } from "contexts/HistoryContext";
-import { Spinner } from "@kvib/react";
+import { Button, IconButton, Spinner } from "@kvib/react";
 
 type Props = {
   kommune: KommuneRef;
@@ -43,25 +42,24 @@ const Kommune = ({ kommune }: Props) => {
     <>
       <KommuneWrapper editing={kommuneValues.editing}>
         <VisibilityButton
+          variant="ghost"
           onClick={toggleKretser}
-          variant="unstyled"
-          visible={kommuneValues.visible}
-          disabled={lasterData}
+          $isVisible={kommuneValues.visible}
+          isDisabled={lasterData}
+          aria-label={kommuneValues.visible ? "Synlig" : "Usynlig"}
           icon={
-            kommuneValues.visible ? (
-              <Icon icon="visibility" aria-label="Synlig" />
-            ) : (
-              <Icon icon="visibility_off" aria-label="Usynlig" />
-            )
+            <Icon
+              icon={kommuneValues.visible ? "visibility" : "visibility_off"}
+            />
           }
         />
         <Title>{getNavnInSpraak(kommune.navn, "nor")}</Title>
         {lasterData ? (
-          <Spinner size="md" color="blue" />
+          <Spinner size="lg" color="blue" />
         ) : (
-          <LinkButton onClick={onAvsluttRedigeringClick}>
+          <Button variant="link" onClick={onAvsluttRedigeringClick}>
             {kommuneValues.editing ? "Avslutt redigering" : "Rediger"}
-          </LinkButton>
+          </Button>
         )}
       </KommuneWrapper>
       <AlertModal
@@ -87,26 +85,13 @@ const KommuneWrapper = styled.div<{ editing?: boolean }>`
   display: flex;
   align-items: center;
   padding: 8px;
-
-  ${LinkButton} {
-    ${({ editing }) => editing && "font-weight: bold"};
-    color: ${({ editing }) => (editing ? "var(--blue_dark)" : "var(--blue)")};
-
-    &:hover {
-      text-decoration: none;
-    }
-
-    &:focus-visible {
-      ${Outline};
-    }
-  }
 `;
 
-const VisibilityButton = styled(Button)<{ visible?: boolean }>`
-  color: ${({ visible }) => (visible ? "var(--white)" : "var(--blue_dark)")};
-  background: ${({ visible }) =>
-    visible ? "var(--blue_dark)" : "transparent"};
-
+const VisibilityButton = styled(IconButton)<{ $isVisible?: boolean }>`
+  color: ${({ $isVisible }) =>
+    $isVisible ? "var(--white)" : "var(--blue_dark)"};
+  background: ${({ $isVisible }) =>
+    $isVisible ? "var(--blue_dark)" : "transparent"};
   border-radius: 50%;
   padding: 8px;
 

@@ -1,10 +1,10 @@
-import Button from "./Button";
 import styled from "styled-components";
 import Icon from "components/Icon";
+import { IconButton } from "@kvib/react";
 
-const CloseButton = styled(Button).attrs({
-  variant: "unstyled",
-  icon: <Icon icon="close" aria-label="Lukk" />,
+const CloseButton = styled(IconButton).attrs({
+  variant: "ghost",
+  icon: <Icon icon="close" />,
 })`
   border-radius: 50%;
 

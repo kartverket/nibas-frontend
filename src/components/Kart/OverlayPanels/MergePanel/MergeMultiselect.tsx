@@ -1,11 +1,11 @@
 import { StemmekretsResponse } from "../../../../types/api";
 import styled from "styled-components";
-import Button from "../../../form/Button";
 import Icon from "../../../Icon/Icon";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { MergeFormData } from "./MergeForm";
-import { ChangeEvent, InputHTMLAttributes } from "react";
+import { ChangeEvent } from "react";
 import { MergeSelect } from "./MergeSelect";
+import { Button, SelectProps } from "@kvib/react";
 
 type MergeMultiselectProps = {
   alleStemmekretser: StemmekretsResponse[];
@@ -29,7 +29,7 @@ export const MergeMultiselect = ({
   const triggerRevalidateOnChange = ({
     onChange,
     ...restProps
-  }: InputHTMLAttributes<HTMLSelectElement>) => {
+  }: SelectProps) => {
     return {
       onChange: (e: ChangeEvent<HTMLSelectElement>) => {
         if (onChange) {
@@ -80,7 +80,11 @@ export const MergeMultiselect = ({
           }}
         />
       ))}
-      <LeggTilFlerButton onClick={() => append({ value: "default" })}>
+      <LeggTilFlerButton
+        variant="outline"
+        rightIcon={<Icon icon="add" />}
+        onClick={() => append({ value: "default" })}
+      >
         Legg til flere sammenslåinger
       </LeggTilFlerButton>
     </MultiSelectWrapper>
@@ -93,14 +97,6 @@ const MultiSelectWrapper = styled.div`
   gap: 18px;
 `;
 
-const LeggTilFlerButton = styled(Button).attrs(() => ({
-  icon: <Icon icon="add" />,
-  variant: "secondary",
-}))`
+const LeggTilFlerButton = styled(Button)`
   margin-bottom: 8px;
-  background: transparent;
-
-  :hover {
-    background: transparent;
-  }
 `;

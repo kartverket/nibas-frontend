@@ -1,10 +1,10 @@
-import { InputHTMLAttributes, forwardRef } from "react";
+import { forwardRef } from "react";
 import styled from "styled-components";
 import { StemmekretsResponse } from "types/api";
-import Button from "components/form/Button";
-import Select from "components/form/Select";
 import { ValidationError } from "components/form/Input/Input";
 import Message from "components/Status/Message";
+import { Button, Select, SelectProps } from "@kvib/react";
+import Label from "components/form/Label";
 
 const MergeSelectWrapper = styled.div`
   display: grid;
@@ -20,18 +20,12 @@ const MergeSelectErrorMessage = styled(Message)`
   grid-area: error;
 `;
 
-const RemoveButton = styled(Button).attrs(() => ({ variant: "tertiary" }))`
+const RemoveButton = styled(Button)`
   grid-area: fjern;
-  margin-top: 26px;
-  margin-left: 16px;
-  background: transparent;
-
-  :hover {
-    background: transparent;
-  }
+  margin-top: 32px;
 `;
 
-const MergeSelectStyle = styled(Select)`
+const SelectLabel = styled(Label)`
   grid-area: select;
 `;
 
@@ -40,9 +34,9 @@ type MergeSelectProps = {
   showRemoveButton: boolean;
   stemmekretser: StemmekretsResponse[];
   validationError?: ValidationError;
-} & InputHTMLAttributes<HTMLSelectElement>;
+} & SelectProps;
 
-export const MergeSelect = forwardRef<HTMLDivElement, MergeSelectProps>(
+export const MergeSelect = forwardRef<HTMLSelectElement, MergeSelectProps>(
   (
     {
       onRemove,
@@ -53,23 +47,24 @@ export const MergeSelect = forwardRef<HTMLDivElement, MergeSelectProps>(
     },
     ref
   ) => (
-    <MergeSelectWrapper ref={ref}>
-      <MergeSelectStyle
-        {...inputProps}
-        defaultValue="default"
-        label="Navn eller nummer på stemmekrets"
-      >
-        <option value="default" disabled>
-          Velg en stemmekrets fra listen
-        </option>
-        {stemmekretser.map((s) => (
-          <option key={s.stemmekretsnummer} value={s.stemmekretsnummer}>
-            {`${s.stemmekretsnummer} - ${s.stemmekretsnavn}`}
-          </option>
-        ))}
-      </MergeSelectStyle>
+    <MergeSelectWrapper>
+      <SelectLabel label="Navn eller nummer på stemmekrets">
+        <Select
+          {...inputProps}
+          ref={ref}
+          placeholder="Velg en stemmekrets fra listen"
+        >
+          {stemmekretser.map((s) => (
+            <option key={s.stemmekretsnummer} value={s.stemmekretsnummer}>
+              {`${s.stemmekretsnummer} - ${s.stemmekretsnavn}`}
+            </option>
+          ))}
+        </Select>
+      </SelectLabel>
       {showRemoveButton && (
-        <RemoveButton onClick={onRemove}>Fjern</RemoveButton>
+        <RemoveButton variant="ghost" onClick={onRemove}>
+          Fjern
+        </RemoveButton>
       )}
       {validationError?.showError && (
         <MergeSelectErrorMessage status="error">

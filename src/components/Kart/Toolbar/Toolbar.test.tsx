@@ -110,12 +110,7 @@ describe("Toolbar", () => {
       "Utkast 1"
     );
 
-    await user.selectOptions(
-      screen.getByRole("combobox", {
-        name: "Endringstype expand_more",
-      }),
-      "Retting"
-    );
+    await user.selectOptions(screen.getByLabelText("Endringstype"), "Retting");
 
     await user.click(screen.getByRole("button", { name: "Opprett" }));
 

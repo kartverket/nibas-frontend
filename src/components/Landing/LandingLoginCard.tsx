@@ -14,7 +14,7 @@ export const LandingLoginCard = () => {
           Denne tjenesten er kun tilgjengelig for autoriserte brukere
         </CardParagraph>
       </div>
-      <Arrow />
+      <Arrow icon="arrow_forward_ios" />
     </Card>
   );
 };
@@ -43,7 +43,7 @@ const Card = styled.button`
   }
 `;
 
-const Arrow = styled(Icon).attrs({ icon: "arrow_forward_ios" })`
+const Arrow = styled(Icon)`
   transition: transform 0.1s;
 
   ${Card}:hover & {

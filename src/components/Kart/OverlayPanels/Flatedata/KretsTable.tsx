@@ -24,9 +24,8 @@ export const KretsTable = styled.table`
 
 export const KretsRow = styled.tr<{ isActive: boolean }>`
   position: relative;
-  vertical-align: baseline;
 
-  ::after {
+  &::after {
     content: "";
     position: absolute;
     left: 0;
@@ -40,7 +39,7 @@ export const KretsRow = styled.tr<{ isActive: boolean }>`
       `};
   }
 
-  :hover::after {
+  &:hover::after {
     background: var(--blue_dark);
   }
 

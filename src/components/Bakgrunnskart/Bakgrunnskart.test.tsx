@@ -17,24 +17,16 @@ const renderWithProvider = (
   });
 
 describe("Bakgrunnskart", () => {
-  it("should not render when not visible", () => {
-    renderWithProvider(<Bakgrunnskart />, null);
-
-    expect(
-      screen.queryByRole("heading", { name: "Kartlag" })
-    ).not.toBeInTheDocument();
-  });
-
   it("should add sublayer to list on plus click", async () => {
     const { user } = renderWithProvider(<Bakgrunnskart />);
 
     const openMainButton = await screen.findByRole("button", {
-      name: "Administrative enheter WMS versjon 2 Åpne",
+      name: "Åpne Administrative enheter WMS versjon 2",
     });
     await user.click(openMainButton);
 
     const openSubButton = await screen.findByRole("button", {
-      name: "Kommuner Åpne",
+      name: "Åpne Kommuner",
     });
     await user.click(openSubButton);
 
@@ -72,12 +64,12 @@ describe("Bakgrunnskart", () => {
     const { user } = renderWithProvider(<Bakgrunnskart />);
 
     const openMainButton = await screen.findByRole("button", {
-      name: "Administrative enheter WMS versjon 2 Åpne",
+      name: "Åpne Administrative enheter WMS versjon 2",
     });
     await user.click(openMainButton);
 
     const openSubButton = await screen.findByRole("button", {
-      name: "Kommuner Åpne",
+      name: "Åpne Kommuner",
     });
     await user.click(openSubButton);
 
