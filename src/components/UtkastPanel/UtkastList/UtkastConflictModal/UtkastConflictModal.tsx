@@ -1,5 +1,4 @@
-import { Button, Heading } from "@kvib/react";
-import Checkbox from "components/Checkbox";
+import { Button, Checkbox, Heading } from "@kvib/react";
 import { ButtonCell } from "components/Kart/OverlayPanels/Flatedata/KretsTable";
 import { Modal, ModalContent } from "components/Modal";
 import styled from "styled-components";
