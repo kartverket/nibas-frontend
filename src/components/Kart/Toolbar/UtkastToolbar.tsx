@@ -60,6 +60,9 @@ const UtkastToolbar = ({ setCreateUtkastOpen }: Props) => {
       setSearchParams({ utkast: utkastId });
       clearHistory({ hasPreviouslySavedHistory: true });
       toast({
+        containerStyle: {
+          margin: "30px",
+        },
         title: "Utkast opprettet",
         status: "success",
         duration: 9000,

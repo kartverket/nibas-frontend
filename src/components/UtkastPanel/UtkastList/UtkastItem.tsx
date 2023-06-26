@@ -97,6 +97,9 @@ const UtkastItem = ({ utkast }: Props) => {
 
     if (statusCode.isSuccessful(response.status)) {
       toast({
+        containerStyle: {
+          margin: "30px",
+        },
         title: "Utkast publisert",
         description: `Endringene trer i kraft ${getPublishDateText()}.`,
         status: "success",
