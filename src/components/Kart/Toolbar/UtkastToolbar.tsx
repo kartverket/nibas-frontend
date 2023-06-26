@@ -6,7 +6,7 @@ import { useHistory } from "contexts/HistoryContext";
 import { translateKeysByEndringsType } from "contexts/UtkastContext/constants";
 import { historyToUtkastOperations } from "contexts/UtkastContext/utils";
 import { createUtkast as createApiUtkast } from "api/utkast";
-import Input from "components/form/Input";
+import Input from "components/Input";
 import { Frame } from "./components";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";

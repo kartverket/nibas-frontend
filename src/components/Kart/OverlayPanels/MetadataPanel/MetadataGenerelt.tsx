@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { Metadata, FeatureProperties } from "types/api";
-import Input from "components/form/Input";
+import Input from "components/Input";
 import useMetadataForm from "components/Kart/OverlayPanels/hooks/useMetadataForm";
 import { getDateInFriendlyString } from "components/Kart/OverlayPanels/MetadataPanel/utils";
 import AsyncKodelisteSelect from "./AsyncKodelisteSelect";
@@ -48,7 +48,7 @@ const Form = styled.form`
 
 const InputRow = styled.div`
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: auto auto;
   gap: 16px;
 `;
 

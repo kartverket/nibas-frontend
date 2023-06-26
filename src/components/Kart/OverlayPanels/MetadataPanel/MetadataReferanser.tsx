@@ -6,7 +6,7 @@ import { ObjectEvent } from "ol/Object";
 import { Control, useFieldArray, useForm } from "react-hook-form";
 import styled from "styled-components";
 import { addMetadataEntryFromFeature } from "./utils";
-import Input from "components/form/Input";
+import Input from "components/Input";
 import Icon from "components/Icon";
 import { useHistory } from "contexts/HistoryContext";
 import { Dokref, FeatureProperties, Metadata } from "types/api";

@@ -1,6 +1,6 @@
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { PanelHeader, PanelProps, AbsolutePanel } from "./Panel";
-import Input from "components/form/Input/Input";
+import Input from "components/Input";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import LineString from "ol/geom/LineString";

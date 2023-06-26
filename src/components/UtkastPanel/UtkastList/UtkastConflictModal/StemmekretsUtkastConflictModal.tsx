@@ -1,4 +1,4 @@
-import Input from "components/form/Input";
+import Input from "components/Input";
 import { ButtonCell } from "components/Kart/OverlayPanels/Flatedata/KretsTable";
 import {
   FramtidigVersjonConflict,

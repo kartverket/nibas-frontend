@@ -11,7 +11,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { MergeFormData } from "./MergeForm";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useCallback, useState } from "react";
-import Input from "components/form/Input";
+import Input from "components/Input";
 import { Divider } from "components/Divider";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import CreateUtkastModal, {

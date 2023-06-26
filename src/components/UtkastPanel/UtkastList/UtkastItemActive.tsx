@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import { UtkastItemExpanded } from "./UtkastItem";
-import Input from "components/form/Input";
+import Input from "components/Input";
 import { useHistory, UtkastEntry } from "contexts/HistoryContext";
 import useToolbarFormSync from "contexts/HistoryContext/useToolbarFormSync";
 import { translateKeysByEndringsType } from "contexts/UtkastContext/constants";

@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 import styled from "styled-components";
 import { StemmekretsResponse } from "types/api";
-import { ValidationError } from "components/form/Input/Input";
+import { ValidationError } from "components/Input";
 import Message from "components/Status/Message";
 import { Button, Select, SelectProps } from "@kvib/react";
 import Label from "components/Label";
