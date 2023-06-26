@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useSearchParams } from "react-router-dom";
 import styled from "styled-components";
-import { Button } from "@kvib/react";
+import { Button, useToast } from "@kvib/react";
 import { useSWRConfig } from "swr";
 import UtkastItemActive from "./UtkastItemActive";
 import { deleteUtkast as deleteApiUtkast, publishUtkast } from "api/utkast";
@@ -60,6 +60,7 @@ const UtkastItem = ({ utkast }: Props) => {
   const { canSave } = useToolbar();
   const { closeUtkast } = useUtkast();
   const { setError } = useErrorHandling();
+  const toast = useToast();
 
   const utkastActive = utkastId === utkast.id;
 
@@ -68,6 +69,15 @@ const UtkastItem = ({ utkast }: Props) => {
 
     if (utkastActive) {
       setSearchParams({});
+    }
+  };
+
+  const getPublishDateText = () => {
+    if (fullUtkast) {
+      if (new Date(fullUtkast.gyldigFra).getDay === new Date().getDay) {
+        return "umiddelbart";
+      }
+      return getDateInFriendlyString(fullUtkast.gyldigFra);
     }
   };
 
@@ -86,6 +96,14 @@ const UtkastItem = ({ utkast }: Props) => {
     if (!response) return;
 
     if (statusCode.isSuccessful(response.status)) {
+      toast({
+        title: "Utkast publisert",
+        description: `Endringene trer i kraft ${getPublishDateText()}.`,
+        status: "success",
+        duration: 9000,
+        isClosable: true,
+        position: "top",
+      });
       cleanUpUtkast();
     } else if (statusCode.isConflict(response.status)) {
       const wrapper = (await response.json()) as ConflictResponseWrapper;

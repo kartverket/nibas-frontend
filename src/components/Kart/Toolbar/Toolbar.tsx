@@ -5,7 +5,6 @@ import UtkastToolbar from "./UtkastToolbar";
 import LagreToolbar from "./LagreToolbar";
 import ButtonToolbar from "./ButtonToolbar";
 import { toolbarSpacing } from "./components";
-import Toast from "./Toast";
 
 const Container = styled.div`
   position: relative;
@@ -26,7 +25,6 @@ const Stack = styled.div`
 
 const Toolbar = () => {
   const [createUtkastOpen, setCreateUtkastOpen] = useState(false);
-  const [utkastJustCreated, setUtkastJustCreated] = useState(false);
   const { redigeringsmodusAktiv } = useRedigeringsmodus();
 
   return (
@@ -34,16 +32,12 @@ const Toolbar = () => {
       {redigeringsmodusAktiv && (
         <Stack>
           {createUtkastOpen && (
-            <UtkastToolbar
-              setCreateUtkastOpen={setCreateUtkastOpen}
-              setUtkastJustCreated={setUtkastJustCreated}
-            />
+            <UtkastToolbar setCreateUtkastOpen={setCreateUtkastOpen} />
           )}
           <LagreToolbar
             createUtkastOpen={createUtkastOpen}
             setCreateUtkastOpen={setCreateUtkastOpen}
           />
-          {utkastJustCreated && <Toast text="Utkastet er opprettet" />}
         </Stack>
       )}
       <ButtonToolbar />

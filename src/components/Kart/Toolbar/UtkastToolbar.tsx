@@ -11,7 +11,7 @@ import { Frame } from "./components";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
 import { ApiErrorResponse } from "../../../types/api";
-import { Button, Heading, Select } from "@kvib/react";
+import { Button, Heading, Select, useToast } from "@kvib/react";
 import Label from "components/form/Label";
 
 const UtkastFrame = styled(Frame)`
@@ -26,14 +26,10 @@ const Buttons = styled.div`
 `;
 
 type Props = {
-  setUtkastJustCreated: (utkastJustCreated: boolean) => void;
   setCreateUtkastOpen: (createUtkastOpen: boolean) => void;
 };
 
-const UtkastToolbar = ({
-  setUtkastJustCreated,
-  setCreateUtkastOpen,
-}: Props) => {
+const UtkastToolbar = ({ setCreateUtkastOpen }: Props) => {
   const [createUtkastLoading, setCreateUtkastLoading] = useState(false);
   const [utkastName, setUtkastName] = useState("");
   const [utkastType, setUtkastType] = useState("");
@@ -42,13 +38,7 @@ const UtkastToolbar = ({
   const setSearchParams = useSearchParams()[1];
   const { setError } = useErrorHandling();
 
-  const promptUtkast = () => {
-    setUtkastJustCreated(true);
-
-    setTimeout(() => {
-      setUtkastJustCreated(false);
-    }, 5000);
-  };
+  const toast = useToast();
 
   const createUtkast = async () => {
     setCreateUtkastLoading(true);
@@ -69,7 +59,13 @@ const UtkastToolbar = ({
       setCreateUtkastOpen(false);
       setSearchParams({ utkast: utkastId });
       clearHistory({ hasPreviouslySavedHistory: true });
-      promptUtkast();
+      toast({
+        title: "Utkast opprettet",
+        status: "success",
+        duration: 9000,
+        isClosable: true,
+        position: "top",
+      });
     } else if (statusCode.isError(response.status)) {
       const wrapper = (await response.json()) as ApiErrorResponse;
       setError({
