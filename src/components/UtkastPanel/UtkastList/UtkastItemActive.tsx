@@ -2,9 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import { UtkastItemExpanded } from "./UtkastItem";
-import Button from "components/form/Button";
 import Input from "components/form/Input";
-import Select from "components/form/Select";
 import { useHistory, UtkastEntry } from "contexts/HistoryContext";
 import useToolbarFormSync from "contexts/HistoryContext/useToolbarFormSync";
 import { translateKeysByEndringsType } from "contexts/UtkastContext/constants";
@@ -16,6 +14,8 @@ import { useUtkast } from "contexts/UtkastContext";
 import useTimer from "hooks/useTimer";
 import AlertModal from "components/Status/AlertModal";
 import { useToolbar } from "contexts/ToolbarContext";
+import { Button, Select } from "@kvib/react";
+import Label from "components/form/Label";
 
 type Inputs = {
   navn: string;
@@ -117,25 +117,24 @@ const UtkastItemActive = ({ utkastId }: Props) => {
   return (
     <UtkastItemExpanded>
       <Input label="Navn på utkast" {...register("navn", registerOptions)} />
-      <Select
-        label="Type utkast"
-        {...register("endringsType", registerOptions)}
-      >
-        {translateKeysByEndringsType.map((type) => (
-          <option key={type} value={type}>
-            {type}
-          </option>
-        ))}
-      </Select>
+      <Label label="Type utkast">
+        <Select {...register("endringsType", registerOptions)}>
+          {translateKeysByEndringsType.map((type) => (
+            <option key={type} value={type}>
+              {type}
+            </option>
+          ))}
+        </Select>
+      </Label>
       <EditingUtkastText>
         Du er nå i redigeringsmodus av dette utkastet. Alle endringer du gjør i
         inndelingene og kartet vil bli lagret på dette utkastet når du klikker
         på &quot;Lagre&quot;-knappen nederst på skjermen.
       </EditingUtkastText>
       <Buttons>
-        <CancelButton onClick={canSave ? openModal : closeUtkast}>
+        <Button variant="ghost" onClick={canSave ? openModal : closeUtkast}>
           Avslutt redigering
-        </CancelButton>
+        </Button>
         <Button onClick={handleSave}>Lagre</Button>
       </Buttons>
       <AlertModal
@@ -170,13 +169,6 @@ const Buttons = styled.div`
   display: flex;
   gap: 8px;
   justify-content: flex-end;
-`;
-
-const CancelButton = styled(Button).attrs(() => ({
-  variant: "tertiary",
-}))`
-  background-color: transparent;
-  color: var(--blue);
 `;
 
 export default UtkastItemActive;

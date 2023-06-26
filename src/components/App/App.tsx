@@ -30,6 +30,7 @@ const App = () => {
    */
   const [redirectAfterLogon, redirectAfterLogout]: JSX.Element[] =
     useConfigureAuthFlow(authFlowProps);
+
   return (
     <Suspense fallback={<FullPageLoader />}>
       <Router>

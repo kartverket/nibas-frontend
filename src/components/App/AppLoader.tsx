@@ -12,9 +12,4 @@ const LoaderWrapper = styled.div`
   padding-top: 5rem;
   justify-content: center;
   align-items: center;
-
-  .loader {
-    height: 4rem;
-    width: 4rem;
-  }
 `;

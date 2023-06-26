@@ -49,7 +49,7 @@ describe("SubBackgroundLayer", () => {
     );
 
     const caret = screen.getByRole("button", {
-      name: "Sublag Åpne",
+      name: "Åpne Sublag",
     });
 
     await user.click(caret);

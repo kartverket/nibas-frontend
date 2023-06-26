@@ -4,9 +4,10 @@
   "private": true,
   "dependencies": {
     "@kartverket/frontend-aut-lib": "0.0.27",
-    "@kvib/css": "^4.0.0",
+    "@kvib/react": "^0.35.0",
     "http-proxy-middleware": "~2.0.6",
     "lodash.orderby": "^4.6.0",
+    "material-symbols": "^0.8.0",
     "ol": "~7.1.0",
     "proj4": "~2.9.0",
     "react": "~18.2.0",
@@ -16,7 +17,7 @@
     "react-hook-form": "~7.44.3",
     "react-modal": "^3.16.1",
     "react-router-dom": "~6.11.0",
-    "styled-components": "~5.3.11",
+    "styled-components": "^5.3.11",
     "swr": "~2.1.5"
   },
   "scripts": {
@@ -60,7 +61,7 @@
     "@types/react-dom": "~18.2.4",
     "@types/react-modal": "^3.16.0",
     "@types/react-router-dom": "~5.3.3",
-    "@types/styled-components": "~5.1.26",
+    "@types/styled-components": "^5.1.26",
     "@typescript-eslint/eslint-plugin": "~5.59.9",
     "@typescript-eslint/parser": "~5.59.9",
     "@vitejs/plugin-react": "^4.0.0",

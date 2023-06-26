@@ -1,4 +1,3 @@
-import Button, { LinkButton } from "components/form/Button";
 import Icon from "components/Icon";
 import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
 import styled from "styled-components";
@@ -7,7 +6,7 @@ import { EditingType } from "contexts/EditGrenserContext";
 import { Feature } from "ol";
 import { Outline } from "style/mixins";
 import { Geometry } from "ol/geom";
-import { Spinner } from "@kvib/react";
+import { Button, IconButton, Spinner } from "@kvib/react";
 
 type Props = {
   grenseType: EditingType;
@@ -39,43 +38,34 @@ const EditableGrenseAccordion = ({
         <VisibilityButton
           onClick={toggleVisible}
           $visible={value.visible ? true : false}
-        >
-          {value.visible ? (
-            <Icon icon="visibility" aria-label={`Skjul ${title}`} />
-          ) : (
-            <Icon icon="visibility_off" aria-label={`Vis ${title}`} />
-          )}
-        </VisibilityButton>
+          aria-label={value.visible ? `Skjul ${title}` : `Vis ${title}`}
+          icon={<Icon icon={value.visible ? "visibility" : "visibility_off"} />}
+        />
         <TextContent>
           <span>{title}</span>
           <div>
-            <LinkButton
+            <Button
+              variant="link"
               onClick={toggleEditing}
-              disabled
+              isDisabled
               title="Midlertidig utilgjengelig"
             >
               {value.editing ? "Stopp redigering" : "Rediger grenser"}
-            </LinkButton>
+            </Button>
           </div>
         </TextContent>
-        {isFetching && <Spinner color="blue" />}
-        <CaretButton
-          variant="unstyled"
+        {isFetching && (
+          <Spinner color="blue" size="lg" aria-label={`Henter ${title}`} />
+        )}
+        <IconButton
+          variant="ghost"
           onClick={accordion.toggle}
+          aria-label={accordion.isVisible ? `Lukk ${title}` : `Åpne ${title}`}
           icon={
-            accordion.isVisible ? (
-              <CaretIcon
-                $visible={accordion.isVisible ? true : false}
-                icon="expand_less"
-                aria-label={`Lukk ${title}`}
-              />
-            ) : (
-              <CaretIcon
-                $visible={accordion.isVisible ? true : false}
-                icon="expand_more"
-                aria-label={`Åpne ${title}`}
-              />
-            )
+            <CaretIcon
+              icon={accordion.isVisible ? "expand_less" : "expand_more"}
+              $visible={accordion.isVisible ? true : false}
+            />
           }
         />
       </Header>
@@ -88,12 +78,6 @@ const ListItem = styled.li`
   margin: 16px 0 0 8px;
 `;
 
-const CaretButton = styled(Button)`
-  &:focus-visible {
-    ${Outline}
-  }
-`;
-
 const TextContent = styled.div`
   flex: 1;
   display: flex;
@@ -101,18 +85,6 @@ const TextContent = styled.div`
 
   > :first-child {
     user-select: none;
-  }
-
-  > :nth-child(2) {
-    ${LinkButton} {
-      &:hover {
-        text-decoration: none;
-      }
-
-      &:focus-visible {
-        outline: 3px solid var(--blue_dark);
-      }
-    }
   }
 `;
 
@@ -133,9 +105,7 @@ const CaretIcon = styled(Icon)<{ $visible: boolean }>`
   }
 `;
 
-const VisibilityButton = styled(Button).attrs(() => ({
-  variant: "unstyled",
-}))<{ $visible: boolean }>`
+const VisibilityButton = styled(IconButton)<{ $visible: boolean }>`
   margin-right: 16px;
   color: ${({ $visible }) => ($visible ? "var(--white)" : "var(--blue_dark)")};
   background: ${({ $visible }) =>

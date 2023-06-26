@@ -228,9 +228,9 @@ const UtkastItem = ({ utkast, setUtkastJustPublished }: Props) => {
       {isPublishOpen && (
         <UtkastItemExpanded>
           <Buttons>
-            <CancelButton onClick={() => setIsPublishOpen(false)}>
+            <Button variant="ghost" onClick={() => setIsPublishOpen(false)}>
               Avbryt
-            </CancelButton>
+            </Button>
             <Button onClick={publish} isLoading={publiserer}>
               Publiser
             </Button>
@@ -249,14 +249,10 @@ const UtkastItem = ({ utkast, setUtkastJustPublished }: Props) => {
       {isDeleteOpen && (
         <UtkastItemExpanded>
           <Buttons>
-            <CancelButton onClick={() => setIsDeleteOpen(false)}>
+            <Button variant="ghost" onClick={() => setIsDeleteOpen(false)}>
               Avbryt
-            </CancelButton>
-            <Button
-              colorScheme="blue"
-              onClick={deleteUtkast}
-              isLoading={forkaster}
-            >
+            </Button>
+            <Button onClick={deleteUtkast} isLoading={forkaster}>
               Forkast
             </Button>
           </Buttons>
@@ -313,6 +309,11 @@ export const UtkastItemExpanded = styled.div`
   border-top: 2px solid var(--black);
   background-color: var(--gray_light);
   padding: 24px;
+
+  input,
+  select {
+    background: white;
+  }
 `;
 
 const Buttons = styled.div`
@@ -321,18 +322,10 @@ const Buttons = styled.div`
   gap: 8px;
 `;
 
-const CancelButton = styled(Button).attrs(() => ({
-  variant: "tertiary",
-}))`
-  background: transparent;
-`;
-
 const UnstyledButton = styled(Button).attrs(() => ({
   variant: "ghost",
 }))`
-  && {
-    padding: 0;
-  }
+  padding: 0;
 
   &&:hover {
     background: none;

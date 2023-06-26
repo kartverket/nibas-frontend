@@ -35,9 +35,7 @@ describe("UtkastItem", () => {
       ).toHaveDisplayValue("Mock utkast")
     );
 
-    const typeSelect = await screen.findByRole("combobox", {
-      name: "Type utkast expand_more",
-    });
+    const typeSelect = screen.getByLabelText("Type utkast");
 
     expect(typeSelect).toHaveValue("Retting");
     expect(document.location.href).toContain(mockUtkastRef1.id);

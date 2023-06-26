@@ -1,5 +1,5 @@
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import Button from "components/form/Button";
+import { Button } from "@kvib/react";
 import Icon from "components/Icon";
 
 /**
@@ -12,10 +12,9 @@ export const AuthenticationButton = () => {
 
   const loginButton = (
     <Button
-      variant="secondary"
+      variant="outline"
       aria-label="Logg inn"
-      icon={<Icon icon="login" aria-label="" />}
-      iconDirection="left"
+      leftIcon={<Icon icon="login" aria-label="" />}
       onClick={() => handleAuthenticateFunc("/")}
     >
       Logg inn
@@ -23,10 +22,9 @@ export const AuthenticationButton = () => {
   );
   const logoutButton = (
     <Button
-      variant="secondary"
+      variant="outline"
       aria-label="Logg ut"
-      icon={<Icon icon="logout" aria-label="" />}
-      iconDirection="left"
+      leftIcon={<Icon icon="logout" aria-label="" />}
       onClick={handleLogoutFunc}
     >
       Logg ut

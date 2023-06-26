@@ -70,7 +70,7 @@ type EndringFraTilProps = {
 export const EndringFraTil = ({ endring }: EndringFraTilProps) => (
   <>
     <TekstEllerTom tekst={endring.fra} />
-    <RightArrow />
+    <RightArrow icon="arrow_right_alt" />
     <TekstEllerTom tekst={endring.til} bold={true} />
   </>
 );
@@ -97,7 +97,7 @@ const KursivTekst = styled(EndringTekst)`
   font-style: italic;
 `;
 
-const RightArrow = styled(Icon).attrs(() => ({ icon: "arrow_right_alt" }))`
+const RightArrow = styled(Icon)`
   color: var(--blue);
   font-size: 20px;
   margin: 0 8px 0 0;

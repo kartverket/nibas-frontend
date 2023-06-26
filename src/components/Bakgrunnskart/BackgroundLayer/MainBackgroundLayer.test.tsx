@@ -51,7 +51,7 @@ describe("MainBackgroundLayer", () => {
     );
 
     const caret = screen.getByRole("button", {
-      name: "Hovedlag Åpne",
+      name: "Åpne Hovedlag",
     });
     await user.click(caret);
 
