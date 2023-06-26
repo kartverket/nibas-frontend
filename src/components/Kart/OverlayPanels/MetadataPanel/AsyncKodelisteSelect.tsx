@@ -1,5 +1,5 @@
 import { Select, SelectProps } from "@kvib/react";
-import Label from "components/form/Label";
+import Label from "components/Label";
 import React, { forwardRef } from "react";
 import { KodelisteRespons } from "types/api";
 

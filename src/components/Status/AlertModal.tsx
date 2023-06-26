@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import CloseButton from "../form/CloseButton";
+import CloseButton from "../CloseButton";
 import Icon from "../Icon";
 import { Modal, ModalContent } from "../Modal";
 import { Status, StatusStyle, statusStyles } from "./common";

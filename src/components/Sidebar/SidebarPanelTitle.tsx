@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import CloseButton from "components/form/CloseButton";
+import CloseButton from "components/CloseButton";
 import { Heading } from "@kvib/react";
 
 type Props = {

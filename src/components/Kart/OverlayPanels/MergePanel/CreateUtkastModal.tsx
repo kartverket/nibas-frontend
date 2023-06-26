@@ -11,7 +11,7 @@ import { Modal, ModalContent } from "components/Modal";
 import { statusCode } from "utils/api";
 import { UtkastOperasjoner } from "../../../../types/api";
 import { Button, Heading, Select } from "@kvib/react";
-import Label from "components/form/Label";
+import Label from "components/Label";
 
 const ModalElement = styled(ModalContent)`
   display: flex;

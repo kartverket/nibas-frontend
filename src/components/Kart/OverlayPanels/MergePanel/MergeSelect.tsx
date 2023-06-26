@@ -4,7 +4,7 @@ import { StemmekretsResponse } from "types/api";
 import { ValidationError } from "components/form/Input/Input";
 import Message from "components/Status/Message";
 import { Button, Select, SelectProps } from "@kvib/react";
-import Label from "components/form/Label";
+import Label from "components/Label";
 
 const MergeSelectWrapper = styled.div`
   display: grid;

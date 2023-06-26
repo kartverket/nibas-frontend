@@ -12,7 +12,7 @@ import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
 import { ApiErrorResponse } from "../../../types/api";
 import { Button, Heading, Select } from "@kvib/react";
-import Label from "components/form/Label";
+import Label from "components/Label";
 
 const UtkastFrame = styled(Frame)`
   flex-direction: column;

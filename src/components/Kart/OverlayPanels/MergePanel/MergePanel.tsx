@@ -23,7 +23,7 @@ import { MergeMultiselect } from "./MergeMultiselect";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { Button, Heading, Select } from "@kvib/react";
-import Label from "components/form/Label";
+import Label from "components/Label";
 
 const Form = styled.form`
   display: flex;

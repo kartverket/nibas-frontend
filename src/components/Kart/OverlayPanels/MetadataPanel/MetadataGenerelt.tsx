@@ -19,7 +19,7 @@ import {
   NumberInputStepper,
   Textarea,
 } from "@kvib/react";
-import Label from "components/form/Label";
+import Label from "components/Label";
 
 type Props = {
   feature: Feature<Geometry>;
