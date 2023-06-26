@@ -1,3 +1,4 @@
+import styled from "styled-components";
 import MainLayer from "./MainLayer";
 import { SidebarPanel } from "components/Sidebar/SidebarPanel";
 import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
@@ -6,6 +7,13 @@ import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { bakgrunnskartLayers } from "hooks/layers/constants";
 import { BakgrunnskartId } from "hooks/layers/types";
 import { Divider, Heading } from "@kvib/react";
+
+const Layers = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 0;
+`;
 
 const Bakgrunnskart = () => {
   const { activeSidebarPanel, closeSidebarPanel } = useSidebarPanel();
@@ -17,15 +25,17 @@ const Bakgrunnskart = () => {
         closePanel={closeSidebarPanel}
         title="Aktive kartlag"
       />
-      {visibleLayers.map((layer, i) => (
-        <MainLayer
-          key={layer.mainLayer}
-          layerId={layer.mainLayer}
-          index={i}
-          isAktiveKartlag={true}
-          canDrag={true}
-        />
-      ))}
+      <Layers>
+        {visibleLayers.map((layer, i) => (
+          <MainLayer
+            key={layer.mainLayer}
+            layerId={layer.mainLayer}
+            index={i}
+            isAktiveKartlag={true}
+            canDrag={true}
+          />
+        ))}
+      </Layers>
       <Heading as="h3" size="sm">
         Kartlag
       </Heading>

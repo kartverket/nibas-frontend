@@ -1,11 +1,17 @@
 import { forwardRef, useState } from "react";
 import styled from "styled-components";
 import useLayerOpacity from "./useLayerOpacity";
-import Slider from "components/form/Slider";
 import Icon from "components/Icon";
 import { MainMappedLayer, MappedLayer } from "utils/getLayersFromWMS";
 import { Outline } from "style/mixins";
-import { Button, IconButton } from "@kvib/react";
+import {
+  Button,
+  IconButton,
+  Slider,
+  SliderTrack,
+  SliderFilledTrack,
+  SliderThumb,
+} from "@kvib/react";
 
 type SharedProps = {
   indent: number;
@@ -124,14 +130,19 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
             />
             <span>{props.mappedLayer.title}</span>
           </DraggableLayer>
-          <AktivtKartlagSlider>
-            <Slider
-              min={0}
-              max={100}
-              value={opacity ?? 100}
-              onChange={onSliderChange}
-            />
-          </AktivtKartlagSlider>
+          <OpacitySlider
+            aria-label="slider-ex-1"
+            defaultValue={30}
+            min={0}
+            max={100}
+            value={opacity ?? 100}
+            onChange={onSliderChange}
+          >
+            <SliderTrack>
+              <SliderFilledTrack />
+            </SliderTrack>
+            <SliderThumb />
+          </OpacitySlider>
           <AddRemoveIconButton
             variant="ghost"
             aria-label="Fjern aktivt kartlag"
@@ -172,6 +183,14 @@ const BackgroundLayerAccordion = forwardRef<HTMLDivElement, Props>(
 );
 
 BackgroundLayerAccordion.displayName = "BackgroundLayerAccordion";
+
+const AktivtMainLayerWrapper = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 64px auto;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+`;
 
 const AddRemove = styled.span<{ visible: boolean; aktivtKartlag: boolean }>`
   color: ${({ visible, aktivtKartlag }) =>
@@ -262,19 +281,15 @@ const ClickableName = styled(Button)<{ open: boolean }>`
 `;
 
 const DraggableLayer = styled.div`
-  cursor: move;
-
-  flex: 1;
   display: flex;
-  flex-direction: row;
   align-items: center;
   justify-content: left;
+  flex: 1;
+  gap: 8px;
+  cursor: move;
 
   > :first-child {
-    margin-right: 8px;
-
-    height: 100%;
-    padding: 5px;
+    padding: 6px;
   }
 
   &:hover {
@@ -294,18 +309,7 @@ const DraggableLayer = styled.div`
   }
 `;
 
-const AktivtKartlagSlider = styled.div`
-  width: 64px;
-  margin-left: 4px;
-  margin-right: 20px;
-  margin-bottom: 6px;
-
-  > :first-child {
-    &:focus-visible {
-      ${Outline}
-    }
-  }
-`;
+const OpacitySlider = styled(Slider)``;
 
 const AddRemoveIconButton = styled(IconButton)`
   width: unset;
@@ -313,16 +317,6 @@ const AddRemoveIconButton = styled(IconButton)`
   &:hover {
     background: none;
   }
-`;
-
-const AktivtMainLayerWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  margin: 8px 0;
-  padding: 6px 0;
-  font-weight: bold;
-  padding-top: 16px;
 `;
 
 const AktivtSubLayerWrapper = styled.button`
