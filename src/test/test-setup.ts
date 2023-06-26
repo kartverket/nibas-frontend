@@ -15,6 +15,14 @@ declare module "vitest" {
 }
 expect.extend(matchers);
 
+beforeEach(() => {
+  window.ResizeObserver = vi.fn().mockImplementation(() => ({
+    observe: vi.fn(),
+    unobserve: vi.fn(),
+    disconnect: vi.fn(),
+  }));
+});
+
 beforeAll(() => {
   // Establish API mocking before all tests.
   server.listen();
