@@ -126,7 +126,7 @@ const reduceGrenseOperations = (
 
     const feature = editSource.getFeatureById(change.id) as Feature<LineString>;
 
-    const featureId = feature.getId();
+    const featureId = feature?.getId();
 
     if (!featureId) return editedFeatures;
 
