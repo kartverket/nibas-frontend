@@ -9,7 +9,7 @@ import { StemmekretsEntry, useHistory } from "contexts/HistoryContext";
 import { RegisterOptions, FieldError, useForm } from "react-hook-form";
 import { updateEditFeatureText } from "utils/map/layerStyles";
 import { getRepresentasjonspunktId } from "utils/map/source";
-import useKretsToolbarSync from "contexts/HistoryContext/useToolbarFormSync";
+import { useHistoryFormSync } from "contexts/HistoryContext/useHistoryFormSync";
 
 type StemmekretsInputs = {
   stemmekretsnavn: string;
@@ -74,7 +74,7 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
     [getValues, setValue, stemmekretsId]
   );
 
-  useKretsToolbarSync<StemmekretsEntry>({
+  useHistoryFormSync<StemmekretsEntry>({
     entityId: stemmekretsId,
     redoEventKey: "stemmekretsRedo",
     undoEventKey: "stemmekretsUndo",

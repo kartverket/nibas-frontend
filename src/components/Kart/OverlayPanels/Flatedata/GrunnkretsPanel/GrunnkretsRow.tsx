@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { GrunnkretsEntry, useHistory } from "contexts/HistoryContext";
-import useKretsToolbarSync from "contexts/HistoryContext/useToolbarFormSync";
+import { useHistoryFormSync } from "contexts/HistoryContext/useHistoryFormSync";
 import { GrunnkretsRequest, GrunnkretsResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { updateEditFeatureText } from "utils/map/layerStyles";
@@ -76,7 +76,7 @@ const GrunnkretsRow = ({ grunnkrets, kommuneId }: Props) => {
     [getValues, grunnkretsId, setValue]
   );
 
-  useKretsToolbarSync<GrunnkretsEntry>({
+  useHistoryFormSync<GrunnkretsEntry>({
     entityId: grunnkretsId,
     redoEventKey: "grunnkretsRedo",
     undoEventKey: "grunnkretsUndo",

@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { UtkastItemExpanded } from "./UtkastItem";
 import Input from "components/Input";
 import { useHistory, UtkastEntry } from "contexts/HistoryContext";
-import useToolbarFormSync from "contexts/HistoryContext/useToolbarFormSync";
+import { useHistoryFormSync } from "contexts/HistoryContext/useHistoryFormSync";
 import { translateKeysByEndringsType } from "contexts/UtkastContext/constants";
 import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
 import useNibasApi from "hooks/useNibasApi";
@@ -80,7 +80,7 @@ const UtkastItemActive = ({ utkastId }: Props) => {
     [setValue]
   );
 
-  useToolbarFormSync<UtkastEntry>({
+  useHistoryFormSync<UtkastEntry>({
     entityId: utkastId,
     undoEventKey: "utkastUndo",
     redoEventKey: "utkastRedo",

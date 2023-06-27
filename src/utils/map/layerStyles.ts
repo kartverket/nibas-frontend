@@ -60,6 +60,7 @@ export const selectedPointStyle = new Style({
   }),
   fill: new Fill({ color: "#0099FF" }),
   stroke: new Stroke({ color: "#ffffff" }),
+  zIndex: 10,
 });
 
 export const grenseStyles = {
