@@ -28,6 +28,7 @@ import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
+import { Toast, useToast } from "@chakra-ui/toast";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
@@ -47,6 +48,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const { closeOverlayPanel } = useOverlayPanel();
   const utkastId = searchParams.get("utkast");
   const { setError } = useErrorHandling();
+  const toast = useToast();
 
   const { mutate: globalMutate } = useSWRConfig();
 
@@ -140,6 +142,16 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     if (!updatedUtkast || !utkast) return;
 
     await updateUtkast(utkast.id, updatedUtkast);
+    toast({
+      containerStyle: {
+        margin: "30px",
+      },
+      title: "Utkastet er lagret",
+      status: "success",
+      duration: 9000,
+      isClosable: true,
+      position: "top",
+    });
   };
 
   const closeUtkast = () => {
