@@ -6,12 +6,12 @@ import Input from "components/Input";
 import useMetadataForm from "components/Kart/OverlayPanels/hooks/useMetadataForm";
 import { getDateInFriendlyString } from "components/Kart/OverlayPanels/MetadataPanel/utils";
 import AsyncKodelisteSelect from "./AsyncKodelisteSelect";
-import { Divider } from "components/Divider";
 import useIsMetadataDisabled from "../hooks/useIsMetadataDisabled";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useEffect } from "react";
 import {
   Button,
+  Divider,
   NumberDecrementStepper,
   NumberIncrementStepper,
   NumberInput,

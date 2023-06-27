@@ -12,7 +12,6 @@ import { MergeFormData } from "./MergeForm";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useCallback } from "react";
 import Input from "components/Input";
-import { Divider } from "components/Divider";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import CreateUtkastModal, {
   CreateUtkastCallbackArgument,
@@ -22,7 +21,7 @@ import { deduplicate, removeNull } from "utils/list-utils";
 import { MergeMultiselect } from "./MergeMultiselect";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import { Button, Heading, Select, useDisclosure } from "@kvib/react";
+import { Button, Divider, Heading, Select, useDisclosure } from "@kvib/react";
 import Label from "components/Label";
 
 const Form = styled.form`

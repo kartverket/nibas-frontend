@@ -3,8 +3,8 @@ import { UnstyledList } from "components/UnstyledList";
 import useNibasApi from "hooks/useNibasApi";
 import styled from "styled-components";
 import { Fragment } from "react";
-import { Divider } from "components/Divider";
 import { UtkastRef } from "../../../types/api";
+import { Divider } from "@kvib/react";
 
 const List = styled(UnstyledList)`
   display: flex;
