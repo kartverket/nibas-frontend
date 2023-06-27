@@ -10,7 +10,7 @@ import { getIdFromEntity } from "utils/api";
 import { FormProvider, useForm } from "react-hook-form";
 import { MergeFormData } from "./MergeForm";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import Input from "components/Input";
 import { Divider } from "components/Divider";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
@@ -22,7 +22,7 @@ import { deduplicate, removeNull } from "utils/list-utils";
 import { MergeMultiselect } from "./MergeMultiselect";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import { Button, Heading, Select } from "@kvib/react";
+import { Button, Heading, Select, useDisclosure } from "@kvib/react";
 import Label from "components/Label";
 
 const Form = styled.form`
@@ -45,7 +45,7 @@ const Buttons = styled.div`
 `;
 
 const MergePanel = ({ isOpen, className }: PanelProps) => {
-  const [isCreateUtkastModalOpen, setIsCreateUtkastModalOpen] = useState(false);
+  const { isOpen: modalIsOpen, onOpen, onClose } = useDisclosure();
   const { flatedata, closeOverlayPanel } = useOverlayPanel();
   const { setError } = useErrorHandling();
   const { utkast, updateUtkast } = useUtkast();
@@ -215,9 +215,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
       });
       return;
     }
-    isCreateUtkastModalOpen
-      ? setIsCreateUtkastModalOpen(false)
-      : setIsCreateUtkastModalOpen(true);
+    modalIsOpen ? onClose() : onOpen();
   };
 
   // Oppdaterer stemmekretsnavn og stemmekretsnummer når valgt stemmekrets endres
@@ -309,8 +307,8 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
               </Button>
             </Buttons>
             <CreateUtkastModal
-              isCreateUtkastModalOpen={isCreateUtkastModalOpen}
-              setIsCreateUtkastModalOpen={setIsCreateUtkastModalOpen}
+              isOpen={modalIsOpen}
+              onClose={onClose}
               callback={mergeStemmekrets}
             />
           </Form>
