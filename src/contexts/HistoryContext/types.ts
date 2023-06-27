@@ -48,8 +48,6 @@ export type StemmekretsSammenslaaingsendringEntry = BaseHistoryEntry<
   StemmekretsSammenslaaingsendringRequest
 >;
 
-export type KretsHistoryEntry = GrunnkretsEntry | StemmekretsEntry;
-
 // endringer skal kunne gjøres i bulk, feks et punkt på to features endrer to features i en entry
 export type HistoryEntry =
   | GrenseEntry

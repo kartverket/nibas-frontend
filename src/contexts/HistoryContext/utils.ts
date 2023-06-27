@@ -16,6 +16,12 @@ export const setFeatureCoordinatesForEntry = (
 
     lineString.setCoordinates(coordinates);
   });
+
+  return document.dispatchEvent(
+    new CustomEvent(direction === "from" ? "grenseUndo" : "grenseRedo", {
+      detail: { entry },
+    })
+  );
 };
 
 export const setFeatureMetadataForEntry = (
