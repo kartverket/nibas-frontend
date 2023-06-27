@@ -1,4 +1,4 @@
-import { VerticalLogo } from "components/Logo/Logo";
+import { VerticalLogo } from "components/Logo";
 import styled from "styled-components";
 import {
   AuthorizationStatus,
