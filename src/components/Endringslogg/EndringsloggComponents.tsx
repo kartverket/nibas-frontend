@@ -101,4 +101,5 @@ const RightArrow = styled(Icon)`
   color: var(--blue);
   font-size: 20px;
   margin: 0 8px 0 0;
+  vertical-align: middle;
 `;
