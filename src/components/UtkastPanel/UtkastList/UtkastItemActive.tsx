@@ -14,8 +14,7 @@ import { useUtkast } from "contexts/UtkastContext";
 import useTimer from "hooks/useTimer";
 import AlertModal from "components/AlertModal";
 import { useToolbar } from "contexts/ToolbarContext";
-import { Button, Select } from "@kvib/react";
-import Label from "components/Label";
+import { Button, FormControl, FormLabel, Select } from "@kvib/react";
 
 type Inputs = {
   navn: string;
@@ -117,7 +116,8 @@ const UtkastItemActive = ({ utkastId }: Props) => {
   return (
     <UtkastItemExpanded>
       <Input label="Navn på utkast" {...register("navn", registerOptions)} />
-      <Label label="Type utkast">
+      <FormControl>
+        <FormLabel>Type utkast</FormLabel>
         <Select {...register("endringsType", registerOptions)}>
           {translateKeysByEndringsType.map((type) => (
             <option key={type} value={type}>
@@ -125,7 +125,7 @@ const UtkastItemActive = ({ utkastId }: Props) => {
             </option>
           ))}
         </Select>
-      </Label>
+      </FormControl>
       <EditingUtkastText>
         Du er nå i redigeringsmodus av dette utkastet. Alle endringer du gjør i
         inndelingene og kartet vil bli lagret på dette utkastet når du klikker

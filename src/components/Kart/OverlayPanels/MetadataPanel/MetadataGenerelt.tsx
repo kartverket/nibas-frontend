@@ -12,6 +12,8 @@ import { useEffect } from "react";
 import {
   Button,
   Divider,
+  FormControl,
+  FormLabel,
   NumberDecrementStepper,
   NumberIncrementStepper,
   NumberInput,
@@ -19,7 +21,6 @@ import {
   NumberInputStepper,
   Textarea,
 } from "@kvib/react";
-import Label from "components/Label";
 
 type Props = {
   feature: Feature<Geometry>;
@@ -117,7 +118,8 @@ const MetadataGenerelt = ({ feature }: Props) => {
             label="Målemetode"
             {...register("maalemetode", { disabled: metadataIsDisabled })}
           />
-          <Label label="Nøyaktighet">
+          <FormControl>
+            <FormLabel>Nøyaktighet</FormLabel>
             <NumberInput>
               <NumberInputField
                 {...register("noeyaktighet", {
@@ -132,18 +134,19 @@ const MetadataGenerelt = ({ feature }: Props) => {
                 <NumberDecrementStepper />
               </NumberInputStepper>
             </NumberInput>
-          </Label>
+          </FormControl>
         </InputRow>
         <Input
           {...register("opphav", { disabled: metadataIsDisabled })}
           label="Opphav"
         />
-        <Label label="Informasjon">
+        <FormControl>
+          <FormLabel>Informasjon</FormLabel>
           <Textarea
             rows={4}
             {...register("informasjon", { disabled: metadataIsDisabled })}
           />
-        </Label>
+        </FormControl>
         <Divider />
         <Buttons>
           <Button

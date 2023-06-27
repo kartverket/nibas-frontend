@@ -11,17 +11,22 @@ import { Frame } from "./components";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
 import { ApiErrorResponse } from "../../../types/api";
-import { Button, Heading, Select, useToast } from "@kvib/react";
-import Label from "components/Label";
+import {
+  Button,
+  ButtonGroup,
+  FormControl,
+  FormLabel,
+  Heading,
+  Select,
+  useToast,
+} from "@kvib/react";
 
 const UtkastFrame = styled(Frame)`
   flex-direction: column;
   width: 365px;
 `;
 
-const Buttons = styled.div`
-  display: flex;
-  gap: 16px;
+const Buttons = styled(ButtonGroup)`
   justify-content: flex-end;
 `;
 
@@ -89,7 +94,8 @@ const UtkastToolbar = ({ setCreateUtkastOpen }: Props) => {
         value={utkastName}
         onChange={(e) => setUtkastName(e.target.value)}
       />
-      <Label label="Endringstype">
+      <FormControl>
+        <FormLabel>Endringstype</FormLabel>
         <Select
           placeholder="Velg en endringstype fra listen"
           value={utkastType}
@@ -101,7 +107,7 @@ const UtkastToolbar = ({ setCreateUtkastOpen }: Props) => {
             </option>
           ))}
         </Select>
-      </Label>
+      </FormControl>
       <Buttons>
         <Button onClick={() => setCreateUtkastOpen(false)} variant="ghost">
           Avbryt

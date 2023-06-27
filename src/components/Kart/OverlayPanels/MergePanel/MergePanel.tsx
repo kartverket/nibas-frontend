@@ -21,8 +21,15 @@ import { deduplicate, removeNull } from "utils/list-utils";
 import { MergeMultiselect } from "./MergeMultiselect";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import { Button, Divider, Heading, Select, useDisclosure } from "@kvib/react";
-import Label from "components/Label";
+import {
+  Button,
+  Divider,
+  FormControl,
+  FormLabel,
+  Heading,
+  Select,
+  useDisclosure,
+} from "@kvib/react";
 
 const Form = styled.form`
   display: flex;
@@ -236,7 +243,8 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
             <Heading as="h3" size="sm">
               Hvilken stemmekrets skal brukes som utgangspunkt?
             </Heading>
-            <Label label="Stemmekrets">
+            <FormControl>
+              <FormLabel>Stemmekrets</FormLabel>
               <Select
                 {...selectStemmekretsRegister}
                 onChange={(e) => {
@@ -263,7 +271,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
                     </option>
                   ))}
               </Select>
-            </Label>
+            </FormControl>
             <Divider />
             <Heading as="h3" size="sm">
               Hvilke stemmekretser ønsker du å slå sammen med denne kretsen?
