@@ -1,6 +1,5 @@
 import styled from "styled-components";
-import CloseButton from "components/CloseButton";
-import { Heading } from "@kvib/react";
+import { CloseButton, Heading } from "@kvib/react";
 
 type Props = {
   closePanel: () => void;
@@ -13,7 +12,11 @@ const SidebarPanelTitle = ({ title, closePanel }: Props) => {
       <Heading as="h2" size="md">
         {title}
       </Heading>
-      <CloseButton onClick={closePanel} aria-label={`Lukk ${title}`} />
+      <CloseButton
+        onClick={closePanel}
+        aria-label={`Lukk ${title}`}
+        size="lg"
+      />
     </TitleWrapper>
   );
 };
