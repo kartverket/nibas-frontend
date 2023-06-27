@@ -1,19 +1,17 @@
 import styled from "styled-components";
-import CloseButton from "../CloseButton";
 import Icon from "../Icon";
-import { Modal, ModalContent } from "../Modal";
 import { Status, StatusStyle, statusStyles } from "./common";
-import { Button } from "@kvib/react";
-
-const borderRadius = "12px";
-const border = "2px solid var(--gray_light)";
-
-const ModalElement = styled(ModalContent)`
-  width: 635px;
-  background: var(--white);
-  box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.15);
-  border-radius: ${borderRadius};
-`;
+import {
+  Button,
+  ButtonGroup,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+} from "@kvib/react";
 
 const StatusIcon = styled(Icon).attrs((props) => ({
   icon: props.icon,
@@ -22,45 +20,21 @@ const StatusIcon = styled(Icon).attrs((props) => ({
   color: ${(props) => props.foreground};
 `;
 
-const Header = styled.div<StatusStyle>`
+const Header = styled(ModalHeader)<StatusStyle>`
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 24px;
   background: ${(props) => props.background};
-
-  border: ${border};
-  border-top-left-radius: ${borderRadius};
-  border-top-right-radius: ${borderRadius};
-  border-bottom: none;
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+  margin-bottom: 12px;
 `;
 
-const Close = styled(CloseButton)`
-  margin-left: auto;
-
-  > span {
-    color: var(--black);
-
-    &:hover {
-      background-color: var(--gray_light);
-    }
-  }
-`;
-
-const Content = styled.div`
+const Body = styled(ModalBody)`
   display: flex;
   flex-direction: column;
   gap: 24px;
-  padding: 24px;
-
-  border: ${border};
-  border-bottom-left-radius: ${borderRadius};
-  border-bottom-right-radius: ${borderRadius};
-  border-top: none;
-`;
-
-const Title = styled.h3`
-  margin: 0;
 `;
 
 const BodyText = styled.p`
@@ -76,12 +50,6 @@ const BodyTextExtra = styled.p`
   font-style: italic;
   color: var(--gray_dark);
   white-space: pre-line;
-`;
-
-const Buttons = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
 `;
 
 type Action = {
@@ -112,31 +80,36 @@ const AlertModal = ({
   primaryAction,
   secondaryAction,
 }: Props) => (
-  <Modal isOpen={isOpen} onRequestClose={onClose} modalElement={ModalElement}>
-    <Header {...statusStyles[status]}>
-      <StatusIcon {...statusStyles[status]} />
-      <Title>{title}</Title>
-      <Close onClick={onClose} aria-label="Lukk" />
-    </Header>
-    <Content>
-      <BodyText>{description}</BodyText>
-      {additionalInfo && <BodyTextExtra>{additionalInfo}</BodyTextExtra>}
-      {errorCode && <BodyTextExtra>{`Feilkode ${errorCode}`}</BodyTextExtra>}
+  <Modal isOpen={isOpen} onClose={onClose} isCentered size="xl">
+    <ModalOverlay />
+    <ModalContent>
+      <Header {...statusStyles[status]}>
+        <StatusIcon {...statusStyles[status]} />
+        {title}
+      </Header>
+      <ModalCloseButton aria-label="Lukk" />
+      <Body>
+        <BodyText>{description}</BodyText>
+        {additionalInfo && <BodyTextExtra>{additionalInfo}</BodyTextExtra>}
+        {errorCode && <BodyTextExtra>{`Feilkode ${errorCode}`}</BodyTextExtra>}
+      </Body>
       {(primaryAction || secondaryAction) && (
-        <Buttons>
-          {secondaryAction && (
-            <Button variant="outline" onClick={secondaryAction.onClick}>
-              {secondaryAction.text}
-            </Button>
-          )}
-          {primaryAction && (
-            <Button onClick={primaryAction.onClick}>
-              {primaryAction.text}
-            </Button>
-          )}
-        </Buttons>
+        <ModalFooter>
+          <ButtonGroup>
+            {secondaryAction && (
+              <Button variant="outline" onClick={secondaryAction.onClick}>
+                {secondaryAction.text}
+              </Button>
+            )}
+            {primaryAction && (
+              <Button onClick={primaryAction.onClick}>
+                {primaryAction.text}
+              </Button>
+            )}
+          </ButtonGroup>
+        </ModalFooter>
       )}
-    </Content>
+    </ModalContent>
   </Modal>
 );
 
