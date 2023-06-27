@@ -120,9 +120,19 @@ const UtkastItem = ({ utkast }: Props) => {
             "Du har gjort endringer på en gammel versjon av en krets. Du må gjennomføre endringene på nytt i et nytt utkast.",
         });
       }
-    } else if (statusCode.isError(response.status)) {
-      const wrapper = (await response.json()) as ApiErrorResponse;
-      setError({ ...wrapper.errorDescription, errorCode: wrapper.errorCode });
+    } else {
+      try {
+        const wrapper = (await response.json()) as ApiErrorResponse;
+        setError({ ...wrapper.errorDescription, errorCode: wrapper.errorCode });
+      } catch {
+        // Dette kan skje om feilmeldingen av en eller annen grunn ikke er gyldig JSON eller ikke har nødvendige felter
+        // F.eks. fordi feilen ikke er håndtert riktig på backend eller kommer fra en proxy eller annet mellom klienten og backenden
+        setError({
+          title: "Ukjent serverfeil",
+          description:
+            "En ukjent feil skjedde ved publisering av utkastet. Vennligst forsøk igjen, om problemet fortsetter er det fint om du tar kontakt med Kartverket.",
+        });
+      }
     }
   };
 
