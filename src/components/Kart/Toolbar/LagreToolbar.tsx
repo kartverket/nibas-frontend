@@ -4,7 +4,7 @@ import useAlertModal from "hooks/useAlertModal";
 import ModeButton from "./ModeButton";
 import { Frame } from "./components";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
-import AlertModal from "components/Status/AlertModal";
+import AlertModal from "components/AlertModal";
 import { useState } from "react";
 import { EndringsloggModal } from "components/Endringslogg/EndringsloggModal";
 import { useToolbar } from "contexts/ToolbarContext";

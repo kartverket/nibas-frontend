@@ -12,7 +12,7 @@ import { UtkastResponse } from "types/api";
 import useAlertModal from "hooks/useAlertModal";
 import { useUtkast } from "contexts/UtkastContext";
 import useTimer from "hooks/useTimer";
-import AlertModal from "components/Status/AlertModal";
+import AlertModal from "components/AlertModal";
 import { useToolbar } from "contexts/ToolbarContext";
 import { Button, Select } from "@kvib/react";
 import Label from "components/Label";

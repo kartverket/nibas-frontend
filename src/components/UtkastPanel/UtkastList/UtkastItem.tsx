@@ -20,7 +20,7 @@ import UtkastConflicts from "./UtkastConflictModal/UtkastConflicts";
 import useAlertModal from "hooks/useAlertModal";
 import { useUtkast } from "contexts/UtkastContext";
 import { Outline } from "style/mixins";
-import AlertModal from "components/Status/AlertModal";
+import AlertModal from "components/AlertModal";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";

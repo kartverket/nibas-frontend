@@ -1,7 +1,8 @@
 import styled from "styled-components";
-import Icon from "../Icon";
-import { Status, StatusStyle, statusStyles } from "./common";
 import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
   Button,
   ButtonGroup,
   Modal,
@@ -9,26 +10,18 @@ import {
   ModalCloseButton,
   ModalContent,
   ModalFooter,
-  ModalHeader,
   ModalOverlay,
+  AlertProps,
 } from "@kvib/react";
 
-const StatusIcon = styled(Icon).attrs((props) => ({
-  icon: props.icon,
-}))<StatusStyle>`
-  font-size: 36px;
-  color: ${(props) => props.foreground};
-`;
-
-const Header = styled(ModalHeader)<StatusStyle>`
+const AlertHeader = styled(Alert)`
   display: flex;
   align-items: center;
-  gap: 12px;
   padding: 24px;
-  background: ${(props) => props.background};
   border-top-left-radius: inherit;
   border-top-right-radius: inherit;
   margin-bottom: 12px;
+  font-size: 20px;
 `;
 
 const Body = styled(ModalBody)`
@@ -58,7 +51,7 @@ type Action = {
 };
 
 type Props = {
-  status: Status;
+  status: AlertProps["status"];
   title: string;
   description: string;
   errorCode?: string;
@@ -70,7 +63,6 @@ type Props = {
 };
 
 const AlertModal = ({
-  status,
   title,
   description,
   additionalInfo,
@@ -83,10 +75,10 @@ const AlertModal = ({
   <Modal isOpen={isOpen} onClose={onClose} isCentered size="xl">
     <ModalOverlay />
     <ModalContent>
-      <Header {...statusStyles[status]}>
-        <StatusIcon {...statusStyles[status]} />
-        {title}
-      </Header>
+      <AlertHeader status="warning">
+        <AlertIcon />
+        <AlertTitle>{title}</AlertTitle>
+      </AlertHeader>
       <ModalCloseButton aria-label="Lukk" />
       <Body>
         <BodyText>{description}</BodyText>

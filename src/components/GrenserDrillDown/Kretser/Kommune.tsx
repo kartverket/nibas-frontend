@@ -4,7 +4,7 @@ import { useInndelingerKrets } from "contexts/InndelingerKretsContext";
 import { KommuneRef } from "types/api";
 import { getNavnInSpraak } from "utils/language/language";
 import { Outline } from "style/mixins";
-import AlertModal from "components/Status/AlertModal";
+import AlertModal from "components/AlertModal";
 import useAlertModal from "hooks/useAlertModal";
 import { useHistory } from "contexts/HistoryContext";
 import { Button, IconButton, Spinner } from "@kvib/react";
