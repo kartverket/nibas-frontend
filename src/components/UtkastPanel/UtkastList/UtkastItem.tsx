@@ -280,7 +280,10 @@ const UtkastItem = ({ utkast }: Props) => {
         onClose={closeModal}
         secondaryAction={{
           text: "Forkast endringer",
-          onClick: closeUtkast,
+          onClick: () => {
+            closeUtkast();
+            closeModal();
+          },
         }}
         primaryAction={{
           text: "Fortsett redigering",
