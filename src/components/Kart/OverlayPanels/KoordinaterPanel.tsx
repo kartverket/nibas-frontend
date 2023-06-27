@@ -178,6 +178,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
 
       const highlightGeometry = selectedPoint.getGeometry() as Point;
       highlightGeometry.setCoordinates(newCoordinates);
+      reset(undefined, { keepValues: true });
     }
   };
 
