@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { useSearchParams } from "react-router-dom";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useHistory } from "contexts/HistoryContext";
-import { translateKeysByEndringsType } from "contexts/UtkastContext/constants";
 import { historyToUtkastOperations } from "contexts/UtkastContext/utils";
 import { createUtkast as createApiUtkast } from "api/utkast";
 import Input from "components/Input";
@@ -20,6 +19,7 @@ import {
   Select,
   useToast,
 } from "@kvib/react";
+import { endringstyper } from "../constants";
 
 const UtkastFrame = styled(Frame)`
   flex-direction: column;
@@ -101,7 +101,7 @@ const UtkastToolbar = ({ setCreateUtkastOpen }: Props) => {
           value={utkastType}
           onChange={(e) => setUtkastType(e.target.value)}
         >
-          {translateKeysByEndringsType.map((type) => (
+          {endringstyper.map((type) => (
             <option key={type} value={type}>
               {type}
             </option>

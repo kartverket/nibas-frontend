@@ -5,7 +5,6 @@ import { UtkastItemExpanded } from "./UtkastItem";
 import Input from "components/Input";
 import { useHistory, UtkastEntry } from "contexts/HistoryContext";
 import { useHistoryFormSync } from "contexts/HistoryContext/useHistoryFormSync";
-import { translateKeysByEndringsType } from "contexts/UtkastContext/constants";
 import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
 import useNibasApi from "hooks/useNibasApi";
 import { UtkastResponse } from "types/api";
@@ -15,6 +14,7 @@ import useTimer from "hooks/useTimer";
 import AlertModal from "components/AlertModal";
 import { useToolbar } from "contexts/ToolbarContext";
 import { Button, FormControl, FormLabel, Select } from "@kvib/react";
+import { endringstyper } from "components/Kart/constants";
 
 type Inputs = {
   navn: string;
@@ -119,7 +119,7 @@ const UtkastItemActive = ({ utkastId }: Props) => {
       <FormControl>
         <FormLabel>Type utkast</FormLabel>
         <Select {...register("endringsType", registerOptions)}>
-          {translateKeysByEndringsType.map((type) => (
+          {endringstyper.map((type) => (
             <option key={type} value={type}>
               {type}
             </option>

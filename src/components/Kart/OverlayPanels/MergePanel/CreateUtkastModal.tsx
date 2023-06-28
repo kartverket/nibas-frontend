@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { useSearchParams } from "react-router-dom";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useHistory } from "contexts/HistoryContext";
-import { translateKeysByEndringsType } from "contexts/UtkastContext/constants";
 import { historyToUtkastOperations } from "contexts/UtkastContext/utils";
 import { createUtkast as createApiUtkast } from "api/utkast";
 import Input from "components/Input";
@@ -23,6 +22,7 @@ import {
   ModalOverlay,
   Select,
 } from "@kvib/react";
+import { endringstyper } from "components/Kart/constants";
 
 const Body = styled(ModalBody)`
   display: flex;
@@ -106,7 +106,7 @@ const CreateUtkastModal = ({ isOpen, onClose, callback }: Props) => {
               value={utkastType}
               onChange={(e) => setUtkastType(e.target.value)}
             >
-              {translateKeysByEndringsType.map((type) => (
+              {endringstyper.map((type) => (
                 <option key={type} value={type}>
                   {type}
                 </option>

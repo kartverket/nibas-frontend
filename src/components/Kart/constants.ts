@@ -31,3 +31,14 @@ export const overlayPopup = new Overlay({
   },
   offset: [0, 0],
 });
+
+export const endringstyper: string[] = [
+  "Vedtatt grensejustering",
+  "Vedtatt sammenslåing",
+  "Vedtatt deling",
+  "Fastsetting",
+  "Kvalitetsheving",
+  "Navneendring",
+  "Nummerendring",
+  "Retting",
+];

@@ -76,11 +76,12 @@ const AlertModal = ({
   onClose,
   primaryAction,
   secondaryAction,
+  status,
 }: Props) => (
   <Modal isOpen={isOpen} onClose={onClose} isCentered size="xl">
     <ModalOverlay />
     <ModalContent>
-      <AlertHeader status="warning">
+      <AlertHeader status={status}>
         <AlertIcon />
         <Title>{title}</Title>
       </AlertHeader>
