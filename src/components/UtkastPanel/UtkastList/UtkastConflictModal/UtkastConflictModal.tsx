@@ -3,18 +3,16 @@ import {
   ButtonGroup,
   Checkbox,
   Heading,
-  ModalFooter,
-} from "@kvib/react";
-import { ButtonCell } from "components/Kart/OverlayPanels/Flatedata/KretsTable";
-import styled from "styled-components";
-import {
   Modal,
   ModalOverlay,
   ModalContent,
+  ModalFooter,
   ModalHeader,
   ModalBody,
   ModalCloseButton,
-} from "@chakra-ui/react";
+} from "@kvib/react";
+import { ButtonCell } from "components/Kart/OverlayPanels/Flatedata/KretsTable";
+import styled from "styled-components";
 
 type Props = {
   currentRow: string[];
@@ -97,9 +95,6 @@ const UtkastConflictModal = ({
 );
 
 const ModalElement = styled(ModalContent)`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
   min-width: 900px;
   max-width: 1500px;
   padding: 40px;

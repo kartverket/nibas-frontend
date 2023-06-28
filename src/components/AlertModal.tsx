@@ -2,7 +2,6 @@ import styled from "styled-components";
 import {
   Alert,
   AlertIcon,
-  AlertTitle,
   Button,
   ButtonGroup,
   Modal,
@@ -12,6 +11,7 @@ import {
   ModalFooter,
   ModalOverlay,
   AlertProps,
+  ModalHeader,
 } from "@kvib/react";
 
 const AlertHeader = styled(Alert)`
@@ -22,6 +22,11 @@ const AlertHeader = styled(Alert)`
   border-top-right-radius: inherit;
   margin-bottom: 12px;
   font-size: 20px;
+`;
+
+const Title = styled(ModalHeader)`
+  padding: 0;
+  flex: unset;
 `;
 
 const Body = styled(ModalBody)`
@@ -77,7 +82,7 @@ const AlertModal = ({
     <ModalContent>
       <AlertHeader status="warning">
         <AlertIcon />
-        <AlertTitle>{title}</AlertTitle>
+        <Title>{title}</Title>
       </AlertHeader>
       <ModalCloseButton aria-label="Lukk" />
       <Body>
