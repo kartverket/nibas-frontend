@@ -1,4 +1,4 @@
-import { UseToastOptions } from "@kvib/react";
+import { UseToastOptions } from "@chakra-ui/toast";
 
 export const createSuccessToast = (
   title: string,

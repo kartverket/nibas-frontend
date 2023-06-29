@@ -29,7 +29,7 @@ import { statusCode } from "utils/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useToast } from "@kvib/react";
-import { createSuccessToast } from "utils/componentUtils";
+import { createSuccessToast } from "utils/components/toast";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 

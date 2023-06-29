@@ -26,7 +26,7 @@ import { statusCode } from "utils/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { getDateInFriendlyString } from "components/Kart/OverlayPanels/MetadataPanel/utils";
-import { createSuccessToast } from "utils/componentUtils";
+import { createSuccessToast } from "utils/components/toast";
 
 type Props = {
   utkast: UtkastRef;

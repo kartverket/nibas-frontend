@@ -13,7 +13,7 @@ import { statusCode } from "utils/api";
 import { ApiErrorResponse } from "../../../types/api";
 import { Button, Heading, Select, useToast } from "@kvib/react";
 import Label from "components/form/Label";
-import { createSuccessToast } from "utils/componentUtils";
+import { createSuccessToast } from "utils/components/toast";
 
 const UtkastFrame = styled(Frame)`
   flex-direction: column;
