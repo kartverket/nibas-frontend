@@ -1,7 +1,6 @@
 import { useUtkastEndringer } from "./hooks/useUtkastEndringer";
 import { EndringsloggGrunnkretsendringer } from "./EndringsloggGrunnkretsendringer";
 import { EndringsloggStemmekretsendringer } from "./EndringsloggStemmekretsendringer";
-import { Skeleton } from "@kvib/react";
 import {
   Modal,
   ModalOverlay,
@@ -9,7 +8,8 @@ import {
   ModalHeader,
   ModalBody,
   ModalCloseButton,
-} from "@chakra-ui/react";
+  Skeleton,
+} from "@kvib/react";
 
 type EndringsloggModalProps = {
   isOpen: boolean;
