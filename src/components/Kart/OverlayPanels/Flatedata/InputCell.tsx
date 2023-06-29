@@ -1,4 +1,4 @@
-import Input from "components/form/Input/Input";
+import Input from "components/Input";
 import { forwardRef } from "react";
 import styled from "styled-components";
 

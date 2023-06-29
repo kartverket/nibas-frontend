@@ -3,8 +3,8 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { PanelHeader, PanelProps, SidePanel } from "../Panel";
 import MetadataGenerelt from "./MetadataGenerelt";
 import MetadataReferanser from "./MetadataReferanser";
-import { Divider } from "components/Divider";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
+import { Divider } from "@kvib/react";
 
 const grenseTypeWithReferanser = [
   "Territorialgrense",

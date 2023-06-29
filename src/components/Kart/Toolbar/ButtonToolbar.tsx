@@ -5,9 +5,9 @@ import ModeButton from "./ModeButton";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { Divider, DividerVertical } from "components/Divider";
 import { useToolbar } from "contexts/ToolbarContext";
 import ToolbarTooltip from "./ToolbarTooltip";
+import { Divider } from "@kvib/react";
 
 const Container = styled.div`
   display: flex;
@@ -110,7 +110,7 @@ const ButtonToolbar = () => {
             Gjør om
           </ModeButton>
         </ToolbarTooltip>
-        <DividerVertical />
+        <Divider orientation="vertical" />
         <ToolbarTooltip text="Flytt et punkt ved bruk av koordinater">
           <ModeButton
             icon="ads_click"
@@ -151,7 +151,7 @@ const ButtonToolbar = () => {
             Grenseinfo
           </ModeButton>
         </ToolbarTooltip>
-        <DividerVertical />
+        <Divider orientation="vertical" />
         {flatedetaljerIsAvailable && (
           <>
             {mergeIsAvailable && (
@@ -176,7 +176,7 @@ const ButtonToolbar = () => {
                 Flateinfo
               </ModeButton>
             </ToolbarTooltip>
-            <DividerVertical />
+            <Divider orientation="vertical" />
           </>
         )}
         {false && (

@@ -1,7 +1,17 @@
-import { Button, Heading } from "@kvib/react";
-import Checkbox from "components/Checkbox";
+import {
+  Button,
+  ButtonGroup,
+  Checkbox,
+  Heading,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalBody,
+  ModalCloseButton,
+} from "@kvib/react";
 import { ButtonCell } from "components/Kart/OverlayPanels/Flatedata/KretsTable";
-import { Modal, ModalContent } from "components/Modal";
 import styled from "styled-components";
 
 type Props = {
@@ -19,93 +29,75 @@ const UtkastConflictModal = ({
   columns,
   children,
 }: Props) => (
-  <Modal
-    isOpen
-    modalElement={ModalElement}
-    aria={{
-      labelledby: "conflict-modal-header",
-      describedby: "conflict-modal-description",
-    }}
-  >
-    <Heading as="h2" size="md" id="conflict-modal-header">
-      Konflikt mellom fremtidige endringer
-    </Heading>
-    <div id="conflict-modal-description">
-      <p>
-        Endringer du gjorde i dette utkastet har ført til at en annen publisert
-        endring må dobbelsjekkes.
-      </p>
-      <p>Dobbeltsjekk feltene i endringen nedenfor før du publiserer.</p>
-    </div>
-    <Heading as="h3" size="sm">
-      Endringer i dette utkastet
-    </Heading>
-    <Table cellSpacing={0}>
-      <thead>
-        <tr>
-          {columns.map((column) => (
-            <th key={column}>{column}</th>
-          ))}
-          <th>{/* Bekreft-knapp */}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <ConflictTableRow numColumns={currentRow.length}>
-          {currentRow.map((row, i) => (
-            <td key={i}>{row}</td>
-          ))}
-          <ButtonCell>
-            <HiddenCheckbox type="checkbox" label="Bekreft" />
-          </ButtonCell>
-        </ConflictTableRow>
-      </tbody>
-    </Table>
-    <Heading as="h3" size="sm">
-      Fremtidig endring i konflikt
-    </Heading>
-    <Table cellSpacing={0}>
-      <thead>
-        <tr>
-          {columns.map((column) => (
-            <th key={column}>{column}</th>
-          ))}
-          <th>{/* Bekreft-knapp */}</th>
-        </tr>
-      </thead>
-      {children}
-    </Table>
-
-    <Buttons>
-      <Button variant="outline" onClick={onCancel}>
-        Avbryt
-      </Button>
-      <Button onClick={submit} isDisabled={!submit}>
-        Publiser
-      </Button>
-    </Buttons>
+  <Modal isOpen onClose={onCancel} isCentered>
+    <ModalOverlay />
+    <ModalElement>
+      <ModalHeader>Konflikt mellom fremtidige endringer</ModalHeader>
+      <ModalCloseButton />
+      <ModalBody>
+        <div id="conflict-modal-description">
+          <p>
+            Endringer du gjorde i dette utkastet har ført til at en annen
+            publisert endring må dobbelsjekkes.
+          </p>
+          <p>Dobbeltsjekk feltene i endringen nedenfor før du publiserer.</p>
+        </div>
+        <Heading as="h3" size="sm">
+          Endringer i dette utkastet
+        </Heading>
+        <Table cellSpacing={0}>
+          <thead>
+            <tr>
+              {columns.map((column) => (
+                <th key={column}>{column}</th>
+              ))}
+              <th>{/* Bekreft-knapp */}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ConflictTableRow numColumns={currentRow.length}>
+              {currentRow.map((row, i) => (
+                <td key={i}>{row}</td>
+              ))}
+              <ButtonCell>
+                <HiddenCheckbox type="checkbox" label="Bekreft" />
+              </ButtonCell>
+            </ConflictTableRow>
+          </tbody>
+        </Table>
+        <Heading as="h3" size="sm">
+          Fremtidig endring i konflikt
+        </Heading>
+        <Table cellSpacing={0}>
+          <thead>
+            <tr>
+              {columns.map((column) => (
+                <th key={column}>{column}</th>
+              ))}
+              <th>{/* Bekreft-knapp */}</th>
+            </tr>
+          </thead>
+          {children}
+        </Table>
+      </ModalBody>
+      <ModalFooter>
+        <ButtonGroup>
+          <Button variant="outline" onClick={onCancel}>
+            Avbryt
+          </Button>
+          <Button onClick={submit} isDisabled={!submit}>
+            Publiser
+          </Button>
+        </ButtonGroup>
+      </ModalFooter>
+    </ModalElement>
   </Modal>
 );
 
 const ModalElement = styled(ModalContent)`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  border: 1px solid var(--blue);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  background: var(--white);
   min-width: 900px;
   max-width: 1500px;
   padding: 40px;
-`;
-
-const Buttons = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 16px;
-
-  button {
-    margin-left: 8px;
-  }
 `;
 
 const Table = styled.table`

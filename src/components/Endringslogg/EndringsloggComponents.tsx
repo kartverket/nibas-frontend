@@ -1,25 +1,27 @@
 import styled from "styled-components";
 import Icon from "../Icon/Icon";
 import { Endring } from "./hooks/utkastEndringerTypes";
+import { Heading } from "@kvib/react";
 
 export const EndringSection = styled.section`
-  &:not(:last-of-type) {
-    margin-bottom: 40px;
-  }
+  margin-bottom: 40px;
 `;
 
 export const Underoverskrift = styled.h3`
   font-weight: 300;
   font-size: 16px;
-  margin: 32px 0 26px 0;
+  margin-bottom: 16px;
   padding: 16px;
   background: var(--gray_light);
   border-radius: 8px;
 `;
 
-export const Seksjonsoverskrift = styled.h3`
+export const Seksjonsoverskrift = styled(Heading).attrs({
+  as: "h3",
+  size: "sm",
+})`
+  font-weight: bold;
   margin: 10px 0;
-  font-size: 16px;
   padding-bottom: 16px;
   border-bottom: 1px solid var(--gray_light);
 `;
@@ -101,4 +103,5 @@ const RightArrow = styled(Icon)`
   color: var(--blue);
   font-size: 20px;
   margin: 0 8px 0 0;
+  vertical-align: middle;
 `;

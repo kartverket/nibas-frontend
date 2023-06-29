@@ -3,25 +3,30 @@ import styled from "styled-components";
 import { useSearchParams } from "react-router-dom";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useHistory } from "contexts/HistoryContext";
-import { translateKeysByEndringsType } from "contexts/UtkastContext/constants";
 import { historyToUtkastOperations } from "contexts/UtkastContext/utils";
 import { createUtkast as createApiUtkast } from "api/utkast";
-import Input from "components/form/Input";
+import Input from "components/Input";
 import { Frame } from "./components";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
 import { ApiErrorResponse } from "../../../types/api";
-import { Button, Heading, Select, useToast } from "@kvib/react";
-import Label from "components/form/Label";
+import {
+  Button,
+  ButtonGroup,
+  FormControl,
+  FormLabel,
+  Heading,
+  Select,
+  useToast,
+} from "@kvib/react";
+import { endringstyper } from "../constants";
 
 const UtkastFrame = styled(Frame)`
   flex-direction: column;
   width: 365px;
 `;
 
-const Buttons = styled.div`
-  display: flex;
-  gap: 16px;
+const Buttons = styled(ButtonGroup)`
   justify-content: flex-end;
 `;
 
@@ -89,19 +94,20 @@ const UtkastToolbar = ({ setCreateUtkastOpen }: Props) => {
         value={utkastName}
         onChange={(e) => setUtkastName(e.target.value)}
       />
-      <Label label="Endringstype">
+      <FormControl>
+        <FormLabel>Endringstype</FormLabel>
         <Select
           placeholder="Velg en endringstype fra listen"
           value={utkastType}
           onChange={(e) => setUtkastType(e.target.value)}
         >
-          {translateKeysByEndringsType.map((type) => (
+          {endringstyper.map((type) => (
             <option key={type} value={type}>
               {type}
             </option>
           ))}
         </Select>
-      </Label>
+      </FormControl>
       <Buttons>
         <Button onClick={() => setCreateUtkastOpen(false)} variant="ghost">
           Avbryt

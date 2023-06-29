@@ -1,5 +1,4 @@
-import { Select, SelectProps } from "@kvib/react";
-import Label from "components/form/Label";
+import { FormControl, FormLabel, Select, SelectProps } from "@kvib/react";
 import React, { forwardRef } from "react";
 import { KodelisteRespons } from "types/api";
 
@@ -14,7 +13,8 @@ const AsyncKodelisteSelectInner = (
   ref: React.ForwardedRef<HTMLSelectElement>
 ) => {
   return (
-    <Label label={label}>
+    <FormControl>
+      <FormLabel>{label}</FormLabel>
       <Select ref={ref} {...selectProps}>
         <option value="">---</option>
         {kodeliste?.items.map((kodeItem) => (
@@ -23,7 +23,7 @@ const AsyncKodelisteSelectInner = (
           </option>
         ))}
       </Select>
-    </Label>
+    </FormControl>
   );
 };
 
