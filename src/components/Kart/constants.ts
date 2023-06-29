@@ -15,7 +15,7 @@ export const map = new Map({
   view: new View({
     zoom: initialMapZoom,
     minZoom: initialMapZoom,
-    maxZoom: 20,
+    maxZoom: 30,
     center: initialMapCenter,
     projection: "EPSG:25833",
   }),
