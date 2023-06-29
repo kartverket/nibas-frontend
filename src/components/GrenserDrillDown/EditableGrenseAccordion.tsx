@@ -55,7 +55,11 @@ const EditableGrenseAccordion = ({
           </div>
         </TextContent>
         {isFetching && (
-          <Spinner color="blue" size="lg" aria-label={`Henter ${title}`} />
+          <Spinner
+            size="lg"
+            color="var(--blue)"
+            aria-label={`Henter ${title}`}
+          />
         )}
         <IconButton
           variant="ghost"
