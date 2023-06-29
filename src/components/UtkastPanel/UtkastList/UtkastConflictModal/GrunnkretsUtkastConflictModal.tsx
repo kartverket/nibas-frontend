@@ -1,5 +1,4 @@
-import Checkbox from "components/Checkbox";
-import Input from "components/form/Input";
+import Input from "components/Input";
 import { ButtonCell } from "components/Kart/OverlayPanels/Flatedata/KretsTable";
 import {
   FramtidigVersjonConflict,
@@ -8,6 +7,7 @@ import {
 } from "types/api";
 import useGrunnkretsConflictModal from "./useGrunnkretsConflictModal";
 import UtkastConflictModal, { ConflictTableRow } from "./UtkastConflictModal";
+import { Checkbox } from "@kvib/react";
 
 type Props = {
   conflictResponse: FramtidigVersjonConflict;
@@ -70,11 +70,11 @@ const GrunnkretsUtkastConflictModal = ({
             <td>{field.gyldigFra}</td>
             <ButtonCell>
               <Checkbox
-                type="checkbox"
-                label="Bekreft"
                 {...register(`grunnkretser.${index}.confirmed`)}
                 aria-label={`Bekreft grunnkrets ${index + 1}`}
-              />
+              >
+                Bekreft
+              </Checkbox>
             </ButtonCell>
           </ConflictTableRow>
         ))}

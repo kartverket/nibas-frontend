@@ -5,9 +5,9 @@ import ModeButton from "./ModeButton";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { Divider, DividerVertical } from "components/Divider";
 import { useToolbar } from "contexts/ToolbarContext";
 import ToolbarTooltip from "./ToolbarTooltip";
+import { Divider } from "@kvib/react";
 
 const Container = styled.div`
   display: flex;
@@ -110,37 +110,41 @@ const ButtonToolbar = () => {
             Gjør om
           </ModeButton>
         </ToolbarTooltip>
-        <DividerVertical />
-        <ToolbarTooltip text="Flytt et punkt ved bruk av koordinater">
-          <ModeButton
-            icon="ads_click"
-            ariaLabel="Flytt punkt med koordinater"
-            isActive={activePointMode === "koordinater"}
-            onClick={toggleMove}
-          >
-            Flytt
-          </ModeButton>
-        </ToolbarTooltip>
-        <ToolbarTooltip text="Legg til ett eller flere punkter på en grense.">
-          <ModeButton
-            icon="add_location_alt"
-            ariaLabel="Legg til punkter"
-            isActive={activePointMode === "add"}
-            onClick={() => togglePointMode("add")}
-          >
-            Legg til
-          </ModeButton>
-        </ToolbarTooltip>
-        <ToolbarTooltip text="Fjern ett eller flere punkter fra en grense.">
-          <ModeButton
-            icon="wrong_location"
-            ariaLabel="Fjern punkter"
-            isActive={activePointMode === "remove"}
-            onClick={() => togglePointMode("remove")}
-          >
-            Fjern
-          </ModeButton>
-        </ToolbarTooltip>
+        <Divider orientation="vertical" />
+        {editingType && (
+          <>
+            <ToolbarTooltip text="Flytt et punkt ved bruk av koordinater">
+              <ModeButton
+                icon="ads_click"
+                ariaLabel="Flytt punkt med koordinater"
+                isActive={activePointMode === "koordinater"}
+                onClick={toggleMove}
+              >
+                Flytt
+              </ModeButton>
+            </ToolbarTooltip>
+            <ToolbarTooltip text="Legg til ett eller flere punkter på en grense.">
+              <ModeButton
+                icon="add_location_alt"
+                ariaLabel="Legg til punkter"
+                isActive={activePointMode === "add"}
+                onClick={() => togglePointMode("add")}
+              >
+                Legg til
+              </ModeButton>
+            </ToolbarTooltip>
+            <ToolbarTooltip text="Fjern ett eller flere punkter fra en grense.">
+              <ModeButton
+                icon="wrong_location"
+                ariaLabel="Fjern punkter"
+                isActive={activePointMode === "remove"}
+                onClick={() => togglePointMode("remove")}
+              >
+                Fjern
+              </ModeButton>
+            </ToolbarTooltip>
+          </>
+        )}
         <ToolbarTooltip text="Se og rediger informasjon om en grense. Trykk på grensen du ønsker å se informasjonen til.">
           <ModeButton
             icon="live_help"
@@ -151,7 +155,7 @@ const ButtonToolbar = () => {
             Grenseinfo
           </ModeButton>
         </ToolbarTooltip>
-        <DividerVertical />
+        <Divider orientation="vertical" />
         {flatedetaljerIsAvailable && (
           <>
             {mergeIsAvailable && (
@@ -176,7 +180,7 @@ const ButtonToolbar = () => {
                 Flateinfo
               </ModeButton>
             </ToolbarTooltip>
-            <DividerVertical />
+            <Divider orientation="vertical" />
           </>
         )}
         {false && (

@@ -10,8 +10,7 @@ type Props = {
 const useLayerOpacity = (props: Props) => {
   const [opacity, setOpacity] = useState<number | undefined>();
 
-  const onSliderChange = (event: React.ChangeEvent<HTMLInputElement>) =>
-    setOpacity(parseInt(event.target.value, 10));
+  const onSliderChange = (value: number) => setOpacity(value);
 
   // hvis hovedlag, hent gjennomsiktighet fra laget i OpenLayers
   useEffect(() => {

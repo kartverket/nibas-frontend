@@ -1,9 +1,7 @@
 import { useEffect } from "react";
-import { KretsHistoryEntry, UtkastEntry } from "contexts/HistoryContext";
+import { HistoryEntry } from "contexts/HistoryContext";
 
-type FormEntry = KretsHistoryEntry | UtkastEntry;
-
-const getChangeForId = <EntryType extends FormEntry>(
+const getChangeForId = <EntryType extends HistoryEntry>(
   entry: EntryType,
   id?: string
 ) =>
@@ -13,7 +11,7 @@ const getChangeForId = <EntryType extends FormEntry>(
     | EntryType["changes"][number]
     | undefined;
 
-type Parameters<EntryType extends FormEntry> = {
+type Parameters<EntryType extends HistoryEntry> = {
   entityId: string | undefined;
   setFormValues: (
     change: EntryType["changes"][number],
@@ -23,7 +21,7 @@ type Parameters<EntryType extends FormEntry> = {
   redoEventKey: string;
 };
 
-const useToolbarFormSync = <EntryType extends FormEntry>({
+export const useHistoryFormSync = <EntryType extends HistoryEntry>({
   entityId,
   undoEventKey,
   redoEventKey,
@@ -65,5 +63,3 @@ const useToolbarFormSync = <EntryType extends FormEntry>({
     };
   }, [entityId, redoEventKey, setFormValues]);
 };
-
-export default useToolbarFormSync;

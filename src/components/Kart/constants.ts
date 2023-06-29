@@ -14,6 +14,8 @@ export const initialMapZoom = 6;
 export const map = new Map({
   view: new View({
     zoom: initialMapZoom,
+    minZoom: initialMapZoom,
+    maxZoom: 30,
     center: initialMapCenter,
     projection: "EPSG:25833",
   }),
@@ -31,3 +33,14 @@ export const overlayPopup = new Overlay({
   },
   offset: [0, 0],
 });
+
+export const endringstyper: string[] = [
+  "Vedtatt grensejustering",
+  "Vedtatt sammenslåing",
+  "Vedtatt deling",
+  "Fastsetting",
+  "Kvalitetsheving",
+  "Navneendring",
+  "Nummerendring",
+  "Retting",
+];

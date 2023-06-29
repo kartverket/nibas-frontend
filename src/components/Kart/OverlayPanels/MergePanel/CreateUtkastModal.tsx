@@ -3,34 +3,31 @@ import styled from "styled-components";
 import { useSearchParams } from "react-router-dom";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useHistory } from "contexts/HistoryContext";
-import { translateKeysByEndringsType } from "contexts/UtkastContext/constants";
 import { historyToUtkastOperations } from "contexts/UtkastContext/utils";
 import { createUtkast as createApiUtkast } from "api/utkast";
-import Input from "components/form/Input";
-import { Modal, ModalContent } from "components/Modal";
+import Input from "components/Input";
 import { statusCode } from "utils/api";
 import { UtkastOperasjoner } from "../../../../types/api";
-import { Button, Heading, Select } from "@kvib/react";
-import Label from "components/form/Label";
+import {
+  Button,
+  ButtonGroup,
+  FormControl,
+  FormLabel,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Select,
+} from "@kvib/react";
+import { endringstyper } from "components/Kart/constants";
 
-const ModalElement = styled(ModalContent)`
+const Body = styled(ModalBody)`
   display: flex;
   flex-direction: column;
   gap: 20px;
-
-  width: fit-content;
-  padding: 20px 12px;
-  border: 2px solid var(--gray_light);
-  background: white;
-  border-radius: 10px;
-  box-shadow: 4px 4px 12px 0 rgba(0, 0, 0, 0.15);
-  width: 365px;
-`;
-
-const Buttons = styled.div`
-  display: flex;
-  gap: 16px;
-  justify-content: flex-end;
 `;
 
 export type CreateUtkastCallbackArgument = {
@@ -41,17 +38,13 @@ export type CreateUtkastCallbackArgument = {
 };
 
 type Props = {
-  isCreateUtkastModalOpen: boolean;
-  setIsCreateUtkastModalOpen: (isCreateUtkastModalOpen: boolean) => void;
+  isOpen: boolean;
+  onClose: () => void;
   callback: (newUtkast: CreateUtkastCallbackArgument) => void;
 };
 
 // TODO: midlertidig løsning for å opprette utkast inntil history er ferdigimplementert
-const CreateUtkastModal = ({
-  isCreateUtkastModalOpen,
-  setIsCreateUtkastModalOpen,
-  callback,
-}: Props) => {
+const CreateUtkastModal = ({ isOpen, onClose, callback }: Props) => {
   const [oppretterUtkast, setOppretterUtkast] = useState(false);
   const [utkastName, setUtkastName] = useState("");
   const [utkastType, setUtkastType] = useState("");
@@ -82,7 +75,7 @@ const CreateUtkastModal = ({
     const json = await response.json();
     const utkastId = json.id;
 
-    setIsCreateUtkastModalOpen(false);
+    onClose();
     setSearchParams({ utkast: utkastId });
 
     callback({ ...nyttUtkast, id: utkastId });
@@ -90,49 +83,52 @@ const CreateUtkastModal = ({
 
   const cancelCreateUtkast = () => {
     clearHistory({ hasPreviouslySavedHistory: false });
-    setIsCreateUtkastModalOpen(false);
+    onClose();
   };
 
   return (
-    <Modal
-      isOpen={isCreateUtkastModalOpen}
-      onRequestClose={() => setIsCreateUtkastModalOpen(false)}
-      modalElement={ModalElement}
-    >
-      <Heading size="xs" as="h3">
-        Opprett et nytt utkast
-      </Heading>
-      <Input
-        label="Navn på utkast"
-        placeholder="f.eks. Endring av stemmekrets i Froland"
-        value={utkastName}
-        onChange={(e) => setUtkastName(e.target.value)}
-      />
-      <Label label="Endringstype">
-        <Select
-          placeholder="Velg en endringstype fra listen"
-          value={utkastType}
-          onChange={(e) => setUtkastType(e.target.value)}
-        >
-          {translateKeysByEndringsType.map((type) => (
-            <option key={type} value={type}>
-              {type}
-            </option>
-          ))}
-        </Select>
-      </Label>
-      <Buttons>
-        <Button onClick={() => cancelCreateUtkast()} variant="ghost">
-          Avbryt
-        </Button>
-        <Button
-          onClick={createUtkast}
-          isDisabled={utkastType === "" || utkastName === ""}
-          isLoading={oppretterUtkast}
-        >
-          Opprett
-        </Button>
-      </Buttons>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered size="sm">
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Opprett et nytt utkast</ModalHeader>
+        <ModalCloseButton />
+        <Body>
+          <Input
+            label="Navn på utkast"
+            placeholder="f.eks. Endring av stemmekrets i Froland"
+            value={utkastName}
+            onChange={(e) => setUtkastName(e.target.value)}
+          />
+          <FormControl>
+            <FormLabel>Endringstype</FormLabel>
+            <Select
+              placeholder="Velg en endringstype fra listen"
+              value={utkastType}
+              onChange={(e) => setUtkastType(e.target.value)}
+            >
+              {endringstyper.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </Select>
+          </FormControl>
+        </Body>
+        <ModalFooter>
+          <ButtonGroup>
+            <Button onClick={() => cancelCreateUtkast()} variant="ghost">
+              Avbryt
+            </Button>
+            <Button
+              onClick={createUtkast}
+              isDisabled={utkastType === "" || utkastName === ""}
+              isLoading={oppretterUtkast}
+            >
+              Opprett
+            </Button>
+          </ButtonGroup>
+        </ModalFooter>
+      </ModalContent>
     </Modal>
   );
 };

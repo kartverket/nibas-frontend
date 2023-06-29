@@ -59,6 +59,7 @@
     "import/no-unresolved": "error",
     "import/no-named-as-default-member": "off",
     "no-shadow": "off",
-    "@typescript-eslint/no-shadow": ["error"]
+    "@typescript-eslint/no-shadow": ["error"],
+    "no-restricted-imports": ["warn", { "patterns": ["@chakra-ui/*"] }]
   }
 }

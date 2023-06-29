@@ -2,16 +2,18 @@ import styled from "styled-components";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { Metadata, FeatureProperties } from "types/api";
-import Input from "components/form/Input";
+import Input from "components/Input";
 import useMetadataForm from "components/Kart/OverlayPanels/hooks/useMetadataForm";
 import { getDateInFriendlyString } from "components/Kart/OverlayPanels/MetadataPanel/utils";
 import AsyncKodelisteSelect from "./AsyncKodelisteSelect";
-import { Divider } from "components/Divider";
 import useIsMetadataDisabled from "../hooks/useIsMetadataDisabled";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useEffect } from "react";
 import {
   Button,
+  Divider,
+  FormControl,
+  FormLabel,
   NumberDecrementStepper,
   NumberIncrementStepper,
   NumberInput,
@@ -19,7 +21,6 @@ import {
   NumberInputStepper,
   Textarea,
 } from "@kvib/react";
-import Label from "components/form/Label";
 
 type Props = {
   feature: Feature<Geometry>;
@@ -48,7 +49,7 @@ const Form = styled.form`
 
 const InputRow = styled.div`
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: auto auto;
   gap: 16px;
 `;
 
@@ -117,7 +118,8 @@ const MetadataGenerelt = ({ feature }: Props) => {
             label="Målemetode"
             {...register("maalemetode", { disabled: metadataIsDisabled })}
           />
-          <Label label="Nøyaktighet">
+          <FormControl>
+            <FormLabel>Nøyaktighet</FormLabel>
             <NumberInput>
               <NumberInputField
                 {...register("noeyaktighet", {
@@ -132,18 +134,19 @@ const MetadataGenerelt = ({ feature }: Props) => {
                 <NumberDecrementStepper />
               </NumberInputStepper>
             </NumberInput>
-          </Label>
+          </FormControl>
         </InputRow>
         <Input
           {...register("opphav", { disabled: metadataIsDisabled })}
           label="Opphav"
         />
-        <Label label="Informasjon">
+        <FormControl>
+          <FormLabel>Informasjon</FormLabel>
           <Textarea
             rows={4}
             {...register("informasjon", { disabled: metadataIsDisabled })}
           />
-        </Label>
+        </FormControl>
         <Divider />
         <Buttons>
           <Button

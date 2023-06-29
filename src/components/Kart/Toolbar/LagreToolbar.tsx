@@ -4,12 +4,12 @@ import useAlertModal from "hooks/useAlertModal";
 import ModeButton from "./ModeButton";
 import { Frame } from "./components";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
-import AlertModal from "components/Status/AlertModal";
+import AlertModal from "components/AlertModal";
 import { useState } from "react";
 import { EndringsloggModal } from "components/Endringslogg/EndringsloggModal";
-import { DividerVertical } from "components/Divider";
 import { useToolbar } from "contexts/ToolbarContext";
 import ToolbarTooltip from "./ToolbarTooltip";
+import { Divider } from "@kvib/react";
 
 const LagreFrame = styled(Frame)`
   justify-content: center;
@@ -69,7 +69,7 @@ const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
             <span>Navn på utkast</span>
             <UtkastNavn>{utkast.navn}</UtkastNavn>
           </UtkastInfo>
-          <DividerVertical />
+          <Divider orientation="vertical" />
           <ToolbarTooltip text="Åpne en endringslogg med oppsummering av alle endringer i utkastet.">
             <ModeButton
               icon="published_with_changes"

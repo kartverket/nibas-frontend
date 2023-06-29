@@ -1,22 +1,27 @@
 import { forwardRef } from "react";
 import styled from "styled-components";
 import { StemmekretsResponse } from "types/api";
-import { ValidationError } from "components/form/Input/Input";
-import Message from "components/Status/Message";
-import { Button, Select, SelectProps } from "@kvib/react";
-import Label from "components/form/Label";
+import { ValidationError } from "components/Input";
+import {
+  Button,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Select,
+  SelectProps,
+} from "@kvib/react";
 
-const MergeSelectWrapper = styled.div`
+const MergeSelectWrapper = styled(FormControl)`
   display: grid;
   align-items: center;
   grid-template-columns: 1fr auto;
   grid-template-areas:
     "select fjern"
     "error .";
-  gap: 8px;
+  gap: 0 8px;
 `;
 
-const MergeSelectErrorMessage = styled(Message)`
+const MergeSelectErrorMessage = styled(FormErrorMessage)`
   grid-area: error;
 `;
 
@@ -25,7 +30,7 @@ const RemoveButton = styled(Button)`
   margin-top: 32px;
 `;
 
-const SelectLabel = styled(Label)`
+const SelectLabel = styled(FormLabel)`
   grid-area: select;
 `;
 
@@ -47,8 +52,9 @@ export const MergeSelect = forwardRef<HTMLSelectElement, MergeSelectProps>(
     },
     ref
   ) => (
-    <MergeSelectWrapper>
-      <SelectLabel label="Navn eller nummer på stemmekrets">
+    <MergeSelectWrapper isInvalid={validationError?.showError}>
+      <div>
+        <SelectLabel>Navn eller nummer på stemmekrets</SelectLabel>
         <Select
           {...inputProps}
           ref={ref}
@@ -60,17 +66,15 @@ export const MergeSelect = forwardRef<HTMLSelectElement, MergeSelectProps>(
             </option>
           ))}
         </Select>
-      </SelectLabel>
+      </div>
       {showRemoveButton && (
         <RemoveButton variant="ghost" onClick={onRemove}>
           Fjern
         </RemoveButton>
       )}
-      {validationError?.showError && (
-        <MergeSelectErrorMessage status="error">
-          {validationError.message}
-        </MergeSelectErrorMessage>
-      )}
+      <MergeSelectErrorMessage>
+        {validationError?.message}
+      </MergeSelectErrorMessage>
     </MergeSelectWrapper>
   )
 );

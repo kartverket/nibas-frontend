@@ -10,9 +10,8 @@ import { getIdFromEntity } from "utils/api";
 import { FormProvider, useForm } from "react-hook-form";
 import { MergeFormData } from "./MergeForm";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
-import { useCallback, useState } from "react";
-import Input from "components/form/Input";
-import { Divider } from "components/Divider";
+import { useCallback } from "react";
+import Input from "components/Input";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import CreateUtkastModal, {
   CreateUtkastCallbackArgument,
@@ -22,8 +21,15 @@ import { deduplicate, removeNull } from "utils/list-utils";
 import { MergeMultiselect } from "./MergeMultiselect";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import { Button, Heading, Select } from "@kvib/react";
-import Label from "components/form/Label";
+import {
+  Button,
+  Divider,
+  FormControl,
+  FormLabel,
+  Heading,
+  Select,
+  useDisclosure,
+} from "@kvib/react";
 
 const Form = styled.form`
   display: flex;
@@ -45,7 +51,7 @@ const Buttons = styled.div`
 `;
 
 const MergePanel = ({ isOpen, className }: PanelProps) => {
-  const [isCreateUtkastModalOpen, setIsCreateUtkastModalOpen] = useState(false);
+  const { isOpen: modalIsOpen, onOpen, onClose } = useDisclosure();
   const { flatedata, closeOverlayPanel } = useOverlayPanel();
   const { setError } = useErrorHandling();
   const { utkast, updateUtkast } = useUtkast();
@@ -215,9 +221,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
       });
       return;
     }
-    isCreateUtkastModalOpen
-      ? setIsCreateUtkastModalOpen(false)
-      : setIsCreateUtkastModalOpen(true);
+    modalIsOpen ? onClose() : onOpen();
   };
 
   // Oppdaterer stemmekretsnavn og stemmekretsnummer når valgt stemmekrets endres
@@ -239,7 +243,8 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
             <Heading as="h3" size="sm">
               Hvilken stemmekrets skal brukes som utgangspunkt?
             </Heading>
-            <Label label="Stemmekrets">
+            <FormControl>
+              <FormLabel>Stemmekrets</FormLabel>
               <Select
                 {...selectStemmekretsRegister}
                 onChange={(e) => {
@@ -266,7 +271,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
                     </option>
                   ))}
               </Select>
-            </Label>
+            </FormControl>
             <Divider />
             <Heading as="h3" size="sm">
               Hvilke stemmekretser ønsker du å slå sammen med denne kretsen?
@@ -309,8 +314,8 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
               </Button>
             </Buttons>
             <CreateUtkastModal
-              isCreateUtkastModalOpen={isCreateUtkastModalOpen}
-              setIsCreateUtkastModalOpen={setIsCreateUtkastModalOpen}
+              isOpen={modalIsOpen}
+              onClose={onClose}
               callback={mergeStemmekrets}
             />
           </Form>

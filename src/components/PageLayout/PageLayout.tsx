@@ -5,7 +5,7 @@ import Kart from "components/Kart";
 import Sidebar from "components/Sidebar";
 import TopBar from "components/TopBar";
 import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
-import AlertModal from "components/Status/AlertModal";
+import AlertModal from "components/AlertModal";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
 import { ApiErrorResponse } from "../../types/api";

@@ -2,8 +2,21 @@ import Icon from "components/Icon";
 import styled from "styled-components";
 import { ButtonGroup, Button, IconButton } from "@kvib/react";
 
+const Cell = styled.td`
+  padding: 12px !important;
+`;
+
+const CombinedButton = styled(ButtonGroup)`
+  width: 100%;
+`;
+
 const EditButton = styled(Button)`
+  width: 100%;
   white-space: nowrap;
+`;
+
+const ChangeButton = styled(Button)`
+  width: 100%;
 `;
 
 type Props = {
@@ -19,24 +32,24 @@ const EditAndSaveButton = ({
   canSave,
   onSubmit,
 }: Props) => (
-  <td>
+  <Cell>
     {isEditing ? (
-      <ButtonGroup isAttached={true} size="md">
-        <Button
+      <CombinedButton isAttached={true} size="md">
+        <ChangeButton
           aria-label="Lagre endringer"
           onClick={onSubmit}
           leftIcon={<Icon icon="edit" />}
           isDisabled={!canSave}
         >
           Endre
-        </Button>
+        </ChangeButton>
         <IconButton
           variant="outline"
           aria-label="Forkast endringer"
           onClick={toggleEditing}
           icon={<Icon icon="close" />}
         />
-      </ButtonGroup>
+      </CombinedButton>
     ) : (
       <EditButton
         size="md"
@@ -47,7 +60,7 @@ const EditAndSaveButton = ({
         Endre detaljer
       </EditButton>
     )}
-  </td>
+  </Cell>
 );
 
 export default EditAndSaveButton;

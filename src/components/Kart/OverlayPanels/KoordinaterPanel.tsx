@@ -1,14 +1,20 @@
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { PanelHeader, PanelProps, AbsolutePanel } from "./Panel";
-import Input from "components/form/Input/Input";
+import Input from "components/Input";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import LineString from "ol/geom/LineString";
-import { useEffect } from "react";
-import { HistoryChange, useHistory } from "contexts/HistoryContext";
+import { useCallback, useEffect } from "react";
+import {
+  GrenseEntry,
+  HistoryChange,
+  useHistory,
+} from "contexts/HistoryContext";
 import { SelectedPoint, useFeatureStyle } from "contexts/FeatureStyleContext";
 import Point from "ol/geom/Point";
 import { Button } from "@kvib/react";
+import { editSource } from "hooks/layers/constants";
+import { Feature } from "ol";
 
 type KoordinaterFormData = {
   north: number;
@@ -33,6 +39,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
   const { closeOverlayPanel } = useOverlayPanel();
   const { selectedPoint, selectedFeatures } = useFeatureStyle();
   const { addHistoryEntry } = useHistory();
+  const { selectPointOnFeature } = useFeatureStyle();
 
   const defaultValues = (punkt: SelectedPoint) => {
     if (!punkt) {
@@ -59,7 +66,69 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
     defaultValues: defaultValues(selectedPoint),
   });
 
-  // Tilbakestill defaultverdier når man endrer valgt punkt
+  // Hjelpefunksjon for å gå gjennom en feature og finne punktet som er påvirket av grensejustering
+  const getCoordinateFromChange = (
+    change: HistoryChange<number[][]>,
+    direction: "to" | "from"
+  ) => {
+    for (let index = 0; index < change.from.length; index++) {
+      const fromCoord = change.from[index];
+      const toCoord = change.to[index];
+      if (fromCoord[0] !== toCoord[0] || fromCoord[1] !== toCoord[1]) {
+        return change[direction][index];
+      }
+    }
+  };
+
+  const setFormValues = useCallback(
+    (e: CustomEvent, direction: "to" | "from") => {
+      // Dette skal bare kjøres dersom et punkt er valgt, ikke ved alle grensendringer
+      if (selectedPoint) {
+        const entry = e.detail.entry as GrenseEntry;
+
+        // Dersom en valgt feature blir endret ved history må vi oppdatere valgt punkt
+        const selectedChange = entry.changes.find((c) =>
+          selectedFeatures.some((f) => f.getId() === c.id)
+        );
+
+        if (selectedChange) {
+          const coordinate = getCoordinateFromChange(selectedChange, direction);
+          if (coordinate) {
+            const features = [];
+            for (const change of entry.changes) {
+              features.push(
+                editSource.getFeatureById(change.id) as Feature<LineString>
+              );
+            }
+            selectPointOnFeature(coordinate, features);
+          }
+        }
+      }
+    },
+    [selectPointOnFeature, selectedFeatures, selectedPoint]
+  );
+
+  // Når man bruker undo og redo må koordinatpanelet oppdateres
+  useEffect(() => {
+    const undo = ((e: CustomEvent) => {
+      setFormValues(e, "from");
+    }) as EventListener;
+
+    const redo = ((e: CustomEvent) => {
+      setFormValues(e, "to");
+    }) as EventListener;
+
+    // Utløses av undo og redo i HistoryContext
+    document.addEventListener("grenseUndo", undo);
+    document.addEventListener("grenseRedo", redo);
+
+    return () => {
+      document.removeEventListener("grenseUndo", undo);
+      document.removeEventListener("grenseRedo", redo);
+    };
+  }, [setFormValues]);
+
+  // Tilbakestill defaultverdier når man endrer eller oppdaterer valgt punkt
   useEffect(() => {
     reset(defaultValues(selectedPoint));
   }, [selectedPoint, reset, selectedFeatures]);
@@ -93,8 +162,6 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
           ...tailCoordinates,
         ];
         geometry.setCoordinates(updatedCoordinates);
-
-        // TODO: trengs denne?
         feature.setGeometry(geometry);
 
         changes.push({
@@ -111,6 +178,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
 
       const highlightGeometry = selectedPoint.getGeometry() as Point;
       highlightGeometry.setCoordinates(newCoordinates);
+      reset(undefined, { keepValues: true });
     }
   };
 

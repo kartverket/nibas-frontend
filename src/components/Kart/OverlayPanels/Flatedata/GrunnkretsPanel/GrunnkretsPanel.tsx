@@ -8,7 +8,7 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { Panel, PanelHeader, PanelProps } from "../../Panel";
 import { KretsTable } from "../KretsTable";
 import { useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
-import Input from "components/form/Input";
+import Input from "components/Input";
 import SortHeader from "../SortHeader";
 import orderBy from "lodash.orderby";
 import { useTableSort } from "../useTableSort";
