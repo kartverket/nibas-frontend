@@ -155,7 +155,6 @@ const ButtonToolbar = () => {
             Grenseinfo
           </ModeButton>
         </ToolbarTooltip>
-        <Divider orientation="vertical" />
         {flatedetaljerIsAvailable && (
           <>
             {mergeIsAvailable && (
@@ -203,16 +202,22 @@ const ButtonToolbar = () => {
             </ModeButton>
           </>
         )}
-        <ToolbarTooltip text="Skru av/på snapping mot bakgrunnskart.">
-          <ModeButton
-            icon="magnet"
-            ariaLabel="Snap til bakgrunnskart"
-            isActive={activeEditModes.includes("snap")}
-            onClick={() => toggleEditMode("snap")}
-          >
-            Snap
-          </ModeButton>
-        </ToolbarTooltip>
+
+        {editingType && (
+          <>
+            <Divider orientation="vertical" />
+            <ToolbarTooltip text="Skru av/på snapping mot bakgrunnskart.">
+              <ModeButton
+                icon="magnet"
+                ariaLabel="Snap til bakgrunnskart"
+                isActive={activeEditModes.includes("snap")}
+                onClick={() => toggleEditMode("snap")}
+              >
+                Snap
+              </ModeButton>
+            </ToolbarTooltip>
+          </>
+        )}
       </Buttons>
       <ZoomButtons>
         <ToolbarTooltip text="Zoom inn på kartet">
