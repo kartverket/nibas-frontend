@@ -28,7 +28,7 @@ import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import { useToast } from "@chakra-ui/toast";
+import { useToast } from "@kvib/react";
 import { createSuccessToast } from "utils/componentUtils";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
