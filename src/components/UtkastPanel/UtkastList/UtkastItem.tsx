@@ -26,6 +26,7 @@ import { statusCode } from "utils/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { getDateInFriendlyString } from "components/Kart/OverlayPanels/MetadataPanel/utils";
+import { createSuccessToast } from "utils/components/toast";
 
 type Props = {
   utkast: UtkastRef;
@@ -96,17 +97,12 @@ const UtkastItem = ({ utkast }: Props) => {
     if (!response) return;
 
     if (statusCode.isSuccessful(response.status)) {
-      toast({
-        containerStyle: {
-          margin: "30px",
-        },
-        title: "Utkast publisert",
-        description: `Endringene trer i kraft ${getPublishDateText()}.`,
-        status: "success",
-        duration: 9000,
-        isClosable: true,
-        position: "top",
-      });
+      toast(
+        createSuccessToast(
+          "Utkast publisert",
+          `Endringene trer i kraft ${getPublishDateText()}.`
+        )
+      );
       cleanUpUtkast();
     } else if (statusCode.isConflict(response.status)) {
       const wrapper = (await response.json()) as ConflictResponseWrapper;

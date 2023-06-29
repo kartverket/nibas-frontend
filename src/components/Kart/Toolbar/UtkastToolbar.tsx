@@ -20,6 +20,7 @@ import {
   useToast,
 } from "@kvib/react";
 import { endringstyper } from "../constants";
+import { createSuccessToast } from "utils/components/toast";
 
 const UtkastFrame = styled(Frame)`
   flex-direction: column;
@@ -64,16 +65,7 @@ const UtkastToolbar = ({ setCreateUtkastOpen }: Props) => {
       setCreateUtkastOpen(false);
       setSearchParams({ utkast: utkastId });
       clearHistory({ hasPreviouslySavedHistory: true });
-      toast({
-        containerStyle: {
-          margin: "30px",
-        },
-        title: "Utkast opprettet",
-        status: "success",
-        duration: 9000,
-        isClosable: true,
-        position: "top",
-      });
+      toast(createSuccessToast("Utkast opprettet"));
     } else if (statusCode.isError(response.status)) {
       const wrapper = (await response.json()) as ApiErrorResponse;
       setError({
