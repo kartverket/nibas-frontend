@@ -13,6 +13,7 @@ import { statusCode } from "utils/api";
 import { ApiErrorResponse } from "../../../types/api";
 import { Button, Heading, Select, useToast } from "@kvib/react";
 import Label from "components/form/Label";
+import { createSuccessToast } from "utils/componentUtils";
 
 const UtkastFrame = styled(Frame)`
   flex-direction: column;
@@ -59,16 +60,7 @@ const UtkastToolbar = ({ setCreateUtkastOpen }: Props) => {
       setCreateUtkastOpen(false);
       setSearchParams({ utkast: utkastId });
       clearHistory({ hasPreviouslySavedHistory: true });
-      toast({
-        containerStyle: {
-          margin: "30px",
-        },
-        title: "Utkast opprettet",
-        status: "success",
-        duration: 9000,
-        isClosable: true,
-        position: "top",
-      });
+      toast(createSuccessToast("Utkast opprettet"));
     } else if (statusCode.isError(response.status)) {
       const wrapper = (await response.json()) as ApiErrorResponse;
       setError({
