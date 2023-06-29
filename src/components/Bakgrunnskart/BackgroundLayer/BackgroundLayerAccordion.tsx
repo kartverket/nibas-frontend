@@ -200,7 +200,11 @@ const AddRemove = styled.span<{ visible: boolean; aktivtKartlag: boolean }>`
   opacity: ${({ visible, aktivtKartlag }) =>
     visible && !aktivtKartlag ? 0.4 : 1};
   border-radius: 50%;
-  padding: 8px 8px 4px;
+  padding: 8px;
+
+  span {
+    vertical-align: top;
+  }
 
   &:focus-visible {
     ${Outline}
