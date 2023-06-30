@@ -55,7 +55,7 @@ const Kommune = ({ kommune }: Props) => {
         />
         <Title>{getNavnInSpraak(kommune.navn, "nor")}</Title>
         {lasterData ? (
-          <Spinner size="lg" color="var(--blue)" />
+          <Spinner size="lg" color="var(--kvib-colors-blue-500)" />
         ) : (
           <Button variant="link" onClick={onAvsluttRedigeringClick}>
             {kommuneValues.editing ? "Avslutt redigering" : "Rediger"}
@@ -89,15 +89,17 @@ const KommuneWrapper = styled.div<{ editing?: boolean }>`
 
 const VisibilityButton = styled(IconButton)<{ $isVisible?: boolean }>`
   color: ${({ $isVisible }) =>
-    $isVisible ? "var(--white)" : "var(--blue_dark)"};
+    $isVisible
+      ? "var(--kvib-colors-chakra-inverse-text)"
+      : "var(--kvib-colors-blue-500)"};
   background: ${({ $isVisible }) =>
-    $isVisible ? "var(--blue_dark)" : "transparent"};
+    $isVisible ? "var(--kvib-colors-blue-500)" : "transparent"};
   border-radius: 50%;
   padding: 8px;
 
   &:hover {
-    color: var(--blue_dark);
-    background: var(--blue_light);
+    color: var(--kvib-colors-blue-500);
+    background: var(--kvib-colors-blue-50);
   }
 
   &:focus-visible {

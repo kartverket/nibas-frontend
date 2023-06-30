@@ -13,12 +13,12 @@ const Container = styled.button<{ isActive: boolean }>`
   cursor: pointer;
 
   &:disabled {
-    color: var(--gray);
+    color: var(--kvib-colors-gray-500);
     cursor: not-allowed;
   }
 
   &:focus-visible {
-    outline: 2px solid var(--blue_dark);
+    outline: 2px solid var(--kvib-colors-blue-500);
     outline-offset: 2px;
   }
 
@@ -29,8 +29,7 @@ const Container = styled.button<{ isActive: boolean }>`
   }
 
   &:hover:not(:disabled) > ${Icon} {
-    background: var(--blue_light);
-    color: var(--black);
+    background: var(--kvib-colors-blue-50);
   }
 
   ${(props) =>
@@ -39,8 +38,8 @@ const Container = styled.button<{ isActive: boolean }>`
       font-weight: bold;
 
       & > ${Icon} {
-        color: var(--white);
-        background: var(--blue_dark);
+        color: var(--kvib-colors-chakra-inverse-text);
+        background: var(--kvib-colors-blue-500);
       }
     `};
 `;

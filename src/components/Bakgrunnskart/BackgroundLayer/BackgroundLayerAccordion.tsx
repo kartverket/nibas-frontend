@@ -194,7 +194,9 @@ const AktivtMainLayerWrapper = styled.div`
 
 const AddRemove = styled.span<{ visible: boolean; aktivtKartlag: boolean }>`
   color: ${({ visible, aktivtKartlag }) =>
-    visible && !aktivtKartlag ? "var(--gray)" : "var(--blue_dark)"};
+    visible && !aktivtKartlag
+      ? "var(--kvib-colors-gray-500)"
+      : "var(--kvib-colors-blue-500)"};
 
   margin: 0 8px;
   opacity: ${({ visible, aktivtKartlag }) =>
@@ -211,8 +213,8 @@ const AddRemove = styled.span<{ visible: boolean; aktivtKartlag: boolean }>`
   }
 
   &:hover {
-    background: var(--blue_light);
-    color: var(--blue_dark);
+    background: var(--kvib-colors-blue-50);
+    color: var(--kvib-colors-blue-500);
   }
 `;
 
@@ -220,15 +222,18 @@ const Caret = styled.span<{ open: boolean }>`
   display: flex;
   align-items: center;
   height: 100%;
-  color: ${({ open }) => (open ? "var(--white)" : "var(--blue_dark)")};
+  color: ${({ open }) =>
+    open
+      ? "var(--kvib-colors-chakra-inverse-text)"
+      : "var(--kvib-colors-blue-500)"};
   background-color: ${({ open }) =>
-    open ? "var(--blue_dark)" : "var(--white)"};
+    open ? "var(--kvib-colors-blue-500)" : "var(--kvib-colors-chakra-body-bg)"};
 
   padding: 0 16px;
 
   &:hover {
-    background: var(--blue_dark);
-    color: var(--white);
+    background: var(--kvib-colors-blue-500);
+    color: var(--kvib-colors-chakra-inverse-text);
   }
 `;
 
@@ -260,12 +265,12 @@ const ClickableName = styled(Button)<{ open: boolean }>`
     flex: 1;
     text-align: left;
     padding: 16px;
-
-    background-color: ${({ open }) =>
-      open ? "var(--blue_light)" : "var(--white)"};
     border-left: 3px solid
-      ${({ open }) => (open ? "var(--blue_dark)" : "transparent")};
-    background: ${({ open }) => (open ? "var(--blue_light)" : "var(--white)")};
+      ${({ open }) => (open ? "var(--kvib-colors-blue-500)" : "transparent")};
+    background: ${({ open }) =>
+      open
+        ? "var(--kvib-colors-blue-50)"
+        : "var(--kvib-colors-chakra-body-bg)"};
   }
 
   &:focus-visible {
@@ -274,12 +279,12 @@ const ClickableName = styled(Button)<{ open: boolean }>`
 
   &:hover {
     > :first-child {
-      background: var(--blue_light);
+      background: var(--kvib-colors-blue-50);
     }
 
     ${Caret} {
-      background: var(--blue_dark);
-      color: var(--white);
+      background: var(--kvib-colors-blue-500);
+      color: var(--kvib-colors-chakra-inverse-text);
     }
   }
 `;
@@ -298,16 +303,16 @@ const DraggableLayer = styled.div`
 
   &:hover {
     ${Icon} {
-      color: var(--blue_dark);
-      background: var(--blue_light);
+      color: var(--kvib-colors-blue-500);
+      background: var(--kvib-colors-blue-50);
       border-radius: 50%;
     }
   }
 
   &:active {
     ${Icon} {
-      color: var(--white);
-      background: var(--blue_dark);
+      color: var(--kvib-colors-chakra-inverse-text);
+      background: var(--kvib-colors-blue-500);
       border-radius: 50%;
     }
   }
@@ -341,8 +346,8 @@ const AktivtSubLayerWrapper = styled.button`
 
   &:hover {
     ${AddRemove} {
-      color: var(--blue_dark);
-      background: var(--blue_light);
+      color: var(--kvib-colors-blue-500);
+      background: var(--kvib-colors-blue-50);
     }
   }
 `;
@@ -357,8 +362,8 @@ const AddableLayer = styled.button<{ activeLayer?: boolean }>`
 
   &:hover {
     ${AddRemove} {
-      background: var(--blue_light);
-      color: var(--blue_dark);
+      background: var(--kvib-colors-blue-50);
+      color: var(--kvib-colors-blue-500);
     }
   }
 

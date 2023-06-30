@@ -328,7 +328,7 @@ const FieldTitle = styled.legend`
 `;
 
 const DokRefWrapper = styled.div`
-  border-top: 2px solid var(--gray);
+  border-top: 2px solid var(--kvib-colors-gray-500);
   margin-top: 16px;
   padding-top: 8px;
   margin-bottom: 16px;

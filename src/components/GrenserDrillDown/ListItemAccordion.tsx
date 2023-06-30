@@ -58,19 +58,24 @@ const DropDown = styled.div`
 const NameContent = styled.div<{ open: boolean }>`
   display: flex;
   flex-direction: column;
-  background: ${({ open }) => (open ? "var(--blue_light)" : "var(--white)")};
+  background: ${({ open }) =>
+    open ? "var(--kvib-colors-blue-50)" : "var(--kvib-colors-chakra-body-bg)"};
   padding: 16px 0;
   padding-left: 16px;
   border-left: 3px solid
-    ${({ open }) => (open ? "var(--blue_dark)" : "transparent")};
+    ${({ open }) => (open ? "var(--kvib-colors-blue-500)" : "transparent")};
   width: 100%;
   transition: background 0.1s;
 `;
 
 const CaretIcon = styled(Icon)<{ open: boolean }>`
   height: 100%;
-  background: ${({ open }) => (open ? "var(--blue_dark)" : "var(--white)")};
-  color: ${({ open }) => (open ? "var(--white)" : "var(--blue_dark)")};
+  background: ${({ open }) =>
+    open ? "var(--kvib-colors-blue-500)" : "var(--kvib-colors-chakra-body-bg)"};
+  color: ${({ open }) =>
+    open
+      ? "var(--kvib-colors-chakra-inverse-text)"
+      : "var(--kvib-colors-blue-500)"};
   height: 100%;
   padding: 16px 12px;
   align-items: center;
@@ -94,12 +99,12 @@ const ButtonWrapper = styled.button`
 
   &:hover {
     ${CaretIcon} {
-      background: var(--blue_dark);
-      color: var(--white);
+      background: var(--kvib-colors-blue-500);
+      color: var(--kvib-colors-chakra-inverse-text);
     }
 
     ${NameContent} {
-      background: var(--blue_light);
+      background: var(--kvib-colors-blue-50);
     }
   }
 

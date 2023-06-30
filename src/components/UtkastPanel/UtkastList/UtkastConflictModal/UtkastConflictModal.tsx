@@ -114,12 +114,12 @@ export const ConflictTableRow = styled.tr<{
   numColumns?: number;
 }>`
   background-color: ${(props) =>
-    props.confirmed ? "var(--green_light)" : "transparent"};
+    props.confirmed ? "var(--kvib-colors-green-100)" : "transparent"};
   transition: background-color 0.2s ease-in-out;
 
   td {
     padding: 16px 8px;
-    border-bottom: 1px solid var(--gray_light);
+    border-bottom: 1px solid var(--kvib-colors-gray-50);
     // de blir ikke faktisk like store, men de blir like store på tvers av tabeller og det ser nice ut 🤷‍♀️
     width: calc(100% / ${(props) => props.numColumns || 1});
     min-width: calc(100% / ${(props) => props.numColumns || 1});

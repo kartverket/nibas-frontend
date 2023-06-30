@@ -20,13 +20,11 @@ const UtkastInfo = styled.div`
   flex-direction: column;
   justify-content: center;
   gap: 4px;
-  color: var(--gray);
   font-size: 12px;
 `;
 
 const UtkastNavn = styled.h4`
   margin: 0;
-  color: var(--black);
   font-size: 14px;
   font-weight: normal;
 `;

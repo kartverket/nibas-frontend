@@ -3,7 +3,7 @@ import { Spinner } from "@kvib/react";
 
 export const FullPageLoader = () => (
   <LoaderWrapper>
-    <Spinner size="xl" color="var(--blue)" />
+    <Spinner size="xl" color="var(--kvib-colors-blue-500)" />
   </LoaderWrapper>
 );
 

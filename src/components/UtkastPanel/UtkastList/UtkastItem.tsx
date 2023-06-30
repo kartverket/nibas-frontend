@@ -201,11 +201,11 @@ const UtkastItem = ({ utkast }: Props) => {
 
   const getColorFromUtkastAction = () =>
     isPublishOpen
-      ? "var(--green_light)"
+      ? "var(--kvib-colors-green-50)"
       : isDeleteOpen
-      ? "var(--pink)"
+      ? "var(--kvib-colors-pink-50)"
       : utkastActive
-      ? "var(--blue_light)"
+      ? "var(--kvib-colors-blue-50)"
       : "transparent";
 
   return (
@@ -222,7 +222,7 @@ const UtkastItem = ({ utkast }: Props) => {
             icon="done"
             aria-label={`Publiser ${utkast.navn}`}
             $isActive={isPublishOpen}
-            $primaryColor="var(--green)"
+            $primaryColor="var(--kvib-colors-green-400)"
           />
         </UnstyledButton>
         <UnstyledButton onClick={() => openCloseDelete()}>
@@ -230,7 +230,7 @@ const UtkastItem = ({ utkast }: Props) => {
             icon="close"
             aria-label={`Forkast ${utkast.navn}`}
             $isActive={isDeleteOpen}
-            $primaryColor="var(--red_error_message)"
+            $primaryColor="var(--kvib-colors-red-500)"
           />
         </UnstyledButton>
         <UnstyledButton onClick={() => openCloseUtkast()}>
@@ -238,7 +238,7 @@ const UtkastItem = ({ utkast }: Props) => {
             icon="edit"
             aria-label={`Aktiver ${utkast.navn}`}
             $isActive={utkastActive}
-            $primaryColor="var(--blue_dark)"
+            $primaryColor="var(--kvib-colors-blue-500)"
           />
         </UnstyledButton>
       </ItemWrapper>
@@ -326,8 +326,8 @@ export const UtkastItemExpanded = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  border-top: 2px solid var(--black);
-  background-color: var(--gray_light);
+  border-top-width: 2px;
+  background-color: var(--kvib-colors-gray-50);
   padding: 24px;
 
   input,
@@ -360,17 +360,20 @@ const UnstyledButton = styled(Button).attrs(() => ({
 const ButtonIcon = styled(Icon)<{ $isActive: boolean; $primaryColor: string }>`
   border-radius: 50%;
   padding: 4px;
-  color: ${(props) => (props.$isActive ? "var(--white)" : props.$primaryColor)};
+  color: ${(props) =>
+    props.$isActive
+      ? "var(--kvib-colors-chakra-inverse-text)"
+      : props.$primaryColor};
   background: ${(props) =>
     props.$isActive ? props.$primaryColor : "transparent"};
 
   &:hover {
     background: ${(props) => props.$primaryColor};
-    color: var(--white);
+    color: var(--kvib-colors-chakra-inverse-text);
   }
 
   &:focus-visible {
-    outline: 2px solid var(--blue_dark);
+    outline: 2px solid var(--kvib-colors-blue-500);
   }
 `;
 

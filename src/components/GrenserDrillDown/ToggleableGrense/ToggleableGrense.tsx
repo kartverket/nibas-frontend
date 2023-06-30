@@ -63,15 +63,18 @@ const Wrapper = styled.div<{ visible: boolean }>`
   margin: 16px 0 0 24px;
 
   > :first-child {
-    color: ${({ visible }) => (visible ? "var(--white)" : "var(--blue_dark)")};
+    color: ${({ visible }) =>
+      visible
+        ? "var(--kvib-colors-chakra-inverse-text)"
+        : "var(--kvib-colors-blue-500)"};
     padding: 8px;
     border-radius: 50%;
     background: ${({ visible }) =>
-      visible ? "var(--blue_dark)" : "transparent"};
+      visible ? "var(--kvib-colors-blue-500)" : "transparent"};
 
     &:hover {
-      background: var(--blue_light);
-      color: var(--blue_dark);
+      background: var(--kvib-colors-blue-50);
+      color: var(--kvib-colors-blue-500);
     }
 
     &:focus-visible {

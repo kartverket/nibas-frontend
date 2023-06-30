@@ -65,7 +65,7 @@ const LoginText = styled.p`
 `;
 
 const LoginIcon = styled(Icon)`
-  color: var(--blue_dark);
+  color: var(--kvib-colors-blue-500);
   margin-right: 8px;
 `;
 

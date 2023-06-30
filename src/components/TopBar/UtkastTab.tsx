@@ -13,7 +13,7 @@ const UtkastTab = () => {
 };
 
 const Wrapper = styled.div`
-  background-color: var(--yellow_dark);
+  background-color: var(--kvib-colors-orange-400);
   padding: 8px 16px;
   font-size: 16px;
   color: black;

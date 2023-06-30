@@ -60,14 +60,14 @@ const FutureChangesTable = <
 
 const Table = styled.table`
   width: 100%;
-  background-color: var(--white);
+  background: var(--kvib-colors-chakra-body-bg);
   border-spacing: 0;
 
   tr:first-child > td {
-    background-color: var(--green_light);
+    background: var(--kvib-colors-green-100);
 
     &:first-child {
-      border-left: 4px solid var(--green);
+      border-left: 4px solid var(--kvib-colors-green-400);
     }
   }
 
@@ -77,7 +77,7 @@ const Table = styled.table`
   }
 
   th {
-    border-bottom: 1px solid var(--gray);
+    border-bottom: 1px solid var(--kvib-colors-gray-500);
     text-align: left;
     font-weight: normal;
     padding: 8px 12px;
@@ -85,16 +85,16 @@ const Table = styled.table`
 
   td {
     padding: 8px;
-    color: var(--gray_dark);
+    color: var(--kvib-colors-gray-600);
     border-left: 4px solid transparent;
     border-right: 4px solid transparent;
-    border-bottom: 2px solid var(--gray_light);
+    border-bottom: 2px solid var(--kvib-colors-gray-50);
   }
 `;
 
 export const FutureChangesTableData = styled.td`
-  border-top: 2px solid var(--gray);
-  background-color: var(--gray_light);
+  border-top: 2px solid var(--kvib-colors-gray-500);
+  background-color: var(--kvib-colors-gray-50);
   width: 100%;
   padding: 32px 16px;
 `;

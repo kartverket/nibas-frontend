@@ -37,8 +37,7 @@ const InfoBox = styled.div`
   grid-template-columns: auto 1fr;
   gap: 12px;
   padding: 20px 16px;
-  color: var(--black);
-  background: var(--gray_light);
+  background: var(--kvib-colors-gray-50);
 `;
 
 const Form = styled.form`

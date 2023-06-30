@@ -24,7 +24,7 @@ const SidebarPanelTitle = ({ title, closePanel }: Props) => {
 const TitleWrapper = styled.div`
   margin-top: 8px;
   margin-bottom: 8px;
-  border-bottom: 2px solid var(--gray_light);
+  border-bottom: 2px solid var(--kvib-colors-gray-50);
   padding: 0 3px 8px 0;
 
   display: flex;
