@@ -28,14 +28,14 @@ const Card = styled.button`
   width: 100%;
   padding: 42px;
   border: 0;
-  background: var(--blue_dark);
-  color: var(--white);
+  background: var(--kvib-colors-blue-500);
+  color: var(--kvib-colors-chakra-inverse-text);
   box-shadow: 0 3px 19px 0 rgba(0, 0, 0, 0.06);
   transition: background 0.1s;
   cursor: pointer;
 
   &:hover {
-    background-color: var(--blue);
+    background-color: var(--kvib-colors-blue-500);
   }
 
   &:focus {

@@ -45,7 +45,7 @@ const Container = styled.main`
   grid-template-columns: 669px;
   gap: 18px 0;
   height: 100%;
-  background: var(--gray_light);
+  background: var(--kvib-colors-gray-50);
   padding: 160px 20px;
 `;
 

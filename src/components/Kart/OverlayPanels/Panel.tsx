@@ -32,7 +32,7 @@ export const Panel = styled.div<{ isOpen: boolean }>`
   margin: 16px;
   padding: 0 16px;
   background: white;
-  border: 2px solid var(--gray_light);
+  border: 2px solid var(--kvib-colors-gray-50);
   border-radius: 12px;
   box-shadow: 4px 4px 12px 0 rgba(0, 0, 0, 0.15);
   width: 100%;
@@ -70,8 +70,8 @@ const PanelHeaderContainer = styled.div`
   justify-content: space-between;
   gap: 16px;
   padding: 24px 8px 16px;
-  background: var(--white);
-  border-bottom: 2px solid var(--gray_light);
+  background: var(--kvib-colors-chakra-body-bg);
+  border-bottom: 2px solid var(--kvib-colors-gray-50);
   margin-bottom: 16px;
 `;
 

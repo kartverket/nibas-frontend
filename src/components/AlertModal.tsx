@@ -38,7 +38,7 @@ const Body = styled(ModalBody)`
 const BodyText = styled.p`
   padding: 0 48px;
   margin: 0;
-  color: var(--gray_dark);
+  color: var(--kvib-colors-gray-600);
   white-space: pre-line;
 `;
 
@@ -46,7 +46,7 @@ const BodyTextExtra = styled.p`
   margin: 0;
   padding: 0 48px;
   font-style: italic;
-  color: var(--gray_dark);
+  color: var(--kvib-colors-gray-600);
   white-space: pre-line;
 `;
 

@@ -3,14 +3,14 @@ import Icon from "components/Icon/Icon";
 import styled from "styled-components";
 
 const ClickableHeader = styled(Button)<{ $isActivated: boolean }>`
-  color: var(--gray_dark);
+  color: var(--kvib-colors-gray-600);
   white-space: nowrap;
   padding: 0 8px;
   margin-left: -8px;
 
   &:hover {
-    color: var(--blue);
-    background: var(--gray_light);
+    color: var(--kvib-colors-blue-500);
+    background: var(--kvib-colors-gray-50);
   }
 
   .material-symbols-outlined {

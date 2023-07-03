@@ -57,7 +57,7 @@ const EditableGrenseAccordion = ({
         {isFetching && (
           <Spinner
             size="lg"
-            color="var(--blue)"
+            color="var(--kvib-colors-blue-500)"
             aria-label={`Henter ${title}`}
           />
         )}
@@ -98,29 +98,35 @@ const Header = styled.div`
 `;
 
 const CaretIcon = styled(Icon)<{ $visible: boolean }>`
-  color: ${({ $visible }) => ($visible ? "var(--white)" : "var(--blue_dark)")};
+  color: ${({ $visible }) =>
+    $visible
+      ? "var(--kvib-colors-chakra-inverse-text)"
+      : "var(--kvib-colors-blue-500)"};
   background: ${({ $visible }) =>
-    $visible ? "var(--blue_dark)" : "transparent"};
+    $visible ? "var(--kvib-colors-blue-500)" : "transparent"};
   padding: 16px 12px;
 
   &:hover {
-    background: var(--blue_dark);
-    color: var(--white);
+    background: var(--kvib-colors-blue-500);
+    color: var(--kvib-colors-chakra-inverse-text);
   }
 `;
 
 const VisibilityButton = styled(IconButton)<{ $visible: boolean }>`
   margin-right: 16px;
-  color: ${({ $visible }) => ($visible ? "var(--white)" : "var(--blue_dark)")};
+  color: ${({ $visible }) =>
+    $visible
+      ? "var(--kvib-colors-chakra-inverse-text)"
+      : "var(--kvib-colors-blue-500)"};
   background: ${({ $visible }) =>
-    $visible ? "var(--blue_dark)" : "transparent"};
+    $visible ? "var(--kvib-colors-blue-500)" : "transparent"};
   padding: 8px;
   border-radius: 50%;
   height: 100%;
 
   &:hover {
-    color: var(--blue_dark);
-    background: var(--blue_light);
+    color: var(--kvib-colors-blue-500);
+    background: var(--kvib-colors-blue-50);
   }
   &:focus-visible {
     ${Outline}

@@ -28,7 +28,7 @@ export const KretsRow = styled.tr<{ isActive: boolean }>`
   position: relative;
 
   td {
-    border-bottom: 2px solid var(--gray_light);
+    border-bottom: 2px solid var(--kvib-colors-gray-50);
   }
 `;
 

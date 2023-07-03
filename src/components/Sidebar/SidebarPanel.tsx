@@ -18,7 +18,7 @@ export const SidebarPanel = styled.div<{ isOpen: boolean }>`
   height: 100%;
   width: 440px;
   padding: 8px 16px;
-  border-right: 3px solid var(--gray_light);
+  border-right: 3px solid var(--kvib-colors-gray-50);
   overflow: auto;
   ${(props) => !props.isOpen && "display: none"};
   animation: ${slideIn} 0.25s ease-in-out;

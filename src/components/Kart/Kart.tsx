@@ -50,7 +50,7 @@ const Kart = () => {
 const KartWrapper = styled.div`
   grid-area: map;
   position: relative;
-  border: 3px solid var(--gray_light);
+  border: 3px solid var(--kvib-colors-gray-50);
   height: calc(100% - 6px);
   width: calc(100% - 6px);
   border-right-width: 0;

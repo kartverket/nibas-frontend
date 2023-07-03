@@ -12,7 +12,7 @@ export const Underoverskrift = styled.h3`
   font-size: 16px;
   margin-bottom: 16px;
   padding: 16px;
-  background: var(--gray_light);
+  background: var(--kvib-colors-gray-50);
   border-radius: 8px;
 `;
 
@@ -23,14 +23,14 @@ export const Seksjonsoverskrift = styled(Heading).attrs({
   font-weight: bold;
   margin: 10px 0;
   padding-bottom: 16px;
-  border-bottom: 1px solid var(--gray_light);
+  border-bottom: 1px solid var(--kvib-colors-gray-50);
 `;
 
 export const EndringsradListItem = styled.li`
   display: flex;
   margin-bottom: 10px;
   padding-bottom: 10px;
-  border-bottom: 1px solid var(--gray_light);
+  border-bottom: 1px solid var(--kvib-colors-gray-50);
 `;
 
 export const EndringsradLabel = styled.div`
@@ -56,13 +56,13 @@ export const Endringsrad = ({ tittel, endring }: EndringsradProps) => (
 );
 
 export const EndringstypeTag = styled.span`
-  background-color: var(--blue_light);
+  background-color: var(--kvib-colors-blue-50);
   padding: 8px 16px;
   margin: 0 16px;
   border-radius: 8px;
   font-weight: 700;
   font-size: 12px;
-  color: var(--blue_dark);
+  color: var(--kvib-colors-blue-500);
 `;
 
 type EndringFraTilProps = {
@@ -100,7 +100,7 @@ const KursivTekst = styled(EndringTekst)`
 `;
 
 const RightArrow = styled(Icon)`
-  color: var(--blue);
+  color: var(--kvib-colors-blue-500);
   font-size: 20px;
   margin: 0 8px 0 0;
   vertical-align: middle;

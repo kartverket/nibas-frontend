@@ -46,7 +46,7 @@ const OverlayPopup = () => {
 const Popup = styled.div`
   position: absolute;
   background-color: white;
-  border: 1px solid var(--gray_light);
+  border: 1px solid var(--kvib-colors-gray-50);
   padding: 8px;
   border-radius: 3px;
 `;

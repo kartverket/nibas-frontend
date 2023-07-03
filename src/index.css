@@ -1,52 +1,11 @@
+/* TODO: fjern denne når vi får det via kvib */
 @import "material-symbols";
-
-:root {
-  /* Egne farger */
-  --yellow_dark: #ffbf00;
-  --yellow_darker: #c07f0c;
-
-  /* Midlertidige aliaser */
-  --green_active: #05502a;
-  --green_dark: #156630;
-  --green: #1a833b;
-  --green_light: #d0ecd6;
-
-  --blue_dark: #175092;
-  --blue: #1a589f;
-  --blue_light: #e4f1f8;
-  --blue_hover: #439ccd;
-  --blue_dark_button: #213060;
-
-  --red_error_message: #a32f00;
-  --red_dark: #d04a14;
-  --pink: #f7e6eb;
-
-  --orange: #fcf1e8;
-  --yellow: #ffdd9d;
-  --yellow_light: #fcebcd;
-
-  --black: #222222;
-  --white: #ffffff;
-
-  --gray_dark: #505050;
-  --gray: #707070;
-  --gray_light: #f5f2f2;
-}
 
 body {
   height: 100vh;
-  margin: 0;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   font-size: 16px;
 }
 
 #root {
   height: 100%;
-}
-
-*,
-*:before,
-*:after {
-  box-sizing: border-box;
 }

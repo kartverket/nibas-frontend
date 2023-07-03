@@ -52,26 +52,27 @@ const StyledButton = styled(Button)<{ $isActivated: boolean }>`
   text-align: center;
   border-radius: 0;
   border-left: 5px solid
-    ${({ $isActivated }) => ($isActivated ? "var(--blue_dark)" : "transparent")};
+    ${({ $isActivated }) =>
+      $isActivated ? "var(--kvib-colors-blue-500)" : "transparent"};
 
   color: ${({ $isActivated }) =>
-    $isActivated ? "var(--blue)" : "var(--black)"};
+    $isActivated ? "var(--kvib-colors-blue-500)" : "inherit"};
 
   background-color: ${({ $isActivated }) =>
-    $isActivated ? "var(--blue_light)" : "transparent"};
+    $isActivated ? "var(--kvib-colors-blue-50)" : "transparent"};
 
   &:hover {
-    background-color: var(--blue_light);
+    background-color: var(--kvib-colors-blue-50);
   }
 
   & ${SidebarButtonTitle} {
     color: ${({ $isActivated }) =>
-      $isActivated ? "var(--blue)" : "var(--black)"};
+      $isActivated ? "var(--kvib-colors-blue-500)" : "inherit"};
     font-weight: ${({ $isActivated }) => ($isActivated ? 600 : 400)};
   }
 
   &:focus-visible {
-    box-shadow: 0px 0px 0px 2px var(--blue_dark) inset;
+    box-shadow: 0px 0px 0px 2px var(--kvib-colors-blue-500) inset;
   }
 `;
 

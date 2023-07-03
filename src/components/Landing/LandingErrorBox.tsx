@@ -57,6 +57,6 @@ const ErrorBoxWrapper = styled.section`
   gap: 1.5rem;
   width: 100%;
   padding: 1.5rem;
-  background: var(--red_error_message);
-  color: var(--white);
+  background: var(--kvib-colors-red-500);
+  color: var(--kvib-colors-chakra-inverse-text);
 `;
