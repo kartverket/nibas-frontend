@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import styled from "styled-components";
 import { SWRConfig } from "swr";
-import Kart from "components/Kart";
+import Kart from "pages/Kart";
 import Sidebar from "components/Sidebar";
 import TopBar from "components/TopBar";
 import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
@@ -10,6 +10,7 @@ import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
 import { ApiErrorResponse } from "../../types/api";
 
+// TODO: Gi denne et bedre navn, kanskje bare "Kart", da Kart-komponenten er lite beskrivende selv
 const PageLayout = () => {
   const { redigeringsmodusAktiv } = useRedigeringsmodus();
   const { error, setError } = useErrorHandling();

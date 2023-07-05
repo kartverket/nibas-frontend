@@ -14,7 +14,7 @@ import useTimer from "hooks/useTimer";
 import AlertModal from "components/AlertModal";
 import { useToolbar } from "contexts/ToolbarContext";
 import { Button, FormControl, FormLabel, Select } from "@kvib/react";
-import { endringstyper } from "components/Kart/constants";
+import { endringstyper } from "pages/Kart/constants";
 
 type Inputs = {
   navn: string;

@@ -1,8 +1,4 @@
-import {
-  initialMapCenter,
-  initialMapZoom,
-  map,
-} from "components/Kart/constants";
+import { initialMapCenter, initialMapZoom, map } from "pages/Kart/constants";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 

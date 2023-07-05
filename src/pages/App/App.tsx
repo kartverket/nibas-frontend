@@ -4,14 +4,14 @@ import {
 } from "@kartverket/frontend-aut-lib";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Providers from "./Providers";
-import PageLayout from "components/PageLayout";
-import Landing from "components/Landing/Landing";
+import PageLayout from "../Kart/PageLayout";
 import { Suspense } from "react";
 import {
   AuthorizationStatus,
   useAuthorization,
 } from "../Authentication/AuthHooks";
 import { FullPageLoader } from "./AppLoader";
+import Authentication from "pages/Authentication/Authentication";
 
 /**
  * Definerer 3 verdier i konfigurasjonen. Disse brukes av biblioteket forskjellige steder i flyten.
@@ -65,7 +65,7 @@ const PageElement = () => {
     return <FullPageLoader />;
   }
 
-  return <Landing />;
+  return <Authentication />;
 };
 
 export default App;

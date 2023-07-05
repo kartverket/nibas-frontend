@@ -22,7 +22,7 @@ import {
   ModalOverlay,
   Select,
 } from "@kvib/react";
-import { endringstyper } from "components/Kart/constants";
+import { endringstyper } from "pages/Kart/constants";
 
 const Body = styled(ModalBody)`
   display: flex;

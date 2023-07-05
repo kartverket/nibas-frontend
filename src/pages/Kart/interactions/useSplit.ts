@@ -1,6 +1,6 @@
 import Feature from "ol/Feature";
 import LineString from "ol/geom/LineString";
-import { map } from "components/Kart/constants";
+import { map } from "pages/Kart/constants";
 import { useHistory } from "contexts/HistoryContext";
 import { getLayerById } from "utils/map/layers";
 import { MapBrowserEvent } from "ol";

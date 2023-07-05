@@ -25,7 +25,7 @@ import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
-import { getDateInFriendlyString } from "components/Kart/OverlayPanels/MetadataPanel/utils";
+import { getDateInFriendlyString } from "pages/Kart/OverlayPanels/MetadataPanel/utils";
 import { createSuccessToast } from "utils/components/toast";
 
 type Props = {

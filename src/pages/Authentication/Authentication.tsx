@@ -1,20 +1,17 @@
 import { VerticalLogo } from "components/Logo";
 import styled from "styled-components";
-import {
-  AuthorizationStatus,
-  useAuthorization,
-} from "../Authentication/AuthHooks";
-import { ErrorBox } from "./LandingErrorBox";
-import { LandingLoginCard } from "./LandingLoginCard";
+import { AuthorizationStatus, useAuthorization } from "./AuthHooks";
+import { ErrorBox } from "./AuthenticationErrorBox";
+import { AuthenticationLoginCard } from "./AuthenticationLoginCard";
 
-const Landing = () => (
+const Authentication = () => (
   <Container>
     <Logo />
-    <LandingBody />
+    <AuthenticationBody />
   </Container>
 );
 
-const LandingBody = () => {
+const AuthenticationBody = () => {
   const { status } = useAuthorization();
   if (status === AuthorizationStatus.ERROR) {
     return (
@@ -34,7 +31,7 @@ const LandingBody = () => {
     );
   }
 
-  return <LandingLoginCard />;
+  return <AuthenticationLoginCard />;
 };
 
 const Container = styled.main`
@@ -53,4 +50,4 @@ const Logo = styled(VerticalLogo)`
   margin-bottom: 30px;
 `;
 
-export default Landing;
+export default Authentication;

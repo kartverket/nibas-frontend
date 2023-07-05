@@ -1,9 +1,9 @@
 import styled from "styled-components";
-import Icon from "../Icon/Icon";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { Outline } from "style/mixins";
+import Icon from "components/Icon";
 
-export const LandingLoginCard = () => {
+export const AuthenticationLoginCard = () => {
   const { handleAuthenticateFunc } = useAuthenticationFlow();
 
   return (

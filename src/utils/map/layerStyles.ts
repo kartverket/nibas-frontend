@@ -7,7 +7,7 @@ import Circle from "ol/style/Circle";
 import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
 import Style from "ol/style/Style";
-import { map } from "components/Kart/constants";
+import { map } from "pages/Kart/constants";
 import Text from "ol/style/Text";
 import Point from "ol/geom/Point";
 import { editableBorderTypes, editSource } from "hooks/layers/constants";

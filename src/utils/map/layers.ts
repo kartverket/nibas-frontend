@@ -5,7 +5,7 @@ import VectorLayer from "ol/layer/Vector";
 import Source from "ol/source/Source";
 import TileWMS from "ol/source/TileWMS";
 import WMTS from "ol/source/WMTS";
-import { map } from "components/Kart/constants";
+import { map } from "pages/Kart/constants";
 import { bakgrunnskartLayers, grenserLayers } from "hooks/layers/constants";
 import { BakgrunnskartId, GrenseId, LayerId } from "hooks/layers/types";
 import { GeometryVectorSource } from "hooks/sources/types";
