@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { WFS } from "ol/format";
-import { map } from "../pages/Kart/constants";
+import { map } from "pages/Kart/constants";
 import { MainMappedLayer } from "./getLayersFromWMS";
 import { getFeaturesFromGeoJson } from "./map/geoJson";
 
