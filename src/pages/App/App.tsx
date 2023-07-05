@@ -2,16 +2,25 @@ import {
   ConfigureAuthFlowProps,
   useConfigureAuthFlow,
 } from "@kartverket/frontend-aut-lib";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+  useOutlet,
+} from "react-router-dom";
 import Providers from "./Providers";
 import PageLayout from "../Kart/PageLayout";
-import { Suspense } from "react";
+import { ReactNode, Suspense } from "react";
 import {
   AuthorizationStatus,
   useAuthorization,
 } from "../Authentication/AuthHooks";
 import { FullPageLoader } from "./AppLoader";
 import Authentication from "pages/Authentication/Authentication";
+import Landing from "pages/Landing/Landing";
+import ThirdPartyProviders from "./ThirdPartyProviders";
+import { routes } from "utils/routes";
 
 /**
  * Definerer 3 verdier i konfigurasjonen. Disse brukes av biblioteket forskjellige steder i flyten.
@@ -37,35 +46,45 @@ const App = () => {
         <Routes>
           {redirectAfterLogon}
           {redirectAfterLogout}
-          <Route
-            index
-            element={
-              <Providers>
-                <PageElement />
-              </Providers>
-            }
-          />
+          <Route path={routes.authentication} element={<ExternalPage />} />
+          <Route element={<ProtectedPage />}>
+            <Route index element={<Landing />} />
+            <Route path={routes.utkast} element={<p>Her kommer utkast!</p>} />
+            <Route path={routes.kart} element={<PageLayout />} />
+          </Route>
         </Routes>
       </Router>
     </Suspense>
   );
 };
 
-const PageElement = () => {
+const ExternalPage = () => {
   const { status } = useAuthorization();
-  const { hostname } = window.location;
-  const isLocalhost = hostname === "localhost";
   const isAuthorized = status === AuthorizationStatus.AUTHORIZED;
+  const isLocalhost = window.location.hostname === "localhost";
 
-  if (isLocalhost || isAuthorized) {
-    return <PageLayout />;
+  if (isAuthorized || isLocalhost) {
+    return <Navigate to={routes.index} />;
   }
 
-  if (status == AuthorizationStatus.PENDING) {
-    return <FullPageLoader />;
+  return (
+    <ThirdPartyProviders>
+      <Authentication />
+    </ThirdPartyProviders>
+  );
+};
+
+const ProtectedPage = () => {
+  const outlet = useOutlet();
+  const { status } = useAuthorization();
+  const isAuthorized = status === AuthorizationStatus.AUTHORIZED;
+  const isLocalhost = window.location.hostname === "localhost";
+
+  if (!isAuthorized && !isLocalhost) {
+    return <Navigate to={routes.authentication} />;
   }
 
-  return <Authentication />;
+  return <Providers>{outlet}</Providers>;
 };
 
 export default App;

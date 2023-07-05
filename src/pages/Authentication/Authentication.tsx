@@ -3,12 +3,13 @@ import styled from "styled-components";
 import { AuthorizationStatus, useAuthorization } from "./AuthHooks";
 import { ErrorBox } from "./AuthenticationErrorBox";
 import { AuthenticationLoginCard } from "./AuthenticationLoginCard";
+import { Page } from "components/Page";
 
 const Authentication = () => (
-  <Container>
+  <Page>
     <Logo />
     <AuthenticationBody />
-  </Container>
+  </Page>
 );
 
 const AuthenticationBody = () => {
@@ -33,18 +34,6 @@ const AuthenticationBody = () => {
 
   return <AuthenticationLoginCard />;
 };
-
-const Container = styled.main`
-  display: grid;
-  justify-content: center;
-  justify-items: center;
-  align-content: start;
-  grid-template-columns: 669px;
-  gap: 18px 0;
-  height: 100%;
-  background: var(--kvib-colors-gray-50);
-  padding: 160px 20px;
-`;
 
 const Logo = styled(VerticalLogo)`
   margin-bottom: 30px;
