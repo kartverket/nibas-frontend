@@ -37,7 +37,14 @@ const App = () => {
         <Routes>
           {redirectAfterLogon}
           {redirectAfterLogout}
-          <Route index element={<PageElement />} />
+          <Route
+            index
+            element={
+              <Providers>
+                <PageElement />
+              </Providers>
+            }
+          />
         </Routes>
       </Router>
     </Suspense>
@@ -51,11 +58,7 @@ const PageElement = () => {
   const isAuthorized = status === AuthorizationStatus.AUTHORIZED;
 
   if (isLocalhost || isAuthorized) {
-    return (
-      <Providers>
-        <PageLayout />
-      </Providers>
-    );
+    return <PageLayout />;
   }
 
   if (status == AuthorizationStatus.PENDING) {
