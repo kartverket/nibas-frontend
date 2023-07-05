@@ -1,5 +1,5 @@
 import Input from "components/Input";
-import { ButtonCell } from "components/Kart/OverlayPanels/Flatedata/KretsTable";
+import { ButtonCell } from "pages/Kart/OverlayPanels/Flatedata/KretsTable";
 import {
   FramtidigVersjonConflict,
   GrunnkretsRequest,

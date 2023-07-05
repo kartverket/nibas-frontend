@@ -44,7 +44,7 @@ import {
   ErrorHandlingContextValue,
   ErrorHandlingProvider,
 } from "contexts/ErrorHandlingContext";
-import ThirdPartyProviders from "components/App/Providers/ThirdPartyProviders";
+import ThirdPartyProviders from "pages/App/ThirdPartyProviders";
 import { BrowserRouter } from "react-router-dom";
 
 // OBS! Rekkefølgen her må være den samme som i Providers.tsx

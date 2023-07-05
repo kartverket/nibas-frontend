@@ -22,12 +22,8 @@ import {
   OppdaterUtkastRequest,
   UtkastResponse,
 } from "types/api";
-import { resetMapView } from "utils/map";
-import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useToast } from "@kvib/react";
 import { createSuccessToast } from "utils/components/toast";
 
@@ -42,11 +38,8 @@ export const UtkastContext = createContext<UtkastContextValue | undefined>(
 
 export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const { history, clearHistory } = useHistory();
-  const { clearDirtyStyles } = useFeatureStyle();
   const { tokenHolderFunc } = useAuthenticationFlow();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const { resetAndClearEditingLayer } = useEditAllGrenser();
-  const { closeOverlayPanel } = useOverlayPanel();
+  const [searchParams] = useSearchParams();
   const utkastId = searchParams.get("utkast");
   const { setError } = useErrorHandling();
   const toast = useToast();
@@ -146,13 +139,16 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     toast(createSuccessToast("Utkastet er lagret"));
   };
 
+  // TODO: dette kan stort sett kuttes, men applikasjonen må resettes når man går tilbake til start
   const closeUtkast = () => {
+    /*
     resetMapView();
     clearHistory({ hasPreviouslySavedHistory: false });
     clearDirtyStyles();
     setSearchParams({});
     resetAndClearEditingLayer();
     closeOverlayPanel();
+    */
   };
 
   const value = {

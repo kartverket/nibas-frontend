@@ -14,19 +14,19 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
     <ThirdPartyProviders>
       <ErrorHandlingProvider>
         <HistoryProvider>
-          <ToolbarProvider>
-            <FeatureStyleProvider>
-              <SidebarPanelProvider>
-                <OverlayPanelProvider>
-                  <EditGrenserProvider>
-                    <BakgrunnskartProvider>
-                      <UtkastProvider>{children}</UtkastProvider>
-                    </BakgrunnskartProvider>
-                  </EditGrenserProvider>
-                </OverlayPanelProvider>
-              </SidebarPanelProvider>
-            </FeatureStyleProvider>
-          </ToolbarProvider>
+          <UtkastProvider>
+            <ToolbarProvider>
+              <FeatureStyleProvider>
+                <SidebarPanelProvider>
+                  <OverlayPanelProvider>
+                    <EditGrenserProvider>
+                      <BakgrunnskartProvider>{children}</BakgrunnskartProvider>
+                    </EditGrenserProvider>
+                  </OverlayPanelProvider>
+                </SidebarPanelProvider>
+              </FeatureStyleProvider>
+            </ToolbarProvider>
+          </UtkastProvider>
         </HistoryProvider>
       </ErrorHandlingProvider>
     </ThirdPartyProviders>

@@ -2,6 +2,8 @@ import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { Button } from "@kvib/react";
 import Icon from "components/Icon";
 
+// TODO: kan antageligvis kuttes helt
+
 /**
  * Eksempel som rendrer en login eller logout-knapp basert på om man er autentisert.
  * Henter ut isAuthenticated-funksjonen, samt login og logout-funksjonene fra useAuthenticationFlow-hook.

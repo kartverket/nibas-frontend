@@ -1,4 +1,4 @@
-import { map } from "components/Kart/constants";
+import { map } from "pages/Kart/constants";
 import { Snap } from "ol/interaction";
 import { useEffect } from "react";
 import { getVectorLayers } from "utils/map/layers";

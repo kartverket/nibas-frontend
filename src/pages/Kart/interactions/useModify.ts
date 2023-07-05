@@ -8,7 +8,7 @@ import { Collection } from "ol";
 import { editableBorderTypes, editSource } from "hooks/layers/constants";
 import { pixelTolerance } from "./constants";
 import { getLayerById } from "utils/map/layers";
-import { map } from "components/Kart/constants";
+import { map } from "pages/Kart/constants";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 

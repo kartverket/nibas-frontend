@@ -11,7 +11,7 @@ import {
   ModalBody,
   ModalCloseButton,
 } from "@kvib/react";
-import { ButtonCell } from "components/Kart/OverlayPanels/Flatedata/KretsTable";
+import { ButtonCell } from "pages/Kart/OverlayPanels/Flatedata/KretsTable";
 import styled from "styled-components";
 
 type Props = {

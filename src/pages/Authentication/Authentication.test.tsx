@@ -1,5 +1,5 @@
 import { render, screen } from "test/test-utils";
-import Landing from "./Landing";
+import Authentication from "./Authentication";
 
 let mockIsAuthenticated = false;
 let mockErrorStatusCode: number | null = null;
@@ -21,12 +21,12 @@ vi.mock("hooks/useNibasApi", () => ({
   })),
 }));
 
-describe("Landing", () => {
+describe("Authentication", () => {
   it("should render normally is not authenticated", async () => {
     mockIsAuthenticated = false;
     mockErrorStatusCode = null;
 
-    render(<Landing />);
+    render(<Authentication />);
 
     expect(
       await screen.findByText("Logg inn i Nasjonal inndelingsbase")
@@ -43,7 +43,7 @@ describe("Landing", () => {
     mockIsAuthenticated = true;
     mockErrorStatusCode = 403;
 
-    render(<Landing />);
+    render(<Authentication />);
 
     expect(
       await screen.findByText("Du har ikke tilgang til å se inndelingsbasen.")
@@ -54,7 +54,7 @@ describe("Landing", () => {
     mockIsAuthenticated = true;
     mockErrorStatusCode = 500;
 
-    render(<Landing />);
+    render(<Authentication />);
 
     expect(
       await screen.findByText("En feil skjedde ved pålogging.")

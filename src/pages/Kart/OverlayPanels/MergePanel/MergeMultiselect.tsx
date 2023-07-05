@@ -1,6 +1,6 @@
 import { StemmekretsResponse } from "../../../../types/api";
 import styled from "styled-components";
-import Icon from "../../../Icon/Icon";
+import Icon from "../../../../components/Icon/Icon";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { MergeFormData } from "./MergeForm";
 import { ChangeEvent } from "react";
