@@ -3,15 +3,16 @@ import {
   useConfigureAuthFlow,
 } from "@kartverket/frontend-aut-lib";
 import {
-  BrowserRouter as Router,
   Route,
-  Routes,
   Navigate,
   useOutlet,
+  createBrowserRouter,
+  createRoutesFromElements,
+  RouterProvider,
 } from "react-router-dom";
 import Providers from "./Providers";
 import PageLayout from "../Kart/PageLayout";
-import { ReactNode, Suspense } from "react";
+import { Suspense } from "react";
 import {
   AuthorizationStatus,
   useAuthorization,
@@ -40,33 +41,38 @@ const App = () => {
   const [redirectAfterLogon, redirectAfterLogout]: JSX.Element[] =
     useConfigureAuthFlow(authFlowProps);
 
+  const router = createBrowserRouter(
+    createRoutesFromElements(
+      <>
+        {redirectAfterLogon}
+        {redirectAfterLogout}
+        <Route path={routes.authentication} element={<ExternalPage />} />
+        <Route element={<ProtectedPage />}>
+          <Route index element={<Landing />} />
+          <Route path={routes.utkast} element={<p>Her kommer utkast!</p>} />
+          <Route path={routes.kart} element={<PageLayout />} />
+        </Route>
+      </>
+    )
+  );
+
   return (
     <Suspense fallback={<FullPageLoader />}>
-      <Router>
-        <Routes>
-          {redirectAfterLogon}
-          {redirectAfterLogout}
-          <Route path={routes.authentication} element={<ExternalPage />} />
-          <Route element={<ProtectedPage />}>
-            <Route index element={<Landing />} />
-            <Route path={routes.utkast} element={<p>Her kommer utkast!</p>} />
-            <Route path={routes.kart} element={<PageLayout />} />
-          </Route>
-        </Routes>
-      </Router>
+      <RouterProvider router={router} />
     </Suspense>
   );
 };
 
-const ExternalPage = () => {
+const useAuthentication = () => {
   const { status } = useAuthorization();
   const isAuthorized = status === AuthorizationStatus.AUTHORIZED;
   const isLocalhost = window.location.hostname === "localhost";
+  return { shouldAuthenticate: !isAuthorized && !isLocalhost };
+};
 
-  if (isAuthorized || isLocalhost) {
-    return <Navigate to={routes.index} />;
-  }
-
+const ExternalPage = () => {
+  const { shouldAuthenticate } = useAuthentication();
+  if (!shouldAuthenticate) return <Navigate to={routes.index} />;
   return (
     <ThirdPartyProviders>
       <Authentication />
@@ -76,14 +82,8 @@ const ExternalPage = () => {
 
 const ProtectedPage = () => {
   const outlet = useOutlet();
-  const { status } = useAuthorization();
-  const isAuthorized = status === AuthorizationStatus.AUTHORIZED;
-  const isLocalhost = window.location.hostname === "localhost";
-
-  if (!isAuthorized && !isLocalhost) {
-    return <Navigate to={routes.authentication} />;
-  }
-
+  const { shouldAuthenticate } = useAuthentication();
+  if (shouldAuthenticate) return <Navigate to={routes.authentication} />;
   return <Providers>{outlet}</Providers>;
 };
 
