@@ -4,6 +4,7 @@
     "paths": {
       "utils/*": ["utils/*"],
       "components/*": ["components/*"],
+      "pages/*": ["pages/*"],
       "contexts/*": ["contexts/*"],
       "hooks/*": ["hooks/*"],
       "api/*": ["api/*"]
