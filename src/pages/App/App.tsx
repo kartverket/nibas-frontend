@@ -22,6 +22,7 @@ import Authentication from "pages/Authentication/Authentication";
 import Landing from "pages/Landing/Landing";
 import ThirdPartyProviders from "./ThirdPartyProviders";
 import { routes } from "utils/routes";
+import Utkast from "pages/Utkast/Utkast";
 
 /**
  * Definerer 3 verdier i konfigurasjonen. Disse brukes av biblioteket forskjellige steder i flyten.
@@ -49,7 +50,10 @@ const App = () => {
         <Route path={routes.authentication} element={<ExternalPage />} />
         <Route element={<ProtectedPage />}>
           <Route index element={<Landing />} />
-          <Route path={routes.utkast} element={<p>Her kommer utkast!</p>} />
+          <Route path={routes.utkast}>
+            <Route index element={<Utkast />} />
+            <Route path={routes.utkastId} element={<PageLayout />} />
+          </Route>
           <Route path={routes.kart} element={<PageLayout />} />
         </Route>
       </>

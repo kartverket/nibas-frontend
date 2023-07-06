@@ -1,6 +1,7 @@
 export const routes = {
   index: "/",
-  authentication: "/autentisering",
-  utkast: "/utkast",
-  kart: "/kart", // TODO: skal fungere på en annen måte
+  authentication: "autentisering",
+  utkast: "utkast",
+  utkastId: ":utkastId",
+  kart: "kart",
 };

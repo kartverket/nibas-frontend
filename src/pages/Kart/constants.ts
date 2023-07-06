@@ -34,7 +34,7 @@ export const overlayPopup = new Overlay({
   offset: [0, 0],
 });
 
-export const endringstyper: string[] = [
+export const endringstyper = [
   "Vedtatt grensejustering",
   "Vedtatt sammenslåing",
   "Vedtatt deling",
@@ -43,4 +43,5 @@ export const endringstyper: string[] = [
   "Navneendring",
   "Nummerendring",
   "Retting",
-];
+] as const;
+export type Endringstype = (typeof endringstyper)[number]; // "hearts" | "diamonds" | "spades" | "clubs"
