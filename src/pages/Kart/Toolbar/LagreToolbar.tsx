@@ -29,12 +29,7 @@ const UtkastNavn = styled.h4`
   font-weight: normal;
 `;
 
-type Props = {
-  createUtkastOpen: boolean;
-  setCreateUtkastOpen: (createUtkastOpen: boolean) => void;
-};
-
-const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
+const LagreToolbar = () => {
   const { canSave } = useToolbar();
   const [endringsloggOpen, setEndringsloggOpen] = useState(false);
   const { utkast, updateUtkastWithHistory, closeUtkast } = useUtkast();
@@ -52,7 +47,7 @@ const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
     if (utkast) {
       updateUtkastWithHistory();
     } else {
-      setCreateUtkastOpen(!createUtkastOpen);
+      // TODO: håndter dette bedre med ny utkastflyt
     }
   };
 
@@ -120,7 +115,6 @@ const LagreToolbar = ({ createUtkastOpen, setCreateUtkastOpen }: Props) => {
               ariaLabel="Lagre utkast"
               onClick={handleSave}
               disabled={!canSave}
-              isActive={createUtkastOpen}
             >
               Lagre
             </ModeButton>

@@ -1,10 +1,11 @@
-import { Button, Heading } from "@kvib/react";
+import { Heading } from "@kvib/react";
 import { BasePage } from "components/Page";
 import { useUtkasts } from "hooks/inndelinger/useUtkasts";
 import { Endringstype } from "pages/Kart/constants";
 import styled from "styled-components";
 import { UtkastResponse } from "types/api";
 import UtkastCard from "./UtkastCard";
+import UtkastOpprett from "./UtkastOpprett";
 
 const endringstypeOrder: Record<Endringstype, "left" | "right"> = {
   "Vedtatt grensejustering": "left",
@@ -56,9 +57,8 @@ const Utkast = () => {
           <Heading as="h1" size="lg">
             Upubliserte utkast
           </Heading>
-          <Button>TODO: Opprett et nytt utkast</Button>
+          <UtkastOpprett />
         </TitleContainer>
-
         {[leftColumn, rightColumn].map((column, i) => (
           <EndringstypeList key={i}>
             {Object.entries(column)

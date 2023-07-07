@@ -1,7 +1,5 @@
-import { useState } from "react";
 import styled from "styled-components";
 import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
-import UtkastToolbar from "./UtkastToolbar";
 import LagreToolbar from "./LagreToolbar";
 import ButtonToolbar from "./ButtonToolbar";
 import { toolbarSpacing } from "./components";
@@ -24,20 +22,13 @@ const Stack = styled.div`
 `;
 
 const Toolbar = () => {
-  const [createUtkastOpen, setCreateUtkastOpen] = useState(false);
   const { redigeringsmodusAktiv } = useRedigeringsmodus();
 
   return (
     <Container>
       {redigeringsmodusAktiv && (
         <Stack>
-          {createUtkastOpen && (
-            <UtkastToolbar setCreateUtkastOpen={setCreateUtkastOpen} />
-          )}
-          <LagreToolbar
-            createUtkastOpen={createUtkastOpen}
-            setCreateUtkastOpen={setCreateUtkastOpen}
-          />
+          <LagreToolbar />
         </Stack>
       )}
       <ButtonToolbar />
