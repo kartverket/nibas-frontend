@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useSWRConfig } from "swr";
 import {
   EntityUtkastType,
@@ -12,6 +12,7 @@ import {
 import {
   applyFeatureUtkast,
   applyNonFeatureUtkast,
+  getUtkastIdFromPath,
   historyToUtkastOperations,
 } from "./utils";
 import { updateUtkast as updateApiUtkast } from "api/utkast";
@@ -30,6 +31,7 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useToast } from "@kvib/react";
 import { createSuccessToast } from "utils/components/toast";
+import { routes } from "utils/routes";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
@@ -44,12 +46,14 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const { history, clearHistory } = useHistory();
   const { clearDirtyStyles } = useFeatureStyle();
   const { tokenHolderFunc } = useAuthenticationFlow();
-  const [searchParams, setSearchParams] = useSearchParams();
   const { resetAndClearEditingLayer } = useEditAllGrenser();
   const { closeOverlayPanel } = useOverlayPanel();
-  const utkastId = searchParams.get("utkast");
   const { setError } = useErrorHandling();
   const toast = useToast();
+
+  const location = useLocation();
+  const utkastId = getUtkastIdFromPath(location.pathname);
+  const navigate = useNavigate();
 
   const { mutate: globalMutate } = useSWRConfig();
 
@@ -150,9 +154,9 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     resetMapView();
     clearHistory({ hasPreviouslySavedHistory: false });
     clearDirtyStyles();
-    setSearchParams({});
     resetAndClearEditingLayer();
     closeOverlayPanel();
+    navigate(routes.utkast);
   };
 
   const value = {

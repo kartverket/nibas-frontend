@@ -1,38 +1,19 @@
-import { useEffect, useRef } from "react";
-import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import { UtkastItemExpanded } from "./UtkastItem";
-import useNibasApi from "hooks/useNibasApi";
 import useAlertModal from "hooks/useAlertModal";
 import { useUtkast } from "contexts/UtkastContext";
 import AlertModal from "components/AlertModal";
 import { useToolbar } from "contexts/ToolbarContext";
 import { Button } from "@kvib/react";
 
-type Inputs = {
-  navn: string;
-  endringsType: string;
-};
-
-type Props = {
-  utkastId: string;
-};
-
-const UtkastItemActive = ({ utkastId }: Props) => {
-  const { setValue, getValues } = useForm<Inputs>();
+const UtkastItemActive = () => {
   const { closeUtkast, updateUtkastWithHistory } = useUtkast();
-
-  const { data: fullUtkast } = useNibasApi("/v1/utkast/{id}", {
-    id: utkastId,
-  });
 
   const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } =
     useAlertModal(
       "Du har endringer i utkastet som ikke er lagret",
       "Er du sikker på at du vil gå ut av utkastet? Dersom du lukker utkastet nå mister du alle ulagrede endringer."
     );
-
-  const previousValues = useRef<Inputs>(getValues());
 
   const { canSave } = useToolbar();
 
@@ -42,15 +23,6 @@ const UtkastItemActive = ({ utkastId }: Props) => {
     }
     updateUtkastWithHistory();
   };
-
-  useEffect(() => {
-    if (!fullUtkast) return;
-
-    setValue("navn", fullUtkast.navn);
-    setValue("endringsType", fullUtkast.endringstype);
-
-    previousValues.current = getValues();
-  }, [fullUtkast, setValue, getValues]);
 
   return (
     <UtkastItemExpanded>

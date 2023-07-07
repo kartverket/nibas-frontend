@@ -1,4 +1,4 @@
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { Button } from "@kvib/react";
 import UtkastItemActive from "./UtkastItemActive";
@@ -13,14 +13,17 @@ import AlertModal from "components/AlertModal";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { getDateInFriendlyString } from "pages/Kart/OverlayPanels/MetadataPanel/utils";
+import { routes } from "utils/routes";
+import { getUtkastIdFromPath } from "contexts/UtkastContext/utils";
 
 type Props = {
   utkast: UtkastRef;
 };
 
 const UtkastItem = ({ utkast }: Props) => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const utkastId = searchParams.get("utkast");
+  const location = useLocation();
+  const utkastId = getUtkastIdFromPath(location.pathname);
+  const navigate = useNavigate();
 
   const { resetAndClearEditingLayer } = useEditAllGrenser();
   const { closeOverlayPanel } = useOverlayPanel();
@@ -36,9 +39,9 @@ const UtkastItem = ({ utkast }: Props) => {
 
   const changeUtkast = (id?: string) => {
     if (id) {
-      setSearchParams({ utkast: id });
+      navigate(id);
     } else {
-      setSearchParams({});
+      navigate(routes.utkast);
     }
     resetAndClearEditingLayer();
     closeOverlayPanel();
@@ -80,7 +83,7 @@ const UtkastItem = ({ utkast }: Props) => {
           />
         </UnstyledButton>
       </ItemWrapper>
-      {utkastActive && <UtkastItemActive utkastId={utkast.id} />}
+      {utkastActive && <UtkastItemActive />}
       <AlertModal
         status="warning"
         title={modalTitle}

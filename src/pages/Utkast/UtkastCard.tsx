@@ -21,7 +21,7 @@ const UtkastCard = ({ utkast }: { utkast: UtkastResponse }) => {
   const navigate = useNavigate();
 
   return (
-    <Container aria-role="button" onClick={() => navigate(utkast.id)}>
+    <Container role="link" onClick={() => navigate(utkast.id)}>
       <Info>
         <Heading as="h3" size="sm">
           {utkast.navn}
