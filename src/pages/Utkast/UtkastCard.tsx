@@ -13,9 +13,15 @@ import { getDateInFriendlyString } from "pages/Kart/OverlayPanels/MetadataPanel/
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { UtkastResponse } from "types/api";
+import UtkastModal from "./UtkastModal";
+import { useState } from "react";
 
 const UtkastCard = ({ utkast }: { utkast: UtkastResponse }) => {
   const navigate = useNavigate();
+  const [utkastModalType, setUtkastModalType] = useState<
+    "Publiser" | "Slett" | null
+  >(null);
+
   return (
     <Container aria-role="button" onClick={() => navigate(utkast.id)}>
       <Info>
@@ -41,10 +47,32 @@ const UtkastCard = ({ utkast }: { utkast: UtkastResponse }) => {
             TODO: Se endringslogg
           </MenuItem>
           <MenuDivider />
-          <MenuItem icon={<Icon icon="publish" />}>TODO: Publiser</MenuItem>
-          <MenuItem icon={<Icon icon="delete" />}>TODO: Slett</MenuItem>
+          <MenuItem
+            icon={<Icon icon="publish" />}
+            onClick={(e) => {
+              e.stopPropagation();
+              setUtkastModalType("Publiser");
+            }}
+          >
+            Publiser
+          </MenuItem>
+          <MenuItem
+            icon={<Icon icon="delete" />}
+            onClick={(e) => {
+              e.stopPropagation();
+              setUtkastModalType("Slett");
+            }}
+          >
+            Slett
+          </MenuItem>
         </MenuList>
       </Menu>
+
+      <UtkastModal
+        utkast={utkast}
+        type={utkastModalType}
+        onClose={() => setUtkastModalType(null)}
+      />
     </Container>
   );
 };

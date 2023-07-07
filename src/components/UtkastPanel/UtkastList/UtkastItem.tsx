@@ -1,58 +1,29 @@
-import { useState } from "react";
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { useSearchParams } from "react-router-dom";
 import styled from "styled-components";
-import { Button, useToast } from "@kvib/react";
-import { useSWRConfig } from "swr";
+import { Button } from "@kvib/react";
 import UtkastItemActive from "./UtkastItemActive";
-import { deleteUtkast as deleteApiUtkast, publishUtkast } from "api/utkast";
 import Icon from "components/Icon";
-import useNibasApi from "hooks/useNibasApi";
-import {
-  ApiErrorResponse,
-  ConflictResponseWrapper,
-  FramtidigVersjonConflict,
-  UtkastRef,
-} from "types/api";
+import { UtkastRef } from "types/api";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { resetMapView } from "utils/map";
-import UtkastConflicts from "./UtkastConflictModal/UtkastConflicts";
 import useAlertModal from "hooks/useAlertModal";
 import { useUtkast } from "contexts/UtkastContext";
 import { Outline } from "style/mixins";
 import AlertModal from "components/AlertModal";
-import { useErrorHandling } from "contexts/ErrorHandlingContext";
-import { statusCode } from "utils/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { getDateInFriendlyString } from "pages/Kart/OverlayPanels/MetadataPanel/utils";
-import { createSuccessToast } from "utils/components/toast";
 
 type Props = {
   utkast: UtkastRef;
 };
 
 const UtkastItem = ({ utkast }: Props) => {
-  const [isPublishOpen, setIsPublishOpen] = useState(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [publiserer, setPubliserer] = useState(false);
-  const [forkaster, setForkaster] = useState(false);
-  const [conflictResponse, setConflictResponse] =
-    useState<FramtidigVersjonConflict | null>(null);
-
   const [searchParams, setSearchParams] = useSearchParams();
   const utkastId = searchParams.get("utkast");
 
   const { resetAndClearEditingLayer } = useEditAllGrenser();
   const { closeOverlayPanel } = useOverlayPanel();
-  const { data: fullUtkast } = useNibasApi(
-    isPublishOpen || isDeleteOpen ? "/v1/utkast/{id}" : null,
-    {
-      id: utkast.id,
-    }
-  );
-  const { tokenHolderFunc } = useAuthenticationFlow();
-  const { mutate } = useSWRConfig();
   const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } =
     useAlertModal(
       "Du har endringer i utkastet som ikke er lagret",
@@ -60,96 +31,8 @@ const UtkastItem = ({ utkast }: Props) => {
     );
   const { canSave } = useToolbar();
   const { closeUtkast } = useUtkast();
-  const { setError } = useErrorHandling();
-  const toast = useToast();
 
   const utkastActive = utkastId === utkast.id;
-
-  const cleanUpUtkast = () => {
-    mutate(["/v1/utkast", tokenHolderFunc()?.token]);
-
-    if (utkastActive) {
-      setSearchParams({});
-    }
-  };
-
-  const getPublishDateText = () => {
-    if (fullUtkast) {
-      if (new Date(fullUtkast.gyldigFra).getDay === new Date().getDay) {
-        return "umiddelbart";
-      }
-      return getDateInFriendlyString(fullUtkast.gyldigFra);
-    }
-  };
-
-  const publish = async () => {
-    if (!fullUtkast) return;
-    setPubliserer(true);
-
-    const response = await publishUtkast(
-      utkast.id,
-      fullUtkast,
-      tokenHolderFunc()?.token
-    );
-
-    setPubliserer(false);
-
-    if (!response) return;
-
-    if (statusCode.isSuccessful(response.status)) {
-      toast(
-        createSuccessToast(
-          "Utkast publisert",
-          `Endringene trer i kraft ${getPublishDateText()}.`
-        )
-      );
-      cleanUpUtkast();
-    } else if (statusCode.isConflict(response.status)) {
-      const wrapper = (await response.json()) as ConflictResponseWrapper;
-
-      if (wrapper.framtidigVersjonConflict) {
-        setConflictResponse(wrapper.framtidigVersjonConflict);
-      } else {
-        setError({
-          title: "Utkastet er utdatert",
-          description:
-            "Du har gjort endringer på en gammel versjon av en krets. Du må gjennomføre endringene på nytt i et nytt utkast.",
-        });
-      }
-    } else {
-      try {
-        const wrapper = (await response.json()) as ApiErrorResponse;
-        setError({ ...wrapper.errorDescription, errorCode: wrapper.errorCode });
-      } catch {
-        // Dette kan skje om feilmeldingen av en eller annen grunn ikke er gyldig JSON eller ikke har nødvendige felter
-        // F.eks. fordi feilen ikke er håndtert riktig på backend eller kommer fra en proxy eller annet mellom klienten og backenden
-        setError({
-          title: "Ukjent serverfeil",
-          description:
-            "En ukjent feil skjedde ved publisering av utkastet. Vennligst forsøk igjen, om problemet fortsetter er det fint om du tar kontakt med Kartverket.",
-        });
-      }
-    }
-  };
-
-  const deleteUtkast = async () => {
-    if (!fullUtkast) return;
-    setForkaster(true);
-
-    const response = await deleteApiUtkast(utkast.id, tokenHolderFunc()?.token);
-    setForkaster(false);
-    if (statusCode.isSuccessful(response.status)) {
-      await mutate(["/v1/utkast", tokenHolderFunc()?.token]);
-
-      if (utkastActive) {
-        setSearchParams({});
-        resetAndClearEditingLayer();
-      }
-    } else if (statusCode.isError(response.status)) {
-      const wrapper = (await response.json()) as ApiErrorResponse;
-      setError({ ...wrapper.errorDescription, errorCode: wrapper.errorCode });
-    }
-  };
 
   const changeUtkast = (id?: string) => {
     if (id) {
@@ -162,35 +45,12 @@ const UtkastItem = ({ utkast }: Props) => {
     resetMapView();
   };
 
-  const openClosePublish = () => {
-    if (isPublishOpen) {
-      setIsPublishOpen(false);
-      return;
-    }
-    setIsPublishOpen(true);
-    setIsDeleteOpen(false);
-  };
-
-  const openCloseDelete = () => {
-    if (isDeleteOpen) {
-      setIsDeleteOpen(false);
-      return;
-    }
-    setIsPublishOpen(false);
-    setIsDeleteOpen(true);
-  };
-
   const openCloseUtkast = () => {
-    if (!isPublishOpen && !isDeleteOpen) {
-      if (canSave) {
-        openModal();
-      } else {
-        closeUtkast();
-      }
+    if (canSave) {
+      openModal();
+    } else {
+      closeUtkast();
     }
-
-    setIsPublishOpen(false);
-    setIsDeleteOpen(false);
 
     if (utkastActive) {
       return;
@@ -200,13 +60,7 @@ const UtkastItem = ({ utkast }: Props) => {
   };
 
   const getColorFromUtkastAction = () =>
-    isPublishOpen
-      ? "var(--kvib-colors-green-50)"
-      : isDeleteOpen
-      ? "var(--kvib-colors-pink-50)"
-      : utkastActive
-      ? "var(--kvib-colors-blue-50)"
-      : "transparent";
+    utkastActive ? "var(--kvib-colors-blue-50)" : "transparent";
 
   return (
     <li>
@@ -217,22 +71,6 @@ const UtkastItem = ({ utkast }: Props) => {
             {`Opprettet: ${getDateInFriendlyString(utkast.opprettetDato)}`}
           </UtkastOpprettetDato>
         </UtkastTekst>
-        <UnstyledButton onClick={() => openClosePublish()}>
-          <ButtonIcon
-            icon="done"
-            aria-label={`Publiser ${utkast.navn}`}
-            $isActive={isPublishOpen}
-            $primaryColor="var(--kvib-colors-green-400)"
-          />
-        </UnstyledButton>
-        <UnstyledButton onClick={() => openCloseDelete()}>
-          <ButtonIcon
-            icon="close"
-            aria-label={`Forkast ${utkast.navn}`}
-            $isActive={isDeleteOpen}
-            $primaryColor="var(--kvib-colors-red-500)"
-          />
-        </UnstyledButton>
         <UnstyledButton onClick={() => openCloseUtkast()}>
           <ButtonIcon
             icon="edit"
@@ -242,42 +80,7 @@ const UtkastItem = ({ utkast }: Props) => {
           />
         </UnstyledButton>
       </ItemWrapper>
-      {isPublishOpen && (
-        <UtkastItemExpanded>
-          <Buttons>
-            <Button variant="ghost" onClick={() => setIsPublishOpen(false)}>
-              Avbryt
-            </Button>
-            <Button onClick={publish} isLoading={publiserer}>
-              Publiser
-            </Button>
-          </Buttons>
-          {conflictResponse && (
-            <UtkastConflicts
-              utkastId={utkast.id}
-              conflictResponse={conflictResponse}
-              onCancel={() => setConflictResponse(null)}
-              close={() => setConflictResponse(null)}
-              onResolved={cleanUpUtkast}
-            />
-          )}
-        </UtkastItemExpanded>
-      )}
-      {isDeleteOpen && (
-        <UtkastItemExpanded>
-          <Buttons>
-            <Button variant="ghost" onClick={() => setIsDeleteOpen(false)}>
-              Avbryt
-            </Button>
-            <Button onClick={deleteUtkast} isLoading={forkaster}>
-              Forkast
-            </Button>
-          </Buttons>
-        </UtkastItemExpanded>
-      )}
-      {utkastActive && !isPublishOpen && !isDeleteOpen && (
-        <UtkastItemActive utkastId={utkast.id} />
-      )}
+      {utkastActive && <UtkastItemActive utkastId={utkast.id} />}
       <AlertModal
         status="warning"
         title={modalTitle}
@@ -334,12 +137,6 @@ export const UtkastItemExpanded = styled.div`
   select {
     background: white;
   }
-`;
-
-const Buttons = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
 `;
 
 const UnstyledButton = styled(Button).attrs(() => ({

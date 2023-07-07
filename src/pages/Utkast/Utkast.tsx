@@ -19,6 +19,11 @@ const endringstypeOrder: Record<Endringstype, "left" | "right"> = {
 
 type UtkastGroup = Record<UtkastResponse["endringstype"], UtkastResponse[]>;
 
+const sortUtkastByCreatedDesc = (
+  a: UtkastResponse,
+  b: UtkastResponse
+): number => b.opprettetDato.localeCompare(a.opprettetDato);
+
 const Utkast = () => {
   const { data: utkasts } = useUtkasts();
 
@@ -56,14 +61,18 @@ const Utkast = () => {
 
         {[leftColumn, rightColumn].map((column, i) => (
           <EndringstypeList key={i}>
-            {Object.entries(column).map(([endringstype, utkastsInGroup]) => (
-              <EndringstypeGroup key={endringstype}>
-                <Heading size="md">{endringstype}</Heading>
-                {utkastsInGroup.map((utkast) => (
-                  <UtkastCard key={utkast.id} utkast={utkast} />
-                ))}
-              </EndringstypeGroup>
-            ))}
+            {Object.entries(column)
+              .sort()
+              .map(([endringstype, utkastsInGroup]) => (
+                <EndringstypeGroup key={endringstype}>
+                  <Heading size="md">{endringstype}</Heading>
+                  {utkastsInGroup
+                    .sort(sortUtkastByCreatedDesc)
+                    .map((utkast) => (
+                      <UtkastCard key={utkast.id} utkast={utkast} />
+                    ))}
+                </EndringstypeGroup>
+              ))}
           </EndringstypeList>
         ))}
       </Container>
