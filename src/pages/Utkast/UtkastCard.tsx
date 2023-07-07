@@ -1,3 +1,5 @@
+import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 import {
   Heading,
   IconButton,
@@ -10,17 +12,12 @@ import {
 } from "@kvib/react";
 import Icon from "components/Icon";
 import { getDateInFriendlyString } from "pages/Kart/OverlayPanels/MetadataPanel/utils";
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
 import { UtkastResponse } from "types/api";
-import UtkastModal from "./UtkastModal";
-import { useState } from "react";
+import UtkastDelete from "./UtkastDelete";
+import UtkastPubliser from "./UtkastPubliser";
 
 const UtkastCard = ({ utkast }: { utkast: UtkastResponse }) => {
   const navigate = useNavigate();
-  const [utkastModalType, setUtkastModalType] = useState<
-    "Publiser" | "Slett" | null
-  >(null);
 
   return (
     <Container aria-role="button" onClick={() => navigate(utkast.id)}>
@@ -47,32 +44,10 @@ const UtkastCard = ({ utkast }: { utkast: UtkastResponse }) => {
             TODO: Se endringslogg
           </MenuItem>
           <MenuDivider />
-          <MenuItem
-            icon={<Icon icon="publish" />}
-            onClick={(e) => {
-              e.stopPropagation();
-              setUtkastModalType("Publiser");
-            }}
-          >
-            Publiser
-          </MenuItem>
-          <MenuItem
-            icon={<Icon icon="delete" />}
-            onClick={(e) => {
-              e.stopPropagation();
-              setUtkastModalType("Slett");
-            }}
-          >
-            Slett
-          </MenuItem>
+          <UtkastPubliser utkast={utkast} />
+          <UtkastDelete utkast={utkast} />
         </MenuList>
       </Menu>
-
-      <UtkastModal
-        utkast={utkast}
-        type={utkastModalType}
-        onClose={() => setUtkastModalType(null)}
-      />
     </Container>
   );
 };

@@ -1,27 +1,47 @@
-import { useState } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import { ModalFooter, ButtonGroup, Button, useToast } from "@kvib/react";
-import { publishUtkast, deleteUtkast } from "api/utkast";
+import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
+  Button,
+  ButtonGroup,
+  MenuItem,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  useDisclosure,
+  useToast,
+} from "@kvib/react";
+import { publishUtkast } from "api/utkast";
+import Icon from "components/Icon";
 import UtkastConflicts from "components/UtkastPanel/UtkastList/UtkastConflictModal/UtkastConflicts";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { getDateInFriendlyString } from "pages/Kart/OverlayPanels/MetadataPanel/utils";
+import { useState } from "react";
+import styled from "styled-components";
 import { useSWRConfig } from "swr";
 import {
-  FramtidigVersjonConflict,
-  ConflictResponseWrapper,
   ApiErrorResponse,
+  ConflictResponseWrapper,
+  FramtidigVersjonConflict,
   UtkastResponse,
 } from "types/api";
 import { statusCode } from "utils/api";
 import { createSuccessToast } from "utils/components/toast";
+import EndringsloggAccordion from "./EndringsloggAccordion";
 
 type Props = {
   utkast: UtkastResponse;
-  type: "Publiser" | "Slett" | null;
-  onClose: () => void;
 };
 
-const UtkastModalFooter = ({ type, onClose, utkast }: Props) => {
+const UtkastPubliser = ({ utkast }: Props) => {
+  const { isOpen, onClose, onOpen } = useDisclosure();
+
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const { tokenHolderFunc } = useAuthenticationFlow();
@@ -84,49 +104,64 @@ const UtkastModalFooter = ({ type, onClose, utkast }: Props) => {
     }
   };
 
-  const slettUtkast = async () => {
-    setIsLoading(true);
-    const response = await deleteUtkast(utkast.id, tokenHolderFunc()?.token);
-    setIsLoading(false);
-
-    if (statusCode.isSuccessful(response.status)) {
-      await mutate(["/v1/utkast", tokenHolderFunc()?.token]);
-    } else if (statusCode.isError(response.status)) {
-      const wrapper = (await response.json()) as ApiErrorResponse;
-      setError({ ...wrapper.errorDescription, errorCode: wrapper.errorCode });
-    }
-  };
-
   return (
-    <ModalFooter>
-      <ButtonGroup>
-        <Button variant="outline" onClick={onClose} colorScheme="gray">
-          Avbryt
-        </Button>
-        <Button
-          isLoading={isLoading}
-          colorScheme={type === "Slett" ? "red" : "blue"}
-          onClick={() => {
-            if (type === "Slett") {
-              slettUtkast();
-            } else if (type === "Publiser") {
-              publiserUtkast();
-            }
-          }}
-        >
-          {type}
-        </Button>
-        {conflictResponse && (
-          <UtkastConflicts
-            utkastId={utkast.id}
-            conflictResponse={conflictResponse}
-            onCancel={() => setConflictResponse(null)}
-            close={() => setConflictResponse(null)}
-            onResolved={cleanUpUtkast}
-          />
-        )}
-      </ButtonGroup>
-    </ModalFooter>
+    <>
+      <MenuItem
+        icon={<Icon icon="publish" />}
+        onClick={(e) => {
+          e.stopPropagation();
+          onOpen();
+        }}
+      >
+        Publiser
+      </MenuItem>
+      <Modal isOpen={isOpen} onClose={onClose} isCentered size="2xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Publiser utkast</ModalHeader>
+          <ModalCloseButton />
+          <Body>
+            <Alert status="info">
+              <AlertIcon />
+              <div>
+                <AlertTitle>Du er i ferd med å publisere et utkast</AlertTitle>
+                <AlertDescription>
+                  Endringene i utkastet vil bli tilgjengelig for alle etter
+                  publisering.
+                </AlertDescription>
+              </div>
+            </Alert>
+            <EndringsloggAccordion />
+          </Body>
+          <ModalFooter>
+            <ButtonGroup>
+              <Button variant="outline" onClick={onClose} colorScheme="gray">
+                Avbryt
+              </Button>
+              <Button isLoading={isLoading} onClick={publiserUtkast}>
+                Publiser utkast
+              </Button>
+              {conflictResponse && (
+                <UtkastConflicts
+                  utkastId={utkast.id}
+                  conflictResponse={conflictResponse}
+                  onCancel={() => setConflictResponse(null)}
+                  close={() => setConflictResponse(null)}
+                  onResolved={cleanUpUtkast}
+                />
+              )}
+            </ButtonGroup>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
   );
 };
-export default UtkastModalFooter;
+
+const Body = styled(ModalBody)`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
+export default UtkastPubliser;
