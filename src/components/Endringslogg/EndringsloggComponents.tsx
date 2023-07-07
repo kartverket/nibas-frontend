@@ -4,7 +4,9 @@ import { Endring } from "./hooks/utkastEndringerTypes";
 import { Heading } from "@kvib/react";
 
 export const EndringSection = styled.section`
-  margin-bottom: 40px;
+  &:not(:last-of-type) {
+    margin-bottom: 40px;
+  }
 `;
 
 export const Underoverskrift = styled.h3`

@@ -33,7 +33,7 @@ import {
 } from "types/api";
 import { statusCode } from "utils/api";
 import { createSuccessToast } from "utils/components/toast";
-import EndringsloggAccordion from "./EndringsloggAccordion";
+import { EndringsloggAccordion } from "./UtkastEndringslogg";
 
 type Props = {
   utkast: UtkastResponse;
@@ -131,7 +131,7 @@ const UtkastPubliser = ({ utkast }: Props) => {
                 </AlertDescription>
               </div>
             </Alert>
-            <EndringsloggAccordion />
+            <EndringsloggAccordion utkast={utkast} />
           </Body>
           <ModalFooter>
             <ButtonGroup>

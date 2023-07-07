@@ -18,13 +18,13 @@ import {
 import Icon from "components/Icon";
 import { ApiErrorResponse, UtkastResponse } from "types/api";
 import styled from "styled-components";
-import EndringsloggAccordion from "./EndringsloggAccordion";
 import { useState } from "react";
 import { deleteUtkast } from "api/utkast";
 import { statusCode } from "utils/api";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { mutate } from "swr";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
+import { EndringsloggAccordion } from "./UtkastEndringslogg";
 
 type Props = {
   utkast: UtkastResponse;
@@ -78,7 +78,7 @@ const UtkastDelete = ({ utkast }: Props) => {
                 </AlertDescription>
               </div>
             </Alert>
-            <EndringsloggAccordion />
+            <EndringsloggAccordion utkast={utkast} />
           </Body>
           <ModalFooter>
             <ButtonGroup>

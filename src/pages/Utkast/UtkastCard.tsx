@@ -15,6 +15,7 @@ import { getDateInFriendlyString } from "pages/Kart/OverlayPanels/MetadataPanel/
 import { UtkastResponse } from "types/api";
 import UtkastDelete from "./UtkastDelete";
 import UtkastPubliser from "./UtkastPubliser";
+import UtkastEndringslogg from "./UtkastEndringslogg";
 
 const UtkastCard = ({ utkast }: { utkast: UtkastResponse }) => {
   const navigate = useNavigate();
@@ -29,7 +30,6 @@ const UtkastCard = ({ utkast }: { utkast: UtkastResponse }) => {
           {`Opprettet: ${getDateInFriendlyString(utkast.opprettetDato)}`}
         </Date>
       </Info>
-
       <Menu>
         <MenuButton
           as={IconButton}
@@ -40,9 +40,7 @@ const UtkastCard = ({ utkast }: { utkast: UtkastResponse }) => {
         />
         <MenuList>
           <MenuItem icon={<Icon icon="edit" />}>TODO: Endre detaljer</MenuItem>
-          <MenuItem icon={<Icon icon="published_with_changes" />}>
-            TODO: Se endringslogg
-          </MenuItem>
+          <UtkastEndringslogg utkast={utkast} />
           <MenuDivider />
           <UtkastPubliser utkast={utkast} />
           <UtkastDelete utkast={utkast} />

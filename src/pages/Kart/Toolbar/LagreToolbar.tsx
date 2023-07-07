@@ -5,8 +5,6 @@ import ModeButton from "./ModeButton";
 import { Frame } from "./components";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import AlertModal from "components/AlertModal";
-import { useState } from "react";
-import { EndringsloggModal } from "components/Endringslogg/EndringsloggModal";
 import { useToolbar } from "contexts/ToolbarContext";
 import ToolbarTooltip from "./ToolbarTooltip";
 import { Divider } from "@kvib/react";
@@ -31,7 +29,6 @@ const UtkastNavn = styled.h4`
 
 const LagreToolbar = () => {
   const { canSave } = useToolbar();
-  const [endringsloggOpen, setEndringsloggOpen] = useState(false);
   const { utkast, updateUtkastWithHistory, closeUtkast } = useUtkast();
   const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } =
     useAlertModal(
@@ -56,71 +53,34 @@ const LagreToolbar = () => {
 
   return (
     <LagreFrame>
-      {utkast ? (
-        <>
-          <UtkastInfo>
-            <span>Navn på utkast</span>
-            <UtkastNavn>{utkast.navn}</UtkastNavn>
-          </UtkastInfo>
-          <Divider orientation="vertical" />
-          <ToolbarTooltip text="Åpne en endringslogg med oppsummering av alle endringer i utkastet.">
-            <ModeButton
-              icon="published_with_changes"
-              ariaLabel="Vis endringer"
-              onClick={() => setEndringsloggOpen(true)}
-            >
-              Endringer
-            </ModeButton>
-          </ToolbarTooltip>
-          <ToolbarTooltip
-            text="Lagre endringene til utkastet"
-            shortcut="CTRL + S"
-          >
-            <ModeButton
-              icon="save"
-              ariaLabel="Lagre utkast"
-              onClick={handleSave}
-              disabled={!canSave}
-            >
-              Lagre
-            </ModeButton>
-          </ToolbarTooltip>
-          <ToolbarTooltip
-            text="Avslutt redigering av utkastet."
-            shortcut="CTRL + L"
-          >
-            <ModeButton
-              icon="close"
-              ariaLabel="Lukk utkast"
-              onClick={canSave ? openModal : closeUtkast}
-            >
-              Lukk
-            </ModeButton>
-          </ToolbarTooltip>
-        </>
-      ) : (
-        <>
-          <ToolbarTooltip text="Åpne en endringslogg med oppsummering av alle endringer i utkastet.">
-            <ModeButton
-              icon="published_with_changes"
-              ariaLabel="Vis endringer"
-              onClick={() => setEndringsloggOpen(true)}
-            >
-              Endringer
-            </ModeButton>
-          </ToolbarTooltip>
-          <ToolbarTooltip text="Opprett et nytt utkast" shortcut="CTRL + S">
-            <ModeButton
-              icon="save"
-              ariaLabel="Lagre utkast"
-              onClick={handleSave}
-              disabled={!canSave}
-            >
-              Lagre
-            </ModeButton>
-          </ToolbarTooltip>
-        </>
-      )}
+      <UtkastInfo>
+        <span>Navn på utkast</span>
+        <UtkastNavn>{utkast?.navn}</UtkastNavn>
+      </UtkastInfo>
+      <Divider orientation="vertical" />
+      <ToolbarTooltip text="Lagre endringene til utkastet" shortcut="CTRL + S">
+        <ModeButton
+          icon="save"
+          ariaLabel="Lagre utkast"
+          onClick={handleSave}
+          disabled={!canSave}
+        >
+          Lagre
+        </ModeButton>
+      </ToolbarTooltip>
+      <ToolbarTooltip
+        text="Avslutt redigering av utkastet."
+        shortcut="CTRL + L"
+      >
+        <ModeButton
+          icon="close"
+          ariaLabel="Lukk utkast"
+          onClick={canSave ? openModal : closeUtkast}
+        >
+          Lukk
+        </ModeButton>
+      </ToolbarTooltip>
+
       <AlertModal
         status="warning"
         title={modalTitle}
@@ -135,10 +95,6 @@ const LagreToolbar = () => {
           text: "Fortsett redigering",
           onClick: closeModal,
         }}
-      />
-      <EndringsloggModal
-        isOpen={endringsloggOpen}
-        onClose={() => setEndringsloggOpen(false)}
       />
     </LagreFrame>
   );
