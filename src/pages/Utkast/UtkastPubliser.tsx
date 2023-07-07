@@ -19,7 +19,7 @@ import {
 } from "@kvib/react";
 import { publishUtkast } from "api/utkast";
 import Icon from "components/Icon";
-import UtkastConflicts from "components/UtkastPanel/UtkastList/UtkastConflictModal/UtkastConflicts";
+import UtkastConflicts from "components/UtkastConflictModal/UtkastConflicts";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { getDateInFriendlyString } from "pages/Kart/OverlayPanels/MetadataPanel/utils";
 import { useState } from "react";

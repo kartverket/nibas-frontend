@@ -1,14 +1,12 @@
 import styled from "styled-components";
 import Bakgrunnskart from "components/Bakgrunnskart";
 import GrenserDrillDown from "components/GrenserDrillDown";
-import UtkastPanel from "components/UtkastPanel";
 
 const SidebarPanels = () => {
   return (
     <Wrapper>
       <GrenserDrillDown />
       <Bakgrunnskart />
-      <UtkastPanel />
     </Wrapper>
   );
 };

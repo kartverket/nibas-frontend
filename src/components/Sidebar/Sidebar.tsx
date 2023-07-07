@@ -19,11 +19,6 @@ const Sidebar = () => {
           panel="kartlag"
           icon={<SidebarIcon icon="map" />}
         />
-        <SidebarButton
-          title="Utkast"
-          panel="utkast"
-          icon={<SidebarIcon icon="description" />}
-        />
       </ButtonsWrapper>
     </StyledSidebar>
   );
