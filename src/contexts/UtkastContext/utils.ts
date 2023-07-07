@@ -250,10 +250,3 @@ export const createUtkastOperations = ({
   },
   stemmekretsSammenslaaingsendring: stemmekretssammenslaaingsendringer,
 });
-
-export const getUtkastIdFromPath = (pathname: string) => {
-  const utkastIdMatches = pathname.match(
-    "/utkast/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})"
-  );
-  return utkastIdMatches ? utkastIdMatches[1] : null;
-};

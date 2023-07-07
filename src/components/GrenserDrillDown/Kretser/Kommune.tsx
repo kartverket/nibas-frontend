@@ -8,12 +8,14 @@ import AlertModal from "components/AlertModal";
 import useAlertModal from "hooks/useAlertModal";
 import { useHistory } from "contexts/HistoryContext";
 import { Button, IconButton, Spinner } from "@kvib/react";
+import { useUtkast } from "contexts/UtkastContext";
 
 type Props = {
   kommune: KommuneRef;
 };
 
 const Kommune = ({ kommune }: Props) => {
+  const { utkast } = useUtkast();
   const { history, clearHistory } = useHistory();
   const { kommuneValues, toggleEditKretser, toggleKretser, lasterData } =
     useInndelingerKrets(kommune);
@@ -57,7 +59,11 @@ const Kommune = ({ kommune }: Props) => {
         {lasterData ? (
           <Spinner size="lg" color="var(--kvib-colors-blue-500)" />
         ) : (
-          <Button variant="link" onClick={onAvsluttRedigeringClick}>
+          <Button
+            variant="link"
+            onClick={onAvsluttRedigeringClick}
+            isDisabled={!utkast}
+          >
             {kommuneValues.editing ? "Avslutt redigering" : "Rediger"}
           </Button>
         )}

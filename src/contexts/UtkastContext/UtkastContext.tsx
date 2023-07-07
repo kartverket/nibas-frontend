@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useSWRConfig } from "swr";
 import {
   EntityUtkastType,
@@ -12,7 +12,6 @@ import {
 import {
   applyFeatureUtkast,
   applyNonFeatureUtkast,
-  getUtkastIdFromPath,
   historyToUtkastOperations,
 } from "./utils";
 import { updateUtkast as updateApiUtkast } from "api/utkast";
@@ -52,7 +51,10 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const toast = useToast();
 
   const location = useLocation();
-  const utkastId = getUtkastIdFromPath(location.pathname);
+  const utkastIdMatches = location.pathname.match(
+    "/utkast/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})"
+  );
+  const utkastId = utkastIdMatches ? utkastIdMatches[1] : null;
   const navigate = useNavigate();
 
   const { mutate: globalMutate } = useSWRConfig();

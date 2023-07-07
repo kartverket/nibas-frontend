@@ -8,6 +8,7 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import ToolbarTooltip from "./ToolbarTooltip";
 import { Divider } from "@kvib/react";
+import { useUtkast } from "contexts/UtkastContext";
 
 const Container = styled.div`
   display: flex;
@@ -26,6 +27,7 @@ const ZoomButtons = styled(Frame)`
 
 // TODO: en eller annen måte å skjule knapper under en "mer"-meny ved mindre skjerm
 const ButtonToolbar = () => {
+  const { utkast } = useUtkast();
   const { undo, redo } = useToolbar();
   const { activePointMode, togglePointMode, activeEditModes, toggleEditMode } =
     useToolbar();
@@ -86,30 +88,34 @@ const ButtonToolbar = () => {
   return (
     <Container>
       <Buttons>
-        <ToolbarTooltip text="Angrer forrige endring" shortcut="CTRL + Z">
-          <ModeButton
-            icon="undo"
-            ariaLabel="Angre handling"
-            onClick={undo}
-            disabled={!undo}
-          >
-            Angre
-          </ModeButton>
-        </ToolbarTooltip>
-        <ToolbarTooltip
-          text="Gjør handling likevel"
-          shortcut="CTRL + SHIFT + Z"
-        >
-          <ModeButton
-            icon="redo"
-            ariaLabel="Gjør om handling"
-            onClick={redo}
-            disabled={!redo}
-          >
-            Gjør om
-          </ModeButton>
-        </ToolbarTooltip>
-        <Divider orientation="vertical" />
+        {utkast && (
+          <>
+            <ToolbarTooltip text="Angrer forrige endring" shortcut="CTRL + Z">
+              <ModeButton
+                icon="undo"
+                ariaLabel="Angre handling"
+                onClick={undo}
+                disabled={!undo}
+              >
+                Angre
+              </ModeButton>
+            </ToolbarTooltip>
+            <ToolbarTooltip
+              text="Gjør handling likevel"
+              shortcut="CTRL + SHIFT + Z"
+            >
+              <ModeButton
+                icon="redo"
+                ariaLabel="Gjør om handling"
+                onClick={redo}
+                disabled={!redo}
+              >
+                Gjør om
+              </ModeButton>
+            </ToolbarTooltip>
+            <Divider orientation="vertical" />
+          </>
+        )}
         {editingType && (
           <>
             <ToolbarTooltip text="Flytt et punkt ved bruk av koordinater">
