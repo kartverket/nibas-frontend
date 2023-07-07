@@ -1,42 +1,25 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import { UtkastItemExpanded } from "./UtkastItem";
-import Input from "components/Input";
-import { useHistory, UtkastEntry } from "contexts/HistoryContext";
-import { useHistoryFormSync } from "contexts/HistoryContext/useHistoryFormSync";
-import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
 import useNibasApi from "hooks/useNibasApi";
-import { UtkastResponse } from "types/api";
 import useAlertModal from "hooks/useAlertModal";
 import { useUtkast } from "contexts/UtkastContext";
-import useTimer from "hooks/useTimer";
 import AlertModal from "components/AlertModal";
 import { useToolbar } from "contexts/ToolbarContext";
-import { Button, FormControl, FormLabel, Select } from "@kvib/react";
-import { endringstyper } from "pages/Kart/constants";
+import { Button } from "@kvib/react";
 
 type Inputs = {
   navn: string;
   endringsType: string;
 };
 
-const fromFormToRequest = (
-  form: Inputs,
-  utkast: UtkastResponse
-): UtkastRequestWithoutOperations => ({
-  ...utkast,
-  navn: form.navn,
-  endringstype: form.endringsType,
-  version: utkast.version,
-});
-
 type Props = {
   utkastId: string;
 };
 
 const UtkastItemActive = ({ utkastId }: Props) => {
-  const { register, setValue, getValues } = useForm<Inputs>();
+  const { setValue, getValues } = useForm<Inputs>();
   const { closeUtkast, updateUtkastWithHistory } = useUtkast();
 
   const { data: fullUtkast } = useNibasApi("/v1/utkast/{id}", {
@@ -50,9 +33,7 @@ const UtkastItemActive = ({ utkastId }: Props) => {
     );
 
   const previousValues = useRef<Inputs>(getValues());
-  const { startTimer, clearTimer } = useTimer();
 
-  const { addHistoryEntry } = useHistory();
   const { canSave } = useToolbar();
 
   const handleSave = () => {
@@ -71,61 +52,8 @@ const UtkastItemActive = ({ utkastId }: Props) => {
     previousValues.current = getValues();
   }, [fullUtkast, setValue, getValues]);
 
-  const setFormValues = useCallback(
-    (change: UtkastEntry["changes"][number], direction: "to" | "from") => {
-      setValue("navn", change[direction]?.navn ?? "");
-      setValue("endringsType", change[direction]?.endringstype ?? "");
-    },
-    [setValue]
-  );
-
-  useHistoryFormSync<UtkastEntry>({
-    entityId: utkastId,
-    undoEventKey: "utkastUndo",
-    redoEventKey: "utkastRedo",
-    setFormValues,
-  });
-
-  const onChange = () => {
-    clearTimer();
-
-    if (!fullUtkast) return;
-
-    startTimer(
-      () =>
-        addHistoryEntry({
-          type: "utkast",
-          changes: [
-            {
-              from: fromFormToRequest(previousValues.current, fullUtkast),
-              to: fromFormToRequest(getValues(), fullUtkast),
-              id: fullUtkast.id,
-            },
-          ],
-        }),
-      700
-    );
-
-    previousValues.current = getValues();
-  };
-
-  const registerOptions = {
-    onChange,
-  };
-
   return (
     <UtkastItemExpanded>
-      <Input label="Navn på utkast" {...register("navn", registerOptions)} />
-      <FormControl>
-        <FormLabel>Type utkast</FormLabel>
-        <Select {...register("endringsType", registerOptions)}>
-          {endringstyper.map((type) => (
-            <option key={type} value={type}>
-              {type}
-            </option>
-          ))}
-        </Select>
-      </FormControl>
       <EditingUtkastText>
         Du er nå i redigeringsmodus av dette utkastet. Alle endringer du gjør i
         inndelingene og kartet vil bli lagret på dette utkastet når du klikker

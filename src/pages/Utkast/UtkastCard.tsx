@@ -6,7 +6,6 @@ import {
   Menu,
   MenuButton,
   MenuDivider,
-  MenuItem,
   MenuList,
   Text,
 } from "@kvib/react";
@@ -16,6 +15,7 @@ import { UtkastResponse } from "types/api";
 import UtkastDelete from "./UtkastDelete";
 import UtkastPubliser from "./UtkastPubliser";
 import UtkastEndringslogg from "./UtkastEndringslogg";
+import UtkastEndre from "./UtkastEndre";
 
 const UtkastCard = ({ utkast }: { utkast: UtkastResponse }) => {
   const navigate = useNavigate();
@@ -39,7 +39,7 @@ const UtkastCard = ({ utkast }: { utkast: UtkastResponse }) => {
           variant="ghost"
         />
         <MenuList>
-          <MenuItem icon={<Icon icon="edit" />}>TODO: Endre detaljer</MenuItem>
+          <UtkastEndre utkast={utkast} />
           <UtkastEndringslogg utkast={utkast} />
           <MenuDivider />
           <UtkastPubliser utkast={utkast} />
