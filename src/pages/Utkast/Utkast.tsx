@@ -6,6 +6,7 @@ import styled from "styled-components";
 import { UtkastResponse } from "types/api";
 import UtkastCard from "./UtkastCard";
 import UtkastOpprett from "./UtkastOpprett";
+import LandingHeader from "pages/Landing/LandingHeader";
 
 const endringstypeOrder: Record<Endringstype, "left" | "right"> = {
   "Vedtatt grensejustering": "left",
@@ -53,7 +54,7 @@ const Utkast = () => {
 
   return (
     <>
-      <Header>TODO: Jeg skal bli en Header en dag!</Header>
+      <LandingHeader />
       <Container>
         <TitleContainer>
           <Heading as="h1" size="lg">
@@ -97,11 +98,6 @@ const TitleContainer = styled.div`
   display: flex;
   gap: 24px;
   grid-area: title;
-`;
-
-const Header = styled.header`
-  background: white;
-  padding: 20px;
 `;
 
 const EndringstypeList = styled.div`

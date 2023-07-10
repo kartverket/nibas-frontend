@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
 import LagreToolbar from "./LagreToolbar";
 import ButtonToolbar from "./ButtonToolbar";
 import { toolbarSpacing } from "./components";
+import { useUtkast } from "contexts/UtkastContext";
 
 const Container = styled.div`
   position: relative;
@@ -22,11 +22,11 @@ const Stack = styled.div`
 `;
 
 const Toolbar = () => {
-  const { redigeringsmodusAktiv } = useRedigeringsmodus();
+  const { utkast } = useUtkast();
 
   return (
     <Container>
-      {redigeringsmodusAktiv && (
+      {utkast && (
         <Stack>
           <LagreToolbar />
         </Stack>

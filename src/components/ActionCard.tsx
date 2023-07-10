@@ -9,18 +9,16 @@ type Props = {
   onClick: () => void;
 };
 
-const ActionCard = ({ title, description, icon, onClick }: Props) => {
-  return (
-    <Container onClick={onClick}>
-      {icon && <ActionIcon icon={icon} />}
-      <div>
-        <Title size="md">{title}</Title>
-        <Description>{description}</Description>
-      </div>
-      <Arrow icon="arrow_forward_ios" />
-    </Container>
-  );
-};
+const ActionCard = ({ title, description, icon, onClick }: Props) => (
+  <Container onClick={onClick}>
+    {icon && <ActionIcon icon={icon} />}
+    <div>
+      <Title size="md">{title}</Title>
+      <Description>{description}</Description>
+    </div>
+    <Arrow icon="arrow_forward_ios" />
+  </Container>
+);
 
 const Container = styled(Button).attrs({ variant: "ghost" })`
   display: flex;

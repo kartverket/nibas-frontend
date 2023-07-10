@@ -8,7 +8,7 @@ import Icon from "components/Icon";
  * Eksempel som rendrer en login eller logout-knapp basert på om man er autentisert.
  * Henter ut isAuthenticated-funksjonen, samt login og logout-funksjonene fra useAuthenticationFlow-hook.
  */
-export const AuthenticationButton = () => {
+const AuthenticationButton = () => {
   const { isAuthenticatedFunc, handleAuthenticateFunc, handleLogoutFunc } =
     useAuthenticationFlow();
 
