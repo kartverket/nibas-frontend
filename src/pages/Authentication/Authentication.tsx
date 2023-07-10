@@ -2,18 +2,23 @@ import { VerticalLogo } from "components/Logo";
 import styled from "styled-components";
 import { AuthorizationStatus, useAuthorization } from "./AuthHooks";
 import { ErrorBox } from "./AuthenticationErrorBox";
-import { AuthenticationLoginCard } from "./AuthenticationLoginCard";
 import { Page } from "components/Page";
+import ActionCard from "components/ActionCard";
+import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 
-const Authentication = () => (
-  <Page>
-    <Logo />
-    <AuthenticationBody />
-  </Page>
-);
+const Authentication = () => {
+  return (
+    <Page>
+      <Logo />
+      <AuthenticationBody />
+    </Page>
+  );
+};
 
 const AuthenticationBody = () => {
   const { status } = useAuthorization();
+  const { handleAuthenticateFunc } = useAuthenticationFlow();
+
   if (status === AuthorizationStatus.ERROR) {
     return (
       <ErrorBox
@@ -32,7 +37,13 @@ const AuthenticationBody = () => {
     );
   }
 
-  return <AuthenticationLoginCard />;
+  return (
+    <ActionCard
+      title="Logg inn i Nasjonal inndelingsbase"
+      description="Denne tjenesten er kun tilgjengelig for autoriserte brukere"
+      onClick={() => handleAuthenticateFunc("/")}
+    />
+  );
 };
 
 const Logo = styled(VerticalLogo)`

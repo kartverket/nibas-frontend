@@ -76,7 +76,7 @@ const useAuthentication = () => {
 
 const ExternalPage = () => {
   const { shouldAuthenticate } = useAuthentication();
-  if (!shouldAuthenticate) return <Navigate to={routes.index} />;
+  if (!shouldAuthenticate) return <Navigate to={routes.index} replace={true} />;
   return (
     <ThirdPartyProviders>
       <Authentication />
@@ -87,7 +87,8 @@ const ExternalPage = () => {
 const ProtectedPage = () => {
   const outlet = useOutlet();
   const { shouldAuthenticate } = useAuthentication();
-  if (shouldAuthenticate) return <Navigate to={routes.authentication} />;
+  if (shouldAuthenticate)
+    return <Navigate to={routes.authentication} replace={true} />;
   return <Providers>{outlet}</Providers>;
 };
 

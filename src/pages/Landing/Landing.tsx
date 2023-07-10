@@ -1,17 +1,25 @@
-import { Card } from "@kvib/react";
+import ActionCard from "components/ActionCard";
 import { Page } from "components/Page";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { routes } from "utils/routes";
 
 const Landing = () => {
+  const navigate = useNavigate();
+
   return (
     <Page>
-      <Link to={routes.utkast}>
-        <Card>Gjør en eller flere endringer</Card>
-      </Link>
-      <Link to={routes.kart}>
-        <Card>Finn og utforsk</Card>
-      </Link>
+      <ActionCard
+        title="Gjør en eller flere endringer"
+        description="Opprett, rediger, eller publiser ett eller flere utkast med endringer."
+        icon="edit_location_alt"
+        onClick={() => navigate(routes.utkast)}
+      />
+      <ActionCard
+        title="Finn og utforsk"
+        description="Se oppdaterte data uten å foreta deg noen endringer."
+        icon="travel_explore"
+        onClick={() => navigate(routes.kart)}
+      />
     </Page>
   );
 };
