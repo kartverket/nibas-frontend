@@ -1,4 +1,4 @@
-import { Breadcrumb, BreadcrumbItem, Text } from "@kvib/react";
+import { Breadcrumb, BreadcrumbItem, Text, useDisclosure } from "@kvib/react";
 import Icon from "components/Icon";
 import { useUtkast } from "contexts/UtkastContext";
 import styled from "styled-components";
@@ -7,8 +7,10 @@ import AlertModal from "components/Modals/AlertModal";
 import useAlertModal from "hooks/useAlertModal";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
+import UtkastEndreModal from "components/Modals/UtkastEndreModal";
 
 const HeaderBreadcrumb = () => {
+  const { isOpen, onClose, onOpen } = useDisclosure();
   const { utkast, closeUtkast } = useUtkast();
   const { canSave } = useToolbar();
 
@@ -51,9 +53,10 @@ const HeaderBreadcrumb = () => {
       <HeaderButton
         label="Rediger utkast"
         icon="edit_note"
-        onClick={() => console.log("TODO")}
+        onClick={onOpen}
         labelIsHidden
       />
+      <UtkastEndreModal isOpen={isOpen} onClose={onClose} utkast={utkast} />
       <AlertModal
         status="warning"
         title={modalTitle}

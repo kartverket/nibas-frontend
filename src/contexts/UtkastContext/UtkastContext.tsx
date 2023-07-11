@@ -160,7 +160,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     clearDirtyStyles();
     resetAndClearEditingLayer();
     closeOverlayPanel();
-    navigate(routes.utkast);
+    navigate(routes.index);
   };
 
   const value = {
