@@ -24,6 +24,8 @@ const Label = styled.label`
   display: flex;
   align-items: center;
   gap: 8px;
+  white-space: nowrap;
+  cursor: pointer;
 
   & > button {
     height: unset;

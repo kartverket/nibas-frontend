@@ -1,4 +1,4 @@
-import { Breadcrumb, BreadcrumbItem } from "@kvib/react";
+import { Breadcrumb, BreadcrumbItem, Text } from "@kvib/react";
 import Icon from "components/Icon";
 import { useUtkast } from "contexts/UtkastContext";
 import styled from "styled-components";
@@ -9,13 +9,13 @@ const HeaderBreadcrumb = () => {
   return (
     <Breadcrumb separator={<Separator icon="chevron_right" />} spacing={1}>
       <BreadcrumbItem>
-        <span>Utkast</span>
+        <Crumb>Utkast</Crumb>
       </BreadcrumbItem>
       <BreadcrumbItem>
-        <span>{utkast.endringstype}</span>
+        <Crumb>{utkast.endringstype}</Crumb>
       </BreadcrumbItem>
       <BreadcrumbItem>
-        <span>{utkast.navn}</span>
+        <Crumb>{utkast.navn}</Crumb>
       </BreadcrumbItem>
     </Breadcrumb>
   );
@@ -25,5 +25,7 @@ const Separator = styled(Icon)`
   line-height: 30px;
   font-size: 20px;
 `;
+
+const Crumb = styled(Text).attrs({ noOfLines: 1 })``;
 
 export default HeaderBreadcrumb;
