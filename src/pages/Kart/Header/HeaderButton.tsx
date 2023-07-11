@@ -6,15 +6,22 @@ type HeaderButtonProps = {
   icon: string;
   label: string;
   labelIsHidden?: boolean;
+  onClick: () => void;
 };
 
-const HeaderButton = ({ icon, label, labelIsHidden }: HeaderButtonProps) => (
+const HeaderButton = ({
+  icon,
+  label,
+  labelIsHidden,
+  onClick,
+}: HeaderButtonProps) => (
   <Label>
     <IconButton
       variant="outline"
       colorScheme="gray"
       icon={<Icon icon={icon} />}
       aria-label={label}
+      onClick={onClick}
     />
     {!labelIsHidden && label}
   </Label>

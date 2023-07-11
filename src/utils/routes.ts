@@ -1,7 +1,7 @@
 export const routes = {
   index: "/",
   authentication: "/autentisering",
-  utkast: "utkast",
+  utkast: "/utkast",
   utkastId: ":utkastId",
   kart: "kart",
 };

@@ -13,20 +13,6 @@ const LagreFrame = styled(Frame)`
   justify-content: center;
 `;
 
-const UtkastInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 4px;
-  font-size: 12px;
-`;
-
-const UtkastNavn = styled.h4`
-  margin: 0;
-  font-size: 14px;
-  font-weight: normal;
-`;
-
 const LagreToolbar = () => {
   const { canSave } = useToolbar();
   const { utkast, updateUtkastWithHistory, closeUtkast } = useUtkast();
@@ -53,11 +39,6 @@ const LagreToolbar = () => {
 
   return (
     <LagreFrame>
-      <UtkastInfo>
-        <span>Navn på utkast</span>
-        <UtkastNavn>{utkast?.navn}</UtkastNavn>
-      </UtkastInfo>
-      <Divider orientation="vertical" />
       <ToolbarTooltip text="Lagre endringene til utkastet" shortcut="CTRL + S">
         <ModeButton
           icon="save"

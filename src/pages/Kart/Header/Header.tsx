@@ -1,30 +1,66 @@
 import styled from "styled-components";
 import HeaderButton from "./HeaderButton";
 import HeaderBreadcrumb from "./HeaderBreadcrumb";
+import { routes } from "utils/routes";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
+  const navigate = useNavigate();
+
   return (
     <Container>
       <UtkastBar>
         <Section>
-          <HeaderButton icon="home" label="Utkast" labelIsHidden />
+          <HeaderButton
+            label="Utkast"
+            icon="home"
+            onClick={() => navigate(routes.utkast)}
+            labelIsHidden
+          />
           <HeaderBreadcrumb />
-          <HeaderButton icon="edit_note" label="Rediger utkast" labelIsHidden />
+          <HeaderButton
+            label="Rediger utkast"
+            icon="edit_note"
+            onClick={() => console.log("TODO")}
+            labelIsHidden
+          />
         </Section>
         <Section>
-          <HeaderButton icon="undo" label="Angre" />
-          <HeaderButton icon="redo" label="Gjør om" />
-          <HeaderButton icon="save" label="Lagre" />
-          <HeaderButton icon="published_with_changes" label="Endringslogg" />
+          <HeaderButton
+            label="Angre"
+            icon="undo"
+            onClick={() => console.log("TODO")}
+          />
+          <HeaderButton
+            label="Gjør om"
+            icon="redo"
+            onClick={() => console.log("TODO")}
+          />
+          <HeaderButton
+            label="Lagre"
+            icon="save"
+            onClick={() => console.log("TODO")}
+          />
+          <HeaderButton
+            label="Endringslogg"
+            icon="published_with_changes"
+            onClick={() => console.log("TODO")}
+          />
         </Section>
       </UtkastBar>
       <SubBar>
+        <Section></Section>
         <Section>
-          <HeaderButton icon="travel_explore" label="TODO: Åpne en inndeling" />
-        </Section>
-        <Section>
-          <HeaderButton icon="upload" label="Publiser utkast" />
-          <HeaderButton icon="delete" label="Slett utkast" />
+          <HeaderButton
+            label="Publiser utkast"
+            icon="upload"
+            onClick={() => console.log("TODO")}
+          />
+          <HeaderButton
+            label="Slett utkast"
+            icon="delete"
+            onClick={() => console.log("TODO")}
+          />
         </Section>
       </SubBar>
     </Container>
