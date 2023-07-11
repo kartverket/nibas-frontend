@@ -12,7 +12,7 @@ import {
 import Icon from "components/Icon";
 import { getDateInFriendlyString } from "pages/Kart/OverlayPanels/MetadataPanel/utils";
 import { UtkastResponse } from "types/api";
-import UtkastDelete from "./UtkastDelete";
+import UtkastSlett from "./UtkastSlett";
 import UtkastPubliser from "./UtkastPubliser";
 import UtkastEndringslogg from "./UtkastEndringslogg";
 import UtkastEndre from "./UtkastEndre";
@@ -43,7 +43,7 @@ const UtkastCard = ({ utkast }: { utkast: UtkastResponse }) => {
           <UtkastEndringslogg utkast={utkast} />
           <MenuDivider />
           <UtkastPubliser utkast={utkast} />
-          <UtkastDelete utkast={utkast} />
+          <UtkastSlett utkast={utkast} />
         </MenuList>
       </Menu>
     </Container>

@@ -3,7 +3,7 @@ import Icon from "components/Icon";
 import { useUtkast } from "contexts/UtkastContext";
 import styled from "styled-components";
 import HeaderButton from "./HeaderButton";
-import AlertModal from "components/AlertModal";
+import AlertModal from "components/Modals/AlertModal";
 import useAlertModal from "hooks/useAlertModal";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";

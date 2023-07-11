@@ -59,6 +59,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
 
   const { mutate: globalMutate } = useSWRConfig();
 
+  // TODO: noe beskyttelse på at man kan ende opp i et utkast som er publisert eller slettet allerede?
   const {
     data: utkast,
     mutate,
