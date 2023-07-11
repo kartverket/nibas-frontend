@@ -152,6 +152,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     toast(createSuccessToast("Utkastet er lagret"));
   };
 
+  // TODO: her trengs det en loader for å indikere at dette tar litt tid å gjøre
   const closeUtkast = () => {
     resetMapView();
     clearHistory({ hasPreviouslySavedHistory: false });
