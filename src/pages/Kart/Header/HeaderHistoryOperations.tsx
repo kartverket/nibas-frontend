@@ -1,7 +1,23 @@
+import { useToolbar } from "contexts/ToolbarContext";
 import HeaderButton from "./HeaderButton";
 import styled from "styled-components";
+import { useUtkast } from "contexts/UtkastContext";
+import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 
 const HeaderHistoryOperations = () => {
+  const { utkast, updateUtkastWithHistory } = useUtkast();
+  const { canSave } = useToolbar();
+
+  const handleSave = () => {
+    if (utkast && canSave) {
+      updateUtkastWithHistory();
+    }
+  };
+
+  useKeyboardShortcut("save", handleSave);
+
+  if (!utkast) return null;
+
   return (
     <Section>
       <HeaderButton
@@ -17,7 +33,8 @@ const HeaderHistoryOperations = () => {
       <HeaderButton
         label="Lagre"
         icon="save"
-        onClick={() => console.log("TODO")}
+        onClick={handleSave}
+        isDisabled={!canSave}
       />
       <HeaderButton
         label="Endringslogg"

@@ -3,19 +3,38 @@ import Icon from "components/Icon";
 import { useUtkast } from "contexts/UtkastContext";
 import styled from "styled-components";
 import HeaderButton from "./HeaderButton";
-import { routes } from "utils/routes";
-import { useNavigate } from "react-router-dom";
+import AlertModal from "components/AlertModal";
+import useAlertModal from "hooks/useAlertModal";
+import { useToolbar } from "contexts/ToolbarContext";
+import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 
 const HeaderBreadcrumb = () => {
-  const navigate = useNavigate();
-  const { utkast } = useUtkast();
+  const { utkast, closeUtkast } = useUtkast();
+  const { canSave } = useToolbar();
+
+  const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } =
+    useAlertModal(
+      "Du har endringer i utkastet som ikke er lagret",
+      "Er du sikker på at du vil gå ut av utkastet? Dersom du lukker utkastet nå mister du alle ulagrede endringer."
+    );
+
+  const handleHome = () => {
+    if (canSave) {
+      openModal();
+    } else {
+      closeUtkast();
+    }
+  };
+
+  useKeyboardShortcut("close", handleHome);
   if (!utkast) return null;
+
   return (
     <Section>
       <HeaderButton
         label="Utkast"
         icon="home"
-        onClick={() => navigate(routes.utkast)}
+        onClick={handleHome}
         labelIsHidden
       />
       <Breadcrumb separator={<Separator icon="chevron_right" />} spacing={1}>
@@ -34,6 +53,21 @@ const HeaderBreadcrumb = () => {
         icon="edit_note"
         onClick={() => console.log("TODO")}
         labelIsHidden
+      />
+      <AlertModal
+        status="warning"
+        title={modalTitle}
+        description={modalBody}
+        isOpen={modalIsOpen}
+        onClose={closeModal}
+        secondaryAction={{
+          text: "Forkast endringer",
+          onClick: closeUtkast,
+        }}
+        primaryAction={{
+          text: "Fortsett redigering",
+          onClick: closeModal,
+        }}
       />
     </Section>
   );

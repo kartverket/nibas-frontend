@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import HeaderButton from "./HeaderButton";
 import HeaderBreadcrumb from "./HeaderBreadcrumb";
 import HeaderHistoryOperations from "./HeaderHistoryOperations";
 import { Spacer } from "@kvib/react";

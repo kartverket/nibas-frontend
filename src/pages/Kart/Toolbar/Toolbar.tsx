@@ -1,8 +1,6 @@
 import styled from "styled-components";
-import LagreToolbar from "./LagreToolbar";
 import ButtonToolbar from "./ButtonToolbar";
 import { toolbarSpacing } from "./components";
-import { useUtkast } from "contexts/UtkastContext";
 
 const Container = styled.div`
   position: relative;
@@ -15,22 +13,9 @@ const Container = styled.div`
   flex-wrap: wrap;
 `;
 
-const Stack = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${toolbarSpacing}px;
-`;
-
 const Toolbar = () => {
-  const { utkast } = useUtkast();
-
   return (
     <Container>
-      {utkast && (
-        <Stack>
-          <LagreToolbar />
-        </Stack>
-      )}
       <ButtonToolbar />
     </Container>
   );

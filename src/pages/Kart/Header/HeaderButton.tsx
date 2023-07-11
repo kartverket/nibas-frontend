@@ -7,6 +7,7 @@ type HeaderButtonProps = {
   label: string;
   labelIsHidden?: boolean;
   onClick: () => void;
+  isDisabled?: boolean;
 };
 
 const HeaderButton = ({
@@ -14,6 +15,7 @@ const HeaderButton = ({
   label,
   labelIsHidden,
   onClick,
+  isDisabled,
 }: HeaderButtonProps) => (
   <Label>
     <IconButton
@@ -22,6 +24,7 @@ const HeaderButton = ({
       icon={<Icon icon={icon} />}
       aria-label={label}
       onClick={onClick}
+      isDisabled={isDisabled}
     />
     {!labelIsHidden && label}
   </Label>
