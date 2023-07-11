@@ -5,8 +5,8 @@ import styled from "styled-components";
 type HeaderButtonProps = {
   icon: string;
   label: string;
+  onClick?: () => void;
   labelIsHidden?: boolean;
-  onClick: () => void;
   isDisabled?: boolean;
 };
 

@@ -5,16 +5,11 @@ import {
   AccordionItem,
   AccordionPanel,
   MenuItem,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
   Skeleton,
   useDisclosure,
 } from "@kvib/react";
 import { EndringsloggGrunnkretsendringer } from "components/Endringslogg/EndringsloggGrunnkretsendringer";
+import EndringsloggModal from "components/Endringslogg/EndringsloggModal";
 import { EndringsloggStemmekretsendringer } from "components/Endringslogg/EndringsloggStemmekretsendringer";
 import { useUtkastEndringer } from "components/Endringslogg/hooks/useUtkastEndringer";
 import Icon from "components/Icon";
@@ -27,12 +22,6 @@ type Props = {
 
 const UtkastEndringslogg = ({ utkast }: Props) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
-  const { harEndringer, laster, stemmekretsendringer, grunnkretsendringer } =
-    useUtkastEndringer(utkast);
-
-  const harLastetData =
-    !laster || !!stemmekretsendringer || !!grunnkretsendringer;
-
   return (
     <>
       <MenuItem
@@ -44,36 +33,7 @@ const UtkastEndringslogg = ({ utkast }: Props) => {
       >
         Se endringslogg
       </MenuItem>
-      <Modal
-        isOpen={isOpen}
-        onClose={onClose}
-        size="xl"
-        isCentered
-        scrollBehavior="inside"
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Endringer i dette utkastet</ModalHeader>
-          <ModalCloseButton aria-label="Lukk" />
-          <ModalBody>
-            {!harEndringer && (
-              <div>Det er ingen endringer i dette utkastet</div>
-            )}
-
-            {stemmekretsendringer?.map((endringer) => (
-              <Skeleton key={endringer.kommune.id} isLoaded={harLastetData}>
-                <EndringsloggStemmekretsendringer endringer={endringer} />
-              </Skeleton>
-            ))}
-
-            {grunnkretsendringer?.map((endringer) => (
-              <Skeleton key={endringer.kommune.id} isLoaded={harLastetData}>
-                <EndringsloggGrunnkretsendringer endringer={endringer} />
-              </Skeleton>
-            ))}
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+      <EndringsloggModal isOpen={isOpen} onClose={onClose} utkast={utkast} />
     </>
   );
 };

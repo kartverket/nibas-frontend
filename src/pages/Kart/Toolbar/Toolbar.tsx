@@ -2,13 +2,11 @@ import styled from "styled-components";
 import { map } from "../constants";
 import { Frame, toolbarSpacing } from "./components";
 import ModeButton from "./ModeButton";
-import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import ToolbarTooltip from "./ToolbarTooltip";
 import { Divider } from "@kvib/react";
-import { useUtkast } from "contexts/UtkastContext";
 
 const Container = styled.div`
   grid-area: toolbar;
@@ -31,8 +29,6 @@ const ZoomButtons = styled(Frame)`
 
 // TODO: en eller annen måte å skjule knapper under en "mer"-meny ved mindre skjerm
 const Toolbar = () => {
-  const { utkast } = useUtkast();
-  const { undo, redo } = useToolbar();
   const { activePointMode, togglePointMode, activeEditModes, toggleEditMode } =
     useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
@@ -86,40 +82,9 @@ const Toolbar = () => {
     });
   };
 
-  useKeyboardShortcut("undo", undo);
-  useKeyboardShortcut("redo", redo);
-
   return (
     <Container>
       <Buttons>
-        {utkast && (
-          <>
-            <ToolbarTooltip text="Angrer forrige endring" shortcut="CTRL + Z">
-              <ModeButton
-                icon="undo"
-                ariaLabel="Angre handling"
-                onClick={undo}
-                disabled={!undo}
-              >
-                Angre
-              </ModeButton>
-            </ToolbarTooltip>
-            <ToolbarTooltip
-              text="Gjør handling likevel"
-              shortcut="CTRL + SHIFT + Z"
-            >
-              <ModeButton
-                icon="redo"
-                ariaLabel="Gjør om handling"
-                onClick={redo}
-                disabled={!redo}
-              >
-                Gjør om
-              </ModeButton>
-            </ToolbarTooltip>
-            <Divider orientation="vertical" />
-          </>
-        )}
         {editingType && (
           <>
             <ToolbarTooltip text="Flytt et punkt ved bruk av koordinater">
@@ -209,12 +174,12 @@ const Toolbar = () => {
             >
               Splitt
             </ModeButton>
+            <Divider orientation="vertical" />
           </>
         )}
 
         {editingType && (
           <>
-            <Divider orientation="vertical" />
             <ToolbarTooltip text="Skru av/på snapping mot bakgrunnskart.">
               <ModeButton
                 icon="magnet"

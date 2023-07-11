@@ -3,10 +3,13 @@ import HeaderButton from "./HeaderButton";
 import styled from "styled-components";
 import { useUtkast } from "contexts/UtkastContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
+import { useDisclosure } from "@kvib/react";
+import EndringsloggModal from "components/Endringslogg/EndringsloggModal";
 
 const HeaderHistoryOperations = () => {
   const { utkast, updateUtkastWithHistory } = useUtkast();
-  const { canSave } = useToolbar();
+  const { canSave, undo, redo } = useToolbar();
+  const { isOpen, onClose, onOpen } = useDisclosure();
 
   const handleSave = () => {
     if (utkast && canSave) {
@@ -15,6 +18,8 @@ const HeaderHistoryOperations = () => {
   };
 
   useKeyboardShortcut("save", handleSave);
+  useKeyboardShortcut("undo", undo);
+  useKeyboardShortcut("redo", redo);
 
   if (!utkast) return null;
 
@@ -23,12 +28,14 @@ const HeaderHistoryOperations = () => {
       <HeaderButton
         label="Angre"
         icon="undo"
-        onClick={() => console.log("TODO")}
+        onClick={undo}
+        isDisabled={!undo}
       />
       <HeaderButton
         label="Gjør om"
         icon="redo"
-        onClick={() => console.log("TODO")}
+        onClick={redo}
+        isDisabled={!redo}
       />
       <HeaderButton
         label="Lagre"
@@ -39,8 +46,9 @@ const HeaderHistoryOperations = () => {
       <HeaderButton
         label="Endringslogg"
         icon="published_with_changes"
-        onClick={() => console.log("TODO")}
+        onClick={onOpen}
       />
+      <EndringsloggModal isOpen={isOpen} onClose={onClose} utkast={utkast} />
     </Section>
   );
 };
