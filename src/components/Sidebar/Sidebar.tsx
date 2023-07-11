@@ -29,6 +29,7 @@ const StyledSidebar = styled.div`
   justify-content: space-between;
   border-right: none;
   overflow: hidden;
+  border-right: 2px solid var(--kvib-colors-chakra-border-color);
 `;
 
 const ButtonsWrapper = styled.div`

@@ -7,6 +7,7 @@ import AlertModal from "components/AlertModal";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
 import { ApiErrorResponse } from "../../types/api";
+import Header from "./Header/Header";
 
 // TODO: Gi denne et bedre navn, kanskje bare "Kart", da Kart-komponenten er lite beskrivende selv
 const PageLayout = () => {
@@ -32,6 +33,7 @@ const PageLayout = () => {
         }}
       >
         <Suspense fallback="Loading...">
+          <Header />
           <Sidebar />
         </Suspense>
         <Kart />
@@ -61,7 +63,7 @@ const Grid = styled.div`
   grid-template-columns: auto 1fr;
   grid-template-rows: auto 1fr;
   grid-template-areas:
-    ". topbar"
+    "header header"
     "sidebar map";
 `;
 
