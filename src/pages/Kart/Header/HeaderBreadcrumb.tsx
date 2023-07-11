@@ -3,42 +3,18 @@ import Icon from "components/Icon";
 import { useUtkast } from "contexts/UtkastContext";
 import styled from "styled-components";
 import HeaderButton from "./HeaderButton";
-import AlertModal from "components/Modals/AlertModal";
-import useAlertModal from "hooks/useAlertModal";
-import { useToolbar } from "contexts/ToolbarContext";
-import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import UtkastEndreModal from "components/Modals/UtkastEndreModal";
+import HeaderHome from "./HeaderHome";
 
 const HeaderBreadcrumb = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();
-  const { utkast, closeUtkast } = useUtkast();
-  const { canSave } = useToolbar();
+  const { utkast } = useUtkast();
 
-  const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } =
-    useAlertModal(
-      "Du har endringer i utkastet som ikke er lagret",
-      "Er du sikker på at du vil gå ut av utkastet? Dersom du lukker utkastet nå mister du alle ulagrede endringer."
-    );
-
-  const handleHome = () => {
-    if (canSave) {
-      openModal();
-    } else {
-      closeUtkast();
-    }
-  };
-
-  useKeyboardShortcut("close", handleHome);
   if (!utkast) return null;
 
   return (
     <Section>
-      <HeaderButton
-        label="Utkast"
-        icon="home"
-        onClick={handleHome}
-        labelIsHidden
-      />
+      <HeaderHome />
       <Breadcrumb separator={<Separator icon="chevron_right" />} spacing={1}>
         <BreadcrumbItem>
           <Crumb>Utkast</Crumb>
@@ -57,21 +33,6 @@ const HeaderBreadcrumb = () => {
         labelIsHidden
       />
       <UtkastEndreModal isOpen={isOpen} onClose={onClose} utkast={utkast} />
-      <AlertModal
-        status="warning"
-        title={modalTitle}
-        description={modalBody}
-        isOpen={modalIsOpen}
-        onClose={closeModal}
-        secondaryAction={{
-          text: "Forkast endringer",
-          onClick: closeUtkast,
-        }}
-        primaryAction={{
-          text: "Fortsett redigering",
-          onClick: closeModal,
-        }}
-      />
     </Section>
   );
 };

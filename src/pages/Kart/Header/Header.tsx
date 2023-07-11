@@ -5,8 +5,11 @@ import HeaderUtkastOperations from "./HeaderUtkastOperations";
 import HeaderButton from "./HeaderButton";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { useUtkast } from "contexts/UtkastContext";
+import HeaderHome from "./HeaderHome";
 
 const Header = () => {
+  const { utkast } = useUtkast();
   const { activeSidebarPanel, openSidebarPanel, closeSidebarPanel } =
     useSidebarPanel();
   const { closeOverlayPanel } = useOverlayPanel();
@@ -27,11 +30,14 @@ const Header = () => {
         <HeaderHistoryOperations />
       </UtkastBar>
       <SubBar>
-        <HeaderButton
-          label="Åpne en inndeling"
-          icon="travel_explore"
-          onClick={toggleSidebar}
-        />
+        <Section>
+          {!utkast && <HeaderHome />}
+          <HeaderButton
+            label="Åpne en inndeling"
+            icon="travel_explore"
+            onClick={toggleSidebar}
+          />
+        </Section>
         <HeaderUtkastOperations />
       </SubBar>
     </Container>
@@ -41,6 +47,7 @@ const Header = () => {
 const Container = styled.header`
   grid-area: header;
   box-shadow: var(--kvib-shadows-base);
+  z-index: 10;
 `;
 
 const Bar = styled.article`
@@ -48,6 +55,10 @@ const Bar = styled.article`
   justify-content: space-between;
   padding: 12px 18px;
   gap: 64px;
+
+  &:empty {
+    display: none;
+  }
 `;
 
 const UtkastBar = styled(Bar)`
@@ -57,6 +68,12 @@ const UtkastBar = styled(Bar)`
 
 const SubBar = styled(Bar)`
   background: var(--kvib-colors-gray-50);
+`;
+
+const Section = styled.section`
+  display: flex;
+  align-items: center;
+  gap: 16px;
 `;
 
 export default Header;
