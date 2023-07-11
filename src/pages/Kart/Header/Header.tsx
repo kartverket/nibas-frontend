@@ -1,10 +1,25 @@
 import styled from "styled-components";
 import HeaderBreadcrumb from "./HeaderBreadcrumb";
 import HeaderHistoryOperations from "./HeaderHistoryOperations";
-import { Spacer } from "@kvib/react";
 import HeaderUtkastOperations from "./HeaderUtkastOperations";
+import HeaderButton from "./HeaderButton";
+import { useSidebarPanel } from "contexts/SidebarPanelContext";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
 
 const Header = () => {
+  const { activeSidebarPanel, openSidebarPanel, closeSidebarPanel } =
+    useSidebarPanel();
+  const { closeOverlayPanel } = useOverlayPanel();
+
+  const toggleSidebar = () => {
+    if (activeSidebarPanel === "inndelinger") {
+      closeSidebarPanel();
+    } else {
+      openSidebarPanel("inndelinger");
+      closeOverlayPanel();
+    }
+  };
+
   return (
     <Container>
       <UtkastBar>
@@ -12,7 +27,11 @@ const Header = () => {
         <HeaderHistoryOperations />
       </UtkastBar>
       <SubBar>
-        <Spacer />
+        <HeaderButton
+          label="Åpne en inndeling"
+          icon="travel_explore"
+          onClick={toggleSidebar}
+        />
         <HeaderUtkastOperations />
       </SubBar>
     </Container>

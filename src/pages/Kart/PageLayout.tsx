@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import styled from "styled-components";
 import { SWRConfig } from "swr";
 import Kart from "pages/Kart";
-import Sidebar from "components/Sidebar";
 import AlertModal from "components/Modals/AlertModal";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
@@ -34,7 +33,6 @@ const PageLayout = () => {
       >
         <Suspense fallback="Loading...">
           <Header />
-          <Sidebar />
         </Suspense>
         <Kart />
         {error && (

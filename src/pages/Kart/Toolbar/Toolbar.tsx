@@ -7,6 +7,7 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import ToolbarTooltip from "./ToolbarTooltip";
 import { Divider } from "@kvib/react";
+import { useSidebarPanel } from "contexts/SidebarPanelContext";
 
 const Container = styled.div`
   grid-area: toolbar;
@@ -41,6 +42,17 @@ const Toolbar = () => {
     activeOverlayPanel === "grunnkrets" || activeOverlayPanel === "stemmekrets";
   const mergeIsAvailable = editingType === "stemmekrets";
   const mergeIsActive = activeOverlayPanel === "sammenslåing";
+  const { activeSidebarPanel, openSidebarPanel, closeSidebarPanel } =
+    useSidebarPanel();
+
+  const toggleSidebar = () => {
+    if (activeSidebarPanel === "kartlag") {
+      closeSidebarPanel();
+    } else {
+      openSidebarPanel("kartlag");
+      closeOverlayPanel();
+    }
+  };
 
   const toggleMove = () => {
     togglePointMode("koordinater");
@@ -129,6 +141,14 @@ const Toolbar = () => {
             Grenseinfo
           </ModeButton>
         </ToolbarTooltip>
+        <ModeButton
+          icon="map"
+          ariaLabel="Åpne kartlagsmenyen"
+          isActive={activeSidebarPanel === "kartlag"}
+          onClick={toggleSidebar}
+        >
+          Kartlag
+        </ModeButton>
         {flatedetaljerIsAvailable && (
           <>
             {mergeIsAvailable && (
