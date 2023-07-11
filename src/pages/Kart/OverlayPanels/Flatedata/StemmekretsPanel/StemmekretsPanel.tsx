@@ -7,8 +7,8 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { PanelProps, Panel, PanelHeader } from "../../Panel";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import SortHeader from "../SortHeader";
-import orderBy from "lodash.orderby";
 import { useTableSort } from "../useTableSort";
+import { orderBy } from "utils/list-utils";
 
 const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
   const { sortProperty, sortOrder, sortHeaderProps } = useTableSort([
