@@ -24,7 +24,7 @@ export const TegnforklaringButton = () => {
 const RoundButton = styled(Button)`
   position: absolute;
   top: 15px;
-  right: 15px;
+  right: 20px;
   height: 40px;
   width: 40px;
   border-radius: 50%;
