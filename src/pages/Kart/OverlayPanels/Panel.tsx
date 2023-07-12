@@ -61,7 +61,39 @@ export const AbsolutePanel = styled(Panel)`
   animation: ${slideIn} 0.25s ease-in-out;
 `;
 
-const PanelHeaderContainer = styled.div`
+type PanelHeaderSizes = "sm" | "md";
+type PanelHeaderContainerProps = {
+  size?: PanelHeaderSizes;
+};
+
+const getPaddingForSize = (size: PanelHeaderSizes): string => {
+  switch (size) {
+    case "md":
+      return "24px 8px 16px";
+    case "sm":
+      return "12px 8px 8px";
+  }
+};
+
+const getMarginForSize = (size: PanelHeaderSizes): string => {
+  switch (size) {
+    case "md":
+      return "16px";
+    case "sm":
+      return "12px";
+  }
+};
+
+const getCloseButtonSize = (size: PanelHeaderSizes): string => {
+  switch (size) {
+    case "md":
+      return "lg";
+    case "sm":
+      return "md";
+  }
+};
+
+const PanelHeaderContainer = styled.div<PanelHeaderContainerProps>`
   position: sticky;
   top: 0;
   z-index: 1;
@@ -69,22 +101,31 @@ const PanelHeaderContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 24px 8px 16px;
+  padding: ${({ size = "md" }) => getPaddingForSize(size)};
   background: var(--kvib-colors-chakra-body-bg);
   border-bottom: 2px solid var(--kvib-colors-gray-50);
-  margin-bottom: 16px;
+  margin-bottom: ${({ size = "md" }) => getMarginForSize(size)};
 `;
 
 type PanelHeaderProps = {
   onClose: () => void;
   children: React.ReactNode;
+  size?: PanelHeaderSizes;
 };
 
-export const PanelHeader = ({ children, onClose }: PanelHeaderProps) => (
-  <PanelHeaderContainer>
-    <Heading as="h3" size="md">
+export const PanelHeader = ({
+  children,
+  onClose,
+  size = "md",
+}: PanelHeaderProps) => (
+  <PanelHeaderContainer size={size}>
+    <Heading as="h3" size={size}>
       {children}
     </Heading>
-    <CloseButton size="lg" onClick={onClose} aria-label="Lukk" />
+    <CloseButton
+      size={getCloseButtonSize(size)}
+      onClick={onClose}
+      aria-label="Lukk"
+    />
   </PanelHeaderContainer>
 );
