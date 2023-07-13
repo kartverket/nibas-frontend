@@ -10,8 +10,8 @@ import { KretsTable } from "../KretsTable";
 import { useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import Input from "components/Input";
 import SortHeader from "../SortHeader";
-import orderBy from "lodash.orderby";
 import { useTableSort } from "../useTableSort";
+import { orderBy } from "utils/list-utils";
 
 const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
   const { sortProperty, sortOrder, sortHeaderProps } = useTableSort([
