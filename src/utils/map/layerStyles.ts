@@ -81,7 +81,7 @@ export const grenseStyles = {
   }),
 };
 
-const grenseStyleFromType = (grenseType: GrenseType): Style[] => {
+export const grenseStyleFromType = (grenseType: GrenseType): Style[] => {
   switch (grenseType) {
     case "Fylkesgrense": {
       return grenseStyles.fylke;

@@ -8,6 +8,7 @@ type OverlayPanel =
   | "grunnkrets"
   | "stemmekrets"
   | "sammenslåing"
+  | "tegnforklaring"
   | "koordinater";
 type Flatedata = KommuneRef | null;
 
