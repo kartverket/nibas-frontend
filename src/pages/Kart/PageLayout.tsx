@@ -8,10 +8,8 @@ import { statusCode } from "utils/api";
 import { ApiErrorResponse } from "../../types/api";
 import Header from "./Header/Header";
 
-// TODO: Gi denne et bedre navn, kanskje bare "Kart", da Kart-komponenten er lite beskrivende selv
 const PageLayout = () => {
   const { error, setError } = useErrorHandling();
-
   return (
     <Grid>
       <SWRConfig

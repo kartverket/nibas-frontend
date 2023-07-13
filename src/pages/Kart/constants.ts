@@ -44,4 +44,4 @@ export const endringstyper = [
   "Nummerendring",
   "Retting",
 ] as const;
-export type Endringstype = (typeof endringstyper)[number]; // "hearts" | "diamonds" | "spades" | "clubs"
+export type Endringstype = (typeof endringstyper)[number];

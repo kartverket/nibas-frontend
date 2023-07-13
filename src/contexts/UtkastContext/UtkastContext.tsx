@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useMatch, useNavigate } from "react-router-dom";
 import { useSWRConfig } from "swr";
 import {
   EntityUtkastType,
@@ -31,6 +31,7 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContex
 import { useToast } from "@kvib/react";
 import { createSuccessToast } from "utils/components/toast";
 import { routes } from "utils/routes";
+import { useSidebarPanel } from "contexts/SidebarPanelContext";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
@@ -47,15 +48,18 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { resetAndClearEditingLayer } = useEditAllGrenser();
   const { closeOverlayPanel } = useOverlayPanel();
+  const { closeSidebarPanel } = useSidebarPanel();
   const { setError } = useErrorHandling();
   const toast = useToast();
-
-  const location = useLocation();
-  const utkastIdMatches = location.pathname.match(
-    "/utkast/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})"
-  );
-  const utkastId = utkastIdMatches ? utkastIdMatches[1] : null;
   const navigate = useNavigate();
+  const utkastPathMatch = useMatch(`${routes.utkast}/${routes.utkastId}`);
+
+  // TODO: faktisk håndter hvis det er feil url/id
+  // TODO: f.eks. utkast/hei eller utkast/en-eller-annen-gammel-id
+  const utkastIdMatches = utkastPathMatch?.params["utkastId"]?.match(
+    "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+  );
+  const utkastId = utkastIdMatches ? utkastIdMatches[0] : null;
 
   const { mutate: globalMutate } = useSWRConfig();
 
@@ -154,13 +158,19 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   // TODO: her trengs det en loader for å indikere at dette tar litt tid å gjøre
+  // Når utkast lukkes ønsker vi å tilbakestille store deler av applikasjonen
   const closeUtkast = () => {
     resetMapView();
     clearHistory({ hasPreviouslySavedHistory: false });
     clearDirtyStyles();
     resetAndClearEditingLayer();
     closeOverlayPanel();
-    navigate(routes.index);
+    closeSidebarPanel();
+
+    // Dersom vi er i redigeringsmodus ønsker vi å dra tilbake til start når utkast lukkes
+    if (utkastPathMatch) {
+      navigate(routes.index);
+    }
   };
 
   const value = {

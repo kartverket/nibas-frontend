@@ -7,6 +7,8 @@ import LandingHeader from "./LandingHeader";
 const Landing = () => {
   const navigate = useNavigate();
 
+  // TODO: mangler "God morgen!"-hilsen
+
   return (
     <>
       <LandingHeader />

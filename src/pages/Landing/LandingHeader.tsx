@@ -1,12 +1,12 @@
+import styled from "styled-components";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import { Heading, Text } from "@kvib/react";
+import { Button, Heading, Text } from "@kvib/react";
 import Icon from "components/Icon";
 import { LogoOnly } from "components/Logo";
-import AuthenticationButton from "pages/Landing/AuthenticationButton";
-import styled from "styled-components";
 
 const LandingHeader = () => {
-  const { tokenHolderFunc } = useAuthenticationFlow();
+  const { isAuthenticatedFunc, handleLogoutFunc, tokenHolderFunc } =
+    useAuthenticationFlow();
 
   return (
     <Container>
@@ -19,14 +19,23 @@ const LandingHeader = () => {
           <Text>En tjeneste fra Kartverket</Text>
         </div>
       </Section>
-      <Section>
-        <LoginIcon icon="person" filled />
-        <div>
-          <Text>Logget inn som</Text>
-          <Text as="b">{`${tokenHolderFunc()?.personId}`}</Text>
-        </div>
-        <AuthenticationButton />
-      </Section>
+      {isAuthenticatedFunc() && (
+        <Section>
+          <LoginIcon icon="person" filled />
+          <div>
+            <Text>Logget inn som</Text>
+            <Text as="b">{`${tokenHolderFunc()?.personId}`}</Text>
+          </div>
+          <Button
+            variant="outline"
+            aria-label="Logg ut"
+            leftIcon={<Icon icon="logout" aria-label="" />}
+            onClick={handleLogoutFunc}
+          >
+            Logg ut
+          </Button>
+        </Section>
+      )}
     </Container>
   );
 };

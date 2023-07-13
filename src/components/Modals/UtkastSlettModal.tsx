@@ -22,6 +22,8 @@ import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useState } from "react";
 import { mutate } from "swr";
 import { statusCode } from "utils/api";
+import { useMatch, useNavigate } from "react-router-dom";
+import { routes } from "utils/routes";
 
 type Props = {
   isOpen: boolean;
@@ -30,6 +32,8 @@ type Props = {
 };
 
 const UtkastSlettModal = ({ isOpen, onClose, utkast }: Props) => {
+  const navigate = useNavigate();
+  const isInUtkast = useMatch(`${routes.utkast}/${routes.utkastId}`);
   const [isLoading, setIsLoading] = useState(false);
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { setError } = useErrorHandling();
@@ -41,7 +45,9 @@ const UtkastSlettModal = ({ isOpen, onClose, utkast }: Props) => {
 
     if (statusCode.isSuccessful(response.status)) {
       await mutate(["/v1/utkast", tokenHolderFunc()?.token]);
-      // TODO: naviger til utkast dersom du ikke allerede er der
+      if (isInUtkast) {
+        navigate(routes.utkast);
+      }
     } else if (statusCode.isError(response.status)) {
       const wrapper = (await response.json()) as ApiErrorResponse;
       setError({ ...wrapper.errorDescription, errorCode: wrapper.errorCode });

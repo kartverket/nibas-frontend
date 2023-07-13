@@ -7,6 +7,8 @@ import { UtkastResponse } from "types/api";
 import UtkastCard from "./UtkastCard";
 import UtkastOpprett from "./UtkastOpprett";
 import LandingHeader from "pages/Landing/LandingHeader";
+import { useUtkast } from "contexts/UtkastContext";
+import { useEffect } from "react";
 
 const endringstypeOrder: Record<Endringstype, "left" | "right"> = {
   "Vedtatt grensejustering": "left",
@@ -31,24 +33,18 @@ const Utkast = () => {
 
   // TODO: dersom brukeren navigerer tilbake hit via nettleseren må kartet m.m. tilbakestilles
 
-  // TODO: håndter bedre
+  // TODO: legg til en loader eller skeleton eller feilmelding eller noe sånt her
   if (!utkasts) return null;
 
   // Vi deler opp utkast i to kolonner manuelt i et forsøk på å holde lengden jevn
-  // Grupperer utkast etter endringstype
   const rightColumn: UtkastGroup = {};
   const leftColumn: UtkastGroup = {};
-  for (const utkast of utkasts) {
-    if (endringstypeOrder[utkast.endringstype as Endringstype] === "left") {
-      leftColumn[utkast.endringstype] = [
-        ...(leftColumn[utkast.endringstype] || []),
-        utkast,
-      ];
+  for (const u of utkasts) {
+    // Grupperer utkast etter endringstype
+    if (endringstypeOrder[u.endringstype as Endringstype] === "left") {
+      leftColumn[u.endringstype] = [...(leftColumn[u.endringstype] || []), u];
     } else {
-      rightColumn[utkast.endringstype] = [
-        ...(rightColumn[utkast.endringstype] || []),
-        utkast,
-      ];
+      rightColumn[u.endringstype] = [...(rightColumn[u.endringstype] || []), u];
     }
   }
 
@@ -69,11 +65,9 @@ const Utkast = () => {
               .map(([endringstype, utkastsInGroup]) => (
                 <EndringstypeGroup key={endringstype}>
                   <Heading size="md">{endringstype}</Heading>
-                  {utkastsInGroup
-                    .sort(sortUtkastByCreatedDesc)
-                    .map((utkast) => (
-                      <UtkastCard key={utkast.id} utkast={utkast} />
-                    ))}
+                  {utkastsInGroup.sort(sortUtkastByCreatedDesc).map((u) => (
+                    <UtkastCard key={u.id} utkast={u} />
+                  ))}
                 </EndringstypeGroup>
               ))}
           </EndringstypeList>

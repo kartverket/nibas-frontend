@@ -13,12 +13,11 @@ import {
   Button,
   FormControl,
 } from "@kvib/react";
-import { useHistory } from "contexts/HistoryContext";
 import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import { UtkastResponse } from "types/api";
-import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
+import { updateUtkast } from "api/utkast";
 
 type Props = {
   isOpen: boolean;
@@ -30,19 +29,7 @@ type UtkastFormData = {
   navn: string;
 };
 
-const fromFormToRequest = (
-  form: UtkastFormData,
-  utkast: UtkastResponse
-): UtkastRequestWithoutOperations => ({
-  ...utkast,
-  navn: form.navn,
-  endringstype: utkast.endringstype,
-  version: utkast.version,
-});
-
 const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
-  const { addHistoryEntry } = useHistory();
-
   const {
     register,
     handleSubmit,
@@ -52,18 +39,9 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
 
   const previousValues = useRef<UtkastFormData>(getValues());
 
-  // TODO: det her fungerer ikke, vil vi bruke history til det uansett?
-  const editUtkast = () => {
-    addHistoryEntry({
-      type: "utkast",
-      changes: [
-        {
-          from: fromFormToRequest(previousValues.current, utkast),
-          to: fromFormToRequest(getValues(), utkast),
-          id: utkast.id,
-        },
-      ],
-    });
+  // TODO: dette oppdaterer backend, men ikke frontend før refresh
+  const editUtkast = async () => {
+    await updateUtkast(utkast.id, { ...utkast, navn: getValues("navn") });
     previousValues.current = getValues();
   };
 
@@ -71,10 +49,10 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Endre detaljer</ModalHeader>
-        <ModalCloseButton aria-label="Lukk" />
-        <ModalBody>
-          <Form onSubmit={handleSubmit(editUtkast)}>
+        <form onSubmit={handleSubmit(editUtkast)}>
+          <ModalHeader>Endre detaljer</ModalHeader>
+          <ModalCloseButton aria-label="Lukk" />
+          <ModalBody>
             <Section>
               <FormLabel>Navn på utkastet</FormLabel>
               <FormHelperText>
@@ -86,28 +64,22 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
                 {...register("navn")}
               />
             </Section>
-          </Form>
-        </ModalBody>
-        <ModalFooter>
-          <ButtonGroup>
-            <Button variant="outline" colorScheme="gray" onClick={onClose}>
-              Avbryt
-            </Button>
-            <Button type="submit" isDisabled={!isDirty}>
-              Endre detaljer
-            </Button>
-          </ButtonGroup>
-        </ModalFooter>
+          </ModalBody>
+          <ModalFooter>
+            <ButtonGroup>
+              <Button variant="outline" colorScheme="gray" onClick={onClose}>
+                Avbryt
+              </Button>
+              <Button type="submit" isDisabled={!isDirty}>
+                Endre detaljer
+              </Button>
+            </ButtonGroup>
+          </ModalFooter>
+        </form>
       </ModalContent>
     </Modal>
   );
 };
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-`;
 
 const Section = styled(FormControl)`
   display: flex;

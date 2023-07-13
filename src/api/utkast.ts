@@ -22,7 +22,7 @@ export const createUtkast = (
 export const updateUtkast = (
   id: string,
   utkast: OppdaterUtkastRequest,
-  token: string | undefined
+  token?: string
 ) => {
   return fetch(getUrlForPath(`v1/utkast/${id}`), {
     method: "PUT",
