@@ -6,7 +6,11 @@ export type TegnforklaringProps = {
   text: string;
 };
 
-export const Tenforklaring = ({ color, dotted, text }: TegnforklaringProps) => {
+export const Tegnforklaring = ({
+  color,
+  dotted,
+  text,
+}: TegnforklaringProps) => {
   return (
     <Wrapper>
       <LineWrapper>

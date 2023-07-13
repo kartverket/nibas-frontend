@@ -1,7 +1,7 @@
 import React from "react";
 import { AbsolutePanel, PanelHeader, PanelProps } from "../Panel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { Tenforklaring } from "./Tegnforklaring";
+import { Tegnforklaring } from "./Tegnforklaring";
 import styled from "styled-components";
 import { tegnforklaringer } from "./tegnforklaring-styles";
 import { Text, Alert, AlertIcon, Divider } from "@kvib/react";
@@ -25,7 +25,7 @@ export const TegnforklaringPanel = ({ isOpen, className }: PanelProps) => {
       {tegnforklaringer.map((group, index) => (
         <React.Fragment key={`group-${index}`}>
           {group.map((props) => (
-            <Tenforklaring key={props.text} {...props} />
+            <Tegnforklaring key={props.text} {...props} />
           ))}
           {index < tegnforklaringer.length - 1 && <Divider mb="10px" />}
         </React.Fragment>
