@@ -13,7 +13,7 @@ import {
   Button,
   FormControl,
 } from "@kvib/react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import { UtkastResponse } from "types/api";
@@ -30,6 +30,7 @@ type UtkastFormData = {
 };
 
 const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
+  const [isLoading, setIsLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -41,7 +42,10 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
 
   // TODO: dette oppdaterer backend, men ikke frontend før refresh
   const editUtkast = async () => {
+    setIsLoading(true);
     await updateUtkast(utkast.id, { ...utkast, navn: getValues("navn") });
+    setIsLoading(false);
+    onClose();
     previousValues.current = getValues();
   };
 
@@ -70,7 +74,7 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
               <Button variant="outline" colorScheme="gray" onClick={onClose}>
                 Avbryt
               </Button>
-              <Button type="submit" isDisabled={!isDirty}>
+              <Button type="submit" isDisabled={!isDirty} isLoading={isLoading}>
                 Endre detaljer
               </Button>
             </ButtonGroup>
