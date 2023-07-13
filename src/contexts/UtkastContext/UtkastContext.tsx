@@ -53,6 +53,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const toast = useToast();
   const navigate = useNavigate();
   const utkastPathMatch = useMatch(`${routes.utkast}/${routes.utkastId}`);
+  const kartPathMatch = useMatch(routes.kart);
 
   // TODO: faktisk håndter hvis det er feil url/id
   // TODO: f.eks. utkast/hei eller utkast/en-eller-annen-gammel-id
@@ -167,8 +168,8 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     closeOverlayPanel();
     closeSidebarPanel();
 
-    // Dersom vi er i redigeringsmodus ønsker vi å dra tilbake til start når utkast lukkes
-    if (utkastPathMatch) {
+    // Dersom vi er i kartvisningen ønsker vi å dra tilbake til start når utkast lukkes
+    if (utkastPathMatch || kartPathMatch) {
       navigate(routes.index);
     }
   };

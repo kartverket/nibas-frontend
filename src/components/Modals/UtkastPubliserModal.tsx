@@ -31,8 +31,7 @@ import {
 } from "types/api";
 import { statusCode } from "utils/api";
 import { createSuccessToast } from "utils/components/toast";
-import { useMatch, useNavigate } from "react-router-dom";
-import { routes } from "utils/routes";
+import { useUtkast } from "contexts/UtkastContext";
 
 type Props = {
   isOpen: boolean;
@@ -42,8 +41,7 @@ type Props = {
 
 const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
   const toast = useToast();
-  const navigate = useNavigate();
-  const isInUtkast = useMatch(`${routes.utkast}/${routes.utkastId}`);
+  const { closeUtkast } = useUtkast();
   const [isLoading, setIsLoading] = useState(false);
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { setError } = useErrorHandling();
@@ -77,9 +75,7 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
         )
       );
       cleanUpUtkast();
-      if (isInUtkast) {
-        navigate(routes.utkast);
-      }
+      closeUtkast();
     } else if (statusCode.isConflict(response.status)) {
       const wrapper = (await response.json()) as ConflictResponseWrapper;
 

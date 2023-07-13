@@ -7,8 +7,6 @@ import { UtkastResponse } from "types/api";
 import UtkastCard from "./UtkastCard";
 import UtkastOpprett from "./UtkastOpprett";
 import LandingHeader from "pages/Landing/LandingHeader";
-import { useUtkast } from "contexts/UtkastContext";
-import { useEffect } from "react";
 
 const endringstypeOrder: Record<Endringstype, "left" | "right"> = {
   "Vedtatt grensejustering": "left",
