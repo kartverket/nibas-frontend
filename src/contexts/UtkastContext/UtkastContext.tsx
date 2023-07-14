@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
-import { useSearchParams } from "react-router-dom";
+import { useMatch, useNavigate } from "react-router-dom";
 import { useSWRConfig } from "swr";
 import {
   EntityUtkastType,
@@ -30,6 +30,8 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useToast } from "@kvib/react";
 import { createSuccessToast } from "utils/components/toast";
+import { routes } from "utils/routes";
+import { useSidebarPanel } from "contexts/SidebarPanelContext";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
@@ -44,15 +46,25 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const { history, clearHistory } = useHistory();
   const { clearDirtyStyles } = useFeatureStyle();
   const { tokenHolderFunc } = useAuthenticationFlow();
-  const [searchParams, setSearchParams] = useSearchParams();
   const { resetAndClearEditingLayer } = useEditAllGrenser();
   const { closeOverlayPanel } = useOverlayPanel();
-  const utkastId = searchParams.get("utkast");
+  const { closeSidebarPanel } = useSidebarPanel();
   const { setError } = useErrorHandling();
   const toast = useToast();
+  const navigate = useNavigate();
+  const utkastPathMatch = useMatch(`${routes.utkast}/${routes.utkastId}`);
+  const kartPathMatch = useMatch(routes.kart);
+
+  // TODO: faktisk håndter hvis det er feil url/id
+  // TODO: f.eks. utkast/hei eller utkast/en-eller-annen-gammel-id
+  const utkastIdMatches = utkastPathMatch?.params["utkastId"]?.match(
+    "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+  );
+  const utkastId = utkastIdMatches ? utkastIdMatches[0] : null;
 
   const { mutate: globalMutate } = useSWRConfig();
 
+  // TODO: noe beskyttelse på at man kan ende opp i et utkast som er publisert eller slettet allerede?
   const {
     data: utkast,
     mutate,
@@ -146,13 +158,20 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     toast(createSuccessToast("Utkastet er lagret"));
   };
 
+  // TODO: her trengs det en loader for å indikere at dette tar litt tid å gjøre
+  // Når utkast lukkes ønsker vi å tilbakestille store deler av applikasjonen
   const closeUtkast = () => {
     resetMapView();
     clearHistory({ hasPreviouslySavedHistory: false });
     clearDirtyStyles();
-    setSearchParams({});
     resetAndClearEditingLayer();
     closeOverlayPanel();
+    closeSidebarPanel();
+
+    // Dersom vi er i kartvisningen ønsker vi å dra tilbake til start når utkast lukkes
+    if (utkastPathMatch || kartPathMatch) {
+      navigate(routes.index);
+    }
   };
 
   const value = {

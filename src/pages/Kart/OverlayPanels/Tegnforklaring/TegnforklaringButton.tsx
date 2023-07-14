@@ -15,7 +15,7 @@ export const TegnforklaringButton = () => {
   };
 
   return (
-    <RoundButton onClick={onClick} ariaLabel="Åpne og lukke tegnforklaring">
+    <RoundButton onClick={onClick} aria-label="Åpne og lukke tegnforklaring">
       ?
     </RoundButton>
   );

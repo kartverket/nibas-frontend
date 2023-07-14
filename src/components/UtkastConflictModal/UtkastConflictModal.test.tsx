@@ -3,7 +3,7 @@ import {
   mockUtkast,
 } from "mocks/handlers/responses";
 import { render, screen, waitFor } from "test/test-utils";
-import UtkastConflictModal from "../UtkastConflictModal";
+import UtkastConflictModal from ".";
 
 const defaultProps: React.ComponentProps<typeof UtkastConflictModal> = {
   conflictResponse: mockFremtidigEndringConflictResponse,

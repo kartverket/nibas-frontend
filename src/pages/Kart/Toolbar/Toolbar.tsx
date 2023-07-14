@@ -1,46 +1,235 @@
-import { useState } from "react";
 import styled from "styled-components";
-import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
-import UtkastToolbar from "./UtkastToolbar";
-import LagreToolbar from "./LagreToolbar";
-import ButtonToolbar from "./ButtonToolbar";
-import { toolbarSpacing } from "./components";
+import { map } from "../constants";
+import { Frame, toolbarSpacing } from "./components";
+import ModeButton from "./ModeButton";
+import { useEditAllGrenser } from "contexts/EditGrenserContext";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { useToolbar } from "contexts/ToolbarContext";
+import ToolbarTooltip from "./ToolbarTooltip";
+import { Divider } from "@kvib/react";
+import { useSidebarPanel } from "contexts/SidebarPanelContext";
 
 const Container = styled.div`
-  position: relative;
   grid-area: toolbar;
   align-self: end;
+  position: relative;
   margin: 16px;
   display: flex;
   gap: ${toolbarSpacing}px;
-  align-items: flex-end;
-  flex-wrap: wrap;
 `;
 
-const Stack = styled.div`
-  display: flex;
+const Buttons = styled(Frame)`
+  padding: 16px 24px;
+`;
+
+const ZoomButtons = styled(Frame)`
   flex-direction: column;
-  gap: ${toolbarSpacing}px;
+  gap: 4px;
+  padding: 8px 4px;
 `;
 
+// TODO: en eller annen måte å skjule knapper under en "mer"-meny ved mindre skjerm
 const Toolbar = () => {
-  const [createUtkastOpen, setCreateUtkastOpen] = useState(false);
-  const { redigeringsmodusAktiv } = useRedigeringsmodus();
+  const { activePointMode, togglePointMode, activeEditModes, toggleEditMode } =
+    useToolbar();
+  const { getCurrentlyEditingType } = useEditAllGrenser();
+  const editingType = getCurrentlyEditingType() as string;
+  const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } =
+    useOverlayPanel();
+  const flatedetaljerIsAvailable =
+    editingType === "grunnkrets" || editingType === "stemmekrets";
+  const flatedetaljerIsActive =
+    activeOverlayPanel === "grunnkrets" || activeOverlayPanel === "stemmekrets";
+  const mergeIsAvailable = editingType === "stemmekrets";
+  const mergeIsActive = activeOverlayPanel === "sammenslåing";
+  const { activeSidebarPanel, openSidebarPanel, closeSidebarPanel } =
+    useSidebarPanel();
+
+  const toggleSidebar = () => {
+    if (activeSidebarPanel === "kartlag") {
+      closeSidebarPanel();
+    } else {
+      openSidebarPanel("kartlag");
+      closeOverlayPanel();
+    }
+  };
+
+  const toggleMove = () => {
+    togglePointMode("koordinater");
+
+    if (activeOverlayPanel === "koordinater") {
+      closeOverlayPanel();
+    }
+  };
+
+  const toggleMetadata = () => {
+    togglePointMode("metadata");
+
+    if (activeOverlayPanel === "metadata") {
+      closeOverlayPanel();
+    }
+  };
+
+  const toggleFlatedetaljer = () => {
+    if (flatedetaljerIsActive) {
+      closeOverlayPanel();
+    } else if (flatedetaljerIsAvailable) {
+      openOverlayPanel(editingType);
+    }
+  };
+
+  const toggleMergePanel = () => {
+    if (mergeIsActive) {
+      closeOverlayPanel();
+    } else {
+      openOverlayPanel("sammenslåing");
+    }
+  };
+
+  const zoom = (difference: number) => {
+    const view = map.getView();
+    view.animate({
+      zoom: (view.getZoom() ?? 0) + difference,
+      duration: 250,
+    });
+  };
 
   return (
     <Container>
-      {redigeringsmodusAktiv && (
-        <Stack>
-          {createUtkastOpen && (
-            <UtkastToolbar setCreateUtkastOpen={setCreateUtkastOpen} />
-          )}
-          <LagreToolbar
-            createUtkastOpen={createUtkastOpen}
-            setCreateUtkastOpen={setCreateUtkastOpen}
+      <Buttons>
+        {editingType && (
+          <>
+            <ToolbarTooltip text="Flytt et punkt ved bruk av koordinater">
+              <ModeButton
+                icon="ads_click"
+                ariaLabel="Flytt punkt med koordinater"
+                isActive={activePointMode === "koordinater"}
+                onClick={toggleMove}
+              >
+                Flytt
+              </ModeButton>
+            </ToolbarTooltip>
+            <ToolbarTooltip text="Legg til ett eller flere punkter på en grense.">
+              <ModeButton
+                icon="add_location_alt"
+                ariaLabel="Legg til punkter"
+                isActive={activePointMode === "add"}
+                onClick={() => togglePointMode("add")}
+              >
+                Legg til
+              </ModeButton>
+            </ToolbarTooltip>
+            <ToolbarTooltip text="Fjern ett eller flere punkter fra en grense.">
+              <ModeButton
+                icon="wrong_location"
+                ariaLabel="Fjern punkter"
+                isActive={activePointMode === "remove"}
+                onClick={() => togglePointMode("remove")}
+              >
+                Fjern
+              </ModeButton>
+            </ToolbarTooltip>
+          </>
+        )}
+        <ToolbarTooltip text="Se og rediger informasjon om en grense. Trykk på grensen du ønsker å se informasjonen til.">
+          <ModeButton
+            icon="live_help"
+            ariaLabel="Se informasjon om grensen"
+            isActive={activePointMode === "metadata"}
+            onClick={toggleMetadata}
+          >
+            Grenseinfo
+          </ModeButton>
+        </ToolbarTooltip>
+        <ModeButton
+          icon="map"
+          ariaLabel="Åpne kartlagsmenyen"
+          isActive={activeSidebarPanel === "kartlag"}
+          onClick={toggleSidebar}
+        >
+          Kartlag
+        </ModeButton>
+        {flatedetaljerIsAvailable && (
+          <>
+            {mergeIsAvailable && (
+              <ToolbarTooltip text="Slå sammen to eller flere stemmekretser.">
+                <ModeButton
+                  icon="merge"
+                  ariaLabel="Slå sammen stemmekretser"
+                  isActive={mergeIsActive}
+                  onClick={toggleMergePanel}
+                >
+                  Slå sammen
+                </ModeButton>
+              </ToolbarTooltip>
+            )}
+            <ToolbarTooltip text="Vis informasjon om flatene innenfor den gitte inndelingen">
+              <ModeButton
+                icon="feed"
+                ariaLabel="Vis informasjon om flatene"
+                isActive={flatedetaljerIsActive}
+                onClick={toggleFlatedetaljer}
+              >
+                Flateinfo
+              </ModeButton>
+            </ToolbarTooltip>
+            <Divider orientation="vertical" />
+          </>
+        )}
+        {false && (
+          <>
+            <ModeButton
+              icon="edit_location_alt"
+              ariaLabel="Løsriv punkter"
+              isActive={activePointMode === "detach"}
+              onClick={() => togglePointMode("detach")}
+            >
+              Løsriv
+            </ModeButton>
+            <ModeButton
+              icon="location_off"
+              ariaLabel="Splitt punkter"
+              isActive={activePointMode === "split"}
+              onClick={() => togglePointMode("split")}
+            >
+              Splitt
+            </ModeButton>
+            <Divider orientation="vertical" />
+          </>
+        )}
+
+        {editingType && (
+          <>
+            <ToolbarTooltip text="Skru av/på snapping mot bakgrunnskart.">
+              <ModeButton
+                icon="magnet"
+                ariaLabel="Snap til bakgrunnskart"
+                isActive={activeEditModes.includes("snap")}
+                onClick={() => toggleEditMode("snap")}
+              >
+                Snap
+              </ModeButton>
+            </ToolbarTooltip>
+          </>
+        )}
+      </Buttons>
+      <ZoomButtons>
+        <ToolbarTooltip text="Zoom inn på kartet">
+          <ModeButton
+            icon="zoom_in"
+            onClick={() => zoom(1)}
+            ariaLabel="Zoom inn på kartet"
           />
-        </Stack>
-      )}
-      <ButtonToolbar />
+        </ToolbarTooltip>
+        <Divider />
+        <ToolbarTooltip text="Zoom ut fra kartet">
+          <ModeButton
+            icon="zoom_out"
+            onClick={() => zoom(-1)}
+            ariaLabel="Zoom ut på kartet"
+          />
+        </ToolbarTooltip>
+      </ZoomButtons>
     </Container>
   );
 };
