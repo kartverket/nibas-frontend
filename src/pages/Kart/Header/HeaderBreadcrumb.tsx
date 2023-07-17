@@ -30,7 +30,7 @@ const HeaderBreadcrumb = () => {
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbItem>
-          <span>{utkast.endringstype}</span>
+          <Crumb>{utkast.endringstype}</Crumb>
         </BreadcrumbItem>
         <BreadcrumbItem>
           <Text noOfLines={1}>{utkast.navn}</Text>
@@ -56,6 +56,10 @@ const Section = styled.section`
 const Separator = styled(Icon)`
   line-height: 30px;
   font-size: 20px;
+`;
+
+const Crumb = styled.span`
+  white-space: nowrap;
 `;
 
 export default HeaderBreadcrumb;
