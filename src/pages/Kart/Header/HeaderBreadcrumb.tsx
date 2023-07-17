@@ -1,10 +1,18 @@
-import { Breadcrumb, BreadcrumbItem, Text, useDisclosure } from "@kvib/react";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  Text,
+  useDisclosure,
+} from "@kvib/react";
 import Icon from "components/Icon";
 import { useUtkast } from "contexts/UtkastContext";
 import styled from "styled-components";
 import HeaderButton from "./HeaderButton";
 import UtkastEndreModal from "components/Modals/UtkastEndreModal";
 import HeaderHome from "./HeaderHome";
+import { Link } from "react-router-dom";
+import { routes } from "utils/routes";
 
 const HeaderBreadcrumb = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();
@@ -17,13 +25,15 @@ const HeaderBreadcrumb = () => {
       <HeaderHome />
       <Breadcrumb separator={<Separator icon="chevron_right" />} spacing={1}>
         <BreadcrumbItem>
-          <Crumb>Utkast</Crumb>
+          <BreadcrumbLink as={Link} to={routes.utkast}>
+            Utkast
+          </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbItem>
-          <Crumb>{utkast.endringstype}</Crumb>
+          <span>{utkast.endringstype}</span>
         </BreadcrumbItem>
         <BreadcrumbItem>
-          <Crumb>{utkast.navn}</Crumb>
+          <Text noOfLines={1}>{utkast.navn}</Text>
         </BreadcrumbItem>
       </Breadcrumb>
       <HeaderButton
@@ -47,7 +57,5 @@ const Separator = styled(Icon)`
   line-height: 30px;
   font-size: 20px;
 `;
-
-const Crumb = styled(Text).attrs({ noOfLines: 1 })``;
 
 export default HeaderBreadcrumb;
