@@ -26,22 +26,23 @@ export type MappedLayer = {
   title: string;
   id?: string;
   queryable: boolean;
-};
-
-export type MainMappedLayer = MappedLayer & {
   sourceId: BakgrunnskartId;
 };
 
-const mapWMSLayer = (responseLayer: WMSResponseLayer) => {
+const mapWMSLayer = (
+  responseLayer: WMSResponseLayer,
+  sourceId: BakgrunnskartId
+) => {
   let layers: MappedLayer[] = [];
 
   if (responseLayer.Layer) {
     layers = responseLayer.Layer.map((nestedLayer: WMSResponseLayer) =>
-      mapWMSLayer(nestedLayer)
+      mapWMSLayer(nestedLayer, sourceId)
     );
   }
 
   return {
+    sourceId,
     layers,
     id: responseLayer.Name,
     title: responseLayer.Title,
@@ -49,11 +50,15 @@ const mapWMSLayer = (responseLayer: WMSResponseLayer) => {
   } as MappedLayer;
 };
 
-const mapWMTSLayer = (responseLayer: WMTSResponseLayer): MappedLayer => ({
+const mapWMTSLayer = (
+  responseLayer: WMTSResponseLayer,
+  sourceId: BakgrunnskartId
+): MappedLayer => ({
   layers: [],
   queryable: true,
   title: responseLayer.Title,
   id: responseLayer.Identifier,
+  sourceId: sourceId,
 });
 
 const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
@@ -101,8 +106,8 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
     if (!json?.Capability) return null;
 
     const mainLayer = json.Capability.Layer;
-    const transformedLayer = mapWMSLayer(mainLayer) as MainMappedLayer;
-    transformedLayer.sourceId = source.get("id") as BakgrunnskartId;
+    const sourceId = source.get("id") as BakgrunnskartId;
+    const transformedLayer = mapWMSLayer(mainLayer, sourceId) as MappedLayer;
 
     return transformedLayer;
   }
@@ -113,8 +118,12 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
 
     if (!json?.Contents) return null;
 
-    const mappedWMTSLayer: MainMappedLayer = {
-      layers: json.Contents.Layer.map(mapWMTSLayer),
+    const sourceId = source.get("id") as BakgrunnskartId;
+
+    const mappedWMTSLayer: MappedLayer = {
+      layers: json.Contents.Layer.map((l: WMTSResponseLayer) =>
+        mapWMTSLayer(l, sourceId)
+      ),
       queryable: true,
       sourceId: source.get("id") as BakgrunnskartId,
       title: json.ServiceIdentification.Title,

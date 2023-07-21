@@ -5,6 +5,7 @@ import StemmekretsPanel from "./Flatedata/StemmekretsPanel/StemmekretsPanel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import KoordinaterPanel from "./KoordinaterPanel";
 import { TegnforklaringPanel } from "./Tegnforklaring/TegnforklaringPanel";
+import KartlagPanel from "./Kartlag/KartlagPanel";
 
 const OverlayPanels = () => {
   const { activeOverlayPanel } = useOverlayPanel();
@@ -17,6 +18,7 @@ const OverlayPanels = () => {
       <MergePanel isOpen={activeOverlayPanel === "sammenslåing"} />
       <KoordinaterPanel isOpen={activeOverlayPanel === "koordinater"} />
       <TegnforklaringPanel isOpen={activeOverlayPanel === "tegnforklaring"} />
+      <KartlagPanel isOpen={activeOverlayPanel === "kartlag"} />
     </>
   );
 };

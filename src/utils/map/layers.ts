@@ -9,7 +9,7 @@ import { map } from "pages/Kart/constants";
 import { bakgrunnskartLayers, grenserLayers } from "hooks/layers/constants";
 import { BakgrunnskartId, GrenseId, LayerId } from "hooks/layers/types";
 import { GeometryVectorSource } from "hooks/sources/types";
-import { MainMappedLayer } from "utils/getLayersFromWMS";
+import { MappedLayer } from "utils/getLayersFromWMS";
 
 export const getLayersArray = () => map.getLayers().getArray() ?? [];
 export const getLayerIds = () =>
@@ -49,7 +49,7 @@ export const addLayerIfNotExists = (layer: Layer<Source>) => {
   }
 };
 
-export const getLayerIdFromMappedLayer = (mappedLayer: MainMappedLayer) => {
+export const getLayerIdFromMappedLayer = (mappedLayer: MappedLayer) => {
   const layers = getLayersArray();
   const layer = layers.find((l) => l.get("id") === mappedLayer.sourceId);
 

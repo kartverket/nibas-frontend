@@ -2,15 +2,12 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { bakgrunnskartLayers } from "hooks/layers/constants";
 import { BakgrunnskartId } from "hooks/layers/types";
 import useVisibleLayers, { VisibleLayer } from "hooks/layers/useVisibleLayers";
-import getSubLayersFromWMSSource, {
-  MainMappedLayer,
-  MappedLayer,
-} from "utils/getLayersFromWMS";
+import getSubLayersFromWMSSource, { MappedLayer } from "utils/getLayersFromWMS";
 import { mapVectorLayer } from "utils/getMatrikkelWfsFeatures";
 import { isVectorLayer } from "utils/map/layers";
 
 export type BakgrunnskartContextValue = {
-  mappedLayers: MainMappedLayer[];
+  mappedLayers: MappedLayer[];
   visibleLayers: VisibleLayer[];
   toggleLayerVisibility: (layerId: BakgrunnskartId, subLayer?: string) => void;
   layerIsVisible: (layerId: BakgrunnskartId) => boolean;
@@ -34,7 +31,7 @@ export const BakgrunnskartProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [mappedLayers, setMappedLayers] = useState<MainMappedLayer[]>([]);
+  const [mappedLayers, setMappedLayers] = useState<MappedLayer[]>([]);
 
   const {
     visibleLayers,
@@ -65,7 +62,7 @@ export const BakgrunnskartProvider = ({
 
       const nonNullLayers = layers.filter(
         (layer) => layer !== null
-      ) as MainMappedLayer[];
+      ) as MappedLayer[];
 
       if (isMounted) {
         setMappedLayers(nonNullLayers);
