@@ -1,14 +1,14 @@
-import { useBakgrunnskart } from "contexts/BakgrunnskartContext";
-import { BakgrunnskartId } from "hooks/layers/types";
+import { useKartlag } from "contexts/KartlagContext/KartlagContext";
+import { KartlagId } from "hooks/layers/types";
 import KartlagInner from "./KartlagInner";
 import KartlagOuter from "./KartlagOuter";
 
 type Props = {
-  layerId: BakgrunnskartId;
+  layerId: KartlagId;
 };
 
 const Kartlag = ({ layerId }: Props) => {
-  const { mappedLayers } = useBakgrunnskart();
+  const { mappedLayers } = useKartlag();
   const mappedLayer = mappedLayers.find((ml) => ml.sourceId === layerId);
   if (!mappedLayer) return null;
 

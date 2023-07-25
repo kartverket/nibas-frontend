@@ -1,5 +1,5 @@
 import ThirdPartyProviders from "./ThirdPartyProviders";
-import { BakgrunnskartProvider } from "contexts/BakgrunnskartContext";
+import { KartlagProvider } from "contexts/KartlagContext/KartlagContext";
 import { EditGrenserProvider } from "contexts/EditGrenserContext";
 import { SidebarPanelProvider } from "contexts/SidebarPanelContext";
 import { HistoryProvider } from "contexts/HistoryContext";
@@ -19,9 +19,9 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
               <SidebarPanelProvider>
                 <OverlayPanelProvider>
                   <EditGrenserProvider>
-                    <BakgrunnskartProvider>
+                    <KartlagProvider>
                       <UtkastProvider>{children}</UtkastProvider>
-                    </BakgrunnskartProvider>
+                    </KartlagProvider>
                   </EditGrenserProvider>
                 </OverlayPanelProvider>
               </SidebarPanelProvider>

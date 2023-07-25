@@ -1,11 +1,11 @@
 import { IconButton } from "@kvib/react";
 import Icon from "components/Icon";
-import { useBakgrunnskart } from "contexts/BakgrunnskartContext";
+import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 import styled from "styled-components";
 import { MappedLayer } from "utils/getLayersFromWMS";
 import { isVectorLayer, isWMSLayer, isWMTSLayer } from "utils/map/layers";
 import { toggleWMSLayer, toggleWMTSLayer, toggleWFSLayer } from "./utils";
-import { bakgrunnskartLayers } from "hooks/layers/constants";
+import { kartlagLayers } from "hooks/layers/constants";
 
 type Props = {
   mappedLayer: MappedLayer;
@@ -13,9 +13,9 @@ type Props = {
 };
 
 const KartlagInner = ({ mappedLayer, isMainLayer }: Props) => {
-  const layer = bakgrunnskartLayers[mappedLayer.sourceId];
+  const layer = kartlagLayers[mappedLayer.sourceId];
   const { layerIsVisible, subLayerIsVisible, toggleLayerVisibility } =
-    useBakgrunnskart();
+    useKartlag();
 
   const isVisible = isMainLayer
     ? layerIsVisible(mappedLayer.sourceId)

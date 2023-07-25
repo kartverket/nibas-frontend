@@ -3,7 +3,7 @@ import WMTSCapabilities from "ol/format/WMTSCapabilities";
 import TileWMS from "ol/source/TileWMS";
 import WMTS from "ol/source/WMTS";
 import { getTicketForTjeneste } from "./geonorgeTicket";
-import { BakgrunnskartId } from "hooks/layers/types";
+import { KartlagId } from "hooks/layers/types";
 import { getUrlForPath } from "utils/api";
 
 const WMSParser = new WMSCapabilities();
@@ -26,13 +26,10 @@ export type MappedLayer = {
   title: string;
   id?: string;
   queryable: boolean;
-  sourceId: BakgrunnskartId;
+  sourceId: KartlagId;
 };
 
-const mapWMSLayer = (
-  responseLayer: WMSResponseLayer,
-  sourceId: BakgrunnskartId
-) => {
+const mapWMSLayer = (responseLayer: WMSResponseLayer, sourceId: KartlagId) => {
   let layers: MappedLayer[] = [];
 
   if (responseLayer.Layer) {
@@ -52,7 +49,7 @@ const mapWMSLayer = (
 
 const mapWMTSLayer = (
   responseLayer: WMTSResponseLayer,
-  sourceId: BakgrunnskartId
+  sourceId: KartlagId
 ): MappedLayer => ({
   layers: [],
   queryable: true,
@@ -106,7 +103,7 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
     if (!json?.Capability) return null;
 
     const mainLayer = json.Capability.Layer;
-    const sourceId = source.get("id") as BakgrunnskartId;
+    const sourceId = source.get("id") as KartlagId;
     const transformedLayer = mapWMSLayer(mainLayer, sourceId) as MappedLayer;
 
     return transformedLayer;
@@ -118,14 +115,14 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
 
     if (!json?.Contents) return null;
 
-    const sourceId = source.get("id") as BakgrunnskartId;
+    const sourceId = source.get("id") as KartlagId;
 
     const mappedWMTSLayer: MappedLayer = {
       layers: json.Contents.Layer.map((l: WMTSResponseLayer) =>
         mapWMTSLayer(l, sourceId)
       ),
       queryable: true,
-      sourceId: source.get("id") as BakgrunnskartId,
+      sourceId: source.get("id") as KartlagId,
       title: json.ServiceIdentification.Title,
       id: json.ServiceIdentification.Title,
     };

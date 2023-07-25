@@ -25,18 +25,18 @@ handle /api/auth/* {
 
 handle /skbaatts/req {
     # Legg på brukernavn og passord når klient skal hente ticket 
-    # til de låste bakgrunnskartene
+    # til de låste kartlagene
     rewrite * ?{query}&brukerid={$BAAT_USERNAME}&passord={$BAAT_PASSWORD}&retformat=s
     reverse_proxy https://baat.geonorge.no
 }
 
-# Send alle bakgrunnskart til geonorge for å unngå CORS error
-@laasteBakgrunnskart {
+# Send alle kartlag til geonorge for å unngå CORS error
+@laasteKartlag {
     path /skwms1/wms.nib
     path /skwms1/wms.ecc_enc
 }
 
-handle @laasteBakgrunnskart {
+handle @laasteKartlag {
     reverse_proxy https://wms.geonorge.no
 }
 

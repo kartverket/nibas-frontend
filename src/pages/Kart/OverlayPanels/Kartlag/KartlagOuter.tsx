@@ -1,14 +1,13 @@
-import {
-  Accordion,
-  AccordionButton,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
-} from "@kvib/react";
 import styled from "styled-components";
+import { Accordion, AccordionPanel } from "@kvib/react";
 import { MappedLayer } from "utils/getLayersFromWMS";
 import KartlagMiddle from "./KartlagMiddle";
 import KartlagInner from "./KartlagInner";
+import {
+  KartlagAccordionItem,
+  KartlagAccordionButton,
+  KartlagAccordionIcon,
+} from "./components";
 
 type Props = {
   mappedLayer: MappedLayer;
@@ -17,12 +16,12 @@ type Props = {
 const KartlagOuter = ({ mappedLayer }: Props) => {
   return (
     <Accordion allowToggle>
-      <Folder>
-        <FolderButton>
+      <KartlagAccordionItem>
+        <KartlagOuterAccordionButton>
           <span>{mappedLayer.title}</span>
-          <FolderIcon />
-        </FolderButton>
-        <FolderContent>
+          <KartlagAccordionIcon />
+        </KartlagOuterAccordionButton>
+        <KartlagAccordionPanel>
           {mappedLayer.layers.map((subLayer) =>
             subLayer.layers.length > 0 ? (
               <KartlagMiddle key={subLayer.id} mappedLayer={subLayer} />
@@ -30,35 +29,19 @@ const KartlagOuter = ({ mappedLayer }: Props) => {
               <KartlagInner key={subLayer.id} mappedLayer={subLayer} />
             )
           )}
-        </FolderContent>
-      </Folder>
+        </KartlagAccordionPanel>
+      </KartlagAccordionItem>
     </Accordion>
   );
 };
 
-// TODO: trekk ut som felleskomponenter siden mye overlapper med middle her
-const Folder = styled(AccordionItem)`
-  border: none;
-`;
-
-const FolderButton = styled(AccordionButton)`
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 16px;
-
+const KartlagOuterAccordionButton = styled(KartlagAccordionButton)`
   &[aria-expanded="true"] {
-    font-weight: var(--kvib-fontWeights-bold);
     background: var(--kvib-colors-gray-50);
   }
 `;
 
-const FolderIcon = styled(AccordionIcon)`
-  width: 40px;
-  height: 40px;
-  padding: 8px;
-`;
-
-const FolderContent = styled(AccordionPanel)`
+const KartlagAccordionPanel = styled(AccordionPanel)`
   display: flex;
   flex-direction: column;
   gap: 8px;

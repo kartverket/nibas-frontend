@@ -27,7 +27,6 @@ const ZoomButtons = styled(Frame)`
   padding: 8px 4px;
 `;
 
-// TODO: en eller annen måte å skjule knapper under en "mer"-meny ved mindre skjerm
 const Toolbar = () => {
   const { activePointMode, togglePointMode, activeEditModes, toggleEditMode } =
     useToolbar();
@@ -196,10 +195,10 @@ const Toolbar = () => {
 
         {editingType && (
           <>
-            <ToolbarTooltip text="Skru av/på snapping mot bakgrunnskart.">
+            <ToolbarTooltip text="Skru av/på snapping mot kartlag.">
               <ModeButton
                 icon="magnet"
-                ariaLabel="Snap til bakgrunnskart"
+                ariaLabel="Snap til kartlag"
                 isActive={activeEditModes.includes("snap")}
                 onClick={() => toggleEditMode("snap")}
               >

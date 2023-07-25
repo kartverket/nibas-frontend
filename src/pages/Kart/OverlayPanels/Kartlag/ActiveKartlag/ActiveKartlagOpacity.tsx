@@ -13,12 +13,12 @@ import {
   SliderThumb,
 } from "@kvib/react";
 import Icon from "components/Icon";
-import { BakgrunnskartId } from "hooks/layers/types";
+import { KartlagId } from "hooks/layers/types";
 import { useEffect, useState } from "react";
 import { getLayerById } from "utils/map/layers";
 
 type Props = {
-  layerId: BakgrunnskartId;
+  layerId: KartlagId;
 };
 
 const ActiveKartlagOpacity = ({ layerId }: Props) => {

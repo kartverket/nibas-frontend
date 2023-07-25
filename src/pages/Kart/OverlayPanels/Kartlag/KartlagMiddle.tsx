@@ -1,13 +1,12 @@
 import styled, { css } from "styled-components";
-import {
-  Accordion,
-  AccordionButton,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
-} from "@kvib/react";
+import { Accordion, AccordionPanel } from "@kvib/react";
 import { MappedLayer } from "utils/getLayersFromWMS";
 import KartlagInner from "./KartlagInner";
+import {
+  KartlagAccordionItem,
+  KartlagAccordionButton,
+  KartlagAccordionIcon,
+} from "./components";
 
 type Props = {
   mappedLayer: MappedLayer;
@@ -18,12 +17,12 @@ type Props = {
 const KartlagMiddle = ({ mappedLayer, isNested }: Props) => {
   return (
     <Accordion allowToggle>
-      <Folder>
-        <FolderButton>
+      <KartlagAccordionItem>
+        <KartlagAccordionButton>
           <span>{mappedLayer.title}</span>
-          <FolderIcon />
-        </FolderButton>
-        <FolderContent $isNested={isNested}>
+          <KartlagAccordionIcon />
+        </KartlagAccordionButton>
+        <KartlagAccordionPanel $isNested={isNested}>
           {mappedLayer.layers.map((subLayer) =>
             subLayer.layers.length > 0 ? (
               <KartlagMiddle
@@ -35,34 +34,13 @@ const KartlagMiddle = ({ mappedLayer, isNested }: Props) => {
               <KartlagInner key={subLayer.id} mappedLayer={subLayer} />
             )
           )}
-        </FolderContent>
-      </Folder>
+        </KartlagAccordionPanel>
+      </KartlagAccordionItem>
     </Accordion>
   );
 };
 
-const Folder = styled(AccordionItem)`
-  background: var(--kvib-colors-chakra-body-bg);
-  border: none;
-`;
-
-const FolderButton = styled(AccordionButton)`
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 16px;
-
-  &[aria-expanded="true"] {
-    font-weight: var(--kvib-fontWeights-bold);
-  }
-`;
-
-const FolderIcon = styled(AccordionIcon)`
-  width: 40px;
-  height: 40px;
-  padding: 8px;
-`;
-
-const FolderContent = styled(AccordionPanel)<{ $isNested: boolean }>`
+const KartlagAccordionPanel = styled(AccordionPanel)<{ $isNested: boolean }>`
   position: relative;
   padding: 0;
   padding-left: 16px;

@@ -1,9 +1,9 @@
 import { ReactNode } from "react";
 import {
-  BakgrunnskartProvider,
-  BakgrunnskartContext,
-  BakgrunnskartContextValue,
-} from "contexts/BakgrunnskartContext";
+  KartlagProvider,
+  KartlagContext,
+  KartlagContextValue,
+} from "contexts/KartlagContext/KartlagContext";
 import {
   EditGrenserProvider,
   EditGrenserContext,
@@ -56,7 +56,7 @@ const defaultProviderMap = {
   SidebarPanelProvider,
   OverlayPanelProvider,
   EditGrenserProvider,
-  BakgrunnskartProvider,
+  KartlagProvider,
   UtkastProvider,
 };
 
@@ -68,7 +68,7 @@ const contextMap = {
   SidebarPanelProvider: SidebarPanelContext.Provider,
   OverlayPanelProvider: OverlayPanelContext.Provider,
   EditGrenserProvider: EditGrenserContext.Provider,
-  BakgrunnskartProvider: BakgrunnskartContext.Provider,
+  KartlagProvider: KartlagContext.Provider,
   UtkastProvider: UtkastContext.Provider,
 };
 
@@ -80,7 +80,7 @@ export type TestProviderValues = {
   SidebarPanelProvider?: SidebarPanelContextValue | boolean;
   OverlayPanelProvider?: OverlayPanelContextValue | boolean;
   EditGrenserProvider?: EditGrenserContextValue | boolean;
-  BakgrunnskartProvider?: BakgrunnskartContextValue | boolean;
+  KartlagProvider?: KartlagContextValue | boolean;
   UtkastProvider?: UtkastContextValue | boolean;
 };
 
@@ -90,9 +90,9 @@ export const renderWithProviders = (
   ui: ReactNode,
   providerValues: TestProviderValues = {}
 ) => {
-  // BakgrunnskartProvider lager kvalme i testene våre, så den er default av
-  if (providerValues.BakgrunnskartProvider === undefined) {
-    providerValues.BakgrunnskartProvider = false;
+  // KartlagProvider lager kvalme i testene våre, så den er default av
+  if (providerValues.KartlagProvider === undefined) {
+    providerValues.KartlagProvider = false;
   }
 
   return (
