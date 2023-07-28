@@ -42,15 +42,17 @@ export const useEditGrense = (
   features: Feature<Geometry>[] | null
 ) => {
   const getEditMode = (): "edit" | "view" | null => {
+    if (value.editing) {
+      return "edit";
+    }
+    //TODO: sjekk om noe annet i kartet redigeres - i så fall returner "null"
+
     return "view";
   };
 
   const { resetAndClearEditingLayer } = useEditGrenser(grenseType);
   const { value, setValue } = useEditGrenseValue(grenseType, grenseId);
   const { addFeaturesToLayer } = useAsyncFeatures(features, getEditMode());
-
-  //det jeg vil sende inn her er om value ==  "edit"
-  //hvis den er value == "visible"
 
   const toggleVisible = () => {
     const newObjectValue = {
