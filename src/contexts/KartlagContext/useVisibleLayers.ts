@@ -1,39 +1,38 @@
 import { useEffect, useState } from "react";
-import { bakgrunnskartLayers } from "./constants";
-import { BakgrunnskartId } from "./types";
+import { kartlagLayers } from "../../hooks/layers/constants";
+import { KartlagId } from "../../hooks/layers/types";
 import { getLayerById } from "utils/map/layers";
-import { MappedLayer } from "utils/getLayersFromWMS";
 
 export type VisibleLayer = {
-  mainLayer: BakgrunnskartId;
+  mainLayer: KartlagId;
   subLayers: string[];
 };
 
+// TODO: skriv om eller dokumenter den filen her
 const useVisibleLayers = () => {
   const [visibleLayers, setVisibleLayers] = useState<VisibleLayer[]>([
     {
-      mainLayer: "cachetjenester" as BakgrunnskartId,
+      mainLayer: "cachetjenester" as KartlagId,
       subLayers: ["Norges grunnkart gråtone"],
     },
   ]);
-  // sett synlighet til layer i map til ny verdi
+
+  // Hver gang listen med synlige kartlag endrer seg skrur vi av alle lagene,
+  // også skrur vi på de vi vil se igjen
   useEffect(() => {
-    for (const bakgrunnsLayer of Object.keys(bakgrunnskartLayers)) {
-      const layer = getLayerById(bakgrunnsLayer as BakgrunnskartId);
+    for (const kartlagLayer of Object.keys(kartlagLayers)) {
+      const layer = getLayerById(kartlagLayer as KartlagId);
       layer?.setVisible(false);
     }
 
     visibleLayers.forEach((visibleLayer, i) => {
-      const layer = getLayerById(visibleLayer.mainLayer as BakgrunnskartId);
+      const layer = getLayerById(visibleLayer.mainLayer as KartlagId);
       layer?.setVisible(true);
       layer.setZIndex(-i - 1);
     });
   }, [visibleLayers]);
 
-  const toggleLayerVisibility = (
-    layerId: BakgrunnskartId,
-    subLayer?: string
-  ) => {
+  const toggleLayerVisibility = (layerId: KartlagId, subLayer?: string) => {
     if (!subLayer) {
       toggleLayerWithOutSublayer(layerId);
       return;
@@ -73,7 +72,7 @@ const useVisibleLayers = () => {
     }
   };
 
-  const toggleLayerWithOutSublayer = (layerId: BakgrunnskartId) => {
+  const toggleLayerWithOutSublayer = (layerId: KartlagId) => {
     const layer = visibleLayers.find(
       (visibleLayer) => visibleLayer.mainLayer === layerId
     );
@@ -90,7 +89,7 @@ const useVisibleLayers = () => {
     }
   };
 
-  const addNewMainLayer = (mainLayer: BakgrunnskartId, subLayer?: string) => {
+  const addNewMainLayer = (mainLayer: KartlagId, subLayer?: string) => {
     if (!subLayer) {
       toggleLayerWithOutSublayer(mainLayer);
       return;
@@ -101,13 +100,13 @@ const useVisibleLayers = () => {
     ]);
   };
 
-  const layerIsVisible = (layerId: BakgrunnskartId) => {
+  const layerIsVisible = (layerId: KartlagId) => {
     return visibleLayers.some(
       (visibleLayer) => visibleLayer.mainLayer === layerId
     );
   };
 
-  const subLayerIsVisible = (mainLayer: BakgrunnskartId, subLayer: string) => {
+  const subLayerIsVisible = (mainLayer: KartlagId, subLayer: string) => {
     return visibleLayers.some(
       (visibleLayer) =>
         visibleLayer.mainLayer === mainLayer &&
@@ -115,7 +114,7 @@ const useVisibleLayers = () => {
     );
   };
 
-  const moveLayer = (direction: "up" | "down", layerId: BakgrunnskartId) => {
+  const moveLayer = (direction: "up" | "down", layerId: KartlagId) => {
     const layer = visibleLayers.find(
       (visibleLayer) => visibleLayer.mainLayer === layerId
     );
@@ -131,28 +130,10 @@ const useVisibleLayers = () => {
     }
   };
 
-  const recursiveIsVisible = (
-    mainLayer: BakgrunnskartId,
-    layer: MappedLayer
-  ): boolean => {
-    if (subLayerIsVisible(mainLayer, layer.title)) {
-      return true;
-    }
-    if (layer.layers.length > 0) {
-      for (const subLayer of layer.layers) {
-        if (recursiveIsVisible(mainLayer, subLayer)) {
-          return true;
-        }
-      }
-    }
-    return false;
-  };
-
   return {
     visibleLayers,
     moveLayer,
     toggleLayerVisibility,
-    recursiveIsVisible,
     layerIsVisible,
     subLayerIsVisible,
   };

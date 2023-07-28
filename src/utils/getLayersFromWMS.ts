@@ -3,7 +3,7 @@ import WMTSCapabilities from "ol/format/WMTSCapabilities";
 import TileWMS from "ol/source/TileWMS";
 import WMTS from "ol/source/WMTS";
 import { getTicketForTjeneste } from "./geonorgeTicket";
-import { BakgrunnskartId } from "hooks/layers/types";
+import { KartlagId } from "hooks/layers/types";
 import { getUrlForPath } from "utils/api";
 
 const WMSParser = new WMSCapabilities();
@@ -26,22 +26,20 @@ export type MappedLayer = {
   title: string;
   id?: string;
   queryable: boolean;
+  sourceId: KartlagId;
 };
 
-export type MainMappedLayer = MappedLayer & {
-  sourceId: BakgrunnskartId;
-};
-
-const mapWMSLayer = (responseLayer: WMSResponseLayer) => {
+const mapWMSLayer = (responseLayer: WMSResponseLayer, sourceId: KartlagId) => {
   let layers: MappedLayer[] = [];
 
   if (responseLayer.Layer) {
     layers = responseLayer.Layer.map((nestedLayer: WMSResponseLayer) =>
-      mapWMSLayer(nestedLayer)
+      mapWMSLayer(nestedLayer, sourceId)
     );
   }
 
   return {
+    sourceId,
     layers,
     id: responseLayer.Name,
     title: responseLayer.Title,
@@ -49,11 +47,15 @@ const mapWMSLayer = (responseLayer: WMSResponseLayer) => {
   } as MappedLayer;
 };
 
-const mapWMTSLayer = (responseLayer: WMTSResponseLayer): MappedLayer => ({
+const mapWMTSLayer = (
+  responseLayer: WMTSResponseLayer,
+  sourceId: KartlagId
+): MappedLayer => ({
   layers: [],
   queryable: true,
   title: responseLayer.Title,
   id: responseLayer.Identifier,
+  sourceId: sourceId,
 });
 
 const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
@@ -101,8 +103,8 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
     if (!json?.Capability) return null;
 
     const mainLayer = json.Capability.Layer;
-    const transformedLayer = mapWMSLayer(mainLayer) as MainMappedLayer;
-    transformedLayer.sourceId = source.get("id") as BakgrunnskartId;
+    const sourceId = source.get("id") as KartlagId;
+    const transformedLayer = mapWMSLayer(mainLayer, sourceId) as MappedLayer;
 
     return transformedLayer;
   }
@@ -113,10 +115,14 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
 
     if (!json?.Contents) return null;
 
-    const mappedWMTSLayer: MainMappedLayer = {
-      layers: json.Contents.Layer.map(mapWMTSLayer),
+    const sourceId = source.get("id") as KartlagId;
+
+    const mappedWMTSLayer: MappedLayer = {
+      layers: json.Contents.Layer.map((l: WMTSResponseLayer) =>
+        mapWMTSLayer(l, sourceId)
+      ),
       queryable: true,
-      sourceId: source.get("id") as BakgrunnskartId,
+      sourceId: source.get("id") as KartlagId,
       title: json.ServiceIdentification.Title,
       id: json.ServiceIdentification.Title,
     };

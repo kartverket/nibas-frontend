@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { WFS } from "ol/format";
 import { map } from "pages/Kart/constants";
-import { MainMappedLayer } from "./getLayersFromWMS";
+import { MappedLayer } from "./getLayersFromWMS";
 import { getFeaturesFromGeoJson } from "./map/geoJson";
 
 export const getMatWFSFeatures = () => {
@@ -19,7 +19,7 @@ export const getMatWFSFeatures = () => {
   }
 };
 
-export const mapVectorLayer = async (): Promise<MainMappedLayer> => {
+export const mapVectorLayer = async (): Promise<MappedLayer> => {
   return {
     layers: [],
     queryable: true,

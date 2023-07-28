@@ -112,7 +112,7 @@ const createAuthedTileWMS = (
     },
   });
 
-export const bakgrunnskartSources = {
+export const kartlagSources = {
   administrativeGrenser: createTileWMS(
     "https://wms.geonorge.no/skwms1/wms.adm_enheter2",
     "adm_enheter_V2_WMS"
@@ -162,21 +162,17 @@ export const bakgrunnskartSources = {
   norgeIBilder: new WMTS(norgeIBilderConfig),
 };
 
-bakgrunnskartSources.norgeIBilder.set("protectedTjenesteId", "wms.nib");
-bakgrunnskartSources.sjokartElektroniske.set(
-  "protectedTjenesteId",
-  "wms.ecc_enc"
-);
+kartlagSources.norgeIBilder.set("protectedTjenesteId", "wms.nib");
+kartlagSources.sjokartElektroniske.set("protectedTjenesteId", "wms.ecc_enc");
 
-bakgrunnskartSources.cachetjenester.set("config", cachetjenesterConfig);
-bakgrunnskartSources.norgeIBilder.set("config", norgeIBilderConfig);
+kartlagSources.cachetjenester.set("config", cachetjenesterConfig);
+kartlagSources.norgeIBilder.set("config", norgeIBilderConfig);
 
 (() => {
   const tileGrid = getWMSTileGrid();
 
-  Object.keys(bakgrunnskartSources).forEach((id) => {
-    const source =
-      bakgrunnskartSources[id as keyof typeof bakgrunnskartSources];
+  Object.keys(kartlagSources).forEach((id) => {
+    const source = kartlagSources[id as keyof typeof kartlagSources];
 
     // sett id på alle sources for å gjøre de mulig å sjekke opp  med layers
     source.set("id", id);

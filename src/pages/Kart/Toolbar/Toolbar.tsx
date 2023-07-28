@@ -7,7 +7,6 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import ToolbarTooltip from "./ToolbarTooltip";
 import { Divider } from "@kvib/react";
-import { useSidebarPanel } from "contexts/SidebarPanelContext";
 
 const Container = styled.div`
   grid-area: toolbar;
@@ -28,7 +27,6 @@ const ZoomButtons = styled(Frame)`
   padding: 8px 4px;
 `;
 
-// TODO: en eller annen måte å skjule knapper under en "mer"-meny ved mindre skjerm
 const Toolbar = () => {
   const { activePointMode, togglePointMode, activeEditModes, toggleEditMode } =
     useToolbar();
@@ -42,15 +40,12 @@ const Toolbar = () => {
     activeOverlayPanel === "grunnkrets" || activeOverlayPanel === "stemmekrets";
   const mergeIsAvailable = editingType === "stemmekrets";
   const mergeIsActive = activeOverlayPanel === "sammenslåing";
-  const { activeSidebarPanel, openSidebarPanel, closeSidebarPanel } =
-    useSidebarPanel();
 
-  const toggleSidebar = () => {
-    if (activeSidebarPanel === "kartlag") {
-      closeSidebarPanel();
-    } else {
-      openSidebarPanel("kartlag");
+  const toggleKartlag = () => {
+    if (activeOverlayPanel === "kartlag") {
       closeOverlayPanel();
+    } else {
+      openOverlayPanel("kartlag");
     }
   };
 
@@ -144,8 +139,8 @@ const Toolbar = () => {
         <ModeButton
           icon="map"
           ariaLabel="Åpne kartlagsmenyen"
-          isActive={activeSidebarPanel === "kartlag"}
-          onClick={toggleSidebar}
+          isActive={activeOverlayPanel === "kartlag"}
+          onClick={toggleKartlag}
         >
           Kartlag
         </ModeButton>
@@ -200,10 +195,10 @@ const Toolbar = () => {
 
         {editingType && (
           <>
-            <ToolbarTooltip text="Skru av/på snapping mot bakgrunnskart.">
+            <ToolbarTooltip text="Skru av/på snapping mot kartlag.">
               <ModeButton
                 icon="magnet"
-                ariaLabel="Snap til bakgrunnskart"
+                ariaLabel="Snap til kartlag"
                 isActive={activeEditModes.includes("snap")}
                 onClick={() => toggleEditMode("snap")}
               >

@@ -9,7 +9,8 @@ type OverlayPanel =
   | "stemmekrets"
   | "sammenslåing"
   | "tegnforklaring"
-  | "koordinater";
+  | "koordinater"
+  | "kartlag";
 type Flatedata = KommuneRef | null;
 
 export type OverlayPanelContextValue = {

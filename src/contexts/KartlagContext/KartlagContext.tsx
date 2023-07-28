@@ -1,0 +1,96 @@
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { kartlagLayers } from "hooks/layers/constants";
+import { KartlagId } from "hooks/layers/types";
+import useVisibleLayers, {
+  VisibleLayer,
+} from "contexts/KartlagContext/useVisibleLayers";
+import getSubLayersFromWMSSource, { MappedLayer } from "utils/getLayersFromWMS";
+import { mapVectorLayer } from "utils/getMatrikkelWfsFeatures";
+import { isVectorLayer } from "utils/map/layers";
+
+export type KartlagContextValue = {
+  mappedLayers: MappedLayer[];
+  visibleLayers: VisibleLayer[];
+  toggleLayerVisibility: (layerId: KartlagId, subLayer?: string) => void;
+  layerIsVisible: (layerId: KartlagId) => boolean;
+  subLayerIsVisible: (mainLayer: KartlagId, subLayer: string) => boolean;
+  moveLayer: (direction: "up" | "down", layerId: KartlagId) => void;
+};
+
+/**
+ * Bruk heller KartlagProvider i koden
+ */
+export const KartlagContext = createContext<KartlagContextValue | undefined>(
+  undefined
+);
+
+export const KartlagProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const [mappedLayers, setMappedLayers] = useState<MappedLayer[]>([]);
+
+  const {
+    visibleLayers,
+    moveLayer,
+    toggleLayerVisibility,
+    layerIsVisible,
+    subLayerIsVisible,
+  } = useVisibleLayers();
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const updateMappedLayers = async () => {
+      const mappedLayerPromises = Object.values(kartlagLayers).map((layer) => {
+        if (isVectorLayer(layer)) {
+          return mapVectorLayer();
+        }
+        const source = layer.getSource();
+        if (source) {
+          return getSubLayersFromWMSSource(source);
+        }
+      });
+
+      const layers = await Promise.all(mappedLayerPromises);
+
+      const nonNullLayers = layers.filter(
+        (layer) => layer !== null
+      ) as MappedLayer[];
+
+      if (isMounted) {
+        setMappedLayers(nonNullLayers);
+      }
+    };
+
+    updateMappedLayers();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const value = {
+    mappedLayers,
+    visibleLayers,
+    toggleLayerVisibility,
+    moveLayer,
+    layerIsVisible,
+    subLayerIsVisible,
+  };
+
+  return (
+    <KartlagContext.Provider value={value}>{children}</KartlagContext.Provider>
+  );
+};
+
+export const useKartlag = () => {
+  const context = useContext(KartlagContext);
+
+  if (!context) {
+    throw new Error("useKartlag must be used within a KartlagProvider");
+  }
+
+  return context;
+};

@@ -4,7 +4,7 @@ import { map } from "./constants";
 import OverlayPopup from "./OverlayPopup";
 import SidebarPanels from "./SidebarPanels";
 import useInteractions from "./interactions/useInteractions";
-import { initBakgrunnskartLayers, initGrenserLayers } from "utils/map/layers";
+import { initKartlagLayers, initGrenserLayers } from "utils/map/layers";
 import Toolbar from "./Toolbar/Toolbar";
 import OverlayPanels from "./OverlayPanels/OverlayPanels";
 import { TegnforklaringButton } from "./OverlayPanels/Tegnforklaring/TegnforklaringButton";
@@ -12,7 +12,7 @@ import { TegnforklaringButton } from "./OverlayPanels/Tegnforklaring/Tegnforklar
 // dette må skje utenfor komponenten siden React kjører dypere useEffects
 // før de lenger opp i treet, så lag er ikke definert når de trengs lenger ned
 initGrenserLayers();
-initBakgrunnskartLayers();
+initKartlagLayers();
 
 const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);

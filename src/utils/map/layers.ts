@@ -6,14 +6,11 @@ import Source from "ol/source/Source";
 import TileWMS from "ol/source/TileWMS";
 import WMTS from "ol/source/WMTS";
 import { map } from "pages/Kart/constants";
-import { bakgrunnskartLayers, grenserLayers } from "hooks/layers/constants";
-import { BakgrunnskartId, GrenseId, LayerId } from "hooks/layers/types";
+import { kartlagLayers, grenserLayers } from "hooks/layers/constants";
+import { KartlagId, GrenseId, LayerId } from "hooks/layers/types";
 import { GeometryVectorSource } from "hooks/sources/types";
-import { MainMappedLayer } from "utils/getLayersFromWMS";
 
-export const getLayersArray = () => map.getLayers().getArray() ?? [];
-export const getLayerIds = () =>
-  getLayersArray().map((layer) => layer.get("id")) as LayerId[];
+const getLayersArray = () => map.getLayers().getArray() ?? [];
 
 export const getLayerById = <T extends LayerId>(id: T) => {
   const layersWithId = getLayersArray().filter(
@@ -26,11 +23,10 @@ export const getLayerById = <T extends LayerId>(id: T) => {
     );
   }
 
-  return layersWithId[0] as (typeof bakgrunnskartLayers &
-    typeof grenserLayers)[T];
+  return layersWithId[0] as (typeof kartlagLayers & typeof grenserLayers)[T];
 };
 
-export const layerExistsInMap = (id: LayerId) => {
+const layerExistsInMap = (id: LayerId) => {
   try {
     const layer = getLayerById(id);
 
@@ -40,35 +36,20 @@ export const layerExistsInMap = (id: LayerId) => {
   }
 };
 
-export const isLayerVisible = (id: LayerId) =>
-  getLayerById(id)?.getVisible() ?? false;
-
-export const addLayerIfNotExists = (layer: Layer<Source>) => {
+const addLayerIfNotExists = (layer: Layer<Source>) => {
   if (!layerExistsInMap(layer.get("id"))) {
     map.addLayer(layer);
   }
 };
 
-export const getLayerIdFromMappedLayer = (mappedLayer: MainMappedLayer) => {
-  const layers = getLayersArray();
-  const layer = layers.find((l) => l.get("id") === mappedLayer.sourceId);
-
-  if (!layer) return;
-
-  return layer.get("id") as BakgrunnskartId;
-};
-
-export const initLayer = (layer: Layer<Source>, layerId: LayerId) => {
+const initLayer = (layer: Layer<Source>, layerId: LayerId) => {
   layer.set("id", layerId);
   addLayerIfNotExists(layer);
 };
 
-export const initBakgrunnskartLayers = () => {
-  Object.keys(bakgrunnskartLayers).map((layerId) => {
-    initLayer(
-      bakgrunnskartLayers[layerId as BakgrunnskartId],
-      layerId as BakgrunnskartId
-    );
+export const initKartlagLayers = () => {
+  Object.keys(kartlagLayers).map((layerId) => {
+    initLayer(kartlagLayers[layerId as KartlagId], layerId as KartlagId);
   });
 };
 

@@ -22,7 +22,7 @@ const customRender = (
     SidebarPanelProvider,
     OverlayPanelProvider,
     EditGrenserProvider,
-    BakgrunnskartProvider,
+    KartlagProvider,
     UtkastProvider,
     ...rltOptions
   } = options;
@@ -38,7 +38,7 @@ const customRender = (
         SidebarPanelProvider,
         OverlayPanelProvider,
         EditGrenserProvider,
-        BakgrunnskartProvider,
+        KartlagProvider,
         UtkastProvider,
       }),
       rltOptions
