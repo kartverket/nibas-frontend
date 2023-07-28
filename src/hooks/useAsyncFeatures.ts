@@ -4,6 +4,8 @@ import Geometry from "ol/geom/Geometry";
 import { LayerId } from "./layers/types";
 import { addFeaturesToSource } from "utils/map/source";
 import { zoomToFeatures } from "utils/map";
+import VectorSource from "ol/source/Vector";
+import { map } from "pages/Kart/constants";
 
 /**
  * Hook for å sette features som kommer async inn i en layer sin source. Venter til features
@@ -12,7 +14,7 @@ import { zoomToFeatures } from "utils/map";
  */
 const useAsyncFeatures = (
   features: Feature<Geometry>[] | null,
-  shouldZoomToFeatures: boolean,
+  zoomMode: "edit" | "view" | null,
   callback?: () => void
 ) => {
   const [layerToAddTo, setLayerToAddTo] = useState<LayerId | null>(null);
@@ -24,12 +26,30 @@ const useAsyncFeatures = (
     addFeaturesToSource(layerToAddTo, features, callback);
     setLayerToAddTo(null);
 
-    if (shouldZoomToFeatures) {
+    if (zoomMode === "edit") {
       zoomToFeatures(features);
     }
-  }, [layerToAddTo, features, shouldZoomToFeatures, callback]);
+
+    if (zoomMode === "view") {
+      zoomToFeatures(getAllFeatures());
+    }
+
+    setLayerToAddTo(null);
+  }, [layerToAddTo, features, callback, zoomMode]);
 
   return { addFeaturesToLayer: setLayerToAddTo };
+};
+
+const getAllFeatures = (): Feature<Geometry>[] => {
+  const layers = map.getAllLayers();
+
+  return layers.flatMap((l) => {
+    const source = l.getSource();
+    if (source instanceof VectorSource) {
+      return source.getFeatures();
+    }
+    return [];
+  });
 };
 
 export default useAsyncFeatures;

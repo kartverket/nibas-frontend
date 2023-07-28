@@ -216,10 +216,8 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
 
   useAddInndelingerKontekst(allFeatures, type, kommuneId);
 
-  const { addFeaturesToLayer } = useAsyncFeatures(
-    allFeatures,
-    !!grenseValue?.editing,
-    () => applyDirtyStylesToUtkastFeatures(allFeatures ?? [])
+  const { addFeaturesToLayer } = useAsyncFeatures(allFeatures, "view", () =>
+    applyDirtyStylesToUtkastFeatures(allFeatures ?? [])
   );
 
   const addKretserToLayer = (layerId: LayerId) => {
