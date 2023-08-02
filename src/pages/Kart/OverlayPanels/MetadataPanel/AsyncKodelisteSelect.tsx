@@ -12,12 +12,17 @@ const AsyncKodelisteSelectInner = (
   { label, kodeliste, ...selectProps }: Props,
   ref: React.ForwardedRef<HTMLSelectElement>
 ) => {
+  const itemsSorted =
+    kodeliste?.items.sort((itemA, itemB) =>
+      itemA.label.toLowerCase().localeCompare(itemB.label.toLowerCase(), "no")
+    ) ?? [];
+
   return (
     <FormControl>
       <FormLabel>{label}</FormLabel>
       <Select ref={ref} {...selectProps}>
         <option value="">---</option>
-        {kodeliste?.items.map((kodeItem) => (
+        {itemsSorted.map((kodeItem) => (
           <option key={kodeItem.id} value={kodeItem.id}>
             {kodeItem.label.replace(/([a-zæøå])([A-ZÆØÅ])/g, "$1 $2")}
           </option>

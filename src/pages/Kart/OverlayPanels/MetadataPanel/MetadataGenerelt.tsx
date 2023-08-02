@@ -48,7 +48,7 @@ const Form = styled.form`
 
 const InputRow = styled.div`
   display: grid;
-  grid-template-columns: auto auto;
+  grid-template-columns: 3fr 2fr;
   gap: 16px;
 `;
 
