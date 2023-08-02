@@ -7,6 +7,7 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import ToolbarTooltip from "./ToolbarTooltip";
 import { Divider } from "@kvib/react";
+import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 
 const Container = styled.div`
   grid-area: toolbar;
@@ -89,12 +90,22 @@ const Toolbar = () => {
     });
   };
 
+  useKeyboardShortcut("add", () => togglePointMode("add"));
+  useKeyboardShortcut("remove", () => togglePointMode("remove"));
+  useKeyboardShortcut("edit", toggleMove);
+  useKeyboardShortcut("snap", () => toggleEditMode("snap"));
+  useKeyboardShortcut("merge", toggleMergePanel);
+  useKeyboardShortcut("layers", toggleKartlag);
+
   return (
     <Container>
       <Buttons>
         {editingType && (
           <>
-            <ToolbarTooltip text="Flytt et punkt ved bruk av koordinater">
+            <ToolbarTooltip
+              text="Flytt et punkt ved bruk av koordinater"
+              shortcut="edit"
+            >
               <ModeButton
                 icon="ads_click"
                 ariaLabel="Flytt punkt med koordinater"
@@ -104,7 +115,10 @@ const Toolbar = () => {
                 Flytt
               </ModeButton>
             </ToolbarTooltip>
-            <ToolbarTooltip text="Legg til ett eller flere punkter på en grense.">
+            <ToolbarTooltip
+              text="Legg til ett eller flere punkter på en grense."
+              shortcut="add"
+            >
               <ModeButton
                 icon="add_location_alt"
                 ariaLabel="Legg til punkter"
@@ -114,7 +128,10 @@ const Toolbar = () => {
                 Legg til
               </ModeButton>
             </ToolbarTooltip>
-            <ToolbarTooltip text="Fjern ett eller flere punkter fra en grense.">
+            <ToolbarTooltip
+              text="Fjern ett eller flere punkter fra en grense."
+              shortcut="remove"
+            >
               <ModeButton
                 icon="wrong_location"
                 ariaLabel="Fjern punkter"
@@ -136,18 +153,26 @@ const Toolbar = () => {
             Grenseinfo
           </ModeButton>
         </ToolbarTooltip>
-        <ModeButton
-          icon="map"
-          ariaLabel="Åpne kartlagsmenyen"
-          isActive={activeOverlayPanel === "kartlag"}
-          onClick={toggleKartlag}
+        <ToolbarTooltip
+          text="Legg til, endre rekkefølge og fjern kartlag fra kartet."
+          shortcut="layers"
         >
-          Kartlag
-        </ModeButton>
+          <ModeButton
+            icon="map"
+            ariaLabel="Åpne kartlagsmenyen"
+            isActive={activeOverlayPanel === "kartlag"}
+            onClick={toggleKartlag}
+          >
+            Kartlag
+          </ModeButton>
+        </ToolbarTooltip>
         {flatedetaljerIsAvailable && (
           <>
             {mergeIsAvailable && (
-              <ToolbarTooltip text="Slå sammen to eller flere stemmekretser.">
+              <ToolbarTooltip
+                text="Slå sammen to eller flere stemmekretser."
+                shortcut="merge"
+              >
                 <ModeButton
                   icon="merge"
                   ariaLabel="Slå sammen stemmekretser"
@@ -195,7 +220,10 @@ const Toolbar = () => {
 
         {editingType && (
           <>
-            <ToolbarTooltip text="Skru av/på snapping mot kartlag.">
+            <ToolbarTooltip
+              text="Skru av/på snapping mot kartlag."
+              shortcut="snap"
+            >
               <ModeButton
                 icon="magnet"
                 ariaLabel="Snap til kartlag"

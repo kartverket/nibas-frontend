@@ -15,6 +15,7 @@ export const useKeyboardShortcut = (
     const eventListener = (event: Event) => {
       if (callback && isKeydownEvent(event) && kbShortcut.checkEvent(event)) {
         event.preventDefault();
+        event.stopPropagation();
         callback();
       }
     };

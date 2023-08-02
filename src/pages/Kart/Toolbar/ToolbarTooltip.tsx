@@ -1,9 +1,13 @@
 import { Stack, Text, Tooltip, TooltipProps } from "@kvib/react";
 import styled from "styled-components";
+import {
+  KeyboardShortcuts,
+  Shortcut,
+} from "hooks/keyboard-shortcuts/keyboard-shortcuts";
 
 type BodyProps = {
   text: string;
-  shortcut?: string;
+  shortcut?: Shortcut;
 };
 
 export type Props = BodyProps & Omit<TooltipProps, "label">;
@@ -11,7 +15,9 @@ export type Props = BodyProps & Omit<TooltipProps, "label">;
 const TooltipBody = ({ text, shortcut }: BodyProps) => (
   <BodyWrapper>
     <Text>{text}</Text>
-    {shortcut && <ShortcutText>{shortcut}</ShortcutText>}
+    {shortcut && (
+      <ShortcutText>{KeyboardShortcuts[shortcut].displayString}</ShortcutText>
+    )}
   </BodyWrapper>
 );
 
