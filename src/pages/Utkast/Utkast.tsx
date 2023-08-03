@@ -30,24 +30,25 @@ const sortUtkastByCreatedDesc = (
 ): number => b.opprettetDato.localeCompare(a.opprettetDato);
 
 const Utkast = () => {
-  const { data: utkasts } = useUtkasts();
+  const { data: utkasts, isLoading } = useUtkasts();
 
   // TODO: dersom brukeren navigerer tilbake hit via nettleseren må kartet m.m. tilbakestilles
 
   // TODO: legg til en loader eller skeleton eller feilmelding eller noe sånt her
-  if (!utkasts) return null;
+  if (isLoading) return null;
 
   // Vi deler opp utkast i to kolonner manuelt i et forsøk på å holde lengden jevn
   const rightColumn: UtkastGroup = {};
   const leftColumn: UtkastGroup = {};
-  for (const u of utkasts) {
+
+  utkasts?.forEach((u) => {
     // Grupperer utkast etter endringstype
     if (endringstypeOrder[u.endringstype as Endringstype] === "left") {
       leftColumn[u.endringstype] = [...(leftColumn[u.endringstype] || []), u];
     } else {
       rightColumn[u.endringstype] = [...(rightColumn[u.endringstype] || []), u];
     }
-  }
+  });
 
   return (
     <>
