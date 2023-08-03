@@ -8,27 +8,30 @@ import { ErrorHandlingProvider } from "contexts/ErrorHandlingContext";
 import { OverlayPanelProvider } from "contexts/OverlayPanelContext";
 import { FeatureStyleProvider } from "contexts/FeatureStyleContext";
 import { ToolbarProvider } from "contexts/ToolbarContext";
+import { LoadingProvider } from "contexts/LoadingContext";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
     <ThirdPartyProviders>
-      <ErrorHandlingProvider>
-        <HistoryProvider>
-          <ToolbarProvider>
-            <FeatureStyleProvider>
-              <SidebarPanelProvider>
-                <OverlayPanelProvider>
-                  <EditGrenserProvider>
-                    <KartlagProvider>
-                      <UtkastProvider>{children}</UtkastProvider>
-                    </KartlagProvider>
-                  </EditGrenserProvider>
-                </OverlayPanelProvider>
-              </SidebarPanelProvider>
-            </FeatureStyleProvider>
-          </ToolbarProvider>
-        </HistoryProvider>
-      </ErrorHandlingProvider>
+      <LoadingProvider>
+        <ErrorHandlingProvider>
+          <HistoryProvider>
+            <ToolbarProvider>
+              <FeatureStyleProvider>
+                <SidebarPanelProvider>
+                  <OverlayPanelProvider>
+                    <EditGrenserProvider>
+                      <KartlagProvider>
+                        <UtkastProvider>{children}</UtkastProvider>
+                      </KartlagProvider>
+                    </EditGrenserProvider>
+                  </OverlayPanelProvider>
+                </SidebarPanelProvider>
+              </FeatureStyleProvider>
+            </ToolbarProvider>
+          </HistoryProvider>
+        </ErrorHandlingProvider>
+      </LoadingProvider>
     </ThirdPartyProviders>
   );
 };

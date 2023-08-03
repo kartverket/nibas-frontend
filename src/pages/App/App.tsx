@@ -17,7 +17,7 @@ import {
   AuthorizationStatus,
   useAuthorization,
 } from "../Authentication/AuthHooks";
-import { FullPageLoader } from "./AppLoader";
+import Loading from "./Loading";
 import Authentication from "pages/Authentication/Authentication";
 import Landing from "pages/Landing/Landing";
 import ThirdPartyProviders from "./ThirdPartyProviders";
@@ -61,7 +61,7 @@ const App = () => {
   );
 
   return (
-    <Suspense fallback={<FullPageLoader />}>
+    <Suspense fallback={<Loading isLoading={true} />}>
       <RouterProvider router={router} />
     </Suspense>
   );

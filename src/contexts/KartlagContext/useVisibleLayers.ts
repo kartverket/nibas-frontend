@@ -8,7 +8,6 @@ export type VisibleLayer = {
   subLayers: string[];
 };
 
-// TODO: skriv om eller dokumenter den filen her
 const useVisibleLayers = () => {
   const [visibleLayers, setVisibleLayers] = useState<VisibleLayer[]>([
     {

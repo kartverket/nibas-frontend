@@ -85,7 +85,8 @@ export const removeAllFeatures = () => {
   Object.values(grenserLayers).forEach((layer) => {
     const source = layer.getSource();
     if (source) {
-      source.clear();
+      // Obs! Bruker fast-flagget siden vi ikke lytter på removeFeature-eventet per nå
+      source.clear(true);
     }
   });
 };
