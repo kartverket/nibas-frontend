@@ -133,7 +133,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
   });
 
   const mergeStemmekrets = async () => {
-    // TODO: utkast skal være garantert med ny flyt, så må gjøre dette litt smartere
+    // Man kommer seg ikke hit uten utkast uansett, men for typesikringens del:
     if (!utkast) return;
 
     const selectedStemmekretsValue = getValues("stemmekrets");
@@ -213,7 +213,6 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
   };
 
   const openCreateUtkastModal = () => {
-    // TODO: denne skal nok håndteres på en annen måte med ny utkastflyt
     if (history.entries.length > 0 && history.index > 0) {
       setError({
         title: "Kan ikke slå sammen stemmekretser",
