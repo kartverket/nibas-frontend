@@ -1,7 +1,14 @@
-import { createContext, useContext, useEffect, useMemo } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
-import { useMatch, useNavigate } from "react-router-dom";
+import { useMatch } from "react-router-dom";
 import { useSWRConfig } from "swr";
 import {
   EntityUtkastType,
@@ -43,6 +50,8 @@ export const UtkastContext = createContext<UtkastContextValue | undefined>(
 );
 
 export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
+  const [utkast, setUtkast] = useState<UtkastResponse>();
+
   const { history, clearHistory } = useHistory();
   const { clearDirtyStyles } = useFeatureStyle();
   const { tokenHolderFunc } = useAuthenticationFlow();
@@ -51,9 +60,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const { closeSidebarPanel } = useSidebarPanel();
   const { setError } = useErrorHandling();
   const toast = useToast();
-  const navigate = useNavigate();
   const utkastPathMatch = useMatch(`${routes.utkast}/${routes.utkastId}`);
-  const kartPathMatch = useMatch(routes.kart);
 
   // TODO: faktisk håndter hvis det er feil url/id
   // TODO: f.eks. utkast/hei eller utkast/en-eller-annen-gammel-id
@@ -66,7 +73,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
 
   // TODO: noe beskyttelse på at man kan ende opp i et utkast som er publisert eller slettet allerede?
   const {
-    data: utkast,
+    data: fetchedUtkast,
     mutate,
     isValidating,
   } = useNibasApi(
@@ -85,12 +92,36 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     }
   );
 
+  // TODO: her trengs det en loader for å indikere at dette tar litt tid å gjøre
+  // Når utkast lukkes ønsker vi å tilbakestille store deler av applikasjonen
+  const closeUtkast = useCallback(() => {
+    setUtkast(undefined);
+    resetMapView();
+    clearHistory({ hasPreviouslySavedHistory: false });
+    clearDirtyStyles();
+    resetAndClearEditingLayer();
+    closeOverlayPanel();
+    closeSidebarPanel();
+  }, [
+    clearDirtyStyles,
+    clearHistory,
+    closeOverlayPanel,
+    closeSidebarPanel,
+    resetAndClearEditingLayer,
+  ]);
+
   useEffect(() => {
+    if (fetchedUtkast && !utkast) {
+      setUtkast(fetchedUtkast);
+    }
+
     // fjern utkast hvis utkastid ikke er i url
-    if (utkast && !utkastId) {
+    if (!utkastId && utkast) {
+      setUtkast(undefined);
+      closeUtkast();
       mutate();
     }
-  }, [utkast, utkastId, mutate]);
+  }, [fetchedUtkast, utkastId, mutate, utkast, closeUtkast]);
 
   const getUpdateUtkastRequestFromHistory =
     (): OppdaterUtkastRequest | null => {
@@ -156,22 +187,6 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
 
     await updateUtkast(utkast.id, updatedUtkast);
     toast(createSuccessToast("Utkastet er lagret"));
-  };
-
-  // TODO: her trengs det en loader for å indikere at dette tar litt tid å gjøre
-  // Når utkast lukkes ønsker vi å tilbakestille store deler av applikasjonen
-  const closeUtkast = () => {
-    resetMapView();
-    clearHistory({ hasPreviouslySavedHistory: false });
-    clearDirtyStyles();
-    resetAndClearEditingLayer();
-    closeOverlayPanel();
-    closeSidebarPanel();
-
-    // Dersom vi er i kartvisningen ønsker vi å dra tilbake til start når utkast lukkes
-    if (utkastPathMatch || kartPathMatch) {
-      navigate(routes.index);
-    }
   };
 
   const value = {

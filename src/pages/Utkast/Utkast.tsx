@@ -32,8 +32,6 @@ const sortUtkastByCreatedDesc = (
 const Utkast = () => {
   const { data: utkasts } = useUtkasts();
 
-  // TODO: dersom brukeren navigerer tilbake hit via nettleseren må kartet m.m. tilbakestilles
-
   // TODO: legg til en loader eller skeleton eller feilmelding eller noe sånt her
   if (!utkasts) return null;
 

@@ -4,10 +4,13 @@ import useAlertModal from "hooks/useAlertModal";
 import HeaderButton from "./HeaderButton";
 import { useUtkast } from "contexts/UtkastContext";
 import AlertModal from "components/Modals/AlertModal";
+import { useNavigate } from "react-router-dom";
+import { routes } from "utils/routes";
 
 const HeaderHome = () => {
   const { closeUtkast } = useUtkast();
   const { canSave } = useToolbar();
+  const navigate = useNavigate();
 
   const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } =
     useAlertModal(
@@ -20,6 +23,7 @@ const HeaderHome = () => {
       openModal();
     } else {
       closeUtkast();
+      navigate(routes.index);
     }
   };
 
