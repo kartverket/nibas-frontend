@@ -39,7 +39,6 @@ import { useToast } from "@kvib/react";
 import { createSuccessToast } from "utils/components/toast";
 import { routes } from "utils/routes";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
-import { useLoading } from "contexts/LoadingContext";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
@@ -61,7 +60,6 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const { closeSidebarPanel } = useSidebarPanel();
   const { setError } = useErrorHandling();
   const toast = useToast();
-  const { setIsLoading } = useLoading();
 
   const utkastPathMatch = useMatch(`${routes.utkast}/${routes.utkastId}`);
   const utkastIdMatches = utkastPathMatch?.params["utkastId"]?.match(
@@ -114,13 +112,11 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
 
     // fjern utkast hvis utkastid ikke er i url
     if (!utkastId && utkast) {
-      setIsLoading(true);
       setUtkast(undefined);
       closeUtkast();
       mutate();
-      setIsLoading(false);
     }
-  }, [fetchedUtkast, utkastId, mutate, utkast, closeUtkast, setIsLoading]);
+  }, [fetchedUtkast, utkastId, mutate, utkast, closeUtkast]);
 
   const getUpdateUtkastRequestFromHistory =
     (): OppdaterUtkastRequest | null => {

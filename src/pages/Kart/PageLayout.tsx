@@ -7,12 +7,9 @@ import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
 import { ApiErrorResponse } from "../../types/api";
 import Header from "./Header/Header";
-import Loading from "pages/App/Loading";
-import { useLoading } from "contexts/LoadingContext";
 
 const PageLayout = () => {
   const { error, setError } = useErrorHandling();
-  const { isLoading } = useLoading();
 
   return (
     <Grid>
@@ -33,7 +30,6 @@ const PageLayout = () => {
           },
         }}
       >
-        <Loading isLoading={isLoading} />
         <Suspense fallback="Loading...">
           <Header />
         </Suspense>
