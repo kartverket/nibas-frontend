@@ -2,12 +2,13 @@ import { useToolbar } from "contexts/ToolbarContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import useAlertModal from "hooks/useAlertModal";
 import HeaderButton from "./HeaderButton";
-import { useUtkast } from "contexts/UtkastContext";
 import AlertModal from "components/Modals/AlertModal";
+import { useNavigate } from "react-router-dom";
+import { routes } from "utils/routes";
 
 const HeaderHome = () => {
-  const { closeUtkast } = useUtkast();
   const { canSave } = useToolbar();
+  const navigate = useNavigate();
 
   const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } =
     useAlertModal(
@@ -19,7 +20,7 @@ const HeaderHome = () => {
     if (canSave) {
       openModal();
     } else {
-      closeUtkast();
+      navigate(routes.index);
     }
   };
 
@@ -41,7 +42,7 @@ const HeaderHome = () => {
         onClose={closeModal}
         secondaryAction={{
           text: "Forkast endringer",
-          onClick: closeUtkast,
+          onClick: () => navigate(routes.index),
         }}
         primaryAction={{
           text: "Fortsett redigering",

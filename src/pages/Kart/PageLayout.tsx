@@ -10,6 +10,7 @@ import Header from "./Header/Header";
 
 const PageLayout = () => {
   const { error, setError } = useErrorHandling();
+
   return (
     <Grid>
       <SWRConfig

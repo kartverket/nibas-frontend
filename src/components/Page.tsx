@@ -13,7 +13,7 @@ export const Page = styled(BasePage)`
   grid-template-columns: 669px;
   gap: 18px 0;
   height: 100%;
-  padding: 160px 20px;
+  padding: 128px 20px;
 `;
 
 export const PageHeader = styled.header`

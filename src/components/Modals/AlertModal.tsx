@@ -13,6 +13,7 @@ import {
   AlertProps,
   ModalHeader,
 } from "@kvib/react";
+import { useState } from "react";
 
 const AlertHeader = styled(Alert)`
   display: flex;
@@ -77,38 +78,66 @@ const AlertModal = ({
   primaryAction,
   secondaryAction,
   status,
-}: Props) => (
-  <Modal isOpen={isOpen} onClose={onClose} isCentered size="xl">
-    <ModalOverlay />
-    <ModalContent>
-      <AlertHeader status={status}>
-        <AlertIcon />
-        <Title>{title}</Title>
-      </AlertHeader>
-      <ModalCloseButton aria-label="Lukk" />
-      <Body>
-        <BodyText>{description}</BodyText>
-        {additionalInfo && <BodyTextExtra>{additionalInfo}</BodyTextExtra>}
-        {errorCode && <BodyTextExtra>{`Feilkode ${errorCode}`}</BodyTextExtra>}
-      </Body>
-      {(primaryAction || secondaryAction) && (
-        <ModalFooter>
-          <ButtonGroup>
-            {secondaryAction && (
-              <Button variant="outline" onClick={secondaryAction.onClick}>
-                {secondaryAction.text}
-              </Button>
-            )}
-            {primaryAction && (
-              <Button onClick={primaryAction.onClick}>
-                {primaryAction.text}
-              </Button>
-            )}
-          </ButtonGroup>
-        </ModalFooter>
-      )}
-    </ModalContent>
-  </Modal>
-);
+}: Props) => {
+  const [primaryLoading, setPrimaryLoading] = useState(false);
+  const [secondaryLoading, setSecondaryLoading] = useState(false);
+
+  const handlePrimaryAction = () => {
+    setPrimaryLoading(true);
+    primaryAction?.onClick();
+    setPrimaryLoading(false);
+  };
+
+  const handleSecondaryAction = () => {
+    setSecondaryLoading(true);
+    secondaryAction?.onClick();
+    setSecondaryLoading(false);
+  };
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} isCentered size="xl">
+      <ModalOverlay />
+      <ModalContent>
+        <AlertHeader status={status}>
+          <AlertIcon />
+          <Title>{title}</Title>
+        </AlertHeader>
+        <ModalCloseButton aria-label="Lukk" />
+        <Body>
+          <BodyText>{description}</BodyText>
+          {additionalInfo && <BodyTextExtra>{additionalInfo}</BodyTextExtra>}
+          {errorCode && (
+            <BodyTextExtra>{`Feilkode ${errorCode}`}</BodyTextExtra>
+          )}
+        </Body>
+        {(primaryAction || secondaryAction) && (
+          <ModalFooter>
+            <ButtonGroup>
+              {secondaryAction && (
+                <Button
+                  variant="outline"
+                  onClick={handleSecondaryAction}
+                  isLoading={secondaryLoading}
+                  isDisabled={primaryAction && primaryLoading}
+                >
+                  {secondaryAction.text}
+                </Button>
+              )}
+              {primaryAction && (
+                <Button
+                  onClick={handlePrimaryAction}
+                  isLoading={primaryLoading}
+                  isDisabled={secondaryAction && secondaryLoading}
+                >
+                  {primaryAction.text}
+                </Button>
+              )}
+            </ButtonGroup>
+          </ModalFooter>
+        )}
+      </ModalContent>
+    </Modal>
+  );
+};
 
 export default AlertModal;

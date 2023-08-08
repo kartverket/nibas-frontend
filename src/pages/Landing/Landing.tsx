@@ -3,16 +3,16 @@ import { Page } from "components/Page";
 import { useNavigate } from "react-router-dom";
 import { routes } from "utils/routes";
 import LandingHeader from "./LandingHeader";
+import Greeting from "./Greeting";
 
 const Landing = () => {
   const navigate = useNavigate();
-
-  // TODO: mangler "God morgen!"-hilsen
 
   return (
     <>
       <LandingHeader />
       <Page>
+        <Greeting />
         <ActionCard
           title="Gjør en eller flere endringer"
           description="Opprett, rediger, eller publiser ett eller flere utkast med endringer."

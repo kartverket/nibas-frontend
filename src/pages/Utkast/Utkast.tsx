@@ -10,6 +10,7 @@ import LandingHeader from "pages/Landing/LandingHeader";
 import Icon from "components/Icon/Icon";
 import { Link as RouterLink } from "react-router-dom";
 import { routes } from "utils/routes";
+import Loading from "pages/App/Loading";
 
 const endringstypeOrder: Record<Endringstype, "left" | "right"> = {
   "Vedtatt grensejustering": "left",
@@ -31,11 +32,6 @@ const sortUtkastByCreatedDesc = (
 
 const Utkast = () => {
   const { data: utkasts, isLoading } = useUtkasts();
-
-  // TODO: dersom brukeren navigerer tilbake hit via nettleseren må kartet m.m. tilbakestilles
-
-  // TODO: legg til en loader eller skeleton eller feilmelding eller noe sånt her
-  if (isLoading) return null;
 
   // Vi deler opp utkast i to kolonner manuelt i et forsøk på å holde lengden jevn
   const rightColumn: UtkastGroup = {};
@@ -79,6 +75,7 @@ const Utkast = () => {
           </EndringstypeList>
         ))}
       </Container>
+      <Loading isLoading={isLoading} />
     </>
   );
 };

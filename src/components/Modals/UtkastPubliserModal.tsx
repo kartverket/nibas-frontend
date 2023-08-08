@@ -32,6 +32,8 @@ import {
 import { statusCode } from "utils/api";
 import { createSuccessToast } from "utils/components/toast";
 import { useUtkast } from "contexts/UtkastContext";
+import { useMatch, useNavigate } from "react-router-dom";
+import { routes } from "utils/routes";
 
 type Props = {
   isOpen: boolean;
@@ -48,6 +50,8 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
   const { mutate } = useSWRConfig();
   const [conflictResponse, setConflictResponse] =
     useState<FramtidigVersjonConflict | null>(null);
+  const navigate = useNavigate();
+  const utkastPathMatch = useMatch(`${routes.utkast}/${routes.utkastId}`);
 
   const cleanUpUtkast = () => {
     mutate(["/v1/utkast", tokenHolderFunc()?.token]);
@@ -76,6 +80,10 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
       );
       cleanUpUtkast();
       closeUtkast();
+
+      if (utkastPathMatch) {
+        navigate(routes.utkast);
+      }
     } else if (statusCode.isConflict(response.status)) {
       const wrapper = (await response.json()) as ConflictResponseWrapper;
 
