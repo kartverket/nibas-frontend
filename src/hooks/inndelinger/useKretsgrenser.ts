@@ -1,10 +1,13 @@
-import { useMemo } from "react";
+import { useContext, useMemo } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import useSWR from "swr";
 import useNibasApi from "../useNibasApi";
-import { useEditGrenseValue } from "contexts/EditGrenserContext";
+import {
+  EditGrenserContext,
+  useEditGrenseValue,
+} from "contexts/EditGrenserContext";
 import { Kretstype } from "contexts/InndelingerKretsContext";
 import { useUtkast, useUtkastFeature } from "contexts/UtkastContext";
 import { LayerId } from "hooks/layers/types";
@@ -111,6 +114,8 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   const { setAndSaveUtkastFeatures, setAndSaveSammenslaaingsFeatures } =
     useFeatureStyle();
 
+  const context = useContext(EditGrenserContext);
+
   const { data: grunnkretserByKommune } = useNibasApi(
     visible ? getKretserByKommuneUrl(type) : null,
     {
@@ -216,8 +221,22 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
 
   useAddInndelingerKontekst(allFeatures, type, kommuneId);
 
-  const { addFeaturesToLayer } = useAsyncFeatures(allFeatures, "view", () =>
-    applyDirtyStylesToUtkastFeatures(allFeatures ?? [])
+  const getEditMode = (): "edit" | "view" | null => {
+    if (grenseValue.editing) {
+      return "edit";
+    }
+    //TODO: sjekk om noe annet i kartet redigeres - i så fall returner "null"
+    if (context?.getCurrentlyEditingType() !== null) {
+      return null;
+    }
+
+    return "view";
+  };
+
+  const { addFeaturesToLayer } = useAsyncFeatures(
+    allFeatures,
+    getEditMode(),
+    () => applyDirtyStylesToUtkastFeatures(allFeatures ?? [])
   );
 
   const addKretserToLayer = (layerId: LayerId) => {

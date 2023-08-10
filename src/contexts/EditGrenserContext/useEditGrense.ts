@@ -41,11 +41,16 @@ export const useEditGrense = (
   grenseId: string,
   features: Feature<Geometry>[] | null
 ) => {
+  const context = useContext(EditGrenserContext);
+
   const getEditMode = (): "edit" | "view" | null => {
     if (value.editing) {
       return "edit";
     }
-    //TODO: sjekk om noe annet i kartet redigeres - i så fall returner "null"
+
+    if (context?.getCurrentlyEditingType() !== null) {
+      return null;
+    }
 
     return "view";
   };
