@@ -13,9 +13,6 @@ import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useCallback } from "react";
 import Input from "components/Input";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import CreateUtkastModal, {
-  CreateUtkastCallbackArgument,
-} from "./CreateUtkastModal";
 import { stemmekretsgrenserFetcher } from "api/stemmekrets";
 import { deduplicate, removeNull } from "utils/list-utils";
 import { MergeMultiselect } from "./MergeMultiselect";
@@ -28,8 +25,8 @@ import {
   FormLabel,
   Heading,
   Select,
-  useDisclosure,
 } from "@kvib/react";
+import { useHistory } from "contexts/HistoryContext";
 
 const Form = styled.form`
   display: flex;
@@ -51,12 +48,12 @@ const Buttons = styled.div`
 `;
 
 const MergePanel = ({ isOpen, className }: PanelProps) => {
-  const { isOpen: modalIsOpen, onOpen, onClose } = useDisclosure();
   const { flatedata, closeOverlayPanel } = useOverlayPanel();
   const { setError } = useErrorHandling();
   const { utkast, updateUtkast } = useUtkast();
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { setAndSaveSammenslaaingsFeatures } = useFeatureStyle();
+  const { history } = useHistory();
   const { data: stemmekretserByKommune } = useKommuneStemmekretser(
     flatedata ? getIdFromEntity(flatedata) : ""
   );
@@ -135,7 +132,10 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
     stemmekretsNummer: getValues("stemmekretsnummer"),
   });
 
-  const mergeStemmekrets = async (nyttUtkast: CreateUtkastCallbackArgument) => {
+  const mergeStemmekrets = async () => {
+    // Man kommer seg ikke hit uten utkast uansett, men for typesikringens del:
+    if (!utkast) return;
+
     const selectedStemmekretsValue = getValues("stemmekrets");
     const stemmekretsNummerTilSammenslaaing: string[] = getValues(
       "stemmekretsNummerTilSammenslaaing"
@@ -152,17 +152,17 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
     if (stemmekretsTilSammenslaaingListe.length > 0 && selectedStemmekrets) {
       const updateUtkastRequest = {
         version: 1,
-        navn: nyttUtkast.navn,
-        endringstype: nyttUtkast.endringstype,
+        navn: utkast.navn,
+        endringstype: utkast.endringstype,
         operasjoner: {
-          ...nyttUtkast.operasjoner,
+          ...utkast.operasjoner,
           stemmekretsSammenslaaingsendring: fromFormToRequest(
             selectedStemmekrets,
             stemmekretsTilSammenslaaingListe
           ),
         },
       };
-      updateUtkast(nyttUtkast.id, updateUtkastRequest);
+      updateUtkast(utkast.id, updateUtkastRequest);
       const sammenslaaingsStemmekretsIder = getStemmekretsIdList(
         selectedStemmekrets,
         stemmekretsTilSammenslaaingListe
@@ -213,7 +213,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
   };
 
   const openCreateUtkastModal = () => {
-    if (utkast) {
+    if (history.entries.length > 0 && history.index > 0) {
       setError({
         title: "Kan ikke slå sammen stemmekretser",
         description:
@@ -221,7 +221,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
       });
       return;
     }
-    modalIsOpen ? onClose() : onOpen();
+    mergeStemmekrets();
   };
 
   // Oppdaterer stemmekretsnavn og stemmekretsnummer når valgt stemmekrets endres
@@ -313,11 +313,6 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
                 Slå sammen
               </Button>
             </Buttons>
-            <CreateUtkastModal
-              isOpen={modalIsOpen}
-              onClose={onClose}
-              callback={mergeStemmekrets}
-            />
           </Form>
         </FormProvider>
       )}

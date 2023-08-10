@@ -1,27 +1,26 @@
-import { useUtkastEndringer } from "./hooks/useUtkastEndringer";
-import { EndringsloggGrunnkretsendringer } from "./EndringsloggGrunnkretsendringer";
-import { EndringsloggStemmekretsendringer } from "./EndringsloggStemmekretsendringer";
 import {
   Modal,
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalBody,
   ModalCloseButton,
+  ModalBody,
   Skeleton,
 } from "@kvib/react";
+import { EndringsloggGrunnkretsendringer } from "./EndringsloggGrunnkretsendringer";
+import { EndringsloggStemmekretsendringer } from "./EndringsloggStemmekretsendringer";
+import { useUtkastEndringer } from "./hooks/useUtkastEndringer";
+import { UtkastResponse } from "types/api";
 
-type EndringsloggModalProps = {
+type Props = {
   isOpen: boolean;
   onClose: () => void;
+  utkast: UtkastResponse;
 };
 
-export const EndringsloggModal = ({
-  isOpen,
-  onClose,
-}: EndringsloggModalProps) => {
+const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
   const { harEndringer, laster, stemmekretsendringer, grunnkretsendringer } =
-    useUtkastEndringer();
+    useUtkastEndringer(utkast);
 
   const harLastetData =
     !laster || !!stemmekretsendringer || !!grunnkretsendringer;
@@ -57,3 +56,4 @@ export const EndringsloggModal = ({
     </Modal>
   );
 };
+export default EndringsloggModal;

@@ -1,39 +1,34 @@
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import { bakgrunnskartSources } from "hooks/sources/syncSources";
+import { kartlagSources } from "hooks/sources/syncSources";
 import { getPointOverlayStyle, getLayerStyle } from "utils/map/layerStyles";
 import { StyleFunction } from "ol/style/Style";
 import { GrenseId } from "./types";
 
-const createTileLayerFromBakgrunnskartSource = (
-  id: keyof typeof bakgrunnskartSources
-) => new TileLayer({ source: bakgrunnskartSources[id] });
+const createTileLayerFromKartlagSource = (id: keyof typeof kartlagSources) =>
+  new TileLayer({ source: kartlagSources[id] });
 
-export const bakgrunnskartLayers = {
-  administrativeGrenser: createTileLayerFromBakgrunnskartSource(
+export const kartlagLayers = {
+  administrativeGrenser: createTileLayerFromKartlagSource(
     "administrativeGrenser"
   ),
-  administrativeGrenserHistorisk: createTileLayerFromBakgrunnskartSource(
+  administrativeGrenserHistorisk: createTileLayerFromKartlagSource(
     "administrativeGrenserHistorisk"
   ),
-  grunnkretserWMS: createTileLayerFromBakgrunnskartSource("grunnkretserWMS"),
-  stedsnavn: createTileLayerFromBakgrunnskartSource("stedsnavn"),
-  stedsnavnSSR: createTileLayerFromBakgrunnskartSource("stedsnavnSSR"),
-  kartbladinndelinger: createTileLayerFromBakgrunnskartSource(
-    "kartbladinndelinger"
-  ),
-  sjokartDybdedata: createTileLayerFromBakgrunnskartSource("sjokartDybdedata"),
-  n5Raster2: createTileLayerFromBakgrunnskartSource("n5Raster2"),
-  historiskeKart: createTileLayerFromBakgrunnskartSource("historiskeKart"),
-  norgeIBilder: createTileLayerFromBakgrunnskartSource("norgeIBilder"),
-  cachetjenester: createTileLayerFromBakgrunnskartSource("cachetjenester"),
-  norgesMaritimeGrenser: createTileLayerFromBakgrunnskartSource(
+  grunnkretserWMS: createTileLayerFromKartlagSource("grunnkretserWMS"),
+  stedsnavn: createTileLayerFromKartlagSource("stedsnavn"),
+  stedsnavnSSR: createTileLayerFromKartlagSource("stedsnavnSSR"),
+  kartbladinndelinger: createTileLayerFromKartlagSource("kartbladinndelinger"),
+  sjokartDybdedata: createTileLayerFromKartlagSource("sjokartDybdedata"),
+  n5Raster2: createTileLayerFromKartlagSource("n5Raster2"),
+  historiskeKart: createTileLayerFromKartlagSource("historiskeKart"),
+  norgeIBilder: createTileLayerFromKartlagSource("norgeIBilder"),
+  cachetjenester: createTileLayerFromKartlagSource("cachetjenester"),
+  norgesMaritimeGrenser: createTileLayerFromKartlagSource(
     "norgesMaritimeGrenser"
   ),
-  sjokartElektroniske: createTileLayerFromBakgrunnskartSource(
-    "sjokartElektroniske"
-  ),
+  sjokartElektroniske: createTileLayerFromKartlagSource("sjokartElektroniske"),
   matrikkelenWfs: new VectorLayer({ source: new VectorSource() }),
 };
 

@@ -2,21 +2,17 @@ import { Suspense } from "react";
 import styled from "styled-components";
 import { SWRConfig } from "swr";
 import Kart from "pages/Kart";
-import Sidebar from "components/Sidebar";
-import TopBar from "components/TopBar";
-import { useRedigeringsmodus } from "hooks/useRedigeringsmodus";
-import AlertModal from "components/AlertModal";
+import AlertModal from "components/Modals/AlertModal";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
 import { ApiErrorResponse } from "../../types/api";
+import Header from "./Header/Header";
 
-// TODO: Gi denne et bedre navn, kanskje bare "Kart", da Kart-komponenten er lite beskrivende selv
 const PageLayout = () => {
-  const { redigeringsmodusAktiv } = useRedigeringsmodus();
   const { error, setError } = useErrorHandling();
 
   return (
-    <Grid utkastActive={redigeringsmodusAktiv}>
+    <Grid>
       <SWRConfig
         value={{
           fetcher: (url) => fetch(url).then((res) => res.json()),
@@ -35,8 +31,7 @@ const PageLayout = () => {
         }}
       >
         <Suspense fallback="Loading...">
-          <TopBar />
-          <Sidebar />
+          <Header />
         </Suspense>
         <Kart />
         {error && (
@@ -59,26 +54,14 @@ const PageLayout = () => {
   );
 };
 
-const Grid = styled.div<{ utkastActive: boolean }>`
+const Grid = styled.div`
   height: 100%;
   display: grid;
   grid-template-columns: auto 1fr;
   grid-template-rows: auto 1fr;
   grid-template-areas:
-    ". topbar"
+    "header header"
     "sidebar map";
-
-  &::after {
-    content: "";
-    display: block;
-    position: absolute;
-    width: 100vw;
-    height: 100vh;
-    border: 6px solid
-      ${({ utkastActive }) =>
-        utkastActive ? "var(--kvib-colors-orange-400)" : "transparent"};
-    z-index: -99999;
-  }
 `;
 
 export default PageLayout;

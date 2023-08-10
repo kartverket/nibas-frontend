@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
 
-export type SidebarPanel = "inndelinger" | "kartlag" | "utkast";
+export type SidebarPanel = "inndelinger";
 
 export type SidebarPanelContextValue = {
   activeSidebarPanel: SidebarPanel | null;

@@ -1,3 +1,5 @@
+import get from "lodash.get";
+
 export function removeNull<T>(list: (T | null | undefined)[]): T[] {
   return list.filter((element) => element != null) as T[];
 }
@@ -32,4 +34,34 @@ export function removeFromList<T>(index: number, list: T[]): T[] {
   }
 
   return [...list.slice(0, index), ...list.slice(index + 1, list.length)];
+}
+
+export function orderBy<T>(
+  items: T[],
+  sortField: string,
+  sortOrder: "asc" | "desc"
+): T[] {
+  const sortedItems = items.sort((itemA, itemB) => {
+    const itemAValue = get(itemA, sortField, "");
+    const itemBValue = get(itemB, sortField, "");
+
+    if (isString(itemAValue) && isString(itemBValue)) {
+      return itemAValue
+        .toLowerCase()
+        .localeCompare(itemBValue.toLowerCase(), "no");
+    }
+    if (isString(itemAValue)) {
+      return 1;
+    }
+    if (isString(itemBValue)) {
+      return -1;
+    }
+    return 0;
+  });
+
+  return sortOrder === "asc" ? sortedItems : sortedItems.reverse();
+}
+
+function isString(value: unknown): value is string {
+  return typeof value === "string";
 }

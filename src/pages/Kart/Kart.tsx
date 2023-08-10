@@ -4,14 +4,15 @@ import { map } from "./constants";
 import OverlayPopup from "./OverlayPopup";
 import SidebarPanels from "./SidebarPanels";
 import useInteractions from "./interactions/useInteractions";
-import { initBakgrunnskartLayers, initGrenserLayers } from "utils/map/layers";
+import { initKartlagLayers, initGrenserLayers } from "utils/map/layers";
 import Toolbar from "./Toolbar/Toolbar";
 import OverlayPanels from "./OverlayPanels/OverlayPanels";
+import { TegnforklaringButton } from "./OverlayPanels/Tegnforklaring/TegnforklaringButton";
 
 // dette må skje utenfor komponenten siden React kjører dypere useEffects
 // før de lenger opp i treet, så lag er ikke definert når de trengs lenger ned
 initGrenserLayers();
-initBakgrunnskartLayers();
+initKartlagLayers();
 
 const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -36,6 +37,7 @@ const Kart = () => {
       <KartTarget ref={mapRef}>
         <Suspense fallback="More loading...">
           <KartOverlay>
+            <TegnforklaringButton />
             <SidebarPanels />
             <OverlayPanels />
             <Toolbar />
@@ -50,9 +52,8 @@ const Kart = () => {
 const KartWrapper = styled.div`
   grid-area: map;
   position: relative;
-  border: 3px solid var(--kvib-colors-gray-50);
-  height: calc(100% - 6px);
-  width: calc(100% - 6px);
+  width: 100%;
+  height: 100%;
   border-right-width: 0;
   border-bottom-width: 0;
 `;

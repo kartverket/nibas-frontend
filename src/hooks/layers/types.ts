@@ -1,6 +1,6 @@
-import { bakgrunnskartLayers } from "./constants";
+import { kartlagLayers } from "./constants";
 
-export type BakgrunnskartId = keyof typeof bakgrunnskartLayers;
+export type KartlagId = keyof typeof kartlagLayers;
 export type GrenseId =
   | "fylke"
   | "kommune"
@@ -21,7 +21,7 @@ export type GrenseType =
   | "Stemmekretsgrense";
 
 // denne iden brukes både til Sources og Layers
-export type LayerId = BakgrunnskartId | GrenseId;
+export type LayerId = KartlagId | GrenseId;
 
 export type ByLayerId<T> = {
   [Property in LayerId]: T;

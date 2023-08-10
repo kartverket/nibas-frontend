@@ -1,7 +1,14 @@
-import { createContext, useContext, useEffect, useMemo } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
-import { useSearchParams } from "react-router-dom";
+import { useMatch } from "react-router-dom";
 import { useSWRConfig } from "swr";
 import {
   EntityUtkastType,
@@ -30,6 +37,8 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useToast } from "@kvib/react";
 import { createSuccessToast } from "utils/components/toast";
+import { routes } from "utils/routes";
+import { useSidebarPanel } from "contexts/SidebarPanelContext";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
@@ -41,20 +50,26 @@ export const UtkastContext = createContext<UtkastContextValue | undefined>(
 );
 
 export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
+  const [utkast, setUtkast] = useState<UtkastResponse>();
+
   const { history, clearHistory } = useHistory();
   const { clearDirtyStyles } = useFeatureStyle();
   const { tokenHolderFunc } = useAuthenticationFlow();
-  const [searchParams, setSearchParams] = useSearchParams();
   const { resetAndClearEditingLayer } = useEditAllGrenser();
   const { closeOverlayPanel } = useOverlayPanel();
-  const utkastId = searchParams.get("utkast");
+  const { closeSidebarPanel } = useSidebarPanel();
   const { setError } = useErrorHandling();
   const toast = useToast();
 
-  const { mutate: globalMutate } = useSWRConfig();
+  const utkastPathMatch = useMatch(`${routes.utkast}/${routes.utkastId}`);
+  const utkastIdMatches = utkastPathMatch?.params["utkastId"]?.match(
+    "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+  );
+  const utkastId = utkastIdMatches ? utkastIdMatches[0] : null;
 
+  const { mutate: globalMutate } = useSWRConfig();
   const {
-    data: utkast,
+    data: fetchedUtkast,
     mutate,
     isValidating,
   } = useNibasApi(
@@ -73,12 +88,35 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     }
   );
 
+  // Når utkast lukkes ønsker vi å tilbakestille store deler av applikasjonen
+  const closeUtkast = useCallback(() => {
+    setUtkast(undefined);
+    resetMapView();
+    clearHistory({ hasPreviouslySavedHistory: false });
+    clearDirtyStyles();
+    resetAndClearEditingLayer();
+    closeOverlayPanel();
+    closeSidebarPanel();
+  }, [
+    clearDirtyStyles,
+    clearHistory,
+    closeOverlayPanel,
+    closeSidebarPanel,
+    resetAndClearEditingLayer,
+  ]);
+
   useEffect(() => {
+    if (fetchedUtkast && !utkast) {
+      setUtkast(fetchedUtkast);
+    }
+
     // fjern utkast hvis utkastid ikke er i url
-    if (utkast && !utkastId) {
+    if (!utkastId && utkast) {
+      setUtkast(undefined);
+      closeUtkast();
       mutate();
     }
-  }, [utkast, utkastId, mutate]);
+  }, [fetchedUtkast, utkastId, mutate, utkast, closeUtkast]);
 
   const getUpdateUtkastRequestFromHistory =
     (): OppdaterUtkastRequest | null => {
@@ -144,15 +182,6 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
 
     await updateUtkast(utkast.id, updatedUtkast);
     toast(createSuccessToast("Utkastet er lagret"));
-  };
-
-  const closeUtkast = () => {
-    resetMapView();
-    clearHistory({ hasPreviouslySavedHistory: false });
-    clearDirtyStyles();
-    setSearchParams({});
-    resetAndClearEditingLayer();
-    closeOverlayPanel();
   };
 
   const value = {

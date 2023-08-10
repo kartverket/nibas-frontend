@@ -4,7 +4,7 @@ import matchers, {
   TestingLibraryMatchers,
 } from "@testing-library/jest-dom/matchers";
 import { server } from "../mocks/server";
-import { initBakgrunnskartLayers, initGrenserLayers } from "utils/map/layers";
+import { initKartlagLayers, initGrenserLayers } from "utils/map/layers";
 
 // extends Vitest's expect method with methods from react-testing-library
 declare module "vitest" {
@@ -31,7 +31,7 @@ beforeAll(() => {
   // Dette gjøres egentlig i <Kart />, men underliggende komponenter
   // har ikke fått de initialisert enda
   initGrenserLayers();
-  initBakgrunnskartLayers();
+  initKartlagLayers();
 });
 
 // runs a cleanup after each test case (e.g. clearing jsdom)
