@@ -1,4 +1,13 @@
-export type Shortcut = "save" | "close" | "redo" | "undo";
+export type Shortcut =
+  | "save"
+  | "redo"
+  | "undo"
+  | "edit"
+  | "add"
+  | "remove"
+  | "merge"
+  | "layers"
+  | "snap";
 
 type KeyboardShortcut = {
   displayString: string;
@@ -60,8 +69,13 @@ const createShortcut = (
 });
 
 export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
-  save: createShortcut("s", { control: true }),
-  close: createShortcut("l", { control: true }),
+  edit: createShortcut("f", { control: true, shift: true }),
+  add: createShortcut("l", { control: true }),
+  remove: createShortcut("l", { control: true, shift: true }),
+  merge: createShortcut("m", { control: true }),
+  snap: createShortcut("g", { control: true }),
+  layers: createShortcut("k", { control: true }),
   redo: createShortcut("z", { control: true, shift: true }),
   undo: createShortcut("z", { control: true }),
+  save: createShortcut("s", { control: true }),
 };
