@@ -4,8 +4,6 @@ import Geometry from "ol/geom/Geometry";
 import { LayerId } from "./layers/types";
 import { addFeaturesToSource } from "utils/map/source";
 import { getAllVisibleFeatures, zoomToFeatures } from "utils/map";
-import VectorSource from "ol/source/Vector";
-import { map } from "pages/Kart/constants";
 
 /**
  * Hook for å sette features som kommer async inn i en layer sin source. Venter til features

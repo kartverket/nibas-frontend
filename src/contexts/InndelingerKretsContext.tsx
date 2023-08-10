@@ -8,10 +8,6 @@ import { getFeatureId, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { getIdFromEntity } from "utils/api";
 import { useOverlayPanel } from "./OverlayPanelContext";
 import { getAllVisibleFeatures, zoomToFeatures } from "utils/map";
-import { map } from "pages/Kart/constants";
-import VectorSource from "ol/source/Vector";
-import Feature from "ol/Feature";
-import Geometry from "ol/geom/Geometry";
 
 export type Kretstype = "grunnkrets" | "stemmekrets";
 
