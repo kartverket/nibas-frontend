@@ -25,7 +25,7 @@ import { isNotNullOrUndefined } from "types/common";
 import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
 import { stemmekretsgrenserFetcher } from "api/stemmekrets";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import { zoomToFeatures } from "utils/map";
+import { getAllVisibleFeatures, getEditMode, zoomToFeatures } from "utils/map";
 import { map } from "pages/Kart/constants";
 import VectorSource from "ol/source/Vector";
 
@@ -224,21 +224,12 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
 
   useAddInndelingerKontekst(allFeatures, type, kommuneId);
 
-  const getEditMode = (): "edit" | "view" | null => {
-    if (grenseValue.editing) {
-      return "edit";
-    }
-    //TODO: sjekk om noe annet i kartet redigeres - i så fall returner "null"
-    if (context?.getCurrentlyEditingType() !== null) {
-      return null;
-    }
-
-    return "view";
-  };
-
   const { addFeaturesToLayer } = useAsyncFeatures(
     allFeatures,
-    getEditMode(),
+    getEditMode(
+      grenseValue.editing ? true : false,
+      context?.getCurrentlyEditingType() !== null
+    ),
     () => applyDirtyStylesToUtkastFeatures(allFeatures ?? [])
   );
 
@@ -251,20 +242,8 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
 
     removeFeaturesFromSourceByIds(layerId, allFeatures.map(getFeatureId));
     if (context?.getCurrentlyEditingType() === null) {
-      zoomToFeatures(getAllFeatures());
+      zoomToFeatures(getAllVisibleFeatures());
     }
-  };
-
-  const getAllFeatures = (): Feature<Geometry>[] => {
-    const layers = map.getAllLayers();
-
-    return layers.flatMap((l) => {
-      const source = l.getSource();
-      if (source instanceof VectorSource) {
-        return source.getFeatures();
-      }
-      return [];
-    });
   };
 
   const lasterData = visible && !allFeatures;

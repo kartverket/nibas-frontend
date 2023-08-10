@@ -3,7 +3,7 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { LayerId } from "./layers/types";
 import { addFeaturesToSource } from "utils/map/source";
-import { zoomToFeatures } from "utils/map";
+import { getAllVisibleFeatures, zoomToFeatures } from "utils/map";
 import VectorSource from "ol/source/Vector";
 import { map } from "pages/Kart/constants";
 
@@ -31,25 +31,13 @@ const useAsyncFeatures = (
     }
 
     if (zoomMode === "view") {
-      zoomToFeatures(getAllFeatures());
+      zoomToFeatures(getAllVisibleFeatures());
     }
 
     setLayerToAddTo(null);
   }, [layerToAddTo, features, callback, zoomMode]);
 
   return { addFeaturesToLayer: setLayerToAddTo };
-};
-
-const getAllFeatures = (): Feature<Geometry>[] => {
-  const layers = map.getAllLayers();
-
-  return layers.flatMap((l) => {
-    const source = l.getSource();
-    if (source instanceof VectorSource) {
-      return source.getFeatures();
-    }
-    return [];
-  });
 };
 
 export default useAsyncFeatures;
