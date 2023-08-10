@@ -23,8 +23,6 @@ const HeaderHome = () => {
     }
   };
 
-  useKeyboardShortcut("close", handleHome);
-
   return (
     <>
       <HeaderButton
