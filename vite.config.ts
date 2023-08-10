@@ -36,7 +36,7 @@ export default defineConfig(({ mode }) => {
       proxy: {
         "/api/auth/": {
           // bytt ut med lokalt kjørende aut-idporten evt.
-          target: "http://aut-idporten.dev.skip.statkart.no",
+          target: "https://aut-idporten.dev.skip.statkart.no",
           changeOrigin: true,
         },
         "/v1": {
