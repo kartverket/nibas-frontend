@@ -7,6 +7,11 @@ import { FeatureProperties, KommuneRef } from "types/api";
 import { getFeatureId, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { getIdFromEntity } from "utils/api";
 import { useOverlayPanel } from "./OverlayPanelContext";
+import { zoomToFeatures } from "utils/map";
+import { map } from "pages/Kart/constants";
+import VectorSource from "ol/source/Vector";
+import Feature from "ol/Feature";
+import Geometry from "ol/geom/Geometry";
 
 export type Kretstype = "grunnkrets" | "stemmekrets";
 
@@ -126,9 +131,22 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
     } else {
       removeKretserFromLayer("edit");
       closeOverlayPanel();
+      zoomToFeatures(getAllFeatures());
     }
 
     setMultipleValues(newValues);
+  };
+
+  const getAllFeatures = (): Feature<Geometry>[] => {
+    const layers = map.getAllLayers();
+
+    return layers.flatMap((l) => {
+      const source = l.getSource();
+      if (source instanceof VectorSource) {
+        return source.getFeatures();
+      }
+      return [];
+    });
   };
 
   const toggleKretser = () => {

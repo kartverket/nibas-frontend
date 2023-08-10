@@ -39,6 +39,9 @@ const calculateFeaturesExtent = (features: Feature<Geometry>[]) => {
 };
 
 export const zoomToFeatures = (features: Feature<Geometry>[]) => {
+  if (features.length === 0) {
+    resetMapView();
+  }
   const extent = calculateFeaturesExtent(features);
 
   if (!extent) return;

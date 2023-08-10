@@ -25,6 +25,9 @@ import { isNotNullOrUndefined } from "types/common";
 import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
 import { stemmekretsgrenserFetcher } from "api/stemmekrets";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
+import { zoomToFeatures } from "utils/map";
+import { map } from "pages/Kart/constants";
+import VectorSource from "ol/source/Vector";
 
 const endpointByKretstype = {
   grunnkrets: "grunnkretser",
@@ -247,6 +250,21 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     if (!allFeatures) return;
 
     removeFeaturesFromSourceByIds(layerId, allFeatures.map(getFeatureId));
+    if (context?.getCurrentlyEditingType() === null) {
+      zoomToFeatures(getAllFeatures());
+    }
+  };
+
+  const getAllFeatures = (): Feature<Geometry>[] => {
+    const layers = map.getAllLayers();
+
+    return layers.flatMap((l) => {
+      const source = l.getSource();
+      if (source instanceof VectorSource) {
+        return source.getFeatures();
+      }
+      return [];
+    });
   };
 
   const lasterData = visible && !allFeatures;
