@@ -7,6 +7,7 @@ import { FeatureProperties, KommuneRef } from "types/api";
 import { getFeatureId, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { getIdFromEntity } from "utils/api";
 import { useOverlayPanel } from "./OverlayPanelContext";
+import { getAllVisibleFeatures, zoomToFeatures } from "utils/map";
 
 export type Kretstype = "grunnkrets" | "stemmekrets";
 
@@ -126,6 +127,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
     } else {
       removeKretserFromLayer("edit");
       closeOverlayPanel();
+      zoomToFeatures(getAllVisibleFeatures());
     }
 
     setMultipleValues(newValues);

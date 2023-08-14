@@ -1,6 +1,7 @@
 import { initialMapCenter, initialMapZoom, map } from "pages/Kart/constants";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
+import VectorSource from "ol/source/Vector";
 
 export const resetMapView = () => {
   const view = map.getView();
@@ -39,6 +40,9 @@ const calculateFeaturesExtent = (features: Feature<Geometry>[]) => {
 };
 
 export const zoomToFeatures = (features: Feature<Geometry>[]) => {
+  if (features.length === 0) {
+    resetMapView();
+  }
   const extent = calculateFeaturesExtent(features);
 
   if (!extent) return;
@@ -48,4 +52,31 @@ export const zoomToFeatures = (features: Feature<Geometry>[]) => {
     padding: [200, 200, 200, 200],
     duration: 500,
   });
+};
+
+export const getAllVisibleFeatures = () => {
+  const layers = map.getAllLayers();
+
+  return layers.flatMap((layer) => {
+    const source = layer.getSource();
+    if (source instanceof VectorSource) {
+      return source.getFeatures();
+    }
+    return [];
+  });
+};
+
+export const getZoomMode = (
+  isEditing: boolean,
+  hasEditingInMap: boolean
+): "edit" | "view" | "none" => {
+  if (isEditing) {
+    return "edit";
+  }
+
+  if (hasEditingInMap) {
+    return "none";
+  }
+
+  return "view";
 };

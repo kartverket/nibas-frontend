@@ -1,10 +1,13 @@
-import { useMemo } from "react";
+import { useContext, useMemo } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import useSWR from "swr";
 import useNibasApi from "../useNibasApi";
-import { useEditGrenseValue } from "contexts/EditGrenserContext";
+import {
+  EditGrenserContext,
+  useEditGrenseValue,
+} from "contexts/EditGrenserContext";
 import { Kretstype } from "contexts/InndelingerKretsContext";
 import { useUtkast, useUtkastFeature } from "contexts/UtkastContext";
 import { LayerId } from "hooks/layers/types";
@@ -22,6 +25,7 @@ import { isNotNullOrUndefined } from "types/common";
 import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
 import { stemmekretsgrenserFetcher } from "api/stemmekrets";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
+import { getAllVisibleFeatures, getZoomMode, zoomToFeatures } from "utils/map";
 
 const endpointByKretstype = {
   grunnkrets: "grunnkretser",
@@ -110,6 +114,8 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   const { utkast } = useUtkast();
   const { setAndSaveUtkastFeatures, setAndSaveSammenslaaingsFeatures } =
     useFeatureStyle();
+
+  const context = useContext(EditGrenserContext);
 
   const { data: grunnkretserByKommune } = useNibasApi(
     visible ? getKretserByKommuneUrl(type) : null,
@@ -218,7 +224,10 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
 
   const { addFeaturesToLayer } = useAsyncFeatures(
     allFeatures,
-    !!grenseValue?.editing,
+    getZoomMode(
+      !!grenseValue.editing,
+      context?.getCurrentlyEditingType() != null
+    ),
     () => applyDirtyStylesToUtkastFeatures(allFeatures ?? [])
   );
 
@@ -230,6 +239,9 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     if (!allFeatures) return;
 
     removeFeaturesFromSourceByIds(layerId, allFeatures.map(getFeatureId));
+    if (context?.getCurrentlyEditingType() === null) {
+      zoomToFeatures(getAllVisibleFeatures());
+    }
   };
 
   const lasterData = visible && !allFeatures;
