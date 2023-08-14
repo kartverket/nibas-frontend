@@ -6,7 +6,7 @@ import { EditingType, ObjectValue } from "./types";
 import useAsyncFeatures from "hooks/useAsyncFeatures";
 import { getFeatureId, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { GrenseId } from "hooks/layers/types";
-import { getEditMode } from "utils/map";
+import { getZoomMode } from "utils/map";
 
 const layerIdByGrenseType: Record<EditingType, GrenseId> = {
   fylke: "fylke",
@@ -48,10 +48,7 @@ export const useEditGrense = (
   const { value, setValue } = useEditGrenseValue(grenseType, grenseId);
   const { addFeaturesToLayer } = useAsyncFeatures(
     features,
-    getEditMode(
-      value.editing ? true : false,
-      context?.getCurrentlyEditingType() !== null
-    )
+    getZoomMode(!!value.editing, context?.getCurrentlyEditingType() != null)
   );
 
   const toggleVisible = () => {

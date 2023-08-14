@@ -12,7 +12,7 @@ import { getAllVisibleFeatures, zoomToFeatures } from "utils/map";
  */
 const useAsyncFeatures = (
   features: Feature<Geometry>[] | null,
-  zoomMode: "edit" | "view" | null,
+  zoomMode: "edit" | "view" | "none",
   callback?: () => void
 ) => {
   const [layerToAddTo, setLayerToAddTo] = useState<LayerId | null>(null);

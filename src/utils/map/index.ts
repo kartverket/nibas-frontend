@@ -57,8 +57,8 @@ export const zoomToFeatures = (features: Feature<Geometry>[]) => {
 export const getAllVisibleFeatures = () => {
   const layers = map.getAllLayers();
 
-  return layers.flatMap((l) => {
-    const source = l.getSource();
+  return layers.flatMap((layer) => {
+    const source = layer.getSource();
     if (source instanceof VectorSource) {
       return source.getFeatures();
     }

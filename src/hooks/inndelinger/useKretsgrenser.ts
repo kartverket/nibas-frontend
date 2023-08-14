@@ -25,9 +25,7 @@ import { isNotNullOrUndefined } from "types/common";
 import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
 import { stemmekretsgrenserFetcher } from "api/stemmekrets";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import { getAllVisibleFeatures, getEditMode, zoomToFeatures } from "utils/map";
-import { map } from "pages/Kart/constants";
-import VectorSource from "ol/source/Vector";
+import { getAllVisibleFeatures, getZoomMode, zoomToFeatures } from "utils/map";
 
 const endpointByKretstype = {
   grunnkrets: "grunnkretser",
@@ -226,9 +224,9 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
 
   const { addFeaturesToLayer } = useAsyncFeatures(
     allFeatures,
-    getEditMode(
-      grenseValue.editing ? true : false,
-      context?.getCurrentlyEditingType() !== null
+    getZoomMode(
+      !!grenseValue.editing,
+      context?.getCurrentlyEditingType() != null
     ),
     () => applyDirtyStylesToUtkastFeatures(allFeatures ?? [])
   );
