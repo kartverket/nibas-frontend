@@ -66,16 +66,16 @@ export const getAllVisibleFeatures = () => {
   });
 };
 
-export const getEditMode = (
+export const getZoomMode = (
   isEditing: boolean,
   hasEditingInMap: boolean
-): "edit" | "view" | null => {
+): "edit" | "view" | "none" => {
   if (isEditing) {
     return "edit";
   }
 
   if (hasEditingInMap) {
-    return null;
+    return "none";
   }
 
   return "view";
