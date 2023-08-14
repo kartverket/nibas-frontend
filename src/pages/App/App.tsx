@@ -71,7 +71,9 @@ const useAuthentication = () => {
   const { status } = useAuthorization();
   const isAuthorized = status === AuthorizationStatus.AUTHORIZED;
   const isLocalhost = window.location.hostname === "localhost";
-  return { shouldAuthenticate: !isAuthorized && !isLocalhost };
+  const authIsEnabled =
+    !isLocalhost || import.meta.env["VITE_AUTH_ENABLED"] === "true";
+  return { shouldAuthenticate: !isAuthorized && authIsEnabled };
 };
 
 const ExternalPage = () => {
