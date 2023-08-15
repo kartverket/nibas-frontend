@@ -77,7 +77,8 @@ const EndringsloggAccordionItem = styled(AccordionItem)`
   box-shadow: var(--kvib-shadows-base);
   border-radius: 8px;
 `;
-export const EndringsloggAccordionButton = styled(AccordionButton)`
+
+const EndringsloggAccordionButton = styled(AccordionButton)`
   display: flex;
   justify-content: space-between;
   font-weight: var(--kvib-fontWeights-bold);

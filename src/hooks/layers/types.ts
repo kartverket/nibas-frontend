@@ -22,7 +22,3 @@ export type GrenseType =
 
 // denne iden brukes både til Sources og Layers
 export type LayerId = KartlagId | GrenseId;
-
-export type ByLayerId<T> = {
-  [Property in LayerId]: T;
-};

@@ -81,7 +81,7 @@ export const grenseStyles = {
   }),
 };
 
-export const grenseStyleFromType = (grenseType: GrenseType): Style[] => {
+const grenseStyleFromType = (grenseType: GrenseType): Style[] => {
   switch (grenseType) {
     case "Fylkesgrense": {
       return grenseStyles.fylke;
@@ -105,15 +105,6 @@ export const grenseStyleFromType = (grenseType: GrenseType): Style[] => {
       return grenseStyles.stemmekrets;
     }
   }
-};
-
-export const grenseStyleFromId: Record<GrenseId, Style[]> = {
-  fylke: grenseStyles.fylke,
-  kommune: grenseStyles.kommune,
-  nasjon: grenseStyles.nasjon,
-  grunnkrets: grenseStyles.grunnkrets,
-  stemmekrets: grenseStyles.stemmekrets,
-  edit: grenseStyles.edit,
 };
 
 export const getLayerStyle = (

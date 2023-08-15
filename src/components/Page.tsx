@@ -15,8 +15,3 @@ export const Page = styled(BasePage)`
   height: 100%;
   padding: 128px 20px;
 `;
-
-export const PageHeader = styled.header`
-  display: flex;
-  background: white;
-`;

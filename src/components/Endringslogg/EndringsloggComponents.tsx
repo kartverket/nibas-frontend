@@ -71,7 +71,7 @@ type EndringFraTilProps = {
   endring: Endring;
 };
 
-export const EndringFraTil = ({ endring }: EndringFraTilProps) => (
+const EndringFraTil = ({ endring }: EndringFraTilProps) => (
   <>
     <TekstEllerTom tekst={endring.fra} />
     <RightArrow icon="arrow_right_alt" />

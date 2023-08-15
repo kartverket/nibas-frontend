@@ -10,7 +10,7 @@ export enum AuthorizationStatus {
   ERROR,
 }
 
-export type AuthHookReturnValue = {
+type AuthHookReturnValue = {
   status: AuthorizationStatus;
 };
 

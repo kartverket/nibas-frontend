@@ -74,19 +74,6 @@ export const removeFeaturesFromSourceByIds = (
   featureIds.forEach(removeFeature);
 };
 
-export const getWMTSOptions = async (
-  capabiltiesUrl: string,
-  // parameteret til optionsFromCapabilties er også any, så vi vet ikke typen
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  optionsConfig: any
-) => {
-  const response = await fetch(capabiltiesUrl);
-  const text = await response.text();
-  const result = parser.read(text);
-
-  return optionsFromCapabilities(result, optionsConfig);
-};
-
 export const getFeatureId = (feature: Feature<Geometry>) =>
   feature.getId()?.toString() ?? "";
 
