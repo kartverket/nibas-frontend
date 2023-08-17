@@ -44,7 +44,7 @@ export const useEditGrense = (
 ) => {
   const context = useContext(EditGrenserContext);
 
-  const { resetAndClearEditingLayer } = useEditGrenser(grenseType);
+  const { resetAndClearAllLayers } = useEditGrenser(grenseType);
   const { value, setValue } = useEditGrenseValue(grenseType, grenseId);
   const { addFeaturesToLayer } = useAsyncFeatures(
     features,
@@ -80,7 +80,7 @@ export const useEditGrense = (
   const toggleEditing = async () => {
     const newObjectValue = { ...value };
 
-    resetAndClearEditingLayer();
+    resetAndClearAllLayers();
 
     newObjectValue.editing = !newObjectValue.editing;
 

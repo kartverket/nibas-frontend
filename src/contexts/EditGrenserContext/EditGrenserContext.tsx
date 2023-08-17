@@ -17,7 +17,7 @@ export type EditGrenserContextValue = {
     grenseId: string,
     values?: ObjectValue
   ) => void;
-  resetAndClearEditingLayer: () => void;
+  resetAndClearAllLayers: () => void;
   getCurrentlyEditingType: () => EditingType | null;
 };
 
@@ -65,7 +65,8 @@ export const EditGrenserProvider = ({
     return null;
   };
 
-  const resetAndClearEditingLayer = () => {
+  // Obs! Denne tømmer hele editingObject, som vil si at alle synlige saker fjernes også.
+  const resetAndClearAllLayers = () => {
     removeAllFeatures();
     setEditingObject(() => ({}));
   };
@@ -74,7 +75,7 @@ export const EditGrenserProvider = ({
     editingObject,
     setEditingObject,
     setObjectValue,
-    resetAndClearEditingLayer,
+    resetAndClearAllLayers,
     getCurrentlyEditingType,
   };
 
@@ -108,7 +109,7 @@ export const useEditGrenser = (grenseType: EditingType) => {
     editingObject,
     setObjectValue,
     setEditingObject,
-    resetAndClearEditingLayer,
+    resetAndClearAllLayers,
   } = context;
 
   const values = editingObject[grenseType] ?? {};
@@ -127,7 +128,7 @@ export const useEditGrenser = (grenseType: EditingType) => {
     values,
     setObjectValue: setObjectValueForType,
     setMultipleValues,
-    resetAndClearEditingLayer,
+    resetAndClearAllLayers,
   };
 };
 

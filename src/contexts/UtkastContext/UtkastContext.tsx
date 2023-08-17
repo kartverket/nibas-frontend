@@ -55,7 +55,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const { history, clearHistory } = useHistory();
   const { clearDirtyStyles } = useFeatureStyle();
   const { tokenHolderFunc } = useAuthenticationFlow();
-  const { resetAndClearEditingLayer } = useEditAllGrenser();
+  const { resetAndClearAllLayers } = useEditAllGrenser();
   const { closeOverlayPanel } = useOverlayPanel();
   const { closeSidebarPanel } = useSidebarPanel();
   const { setError } = useErrorHandling();
@@ -94,7 +94,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     resetMapView();
     clearHistory({ hasPreviouslySavedHistory: false });
     clearDirtyStyles();
-    resetAndClearEditingLayer();
+    resetAndClearAllLayers();
     closeOverlayPanel();
     closeSidebarPanel();
   }, [
@@ -102,7 +102,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     clearHistory,
     closeOverlayPanel,
     closeSidebarPanel,
-    resetAndClearEditingLayer,
+    resetAndClearAllLayers,
   ]);
 
   useEffect(() => {

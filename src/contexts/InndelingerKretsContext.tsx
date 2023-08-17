@@ -1,10 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useEditGrenser } from "./EditGrenserContext";
 import useKretsgrenser from "hooks/inndelinger/useKretsgrenser";
-import { editSource } from "hooks/layers/constants";
 import { LayerId } from "hooks/layers/types";
-import { FeatureProperties, KommuneRef } from "types/api";
-import { getFeatureId, removeFeaturesFromSourceByIds } from "utils/map/source";
+import { KommuneRef } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { useOverlayPanel } from "./OverlayPanelContext";
 import { getAllVisibleFeatures, zoomToFeatures } from "utils/map";
@@ -95,17 +93,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
           newValues[kommuneIdInList]?.visible &&
           newValues[kommuneIdInList]?.editing
         ) {
-          const featureIdsToRemove = editSource
-            .getFeatures()
-            .filter((feature) => {
-              const { type, id } = (
-                feature.getProperties() as FeatureProperties
-              ).inndelingerKontekst;
-              return type === currentKretstype && id === kommuneIdInList;
-            })
-            .map(getFeatureId);
-
-          removeFeaturesFromSourceByIds("edit", featureIdsToRemove);
+          removeKretserFromLayer("edit");
         }
         // hvis tidligere endret, fjern editing og visible
         if (newValues[kommuneIdInList]?.editing) {

@@ -26,6 +26,7 @@ import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
 import { stemmekretsgrenserFetcher } from "api/stemmekrets";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { getAllVisibleFeatures, getZoomMode, zoomToFeatures } from "utils/map";
+import { getLayerById } from "utils/map/layers";
 
 const endpointByKretstype = {
   grunnkrets: "grunnkretser",
@@ -236,9 +237,17 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   };
 
   const removeKretserFromLayer = (layerId: LayerId) => {
-    if (!allFeatures) return;
-
-    removeFeaturesFromSourceByIds(layerId, allFeatures.map(getFeatureId));
+    // Edit-laget inneholder bare ett sett med kretser om gangen
+    // derfor vil vi heller tømme hele laget for å få bedre ytelse
+    if (layerId === "edit") {
+      const layer = getLayerById(layerId);
+      const source = layer.getSource();
+      source?.clear(true);
+    } else {
+      // I andre tilfeller kan det være flere ting i laget, så vi må fjerne features hver for seg
+      if (!allFeatures) return;
+      removeFeaturesFromSourceByIds(layerId, allFeatures.map(getFeatureId));
+    }
     if (context?.getCurrentlyEditingType() === null) {
       zoomToFeatures(getAllVisibleFeatures());
     }
