@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { useNavigate } from "react-router-dom";
 import {
   Heading,
@@ -9,7 +9,6 @@ import {
   MenuList,
   Text,
 } from "@kvib/react";
-import Icon from "components/Icon";
 import { getDateInFriendlyString } from "pages/Kart/OverlayPanels/MetadataPanel/utils";
 import { UtkastResponse } from "types/api";
 import UtkastSlett from "./UtkastSlett";
@@ -32,10 +31,10 @@ const UtkastCard = ({ utkast }: { utkast: UtkastResponse }) => {
       </Info>
       <Menu>
         <MenuButton
-          as={IconButton}
+          as={MenuIconButton}
           onClick={(e) => e.stopPropagation()}
           aria-label="Flere alternativer"
-          icon={<Icon icon="more_horiz" />}
+          icon="more_horiz"
           variant="ghost"
         />
         <MenuList>
@@ -75,6 +74,12 @@ const Info = styled.div`
 const Date = styled(Text)`
   font-size: var(--kvib-fontSizes-xs);
   color: var(--kvib-colors-gray-500);
+`;
+
+const MenuIconButton = styled(IconButton)`
+  .material-symbols-rounded {
+    font-size: 20px;
+  }
 `;
 
 export default UtkastCard;

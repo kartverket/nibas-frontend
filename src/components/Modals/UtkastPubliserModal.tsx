@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import {
   useToast,

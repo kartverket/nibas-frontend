@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { Accordion, AccordionPanel } from "@kvib/react";
 import { MappedLayer } from "utils/getLayersFromWMS";
 import KartlagMiddle from "./KartlagMiddle";

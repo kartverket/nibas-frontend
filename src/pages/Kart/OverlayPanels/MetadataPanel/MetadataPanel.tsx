@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { PanelHeader, PanelProps, SidePanel } from "../Panel";
 import MetadataGenerelt from "./MetadataGenerelt";

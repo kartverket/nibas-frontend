@@ -2,7 +2,7 @@ import React from "react";
 import { AbsolutePanel, PanelHeader, PanelProps } from "../Panel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { Tegnforklaring } from "./Tegnforklaring";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { tegnforklaringer } from "./tegnforklaring-styles";
 import { Text, Alert, AlertIcon, Divider } from "@kvib/react";
 

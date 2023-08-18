@@ -1,7 +1,6 @@
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
-import styled from "styled-components";
-import Icon from "components/Icon";
+import { styled } from "styled-components";
 import { EditingType } from "contexts/EditGrenserContext";
 import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
 import { GrenseRef } from "types/api";
@@ -37,17 +36,17 @@ const ToggleableGrense = <T extends GrenseRef>({
       <IconButton
         onClick={toggleVisible}
         aria-label={value.visible ? "Synlig" : "Usynlig"}
-        icon={<Icon icon={value.visible ? "visibility" : "visibility_off"} />}
+        icon={value.visible ? "visibility" : "visibility_off"}
       />
       <Title>{title}</Title>
-      <Button
+      <EditButton
         variant="link"
         onClick={openInfo}
         isDisabled
         title="Kommer snart!"
       >
         {value.editing ? "Avslutt redigering" : "Rediger"}
-      </Button>
+      </EditButton>
     </Wrapper>
   );
 };
@@ -55,6 +54,11 @@ const Title = styled.div`
   flex: 1;
   margin-left: 8px;
   user-select: none;
+`;
+
+const EditButton = styled(Button)`
+  min-width: unset;
+  min-height: unset;
 `;
 
 const Wrapper = styled.div<{ visible: boolean }>`

@@ -1,5 +1,4 @@
 import { useToolbar } from "contexts/ToolbarContext";
-import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import useAlertModal from "hooks/useAlertModal";
 import HeaderButton from "./HeaderButton";
 import AlertModal from "components/Modals/AlertModal";

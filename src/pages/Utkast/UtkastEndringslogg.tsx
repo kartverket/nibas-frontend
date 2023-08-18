@@ -7,13 +7,13 @@ import {
   MenuItem,
   Skeleton,
   useDisclosure,
+  Icon,
 } from "@kvib/react";
 import { EndringsloggGrunnkretsendringer } from "components/Endringslogg/EndringsloggGrunnkretsendringer";
 import EndringsloggModal from "components/Endringslogg/EndringsloggModal";
 import { EndringsloggStemmekretsendringer } from "components/Endringslogg/EndringsloggStemmekretsendringer";
 import { useUtkastEndringer } from "components/Endringslogg/hooks/useUtkastEndringer";
-import Icon from "components/Icon";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { UtkastResponse } from "types/api";
 
 type Props = {

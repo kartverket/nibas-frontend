@@ -1,5 +1,4 @@
-import Icon from "components/Icon";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { ButtonGroup, Button, IconButton } from "@kvib/react";
 
 const Cell = styled.td`
@@ -38,7 +37,7 @@ const EditAndSaveButton = ({
         <ChangeButton
           aria-label="Lagre endringer"
           onClick={onSubmit}
-          leftIcon={<Icon icon="edit" />}
+          leftIcon="edit"
           isDisabled={!canSave}
         >
           Endre
@@ -47,7 +46,7 @@ const EditAndSaveButton = ({
           variant="outline"
           aria-label="Forkast endringer"
           onClick={toggleEditing}
-          icon={<Icon icon="close" />}
+          icon="close"
         />
       </CombinedButton>
     ) : (
@@ -55,7 +54,7 @@ const EditAndSaveButton = ({
         size="md"
         aria-label="Åpne redigering"
         onClick={toggleEditing}
-        leftIcon={<Icon icon="settings" />}
+        leftIcon="settings"
       >
         Endre detaljer
       </EditButton>

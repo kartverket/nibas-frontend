@@ -1,10 +1,9 @@
 import React from "react";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { useDragAndDrop } from "../utils";
-import { Heading, IconButton, Divider, ButtonGroup } from "@kvib/react";
+import { Heading, IconButton, Divider, ButtonGroup, Icon } from "@kvib/react";
 import ActiveKartlagOpacity from "./ActiveKartlagOpacity";
 import { VisibleLayer } from "contexts/KartlagContext/useVisibleLayers";
-import Icon from "components/Icon";
 import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 
 type Props = {
@@ -34,7 +33,7 @@ const ActiveKartlag = ({ layer, index }: Props) => {
             <IconButton
               aria-label={`Fjern ${layer.mainLayer}`}
               variant="ghost"
-              icon={<Icon icon="close" />}
+              icon="close"
               onClick={() => toggleLayerVisibility(layer.mainLayer)}
             />
           </Buttons>
@@ -47,7 +46,7 @@ const ActiveKartlag = ({ layer, index }: Props) => {
               <IconButton
                 aria-label={`Fjern ${subLayer}`}
                 variant="ghost"
-                icon={<Icon icon="close" />}
+                icon="close"
                 onClick={() => toggleLayerVisibility(layer.mainLayer, subLayer)}
               />
             </ActiveSublag>

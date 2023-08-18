@@ -1,5 +1,5 @@
 import { Heading, Text } from "@kvib/react";
-import styled from "styled-components";
+import { styled } from "styled-components";
 
 const getGreetingFromDate = (date: Date) => {
   const hours = date.getHours();

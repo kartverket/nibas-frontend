@@ -1,6 +1,5 @@
 import { IconButton } from "@kvib/react";
-import Icon from "components/Icon";
-import styled from "styled-components";
+import { styled } from "styled-components";
 
 type HeaderButtonProps = {
   icon: string;
@@ -21,7 +20,7 @@ const HeaderButton = ({
     <IconButton
       variant="outline"
       colorScheme="gray"
-      icon={<Icon icon={icon} />}
+      icon={icon}
       aria-label={label}
       onClick={onClick}
       isDisabled={isDisabled}

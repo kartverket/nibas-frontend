@@ -1,6 +1,6 @@
-import Icon from "components/Icon";
+import { Icon } from "@kvib/react";
 import { ReactNode } from "react";
-import styled, { css } from "styled-components";
+import { styled, css } from "styled-components";
 
 const Container = styled.button<{ isActive: boolean }>`
   display: flex;
@@ -12,6 +12,12 @@ const Container = styled.button<{ isActive: boolean }>`
   background: none;
   cursor: pointer;
 
+  .material-symbols-rounded {
+    padding: 4px;
+    border-radius: 8px;
+    transition: background 0.15s, color 0.2s;
+  }
+
   &:disabled {
     color: var(--kvib-colors-gray-500);
     cursor: not-allowed;
@@ -22,13 +28,7 @@ const Container = styled.button<{ isActive: boolean }>`
     outline-offset: 2px;
   }
 
-  & > ${Icon} {
-    padding: 4px;
-    border-radius: 8px;
-    transition: background 0.15s, color 0.2s;
-  }
-
-  &:hover:not(:disabled) > ${Icon} {
+  &:hover:not(:disabled) > .material-symbols-rounded {
     background: var(--kvib-colors-blue-50);
   }
 
@@ -37,7 +37,7 @@ const Container = styled.button<{ isActive: boolean }>`
     css`
       font-weight: bold;
 
-      & > ${Icon} {
+      & > .material-symbols-rounded {
         color: var(--kvib-colors-chakra-inverse-text);
         background: var(--kvib-colors-blue-500);
       }

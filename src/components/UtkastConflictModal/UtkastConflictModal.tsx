@@ -12,7 +12,7 @@ import {
   ModalCloseButton,
 } from "@kvib/react";
 import { ButtonCell } from "pages/Kart/OverlayPanels/Flatedata/KretsTable";
-import styled from "styled-components";
+import { styled } from "styled-components";
 
 type Props = {
   currentRow: string[];

@@ -4,10 +4,9 @@ import Geometry from "ol/geom/Geometry";
 import LineString from "ol/geom/LineString";
 import { ObjectEvent } from "ol/Object";
 import { Control, useFieldArray, useForm } from "react-hook-form";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { addMetadataEntryFromFeature } from "./utils";
 import Input from "components/Input";
-import Icon from "components/Icon";
 import { useHistory } from "contexts/HistoryContext";
 import { Dokref, FeatureProperties, Metadata } from "types/api";
 import useIsMetadataDisabled from "../hooks/useIsMetadataDisabled";
@@ -123,7 +122,7 @@ const FieldArray = ({
           </a>
           <div>
             <Button
-              rightIcon={<Icon icon="remove" />}
+              rightIcon="remove"
               onClick={() => remove(nestedIndex)}
               isDisabled={disabled}
             >
@@ -141,11 +140,7 @@ const FieldArray = ({
           onKeyPress={onKeyPress}
           isDisabled={disabled}
         />
-        <Button
-          onClick={onAdd}
-          isDisabled={!newLenke}
-          rightIcon={<Icon icon="add" />}
-        >
+        <Button onClick={onAdd} isDisabled={!newLenke} rightIcon="add">
           Legg til
         </Button>
       </div>

@@ -15,7 +15,7 @@ import {
 } from "@kvib/react";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { UtkastResponse } from "types/api";
 import { updateUtkast } from "api/utkast";
 

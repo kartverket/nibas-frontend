@@ -1,6 +1,5 @@
 import { Button } from "@kvib/react";
-import Icon from "components/Icon/Icon";
-import styled from "styled-components";
+import { styled } from "styled-components";
 
 const ClickableHeader = styled(Button)<{ $isActivated: boolean }>`
   color: var(--kvib-colors-gray-600);
@@ -29,13 +28,9 @@ type Props = {
 const SortHeader = ({ children, onClick, isActivated, isReversed }: Props) => {
   const getRightIcon = () => {
     if (!isActivated) {
-      return null;
+      return "";
     }
-    return isReversed ? (
-      <Icon icon="arrow_drop_up" />
-    ) : (
-      <Icon icon="arrow_drop_down" />
-    );
+    return isReversed ? "arrow_drop_up" : "arrow_drop_down";
   };
 
   return (

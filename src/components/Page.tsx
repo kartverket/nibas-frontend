@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 
 export const BasePage = styled.main`
   background: var(--kvib-colors-gray-50);

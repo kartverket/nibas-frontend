@@ -1,5 +1,5 @@
 import { CloseButton, Heading } from "@kvib/react";
-import styled, { keyframes } from "styled-components";
+import { styled, keyframes } from "styled-components";
 
 export type PanelProps = {
   isOpen: boolean;
@@ -40,6 +40,7 @@ export const Panel = styled.div<{ isOpen: boolean }>`
   overflow: auto;
   ${(props) => !props.isOpen && "display: none"};
   animation: ${fadeIn} 0.25s ease-in-out;
+  z-index: 1;
 `;
 
 export const SidePanel = styled(Panel)`

@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import { styled, css } from "styled-components";
 import { Accordion, AccordionPanel } from "@kvib/react";
 import { MappedLayer } from "utils/getLayersFromWMS";
 import KartlagInner from "./KartlagInner";
@@ -40,7 +40,7 @@ const KartlagMiddle = ({ mappedLayer, isNested }: Props) => {
   );
 };
 
-const KartlagAccordionPanel = styled(AccordionPanel)<{ $isNested: boolean }>`
+const KartlagAccordionPanel = styled(AccordionPanel)<{ $isNested?: boolean }>`
   position: relative;
   padding: 0;
   padding-left: 16px;
