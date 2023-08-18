@@ -60,7 +60,8 @@ const EditableGrenseAccordion = ({
             aria-label={`Henter ${title}`}
           />
         )}
-        <IconButton
+        <Caret
+          $visible={accordion.isVisible}
           variant="ghost"
           onClick={accordion.toggle}
           aria-label={accordion.isVisible ? `Lukk ${title}` : `Åpne ${title}`}
@@ -97,6 +98,8 @@ const EditButton = styled(Button)`
 `;
 
 const VisibilityButton = styled(IconButton)<{ $visible: boolean }>`
+  width: fit-content;
+  height: 100%;
   margin-right: 16px;
   color: ${({ $visible }) =>
     $visible
@@ -106,7 +109,6 @@ const VisibilityButton = styled(IconButton)<{ $visible: boolean }>`
     $visible ? "var(--kvib-colors-blue-500)" : "transparent"};
   padding: 8px;
   border-radius: 50%;
-  height: 100%;
 
   &:hover {
     color: var(--kvib-colors-blue-500);
@@ -114,6 +116,27 @@ const VisibilityButton = styled(IconButton)<{ $visible: boolean }>`
   }
   &:focus-visible {
     ${Outline}
+  }
+`;
+
+const Caret = styled(IconButton)<{ $visible: boolean }>`
+  width: fit-content;
+  height: 100%;
+  color: ${({ $visible }) =>
+    $visible
+      ? "var(--kvib-colors-chakra-inverse-text)"
+      : "var(--kvib-colors-blue-500)"};
+  background: ${({ $visible }) =>
+    $visible ? "var(--kvib-colors-blue-500)" : "transparent"};
+  padding: 16px 12px;
+  &:hover {
+    background: var(--kvib-colors-blue-500);
+    color: var(--kvib-colors-chakra-inverse-text);
+  }
+  border-radius: 0;
+
+  .material-symbols-rounded {
+    font-size: 24px;
   }
 `;
 
