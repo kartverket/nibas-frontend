@@ -28,9 +28,13 @@ const featureToggles: Record<Keys, Record<Environment, boolean>> = {
   },
 };
 
-export const featureEnabled = (key: Keys): boolean => {
+export const getCurrentEnvironment = (): Environment => {
   const { hostname } = window.location;
-  const environment = environmentByUrl[hostname];
+  return environmentByUrl[hostname];
+};
+
+export const featureEnabled = (key: Keys): boolean => {
+  const environment = getCurrentEnvironment();
   const { NODE_ENV } = import.meta.env;
 
   // skru på alle toggles i test, for å sikre at tester kjører

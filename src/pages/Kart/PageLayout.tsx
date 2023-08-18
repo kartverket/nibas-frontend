@@ -4,9 +4,10 @@ import { SWRConfig } from "swr";
 import Kart from "pages/Kart";
 import AlertModal from "components/Modals/AlertModal";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
-import { statusCode } from "utils/api";
+import { isApiError, statusCode } from "utils/api";
 import { ApiErrorResponse } from "../../types/api";
 import Header from "./Header/Header";
+import { logDevOnly } from "utils/log";
 
 const PageLayout = () => {
   const { error, setError } = useErrorHandling();
@@ -17,14 +18,17 @@ const PageLayout = () => {
         value={{
           fetcher: (url) => fetch(url).then((res) => res.json()),
           onError: (err) => {
-            // TODO: lar denne stå inntil vi ser hvor mye feilaktige errors som oppstår
-            // eslint-disable-next-line no-console
-            console.log("onError", err);
-            if (statusCode.isError(err.status)) {
+            logDevOnly("onError", err);
+            if (statusCode.isError(err.status) && isApiError(err)) {
               const wrapper = err as ApiErrorResponse;
               setError({
                 ...wrapper.errorDescription,
                 errorCode: wrapper.errorCode,
+              });
+            } else {
+              setError({
+                title: `Ukjent feil`,
+                description: `En ukjent feil oppstod med. Kall mot backtjenesten feilet med responskode ${err.status}.`,
               });
             }
           },
