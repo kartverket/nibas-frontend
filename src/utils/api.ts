@@ -1,3 +1,5 @@
+import { ApiErrorResponse } from "../types/api";
+
 type ApiEntity = {
   id: {
     lokalid: {
@@ -67,6 +69,11 @@ export const fetcherWithToken = async ([url, token]: [
   }
 
   return res.json();
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const isApiError = (err: any): err is ApiErrorResponse => {
+  return err.errorCode != null && err.errorDescription != null;
 };
 
 export const statusCode = {
