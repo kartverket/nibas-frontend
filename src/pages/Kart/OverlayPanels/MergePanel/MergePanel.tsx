@@ -233,7 +233,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
   };
 
   return (
-    <SidePanel isOpen={isOpen} className={className}>
+    <SidePanel $isOpen={isOpen} className={className}>
       <PanelHeader onClose={closeOverlayPanel}>
         Slå sammen stemmekretser
       </PanelHeader>

@@ -9,7 +9,7 @@ import { Text, Alert, AlertIcon, Divider } from "@kvib/react";
 export const TegnforklaringPanel = ({ isOpen, className }: PanelProps) => {
   const { closeOverlayPanel } = useOverlayPanel();
   return (
-    <TegnforklaringPanelWrapper isOpen={isOpen} className={className}>
+    <TegnforklaringPanelWrapper $isOpen={isOpen} className={className}>
       <PanelHeader size="sm" onClose={closeOverlayPanel}>
         Tegnforklaring
       </PanelHeader>

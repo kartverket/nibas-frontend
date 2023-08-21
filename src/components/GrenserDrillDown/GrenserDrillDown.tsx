@@ -11,7 +11,7 @@ const GrenserDrillDown = () => {
   const { activeSidebarPanel, closeSidebarPanel } = useSidebarPanel();
 
   return (
-    <SidebarPanel isOpen={activeSidebarPanel === "inndelinger"}>
+    <SidebarPanel $isOpen={activeSidebarPanel === "inndelinger"}>
       <SidebarPanelTitle closePanel={closeSidebarPanel} title="Inndelinger" />
       <UnstyledList>
         <Fylkesgrenser />

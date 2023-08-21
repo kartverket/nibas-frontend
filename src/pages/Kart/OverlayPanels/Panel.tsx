@@ -28,7 +28,7 @@ const slideIn = keyframes`
   }
 `;
 
-export const Panel = styled.div<{ isOpen: boolean }>`
+export const Panel = styled.div<{ $isOpen: boolean }>`
   margin: 16px;
   padding: 0 16px;
   background: white;
@@ -38,7 +38,7 @@ export const Panel = styled.div<{ isOpen: boolean }>`
   width: 100%;
   max-width: 1250px;
   overflow: auto;
-  ${(props) => !props.isOpen && "display: none"};
+  ${(props) => !props.$isOpen && "display: none"};
   animation: ${fadeIn} 0.25s ease-in-out;
   z-index: 1;
 `;

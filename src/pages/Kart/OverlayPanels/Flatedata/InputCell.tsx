@@ -14,14 +14,14 @@ const InputCell = forwardRef<HTMLInputElement, Props>(function InputCell(
   ref
 ) {
   return (
-    <Cell isEditing={isEditing}>
+    <Cell $isEditing={isEditing}>
       {isEditing ? <InlineInput {...inputProps} ref={ref} /> : data}
     </Cell>
   );
 });
 
-const Cell = styled.td<{ isEditing: boolean }>`
-  ${(props) => props.isEditing && "padding: 12px !important;"};
+const Cell = styled.td<{ $isEditing: boolean }>`
+  ${(props) => props.$isEditing && "padding: 12px !important;"};
 `;
 
 const InlineInput = styled(Input)`

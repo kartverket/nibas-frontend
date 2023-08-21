@@ -11,7 +11,7 @@ const KartlagPanel = ({ isOpen, className }: PanelProps) => {
   const { closeOverlayPanel } = useOverlayPanel();
 
   return (
-    <SidePanel isOpen={isOpen} className={className}>
+    <SidePanel $isOpen={isOpen} className={className}>
       <PanelHeader onClose={closeOverlayPanel}>Kartlag</PanelHeader>
       <Section>
         <ActiveKartlagList />

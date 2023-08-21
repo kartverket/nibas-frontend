@@ -41,7 +41,7 @@ const Kommune = ({ kommune }: Props) => {
 
   return (
     <>
-      <KommuneWrapper editing={kommuneValues.editing}>
+      <KommuneWrapper>
         <VisibilityButton
           variant="ghost"
           onClick={toggleKretser}
@@ -82,7 +82,7 @@ const Kommune = ({ kommune }: Props) => {
   );
 };
 
-const KommuneWrapper = styled.div<{ editing?: boolean }>`
+const KommuneWrapper = styled.div`
   display: flex;
   align-items: center;
   padding: 8px;

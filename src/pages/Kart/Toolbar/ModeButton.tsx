@@ -2,7 +2,7 @@ import { Icon } from "@kvib/react";
 import { ReactNode } from "react";
 import { styled, css } from "styled-components";
 
-const Container = styled.button<{ isActive: boolean }>`
+const Container = styled.button<{ $isActive: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -33,7 +33,7 @@ const Container = styled.button<{ isActive: boolean }>`
   }
 
   ${(props) =>
-    props.isActive &&
+    props.$isActive &&
     css`
       font-weight: bold;
 
@@ -65,7 +65,7 @@ const ModeButton = ({
     <Container
       onClick={onClick}
       aria-label={ariaLabel}
-      isActive={isActive}
+      $isActive={isActive}
       disabled={disabled}
     >
       <Icon icon={icon} />

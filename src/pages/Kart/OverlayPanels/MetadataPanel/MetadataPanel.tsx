@@ -38,7 +38,7 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
     .includes("TEIGGRENSEWFS");
 
   return (
-    <SidePanel isOpen={isOpen} className={className}>
+    <SidePanel $isOpen={isOpen} className={className}>
       <PanelHeader onClose={closeOverlayPanel}>Metadata for grense</PanelHeader>
       {selectedFeature && !isWFSGrense && (
         <Content>

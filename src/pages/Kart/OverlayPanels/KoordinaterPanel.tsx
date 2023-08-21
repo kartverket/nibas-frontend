@@ -183,7 +183,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
   };
 
   return (
-    <AbsolutePanel isOpen={isOpen} className={className}>
+    <AbsolutePanel $isOpen={isOpen} className={className}>
       <PanelHeader onClose={closeOverlayPanel}>
         Flytt punkt med koordinater
       </PanelHeader>
