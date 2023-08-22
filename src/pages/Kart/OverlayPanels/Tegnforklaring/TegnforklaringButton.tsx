@@ -1,6 +1,6 @@
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import styled from "styled-components";
-import { Button } from "@kvib/react";
+import { styled } from "styled-components";
+import { IconButton } from "@kvib/react";
 
 export const TegnforklaringButton = () => {
   const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } =
@@ -15,18 +15,21 @@ export const TegnforklaringButton = () => {
   };
 
   return (
-    <RoundButton onClick={onClick} aria-label="Åpne og lukke tegnforklaring">
-      ?
-    </RoundButton>
+    <RoundButton
+      onClick={onClick}
+      aria-label="Åpne og lukke tegnforklaring"
+      icon="question_mark"
+    />
   );
 };
 
-const RoundButton = styled(Button)`
+const RoundButton = styled(IconButton)`
   position: absolute;
-  top: 15px;
-  right: 20px;
-  height: 40px;
-  width: 40px;
+  top: 16px;
+  right: 16px;
   border-radius: 50%;
-  font-size: 24px;
+
+  .material-symbols-rounded {
+    font-size: 20px;
+  }
 `;

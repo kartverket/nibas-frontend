@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { PanelHeader, PanelProps, SidePanel } from "../Panel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useUtkast, useUtkastEntity } from "contexts/UtkastContext";
@@ -233,7 +233,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
   };
 
   return (
-    <SidePanel isOpen={isOpen} className={className}>
+    <SidePanel $isOpen={isOpen} className={className}>
       <PanelHeader onClose={closeOverlayPanel}>
         Slå sammen stemmekretser
       </PanelHeader>

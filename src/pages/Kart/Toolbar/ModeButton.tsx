@@ -1,8 +1,8 @@
-import Icon from "components/Icon";
+import { Icon } from "@kvib/react";
 import { ReactNode } from "react";
-import styled, { css } from "styled-components";
+import { styled, css } from "styled-components";
 
-const Container = styled.button<{ isActive: boolean }>`
+const Container = styled.button<{ $isActive: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -11,6 +11,12 @@ const Container = styled.button<{ isActive: boolean }>`
   border: none;
   background: none;
   cursor: pointer;
+
+  .material-symbols-rounded {
+    padding: 4px;
+    border-radius: 8px;
+    transition: background 0.15s, color 0.2s;
+  }
 
   &:disabled {
     color: var(--kvib-colors-gray-500);
@@ -22,22 +28,16 @@ const Container = styled.button<{ isActive: boolean }>`
     outline-offset: 2px;
   }
 
-  & > ${Icon} {
-    padding: 4px;
-    border-radius: 8px;
-    transition: background 0.15s, color 0.2s;
-  }
-
-  &:hover:not(:disabled) > ${Icon} {
+  &:hover:not(:disabled) > .material-symbols-rounded {
     background: var(--kvib-colors-blue-50);
   }
 
   ${(props) =>
-    props.isActive &&
+    props.$isActive &&
     css`
       font-weight: bold;
 
-      & > ${Icon} {
+      & > .material-symbols-rounded {
         color: var(--kvib-colors-chakra-inverse-text);
         background: var(--kvib-colors-blue-500);
       }
@@ -65,7 +65,7 @@ const ModeButton = ({
     <Container
       onClick={onClick}
       aria-label={ariaLabel}
-      isActive={isActive}
+      $isActive={isActive}
       disabled={disabled}
     >
       <Icon icon={icon} />

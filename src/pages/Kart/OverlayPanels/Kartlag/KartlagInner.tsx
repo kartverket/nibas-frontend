@@ -1,7 +1,6 @@
 import { IconButton } from "@kvib/react";
-import Icon from "components/Icon";
 import { useKartlag } from "contexts/KartlagContext/KartlagContext";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { MappedLayer } from "utils/getLayersFromWMS";
 import { isVectorLayer, isWMSLayer, isWMTSLayer } from "utils/map/layers";
 import { toggleWMSLayer, toggleWMTSLayer, toggleWFSLayer } from "./utils";
@@ -48,7 +47,7 @@ const KartlagInner = ({ mappedLayer, isMainLayer }: Props) => {
       <IconButton
         colorScheme="gray"
         variant="outline"
-        icon={<Icon icon={isVisible ? "visibility_off" : "visibility"} />}
+        icon={isVisible ? "visibility_off" : "visibility"}
         aria-label={
           isVisible ? `Fjern ${mappedLayer.title}` : `Vis ${mappedLayer.title}`
         }

@@ -1,5 +1,5 @@
 import { Stack, Text, Tooltip, TooltipProps } from "@kvib/react";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import {
   KeyboardShortcuts,
   Shortcut,
@@ -10,7 +10,7 @@ type BodyProps = {
   shortcut?: Shortcut;
 };
 
-export type Props = BodyProps & Omit<TooltipProps, "label">;
+type Props = BodyProps & Omit<TooltipProps, "label">;
 
 const TooltipBody = ({ text, shortcut }: BodyProps) => (
   <BodyWrapper>

@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { Metadata, FeatureProperties } from "types/api";
@@ -14,8 +14,6 @@ import {
   Divider,
   FormControl,
   FormLabel,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
@@ -128,10 +126,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
                   max: 1_000_000,
                 })}
               />
-              <NumberInputStepper>
-                <NumberIncrementStepper />
-                <NumberDecrementStepper />
-              </NumberInputStepper>
+              <NumberInputStepper />
             </NumberInput>
           </FormControl>
         </InputRow>

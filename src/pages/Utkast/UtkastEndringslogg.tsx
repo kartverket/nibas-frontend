@@ -7,13 +7,13 @@ import {
   MenuItem,
   Skeleton,
   useDisclosure,
+  Icon,
 } from "@kvib/react";
 import { EndringsloggGrunnkretsendringer } from "components/Endringslogg/EndringsloggGrunnkretsendringer";
 import EndringsloggModal from "components/Endringslogg/EndringsloggModal";
 import { EndringsloggStemmekretsendringer } from "components/Endringslogg/EndringsloggStemmekretsendringer";
 import { useUtkastEndringer } from "components/Endringslogg/hooks/useUtkastEndringer";
-import Icon from "components/Icon";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { UtkastResponse } from "types/api";
 
 type Props = {
@@ -77,7 +77,8 @@ const EndringsloggAccordionItem = styled(AccordionItem)`
   box-shadow: var(--kvib-shadows-base);
   border-radius: 8px;
 `;
-export const EndringsloggAccordionButton = styled(AccordionButton)`
+
+const EndringsloggAccordionButton = styled(AccordionButton)`
   display: flex;
   justify-content: space-between;
   font-weight: var(--kvib-fontWeights-bold);

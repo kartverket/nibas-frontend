@@ -6,7 +6,7 @@ describe("Kommunegrenser", () => {
     const { user } = render(<Kommunegrenser />);
 
     const kommuneGrenserAccordionButton = screen.getByRole("button", {
-      name: "Kommuner Åpne Kommuner",
+      name: "Kommuner expand_more",
     });
     await user.click(kommuneGrenserAccordionButton);
 
@@ -24,7 +24,7 @@ describe("Kommunegrenser", () => {
 
     await user.click(
       screen.getByRole("button", {
-        name: "Kommuner Åpne Kommuner",
+        name: "Kommuner expand_more",
       })
     );
 

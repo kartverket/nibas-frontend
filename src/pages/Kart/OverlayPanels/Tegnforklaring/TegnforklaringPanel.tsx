@@ -2,14 +2,14 @@ import React from "react";
 import { AbsolutePanel, PanelHeader, PanelProps } from "../Panel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { Tegnforklaring } from "./Tegnforklaring";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { tegnforklaringer } from "./tegnforklaring-styles";
 import { Text, Alert, AlertIcon, Divider } from "@kvib/react";
 
 export const TegnforklaringPanel = ({ isOpen, className }: PanelProps) => {
   const { closeOverlayPanel } = useOverlayPanel();
   return (
-    <TegnforklaringPanelWrapper isOpen={isOpen} className={className}>
+    <TegnforklaringPanelWrapper $isOpen={isOpen} className={className}>
       <PanelHeader size="sm" onClose={closeOverlayPanel}>
         Tegnforklaring
       </PanelHeader>

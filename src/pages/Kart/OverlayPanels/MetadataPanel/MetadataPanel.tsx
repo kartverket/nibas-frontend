@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { PanelHeader, PanelProps, SidePanel } from "../Panel";
 import MetadataGenerelt from "./MetadataGenerelt";
@@ -38,7 +38,7 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
     .includes("TEIGGRENSEWFS");
 
   return (
-    <SidePanel isOpen={isOpen} className={className}>
+    <SidePanel $isOpen={isOpen} className={className}>
       <PanelHeader onClose={closeOverlayPanel}>Metadata for grense</PanelHeader>
       {selectedFeature && !isWFSGrense && (
         <Content>

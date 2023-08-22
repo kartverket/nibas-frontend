@@ -1,6 +1,6 @@
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { PanelHeader, PanelProps, SidePanel } from "../Panel";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { Divider, Heading } from "@kvib/react";
 import Kartlag from "./Kartlag";
 import { kartlagLayers } from "hooks/layers/constants";
@@ -11,7 +11,7 @@ const KartlagPanel = ({ isOpen, className }: PanelProps) => {
   const { closeOverlayPanel } = useOverlayPanel();
 
   return (
-    <SidePanel isOpen={isOpen} className={className}>
+    <SidePanel $isOpen={isOpen} className={className}>
       <PanelHeader onClose={closeOverlayPanel}>Kartlag</PanelHeader>
       <Section>
         <ActiveKartlagList />

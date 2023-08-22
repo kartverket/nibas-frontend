@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { CloseButton, Heading } from "@kvib/react";
 
 type Props = {

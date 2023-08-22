@@ -1,6 +1,6 @@
 import useNibasApi from "hooks/useNibasApi";
 import { useMemo } from "react";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { GrunnkretsResponse, StemmekretsResponse } from "types/api";
 
 export type TableRow = {
@@ -90,13 +90,6 @@ const Table = styled.table`
     border-right: 4px solid transparent;
     border-bottom: 2px solid var(--kvib-colors-gray-50);
   }
-`;
-
-export const FutureChangesTableData = styled.td`
-  border-top: 2px solid var(--kvib-colors-gray-500);
-  background-color: var(--kvib-colors-gray-50);
-  width: 100%;
-  padding: 32px 16px;
 `;
 
 export default FutureChangesTable;

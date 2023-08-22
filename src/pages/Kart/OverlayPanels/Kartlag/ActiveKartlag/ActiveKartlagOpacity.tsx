@@ -12,7 +12,6 @@ import {
   SliderFilledTrack,
   SliderThumb,
 } from "@kvib/react";
-import Icon from "components/Icon";
 import { KartlagId } from "hooks/layers/types";
 import { useEffect, useState } from "react";
 import { getLayerById } from "utils/map/layers";
@@ -35,7 +34,7 @@ const ActiveKartlagOpacity = ({ layerId }: Props) => {
         <IconButton
           aria-label="Juster gjennomsiktighet"
           variant="ghost"
-          icon={<Icon icon="opacity" />}
+          icon="opacity"
         />
       </PopoverTrigger>
       <PopoverContent>

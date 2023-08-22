@@ -1,5 +1,4 @@
-import { MenuItem, useDisclosure } from "@kvib/react";
-import Icon from "components/Icon";
+import { Icon, MenuItem, useDisclosure } from "@kvib/react";
 import { UtkastResponse } from "types/api";
 import UtkastSlettModal from "components/Modals/UtkastSlettModal";
 

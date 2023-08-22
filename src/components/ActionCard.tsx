@@ -1,6 +1,5 @@
 import { Button, Heading, Text } from "@kvib/react";
-import styled from "styled-components";
-import Icon from "./Icon";
+import { styled } from "styled-components";
 
 type Props = {
   title: string;
@@ -10,34 +9,44 @@ type Props = {
 };
 
 const ActionCard = ({ title, description, icon, onClick }: Props) => (
-  <Container onClick={onClick}>
-    {icon && <ActionIcon icon={icon} />}
+  <Container onClick={onClick} leftIcon={icon} rightIcon="arrow_forward_ios">
     <div>
       <Title size="md">{title}</Title>
       <Description>{description}</Description>
     </div>
-    <Arrow icon="arrow_forward_ios" />
   </Container>
 );
 
 const Container = styled(Button).attrs({ variant: "ghost" })`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 36px;
-
   width: 100%;
-  height: unset;
+  padding: 36px;
   text-align: left;
+  height: unset;
 
   background: var(--kvib-colors-chakra-body-bg);
   color: var(--kvib-colors-chakra-body-text);
   box-shadow: var(--kvib-shadows-base);
-`;
 
-const ActionIcon = styled(Icon)`
-  font-size: 48px;
+  & > div {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .material-symbols-rounded {
+    font-size: 36px;
+
+    &:last-child {
+      font-size: 30px;
+      margin-left: auto;
+      transition: transform 0.1s;
+    }
+  }
+
+  &:hover .material-symbols-rounded:last-child {
+    transform: translateX(8px);
+  }
 `;
 
 const Title = styled(Heading)`
@@ -46,15 +55,6 @@ const Title = styled(Heading)`
 
 const Description = styled(Text)`
   font-size: 14px;
-`;
-
-const Arrow = styled(Icon)`
-  margin-left: auto;
-  transition: transform 0.1s;
-
-  ${Container}:hover & {
-    transform: translateX(5px);
-  }
 `;
 
 export default ActionCard;

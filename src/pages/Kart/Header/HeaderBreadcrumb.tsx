@@ -2,12 +2,12 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
+  Icon,
   Text,
   useDisclosure,
 } from "@kvib/react";
-import Icon from "components/Icon";
 import { useUtkast } from "contexts/UtkastContext";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import HeaderButton from "./HeaderButton";
 import UtkastEndreModal from "components/Modals/UtkastEndreModal";
 import HeaderHome from "./HeaderHome";

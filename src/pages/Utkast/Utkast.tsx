@@ -1,13 +1,12 @@
-import { Heading, Link } from "@kvib/react";
+import { Heading, Icon, Link } from "@kvib/react";
 import { BasePage } from "components/Page";
 import { useUtkasts } from "hooks/inndelinger/useUtkasts";
 import { Endringstype } from "pages/Kart/constants";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { UtkastResponse } from "types/api";
 import UtkastCard from "./UtkastCard";
 import UtkastOpprett from "./UtkastOpprett";
 import LandingHeader from "pages/Landing/LandingHeader";
-import Icon from "components/Icon/Icon";
 import { Link as RouterLink } from "react-router-dom";
 import { routes } from "utils/routes";
 import Loading from "pages/App/Loading";
@@ -121,13 +120,13 @@ const ReturnButton = styled(Link).attrs({ as: RouterLink })`
   align-self: start;
   color: var(--kvib-colors-blue-500);
 
-  & > ${Icon} {
+  & > .material-symbols-rounded {
     font-size: 20px;
     transition: transform 0.2s;
   }
 
   &:hover {
-    & > ${Icon} {
+    & > .material-symbols-rounded {
       transform: translateX(-4px);
     }
     & > span:last-child {

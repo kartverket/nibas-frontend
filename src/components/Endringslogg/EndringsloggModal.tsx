@@ -1,3 +1,4 @@
+import { styled } from "styled-components";
 import {
   Modal,
   ModalOverlay,
@@ -38,7 +39,9 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
         <ModalHeader>Endringer i dette utkastet</ModalHeader>
         <ModalCloseButton aria-label="Lukk" />
         <ModalBody>
-          {!harEndringer && <div>Det er ingen endringer i dette utkastet</div>}
+          {!harEndringer && (
+            <Empty>Det er ingen endringer i dette utkastet</Empty>
+          )}
 
           {stemmekretsendringer?.map((endringer) => (
             <Skeleton key={endringer.kommune.id} isLoaded={harLastetData}>
@@ -56,4 +59,9 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
     </Modal>
   );
 };
+
+const Empty = styled.div`
+  margin-bottom: 16px;
+`;
+
 export default EndringsloggModal;

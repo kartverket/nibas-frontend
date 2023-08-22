@@ -1,6 +1,5 @@
 import { IconButton } from "@kvib/react";
-import Icon from "components/Icon";
-import styled from "styled-components";
+import { styled } from "styled-components";
 
 type HeaderButtonProps = {
   icon: string;
@@ -18,10 +17,10 @@ const HeaderButton = ({
   isDisabled,
 }: HeaderButtonProps) => (
   <Label>
-    <IconButton
+    <HeaderIconButton
       variant="outline"
       colorScheme="gray"
-      icon={<Icon icon={icon} />}
+      icon={icon}
       aria-label={label}
       onClick={onClick}
       isDisabled={isDisabled}
@@ -30,22 +29,22 @@ const HeaderButton = ({
   </Label>
 );
 
+const HeaderIconButton = styled(IconButton)`
+  width: unset;
+  height: unset;
+  padding: 5px;
+
+  & > .material-symbols-rounded {
+    font-size: var(--kvib-fontSizes-lg);
+  }
+`;
+
 const Label = styled.label`
   display: flex;
   align-items: center;
   gap: 8px;
   white-space: nowrap;
   cursor: pointer;
-
-  & > button {
-    height: unset;
-    min-width: unset;
-    padding: 5px;
-
-    & > span {
-      font-size: var(--kvib-fontSizes-lg);
-    }
-  }
 `;
 
 export default HeaderButton;

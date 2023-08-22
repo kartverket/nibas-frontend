@@ -1,6 +1,6 @@
 import { useToolbar } from "contexts/ToolbarContext";
 import HeaderButton from "./HeaderButton";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { useUtkast } from "contexts/UtkastContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import { useDisclosure } from "@kvib/react";

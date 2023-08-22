@@ -27,7 +27,7 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
   ) as StemmekretsResponse[] | undefined;
 
   return (
-    <Panel isOpen={isOpen} className={className}>
+    <Panel $isOpen={isOpen} className={className}>
       <PanelHeader onClose={closeOverlayPanel}>Endre kretsdetaljer</PanelHeader>
       {utkastStemmekretser && (
         <KretsTable>

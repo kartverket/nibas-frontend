@@ -1,7 +1,7 @@
 import { ReactNode, useState } from "react";
-import styled from "styled-components";
-import Icon from "components/Icon";
+import { styled } from "styled-components";
 import { Outline } from "style/mixins";
+import { Icon } from "@kvib/react";
 
 type Props = {
   title: ReactNode;

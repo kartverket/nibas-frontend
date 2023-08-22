@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import ApiGrense from "components/GrenserDrillDown/ApiGrense";
 import useKommuner from "hooks/inndelinger/useKommuner";
 import { GrenseRef } from "types/api";

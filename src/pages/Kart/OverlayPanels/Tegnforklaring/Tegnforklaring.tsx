@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 
 export type TegnforklaringProps = {
   color: string;
@@ -14,7 +14,7 @@ export const Tegnforklaring = ({
   return (
     <Wrapper>
       <LineWrapper>
-        <Line dotted={dotted} color={color} />
+        <Line $dotted={dotted} $color={color} />
       </LineWrapper>
       <TextContent>{text}</TextContent>
     </Wrapper>
@@ -38,12 +38,12 @@ const LineWrapper = styled.div`
 `;
 
 type LineProps = {
-  color: string;
-  dotted: boolean;
+  $color: string;
+  $dotted: boolean;
 };
 
 const Line = styled.div<LineProps>`
   margin-top: 12px;
-  border-bottom: 4px ${(props) => (props.dotted ? "dotted" : "solid")}
-    ${(props) => props.color};
+  border-bottom: 4px ${(props) => (props.$dotted ? "dotted" : "solid")}
+    ${(props) => props.$color};
 `;

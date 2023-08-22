@@ -1,5 +1,5 @@
 import { Suspense, useEffect, useRef } from "react";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { map } from "./constants";
 import OverlayPopup from "./OverlayPopup";
 import SidebarPanels from "./SidebarPanels";

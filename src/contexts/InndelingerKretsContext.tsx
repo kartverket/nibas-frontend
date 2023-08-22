@@ -14,14 +14,14 @@ const layerIdByKretstype: Record<Kretstype, LayerId> = {
   stemmekrets: "stemmekrets",
 };
 
-export type InndelingerKretsContextValue = {
+type InndelingerKretsContextValue = {
   currentKretstype: Kretstype;
 };
 
 /**
  * Bruk heller InndelingerKretsProvider i koden
  */
-export const InndelingerKretsContext = createContext<
+const InndelingerKretsContext = createContext<
   InndelingerKretsContextValue | undefined
 >(undefined);
 

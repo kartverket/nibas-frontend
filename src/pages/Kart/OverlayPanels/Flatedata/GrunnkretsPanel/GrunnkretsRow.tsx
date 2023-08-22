@@ -115,7 +115,7 @@ const GrunnkretsRow = ({ grunnkrets, kommuneId }: Props) => {
   };
 
   return (
-    <KretsRow isActive={isEditing}>
+    <KretsRow>
       <InputCell
         isEditing={isEditing}
         data={getValues("grunnkretsnummer")}

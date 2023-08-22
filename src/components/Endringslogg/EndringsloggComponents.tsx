@@ -1,7 +1,6 @@
-import styled from "styled-components";
-import Icon from "../Icon/Icon";
+import { styled } from "styled-components";
 import { Endring } from "./hooks/utkastEndringerTypes";
-import { Heading } from "@kvib/react";
+import { Heading, Icon } from "@kvib/react";
 
 export const EndringSection = styled.section`
   &:not(:last-of-type) {
@@ -71,7 +70,7 @@ type EndringFraTilProps = {
   endring: Endring;
 };
 
-export const EndringFraTil = ({ endring }: EndringFraTilProps) => (
+const EndringFraTil = ({ endring }: EndringFraTilProps) => (
   <>
     <TekstEllerTom tekst={endring.fra} />
     <RightArrow icon="arrow_right_alt" />

@@ -1,6 +1,5 @@
 import { StemmekretsResponse } from "../../../../types/api";
-import styled from "styled-components";
-import Icon from "../../../../components/Icon/Icon";
+import { styled } from "styled-components";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { MergeFormData } from "./MergeForm";
 import { ChangeEvent } from "react";
@@ -82,7 +81,7 @@ export const MergeMultiselect = ({
       ))}
       <LeggTilFlerButton
         variant="outline"
-        rightIcon={<Icon icon="add" />}
+        rightIcon="add"
         onClick={() => append({ value: "default" })}
       >
         Legg til flere sammenslåinger

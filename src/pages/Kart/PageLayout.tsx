@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { SWRConfig } from "swr";
 import Kart from "pages/Kart";
 import AlertModal from "components/Modals/AlertModal";

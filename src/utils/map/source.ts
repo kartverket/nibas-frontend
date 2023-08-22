@@ -1,13 +1,9 @@
 import { Feature } from "ol";
-import WMTSCapabilities from "ol/format/WMTSCapabilities";
 import Geometry from "ol/geom/Geometry";
 import VectorLayer from "ol/layer/Vector";
-import { optionsFromCapabilities } from "ol/source/WMTS";
 import { getLayerById } from "./layers";
 import { LayerId } from "hooks/layers/types";
 import { GeometryVectorSource } from "hooks/sources/types";
-
-const parser = new WMTSCapabilities();
 
 export const addFeaturesToSource = (
   sourceId: LayerId,
@@ -72,19 +68,6 @@ export const removeFeaturesFromSourceByIds = (
   };
 
   featureIds.forEach(removeFeature);
-};
-
-export const getWMTSOptions = async (
-  capabiltiesUrl: string,
-  // parameteret til optionsFromCapabilties er også any, så vi vet ikke typen
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  optionsConfig: any
-) => {
-  const response = await fetch(capabiltiesUrl);
-  const text = await response.text();
-  const result = parser.read(text);
-
-  return optionsFromCapabilities(result, optionsConfig);
 };
 
 export const getFeatureId = (feature: Feature<Geometry>) =>

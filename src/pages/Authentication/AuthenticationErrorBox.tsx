@@ -1,8 +1,7 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { ReactElement, ReactNode } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import { Button } from "@kvib/react";
-import Icon from "components/Icon";
+import { Button, Icon } from "@kvib/react";
 
 type ErrorBoxProps = {
   title: string | ReactElement | ReactNode;

@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import HeaderButton from "./HeaderButton";
 import { useDisclosure } from "@kvib/react";
 import UtkastSlettModal from "components/Modals/UtkastSlettModal";

@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { map } from "../constants";
 import { Frame, toolbarSpacing } from "./components";
 import ModeButton from "./ModeButton";
@@ -225,7 +225,7 @@ const Toolbar = () => {
               shortcut="snap"
             >
               <ModeButton
-                icon="magnet"
+                icon="layers"
                 ariaLabel="Snap til kartlag"
                 isActive={activeEditModes.includes("snap")}
                 onClick={() => toggleEditMode("snap")}

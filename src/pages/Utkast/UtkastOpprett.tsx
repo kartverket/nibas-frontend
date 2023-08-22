@@ -21,7 +21,6 @@ import {
   AlertDescription,
 } from "@kvib/react";
 import { createUtkast } from "api/utkast";
-import Icon from "components/Icon/Icon";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useHistory } from "contexts/HistoryContext";
 import { historyToUtkastOperations } from "contexts/UtkastContext/utils";
@@ -29,7 +28,7 @@ import { endringstyper } from "pages/Kart/constants";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { ApiErrorResponse } from "types/api";
 import { statusCode } from "utils/api";
 import { createSuccessToast } from "utils/components/toast";
@@ -83,7 +82,7 @@ const UtkastOpprett = () => {
 
   return (
     <>
-      <Button onClick={onOpen} leftIcon={<Icon icon="add" />}>
+      <Button onClick={onOpen} leftIcon="add">
         Opprett et nytt utkast
       </Button>
 

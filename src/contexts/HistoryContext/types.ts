@@ -19,7 +19,7 @@ export type HistoryChange<T> = {
   to: T;
 };
 
-export type BaseHistoryEntry<Type extends string, Model> = {
+type BaseHistoryEntry<Type extends string, Model> = {
   type: Type;
   changes: HistoryChange<Model>[];
 };
@@ -38,10 +38,7 @@ export type StemmekretsEntry = BaseHistoryEntry<
 > & {
   kommuneId: string;
 };
-export type UtkastEntry = BaseHistoryEntry<
-  "utkast",
-  UtkastRequestWithoutOperations
->;
+type UtkastEntry = BaseHistoryEntry<"utkast", UtkastRequestWithoutOperations>;
 
 export type StemmekretsSammenslaaingsendringEntry = BaseHistoryEntry<
   "stemmekretssammenslaaingsendring",
@@ -56,8 +53,6 @@ export type HistoryEntry =
   | StemmekretsEntry
   | UtkastEntry
   | StemmekretsSammenslaaingsendringEntry;
-
-export type EditContextType = HistoryEntry["type"];
 
 export type HistoryContextValue = {
   addHistoryEntry: (entry: HistoryEntry) => void;

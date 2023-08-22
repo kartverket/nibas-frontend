@@ -1,5 +1,4 @@
-import styled from "styled-components";
-import Icon from "components/Icon";
+import { styled } from "styled-components";
 import { useInndelingerKrets } from "contexts/InndelingerKretsContext";
 import { KommuneRef } from "types/api";
 import { getNavnInSpraak } from "utils/language/language";
@@ -42,30 +41,26 @@ const Kommune = ({ kommune }: Props) => {
 
   return (
     <>
-      <KommuneWrapper editing={kommuneValues.editing}>
+      <KommuneWrapper>
         <VisibilityButton
           variant="ghost"
           onClick={toggleKretser}
           $isVisible={kommuneValues.visible}
           isDisabled={lasterData}
           aria-label={kommuneValues.visible ? "Synlig" : "Usynlig"}
-          icon={
-            <Icon
-              icon={kommuneValues.visible ? "visibility" : "visibility_off"}
-            />
-          }
+          icon={kommuneValues.visible ? "visibility" : "visibility_off"}
         />
         <Title>{getNavnInSpraak(kommune.navn, "nor")}</Title>
         {lasterData ? (
           <Spinner size="lg" color="var(--kvib-colors-blue-500)" />
         ) : (
-          <Button
+          <EditButton
             variant="link"
             onClick={onAvsluttRedigeringClick}
             isDisabled={!utkast}
           >
             {kommuneValues.editing ? "Avslutt redigering" : "Rediger"}
-          </Button>
+          </EditButton>
         )}
       </KommuneWrapper>
       <AlertModal
@@ -87,10 +82,15 @@ const Kommune = ({ kommune }: Props) => {
   );
 };
 
-const KommuneWrapper = styled.div<{ editing?: boolean }>`
+const KommuneWrapper = styled.div`
   display: flex;
   align-items: center;
   padding: 8px;
+`;
+
+const EditButton = styled(Button)`
+  min-width: unset;
+  min-height: unset;
 `;
 
 const VisibilityButton = styled(IconButton)<{ $isVisible?: boolean }>`

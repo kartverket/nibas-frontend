@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { StemmekretsResponse } from "types/api";
 import { ValidationError } from "components/Input";
 import {

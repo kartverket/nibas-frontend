@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 
 export const KretsTable = styled.table`
   display: grid;
@@ -24,7 +24,7 @@ export const KretsTable = styled.table`
   }
 `;
 
-export const KretsRow = styled.tr<{ isActive: boolean }>`
+export const KretsRow = styled.tr`
   position: relative;
 
   td {

@@ -1,4 +1,4 @@
-import styled, { keyframes } from "styled-components";
+import { styled, keyframes } from "styled-components";
 
 const slideIn = keyframes`
   from {
@@ -11,7 +11,7 @@ const slideIn = keyframes`
   }
 `;
 
-export const SidebarPanel = styled.div<{ isOpen: boolean }>`
+export const SidebarPanel = styled.div<{ $isOpen: boolean }>`
   display: inline-block;
   background-color: white;
   pointer-events: auto;
@@ -20,6 +20,6 @@ export const SidebarPanel = styled.div<{ isOpen: boolean }>`
   padding: 8px 16px;
   border-right: 3px solid var(--kvib-colors-gray-50);
   overflow: auto;
-  ${(props) => !props.isOpen && "display: none"};
+  ${(props) => !props.$isOpen && "display: none"};
   animation: ${slideIn} 0.25s ease-in-out;
 `;

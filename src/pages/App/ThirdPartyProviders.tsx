@@ -1,10 +1,14 @@
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { SWRConfig } from "swr";
-import { KvibProvider, theme } from "@kvib/react";
+import {
+  KvibProvider,
+  theme,
+  extendTheme,
+  withDefaultColorScheme,
+} from "@kvib/react";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
-import { extendTheme, withDefaultColorScheme } from "@chakra-ui/react"; // eslint-disable-line no-restricted-imports
 
 const emotionCache = createCache({
   key: "emotion-css-cache",

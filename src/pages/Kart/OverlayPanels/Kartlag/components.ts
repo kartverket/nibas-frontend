@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { AccordionItem, AccordionButton, AccordionIcon } from "@kvib/react";
 
 export const KartlagAccordionItem = styled(AccordionItem)`

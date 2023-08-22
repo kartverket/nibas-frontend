@@ -11,7 +11,7 @@ export const getDateInFriendlyString = (dateString?: string) => {
   return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
 };
 
-export const updateFeatureWithNewMetadata = (
+const updateFeatureWithNewMetadata = (
   feature: Feature<LineString>,
   newMetadata: Metadata
 ) => {
