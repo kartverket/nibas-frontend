@@ -2,20 +2,18 @@ import { styled } from "styled-components";
 import { ButtonGroup, Button, IconButton } from "@kvib/react";
 
 const Cell = styled.td`
+  display: flex;
+  justify-content: end;
   padding: 12px !important;
 `;
 
-const CombinedButton = styled(ButtonGroup)`
-  width: 100%;
-`;
-
 const EditButton = styled(Button)`
-  width: 100%;
   white-space: nowrap;
+  min-width: unset;
 `;
 
-const ChangeButton = styled(Button)`
-  width: 100%;
+const CombinedButton = styled(ButtonGroup)`
+  gap: 3px;
 `;
 
 type Props = {
@@ -33,17 +31,15 @@ const EditAndSaveButton = ({
 }: Props) => (
   <Cell>
     {isEditing ? (
-      <CombinedButton isAttached={true} size="md">
-        <ChangeButton
+      <CombinedButton>
+        <IconButton
           aria-label="Lagre endringer"
           onClick={onSubmit}
-          leftIcon="edit"
+          icon="check"
           isDisabled={!canSave}
-        >
-          Endre
-        </ChangeButton>
+        />
         <IconButton
-          variant="outline"
+          colorScheme="gray"
           aria-label="Forkast endringer"
           onClick={toggleEditing}
           icon="close"
@@ -51,12 +47,13 @@ const EditAndSaveButton = ({
       </CombinedButton>
     ) : (
       <EditButton
-        size="md"
         aria-label="Åpne redigering"
         onClick={toggleEditing}
-        leftIcon="settings"
+        iconFill
+        variant="outline"
+        colorScheme="gray"
       >
-        Endre detaljer
+        Rediger
       </EditButton>
     )}
   </Cell>

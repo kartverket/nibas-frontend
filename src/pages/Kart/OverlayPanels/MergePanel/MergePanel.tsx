@@ -301,7 +301,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
             </InputsWrapper>
             <Buttons>
               <Button
-                variant="ghost"
+                variant="link"
                 onClick={() => {
                   closeOverlayPanel();
                   reset();

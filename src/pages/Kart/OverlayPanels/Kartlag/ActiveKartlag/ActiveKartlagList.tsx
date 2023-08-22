@@ -14,7 +14,7 @@ const ActiveKartlagList = () => {
       ) : (
         <Alert>
           <AlertIcon />
-          <AlertTitle>TODO: Det er ingen aktive kartlag</AlertTitle>
+          <AlertTitle>Det er ingen aktive kartlag</AlertTitle>
         </Alert>
       )}
     </>

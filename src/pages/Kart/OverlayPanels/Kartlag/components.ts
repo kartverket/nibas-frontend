@@ -11,6 +11,10 @@ export const KartlagAccordionButton = styled(AccordionButton)`
   justify-content: space-between;
   padding: 8px 16px;
 
+  &:hover {
+    background: var(--kvib-colors-gray-50);
+  }
+
   &[aria-expanded="true"] {
     font-weight: var(--kvib-fontWeights-bold);
   }

@@ -35,7 +35,8 @@ const UtkastCard = ({ utkast }: { utkast: UtkastResponse }) => {
           onClick={(e) => e.stopPropagation()}
           aria-label="Flere alternativer"
           icon="more_horiz"
-          variant="ghost"
+          variant="outline"
+          colorScheme="gray"
         />
         <MenuList>
           <UtkastEndre utkast={utkast} />
