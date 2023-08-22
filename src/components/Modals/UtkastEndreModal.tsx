@@ -17,7 +17,7 @@ import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import { UtkastResponse } from "types/api";
-import { updateUtkast } from "api/utkast";
+import { useUtkast } from "contexts/UtkastContext";
 
 type Props = {
   isOpen: boolean;
@@ -37,6 +37,7 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
     getValues,
     formState: { isDirty },
   } = useForm<UtkastFormData>({ defaultValues: { navn: utkast.navn } });
+  const { updateUtkast } = useUtkast();
 
   const previousValues = useRef<UtkastFormData>(getValues());
 

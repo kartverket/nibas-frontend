@@ -21,7 +21,7 @@ import {
   applyNonFeatureUtkast,
   historyToUtkastOperations,
 } from "./utils";
-import { updateUtkast as updateApiUtkast } from "api/utkast";
+import { updateUtkastApi } from "api/utkast";
 import { HistoryChange, useHistory } from "contexts/HistoryContext";
 import useNibasApi from "hooks/useNibasApi";
 import {
@@ -154,17 +154,18 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
   const updateUtkast = async (id: string, newUtkast: OppdaterUtkastRequest) => {
-    const response = await updateApiUtkast(
+    const response = await updateUtkastApi(
       id,
       newUtkast,
       tokenHolderFunc()?.token
     );
 
     if (statusCode.isSuccessful(response.status)) {
-      const json = await response.json();
-      await mutate(json as UtkastResponse);
+      const updatedUtkast = (await response.json()) as UtkastResponse;
+      await mutate(updatedUtkast);
       await globalMutate(["/v1/utkast", tokenHolderFunc()?.token]);
       clearHistory({ hasPreviouslySavedHistory: true });
+      setUtkast(updatedUtkast);
     } else if (statusCode.isError(response.status)) {
       const wrapper = (await response.json()) as ApiErrorResponse;
       setError({

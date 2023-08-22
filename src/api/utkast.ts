@@ -19,7 +19,7 @@ export const createUtkast = (
   });
 };
 
-export const updateUtkast = (
+export const updateUtkastApi = (
   id: string,
   utkast: OppdaterUtkastRequest,
   token?: string
