@@ -36,7 +36,7 @@ const EditableGrenseAccordion = ({
       <Header>
         <VisibilityButton
           onClick={toggleVisible}
-          $visible={value.visible ? true : false}
+          $isVisible={value.visible ? true : false}
           aria-label={value.visible ? `Skjul ${title}` : `Vis ${title}`}
           icon={value.visible ? "visibility" : "visibility_off"}
         />
@@ -61,7 +61,7 @@ const EditableGrenseAccordion = ({
           />
         )}
         <Caret
-          $visible={accordion.isVisible}
+          $isVisible={accordion.isVisible}
           variant="ghost"
           onClick={accordion.toggle}
           aria-label={accordion.isVisible ? `Lukk ${title}` : `Åpne ${title}`}
@@ -97,16 +97,16 @@ const EditButton = styled(Button)`
   min-height: unset;
 `;
 
-const VisibilityButton = styled(IconButton)<{ $visible: boolean }>`
+const VisibilityButton = styled(IconButton)<{ $isVisible: boolean }>`
   width: fit-content;
   height: 100%;
   margin-right: 16px;
-  color: ${({ $visible }) =>
-    $visible
+  color: ${({ $isVisible }) =>
+    $isVisible
       ? "var(--kvib-colors-chakra-inverse-text)"
       : "var(--kvib-colors-blue-500)"};
-  background: ${({ $visible }) =>
-    $visible ? "var(--kvib-colors-blue-500)" : "transparent"};
+  background: ${({ $isVisible }) =>
+    $isVisible ? "var(--kvib-colors-blue-500)" : "transparent"};
   padding: 8px;
   border-radius: 50%;
 
@@ -119,15 +119,15 @@ const VisibilityButton = styled(IconButton)<{ $visible: boolean }>`
   }
 `;
 
-const Caret = styled(IconButton)<{ $visible: boolean }>`
+const Caret = styled(IconButton)<{ $isVisible: boolean }>`
   width: fit-content;
   height: 100%;
-  color: ${({ $visible }) =>
-    $visible
+  color: ${({ $isVisible }) =>
+    $isVisible
       ? "var(--kvib-colors-chakra-inverse-text)"
       : "var(--kvib-colors-blue-500)"};
-  background: ${({ $visible }) =>
-    $visible ? "var(--kvib-colors-blue-500)" : "transparent"};
+  background: ${({ $isVisible }) =>
+    $isVisible ? "var(--kvib-colors-blue-500)" : "transparent"};
   padding: 16px 12px;
   &:hover {
     background: var(--kvib-colors-blue-500);

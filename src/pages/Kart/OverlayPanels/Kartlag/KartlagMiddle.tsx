@@ -14,7 +14,7 @@ type Props = {
 };
 
 // Obs! Denne komponenten kan være nøstet i seg selv dersom det er flere underlag
-const KartlagMiddle = ({ mappedLayer, isNested }: Props) => {
+const KartlagMiddle = ({ mappedLayer, isNested = false }: Props) => {
   return (
     <Accordion allowToggle>
       <KartlagAccordionItem>
@@ -40,7 +40,7 @@ const KartlagMiddle = ({ mappedLayer, isNested }: Props) => {
   );
 };
 
-const KartlagAccordionPanel = styled(AccordionPanel)<{ $isNested?: boolean }>`
+const KartlagAccordionPanel = styled(AccordionPanel)<{ $isNested: boolean }>`
   position: relative;
   padding: 0;
   padding-left: 16px;

@@ -44,6 +44,6 @@ type LineProps = {
 
 const Line = styled.div<LineProps>`
   margin-top: 12px;
-  border-bottom: 4px ${(props) => (props.$dotted ? "dotted" : "solid")}
-    ${(props) => props.$color};
+  border-bottom: ${(props) =>
+    `4px ${props.$dotted ? "dotted" : "solid"} ${props.$color}`};
 `;

@@ -57,8 +57,8 @@ const GrunnkretsUtkastConflictModal = ({
         {fields.map((field, index) => (
           <ConflictTableRow
             key={field.id}
-            confirmed={getIsConfirmed(index)}
-            numColumns={columns.length}
+            $confirmed={getIsConfirmed(index)}
+            $numColumns={columns.length}
           >
             <td>
               <Input {...register(`grunnkretser.${index}.grunnkretsnummer`)} />
