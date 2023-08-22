@@ -64,7 +64,7 @@ export const AbsolutePanel = styled(Panel)`
 
 type PanelHeaderSizes = "sm" | "md";
 type PanelHeaderContainerProps = {
-  size?: PanelHeaderSizes;
+  $size?: PanelHeaderSizes;
 };
 
 const getPaddingForSize = (size: PanelHeaderSizes): string => {
@@ -102,10 +102,10 @@ const PanelHeaderContainer = styled.div<PanelHeaderContainerProps>`
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: ${({ size = "md" }) => getPaddingForSize(size)};
+  padding: ${({ $size = "md" }) => getPaddingForSize($size)};
   background: var(--kvib-colors-chakra-body-bg);
   border-bottom: 2px solid var(--kvib-colors-gray-50);
-  margin-bottom: ${({ size = "md" }) => getMarginForSize(size)};
+  margin-bottom: ${({ $size = "md" }) => getMarginForSize($size)};
 `;
 
 type PanelHeaderProps = {
@@ -119,7 +119,7 @@ export const PanelHeader = ({
   onClose,
   size = "md",
 }: PanelHeaderProps) => (
-  <PanelHeaderContainer size={size}>
+  <PanelHeaderContainer $size={size}>
     <Heading as="h3" size={size}>
       {children}
     </Heading>

@@ -110,7 +110,7 @@ const StemmekretsSammenslaaing = ({
             <UnstyledList>
               {gamleKretser.map((gammelKrets) => (
                 <li key={gammelKrets.nummer}>
-                  <EndringTekst bold={true}>
+                  <EndringTekst $isBold={true}>
                     {gammelKrets.nummer} {gammelKrets.navn}
                   </EndringTekst>
                 </li>

@@ -85,13 +85,13 @@ type TekstEllerTomProps = {
 
 const TekstEllerTom = ({ tekst, bold = false }: TekstEllerTomProps) => {
   if (tekst == null || tekst.trim() === "") {
-    return <KursivTekst bold={bold}>(tom)</KursivTekst>;
+    return <KursivTekst $isBold={bold}>(tom)</KursivTekst>;
   }
-  return <EndringTekst bold={bold}>{tekst.trim()}</EndringTekst>;
+  return <EndringTekst $isBold={bold}>{tekst.trim()}</EndringTekst>;
 };
 
-export const EndringTekst = styled.span<{ bold: boolean }>`
-  font-weight: ${({ bold }) => (bold ? "900" : "300")};
+export const EndringTekst = styled.span<{ $isBold: boolean }>`
+  font-weight: ${({ $isBold }) => ($isBold ? "900" : "300")};
   white-space: nowrap;
   margin-right: 8px;
 `;

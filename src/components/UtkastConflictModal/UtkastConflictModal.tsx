@@ -55,7 +55,7 @@ const UtkastConflictModal = ({
             </tr>
           </thead>
           <tbody>
-            <ConflictTableRow numColumns={currentRow.length}>
+            <ConflictTableRow $numColumns={currentRow.length}>
               {currentRow.map((row, i) => (
                 <td key={i}>{row}</td>
               ))}
@@ -110,20 +110,20 @@ const Table = styled.table`
 `;
 
 export const ConflictTableRow = styled.tr<{
-  confirmed?: boolean;
-  numColumns?: number;
+  $confirmed?: boolean;
+  $numColumns?: number;
 }>`
   background-color: ${(props) =>
-    props.confirmed ? "var(--kvib-colors-green-100)" : "transparent"};
+    props.$confirmed ? "var(--kvib-colors-green-100)" : "transparent"};
   transition: background-color 0.2s ease-in-out;
 
   td {
     padding: 16px 8px;
     border-bottom: 1px solid var(--kvib-colors-gray-50);
     // de blir ikke faktisk like store, men de blir like store på tvers av tabeller og det ser nice ut 🤷‍♀️
-    width: calc(100% / ${(props) => props.numColumns || 1});
-    min-width: calc(100% / ${(props) => props.numColumns || 1});
-    max-width: calc(100% / ${(props) => props.numColumns || 1});
+    width: calc(100% / ${(props) => props.$numColumns || 1});
+    min-width: calc(100% / ${(props) => props.$numColumns || 1});
+    max-width: calc(100% / ${(props) => props.$numColumns || 1});
 
     > input {
       width: 100%;

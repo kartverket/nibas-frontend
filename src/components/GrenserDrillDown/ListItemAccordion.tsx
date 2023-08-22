@@ -24,19 +24,19 @@ const ListItemAccordion = ({
     <Wrapper className={className}>
       <ButtonWrapper onClick={() => setOpen(!open)}>
         <DropDown>
-          <NameContent open={open}>
+          <NameContent $isOpen={open}>
             {title}
             {subButton}
           </NameContent>
           {open ? (
             <CaretIcon
-              open={open}
+              $isOpen={open}
               icon="expand_less"
               aria-label={`Lukk ${title}`}
             />
           ) : (
             <CaretIcon
-              open={open}
+              $isOpen={open}
               icon="expand_more"
               aria-label={`Åpne ${title}`}
             />
@@ -55,25 +55,30 @@ const DropDown = styled.div`
   text-align: left;
 `;
 
-const NameContent = styled.div<{ open: boolean }>`
+const NameContent = styled.div<{ $isOpen: boolean }>`
   display: flex;
   flex-direction: column;
-  background: ${({ open }) =>
-    open ? "var(--kvib-colors-blue-50)" : "var(--kvib-colors-chakra-body-bg)"};
+  background: ${({ $isOpen }) =>
+    $isOpen
+      ? "var(--kvib-colors-blue-50)"
+      : "var(--kvib-colors-chakra-body-bg)"};
   padding: 16px 0;
   padding-left: 16px;
   border-left: 3px solid
-    ${({ open }) => (open ? "var(--kvib-colors-blue-500)" : "transparent")};
+    ${({ $isOpen }) =>
+      $isOpen ? "var(--kvib-colors-blue-500)" : "transparent"};
   width: 100%;
   transition: background 0.1s;
 `;
 
-const CaretIcon = styled(Icon)<{ open: boolean }>`
+const CaretIcon = styled(Icon)<{ $isOpen: boolean }>`
   height: 100%;
-  background: ${({ open }) =>
-    open ? "var(--kvib-colors-blue-500)" : "var(--kvib-colors-chakra-body-bg)"};
-  color: ${({ open }) =>
-    open
+  background: ${({ $isOpen }) =>
+    $isOpen
+      ? "var(--kvib-colors-blue-500)"
+      : "var(--kvib-colors-chakra-body-bg)"};
+  color: ${({ $isOpen }) =>
+    $isOpen
       ? "var(--kvib-colors-chakra-inverse-text)"
       : "var(--kvib-colors-blue-500)"};
   height: 100%;

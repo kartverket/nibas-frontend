@@ -32,7 +32,7 @@ const ToggleableGrense = <T extends GrenseRef>({
   };
 
   return (
-    <Wrapper visible={value.visible ? true : false}>
+    <Wrapper $isVisible={value.visible ? true : false}>
       <IconButton
         onClick={toggleVisible}
         aria-label={value.visible ? "Synlig" : "Usynlig"}
@@ -61,20 +61,20 @@ const EditButton = styled(Button)`
   min-height: unset;
 `;
 
-const Wrapper = styled.div<{ visible: boolean }>`
+const Wrapper = styled.div<{ $isVisible: boolean }>`
   display: flex;
   align-items: center;
   margin: 16px 0 0 24px;
 
   > :first-child {
-    color: ${({ visible }) =>
-      visible
+    color: ${({ $isVisible }) =>
+      $isVisible
         ? "var(--kvib-colors-chakra-inverse-text)"
         : "var(--kvib-colors-blue-500)"};
     padding: 8px;
     border-radius: 50%;
-    background: ${({ visible }) =>
-      visible ? "var(--kvib-colors-blue-500)" : "transparent"};
+    background: ${({ $isVisible }) =>
+      $isVisible ? "var(--kvib-colors-blue-500)" : "transparent"};
 
     &:hover {
       background: var(--kvib-colors-blue-50);
