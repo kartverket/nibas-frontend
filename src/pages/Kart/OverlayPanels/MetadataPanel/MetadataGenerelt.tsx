@@ -144,7 +144,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
         <Divider />
         <Buttons>
           <Button
-            variant="ghost"
+            variant="link"
             onClick={() => {
               reset();
               closeOverlayPanel();

@@ -1,4 +1,4 @@
-import { Heading, Icon, Link } from "@kvib/react";
+import { Heading, Icon, Link, SkeletonText } from "@kvib/react";
 import { BasePage } from "components/Page";
 import { useUtkasts } from "hooks/inndelinger/useUtkasts";
 import { Endringstype } from "pages/Kart/constants";
@@ -9,7 +9,6 @@ import UtkastOpprett from "./UtkastOpprett";
 import LandingHeader from "pages/Landing/LandingHeader";
 import { Link as RouterLink } from "react-router-dom";
 import { routes } from "utils/routes";
-import Loading from "pages/App/Loading";
 
 const endringstypeOrder: Record<Endringstype, "left" | "right"> = {
   "Vedtatt grensejustering": "left",
@@ -61,6 +60,13 @@ const Utkast = () => {
         </TitleContainer>
         {[leftColumn, rightColumn].map((column, i) => (
           <EndringstypeList key={i}>
+            {isLoading && (
+              <EndringstypeGroup>
+                <Heading size="md">Henter utkast...</Heading>
+                <LoadingSkeleton />
+                <LoadingSkeleton />
+              </EndringstypeGroup>
+            )}
             {Object.entries(column)
               .sort()
               .map(([endringstype, utkastsInGroup]) => (
@@ -74,7 +80,6 @@ const Utkast = () => {
           </EndringstypeList>
         ))}
       </Container>
-      <Loading isLoading={isLoading} />
     </>
   );
 };
@@ -97,6 +102,14 @@ const TitleContainer = styled.div`
   gap: 12px 24px;
   grid-area: title;
   width: fit-content;
+`;
+
+const LoadingSkeleton = styled(SkeletonText)`
+  padding: 24px;
+  border-radius: 8px;
+  background: var(--kvib-colors-chakra-body-bg);
+  box-shadow: var(--kvib-shadows-base);
+  cursor: not-allowed;
 `;
 
 const EndringstypeList = styled.div`

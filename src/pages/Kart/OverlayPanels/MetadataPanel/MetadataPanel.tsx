@@ -39,7 +39,7 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
 
   return (
     <SidePanel $isOpen={isOpen} className={className}>
-      <PanelHeader onClose={closeOverlayPanel}>Metadata for grense</PanelHeader>
+      <PanelHeader onClose={closeOverlayPanel}>Grenseinfo</PanelHeader>
       {selectedFeature && !isWFSGrense && (
         <Content>
           <MetadataGenerelt feature={selectedFeature} />

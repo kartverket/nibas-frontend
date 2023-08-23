@@ -30,13 +30,12 @@ const Container = styled.button<{ $isActive: boolean }>`
 
   &:hover:not(:disabled) > .material-symbols-rounded {
     background: var(--kvib-colors-blue-50);
+    color: var(--kvib-colors-blue-500);
   }
 
   ${(props) =>
     props.$isActive &&
     css`
-      font-weight: bold;
-
       & > .material-symbols-rounded {
         color: var(--kvib-colors-chakra-inverse-text);
         background: var(--kvib-colors-blue-500);

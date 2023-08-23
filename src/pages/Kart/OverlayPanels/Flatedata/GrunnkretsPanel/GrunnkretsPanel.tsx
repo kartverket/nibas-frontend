@@ -40,7 +40,7 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
 
   return (
     <Panel $isOpen={isOpen} className={className}>
-      <PanelHeader onClose={closeOverlayPanel}>Endre kretsdetaljer</PanelHeader>
+      <PanelHeader onClose={closeOverlayPanel}>Endre flateinfo</PanelHeader>
       {filteredGrunnkretser && (
         <KretsTable>
           <thead>

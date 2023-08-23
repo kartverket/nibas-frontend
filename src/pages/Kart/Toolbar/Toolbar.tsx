@@ -24,6 +24,7 @@ const Buttons = styled(Frame)`
 
 const ZoomButtons = styled(Frame)`
   flex-direction: column;
+  justify-content: space-between;
   gap: 4px;
   padding: 8px 4px;
 `;
@@ -239,7 +240,7 @@ const Toolbar = () => {
       <ZoomButtons>
         <ToolbarTooltip text="Zoom inn på kartet">
           <ModeButton
-            icon="zoom_in"
+            icon="add"
             onClick={() => zoom(1)}
             ariaLabel="Zoom inn på kartet"
           />
@@ -247,7 +248,7 @@ const Toolbar = () => {
         <Divider />
         <ToolbarTooltip text="Zoom ut fra kartet">
           <ModeButton
-            icon="zoom_out"
+            icon="remove"
             onClick={() => zoom(-1)}
             ariaLabel="Zoom ut på kartet"
           />

@@ -82,7 +82,7 @@ const UtkastConflictModal = ({
       </ModalBody>
       <ModalFooter>
         <ButtonGroup>
-          <Button variant="outline" onClick={onCancel}>
+          <Button variant="link" onClick={onCancel}>
             Avbryt
           </Button>
           <Button onClick={submit} isDisabled={!submit}>

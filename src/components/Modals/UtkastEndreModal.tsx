@@ -72,7 +72,7 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
           </ModalBody>
           <ModalFooter>
             <ButtonGroup>
-              <Button variant="outline" colorScheme="gray" onClick={onClose}>
+              <Button variant="link" onClick={onClose}>
                 Avbryt
               </Button>
               <Button type="submit" isDisabled={!isDirty} isLoading={isLoading}>

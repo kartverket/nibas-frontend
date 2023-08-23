@@ -16,6 +16,7 @@ const MergeSelectWrapper = styled(FormControl)`
   align-items: center;
   grid-template-columns: 1fr auto;
   grid-template-areas:
+    "label label"
     "select fjern"
     "error .";
   gap: 0 8px;
@@ -27,11 +28,10 @@ const MergeSelectErrorMessage = styled(FormErrorMessage)`
 
 const RemoveButton = styled(Button)`
   grid-area: fjern;
-  margin-top: 32px;
 `;
 
 const SelectLabel = styled(FormLabel)`
-  grid-area: select;
+  grid-area: label;
 `;
 
 type MergeSelectProps = {
@@ -53,8 +53,8 @@ export const MergeSelect = forwardRef<HTMLSelectElement, MergeSelectProps>(
     ref
   ) => (
     <MergeSelectWrapper isInvalid={validationError?.showError}>
+      <SelectLabel>Navn eller nummer på stemmekrets</SelectLabel>
       <div>
-        <SelectLabel>Navn eller nummer på stemmekrets</SelectLabel>
         <Select
           {...inputProps}
           ref={ref}
