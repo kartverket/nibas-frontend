@@ -10,6 +10,7 @@ import ToolbarTooltip from "./ToolbarTooltip";
 import {
   Divider,
   Icon,
+  IconButton,
   Menu,
   MenuButton,
   MenuItem,
@@ -109,35 +110,76 @@ const Toolbar = () => {
   return (
     <Container>
       <Buttons>
-        <Menu>
+        <Menu autoSelect={false}>
           <MenuButton
             as={ModeButton}
-            aria-label="Grensejusteringsverktøy"
-            icon={"handyman"}
+            aria-label="Grenseverktøy"
+            icon="show_chart"
           >
-            Verktøy
+            Grense
           </MenuButton>
           <MenuList>
-            <MenuItem icon={<Icon weight={300} icon="add" />} command="⌘T">
-              Ny fane
-            </MenuItem>
-            <MenuItem
-              icon={<Icon weight={300} icon="open_in_new" />}
-              command="⌘N"
+            <ToolMenuItem
+              icon={<Icon icon="edit" />}
+              $isActive={activePointMode === "draw"}
+              onClick={() => togglePointMode("draw")}
             >
-              Nytt vindu
-            </MenuItem>
-            <MenuItem icon={<Icon weight={300} icon="cached" />} command="⌘⇧N">
-              Åpne lukket fane
-            </MenuItem>
-            <MenuItem
-              icon={<Icon weight={300} icon="file_open" />}
-              command="⌘O"
+              Tegn ny grense
+            </ToolMenuItem>
+
+            <ToolMenuItem
+              icon={<Icon icon="location_off" />}
+              $isActive={activePointMode === "split"}
+              onClick={() => togglePointMode("split")}
             >
-              Åpne fil...
-            </MenuItem>
+              Splitt
+            </ToolMenuItem>
+            <ToolMenuItem
+              icon={<Icon icon="location_off" />}
+              $isActive={activePointMode === "metadata"}
+              onClick={toggleMetadata}
+            >
+              Grenseinfo
+            </ToolMenuItem>
           </MenuList>
         </Menu>
+        <Menu autoSelect={false}>
+          <MenuButton
+            as={ModeButton}
+            aria-label="Punktverktøy"
+            icon="conversion_path"
+          >
+            Punkt
+          </MenuButton>
+          <MenuList>
+            <ToolMenuItem
+              icon={<Icon icon="edit_location_alt" />}
+              $isActive={activePointMode === "detach"}
+              onClick={() => togglePointMode("detach")}
+            >
+              Løsriv
+            </ToolMenuItem>
+          </MenuList>
+        </Menu>
+        <Menu autoSelect={false}>
+          <MenuButton
+            as={ModeButton}
+            aria-label="Flateverktøy"
+            icon="area_chart"
+          >
+            Flate
+          </MenuButton>
+          <MenuList>
+            <ToolMenuItem
+              icon={<Icon icon="edit_location_alt" />}
+              $isActive={flatedetaljerIsActive}
+              onClick={toggleFlatedetaljer}
+            >
+              Se/endre flatedetaljer
+            </ToolMenuItem>
+          </MenuList>
+        </Menu>
+
         {editingType && (
           <>
             <ToolbarTooltip
@@ -221,45 +263,11 @@ const Toolbar = () => {
                 </ModeButton>
               </ToolbarTooltip>
             )}
-            <ToolbarTooltip text="Vis informasjon om flatene innenfor den gitte inndelingen">
-              <ModeButton
-                icon="feed"
-                ariaLabel="Vis informasjon om flatene"
-                isActive={flatedetaljerIsActive}
-                onClick={toggleFlatedetaljer}
-              >
-                Flateinfo
-              </ModeButton>
-            </ToolbarTooltip>
             <Divider orientation="vertical" />
           </>
         )}
         {editingType && (
           <>
-            <ModeButton
-              icon="edit"
-              ariaLabel="Tegn grense"
-              isActive={activePointMode === "draw"}
-              onClick={() => togglePointMode("draw")}
-            >
-              Tegn
-            </ModeButton>
-            <ModeButton
-              icon="edit_location_alt"
-              ariaLabel="Løsriv punkter"
-              isActive={activePointMode === "detach"}
-              onClick={() => togglePointMode("detach")}
-            >
-              Løsriv
-            </ModeButton>
-            <ModeButton
-              icon="location_off"
-              ariaLabel="Splitt punkter"
-              isActive={activePointMode === "split"}
-              onClick={() => togglePointMode("split")}
-            >
-              Splitt
-            </ModeButton>
             <Divider orientation="vertical" />
             <ToolbarTooltip
               text="Skru av/på snapping mot kartlag."
@@ -298,4 +306,8 @@ const Toolbar = () => {
   );
 };
 
+const ToolMenuItem = styled(MenuItem)<{ $isActive: boolean }>`
+  background-color: ${(props) =>
+    props.$isActive && "var(--kvib-colors-blue-50)"};
+`;
 export default Toolbar;
