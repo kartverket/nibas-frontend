@@ -1,8 +1,8 @@
 import { IconButton } from "@kvib/react";
 import { styled } from "styled-components";
-
+import { MaterialSymbol } from "material-symbols";
 type HeaderButtonProps = {
-  icon: string;
+  icon: MaterialSymbol;
   label: string;
   onClick?: () => void;
   labelIsHidden?: boolean;
@@ -18,7 +18,7 @@ const HeaderButton = ({
 }: HeaderButtonProps) => (
   <Label>
     <HeaderIconButton
-      variant="outline"
+      variant="secondary"
       colorScheme="gray"
       icon={icon}
       aria-label={label}

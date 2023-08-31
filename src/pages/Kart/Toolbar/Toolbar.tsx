@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-undef */
 import { styled } from "styled-components";
 import { map } from "../constants";
 import { Frame, toolbarSpacing } from "./components";
@@ -6,7 +7,14 @@ import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import ToolbarTooltip from "./ToolbarTooltip";
-import { Divider } from "@kvib/react";
+import {
+  Divider,
+  Icon,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+} from "@kvib/react";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 
 const Container = styled.div`
@@ -101,6 +109,35 @@ const Toolbar = () => {
   return (
     <Container>
       <Buttons>
+        <Menu>
+          <MenuButton
+            as={ModeButton}
+            aria-label="Grensejusteringsverktøy"
+            icon={"handyman"}
+          >
+            Verktøy
+          </MenuButton>
+          <MenuList>
+            <MenuItem icon={<Icon weight={300} icon="add" />} command="⌘T">
+              Ny fane
+            </MenuItem>
+            <MenuItem
+              icon={<Icon weight={300} icon="open_in_new" />}
+              command="⌘N"
+            >
+              Nytt vindu
+            </MenuItem>
+            <MenuItem icon={<Icon weight={300} icon="cached" />} command="⌘⇧N">
+              Åpne lukket fane
+            </MenuItem>
+            <MenuItem
+              icon={<Icon weight={300} icon="file_open" />}
+              command="⌘O"
+            >
+              Åpne fil...
+            </MenuItem>
+          </MenuList>
+        </Menu>
         {editingType && (
           <>
             <ToolbarTooltip

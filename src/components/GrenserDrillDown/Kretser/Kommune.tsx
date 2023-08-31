@@ -55,7 +55,7 @@ const Kommune = ({ kommune }: Props) => {
           <Spinner size="lg" color="var(--kvib-colors-blue-500)" />
         ) : (
           <EditButton
-            variant="link"
+            variant="tertiary"
             onClick={onAvsluttRedigeringClick}
             isDisabled={!utkast}
           >

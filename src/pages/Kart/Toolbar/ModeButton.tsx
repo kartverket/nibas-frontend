@@ -1,4 +1,5 @@
 import { Icon } from "@kvib/react";
+import { MaterialSymbol } from "material-symbols";
 import { ReactNode } from "react";
 import { styled, css } from "styled-components";
 
@@ -44,7 +45,7 @@ const Container = styled.button<{ $isActive: boolean }>`
 `;
 
 type Props = {
-  icon: string;
+  icon: MaterialSymbol;
   ariaLabel: string;
   isActive?: boolean;
   children?: ReactNode;

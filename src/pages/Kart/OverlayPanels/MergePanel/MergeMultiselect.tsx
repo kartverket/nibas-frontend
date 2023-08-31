@@ -80,7 +80,7 @@ export const MergeMultiselect = ({
         />
       ))}
       <LeggTilFlerButton
-        variant="outline"
+        variant="secondary"
         rightIcon="add"
         onClick={() => append({ value: "default" })}
       >

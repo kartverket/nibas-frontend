@@ -44,7 +44,7 @@ const EditableGrenseAccordion = ({
           <span>{title}</span>
           <div>
             <EditButton
-              variant="link"
+              variant="tertiary"
               onClick={toggleEditing}
               isDisabled
               title="Midlertidig utilgjengelig"

@@ -50,7 +50,7 @@ const EditAndSaveButton = ({
         aria-label="Åpne redigering"
         onClick={toggleEditing}
         iconFill
-        variant="outline"
+        variant="secondary"
         colorScheme="gray"
       >
         Rediger

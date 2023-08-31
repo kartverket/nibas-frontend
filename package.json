@@ -4,9 +4,9 @@
   "private": true,
   "dependencies": {
     "@kartverket/frontend-aut-lib": "0.0.27",
-    "@kvib/react": "^1.22.0",
+    "@kvib/react": "^2.0.0",
     "lodash.get": "^4.4.2",
-    "material-symbols": "^0.10.4",
+    "material-symbols": "^0.5.4",
     "ol": "~7.1.0",
     "proj4": "~2.9.0",
     "react": "~18.2.0",

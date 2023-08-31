@@ -1,10 +1,11 @@
 import { Button, Heading, Text } from "@kvib/react";
 import { styled } from "styled-components";
+import { MaterialSymbol } from "material-symbols";
 
 type Props = {
   title: string;
   description: string;
-  icon?: string;
+  icon?: MaterialSymbol;
   onClick: () => void;
 };
 
