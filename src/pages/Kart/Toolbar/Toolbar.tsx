@@ -10,7 +10,6 @@ import ToolbarTooltip from "./ToolbarTooltip";
 import {
   Divider,
   Icon,
-  IconButton,
   Menu,
   MenuButton,
   MenuItem,
@@ -42,14 +41,11 @@ const Toolbar = () => {
   const { activePointMode, togglePointMode, activeEditModes, toggleEditMode } =
     useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
-  const editingType = getCurrentlyEditingType() as string;
+  const editingType = getCurrentlyEditingType();
   const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } =
     useOverlayPanel();
-  const flatedetaljerIsAvailable =
-    editingType === "grunnkrets" || editingType === "stemmekrets";
   const flatedetaljerIsActive =
     activeOverlayPanel === "grunnkrets" || activeOverlayPanel === "stemmekrets";
-  const mergeIsAvailable = editingType === "stemmekrets";
   const mergeIsActive = activeOverlayPanel === "sammenslåing";
 
   const toggleKartlag = () => {
@@ -79,7 +75,7 @@ const Toolbar = () => {
   const toggleFlatedetaljer = () => {
     if (flatedetaljerIsActive) {
       closeOverlayPanel();
-    } else if (flatedetaljerIsAvailable) {
+    } else if (editingType === "grunnkrets" || editingType === "stemmekrets") {
       openOverlayPanel(editingType);
     }
   };
@@ -110,129 +106,6 @@ const Toolbar = () => {
   return (
     <Container>
       <Buttons>
-        <Menu autoSelect={false}>
-          <MenuButton
-            as={ModeButton}
-            aria-label="Grenseverktøy"
-            icon="show_chart"
-          >
-            Grense
-          </MenuButton>
-          <MenuList>
-            <ToolMenuItem
-              icon={<Icon icon="edit" />}
-              $isActive={activePointMode === "draw"}
-              onClick={() => togglePointMode("draw")}
-            >
-              Tegn ny grense
-            </ToolMenuItem>
-
-            <ToolMenuItem
-              icon={<Icon icon="location_off" />}
-              $isActive={activePointMode === "split"}
-              onClick={() => togglePointMode("split")}
-            >
-              Splitt
-            </ToolMenuItem>
-            <ToolMenuItem
-              icon={<Icon icon="location_off" />}
-              $isActive={activePointMode === "metadata"}
-              onClick={toggleMetadata}
-            >
-              Grenseinfo
-            </ToolMenuItem>
-          </MenuList>
-        </Menu>
-        <Menu autoSelect={false}>
-          <MenuButton
-            as={ModeButton}
-            aria-label="Punktverktøy"
-            icon="conversion_path"
-          >
-            Punkt
-          </MenuButton>
-          <MenuList>
-            <ToolMenuItem
-              icon={<Icon icon="edit_location_alt" />}
-              $isActive={activePointMode === "detach"}
-              onClick={() => togglePointMode("detach")}
-            >
-              Løsriv
-            </ToolMenuItem>
-          </MenuList>
-        </Menu>
-        <Menu autoSelect={false}>
-          <MenuButton
-            as={ModeButton}
-            aria-label="Flateverktøy"
-            icon="area_chart"
-          >
-            Flate
-          </MenuButton>
-          <MenuList>
-            <ToolMenuItem
-              icon={<Icon icon="edit_location_alt" />}
-              $isActive={flatedetaljerIsActive}
-              onClick={toggleFlatedetaljer}
-            >
-              Se/endre flatedetaljer
-            </ToolMenuItem>
-          </MenuList>
-        </Menu>
-
-        {editingType && (
-          <>
-            <ToolbarTooltip
-              text="Flytt et punkt ved bruk av koordinater"
-              shortcut="edit"
-            >
-              <ModeButton
-                icon="ads_click"
-                ariaLabel="Flytt punkt med koordinater"
-                isActive={activePointMode === "koordinater"}
-                onClick={toggleMove}
-              >
-                Flytt
-              </ModeButton>
-            </ToolbarTooltip>
-            <ToolbarTooltip
-              text="Legg til ett eller flere punkter på en grense."
-              shortcut="add"
-            >
-              <ModeButton
-                icon="add_location_alt"
-                ariaLabel="Legg til punkter"
-                isActive={activePointMode === "add"}
-                onClick={() => togglePointMode("add")}
-              >
-                Legg til
-              </ModeButton>
-            </ToolbarTooltip>
-            <ToolbarTooltip
-              text="Fjern ett eller flere punkter fra en grense."
-              shortcut="remove"
-            >
-              <ModeButton
-                icon="wrong_location"
-                ariaLabel="Fjern punkter"
-                isActive={activePointMode === "remove"}
-                onClick={() => togglePointMode("remove")}
-              >
-                Fjern
-              </ModeButton>
-            </ToolbarTooltip>
-          </>
-        )}
-        <ToolbarTooltip text="Se og rediger informasjon om en grense. Trykk på grensen du ønsker å se informasjonen til.">
-          <ModeButton
-            icon="live_help"
-            ariaLabel="Se informasjon om grensen"
-            isActive={activePointMode === "metadata"}
-            onClick={toggleMetadata}
-          >
-            Grenseinfo
-          </ModeButton>
-        </ToolbarTooltip>
         <ToolbarTooltip
           text="Legg til, endre rekkefølge og fjern kartlag fra kartet."
           shortcut="layers"
@@ -246,44 +119,124 @@ const Toolbar = () => {
             Kartlag
           </ModeButton>
         </ToolbarTooltip>
-        {flatedetaljerIsAvailable && (
-          <>
-            {mergeIsAvailable && (
-              <ToolbarTooltip
-                text="Slå sammen to eller flere stemmekretser."
-                shortcut="merge"
-              >
-                <ModeButton
-                  icon="merge"
-                  ariaLabel="Slå sammen stemmekretser"
-                  isActive={mergeIsActive}
-                  onClick={toggleMergePanel}
-                >
-                  Slå sammen
-                </ModeButton>
-              </ToolbarTooltip>
-            )}
-            <Divider orientation="vertical" />
-          </>
-        )}
-        {editingType && (
-          <>
-            <Divider orientation="vertical" />
-            <ToolbarTooltip
-              text="Skru av/på snapping mot kartlag."
-              shortcut="snap"
+        <Divider orientation="vertical" />
+        <Menu autoSelect={false}>
+          <MenuButton
+            as={ModeButton}
+            aria-label="Grenseverktøy"
+            icon="show_chart"
+            isDisabled={!editingType}
+          >
+            Grense
+          </MenuButton>
+          <MenuList>
+            <ToolMenuItem
+              icon={<Icon icon="edit" />}
+              $isActive={activePointMode === "draw"}
+              onClick={() => togglePointMode("draw")}
             >
-              <ModeButton
-                icon="layers"
-                ariaLabel="Snap til kartlag"
-                isActive={activeEditModes.includes("snap")}
-                onClick={() => toggleEditMode("snap")}
-              >
-                Snap
-              </ModeButton>
-            </ToolbarTooltip>
-          </>
-        )}
+              Tegn ny grense
+            </ToolMenuItem>
+            <ToolMenuItem
+              icon={<Icon icon="location_off" />}
+              $isActive={activePointMode === "split"}
+              onClick={() => togglePointMode("split")}
+            >
+              Splitt grense
+            </ToolMenuItem>
+            <ToolMenuItem
+              icon={<Icon icon="edit_location_alt" />}
+              $isActive={activePointMode === "detach"}
+              onClick={() => togglePointMode("detach")}
+            >
+              Løsriv grense
+            </ToolMenuItem>
+            <ToolMenuItem
+              icon={<Icon icon="live_help" />}
+              aria-label="Se informasjon om grensen"
+              $isActive={activePointMode === "metadata"}
+              onClick={toggleMetadata}
+            >
+              Se/endre grenseinformasjon
+            </ToolMenuItem>
+          </MenuList>
+        </Menu>
+        <Menu autoSelect={false}>
+          <MenuButton
+            as={ModeButton}
+            aria-label="Punktverktøy"
+            icon="conversion_path"
+            isDisabled={!editingType}
+          >
+            Punkt
+          </MenuButton>
+          <MenuList>
+            <ToolMenuItem
+              icon={<Icon icon="ads_click" />}
+              ariaLabel="Flytt punkt med koordinater"
+              $isActive={activePointMode === "koordinater"}
+              onClick={toggleMove}
+            >
+              Flytt punkt med koordinater
+            </ToolMenuItem>
+            <ToolMenuItem
+              icon={<Icon icon="add_location_alt" />}
+              ariaLabel="Legg til punkter"
+              $isActive={activePointMode === "add"}
+              onClick={() => togglePointMode("add")}
+            >
+              Legg til punkt
+            </ToolMenuItem>
+            <ToolMenuItem
+              icon={<Icon icon="wrong_location" />}
+              ariaLabel="Fjern punkter"
+              $isActive={activePointMode === "remove"}
+              onClick={() => togglePointMode("remove")}
+            >
+              Fjern punkt
+            </ToolMenuItem>
+          </MenuList>
+        </Menu>
+        <Menu autoSelect={false}>
+          <MenuButton
+            as={ModeButton}
+            aria-label="Flateverktøy"
+            icon="area_chart"
+            isDisabled={!editingType}
+          >
+            Flate
+          </MenuButton>
+          <MenuList>
+            <ToolMenuItem
+              icon={<Icon icon="edit_location_alt" />}
+              $isActive={flatedetaljerIsActive}
+              onClick={toggleFlatedetaljer}
+            >
+              Se/endre flatedetaljer
+            </ToolMenuItem>
+            <ToolMenuItem
+              icon={<Icon icon="merge" />}
+              aria-label="Slå sammen stemmekretser"
+              $isActive={mergeIsActive}
+              isDisabled={editingType !== "stemmekrets"}
+              onClick={toggleMergePanel}
+            >
+              Slå sammen flater
+            </ToolMenuItem>
+          </MenuList>
+        </Menu>
+        <Divider orientation="vertical" />
+        <ToolbarTooltip text="Skru av/på snapping mot kartlag." shortcut="snap">
+          <ModeButton
+            icon="layers"
+            ariaLabel="Snap til kartlag"
+            isActive={activeEditModes.includes("snap")}
+            onClick={() => toggleEditMode("snap")}
+            isDisabled={!editingType}
+          >
+            Snap
+          </ModeButton>
+        </ToolbarTooltip>
       </Buttons>
       <ZoomButtons>
         <ToolbarTooltip text="Zoom inn på kartet">

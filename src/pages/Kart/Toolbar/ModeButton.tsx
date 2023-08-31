@@ -50,7 +50,7 @@ type Props = {
   isActive?: boolean;
   children?: ReactNode;
   onClick?: () => void;
-  disabled?: boolean;
+  isDisabled?: boolean;
 };
 
 const InnerModeButton = (
@@ -60,7 +60,7 @@ const InnerModeButton = (
     children,
     onClick,
     isActive = false,
-    disabled = false,
+    isDisabled = false,
   }: Props,
   ref: React.ForwardedRef<HTMLButtonElement>
 ) => {
@@ -69,7 +69,7 @@ const InnerModeButton = (
       onClick={onClick}
       aria-label={ariaLabel}
       $isActive={isActive}
-      disabled={disabled}
+      disabled={isDisabled}
       ref={ref}
     >
       <Icon icon={icon} />
