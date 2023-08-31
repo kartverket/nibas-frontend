@@ -36,7 +36,7 @@ const useModify = () => {
             mapBrowserEvent.pixel,
             {
               layerFilter: (layer) => layer === editLayer,
-              hitTolerance: 20,
+              hitTolerance: pixelTolerance,
             }
           );
           const feature = featuresAtPixel[0];

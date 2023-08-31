@@ -6,6 +6,7 @@ type ToolbarPointMode =
   | null
   | "add"
   | "remove"
+  | "draw"
   | "split"
   | "detach"
   | "metadata"

@@ -197,8 +197,16 @@ const Toolbar = () => {
             <Divider orientation="vertical" />
           </>
         )}
-        {false && (
+        {editingType && (
           <>
+            <ModeButton
+              icon="edit"
+              ariaLabel="Tegn grense"
+              isActive={activePointMode === "draw"}
+              onClick={() => togglePointMode("draw")}
+            >
+              Tegn
+            </ModeButton>
             <ModeButton
               icon="edit_location_alt"
               ariaLabel="Løsriv punkter"
@@ -216,11 +224,6 @@ const Toolbar = () => {
               Splitt
             </ModeButton>
             <Divider orientation="vertical" />
-          </>
-        )}
-
-        {editingType && (
-          <>
             <ToolbarTooltip
               text="Skru av/på snapping mot kartlag."
               shortcut="snap"
