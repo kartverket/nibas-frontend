@@ -92,6 +92,7 @@ const isFeatureConnectedToCoordinate = (
   feature: FeatureLike,
   coordinate: Coordinate
 ): boolean => {
+  // TODO: dersom featuren er arkivert skal den alltid returnere false
   if (feature instanceof Feature) {
     const geometry = feature.getGeometry();
     if (geometry instanceof LineString) {

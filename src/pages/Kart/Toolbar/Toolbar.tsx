@@ -173,7 +173,7 @@ const Toolbar = () => {
           <MenuList>
             <ToolMenuItem
               icon={<Icon icon="ads_click" />}
-              ariaLabel="Flytt punkt med koordinater"
+              aria-label="Flytt punkt med koordinater"
               $isActive={activePointMode === "koordinater"}
               onClick={toggleMove}
             >
@@ -181,7 +181,7 @@ const Toolbar = () => {
             </ToolMenuItem>
             <ToolMenuItem
               icon={<Icon icon="add_location_alt" />}
-              ariaLabel="Legg til punkter"
+              aria-label="Legg til punkter"
               $isActive={activePointMode === "add"}
               onClick={() => togglePointMode("add")}
             >
@@ -189,7 +189,7 @@ const Toolbar = () => {
             </ToolMenuItem>
             <ToolMenuItem
               icon={<Icon icon="wrong_location" />}
-              ariaLabel="Fjern punkter"
+              aria-label="Fjern punkter"
               $isActive={activePointMode === "remove"}
               onClick={() => togglePointMode("remove")}
             >
