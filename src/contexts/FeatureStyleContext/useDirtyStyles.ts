@@ -8,9 +8,6 @@ const useDirtyStyles = () => {
     []
   );
   const [archivedFeatureIds, setArchivedFeatureIds] = useState<string[]>([]);
-  const [savedArchivedFeatureIds, setSavedArchivedFeatureIds] = useState<
-    string[]
-  >([]);
 
   const setEditFeatures = (features: string[]) => {
     for (const featureId of features) {

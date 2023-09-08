@@ -16,8 +16,16 @@ import {
   MenuList,
 } from "@kvib/react";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
-import { useFeatureStyle } from "contexts/FeatureStyleContext";
+import {
+  SelectedFeatures,
+  useFeatureStyle,
+} from "contexts/FeatureStyleContext";
 import { grenseStyles } from "utils/map/layerStyles";
+import { LineString } from "ol/geom";
+import { Feature } from "ol";
+import useDirtyStyles from "contexts/FeatureStyleContext/useDirtyStyles";
+import { getFeatureId } from "utils/map/source";
+import { arch } from "os";
 
 const Container = styled.div`
   grid-area: toolbar;
@@ -55,6 +63,7 @@ const Toolbar = () => {
   const mergeIsActive = activeOverlayPanel === "sammenslåing";
 
   const { selectedFeatures } = useFeatureStyle();
+  const { setArchivedFeatures } = useDirtyStyles();
 
   const toggleKartlag = () => {
     if (activeOverlayPanel === "kartlag") {
@@ -104,6 +113,10 @@ const Toolbar = () => {
     });
   };
 
+  const archiveFeatures = (features: Feature<LineString>[]) => {
+    setArchivedFeatures(features.map((feature) => getFeatureId(feature)));
+  };
+
   useKeyboardShortcut("add", () => togglePointMode("add"));
   useKeyboardShortcut("remove", () => togglePointMode("remove"));
   useKeyboardShortcut("edit", toggleMove);
@@ -119,7 +132,7 @@ const Toolbar = () => {
           <Button
             size="sm"
             isDisabled={selectedFeatures.length === 0}
-            onClick={() => selectedFeatures[0].setStyle(grenseStyles.archived)}
+            onClick={() => archiveFeatures(selectedFeatures)}
           >
             Arkiver grense
           </Button>
