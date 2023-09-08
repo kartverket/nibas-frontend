@@ -73,6 +73,7 @@ const kretsGeometryFetcher = async ([kretsIds, token, type]: [
       const [representasjonspunktFeature, flateFeature] =
         krets.features.features;
 
+      const shouldRenderFlater = false;
       const featuresWithId = [
         {
           ...representasjonspunktFeature,
@@ -87,7 +88,7 @@ const kretsGeometryFetcher = async ([kretsIds, token, type]: [
               (krets as GrunnkretsResponse).grunnkretsnummer,
           },
         },
-        {
+        shouldRenderFlater && {
           ...flateFeature,
           id: getFlateId(kretsId),
           properties: {
@@ -107,7 +108,6 @@ const kretsGeometryFetcher = async ([kretsIds, token, type]: [
   });
 
   const representasjonspunktFeatures = await Promise.all(kretsGeometryPromises);
-
   return representasjonspunktFeatures.filter(isNotNullOrUndefined);
 };
 
