@@ -10,7 +10,8 @@ type ToolbarPointMode =
   | "split"
   | "detach"
   | "metadata"
-  | "koordinater";
+  | "koordinater"
+  | "archive";
 
 export type ToolbarContextValue = {
   activePointMode: ToolbarPointMode;

@@ -79,6 +79,7 @@ export const grenseStyles = {
     dashed: true,
     points: false,
   }),
+  archived: lineAndPointStyles({ color: "#C8C8C8", dashed: true }),
 };
 
 const grenseStyleFromType = (grenseType: GrenseType): Style[] => {
