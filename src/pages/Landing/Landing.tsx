@@ -4,9 +4,33 @@ import { useNavigate } from "react-router-dom";
 import { routes } from "utils/routes";
 import LandingHeader from "./LandingHeader";
 import Greeting from "./Greeting";
+import { useEditAllGrenser } from "contexts/EditGrenserContext";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { useSidebarPanel } from "contexts/SidebarPanelContext";
+import { useEffect } from "react";
+import { resetMapView, getAllVisibleFeatures } from "utils/map";
 
 const Landing = () => {
   const navigate = useNavigate();
+  const { resetAndClearAllLayers } = useEditAllGrenser();
+  const { activeOverlayPanel, closeOverlayPanel } = useOverlayPanel();
+  const { activeSidebarPanel, closeSidebarPanel } = useSidebarPanel();
+
+  useEffect(() => {
+    resetMapView();
+    if (activeOverlayPanel) closeOverlayPanel();
+    if (activeSidebarPanel) closeSidebarPanel();
+    const allVisibleFeatures = getAllVisibleFeatures();
+    if (allVisibleFeatures.length > 0) {
+      resetAndClearAllLayers();
+    }
+  }, [
+    activeOverlayPanel,
+    activeSidebarPanel,
+    closeOverlayPanel,
+    closeSidebarPanel,
+    resetAndClearAllLayers,
+  ]);
 
   return (
     <>
