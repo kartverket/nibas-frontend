@@ -18,7 +18,9 @@ export type GrenseType =
   | "Grunnkretsgrense"
   | "Delområdegrense"
   | "Posisjon"
-  | "Stemmekretsgrense";
+  | "Stemmekretsgrense"
+  | "GRUNNKRETS"
+  | "STEMMEKRETS";
 
 // denne iden brukes både til Sources og Layers
 export type LayerId = KartlagId | GrenseId;

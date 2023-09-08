@@ -307,6 +307,7 @@ export interface components {
     /** @description Geometry-typene vi støtter i NIBAS. */
     Geometry: {
       type: string;
+      coordinates: number[][][];
     };
     /** @description Representasjon av endringer på grensegeometri. */
     Grenseendringer: {

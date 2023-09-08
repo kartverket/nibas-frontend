@@ -12,6 +12,7 @@ import Text from "ol/style/Text";
 import Point from "ol/geom/Point";
 import { editableBorderTypes, editSource } from "hooks/layers/constants";
 import { GrenseId, GrenseType } from "hooks/layers/types";
+import CircleStyle from "ol/style/Circle";
 
 const getPointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
   // hent punkter når zoomet langt nok inn
@@ -63,6 +64,14 @@ export const selectedPointStyle = new Style({
   zIndex: 10,
 });
 
+const flateStyles = [
+  new Style({
+    fill: new Fill({
+      color: "rgba(255, 0, 0, 0.05)",
+    }),
+  }),
+];
+
 export const grenseStyles = {
   fylke: lineAndPointStyles({ color: "#B92659" }),
   kommune: lineAndPointStyles({ color: "#F15D4E" }),
@@ -74,6 +83,7 @@ export const grenseStyles = {
   select: lineAndPointStyles({ color: "#000000", dashed: true }),
   dirty: lineAndPointStyles({ color: "#00A76C", dashed: true }),
   sammenslaaing: lineAndPointStyles({ color: "#D163E6" }),
+  flate: flateStyles,
   sammenslaaingOverlapping: lineAndPointStyles({
     color: "#D163E6",
     dashed: true,
@@ -103,6 +113,10 @@ const grenseStyleFromType = (grenseType: GrenseType): Style[] => {
     }
     case "Stemmekretsgrense": {
       return grenseStyles.stemmekrets;
+    }
+    case "GRUNNKRETS":
+    case "STEMMEKRETS": {
+      return grenseStyles.flate;
     }
   }
 };

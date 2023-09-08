@@ -18,9 +18,9 @@ import {
   removeFeaturesFromSourceByIds,
   getFeatureId,
   getRepresentasjonspunktId,
+  getFlateId,
 } from "utils/map/source";
 import { fetcherWithToken, getIdFromEntity } from "utils/api";
-import { isPoint } from "types/geometry";
 import { isNotNullOrUndefined } from "types/common";
 import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
 import { stemmekretsgrenserFetcher } from "api/stemmekrets";
@@ -55,46 +55,58 @@ const kretserByKommuneFetcher = async ([kretsIds, token, type]: [
   return Promise.all(kretsFeaturesPromises);
 };
 
-const representasjonspunkterFetcher = async ([kretsIds, token, type]: [
+// Henter tilleggsgeometri som representasjonspunkter og flater
+const kretsGeometryFetcher = async ([kretsIds, token, type]: [
   string[],
   string | undefined,
   Kretstype
 ]) => {
   const typeUrl = endpointByKretstype[type];
 
-  const representasjonspunkterPromises = kretsIds.map(async (kretsId) => {
+  const kretsGeometryPromises = kretsIds.map(async (kretsId) => {
     const krets = (await fetcherWithToken([
       `v1/${typeUrl}/${kretsId}`,
       token,
     ])) as KretsResponse<typeof typeUrl>;
 
-    if (!krets) return;
+    if (krets && krets.features.features.length > 0) {
+      const [representasjonspunktFeature, flateFeature] =
+        krets.features.features;
 
-    const kretsRepresentasjonspunktFeature = krets.features.features?.[0];
-    const pointGeometry = kretsRepresentasjonspunktFeature.geometry;
+      const featuresWithId = [
+        {
+          ...representasjonspunktFeature,
+          id: getRepresentasjonspunktId(kretsId),
+          properties: {
+            ...representasjonspunktFeature.properties,
+            name:
+              (krets as StemmekretsResponse).stemmekretsnavn ||
+              (krets as GrunnkretsResponse).navn,
+            number:
+              (krets as StemmekretsResponse).stemmekretsnummer ||
+              (krets as GrunnkretsResponse).grunnkretsnummer,
+          },
+        },
+        {
+          ...flateFeature,
+          id: getFlateId(kretsId),
+          properties: {
+            ...flateFeature.properties,
+            name:
+              (krets as StemmekretsResponse).stemmekretsnavn ||
+              (krets as GrunnkretsResponse).navn,
+            number:
+              (krets as StemmekretsResponse).stemmekretsnummer ||
+              (krets as GrunnkretsResponse).grunnkretsnummer,
+          },
+        },
+      ];
 
-    if (!isPoint(pointGeometry) || !pointGeometry.coordinates) return;
-
-    const featureWithId = {
-      ...kretsRepresentasjonspunktFeature,
-      id: getRepresentasjonspunktId(kretsId),
-      properties: {
-        ...kretsRepresentasjonspunktFeature.properties,
-        name:
-          (krets as StemmekretsResponse).stemmekretsnavn ||
-          (krets as GrunnkretsResponse).navn,
-        number:
-          (krets as StemmekretsResponse).stemmekretsnummer ||
-          (krets as GrunnkretsResponse).grunnkretsnummer,
-      },
-    };
-
-    return featureWithId;
+      return featuresWithId;
+    }
   });
 
-  const representasjonspunktFeatures = await Promise.all(
-    representasjonspunkterPromises
-  );
+  const representasjonspunktFeatures = await Promise.all(kretsGeometryPromises);
 
   return representasjonspunktFeatures.filter(isNotNullOrUndefined);
 };
@@ -144,7 +156,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     kretserByKommuneFetcher
   );
 
-  const { data: representasjonspunkter } = useSWR(
+  const { data: kretsGeometries } = useSWR(
     grunnkretserByKommune
       ? [
           mapGrunnkretserToIds(grunnkretserByKommune),
@@ -153,20 +165,20 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
           "punkter",
         ]
       : null,
-    representasjonspunkterFetcher
+    kretsGeometryFetcher
   );
 
   const utkastGeoJsons = useUtkastFeature(grenserGeoJsons, utkast);
 
   const allFeatures = useMemo(() => {
-    if (!utkastGeoJsons || !representasjonspunkter) return null;
+    if (!utkastGeoJsons || !kretsGeometries) return null;
 
     const features: Feature<Geometry>[] = utkastGeoJsons
       .flatMap(getFeaturesFromGeoJson)
-      .concat(representasjonspunkter.flatMap(getFeaturesFromGeoJson));
+      .concat(kretsGeometries.flat().flatMap(getFeaturesFromGeoJson));
 
     return features;
-  }, [representasjonspunkter, utkastGeoJsons]);
+  }, [kretsGeometries, utkastGeoJsons]);
 
   const getOverlappingStemmekretsFeatureIds = (featureIds: string[]) => {
     return featureIds.filter(
