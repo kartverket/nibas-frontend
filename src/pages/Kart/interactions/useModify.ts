@@ -3,7 +3,7 @@ import Feature, { FeatureLike } from "ol/Feature";
 import LineString from "ol/geom/LineString";
 import Modify, { ModifyEvent } from "ol/interaction/Modify";
 import { HistoryChange, useHistory } from "contexts/HistoryContext";
-import { click, primaryAction } from "ol/events/condition";
+import { primaryAction, singleClick } from "ol/events/condition";
 import { Collection } from "ol";
 import { editableBorderTypes, editSource } from "hooks/layers/constants";
 import { pixelTolerance } from "./constants";
@@ -51,7 +51,30 @@ const useModify = () => {
           return activePointMode === "add";
         },
         deleteCondition: (mapBrowserEvent) => {
-          return activePointMode === "remove" && click(mapBrowserEvent);
+          if (activePointMode === "remove") {
+            const featuresAtPixel = map.getFeaturesAtPixel(
+              mapBrowserEvent.pixel,
+              {
+                layerFilter: (layer) => layer === editLayer,
+                hitTolerance: 20,
+              }
+            );
+
+            // Dersom noen av featurene vi trykker på har for få punkter skal vi ikke fjerne punktet
+            for (const feature of featuresAtPixel) {
+              const geometry = feature.getGeometry();
+              if (geometry instanceof LineString) {
+                const coordinates = geometry.getCoordinates();
+                if (coordinates.length <= 2) {
+                  return false;
+                }
+              }
+            }
+
+            // Hvis alt ellers ser greit ut så fjernes punktet på klikk
+            return singleClick(mapBrowserEvent);
+          }
+          return false;
         },
       }),
     [activePointMode, detachIsActive, editLayer, selectedFeatures]
