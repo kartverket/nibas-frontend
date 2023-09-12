@@ -307,7 +307,6 @@ export interface components {
     /** @description Geometry-typene vi støtter i NIBAS. */
     Geometry: {
       type: string;
-      coordinates: number[][][];
     };
     /** @description Representasjon av endringer på grensegeometri. */
     Grenseendringer: {
@@ -1034,11 +1033,8 @@ export interface components {
     Fylkesnummer: {
       /** @description Unik UUID for fylkesnummeret */
       id: string;
-      /**
-       * Format: int32
-       * @description Det faktiske fylkesnummeret
-       */
-      kodeverdi: number;
+      /** @description Det faktiske fylkesnummeret */
+      kodeverdi: string;
     };
     /** @description Representasjon av en krets. Response-type kun for Matrikkelen. Kan være grunnkrets, stemmekrets etc. */
     KretsResponse: {
