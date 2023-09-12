@@ -75,3 +75,5 @@ export const getFeatureId = (feature: Feature<Geometry>) =>
 
 export const getRepresentasjonspunktId = (entityId: string) =>
   `${entityId}-representasjonspunkt`;
+
+export const getFlateId = (entityId: string) => `${entityId}-flate`;

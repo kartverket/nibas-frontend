@@ -84,14 +84,20 @@ const useModify = () => {
         const changes: HistoryChange<number[][]>[] = [];
         e.features.forEach((featureLike) => {
           if (featureLike instanceof Feature) {
-            const { featureId, coordinates } = getInfoFromFeature(featureLike);
-            if (!featureId || !coordinates) return;
-            changes.push({
-              id: featureId as string,
-              from: featureLike.get(previousCoordinateKey),
-              to: coordinates,
-            });
-            featureLike.unset(previousCoordinateKey);
+            const geometry = featureLike.getGeometry();
+
+            // Filtrerer ut representasjonspunkt og flate fra å bli satt inn i history
+            if (geometry instanceof LineString) {
+              const { featureId, coordinates } =
+                getInfoFromFeature(featureLike);
+              if (!featureId || !coordinates) return;
+              changes.push({
+                id: featureId as string,
+                from: featureLike.get(previousCoordinateKey),
+                to: coordinates,
+              });
+              featureLike.unset(previousCoordinateKey);
+            }
           }
         });
         addHistoryEntry({
