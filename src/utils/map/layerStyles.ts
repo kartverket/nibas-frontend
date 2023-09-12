@@ -56,9 +56,9 @@ export const selectedPointStyle = new Style({
   image: new Circle({
     radius: 6,
     stroke: new Stroke({ color: "#ffffff", width: 2 }),
-    fill: new Fill({ color: "#0099FF" }),
+    fill: new Fill({ color: "#00A76C" }),
   }),
-  fill: new Fill({ color: "#0099FF" }),
+  fill: new Fill({ color: "#00A76C" }),
   stroke: new Stroke({ color: "#ffffff" }),
   zIndex: 10,
 });
@@ -128,15 +128,10 @@ export const getPointOverlayStyle = (
 
   return new Style({
     text: new Text({
-      text: `${feature.get("name")}\n${feature.get("number")}`,
-      font: "12px Arial,sans-serif",
-      fill: new Fill({
-        color: "#000",
-      }),
-      padding: [5, 5, 5, 5],
-      backgroundFill: new Fill({
-        color: [255, 255, 255, 0.5],
-      }),
+      text: `${feature.get("number")} ${feature.get("name")}`,
+      font: "bold 16px Mulish, sans-serif",
+      fill: new Fill({ color: "#FFF" }),
+      stroke: new Stroke({ width: 2 }),
       textBaseline: "middle",
       textAlign: "center",
     }),
