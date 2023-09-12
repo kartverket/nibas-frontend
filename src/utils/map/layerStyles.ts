@@ -12,7 +12,6 @@ import Text from "ol/style/Text";
 import Point from "ol/geom/Point";
 import { editableBorderTypes, editSource } from "hooks/layers/constants";
 import { GrenseId, GrenseType } from "hooks/layers/types";
-import CircleStyle from "ol/style/Circle";
 
 const getPointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
   // hent punkter når zoomet langt nok inn
