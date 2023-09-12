@@ -39,12 +39,17 @@ const useModify = () => {
               hitTolerance: 20,
             }
           );
-          const feature = featuresAtPixel[0];
-          if (feature) {
-            return editableBorderTypes.includes(feature.get("type"));
+
+          // Sjekk alle featurene i punktet, hvis en av dem ikke skal kunne endres ønsker vi ikke å endre noe
+          // Her er det fare for at vi er overivrige hvis det er flere features veldig nærme hverandre, men ikke samme punkt
+          for (const feature of featuresAtPixel) {
+            const featureType = feature.get("type");
+            if (!editableBorderTypes.includes(featureType)) {
+              return false;
+            }
           }
 
-          // Hvis vi ikke har en spesiell regel bruker vi default-condition
+          // Hvis vi ikke har en spesiell regel bruker vi default condition, som er primaryAction her
           return primaryAction(mapBrowserEvent);
         },
         insertVertexCondition: () => {
