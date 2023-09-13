@@ -5,6 +5,7 @@ import { getFeatureIdsFromEntries } from "./utils";
 import { FeatureStyleContextValue } from "./types";
 import { useSelectStyles } from "./useSelectStyles";
 import { grenseStyles } from "utils/map/layerStyles";
+import useArchiveStyles from "./useArchiveStyles";
 
 export const FeatureStyleContext = createContext<
   FeatureStyleContextValue | undefined
@@ -31,6 +32,7 @@ export const FeatureStyleProvider = ({
     setAndSaveUtkastFeatures,
     setAndSaveSammenslaaingsFeatures,
   } = useDirtyStyles();
+  const { archivedFeatureIds, setArchivedFeatures } = useArchiveStyles();
   const { history } = useHistory();
   const previousSelectedFeatures = useRef(selectedFeatures);
 
@@ -96,6 +98,8 @@ export const FeatureStyleProvider = ({
     setAndSaveSammenslaaingsFeatures,
     dirtyFeatureIds,
     clearDirtyStyles: clearSavedDirtyFeatureIds,
+    archivedFeatureIds,
+    setArchivedFeatures,
   };
 
   return (

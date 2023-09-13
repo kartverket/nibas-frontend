@@ -23,4 +23,7 @@ export type FeatureStyleContextValue = {
   ) => void;
   dirtyFeatureIds: string[];
   clearDirtyStyles: () => void;
+
+  archivedFeatureIds: string[];
+  setArchivedFeatures: (features: string[]) => void;
 };

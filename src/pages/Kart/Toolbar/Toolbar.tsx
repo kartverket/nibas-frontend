@@ -17,6 +17,7 @@ import {
 } from "@kvib/react";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import {
+  FeatureStyleContext,
   SelectedFeatures,
   useFeatureStyle,
 } from "contexts/FeatureStyleContext";
@@ -26,6 +27,7 @@ import { Feature } from "ol";
 import useDirtyStyles from "contexts/FeatureStyleContext/useDirtyStyles";
 import { getFeatureId } from "utils/map/source";
 import { arch } from "os";
+import useArchiveStyles from "contexts/FeatureStyleContext/useArchiveStyles";
 
 const Container = styled.div`
   grid-area: toolbar;
@@ -62,8 +64,7 @@ const Toolbar = () => {
     activeOverlayPanel === "grunnkrets" || activeOverlayPanel === "stemmekrets";
   const mergeIsActive = activeOverlayPanel === "sammenslåing";
 
-  const { selectedFeatures } = useFeatureStyle();
-  const { setArchivedFeatures } = useDirtyStyles();
+  const { selectedFeatures, setArchivedFeatures } = useFeatureStyle();
 
   const toggleKartlag = () => {
     if (activeOverlayPanel === "kartlag") {

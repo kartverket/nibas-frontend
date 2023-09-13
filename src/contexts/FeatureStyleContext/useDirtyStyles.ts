@@ -7,7 +7,6 @@ const useDirtyStyles = () => {
   const [savedDirtyFeatureIds, setSavedDirtyFeaturesIds] = useState<string[]>(
     []
   );
-  const [archivedFeatureIds, setArchivedFeatureIds] = useState<string[]>([]);
 
   const setEditFeatures = (features: string[]) => {
     for (const featureId of features) {
@@ -28,16 +27,6 @@ const useDirtyStyles = () => {
       editSource.getFeatureById(featureId)?.setStyle(grenseStyles.dirty);
     }
     setDirtyFeatureIds(features);
-  };
-
-  const setArchivedFeatures = (features: string[]) => {
-    for (const featureId of features) {
-      editSource.getFeatureById(featureId)?.setStyle(grenseStyles.archived);
-    }
-    for (const featureId of savedDirtyFeatureIds) {
-      editSource.getFeatureById(featureId)?.setStyle(grenseStyles.archived);
-    }
-    setArchivedFeatureIds(features);
   };
 
   const clearSavedDirtyFeatureIds = () => {
@@ -88,8 +77,6 @@ const useDirtyStyles = () => {
     clearSavedDirtyFeatureIds,
     setAndSaveUtkastFeatures,
     setAndSaveSammenslaaingsFeatures,
-    archivedFeatureIds,
-    setArchivedFeatures,
   };
 };
 
