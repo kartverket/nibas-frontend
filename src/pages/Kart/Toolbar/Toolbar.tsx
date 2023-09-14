@@ -16,18 +16,10 @@ import {
   MenuList,
 } from "@kvib/react";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
-import {
-  FeatureStyleContext,
-  SelectedFeatures,
-  useFeatureStyle,
-} from "contexts/FeatureStyleContext";
-import { grenseStyles } from "utils/map/layerStyles";
+import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { LineString } from "ol/geom";
 import { Feature } from "ol";
-import useDirtyStyles from "contexts/FeatureStyleContext/useDirtyStyles";
 import { getFeatureId } from "utils/map/source";
-import { arch } from "os";
-import useArchiveStyles from "contexts/FeatureStyleContext/useArchiveStyles";
 
 const Container = styled.div`
   grid-area: toolbar;
@@ -65,6 +57,7 @@ const Toolbar = () => {
   const mergeIsActive = activeOverlayPanel === "sammenslåing";
 
   const { selectedFeatures, setArchivedFeatures } = useFeatureStyle();
+  const { archivedFeatureIds } = useFeatureStyle();
 
   const toggleKartlag = () => {
     if (activeOverlayPanel === "kartlag") {
@@ -132,7 +125,12 @@ const Toolbar = () => {
           <ToolPopupText>Velg grensen du ønsker å arkivere</ToolPopupText>
           <Button
             size="sm"
-            isDisabled={selectedFeatures.length === 0}
+            isDisabled={
+              selectedFeatures.length === 0 ||
+              archivedFeatureIds.some(
+                (id) => id === selectedFeatures[0].getId()
+              )
+            }
             onClick={() => archiveFeatures(selectedFeatures)}
           >
             Arkiver grense

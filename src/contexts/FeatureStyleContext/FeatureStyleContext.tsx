@@ -45,13 +45,15 @@ export const FeatureStyleProvider = ({
     for (const feature of deselectedFeatures) {
       if (dirtyFeatureIds.some((id) => id === feature.getId())) {
         feature.setStyle(grenseStyles.dirty);
+      } else if (archivedFeatureIds.some((id) => id === feature.getId())) {
+        feature.setStyle(grenseStyles.archived);
       } else {
         feature.setStyle();
       }
     }
 
     previousSelectedFeatures.current = selectedFeatures;
-  }, [dirtyFeatureIds, selectedFeatures]);
+  }, [dirtyFeatureIds, selectedFeatures, archivedFeatureIds]);
 
   useEffect(() => {
     if (history.entries.length === 0) {
