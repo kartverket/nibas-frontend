@@ -11,6 +11,7 @@ import { getLayerById } from "utils/map/layers";
 import { map } from "pages/Kart/constants";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
+import { selectedPointStyle } from "utils/map/layerStyles";
 
 const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
@@ -52,6 +53,7 @@ const useModify = () => {
           // Hvis vi ikke har en spesiell regel bruker vi default condition, som er primaryAction her
           return primaryAction(mapBrowserEvent);
         },
+        style: selectedPointStyle,
         insertVertexCondition: () => {
           return activePointMode === "add";
         },
