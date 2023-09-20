@@ -9,6 +9,8 @@ import UtkastOpprett from "./UtkastOpprett";
 import LandingHeader from "pages/Landing/LandingHeader";
 import { Link as RouterLink } from "react-router-dom";
 import { routes } from "utils/routes";
+import AlertModal from "components/Modals/AlertModal";
+import { useErrorHandling } from "contexts/ErrorHandlingContext";
 
 const endringstypeOrder: Record<Endringstype, "left" | "right"> = {
   "Vedtatt grensejustering": "left",
@@ -29,6 +31,7 @@ const sortUtkastByCreatedDesc = (
 ): number => b.opprettetDato.localeCompare(a.opprettetDato);
 
 const Utkast = () => {
+  const { error, setError } = useErrorHandling();
   const { data: utkasts, isLoading } = useUtkasts();
 
   // Vi deler opp utkast i to kolonner manuelt i et forsøk på å holde lengden jevn
@@ -80,6 +83,21 @@ const Utkast = () => {
           </EndringstypeList>
         ))}
       </Container>
+      {error && (
+        <AlertModal
+          status="error"
+          title={error.title}
+          description={error.description}
+          additionalInfo={error.additionalInfo}
+          errorCode={error.errorCode}
+          isOpen={true}
+          onClose={() => setError(null)}
+          primaryAction={{
+            text: "Lukk",
+            onClick: () => setError(null),
+          }}
+        />
+      )}
     </>
   );
 };
