@@ -14,8 +14,8 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
     <ThirdPartyProviders>
       <ErrorHandlingProvider>
         <HistoryProvider>
-          <ToolbarProvider>
-            <FeatureStyleProvider>
+          <FeatureStyleProvider>
+            <ToolbarProvider>
               <SidebarPanelProvider>
                 <OverlayPanelProvider>
                   <EditGrenserProvider>
@@ -25,8 +25,8 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
                   </EditGrenserProvider>
                 </OverlayPanelProvider>
               </SidebarPanelProvider>
-            </FeatureStyleProvider>
-          </ToolbarProvider>
+            </ToolbarProvider>
+          </FeatureStyleProvider>
         </HistoryProvider>
       </ErrorHandlingProvider>
     </ThirdPartyProviders>

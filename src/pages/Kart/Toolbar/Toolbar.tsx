@@ -20,6 +20,7 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { LineString } from "ol/geom";
 import { Feature } from "ol";
 import { getFeatureId } from "utils/map/source";
+import ToolbarPopup from "./ToolbarPopup";
 
 const Container = styled.div`
   grid-area: toolbar;
@@ -46,8 +47,13 @@ const ZoomButtons = styled(Frame)`
 `;
 
 const Toolbar = () => {
-  const { activePointMode, togglePointMode, activeEditModes, toggleEditMode } =
-    useToolbar();
+  const {
+    activePointMode,
+    togglePointMode,
+    activeEditModes,
+    toggleEditMode,
+    canArchive,
+  } = useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const editingType = getCurrentlyEditingType();
   const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } =
@@ -57,7 +63,6 @@ const Toolbar = () => {
   const mergeIsActive = activeOverlayPanel === "sammenslåing";
 
   const { selectedFeatures, setArchivedFeatures } = useFeatureStyle();
-  const { archivedFeatureIds } = useFeatureStyle();
 
   const toggleKartlag = () => {
     if (activeOverlayPanel === "kartlag") {
@@ -121,21 +126,10 @@ const Toolbar = () => {
   return (
     <ToolbarMenu>
       {activePointMode === "archive" && (
-        <ToolPopup>
-          <ToolPopupText>Velg grensen du ønsker å arkivere</ToolPopupText>
-          <Button
-            size="sm"
-            isDisabled={
-              selectedFeatures.length === 0 ||
-              archivedFeatureIds.some(
-                (id) => id === selectedFeatures[0].getId()
-              )
-            }
-            onClick={() => archiveFeatures(selectedFeatures)}
-          >
-            Arkiver grense
-          </Button>
-        </ToolPopup>
+        <ToolbarPopup
+          text={"Velg grensen du ønsker å arkivere"}
+          onClick={() => archiveFeatures(selectedFeatures)}
+        />
       )}
       <Container>
         <Buttons>
@@ -316,7 +310,8 @@ const ToolbarMenu = styled.div`
   align-items: center;
 `;
 
-const ToolPopup = styled.div`
+{
+  /* const ToolPopup = styled.div`
   display: flex;
   justify-content: space-between;
   width: 450px;
@@ -333,6 +328,7 @@ const ToolPopup = styled.div`
 
 const ToolPopupText = styled.div`
   font-size: 18px;
-`;
+`; */
+}
 
 export default Toolbar;
