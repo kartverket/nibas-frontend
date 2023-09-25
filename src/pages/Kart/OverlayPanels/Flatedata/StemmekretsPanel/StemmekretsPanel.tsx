@@ -1,6 +1,6 @@
 import { KretsTable } from "../KretsTable";
 import StemmekretsRow from "./StemmekretsRow";
-import { useUtkastEntity } from "contexts/UtkastContext";
+import { useUtkast, useUtkastEntity } from "contexts/UtkastContext";
 import { StemmekretsResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
@@ -11,6 +11,7 @@ import { useTableSort } from "../useTableSort";
 import { orderBy } from "utils/list-utils";
 
 const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
+  const { utkast } = useUtkast();
   const { sortProperty, sortOrder, sortHeaderProps } = useTableSort([
     "stemmekretsnummer",
     "stemmekretsnavn",
@@ -18,7 +19,6 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
   ]);
 
   const { flatedata, closeOverlayPanel } = useOverlayPanel();
-
   const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
   const { data: stemmekretserByKommune } = useKommuneStemmekretser(kommuneId);
   const utkastStemmekretser = useUtkastEntity(
@@ -30,7 +30,7 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
     <Panel $isOpen={isOpen} className={className}>
       <PanelHeader onClose={closeOverlayPanel}>Endre flateinfo</PanelHeader>
       {utkastStemmekretser && (
-        <KretsTable>
+        <KretsTable hasUtkast={utkast !== undefined}>
           <thead>
             <tr>
               <SortHeader {...sortHeaderProps("stemmekretsnummer")}>
@@ -42,7 +42,7 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
               <SortHeader {...sortHeaderProps("valgdistriktsnummer")}>
                 Valgdistriktsnummer
               </SortHeader>
-              <th>{/* Tom plass for knapp i rader */}</th>
+              {utkast && <th>{/* Tom plass for knapp i rader */}</th>}
             </tr>
           </thead>
           <tbody>

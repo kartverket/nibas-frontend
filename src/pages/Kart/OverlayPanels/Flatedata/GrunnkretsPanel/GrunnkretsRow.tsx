@@ -9,6 +9,7 @@ import { getRepresentasjonspunktId } from "utils/map/source";
 import InputCell from "../InputCell";
 import { KretsRow } from "../KretsTable";
 import EditAndSaveButton from "../EditAndSaveButton";
+import { useUtkast } from "contexts/UtkastContext";
 
 type GrunnkretsInputs = {
   grunnkretsnavn: string;
@@ -33,6 +34,7 @@ type Props = {
 };
 
 const GrunnkretsRow = ({ grunnkrets, kommuneId }: Props) => {
+  const { utkast } = useUtkast();
   const grunnkretsId = getIdFromEntity(grunnkrets);
   const { addHistoryEntry } = useHistory();
   const [isEditing, setIsEditing] = useState(false);
@@ -127,12 +129,14 @@ const GrunnkretsRow = ({ grunnkrets, kommuneId }: Props) => {
         {...register("grunnkretsnavn")}
       />
       <td>{/* Tom plass for mellomrom */}</td>
-      <EditAndSaveButton
-        isEditing={isEditing}
-        toggleEditing={toggleEditing}
-        canSave={isDirty}
-        onSubmit={(event) => handleSubmit(saveAndAddHistoryEntry)(event)}
-      />
+      {utkast && (
+        <EditAndSaveButton
+          isEditing={isEditing}
+          toggleEditing={toggleEditing}
+          canSave={isDirty}
+          onSubmit={(event) => handleSubmit(saveAndAddHistoryEntry)(event)}
+        />
+      )}
     </KretsRow>
   );
 };
