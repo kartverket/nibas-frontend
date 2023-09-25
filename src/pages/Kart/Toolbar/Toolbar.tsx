@@ -7,7 +7,6 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import ToolbarTooltip from "./ToolbarTooltip";
 import {
-  Button,
   Divider,
   Icon,
   Menu,
@@ -128,7 +127,9 @@ const Toolbar = () => {
       {activePointMode === "archive" && (
         <ToolbarPopup
           text={"Velg grensen du ønsker å arkivere"}
+          buttonText={"Arkiver"}
           onClick={() => archiveFeatures(selectedFeatures)}
+          isDisabled={canArchive}
         />
       )}
       <Container>

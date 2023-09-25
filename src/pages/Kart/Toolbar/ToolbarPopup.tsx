@@ -3,24 +3,27 @@ import { styled } from "styled-components";
 
 type PopupProps = {
   text: string;
+  buttonText: string;
   onClick: () => void;
   isDisabled?: boolean;
 };
 
 type Props = PopupProps;
 
-const ToolPopup = ({ text, onClick, isDisabled }: Props) => {
-  <ToolPopupBody>
-    <ToolPopupText>Velg grensen du ønsker å arkivere</ToolPopupText>
-    <Button size="sm" isDisabled={isDisabled} onClick={() => onClick()}>
-      {text}
-    </Button>
-  </ToolPopupBody>;
+const ToolbarPopup = ({ text, buttonText, onClick, isDisabled }: Props) => {
+  return (
+    <ToolbarPopupBody>
+      <ToolbarPopupText>{text}</ToolbarPopupText>
+      <Button size="sm" isDisabled={isDisabled} onClick={() => onClick()}>
+        {buttonText}
+      </Button>
+    </ToolbarPopupBody>
+  );
 };
 
-export default ToolPopup;
+export default ToolbarPopup;
 
-const ToolPopupBody = styled.div`
+const ToolbarPopupBody = styled.div`
   display: flex;
   justify-content: space-between;
   width: 450px;
@@ -35,6 +38,6 @@ const ToolPopupBody = styled.div`
   font-size: 16px;
 `;
 
-const ToolPopupText = styled.div`
+const ToolbarPopupText = styled.div`
   font-size: 18px;
 `;
