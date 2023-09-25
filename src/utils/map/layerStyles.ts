@@ -56,12 +56,20 @@ export const selectedPointStyle = new Style({
   image: new Circle({
     radius: 6,
     stroke: new Stroke({ color: "#ffffff", width: 2 }),
-    fill: new Fill({ color: "#0099FF" }),
+    fill: new Fill({ color: "#00A76C" }),
   }),
-  fill: new Fill({ color: "#0099FF" }),
+  fill: new Fill({ color: "#00A76C" }),
   stroke: new Stroke({ color: "#ffffff" }),
   zIndex: 10,
 });
+
+const flateStyles = [
+  new Style({
+    fill: new Fill({
+      color: "rgba(255, 0, 0, 0.05)",
+    }),
+  }),
+];
 
 export const grenseStyles = {
   fylke: lineAndPointStyles({ color: "#B92659" }),
@@ -74,6 +82,7 @@ export const grenseStyles = {
   select: lineAndPointStyles({ color: "#000000", dashed: true }),
   dirty: lineAndPointStyles({ color: "#00A76C", dashed: true }),
   sammenslaaing: lineAndPointStyles({ color: "#D163E6" }),
+  flate: flateStyles,
   sammenslaaingOverlapping: lineAndPointStyles({
     color: "#D163E6",
     dashed: true,
@@ -105,6 +114,10 @@ const grenseStyleFromType = (grenseType: GrenseType): Style[] => {
     case "Stemmekretsgrense": {
       return grenseStyles.stemmekrets;
     }
+    case "GRUNNKRETS":
+    case "STEMMEKRETS": {
+      return grenseStyles.flate;
+    }
   }
 };
 
@@ -129,15 +142,10 @@ export const getPointOverlayStyle = (
 
   return new Style({
     text: new Text({
-      text: `${feature.get("name")}\n${feature.get("number")}`,
-      font: "12px Arial,sans-serif",
-      fill: new Fill({
-        color: "#000",
-      }),
-      padding: [5, 5, 5, 5],
-      backgroundFill: new Fill({
-        color: [255, 255, 255, 0.5],
-      }),
+      text: `${feature.get("number")} ${feature.get("name")}`,
+      font: "bold 16px Mulish, sans-serif",
+      fill: new Fill({ color: "#FFF" }),
+      stroke: new Stroke({ width: 2 }),
       textBaseline: "middle",
       textAlign: "center",
     }),

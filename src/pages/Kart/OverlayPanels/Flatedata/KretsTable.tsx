@@ -1,8 +1,9 @@
 import { styled } from "styled-components";
 
-export const KretsTable = styled.table`
+export const KretsTable = styled.table<{ hasUtkast: boolean }>`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 200px;
+  grid-template-columns: 1fr 1fr 1fr ${(props) => props.hasUtkast && "200px"};
+
   line-height: 2;
 
   thead,

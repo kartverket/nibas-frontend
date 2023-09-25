@@ -1,12 +1,14 @@
 import { Icon, MenuItem, useDisclosure } from "@kvib/react";
 import { UtkastResponse } from "types/api";
 import UtkastPubliserModal from "components/Modals/UtkastPubliserModal";
+import { useUtkastEndringer } from "components/Endringslogg/hooks/useUtkastEndringer";
 
 type Props = {
   utkast: UtkastResponse;
 };
 
 const UtkastPubliser = ({ utkast }: Props) => {
+  const { harEndringer } = useUtkastEndringer(utkast);
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   return (
@@ -17,6 +19,7 @@ const UtkastPubliser = ({ utkast }: Props) => {
           e.stopPropagation();
           onOpen();
         }}
+        isDisabled={!harEndringer}
       >
         Publiser
       </MenuItem>

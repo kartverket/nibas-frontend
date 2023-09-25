@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import GrunnkretsRow from "./GrunnkretsRow";
-import { useUtkastEntity } from "contexts/UtkastContext";
+import { useUtkast, useUtkastEntity } from "contexts/UtkastContext";
 import useSearch from "hooks/useSearch";
 import { GrunnkretsResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
@@ -14,6 +14,7 @@ import { useTableSort } from "../useTableSort";
 import { orderBy } from "utils/list-utils";
 
 const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
+  const { utkast } = useUtkast();
   const { sortProperty, sortOrder, sortHeaderProps } = useTableSort([
     "grunnkretsnummer",
     "navn",
@@ -42,7 +43,7 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
     <Panel $isOpen={isOpen} className={className}>
       <PanelHeader onClose={closeOverlayPanel}>Endre flateinfo</PanelHeader>
       {filteredGrunnkretser && (
-        <KretsTable>
+        <KretsTable hasUtkast={utkast !== undefined}>
           <thead>
             <tr>
               <SortHeader {...sortHeaderProps("grunnkretsnummer")}>
@@ -51,7 +52,7 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
               <SortHeader {...sortHeaderProps("navn")}>
                 Grunnkretsnavn
               </SortHeader>
-              <th>{/* Tom plass for mellomrom */}</th>
+              {utkast && <th>{/* Tom plass for mellomrom */}</th>}
               <th>
                 <Input
                   placeholder="Søk på navn"

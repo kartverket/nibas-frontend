@@ -145,5 +145,6 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
     toggleKretser,
     kommuneValues,
     lasterData,
+    currentKretstype,
   };
 };

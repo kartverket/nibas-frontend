@@ -8,6 +8,7 @@ import useAlertModal from "hooks/useAlertModal";
 import { useHistory } from "contexts/HistoryContext";
 import { Button, IconButton, Spinner } from "@kvib/react";
 import { useUtkast } from "contexts/UtkastContext";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
 
 type Props = {
   kommune: KommuneRef;
@@ -16,8 +17,14 @@ type Props = {
 const Kommune = ({ kommune }: Props) => {
   const { utkast } = useUtkast();
   const { history, clearHistory } = useHistory();
-  const { kommuneValues, toggleEditKretser, toggleKretser, lasterData } =
-    useInndelingerKrets(kommune);
+  const { openOverlayPanel, setFlatedata } = useOverlayPanel();
+  const {
+    kommuneValues,
+    toggleEditKretser,
+    toggleKretser,
+    lasterData,
+    currentKretstype,
+  } = useInndelingerKrets(kommune);
 
   const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } =
     useAlertModal(
@@ -39,6 +46,11 @@ const Kommune = ({ kommune }: Props) => {
     }
   };
 
+  const toggleFlatedetaljer = () => {
+    setFlatedata(kommune);
+    openOverlayPanel(currentKretstype);
+  };
+
   return (
     <>
       <KommuneWrapper>
@@ -53,14 +65,17 @@ const Kommune = ({ kommune }: Props) => {
         <Title>{getNavnInSpraak(kommune.navn, "nor")}</Title>
         {lasterData ? (
           <Spinner size="lg" color="var(--kvib-colors-blue-500)" />
-        ) : (
-          <EditButton
-            variant="tertiary"
-            onClick={onAvsluttRedigeringClick}
-            isDisabled={!utkast}
-          >
+        ) : utkast ? (
+          <EditButton variant="tertiary" onClick={onAvsluttRedigeringClick}>
             {kommuneValues.editing ? "Avslutt redigering" : "Rediger"}
           </EditButton>
+        ) : (
+          <IconButton
+            variant="ghost"
+            icon="feed"
+            aria-label="Vis informasjon om flatene"
+            onClick={toggleFlatedetaljer}
+          />
         )}
       </KommuneWrapper>
       <AlertModal

@@ -5,8 +5,6 @@ import {
 } from "./stemmekretsEndringerUtils";
 import { useEffect, useMemo, useState } from "react";
 import { useStemmekretser } from "hooks/inndelinger/useStemmekretser";
-import { useHistory } from "contexts/HistoryContext";
-import { historyToUtkastOperations } from "contexts/UtkastContext/utils";
 import useNibasApi from "hooks/useNibasApi";
 import { UtkastResponse } from "types/api";
 
@@ -25,10 +23,7 @@ export const useUtkastStemmekretsEndringer = (
 
   const { data: kommuner, isValidating: lasterKommuner } =
     useNibasApi("/v1/kommuner");
-  const { history } = useHistory();
-  const operasjoner = useMemo(() => {
-    return historyToUtkastOperations(history, utkast);
-  }, [history, utkast]);
+  const operasjoner = utkast.operasjoner;
 
   const stemmekretserMedEndringer = useMemo(() => {
     return getStemmekretserMedEndringer(operasjoner);

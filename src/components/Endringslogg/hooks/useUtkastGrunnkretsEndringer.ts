@@ -1,7 +1,5 @@
 import { Grunnkretsendringer } from "./utkastEndringerTypes";
 import { useEffect, useMemo, useState } from "react";
-import { useHistory } from "contexts/HistoryContext";
-import { historyToUtkastOperations } from "contexts/UtkastContext/utils";
 import useNibasApi from "hooks/useNibasApi";
 import {
   getGrunnkretsEndringer,
@@ -26,10 +24,7 @@ export const useUtkastGrunnkretsEndringer = (
   const { data: kommuner, isValidating: lasterKommuner } =
     useNibasApi("/v1/kommuner");
 
-  const { history } = useHistory();
-  const operasjoner = useMemo(() => {
-    return historyToUtkastOperations(history, utkast);
-  }, [history, utkast]);
+  const operasjoner = utkast.operasjoner;
 
   const grunnkretserMedEndringer = useMemo(() => {
     return getGrunnkretserMedEndringer(operasjoner);

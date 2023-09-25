@@ -3,7 +3,7 @@ import Feature, { FeatureLike } from "ol/Feature";
 import LineString from "ol/geom/LineString";
 import Modify, { ModifyEvent } from "ol/interaction/Modify";
 import { HistoryChange, useHistory } from "contexts/HistoryContext";
-import { click, primaryAction } from "ol/events/condition";
+import { primaryAction, singleClick } from "ol/events/condition";
 import { Collection } from "ol";
 import { editableBorderTypes, editSource } from "hooks/layers/constants";
 import { pixelTolerance } from "./constants";
@@ -11,6 +11,7 @@ import { getLayerById } from "utils/map/layers";
 import { map } from "pages/Kart/constants";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
+import { selectedPointStyle } from "utils/map/layerStyles";
 
 const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
@@ -39,19 +40,48 @@ const useModify = () => {
               hitTolerance: pixelTolerance,
             }
           );
-          const feature = featuresAtPixel[0];
-          if (feature) {
-            return editableBorderTypes.includes(feature.get("type"));
+
+          // Sjekk alle featurene i punktet, hvis en av dem ikke skal kunne endres ønsker vi ikke å endre noe
+          // Her er det fare for at vi er overivrige hvis det er flere features veldig nærme hverandre, men ikke samme punkt
+          for (const feature of featuresAtPixel) {
+            const featureType = feature.get("type");
+            if (!editableBorderTypes.includes(featureType)) {
+              return false;
+            }
           }
 
-          // Hvis vi ikke har en spesiell regel bruker vi default-condition
+          // Hvis vi ikke har en spesiell regel bruker vi default condition, som er primaryAction her
           return primaryAction(mapBrowserEvent);
         },
+        style: selectedPointStyle,
         insertVertexCondition: () => {
           return activePointMode === "add";
         },
         deleteCondition: (mapBrowserEvent) => {
-          return activePointMode === "remove" && click(mapBrowserEvent);
+          if (activePointMode === "remove") {
+            const featuresAtPixel = map.getFeaturesAtPixel(
+              mapBrowserEvent.pixel,
+              {
+                layerFilter: (layer) => layer === editLayer,
+                hitTolerance: 20,
+              }
+            );
+
+            // Dersom noen av featurene vi trykker på har for få punkter skal vi ikke fjerne punktet
+            for (const feature of featuresAtPixel) {
+              const geometry = feature.getGeometry();
+              if (geometry instanceof LineString) {
+                const coordinates = geometry.getCoordinates();
+                if (coordinates.length <= 2) {
+                  return false;
+                }
+              }
+            }
+
+            // Hvis alt ellers ser greit ut så fjernes punktet på klikk
+            return singleClick(mapBrowserEvent);
+          }
+          return false;
         },
       }),
     [activePointMode, detachIsActive, editLayer, selectedFeatures]
@@ -84,14 +114,20 @@ const useModify = () => {
         const changes: HistoryChange<number[][]>[] = [];
         e.features.forEach((featureLike) => {
           if (featureLike instanceof Feature) {
-            const { featureId, coordinates } = getInfoFromFeature(featureLike);
-            if (!featureId || !coordinates) return;
-            changes.push({
-              id: featureId as string,
-              from: featureLike.get(previousCoordinateKey),
-              to: coordinates,
-            });
-            featureLike.unset(previousCoordinateKey);
+            const geometry = featureLike.getGeometry();
+
+            // Filtrerer ut representasjonspunkt og flate fra å bli satt inn i history
+            if (geometry instanceof LineString) {
+              const { featureId, coordinates } =
+                getInfoFromFeature(featureLike);
+              if (!featureId || !coordinates) return;
+              changes.push({
+                id: featureId as string,
+                from: featureLike.get(previousCoordinateKey),
+                to: coordinates,
+              });
+              featureLike.unset(previousCoordinateKey);
+            }
           }
         });
         addHistoryEntry({

@@ -38,7 +38,7 @@ const Header = () => {
             onClick={toggleSidebar}
           />
         </Section>
-        <HeaderUtkastOperations />
+        {utkast && <HeaderUtkastOperations utkast={utkast} />}
       </SubBar>
     </Container>
   );

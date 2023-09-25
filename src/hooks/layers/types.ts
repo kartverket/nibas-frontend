@@ -19,7 +19,9 @@ export type GrenseType =
   | "Grunnkretsgrense"
   | "Delområdegrense"
   | "Posisjon"
-  | "Stemmekretsgrense";
+  | "Stemmekretsgrense"
+  | "GRUNNKRETS"
+  | "STEMMEKRETS";
 
 export const getGrenseTypeFromEditingType = (editingType: EditingType) => {
   switch (editingType) {

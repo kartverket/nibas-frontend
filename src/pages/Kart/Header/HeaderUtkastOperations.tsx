@@ -2,11 +2,12 @@ import { styled } from "styled-components";
 import HeaderButton from "./HeaderButton";
 import { useDisclosure } from "@kvib/react";
 import UtkastSlettModal from "components/Modals/UtkastSlettModal";
-import { useUtkast } from "contexts/UtkastContext";
 import UtkastPubliserModal from "components/Modals/UtkastPubliserModal";
+import { useUtkastEndringer } from "components/Endringslogg/hooks/useUtkastEndringer";
+import { UtkastResponse } from "types/api";
 
-const HeaderUtkastOperations = () => {
-  const { utkast } = useUtkast();
+const HeaderUtkastOperations = ({ utkast }: { utkast: UtkastResponse }) => {
+  const { harEndringer } = useUtkastEndringer(utkast);
   const {
     isOpen: isPubliserOpen,
     onClose: onPubliserClose,
@@ -18,14 +19,13 @@ const HeaderUtkastOperations = () => {
     onOpen: onSlettOpen,
   } = useDisclosure();
 
-  if (!utkast) return null;
-
   return (
     <Section>
       <HeaderButton
         label="Publiser utkast"
         icon="upload"
         onClick={onPubliserOpen}
+        isDisabled={!harEndringer}
       />
       <HeaderButton label="Slett utkast" icon="delete" onClick={onSlettOpen} />
       <UtkastPubliserModal
