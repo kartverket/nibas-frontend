@@ -311,25 +311,4 @@ const ToolbarMenu = styled.div`
   align-items: center;
 `;
 
-{
-  /* const ToolPopup = styled.div`
-  display: flex;
-  justify-content: space-between;
-  width: 450px;
-  align-items: center;
-  padding: 12px;
-  border-radius: 8px;
-  background: var(--kvib-colors-chakra-body-bg);
-  box-shadow: var(--kvib-shadows-base);
-  border: 2px solid transparent;
-  transition: border-color 0.1s;
-  cursor: pointer;
-  font-size: 16px;
-`;
-
-const ToolPopupText = styled.div`
-  font-size: 18px;
-`; */
-}
-
 export default Toolbar;
