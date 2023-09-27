@@ -1,6 +1,5 @@
 import { styled } from "styled-components";
 import { map } from "../constants";
-import { Frame, toolbarSpacing } from "./components";
 import ModeButton from "./ModeButton";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
@@ -27,21 +26,30 @@ const Container = styled.div`
   position: relative;
   margin: 16px 0;
   display: flex;
-  gap: ${toolbarSpacing}px;
+  gap: 24px;
 `;
 
-const Buttons = styled(Frame)`
+const ToolbarButtons = styled.div`
+  display: flex;
+  gap: 32px;
+
+  width: fit-content;
   padding: 16px 24px;
-
-  * {
-    margin: 0 8px;
-  }
+  background: white;
+  border-radius: 10px;
+  box-shadow: var(--kvib-shadows-base);
 `;
 
-const ZoomButtons = styled(Frame)`
+const ZoomButtons = styled.div`
+  display: flex;
   flex-direction: column;
-  justify-content: space-between;
   gap: 4px;
+  justify-content: space-between;
+
+  width: fit-content;
+  border-radius: 10px;
+  background: white;
+  box-shadow: var(--kvib-shadows-base);
   padding: 8px 4px;
 `;
 
@@ -133,7 +141,7 @@ const Toolbar = () => {
         />
       )}
       <Container>
-        <Buttons>
+        <ToolbarButtons>
           <ToolbarTooltip
             text="Legg til, endre rekkefølge og fjern kartlag fra kartet."
             shortcut="layers"
@@ -276,7 +284,7 @@ const Toolbar = () => {
               Snap
             </ModeButton>
           </ToolbarTooltip>
-        </Buttons>
+        </ToolbarButtons>
         <ZoomButtons>
           <ToolbarTooltip text="Zoom inn på kartet">
             <ModeButton

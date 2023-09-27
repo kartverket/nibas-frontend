@@ -95,6 +95,7 @@ const Header = styled.div`
 const EditButton = styled(Button)`
   min-width: unset;
   min-height: unset;
+  padding: 0;
 `;
 
 const VisibilityButton = styled(IconButton)<{ $isVisible: boolean }>`
