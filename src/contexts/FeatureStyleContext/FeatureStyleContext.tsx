@@ -4,7 +4,7 @@ import { useHistory } from "contexts/HistoryContext";
 import { getFeatureIdsFromEntries } from "./utils";
 import { FeatureStyleContextValue } from "./types";
 import { useSelectStyles } from "./useSelectStyles";
-import { grenseStyles } from "utils/map/layerStyles";
+import { getArchiveLayerStyle, grenseStyles } from "utils/map/layerStyles";
 import useArchiveStyles from "./useArchiveStyles";
 
 export const FeatureStyleContext = createContext<
@@ -46,7 +46,7 @@ export const FeatureStyleProvider = ({
       if (dirtyFeatureIds.some((id) => id === feature.getId())) {
         feature.setStyle(grenseStyles.dirty);
       } else if (archivedFeatureIds.some((id) => id === feature.getId())) {
-        feature.setStyle(grenseStyles.archived);
+        feature.setStyle(getArchiveLayerStyle(feature));
       } else {
         feature.setStyle();
       }

@@ -88,31 +88,46 @@ export const grenseStyles = {
     dashed: true,
     points: false,
   }),
-  archived: lineAndPointStyles({ color: "#C8C8C8", dashed: true }),
+  archivedFylke: lineAndPointStyles({ color: "#B92659", dashed: true }),
+  archivedKommune: lineAndPointStyles({ color: "#F15D4E", dashed: true }),
+  archivedNasjon: lineAndPointStyles({ color: "#91120A", dashed: true }),
+
+  archivedGrunnkrets: lineAndPointStyles({ color: "#3E8DF6", dashed: true }),
+  archivedStemmekrets: lineAndPointStyles({ color: "#EBAB3B", dashed: true }),
+  archivedDelomraade: lineAndPointStyles({ color: "#5952D2", dashed: true }),
 };
 
-const grenseStyleFromType = (grenseType: GrenseType): Style[] => {
+const grenseStyleFromType = (
+  grenseType: GrenseType,
+  archived: boolean
+): Style[] => {
   switch (grenseType) {
     case "Fylkesgrense": {
-      return grenseStyles.fylke;
+      return archived ? grenseStyles.archivedFylke : grenseStyles.fylke;
     }
     case "Kommunegrense": {
-      return grenseStyles.kommune;
+      return archived ? grenseStyles.archivedKommune : grenseStyles.kommune;
     }
     case "Posisjon":
     case "Territorialgrense":
     case "AvtaltAvgrensningslinje":
     case "Riksgrense": {
-      return grenseStyles.nasjon;
+      return archived ? grenseStyles.archivedNasjon : grenseStyles.nasjon;
     }
     case "Delområdegrense": {
-      return grenseStyles.delomraade;
+      return archived
+        ? grenseStyles.archivedDelomraade
+        : grenseStyles.delomraade;
     }
     case "Grunnkretsgrense": {
-      return grenseStyles.grunnkrets;
+      return archived
+        ? grenseStyles.archivedGrunnkrets
+        : grenseStyles.grunnkrets;
     }
     case "Stemmekretsgrense": {
-      return grenseStyles.stemmekrets;
+      return archived
+        ? grenseStyles.archivedStemmekrets
+        : grenseStyles.stemmekrets;
     }
     case "GRUNNKRETS":
     case "STEMMEKRETS": {
@@ -123,7 +138,8 @@ const grenseStyleFromType = (grenseType: GrenseType): Style[] => {
 
 export const getLayerStyle = (
   feature: Feature<Geometry> | RenderFeature,
-  grenseId: GrenseId
+  grenseId: GrenseId,
+  archived: boolean
 ) => {
   const borderIsNotEditable = !editableBorderTypes.includes(
     feature.get("type")
@@ -131,8 +147,17 @@ export const getLayerStyle = (
   if (grenseId == "edit" && !borderIsNotEditable) {
     return grenseStyles.edit;
   } else {
-    return grenseStyleFromType(feature.getProperties().type as GrenseType);
+    return grenseStyleFromType(
+      feature.getProperties().type as GrenseType,
+      archived
+    );
   }
+};
+
+export const getArchiveLayerStyle = (
+  feature: Feature<Geometry> | RenderFeature
+) => {
+  return grenseStyleFromType(feature.getProperties().type as GrenseType, true);
 };
 
 export const getPointOverlayStyle = (
