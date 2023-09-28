@@ -19,7 +19,10 @@ const useSelect = () => {
   const { closeOverlayPanel, openOverlayPanel } = useOverlayPanel();
 
   const select = (event: MapBrowserEvent<MouseEvent>) => {
-    if (activePointMode === "metadata" && !event.dragging) {
+    if (
+      (activePointMode === "metadata" || activePointMode === "archive") &&
+      !event.dragging
+    ) {
       event.stopPropagation();
 
       const features = map.getFeaturesAtPixel(event.pixel, {
@@ -40,7 +43,9 @@ const useSelect = () => {
 
       const clickedFeature = filteredFeatures[0] as Feature<LineString>;
       selectFeatures([clickedFeature]);
-
+      if (activePointMode === "archive") {
+        return;
+      }
       if (clickedFeature.getId()?.toString().includes("TEIGGRENSEWFS")) {
         overlayPopup.setPosition(getOverlayPosition(clickedFeature));
       } else {

@@ -1,5 +1,6 @@
 import { Icon } from "@kvib/react";
-import { ReactNode } from "react";
+import { MaterialSymbol } from "material-symbols";
+import { forwardRef, ReactNode } from "react";
 import { styled, css } from "styled-components";
 
 const Container = styled.button<{ $isActive: boolean }>`
@@ -44,33 +45,39 @@ const Container = styled.button<{ $isActive: boolean }>`
 `;
 
 type Props = {
-  icon: string;
+  icon: MaterialSymbol;
   ariaLabel: string;
   isActive?: boolean;
   children?: ReactNode;
   onClick?: () => void;
-  disabled?: boolean;
+  isDisabled?: boolean;
 };
 
-const ModeButton = ({
-  icon,
-  ariaLabel,
-  children,
-  onClick,
-  isActive = false,
-  disabled = false,
-}: Props) => {
+const InnerModeButton = (
+  {
+    icon,
+    ariaLabel,
+    children,
+    onClick,
+    isActive = false,
+    isDisabled = false,
+  }: Props,
+  ref: React.ForwardedRef<HTMLButtonElement>
+) => {
   return (
     <Container
       onClick={onClick}
       aria-label={ariaLabel}
       $isActive={isActive}
-      disabled={disabled}
+      disabled={isDisabled}
+      ref={ref}
     >
       <Icon icon={icon} />
       {children}
     </Container>
   );
 };
+
+const ModeButton = forwardRef(InnerModeButton);
 
 export default ModeButton;

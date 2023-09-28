@@ -196,7 +196,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
           Flytt punkt til koordinater
         </Button>
         <Button
-          variant="link"
+          variant="tertiary"
           onClick={() => {
             reset();
             closeOverlayPanel();

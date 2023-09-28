@@ -26,7 +26,7 @@ const LandingHeader = () => {
             <Text as="b">{`${tokenHolderFunc()?.personId}`}</Text>
           </div>
           <Button
-            variant="outline"
+            variant="secondary"
             aria-label="Logg ut"
             leftIcon="logout"
             onClick={handleLogoutFunc}

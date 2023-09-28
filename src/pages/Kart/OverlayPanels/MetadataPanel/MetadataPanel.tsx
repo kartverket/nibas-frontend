@@ -5,6 +5,7 @@ import MetadataGenerelt from "./MetadataGenerelt";
 import MetadataReferanser from "./MetadataReferanser";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { Divider } from "@kvib/react";
+import { FeatureProperties } from "types/api";
 
 const grenseTypeWithReferanser = [
   "Territorialgrense",
@@ -37,10 +38,13 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
     ?.toString()
     .includes("TEIGGRENSEWFS");
 
+  const selectedProperties =
+    selectedFeature?.getProperties() as FeatureProperties;
+
   return (
     <SidePanel $isOpen={isOpen} className={className}>
       <PanelHeader onClose={closeOverlayPanel}>Grenseinfo</PanelHeader>
-      {selectedFeature && !isWFSGrense && (
+      {selectedFeature && !isWFSGrense && selectedProperties.metadata ? (
         <Content>
           <MetadataGenerelt feature={selectedFeature} />
           {showReferanser && (
@@ -50,6 +54,8 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
             </>
           )}
         </Content>
+      ) : (
+        <p>Den valgte grensen har ingen metadata</p>
       )}
     </SidePanel>
   );

@@ -28,7 +28,7 @@ type Props = {
 const SortHeader = ({ children, onClick, isActivated, isReversed }: Props) => {
   const getRightIcon = () => {
     if (!isActivated) {
-      return "";
+      return undefined;
     }
     return isReversed ? "arrow_drop_up" : "arrow_drop_down";
   };

@@ -115,7 +115,7 @@ const AlertModal = ({
             <ButtonGroup>
               {secondaryAction && (
                 <Button
-                  variant="link"
+                  variant="tertiary"
                   onClick={handleSecondaryAction}
                   isLoading={secondaryLoading}
                   isDisabled={primaryAction && primaryLoading}

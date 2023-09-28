@@ -51,8 +51,8 @@ import { BrowserRouter } from "react-router-dom";
 const defaultProviderMap = {
   ErrorHandlingProvider,
   HistoryProvider,
-  ToolbarProvider,
   FeatureStyleProvider,
+  ToolbarProvider,
   SidebarPanelProvider,
   OverlayPanelProvider,
   EditGrenserProvider,

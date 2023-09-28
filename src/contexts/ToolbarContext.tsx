@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
+import { useFeatureStyle } from "./FeatureStyleContext";
 import { useHistory } from "./HistoryContext";
 
 type ToolbarEditMode = "snap";
@@ -6,10 +7,12 @@ type ToolbarPointMode =
   | null
   | "add"
   | "remove"
+  | "draw"
   | "split"
   | "detach"
   | "metadata"
-  | "koordinater";
+  | "koordinater"
+  | "archive";
 
 export type ToolbarContextValue = {
   activePointMode: ToolbarPointMode;
@@ -20,6 +23,7 @@ export type ToolbarContextValue = {
   canSave: boolean;
   undo: (() => void) | undefined;
   redo: (() => void) | undefined;
+  canArchive: boolean;
 };
 
 export const ToolbarContext = createContext<ToolbarContextValue | undefined>(
@@ -32,6 +36,7 @@ export const ToolbarProvider = ({
   children: React.ReactNode;
 }) => {
   const { history, redo, undo } = useHistory();
+  const { selectedFeatures, archivedFeatureIds } = useFeatureStyle();
 
   const [activePointMode, setActivePointMode] =
     useState<ToolbarPointMode>(null);
@@ -66,6 +71,9 @@ export const ToolbarProvider = ({
       history.entries.length > 0 && history.index < history.entries.length
         ? redo
         : undefined,
+    canArchive:
+      selectedFeatures.length === 0 ||
+      archivedFeatureIds.some((id) => id === selectedFeatures[0].getId()),
   };
 
   return (

@@ -37,7 +37,7 @@ export const editSource = new VectorSource();
 const grenseStyle =
   (grenseId: GrenseId): StyleFunction =>
   (feature) =>
-    [...getLayerStyle(feature, grenseId), getPointOverlayStyle(feature)];
+    [...getLayerStyle(feature, grenseId, false), getPointOverlayStyle(feature)];
 
 export const grenserLayers = {
   // ingen source betyr at source settes async

@@ -2,6 +2,9 @@ import { initialMapCenter, initialMapZoom, map } from "pages/Kart/constants";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import VectorSource from "ol/source/Vector";
+import { LineString } from "ol/geom";
+import { Coordinate } from "ol/coordinate";
+import { FeatureLike } from "ol/Feature";
 
 export const resetMapView = () => {
   const view = map.getView();
@@ -79,4 +82,51 @@ export const getZoomMode = (
   }
 
   return "view";
+};
+
+const isCoordinateEqual = (a: Coordinate, b: Coordinate) => {
+  return a[0] === b[0] && a[1] === b[1];
+};
+
+const isFeatureConnectedToCoordinate = (
+  feature: FeatureLike,
+  coordinate: Coordinate
+): boolean => {
+  // TODO: dersom featuren er arkivert skal den alltid returnere false
+  if (feature instanceof Feature) {
+    const geometry = feature.getGeometry();
+    if (geometry instanceof LineString) {
+      const coordinates = geometry?.getCoordinates();
+      const head = coordinates[0];
+      const tail = coordinates[coordinates.length - 1];
+      return (
+        isCoordinateEqual(head, coordinate) ||
+        isCoordinateEqual(tail, coordinate)
+      );
+    }
+  }
+  return false;
+};
+
+/**
+ * Tar inn en grense og prøver å avgjøre om den er koblet til andre grenser i begge ender
+ */
+export const isFeatureDeadEnd = (feature: Feature<LineString>) => {
+  const geometry = feature.getGeometry() as LineString;
+  const coordinates = geometry?.getCoordinates() as Coordinate[];
+
+  const head = coordinates[0];
+  const tail = coordinates[coordinates.length - 1];
+
+  const headFeatures = map.getFeaturesAtPixel(map.getPixelFromCoordinate(head));
+  const tailFeatures = map.getFeaturesAtPixel(map.getPixelFromCoordinate(tail));
+
+  const headConnected = headFeatures.some((f) =>
+    isFeatureConnectedToCoordinate(f, head)
+  );
+  const tailConnected = tailFeatures.some((f) =>
+    isFeatureConnectedToCoordinate(f, tail)
+  );
+
+  return !(headConnected && tailConnected);
 };

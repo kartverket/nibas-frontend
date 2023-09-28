@@ -141,7 +141,7 @@ const UtkastOpprett = () => {
           </ModalBody>
           <ModalFooter>
             <ButtonGroup>
-              <Button variant="link" onClick={onClose}>
+              <Button variant="tertiary" onClick={onClose}>
                 Avbryt
               </Button>
               <Button

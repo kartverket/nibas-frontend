@@ -66,7 +66,7 @@ const Kommune = ({ kommune }: Props) => {
         {lasterData ? (
           <Spinner size="lg" color="var(--kvib-colors-blue-500)" />
         ) : utkast ? (
-          <EditButton variant="link" onClick={onAvsluttRedigeringClick}>
+          <EditButton variant="tertiary" onClick={onAvsluttRedigeringClick}>
             {kommuneValues.editing ? "Avslutt redigering" : "Rediger"}
           </EditButton>
         ) : (
@@ -106,6 +106,7 @@ const KommuneWrapper = styled.div`
 const EditButton = styled(Button)`
   min-width: unset;
   min-height: unset;
+  padding: 0;
 `;
 
 const VisibilityButton = styled(IconButton)<{ $isVisible?: boolean }>`

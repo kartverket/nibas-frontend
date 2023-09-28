@@ -40,7 +40,7 @@ const ToggleableGrense = <T extends GrenseRef>({
       />
       <Title>{title}</Title>
       <EditButton
-        variant="link"
+        variant="tertiary"
         onClick={openInfo}
         isDisabled
         title="Kommer snart!"
