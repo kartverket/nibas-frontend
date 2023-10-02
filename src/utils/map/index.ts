@@ -96,12 +96,11 @@ const isFeatureConnectedToCoordinate = (
   if (feature instanceof Feature) {
     const geometry = feature.getGeometry();
     if (geometry instanceof LineString) {
-      const coordinates = geometry?.getCoordinates();
-      const head = coordinates[0];
-      const tail = coordinates[coordinates.length - 1];
-      return (
-        isCoordinateEqual(head, coordinate) ||
-        isCoordinateEqual(tail, coordinate)
+      const featureCoordinates = geometry?.getCoordinates();
+
+      // TODO: dersom man bare skal kunne tegne fra endepunkt til endepunkt, så kan vi velge å bare sjekke head og tail
+      return featureCoordinates.some((featureCoordinate) =>
+        isCoordinateEqual(featureCoordinate, coordinate)
       );
     }
   }
@@ -111,15 +110,19 @@ const isFeatureConnectedToCoordinate = (
 /**
  * Tar inn en grense og prøver å avgjøre om den er koblet til andre grenser i begge ender
  */
-export const isFeatureDeadEnd = (feature: Feature<LineString>) => {
+export const isFeatureDeadEnd = (feature: Feature<Geometry>) => {
   const geometry = feature.getGeometry() as LineString;
   const coordinates = geometry?.getCoordinates() as Coordinate[];
 
   const head = coordinates[0];
   const tail = coordinates[coordinates.length - 1];
 
-  const headFeatures = map.getFeaturesAtPixel(map.getPixelFromCoordinate(head));
-  const tailFeatures = map.getFeaturesAtPixel(map.getPixelFromCoordinate(tail));
+  const headFeatures = map
+    .getFeaturesAtPixel(map.getPixelFromCoordinate(head))
+    .filter((headFeature) => headFeature.getId() !== feature.getId());
+  const tailFeatures = map
+    .getFeaturesAtPixel(map.getPixelFromCoordinate(tail))
+    .filter((tailFeature) => tailFeature.getId() !== feature.getId());
 
   const headConnected = headFeatures.some((f) =>
     isFeatureConnectedToCoordinate(f, head)

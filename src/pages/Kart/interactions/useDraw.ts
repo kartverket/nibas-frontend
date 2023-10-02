@@ -35,7 +35,8 @@ const useDraw = () => {
             const geometry = feature.getGeometry();
             if (geometry instanceof LineString) {
               const coordinates = geometry.getCoordinates();
-              // TODO: funker ikke
+              // TODO: pikseltoleransen her fungerer ikke konsekvent, av og til får man tegne når man ikke skal og motsatt
+              // TODO: ønsker bare å tegne fra endepunkt til endepunkt? eller skal det splittes når man tegner?
               return coordinates.some((coordinate) => {
                 return (
                   squaredDistance(coordinate, mapBrowserEvent.coordinate) <
@@ -52,16 +53,19 @@ const useDraw = () => {
   );
 
   useEffect(() => {
-    const setMetadata = (e: DrawEvent) => {
+    const onDrawEnd = (e: DrawEvent) => {
       const editingType = getCurrentlyEditingType();
 
       // Skal ikke være mulig da tegneverktøyet bare skal være tilgjengelig i redigering
       if (!editingType) return;
 
-      // Setter grensetype lik typen man redigerer
+      // TODO: for å kunne tegnes i kartet må en feature også ha en unik ID (tror jeg)
       e.feature.setProperties({
+        // Setter grensetypen til featuren lik typen man redigerer, kanskje naivt
         type: getGrenseTypeFromEditingType(editingType),
       });
+
+      // TODO: bruk isFeatureDeadEnd for å avgjøre om den nye grensen danner en lukket flate
 
       // TODO: her skal vi på sikt legge til history
       // slik at den nye grensen blir sendt til backend via utkastet
@@ -70,9 +74,9 @@ const useDraw = () => {
       // i så fall må vi holde styr på hvilken grense som skal utvides, og fra hvilket punkt. selectPoint kan være nyttig her
     };
 
-    draw.on("drawend", setMetadata);
+    draw.on("drawend", onDrawEnd);
     return () => {
-      draw.un("drawend", setMetadata);
+      draw.un("drawend", onDrawEnd);
     };
   }, [draw, getCurrentlyEditingType]);
 
