@@ -1,6 +1,6 @@
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import useNibasApi from "hooks/useNibasApi";
-import useSWRImmutable from "swr/immutable";
+import useSWR from "swr";
 import { UtkastResponse } from "types/api";
 import { fetcherWithToken } from "utils/api";
 
@@ -20,7 +20,7 @@ export const useUtkasts = () => {
   const { data: utkasts } = useNibasApi("/v1/utkast");
   const utkastIds = utkasts?.map((u) => u.id) ?? [];
 
-  return useSWRImmutable(
+  return useSWR(
     utkastIds.length > 0 ? [utkastIds, tokenHolderFunc()?.token] : null,
     utkastFetcher
   );
