@@ -5,8 +5,11 @@ import { LineString } from "ol/geom";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import useSplit from "../interactions/useSplit";
 import { getFeatureId } from "utils/map/source";
+import { useToast } from "@kvib/react";
+import { createSuccessToast } from "utils/components/toast";
 
 const ToolbarPopups = () => {
+  const toast = useToast();
   const { activePointMode, canArchive } = useToolbar();
   const { split } = useSplit();
   const { selectedFeatures, selectedPoint, setArchivedFeatures } =
@@ -14,6 +17,11 @@ const ToolbarPopups = () => {
 
   const archiveFeatures = (features: Feature<LineString>[]) => {
     setArchivedFeatures(features.map((feature) => getFeatureId(feature)));
+  };
+
+  const handleSplit = () => {
+    split();
+    toast(createSuccessToast("Grensen ble splittet"));
   };
 
   return (
@@ -33,7 +41,7 @@ const ToolbarPopups = () => {
         <ToolbarPopup
           text="Velg hvilket punkt du ønsker å splitte grensen på"
           buttonText="Splitt grense"
-          onClick={split}
+          onClick={() => handleSplit()}
           isDisabled={selectedPoint === null}
         />
       )}
