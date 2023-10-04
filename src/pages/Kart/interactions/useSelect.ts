@@ -1,4 +1,4 @@
-import { useToolbar } from "contexts/ToolbarContext";
+import { ToolbarPointMode, useToolbar } from "contexts/ToolbarContext";
 import { Feature, MapBrowserEvent } from "ol";
 import { pixelTolerance } from "./constants";
 import { map, overlayPopup } from "../constants";
@@ -15,16 +15,18 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 
 const useSelect = () => {
   const { activePointMode } = useToolbar();
-  const { selectFeatures, clearSelection } = useFeatureStyle();
+  const { selectFeatures, selectedFeatures, clearSelection } =
+    useFeatureStyle();
   const { closeOverlayPanel, openOverlayPanel } = useOverlayPanel();
 
-  const select = (event: MapBrowserEvent<MouseEvent>) => {
-    if (
-      (activePointMode === "metadata" || activePointMode === "archive") &&
-      !event.dragging
-    ) {
-      event.stopPropagation();
+  const allowedPointModes: ToolbarPointMode[] = [
+    "metadata",
+    "archive",
+    "split",
+  ];
 
+  const select = (event: MapBrowserEvent<MouseEvent>) => {
+    if (allowedPointModes.includes(activePointMode) && !event.dragging) {
       const features = map.getFeaturesAtPixel(event.pixel, {
         hitTolerance: pixelTolerance,
       });
@@ -38,20 +40,36 @@ const useSelect = () => {
         overlayPopup.setPosition(undefined);
         closeOverlayPanel();
         clearSelection();
+        event.stopPropagation();
         return;
       }
 
       const clickedFeature = filteredFeatures[0] as Feature<LineString>;
-      selectFeatures([clickedFeature]);
-      if (activePointMode === "archive") {
+
+      // Dersom vi er i split-modus og allerede har valgt denne grensen
+      if (
+        activePointMode === "split" &&
+        selectedFeatures.length === 1 &&
+        clickedFeature.getId() === selectedFeatures[0].getId()
+      ) {
+        // ...ønsker vi å returnere tidlig og la eventet propagere til selectPoint
         return;
       }
-      if (clickedFeature.getId()?.toString().includes("TEIGGRENSEWFS")) {
-        overlayPopup.setPosition(getOverlayPosition(clickedFeature));
-      } else {
-        overlayPopup.setPosition(undefined);
-        openOverlayPanel("metadata");
+
+      selectFeatures([clickedFeature]);
+
+      if (activePointMode === "metadata") {
+        if (clickedFeature.getId()?.toString().includes("TEIGGRENSEWFS")) {
+          overlayPopup.setPosition(getOverlayPosition(clickedFeature));
+        } else {
+          overlayPopup.setPosition(undefined);
+          openOverlayPanel("metadata");
+        }
       }
+
+      // Vi tar denne til slutt da vi noen ganger ønsker å returnere tidlig og la eventet propagere
+      // f.eks. ønsker vi at split skal både kunne gjøre select og selectPoint
+      event.stopPropagation();
     }
   };
 

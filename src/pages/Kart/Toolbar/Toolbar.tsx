@@ -14,11 +14,7 @@ import {
   MenuList,
 } from "@kvib/react";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
-import { useFeatureStyle } from "contexts/FeatureStyleContext";
-import { LineString } from "ol/geom";
-import { Feature } from "ol";
-import { getFeatureId } from "utils/map/source";
-import ToolbarPopup from "./ToolbarPopup";
+import ToolbarPopups from "./ToolbarPopups";
 
 const Container = styled.div`
   grid-area: toolbar;
@@ -54,13 +50,8 @@ const ZoomButtons = styled.div`
 `;
 
 const Toolbar = () => {
-  const {
-    activePointMode,
-    togglePointMode,
-    activeEditModes,
-    toggleEditMode,
-    canArchive,
-  } = useToolbar();
+  const { activePointMode, togglePointMode, activeEditModes, toggleEditMode } =
+    useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const editingType = getCurrentlyEditingType();
   const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } =
@@ -68,8 +59,6 @@ const Toolbar = () => {
   const flatedetaljerIsActive =
     activeOverlayPanel === "grunnkrets" || activeOverlayPanel === "stemmekrets";
   const mergeIsActive = activeOverlayPanel === "sammenslåing";
-
-  const { selectedFeatures, setArchivedFeatures } = useFeatureStyle();
 
   const toggleKartlag = () => {
     if (activeOverlayPanel === "kartlag") {
@@ -119,10 +108,6 @@ const Toolbar = () => {
     });
   };
 
-  const archiveFeatures = (features: Feature<LineString>[]) => {
-    setArchivedFeatures(features.map((feature) => getFeatureId(feature)));
-  };
-
   useKeyboardShortcut("add", () => togglePointMode("add"));
   useKeyboardShortcut("remove", () => togglePointMode("remove"));
   useKeyboardShortcut("edit", toggleMove);
@@ -132,14 +117,7 @@ const Toolbar = () => {
 
   return (
     <ToolbarMenu>
-      {activePointMode === "archive" && (
-        <ToolbarPopup
-          text={"Velg grensen du ønsker å arkivere"}
-          buttonText={"Arkiver"}
-          onClick={() => archiveFeatures(selectedFeatures)}
-          isDisabled={canArchive}
-        />
-      )}
+      <ToolbarPopups />
       <Container>
         <ToolbarButtons>
           <ToolbarTooltip
