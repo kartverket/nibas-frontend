@@ -38,8 +38,8 @@ const Container = styled.button<{ $isActive: boolean }>`
     props.$isActive &&
     css`
       & > .material-symbols-rounded {
-        color: var(--kvib-colors-chakra-inverse-text);
-        background: var(--kvib-colors-blue-500);
+        color: var(--kvib-colors-blue-500);
+        background: var(--kvib-colors-blue-50);
       }
     `};
 `;

@@ -8,13 +8,32 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { editableBorderTypes } from "hooks/layers/constants";
 import { ToolbarPointMode, useToolbar } from "contexts/ToolbarContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
+import { useEffect, useMemo } from "react";
 
 const useSelectPoint = () => {
   const { activePointMode } = useToolbar();
   const { openOverlayPanel, closeOverlayPanel } = useOverlayPanel();
-  const { selectPointOnFeature, clearSelection } = useFeatureStyle();
+  const { selectPointOnFeature, selectedPoint, clearSelection } =
+    useFeatureStyle();
 
-  const allowedPointModes: ToolbarPointMode[] = ["koordinater", "split"];
+  const allowedPointModes: ToolbarPointMode[] = useMemo(
+    () => ["koordinater", "split"],
+    []
+  );
+
+  // Dersom man har byttet verktøy ønsker vi å tilbakestille punktet
+  useEffect(() => {
+    if (selectedPoint && !allowedPointModes.includes(activePointMode)) {
+      clearSelection();
+      closeOverlayPanel();
+    }
+  }, [
+    activePointMode,
+    allowedPointModes,
+    clearSelection,
+    closeOverlayPanel,
+    selectedPoint,
+  ]);
 
   const selectPoint = (event: MapBrowserEvent<MouseEvent>) => {
     if (allowedPointModes.includes(activePointMode) && !event.dragging) {
