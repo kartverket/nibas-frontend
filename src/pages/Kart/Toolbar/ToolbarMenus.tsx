@@ -156,6 +156,7 @@ const ToolbarMenus = () => {
           aria-label="Grenseverktøy"
           icon="show_chart"
           isDisabled={!editingType}
+          isActive={grenseMenuItems.some((gmi) => gmi.$isActive)}
         >
           Grense
         </MenuButton>
@@ -173,6 +174,7 @@ const ToolbarMenus = () => {
           aria-label="Punktverktøy"
           icon="conversion_path"
           isDisabled={!editingType}
+          isActive={punktMenuItems.some((pmi) => pmi.$isActive)}
         >
           Punkt
         </MenuButton>
@@ -190,6 +192,7 @@ const ToolbarMenus = () => {
           aria-label="Flateverktøy"
           icon="area_chart"
           isDisabled={!editingType}
+          isActive={flateMenuItems.some((fmi) => fmi.$isActive)}
         >
           Flate
         </MenuButton>
