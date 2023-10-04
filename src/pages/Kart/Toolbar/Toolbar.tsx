@@ -7,22 +7,15 @@ import { useToolbar } from "contexts/ToolbarContext";
 import ToolbarTooltip from "./ToolbarTooltip";
 import { Divider } from "@kvib/react";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
-import { useFeatureStyle } from "contexts/FeatureStyleContext";
-import { LineString } from "ol/geom";
-import { Feature } from "ol";
-import { getFeatureId } from "utils/map/source";
-import ToolbarPopup from "./ToolbarPopup";
+import ToolbarPopups from "./ToolbarPopups";
 import ToolbarMenus from "./ToolbarMenus";
 
 const Toolbar = () => {
-  const { activePointMode, activeEditModes, toggleEditMode, canArchive } =
-    useToolbar();
+  const { activeEditModes, toggleEditMode } = useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const editingType = getCurrentlyEditingType();
   const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } =
     useOverlayPanel();
-
-  const { selectedFeatures, setArchivedFeatures } = useFeatureStyle();
 
   const toggleKartlag = () => {
     if (activeOverlayPanel === "kartlag") {
@@ -40,22 +33,11 @@ const Toolbar = () => {
     });
   };
 
-  const archiveFeatures = (features: Feature<LineString>[]) => {
-    setArchivedFeatures(features.map((feature) => getFeatureId(feature)));
-  };
-
   useKeyboardShortcut("layers", toggleKartlag);
 
   return (
     <OuterContainer>
-      {activePointMode === "archive" && (
-        <ToolbarPopup
-          text={"Velg grensen du ønsker å arkivere"}
-          buttonText={"Arkiver"}
-          onClick={() => archiveFeatures(selectedFeatures)}
-          isDisabled={canArchive}
-        />
-      )}
+      <ToolbarPopups />
       <Container>
         <ToolbarButtons>
           <ToolbarTooltip

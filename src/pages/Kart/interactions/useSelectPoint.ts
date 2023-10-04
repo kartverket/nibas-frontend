@@ -6,7 +6,7 @@ import LineString from "ol/geom/LineString";
 import { squaredDistance } from "ol/coordinate";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { editableBorderTypes } from "hooks/layers/constants";
-import { useToolbar } from "contexts/ToolbarContext";
+import { ToolbarPointMode, useToolbar } from "contexts/ToolbarContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { useEffect } from "react";
 
@@ -24,8 +24,10 @@ const useSelectPoint = () => {
     }
   }, [activePointMode, clearSelection, closeOverlayPanel, selectedPoint]);
 
+  const allowedPointModes: ToolbarPointMode[] = ["koordinater", "split"];
+
   const selectPoint = (event: MapBrowserEvent<MouseEvent>) => {
-    if (activePointMode === "koordinater" && !event.dragging) {
+    if (allowedPointModes.includes(activePointMode) && !event.dragging) {
       event.stopPropagation();
 
       const editLayer = getLayerById("edit");
@@ -64,7 +66,9 @@ const useSelectPoint = () => {
           features as Feature<LineString>[]
         );
 
-        openOverlayPanel("koordinater");
+        if (activePointMode === "koordinater") {
+          openOverlayPanel("koordinater");
+        }
       }
     }
   };
