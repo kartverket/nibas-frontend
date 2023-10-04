@@ -101,12 +101,9 @@ const OuterContainer = styled.div`
 `;
 
 const Container = styled.div`
-  grid-area: toolbar;
-  align-self: end;
-  position: relative;
-  margin: 16px 0;
   display: flex;
   gap: 24px;
+  margin: 16px 0;
 `;
 
 const ToolbarButtons = styled.div`
