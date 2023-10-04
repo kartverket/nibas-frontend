@@ -30,7 +30,7 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
     <Panel $isOpen={isOpen} className={className}>
       <PanelHeader onClose={closeOverlayPanel}>Endre flateinfo</PanelHeader>
       {utkastStemmekretser && (
-        <KretsTable hasUtkast={utkast !== undefined}>
+        <KretsTable $hasUtkast={utkast !== undefined}>
           <thead>
             <tr>
               <SortHeader {...sortHeaderProps("stemmekretsnummer")}>
