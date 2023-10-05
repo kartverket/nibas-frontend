@@ -7,6 +7,8 @@ import LineString from "ol/geom/LineString";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { borderIsEditable } from "utils/map";
 import { useToast } from "@kvib/react";
+import { useEffect } from "react";
+import { usePrevious } from "hooks/usePrevious";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -20,7 +22,9 @@ const useSelect = () => {
   const { activePointMode } = useToolbar();
   const { selectFeatures, selectedFeatures, clearSelection } =
     useFeatureStyle();
-  const { closeOverlayPanel, openOverlayPanel } = useOverlayPanel();
+  const { activeOverlayPanel, closeOverlayPanel, openOverlayPanel } =
+    useOverlayPanel();
+  const previousPointMode = usePrevious(activePointMode);
 
   const dangerousPointModes: ToolbarPointMode[] = [
     "archive",
@@ -31,6 +35,23 @@ const useSelect = () => {
     ...dangerousPointModes,
     "metadata",
   ];
+
+  // Dersom man bytter verktøy ønsker vi å cleare selection
+  useEffect(() => {
+    if (activePointMode !== previousPointMode && selectedFeatures.length > 0) {
+      clearSelection();
+      if (activeOverlayPanel === "metadata") {
+        closeOverlayPanel();
+      }
+    }
+  }, [
+    activeOverlayPanel,
+    activePointMode,
+    clearSelection,
+    closeOverlayPanel,
+    previousPointMode,
+    selectedFeatures.length,
+  ]);
 
   const select = (event: MapBrowserEvent<MouseEvent>) => {
     if (allowedPointModes.includes(activePointMode) && !event.dragging) {

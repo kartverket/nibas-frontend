@@ -13,7 +13,8 @@ import { useToast } from "@kvib/react";
 const useSelectPoint = () => {
   const toast = useToast();
   const { activePointMode } = useToolbar();
-  const { openOverlayPanel, closeOverlayPanel } = useOverlayPanel();
+  const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } =
+    useOverlayPanel();
   const { selectPointOnFeature, selectedPoint, clearSelection } =
     useFeatureStyle();
 
@@ -26,9 +27,13 @@ const useSelectPoint = () => {
   useEffect(() => {
     if (selectedPoint && !allowedPointModes.includes(activePointMode)) {
       clearSelection();
-      closeOverlayPanel();
+
+      if (activeOverlayPanel === "koordinater") {
+        closeOverlayPanel();
+      }
     }
   }, [
+    activeOverlayPanel,
     activePointMode,
     allowedPointModes,
     clearSelection,
