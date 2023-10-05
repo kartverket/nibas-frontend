@@ -3,7 +3,7 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import VectorSource from "ol/source/Vector";
 import { LineString } from "ol/geom";
-import { Coordinate } from "ol/coordinate";
+import { Coordinate, squaredDistance } from "ol/coordinate";
 import { FeatureLike } from "ol/Feature";
 
 export const resetMapView = () => {
@@ -84,7 +84,7 @@ export const getZoomMode = (
   return "view";
 };
 
-const isCoordinateEqual = (a: Coordinate, b: Coordinate) => {
+export const isCoordinateEqual = (a: Coordinate, b: Coordinate) => {
   return a[0] === b[0] && a[1] === b[1];
 };
 
@@ -132,4 +132,21 @@ export const isFeatureDeadEnd = (feature: Feature<Geometry>) => {
   );
 
   return !(headConnected && tailConnected);
+};
+
+export const findNearestVertexOnFeature = (
+  feature: Feature<LineString>,
+  coordinate: Coordinate
+) => {
+  const geometry = feature.getGeometry() as LineString;
+  const coordinates = geometry.getCoordinates();
+
+  const coordinatesWithDistanceToClick = coordinates.map((coord) => ({
+    coordinates: coord,
+    distance: squaredDistance(coord, coordinate),
+  }));
+  const nearestVertexCoordinate = coordinatesWithDistanceToClick
+    .sort((a, b) => a.distance - b.distance)
+    .map((cwd) => cwd.coordinates)[0];
+  return nearestVertexCoordinate;
 };

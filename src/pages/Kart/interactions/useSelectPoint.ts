@@ -3,12 +3,12 @@ import { map } from "../constants";
 import { getLayerById } from "utils/map/layers";
 import { pixelTolerance } from "./constants";
 import LineString from "ol/geom/LineString";
-import { squaredDistance } from "ol/coordinate";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { editableBorderTypes } from "hooks/layers/constants";
 import { ToolbarPointMode, useToolbar } from "contexts/ToolbarContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { useEffect, useMemo } from "react";
+import { findNearestVertexOnFeature } from "utils/map";
 
 const useSelectPoint = () => {
   const { activePointMode } = useToolbar();
@@ -57,21 +57,14 @@ const useSelectPoint = () => {
           editableBorderTypes.includes(feature.get("type"))
         )
       ) {
-        // Hent punktkoordinatene fra en hvilken som helst av featurene
-        const geometry = features[0].getGeometry() as LineString;
-        const coordinates = geometry.getCoordinates();
-
         // Må estimere hvilket punkt på linjen man prøvde å trykke på
-        const coordinatesWithDistanceToClick = coordinates.map((coord) => ({
-          coordinates: coord,
-          distance: squaredDistance(coord, event.coordinate),
-        }));
-        const nearestVertexCoordinates = coordinatesWithDistanceToClick
-          .sort((a, b) => a.distance - b.distance)
-          .map((cwd) => cwd.coordinates)[0];
+        const nearestVertexCoordinate = findNearestVertexOnFeature(
+          features[0] as Feature<LineString>,
+          event.coordinate
+        );
 
         selectPointOnFeature(
-          nearestVertexCoordinates,
+          nearestVertexCoordinate,
           features as Feature<LineString>[]
         );
 
