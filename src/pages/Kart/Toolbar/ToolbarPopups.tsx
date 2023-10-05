@@ -11,8 +11,12 @@ const ToolbarPopups = () => {
   const toast = useToast();
   const { activePointMode, canArchive } = useToolbar();
   const { split } = useSplit();
-  const { selectedFeatures, selectedPoint, setArchivedFeatures } =
-    useFeatureStyle();
+  const {
+    selectedFeatures,
+    selectedPoint,
+    setArchivedFeatures,
+    clearSelection,
+  } = useFeatureStyle();
 
   const archiveFeatures = (features: Feature<LineString>[]) => {
     setArchivedFeatures(features.map((feature) => getFeatureId(feature)));
@@ -20,6 +24,7 @@ const ToolbarPopups = () => {
 
   const handleSplit = () => {
     split();
+    clearSelection();
     toast({ status: "success", title: "Grensen ble splittet" });
   };
 
