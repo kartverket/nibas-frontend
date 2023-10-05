@@ -36,7 +36,6 @@ import { statusCode } from "utils/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useToast } from "@kvib/react";
-import { createSuccessToast } from "utils/components/toast";
 import { routes } from "utils/routes";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 
@@ -182,7 +181,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     if (!updatedUtkast || !utkast) return;
 
     await updateUtkast(utkast.id, updatedUtkast);
-    toast(createSuccessToast("Utkastet er lagret"));
+    toast({ status: "success", title: "Utkastet er lagret" });
   };
 
   const value = {

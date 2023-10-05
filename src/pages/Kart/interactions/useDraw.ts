@@ -11,7 +11,6 @@ import { map } from "../constants";
 import { LineString } from "ol/geom";
 import { squaredDistance } from "ol/coordinate";
 import { useToast } from "@kvib/react";
-import { createSuccessToast } from "utils/components/toast";
 import { MapBrowserEvent } from "ol";
 
 const useDraw = () => {
@@ -68,7 +67,7 @@ const useDraw = () => {
         type: getGrenseTypeFromEditingType(editingType),
       });
 
-      toast(createSuccessToast("Grensen ble lagt til i kartet"));
+      toast({ status: "success", title: "Grensen ble lagt til i kartet" });
 
       // TODO: bruk isFeatureDeadEnd for å avgjøre om den nye grensen danner en lukket flate
 

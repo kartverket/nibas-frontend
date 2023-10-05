@@ -15,7 +15,6 @@ import Point from "ol/geom/Point";
 import { Button, useToast } from "@kvib/react";
 import { editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
-import { createSuccessToast } from "utils/components/toast";
 
 type KoordinaterFormData = {
   north: number;
@@ -181,7 +180,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
       const highlightGeometry = selectedPoint.getGeometry() as Point;
       highlightGeometry.setCoordinates(newCoordinates);
       reset(undefined, { keepValues: true });
-      toast(createSuccessToast("Punktet ble flyttet"));
+      toast({ status: "success", title: "Punktet ble flyttet" });
     }
   };
 

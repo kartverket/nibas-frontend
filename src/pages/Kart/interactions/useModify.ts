@@ -13,7 +13,6 @@ import { useToolbar } from "contexts/ToolbarContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { selectedPointStyle } from "utils/map/layerStyles";
 import { useToast } from "@kvib/react";
-import { createSuccessToast } from "utils/components/toast";
 import { findNearestVertexOnFeature, isCoordinateEqual } from "utils/map";
 
 const getInfoFromFeature = (featureLike: FeatureLike) => {
@@ -79,14 +78,14 @@ const useModify = () => {
                   feature as Feature<LineString>,
                   event.coordinate
                 );
-                const coordinateIndex = coordinates.findIndex((v) =>
-                  isCoordinateEqual(v, nearestVertexCoordinate)
-                );
 
                 // Ettersom vi ikke støtter løse tråder per nå lar vi deg ikke fjerne endepunkter
                 if (
-                  coordinateIndex === 0 ||
-                  coordinateIndex === coordinates.length - 1
+                  isCoordinateEqual(nearestVertexCoordinate, coordinates[0]) ||
+                  isCoordinateEqual(
+                    nearestVertexCoordinate,
+                    coordinates[coordinates.length - 1]
+                  )
                 ) {
                   // TODO: si til brukeren at dette ikke er lov
                   return false;
@@ -152,9 +151,9 @@ const useModify = () => {
         });
       }
       if (activePointMode === "add") {
-        toast(createSuccessToast("Punktet ble lagt til"));
+        toast({ description: "Punktet ble lagt til", status: "success" });
       } else if (activePointMode === "remove") {
-        toast(createSuccessToast("Punktet ble fjernet"));
+        toast({ description: "Punktet ble fjernet", status: "success" });
       }
 
       // TODO: hvis man har kjørt en detach vil vi kanskje sjekke om featuren nå er en løs tråd

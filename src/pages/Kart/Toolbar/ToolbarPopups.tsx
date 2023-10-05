@@ -6,7 +6,6 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import useSplit from "../interactions/useSplit";
 import { getFeatureId } from "utils/map/source";
 import { useToast } from "@kvib/react";
-import { createSuccessToast } from "utils/components/toast";
 
 const ToolbarPopups = () => {
   const toast = useToast();
@@ -21,7 +20,7 @@ const ToolbarPopups = () => {
 
   const handleSplit = () => {
     split();
-    toast(createSuccessToast("Grensen ble splittet"));
+    toast({ status: "success", title: "Grensen ble splittet" });
   };
 
   return (
