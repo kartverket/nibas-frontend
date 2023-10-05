@@ -4,13 +4,14 @@ import { getLayerById } from "utils/map/layers";
 import { pixelTolerance } from "./constants";
 import LineString from "ol/geom/LineString";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { editableBorderTypes } from "hooks/layers/constants";
 import { ToolbarPointMode, useToolbar } from "contexts/ToolbarContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { useEffect, useMemo } from "react";
-import { findNearestVertexOnFeature } from "utils/map";
+import { borderIsEditable, findNearestVertexOnFeature } from "utils/map";
+import { useToast } from "@kvib/react";
 
 const useSelectPoint = () => {
+  const toast = useToast();
   const { activePointMode } = useToolbar();
   const { openOverlayPanel, closeOverlayPanel } = useOverlayPanel();
   const { selectPointOnFeature, selectedPoint, clearSelection } =
@@ -52,11 +53,7 @@ const useSelectPoint = () => {
       }
 
       // Valgt punkt kan ikke være en del av en ikke-redigerbar grense
-      if (
-        features.every((feature) =>
-          editableBorderTypes.includes(feature.get("type"))
-        )
-      ) {
+      if (features.every(borderIsEditable)) {
         // Må estimere hvilket punkt på linjen man prøvde å trykke på
         const nearestVertexCoordinate = findNearestVertexOnFeature(
           features[0] as Feature<LineString>,
@@ -71,6 +68,11 @@ const useSelectPoint = () => {
         if (activePointMode === "koordinater") {
           openOverlayPanel("koordinater");
         }
+      } else {
+        toast({
+          status: "error",
+          title: "Denne grensen er ikke redigerbar",
+        });
       }
     }
   };

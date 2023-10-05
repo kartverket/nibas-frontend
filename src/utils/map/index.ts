@@ -5,6 +5,7 @@ import VectorSource from "ol/source/Vector";
 import { LineString } from "ol/geom";
 import { Coordinate, squaredDistance } from "ol/coordinate";
 import { FeatureLike } from "ol/Feature";
+import { editableBorderTypes } from "hooks/layers/constants";
 
 export const resetMapView = () => {
   const view = map.getView();
@@ -150,3 +151,6 @@ export const findNearestVertexOnFeature = (
     .map((cwd) => cwd.coordinates)[0];
   return nearestVertexCoordinate;
 };
+
+export const borderIsEditable = (feature: FeatureLike) =>
+  editableBorderTypes.includes(feature.get("type"));

@@ -5,15 +5,19 @@ import Modify, { ModifyEvent } from "ol/interaction/Modify";
 import { HistoryChange, useHistory } from "contexts/HistoryContext";
 import { primaryAction, singleClick } from "ol/events/condition";
 import { Collection, MapBrowserEvent } from "ol";
-import { editableBorderTypes, editSource } from "hooks/layers/constants";
+import { editSource } from "hooks/layers/constants";
 import { pixelTolerance } from "./constants";
 import { getLayerById } from "utils/map/layers";
 import { map } from "pages/Kart/constants";
-import { useToolbar } from "contexts/ToolbarContext";
+import { ToolbarPointMode, useToolbar } from "contexts/ToolbarContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { selectedPointStyle } from "utils/map/layerStyles";
 import { useToast } from "@kvib/react";
-import { findNearestVertexOnFeature, isCoordinateEqual } from "utils/map";
+import {
+  borderIsEditable,
+  findNearestVertexOnFeature,
+  isCoordinateEqual,
+} from "utils/map";
 
 const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
@@ -29,6 +33,12 @@ const useModify = () => {
   const detachIsActive = activePointMode === "detach";
   const editLayer = getLayerById("edit");
 
+  // Ønsker helst at redigering ikke skal være aktiv under enkelte verktøy
+  const disallowedPointModes: ToolbarPointMode[] = useMemo(
+    () => ["draw", "split", "metadata", "archive", "koordinater"],
+    []
+  );
+
   const modify = useMemo(
     () =>
       new Modify({
@@ -36,6 +46,9 @@ const useModify = () => {
         features: detachIsActive ? new Collection(selectedFeatures) : undefined,
         pixelTolerance: pixelTolerance,
         condition: (event: MapBrowserEvent<MouseEvent>) => {
+          if (disallowedPointModes.includes(activePointMode)) return false;
+          if (activePointMode === "detach" && selectedFeatures.length === 0)
+            return false;
           const featuresAtPixel = map.getFeaturesAtPixel(event.pixel, {
             layerFilter: (layer) => layer === editLayer,
             hitTolerance: pixelTolerance,
@@ -43,11 +56,12 @@ const useModify = () => {
 
           // Sjekk alle featurene i punktet, hvis en av dem ikke skal kunne endres ønsker vi ikke å endre noe
           // Her er det fare for at vi er overivrige hvis det er flere features veldig nærme hverandre, men ikke samme punkt
-          for (const feature of featuresAtPixel) {
-            const featureType = feature.get("type");
-            if (!editableBorderTypes.includes(featureType)) {
-              return false;
-            }
+          if (!featuresAtPixel.every(borderIsEditable)) {
+            toast({
+              status: "error",
+              title: "Denne grensen er ikke redigerbar",
+            });
+            return false;
           }
 
           // Hvis vi ikke har en spesiell regel bruker vi default condition, som er primaryAction her
@@ -99,7 +113,14 @@ const useModify = () => {
           return false;
         },
       }),
-    [activePointMode, detachIsActive, editLayer, selectedFeatures]
+    [
+      activePointMode,
+      detachIsActive,
+      disallowedPointModes,
+      editLayer,
+      selectedFeatures,
+      toast,
+    ]
   );
 
   const previousCoordinateKey = "previousCoordinates";

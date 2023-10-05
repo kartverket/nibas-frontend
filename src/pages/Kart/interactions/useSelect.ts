@@ -5,6 +5,8 @@ import { map, overlayPopup } from "../constants";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import LineString from "ol/geom/LineString";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { borderIsEditable } from "utils/map";
+import { useToast } from "@kvib/react";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -14,16 +16,20 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 };
 
 const useSelect = () => {
+  const toast = useToast();
   const { activePointMode } = useToolbar();
   const { selectFeatures, selectedFeatures, clearSelection } =
     useFeatureStyle();
   const { closeOverlayPanel, openOverlayPanel } = useOverlayPanel();
 
-  const allowedPointModes: ToolbarPointMode[] = [
-    "metadata",
+  const dangerousPointModes: ToolbarPointMode[] = [
     "archive",
     "split",
     "detach",
+  ];
+  const allowedPointModes: ToolbarPointMode[] = [
+    ...dangerousPointModes,
+    "metadata",
   ];
 
   const select = (event: MapBrowserEvent<MouseEvent>) => {
@@ -46,6 +52,15 @@ const useSelect = () => {
       }
 
       const clickedFeature = filteredFeatures[0] as Feature<LineString>;
+
+      // I noen verktøy skal man ikke kunne velge ikke-redigerbare grenser
+      if (
+        dangerousPointModes.includes(activePointMode) &&
+        !borderIsEditable(clickedFeature)
+      ) {
+        toast({ status: "error", title: "Denne grensen er ikke redigerbar" });
+        return;
+      }
 
       // Dersom vi er i split-modus og allerede har valgt denne grensen
       if (
