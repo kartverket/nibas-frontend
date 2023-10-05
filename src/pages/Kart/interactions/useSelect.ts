@@ -23,6 +23,7 @@ const useSelect = () => {
     "metadata",
     "archive",
     "split",
+    "detach",
   ];
 
   const select = (event: MapBrowserEvent<MouseEvent>) => {

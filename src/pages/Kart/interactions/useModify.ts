@@ -143,6 +143,8 @@ const useModify = () => {
       } else if (activePointMode === "remove") {
         toast(createSuccessToast("Punktet ble fjernet"));
       }
+
+      // TODO: hvis man har kjørt en detach vil vi kanskje sjekke om featuren nå er en løs tråd
     };
 
     modify.on("modifyend", addModificationToHistory);
