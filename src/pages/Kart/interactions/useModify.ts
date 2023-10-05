@@ -14,6 +14,7 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { selectedPointStyle } from "utils/map/layerStyles";
 import { useToast } from "@kvib/react";
 import { createSuccessToast } from "utils/components/toast";
+import { squaredDistance } from "ol/coordinate";
 
 const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
@@ -76,6 +77,34 @@ const useModify = () => {
               if (geometry instanceof LineString) {
                 const coordinates = geometry.getCoordinates();
                 if (coordinates.length <= 2) {
+                  return false;
+                }
+
+                // Finner punktet på grensen du trykket på
+                const coordinatesWithDistanceToClick = coordinates.map(
+                  (coord) => ({
+                    coordinates: coord,
+                    distance: squaredDistance(
+                      coord,
+                      mapBrowserEvent.coordinate
+                    ),
+                  })
+                );
+                const nearestVertexCoordinate = coordinatesWithDistanceToClick
+                  .sort((a, b) => a.distance - b.distance)
+                  .map((cwd) => cwd.coordinates)[0];
+                const coordinateIndex = coordinates.findIndex(
+                  (v) =>
+                    v[0] === nearestVertexCoordinate[0] &&
+                    v[1] === nearestVertexCoordinate[1]
+                );
+
+                // Ettersom vi ikke støtter løse tråder per nå lar vi deg ikke fjerne endepunkter
+                if (
+                  coordinateIndex === 0 ||
+                  coordinateIndex === coordinates.length - 1
+                ) {
+                  // TODO: si til brukeren at dette ikke er lov
                   return false;
                 }
               }
