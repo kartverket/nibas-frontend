@@ -6,6 +6,7 @@ import MetadataReferanser from "./MetadataReferanser";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { Divider } from "@kvib/react";
 import { FeatureProperties } from "types/api";
+import { useEffect } from "react";
 
 const grenseTypeWithReferanser = [
   "Territorialgrense",
@@ -24,7 +25,7 @@ const Content = styled.div`
 
 const MetadataPanel = ({ isOpen, className }: PanelProps) => {
   const { selectedFeatures } = useFeatureStyle();
-  const { closeOverlayPanel } = useOverlayPanel();
+  const { activeOverlayPanel, closeOverlayPanel } = useOverlayPanel();
 
   const selectedFeature =
     selectedFeatures.length === 1 ? selectedFeatures[0] : undefined;
@@ -32,6 +33,12 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
   const showReferanser = grenseTypeWithReferanser.includes(
     selectedFeature?.get("type") as string
   );
+
+  useEffect(() => {
+    if (activeOverlayPanel === "metadata" && selectedFeatures.length === 0) {
+      closeOverlayPanel();
+    }
+  }, [activeOverlayPanel, closeOverlayPanel, selectedFeatures.length]);
 
   const isWFSGrense = selectedFeature
     ?.getId()
