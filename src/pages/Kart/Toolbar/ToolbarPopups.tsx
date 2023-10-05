@@ -26,6 +26,21 @@ const ToolbarPopups = () => {
 
   return (
     <>
+      {activePointMode === "draw" && (
+        <ToolbarPopup text="Start tegningen i et punkt og dobbeltklikk for å avslutte tegning" />
+      )}
+      {activePointMode === "metadata" && (
+        <ToolbarPopup text="Velg en grense i kartet for å se grenseinformasjon" />
+      )}
+      {activePointMode === "koordinater" && (
+        <ToolbarPopup text="Velg et punkt på en grense for å åpne koordinatmenyen" />
+      )}
+      {activePointMode === "add" && (
+        <ToolbarPopup text="Trykk på en grense for å legge til et punkt" />
+      )}
+      {activePointMode === "remove" && (
+        <ToolbarPopup text="Trykk på et punkt for å fjerne punktet fra grensen" />
+      )}
       {activePointMode === "archive" && (
         <ToolbarPopup
           text="Velg grensen du ønsker å arkivere"
