@@ -10,7 +10,7 @@ Prosjektet trenger pakke(r) fra github package registry. For å kunne installere
 
 - Opprette et personal access token på github (https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-to-github-packages)
 - Autorisere personal access token for bruk med SSO (https://docs.github.com/en/enterprise-cloud@latest/authentication/authenticating-with-saml-single-sign-on/authorizing-a-personal-access-token-for-use-with-saml-single-sign-on)
-- Opprette en lokal .npmrc-fil i hjemmekatalogen som knytter github package registry med autorisert personal access token (https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-with-a-personal-access-token)
+- Autoriser deg mot GitHub Packages med npm ved å bruke kommandoen: ```npm login --scope=@kartverket --registry=https://npm.pkg.github.com```. Her vil du bli promptet til å logge inn med GitHub brukernavnet ditt. Passord vil være access token du lagde i et tidligere steg. (https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-with-a-personal-access-token)
 
 ### Oppstart av applikasjonen
 
