@@ -12,6 +12,7 @@ import { LineString } from "ol/geom";
 import { squaredDistance } from "ol/coordinate";
 import { useToast } from "@kvib/react";
 import { createSuccessToast } from "utils/components/toast";
+import { MapBrowserEvent } from "ol";
 
 const useDraw = () => {
   const { activePointMode } = useToolbar();
@@ -27,12 +28,11 @@ const useDraw = () => {
         snapTolerance: pixelTolerance,
         style: grenseStyles.dirty,
         freehandCondition: () => false,
-        condition: (mapBrowserEvent) => {
+        condition: (event: MapBrowserEvent<MouseEvent>) => {
           if (activePointMode !== "draw") return false;
-          const featuresAtPixel = map.getFeaturesAtPixel(
-            mapBrowserEvent.pixel,
-            { hitTolerance: pixelTolerance }
-          );
+          const featuresAtPixel = map.getFeaturesAtPixel(event.pixel, {
+            hitTolerance: pixelTolerance,
+          });
 
           const lineStringWasClicked = featuresAtPixel.some((feature) => {
             const geometry = feature.getGeometry();
@@ -42,14 +42,14 @@ const useDraw = () => {
               // TODO: ønsker bare å tegne fra endepunkt til endepunkt? eller skal det splittes når man tegner?
               return coordinates.some((coordinate) => {
                 return (
-                  squaredDistance(coordinate, mapBrowserEvent.coordinate) <
+                  squaredDistance(coordinate, event.coordinate) <
                   pixelTolerance ** 2
                 );
               });
             }
           });
 
-          return noModifierKeys(mapBrowserEvent) && lineStringWasClicked;
+          return noModifierKeys(event) && lineStringWasClicked;
         },
       }),
     [activePointMode]

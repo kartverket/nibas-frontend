@@ -4,7 +4,7 @@ import LineString from "ol/geom/LineString";
 import Modify, { ModifyEvent } from "ol/interaction/Modify";
 import { HistoryChange, useHistory } from "contexts/HistoryContext";
 import { primaryAction, singleClick } from "ol/events/condition";
-import { Collection } from "ol";
+import { Collection, MapBrowserEvent } from "ol";
 import { editableBorderTypes, editSource } from "hooks/layers/constants";
 import { pixelTolerance } from "./constants";
 import { getLayerById } from "utils/map/layers";
@@ -36,14 +36,11 @@ const useModify = () => {
         source: detachIsActive ? undefined : editSource,
         features: detachIsActive ? new Collection(selectedFeatures) : undefined,
         pixelTolerance: pixelTolerance,
-        condition: (mapBrowserEvent) => {
-          const featuresAtPixel = map.getFeaturesAtPixel(
-            mapBrowserEvent.pixel,
-            {
-              layerFilter: (layer) => layer === editLayer,
-              hitTolerance: pixelTolerance,
-            }
-          );
+        condition: (event: MapBrowserEvent<MouseEvent>) => {
+          const featuresAtPixel = map.getFeaturesAtPixel(event.pixel, {
+            layerFilter: (layer) => layer === editLayer,
+            hitTolerance: pixelTolerance,
+          });
 
           // Sjekk alle featurene i punktet, hvis en av dem ikke skal kunne endres ønsker vi ikke å endre noe
           // Her er det fare for at vi er overivrige hvis det er flere features veldig nærme hverandre, men ikke samme punkt
@@ -55,21 +52,18 @@ const useModify = () => {
           }
 
           // Hvis vi ikke har en spesiell regel bruker vi default condition, som er primaryAction her
-          return primaryAction(mapBrowserEvent);
+          return primaryAction(event);
         },
         style: selectedPointStyle,
         insertVertexCondition: () => {
           return activePointMode === "add";
         },
-        deleteCondition: (mapBrowserEvent) => {
+        deleteCondition: (event: MapBrowserEvent<MouseEvent>) => {
           if (activePointMode === "remove") {
-            const featuresAtPixel = map.getFeaturesAtPixel(
-              mapBrowserEvent.pixel,
-              {
-                layerFilter: (layer) => layer === editLayer,
-                hitTolerance: 20,
-              }
-            );
+            const featuresAtPixel = map.getFeaturesAtPixel(event.pixel, {
+              layerFilter: (layer) => layer === editLayer,
+              hitTolerance: pixelTolerance,
+            });
 
             // Dersom noen av featurene vi trykker på har for få punkter skal vi ikke fjerne punktet
             for (const feature of featuresAtPixel) {
@@ -83,7 +77,7 @@ const useModify = () => {
                 // Finner punktet på grensen du trykket på
                 const nearestVertexCoordinate = findNearestVertexOnFeature(
                   feature as Feature<LineString>,
-                  mapBrowserEvent.coordinate
+                  event.coordinate
                 );
                 const coordinateIndex = coordinates.findIndex((v) =>
                   isCoordinateEqual(v, nearestVertexCoordinate)
@@ -101,7 +95,7 @@ const useModify = () => {
             }
 
             // Hvis alt ellers ser greit ut så fjernes punktet på klikk
-            return singleClick(mapBrowserEvent);
+            return singleClick(event);
           }
           return false;
         },
