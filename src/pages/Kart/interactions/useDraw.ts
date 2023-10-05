@@ -10,10 +10,13 @@ import { getGrenseTypeFromEditingType } from "hooks/layers/types";
 import { map } from "../constants";
 import { LineString } from "ol/geom";
 import { squaredDistance } from "ol/coordinate";
+import { useToast } from "@kvib/react";
+import { createSuccessToast } from "utils/components/toast";
 
 const useDraw = () => {
   const { activePointMode } = useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
+  const toast = useToast();
 
   // TODO: fungerer ikke uten snap, vet ikke hvorfor
   const draw = useMemo(
@@ -65,6 +68,8 @@ const useDraw = () => {
         type: getGrenseTypeFromEditingType(editingType),
       });
 
+      toast(createSuccessToast("Grensen ble lagt til i kartet"));
+
       // TODO: bruk isFeatureDeadEnd for å avgjøre om den nye grensen danner en lukket flate
 
       // TODO: her skal vi på sikt legge til history
@@ -78,7 +83,7 @@ const useDraw = () => {
     return () => {
       draw.un("drawend", onDrawEnd);
     };
-  }, [draw, getCurrentlyEditingType]);
+  }, [draw, getCurrentlyEditingType, toast]);
 
   return { draw };
 };

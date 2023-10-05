@@ -12,9 +12,10 @@ import {
 } from "contexts/HistoryContext";
 import { SelectedPoint, useFeatureStyle } from "contexts/FeatureStyleContext";
 import Point from "ol/geom/Point";
-import { Button } from "@kvib/react";
+import { Button, useToast } from "@kvib/react";
 import { editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
+import { createSuccessToast } from "utils/components/toast";
 
 type KoordinaterFormData = {
   north: number;
@@ -40,6 +41,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
   const { selectedPoint, selectedFeatures } = useFeatureStyle();
   const { addHistoryEntry } = useHistory();
   const { selectPointOnFeature } = useFeatureStyle();
+  const toast = useToast();
 
   const defaultValues = (punkt: SelectedPoint) => {
     if (!punkt) {
@@ -179,6 +181,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
       const highlightGeometry = selectedPoint.getGeometry() as Point;
       highlightGeometry.setCoordinates(newCoordinates);
       reset(undefined, { keepValues: true });
+      toast(createSuccessToast("Punktet ble flyttet"));
     }
   };
 

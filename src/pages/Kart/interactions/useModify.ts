@@ -12,6 +12,8 @@ import { map } from "pages/Kart/constants";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { selectedPointStyle } from "utils/map/layerStyles";
+import { useToast } from "@kvib/react";
+import { createSuccessToast } from "utils/components/toast";
 
 const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
@@ -23,6 +25,7 @@ const useModify = () => {
   const { addHistoryEntry } = useHistory();
   const { activePointMode } = useToolbar();
   const { selectedFeatures } = useFeatureStyle();
+  const toast = useToast();
   const detachIsActive = activePointMode === "detach";
   const editLayer = getLayerById("edit");
 
@@ -135,6 +138,11 @@ const useModify = () => {
           changes,
         });
       }
+      if (activePointMode === "add") {
+        toast(createSuccessToast("Punktet ble lagt til"));
+      } else if (activePointMode === "remove") {
+        toast(createSuccessToast("Punktet ble fjernet"));
+      }
     };
 
     modify.on("modifyend", addModificationToHistory);
@@ -142,7 +150,7 @@ const useModify = () => {
     return () => {
       modify.un("modifyend", addModificationToHistory);
     };
-  }, [addHistoryEntry, modify]);
+  }, [activePointMode, addHistoryEntry, modify, toast]);
 
   return { modify };
 };

@@ -5,12 +5,12 @@ export const createSuccessToast = (
   description?: string
 ): UseToastOptions => ({
   containerStyle: {
-    margin: "30px",
+    marginTop: "24px",
   },
   title,
   description,
   status: "success",
-  duration: 9000,
+  duration: 7500,
   isClosable: true,
   position: "top",
 });
