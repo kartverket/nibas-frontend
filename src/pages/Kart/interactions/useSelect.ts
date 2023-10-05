@@ -80,7 +80,6 @@ const useSelect = () => {
         !borderIsEditable(clickedFeature)
       ) {
         toast({ status: "error", title: "Denne grensen er ikke redigerbar" });
-        event.stopPropagation();
         return;
       }
 
