@@ -85,14 +85,27 @@ const useSelect = () => {
         return;
       }
 
-      // Dersom vi er i split-modus og allerede har valgt denne grensen
-      if (
-        activePointMode === "split" &&
-        selectedFeatures.length === 1 &&
-        clickedFeature.getId() === selectedFeatures[0].getId()
-      ) {
-        // ...ønsker vi å returnere tidlig og la eventet propagere til selectPoint
-        return;
+      if (activePointMode === "split") {
+        // Dersom featuren vi vil splitte er for liten skal vi ikke velge den
+        const geometry = clickedFeature.getGeometry() as LineString;
+        const coordinates = geometry.getCoordinates();
+        if (coordinates.length <= 2) {
+          toast({
+            status: "error",
+            title: "Grensen er for liten til å splittes",
+          });
+          event.stopPropagation();
+          return;
+        }
+
+        // Dersom vi er i split-modus og allerede har valgt denne grensen
+        if (
+          selectedFeatures.length === 1 &&
+          clickedFeature.getId() === selectedFeatures[0].getId()
+        ) {
+          // ...ønsker vi å returnere tidlig og la eventet propagere til selectPoint
+          return;
+        }
       }
 
       if (activePointMode === "metadata") {
