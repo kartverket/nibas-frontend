@@ -66,6 +66,14 @@ const useSelectPoint = () => {
         );
 
         if (nearbyVertexCoordinate) {
+          if (activePointMode === "split" && features.length > 1) {
+            toast({
+              status: "error",
+              title: "Man kan ikke splitte på et endepunkt",
+            });
+            return;
+          }
+
           selectPointOnFeature(
             nearbyVertexCoordinate,
             features as Feature<LineString>[]
