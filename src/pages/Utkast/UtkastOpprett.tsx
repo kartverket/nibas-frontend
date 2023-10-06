@@ -120,22 +120,24 @@ const UtkastOpprett = () => {
                   ))}
                 </Select>
               </Section>
-              <Section>
-                <FormLabel>Gyldig fra-dato</FormLabel>
-                <FormHelperText>
-                  Når skal endringene tre i kraft (etter publisering)?
-                </FormHelperText>
-                <Input isDisabled placeholder="TODO" />
-                <Alert>
-                  <AlertIcon />
-                  <AlertDescription>
-                    Inndelingsbasen gjør det mulig å publisere endringer som
-                    trer i kraft fram i tid. Datoen du velger her vil kun gjelde
-                    dersom du publiserer utkastet. Vi vil aldri publisere en
-                    endring automatisk.
-                  </AlertDescription>
-                </Alert>
-              </Section>
+              {false && ( // TODO
+                <Section>
+                  <FormLabel>Gyldig fra-dato</FormLabel>
+                  <FormHelperText>
+                    Når skal endringene tre i kraft (etter publisering)?
+                  </FormHelperText>
+                  <Input isDisabled placeholder="TODO" />
+                  <Alert>
+                    <AlertIcon />
+                    <AlertDescription>
+                      Inndelingsbasen gjør det mulig å publisere endringer som
+                      trer i kraft fram i tid. Datoen du velger her vil kun
+                      gjelde dersom du publiserer utkastet. Vi vil aldri
+                      publisere en endring automatisk.
+                    </AlertDescription>
+                  </Alert>
+                </Section>
+              )}
             </Form>
           </ModalBody>
           <ModalFooter>
