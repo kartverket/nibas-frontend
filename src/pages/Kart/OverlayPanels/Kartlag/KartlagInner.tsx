@@ -29,7 +29,6 @@ const KartlagInner = ({ mappedLayer, isMainLayer }: Props) => {
       toggleWMTSLayer(mappedLayer);
     }
 
-    // TODO: dobbeltsjekk litt logikk her, hvorfor er den sånn her? var det alltid sånn at den bare fungerte en gang?
     if (isVectorLayer(layer) && !isVisible) {
       toggleWFSLayer();
     }
