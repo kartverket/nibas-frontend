@@ -9,6 +9,7 @@ import { borderIsEditable } from "utils/map";
 import { useToast } from "@kvib/react";
 import { useEffect } from "react";
 import { usePrevious } from "hooks/usePrevious";
+import { FeatureProperties } from "types/api";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -94,16 +95,29 @@ const useSelect = () => {
         return;
       }
 
-      selectFeatures([clickedFeature]);
-
       if (activePointMode === "metadata") {
-        if (clickedFeature.getId()?.toString().includes("TEIGGRENSEWFS")) {
+        // Dersom den valgte grensen er en WFS-grense skal vi vise et eget panel for det
+        if (clickedFeature?.getId()?.toString().includes("TEIGGRENSEWFS")) {
           overlayPopup.setPosition(getOverlayPosition(clickedFeature));
         } else {
-          overlayPopup.setPosition(undefined);
-          openOverlayPanel("metadata");
+          const featureProperties =
+            clickedFeature?.getProperties() as FeatureProperties;
+
+          if (featureProperties.metadata) {
+            overlayPopup.setPosition(undefined);
+            openOverlayPanel("metadata");
+          } else {
+            toast({
+              status: "error",
+              title: "Den valgte grensen har ingen metadata",
+            });
+            event.stopPropagation();
+            return;
+          }
         }
       }
+
+      selectFeatures([clickedFeature]);
 
       // Vi tar denne til slutt da vi noen ganger ønsker å returnere tidlig og la eventet propagere
       // f.eks. ønsker vi at split skal både kunne gjøre select og selectPoint
