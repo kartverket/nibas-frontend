@@ -7,7 +7,7 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { ToolbarPointMode, useToolbar } from "contexts/ToolbarContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { useEffect, useMemo } from "react";
-import { borderIsEditable, findNearestVertexOnFeature } from "utils/map";
+import { borderIsEditable, findNearbyVertexOnFeature } from "utils/map";
 import { useToast } from "@kvib/react";
 
 const useSelectPoint = () => {
@@ -60,18 +60,20 @@ const useSelectPoint = () => {
       // Valgt punkt kan ikke være en del av en ikke-redigerbar grense
       if (features.every(borderIsEditable)) {
         // Må estimere hvilket punkt på linjen man prøvde å trykke på
-        const nearestVertexCoordinate = findNearestVertexOnFeature(
+        const nearbyVertexCoordinate = findNearbyVertexOnFeature(
           features[0] as Feature<LineString>,
           event.coordinate
         );
 
-        selectPointOnFeature(
-          nearestVertexCoordinate,
-          features as Feature<LineString>[]
-        );
+        if (nearbyVertexCoordinate) {
+          selectPointOnFeature(
+            nearbyVertexCoordinate,
+            features as Feature<LineString>[]
+          );
 
-        if (activePointMode === "koordinater") {
-          openOverlayPanel("koordinater");
+          if (activePointMode === "koordinater") {
+            openOverlayPanel("koordinater");
+          }
         }
       } else {
         toast({

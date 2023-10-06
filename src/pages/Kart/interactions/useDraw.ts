@@ -9,9 +9,9 @@ import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { getGrenseTypeFromEditingType } from "hooks/layers/types";
 import { map } from "../constants";
 import { LineString } from "ol/geom";
-import { squaredDistance } from "ol/coordinate";
 import { useToast } from "@kvib/react";
 import { MapBrowserEvent } from "ol";
+import { pixelDistance } from "utils/map";
 
 const useDraw = () => {
   const { activePointMode } = useToolbar();
@@ -39,12 +39,10 @@ const useDraw = () => {
               const coordinates = geometry.getCoordinates();
               // TODO: pikseltoleransen her fungerer ikke konsekvent, av og til får man tegne når man ikke skal og motsatt
               // TODO: ønsker bare å tegne fra endepunkt til endepunkt? eller skal det splittes når man tegner?
-              return coordinates.some((coordinate) => {
-                return (
-                  squaredDistance(coordinate, event.coordinate) <
-                  pixelTolerance ** 2
-                );
-              });
+              return coordinates.some(
+                (coordinate) =>
+                  pixelDistance(coordinate, event.coordinate) < pixelTolerance
+              );
             }
           });
 

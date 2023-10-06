@@ -15,7 +15,7 @@ import { selectedPointStyle } from "utils/map/layerStyles";
 import { useToast } from "@kvib/react";
 import {
   borderIsEditable,
-  findNearestVertexOnFeature,
+  findNearbyVertexOnFeature,
   isCoordinateEqual,
 } from "utils/map";
 
@@ -87,19 +87,20 @@ const useModify = () => {
                   return false;
                 }
 
-                // Finner punktet på grensen du trykket på
-                const nearestVertexCoordinate = findNearestVertexOnFeature(
+                // Sjekker hvilket punkt du trykket på
+                const nearbyVertexCoordinate = findNearbyVertexOnFeature(
                   feature as Feature<LineString>,
                   event.coordinate
                 );
 
                 // Ettersom vi ikke støtter løse tråder per nå lar vi deg ikke fjerne endepunkter
                 if (
-                  isCoordinateEqual(nearestVertexCoordinate, coordinates[0]) ||
-                  isCoordinateEqual(
-                    nearestVertexCoordinate,
-                    coordinates[coordinates.length - 1]
-                  )
+                  nearbyVertexCoordinate &&
+                  (isCoordinateEqual(nearbyVertexCoordinate, coordinates[0]) ||
+                    isCoordinateEqual(
+                      nearbyVertexCoordinate,
+                      coordinates[coordinates.length - 1]
+                    ))
                 ) {
                   // TODO: si til brukeren at dette ikke er lov
                   return false;
