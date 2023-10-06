@@ -31,7 +31,7 @@ const ToolbarPopups = () => {
   return (
     <>
       {activePointMode === "draw" && (
-        <ToolbarPopup text="Start tegningen i et punkt og dobbeltklikk for å avslutte tegning" />
+        <ToolbarPopup text="Dobbeltklikk for å avslutte tegningen" />
       )}
       {activePointMode === "split" && selectedFeatures.length === 0 && (
         <ToolbarPopup text="Velg grensen du ønsker å splitte" />

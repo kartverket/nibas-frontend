@@ -7,11 +7,8 @@ import { grenseStyles } from "utils/map/layerStyles";
 import { editSource } from "hooks/layers/constants";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { getGrenseTypeFromEditingType } from "hooks/layers/types";
-import { map } from "../constants";
-import { LineString } from "ol/geom";
 import { useToast } from "@kvib/react";
 import { MapBrowserEvent } from "ol";
-import { pixelDistance } from "utils/map";
 
 const useDraw = () => {
   const { activePointMode } = useToolbar();
@@ -27,27 +24,8 @@ const useDraw = () => {
         snapTolerance: pixelTolerance,
         style: grenseStyles.dirty,
         freehandCondition: () => false,
-        condition: (event: MapBrowserEvent<MouseEvent>) => {
-          if (activePointMode !== "draw") return false;
-          const featuresAtPixel = map.getFeaturesAtPixel(event.pixel, {
-            hitTolerance: pixelTolerance,
-          });
-
-          const lineStringWasClicked = featuresAtPixel.some((feature) => {
-            const geometry = feature.getGeometry();
-            if (geometry instanceof LineString) {
-              const coordinates = geometry.getCoordinates();
-              // TODO: pikseltoleransen her fungerer ikke konsekvent, av og til får man tegne når man ikke skal og motsatt
-              // TODO: ønsker bare å tegne fra endepunkt til endepunkt? eller skal det splittes når man tegner?
-              return coordinates.some(
-                (coordinate) =>
-                  pixelDistance(coordinate, event.coordinate) < pixelTolerance
-              );
-            }
-          });
-
-          return noModifierKeys(event) && lineStringWasClicked;
-        },
+        condition: (event: MapBrowserEvent<MouseEvent>) =>
+          noModifierKeys(event) && activePointMode === "draw",
       }),
     [activePointMode]
   );
