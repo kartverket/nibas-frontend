@@ -1,4 +1,4 @@
-import { CloseButton, Heading } from "@kvib/react";
+import { CloseButton, Heading, Text } from "@kvib/react";
 import { styled, keyframes } from "styled-components";
 
 export type PanelProps = {
@@ -108,21 +108,31 @@ const PanelHeaderContainer = styled.div<PanelHeaderContainerProps>`
   margin-bottom: ${({ $size = "md" }) => getMarginForSize($size)};
 `;
 
+const PanelHeaderText = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 type PanelHeaderProps = {
   onClose: () => void;
   children: React.ReactNode;
+  subHeading?: React.ReactNode;
   size?: PanelHeaderSizes;
 };
 
 export const PanelHeader = ({
   children,
+  subHeading,
   onClose,
   size = "md",
 }: PanelHeaderProps) => (
   <PanelHeaderContainer $size={size}>
-    <Heading as="h3" size={size}>
-      {children}
-    </Heading>
+    <PanelHeaderText>
+      <Heading as="h3" size={size}>
+        {children}
+      </Heading>
+      <Text fontSize={"sm"}>{subHeading}</Text>
+    </PanelHeaderText>
     <CloseButton
       size={getCloseButtonSize(size)}
       onClick={onClose}

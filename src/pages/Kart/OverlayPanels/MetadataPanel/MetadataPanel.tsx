@@ -4,8 +4,9 @@ import { PanelHeader, PanelProps, SidePanel } from "../Panel";
 import MetadataGenerelt from "./MetadataGenerelt";
 import MetadataReferanser from "./MetadataReferanser";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
-import { Divider } from "@kvib/react";
-import { FeatureProperties } from "types/api";
+import { Divider, Text } from "@kvib/react";
+import { FeatureProperties, Metadata } from "types/api";
+import { getDateInFriendlyString } from "./utils";
 
 const grenseTypeWithReferanser = [
   "Territorialgrense",
@@ -43,7 +44,22 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
 
   return (
     <SidePanel $isOpen={isOpen} className={className}>
-      <PanelHeader onClose={closeOverlayPanel}>Grenseinfo</PanelHeader>
+      <PanelHeader
+        onClose={closeOverlayPanel}
+        subHeading={
+          <>
+            Sist oppdatert:{" "}
+            {getDateInFriendlyString(
+              (
+                (selectedFeature?.getProperties() as FeatureProperties)
+                  .metadata as Metadata
+              ).common?.sporingsinformasjon.oppdateringsdato
+            )}
+          </>
+        }
+      >
+        Informasjon om grense
+      </PanelHeader>
       {selectedFeature && !isWFSGrense && selectedProperties.metadata ? (
         <Content>
           <MetadataGenerelt feature={selectedFeature} />
