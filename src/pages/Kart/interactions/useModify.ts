@@ -102,7 +102,10 @@ const useModify = () => {
                       coordinates[coordinates.length - 1]
                     ))
                 ) {
-                  // TODO: si til brukeren at dette ikke er lov
+                  toast({
+                    status: "error",
+                    title: "Man kan ikke fjerne endepunkter fra en grense",
+                  });
                   return false;
                 }
               }
