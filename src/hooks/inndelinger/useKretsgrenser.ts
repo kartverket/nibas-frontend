@@ -36,20 +36,21 @@ const endpointByKretstype = {
 type KretsResponse<T extends (typeof endpointByKretstype)[Kretstype]> =
   T extends "grunnkretser" ? GrunnkretsResponse : StemmekretsResponse;
 
-const mapGrunnkretserToIds = (kretser?: KretsRef[]) =>
+const mapKretserToIds = (kretser?: KretsRef[]) =>
   kretser?.map((krets) => getIdFromEntity(krets));
 
 // fetch alle kretsgrenser i en kommune
-const kretserByKommuneFetcher = async ([kretsIds, token, type]: [
+const kretserByKommuneFetcher = async ([kretsIds, token, type, endpoint]: [
   string[],
   string | undefined,
   Kretstype,
+  string,
 ]) => {
   const typeUrl = endpointByKretstype[type];
 
   const kretsFeaturesPromises: Promise<string>[] = kretsIds.map(
     async (kretsId) =>
-      fetcherWithToken([`/v1/${typeUrl}/${kretsId}/grenser`, token]),
+      fetcherWithToken([`/v1/${typeUrl}/${kretsId}/${endpoint}`, token]),
   );
 
   return Promise.all(kretsFeaturesPromises);
@@ -130,13 +131,6 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
 
   const context = useContext(EditGrenserContext);
 
-  const { data: grunnkretserByKommune } = useNibasApi(
-    visible ? getKretserByKommuneUrl(type) : null,
-    {
-      id: kommuneId,
-    },
-  );
-
   const { data: kretserByKommune } = useNibasApi(
     visible ? getKretserByKommuneUrl(type) : null,
     {
@@ -144,27 +138,14 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     },
   );
 
+  const kretsIds = mapKretserToIds(kretserByKommune);
   const { data: grenserGeoJsons } = useSWR(
-    kretserByKommune
-      ? [
-          mapGrunnkretserToIds(kretserByKommune),
-          tokenHolderFunc()?.token,
-          type,
-          "grenser",
-        ]
-      : null,
+    kretsIds ? [kretsIds, tokenHolderFunc()?.token, type, "grenser"] : null,
     kretserByKommuneFetcher,
   );
 
   const { data: kretsGeometries } = useSWR(
-    grunnkretserByKommune
-      ? [
-          mapGrunnkretserToIds(grunnkretserByKommune),
-          tokenHolderFunc()?.token,
-          type,
-          "punkter",
-        ]
-      : null,
+    kretsIds ? [kretsIds, tokenHolderFunc()?.token, type] : null,
     kretsGeometryFetcher,
   );
 

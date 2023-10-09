@@ -1,20 +1,18 @@
 import { useCallback, useMemo, useState } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
-import useSWRImmutable from "swr/immutable";
 import { useUtkast, useUtkastFeature } from "contexts/UtkastContext";
 import { geoJsonToSource } from "utils/map/geoJson";
 import { getLayerById } from "utils/map/layers";
-import { fetcherWithToken } from "utils/api";
+import useNibasApi from "hooks/useNibasApi";
 
 const useApiGrense = (featuresUrl: string, shouldFetchInitially = false) => {
   const [shouldFetch, setShouldFetch] = useState(shouldFetchInitially);
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { utkast } = useUtkast();
 
-  const { data: geoJson, mutate } = useSWRImmutable<GeoJSONFeatureCollection>(
+  const { data: geoJson, mutate } = useNibasApi<GeoJSONFeatureCollection>(
     shouldFetch ? [featuresUrl, tokenHolderFunc()?.token] : null,
-    fetcherWithToken,
   );
 
   const utkastGeoJson = useUtkastFeature(geoJson, utkast);
