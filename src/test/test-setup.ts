@@ -1,3 +1,4 @@
+import "mocks/globals";
 import { expect, afterEach } from "vitest";
 import { cleanup } from "@testing-library/react";
 import matchers, {
@@ -14,14 +15,6 @@ declare module "vitest" {
       TestingLibraryMatchers<T, void> {}
 }
 expect.extend(matchers);
-
-beforeEach(() => {
-  window.ResizeObserver = vi.fn().mockImplementation(() => ({
-    observe: vi.fn(),
-    unobserve: vi.fn(),
-    disconnect: vi.fn(),
-  }));
-});
 
 beforeAll(() => {
   // Establish API mocking before all tests.
