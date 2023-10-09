@@ -1,5 +1,4 @@
-import { Icon } from "@kvib/react";
-import { MaterialSymbol } from "material-symbols";
+import { Icon, MaterialSymbol } from "@kvib/react";
 import { forwardRef, ReactNode } from "react";
 import { styled, css } from "styled-components";
 

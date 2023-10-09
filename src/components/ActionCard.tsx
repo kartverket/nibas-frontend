@@ -1,6 +1,5 @@
-import { Button, Heading, Text } from "@kvib/react";
+import { Button, Heading, Text, MaterialSymbol } from "@kvib/react";
 import { styled } from "styled-components";
-import { MaterialSymbol } from "material-symbols";
 
 type Props = {
   title: string;

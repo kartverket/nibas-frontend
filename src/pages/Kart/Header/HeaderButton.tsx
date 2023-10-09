@@ -1,6 +1,6 @@
-import { IconButton } from "@kvib/react";
+import { IconButton, MaterialSymbol } from "@kvib/react";
 import { styled } from "styled-components";
-import { MaterialSymbol } from "material-symbols";
+
 type HeaderButtonProps = {
   icon: MaterialSymbol;
   label: string;
