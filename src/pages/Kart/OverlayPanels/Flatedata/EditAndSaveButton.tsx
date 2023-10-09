@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { ButtonGroup, Button, IconButton } from "@kvib/react";
+import { ButtonGroup, IconButton } from "@kvib/react";
 
 const Cell = styled.td`
   display: flex;
@@ -7,7 +7,7 @@ const Cell = styled.td`
   padding: 12px !important;
 `;
 
-const EditButton = styled(Button)`
+const EditButton = styled(IconButton)`
   white-space: nowrap;
   min-width: unset;
 `;
@@ -49,12 +49,10 @@ const EditAndSaveButton = ({
       <EditButton
         aria-label="Åpne redigering"
         onClick={toggleEditing}
-        iconFill
+        icon="edit"
         variant="secondary"
         colorScheme="gray"
-      >
-        Rediger
-      </EditButton>
+      />
     )}
   </Cell>
 );
