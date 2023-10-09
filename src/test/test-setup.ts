@@ -1,9 +1,8 @@
 import "mocks/globals";
-import { expect, afterEach } from "vitest";
+import "@testing-library/jest-dom/vitest";
+import { afterEach } from "vitest";
 import { cleanup } from "@testing-library/react";
-import matchers, {
-  TestingLibraryMatchers,
-} from "@testing-library/jest-dom/matchers";
+import { TestingLibraryMatchers } from "@testing-library/jest-dom/matchers";
 import { server } from "../mocks/server";
 import { initKartlagLayers, initGrenserLayers } from "utils/map/layers";
 
@@ -14,7 +13,6 @@ declare module "vitest" {
     extends jest.Matchers<void, T>,
       TestingLibraryMatchers<T, void> {}
 }
-expect.extend(matchers);
 
 beforeAll(() => {
   // Establish API mocking before all tests.
