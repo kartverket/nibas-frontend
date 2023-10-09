@@ -3,16 +3,18 @@ import { map } from "../constants";
 import { getLayerById } from "utils/map/layers";
 import { pixelTolerance } from "./constants";
 import LineString from "ol/geom/LineString";
-import { squaredDistance } from "ol/coordinate";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { editableBorderTypes } from "hooks/layers/constants";
 import { ToolbarPointMode, useToolbar } from "contexts/ToolbarContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { useEffect, useMemo } from "react";
+import { borderIsEditable, findNearbyVertexOnFeature } from "utils/map";
+import { useToast } from "@kvib/react";
 
 const useSelectPoint = () => {
+  const toast = useToast();
   const { activePointMode } = useToolbar();
-  const { openOverlayPanel, closeOverlayPanel } = useOverlayPanel();
+  const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } =
+    useOverlayPanel();
   const { selectPointOnFeature, selectedPoint, clearSelection } =
     useFeatureStyle();
 
@@ -25,9 +27,13 @@ const useSelectPoint = () => {
   useEffect(() => {
     if (selectedPoint && !allowedPointModes.includes(activePointMode)) {
       clearSelection();
-      closeOverlayPanel();
+
+      if (activeOverlayPanel === "koordinater") {
+        closeOverlayPanel();
+      }
     }
   }, [
+    activeOverlayPanel,
     activePointMode,
     allowedPointModes,
     clearSelection,
@@ -52,32 +58,36 @@ const useSelectPoint = () => {
       }
 
       // Valgt punkt kan ikke være en del av en ikke-redigerbar grense
-      if (
-        features.every((feature) =>
-          editableBorderTypes.includes(feature.get("type"))
-        )
-      ) {
-        // Hent punktkoordinatene fra en hvilken som helst av featurene
-        const geometry = features[0].getGeometry() as LineString;
-        const coordinates = geometry.getCoordinates();
-
+      if (features.every(borderIsEditable)) {
         // Må estimere hvilket punkt på linjen man prøvde å trykke på
-        const coordinatesWithDistanceToClick = coordinates.map((coord) => ({
-          coordinates: coord,
-          distance: squaredDistance(coord, event.coordinate),
-        }));
-        const nearestVertexCoordinates = coordinatesWithDistanceToClick
-          .sort((a, b) => a.distance - b.distance)
-          .map((cwd) => cwd.coordinates)[0];
-
-        selectPointOnFeature(
-          nearestVertexCoordinates,
-          features as Feature<LineString>[]
+        const nearbyVertexCoordinate = findNearbyVertexOnFeature(
+          features[0] as Feature<LineString>,
+          event.coordinate
         );
 
-        if (activePointMode === "koordinater") {
-          openOverlayPanel("koordinater");
+        if (nearbyVertexCoordinate) {
+          if (activePointMode === "split" && features.length > 1) {
+            toast({
+              status: "error",
+              title: "Man kan ikke splitte på et endepunkt",
+            });
+            return;
+          }
+
+          selectPointOnFeature(
+            nearbyVertexCoordinate,
+            features as Feature<LineString>[]
+          );
+
+          if (activePointMode === "koordinater") {
+            openOverlayPanel("koordinater");
+          }
         }
+      } else {
+        toast({
+          status: "error",
+          title: "Denne grensen er ikke redigerbar",
+        });
       }
     }
   };

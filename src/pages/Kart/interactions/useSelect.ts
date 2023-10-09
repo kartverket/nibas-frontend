@@ -5,6 +5,11 @@ import { map, overlayPopup } from "../constants";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import LineString from "ol/geom/LineString";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { borderIsEditable } from "utils/map";
+import { useToast } from "@kvib/react";
+import { useEffect } from "react";
+import { usePrevious } from "hooks/usePrevious";
+import { FeatureProperties } from "types/api";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -14,16 +19,40 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 };
 
 const useSelect = () => {
+  const toast = useToast();
   const { activePointMode } = useToolbar();
   const { selectFeatures, selectedFeatures, clearSelection } =
     useFeatureStyle();
-  const { closeOverlayPanel, openOverlayPanel } = useOverlayPanel();
+  const { activeOverlayPanel, closeOverlayPanel, openOverlayPanel } =
+    useOverlayPanel();
+  const previousPointMode = usePrevious(activePointMode);
 
-  const allowedPointModes: ToolbarPointMode[] = [
-    "metadata",
+  const dangerousPointModes: ToolbarPointMode[] = [
     "archive",
     "split",
+    "detach",
   ];
+  const allowedPointModes: ToolbarPointMode[] = [
+    ...dangerousPointModes,
+    "metadata",
+  ];
+
+  // Dersom man bytter verktøy ønsker vi å cleare selection
+  useEffect(() => {
+    if (activePointMode !== previousPointMode && selectedFeatures.length > 0) {
+      clearSelection();
+      if (activeOverlayPanel === "metadata") {
+        closeOverlayPanel();
+      }
+    }
+  }, [
+    activeOverlayPanel,
+    activePointMode,
+    clearSelection,
+    closeOverlayPanel,
+    previousPointMode,
+    selectedFeatures.length,
+  ]);
 
   const select = (event: MapBrowserEvent<MouseEvent>) => {
     if (allowedPointModes.includes(activePointMode) && !event.dragging) {
@@ -46,26 +75,62 @@ const useSelect = () => {
 
       const clickedFeature = filteredFeatures[0] as Feature<LineString>;
 
-      // Dersom vi er i split-modus og allerede har valgt denne grensen
+      // I noen verktøy skal man ikke kunne velge ikke-redigerbare grenser
       if (
-        activePointMode === "split" &&
-        selectedFeatures.length === 1 &&
-        clickedFeature.getId() === selectedFeatures[0].getId()
+        dangerousPointModes.includes(activePointMode) &&
+        !borderIsEditable(clickedFeature)
       ) {
-        // ...ønsker vi å returnere tidlig og la eventet propagere til selectPoint
+        toast({ status: "error", title: "Denne grensen er ikke redigerbar" });
+        event.stopPropagation();
         return;
       }
 
-      selectFeatures([clickedFeature]);
+      if (activePointMode === "split") {
+        // Dersom featuren vi vil splitte er for liten skal vi ikke velge den
+        const geometry = clickedFeature.getGeometry() as LineString;
+        const coordinates = geometry.getCoordinates();
+        if (coordinates.length <= 2) {
+          toast({
+            status: "error",
+            title: "Grensen er for liten til å splittes",
+          });
+          event.stopPropagation();
+          return;
+        }
 
-      if (activePointMode === "metadata") {
-        if (clickedFeature.getId()?.toString().includes("TEIGGRENSEWFS")) {
-          overlayPopup.setPosition(getOverlayPosition(clickedFeature));
-        } else {
-          overlayPopup.setPosition(undefined);
-          openOverlayPanel("metadata");
+        // Dersom vi er i split-modus og allerede har valgt denne grensen
+        if (
+          selectedFeatures.length === 1 &&
+          clickedFeature.getId() === selectedFeatures[0].getId()
+        ) {
+          // ...ønsker vi å returnere tidlig og la eventet propagere til selectPoint
+          return;
         }
       }
+
+      if (activePointMode === "metadata") {
+        // Dersom den valgte grensen er en WFS-grense skal vi vise et eget panel for det
+        if (clickedFeature?.getId()?.toString().includes("TEIGGRENSEWFS")) {
+          overlayPopup.setPosition(getOverlayPosition(clickedFeature));
+        } else {
+          const featureProperties =
+            clickedFeature?.getProperties() as FeatureProperties;
+
+          if (featureProperties.metadata) {
+            overlayPopup.setPosition(undefined);
+            openOverlayPanel("metadata");
+          } else {
+            toast({
+              status: "error",
+              title: "Den valgte grensen har ingen metadata",
+            });
+            event.stopPropagation();
+            return;
+          }
+        }
+      }
+
+      selectFeatures([clickedFeature]);
 
       // Vi tar denne til slutt da vi noen ganger ønsker å returnere tidlig og la eventet propagere
       // f.eks. ønsker vi at split skal både kunne gjøre select og selectPoint

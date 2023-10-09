@@ -31,7 +31,6 @@ import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { ApiErrorResponse } from "types/api";
 import { statusCode } from "utils/api";
-import { createSuccessToast } from "utils/components/toast";
 
 type UtkastFormData = {
   navn: string;
@@ -69,7 +68,7 @@ const UtkastOpprett = () => {
     if (statusCode.isSuccessful(response.status)) {
       const json = await response.json();
       const utkastId = json.id;
-      toast(createSuccessToast("Utkast opprettet"));
+      toast({ title: "Utkast opprettet", status: "success" });
       navigate(utkastId);
     } else if (statusCode.isError(response.status)) {
       const wrapper = (await response.json()) as ApiErrorResponse;
@@ -121,22 +120,24 @@ const UtkastOpprett = () => {
                   ))}
                 </Select>
               </Section>
-              <Section>
-                <FormLabel>Gyldig fra-dato</FormLabel>
-                <FormHelperText>
-                  Når skal endringene tre i kraft (etter publisering)?
-                </FormHelperText>
-                <Input isDisabled placeholder="TODO" />
-                <Alert>
-                  <AlertIcon />
-                  <AlertDescription>
-                    Inndelingsbasen gjør det mulig å publisere endringer som
-                    trer i kraft fram i tid. Datoen du velger her vil kun gjelde
-                    dersom du publiserer utkastet. Vi vil aldri publisere en
-                    endring automatisk.
-                  </AlertDescription>
-                </Alert>
-              </Section>
+              {false && ( // TODO
+                <Section>
+                  <FormLabel>Gyldig fra-dato</FormLabel>
+                  <FormHelperText>
+                    Når skal endringene tre i kraft (etter publisering)?
+                  </FormHelperText>
+                  <Input isDisabled placeholder="TODO" />
+                  <Alert>
+                    <AlertIcon />
+                    <AlertDescription>
+                      Inndelingsbasen gjør det mulig å publisere endringer som
+                      trer i kraft fram i tid. Datoen du velger her vil kun
+                      gjelde dersom du publiserer utkastet. Vi vil aldri
+                      publisere en endring automatisk.
+                    </AlertDescription>
+                  </Alert>
+                </Section>
+              )}
             </Form>
           </ModalBody>
           <ModalFooter>
