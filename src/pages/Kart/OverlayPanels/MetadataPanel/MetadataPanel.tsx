@@ -4,7 +4,7 @@ import { PanelHeader, PanelProps, SidePanel } from "../Panel";
 import MetadataGenerelt from "./MetadataGenerelt";
 import MetadataReferanser from "./MetadataReferanser";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
-import { Divider, Text } from "@kvib/react";
+import { Divider } from "@kvib/react";
 import { FeatureProperties, Metadata } from "types/api";
 import { getDateInFriendlyString } from "./utils";
 
@@ -47,15 +47,18 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
       <PanelHeader
         onClose={closeOverlayPanel}
         subHeading={
-          <>
-            Sist oppdatert:{" "}
-            {getDateInFriendlyString(
-              (
-                (selectedFeature?.getProperties() as FeatureProperties)
-                  .metadata as Metadata
-              ).common?.sporingsinformasjon.oppdateringsdato
-            )}
-          </>
+          selectedProperties &&
+          selectedProperties.metadata && (
+            <>
+              Sist oppdatert:{" "}
+              {getDateInFriendlyString(
+                (
+                  (selectedFeature?.getProperties() as FeatureProperties)
+                    .metadata as Metadata
+                ).common?.sporingsinformasjon.oppdateringsdato
+              )}
+            </>
+          )
         }
       >
         Informasjon om grense

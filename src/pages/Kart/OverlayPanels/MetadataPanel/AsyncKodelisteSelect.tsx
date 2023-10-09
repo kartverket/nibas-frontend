@@ -19,7 +19,6 @@ const AsyncKodelisteSelectInner = (
 
   return (
     <FormControl>
-      <FormLabel>{label}</FormLabel>
       <Select ref={ref} {...selectProps}>
         <option value="">---</option>
         {itemsSorted.map((kodeItem) => (

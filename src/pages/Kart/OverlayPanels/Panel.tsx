@@ -105,7 +105,6 @@ const PanelHeaderContainer = styled.div<PanelHeaderContainerProps>`
   padding: ${({ $size = "md" }) => getPaddingForSize($size)};
   background: var(--kvib-colors-chakra-body-bg);
   border-bottom: 2px solid var(--kvib-colors-gray-50);
-  margin-bottom: ${({ $size = "md" }) => getMarginForSize($size)};
 `;
 
 const PanelHeaderText = styled.div`
