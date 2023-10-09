@@ -18,6 +18,7 @@ const CombinedButton = styled(ButtonGroup)`
 
 type Props = {
   isEditing: boolean;
+  isDisabled?: boolean;
   canSave: boolean;
   onSubmit: (event: React.MouseEvent<HTMLButtonElement>) => void;
   toggleEditing: () => void;
@@ -25,6 +26,7 @@ type Props = {
 
 const EditAndSaveButton = ({
   isEditing,
+  isDisabled,
   toggleEditing,
   canSave,
   onSubmit,
@@ -47,6 +49,7 @@ const EditAndSaveButton = ({
       </CombinedButton>
     ) : (
       <EditButton
+        isDisabled={isDisabled}
         aria-label="Åpne redigering"
         onClick={toggleEditing}
         icon="edit"
