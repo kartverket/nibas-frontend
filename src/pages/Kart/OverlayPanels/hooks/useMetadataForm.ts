@@ -12,6 +12,7 @@ import { Metadata } from "types/api";
 type Inputs = {
   grenseType: string;
   maalemetode: string;
+  datafangstdato: string;
   noeyaktighet: number;
   informasjon: string;
   opphav: string;
@@ -25,6 +26,7 @@ const getUpdatedMetadata = (data: Inputs, oldMetadata: Metadata) =>
     common: {
       ...(oldMetadata.common ?? {}),
       informasjon: data.informasjon,
+      datafangstdato: data.datafangstdato,
       opphav: data.opphav,
       gyldigFra: data.gyldigFra,
       gyldigTil: data.gyldigTil,
@@ -45,6 +47,7 @@ const getUpdatedMetadata = (data: Inputs, oldMetadata: Metadata) =>
 const getFormFromApiMetadata = (metadata: Metadata) => ({
   informasjon: metadata?.common?.informasjon,
   grenseType: metadata?.discriminator,
+  datafangstdato: metadata.common?.datafangstdato,
   noeyaktighet: metadata?.commonGrense?.posisjonskvalitet?.noeyaktighet,
   opphav: metadata?.common?.opphav,
   gyldigFra: metadata?.common?.gyldigFra,
@@ -79,6 +82,7 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
 
       setValue("informasjon", newMetadata?.common?.informasjon ?? "");
       setValue("grenseType", newMetadata?.discriminator ?? "");
+      setValue("datafangstdato", newMetadata.common?.datafangstdato ?? "");
       setValue(
         "noeyaktighet",
         newMetadata?.commonGrense?.posisjonskvalitet?.noeyaktighet ?? 0
