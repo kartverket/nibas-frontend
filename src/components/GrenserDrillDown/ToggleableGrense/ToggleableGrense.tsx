@@ -24,7 +24,7 @@ const ToggleableGrense = <T extends GrenseRef>({
   const { value, toggleVisible } = useEditGrense(
     type,
     getIdFromEntity(grense),
-    features
+    features,
   );
 
   const openInfo = () => {

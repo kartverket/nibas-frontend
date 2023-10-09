@@ -10,7 +10,7 @@ type Options = RenderOptions & TestProviderValues;
 
 const customRender = (
   ui: ReactNode,
-  options: Options = {}
+  options: Options = {},
 ): RenderResult & { user: ReturnType<typeof userEvent.setup> } => {
   const user = userEvent.setup();
 
@@ -41,7 +41,7 @@ const customRender = (
         KartlagProvider,
         UtkastProvider,
       }),
-      rltOptions
+      rltOptions,
     ),
   };
 };

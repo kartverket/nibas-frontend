@@ -19,7 +19,7 @@ type StemmekretsInputs = {
 
 const fromFormToRequest = (
   data: StemmekretsInputs,
-  stemmekrets: StemmekretsResponse
+  stemmekrets: StemmekretsResponse,
 ): StemmekretsRequest => ({
   identifikasjon: {
     lokalid: getIdFromEntity(stemmekrets),
@@ -76,10 +76,10 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
       updateEditFeatureText(
         getRepresentasjonspunktId(stemmekretsId),
         newName,
-        newNumber
+        newNumber,
       );
     },
-    [getValues, setValue, stemmekretsId]
+    [getValues, setValue, stemmekretsId],
   );
 
   useHistoryFormSync<StemmekretsEntry>({
@@ -138,7 +138,7 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
     updateEditFeatureText(
       getRepresentasjonspunktId(stemmekretsId),
       newValues.stemmekretsnavn,
-      newValues.stemmekretsnummer
+      newValues.stemmekretsnummer,
     );
     setNavn(newValues.stemmekretsnavn);
     setNummer(newValues.stemmekretsnummer);

@@ -22,7 +22,7 @@ const swrGlobalConfig = {
 
 const customTheme = extendTheme(
   withDefaultColorScheme({ colorScheme: "blue" }),
-  theme
+  theme,
 );
 
 const defaultToastOptions: UseToastOptions = {

@@ -31,7 +31,7 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
     selectedFeatures.length === 1 ? selectedFeatures[0] : undefined;
 
   const showReferanser = grenseTypeWithReferanser.includes(
-    selectedFeature?.get("type") as string
+    selectedFeature?.get("type") as string,
   );
 
   useEffect(() => {

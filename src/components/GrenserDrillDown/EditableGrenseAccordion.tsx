@@ -28,7 +28,7 @@ const EditableGrenseAccordion = ({
   const { value, toggleEditing, toggleVisible } = useEditGrense(
     grenseType,
     grenseId,
-    features
+    features,
   );
 
   return (

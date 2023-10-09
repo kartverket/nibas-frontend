@@ -6,10 +6,10 @@ import { fetcherWithToken } from "utils/api";
 
 const utkastFetcher = async ([utkastIds, token]: [
   string[],
-  string | undefined
+  string | undefined,
 ]) => {
   const promises: Promise<UtkastResponse>[] = utkastIds.map(async (id) =>
-    fetcherWithToken([`/v1/utkast/${id}`, token])
+    fetcherWithToken([`/v1/utkast/${id}`, token]),
   );
 
   return await Promise.all(promises);
@@ -22,6 +22,6 @@ export const useUtkasts = () => {
 
   return useSWR(
     utkastIds.length > 0 ? [utkastIds, tokenHolderFunc()?.token] : null,
-    utkastFetcher
+    utkastFetcher,
   );
 };

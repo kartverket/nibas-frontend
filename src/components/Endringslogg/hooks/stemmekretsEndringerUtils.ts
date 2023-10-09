@@ -20,7 +20,7 @@ import {
 import { getNavnInSpraak } from "utils/language/language";
 
 export const getStemmekretserMedEndringer = (
-  operasjoner: OperasjonerOrNull
+  operasjoner: OperasjonerOrNull,
 ): string[] => {
   const endringerResponse =
     operasjoner?.metadataendringer?.stemmekretsendringer;
@@ -30,7 +30,7 @@ export const getStemmekretserMedEndringer = (
   }
 
   const stemmekretserMedMetadataEndringer = removeNull(
-    Object.keys(operasjoner?.metadataendringer?.stemmekretsendringer)
+    Object.keys(operasjoner?.metadataendringer?.stemmekretsendringer),
   );
 
   const viderefoertStemmekrets =
@@ -39,16 +39,16 @@ export const getStemmekretserMedEndringer = (
 
   const gamleKretser =
     operasjoner?.stemmekretsSammenslaaingsendring?.stemmekretserTilSammenslaaing.map(
-      (krets) => krets.lokalId
+      (krets) => krets.lokalId,
     ) ?? [];
 
   const stemmekretserMedSammenslaaing = removeNull(
-    gamleKretser.concat(viderefoertStemmekrets ?? [])
+    gamleKretser.concat(viderefoertStemmekrets ?? []),
   );
 
   const alleStemmekretserMedEndringer = getKretserMedGrensejusteringer(
     operasjoner,
-    "STEMMEKRETS"
+    "STEMMEKRETS",
   )
     .concat(stemmekretserMedMetadataEndringer)
     .concat(stemmekretserMedSammenslaaing);
@@ -60,7 +60,7 @@ const getEndringAvTypeForId = (
   type: StemmekretsMetadataEndringstype,
   stemmekrets: string,
   operasjoner: UtkastOperasjoner,
-  alleStemmekretser: StemmekretsResponse[]
+  alleStemmekretser: StemmekretsResponse[],
 ): Endring | null => {
   const gammelStemmekrets = findKrets(stemmekrets, alleStemmekretser);
   const nyVerdi =
@@ -81,7 +81,7 @@ const getEndringAvTypeForId = (
 };
 
 const harMetadataEndring = (
-  metadatEndring: StemmekretsMetadataEndring
+  metadatEndring: StemmekretsMetadataEndring,
 ): boolean => {
   const fieldsToCheck = [
     metadatEndring.stemmekretsnavn,
@@ -95,7 +95,7 @@ const harMetadataEndring = (
 const getMetadataEndringer = (
   stemmekretser: string[],
   operasjoner: UtkastOperasjoner,
-  alleStemmekretser: StemmekretsResponse[]
+  alleStemmekretser: StemmekretsResponse[],
 ): StemmekretsMetadataEndring[] => {
   return stemmekretser
     .map((stemmekretsId) => {
@@ -104,7 +104,7 @@ const getMetadataEndringer = (
           type,
           stemmekretsId,
           operasjoner,
-          alleStemmekretser
+          alleStemmekretser,
         );
 
       return {
@@ -120,7 +120,7 @@ const getMetadataEndringer = (
 const getSammenslaaingEndring = (
   stemmekretser: string[],
   operasjoner: UtkastOperasjoner,
-  alleStemmekretser: StemmekretsResponse[]
+  alleStemmekretser: StemmekretsResponse[],
 ): StemmekretsSammenslaaingEndring | null => {
   const viderefoertKrets =
     operasjoner.stemmekretsSammenslaaingsendring?.viderefoertStemmekrets;
@@ -159,15 +159,15 @@ const getEndringerForKommune = (
   stemmekretserMedEndring: string[],
   operasjoner: UtkastOperasjoner,
   alleStemmekretser: StemmekretsResponse[],
-  alleKommuner: KommuneRef[]
+  alleKommuner: KommuneRef[],
 ): Stemmekretsendringer => {
   const stemmekretserMedGrensejusteringer = getKretserMedGrensejusteringer(
     operasjoner,
-    "STEMMEKRETS"
+    "STEMMEKRETS",
   );
 
   const kommune = alleKommuner.find(
-    (kommuneRef) => kommuneRef.kommunenummer.id === kommuneId
+    (kommuneRef) => kommuneRef.kommunenummer.id === kommuneId,
   );
 
   return {
@@ -179,17 +179,17 @@ const getEndringerForKommune = (
     metadataendringer: getMetadataEndringer(
       stemmekretserMedEndring,
       operasjoner,
-      alleStemmekretser
+      alleStemmekretser,
     ),
     grensejusteringer: removeNull(
       stemmekretserMedEndring
         .filter((id) => stemmekretserMedGrensejusteringer.includes(id))
-        .map((stemmekretsId) => findKrets(stemmekretsId, alleStemmekretser))
+        .map((stemmekretsId) => findKrets(stemmekretsId, alleStemmekretser)),
     ),
     sammenslaaing: getSammenslaaingEndring(
       stemmekretserMedEndring,
       operasjoner,
-      alleStemmekretser
+      alleStemmekretser,
     ),
   };
 };
@@ -198,7 +198,7 @@ export const getStemmekretsEndringer = (
   endredeStemmekretser: string[],
   operasjoner: OperasjonerOrNull,
   alleStemmekretser: StemmekretsResponse[],
-  alleKommuner: KommuneRef[]
+  alleKommuner: KommuneRef[],
 ): Stemmekretsendringer[] | null => {
   if (operasjoner == null || endredeStemmekretser.length == 0) {
     return null;
@@ -206,7 +206,7 @@ export const getStemmekretsEndringer = (
 
   const endredeStemmekretserGroupedBykommuneId = groupEndringerByKommune(
     endredeStemmekretser,
-    alleStemmekretser
+    alleStemmekretser,
   );
 
   return Object.entries(endredeStemmekretserGroupedBykommuneId).map(
@@ -216,7 +216,7 @@ export const getStemmekretsEndringer = (
         stemmekretser,
         operasjoner,
         alleStemmekretser,
-        alleKommuner
-      )
+        alleKommuner,
+      ),
   );
 };

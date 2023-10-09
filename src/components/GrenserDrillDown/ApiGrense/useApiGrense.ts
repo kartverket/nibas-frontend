@@ -14,7 +14,7 @@ const useApiGrense = (featuresUrl: string, shouldFetchInitially = false) => {
 
   const { data: geoJson, mutate } = useSWRImmutable<GeoJSONFeatureCollection>(
     shouldFetch ? [featuresUrl, tokenHolderFunc()?.token] : null,
-    fetcherWithToken
+    fetcherWithToken,
   );
 
   const utkastGeoJson = useUtkastFeature(geoJson, utkast);
@@ -32,8 +32,8 @@ const useApiGrense = (featuresUrl: string, shouldFetchInitially = false) => {
 
       const featuresInMap = allFeaturesInMap.filter((feature) =>
         geoJsonFeatures.some(
-          (apiFeature) => apiFeature.getId() === feature.getId()
-        )
+          (apiFeature) => apiFeature.getId() === feature.getId(),
+        ),
       );
 
       if (featuresInMap.length === geoJsonFeatures.length) {

@@ -26,7 +26,7 @@ const useAsyncKodeliste = <T extends FieldValues>(params: Params<T>) => {
     if (!kodeliste) return;
 
     const selectedKodelisteItem = kodeliste.items.find(
-      (kode) => kode.id === initialItemId
+      (kode) => kode.id === initialItemId,
     );
 
     if (!selectedKodelisteItem) return;

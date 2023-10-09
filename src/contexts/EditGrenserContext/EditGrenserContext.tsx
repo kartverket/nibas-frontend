@@ -15,7 +15,7 @@ export type EditGrenserContextValue = {
   setObjectValue: (
     type: EditingType,
     grenseId: string,
-    values?: ObjectValue
+    values?: ObjectValue,
   ) => void;
   resetAndClearAllLayers: () => void;
   getCurrentlyEditingType: () => EditingType | null;
@@ -38,7 +38,7 @@ export const EditGrenserProvider = ({
   const setObjectValue = (
     type: EditingType,
     grenseId: string,
-    values: ObjectValue = {}
+    values: ObjectValue = {},
   ) => {
     setEditingObject((prevState) => ({
       ...prevState,
@@ -56,7 +56,7 @@ export const EditGrenserProvider = ({
   const getCurrentlyEditingType = () => {
     const currentlyEditingType = Object.entries(editingObject).find(
       ([, grensevalues]) =>
-        Object.values(grensevalues).some((grense) => grense.editing)
+        Object.values(grensevalues).some((grense) => grense.editing),
     );
 
     if (currentlyEditingType) {
@@ -91,7 +91,7 @@ export const useEditAllGrenser = () => {
 
   if (!context) {
     throw new Error(
-      "useEditAllGrenser must be used within a EditGrenserProvider"
+      "useEditAllGrenser must be used within a EditGrenserProvider",
     );
   }
 
@@ -134,13 +134,13 @@ export const useEditGrenser = (grenseType: EditingType) => {
 
 export const useEditGrenseValue = (
   grenseType: EditingType,
-  grenseId: string
+  grenseId: string,
 ) => {
   const context = useContext(EditGrenserContext);
 
   if (!context) {
     throw new Error(
-      "useEditGrenseValue must be used within a EditGrenserProvider"
+      "useEditGrenseValue must be used within a EditGrenserProvider",
     );
   }
 

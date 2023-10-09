@@ -15,7 +15,7 @@ const ActiveKartlag = ({ layer, index }: Props) => {
   const { mappedLayers, moveLayer, toggleLayerVisibility } = useKartlag();
 
   const mappedLayer = mappedLayers.find(
-    (ml) => ml.sourceId === layer.mainLayer
+    (ml) => ml.sourceId === layer.mainLayer,
   );
 
   const ref = useDragAndDrop(index, mappedLayer, moveLayer);

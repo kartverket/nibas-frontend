@@ -39,7 +39,7 @@ export const useErrorHandling = () => {
   const context = useContext(ErrorHandlingContext);
   if (!context) {
     throw new Error(
-      "useErrorHandling must be used within a ErrorHandlingContext"
+      "useErrorHandling must be used within a ErrorHandlingContext",
     );
   }
 

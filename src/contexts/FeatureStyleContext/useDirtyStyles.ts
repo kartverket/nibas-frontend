@@ -5,7 +5,7 @@ import { grenseStyles } from "utils/map/layerStyles";
 const useDirtyStyles = () => {
   const [dirtyFeatureIds, setDirtyFeatureIds] = useState<string[]>([]);
   const [savedDirtyFeatureIds, setSavedDirtyFeaturesIds] = useState<string[]>(
-    []
+    [],
   );
 
   const setEditFeatures = (features: string[]) => {
@@ -15,7 +15,7 @@ const useDirtyStyles = () => {
       }
     }
     setDirtyFeatureIds(
-      dirtyFeatureIds.filter((dfi) => !features.includes(dfi))
+      dirtyFeatureIds.filter((dfi) => !features.includes(dfi)),
     );
   };
 
@@ -54,7 +54,7 @@ const useDirtyStyles = () => {
 
   const setAndSaveSammenslaaingsFeatures = (
     stemmekretsFeatureIds: string[],
-    overlappingStemmekretsFeatureIds: string[]
+    overlappingStemmekretsFeatureIds: string[],
   ) => {
     for (const featureId of stemmekretsFeatureIds) {
       editSource

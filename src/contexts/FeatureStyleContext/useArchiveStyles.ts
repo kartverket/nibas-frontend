@@ -11,14 +11,14 @@ const useArchiveStyles = () => {
       editSource
         .getFeatureById(featureId)
         ?.setStyle(
-          getArchiveLayerStyle(editSource.getFeatureById(featureId) as Feature)
+          getArchiveLayerStyle(editSource.getFeatureById(featureId) as Feature),
         );
     }
     for (const featureId of archivedFeatureIds) {
       editSource
         .getFeatureById(featureId)
         ?.setStyle(
-          getArchiveLayerStyle(editSource.getFeatureById(featureId) as Feature)
+          getArchiveLayerStyle(editSource.getFeatureById(featureId) as Feature),
         );
     }
     setArchivedFeatureIds(features);

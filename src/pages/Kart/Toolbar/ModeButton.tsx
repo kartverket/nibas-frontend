@@ -15,7 +15,9 @@ const Container = styled.button<{ $isActive: boolean }>`
   .material-symbols-rounded {
     padding: 4px;
     border-radius: 8px;
-    transition: background 0.15s, color 0.2s;
+    transition:
+      background 0.15s,
+      color 0.2s;
   }
 
   &:disabled {
@@ -61,7 +63,7 @@ const InnerModeButton = (
     isActive = false,
     isDisabled = false,
   }: Props,
-  ref: React.ForwardedRef<HTMLButtonElement>
+  ref: React.ForwardedRef<HTMLButtonElement>,
 ) => {
   return (
     <Container

@@ -9,15 +9,15 @@ import { removeFeaturesFromSourceByIds } from "utils/map/source";
 
 export const useSelectStyles = () => {
   const [selectedPoint, setSelectedPoint] = useState<Feature<Point> | null>(
-    null
+    null,
   );
   const [selectedFeatures, setSelectedFeatures] = useState<SelectedFeatures>(
-    []
+    [],
   );
 
   const selectPointOnFeature = (
     coordinate: Coordinate,
-    features: SelectedFeatures
+    features: SelectedFeatures,
   ) => {
     selectFeatures(features);
 

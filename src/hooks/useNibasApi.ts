@@ -61,7 +61,7 @@ const useNibasApi = <Path extends ApiPath>(
           BareFetcher<ResponseType<Path>>
         >
       >
-    | undefined
+    | undefined,
 ) => {
   const { tokenHolderFunc } = useAuthenticationFlow();
 
@@ -107,7 +107,7 @@ const useNibasApi = <Path extends ApiPath>(
   return useSWR<ResponseType<Path>>(
     [modifiedUrl, tokenHolderFunc()?.token],
     fetcherWithToken,
-    swrOptions
+    swrOptions,
   );
 };
 

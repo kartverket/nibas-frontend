@@ -2,7 +2,7 @@ import { HistoryEntry } from "contexts/HistoryContext";
 
 export const getFeatureIdsFromEntries = (
   accumulator: string[][],
-  entry: HistoryEntry
+  entry: HistoryEntry,
 ) => {
   const featureIds: string[] = [];
   entry.changes.forEach((change) => {

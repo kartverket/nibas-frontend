@@ -43,13 +43,13 @@ const mapGrunnkretserToIds = (kretser?: KretsRef[]) =>
 const kretserByKommuneFetcher = async ([kretsIds, token, type]: [
   string[],
   string | undefined,
-  Kretstype
+  Kretstype,
 ]) => {
   const typeUrl = endpointByKretstype[type];
 
   const kretsFeaturesPromises: Promise<string>[] = kretsIds.map(
     async (kretsId) =>
-      fetcherWithToken([`/v1/${typeUrl}/${kretsId}/grenser`, token])
+      fetcherWithToken([`/v1/${typeUrl}/${kretsId}/grenser`, token]),
   );
 
   return Promise.all(kretsFeaturesPromises);
@@ -59,7 +59,7 @@ const kretserByKommuneFetcher = async ([kretsIds, token, type]: [
 const kretsGeometryFetcher = async ([kretsIds, token, type]: [
   string[],
   string | undefined,
-  Kretstype
+  Kretstype,
 ]) => {
   const typeUrl = endpointByKretstype[type];
 
@@ -134,14 +134,14 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     visible ? getKretserByKommuneUrl(type) : null,
     {
       id: kommuneId,
-    }
+    },
   );
 
   const { data: kretserByKommune } = useNibasApi(
     visible ? getKretserByKommuneUrl(type) : null,
     {
       id: kommuneId,
-    }
+    },
   );
 
   const { data: grenserGeoJsons } = useSWR(
@@ -153,7 +153,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
           "grenser",
         ]
       : null,
-    kretserByKommuneFetcher
+    kretserByKommuneFetcher,
   );
 
   const { data: kretsGeometries } = useSWR(
@@ -165,7 +165,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
           "punkter",
         ]
       : null,
-    kretsGeometryFetcher
+    kretsGeometryFetcher,
   );
 
   const utkastGeoJsons = useUtkastFeature(grenserGeoJsons, utkast);
@@ -182,7 +182,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
 
   const getOverlappingStemmekretsFeatureIds = (featureIds: string[]) => {
     return featureIds.filter(
-      (featureId, index) => featureIds.indexOf(featureId) !== index
+      (featureId, index) => featureIds.indexOf(featureId) !== index,
     );
   };
 
@@ -200,7 +200,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     const sammenslaaing = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
     const innlemmedeStemmekretsIder =
       sammenslaaing?.stemmekretserTilSammenslaaing.map(
-        (stemmekrets) => stemmekrets.lokalId
+        (stemmekrets) => stemmekrets.lokalId,
       );
 
     let sammenslaaingsIder: string[] = [];
@@ -213,7 +213,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
 
     const promiseStemmemkretsFeatureIds = stemmekretsgrenserFetcher(
       sammenslaaingsIder,
-      tokenHolderFunc()?.token
+      tokenHolderFunc()?.token,
     );
 
     promiseStemmemkretsFeatureIds.then((resolvedValue) => {
@@ -221,12 +221,12 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
         ? resolvedValue.filter((x) => x !== undefined).map((x) => String(x))
         : [];
       const overlappingFeatureIds = getOverlappingStemmekretsFeatureIds(
-        stemmekretsFeatureIds
+        stemmekretsFeatureIds,
       );
 
       setAndSaveSammenslaaingsFeatures(
         stemmekretsFeatureIds,
-        overlappingFeatureIds
+        overlappingFeatureIds,
       );
     });
 
@@ -239,9 +239,9 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     allFeatures,
     getZoomMode(
       !!grenseValue.editing,
-      context?.getCurrentlyEditingType() != null
+      context?.getCurrentlyEditingType() != null,
     ),
-    () => applyDirtyStylesToUtkastFeatures(allFeatures ?? [])
+    () => applyDirtyStylesToUtkastFeatures(allFeatures ?? []),
   );
 
   const addKretserToLayer = (layerId: LayerId) => {

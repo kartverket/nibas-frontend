@@ -11,10 +11,10 @@ const createTileLayerFromKartlagSource = (id: keyof typeof kartlagSources) =>
 
 export const kartlagLayers = {
   administrativeGrenser: createTileLayerFromKartlagSource(
-    "administrativeGrenser"
+    "administrativeGrenser",
   ),
   administrativeGrenserHistorisk: createTileLayerFromKartlagSource(
-    "administrativeGrenserHistorisk"
+    "administrativeGrenserHistorisk",
   ),
   grunnkretserWMS: createTileLayerFromKartlagSource("grunnkretserWMS"),
   stedsnavn: createTileLayerFromKartlagSource("stedsnavn"),
@@ -26,7 +26,7 @@ export const kartlagLayers = {
   norgeIBilder: createTileLayerFromKartlagSource("norgeIBilder"),
   cachetjenester: createTileLayerFromKartlagSource("cachetjenester"),
   norgesMaritimeGrenser: createTileLayerFromKartlagSource(
-    "norgesMaritimeGrenser"
+    "norgesMaritimeGrenser",
   ),
   sjokartElektroniske: createTileLayerFromKartlagSource("sjokartElektroniske"),
   matrikkelenWfs: new VectorLayer({ source: new VectorSource() }),
@@ -36,8 +36,10 @@ export const editSource = new VectorSource();
 
 const grenseStyle =
   (grenseId: GrenseId): StyleFunction =>
-  (feature) =>
-    [...getLayerStyle(feature, grenseId, false), getPointOverlayStyle(feature)];
+  (feature) => [
+    ...getLayerStyle(feature, grenseId, false),
+    getPointOverlayStyle(feature),
+  ];
 
 export const grenserLayers = {
   // ingen source betyr at source settes async

@@ -14,7 +14,7 @@ type UseUtkastEndringerReturnType = {
 };
 
 export const useUtkastEndringer = (
-  utkast: UtkastResponse
+  utkast: UtkastResponse,
 ): UseUtkastEndringerReturnType => {
   const {
     endringer: stemmekretsEndringer,

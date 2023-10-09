@@ -20,7 +20,7 @@ const useSelectPoint = () => {
 
   const allowedPointModes: ToolbarPointMode[] = useMemo(
     () => ["koordinater", "split"],
-    []
+    [],
   );
 
   // Dersom man har byttet verktøy ønsker vi å tilbakestille punktet
@@ -62,7 +62,7 @@ const useSelectPoint = () => {
         // Må estimere hvilket punkt på linjen man prøvde å trykke på
         const nearbyVertexCoordinate = findNearbyVertexOnFeature(
           features[0] as Feature<LineString>,
-          event.coordinate
+          event.coordinate,
         );
 
         if (nearbyVertexCoordinate) {
@@ -76,7 +76,7 @@ const useSelectPoint = () => {
 
           selectPointOnFeature(
             nearbyVertexCoordinate,
-            features as Feature<LineString>[]
+            features as Feature<LineString>[],
           );
 
           if (activePointMode === "koordinater") {

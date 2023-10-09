@@ -24,7 +24,7 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
   const { data: stemmekretserByKommune } = useKommuneStemmekretser(kommuneId);
   const utkastStemmekretser = useUtkastEntity(
     stemmekretserByKommune,
-    "stemmekretsendringer"
+    "stemmekretsendringer",
   ) as StemmekretsResponse[] | undefined;
 
   return (
@@ -56,7 +56,7 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
                   stemmekrets={stemmekrets}
                   kommuneId={kommuneId}
                 />
-              )
+              ),
             )}
           </tbody>
         </KretsTable>

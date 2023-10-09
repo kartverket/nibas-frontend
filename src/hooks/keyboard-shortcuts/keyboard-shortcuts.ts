@@ -22,7 +22,7 @@ type ModifierKeysOption = {
 
 const checkModifierKeys = (
   event: KeyboardEvent,
-  modifierKeys: ModifierKeysOption
+  modifierKeys: ModifierKeysOption,
 ): boolean => {
   if (!!modifierKeys.control != (event.ctrlKey || event.metaKey)) {
     return false;
@@ -41,7 +41,7 @@ const checkModifierKeys = (
 
 const keyComboToString = (
   key: string,
-  modifierKeys: ModifierKeysOption
+  modifierKeys: ModifierKeysOption,
 ): string => {
   const keys = [];
   if (modifierKeys.control) {
@@ -60,7 +60,7 @@ const keyComboToString = (
 
 const createShortcut = (
   key: string,
-  modifierKeys: ModifierKeysOption
+  modifierKeys: ModifierKeysOption,
 ): KeyboardShortcut => ({
   displayString: keyComboToString(key, modifierKeys),
   checkEvent: (event: KeyboardEvent) =>

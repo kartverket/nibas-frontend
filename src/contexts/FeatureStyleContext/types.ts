@@ -13,13 +13,13 @@ export type FeatureStyleContextValue = {
   selectFeatures: (features: SelectedFeatures) => void;
   selectPointOnFeature: (
     coordinate: Coordinate,
-    features: SelectedFeatures
+    features: SelectedFeatures,
   ) => void;
 
   setAndSaveUtkastFeatures: (features: string[]) => void;
   setAndSaveSammenslaaingsFeatures: (
     features: string[],
-    overlappingFeatures: string[]
+    overlappingFeatures: string[],
   ) => void;
   dirtyFeatureIds: string[];
   clearDirtyStyles: () => void;

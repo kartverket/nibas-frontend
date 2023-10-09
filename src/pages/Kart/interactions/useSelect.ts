@@ -62,7 +62,7 @@ const useSelect = () => {
 
       // Filtrerer ut den blå prikken som indikerer hva man trykker på
       const filteredFeatures = features.filter(
-        (feature) => feature.getGeometry() instanceof LineString
+        (feature) => feature.getGeometry() instanceof LineString,
       );
 
       if (filteredFeatures.length === 0) {

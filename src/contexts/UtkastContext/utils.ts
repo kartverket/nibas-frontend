@@ -31,7 +31,7 @@ const getCombinedEntity = <T extends ResponseWithId>(
   entity: T,
   utkastSlice: NonNullable<
     NonNullable<UtkastMetadataendringer>[EntityUtkastType]
-  >
+  >,
 ) => {
   const utkastForEntity = utkastSlice[getIdFromEntity(entity)];
 
@@ -43,17 +43,17 @@ const getCombinedEntity = <T extends ResponseWithId>(
 
 const getCombinedFeatures = (
   featureCollection: GeoJSONFeatureCollection,
-  featuresSlice: NonNullable<UtkastGrenseendringer["endredeFeatures"]>
+  featuresSlice: NonNullable<UtkastGrenseendringer["endredeFeatures"]>,
 ) => {
   return featureCollection.features.map(
-    (feature: GeoJSONFeature) => featuresSlice[feature.id] ?? feature
+    (feature: GeoJSONFeature) => featuresSlice[feature.id] ?? feature,
   );
 };
 
 export const applyNonFeatureUtkast = <T extends NonNullable<UtkastEntity>>(
   entity: T,
   utkast: UtkastResponse,
-  type: EntityUtkastType
+  type: EntityUtkastType,
 ) => {
   const utkastSlice = utkast.operasjoner.metadataendringer?.[type];
 
@@ -81,7 +81,7 @@ export const applyNonFeatureUtkast = <T extends NonNullable<UtkastEntity>>(
 
 export const applyFeatureUtkast = (
   featureCollection: GeoJSONFeatureCollection,
-  utkast: UtkastResponse
+  utkast: UtkastResponse,
 ) => {
   const featuresSlice = utkast.operasjoner.grenseendringer?.endredeFeatures;
 
@@ -97,21 +97,21 @@ export const applyFeatureUtkast = (
 
 const reduceMetadataOperations = (
   utkastOperations: UtkastOperasjoner,
-  entry: GrunnkretsEntry | StemmekretsEntry
+  entry: GrunnkretsEntry | StemmekretsEntry,
 ) => {
   switch (entry.type) {
     case "grunnkrets": {
       return addKretsChangeToOperations(
         utkastOperations,
         entry,
-        "grunnkretsendringer"
+        "grunnkretsendringer",
       );
     }
     case "stemmekrets": {
       return addKretsChangeToOperations(
         utkastOperations,
         entry,
-        "stemmekretsendringer"
+        "stemmekretsendringer",
       );
     }
   }
@@ -119,7 +119,7 @@ const reduceMetadataOperations = (
 
 const reduceGrenseOperations = (
   editedFeatures: Record<string, GeoJSONFeature>,
-  entry: GrenseEntry | MetadataEntry
+  entry: GrenseEntry | MetadataEntry,
 ) => {
   entry.changes.forEach((change) => {
     if (!change.to) return editedFeatures;
@@ -139,7 +139,7 @@ const reduceGrenseOperations = (
 //Antas at det bare er en entry i changes
 const reduceStemmekretssammenslaingsOperations = (
   operations: StemmekretsSammenslaaingsendringRequest,
-  entry: StemmekretsSammenslaaingsendringEntry
+  entry: StemmekretsSammenslaaingsendringEntry,
 ): StemmekretsSammenslaaingsendringRequest => {
   entry.changes.forEach((change) => {
     if (!change.to) return operations;
@@ -152,7 +152,7 @@ const reduceStemmekretssammenslaingsOperations = (
 const addKretsChangeToOperations = (
   operations: UtkastOperasjoner,
   entry: GrunnkretsEntry | StemmekretsEntry,
-  endringerKey: "grunnkretsendringer" | "stemmekretsendringer"
+  endringerKey: "grunnkretsendringer" | "stemmekretsendringer",
 ) => {
   entry.changes.forEach((change) => {
     if (change.to && operations.metadataendringer[endringerKey]) {
@@ -165,14 +165,14 @@ const addKretsChangeToOperations = (
 
 export const historyToUtkastOperations = (
   history: HistoryState,
-  previousUtkast?: UtkastResponse
+  previousUtkast?: UtkastResponse,
 ) => {
   const historyToCurrentIndex = history.entries.slice(0, history.index);
 
   // hent endringer på enheter og gjør endringene om til utkastoperasjoner
   const utkastOperations = (
     historyToCurrentIndex.filter(
-      (entry) => entry.type === "stemmekrets" || entry.type === "grunnkrets"
+      (entry) => entry.type === "stemmekrets" || entry.type === "grunnkrets",
     ) as (GrunnkretsEntry | StemmekretsEntry)[]
   ).reduce(
     reduceMetadataOperations,
@@ -183,16 +183,16 @@ export const historyToUtkastOperations = (
         stemmekretssammenslaaingsendringer:
           previousUtkast?.operasjoner.stemmekretsSammenslaaingsendring,
       },
-    })
+    }),
   ) as UtkastOperasjoner;
 
   const sammenslaaingsOperations = (
     historyToCurrentIndex.filter(
-      (entry) => entry.type === "stemmekretssammenslaaingsendring"
+      (entry) => entry.type === "stemmekretssammenslaaingsendring",
     ) as StemmekretsSammenslaaingsendringEntry[]
   ).reduce(
     reduceStemmekretssammenslaingsOperations,
-    {} as StemmekretsSammenslaaingsendringRequest
+    {} as StemmekretsSammenslaaingsendringRequest,
   );
 
   //Antar her at det bare er en sammenslåing per utkast
@@ -204,7 +204,7 @@ export const historyToUtkastOperations = (
   // hent grenseendringer og gjør endringene om til en liste av features
   const editedFeatures = (
     historyToCurrentIndex.filter(
-      (entry) => entry.type === "grense" || entry.type === "metadata"
+      (entry) => entry.type === "grense" || entry.type === "metadata",
     ) as (GrenseEntry | MetadataEntry)[]
   ).reduce(reduceGrenseOperations, {} as Record<string, GeoJSONFeature>);
 
