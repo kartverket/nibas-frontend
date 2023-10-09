@@ -30,12 +30,12 @@ const HeaderButton = ({
 );
 
 const HeaderIconButton = styled(IconButton)`
-  width: unset;
+  min-width: unset;
   height: unset;
   padding: 5px;
 
   & > .material-symbols-rounded {
-    font-size: var(--kvib-fontSizes-lg);
+    font-size: var(--kvib-fontSizes-lg) !important;
   }
 `;
 

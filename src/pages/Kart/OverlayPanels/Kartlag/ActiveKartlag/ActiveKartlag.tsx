@@ -75,10 +75,6 @@ const Card = styled.div`
   padding: 16px;
   border-width: 1px;
   border-radius: 8px;
-
-  .material-symbols-rounded {
-    font-size: 24px;
-  }
 `;
 
 const ActiveSublag = styled.div`
