@@ -27,7 +27,7 @@ const useDraw = () => {
         condition: (event: MapBrowserEvent<MouseEvent>) =>
           noModifierKeys(event) && activePointMode === "draw",
       }),
-    [activePointMode]
+    [activePointMode],
   );
 
   useEffect(() => {

@@ -27,7 +27,7 @@ export type ToolbarContextValue = {
 };
 
 export const ToolbarContext = createContext<ToolbarContextValue | undefined>(
-  undefined
+  undefined,
 );
 
 export const ToolbarProvider = ({

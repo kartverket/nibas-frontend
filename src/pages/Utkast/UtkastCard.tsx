@@ -31,7 +31,7 @@ const UtkastCard = ({ utkast }: { utkast: UtkastResponse }) => {
       </Info>
       <Menu>
         <MenuButton
-          as={MenuIconButton}
+          as={IconButton}
           onClick={(e) => e.stopPropagation()}
           aria-label="Flere alternativer"
           icon="more_horiz"
@@ -75,12 +75,6 @@ const Info = styled.div`
 const Date = styled(Text)`
   font-size: var(--kvib-fontSizes-xs);
   color: var(--kvib-colors-gray-500);
-`;
-
-const MenuIconButton = styled(IconButton)`
-  .material-symbols-rounded {
-    font-size: 20px;
-  }
 `;
 
 export default UtkastCard;

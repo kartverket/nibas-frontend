@@ -67,7 +67,7 @@ export const useOverlayPanel = () => {
   const context = useContext(OverlayPanelContext);
   if (!context) {
     throw new Error(
-      "useOverlayPanel must be used within a OverlayPanelContext"
+      "useOverlayPanel must be used within a OverlayPanelContext",
     );
   }
 

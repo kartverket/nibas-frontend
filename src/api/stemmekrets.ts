@@ -4,11 +4,11 @@ import { removeNull } from "utils/list-utils";
 
 export const stemmekretsgrenserFetcher = async (
   stemmekretsIds: string[],
-  token: string | undefined
+  token: string | undefined,
 ) => {
   const promises: Promise<FeatureCollection>[] = stemmekretsIds.map(
     async (kretsId) =>
-      fetcherWithToken([`/v1/stemmekretser/${kretsId}/grenser`, token])
+      fetcherWithToken([`/v1/stemmekretser/${kretsId}/grenser`, token]),
   );
 
   const stemmekretsFeatures = await Promise.all(promises);
@@ -16,7 +16,7 @@ export const stemmekretsgrenserFetcher = async (
   const featureIds = removeNull(
     stemmekretsFeatures
       .flatMap((feature) => feature.features)
-      .map((feature) => feature.id)
+      .map((feature) => feature.id),
   );
   return featureIds;
 };

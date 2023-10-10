@@ -15,7 +15,7 @@ type ApiEntityWithIdentifikasjon = {
 };
 
 export const getIdFromEntity = (
-  entity: ApiEntity | ApiEntityWithIdentifikasjon
+  entity: ApiEntity | ApiEntityWithIdentifikasjon,
 ) => {
   if ((entity as ApiEntityWithIdentifikasjon).identifikasjon) {
     return (entity as ApiEntityWithIdentifikasjon).identifikasjon.lokalid;
@@ -54,7 +54,7 @@ export const getUrlForPath = (path: string): string => {
 
 export const fetcherWithToken = async ([url, token]: [
   string | null,
-  string | undefined
+  string | undefined,
 ]) => {
   if (!url) return;
 

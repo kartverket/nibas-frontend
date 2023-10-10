@@ -32,7 +32,7 @@ beforeEach(() => {
 
 const renderWithProvider = (
   ui: React.ReactNode,
-  objectValue: ObjectValue = { editing: false, visible: false }
+  objectValue: ObjectValue = { editing: false, visible: false },
 ) => {
   render(ui, {
     EditGrenserProvider: {

@@ -7,7 +7,7 @@ import { getUrlForPath } from "utils/api";
 
 export const createUtkast = (
   utkast: OpprettUtkastRequest,
-  token: string | undefined
+  token: string | undefined,
 ) => {
   return fetch(getUrlForPath(`v1/utkast`), {
     method: "POST",
@@ -22,7 +22,7 @@ export const createUtkast = (
 export const updateUtkastApi = (
   id: string,
   utkast: OppdaterUtkastRequest,
-  token?: string
+  token?: string,
 ) => {
   return fetch(getUrlForPath(`v1/utkast/${id}`), {
     method: "PUT",
@@ -37,7 +37,7 @@ export const updateUtkastApi = (
 export const publishUtkast = (
   id: string,
   utkast: OppdaterUtkastRequest,
-  token: string | undefined
+  token: string | undefined,
 ) => {
   return fetch(getUrlForPath(`v1/utkast/${id}/publiser`), {
     method: "POST",
@@ -62,7 +62,7 @@ export const deleteUtkast = (utkastId: string, token: string | undefined) => {
 export const resolveUtkastConflict = (
   utkastId: string,
   resolvedConflict: ConflictResolved,
-  token: string | undefined
+  token: string | undefined,
 ) => {
   return fetch(getUrlForPath(`v1/utkast/${utkastId}/resolved`), {
     method: "POST",

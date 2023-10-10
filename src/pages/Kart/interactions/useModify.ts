@@ -36,7 +36,7 @@ const useModify = () => {
   // Ønsker helst at redigering ikke skal være aktiv under enkelte verktøy
   const disallowedPointModes: ToolbarPointMode[] = useMemo(
     () => ["draw", "split", "metadata", "archive", "koordinater"],
-    []
+    [],
   );
 
   const modify = useMemo(
@@ -90,7 +90,7 @@ const useModify = () => {
                 // Sjekker hvilket punkt du trykket på
                 const nearbyVertexCoordinate = findNearbyVertexOnFeature(
                   feature as Feature<LineString>,
-                  event.coordinate
+                  event.coordinate,
                 );
 
                 // Ettersom vi ikke støtter løse tråder per nå lar vi deg ikke fjerne endepunkter
@@ -99,7 +99,7 @@ const useModify = () => {
                   (isCoordinateEqual(nearbyVertexCoordinate, coordinates[0]) ||
                     isCoordinateEqual(
                       nearbyVertexCoordinate,
-                      coordinates[coordinates.length - 1]
+                      coordinates[coordinates.length - 1],
                     ))
                 ) {
                   toast({
@@ -124,7 +124,7 @@ const useModify = () => {
       editLayer,
       selectedFeatures,
       toast,
-    ]
+    ],
   );
 
   const previousCoordinateKey = "previousCoordinates";

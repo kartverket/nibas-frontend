@@ -29,7 +29,7 @@ const Kommune = ({ kommune }: Props) => {
   const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } =
     useAlertModal(
       "Du har endringer i utkastet som ikke er lagret",
-      "Er du sikker på at du vil avslutte redigering av denne kommunen? Dersom du avslutter redigering nå mister du alle ulagrede endringer."
+      "Er du sikker på at du vil avslutte redigering av denne kommunen? Dersom du avslutter redigering nå mister du alle ulagrede endringer.",
     );
 
   const closeEditing = () => {

@@ -19,7 +19,7 @@ const KommuneList = ({ fylke }: Props) => {
   const [shouldFetch, setShouldFetch] = useState(false);
   const { kommunegrenser, isFetching } = useKommunegrenser(
     fylkeId,
-    shouldFetch
+    shouldFetch,
   );
   const { value } = useEditGrense("kommune", fylkeId, kommunegrenser);
 

@@ -20,7 +20,7 @@ const getFailingRequests = () => {
   ];
 
   return requestUrls.map((url) =>
-    rest.get(url, (req, res, ctx) => res(ctx.status(501)))
+    rest.get(url, (req, res, ctx) => res(ctx.status(501))),
   );
 };
 
@@ -284,9 +284,9 @@ export const geonorgeHandlers: RestHandler[] = [
        </Contents>
     <ServiceMetadataURL xlink:href="https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm33_wmts_v2?request=GetCapabilities&amp;service=WMTS" /> 
     </Capabilities>
-    `)
+    `),
       );
-    }
+    },
   ),
   rest.get(
     "https://wms.geonorge.no/skwms1/wms.adm_enheter2",
@@ -917,8 +917,8 @@ export const geonorgeHandlers: RestHandler[] = [
       </Layer>
     </Capability>
     </WMS_Capabilities>
-    `)
+    `),
       );
-    }
+    },
   ),
 ];

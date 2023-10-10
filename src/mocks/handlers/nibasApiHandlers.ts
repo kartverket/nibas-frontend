@@ -33,7 +33,7 @@ export const nibasApiHandlers: RestHandler[] = [
   rest.get("/v1/kodeliste/noeyaktighetsklasser", (req, res, ctx) => {
     return res(
       ctx.status(200),
-      ctx.json(mocks.mockNoeyaktighetsklasseResponse)
+      ctx.json(mocks.mockNoeyaktighetsklasseResponse),
     );
   }),
   rest.get("/v1/kommuner/:id", (req, res, ctx) => {
@@ -42,7 +42,7 @@ export const nibasApiHandlers: RestHandler[] = [
   rest.get("/v1/kommuner/:id/grunnkretser", (req, res, ctx) => {
     return res(
       ctx.status(200),
-      ctx.json([mocks.mockGrunnkrets1, mocks.mockGrunnkrets2])
+      ctx.json([mocks.mockGrunnkrets1, mocks.mockGrunnkrets2]),
     );
   }),
   rest.get("/v1/grunnkretser/1", (req, res, ctx) => {
@@ -69,7 +69,7 @@ export const nibasApiHandlers: RestHandler[] = [
   rest.get("/v1/utkast", (req, res, ctx) => {
     return res(
       ctx.status(200),
-      ctx.json<UtkastRef[]>([mocks.mockUtkastRef1, mocks.mockUtkastRef2])
+      ctx.json<UtkastRef[]>([mocks.mockUtkastRef1, mocks.mockUtkastRef2]),
     );
   }),
   rest.post("/v1/utkast/1/publiser", (req, res, ctx) => {
@@ -78,15 +78,15 @@ export const nibasApiHandlers: RestHandler[] = [
   rest.get("/v1/grunnkretser/1/framtidigeversjoner", (req, res, ctx) => {
     return res(
       ctx.status(200),
-      ctx.json<GrunnkretsResponse[]>(mocks.mockGrunnkretserFramtidigeEndringer)
+      ctx.json<GrunnkretsResponse[]>(mocks.mockGrunnkretserFramtidigeEndringer),
     );
   }),
   rest.get("/v1/stemmekretser/1/framtidigeversjoner", (req, res, ctx) => {
     return res(
       ctx.status(200),
       ctx.json<StemmekretsResponse[]>(
-        mocks.mockStemmekretserFramtidigeEndringer
-      )
+        mocks.mockStemmekretserFramtidigeEndringer,
+      ),
     );
   }),
 ];

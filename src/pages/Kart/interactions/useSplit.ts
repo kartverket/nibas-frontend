@@ -35,7 +35,8 @@ const useSplit = () => {
             const coordinatesToSplit = pointGeometry.getCoordinates();
             const splitIndex = coordinates.findIndex(
               (v) =>
-                v[0] === coordinatesToSplit[0] && v[1] === coordinatesToSplit[1]
+                v[0] === coordinatesToSplit[0] &&
+                v[1] === coordinatesToSplit[1],
             );
 
             // Dette verifiserer at det valgte punktet er et gyldig punkt å splitte på grensen

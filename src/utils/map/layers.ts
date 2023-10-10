@@ -14,12 +14,12 @@ const getLayersArray = () => map.getLayers().getArray() ?? [];
 
 export const getLayerById = <T extends LayerId>(id: T) => {
   const layersWithId = getLayersArray().filter(
-    (layer) => layer.get("id") === id
+    (layer) => layer.get("id") === id,
   );
 
   if (layersWithId.length !== 1) {
     throw new Error(
-      `Fant ${layersWithId.length} lag med id ${id}. Sjekk funksjonen som oppretter og setter inn lag i kartet`
+      `Fant ${layersWithId.length} lag med id ${id}. Sjekk funksjonen som oppretter og setter inn lag i kartet`,
     );
   }
 
@@ -63,7 +63,7 @@ export const getVectorLayers = () => {
   const layers = getLayersArray();
 
   return layers.filter(
-    (layer) => layer instanceof VectorLayer
+    (layer) => layer instanceof VectorLayer,
   ) as VectorLayer<GeometryVectorSource>[];
 };
 
@@ -76,7 +76,7 @@ export const isWMSLayer = (layer: BaseLayer): layer is TileLayer<TileWMS> => {
 };
 
 export const isVectorLayer = (
-  layer: BaseLayer
+  layer: BaseLayer,
 ): layer is VectorLayer<GeometryVectorSource> => {
   return layer instanceof VectorLayer;
 };

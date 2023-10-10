@@ -39,7 +39,7 @@ export const FeatureStyleProvider = ({
   // Når en feature ikke er valgt lengre må vi avgjøre hvilken stil den skal ha
   useEffect(() => {
     const deselectedFeatures = previousSelectedFeatures.current.filter(
-      (psf) => !selectedFeatures.some((sf) => psf.getId() === sf.getId())
+      (psf) => !selectedFeatures.some((sf) => psf.getId() === sf.getId()),
     );
 
     for (const feature of deselectedFeatures) {
@@ -115,7 +115,7 @@ export const useFeatureStyle = () => {
   const context = useContext(FeatureStyleContext);
   if (!context) {
     throw new Error(
-      "useFeatureStyle must be used within a FeatureStyleContext"
+      "useFeatureStyle must be used within a FeatureStyleContext",
     );
   }
 

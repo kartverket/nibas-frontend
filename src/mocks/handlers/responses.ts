@@ -106,7 +106,7 @@ export const mockGeoJsonFeatureResponse: GeoJSONFeatureCollection = {
 };
 
 export const mockBasicFeature = getFeaturesFromGeoJson(
-  mockGeoJsonFeatureResponse
+  mockGeoJsonFeatureResponse,
 )[0];
 
 export const mockFylker = [

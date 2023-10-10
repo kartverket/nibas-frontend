@@ -27,7 +27,7 @@ type UtkastGroup = Record<UtkastResponse["endringstype"], UtkastResponse[]>;
 
 const sortUtkastByCreatedDesc = (
   a: UtkastResponse,
-  b: UtkastResponse
+  b: UtkastResponse,
 ): number => b.opprettetDato.localeCompare(a.opprettetDato);
 
 const Utkast = () => {

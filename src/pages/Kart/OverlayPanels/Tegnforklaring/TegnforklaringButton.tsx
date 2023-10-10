@@ -28,8 +28,4 @@ const RoundButton = styled(IconButton)`
   top: 16px;
   right: 16px;
   border-radius: 50%;
-
-  .material-symbols-rounded {
-    font-size: 20px;
-  }
 `;

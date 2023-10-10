@@ -18,13 +18,13 @@ const layerIdByGrenseType: Record<EditingType, GrenseId> = {
 
 export const useEditGrenseValue = (
   grenseType: EditingType,
-  grenseId: string
+  grenseId: string,
 ) => {
   const context = useContext(EditGrenserContext);
 
   if (!context) {
     throw new Error(
-      "useIsEditingGrense must be used within a EditGrenserProvider"
+      "useIsEditingGrense must be used within a EditGrenserProvider",
     );
   }
 
@@ -40,7 +40,7 @@ export const useEditGrenseValue = (
 export const useEditGrense = (
   grenseType: EditingType,
   grenseId: string,
-  features: Feature<Geometry>[] | null
+  features: Feature<Geometry>[] | null,
 ) => {
   const context = useContext(EditGrenserContext);
 
@@ -48,7 +48,7 @@ export const useEditGrense = (
   const { value, setValue } = useEditGrenseValue(grenseType, grenseId);
   const { addFeaturesToLayer } = useAsyncFeatures(
     features,
-    getZoomMode(!!value.editing, context?.getCurrentlyEditingType() != null)
+    getZoomMode(!!value.editing, context?.getCurrentlyEditingType() != null),
   );
 
   const toggleVisible = () => {

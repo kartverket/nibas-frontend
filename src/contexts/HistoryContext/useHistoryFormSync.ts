@@ -3,7 +3,7 @@ import { HistoryEntry } from "contexts/HistoryContext";
 
 const getChangeForId = <EntryType extends HistoryEntry>(
   entry: EntryType,
-  id?: string
+  id?: string,
 ) =>
   // https://github.com/microsoft/TypeScript/issues/33591
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -15,7 +15,7 @@ type Parameters<EntryType extends HistoryEntry> = {
   entityId: string | undefined;
   setFormValues: (
     change: EntryType["changes"][number],
-    direction: "to" | "from"
+    direction: "to" | "from",
   ) => void;
   undoEventKey: string;
   redoEventKey: string;

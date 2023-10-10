@@ -22,7 +22,7 @@ const ApiGrense = <T extends GrenseRef>({
   const { editing, visible } = useEditGrenseValue(type, grenseId);
   const { features, fetchFeatures } = useApiGrense(
     featuresUrl,
-    editing || visible
+    editing || visible,
   );
 
   useEffect(() => {

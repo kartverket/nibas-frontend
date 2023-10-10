@@ -4,7 +4,7 @@ import { editSource } from "hooks/layers/constants";
 
 export const setFeatureCoordinatesForEntry = (
   entry: GrenseEntry,
-  direction: "from" | "to"
+  direction: "from" | "to",
 ) => {
   entry.changes.forEach((change) => {
     const feature = editSource.getFeatureById(change.id);
@@ -20,13 +20,13 @@ export const setFeatureCoordinatesForEntry = (
   return document.dispatchEvent(
     new CustomEvent(direction === "from" ? "grenseUndo" : "grenseRedo", {
       detail: { entry },
-    })
+    }),
   );
 };
 
 export const setFeatureMetadataForEntry = (
   entry: MetadataEntry,
-  direction: "from" | "to"
+  direction: "from" | "to",
 ) => {
   entry.changes.forEach((change) => {
     const feature = editSource.getFeatureById(change.id);
