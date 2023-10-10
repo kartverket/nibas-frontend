@@ -75,6 +75,7 @@ const ToolbarMenus = () => {
       label: "Tegn ny grense",
       icon: <Icon icon="edit" />,
       $isActive: activePointMode === "draw",
+      isDisabled: !editingType,
       onClick: () => togglePointMode("draw"),
       "aria-label": "Tegn en ny grense fra et punkt",
     },
@@ -82,6 +83,7 @@ const ToolbarMenus = () => {
       label: "Splitt grense",
       icon: <Icon icon="location_off" />,
       $isActive: activePointMode === "split",
+      isDisabled: !editingType,
       onClick: () => togglePointMode("split"),
       "aria-label": "Del en grense i to fra et punkt",
     },
@@ -89,6 +91,7 @@ const ToolbarMenus = () => {
       label: "Løsriv grense",
       icon: <Icon icon="edit_location_alt" />,
       $isActive: activePointMode === "detach",
+      isDisabled: !editingType,
       onClick: () => togglePointMode("detach"),
       "aria-label": "Løsriv grense fra et knutepunkt",
     },
@@ -103,6 +106,7 @@ const ToolbarMenus = () => {
       label: "Arkiver grense",
       icon: <Icon icon="archive" />,
       $isActive: activePointMode === "archive",
+      isDisabled: !editingType,
       onClick: () => togglePointMode("archive"),
       "aria-label": "Arkiver grense",
     },
@@ -155,7 +159,7 @@ const ToolbarMenus = () => {
           as={ModeButton}
           aria-label="Grenseverktøy"
           icon="show_chart"
-          isDisabled={!editingType}
+          isDisabled={grenseMenuItems.every((gmi) => gmi.isDisabled)}
           isActive={grenseMenuItems.some((gmi) => gmi.$isActive)}
         >
           Grense
@@ -173,7 +177,7 @@ const ToolbarMenus = () => {
           as={ModeButton}
           aria-label="Punktverktøy"
           icon="conversion_path"
-          isDisabled={!editingType}
+          isDisabled={punktMenuItems.every((pmi) => pmi.isDisabled)}
           isActive={punktMenuItems.some((pmi) => pmi.$isActive)}
         >
           Punkt
@@ -191,7 +195,7 @@ const ToolbarMenus = () => {
           as={ModeButton}
           aria-label="Flateverktøy"
           icon="area_chart"
-          isDisabled={!editingType}
+          isDisabled={flateMenuItems.every((fmi) => fmi.isDisabled)}
           isActive={flateMenuItems.some((fmi) => fmi.$isActive)}
         >
           Flate
