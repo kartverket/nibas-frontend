@@ -3,22 +3,34 @@ import styled from "styled-components";
 import EditAndSaveButton from "../Flatedata/EditAndSaveButton";
 import { useState } from "react";
 
-const EditContent = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
-  column-gap: 16px;
-  padding: 9px 28px 9px 28px;
-  align-items: center;
-`;
-
 const EditRow = styled.div`
   display: flex;
   flex-direction: column;
 `;
 
+const EditContent = styled.div<{ $twoRows: boolean }>`
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr;
+  ${(props) => props.$twoRows && "grid-template-rows: 1fr 2fr;"};
+  column-gap: 16px;
+  row-gap: 16px;
+  padding: 21px 28px 21px 28px;
+  align-items: center;
+
+  :nth-child(2) {
+    ${(props) => props.$twoRows && "grid-row: 2; grid-column: 1 / -1"};
+  }
+
+  td {
+    // Setter EditAndSaveButton til å alltid ligge i siste kolonne
+    padding: 0;
+    grid-column: 3;
+  }
+`;
+
 const StyledDivider = styled(Divider)`
   align-self: center;
-  width: calc(100% - 56px);
+  width: calc(100% - 56px); // 56px er padding-bottom + padding-top
 `;
 
 interface Props {
@@ -27,6 +39,7 @@ interface Props {
   children: React.ReactNode;
   onMetadataSubmit: () => void;
   isDisabled?: boolean;
+  useSeperateRowForChildren?: boolean;
 }
 
 export const MetadataRow = ({
@@ -35,12 +48,13 @@ export const MetadataRow = ({
   children,
   onMetadataSubmit,
   isDisabled,
+  useSeperateRowForChildren,
 }: Props) => {
   const [isEdit, setIsEdit] = useState(false);
-
+  const twoRows = (useSeperateRowForChildren && isEdit) ?? false;
   return (
-    <EditRow style={{ display: "flex", flexDirection: "column" }}>
-      <EditContent>
+    <EditRow>
+      <EditContent $twoRows={twoRows}>
         <Text>{name}</Text>
 
         {!isEdit ? <Text as="b">{value}</Text> : children}

@@ -20,8 +20,8 @@ type Inputs = {
   gyldigTil: string;
 };
 
-const getUpdatedMetadata = (data: Inputs, oldMetadata: Metadata) =>
-  ({
+const getUpdatedMetadata = (data: Inputs, oldMetadata: Metadata) => {
+  const newMetadata = ({
     ...(oldMetadata ?? {}),
     common: {
       ...(oldMetadata.common ?? {}),
@@ -42,7 +42,11 @@ const getUpdatedMetadata = (data: Inputs, oldMetadata: Metadata) =>
         noeyaktighet: data.noeyaktighet,
       },
     },
-  }) as Metadata;
+  } as Metadata);
+  console.log(newMetadata)
+  return newMetadata
+}
+  
 
 const getFormFromApiMetadata = (metadata: Metadata) => ({
   informasjon: metadata?.common?.informasjon,

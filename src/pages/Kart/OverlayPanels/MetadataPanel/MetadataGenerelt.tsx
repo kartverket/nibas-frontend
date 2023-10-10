@@ -12,6 +12,7 @@ import {
   NumberInputField,
   NumberInputStepper,
   Select,
+  Textarea,
 } from "@kvib/react";
 
 import { MetadataRow } from "./MetadataRow";
@@ -118,6 +119,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
           )?.label ?? "Ukjent"
         }
         onMetadataSubmit={onSubmit}
+        useSeperateRowForChildren
       >
         <AsyncKodelisteSelect
           kodeliste={maalemetodeKoder}
@@ -145,15 +147,24 @@ const MetadataGenerelt = ({ feature }: Props) => {
         name="Opphav"
         value={metadata.common?.opphav ?? ""}
         onMetadataSubmit={onSubmit}
+        useSeperateRowForChildren
       >
-        <Input {...register("opphav")} />
+        <Input
+          {...register("opphav")}
+          placeholder={"Fyll inn informasjon om opphav"}
+        />
       </MetadataRow>
       <MetadataRow
         name="Ekstra informasjon"
         value={metadata.common?.informasjon ?? ""}
         onMetadataSubmit={onSubmit}
+        useSeperateRowForChildren
       >
-        <Input {...register("informasjon")} />
+        <Textarea
+          {...register("informasjon")}
+          placeholder={"Fyll inn ekstra informasjon"}
+          minHeight={"100%"}
+        />
       </MetadataRow>
     </EditTable>
   );
