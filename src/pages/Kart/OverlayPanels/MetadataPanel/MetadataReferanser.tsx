@@ -214,7 +214,7 @@ const MetadataReferanser = ({ feature }: Props) => {
   const metadataIsDisabled = useIsMetadataDisabled(properties);
 
   return (
-    <form>
+    <form style={{ paddingTop: "16px" }}>
       {fields.map((field, i) => (
         <DokRefWrapper key={field.id}>
           <Container>

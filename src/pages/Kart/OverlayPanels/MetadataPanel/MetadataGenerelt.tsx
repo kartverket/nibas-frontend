@@ -153,7 +153,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
         value={metadata.common?.informasjon ?? ""}
         onMetadataSubmit={onSubmit}
       >
-        <Input {...register("informasjon", { disabled: metadataIsDisabled })} />
+        <Input {...register("informasjon")} />
       </MetadataRow>
     </EditTable>
   );

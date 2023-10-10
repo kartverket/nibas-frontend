@@ -62,7 +62,6 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
           <MetadataGenerelt feature={selectedFeature} />
           {showReferanser && (
             <>
-              <Divider />
               <MetadataReferanser feature={selectedFeature} />
             </>
           )}

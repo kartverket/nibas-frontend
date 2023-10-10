@@ -11,10 +11,6 @@ const EditRow = styled.div`
   align-items: center;
 `;
 
-const RightAlignedCell = styled.div`
-  width: 100%;
-`;
-
 interface Props {
   name: string;
   value: string | undefined;
@@ -37,9 +33,7 @@ export const MetadataRow = ({
       <EditRow>
         <Text>{name}</Text>
 
-        <RightAlignedCell>
-          {!isEdit ? <Text as="b">{value}</Text> : children}
-        </RightAlignedCell>
+        {!isEdit ? <Text as="b">{value}</Text> : children}
 
         <EditAndSaveButton
           isDisabled={isDisabled}

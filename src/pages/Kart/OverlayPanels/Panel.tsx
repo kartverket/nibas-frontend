@@ -76,15 +76,6 @@ const getPaddingForSize = (size: PanelHeaderSizes): string => {
   }
 };
 
-const getMarginForSize = (size: PanelHeaderSizes): string => {
-  switch (size) {
-    case "md":
-      return "16px";
-    case "sm":
-      return "12px";
-  }
-};
-
 const getCloseButtonSize = (size: PanelHeaderSizes): string => {
   switch (size) {
     case "md":
