@@ -30,7 +30,7 @@ const slideIn = keyframes`
 
 export const Panel = styled.div<{ $isOpen: boolean }>`
   margin: 16px;
-  padding: 0 16px;
+  padding: 22px 28px 22px 28px;
   background: white;
   border: 2px solid var(--kvib-colors-gray-50);
   border-radius: 12px;
@@ -45,7 +45,7 @@ export const Panel = styled.div<{ $isOpen: boolean }>`
 
 export const SidePanel = styled(Panel)`
   grid-area: sidepanel;
-  width: 450px;
+  width: 558px;
   border-radius: unset;
   margin: 0;
   border-top: none;
@@ -70,9 +70,9 @@ type PanelHeaderContainerProps = {
 const getPaddingForSize = (size: PanelHeaderSizes): string => {
   switch (size) {
     case "md":
-      return "24px 8px 16px";
+      return "16px 0 16px 0";
     case "sm":
-      return "12px 8px 8px";
+      return "12px 0 8px 0";
   }
 };
 

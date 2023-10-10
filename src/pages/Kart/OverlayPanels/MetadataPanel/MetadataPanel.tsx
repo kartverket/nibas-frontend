@@ -17,12 +17,6 @@ const grenseTypeWithReferanser = [
   "Grunnlinje",
 ];
 
-const Content = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-`;
-
 const MetadataPanel = ({ isOpen, className }: PanelProps) => {
   const { selectedFeatures } = useFeatureStyle();
   const { closeOverlayPanel } = useOverlayPanel();
@@ -64,7 +58,7 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
         Informasjon om grense
       </PanelHeader>
       {selectedFeature && !isWFSGrense && selectedProperties.metadata ? (
-        <Content>
+        <>
           <MetadataGenerelt feature={selectedFeature} />
           {showReferanser && (
             <>
@@ -72,7 +66,7 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
               <MetadataReferanser feature={selectedFeature} />
             </>
           )}
-        </Content>
+        </>
       ) : (
         <p>Den valgte grensen har ingen metadata</p>
       )}

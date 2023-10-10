@@ -3,8 +3,16 @@ import styled from "styled-components";
 import EditAndSaveButton from "../Flatedata/EditAndSaveButton";
 import { useState } from "react";
 
-const EditRow = styled.tr`
+const EditRow = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  column-gap: 16px;
+  padding: 9px 0 9px 0;
   align-items: center;
+`;
+
+const RightAlignedCell = styled.div`
+  width: 100%;
 `;
 
 interface Props {
@@ -27,23 +35,22 @@ export const MetadataRow = ({
   return (
     <>
       <EditRow>
-        <td>
-          <Text>{name}</Text>
-        </td>
-        <td>{!isEdit ? <Text as="b">{value}</Text> : children}</td>
+        <Text>{name}</Text>
 
-        <td>
-          <EditAndSaveButton
-            isDisabled={isDisabled}
-            isEditing={isEdit}
-            canSave={true}
-            onSubmit={() => {
-              onMetadataSubmit();
-              setIsEdit(false);
-            }}
-            toggleEditing={() => setIsEdit((prevState) => !prevState)}
-          />
-        </td>
+        <RightAlignedCell>
+          {!isEdit ? <Text as="b">{value}</Text> : children}
+        </RightAlignedCell>
+
+        <EditAndSaveButton
+          isDisabled={isDisabled}
+          isEditing={isEdit}
+          canSave={true}
+          onSubmit={() => {
+            onMetadataSubmit();
+            setIsEdit(false);
+          }}
+          toggleEditing={() => setIsEdit((prevState) => !prevState)}
+        />
       </EditRow>
       <Divider />
     </>

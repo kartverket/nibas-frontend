@@ -37,14 +37,7 @@ type Props = {
   feature: Feature<Geometry>;
 };
 
-const Container = styled.div`
-  padding: 0 8px 0 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-`;
-
-const EditTable = styled.table``;
+const EditTable = styled.div``;
 
 const MetadataGenerelt = ({ feature }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
@@ -72,105 +65,97 @@ const MetadataGenerelt = ({ feature }: Props) => {
   };
 
   return (
-    <Container>
-      <EditTable>
-        <tbody>
-          <MetadataRow
-            name={"Grensetype"}
-            value={properties.type}
-            onMetadataSubmit={onSubmit}
-            isDisabled={true}
-          >
-            <Select {...register("grenseType")}>
-              {GrenseTypeValues.map((grenseType: GrenseType) => (
-                <option key={grenseType}>{grenseType}</option>
-              ))}
-            </Select>
-          </MetadataRow>
-          <MetadataRow
-            name="Datafangsdato"
-            value={
-              getDateInFriendlyString(metadata.common?.datafangstdato) ??
-              "Ikke definert"
-            }
-            onMetadataSubmit={onSubmit}
-          >
-            <Datepicker {...register("datafangstdato")} />
-          </MetadataRow>
-          <MetadataRow
-            name={"Gyldig fra"}
-            value={
-              getDateInFriendlyString(metadata.common?.gyldigFra) ??
-              "Ikke definert"
-            }
-            onMetadataSubmit={onSubmit}
-            isDisabled={true}
-          >
-            <Datepicker {...register("gyldigFra")} />
-          </MetadataRow>
-          <MetadataRow
-            name={"Gyldig til"}
-            value={
-              getDateInFriendlyString(metadata.common?.gyldigTil) ??
-              "Ikke definert"
-            }
-            onMetadataSubmit={onSubmit}
-            isDisabled={true}
-          >
-            <Datepicker {...register("gyldigTil")} />
-          </MetadataRow>
-          <MetadataRow
-            name={"Målemetode"}
-            value={
-              maalemetodeKoder?.items.find(
-                (item) =>
-                  item.id ===
-                  metadata.commonGrense?.posisjonskvalitet?.maalemetode.id
-              )?.label ?? "Ukjent"
-            }
-            onMetadataSubmit={onSubmit}
-          >
-            <AsyncKodelisteSelect
-              kodeliste={maalemetodeKoder}
-              label="Målemetode"
-              {...register("maalemetode")}
-            />
-          </MetadataRow>
-          <MetadataRow
-            name={"Nøyaktighet"}
-            value={metadata.commonGrense?.posisjonskvalitet?.noeyaktighet?.toString()}
-            onMetadataSubmit={onSubmit}
-          >
-            <NumberInput>
-              <NumberInputField
-                {...register("noeyaktighet", {
-                  valueAsNumber: true,
-                  min: 0,
-                  max: 1_000_000,
-                })}
-              />
-              <NumberInputStepper />
-            </NumberInput>
-          </MetadataRow>
-          <MetadataRow
-            name="Opphav"
-            value={metadata.common?.opphav ?? ""}
-            onMetadataSubmit={onSubmit}
-          >
-            <Input {...register("opphav")} />
-          </MetadataRow>
-          <MetadataRow
-            name="Ekstra informasjon"
-            value={metadata.common?.informasjon ?? ""}
-            onMetadataSubmit={onSubmit}
-          >
-            <Input
-              {...register("informasjon", { disabled: metadataIsDisabled })}
-            />
-          </MetadataRow>
-        </tbody>
-      </EditTable>
-    </Container>
+    <EditTable>
+      <MetadataRow
+        name={"Grensetype"}
+        value={properties.type}
+        onMetadataSubmit={onSubmit}
+        isDisabled={true}
+      >
+        <Select {...register("grenseType")}>
+          {GrenseTypeValues.map((grenseType: GrenseType) => (
+            <option key={grenseType}>{grenseType}</option>
+          ))}
+        </Select>
+      </MetadataRow>
+      <MetadataRow
+        name="Datafangsdato"
+        value={
+          getDateInFriendlyString(metadata.common?.datafangstdato) ??
+          "Ikke definert"
+        }
+        onMetadataSubmit={onSubmit}
+      >
+        <Datepicker {...register("datafangstdato")} />
+      </MetadataRow>
+      <MetadataRow
+        name={"Gyldig fra"}
+        value={
+          getDateInFriendlyString(metadata.common?.gyldigFra) ?? "Ikke definert"
+        }
+        onMetadataSubmit={onSubmit}
+        isDisabled={true}
+      >
+        <Datepicker {...register("gyldigFra")} />
+      </MetadataRow>
+      <MetadataRow
+        name={"Gyldig til"}
+        value={
+          getDateInFriendlyString(metadata.common?.gyldigTil) ?? "Ikke definert"
+        }
+        onMetadataSubmit={onSubmit}
+        isDisabled={true}
+      >
+        <Datepicker {...register("gyldigTil")} />
+      </MetadataRow>
+      <MetadataRow
+        name={"Målemetode"}
+        value={
+          maalemetodeKoder?.items.find(
+            (item) =>
+              item.id ===
+              metadata.commonGrense?.posisjonskvalitet?.maalemetode.id
+          )?.label ?? "Ukjent"
+        }
+        onMetadataSubmit={onSubmit}
+      >
+        <AsyncKodelisteSelect
+          kodeliste={maalemetodeKoder}
+          label="Målemetode"
+          {...register("maalemetode")}
+        />
+      </MetadataRow>
+      <MetadataRow
+        name={"Nøyaktighet"}
+        value={metadata.commonGrense?.posisjonskvalitet?.noeyaktighet?.toString()}
+        onMetadataSubmit={onSubmit}
+      >
+        <NumberInput>
+          <NumberInputField
+            {...register("noeyaktighet", {
+              valueAsNumber: true,
+              min: 0,
+              max: 1_000_000,
+            })}
+          />
+          <NumberInputStepper />
+        </NumberInput>
+      </MetadataRow>
+      <MetadataRow
+        name="Opphav"
+        value={metadata.common?.opphav ?? ""}
+        onMetadataSubmit={onSubmit}
+      >
+        <Input {...register("opphav")} />
+      </MetadataRow>
+      <MetadataRow
+        name="Ekstra informasjon"
+        value={metadata.common?.informasjon ?? ""}
+        onMetadataSubmit={onSubmit}
+      >
+        <Input {...register("informasjon", { disabled: metadataIsDisabled })} />
+      </MetadataRow>
+    </EditTable>
   );
 };
 
