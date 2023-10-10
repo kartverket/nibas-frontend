@@ -15,6 +15,7 @@ import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts
 
 type MenuItems = (MenuItemProps & {
   $isActive: boolean;
+  isDisabled: boolean;
   label: string;
 })[];
 
@@ -99,6 +100,7 @@ const ToolbarMenus = () => {
       label: "Se/endre grenseinformasjon",
       icon: <Icon icon="live_help" />,
       $isActive: activePointMode === "metadata",
+      isDisabled: false,
       onClick: toggleMetadata,
       "aria-label": "Se informasjon om grensen",
     },
@@ -116,6 +118,7 @@ const ToolbarMenus = () => {
       label: "Flytt punkt med koordinater",
       icon: <Icon icon="ads_click" />,
       $isActive: activePointMode === "koordinater",
+      isDisabled: !editingType,
       onClick: toggleMove,
       "aria-label": "Flytt punkt med koordinater",
     },
@@ -123,6 +126,7 @@ const ToolbarMenus = () => {
       label: "Legg til punkt",
       icon: <Icon icon="add_location_alt" />,
       $isActive: activePointMode === "add",
+      isDisabled: !editingType,
       onClick: () => togglePointMode("add"),
       "aria-label": "Legg til punkter",
     },
@@ -130,6 +134,7 @@ const ToolbarMenus = () => {
       label: "Fjern punkt",
       icon: <Icon icon="wrong_location" />,
       $isActive: activePointMode === "remove",
+      isDisabled: !editingType,
       onClick: () => togglePointMode("remove"),
       "aria-label": "Fjern punkter",
     },
@@ -138,6 +143,7 @@ const ToolbarMenus = () => {
     {
       label: "Se/endre flatedetaljer",
       icon: <Icon icon="edit_location_alt" />,
+      isDisabled: !editingType,
       $isActive: flatedetaljerIsActive,
       onClick: toggleFlatedetaljer,
       "aria-label": "Se eller endre flatedetaljer for kretsen som redigeres",
