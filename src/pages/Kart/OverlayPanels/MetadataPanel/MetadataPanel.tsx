@@ -58,14 +58,7 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
         Informasjon om grense
       </PanelHeader>
       {selectedFeature && !isWFSGrense && selectedProperties.metadata ? (
-        <>
-          <MetadataGenerelt feature={selectedFeature} />
-          {showReferanser && (
-            <>
-              <MetadataReferanser feature={selectedFeature} />
-            </>
-          )}
-        </>
+        <MetadataGenerelt feature={selectedFeature} />
       ) : (
         <p>Den valgte grensen har ingen metadata</p>
       )}
