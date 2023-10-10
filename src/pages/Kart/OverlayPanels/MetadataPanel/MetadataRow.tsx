@@ -3,12 +3,22 @@ import styled from "styled-components";
 import EditAndSaveButton from "../Flatedata/EditAndSaveButton";
 import { useState } from "react";
 
-const EditRow = styled.div`
+const EditContent = styled.div`
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   column-gap: 16px;
-  padding: 9px 0 9px 0;
+  padding: 9px 28px 9px 28px;
   align-items: center;
+`;
+
+const EditRow = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const StyledDivider = styled(Divider)`
+  align-self: center;
+  width: calc(100% - 56px);
 `;
 
 interface Props {
@@ -29,8 +39,8 @@ export const MetadataRow = ({
   const [isEdit, setIsEdit] = useState(false);
 
   return (
-    <>
-      <EditRow>
+    <EditRow style={{ display: "flex", flexDirection: "column" }}>
+      <EditContent>
         <Text>{name}</Text>
 
         {!isEdit ? <Text as="b">{value}</Text> : children}
@@ -45,8 +55,8 @@ export const MetadataRow = ({
           }}
           toggleEditing={() => setIsEdit((prevState) => !prevState)}
         />
-      </EditRow>
-      <Divider />
-    </>
+      </EditContent>
+      <StyledDivider />
+    </EditRow>
   );
 };
