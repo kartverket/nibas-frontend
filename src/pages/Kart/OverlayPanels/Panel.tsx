@@ -44,7 +44,7 @@ export const Panel = styled.div<{ $isOpen: boolean }>`
 
 export const SidePanel = styled(Panel)`
   grid-area: sidepanel;
-  width: 558px;
+  width: 500px;
   border-radius: unset;
   margin: 0;
   border-top: none;

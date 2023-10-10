@@ -4,7 +4,7 @@ import { ButtonGroup, IconButton } from "@kvib/react";
 const Cell = styled.td`
   display: flex;
   justify-content: end;
-  padding: 12px !important;
+  padding: 12px;
 `;
 
 const EditButton = styled(IconButton)`
