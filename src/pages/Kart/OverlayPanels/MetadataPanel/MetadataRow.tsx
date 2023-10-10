@@ -23,7 +23,7 @@ const EditContent = styled.div<{ $twoRows: boolean }>`
 
   td {
     // Setter EditAndSaveButton til å alltid ligge i siste kolonne
-    padding: 0;
+    padding: 0 !important;
     grid-column: 3;
   }
 `;

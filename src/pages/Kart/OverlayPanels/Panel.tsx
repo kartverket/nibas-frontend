@@ -30,6 +30,7 @@ const slideIn = keyframes`
 
 export const Panel = styled.div<{ $isOpen: boolean }>`
   margin: 16px;
+  padding: 0 16px;
   background: white;
   border: 2px solid var(--kvib-colors-gray-50);
   border-radius: 12px;
@@ -90,17 +91,15 @@ const PanelHeaderContainer = styled.div<PanelHeaderContainerProps>`
   z-index: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
   gap: 16px;
   padding: ${({ $size = "md" }) => getPaddingForSize($size)};
   background: var(--kvib-colors-chakra-body-bg);
 `;
 
 const PanelHeaderContent = styled.div`
-  display: "flex";
-  justify-content: "space-between";
-  width: "100%";
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 `;
 
 const PanelHeaderText = styled.div`
@@ -111,7 +110,7 @@ const PanelHeaderText = styled.div`
 type PanelHeaderProps = {
   onClose: () => void;
   children: React.ReactNode;
-  subHeading?: React.ReactNode;
+  subHeading?: string;
   size?: PanelHeaderSizes;
 };
 
@@ -122,13 +121,7 @@ export const PanelHeader = ({
   size = "md",
 }: PanelHeaderProps) => (
   <PanelHeaderContainer $size={size}>
-    <PanelHeaderContent
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        width: "100%",
-      }}
-    >
+    <PanelHeaderContent>
       <PanelHeaderText>
         <Heading as="h3" size={size}>
           {children}

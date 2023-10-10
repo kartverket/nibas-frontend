@@ -1,9 +1,7 @@
-import { styled } from "styled-components";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { Metadata, FeatureProperties } from "types/api";
 import useMetadataForm from "pages/Kart/OverlayPanels/hooks/useMetadataForm";
-import useIsMetadataDisabled from "../hooks/useIsMetadataDisabled";
 import { useEffect } from "react";
 import {
   Datepicker,
@@ -14,13 +12,12 @@ import {
   Select,
   Textarea,
 } from "@kvib/react";
-
 import { MetadataRow } from "./MetadataRow";
 import { GrenseType } from "../../../../hooks/layers/types";
 import { getDateInFriendlyString } from "./utils";
 import AsyncKodelisteSelect from "./AsyncKodelisteSelect";
 
-const GrenseTypeValues: GrenseType[] = [
+const grenseTypeValues: GrenseType[] = [
   "Kommunegrense",
   "Fylkesgrense",
   "Riksgrense",
@@ -30,15 +27,11 @@ const GrenseTypeValues: GrenseType[] = [
   "Delområdegrense",
   "Posisjon",
   "Stemmekretsgrense",
-  "GRUNNKRETS",
-  "STEMMEKRETS",
 ];
 
 type Props = {
   feature: Feature<Geometry>;
 };
-
-const EditTable = styled.div``;
 
 const MetadataGenerelt = ({ feature }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
@@ -58,23 +51,21 @@ const MetadataGenerelt = ({ feature }: Props) => {
     reset(getFormFromApiMetadata(metadata));
   }, [getFormFromApiMetadata, metadata, reset]);
 
-  const metadataIsDisabled = useIsMetadataDisabled(properties);
-
   const onSubmit = () => {
     updateDraftFromFeature();
     reset(undefined, { keepValues: true });
   };
 
   return (
-    <EditTable>
+    <div>
       <MetadataRow
-        name={"Grensetype"}
+        name="Grensetype"
         value={properties.type}
         onMetadataSubmit={onSubmit}
-        isDisabled={true}
+        isDisabled
       >
         <Select {...register("grenseType")}>
-          {GrenseTypeValues.map((grenseType: GrenseType) => (
+          {grenseTypeValues.map((grenseType: GrenseType) => (
             <option key={grenseType}>{grenseType}</option>
           ))}
         </Select>
@@ -90,32 +81,32 @@ const MetadataGenerelt = ({ feature }: Props) => {
         <Datepicker {...register("datafangstdato")} />
       </MetadataRow>
       <MetadataRow
-        name={"Gyldig fra"}
+        name="Gyldig fra"
         value={
           getDateInFriendlyString(metadata.common?.gyldigFra) ?? "Ikke definert"
         }
         onMetadataSubmit={onSubmit}
-        isDisabled={true}
+        isDisabled
       >
         <Datepicker {...register("gyldigFra")} />
       </MetadataRow>
       <MetadataRow
-        name={"Gyldig til"}
+        name="Gyldig til"
         value={
           getDateInFriendlyString(metadata.common?.gyldigTil) ?? "Ikke definert"
         }
         onMetadataSubmit={onSubmit}
-        isDisabled={true}
+        isDisabled
       >
         <Datepicker {...register("gyldigTil")} />
       </MetadataRow>
       <MetadataRow
-        name={"Målemetode"}
+        name="Målemetode"
         value={
           maalemetodeKoder?.items.find(
             (item) =>
               item.id ===
-              metadata.commonGrense?.posisjonskvalitet?.maalemetode.id,
+              metadata.commonGrense?.posisjonskvalitet?.maalemetode.id
           )?.label ?? "Ukjent"
         }
         onMetadataSubmit={onSubmit}
@@ -128,7 +119,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
         />
       </MetadataRow>
       <MetadataRow
-        name={"Nøyaktighet"}
+        name="Nøyaktighet"
         value={metadata.commonGrense?.posisjonskvalitet?.noeyaktighet?.toString()}
         onMetadataSubmit={onSubmit}
       >
@@ -151,7 +142,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
       >
         <Input
           {...register("opphav")}
-          placeholder={"Fyll inn informasjon om opphav"}
+          placeholder="Fyll inn informasjon om opphav"
         />
       </MetadataRow>
       <MetadataRow
@@ -162,11 +153,11 @@ const MetadataGenerelt = ({ feature }: Props) => {
       >
         <Textarea
           {...register("informasjon")}
-          placeholder={"Fyll inn ekstra informasjon"}
-          minHeight={"100%"}
+          placeholder="Fyll inn ekstra informasjon"
+          minHeight="100%"
         />
       </MetadataRow>
-    </EditTable>
+    </div>
   );
 };
 

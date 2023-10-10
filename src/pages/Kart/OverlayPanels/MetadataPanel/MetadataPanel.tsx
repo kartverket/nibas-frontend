@@ -5,6 +5,11 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { FeatureProperties, Metadata } from "types/api";
 import { getDateInFriendlyString } from "./utils";
 import { useEffect } from "react";
+import { styled } from "styled-components";
+
+const StyledSidePanel = styled(SidePanel)`
+  padding: 0;
+`;
 
 const MetadataPanel = ({ isOpen, className }: PanelProps) => {
   const { selectedFeatures } = useFeatureStyle();
@@ -27,23 +32,26 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
   const selectedProperties =
     selectedFeature?.getProperties() as FeatureProperties;
 
+  const sistOppdatertString = "Sist oppdatert:".concat(
+    selectedProperties && selectedProperties.metadata
+      ? " " +
+          getDateInFriendlyString(
+            (
+              (selectedFeature?.getProperties() as FeatureProperties)
+                .metadata as Metadata
+            ).common?.sporingsinformasjon.oppdateringsdato
+          )
+      : " Ukjent"
+  );
+
   return (
-    <SidePanel $isOpen={isOpen} className={className}>
+    <StyledSidePanel $isOpen={isOpen} className={className}>
       <PanelHeader
         onClose={closeOverlayPanel}
         subHeading={
           selectedProperties &&
-          selectedProperties.metadata && (
-            <>
-              Sist oppdatert:{" "}
-              {getDateInFriendlyString(
-                (
-                  (selectedFeature?.getProperties() as FeatureProperties)
-                    .metadata as Metadata
-                ).common?.sporingsinformasjon.oppdateringsdato
-              )}
-            </>
-          )
+          selectedProperties.metadata &&
+          sistOppdatertString
         }
       >
         Informasjon om grense
@@ -53,7 +61,7 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
       ) : (
         <p>Den valgte grensen har ingen metadata</p>
       )}
-    </SidePanel>
+    </StyledSidePanel>
   );
 };
 

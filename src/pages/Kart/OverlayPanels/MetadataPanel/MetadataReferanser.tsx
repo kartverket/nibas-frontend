@@ -48,7 +48,7 @@ const mapFromApiToForm = (dokrefs: Dokref[] = []): DokrefForm[] => {
       (ref) => ({
         apiId: ref.id,
         beskrivelse: ref.beskrivelse,
-      }),
+      })
     ),
   }));
 };
@@ -69,7 +69,7 @@ const mapFromFormToApi = (data: Inputs): Dokref[] => {
       (ref) => ({
         id: ref.apiId,
         beskrivelse: ref.beskrivelse,
-      }),
+      })
     ),
   }));
 };
@@ -188,7 +188,7 @@ const MetadataReferanser = ({ feature }: Props) => {
 
       setValue(
         "dokrefs",
-        mapFromApiToForm(newMetadata.dokumentasjonsreferanser),
+        mapFromApiToForm(newMetadata.dokumentasjonsreferanser)
       );
     };
 
@@ -207,14 +207,14 @@ const MetadataReferanser = ({ feature }: Props) => {
       {
         ...metadata,
         dokumentasjonsreferanser: mapFromFormToApi(getValues()),
-      },
+      }
     );
   };
 
   const metadataIsDisabled = useIsMetadataDisabled(properties);
 
   return (
-    <form style={{ paddingTop: "16px" }}>
+    <form>
       {fields.map((field, i) => (
         <DokRefWrapper key={field.id}>
           <Container>
