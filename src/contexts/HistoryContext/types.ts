@@ -45,6 +45,11 @@ export type StemmekretsSammenslaaingsendringEntry = BaseHistoryEntry<
   StemmekretsSammenslaaingsendringRequest
 >;
 
+export type GrenseArkiveringsEntry = BaseHistoryEntry<
+  "grensearkivering",
+  string[]
+>;
+
 // endringer skal kunne gjøres i bulk, feks et punkt på to features endrer to features i en entry
 export type HistoryEntry =
   | GrenseEntry
@@ -52,7 +57,8 @@ export type HistoryEntry =
   | GrunnkretsEntry
   | StemmekretsEntry
   | UtkastEntry
-  | StemmekretsSammenslaaingsendringEntry;
+  | StemmekretsSammenslaaingsendringEntry
+  | GrenseArkiveringsEntry;
 
 export type HistoryContextValue = {
   addHistoryEntry: (entry: HistoryEntry) => void;
