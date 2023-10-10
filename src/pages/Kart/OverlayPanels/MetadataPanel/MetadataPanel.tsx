@@ -1,12 +1,10 @@
-import { styled } from "styled-components";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { PanelHeader, PanelProps, SidePanel } from "../Panel";
 import MetadataGenerelt from "./MetadataGenerelt";
-import MetadataReferanser from "./MetadataReferanser";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
-import { Divider } from "@kvib/react";
 import { FeatureProperties, Metadata } from "types/api";
 import { getDateInFriendlyString } from "./utils";
+import { useEffect } from "react";
 
 const grenseTypeWithReferanser = [
   "Territorialgrense",
@@ -19,14 +17,21 @@ const grenseTypeWithReferanser = [
 
 const MetadataPanel = ({ isOpen, className }: PanelProps) => {
   const { selectedFeatures } = useFeatureStyle();
-  const { closeOverlayPanel } = useOverlayPanel();
+  const { activeOverlayPanel, closeOverlayPanel } = useOverlayPanel();
 
   const selectedFeature =
     selectedFeatures.length === 1 ? selectedFeatures[0] : undefined;
 
-  const showReferanser = grenseTypeWithReferanser.includes(
-    selectedFeature?.get("type") as string
-  );
+  // Død kode for grenserefaranser
+  // const showReferanser = grenseTypeWithReferanser.includes(
+  //   selectedFeature?.get("type") as string
+  // );
+
+  useEffect(() => {
+    if (activeOverlayPanel === "metadata" && selectedFeatures.length === 0) {
+      closeOverlayPanel();
+    }
+  }, [activeOverlayPanel, closeOverlayPanel, selectedFeatures.length]);
 
   const isWFSGrense = selectedFeature
     ?.getId()

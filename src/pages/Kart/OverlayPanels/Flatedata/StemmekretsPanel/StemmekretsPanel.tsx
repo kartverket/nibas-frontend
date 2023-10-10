@@ -9,6 +9,7 @@ import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import SortHeader from "../SortHeader";
 import { useTableSort } from "../useTableSort";
 import { orderBy } from "utils/list-utils";
+import { getNavnInSpraak } from "utils/language/language";
 
 const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
   const { utkast } = useUtkast();
@@ -28,7 +29,9 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
 
   return (
     <Panel $isOpen={isOpen} className={className}>
-      <PanelHeader onClose={closeOverlayPanel}>Endre flateinfo</PanelHeader>
+      <PanelHeader onClose={closeOverlayPanel}>
+        Flateinformasjon for {getNavnInSpraak(flatedata?.navn, "nor")}
+      </PanelHeader>
       {utkastStemmekretser && (
         <KretsTable $hasUtkast={utkast !== undefined}>
           <thead>

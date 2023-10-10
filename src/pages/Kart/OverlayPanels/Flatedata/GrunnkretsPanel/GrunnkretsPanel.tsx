@@ -12,6 +12,7 @@ import Input from "components/Input";
 import SortHeader from "../SortHeader";
 import { useTableSort } from "../useTableSort";
 import { orderBy } from "utils/list-utils";
+import { getNavnInSpraak } from "utils/language/language";
 
 const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
   const { utkast } = useUtkast();
@@ -41,7 +42,9 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
 
   return (
     <Panel $isOpen={isOpen} className={className}>
-      <PanelHeader onClose={closeOverlayPanel}>Endre flateinfo</PanelHeader>
+      <PanelHeader onClose={closeOverlayPanel}>
+        Flateinformasjon for {getNavnInSpraak(flatedata?.navn, "nor")}
+      </PanelHeader>
       {filteredGrunnkretser && (
         <KretsTable $hasUtkast={utkast !== undefined}>
           <thead>

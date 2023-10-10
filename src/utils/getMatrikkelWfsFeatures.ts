@@ -23,7 +23,7 @@ export const mapVectorLayer = async (): Promise<MappedLayer> => {
   return {
     layers: [],
     queryable: true,
-    sourceId: "matrikkelenWfs", // todo: andre mappingfunksjoner setter layer.getSource().get("id"), men vi har ingenting på tidspunktet dette settes
+    sourceId: "matrikkelenWfs",
     title: "MatrikkelWfsLayer",
     id: "MatrikkelWfsLayer",
   };
