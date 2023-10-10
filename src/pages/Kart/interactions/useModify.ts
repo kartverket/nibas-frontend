@@ -72,7 +72,7 @@ const useModify = () => {
           return activePointMode === "add";
         },
         deleteCondition: (event: MapBrowserEvent<MouseEvent>) => {
-          if (activePointMode === "remove") {
+          if (activePointMode === "remove" && singleClick(event)) {
             const featuresAtPixel = map.getFeaturesAtPixel(event.pixel, {
               layerFilter: (layer) => layer === editLayer,
               hitTolerance: pixelTolerance,
@@ -112,7 +112,7 @@ const useModify = () => {
             }
 
             // Hvis alt ellers ser greit ut så fjernes punktet på klikk
-            return singleClick(event);
+            return true;
           }
           return false;
         },
