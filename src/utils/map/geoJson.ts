@@ -9,7 +9,7 @@ import VectorSource from "ol/source/Vector";
 const geoJson = new GeoJSON();
 
 export const getFeaturesFromGeoJson = (
-  json: GeoJSONFeature | GeoJSONFeatureCollection
+  json: GeoJSONFeature | GeoJSONFeatureCollection,
 ) => {
   return geoJson.readFeatures(json, {
     dataProjection: "EPSG:25833",
@@ -17,7 +17,7 @@ export const getFeaturesFromGeoJson = (
 };
 
 export const geoJsonToSource = (
-  json: GeoJSONFeature | GeoJSONFeatureCollection
+  json: GeoJSONFeature | GeoJSONFeatureCollection,
 ) => {
   return new VectorSource({
     features: getFeaturesFromGeoJson(json),

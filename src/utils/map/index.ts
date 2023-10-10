@@ -73,7 +73,7 @@ export const getAllVisibleFeatures = () => {
 
 export const getZoomMode = (
   isEditing: boolean,
-  hasEditingInMap: boolean
+  hasEditingInMap: boolean,
 ): "edit" | "view" | "none" => {
   if (isEditing) {
     return "edit";
@@ -93,7 +93,7 @@ export const isCoordinateEqual = (a: Coordinate, b: Coordinate) => {
 /** Sjekker om en feature har et punkt på gitt koordinat */
 const isFeatureConnectedToCoordinate = (
   feature: FeatureLike,
-  coordinate: Coordinate
+  coordinate: Coordinate,
 ): boolean => {
   // TODO: dersom featuren er arkivert skal den alltid returnere false?
   if (feature instanceof Feature) {
@@ -101,7 +101,7 @@ const isFeatureConnectedToCoordinate = (
     if (geometry instanceof LineString) {
       const featureCoordinates = geometry?.getCoordinates();
       return featureCoordinates.some((featureCoordinate) =>
-        isCoordinateEqual(featureCoordinate, coordinate)
+        isCoordinateEqual(featureCoordinate, coordinate),
       );
     }
   }
@@ -124,10 +124,10 @@ export const isFeatureDeadEnd = (feature: Feature<Geometry>) => {
     .filter((tailFeature) => tailFeature.getId() !== feature.getId());
 
   const headConnected = headFeatures.some((f) =>
-    isFeatureConnectedToCoordinate(f, head)
+    isFeatureConnectedToCoordinate(f, head),
   );
   const tailConnected = tailFeatures.some((f) =>
-    isFeatureConnectedToCoordinate(f, tail)
+    isFeatureConnectedToCoordinate(f, tail),
   );
 
   return !(headConnected && tailConnected);
@@ -145,7 +145,7 @@ export const pixelDistance = (coord1: Coordinate, coord2: Coordinate) => {
 
 export const findNearbyVertexOnFeature = (
   feature: Feature<LineString>,
-  coordinate: Coordinate
+  coordinate: Coordinate,
 ): Coordinate | null => {
   const geometry = feature.getGeometry() as LineString;
   const coordinates = geometry.getCoordinates();

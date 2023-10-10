@@ -27,7 +27,7 @@ const fetchNewTicket = async (tjenesteId: string) => {
   if (!ticketConfigSetUpCorrectly) return "*";
 
   const ticketResponse = await fetch(
-    getUrlForPath(`/skbaatts/req?tjenesteid=${tjenesteId}`)
+    getUrlForPath(`/skbaatts/req?tjenesteid=${tjenesteId}`),
   );
   return ticketResponse.text();
 };

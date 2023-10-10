@@ -16,7 +16,7 @@ describe("GrenserDrillDown", () => {
     renderWithProvider(<GrenserDrillDown />);
 
     expect(
-      screen.queryByRole("heading", { name: "grenser" })
+      screen.queryByRole("heading", { name: "grenser" }),
     ).not.toBeInTheDocument();
   });
 
@@ -24,7 +24,7 @@ describe("GrenserDrillDown", () => {
     renderWithProvider(<GrenserDrillDown />);
 
     expect(
-      screen.getByRole("heading", { name: "Inndelinger" })
+      screen.getByRole("heading", { name: "Inndelinger" }),
     ).toBeInTheDocument();
   });
 

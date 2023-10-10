@@ -21,7 +21,7 @@ describe("Fylkesgrenser", () => {
     await user.click(screen.getByRole("button", { name: "Skjul Fylker" }));
 
     expect(
-      screen.getByRole("button", { name: "Vis Fylker" })
+      screen.getByRole("button", { name: "Vis Fylker" }),
     ).toBeInTheDocument();
   });
 });

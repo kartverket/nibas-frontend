@@ -11,7 +11,7 @@ import { addFeaturesToSource } from "utils/map/source";
 
 const getLayersStringToReplace = (
   layersInParams: string,
-  mappedLayerName: string
+  mappedLayerName: string,
 ) => {
   const commaRegex = new RegExp(`(,{0,1})(${mappedLayerName})(,{0,1})`, "i");
   const match = commaRegex.exec(layersInParams);
@@ -38,7 +38,7 @@ const getLayersStringToReplace = (
 
 export const toggleWMSLayer = (
   mappedLayer: MappedLayer,
-  isVisible: boolean
+  isVisible: boolean,
 ) => {
   const source = kartlagLayers[mappedLayer.sourceId].getSource() as TileWMS;
   const layersInParams = source.getParams().LAYERS as string;
@@ -51,7 +51,7 @@ export const toggleWMSLayer = (
   if (isVisible) {
     const replaceString = getLayersStringToReplace(
       layersInParams,
-      mappedLayerId
+      mappedLayerId,
     );
 
     if (!replaceString) return;
@@ -115,7 +115,7 @@ type DragItem = {
 export const useDragAndDrop = (
   index: number,
   mappedLayer?: MappedLayer,
-  moveLayer?: (direction: "up" | "down", layerId: KartlagId) => void
+  moveLayer?: (direction: "up" | "down", layerId: KartlagId) => void,
 ) => {
   const ref = useRef<HTMLDivElement>(null);
 

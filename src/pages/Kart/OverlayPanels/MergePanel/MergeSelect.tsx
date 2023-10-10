@@ -50,7 +50,7 @@ export const MergeSelect = forwardRef<HTMLSelectElement, MergeSelectProps>(
       validationError,
       ...inputProps
     },
-    ref
+    ref,
   ) => (
     <MergeSelectWrapper isInvalid={validationError?.showError}>
       <SelectLabel>Navn eller nummer på stemmekrets</SelectLabel>
@@ -76,7 +76,7 @@ export const MergeSelect = forwardRef<HTMLSelectElement, MergeSelectProps>(
         {validationError?.message}
       </MergeSelectErrorMessage>
     </MergeSelectWrapper>
-  )
+  ),
 );
 
 MergeSelect.displayName = "MergeSelect";

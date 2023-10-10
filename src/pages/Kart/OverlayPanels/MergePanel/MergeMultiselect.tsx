@@ -63,12 +63,12 @@ export const MergeMultiselect = ({
           {...triggerRevalidateOnChange(
             register(
               `stemmekretsNummerTilSammenslaaing.${index}.value`,
-              multiselectValidator
-            )
+              multiselectValidator,
+            ),
           )}
           onRemove={() => remove(index)}
           stemmekretser={alleStemmekretser.filter(
-            (s) => s.stemmekretsnummer !== getValues("stemmekrets")
+            (s) => s.stemmekretsnummer !== getValues("stemmekrets"),
           )}
           showRemoveButton={fields.length > 1}
           validationError={{

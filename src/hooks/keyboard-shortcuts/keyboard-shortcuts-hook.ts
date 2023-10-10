@@ -7,7 +7,7 @@ function isKeydownEvent(event: Event): event is KeyboardEvent {
 
 export const useKeyboardShortcut = (
   shortcut: Shortcut,
-  callback?: () => unknown
+  callback?: () => unknown,
 ) => {
   useEffect(() => {
     const kbShortcut = KeyboardShortcuts[shortcut];

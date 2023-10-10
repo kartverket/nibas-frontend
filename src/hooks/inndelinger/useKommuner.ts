@@ -7,7 +7,7 @@ const useKommuner = (fylkeId: string, shouldFetch = true) => {
     shouldFetch ? "/v1/kommuner" : null,
     {
       fylkeid: fylkeId,
-    }
+    },
   );
 
   const sortedKommuner = sortGrenserAlphabetically(kommuner) as KommuneRef[];

@@ -27,7 +27,7 @@ export const useAuthorization = (): AuthHookReturnValue => {
   const { data, error } = useNibasApi(
     isAuthenticated ? "/v1/authz/status" : null,
     undefined,
-    authSwrConfig
+    authSwrConfig,
   );
 
   if (!isAuthenticated) {

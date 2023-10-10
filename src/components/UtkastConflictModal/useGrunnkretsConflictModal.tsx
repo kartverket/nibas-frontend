@@ -27,10 +27,10 @@ type Inputs = {
 const getGrunnkretsRequest = (
   grunnkretsFormData: GrunnkretsFormData,
   futureVersions: GrunnkretsResponse[],
-  grunnkrets: GrunnkretsRequest
+  grunnkrets: GrunnkretsRequest,
 ) => {
   const futureVersion = futureVersions?.find(
-    (fv) => fv.gyldighet.gyldigFra === grunnkretsFormData.gyldigFra
+    (fv) => fv.gyldighet.gyldigFra === grunnkretsFormData.gyldigFra,
   );
 
   return {
@@ -62,7 +62,7 @@ const useGrunnkretsConflictModal = ({
     "/v1/grunnkretser/{lokalid}/framtidigeversjoner",
     {
       lokalid: grunnkrets.identifikasjon.lokalid,
-    }
+    },
   );
 
   const conflictedFutureVersions = useMemo(
@@ -71,10 +71,10 @@ const useGrunnkretsConflictModal = ({
         conflictResponse.affectedIds.some(
           (affectedId) =>
             affectedId.lokalid.value === getIdFromEntity(fv) &&
-            affectedId.gyldighetsdato === fv.id.gyldighetsdato
-        )
+            affectedId.gyldighetsdato === fv.id.gyldighetsdato,
+        ),
       ),
-    [futureVersions, conflictResponse.affectedIds]
+    [futureVersions, conflictResponse.affectedIds],
   );
 
   const { tokenHolderFunc } = useAuthenticationFlow();
@@ -103,7 +103,7 @@ const useGrunnkretsConflictModal = ({
           grunnkretsRequest: getGrunnkretsRequest(
             g,
             conflictedFutureVersions as GrunnkretsResponse[],
-            grunnkrets
+            grunnkrets,
           ),
         }))
         .concat({
@@ -117,7 +117,7 @@ const useGrunnkretsConflictModal = ({
     await resolveUtkastConflict(
       utkast.id,
       resolvedConflict,
-      tokenHolderFunc()?.token
+      tokenHolderFunc()?.token,
     );
 
     onNext();
@@ -134,7 +134,7 @@ const useGrunnkretsConflictModal = ({
         endringstype: futureVersion.endringstype ?? "---",
         gyldigFra: futureVersion.gyldighet.gyldigFra,
         confirmed: false,
-      }))
+      })),
     );
   }, [conflictedFutureVersions, setValue]);
 

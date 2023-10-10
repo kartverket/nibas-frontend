@@ -15,7 +15,7 @@ export type UtkastContextValue = {
   updateUtkastWithHistory: () => Promise<unknown>;
   updateUtkast: (
     id: string,
-    newUtkast: OppdaterUtkastRequest
+    newUtkast: OppdaterUtkastRequest,
   ) => Promise<unknown>;
   getUpdateUtkastRequestFromHistory: () => OppdaterUtkastRequest | null;
   closeUtkast: () => void;

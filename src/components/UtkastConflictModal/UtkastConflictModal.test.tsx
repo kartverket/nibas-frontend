@@ -22,27 +22,27 @@ describe("UtkastConflictModal", () => {
     expect(screen.getAllByRole("cell", { name: "Retting" })).toHaveLength(3);
 
     expect(
-      screen.getByRole("cell", { name: "Utkast grunnkrets" })
+      screen.getByRole("cell", { name: "Utkast grunnkrets" }),
     ).toBeInTheDocument();
     expect(screen.getByRole("cell", { name: "12345678" })).toBeInTheDocument();
     expect(
-      screen.getByRole("cell", { name: "2022-06-01" })
+      screen.getByRole("cell", { name: "2022-06-01" }),
     ).toBeInTheDocument();
 
     expect(
-      screen.getByRole("cell", { name: "Mosekollen vest" })
+      screen.getByRole("cell", { name: "Mosekollen vest" }),
     ).toBeInTheDocument();
     expect(screen.getByRole("cell", { name: "12345679" })).toBeInTheDocument();
     expect(
-      screen.getByRole("cell", { name: "2022-04-01" })
+      screen.getByRole("cell", { name: "2022-04-01" }),
     ).toBeInTheDocument();
 
     expect(
-      screen.getByRole("cell", { name: "Mosekollen nord" })
+      screen.getByRole("cell", { name: "Mosekollen nord" }),
     ).toBeInTheDocument();
     expect(screen.getByRole("cell", { name: "87654321" })).toBeInTheDocument();
     expect(
-      screen.getByRole("cell", { name: "2022-07-01" })
+      screen.getByRole("cell", { name: "2022-07-01" }),
     ).toBeInTheDocument();
   });
 
@@ -50,7 +50,7 @@ describe("UtkastConflictModal", () => {
     const { user } = render(<UtkastConflictModal {...defaultProps} />);
 
     await waitFor(
-      () => expect(screen.getAllByRole("row")).toHaveLength(5) // 2 headers + 1 current + 2 future
+      () => expect(screen.getAllByRole("row")).toHaveLength(5), // 2 headers + 1 current + 2 future
     );
 
     const publishButton = screen.getByRole("button", {
@@ -60,12 +60,12 @@ describe("UtkastConflictModal", () => {
     expect(publishButton).toBeDisabled();
 
     await user.click(
-      screen.getByRole("checkbox", { name: "Bekreft grunnkrets 1" })
+      screen.getByRole("checkbox", { name: "Bekreft grunnkrets 1" }),
     );
     expect(publishButton).toBeDisabled();
 
     await user.click(
-      screen.getByRole("checkbox", { name: "Bekreft grunnkrets 2" })
+      screen.getByRole("checkbox", { name: "Bekreft grunnkrets 2" }),
     );
     expect(publishButton).toBeEnabled();
   });

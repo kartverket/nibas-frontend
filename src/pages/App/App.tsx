@@ -56,8 +56,8 @@ const App = () => {
           </Route>
           <Route path={routes.kart} element={<PageLayout />} />
         </Route>
-      </>
-    )
+      </>,
+    ),
   );
 
   return (

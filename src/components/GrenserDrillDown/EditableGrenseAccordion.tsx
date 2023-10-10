@@ -28,7 +28,7 @@ const EditableGrenseAccordion = ({
   const { value, toggleEditing, toggleVisible } = useEditGrense(
     grenseType,
     grenseId,
-    features
+    features,
   );
 
   return (
@@ -130,14 +130,11 @@ const Caret = styled(IconButton)<{ $isVisible: boolean }>`
   background: ${({ $isVisible }) =>
     $isVisible ? "var(--kvib-colors-blue-500)" : "transparent"};
   padding: 16px 12px;
+  border-radius: 0;
+
   &:hover {
     background: var(--kvib-colors-blue-500);
     color: var(--kvib-colors-chakra-inverse-text);
-  }
-  border-radius: 0;
-
-  .material-symbols-rounded {
-    font-size: 24px;
   }
 `;
 

@@ -61,7 +61,7 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
     const response = await publishUtkast(
       utkast.id,
       utkast,
-      tokenHolderFunc()?.token
+      tokenHolderFunc()?.token,
     );
     setIsLoading(false);
 

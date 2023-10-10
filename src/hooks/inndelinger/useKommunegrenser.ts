@@ -9,11 +9,11 @@ import useKommuner from "./useKommuner";
 
 const kommunegrenserFetcher = async ([kommuneIds, token]: [
   string[],
-  string | undefined
+  string | undefined,
 ]) => {
   const promises: Promise<FeatureCollection>[] = kommuneIds.map(
     async (kommuneId) =>
-      fetcherWithToken([`/v1/kommuner/${kommuneId}/grenser`, token])
+      fetcherWithToken([`/v1/kommuner/${kommuneId}/grenser`, token]),
   );
 
   const settledPromises = await Promise.allSettled(promises);
@@ -35,7 +35,7 @@ const useKommunegrenser = (fylkeId: string, shouldFetch: boolean) => {
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { data: geoJsonFeatures } = useSWRImmutable(
     shouldFetch ? [kommuneIds, tokenHolderFunc()?.token] : null,
-    kommunegrenserFetcher
+    kommunegrenserFetcher,
   );
 
   useEffect(() => {

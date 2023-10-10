@@ -34,7 +34,7 @@ const mapWMSLayer = (responseLayer: WMSResponseLayer, sourceId: KartlagId) => {
 
   if (responseLayer.Layer) {
     layers = responseLayer.Layer.map((nestedLayer: WMSResponseLayer) =>
-      mapWMSLayer(nestedLayer, sourceId)
+      mapWMSLayer(nestedLayer, sourceId),
     );
   }
 
@@ -49,7 +49,7 @@ const mapWMSLayer = (responseLayer: WMSResponseLayer, sourceId: KartlagId) => {
 
 const mapWMTSLayer = (
   responseLayer: WMTSResponseLayer,
-  sourceId: KartlagId
+  sourceId: KartlagId,
 ): MappedLayer => ({
   layers: [],
   queryable: true,
@@ -86,7 +86,7 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
   if (source.get("protectedTjenesteId")) {
     const ticket = await getTicketForTjeneste(
       source.get("protectedTjenesteId"),
-      url
+      url,
     );
     capabilitiesUrl = `${capabilitiesUrl}&ticket=${ticket}`;
   }
@@ -119,7 +119,7 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
 
     const mappedWMTSLayer: MappedLayer = {
       layers: json.Contents.Layer.map((l: WMTSResponseLayer) =>
-        mapWMTSLayer(l, sourceId)
+        mapWMTSLayer(l, sourceId),
       ),
       queryable: true,
       sourceId: source.get("id") as KartlagId,

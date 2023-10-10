@@ -11,7 +11,7 @@ type Props = {
 
 const InputCell = forwardRef<HTMLInputElement, Props>(function InputCell(
   { data, isEditing, ...inputProps }: Props,
-  ref
+  ref,
 ) {
   return (
     <Cell $isEditing={isEditing}>

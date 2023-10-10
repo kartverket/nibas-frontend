@@ -53,7 +53,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
 
   if (!context) {
     throw new Error(
-      "useInndelingerKrets must be used within a InndelingerKretsContext"
+      "useInndelingerKrets must be used within a InndelingerKretsContext",
     );
   }
 

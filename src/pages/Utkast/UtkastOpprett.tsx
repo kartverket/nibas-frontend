@@ -61,7 +61,7 @@ const UtkastOpprett = () => {
         endringstype: getValues("endringstype"),
         operasjoner: historyToUtkastOperations(history),
       },
-      tokenHolderFunc()?.token
+      tokenHolderFunc()?.token,
     );
     setIsLoading(false);
 

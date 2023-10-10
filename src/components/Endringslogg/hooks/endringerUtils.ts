@@ -9,7 +9,7 @@ import {
 export type OperasjonerOrNull = UtkastOperasjoner | null | undefined;
 export const getKretserMedGrensejusteringer = (
   operasjoner: OperasjonerOrNull,
-  type: "STEMMEKRETS" | "GRUNNKRETS"
+  type: "STEMMEKRETS" | "GRUNNKRETS",
 ): string[] => {
   const endredeFeaturesMap = operasjoner?.grenseendringer?.endredeFeatures;
 
@@ -18,15 +18,15 @@ export const getKretserMedGrensejusteringer = (
   }
 
   const endredeFeatures = removeNull(
-    Object.values(endredeFeaturesMap)
+    Object.values(endredeFeaturesMap),
   ) as components["schemas"]["Feature"][];
 
   return removeNull(
     endredeFeatures
       .filter((feature) => feature.properties.kontekstEgenskaper?.type === type)
       .map(
-        (feature) => feature.properties.kontekstEgenskaper?.id?.lokalid?.value
-      )
+        (feature) => feature.properties.kontekstEgenskaper?.id?.lokalid?.value,
+      ),
   );
 };
 
@@ -38,7 +38,7 @@ export const getKretserMedGrensejusteringer = (
 type groupEndringerByKommuneReturnType = { [kommuneid: string]: string[] };
 export function groupEndringerByKommune(
   endredeKretser: string[],
-  alleKretser: (StemmekretsResponse | GrunnkretsResponse)[]
+  alleKretser: (StemmekretsResponse | GrunnkretsResponse)[],
 ): groupEndringerByKommuneReturnType {
   return endredeKretser
     .map((kretsId) => {
@@ -55,12 +55,12 @@ export function groupEndringerByKommune(
 
 export function findKrets<T extends StemmekretsResponse | GrunnkretsResponse>(
   id: string,
-  kretser: T[]
+  kretser: T[],
 ): T {
   const resultat = kretser.find((krets) => krets.id.lokalid.value === id);
   if (resultat == null) {
     throw Error(
-      `Kunne ikke finne krets med id: ${id}. Dette skal egentlig ikke skje, og kan tyde på feil i implementasjonen. Gjerne ta kontakt med Team Smia om feilen vedvarer.`
+      `Kunne ikke finne krets med id: ${id}. Dette skal egentlig ikke skje, og kan tyde på feil i implementasjonen. Gjerne ta kontakt med Team Smia om feilen vedvarer.`,
     );
   }
   return resultat;

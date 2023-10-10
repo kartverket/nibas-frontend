@@ -100,7 +100,7 @@ export const grenseStyles = {
 
 const grenseStyleFromType = (
   grenseType: GrenseType,
-  archived: boolean
+  archived: boolean,
 ): Style[] => {
   switch (grenseType) {
     case "Fylkesgrense": {
@@ -140,26 +140,26 @@ const grenseStyleFromType = (
 export const getLayerStyle = (
   feature: Feature<Geometry> | RenderFeature,
   grenseId: GrenseId,
-  archived: boolean
+  archived: boolean,
 ) => {
   if (grenseId == "edit" && borderIsEditable(feature)) {
     return grenseStyles.edit;
   } else {
     return grenseStyleFromType(
       feature.getProperties().type as GrenseType,
-      archived
+      archived,
     );
   }
 };
 
 export const getArchiveLayerStyle = (
-  feature: Feature<Geometry> | RenderFeature
+  feature: Feature<Geometry> | RenderFeature,
 ) => {
   return grenseStyleFromType(feature.getProperties().type as GrenseType, true);
 };
 
 export const getPointOverlayStyle = (
-  feature: Feature<Geometry> | RenderFeature
+  feature: Feature<Geometry> | RenderFeature,
 ) => {
   if (!feature.get("name") || !feature.get("number")) return new Style();
 
@@ -187,7 +187,7 @@ export const getPointOverlayStyle = (
 export const updateEditFeatureText = (
   featureId: string,
   name?: string,
-  number?: string
+  number?: string,
 ) => {
   const feature = editSource.getFeatureById(featureId);
   if (feature) {

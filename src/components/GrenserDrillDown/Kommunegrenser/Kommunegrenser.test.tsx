@@ -25,14 +25,14 @@ describe("Kommunegrenser", () => {
     await user.click(
       screen.getByRole("button", {
         name: "Kommuner expand_more",
-      })
+      }),
     );
 
     await user.click(screen.getByRole("button", { name: "Vis Agder" }));
     await user.click(screen.getByRole("button", { name: "Skjul Agder" }));
 
     expect(
-      screen.getByRole("button", { name: "Vis Agder" })
+      screen.getByRole("button", { name: "Vis Agder" }),
     ).toBeInTheDocument();
   });
 });

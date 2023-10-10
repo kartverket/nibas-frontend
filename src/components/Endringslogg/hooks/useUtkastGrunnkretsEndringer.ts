@@ -15,10 +15,10 @@ type useUtkastGrunnkretsEndringerReturnType = {
 };
 
 export const useUtkastGrunnkretsEndringer = (
-  utkast: UtkastResponse
+  utkast: UtkastResponse,
 ): useUtkastGrunnkretsEndringerReturnType => {
   const [endringer, setEndringer] = useState<Grunnkretsendringer[] | null>(
-    null
+    null,
   );
 
   const { data: kommuner, isValidating: lasterKommuner } =
@@ -42,8 +42,8 @@ export const useUtkastGrunnkretsEndringer = (
           grunnkretserMedEndringer,
           operasjoner,
           grunnkretser,
-          kommuner
-        )
+          kommuner,
+        ),
       );
     }
   }, [

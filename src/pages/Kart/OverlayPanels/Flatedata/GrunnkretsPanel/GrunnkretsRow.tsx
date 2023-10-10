@@ -18,7 +18,7 @@ type GrunnkretsInputs = {
 
 const fromFormToRequest = (
   data: GrunnkretsInputs,
-  grunnkrets: GrunnkretsResponse
+  grunnkrets: GrunnkretsResponse,
 ): GrunnkretsRequest => ({
   identifikasjon: {
     lokalid: getIdFromEntity(grunnkrets),
@@ -72,10 +72,10 @@ const GrunnkretsRow = ({ grunnkrets, kommuneId }: Props) => {
       updateEditFeatureText(
         getRepresentasjonspunktId(grunnkretsId),
         newName,
-        newNumber
+        newNumber,
       );
     },
-    [getValues, grunnkretsId, setValue]
+    [getValues, grunnkretsId, setValue],
   );
 
   useHistoryFormSync<GrunnkretsEntry>({
@@ -102,7 +102,7 @@ const GrunnkretsRow = ({ grunnkrets, kommuneId }: Props) => {
     updateEditFeatureText(
       getRepresentasjonspunktId(grunnkretsId),
       newValues.grunnkretsnavn,
-      newValues.grunnkretsnummer
+      newValues.grunnkretsnummer,
     );
     toggleEditing();
   };

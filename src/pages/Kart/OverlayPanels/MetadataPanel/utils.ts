@@ -13,7 +13,7 @@ export const getDateInFriendlyString = (dateString?: string) => {
 
 const updateFeatureWithNewMetadata = (
   feature: Feature<LineString>,
-  newMetadata: Metadata
+  newMetadata: Metadata,
 ) => {
   const properties = feature.getProperties() as FeatureProperties;
   feature.setProperties({
@@ -25,7 +25,7 @@ const updateFeatureWithNewMetadata = (
 export const addMetadataEntryFromFeature = (
   feature: Feature<LineString>,
   addHistoryEntry: (entry: MetadataEntry) => void,
-  updatedMetadata: Metadata
+  updatedMetadata: Metadata,
 ) => {
   const id = feature.getId();
 

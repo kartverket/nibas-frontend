@@ -54,7 +54,7 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
                 (
                   (selectedFeature?.getProperties() as FeatureProperties)
                     .metadata as Metadata
-                ).common?.sporingsinformasjon.oppdateringsdato
+                ).common?.sporingsinformasjon.oppdateringsdato,
               )}
             </>
           )

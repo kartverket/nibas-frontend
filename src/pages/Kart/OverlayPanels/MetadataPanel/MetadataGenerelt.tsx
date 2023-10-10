@@ -114,7 +114,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
           maalemetodeKoder?.items.find(
             (item) =>
               item.id ===
-              metadata.commonGrense?.posisjonskvalitet?.maalemetode.id
+              metadata.commonGrense?.posisjonskvalitet?.maalemetode.id,
           )?.label ?? "Ukjent"
         }
         onMetadataSubmit={onSubmit}

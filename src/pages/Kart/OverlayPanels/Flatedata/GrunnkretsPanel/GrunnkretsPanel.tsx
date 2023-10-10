@@ -27,7 +27,7 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
   const { data: grunnkretserByKommune } = useKommuneGrunnkretser(kommuneId);
   const utkastGrunnkretser = useUtkastEntity(
     grunnkretserByKommune,
-    "grunnkretsendringer"
+    "grunnkretsendringer",
   ) as GrunnkretsResponse[] | undefined;
 
   const filteredGrunnkretser = useMemo(() => {
@@ -36,7 +36,7 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
     return utkastGrunnkretser?.filter(
       (grunnkrets) =>
         grunnkrets.grunnkretsnummer.includes(searchValue) ||
-        grunnkrets.navn.toLowerCase().includes(searchValue.toLowerCase())
+        grunnkrets.navn.toLowerCase().includes(searchValue.toLowerCase()),
     );
   }, [searchValue, utkastGrunnkretser]);
 
@@ -72,7 +72,7 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
                   grunnkrets={grunnkrets}
                   kommuneId={kommuneId}
                 />
-              )
+              ),
             )}
           </tbody>
         </KretsTable>
