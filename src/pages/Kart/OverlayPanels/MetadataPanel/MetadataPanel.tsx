@@ -5,11 +5,6 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { FeatureProperties, Metadata } from "types/api";
 import { getDateInFriendlyString } from "./utils";
 import { useEffect } from "react";
-import { styled } from "styled-components";
-
-const StyledSidePanel = styled(SidePanel)`
-  padding: 0;
-`;
 
 const MetadataPanel = ({ isOpen, className }: PanelProps) => {
   const { selectedFeatures } = useFeatureStyle();
@@ -42,7 +37,7 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
   }`;
 
   return (
-    <StyledSidePanel $isOpen={isOpen} className={className}>
+    <SidePanel $isOpen={isOpen} className={className}>
       <PanelHeader onClose={closeOverlayPanel} subHeading={sistOppdatertString}>
         Informasjon om grense
       </PanelHeader>
@@ -51,7 +46,7 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
       ) : (
         <p>Du har ikke valgt en grense</p>
       )}
-    </StyledSidePanel>
+    </SidePanel>
   );
 };
 

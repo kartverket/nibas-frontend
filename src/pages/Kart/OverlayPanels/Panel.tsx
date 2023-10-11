@@ -1,4 +1,4 @@
-import { CloseButton, Divider, Heading, Text } from "@kvib/react";
+import { CloseButton, Heading, Text } from "@kvib/react";
 import { styled, keyframes } from "styled-components";
 
 export type PanelProps = {
@@ -70,9 +70,18 @@ type PanelHeaderContainerProps = {
 const getPaddingForSize = (size: PanelHeaderSizes): string => {
   switch (size) {
     case "md":
-      return "16px 28px 0 28px";
+      return "24px 0 16px";
     case "sm":
-      return "12px 28px 0 28px";
+      return "12px 0 8px";
+  }
+};
+
+const getMarginForSize = (size: PanelHeaderSizes): string => {
+  switch (size) {
+    case "md":
+      return "16px";
+    case "sm":
+      return "12px";
   }
 };
 
@@ -89,17 +98,14 @@ const PanelHeaderContainer = styled.div<PanelHeaderContainerProps>`
   position: sticky;
   top: 0;
   z-index: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: ${({ $size = "md" }) => getPaddingForSize($size)};
-  background: var(--kvib-colors-chakra-body-bg);
-`;
 
-const PanelHeaderContent = styled.div`
   display: flex;
   justify-content: space-between;
-  width: 100%;
+  align-items: center;
+  padding: ${({ $size = "md" }) => getPaddingForSize($size)};
+  margin-bottom: ${({ $size = "md" }) => getMarginForSize($size)};
+  border-bottom: 2px solid var(--kvib-colors-gray-50);
+  background: var(--kvib-colors-chakra-body-bg);
 `;
 
 const PanelHeaderText = styled.div`
@@ -122,19 +128,16 @@ export const PanelHeader = ({
   size = "md",
 }: PanelHeaderProps) => (
   <PanelHeaderContainer $size={size}>
-    <PanelHeaderContent>
-      <PanelHeaderText>
-        <Heading as="h3" size={size}>
-          {children}
-        </Heading>
-        {subHeading && <Text fontSize={"sm"}>{subHeading}</Text>}
-      </PanelHeaderText>
-      <CloseButton
-        size={getCloseButtonSize(size)}
-        onClick={onClose}
-        aria-label="Lukk"
-      />
-    </PanelHeaderContent>
-    <Divider />
+    <PanelHeaderText>
+      <Heading as="h3" size={size}>
+        {children}
+      </Heading>
+      {subHeading && <Text fontSize="sm">{subHeading}</Text>}
+    </PanelHeaderText>
+    <CloseButton
+      size={getCloseButtonSize(size)}
+      onClick={onClose}
+      aria-label="Lukk"
+    />
   </PanelHeaderContainer>
 );

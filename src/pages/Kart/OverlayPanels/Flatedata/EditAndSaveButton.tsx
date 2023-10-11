@@ -1,10 +1,9 @@
 import { styled } from "styled-components";
 import { ButtonGroup, IconButton } from "@kvib/react";
 
-const Cell = styled.td`
+const Container = styled.div`
   display: flex;
   justify-content: end;
-  padding: 12px !important;
 `;
 
 const EditButton = styled(IconButton)`
@@ -16,6 +15,7 @@ const CombinedButton = styled(ButtonGroup)`
 `;
 
 type Props = {
+  className?: string;
   isEditing: boolean;
   isDisabled?: boolean;
   canSave: boolean;
@@ -24,13 +24,14 @@ type Props = {
 };
 
 const EditAndSaveButton = ({
+  className,
   isEditing,
   isDisabled,
   toggleEditing,
   canSave,
   onSubmit,
 }: Props) => (
-  <Cell>
+  <Container className={className}>
     {isEditing ? (
       <CombinedButton>
         <IconButton
@@ -56,7 +57,7 @@ const EditAndSaveButton = ({
         colorScheme="gray"
       />
     )}
-  </Cell>
+  </Container>
 );
 
 export default EditAndSaveButton;

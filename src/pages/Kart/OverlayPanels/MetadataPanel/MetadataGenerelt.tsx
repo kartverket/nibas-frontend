@@ -14,7 +14,7 @@ import {
   Textarea,
 } from "@kvib/react";
 
-import { MetadataRow } from "./MetadataRow";
+import MetadataRow from "./MetadataRow";
 import { GrenseType } from "../../../../hooks/layers/types";
 import { getDateInFriendlyString } from "./utils";
 import AsyncKodelisteSelect from "./AsyncKodelisteSelect";
@@ -42,7 +42,6 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 20px 28px;
 `;
 
 const MetadataGenerelt = ({ feature }: Props) => {
