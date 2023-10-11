@@ -3,7 +3,7 @@ import Feature, { FeatureLike } from "ol/Feature";
 import LineString from "ol/geom/LineString";
 import Modify, { ModifyEvent } from "ol/interaction/Modify";
 import { HistoryChange, useHistory } from "contexts/HistoryContext";
-import { primaryAction, singleClick } from "ol/events/condition";
+import { click, primaryAction } from "ol/events/condition";
 import { Collection, MapBrowserEvent } from "ol";
 import { editSource } from "hooks/layers/constants";
 import { pixelTolerance } from "./constants";
@@ -72,7 +72,7 @@ const useModify = () => {
           return activePointMode === "add";
         },
         deleteCondition: (event: MapBrowserEvent<MouseEvent>) => {
-          if (activePointMode === "remove") {
+          if (activePointMode === "remove" && click(event)) {
             const featuresAtPixel = map.getFeaturesAtPixel(event.pixel, {
               layerFilter: (layer) => layer === editLayer,
               hitTolerance: pixelTolerance,
@@ -112,7 +112,7 @@ const useModify = () => {
             }
 
             // Hvis alt ellers ser greit ut så fjernes punktet på klikk
-            return singleClick(event);
+            return true;
           }
           return false;
         },
