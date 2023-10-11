@@ -1,7 +1,9 @@
+import { styled } from "styled-components";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { Metadata, FeatureProperties } from "types/api";
 import useMetadataForm from "pages/Kart/OverlayPanels/hooks/useMetadataForm";
+import useIsMetadataDisabled from "../hooks/useIsMetadataDisabled";
 import { useEffect } from "react";
 import {
   Datepicker,
@@ -12,12 +14,13 @@ import {
   Select,
   Textarea,
 } from "@kvib/react";
+
 import { MetadataRow } from "./MetadataRow";
 import { GrenseType } from "../../../../hooks/layers/types";
 import { getDateInFriendlyString } from "./utils";
 import AsyncKodelisteSelect from "./AsyncKodelisteSelect";
 
-const grenseTypeValues: GrenseType[] = [
+const GrenseTypeValues: GrenseType[] = [
   "Kommunegrense",
   "Fylkesgrense",
   "Riksgrense",
@@ -27,6 +30,8 @@ const grenseTypeValues: GrenseType[] = [
   "Delområdegrense",
   "Posisjon",
   "Stemmekretsgrense",
+  "GRUNNKRETS",
+  "STEMMEKRETS",
 ];
 
 type Props = {
@@ -51,6 +56,9 @@ const MetadataGenerelt = ({ feature }: Props) => {
     reset(getFormFromApiMetadata(metadata));
   }, [getFormFromApiMetadata, metadata, reset]);
 
+  const metadataIsDisabled = useIsMetadataDisabled(properties);
+  const disabledByFeatureLock = true; // Fleter låst med denne variabelen er ikke ment å bli tatt i bruk enda, og skal være låst inntil videre.
+
   const onSubmit = () => {
     updateDraftFromFeature();
     reset(undefined, { keepValues: true });
@@ -59,13 +67,13 @@ const MetadataGenerelt = ({ feature }: Props) => {
   return (
     <div>
       <MetadataRow
-        name="Grensetype"
+        name={"Grensetype"}
         value={properties.type}
         onMetadataSubmit={onSubmit}
-        isDisabled
+        isDisabled={disabledByFeatureLock}
       >
         <Select {...register("grenseType")}>
-          {grenseTypeValues.map((grenseType: GrenseType) => (
+          {GrenseTypeValues.map((grenseType: GrenseType) => (
             <option key={grenseType}>{grenseType}</option>
           ))}
         </Select>
@@ -77,31 +85,32 @@ const MetadataGenerelt = ({ feature }: Props) => {
           "Ikke definert"
         }
         onMetadataSubmit={onSubmit}
+        isDisabled={metadataIsDisabled}
       >
         <Datepicker {...register("datafangstdato")} />
       </MetadataRow>
       <MetadataRow
-        name="Gyldig fra"
+        name={"Gyldig fra"}
         value={
           getDateInFriendlyString(metadata.common?.gyldigFra) ?? "Ikke definert"
         }
         onMetadataSubmit={onSubmit}
-        isDisabled
+        isDisabled={disabledByFeatureLock}
       >
         <Datepicker {...register("gyldigFra")} />
       </MetadataRow>
       <MetadataRow
-        name="Gyldig til"
+        name={"Gyldig til"}
         value={
           getDateInFriendlyString(metadata.common?.gyldigTil) ?? "Ikke definert"
         }
         onMetadataSubmit={onSubmit}
-        isDisabled
+        isDisabled={disabledByFeatureLock}
       >
         <Datepicker {...register("gyldigTil")} />
       </MetadataRow>
       <MetadataRow
-        name="Målemetode"
+        name={"Målemetode"}
         value={
           maalemetodeKoder?.items.find(
             (item) =>
@@ -111,6 +120,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
         }
         onMetadataSubmit={onSubmit}
         useSeperateRowForChildren
+        isDisabled={metadataIsDisabled}
       >
         <AsyncKodelisteSelect
           kodeliste={maalemetodeKoder}
@@ -119,9 +129,10 @@ const MetadataGenerelt = ({ feature }: Props) => {
         />
       </MetadataRow>
       <MetadataRow
-        name="Nøyaktighet"
+        name={"Nøyaktighet"}
         value={metadata.commonGrense?.posisjonskvalitet?.noeyaktighet?.toString()}
         onMetadataSubmit={onSubmit}
+        isDisabled={metadataIsDisabled}
       >
         <NumberInput>
           <NumberInputField
@@ -139,10 +150,11 @@ const MetadataGenerelt = ({ feature }: Props) => {
         value={metadata.common?.opphav ?? ""}
         onMetadataSubmit={onSubmit}
         useSeperateRowForChildren
+        isDisabled={metadataIsDisabled}
       >
         <Input
           {...register("opphav")}
-          placeholder="Fyll inn informasjon om opphav"
+          placeholder={"Fyll inn informasjon om opphav"}
         />
       </MetadataRow>
       <MetadataRow
@@ -150,11 +162,12 @@ const MetadataGenerelt = ({ feature }: Props) => {
         value={metadata.common?.informasjon ?? ""}
         onMetadataSubmit={onSubmit}
         useSeperateRowForChildren
+        isDisabled={metadataIsDisabled}
       >
         <Textarea
           {...register("informasjon")}
-          placeholder="Fyll inn ekstra informasjon"
-          minHeight="100%"
+          placeholder={"Fyll inn ekstra informasjon"}
+          minHeight={"100%"}
         />
       </MetadataRow>
     </div>
