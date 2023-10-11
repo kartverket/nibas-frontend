@@ -41,10 +41,13 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
       <PanelHeader onClose={closeOverlayPanel} subHeading={sistOppdatertString}>
         Informasjon om grense
       </PanelHeader>
-      {selectedFeature && !isWFSGrense ? (
+      {selectedFeature &&
+      selectedProperties &&
+      selectedProperties.metadata &&
+      !isWFSGrense ? (
         <MetadataGenerelt feature={selectedFeature} />
       ) : (
-        <p>Du har ikke valgt en grense</p>
+        <p>Valgt grense har ikke metadata</p>
       )}
     </SidePanel>
   );
