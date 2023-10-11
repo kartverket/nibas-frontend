@@ -105,6 +105,7 @@ const PanelHeaderContent = styled.div`
 const PanelHeaderText = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: center;
 `;
 
 type PanelHeaderProps = {
@@ -126,7 +127,7 @@ export const PanelHeader = ({
         <Heading as="h3" size={size}>
           {children}
         </Heading>
-        <Text fontSize={"sm"}>{subHeading}</Text>
+        {subHeading && <Text fontSize={"sm"}>{subHeading}</Text>}
       </PanelHeaderText>
       <CloseButton
         size={getCloseButtonSize(size)}

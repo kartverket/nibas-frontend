@@ -1,4 +1,3 @@
-import { styled } from "styled-components";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { Metadata, FeatureProperties } from "types/api";
@@ -19,6 +18,7 @@ import { MetadataRow } from "./MetadataRow";
 import { GrenseType } from "../../../../hooks/layers/types";
 import { getDateInFriendlyString } from "./utils";
 import AsyncKodelisteSelect from "./AsyncKodelisteSelect";
+import { styled } from "styled-components";
 
 const GrenseTypeValues: GrenseType[] = [
   "Kommunegrense",
@@ -37,6 +37,13 @@ const GrenseTypeValues: GrenseType[] = [
 type Props = {
   feature: Feature<Geometry>;
 };
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 28px;
+`;
 
 const MetadataGenerelt = ({ feature }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
@@ -65,7 +72,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
   };
 
   return (
-    <div>
+    <Container>
       <MetadataRow
         name={"Grensetype"}
         value={properties.type}
@@ -115,7 +122,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
           maalemetodeKoder?.items.find(
             (item) =>
               item.id ===
-              metadata.commonGrense?.posisjonskvalitet?.maalemetode.id
+              metadata.commonGrense?.posisjonskvalitet?.maalemetode.id,
           )?.label ?? "Ukjent"
         }
         onMetadataSubmit={onSubmit}
@@ -167,10 +174,9 @@ const MetadataGenerelt = ({ feature }: Props) => {
         <Textarea
           {...register("informasjon")}
           placeholder={"Fyll inn ekstra informasjon"}
-          minHeight={"100%"}
         />
       </MetadataRow>
-    </div>
+    </Container>
   );
 };
 

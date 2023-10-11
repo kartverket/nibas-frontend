@@ -1,12 +1,7 @@
 import { Divider, Text } from "@kvib/react";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import EditAndSaveButton from "../Flatedata/EditAndSaveButton";
 import { useState } from "react";
-
-const EditRow = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
 
 const EditContent = styled.div<{ $twoRows: boolean }>`
   display: grid;
@@ -14,7 +9,6 @@ const EditContent = styled.div<{ $twoRows: boolean }>`
   ${(props) => props.$twoRows && "grid-template-rows: 1fr 2fr;"};
   column-gap: 16px;
   row-gap: 16px;
-  padding: 21px 28px 21px 28px;
   align-items: center;
 
   :nth-child(2) {
@@ -26,11 +20,6 @@ const EditContent = styled.div<{ $twoRows: boolean }>`
     padding: 0 !important;
     grid-column: 3;
   }
-`;
-
-const StyledDivider = styled(Divider)`
-  align-self: center;
-  width: calc(100% - 56px); // 56px er padding-bottom + padding-top
 `;
 
 interface Props {
@@ -53,7 +42,7 @@ export const MetadataRow = ({
   const [isEdit, setIsEdit] = useState(false);
   const twoRows = (useSeperateRowForChildren && isEdit) ?? false;
   return (
-    <EditRow>
+    <>
       <EditContent $twoRows={twoRows}>
         <Text>{name}</Text>
 
@@ -70,7 +59,7 @@ export const MetadataRow = ({
           toggleEditing={() => setIsEdit((prevState) => !prevState)}
         />
       </EditContent>
-      <StyledDivider />
-    </EditRow>
+      <Divider />
+    </>
   );
 };

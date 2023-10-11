@@ -21,7 +21,7 @@ type Inputs = {
 };
 
 const getUpdatedMetadata = (data: Inputs, oldMetadata: Metadata) => {
-  const newMetadata = ({
+  const newMetadata = {
     ...(oldMetadata ?? {}),
     common: {
       ...(oldMetadata.common ?? {}),
@@ -42,11 +42,9 @@ const getUpdatedMetadata = (data: Inputs, oldMetadata: Metadata) => {
         noeyaktighet: data.noeyaktighet,
       },
     },
-  } as Metadata);
-  console.log(newMetadata)
-  return newMetadata
-}
-  
+  } as Metadata;
+  return newMetadata;
+};
 
 const getFormFromApiMetadata = (metadata: Metadata) => ({
   informasjon: metadata?.common?.informasjon,

@@ -32,34 +32,24 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
   const selectedProperties =
     selectedFeature?.getProperties() as FeatureProperties;
 
-  const sistOppdatertString = "Sist oppdatert:".concat(
+  const sistOppdatertString = `Sist oppdatert: ${
     selectedProperties && selectedProperties.metadata
-      ? " " +
-          getDateInFriendlyString(
-            (
-              (selectedFeature?.getProperties() as FeatureProperties)
-                .metadata as Metadata
-            ).common?.sporingsinformasjon.oppdateringsdato
-          )
-      : " Ukjent"
-  );
+      ? getDateInFriendlyString(
+          (selectedProperties.metadata as Metadata).common?.sporingsinformasjon
+            .oppdateringsdato,
+        )
+      : "Ukjent"
+  }`;
 
   return (
     <StyledSidePanel $isOpen={isOpen} className={className}>
-      <PanelHeader
-        onClose={closeOverlayPanel}
-        subHeading={
-          selectedProperties &&
-          selectedProperties.metadata &&
-          sistOppdatertString
-        }
-      >
+      <PanelHeader onClose={closeOverlayPanel} subHeading={sistOppdatertString}>
         Informasjon om grense
       </PanelHeader>
-      {selectedFeature && !isWFSGrense && selectedProperties.metadata ? (
+      {selectedFeature && !isWFSGrense ? (
         <MetadataGenerelt feature={selectedFeature} />
       ) : (
-        <p>Den valgte grensen har ingen metadata</p>
+        <p>Du har ikke valgt en grense</p>
       )}
     </StyledSidePanel>
   );
