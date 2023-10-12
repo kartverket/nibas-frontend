@@ -71,7 +71,7 @@ const ToolbarMenus = () => {
   // For å kunne vise at en meny er aktiv må vi kunne sjekke hvorvidt noen av menuitems er aktive
   // Korteste vei til mål da blir å kunne iterere gjennom menu items
   const grenseMenuItems: MenuItems = [
-    {
+    /*{
       label: "Tegn ny grense",
       icon: <Icon icon="edit" />,
       $isActive: activePointMode === "draw",
@@ -91,7 +91,7 @@ const ToolbarMenus = () => {
       $isActive: activePointMode === "detach",
       onClick: () => togglePointMode("detach"),
       "aria-label": "Løsriv grense fra et knutepunkt",
-    },
+    },*/
     {
       label: "Se/endre grenseinformasjon",
       icon: <Icon icon="live_help" />,
@@ -99,13 +99,13 @@ const ToolbarMenus = () => {
       onClick: toggleMetadata,
       "aria-label": "Se informasjon om grensen",
     },
-    {
+    /*{
       label: "Arkiver grense",
       icon: <Icon icon="archive" />,
       $isActive: activePointMode === "archive",
       onClick: () => togglePointMode("archive"),
       "aria-label": "Arkiver grense",
-    },
+    },*/
   ];
   const punktMenuItems: MenuItems = [
     {
