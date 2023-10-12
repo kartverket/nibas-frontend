@@ -30,7 +30,7 @@ const slideIn = keyframes`
 
 export const Panel = styled.div<{ $isOpen: boolean }>`
   margin: 16px;
-  padding: 0 16px;
+  padding: 0 22px;
   background: white;
   border: 2px solid var(--kvib-colors-gray-50);
   border-radius: 12px;
@@ -45,7 +45,7 @@ export const Panel = styled.div<{ $isOpen: boolean }>`
 
 export const SidePanel = styled(Panel)`
   grid-area: sidepanel;
-  width: 500px;
+  width: 520px;
   border-radius: unset;
   margin: 0;
   border-top: none;
