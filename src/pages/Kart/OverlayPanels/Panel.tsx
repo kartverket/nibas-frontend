@@ -111,6 +111,7 @@ const PanelHeaderContainer = styled.div<PanelHeaderContainerProps>`
 const PanelHeaderText = styled.div`
   display: flex;
   flex-direction: column;
+  gap: 4px;
   justify-content: center;
 `;
 

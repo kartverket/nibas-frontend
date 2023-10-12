@@ -49,7 +49,7 @@ const getUpdatedMetadata = (data: Inputs, oldMetadata: Metadata) => {
 const getFormFromApiMetadata = (metadata: Metadata) => ({
   informasjon: metadata?.common?.informasjon,
   grenseType: metadata?.discriminator,
-  datafangstdato: metadata.common?.datafangstdato,
+  datafangstdato: metadata.common?.datafangstdato?.split("T")[0],
   noeyaktighet: metadata?.commonGrense?.posisjonskvalitet?.noeyaktighet,
   opphav: metadata?.common?.opphav,
   gyldigFra: metadata?.common?.gyldigFra,

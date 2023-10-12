@@ -48,7 +48,6 @@ const MetadataGenerelt = ({ feature }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
 
   const metadata = properties.metadata as Metadata;
-
   const {
     register,
     updateDraftFromFeature,
@@ -77,6 +76,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
         value={properties.type}
         onMetadataSubmit={onSubmit}
         isDisabled={disabledByFeatureLock}
+        useSeperateRowForChildren
       >
         <Select {...register("grenseType")}>
           {GrenseTypeValues.map((grenseType: GrenseType) => (
@@ -92,6 +92,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
         }
         onMetadataSubmit={onSubmit}
         isDisabled={metadataIsDisabled}
+        useSeperateRowForChildren
       >
         <Datepicker {...register("datafangstdato")} />
       </MetadataRow>
@@ -102,6 +103,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
         }
         onMetadataSubmit={onSubmit}
         isDisabled={disabledByFeatureLock}
+        useSeperateRowForChildren
       >
         <Datepicker {...register("gyldigFra")} />
       </MetadataRow>
@@ -112,6 +114,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
         }
         onMetadataSubmit={onSubmit}
         isDisabled={disabledByFeatureLock}
+        useSeperateRowForChildren
       >
         <Datepicker {...register("gyldigTil")} />
       </MetadataRow>
@@ -139,6 +142,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
         value={metadata.commonGrense?.posisjonskvalitet?.noeyaktighet?.toString()}
         onMetadataSubmit={onSubmit}
         isDisabled={metadataIsDisabled}
+        useSeperateRowForChildren
       >
         <NumberInput>
           <NumberInputField

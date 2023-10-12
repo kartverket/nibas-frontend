@@ -1,13 +1,14 @@
 import { styled } from "styled-components";
-import { ButtonGroup, IconButton } from "@kvib/react";
+import { ButtonGroup, IconButton, Button } from "@kvib/react";
 
 const Container = styled.div`
   display: flex;
   justify-content: end;
 `;
 
-const EditButton = styled(IconButton)`
+const EditButton = styled(Button)`
   white-space: nowrap;
+  min-width: unset;
 `;
 
 const CombinedButton = styled(ButtonGroup)`
@@ -52,10 +53,11 @@ const EditAndSaveButton = ({
         isDisabled={isDisabled}
         aria-label="Åpne redigering"
         onClick={toggleEditing}
-        icon="edit"
         variant="secondary"
         colorScheme="gray"
-      />
+      >
+        Rediger
+      </EditButton>
     )}
   </Container>
 );

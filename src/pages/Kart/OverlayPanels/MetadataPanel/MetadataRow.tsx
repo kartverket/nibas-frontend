@@ -2,7 +2,6 @@ import { Divider, Text } from "@kvib/react";
 import { styled } from "styled-components";
 import EditAndSaveButton from "../Flatedata/EditAndSaveButton";
 import { useState } from "react";
-
 interface Props {
   name: string;
   value: string | undefined;
@@ -48,7 +47,7 @@ const MetadataRow = ({
 const EditContent = styled.div<{ $twoRows: boolean }>`
   display: grid;
   align-items: center;
-  grid-template-columns: 2fr 2fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 16px;
 `;
 
