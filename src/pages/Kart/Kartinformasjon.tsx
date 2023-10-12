@@ -16,34 +16,42 @@ const Kartinformasjon = () => {
         target: document.getElementById("mouse-position") ?? "",
       });
 
-      const scaleLine = new ScaleLine({
+      const scaleBar = new ScaleLine({
         bar: true,
         text: true,
+        target: document.getElementById("scale-bar") ?? "",
+      });
+
+      const scaleLine = new ScaleLine({
         target: document.getElementById("scale-line") ?? "",
       });
 
       map.addControl(mousePosition);
+      map.addControl(scaleBar);
       map.addControl(scaleLine);
     }
   }, []);
 
   return (
-    <Container>
-      <Section>
-        <IconButton
-          size="sm"
-          aria-label="Koordinatsystem"
-          variant="secondary"
-          colorScheme="gray"
-          icon="language"
-          isDisabled
-        />
-        <CoordinateSystem>EUREF89 UTM33</CoordinateSystem>
-        <Position id="mouse-position" />
-      </Section>
-      <Divider orientation="vertical" />
-      <Scale id="scale-line" />
-    </Container>
+    <>
+      <Container>
+        <Section>
+          <IconButton
+            size="sm"
+            aria-label="Koordinatsystem"
+            variant="secondary"
+            colorScheme="gray"
+            icon="language"
+            isDisabled
+          />
+          <CoordinateSystem>EUREF89 UTM33</CoordinateSystem>
+          <Position id="mouse-position" />
+        </Section>
+        <Divider orientation="vertical" />
+        <Scale id="scale-bar" />
+      </Container>
+      <ScaleIndicator id="scale-line" />
+    </>
   );
 };
 
@@ -71,16 +79,16 @@ const Section = styled.section`
 const Scale = styled(Section)`
   border-left: 1px solid var(--kvib-colors-chakra-border-color);
 
+  // Vi hindrer OpenLayers sin innebygde styling fra å sette bredde ved å bare ha inline-elementer
   .ol-scale-bar-inner {
-    width: fit-content !important;
+    display: inline;
 
     * {
       display: none;
     }
 
     .ol-scale-text {
-      display: unset;
-      width: inherit !important;
+      display: inline;
     }
   }
 `;
@@ -95,6 +103,16 @@ const Position = styled.span`
   div {
     white-space: pre;
   }
+`;
+
+const ScaleIndicator = styled.span`
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+
+  border: 2px solid var(--kvib-colors-gray-900);
+  border-top: none;
+  text-align: center;
 `;
 
 export default Kartinformasjon;
