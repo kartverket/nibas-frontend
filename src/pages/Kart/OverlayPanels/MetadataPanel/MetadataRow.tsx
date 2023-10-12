@@ -1,33 +1,39 @@
 import { Divider, Text } from "@kvib/react";
 import { styled } from "styled-components";
 import EditAndSaveButton from "../Flatedata/EditAndSaveButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Geometry } from "ol/geom";
+import { Feature } from "ol";
 interface Props {
+  feature: Feature<Geometry>;
   name: string;
   value: string | undefined;
   children: React.ReactNode;
   onMetadataSubmit: () => void;
   isDisabled?: boolean;
-  useSeperateRowForChildren?: boolean;
 }
 
 const MetadataRow = ({
+  feature,
   name,
   value,
   children,
   onMetadataSubmit,
   isDisabled,
-  useSeperateRowForChildren,
 }: Props) => {
   const [isEdit, setIsEdit] = useState(false);
-  const twoRows = (useSeperateRowForChildren && isEdit) ?? false;
+
+  useEffect(() => {
+    setIsEdit(false);
+  }, [feature]);
+
   return (
     <>
-      <EditContent $twoRows={twoRows}>
+      <EditContent>
         <Text>{name}</Text>
-        <Field $twoRows={twoRows}>
-          {!isEdit ? <Text as="b">{value}</Text> : children}
-        </Field>
+
+        {!isEdit && <Text as="b">{value}</Text>}
+
         <EditButton
           isDisabled={isDisabled}
           isEditing={isEdit}
@@ -38,21 +44,24 @@ const MetadataRow = ({
           }}
           toggleEditing={() => setIsEdit((prevState) => !prevState)}
         />
+        <Field $isEditing={isEdit}>{children}</Field>
       </EditContent>
       <Divider />
     </>
   );
 };
 
-const EditContent = styled.div<{ $twoRows: boolean }>`
+const EditContent = styled.div`
   display: grid;
-  align-items: center;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 16px;
+  transition: all 0.5ms;
 `;
 
-const Field = styled.div<{ $twoRows: boolean }>`
-  ${(props) => props.$twoRows && "grid-row: 2; grid-column: 1 / -1"};
+const Field = styled.div<{ $isEditing: boolean }>`
+  grid-row: 2;
+  grid-column: 1 / -1;
+  ${(props) => !props.$isEditing && "display: none"};
 `;
 
 const EditButton = styled(EditAndSaveButton)`

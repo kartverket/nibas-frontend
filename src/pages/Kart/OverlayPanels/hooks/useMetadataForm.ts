@@ -81,10 +81,10 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
     const updateFormOnPropertyChange = (e: ObjectEvent) => {
       const newMetadata = (e.target as Feature<LineString>).getProperties()
         .metadata as Metadata;
-
+  
       setValue("informasjon", newMetadata?.common?.informasjon ?? "");
       setValue("grenseType", newMetadata?.discriminator ?? "");
-      setValue("datafangstdato", newMetadata.common?.datafangstdato ?? "");
+      setValue("datafangstdato", newMetadata?.common?.datafangstdato ?? "");
       setValue(
         "noeyaktighet",
         newMetadata?.commonGrense?.posisjonskvalitet?.noeyaktighet ?? 0,
@@ -116,6 +116,7 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
     register,
     handleSubmit,
     maalemetodeKoder,
+    getValues,
     updateDraftFromFeature,
     isDirty,
     reset,

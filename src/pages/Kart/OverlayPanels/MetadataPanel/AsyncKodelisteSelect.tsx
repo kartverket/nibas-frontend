@@ -1,15 +1,14 @@
-import { FormControl, FormLabel, Select, SelectProps } from "@kvib/react";
+import { FormControl, Select, SelectProps } from "@kvib/react";
 import React, { forwardRef } from "react";
 import { KodelisteRespons } from "types/api";
 
 type Props = SelectProps & {
-  label: string;
   kodeliste: KodelisteRespons | undefined;
   disabled?: boolean;
 };
 
 const AsyncKodelisteSelectInner = (
-  { label, kodeliste, ...selectProps }: Props,
+  { kodeliste, ...selectProps }: Props,
   ref: React.ForwardedRef<HTMLSelectElement>,
 ) => {
   const itemsSorted =
