@@ -32,7 +32,8 @@ export const FeatureStyleProvider = ({
     setAndSaveUtkastFeatures,
     setAndSaveSammenslaaingsFeatures,
   } = useDirtyStyles();
-  const { archivedFeatureIds, setArchivedFeatures } = useArchiveStyles();
+  const { archivedFeatureIds, setArchivedFeatures, saveArchivedFeatureIds } =
+    useArchiveStyles();
   const { history } = useHistory();
   const previousSelectedFeatures = useRef(selectedFeatures);
 
@@ -60,6 +61,13 @@ export const FeatureStyleProvider = ({
       if (history.hasPreviouslySavedHistory && dirtyFeatureIds.length !== 0) {
         saveDirtyFeatureIds();
       }
+
+      if (
+        history.hasPreviouslySavedHistory &&
+        archivedFeatureIds.length !== 0
+      ) {
+        saveArchivedFeatureIds();
+      }
       // Hvis det ikke er for å lagre, så er det for å forhindre uendelig løkke
       return;
     }
@@ -68,9 +76,14 @@ export const FeatureStyleProvider = ({
       .filter((entry) => entry.type === "grense" || entry.type === "metadata")
       .reduce<string[][]>(getFeatureIdsFromEntries, []);
 
+    const archivedFeatures = history.entries
+      .filter((entry) => entry.type === "grensearkivering")
+      .reduce<string[][]>(getFeatureIdsFromEntries, []);
+
     const editFeatures = historyFeatures
       .slice(history.index)
       .flatMap((id) => id);
+
     const dirtyFeatures = historyFeatures
       .slice(0, history.index)
       .flatMap((id) => id);
@@ -80,6 +93,7 @@ export const FeatureStyleProvider = ({
 
     setEditFeatures(editFeatures);
     setDirtyFeatures(dirtyFeatures);
+    setArchivedFeatures(archivedFeatures.flatMap((id) => id));
   }, [
     dirtyFeatureIds.length,
     history.entries,
@@ -88,6 +102,9 @@ export const FeatureStyleProvider = ({
     saveDirtyFeatureIds,
     setDirtyFeatures,
     setEditFeatures,
+    archivedFeatureIds.length,
+    saveArchivedFeatureIds,
+    setArchivedFeatures,
   ]);
 
   const value = {

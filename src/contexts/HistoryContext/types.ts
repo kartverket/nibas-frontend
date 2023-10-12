@@ -1,5 +1,6 @@
 import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
 import {
+  FeatureProperties,
   GrunnkretsRequest,
   Metadata,
   StemmekretsRequest,
@@ -47,7 +48,7 @@ export type StemmekretsSammenslaaingsendringEntry = BaseHistoryEntry<
 
 export type GrenseArkiveringsEntry = BaseHistoryEntry<
   "grensearkivering",
-  string[]
+  FeatureProperties
 >;
 
 // endringer skal kunne gjøres i bulk, feks et punkt på to features endrer to features i en entry

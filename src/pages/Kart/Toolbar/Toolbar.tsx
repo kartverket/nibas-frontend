@@ -19,6 +19,8 @@ import { LineString } from "ol/geom";
 import { Feature } from "ol";
 import { getFeatureId } from "utils/map/source";
 import ToolbarPopup from "./ToolbarPopup";
+import { useHistory } from "contexts/HistoryContext";
+import { addArchivingEntryFromFeature } from "../OverlayPanels/MetadataPanel/utils";
 
 const Container = styled.div`
   grid-area: toolbar;
@@ -61,6 +63,7 @@ const Toolbar = () => {
     toggleEditMode,
     canArchive,
   } = useToolbar();
+  const { addHistoryEntry } = useHistory();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const editingType = getCurrentlyEditingType();
   const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } =
@@ -121,6 +124,10 @@ const Toolbar = () => {
 
   const archiveFeatures = (features: Feature<LineString>[]) => {
     setArchivedFeatures(features.map((feature) => getFeatureId(feature)));
+
+    features.forEach((feature) =>
+      addArchivingEntryFromFeature(feature, addHistoryEntry)
+    );
   };
 
   useKeyboardShortcut("add", () => togglePointMode("add"));
