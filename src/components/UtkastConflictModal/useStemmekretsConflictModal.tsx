@@ -28,10 +28,10 @@ type Inputs = {
 const getStemmekretsRequest = (
   grunnkretsFormData: StemmekretsFormData,
   futureVersions: StemmekretsResponse[],
-  stemmekrets: StemmekretsRequest
+  stemmekrets: StemmekretsRequest,
 ) => {
   const futureVersion = futureVersions?.find(
-    (fv) => fv.gyldighet.gyldigFra === grunnkretsFormData.gyldigFra
+    (fv) => fv.gyldighet.gyldigFra === grunnkretsFormData.gyldigFra,
   );
 
   return {
@@ -64,7 +64,7 @@ const useStemmekretsConflictModal = ({
     "/v1/stemmekretser/{lokalid}/framtidigeversjoner",
     {
       lokalid: stemmekrets.identifikasjon.lokalid,
-    }
+    },
   );
 
   const conflictedFutureVersions = useMemo(
@@ -73,10 +73,10 @@ const useStemmekretsConflictModal = ({
         conflictResponse.affectedIds.some(
           (affectedId) =>
             affectedId.lokalid.value === getIdFromEntity(fv) &&
-            affectedId.gyldighetsdato === fv.id.gyldighetsdato
-        )
+            affectedId.gyldighetsdato === fv.id.gyldighetsdato,
+        ),
       ),
-    [futureVersions, conflictResponse.affectedIds]
+    [futureVersions, conflictResponse.affectedIds],
   );
 
   const { tokenHolderFunc } = useAuthenticationFlow();
@@ -105,7 +105,7 @@ const useStemmekretsConflictModal = ({
           stemmekretsRequest: getStemmekretsRequest(
             s,
             conflictedFutureVersions as StemmekretsResponse[],
-            stemmekrets
+            stemmekrets,
           ),
         }))
         .concat({
@@ -119,7 +119,7 @@ const useStemmekretsConflictModal = ({
     await resolveUtkastConflict(
       utkast.id,
       resolvedConflict,
-      tokenHolderFunc()?.token
+      tokenHolderFunc()?.token,
     );
 
     onNext();
@@ -137,7 +137,7 @@ const useStemmekretsConflictModal = ({
         endringstype: futureVersion.endringstype ?? "",
         gyldigFra: futureVersion.gyldighet.gyldigFra,
         confirmed: false,
-      }))
+      })),
     );
   }, [conflictedFutureVersions, setValue]);
 

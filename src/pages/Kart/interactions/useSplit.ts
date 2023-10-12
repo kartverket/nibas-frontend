@@ -1,34 +1,24 @@
-import Feature from "ol/Feature";
 import LineString from "ol/geom/LineString";
-import { map } from "pages/Kart/constants";
 import { useHistory } from "contexts/HistoryContext";
-import { getLayerById } from "utils/map/layers";
-import { MapBrowserEvent } from "ol";
-import { squaredDistance } from "ol/coordinate";
 import { addFeaturesToSource } from "utils/map/source";
-import { pixelTolerance } from "./constants";
 import { useToolbar } from "contexts/ToolbarContext";
-import { Geometry } from "ol/geom";
+import { Point } from "ol/geom";
+import { useFeatureStyle } from "contexts/FeatureStyleContext";
 
-// TODO: denne koden er ikke i bruk og skal ombygges i fremtiden
-// vi måtte gå tilbake til scratch for å finne ut hva backenden vil ha fra frontenden
-// mye av koden vil nok overleve, men detaljene rundt hva klonen har av data vil nok endres
+// OBS! Per nå skiller denne seg fra de andre interaksjonene ved at den ikke legges til som et event i kartet
+// I stedet bruker man select og selectPoint etter hverandre, og utløser handlingen ved en knapp i React
 const useSplit = () => {
   const { addHistoryEntry } = useHistory();
   const { activePointMode } = useToolbar();
+  const { selectedFeatures, selectedPoint } = useFeatureStyle();
 
-  const split = (event: MapBrowserEvent<MouseEvent>) => {
-    if (activePointMode === "split" && !event.dragging) {
-      // Stopper propagering for å unngå selection når man skal splitte
-      event.stopPropagation();
-
-      const editLayer = getLayerById("edit");
-      const features = map.getFeaturesAtPixel(event.pixel, {
-        layerFilter: (layer) => layer === editLayer,
-        hitTolerance: pixelTolerance,
-      });
-      // Forutsetter at man bare trykker på én feature
-      const feature = features[0] as Feature<Geometry>;
+  const split = () => {
+    if (
+      activePointMode === "split" &&
+      selectedFeatures.length === 1 &&
+      selectedPoint
+    ) {
+      const feature = selectedFeatures[0];
       const geometry = feature.getGeometry();
       if (geometry instanceof LineString) {
         const coordinates = geometry.getCoordinates();
@@ -39,48 +29,52 @@ const useSplit = () => {
 
         // Ikke vits å gjøre splitting med mindre du har en linje med minst tre punkter
         if (coordinates.length > 2) {
-          const coordinatesWithDistance = coordinates.map((coord) => [
-            ...coord,
-            squaredDistance(coord, event.coordinate),
-          ]);
-          const nearestVertex = coordinatesWithDistance
-            .sort((a, b) => a[2] - b[2])
-            .map((cwd) => cwd.slice(0, -1))[0];
+          const pointGeometry = selectedPoint.getGeometry();
 
-          const nearestVertexIndex = coordinates.findIndex(
-            (v) => v[0] === nearestVertex[0] && v[1] === nearestVertex[1]
-          );
+          if (pointGeometry instanceof Point) {
+            const coordinatesToSplit = pointGeometry.getCoordinates();
+            const splitIndex = coordinates.findIndex(
+              (v) =>
+                v[0] === coordinatesToSplit[0] &&
+                v[1] === coordinatesToSplit[1],
+            );
 
-          const clonedFeature = feature.clone();
-          const clonedFeatureId = `${featureId}-clone`;
-          const clonedGeometry = clonedFeature.getGeometry() as LineString;
-          const clonedCoordinates = clonedGeometry.getCoordinates();
-          clonedFeature.setId(clonedFeatureId);
+            // Dette verifiserer at det valgte punktet er et gyldig punkt å splitte på grensen
+            if (splitIndex > 0 && splitIndex < coordinates.length - 1) {
+              // TODO: alt under denne kommentaren er spekulasjon på hvordan vi kanskje ønsker å gjøre det på sikt
+              // per nå er ikke split faktisk brukbart uten backend uansett, så det er bare et forslag
+              const clonedFeature = feature.clone();
+              const clonedFeatureId = `${featureId}-clone`;
+              const clonedGeometry = clonedFeature.getGeometry() as LineString;
+              const clonedCoordinates = clonedGeometry.getCoordinates();
+              clonedFeature.setId(clonedFeatureId);
 
-          const headCoordinates = coordinates.splice(0, nearestVertexIndex + 1);
-          const tailCoordinates = clonedCoordinates.splice(nearestVertexIndex);
+              const headCoordinates = coordinates.splice(0, splitIndex + 1);
+              const tailCoordinates = clonedCoordinates.splice(splitIndex);
 
-          geometry.setCoordinates(headCoordinates);
-          clonedGeometry.setCoordinates(tailCoordinates);
+              geometry.setCoordinates(headCoordinates);
+              clonedGeometry.setCoordinates(tailCoordinates);
 
-          addFeaturesToSource("edit", [clonedFeature]);
+              addFeaturesToSource("edit", [clonedFeature]);
 
-          if (featureId && clonedFeatureId) {
-            addHistoryEntry({
-              type: "grense",
-              changes: [
-                {
-                  id: featureId,
-                  from: originalCoordinates,
-                  to: coordinates,
-                },
-                {
-                  id: clonedFeatureId,
-                  from: [],
-                  to: clonedCoordinates,
-                },
-              ],
-            });
+              if (featureId && clonedFeatureId) {
+                addHistoryEntry({
+                  type: "grense",
+                  changes: [
+                    {
+                      id: featureId,
+                      from: originalCoordinates,
+                      to: coordinates,
+                    },
+                    {
+                      id: clonedFeatureId,
+                      from: [],
+                      to: clonedCoordinates,
+                    },
+                  ],
+                });
+              }
+            }
           }
         }
       }

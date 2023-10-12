@@ -30,7 +30,6 @@ import {
   UtkastResponse,
 } from "types/api";
 import { statusCode } from "utils/api";
-import { createSuccessToast } from "utils/components/toast";
 import { useUtkast } from "contexts/UtkastContext";
 import { useMatch, useNavigate } from "react-router-dom";
 import { routes } from "utils/routes";
@@ -62,7 +61,7 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
     const response = await publishUtkast(
       utkast.id,
       utkast,
-      tokenHolderFunc()?.token
+      tokenHolderFunc()?.token,
     );
     setIsLoading(false);
 
@@ -72,12 +71,11 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
         : getDateInFriendlyString(utkast.gyldigFra);
 
     if (statusCode.isSuccessful(response.status)) {
-      toast(
-        createSuccessToast(
-          "Utkast publisert",
-          `Endringene trer i kraft ${publishDateText}.`
-        )
-      );
+      toast({
+        status: "success",
+        title: "Utkast publisert",
+        description: `Endringene trer i kraft ${publishDateText}.`,
+      });
       cleanUpUtkast();
       closeUtkast();
 

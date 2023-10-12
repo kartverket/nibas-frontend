@@ -6,10 +6,10 @@ import useNibasApi from "hooks/useNibasApi";
 
 const stemmekretserFetcher = async ([stemmekretsIds, token]: [
   string[],
-  string | undefined
+  string | undefined,
 ]) => {
   const promises: Promise<StemmekretsResponse>[] = stemmekretsIds.map(
-    async (id) => fetcherWithToken([`/v1/stemmekretser/${id}`, token])
+    async (id) => fetcherWithToken([`/v1/stemmekretser/${id}`, token]),
   );
 
   return await Promise.all(promises);
@@ -22,7 +22,7 @@ export const useStemmekretser = (stemmekretsIds: string[]) => {
     stemmekretsIds.length > 0
       ? [stemmekretsIds, tokenHolderFunc()?.token]
       : null,
-    stemmekretserFetcher
+    stemmekretserFetcher,
   );
 };
 
@@ -32,7 +32,7 @@ export const useKommuneStemmekretser = (kommuneId: string) => {
     kommuneId ? "/v1/kommuner/{id}/stemmekretser" : null,
     {
       id: kommuneId,
-    }
+    },
   );
 
   const stemmekretsIds = stemmekretser?.map(getIdFromEntity) || [];
@@ -40,6 +40,6 @@ export const useKommuneStemmekretser = (kommuneId: string) => {
     stemmekretsIds.length > 0
       ? [stemmekretsIds, tokenHolderFunc()?.token]
       : null,
-    stemmekretserFetcher
+    stemmekretserFetcher,
   );
 };

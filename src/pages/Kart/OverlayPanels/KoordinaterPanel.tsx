@@ -12,7 +12,7 @@ import {
 } from "contexts/HistoryContext";
 import { SelectedPoint, useFeatureStyle } from "contexts/FeatureStyleContext";
 import Point from "ol/geom/Point";
-import { Button } from "@kvib/react";
+import { Button, useToast } from "@kvib/react";
 import { editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
 
@@ -40,6 +40,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
   const { selectedPoint, selectedFeatures } = useFeatureStyle();
   const { addHistoryEntry } = useHistory();
   const { selectPointOnFeature } = useFeatureStyle();
+  const toast = useToast();
 
   const defaultValues = (punkt: SelectedPoint) => {
     if (!punkt) {
@@ -69,7 +70,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
   // Hjelpefunksjon for å gå gjennom en feature og finne punktet som er påvirket av grensejustering
   const getCoordinateFromChange = (
     change: HistoryChange<number[][]>,
-    direction: "to" | "from"
+    direction: "to" | "from",
   ) => {
     for (let index = 0; index < change.from.length; index++) {
       const fromCoord = change.from[index];
@@ -88,7 +89,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
 
         // Dersom en valgt feature blir endret ved history må vi oppdatere valgt punkt
         const selectedChange = entry.changes.find((c) =>
-          selectedFeatures.some((f) => f.getId() === c.id)
+          selectedFeatures.some((f) => f.getId() === c.id),
         );
 
         if (selectedChange) {
@@ -97,7 +98,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
             const features = [];
             for (const change of entry.changes) {
               features.push(
-                editSource.getFeatureById(change.id) as Feature<LineString>
+                editSource.getFeatureById(change.id) as Feature<LineString>,
               );
             }
             selectPointOnFeature(coordinate, features);
@@ -105,7 +106,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
         }
       }
     },
-    [selectPointOnFeature, selectedFeatures, selectedPoint]
+    [selectPointOnFeature, selectedFeatures, selectedPoint],
   );
 
   // Når man bruker undo og redo må koordinatpanelet oppdateres
@@ -151,7 +152,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
         const originalCoordinates = [...coordinates];
 
         const nearestVertexIndex = coordinates.findIndex(
-          (v) => v[0] === oldCoordinates[0] && v[1] === oldCoordinates[1]
+          (v) => v[0] === oldCoordinates[0] && v[1] === oldCoordinates[1],
         );
         const headCoordinates = coordinates.slice(0, nearestVertexIndex);
         const tailCoordinates = coordinates.slice(nearestVertexIndex + 1);
@@ -179,6 +180,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
       const highlightGeometry = selectedPoint.getGeometry() as Point;
       highlightGeometry.setCoordinates(newCoordinates);
       reset(undefined, { keepValues: true });
+      toast({ status: "success", title: "Punktet ble flyttet" });
     }
   };
 

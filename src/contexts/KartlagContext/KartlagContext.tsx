@@ -21,7 +21,7 @@ export type KartlagContextValue = {
  * Bruk heller KartlagProvider i koden
  */
 export const KartlagContext = createContext<KartlagContextValue | undefined>(
-  undefined
+  undefined,
 );
 
 export const KartlagProvider = ({
@@ -56,7 +56,7 @@ export const KartlagProvider = ({
       const layers = await Promise.all(mappedLayerPromises);
 
       const nonNullLayers = layers.filter(
-        (layer) => layer !== null
+        (layer) => layer !== null,
       ) as MappedLayer[];
 
       if (isMounted) {

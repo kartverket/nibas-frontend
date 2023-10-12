@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { getVectorLayers } from "utils/map/layers";
 import useModify from "./useModify";
 import useSelect from "./useSelect";
-import useSplit from "./useSplit";
 import useDraw from "./useDraw";
 import useSelectPoint from "./useSelectPoint";
 import { useToolbar } from "contexts/ToolbarContext";
@@ -14,7 +13,6 @@ const useInteractions = () => {
   const { modify } = useModify();
   const { select } = useSelect();
   const { draw } = useDraw();
-  const { split } = useSplit();
   const { selectPoint } = useSelectPoint();
   const { activeEditModes } = useToolbar();
 
@@ -31,7 +29,6 @@ const useInteractions = () => {
     });
 
     // Rekkefølgen her er potensielt viktig for at events skal avbryte hverandre i riktig rekkefølge
-    map.on("click", split);
     map.on("click", select);
     map.on("click", selectPoint);
     map.addInteraction(modify);
@@ -45,7 +42,6 @@ const useInteractions = () => {
     }
 
     return () => {
-      map.un("click", split);
       map.un("click", select);
       map.un("click", selectPoint);
       map.removeInteraction(modify);
@@ -54,7 +50,7 @@ const useInteractions = () => {
         map.removeInteraction(snap);
       });
     };
-  }, [activeEditModes, draw, modify, select, selectPoint, split]);
+  }, [activeEditModes, draw, modify, select, selectPoint]);
 };
 
 export default useInteractions;

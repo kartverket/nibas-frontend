@@ -3,7 +3,7 @@ import { sortGrenserAlphabetically } from "utils/language/language";
 
 const useFylker = (shouldFetch = true) => {
   const { data: fylker, ...rest } = useNibasApi(
-    shouldFetch ? "/v1/fylker" : null
+    shouldFetch ? "/v1/fylker" : null,
   );
   const sortedFylker = sortGrenserAlphabetically(fylker);
 

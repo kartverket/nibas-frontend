@@ -3,15 +3,21 @@ import Feature, { FeatureLike } from "ol/Feature";
 import LineString from "ol/geom/LineString";
 import Modify, { ModifyEvent } from "ol/interaction/Modify";
 import { HistoryChange, useHistory } from "contexts/HistoryContext";
-import { primaryAction, singleClick } from "ol/events/condition";
-import { Collection } from "ol";
-import { editableBorderTypes, editSource } from "hooks/layers/constants";
+import { click, primaryAction } from "ol/events/condition";
+import { Collection, MapBrowserEvent } from "ol";
+import { editSource } from "hooks/layers/constants";
 import { pixelTolerance } from "./constants";
 import { getLayerById } from "utils/map/layers";
 import { map } from "pages/Kart/constants";
-import { useToolbar } from "contexts/ToolbarContext";
+import { ToolbarPointMode, useToolbar } from "contexts/ToolbarContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { selectedPointStyle } from "utils/map/layerStyles";
+import { useToast } from "@kvib/react";
+import {
+  borderIsEditable,
+  findNearbyVertexOnFeature,
+  isCoordinateEqual,
+} from "utils/map";
 
 const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
@@ -23,8 +29,15 @@ const useModify = () => {
   const { addHistoryEntry } = useHistory();
   const { activePointMode } = useToolbar();
   const { selectedFeatures } = useFeatureStyle();
+  const toast = useToast();
   const detachIsActive = activePointMode === "detach";
   const editLayer = getLayerById("edit");
+
+  // Ønsker helst at redigering ikke skal være aktiv under enkelte verktøy
+  const disallowedPointModes: ToolbarPointMode[] = useMemo(
+    () => ["draw", "split", "metadata", "archive", "koordinater"],
+    [],
+  );
 
   const modify = useMemo(
     () =>
@@ -32,40 +45,38 @@ const useModify = () => {
         source: detachIsActive ? undefined : editSource,
         features: detachIsActive ? new Collection(selectedFeatures) : undefined,
         pixelTolerance: pixelTolerance,
-        condition: (mapBrowserEvent) => {
-          const featuresAtPixel = map.getFeaturesAtPixel(
-            mapBrowserEvent.pixel,
-            {
-              layerFilter: (layer) => layer === editLayer,
-              hitTolerance: pixelTolerance,
-            }
-          );
+        condition: (event: MapBrowserEvent<MouseEvent>) => {
+          if (disallowedPointModes.includes(activePointMode)) return false;
+          if (activePointMode === "detach" && selectedFeatures.length === 0)
+            return false;
+          const featuresAtPixel = map.getFeaturesAtPixel(event.pixel, {
+            layerFilter: (layer) => layer === editLayer,
+            hitTolerance: pixelTolerance,
+          });
 
           // Sjekk alle featurene i punktet, hvis en av dem ikke skal kunne endres ønsker vi ikke å endre noe
           // Her er det fare for at vi er overivrige hvis det er flere features veldig nærme hverandre, men ikke samme punkt
-          for (const feature of featuresAtPixel) {
-            const featureType = feature.get("type");
-            if (!editableBorderTypes.includes(featureType)) {
-              return false;
-            }
+          if (!featuresAtPixel.every(borderIsEditable)) {
+            toast({
+              status: "error",
+              title: "Denne grensen er ikke redigerbar",
+            });
+            return false;
           }
 
           // Hvis vi ikke har en spesiell regel bruker vi default condition, som er primaryAction her
-          return primaryAction(mapBrowserEvent);
+          return primaryAction(event);
         },
         style: selectedPointStyle,
         insertVertexCondition: () => {
           return activePointMode === "add";
         },
-        deleteCondition: (mapBrowserEvent) => {
-          if (activePointMode === "remove") {
-            const featuresAtPixel = map.getFeaturesAtPixel(
-              mapBrowserEvent.pixel,
-              {
-                layerFilter: (layer) => layer === editLayer,
-                hitTolerance: 20,
-              }
-            );
+        deleteCondition: (event: MapBrowserEvent<MouseEvent>) => {
+          if (activePointMode === "remove" && click(event)) {
+            const featuresAtPixel = map.getFeaturesAtPixel(event.pixel, {
+              layerFilter: (layer) => layer === editLayer,
+              hitTolerance: pixelTolerance,
+            });
 
             // Dersom noen av featurene vi trykker på har for få punkter skal vi ikke fjerne punktet
             for (const feature of featuresAtPixel) {
@@ -75,16 +86,45 @@ const useModify = () => {
                 if (coordinates.length <= 2) {
                   return false;
                 }
+
+                // Sjekker hvilket punkt du trykket på
+                const nearbyVertexCoordinate = findNearbyVertexOnFeature(
+                  feature as Feature<LineString>,
+                  event.coordinate,
+                );
+
+                // Ettersom vi ikke støtter løse tråder per nå lar vi deg ikke fjerne endepunkter
+                if (
+                  nearbyVertexCoordinate &&
+                  (isCoordinateEqual(nearbyVertexCoordinate, coordinates[0]) ||
+                    isCoordinateEqual(
+                      nearbyVertexCoordinate,
+                      coordinates[coordinates.length - 1],
+                    ))
+                ) {
+                  toast({
+                    status: "error",
+                    title: "Man kan ikke fjerne endepunkter fra en grense",
+                  });
+                  return false;
+                }
               }
             }
 
             // Hvis alt ellers ser greit ut så fjernes punktet på klikk
-            return singleClick(mapBrowserEvent);
+            return true;
           }
           return false;
         },
       }),
-    [activePointMode, detachIsActive, editLayer, selectedFeatures]
+    [
+      activePointMode,
+      detachIsActive,
+      disallowedPointModes,
+      editLayer,
+      selectedFeatures,
+      toast,
+    ],
   );
 
   const previousCoordinateKey = "previousCoordinates";
@@ -135,6 +175,13 @@ const useModify = () => {
           changes,
         });
       }
+      if (activePointMode === "add") {
+        toast({ description: "Punktet ble lagt til", status: "success" });
+      } else if (activePointMode === "remove") {
+        toast({ description: "Punktet ble fjernet", status: "success" });
+      }
+
+      // TODO: hvis man har kjørt en detach vil vi kanskje sjekke om featuren nå er en løs tråd
     };
 
     modify.on("modifyend", addModificationToHistory);
@@ -142,7 +189,7 @@ const useModify = () => {
     return () => {
       modify.un("modifyend", addModificationToHistory);
     };
-  }, [addHistoryEntry, modify]);
+  }, [activePointMode, addHistoryEntry, modify, toast]);
 
   return { modify };
 };

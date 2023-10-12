@@ -10,8 +10,9 @@ import Style from "ol/style/Style";
 import { map } from "pages/Kart/constants";
 import Text from "ol/style/Text";
 import Point from "ol/geom/Point";
-import { editableBorderTypes, editSource } from "hooks/layers/constants";
+import { editSource } from "hooks/layers/constants";
 import { GrenseId, GrenseType } from "hooks/layers/types";
+import { borderIsEditable } from ".";
 
 const getPointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
   // hent punkter når zoomet langt nok inn
@@ -99,7 +100,7 @@ export const grenseStyles = {
 
 const grenseStyleFromType = (
   grenseType: GrenseType,
-  archived: boolean
+  archived: boolean,
 ): Style[] => {
   switch (grenseType) {
     case "Fylkesgrense": {
@@ -139,29 +140,26 @@ const grenseStyleFromType = (
 export const getLayerStyle = (
   feature: Feature<Geometry> | RenderFeature,
   grenseId: GrenseId,
-  archived: boolean
+  archived: boolean,
 ) => {
-  const borderIsNotEditable = !editableBorderTypes.includes(
-    feature.get("type")
-  );
-  if (grenseId == "edit" && !borderIsNotEditable) {
+  if (grenseId == "edit" && borderIsEditable(feature)) {
     return grenseStyles.edit;
   } else {
     return grenseStyleFromType(
       feature.getProperties().type as GrenseType,
-      archived
+      archived,
     );
   }
 };
 
 export const getArchiveLayerStyle = (
-  feature: Feature<Geometry> | RenderFeature
+  feature: Feature<Geometry> | RenderFeature,
 ) => {
   return grenseStyleFromType(feature.getProperties().type as GrenseType, true);
 };
 
 export const getPointOverlayStyle = (
-  feature: Feature<Geometry> | RenderFeature
+  feature: Feature<Geometry> | RenderFeature,
 ) => {
   if (!feature.get("name") || !feature.get("number")) return new Style();
 
@@ -189,7 +187,7 @@ export const getPointOverlayStyle = (
 export const updateEditFeatureText = (
   featureId: string,
   name?: string,
-  number?: string
+  number?: string,
 ) => {
   const feature = editSource.getFeatureById(featureId);
   if (feature) {

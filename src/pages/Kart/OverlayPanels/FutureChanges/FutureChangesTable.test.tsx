@@ -29,7 +29,7 @@ const defaultProps: React.ComponentProps<
             futureChange.gyldighet.gyldigFra,
             futureChange.gyldighet.gyldigTil,
           ],
-        } as TableRow)
+        }) as TableRow,
     );
   },
 };
@@ -43,24 +43,24 @@ describe("FutureChangesTable", () => {
     expect(screen.getAllByRole("row")).toHaveLength(4); // header, current row, 2 future changes
 
     expect(
-      await screen.findByRole("cell", { name: "Mosekollen øst" })
+      await screen.findByRole("cell", { name: "Mosekollen øst" }),
     ).toBeInTheDocument();
     expect(
-      await screen.findByRole("cell", { name: "12345678" })
-    ).toBeInTheDocument();
-
-    expect(
-      await screen.findByRole("cell", { name: "Mosekollen vest" })
-    ).toBeInTheDocument();
-    expect(
-      await screen.findByRole("cell", { name: "12345679" })
+      await screen.findByRole("cell", { name: "12345678" }),
     ).toBeInTheDocument();
 
     expect(
-      await screen.findByRole("cell", { name: "Mosekollen nord" })
+      await screen.findByRole("cell", { name: "Mosekollen vest" }),
     ).toBeInTheDocument();
     expect(
-      await screen.findByRole("cell", { name: "87654321" })
+      await screen.findByRole("cell", { name: "12345679" }),
+    ).toBeInTheDocument();
+
+    expect(
+      await screen.findByRole("cell", { name: "Mosekollen nord" }),
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByRole("cell", { name: "87654321" }),
     ).toBeInTheDocument();
   });
 });

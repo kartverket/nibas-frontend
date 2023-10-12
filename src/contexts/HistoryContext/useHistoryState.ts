@@ -21,7 +21,7 @@ const useHistoryState = ({ onUndo, onRedo }: Options) => {
         hasPreviouslySavedHistory: prevHistory.hasPreviouslySavedHistory,
       }));
     },
-    [setHistory]
+    [setHistory],
   );
 
   const clearHistory = ({

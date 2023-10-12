@@ -15,10 +15,10 @@ type useUtkastStemmekretsEndringerReturnType = {
 };
 
 export const useUtkastStemmekretsEndringer = (
-  utkast: UtkastResponse
+  utkast: UtkastResponse,
 ): useUtkastStemmekretsEndringerReturnType => {
   const [endringer, setEndringer] = useState<Stemmekretsendringer[] | null>(
-    null
+    null,
   );
 
   const { data: kommuner, isValidating: lasterKommuner } =
@@ -41,8 +41,8 @@ export const useUtkastStemmekretsEndringer = (
           stemmekretserMedEndringer,
           operasjoner,
           stemmekretser,
-          kommuner
-        )
+          kommuner,
+        ),
       );
     }
   }, [

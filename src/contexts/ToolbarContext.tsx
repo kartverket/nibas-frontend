@@ -3,7 +3,7 @@ import { useFeatureStyle } from "./FeatureStyleContext";
 import { useHistory } from "./HistoryContext";
 
 type ToolbarEditMode = "snap";
-type ToolbarPointMode =
+export type ToolbarPointMode =
   | null
   | "add"
   | "remove"
@@ -27,7 +27,7 @@ export type ToolbarContextValue = {
 };
 
 export const ToolbarContext = createContext<ToolbarContextValue | undefined>(
-  undefined
+  undefined,
 );
 
 export const ToolbarProvider = ({

@@ -10,7 +10,7 @@ export function deduplicate<T>(list: T[]): T[] {
 
 export function addToList<T>(
   element: T | null | undefined,
-  list: T[] | null
+  list: T[] | null,
 ): T[] {
   const listToUse = list ?? [];
   return element != null ? [...listToUse, element] : listToUse;
@@ -39,7 +39,7 @@ export function removeFromList<T>(index: number, list: T[]): T[] {
 export function orderBy<T>(
   items: T[],
   sortField: string,
-  sortOrder: "asc" | "desc"
+  sortOrder: "asc" | "desc",
 ): T[] {
   const sortedItems = items.sort((itemA, itemB) => {
     const itemAValue = get(itemA, sortField, "");

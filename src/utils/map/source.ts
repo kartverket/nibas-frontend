@@ -8,7 +8,7 @@ import { GeometryVectorSource } from "hooks/sources/types";
 export const addFeaturesToSource = (
   sourceId: LayerId,
   features: Feature<Geometry>[],
-  callback?: () => void
+  callback?: () => void,
 ) => {
   const layer = getLayerById(sourceId) as VectorLayer<GeometryVectorSource>;
   const source = layer.getSource();
@@ -40,7 +40,7 @@ export const addFeaturesToSource = (
 
 export const removeFeaturesFromSourceByIds = (
   sourceId: LayerId,
-  featureIds: string[]
+  featureIds: string[],
 ) => {
   const layer = getLayerById(sourceId) as VectorLayer<GeometryVectorSource>;
   const source = layer.getSource();

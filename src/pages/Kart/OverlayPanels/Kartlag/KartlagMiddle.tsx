@@ -32,7 +32,7 @@ const KartlagMiddle = ({ mappedLayer, isNested = false }: Props) => {
               />
             ) : (
               <KartlagInner key={subLayer.id} mappedLayer={subLayer} />
-            )
+            ),
           )}
         </KartlagAccordionPanel>
       </KartlagAccordionItem>

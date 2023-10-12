@@ -36,7 +36,6 @@ import { statusCode } from "utils/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useToast } from "@kvib/react";
-import { createSuccessToast } from "utils/components/toast";
 import { routes } from "utils/routes";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 
@@ -46,7 +45,7 @@ import { useSidebarPanel } from "contexts/SidebarPanelContext";
  * Bruk heller UtkastProvider i koden
  */
 export const UtkastContext = createContext<UtkastContextValue | undefined>(
-  undefined
+  undefined,
 );
 
 export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
@@ -63,7 +62,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
 
   const utkastPathMatch = useMatch(`${routes.utkast}/${routes.utkastId}`);
   const utkastIdMatches = utkastPathMatch?.params["utkastId"]?.match(
-    "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+    "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}",
   );
   const utkastId = utkastIdMatches ? utkastIdMatches[0] : null;
 
@@ -85,7 +84,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
       revalidateIfStale: false,
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
-    }
+    },
   );
 
   // Når utkast lukkes ønsker vi å tilbakestille store deler av applikasjonen
@@ -135,7 +134,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
         .slice(0, history.index)
         .reverse() // siste entry inneholder alle endringene på utkastet
         .find((entry) =>
-          entry.changes.some((change) => change.id === utkast.id)
+          entry.changes.some((change) => change.id === utkast.id),
         );
 
       if (utkastEntry) {
@@ -157,7 +156,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     const response = await updateUtkastApi(
       id,
       newUtkast,
-      tokenHolderFunc()?.token
+      tokenHolderFunc()?.token,
     );
 
     if (statusCode.isSuccessful(response.status)) {
@@ -182,7 +181,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     if (!updatedUtkast || !utkast) return;
 
     await updateUtkast(utkast.id, updatedUtkast);
-    toast(createSuccessToast("Utkastet er lagret"));
+    toast({ status: "success", title: "Utkastet er lagret" });
   };
 
   const value = {
@@ -211,7 +210,7 @@ export const useUtkast = () => {
 
 export const useUtkastEntity = <T extends UtkastEntity>(
   entity: T,
-  type: EntityUtkastType
+  type: EntityUtkastType,
 ) => {
   const { utkast } = useUtkast();
 
@@ -224,14 +223,14 @@ export const useUtkastEntity = <T extends UtkastEntity>(
 
 export const useUtkastFeature = (
   featureCollection: GeoJSONFeatureCollection | GeoJSONFeatureCollection[],
-  utkast?: UtkastResponse
+  utkast?: UtkastResponse,
 ) => {
   return useMemo(() => {
     if (!featureCollection || !utkast) return featureCollection;
 
     if (Array.isArray(featureCollection)) {
       return featureCollection.map((collection) =>
-        applyFeatureUtkast(collection, utkast)
+        applyFeatureUtkast(collection, utkast),
       );
     }
 

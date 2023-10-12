@@ -4,7 +4,7 @@ import { editableBorderTypes } from "hooks/layers/constants";
 
 const useIsMetadataDisabled = (properties: FeatureProperties) => {
   const { values } = useEditGrenser(
-    properties.inndelingerKontekst?.type ?? "fylke"
+    properties.inndelingerKontekst?.type ?? "fylke",
   );
 
   const featureKontekstId = properties.inndelingerKontekst?.id;

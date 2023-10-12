@@ -48,7 +48,7 @@ export const useSidebarPanel = () => {
   const context = useContext(SidebarPanelContext);
   if (!context) {
     throw new Error(
-      "useSidebarPanel must be used within a SidebarPanelContext"
+      "useSidebarPanel must be used within a SidebarPanelContext",
     );
   }
   return context;

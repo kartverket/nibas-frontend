@@ -10,10 +10,10 @@ import { useEditGrenseValue } from "contexts/EditGrenserContext/useEditGrense";
 
 const fylkesgrenserFetcher = async ([fylkeIds, token]: [
   string[],
-  string | undefined
+  string | undefined,
 ]) => {
   const promises: Promise<FeatureCollection>[] = fylkeIds.map(async (fylkeId) =>
-    fetcherWithToken([`/v1/fylker/${fylkeId}/grenser`, token])
+    fetcherWithToken([`/v1/fylker/${fylkeId}/grenser`, token]),
   );
 
   const settledPromises = await Promise.allSettled(promises);
@@ -37,7 +37,7 @@ const useFylkesgrenser = () => {
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { data: geoJsonFeatures } = useSWRImmutable(
     shouldFetch ? [fylkeIds, tokenHolderFunc()?.token] : null,
-    fylkesgrenserFetcher
+    fylkesgrenserFetcher,
   );
 
   useEffect(() => {

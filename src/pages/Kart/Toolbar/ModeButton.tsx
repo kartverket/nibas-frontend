@@ -1,5 +1,4 @@
-import { Icon } from "@kvib/react";
-import { MaterialSymbol } from "material-symbols";
+import { Icon, MaterialSymbol } from "@kvib/react";
 import { forwardRef, ReactNode } from "react";
 import { styled, css } from "styled-components";
 
@@ -16,7 +15,9 @@ const Container = styled.button<{ $isActive: boolean }>`
   .material-symbols-rounded {
     padding: 4px;
     border-radius: 8px;
-    transition: background 0.15s, color 0.2s;
+    transition:
+      background 0.15s,
+      color 0.2s;
   }
 
   &:disabled {
@@ -38,8 +39,8 @@ const Container = styled.button<{ $isActive: boolean }>`
     props.$isActive &&
     css`
       & > .material-symbols-rounded {
-        color: var(--kvib-colors-chakra-inverse-text);
-        background: var(--kvib-colors-blue-500);
+        color: var(--kvib-colors-blue-500);
+        background: var(--kvib-colors-blue-50);
       }
     `};
 `;
@@ -62,7 +63,7 @@ const InnerModeButton = (
     isActive = false,
     isDisabled = false,
   }: Props,
-  ref: React.ForwardedRef<HTMLButtonElement>
+  ref: React.ForwardedRef<HTMLButtonElement>,
 ) => {
   return (
     <Container

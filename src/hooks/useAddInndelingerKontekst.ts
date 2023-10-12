@@ -6,7 +6,7 @@ import { useEffect } from "react";
 const useAddInndelingerKontekst = (
   features: Feature<Geometry>[] | null,
   type: EditingType,
-  id: string
+  id: string,
 ) => {
   useEffect(() => {
     features?.forEach((feature) => {

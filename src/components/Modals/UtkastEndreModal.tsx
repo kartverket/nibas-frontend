@@ -18,6 +18,7 @@ import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import { UtkastResponse } from "types/api";
 import { useUtkast } from "contexts/UtkastContext";
+import { useUtkasts } from "hooks/inndelinger/useUtkasts";
 
 type Props = {
   isOpen: boolean;
@@ -38,16 +39,17 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
     formState: { isDirty },
   } = useForm<UtkastFormData>({ defaultValues: { navn: utkast.navn } });
   const { updateUtkast } = useUtkast();
+  const { mutate } = useUtkasts();
 
   const previousValues = useRef<UtkastFormData>(getValues());
 
-  // TODO: dette oppdaterer backend, men ikke frontend før refresh
   const editUtkast = async () => {
     setIsLoading(true);
     await updateUtkast(utkast.id, { ...utkast, navn: getValues("navn") });
     setIsLoading(false);
     onClose();
     previousValues.current = getValues();
+    mutate();
   };
 
   return (

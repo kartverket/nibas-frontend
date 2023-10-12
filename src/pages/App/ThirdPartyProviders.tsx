@@ -6,6 +6,7 @@ import {
   theme,
   extendTheme,
   withDefaultColorScheme,
+  UseToastOptions,
 } from "@kvib/react";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
@@ -21,14 +22,26 @@ const swrGlobalConfig = {
 
 const customTheme = extendTheme(
   withDefaultColorScheme({ colorScheme: "blue" }),
-  theme
+  theme,
 );
+
+const defaultToastOptions: UseToastOptions = {
+  position: "top",
+  isClosable: true,
+  duration: 7500,
+  containerStyle: {
+    marginTop: "24px",
+  },
+};
 
 const ThirdPartyProviders = ({ children }: { children: React.ReactNode }) => {
   return (
     <DndProvider backend={HTML5Backend}>
       <CacheProvider value={emotionCache}>
-        <KvibProvider theme={customTheme}>
+        <KvibProvider
+          theme={customTheme}
+          toastOptions={{ defaultOptions: defaultToastOptions }}
+        >
           <SWRConfig value={swrGlobalConfig}>{children}</SWRConfig>
         </KvibProvider>
       </CacheProvider>

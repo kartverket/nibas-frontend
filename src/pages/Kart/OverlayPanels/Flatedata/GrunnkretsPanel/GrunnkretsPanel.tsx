@@ -12,6 +12,7 @@ import Input from "components/Input";
 import SortHeader from "../SortHeader";
 import { useTableSort } from "../useTableSort";
 import { orderBy } from "utils/list-utils";
+import { getNavnInSpraak } from "utils/language/language";
 
 const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
   const { utkast } = useUtkast();
@@ -26,7 +27,7 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
   const { data: grunnkretserByKommune } = useKommuneGrunnkretser(kommuneId);
   const utkastGrunnkretser = useUtkastEntity(
     grunnkretserByKommune,
-    "grunnkretsendringer"
+    "grunnkretsendringer",
   ) as GrunnkretsResponse[] | undefined;
 
   const filteredGrunnkretser = useMemo(() => {
@@ -35,15 +36,17 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
     return utkastGrunnkretser?.filter(
       (grunnkrets) =>
         grunnkrets.grunnkretsnummer.includes(searchValue) ||
-        grunnkrets.navn.toLowerCase().includes(searchValue.toLowerCase())
+        grunnkrets.navn.toLowerCase().includes(searchValue.toLowerCase()),
     );
   }, [searchValue, utkastGrunnkretser]);
 
   return (
     <Panel $isOpen={isOpen} className={className}>
-      <PanelHeader onClose={closeOverlayPanel}>Endre flateinfo</PanelHeader>
+      <PanelHeader onClose={closeOverlayPanel}>
+        Flateinformasjon for {getNavnInSpraak(flatedata?.navn, "nor")}
+      </PanelHeader>
       {filteredGrunnkretser && (
-        <KretsTable hasUtkast={utkast !== undefined}>
+        <KretsTable $hasUtkast={utkast !== undefined}>
           <thead>
             <tr>
               <SortHeader {...sortHeaderProps("grunnkretsnummer")}>
@@ -69,7 +72,7 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
                   grunnkrets={grunnkrets}
                   kommuneId={kommuneId}
                 />
-              )
+              ),
             )}
           </tbody>
         </KretsTable>

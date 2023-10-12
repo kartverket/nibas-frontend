@@ -10,11 +10,11 @@ type Props = SelectProps & {
 
 const AsyncKodelisteSelectInner = (
   { label, kodeliste, ...selectProps }: Props,
-  ref: React.ForwardedRef<HTMLSelectElement>
+  ref: React.ForwardedRef<HTMLSelectElement>,
 ) => {
   const itemsSorted =
     kodeliste?.items.sort((itemA, itemB) =>
-      itemA.label.toLowerCase().localeCompare(itemB.label.toLowerCase(), "no")
+      itemA.label.toLowerCase().localeCompare(itemB.label.toLowerCase(), "no"),
     ) ?? [];
 
   return (

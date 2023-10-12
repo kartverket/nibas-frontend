@@ -37,7 +37,7 @@ const useVisibleLayers = () => {
       return;
     }
     const layer = visibleLayers.find(
-      (visibleLayer) => visibleLayer.mainLayer === layerId
+      (visibleLayer) => visibleLayer.mainLayer === layerId,
     );
 
     if (!layer) {
@@ -73,7 +73,7 @@ const useVisibleLayers = () => {
 
   const toggleLayerWithOutSublayer = (layerId: KartlagId) => {
     const layer = visibleLayers.find(
-      (visibleLayer) => visibleLayer.mainLayer === layerId
+      (visibleLayer) => visibleLayer.mainLayer === layerId,
     );
 
     const visible = layer ? true : false;
@@ -101,7 +101,7 @@ const useVisibleLayers = () => {
 
   const layerIsVisible = (layerId: KartlagId) => {
     return visibleLayers.some(
-      (visibleLayer) => visibleLayer.mainLayer === layerId
+      (visibleLayer) => visibleLayer.mainLayer === layerId,
     );
   };
 
@@ -109,13 +109,13 @@ const useVisibleLayers = () => {
     return visibleLayers.some(
       (visibleLayer) =>
         visibleLayer.mainLayer === mainLayer &&
-        visibleLayer.subLayers.includes(subLayer)
+        visibleLayer.subLayers.includes(subLayer),
     );
   };
 
   const moveLayer = (direction: "up" | "down", layerId: KartlagId) => {
     const layer = visibleLayers.find(
-      (visibleLayer) => visibleLayer.mainLayer === layerId
+      (visibleLayer) => visibleLayer.mainLayer === layerId,
     );
 
     if (layer) {

@@ -96,7 +96,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
         <b>Sist oppdatert</b>
         <span>
           {getDateInFriendlyString(
-            metadata?.common?.sporingsinformasjon.oppdateringsdato
+            metadata?.common?.sporingsinformasjon.oppdateringsdato,
           ) ?? "--"}
         </span>
         <b>Gyldig fra</b>

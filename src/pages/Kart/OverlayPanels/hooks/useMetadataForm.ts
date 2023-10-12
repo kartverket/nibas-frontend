@@ -40,7 +40,7 @@ const getUpdatedMetadata = (data: Inputs, oldMetadata: Metadata) =>
         noeyaktighet: data.noeyaktighet,
       },
     },
-  } as Metadata);
+  }) as Metadata;
 
 const getFormFromApiMetadata = (metadata: Metadata) => ({
   informasjon: metadata?.common?.informasjon,
@@ -81,7 +81,7 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
       setValue("grenseType", newMetadata?.discriminator ?? "");
       setValue(
         "noeyaktighet",
-        newMetadata?.commonGrense?.posisjonskvalitet?.noeyaktighet ?? 0
+        newMetadata?.commonGrense?.posisjonskvalitet?.noeyaktighet ?? 0,
       );
       setValue("opphav", newMetadata?.common?.opphav ?? "");
       setValue("gyldigFra", newMetadata?.common?.gyldigFra ?? "");
@@ -101,8 +101,8 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
       addHistoryEntry,
       getUpdatedMetadata(
         getValues(),
-        feature.getProperties().metadata as Metadata
-      )
+        feature.getProperties().metadata as Metadata,
+      ),
     );
   };
 

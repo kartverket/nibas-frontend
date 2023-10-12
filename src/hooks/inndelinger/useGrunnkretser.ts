@@ -6,10 +6,10 @@ import useNibasApi from "hooks/useNibasApi";
 
 const grunnkretsFetcher = async ([grunnkretsIds, token]: [
   string[],
-  string | undefined
+  string | undefined,
 ]) => {
   const promises: Promise<GrunnkretsResponse>[] = grunnkretsIds.map(
-    async (id) => fetcherWithToken([`/v1/grunnkretser/${id}`, token])
+    async (id) => fetcherWithToken([`/v1/grunnkretser/${id}`, token]),
   );
 
   return await Promise.all(promises);
@@ -20,7 +20,7 @@ export const useGrunnkretser = (grunnkretsId: string[]) => {
 
   return useSWRImmutable(
     grunnkretsId.length > 0 ? [grunnkretsId, tokenHolderFunc()?.token] : null,
-    grunnkretsFetcher
+    grunnkretsFetcher,
   );
 };
 
@@ -30,12 +30,12 @@ export const useKommuneGrunnkretser = (kommuneId: string) => {
     kommuneId ? "/v1/kommuner/{id}/grunnkretser" : null,
     {
       id: kommuneId,
-    }
+    },
   );
 
   const grunnkretsIds = grunnkretser?.map(getIdFromEntity) || [];
   return useSWRImmutable(
     grunnkretsIds.length > 0 ? [grunnkretsIds, tokenHolderFunc()?.token] : null,
-    grunnkretsFetcher
+    grunnkretsFetcher,
   );
 };

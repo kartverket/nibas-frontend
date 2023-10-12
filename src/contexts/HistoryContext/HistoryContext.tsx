@@ -21,28 +21,28 @@ const onUndo = (entry: HistoryEntry) => {
       return document.dispatchEvent(
         new CustomEvent("grunnkretsUndo", {
           detail: { entry },
-        })
+        }),
       );
     }
     case "stemmekrets": {
       return document.dispatchEvent(
         new CustomEvent("stemmekretsUndo", {
           detail: { entry },
-        })
+        }),
       );
     }
     case "utkast": {
       return document.dispatchEvent(
         new CustomEvent("utkastUndo", {
           detail: { entry },
-        })
+        }),
       );
     }
     case "stemmekretssammenslaaingsendring": {
       return document.dispatchEvent(
         new CustomEvent("stemmekretssammenslaaingsendringUndo", {
           detail: { entry },
-        })
+        }),
       );
     }
     case "grensearkivering": {
@@ -71,28 +71,28 @@ const onRedo = (entry: HistoryEntry) => {
       return document.dispatchEvent(
         new CustomEvent("grunnkretsRedo", {
           detail: { entry },
-        })
+        }),
       );
     }
     case "stemmekrets": {
       return document.dispatchEvent(
         new CustomEvent("stemmekretsRedo", {
           detail: { entry },
-        })
+        }),
       );
     }
     case "utkast": {
       return document.dispatchEvent(
         new CustomEvent("utkastRedo", {
           detail: { entry },
-        })
+        }),
       );
     }
     case "stemmekretssammenslaaingsendring": {
       return document.dispatchEvent(
         new CustomEvent("stemmekretssammenslaaingsendringRedo", {
           detail: { entry },
-        })
+        }),
       );
     }
     case "grensearkivering": {
@@ -108,7 +108,7 @@ const onRedo = (entry: HistoryEntry) => {
 };
 
 export const HistoryContext = createContext<HistoryContextValue | undefined>(
-  undefined
+  undefined,
 );
 
 export const HistoryProvider = ({
