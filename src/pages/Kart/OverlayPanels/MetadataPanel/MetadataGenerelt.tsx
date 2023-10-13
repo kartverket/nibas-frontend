@@ -69,13 +69,8 @@ const MetadataGenerelt = ({ feature }: Props) => {
   const disabledByFeatureLock = true; // Fleter låst med denne variabelen er ikke ment å bli tatt i bruk enda, og skal være låst inntil videre.
 
   const onSubmit = () => {
-    const newValues = getValues();
-    previousValues.current = newValues;
-
     updateDraftFromFeature();
   };
-
-  const previousValues = useRef<Inputs>(getValues());
 
   return (
     <Container>
@@ -147,7 +142,12 @@ const MetadataGenerelt = ({ feature }: Props) => {
         onMetadataSubmit={onSubmit}
         isDisabled={metadataIsDisabled}
         isDirty={dirtyFields.maalemetode}
-        reset={() => resetField("maalemetode")}
+        reset={() =>
+          resetField("maalemetode", {
+            defaultValue:
+              metadata.commonGrense?.posisjonskvalitet?.maalemetode.id,
+          })
+        }
       >
         <AsyncKodelisteSelect
           kodeliste={maalemetodeKoder}
@@ -162,20 +162,15 @@ const MetadataGenerelt = ({ feature }: Props) => {
         isDisabled={metadataIsDisabled}
         isDirty={dirtyFields.noeyaktighet}
         reset={() => {
-          console.log("prev nøyaktighet:", previousValues.current.noeyaktighet);
-
           resetField("noeyaktighet");
         }}
       >
-        <NumberInput>
-          <NumberInputField
-            {...register("noeyaktighet", {
-              valueAsNumber: true,
-              min: 0,
-              max: 1_000_000,
-            })}
-          />
-        </NumberInput>
+        <Input
+          {...register("noeyaktighet", {
+            valueAsNumber: true,
+          })}
+          type="number"
+        />
       </MetadataRow>
       <MetadataRow
         feature={feature}
