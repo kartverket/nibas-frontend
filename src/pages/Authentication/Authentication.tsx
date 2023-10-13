@@ -1,17 +1,17 @@
-import { VerticalLogo } from "components/Logo";
 import { styled } from "styled-components";
 import { AuthorizationStatus, useAuthorization } from "./AuthHooks";
 import { ErrorBox } from "./AuthenticationErrorBox";
 import { Page } from "components/Page";
 import ActionCard from "components/ActionCard";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
+import { Logo } from "@kvib/react";
 
 const Authentication = () => {
   return (
-    <Page>
+    <AuthenticationPage>
       <Logo />
       <AuthenticationBody />
-    </Page>
+    </AuthenticationPage>
   );
 };
 
@@ -46,8 +46,8 @@ const AuthenticationBody = () => {
   );
 };
 
-const Logo = styled(VerticalLogo)`
-  margin-bottom: 30px;
+const AuthenticationPage = styled(Page)`
+  gap: 48px;
 `;
 
 export default Authentication;
