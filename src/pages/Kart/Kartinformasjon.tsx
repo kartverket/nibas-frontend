@@ -30,6 +30,9 @@ const Kartinformasjon = () => {
       map.addControl(scaleBar);
       map.addControl(scaleLine);
     }
+    return () => {
+      map.getControls().clear();
+    };
   }, []);
 
   return (
