@@ -4,6 +4,7 @@ import EditAndSaveButton from "../Flatedata/EditAndSaveButton";
 import { useEffect, useState } from "react";
 import { Geometry } from "ol/geom";
 import { Feature } from "ol";
+
 interface Props {
   feature: Feature<Geometry>;
   name: string;
@@ -11,6 +12,8 @@ interface Props {
   children: React.ReactNode;
   onMetadataSubmit: () => void;
   isDisabled?: boolean;
+  isDirty: boolean | undefined;
+  reset: () => void;
 }
 
 const MetadataRow = ({
@@ -20,11 +23,13 @@ const MetadataRow = ({
   children,
   onMetadataSubmit,
   isDisabled,
+  isDirty,
+  reset,
 }: Props) => {
-  const [isEdit, setIsEdit] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    setIsEdit(false);
+    setIsEditing(false);
   }, [feature]);
 
   return (
@@ -32,19 +37,27 @@ const MetadataRow = ({
       <EditContent>
         <Text>{name}</Text>
 
-        {!isEdit && <Text as="b">{value}</Text>}
+        {!isEditing && <Text as="b">{value}</Text>}
 
         <EditButton
           isDisabled={isDisabled}
-          isEditing={isEdit}
-          canSave={true}
+          isEditing={isEditing}
+          canSave={isDirty !== undefined && isDirty}
           onSubmit={() => {
             onMetadataSubmit();
-            setIsEdit(false);
+            setIsEditing(false);
           }}
-          toggleEditing={() => setIsEdit((prevState) => !prevState)}
+          toggleEditing={() =>
+            setIsEditing((prevState) => {
+              if (isEditing) {
+                console.log("lukker ", name);
+                reset();
+              }
+              return !prevState;
+            })
+          }
         />
-        <Field $isEditing={isEdit}>{children}</Field>
+        <Field $isEditing={isEditing}>{children}</Field>
       </EditContent>
       <Divider />
     </>
@@ -55,7 +68,6 @@ const EditContent = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 16px;
-  transition: all 0.5ms;
 `;
 
 const Field = styled.div<{ $isEditing: boolean }>`

@@ -9,7 +9,7 @@ import { addMetadataEntryFromFeature } from "../MetadataPanel/utils";
 import { useHistory } from "contexts/HistoryContext";
 import { Metadata } from "types/api";
 
-type Inputs = {
+export type Inputs = {
   grenseType: string;
   maalemetode: string;
   datafangstdato: string;
@@ -62,8 +62,9 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
     setValue,
     getValues,
     handleSubmit,
+    resetField,
     reset,
-    formState: { isDirty },
+    formState: { dirtyFields },
   } = useForm<Inputs>({
     defaultValues: getFormFromApiMetadata(metadata),
   });
@@ -81,7 +82,7 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
     const updateFormOnPropertyChange = (e: ObjectEvent) => {
       const newMetadata = (e.target as Feature<LineString>).getProperties()
         .metadata as Metadata;
-  
+      console.log(newMetadata)
       setValue("informasjon", newMetadata?.common?.informasjon ?? "");
       setValue("grenseType", newMetadata?.discriminator ?? "");
       setValue("datafangstdato", newMetadata?.common?.datafangstdato ?? "");
@@ -118,9 +119,11 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
     maalemetodeKoder,
     getValues,
     updateDraftFromFeature,
-    isDirty,
+    dirtyFields,
+    resetField,
     reset,
     getFormFromApiMetadata,
+    setValue,
   };
 };
 

@@ -1,15 +1,16 @@
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { Metadata, FeatureProperties } from "types/api";
-import useMetadataForm from "pages/Kart/OverlayPanels/hooks/useMetadataForm";
+import useMetadataForm, {
+  Inputs,
+} from "pages/Kart/OverlayPanels/hooks/useMetadataForm";
 import useIsMetadataDisabled from "../hooks/useIsMetadataDisabled";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import {
   Datepicker,
   Input,
   NumberInput,
   NumberInputField,
-  NumberInputStepper,
   Select,
   Textarea,
 } from "@kvib/react";
@@ -52,7 +53,11 @@ const MetadataGenerelt = ({ feature }: Props) => {
     register,
     updateDraftFromFeature,
     maalemetodeKoder,
+    resetField,
     reset,
+    getValues,
+    setValue,
+    dirtyFields,
     getFormFromApiMetadata,
   } = useMetadataForm(metadata, feature);
   // Still tilbake til default-verdier dersom man bytter valgt feature
@@ -64,9 +69,13 @@ const MetadataGenerelt = ({ feature }: Props) => {
   const disabledByFeatureLock = true; // Fleter låst med denne variabelen er ikke ment å bli tatt i bruk enda, og skal være låst inntil videre.
 
   const onSubmit = () => {
+    const newValues = getValues();
+    previousValues.current = newValues;
+
     updateDraftFromFeature();
-    reset(undefined, { keepValues: true });
   };
+
+  const previousValues = useRef<Inputs>(getValues());
 
   return (
     <Container>
@@ -76,6 +85,8 @@ const MetadataGenerelt = ({ feature }: Props) => {
         value={properties.type}
         onMetadataSubmit={onSubmit}
         isDisabled={disabledByFeatureLock}
+        isDirty={dirtyFields.grenseType}
+        reset={() => resetField("grenseType")}
       >
         <Select {...register("grenseType")}>
           {GrenseTypeValues.map((grenseType: GrenseType) => (
@@ -92,6 +103,8 @@ const MetadataGenerelt = ({ feature }: Props) => {
         }
         onMetadataSubmit={onSubmit}
         isDisabled={metadataIsDisabled}
+        isDirty={dirtyFields.datafangstdato}
+        reset={() => resetField("datafangstdato")}
       >
         <Datepicker {...register("datafangstdato")} />
       </MetadataRow>
@@ -103,6 +116,8 @@ const MetadataGenerelt = ({ feature }: Props) => {
         }
         onMetadataSubmit={onSubmit}
         isDisabled={disabledByFeatureLock}
+        isDirty={dirtyFields.gyldigFra}
+        reset={() => resetField("gyldigFra")}
       >
         <Datepicker {...register("gyldigFra")} />
       </MetadataRow>
@@ -114,6 +129,8 @@ const MetadataGenerelt = ({ feature }: Props) => {
         }
         onMetadataSubmit={onSubmit}
         isDisabled={disabledByFeatureLock}
+        isDirty={dirtyFields.gyldigTil}
+        reset={() => resetField("gyldigTil")}
       >
         <Datepicker {...register("gyldigTil")} />
       </MetadataRow>
@@ -129,6 +146,8 @@ const MetadataGenerelt = ({ feature }: Props) => {
         }
         onMetadataSubmit={onSubmit}
         isDisabled={metadataIsDisabled}
+        isDirty={dirtyFields.maalemetode}
+        reset={() => resetField("maalemetode")}
       >
         <AsyncKodelisteSelect
           kodeliste={maalemetodeKoder}
@@ -137,10 +156,16 @@ const MetadataGenerelt = ({ feature }: Props) => {
       </MetadataRow>
       <MetadataRow
         feature={feature}
-        name={"Nøyaktighet"}
-        value={metadata.commonGrense?.posisjonskvalitet?.noeyaktighet?.toString()}
+        name={"Nøyaktighet (cm)"}
+        value={getValues("noeyaktighet").toString()}
         onMetadataSubmit={onSubmit}
         isDisabled={metadataIsDisabled}
+        isDirty={dirtyFields.noeyaktighet}
+        reset={() => {
+          console.log("prev nøyaktighet:", previousValues.current.noeyaktighet);
+
+          resetField("noeyaktighet");
+        }}
       >
         <NumberInput>
           <NumberInputField
@@ -150,7 +175,6 @@ const MetadataGenerelt = ({ feature }: Props) => {
               max: 1_000_000,
             })}
           />
-          <NumberInputStepper />
         </NumberInput>
       </MetadataRow>
       <MetadataRow
@@ -159,6 +183,8 @@ const MetadataGenerelt = ({ feature }: Props) => {
         value={metadata.common?.opphav ?? ""}
         onMetadataSubmit={onSubmit}
         isDisabled={metadataIsDisabled}
+        isDirty={dirtyFields.opphav}
+        reset={() => resetField("opphav")}
       >
         <Input
           {...register("opphav")}
@@ -171,6 +197,8 @@ const MetadataGenerelt = ({ feature }: Props) => {
         value={metadata.common?.informasjon ?? ""}
         onMetadataSubmit={onSubmit}
         isDisabled={metadataIsDisabled}
+        isDirty={dirtyFields.informasjon}
+        reset={() => resetField("informasjon")}
       >
         <Textarea
           {...register("informasjon")}
