@@ -109,6 +109,7 @@ const ScaleIndicator = styled.span`
   position: absolute;
   bottom: 16px;
   left: 16px;
+  z-index: -1;
 
   border: 2px solid var(--kvib-colors-gray-900);
   border-top: none;
