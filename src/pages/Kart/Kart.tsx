@@ -8,6 +8,7 @@ import { initKartlagLayers, initGrenserLayers } from "utils/map/layers";
 import Toolbar from "./Toolbar/Toolbar";
 import OverlayPanels from "./OverlayPanels/OverlayPanels";
 import { TegnforklaringButton } from "./OverlayPanels/Tegnforklaring/TegnforklaringButton";
+import Kartinformasjon from "./Kartinformasjon";
 
 // dette må skje utenfor komponenten siden React kjører dypere useEffects
 // før de lenger opp i treet, så lag er ikke definert når de trengs lenger ned
@@ -37,6 +38,7 @@ const Kart = () => {
       <KartTarget ref={mapRef}>
         <Suspense fallback="More loading...">
           <KartOverlay>
+            <Kartinformasjon />
             <TegnforklaringButton />
             <SidebarPanels />
             <OverlayPanels />
