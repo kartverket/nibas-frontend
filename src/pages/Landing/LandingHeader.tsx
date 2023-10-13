@@ -9,7 +9,7 @@ const LandingHeader = () => {
   return (
     <Container>
       <Section>
-        <Logo variant="horizontal" />
+        <Logo variant="horizontal" size={128} />
       </Section>
       {isAuthenticatedFunc() && (
         <Section>

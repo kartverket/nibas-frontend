@@ -6,7 +6,7 @@ import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
 import { GrenseRef } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { Outline } from "style/mixins";
-import { Button, IconButton } from "@kvib/react";
+import { IconButton } from "@kvib/react";
 
 type Props<T extends GrenseRef> = {
   grense: T;
@@ -27,10 +27,6 @@ const ToggleableGrense = <T extends GrenseRef>({
     features,
   );
 
-  const openInfo = () => {
-    // todo
-  };
-
   return (
     <Wrapper $isVisible={value.visible ? true : false}>
       <IconButton
@@ -39,14 +35,6 @@ const ToggleableGrense = <T extends GrenseRef>({
         icon={value.visible ? "visibility" : "visibility_off"}
       />
       <Title>{title}</Title>
-      <EditButton
-        variant="tertiary"
-        onClick={openInfo}
-        isDisabled
-        title="Kommer snart!"
-      >
-        {value.editing ? "Avslutt redigering" : "Rediger"}
-      </EditButton>
     </Wrapper>
   );
 };
@@ -54,11 +42,6 @@ const Title = styled.div`
   flex: 1;
   margin-left: 8px;
   user-select: none;
-`;
-
-const EditButton = styled(Button)`
-  min-width: unset;
-  min-height: unset;
 `;
 
 const Wrapper = styled.div<{ $isVisible: boolean }>`
