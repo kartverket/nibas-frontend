@@ -82,7 +82,7 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
     const updateFormOnPropertyChange = (e: ObjectEvent) => {
       const newMetadata = (e.target as Feature<LineString>).getProperties()
         .metadata as Metadata;
-      console.log(newMetadata)
+
       setValue("informasjon", newMetadata?.common?.informasjon ?? "");
       setValue("grenseType", newMetadata?.discriminator ?? "");
       setValue("datafangstdato", newMetadata?.common?.datafangstdato ?? "");
@@ -123,7 +123,6 @@ const useMetadataForm = (metadata: Metadata, feature: Feature<Geometry>) => {
     resetField,
     reset,
     getFormFromApiMetadata,
-    setValue,
   };
 };
 

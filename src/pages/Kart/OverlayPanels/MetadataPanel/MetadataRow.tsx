@@ -50,7 +50,6 @@ const MetadataRow = ({
           toggleEditing={() =>
             setIsEditing((prevState) => {
               if (isEditing) {
-                console.log("lukker ", name);
                 reset();
               }
               return !prevState;

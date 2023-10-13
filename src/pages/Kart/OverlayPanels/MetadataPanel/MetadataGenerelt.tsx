@@ -1,19 +1,10 @@
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { Metadata, FeatureProperties } from "types/api";
-import useMetadataForm, {
-  Inputs,
-} from "pages/Kart/OverlayPanels/hooks/useMetadataForm";
+import useMetadataForm from "pages/Kart/OverlayPanels/hooks/useMetadataForm";
 import useIsMetadataDisabled from "../hooks/useIsMetadataDisabled";
-import { useEffect, useRef } from "react";
-import {
-  Datepicker,
-  Input,
-  NumberInput,
-  NumberInputField,
-  Select,
-  Textarea,
-} from "@kvib/react";
+import { useEffect } from "react";
+import { Datepicker, Input, Select, Textarea } from "@kvib/react";
 
 import MetadataRow from "./MetadataRow";
 import { GrenseType } from "../../../../hooks/layers/types";
@@ -55,8 +46,6 @@ const MetadataGenerelt = ({ feature }: Props) => {
     maalemetodeKoder,
     resetField,
     reset,
-    getValues,
-    setValue,
     dirtyFields,
     getFormFromApiMetadata,
   } = useMetadataForm(metadata, feature);
@@ -157,7 +146,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
       <MetadataRow
         feature={feature}
         name={"Nøyaktighet (cm)"}
-        value={getValues("noeyaktighet").toString()}
+        value={metadata.commonGrense?.posisjonskvalitet?.noeyaktighet?.toString()}
         onMetadataSubmit={onSubmit}
         isDisabled={metadataIsDisabled}
         isDirty={dirtyFields.noeyaktighet}
