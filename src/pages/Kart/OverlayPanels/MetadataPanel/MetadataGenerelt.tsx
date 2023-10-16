@@ -1,16 +1,23 @@
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
-import { Metadata, FeatureProperties } from "types/api";
-import useMetadataForm from "pages/Kart/OverlayPanels/hooks/useMetadataForm";
-import useIsMetadataDisabled from "../hooks/useIsMetadataDisabled";
-import { useEffect } from "react";
 import { Datepicker, Input, Select, Textarea } from "@kvib/react";
-
-import MetadataRow from "./MetadataRow";
 import { GrenseType } from "../../../../hooks/layers/types";
-import { getDateInFriendlyString } from "./utils";
-import AsyncKodelisteSelect from "./AsyncKodelisteSelect";
 import { styled } from "styled-components";
+import { MetadataField } from "./MetadataField";
+import { getDateInFriendlyString } from "./utils";
+import useNibasApi from "hooks/useNibasApi";
+import { FeatureProperties, KodelisteRespons } from "types/api";
+
+export type Inputs = {
+  grenseType: string;
+  maalemetode: string;
+  datafangstdato: string;
+  noeyaktighet: number;
+  informasjon: string;
+  opphav: string;
+  gyldigFra: string;
+  gyldigTil: string;
+};
 
 const GrenseTypeValues: GrenseType[] = [
   "Kommunegrense",
@@ -22,8 +29,6 @@ const GrenseTypeValues: GrenseType[] = [
   "Delområdegrense",
   "Posisjon",
   "Stemmekretsgrense",
-  "GRUNNKRETS",
-  "STEMMEKRETS",
 ];
 
 type Props = {
@@ -37,158 +42,92 @@ const Container = styled.div`
 `;
 
 const MetadataGenerelt = ({ feature }: Props) => {
+  const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
   const properties = feature.getProperties() as FeatureProperties;
 
-  const metadata = properties.metadata as Metadata;
-  const {
-    register,
-    updateDraftFromFeature,
-    maalemetodeKoder,
-    resetField,
-    reset,
-    dirtyFields,
-    getFormFromApiMetadata,
-  } = useMetadataForm(metadata, feature);
-  // Still tilbake til default-verdier dersom man bytter valgt feature
-  useEffect(() => {
-    reset(getFormFromApiMetadata(metadata));
-  }, [getFormFromApiMetadata, metadata, reset]);
-
-  const metadataIsDisabled = useIsMetadataDisabled(properties);
-  const disabledByFeatureLock = true; // Fleter låst med denne variabelen er ikke ment å bli tatt i bruk enda, og skal være låst inntil videre.
-
-  const onSubmit = () => {
-    updateDraftFromFeature();
-  };
+  const getMaalemetodeFromId = (maalemetoder: KodelisteRespons, id: string) =>
+    maalemetoder.items.find((item) => item.id === id)?.label ?? null;
 
   return (
     <Container>
-      <MetadataRow
+      <MetadataField
         feature={feature}
-        name={"Grensetype"}
-        value={properties.type}
-        onMetadataSubmit={onSubmit}
-        isDisabled={disabledByFeatureLock}
-        isDirty={dirtyFields.grenseType}
-        reset={() => resetField("grenseType")}
+        fieldKey="grenseType"
+        fieldLabel="Grensetype"
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        valueLabelFormatter={(_) => {
+          // Henter fra dataen i stedet for å formattere
+          return properties.type;
+        }}
+        disabledByFeatureLock
       >
-        <Select {...register("grenseType")}>
+        <Select>
           {GrenseTypeValues.map((grenseType: GrenseType) => (
             <option key={grenseType}>{grenseType}</option>
           ))}
         </Select>
-      </MetadataRow>
-      <MetadataRow
+      </MetadataField>
+      <MetadataField
         feature={feature}
-        name="Datafangsdato"
-        value={
-          getDateInFriendlyString(metadata.common?.datafangstdato) ??
-          "Ikke definert"
-        }
-        onMetadataSubmit={onSubmit}
-        isDisabled={metadataIsDisabled}
-        isDirty={dirtyFields.datafangstdato}
-        reset={() => resetField("datafangstdato")}
+        fieldLabel="Datafangsdato"
+        fieldKey="datafangstdato"
+        valueLabelFormatter={getDateInFriendlyString}
       >
-        <Datepicker {...register("datafangstdato")} />
-      </MetadataRow>
-      <MetadataRow
+        <Datepicker />
+      </MetadataField>
+      <MetadataField
         feature={feature}
-        name={"Gyldig fra"}
-        value={
-          getDateInFriendlyString(metadata.common?.gyldigFra) ?? "Ikke definert"
-        }
-        onMetadataSubmit={onSubmit}
-        isDisabled={disabledByFeatureLock}
-        isDirty={dirtyFields.gyldigFra}
-        reset={() => resetField("gyldigFra")}
+        fieldLabel="Gyldig fra"
+        fieldKey="gyldigFra"
+        disabledByFeatureLock
+        valueLabelFormatter={getDateInFriendlyString}
       >
-        <Datepicker {...register("gyldigFra")} />
-      </MetadataRow>
-      <MetadataRow
+        <Datepicker />
+      </MetadataField>
+      <MetadataField
         feature={feature}
-        name={"Gyldig til"}
-        value={
-          getDateInFriendlyString(metadata.common?.gyldigTil) ?? "Ikke definert"
-        }
-        onMetadataSubmit={onSubmit}
-        isDisabled={disabledByFeatureLock}
-        isDirty={dirtyFields.gyldigTil}
-        reset={() => resetField("gyldigTil")}
+        fieldLabel="Gyldig til"
+        fieldKey="gyldigTil"
+        disabledByFeatureLock
+        valueLabelFormatter={getDateInFriendlyString}
       >
-        <Datepicker {...register("gyldigTil")} />
-      </MetadataRow>
-      <MetadataRow
+        <Datepicker />
+      </MetadataField>
+      <MetadataField
         feature={feature}
-        name={"Målemetode"}
-        value={
-          maalemetodeKoder?.items.find(
-            (item) =>
-              item.id ===
-              metadata.commonGrense?.posisjonskvalitet?.maalemetode.id,
-          )?.label ?? "Ukjent"
-        }
-        onMetadataSubmit={onSubmit}
-        isDisabled={metadataIsDisabled}
-        isDirty={dirtyFields.maalemetode}
-        reset={() =>
-          resetField("maalemetode", {
-            defaultValue:
-              metadata.commonGrense?.posisjonskvalitet?.maalemetode.id,
-          })
+        fieldLabel="Målemetode"
+        fieldKey="maalemetode"
+        valueLabelFormatter={(valueLabel: string) =>
+          kodeliste ? getMaalemetodeFromId(kodeliste, valueLabel) : valueLabel
         }
       >
-        <AsyncKodelisteSelect
-          kodeliste={maalemetodeKoder}
-          {...register("maalemetode")}
-        />
-      </MetadataRow>
-      <MetadataRow
+        <Select>
+          <option value="">Velg målemetode</option>
+          {kodeliste &&
+            kodeliste.items.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.label}
+              </option>
+            ))}
+        </Select>
+      </MetadataField>
+      <MetadataField
         feature={feature}
-        name={"Nøyaktighet (cm)"}
-        value={metadata.commonGrense?.posisjonskvalitet?.noeyaktighet?.toString()}
-        onMetadataSubmit={onSubmit}
-        isDisabled={metadataIsDisabled}
-        isDirty={dirtyFields.noeyaktighet}
-        reset={() => {
-          resetField("noeyaktighet");
-        }}
+        fieldKey={"noeyaktighet"}
+        fieldLabel={"Nøyaktighet (cm)"}
       >
-        <Input
-          {...register("noeyaktighet", {
-            valueAsNumber: true,
-          })}
-          type="number"
-        />
-      </MetadataRow>
-      <MetadataRow
+        <Input type="number" />
+      </MetadataField>
+      <MetadataField feature={feature} fieldKey="opphav" fieldLabel="Opphav">
+        <Input placeholder={"Fyll inn informasjon om opphav"} />
+      </MetadataField>
+      <MetadataField
         feature={feature}
-        name="Opphav"
-        value={metadata.common?.opphav ?? ""}
-        onMetadataSubmit={onSubmit}
-        isDisabled={metadataIsDisabled}
-        isDirty={dirtyFields.opphav}
-        reset={() => resetField("opphav")}
+        fieldKey="informasjon"
+        fieldLabel="Ekstra informasjon"
       >
-        <Input
-          {...register("opphav")}
-          placeholder={"Fyll inn informasjon om opphav"}
-        />
-      </MetadataRow>
-      <MetadataRow
-        feature={feature}
-        name="Ekstra informasjon"
-        value={metadata.common?.informasjon ?? ""}
-        onMetadataSubmit={onSubmit}
-        isDisabled={metadataIsDisabled}
-        isDirty={dirtyFields.informasjon}
-        reset={() => resetField("informasjon")}
-      >
-        <Textarea
-          {...register("informasjon")}
-          placeholder={"Fyll inn ekstra informasjon"}
-        />
-      </MetadataRow>
+        <Textarea placeholder={"Fyll inn ekstra informasjon"} />
+      </MetadataField>
     </Container>
   );
 };
