@@ -1,6 +1,14 @@
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
-import { Datepicker, Input, Select, Textarea } from "@kvib/react";
+import {
+  Button,
+  Datepicker,
+  Divider,
+  Input,
+  Select,
+  Text,
+  Textarea,
+} from "@kvib/react";
 import { GrenseType } from "../../../../hooks/layers/types";
 import { styled } from "styled-components";
 import { MetadataField } from "./MetadataField";
@@ -50,6 +58,14 @@ const MetadataGenerelt = ({ feature }: Props) => {
 
   return (
     <Container>
+      <ID>
+        <Text>UUID</Text>
+        <Text as="b">{feature.getId()}</Text>
+        <FakeEditButton colorScheme="gray" variant="secondary" isDisabled>
+          Rediger
+        </FakeEditButton>
+      </ID>
+      <Divider />
       <MetadataField
         feature={feature}
         fieldKey="grenseType"
@@ -130,5 +146,15 @@ const MetadataGenerelt = ({ feature }: Props) => {
     </Container>
   );
 };
+
+const ID = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+`;
+
+const FakeEditButton = styled(Button)`
+  justify-self: end;
+`;
 
 export default MetadataGenerelt;
