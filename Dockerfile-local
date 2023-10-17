@@ -5,7 +5,7 @@ RUN npm install
 RUN rm -f .npmrc
 RUN npm run build
 
-FROM caddy:2-alpine
+FROM caddy:2.7-alpine
 ENV PORT=8080
 ENV BACKEND_HOST=nibas-backend
 RUN apk --no-cache add tzdata
