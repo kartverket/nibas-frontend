@@ -12,7 +12,7 @@ interface Props {
   children: React.ReactNode;
   onMetadataSubmit: () => void;
   isDisabled?: boolean;
-  isDirty: boolean | undefined;
+  isDirty: boolean;
   reset: () => void;
 }
 
@@ -42,7 +42,7 @@ const MetadataRow = ({
         <EditButton
           isDisabled={isDisabled}
           isEditing={isEditing}
-          canSave={isDirty !== undefined && isDirty}
+          canSave={isDirty}
           onSubmit={() => {
             onMetadataSubmit();
             setIsEditing(false);

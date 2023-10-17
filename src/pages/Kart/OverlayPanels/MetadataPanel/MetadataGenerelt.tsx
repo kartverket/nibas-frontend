@@ -54,8 +54,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
         feature={feature}
         fieldKey="grenseType"
         fieldLabel="Grensetype"
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        valueLabelFormatter={(_) => {
+        valueLabelFormatter={() => {
           // Henter fra dataen i stedet for å formattere
           return properties.type;
         }}
@@ -97,7 +96,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
         feature={feature}
         fieldLabel="Målemetode"
         fieldKey="maalemetode"
-        valueLabelFormatter={(valueLabel: string) =>
+        valueLabelFormatter={(valueLabel) =>
           kodeliste ? getMaalemetodeFromId(kodeliste, valueLabel) : valueLabel
         }
       >
@@ -113,20 +112,20 @@ const MetadataGenerelt = ({ feature }: Props) => {
       </MetadataField>
       <MetadataField
         feature={feature}
-        fieldKey={"noeyaktighet"}
-        fieldLabel={"Nøyaktighet (cm)"}
+        fieldKey="noeyaktighet"
+        fieldLabel="Nøyaktighet (cm)"
       >
         <Input type="number" />
       </MetadataField>
       <MetadataField feature={feature} fieldKey="opphav" fieldLabel="Opphav">
-        <Input placeholder={"Fyll inn informasjon om opphav"} />
+        <Input placeholder="Fyll inn informasjon om opphav" />
       </MetadataField>
       <MetadataField
         feature={feature}
         fieldKey="informasjon"
         fieldLabel="Ekstra informasjon"
       >
-        <Textarea placeholder={"Fyll inn ekstra informasjon"} />
+        <Textarea placeholder="Fyll inn ekstra informasjon" />
       </MetadataField>
     </Container>
   );
