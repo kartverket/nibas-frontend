@@ -8,7 +8,7 @@ import { Feature } from "ol";
 interface Props {
   feature: Feature<Geometry>;
   name: string;
-  value: string | undefined;
+  value: string;
   children: React.ReactNode;
   onMetadataSubmit: () => void;
   isDisabled?: boolean;
