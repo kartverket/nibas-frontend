@@ -10,6 +10,7 @@ import InputCell from "../InputCell";
 import { KretsRow } from "../KretsTable";
 import EditAndSaveButton from "../EditAndSaveButton";
 import { useUtkast } from "contexts/UtkastContext";
+import { styled } from "styled-components";
 
 type GrunnkretsInputs = {
   grunnkretsnavn: string;
@@ -130,15 +131,23 @@ const GrunnkretsRow = ({ grunnkrets, kommuneId }: Props) => {
       />
       <td>{/* Tom plass for mellomrom */}</td>
       {utkast && (
-        <EditAndSaveButton
-          isEditing={isEditing}
-          toggleEditing={toggleEditing}
-          canSave={isDirty}
-          onSubmit={(event) => handleSubmit(saveAndAddHistoryEntry)(event)}
-        />
+        <Cell>
+          <EditAndSaveButton
+            isEditing={isEditing}
+            toggleEditing={toggleEditing}
+            canSave={isDirty}
+            onSubmit={(event) => handleSubmit(saveAndAddHistoryEntry)(event)}
+          />
+        </Cell>
       )}
     </KretsRow>
   );
 };
+
+const Cell = styled.td`
+  display: flex;
+  justify-content: end;
+  padding: 12px !important;
+`;
 
 export default GrunnkretsRow;

@@ -11,6 +11,7 @@ import { updateEditFeatureText } from "utils/map/layerStyles";
 import { getRepresentasjonspunktId } from "utils/map/source";
 import { useHistoryFormSync } from "contexts/HistoryContext/useHistoryFormSync";
 import { useUtkast } from "contexts/UtkastContext";
+import { styled } from "styled-components";
 
 type StemmekretsInputs = {
   stemmekretsnavn: string;
@@ -175,15 +176,23 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
       />
       <td>{stemmekrets.valgdistriktsnummer ?? ""}</td>
       {utkast && (
-        <EditAndSaveButton
-          isEditing={isEditing}
-          toggleEditing={toggleEditing}
-          canSave={isDirty}
-          onSubmit={onSubmit}
-        />
+        <Cell>
+          <EditAndSaveButton
+            isEditing={isEditing}
+            toggleEditing={toggleEditing}
+            canSave={isDirty}
+            onSubmit={onSubmit}
+          />
+        </Cell>
       )}
     </KretsRow>
   );
 };
+
+const Cell = styled.td`
+  display: flex;
+  justify-content: end;
+  padding: 12px !important;
+`;
 
 export default StemmekretsRow;
