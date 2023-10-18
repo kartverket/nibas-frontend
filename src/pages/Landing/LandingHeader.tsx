@@ -1,7 +1,6 @@
 import { styled } from "styled-components";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import { Button, Heading, Icon, Text } from "@kvib/react";
-import { LogoOnly } from "components/Logo";
+import { Button, Icon, Logo, Text } from "@kvib/react";
 
 const LandingHeader = () => {
   const { isAuthenticatedFunc, handleLogoutFunc, tokenHolderFunc } =
@@ -10,13 +9,7 @@ const LandingHeader = () => {
   return (
     <Container>
       <Section>
-        <LogoOnly />
-        <div>
-          <Heading as="h1" size="md">
-            Nasjonal inndelingsbase
-          </Heading>
-          <Text>En tjeneste fra Kartverket</Text>
-        </div>
+        <Logo variant="horizontal" size={128} />
       </Section>
       {isAuthenticatedFunc() && (
         <Section>

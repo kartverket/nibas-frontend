@@ -1,4 +1,4 @@
-import { CloseButton, Heading } from "@kvib/react";
+import { CloseButton, Heading, Text } from "@kvib/react";
 import { styled, keyframes } from "styled-components";
 
 export type PanelProps = {
@@ -30,7 +30,7 @@ const slideIn = keyframes`
 
 export const Panel = styled.div<{ $isOpen: boolean }>`
   margin: 16px;
-  padding: 0 16px;
+  padding: 0 22px;
   background: white;
   border: 2px solid var(--kvib-colors-gray-50);
   border-radius: 12px;
@@ -45,7 +45,7 @@ export const Panel = styled.div<{ $isOpen: boolean }>`
 
 export const SidePanel = styled(Panel)`
   grid-area: sidepanel;
-  width: 450px;
+  width: 520px;
   border-radius: unset;
   margin: 0;
   border-top: none;
@@ -70,9 +70,9 @@ type PanelHeaderContainerProps = {
 const getPaddingForSize = (size: PanelHeaderSizes): string => {
   switch (size) {
     case "md":
-      return "24px 8px 16px";
+      return "24px 0 16px";
     case "sm":
-      return "12px 8px 8px";
+      return "12px 0 8px";
   }
 };
 
@@ -98,31 +98,43 @@ const PanelHeaderContainer = styled.div<PanelHeaderContainerProps>`
   position: sticky;
   top: 0;
   z-index: 1;
+
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  align-items: center;
   padding: ${({ $size = "md" }) => getPaddingForSize($size)};
-  background: var(--kvib-colors-chakra-body-bg);
-  border-bottom: 2px solid var(--kvib-colors-gray-50);
   margin-bottom: ${({ $size = "md" }) => getMarginForSize($size)};
+  border-bottom: 2px solid var(--kvib-colors-gray-50);
+  background: var(--kvib-colors-chakra-body-bg);
+`;
+
+const PanelHeaderText = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  justify-content: center;
 `;
 
 type PanelHeaderProps = {
   onClose: () => void;
   children: React.ReactNode;
+  subHeading?: string;
   size?: PanelHeaderSizes;
 };
 
 export const PanelHeader = ({
   children,
+  subHeading,
   onClose,
   size = "md",
 }: PanelHeaderProps) => (
   <PanelHeaderContainer $size={size}>
-    <Heading as="h3" size={size}>
-      {children}
-    </Heading>
+    <PanelHeaderText>
+      <Heading as="h3" size={size}>
+        {children}
+      </Heading>
+      {subHeading && <Text fontSize="sm">{subHeading}</Text>}
+    </PanelHeaderText>
     <CloseButton
       size={getCloseButtonSize(size)}
       onClick={onClose}

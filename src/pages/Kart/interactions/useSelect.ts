@@ -9,7 +9,6 @@ import { borderIsEditable } from "utils/map";
 import { useToast } from "@kvib/react";
 import { useEffect } from "react";
 import { usePrevious } from "hooks/usePrevious";
-import { FeatureProperties } from "types/api";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -113,20 +112,8 @@ const useSelect = () => {
         if (clickedFeature?.getId()?.toString().includes("TEIGGRENSEWFS")) {
           overlayPopup.setPosition(getOverlayPosition(clickedFeature));
         } else {
-          const featureProperties =
-            clickedFeature?.getProperties() as FeatureProperties;
-
-          if (featureProperties.metadata) {
-            overlayPopup.setPosition(undefined);
-            openOverlayPanel("metadata");
-          } else {
-            toast({
-              status: "error",
-              title: "Den valgte grensen har ingen metadata",
-            });
-            event.stopPropagation();
-            return;
-          }
+          overlayPopup.setPosition(undefined);
+          openOverlayPanel("metadata");
         }
       }
 

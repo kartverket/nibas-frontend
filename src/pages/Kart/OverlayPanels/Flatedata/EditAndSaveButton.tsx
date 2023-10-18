@@ -1,10 +1,9 @@
 import { styled } from "styled-components";
-import { ButtonGroup, Button, IconButton } from "@kvib/react";
+import { ButtonGroup, IconButton, Button } from "@kvib/react";
 
-const Cell = styled.td`
+const Container = styled.div`
   display: flex;
   justify-content: end;
-  padding: 12px !important;
 `;
 
 const EditButton = styled(Button)`
@@ -17,19 +16,23 @@ const CombinedButton = styled(ButtonGroup)`
 `;
 
 type Props = {
+  className?: string;
   isEditing: boolean;
+  isDisabled?: boolean;
   canSave: boolean;
   onSubmit: (event: React.MouseEvent<HTMLButtonElement>) => void;
   toggleEditing: () => void;
 };
 
 const EditAndSaveButton = ({
+  className,
   isEditing,
+  isDisabled,
   toggleEditing,
   canSave,
   onSubmit,
 }: Props) => (
-  <Cell>
+  <Container className={className}>
     {isEditing ? (
       <CombinedButton>
         <IconButton
@@ -47,16 +50,16 @@ const EditAndSaveButton = ({
       </CombinedButton>
     ) : (
       <EditButton
+        isDisabled={isDisabled}
         aria-label="Åpne redigering"
         onClick={toggleEditing}
-        iconFill
         variant="secondary"
         colorScheme="gray"
       >
         Rediger
       </EditButton>
     )}
-  </Cell>
+  </Container>
 );
 
 export default EditAndSaveButton;

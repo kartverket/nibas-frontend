@@ -1,24 +1,43 @@
-import { styled } from "styled-components";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
-import { Metadata, FeatureProperties } from "types/api";
-import Input from "components/Input";
-import useMetadataForm from "pages/Kart/OverlayPanels/hooks/useMetadataForm";
-import { getDateInFriendlyString } from "pages/Kart/OverlayPanels/MetadataPanel/utils";
-import AsyncKodelisteSelect from "./AsyncKodelisteSelect";
-import useIsMetadataDisabled from "../hooks/useIsMetadataDisabled";
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { useEffect } from "react";
 import {
   Button,
+  Datepicker,
   Divider,
-  FormControl,
-  FormLabel,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
+  Input,
+  Select,
+  Text,
   Textarea,
 } from "@kvib/react";
+import { GrenseType } from "../../../../hooks/layers/types";
+import { styled } from "styled-components";
+import { MetadataField } from "./MetadataField";
+import { getDateInFriendlyString } from "./utils";
+import useNibasApi from "hooks/useNibasApi";
+import { FeatureProperties, KodelisteRespons } from "types/api";
+
+export type Inputs = {
+  grenseType: string;
+  maalemetode: string;
+  datafangstdato: string;
+  noeyaktighet: number;
+  informasjon: string;
+  opphav: string;
+  gyldigFra: string;
+  gyldigTil: string;
+};
+
+const GrenseTypeValues: GrenseType[] = [
+  "Kommunegrense",
+  "Fylkesgrense",
+  "Riksgrense",
+  "AvtaltAvgrensningslinje",
+  "Territorialgrense",
+  "Grunnkretsgrense",
+  "Delområdegrense",
+  "Posisjon",
+  "Stemmekretsgrense",
+];
 
 type Props = {
   feature: Feature<Geometry>;
@@ -27,139 +46,115 @@ type Props = {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 24px;
-`;
-
-const InfoBox = styled.div`
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 12px;
-  padding: 20px 16px;
-  background: var(--kvib-colors-gray-50);
-`;
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-`;
-
-const InputRow = styled.div`
-  display: grid;
-  grid-template-columns: 3fr 2fr;
-  gap: 16px;
-`;
-
-const Buttons = styled.div`
-  display: flex;
-  justify-content: end;
   gap: 16px;
 `;
 
 const MetadataGenerelt = ({ feature }: Props) => {
-  const { closeOverlayPanel } = useOverlayPanel();
+  const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
   const properties = feature.getProperties() as FeatureProperties;
-  const type = properties.type;
-  const metadata = properties.metadata as Metadata;
 
-  const {
-    register,
-    handleSubmit,
-    maalemetodeKoder,
-    updateDraftFromFeature,
-    isDirty,
-    reset,
-    getFormFromApiMetadata,
-  } = useMetadataForm(metadata, feature);
-
-  // Still tilbake til default-verdier dersom man bytter valgt feature
-  useEffect(() => {
-    reset(getFormFromApiMetadata(metadata));
-  }, [getFormFromApiMetadata, metadata, reset]);
-
-  const metadataIsDisabled = useIsMetadataDisabled(properties);
-
-  const onSubmit = () => {
-    updateDraftFromFeature();
-    reset(undefined, { keepValues: true });
-  };
+  const getMaalemetodeFromId = (maalemetoder: KodelisteRespons, id: string) =>
+    maalemetoder.items.find((item) => item.id === id)?.label ?? null;
 
   return (
     <Container>
-      <InfoBox>
-        <b>Grensetype</b>
-        <span>{type}</span>
-        <b>Datofangst</b>
-        <span>
-          {getDateInFriendlyString(metadata?.common?.datafangstdato) ?? "--"}
-        </span>
-        <b>Sist oppdatert</b>
-        <span>
-          {getDateInFriendlyString(
-            metadata?.common?.sporingsinformasjon.oppdateringsdato,
-          ) ?? "--"}
-        </span>
-        <b>Gyldig fra</b>
-        <span>
-          {getDateInFriendlyString(metadata?.common?.gyldigFra) ?? "--"}
-        </span>
-        <b>Gyldig til</b>
-        <span>
-          {getDateInFriendlyString(metadata?.common?.gyldigTil) ?? "--"}
-        </span>
-      </InfoBox>
-      <Form onSubmit={handleSubmit(onSubmit)}>
-        <InputRow>
-          <AsyncKodelisteSelect
-            kodeliste={maalemetodeKoder}
-            label="Målemetode"
-            {...register("maalemetode", { disabled: metadataIsDisabled })}
-          />
-          <FormControl>
-            <FormLabel>Nøyaktighet</FormLabel>
-            <NumberInput>
-              <NumberInputField
-                {...register("noeyaktighet", {
-                  disabled: metadataIsDisabled,
-                  valueAsNumber: true,
-                  min: 0,
-                  max: 1_000_000,
-                })}
-              />
-              <NumberInputStepper />
-            </NumberInput>
-          </FormControl>
-        </InputRow>
-        <Input
-          {...register("opphav", { disabled: metadataIsDisabled })}
-          label="Opphav"
-        />
-        <FormControl>
-          <FormLabel>Informasjon</FormLabel>
-          <Textarea
-            rows={4}
-            {...register("informasjon", { disabled: metadataIsDisabled })}
-          />
-        </FormControl>
-        <Divider />
-        <Buttons>
-          <Button
-            variant="tertiary"
-            onClick={() => {
-              reset();
-              closeOverlayPanel();
-            }}
-            isDisabled={metadataIsDisabled}
-          >
-            Avbryt
-          </Button>
-          <Button type="submit" isDisabled={!isDirty || metadataIsDisabled}>
-            Endre metadata
-          </Button>
-        </Buttons>
-      </Form>
+      <ID>
+        <Text>UUID</Text>
+        <Text as="b">{feature.getId()}</Text>
+        <FakeEditButton colorScheme="gray" variant="secondary" isDisabled>
+          Rediger
+        </FakeEditButton>
+      </ID>
+      <Divider />
+      <MetadataField
+        feature={feature}
+        fieldKey="grenseType"
+        fieldLabel="Grensetype"
+        valueLabelFormatter={() => {
+          // Henter fra dataen i stedet for å formattere
+          return properties.type;
+        }}
+        disabledByFeatureLock
+      >
+        <Select>
+          {GrenseTypeValues.map((grenseType: GrenseType) => (
+            <option key={grenseType}>{grenseType}</option>
+          ))}
+        </Select>
+      </MetadataField>
+      <MetadataField
+        feature={feature}
+        fieldLabel="Datafangsdato"
+        fieldKey="datafangstdato"
+        valueLabelFormatter={getDateInFriendlyString}
+      >
+        <Datepicker />
+      </MetadataField>
+      <MetadataField
+        feature={feature}
+        fieldLabel="Gyldig fra"
+        fieldKey="gyldigFra"
+        disabledByFeatureLock
+        valueLabelFormatter={getDateInFriendlyString}
+      >
+        <Datepicker />
+      </MetadataField>
+      <MetadataField
+        feature={feature}
+        fieldLabel="Gyldig til"
+        fieldKey="gyldigTil"
+        disabledByFeatureLock
+        valueLabelFormatter={getDateInFriendlyString}
+      >
+        <Datepicker />
+      </MetadataField>
+      <MetadataField
+        feature={feature}
+        fieldLabel="Målemetode"
+        fieldKey="maalemetode"
+        valueLabelFormatter={(valueLabel) =>
+          kodeliste ? getMaalemetodeFromId(kodeliste, valueLabel) : valueLabel
+        }
+      >
+        <Select>
+          <option value="">Velg målemetode</option>
+          {kodeliste &&
+            kodeliste.items.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.label}
+              </option>
+            ))}
+        </Select>
+      </MetadataField>
+      <MetadataField
+        feature={feature}
+        fieldKey="noeyaktighet"
+        fieldLabel="Nøyaktighet (cm)"
+      >
+        <Input type="number" />
+      </MetadataField>
+      <MetadataField feature={feature} fieldKey="opphav" fieldLabel="Opphav">
+        <Input placeholder="Fyll inn informasjon om opphav" />
+      </MetadataField>
+      <MetadataField
+        feature={feature}
+        fieldKey="informasjon"
+        fieldLabel="Ekstra informasjon"
+      >
+        <Textarea placeholder="Fyll inn ekstra informasjon" />
+      </MetadataField>
     </Container>
   );
 };
+
+const ID = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+`;
+
+const FakeEditButton = styled(Button)`
+  justify-self: end;
+`;
 
 export default MetadataGenerelt;

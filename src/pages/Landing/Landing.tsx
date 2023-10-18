@@ -9,15 +9,18 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { useEffect } from "react";
 import { resetMapView, getAllVisibleFeatures } from "utils/map";
+import { useToolbar } from "contexts/ToolbarContext";
 
 const Landing = () => {
   const navigate = useNavigate();
+  const { activePointMode, togglePointMode } = useToolbar();
   const { resetAndClearAllLayers } = useEditAllGrenser();
   const { activeOverlayPanel, closeOverlayPanel } = useOverlayPanel();
   const { activeSidebarPanel, closeSidebarPanel } = useSidebarPanel();
 
   useEffect(() => {
     resetMapView();
+    if (activePointMode) togglePointMode(activePointMode);
     if (activeOverlayPanel) closeOverlayPanel();
     if (activeSidebarPanel) closeSidebarPanel();
     const allVisibleFeatures = getAllVisibleFeatures();
@@ -26,10 +29,12 @@ const Landing = () => {
     }
   }, [
     activeOverlayPanel,
+    activePointMode,
     activeSidebarPanel,
     closeOverlayPanel,
     closeSidebarPanel,
     resetAndClearAllLayers,
+    togglePointMode,
   ]);
 
   return (

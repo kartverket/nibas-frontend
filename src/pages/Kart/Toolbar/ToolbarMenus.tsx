@@ -15,6 +15,7 @@ import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts
 
 type MenuItems = (MenuItemProps & {
   $isActive: boolean;
+  isDisabled: boolean;
   label: string;
 })[];
 
@@ -71,10 +72,11 @@ const ToolbarMenus = () => {
   // For å kunne vise at en meny er aktiv må vi kunne sjekke hvorvidt noen av menuitems er aktive
   // Korteste vei til mål da blir å kunne iterere gjennom menu items
   const grenseMenuItems: MenuItems = [
-    {
+    /*{
       label: "Tegn ny grense",
       icon: <Icon icon="edit" />,
       $isActive: activePointMode === "draw",
+      isDisabled: !editingType,
       onClick: () => togglePointMode("draw"),
       "aria-label": "Tegn en ny grense fra et punkt",
     },
@@ -82,6 +84,7 @@ const ToolbarMenus = () => {
       label: "Splitt grense",
       icon: <Icon icon="location_off" />,
       $isActive: activePointMode === "split",
+      isDisabled: !editingType,
       onClick: () => togglePointMode("split"),
       "aria-label": "Del en grense i to fra et punkt",
     },
@@ -89,29 +92,33 @@ const ToolbarMenus = () => {
       label: "Løsriv grense",
       icon: <Icon icon="edit_location_alt" />,
       $isActive: activePointMode === "detach",
+      isDisabled: !editingType,
       onClick: () => togglePointMode("detach"),
       "aria-label": "Løsriv grense fra et knutepunkt",
-    },
+    },*/
     {
       label: "Se/endre grenseinformasjon",
       icon: <Icon icon="live_help" />,
       $isActive: activePointMode === "metadata",
+      isDisabled: false,
       onClick: toggleMetadata,
       "aria-label": "Se informasjon om grensen",
     },
-    {
+    /*{
       label: "Arkiver grense",
       icon: <Icon icon="archive" />,
       $isActive: activePointMode === "archive",
+      isDisabled: !editingType,
       onClick: () => togglePointMode("archive"),
       "aria-label": "Arkiver grense",
-    },
+    },*/
   ];
   const punktMenuItems: MenuItems = [
     {
       label: "Flytt punkt med koordinater",
       icon: <Icon icon="ads_click" />,
       $isActive: activePointMode === "koordinater",
+      isDisabled: !editingType,
       onClick: toggleMove,
       "aria-label": "Flytt punkt med koordinater",
     },
@@ -119,6 +126,7 @@ const ToolbarMenus = () => {
       label: "Legg til punkt",
       icon: <Icon icon="add_location_alt" />,
       $isActive: activePointMode === "add",
+      isDisabled: !editingType,
       onClick: () => togglePointMode("add"),
       "aria-label": "Legg til punkter",
     },
@@ -126,6 +134,7 @@ const ToolbarMenus = () => {
       label: "Fjern punkt",
       icon: <Icon icon="wrong_location" />,
       $isActive: activePointMode === "remove",
+      isDisabled: !editingType,
       onClick: () => togglePointMode("remove"),
       "aria-label": "Fjern punkter",
     },
@@ -134,6 +143,7 @@ const ToolbarMenus = () => {
     {
       label: "Se/endre flatedetaljer",
       icon: <Icon icon="edit_location_alt" />,
+      isDisabled: !editingType,
       $isActive: flatedetaljerIsActive,
       onClick: toggleFlatedetaljer,
       "aria-label": "Se eller endre flatedetaljer for kretsen som redigeres",
@@ -155,7 +165,7 @@ const ToolbarMenus = () => {
           as={ModeButton}
           aria-label="Grenseverktøy"
           icon="show_chart"
-          isDisabled={!editingType}
+          isDisabled={grenseMenuItems.every((gmi) => gmi.isDisabled)}
           isActive={grenseMenuItems.some((gmi) => gmi.$isActive)}
         >
           Grense
@@ -173,7 +183,7 @@ const ToolbarMenus = () => {
           as={ModeButton}
           aria-label="Punktverktøy"
           icon="conversion_path"
-          isDisabled={!editingType}
+          isDisabled={punktMenuItems.every((pmi) => pmi.isDisabled)}
           isActive={punktMenuItems.some((pmi) => pmi.$isActive)}
         >
           Punkt
@@ -191,7 +201,7 @@ const ToolbarMenus = () => {
           as={ModeButton}
           aria-label="Flateverktøy"
           icon="area_chart"
-          isDisabled={!editingType}
+          isDisabled={flateMenuItems.every((fmi) => fmi.isDisabled)}
           isActive={flateMenuItems.some((fmi) => fmi.$isActive)}
         >
           Flate
