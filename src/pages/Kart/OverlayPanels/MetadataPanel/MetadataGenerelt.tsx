@@ -1,19 +1,12 @@
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
-import {
-  Datepicker,
-  Input,
-  Select,
-  Textarea,
-  useDisclosure,
-} from "@kvib/react";
+import { Datepicker, Input, Select, Textarea } from "@kvib/react";
 import { GrenseType } from "../../../../hooks/layers/types";
 import { styled } from "styled-components";
 import { MetadataField } from "./MetadataField";
 import { getDateInFriendlyString } from "./utils";
 import useNibasApi from "hooks/useNibasApi";
 import { FeatureProperties, KodelisteRespons } from "types/api";
-import { getNavnInSpraak } from "utils/language/language";
 import { useTilhorighet } from "../hooks/useTilhorighet";
 import { getIdFromEntity } from "utils/api";
 import { Flatedata } from "contexts/OverlayPanelContext";
@@ -67,19 +60,11 @@ const MetadataGenerelt = ({ feature, flatedata }: Props) => {
     kommuneId,
   );
 
-  const {
-    isOpen: isOpprettelseOpen,
-    onClose: onOpprettelseClose,
-    onOpen: onOpprettelseOpen,
-  } = useDisclosure();
-
   const getMaalemetodeFromId = (maalemetoder: KodelisteRespons, id: string) =>
     maalemetoder.items.find((item) => item.id === id)?.label ?? null;
 
   const handleSelect = (option: string) => {
-    if (option == "OPPRETT") {
-      onOpprettelseOpen();
-    }
+    return option;
   };
 
   return (
@@ -178,7 +163,7 @@ const MetadataGenerelt = ({ feature, flatedata }: Props) => {
                   const uid = `${key}_${krets.id.lokalid.value}`;
                   return (
                     <option key={uid} value={uid}>
-                      {krets.kretsNummer} {getNavnInSpraak(krets.navn, "nor")}
+                      {krets.kretsNummer} {krets.navn}
                     </option>
                   );
                 })}

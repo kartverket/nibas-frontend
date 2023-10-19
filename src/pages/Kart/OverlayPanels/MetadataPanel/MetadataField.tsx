@@ -59,8 +59,12 @@ export const MetadataField = ({
       isDirty={isDirty}
       reset={reset}
     >
-      {React.isValidElement(children) &&
-        React.cloneElement(children, { ...register("metadata") })}
+      {React.Children.map(children, (child) => {
+        if (React.isValidElement(child)) {
+          return React.cloneElement(child, { ...register("metadata") });
+        }
+        return child;
+      })}
     </MetadataRow>
   );
 };

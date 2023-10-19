@@ -58,5 +58,8 @@ export const useTilhorighet = (grenseType: GrenseType, kommuneId: string) => {
     }
   }, [grenseType, grunnkretser, stemmekretser]);
 
-  return { data: tilhorighetOptions, kretsType: tilhorighetOptions ? tilhorighetOptions[0].type : null};
+  return {
+    data: tilhorighetOptions,
+    kretsType: tilhorighetOptions ? tilhorighetOptions[0].type : null,
+  };
 };
