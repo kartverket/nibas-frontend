@@ -13,7 +13,6 @@ import { MetadataField } from "./MetadataField";
 import { getDateInFriendlyString } from "./utils";
 import useNibasApi from "hooks/useNibasApi";
 import { FeatureProperties, KodelisteRespons } from "types/api";
-import { FlateOpprettelseModal } from "./FlateOpprettelseModal";
 import { getNavnInSpraak } from "utils/language/language";
 import { useTilhorighet } from "../hooks/useTilhorighet";
 import { getIdFromEntity } from "utils/api";
@@ -187,11 +186,6 @@ const MetadataGenerelt = ({ feature, flatedata }: Props) => {
           ))}
         </Container>
       </MetadataField>
-      <FlateOpprettelseModal
-        isOpen={isOpprettelseOpen}
-        featureProps={properties}
-        onClose={onOpprettelseClose}
-      />
     </Container>
   );
 };
