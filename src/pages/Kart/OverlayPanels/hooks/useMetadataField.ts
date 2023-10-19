@@ -111,7 +111,6 @@ export const useMetadataField = (
         (e.target as Feature<LineString>).getProperties().metadata as Metadata,
         field,
       );
-      console.log("skjer noe")
       setValue("metadata", newMetadata.metadata ?? "");
     };
 
