@@ -102,7 +102,6 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS | XYZ) => {
 
   if (source instanceof TileWMS) {
     json = WMSParser.read(xml);
-    // console.log(capabilitiesUrl, json);
     if (!json?.Capability) return null;
 
     const mainLayer = json.Capability.Layer;
@@ -114,7 +113,7 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS | XYZ) => {
 
   if (source instanceof WMTS) {
     json = WMTSParser.read(xml);
-    // console.log(capabilitiesUrl, json);
+    console.log(capabilitiesUrl, json);
 
     if (!json?.Contents) return null;
 

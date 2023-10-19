@@ -79,8 +79,8 @@ const norgeIBilderConfig: WMTSConfig = {
 };
 
 const topoWMSConfig: WMTSConfig = {
-  url: "https://cache.kartverket.no/topo4/v1/wmts/1.0.0/default/utm33n/{z}/{y}/{x}.png",
-  layer: "knoll",
+  url: "https://cache.kartverket.no/topo4/v1/wmts/1.0.0/",
+  layer: "Topografisk Norgeskart",
   matrixSet: "utm33n",
   tileGrid: get25833Grid(),
   style: "default",
@@ -88,18 +88,22 @@ const topoWMSConfig: WMTSConfig = {
 };
 
 const europaKartConfig: WMTSConfig = {
-  url: "https://cache.kartverket.no/europa_forenklet/v1/wmts/1.0.0/default/utm33n/{z}/{y}/{x}.png",
+  url: "https://cache.kartverket.no/europa_forenklet/v1/wmts/1.0.0/",
   layer: "Europeisk bakgrunnskart forenklet",
-  matrixSet: "utm33n",
+  matrixSet: "EPSG:25833",
   tileGrid: get25833Grid(),
   style: "default",
   format: "image/png",
 };
-/*
+
 const ortoWMSConfig: WMTSConfig = {
-  url: "https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm33_wmts_v2?layer=Nibcache_web_mercator_v2&style=default&tilematrixset=GoogleMapsCompatible&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpg&TileMatrix={z}&TileCol={x}&TileRow={y}",
+  url: "https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_web_mercator_wmts_v2",
+  layer: "Nibcache_web_mercator_v2",
+  matrixSet: "GoogleMapsCompatible",
+  tileGrid: getBaseGrid(),
+  style: "default",
+  format: "image/jpg",
 };
-*/
 
 const defaultParams = {
   CRS: "EPSG:25833",
@@ -193,6 +197,7 @@ export const kartlagSources = {
   ),
   europaKart: new WMTS(europaKartConfig),
   topoWMS: new WMTS(topoWMSConfig),
+  ortoWMS: new WMTS(ortoWMSConfig),
   norgeIBilder: new WMTS(norgeIBilderConfig),
 };
 
