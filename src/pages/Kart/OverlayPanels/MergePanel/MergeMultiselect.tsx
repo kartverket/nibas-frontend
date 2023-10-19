@@ -67,9 +67,7 @@ export const MergeMultiselect = ({
             ),
           )}
           onRemove={() => remove(index)}
-          stemmekretser={alleStemmekretser.filter(
-            (s) => s.stemmekretsnummer !== getValues("stemmekrets"),
-          )}
+          stemmekretser={alleStemmekretser}
           showRemoveButton={fields.length > 1}
           validationError={{
             showError: !!errors?.stemmekretsNummerTilSammenslaaing?.[index],
