@@ -27,7 +27,7 @@ const getUpdatedMetadata = (
           : oldMetadata.common?.informasjon,
       datafangstdato:
         field === "datafangstdato"
-          ? data.metadata
+          ? data.metadata + "T00:00:00+00:00"
           : oldMetadata.common?.datafangstdato,
       opphav: field === "opphav" ? data.metadata : oldMetadata.common?.opphav,
       gyldigFra:
