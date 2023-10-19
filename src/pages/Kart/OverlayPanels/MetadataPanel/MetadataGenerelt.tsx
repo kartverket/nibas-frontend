@@ -62,7 +62,7 @@ const MetadataGenerelt = ({ feature, flatedata }: Props) => {
   const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
   const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
 
-  const tilhorighetOptions = useTilhorighet(
+  const { data: tilhorighetOptions, kretsType: kretsType } = useTilhorighet(
     properties.type as GrenseType,
     kommuneId,
   );
@@ -170,7 +170,7 @@ const MetadataGenerelt = ({ feature, flatedata }: Props) => {
           {["1", "2"].map((key) => (
             <Select key={key} onChange={(e) => handleSelect(e.target.value)}>
               <DefaultOption value={`DEFAULT`}>
-                Velg en flate fra listen
+                Velg en {kretsType} fra listen
               </DefaultOption>
 
               {tilhorighetOptions &&

@@ -1,3 +1,4 @@
+import { Kretstype } from "contexts/InndelingerKretsContext";
 import { useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { GrenseType } from "hooks/layers/types";
@@ -13,6 +14,7 @@ type Krets = {
   };
   kretsNummer: string;
   navn: string;
+  type: Kretstype;
 };
 type TilhorighetOptions = Krets[];
 
@@ -27,6 +29,7 @@ const getMuligeKretserForGrense = (
         id: stemmekrets.id,
         kretsNummer: stemmekrets.stemmekretsnummer,
         navn: stemmekrets.stemmekretsnavn,
+        type: "stemmekrets",
       };
     });
   } else {
@@ -35,6 +38,7 @@ const getMuligeKretserForGrense = (
         id: grunnkrets.id,
         kretsNummer: grunnkrets.grunnkretsnummer,
         navn: grunnkrets.navn,
+        type: "grunnkrets",
       };
     });
   }
@@ -54,5 +58,5 @@ export const useTilhorighet = (grenseType: GrenseType, kommuneId: string) => {
     }
   }, [grenseType, grunnkretser, stemmekretser]);
 
-  return tilhorighetOptions;
+  return { data: tilhorighetOptions, kretsType: tilhorighetOptions ? tilhorighetOptions[0].type : null};
 };
