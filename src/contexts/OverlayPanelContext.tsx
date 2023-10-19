@@ -11,7 +11,7 @@ type OverlayPanel =
   | "tegnforklaring"
   | "koordinater"
   | "kartlag";
-type Flatedata = KommuneRef | null;
+export type Flatedata = KommuneRef | null;
 
 export type OverlayPanelContextValue = {
   activeOverlayPanel: OverlayPanel | null;
