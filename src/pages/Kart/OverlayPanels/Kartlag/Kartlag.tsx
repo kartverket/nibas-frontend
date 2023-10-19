@@ -10,7 +10,10 @@ type Props = {
 const Kartlag = ({ layerId }: Props) => {
   const { mappedLayers } = useKartlag();
   const mappedLayer = mappedLayers.find((ml) => ml.sourceId === layerId);
-  if (!mappedLayer) return null;
+  if (!mappedLayer) {
+    console.log("not mapped", layerId);
+    return null;
+  }
 
   // Dersom dette laget har flere lag i seg ønsker vi å lage en mappe
   if (mappedLayer.layers.length > 0) {

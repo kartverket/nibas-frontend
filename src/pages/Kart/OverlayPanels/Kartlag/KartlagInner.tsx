@@ -2,7 +2,12 @@ import { IconButton } from "@kvib/react";
 import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { styled } from "styled-components";
 import { MappedLayer } from "utils/getLayersFromWMS";
-import { isVectorLayer, isWMSLayer, isWMTSLayer } from "utils/map/layers";
+import {
+  isVectorLayer,
+  isWMSLayer,
+  isWMTSLayer,
+  isXYZLayer,
+} from "utils/map/layers";
 import { toggleWMSLayer, toggleWMTSLayer, toggleWFSLayer } from "./utils";
 import { kartlagLayers } from "hooks/layers/constants";
 
@@ -26,7 +31,12 @@ const KartlagInner = ({ mappedLayer, isMainLayer }: Props) => {
     }
 
     if (isWMTSLayer(layer)) {
+      console.log("vi har et wmtslag", layer);
       toggleWMTSLayer(mappedLayer);
+    }
+
+    if (isXYZLayer(layer)) {
+      toggleXYZLayer(mappedLayer, isVisible);
     }
 
     if (isVectorLayer(layer) && !isVisible) {
@@ -65,3 +75,7 @@ const Container = styled.div`
 `;
 
 export default KartlagInner;
+
+function toggleXYZLayer(mappedLayer: MappedLayer, isVisible: boolean) {
+  throw new Error("Function not implemented.");
+}
