@@ -6,7 +6,6 @@ import { Feature } from "ol";
 import { Outline } from "style/mixins";
 import { Geometry } from "ol/geom";
 import { Button, IconButton, Spinner } from "@kvib/react";
-import { useUtkast } from "contexts/UtkastContext";
 
 type Props = {
   grenseType: EditingType;
@@ -26,8 +25,7 @@ const EditableGrenseAccordion = ({
   title,
 }: Props) => {
   const accordion = useVisibility();
-  const { utkast } = useUtkast();
-  const { value, toggleEditing, toggleVisible } = useEditGrense(
+  const { value, toggleVisible } = useEditGrense(
     grenseType,
     grenseId,
     features,
@@ -44,18 +42,6 @@ const EditableGrenseAccordion = ({
         />
         <TextContent>
           <span>{title}</span>
-          {utkast && (
-            <div>
-              <EditButton
-                variant="tertiary"
-                onClick={toggleEditing}
-                isDisabled
-                title="Midlertidig utilgjengelig"
-              >
-                {value.editing ? "Stopp redigering" : "Rediger grenser"}
-              </EditButton>
-            </div>
-          )}
         </TextContent>
         {isFetching && (
           <Spinner
