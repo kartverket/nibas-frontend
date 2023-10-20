@@ -14,6 +14,7 @@ type Props = {
   valueLabelFormatter?: (fieldLabel: string) => string | null;
   children: React.ReactNode;
   disabledByFeatureLock?: boolean;
+  isAsync?: boolean;
 };
 
 export const MetadataField = ({
@@ -23,6 +24,7 @@ export const MetadataField = ({
   valueLabelFormatter,
   children,
   disabledByFeatureLock,
+  isAsync,
 }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
   const metadata = properties.metadata as Metadata;
@@ -31,6 +33,7 @@ export const MetadataField = ({
     isDirty,
     updateDraftFromFeature,
     reset,
+    setValue,
     getValues,
     getFieldFromMetadata,
   } = useMetadataField(fieldKey, metadata, feature);
@@ -59,8 +62,15 @@ export const MetadataField = ({
       isDirty={isDirty}
       reset={reset}
     >
-      {React.isValidElement(children) &&
-        React.cloneElement(children, { ...register("metadata") })}
+      {React.Children.map(children, (child) => {
+        if (React.isValidElement(child)) {
+          return React.cloneElement(child, {
+            ...register("metadata"),
+            ...(isAsync ? { setValue, getValues } : {}),
+          });
+        }
+        return child;
+      })}
     </MetadataRow>
   );
 };

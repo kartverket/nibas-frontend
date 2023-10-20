@@ -8,7 +8,7 @@ import { addMetadataEntryFromFeature } from "../MetadataPanel/utils";
 import { useHistory } from "contexts/HistoryContext";
 import { Inputs } from "../MetadataPanel/MetadataGenerelt";
 
-type MetadataField = {
+export type MetadataField = {
   metadata: string;
 };
 
@@ -137,6 +137,7 @@ export const useMetadataField = (
     register,
     handleSubmit,
     reset,
+    setValue,
     getFieldFromMetadata,
     updateDraftFromFeature,
     getValues,

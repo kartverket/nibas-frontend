@@ -15,6 +15,7 @@ import { MetadataField } from "./MetadataField";
 import { getDateInFriendlyString } from "./utils";
 import useNibasApi from "hooks/useNibasApi";
 import { FeatureProperties, KodelisteRespons } from "types/api";
+import AsyncKodelisteSelect from "./AsyncKodelisteSelect";
 
 export type Inputs = {
   grenseType: string;
@@ -115,16 +116,9 @@ const MetadataGenerelt = ({ feature }: Props) => {
         valueLabelFormatter={(valueLabel) =>
           kodeliste ? getMaalemetodeFromId(kodeliste, valueLabel) : valueLabel
         }
+        isAsync
       >
-        <Select>
-          <option value="">Velg målemetode</option>
-          {kodeliste &&
-            kodeliste.items.map((item) => (
-              <option key={item.id} value={item.id}>
-                {item.label}
-              </option>
-            ))}
-        </Select>
+        <AsyncKodelisteSelect />
       </MetadataField>
       <MetadataField
         feature={feature}
