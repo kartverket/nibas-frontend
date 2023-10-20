@@ -36,14 +36,11 @@ type Props = {
   kommuneId: string;
 };
 
-// TODO: legg til fremtidige endringer igjen, sjekk med Erlend for skisser
 const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
   const { utkast } = useUtkast();
   const stemmekretsId = getIdFromEntity(stemmekrets);
   const { addHistoryEntry } = useHistory();
   const [isEditing, setIsEditing] = useState(false);
-  const [navn, setNavn] = useState("");
-  const [nummer, setNummer] = useState("");
 
   const {
     register,
@@ -58,8 +55,6 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
   useEffect(() => {
     setValue("stemmekretsnavn", stemmekrets.stemmekretsnavn);
     setValue("stemmekretsnummer", stemmekrets.stemmekretsnummer);
-    setNavn(stemmekrets.stemmekretsnavn);
-    setNummer(stemmekrets.stemmekretsnummer);
     previousValues.current = getValues();
   }, [getValues, setValue, stemmekrets]);
 
@@ -69,8 +64,6 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
       const newNumber = change[direction]?.stemmekretsnummer;
       setValue("stemmekretsnavn", newName ?? "");
       setValue("stemmekretsnummer", newNumber ?? "");
-      setNavn(newName ?? "");
-      setNummer(newNumber ?? "");
 
       previousValues.current = getValues();
 
@@ -141,8 +134,6 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
       newValues.stemmekretsnavn,
       newValues.stemmekretsnummer,
     );
-    setNavn(newValues.stemmekretsnavn);
-    setNummer(newValues.stemmekretsnummer);
     toggleEditing();
   };
 
@@ -164,13 +155,13 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
     <KretsRow>
       <InputCell
         isEditing={isEditing}
-        data={nummer}
+        data={getValues("stemmekretsnummer")}
         validationError={validationError(errors.stemmekretsnummer)}
         {...register("stemmekretsnummer", formOptions.stemmekretsnummer)}
       />
       <InputCell
         isEditing={isEditing}
-        data={navn}
+        data={getValues("stemmekretsnavn")}
         validationError={validationError(errors.stemmekretsnavn)}
         {...register("stemmekretsnavn", formOptions.stemmekretsnavn)}
       />
