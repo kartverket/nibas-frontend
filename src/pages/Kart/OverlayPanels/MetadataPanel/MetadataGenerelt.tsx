@@ -116,15 +116,16 @@ const MetadataGenerelt = ({ feature }: Props) => {
           kodeliste ? getMaalemetodeFromId(kodeliste, valueLabel) : valueLabel
         }
       >
-        <Select>
-          <option value="">Velg målemetode</option>
-          {kodeliste &&
-            kodeliste.items.map((item) => (
+        {kodeliste && (
+          <Select>
+            <option value="">Velg målemetode</option>
+            {kodeliste.items.map((item) => (
               <option key={item.id} value={item.id}>
                 {item.label}
               </option>
             ))}
-        </Select>
+          </Select>
+        )}
       </MetadataField>
       <MetadataField
         feature={feature}
