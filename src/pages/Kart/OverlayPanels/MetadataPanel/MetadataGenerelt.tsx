@@ -14,7 +14,7 @@ import { styled } from "styled-components";
 import { MetadataField } from "./MetadataField";
 import { getDateInFriendlyString } from "./utils";
 import useNibasApi from "hooks/useNibasApi";
-import { FeatureProperties, KodelisteRespons } from "types/api";
+import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
 
 export type Inputs = {
   grenseType: string;
@@ -52,6 +52,7 @@ const Container = styled.div`
 const MetadataGenerelt = ({ feature }: Props) => {
   const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
   const properties = feature.getProperties() as FeatureProperties;
+  const gyldigTil = (properties.metadata as Metadata).common?.gyldigTil;
 
   const getMaalemetodeFromId = (maalemetoder: KodelisteRespons, id: string) =>
     maalemetoder.items.find((item) => item.id === id)?.label ?? null;
@@ -99,15 +100,17 @@ const MetadataGenerelt = ({ feature }: Props) => {
         valueLabelFormatter={getDateInFriendlyString}
         renderItem={(register) => <Datepicker {...register} />}
       />
+      {gyldigTil && (
+        <MetadataField
+          feature={feature}
+          fieldLabel="Gyldig til"
+          fieldKey="gyldigTil"
+          disabledByFeatureLock
+          valueLabelFormatter={getDateInFriendlyString}
+          renderItem={(register) => <Datepicker {...register} />}
+        />
+      )}
 
-      <MetadataField
-        feature={feature}
-        fieldLabel="Gyldig til"
-        fieldKey="gyldigTil"
-        disabledByFeatureLock
-        valueLabelFormatter={getDateInFriendlyString}
-        renderItem={(register) => <Datepicker {...register} />}
-      />
       <MetadataField
         feature={feature}
         fieldLabel="Målemetode"
