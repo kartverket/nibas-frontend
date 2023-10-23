@@ -50,11 +50,11 @@ export const MetadataField = ({
     <MetadataRow
       feature={feature}
       name={fieldLabel}
-      valueLabel={(() => {
-        return valueLabelFormatter
+      valueLabel={
+        valueLabelFormatter
           ? valueLabelFormatter(getValues().metadata) ?? "Ukjent"
-          : getValues().metadata;
-      })()}
+          : getValues().metadata
+      }
       onMetadataSubmit={onSubmit}
       isDisabled={metadataIsDisabled || disabledByFeatureLock}
       isDirty={isDirty}
