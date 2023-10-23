@@ -75,39 +75,39 @@ const MetadataGenerelt = ({ feature }: Props) => {
           return properties.type;
         }}
         disabledByFeatureLock
-      >
-        <Select>
-          {GrenseTypeValues.map((grenseType: GrenseType) => (
-            <option key={grenseType}>{grenseType}</option>
-          ))}
-        </Select>
-      </MetadataField>
+        renderItem={(register) => (
+          <Select {...register}>
+            {GrenseTypeValues.map((grenseType: GrenseType) => (
+              <option key={grenseType}>{grenseType}</option>
+            ))}
+          </Select>
+        )}
+      />
       <MetadataField
         feature={feature}
         fieldLabel="Datafangsdato"
         fieldKey="datafangstdato"
         valueLabelFormatter={getDateInFriendlyString}
-      >
-        <Datepicker />
-      </MetadataField>
+        renderItem={(register) => <Datepicker {...register} />}
+      />
+
       <MetadataField
         feature={feature}
         fieldLabel="Gyldig fra"
         fieldKey="gyldigFra"
         disabledByFeatureLock
         valueLabelFormatter={getDateInFriendlyString}
-      >
-        <Datepicker />
-      </MetadataField>
+        renderItem={(register) => <Datepicker {...register} />}
+      />
+
       <MetadataField
         feature={feature}
         fieldLabel="Gyldig til"
         fieldKey="gyldigTil"
         disabledByFeatureLock
         valueLabelFormatter={getDateInFriendlyString}
-      >
-        <Datepicker />
-      </MetadataField>
+        renderItem={(register) => <Datepicker {...register} />}
+      />
       <MetadataField
         feature={feature}
         fieldLabel="Målemetode"
@@ -115,35 +115,42 @@ const MetadataGenerelt = ({ feature }: Props) => {
         valueLabelFormatter={(valueLabel) =>
           kodeliste ? getMaalemetodeFromId(kodeliste, valueLabel) : valueLabel
         }
-      >
-        {kodeliste && (
-          <Select>
-            <option value="">Velg målemetode</option>
-            {kodeliste.items.map((item) => (
-              <option key={item.id} value={item.id}>
-                {item.label}
-              </option>
-            ))}
-          </Select>
-        )}
-      </MetadataField>
+        renderItem={(register) =>
+          kodeliste && (
+            <Select {...register}>
+              <option value="">Velg målemetode</option>
+              {kodeliste.items.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.label}
+                </option>
+              ))}
+            </Select>
+          )
+        }
+      />
       <MetadataField
         feature={feature}
         fieldKey="noeyaktighet"
         fieldLabel="Nøyaktighet (cm)"
-      >
-        <Input type="number" />
-      </MetadataField>
-      <MetadataField feature={feature} fieldKey="opphav" fieldLabel="Opphav">
-        <Input placeholder="Fyll inn informasjon om opphav" />
-      </MetadataField>
+        renderItem={(register) => <Input type="number" {...register} />}
+      />
+
+      <MetadataField
+        feature={feature}
+        fieldKey="opphav"
+        fieldLabel="Opphav"
+        renderItem={(register) => (
+          <Input placeholder="Fyll inn informasjon om opphav" {...register} />
+        )}
+      />
       <MetadataField
         feature={feature}
         fieldKey="informasjon"
         fieldLabel="Ekstra informasjon"
-      >
-        <Textarea placeholder="Fyll inn ekstra informasjon" />
-      </MetadataField>
+        renderItem={(register) => (
+          <Textarea placeholder="Fyll inn ekstra informasjon" {...register} />
+        )}
+      />
     </Container>
   );
 };

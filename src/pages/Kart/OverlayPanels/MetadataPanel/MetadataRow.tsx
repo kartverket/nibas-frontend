@@ -8,7 +8,7 @@ import { Feature } from "ol";
 interface Props {
   feature: Feature<Geometry>;
   name: string;
-  value: string;
+  valueLabel: string;
   children: React.ReactNode;
   onMetadataSubmit: () => void;
   isDisabled?: boolean;
@@ -19,7 +19,7 @@ interface Props {
 const MetadataRow = ({
   feature,
   name,
-  value,
+  valueLabel,
   children,
   onMetadataSubmit,
   isDisabled,
@@ -37,7 +37,7 @@ const MetadataRow = ({
       <EditContent>
         <Text>{name}</Text>
 
-        {!isEditing && <Text as="b">{value}</Text>}
+        {!isEditing && <Text as="b">{valueLabel}</Text>}
 
         <EditButton
           isDisabled={isDisabled}

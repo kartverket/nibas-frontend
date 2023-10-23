@@ -85,7 +85,6 @@ const getFieldFromMetadata = (metadata: Metadata, field: keyof Inputs) => {
       value = metadata.commonGrense?.posisjonskvalitet?.maalemetode.id;
       break;
   }
-
   return { metadata: value?.toString() };
 };
 
