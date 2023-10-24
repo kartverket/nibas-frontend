@@ -1,6 +1,8 @@
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import {
+  Alert,
+  AlertIcon,
   Button,
   Datepicker,
   Divider,
@@ -43,7 +45,7 @@ type Props = {
   feature: Feature<Geometry>;
 };
 
-const Container = styled.div`
+export const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -59,14 +61,16 @@ const MetadataGenerelt = ({ feature }: Props) => {
 
   return (
     <Container>
-      <ID>
-        <Text>UUID</Text>
-        <Text as="b">{feature.getId()}</Text>
-        <FakeEditButton colorScheme="gray" variant="secondary" isDisabled>
-          Rediger
-        </FakeEditButton>
-      </ID>
-      <Divider />
+      <Container>
+        <ID>
+          <Text>UUID</Text>
+          <Text as="b">{feature.getId()}</Text>
+          <FakeEditButton colorScheme="gray" variant="secondary" isDisabled>
+            Rediger
+          </FakeEditButton>
+        </ID>
+        <Divider />
+      </Container>
       <MetadataField
         feature={feature}
         fieldKey="grenseType"
@@ -101,14 +105,21 @@ const MetadataGenerelt = ({ feature }: Props) => {
         renderItem={(register) => <Datepicker {...register} />}
       />
       {gyldigTil && (
-        <MetadataField
-          feature={feature}
-          fieldLabel="Gyldig til"
-          fieldKey="gyldigTil"
-          disabledByFeatureLock
-          valueLabelFormatter={getDateInFriendlyString}
-          renderItem={(register) => <Datepicker {...register} />}
-        />
+        <div>
+          <MetadataField
+            feature={feature}
+            fieldLabel="Gyldig til"
+            fieldKey="gyldigTil"
+            disabledByFeatureLock
+            valueLabelFormatter={getDateInFriendlyString}
+            renderItem={(register) => <Datepicker {...register} />}
+          />
+          <Alert status="warning" variant="top-accent">
+            <AlertIcon />
+            Grensen er satt til å utgå ved en fremtidig dato, og du vil derfor
+            ikke kunne gjøre noen endringer på denne grensen
+          </Alert>
+        </div>
       )}
 
       <MetadataField
@@ -161,7 +172,6 @@ const MetadataGenerelt = ({ feature }: Props) => {
 const ID = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 16px;
 `;
 
 const FakeEditButton = styled(Button)`

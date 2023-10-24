@@ -4,6 +4,7 @@ import EditAndSaveButton from "../Flatedata/EditAndSaveButton";
 import { useEffect, useState } from "react";
 import { Geometry } from "ol/geom";
 import { Feature } from "ol";
+import { Container } from "./MetadataGenerelt";
 
 interface Props {
   feature: Feature<Geometry>;
@@ -33,7 +34,7 @@ const MetadataRow = ({
   }, [feature]);
 
   return (
-    <>
+    <Container>
       <EditContent>
         <Text>{name}</Text>
 
@@ -59,7 +60,7 @@ const MetadataRow = ({
         <Field $isEditing={isEditing}>{children}</Field>
       </EditContent>
       <Divider />
-    </>
+    </Container>
   );
 };
 
