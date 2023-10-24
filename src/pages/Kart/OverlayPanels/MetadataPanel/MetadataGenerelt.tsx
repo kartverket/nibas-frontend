@@ -117,7 +117,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
           <Alert status="warning" variant="top-accent">
             <AlertIcon />
             Grensen er satt til å utgå ved en fremtidig dato, og du vil derfor
-            ikke kunne gjøre noen endringer på denne grensen
+            ikke kunne gjøre noen endringer på denne grensen.
           </Alert>
         </div>
       )}
