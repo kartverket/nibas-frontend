@@ -7,7 +7,8 @@ export type Shortcut =
   | "remove"
   | "merge"
   | "layers"
-  | "snap";
+  | "snap"
+  | "open";
 
 type KeyboardShortcut = {
   displayString: string;
@@ -78,4 +79,5 @@ export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
   redo: createShortcut("z", { control: true, shift: true }),
   undo: createShortcut("z", { control: true }),
   save: createShortcut("s", { control: true }),
+  open: createShortcut("o", { control: true }),
 };

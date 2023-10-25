@@ -4,7 +4,7 @@ import ModeButton from "./ModeButton";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
-import ToolbarTooltip from "./ToolbarTooltip";
+import CustomTooltip from "./CustomTooltip";
 import { Divider } from "@kvib/react";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import ToolbarPopups from "./ToolbarPopups";
@@ -40,7 +40,7 @@ const Toolbar = () => {
       <ToolbarPopups />
       <Container>
         <ToolbarButtons>
-          <ToolbarTooltip
+          <CustomTooltip
             text="Legg til, endre rekkefølge og fjern kartlag fra kartet."
             shortcut="layers"
           >
@@ -52,11 +52,11 @@ const Toolbar = () => {
             >
               Kartlag
             </ModeButton>
-          </ToolbarTooltip>
+          </CustomTooltip>
           <Divider orientation="vertical" />
           <ToolbarMenus />
           <Divider orientation="vertical" />
-          <ToolbarTooltip
+          <CustomTooltip
             text="Skru av/på snapping mot kartlag."
             shortcut="snap"
           >
@@ -69,24 +69,24 @@ const Toolbar = () => {
             >
               Snap
             </ModeButton>
-          </ToolbarTooltip>
+          </CustomTooltip>
         </ToolbarButtons>
         <ZoomButtons>
-          <ToolbarTooltip text="Zoom inn på kartet">
+          <CustomTooltip text="Zoom inn på kartet" icon="add">
             <ModeButton
               icon="add"
               onClick={() => zoom(1)}
               ariaLabel="Zoom inn på kartet"
             />
-          </ToolbarTooltip>
+          </CustomTooltip>
           <Divider />
-          <ToolbarTooltip text="Zoom ut fra kartet">
+          <CustomTooltip text="Zoom ut fra kartet" icon="remove">
             <ModeButton
               icon="remove"
               onClick={() => zoom(-1)}
               ariaLabel="Zoom ut på kartet"
             />
-          </ToolbarTooltip>
+          </CustomTooltip>
         </ZoomButtons>
       </Container>
     </OuterContainer>

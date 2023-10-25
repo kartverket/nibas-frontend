@@ -1,6 +1,6 @@
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { styled } from "styled-components";
-import { IconButton } from "@kvib/react";
+import { IconButton, Tooltip } from "@kvib/react";
 
 export const TegnforklaringButton = () => {
   const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } =
@@ -15,11 +15,13 @@ export const TegnforklaringButton = () => {
   };
 
   return (
-    <RoundButton
-      onClick={onClick}
-      aria-label="Åpne og lukke tegnforklaring"
-      icon="question_mark"
-    />
+    <Tooltip label="Vis tegnforklaring for grensetypene i kartet" hasArrow>
+      <RoundButton
+        onClick={onClick}
+        aria-label="Åpne og lukke tegnforklaring"
+        icon="question_mark"
+      />
+    </Tooltip>
   );
 };
 
