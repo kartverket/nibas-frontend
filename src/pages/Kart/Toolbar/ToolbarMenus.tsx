@@ -12,7 +12,7 @@ import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
-import ToolbarTooltip from "./ToolbarTooltip";
+import CustomTooltip from "./CustomTooltip";
 
 type MenuItems = (MenuItemProps & {
   $isActive: boolean;
@@ -163,7 +163,7 @@ const ToolbarMenus = () => {
   return (
     <>
       <Menu autoSelect={false}>
-        <ToolbarTooltip text={"Vis grenseverktøy"}>
+        <CustomTooltip text={"Vis grenseverktøy"}>
           <MenuButton
             as={ModeButton}
             aria-label="Grenseverktøy"
@@ -173,7 +173,7 @@ const ToolbarMenus = () => {
           >
             Grense
           </MenuButton>
-        </ToolbarTooltip>
+        </CustomTooltip>
         <MenuList>
           {grenseMenuItems.map((gmi) => (
             <ToolbarMenuItem key={gmi.label} {...gmi}>
@@ -183,7 +183,7 @@ const ToolbarMenus = () => {
         </MenuList>
       </Menu>
       <Menu autoSelect={false}>
-        <ToolbarTooltip text="Vis punktverktøy">
+        <CustomTooltip text="Vis punktverktøy">
           <MenuButton
             as={ModeButton}
             aria-label="Punktverktøy"
@@ -193,7 +193,7 @@ const ToolbarMenus = () => {
           >
             Punkt
           </MenuButton>
-        </ToolbarTooltip>
+        </CustomTooltip>
         <MenuList>
           {punktMenuItems.map((pmi) => (
             <ToolbarMenuItem key={pmi.label} {...pmi}>
@@ -203,7 +203,7 @@ const ToolbarMenus = () => {
         </MenuList>
       </Menu>
       <Menu autoSelect={false}>
-        <ToolbarTooltip text="Vis flateverktøy">
+        <CustomTooltip text="Vis flateverktøy">
           <MenuButton
             as={ModeButton}
             aria-label="Flateverktøy"
@@ -213,7 +213,7 @@ const ToolbarMenus = () => {
           >
             Flate
           </MenuButton>
-        </ToolbarTooltip>
+        </CustomTooltip>
         <MenuList>
           {flateMenuItems.map((fmi) => (
             <ToolbarMenuItem key={fmi.label} {...fmi}>

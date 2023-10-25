@@ -33,7 +33,7 @@ export const TooltipBody = ({ text, icon, shortcut }: BodyProps) => (
   </BodyWrapper>
 );
 
-const ToolbarTooltip = ({
+const CustomTooltip = ({
   text,
   icon,
   shortcut,
@@ -52,7 +52,7 @@ const ToolbarTooltip = ({
   );
 };
 
-export default ToolbarTooltip;
+export default CustomTooltip;
 
 const ShortcutText = styled(Text)`
   font-style: italic;

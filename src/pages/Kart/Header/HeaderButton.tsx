@@ -1,6 +1,6 @@
 import { IconButton, MaterialSymbol, Tooltip } from "@kvib/react";
 import { styled } from "styled-components";
-import { TooltipBody } from "../Toolbar/ToolbarTooltip";
+import { TooltipBody } from "../Toolbar/CustomTooltip";
 import { Shortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
 
 type HeaderButtonProps = {
