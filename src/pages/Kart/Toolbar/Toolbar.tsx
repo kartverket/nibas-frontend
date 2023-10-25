@@ -72,7 +72,7 @@ const Toolbar = () => {
           </ToolbarTooltip>
         </ToolbarButtons>
         <ZoomButtons>
-          <ToolbarTooltip text="Zoom inn på kartet">
+          <ToolbarTooltip text="Zoom inn på kartet" icon="add">
             <ModeButton
               icon="add"
               onClick={() => zoom(1)}
@@ -80,7 +80,7 @@ const Toolbar = () => {
             />
           </ToolbarTooltip>
           <Divider />
-          <ToolbarTooltip text="Zoom ut fra kartet">
+          <ToolbarTooltip text="Zoom ut fra kartet" icon="remove">
             <ModeButton
               icon="remove"
               onClick={() => zoom(-1)}

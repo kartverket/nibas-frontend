@@ -24,7 +24,7 @@ const HeaderButton = ({
     <Tooltip
       hasArrow
       label={<TooltipBody text={tooltip.text} shortcut={tooltip.shortcut} />}
-      isDisabled={!tooltip || isDisabled}
+      isDisabled={!tooltip}
     >
       <HeaderIconButton
         variant="secondary"
