@@ -26,8 +26,14 @@ const HeaderUtkastOperations = ({ utkast }: { utkast: UtkastResponse }) => {
         icon="upload"
         onClick={onPubliserOpen}
         isDisabled={!harEndringer}
+        tooltip="Publiser alle endringene i dette utkastet"
       />
-      <HeaderButton label="Slett utkast" icon="delete" onClick={onSlettOpen} />
+      <HeaderButton
+        label="Slett utkast"
+        icon="delete"
+        onClick={onSlettOpen}
+        tooltip="Slett utkastet og alle endringene i dette utkastet"
+      />
       <UtkastPubliserModal
         isOpen={isPubliserOpen}
         onClose={onPubliserClose}

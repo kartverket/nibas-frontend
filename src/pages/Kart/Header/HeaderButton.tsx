@@ -1,4 +1,4 @@
-import { IconButton, MaterialSymbol } from "@kvib/react";
+import { IconButton, MaterialSymbol, Tooltip } from "@kvib/react";
 import { styled } from "styled-components";
 
 type HeaderButtonProps = {
@@ -7,6 +7,7 @@ type HeaderButtonProps = {
   onClick?: () => void;
   labelIsHidden?: boolean;
   isDisabled?: boolean;
+  tooltip?: string;
 };
 
 const HeaderButton = ({
@@ -15,16 +16,19 @@ const HeaderButton = ({
   labelIsHidden,
   onClick,
   isDisabled,
+  tooltip,
 }: HeaderButtonProps) => (
   <Label>
-    <HeaderIconButton
-      variant="secondary"
-      colorScheme="gray"
-      icon={icon}
-      aria-label={label}
-      onClick={onClick}
-      isDisabled={isDisabled}
-    />
+    <Tooltip hasArrow label={tooltip} isDisabled={!tooltip || isDisabled}>
+      <HeaderIconButton
+        variant="secondary"
+        colorScheme="gray"
+        icon={icon}
+        aria-label={label}
+        onClick={onClick}
+        isDisabled={isDisabled}
+      />
+    </Tooltip>
     {!labelIsHidden && label}
   </Label>
 );

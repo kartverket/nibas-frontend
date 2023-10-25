@@ -12,6 +12,7 @@ import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
+import ToolbarTooltip from "./ToolbarTooltip";
 
 type MenuItems = (MenuItemProps & {
   $isActive: boolean;

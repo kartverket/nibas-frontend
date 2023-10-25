@@ -30,23 +30,27 @@ const HeaderHistoryOperations = () => {
         icon="undo"
         onClick={undo}
         isDisabled={!undo}
+        tooltip="Angre på siste handling (CTRL + Z)"
       />
       <HeaderButton
         label="Gjør om"
         icon="redo"
         onClick={redo}
         isDisabled={!redo}
+        tooltip="Gjør om siste handling (CTRL + Shift + Z)"
       />
       <HeaderButton
         label="Lagre"
         icon="save"
         onClick={handleSave}
         isDisabled={!canSave}
+        tooltip="Lagre endringene til utkastet"
       />
       <HeaderButton
         label="Endringslogg"
         icon="published_with_changes"
         onClick={onOpen}
+        tooltip="Se en liste over alle endringer som er gjort i dette utkastet"
       />
       <EndringsloggModal isOpen={isOpen} onClose={onClose} utkast={utkast} />
     </Section>

@@ -58,6 +58,7 @@ const HeaderBreadcrumb = () => {
         icon="edit_note"
         onClick={onOpen}
         labelIsHidden
+        tooltip="Rediger detaljene til dette utkastet"
       />
       <UtkastEndreModal isOpen={isOpen} onClose={onClose} utkast={utkast} />
       <AlertModal

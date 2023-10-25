@@ -36,6 +36,7 @@ const Header = () => {
             label="Åpne en inndeling"
             icon="travel_explore"
             onClick={toggleSidebar}
+            tooltip="Åpne og rediger en inndeling i kartet (CTRL + O)"
           />
         </Section>
         {utkast && <HeaderUtkastOperations utkast={utkast} />}
