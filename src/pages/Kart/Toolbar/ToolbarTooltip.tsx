@@ -12,7 +12,7 @@ type BodyProps = {
 
 type Props = BodyProps & Omit<TooltipProps, "label">;
 
-const TooltipBody = ({ text, shortcut }: BodyProps) => (
+export const TooltipBody = ({ text, shortcut }: BodyProps) => (
   <BodyWrapper>
     <Text>{text}</Text>
     {shortcut && (

@@ -7,6 +7,7 @@ import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useUtkast } from "contexts/UtkastContext";
 import HeaderHome from "./HeaderHome";
+import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 
 const Header = () => {
   const { utkast } = useUtkast();
@@ -23,6 +24,8 @@ const Header = () => {
     }
   };
 
+  useKeyboardShortcut("open", toggleSidebar);
+
   return (
     <Container>
       <UtkastBar>
@@ -36,7 +39,10 @@ const Header = () => {
             label="Åpne en inndeling"
             icon="travel_explore"
             onClick={toggleSidebar}
-            tooltip="Åpne og rediger en inndeling i kartet (CTRL + O)"
+            tooltip={{
+              text: "Åpne og rediger en inndeling i kartet",
+              shortcut: "open",
+            }}
           />
         </Section>
         {utkast && <HeaderUtkastOperations utkast={utkast} />}

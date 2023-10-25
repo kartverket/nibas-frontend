@@ -1,5 +1,7 @@
 import { IconButton, MaterialSymbol, Tooltip } from "@kvib/react";
 import { styled } from "styled-components";
+import { TooltipBody } from "../Toolbar/ToolbarTooltip";
+import { Shortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
 
 type HeaderButtonProps = {
   icon: MaterialSymbol;
@@ -7,7 +9,7 @@ type HeaderButtonProps = {
   onClick?: () => void;
   labelIsHidden?: boolean;
   isDisabled?: boolean;
-  tooltip?: string;
+  tooltip: { text: string; shortcut?: Shortcut };
 };
 
 const HeaderButton = ({
@@ -19,7 +21,11 @@ const HeaderButton = ({
   tooltip,
 }: HeaderButtonProps) => (
   <Label>
-    <Tooltip hasArrow label={tooltip} isDisabled={!tooltip || isDisabled}>
+    <Tooltip
+      hasArrow
+      label={<TooltipBody text={tooltip.text} shortcut={tooltip.shortcut} />}
+      isDisabled={!tooltip || isDisabled}
+    >
       <HeaderIconButton
         variant="secondary"
         colorScheme="gray"
