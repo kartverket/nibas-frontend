@@ -10,6 +10,9 @@ const createTileLayerFromKartlagSource = (id: keyof typeof kartlagSources) =>
   new TileLayer({ source: kartlagSources[id] });
 
 export const kartlagLayers = {
+  topografiskNorgeskart: createTileLayerFromKartlagSource(
+    "topografiskNorgeskart",
+  ),
   administrativeGrenser: createTileLayerFromKartlagSource(
     "administrativeGrenser",
   ),
