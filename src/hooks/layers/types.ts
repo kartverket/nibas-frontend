@@ -2,8 +2,7 @@ import { EditingType } from "contexts/EditGrenserContext";
 
 export type KartlagId =
   | "europaKart"
-  | "topoWMS"
-  | "ortoWMS"
+  | "topoWMTS"
   | "administrativeGrenser"
   | "administrativeGrenserHistorisk"
   | "grunnkretserWMS"

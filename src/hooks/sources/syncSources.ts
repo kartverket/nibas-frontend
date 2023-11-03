@@ -78,11 +78,11 @@ const norgeIBilderConfig: WMTSConfig = {
   format: "image/png",
 };
 
-const topoWMSConfig: WMTSConfig = {
+const topoWMTSConfig: WMTSConfig = {
   url: "https://cache.kartverket.no/topo4/v1/wmts/1.0.0/",
   layer: "Topografisk Norgeskart",
   matrixSet: "utm33n",
-  tileGrid: get25833Grid(),
+  tileGrid: getBaseGrid(),
   style: "default",
   format: "image/png",
 };
@@ -90,19 +90,10 @@ const topoWMSConfig: WMTSConfig = {
 const europaKartConfig: WMTSConfig = {
   url: "https://cache.kartverket.no/europa_forenklet/v1/wmts/1.0.0/",
   layer: "Europeisk bakgrunnskart forenklet",
-  matrixSet: "EPSG:25833",
-  tileGrid: get25833Grid(),
+  matrixSet: "utm33n", // må kanskje endre denne også
+  tileGrid: getBaseGrid(), // denne må være en av de tre de tilbyr, så den bør ta imot tilematrixset-verdi
   style: "default",
   format: "image/png",
-};
-
-const ortoWMSConfig: WMTSConfig = {
-  url: "https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_web_mercator_wmts_v2",
-  layer: "Nibcache_web_mercator_v2",
-  matrixSet: "GoogleMapsCompatible",
-  tileGrid: getBaseGrid(),
-  style: "default",
-  format: "image/jpg",
 };
 
 const defaultParams = {
@@ -196,8 +187,7 @@ export const kartlagSources = {
     "wms.ecc_enc",
   ),
   europaKart: new WMTS(europaKartConfig),
-  topoWMS: new WMTS(topoWMSConfig),
-  ortoWMS: new WMTS(ortoWMSConfig),
+  topoWMTS: new WMTS(topoWMTSConfig),
   norgeIBilder: new WMTS(norgeIBilderConfig),
 };
 
@@ -207,7 +197,7 @@ kartlagSources.sjokartElektroniske.set("protectedTjenesteId", "wms.ecc_enc");
 kartlagSources.cachetjenester.set("config", cachetjenesterConfig);
 kartlagSources.norgeIBilder.set("config", norgeIBilderConfig);
 kartlagSources.europaKart.set("config", europaKartConfig);
-kartlagSources.topoWMS.set("config", topoWMSConfig);
+kartlagSources.topoWMTS.set("config", topoWMTSConfig);
 
 (() => {
   const tileGrid = getWMSTileGrid();

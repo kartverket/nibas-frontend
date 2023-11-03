@@ -84,9 +84,7 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS | XYZ) => {
 
   capabilitiesUrl += serviceParam;
 
-  console.log(source.get("protectedTjenesteId"));
   if (source.get("protectedTjenesteId")) {
-    console.log("protectedTjenesteId for ", url);
     const ticket = await getTicketForTjeneste(
       source.get("protectedTjenesteId"),
       url,
@@ -113,7 +111,6 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS | XYZ) => {
 
   if (source instanceof WMTS) {
     json = WMTSParser.read(xml);
-    console.log(capabilitiesUrl, json);
 
     if (!json?.Contents) return null;
 

@@ -11,7 +11,6 @@ const Kartlag = ({ layerId }: Props) => {
   const { mappedLayers } = useKartlag();
   const mappedLayer = mappedLayers.find((ml) => ml.sourceId === layerId);
   if (!mappedLayer) {
-    console.log("not mapped", layerId);
     return null;
   }
 
