@@ -90,8 +90,8 @@ const topoWMTSConfig: WMTSConfig = {
 const europaKartConfig: WMTSConfig = {
   url: "https://cache.kartverket.no/europa_forenklet/v1/wmts/1.0.0/",
   layer: "Europeisk bakgrunnskart forenklet",
-  matrixSet: "utm33n", // må kanskje endre denne også
-  tileGrid: getBaseGrid(), // denne må være en av de tre de tilbyr, så den bør ta imot tilematrixset-verdi
+  matrixSet: "utm33n",
+  tileGrid: getBaseGrid(),
   style: "default",
   format: "image/png",
 };
