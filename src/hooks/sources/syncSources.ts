@@ -160,6 +160,10 @@ export const kartlagSources = {
     "wms.ecc_enc",
   ),
   norgeIBilder: new WMTS(norgeIBilderConfig),
+  topografiskNorgeskart: createTileWMS(
+    "https://openwms.statkart.no/skwms1/wms.topo",
+    "topo",
+  ),
 };
 
 kartlagSources.norgeIBilder.set("protectedTjenesteId", "wms.nib");
