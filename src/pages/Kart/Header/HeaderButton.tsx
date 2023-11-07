@@ -20,12 +20,12 @@ const HeaderButton = ({
   isDisabled,
   tooltip,
 }: HeaderButtonProps) => (
-  <Label>
-    <Tooltip
-      hasArrow
-      label={<TooltipBody text={tooltip.text} shortcut={tooltip.shortcut} />}
-      isDisabled={!tooltip}
-    >
+  <Tooltip
+    hasArrow
+    label={<TooltipBody text={tooltip.text} shortcut={tooltip.shortcut} />}
+    isDisabled={!tooltip}
+  >
+    <Label>
       <HeaderIconButton
         variant="secondary"
         colorScheme="gray"
@@ -34,9 +34,9 @@ const HeaderButton = ({
         onClick={onClick}
         isDisabled={isDisabled}
       />
-    </Tooltip>
-    {!labelIsHidden && label}
-  </Label>
+      {!labelIsHidden && label}
+    </Label>
+  </Tooltip>
 );
 
 const HeaderIconButton = styled(IconButton)`

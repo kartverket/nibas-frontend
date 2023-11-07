@@ -104,7 +104,6 @@ const ToolbarMenus = () => {
       isDisabled: false,
       onClick: toggleMetadata,
       "aria-label": "Se informasjon om grensen",
-      command: "⌘+I",
     },
     /*{
       label: "Arkiver grense",
