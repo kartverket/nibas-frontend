@@ -3,14 +3,14 @@ import Geometry from "ol/geom/Geometry";
 import VectorLayer from "ol/layer/Vector";
 import { getLayerById } from "./layers";
 import { LayerId } from "hooks/layers/types";
-import { GeometryVectorSource } from "hooks/sources/types";
+import VectorSource from "ol/source/Vector";
 
 export const addFeaturesToSource = (
   sourceId: LayerId,
   features: Feature<Geometry>[],
   callback?: () => void,
 ) => {
-  const layer = getLayerById(sourceId) as VectorLayer<GeometryVectorSource>;
+  const layer = getLayerById(sourceId) as VectorLayer<VectorSource>;
   const source = layer.getSource();
   if (!source) return;
 
@@ -42,7 +42,7 @@ export const removeFeaturesFromSourceByIds = (
   sourceId: LayerId,
   featureIds: string[],
 ) => {
-  const layer = getLayerById(sourceId) as VectorLayer<GeometryVectorSource>;
+  const layer = getLayerById(sourceId) as VectorLayer<VectorSource>;
   const source = layer.getSource();
   if (!source) return;
 

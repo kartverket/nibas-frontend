@@ -2,7 +2,12 @@ import { IconButton } from "@kvib/react";
 import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { styled } from "styled-components";
 import { MappedLayer } from "utils/getLayersFromWMS";
-import { isVectorLayer, isWMSLayer, isWMTSLayer } from "utils/map/layers";
+import {
+  isVectorLayer,
+  isWMSLayer,
+  isWMTSLayer,
+  isXYZLayer,
+} from "utils/map/layers";
 import { toggleWMSLayer, toggleWMTSLayer, toggleWFSLayer } from "./utils";
 import { kartlagLayers } from "hooks/layers/constants";
 
@@ -26,6 +31,10 @@ const KartlagInner = ({ mappedLayer, isMainLayer }: Props) => {
     }
 
     if (isWMTSLayer(layer)) {
+      toggleWMTSLayer(mappedLayer);
+    }
+
+    if (isXYZLayer(layer)) {
       toggleWMTSLayer(mappedLayer);
     }
 

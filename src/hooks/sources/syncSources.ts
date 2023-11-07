@@ -3,8 +3,8 @@ import TileWMS from "ol/source/TileWMS";
 import WMTS from "ol/source/WMTS";
 import { createXYZ } from "ol/tilegrid";
 import WMTSTileGrid from "ol/tilegrid/WMTS";
-import { isWMTSSource } from "./utils";
 import { getSrcWithTicket } from "utils/geonorgeTicket";
+import VectorSource from "ol/source/Vector";
 
 const getWMSTileGrid = () => {
   // default er 256, så vi henter 4 ganger så store tiles
@@ -42,29 +42,56 @@ const getWMTSTileGrid = (
 // extent fått fra `optionsFromCapabilities` funksjon, se eksempler
 // https://openlayers.org/en/latest/examples/wmts-layer-from-capabilities.html
 // https://openlayers.org/en/latest/examples/wmts.html
-const getTopografiskNorgeskartTileGrid = () =>
+const get25833Grid = () =>
   getWMTSTileGrid(
     [-2500000, 3500000, 3045984, 9045984],
     (z) => "EPSG:25833:" + z,
   );
 
-const getNorgeIBilderTileGrid = () =>
+const getBaseGrid = () =>
   getWMTSTileGrid([-2500000, 3500000, 3045984, 9045984], (z) => z.toString());
 
-const cachetjenesterConfig = {
+type WMTSConfig = {
+  url: string;
+  layer: string;
+  matrixSet: string;
+  tileGrid: WMTSTileGrid;
+  style: string;
+  format: string;
+};
+
+const cachetjenesterConfig: WMTSConfig = {
   url: "https://opencache.statkart.no/gatekeeper/gk/gk.open_wmts",
   layer: "norges_grunnkart_graatone",
   matrixSet: "EPSG:25833",
-  tileGrid: getTopografiskNorgeskartTileGrid(),
+  tileGrid: get25833Grid(),
   style: "default",
   format: "image/png",
 };
 
-const norgeIBilderConfig = {
+const norgeIBilderConfig: WMTSConfig = {
   url: "https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm33_wmts_v2",
   layer: "Nibcache_UTM33_EUREF89_v2",
   matrixSet: "default028mm",
-  tileGrid: getNorgeIBilderTileGrid(),
+  tileGrid: getBaseGrid(),
+  style: "default",
+  format: "image/png",
+};
+
+const topoWMTSConfig: WMTSConfig = {
+  url: "https://cache.kartverket.no/topo4/v1/wmts/1.0.0/",
+  layer: "Topografisk Norgeskart",
+  matrixSet: "utm33n",
+  tileGrid: getBaseGrid(),
+  style: "default",
+  format: "image/png",
+};
+
+const europaKartConfig: WMTSConfig = {
+  url: "https://cache.kartverket.no/europa_forenklet/v1/wmts/1.0.0/",
+  layer: "Europeisk bakgrunnskart forenklet",
+  matrixSet: "utm33n",
+  tileGrid: getBaseGrid(),
   style: "default",
   format: "image/png",
 };
@@ -159,6 +186,8 @@ export const kartlagSources = {
     "background",
     "wms.ecc_enc",
   ),
+  europaKart: new WMTS(europaKartConfig),
+  topoWMTS: new WMTS(topoWMTSConfig),
   norgeIBilder: new WMTS(norgeIBilderConfig),
   topografiskNorgeskart: createTileWMS(
     "https://openwms.statkart.no/skwms1/wms.topo",
@@ -171,6 +200,8 @@ kartlagSources.sjokartElektroniske.set("protectedTjenesteId", "wms.ecc_enc");
 
 kartlagSources.cachetjenester.set("config", cachetjenesterConfig);
 kartlagSources.norgeIBilder.set("config", norgeIBilderConfig);
+kartlagSources.europaKart.set("config", europaKartConfig);
+kartlagSources.topoWMTS.set("config", topoWMTSConfig);
 
 (() => {
   const tileGrid = getWMSTileGrid();
@@ -181,7 +212,7 @@ kartlagSources.norgeIBilder.set("config", norgeIBilderConfig);
     // sett id på alle sources for å gjøre de mulig å sjekke opp  med layers
     source.set("id", id);
 
-    if (isWMTSSource(source)) return;
+    if (source instanceof WMTS || source instanceof VectorSource) return;
 
     // sett tile grid på alle sources som ikke er WMTS
     source.setTileGridForProjection("EPSG:25833", tileGrid);
