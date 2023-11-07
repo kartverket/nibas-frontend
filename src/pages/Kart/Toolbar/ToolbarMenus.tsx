@@ -12,6 +12,7 @@ import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
+import CustomTooltip from "./CustomTooltip";
 
 type MenuItems = (MenuItemProps & {
   $isActive: boolean;
@@ -103,6 +104,7 @@ const ToolbarMenus = () => {
       isDisabled: false,
       onClick: toggleMetadata,
       "aria-label": "Se informasjon om grensen",
+      command: "⌘+I",
     },
     /*{
       label: "Arkiver grense",
@@ -161,15 +163,17 @@ const ToolbarMenus = () => {
   return (
     <>
       <Menu autoSelect={false}>
-        <MenuButton
-          as={ModeButton}
-          aria-label="Grenseverktøy"
-          icon="show_chart"
-          isDisabled={grenseMenuItems.every((gmi) => gmi.isDisabled)}
-          isActive={grenseMenuItems.some((gmi) => gmi.$isActive)}
-        >
-          Grense
-        </MenuButton>
+        <CustomTooltip text={"Vis grenseverktøy"}>
+          <MenuButton
+            as={ModeButton}
+            aria-label="Grenseverktøy"
+            icon="show_chart"
+            isDisabled={grenseMenuItems.every((gmi) => gmi.isDisabled)}
+            isActive={grenseMenuItems.some((gmi) => gmi.$isActive)}
+          >
+            Grense
+          </MenuButton>
+        </CustomTooltip>
         <MenuList>
           {grenseMenuItems.map((gmi) => (
             <ToolbarMenuItem key={gmi.label} {...gmi}>
@@ -179,15 +183,17 @@ const ToolbarMenus = () => {
         </MenuList>
       </Menu>
       <Menu autoSelect={false}>
-        <MenuButton
-          as={ModeButton}
-          aria-label="Punktverktøy"
-          icon="conversion_path"
-          isDisabled={punktMenuItems.every((pmi) => pmi.isDisabled)}
-          isActive={punktMenuItems.some((pmi) => pmi.$isActive)}
-        >
-          Punkt
-        </MenuButton>
+        <CustomTooltip text="Vis punktverktøy">
+          <MenuButton
+            as={ModeButton}
+            aria-label="Punktverktøy"
+            icon="conversion_path"
+            isDisabled={punktMenuItems.every((pmi) => pmi.isDisabled)}
+            isActive={punktMenuItems.some((pmi) => pmi.$isActive)}
+          >
+            Punkt
+          </MenuButton>
+        </CustomTooltip>
         <MenuList>
           {punktMenuItems.map((pmi) => (
             <ToolbarMenuItem key={pmi.label} {...pmi}>
@@ -197,15 +203,17 @@ const ToolbarMenus = () => {
         </MenuList>
       </Menu>
       <Menu autoSelect={false}>
-        <MenuButton
-          as={ModeButton}
-          aria-label="Flateverktøy"
-          icon="area_chart"
-          isDisabled={flateMenuItems.every((fmi) => fmi.isDisabled)}
-          isActive={flateMenuItems.some((fmi) => fmi.$isActive)}
-        >
-          Flate
-        </MenuButton>
+        <CustomTooltip text="Vis flateverktøy">
+          <MenuButton
+            as={ModeButton}
+            aria-label="Flateverktøy"
+            icon="area_chart"
+            isDisabled={flateMenuItems.every((fmi) => fmi.isDisabled)}
+            isActive={flateMenuItems.some((fmi) => fmi.$isActive)}
+          >
+            Flate
+          </MenuButton>
+        </CustomTooltip>
         <MenuList>
           {flateMenuItems.map((fmi) => (
             <ToolbarMenuItem key={fmi.label} {...fmi}>

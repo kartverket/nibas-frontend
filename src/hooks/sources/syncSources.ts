@@ -189,6 +189,10 @@ export const kartlagSources = {
   europaKart: new WMTS(europaKartConfig),
   topoWMTS: new WMTS(topoWMTSConfig),
   norgeIBilder: new WMTS(norgeIBilderConfig),
+  topografiskNorgeskart: createTileWMS(
+    "https://openwms.statkart.no/skwms1/wms.topo",
+    "topo",
+  ),
 };
 
 kartlagSources.norgeIBilder.set("protectedTjenesteId", "wms.nib");

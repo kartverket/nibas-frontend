@@ -17,6 +17,9 @@ export const kartlagLayers: Record<
 > = {
   europaKart: createTileLayerFromKartlagSource("europaKart"),
   topoWMTS: createTileLayerFromKartlagSource("topoWMTS"),
+  topografiskNorgeskart: createTileLayerFromKartlagSource(
+    "topografiskNorgeskart",
+  ),
   administrativeGrenser: createTileLayerFromKartlagSource(
     "administrativeGrenser",
   ),

@@ -51,6 +51,9 @@ export const MergeMultiselect = ({
       if (values.filter((v) => v.value === value).length > 1) {
         return "Du kan ikke velge samme krets flere ganger";
       }
+      if (values.some((v) => v.value === getValues("stemmekrets"))) {
+        return "Du kan ikke slå en krets sammen med seg selv";
+      }
       return true;
     },
   };
@@ -67,9 +70,7 @@ export const MergeMultiselect = ({
             ),
           )}
           onRemove={() => remove(index)}
-          stemmekretser={alleStemmekretser.filter(
-            (s) => s.stemmekretsnummer !== getValues("stemmekrets"),
-          )}
+          stemmekretser={alleStemmekretser}
           showRemoveButton={fields.length > 1}
           validationError={{
             showError: !!errors?.stemmekretsNummerTilSammenslaaing?.[index],

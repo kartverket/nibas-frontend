@@ -30,6 +30,7 @@ const HeaderHome = () => {
         icon="home"
         onClick={handleHome}
         labelIsHidden
+        tooltip={{ text: "Gå tilbake til startsiden" }}
       />
       <AlertModal
         status="warning"

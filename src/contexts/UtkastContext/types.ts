@@ -12,6 +12,7 @@ export type ResponseWithId = {
 
 export type UtkastContextValue = {
   utkast: UtkastResponse | undefined;
+  utkastHarEndringer: () => boolean;
   updateUtkastWithHistory: () => Promise<unknown>;
   updateUtkast: (
     id: string,

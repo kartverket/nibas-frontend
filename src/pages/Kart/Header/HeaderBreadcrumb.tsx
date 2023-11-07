@@ -16,6 +16,7 @@ import { routes } from "utils/routes";
 import useAlertModal from "hooks/useAlertModal";
 import { useToolbar } from "contexts/ToolbarContext";
 import AlertModal from "components/Modals/AlertModal";
+import CustomTooltip from "../Toolbar/CustomTooltip";
 
 const HeaderBreadcrumb = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();
@@ -44,7 +45,9 @@ const HeaderBreadcrumb = () => {
       <HeaderHome />
       <Breadcrumb separator={<Separator icon="chevron_right" />} spacing={1}>
         <BreadcrumbItem>
-          <BreadcrumbLink onClick={handleHome}>Utkast</BreadcrumbLink>
+          <CustomTooltip text="Gå tilbake til utkastoversikten" hasArrow>
+            <BreadcrumbLink onClick={handleHome}>Utkast</BreadcrumbLink>
+          </CustomTooltip>
         </BreadcrumbItem>
         <BreadcrumbItem>
           <Crumb>{utkast.endringstype}</Crumb>
@@ -58,6 +61,7 @@ const HeaderBreadcrumb = () => {
         icon="edit_note"
         onClick={onOpen}
         labelIsHidden
+        tooltip={{ text: "Rediger detaljene til dette utkastet" }}
       />
       <UtkastEndreModal isOpen={isOpen} onClose={onClose} utkast={utkast} />
       <AlertModal
