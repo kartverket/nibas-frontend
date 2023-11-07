@@ -60,7 +60,7 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
     setIsLoading(true);
     const response = await publishUtkast(
       utkast.id,
-      utkast,
+      "2022-04-04",
       tokenHolderFunc()?.token,
     );
     setIsLoading(false);
