@@ -15,20 +15,16 @@ import {
   ModalFooter,
   ButtonGroup,
   Button,
+  Datepicker,
 } from "@kvib/react";
 import { publishUtkast } from "api/utkast";
-import UtkastConflicts from "components/UtkastConflictModal/UtkastConflicts";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { getDateInFriendlyString } from "pages/Kart/OverlayPanels/MetadataPanel/utils";
 import { EndringsloggAccordion } from "pages/Utkast/UtkastEndringslogg";
 import { useState } from "react";
 import { useSWRConfig } from "swr";
-import {
-  ApiErrorResponse,
-  ConflictResponseWrapper,
-  FramtidigVersjonConflict,
-  UtkastResponse,
-} from "types/api";
+import { isToday, format } from "date-fns";
+import { ApiErrorResponse, UtkastResponse } from "types/api";
 import { statusCode } from "utils/api";
 import { useUtkast } from "contexts/UtkastContext";
 import { useMatch, useNavigate } from "react-router-dom";
@@ -43,12 +39,11 @@ type Props = {
 const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
   const toast = useToast();
   const { closeUtkast } = useUtkast();
+  const [publiseringsdato, setPubliseringsdato] = useState(new Date());
   const [isLoading, setIsLoading] = useState(false);
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { setError } = useErrorHandling();
   const { mutate } = useSWRConfig();
-  const [conflictResponse, setConflictResponse] =
-    useState<FramtidigVersjonConflict | null>(null);
   const navigate = useNavigate();
   const utkastPathMatch = useMatch(`${routes.utkast}/${routes.utkastId}`);
 
@@ -58,17 +53,18 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
 
   const publiserUtkast = async () => {
     setIsLoading(true);
+    const publiseringDateString = format(publiseringsdato, "yyyy-MM-dd");
+
     const response = await publishUtkast(
       utkast.id,
-      "2022-04-04",
+      publiseringDateString,
       tokenHolderFunc()?.token,
     );
     setIsLoading(false);
 
-    const publishDateText =
-      new Date(utkast.gyldigFra).getDay === new Date().getDay
-        ? "umiddelbart"
-        : getDateInFriendlyString(utkast.gyldigFra);
+    const publishDateText = isToday(publiseringsdato)
+      ? "umiddelbart"
+      : getDateInFriendlyString(publiseringDateString);
 
     if (statusCode.isSuccessful(response.status)) {
       toast({
@@ -83,17 +79,11 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
         navigate(routes.utkast);
       }
     } else if (statusCode.isConflict(response.status)) {
-      const wrapper = (await response.json()) as ConflictResponseWrapper;
-
-      if (wrapper.framtidigVersjonConflict) {
-        setConflictResponse(wrapper.framtidigVersjonConflict);
-      } else {
-        setError({
-          title: "Utkastet er utdatert",
-          description:
-            "Du har gjort endringer på en gammel versjon av en krets. Du må gjennomføre endringene på nytt i et nytt utkast.",
-        });
-      }
+      setError({
+        title: "Utkastet er utdatert",
+        description:
+          "Du har gjort endringer på en gammel versjon av en krets. Du må gjennomføre endringene på nytt i et nytt utkast.",
+      });
     } else {
       try {
         const wrapper = (await response.json()) as ApiErrorResponse;
@@ -122,12 +112,20 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
             <div>
               <AlertTitle>Du er i ferd med å publisere et utkast</AlertTitle>
               <AlertDescription>
-                Endringene i utkastet vil bli tilgjengelig for alle etter
-                publisering.
+                Endringene i utkastet vil bli tilgjengelig for alle etter den
+                valgte publiseringsdatoen.
               </AlertDescription>
             </div>
           </Alert>
           <EndringsloggAccordion utkast={utkast} />
+          <Datepickerlabel>
+            Fra hvilken dato skal endringene utkastet tre i kraft?
+            <Datepicker
+              fromDate={new Date()}
+              defaultSelected={new Date()}
+              onChange={setPubliseringsdato}
+            />
+          </Datepickerlabel>
         </Body>
         <ModalFooter>
           <ButtonGroup>
@@ -137,15 +135,6 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
             <Button isLoading={isLoading} onClick={publiserUtkast}>
               Publiser utkast
             </Button>
-            {conflictResponse && (
-              <UtkastConflicts
-                utkastId={utkast.id}
-                conflictResponse={conflictResponse}
-                onCancel={() => setConflictResponse(null)}
-                close={() => setConflictResponse(null)}
-                onResolved={cleanUpUtkast}
-              />
-            )}
           </ButtonGroup>
         </ModalFooter>
       </ModalContent>
@@ -156,7 +145,11 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
 const Body = styled(ModalBody)`
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
+`;
+
+const Datepickerlabel = styled.label`
+  margin-bottom: 16px;
 `;
 
 export default UtkastPubliserModal;

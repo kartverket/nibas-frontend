@@ -22,10 +22,6 @@ export interface paths {
     /** Oppretter et utkast og returnerer id. */
     post: operations["opprettUtkast"];
   };
-  "/v1/utkast/{id}/resolved": {
-    /** Publiserer utkastet for resolvet konflikt. */
-    post: operations["resolveConflictForFramtidigeVersjoner"];
-  };
   "/v1/utkast/{id}/publiser": {
     /** Publiserer utkastet med gitt id. */
     post: operations["publiserUtkast"];
@@ -132,9 +128,17 @@ export interface paths {
     /** Henter alle kommuner i Nasjonal inndelingsbase. */
     get: operations["hentKommuner_1"];
   };
+  "/v1/ekstern/kommuner/{kommunenummer}/stemmekretsermeddetaljer": {
+    /** Henter alle stemmekretser med detaljer for gitt kommunenummer. Denne brukes for uthenting av data til dataplattform. */
+    get: operations["hentAlleStemmekretserMedDetaljerForKommune"];
+  };
   "/v1/ekstern/kommuner/{kommunenummer}/stemmekretser": {
     /** Henter alle stemmekretser for gitt kommunenummer */
     get: operations["hentAlleStemmekretserForKommune"];
+  };
+  "/v1/ekstern/kommuner/{kommunenummer}/grunnkretsermeddetaljer": {
+    /** Henter alle grunnkretser med detaljer for gitt kommunenummer. Denne brukes for uthenting av data til dataplattform. */
+    get: operations["hentAlleGrunnkretserMedDetaljerForKommune"];
   };
   "/v1/ekstern/kommuner/{kommunenummer}/grunnkretser": {
     /** Henter alle grunnkretser for gitt kommunenummer */
@@ -587,7 +591,7 @@ export interface components {
       dokumentasjonsreferanser: unknown;
     };
     /** @description Feil som har oppstått pga optimistisk lås. */
-    ConflictResponse: {
+    OptimistiskLaarResponse: {
       /** @description Identifikatoren til objektet som er utdatert. */
       id: string;
       /** @description Typen til objektet som er utdatert. */
@@ -605,7 +609,7 @@ export interface components {
       /** @description Beskrivelse av hva som har gått galt. */
       melding?: string;
     };
-    ConflictResponseWrapper: {
+    OptimistiskLaarWrapper: {
       /**
        * @description HttpStatus for responsen.
        * @enum {string}
@@ -681,18 +685,7 @@ export interface components {
         | "510 NOT_EXTENDED"
         | "511 NETWORK_AUTHENTICATION_REQUIRED";
       /** @description Feil som har oppstått pga optimistisk lås. */
-      optimisticLockExceptions: components["schemas"]["ConflictResponse"][];
-      framtidigVersjonConflict?: components["schemas"]["FramtidigVersjonConflict"];
-    };
-    /** @description Feil som har oppstått pga at det fantes rader med nyere gyldighet. */
-    FramtidigVersjonConflict: {
-      id: components["schemas"]["ObjektIdentifikator"];
-      /** @description Typen til objektet som ble forsøkt oppdatert. */
-      type: string;
-      /** @description Identifikator til objekt(et/ene) som har en nyere gyldigFra-dato og er i konflikt med endringen. */
-      affectedIds: components["schemas"]["ObjektIdentifikator"][];
-      /** @description Beskrivelse av hva som har gått galt. */
-      melding?: string;
+      optimisticLockExceptions: components["schemas"]["OptimistiskLaarResponse"][];
     };
     ApiErrorResponse: {
       /** @description En unik feilkode for denne feilen som kan vises til bruker. Denne feilkoden burde også være med i loggene så man finner igjen feilen som oppstod. */
@@ -752,35 +745,13 @@ export interface components {
       endringstype: string;
       operasjoner: components["schemas"]["Operasjoner"];
     };
-    /** @description Representasjon for resolved konflikt. */
-    ConflictResolved: {
-      lokalid: components["schemas"]["Lokalid"];
-      /** @description Resolvede endringer på grunnkrets. */
-      grunnkretsRequests: components["schemas"]["GrunnkretsRequestResolved"][];
-      /** @description Resolvede endringer på stemmekrets. */
-      stemmekretsRequests: components["schemas"]["StemmekretsRequestResolved"][];
-    };
-    /** @description Representasjon av en resolvet konflikt for en endring på Grunnkrets. */
-    GrunnkretsRequestResolved: {
+    /** @description Requestbody for publisering av utkast. */
+    PubliserUtkastRequest: {
       /**
        * Format: date
-       * @description Tidspunktet utkastet skal være gyldig fra.
+       * @description Datoen utkastet skal publiseres fra. Settes default til dagens dato om ikke satt.
        */
-      gyldigFra: string;
-      /** @description Typen endring utkastet representerer. */
-      endringstype: string;
-      grunnkretsRequest: components["schemas"]["GrunnkretsRequest"];
-    };
-    /** @description Representasjon av en resolvet konflikt for en endring på Stemmekrets. */
-    StemmekretsRequestResolved: {
-      /**
-       * Format: date
-       * @description Tidspunktet utkastet skal være gyldig fra.
-       */
-      gyldigFra: string;
-      /** @description Typen endring utkastet representerer. */
-      endringstype: string;
-      stemmekretsRequest: components["schemas"]["StemmekretsRequest"];
+      publiseringsdato: string;
     };
     /** @description En referanse til et utkast */
     UtkastRef: {
@@ -834,6 +805,11 @@ export interface components {
        * @description Siste oppdateringstidspunkt for objektet
        */
       oppdateringsdato: string;
+      /**
+       * Format: date-time
+       * @description Datafangsdato for objektet
+       */
+      datafangstdato?: string;
       /** @description Navnet på stemmekretsen */
       stemmekretsnavn: string;
       /** @description Stemmekretsnummeret til stemmekretsen */
@@ -986,6 +962,11 @@ export interface components {
        * @description Siste oppdateringstidspunkt for objektet
        */
       oppdateringsdato: string;
+      /**
+       * Format: date-time
+       * @description Datafangsdato for objektet
+       */
+      datafangstdato?: string;
       kommunenummer: components["schemas"]["Kommunenummer"];
       /** @description Typen endring som ble gjort på objektet */
       endringstype?: string;
@@ -1102,7 +1083,7 @@ export interface operations {
       /** Conflict */
       409: {
         content: {
-          "application/json": components["schemas"]["ConflictResponseWrapper"];
+          "application/json": components["schemas"]["OptimistiskLaarWrapper"];
         };
       };
     };
@@ -1165,42 +1146,6 @@ export interface operations {
       };
     };
   };
-  /** Publiserer utkastet for resolvet konflikt. */
-  resolveConflictForFramtidigeVersjoner: {
-    parameters: {
-      path: {
-        /** ID-en til utkastet man har resolvet konflikt for og vil publisere */
-        id: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: unknown;
-      /** Bad request. Check the request body and path */
-      400: {
-        content: {
-          "application/json": components["schemas"]["ApiErrorResponse"];
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "application/json": components["schemas"]["ApiErrorResponse"];
-        };
-      };
-      /** Conflict */
-      409: {
-        content: {
-          "application/json": components["schemas"]["ConflictResponseWrapper"];
-        };
-      };
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["ConflictResolved"];
-      };
-    };
-  };
   /** Publiserer utkastet med gitt id. */
   publiserUtkast: {
     parameters: {
@@ -1227,8 +1172,13 @@ export interface operations {
       /** Conflict */
       409: {
         content: {
-          "application/json": components["schemas"]["ConflictResponseWrapper"];
+          "application/json": components["schemas"]["OptimistiskLaarWrapper"];
         };
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PubliserUtkastRequest"];
       };
     };
   };
@@ -1813,6 +1763,33 @@ export interface operations {
       };
     };
   };
+  /** Henter alle stemmekretser med detaljer for gitt kommunenummer. Denne brukes for uthenting av data til dataplattform. */
+  hentAlleStemmekretserMedDetaljerForKommune: {
+    parameters: {
+      path: {
+        /** Kommunenummer for kommune man ønsker å hente stemmekretsene til */
+        kommunenummer: string;
+      };
+      query: {
+        /** Eventuell gyldighetsdato for kommune (default = dagens dato */
+        gyldighetsdato?: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["KretsResponse"][];
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["StemmekretsResponse"][];
+        };
+      };
+    };
+  };
   /** Henter alle stemmekretser for gitt kommunenummer */
   hentAlleStemmekretserForKommune: {
     parameters: {
@@ -1836,6 +1813,33 @@ export interface operations {
       404: {
         content: {
           "application/json": components["schemas"]["KretsResponse"][];
+        };
+      };
+    };
+  };
+  /** Henter alle grunnkretser med detaljer for gitt kommunenummer. Denne brukes for uthenting av data til dataplattform. */
+  hentAlleGrunnkretserMedDetaljerForKommune: {
+    parameters: {
+      path: {
+        /** Kommunenummer for kommune man ønsker å hente grunnkretsene til */
+        kommunenummer: string;
+      };
+      query: {
+        /** Eventuell gyldighetsdato for kommune (default = dagens dato */
+        gyldighetsdato?: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["KretsResponse"][];
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["GrunnkretsResponse"][];
         };
       };
     };
