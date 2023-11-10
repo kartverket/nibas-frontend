@@ -46,12 +46,11 @@ export const kartlagLayers: Record<
       format: new GeoJSON(),
       url: function (extent) {
         return (
-          "http://www.statkart.no/matrikkel/geoservergeo/wfs/matrikkel?service=WFS&" +
-          "version=2.0.0&request=GetFeature&typename=TEIGGRENSEWFS&" +
-          "outputFormat=application/json&srsname=EPSG:25833&" +
-          "bbox=" +
-          extent.join(",") +
-          ",EPSG:25833"
+          "http://www.statkart.no/matrikkel/geoservergeo/wfs/matrikkel?SERVICE=WFS&" +
+          "VERSION=1.1.0&REQUEST=GetFeature&LAYERS=TEIGGRENSEWFS&" +
+          "FORMAT=application/json&SRS=EPSG:25833&" +
+          "BBOX=" +
+          extent.join(",")
         );
       },
       strategy: bbox,

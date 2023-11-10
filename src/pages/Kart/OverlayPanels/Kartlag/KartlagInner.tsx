@@ -2,12 +2,7 @@ import { IconButton } from "@kvib/react";
 import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { styled } from "styled-components";
 import { MappedLayer } from "utils/getLayersFromWMS";
-import {
-  isVectorLayer,
-  isWMSLayer,
-  isWMTSLayer,
-  isXYZLayer,
-} from "utils/map/layers";
+import { isWMSLayer, isWMTSLayer, isXYZLayer } from "utils/map/layers";
 import { toggleWMSLayer, toggleWMTSLayer } from "./utils";
 import { kartlagLayers } from "hooks/layers/constants";
 
