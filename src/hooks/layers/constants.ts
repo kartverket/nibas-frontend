@@ -48,9 +48,10 @@ export const kartlagLayers: Record<
         return (
           "/geoservergeo/wfs/matrikkel?SERVICE=WFS&" +
           "VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=TEIGGRENSEWFS&" +
-          "FORMAT=application/json&SRSNAME=EPSG:25833&" +
+          "OUTPUTFORMAT=application/json&SRSNAME=EPSG:25833&" +
           "BBOX=" +
-          extent.join(",")
+          extent.join(",") +
+          ",EPSG:25833"
         );
       },
       strategy: bbox,
