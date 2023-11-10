@@ -2,7 +2,6 @@ import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { createUtkastOperations } from "contexts/UtkastContext/utils";
 import {
   AdministrativGrenseMetadata,
-  FramtidigVersjonConflict,
   FylkeRef,
   GrunnkretsRef,
   GrunnkretsRequest,
@@ -496,31 +495,6 @@ export const mockFutureGrunnkrets1_2: GrunnkretsResponse = {
   gyldighet: {
     gyldigFra: "2022-07-01",
   },
-};
-
-export const mockFremtidigEndringConflictResponse: FramtidigVersjonConflict = {
-  id: {
-    lokalid: {
-      value: "1",
-    },
-    gyldighetsdato: mockDetailedGrunnkrets1.id.gyldighetsdato,
-  },
-  affectedIds: [
-    {
-      lokalid: {
-        value: "1",
-      },
-      gyldighetsdato: mockFutureGrunnkrets1_1.id.gyldighetsdato,
-    },
-    {
-      lokalid: {
-        value: "1",
-      },
-      gyldighetsdato: mockFutureGrunnkrets1_2.id.gyldighetsdato,
-    },
-  ],
-  type: "GRUNNKRETS",
-  melding: "Konflikt",
 };
 
 export const mockGrunnkretserFramtidigeEndringer: GrunnkretsResponse[] = [

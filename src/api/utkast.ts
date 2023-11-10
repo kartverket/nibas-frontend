@@ -1,8 +1,4 @@
-import {
-  ConflictResolved,
-  OppdaterUtkastRequest,
-  OpprettUtkastRequest,
-} from "types/api";
+import { OppdaterUtkastRequest, OpprettUtkastRequest } from "types/api";
 import { getUrlForPath } from "utils/api";
 
 export const createUtkast = (
@@ -36,12 +32,12 @@ export const updateUtkastApi = (
 
 export const publishUtkast = (
   id: string,
-  utkast: OppdaterUtkastRequest,
+  publiseringsdato: string,
   token: string | undefined,
 ) => {
   return fetch(getUrlForPath(`v1/utkast/${id}/publiser`), {
     method: "POST",
-    body: JSON.stringify(utkast),
+    body: JSON.stringify({ publiseringsdato }),
     headers: {
       "Content-Type": "application/json",
       Authorization: "Bearer " + token,
@@ -52,21 +48,6 @@ export const publishUtkast = (
 export const deleteUtkast = (utkastId: string, token: string | undefined) => {
   return fetch(getUrlForPath(`v1/utkast/${utkastId}`), {
     method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + token,
-    },
-  });
-};
-
-export const resolveUtkastConflict = (
-  utkastId: string,
-  resolvedConflict: ConflictResolved,
-  token: string | undefined,
-) => {
-  return fetch(getUrlForPath(`v1/utkast/${utkastId}/resolved`), {
-    method: "POST",
-    body: JSON.stringify(resolvedConflict),
     headers: {
       "Content-Type": "application/json",
       Authorization: "Bearer " + token,
