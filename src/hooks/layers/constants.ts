@@ -46,9 +46,9 @@ export const kartlagLayers: Record<
       format: new GeoJSON(),
       url: function (extent) {
         return (
-          "http://www.statkart.no/matrikkel/geoservergeo/wfs/matrikkel?SERVICE=WFS&" +
-          "VERSION=1.1.0&REQUEST=GetFeature&LAYERS=TEIGGRENSEWFS&" +
-          "FORMAT=application/json&SRS=EPSG:25833&" +
+          "/geoservergeo/wfs/matrikkel?SERVICE=WFS&" +
+          "VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=TEIGGRENSEWFS&" +
+          "FORMAT=application/json&SRSNAME=EPSG:25833&" +
           "BBOX=" +
           extent.join(",")
         );
