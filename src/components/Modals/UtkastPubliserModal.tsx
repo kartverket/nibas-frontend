@@ -16,6 +16,7 @@ import {
   ButtonGroup,
   Button,
   Datepicker,
+  FormLabel,
 } from "@kvib/react";
 import { publishUtkast } from "api/utkast";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
@@ -148,7 +149,7 @@ const Body = styled(ModalBody)`
   gap: 24px;
 `;
 
-const Datepickerlabel = styled.label`
+const Datepickerlabel = styled(FormLabel)`
   margin-bottom: 16px;
 `;
 
