@@ -39,7 +39,7 @@ const KartlagInner = ({ mappedLayer, isMainLayer }: Props) => {
     }
 
     if (isVectorLayer(layer) && !isVisible) {
-      toggleWFSLayer();
+      toggleWFSLayer(mappedLayer);
     }
 
     if (isMainLayer) {

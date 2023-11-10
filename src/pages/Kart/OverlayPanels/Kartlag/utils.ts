@@ -5,7 +5,7 @@ import { KartlagId } from "hooks/layers/types";
 import TileWMS from "ol/source/TileWMS";
 import WMTS from "ol/source/WMTS";
 import { MappedLayer } from "utils/getLayersFromWMS";
-import { getMatWFSFeatures } from "utils/getMatrikkelWfsFeatures";
+import { getWFSFeatures } from "utils/getWFSFeatures";
 import { getLayerById, isWMTSLayer } from "utils/map/layers";
 import { addFeaturesToSource } from "utils/map/source";
 
@@ -96,14 +96,14 @@ export const toggleWMTSLayer = (mappedLayer: MappedLayer) => {
   }
 };
 
-export const toggleWFSLayer = async () => {
-  const features = await getMatWFSFeatures();
+export const toggleWFSLayer = async (mappedLayer: MappedLayer) => {
+  const features = await getWFSFeatures(mappedLayer.sourceId);
   if (!features) return null;
-  const source = getLayerById("matrikkelenWfs").getSource();
+  const source = getLayerById(mappedLayer.sourceId).getSource();
   if (source) {
     source.clear();
   }
-  addFeaturesToSource("matrikkelenWfs", features);
+  addFeaturesToSource(mappedLayer.sourceId, features);
 };
 
 type DragItem = {
