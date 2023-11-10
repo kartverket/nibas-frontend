@@ -190,7 +190,8 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
    */
   const utkastHarEndringer = () => {
     if (!utkast?.operasjoner) return false;
-    if (Object.keys(utkast.operasjoner.grenseendringer).length > 0) return true;
+    const endredeFeatures = utkast.operasjoner.grenseendringer.endredeFeatures;
+    if (Object.keys(endredeFeatures).length > 0) return true;
 
     // Går gjennom metadataendringsobjektene og sjekker om de er tomme
     for (const endringstype of Object.values(

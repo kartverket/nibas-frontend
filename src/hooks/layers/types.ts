@@ -3,7 +3,6 @@ import { EditingType } from "contexts/EditGrenserContext";
 export type KartlagId =
   | "europaKart"
   | "topoWMTS"
-  | "topografiskNorgeskart"
   | "administrativeGrenser"
   | "administrativeGrenserHistorisk"
   | "grunnkretserWMS"
