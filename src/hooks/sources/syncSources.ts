@@ -214,7 +214,7 @@ kartlagSources.topoWMTS.set("config", topoWMTSConfig);
 
     if (source instanceof WMTS || source instanceof VectorSource) return;
 
-    // sett tile grid på alle sources som ikke er WMTS
+    // sett tile grid på alle WMS-lag
     source.setTileGridForProjection("EPSG:25833", tileGrid);
   });
 })();

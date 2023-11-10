@@ -8,7 +8,7 @@ import {
   isWMTSLayer,
   isXYZLayer,
 } from "utils/map/layers";
-import { toggleWMSLayer, toggleWMTSLayer, toggleWFSLayer } from "./utils";
+import { toggleWMSLayer, toggleWMTSLayer } from "./utils";
 import { kartlagLayers } from "hooks/layers/constants";
 
 type Props = {
@@ -36,10 +36,6 @@ const KartlagInner = ({ mappedLayer, isMainLayer }: Props) => {
 
     if (isXYZLayer(layer)) {
       toggleWMTSLayer(mappedLayer);
-    }
-
-    if (isVectorLayer(layer) && !isVisible) {
-      toggleWFSLayer(mappedLayer);
     }
 
     if (isMainLayer) {

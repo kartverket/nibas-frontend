@@ -7,6 +7,8 @@ import { StyleFunction } from "ol/style/Style";
 import { GrenseId, KartlagId } from "./types";
 import WMTS from "ol/source/WMTS";
 import TileWMS from "ol/source/TileWMS";
+import { bbox } from "ol/loadingstrategy";
+import { GeoJSON } from "ol/format";
 
 const createTileLayerFromKartlagSource = (id: keyof typeof kartlagSources) =>
   new TileLayer({ source: kartlagSources[id] });
@@ -39,7 +41,22 @@ export const kartlagLayers: Record<
     "norgesMaritimeGrenser",
   ),
   sjokartElektroniske: createTileLayerFromKartlagSource("sjokartElektroniske"),
-  matrikkelenWfs: new VectorLayer({ source: new VectorSource() }),
+  matrikkelenWfs: new VectorLayer({
+    source: new VectorSource({
+      format: new GeoJSON(),
+      url: function (extent) {
+        return (
+          "http://www.statkart.no/matrikkel/geoservergeo/wfs/matrikkel?service=WFS&" +
+          "version=2.0.0&request=GetFeature&typename=TEIGGRENSEWFS&" +
+          "outputFormat=application/json&srsname=EPSG:25833&" +
+          "bbox=" +
+          extent.join(",") +
+          ",EPSG:25833"
+        );
+      },
+      strategy: bbox,
+    }),
+  }),
 };
 
 export const editSource = new VectorSource();
