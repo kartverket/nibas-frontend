@@ -7,18 +7,12 @@ import { useToolbar } from "contexts/ToolbarContext";
 import ToolbarTooltip from "./ToolbarTooltip";
 import { Divider } from "@kvib/react";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
-import { LineString } from "ol/geom";
-import { Feature } from "ol";
-import { getFeatureId } from "utils/map/source";
-import { useHistory } from "contexts/HistoryContext";
-import { addArchivingEntryFromFeature } from "../OverlayPanels/MetadataPanel/utils";
 import ToolbarPopups from "./ToolbarPopups";
 import ToolbarMenus from "./ToolbarMenus";
 
 const Toolbar = () => {
   const { activeEditModes, toggleEditMode } = useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
-  const { addHistoryEntry } = useHistory();
   const editingType = getCurrentlyEditingType();
   const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } =
     useOverlayPanel();
@@ -39,13 +33,6 @@ const Toolbar = () => {
     });
   };
 
-  const archiveFeatures = (features: Feature<LineString>[]) => {
-    setArchivedFeatures(features.map((feature) => getFeatureId(feature)));
-
-    features.forEach((feature) =>
-      addArchivingEntryFromFeature(feature, addHistoryEntry)
-    );
-  };
   useKeyboardShortcut("layers", toggleKartlag);
 
   return (

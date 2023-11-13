@@ -204,7 +204,10 @@ export const historyToUtkastOperations = (
   // hent grenseendringer og gjør endringene om til en liste av features
   const editedFeatures = (
     historyToCurrentIndex.filter(
-      (entry) => entry.type === "grense" || entry.type === "metadata",
+      (entry) =>
+        entry.type === "grense" ||
+        entry.type === "metadata" ||
+        entry.type === "grensearkivering"
     ) as (GrenseEntry | MetadataEntry)[]
   ).reduce(reduceGrenseOperations, {} as Record<string, GeoJSONFeature>);
 

@@ -6,6 +6,8 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import useSplit from "../interactions/useSplit";
 import { getFeatureId } from "utils/map/source";
 import { useToast } from "@kvib/react";
+import { addArchivingEntryFromFeature } from "../OverlayPanels/MetadataPanel/utils";
+import { useHistory } from "contexts/HistoryContext";
 
 const ToolbarPopups = () => {
   const toast = useToast();
@@ -17,9 +19,15 @@ const ToolbarPopups = () => {
     setArchivedFeatures,
     clearSelection,
   } = useFeatureStyle();
+  const { addHistoryEntry } = useHistory();
+
 
   const archiveFeatures = (features: Feature<LineString>[]) => {
     setArchivedFeatures(features.map((feature) => getFeatureId(feature)));
+
+    features.forEach((feature) =>
+    addArchivingEntryFromFeature(feature, addHistoryEntry)
+  );
   };
 
   const handleSplit = () => {
