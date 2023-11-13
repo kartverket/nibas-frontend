@@ -21,13 +21,15 @@ const ToolbarPopups = () => {
   } = useFeatureStyle();
   const { addHistoryEntry } = useHistory();
 
-
+  // TODO: bør kanskje tømme selection etter arkivering
+  // TODO: bør gi en toast når man arkiverer og alt går bra
   const archiveFeatures = (features: Feature<LineString>[]) => {
     setArchivedFeatures(features.map((feature) => getFeatureId(feature)));
 
+    // TODO: dette tyder på at man kan ha flere ting valgt samtidig, som jeg ikke tror dette skal støtte
     features.forEach((feature) =>
-    addArchivingEntryFromFeature(feature, addHistoryEntry)
-  );
+      addArchivingEntryFromFeature(feature, addHistoryEntry),
+    );
   };
 
   const handleSplit = () => {

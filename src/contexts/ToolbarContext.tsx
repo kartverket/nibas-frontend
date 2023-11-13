@@ -71,6 +71,7 @@ export const ToolbarProvider = ({
       history.entries.length > 0 && history.index < history.entries.length
         ? redo
         : undefined,
+    // TODO: denne lar meg arkivere grenser som allerede er arkiverte dersom jeg har lagret arkiveringen
     canArchive:
       selectedFeatures.length === 0 ||
       archivedFeatureIds.some((id) => id === selectedFeatures[0].getId()),

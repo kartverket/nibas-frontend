@@ -11,14 +11,6 @@ export const getDateInFriendlyString = (dateString?: string) => {
   return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
 };
 
-const updateFeatureWithNewArchiving = (feature: Feature<LineString>) => {
-  const properties = feature.getProperties() as FeatureProperties;
-  feature.setProperties({
-    ...properties,
-    shouldArchive: true,
-  });
-};
-
 const updateFeatureWithNewMetadata = (
   feature: Feature<LineString>,
   newMetadata: Metadata,
@@ -57,15 +49,17 @@ export const addMetadataEntryFromFeature = (
 
 export const addArchivingEntryFromFeature = (
   feature: Feature<LineString>,
-  addHistoryEntry: (entry: GrenseArkiveringsEntry) => void
+  addHistoryEntry: (entry: GrenseArkiveringsEntry) => void,
 ) => {
   const id = feature.getId();
-
   if (!id) return;
 
   const oldProperties = feature.getProperties() as FeatureProperties;
-
-  updateFeatureWithNewArchiving(feature as Feature<LineString>);
+  const newProperties: FeatureProperties = {
+    ...oldProperties,
+    shouldArchive: true,
+  };
+  feature.setProperties(newProperties);
 
   addHistoryEntry({
     type: "grensearkivering",
@@ -73,7 +67,7 @@ export const addArchivingEntryFromFeature = (
       {
         id: id as string,
         from: oldProperties,
-        to: feature.getProperties() as FeatureProperties,
+        to: newProperties,
       },
     ],
   });

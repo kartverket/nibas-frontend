@@ -45,8 +45,10 @@ export const FeatureStyleProvider = ({
 
     for (const feature of deselectedFeatures) {
       if (dirtyFeatureIds.some((id) => id === feature.getId())) {
+        // TODO: denne ser ikke ut til å fungere som den skal når jeg selecter og deselecter en (lagret) endret grense, den blir bare standard sort
         feature.setStyle(grenseStyles.dirty);
       } else if (archivedFeatureIds.some((id) => id === feature.getId())) {
+        // TODO: denne ser ikke ut til å fungere som den skal når jeg selecter og deselecter en (lagret) arkivert grense, den blir bare standard sort
         feature.setStyle(getArchiveLayerStyle(feature));
       } else {
         feature.setStyle();
@@ -93,6 +95,7 @@ export const FeatureStyleProvider = ({
 
     setEditFeatures(editFeatures);
     setDirtyFeatures(dirtyFeatures);
+    // TODO: hvis man åpner et utkast med en lagret arkivering så blir den farget som en endring fremfor en arkivering, er det med vilje?
     setArchivedFeatures(archivedFeatures.flatMap((id) => id));
   }, [
     dirtyFeatureIds.length,
