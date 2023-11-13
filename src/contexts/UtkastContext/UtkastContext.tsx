@@ -38,6 +38,7 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContex
 import { useToast } from "@kvib/react";
 import { routes } from "utils/routes";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
+import { useToolbar } from "contexts/ToolbarContext";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
@@ -58,6 +59,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const { closeOverlayPanel } = useOverlayPanel();
   const { closeSidebarPanel } = useSidebarPanel();
   const { setError } = useErrorHandling();
+  const { activePointMode, togglePointMode } = useToolbar();
   const toast = useToast();
 
   const utkastPathMatch = useMatch(`${routes.utkast}/${routes.utkastId}`);
@@ -96,12 +98,15 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     resetAndClearAllLayers();
     closeOverlayPanel();
     closeSidebarPanel();
+    if (activePointMode) togglePointMode(activePointMode);
   }, [
+    activePointMode,
     clearDirtyStyles,
     clearHistory,
     closeOverlayPanel,
     closeSidebarPanel,
     resetAndClearAllLayers,
+    togglePointMode,
   ]);
 
   useEffect(() => {
