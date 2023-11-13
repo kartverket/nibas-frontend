@@ -16,12 +16,7 @@ const LandingHeader = () => {
       {isAuthenticatedFunc() && (
         <Section>
           <LoginIcon icon="person" isFilled />
-          {personId && (
-            <div>
-              <Text>Logget inn som</Text>
-              <Text as="b">{personId.substring(0, 6) + "*****"}</Text>
-            </div>
-          )}
+          {personId && <Text as="b">{personId.substring(0, 6) + "*****"}</Text>}
           <Button
             variant="secondary"
             aria-label="Logg ut"
