@@ -45,13 +45,24 @@ export const kartlagLayers: Record<
     source: new VectorSource({
       format: new GeoJSON(),
       url: function (extent) {
+        const coordinates = `${extent[0]},${extent[1]} ${extent[2]},${extent[3]}`;
         return (
-          "/geoservergeo/wfs/matrikkel?SERVICE=WFS&" +
-          "VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=TEIGGRENSEWFS&" +
-          "OUTPUTFORMAT=application/json&SRSNAME=EPSG:25833&" +
-          "BBOX=" +
-          extent.join(",") +
-          ",EPSG:25833"
+          "/geoserver/wfs/MATRIKKEL?VERSION=1.1.0&SERVICE=WFS&REQUEST=GetFeature&TYPENAME=TEIGWFS&" +
+          `Filter=
+          <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml">
+             <And>
+                <ogc:PropertyIsEqualTo>
+                   <ogc:PropertyName>KOMMUNENR</ogc:PropertyName>
+                   <ogc:Literal>4203</ogc:Literal>
+                </ogc:PropertyIsEqualTo>
+                <ogc:BBOX>
+                   <ogc:PropertyName>FLATE</ogc:PropertyName>
+                   <gml:Envelope srsName="urn:x-ogc:def:crs:EPSG:25833">
+                      <gml:coordinates>${coordinates}</gml:coordinates>
+                   </gml:Envelope>
+                </ogc:BBOX>
+             </And>
+          </ogc:Filter>`
         );
       },
       strategy: bbox,
