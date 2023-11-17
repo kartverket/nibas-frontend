@@ -6,10 +6,11 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import useSplit from "../interactions/useSplit";
 import { getFeatureId } from "utils/map/source";
 import { useToast } from "@kvib/react";
+import { getMatrikkelFeatures } from "utils/map/layers";
 
 const ToolbarPopups = () => {
   const toast = useToast();
-  const { activePointMode, canArchive } = useToolbar();
+  const { activeEditModes, activePointMode, canArchive } = useToolbar();
   const { split } = useSplit();
   const {
     selectedFeatures,
@@ -30,6 +31,13 @@ const ToolbarPopups = () => {
 
   return (
     <>
+      {activeEditModes.includes("matrikkel") && (
+        <ToolbarPopup
+          text="Bruk knappen til å hente grenser innenfor skjermen"
+          buttonText="Hent grenser"
+          onClick={() => getMatrikkelFeatures()}
+        />
+      )}
       {activePointMode === "draw" && (
         <ToolbarPopup text="Dobbeltklikk for å avslutte tegningen" />
       )}

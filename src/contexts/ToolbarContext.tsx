@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState } from "react";
 import { useFeatureStyle } from "./FeatureStyleContext";
 import { useHistory } from "./HistoryContext";
 
-type ToolbarEditMode = "snap";
+type ToolbarEditMode = "snap" | "matrikkel";
 export type ToolbarPointMode =
   | null
   | "add"

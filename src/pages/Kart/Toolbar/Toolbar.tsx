@@ -56,6 +56,14 @@ const Toolbar = () => {
           <Divider orientation="vertical" />
           <ToolbarMenus />
           <Divider orientation="vertical" />
+          <ModeButton
+            icon="ssid_chart"
+            ariaLabel="Vis grenser fra matrikkelen"
+            isActive={activeEditModes.includes("matrikkel")}
+            onClick={() => toggleEditMode("matrikkel")}
+          >
+            Matrikkel
+          </ModeButton>
           <CustomTooltip
             text="Skru av/på snapping mot kartlag."
             shortcut="snap"

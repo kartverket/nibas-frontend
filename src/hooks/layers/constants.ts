@@ -7,8 +7,6 @@ import { StyleFunction } from "ol/style/Style";
 import { GrenseId, KartlagId } from "./types";
 import WMTS from "ol/source/WMTS";
 import TileWMS from "ol/source/TileWMS";
-import { bbox } from "ol/loadingstrategy";
-import { GeoJSON } from "ol/format";
 
 const createTileLayerFromKartlagSource = (id: keyof typeof kartlagSources) =>
   new TileLayer({ source: kartlagSources[id] });
@@ -41,33 +39,6 @@ export const kartlagLayers: Record<
     "norgesMaritimeGrenser",
   ),
   sjokartElektroniske: createTileLayerFromKartlagSource("sjokartElektroniske"),
-  matrikkelenWfs: new VectorLayer({
-    source: new VectorSource({
-      format: new GeoJSON(),
-      url: function (extent) {
-        const coordinates = `${extent[0]},${extent[1]} ${extent[2]},${extent[3]}`;
-        return (
-          "/geoserver/wfs/MATRIKKEL?VERSION=1.1.0&SERVICE=WFS&REQUEST=GetFeature&TYPENAME=TEIGWFS&" +
-          `Filter=
-          <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml">
-             <And>
-                <ogc:PropertyIsEqualTo>
-                   <ogc:PropertyName>KOMMUNENR</ogc:PropertyName>
-                   <ogc:Literal>4203</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:BBOX>
-                   <ogc:PropertyName>FLATE</ogc:PropertyName>
-                   <gml:Envelope srsName="urn:x-ogc:def:crs:EPSG:25833">
-                      <gml:coordinates>${coordinates}</gml:coordinates>
-                   </gml:Envelope>
-                </ogc:BBOX>
-             </And>
-          </ogc:Filter>`
-        );
-      },
-      strategy: bbox,
-    }),
-  }),
 };
 
 export const editSource = new VectorSource();
@@ -81,6 +52,9 @@ const grenseStyle =
 
 export const grenserLayers = {
   // ingen source betyr at source settes async
+  matrikkel: new VectorLayer({
+    source: new VectorSource(),
+  }),
   fylke: new VectorLayer({
     source: new VectorSource(),
     style: grenseStyle("fylke"),
