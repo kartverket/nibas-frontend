@@ -33,7 +33,7 @@ const ToolbarPopups = () => {
 
   const handleMatrikkel = async () => {
     const zoom = map.getView().getZoom();
-    if (!zoom || zoom < 10) {
+    if (!zoom || zoom < 15) {
       toast({ status: "error", title: "Du er zoomet for langt ut" });
     } else {
       setMatrikkelIsLoading(true);
