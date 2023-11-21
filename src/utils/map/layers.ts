@@ -129,24 +129,20 @@ export const getMatrikkelFeatures = async () => {
         json = await response.text();
         console.log("Kartdata mottatt");
 
-        // console.log(json)
-
         const fetchedFeatures = getFeaturesFromGeoJson(json);
-        console.log("Antall features: " + fetchedFeatures.length);
+        console.log("Antall features:", fetchedFeatures.length);
 
         if (!fetchedFeatures) return null;
         const source = getLayerById("matrikkel").getSource();
         if (source) {
-          source.clear();
+          source.clear(true);
         }
         addFeaturesToSource("matrikkel", fetchedFeatures);
       } catch (Error) {
-        console.log("Error: " + Error + " : " + json);
+        console.log(`Error: ${Error} : ${json}`);
       }
-
-      // map.render()
     } catch (Error) {
-      console.log("Error: " + Error);
+      console.log("Error:", Error);
     }
   }
 };

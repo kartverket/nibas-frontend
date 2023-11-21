@@ -9,6 +9,7 @@ import { Divider } from "@kvib/react";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import ToolbarPopups from "./ToolbarPopups";
 import ToolbarMenus from "./ToolbarMenus";
+import { getLayerById } from "utils/map/layers";
 
 const Toolbar = () => {
   const { activeEditModes, toggleEditMode } = useToolbar();
@@ -23,6 +24,16 @@ const Toolbar = () => {
     } else {
       openOverlayPanel("kartlag");
     }
+  };
+
+  const toggleMatrikkel = () => {
+    if (activeEditModes.includes("matrikkel")) {
+      const source = getLayerById("matrikkel").getSource();
+      if (source) {
+        source.clear(true);
+      }
+    }
+    toggleEditMode("matrikkel");
   };
 
   const zoom = (difference: number) => {
@@ -60,7 +71,7 @@ const Toolbar = () => {
             icon="ssid_chart"
             ariaLabel="Vis grenser fra matrikkelen"
             isActive={activeEditModes.includes("matrikkel")}
-            onClick={() => toggleEditMode("matrikkel")}
+            onClick={toggleMatrikkel}
           >
             Matrikkel
           </ModeButton>
