@@ -5,12 +5,13 @@ import { LineString } from "ol/geom";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import useSplit from "../interactions/useSplit";
 import { getFeatureId } from "utils/map/source";
-import { useBoolean, useToast } from "@kvib/react";
+import { useToast } from "@kvib/react";
 import { getMatrikkelFeatures } from "utils/map/layers";
 import { map } from "../constants";
+import { useState } from "react";
 
 const ToolbarPopups = () => {
-  const [matrikkelIsLoading, { toggle: toggleIsLoading }] = useBoolean(false);
+  const [matrikkelIsLoading, setMatrikkelIsLoading] = useState(false);
   const toast = useToast();
   const { activeEditModes, activePointMode, canArchive } = useToolbar();
   const { split } = useSplit();
@@ -30,14 +31,14 @@ const ToolbarPopups = () => {
     toast({ status: "success", title: "Grensen ble splittet" });
   };
 
-  const handleMatrikkel = () => {
+  const handleMatrikkel = async () => {
     const zoom = map.getView().getZoom();
     if (!zoom || zoom < 10) {
       toast({ status: "error", title: "Du er zoomet for langt ut" });
     } else {
-      toggleIsLoading();
-      getMatrikkelFeatures();
-      toggleIsLoading();
+      setMatrikkelIsLoading(true);
+      await getMatrikkelFeatures();
+      setMatrikkelIsLoading(false);
     }
   };
 
