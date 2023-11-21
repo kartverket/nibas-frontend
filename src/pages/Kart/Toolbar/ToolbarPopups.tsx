@@ -8,6 +8,7 @@ import { addFeaturesToSource, getFeatureId } from "utils/map/source";
 import { useToast } from "@kvib/react";
 import { getLayerById, useMatrikkelFeatures } from "utils/map/layers";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
+import { map } from "../constants";
 
 const ToolbarPopups = () => {
   const toast = useToast();
@@ -19,12 +20,7 @@ const ToolbarPopups = () => {
     setArchivedFeatures,
     clearSelection,
   } = useFeatureStyle();
-  const {
-    trigger: triggerMatrikkelFetch,
-    isMutating,
-    error,
-    data: matrikkelResponse,
-  } = useMatrikkelFeatures();
+  const { trigger: triggerMatrikkelFetch, isMutating } = useMatrikkelFeatures();
 
   const archiveFeatures = (features: Feature<LineString>[]) => {
     setArchivedFeatures(features.map((feature) => getFeatureId(feature)));
@@ -37,25 +33,27 @@ const ToolbarPopups = () => {
   };
 
   const handleMatrikkelFeatures = async () => {
-    console.log("Skal prøve å hente noe");
-    triggerMatrikkelFetch();
+    const zoom = map.getView().getZoom();
 
-    if (error) {
-      console.log("error?", error);
-    }
+    if (zoom && zoom > 10) {
+      const response = await triggerMatrikkelFetch();
+      if (!response.ok) throw new Error("Feil i response: " + response);
 
-    if (matrikkelResponse) {
-      console.log("fikk en response", matrikkelResponse);
-      const json = await matrikkelResponse.text();
+      const json = await response.text();
       const fetchedFeatures = getFeaturesFromGeoJson(json);
-      console.log("Antall features:", fetchedFeatures.length);
-
-      if (!fetchedFeatures) return null;
-      const source = getLayerById("matrikkel").getSource();
-      if (source) {
-        source.clear(true);
+      if (fetchedFeatures) {
+        const source = getLayerById("matrikkel").getSource();
+        if (source) {
+          source.clear(true);
+        }
+        addFeaturesToSource("matrikkel", fetchedFeatures);
+        toast({
+          status: "success",
+          title: `Hentet ${fetchedFeatures.length} grenser fra matrikkelen`,
+        });
       }
-      addFeaturesToSource("matrikkel", fetchedFeatures);
+    } else {
+      toast({ status: "error", title: "Du er zoomet for langt ut" });
     }
   };
 

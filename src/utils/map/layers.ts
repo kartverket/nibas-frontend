@@ -100,15 +100,6 @@ export const removeAllFeatures = () => {
 };
 
 export const useMatrikkelFeatures = () => {
-  const toast = useToast();
-  const zoom = map.getView().getZoom();
-  let shouldFetch = true;
-
-  if (!zoom || zoom < 10) {
-    toast({ status: "error", title: "Du er zoomet for langt ut" });
-    shouldFetch = false;
-  }
-
   const extent = map.getView().calculateExtent(map.getSize());
   const request: Node = new WFS({ version: "2.0.0" }).writeGetFeature({
     srsName: "EPSG:25833",
@@ -121,12 +112,10 @@ export const useMatrikkelFeatures = () => {
     geometryName: "KURVE",
   });
 
-  return useSWRMutation(
-    shouldFetch ? "/geoservergeo/wfs/matrikkel" : null,
-    (api) =>
-      fetch(api, {
-        method: "POST",
-        body: new XMLSerializer().serializeToString(request),
-      }),
+  return useSWRMutation("/geoservergeo/wfs/matrikkel", (api) =>
+    fetch(api, {
+      method: "POST",
+      body: new XMLSerializer().serializeToString(request),
+    }),
   );
 };
