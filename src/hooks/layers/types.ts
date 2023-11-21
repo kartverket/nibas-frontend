@@ -19,6 +19,7 @@ export type KartlagId =
   | "sjokartElektroniske";
 
 export type GrenseId =
+  | "matrikkel"
   | "fylke"
   | "kommune"
   | "nasjon"

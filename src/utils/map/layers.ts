@@ -11,6 +11,8 @@ import { KartlagId, GrenseId, LayerId } from "hooks/layers/types";
 import XYZ from "ol/source/XYZ";
 import VectorSource from "ol/source/Vector";
 import { WFS } from "ol/format";
+import { getFeaturesFromGeoJson } from "./geoJson";
+import { addFeaturesToSource } from "./source";
 
 const getLayersArray = () => map.getLayers().getArray() ?? [];
 
@@ -97,7 +99,7 @@ export const removeAllFeatures = () => {
   });
 };
 
-export const getMatrikkelFeatures = () => {
+export const getMatrikkelFeatures = async () => {
   const zoom = map.getView().getZoom();
 
   if (zoom && zoom > 10) {
@@ -114,7 +116,7 @@ export const getMatrikkelFeatures = () => {
       geometryName: "KURVE",
     });
     try {
-      const response = fetch("/geoservergeo/wfs/matrikkel", {
+      const response = await fetch("/geoservergeo/wfs/matrikkel", {
         method: "POST",
         body: new XMLSerializer().serializeToString(request),
       });
@@ -124,7 +126,7 @@ export const getMatrikkelFeatures = () => {
       let json = "";
 
       try {
-        json = response.text();
+        json = await response.text();
         console.log("Kartdata mottatt");
 
         // console.log(json)
@@ -132,7 +134,12 @@ export const getMatrikkelFeatures = () => {
         const fetchedFeatures = getFeaturesFromGeoJson(json);
         console.log("Antall features: " + fetchedFeatures.length);
 
-        return fetchedFeatures;
+        if (!fetchedFeatures) return null;
+        const source = getLayerById("matrikkel").getSource();
+        if (source) {
+          source.clear();
+        }
+        addFeaturesToSource("matrikkel", fetchedFeatures);
       } catch (Error) {
         console.log("Error: " + Error + " : " + json);
       }
@@ -142,11 +149,4 @@ export const getMatrikkelFeatures = () => {
       console.log("Error: " + Error);
     }
   }
-
-  if (!features) return null;
-  const source = getLayerById("matrikkelenWfs").getSource();
-  if (source) {
-    source.clear();
-  }
-  addFeaturesToSource("matrikkelenWfs", features);
 };
