@@ -50,6 +50,7 @@ const ToolbarPopups = () => {
           buttonText="Hent grenser"
           onClick={handleMatrikkel}
           isDisabled={matrikkelIsLoading}
+          isLoading={matrikkelIsLoading}
         />
       )}
       {activePointMode === "draw" && (
