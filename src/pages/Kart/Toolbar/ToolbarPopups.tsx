@@ -4,9 +4,10 @@ import { Feature } from "ol";
 import { LineString } from "ol/geom";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import useSplit from "../interactions/useSplit";
-import { getFeatureId } from "utils/map/source";
+import { addFeaturesToSource, getFeatureId } from "utils/map/source";
 import { useToast } from "@kvib/react";
-import { getMatrikkelFeatures } from "utils/map/layers";
+import { getLayerById, useMatrikkelFeatures } from "utils/map/layers";
+import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 
 const ToolbarPopups = () => {
   const toast = useToast();
@@ -18,6 +19,12 @@ const ToolbarPopups = () => {
     setArchivedFeatures,
     clearSelection,
   } = useFeatureStyle();
+  const {
+    trigger: triggerMatrikkelFetch,
+    isMutating,
+    error,
+    data: matrikkelResponse,
+  } = useMatrikkelFeatures();
 
   const archiveFeatures = (features: Feature<LineString>[]) => {
     setArchivedFeatures(features.map((feature) => getFeatureId(feature)));
@@ -29,13 +36,37 @@ const ToolbarPopups = () => {
     toast({ status: "success", title: "Grensen ble splittet" });
   };
 
+  const handleMatrikkelFeatures = async () => {
+    console.log("Skal prøve å hente noe");
+    triggerMatrikkelFetch();
+
+    if (error) {
+      console.log("error?", error);
+    }
+
+    if (matrikkelResponse) {
+      console.log("fikk en response", matrikkelResponse);
+      const json = await matrikkelResponse.text();
+      const fetchedFeatures = getFeaturesFromGeoJson(json);
+      console.log("Antall features:", fetchedFeatures.length);
+
+      if (!fetchedFeatures) return null;
+      const source = getLayerById("matrikkel").getSource();
+      if (source) {
+        source.clear(true);
+      }
+      addFeaturesToSource("matrikkel", fetchedFeatures);
+    }
+  };
+
   return (
     <>
       {activeEditModes.includes("matrikkel") && (
         <ToolbarPopup
           text="Bruk knappen til å hente grenser innenfor skjermen"
           buttonText="Hent grenser"
-          onClick={() => getMatrikkelFeatures()}
+          onClick={handleMatrikkelFeatures}
+          isDisabled={isMutating}
         />
       )}
       {activePointMode === "draw" && (

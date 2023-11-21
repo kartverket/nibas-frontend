@@ -11,8 +11,8 @@ import { KartlagId, GrenseId, LayerId } from "hooks/layers/types";
 import XYZ from "ol/source/XYZ";
 import VectorSource from "ol/source/Vector";
 import { WFS } from "ol/format";
-import { getFeaturesFromGeoJson } from "./geoJson";
-import { addFeaturesToSource } from "./source";
+import useSWRMutation from "swr/mutation";
+import { useToast } from "@kvib/react";
 
 const getLayersArray = () => map.getLayers().getArray() ?? [];
 
@@ -99,50 +99,34 @@ export const removeAllFeatures = () => {
   });
 };
 
-export const getMatrikkelFeatures = async () => {
+export const useMatrikkelFeatures = () => {
+  const toast = useToast();
   const zoom = map.getView().getZoom();
+  let shouldFetch = true;
 
-  if (zoom && zoom > 10) {
-    const extent = map.getView().calculateExtent(map.getSize());
-    console.log("Henter WFS");
-    const request: Node = new WFS({ version: "2.0.0" }).writeGetFeature({
-      srsName: "EPSG:25833",
-      featureNS: "http://www.statkart.no/matrikkel",
-      featurePrefix: "matrikkel",
-      featureTypes: ["TEIGGRENSEWFS"],
-      outputFormat: "application/json",
-      // count: 500,
-      bbox: extent,
-      geometryName: "KURVE",
-    });
-    try {
-      const response = await fetch("/geoservergeo/wfs/matrikkel", {
+  if (!zoom || zoom < 10) {
+    toast({ status: "error", title: "Du er zoomet for langt ut" });
+    shouldFetch = false;
+  }
+
+  const extent = map.getView().calculateExtent(map.getSize());
+  const request: Node = new WFS({ version: "2.0.0" }).writeGetFeature({
+    srsName: "EPSG:25833",
+    featureNS: "http://www.statkart.no/matrikkel",
+    featurePrefix: "matrikkel",
+    featureTypes: ["TEIGGRENSEWFS"],
+    outputFormat: "application/json",
+    // count: 500,
+    bbox: extent,
+    geometryName: "KURVE",
+  });
+
+  return useSWRMutation(
+    shouldFetch ? "/geoservergeo/wfs/matrikkel" : null,
+    (api) =>
+      fetch(api, {
         method: "POST",
         body: new XMLSerializer().serializeToString(request),
-      });
-
-      if (!response.ok) throw new Error("Feil i response: " + response);
-
-      let json = "";
-
-      try {
-        json = await response.text();
-        console.log("Kartdata mottatt");
-
-        const fetchedFeatures = getFeaturesFromGeoJson(json);
-        console.log("Antall features:", fetchedFeatures.length);
-
-        if (!fetchedFeatures) return null;
-        const source = getLayerById("matrikkel").getSource();
-        if (source) {
-          source.clear(true);
-        }
-        addFeaturesToSource("matrikkel", fetchedFeatures);
-      } catch (Error) {
-        console.log(`Error: ${Error} : ${json}`);
-      }
-    } catch (Error) {
-      console.log("Error:", Error);
-    }
-  }
+      }),
+  );
 };
