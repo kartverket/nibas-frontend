@@ -4,13 +4,13 @@ import { Feature } from "ol";
 import { LineString } from "ol/geom";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import useSplit from "../interactions/useSplit";
-import { addFeaturesToSource, getFeatureId } from "utils/map/source";
-import { useToast } from "@kvib/react";
-import { getLayerById, useMatrikkelFeatures } from "utils/map/layers";
-import { getFeaturesFromGeoJson } from "utils/map/geoJson";
+import { getFeatureId } from "utils/map/source";
+import { useBoolean, useToast } from "@kvib/react";
+import { getMatrikkelFeatures } from "utils/map/layers";
 import { map } from "../constants";
 
 const ToolbarPopups = () => {
+  const [matrikkelIsLoading, { toggle: toggleIsLoading }] = useBoolean(false);
   const toast = useToast();
   const { activeEditModes, activePointMode, canArchive } = useToolbar();
   const { split } = useSplit();
@@ -20,8 +20,6 @@ const ToolbarPopups = () => {
     setArchivedFeatures,
     clearSelection,
   } = useFeatureStyle();
-  const { trigger: triggerMatrikkelFetch, isMutating } = useMatrikkelFeatures();
-
   const archiveFeatures = (features: Feature<LineString>[]) => {
     setArchivedFeatures(features.map((feature) => getFeatureId(feature)));
   };
@@ -32,28 +30,14 @@ const ToolbarPopups = () => {
     toast({ status: "success", title: "Grensen ble splittet" });
   };
 
-  const handleMatrikkelFeatures = async () => {
+  const handleMatrikkel = () => {
     const zoom = map.getView().getZoom();
-
-    if (zoom && zoom > 10) {
-      const response = await triggerMatrikkelFetch();
-      if (!response.ok) throw new Error("Feil i response: " + response);
-
-      const json = await response.text();
-      const fetchedFeatures = getFeaturesFromGeoJson(json);
-      if (fetchedFeatures) {
-        const source = getLayerById("matrikkel").getSource();
-        if (source) {
-          source.clear(true);
-        }
-        addFeaturesToSource("matrikkel", fetchedFeatures);
-        toast({
-          status: "success",
-          title: `Hentet ${fetchedFeatures.length} grenser fra matrikkelen`,
-        });
-      }
-    } else {
+    if (!zoom || zoom < 10) {
       toast({ status: "error", title: "Du er zoomet for langt ut" });
+    } else {
+      toggleIsLoading();
+      getMatrikkelFeatures();
+      toggleIsLoading();
     }
   };
 
@@ -63,8 +47,8 @@ const ToolbarPopups = () => {
         <ToolbarPopup
           text="Bruk knappen til å hente grenser innenfor skjermen"
           buttonText="Hent grenser"
-          onClick={handleMatrikkelFeatures}
-          isDisabled={isMutating}
+          onClick={handleMatrikkel}
+          isDisabled={matrikkelIsLoading}
         />
       )}
       {activePointMode === "draw" && (

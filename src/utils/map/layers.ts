@@ -11,8 +11,8 @@ import { KartlagId, GrenseId, LayerId } from "hooks/layers/types";
 import XYZ from "ol/source/XYZ";
 import VectorSource from "ol/source/Vector";
 import { WFS } from "ol/format";
-import useSWRMutation from "swr/mutation";
-import { useToast } from "@kvib/react";
+import { getFeaturesFromGeoJson } from "./geoJson";
+import { addFeaturesToSource } from "./source";
 
 const getLayersArray = () => map.getLayers().getArray() ?? [];
 
@@ -99,7 +99,7 @@ export const removeAllFeatures = () => {
   });
 };
 
-export const useMatrikkelFeatures = () => {
+export const getMatrikkelFeatures = async () => {
   const extent = map.getView().calculateExtent(map.getSize());
   const request: Node = new WFS({ version: "2.0.0" }).writeGetFeature({
     srsName: "EPSG:25833",
@@ -112,10 +112,19 @@ export const useMatrikkelFeatures = () => {
     geometryName: "KURVE",
   });
 
-  return useSWRMutation("/geoservergeo/wfs/matrikkel", (api) =>
-    fetch(api, {
-      method: "POST",
-      body: new XMLSerializer().serializeToString(request),
-    }),
-  );
+  const response = await fetch("/geoservergeo/wfs/matrikkel", {
+    method: "POST",
+    body: new XMLSerializer().serializeToString(request),
+  });
+  if (!response.ok) throw new Error("Feil i response: " + response);
+
+  const json = await response.text();
+  const fetchedFeatures = getFeaturesFromGeoJson(json);
+  if (fetchedFeatures) {
+    const source = getLayerById("matrikkel").getSource();
+    if (source) {
+      source.clear(true);
+    }
+    addFeaturesToSource("matrikkel", fetchedFeatures);
+  }
 };
