@@ -10,7 +10,7 @@ const defaultProps: React.ComponentProps<typeof ApiGrense> = {
     },
     navn: [{ navn: "Grense", spraak: "nor", version: 1 }],
     href: "href",
-    kommunenummer: {
+    fylkesnummer: {
       id: "id",
       kodeverdi: "1234",
     },
@@ -23,6 +23,6 @@ describe("ApiGrense", () => {
   it("should render name in Norwegian", () => {
     render(<ApiGrense {...defaultProps} />);
 
-    expect(screen.getByText("Grense")).toBeInTheDocument();
+    expect(screen.getByText("1234 Grense")).toBeInTheDocument();
   });
 });
