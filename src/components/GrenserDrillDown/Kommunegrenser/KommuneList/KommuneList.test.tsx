@@ -10,6 +10,10 @@ const defaultProps: React.ComponentProps<typeof KommuneList> = {
     },
     navn: [{ navn: "Fylke", spraak: "nor", version: 1 }],
     href: "href1",
+    fylkesnummer: {
+      id: "id",
+      kodeverdi: "1234",
+    },
     antallFramtidigeVersjoner: 0,
   },
 };

@@ -10,6 +10,10 @@ const defaultProps: React.ComponentProps<typeof ApiGrense> = {
     },
     navn: [{ navn: "Grense", spraak: "nor", version: 1 }],
     href: "href",
+    kommunenummer: {
+      id: "id",
+      kodeverdi: "1234",
+    },
     antallFramtidigeVersjoner: 0,
   },
   type: "fylke",
