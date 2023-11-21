@@ -107,7 +107,6 @@ export const getMatrikkelFeatures = async () => {
     featurePrefix: "matrikkel",
     featureTypes: ["TEIGGRENSEWFS"],
     outputFormat: "application/json",
-    // count: 500,
     bbox: extent,
     geometryName: "KURVE",
   });
@@ -118,7 +117,7 @@ export const getMatrikkelFeatures = async () => {
   });
   if (!response.ok) throw new Error("Feil i response: " + response);
 
-  const json = await response.text();
+  const json = await response.json();
   const fetchedFeatures = getFeaturesFromGeoJson(json);
   if (fetchedFeatures) {
     const source = getLayerById("matrikkel").getSource();
@@ -126,5 +125,6 @@ export const getMatrikkelFeatures = async () => {
       source.clear(true);
     }
     addFeaturesToSource("matrikkel", fetchedFeatures);
+    return fetchedFeatures;
   }
 };

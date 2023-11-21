@@ -37,7 +37,21 @@ const ToolbarPopups = () => {
       toast({ status: "error", title: "Du er zoomet for langt ut" });
     } else {
       setMatrikkelIsLoading(true);
-      await getMatrikkelFeatures();
+      const matrikkelFeatures = await getMatrikkelFeatures();
+      if (matrikkelFeatures) {
+        if (matrikkelFeatures.length === 10000) {
+          toast({
+            status: "warning",
+            title:
+              "Prøvde å hente flere enn 10000 grenser, zoom lengre inn og prøv igjen",
+          });
+        } else {
+          toast({
+            status: "success",
+            title: `Hentet ${matrikkelFeatures.length} grenser fra matrikkelen`,
+          });
+        }
+      }
       setMatrikkelIsLoading(false);
     }
   };
