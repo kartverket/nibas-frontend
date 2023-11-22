@@ -21,7 +21,6 @@ const ToolbarPopups = () => {
   } = useFeatureStyle();
   const { addHistoryEntry } = useHistory();
 
-  // TODO: bør kanskje tømme selection etter arkivering
   // TODO: bør gi en toast når man arkiverer og alt går bra
   const archiveFeatures = (features: Feature<LineString>[]) => {
     setArchivedFeatures(features.map((feature) => getFeatureId(feature)));
@@ -30,6 +29,7 @@ const ToolbarPopups = () => {
     features.forEach((feature) =>
       addArchivingEntryFromFeature(feature, addHistoryEntry),
     );
+    clearSelection();
   };
 
   const handleSplit = () => {

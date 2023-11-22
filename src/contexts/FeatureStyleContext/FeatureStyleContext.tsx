@@ -28,6 +28,7 @@ export const FeatureStyleProvider = ({
     setDirtyFeatures,
     setEditFeatures,
     saveDirtyFeatureIds,
+    savedDirtyFeatureIds,
     clearSavedDirtyFeatureIds,
     setAndSaveUtkastFeatures,
     setAndSaveSammenslaaingsFeatures,
@@ -44,11 +45,12 @@ export const FeatureStyleProvider = ({
     );
 
     for (const feature of deselectedFeatures) {
-      if (dirtyFeatureIds.some((id) => id === feature.getId())) {
-        // TODO: denne ser ikke ut til å fungere som den skal når jeg selecter og deselecter en (lagret) endret grense, den blir bare standard sort
+      if (
+        dirtyFeatureIds.some((id) => id === feature.getId()) ||
+        savedDirtyFeatureIds.some((id) => id === feature.getId())
+      ) {
         feature.setStyle(grenseStyles.dirty);
       } else if (archivedFeatureIds.some((id) => id === feature.getId())) {
-        // TODO: denne ser ikke ut til å fungere som den skal når jeg selecter og deselecter en (lagret) arkivert grense, den blir bare standard sort
         feature.setStyle(getArchiveLayerStyle(feature));
       } else {
         feature.setStyle();
@@ -56,7 +58,12 @@ export const FeatureStyleProvider = ({
     }
 
     previousSelectedFeatures.current = selectedFeatures;
-  }, [dirtyFeatureIds, selectedFeatures, archivedFeatureIds]);
+  }, [
+    dirtyFeatureIds,
+    selectedFeatures,
+    archivedFeatureIds,
+    savedDirtyFeatureIds,
+  ]);
 
   useEffect(() => {
     if (history.entries.length === 0) {
@@ -68,6 +75,7 @@ export const FeatureStyleProvider = ({
         history.hasPreviouslySavedHistory &&
         archivedFeatureIds.length !== 0
       ) {
+        // TODO: angring fungerer ikke med arkiveringsstilen, usikker på om det er her eller annet sted
         saveArchivedFeatureIds();
       }
       // Hvis det ikke er for å lagre, så er det for å forhindre uendelig løkke

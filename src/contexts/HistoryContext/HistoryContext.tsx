@@ -49,7 +49,7 @@ const onUndo = (entry: HistoryEntry) => {
       return document.dispatchEvent(
         new CustomEvent("grensearkiveringUndo", {
           detail: { entry },
-        })
+        }),
       );
     }
   }
@@ -99,7 +99,7 @@ const onRedo = (entry: HistoryEntry) => {
       return document.dispatchEvent(
         new CustomEvent("grensearkiveringRedo", {
           detail: { entry },
-        })
+        }),
       );
     }
   }
