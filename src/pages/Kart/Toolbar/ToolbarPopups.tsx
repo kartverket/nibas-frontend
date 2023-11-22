@@ -1,7 +1,5 @@
 import { useToolbar } from "contexts/ToolbarContext";
 import ToolbarPopup from "./ToolbarPopup";
-import { Feature } from "ol";
-import { LineString } from "ol/geom";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import useSplit from "../interactions/useSplit";
 import { getFeatureId } from "utils/map/source";
@@ -11,25 +9,25 @@ import { useHistory } from "contexts/HistoryContext";
 
 const ToolbarPopups = () => {
   const toast = useToast();
-  const { activePointMode, canArchive } = useToolbar();
+  const { activePointMode } = useToolbar();
   const { split } = useSplit();
   const {
     selectedFeatures,
     selectedPoint,
+    archivedFeatureIds,
     setArchivedFeatures,
     clearSelection,
   } = useFeatureStyle();
   const { addHistoryEntry } = useHistory();
 
-  // TODO: bør gi en toast når man arkiverer og alt går bra
-  const archiveFeatures = (features: Feature<LineString>[]) => {
-    setArchivedFeatures(features.map((feature) => getFeatureId(feature)));
-
-    // TODO: dette tyder på at man kan ha flere ting valgt samtidig, som jeg ikke tror dette skal støtte
-    features.forEach((feature) =>
-      addArchivingEntryFromFeature(feature, addHistoryEntry),
-    );
-    clearSelection();
+  const archiveFeatures = () => {
+    const selectedFeature = selectedFeatures[0];
+    if (selectedFeature) {
+      setArchivedFeatures([getFeatureId(selectedFeature)]);
+      addArchivingEntryFromFeature(selectedFeature, addHistoryEntry),
+        clearSelection();
+      toast({ status: "success", title: "Grensen ble arkivert" });
+    }
   };
 
   const handleSplit = () => {
@@ -37,6 +35,11 @@ const ToolbarPopups = () => {
     clearSelection();
     toast({ status: "success", title: "Grensen ble splittet" });
   };
+
+  // TODO: denne lar meg arkivere grenser som allerede er arkiverte dersom jeg har lagret arkiveringen
+  const canArchive =
+    selectedFeatures.length === 0 ||
+    archivedFeatureIds.some((id) => id === selectedFeatures[0].getId());
 
   return (
     <>
@@ -67,7 +70,7 @@ const ToolbarPopups = () => {
         <ToolbarPopup
           text="Velg grensen du ønsker å arkivere"
           buttonText="Arkiver"
-          onClick={() => archiveFeatures(selectedFeatures)}
+          onClick={archiveFeatures}
           isDisabled={canArchive}
         />
       )}

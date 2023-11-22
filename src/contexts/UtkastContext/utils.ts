@@ -207,7 +207,7 @@ export const historyToUtkastOperations = (
       (entry) =>
         entry.type === "grense" ||
         entry.type === "metadata" ||
-        entry.type === "grensearkivering"
+        entry.type === "grensearkivering",
     ) as (GrenseEntry | MetadataEntry)[]
   ).reduce(reduceGrenseOperations, {} as Record<string, GeoJSONFeature>);
 
