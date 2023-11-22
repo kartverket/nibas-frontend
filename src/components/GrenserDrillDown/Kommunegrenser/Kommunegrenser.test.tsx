@@ -11,12 +11,12 @@ describe("Kommunegrenser", () => {
     await user.click(kommuneGrenserAccordionButton);
 
     const agderAccordionButton = await screen.findByRole("button", {
-      name: "Åpne Agder",
+      name: "Åpne 42 Agder",
     });
     await user.click(agderAccordionButton);
 
-    expect(await screen.findByText("Malvik")).toBeInTheDocument();
-    expect(await screen.findByText("Giske")).toBeInTheDocument();
+    expect(await screen.findByText("5031 Malvik")).toBeInTheDocument();
+    expect(await screen.findByText("1532 Giske")).toBeInTheDocument();
   });
 
   it("should toggle eye on eye click", async () => {
@@ -28,11 +28,11 @@ describe("Kommunegrenser", () => {
       }),
     );
 
-    await user.click(screen.getByRole("button", { name: "Vis Agder" }));
-    await user.click(screen.getByRole("button", { name: "Skjul Agder" }));
+    await user.click(screen.getByRole("button", { name: "Vis 42 Agder" }));
+    await user.click(screen.getByRole("button", { name: "Skjul 42 Agder" }));
 
     expect(
-      screen.getByRole("button", { name: "Vis Agder" }),
+      screen.getByRole("button", { name: "Vis 42 Agder" }),
     ).toBeInTheDocument();
   });
 });

@@ -10,8 +10,10 @@ describe("Fylkesgrenser", () => {
     });
     await user.click(fylkesGrenserAccordionButton);
 
-    expect(await screen.findByText("Vestfold og Telemark")).toBeInTheDocument();
-    expect(await screen.findByText("Agder")).toBeInTheDocument();
+    expect(
+      await screen.findByText("38 Vestfold og Telemark"),
+    ).toBeInTheDocument();
+    expect(await screen.findByText("42 Agder")).toBeInTheDocument();
   });
 
   it("should toggle eye on eye click", async () => {

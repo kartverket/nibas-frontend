@@ -20,7 +20,10 @@ const Grunnkretser = () => {
             {fylker.map((fylke) => (
               <ListItemAccordion
                 key={getIdFromEntity(fylke)}
-                title={getNavnInSpraak(fylke.navn, "nor")}
+                title={`${fylke.fylkesnummer.kodeverdi} ${getNavnInSpraak(
+                  fylke.navn,
+                  "nor",
+                )}`}
               >
                 <KommuneList fylke={fylke} />
               </ListItemAccordion>

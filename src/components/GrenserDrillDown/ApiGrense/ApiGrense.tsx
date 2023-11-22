@@ -3,7 +3,7 @@ import ToggleableGrense from "../ToggleableGrense";
 import useApiGrense from "./useApiGrense";
 import { EditingType } from "contexts/EditGrenserContext";
 import { useEditGrenseValue } from "contexts/EditGrenserContext/EditGrenserContext";
-import { GrenseRef } from "types/api";
+import { FylkeRef, GrenseRef, KommuneRef } from "types/api";
 import { getNavnInSpraak } from "utils/language/language";
 import { getIdFromEntity } from "utils/api";
 
@@ -43,6 +43,10 @@ const ApiGrense = <T extends GrenseRef>({
     fetchFeatures();
   }, [visible, features, fetchFeatures]);
 
+  const nummer =
+    type === "fylke"
+      ? (grense as FylkeRef).fylkesnummer.kodeverdi
+      : (grense as KommuneRef).kommunenummer.kodeverdi;
   const navn = getNavnInSpraak(grense.navn, "nor");
 
   return (
@@ -50,7 +54,7 @@ const ApiGrense = <T extends GrenseRef>({
       key={navn}
       grense={grense}
       type={type}
-      title={navn}
+      title={`${nummer} ${navn}`}
       features={features}
     />
   );
