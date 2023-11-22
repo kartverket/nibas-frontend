@@ -123,6 +123,10 @@ export const mockFylker = [
       },
     ],
     href: "http://localhost:8080/v1/fylker/1",
+    fylkesnummer: {
+      id: "id1",
+      kodeverdi: "38",
+    },
     antallFramtidigeVersjoner: 0,
   },
   {
@@ -139,6 +143,10 @@ export const mockFylker = [
       },
     ],
     href: "http://localhost:8080/v1/fylker/2",
+    fylkesnummer: {
+      id: "id2",
+      kodeverdi: "42",
+    },
     antallFramtidigeVersjoner: 0,
   },
 ] as FylkeRef[];
@@ -267,7 +275,7 @@ export const mockKommuner = [
     navn: [{ navn: "Malvik", spraak: "nor" }],
     kommunenummer: {
       id: "12345",
-      kodeverdi: "4321",
+      kodeverdi: "5031",
     },
     href: "http://localhost:8080/v1/kommuner/1",
     antallFramtidigeVersjoner: 0,
@@ -287,7 +295,7 @@ export const mockKommuner = [
     ],
     kommunenummer: {
       id: "12345",
-      kodeverdi: "4321",
+      kodeverdi: "1532",
     },
     href: "http://localhost:8080/v1/kommuner/2",
     antallFramtidigeVersjoner: 0,

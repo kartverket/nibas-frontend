@@ -10,6 +10,9 @@ import { kartlagLayers, grenserLayers } from "hooks/layers/constants";
 import { KartlagId, GrenseId, LayerId } from "hooks/layers/types";
 import XYZ from "ol/source/XYZ";
 import VectorSource from "ol/source/Vector";
+import { WFS } from "ol/format";
+import { getFeaturesFromGeoJson } from "./geoJson";
+import { addFeaturesToSource } from "./source";
 
 const getLayersArray = () => map.getLayers().getArray() ?? [];
 
@@ -94,4 +97,34 @@ export const removeAllFeatures = () => {
       source.clear(true);
     }
   });
+};
+
+export const getMatrikkelFeatures = async () => {
+  const extent = map.getView().calculateExtent(map.getSize());
+  const request: Node = new WFS({ version: "2.0.0" }).writeGetFeature({
+    srsName: "EPSG:25833",
+    featureNS: "http://www.statkart.no/matrikkel",
+    featurePrefix: "matrikkel",
+    featureTypes: ["TEIGGRENSEWFS"],
+    outputFormat: "application/json",
+    bbox: extent,
+    geometryName: "KURVE",
+  });
+
+  const response = await fetch("/geoservergeo/wfs/matrikkel", {
+    method: "POST",
+    body: new XMLSerializer().serializeToString(request),
+  });
+  if (!response.ok) throw new Error("Feil i response: " + response);
+
+  const json = await response.json();
+  const fetchedFeatures = getFeaturesFromGeoJson(json);
+  if (fetchedFeatures) {
+    const source = getLayerById("matrikkel").getSource();
+    if (source) {
+      source.clear(true);
+    }
+    addFeaturesToSource("matrikkel", fetchedFeatures);
+    return fetchedFeatures;
+  }
 };

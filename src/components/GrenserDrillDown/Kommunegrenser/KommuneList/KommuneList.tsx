@@ -1,7 +1,7 @@
 import { styled } from "styled-components";
 import ApiGrense from "components/GrenserDrillDown/ApiGrense";
 import useKommuner from "hooks/inndelinger/useKommuner";
-import { GrenseRef } from "types/api";
+import { FylkeRef } from "types/api";
 import useKommunegrenser from "hooks/inndelinger/useKommunegrenser";
 import { useEffect, useState } from "react";
 import { getNavnInSpraak } from "utils/language/language";
@@ -10,7 +10,7 @@ import EditableGrenseAccordion from "components/GrenserDrillDown/EditableGrenseA
 import { getIdFromEntity } from "utils/api";
 
 type Props = {
-  fylke: GrenseRef;
+  fylke: FylkeRef;
 };
 
 const KommuneList = ({ fylke }: Props) => {
@@ -39,7 +39,10 @@ const KommuneList = ({ fylke }: Props) => {
       grenseId={fylkeId}
       grenseType="kommune"
       isFetching={isFetching}
-      title={getNavnInSpraak(fylke.navn, "nor")}
+      title={`${fylke.fylkesnummer.kodeverdi} ${getNavnInSpraak(
+        fylke.navn,
+        "nor",
+      )}`}
     >
       <Wrapper>
         {kommuner.map((kommune) => (

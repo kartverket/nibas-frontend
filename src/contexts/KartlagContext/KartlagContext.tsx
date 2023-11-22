@@ -5,7 +5,6 @@ import useVisibleLayers, {
   VisibleLayer,
 } from "contexts/KartlagContext/useVisibleLayers";
 import getSubLayersFromWMSSource, { MappedLayer } from "utils/getLayersFromWMS";
-import { mapVectorLayer } from "utils/getMatrikkelWfsFeatures";
 import { isVectorLayer } from "utils/map/layers";
 
 export type KartlagContextValue = {
@@ -43,15 +42,23 @@ export const KartlagProvider = ({
     let isMounted = true;
 
     const updateMappedLayers = async () => {
-      const mappedLayerPromises = Object.values(kartlagLayers).map((layer) => {
-        if (isVectorLayer(layer)) {
-          return mapVectorLayer();
-        }
-        const source = layer.getSource();
-        if (source) {
-          return getSubLayersFromWMSSource(source);
-        }
-      });
+      const mappedLayerPromises = Object.entries(kartlagLayers).map(
+        ([id, layer]) => {
+          if (isVectorLayer(layer)) {
+            return {
+              layers: [],
+              queryable: true,
+              sourceId: id,
+              title: id,
+              id: id,
+            };
+          }
+          const source = layer.getSource();
+          if (source) {
+            return getSubLayersFromWMSSource(source);
+          }
+        },
+      );
 
       const layers = await Promise.all(mappedLayerPromises);
 

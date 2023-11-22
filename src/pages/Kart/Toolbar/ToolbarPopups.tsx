@@ -6,11 +6,17 @@ import { getFeatureId } from "utils/map/source";
 import { useToast } from "@kvib/react";
 import { addArchivingEntryFromFeature } from "../OverlayPanels/MetadataPanel/utils";
 import { useHistory } from "contexts/HistoryContext";
+import { getMatrikkelFeatures } from "utils/map/layers";
+import { map } from "../constants";
+import { useState } from "react";
 
 const ToolbarPopups = () => {
+  const [matrikkelIsLoading, setMatrikkelIsLoading] = useState(false);
+
   const toast = useToast();
-  const { activePointMode } = useToolbar();
   const { split } = useSplit();
+  const { addHistoryEntry } = useHistory();
+  const { activeEditModes, activePointMode } = useToolbar();
   const {
     selectedFeatures,
     selectedPoint,
@@ -18,7 +24,6 @@ const ToolbarPopups = () => {
     setArchivedFeatures,
     clearSelection,
   } = useFeatureStyle();
-  const { addHistoryEntry } = useHistory();
 
   const archiveFeatures = () => {
     const selectedFeature = selectedFeatures[0];
@@ -41,8 +46,42 @@ const ToolbarPopups = () => {
     selectedFeatures.length === 0 ||
     archivedFeatureIds.some((id) => id === selectedFeatures[0].getId());
 
+  const handleMatrikkel = async () => {
+    const zoom = map.getView().getZoom();
+    if (!zoom || zoom < 15) {
+      toast({ status: "error", title: "Du er zoomet for langt ut" });
+    } else {
+      setMatrikkelIsLoading(true);
+      const matrikkelFeatures = await getMatrikkelFeatures();
+      if (matrikkelFeatures) {
+        if (matrikkelFeatures.length === 10000) {
+          toast({
+            status: "warning",
+            title:
+              "Prøvde å hente flere enn 10000 grenser, zoom lengre inn og prøv igjen",
+          });
+        } else {
+          toast({
+            status: "success",
+            title: `Hentet ${matrikkelFeatures.length} grenser fra matrikkelen`,
+          });
+        }
+      }
+      setMatrikkelIsLoading(false);
+    }
+  };
+
   return (
     <>
+      {activeEditModes.includes("matrikkel") && (
+        <ToolbarPopup
+          text="Bruk knappen til å hente grenser innenfor skjermen"
+          buttonText="Hent grenser"
+          onClick={handleMatrikkel}
+          isDisabled={matrikkelIsLoading}
+          isLoading={matrikkelIsLoading}
+        />
+      )}
       {activePointMode === "draw" && (
         <ToolbarPopup text="Dobbeltklikk for å avslutte tegningen" />
       )}

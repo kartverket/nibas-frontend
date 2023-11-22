@@ -36,7 +36,6 @@ export const kartlagLayers: Record<
     "norgesMaritimeGrenser",
   ),
   sjokartElektroniske: createTileLayerFromKartlagSource("sjokartElektroniske"),
-  matrikkelenWfs: new VectorLayer({ source: new VectorSource() }),
 };
 
 export const editSource = new VectorSource();
@@ -50,6 +49,9 @@ const grenseStyle =
 
 export const grenserLayers = {
   // ingen source betyr at source settes async
+  matrikkel: new VectorLayer({
+    source: new VectorSource(),
+  }),
   fylke: new VectorLayer({
     source: new VectorSource(),
     style: grenseStyle("fylke"),

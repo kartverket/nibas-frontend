@@ -15,10 +15,10 @@ export type KartlagId =
   | "norgeIBilder"
   | "cachetjenester"
   | "norgesMaritimeGrenser"
-  | "sjokartElektroniske"
-  | "matrikkelenWfs";
+  | "sjokartElektroniske";
 
 export type GrenseId =
+  | "matrikkel"
   | "fylke"
   | "kommune"
   | "nasjon"

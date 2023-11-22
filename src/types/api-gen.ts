@@ -986,11 +986,19 @@ export interface components {
       navn: components["schemas"]["AdministrativEnhetNavn"][];
       /** @description URL til full representasjon av fylket */
       href: string;
+      fylkesnummer: components["schemas"]["Fylkesnummer"];
       /**
        * Format: int32
        * @description Antall publiserte framtidige gyldige versjoner.
        */
       antallFramtidigeVersjoner: number;
+    };
+    /** @description Representasjon av et fylkesnummer */
+    Fylkesnummer: {
+      /** @description Unik UUID for fylkesnummeret */
+      id: string;
+      /** @description Det faktiske fylkesnummeret */
+      kodeverdi: string;
     };
     /** @description Representasjon av et fylke */
     FylkeResponse: {
@@ -1011,13 +1019,6 @@ export interface components {
        * @description Teknisk versjon for å støtte samhandling og redigering
        */
       version: number;
-    };
-    /** @description Representasjon av et fylkesnummer */
-    Fylkesnummer: {
-      /** @description Unik UUID for fylkesnummeret */
-      id: string;
-      /** @description Det faktiske fylkesnummeret */
-      kodeverdi: string;
     };
     /** @description Representasjon av en krets. Response-type kun for Matrikkelen. Kan være grunnkrets, stemmekrets etc. */
     KretsResponse: {
