@@ -6,14 +6,26 @@ type Props = {
   onClick?: () => void;
   buttonText?: string;
   isDisabled?: boolean;
+  isLoading?: boolean;
 };
 
-const ToolbarPopup = ({ text, buttonText, onClick, isDisabled }: Props) => {
+const ToolbarPopup = ({
+  text,
+  buttonText,
+  onClick,
+  isDisabled,
+  isLoading,
+}: Props) => {
   return (
     <ToolbarPopupBody>
       <span>{text}</span>
       {buttonText && (
-        <Button size="sm" isDisabled={isDisabled} onClick={onClick}>
+        <Button
+          size="sm"
+          isDisabled={isDisabled}
+          onClick={onClick}
+          isLoading={isLoading}
+        >
           {buttonText}
         </Button>
       )}
