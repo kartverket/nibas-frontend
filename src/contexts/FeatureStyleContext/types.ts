@@ -26,4 +26,5 @@ export type FeatureStyleContextValue = {
 
   archivedFeatureIds: string[];
   setArchivedFeatures: (features: string[]) => void;
+  setAndSaveUtkastArchivedFeatures: (features: string[]) => void;
 };

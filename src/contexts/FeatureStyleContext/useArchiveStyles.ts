@@ -5,7 +5,7 @@ import { getArchiveLayerStyle } from "utils/map/layerStyles";
 
 const useArchiveStyles = () => {
   const [archivedFeatureIds, setArchivedFeatureIds] = useState<string[]>([]);
-  const [savedArchivedFeaturesIds, setSavedArchivedFeaturesIds] = useState<
+  const [savedArchivedFeatureIds, setSavedArchivedFeatureIds] = useState<
     string[]
   >([]);
 
@@ -28,17 +28,29 @@ const useArchiveStyles = () => {
   };
 
   const saveArchivedFeatureIds = () => {
-    setSavedArchivedFeaturesIds([
-      ...savedArchivedFeaturesIds,
+    setSavedArchivedFeatureIds([
+      ...savedArchivedFeatureIds,
       ...archivedFeatureIds,
     ]);
     setArchivedFeatureIds([]);
+  };
+
+  const setAndSaveUtkastArchivedFeatures = (features: string[]) => {
+    for (const featureId of features) {
+      editSource
+        .getFeatureById(featureId)
+        ?.setStyle(
+          getArchiveLayerStyle(editSource.getFeatureById(featureId) as Feature),
+        );
+    }
+    setSavedArchivedFeatureIds([...savedArchivedFeatureIds, ...features]);
   };
 
   return {
     archivedFeatureIds,
     setArchivedFeatures,
     saveArchivedFeatureIds,
+    setAndSaveUtkastArchivedFeatures,
   };
 };
 

@@ -126,8 +126,11 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   const { visible } = grenseValue;
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { utkast } = useUtkast();
-  const { setAndSaveUtkastFeatures, setAndSaveSammenslaaingsFeatures } =
-    useFeatureStyle();
+  const {
+    setAndSaveUtkastFeatures,
+    setAndSaveSammenslaaingsFeatures,
+    setAndSaveUtkastArchivedFeatures,
+  } = useFeatureStyle();
 
   const context = useContext(EditGrenserContext);
 
@@ -167,14 +170,22 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     );
   };
 
+  // Endrede features skal markeres med riktig stil når man åpner utkastet
   const applyDirtyStylesToUtkastFeatures = (features: Feature<Geometry>[]) => {
-    const featuresSlice = utkast?.operasjoner.grenseendringer?.endredeFeatures;
+    const endredeFeatures =
+      utkast?.operasjoner.grenseendringer?.endredeFeatures;
     const dirtyFeatureIds: string[] = [];
-    if (features && featuresSlice) {
+    const archivedFeatureIds: string[] = [];
+    if (features && endredeFeatures) {
       for (const feature of features) {
         const id = feature.getId();
-        if (id && featuresSlice[id]) {
-          dirtyFeatureIds.push(id.toString());
+        if (id && endredeFeatures[id]) {
+          // Avgjør hvilken type endringsfarge featuren skal ha
+          if (endredeFeatures[id].properties.shouldArchive) {
+            archivedFeatureIds.push(id.toString());
+          } else {
+            dirtyFeatureIds.push(id.toString());
+          }
         }
       }
     }
@@ -212,6 +223,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     });
 
     setAndSaveUtkastFeatures(dirtyFeatureIds);
+    setAndSaveUtkastArchivedFeatures(archivedFeatureIds);
   };
 
   useAddInndelingerKontekst(allFeatures, type, kommuneId);

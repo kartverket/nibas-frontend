@@ -33,8 +33,12 @@ export const FeatureStyleProvider = ({
     setAndSaveUtkastFeatures,
     setAndSaveSammenslaaingsFeatures,
   } = useDirtyStyles();
-  const { archivedFeatureIds, setArchivedFeatures, saveArchivedFeatureIds } =
-    useArchiveStyles();
+  const {
+    archivedFeatureIds,
+    setArchivedFeatures,
+    saveArchivedFeatureIds,
+    setAndSaveUtkastArchivedFeatures,
+  } = useArchiveStyles();
   const { history } = useHistory();
   const previousSelectedFeatures = useRef(selectedFeatures);
 
@@ -130,6 +134,7 @@ export const FeatureStyleProvider = ({
     clearDirtyStyles: clearSavedDirtyFeatureIds,
     archivedFeatureIds,
     setArchivedFeatures,
+    setAndSaveUtkastArchivedFeatures,
   };
 
   return (
