@@ -4,11 +4,12 @@ import EditAndSaveButton from "../Flatedata/EditAndSaveButton";
 import { useEffect, useState } from "react";
 import { Geometry } from "ol/geom";
 import { Feature } from "ol";
+import { Container } from "./MetadataGenerelt";
 
 interface Props {
   feature: Feature<Geometry>;
   name: string;
-  value: string;
+  valueLabel: string;
   children: React.ReactNode;
   onMetadataSubmit: () => void;
   isDisabled?: boolean;
@@ -19,7 +20,7 @@ interface Props {
 const MetadataRow = ({
   feature,
   name,
-  value,
+  valueLabel,
   children,
   onMetadataSubmit,
   isDisabled,
@@ -33,11 +34,11 @@ const MetadataRow = ({
   }, [feature]);
 
   return (
-    <>
+    <Container>
       <EditContent>
         <Text>{name}</Text>
 
-        {!isEditing && <Text as="b">{value}</Text>}
+        {!isEditing && <Text as="b">{valueLabel}</Text>}
 
         <EditButton
           isDisabled={isDisabled}
@@ -59,7 +60,7 @@ const MetadataRow = ({
         <Field $isEditing={isEditing}>{children}</Field>
       </EditContent>
       <Divider />
-    </>
+    </Container>
   );
 };
 

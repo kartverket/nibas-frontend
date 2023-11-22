@@ -6,7 +6,7 @@ import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
 import { GrenseRef } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { Outline } from "style/mixins";
-import { IconButton } from "@kvib/react";
+import { IconButton, Spinner } from "@kvib/react";
 
 type Props<T extends GrenseRef> = {
   grense: T;
@@ -21,7 +21,7 @@ const ToggleableGrense = <T extends GrenseRef>({
   type,
   features,
 }: Props<T>) => {
-  const { value, toggleVisible } = useEditGrense(
+  const { value, toggleVisible, isLoading } = useEditGrense(
     type,
     getIdFromEntity(grense),
     features,
@@ -35,9 +35,11 @@ const ToggleableGrense = <T extends GrenseRef>({
         icon={value.visible ? "visibility" : "visibility_off"}
       />
       <Title>{title}</Title>
+      {isLoading && <Spinner size="lg" color="var(--kvib-colors-blue-500)" />}
     </Wrapper>
   );
 };
+
 const Title = styled.div`
   flex: 1;
   margin-left: 8px;

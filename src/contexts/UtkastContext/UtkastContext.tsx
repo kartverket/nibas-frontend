@@ -38,6 +38,7 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContex
 import { useToast } from "@kvib/react";
 import { routes } from "utils/routes";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
+import { useToolbar } from "contexts/ToolbarContext";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
@@ -58,6 +59,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const { closeOverlayPanel } = useOverlayPanel();
   const { closeSidebarPanel } = useSidebarPanel();
   const { setError } = useErrorHandling();
+  const { activePointMode, togglePointMode } = useToolbar();
   const toast = useToast();
 
   const utkastPathMatch = useMatch(`${routes.utkast}/${routes.utkastId}`);
@@ -96,12 +98,15 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     resetAndClearAllLayers();
     closeOverlayPanel();
     closeSidebarPanel();
+    if (activePointMode) togglePointMode(activePointMode);
   }, [
+    activePointMode,
     clearDirtyStyles,
     clearHistory,
     closeOverlayPanel,
     closeSidebarPanel,
     resetAndClearAllLayers,
+    togglePointMode,
   ]);
 
   useEffect(() => {
@@ -184,8 +189,30 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     toast({ status: "success", title: "Utkastet er lagret" });
   };
 
+  /**
+   * Går gjennom utkastets knotete operasjonstruktur for å sjekke om utkastet har lagrede endringer
+   * @returns Hvorvidt utkastet har lagrede endringer eller ei
+   */
+  const utkastHarEndringer = () => {
+    if (!utkast?.operasjoner) return false;
+    const endredeFeatures = utkast.operasjoner.grenseendringer.endredeFeatures;
+    if (Object.keys(endredeFeatures).length > 0) return true;
+
+    // Går gjennom metadataendringsobjektene og sjekker om de er tomme
+    for (const endringstype of Object.values(
+      utkast.operasjoner.metadataendringer,
+    )) {
+      if (Object.keys(endringstype).length > 0) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
   const value = {
     utkast,
+    utkastHarEndringer,
     getUpdateUtkastRequestFromHistory,
     updateUtkastWithHistory,
     updateUtkast,

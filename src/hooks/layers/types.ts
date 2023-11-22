@@ -1,7 +1,23 @@
 import { EditingType } from "contexts/EditGrenserContext";
-import { kartlagLayers } from "./constants";
 
-export type KartlagId = keyof typeof kartlagLayers;
+export type KartlagId =
+  | "europaKart"
+  | "topoWMTS"
+  | "administrativeGrenser"
+  | "administrativeGrenserHistorisk"
+  | "grunnkretserWMS"
+  | "stedsnavn"
+  | "stedsnavnSSR"
+  | "kartbladinndelinger"
+  | "sjokartDybdedata"
+  | "n5Raster2"
+  | "historiskeKart"
+  | "norgeIBilder"
+  | "cachetjenester"
+  | "norgesMaritimeGrenser"
+  | "sjokartElektroniske"
+  | "matrikkelenWfs";
+
 export type GrenseId =
   | "fylke"
   | "kommune"

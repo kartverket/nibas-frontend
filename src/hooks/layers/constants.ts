@@ -4,12 +4,19 @@ import VectorSource from "ol/source/Vector";
 import { kartlagSources } from "hooks/sources/syncSources";
 import { getPointOverlayStyle, getLayerStyle } from "utils/map/layerStyles";
 import { StyleFunction } from "ol/style/Style";
-import { GrenseId } from "./types";
+import { GrenseId, KartlagId } from "./types";
+import WMTS from "ol/source/WMTS";
+import TileWMS from "ol/source/TileWMS";
 
 const createTileLayerFromKartlagSource = (id: keyof typeof kartlagSources) =>
   new TileLayer({ source: kartlagSources[id] });
 
-export const kartlagLayers = {
+export const kartlagLayers: Record<
+  KartlagId,
+  TileLayer<TileWMS | WMTS> | VectorLayer<VectorSource>
+> = {
+  europaKart: createTileLayerFromKartlagSource("europaKart"),
+  topoWMTS: createTileLayerFromKartlagSource("topoWMTS"),
   administrativeGrenser: createTileLayerFromKartlagSource(
     "administrativeGrenser",
   ),

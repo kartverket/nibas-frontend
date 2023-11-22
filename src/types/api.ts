@@ -71,12 +71,6 @@ export type UtkastMetadataendringer =
   components["schemas"]["Metadataendringer"];
 export type UtkastGrenseendringer = components["schemas"]["Grenseendringer"];
 export type Point = components["schemas"]["Point"];
-export type ConflictResponse = components["schemas"]["ConflictResponse"];
-export type FramtidigVersjonConflict =
-  components["schemas"]["FramtidigVersjonConflict"];
-export type ConflictResponseWrapper =
-  components["schemas"]["ConflictResponseWrapper"];
-export type ConflictResolved = components["schemas"]["ConflictResolved"];
 export type ApiErrorResponse = components["schemas"]["ApiErrorResponse"];
 
 // custom typer basert på api doc
@@ -97,11 +91,3 @@ export type Metadata =
 export type KretsRef = GrunnkretsRef | StemmekretsRef;
 export type GrenseRef = FylkeRef | KommuneRef | KretsRef;
 export type UtkastOperasjoner = UtkastResponse["operasjoner"];
-export type GrunnkretsConflictResponse = ConflictResponse & {
-  type: "Grunnkrets";
-};
-export type TypedConflictResponse<T> = T extends GrunnkretsResponse
-  ? ConflictResponse & {
-      type: "Grunnkrets";
-    }
-  : ConflictResponse;

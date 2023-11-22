@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { EditGrenserContext, useEditGrenser } from "./EditGrenserContext";
@@ -42,6 +42,7 @@ export const useEditGrense = (
   grenseId: string,
   features: Feature<Geometry>[] | null,
 ) => {
+  const [isLoading, setIsLoading] = useState(false);
   const context = useContext(EditGrenserContext);
 
   const { resetAndClearAllLayers } = useEditGrenser(grenseType);
@@ -49,9 +50,11 @@ export const useEditGrense = (
   const { addFeaturesToLayer } = useAsyncFeatures(
     features,
     getZoomMode(!!value.editing, context?.getCurrentlyEditingType() != null),
+    () => setIsLoading(false),
   );
 
   const toggleVisible = () => {
+    setIsLoading(true);
     const newObjectValue = {
       ...value,
       visible: !value.visible,
@@ -69,6 +72,7 @@ export const useEditGrense = (
       } else {
         removeFeaturesFromSourceByIds(layerId, features.map(getFeatureId));
       }
+      setIsLoading(false);
     } else if (newObjectValue?.editing) {
       // hvis editing skal features legges tilbake til edit-laget
       addFeaturesToLayer("edit");
@@ -112,5 +116,6 @@ export const useEditGrense = (
     value,
     toggleEditing,
     toggleVisible,
+    isLoading,
   };
 };

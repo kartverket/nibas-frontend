@@ -6,14 +6,15 @@ import { FeatureProperties, Metadata } from "types/api";
 import React, { useEffect } from "react";
 import useIsMetadataDisabled from "../hooks/useIsMetadataDisabled";
 import { Inputs } from "./MetadataGenerelt";
+import { UseFormRegisterReturn } from "react-hook-form";
 
 type Props = {
   feature: Feature<Geometry>;
   fieldKey: keyof Inputs;
   fieldLabel: string;
   valueLabelFormatter?: (fieldLabel: string) => string | null;
-  children: React.ReactNode;
   disabledByFeatureLock?: boolean;
+  renderItem: (register: UseFormRegisterReturn<"metadata">) => React.ReactNode;
 };
 
 export const MetadataField = ({
@@ -21,8 +22,8 @@ export const MetadataField = ({
   fieldKey,
   fieldLabel,
   valueLabelFormatter,
-  children,
   disabledByFeatureLock,
+  renderItem,
 }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
   const metadata = properties.metadata as Metadata;
@@ -49,18 +50,21 @@ export const MetadataField = ({
     <MetadataRow
       feature={feature}
       name={fieldLabel}
-      value={
+      valueLabel={
         valueLabelFormatter
           ? valueLabelFormatter(getValues().metadata) ?? "Ukjent"
           : getValues().metadata
       }
       onMetadataSubmit={onSubmit}
-      isDisabled={metadataIsDisabled || disabledByFeatureLock}
+      isDisabled={
+        metadataIsDisabled ||
+        disabledByFeatureLock ||
+        metadata.common?.gyldigTil != null
+      }
       isDirty={isDirty}
       reset={reset}
     >
-      {React.isValidElement(children) &&
-        React.cloneElement(children, { ...register("metadata") })}
+      {renderItem(register("metadata"))}
     </MetadataRow>
   );
 };

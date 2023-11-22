@@ -7,6 +7,7 @@ import { Metadata } from "types/api";
 import { addMetadataEntryFromFeature } from "../MetadataPanel/utils";
 import { useHistory } from "contexts/HistoryContext";
 import { Inputs } from "../MetadataPanel/MetadataGenerelt";
+import { formatISO, startOfDay } from "date-fns";
 
 type MetadataField = {
   metadata: string;
@@ -27,7 +28,7 @@ const getUpdatedMetadata = (
           : oldMetadata.common?.informasjon,
       datafangstdato:
         field === "datafangstdato"
-          ? data.metadata
+          ? formatISO(startOfDay(new Date(data.metadata)))
           : oldMetadata.common?.datafangstdato,
       opphav: field === "opphav" ? data.metadata : oldMetadata.common?.opphav,
       gyldigFra:
@@ -84,7 +85,6 @@ const getFieldFromMetadata = (metadata: Metadata, field: keyof Inputs) => {
       value = metadata.commonGrense?.posisjonskvalitet?.maalemetode.id;
       break;
   }
-
   return { metadata: value?.toString() };
 };
 

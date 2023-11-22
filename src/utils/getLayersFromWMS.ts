@@ -5,6 +5,7 @@ import WMTS from "ol/source/WMTS";
 import { getTicketForTjeneste } from "./geonorgeTicket";
 import { KartlagId } from "hooks/layers/types";
 import { getUrlForPath } from "utils/api";
+import XYZ from "ol/source/XYZ";
 
 const WMSParser = new WMSCapabilities();
 const WMTSParser = new WMTSCapabilities();
@@ -58,7 +59,7 @@ const mapWMTSLayer = (
   sourceId: sourceId,
 });
 
-const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
+const getSubLayersFromWMSSource = async (source: TileWMS | WMTS | XYZ) => {
   const urls = source.getUrls();
 
   if (!urls || urls.length === 0) return null;
@@ -99,7 +100,6 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
 
   if (source instanceof TileWMS) {
     json = WMSParser.read(xml);
-    // console.log(capabilitiesUrl, json);
     if (!json?.Capability) return null;
 
     const mainLayer = json.Capability.Layer;
@@ -111,7 +111,6 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
 
   if (source instanceof WMTS) {
     json = WMTSParser.read(xml);
-    // console.log(capabilitiesUrl, json);
 
     if (!json?.Contents) return null;
 
@@ -123,7 +122,7 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
       ),
       queryable: true,
       sourceId: source.get("id") as KartlagId,
-      title: json.ServiceIdentification.Title,
+      title: json.ServiceIdentification.Title ?? source.getLayer(),
       id: json.ServiceIdentification.Title,
     };
 

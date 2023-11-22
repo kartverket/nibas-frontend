@@ -4,7 +4,8 @@
   "private": true,
   "dependencies": {
     "@kartverket/frontend-aut-lib": "0.0.27",
-    "@kvib/react": "^2.5.5",
+    "@kvib/react": "^2.6.2",
+    "date-fns": "^2.30.0",
     "lodash.get": "^4.4.2",
     "material-symbols": "^0.13.0",
     "ol": "^8.1.0",
@@ -26,8 +27,7 @@
     "test:coverage": "npm test -- src/* --coverage",
     "lint": "eslint src",
     "lint:fix": "npm run lint -- --fix",
-    "update-api-types": "npx openapi-typescript@5 http://localhost:8080/api-docs --output src/types/api-gen.ts",
-    "update-api-types:remote": "npx openapi-typescript@5 http://nibas-backend.tz2-test-apps.k8s.local/api-docs --output src/types/api-gen.ts"
+    "update-api-types": "npx openapi-typescript@5 http://localhost:8080/api-docs --output src/types/api-gen.ts"
   },
   "eslintConfig": {
     "extends": [
