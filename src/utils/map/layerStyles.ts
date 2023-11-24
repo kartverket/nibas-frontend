@@ -77,8 +77,8 @@ export const grenseStyles = {
   kommune: lineAndPointStyles({ color: "#F15D4E" }),
   nasjon: lineAndPointStyles({ color: "#91120A" }),
   grunnkrets: lineAndPointStyles({ color: "#3E8DF6" }),
-  delomraade: lineAndPointStyles({ color: "#5952D2" }),
   stemmekrets: lineAndPointStyles({ color: "#EBAB3B" }),
+  delomraade: lineAndPointStyles({ color: "#5952D2" }),
   edit: lineAndPointStyles({ color: "#000000" }),
   select: lineAndPointStyles({ color: "#000000", dashed: true }),
   dirty: lineAndPointStyles({ color: "#00A76C", dashed: true }),
@@ -92,7 +92,6 @@ export const grenseStyles = {
   archivedFylke: lineAndPointStyles({ color: "#B92659", dashed: true }),
   archivedKommune: lineAndPointStyles({ color: "#F15D4E", dashed: true }),
   archivedNasjon: lineAndPointStyles({ color: "#91120A", dashed: true }),
-
   archivedGrunnkrets: lineAndPointStyles({ color: "#3E8DF6", dashed: true }),
   archivedStemmekrets: lineAndPointStyles({ color: "#EBAB3B", dashed: true }),
   archivedDelomraade: lineAndPointStyles({ color: "#5952D2", dashed: true }),
