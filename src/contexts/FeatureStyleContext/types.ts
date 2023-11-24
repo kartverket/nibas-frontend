@@ -22,7 +22,7 @@ export type FeatureStyleContextValue = {
     overlappingFeatures: string[],
   ) => void;
   dirtyFeatureIds: string[];
-  clearDirtyStyles: () => void;
+  clearFeatureStyles: () => void;
 
   archivedFeatureIds: string[];
   setArchivedFeatures: (features: string[]) => void;
