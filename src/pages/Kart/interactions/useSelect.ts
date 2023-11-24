@@ -20,8 +20,12 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 const useSelect = () => {
   const toast = useToast();
   const { activePointMode } = useToolbar();
-  const { selectFeatures, selectedFeatures, clearSelection } =
-    useFeatureStyle();
+  const {
+    selectFeatures,
+    selectedFeatures,
+    clearSelection,
+    featureIsArchived,
+  } = useFeatureStyle();
   const { activeOverlayPanel, closeOverlayPanel, openOverlayPanel } =
     useOverlayPanel();
   const previousPointMode = usePrevious(activePointMode);
@@ -114,6 +118,18 @@ const useSelect = () => {
         } else {
           overlayPopup.setPosition(undefined);
           openOverlayPanel("metadata");
+        }
+      }
+
+      if (activePointMode === "archive") {
+        const featureId = clickedFeature.getId();
+        if (featureId && featureIsArchived(featureId as string)) {
+          toast({
+            status: "error",
+            title: "Kan ikke arkivere grenser som allerede er arkivert",
+          });
+          event.stopPropagation();
+          return;
         }
       }
 

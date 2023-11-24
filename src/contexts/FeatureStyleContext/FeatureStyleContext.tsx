@@ -156,17 +156,25 @@ export const FeatureStyleProvider = ({
     clearArchivedStyles();
   };
 
+  const featureIsArchived = (featureId: string) => {
+    return (
+      archivedFeatureIds.includes(featureId) ||
+      savedArchivedFeatureIds.includes(featureId)
+    );
+  };
+
+  // TODO: sjekk om alt trenger å eksporteres
   const value = {
     selectedPoint,
     selectedFeatures,
     selectFeatures,
     clearSelection,
+    featureIsArchived,
     selectPointOnFeature,
     setAndSaveUtkastFeatures,
     setAndSaveSammenslaaingsFeatures,
     dirtyFeatureIds,
     clearFeatureStyles,
-    archivedFeatureIds,
     setArchivedFeatures,
     setAndSaveUtkastArchivedFeatures,
   };

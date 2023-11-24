@@ -20,7 +20,6 @@ const ToolbarPopups = () => {
   const {
     selectedFeatures,
     selectedPoint,
-    archivedFeatureIds,
     setArchivedFeatures,
     clearSelection,
   } = useFeatureStyle();
@@ -40,11 +39,6 @@ const ToolbarPopups = () => {
     clearSelection();
     toast({ status: "success", title: "Grensen ble splittet" });
   };
-
-  // TODO: denne lar meg arkivere grenser som allerede er arkiverte dersom jeg har lagret arkiveringen
-  const canArchive =
-    selectedFeatures.length === 0 ||
-    archivedFeatureIds.some((id) => id === selectedFeatures[0].getId());
 
   const handleMatrikkel = async () => {
     const zoom = map.getView().getZoom();
@@ -110,7 +104,7 @@ const ToolbarPopups = () => {
           text="Velg grensen du ønsker å arkivere"
           buttonText="Arkiver"
           onClick={archiveFeatures}
-          isDisabled={canArchive}
+          isDisabled={selectedFeatures.length !== 1}
         />
       )}
       {activePointMode === "koordinater" && (
