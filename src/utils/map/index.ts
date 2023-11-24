@@ -5,7 +5,6 @@ import VectorSource from "ol/source/Vector";
 import { LineString } from "ol/geom";
 import { Coordinate } from "ol/coordinate";
 import { FeatureLike } from "ol/Feature";
-import { editableBorderTypes } from "hooks/layers/constants";
 import { pixelTolerance } from "pages/Kart/interactions/constants";
 
 export const resetMapView = () => {
@@ -167,6 +166,3 @@ export const findNearbyVertexOnFeature = (
     .map((cwd) => cwd.coordinates)[0];
   return nearestVertexCoordinate;
 };
-
-export const borderIsEditable = (feature: FeatureLike) =>
-  editableBorderTypes.includes(feature.get("type"));

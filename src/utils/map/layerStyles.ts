@@ -10,9 +10,8 @@ import Style from "ol/style/Style";
 import { map } from "pages/Kart/constants";
 import Text from "ol/style/Text";
 import Point from "ol/geom/Point";
-import { editSource } from "hooks/layers/constants";
+import { editSource, editableBorderTypes } from "hooks/layers/constants";
 import { GrenseId, GrenseType } from "hooks/layers/types";
-import { borderIsEditable } from ".";
 
 const getPointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
   // hent punkter når zoomet langt nok inn
@@ -141,7 +140,7 @@ export const getLayerStyle = (
   grenseId: GrenseId,
   archived: boolean,
 ) => {
-  if (grenseId == "edit" && borderIsEditable(feature)) {
+  if (grenseId == "edit" && editableBorderTypes.includes(feature.get("type"))) {
     return grenseStyles.edit;
   } else {
     return grenseStyleFromType(

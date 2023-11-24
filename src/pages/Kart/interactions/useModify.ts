@@ -13,11 +13,7 @@ import { ToolbarPointMode, useToolbar } from "contexts/ToolbarContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { selectedPointStyle } from "utils/map/layerStyles";
 import { useToast } from "@kvib/react";
-import {
-  borderIsEditable,
-  findNearbyVertexOnFeature,
-  isCoordinateEqual,
-} from "utils/map";
+import { findNearbyVertexOnFeature, isCoordinateEqual } from "utils/map";
 
 const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
@@ -28,7 +24,7 @@ const getInfoFromFeature = (featureLike: FeatureLike) => {
 const useModify = () => {
   const { addHistoryEntry } = useHistory();
   const { activePointMode } = useToolbar();
-  const { selectedFeatures } = useFeatureStyle();
+  const { selectedFeatures, featureIsEditable } = useFeatureStyle();
   const toast = useToast();
   const detachIsActive = activePointMode === "detach";
   const editLayer = getLayerById("edit");
@@ -55,8 +51,11 @@ const useModify = () => {
           });
 
           // Sjekk alle featurene i punktet, hvis en av dem ikke skal kunne endres ønsker vi ikke å endre noe
-          // Her er det fare for at vi er overivrige hvis det er flere features veldig nærme hverandre, men ikke samme punkt
-          if (!featuresAtPixel.every(borderIsEditable)) {
+          // Inntil videre lar vi løsriving forbigå denne fordi man ikke kan velge ulovlige grenser for løsriving
+          if (
+            !featuresAtPixel.every(featureIsEditable) &&
+            activePointMode !== "detach"
+          ) {
             toast({
               status: "error",
               title: "Denne grensen er ikke redigerbar",
@@ -122,6 +121,7 @@ const useModify = () => {
       detachIsActive,
       disallowedPointModes,
       editLayer,
+      featureIsEditable,
       selectedFeatures,
       toast,
     ],

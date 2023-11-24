@@ -1,4 +1,5 @@
 import { Feature } from "ol";
+import { FeatureLike } from "ol/Feature";
 import { Coordinate } from "ol/coordinate";
 import LineString from "ol/geom/LineString";
 import Point from "ol/geom/Point";
@@ -23,7 +24,8 @@ export type FeatureStyleContextValue = {
   ) => void;
   clearFeatureStyles: () => void;
 
-  featureIsArchived: (featureId: string) => boolean;
+  featureIsEditable: (feature: FeatureLike) => boolean;
+  featureIsArchived: (feature: FeatureLike) => boolean;
   setArchivedFeatures: (features: string[]) => void;
   setAndSaveUtkastArchivedFeatures: (features: string[]) => void;
 };

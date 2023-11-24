@@ -5,6 +5,8 @@ import { FeatureStyleContextValue } from "./types";
 import { useSelectStyles } from "./useSelectStyles";
 import { getArchiveLayerStyle, grenseStyles } from "utils/map/layerStyles";
 import useArchiveStyles from "./useArchiveStyles";
+import { FeatureLike } from "ol/Feature";
+import { editableBorderTypes } from "hooks/layers/constants";
 
 export const FeatureStyleContext = createContext<
   FeatureStyleContextValue | undefined
@@ -155,12 +157,20 @@ export const FeatureStyleProvider = ({
     clearArchivedStyles();
   };
 
-  const featureIsArchived = (featureId: string) => {
-    return (
-      archivedFeatureIds.includes(featureId) ||
-      savedArchivedFeatureIds.includes(featureId)
-    );
+  const featureIsArchived = (feature: FeatureLike) => {
+    const featureId = feature.getId();
+    if (featureId) {
+      return (
+        archivedFeatureIds.includes(featureId as string) ||
+        savedArchivedFeatureIds.includes(featureId as string)
+      );
+    }
+    return false;
   };
+
+  const featureIsEditable = (feature: FeatureLike) =>
+    editableBorderTypes.includes(feature.get("type")) &&
+    !featureIsArchived(feature);
 
   const value = {
     selectedPoint,
@@ -168,6 +178,7 @@ export const FeatureStyleProvider = ({
     selectFeatures,
     clearSelection,
     featureIsArchived,
+    featureIsEditable,
     selectPointOnFeature,
     setAndSaveUtkastFeatures,
     setAndSaveSammenslaaingsFeatures,
