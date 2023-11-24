@@ -152,6 +152,9 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     kretsGeometryFetcher,
   );
 
+  // TODO: vi får doble grenser ut av grenserGeoJsons
+  // det gir mening når to kretser deler grenser mellom seg
+  // men vi bør kanskje filtrere det ned, med mindre vi må ha to versjoner av hver feature
   const utkastGeoJsons = useUtkastFeature(grenserGeoJsons, utkast);
 
   const allFeatures = useMemo(() => {

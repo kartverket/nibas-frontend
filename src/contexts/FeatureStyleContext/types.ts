@@ -21,7 +21,6 @@ export type FeatureStyleContextValue = {
     features: string[],
     overlappingFeatures: string[],
   ) => void;
-  dirtyFeatureIds: string[];
   clearFeatureStyles: () => void;
 
   featureIsArchived: (featureId: string) => boolean;

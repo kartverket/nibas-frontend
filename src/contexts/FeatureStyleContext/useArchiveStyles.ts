@@ -39,7 +39,6 @@ const useArchiveStyles = () => {
     setArchivedFeatureIds(features);
   };
 
-  // TODO: lagrer kanskje dobbelt
   const saveArchivedFeatureIds = () => {
     setSavedArchivedFeatureIds([
       ...savedArchivedFeatureIds,

@@ -92,7 +92,6 @@ export const FeatureStyleProvider = ({
     return accumulator;
   };
 
-  // TODO: angring fungerer ikke med arkiveringsstilen, usikker på om det er her eller annet sted
   useEffect(() => {
     // Når vi lagrer blir history entries tømt, så vi lagrer stilene som er satt
     if (history.entries.length === 0) {
@@ -163,7 +162,6 @@ export const FeatureStyleProvider = ({
     );
   };
 
-  // TODO: sjekk om alt trenger å eksporteres
   const value = {
     selectedPoint,
     selectedFeatures,
@@ -173,7 +171,6 @@ export const FeatureStyleProvider = ({
     selectPointOnFeature,
     setAndSaveUtkastFeatures,
     setAndSaveSammenslaaingsFeatures,
-    dirtyFeatureIds,
     clearFeatureStyles,
     setArchivedFeatures,
     setAndSaveUtkastArchivedFeatures,
