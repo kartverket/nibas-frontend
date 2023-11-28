@@ -88,7 +88,7 @@ const ToolbarMenus = () => {
       isDisabled: !editingType,
       onClick: () => togglePointMode("split"),
       "aria-label": "Del en grense i to fra et punkt",
-    },
+    },*/
     {
       label: "Løsriv grense",
       icon: <Icon icon="edit_location_alt" />,
@@ -96,7 +96,7 @@ const ToolbarMenus = () => {
       isDisabled: !editingType,
       onClick: () => togglePointMode("detach"),
       "aria-label": "Løsriv grense fra et knutepunkt",
-    },*/
+    },
     {
       label: "Se/endre grenseinformasjon",
       icon: <Icon icon="live_help" />,
@@ -105,14 +105,14 @@ const ToolbarMenus = () => {
       onClick: toggleMetadata,
       "aria-label": "Se informasjon om grensen",
     },
-    /*{
+    {
       label: "Arkiver grense",
       icon: <Icon icon="archive" />,
       $isActive: activePointMode === "archive",
       isDisabled: !editingType,
       onClick: () => togglePointMode("archive"),
       "aria-label": "Arkiver grense",
-    },*/
+    },
   ];
   const punktMenuItems: MenuItems = [
     {

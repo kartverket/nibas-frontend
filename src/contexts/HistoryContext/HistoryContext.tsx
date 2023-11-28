@@ -45,8 +45,14 @@ const onUndo = (entry: HistoryEntry) => {
         }),
       );
     }
+    case "grensearkivering": {
+      return document.dispatchEvent(
+        new CustomEvent("grensearkiveringUndo", {
+          detail: { entry },
+        }),
+      );
+    }
   }
-
   ensureAllCasesCovered(type);
 };
 
@@ -58,6 +64,7 @@ const onRedo = (entry: HistoryEntry) => {
       return setFeatureCoordinatesForEntry(entry, "to");
     }
     case "metadata": {
+      //skal den kanskje bare gå inn under det her?
       return setFeatureMetadataForEntry(entry, "to");
     }
     case "grunnkrets": {
@@ -84,6 +91,13 @@ const onRedo = (entry: HistoryEntry) => {
     case "stemmekretssammenslaaingsendring": {
       return document.dispatchEvent(
         new CustomEvent("stemmekretssammenslaaingsendringRedo", {
+          detail: { entry },
+        }),
+      );
+    }
+    case "grensearkivering": {
+      return document.dispatchEvent(
+        new CustomEvent("grensearkiveringRedo", {
           detail: { entry },
         }),
       );

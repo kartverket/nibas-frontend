@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useEffect, useRef } from "react";
 import useDirtyStyles from "./useDirtyStyles";
-import { useHistory } from "contexts/HistoryContext";
-import { getFeatureIdsFromEntries } from "./utils";
+import { HistoryEntry, useHistory } from "contexts/HistoryContext";
 import { FeatureStyleContextValue } from "./types";
 import { useSelectStyles } from "./useSelectStyles";
 import { getArchiveLayerStyle, grenseStyles } from "utils/map/layerStyles";
 import useArchiveStyles from "./useArchiveStyles";
+import { FeatureLike } from "ol/Feature";
+import { editableBorderTypes } from "hooks/layers/constants";
 
 export const FeatureStyleContext = createContext<
   FeatureStyleContextValue | undefined
@@ -26,13 +27,22 @@ export const FeatureStyleProvider = ({
   const {
     dirtyFeatureIds,
     setDirtyFeatures,
-    setEditFeatures,
+    clearDirtyStyles,
+    setDirtyFeaturesToEdit,
     saveDirtyFeatureIds,
-    clearSavedDirtyFeatureIds,
+    savedDirtyFeatureIds,
     setAndSaveUtkastFeatures,
     setAndSaveSammenslaaingsFeatures,
   } = useDirtyStyles();
-  const { archivedFeatureIds, setArchivedFeatures } = useArchiveStyles();
+  const {
+    archivedFeatureIds,
+    setArchivedFeatures,
+    clearArchivedStyles,
+    saveArchivedFeatureIds,
+    savedArchivedFeatureIds,
+    setAndSaveUtkastArchivedFeatures,
+    setArchivedFeaturesToEdit,
+  } = useArchiveStyles();
   const { history } = useHistory();
   const previousSelectedFeatures = useRef(selectedFeatures);
 
@@ -43,9 +53,15 @@ export const FeatureStyleProvider = ({
     );
 
     for (const feature of deselectedFeatures) {
-      if (dirtyFeatureIds.some((id) => id === feature.getId())) {
+      if (
+        dirtyFeatureIds.some((id) => id === feature.getId()) ||
+        savedDirtyFeatureIds.some((id) => id === feature.getId())
+      ) {
         feature.setStyle(grenseStyles.dirty);
-      } else if (archivedFeatureIds.some((id) => id === feature.getId())) {
+      } else if (
+        archivedFeatureIds.some((id) => id === feature.getId()) ||
+        savedArchivedFeatureIds.some((id) => id === feature.getId())
+      ) {
         feature.setStyle(getArchiveLayerStyle(feature));
       } else {
         feature.setStyle();
@@ -53,33 +69,73 @@ export const FeatureStyleProvider = ({
     }
 
     previousSelectedFeatures.current = selectedFeatures;
-  }, [dirtyFeatureIds, selectedFeatures, archivedFeatureIds]);
+  }, [
+    dirtyFeatureIds,
+    selectedFeatures,
+    archivedFeatureIds,
+    savedDirtyFeatureIds,
+    savedArchivedFeatureIds,
+  ]);
+
+  const getFeatureIdsFromEntries = (
+    accumulator: string[][],
+    entry: HistoryEntry,
+  ) => {
+    const featureIds: string[] = [];
+    entry.changes.forEach((change) => {
+      if (
+        change.to &&
+        !accumulator.some((value) => value.includes(change.id))
+      ) {
+        featureIds.push(change.id);
+      }
+    });
+    accumulator.push(featureIds);
+    return accumulator;
+  };
 
   useEffect(() => {
+    // Når vi lagrer blir history entries tømt, så vi lagrer stilene som er satt
     if (history.entries.length === 0) {
-      if (history.hasPreviouslySavedHistory && dirtyFeatureIds.length !== 0) {
-        saveDirtyFeatureIds();
+      if (history.hasPreviouslySavedHistory) {
+        if (dirtyFeatureIds.length !== 0) saveDirtyFeatureIds();
+        if (archivedFeatureIds.length !== 0) saveArchivedFeatureIds();
       }
-      // Hvis det ikke er for å lagre, så er det for å forhindre uendelig løkke
+      // Dersom vi ikke har lagret history fra før returnerer vi for å forhindre uendelig løkke
       return;
     }
 
-    const historyFeatures = history.entries
-      .filter((entry) => entry.type === "grense" || entry.type === "metadata")
-      .reduce<string[][]>(getFeatureIdsFromEntries, []);
-
-    const editFeatures = historyFeatures
+    // Alle entries etter index (angrede endringer) skal tilbakestilles
+    const editFeatures = history.entries
       .slice(history.index)
+      .reduce(getFeatureIdsFromEntries, [])
       .flatMap((id) => id);
-    const dirtyFeatures = historyFeatures
+
+    // Entries før index skal fargelegges basert på endringen som er gjort
+    const dirtyFeatures = history.entries
       .slice(0, history.index)
+      .filter((entry) => entry.type === "grense" || entry.type === "metadata")
+      .reduce(getFeatureIdsFromEntries, [])
+      .flatMap((id) => id);
+
+    const archivedFeatures = history.entries
+      .slice(0, history.index)
+      .filter((entry) => entry.type === "grensearkivering")
+      .reduce(getFeatureIdsFromEntries, [])
       .flatMap((id) => id);
 
     // For å forhindre uendelig løkke
-    if (dirtyFeatureIds.length === dirtyFeatures.length) return;
+    if (
+      dirtyFeatureIds.length === dirtyFeatures.length &&
+      archivedFeatureIds.length === archivedFeatures.length
+    ) {
+      return;
+    }
 
-    setEditFeatures(editFeatures);
+    setDirtyFeaturesToEdit(editFeatures);
+    setArchivedFeaturesToEdit(editFeatures);
     setDirtyFeatures(dirtyFeatures);
+    setArchivedFeatures(archivedFeatures);
   }, [
     dirtyFeatureIds.length,
     history.entries,
@@ -87,21 +143,48 @@ export const FeatureStyleProvider = ({
     history.hasPreviouslySavedHistory,
     saveDirtyFeatureIds,
     setDirtyFeatures,
-    setEditFeatures,
+    archivedFeatureIds.length,
+    saveArchivedFeatureIds,
+    setArchivedFeatures,
+    setDirtyFeaturesToEdit,
+    setArchivedFeaturesToEdit,
+    archivedFeatureIds,
+    savedArchivedFeatureIds,
   ]);
+
+  const clearFeatureStyles = () => {
+    clearDirtyStyles();
+    clearArchivedStyles();
+  };
+
+  const featureIsArchived = (feature: FeatureLike) => {
+    const featureId = feature.getId();
+    if (featureId) {
+      return (
+        archivedFeatureIds.includes(featureId as string) ||
+        savedArchivedFeatureIds.includes(featureId as string)
+      );
+    }
+    return false;
+  };
+
+  const featureIsEditable = (feature: FeatureLike) =>
+    editableBorderTypes.includes(feature.get("type")) &&
+    !featureIsArchived(feature);
 
   const value = {
     selectedPoint,
     selectedFeatures,
     selectFeatures,
     clearSelection,
+    featureIsArchived,
+    featureIsEditable,
     selectPointOnFeature,
     setAndSaveUtkastFeatures,
     setAndSaveSammenslaaingsFeatures,
-    dirtyFeatureIds,
-    clearDirtyStyles: clearSavedDirtyFeatureIds,
-    archivedFeatureIds,
+    clearFeatureStyles,
     setArchivedFeatures,
+    setAndSaveUtkastArchivedFeatures,
   };
 
   return (

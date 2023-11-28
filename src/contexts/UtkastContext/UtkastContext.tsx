@@ -53,7 +53,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const [utkast, setUtkast] = useState<UtkastResponse>();
 
   const { history, clearHistory } = useHistory();
-  const { clearDirtyStyles } = useFeatureStyle();
+  const { clearFeatureStyles } = useFeatureStyle();
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { resetAndClearAllLayers } = useEditAllGrenser();
   const { closeOverlayPanel } = useOverlayPanel();
@@ -94,14 +94,14 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     setUtkast(undefined);
     resetMapView();
     clearHistory({ hasPreviouslySavedHistory: false });
-    clearDirtyStyles();
+    clearFeatureStyles();
     resetAndClearAllLayers();
     closeOverlayPanel();
     closeSidebarPanel();
     if (activePointMode) togglePointMode(activePointMode);
   }, [
     activePointMode,
-    clearDirtyStyles,
+    clearFeatureStyles,
     clearHistory,
     closeOverlayPanel,
     closeSidebarPanel,

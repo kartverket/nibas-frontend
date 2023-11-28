@@ -4,11 +4,12 @@ import { grenseStyles } from "utils/map/layerStyles";
 
 const useDirtyStyles = () => {
   const [dirtyFeatureIds, setDirtyFeatureIds] = useState<string[]>([]);
-  const [savedDirtyFeatureIds, setSavedDirtyFeaturesIds] = useState<string[]>(
+  const [savedDirtyFeatureIds, setSavedDirtyFeatureIds] = useState<string[]>(
     [],
   );
 
-  const setEditFeatures = (features: string[]) => {
+  // TODO: denne bør være felles for både dirty og archive, fordi den gjør mer magi
+  const setDirtyFeaturesToEdit = (features: string[]) => {
     for (const featureId of features) {
       if (!savedDirtyFeatureIds.includes(featureId)) {
         editSource.getFeatureById(featureId)?.setStyle(grenseStyles.edit);
@@ -29,19 +30,13 @@ const useDirtyStyles = () => {
     setDirtyFeatureIds(features);
   };
 
-  const clearSavedDirtyFeatureIds = () => {
-    for (const featureId of dirtyFeatureIds) {
-      editSource.getFeatureById(featureId)?.setStyle(grenseStyles.edit);
-    }
-    for (const featureId of savedDirtyFeatureIds) {
-      editSource.getFeatureById(featureId)?.setStyle(grenseStyles.edit);
-    }
-    setSavedDirtyFeaturesIds([]);
+  const clearDirtyStyles = () => {
+    setSavedDirtyFeatureIds([]);
     setDirtyFeatureIds([]);
   };
 
   const saveDirtyFeatureIds = () => {
-    setSavedDirtyFeaturesIds([...savedDirtyFeatureIds, ...dirtyFeatureIds]);
+    setSavedDirtyFeatureIds([...savedDirtyFeatureIds, ...dirtyFeatureIds]);
     setDirtyFeatureIds([]);
   };
 
@@ -49,7 +44,7 @@ const useDirtyStyles = () => {
     for (const featureId of features) {
       editSource.getFeatureById(featureId)?.setStyle(grenseStyles.dirty);
     }
-    setSavedDirtyFeaturesIds([...savedDirtyFeatureIds, ...features]);
+    setSavedDirtyFeatureIds([...savedDirtyFeatureIds, ...features]);
   };
 
   const setAndSaveSammenslaaingsFeatures = (
@@ -70,11 +65,11 @@ const useDirtyStyles = () => {
 
   return {
     dirtyFeatureIds,
+    clearDirtyStyles,
     setDirtyFeatures,
-    setEditFeatures,
+    setDirtyFeaturesToEdit,
     saveDirtyFeatureIds,
     savedDirtyFeatureIds,
-    clearSavedDirtyFeatureIds,
     setAndSaveUtkastFeatures,
     setAndSaveSammenslaaingsFeatures,
   };

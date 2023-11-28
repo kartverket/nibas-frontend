@@ -285,6 +285,8 @@ export interface components {
        * @description Teknisk versjon for å støtte samhandling og redigering
        */
       version: number;
+      /** @description Egenskap som sier om en grense med en grenseendring er skal arkiveres */
+      shouldArchive: boolean;
     };
     /** @description Metadata for en flate (felles for nasjon, fylke, kommune og grunnkrets) */
     FlateMetadata: components["schemas"]["Metadata"] & {

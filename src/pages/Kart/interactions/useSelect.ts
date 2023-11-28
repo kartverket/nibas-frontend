@@ -5,7 +5,6 @@ import { map, overlayPopup } from "../constants";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import LineString from "ol/geom/LineString";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { borderIsEditable } from "utils/map";
 import { useToast } from "@kvib/react";
 import { useEffect } from "react";
 import { usePrevious } from "hooks/usePrevious";
@@ -20,8 +19,13 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 const useSelect = () => {
   const toast = useToast();
   const { activePointMode } = useToolbar();
-  const { selectFeatures, selectedFeatures, clearSelection } =
-    useFeatureStyle();
+  const {
+    selectFeatures,
+    selectedFeatures,
+    clearSelection,
+    featureIsArchived,
+    featureIsEditable,
+  } = useFeatureStyle();
   const { activeOverlayPanel, closeOverlayPanel, openOverlayPanel } =
     useOverlayPanel();
   const previousPointMode = usePrevious(activePointMode);
@@ -77,7 +81,7 @@ const useSelect = () => {
       // I noen verktøy skal man ikke kunne velge ikke-redigerbare grenser
       if (
         dangerousPointModes.includes(activePointMode) &&
-        !borderIsEditable(clickedFeature)
+        !featureIsEditable(clickedFeature)
       ) {
         toast({ status: "error", title: "Denne grensen er ikke redigerbar" });
         event.stopPropagation();
@@ -114,6 +118,17 @@ const useSelect = () => {
         } else {
           overlayPopup.setPosition(undefined);
           openOverlayPanel("metadata");
+        }
+      }
+
+      if (activePointMode === "archive") {
+        if (featureIsArchived(clickedFeature)) {
+          toast({
+            status: "error",
+            title: "Kan ikke arkivere grenser som allerede er arkivert",
+          });
+          event.stopPropagation();
+          return;
         }
       }
 
