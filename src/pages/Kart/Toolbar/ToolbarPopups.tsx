@@ -9,9 +9,11 @@ import { useHistory } from "contexts/HistoryContext";
 import { getMatrikkelFeatures } from "utils/map/layers";
 import { map } from "../constants";
 import { useState } from "react";
+import { useErrorHandling } from "contexts/ErrorHandlingContext";
 
 const ToolbarPopups = () => {
   const [matrikkelIsLoading, setMatrikkelIsLoading] = useState(false);
+  const { setError } = useErrorHandling();
 
   const toast = useToast();
   const { split } = useSplit();
@@ -43,7 +45,11 @@ const ToolbarPopups = () => {
   const handleMatrikkel = async () => {
     const zoom = map.getView().getZoom();
     if (!zoom || zoom < 15) {
-      toast({ status: "error", title: "Du er zoomet for langt ut" });
+      toast({
+        status: "error",
+        title:
+          "Kartutsnittet er for stort. Zoom inn nærmere før du henter inn eiendomsgrensene",
+      });
     } else {
       setMatrikkelIsLoading(true);
       const matrikkelFeatures = await getMatrikkelFeatures();
@@ -52,14 +58,20 @@ const ToolbarPopups = () => {
           toast({
             status: "warning",
             title:
-              "Prøvde å hente flere enn 10000 grenser, zoom lengre inn og prøv igjen",
+              "Utsnittet inneholder for mange grenser. Zoom nærmere, og prøv igjen.",
           });
         } else {
           toast({
             status: "success",
-            title: `Hentet ${matrikkelFeatures.length} grenser fra matrikkelen`,
+            title: `${matrikkelFeatures.length} grenser ble hentet og vises nå i kartet`,
           });
         }
+      } else {
+        setError({
+          title: "Feil ved henting av grenser fra matrikkelen",
+          description:
+            "En ukjent feil skjedde ved henting av grenser fra matrikkelen. Vennligst forsøk igjen, om problemet fortsetter er det fint om du tar kontakt med Kartverket.",
+        });
       }
       setMatrikkelIsLoading(false);
     }
@@ -69,7 +81,8 @@ const ToolbarPopups = () => {
     <>
       {activeEditModes.includes("matrikkel") && (
         <ToolbarPopup
-          text="Bruk knappen til å hente grenser innenfor skjermen"
+          text="Hent og vis eiendomsgrenser fra matrikkelen"
+          subtext="Grensene hentes ut basert på kartutsnittet du ser på. Flytt kartet til hvor du ønsker å hente frem eiendomsgrensene."
           buttonText="Hent grenser"
           onClick={handleMatrikkel}
           isDisabled={matrikkelIsLoading}

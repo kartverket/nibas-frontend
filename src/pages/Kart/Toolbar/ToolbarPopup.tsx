@@ -1,8 +1,9 @@
-import { Button } from "@kvib/react";
+import { Button, Text } from "@kvib/react";
 import { styled } from "styled-components";
 
 type Props = {
   text: string;
+  subtext?: string;
   onClick?: () => void;
   buttonText?: string;
   isDisabled?: boolean;
@@ -11,6 +12,7 @@ type Props = {
 
 const ToolbarPopup = ({
   text,
+  subtext,
   buttonText,
   onClick,
   isDisabled,
@@ -18,7 +20,12 @@ const ToolbarPopup = ({
 }: Props) => {
   return (
     <ToolbarPopupBody>
-      <span>{text}</span>
+      <TextRows>
+        <Text as="b" fontSize="md">
+          {text}
+        </Text>
+        {subtext && <Text fontSize="sm">{subtext}</Text>}
+      </TextRows>
       {buttonText && (
         <Button
           size="sm"
@@ -40,10 +47,14 @@ const ToolbarPopupBody = styled.div`
   justify-content: space-between;
   align-items: center;
   gap: 24px;
-  font-size: 1.1rem;
-  font-weight: var(--kvib-fontWeights-semibold);
   padding: 12px 20px;
   border-radius: 8px;
   background: var(--kvib-colors-chakra-body-bg);
   box-shadow: var(--kvib-shadows-base);
+`;
+
+const TextRows = styled.div`
+  display: flex;
+  flex-direction: column;
+  max-width: 50ch;
 `;

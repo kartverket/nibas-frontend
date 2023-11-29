@@ -51,6 +51,8 @@ const Toolbar = () => {
       <ToolbarPopups />
       <Container>
         <ToolbarButtons>
+          <ToolbarMenus />
+          <Divider orientation="vertical" />
           <CustomTooltip
             text="Legg til, endre rekkefølge og fjern kartlag fra kartet."
             shortcut="layers"
@@ -64,11 +66,8 @@ const Toolbar = () => {
               Kartlag
             </ModeButton>
           </CustomTooltip>
-          <Divider orientation="vertical" />
-          <ToolbarMenus />
-          <Divider orientation="vertical" />
           <ModeButton
-            icon="ssid_chart"
+            icon="holiday_village"
             ariaLabel="Vis grenser fra matrikkelen"
             isActive={activeEditModes.includes("matrikkel")}
             onClick={toggleMatrikkel}

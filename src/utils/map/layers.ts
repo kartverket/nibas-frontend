@@ -111,20 +111,24 @@ export const getMatrikkelFeatures = async () => {
     geometryName: "KURVE",
   });
 
-  const response = await fetch("/geoservergeo/wfs/matrikkel", {
-    method: "POST",
-    body: new XMLSerializer().serializeToString(request),
-  });
-  if (!response.ok) throw new Error("Feil i response: " + response);
+  try {
+    const response = await fetch("/geoservergeo/wfs/matrikkel", {
+      method: "POST",
+      body: new XMLSerializer().serializeToString(request),
+    });
+    if (!response.ok) throw new Error("Feil i response: " + response);
 
-  const json = await response.json();
-  const fetchedFeatures = getFeaturesFromGeoJson(json);
-  if (fetchedFeatures) {
-    const source = getLayerById("matrikkel").getSource();
-    if (source) {
-      source.clear(true);
+    const json = await response.json();
+    const fetchedFeatures = getFeaturesFromGeoJson(json);
+    if (fetchedFeatures) {
+      const source = getLayerById("matrikkel").getSource();
+      if (source) {
+        source.clear(true);
+      }
+      addFeaturesToSource("matrikkel", fetchedFeatures);
+      return fetchedFeatures;
     }
-    addFeaturesToSource("matrikkel", fetchedFeatures);
-    return fetchedFeatures;
+  } catch {
+    return;
   }
 };
