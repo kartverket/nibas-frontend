@@ -26,10 +26,14 @@ export const getSrcWithTicket = async (tjenesteId: string, src: string) => {
 const fetchNewTicket = async (tjenesteId: string) => {
   if (!ticketConfigSetUpCorrectly) return "*";
 
-  const ticketResponse = await fetch(
-    getUrlForPath(`/skbaatts/req?tjenesteid=${tjenesteId}`),
-  );
-  return ticketResponse.text();
+  try {
+    const ticketResponse = await fetch(
+      getUrlForPath(`/skbaatts/req?tjenesteid=${tjenesteId}`),
+    );
+    return ticketResponse.text();
+  } catch {
+    return "*";
+  }
 };
 
 export const getTicketForTjeneste = async (tjenesteId: string, src: string) => {

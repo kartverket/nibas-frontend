@@ -3,20 +3,20 @@ import type { RestHandler } from "msw";
 
 const getFailingRequests = () => {
   const requestUrls = [
-    "https://openwms.statkart.no/skwms1/wms.topo4",
+    "https://opencache.statkart.no/gatekeeper/gk/gk.open_wmts",
+    "https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm33_wmts_v2",
+    "https://cache.kartverket.no/topo4/v1/wmts/1.0.0/",
+    "https://cache.kartverket.no/europa_forenklet/v1/wmts/1.0.0/",
+    "https://wms.geonorge.no/skwms1/wms.adm_enheter2",
     "https://openwms.statkart.no/skwms1/wms.stedsnavnenkel",
-    "https://openwms.statkart.no/skwms1/wms.grunnkretser",
+    "https://openwms.statkart.no/skwms1/wms.nmg",
     "https://wms.geonorge.no/skwms1/wms.adm_enheter_historisk",
+    "https://openwms.statkart.no/skwms1/wms.grunnkretser",
     "https://openwms.statkart.no/skwms1/wms.n5raster2",
     "https://openwms.statkart.no/skwms1/wms.kartblad",
-    "https://openwms.statkart.no/skwms1/wms.nmg",
     "https://wms.geonorge.no/skwms1/wms.dybdedata2",
-    "https://openwms.statkart.no/skwms1/wms.toporaster4",
     "https://openwms.statkart.no/skwms1/wms.ssr2",
     "https://wms.geonorge.no/skwms1/wms.historiskekart",
-    "https://openwms.statkart.no/skwms1/wms.grunnkretser",
-    "https://openwms.statkart.no/skwms1/wms.topo4.graatone",
-    "https://opencache.statkart.no/gatekeeper/gk/gk.open_wmts",
   ];
 
   return requestUrls.map((url) =>

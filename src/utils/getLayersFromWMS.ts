@@ -92,44 +92,46 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS | XYZ) => {
     capabilitiesUrl = `${capabilitiesUrl}&ticket=${ticket}`;
   }
 
-  const response = await fetch(getUrlForPath(capabilitiesUrl));
-  const xml = await response.text();
+  try {
+    const response = await fetch(getUrlForPath(capabilitiesUrl));
+    const xml = await response.text();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let json: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let json: any;
 
-  if (source instanceof TileWMS) {
-    json = WMSParser.read(xml);
-    if (!json?.Capability) return null;
+    if (source instanceof TileWMS) {
+      json = WMSParser.read(xml);
+      if (!json?.Capability) return null;
 
-    const mainLayer = json.Capability.Layer;
-    const sourceId = source.get("id") as KartlagId;
-    const transformedLayer = mapWMSLayer(mainLayer, sourceId) as MappedLayer;
+      const mainLayer = json.Capability.Layer;
+      const sourceId = source.get("id") as KartlagId;
+      const transformedLayer = mapWMSLayer(mainLayer, sourceId) as MappedLayer;
 
-    return transformedLayer;
+      return transformedLayer;
+    }
+
+    if (source instanceof WMTS) {
+      json = WMTSParser.read(xml);
+
+      if (!json?.Contents) return null;
+
+      const sourceId = source.get("id") as KartlagId;
+
+      const mappedWMTSLayer: MappedLayer = {
+        layers: json.Contents.Layer.map((l: WMTSResponseLayer) =>
+          mapWMTSLayer(l, sourceId),
+        ),
+        queryable: true,
+        sourceId: source.get("id") as KartlagId,
+        title: json.ServiceIdentification.Title ?? source.getLayer(),
+        id: json.ServiceIdentification.Title,
+      };
+
+      return mappedWMTSLayer;
+    }
+  } catch {
+    return null;
   }
-
-  if (source instanceof WMTS) {
-    json = WMTSParser.read(xml);
-
-    if (!json?.Contents) return null;
-
-    const sourceId = source.get("id") as KartlagId;
-
-    const mappedWMTSLayer: MappedLayer = {
-      layers: json.Contents.Layer.map((l: WMTSResponseLayer) =>
-        mapWMTSLayer(l, sourceId),
-      ),
-      queryable: true,
-      sourceId: source.get("id") as KartlagId,
-      title: json.ServiceIdentification.Title ?? source.getLayer(),
-      id: json.ServiceIdentification.Title,
-    };
-
-    return mappedWMTSLayer;
-  }
-
-  return null;
 };
 
 export default getSubLayersFromWMSSource;
