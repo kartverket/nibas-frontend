@@ -47,8 +47,10 @@ const UtkastOpprett = () => {
     register,
     handleSubmit,
     getValues,
-    formState: { isDirty },
-  } = useForm<UtkastFormData>();
+    formState: { dirtyFields },
+  } = useForm<UtkastFormData>({
+    defaultValues: { navn: "", endringstype: "" },
+  });
 
   const opprettUtkast = async () => {
     setIsLoading(true);
@@ -95,9 +97,11 @@ const UtkastOpprett = () => {
                   Velg et beskrivende navn som gjør at andre kan forstå hva
                   utkastet inneholder.
                 </FormHelperText>
+
                 <Input
-                  placeholder="f.eks. Sammenslåing av Rosenborg og Sentrum i Trondheim"
                   {...register("navn")}
+                  type="text"
+                  placeholder="f.eks. Sammenslåing av Rosenborg og Sentrum i Trondheim"
                 />
               </Section>
               <Section>
@@ -128,7 +132,7 @@ const UtkastOpprett = () => {
                 type="submit"
                 onClick={opprettUtkast}
                 isLoading={isLoading}
-                isDisabled={!isDirty}
+                isDisabled={!(dirtyFields.navn && dirtyFields.endringstype)}
               >
                 Opprett utkast
               </Button>
