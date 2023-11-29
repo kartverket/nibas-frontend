@@ -39,6 +39,7 @@ import { useToast } from "@kvib/react";
 import { routes } from "utils/routes";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
+import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
@@ -61,6 +62,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const { setError } = useErrorHandling();
   const { activePointMode, togglePointMode } = useToolbar();
   const toast = useToast();
+  const { resetKartlag } = useKartlag();
 
   const utkastPathMatch = useMatch(`${routes.utkast}/${routes.utkastId}`);
   const utkastIdMatches = utkastPathMatch?.params["utkastId"]?.match(
@@ -93,6 +95,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const closeUtkast = useCallback(() => {
     setUtkast(undefined);
     resetMapView();
+    resetKartlag();
     clearHistory({ hasPreviouslySavedHistory: false });
     clearFeatureStyles();
     resetAndClearAllLayers();
@@ -106,6 +109,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     closeOverlayPanel,
     closeSidebarPanel,
     resetAndClearAllLayers,
+    resetKartlag,
     togglePointMode,
   ]);
 

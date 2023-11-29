@@ -14,6 +14,7 @@ export type KartlagContextValue = {
   layerIsVisible: (layerId: KartlagId) => boolean;
   subLayerIsVisible: (mainLayer: KartlagId, subLayer: string) => boolean;
   moveLayer: (direction: "up" | "down", layerId: KartlagId) => void;
+  resetKartlag: () => void;
 };
 
 /**
@@ -36,6 +37,7 @@ export const KartlagProvider = ({
     toggleLayerVisibility,
     layerIsVisible,
     subLayerIsVisible,
+    resetVisibleLayers,
   } = useVisibleLayers();
 
   useEffect(() => {
@@ -78,6 +80,10 @@ export const KartlagProvider = ({
     };
   }, []);
 
+  const resetKartlag = () => {
+    resetVisibleLayers();
+  };
+
   const value = {
     mappedLayers,
     visibleLayers,
@@ -85,6 +91,7 @@ export const KartlagProvider = ({
     moveLayer,
     layerIsVisible,
     subLayerIsVisible,
+    resetKartlag,
   };
 
   return (

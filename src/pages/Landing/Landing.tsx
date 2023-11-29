@@ -10,9 +10,11 @@ import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { useEffect } from "react";
 import { resetMapView, getAllVisibleFeatures } from "utils/map";
 import { useToolbar } from "contexts/ToolbarContext";
+import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 
 const Landing = () => {
   const navigate = useNavigate();
+  const { resetKartlag } = useKartlag();
   const { activePointMode, togglePointMode } = useToolbar();
   const { resetAndClearAllLayers } = useEditAllGrenser();
   const { activeOverlayPanel, closeOverlayPanel } = useOverlayPanel();
@@ -20,6 +22,7 @@ const Landing = () => {
 
   useEffect(() => {
     resetMapView();
+    resetKartlag();
     if (activePointMode) togglePointMode(activePointMode);
     if (activeOverlayPanel) closeOverlayPanel();
     if (activeSidebarPanel) closeSidebarPanel();
@@ -34,6 +37,7 @@ const Landing = () => {
     closeOverlayPanel,
     closeSidebarPanel,
     resetAndClearAllLayers,
+    resetKartlag,
     togglePointMode,
   ]);
 
