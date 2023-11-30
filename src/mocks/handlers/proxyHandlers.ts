@@ -1,10 +1,10 @@
-import { rest } from "msw";
-import type { RestHandler } from "msw";
+import { HttpHandler, HttpResponse, http } from "msw";
 
-export const proxyHandlers: RestHandler[] = [
-  rest.get("/skbaatts/req", (req, res, ctx) =>
-    res(ctx.status(200), ctx.text("ABC123")),
+export const proxyHandlers: HttpHandler[] = [
+  http.get("/skbaatts/req", () => new HttpResponse("ABC123", { status: 200 })),
+  http.get("/skwms1/wms.nib", () => new HttpResponse(null, { status: 501 })),
+  http.get(
+    "/skwms1/wms.ecc_enc",
+    () => new HttpResponse(null, { status: 501 }),
   ),
-  rest.get("/skwms1/wms.nib", (req, res, ctx) => res(ctx.status(501))),
-  rest.get("/skwms1/wms.ecc_enc", (req, res, ctx) => res(ctx.status(501))),
 ];

@@ -1,5 +1,4 @@
-import { rest } from "msw";
-import type { RestHandler } from "msw";
+import { HttpHandler, HttpResponse, http } from "msw";
 import * as mocks from "./responses";
 import {
   GrunnkretsResponse,
@@ -8,85 +7,86 @@ import {
   UtkastResponse,
 } from "types/api";
 
-export const nibasApiHandlers: RestHandler[] = [
-  rest.get("/v1/fylker", (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mocks.mockFylker));
+export const nibasApiHandlers: HttpHandler[] = [
+  http.get("/v1/fylker", () =>
+    HttpResponse.json(mocks.mockFylker, { status: 200 }),
+  ),
+  http.get("/v1/kommuner", () =>
+    HttpResponse.json(mocks.mockKommuner, { status: 200 }),
+  ),
+  http.get("v1/kommuner/:id/grenser", () =>
+    HttpResponse.json(mocks.mockGeoJsonFeatureResponse, { status: 200 }),
+  ),
+  http.get("/v1/fylker/:fylkeId/grenser", () =>
+    HttpResponse.json(mocks.mockGeoJsonFeatureResponse, { status: 200 }),
+  ),
+  http.get("/v1/kodeliste/maalemetode-koder", () =>
+    HttpResponse.json(mocks.mockMaalemetodeResponse, { status: 200 }),
+  ),
+  http.post("/v1/grenser", () => new HttpResponse(null, { status: 200 })),
+  http.get("/v1/kodeliste/terrengdetaljkoder", () =>
+    HttpResponse.json(mocks.mockTerrengdetaljResponse, { status: 200 }),
+  ),
+  http.get("/v1/kodeliste/noeyaktighetsklasser", () => {
+    return HttpResponse.json(mocks.mockNoeyaktighetsklasseResponse, {
+      status: 200,
+    });
   }),
-  rest.get("/v1/kommuner", (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mocks.mockKommuner));
+  http.get("/v1/kommuner/:id", () =>
+    HttpResponse.json(mocks.mockDetailedKommune, { status: 200 }),
+  ),
+  http.get("/v1/kommuner/:id/grunnkretser", () => {
+    return HttpResponse.json([mocks.mockGrunnkrets1, mocks.mockGrunnkrets2], {
+      status: 200,
+    });
   }),
-  rest.get("v1/kommuner/:id/grenser", (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mocks.mockGeoJsonFeatureResponse));
-  }),
-  rest.get("/v1/fylker/:fylkeId/grenser", (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mocks.mockGeoJsonFeatureResponse));
-  }),
-  rest.get("/v1/kodeliste/maalemetode-koder", (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mocks.mockMaalemetodeResponse));
-  }),
-  rest.post("/v1/grenser", (req, res, ctx) => {
-    return res(ctx.status(200));
-  }),
-  rest.get("/v1/kodeliste/terrengdetaljkoder", (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mocks.mockTerrengdetaljResponse));
-  }),
-  rest.get("/v1/kodeliste/noeyaktighetsklasser", (req, res, ctx) => {
-    return res(
-      ctx.status(200),
-      ctx.json(mocks.mockNoeyaktighetsklasseResponse),
-    );
-  }),
-  rest.get("/v1/kommuner/:id", (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mocks.mockDetailedKommune));
-  }),
-  rest.get("/v1/kommuner/:id/grunnkretser", (req, res, ctx) => {
-    return res(
-      ctx.status(200),
-      ctx.json([mocks.mockGrunnkrets1, mocks.mockGrunnkrets2]),
-    );
-  }),
-  rest.get("/v1/grunnkretser/1", (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mocks.mockDetailedGrunnkrets1));
-  }),
-  rest.get("/v1/grunnkretser/2", (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mocks.mockDetailedGrunnkrets2));
-  }),
-  rest.get("/v1/kommuner/:id/stemmekretser", (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mocks.mockStemmekretser));
-  }),
-  rest.get("/v1/stemmekretser/1", (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mocks.mockStemmekrets1));
-  }),
-  rest.get("/v1/stemmekretser/2", (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mocks.mockStemmekrets2));
-  }),
-  rest.post("/v1/utkast", (req, res, ctx) => {
-    return res(ctx.status(201), ctx.json({ id: "1" }));
-  }),
-  rest.get("/v1/utkast/1", (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json<UtkastResponse>(mocks.mockUtkast));
-  }),
-  rest.get("/v1/utkast", (req, res, ctx) => {
-    return res(
-      ctx.status(200),
-      ctx.json<UtkastRef[]>([mocks.mockUtkastRef1, mocks.mockUtkastRef2]),
-    );
-  }),
-  rest.post("/v1/utkast/1/publiser", (req, res, ctx) => {
-    return res(ctx.status(200));
-  }),
-  rest.get("/v1/grunnkretser/1/framtidigeversjoner", (req, res, ctx) => {
-    return res(
-      ctx.status(200),
-      ctx.json<GrunnkretsResponse[]>(mocks.mockGrunnkretserFramtidigeEndringer),
-    );
-  }),
-  rest.get("/v1/stemmekretser/1/framtidigeversjoner", (req, res, ctx) => {
-    return res(
-      ctx.status(200),
-      ctx.json<StemmekretsResponse[]>(
-        mocks.mockStemmekretserFramtidigeEndringer,
-      ),
-    );
-  }),
+  http.get("/v1/grunnkretser/1", () =>
+    HttpResponse.json(mocks.mockDetailedGrunnkrets1, { status: 200 }),
+  ),
+  http.get("/v1/grunnkretser/2", () =>
+    HttpResponse.json(mocks.mockDetailedGrunnkrets2, { status: 200 }),
+  ),
+  http.get("/v1/kommuner/:id/stemmekretser", () =>
+    HttpResponse.json(mocks.mockStemmekretser, { status: 200 }),
+  ),
+  http.get("/v1/stemmekretser/1", () =>
+    HttpResponse.json(mocks.mockStemmekrets1, { status: 200 }),
+  ),
+  http.get("/v1/stemmekretser/2", () =>
+    HttpResponse.json(mocks.mockStemmekrets2, { status: 200 }),
+  ),
+  http.post("/v1/utkast", () =>
+    HttpResponse.json({ id: "1" }, { status: 201 }),
+  ),
+  http.get("/v1/utkast/1", () =>
+    HttpResponse.json<UtkastResponse>(mocks.mockUtkast, { status: 200 }),
+  ),
+  http.get("/v1/utkast", () =>
+    HttpResponse.json<UtkastRef[]>(
+      [mocks.mockUtkastRef1, mocks.mockUtkastRef2],
+      {
+        status: 200,
+      },
+    ),
+  ),
+  http.post(
+    "/v1/utkast/1/publiser",
+    () => new HttpResponse(null, { status: 200 }),
+  ),
+  http.get("/v1/grunnkretser/1/framtidigeversjoner", () =>
+    HttpResponse.json<GrunnkretsResponse[]>(
+      mocks.mockGrunnkretserFramtidigeEndringer,
+      {
+        status: 200,
+      },
+    ),
+  ),
+  http.get("/v1/stemmekretser/1/framtidigeversjoner", () =>
+    HttpResponse.json<StemmekretsResponse[]>(
+      mocks.mockStemmekretserFramtidigeEndringer,
+      {
+        status: 200,
+      },
+    ),
+  ),
 ];
