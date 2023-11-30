@@ -13,7 +13,7 @@ export const getFeaturesFromGeoJson = (
 ) => {
   return geoJson.readFeatures(json, {
     dataProjection: "EPSG:25833",
-  });
+  }) as Feature<Geometry>[];
 };
 
 export const geoJsonToSource = (

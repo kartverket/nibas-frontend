@@ -4,6 +4,8 @@ import { useUtkast, useUtkastFeature } from "contexts/UtkastContext";
 import { geoJsonToSource } from "utils/map/geoJson";
 import { getLayerById } from "utils/map/layers";
 import useNibasApi from "hooks/useNibasApi";
+import { Feature } from "ol";
+import { Geometry } from "ol/geom";
 
 const useApiGrense = (featuresUrl: string, shouldFetchInitially = false) => {
   const [shouldFetch, setShouldFetch] = useState(shouldFetchInitially);
@@ -18,7 +20,9 @@ const useApiGrense = (featuresUrl: string, shouldFetchInitially = false) => {
   const features = useMemo(() => {
     if (!utkastGeoJson) return null;
 
-    const geoJsonFeatures = geoJsonToSource(utkastGeoJson).getFeatures();
+    const geoJsonFeatures = geoJsonToSource(
+      utkastGeoJson,
+    ).getFeatures() as Feature<Geometry>[];
 
     // sjekk om features allerede ligger i kartet
     // hvis featurene er annerledes enn vanlig, så ligger de endrede featurene i edit-laget

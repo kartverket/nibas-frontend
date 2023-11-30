@@ -1,7 +1,9 @@
-import { editSource } from "hooks/layers/constants";
-import { Feature } from "ol";
 import { useState } from "react";
-import { getArchiveLayerStyle, grenseStyles } from "utils/map/layerStyles";
+import {
+  getArchiveLayerStyle,
+  grenseStyles,
+  setFeatureStyle,
+} from "utils/map/layerStyles";
 
 const useArchiveStyles = () => {
   const [archivedFeatureIds, setArchivedFeatureIds] = useState<string[]>([]);
@@ -13,7 +15,7 @@ const useArchiveStyles = () => {
   const setArchivedFeaturesToEdit = (features: string[]) => {
     for (const featureId of features) {
       if (!savedArchivedFeatureIds.includes(featureId)) {
-        editSource.getFeatureById(featureId)?.setStyle(grenseStyles.edit);
+        setFeatureStyle(featureId, grenseStyles.edit);
       }
     }
     setArchivedFeatureIds(
@@ -23,18 +25,10 @@ const useArchiveStyles = () => {
 
   const setArchivedFeatures = (features: string[]) => {
     for (const featureId of features) {
-      editSource
-        .getFeatureById(featureId)
-        ?.setStyle(
-          getArchiveLayerStyle(editSource.getFeatureById(featureId) as Feature),
-        );
+      setFeatureStyle(featureId, (feature) => getArchiveLayerStyle(feature));
     }
     for (const featureId of savedArchivedFeatureIds) {
-      editSource
-        .getFeatureById(featureId)
-        ?.setStyle(
-          getArchiveLayerStyle(editSource.getFeatureById(featureId) as Feature),
-        );
+      setFeatureStyle(featureId, (feature) => getArchiveLayerStyle(feature));
     }
     setArchivedFeatureIds(features);
   };
@@ -49,11 +43,7 @@ const useArchiveStyles = () => {
 
   const setAndSaveUtkastArchivedFeatures = (features: string[]) => {
     for (const featureId of features) {
-      editSource
-        .getFeatureById(featureId)
-        ?.setStyle(
-          getArchiveLayerStyle(editSource.getFeatureById(featureId) as Feature),
-        );
+      setFeatureStyle(featureId, (feature) => getArchiveLayerStyle(feature));
     }
     setSavedArchivedFeatureIds([...savedArchivedFeatureIds, ...features]);
   };
