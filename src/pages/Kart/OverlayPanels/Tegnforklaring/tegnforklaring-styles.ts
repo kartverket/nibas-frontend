@@ -7,8 +7,7 @@ const getColorFromStyle = (styles: Style[]): string => {
   if (strokeStyle == null) {
     return "#000000";
   }
-
-  return strokeStyle.getStroke().getColor().toLocaleString();
+  return strokeStyle.getStroke()?.getColor().toLocaleString() ?? "";
 };
 
 const isDottedStyle = (styles: Style[]): boolean => {
@@ -17,7 +16,7 @@ const isDottedStyle = (styles: Style[]): boolean => {
     return false;
   }
 
-  const dash = strokeStyle.getStroke().getLineDash();
+  const dash = strokeStyle.getStroke()?.getLineDash();
   return dash != null && dash.length > 0;
 };
 

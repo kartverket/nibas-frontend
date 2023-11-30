@@ -1,6 +1,5 @@
-import { editSource } from "hooks/layers/constants";
 import { useState } from "react";
-import { grenseStyles } from "utils/map/layerStyles";
+import { grenseStyles, setFeatureStyle } from "utils/map/layerStyles";
 
 const useDirtyStyles = () => {
   const [dirtyFeatureIds, setDirtyFeatureIds] = useState<string[]>([]);
@@ -12,7 +11,7 @@ const useDirtyStyles = () => {
   const setDirtyFeaturesToEdit = (features: string[]) => {
     for (const featureId of features) {
       if (!savedDirtyFeatureIds.includes(featureId)) {
-        editSource.getFeatureById(featureId)?.setStyle(grenseStyles.edit);
+        setFeatureStyle(featureId, grenseStyles.dirty);
       }
     }
     setDirtyFeatureIds(
@@ -22,10 +21,10 @@ const useDirtyStyles = () => {
 
   const setDirtyFeatures = (features: string[]) => {
     for (const featureId of features) {
-      editSource.getFeatureById(featureId)?.setStyle(grenseStyles.dirty);
+      setFeatureStyle(featureId, grenseStyles.dirty);
     }
     for (const featureId of savedDirtyFeatureIds) {
-      editSource.getFeatureById(featureId)?.setStyle(grenseStyles.dirty);
+      setFeatureStyle(featureId, grenseStyles.dirty);
     }
     setDirtyFeatureIds(features);
   };
@@ -42,7 +41,7 @@ const useDirtyStyles = () => {
 
   const setAndSaveUtkastFeatures = (features: string[]) => {
     for (const featureId of features) {
-      editSource.getFeatureById(featureId)?.setStyle(grenseStyles.dirty);
+      setFeatureStyle(featureId, grenseStyles.dirty);
     }
     setSavedDirtyFeatureIds([...savedDirtyFeatureIds, ...features]);
   };
@@ -52,14 +51,10 @@ const useDirtyStyles = () => {
     overlappingStemmekretsFeatureIds: string[],
   ) => {
     for (const featureId of stemmekretsFeatureIds) {
-      editSource
-        .getFeatureById(featureId)
-        ?.setStyle(grenseStyles.sammenslaaing);
+      setFeatureStyle(featureId, grenseStyles.sammenslaaing);
     }
     for (const featureId of overlappingStemmekretsFeatureIds) {
-      editSource
-        .getFeatureById(featureId)
-        ?.setStyle(grenseStyles.sammenslaaingOverlapping);
+      setFeatureStyle(featureId, grenseStyles.sammenslaaingOverlapping);
     }
   };
 

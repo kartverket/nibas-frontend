@@ -6,7 +6,7 @@ import RenderFeature from "ol/render/Feature";
 import Circle from "ol/style/Circle";
 import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
-import Style from "ol/style/Style";
+import Style, { StyleFunction } from "ol/style/Style";
 import { map } from "pages/Kart/constants";
 import Text from "ol/style/Text";
 import Point from "ol/geom/Point";
@@ -187,7 +187,9 @@ export const updateEditFeatureText = (
   name?: string,
   number?: string,
 ) => {
-  const feature = editSource.getFeatureById(featureId);
+  const feature = editSource.getFeatureById(
+    featureId,
+  ) as Feature<Geometry> | null;
   if (feature) {
     if (name) {
       feature.set("name", name);
@@ -196,4 +198,19 @@ export const updateEditFeatureText = (
       feature.set("number", number);
     }
   }
+};
+
+/**
+ * Liten hjelpefunksjon for å slippe så mye typehåndtering når man skal sette stiler
+ * @param featureId En gitt feature i editSource som skal få ny stil
+ * @param style Stil fra grenseStyles eller en stilfunksjon
+ */
+export const setFeatureStyle = (
+  featureId: string,
+  style: Style[] | StyleFunction,
+) => {
+  const feature = editSource.getFeatureById(
+    featureId,
+  ) as Feature<Geometry> | null;
+  feature?.setStyle(style);
 };

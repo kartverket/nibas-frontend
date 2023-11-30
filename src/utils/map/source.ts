@@ -21,7 +21,9 @@ export const addFeaturesToSource = (
 
     if (!id) return;
 
-    const existingFeature = source.getFeatureById(id);
+    const existingFeature = source.getFeatureById(
+      id,
+    ) as Feature<Geometry> | null;
 
     // oppdatere eksisterende feature hvis den finnes, så den ikke slettes
     // når nærliggende grense fjernes
@@ -47,7 +49,9 @@ export const removeFeaturesFromSourceByIds = (
   if (!source) return;
 
   const removeFeature = (featureId: string) => {
-    const featureToRemove = source.getFeatureById(featureId);
+    const featureToRemove = source.getFeatureById(
+      featureId,
+    ) as Feature<Geometry> | null;
 
     if (!featureToRemove) return null;
 
