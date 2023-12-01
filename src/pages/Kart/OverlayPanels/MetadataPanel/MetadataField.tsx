@@ -7,7 +7,6 @@ import React, { useEffect } from "react";
 import useIsMetadataDisabled from "../hooks/useIsMetadataDisabled";
 import { Inputs } from "./MetadataGenerelt";
 import { UseFormRegisterReturn } from "react-hook-form";
-import { useFeatureStyle } from "contexts/FeatureStyleContext";
 
 type Props = {
   feature: Feature<Geometry>;
@@ -36,7 +35,6 @@ export const MetadataField = ({
     getValues,
     getFieldFromMetadata,
   } = useMetadataField(fieldKey, metadata, feature);
-  const { featureIsArchived } = useFeatureStyle();
 
   // Still tilbake til default-verdi dersom man bytter valgt feature
   useEffect(() => {
@@ -46,8 +44,7 @@ export const MetadataField = ({
   const onSubmit = () => {
     updateDraftFromFeature();
   };
-  const metadataIsDisabled =
-    useIsMetadataDisabled(properties) || featureIsArchived(feature);
+  const metadataIsDisabled = useIsMetadataDisabled(feature, properties);
 
   return (
     <MetadataRow
