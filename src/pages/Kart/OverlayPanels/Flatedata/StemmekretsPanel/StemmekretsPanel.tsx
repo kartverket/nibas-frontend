@@ -10,6 +10,7 @@ import SortHeader from "../SortHeader";
 import { useTableSort } from "../useTableSort";
 import { orderBy } from "utils/list-utils";
 import { getNavnInSpraak } from "utils/language/language";
+import { Spinner } from "@kvib/react";
 
 const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
   const { utkast } = useUtkast();
@@ -32,7 +33,7 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
       <PanelHeader onClose={closeOverlayPanel}>
         Flateinformasjon for {getNavnInSpraak(flatedata?.navn, "nor")}
       </PanelHeader>
-      {utkastStemmekretser && (
+      {utkastStemmekretser ? (
         <KretsTable $hasUtkast={utkast !== undefined}>
           <thead>
             <tr>
@@ -60,6 +61,8 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
             )}
           </tbody>
         </KretsTable>
+      ) : (
+        <Spinner />
       )}
     </Panel>
   );
