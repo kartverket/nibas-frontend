@@ -13,6 +13,7 @@ import SortHeader from "../SortHeader";
 import { useTableSort } from "../useTableSort";
 import { orderBy } from "utils/list-utils";
 import { getNavnInSpraak } from "utils/language/language";
+import { Spinner } from "@kvib/react";
 
 const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
   const { utkast } = useUtkast();
@@ -45,7 +46,7 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
       <PanelHeader onClose={closeOverlayPanel}>
         Flateinformasjon for {getNavnInSpraak(flatedata?.navn, "nor")}
       </PanelHeader>
-      {filteredGrunnkretser && (
+      {filteredGrunnkretser ? (
         <KretsTable $hasUtkast={utkast !== undefined}>
           <thead>
             <tr>
@@ -76,6 +77,8 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
             )}
           </tbody>
         </KretsTable>
+      ) : (
+        <Spinner />
       )}
     </Panel>
   );
