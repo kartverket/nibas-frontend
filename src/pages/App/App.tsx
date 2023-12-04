@@ -23,6 +23,7 @@ import Landing from "pages/Landing/Landing";
 import ThirdPartyProviders from "./ThirdPartyProviders";
 import { routes } from "utils/routes";
 import Utkast from "pages/Utkast/Utkast";
+import EnvironmentOverlay from "./EnvironmentOverlay";
 
 /**
  * Definerer 3 verdier i konfigurasjonen. Disse brukes av biblioteket forskjellige steder i flyten.
@@ -62,7 +63,9 @@ const App = () => {
 
   return (
     <Suspense fallback={<Loading isLoading={true} />}>
-      <RouterProvider router={router} />
+      <EnvironmentOverlay>
+        <RouterProvider router={router} />
+      </EnvironmentOverlay>
     </Suspense>
   );
 };

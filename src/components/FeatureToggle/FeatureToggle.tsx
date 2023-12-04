@@ -6,7 +6,7 @@ const getLocalEnvironmentOverride = (envKey: string) => {
   return import.meta.env[envKey] === "true";
 };
 
-type Environment = "prod" | "test" | "dev";
+export type Environment = "prod" | "test" | "dev";
 
 const environmentByUrl: Record<string, Environment> = {
   localhost: "dev",
