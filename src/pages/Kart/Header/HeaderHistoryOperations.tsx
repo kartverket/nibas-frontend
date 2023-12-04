@@ -17,9 +17,9 @@ const HeaderHistoryOperations = () => {
     }
   };
 
-  useKeyboardShortcut("save", handleSave);
-  useKeyboardShortcut("undo", undo);
-  useKeyboardShortcut("redo", redo);
+  useKeyboardShortcut("save", handleSave, canSave);
+  useKeyboardShortcut("undo", undo, !!undo);
+  useKeyboardShortcut("redo", redo, !!redo);
 
   if (!utkast) return null;
 
