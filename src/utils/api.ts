@@ -59,7 +59,7 @@ export const fetcherWithToken = async ([url, token]: [
   if (!url) return;
 
   const res = await fetch(getUrlForPath(url), {
-    headers: { Authorization: "Bearer " + token ?? "" },
+    headers: { Authorization: `Bearer ${token}` },
   });
 
   if (!res.ok) {
