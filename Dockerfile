@@ -1,5 +1,5 @@
 # Intended to be used by CI
-FROM caddy:2-alpine
+FROM caddy:2-alpine@sha256:80589bc2e950ea6931c08a43265082aa8111ebf8dc4d880a97f510865d5fbde8
 
 COPY /build /srv
 
