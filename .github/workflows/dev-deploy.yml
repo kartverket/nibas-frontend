@@ -20,10 +20,11 @@ jobs:
 
   deploy-argo:
     needs: build
-    uses: kartverket/smia-apps/.github/workflows/release-app.yml@main
+    uses: kartverket/smia-apps/.github/workflows/release-app.yml@tillate-digest
     with:
       application: nibas-frontend
       version: ${{ needs.build.outputs.version }}
+      digest: ${{ needs.build.outputs.digest }}
       deploy_dev: true
     secrets:
       PAT_TOKEN: ${{ secrets.PAT_ARGOCD }}

@@ -38,11 +38,12 @@ jobs:
           image_url: ${{ needs.build.outputs.image_url }}
 
   deploy-argo:
-    needs: [pharos, build]
+    needs: build
     uses: kartverket/smia-apps/.github/workflows/release-app.yml@main
     with:
       application: nibas-frontend
       version: ${{ needs.build.outputs.version }}
+      digest: ${{ needs.build.outputs.digest }}
       deploy_dev: true
       deploy_test: true
       deploy_prod: true
