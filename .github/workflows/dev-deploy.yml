@@ -24,7 +24,6 @@ jobs:
     with:
       application: nibas-frontend
       version: ${{ needs.build.outputs.version }}
-      digest: ${{ needs.build.outputs.digest }}
       deploy_dev: true
     secrets:
       PAT_TOKEN: ${{ secrets.PAT_ARGOCD }}
