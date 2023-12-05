@@ -13,17 +13,18 @@ jobs:
       packages: write
       security-events: write
       actions: read
-    uses: kartverket/nibas-frontend/.github/workflows/build-app.yml@fikse-caddy-versjon
+    uses: kartverket/nibas-frontend/.github/workflows/build-app.yml@master
     with:
       deploy_ghcr: true
     secrets: inherit
 
   deploy-argo:
     needs: build
-    uses: kartverket/smia-apps/.github/workflows/release-app.yml@tillate-digest
+    uses: kartverket/smia-apps/.github/workflows/release-app.yml@main
     with:
       application: nibas-frontend
       version: ${{ needs.build.outputs.version }}
+      digest: ${{ needs.build.outputs.digest }}
       deploy_dev: true
     secrets:
       PAT_TOKEN: ${{ secrets.PAT_ARGOCD }}
