@@ -36,7 +36,7 @@ export const kartlagLayers: Record<
   sjokartElektroniske: createTileLayerFromKartlagSource("sjokartElektroniske"),
 };
 
-export const editSource = new VectorSource();
+export const editSource = new VectorSource({ useSpatialIndex: false });
 
 const grenseStyle =
   (grenseId: GrenseId): StyleFunction =>

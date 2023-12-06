@@ -211,7 +211,7 @@ const MetadataReferanser = ({ feature }: Props) => {
     );
   };
 
-  const metadataIsDisabled = useIsMetadataDisabled(properties);
+  const metadataIsDisabled = useIsMetadataDisabled(feature, properties);
 
   return (
     <form>
