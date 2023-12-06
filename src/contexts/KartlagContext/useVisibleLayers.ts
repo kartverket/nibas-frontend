@@ -8,13 +8,20 @@ export type VisibleLayer = {
   subLayers: string[];
 };
 
+const defaultLayers = [
+  {
+    mainLayer: "cachetjenester" as KartlagId,
+    subLayers: ["Norges grunnkart gråtone"],
+  },
+];
+
 const useVisibleLayers = () => {
-  const [visibleLayers, setVisibleLayers] = useState<VisibleLayer[]>([
-    {
-      mainLayer: "cachetjenester" as KartlagId,
-      subLayers: ["Norges grunnkart gråtone"],
-    },
-  ]);
+  const [visibleLayers, setVisibleLayers] =
+    useState<VisibleLayer[]>(defaultLayers);
+
+  const resetVisibleLayers = () => {
+    setVisibleLayers(defaultLayers);
+  };
 
   // Hver gang listen med synlige kartlag endrer seg skrur vi av alle lagene,
   // også skrur vi på de vi vil se igjen
@@ -135,6 +142,7 @@ const useVisibleLayers = () => {
     toggleLayerVisibility,
     layerIsVisible,
     subLayerIsVisible,
+    resetVisibleLayers,
   };
 };
 
