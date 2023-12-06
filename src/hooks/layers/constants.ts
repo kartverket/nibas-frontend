@@ -15,8 +15,7 @@ export const kartlagLayers: Record<
   KartlagId,
   TileLayer<TileWMS | WMTS> | VectorLayer<VectorSource>
 > = {
-  europaKart: createTileLayerFromKartlagSource("europaKart"),
-  topoWMTS: createTileLayerFromKartlagSource("topoWMTS"),
+  cachetjenester: createTileLayerFromKartlagSource("cachetjenester"),
   administrativeGrenser: createTileLayerFromKartlagSource(
     "administrativeGrenser",
   ),
@@ -31,7 +30,6 @@ export const kartlagLayers: Record<
   n5Raster2: createTileLayerFromKartlagSource("n5Raster2"),
   historiskeKart: createTileLayerFromKartlagSource("historiskeKart"),
   norgeIBilder: createTileLayerFromKartlagSource("norgeIBilder"),
-  cachetjenester: createTileLayerFromKartlagSource("cachetjenester"),
   norgesMaritimeGrenser: createTileLayerFromKartlagSource(
     "norgesMaritimeGrenser",
   ),
