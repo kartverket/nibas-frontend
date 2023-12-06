@@ -116,12 +116,13 @@ const OuterContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
 `;
 
 const Container = styled.div`
   display: flex;
   gap: 24px;
-  margin: 16px 0;
 `;
 
 const ToolbarButtons = styled.div`
