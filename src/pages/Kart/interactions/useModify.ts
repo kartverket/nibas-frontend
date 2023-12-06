@@ -24,9 +24,9 @@ const getInfoFromFeature = (featureLike: FeatureLike) => {
 const useModify = () => {
   const { addHistoryEntry } = useHistory();
   const { activePointMode } = useToolbar();
-  const { selectedFeatures, featureIsEditable } = useFeatureStyle();
+  const { selectedFeatures, featureIsEditable, featureIsArchived } =
+    useFeatureStyle();
   const toast = useToast();
-  const detachIsActive = activePointMode === "detach";
   const editLayer = getLayerById("edit");
 
   // Ønsker helst at redigering ikke skal være aktiv under enkelte verktøy
@@ -38,8 +38,20 @@ const useModify = () => {
   const modify = useMemo(
     () =>
       new Modify({
-        source: detachIsActive ? undefined : editSource,
-        features: detachIsActive ? new Collection(selectedFeatures) : undefined,
+        features: new Collection(
+          (editSource.getFeaturesCollection()!.getArray() ?? []).filter(
+            (feature) => {
+              // Ved løsriving ønsker vi kun å kunne påvirke valgte features
+              if (activePointMode === "detach") {
+                return selectedFeatures.some(
+                  (sf) => sf.getId() === feature.getId(),
+                );
+              }
+              // Arkiverte features skal ikke kunne modifiseres
+              return !featureIsArchived(feature);
+            },
+          ),
+        ),
         pixelTolerance: pixelTolerance,
         condition: (event: MapBrowserEvent<MouseEvent>) => {
           if (disallowedPointModes.includes(activePointMode)) return false;
@@ -50,12 +62,12 @@ const useModify = () => {
             hitTolerance: pixelTolerance,
           });
 
+          const activeFeatures = featuresAtPixel.filter(
+            (feature) => !featureIsArchived(feature),
+          );
+
           // Sjekk alle featurene i punktet, hvis en av dem ikke skal kunne endres ønsker vi ikke å endre noe
-          // Inntil videre lar vi løsriving forbigå denne fordi man ikke kan velge ulovlige grenser for løsriving
-          if (
-            !featuresAtPixel.every(featureIsEditable) &&
-            activePointMode !== "detach"
-          ) {
+          if (!activeFeatures.every(featureIsEditable)) {
             toast({
               status: "error",
               title: "Denne grensen er ikke redigerbar",
@@ -118,9 +130,9 @@ const useModify = () => {
       }),
     [
       activePointMode,
-      detachIsActive,
       disallowedPointModes,
       editLayer,
+      featureIsArchived,
       featureIsEditable,
       selectedFeatures,
       toast,
