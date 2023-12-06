@@ -101,15 +101,10 @@ const defaultParams = {
   TILED: true,
 };
 
-const createTileWMS = (
-  url: string,
-  mainLayerName: string,
-  params: Record<string, unknown> = {},
-) =>
+const createTileWMS = (url: string, params: Record<string, unknown> = {}) =>
   new TileWMS({
     url,
     params: {
-      LAYERS: mainLayerName,
       ...defaultParams,
       ...params,
     },
@@ -117,7 +112,6 @@ const createTileWMS = (
 
 const createAuthedTileWMS = (
   url: string,
-  mainLayerName: string,
   tjenesteId: string,
   params: Record<string, unknown> = {},
 ) =>
@@ -133,7 +127,6 @@ const createAuthedTileWMS = (
       );
     },
     params: {
-      LAYERS: mainLayerName,
       ...defaultParams,
       ...params,
     },
@@ -142,50 +135,32 @@ const createAuthedTileWMS = (
 export const kartlagSources = {
   administrativeGrenser: createTileWMS(
     "https://wms.geonorge.no/skwms1/wms.adm_enheter2",
-    "adm_enheter_V2_WMS",
   ),
   stedsnavn: createTileWMS(
     "https://openwms.statkart.no/skwms1/wms.stedsnavnenkel",
-    "stedsnavnenkel",
   ),
   cachetjenester: new WMTS(cachetjenesterConfig),
   norgesMaritimeGrenser: createTileWMS(
     "https://openwms.statkart.no/skwms1/wms.nmg",
-    "nmg_WMS",
   ),
   administrativeGrenserHistorisk: createTileWMS(
     "https://wms.geonorge.no/skwms1/wms.adm_enheter_historisk",
-    "adm_enheter_historisk_WMS",
   ),
   grunnkretserWMS: createTileWMS(
     "https://openwms.statkart.no/skwms1/wms.grunnkretser",
-    "grunnkretser_WMS",
   ),
-  n5Raster2: createTileWMS(
-    "https://openwms.statkart.no/skwms1/wms.n5raster2",
-    "n5Raster_WMS",
-  ),
+  n5Raster2: createTileWMS("https://openwms.statkart.no/skwms1/wms.n5raster2"),
   kartbladinndelinger: createTileWMS(
     "https://openwms.statkart.no/skwms1/wms.kartblad",
-    "Kartblad_WMS",
   ),
   sjokartDybdedata: createTileWMS(
     "https://wms.geonorge.no/skwms1/wms.dybdedata2",
-    "Dybdedata2",
   ),
-  stedsnavnSSR: createTileWMS(
-    "https://openwms.statkart.no/skwms1/wms.ssr2",
-    "ssr2_wms",
-  ),
+  stedsnavnSSR: createTileWMS("https://openwms.statkart.no/skwms1/wms.ssr2"),
   historiskeKart: createTileWMS(
     "https://wms.geonorge.no/skwms1/wms.historiskekart",
-    "historiskekart",
   ),
-  sjokartElektroniske: createAuthedTileWMS(
-    "/skwms1/wms.ecc_enc",
-    "background",
-    "wms.ecc_enc",
-  ),
+  sjokartElektroniske: createAuthedTileWMS("/skwms1/wms.ecc_enc", "background"),
   europaKart: new WMTS(europaKartConfig),
   topoWMTS: new WMTS(topoWMTSConfig),
   norgeIBilder: new WMTS(norgeIBilderConfig),
