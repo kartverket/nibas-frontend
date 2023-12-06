@@ -18,7 +18,8 @@ const ToolbarPopups = () => {
   const toast = useToast();
   const { split } = useSplit();
   const { addHistoryEntry } = useHistory();
-  const { activeEditModes, activePointMode } = useToolbar();
+  const { activeEditModes, activePointMode, toggleEditMode, togglePointMode } =
+    useToolbar();
   const {
     selectedFeatures,
     selectedPoint,
@@ -85,15 +86,22 @@ const ToolbarPopups = () => {
           subtext="Grensene hentes ut basert på kartutsnittet du ser på. Flytt kartet til hvor du ønsker å hente frem eiendomsgrensene."
           buttonText="Hent grenser"
           onClick={handleMatrikkel}
+          onClose={() => toggleEditMode("matrikkel")}
           isDisabled={matrikkelIsLoading}
           isLoading={matrikkelIsLoading}
         />
       )}
       {activePointMode === "draw" && (
-        <ToolbarPopup text="Dobbeltklikk for å avslutte tegningen" />
+        <ToolbarPopup
+          text="Dobbeltklikk for å avslutte tegningen"
+          onClose={() => togglePointMode("draw")}
+        />
       )}
       {activePointMode === "split" && selectedFeatures.length === 0 && (
-        <ToolbarPopup text="Velg grensen du ønsker å splitte" />
+        <ToolbarPopup
+          text="Velg grensen du ønsker å splitte"
+          onClose={() => togglePointMode("split")}
+        />
       )}
       {activePointMode === "split" && selectedFeatures.length === 1 && (
         <ToolbarPopup
@@ -101,16 +109,32 @@ const ToolbarPopups = () => {
           buttonText="Splitt grense"
           onClick={() => handleSplit()}
           isDisabled={selectedPoint === null}
+          onClose={() => {
+            clearSelection();
+            togglePointMode("split");
+          }}
         />
       )}
       {activePointMode === "detach" && selectedFeatures.length === 0 && (
-        <ToolbarPopup text="Velg grensen du ønsker å løsrive fra andre grenser" />
+        <ToolbarPopup
+          text="Velg grensen du ønsker å løsrive fra andre grenser"
+          onClose={() => togglePointMode("detach")}
+        />
       )}
       {activePointMode === "detach" && selectedFeatures.length === 1 && (
-        <ToolbarPopup text="Dra på et knutepunkt for å løsrive grensen" />
+        <ToolbarPopup
+          text="Dra på et knutepunkt for å løsrive grensen"
+          onClose={() => {
+            clearSelection();
+            togglePointMode("detach");
+          }}
+        />
       )}
       {activePointMode === "metadata" && (
-        <ToolbarPopup text="Velg en grense i kartet for å se grenseinformasjon" />
+        <ToolbarPopup
+          text="Velg en grense i kartet for å se grenseinformasjon"
+          onClose={() => togglePointMode("metadata")}
+        />
       )}
       {activePointMode === "archive" && (
         <ToolbarPopup
@@ -118,16 +142,26 @@ const ToolbarPopups = () => {
           buttonText="Arkiver"
           onClick={archiveFeatures}
           isDisabled={selectedFeatures.length !== 1}
+          onClose={() => togglePointMode("archive")}
         />
       )}
       {activePointMode === "koordinater" && (
-        <ToolbarPopup text="Velg et punkt på en grense for å åpne koordinatmenyen" />
+        <ToolbarPopup
+          text="Velg et punkt på en grense for å åpne koordinatmenyen"
+          onClose={() => togglePointMode("koordinater")}
+        />
       )}
       {activePointMode === "add" && (
-        <ToolbarPopup text="Trykk på en grense for å legge til et punkt" />
+        <ToolbarPopup
+          text="Trykk på en grense for å legge til et punkt"
+          onClose={() => togglePointMode("add")}
+        />
       )}
       {activePointMode === "remove" && (
-        <ToolbarPopup text="Trykk på et punkt for å fjerne punktet fra grensen" />
+        <ToolbarPopup
+          text="Trykk på et punkt for å fjerne punktet fra grensen"
+          onClose={() => togglePointMode("remove")}
+        />
       )}
     </>
   );

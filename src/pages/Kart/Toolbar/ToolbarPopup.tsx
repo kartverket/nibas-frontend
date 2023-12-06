@@ -5,6 +5,7 @@ type Props = {
   text: string;
   subtext?: string;
   onClick?: () => void;
+  onClose: () => void;
   buttonText?: string;
   isDisabled?: boolean;
   isLoading?: boolean;
@@ -15,6 +16,7 @@ const ToolbarPopup = ({
   subtext,
   buttonText,
   onClick,
+  onClose,
   isDisabled,
   isLoading,
 }: Props) => {
@@ -36,6 +38,14 @@ const ToolbarPopup = ({
           {buttonText}
         </Button>
       )}
+      <Button
+        size="sm"
+        variant="secondary"
+        colorScheme="gray"
+        onClick={onClose}
+      >
+        Avbryt
+      </Button>
     </ToolbarPopupBody>
   );
 };
@@ -46,7 +56,7 @@ const ToolbarPopupBody = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 24px;
+  gap: 16px;
   padding: 12px 20px;
   border-radius: 8px;
   background: var(--kvib-colors-chakra-body-bg);

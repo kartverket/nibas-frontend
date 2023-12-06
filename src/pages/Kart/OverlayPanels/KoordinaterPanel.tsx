@@ -15,6 +15,7 @@ import Point from "ol/geom/Point";
 import { Button, useToast } from "@kvib/react";
 import { editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
+import { useToolbar } from "contexts/ToolbarContext";
 
 type KoordinaterFormData = {
   north: number;
@@ -37,9 +38,10 @@ const InputRow = styled.div`
 
 const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
   const { closeOverlayPanel } = useOverlayPanel();
-  const { selectedPoint, selectedFeatures } = useFeatureStyle();
+  const { selectedPoint, selectedFeatures, selectPointOnFeature } =
+    useFeatureStyle();
+  const { togglePointMode } = useToolbar();
   const { addHistoryEntry } = useHistory();
-  const { selectPointOnFeature } = useFeatureStyle();
   const toast = useToast();
 
   const defaultValues = (punkt: SelectedPoint) => {
@@ -201,7 +203,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
           variant="tertiary"
           onClick={() => {
             reset();
-            closeOverlayPanel();
+            togglePointMode("koordinater");
           }}
         >
           Avbryt
