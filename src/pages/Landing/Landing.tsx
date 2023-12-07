@@ -15,7 +15,7 @@ import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 const Landing = () => {
   const navigate = useNavigate();
   const { resetKartlag } = useKartlag();
-  const { activeTool, toggleTool } = useToolbar();
+  const { resetTool, resetModeTools } = useToolbar();
   const { resetAndClearAllLayers } = useEditAllGrenser();
   const { activeOverlayPanel, closeOverlayPanel } = useOverlayPanel();
   const { activeSidebarPanel, closeSidebarPanel } = useSidebarPanel();
@@ -23,22 +23,26 @@ const Landing = () => {
   useEffect(() => {
     resetMapView();
     resetKartlag();
-    if (activeTool) toggleTool(activeTool);
-    if (activeOverlayPanel) closeOverlayPanel();
-    if (activeSidebarPanel) closeSidebarPanel();
+    resetTool();
+    resetModeTools();
+
     const allVisibleFeatures = getAllVisibleFeatures();
     if (allVisibleFeatures.length > 0) {
       resetAndClearAllLayers();
     }
+
+    // Disse to krever ekstra sjekking for å unngå uendelig useEffekt-løkke
+    if (activeOverlayPanel) closeOverlayPanel();
+    if (activeSidebarPanel) closeSidebarPanel();
   }, [
     activeOverlayPanel,
-    activeTool,
     activeSidebarPanel,
     closeOverlayPanel,
     closeSidebarPanel,
     resetAndClearAllLayers,
     resetKartlag,
-    toggleTool,
+    resetModeTools,
+    resetTool,
   ]);
 
   return (

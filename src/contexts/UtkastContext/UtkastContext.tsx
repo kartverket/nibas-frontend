@@ -60,7 +60,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const { closeOverlayPanel } = useOverlayPanel();
   const { closeSidebarPanel } = useSidebarPanel();
   const { setError } = useErrorHandling();
-  const { activeTool, toggleTool } = useToolbar();
+  const { resetTool, resetModeTools } = useToolbar();
   const toast = useToast();
   const { resetKartlag } = useKartlag();
 
@@ -101,16 +101,17 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     resetAndClearAllLayers();
     closeOverlayPanel();
     closeSidebarPanel();
-    if (activeTool) toggleTool(activeTool);
+    resetModeTools();
+    resetTool();
   }, [
-    activeTool,
     clearFeatureStyles,
     clearHistory,
     closeOverlayPanel,
     closeSidebarPanel,
     resetAndClearAllLayers,
     resetKartlag,
-    toggleTool,
+    resetModeTools,
+    resetTool,
   ]);
 
   useEffect(() => {
