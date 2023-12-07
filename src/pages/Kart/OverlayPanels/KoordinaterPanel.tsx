@@ -40,7 +40,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
   const { closeOverlayPanel } = useOverlayPanel();
   const { selectedPoint, selectedFeatures, selectPointOnFeature } =
     useFeatureStyle();
-  const { togglePointMode } = useToolbar();
+  const { toggleTool } = useToolbar();
   const { addHistoryEntry } = useHistory();
   const toast = useToast();
 
@@ -203,7 +203,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
           variant="tertiary"
           onClick={() => {
             reset();
-            togglePointMode("koordinater");
+            toggleTool("koordinater");
           }}
         >
           Avbryt

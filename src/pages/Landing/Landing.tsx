@@ -15,7 +15,7 @@ import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 const Landing = () => {
   const navigate = useNavigate();
   const { resetKartlag } = useKartlag();
-  const { activePointMode, togglePointMode } = useToolbar();
+  const { activeTool, toggleTool } = useToolbar();
   const { resetAndClearAllLayers } = useEditAllGrenser();
   const { activeOverlayPanel, closeOverlayPanel } = useOverlayPanel();
   const { activeSidebarPanel, closeSidebarPanel } = useSidebarPanel();
@@ -23,7 +23,7 @@ const Landing = () => {
   useEffect(() => {
     resetMapView();
     resetKartlag();
-    if (activePointMode) togglePointMode(activePointMode);
+    if (activeTool) toggleTool(activeTool);
     if (activeOverlayPanel) closeOverlayPanel();
     if (activeSidebarPanel) closeSidebarPanel();
     const allVisibleFeatures = getAllVisibleFeatures();
@@ -32,13 +32,13 @@ const Landing = () => {
     }
   }, [
     activeOverlayPanel,
-    activePointMode,
+    activeTool,
     activeSidebarPanel,
     closeOverlayPanel,
     closeSidebarPanel,
     resetAndClearAllLayers,
     resetKartlag,
-    togglePointMode,
+    toggleTool,
   ]);
 
   return (

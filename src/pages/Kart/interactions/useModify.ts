@@ -9,7 +9,7 @@ import { editSource } from "hooks/layers/constants";
 import { pixelTolerance } from "./constants";
 import { getLayerById } from "utils/map/layers";
 import { map } from "pages/Kart/constants";
-import { ToolbarPointMode, useToolbar } from "contexts/ToolbarContext";
+import { Tool, useToolbar } from "contexts/ToolbarContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { selectedPointStyle } from "utils/map/layerStyles";
 import { useToast } from "@kvib/react";
@@ -23,14 +23,14 @@ const getInfoFromFeature = (featureLike: FeatureLike) => {
 
 const useModify = () => {
   const { addHistoryEntry } = useHistory();
-  const { activePointMode } = useToolbar();
+  const { activeTool } = useToolbar();
   const { selectedFeatures, featureIsEditable, featureIsArchived } =
     useFeatureStyle();
   const toast = useToast();
   const editLayer = getLayerById("edit");
 
   // Ønsker helst at redigering ikke skal være aktiv under enkelte verktøy
-  const disallowedPointModes: ToolbarPointMode[] = useMemo(
+  const disallowedPointModes: Tool[] = useMemo(
     () => ["draw", "split", "metadata", "archive", "koordinater"],
     [],
   );
@@ -42,7 +42,7 @@ const useModify = () => {
           (editSource.getFeaturesCollection()!.getArray() ?? []).filter(
             (feature) => {
               // Ved løsriving ønsker vi kun å kunne påvirke valgte features
-              if (activePointMode === "detach") {
+              if (activeTool === "detach") {
                 return selectedFeatures.some(
                   (sf) => sf.getId() === feature.getId(),
                 );
@@ -54,8 +54,8 @@ const useModify = () => {
         ),
         pixelTolerance: pixelTolerance,
         condition: (event: MapBrowserEvent<MouseEvent>) => {
-          if (disallowedPointModes.includes(activePointMode)) return false;
-          if (activePointMode === "detach" && selectedFeatures.length === 0)
+          if (disallowedPointModes.includes(activeTool)) return false;
+          if (activeTool === "detach" && selectedFeatures.length === 0)
             return false;
           const featuresAtPixel = map.getFeaturesAtPixel(event.pixel, {
             layerFilter: (layer) => layer === editLayer,
@@ -80,10 +80,10 @@ const useModify = () => {
         },
         style: selectedPointStyle,
         insertVertexCondition: () => {
-          return activePointMode === "add";
+          return activeTool === "add";
         },
         deleteCondition: (event: MapBrowserEvent<MouseEvent>) => {
-          if (activePointMode === "remove" && click(event)) {
+          if (activeTool === "remove" && click(event)) {
             const featuresAtPixel = map.getFeaturesAtPixel(event.pixel, {
               layerFilter: (layer) => layer === editLayer,
               hitTolerance: pixelTolerance,
@@ -129,7 +129,7 @@ const useModify = () => {
         },
       }),
     [
-      activePointMode,
+      activeTool,
       disallowedPointModes,
       editLayer,
       featureIsArchived,
@@ -187,9 +187,9 @@ const useModify = () => {
           changes,
         });
       }
-      if (activePointMode === "add") {
+      if (activeTool === "add") {
         toast({ description: "Punktet ble lagt til", status: "success" });
-      } else if (activePointMode === "remove") {
+      } else if (activeTool === "remove") {
         toast({ description: "Punktet ble fjernet", status: "success" });
       }
 
@@ -201,7 +201,7 @@ const useModify = () => {
     return () => {
       modify.un("modifyend", addModificationToHistory);
     };
-  }, [activePointMode, addHistoryEntry, modify, toast]);
+  }, [activeTool, addHistoryEntry, modify, toast]);
 
   return { modify };
 };

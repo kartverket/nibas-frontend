@@ -12,7 +12,7 @@ import ToolbarMenus from "./ToolbarMenus";
 import { getLayerById } from "utils/map/layers";
 
 const Toolbar = () => {
-  const { activeEditModes, toggleEditMode } = useToolbar();
+  const { activeModeTools, toggleModeTool } = useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const editingType = getCurrentlyEditingType();
   const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } =
@@ -27,13 +27,13 @@ const Toolbar = () => {
   };
 
   const toggleMatrikkel = () => {
-    if (activeEditModes.includes("matrikkel")) {
+    if (activeModeTools.includes("matrikkel")) {
       const source = getLayerById("matrikkel").getSource();
       if (source) {
         source.clear(true);
       }
     }
-    toggleEditMode("matrikkel");
+    toggleModeTool("matrikkel");
   };
 
   const zoom = (difference: number) => {
@@ -69,7 +69,7 @@ const Toolbar = () => {
           <ModeButton
             icon="holiday_village"
             ariaLabel="Vis grenser fra matrikkelen"
-            isActive={activeEditModes.includes("matrikkel")}
+            isActive={activeModeTools.includes("matrikkel")}
             onClick={toggleMatrikkel}
           >
             Matrikkel
@@ -81,8 +81,8 @@ const Toolbar = () => {
             <ModeButton
               icon="layers"
               ariaLabel="Snap til kartlag"
-              isActive={activeEditModes.includes("snap")}
-              onClick={() => toggleEditMode("snap")}
+              isActive={activeModeTools.includes("snap")}
+              onClick={() => toggleModeTool("snap")}
               isDisabled={!editingType}
             >
               Snap

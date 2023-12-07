@@ -1,8 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
 import { useHistory } from "./HistoryContext";
 
-type ToolbarEditMode = "snap" | "matrikkel";
-export type ToolbarPointMode =
+export type Tool =
   | null
   | "add"
   | "remove"
@@ -12,12 +11,16 @@ export type ToolbarPointMode =
   | "metadata"
   | "koordinater"
   | "archive";
+type ModeTool = "snap" | "matrikkel";
 
 export type ToolbarContextValue = {
-  activePointMode: ToolbarPointMode;
-  togglePointMode: (pointMode: ToolbarPointMode) => void;
-  activeEditModes: ToolbarEditMode[];
-  toggleEditMode: (editMode: ToolbarEditMode) => void;
+  activeTool: Tool;
+  toggleTool: (tool: Tool) => void;
+  resetTool: () => void;
+
+  activeModeTools: ModeTool[];
+  toggleModeTool: (modeTool: ModeTool) => void;
+  resetModeTools: () => void;
 
   canSave: boolean;
   undo: (() => void) | undefined;
@@ -35,33 +38,36 @@ export const ToolbarProvider = ({
 }) => {
   const { history, redo, undo } = useHistory();
 
-  const [activePointMode, setActivePointMode] =
-    useState<ToolbarPointMode>(null);
-  const [activeEditModes, setActiveEditModes] = useState<ToolbarEditMode[]>([
-    "snap",
-  ]);
+  const defaultTool = null;
+  const [activeTool, setActiveTool] = useState<Tool>(defaultTool);
 
-  const togglePointMode = (pointMode: ToolbarPointMode) => {
-    if (pointMode === activePointMode) {
-      setActivePointMode(null);
+  const defaultModeTools: ModeTool[] = ["snap"];
+  const [activeModeTools, setActiveModeTools] =
+    useState<ModeTool[]>(defaultModeTools);
+
+  const toggleTool = (tool: Tool) => {
+    if (tool === activeTool) {
+      setActiveTool(null);
     } else {
-      setActivePointMode(pointMode);
+      setActiveTool(tool);
     }
   };
 
-  const toggleEditMode = (editMode: ToolbarEditMode) => {
-    if (activeEditModes.includes(editMode)) {
-      setActiveEditModes(activeEditModes.filter((em) => em !== editMode));
+  const toggleModeTool = (modeTool: ModeTool) => {
+    if (activeModeTools.includes(modeTool)) {
+      setActiveModeTools(activeModeTools.filter((em) => em !== modeTool));
     } else {
-      setActiveEditModes(activeEditModes.concat(editMode));
+      setActiveModeTools(activeModeTools.concat(modeTool));
     }
   };
 
   const value = {
-    activePointMode,
-    togglePointMode,
-    activeEditModes,
-    toggleEditMode,
+    activeTool,
+    toggleTool,
+    activeModeTools,
+    toggleModeTool,
+    resetTool: () => setActiveTool(defaultTool),
+    resetModeTools: () => setActiveModeTools(defaultModeTools),
     canSave: history.entries.length > 0 && history.index > 0,
     undo: history.index > 0 ? undo : undefined,
     redo:

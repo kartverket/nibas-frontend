@@ -14,7 +14,7 @@ const useInteractions = () => {
   const { select } = useSelect();
   const { draw } = useDraw();
   const { selectPoint } = useSelectPoint();
-  const { activeEditModes } = useToolbar();
+  const { activeModeTools } = useToolbar();
 
   useEffect(() => {
     const vectorLayers = getVectorLayers();
@@ -35,7 +35,7 @@ const useInteractions = () => {
     map.addInteraction(draw);
 
     // snaps må legges til etter modify og draw interactions
-    if (activeEditModes.includes("snap")) {
+    if (activeModeTools.includes("snap")) {
       snaps.forEach((snap) => {
         map.addInteraction(snap);
       });
@@ -50,7 +50,7 @@ const useInteractions = () => {
         map.removeInteraction(snap);
       });
     };
-  }, [activeEditModes, draw, modify, select, selectPoint]);
+  }, [activeModeTools, draw, modify, select, selectPoint]);
 };
 
 export default useInteractions;
