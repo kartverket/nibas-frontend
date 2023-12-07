@@ -240,7 +240,8 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
       <PanelHeader onClose={closeOverlayPanel}>
         Slå sammen stemmekretser
       </PanelHeader>
-      {history.entries.length > 0 || utkastHarEndringer() ? (
+      {(history.entries.length > 0 && history.index > 0) ||
+      utkastHarEndringer() ? (
         <Alert>
           <AlertIcon />
           <AlertTitle>
