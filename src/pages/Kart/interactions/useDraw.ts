@@ -11,7 +11,7 @@ import { useToast } from "@kvib/react";
 import { MapBrowserEvent } from "ol";
 
 const useDraw = () => {
-  const { activePointMode } = useToolbar();
+  const { activeTool } = useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const toast = useToast();
 
@@ -25,9 +25,9 @@ const useDraw = () => {
         style: grenseStyles.dirty,
         freehandCondition: () => false,
         condition: (event: MapBrowserEvent<MouseEvent>) =>
-          noModifierKeys(event) && activePointMode === "draw",
+          noModifierKeys(event) && activeTool === "draw",
       }),
-    [activePointMode],
+    [activeTool],
   );
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { ToolbarPointMode, useToolbar } from "contexts/ToolbarContext";
+import { Tool, useToolbar } from "contexts/ToolbarContext";
 import { Feature, MapBrowserEvent } from "ol";
 import { pixelTolerance } from "./constants";
 import { map, overlayPopup } from "../constants";
@@ -18,7 +18,7 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 
 const useSelect = () => {
   const toast = useToast();
-  const { activePointMode } = useToolbar();
+  const { activeTool } = useToolbar();
   const {
     selectFeatures,
     selectedFeatures,
@@ -28,21 +28,14 @@ const useSelect = () => {
   } = useFeatureStyle();
   const { activeOverlayPanel, closeOverlayPanel, openOverlayPanel } =
     useOverlayPanel();
-  const previousPointMode = usePrevious(activePointMode);
+  const previousPointMode = usePrevious(activeTool);
 
-  const dangerousPointModes: ToolbarPointMode[] = [
-    "archive",
-    "split",
-    "detach",
-  ];
-  const allowedPointModes: ToolbarPointMode[] = [
-    ...dangerousPointModes,
-    "metadata",
-  ];
+  const dangerousPointModes: Tool[] = ["archive", "split", "detach"];
+  const allowedPointModes: Tool[] = [...dangerousPointModes, "metadata"];
 
   // Dersom man bytter verktøy ønsker vi å cleare selection
   useEffect(() => {
-    if (activePointMode !== previousPointMode && selectedFeatures.length > 0) {
+    if (activeTool !== previousPointMode && selectedFeatures.length > 0) {
       clearSelection();
       if (activeOverlayPanel === "metadata") {
         closeOverlayPanel();
@@ -50,7 +43,7 @@ const useSelect = () => {
     }
   }, [
     activeOverlayPanel,
-    activePointMode,
+    activeTool,
     clearSelection,
     closeOverlayPanel,
     previousPointMode,
@@ -58,7 +51,7 @@ const useSelect = () => {
   ]);
 
   const select = (event: MapBrowserEvent<MouseEvent>) => {
-    if (allowedPointModes.includes(activePointMode) && !event.dragging) {
+    if (allowedPointModes.includes(activeTool) && !event.dragging) {
       const features = map.getFeaturesAtPixel(event.pixel, {
         hitTolerance: pixelTolerance,
       });
@@ -80,7 +73,7 @@ const useSelect = () => {
 
       // I noen verktøy skal man ikke kunne velge ikke-redigerbare grenser
       if (
-        dangerousPointModes.includes(activePointMode) &&
+        dangerousPointModes.includes(activeTool) &&
         !featureIsEditable(clickedFeature)
       ) {
         toast({ status: "error", title: "Denne grensen er ikke redigerbar" });
@@ -88,7 +81,7 @@ const useSelect = () => {
         return;
       }
 
-      if (activePointMode === "split") {
+      if (activeTool === "split") {
         // Dersom featuren vi vil splitte er for liten skal vi ikke velge den
         const geometry = clickedFeature.getGeometry() as LineString;
         const coordinates = geometry.getCoordinates();
@@ -111,7 +104,7 @@ const useSelect = () => {
         }
       }
 
-      if (activePointMode === "metadata") {
+      if (activeTool === "metadata") {
         // Dersom den valgte grensen er en WFS-grense skal vi vise et eget panel for det
         if (clickedFeature?.getId()?.toString().includes("TEIGGRENSEWFS")) {
           overlayPopup.setPosition(getOverlayPosition(clickedFeature));
@@ -121,7 +114,7 @@ const useSelect = () => {
         }
       }
 
-      if (activePointMode === "archive") {
+      if (activeTool === "archive") {
         if (featureIsArchived(clickedFeature)) {
           toast({
             status: "error",

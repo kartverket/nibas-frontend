@@ -14,14 +14,14 @@ import HeaderHome from "./HeaderHome";
 import { useNavigate } from "react-router-dom";
 import { routes } from "utils/routes";
 import useAlertModal from "hooks/useAlertModal";
-import { useToolbar } from "contexts/ToolbarContext";
+import { useHistory } from "contexts/HistoryContext";
 import AlertModal from "components/Modals/AlertModal";
 import CustomTooltip from "../Toolbar/CustomTooltip";
 
 const HeaderBreadcrumb = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const { utkast } = useUtkast();
-  const { canSave } = useToolbar();
+  const { canSave } = useHistory();
   const navigate = useNavigate();
 
   const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } =
