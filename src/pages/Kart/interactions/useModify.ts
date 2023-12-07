@@ -47,8 +47,13 @@ const useModify = () => {
                   (sf) => sf.getId() === feature.getId(),
                 );
               }
+
               // Arkiverte features skal ikke kunne modifiseres
-              return !featureIsArchived(feature);
+              // Representasjonspunkter skal ikke kunne modifiseres
+              return (
+                !featureIsArchived(feature) &&
+                !(feature.getId() as string).includes("representasjonspunkt")
+              );
             },
           ),
         ),
@@ -62,9 +67,9 @@ const useModify = () => {
             hitTolerance: pixelTolerance,
           });
 
-          const activeFeatures = featuresAtPixel.filter(
-            (feature) => !featureIsArchived(feature),
-          );
+          const activeFeatures = featuresAtPixel
+            .filter((feature) => feature.getGeometry() instanceof LineString)
+            .filter((feature) => !featureIsArchived(feature));
 
           // Sjekk alle featurene i punktet, hvis en av dem ikke skal kunne endres ønsker vi ikke å endre noe
           if (!activeFeatures.every(featureIsEditable)) {
