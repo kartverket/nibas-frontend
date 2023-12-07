@@ -13,7 +13,7 @@ import SortHeader from "../SortHeader";
 import { useTableSort } from "../useTableSort";
 import { orderBy } from "utils/list-utils";
 import { getNavnInSpraak } from "utils/language/language";
-import { Spinner } from "@kvib/react";
+import { Modal, ModalContent, ModalOverlay, Spinner } from "@kvib/react";
 
 const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
   const { utkast } = useUtkast();
@@ -21,7 +21,7 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
     "grunnkretsnummer",
     "navn",
   ]);
-  const { flatedata, closeOverlayPanel } = useOverlayPanel();
+  const { flatedata, closeOverlayModal } = useOverlayPanel();
   const { searchValue, setInputValue } = useSearch();
 
   const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
@@ -42,45 +42,48 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
   }, [searchValue, utkastGrunnkretser]);
 
   return (
-    <Panel $isOpen={isOpen} className={className}>
-      <PanelHeader onClose={closeOverlayPanel}>
-        Flateinformasjon for {getNavnInSpraak(flatedata?.navn, "nor")}
-      </PanelHeader>
-      {filteredGrunnkretser ? (
-        <KretsTable $hasUtkast={utkast !== undefined}>
-          <thead>
-            <tr>
-              <SortHeader {...sortHeaderProps("grunnkretsnummer")}>
-                Grunnkretsnummer
-              </SortHeader>
-              <SortHeader {...sortHeaderProps("navn")}>
-                Grunnkretsnavn
-              </SortHeader>
-              {utkast && <th>{/* Tom plass for mellomrom */}</th>}
-              <th>
-                <Input
-                  placeholder="Søk på navn"
-                  onChange={(e) => setInputValue(e.currentTarget.value)}
-                />
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {orderBy(filteredGrunnkretser, sortProperty, sortOrder).map(
-              (grunnkrets) => (
-                <GrunnkretsRow
-                  key={getIdFromEntity(grunnkrets)}
-                  grunnkrets={grunnkrets}
-                  kommuneId={kommuneId}
-                />
-              ),
-            )}
-          </tbody>
-        </KretsTable>
-      ) : (
-        <Spinner />
-      )}
-    </Panel>
+    <Modal isOpen={isOpen} onClose={closeOverlayModal} scrollBehavior="inside">
+      <ModalOverlay />
+      <ModalContent as={Panel} $isOpen={isOpen} className={className}>
+        <PanelHeader onClose={closeOverlayModal}>
+          Flateinformasjon for {getNavnInSpraak(flatedata?.navn, "nor")}
+        </PanelHeader>
+        {filteredGrunnkretser ? (
+          <KretsTable $hasUtkast={utkast !== undefined}>
+            <thead>
+              <tr>
+                <SortHeader {...sortHeaderProps("grunnkretsnummer")}>
+                  Grunnkretsnummer
+                </SortHeader>
+                <SortHeader {...sortHeaderProps("navn")}>
+                  Grunnkretsnavn
+                </SortHeader>
+                {utkast && <th>{/* Tom plass for mellomrom */}</th>}
+                <th>
+                  <Input
+                    placeholder="Søk på navn"
+                    onChange={(e) => setInputValue(e.currentTarget.value)}
+                  />
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {orderBy(filteredGrunnkretser, sortProperty, sortOrder).map(
+                (grunnkrets) => (
+                  <GrunnkretsRow
+                    key={getIdFromEntity(grunnkrets)}
+                    grunnkrets={grunnkrets}
+                    kommuneId={kommuneId}
+                  />
+                ),
+              )}
+            </tbody>
+          </KretsTable>
+        ) : (
+          <Spinner />
+        )}
+      </ModalContent>
+    </Modal>
   );
 };
 

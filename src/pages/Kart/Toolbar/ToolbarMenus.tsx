@@ -24,13 +24,19 @@ const ToolbarMenus = () => {
   const { activeTool, toggleTool, toggleModeTool } = useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const editingType = getCurrentlyEditingType();
-  const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } =
-    useOverlayPanel();
+  const {
+    activeOverlayPanel,
+    openOverlayPanel,
+    closeOverlayPanel,
+    activeOverlayModal,
+    openOverlayModal,
+    closeOverlayModal,
+  } = useOverlayPanel();
 
   const mergeIsActive = activeOverlayPanel === "sammenslåing";
 
   const flatedetaljerIsActive =
-    activeOverlayPanel === "grunnkrets" || activeOverlayPanel === "stemmekrets";
+    activeOverlayModal === "grunnkrets" || activeOverlayModal === "stemmekrets";
 
   const toggleMetadata = () => {
     toggleTool("metadata");
@@ -42,9 +48,9 @@ const ToolbarMenus = () => {
 
   const toggleFlatedetaljer = () => {
     if (flatedetaljerIsActive) {
-      closeOverlayPanel();
+      closeOverlayModal();
     } else if (editingType === "grunnkrets" || editingType === "stemmekrets") {
-      openOverlayPanel(editingType);
+      openOverlayModal(editingType);
     }
   };
 
