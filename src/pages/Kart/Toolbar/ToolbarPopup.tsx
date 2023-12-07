@@ -44,7 +44,7 @@ const ToolbarPopup = ({
         colorScheme="gray"
         onClick={onClose}
       >
-        Avbryt
+        Lukk
       </Button>
     </ToolbarPopupBody>
   );
