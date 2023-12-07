@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState } from "react";
-import { useHistory } from "./HistoryContext";
 
 export type Tool =
   | null
@@ -21,10 +20,6 @@ export type ToolbarContextValue = {
   activeModeTools: ModeTool[];
   toggleModeTool: (modeTool: ModeTool) => void;
   resetModeTools: () => void;
-
-  canSave: boolean;
-  undo: (() => void) | undefined;
-  redo: (() => void) | undefined;
 };
 
 export const ToolbarContext = createContext<ToolbarContextValue | undefined>(
@@ -36,8 +31,6 @@ export const ToolbarProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { history, redo, undo } = useHistory();
-
   const defaultTool = null;
   const [activeTool, setActiveTool] = useState<Tool>(defaultTool);
 
@@ -68,12 +61,6 @@ export const ToolbarProvider = ({
     toggleModeTool,
     resetTool: () => setActiveTool(defaultTool),
     resetModeTools: () => setActiveModeTools(defaultModeTools),
-    canSave: history.entries.length > 0 && history.index > 0,
-    undo: history.index > 0 ? undo : undefined,
-    redo:
-      history.entries.length > 0 && history.index < history.entries.length
-        ? redo
-        : undefined,
   };
 
   return (

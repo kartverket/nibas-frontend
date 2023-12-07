@@ -125,8 +125,12 @@ export const HistoryProvider = ({
   const value = {
     history,
     clearHistory,
-    undo,
-    redo,
+    canSave: history.entries.length > 0 && history.index > 0,
+    undo: history.index > 0 ? undo : undefined,
+    redo:
+      history.entries.length > 0 && history.index < history.entries.length
+        ? redo
+        : undefined,
     addHistoryEntry,
   };
 
