@@ -5,12 +5,14 @@ import { getVectorLayers } from "utils/map/layers";
 import useModify from "./useModify";
 import useSelect from "./useSelect";
 import useDraw from "./useDraw";
+import useDragPan from "./useDragPan";
 import useSelectPoint from "./useSelectPoint";
 import { useToolbar } from "contexts/ToolbarContext";
 import { pixelTolerance } from "./constants";
 
 const useInteractions = () => {
   const { modify } = useModify();
+  const { dragPan } = useDragPan();
   const { select } = useSelect();
   const { draw } = useDraw();
   const { selectPoint } = useSelectPoint();
@@ -31,6 +33,7 @@ const useInteractions = () => {
     // Rekkefølgen her er potensielt viktig for at events skal avbryte hverandre i riktig rekkefølge
     map.on("click", select);
     map.on("click", selectPoint);
+    map.addInteraction(dragPan);
     map.addInteraction(modify);
     map.addInteraction(draw);
 
@@ -44,13 +47,14 @@ const useInteractions = () => {
     return () => {
       map.un("click", select);
       map.un("click", selectPoint);
+      map.removeInteraction(dragPan);
       map.removeInteraction(modify);
       map.removeInteraction(draw);
       snaps.forEach((snap) => {
         map.removeInteraction(snap);
       });
     };
-  }, [activeModeTools, draw, modify, select, selectPoint]);
+  }, [activeModeTools, dragPan, draw, modify, select, selectPoint]);
 };
 
 export default useInteractions;

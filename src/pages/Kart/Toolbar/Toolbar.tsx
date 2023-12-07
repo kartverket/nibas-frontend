@@ -51,6 +51,17 @@ const Toolbar = () => {
       <ToolbarPopups />
       <Container>
         <ToolbarButtons>
+          <CustomTooltip text="Panorer i kartet" icon="ads_click">
+            <ModeButton
+              icon="ads_click"
+              onClick={() => toggleModeTool("move")}
+              isActive={activeModeTools.includes("move")}
+              ariaLabel="Panorer i kartet"
+            >
+              Flytt
+            </ModeButton>
+          </CustomTooltip>
+          <Divider orientation="vertical" />
           <ToolbarMenus />
           <Divider orientation="vertical" />
           <CustomTooltip

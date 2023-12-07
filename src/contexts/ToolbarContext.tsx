@@ -10,7 +10,7 @@ export type Tool =
   | "metadata"
   | "koordinater"
   | "archive";
-type ModeTool = "snap" | "matrikkel";
+type ModeTool = "move" | "snap" | "matrikkel";
 
 export type ToolbarContextValue = {
   activeTool: Tool;
@@ -34,7 +34,7 @@ export const ToolbarProvider = ({
   const defaultTool = null;
   const [activeTool, setActiveTool] = useState<Tool>(defaultTool);
 
-  const defaultModeTools: ModeTool[] = ["snap"];
+  const defaultModeTools: ModeTool[] = ["move", "snap"];
   const [activeModeTools, setActiveModeTools] =
     useState<ModeTool[]>(defaultModeTools);
 
