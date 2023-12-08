@@ -61,6 +61,16 @@ const Toolbar = () => {
               Panorer
             </ModeButton>
           </CustomTooltip>
+          <CustomTooltip text="Rediger grenser i kartet">
+            <ModeButton
+              icon="arrow_selector_tool"
+              onClick={() => toggleModeTool("move")}
+              isActive={!activeModeTools.includes("move")}
+              ariaLabel="Rediger grenser i kartet"
+            >
+              Rediger
+            </ModeButton>
+          </CustomTooltip>
           <Divider orientation="vertical" />
           <ToolbarMenus />
           <Divider orientation="vertical" />
