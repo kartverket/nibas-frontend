@@ -51,6 +51,28 @@ const Toolbar = () => {
       <ToolbarPopups />
       <Container>
         <ToolbarButtons>
+          <CustomTooltip text="Panorer i kartet">
+            <ModeButton
+              icon="pan_tool"
+              onClick={() => toggleModeTool("move")}
+              isActive={activeModeTools.includes("move")}
+              ariaLabel="Panorer i kartet"
+            >
+              Panorer
+            </ModeButton>
+          </CustomTooltip>
+          <CustomTooltip text="Rediger grenser i kartet">
+            <ModeButton
+              icon="arrow_selector_tool"
+              onClick={() => toggleModeTool("move")}
+              isActive={!activeModeTools.includes("move")}
+              ariaLabel="Rediger grenser i kartet"
+              isDisabled={!editingType}
+            >
+              Rediger
+            </ModeButton>
+          </CustomTooltip>
+          <Divider orientation="vertical" />
           <ToolbarMenus />
           <Divider orientation="vertical" />
           <CustomTooltip

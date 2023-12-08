@@ -23,7 +23,7 @@ const getInfoFromFeature = (featureLike: FeatureLike) => {
 
 const useModify = () => {
   const { addHistoryEntry } = useHistory();
-  const { activeTool } = useToolbar();
+  const { activeTool, activeModeTools } = useToolbar();
   const { selectedFeatures, featureIsEditable, featureIsArchived } =
     useFeatureStyle();
   const toast = useToast();
@@ -59,6 +59,7 @@ const useModify = () => {
         ),
         pixelTolerance: pixelTolerance,
         condition: (event: MapBrowserEvent<MouseEvent>) => {
+          if (activeModeTools.includes("move")) return false;
           if (disallowedPointModes.includes(activeTool)) return false;
           if (activeTool === "detach" && selectedFeatures.length === 0)
             return false;
@@ -139,6 +140,7 @@ const useModify = () => {
         },
       }),
     [
+      activeModeTools,
       activeTool,
       disallowedPointModes,
       editLayer,
