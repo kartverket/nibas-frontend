@@ -24,6 +24,7 @@ import ThirdPartyProviders from "./ThirdPartyProviders";
 import { routes } from "utils/routes";
 import Utkast from "pages/Utkast/Utkast";
 import EnvironmentOverlay from "./EnvironmentOverlay";
+import { ErrorBoundaryWithFrontendLogger } from "components/FrontendLogger/FrontendLoggerErrorBoundry";
 
 /**
  * Definerer 3 verdier i konfigurasjonen. Disse brukes av biblioteket forskjellige steder i flyten.
@@ -45,7 +46,7 @@ const App = () => {
 
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <>
+      <Route element={<ErrorBoundaryWithFrontendLogger />}>
         {redirectAfterLogon}
         {redirectAfterLogout}
         <Route path={routes.authentication} element={<ExternalPage />} />
@@ -57,7 +58,7 @@ const App = () => {
           </Route>
           <Route path={routes.kart} element={<PageLayout />} />
         </Route>
-      </>,
+      </Route>,
     ),
   );
 
