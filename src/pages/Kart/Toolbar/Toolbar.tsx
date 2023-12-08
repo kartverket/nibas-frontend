@@ -53,7 +53,7 @@ const Toolbar = () => {
         <ToolbarButtons>
           <CustomTooltip text="Panorer i kartet">
             <ModeButton
-              icon="ads_click"
+              icon="pan_tool"
               onClick={() => toggleModeTool("move")}
               isActive={activeModeTools.includes("move")}
               ariaLabel="Panorer i kartet"
