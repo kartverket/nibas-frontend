@@ -25,7 +25,7 @@ const HeaderButton = ({
     label={<TooltipBody text={tooltip.text} shortcut={tooltip.shortcut} />}
     isDisabled={!tooltip}
   >
-    <Label>
+    <Label $isDisabled={isDisabled}>
       <HeaderIconButton
         variant="secondary"
         colorScheme="gray"
@@ -49,12 +49,12 @@ const HeaderIconButton = styled(IconButton)`
   }
 `;
 
-const Label = styled.label`
+const Label = styled.label<{ $isDisabled?: boolean }>`
   display: flex;
   align-items: center;
   gap: 8px;
   white-space: nowrap;
-  cursor: pointer;
+  cursor: ${(props) => (props.$isDisabled ? "not-allowed" : "pointer")};
 `;
 
 export default HeaderButton;
