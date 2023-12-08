@@ -67,6 +67,7 @@ const Toolbar = () => {
               onClick={() => toggleModeTool("move")}
               isActive={!activeModeTools.includes("move")}
               ariaLabel="Rediger grenser i kartet"
+              isDisabled={!editingType}
             >
               Rediger
             </ModeButton>
