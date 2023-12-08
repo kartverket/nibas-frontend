@@ -51,7 +51,7 @@ const Toolbar = () => {
       <ToolbarPopups />
       <Container>
         <ToolbarButtons>
-          <CustomTooltip text="Panorer i kartet" icon="ads_click">
+          <CustomTooltip text="Panorer i kartet">
             <ModeButton
               icon="ads_click"
               onClick={() => toggleModeTool("move")}
