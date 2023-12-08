@@ -58,7 +58,7 @@ const Toolbar = () => {
               isActive={activeModeTools.includes("move")}
               ariaLabel="Panorer i kartet"
             >
-              Flytt
+              Panorer
             </ModeButton>
           </CustomTooltip>
           <Divider orientation="vertical" />
