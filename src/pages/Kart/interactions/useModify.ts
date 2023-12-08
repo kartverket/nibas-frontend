@@ -80,7 +80,11 @@ const useModify = () => {
         },
         style: selectedPointStyle,
         insertVertexCondition: () => {
-          return activeTool === "add";
+          if (activeTool === "add") {
+            toast({ description: "Punktet ble lagt til", status: "success" });
+            return true;
+          }
+          return false;
         },
         deleteCondition: (event: MapBrowserEvent<MouseEvent>) => {
           if (activeTool === "remove" && click(event)) {
@@ -123,6 +127,7 @@ const useModify = () => {
             }
 
             // Hvis alt ellers ser greit ut så fjernes punktet på klikk
+            toast({ description: "Punktet ble fjernet", status: "success" });
             return true;
           }
           return false;
@@ -187,12 +192,6 @@ const useModify = () => {
           changes,
         });
       }
-      if (activeTool === "add") {
-        toast({ description: "Punktet ble lagt til", status: "success" });
-      } else if (activeTool === "remove") {
-        toast({ description: "Punktet ble fjernet", status: "success" });
-      }
-
       // TODO: hvis man har kjørt en detach vil vi kanskje sjekke om featuren nå er en løs tråd
     };
 
