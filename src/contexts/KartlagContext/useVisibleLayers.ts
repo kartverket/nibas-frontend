@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { kartlagLayers } from "../../hooks/layers/constants";
 import { KartlagId } from "../../hooks/layers/types";
 import { getLayerById } from "utils/map/layers";
+import WMTS from "ol/source/WMTS";
+import TileLayer from "ol/layer/Tile";
 
 export type VisibleLayer = {
   mainLayer: KartlagId;
@@ -21,6 +23,18 @@ const useVisibleLayers = () => {
 
   const resetVisibleLayers = () => {
     setVisibleLayers(defaultLayers);
+
+    // Tilbakestill cachetjenester sin source, bør ha en mer generell løsning på dette i fremtiden
+    const layer = getLayerById("cachetjenester") as TileLayer<WMTS>;
+    const source = layer.getSource();
+    if (source) {
+      const newSource = new WMTS({
+        ...source.get("config"),
+        layer: "norges_grunnkart_graatone",
+      });
+      newSource.set("config", source.get("config"));
+      layer.setSource(newSource);
+    }
   };
 
   // Hver gang listen med synlige kartlag endrer seg skrur vi av alle lagene,
