@@ -1,5 +1,3 @@
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
 import { SWRConfig } from "swr";
 import {
   KvibProvider,
@@ -36,16 +34,14 @@ const defaultToastOptions: UseToastOptions = {
 
 const ThirdPartyProviders = ({ children }: { children: React.ReactNode }) => {
   return (
-    <DndProvider backend={HTML5Backend}>
-      <CacheProvider value={emotionCache}>
-        <KvibProvider
-          theme={customTheme}
-          toastOptions={{ defaultOptions: defaultToastOptions }}
-        >
-          <SWRConfig value={swrGlobalConfig}>{children}</SWRConfig>
-        </KvibProvider>
-      </CacheProvider>
-    </DndProvider>
+    <CacheProvider value={emotionCache}>
+      <KvibProvider
+        theme={customTheme}
+        toastOptions={{ defaultOptions: defaultToastOptions }}
+      >
+        <SWRConfig value={swrGlobalConfig}>{children}</SWRConfig>
+      </KvibProvider>
+    </CacheProvider>
   );
 };
 

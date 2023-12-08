@@ -126,12 +126,11 @@ const useVisibleLayers = () => {
     );
 
     if (layer) {
-      const indexDifference = direction === "up" ? 1 : -1;
+      const indexDifference = direction === "up" ? -1 : 1;
       const index = visibleLayers.indexOf(layer);
       const newZIndexes = [...visibleLayers];
       newZIndexes.splice(index, 1);
       newZIndexes.splice(index + indexDifference, 0, layer);
-
       setVisibleLayers(newZIndexes);
     }
   };
