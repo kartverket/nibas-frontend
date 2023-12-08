@@ -54,13 +54,22 @@ export const ToolbarProvider = ({
     }
   };
 
+  const resetModeTools = () => {
+    if (
+      activeModeTools.length !== defaultModeTools.length ||
+      !defaultModeTools.every((modeTool) => activeModeTools.includes(modeTool))
+    ) {
+      setActiveModeTools(defaultModeTools);
+    }
+  };
+
   const value = {
     activeTool,
     toggleTool,
     activeModeTools,
     toggleModeTool,
     resetTool: () => setActiveTool(defaultTool),
-    resetModeTools: () => setActiveModeTools(defaultModeTools),
+    resetModeTools,
   };
 
   return (
