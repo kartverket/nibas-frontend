@@ -29,14 +29,13 @@ const slideIn = keyframes`
 `;
 
 export const Panel = styled.div<{ $isOpen: boolean }>`
-  margin: 16px;
+  width: 100%;
+  max-width: 1250px;
   padding: 0 22px;
   background: white;
   border: 2px solid var(--kvib-colors-gray-50);
   border-radius: 12px;
   box-shadow: 4px 4px 12px 0 rgba(0, 0, 0, 0.15);
-  width: 100%;
-  max-width: 1250px;
   overflow: auto;
   ${(props) => !props.$isOpen && "display: none"};
   animation: ${fadeIn} 0.25s ease-in-out;
@@ -47,7 +46,6 @@ export const SidePanel = styled(Panel)`
   grid-area: sidepanel;
   width: 520px;
   border-radius: unset;
-  margin: 0;
   border-top: none;
   animation: ${slideIn} 0.25s ease-in-out;
 `;
@@ -59,6 +57,7 @@ export const AbsolutePanel = styled(Panel)`
   width: unset;
   max-width: 450px;
   height: fit-content;
+  margin: 16px;
   animation: ${slideIn} 0.25s ease-in-out;
 `;
 

@@ -17,7 +17,7 @@ type Props = {
 const Kommune = ({ kommune }: Props) => {
   const { utkast } = useUtkast();
   const { history, clearHistory } = useHistory();
-  const { openOverlayPanel, setFlatedata } = useOverlayPanel();
+  const { openOverlayModal, setFlatedata } = useOverlayPanel();
   const {
     kommuneValues,
     toggleEditKretser,
@@ -48,7 +48,7 @@ const Kommune = ({ kommune }: Props) => {
 
   const toggleFlatedetaljer = () => {
     setFlatedata(kommune);
-    openOverlayPanel(currentKretstype);
+    openOverlayModal(currentKretstype);
   };
 
   return (
