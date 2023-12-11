@@ -1,36 +1,54 @@
 import { getUrlForPath } from "utils/api";
 import { getTokenHolder } from "@kartverket/frontend-aut-lib/dist/authService";
+import StackTrace from "stacktrace-js";
 
 const useRemoteLogging = import.meta.env["VITE_USE_REMOTE_LOGGING"];
 
 type LogLevels = "INFO" | "WARN" | "ERROR";
 
 class FrontendLogger {
-  info = (message: string, stacktrace?: string) => {
+  info = (message: string, error?: Error) => {
     // eslint-disable-next-line no-console
-    console.log(message, stacktrace);
-    this.logRemote(message, "INFO", stacktrace);
+    console.log(message, error);
+    this.logRemote(message, "INFO", error);
   };
 
-  warn = (message: string, stacktrace?: string) => {
+  warn = (message: string, error?: Error) => {
     // eslint-disable-next-line no-console
-    console.warn(message, stacktrace);
-    this.logRemote(message, "WARN", stacktrace);
+    console.warn(message, error);
+    this.logRemote(message, "WARN", error);
   };
 
-  error = (message: string, stacktrace: string | null | undefined) => {
+  error = (message: string, error: Error | null | undefined) => {
     // eslint-disable-next-line no-console
-    console.error(message, stacktrace);
-    this.logRemote(message, "ERROR", stacktrace);
+    console.error(message, error);
+    this.logRemote(message, "ERROR", error);
   };
 
-  private logRemote = (
+  private logRemote = async (
+    message: string,
+    level: LogLevels,
+    error: Error | null | undefined,
+  ) => {
+    if (useRemoteLogging != "true") return;
+
+    if (error == null) {
+      this.sendLogToRemote(message, level, null);
+    } else {
+      const parsedStackFrames = await StackTrace.fromError(error);
+      this.sendLogToRemote(
+        message,
+        level,
+        parsedStackFrames.map((frame) => frame.toString()).join("\n  "),
+      );
+    }
+  };
+
+  private sendLogToRemote = (
     message: string,
     level: LogLevels,
     stacktrace: string | null | undefined,
   ) => {
-    if (useRemoteLogging != "true") return;
-
     const token = getTokenHolder()?.token;
     fetch(getUrlForPath("/v1/frontendlogger"), {
       method: "POST",

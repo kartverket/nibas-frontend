@@ -19,7 +19,7 @@ export class ErrorBoundaryWithFrontendLogger extends React.Component<
     return { hasError: true };
   }
   componentDidCatch(error: Error) {
-    frontendLogger.error(error.message, error.stack);
+    frontendLogger.error(error.message, error);
   }
 
   render() {
