@@ -34,6 +34,10 @@ const Utkast = () => {
   const { error, setError } = useErrorHandling();
   const { data: utkasts, isLoading } = useUtkasts();
 
+  if (isLoading != null) {
+    throw new Error("OOOPS");
+  }
+
   // Vi deler opp utkast i to kolonner manuelt i et forsøk på å holde lengden jevn
   const rightColumn: UtkastGroup = {};
   const leftColumn: UtkastGroup = {};
