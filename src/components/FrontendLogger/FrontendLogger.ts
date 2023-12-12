@@ -2,8 +2,6 @@ import { getUrlForPath } from "utils/api";
 import { getTokenHolder } from "@kartverket/frontend-aut-lib/dist/authService";
 import StackTrace from "stacktrace-js";
 
-const useRemoteLogging = import.meta.env["VITE_USE_REMOTE_LOGGING"];
-
 type LogLevels = "INFO" | "WARN" | "ERROR";
 
 class FrontendLogger {
@@ -30,8 +28,6 @@ class FrontendLogger {
     level: LogLevels,
     error: Error | null | undefined,
   ) => {
-    if (useRemoteLogging != "true") return;
-
     if (error == null) {
       this.sendLogToRemote(message, level, null);
     } else {
