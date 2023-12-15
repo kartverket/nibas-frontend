@@ -1,5 +1,6 @@
 import { CloseButton, Heading, Text } from "@kvib/react";
 import { styled, keyframes } from "styled-components";
+import { zindex } from "utils/constants";
 
 export type PanelProps = {
   isOpen: boolean;
@@ -39,7 +40,7 @@ export const Panel = styled.div<{ $isOpen: boolean }>`
   overflow: auto;
   ${(props) => !props.$isOpen && "display: none"};
   animation: ${fadeIn} 0.25s ease-in-out;
-  z-index: 1;
+  z-index: ${zindex.panel};
 `;
 
 export const SidePanel = styled(Panel)`
@@ -96,7 +97,7 @@ const getCloseButtonSize = (size: PanelHeaderSizes): string => {
 const PanelHeaderContainer = styled.div<PanelHeaderContainerProps>`
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: ${zindex.panel};
 
   display: flex;
   justify-content: space-between;
