@@ -1,4 +1,4 @@
-import { Divider, Text } from "@kvib/react";
+import { Divider, IconButton, Text, Tooltip } from "@kvib/react";
 import { styled } from "styled-components";
 import EditAndSaveButton from "../Flatedata/EditAndSaveButton";
 import { useEffect, useState } from "react";
@@ -10,6 +10,7 @@ interface Props {
   feature: Feature<Geometry>;
   name: string;
   valueLabel: string;
+  tooltipLabel: string;
   children: React.ReactNode;
   onMetadataSubmit: () => void;
   isDisabled?: boolean;
@@ -20,6 +21,7 @@ interface Props {
 const MetadataRow = ({
   feature,
   name,
+  tooltipLabel,
   valueLabel,
   children,
   onMetadataSubmit,
@@ -30,14 +32,22 @@ const MetadataRow = ({
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    setIsEditing(false);
+    setIsEditing(true);
   }, [feature]);
 
   return (
     <Container>
       <EditContent>
+        <Tooltip label={tooltipLabel}>
+          <InfoIconButton
+            aria-label="Information Button"
+            colorScheme="blue"
+            icon="question_mark"
+            size="xs"
+            variant="secondary"
+          />
+        </Tooltip>
         <Text>{name}</Text>
-
         {!isEditing && <Text as="b">{valueLabel}</Text>}
 
         <EditButton
@@ -64,9 +74,13 @@ const MetadataRow = ({
   );
 };
 
+const InfoIconButton = styled(IconButton)`
+  border-radius: 50%;
+`;
+
 const EditContent = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 16px 1fr 1fr 1fr;
   gap: 16px;
 `;
 
@@ -77,7 +91,7 @@ const Field = styled.div<{ $isEditing: boolean }>`
 `;
 
 const EditButton = styled(EditAndSaveButton)`
-  grid-column: 3;
+  grid-column: 4;
 `;
 
 export default MetadataRow;

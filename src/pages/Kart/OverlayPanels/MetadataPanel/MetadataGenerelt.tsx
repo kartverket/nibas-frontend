@@ -73,6 +73,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
       </Container>
       <MetadataField
         feature={feature}
+        tooltipLabel="En grensetype ellerno"
         fieldKey="grenseType"
         fieldLabel="Grensetype"
         valueLabelFormatter={() => {
@@ -90,6 +91,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
       />
       <MetadataField
         feature={feature}
+        tooltipLabel="En grensetype ellerno"
         fieldLabel="Datafangsdato"
         fieldKey="datafangstdato"
         valueLabelFormatter={getDateInFriendlyString}
@@ -98,6 +100,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
 
       <MetadataField
         feature={feature}
+        tooltipLabel="En grensetype ellerno"
         fieldLabel="Gyldig fra"
         fieldKey="gyldigFra"
         disabledByFeatureLock
@@ -108,6 +111,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
         <div>
           <MetadataField
             feature={feature}
+            tooltipLabel="En grensetype ellerno"
             fieldLabel="Gyldig til"
             fieldKey="gyldigTil"
             disabledByFeatureLock
@@ -124,6 +128,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
 
       <MetadataField
         feature={feature}
+        tooltipLabel="En grensetype ellerno"
         fieldLabel="Målemetode"
         fieldKey="maalemetode"
         valueLabelFormatter={(valueLabel) =>
@@ -144,6 +149,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
       />
       <MetadataField
         feature={feature}
+        tooltipLabel="En grensetype ellerno"
         fieldKey="noeyaktighet"
         fieldLabel="Nøyaktighet (cm)"
         renderItem={(register) => <Input type="number" {...register} />}
@@ -151,6 +157,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
 
       <MetadataField
         feature={feature}
+        tooltipLabel="En grensetype ellerno"
         fieldKey="opphav"
         fieldLabel="Opphav"
         renderItem={(register) => (
@@ -159,6 +166,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
       />
       <MetadataField
         feature={feature}
+        tooltipLabel="En grensetype ellerno"
         fieldKey="informasjon"
         fieldLabel="Ekstra informasjon"
         renderItem={(register) => (

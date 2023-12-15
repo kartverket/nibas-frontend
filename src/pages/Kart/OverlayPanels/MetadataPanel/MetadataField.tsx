@@ -12,6 +12,7 @@ type Props = {
   feature: Feature<Geometry>;
   fieldKey: keyof Inputs;
   fieldLabel: string;
+  tooltipLabel: string;
   valueLabelFormatter?: (fieldLabel: string) => string | null;
   disabledByFeatureLock?: boolean;
   renderItem: (register: UseFormRegisterReturn<"metadata">) => React.ReactNode;
@@ -21,6 +22,7 @@ export const MetadataField = ({
   feature,
   fieldKey,
   fieldLabel,
+  tooltipLabel,
   valueLabelFormatter,
   disabledByFeatureLock,
   renderItem,
@@ -50,6 +52,7 @@ export const MetadataField = ({
     <MetadataRow
       feature={feature}
       name={fieldLabel}
+      tooltipLabel={tooltipLabel}
       valueLabel={
         valueLabelFormatter
           ? valueLabelFormatter(getValues().metadata) ?? "Ukjent"
