@@ -9,6 +9,7 @@ import Toolbar from "./Toolbar/Toolbar";
 import OverlayPanels from "./OverlayPanels/OverlayPanels";
 import { TegnforklaringButton } from "./OverlayPanels/Tegnforklaring/TegnforklaringButton";
 import Kartinformasjon from "./Kartinformasjon";
+import { zindex } from "utils/constants";
 
 // dette må skje utenfor komponenten siden React kjører dypere useEffects
 // før de lenger opp i treet, så lag er ikke definert når de trengs lenger ned
@@ -81,7 +82,7 @@ const KartOverlay = styled.div`
   width: 100%;
   height: 100%;
   position: absolute;
-  z-index: 1;
+  z-index: ${zindex.mapOverlay};
   overflow: hidden;
   pointer-events: none;
 

@@ -3,6 +3,7 @@ import { styled } from "styled-components";
 import { map } from "./constants";
 import { useEffect } from "react";
 import { MousePosition, ScaleLine } from "ol/control";
+import { zindex } from "utils/constants";
 
 const Kartinformasjon = () => {
   useEffect(() => {
@@ -69,7 +70,7 @@ const Container = styled.div`
   box-shadow: var(--kvib-shadows-base);
   border-radius: 8px;
   margin-bottom: auto;
-  z-index: -1;
+  z-index: ${zindex.farBack};
 `;
 
 const Section = styled.section`
@@ -112,7 +113,7 @@ const ScaleIndicator = styled.span`
   position: absolute;
   bottom: 16px;
   left: 16px;
-  z-index: -1;
+  z-index: ${zindex.farBack};
 
   border: 2px solid var(--kvib-colors-gray-900);
   border-top: none;
