@@ -25,14 +25,21 @@ export const getKretserMedGrensejusteringer = (
     endredeFeatures
       .filter((feature) => feature.properties.kontekstEgenskaper !== null)
       .flatMap((feature) => {
-        const kontekstEgenskaperArray =
-          feature.properties.kontekstEgenskaper ?? [];
+        const kontekstEgenskaperArray = Array.isArray(
+          feature.properties.kontekstEgenskaper,
+        )
+          ? feature.properties.kontekstEgenskaper
+          : feature.properties.kontekstEgenskaper
+            ? [feature.properties.kontekstEgenskaper]
+            : [];
+
         const filteredKontekstEgenskaper = kontekstEgenskaperArray.filter(
-          (kontekstEgenskaper) => kontekstEgenskaper.type === type,
+          (kontekstEgenskaper) =>
+            kontekstEgenskaper && kontekstEgenskaper.type === type,
         );
 
         return filteredKontekstEgenskaper.map(
-          (kontekstEgenskaper) => kontekstEgenskaper.id?.lokalid.value,
+          (kontekstEgenskaper) => kontekstEgenskaper.id?.lokalid?.value,
         );
       }),
   );
