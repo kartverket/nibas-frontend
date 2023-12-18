@@ -279,7 +279,8 @@ export interface components {
        */
       srid: number;
       metadata?: components["schemas"]["Metadata"];
-      kontekstEgenskaper?: components["schemas"]["KontekstEgenskaper"];
+      /** @description Egenskaper til konteksten til grensen. */
+      kontekstEgenskaper?: components["schemas"]["KontekstEgenskaper"][];
       /**
        * Format: int32
        * @description Teknisk versjon for å støtte samhandling og redigering
@@ -389,6 +390,11 @@ export interface components {
        * @enum {string}
        */
       type?: "GRUNNKRETS" | "STEMMEKRETS";
+      /**
+       * Format: int32
+       * @description Teknisk versjon til referert objekt for å støtte samhandling og redigering
+       */
+      version: number;
       /** @description Angir om grensen skal leses med klokken for å danne flate. */
       retningMedKlokken: boolean;
       /**
