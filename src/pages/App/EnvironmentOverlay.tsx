@@ -3,6 +3,7 @@ import {
   getCurrentEnvironment,
 } from "components/FeatureToggle/FeatureToggle";
 import { styled } from "styled-components";
+import { zindex } from "utils/constants";
 
 type EnvironmentStyle = { label: string; color: string };
 const styles: Record<Environment, EnvironmentStyle> = {
@@ -39,7 +40,7 @@ const Overlay = styled.div<{ color: string }>`
   border: 4px solid ${(props) => props.color};
   inset: 0;
   pointer-events: none;
-  z-index: 9999;
+  z-index: ${zindex.environmentOverlay};
 `;
 
 const OverlayLabel = styled.span<{ color: string }>`
