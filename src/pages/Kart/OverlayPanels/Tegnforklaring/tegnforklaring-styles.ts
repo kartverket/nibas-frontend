@@ -7,8 +7,7 @@ const getColorFromStyle = (styles: Style[]): string => {
   if (strokeStyle == null) {
     return "#000000";
   }
-
-  return strokeStyle.getStroke().getColor().toLocaleString();
+  return strokeStyle.getStroke()?.getColor().toLocaleString() ?? "";
 };
 
 const isDottedStyle = (styles: Style[]): boolean => {
@@ -17,7 +16,7 @@ const isDottedStyle = (styles: Style[]): boolean => {
     return false;
   }
 
-  const dash = strokeStyle.getStroke().getLineDash();
+  const dash = strokeStyle.getStroke()?.getLineDash();
   return dash != null && dash.length > 0;
 };
 
@@ -29,14 +28,29 @@ export const tegnforklaringer: TegnforklaringProps[][] = [
       color: getColorFromStyle(grenseStyles.nasjon),
     },
     {
+      text: "Arkivert nasjon",
+      dotted: isDottedStyle(grenseStyles.archivedNasjon),
+      color: getColorFromStyle(grenseStyles.archivedNasjon),
+    },
+    {
       text: "Fylke",
       dotted: isDottedStyle(grenseStyles.fylke),
       color: getColorFromStyle(grenseStyles.fylke),
     },
     {
+      text: "Arkivert fylke",
+      dotted: isDottedStyle(grenseStyles.archivedFylke),
+      color: getColorFromStyle(grenseStyles.archivedFylke),
+    },
+    {
       text: "Kommune",
       dotted: isDottedStyle(grenseStyles.kommune),
       color: getColorFromStyle(grenseStyles.kommune),
+    },
+    {
+      text: "Arkivert kommune",
+      dotted: isDottedStyle(grenseStyles.archivedKommune),
+      color: getColorFromStyle(grenseStyles.archivedKommune),
     },
   ],
   [
@@ -46,14 +60,29 @@ export const tegnforklaringer: TegnforklaringProps[][] = [
       color: getColorFromStyle(grenseStyles.stemmekrets),
     },
     {
+      text: "Arkivert stemmekrets",
+      dotted: isDottedStyle(grenseStyles.archivedStemmekrets),
+      color: getColorFromStyle(grenseStyles.archivedStemmekrets),
+    },
+    {
       text: "Grunnkrets",
       dotted: isDottedStyle(grenseStyles.grunnkrets),
       color: getColorFromStyle(grenseStyles.grunnkrets),
     },
     {
+      text: "Arkivert grunnkrets",
+      dotted: isDottedStyle(grenseStyles.archivedGrunnkrets),
+      color: getColorFromStyle(grenseStyles.archivedGrunnkrets),
+    },
+    {
       text: "Delområde",
       dotted: isDottedStyle(grenseStyles.delomraade),
       color: getColorFromStyle(grenseStyles.delomraade),
+    },
+    {
+      text: "Arkivert delområde",
+      dotted: isDottedStyle(grenseStyles.archivedDelomraade),
+      color: getColorFromStyle(grenseStyles.archivedDelomraade),
     },
   ],
   [
@@ -81,7 +110,7 @@ export const tegnforklaringer: TegnforklaringProps[][] = [
     },
     {
       text: "Har blitt redigert",
-      dotted: false,
+      dotted: isDottedStyle(grenseStyles.dirty),
       color: getColorFromStyle(grenseStyles.dirty),
     },
   ],

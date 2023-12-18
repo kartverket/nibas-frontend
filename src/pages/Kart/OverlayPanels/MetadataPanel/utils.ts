@@ -1,6 +1,6 @@
 import { Feature } from "ol";
 import LineString from "ol/geom/LineString";
-import { MetadataEntry } from "contexts/HistoryContext";
+import { GrenseArkiveringsEntry, MetadataEntry } from "contexts/HistoryContext";
 import { FeatureProperties, Metadata } from "types/api";
 
 export const getDateInFriendlyString = (dateString?: string) => {
@@ -42,6 +42,32 @@ export const addMetadataEntryFromFeature = (
         id: id as string,
         from: oldMetadata,
         to: feature.getProperties().metadata as Metadata,
+      },
+    ],
+  });
+};
+
+export const addArchivingEntryFromFeature = (
+  feature: Feature<LineString>,
+  addHistoryEntry: (entry: GrenseArkiveringsEntry) => void,
+) => {
+  const id = feature.getId();
+  if (!id) return;
+
+  const oldProperties = feature.getProperties() as FeatureProperties;
+  const newProperties: FeatureProperties = {
+    ...oldProperties,
+    shouldArchive: true,
+  };
+  feature.setProperties(newProperties);
+
+  addHistoryEntry({
+    type: "grensearkivering",
+    changes: [
+      {
+        id: id as string,
+        from: oldProperties,
+        to: newProperties,
       },
     ],
   });

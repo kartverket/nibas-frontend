@@ -2,7 +2,6 @@ import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { createUtkastOperations } from "contexts/UtkastContext/utils";
 import {
   AdministrativGrenseMetadata,
-  FramtidigVersjonConflict,
   FylkeRef,
   GrunnkretsRef,
   GrunnkretsRequest,
@@ -124,6 +123,10 @@ export const mockFylker = [
       },
     ],
     href: "http://localhost:8080/v1/fylker/1",
+    fylkesnummer: {
+      id: "id1",
+      kodeverdi: "38",
+    },
     antallFramtidigeVersjoner: 0,
   },
   {
@@ -140,6 +143,10 @@ export const mockFylker = [
       },
     ],
     href: "http://localhost:8080/v1/fylker/2",
+    fylkesnummer: {
+      id: "id2",
+      kodeverdi: "42",
+    },
     antallFramtidigeVersjoner: 0,
   },
 ] as FylkeRef[];
@@ -268,7 +275,7 @@ export const mockKommuner = [
     navn: [{ navn: "Malvik", spraak: "nor" }],
     kommunenummer: {
       id: "12345",
-      kodeverdi: "4321",
+      kodeverdi: "5031",
     },
     href: "http://localhost:8080/v1/kommuner/1",
     antallFramtidigeVersjoner: 0,
@@ -288,7 +295,7 @@ export const mockKommuner = [
     ],
     kommunenummer: {
       id: "12345",
-      kodeverdi: "4321",
+      kodeverdi: "1532",
     },
     href: "http://localhost:8080/v1/kommuner/2",
     antallFramtidigeVersjoner: 0,
@@ -496,31 +503,6 @@ export const mockFutureGrunnkrets1_2: GrunnkretsResponse = {
   gyldighet: {
     gyldigFra: "2022-07-01",
   },
-};
-
-export const mockFremtidigEndringConflictResponse: FramtidigVersjonConflict = {
-  id: {
-    lokalid: {
-      value: "1",
-    },
-    gyldighetsdato: mockDetailedGrunnkrets1.id.gyldighetsdato,
-  },
-  affectedIds: [
-    {
-      lokalid: {
-        value: "1",
-      },
-      gyldighetsdato: mockFutureGrunnkrets1_1.id.gyldighetsdato,
-    },
-    {
-      lokalid: {
-        value: "1",
-      },
-      gyldighetsdato: mockFutureGrunnkrets1_2.id.gyldighetsdato,
-    },
-  ],
-  type: "GRUNNKRETS",
-  melding: "Konflikt",
 };
 
 export const mockGrunnkretserFramtidigeEndringer: GrunnkretsResponse[] = [

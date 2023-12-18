@@ -6,6 +6,8 @@ const LandingHeader = () => {
   const { isAuthenticatedFunc, handleLogoutFunc, tokenHolderFunc } =
     useAuthenticationFlow();
 
+  const personId = tokenHolderFunc()?.personId;
+
   return (
     <Container>
       <Section>
@@ -14,10 +16,7 @@ const LandingHeader = () => {
       {isAuthenticatedFunc() && (
         <Section>
           <LoginIcon icon="person" isFilled />
-          <div>
-            <Text>Logget inn som</Text>
-            <Text as="b">{`${tokenHolderFunc()?.personId}`}</Text>
-          </div>
+          {personId && <Text as="b">{personId.substring(0, 6) + "*****"}</Text>}
           <Button
             variant="secondary"
             aria-label="Logg ut"

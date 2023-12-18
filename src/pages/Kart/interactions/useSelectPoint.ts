@@ -4,28 +4,29 @@ import { getLayerById } from "utils/map/layers";
 import { pixelTolerance } from "./constants";
 import LineString from "ol/geom/LineString";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { ToolbarPointMode, useToolbar } from "contexts/ToolbarContext";
+import { Tool, useToolbar } from "contexts/ToolbarContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { useEffect, useMemo } from "react";
-import { borderIsEditable, findNearbyVertexOnFeature } from "utils/map";
+import { findNearbyVertexOnFeature } from "utils/map";
 import { useToast } from "@kvib/react";
 
 const useSelectPoint = () => {
   const toast = useToast();
-  const { activePointMode } = useToolbar();
+  const { activeTool } = useToolbar();
   const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } =
     useOverlayPanel();
-  const { selectPointOnFeature, selectedPoint, clearSelection } =
-    useFeatureStyle();
+  const {
+    selectPointOnFeature,
+    selectedPoint,
+    clearSelection,
+    featureIsEditable,
+  } = useFeatureStyle();
 
-  const allowedPointModes: ToolbarPointMode[] = useMemo(
-    () => ["koordinater", "split"],
-    [],
-  );
+  const allowedPointModes: Tool[] = useMemo(() => ["koordinater", "split"], []);
 
   // Dersom man har byttet verktøy ønsker vi å tilbakestille punktet
   useEffect(() => {
-    if (selectedPoint && !allowedPointModes.includes(activePointMode)) {
+    if (selectedPoint && !allowedPointModes.includes(activeTool)) {
       clearSelection();
 
       if (activeOverlayPanel === "koordinater") {
@@ -34,7 +35,7 @@ const useSelectPoint = () => {
     }
   }, [
     activeOverlayPanel,
-    activePointMode,
+    activeTool,
     allowedPointModes,
     clearSelection,
     closeOverlayPanel,
@@ -42,7 +43,7 @@ const useSelectPoint = () => {
   ]);
 
   const selectPoint = (event: MapBrowserEvent<MouseEvent>) => {
-    if (allowedPointModes.includes(activePointMode) && !event.dragging) {
+    if (allowedPointModes.includes(activeTool) && !event.dragging) {
       event.stopPropagation();
 
       const editLayer = getLayerById("edit");
@@ -58,7 +59,7 @@ const useSelectPoint = () => {
       }
 
       // Valgt punkt kan ikke være en del av en ikke-redigerbar grense
-      if (features.every(borderIsEditable)) {
+      if (features.every(featureIsEditable)) {
         // Må estimere hvilket punkt på linjen man prøvde å trykke på
         const nearbyVertexCoordinate = findNearbyVertexOnFeature(
           features[0] as Feature<LineString>,
@@ -66,7 +67,7 @@ const useSelectPoint = () => {
         );
 
         if (nearbyVertexCoordinate) {
-          if (activePointMode === "split" && features.length > 1) {
+          if (activeTool === "split" && features.length > 1) {
             toast({
               status: "error",
               title: "Man kan ikke splitte på et endepunkt",
@@ -79,7 +80,7 @@ const useSelectPoint = () => {
             features as Feature<LineString>[],
           );
 
-          if (activePointMode === "koordinater") {
+          if (activeTool === "koordinater") {
             openOverlayPanel("koordinater");
           }
         }

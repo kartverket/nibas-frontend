@@ -1,0 +1,5 @@
+version: 2.0
+organization: Eiendom
+product: Nasjonal inndelingsbase
+repo_types: [InternalClient]
+platforms: [SKIP]

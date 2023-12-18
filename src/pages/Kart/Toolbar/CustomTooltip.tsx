@@ -1,4 +1,11 @@
-import { Stack, Text, Tooltip, TooltipProps } from "@kvib/react";
+import {
+  Icon,
+  MaterialSymbol,
+  Stack,
+  Text,
+  Tooltip,
+  TooltipProps,
+} from "@kvib/react";
 import { styled } from "styled-components";
 import {
   KeyboardShortcuts,
@@ -8,33 +15,44 @@ import {
 type BodyProps = {
   text: string;
   shortcut?: Shortcut;
+  icon?: MaterialSymbol;
 };
 
 type Props = BodyProps & Omit<TooltipProps, "label">;
 
-const TooltipBody = ({ text, shortcut }: BodyProps) => (
+export const TooltipBody = ({ text, icon, shortcut }: BodyProps) => (
   <BodyWrapper>
-    <Text>{text}</Text>
+    <IconText>
+      {text}
+
+      {icon && <Icon size={24} icon={icon} />}
+    </IconText>
     {shortcut && (
       <ShortcutText>{KeyboardShortcuts[shortcut].displayString}</ShortcutText>
     )}
   </BodyWrapper>
 );
 
-const ToolbarTooltip = ({ text, shortcut, children, ...restProps }: Props) => {
+const CustomTooltip = ({
+  text,
+  icon,
+  shortcut,
+  children,
+  ...restProps
+}: Props) => {
   return (
     <Tooltip
       hasArrow
       placement="top"
       {...restProps}
-      label={<TooltipBody text={text} shortcut={shortcut} />}
+      label={<TooltipBody text={text} shortcut={shortcut} icon={icon} />}
     >
       <div>{children}</div>
     </Tooltip>
   );
 };
 
-export default ToolbarTooltip;
+export default CustomTooltip;
 
 const ShortcutText = styled(Text)`
   font-style: italic;
@@ -43,4 +61,10 @@ const ShortcutText = styled(Text)`
 
 const BodyWrapper = styled(Stack)`
   padding: 12px;
+`;
+
+const IconText = styled(Text)`
+  display: flex;
+  align-items: center;
+  gap: 6px;
 `;

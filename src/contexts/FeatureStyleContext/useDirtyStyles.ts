@@ -1,17 +1,17 @@
-import { editSource } from "hooks/layers/constants";
 import { useState } from "react";
-import { grenseStyles } from "utils/map/layerStyles";
+import { grenseStyles, setFeatureStyle } from "utils/map/layerStyles";
 
 const useDirtyStyles = () => {
   const [dirtyFeatureIds, setDirtyFeatureIds] = useState<string[]>([]);
-  const [savedDirtyFeatureIds, setSavedDirtyFeaturesIds] = useState<string[]>(
+  const [savedDirtyFeatureIds, setSavedDirtyFeatureIds] = useState<string[]>(
     [],
   );
 
-  const setEditFeatures = (features: string[]) => {
+  // TODO: denne bør være felles for både dirty og archive, fordi den gjør mer magi
+  const setDirtyFeaturesToEdit = (features: string[]) => {
     for (const featureId of features) {
       if (!savedDirtyFeatureIds.includes(featureId)) {
-        editSource.getFeatureById(featureId)?.setStyle(grenseStyles.edit);
+        setFeatureStyle(featureId, grenseStyles.dirty);
       }
     }
     setDirtyFeatureIds(
@@ -21,35 +21,29 @@ const useDirtyStyles = () => {
 
   const setDirtyFeatures = (features: string[]) => {
     for (const featureId of features) {
-      editSource.getFeatureById(featureId)?.setStyle(grenseStyles.dirty);
+      setFeatureStyle(featureId, grenseStyles.dirty);
     }
     for (const featureId of savedDirtyFeatureIds) {
-      editSource.getFeatureById(featureId)?.setStyle(grenseStyles.dirty);
+      setFeatureStyle(featureId, grenseStyles.dirty);
     }
     setDirtyFeatureIds(features);
   };
 
-  const clearSavedDirtyFeatureIds = () => {
-    for (const featureId of dirtyFeatureIds) {
-      editSource.getFeatureById(featureId)?.setStyle(grenseStyles.edit);
-    }
-    for (const featureId of savedDirtyFeatureIds) {
-      editSource.getFeatureById(featureId)?.setStyle(grenseStyles.edit);
-    }
-    setSavedDirtyFeaturesIds([]);
+  const clearDirtyStyles = () => {
+    setSavedDirtyFeatureIds([]);
     setDirtyFeatureIds([]);
   };
 
   const saveDirtyFeatureIds = () => {
-    setSavedDirtyFeaturesIds([...savedDirtyFeatureIds, ...dirtyFeatureIds]);
+    setSavedDirtyFeatureIds([...savedDirtyFeatureIds, ...dirtyFeatureIds]);
     setDirtyFeatureIds([]);
   };
 
   const setAndSaveUtkastFeatures = (features: string[]) => {
     for (const featureId of features) {
-      editSource.getFeatureById(featureId)?.setStyle(grenseStyles.dirty);
+      setFeatureStyle(featureId, grenseStyles.dirty);
     }
-    setSavedDirtyFeaturesIds([...savedDirtyFeatureIds, ...features]);
+    setSavedDirtyFeatureIds([...savedDirtyFeatureIds, ...features]);
   };
 
   const setAndSaveSammenslaaingsFeatures = (
@@ -57,24 +51,20 @@ const useDirtyStyles = () => {
     overlappingStemmekretsFeatureIds: string[],
   ) => {
     for (const featureId of stemmekretsFeatureIds) {
-      editSource
-        .getFeatureById(featureId)
-        ?.setStyle(grenseStyles.sammenslaaing);
+      setFeatureStyle(featureId, grenseStyles.sammenslaaing);
     }
     for (const featureId of overlappingStemmekretsFeatureIds) {
-      editSource
-        .getFeatureById(featureId)
-        ?.setStyle(grenseStyles.sammenslaaingOverlapping);
+      setFeatureStyle(featureId, grenseStyles.sammenslaaingOverlapping);
     }
   };
 
   return {
     dirtyFeatureIds,
+    clearDirtyStyles,
     setDirtyFeatures,
-    setEditFeatures,
+    setDirtyFeaturesToEdit,
     saveDirtyFeatureIds,
     savedDirtyFeatureIds,
-    clearSavedDirtyFeatureIds,
     setAndSaveUtkastFeatures,
     setAndSaveSammenslaaingsFeatures,
   };

@@ -1,4 +1,4 @@
-import { useToolbar } from "contexts/ToolbarContext";
+import { useHistory } from "contexts/HistoryContext";
 import useAlertModal from "hooks/useAlertModal";
 import HeaderButton from "./HeaderButton";
 import AlertModal from "components/Modals/AlertModal";
@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { routes } from "utils/routes";
 
 const HeaderHome = () => {
-  const { canSave } = useToolbar();
+  const { canSave } = useHistory();
   const navigate = useNavigate();
 
   const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } =
@@ -30,6 +30,7 @@ const HeaderHome = () => {
         icon="home"
         onClick={handleHome}
         labelIsHidden
+        tooltip={{ text: "Gå tilbake til startsiden" }}
       />
       <AlertModal
         status="warning"

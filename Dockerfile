@@ -1,5 +1,5 @@
 # Intended to be used by CI
-FROM caddy:2-alpine
+FROM caddy:2.7.5-alpine
 
 COPY /build /srv
 

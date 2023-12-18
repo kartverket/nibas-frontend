@@ -9,12 +9,12 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext";
 // I stedet bruker man select og selectPoint etter hverandre, og utløser handlingen ved en knapp i React
 const useSplit = () => {
   const { addHistoryEntry } = useHistory();
-  const { activePointMode } = useToolbar();
+  const { activeTool } = useToolbar();
   const { selectedFeatures, selectedPoint } = useFeatureStyle();
 
   const split = () => {
     if (
-      activePointMode === "split" &&
+      activeTool === "split" &&
       selectedFeatures.length === 1 &&
       selectedPoint
     ) {

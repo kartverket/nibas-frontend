@@ -45,8 +45,14 @@ const onUndo = (entry: HistoryEntry) => {
         }),
       );
     }
+    case "grensearkivering": {
+      return document.dispatchEvent(
+        new CustomEvent("grensearkiveringUndo", {
+          detail: { entry },
+        }),
+      );
+    }
   }
-
   ensureAllCasesCovered(type);
 };
 
@@ -58,6 +64,7 @@ const onRedo = (entry: HistoryEntry) => {
       return setFeatureCoordinatesForEntry(entry, "to");
     }
     case "metadata": {
+      //skal den kanskje bare gå inn under det her?
       return setFeatureMetadataForEntry(entry, "to");
     }
     case "grunnkrets": {
@@ -88,6 +95,13 @@ const onRedo = (entry: HistoryEntry) => {
         }),
       );
     }
+    case "grensearkivering": {
+      return document.dispatchEvent(
+        new CustomEvent("grensearkiveringRedo", {
+          detail: { entry },
+        }),
+      );
+    }
   }
 
   ensureAllCasesCovered(type);
@@ -111,8 +125,12 @@ export const HistoryProvider = ({
   const value = {
     history,
     clearHistory,
-    undo,
-    redo,
+    canSave: history.entries.length > 0 && history.index > 0,
+    undo: history.index > 0 ? undo : undefined,
+    redo:
+      history.entries.length > 0 && history.index < history.entries.length
+        ? redo
+        : undefined,
     addHistoryEntry,
   };
 

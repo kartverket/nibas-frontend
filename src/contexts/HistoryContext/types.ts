@@ -1,5 +1,6 @@
 import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
 import {
+  FeatureProperties,
   GrunnkretsRequest,
   Metadata,
   StemmekretsRequest,
@@ -45,6 +46,11 @@ export type StemmekretsSammenslaaingsendringEntry = BaseHistoryEntry<
   StemmekretsSammenslaaingsendringRequest
 >;
 
+export type GrenseArkiveringsEntry = BaseHistoryEntry<
+  "grensearkivering",
+  FeatureProperties
+>;
+
 // endringer skal kunne gjøres i bulk, feks et punkt på to features endrer to features i en entry
 export type HistoryEntry =
   | GrenseEntry
@@ -52,16 +58,19 @@ export type HistoryEntry =
   | GrunnkretsEntry
   | StemmekretsEntry
   | UtkastEntry
-  | StemmekretsSammenslaaingsendringEntry;
+  | StemmekretsSammenslaaingsendringEntry
+  | GrenseArkiveringsEntry;
 
 export type HistoryContextValue = {
   addHistoryEntry: (entry: HistoryEntry) => void;
-  undo: () => void;
-  redo: () => void;
   history: HistoryState;
   clearHistory: ({
     hasPreviouslySavedHistory,
   }: {
     hasPreviouslySavedHistory: boolean;
   }) => void;
+
+  canSave: boolean;
+  undo: (() => void) | undefined;
+  redo: (() => void) | undefined;
 };

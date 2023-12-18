@@ -50,7 +50,7 @@ export default defineConfig(({ mode }) => {
             Authorization:
               "Basic " +
               new Buffer(matWfsUsername + ":" + matWfsPassword).toString(
-                "base64"
+                "base64",
               ),
           },
         },

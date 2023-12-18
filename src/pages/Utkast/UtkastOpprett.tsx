@@ -16,9 +16,6 @@ import {
   FormHelperText,
   Select,
   useToast,
-  Alert,
-  AlertIcon,
-  AlertDescription,
 } from "@kvib/react";
 import { createUtkast } from "api/utkast";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
@@ -50,8 +47,10 @@ const UtkastOpprett = () => {
     register,
     handleSubmit,
     getValues,
-    formState: { isDirty },
-  } = useForm<UtkastFormData>();
+    formState: { dirtyFields },
+  } = useForm<UtkastFormData>({
+    defaultValues: { navn: "", endringstype: "" },
+  });
 
   const opprettUtkast = async () => {
     setIsLoading(true);
@@ -98,9 +97,11 @@ const UtkastOpprett = () => {
                   Velg et beskrivende navn som gjør at andre kan forstå hva
                   utkastet inneholder.
                 </FormHelperText>
+
                 <Input
-                  placeholder="f.eks. Sammenslåing av Rosenborg og Sentrum i Trondheim"
                   {...register("navn")}
+                  type="text"
+                  placeholder="f.eks. Sammenslåing av Rosenborg og Sentrum i Trondheim"
                 />
               </Section>
               <Section>
@@ -120,24 +121,6 @@ const UtkastOpprett = () => {
                   ))}
                 </Select>
               </Section>
-              {false && ( // TODO
-                <Section>
-                  <FormLabel>Gyldig fra-dato</FormLabel>
-                  <FormHelperText>
-                    Når skal endringene tre i kraft (etter publisering)?
-                  </FormHelperText>
-                  <Input isDisabled placeholder="TODO" />
-                  <Alert>
-                    <AlertIcon />
-                    <AlertDescription>
-                      Inndelingsbasen gjør det mulig å publisere endringer som
-                      trer i kraft fram i tid. Datoen du velger her vil kun
-                      gjelde dersom du publiserer utkastet. Vi vil aldri
-                      publisere en endring automatisk.
-                    </AlertDescription>
-                  </Alert>
-                </Section>
-              )}
             </Form>
           </ModalBody>
           <ModalFooter>
@@ -149,7 +132,7 @@ const UtkastOpprett = () => {
                 type="submit"
                 onClick={opprettUtkast}
                 isLoading={isLoading}
-                isDisabled={!isDirty}
+                isDisabled={!(dirtyFields.navn && dirtyFields.endringstype)}
               >
                 Opprett utkast
               </Button>

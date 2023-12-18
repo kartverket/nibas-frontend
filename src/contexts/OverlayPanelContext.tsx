@@ -5,18 +5,23 @@ import { useFeatureStyle } from "./FeatureStyleContext";
 
 type OverlayPanel =
   | "metadata"
-  | "grunnkrets"
-  | "stemmekrets"
   | "sammenslåing"
   | "tegnforklaring"
   | "koordinater"
   | "kartlag";
 export type Flatedata = KommuneRef | null;
 
+type OverlayModal = "stemmekrets" | "grunnkrets";
+
 export type OverlayPanelContextValue = {
   activeOverlayPanel: OverlayPanel | null;
   openOverlayPanel: (overlayPanel: OverlayPanel) => void;
   closeOverlayPanel: () => void;
+
+  activeOverlayModal: OverlayModal | null;
+  openOverlayModal: (overlayModal: OverlayModal) => void;
+  closeOverlayModal: () => void;
+
   flatedata: Flatedata;
   setFlatedata: (flatedata: Flatedata) => void;
 };
@@ -32,12 +37,22 @@ export const OverlayPanelProvider = ({
 }) => {
   const { closeSidebarPanel } = useSidebarPanel();
   const { clearSelection } = useFeatureStyle();
+  const [activeOverlayModal, setActiveOverlayModal] =
+    useState<OverlayModal | null>(null);
   const [activeOverlayPanel, setActiveOverlayPanel] =
     useState<OverlayPanel | null>(null);
 
   const openOverlayPanel = (panelType: OverlayPanel) => {
     setActiveOverlayPanel(panelType);
     closeSidebarPanel();
+  };
+
+  const openOverlayModal = (modalType: OverlayModal) => {
+    setActiveOverlayModal(modalType);
+  };
+
+  const closeOverlayModal = () => {
+    setActiveOverlayModal(null);
   };
 
   const closeOverlayPanel = () => {
@@ -50,8 +65,11 @@ export const OverlayPanelProvider = ({
 
   const value = {
     activeOverlayPanel,
+    activeOverlayModal,
     openOverlayPanel,
+    openOverlayModal,
     closeOverlayPanel,
+    closeOverlayModal,
     flatedata,
     setFlatedata,
   };

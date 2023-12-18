@@ -19,6 +19,10 @@ const defaultProps: React.ComponentProps<typeof ToggleableGrense> = {
         version: 1,
       },
     ],
+    kommunenummer: {
+      id: "id",
+      kodeverdi: "1234",
+    },
     antallFramtidigeVersjoner: 0,
   },
   title: "Grense",

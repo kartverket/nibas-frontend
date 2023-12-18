@@ -14,13 +14,14 @@ import HeaderHome from "./HeaderHome";
 import { useNavigate } from "react-router-dom";
 import { routes } from "utils/routes";
 import useAlertModal from "hooks/useAlertModal";
-import { useToolbar } from "contexts/ToolbarContext";
+import { useHistory } from "contexts/HistoryContext";
 import AlertModal from "components/Modals/AlertModal";
+import CustomTooltip from "../Toolbar/CustomTooltip";
 
 const HeaderBreadcrumb = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const { utkast } = useUtkast();
-  const { canSave } = useToolbar();
+  const { canSave } = useHistory();
   const navigate = useNavigate();
 
   const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } =
@@ -44,7 +45,9 @@ const HeaderBreadcrumb = () => {
       <HeaderHome />
       <Breadcrumb separator={<Separator icon="chevron_right" />} spacing={1}>
         <BreadcrumbItem>
-          <BreadcrumbLink onClick={handleHome}>Utkast</BreadcrumbLink>
+          <CustomTooltip text="Gå tilbake til utkastoversikten" hasArrow>
+            <BreadcrumbLink onClick={handleHome}>Utkast</BreadcrumbLink>
+          </CustomTooltip>
         </BreadcrumbItem>
         <BreadcrumbItem>
           <Crumb>{utkast.endringstype}</Crumb>
@@ -58,6 +61,7 @@ const HeaderBreadcrumb = () => {
         icon="edit_note"
         onClick={onOpen}
         labelIsHidden
+        tooltip={{ text: "Rediger detaljene til dette utkastet" }}
       />
       <UtkastEndreModal isOpen={isOpen} onClose={onClose} utkast={utkast} />
       <AlertModal

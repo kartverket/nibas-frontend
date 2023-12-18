@@ -1,8 +1,13 @@
 import { useEditGrenser } from "contexts/EditGrenserContext";
 import { FeatureProperties } from "types/api";
-import { editableBorderTypes } from "hooks/layers/constants";
+import { useFeatureStyle } from "contexts/FeatureStyleContext";
+import { Feature } from "ol";
 
-const useIsMetadataDisabled = (properties: FeatureProperties) => {
+const useIsMetadataDisabled = (
+  feature: Feature,
+  properties: FeatureProperties,
+) => {
+  const { featureIsEditable } = useFeatureStyle();
   const { values } = useEditGrenser(
     properties.inndelingerKontekst?.type ?? "fylke",
   );
@@ -13,7 +18,7 @@ const useIsMetadataDisabled = (properties: FeatureProperties) => {
 
   const value = values[featureKontekstId];
 
-  const borderIsNotEditable = !editableBorderTypes.includes(properties.type);
+  const borderIsNotEditable = !featureIsEditable(feature);
   return ((value?.visible && !value?.editing) || borderIsNotEditable) ?? true;
 };
 

@@ -6,12 +6,13 @@ const getLocalEnvironmentOverride = (envKey: string) => {
   return import.meta.env[envKey] === "true";
 };
 
-type Environment = "prod" | "test" | "dev";
+export type Environment = "prod" | "test" | "dev";
 
 const environmentByUrl: Record<string, Environment> = {
   localhost: "dev",
   "nibas.dev.skip.statkart.no": "dev",
   "nibas.test.skip.statkart.no": "test",
+  "nibas.prod.skip.statkart.no": "prod",
 };
 
 // denne utvides etterhvert som vi får flere flagg
@@ -30,7 +31,7 @@ const featureToggles: Record<Keys, Record<Environment, boolean>> = {
 
 export const getCurrentEnvironment = (): Environment => {
   const { hostname } = window.location;
-  return environmentByUrl[hostname];
+  return environmentByUrl[hostname] ?? "prod";
 };
 
 export const featureEnabled = (key: Keys): boolean => {

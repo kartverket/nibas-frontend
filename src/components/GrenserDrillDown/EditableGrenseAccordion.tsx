@@ -5,8 +5,7 @@ import { EditingType } from "contexts/EditGrenserContext";
 import { Feature } from "ol";
 import { Outline } from "style/mixins";
 import { Geometry } from "ol/geom";
-import { Button, IconButton, Spinner } from "@kvib/react";
-import { useUtkast } from "contexts/UtkastContext";
+import { IconButton, Spinner } from "@kvib/react";
 
 type Props = {
   grenseType: EditingType;
@@ -26,8 +25,7 @@ const EditableGrenseAccordion = ({
   title,
 }: Props) => {
   const accordion = useVisibility();
-  const { utkast } = useUtkast();
-  const { value, toggleEditing, toggleVisible } = useEditGrense(
+  const { value, toggleVisible } = useEditGrense(
     grenseType,
     grenseId,
     features,
@@ -44,18 +42,6 @@ const EditableGrenseAccordion = ({
         />
         <TextContent>
           <span>{title}</span>
-          {utkast && (
-            <div>
-              <EditButton
-                variant="tertiary"
-                onClick={toggleEditing}
-                isDisabled
-                title="Midlertidig utilgjengelig"
-              >
-                {value.editing ? "Stopp redigering" : "Rediger grenser"}
-              </EditButton>
-            </div>
-          )}
         </TextContent>
         {isFetching && (
           <Spinner
@@ -94,12 +80,6 @@ const TextContent = styled.div`
 const Header = styled.div`
   display: flex;
   align-items: center;
-`;
-
-const EditButton = styled(Button)`
-  min-width: unset;
-  min-height: unset;
-  padding: 0;
 `;
 
 const VisibilityButton = styled(IconButton)<{ $isVisible: boolean }>`

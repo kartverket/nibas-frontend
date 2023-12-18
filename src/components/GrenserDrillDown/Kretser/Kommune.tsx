@@ -17,7 +17,7 @@ type Props = {
 const Kommune = ({ kommune }: Props) => {
   const { utkast } = useUtkast();
   const { history, clearHistory } = useHistory();
-  const { openOverlayPanel, setFlatedata } = useOverlayPanel();
+  const { openOverlayModal, setFlatedata } = useOverlayPanel();
   const {
     kommuneValues,
     toggleEditKretser,
@@ -48,7 +48,7 @@ const Kommune = ({ kommune }: Props) => {
 
   const toggleFlatedetaljer = () => {
     setFlatedata(kommune);
-    openOverlayPanel(currentKretstype);
+    openOverlayModal(currentKretstype);
   };
 
   return (
@@ -62,7 +62,10 @@ const Kommune = ({ kommune }: Props) => {
           aria-label={kommuneValues.visible ? "Synlig" : "Usynlig"}
           icon={kommuneValues.visible ? "visibility" : "visibility_off"}
         />
-        <Title>{getNavnInSpraak(kommune.navn, "nor")}</Title>
+        <Title>{`${kommune.kommunenummer.kodeverdi} ${getNavnInSpraak(
+          kommune.navn,
+          "nor",
+        )}`}</Title>
         {lasterData ? (
           <Spinner size="lg" color="var(--kvib-colors-blue-500)" />
         ) : utkast ? (

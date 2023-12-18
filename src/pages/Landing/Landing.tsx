@@ -10,31 +10,39 @@ import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { useEffect } from "react";
 import { resetMapView, getAllVisibleFeatures } from "utils/map";
 import { useToolbar } from "contexts/ToolbarContext";
+import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 
 const Landing = () => {
   const navigate = useNavigate();
-  const { activePointMode, togglePointMode } = useToolbar();
+  const { resetKartlag } = useKartlag();
+  const { resetTool, resetModeTools } = useToolbar();
   const { resetAndClearAllLayers } = useEditAllGrenser();
   const { activeOverlayPanel, closeOverlayPanel } = useOverlayPanel();
   const { activeSidebarPanel, closeSidebarPanel } = useSidebarPanel();
 
   useEffect(() => {
     resetMapView();
-    if (activePointMode) togglePointMode(activePointMode);
-    if (activeOverlayPanel) closeOverlayPanel();
-    if (activeSidebarPanel) closeSidebarPanel();
+    resetKartlag();
+    resetTool();
+    resetModeTools();
+
     const allVisibleFeatures = getAllVisibleFeatures();
     if (allVisibleFeatures.length > 0) {
       resetAndClearAllLayers();
     }
+
+    // Disse to krever ekstra sjekking for å unngå uendelig useEffekt-løkke
+    if (activeOverlayPanel) closeOverlayPanel();
+    if (activeSidebarPanel) closeSidebarPanel();
   }, [
     activeOverlayPanel,
-    activePointMode,
     activeSidebarPanel,
     closeOverlayPanel,
     closeSidebarPanel,
     resetAndClearAllLayers,
-    togglePointMode,
+    resetKartlag,
+    resetModeTools,
+    resetTool,
   ]);
 
   return (

@@ -1,5 +1,7 @@
-import { IconButton, MaterialSymbol } from "@kvib/react";
+import { IconButton, MaterialSymbol, Tooltip } from "@kvib/react";
 import { styled } from "styled-components";
+import { TooltipBody } from "../Toolbar/CustomTooltip";
+import { Shortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
 
 type HeaderButtonProps = {
   icon: MaterialSymbol;
@@ -7,6 +9,7 @@ type HeaderButtonProps = {
   onClick?: () => void;
   labelIsHidden?: boolean;
   isDisabled?: boolean;
+  tooltip: { text: string; shortcut?: Shortcut };
 };
 
 const HeaderButton = ({
@@ -15,18 +18,25 @@ const HeaderButton = ({
   labelIsHidden,
   onClick,
   isDisabled,
+  tooltip,
 }: HeaderButtonProps) => (
-  <Label>
-    <HeaderIconButton
-      variant="secondary"
-      colorScheme="gray"
-      icon={icon}
-      aria-label={label}
-      onClick={onClick}
-      isDisabled={isDisabled}
-    />
-    {!labelIsHidden && label}
-  </Label>
+  <Tooltip
+    hasArrow
+    label={<TooltipBody text={tooltip.text} shortcut={tooltip.shortcut} />}
+    isDisabled={!tooltip}
+  >
+    <Label $isDisabled={isDisabled}>
+      <HeaderIconButton
+        variant="secondary"
+        colorScheme="gray"
+        icon={icon}
+        aria-label={label}
+        onClick={onClick}
+        isDisabled={isDisabled}
+      />
+      {!labelIsHidden && label}
+    </Label>
+  </Tooltip>
 );
 
 const HeaderIconButton = styled(IconButton)`
@@ -39,12 +49,12 @@ const HeaderIconButton = styled(IconButton)`
   }
 `;
 
-const Label = styled.label`
+const Label = styled.label<{ $isDisabled?: boolean }>`
   display: flex;
   align-items: center;
   gap: 8px;
   white-space: nowrap;
-  cursor: pointer;
+  cursor: ${(props) => (props.$isDisabled ? "not-allowed" : "pointer")};
 `;
 
 export default HeaderButton;

@@ -1,11 +1,10 @@
-import { ToolbarPointMode, useToolbar } from "contexts/ToolbarContext";
+import { Tool, useToolbar } from "contexts/ToolbarContext";
 import { Feature, MapBrowserEvent } from "ol";
 import { pixelTolerance } from "./constants";
 import { map, overlayPopup } from "../constants";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import LineString from "ol/geom/LineString";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { borderIsEditable } from "utils/map";
 import { useToast } from "@kvib/react";
 import { useEffect } from "react";
 import { usePrevious } from "hooks/usePrevious";
@@ -19,26 +18,24 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 
 const useSelect = () => {
   const toast = useToast();
-  const { activePointMode } = useToolbar();
-  const { selectFeatures, selectedFeatures, clearSelection } =
-    useFeatureStyle();
+  const { activeTool } = useToolbar();
+  const {
+    selectFeatures,
+    selectedFeatures,
+    clearSelection,
+    featureIsArchived,
+    featureIsEditable,
+  } = useFeatureStyle();
   const { activeOverlayPanel, closeOverlayPanel, openOverlayPanel } =
     useOverlayPanel();
-  const previousPointMode = usePrevious(activePointMode);
+  const previousPointMode = usePrevious(activeTool);
 
-  const dangerousPointModes: ToolbarPointMode[] = [
-    "archive",
-    "split",
-    "detach",
-  ];
-  const allowedPointModes: ToolbarPointMode[] = [
-    ...dangerousPointModes,
-    "metadata",
-  ];
+  const dangerousPointModes: Tool[] = ["archive", "split", "detach"];
+  const allowedPointModes: Tool[] = [...dangerousPointModes, "metadata"];
 
   // Dersom man bytter verktøy ønsker vi å cleare selection
   useEffect(() => {
-    if (activePointMode !== previousPointMode && selectedFeatures.length > 0) {
+    if (activeTool !== previousPointMode && selectedFeatures.length > 0) {
       clearSelection();
       if (activeOverlayPanel === "metadata") {
         closeOverlayPanel();
@@ -46,7 +43,7 @@ const useSelect = () => {
     }
   }, [
     activeOverlayPanel,
-    activePointMode,
+    activeTool,
     clearSelection,
     closeOverlayPanel,
     previousPointMode,
@@ -54,7 +51,7 @@ const useSelect = () => {
   ]);
 
   const select = (event: MapBrowserEvent<MouseEvent>) => {
-    if (allowedPointModes.includes(activePointMode) && !event.dragging) {
+    if (allowedPointModes.includes(activeTool) && !event.dragging) {
       const features = map.getFeaturesAtPixel(event.pixel, {
         hitTolerance: pixelTolerance,
       });
@@ -76,15 +73,15 @@ const useSelect = () => {
 
       // I noen verktøy skal man ikke kunne velge ikke-redigerbare grenser
       if (
-        dangerousPointModes.includes(activePointMode) &&
-        !borderIsEditable(clickedFeature)
+        dangerousPointModes.includes(activeTool) &&
+        !featureIsEditable(clickedFeature)
       ) {
         toast({ status: "error", title: "Denne grensen er ikke redigerbar" });
         event.stopPropagation();
         return;
       }
 
-      if (activePointMode === "split") {
+      if (activeTool === "split") {
         // Dersom featuren vi vil splitte er for liten skal vi ikke velge den
         const geometry = clickedFeature.getGeometry() as LineString;
         const coordinates = geometry.getCoordinates();
@@ -107,13 +104,24 @@ const useSelect = () => {
         }
       }
 
-      if (activePointMode === "metadata") {
+      if (activeTool === "metadata") {
         // Dersom den valgte grensen er en WFS-grense skal vi vise et eget panel for det
         if (clickedFeature?.getId()?.toString().includes("TEIGGRENSEWFS")) {
           overlayPopup.setPosition(getOverlayPosition(clickedFeature));
         } else {
           overlayPopup.setPosition(undefined);
           openOverlayPanel("metadata");
+        }
+      }
+
+      if (activeTool === "archive") {
+        if (featureIsArchived(clickedFeature)) {
+          toast({
+            status: "error",
+            title: "Kan ikke arkivere grenser som allerede er arkivert",
+          });
+          event.stopPropagation();
+          return;
         }
       }
 

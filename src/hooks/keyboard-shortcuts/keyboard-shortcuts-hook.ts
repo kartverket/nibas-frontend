@@ -8,12 +8,18 @@ function isKeydownEvent(event: Event): event is KeyboardEvent {
 export const useKeyboardShortcut = (
   shortcut: Shortcut,
   callback?: () => unknown,
+  enabled: boolean = true,
 ) => {
   useEffect(() => {
     const kbShortcut = KeyboardShortcuts[shortcut];
 
     const eventListener = (event: Event) => {
-      if (callback && isKeydownEvent(event) && kbShortcut.checkEvent(event)) {
+      if (
+        callback &&
+        isKeydownEvent(event) &&
+        kbShortcut.checkEvent(event) &&
+        enabled
+      ) {
         event.preventDefault();
         event.stopPropagation();
         callback();

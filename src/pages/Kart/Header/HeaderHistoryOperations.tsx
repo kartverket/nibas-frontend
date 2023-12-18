@@ -1,4 +1,4 @@
-import { useToolbar } from "contexts/ToolbarContext";
+import { useHistory } from "contexts/HistoryContext";
 import HeaderButton from "./HeaderButton";
 import { styled } from "styled-components";
 import { useUtkast } from "contexts/UtkastContext";
@@ -8,7 +8,7 @@ import EndringsloggModal from "components/Endringslogg/EndringsloggModal";
 
 const HeaderHistoryOperations = () => {
   const { utkast, updateUtkastWithHistory } = useUtkast();
-  const { canSave, undo, redo } = useToolbar();
+  const { canSave, undo, redo } = useHistory();
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   const handleSave = () => {
@@ -17,9 +17,9 @@ const HeaderHistoryOperations = () => {
     }
   };
 
-  useKeyboardShortcut("save", handleSave);
-  useKeyboardShortcut("undo", undo);
-  useKeyboardShortcut("redo", redo);
+  useKeyboardShortcut("save", handleSave, canSave);
+  useKeyboardShortcut("undo", undo, !!undo);
+  useKeyboardShortcut("redo", redo, !!redo);
 
   if (!utkast) return null;
 
@@ -30,23 +30,38 @@ const HeaderHistoryOperations = () => {
         icon="undo"
         onClick={undo}
         isDisabled={!undo}
+        tooltip={{
+          text: "Angre på siste handling",
+          shortcut: "undo",
+        }}
       />
       <HeaderButton
         label="Gjør om"
         icon="redo"
         onClick={redo}
         isDisabled={!redo}
+        tooltip={{
+          text: "Gjør om siste handling",
+          shortcut: "redo",
+        }}
       />
       <HeaderButton
         label="Lagre"
         icon="save"
         onClick={handleSave}
         isDisabled={!canSave}
+        tooltip={{
+          text: "Lagre endringene til utkastet",
+          shortcut: "save",
+        }}
       />
       <HeaderButton
         label="Endringslogg"
         icon="published_with_changes"
         onClick={onOpen}
+        tooltip={{
+          text: "Se en liste over alle endringer som er gjort i dette utkastet",
+        }}
       />
       <EndringsloggModal isOpen={isOpen} onClose={onClose} utkast={utkast} />
     </Section>

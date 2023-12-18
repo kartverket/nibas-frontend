@@ -38,6 +38,8 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContex
 import { useToast } from "@kvib/react";
 import { routes } from "utils/routes";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
+import { useToolbar } from "contexts/ToolbarContext";
+import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
@@ -52,13 +54,15 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const [utkast, setUtkast] = useState<UtkastResponse>();
 
   const { history, clearHistory } = useHistory();
-  const { clearDirtyStyles } = useFeatureStyle();
+  const { clearFeatureStyles } = useFeatureStyle();
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { resetAndClearAllLayers } = useEditAllGrenser();
   const { closeOverlayPanel } = useOverlayPanel();
   const { closeSidebarPanel } = useSidebarPanel();
   const { setError } = useErrorHandling();
+  const { resetTool, resetModeTools } = useToolbar();
   const toast = useToast();
+  const { resetKartlag } = useKartlag();
 
   const utkastPathMatch = useMatch(`${routes.utkast}/${routes.utkastId}`);
   const utkastIdMatches = utkastPathMatch?.params["utkastId"]?.match(
@@ -91,17 +95,23 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const closeUtkast = useCallback(() => {
     setUtkast(undefined);
     resetMapView();
+    resetKartlag();
     clearHistory({ hasPreviouslySavedHistory: false });
-    clearDirtyStyles();
+    clearFeatureStyles();
     resetAndClearAllLayers();
     closeOverlayPanel();
     closeSidebarPanel();
+    resetModeTools();
+    resetTool();
   }, [
-    clearDirtyStyles,
+    clearFeatureStyles,
     clearHistory,
     closeOverlayPanel,
     closeSidebarPanel,
     resetAndClearAllLayers,
+    resetKartlag,
+    resetModeTools,
+    resetTool,
   ]);
 
   useEffect(() => {
@@ -184,8 +194,30 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     toast({ status: "success", title: "Utkastet er lagret" });
   };
 
+  /**
+   * Går gjennom utkastets knotete operasjonstruktur for å sjekke om utkastet har lagrede endringer
+   * @returns Hvorvidt utkastet har lagrede endringer eller ei
+   */
+  const utkastHarEndringer = () => {
+    if (!utkast?.operasjoner) return false;
+    const endredeFeatures = utkast.operasjoner.grenseendringer.endredeFeatures;
+    if (Object.keys(endredeFeatures).length > 0) return true;
+
+    // Går gjennom metadataendringsobjektene og sjekker om de er tomme
+    for (const endringstype of Object.values(
+      utkast.operasjoner.metadataendringer,
+    )) {
+      if (Object.keys(endringstype).length > 0) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
   const value = {
     utkast,
+    utkastHarEndringer,
     getUpdateUtkastRequestFromHistory,
     updateUtkastWithHistory,
     updateUtkast,

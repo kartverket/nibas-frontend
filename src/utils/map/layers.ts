@@ -8,7 +8,11 @@ import WMTS from "ol/source/WMTS";
 import { map } from "pages/Kart/constants";
 import { kartlagLayers, grenserLayers } from "hooks/layers/constants";
 import { KartlagId, GrenseId, LayerId } from "hooks/layers/types";
-import { GeometryVectorSource } from "hooks/sources/types";
+import XYZ from "ol/source/XYZ";
+import VectorSource from "ol/source/Vector";
+import { WFS } from "ol/format";
+import { getFeaturesFromGeoJson } from "./geoJson";
+import { addFeaturesToSource } from "./source";
 
 const getLayersArray = () => map.getLayers().getArray() ?? [];
 
@@ -64,7 +68,7 @@ export const getVectorLayers = () => {
 
   return layers.filter(
     (layer) => layer instanceof VectorLayer,
-  ) as VectorLayer<GeometryVectorSource>[];
+  ) as VectorLayer<VectorSource>[];
 };
 
 export const isWMTSLayer = (layer: BaseLayer): layer is TileLayer<WMTS> => {
@@ -75,9 +79,13 @@ export const isWMSLayer = (layer: BaseLayer): layer is TileLayer<TileWMS> => {
   return layer instanceof TileLayer && layer.getSource() instanceof TileWMS;
 };
 
+export const isXYZLayer = (layer: BaseLayer): layer is TileLayer<XYZ> => {
+  return layer instanceof TileLayer && layer.getSource() instanceof XYZ;
+};
+
 export const isVectorLayer = (
   layer: BaseLayer,
-): layer is VectorLayer<GeometryVectorSource> => {
+): layer is VectorLayer<VectorSource> => {
   return layer instanceof VectorLayer;
 };
 
@@ -89,4 +97,38 @@ export const removeAllFeatures = () => {
       source.clear(true);
     }
   });
+};
+
+export const getMatrikkelFeatures = async () => {
+  const extent = map.getView().calculateExtent(map.getSize());
+  const request: Node = new WFS({ version: "2.0.0" }).writeGetFeature({
+    srsName: "EPSG:25833",
+    featureNS: "http://www.statkart.no/matrikkel",
+    featurePrefix: "matrikkel",
+    featureTypes: ["TEIGGRENSEWFS"],
+    outputFormat: "application/json",
+    bbox: extent,
+    geometryName: "KURVE",
+  });
+
+  try {
+    const response = await fetch("/geoservergeo/wfs/matrikkel", {
+      method: "POST",
+      body: new XMLSerializer().serializeToString(request),
+    });
+    if (!response.ok) throw new Error("Feil i response: " + response);
+
+    const json = await response.json();
+    const fetchedFeatures = getFeaturesFromGeoJson(json);
+    if (fetchedFeatures) {
+      const source = getLayerById("matrikkel").getSource();
+      if (source) {
+        source.clear(true);
+      }
+      addFeaturesToSource("matrikkel", fetchedFeatures);
+      return fetchedFeatures;
+    }
+  } catch {
+    return;
+  }
 };
