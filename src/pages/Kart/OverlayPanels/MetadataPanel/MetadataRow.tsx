@@ -38,9 +38,9 @@ const MetadataRow = ({
   return (
     <Container>
       <EditContent>
-        <Tooltip label={tooltipLabel}>
+        <Tooltip label={tooltipLabel} hasArrow placement="left">
           <InfoIconButton
-            aria-label="Information Button"
+            aria-label="Informasjon om metadatafelt"
             colorScheme="blue"
             icon="question_mark"
             size="xs"
@@ -75,12 +75,14 @@ const MetadataRow = ({
 };
 
 const InfoIconButton = styled(IconButton)`
-  border-radius: 50%;
+  border-radius: 100%;
+  grid-row: 1;
+  grid-column: 1;
 `;
 
 const EditContent = styled.div`
   display: grid;
-  grid-template-columns: 16px 1fr 1fr 1fr;
+  grid-template-columns: 20px 1fr 1fr 1fr;
   gap: 16px;
 `;
 
