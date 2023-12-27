@@ -52,6 +52,13 @@ const onUndo = (entry: HistoryEntry) => {
         }),
       );
     }
+    case "grensetilhorighetendring": {
+      return document.dispatchEvent(
+        new CustomEvent("grensetilhorighetUndo", {
+          detail: { entry },
+        }),
+      );
+    }
   }
   ensureAllCasesCovered(type);
 };
@@ -102,8 +109,14 @@ const onRedo = (entry: HistoryEntry) => {
         }),
       );
     }
+    case "grensetilhorighetendring": {
+      return document.dispatchEvent(
+        new CustomEvent("grensetilhorighetRedo", {
+          detail: { entry },
+        }),
+      );
+    }
   }
-
   ensureAllCasesCovered(type);
 };
 

@@ -52,6 +52,9 @@ export const FeatureStyleProvider = ({
       (psf) => !selectedFeatures.some((sf) => psf.getId() === sf.getId()),
     );
 
+    console.log(deselectedFeatures);
+    console.log(dirtyFeatureIds);
+
     for (const feature of deselectedFeatures) {
       if (
         dirtyFeatureIds.some((id) => id === feature.getId()) ||

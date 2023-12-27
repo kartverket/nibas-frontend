@@ -50,7 +50,7 @@ export const MetadataField = ({
     <MetadataRow
       feature={feature}
       name={fieldLabel}
-      valueLabel={
+      valueLabel={() =>
         valueLabelFormatter
           ? valueLabelFormatter(getValues().metadata) ?? "Ukjent"
           : getValues().metadata

@@ -16,10 +16,9 @@ import { styled } from "styled-components";
 import { MetadataField } from "./MetadataField";
 import { getDateInFriendlyString } from "./utils";
 import useNibasApi from "hooks/useNibasApi";
-import { useTilhorighet } from "../hooks/useTilhorighet";
-import { getIdFromEntity } from "utils/api";
-import { Flatedata } from "contexts/OverlayPanelContext";
 import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
+import { Flatedata } from "contexts/OverlayPanelContext";
+import { TilhorighetField } from "./TilhorighetField";
 
 export type Inputs = {
   grenseType: string;
@@ -30,7 +29,7 @@ export type Inputs = {
   opphav: string;
   gyldigFra: string;
   gyldigTil: string;
-  tilhorighet: [string, string];
+  tilhorighet: Array<string>;
 };
 
 const GrenseTypeValues: GrenseType[] = [
@@ -56,27 +55,23 @@ export const Container = styled.div`
   gap: 16px;
 `;
 
-const DefaultOption = styled.option`
-  font-style: italic;
-`;
-
 const MetadataGenerelt = ({ feature, flatedata }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
-  const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
   const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
 
-  const { data: tilhorighetOptions, kretsType: kretsType } = useTilhorighet(
-    properties.type as GrenseType,
-    kommuneId,
-  );
   const gyldigTil = (properties.metadata as Metadata).common?.gyldigTil;
 
   const getMaalemetodeFromId = (maalemetoder: KodelisteRespons, id: string) =>
     maalemetoder.items.find((item) => item.id === id)?.label ?? null;
 
-  const handleSelect = (option: string) => {
-    return option;
-  };
+  const grenseType = properties.type as GrenseType;
+
+  const tilhorighetToChange =
+    grenseType == "Grunnkretsgrense" || grenseType == "Delområdegrense"
+      ? "grunnkretser"
+      : grenseType == "Stemmekretsgrense"
+        ? "stemmekretser"
+        : null;
 
   return (
     <Container>
@@ -101,8 +96,8 @@ const MetadataGenerelt = ({ feature, flatedata }: Props) => {
         disabledByFeatureLock
         renderItem={(register) => (
           <Select {...register}>
-            {GrenseTypeValues.map((grenseType: GrenseType) => (
-              <option key={grenseType}>{grenseType}</option>
+            {GrenseTypeValues.map((type) => (
+              <option key={type}>{type}</option>
             ))}
           </Select>
         )}
@@ -184,33 +179,13 @@ const MetadataGenerelt = ({ feature, flatedata }: Props) => {
           <Textarea placeholder="Fyll inn ekstra informasjon" {...register} />
         )}
       />
-
-      <MetadataField
-        feature={feature}
-        fieldKey={"tilhorighet"}
-        fieldLabel={"Tilhørighet"}
-        renderItem={(register) => (
-          <Container>
-            {["1", "2"].map((key) => (
-              <Select key={key} onChange={(e) => handleSelect(e.target.value)}>
-                <DefaultOption value={`DEFAULT`}>
-                  Velg en {kretsType} fra listen
-                </DefaultOption>
-
-                {tilhorighetOptions &&
-                  tilhorighetOptions.map((krets) => {
-                    const uid = `${key}_${krets.id.lokalid.value}`;
-                    return (
-                      <option key={uid} value={uid}>
-                        {krets.kretsNummer} {krets.navn}
-                      </option>
-                    );
-                  })}
-              </Select>
-            ))}
-          </Container>
-        )}
-      />
+      {tilhorighetToChange && (
+        <TilhorighetField
+          feature={feature}
+          tilhorighetToChange={tilhorighetToChange}
+          flatedata={flatedata}
+        />
+      )}
     </Container>
   );
 };

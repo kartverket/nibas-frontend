@@ -9,7 +9,7 @@ import { Container } from "./MetadataGenerelt";
 interface Props {
   feature: Feature<Geometry>;
   name: string;
-  valueLabel: string;
+  valueLabel: () => string;
   children: React.ReactNode;
   onMetadataSubmit: () => void;
   isDisabled?: boolean;
@@ -33,29 +33,33 @@ const MetadataRow = ({
     setIsEditing(false);
   }, [feature]);
 
+  const handleMetadataSubmit = () => {
+    onMetadataSubmit();
+    setIsEditing(false);
+  };
+
+  const toggleEditing = () => {
+    setIsEditing((prevState) => {
+      if (isEditing) {
+        reset();
+      }
+      return !prevState;
+    });
+  };
+
   return (
     <Container>
       <EditContent>
         <Text>{name}</Text>
 
-        {!isEditing && <Text as="b">{valueLabel}</Text>}
+        {!isEditing && <Text as="b">{valueLabel()}</Text>}
 
         <EditButton
           isDisabled={isDisabled}
           isEditing={isEditing}
           canSave={isDirty}
-          onSubmit={() => {
-            onMetadataSubmit();
-            setIsEditing(false);
-          }}
-          toggleEditing={() =>
-            setIsEditing((prevState) => {
-              if (isEditing) {
-                reset();
-              }
-              return !prevState;
-            })
-          }
+          onSubmit={handleMetadataSubmit}
+          toggleEditing={toggleEditing}
         />
         <Field $isEditing={isEditing}>{children}</Field>
       </EditContent>
