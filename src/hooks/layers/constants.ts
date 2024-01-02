@@ -15,6 +15,7 @@ export const kartlagLayers: Record<
   KartlagId,
   TileLayer<TileWMS | WMTS> | VectorLayer<VectorSource>
 > = {
+  matrikkelenWMS: createTileLayerFromKartlagSource("matrikkelenWMS"),
   europaKart: createTileLayerFromKartlagSource("europaKart"),
   topoWMTS: createTileLayerFromKartlagSource("topoWMTS"),
   administrativeGrenser: createTileLayerFromKartlagSource(
