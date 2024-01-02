@@ -69,6 +69,10 @@ export default defineConfig(({ mode }) => {
             return `/skbaatts/req?tjenesteid=${tjenesteId}&brukerid=${baatUsername}&passord=${baatPassword}&retformat=s`;
           },
         },
+        "/skwms1/wms.matrikkel.v1": {
+          target: "https://wms.geonorge.no",
+          changeOrigin: true,
+        },
         "/skwms1/wms.nib": {
           target: "https://wms.geonorge.no",
           changeOrigin: true,

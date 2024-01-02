@@ -2,6 +2,7 @@ import { EditingType } from "contexts/EditGrenserContext";
 
 export type KartlagId =
   | "cachetjenester"
+  | "matrikkelenWMS"
   | "administrativeGrenser"
   | "administrativeGrenserHistorisk"
   | "grunnkretserWMS"

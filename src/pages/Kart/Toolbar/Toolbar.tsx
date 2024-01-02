@@ -12,7 +12,7 @@ import ToolbarMenus from "./ToolbarMenus";
 import { getLayerById } from "utils/map/layers";
 
 const Toolbar = () => {
-  const { activeEditModes, toggleEditMode } = useToolbar();
+  const { activeModeTools, toggleModeTool } = useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const editingType = getCurrentlyEditingType();
   const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } =
@@ -27,13 +27,13 @@ const Toolbar = () => {
   };
 
   const toggleMatrikkel = () => {
-    if (activeEditModes.includes("matrikkel")) {
+    if (activeModeTools.includes("matrikkel")) {
       const source = getLayerById("matrikkel").getSource();
       if (source) {
         source.clear(true);
       }
     }
-    toggleEditMode("matrikkel");
+    toggleModeTool("matrikkel");
   };
 
   const zoom = (difference: number) => {
@@ -51,6 +51,28 @@ const Toolbar = () => {
       <ToolbarPopups />
       <Container>
         <ToolbarButtons>
+          <CustomTooltip text="Panorer i kartet">
+            <ModeButton
+              icon="pan_tool"
+              onClick={() => toggleModeTool("move")}
+              isActive={activeModeTools.includes("move")}
+              ariaLabel="Panorer i kartet"
+            >
+              Panorer
+            </ModeButton>
+          </CustomTooltip>
+          <CustomTooltip text="Rediger grenser i kartet">
+            <ModeButton
+              icon="arrow_selector_tool"
+              onClick={() => toggleModeTool("move")}
+              isActive={!activeModeTools.includes("move")}
+              ariaLabel="Rediger grenser i kartet"
+              isDisabled={!editingType}
+            >
+              Rediger
+            </ModeButton>
+          </CustomTooltip>
+          <Divider orientation="vertical" />
           <ToolbarMenus />
           <Divider orientation="vertical" />
           <CustomTooltip
@@ -69,7 +91,7 @@ const Toolbar = () => {
           <ModeButton
             icon="holiday_village"
             ariaLabel="Vis grenser fra matrikkelen"
-            isActive={activeEditModes.includes("matrikkel")}
+            isActive={activeModeTools.includes("matrikkel")}
             onClick={toggleMatrikkel}
           >
             Matrikkel
@@ -81,8 +103,8 @@ const Toolbar = () => {
             <ModeButton
               icon="layers"
               ariaLabel="Snap til kartlag"
-              isActive={activeEditModes.includes("snap")}
-              onClick={() => toggleEditMode("snap")}
+              isActive={activeModeTools.includes("snap")}
+              onClick={() => toggleModeTool("snap")}
               isDisabled={!editingType}
             >
               Snap
@@ -116,12 +138,13 @@ const OuterContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
 `;
 
 const Container = styled.div`
   display: flex;
   gap: 24px;
-  margin: 16px 0;
 `;
 
 const ToolbarButtons = styled.div`

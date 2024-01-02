@@ -21,19 +21,25 @@ type MenuItems = (MenuItemProps & {
 })[];
 
 const ToolbarMenus = () => {
-  const { activePointMode, togglePointMode, toggleEditMode } = useToolbar();
+  const { activeTool, toggleTool, toggleModeTool } = useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const editingType = getCurrentlyEditingType();
-  const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } =
-    useOverlayPanel();
+  const {
+    activeOverlayPanel,
+    openOverlayPanel,
+    closeOverlayPanel,
+    activeOverlayModal,
+    openOverlayModal,
+    closeOverlayModal,
+  } = useOverlayPanel();
 
   const mergeIsActive = activeOverlayPanel === "sammenslåing";
 
   const flatedetaljerIsActive =
-    activeOverlayPanel === "grunnkrets" || activeOverlayPanel === "stemmekrets";
+    activeOverlayModal === "grunnkrets" || activeOverlayModal === "stemmekrets";
 
   const toggleMetadata = () => {
-    togglePointMode("metadata");
+    toggleTool("metadata");
 
     if (activeOverlayPanel === "metadata") {
       closeOverlayPanel();
@@ -42,14 +48,14 @@ const ToolbarMenus = () => {
 
   const toggleFlatedetaljer = () => {
     if (flatedetaljerIsActive) {
-      closeOverlayPanel();
+      closeOverlayModal();
     } else if (editingType === "grunnkrets" || editingType === "stemmekrets") {
-      openOverlayPanel(editingType);
+      openOverlayModal(editingType);
     }
   };
 
   const toggleMove = () => {
-    togglePointMode("koordinater");
+    toggleTool("koordinater");
 
     if (activeOverlayPanel === "koordinater") {
       closeOverlayPanel();
@@ -65,10 +71,10 @@ const ToolbarMenus = () => {
   };
 
   const isEditMode = !!editingType;
-  useKeyboardShortcut("add", () => togglePointMode("add"), isEditMode);
-  useKeyboardShortcut("remove", () => togglePointMode("remove"), isEditMode);
+  useKeyboardShortcut("add", () => toggleTool("add"), isEditMode);
+  useKeyboardShortcut("remove", () => toggleTool("remove"), isEditMode);
   useKeyboardShortcut("edit", toggleMove, isEditMode);
-  useKeyboardShortcut("snap", () => toggleEditMode("snap"), isEditMode);
+  useKeyboardShortcut("snap", () => toggleModeTool("snap"), isEditMode);
   useKeyboardShortcut("merge", toggleMergePanel, editingType === "stemmekrets");
 
   // For å kunne vise at en meny er aktiv må vi kunne sjekke hvorvidt noen av menuitems er aktive
@@ -78,32 +84,32 @@ const ToolbarMenus = () => {
     {
       label: "Tegn ny grense",
       icon: <Icon icon="edit" />,
-      $isActive: activePointMode === "draw",
+      $isActive: activeTool === "draw",
       isDisabled: !isEditMode,
-      onClick: () => togglePointMode("draw"),
+      onClick: () => toggleTool("draw"),
       "aria-label": "Tegn en ny grense fra et punkt",
     },
     {
       label: "Splitt grense",
       icon: <Icon icon="location_off" />,
-      $isActive: activePointMode === "split",
+      $isActive: activeTool === "split",
       isDisabled: !isEditMode,
-      onClick: () => togglePointMode("split"),
+      onClick: () => toggleTool("split"),
       "aria-label": "Del en grense i to fra et punkt",
     },
     {
       label: "Løsriv grense",
       icon: <Icon icon="edit_location_alt" />,
-      $isActive: activePointMode === "detach",
+      $isActive: activeTool === "detach",
       isDisabled: !isEditMode,
-      onClick: () => togglePointMode("detach"),
+      onClick: () => toggleTool("detach"),
       "aria-label": "Løsriv grense fra et knutepunkt",
     },
     */
     {
       label: "Se/endre grenseinformasjon",
       icon: <Icon icon="live_help" />,
-      $isActive: activePointMode === "metadata",
+      $isActive: activeTool === "metadata",
       isDisabled: false,
       onClick: toggleMetadata,
       "aria-label": "Se informasjon om grensen",
@@ -111,9 +117,9 @@ const ToolbarMenus = () => {
     {
       label: "Arkiver grense",
       icon: <Icon icon="archive" />,
-      $isActive: activePointMode === "archive",
+      $isActive: activeTool === "archive",
       isDisabled: !isEditMode,
-      onClick: () => togglePointMode("archive"),
+      onClick: () => toggleTool("archive"),
       "aria-label": "Arkiver grense",
     },
   ];
@@ -121,7 +127,7 @@ const ToolbarMenus = () => {
     {
       label: "Flytt punkt med koordinater",
       icon: <Icon icon="ads_click" />,
-      $isActive: activePointMode === "koordinater",
+      $isActive: activeTool === "koordinater",
       isDisabled: !isEditMode,
       onClick: toggleMove,
       "aria-label": "Flytt punkt med koordinater",
@@ -129,17 +135,17 @@ const ToolbarMenus = () => {
     {
       label: "Legg til punkt",
       icon: <Icon icon="add_location_alt" />,
-      $isActive: activePointMode === "add",
+      $isActive: activeTool === "add",
       isDisabled: !isEditMode,
-      onClick: () => togglePointMode("add"),
+      onClick: () => toggleTool("add"),
       "aria-label": "Legg til punkter",
     },
     {
       label: "Fjern punkt",
       icon: <Icon icon="wrong_location" />,
-      $isActive: activePointMode === "remove",
+      $isActive: activeTool === "remove",
       isDisabled: !isEditMode,
-      onClick: () => togglePointMode("remove"),
+      onClick: () => toggleTool("remove"),
       "aria-label": "Fjern punkter",
     },
   ];

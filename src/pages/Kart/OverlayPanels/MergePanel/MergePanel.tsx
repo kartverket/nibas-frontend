@@ -240,7 +240,8 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
       <PanelHeader onClose={closeOverlayPanel}>
         Slå sammen stemmekretser
       </PanelHeader>
-      {history.entries.length > 0 || utkastHarEndringer() ? (
+      {(history.entries.length > 0 && history.index > 0) ||
+      utkastHarEndringer() ? (
         <Alert>
           <AlertIcon />
           <AlertTitle>
@@ -285,6 +286,15 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
                     ))}
                 </Select>
               </FormControl>
+              <Alert>
+                <AlertIcon />
+                <AlertTitle>
+                  Legg merke til at det er informasjonen fra denne stemmekretsen
+                  som vil beholdes, mens all informasjon om de resterende
+                  stemmekretsene vil bli fjernet i sin helhet fra
+                  inndelingsbasen.
+                </AlertTitle>
+              </Alert>
               <Divider />
               <Heading as="h3" size="sm">
                 Hvilke stemmekretser ønsker du å slå sammen med denne kretsen?

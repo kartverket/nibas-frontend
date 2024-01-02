@@ -63,12 +63,14 @@ export type HistoryEntry =
 
 export type HistoryContextValue = {
   addHistoryEntry: (entry: HistoryEntry) => void;
-  undo: () => void;
-  redo: () => void;
   history: HistoryState;
   clearHistory: ({
     hasPreviouslySavedHistory,
   }: {
     hasPreviouslySavedHistory: boolean;
   }) => void;
+
+  canSave: boolean;
+  undo: (() => void) | undefined;
+  redo: (() => void) | undefined;
 };

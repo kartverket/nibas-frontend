@@ -1,12 +1,12 @@
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import { kartlagSources } from "hooks/sources/syncSources";
 import { getPointOverlayStyle, getLayerStyle } from "utils/map/layerStyles";
 import { StyleFunction } from "ol/style/Style";
 import { GrenseId, KartlagId } from "./types";
 import WMTS from "ol/source/WMTS";
 import TileWMS from "ol/source/TileWMS";
+import { kartlagSources } from "./kartlagSources";
 
 const createTileLayerFromKartlagSource = (id: keyof typeof kartlagSources) =>
   new TileLayer({ source: kartlagSources[id] });
@@ -16,6 +16,7 @@ export const kartlagLayers: Record<
   TileLayer<TileWMS | WMTS> | VectorLayer<VectorSource>
 > = {
   cachetjenester: createTileLayerFromKartlagSource("cachetjenester"),
+  matrikkelenWMS: createTileLayerFromKartlagSource("matrikkelenWMS"),
   administrativeGrenser: createTileLayerFromKartlagSource(
     "administrativeGrenser",
   ),

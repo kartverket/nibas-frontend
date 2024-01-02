@@ -5,7 +5,7 @@ import { createXYZ } from "ol/tilegrid";
 import WMTSTileGrid from "ol/tilegrid/WMTS";
 import { getSrcWithTicket } from "utils/geonorgeTicket";
 import VectorSource from "ol/source/Vector";
-import { KartlagId } from "hooks/layers/types";
+import { KartlagId } from "./types";
 
 const getWMSTileGrid = () => {
   // default er 256, så vi henter 4 ganger så store tiles
@@ -143,6 +143,7 @@ export const kartlagSources: Record<KartlagId, WMTS | TileWMS> = {
   historiskeKart: createTileWMS(
     "https://wms.geonorge.no/skwms1/wms.historiskekart",
   ),
+  matrikkelenWMS: createAuthedTileWMS("/skwms1/wms.matrikkel.v1", "background"),
   sjokartElektroniske: createAuthedTileWMS("/skwms1/wms.ecc_enc", "background"),
   norgeIBilder: new WMTS(norgeIBilderConfig),
 };

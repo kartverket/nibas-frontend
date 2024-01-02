@@ -4,7 +4,7 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { Tegnforklaring } from "./Tegnforklaring";
 import { styled } from "styled-components";
 import { tegnforklaringer } from "./tegnforklaring-styles";
-import { Text, Alert, AlertIcon, Divider } from "@kvib/react";
+import { Divider } from "@kvib/react";
 
 export const TegnforklaringPanel = ({ isOpen, className }: PanelProps) => {
   const { closeOverlayPanel } = useOverlayPanel();
@@ -13,14 +13,6 @@ export const TegnforklaringPanel = ({ isOpen, className }: PanelProps) => {
       <PanelHeader size="sm" onClose={closeOverlayPanel}>
         Tegnforklaring
       </PanelHeader>
-
-      <Alert status="info" mb="10px">
-        <AlertIcon />
-        <Text>
-          Grensetype kan også ses ved å bruke <strong>Grenseinfo</strong>
-          -verktøyet
-        </Text>
-      </Alert>
 
       {tegnforklaringer.map((group, index) => (
         <React.Fragment key={`group-${index}`}>
@@ -35,7 +27,7 @@ export const TegnforklaringPanel = ({ isOpen, className }: PanelProps) => {
 };
 
 const TegnforklaringPanelWrapper = styled(AbsolutePanel)`
-  top: 50px;
+  right: 50px;
   min-width: 400px;
   padding-bottom: 10px;
 `;

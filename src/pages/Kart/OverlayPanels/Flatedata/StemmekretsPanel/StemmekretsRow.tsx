@@ -49,7 +49,12 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
     handleSubmit,
     reset,
     formState: { errors, isDirty },
-  } = useForm<StemmekretsInputs>();
+  } = useForm<StemmekretsInputs>({
+    defaultValues: {
+      stemmekretsnavn: stemmekrets.stemmekretsnavn,
+      stemmekretsnummer: stemmekrets.stemmekretsnummer,
+    },
+  });
   const previousValues = useRef<StemmekretsInputs>(getValues());
 
   useEffect(() => {

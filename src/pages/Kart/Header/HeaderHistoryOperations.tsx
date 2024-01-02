@@ -1,4 +1,4 @@
-import { useToolbar } from "contexts/ToolbarContext";
+import { useHistory } from "contexts/HistoryContext";
 import HeaderButton from "./HeaderButton";
 import { styled } from "styled-components";
 import { useUtkast } from "contexts/UtkastContext";
@@ -8,7 +8,7 @@ import EndringsloggModal from "components/Endringslogg/EndringsloggModal";
 
 const HeaderHistoryOperations = () => {
   const { utkast, updateUtkastWithHistory } = useUtkast();
-  const { canSave, undo, redo } = useToolbar();
+  const { canSave, undo, redo } = useHistory();
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   const handleSave = () => {

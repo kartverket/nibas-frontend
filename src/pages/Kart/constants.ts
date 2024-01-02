@@ -3,6 +3,7 @@ import Map from "ol/Map";
 import { fromLonLat } from "ol/proj";
 import View from "ol/View";
 import { registerProjections } from "utils/map/projections";
+import { defaults } from "ol/interaction/defaults";
 
 registerProjections();
 
@@ -22,6 +23,7 @@ export const map = new Map({
   controls: [],
   overlays: [],
   keyboardEventTarget: window.document,
+  interactions: defaults({ dragPan: false }),
 });
 
 export const overlayPopup = new Overlay({
