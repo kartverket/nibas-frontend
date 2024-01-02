@@ -67,11 +67,7 @@ export const fetcherWithToken = async ([url, token]: [
   });
 
   if (!res.ok) {
-    const error: ResponseError = new ResponseError(
-      "Fikk ikke hentet data.",
-      res,
-    );
-    throw error;
+    throw new ResponseError("Fikk ikke hentet data.", res);
   }
 
   return res.json();
