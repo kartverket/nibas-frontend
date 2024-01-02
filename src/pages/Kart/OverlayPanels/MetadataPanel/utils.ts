@@ -79,7 +79,7 @@ export const addKontekstEntryFromFeature = (
   addHistoryEntry: (entry: GrenseTilhorighetEntry) => void,
 ) => {
   const id = feature.getId();
-  if(!id) return;
+  if (!id) return;
 
   const oldProperties = feature.getProperties() as FeatureProperties;
   const newProperties: FeatureProperties = {

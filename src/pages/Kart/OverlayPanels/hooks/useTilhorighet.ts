@@ -13,7 +13,6 @@ import {
 } from "types/api";
 import { addKontekstEntryFromFeature } from "../MetadataPanel/utils";
 import LineString from "ol/geom/LineString";
-import { ObjectEvent } from "ol/Object";
 
 export type Krets = {
   id: {
@@ -67,14 +66,13 @@ const getMuligeKretserForGrense = (
   }
 };
 
-const getTilhorighetData = (feature: Feature): TilhorighetForm | undefined => {
-  const properties = feature.getProperties() as FeatureProperties;
-  if (properties.kontekstEgenskaper) {
-    const grunnkretser: string[] = properties.kontekstEgenskaper
+const getTilhorighetData = (tilhorigheter: KontekstEgenskaper[] | undefined): TilhorighetForm | undefined => {
+  if (tilhorigheter) {
+    const grunnkretser: string[] = tilhorigheter
       .filter((kontekstEgenskaper) => kontekstEgenskaper.type === "GRUNNKRETS")
       .map((grunnkrets) => grunnkrets.id?.lokalid.value)
       .filter((value) => value !== undefined) as string[];
-    const stemmekretser: string[] = properties.kontekstEgenskaper
+    const stemmekretser: string[] = tilhorigheter
       .filter((kontekstEgenskaper) => kontekstEgenskaper.type === "STEMMEKRETS")
       .map((stemmekrets) => stemmekrets.id?.lokalid.value)
       .filter((value) => value !== undefined) as string[];
@@ -120,6 +118,7 @@ export const useTilhorighet = (
   grenseType: GrenseType,
   kommuneId: string,
   tilhorighetToChange: "grunnkretser" | "stemmekretser",
+  kontekstEgenskaper: KontekstEgenskaper[] | undefined
 ) => {
   const { data: grunnkretser } = useKommuneGrunnkretser(kommuneId);
   const { data: stemmekretser } = useKommuneStemmekretser(kommuneId);
@@ -138,19 +137,17 @@ export const useTilhorighet = (
   const {
     register,
     getValues,
-    setValue,
     formState: { isDirty },
     reset,
   } = useForm<TilhorighetForm>({
-    defaultValues: getTilhorighetData(feature),
+    defaultValues: getTilhorighetData(kontekstEgenskaper),
   });
-
 
   const resetTilhorighet = useCallback(() => {
     if (tilhorighetOptions) {
-      reset(getTilhorighetData(feature));
+      reset(getTilhorighetData(kontekstEgenskaper));
     }
-  }, [feature, reset, tilhorighetOptions]);
+  }, [kontekstEgenskaper, reset, tilhorighetOptions]);
 
   const getValuesFormatted = () => {
     const value = getValues(tilhorighetToChange);
@@ -173,12 +170,10 @@ export const useTilhorighet = (
     const oldKontekstEgenskaper = (feature.getProperties() as FeatureProperties)
       ?.kontekstEgenskaper;
     if (oldKontekstEgenskaper && tilhorighetOptions) {
-      console.log(oldKontekstEgenskaper);
       const oppdaterteKontekstEgenskaper = getUpdatedKontekstEgenskaper(
         getValues(tilhorighetToChange),
         tilhorighetOptions,
       );
-      console.log(oppdaterteKontekstEgenskaper);
       addKontekstEntryFromFeature(
         feature as Feature<LineString>,
         oppdaterteKontekstEgenskaper,

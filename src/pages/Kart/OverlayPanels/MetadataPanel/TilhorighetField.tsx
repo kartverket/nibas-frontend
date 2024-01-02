@@ -1,6 +1,6 @@
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
-import { FeatureProperties } from "types/api";
+import { FeatureProperties, KontekstEgenskaper } from "types/api";
 import useIsMetadataDisabled from "../hooks/useIsMetadataDisabled";
 import MetadataRow from "./MetadataRow";
 import { Select, Stack } from "@kvib/react";
@@ -27,10 +27,10 @@ export const StemmekretsTilhorighetField = ({
   flatedata,
 }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
+  const kontekstEgenskaper = properties.kontekstEgenskaper;
   const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
 
   const metadataIsDisabled = useIsMetadataDisabled(feature, properties);
-  const tilhorighetToChange = "stemmekretser";
 
   const grenseType = properties.type as GrenseType;
 
@@ -42,7 +42,13 @@ export const StemmekretsTilhorighetField = ({
     getTilhorighetData,
     register,
     updateDraftFromFeature,
-  } = useTilhorighet(feature, grenseType, kommuneId, tilhorighetToChange);
+  } = useTilhorighet(
+    feature,
+    grenseType,
+    kommuneId,
+    "stemmekretser",
+    kontekstEgenskaper,
+  );
 
   useEffect(() => {
     resetTilhorighet();
