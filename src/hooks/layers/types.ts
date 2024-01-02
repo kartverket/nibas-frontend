@@ -1,9 +1,8 @@
 import { EditingType } from "contexts/EditGrenserContext";
 
 export type KartlagId =
+  | "cachetjenester"
   | "matrikkelenWMS"
-  | "europaKart"
-  | "topoWMTS"
   | "administrativeGrenser"
   | "administrativeGrenserHistorisk"
   | "grunnkretserWMS"
@@ -14,7 +13,6 @@ export type KartlagId =
   | "n5Raster2"
   | "historiskeKart"
   | "norgeIBilder"
-  | "cachetjenester"
   | "norgesMaritimeGrenser"
   | "sjokartElektroniske";
 

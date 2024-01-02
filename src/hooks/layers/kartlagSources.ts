@@ -79,24 +79,6 @@ const norgeIBilderConfig: WMTSConfig = {
   format: "image/png",
 };
 
-const topoWMTSConfig: WMTSConfig = {
-  url: "https://cache.kartverket.no/topo4/v1/wmts/1.0.0/",
-  layer: "Topografisk Norgeskart",
-  matrixSet: "utm33n",
-  tileGrid: getBaseGrid(),
-  style: "default",
-  format: "image/png",
-};
-
-const europaKartConfig: WMTSConfig = {
-  url: "https://cache.kartverket.no/europa_forenklet/v1/wmts/1.0.0/",
-  layer: "Europeisk bakgrunnskart forenklet",
-  matrixSet: "utm33n",
-  tileGrid: getBaseGrid(),
-  style: "default",
-  format: "image/png",
-};
-
 const defaultParams = {
   CRS: "EPSG:25833",
   TILED: true,
@@ -133,14 +115,14 @@ const createAuthedTileWMS = (
     },
   });
 
-export const kartlagSources: Record<KartlagId, TileWMS | WMTS> = {
+export const kartlagSources: Record<KartlagId, WMTS | TileWMS> = {
+  cachetjenester: new WMTS(cachetjenesterConfig),
   administrativeGrenser: createTileWMS(
     "https://wms.geonorge.no/skwms1/wms.adm_enheter2",
   ),
   stedsnavn: createTileWMS(
     "https://openwms.statkart.no/skwms1/wms.stedsnavnenkel",
   ),
-  cachetjenester: new WMTS(cachetjenesterConfig),
   norgesMaritimeGrenser: createTileWMS(
     "https://openwms.statkart.no/skwms1/wms.nmg",
   ),
@@ -163,8 +145,6 @@ export const kartlagSources: Record<KartlagId, TileWMS | WMTS> = {
   ),
   matrikkelenWMS: createAuthedTileWMS("/skwms1/wms.matrikkel.v1", "background"),
   sjokartElektroniske: createAuthedTileWMS("/skwms1/wms.ecc_enc", "background"),
-  europaKart: new WMTS(europaKartConfig),
-  topoWMTS: new WMTS(topoWMTSConfig),
   norgeIBilder: new WMTS(norgeIBilderConfig),
 };
 
@@ -173,8 +153,6 @@ kartlagSources.sjokartElektroniske.set("protectedTjenesteId", "wms.ecc_enc");
 
 kartlagSources.cachetjenester.set("config", cachetjenesterConfig);
 kartlagSources.norgeIBilder.set("config", norgeIBilderConfig);
-kartlagSources.europaKart.set("config", europaKartConfig);
-kartlagSources.topoWMTS.set("config", topoWMTSConfig);
 
 (() => {
   const tileGrid = getWMSTileGrid();
