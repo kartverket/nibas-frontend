@@ -7,7 +7,7 @@ import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { isApiError, statusCode } from "utils/api";
 import { ApiErrorResponse } from "../../types/api";
 import Header from "./Header/Header";
-import { logDevOnly } from "utils/log";
+import frontendLogger from "components/FrontendLogger/FrontendLogger";
 
 const PageLayout = () => {
   const { error, setError } = useErrorHandling();
@@ -18,8 +18,8 @@ const PageLayout = () => {
         value={{
           fetcher: (url) => fetch(url).then((res) => res.json()),
           onError: (err) => {
-            logDevOnly("onError", err);
-            if (statusCode.isError(err.status) && isApiError(err)) {
+            frontendLogger.error("Noe gikk galt med kall til baksystem", err);
+            if (statusCode.isError(err.response?.status) && isApiError(err)) {
               const wrapper = err as ApiErrorResponse;
               setError({
                 ...wrapper.errorDescription,
@@ -28,7 +28,7 @@ const PageLayout = () => {
             } else {
               setError({
                 title: `Ukjent feil`,
-                description: `En ukjent feil oppstod med. Kall mot backtjenesten feilet med responskode ${err.status}.`,
+                description: `En ukjent feil oppstod med. Kall mot backtjenesten feilet med responskode ${err.response?.status}.`,
               });
             }
           },

@@ -56,4 +56,10 @@ handle {
 
     # Start filserveren
     file_server
+
+    # Add header for .map files
+    @jsonFiles {
+        path *.map
+    }
+    header @jsonFiles Content-Type application/json
 }
