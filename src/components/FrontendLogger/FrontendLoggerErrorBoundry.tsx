@@ -1,7 +1,14 @@
 import React from "react";
 import { Outlet } from "react-router";
 import frontendLogger from "./FrontendLogger";
-import { Card, Heading, Logo, Text } from "@kvib/react";
+import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
+  Box,
+  Logo,
+} from "@kvib/react";
 import { styled } from "styled-components";
 import ThirdPartyProviders from "pages/App/ThirdPartyProviders";
 
@@ -33,18 +40,20 @@ export class ErrorBoundaryWithFrontendLogger extends React.Component<
             <LogoContainer>
               <Logo variant="vertical" size={128} />
             </LogoContainer>
-            <FeilCard>
-              <Heading as="h2" size="lg" mb="32px">
-                En ukjent feil har oppstått
-              </Heading>
-              <Text fontSize="lg">
-                Noe gikk galt med siden, men vi vet ikke helt hvorfor.
-              </Text>
-              <Text fontSize="lg">
-                Vennligst oppdater siden eller send oss en melding om feilen
-                vedvarer.
-              </Text>
-            </FeilCard>
+
+            <AlertWithMaxSize status="error">
+              <AlertIcon />
+              <Box>
+                <AlertTitle>En ukjent feil har oppstått</AlertTitle>
+                <AlertDescription>
+                  Noe gikk galt med siden, men vi vet ikke hvorfor. Kontakt oss
+                  om feilen vedvarer. Kontaktinformasjon finnes i{" "}
+                  <UnderlinedLink href="https://kartverket.atlassian.net/wiki/spaces/NIBAS/pages/685342721/Brukerveiledning">
+                    brukerveiledningen.
+                  </UnderlinedLink>
+                </AlertDescription>
+              </Box>
+            </AlertWithMaxSize>
           </ErrorContainer>
         </ThirdPartyProviders>
       );
@@ -52,6 +61,14 @@ export class ErrorBoundaryWithFrontendLogger extends React.Component<
     return <Outlet />;
   }
 }
+
+const UnderlinedLink = styled.a`
+  border-bottom: 1px solid;
+`;
+
+const AlertWithMaxSize = styled(Alert)`
+  max-width: 800px;
+`;
 
 const ErrorContainer = styled.div`
   display: flex;
@@ -63,12 +80,6 @@ const ErrorContainer = styled.div`
 `;
 
 const LogoContainer = styled.div`
-  margin-top: 180px;
-  margin-bottom: 80px;
-`;
-
-const FeilCard = styled(Card)`
-  text-align: center;
-  padding: 50px;
-  max-width: 800px;
+  margin-top: 128px;
+  margin-bottom: 48px;
 `;
