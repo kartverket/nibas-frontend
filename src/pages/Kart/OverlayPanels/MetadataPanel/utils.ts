@@ -1,6 +1,10 @@
 import { Feature } from "ol";
 import LineString from "ol/geom/LineString";
-import { GrenseArkiveringsEntry, GrenseTilhorighetEntry, MetadataEntry } from "contexts/HistoryContext";
+import {
+  GrenseArkiveringsEntry,
+  GrenseTilhorighetEntry,
+  MetadataEntry,
+} from "contexts/HistoryContext";
 import { FeatureProperties, KontekstEgenskaper, Metadata } from "types/api";
 
 export const getDateInFriendlyString = (dateString?: string) => {
@@ -82,6 +86,8 @@ export const addKontekstEntryFromFeature = (
   if (!id) return;
 
   const oldProperties = feature.getProperties() as FeatureProperties;
+  const oldKontekstEgenskaper = oldProperties.kontekstEgenskaper;
+  if (!oldKontekstEgenskaper) return;
   const newProperties: FeatureProperties = {
     ...oldProperties,
     kontekstEgenskaper: updatedKontekstEgenskaper,
@@ -93,8 +99,8 @@ export const addKontekstEntryFromFeature = (
     changes: [
       {
         id: id as string,
-        from: oldProperties,
-        to: newProperties,
+        from: oldKontekstEgenskaper,
+        to: updatedKontekstEgenskaper,
       },
     ],
   });

@@ -118,7 +118,7 @@ export const useTilhorighet = (
   grenseType: GrenseType,
   kommuneId: string,
   tilhorighetToChange: "grunnkretser" | "stemmekretser",
-  kontekstEgenskaper: KontekstEgenskaper[] | undefined
+  kontekstEgenskaper: KontekstEgenskaper[] | undefined,
 ) => {
   const { data: grunnkretser } = useKommuneGrunnkretser(kommuneId);
   const { data: stemmekretser } = useKommuneStemmekretser(kommuneId);
@@ -167,9 +167,7 @@ export const useTilhorighet = (
   };
 
   const updateDraftFromFeature = () => {
-    const oldKontekstEgenskaper = (feature.getProperties() as FeatureProperties)
-      ?.kontekstEgenskaper;
-    if (oldKontekstEgenskaper && tilhorighetOptions) {
+    if (kontekstEgenskaper && tilhorighetOptions) {
       const oppdaterteKontekstEgenskaper = getUpdatedKontekstEgenskaper(
         getValues(tilhorighetToChange),
         tilhorighetOptions,

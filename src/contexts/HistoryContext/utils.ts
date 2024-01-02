@@ -57,10 +57,10 @@ export const setKontekstEgenskaperForEntry = (
     ) as Feature<Geometry> | null;
     if (!feature) return;
 
-    const properties = change[direction];
+    const kontekstEgenskaper = change[direction];
 
-    if (!properties) return;
+    if (!kontekstEgenskaper) return;
 
-    feature.setProperties(properties);
+    feature.setProperties({ ...feature.getProperties(), kontekstEgenskaper });
   });
 };
