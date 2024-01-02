@@ -161,10 +161,7 @@ export const kartlagSources: Record<KartlagId, TileWMS | WMTS> = {
   historiskeKart: createTileWMS(
     "https://wms.geonorge.no/skwms1/wms.historiskekart",
   ),
-  matrikkelenWMS: createAuthedTileWMS(
-    "https://wms.geonorge.no/skwms1/wms.matrikkel.v1",
-    "background",
-  ),
+  matrikkelenWMS: createAuthedTileWMS("/skwms1/wms.matrikkel.v1", "background"),
   sjokartElektroniske: createAuthedTileWMS("/skwms1/wms.ecc_enc", "background"),
   europaKart: new WMTS(europaKartConfig),
   topoWMTS: new WMTS(topoWMTSConfig),
