@@ -15,7 +15,7 @@ export class ErrorBoundaryWithFrontendLogger extends React.Component<
 > {
   constructor(props: unknown) {
     super(props);
-    this.state = { hasError: true };
+    this.state = { hasError: false };
   }
 
   static getDerivedStateFromError() {
