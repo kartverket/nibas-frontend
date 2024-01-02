@@ -1,6 +1,6 @@
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
-import { FeatureProperties, KontekstEgenskaper } from "types/api";
+import { FeatureProperties } from "types/api";
 import useIsMetadataDisabled from "../hooks/useIsMetadataDisabled";
 import MetadataRow from "./MetadataRow";
 import { Select, Stack } from "@kvib/react";
@@ -10,22 +10,24 @@ import { Flatedata } from "contexts/OverlayPanelContext";
 import { getIdFromEntity } from "utils/api";
 import { useEffect } from "react";
 
-type Props = {
-  feature: Feature<Geometry>;
-  disabledByFeatureLock?: boolean;
-  flatedata: Flatedata;
-};
-
 enum Tilhorighet {
   A = "a",
   B = "b",
 }
 
-export const StemmekretsTilhorighetField = ({
+type TilhorighetProps = {
+  feature: Feature<Geometry>;
+  disabledByFeatureLock?: boolean;
+  tilhorighetToChange: "grunnkretser" | "stemmekretser";
+  flatedata: Flatedata;
+};
+
+export const TilhorighetField = ({
   feature,
   disabledByFeatureLock,
+  tilhorighetToChange,
   flatedata,
-}: Props) => {
+}: TilhorighetProps) => {
   const properties = feature.getProperties() as FeatureProperties;
   const kontekstEgenskaper = properties.kontekstEgenskaper;
   const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
@@ -46,14 +48,13 @@ export const StemmekretsTilhorighetField = ({
     feature,
     grenseType,
     kommuneId,
-    "stemmekretser",
+    tilhorighetToChange,
     kontekstEgenskaper,
   );
 
   useEffect(() => {
     resetTilhorighet();
   }, [getTilhorighetData, feature, tilhorighetOptions, resetTilhorighet]);
-
   return (
     <MetadataRow
       feature={feature}
@@ -65,7 +66,10 @@ export const StemmekretsTilhorighetField = ({
       reset={resetTilhorighet}
     >
       <Stack>
-        <Select key={Tilhorighet.A} {...register("stemmekretser.a")}>
+        <Select
+          key={Tilhorighet.A}
+          {...register(`${tilhorighetToChange}.${Tilhorighet.A}`)}
+        >
           {tilhorighetOptions &&
             tilhorighetOptions.map((krets) => {
               const uid = `${Tilhorighet.A}_${krets.id.lokalid.value}`;
@@ -76,7 +80,10 @@ export const StemmekretsTilhorighetField = ({
               );
             })}
         </Select>
-        <Select key={Tilhorighet.B} {...register("stemmekretser.b")}>
+        <Select
+          key={Tilhorighet.B}
+          {...register(`${tilhorighetToChange}.${Tilhorighet.B}`)}
+        >
           {tilhorighetOptions &&
             tilhorighetOptions.map((krets) => {
               const uid = `${Tilhorighet.B}_${krets.id.lokalid.value}`;
@@ -89,27 +96,5 @@ export const StemmekretsTilhorighetField = ({
         </Select>
       </Stack>
     </MetadataRow>
-  );
-};
-
-type TilhorighetProps = {
-  feature: Feature<Geometry>;
-  disabledByFeatureLock?: boolean;
-  tilhorighetToChange: "grunnkretser" | "stemmekretser";
-  flatedata: Flatedata;
-};
-
-export const TilhorighetField = ({
-  feature,
-  tilhorighetToChange,
-  flatedata,
-}: TilhorighetProps) => {
-  return (
-    <>
-      {tilhorighetToChange == "grunnkretser" ? null : tilhorighetToChange ==
-        "stemmekretser" ? (
-        <StemmekretsTilhorighetField feature={feature} flatedata={flatedata} />
-      ) : null}
-    </>
   );
 };
