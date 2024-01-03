@@ -6,7 +6,10 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import CustomTooltip from "./CustomTooltip";
 import { Divider } from "@kvib/react";
-import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
+import {
+  useHoldButtonToggle,
+  useKeyboardShortcut,
+} from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import ToolbarPopups from "./ToolbarPopups";
 import ToolbarMenus from "./ToolbarMenus";
 import { getLayerById } from "utils/map/layers";
@@ -36,6 +39,18 @@ const Toolbar = () => {
     toggleModeTool("matrikkel");
   };
 
+  const setMoveMode = () => {
+    if (!activeModeTools.includes("move")) {
+      toggleModeTool("move");
+    }
+  };
+
+  const setEditMode = () => {
+    if (activeModeTools.includes("move")) {
+      toggleModeTool("move");
+    }
+  };
+
   const zoom = (difference: number) => {
     const view = map.getView();
     view.animate({
@@ -45,6 +60,9 @@ const Toolbar = () => {
   };
 
   useKeyboardShortcut("layers", toggleKartlag);
+  useKeyboardShortcut("move", setMoveMode);
+  useKeyboardShortcut("edit", setEditMode, !!editingType);
+  useHoldButtonToggle(" ", setMoveMode, setEditMode, !!editingType);
 
   return (
     <OuterContainer>

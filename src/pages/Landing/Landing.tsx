@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import { resetMapView, getAllVisibleFeatures } from "utils/map";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useKartlag } from "contexts/KartlagContext/KartlagContext";
+import { useHoldButtonToggle } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 
 const Landing = () => {
   const navigate = useNavigate();
