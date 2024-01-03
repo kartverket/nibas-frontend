@@ -1,4 +1,4 @@
-import { Divider, IconButton, Text, Tooltip } from "@kvib/react";
+import { Divider, Flex, Icon, IconButton, Text, Tooltip } from "@kvib/react";
 import { styled } from "styled-components";
 import EditAndSaveButton from "../Flatedata/EditAndSaveButton";
 import { useEffect, useState } from "react";
@@ -38,16 +38,19 @@ const MetadataRow = ({
   return (
     <Container>
       <EditContent>
-        <Tooltip label={tooltipLabel} hasArrow placement="left">
-          <InfoIconButton
-            aria-label="Informasjon om metadatafelt"
-            colorScheme="blue"
-            icon="question_mark"
-            size="xs"
-            variant="secondary"
-          />
-        </Tooltip>
-        <Text>{name}</Text>
+        <TextWithIcon>
+          <Text>{name}</Text>
+          <Tooltip label={tooltipLabel} hasArrow placement="bottom">
+            <InfoIconButton
+              aria-label="Informasjon om metadatafelt"
+              colorScheme="blue"
+              icon="exclamation"
+              size="xs"
+              variant="secondary"
+            />
+          </Tooltip>
+        </TextWithIcon>
+
         {!isEditing && <Text as="b">{valueLabel}</Text>}
 
         <EditButton
@@ -76,14 +79,21 @@ const MetadataRow = ({
 
 const InfoIconButton = styled(IconButton)`
   border-radius: 100%;
-  grid-row: 1;
-  grid-column: 1;
+  height: 20px;
+  width: 20px;
+  margin-left: 8px;
 `;
 
 const EditContent = styled.div`
   display: grid;
-  grid-template-columns: 20px 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 16px;
+`;
+
+const TextWithIcon = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
 `;
 
 const Field = styled.div<{ $isEditing: boolean }>`
@@ -93,7 +103,7 @@ const Field = styled.div<{ $isEditing: boolean }>`
 `;
 
 const EditButton = styled(EditAndSaveButton)`
-  grid-column: 4;
+  grid-column: 3;
 `;
 
 export default MetadataRow;
