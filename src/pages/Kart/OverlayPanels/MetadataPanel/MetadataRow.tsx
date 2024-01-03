@@ -1,4 +1,4 @@
-import { Divider, Flex, Icon, IconButton, Text, Tooltip } from "@kvib/react";
+import { Divider, IconButton, Text, Tooltip } from "@kvib/react";
 import { styled } from "styled-components";
 import EditAndSaveButton from "../Flatedata/EditAndSaveButton";
 import { useEffect, useState } from "react";
@@ -79,8 +79,6 @@ const MetadataRow = ({
 
 const InfoIconButton = styled(IconButton)`
   border-radius: 100%;
-  height: 20px;
-  width: 20px;
   margin-left: 8px;
 `;
 
