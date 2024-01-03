@@ -3,7 +3,6 @@ import { GrenseEntry, GrenseTilhorighetEntry, MetadataEntry } from "./types";
 import { editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
-import { FeatureProperties } from "types/api";
 
 export const setFeatureCoordinatesForEntry = (
   entry: GrenseEntry,

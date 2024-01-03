@@ -52,7 +52,7 @@ const GrunnkretsGrensejusteringer = ({
   return (
     <EndringSection>
       <Seksjonsoverskrift>
-        Flater påvirket av grensejusteringer
+        Grunnkretser påvirket av grensejusteringer
       </Seksjonsoverskrift>
       <UnstyledList>
         {grendejusteringer.map((grensjustering) => (

@@ -6,7 +6,6 @@ import { Feature } from "ol";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
-  FeatureProperties,
   GrunnkretsResponse,
   KontekstEgenskaper,
   StemmekretsResponse,
@@ -66,7 +65,9 @@ const getMuligeKretserForGrense = (
   }
 };
 
-const getTilhorighetData = (tilhorigheter: KontekstEgenskaper[] | undefined): TilhorighetForm | undefined => {
+const getTilhorighetData = (
+  tilhorigheter: KontekstEgenskaper[] | undefined,
+): TilhorighetForm | undefined => {
   if (tilhorigheter) {
     const grunnkretser: string[] = tilhorigheter
       .filter((kontekstEgenskaper) => kontekstEgenskaper.type === "GRUNNKRETS")
