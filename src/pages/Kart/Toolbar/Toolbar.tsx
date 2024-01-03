@@ -15,7 +15,8 @@ import ToolbarMenus from "./ToolbarMenus";
 import { getLayerById } from "utils/map/layers";
 
 const Toolbar = () => {
-  const { activeModeTools, toggleModeTool } = useToolbar();
+  const { activeModeTools, toggleModeTool, enableModeTool, disableModeTool } =
+    useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const editingType = getCurrentlyEditingType();
   const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } =
@@ -39,18 +40,6 @@ const Toolbar = () => {
     toggleModeTool("matrikkel");
   };
 
-  const setMoveMode = () => {
-    if (!activeModeTools.includes("move")) {
-      toggleModeTool("move");
-    }
-  };
-
-  const setEditMode = () => {
-    if (activeModeTools.includes("move")) {
-      toggleModeTool("move");
-    }
-  };
-
   const zoom = (difference: number) => {
     const view = map.getView();
     view.animate({
@@ -60,9 +49,14 @@ const Toolbar = () => {
   };
 
   useKeyboardShortcut("layers", toggleKartlag);
-  useKeyboardShortcut("move", setMoveMode);
-  useKeyboardShortcut("edit", setEditMode, !!editingType);
-  useHoldButtonToggle(" ", setMoveMode, setEditMode, !!editingType);
+  useKeyboardShortcut("move", () => enableModeTool("move"));
+  useKeyboardShortcut("edit", () => disableModeTool("move"), !!editingType);
+  useHoldButtonToggle(
+    " ",
+    () => enableModeTool("move"),
+    () => disableModeTool("move"),
+    !!editingType,
+  );
 
   return (
     <OuterContainer>
