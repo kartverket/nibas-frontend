@@ -8,6 +8,7 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useUtkast } from "contexts/UtkastContext";
 import HeaderHome from "./HeaderHome";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
+import { zindex } from "utils/constants";
 
 const Header = () => {
   const { utkast } = useUtkast();
@@ -54,7 +55,7 @@ const Header = () => {
 const Container = styled.header`
   grid-area: header;
   box-shadow: var(--kvib-shadows-base);
-  z-index: 10;
+  z-index: ${zindex.mapHeader};
 `;
 
 const Bar = styled.article`

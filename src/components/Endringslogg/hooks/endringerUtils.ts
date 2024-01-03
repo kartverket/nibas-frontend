@@ -23,10 +23,25 @@ export const getKretserMedGrensejusteringer = (
 
   return removeNull(
     endredeFeatures
-      .filter((feature) => feature.properties.kontekstEgenskaper?.type === type)
-      .map(
-        (feature) => feature.properties.kontekstEgenskaper?.id?.lokalid?.value,
-      ),
+      .filter((feature) => feature.properties.kontekstEgenskaper !== null)
+      .flatMap((feature) => {
+        const kontekstEgenskaperArray = Array.isArray(
+          feature.properties.kontekstEgenskaper,
+        )
+          ? feature.properties.kontekstEgenskaper
+          : feature.properties.kontekstEgenskaper
+            ? [feature.properties.kontekstEgenskaper]
+            : [];
+
+        const filteredKontekstEgenskaper = kontekstEgenskaperArray.filter(
+          (kontekstEgenskaper) =>
+            kontekstEgenskaper && kontekstEgenskaper.type === type,
+        );
+
+        return filteredKontekstEgenskaper.map(
+          (kontekstEgenskaper) => kontekstEgenskaper.id?.lokalid?.value,
+        );
+      }),
   );
 };
 

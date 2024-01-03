@@ -32,6 +32,7 @@ handle /skbaatts/req {
 
 # Send alle kartlag til geonorge for å unngå CORS error
 @laasteKartlag {
+    path /skwms1/wms.matrikkel.v1
     path /skwms1/wms.nib
     path /skwms1/wms.ecc_enc
 }
@@ -55,4 +56,10 @@ handle {
 
     # Start filserveren
     file_server
+
+    # Add header for .map files
+    @jsonFiles {
+        path *.map
+    }
+    header @jsonFiles Content-Type application/json
 }
