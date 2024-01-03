@@ -67,6 +67,7 @@ const createShortcut = (
 ): KeyboardShortcut => ({
   displayString: keyComboToString(key, modifierKeys),
   checkEvent: (event: KeyboardEvent) =>
+    event.target == document.body &&
     checkModifierKeys(event, modifierKeys) &&
     event.key.toLowerCase() === key.toLowerCase(),
 });
