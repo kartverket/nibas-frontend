@@ -66,34 +66,22 @@ export const TilhorighetField = ({
       reset={resetTilhorighet}
     >
       <Stack>
-        <Select
-          key={Tilhorighet.A}
-          {...register(`${tilhorighetToChange}.${Tilhorighet.A}`)}
-        >
-          {tilhorighetOptions &&
-            tilhorighetOptions.map((krets) => {
-              const uid = `${Tilhorighet.A}_${krets.id.lokalid.value}`;
-              return (
-                <option key={uid} value={krets.id.lokalid.value}>
-                  {krets.nummer} {krets.navn}
-                </option>
-              );
-            })}
-        </Select>
-        <Select
-          key={Tilhorighet.B}
-          {...register(`${tilhorighetToChange}.${Tilhorighet.B}`)}
-        >
-          {tilhorighetOptions &&
-            tilhorighetOptions.map((krets) => {
-              const uid = `${Tilhorighet.B}_${krets.id.lokalid.value}`;
-              return (
-                <option key={uid} value={krets.id.lokalid.value}>
-                  {krets.nummer} {krets.navn}
-                </option>
-              );
-            })}
-        </Select>
+        {Object.values(Tilhorighet).map((tilhorighet) => (
+          <Select
+            key={tilhorighet}
+            {...register(`${tilhorighetToChange}.${tilhorighet}`)}
+          >
+            {tilhorighetOptions &&
+              tilhorighetOptions.map((krets) => {
+                const uid = `${tilhorighet}_${krets.id.lokalid.value}`;
+                return (
+                  <option key={uid} value={krets.id.lokalid.value}>
+                    {krets.nummer} {krets.navn}
+                  </option>
+                );
+              })}
+          </Select>
+        ))}
       </Stack>
     </MetadataRow>
   );
