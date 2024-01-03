@@ -8,11 +8,16 @@ import { GrenseType } from "hooks/layers/types";
 import { useTilhorighet } from "../hooks/useTilhorighet";
 import { Flatedata } from "contexts/OverlayPanelContext";
 import { getIdFromEntity } from "utils/api";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { FlateOpprettelseModal } from "./FlateOpprettelseModal";
 
 enum Tilhorighet {
   A = "a",
   B = "b",
+}
+
+enum Option {
+  NY_FLATE = "NY_FLATE",
 }
 
 type TilhorighetProps = {
@@ -31,6 +36,7 @@ export const TilhorighetField = ({
   const properties = feature.getProperties() as FeatureProperties;
   const kontekstEgenskaper = properties.kontekstEgenskaper;
   const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
+  const [isFlateModalOpen, setIsFlateModalOpen] = useState(false);
 
   const metadataIsDisabled = useIsMetadataDisabled(feature, properties);
 
@@ -55,34 +61,56 @@ export const TilhorighetField = ({
   useEffect(() => {
     resetTilhorighet();
   }, [getTilhorighetData, feature, tilhorighetOptions, resetTilhorighet]);
+
+  const tilhorighetRegisters = {
+    [Tilhorighet.A]: { ...register(`${tilhorighetToChange}.${Tilhorighet.A}`) },
+    [Tilhorighet.B]: { ...register(`${tilhorighetToChange}.${Tilhorighet.B}`) },
+  };
+
   return (
-    <MetadataRow
-      feature={feature}
-      name={"Tilhørighet"}
-      valueLabel={() => getValuesFormatted() ?? "Ikke definert"}
-      onMetadataSubmit={() => updateDraftFromFeature()}
-      isDisabled={metadataIsDisabled || disabledByFeatureLock}
-      isDirty={isDirty}
-      reset={resetTilhorighet}
-    >
-      <Stack>
-        {Object.values(Tilhorighet).map((tilhorighet) => (
-          <Select
-            key={tilhorighet}
-            {...register(`${tilhorighetToChange}.${tilhorighet}`)}
-          >
-            {tilhorighetOptions &&
-              tilhorighetOptions.map((krets) => {
-                const uid = `${tilhorighet}_${krets.id.lokalid.value}`;
-                return (
-                  <option key={uid} value={krets.id.lokalid.value}>
-                    {krets.nummer} {krets.navn}
-                  </option>
-                );
-              })}
-          </Select>
-        ))}
-      </Stack>
-    </MetadataRow>
+    <>
+      <MetadataRow
+        feature={feature}
+        name={"Tilhørighet"}
+        valueLabel={() => getValuesFormatted() ?? "Ikke definert"}
+        onMetadataSubmit={() => updateDraftFromFeature()}
+        isDisabled={metadataIsDisabled || disabledByFeatureLock}
+        isDirty={isDirty}
+        reset={resetTilhorighet}
+      >
+        <Stack>
+          {Object.values(Tilhorighet).map((tilhorighet) => (
+            <Select
+              key={tilhorighet}
+              {...tilhorighetRegisters[tilhorighet]}
+              onChange={(e) => {
+                tilhorighetRegisters[tilhorighet].onChange(e);
+                if (e.target.value === Option.NY_FLATE) {
+                  setIsFlateModalOpen(true);
+                }
+              }}
+            >
+              <option key={Option.NY_FLATE} value={Option.NY_FLATE}>
+                {"<Opprett ny flate>"}
+              </option>
+              {tilhorighetOptions &&
+                tilhorighetOptions.map((krets) => {
+                  const uid = `${tilhorighet}_${krets.id.lokalid.value}`;
+                  return (
+                    <option key={uid} value={krets.id.lokalid.value}>
+                      {krets.nummer} {krets.navn}
+                    </option>
+                  );
+                })}
+            </Select>
+          ))}
+        </Stack>
+      </MetadataRow>
+      <FlateOpprettelseModal
+        isOpen={isFlateModalOpen}
+        onClose={() => setIsFlateModalOpen(false)}
+        featureProps={properties}
+      />
+    </>
   );
 };
