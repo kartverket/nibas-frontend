@@ -41,7 +41,7 @@ const MetadataRow = ({
     <Container>
       <EditContent>
         <TextWithIcon>
-          <Text>{name}</Text>
+          <Text as="b">{name}</Text>
           <Tooltip label={tooltipLabel} hasArrow placement="bottom">
             <InfoIconButton
               aria-label="Informasjon om metadatafelt"
@@ -52,8 +52,6 @@ const MetadataRow = ({
             />
           </Tooltip>
         </TextWithIcon>
-
-        {!isEditing && <Text as="b">{valueLabel}</Text>}
 
         {!isUneditable && (
           <EditButton
@@ -74,8 +72,11 @@ const MetadataRow = ({
             }
           />
         )}
-
-        <Field $isEditing={isEditing}>{children}</Field>
+        {isEditing ? (
+          <Field>{children}</Field>
+        ) : (
+          <Field>{valueLabel || "Ikke spesifisert"}</Field>
+        )}
       </EditContent>
       <Divider />
     </Container>
@@ -89,8 +90,8 @@ const InfoIconButton = styled(IconButton)`
 
 const EditContent = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 16px;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
 `;
 
 const TextWithIcon = styled.div`
@@ -99,14 +100,13 @@ const TextWithIcon = styled.div`
   align-items: flex-start;
 `;
 
-const Field = styled.div<{ $isEditing: boolean }>`
+const Field = styled.div`
   grid-row: 2;
   grid-column: 1 / -1;
-  ${(props) => !props.$isEditing && "display: none"};
 `;
 
 const EditButton = styled(EditAndSaveButton)`
-  grid-column: 3;
+  grid-column: 2;
 `;
 
 export default MetadataRow;
