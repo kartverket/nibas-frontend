@@ -68,7 +68,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
           // Henter fra dataen i stedet for å formattere
           return properties.type;
         }}
-        disabledByFeatureLock
+        isDisabled
         isUneditable
         renderItem={(register) => (
           <Select {...register}>
@@ -83,7 +83,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
         tooltipLabel="Grensen sin unike identifikator"
         fieldKey="uuid"
         fieldLabel="Identifikator (UUID)"
-        disabledByFeatureLock
+        isDisabled
         isUneditable
         renderItem={(register) => (
           <Input placeholder={feature.getId()?.toString()} {...register} />
@@ -95,7 +95,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
         tooltipLabel="Dato når grensen skal være gyldig fra. Fra-dato settes automatisk til dagens dato ved opprettelse av nye grenser."
         fieldLabel="Gyldig fra"
         fieldKey="gyldigFra"
-        disabledByFeatureLock
+        isDisabled
         isUneditable
         valueLabelFormatter={getDateInFriendlyString}
         renderItem={(register) => <Datepicker {...register} />}
@@ -125,7 +125,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
             tooltipLabel="Dato når grensen skal være gyldig til."
             fieldLabel="Gyldig til"
             fieldKey="gyldigTil"
-            disabledByFeatureLock
+            isDisabled
             valueLabelFormatter={getDateInFriendlyString}
             renderItem={(register) => <Datepicker {...register} />}
           />
