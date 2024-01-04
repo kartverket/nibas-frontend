@@ -15,6 +15,7 @@ interface Props {
   onMetadataSubmit: () => void;
   isDisabled?: boolean;
   isDirty: boolean;
+  isUneditable?: boolean;
   reset: () => void;
 }
 
@@ -27,12 +28,13 @@ const MetadataRow = ({
   onMetadataSubmit,
   isDisabled,
   isDirty,
+  isUneditable,
   reset,
 }: Props) => {
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    setIsEditing(true);
+    setIsEditing(false);
   }, [feature]);
 
   return (
@@ -53,23 +55,26 @@ const MetadataRow = ({
 
         {!isEditing && <Text as="b">{valueLabel}</Text>}
 
-        <EditButton
-          isDisabled={isDisabled}
-          isEditing={isEditing}
-          canSave={isDirty}
-          onSubmit={() => {
-            onMetadataSubmit();
-            setIsEditing(false);
-          }}
-          toggleEditing={() =>
-            setIsEditing((prevState) => {
-              if (isEditing) {
-                reset();
-              }
-              return !prevState;
-            })
-          }
-        />
+        {!isUneditable && (
+          <EditButton
+            isDisabled={isDisabled}
+            isEditing={isEditing}
+            canSave={isDirty}
+            onSubmit={() => {
+              onMetadataSubmit();
+              setIsEditing(false);
+            }}
+            toggleEditing={() =>
+              setIsEditing((prevState) => {
+                if (isEditing) {
+                  reset();
+                }
+                return !prevState;
+              })
+            }
+          />
+        )}
+
         <Field $isEditing={isEditing}>{children}</Field>
       </EditContent>
       <Divider />

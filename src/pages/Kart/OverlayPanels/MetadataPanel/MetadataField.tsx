@@ -15,6 +15,7 @@ type Props = {
   tooltipLabel: string;
   valueLabelFormatter?: (fieldLabel: string) => string | null;
   disabledByFeatureLock?: boolean;
+  isUneditable?: boolean;
   renderItem: (register: UseFormRegisterReturn<"metadata">) => React.ReactNode;
 };
 
@@ -25,6 +26,7 @@ export const MetadataField = ({
   tooltipLabel,
   valueLabelFormatter,
   disabledByFeatureLock,
+  isUneditable,
   renderItem,
 }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
@@ -66,6 +68,7 @@ export const MetadataField = ({
       }
       isDirty={isDirty}
       reset={reset}
+      isUneditable={isUneditable}
     >
       {renderItem(register("metadata"))}
     </MetadataRow>
