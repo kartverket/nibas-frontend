@@ -73,7 +73,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
       </Container>
       <MetadataField
         feature={feature}
-        tooltipLabel="Hva slags grense/kartobjekt det valgte objektet er"
+        tooltipLabel="Hvilken type grense som er valgt."
         fieldKey="grenseType"
         fieldLabel="Grensetype"
         valueLabelFormatter={() => {
@@ -91,7 +91,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
       />
       <MetadataField
         feature={feature}
-        tooltipLabel="Dato når grensen sist ble registrert/observert/målt i terreng"
+        tooltipLabel="Dato når grensen siste gang ble registert, observert eller målt."
         fieldLabel="Datafangsdato"
         fieldKey="datafangstdato"
         valueLabelFormatter={getDateInFriendlyString}
@@ -100,7 +100,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
 
       <MetadataField
         feature={feature}
-        tooltipLabel="Tidspunktet når grensen oppstod i den virkelige verden"
+        tooltipLabel="Dato når grensen skal være gyldig fra. Fra-dato settes automatisk til dagens dato ved opprettelse av nye grenser."
         fieldLabel="Gyldig fra"
         fieldKey="gyldigFra"
         disabledByFeatureLock
@@ -111,7 +111,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
         <div>
           <MetadataField
             feature={feature}
-            tooltipLabel="Tidspunktet når objektet opphørte å eksistere i den virkelige verden"
+            tooltipLabel="Dato når grensen skal være gyldig til."
             fieldLabel="Gyldig til"
             fieldKey="gyldigTil"
             disabledByFeatureLock
@@ -128,7 +128,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
 
       <MetadataField
         feature={feature}
-        tooltipLabel="Metode for måling i grunnriss (x, y)"
+        tooltipLabel="Metode som ligger til grunn for registrering av posisjon."
         fieldLabel="Målemetode"
         fieldKey="maalemetode"
         valueLabelFormatter={(valueLabel) =>
@@ -149,7 +149,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
       />
       <MetadataField
         feature={feature}
-        tooltipLabel="Punktstandardavviket i grunnriss for punkter, samt tverravvik for linjer. Målt i centimeter"
+        tooltipLabel="Antatt posisjonsnøyaktighet i grunnriss (x, y) oppgitt i cm. Den nøyaktigheten som angis bør være så nær det virkelige objektet som mulig."
         fieldKey="noeyaktighet"
         fieldLabel="Nøyaktighet (cm)"
         renderItem={(register) => <Input type="number" {...register} />}
@@ -157,7 +157,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
 
       <MetadataField
         feature={feature}
-        tooltipLabel="Referanse til opphavsmaterialet, kildematerialet, organisasjons/publiseringskilde. Merk at dette også kan beskrive navn på person og årsak til oppdatering"
+        tooltipLabel="Ansvarlig organisasjon som er opphav til grensedataene."
         fieldKey="opphav"
         fieldLabel="Opphav"
         renderItem={(register) => (
@@ -166,7 +166,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
       />
       <MetadataField
         feature={feature}
-        tooltipLabel="Generell ekstra opplysning dersom dette behøves"
+        tooltipLabel="Åpent felt med ekstra informasjon om grensen"
         fieldKey="informasjon"
         fieldLabel="Ekstra informasjon"
         renderItem={(register) => (
