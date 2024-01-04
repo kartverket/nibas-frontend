@@ -13,7 +13,7 @@ type Props = {
   fieldKey: keyof Inputs;
   fieldLabel: string;
   valueLabelFormatter?: (fieldLabel: string) => string | null;
-  disabled?: boolean;
+  isDisabled?: boolean;
   renderItem: (register: UseFormRegisterReturn<"metadata">) => React.ReactNode;
 };
 
@@ -22,7 +22,7 @@ export const MetadataField = ({
   fieldKey,
   fieldLabel,
   valueLabelFormatter,
-  disabled,
+  isDisabled,
   renderItem,
 }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
@@ -57,7 +57,7 @@ export const MetadataField = ({
       }
       onMetadataSubmit={onSubmit}
       isDisabled={
-        metadataIsDisabled || disabled || metadata.common?.gyldigTil != null
+        metadataIsDisabled || isDisabled || metadata.common?.gyldigTil != null
       }
       isDirty={isDirty}
       reset={reset}
