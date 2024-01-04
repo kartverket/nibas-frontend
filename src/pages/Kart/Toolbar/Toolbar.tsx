@@ -63,7 +63,11 @@ const Toolbar = () => {
       <ToolbarPopups />
       <Container>
         <ToolbarButtons>
-          <CustomTooltip text="Panorer i kartet">
+          <CustomTooltip
+            text="Panorer i kartet"
+            shortcut="move"
+            holdButton="mellomromstasten"
+          >
             <ModeButton
               icon="pan_tool"
               onClick={() => toggleModeTool("move")}
@@ -73,7 +77,7 @@ const Toolbar = () => {
               Panorer
             </ModeButton>
           </CustomTooltip>
-          <CustomTooltip text="Rediger grenser i kartet">
+          <CustomTooltip text="Rediger grenser i kartet" shortcut="edit">
             <ModeButton
               icon="arrow_selector_tool"
               onClick={() => toggleModeTool("move")}

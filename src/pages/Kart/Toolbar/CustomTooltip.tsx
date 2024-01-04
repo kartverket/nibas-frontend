@@ -15,12 +15,18 @@ import {
 type BodyProps = {
   text: string;
   shortcut?: Shortcut;
+  holdButton?: string;
   icon?: MaterialSymbol;
 };
 
 type Props = BodyProps & Omit<TooltipProps, "label">;
 
-export const TooltipBody = ({ text, icon, shortcut }: BodyProps) => (
+export const TooltipBody = ({
+  text,
+  icon,
+  shortcut,
+  holdButton,
+}: BodyProps) => (
   <BodyWrapper>
     <IconText>
       {text}
@@ -28,7 +34,12 @@ export const TooltipBody = ({ text, icon, shortcut }: BodyProps) => (
       {icon && <Icon size={24} icon={icon} />}
     </IconText>
     {shortcut && (
-      <ShortcutText>{KeyboardShortcuts[shortcut].displayString}</ShortcutText>
+      <ShortcutText>
+        Trykk {KeyboardShortcuts[shortcut].displayString} på tastaturet
+      </ShortcutText>
+    )}
+    {holdButton && (
+      <ShortcutText>Hold inne {holdButton} på tastaturet</ShortcutText>
     )}
   </BodyWrapper>
 );
@@ -38,6 +49,7 @@ const CustomTooltip = ({
   icon,
   shortcut,
   children,
+  holdButton,
   ...restProps
 }: Props) => {
   return (
@@ -45,7 +57,14 @@ const CustomTooltip = ({
       hasArrow
       placement="top"
       {...restProps}
-      label={<TooltipBody text={text} shortcut={shortcut} icon={icon} />}
+      label={
+        <TooltipBody
+          text={text}
+          shortcut={shortcut}
+          holdButton={holdButton}
+          icon={icon}
+        />
+      }
     >
       <div>{children}</div>
     </Tooltip>
