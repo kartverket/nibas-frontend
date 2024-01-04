@@ -9,7 +9,7 @@ import { useTilhorighet } from "../hooks/useTilhorighet";
 import { Flatedata } from "contexts/OverlayPanelContext";
 import { getIdFromEntity } from "utils/api";
 import { useEffect, useState } from "react";
-import { FlateOpprettelseModal } from "./FlateOpprettelseModal";
+import { FlateFormModal } from "./FlateOpprettelseModal";
 
 enum Tilhorighet {
   A = "a",
@@ -106,10 +106,11 @@ export const TilhorighetField = ({
           ))}
         </Stack>
       </MetadataRow>
-      <FlateOpprettelseModal
+      <FlateFormModal
         isOpen={isFlateModalOpen}
         onClose={() => setIsFlateModalOpen(false)}
         featureProps={properties}
+        flatedata={flatedata}
       />
     </>
   );
