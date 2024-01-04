@@ -97,7 +97,7 @@ const EditContent = styled.div`
 const TextWithIcon = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: center;
 `;
 
 const Field = styled.div`
