@@ -8,19 +8,13 @@ type FlateForm = {
   nummer: string;
 };
 
-const getDefaultValuesForKretsFromFeature = (): FlateForm | undefined => {
-  return { navn: "", nummer: "" };
-};
-
 export const useFlateForm = (grenseFeatureProperties: FeatureProperties) => {
   const {
     register,
     getValues,
     reset,
     formState: { isDirty },
-  } = useForm<FlateForm>({
-    defaultValues: getDefaultValuesForKretsFromFeature(),
-  });
+  } = useForm<FlateForm>();
 
   const type =
     grenseFeatureProperties?.kontekstEgenskaper?.map((k) => k.type)[0] ?? null;
