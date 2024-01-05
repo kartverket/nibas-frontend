@@ -103,14 +103,6 @@ const MetadataGenerelt = ({ feature }: Props) => {
 
       <MetadataField
         feature={feature}
-        tooltipLabel="Antatt posisjonsnøyaktighet i grunnriss (x, y) oppgitt i cm. Den nøyaktigheten som angis bør være så nær det virkelige objektet som mulig."
-        fieldKey="noeyaktighet"
-        fieldLabel="Nøyaktighet (cm)"
-        renderItem={(register) => <Input type="number" {...register} />}
-      />
-
-      <MetadataField
-        feature={feature}
         tooltipLabel="Dato når grensen siste gang ble registert, observert eller målt."
         fieldLabel="Datafangsdato"
         fieldKey="datafangstdato"
