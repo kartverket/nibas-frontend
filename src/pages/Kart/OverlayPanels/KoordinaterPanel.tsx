@@ -59,6 +59,10 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
     };
   };
 
+  const coordinateDecimalPattern = /^\d+(.\d+)?$/;
+  const coordinateDecimalPatternHelperText =
+    "Koordinatet ditt må være et tall med eventuell punktum-separator";
+
   const {
     register,
     handleSubmit,
@@ -193,8 +197,22 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
       </PanelHeader>
       <Form onSubmit={handleSubmit(movePoint)}>
         <InputRow>
-          <Input label="Nord" {...register("north")} />
-          <Input label="Øst" {...register("east")} />
+          <Input
+            type="text"
+            inputMode="decimal"
+            pattern={coordinateDecimalPattern.source}
+            title={coordinateDecimalPatternHelperText}
+            label="Nord"
+            {...register("north")}
+          />
+          <Input
+            type="text"
+            inputMode="decimal"
+            pattern={coordinateDecimalPattern.source}
+            title={coordinateDecimalPatternHelperText}
+            label="Øst"
+            {...register("east")}
+          />
         </InputRow>
         <Button type="submit" isDisabled={!isDirty}>
           Flytt punkt til koordinater

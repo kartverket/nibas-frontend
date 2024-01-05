@@ -93,7 +93,7 @@ const MetadataGenerelt = ({ feature, flatedata }: Props) => {
           // Henter fra dataen i stedet for å formattere
           return properties.type;
         }}
-        disabledByFeatureLock
+        isDisabled
         renderItem={(register) => (
           <Select {...register}>
             {GrenseTypeValues.map((type) => (
@@ -106,6 +106,7 @@ const MetadataGenerelt = ({ feature, flatedata }: Props) => {
         feature={feature}
         fieldLabel="Datafangsdato"
         fieldKey="datafangstdato"
+        isDisabled
         valueLabelFormatter={getDateInFriendlyString}
         renderItem={(register) => <Datepicker {...register} />}
       />
@@ -114,7 +115,7 @@ const MetadataGenerelt = ({ feature, flatedata }: Props) => {
         feature={feature}
         fieldLabel="Gyldig fra"
         fieldKey="gyldigFra"
-        disabledByFeatureLock
+        isDisabled
         valueLabelFormatter={getDateInFriendlyString}
         renderItem={(register) => <Datepicker {...register} />}
       />
@@ -124,7 +125,7 @@ const MetadataGenerelt = ({ feature, flatedata }: Props) => {
             feature={feature}
             fieldLabel="Gyldig til"
             fieldKey="gyldigTil"
-            disabledByFeatureLock
+            isDisabled
             valueLabelFormatter={getDateInFriendlyString}
             renderItem={(register) => <Datepicker {...register} />}
           />

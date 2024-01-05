@@ -16,14 +16,14 @@ enum Tilhorighet {
 
 type TilhorighetProps = {
   feature: Feature<Geometry>;
-  disabledByFeatureLock?: boolean;
+  isDisabled?: boolean;
   tilhorighetToChange: "grunnkretser" | "stemmekretser";
   flatedata: Flatedata;
 };
 
 export const TilhorighetField = ({
   feature,
-  disabledByFeatureLock,
+  isDisabled,
   tilhorighetToChange,
   flatedata,
 }: TilhorighetProps) => {
@@ -59,7 +59,7 @@ export const TilhorighetField = ({
       name="Tilhørighet"
       valueLabel={() => getValuesFormatted() ?? "Ikke definert"}
       onMetadataSubmit={() => updateDraftFromFeature()}
-      isDisabled={metadataIsDisabled || disabledByFeatureLock}
+      isDisabled={metadataIsDisabled || isDisabled}
       isDirty={isDirty}
       reset={resetTilhorighet}
     >
