@@ -1,4 +1,4 @@
-import { Divider, IconButton, Text, Tooltip } from "@kvib/react";
+import { Divider, Icon, Text, Tooltip } from "@kvib/react";
 import { styled } from "styled-components";
 import EditAndSaveButton from "../Flatedata/EditAndSaveButton";
 import { useEffect, useState } from "react";
@@ -32,6 +32,7 @@ const MetadataRow = ({
   reset,
 }: Props) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [iconHovered, setIconHovered] = useState(false);
 
   useEffect(() => {
     setIsEditing(false);
@@ -40,38 +41,46 @@ const MetadataRow = ({
   return (
     <Container>
       <EditContent>
-        <TextWithIcon>
-          <Text as="b">{name}</Text>
+        <Row>
           <Tooltip label={tooltipLabel} hasArrow placement="bottom">
-            <InfoIconButton
-              aria-label="Informasjon om metadatafelt"
-              colorScheme="blue"
-              icon="exclamation"
-              size="xs"
-              variant="secondary"
-            />
+            <TextWithIcon
+              onMouseOver={() => setIconHovered(true)}
+              onMouseOut={() => setIconHovered(false)}
+            >
+              <Text as="b">{name}</Text>
+              <InfoIcon>
+                <Icon
+                  size={24}
+                  color="var(--kvib-colors-blue-500)"
+                  isFilled={iconHovered}
+                  icon={"info"}
+                ></Icon>
+              </InfoIcon>
+            </TextWithIcon>
           </Tooltip>
-        </TextWithIcon>
 
-        {!isUneditable && (
-          <EditButton
-            isDisabled={isDisabled}
-            isEditing={isEditing}
-            canSave={isDirty}
-            onSubmit={() => {
-              onMetadataSubmit();
-              setIsEditing(false);
-            }}
-            toggleEditing={() =>
-              setIsEditing((prevState) => {
-                if (isEditing) {
-                  reset();
+          {!isUneditable && (
+            <EditAndSaveButton
+              isDisabled={isDisabled}
+              isEditing={isEditing}
+              size="sm"
+              onSubmit={() => {
+                if (isDirty) {
+                  onMetadataSubmit();
                 }
-                return !prevState;
-              })
-            }
-          />
-        )}
+                setIsEditing(false);
+              }}
+              toggleEditing={() =>
+                setIsEditing((prevState) => {
+                  if (isEditing) {
+                    reset();
+                  }
+                  return !prevState;
+                })
+              }
+            />
+          )}
+        </Row>
         {isEditing ? (
           <Field>{children}</Field>
         ) : (
@@ -83,15 +92,22 @@ const MetadataRow = ({
   );
 };
 
-const InfoIconButton = styled(IconButton)`
-  border-radius: 100%;
+const InfoIcon = styled.div`
   margin-left: 8px;
+  display: flex;
+  align-items: center;
+  cursor: default;
 `;
 
 const EditContent = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  display: flex;
+  flex-direction: column;
+`;
+
+const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 `;
 
 const TextWithIcon = styled.div`
@@ -101,12 +117,7 @@ const TextWithIcon = styled.div`
 `;
 
 const Field = styled.div`
-  grid-row: 2;
-  grid-column: 1 / -1;
-`;
-
-const EditButton = styled(EditAndSaveButton)`
-  grid-column: 2;
+  margin-top: 8px;
 `;
 
 export default MetadataRow;
