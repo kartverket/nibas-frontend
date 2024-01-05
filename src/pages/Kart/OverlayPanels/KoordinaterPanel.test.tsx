@@ -6,7 +6,7 @@ const defaultProps: React.ComponentProps<typeof KoordinaterPanel> = {
 };
 
 describe("KoordinaterPanel", () => {
-  it("it allow only decimal or integer inputs", async () => {
+  it("it should allow only decimal or integer inputs", async () => {
     render(<KoordinaterPanel {...defaultProps} />);
 
     const user = userEvent.setup();
