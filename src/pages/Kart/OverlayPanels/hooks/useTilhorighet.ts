@@ -12,27 +12,32 @@ import {
 } from "types/api";
 import { addKontekstEntryFromFeature } from "../MetadataPanel/utils";
 import LineString from "ol/geom/LineString";
+import { Flatedata } from "contexts/OverlayPanelContext";
+import { getIdFromEntity } from "utils/api";
+
+export type ObjektIdentifikator = {
+  lokalid: {
+    value: string;
+  };
+  gyldighetsdato: string;
+};
 
 export type Krets = {
-  id: {
-    lokalid: {
-      value: string;
-    };
-    gyldighetsdato: string;
-  };
+  id: ObjektIdentifikator;
   version: number;
   nummer: string;
   navn: string;
   type: "GRUNNKRETS" | "STEMMEKRETS";
 };
+
 type TilhorighetOptions = Krets[];
 
-export type TilhorighetChoice = {
+type TilhorighetChoice = {
   a: string;
   b: string;
 };
 
-export type TilhorighetForm = {
+type TilhorighetForm = {
   grunnkretser: TilhorighetChoice;
   stemmekretser: TilhorighetChoice;
 };
@@ -115,17 +120,24 @@ const getUpdatedKontekstEgenskaper = (
 };
 
 export const useTilhorighet = (
+  flatedata: Flatedata,
   feature: Feature,
   grenseType: GrenseType,
-  kommuneId: string,
   tilhorighetToChange: "grunnkretser" | "stemmekretser",
   kontekstEgenskaper: KontekstEgenskaper[] | undefined,
 ) => {
-  const { data: grunnkretser } = useKommuneGrunnkretser(kommuneId);
-  const { data: stemmekretser } = useKommuneStemmekretser(kommuneId);
+  const [currentKommuneId, setCurrentKommuneId] = useState<string>("");
+  const { data: grunnkretser } = useKommuneGrunnkretser(currentKommuneId);
+  const { data: stemmekretser } = useKommuneStemmekretser(currentKommuneId);
+
   const [tilhorighetOptions, setTilhorighetOptions] =
     useState<TilhorighetOptions>();
   const { addHistoryEntry } = useHistory();
+
+  useEffect(() => {
+    const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
+    setCurrentKommuneId(kommuneId);
+  }, [flatedata]);
 
   useEffect(() => {
     if (grunnkretser && stemmekretser) {
@@ -162,8 +174,7 @@ export const useTilhorighet = (
             return krets.nummer + " " + krets.navn;
           }
         })
-        .toString()
-        .replace(",", ", ");
+        .join(", ");
     }
   };
 

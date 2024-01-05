@@ -51,7 +51,7 @@ const getUpdatedMetadata = (
           field === "noeyaktighet"
             ? data.metadata
             : oldMetadata.commonGrense?.posisjonskvalitet?.noeyaktighet,
-      }
+      },
     },
   } as Metadata;
   return newMetadata;

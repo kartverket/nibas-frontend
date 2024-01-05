@@ -7,7 +7,6 @@ import { Select, Stack } from "@kvib/react";
 import { GrenseType } from "hooks/layers/types";
 import { useTilhorighet } from "../hooks/useTilhorighet";
 import { Flatedata } from "contexts/OverlayPanelContext";
-import { getIdFromEntity } from "utils/api";
 import { useEffect } from "react";
 
 enum Tilhorighet {
@@ -30,7 +29,6 @@ export const TilhorighetField = ({
 }: TilhorighetProps) => {
   const properties = feature.getProperties() as FeatureProperties;
   const kontekstEgenskaper = properties.kontekstEgenskaper;
-  const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
 
   const metadataIsDisabled = useIsMetadataDisabled(feature, properties);
 
@@ -45,9 +43,9 @@ export const TilhorighetField = ({
     register,
     updateDraftFromFeature,
   } = useTilhorighet(
+    flatedata,
     feature,
     grenseType,
-    kommuneId,
     tilhorighetToChange,
     kontekstEgenskaper,
   );
@@ -58,7 +56,7 @@ export const TilhorighetField = ({
   return (
     <MetadataRow
       feature={feature}
-      name={"Tilhørighet"}
+      name="Tilhørighet"
       valueLabel={() => getValuesFormatted() ?? "Ikke definert"}
       onMetadataSubmit={() => updateDraftFromFeature()}
       isDisabled={metadataIsDisabled || disabledByFeatureLock}

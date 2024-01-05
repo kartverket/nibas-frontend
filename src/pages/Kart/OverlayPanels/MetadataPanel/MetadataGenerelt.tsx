@@ -29,7 +29,7 @@ export type Inputs = {
   opphav: string;
   gyldigFra: string;
   gyldigTil: string;
-  tilhorighet: Array<string>;
+  tilhorighet: string[];
 };
 
 const GrenseTypeValues: GrenseType[] = [
