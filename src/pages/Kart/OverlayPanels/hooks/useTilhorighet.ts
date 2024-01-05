@@ -33,8 +33,8 @@ export type Krets = {
 type TilhorighetOptions = Krets[];
 
 type TilhorighetChoice = {
-  a: string;
-  b: string;
+  a: string | undefined;
+  b: string | undefined;
 };
 
 type TilhorighetForm = {
@@ -74,14 +74,12 @@ const getTilhorighetData = (
   tilhorigheter: KontekstEgenskaper[] | undefined,
 ): TilhorighetForm | undefined => {
   if (tilhorigheter) {
-    const grunnkretser: string[] = tilhorigheter
+    const grunnkretser = tilhorigheter
       .filter((kontekstEgenskaper) => kontekstEgenskaper.type === "GRUNNKRETS")
-      .map((grunnkrets) => grunnkrets.id?.lokalid.value)
-      .filter((value) => value !== undefined) as string[];
-    const stemmekretser: string[] = tilhorigheter
+      .map((grunnkrets) => grunnkrets.id?.lokalid.value);
+    const stemmekretser = tilhorigheter
       .filter((kontekstEgenskaper) => kontekstEgenskaper.type === "STEMMEKRETS")
-      .map((stemmekrets) => stemmekrets.id?.lokalid.value)
-      .filter((value) => value !== undefined) as string[];
+      .map((stemmekrets) => stemmekrets.id?.lokalid.value);
 
     if (grunnkretser && stemmekretser) {
       return {
@@ -126,18 +124,14 @@ export const useTilhorighet = (
   tilhorighetToChange: "grunnkretser" | "stemmekretser",
   kontekstEgenskaper: KontekstEgenskaper[] | undefined,
 ) => {
-  const [currentKommuneId, setCurrentKommuneId] = useState<string>("");
-  const { data: grunnkretser } = useKommuneGrunnkretser(currentKommuneId);
-  const { data: stemmekretser } = useKommuneStemmekretser(currentKommuneId);
+  const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
+
+  const { data: grunnkretser } = useKommuneGrunnkretser(kommuneId);
+  const { data: stemmekretser } = useKommuneStemmekretser(kommuneId);
 
   const [tilhorighetOptions, setTilhorighetOptions] =
     useState<TilhorighetOptions>();
   const { addHistoryEntry } = useHistory();
-
-  useEffect(() => {
-    const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
-    setCurrentKommuneId(kommuneId);
-  }, [flatedata]);
 
   useEffect(() => {
     if (grunnkretser && stemmekretser) {
