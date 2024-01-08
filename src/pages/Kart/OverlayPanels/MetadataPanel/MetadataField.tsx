@@ -12,8 +12,10 @@ type Props = {
   feature: Feature<Geometry>;
   fieldKey: keyof Inputs;
   fieldLabel: string;
+  tooltipLabel: string;
   valueLabelFormatter?: (fieldLabel: string) => string | null;
   isDisabled?: boolean;
+  isUneditable?: boolean;
   renderItem: (register: UseFormRegisterReturn<"metadata">) => React.ReactNode;
 };
 
@@ -21,8 +23,10 @@ export const MetadataField = ({
   feature,
   fieldKey,
   fieldLabel,
+  tooltipLabel,
   valueLabelFormatter,
   isDisabled,
+  isUneditable,
   renderItem,
 }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
@@ -50,7 +54,8 @@ export const MetadataField = ({
     <MetadataRow
       feature={feature}
       name={fieldLabel}
-      valueLabel={() =>
+      tooltipLabel={tooltipLabel}
+      valueLabel={
         valueLabelFormatter
           ? valueLabelFormatter(getValues().metadata) ?? "Ukjent"
           : getValues().metadata
@@ -61,6 +66,7 @@ export const MetadataField = ({
       }
       isDirty={isDirty}
       reset={reset}
+      isUneditable={isUneditable}
     >
       {renderItem(register("metadata"))}
     </MetadataRow>

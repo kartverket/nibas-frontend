@@ -60,6 +60,9 @@ const getUpdatedMetadata = (
 const getFieldFromMetadata = (metadata: Metadata, field: keyof Inputs) => {
   let value;
   switch (field) {
+    case "uuid":
+      value = metadata.common?.identifikasjon.lokalid;
+      break;
     case "informasjon":
       value = metadata?.common?.informasjon;
       break;

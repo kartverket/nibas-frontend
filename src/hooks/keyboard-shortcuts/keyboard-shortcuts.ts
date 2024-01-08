@@ -3,6 +3,8 @@ export type Shortcut =
   | "redo"
   | "undo"
   | "edit"
+  | "edit_point"
+  | "move"
   | "add"
   | "remove"
   | "merge"
@@ -65,12 +67,15 @@ const createShortcut = (
 ): KeyboardShortcut => ({
   displayString: keyComboToString(key, modifierKeys),
   checkEvent: (event: KeyboardEvent) =>
+    event.target == document.body &&
     checkModifierKeys(event, modifierKeys) &&
     event.key.toLowerCase() === key.toLowerCase(),
 });
 
 export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
-  edit: createShortcut("f", { control: true, shift: true }),
+  move: createShortcut("v", {}),
+  edit: createShortcut("r", {}),
+  edit_point: createShortcut("f", { control: true, shift: true }),
   add: createShortcut("l", { control: true }),
   remove: createShortcut("l", { control: true, shift: true }),
   merge: createShortcut("m", { control: true }),

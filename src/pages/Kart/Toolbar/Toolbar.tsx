@@ -6,13 +6,17 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import CustomTooltip from "./CustomTooltip";
 import { Divider } from "@kvib/react";
-import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
+import {
+  useHoldButtonToggle,
+  useKeyboardShortcut,
+} from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import ToolbarPopups from "./ToolbarPopups";
 import ToolbarMenus from "./ToolbarMenus";
 import { getLayerById } from "utils/map/layers";
 
 const Toolbar = () => {
-  const { activeModeTools, toggleModeTool } = useToolbar();
+  const { activeModeTools, toggleModeTool, enableModeTool, disableModeTool } =
+    useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const editingType = getCurrentlyEditingType();
   const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } =
@@ -45,6 +49,14 @@ const Toolbar = () => {
   };
 
   useKeyboardShortcut("layers", toggleKartlag);
+  useKeyboardShortcut("move", () => enableModeTool("move"));
+  useKeyboardShortcut("edit", () => disableModeTool("move"), !!editingType);
+  useHoldButtonToggle(
+    " ",
+    () => enableModeTool("move"),
+    () => disableModeTool("move"),
+    !!editingType,
+  );
 
   return (
     <OuterContainer>
