@@ -19,6 +19,8 @@ export type ToolbarContextValue = {
 
   activeModeTools: ModeTool[];
   toggleModeTool: (modeTool: ModeTool) => void;
+  enableModeTool: (modeTool: ModeTool) => void;
+  disableModeTool: (modeTool: ModeTool) => void;
   resetModeTools: () => void;
 };
 
@@ -54,6 +56,18 @@ export const ToolbarProvider = ({
     }
   };
 
+  const enableModeTool = (modeTool: ModeTool) => {
+    if (!activeModeTools.includes(modeTool)) {
+      setActiveModeTools(activeModeTools.concat(modeTool));
+    }
+  };
+
+  const disableModeTool = (modeTool: ModeTool) => {
+    if (activeModeTools.includes(modeTool)) {
+      setActiveModeTools(activeModeTools.filter((em) => em !== modeTool));
+    }
+  };
+
   const resetModeTools = () => {
     if (
       activeModeTools.length !== defaultModeTools.length ||
@@ -68,6 +82,8 @@ export const ToolbarProvider = ({
     toggleTool,
     activeModeTools,
     toggleModeTool,
+    enableModeTool,
+    disableModeTool,
     resetTool: () => setActiveTool(defaultTool),
     resetModeTools,
   };

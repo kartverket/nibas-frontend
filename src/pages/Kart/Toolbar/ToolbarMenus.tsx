@@ -54,7 +54,7 @@ const ToolbarMenus = () => {
     }
   };
 
-  const toggleMove = () => {
+  const toggleMovePoint = () => {
     toggleTool("koordinater");
 
     if (activeOverlayPanel === "koordinater") {
@@ -73,7 +73,7 @@ const ToolbarMenus = () => {
   const isEditMode = !!editingType;
   useKeyboardShortcut("add", () => toggleTool("add"), isEditMode);
   useKeyboardShortcut("remove", () => toggleTool("remove"), isEditMode);
-  useKeyboardShortcut("edit", toggleMove, isEditMode);
+  useKeyboardShortcut("edit_point", toggleMovePoint, isEditMode);
   useKeyboardShortcut("snap", () => toggleModeTool("snap"), isEditMode);
   useKeyboardShortcut("merge", toggleMergePanel, editingType === "stemmekrets");
 
@@ -129,7 +129,7 @@ const ToolbarMenus = () => {
       icon: <Icon icon="ads_click" />,
       $isActive: activeTool === "koordinater",
       isDisabled: !isEditMode,
-      onClick: toggleMove,
+      onClick: toggleMovePoint,
       "aria-label": "Flytt punkt med koordinater",
     },
     {

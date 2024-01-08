@@ -6,6 +6,7 @@ import { KommuneRef } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { useOverlayPanel } from "./OverlayPanelContext";
 import { getAllVisibleFeatures, zoomToFeatures } from "utils/map";
+import { useToolbar } from "./ToolbarContext";
 
 export type Kretstype = "grunnkrets" | "stemmekrets";
 
@@ -64,6 +65,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
   const { setFlatedata, closeOverlayPanel } = useOverlayPanel();
   const { addKretserToLayer, removeKretserFromLayer, lasterData } =
     useKretsgrenser(kommuneId, currentKretstype);
+  const { enableModeTool, disableModeTool } = useToolbar();
 
   const kommuneValues = values[kommuneId] ?? {};
 
@@ -83,6 +85,12 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
 
     closeOverlayPanel();
     removeKretserFromLayer(layerId);
+
+    if (newEditing) {
+      disableModeTool("move");
+    } else {
+      enableModeTool("move");
+    }
 
     if (newEditing) {
       Object.keys(values).forEach((kommuneIdInList) => {
