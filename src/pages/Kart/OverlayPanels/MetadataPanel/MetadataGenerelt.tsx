@@ -3,12 +3,9 @@ import Geometry from "ol/geom/Geometry";
 import {
   Alert,
   AlertIcon,
-  Button,
   Datepicker,
-  Divider,
   Input,
   Select,
-  Text,
   Textarea,
 } from "@kvib/react";
 import { GrenseType } from "../../../../hooks/layers/types";
@@ -19,6 +16,7 @@ import useNibasApi from "hooks/useNibasApi";
 import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
 
 export type Inputs = {
+  uuid: string;
   grenseType: string;
   maalemetode: string;
   datafangstdato: string;
@@ -61,18 +59,9 @@ const MetadataGenerelt = ({ feature }: Props) => {
 
   return (
     <Container>
-      <Container>
-        <ID>
-          <Text>UUID</Text>
-          <Text as="b">{feature.getId()}</Text>
-          <FakeEditButton colorScheme="gray" variant="secondary" isDisabled>
-            Rediger
-          </FakeEditButton>
-        </ID>
-        <Divider />
-      </Container>
       <MetadataField
         feature={feature}
+        tooltipLabel="Hvilken type grense som er valgt."
         fieldKey="grenseType"
         fieldLabel="Grensetype"
         valueLabelFormatter={() => {
@@ -80,6 +69,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
           return properties.type;
         }}
         isDisabled
+        isUneditable
         renderItem={(register) => (
           <Select {...register}>
             {GrenseTypeValues.map((grenseType: GrenseType) => (
@@ -90,25 +80,41 @@ const MetadataGenerelt = ({ feature }: Props) => {
       />
       <MetadataField
         feature={feature}
-        fieldLabel="Datafangsdato"
-        fieldKey="datafangstdato"
+        tooltipLabel="Grensen sin unike identifikator"
+        fieldKey="uuid"
+        fieldLabel="Identifikator (UUID)"
         isDisabled
+        isUneditable
+        renderItem={(register) => (
+          <Input placeholder={feature.getId()?.toString()} {...register} />
+        )}
+      />
+
+      <MetadataField
+        feature={feature}
+        tooltipLabel="Dato når grensen skal være gyldig fra. Fra-dato settes automatisk til dagens dato ved opprettelse av nye grenser."
+        fieldLabel="Gyldig fra"
+        fieldKey="gyldigFra"
+        isDisabled
+        isUneditable
         valueLabelFormatter={getDateInFriendlyString}
         renderItem={(register) => <Datepicker {...register} />}
       />
 
       <MetadataField
         feature={feature}
-        fieldLabel="Gyldig fra"
-        fieldKey="gyldigFra"
-        isDisabled
+        tooltipLabel="Dato når grensen siste gang ble registert, observert eller målt."
+        fieldLabel="Datafangsdato"
+        fieldKey="datafangstdato"
         valueLabelFormatter={getDateInFriendlyString}
         renderItem={(register) => <Datepicker {...register} />}
       />
+
       {gyldigTil && (
         <div>
           <MetadataField
             feature={feature}
+            tooltipLabel="Dato når grensen skal være gyldig til."
             fieldLabel="Gyldig til"
             fieldKey="gyldigTil"
             isDisabled
@@ -125,6 +131,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
 
       <MetadataField
         feature={feature}
+        tooltipLabel="Metode som ligger til grunn for registrering av posisjon."
         fieldLabel="Målemetode"
         fieldKey="maalemetode"
         valueLabelFormatter={(valueLabel) =>
@@ -145,6 +152,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
       />
       <MetadataField
         feature={feature}
+        tooltipLabel="Antatt posisjonsnøyaktighet i grunnriss (x, y) oppgitt i cm. Den nøyaktigheten som angis bør være så nær det virkelige objektet som mulig."
         fieldKey="noeyaktighet"
         fieldLabel="Nøyaktighet (cm)"
         renderItem={(register) => <Input type="number" {...register} />}
@@ -152,6 +160,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
 
       <MetadataField
         feature={feature}
+        tooltipLabel="Ansvarlig organisasjon som er opphav til grensedataene."
         fieldKey="opphav"
         fieldLabel="Opphav"
         renderItem={(register) => (
@@ -160,6 +169,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
       />
       <MetadataField
         feature={feature}
+        tooltipLabel="Åpent felt med ekstra informasjon om grensen"
         fieldKey="informasjon"
         fieldLabel="Ekstra informasjon"
         renderItem={(register) => (
@@ -169,14 +179,5 @@ const MetadataGenerelt = ({ feature }: Props) => {
     </Container>
   );
 };
-
-const ID = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-`;
-
-const FakeEditButton = styled(Button)`
-  justify-self: end;
-`;
 
 export default MetadataGenerelt;
