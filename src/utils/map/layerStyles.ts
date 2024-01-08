@@ -79,8 +79,8 @@ export const grenseStyles = {
   stemmekrets: lineAndPointStyles({ color: "#EBAB3B" }),
   delomraade: lineAndPointStyles({ color: "#5952D2" }),
   edit: lineAndPointStyles({ color: "#000000" }),
-  select: lineAndPointStyles({ color: "#000000", dashed: true }),
-  dirty: lineAndPointStyles({ color: "#00A76C", dashed: true }),
+  select: lineAndPointStyles({ color: "#00CB85FF", dashed: true }),
+  dirty: lineAndPointStyles({ color: "#005900E6", dashed: true }),
   sammenslaaing: lineAndPointStyles({ color: "#D163E6" }),
   flate: flateStyles,
   sammenslaaingOverlapping: lineAndPointStyles({
