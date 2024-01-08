@@ -21,6 +21,37 @@ type BodyProps = {
 
 type Props = BodyProps & Omit<TooltipProps, "label">;
 
+type ShortcutTextProps = {
+  shortcut?: Shortcut;
+  holdButton?: string;
+};
+
+const ShortcutText = ({ shortcut, holdButton }: ShortcutTextProps) => {
+  const shortcutString =
+    shortcut != null ? KeyboardShortcuts[shortcut].displayString : null;
+
+  if (shortcutString && holdButton) {
+    return (
+      <ShortcutTextStyle>
+        Trykk {shortcutString} eller hold inne {holdButton}
+      </ShortcutTextStyle>
+    );
+  } else if (holdButton) {
+    return (
+      <ShortcutTextStyle>
+        Hold inne {holdButton} på tastaturet
+      </ShortcutTextStyle>
+    );
+  } else if (shortcutString) {
+    return (
+      <ShortcutTextStyle>
+        Trykk {shortcutString} på tastaturet
+      </ShortcutTextStyle>
+    );
+  }
+  return null;
+};
+
 export const TooltipBody = ({
   text,
   icon,
@@ -33,14 +64,7 @@ export const TooltipBody = ({
 
       {icon && <Icon size={24} icon={icon} />}
     </IconText>
-    {shortcut && (
-      <ShortcutText>
-        Trykk {KeyboardShortcuts[shortcut].displayString} på tastaturet
-      </ShortcutText>
-    )}
-    {holdButton && (
-      <ShortcutText>Hold inne {holdButton} på tastaturet</ShortcutText>
-    )}
+    <ShortcutText shortcut={shortcut} holdButton={holdButton} />
   </BodyWrapper>
 );
 
@@ -73,7 +97,7 @@ const CustomTooltip = ({
 
 export default CustomTooltip;
 
-const ShortcutText = styled(Text)`
+const ShortcutTextStyle = styled(Text)`
   font-style: italic;
   font-size: 12px;
 `;
