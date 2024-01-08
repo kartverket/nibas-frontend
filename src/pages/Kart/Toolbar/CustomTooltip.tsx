@@ -37,17 +37,9 @@ const ShortcutText = ({ shortcut, holdButton }: ShortcutTextProps) => {
       </ShortcutTextStyle>
     );
   } else if (holdButton) {
-    return (
-      <ShortcutTextStyle>
-        Hold inne {holdButton} på tastaturet
-      </ShortcutTextStyle>
-    );
+    return <ShortcutTextStyle>Hold inne {holdButton}</ShortcutTextStyle>;
   } else if (shortcutString) {
-    return (
-      <ShortcutTextStyle>
-        Trykk {shortcutString} på tastaturet
-      </ShortcutTextStyle>
-    );
+    return <ShortcutTextStyle>Trykk {shortcutString}</ShortcutTextStyle>;
   }
   return null;
 };
