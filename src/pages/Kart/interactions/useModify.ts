@@ -93,6 +93,8 @@ const useModify = () => {
           return false;
         },
         deleteCondition: (event: MapBrowserEvent<MouseEvent>) => {
+          if (activeModeTools.includes("move")) return false;
+
           if (activeTool === "remove" && click(event)) {
             const featuresAtPixel = map.getFeaturesAtPixel(event.pixel, {
               layerFilter: (layer) => layer === editLayer,

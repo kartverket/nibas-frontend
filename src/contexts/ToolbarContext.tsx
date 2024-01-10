@@ -10,6 +10,17 @@ export type Tool =
   | "metadata"
   | "koordinater"
   | "archive";
+
+const editTools: Tool[] = [
+  "add",
+  "remove",
+  "draw",
+  "split",
+  "detach",
+  "koordinater",
+  "archive",
+];
+
 type ModeTool = "move" | "snap" | "matrikkel";
 
 export type ToolbarContextValue = {
@@ -45,6 +56,9 @@ export const ToolbarProvider = ({
       setActiveTool(null);
     } else {
       setActiveTool(tool);
+      if (editTools.includes(tool)) {
+        disableModeTool("move");
+      }
     }
   };
 
