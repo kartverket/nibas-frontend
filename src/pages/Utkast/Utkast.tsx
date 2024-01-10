@@ -1,16 +1,17 @@
 import { Heading, Icon, Link, SkeletonText } from "@kvib/react";
+import AlertModal from "components/Modals/AlertModal";
 import { BasePage } from "components/Page";
+import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useUtkasts } from "hooks/inndelinger/useUtkasts";
 import { Endringstype } from "pages/Kart/constants";
-import { styled } from "styled-components";
-import { UtkastResponse } from "types/api";
-import UtkastCard from "./UtkastCard";
-import UtkastOpprett from "./UtkastOpprett";
+import EnableFooter from "pages/Landing/EnableFooter";
 import LandingHeader from "pages/Landing/LandingHeader";
 import { Link as RouterLink } from "react-router-dom";
+import { styled } from "styled-components";
+import { UtkastResponse } from "types/api";
 import { routes } from "utils/routes";
-import AlertModal from "components/Modals/AlertModal";
-import { useErrorHandling } from "contexts/ErrorHandlingContext";
+import UtkastCard from "./UtkastCard";
+import UtkastOpprett from "./UtkastOpprett";
 
 const endringstypeOrder: Record<Endringstype, "left" | "right"> = {
   "Vedtatt grensejustering": "left",
@@ -27,7 +28,7 @@ type UtkastGroup = Record<UtkastResponse["endringstype"], UtkastResponse[]>;
 
 const sortUtkastByCreatedDesc = (
   a: UtkastResponse,
-  b: UtkastResponse,
+  b: UtkastResponse
 ): number => b.opprettetDato.localeCompare(a.opprettetDato);
 
 const Utkast = () => {
@@ -48,7 +49,7 @@ const Utkast = () => {
   });
 
   return (
-    <>
+    <EnableFooter>
       <LandingHeader />
       <Container>
         <TitleContainer>
@@ -98,7 +99,7 @@ const Utkast = () => {
           }}
         />
       )}
-    </>
+    </EnableFooter>
   );
 };
 

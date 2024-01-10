@@ -1,17 +1,20 @@
+import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
+import { Logo } from "@kvib/react";
+import ActionCard from "components/ActionCard";
+import { Page } from "components/Page";
+import EnableFooter from "pages/Landing/EnableFooter";
 import { styled } from "styled-components";
 import { AuthorizationStatus, useAuthorization } from "./AuthHooks";
 import { ErrorBox } from "./AuthenticationErrorBox";
-import { Page } from "components/Page";
-import ActionCard from "components/ActionCard";
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import { Logo } from "@kvib/react";
 
 const Authentication = () => {
   return (
-    <AuthenticationPage>
-      <Logo />
-      <AuthenticationBody />
-    </AuthenticationPage>
+    <EnableFooter>
+      <AuthenticationPage>
+        <Logo />
+        <AuthenticationBody />
+      </AuthenticationPage>
+    </EnableFooter>
   );
 };
 
