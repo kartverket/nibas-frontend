@@ -162,6 +162,7 @@ kartlagSources.norgeIBilder.set("config", norgeIBilderConfig);
 
     // sett id på alle sources for å gjøre de mulig å sjekke opp  med layers
     source.set("id", id);
+    console.log("setting sourceId", source.get("id"));
 
     if (source instanceof WMTS || source instanceof VectorSource) return;
 
