@@ -15,21 +15,48 @@ import {
 type BodyProps = {
   text: string;
   shortcut?: Shortcut;
+  holdButton?: string;
   icon?: MaterialSymbol;
 };
 
 type Props = BodyProps & Omit<TooltipProps, "label">;
 
-export const TooltipBody = ({ text, icon, shortcut }: BodyProps) => (
+type ShortcutTextProps = {
+  shortcut?: Shortcut;
+  holdButton?: string;
+};
+
+const ShortcutText = ({ shortcut, holdButton }: ShortcutTextProps) => {
+  const shortcutString =
+    shortcut != null ? KeyboardShortcuts[shortcut].displayString : null;
+
+  if (shortcutString && holdButton) {
+    return (
+      <ShortcutTextStyle>
+        Trykk {shortcutString} eller hold inne {holdButton}
+      </ShortcutTextStyle>
+    );
+  } else if (holdButton) {
+    return <ShortcutTextStyle>Hold inne {holdButton}</ShortcutTextStyle>;
+  } else if (shortcutString) {
+    return <ShortcutTextStyle>Trykk {shortcutString}</ShortcutTextStyle>;
+  }
+  return null;
+};
+
+export const TooltipBody = ({
+  text,
+  icon,
+  shortcut,
+  holdButton,
+}: BodyProps) => (
   <BodyWrapper>
     <IconText>
       {text}
 
       {icon && <Icon size={24} icon={icon} />}
     </IconText>
-    {shortcut && (
-      <ShortcutText>{KeyboardShortcuts[shortcut].displayString}</ShortcutText>
-    )}
+    <ShortcutText shortcut={shortcut} holdButton={holdButton} />
   </BodyWrapper>
 );
 
@@ -38,6 +65,7 @@ const CustomTooltip = ({
   icon,
   shortcut,
   children,
+  holdButton,
   ...restProps
 }: Props) => {
   return (
@@ -45,7 +73,14 @@ const CustomTooltip = ({
       hasArrow
       placement="top"
       {...restProps}
-      label={<TooltipBody text={text} shortcut={shortcut} icon={icon} />}
+      label={
+        <TooltipBody
+          text={text}
+          shortcut={shortcut}
+          holdButton={holdButton}
+          icon={icon}
+        />
+      }
     >
       <div>{children}</div>
     </Tooltip>
@@ -54,7 +89,7 @@ const CustomTooltip = ({
 
 export default CustomTooltip;
 
-const ShortcutText = styled(Text)`
+const ShortcutTextStyle = styled(Text)`
   font-style: italic;
   font-size: 12px;
 `;
