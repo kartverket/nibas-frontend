@@ -36,125 +36,139 @@ const useModify = () => {
     [],
   );
 
-  const modify = useMemo(
-    () =>
-      new Modify({
-        features: new Collection(
-          (editSource.getFeaturesCollection()!.getArray() ?? []).filter(
-            (feature) => {
-              // Ved løsriving ønsker vi kun å kunne påvirke valgte features
-              if (activeTool === "detach") {
-                return selectedFeatures.some(
-                  (sf) => sf.getId() === feature.getId(),
-                );
-              }
+  const modify = useMemo(() => {
+    const getFeaturesAtPixel = (
+      event: MapBrowserEvent<MouseEvent>,
+    ): FeatureLike[] =>
+      map.getFeaturesAtPixel(event.pixel, {
+        layerFilter: (layer) => layer === editLayer,
+        hitTolerance: pixelTolerance,
+      });
 
-              // Arkiverte features skal ikke kunne modifiseres
-              // Representasjonspunkter skal ikke kunne modifiseres
-              return (
-                !featureIsArchived(feature) &&
-                !(feature.getId() as string).includes("representasjonspunkt")
+    const getActiveFeaturesAtPixel = (
+      event: MapBrowserEvent<MouseEvent>,
+    ): FeatureLike[] => {
+      return getFeaturesAtPixel(event)
+        .filter((feature) => feature.getGeometry() instanceof LineString)
+        .filter((feature) => !featureIsArchived(feature));
+    };
+
+    return new Modify({
+      features: new Collection(
+        (editSource.getFeaturesCollection()!.getArray() ?? []).filter(
+          (feature) => {
+            // Ved løsriving ønsker vi kun å kunne påvirke valgte features
+            if (activeTool === "detach") {
+              return selectedFeatures.some(
+                (sf) => sf.getId() === feature.getId(),
               );
-            },
-          ),
+            }
+
+            // Arkiverte features skal ikke kunne modifiseres
+            // Representasjonspunkter skal ikke kunne modifiseres
+            return (
+              !featureIsArchived(feature) &&
+              !(feature.getId() as string).includes("representasjonspunkt")
+            );
+          },
         ),
-        pixelTolerance: pixelTolerance,
-        condition: (event: MapBrowserEvent<MouseEvent>) => {
-          if (activeModeTools.includes("move")) return false;
-          if (disallowedPointModes.includes(activeTool)) return false;
-          if (activeTool === "detach" && selectedFeatures.length === 0)
+      ),
+      pixelTolerance: pixelTolerance,
+      condition: (event: MapBrowserEvent<MouseEvent>) => {
+        if (activeModeTools.includes("move")) return false;
+        if (disallowedPointModes.includes(activeTool)) return false;
+        if (activeTool === "detach" && selectedFeatures.length === 0)
+          return false;
+
+        const activeFeatures = getActiveFeaturesAtPixel(event);
+
+        // Sjekk alle featurene i punktet, hvis en av dem ikke skal kunne endres ønsker vi ikke å endre noe
+        if (!activeFeatures.every(featureIsEditable)) {
+          toast({
+            status: "error",
+            title: "Denne grensen er ikke redigerbar",
+          });
+          return false;
+        }
+
+        // Hvis vi ikke har en spesiell regel bruker vi default condition, som er primaryAction her
+        return primaryAction(event);
+      },
+      style: activeModeTools.includes("move")
+        ? new Style()
+        : selectedPointStyle,
+      insertVertexCondition: () => {
+        if (activeTool === "add") {
+          toast({ description: "Punktet ble lagt til", status: "success" });
+          return true;
+        }
+        return false;
+      },
+      deleteCondition: (event: MapBrowserEvent<MouseEvent>) => {
+        if (activeModeTools.includes("move")) return false;
+
+        if (activeTool === "remove" && click(event)) {
+          const activeFeatures = getActiveFeaturesAtPixel(event);
+
+          if (!activeFeatures.every(featureIsEditable)) {
             return false;
+          }
+
           const featuresAtPixel = map.getFeaturesAtPixel(event.pixel, {
             layerFilter: (layer) => layer === editLayer,
             hitTolerance: pixelTolerance,
           });
 
-          const activeFeatures = featuresAtPixel
-            .filter((feature) => feature.getGeometry() instanceof LineString)
-            .filter((feature) => !featureIsArchived(feature));
+          // Dersom noen av featurene vi trykker på har for få punkter skal vi ikke fjerne punktet
+          for (const feature of featuresAtPixel) {
+            const geometry = feature.getGeometry();
+            if (geometry instanceof LineString) {
+              const coordinates = geometry.getCoordinates();
+              if (coordinates.length <= 2) {
+                return false;
+              }
 
-          // Sjekk alle featurene i punktet, hvis en av dem ikke skal kunne endres ønsker vi ikke å endre noe
-          if (!activeFeatures.every(featureIsEditable)) {
-            toast({
-              status: "error",
-              title: "Denne grensen er ikke redigerbar",
-            });
-            return false;
-          }
+              // Sjekker hvilket punkt du trykket på
+              const nearbyVertexCoordinate = findNearbyVertexOnFeature(
+                feature as Feature<LineString>,
+                event.coordinate,
+              );
 
-          // Hvis vi ikke har en spesiell regel bruker vi default condition, som er primaryAction her
-          return primaryAction(event);
-        },
-        style: activeModeTools.includes("move")
-          ? new Style()
-          : selectedPointStyle,
-        insertVertexCondition: () => {
-          if (activeTool === "add") {
-            toast({ description: "Punktet ble lagt til", status: "success" });
-            return true;
-          }
-          return false;
-        },
-        deleteCondition: (event: MapBrowserEvent<MouseEvent>) => {
-          if (activeModeTools.includes("move")) return false;
-
-          if (activeTool === "remove" && click(event)) {
-            const featuresAtPixel = map.getFeaturesAtPixel(event.pixel, {
-              layerFilter: (layer) => layer === editLayer,
-              hitTolerance: pixelTolerance,
-            });
-
-            // Dersom noen av featurene vi trykker på har for få punkter skal vi ikke fjerne punktet
-            for (const feature of featuresAtPixel) {
-              const geometry = feature.getGeometry();
-              if (geometry instanceof LineString) {
-                const coordinates = geometry.getCoordinates();
-                if (coordinates.length <= 2) {
-                  return false;
-                }
-
-                // Sjekker hvilket punkt du trykket på
-                const nearbyVertexCoordinate = findNearbyVertexOnFeature(
-                  feature as Feature<LineString>,
-                  event.coordinate,
-                );
-
-                // Ettersom vi ikke støtter løse tråder per nå lar vi deg ikke fjerne endepunkter
-                if (
-                  nearbyVertexCoordinate &&
-                  (isCoordinateEqual(nearbyVertexCoordinate, coordinates[0]) ||
-                    isCoordinateEqual(
-                      nearbyVertexCoordinate,
-                      coordinates[coordinates.length - 1],
-                    ))
-                ) {
-                  toast({
-                    status: "error",
-                    title: "Man kan ikke fjerne endepunkter fra en grense",
-                  });
-                  return false;
-                }
+              // Ettersom vi ikke støtter løse tråder per nå lar vi deg ikke fjerne endepunkter
+              if (
+                nearbyVertexCoordinate &&
+                (isCoordinateEqual(nearbyVertexCoordinate, coordinates[0]) ||
+                  isCoordinateEqual(
+                    nearbyVertexCoordinate,
+                    coordinates[coordinates.length - 1],
+                  ))
+              ) {
+                toast({
+                  status: "error",
+                  title: "Man kan ikke fjerne endepunkter fra en grense",
+                });
+                return false;
               }
             }
-
-            // Hvis alt ellers ser greit ut så fjernes punktet på klikk
-            toast({ description: "Punktet ble fjernet", status: "success" });
-            return true;
           }
-          return false;
-        },
-      }),
-    [
-      activeModeTools,
-      activeTool,
-      disallowedPointModes,
-      editLayer,
-      featureIsArchived,
-      featureIsEditable,
-      selectedFeatures,
-      toast,
-    ],
-  );
+
+          // Hvis alt ellers ser greit ut så fjernes punktet på klikk
+          toast({ description: "Punktet ble fjernet", status: "success" });
+          return true;
+        }
+        return false;
+      },
+    });
+  }, [
+    activeModeTools,
+    activeTool,
+    disallowedPointModes,
+    editLayer,
+    featureIsArchived,
+    featureIsEditable,
+    selectedFeatures,
+    toast,
+  ]);
 
   const previousCoordinateKey = "previousCoordinates";
 
