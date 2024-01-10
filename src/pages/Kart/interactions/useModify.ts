@@ -14,6 +14,7 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { selectedPointStyle } from "utils/map/layerStyles";
 import { useToast } from "@kvib/react";
 import { findNearbyVertexOnFeature, isCoordinateEqual } from "utils/map";
+import { Style } from "ol/style";
 
 const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
@@ -84,7 +85,9 @@ const useModify = () => {
           // Hvis vi ikke har en spesiell regel bruker vi default condition, som er primaryAction her
           return primaryAction(event);
         },
-        style: selectedPointStyle,
+        style: activeModeTools.includes("move")
+          ? new Style()
+          : selectedPointStyle,
         insertVertexCondition: () => {
           if (activeTool === "add") {
             toast({ description: "Punktet ble lagt til", status: "success" });
