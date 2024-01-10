@@ -59,7 +59,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
     };
   };
 
-  const coordinateDecimalPattern = /^\d+(.\d+)?$/;
+  const coordinateDecimalPattern = /^\d+(\.\d+)?$/;
   const coordinateDecimalPatternHelperText =
     "Koordinatet ditt må være et tall med eventuell punktum-separator";
 
