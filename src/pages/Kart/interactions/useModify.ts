@@ -53,6 +53,8 @@ const useModify = () => {
         .filter((feature) => !featureIsArchived(feature));
     };
 
+    // TODO: Vi burde finne et felles sett med sjekker som alle modifications går gjennom.
+    // Det er per nå flere sjekker som blir gjort flere steder, hvorav vi bare på noen av dem ønsker å sende inn en toast til brukeren.
     return new Modify({
       features: new Collection(
         (editSource.getFeaturesCollection()!.getArray() ?? []).filter(
