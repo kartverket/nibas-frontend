@@ -92,7 +92,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
 
       <MetadataField
         feature={feature}
-        tooltipLabel="Dato når grensen skal være gyldig fra. Fra-dato settes automatisk til dagens dato ved opprettelse av nye grenser."
+        tooltipLabel="Dato når grensen skal være gyldig fra. Fra-dato settes automatisk til publiseringsdato for utkastet ditt."
         fieldLabel="Gyldig fra"
         fieldKey="gyldigFra"
         isDisabled
@@ -103,9 +103,10 @@ const MetadataGenerelt = ({ feature }: Props) => {
 
       <MetadataField
         feature={feature}
-        tooltipLabel="Dato når grensen siste gang ble registert, observert eller målt."
+        tooltipLabel="Dato når grensen siste gang ble registert, observert eller målt. Oppdateres automatisk ved lagring av ny metadata for grense."
         fieldLabel="Datafangsdato"
         fieldKey="datafangstdato"
+        isUneditable
         valueLabelFormatter={getDateInFriendlyString}
         renderItem={(register) => <Datepicker {...register} />}
       />
