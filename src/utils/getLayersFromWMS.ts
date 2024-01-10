@@ -116,7 +116,6 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS | XYZ) => {
       if (!json?.Contents) return null;
 
       const sourceId = source.get("id") as KartlagId;
-      console.log("getLayersFromWMS", sourceId);
 
       const mappedWMTSLayer: MappedLayer = {
         layers: json.Contents.Layer.map((l: WMTSResponseLayer) =>

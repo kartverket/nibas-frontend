@@ -53,6 +53,7 @@ const getBaseGrid = () =>
   getWMTSTileGrid([-2500000, 3500000, 3045984, 9045984], (z) => z.toString());
 
 type WMTSConfig = {
+  id: KartlagId;
   url: string;
   layer: string;
   matrixSet: string;
@@ -62,6 +63,7 @@ type WMTSConfig = {
 };
 
 const cachetjenesterConfig: WMTSConfig = {
+  id: "cachetjenester",
   url: "https://opencache.statkart.no/gatekeeper/gk/gk.open_wmts",
   layer: "norges_grunnkart_graatone",
   matrixSet: "EPSG:25833",
@@ -71,6 +73,7 @@ const cachetjenesterConfig: WMTSConfig = {
 };
 
 const norgeIBilderConfig: WMTSConfig = {
+  id: "norgeIBilder",
   url: "https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm33_wmts_v2",
   layer: "Nibcache_UTM33_EUREF89_v2",
   matrixSet: "default028mm",
@@ -162,7 +165,6 @@ kartlagSources.norgeIBilder.set("config", norgeIBilderConfig);
 
     // sett id på alle sources for å gjøre de mulig å sjekke opp  med layers
     source.set("id", id);
-    console.log("setting sourceId", source.get("id"));
 
     if (source instanceof WMTS || source instanceof VectorSource) return;
 
