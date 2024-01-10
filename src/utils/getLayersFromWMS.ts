@@ -122,9 +122,9 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS | XYZ) => {
           mapWMTSLayer(l, sourceId),
         ),
         queryable: true,
-        sourceId: source.get("id") as KartlagId,
+        sourceId: sourceId,
         title: json.ServiceIdentification.Title ?? source.getLayer(),
-        id: json.ServiceIdentification.Title,
+        id: sourceId,
       };
 
       return mappedWMTSLayer;
