@@ -18,7 +18,7 @@ const FlexGrowContent = styled.div`
 `;
 
 const FooterContainer = styled(Box)`
-  padding: 0vh 3vh 2vh 4vh;
+  padding: 0 50px 15px 55px;
   background-color: white;
 `;
 
