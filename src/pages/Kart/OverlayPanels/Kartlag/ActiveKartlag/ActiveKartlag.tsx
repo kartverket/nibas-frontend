@@ -23,6 +23,7 @@ const ActiveKartlag = ({ layer, index, maxIndex }: Props) => {
   const mappedLayer = mappedLayers.find(
     (ml) => ml.sourceId === layer.mainLayer,
   );
+  console.log("mappedLayer", mappedLayer);
 
   return (
     <>
