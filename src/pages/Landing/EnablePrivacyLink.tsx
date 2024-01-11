@@ -1,5 +1,5 @@
 import { Center, Flex, Link } from "@kvib/react";
-import styled from "styled-components";
+import { styled } from "styled-components";
 
 const EnablePrivacyLink = (props: React.PropsWithChildren) => {
   return (
