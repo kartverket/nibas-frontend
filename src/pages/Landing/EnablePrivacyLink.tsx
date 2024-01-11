@@ -7,7 +7,13 @@ const EnablePrivacyLink = (props: React.PropsWithChildren) => {
       <FlexGrowContent>{props.children}</FlexGrowContent>
 
       <FooterContainer>
-        <Link href={"google.com"} colorScheme="green" isExternal={true}>
+        <Link
+          href={
+            "https://kartverket.atlassian.net/wiki/spaces/NIBAS/pages/762642534/Personvernerkl+ring"
+          }
+          colorScheme="green"
+          isExternal={true}
+        >
           Personvernerklæring
         </Link>
       </FooterContainer>

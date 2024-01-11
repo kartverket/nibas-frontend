@@ -4,7 +4,7 @@ import { BasePage } from "components/Page";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useUtkasts } from "hooks/inndelinger/useUtkasts";
 import { Endringstype } from "pages/Kart/constants";
-import EnablePrivacyLink from "pages/Landing/EnableFooter";
+import EnablePrivacyLink from "pages/Landing/EnablePrivacyLink";
 import LandingHeader from "pages/Landing/LandingHeader";
 import { Link as RouterLink } from "react-router-dom";
 import { styled } from "styled-components";

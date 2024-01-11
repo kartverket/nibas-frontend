@@ -9,7 +9,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllVisibleFeatures, resetMapView } from "utils/map";
 import { routes } from "utils/routes";
-import EnablePrivacyLink from "./EnableFooter";
+import EnablePrivacyLink from "./EnablePrivacyLink";
 import Greeting from "./Greeting";
 import LandingHeader from "./LandingHeader";
 
