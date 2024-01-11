@@ -1,4 +1,4 @@
-import { Box, Flex, FooterInline } from "@kvib/react";
+import { Center, Flex, Link } from "@kvib/react";
 import styled from "styled-components";
 
 const EnableFooter = (props: React.PropsWithChildren) => {
@@ -7,7 +7,9 @@ const EnableFooter = (props: React.PropsWithChildren) => {
       <FlexGrowContent>{props.children}</FlexGrowContent>
 
       <FooterContainer>
-        <FooterInline />
+        <Link href={"google.com"} colorScheme="green" isExternal={true}>
+          Personvernerklæring
+        </Link>
       </FooterContainer>
     </Flex>
   );
@@ -17,9 +19,8 @@ const FlexGrowContent = styled.div`
   flex-grow: 1;
 `;
 
-const FooterContainer = styled(Box)`
-  padding: 0 50px 15px 55px;
-  background-color: white;
+const FooterContainer = styled(Center)`
+  padding-bottom: 15px;
 `;
 
 export default EnableFooter;
