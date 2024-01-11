@@ -47,7 +47,7 @@ const getMuligeKretserForGrense = (
   grunnkretser: GrunnkretsResponse[],
   stemmekretser: StemmekretsResponse[],
 ): Krets[] => {
-  if (grenseType == "Stemmekretsgrense") {
+  if (grenseType === "Stemmekretsgrense") {
     return stemmekretser.map((stemmekrets) => {
       return {
         id: stemmekrets.id,
@@ -101,7 +101,7 @@ const getUpdatedKontekstEgenskaper = (
   kretsValg: TilhorighetOptions,
 ): KontekstEgenskaper[] => {
   const kretser = Object.values(newKretsIds).map(
-    (id) => kretsValg.find((krets) => krets.id.lokalid.value == id)!,
+    (id) => kretsValg.find((krets) => krets.id.lokalid.value === id)!,
   );
   const nyeKontekstEgenskaper = kretser.map((krets) => {
     return {
@@ -162,7 +162,7 @@ export const useTilhorighet = (
       return Object.values(value)
         .map((id) => {
           const krets = tilhorighetOptions.find(
-            (opt) => opt.id.lokalid.value == id,
+            (opt) => opt.id.lokalid.value === id,
           );
           if (krets?.nummer && krets.navn) {
             return krets.nummer + " " + krets.navn;

@@ -62,7 +62,7 @@ export const TilhorighetField = ({
       isDisabled={metadataIsDisabled || isDisabled}
       isDirty={isDirty}
       reset={resetTilhorighet}
-      tooltipLabel={`Definerer hvilke inndelinger grensen har på hver sin side. Obs! Endring av dette feltet kan forårsake geometriendringer.`}
+      tooltipLabel="Definerer hvilke inndelinger grensen har på hver sin side. Obs! Endring av dette feltet kan forårsake geometriendringer."
     >
       <Stack>
         {Object.values(Tilhorighet).map((tilhorighet) => (

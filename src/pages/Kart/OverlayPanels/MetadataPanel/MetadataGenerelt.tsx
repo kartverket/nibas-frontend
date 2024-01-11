@@ -65,9 +65,9 @@ const MetadataGenerelt = ({ feature, flatedata }: Props) => {
   const grenseType = properties.type as GrenseType;
 
   const tilhorighetToChange =
-    grenseType == "Grunnkretsgrense" || grenseType == "Delområdegrense"
+    grenseType === "Grunnkretsgrense" || grenseType === "Delområdegrense"
       ? "grunnkretser"
-      : grenseType == "Stemmekretsgrense"
+      : grenseType === "Stemmekretsgrense"
         ? "stemmekretser"
         : null;
 
