@@ -112,9 +112,15 @@ export const FeatureStyleProvider = ({
       .flatMap((id) => id);
 
     // Entries før index skal fargelegges basert på endringen som er gjort
+
     const dirtyFeatures = history.entries
       .slice(0, history.index)
-      .filter((entry) => entry.type === "grense" || entry.type === "metadata")
+      .filter(
+        (entry) =>
+          entry.type === "grense" ||
+          entry.type === "metadata" ||
+          entry.type === "grensetilhorighetendring",
+      )
       .reduce(getFeatureIdsFromEntries, [])
       .flatMap((id) => id);
 

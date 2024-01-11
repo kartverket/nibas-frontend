@@ -14,6 +14,7 @@ import { MetadataField } from "./MetadataField";
 import { getDateInFriendlyString } from "./utils";
 import useNibasApi from "hooks/useNibasApi";
 import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
+import { TilhorighetField } from "./TilhorighetField";
 
 export type Inputs = {
   uuid: string;
@@ -25,6 +26,7 @@ export type Inputs = {
   opphav: string;
   gyldigFra: string;
   gyldigTil: string;
+  tilhorighet: string[];
 };
 
 const GrenseTypeValues: GrenseType[] = [
@@ -50,12 +52,22 @@ export const Container = styled.div`
 `;
 
 const MetadataGenerelt = ({ feature }: Props) => {
-  const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
   const properties = feature.getProperties() as FeatureProperties;
+  const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
+
   const gyldigTil = (properties.metadata as Metadata).common?.gyldigTil;
 
   const getMaalemetodeFromId = (maalemetoder: KodelisteRespons, id: string) =>
     maalemetoder.items.find((item) => item.id === id)?.label ?? null;
+
+  const grenseType = properties.type as GrenseType;
+
+  const tilhorighetToChange =
+    grenseType === "Grunnkretsgrense" || grenseType === "Delområdegrense"
+      ? "grunnkretser"
+      : grenseType === "Stemmekretsgrense"
+        ? "stemmekretser"
+        : null;
 
   return (
     <Container>
@@ -72,8 +84,8 @@ const MetadataGenerelt = ({ feature }: Props) => {
         isUneditable
         renderItem={(register) => (
           <Select {...register}>
-            {GrenseTypeValues.map((grenseType: GrenseType) => (
-              <option key={grenseType}>{grenseType}</option>
+            {GrenseTypeValues.map((type) => (
+              <option key={type}>{type}</option>
             ))}
           </Select>
         )}
@@ -177,6 +189,12 @@ const MetadataGenerelt = ({ feature }: Props) => {
           <Textarea placeholder="Fyll inn ekstra informasjon" {...register} />
         )}
       />
+      {tilhorighetToChange && (
+        <TilhorighetField
+          feature={feature}
+          tilhorighetToChange={tilhorighetToChange}
+        />
+      )}
     </Container>
   );
 };

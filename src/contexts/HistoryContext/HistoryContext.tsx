@@ -3,6 +3,7 @@ import { HistoryContextValue, HistoryEntry } from "./types";
 import {
   setFeatureCoordinatesForEntry,
   setFeatureMetadataForEntry,
+  setKontekstEgenskaperForEntry,
 } from "./utils";
 import useHistoryState from "contexts/HistoryContext/useHistoryState";
 import { ensureAllCasesCovered } from "utils/typeHelpers";
@@ -51,6 +52,9 @@ const onUndo = (entry: HistoryEntry) => {
           detail: { entry },
         }),
       );
+    }
+    case "grensetilhorighetendring": {
+      return setKontekstEgenskaperForEntry(entry, "from");
     }
   }
   ensureAllCasesCovered(type);
@@ -102,8 +106,10 @@ const onRedo = (entry: HistoryEntry) => {
         }),
       );
     }
+    case "grensetilhorighetendring": {
+      return setKontekstEgenskaperForEntry(entry, "to");
+    }
   }
-
   ensureAllCasesCovered(type);
 };
 
