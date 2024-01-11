@@ -52,7 +52,11 @@ const useVisibleLayers = () => {
     });
   }, [visibleLayers]);
 
-  const toggleLayerVisibility = (layerId: KartlagId, subLayer?: string) => {
+  const toggleLayerVisibility = (
+    layerId: KartlagId,
+    subLayer?: string,
+    replaceSubLayer?: boolean,
+  ) => {
     if (!subLayer) {
       toggleLayerWithOutSublayer(layerId);
       return;
@@ -68,7 +72,7 @@ const useVisibleLayers = () => {
     const visible = layer?.subLayers.includes(subLayer);
     const index = visibleLayers.findIndex((vl) => vl.mainLayer === layerId);
 
-    //treffer når du skal fjerne et sublag
+    // Treffer når underlaget er synlig og det skal fjernes
     if (visible) {
       if (layer.subLayers.length === 1) {
         setVisibleLayers(visibleLayers.filter((vl) => vl !== layer));
@@ -83,10 +87,13 @@ const useVisibleLayers = () => {
         ...visibleLayers.slice(index + 1),
       ]);
     } else if (layer && !visible) {
-      //skal treffe når man skal legge til sublag på et eksisterende aktivt hovedlag
+      // Treffer når man velger et annet underlag på et synlig hovedlag
+      const newSubLayers = replaceSubLayer
+        ? [subLayer]
+        : layer.subLayers.concat(subLayer);
       setVisibleLayers([
         ...visibleLayers.slice(0, index),
-        { mainLayer: layerId, subLayers: layer.subLayers.concat(subLayer) },
+        { mainLayer: layerId, subLayers: newSubLayers },
         ...visibleLayers.slice(index + 1),
       ]);
     }
