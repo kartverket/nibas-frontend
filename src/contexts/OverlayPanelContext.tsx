@@ -11,7 +11,7 @@ type OverlayPanel =
   | "kartlag";
 
 type OverlayModal = "stemmekrets" | "grunnkrets";
-export type Flatedata = KommuneRef | null;
+type Flatedata = KommuneRef | null;
 
 export type OverlayPanelContextValue = {
   activeOverlayPanel: OverlayPanel | null;

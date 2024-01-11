@@ -14,7 +14,6 @@ import { MetadataField } from "./MetadataField";
 import { getDateInFriendlyString } from "./utils";
 import useNibasApi from "hooks/useNibasApi";
 import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
-import { Flatedata } from "contexts/OverlayPanelContext";
 import { TilhorighetField } from "./TilhorighetField";
 
 export type Inputs = {
@@ -44,7 +43,6 @@ const GrenseTypeValues: GrenseType[] = [
 
 type Props = {
   feature: Feature<Geometry>;
-  flatedata: Flatedata;
 };
 
 export const Container = styled.div`
@@ -53,7 +51,7 @@ export const Container = styled.div`
   gap: 16px;
 `;
 
-const MetadataGenerelt = ({ feature, flatedata }: Props) => {
+const MetadataGenerelt = ({ feature }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
   const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
 
@@ -194,7 +192,6 @@ const MetadataGenerelt = ({ feature, flatedata }: Props) => {
         <TilhorighetField
           feature={feature}
           tilhorighetToChange={tilhorighetToChange}
-          flatedata={flatedata}
         />
       )}
     </Container>

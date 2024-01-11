@@ -6,7 +6,6 @@ import MetadataRow from "./MetadataRow";
 import { Select, Stack } from "@kvib/react";
 import { GrenseType } from "hooks/layers/types";
 import { useTilhorighet } from "../hooks/useTilhorighet";
-import { Flatedata } from "contexts/OverlayPanelContext";
 import { useEffect } from "react";
 
 enum Tilhorighet {
@@ -18,14 +17,12 @@ type TilhorighetProps = {
   feature: Feature<Geometry>;
   isDisabled?: boolean;
   tilhorighetToChange: "grunnkretser" | "stemmekretser";
-  flatedata: Flatedata;
 };
 
 export const TilhorighetField = ({
   feature,
   isDisabled,
   tilhorighetToChange,
-  flatedata,
 }: TilhorighetProps) => {
   const properties = feature.getProperties() as FeatureProperties;
   const kontekstEgenskaper = properties.kontekstEgenskaper;
@@ -43,7 +40,6 @@ export const TilhorighetField = ({
     register,
     updateDraftFromFeature,
   } = useTilhorighet(
-    flatedata,
     feature,
     grenseType,
     tilhorighetToChange,

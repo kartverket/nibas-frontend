@@ -8,8 +8,7 @@ import { useEffect } from "react";
 
 const MetadataPanel = ({ isOpen, className }: PanelProps) => {
   const { selectedFeatures } = useFeatureStyle();
-  const { activeOverlayPanel, closeOverlayPanel, flatedata } =
-    useOverlayPanel();
+  const { activeOverlayPanel, closeOverlayPanel } = useOverlayPanel();
 
   const selectedFeature =
     selectedFeatures.length === 1 ? selectedFeatures[0] : undefined;
@@ -46,7 +45,7 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
       selectedProperties &&
       selectedProperties.metadata &&
       !isWFSGrense ? (
-        <MetadataGenerelt feature={selectedFeature} flatedata={flatedata} />
+        <MetadataGenerelt feature={selectedFeature} />
       ) : (
         <p>Valgt grense har ikke metadata</p>
       )}

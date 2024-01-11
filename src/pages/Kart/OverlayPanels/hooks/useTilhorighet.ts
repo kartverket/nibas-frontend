@@ -8,19 +8,13 @@ import { useForm } from "react-hook-form";
 import {
   GrunnkretsResponse,
   KontekstEgenskaper,
+  ObjektIdentifikator,
   StemmekretsResponse,
 } from "types/api";
 import { addKontekstEntryFromFeature } from "../MetadataPanel/utils";
 import LineString from "ol/geom/LineString";
-import { Flatedata } from "contexts/OverlayPanelContext";
 import { getIdFromEntity } from "utils/api";
-
-export type ObjektIdentifikator = {
-  lokalid: {
-    value: string;
-  };
-  gyldighetsdato: string;
-};
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
 
 export type Krets = {
   id: ObjektIdentifikator;
@@ -118,12 +112,12 @@ const getUpdatedKontekstEgenskaper = (
 };
 
 export const useTilhorighet = (
-  flatedata: Flatedata,
   feature: Feature,
   grenseType: GrenseType,
   tilhorighetToChange: "grunnkretser" | "stemmekretser",
   kontekstEgenskaper: KontekstEgenskaper[] | undefined,
 ) => {
+  const { flatedata } = useOverlayPanel();
   const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
 
   const { data: grunnkretser } = useKommuneGrunnkretser(kommuneId);
