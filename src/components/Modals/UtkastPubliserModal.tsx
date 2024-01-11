@@ -124,7 +124,7 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
             <Datepicker
               fromDate={new Date()}
               defaultSelected={new Date()}
-              onChange={setPubliseringsdato}
+              onChange={() => setPubliseringsdato}
             />
           </Datepickerlabel>
         </Body>
