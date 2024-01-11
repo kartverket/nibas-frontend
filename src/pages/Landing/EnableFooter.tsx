@@ -1,7 +1,7 @@
 import { Center, Flex, Link } from "@kvib/react";
 import styled from "styled-components";
 
-const EnableFooter = (props: React.PropsWithChildren) => {
+const EnablePrivacyLink = (props: React.PropsWithChildren) => {
   return (
     <Flex direction="column" height="100%">
       <FlexGrowContent>{props.children}</FlexGrowContent>
@@ -23,4 +23,4 @@ const FooterContainer = styled(Center)`
   padding-bottom: 15px;
 `;
 
-export default EnableFooter;
+export default EnablePrivacyLink;

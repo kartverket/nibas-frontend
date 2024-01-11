@@ -4,7 +4,7 @@ import { BasePage } from "components/Page";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useUtkasts } from "hooks/inndelinger/useUtkasts";
 import { Endringstype } from "pages/Kart/constants";
-import EnableFooter from "pages/Landing/EnableFooter";
+import EnablePrivacyLink from "pages/Landing/EnableFooter";
 import LandingHeader from "pages/Landing/LandingHeader";
 import { Link as RouterLink } from "react-router-dom";
 import { styled } from "styled-components";
@@ -49,7 +49,7 @@ const Utkast = () => {
   });
 
   return (
-    <EnableFooter>
+    <EnablePrivacyLink>
       <LandingHeader />
       <Container>
         <TitleContainer>
@@ -99,7 +99,7 @@ const Utkast = () => {
           }}
         />
       )}
-    </EnableFooter>
+    </EnablePrivacyLink>
   );
 };
 

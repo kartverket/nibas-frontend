@@ -2,19 +2,19 @@ import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { Logo } from "@kvib/react";
 import ActionCard from "components/ActionCard";
 import { Page } from "components/Page";
-import EnableFooter from "pages/Landing/EnableFooter";
+import EnablePrivacyLink from "pages/Landing/EnableFooter";
 import { styled } from "styled-components";
 import { AuthorizationStatus, useAuthorization } from "./AuthHooks";
 import { ErrorBox } from "./AuthenticationErrorBox";
 
 const Authentication = () => {
   return (
-    <EnableFooter>
+    <EnablePrivacyLink>
       <AuthenticationPage>
         <Logo />
         <AuthenticationBody />
       </AuthenticationPage>
-    </EnableFooter>
+    </EnablePrivacyLink>
   );
 };
 
