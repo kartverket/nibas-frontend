@@ -1,3 +1,4 @@
+import { Box, Flex } from "@kvib/react";
 import ActionCard from "components/ActionCard";
 import { Page } from "components/Page";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
@@ -9,9 +10,9 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllVisibleFeatures, resetMapView } from "utils/map";
 import { routes } from "utils/routes";
-import EnablePrivacyLink from "./EnablePrivacyLink";
 import Greeting from "./Greeting";
 import LandingHeader from "./LandingHeader";
+import PrivacyFooter from "./PrivacyFooter";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -47,24 +48,27 @@ const Landing = () => {
   ]);
 
   return (
-    <EnablePrivacyLink>
+    <Flex direction="column" height="100%">
       <LandingHeader />
-      <Page>
-        <Greeting />
-        <ActionCard
-          title="Gjør en eller flere endringer"
-          description="Opprett, rediger, eller publiser ett eller flere utkast med endringer."
-          icon="edit_location_alt"
-          onClick={() => navigate(routes.utkast)}
-        />
-        <ActionCard
-          title="Finn og utforsk"
-          description="Se oppdaterte data uten å foreta deg noen endringer."
-          icon="travel_explore"
-          onClick={() => navigate(routes.kart)}
-        />
-      </Page>
-    </EnablePrivacyLink>
+      <Box flexGrow="1">
+        <Page>
+          <Greeting />
+          <ActionCard
+            title="Gjør en eller flere endringer"
+            description="Opprett, rediger, eller publiser ett eller flere utkast med endringer."
+            icon="edit_location_alt"
+            onClick={() => navigate(routes.utkast)}
+          />
+          <ActionCard
+            title="Finn og utforsk"
+            description="Se oppdaterte data uten å foreta deg noen endringer."
+            icon="travel_explore"
+            onClick={() => navigate(routes.kart)}
+          />
+        </Page>
+      </Box>
+      <PrivacyFooter />
+    </Flex>
   );
 };
 

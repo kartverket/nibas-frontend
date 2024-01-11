@@ -1,11 +1,11 @@
-import { Heading, Icon, Link, SkeletonText } from "@kvib/react";
+import { Box, Flex, Heading, Icon, Link, SkeletonText } from "@kvib/react";
 import AlertModal from "components/Modals/AlertModal";
 import { BasePage } from "components/Page";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useUtkasts } from "hooks/inndelinger/useUtkasts";
 import { Endringstype } from "pages/Kart/constants";
-import EnablePrivacyLink from "pages/Landing/EnablePrivacyLink";
 import LandingHeader from "pages/Landing/LandingHeader";
+import PrivacyFooter from "pages/Landing/PrivacyFooter";
 import { Link as RouterLink } from "react-router-dom";
 import { styled } from "styled-components";
 import { UtkastResponse } from "types/api";
@@ -49,57 +49,60 @@ const Utkast = () => {
   });
 
   return (
-    <EnablePrivacyLink>
+    <Flex direction={"column"} height="100%">
       <LandingHeader />
-      <Container>
-        <TitleContainer>
-          <ReturnButton to={routes.index}>
-            <Icon icon="arrow_back" />
-            <span>Gå tilbake</span>
-          </ReturnButton>
-          <Heading as="h1" size="lg">
-            Upubliserte utkast
-          </Heading>
-          <UtkastOpprett />
-        </TitleContainer>
-        {[leftColumn, rightColumn].map((column, i) => (
-          <EndringstypeList key={i}>
-            {isLoading && (
-              <EndringstypeGroup>
-                <Heading size="md">Henter utkast...</Heading>
-                <LoadingSkeleton />
-                <LoadingSkeleton />
-              </EndringstypeGroup>
-            )}
-            {Object.entries(column)
-              .sort()
-              .map(([endringstype, utkastsInGroup]) => (
-                <EndringstypeGroup key={endringstype}>
-                  <Heading size="md">{endringstype}</Heading>
-                  {utkastsInGroup.sort(sortUtkastByCreatedDesc).map((u) => (
-                    <UtkastCard key={u.id} utkast={u} />
-                  ))}
+      <Box flexGrow="1">
+        <Container>
+          <TitleContainer>
+            <ReturnButton to={routes.index}>
+              <Icon icon="arrow_back" />
+              <span>Gå tilbake</span>
+            </ReturnButton>
+            <Heading as="h1" size="lg">
+              Upubliserte utkast
+            </Heading>
+            <UtkastOpprett />
+          </TitleContainer>
+          {[leftColumn, rightColumn].map((column, i) => (
+            <EndringstypeList key={i}>
+              {isLoading && (
+                <EndringstypeGroup>
+                  <Heading size="md">Henter utkast...</Heading>
+                  <LoadingSkeleton />
+                  <LoadingSkeleton />
                 </EndringstypeGroup>
-              ))}
-          </EndringstypeList>
-        ))}
-      </Container>
-      {error && (
-        <AlertModal
-          status="error"
-          title={error.title}
-          description={error.description}
-          additionalInfo={error.additionalInfo}
-          errorCode={error.errorCode}
-          isOpen={true}
-          onClose={() => setError(null)}
-          primaryAction={{
-            text: "Lukk",
-            onClick: () => setError(null),
-          }}
-        />
-      )}
-    </EnablePrivacyLink>
+              )}
+              {Object.entries(column)
+                .sort()
+                .map(([endringstype, utkastsInGroup]) => (
+                  <EndringstypeGroup key={endringstype}>
+                    <Heading size="md">{endringstype}</Heading>
+                    {utkastsInGroup.sort(sortUtkastByCreatedDesc).map((u) => (
+                      <UtkastCard key={u.id} utkast={u} />
+                    ))}
+                  </EndringstypeGroup>
+                ))}
+            </EndringstypeList>
+          ))}
+        </Container>
+        {error && (
+          <AlertModal
+            status="error"
+            title={error.title}
+            description={error.description}
+            additionalInfo={error.additionalInfo}
+            errorCode={error.errorCode}
+            isOpen={true}
+            onClose={() => setError(null)}
+            primaryAction={{
+              text: "Lukk",
+              onClick: () => setError(null),
+            }}
+          />
+        )}
+      </Box>
+      <PrivacyFooter />
+    </Flex>
   );
 };
 

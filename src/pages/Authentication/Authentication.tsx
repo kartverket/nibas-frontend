@@ -1,20 +1,23 @@
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import { Logo } from "@kvib/react";
+import { Box, Flex, Logo } from "@kvib/react";
 import ActionCard from "components/ActionCard";
 import { Page } from "components/Page";
-import EnablePrivacyLink from "pages/Landing/EnablePrivacyLink";
+import PrivacyFooter from "pages/Landing/PrivacyFooter";
 import { styled } from "styled-components";
 import { AuthorizationStatus, useAuthorization } from "./AuthHooks";
 import { ErrorBox } from "./AuthenticationErrorBox";
 
 const Authentication = () => {
   return (
-    <EnablePrivacyLink>
-      <AuthenticationPage>
-        <Logo />
-        <AuthenticationBody />
-      </AuthenticationPage>
-    </EnablePrivacyLink>
+    <Flex direction="column" height="100%">
+      <Box flexGrow="1">
+        <AuthenticationPage>
+          <Logo />
+          <AuthenticationBody />
+        </AuthenticationPage>
+      </Box>
+      <PrivacyFooter />
+    </Flex>
   );
 };
 
