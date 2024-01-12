@@ -35,7 +35,6 @@ const Container = styled(Button).attrs({ variant: "ghost" })`
   }
 
   .material-symbols-rounded {
-    width: 36px !important;
     font-size: 36px !important;
 
     &:last-child {

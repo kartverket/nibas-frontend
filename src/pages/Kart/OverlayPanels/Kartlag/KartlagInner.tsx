@@ -2,7 +2,7 @@ import { IconButton } from "@kvib/react";
 import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { styled } from "styled-components";
 import { MappedLayer } from "utils/getLayersFromWMS";
-import { isWMSLayer, isWMTSLayer } from "utils/map/layers";
+import { isWMSLayer, isWMTSLayer, isXYZLayer } from "utils/map/layers";
 import { toggleWMSLayer, toggleWMTSLayer } from "./utils";
 import { kartlagLayers } from "hooks/layers/constants";
 
@@ -21,17 +21,22 @@ const KartlagInner = ({ mappedLayer, isMainLayer }: Props) => {
     : subLayerIsVisible(mappedLayer.sourceId, mappedLayer.title);
 
   const handleToggle = () => {
-    if (isWMSLayer(layer)) toggleWMSLayer(mappedLayer, isVisible);
-    if (isWMTSLayer(layer)) toggleWMTSLayer(mappedLayer);
+    if (isWMSLayer(layer)) {
+      toggleWMSLayer(mappedLayer, isVisible);
+    }
+
+    if (isWMTSLayer(layer)) {
+      toggleWMTSLayer(mappedLayer);
+    }
+
+    if (isXYZLayer(layer)) {
+      toggleWMTSLayer(mappedLayer);
+    }
 
     if (isMainLayer) {
       toggleLayerVisibility(mappedLayer.sourceId);
     } else {
-      toggleLayerVisibility(
-        mappedLayer.sourceId,
-        mappedLayer.title,
-        isWMTSLayer(layer),
-      );
+      toggleLayerVisibility(mappedLayer.sourceId, mappedLayer.title);
     }
   };
 

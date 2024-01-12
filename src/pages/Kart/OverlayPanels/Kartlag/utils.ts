@@ -75,17 +75,17 @@ export const toggleWMSLayer = (
 };
 
 export const toggleWMTSLayer = (mappedLayer: MappedLayer) => {
+  // hent originale sourcen med config
+  // lag ny source basert på options med det nye laget
   const layer = getLayerById(mappedLayer.sourceId);
   if (isWMTSLayer(layer)) {
     const source = layer.getSource();
     if (source) {
-      // OpenLayers lar deg ikke sette layer for WMTS-lag, så vi må bytte ut hele sourcen med ny layer-verdi
-      const config = source.get("config");
       const newSource = new WMTS({
-        ...config,
+        ...source.get("config"),
         layer: mappedLayer.id,
       });
-      newSource.set("config", config);
+      newSource.set("config", source.get("config"));
       layer.setSource(newSource);
     }
   }

@@ -1,13 +1,13 @@
 import { Tool, useToolbar } from "contexts/ToolbarContext";
 import { Feature, MapBrowserEvent } from "ol";
-import { overlayPopup } from "../constants";
+import { pixelTolerance } from "./constants";
+import { map, overlayPopup } from "../constants";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import LineString from "ol/geom/LineString";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToast } from "@kvib/react";
 import { useEffect } from "react";
 import { usePrevious } from "hooks/usePrevious";
-import { useGetFeatures } from "./utils";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -29,7 +29,6 @@ const useSelect = () => {
   const { activeOverlayPanel, closeOverlayPanel, openOverlayPanel } =
     useOverlayPanel();
   const previousPointMode = usePrevious(activeTool);
-  const { getActiveFeaturesAtPixel } = useGetFeatures();
 
   const dangerousPointModes: Tool[] = ["archive", "split", "detach"];
   const allowedPointModes: Tool[] = [...dangerousPointModes, "metadata"];
@@ -53,8 +52,14 @@ const useSelect = () => {
 
   const select = (event: MapBrowserEvent<MouseEvent>) => {
     if (allowedPointModes.includes(activeTool) && !event.dragging) {
-      // Henter features og filtrerer ut den blå prikken som indikerer hva man trykker på
-      const filteredFeatures = getActiveFeaturesAtPixel(event, null);
+      const features = map.getFeaturesAtPixel(event.pixel, {
+        hitTolerance: pixelTolerance,
+      });
+
+      // Filtrerer ut den blå prikken som indikerer hva man trykker på
+      const filteredFeatures = features.filter(
+        (feature) => feature.getGeometry() instanceof LineString,
+      );
 
       if (filteredFeatures.length === 0) {
         overlayPopup.setPosition(undefined);

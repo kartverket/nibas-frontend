@@ -1,17 +1,16 @@
 import { Heading, Icon, Link, SkeletonText } from "@kvib/react";
-import AlertModal from "components/Modals/AlertModal";
-import { Page, PageContainer } from "components/Page";
-import { useErrorHandling } from "contexts/ErrorHandlingContext";
+import { BasePage } from "components/Page";
 import { useUtkasts } from "hooks/inndelinger/useUtkasts";
 import { Endringstype } from "pages/Kart/constants";
-import LandingHeader from "pages/Landing/LandingHeader";
-import PrivacyFooter from "pages/Landing/PrivacyFooter";
-import { Link as RouterLink } from "react-router-dom";
 import { styled } from "styled-components";
 import { UtkastResponse } from "types/api";
-import { routes } from "utils/routes";
 import UtkastCard from "./UtkastCard";
 import UtkastOpprett from "./UtkastOpprett";
+import LandingHeader from "pages/Landing/LandingHeader";
+import { Link as RouterLink } from "react-router-dom";
+import { routes } from "utils/routes";
+import AlertModal from "components/Modals/AlertModal";
+import { useErrorHandling } from "contexts/ErrorHandlingContext";
 
 const endringstypeOrder: Record<Endringstype, "left" | "right"> = {
   "Vedtatt grensejustering": "left",
@@ -49,9 +48,9 @@ const Utkast = () => {
   });
 
   return (
-    <PageContainer>
+    <>
       <LandingHeader />
-      <UtkastPage>
+      <Container>
         <TitleContainer>
           <ReturnButton to={routes.index}>
             <Icon icon="arrow_back" />
@@ -83,7 +82,7 @@ const Utkast = () => {
               ))}
           </EndringstypeList>
         ))}
-      </UtkastPage>
+      </Container>
       {error && (
         <AlertModal
           status="error"
@@ -99,19 +98,17 @@ const Utkast = () => {
           }}
         />
       )}
-      <PrivacyFooter />
-    </PageContainer>
+    </>
   );
 };
 
-const UtkastPage = styled(Page)`
+const Container = styled(BasePage)`
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto 1fr;
   grid-template-areas:
     "title title"
     "left right";
-  justify-items: unset;
   gap: 48px;
   padding: 64px;
 `;

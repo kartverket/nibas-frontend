@@ -4,12 +4,22 @@ import WMTS from "ol/source/WMTS";
 import { createXYZ } from "ol/tilegrid";
 import WMTSTileGrid from "ol/tilegrid/WMTS";
 import { getSrcWithTicket } from "utils/geonorgeTicket";
+import VectorSource from "ol/source/Vector";
 import { KartlagId } from "./types";
 
-const tileGrid = createXYZ({
-  extent: [-2465144.8, 4102893.55, 776625.76, 9408555.22],
-  tileSize: 1024,
-});
+const getWMSTileGrid = () => {
+  // default er 256, så vi henter 4 ganger så store tiles
+  const tileSize = 1024;
+  // http://epsg.io/25833
+  // extent for EPSG:25833
+  const extent = [-2465144.8, 4102893.55, 776625.76, 9408555.22];
+  const tileGrid = createXYZ({
+    extent,
+    tileSize,
+  });
+
+  return tileGrid;
+};
 
 const getWMTSTileGrid = (
   extent: number[],
@@ -30,6 +40,9 @@ const getWMTSTileGrid = (
   });
 };
 
+// extent fått fra `optionsFromCapabilities` funksjon, se eksempler
+// https://openlayers.org/en/latest/examples/wmts-layer-from-capabilities.html
+// https://openlayers.org/en/latest/examples/wmts.html
 const get25833Grid = () =>
   getWMTSTileGrid(
     [-2500000, 3500000, 3045984, 9045984],
@@ -66,40 +79,26 @@ const norgeIBilderConfig: WMTSConfig = {
   format: "image/png",
 };
 
-const createWMTS = (id: KartlagId, config: WMTSConfig) => {
-  const wmts = new WMTS(config);
-
-  // Setter id på alle sources for å kunne finne riktig mappedLayer senere
-  wmts.set("id", id);
-
-  // Setter config for å kunne bytte ut source når man toggler kartlag senere
-  wmts.set("config", config);
-  return wmts;
-};
-
-const defaultTileWMSParams = {
+const defaultParams = {
   CRS: "EPSG:25833",
   TILED: true,
 };
 
-const createTileWMS = (id: KartlagId, url: string) => {
-  const tileWMS = new TileWMS({
+const createTileWMS = (url: string, params: Record<string, unknown> = {}) =>
+  new TileWMS({
     url,
-    params: defaultTileWMSParams,
+    params: {
+      ...defaultParams,
+      ...params,
+    },
   });
 
-  // Setter id på alle sources for å kunne finne riktig mappedLayer senere
-  tileWMS.set("id", id);
-  tileWMS.setTileGridForProjection("EPSG:25833", tileGrid);
-  return tileWMS;
-};
-
 const createAuthedTileWMS = (
-  id: KartlagId,
   url: string,
   tjenesteId: string,
-) => {
-  const tileWMS = new TileWMS({
+  params: Record<string, unknown> = {},
+) =>
+  new TileWMS({
     url,
     tileLoadFunction: async (imageTile, src) => {
       // dokumentasjonen mener dette skal være måten det gjøres på,
@@ -110,68 +109,63 @@ const createAuthedTileWMS = (
         src,
       );
     },
-    params: defaultTileWMSParams,
+    params: {
+      ...defaultParams,
+      ...params,
+    },
   });
 
-  // Setter id på alle sources for å kunne finne riktig mappedLayer senere
-  tileWMS.set("id", id);
-  tileWMS.setTileGridForProjection("EPSG:25833", tileGrid);
-  return tileWMS;
-};
 export const kartlagSources: Record<KartlagId, WMTS | TileWMS> = {
-  cachetjenester: createWMTS("cachetjenester", cachetjenesterConfig),
-  norgeIBilder: createWMTS("norgeIBilder", norgeIBilderConfig),
+  cachetjenester: new WMTS(cachetjenesterConfig),
   administrativeGrenser: createTileWMS(
-    "administrativeGrenser",
     "https://wms.geonorge.no/skwms1/wms.adm_enheter2",
   ),
   stedsnavn: createTileWMS(
-    "stedsnavn",
     "https://openwms.statkart.no/skwms1/wms.stedsnavnenkel",
   ),
   norgesMaritimeGrenser: createTileWMS(
-    "norgesMaritimeGrenser",
     "https://openwms.statkart.no/skwms1/wms.nmg",
   ),
   administrativeGrenserHistorisk: createTileWMS(
-    "administrativeGrenserHistorisk",
     "https://wms.geonorge.no/skwms1/wms.adm_enheter_historisk",
   ),
   grunnkretserWMS: createTileWMS(
-    "grunnkretserWMS",
     "https://openwms.statkart.no/skwms1/wms.grunnkretser",
   ),
-  n5Raster2: createTileWMS(
-    "n5Raster2",
-    "https://openwms.statkart.no/skwms1/wms.n5raster2",
-  ),
+  n5Raster2: createTileWMS("https://openwms.statkart.no/skwms1/wms.n5raster2"),
   kartbladinndelinger: createTileWMS(
-    "kartbladinndelinger",
     "https://openwms.statkart.no/skwms1/wms.kartblad",
   ),
   sjokartDybdedata: createTileWMS(
-    "sjokartDybdedata",
     "https://wms.geonorge.no/skwms1/wms.dybdedata2",
   ),
-  stedsnavnSSR: createTileWMS(
-    "stedsnavnSSR",
-    "https://openwms.statkart.no/skwms1/wms.ssr2",
-  ),
+  stedsnavnSSR: createTileWMS("https://openwms.statkart.no/skwms1/wms.ssr2"),
   historiskeKart: createTileWMS(
-    "historiskeKart",
     "https://wms.geonorge.no/skwms1/wms.historiskekart",
   ),
-  matrikkelenWMS: createAuthedTileWMS(
-    "matrikkelenWMS",
-    "/skwms1/wms.matrikkel.v1",
-    "background",
-  ),
-  sjokartElektroniske: createAuthedTileWMS(
-    "sjokartElektroniske",
-    "/skwms1/wms.ecc_enc",
-    "background",
-  ),
+  matrikkelenWMS: createAuthedTileWMS("/skwms1/wms.matrikkel.v1", "background"),
+  sjokartElektroniske: createAuthedTileWMS("/skwms1/wms.ecc_enc", "background"),
+  norgeIBilder: new WMTS(norgeIBilderConfig),
 };
 
 kartlagSources.norgeIBilder.set("protectedTjenesteId", "wms.nib");
 kartlagSources.sjokartElektroniske.set("protectedTjenesteId", "wms.ecc_enc");
+
+kartlagSources.cachetjenester.set("config", cachetjenesterConfig);
+kartlagSources.norgeIBilder.set("config", norgeIBilderConfig);
+
+(() => {
+  const tileGrid = getWMSTileGrid();
+
+  Object.keys(kartlagSources).forEach((id) => {
+    const source = kartlagSources[id as keyof typeof kartlagSources];
+
+    // sett id på alle sources for å gjøre de mulig å sjekke opp  med layers
+    source.set("id", id);
+
+    if (source instanceof WMTS || source instanceof VectorSource) return;
+
+    // sett tile grid på alle WMS-lag
+    source.setTileGridForProjection("EPSG:25833", tileGrid);
+  });
+})();

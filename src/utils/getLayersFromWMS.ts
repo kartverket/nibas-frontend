@@ -5,6 +5,7 @@ import WMTS from "ol/source/WMTS";
 import { getTicketForTjeneste } from "./geonorgeTicket";
 import { KartlagId } from "hooks/layers/types";
 import { getUrlForPath } from "utils/api";
+import XYZ from "ol/source/XYZ";
 
 const WMSParser = new WMSCapabilities();
 const WMTSParser = new WMTSCapabilities();
@@ -58,7 +59,7 @@ const mapWMTSLayer = (
   sourceId: sourceId,
 });
 
-const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
+const getSubLayersFromWMSSource = async (source: TileWMS | WMTS | XYZ) => {
   const urls = source.getUrls();
 
   if (!urls || urls.length === 0) return null;
@@ -121,9 +122,9 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
           mapWMTSLayer(l, sourceId),
         ),
         queryable: true,
-        sourceId: sourceId,
+        sourceId: source.get("id") as KartlagId,
         title: json.ServiceIdentification.Title ?? source.getLayer(),
-        id: sourceId,
+        id: json.ServiceIdentification.Title,
       };
 
       return mappedWMTSLayer;
