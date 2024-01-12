@@ -11,7 +11,7 @@ import { useToast } from "@kvib/react";
 import { MapBrowserEvent } from "ol";
 import { useHistory } from "contexts/HistoryContext";
 import { getTempFeatureId } from "./tempFeatureIdUtil";
-import { createHistoryEntryForFeatures } from "./historyUtil";
+import { createHistoryChangesFromFeatures } from "./historyUtil";
 
 const useDraw = () => {
   const { activeTool } = useToolbar();
@@ -40,7 +40,7 @@ const useDraw = () => {
       if (feature) {
         addHistoryEntry({
           type: "grense",
-          changes: createHistoryEntryForFeatures([feature]),
+          changes: createHistoryChangesFromFeatures([feature]),
         });
       }
     };

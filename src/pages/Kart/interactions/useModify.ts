@@ -16,7 +16,7 @@ import { useToast } from "@kvib/react";
 import { findNearbyVertexOnFeature, isCoordinateEqual } from "utils/map";
 import { Style } from "ol/style";
 import {
-  createHistoryEntryForFeatures,
+  createHistoryChangesFromFeatures,
   getInfoFromFeature,
 } from "./historyUtil";
 
@@ -195,7 +195,7 @@ const useModify = () => {
       if (features.length > 0) {
         addHistoryEntry({
           type: "grense",
-          changes: createHistoryEntryForFeatures(features),
+          changes: createHistoryChangesFromFeatures(features),
         });
       }
       // TODO: hvis man har kjørt en detach vil vi kanskje sjekke om featuren nå er en løs tråd

@@ -8,6 +8,7 @@ import { useCallback, useEffect } from "react";
 import {
   GrenseEntry,
   HistoryChange,
+  HistoryDirection,
   useHistory,
 } from "contexts/HistoryContext";
 import { SelectedPoint, useFeatureStyle } from "contexts/FeatureStyleContext";
@@ -76,7 +77,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
   // Hjelpefunksjon for å gå gjennom en feature og finne punktet som er påvirket av grensejustering
   const getCoordinateFromChange = (
     change: HistoryChange<number[][]>,
-    direction: "to" | "from",
+    direction: HistoryDirection,
   ) => {
     for (let index = 0; index < change.from.length; index++) {
       const fromCoord = change.from[index];
@@ -88,7 +89,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
   };
 
   const setFormValues = useCallback(
-    (e: CustomEvent, direction: "to" | "from") => {
+    (e: CustomEvent, direction: HistoryDirection) => {
       // Dette skal bare kjøres dersom et punkt er valgt, ikke ved alle grensendringer
       if (selectedPoint) {
         const entry = e.detail.entry as GrenseEntry;

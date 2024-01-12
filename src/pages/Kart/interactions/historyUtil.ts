@@ -10,7 +10,7 @@ export const getInfoFromFeature = (featureLike: FeatureLike) => {
   return { coordinates: geometry.getCoordinates(), featureId };
 };
 
-export const createHistoryEntryForFeatures = (features: Feature[]) => {
+export const createHistoryChangesFromFeatures = (features: Feature[]) => {
   const changes: HistoryChange<number[][]>[] = [];
 
   features.forEach((feature) => {
