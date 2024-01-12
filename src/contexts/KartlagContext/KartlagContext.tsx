@@ -10,7 +10,11 @@ import { isVectorLayer } from "utils/map/layers";
 export type KartlagContextValue = {
   mappedLayers: MappedLayer[];
   visibleLayers: VisibleLayer[];
-  toggleLayerVisibility: (layerId: KartlagId, subLayer?: string) => void;
+  toggleLayerVisibility: (
+    layerId: KartlagId,
+    subLayer?: string,
+    replaceSubLayer?: boolean,
+  ) => void;
   layerIsVisible: (layerId: KartlagId) => boolean;
   subLayerIsVisible: (mainLayer: KartlagId, subLayer: string) => boolean;
   moveLayer: (direction: "up" | "down", layerId: KartlagId) => void;
