@@ -1,6 +1,6 @@
-import { Box, Flex, Heading, Icon, Link, SkeletonText } from "@kvib/react";
+import { Heading, Icon, Link, SkeletonText } from "@kvib/react";
 import AlertModal from "components/Modals/AlertModal";
-import { BasePage } from "components/Page";
+import { Page, PageContainer } from "components/Page";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useUtkasts } from "hooks/inndelinger/useUtkasts";
 import { Endringstype } from "pages/Kart/constants";
@@ -49,70 +49,69 @@ const Utkast = () => {
   });
 
   return (
-    <Flex direction={"column"} height="100%">
+    <PageContainer>
       <LandingHeader />
-      <Box flexGrow="1">
-        <Container>
-          <TitleContainer>
-            <ReturnButton to={routes.index}>
-              <Icon icon="arrow_back" />
-              <span>Gå tilbake</span>
-            </ReturnButton>
-            <Heading as="h1" size="lg">
-              Upubliserte utkast
-            </Heading>
-            <UtkastOpprett />
-          </TitleContainer>
-          {[leftColumn, rightColumn].map((column, i) => (
-            <EndringstypeList key={i}>
-              {isLoading && (
-                <EndringstypeGroup>
-                  <Heading size="md">Henter utkast...</Heading>
-                  <LoadingSkeleton />
-                  <LoadingSkeleton />
+      <UtkastPage>
+        <TitleContainer>
+          <ReturnButton to={routes.index}>
+            <Icon icon="arrow_back" />
+            <span>Gå tilbake</span>
+          </ReturnButton>
+          <Heading as="h1" size="lg">
+            Upubliserte utkast
+          </Heading>
+          <UtkastOpprett />
+        </TitleContainer>
+        {[leftColumn, rightColumn].map((column, i) => (
+          <EndringstypeList key={i}>
+            {isLoading && (
+              <EndringstypeGroup>
+                <Heading size="md">Henter utkast...</Heading>
+                <LoadingSkeleton />
+                <LoadingSkeleton />
+              </EndringstypeGroup>
+            )}
+            {Object.entries(column)
+              .sort()
+              .map(([endringstype, utkastsInGroup]) => (
+                <EndringstypeGroup key={endringstype}>
+                  <Heading size="md">{endringstype}</Heading>
+                  {utkastsInGroup.sort(sortUtkastByCreatedDesc).map((u) => (
+                    <UtkastCard key={u.id} utkast={u} />
+                  ))}
                 </EndringstypeGroup>
-              )}
-              {Object.entries(column)
-                .sort()
-                .map(([endringstype, utkastsInGroup]) => (
-                  <EndringstypeGroup key={endringstype}>
-                    <Heading size="md">{endringstype}</Heading>
-                    {utkastsInGroup.sort(sortUtkastByCreatedDesc).map((u) => (
-                      <UtkastCard key={u.id} utkast={u} />
-                    ))}
-                  </EndringstypeGroup>
-                ))}
-            </EndringstypeList>
-          ))}
-        </Container>
-        {error && (
-          <AlertModal
-            status="error"
-            title={error.title}
-            description={error.description}
-            additionalInfo={error.additionalInfo}
-            errorCode={error.errorCode}
-            isOpen={true}
-            onClose={() => setError(null)}
-            primaryAction={{
-              text: "Lukk",
-              onClick: () => setError(null),
-            }}
-          />
-        )}
-      </Box>
+              ))}
+          </EndringstypeList>
+        ))}
+      </UtkastPage>
+      {error && (
+        <AlertModal
+          status="error"
+          title={error.title}
+          description={error.description}
+          additionalInfo={error.additionalInfo}
+          errorCode={error.errorCode}
+          isOpen={true}
+          onClose={() => setError(null)}
+          primaryAction={{
+            text: "Lukk",
+            onClick: () => setError(null),
+          }}
+        />
+      )}
       <PrivacyFooter />
-    </Flex>
+    </PageContainer>
   );
 };
 
-const Container = styled(BasePage)`
+const UtkastPage = styled(Page)`
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto 1fr;
   grid-template-areas:
     "title title"
     "left right";
+  justify-items: unset;
   gap: 48px;
   padding: 64px;
 `;

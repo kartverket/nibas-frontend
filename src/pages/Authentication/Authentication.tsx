@@ -1,5 +1,5 @@
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import { Box, Flex, Logo } from "@kvib/react";
+import { Logo } from "@kvib/react";
 import ActionCard from "components/ActionCard";
 import { Page } from "components/Page";
 import PrivacyFooter from "pages/Landing/PrivacyFooter";
@@ -9,15 +9,11 @@ import { ErrorBox } from "./AuthenticationErrorBox";
 
 const Authentication = () => {
   return (
-    <Flex direction="column" height="100%">
-      <Box flexGrow="1">
-        <AuthenticationPage>
-          <Logo />
-          <AuthenticationBody />
-        </AuthenticationPage>
-      </Box>
+    <AuthenticationPage>
+      <Logo />
+      <AuthenticationBody />
       <PrivacyFooter />
-    </Flex>
+    </AuthenticationPage>
   );
 };
 
