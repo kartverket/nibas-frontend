@@ -17,7 +17,8 @@ const PrivacyFooter = () => {
   );
 };
 
-const FooterContainer = styled(Center)`
+const FooterContainer = styled.footer`
+  text-align: center;
   padding-bottom: 15px;
   background: var(--kvib-colors-gray-50);
 `;
