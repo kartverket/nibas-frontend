@@ -51,7 +51,9 @@ const GrunnkretsGrensejusteringer = ({
 
   return (
     <EndringSection>
-      <Seksjonsoverskrift>Grensejusteringer</Seksjonsoverskrift>
+      <Seksjonsoverskrift>
+        Grunnkretser påvirket av grensejusteringer
+      </Seksjonsoverskrift>
       <UnstyledList>
         {grendejusteringer.map((grensjustering) => (
           <EndringsradListItem key={grensjustering.id.lokalid.value}>

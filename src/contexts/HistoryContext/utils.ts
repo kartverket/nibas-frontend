@@ -1,5 +1,5 @@
 import LineString from "ol/geom/LineString";
-import { GrenseEntry, MetadataEntry } from "./types";
+import { GrenseEntry, GrenseTilhorighetEntry, MetadataEntry } from "./types";
 import { editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
@@ -43,5 +43,23 @@ export const setFeatureMetadataForEntry = (
     if (!metadata) return;
 
     feature.setProperties({ ...feature.getProperties(), metadata });
+  });
+};
+
+export const setKontekstEgenskaperForEntry = (
+  entry: GrenseTilhorighetEntry,
+  direction: "from" | "to",
+) => {
+  entry.changes.forEach((change) => {
+    const feature = editSource.getFeatureById(
+      change.id,
+    ) as Feature<Geometry> | null;
+    if (!feature) return;
+
+    const kontekstEgenskaper = change[direction];
+
+    if (!kontekstEgenskaper) return;
+
+    feature.setProperties({ ...feature.getProperties(), kontekstEgenskaper });
   });
 };
