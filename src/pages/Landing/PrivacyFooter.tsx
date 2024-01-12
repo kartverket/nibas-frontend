@@ -1,4 +1,4 @@
-import { Center, Link } from "@kvib/react";
+import { Link } from "@kvib/react";
 import { styled } from "styled-components";
 
 const PrivacyFooter = () => {
