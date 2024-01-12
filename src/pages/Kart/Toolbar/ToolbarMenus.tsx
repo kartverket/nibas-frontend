@@ -80,6 +80,7 @@ const ToolbarMenus = () => {
   // For å kunne vise at en meny er aktiv må vi kunne sjekke hvorvidt noen av menuitems er aktive
   // Korteste vei til mål da blir å kunne iterere gjennom menu items
   const grenseMenuItems: MenuItems = [
+    /*
     {
       label: "Tegn ny grense",
       icon: <Icon icon="edit" />,
@@ -88,7 +89,6 @@ const ToolbarMenus = () => {
       onClick: () => toggleTool("draw"),
       "aria-label": "Tegn en ny grense fra et punkt",
     },
-    /*
     {
       label: "Splitt grense",
       icon: <Icon icon="location_off" />,
