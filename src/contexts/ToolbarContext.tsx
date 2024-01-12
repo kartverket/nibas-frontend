@@ -5,6 +5,7 @@ export type Tool =
   | "add"
   | "remove"
   | "draw"
+  | "extend"
   | "split"
   | "detach"
   | "metadata"
@@ -15,6 +16,7 @@ const editTools: Tool[] = [
   "add",
   "remove",
   "draw",
+  "extend",
   "split",
   "detach",
   "koordinater",

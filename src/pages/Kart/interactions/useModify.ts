@@ -14,12 +14,7 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { selectedPointStyle } from "utils/map/layerStyles";
 import { useToast } from "@kvib/react";
 import { findNearbyVertexOnFeature, isCoordinateEqual } from "utils/map";
-
-const getInfoFromFeature = (featureLike: FeatureLike) => {
-  const featureId = featureLike.getId();
-  const geometry = featureLike.getGeometry() as LineString;
-  return { coordinates: geometry.getCoordinates(), featureId };
-};
+import { getInfoFromFeature } from "./utils";
 
 const useModify = () => {
   const { addHistoryEntry } = useHistory();

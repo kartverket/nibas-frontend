@@ -112,6 +112,13 @@ const ToolbarPopups = () => {
           onClose={resetTool}
         />
       )}
+      {activeTool === "extend" && (
+        <ToolbarPopup
+          text="Velg punktet du ønsker å starte forlengelsen fra"
+          subtext="Punktet må være et løsrevet endepunkt."
+          onClose={resetTool}
+        />
+      )}
       {activeTool === "detach" && selectedFeatures.length === 0 && (
         <ToolbarPopup
           text="Velg grensen du ønsker å løsrive fra andre grenser"

@@ -15,6 +15,11 @@ export const setFeatureCoordinatesForEntry = (
     if (!feature) return;
 
     const lineString = feature.getGeometry() as LineString;
+
+    if (direction === "from" && !change[direction]) {
+      editSource.removeFeature(feature);
+    }
+
     const coordinates = change[direction];
     if (!coordinates) return;
 
