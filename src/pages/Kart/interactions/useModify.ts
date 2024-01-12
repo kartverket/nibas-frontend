@@ -7,14 +7,13 @@ import { click, primaryAction } from "ol/events/condition";
 import { Collection, MapBrowserEvent } from "ol";
 import { editSource } from "hooks/layers/constants";
 import { pixelTolerance } from "./constants";
-import { getLayerById } from "utils/map/layers";
-import { map } from "pages/Kart/constants";
 import { Tool, useToolbar } from "contexts/ToolbarContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { selectedPointStyle } from "utils/map/layerStyles";
 import { useToast } from "@kvib/react";
 import { findNearbyVertexOnFeature, isCoordinateEqual } from "utils/map";
 import { Style } from "ol/style";
+import { useGetFeatures } from "./utils";
 
 const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
@@ -28,7 +27,7 @@ const useModify = () => {
   const { selectedFeatures, featureIsEditable, featureIsArchived } =
     useFeatureStyle();
   const toast = useToast();
-  const editLayer = getLayerById("edit");
+  const { getActiveFeaturesAtPixel, getFeaturesAtPixel } = useGetFeatures();
 
   // Ønsker helst at redigering ikke skal være aktiv under enkelte verktøy
   const disallowedPointModes: Tool[] = useMemo(
@@ -37,22 +36,6 @@ const useModify = () => {
   );
 
   const modify = useMemo(() => {
-    const getFeaturesAtPixel = (
-      event: MapBrowserEvent<MouseEvent>,
-    ): FeatureLike[] =>
-      map.getFeaturesAtPixel(event.pixel, {
-        layerFilter: (layer) => layer === editLayer,
-        hitTolerance: pixelTolerance,
-      });
-
-    const getActiveFeaturesAtPixel = (
-      event: MapBrowserEvent<MouseEvent>,
-    ): FeatureLike[] => {
-      return getFeaturesAtPixel(event)
-        .filter((feature) => feature.getGeometry() instanceof LineString)
-        .filter((feature) => !featureIsArchived(feature));
-    };
-
     // TODO: Vi burde finne et felles sett med sjekker som alle modifications går gjennom.
     // Det er per nå flere sjekker som blir gjort flere steder, hvorav vi bare på noen av dem ønsker å sende inn en toast til brukeren.
     return new Modify({
@@ -82,7 +65,7 @@ const useModify = () => {
         if (activeTool === "detach" && selectedFeatures.length === 0)
           return false;
 
-        const activeFeatures = getActiveFeaturesAtPixel(event);
+        const activeFeatures = getActiveFeaturesAtPixel(event, "edit");
 
         // Sjekk alle featurene i punktet, hvis en av dem ikke skal kunne endres ønsker vi ikke å endre noe
         if (!activeFeatures.every(featureIsEditable)) {
@@ -110,16 +93,13 @@ const useModify = () => {
         if (activeModeTools.includes("move")) return false;
 
         if (activeTool === "remove" && click(event)) {
-          const activeFeatures = getActiveFeaturesAtPixel(event);
+          const activeFeatures = getActiveFeaturesAtPixel(event, "edit");
 
           if (!activeFeatures.every(featureIsEditable)) {
             return false;
           }
 
-          const featuresAtPixel = map.getFeaturesAtPixel(event.pixel, {
-            layerFilter: (layer) => layer === editLayer,
-            hitTolerance: pixelTolerance,
-          });
+          const featuresAtPixel = getFeaturesAtPixel(event, "edit");
 
           // Dersom noen av featurene vi trykker på har for få punkter skal vi ikke fjerne punktet
           for (const feature of featuresAtPixel) {
@@ -165,9 +145,10 @@ const useModify = () => {
     activeModeTools,
     activeTool,
     disallowedPointModes,
-    editLayer,
     featureIsArchived,
     featureIsEditable,
+    getActiveFeaturesAtPixel,
+    getFeaturesAtPixel,
     selectedFeatures,
     toast,
   ]);
