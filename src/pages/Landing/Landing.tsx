@@ -1,16 +1,17 @@
 import ActionCard from "components/ActionCard";
-import { Page } from "components/Page";
-import { useNavigate } from "react-router-dom";
-import { routes } from "utils/routes";
-import LandingHeader from "./LandingHeader";
-import Greeting from "./Greeting";
+import { Page, PageContainer } from "components/Page";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
+import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
-import { useEffect } from "react";
-import { resetMapView, getAllVisibleFeatures } from "utils/map";
 import { useToolbar } from "contexts/ToolbarContext";
-import { useKartlag } from "contexts/KartlagContext/KartlagContext";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { getAllVisibleFeatures, resetMapView } from "utils/map";
+import { routes } from "utils/routes";
+import Greeting from "./Greeting";
+import LandingHeader from "./LandingHeader";
+import PrivacyFooter from "./PrivacyFooter";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ const Landing = () => {
   ]);
 
   return (
-    <>
+    <PageContainer>
       <LandingHeader />
       <Page>
         <Greeting />
@@ -63,7 +64,8 @@ const Landing = () => {
           onClick={() => navigate(routes.kart)}
         />
       </Page>
-    </>
+      <PrivacyFooter />
+    </PageContainer>
   );
 };
 
