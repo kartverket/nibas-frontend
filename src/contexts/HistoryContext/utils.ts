@@ -9,12 +9,26 @@ export const setFeatureCoordinatesForEntry = (
   direction: "from" | "to",
 ) => {
   entry.changes.forEach((change) => {
-    const feature = editSource.getFeatureById(
+    let feature = editSource.getFeatureById(
       change.id,
     ) as Feature<Geometry> | null;
-    if (!feature) return;
+    if (!feature) {
+      if (direction === "to" && change[direction]) {
+        const geometry = new LineString(change[direction]);
+        feature = new Feature(geometry);
+        feature.setId(change.id);
+        editSource.addFeature(feature);
+      } else {
+        return;
+      }
+    }
 
     const lineString = feature.getGeometry() as LineString;
+
+    if (direction === "from" && !change[direction]) {
+      editSource.removeFeature(feature);
+    }
+
     const coordinates = change[direction];
     if (!coordinates) return;
 

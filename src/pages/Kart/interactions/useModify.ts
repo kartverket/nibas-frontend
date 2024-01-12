@@ -2,11 +2,11 @@ import { useEffect, useMemo } from "react";
 import Feature, { FeatureLike } from "ol/Feature";
 import LineString from "ol/geom/LineString";
 import Modify, { ModifyEvent } from "ol/interaction/Modify";
-import { HistoryChange, useHistory } from "contexts/HistoryContext";
+import { useHistory } from "contexts/HistoryContext";
 import { click, primaryAction } from "ol/events/condition";
 import { Collection, MapBrowserEvent } from "ol";
 import { editSource } from "hooks/layers/constants";
-import { pixelTolerance } from "./constants";
+import { pixelTolerance, previousCoordinateKey } from "./constants";
 import { getLayerById } from "utils/map/layers";
 import { map } from "pages/Kart/constants";
 import { Tool, useToolbar } from "contexts/ToolbarContext";
@@ -15,12 +15,10 @@ import { selectedPointStyle } from "utils/map/layerStyles";
 import { useToast } from "@kvib/react";
 import { findNearbyVertexOnFeature, isCoordinateEqual } from "utils/map";
 import { Style } from "ol/style";
-
-const getInfoFromFeature = (featureLike: FeatureLike) => {
-  const featureId = featureLike.getId();
-  const geometry = featureLike.getGeometry() as LineString;
-  return { coordinates: geometry.getCoordinates(), featureId };
-};
+import {
+  createHistoryEntryForFeatures,
+  getInfoFromFeature,
+} from "./historyUtil";
 
 const useModify = () => {
   const { addHistoryEntry } = useHistory();
@@ -172,8 +170,6 @@ const useModify = () => {
     toast,
   ]);
 
-  const previousCoordinateKey = "previousCoordinates";
-
   useEffect(() => {
     const saveCoordinatesBeforeModification = (e: ModifyEvent) => {
       if (e.features) {
@@ -195,29 +191,11 @@ const useModify = () => {
 
   useEffect(() => {
     const addModificationToHistory = (e: ModifyEvent) => {
-      if (e.features) {
-        const changes: HistoryChange<number[][]>[] = [];
-        e.features.forEach((featureLike) => {
-          if (featureLike instanceof Feature) {
-            const geometry = featureLike.getGeometry();
-
-            // Filtrerer ut representasjonspunkt og flate fra å bli satt inn i history
-            if (geometry instanceof LineString) {
-              const { featureId, coordinates } =
-                getInfoFromFeature(featureLike);
-              if (!featureId || !coordinates) return;
-              changes.push({
-                id: featureId as string,
-                from: featureLike.get(previousCoordinateKey),
-                to: coordinates,
-              });
-              featureLike.unset(previousCoordinateKey);
-            }
-          }
-        });
+      const features = e.features.getArray();
+      if (features.length > 0) {
         addHistoryEntry({
           type: "grense",
-          changes,
+          changes: createHistoryEntryForFeatures(features),
         });
       }
       // TODO: hvis man har kjørt en detach vil vi kanskje sjekke om featuren nå er en løs tråd

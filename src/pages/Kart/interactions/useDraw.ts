@@ -9,10 +9,14 @@ import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { getGrenseTypeFromEditingType } from "hooks/layers/types";
 import { useToast } from "@kvib/react";
 import { MapBrowserEvent } from "ol";
+import { useHistory } from "contexts/HistoryContext";
+import { getTempFeatureId } from "./tempFeatureIdUtil";
+import { createHistoryEntryForFeatures } from "./historyUtil";
 
 const useDraw = () => {
   const { activeTool } = useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
+  const { addHistoryEntry } = useHistory();
   const toast = useToast();
 
   // TODO: fungerer ikke uten snap, vet ikke hvorfor
@@ -31,17 +35,29 @@ const useDraw = () => {
   );
 
   useEffect(() => {
+    const addDrawToHistory = (e: DrawEvent) => {
+      const feature = e.feature;
+      if (feature) {
+        addHistoryEntry({
+          type: "grense",
+          changes: createHistoryEntryForFeatures([feature]),
+        });
+      }
+    };
+
     const onDrawEnd = (e: DrawEvent) => {
       const editingType = getCurrentlyEditingType();
 
       // Skal ikke være mulig da tegneverktøyet bare skal være tilgjengelig i redigering
       if (!editingType) return;
 
-      // TODO: for å kunne tegnes i kartet må en feature også ha en unik ID (tror jeg)
+      e.feature.setId(getTempFeatureId());
       e.feature.setProperties({
         // Setter grensetypen til featuren lik typen man redigerer, kanskje naivt
         type: getGrenseTypeFromEditingType(editingType),
       });
+
+      addDrawToHistory(e);
 
       toast({ status: "success", title: "Grensen ble lagt til i kartet" });
 
@@ -58,7 +74,7 @@ const useDraw = () => {
     return () => {
       draw.un("drawend", onDrawEnd);
     };
-  }, [draw, getCurrentlyEditingType, toast]);
+  }, [addHistoryEntry, draw, getCurrentlyEditingType, toast]);
 
   return { draw };
 };
