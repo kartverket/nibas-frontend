@@ -1,6 +1,5 @@
-import { Box, Flex } from "@kvib/react";
 import ActionCard from "components/ActionCard";
-import { Page } from "components/Page";
+import { Page, PageContainer } from "components/Page";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
@@ -48,27 +47,25 @@ const Landing = () => {
   ]);
 
   return (
-    <Flex direction="column" height="100%">
+    <PageContainer>
       <LandingHeader />
-      <Box flexGrow="1">
-        <Page>
-          <Greeting />
-          <ActionCard
-            title="Gjør en eller flere endringer"
-            description="Opprett, rediger, eller publiser ett eller flere utkast med endringer."
-            icon="edit_location_alt"
-            onClick={() => navigate(routes.utkast)}
-          />
-          <ActionCard
-            title="Finn og utforsk"
-            description="Se oppdaterte data uten å foreta deg noen endringer."
-            icon="travel_explore"
-            onClick={() => navigate(routes.kart)}
-          />
-        </Page>
-      </Box>
+      <Page>
+        <Greeting />
+        <ActionCard
+          title="Gjør en eller flere endringer"
+          description="Opprett, rediger, eller publiser ett eller flere utkast med endringer."
+          icon="edit_location_alt"
+          onClick={() => navigate(routes.utkast)}
+        />
+        <ActionCard
+          title="Finn og utforsk"
+          description="Se oppdaterte data uten å foreta deg noen endringer."
+          icon="travel_explore"
+          onClick={() => navigate(routes.kart)}
+        />
+      </Page>
       <PrivacyFooter />
-    </Flex>
+    </PageContainer>
   );
 };
 
