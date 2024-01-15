@@ -24,7 +24,6 @@ export const getInfoFromFeature = (featureLike: FeatureLike) => {
 
 export const previousCoordinateKey = "previousCoordinates";
 
-
 export const useGetFeatures = () => {
   const { featureIsArchived } = useFeatureStyle();
 

@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import Feature, { FeatureLike } from "ol/Feature";
+import Feature from "ol/Feature";
 import LineString from "ol/geom/LineString";
 import Modify, { ModifyEvent } from "ol/interaction/Modify";
 import { useHistory } from "contexts/HistoryContext";
@@ -67,6 +67,7 @@ const useModify = () => {
 
         // Sjekk alle featurene i punktet, hvis en av dem ikke skal kunne endres ønsker vi ikke å endre noe
         if (!activeFeatures.every(featureIsEditable)) {
+          console.log(activeFeatures);
           toast({
             status: "error",
             title: "Denne grensen er ikke redigerbar",

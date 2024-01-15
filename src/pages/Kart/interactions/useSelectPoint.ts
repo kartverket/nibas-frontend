@@ -50,6 +50,8 @@ const useSelectPoint = () => {
 
       const features = getFeaturesAtPixel(event, "edit");
 
+      console.log(features);
+
       if (features.length === 0) {
         clearSelection();
         closeOverlayPanel();
@@ -89,6 +91,7 @@ const useSelectPoint = () => {
                 pointOnFeature,
               )
             ) {
+              clearSelection();
               toast({
                 status: "error",
                 title: "Man må utvide fra et løsrevet endepunkt",
