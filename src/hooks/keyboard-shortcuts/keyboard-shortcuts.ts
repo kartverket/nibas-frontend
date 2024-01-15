@@ -13,7 +13,8 @@ export type Shortcut =
   | "open"
   | "grenseinfo"
   | "archive"
-  | "matrikkel";
+  | "matrikkel"
+  | "flate";
 
 type KeyboardShortcut = {
   displayString: string;
@@ -89,6 +90,7 @@ export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
   save: createShortcut("s", { control: true }),
   open: createShortcut("o", { control: true }),
   grenseinfo: createShortcut("i", { control: true }),
+  flate: createShortcut("i", { control: true, shift: true }),
   archive: createShortcut("a", { control: true }),
   matrikkel: createShortcut("e", { control: true }),
 };

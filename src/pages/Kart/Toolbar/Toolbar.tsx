@@ -105,14 +105,16 @@ const Toolbar = () => {
               Kartlag
             </ModeButton>
           </CustomTooltip>
-          <ModeButton
-            icon="holiday_village"
-            ariaLabel="Vis grenser fra matrikkelen"
-            isActive={activeModeTools.includes("matrikkel")}
-            onClick={toggleMatrikkel}
-          >
-            Matrikkel
-          </ModeButton>
+          <CustomTooltip text="Vis grenser fra matrikkelen" shortcut="merge">
+            <ModeButton
+              icon="holiday_village"
+              ariaLabel="Vis grenser fra matrikkelen"
+              isActive={activeModeTools.includes("matrikkel")}
+              onClick={toggleMatrikkel}
+            >
+              Matrikkel
+            </ModeButton>
+          </CustomTooltip>
           <CustomTooltip
             text="Skru av/på snapping mot kartlag."
             shortcut="snap"
