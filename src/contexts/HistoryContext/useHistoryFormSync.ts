@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { HistoryEntry } from "contexts/HistoryContext";
+import { HistoryDirection, HistoryEntry } from "contexts/HistoryContext";
 
 const getChangeForId = <EntryType extends HistoryEntry>(
   entry: EntryType,
@@ -15,7 +15,7 @@ type Parameters<EntryType extends HistoryEntry> = {
   entityId: string | undefined;
   setFormValues: (
     change: EntryType["changes"][number],
-    direction: "to" | "from",
+    direction: HistoryDirection,
   ) => void;
   undoEventKey: string;
   redoEventKey: string;

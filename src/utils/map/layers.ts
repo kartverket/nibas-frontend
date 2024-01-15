@@ -8,7 +8,6 @@ import WMTS from "ol/source/WMTS";
 import { map } from "pages/Kart/constants";
 import { kartlagLayers, grenserLayers } from "hooks/layers/constants";
 import { KartlagId, GrenseId, LayerId } from "hooks/layers/types";
-import XYZ from "ol/source/XYZ";
 import VectorSource from "ol/source/Vector";
 import { WFS } from "ol/format";
 import { getFeaturesFromGeoJson } from "./geoJson";
@@ -77,10 +76,6 @@ export const isWMTSLayer = (layer: BaseLayer): layer is TileLayer<WMTS> => {
 
 export const isWMSLayer = (layer: BaseLayer): layer is TileLayer<TileWMS> => {
   return layer instanceof TileLayer && layer.getSource() instanceof TileWMS;
-};
-
-export const isXYZLayer = (layer: BaseLayer): layer is TileLayer<XYZ> => {
-  return layer instanceof TileLayer && layer.getSource() instanceof XYZ;
 };
 
 export const isVectorLayer = (

@@ -1,7 +1,4 @@
 import { Feature, MapBrowserEvent } from "ol";
-import { map } from "../constants";
-import { getLayerById } from "utils/map/layers";
-import { pixelTolerance } from "./constants";
 import LineString from "ol/geom/LineString";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { Tool, useToolbar } from "contexts/ToolbarContext";
@@ -9,7 +6,7 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { useEffect, useMemo } from "react";
 import { findNearbyVertexOnFeature } from "utils/map";
 import { useToast } from "@kvib/react";
-import { coordinatesAreEqual } from "./utils";
+import { useGetFeatures, coordinatesAreEqual } from "./utils";
 
 const useSelectPoint = () => {
   const toast = useToast();
@@ -22,6 +19,7 @@ const useSelectPoint = () => {
     clearSelection,
     featureIsEditable,
   } = useFeatureStyle();
+  const { getFeaturesAtPixel } = useGetFeatures();
 
   const allowedPointModes: Tool[] = useMemo(
     () => ["koordinater", "split", "extend"],
@@ -50,11 +48,7 @@ const useSelectPoint = () => {
     if (allowedPointModes.includes(activeTool) && !event.dragging) {
       event.stopPropagation();
 
-      const editLayer = getLayerById("edit");
-      const features = map.getFeaturesAtPixel(event.pixel, {
-        layerFilter: (layer) => layer === editLayer,
-        hitTolerance: pixelTolerance,
-      });
+      const features = getFeaturesAtPixel(event, "edit");
 
       if (features.length === 0) {
         clearSelection();

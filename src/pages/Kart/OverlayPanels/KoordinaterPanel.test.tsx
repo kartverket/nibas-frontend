@@ -30,5 +30,11 @@ describe("KoordinaterPanel", () => {
 
     expect(nord).toBeValid();
     expect(ost).toBeInvalid();
+
+    await user.type(nord, "0..1");
+    await user.type(ost, "0f1");
+
+    expect(nord).toBeInvalid();
+    expect(ost).toBeInvalid();
   });
 });

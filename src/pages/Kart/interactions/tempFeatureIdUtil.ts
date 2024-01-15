@@ -1,0 +1,15 @@
+// OpenLayers demands an ID for all features, and when drawing features
+// we need to give the feature some temporary ID. For a temporary id a counter should be just fine
+let idCounter: number = 1000;
+const tempIdPrefix = "temp-feature-id-";
+
+export const getTempFeatureId = (): string => {
+  const id = tempIdPrefix + String(idCounter);
+  idCounter++;
+
+  return id;
+};
+
+export const isTempFeatureId = (id: string): boolean => {
+  return id.includes(tempIdPrefix);
+};

@@ -8,11 +8,10 @@ import { editSource } from "hooks/layers/constants";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { getGrenseTypeFromEditingType } from "hooks/layers/types";
 import { useToast } from "@kvib/react";
-import { Feature, MapBrowserEvent } from "ol";
-import LineString from "ol/geom/LineString";
-import { getInfoFromFeature, previousCoordinateKey } from "./utils";
-import { HistoryChange } from "contexts/HistoryContext/types";
-import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { MapBrowserEvent } from "ol";
+import { useHistory } from "contexts/HistoryContext";
+import { getTempFeatureId } from "./tempFeatureIdUtil";
+import { createHistoryChangesFromFeatures } from "./historyUtil";
 
 const useDraw = () => {
   const { activeTool } = useToolbar();
@@ -40,30 +39,12 @@ const useDraw = () => {
   useEffect(() => {
     const addDrawToHistory = (e: DrawEvent) => {
       const feature = e.feature;
-      if (e.feature instanceof Feature) {
-        const changes: HistoryChange<number[][]>[] = [];
-        const geometry = feature.getGeometry();
-
-        // Filtrerer ut representasjonspunkt og flate fra å bli satt inn i history
-        if (geometry instanceof LineString) {
-          const { coordinates, featureId } = getInfoFromFeature(feature);
-
-          console.log(getInfoFromFeature(feature));
-          if (!coordinates || !featureId) return;
-          changes.push({
-            id: featureId as string,
-            from: feature.get(previousCoordinateKey),
-            to: coordinates,
-          });
-          feature.unset(previousCoordinateKey);
-        }
-        console.log(changes);
+      if (feature) {
         addHistoryEntry({
           type: "grense",
-          changes,
+          changes: createHistoryChangesFromFeatures([feature]),
         });
       }
-      // TODO: hvis man har kjørt en detach vil vi kanskje sjekke om featuren nå er en løs tråd
     };
 
     const onDrawEnd = (e: DrawEvent) => {
@@ -72,10 +53,7 @@ const useDraw = () => {
       // Skal ikke være mulig da tegneverktøyet bare skal være tilgjengelig i redigering
       if (!editingType) return;
 
-      // TODO: for å kunne tegnes i kartet må en feature også ha en unik ID (tror jeg)
-      e.feature.setId(
-        "abc123-uuid-lmao-" + String(Math.floor(Math.random() * 1000)),
-      );
+      e.feature.setId(getTempFeatureId());
       e.feature.setProperties({
         // Setter grensetypen til featuren lik typen man redigerer, kanskje naivt
         type: getGrenseTypeFromEditingType(editingType),
