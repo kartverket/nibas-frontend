@@ -1,18 +1,18 @@
-import { styled } from "styled-components";
-import { map } from "../constants";
-import ModeButton from "./ModeButton";
+import { Divider } from "@kvib/react";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
-import CustomTooltip from "./CustomTooltip";
-import { Divider } from "@kvib/react";
 import {
   useHoldButtonToggle,
   useKeyboardShortcut,
 } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
-import ToolbarPopups from "./ToolbarPopups";
-import ToolbarMenus from "./ToolbarMenus";
+import { styled } from "styled-components";
 import { getLayerById } from "utils/map/layers";
+import { map } from "../constants";
+import CustomTooltip from "./CustomTooltip";
+import ModeButton from "./ModeButton";
+import ToolbarMenus from "./ToolbarMenus";
+import ToolbarPopups from "./ToolbarPopups";
 
 const Toolbar = () => {
   const { activeModeTools, toggleModeTool, enableModeTool, disableModeTool } =
@@ -51,6 +51,7 @@ const Toolbar = () => {
   useKeyboardShortcut("layers", toggleKartlag);
   useKeyboardShortcut("move", () => enableModeTool("move"));
   useKeyboardShortcut("edit", () => disableModeTool("move"), !!editingType);
+  useKeyboardShortcut("matrikkel", () => toggleModeTool("matrikkel"));
   useHoldButtonToggle(
     " ",
     () => enableModeTool("move"),
@@ -104,14 +105,16 @@ const Toolbar = () => {
               Kartlag
             </ModeButton>
           </CustomTooltip>
-          <ModeButton
-            icon="holiday_village"
-            ariaLabel="Vis grenser fra matrikkelen"
-            isActive={activeModeTools.includes("matrikkel")}
-            onClick={toggleMatrikkel}
-          >
-            Matrikkel
-          </ModeButton>
+          <CustomTooltip text="Vis grenser fra matrikkelen" shortcut="merge">
+            <ModeButton
+              icon="holiday_village"
+              ariaLabel="Vis grenser fra matrikkelen"
+              isActive={activeModeTools.includes("matrikkel")}
+              onClick={toggleMatrikkel}
+            >
+              Matrikkel
+            </ModeButton>
+          </CustomTooltip>
           <CustomTooltip
             text="Skru av/på snapping mot kartlag."
             shortcut="snap"
