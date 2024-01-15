@@ -32,6 +32,7 @@ const useVisibleLayers = () => {
         ...source.get("config"),
         layer: "norges_grunnkart_graatone",
       });
+      newSource.set("id", source.get("id"));
       newSource.set("config", source.get("config"));
       layer.setSource(newSource);
     }
