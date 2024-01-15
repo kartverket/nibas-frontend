@@ -1,4 +1,3 @@
-import { styled } from "styled-components";
 import {
   Icon,
   Menu,
@@ -7,12 +6,13 @@ import {
   MenuItemProps,
   MenuList,
 } from "@kvib/react";
-import ModeButton from "./ModeButton";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
+import { styled } from "styled-components";
 import CustomTooltip from "./CustomTooltip";
+import ModeButton from "./ModeButton";
 
 type MenuItems = (MenuItemProps & {
   $isActive: boolean;
@@ -76,6 +76,8 @@ const ToolbarMenus = () => {
   useKeyboardShortcut("edit_point", toggleMovePoint, isEditMode);
   useKeyboardShortcut("snap", () => toggleModeTool("snap"), isEditMode);
   useKeyboardShortcut("merge", toggleMergePanel, editingType === "stemmekrets");
+  useKeyboardShortcut("grenseinfo", toggleMetadata, isEditMode);
+  useKeyboardShortcut("archive", () => toggleTool("archive"), isEditMode);
 
   // For å kunne vise at en meny er aktiv må vi kunne sjekke hvorvidt noen av menuitems er aktive
   // Korteste vei til mål da blir å kunne iterere gjennom menu items
