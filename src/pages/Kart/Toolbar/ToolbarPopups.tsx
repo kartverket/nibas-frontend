@@ -10,16 +10,10 @@ import { getMatrikkelFeatures } from "utils/map/layers";
 import { map } from "../constants";
 import { useState } from "react";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
-import useAlertModal from "hooks/useAlertModal";
 
 const ToolbarPopups = () => {
   const [matrikkelIsLoading, setMatrikkelIsLoading] = useState(false);
   const { setError } = useErrorHandling();
-  const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } =
-    useAlertModal(
-      "Husk å sette tilhørighet",
-      "Du har gjort en endring som medfører endring i grensetilhørighet",
-    );
   const toast = useToast();
   const { split } = useSplit();
   const { addHistoryEntry } = useHistory();
