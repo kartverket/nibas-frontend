@@ -53,7 +53,8 @@ const Toolbar = () => {
   useKeyboardShortcut("edit", () => disableModeTool("move"), !!editingType);
   useKeyboardShortcut("matrikkel", () => toggleModeTool("matrikkel"));
   useHoldButtonToggle(
-    " ",
+    "alt",
+    activeModeTools.includes("move"),
     () => enableModeTool("move"),
     () => disableModeTool("move"),
     !!editingType,
@@ -67,11 +68,11 @@ const Toolbar = () => {
           <CustomTooltip
             text="Panorer i kartet"
             shortcut="move"
-            holdButton="mellomromstasten"
+            holdButton="ALT-tasten"
           >
             <ModeButton
               icon="pan_tool"
-              onClick={() => toggleModeTool("move")}
+              onClick={() => enableModeTool("move")}
               isActive={activeModeTools.includes("move")}
               ariaLabel="Panorer i kartet"
             >
@@ -81,7 +82,7 @@ const Toolbar = () => {
           <CustomTooltip text="Rediger grenser i kartet" shortcut="edit">
             <ModeButton
               icon="arrow_selector_tool"
-              onClick={() => toggleModeTool("move")}
+              onClick={() => disableModeTool("move")}
               isActive={!activeModeTools.includes("move")}
               ariaLabel="Rediger grenser i kartet"
               isDisabled={!editingType}
@@ -105,7 +106,10 @@ const Toolbar = () => {
               Kartlag
             </ModeButton>
           </CustomTooltip>
-          <CustomTooltip text="Vis grenser fra matrikkelen" shortcut="merge">
+          <CustomTooltip
+            text="Vis grenser fra matrikkelen"
+            shortcut="matrikkel"
+          >
             <ModeButton
               icon="holiday_village"
               ariaLabel="Vis grenser fra matrikkelen"

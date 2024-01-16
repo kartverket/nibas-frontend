@@ -5,6 +5,23 @@ function isKeydownEvent(event: Event): event is KeyboardEvent {
   return event.type === "keydown";
 }
 
+const isValidTarget = (target: EventTarget | null): boolean => {
+  if (target === document.body || target == null) {
+    return true;
+  }
+
+  const targetTag = (target as HTMLElement).tagName.toLowerCase();
+  if (
+    targetTag === "input" ||
+    targetTag === "select" ||
+    targetTag === "textarea"
+  ) {
+    return false;
+  }
+
+  return true;
+};
+
 export const useKeyboardShortcut = (
   shortcut: Shortcut,
   callback?: () => unknown,
@@ -16,6 +33,7 @@ export const useKeyboardShortcut = (
     const eventListener = (event: Event) => {
       if (
         callback &&
+        isValidTarget(event.target) &&
         isKeydownEvent(event) &&
         kbShortcut.checkEvent(event) &&
         enabled
@@ -36,11 +54,14 @@ export const useKeyboardShortcut = (
 
 export const useHoldButtonToggle = (
   button: string,
+  currentState: boolean,
   onClick?: () => unknown,
   onRelease?: () => unknown,
   enabled: boolean = true,
 ) => {
   const [keyIsDown, setKeyIsDown] = useState(false);
+  const [isSetByHolding, setIsSetByHolding] = useState(false);
+
   useEffect(() => {
     const keyboardEventHandler = (event: KeyboardEvent) => {
       const isKeyDownEvent = event.type === "keydown";
@@ -48,7 +69,7 @@ export const useHoldButtonToggle = (
       if (
         enabled &&
         event.key.toLowerCase() === button.toLowerCase() &&
-        event.target == document.body
+        isValidTarget(event.target)
       ) {
         event.stopPropagation();
         event.preventDefault();
@@ -56,10 +77,16 @@ export const useHoldButtonToggle = (
         if (keyIsDown !== isKeyDownEvent) {
           if (isKeyDownEvent) {
             setKeyIsDown(true);
-            onClick?.();
+            if (!currentState) {
+              setIsSetByHolding(true);
+              onClick?.();
+            }
           } else {
             setKeyIsDown(false);
-            onRelease?.();
+            setIsSetByHolding(false);
+            if (isSetByHolding && currentState) {
+              onRelease?.();
+            }
           }
         }
       }

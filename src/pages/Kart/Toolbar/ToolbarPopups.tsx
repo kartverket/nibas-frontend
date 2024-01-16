@@ -36,11 +36,11 @@ const ToolbarPopups = () => {
       toast({
         status: "warning",
         title: "Husk å sette tilhørighet på berørte grenser",
-        description: `For øyeblikket må alle flatetilørigheter på grensene legges til manuelt. 
+        description: `For øyeblikket må alle flatetilhørigheter på grensene legges til manuelt. 
         Husk å se gjennom og sørg for at alle tilhørighetene stemmer. 
         Er ikke de satt ordentlig vil ikke publiseringen kunne gjennomføres uten feil. 
         Tilhørigheten kan settes ved å bruke "Se og endre 
-        grenseinformasjon"-verktøyet`,
+        grenseinformasjon"-verktøyet.`,
         isClosable: true,
         duration: null,
       });
