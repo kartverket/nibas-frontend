@@ -14,7 +14,12 @@ const Header = () => {
   const { utkast } = useUtkast();
   const { activeSidebarPanel, openSidebarPanel, closeSidebarPanel } =
     useSidebarPanel();
-  const { closeOverlayPanel } = useOverlayPanel();
+  const {
+    closeOverlayPanel,
+    openOverlayModal,
+    closeOverlayModal,
+    activeOverlayModal,
+  } = useOverlayPanel();
 
   const toggleSidebar = () => {
     if (activeSidebarPanel === "inndelinger") {
@@ -22,6 +27,14 @@ const Header = () => {
     } else {
       openSidebarPanel("inndelinger");
       closeOverlayPanel();
+    }
+  };
+
+  const toggleInndelinger = () => {
+    if (activeOverlayModal === "inndelinger") {
+      closeOverlayModal();
+    } else {
+      openOverlayModal("inndelinger");
     }
   };
 
@@ -40,6 +53,15 @@ const Header = () => {
             label="Åpne en inndeling"
             icon="travel_explore"
             onClick={toggleSidebar}
+            tooltip={{
+              text: "Åpne og rediger en inndeling i kartet",
+              shortcut: "open",
+            }}
+          />
+          <HeaderButton
+            label="Temp: Åpne en inndeling"
+            icon="travel_explore"
+            onClick={toggleInndelinger}
             tooltip={{
               text: "Åpne og rediger en inndeling i kartet",
               shortcut: "open",
