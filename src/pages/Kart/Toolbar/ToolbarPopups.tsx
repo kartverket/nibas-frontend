@@ -10,11 +10,16 @@ import { getMatrikkelFeatures } from "utils/map/layers";
 import { map } from "../constants";
 import { useState } from "react";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
+import useAlertModal from "hooks/useAlertModal";
 
 const ToolbarPopups = () => {
   const [matrikkelIsLoading, setMatrikkelIsLoading] = useState(false);
   const { setError } = useErrorHandling();
-
+  const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } =
+    useAlertModal(
+      "Husk å sette tilhørighet",
+      "Du har gjort en endring som medfører endring i grensetilhørighet",
+    );
   const toast = useToast();
   const { split } = useSplit();
   const { addHistoryEntry } = useHistory();
@@ -34,13 +39,27 @@ const ToolbarPopups = () => {
       addArchivingEntryFromFeature(selectedFeature, addHistoryEntry),
         clearSelection();
       toast({ status: "success", title: "Grensen ble arkivert" });
+      toast({
+        status: "warning",
+        title: "Husk å sette tilhørighet på berørte grenser",
+        description: `For øyeblikket må alle flatetilørigheter på grensene legges til manuelt. 
+        Husk å se gjennom og sørg for at alle tilhørighetene stemmer. 
+        Er ikke de satt ordentlig vil ikke publiseringen kunne gjennomføres uten feil. 
+        Tilhørigheten kan settes ved å bruke "Se og endre 
+        grenseinformasjon"-verktøyet`,
+        isClosable: true,
+        duration: null,
+      });
     }
   };
 
   const handleSplit = () => {
     split();
     clearSelection();
-    toast({ status: "success", title: "Grensen ble splittet" });
+    toast({
+      status: "success",
+      title: "Grensen ble splittet",
+    });
   };
 
   const handleMatrikkel = async () => {
