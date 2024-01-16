@@ -71,7 +71,6 @@ const createShortcut = (
 ): KeyboardShortcut => ({
   displayString: keyComboToString(key, modifierKeys),
   checkEvent: (event: KeyboardEvent) =>
-    event.target == document.body &&
     checkModifierKeys(event, modifierKeys) &&
     event.key.toLowerCase() === key.toLowerCase(),
 });
@@ -79,7 +78,7 @@ const createShortcut = (
 export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
   move: createShortcut("v", {}),
   edit: createShortcut("r", {}),
-  edit_point: createShortcut("f", { control: true, shift: true }),
+  edit_point: createShortcut("f", { control: true }),
   add: createShortcut("l", { control: true }),
   remove: createShortcut("l", { control: true, shift: true }),
   merge: createShortcut("m", { control: true }),
