@@ -77,7 +77,7 @@ const ToolbarMenus = () => {
   useKeyboardShortcut("edit_point", toggleMovePoint, isEditMode);
   useKeyboardShortcut("snap", () => toggleModeTool("snap"), isEditMode);
   useKeyboardShortcut("merge", toggleMergePanel, editingType === "stemmekrets");
-  useKeyboardShortcut("grenseinfo", toggleMetadata, isEditMode);
+  useKeyboardShortcut("grenseinfo", toggleMetadata);
   useKeyboardShortcut("archive", () => toggleTool("archive"), isEditMode);
   useKeyboardShortcut("flate", toggleFlatedetaljer);
 
