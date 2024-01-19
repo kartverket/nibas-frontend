@@ -69,10 +69,9 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
 
   const kommuneValues = values[kommuneId] ?? {};
 
+  // TODO Burde ikke cleare synlighet på kretser man har synlige hvis man skrur på redigering for en annen type krets
+  // Det er veldig knotete nå da contextene er kretsavhengige
   const toggleEditKretser = () => {
-    // Burde ikke cleare synlighet på kretser man har kun skrudd på synlighet for.
-    // Kanskje resetAndClearSimilarLayers?
-    // Eventuelt så kan man kanskje hente CurrentlyEditingType her, og kun skru av den dersom vi ser at det ikke stemmer overens med det vi prøve å skru på nå?
     setOtherEditingTypes(currentKretstype, false);
     removeKretserFromLayer("edit");
     const newEditing = !kommuneValues.editing;
@@ -89,7 +88,6 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
       : layerIdByKretstype[currentKretstype];
 
     closeOverlayPanel();
-    console.log(layerId);
     removeKretserFromLayer(layerId);
 
     if (newEditing) {
@@ -111,7 +109,6 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
         }
         // hvis tidligere endret, fjern editing og visible
         if (newValues[kommuneIdInList]?.editing) {
-          console.log("AAAAAH");
           newValues[kommuneIdInList] = {
             visible: false,
             editing: false,
@@ -120,17 +117,8 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
       });
 
       setFlatedata(kommune);
-
-      // // hvis ikke endret fra før, endre nå
-      // if (kommuneValues.visible) {
-      //   console.log(layerIdByKretstype);
-      //   console.log(currentKretstype);
-      //   removeKretserFromLayer(layerIdByKretstype[currentKretstype]);
-      // }
-
       addKretserToLayer("edit");
     } else {
-      console.log("AAAAH");
       removeKretserFromLayer("edit");
       closeOverlayPanel();
       zoomToFeatures(getAllVisibleFeatures());
