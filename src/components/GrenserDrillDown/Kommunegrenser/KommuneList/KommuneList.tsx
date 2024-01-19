@@ -21,13 +21,13 @@ const KommuneList = ({ fylke }: Props) => {
     fylkeId,
     shouldFetch,
   );
-  const { value } = useEditGrense("kommune", fylkeId, kommunegrenser);
+  const { kretsStatus } = useEditGrense("kommune", fylkeId, kommunegrenser);
 
   useEffect(() => {
-    if (value.editing || value.visible) {
+    if (kretsStatus.editing || kretsStatus.visible) {
       setShouldFetch(true);
     }
-  }, [value]);
+  }, [kretsStatus]);
 
   if (error) return <p>Fikk ikke hentet kommuner</p>;
 

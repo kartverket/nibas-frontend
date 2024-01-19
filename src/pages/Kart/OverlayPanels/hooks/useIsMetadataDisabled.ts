@@ -8,7 +8,7 @@ const useIsMetadataDisabled = (
   properties: FeatureProperties,
 ) => {
   const { featureIsEditable } = useFeatureStyle();
-  const { values } = useEditGrenser(
+  const { kretsStatuser } = useEditGrenser(
     properties.inndelingerKontekst?.type ?? "fylke",
   );
 
@@ -16,7 +16,7 @@ const useIsMetadataDisabled = (
 
   if (!featureKontekstId) return true;
 
-  const value = values[featureKontekstId];
+  const value = kretsStatuser[featureKontekstId];
 
   const borderIsNotEditable = !featureIsEditable(feature);
   return ((value?.visible && !value?.editing) || borderIsNotEditable) ?? true;

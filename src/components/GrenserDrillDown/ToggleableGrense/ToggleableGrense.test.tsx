@@ -1,6 +1,6 @@
 import { render, screen } from "test/test-utils";
 import ToggleableGrense from "./ToggleableGrense";
-import { GrenseStatus } from "contexts/EditGrenserContext";
+import { KretsStatus } from "contexts/EditGrenserContext";
 import { mockBasicFeature } from "mocks/handlers/responses";
 
 const defaultProps: React.ComponentProps<typeof ToggleableGrense> = {
@@ -36,13 +36,13 @@ beforeEach(() => {
 
 const renderWithProvider = (
   ui: React.ReactNode,
-  objectValue: GrenseStatus = { editing: false, visible: false },
+  kretsStatus: KretsStatus = { editing: false, visible: false },
 ) => {
   render(ui, {
     EditGrenserProvider: {
-      editingObject: { fylke: { "1": objectValue } },
-      setObjectValue: vi.fn(),
-      setEditingObject: vi.fn(),
+      alleKretserStatuser: { fylke: { "1": kretsStatus } },
+      setKretsStatus: vi.fn(),
+      setAlleKretserStatuser: vi.fn(),
       resetAndClearAllLayers: vi.fn(),
       getCurrentlyEditingType: vi.fn(),
       setOtherEditingTypes: vi.fn(),
@@ -51,14 +51,14 @@ const renderWithProvider = (
 };
 
 describe("ToggleableGrense", () => {
-  it("should show eye closed and unchecked checkbox when objectValue is undefined", () => {
+  it("should show eye closed and unchecked checkbox when kretsstatus is undefined", () => {
     renderWithProvider(<ToggleableGrense {...defaultProps} />);
 
     expect(screen.getByText(defaultProps.title)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Usynlig" })).toBeInTheDocument();
   });
 
-  it("should show open eye and checked checkbox when objectValue values are true", () => {
+  it("should show open eye and checked checkbox when kretsstatus values are true", () => {
     renderWithProvider(<ToggleableGrense {...defaultProps} />, {
       editing: true,
       visible: true,
