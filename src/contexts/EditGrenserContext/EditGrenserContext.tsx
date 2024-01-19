@@ -69,6 +69,10 @@ export const EditGrenserProvider = ({
     return null;
   };
 
+  /**
+   * Går gjennom editingObject og henter alle typer kretser utenom currentType, og setter redigeringsstatus til innsendt parameter.
+   * Brukes kun som en workaround for å komme seg unna kretsavhengige contexter for redigering.
+   */
   const setOtherEditingTypes = (
     currentType: EditingType,
     shouldBeEditable?: boolean,
@@ -77,11 +81,11 @@ export const EditGrenserProvider = ({
       ([editingType]) => editingType !== currentType,
     );
 
-    otherEditingTypes.forEach((type) => {
-      Object.entries(type[1]).forEach((grense) => {
-        setObjectValue(type[0] as EditingType, grense[0], {
-          visible: grense[1].visible,
-          editing: shouldBeEditable ?? grense[1].editing,
+    otherEditingTypes.forEach(([type, grenseStatuses]) => {
+      Object.entries(grenseStatuses).forEach(([grenseId, grenseStatus]) => {
+        setObjectValue(type as EditingType, grenseId, {
+          visible: grenseStatus.visible,
+          editing: shouldBeEditable ?? grenseStatus.editing,
         });
       });
     });
