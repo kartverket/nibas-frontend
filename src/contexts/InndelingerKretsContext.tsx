@@ -60,7 +60,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
 
   const { currentKretstype } = context;
 
-  const { values, setObjectValue, setMultipleValues } =
+  const { values, setObjectValue, setMultipleValues, setOtherEditingTypes } =
     useEditGrenser(currentKretstype);
   const { setFlatedata, closeOverlayPanel } = useOverlayPanel();
   const { addKretserToLayer, removeKretserFromLayer, lasterData } =
@@ -69,7 +69,11 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
 
   const kommuneValues = values[kommuneId] ?? {};
 
+  // TODO Burde ikke cleare synlighet på kretser man har synlige hvis man skrur på redigering for en annen type krets
+  // Det er veldig knotete nå da contextene er kretsavhengige
   const toggleEditKretser = () => {
+    setOtherEditingTypes(currentKretstype, false);
+    removeKretserFromLayer("edit");
     const newEditing = !kommuneValues.editing;
     const newValues = {
       ...values,
@@ -113,12 +117,6 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
       });
 
       setFlatedata(kommune);
-
-      // hvis ikke endret fra før, endre nå
-      if (kommuneValues.visible) {
-        removeKretserFromLayer(layerIdByKretstype[currentKretstype]);
-      }
-
       addKretserToLayer("edit");
     } else {
       removeKretserFromLayer("edit");

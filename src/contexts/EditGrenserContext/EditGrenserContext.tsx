@@ -4,7 +4,7 @@ import {
   EditingObject,
   EditingType,
   GrenseDictionary,
-  ObjectValue,
+  GrenseStatus,
 } from "./types";
 
 export type EditGrenserContextValue = {
@@ -15,10 +15,14 @@ export type EditGrenserContextValue = {
   setObjectValue: (
     type: EditingType,
     grenseId: string,
-    values?: ObjectValue,
+    values?: GrenseStatus,
   ) => void;
   resetAndClearAllLayers: () => void;
   getCurrentlyEditingType: () => EditingType | null;
+  setOtherEditingTypes: (
+    currentType: EditingType,
+    shouldBeEditable?: boolean,
+  ) => void;
 };
 
 /**
@@ -38,13 +42,13 @@ export const EditGrenserProvider = ({
   const setObjectValue = (
     type: EditingType,
     grenseId: string,
-    values: ObjectValue = {},
+    status: GrenseStatus = {},
   ) => {
     setEditingObject((prevState) => ({
       ...prevState,
       [type]: {
         ...prevState[type],
-        [grenseId]: values,
+        [grenseId]: status,
       },
     }));
   };
@@ -65,6 +69,28 @@ export const EditGrenserProvider = ({
     return null;
   };
 
+  /**
+   * Går gjennom editingObject og henter alle typer kretser utenom currentType, og setter redigeringsstatus til innsendt parameter.
+   * Brukes kun som en workaround for å komme seg unna kretsavhengige contexter for redigering.
+   */
+  const setOtherEditingTypes = (
+    currentType: EditingType,
+    shouldBeEditable?: boolean,
+  ) => {
+    const otherEditingTypes = Object.entries(editingObject).filter(
+      ([editingType]) => editingType !== currentType,
+    );
+
+    otherEditingTypes.forEach(([type, grenseStatuses]) => {
+      Object.entries(grenseStatuses).forEach(([grenseId, grenseStatus]) => {
+        setObjectValue(type as EditingType, grenseId, {
+          visible: grenseStatus.visible,
+          editing: shouldBeEditable ?? grenseStatus.editing,
+        });
+      });
+    });
+  };
+
   // Obs! Denne tømmer hele editingObject, som vil si at alle synlige saker fjernes også.
   const resetAndClearAllLayers = () => {
     removeAllFeatures();
@@ -77,6 +103,7 @@ export const EditGrenserProvider = ({
     setObjectValue,
     resetAndClearAllLayers,
     getCurrentlyEditingType,
+    setOtherEditingTypes,
   };
 
   return (
@@ -110,11 +137,12 @@ export const useEditGrenser = (grenseType: EditingType) => {
     setObjectValue,
     setEditingObject,
     resetAndClearAllLayers,
+    setOtherEditingTypes,
   } = context;
 
   const values = editingObject[grenseType] ?? {};
 
-  const setObjectValueForType = (grenseId: string, newValues: ObjectValue) =>
+  const setObjectValueForType = (grenseId: string, newValues: GrenseStatus) =>
     setObjectValue(grenseType, grenseId, newValues);
 
   const setMultipleValues = (newDictionary: GrenseDictionary) => {
@@ -129,6 +157,7 @@ export const useEditGrenser = (grenseType: EditingType) => {
     setObjectValue: setObjectValueForType,
     setMultipleValues,
     resetAndClearAllLayers,
+    setOtherEditingTypes,
   };
 };
 

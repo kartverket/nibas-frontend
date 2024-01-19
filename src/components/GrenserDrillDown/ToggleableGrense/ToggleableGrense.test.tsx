@@ -1,6 +1,6 @@
 import { render, screen } from "test/test-utils";
 import ToggleableGrense from "./ToggleableGrense";
-import { ObjectValue } from "contexts/EditGrenserContext";
+import { GrenseStatus } from "contexts/EditGrenserContext";
 import { mockBasicFeature } from "mocks/handlers/responses";
 
 const defaultProps: React.ComponentProps<typeof ToggleableGrense> = {
@@ -36,7 +36,7 @@ beforeEach(() => {
 
 const renderWithProvider = (
   ui: React.ReactNode,
-  objectValue: ObjectValue = { editing: false, visible: false },
+  objectValue: GrenseStatus = { editing: false, visible: false },
 ) => {
   render(ui, {
     EditGrenserProvider: {
@@ -45,6 +45,7 @@ const renderWithProvider = (
       setEditingObject: vi.fn(),
       resetAndClearAllLayers: vi.fn(),
       getCurrentlyEditingType: vi.fn(),
+      setOtherEditingTypes: vi.fn(),
     },
   });
 };
