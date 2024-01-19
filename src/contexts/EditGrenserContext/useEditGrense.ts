@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { EditGrenserContext, useEditGrenser } from "./EditGrenserContext";
-import { EditingType, ObjectValue } from "./types";
+import { EditingType, GrenseStatus } from "./types";
 import useAsyncFeatures from "hooks/useAsyncFeatures";
 import { getFeatureId, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { GrenseId } from "hooks/layers/types";
@@ -30,7 +30,7 @@ export const useEditGrenseValue = (
 
   const value = context.editingObject[grenseType]?.[grenseId] ?? {};
 
-  const setValue = (newValue: ObjectValue) => {
+  const setValue = (newValue: GrenseStatus) => {
     context.setObjectValue(grenseType, grenseId, newValue);
   };
 

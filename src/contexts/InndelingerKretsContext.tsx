@@ -60,7 +60,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
 
   const { currentKretstype } = context;
 
-  const { values, setObjectValue, setMultipleValues } =
+  const { values, setObjectValue, setMultipleValues, setOtherEditingTypes } =
     useEditGrenser(currentKretstype);
   const { setFlatedata, closeOverlayPanel } = useOverlayPanel();
   const { addKretserToLayer, removeKretserFromLayer, lasterData } =
@@ -70,6 +70,11 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
   const kommuneValues = values[kommuneId] ?? {};
 
   const toggleEditKretser = () => {
+    // Burde ikke cleare synlighet på kretser man har kun skrudd på synlighet for.
+    // Kanskje resetAndClearSimilarLayers?
+    // Eventuelt så kan man kanskje hente CurrentlyEditingType her, og kun skru av den dersom vi ser at det ikke stemmer overens med det vi prøve å skru på nå?
+    setOtherEditingTypes(currentKretstype, false);
+    removeKretserFromLayer("edit");
     const newEditing = !kommuneValues.editing;
     const newValues = {
       ...values,
@@ -84,6 +89,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
       : layerIdByKretstype[currentKretstype];
 
     closeOverlayPanel();
+    console.log(layerId);
     removeKretserFromLayer(layerId);
 
     if (newEditing) {
@@ -105,6 +111,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
         }
         // hvis tidligere endret, fjern editing og visible
         if (newValues[kommuneIdInList]?.editing) {
+          console.log("AAAAAH");
           newValues[kommuneIdInList] = {
             visible: false,
             editing: false,
@@ -114,13 +121,16 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
 
       setFlatedata(kommune);
 
-      // hvis ikke endret fra før, endre nå
-      if (kommuneValues.visible) {
-        removeKretserFromLayer(layerIdByKretstype[currentKretstype]);
-      }
+      // // hvis ikke endret fra før, endre nå
+      // if (kommuneValues.visible) {
+      //   console.log(layerIdByKretstype);
+      //   console.log(currentKretstype);
+      //   removeKretserFromLayer(layerIdByKretstype[currentKretstype]);
+      // }
 
       addKretserToLayer("edit");
     } else {
+      console.log("AAAAH");
       removeKretserFromLayer("edit");
       closeOverlayPanel();
       zoomToFeatures(getAllVisibleFeatures());
