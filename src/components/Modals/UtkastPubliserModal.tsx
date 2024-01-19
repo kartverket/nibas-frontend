@@ -22,7 +22,7 @@ import { publishUtkast } from "api/utkast";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { getDateInFriendlyString } from "pages/Kart/OverlayPanels/MetadataPanel/utils";
 import { EndringsloggAccordion } from "pages/Utkast/UtkastEndringslogg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSWRConfig } from "swr";
 import { isToday, format } from "date-fns";
 import { ApiErrorResponse, UtkastResponse } from "types/api";
@@ -30,6 +30,7 @@ import { statusCode } from "utils/api";
 import { useUtkast } from "contexts/UtkastContext";
 import { useMatch, useNavigate } from "react-router-dom";
 import { routes } from "utils/routes";
+import { GrenseType } from "hooks/layers/types";
 
 type Props = {
   isOpen: boolean;
@@ -42,6 +43,7 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
   const { closeUtkast } = useUtkast();
   const [publiseringsdato, setPubliseringsdato] = useState(new Date());
   const [isLoading, setIsLoading] = useState(false);
+  const [dangerousUtkast, setDangerousUtkast] = useState(false);
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { setError } = useErrorHandling();
   const { mutate } = useSWRConfig();
@@ -101,6 +103,28 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
     }
   };
 
+  const utkastHarEndringAdministrativeGrenser = (): boolean => {
+    const endredeFeatures = utkast.operasjoner.grenseendringer.endredeFeatures;
+    const administrativeGrensertyper: GrenseType[] = [
+      "Kommunegrense",
+      "Fylkesgrense",
+    ];
+
+    let isDangerous = false;
+
+    Object.values(endredeFeatures).forEach((feature) => {
+      if (
+        administrativeGrensertyper.includes(
+          feature.properties.type as GrenseType,
+        )
+      ) {
+        isDangerous = true;
+      }
+    });
+
+    return isDangerous;
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered size="2xl">
       <ModalOverlay />
@@ -118,6 +142,20 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
               </AlertDescription>
             </div>
           </Alert>
+          {utkastHarEndringAdministrativeGrenser() ? (
+            <Alert status="warning">
+              <AlertIcon />
+              <div>
+                <AlertTitle>Du er i ferd med å publisere et utkast</AlertTitle>
+                <AlertDescription>
+                  Endringene i utkastet vil bli tilgjengelig for alle etter den
+                  valgte publiseringsdatoen.
+                </AlertDescription>
+              </div>
+            </Alert>
+          ) : (
+            <>hello</>
+          )}
           <EndringsloggAccordion utkast={utkast} />
           <Datepickerlabel>
             Fra hvilken dato skal endringene utkastet tre i kraft?
