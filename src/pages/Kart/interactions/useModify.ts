@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import Feature, { FeatureLike } from "ol/Feature";
+import Feature from "ol/Feature";
 import LineString from "ol/geom/LineString";
 import Modify, { ModifyEvent } from "ol/interaction/Modify";
 import { useHistory } from "contexts/HistoryContext";
@@ -11,7 +11,6 @@ import { Tool, useToolbar } from "contexts/ToolbarContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { selectedPointStyle } from "utils/map/layerStyles";
 import { useToast } from "@kvib/react";
-import { findNearbyVertexOnFeature, isCoordinateEqual } from "utils/map";
 import { Style } from "ol/style";
 import {
   createHistoryChangesFromFeatures,
@@ -107,29 +106,22 @@ const useModify = () => {
               if (coordinates.length <= 2) {
                 return false;
               }
-
-              // Sjekker hvilket punkt du trykket på
-              const nearbyVertexCoordinate = findNearbyVertexOnFeature(
-                feature as Feature<LineString>,
-                event.coordinate,
-              );
-
-              // Ettersom vi ikke støtter løse tråder per nå lar vi deg ikke fjerne endepunkter
-              if (
-                nearbyVertexCoordinate &&
-                (isCoordinateEqual(nearbyVertexCoordinate, coordinates[0]) ||
-                  isCoordinateEqual(
-                    nearbyVertexCoordinate,
-                    coordinates[coordinates.length - 1],
-                  ))
-              ) {
-                toast({
-                  status: "error",
-                  title: "Man kan ikke fjerne endepunkter fra en grense",
-                });
-                return false;
-              }
             }
+          }
+
+          // I tilfellet vi har én LineString og ett punkt er det sikkert lurt å filtrere kun etter linestrings
+          const lineStringsAtPixel = featuresAtPixel.filter((featureLike) => {
+            return featureLike.getGeometry() instanceof LineString;
+          });
+
+          // Vi ønsker ikke å slette punkter i knutepunkter
+          if (lineStringsAtPixel.length > 1) {
+            toast({
+              description:
+                "Kan ikke slette punkter i knutepunkter, løsriv grensen først",
+              status: "error",
+            });
+            return false;
           }
 
           // Hvis alt ellers ser greit ut så fjernes punktet på klikk
