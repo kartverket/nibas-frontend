@@ -5,28 +5,34 @@ import {
   GrenseTilhorighetEntry,
   HistoryChange,
   MetadataEntry,
+  MinimalGrense,
 } from "./types";
 import { editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
 
 const getFeatureFromChange = (
-  change: HistoryChange<number[][]>,
+  change: HistoryChange<MinimalGrense>,
   direction: HistoryDirection,
 ) => {
-  const existingFeature = editSource.getFeatureById(
-    change.id,
-  ) as Feature<Geometry> | null;
-  if (!existingFeature && direction === "to" && change[direction]) {
+  const existingFeature = getFeatureIfExists(change.id);
+  if (!existingFeature && direction === "to" && change[direction].coordinates) {
     const newFeature = new Feature({
-      geometry: new LineString(change[direction]),
+      geometry: new LineString(change[direction].coordinates),
     });
     newFeature.setId(change.id);
+    newFeature.setProperties({
+      type: change.to.type,
+    });
     editSource.addFeature(newFeature);
     return newFeature;
   }
 
   return existingFeature;
+};
+
+const getFeatureIfExists = (featureId: string) => {
+  return editSource.getFeatureById(featureId) as Feature<Geometry> | null;
 };
 
 export const setFeatureCoordinatesForEntry = (
@@ -39,11 +45,11 @@ export const setFeatureCoordinatesForEntry = (
 
     const lineString = feature.getGeometry() as LineString;
 
-    if (direction === "from" && !change[direction]) {
+    if (direction === "from" && !change[direction].coordinates) {
       editSource.removeFeature(feature);
     }
 
-    const coordinates = change[direction];
+    const coordinates = change[direction].coordinates;
     if (!coordinates) return;
 
     lineString.setCoordinates(coordinates);
@@ -61,9 +67,7 @@ export const setFeatureMetadataForEntry = (
   direction: HistoryDirection,
 ) => {
   entry.changes.forEach((change) => {
-    const feature = editSource.getFeatureById(
-      change.id,
-    ) as Feature<Geometry> | null;
+    const feature = getFeatureIfExists(change.id);
     if (!feature) return;
 
     const metadata = change[direction];
@@ -79,9 +83,7 @@ export const setKontekstEgenskaperForEntry = (
   direction: HistoryDirection,
 ) => {
   entry.changes.forEach((change) => {
-    const feature = editSource.getFeatureById(
-      change.id,
-    ) as Feature<Geometry> | null;
+    const feature = getFeatureIfExists(change.id);
     if (!feature) return;
 
     const kontekstEgenskaper = change[direction];

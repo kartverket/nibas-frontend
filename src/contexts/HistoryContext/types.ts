@@ -1,4 +1,5 @@
 import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
+import { GrenseType } from "hooks/layers/types";
 import {
   FeatureProperties,
   GrunnkretsRequest,
@@ -26,7 +27,12 @@ type BaseHistoryEntry<Type extends string, Model> = {
   changes: HistoryChange<Model>[];
 };
 
-export type GrenseEntry = BaseHistoryEntry<"grense", number[][]>;
+export type MinimalGrense = {
+  coordinates: number[][];
+  type?: GrenseType | undefined;
+};
+
+export type GrenseEntry = BaseHistoryEntry<"grense", MinimalGrense>;
 export type MetadataEntry = BaseHistoryEntry<"metadata", Metadata>;
 export type GrunnkretsEntry = BaseHistoryEntry<
   "grunnkrets",
