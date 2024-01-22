@@ -22,7 +22,7 @@ import { publishUtkast } from "api/utkast";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { getDateInFriendlyString } from "pages/Kart/OverlayPanels/MetadataPanel/utils";
 import { EndringsloggAccordion } from "pages/Utkast/UtkastEndringslogg";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSWRConfig } from "swr";
 import { isToday, format } from "date-fns";
 import { ApiErrorResponse, UtkastResponse } from "types/api";
@@ -43,7 +43,6 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
   const { closeUtkast } = useUtkast();
   const [publiseringsdato, setPubliseringsdato] = useState(new Date());
   const [isLoading, setIsLoading] = useState(false);
-  const [dangerousUtkast, setDangerousUtkast] = useState(false);
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { setError } = useErrorHandling();
   const { mutate } = useSWRConfig();
@@ -142,20 +141,25 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
               </AlertDescription>
             </div>
           </Alert>
-          {utkastHarEndringAdministrativeGrenser() ? (
-            <Alert status="warning">
-              <AlertIcon />
-              <div>
-                <AlertTitle>Du er i ferd med å publisere et utkast</AlertTitle>
-                <AlertDescription>
-                  Endringene i utkastet vil bli tilgjengelig for alle etter den
-                  valgte publiseringsdatoen.
-                </AlertDescription>
-              </div>
-            </Alert>
-          ) : (
-            <>hello</>
-          )}
+
+          {
+            // TODO Fjern når vi har delt geometri?
+            utkastHarEndringAdministrativeGrenser() && (
+              <Alert status="warning">
+                <AlertIcon />
+                <div>
+                  <AlertTitle>
+                    Utkastet ditt inneholder endringer på administrative grenser
+                  </AlertTitle>
+                  <AlertDescription>
+                    Pass på at du er sikker på endringene dine, og husk å gjøre
+                    tilsvarende endring for både grunnkretsgrense og
+                    stemmekretsgrense.
+                  </AlertDescription>
+                </div>
+              </Alert>
+            )
+          }
           <EndringsloggAccordion utkast={utkast} />
           <Datepickerlabel>
             Fra hvilken dato skal endringene utkastet tre i kraft?
