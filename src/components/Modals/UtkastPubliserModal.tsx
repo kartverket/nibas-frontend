@@ -109,19 +109,11 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
       "Fylkesgrense",
     ];
 
-    let isDangerous = false;
-
-    Object.values(endredeFeatures).forEach((feature) => {
-      if (
-        administrativeGrensertyper.includes(
-          feature.properties.type as GrenseType,
-        )
-      ) {
-        isDangerous = true;
-      }
-    });
-
-    return isDangerous;
+    return Object.values(endredeFeatures).some((feature) =>
+      administrativeGrensertyper.includes(
+        feature.properties.type as GrenseType,
+      ),
+    );
   };
 
   return (
