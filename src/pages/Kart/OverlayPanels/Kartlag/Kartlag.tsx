@@ -1,9 +1,7 @@
 import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { KartlagId } from "hooks/layers/types";
-import KartlagInner from "./KartlagInner";
-import KartlagOuter from "./KartlagOuter";
-import { Box, Icon, Text } from "@kvib/react";
-import styled from "styled-components";
+import { Icon, Text } from "@kvib/react";
+import { styled } from "styled-components";
 
 type Props = {
   layerId: KartlagId;
@@ -16,18 +14,28 @@ const Kartlag = ({ layerId }: Props) => {
     return null;
   }
 
+  const subLayers = mappedLayer.layers;
+  if (!subLayers) {
+    return null;
+  }
+
   return (
     <KartlagContainer>
-      <KartlagHeader>
-        <Text>{mappedLayer.title}</Text>
-        <Icon icon="arrow_drop_down"></Icon>
-      </KartlagHeader>
-      {mappedLayer.layers.length > 0 && mappedLayer.layers.length > 1 ? (
-        mappedLayer.layers.map((layer) => (
-          <KartlagLayer key={layer.id}>{layer.title}</KartlagLayer>
-        ))
+      {subLayers.length > 1 ? (
+        <div>
+          <KartlagHeader>
+            <Text>{mappedLayer.title}</Text>
+            <Icon icon="arrow_drop_down"></Icon>
+          </KartlagHeader>
+          {subLayers.map((layer) => (
+            <KartlagLayer key={layer.id}>{layer.title}</KartlagLayer>
+          ))}
+        </div>
       ) : (
-        <KartlagLayer>Solo: {mappedLayer.layers[0].title}</KartlagLayer>
+        <KartlagHeader>
+          <Text>Solo: {mappedLayer.title}</Text>
+          <Icon icon="arrow_drop_down"></Icon>
+        </KartlagHeader>
       )}
     </KartlagContainer>
   );
