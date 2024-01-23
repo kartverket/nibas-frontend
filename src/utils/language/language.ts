@@ -19,8 +19,8 @@ export const getNavnInSpraak = (
   );
 };
 
-export const sortGrenserAlphabetically = <T extends GrenseRef>(grenser?: T[]) =>
-  grenser?.sort((a, b) =>
+export const sortGrenserAlphabetically = <T extends GrenseRef>(grenser: T[]) =>
+  grenser.sort((a, b) =>
     getNavnInSpraak(a.navn, "nor").localeCompare(
       getNavnInSpraak(b.navn, "nor"),
       "nb",

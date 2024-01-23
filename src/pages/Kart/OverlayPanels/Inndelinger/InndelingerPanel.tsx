@@ -8,9 +8,60 @@ import {
 import { Panel, PanelHeader, PanelProps } from "../Panel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { styled } from "styled-components";
+import {
+  KRETSTYPER,
+  Kretstype,
+} from "contexts/InndelingerContekst/InndelingerContext";
+import { getIdFromEntity } from "utils/api";
+import { getNavnInSpraak } from "utils/language/language";
+import { useState } from "react";
+import useFylker from "hooks/inndelinger/useFylker";
+import useKommuner from "hooks/inndelinger/useKommuner";
 
 const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
-  const { closeOverlayModal } = useOverlayPanel();
+  const [selectedKretstype, setSelectedKretstype] = useState<Kretstype | null>(
+    null,
+  );
+  const { fylker } = useFylker();
+
+  const [selectedFylkeId, setSelectedFylkeId] = useState<string>("");
+  const { kommuner } = useKommuner(selectedFylkeId);
+
+  const { activeOverlayModal, closeOverlayModal } = useOverlayPanel();
+
+  const isEditing = activeOverlayModal === "inndelinger_redigering";
+
+  const resetInndelingerPanel = () => {
+    closeOverlayModal();
+    setSelectedKretstype(null);
+    setSelectedFylkeId("");
+  };
+
+  // TODO: avhengig av kretstype ønsker vi enten å bare se kommuner, eller legge til i kartet?
+  const selectFylke = (fylkeId: string) => {
+    if (selectedKretstype === "fylker") {
+      // startEditingFylke();
+      resetInndelingerPanel();
+    } else {
+      setSelectedFylkeId(fylkeId);
+    }
+  };
+
+  // TODO: avhengig av kretstype ønsker vi å aktivere redigering eller synliggjøre visse kretser
+  // mye av dette bør nok bo i inndelingercontext
+  const selectKommune = (selectedKommuneId: string) => {
+    if (selectedKretstype === "kommuner") {
+      // startEditingKommune(selectedKommuneId);
+    } else if (selectedKretstype === "stemmekretser") {
+      // startEditingStemmekretser(selectedKommuneId)
+    } else if (selectedKretstype === "grunnkretser") {
+      // startEditingGrunnkretser(selectedKommuneId)
+    }
+    resetInndelingerPanel();
+  };
+
+  const capitalize = (str: string) =>
+    str.charAt(0).toUpperCase() + str.slice(1);
 
   return (
     <Modal isOpen={isOpen} onClose={closeOverlayModal} scrollBehavior="inside">
@@ -21,50 +72,46 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
         </PanelHeader>
         <InndelingerLayout>
           <InndelingerList>
-            <Inndeling>Fylker</Inndeling>
-            <Inndeling>Kommuner</Inndeling>
-            <Inndeling>Stemmekretser</Inndeling>
-            <Inndeling>Grunnkretser</Inndeling>
+            {KRETSTYPER.map((kretstype) => (
+              <Inndeling
+                key={kretstype}
+                onClick={() => setSelectedKretstype(kretstype)}
+                isActive={selectedKretstype === kretstype}
+              >
+                {capitalize(kretstype)}
+              </Inndeling>
+            ))}
           </InndelingerList>
           <Divider orientation="vertical" />
           <InndelingerList>
-            <Inndeling>42 Agder</Inndeling>
-            <Inndeling>32 Akershus</Inndeling>
-            <Inndeling>33 Buskerud</Inndeling>
-            <Inndeling>56 Finnmark</Inndeling>
-            <Inndeling>34 Innlandet</Inndeling>
-            <Inndeling>15 Møre og Romsdal</Inndeling>
-            <Inndeling>18 Nordland</Inndeling>
-            <Inndeling>03 Oslo</Inndeling>
-            <Inndeling>11 Rogaland</Inndeling>
-            <Inndeling>40 Telemark</Inndeling>
-            <Inndeling>55 Troms</Inndeling>
-            <Inndeling>50 Trøndelag</Inndeling>
-            <Inndeling>39 Vestfold</Inndeling>
-            <Inndeling>46 Vestland</Inndeling>
-            <Inndeling>31 Østfold</Inndeling>
+            {selectedKretstype &&
+              fylker.map((fylke) => (
+                <Inndeling
+                  key={getIdFromEntity(fylke)}
+                  onClick={() => selectFylke(getIdFromEntity(fylke))}
+                  isActive={selectedFylkeId === getIdFromEntity(fylke)}
+                >
+                  {`${fylke.fylkesnummer.kodeverdi} ${getNavnInSpraak(
+                    fylke.navn,
+                    "nor",
+                  )}`}
+                </Inndeling>
+              ))}
           </InndelingerList>
           <Divider orientation="vertical" />
           <InndelingerList>
-            <Inndeling>4203 Arendal</Inndeling>
-            <Inndeling>4216 Birkenes</Inndeling>
-            <Inndeling>4220 Bygland</Inndeling>
-            <Inndeling>4222 Bykle</Inndeling>
-            <Inndeling>4206 Farsund</Inndeling>
-            <Inndeling>4207 Flekkefjord</Inndeling>
-            <Inndeling>4214 Froland</Inndeling>
-            <Inndeling>4211 Gjerstad</Inndeling>
-            <Inndeling>4202 Grimstad</Inndeling>
-            <Inndeling>4218 Iveland</Inndeling>
-            <Inndeling>4204 Kristiansand</Inndeling>
-            <Inndeling>4227 Kvinesdal</Inndeling>
-            <Inndeling>4215 Lillesand</Inndeling>
-            <Inndeling>4205 Lindesnes</Inndeling>
-            <Inndeling>4225 Lyngdal</Inndeling>
-            <Inndeling>4228 Sirdal</Inndeling>
-            <Inndeling>4213 Tvedestrand</Inndeling>
-            <Inndeling>4221 Valle</Inndeling>
-            <Inndeling>4223 Vennesla</Inndeling>
+            {selectedFylkeId &&
+              kommuner.map((kommune) => (
+                <Inndeling
+                  key={getIdFromEntity(kommune)}
+                  onClick={() => selectKommune(getIdFromEntity(kommune))}
+                >
+                  {`${kommune.kommunenummer.kodeverdi} ${getNavnInSpraak(
+                    kommune.navn,
+                    "nor",
+                  )}`}
+                </Inndeling>
+              ))}
           </InndelingerList>
         </InndelingerLayout>
       </ModalContent>

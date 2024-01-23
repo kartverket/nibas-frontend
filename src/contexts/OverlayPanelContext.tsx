@@ -10,7 +10,11 @@ type OverlayPanel =
   | "koordinater"
   | "kartlag";
 
-type OverlayModal = "inndelinger" | "stemmekrets" | "grunnkrets";
+type OverlayModal =
+  | "inndelinger_redigering"
+  | "inndelinger_visning"
+  | "stemmekrets"
+  | "grunnkrets";
 type Flatedata = KommuneRef | null;
 
 export type OverlayPanelContextValue = {

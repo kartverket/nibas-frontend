@@ -8,6 +8,7 @@ import { ErrorHandlingProvider } from "contexts/ErrorHandlingContext";
 import { OverlayPanelProvider } from "contexts/OverlayPanelContext";
 import { FeatureStyleProvider } from "contexts/FeatureStyleContext";
 import { ToolbarProvider } from "contexts/ToolbarContext";
+import { InndelingerProvider } from "contexts/InndelingerContekst/InndelingerContext";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -18,11 +19,13 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
             <ToolbarProvider>
               <SidebarPanelProvider>
                 <OverlayPanelProvider>
-                  <EditGrenserProvider>
-                    <KartlagProvider>
-                      <UtkastProvider>{children}</UtkastProvider>
-                    </KartlagProvider>
-                  </EditGrenserProvider>
+                  <InndelingerProvider>
+                    <EditGrenserProvider>
+                      <KartlagProvider>
+                        <UtkastProvider>{children}</UtkastProvider>
+                      </KartlagProvider>
+                    </EditGrenserProvider>
+                  </InndelingerProvider>
                 </OverlayPanelProvider>
               </SidebarPanelProvider>
             </ToolbarProvider>
