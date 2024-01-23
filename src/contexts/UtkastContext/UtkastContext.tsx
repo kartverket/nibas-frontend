@@ -132,6 +132,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
       if (!utkast) return null;
 
       const operasjoner = historyToUtkastOperations(history, utkast);
+      console.log(operasjoner);
 
       const updatedUtkast: OppdaterUtkastRequest = {
         endringstype: utkast.endringstype,
@@ -163,6 +164,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
   const updateUtkast = async (id: string, newUtkast: OppdaterUtkastRequest) => {
+    console.log(newUtkast);
     const response = await updateUtkastApi(
       id,
       newUtkast,
@@ -177,6 +179,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
       setUtkast(updatedUtkast);
     } else if (statusCode.isError(response.status)) {
       const wrapper = (await response.json()) as ApiErrorResponse;
+      console.log(wrapper);
       setError({
         title: "Oppdatering av utkast feilet",
         description: wrapper.errorDescription.description,

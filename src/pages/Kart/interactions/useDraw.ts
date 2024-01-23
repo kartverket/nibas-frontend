@@ -12,6 +12,7 @@ import { MapBrowserEvent } from "ol";
 import { useHistory } from "contexts/HistoryContext";
 import { getTempFeatureId } from "./tempFeatureIdUtil";
 import { createGrenseHistoryChange } from "./historyUtil";
+import { setDefaultFeatureProperties } from "utils/features";
 
 const useDraw = () => {
   const { activeTool } = useToolbar();
@@ -52,10 +53,10 @@ const useDraw = () => {
       if (!editingType) return;
 
       e.feature.setId(getTempFeatureId());
-      e.feature.setProperties({
-        // Setter grensetypen til featuren lik typen man redigerer, kanskje naivt
-        type: getGrenseTypeFromEditingType(editingType),
-      });
+      setDefaultFeatureProperties(
+        e.feature,
+        getGrenseTypeFromEditingType(editingType),
+      );
 
       addDrawToHistory(e);
 

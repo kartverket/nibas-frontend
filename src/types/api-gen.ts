@@ -26,6 +26,9 @@ export interface paths {
     /** Publiserer utkastet med gitt id. */
     post: operations["publiserUtkast"];
   };
+  "/v1/frontendlogger": {
+    post: operations["logMelding"];
+  };
   "/v1/stemmekretser/{lokalid}/framtidigeversjoner": {
     /** Returnerer en liste av nåværende Stemmekrets og eventuelt publiserte framtidige versjoner som matcher lokalid. */
     get: operations["hentFramtidigeVersjonerForStemmekrets"];
@@ -280,7 +283,7 @@ export interface components {
       srid: number;
       metadata?: components["schemas"]["Metadata"];
       /** @description Egenskaper til konteksten til grensen. */
-      kontekstEgenskaper?: components["schemas"]["KontekstEgenskaper"][];
+      kontekstEgenskaper: components["schemas"]["KontekstEgenskaper"][];
       /**
        * Format: int32
        * @description Teknisk versjon for å støtte samhandling og redigering
@@ -318,7 +321,7 @@ export interface components {
     /** @description Representasjon av endringer på grensegeometri. */
     Grenseendringer: {
       /** @description Endringer på features. */
-      endredeFeatures: { [key: string]: components["schemas"]["Feature"] };
+      endredeFeatures: components["schemas"]["Feature"][];
     };
     /** @description Representasjon av en grunnkrets */
     GrunnkretsRequest: {
@@ -385,11 +388,14 @@ export interface components {
     /** @description Egenskaper som beskriver konteksten som grensen sees i. */
     KontekstEgenskaper: {
       id?: components["schemas"]["ObjektIdentifikator"];
+      kommuneId?: components["schemas"]["ObjektIdentifikator"];
+      /** @description kretsnummeret til konteksten */
+      kretsNummer?: string;
       /**
        * @description Hvilken kontekst geometrien skal sees i
        * @enum {string}
        */
-      type?: "GRUNNKRETS" | "STEMMEKRETS";
+      type: "GRUNNKRETS" | "STEMMEKRETS";
       /**
        * Format: int32
        * @description Teknisk versjon til referert objekt for å støtte samhandling og redigering
@@ -412,6 +418,25 @@ export interface components {
        * @description Angir om grensen er en del av et hull, og i så fall index på gitt hull.
        */
       hullIndeks?: number;
+    };
+    /** @description Representasjon av deling av en krets som ender i to kretser der én er videreført og én er ny */
+    KretsDelingEndringRequest: {
+      opprinneligKrets: components["schemas"]["IdentifikatorMedVersjon"];
+      /**
+       * @description Flatetypen som skal deles
+       * @enum {string}
+       */
+      flatetype:
+        | "FYLKE"
+        | "KOMMUNE"
+        | "NASJON"
+        | "GRUNNKRETS"
+        | "STEMMEKRETS"
+        | "SKOLEKRETS";
+      /** @description Navnet til den nye kretsen */
+      kretsNavn: string;
+      /** @description Grunnkrets/stemmekrets-nummmeret til den nye kretsen */
+      kretsNummer: string;
     };
     /** @description Wrapper-objekt rundt en JTS LineString. */
     LineString: components["schemas"]["Geometry"] & {
@@ -473,7 +498,7 @@ export interface components {
        */
       version: number;
     };
-    /** @description Id til objekt som det vises til i kontekst */
+    /** @description Id til kommunen som konteksten ligger i */
     ObjektIdentifikator: {
       lokalid: components["schemas"]["Lokalid"];
       /** Format: date */
@@ -484,6 +509,7 @@ export interface components {
       metadataendringer: components["schemas"]["Metadataendringer"];
       grenseendringer: components["schemas"]["Grenseendringer"];
       stemmekretsSammenslaaingsendring?: components["schemas"]["StemmekretsSammenslaaingsendringRequest"];
+      kretsDelingEndring?: components["schemas"]["KretsDelingEndringRequest"];
     };
     /** @description Representasjon for oppdatering av utkast */
     OppdaterUtkastRequest: {
@@ -598,6 +624,20 @@ export interface components {
       commonGrense: unknown;
       dokumentasjonsreferanser: unknown;
     };
+    ApiErrorResponse: {
+      /** @description En unik feilkode for denne feilen som kan vises til bruker. Denne feilkoden burde også være med i loggene så man finner igjen feilen som oppstod. */
+      errorCode: string;
+      errorDescription: components["schemas"]["ErrorDescription"];
+    };
+    /** @description En forklaring av feilen som oppstod. Denne er ment til å kunne vises direkte til brukeren. */
+    ErrorDescription: {
+      /** @description Tittelen på feilmeldingen som skal vises. */
+      title: string;
+      /** @description En beskrivende forklaring av feilen som oppstod. */
+      description: string;
+      /** @description Litt tilleggsinfo relatert til feilen om man vil gi noe mer forklaring av konteksten. Ikke obligatorisk. */
+      additionalInfo?: string;
+    };
     /** @description Feil som har oppstått pga optimistisk lås. */
     OptimistiskLaarResponse: {
       /** @description Identifikatoren til objektet som er utdatert. */
@@ -695,20 +735,6 @@ export interface components {
       /** @description Feil som har oppstått pga optimistisk lås. */
       optimisticLockExceptions: components["schemas"]["OptimistiskLaarResponse"][];
     };
-    ApiErrorResponse: {
-      /** @description En unik feilkode for denne feilen som kan vises til bruker. Denne feilkoden burde også være med i loggene så man finner igjen feilen som oppstod. */
-      errorCode: string;
-      errorDescription: components["schemas"]["ErrorDescription"];
-    };
-    /** @description En forklaring av feilen som oppstod. Denne er ment til å kunne vises direkte til brukeren. */
-    ErrorDescription: {
-      /** @description Tittelen på feilmeldingen som skal vises. */
-      title: string;
-      /** @description En beskrivende forklaring av feilen som oppstod. */
-      description: string;
-      /** @description Litt tilleggsinfo relatert til feilen om man vil gi noe mer forklaring av konteksten. Ikke obligatorisk. */
-      additionalInfo?: string;
-    };
     /** @description Representasjon av audit info for et objekt. */
     AuditInfoResponse: {
       /**
@@ -760,6 +786,12 @@ export interface components {
        * @description Datoen utkastet skal publiseres fra. Settes default til dagens dato om ikke satt.
        */
       publiseringsdato: string;
+    };
+    FrontendLogRequest: {
+      /** @enum {string} */
+      logLevel: "INFO" | "WARN" | "ERROR";
+      message: string;
+      stacktrace?: string;
     };
     /** @description En referanse til et utkast */
     UtkastRef: {
@@ -1188,6 +1220,17 @@ export interface operations {
     requestBody: {
       content: {
         "application/json": components["schemas"]["PubliserUtkastRequest"];
+      };
+    };
+  };
+  logMelding: {
+    responses: {
+      /** Successful operation */
+      200: unknown;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["FrontendLogRequest"];
       };
     };
   };
