@@ -211,7 +211,7 @@ export const historyToUtkastOperations = (
   ).reduce(reduceGrenseOperations, [] as GeoJSONFeature[]);
 
   // hvis det er noen endringer, slå sammen tidligere endringer og nye endringer til ny liste
-  if (Object.keys(editedFeatures).length > 0) {
+  if (editedFeatures.length > 0) {
     utkastOperations.grenseendringer = {
       endredeFeatures:
         utkastOperations.grenseendringer?.endredeFeatures.concat(
