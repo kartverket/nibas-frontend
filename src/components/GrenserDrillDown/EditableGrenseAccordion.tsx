@@ -25,7 +25,7 @@ const EditableGrenseAccordion = ({
   title,
 }: Props) => {
   const accordion = useVisibility();
-  const { value, toggleVisible } = useEditGrense(
+  const { kretsStatus, toggleVisible } = useEditGrense(
     grenseType,
     grenseId,
     features,
@@ -36,9 +36,9 @@ const EditableGrenseAccordion = ({
       <Header>
         <VisibilityButton
           onClick={toggleVisible}
-          $isVisible={value.visible ? true : false}
-          aria-label={value.visible ? `Skjul ${title}` : `Vis ${title}`}
-          icon={value.visible ? "visibility" : "visibility_off"}
+          $isVisible={kretsStatus.visible ? true : false}
+          aria-label={kretsStatus.visible ? `Skjul ${title}` : `Vis ${title}`}
+          icon={kretsStatus.visible ? "visibility" : "visibility_off"}
         />
         <TextContent>
           <span>{title}</span>
