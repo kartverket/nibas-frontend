@@ -21,36 +21,36 @@ const getUpdatedMetadata = (
   const newMetadata = {
     ...(oldMetadata ?? {}),
     common: {
-      ...(oldMetadata.common ?? {}),
+      ...(oldMetadata?.common ?? {}),
       informasjon:
         field === "informasjon"
           ? data.metadata
-          : oldMetadata.common?.informasjon,
+          : oldMetadata?.common?.informasjon,
       datafangstdato:
         field === "datafangstdato"
           ? formatISO(startOfDay(new Date(data.metadata)))
-          : oldMetadata.common?.datafangstdato,
-      opphav: field === "opphav" ? data.metadata : oldMetadata.common?.opphav,
+          : oldMetadata?.common?.datafangstdato,
+      opphav: field === "opphav" ? data.metadata : oldMetadata?.common?.opphav,
       gyldigFra:
-        field === "gyldigFra" ? data.metadata : oldMetadata.common?.gyldigFra,
+        field === "gyldigFra" ? data.metadata : oldMetadata?.common?.gyldigFra,
       gyldigTil:
-        field === "gyldigTil" ? data.metadata : oldMetadata.common?.gyldigTil,
+        field === "gyldigTil" ? data.metadata : oldMetadata?.common?.gyldigTil,
     },
     commonGrense: {
-      ...(oldMetadata.commonGrense ?? {}),
+      ...(oldMetadata?.commonGrense ?? {}),
       posisjonskvalitet: {
         ...(oldMetadata?.commonGrense?.posisjonskvalitet ?? {}),
         maalemetode: {
           id:
             field === "maalemetode"
               ? data.metadata
-              : oldMetadata.commonGrense?.posisjonskvalitet?.maalemetode.id,
+              : oldMetadata?.commonGrense?.posisjonskvalitet?.maalemetode.id,
           href: "",
         },
         noeyaktighet:
           field === "noeyaktighet"
             ? data.metadata
-            : oldMetadata.commonGrense?.posisjonskvalitet?.noeyaktighet,
+            : oldMetadata?.commonGrense?.posisjonskvalitet?.noeyaktighet,
       },
     },
   } as Metadata;
@@ -61,7 +61,7 @@ const getFieldFromMetadata = (metadata: Metadata, field: keyof Inputs) => {
   let value;
   switch (field) {
     case "uuid":
-      value = metadata?.common?.identifikasjon.lokalid;
+      value = metadata?.common?.identifikasjon?.lokalid;
       break;
     case "informasjon":
       value = metadata?.common?.informasjon;
@@ -85,7 +85,7 @@ const getFieldFromMetadata = (metadata: Metadata, field: keyof Inputs) => {
       value = metadata?.common?.gyldigTil;
       break;
     case "maalemetode":
-      value = metadata?.commonGrense?.posisjonskvalitet?.maalemetode.id;
+      value = metadata?.commonGrense?.posisjonskvalitet?.maalemetode?.id;
       break;
   }
   return { metadata: value?.toString() };

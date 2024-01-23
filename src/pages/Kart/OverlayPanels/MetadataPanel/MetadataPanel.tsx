@@ -31,7 +31,7 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
     selectedProperties && selectedProperties.metadata
       ? getDateInFriendlyString(
           (selectedProperties.metadata as Metadata).common?.sporingsinformasjon
-            .oppdateringsdato,
+            ?.oppdateringsdato,
         )
       : "Ukjent"
   }`;
