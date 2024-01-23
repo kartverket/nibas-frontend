@@ -5,10 +5,12 @@ export type EditingType =
   | "grunnkrets"
   | "stemmekrets";
 
-export type GrenseStatus = {
+export type KretsStatus = {
   editing?: boolean;
   visible?: boolean;
 };
 
-export type GrenseDictionary = Record<string, GrenseStatus>;
-export type EditingObject = Partial<Record<EditingType, GrenseDictionary>>;
+export type KretsStatusPerKretstype = Record<string, KretsStatus>;
+export type KretsStatusAlle = Partial<
+  Record<EditingType, KretsStatusPerKretstype>
+>;
