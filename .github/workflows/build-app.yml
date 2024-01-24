@@ -1,7 +1,8 @@
 name: Build app
 on:
+  merge_group:
   pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_call:
     inputs:
       deploy_ghcr:
@@ -43,10 +44,10 @@ jobs:
 
     steps:
       - name: checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18.x
           cache: "npm"
@@ -83,7 +84,7 @@ jobs:
 
       - name: Build docker and push
         id: build
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
           push: ${{ inputs.deploy_ghcr == 'true' }}
