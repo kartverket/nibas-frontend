@@ -11,8 +11,8 @@ type OverlayPanel =
   | "kartlag";
 
 type OverlayModal =
-  | "inndelinger_redigering"
-  | "inndelinger_visning"
+  | "inndelinger-redigering"
+  | "inndelinger-visning"
   | "stemmekrets"
   | "grunnkrets";
 type Flatedata = KommuneRef | null;

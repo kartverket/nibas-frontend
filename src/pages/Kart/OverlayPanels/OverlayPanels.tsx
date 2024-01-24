@@ -21,8 +21,8 @@ const OverlayPanels = () => {
 
       <InndelingerPanel
         isOpen={
-          activeOverlayModal === "inndelinger_redigering" ||
-          activeOverlayModal === "inndelinger_visning"
+          activeOverlayModal === "inndelinger-redigering" ||
+          activeOverlayModal === "inndelinger-visning"
         }
       />
       <GrunnkretsPanel isOpen={activeOverlayModal === "grunnkrets"} />

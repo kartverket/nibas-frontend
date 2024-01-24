@@ -29,7 +29,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
 
   const { activeOverlayModal, closeOverlayModal } = useOverlayPanel();
 
-  const isEditing = activeOverlayModal === "inndelinger_redigering";
+  const isEditing = activeOverlayModal === "inndelinger-redigering";
 
   const resetInndelingerPanel = () => {
     closeOverlayModal();
@@ -37,11 +37,18 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
     setSelectedFylkeId("");
   };
 
+  const selectKretstype = (kretstype: Kretstype) => {
+    setSelectedKretstype(kretstype);
+    setSelectedFylkeId("");
+  };
+
   // TODO: avhengig av kretstype ønsker vi enten å bare se kommuner, eller legge til i kartet?
   const selectFylke = (fylkeId: string) => {
     if (selectedKretstype === "fylker") {
       // startEditingFylke();
-      resetInndelingerPanel();
+      if (isEditing) {
+        resetInndelingerPanel();
+      }
     } else {
       setSelectedFylkeId(fylkeId);
     }
@@ -57,26 +64,33 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
     } else if (selectedKretstype === "grunnkretser") {
       // startEditingGrunnkretser(selectedKommuneId)
     }
-    resetInndelingerPanel();
+    if (isEditing) {
+      resetInndelingerPanel();
+    }
   };
 
   const capitalize = (str: string) =>
     str.charAt(0).toUpperCase() + str.slice(1);
 
   return (
-    <Modal isOpen={isOpen} onClose={closeOverlayModal} scrollBehavior="inside">
+    <Modal
+      isOpen={isOpen}
+      onClose={resetInndelingerPanel}
+      scrollBehavior="inside"
+    >
       <ModalOverlay />
       <ModalContent as={Panel} $isOpen={isOpen} className={className}>
-        <PanelHeader onClose={closeOverlayModal}>
-          Velg en inndeling du ønsker å redigere
+        <PanelHeader onClose={resetInndelingerPanel}>
+          Velg en inndeling du ønsker å {isEditing ? "redigere" : "vise"}
         </PanelHeader>
         <InndelingerLayout>
           <InndelingerList>
             {KRETSTYPER.map((kretstype) => (
               <Inndeling
                 key={kretstype}
-                onClick={() => setSelectedKretstype(kretstype)}
+                onClick={() => selectKretstype(kretstype)}
                 isActive={selectedKretstype === kretstype}
+                rightIcon="chevron_right"
               >
                 {capitalize(kretstype)}
               </Inndeling>
@@ -90,6 +104,11 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
                   key={getIdFromEntity(fylke)}
                   onClick={() => selectFylke(getIdFromEntity(fylke))}
                   isActive={selectedFylkeId === getIdFromEntity(fylke)}
+                  rightIcon={
+                    !isEditing && selectedKretstype === "fylker"
+                      ? "visibility_off"
+                      : "chevron_right"
+                  }
                 >
                   {`${fylke.fylkesnummer.kodeverdi} ${getNavnInSpraak(
                     fylke.navn,
@@ -105,6 +124,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
                 <Inndeling
                   key={getIdFromEntity(kommune)}
                   onClick={() => selectKommune(getIdFromEntity(kommune))}
+                  rightIcon={isEditing ? "chevron_right" : "visibility_off"}
                 >
                   {`${kommune.kommunenummer.kodeverdi} ${getNavnInSpraak(
                     kommune.navn,
@@ -136,7 +156,6 @@ const InndelingerList = styled.section`
 
 const Inndeling = styled(Button).attrs({
   variant: "ghost",
-  rightIcon: "chevron_right",
 })`
   height: unset;
   padding: 24px 16px;
