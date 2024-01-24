@@ -1,7 +1,7 @@
 name: Release app
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   workflow_dispatch:
 
 env:
@@ -16,7 +16,7 @@ jobs:
       packages: write
       security-events: write
       actions: read
-    uses: kartverket/nibas-frontend/.github/workflows/build-app.yml@master
+    uses: kartverket/nibas-frontend/.github/workflows/build-app.yml@main
     with:
       deploy_ghcr: true
     secrets: inherit
