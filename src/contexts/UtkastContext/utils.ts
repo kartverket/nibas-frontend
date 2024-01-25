@@ -26,6 +26,7 @@ import {
 } from "types/api";
 import { featureToGeoJson } from "utils/map/geoJson";
 import { getIdFromEntity } from "utils/api";
+import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 
 const getCombinedEntity = <T extends ResponseWithId>(
   entity: T,
@@ -128,7 +129,12 @@ const reduceGrenseOperations = (
 
     if (!feature) return editedFeatures;
 
-    editedFeatures.push(featureToGeoJson(feature));
+    if (isTempFeatureId(change.id)) {
+      const newFeatureWithoutId = feature.clone();
+      editedFeatures.push(featureToGeoJson(newFeatureWithoutId));
+    } else {
+      editedFeatures.push(featureToGeoJson(feature));
+    }
   });
 
   return editedFeatures;
@@ -212,11 +218,10 @@ export const historyToUtkastOperations = (
 
   // hvis det er noen endringer, slå sammen tidligere endringer og nye endringer til ny liste
   if (editedFeatures.length > 0) {
+    const utkastEndredeFeatures =
+      utkastOperations.grenseendringer?.endredeFeatures || [];
     utkastOperations.grenseendringer = {
-      endredeFeatures:
-        utkastOperations.grenseendringer?.endredeFeatures.concat(
-          editedFeatures,
-        ),
+      endredeFeatures: utkastEndredeFeatures.concat(editedFeatures),
     };
   }
 
