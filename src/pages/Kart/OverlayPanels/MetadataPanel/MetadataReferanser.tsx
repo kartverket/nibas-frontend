@@ -1,79 +1,33 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
-import LineString from "ol/geom/LineString";
-import { ObjectEvent } from "ol/Object";
-import { Control, useFieldArray, useForm } from "react-hook-form";
+import { Control, useFieldArray } from "react-hook-form";
 import { styled } from "styled-components";
-import { addMetadataEntryFromFeature } from "./utils";
 import Input from "components/Input";
-import { useHistory } from "contexts/HistoryContext";
-import { Dokref, FeatureProperties, Metadata } from "types/api";
-import useIsMetadataDisabled from "../hooks/useIsMetadataDisabled";
 import { Button } from "@kvib/react";
+import { useDokumentreferanser } from "./useDokumentreferanser";
+import { DokrefField } from "./DokrefField";
+import { DokrefRow } from "./DokrefRow";
 
-type Value = {
+export type Value = {
   beskrivelse: string;
   apiId?: string;
 };
 
-type DokrefForm = {
+export type DokrefForm = {
   apiId?: string;
   dokumentlenker: Value[];
   fastsettingsdato: string;
-  fastsettingsmyndighet: string;
-  hjemmel: string;
+  fastsettingsmyndighet?: string;
+  hjemmel?: string;
   internReferanserKartverket: Value[];
-  rettskildeId: string;
+  rettskildeId?: string;
   rettskildeTittel: string;
 };
 
-type Inputs = {
+export type Inputs = {
   dokrefs: DokrefForm[];
 };
-
-const mapFromApiToForm = (dokrefs: Dokref[] = []): DokrefForm[] => {
-  return dokrefs.map((dokref) => ({
-    apiId: dokref.id,
-    fastsettingsdato: dokref.fastsettingsdato,
-    fastsettingsmyndighet: dokref.fastsettingsmyndighet ?? "",
-    hjemmel: dokref.hjemmel ?? "",
-    rettskildeId: dokref.rettskildeId ?? "",
-    rettskildeTittel: dokref.rettskildeTittel,
-    dokumentlenker: dokref.dokumentlenker.map((lenke) => ({
-      apiId: lenke.id,
-      beskrivelse: lenke.beskrivelse,
-    })),
-    internReferanserKartverket: dokref.internReferanserKartverket.map(
-      (ref) => ({
-        apiId: ref.id,
-        beskrivelse: ref.beskrivelse,
-      }),
-    ),
-  }));
-};
-
-const mapFromFormToApi = (data: Inputs): Dokref[] => {
-  return data.dokrefs.map((dokref) => ({
-    id: dokref.apiId,
-    rettskildeTittel: dokref.rettskildeTittel,
-    fastsettingsdato: dokref.fastsettingsdato,
-    fastsettingsmyndighet: dokref.fastsettingsmyndighet,
-    hjemmel: dokref.hjemmel,
-    rettskildeId: dokref.rettskildeId,
-    dokumentlenker: dokref.dokumentlenker.map((lenke) => ({
-      id: lenke.apiId,
-      beskrivelse: lenke.beskrivelse,
-    })),
-    internReferanserKartverket: dokref.internReferanserKartverket.map(
-      (ref) => ({
-        id: ref.apiId,
-        beskrivelse: ref.beskrivelse,
-      }),
-    ),
-  }));
-};
-
 type FieldArrayProps = {
   control: Control<Inputs>;
   itemName: string;
@@ -97,7 +51,7 @@ const FieldArray = ({
     name,
   });
 
-  const onKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key !== "Enter") return;
 
     e.preventDefault();
@@ -114,36 +68,37 @@ const FieldArray = ({
 
   return (
     <FieldArrayWrapper>
-      <FieldTitle>{itemName}</FieldTitle>
-      {fields.map((field, nestedIndex) => (
-        <FieldWrapper key={field.id}>
-          <a href={field.beskrivelse} target="_blank" rel="noreferrer">
-            {field.beskrivelse}
-          </a>
-          <div>
-            <Button
-              rightIcon="remove"
-              onClick={() => remove(nestedIndex)}
-              isDisabled={disabled}
-            >
-              Slett
-            </Button>
-          </div>
-        </FieldWrapper>
-      ))}
-      <div>
-        <Input
-          label="Ny URL"
-          value={newLenke}
-          onChange={(e) => setNewLenke(e.target.value)}
-          placeholder="URL"
-          onKeyPress={onKeyPress}
-          isDisabled={disabled}
-        />
-        <Button onClick={onAdd} isDisabled={!newLenke} rightIcon="add">
-          Legg til
-        </Button>
-      </div>
+      <DokrefRow tooltipLabel={itemName} name={itemName}>
+        {fields.map((field, nestedIndex) => (
+          <FieldWrapper key={field.id}>
+            <a href={field.beskrivelse} target="_blank" rel="noreferrer">
+              {field.beskrivelse}
+            </a>
+            <div>
+              <Button
+                rightIcon="remove"
+                onClick={() => remove(nestedIndex)}
+                isDisabled={disabled}
+              >
+                Slett
+              </Button>
+            </div>
+          </FieldWrapper>
+        ))}
+        <div>
+          <Input
+            label="Ny URL"
+            value={newLenke}
+            onChange={(e) => setNewLenke(e.target.value)}
+            placeholder="URL"
+            onKeyDown={onKeyDown}
+            isDisabled={disabled}
+          />
+          <Button onClick={onAdd} isDisabled={!newLenke} rightIcon="add">
+            Legg til
+          </Button>
+        </div>
+      </DokrefRow>
     </FieldArrayWrapper>
   );
 };
@@ -154,6 +109,7 @@ type Props = {
 
 const Container = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: flex-start;
 `;
 
@@ -168,137 +124,64 @@ const Part = styled.div`
 `;
 
 const MetadataReferanser = ({ feature }: Props) => {
-  const properties = feature.getProperties() as FeatureProperties;
-  const dokrefs = (properties.metadata as Metadata).dokumentasjonsreferanser;
-
-  const { register, control, setValue, getValues } = useForm<Inputs>({
-    defaultValues: { dokrefs: mapFromApiToForm(dokrefs) },
-  });
-  const { append, fields, remove } = useFieldArray({
-    control,
-    name: "dokrefs",
-  });
-
-  const { addHistoryEntry } = useHistory();
-
-  useEffect(() => {
-    const updateFormOnPropertyChange = (e: ObjectEvent) => {
-      const newMetadata = (e.target as Feature<LineString>).getProperties()
-        .metadata as Metadata;
-
-      setValue(
-        "dokrefs",
-        mapFromApiToForm(newMetadata.dokumentasjonsreferanser),
-      );
-    };
-
-    feature.on("propertychange", updateFormOnPropertyChange);
-
-    return () => {
-      feature.un("propertychange", updateFormOnPropertyChange);
-    };
-  }, [feature, setValue]);
-
-  const updateDraftFromFeature = () => {
-    const metadata = feature.getProperties().metadata as Metadata;
-    addMetadataEntryFromFeature(
-      feature as Feature<LineString>,
-      addHistoryEntry,
-      {
-        ...metadata,
-        dokumentasjonsreferanser: mapFromFormToApi(getValues()),
-      },
-    );
-  };
-
-  const metadataIsDisabled = useIsMetadataDisabled(feature, properties);
+  const metadataIsDisabled = false; //useIsMetadataDisabled(feature, properties);
+  const { control, updateDraftFromFeature } = useDokumentreferanser(feature);
 
   return (
-    <form>
-      {fields.map((field, i) => (
-        <DokRefWrapper key={field.id}>
-          <Container>
-            <Part>
-              <Input
-                label="Rettskildetittel"
-                {...register(`dokrefs.${i}.rettskildeTittel`, {
-                  onChange: updateDraftFromFeature,
-                  disabled: metadataIsDisabled,
-                })}
-              />
-              <Input
-                label="Rettskilde-ID"
-                {...register(`dokrefs.${i}.rettskildeId`, {
-                  onChange: updateDraftFromFeature,
-                  disabled: metadataIsDisabled,
-                })}
-              />
-            </Part>
-            <Part>
-              <Input
-                label="Fastsettingsmyndighet"
-                {...register(`dokrefs.${i}.fastsettingsmyndighet`, {
-                  onChange: updateDraftFromFeature,
-                  disabled: metadataIsDisabled,
-                })}
-              />
-              <Input
-                label="Fastsettingsdato"
-                {...register(`dokrefs.${i}.fastsettingsdato`, {
-                  onChange: updateDraftFromFeature,
-                  disabled: metadataIsDisabled,
-                })}
-                type="date"
-                role="textbox"
-              />
-            </Part>
-            <Part>
-              <Input
-                label="Hjemmel"
-                {...register(`dokrefs.${i}.hjemmel`, {
-                  onChange: updateDraftFromFeature,
-                  disabled: metadataIsDisabled,
-                })}
-              />
-            </Part>
-          </Container>
-          <FieldArray
-            control={control}
-            name={`dokrefs.${i}.dokumentlenker`}
-            itemName="Dokumentlenker"
-            disabled={metadataIsDisabled}
-            updateDraft={updateDraftFromFeature}
+    <>
+      <DokRefWrapper>
+        <Container>
+          <DokrefField
+            feature={feature}
+            tooltipLabel="Rettskildetittel"
+            name="Rettskildetittel"
+            renderItem={(register) => <Input {...register} />}
           />
-          <FieldArray
-            control={control}
-            name={`dokrefs.${i}.internReferanserKartverket`}
-            itemName="Internreferanser"
-            disabled={metadataIsDisabled}
-            updateDraft={updateDraftFromFeature}
+          <DokrefField
+            feature={feature}
+            tooltipLabel="Rettskilde-ID"
+            name="Rettskilde-ID"
+            renderItem={(register) => <Input {...register} />}
           />
-
-          <Button onClick={() => remove(i)} isDisabled={metadataIsDisabled}>
-            Slett referanse
-          </Button>
-        </DokRefWrapper>
-      ))}
-      <Button
-        isDisabled={metadataIsDisabled}
-        onClick={() =>
-          append({
-            dokumentlenker: [],
-            internReferanserKartverket: [],
-            fastsettingsdato: "",
-            fastsettingsmyndighet: "",
-            hjemmel: "",
-            rettskildeId: "",
-            rettskildeTittel: "",
-          })
-        }
-      >
-        Ny referanse
-      </Button>
-    </form>
+          <DokrefField
+            feature={feature}
+            tooltipLabel="Fastsettingsmyndighet"
+            name="Fastsettingsmyndighet"
+            renderItem={(register) => <Input {...register} />}
+          />
+          <DokrefField
+            feature={feature}
+            tooltipLabel="Fastsettingsdato"
+            name="Fastsettingsdato"
+            renderItem={(register) => (
+              <Input {...register} type="date" role="textbox" />
+            )}
+          />
+          <DokrefField
+            feature={feature}
+            tooltipLabel="Hjemmel"
+            name="Hjemmel"
+            renderItem={(register) => <Input {...register} />}
+          />
+          {feature.getProperties()?.metadata}
+        </Container>
+        {/* <FieldArray
+          control={control}
+          name={"dokrefs"}
+          itemName="Dokumentlenker"
+          disabled={metadataIsDisabled}
+          updateDraft={updateDraftFromFeature}
+        />
+        <FieldArray
+          control={control}
+          name={"dokrefs"}
+          itemName="Internreferanser"
+          disabled={metadataIsDisabled}
+          updateDraft={updateDraftFromFeature}
+        /> */}
+      </DokRefWrapper>
+      <Button onClick={() => updateDraftFromFeature()}>Lagre</Button>
+    </>
   );
 };
 
@@ -315,11 +198,6 @@ const FieldWrapper = styled.div`
   > :first-child {
     margin-right: 8px;
   }
-`;
-
-const FieldTitle = styled.legend`
-  margin: 0;
-  margin-bottom: 8px;
 `;
 
 const DokRefWrapper = styled.div`
