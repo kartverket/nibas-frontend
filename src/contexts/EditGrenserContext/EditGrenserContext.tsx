@@ -1,24 +1,28 @@
 import React, { createContext, useContext, useState } from "react";
 import { removeAllFeatures } from "utils/map/layers";
 import {
-  EditingObject,
+  KretsStatusAlle,
   EditingType,
-  GrenseDictionary,
-  ObjectValue,
+  KretsStatusPerKretstype,
+  KretsStatus,
 } from "./types";
 
 export type EditGrenserContextValue = {
-  editingObject: EditingObject;
-  setEditingObject: React.Dispatch<
-    React.SetStateAction<Partial<Record<EditingType, GrenseDictionary>>>
+  alleKretserStatuser: KretsStatusAlle;
+  setAlleKretserStatuser: React.Dispatch<
+    React.SetStateAction<Partial<Record<EditingType, KretsStatusPerKretstype>>>
   >;
-  setObjectValue: (
+  setKretsStatus: (
     type: EditingType,
     grenseId: string,
-    values?: ObjectValue,
+    values?: KretsStatus,
   ) => void;
   resetAndClearAllLayers: () => void;
   getCurrentlyEditingType: () => EditingType | null;
+  setOtherEditingTypes: (
+    currentType: EditingType,
+    shouldBeEditable?: boolean,
+  ) => void;
 };
 
 /**
@@ -33,28 +37,29 @@ export const EditGrenserProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [editingObject, setEditingObject] = useState<EditingObject>({});
+  const [alleKretserStatuser, setAlleKretserStatuser] =
+    useState<KretsStatusAlle>({});
 
-  const setObjectValue = (
+  const setKretsStatus = (
     type: EditingType,
-    grenseId: string,
-    values: ObjectValue = {},
+    kretsId: string,
+    status: KretsStatus = {},
   ) => {
-    setEditingObject((prevState) => ({
+    setAlleKretserStatuser((prevState) => ({
       ...prevState,
       [type]: {
         ...prevState[type],
-        [grenseId]: values,
+        [kretsId]: status,
       },
     }));
   };
 
   /**
-   * Går gjennom editingObject for å finne ut hva, om noe, som redigeres
+   * Går gjennom alle type kretser sine statuser for å finne ut hva, om noe, som redigeres
    * @returns Hvilken grensetype man er i redigeringsmodus for, eller null hvis det er ingenting
    */
   const getCurrentlyEditingType = () => {
-    const currentlyEditingType = Object.entries(editingObject).find(
+    const currentlyEditingType = Object.entries(alleKretserStatuser).find(
       ([, grensevalues]) =>
         Object.values(grensevalues).some((grense) => grense.editing),
     );
@@ -65,18 +70,41 @@ export const EditGrenserProvider = ({
     return null;
   };
 
-  // Obs! Denne tømmer hele editingObject, som vil si at alle synlige saker fjernes også.
+  /**
+   * Går gjennom alle type krester sine statuser og henter alle typer kretser utenom currentType, og setter redigeringsstatus til innsendt parameter.
+   * Brukes kun som en workaround for å komme seg unna kretsavhengige contexter for redigering.
+   */
+  const setOtherEditingTypes = (
+    currentType: EditingType,
+    shouldBeEditable?: boolean,
+  ) => {
+    const otherEditingTypes = Object.entries(alleKretserStatuser).filter(
+      ([editingType]) => editingType !== currentType,
+    );
+
+    otherEditingTypes.forEach(([type, kretsStatuses]) => {
+      Object.entries(kretsStatuses).forEach(([grenseId, kretsStatus]) => {
+        setKretsStatus(type as EditingType, grenseId, {
+          visible: kretsStatus.visible,
+          editing: shouldBeEditable ?? kretsStatus.editing,
+        });
+      });
+    });
+  };
+
+  // Obs! Denne tømmer alle statuser for alle typer kretser, som vil si at alle synlige saker fjernes også.
   const resetAndClearAllLayers = () => {
     removeAllFeatures();
-    setEditingObject(() => ({}));
+    setAlleKretserStatuser(() => ({}));
   };
 
   const value = {
-    editingObject,
-    setEditingObject,
-    setObjectValue,
+    alleKretserStatuser,
+    setAlleKretserStatuser,
+    setKretsStatus,
     resetAndClearAllLayers,
     getCurrentlyEditingType,
+    setOtherEditingTypes,
   };
 
   return (
@@ -98,7 +126,7 @@ export const useEditAllGrenser = () => {
   return context;
 };
 
-export const useEditGrenser = (grenseType: EditingType) => {
+export const useEditGrenser = (kretsType: EditingType) => {
   const context = useContext(EditGrenserContext);
 
   if (!context) {
@@ -106,36 +134,37 @@ export const useEditGrenser = (grenseType: EditingType) => {
   }
 
   const {
-    editingObject,
-    setObjectValue,
-    setEditingObject,
+    alleKretserStatuser,
+    setKretsStatus,
+    setAlleKretserStatuser,
     resetAndClearAllLayers,
+    setOtherEditingTypes,
   } = context;
 
-  const values = editingObject[grenseType] ?? {};
+  const kretsStatuser = alleKretserStatuser[kretsType] ?? {};
 
-  const setObjectValueForType = (grenseId: string, newValues: ObjectValue) =>
-    setObjectValue(grenseType, grenseId, newValues);
+  const setKretsStatusForKretstype = (
+    grenseId: string,
+    kretsStatus: KretsStatus,
+  ) => setKretsStatus(kretsType, grenseId, kretsStatus);
 
-  const setMultipleValues = (newDictionary: GrenseDictionary) => {
-    setEditingObject((prevEditingObject) => ({
-      ...prevEditingObject,
-      [grenseType]: newDictionary,
+  const setMultipleValues = (kretsStatus: KretsStatusPerKretstype) => {
+    setAlleKretserStatuser((gammelAlleKretserStatuser) => ({
+      ...gammelAlleKretserStatuser,
+      [kretsType]: kretsStatus,
     }));
   };
 
   return {
-    values,
-    setObjectValue: setObjectValueForType,
+    kretsStatuser,
+    setKretsStatusForKretstype,
     setMultipleValues,
     resetAndClearAllLayers,
+    setOtherEditingTypes,
   };
 };
 
-export const useEditGrenseValue = (
-  grenseType: EditingType,
-  grenseId: string,
-) => {
+export const useEditGrenseValue = (kretsType: EditingType, kretsId: string) => {
   const context = useContext(EditGrenserContext);
 
   if (!context) {
@@ -144,9 +173,9 @@ export const useEditGrenseValue = (
     );
   }
 
-  const { editingObject } = context;
-  const values = editingObject[grenseType] ?? {};
-  const value = values[grenseId] ?? {};
+  const { alleKretserStatuser } = context;
+  const kretsStatuserForKretsType = alleKretserStatuser[kretsType] ?? {};
+  const kretsStatus = kretsStatuserForKretsType[kretsId] ?? {};
 
-  return value;
+  return kretsStatus;
 };

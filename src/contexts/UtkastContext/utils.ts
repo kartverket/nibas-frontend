@@ -118,19 +118,17 @@ const reduceMetadataOperations = (
 };
 
 const reduceGrenseOperations = (
-  editedFeatures: Record<string, GeoJSONFeature>,
+  editedFeatures: GeoJSONFeature[],
   entry: GrenseEntry | MetadataEntry,
-) => {
+): GeoJSONFeature[] => {
   entry.changes.forEach((change) => {
     if (!change.to) return editedFeatures;
 
     const feature = editSource.getFeatureById(change.id) as Feature<LineString>;
 
-    const featureId = feature?.getId();
+    if (!feature) return editedFeatures;
 
-    if (!featureId) return editedFeatures;
-
-    editedFeatures[featureId] = featureToGeoJson(feature);
+    editedFeatures.push(featureToGeoJson(feature));
   });
 
   return editedFeatures;
@@ -202,7 +200,7 @@ export const historyToUtkastOperations = (
   }
 
   // hent grenseendringer og gjør endringene om til en liste av features
-  const editedFeatures = (
+  const editedFeatures: GeoJSONFeature[] = (
     historyToCurrentIndex.filter(
       (entry) =>
         entry.type === "grense" ||
@@ -210,15 +208,15 @@ export const historyToUtkastOperations = (
         entry.type === "grensearkivering" ||
         entry.type === "grensetilhorighetendring",
     ) as (GrenseEntry | MetadataEntry)[]
-  ).reduce(reduceGrenseOperations, {} as Record<string, GeoJSONFeature>);
+  ).reduce(reduceGrenseOperations, [] as GeoJSONFeature[]);
 
   // hvis det er noen endringer, slå sammen tidligere endringer og nye endringer til ny liste
   if (Object.keys(editedFeatures).length > 0) {
     utkastOperations.grenseendringer = {
-      endredeFeatures: {
-        ...utkastOperations.grenseendringer?.endredeFeatures,
-        ...editedFeatures,
-      },
+      endredeFeatures:
+        utkastOperations.grenseendringer?.endredeFeatures.concat(
+          editedFeatures,
+        ),
     };
   }
 
@@ -226,7 +224,7 @@ export const historyToUtkastOperations = (
 };
 
 export const createUtkastOperations = ({
-  endredeFeatures = {},
+  endredeFeatures = [],
   fylkesendringer = {},
   grunnkretsendringer = {},
   kommuneendringer = {},
@@ -234,7 +232,7 @@ export const createUtkastOperations = ({
   stemmekretsendringer = {},
   stemmekretssammenslaaingsendringer,
 }: {
-  endredeFeatures?: Record<string, GeoJSONFeature>;
+  endredeFeatures?: GeoJSONFeature[];
   fylkesendringer?: Record<string, FylkeRequest>;
   grunnkretsendringer?: Record<string, GrunnkretsRequest>;
   kommuneendringer?: Record<string, KommuneRequest>;
