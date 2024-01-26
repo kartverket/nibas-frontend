@@ -128,7 +128,11 @@ const reduceGrenseOperations = (
 
     if (!feature) return editedFeatures;
 
-    editedFeatures.push(featureToGeoJson(feature));
+    // Skal kun legge til én feature for en gitt id
+    const featureAsGeoJson = featureToGeoJson(feature);
+    return editedFeatures
+      .filter((editedFeature) => editedFeature.id != featureAsGeoJson.id)
+      .concat(featureAsGeoJson);
   });
 
   return editedFeatures;
