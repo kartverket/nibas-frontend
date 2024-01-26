@@ -11,12 +11,11 @@ import { useToast } from "@kvib/react";
 import { Feature, MapBrowserEvent } from "ol";
 import { useHistory } from "contexts/HistoryContext";
 import { getTempFeatureId } from "./tempFeatureIdUtil";
-import { createGrenseHistoryChange } from "./historyUtil";
+import { createNyGrenseHistoryChanges } from "./historyUtil";
 import { setDefaultFeatureProperties } from "utils/features";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import LineString from "ol/geom/LineString";
-import { Metadata } from "types/api";
 
 const useDraw = () => {
   const { activeTool } = useToolbar();
@@ -44,20 +43,16 @@ const useDraw = () => {
   useEffect(() => {
     const addDrawToHistory = (e: DrawEvent) => {
       const feature = e.feature;
+      const editingType = getCurrentlyEditingType();
+      if (!editingType) return;
+
       if (feature) {
         addHistoryEntry({
-          type: "grense",
-          changes: createGrenseHistoryChange([feature]),
-        });
-        addHistoryEntry({
-          type: "metadata",
-          changes: [
-            {
-              id: e.feature.getId() as string,
-              from: {} as Metadata,
-              to: feature.getProperties().metadata as Metadata,
-            },
-          ],
+          type: "nygrense",
+          changes: createNyGrenseHistoryChanges(
+            [feature],
+            getGrenseTypeFromEditingType(editingType) || undefined,
+          ),
         });
       }
     };
