@@ -3,10 +3,9 @@ import { GeoJSONFeature, GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import LineString from "ol/geom/LineString";
 import { EntityUtkastType, UtkastEntity, ResponseWithId } from "./types";
 import {
-  GrenseEntry,
   GrunnkretsEntry,
+  HistoryEntry,
   HistoryState,
-  MetadataEntry,
   StemmekretsEntry,
   StemmekretsSammenslaaingsendringEntry,
 } from "contexts/HistoryContext";
@@ -26,7 +25,10 @@ import {
 } from "types/api";
 import { featureToGeoJson } from "utils/map/geoJson";
 import { getIdFromEntity } from "utils/api";
-import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
+import {
+  getTempFeatureId,
+  isTempFeatureId,
+} from "pages/Kart/interactions/tempFeatureIdUtil";
 
 const getCombinedEntity = <T extends ResponseWithId>(
   entity: T,
@@ -46,9 +48,16 @@ const getCombinedFeatures = (
   featureCollection: GeoJSONFeatureCollection,
   featuresSlice: NonNullable<UtkastGrenseendringer["endredeFeatures"]>,
 ) => {
-  return featureCollection.features.map(
-    (feature: GeoJSONFeature) => featuresSlice[feature.id] ?? feature,
+  const updatedFeaturesFromCollection = featureCollection.features.map(
+    (feature: GeoJSONFeature) =>
+      featuresSlice.find((f) => f.id === feature.id) ?? feature,
   );
+
+  const newFeatures = featuresSlice.filter((f) =>
+    isTempFeatureId(f.id as string),
+  );
+
+  return updatedFeaturesFromCollection.concat(newFeatures);
 };
 
 export const applyNonFeatureUtkast = <T extends NonNullable<UtkastEntity>>(
@@ -120,12 +129,14 @@ const reduceMetadataOperations = (
 
 const reduceGrenseOperations = (
   editedFeatures: GeoJSONFeature[],
-  entry: GrenseEntry | MetadataEntry,
+  entry: HistoryEntry,
 ): GeoJSONFeature[] => {
   entry.changes.forEach((change) => {
     if (!change.to) return editedFeatures;
 
     const feature = editSource.getFeatureById(change.id) as Feature<LineString>;
+
+    console.log("feature in reducregrenseops", feature);
 
     if (!feature) return editedFeatures;
 
@@ -136,6 +147,8 @@ const reduceGrenseOperations = (
       .filter((editedFeature) => editedFeature.id != featureAsGeoJson.id)
       .concat(featureAsGeoJson);
   });
+
+  console.log("testing");
 
   return editedFeatures;
 };
@@ -205,25 +218,65 @@ export const historyToUtkastOperations = (
       sammenslaaingsOperations;
   }
 
-  // hent grenseendringer og gjør endringene om til en liste av features
-  const editedFeatures: GeoJSONFeature[] = (
-    historyToCurrentIndex.filter(
-      (entry) =>
-        entry.type === "grense" ||
-        entry.type === "metadata" ||
-        entry.type === "grensearkivering" ||
-        entry.type === "grensetilhorighetendring",
-    ) as (GrenseEntry | MetadataEntry)[]
-  ).reduce(reduceGrenseOperations, [] as GeoJSONFeature[]);
+  const editedFeatureHistoryEntries = [
+    "grense",
+    "metadata",
+    "grensearkivering",
+    "grensetilhorighetendring",
+    "nygrense",
+  ];
 
-  // hvis det er noen endringer, slå sammen tidligere endringer og nye endringer til ny liste
-  if (editedFeatures.length > 0) {
-    const utkastEndredeFeatures =
-      utkastOperations.grenseendringer?.endredeFeatures || [];
-    utkastOperations.grenseendringer = {
-      endredeFeatures: utkastEndredeFeatures.concat(editedFeatures),
-    };
-  }
+  const relevantHistoryEntries = historyToCurrentIndex.filter((entry) =>
+    editedFeatureHistoryEntries.includes(entry.type),
+  );
+
+  console.log("relevant history", relevantHistoryEntries);
+
+  // hent grenseendringer og gjør endringene om til en liste av features
+  const editedFeatures: GeoJSONFeature[] =
+    utkastOperations.grenseendringer.endredeFeatures;
+
+  relevantHistoryEntries.forEach((entry) => {
+    entry.changes.forEach((change) => {
+      if (!change.to) return;
+
+      const feature = editSource.getFeatureById(
+        change.id,
+      ) as Feature<LineString>;
+
+      if (!feature) return;
+
+      const featureAsGeoJson = featureToGeoJson(feature);
+
+      const index = editedFeatures.findIndex(
+        (geoJsonFeature) => featureAsGeoJson.id === geoJsonFeature.id,
+      );
+
+      if (index >= 0) {
+        editedFeatures[index] = featureAsGeoJson;
+        return;
+      }
+
+      editedFeatures.push(featureAsGeoJson);
+    });
+  });
+
+  console.log("edited features", editedFeatures);
+
+  // // hvis det er noen endringer, slå sammen tidligere endringer og nye endringer til ny liste
+  // if (editedFeatures.length > 0) {
+  //   const utkastEndredeFeatures =
+  //     utkastOperations.grenseendringer?.endredeFeatures || [];
+
+  //   console.log("utkastoperations", utkastEndredeFeatures);
+  //   utkastOperations.grenseendringer = {
+  //     endredeFeatures: utkastEndredeFeatures.concat(editedFeatures),
+  //   };
+  // }
+
+  utkastOperations.grenseendringer = {
+    endredeFeatures: editedFeatures,
+  };
 
   return utkastOperations;
 };
