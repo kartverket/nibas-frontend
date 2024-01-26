@@ -3,7 +3,10 @@ import Geometry from "ol/geom/Geometry";
 import {
   Alert,
   AlertIcon,
+  Button,
   Datepicker,
+  Icon,
+  IconButton,
   Input,
   Select,
   Textarea,
@@ -15,6 +18,7 @@ import { getDateInFriendlyString } from "./utils";
 import useNibasApi from "hooks/useNibasApi";
 import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
 import { TilhorighetField } from "./TilhorighetField";
+import { OversiktReferanser } from "./OversiktReferanser";
 
 export type Inputs = {
   uuid: string;
@@ -195,6 +199,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
           tilhorighetToChange={tilhorighetToChange}
         />
       )}
+      <OversiktReferanser feature={feature} />
     </Container>
   );
 };
