@@ -23,12 +23,13 @@ import {
 } from "@kvib/react";
 import { styled } from "styled-components";
 import { InfoIcon } from "./MetadataGenerelt";
-import { DokrefField } from "./DokrefField";
+import { DokrefField } from "./dokref_old/DokrefField";
 import { Feature } from "ol";
-import { useDokumentreferanser } from "./useDokumentreferanser";
 import { useForm } from "react-hook-form";
 import { DokrefRow } from "./DokrefRow";
 import { useEffect, useState } from "react";
+import { useDokumentreferanser } from "./useDokumentreferanser";
+import { addCoordinateTransforms } from "ol/proj";
 
 // TODO:
 // * Vise referanseoversikt i metadata
@@ -109,30 +110,18 @@ export type DokrefForm = {
   fastsettingsdato: string;
   fastsettingsmyndighet?: string;
   hjemmel?: string;
-  internReferanserKartverket: string[];
+  internreferanserKartverket: string[];
   rettskildeId?: string;
   rettskildeTittel: string;
 };
 
 const ReferanseBody = ({ feature }: { feature: Feature }) => {
-  const { register, setValue, handleSubmit, watch } = useForm<DokrefForm>();
-  const dokumentlenker = watch("dokumentlenker", []);
-
-  useEffect(() => {
-    register("dokumentlenker");
-  }, [register]);
-
-  useEffect(() => {
-    console.log(dokumentlenker);
-  }, [dokumentlenker]);
-  const addDokumentlenke = (lenke: string) => {
-    const oppdaterteLenker = [...dokumentlenker, lenke];
-    setValue("dokumentlenker", oppdaterteLenker);
-  };
-
-  function clearInput(element: HTMLInputElement) {
-    element.value = "";
-  }
+  const {
+    dokumentlenker,
+    internreferanser,
+    addDokumentlenke,
+    addInternreferanse,
+  } = useDokumentreferanser(feature);
 
   return (
     <>
@@ -162,49 +151,34 @@ const ReferanseBody = ({ feature }: { feature: Feature }) => {
                   {dokumentlenker.map((it: string) => (
                     <Card key={it}>{it}</Card>
                   ))}
+                  <BorderTop />
+                  <ReferanseInput
+                    appendFn={addDokumentlenke}
+                    feature={feature}
+                    inputName="leggTilDokumentlenke"
+                    inputCollectionName="dokumentlenker"
+                    tooltipLabel="Tooltip"
+                    placeholder="URL til dokument"
+                    title="Legg til nytt dokument (URL)"
+                  />
                 </TabPanel>
                 <TabPanel>
-                  <Card>REF</Card>
-                  <Card>REF</Card>
-                  <Card>REF</Card>
-                  <Card>REF</Card>
+                  {internreferanser.map((it: string) => (
+                    <Card key={it}>{it}</Card>
+                  ))}
+                  <BorderTop />
+                  <ReferanseInput
+                    appendFn={addInternreferanse}
+                    feature={feature}
+                    inputName="leggTilInternreferanse"
+                    inputCollectionName="internreferanserKartverket"
+                    tooltipLabel="Tooltip"
+                    placeholder="Internreferanse"
+                    title="Legg til ny internreferanse"
+                  />
                 </TabPanel>
               </TabPanels>
             </Tabs>
-            <BorderTop />
-            <DokrefRow tooltipLabel={"Dokumentlenker"} name={"Dokumentlenker"}>
-              <Input
-                hidden
-                backgroundColor={"white"}
-                placeholder="legg til dokumentlenke"
-                {...register("dokumentlenker")}
-              />
-              <Input
-                {...register("leggTilDokumentlenke")}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    const element = e.target as HTMLInputElement;
-                    if (element?.value) {
-                      addDokumentlenke(element.value);
-                      clearInput(element);
-                    }
-                  }
-                }}
-              />
-              <Button
-                onClick={() => {
-                  const element = document.querySelector(
-                    'input[name="leggTilDokumentlenke"]',
-                  ) as HTMLInputElement;
-                  if (element?.value) {
-                    addDokumentlenke(element.value);
-                    clearInput(element);
-                  }
-                }}
-              >
-                Legg til
-              </Button>
-            </DokrefRow>
           </Card>
         </GridItem>
       </Grid>
@@ -212,14 +186,82 @@ const ReferanseBody = ({ feature }: { feature: Feature }) => {
   );
 };
 
+type InputCollection = {
+  dokumentlenker: string;
+  internreferanserKartverket: string;
+};
+
+type InputName = {
+  leggTilDokumentlenke: string;
+  leggTilInternreferanse: string;
+};
+
+const ReferanseInput = ({
+  feature,
+  inputName,
+  inputCollectionName,
+  placeholder,
+  tooltipLabel,
+  title,
+  appendFn,
+}: {
+  feature: Feature;
+  inputName: keyof InputName;
+  inputCollectionName: keyof InputCollection;
+  placeholder: string;
+  tooltipLabel: string;
+  title: string;
+  appendFn: (item: string) => void;
+}) => {
+  const { register } = useDokumentreferanser(feature);
+
+  function clearInput(element: HTMLInputElement) {
+    element.value = "";
+  }
+  return (
+    <DokrefRow tooltipLabel={tooltipLabel} name={title}>
+      <Input
+        hidden
+        placeholder={placeholder}
+        {...register(inputCollectionName)}
+      />
+      <Input
+        {...register(inputName)}
+        backgroundColor={"white"}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            const element = e.target as HTMLInputElement;
+            if (element?.value) {
+              appendFn(element.value);
+              clearInput(element);
+            }
+          }
+        }}
+      />
+      <Button
+        onClick={() => {
+          const element = document.querySelector(
+            `input[name=${inputName}]`,
+          ) as HTMLInputElement;
+          if (element?.value) {
+            appendFn(element.value);
+            clearInput(element);
+          } else throw Error(`Kunne ikke finne inputelement: ${inputName} `);
+        }}
+      >
+        Legg til
+      </Button>
+    </DokrefRow>
+  );
+};
+
 const AntallReferanser = ({
-  count = 0,
+  count,
   colorScheme,
 }: {
   count: number;
   colorScheme: "blue" | "gray";
 }) => {
-  // TODO: Ville man kastet en exception ved validering? Hva er vanlig?
   if (count < 0) count = 0;
 
   return (
