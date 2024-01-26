@@ -128,7 +128,15 @@ const reduceGrenseOperations = (
 
     if (!feature) return editedFeatures;
 
-    editedFeatures.push(featureToGeoJson(feature));
+    const featureAsGeoJson = featureToGeoJson(feature);
+    const featureIndex = editedFeatures.findIndex(
+      (editedFeature) => editedFeature.id == featureAsGeoJson.id,
+    );
+    if (featureIndex != -1) {
+      editedFeatures[featureIndex] = featureAsGeoJson;
+    } else {
+      editedFeatures.push(featureAsGeoJson);
+    }
   });
 
   return editedFeatures;
