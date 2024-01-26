@@ -43,7 +43,7 @@ export const DokrefRow = ({ children, tooltipLabel, name }: Props) => {
           </TextWithIcon>
         </Tooltip>
       </Row>
-      {children}
+      <Row>{children}</Row>
     </Container>
   );
 };
