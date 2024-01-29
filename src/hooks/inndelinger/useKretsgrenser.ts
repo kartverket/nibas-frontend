@@ -166,12 +166,6 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
       .flatMap(getFeaturesFromGeoJson)
       .concat(kretsGeometries.flat().flatMap(getFeaturesFromGeoJson));
 
-    // for (const feature of features) {
-    //   if (feature.getGeometry() instanceof LineString && !feature.getId()) {
-    //     feature.setId(getTempFeatureId());
-    //   }
-    // }
-
     return features;
   }, [kretsGeometries, utkastGeoJsons]);
 

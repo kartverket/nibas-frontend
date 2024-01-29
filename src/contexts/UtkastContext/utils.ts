@@ -4,7 +4,6 @@ import LineString from "ol/geom/LineString";
 import { EntityUtkastType, UtkastEntity, ResponseWithId } from "./types";
 import {
   GrunnkretsEntry,
-  HistoryEntry,
   HistoryState,
   StemmekretsEntry,
   StemmekretsSammenslaaingsendringEntry,
