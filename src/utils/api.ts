@@ -26,8 +26,12 @@ export const getIdFromEntity = (
   return "";
 };
 
-interface ResponseError extends Error {
-  status?: number;
+class ResponseError extends Error {
+  response: Response;
+  constructor(message: string, response: Response) {
+    super(message);
+    this.response = response;
+  }
 }
 
 /**
@@ -63,9 +67,7 @@ export const fetcherWithToken = async ([url, token]: [
   });
 
   if (!res.ok) {
-    const error: ResponseError = new Error("Fikk ikke hentet data.");
-    error.status = res.status;
-    throw error;
+    throw new ResponseError("Fikk ikke hentet data.", res);
   }
 
   return res.json();

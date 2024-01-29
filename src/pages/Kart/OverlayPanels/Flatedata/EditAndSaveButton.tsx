@@ -19,9 +19,10 @@ type Props = {
   className?: string;
   isEditing: boolean;
   isDisabled?: boolean;
-  canSave: boolean;
+  canSave?: boolean;
   onSubmit: (event: React.MouseEvent<HTMLButtonElement>) => void;
   toggleEditing: () => void;
+  size?: string;
 };
 
 const EditAndSaveButton = ({
@@ -29,8 +30,9 @@ const EditAndSaveButton = ({
   isEditing,
   isDisabled,
   toggleEditing,
-  canSave,
+  canSave = true,
   onSubmit,
+  size,
 }: Props) => (
   <Container className={className}>
     {isEditing ? (
@@ -40,12 +42,14 @@ const EditAndSaveButton = ({
           onClick={onSubmit}
           icon="check"
           isDisabled={!canSave}
+          size={size}
         />
         <IconButton
           colorScheme="gray"
           aria-label="Forkast endringer"
           onClick={toggleEditing}
           icon="close"
+          size={size}
         />
       </CombinedButton>
     ) : (
@@ -55,6 +59,7 @@ const EditAndSaveButton = ({
         onClick={toggleEditing}
         variant="secondary"
         colorScheme="gray"
+        size={size}
       >
         Rediger
       </EditButton>

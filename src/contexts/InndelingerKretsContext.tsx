@@ -6,13 +6,9 @@ import { KommuneRef } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { useOverlayPanel } from "./OverlayPanelContext";
 import { getAllVisibleFeatures, zoomToFeatures } from "utils/map";
+import { useToolbar } from "./ToolbarContext";
 
 export type Kretstype = "grunnkrets" | "stemmekrets";
-
-const layerIdByKretstype: Record<Kretstype, LayerId> = {
-  grunnkrets: "grunnkrets",
-  stemmekrets: "stemmekrets",
-};
 
 type InndelingerKretsContextValue = {
   currentKretstype: Kretstype;
@@ -59,45 +55,58 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
 
   const { currentKretstype } = context;
 
-  const { values, setObjectValue, setMultipleValues } =
-    useEditGrenser(currentKretstype);
+  const {
+    kretsStatuser,
+    setKretsStatusForKretstype,
+    setMultipleValues,
+    setOtherEditingTypes,
+  } = useEditGrenser(currentKretstype);
   const { setFlatedata, closeOverlayPanel } = useOverlayPanel();
   const { addKretserToLayer, removeKretserFromLayer, lasterData } =
     useKretsgrenser(kommuneId, currentKretstype);
+  const { enableModeTool, disableModeTool } = useToolbar();
 
-  const kommuneValues = values[kommuneId] ?? {};
+  const kommuneValues = kretsStatuser[kommuneId] ?? {};
 
+  // TODO Burde ikke cleare synlighet på kretser man har synlige hvis man skrur på redigering for en annen type krets
+  // Det er veldig knotete nå da contextene er kretsavhengige
   const toggleEditKretser = () => {
+    setOtherEditingTypes(currentKretstype, false);
+    removeKretserFromLayer("edit");
     const newEditing = !kommuneValues.editing;
-    const newValues = {
-      ...values,
+    const newKretsStatuser = {
+      ...kretsStatuser,
       [kommuneId]: {
         visible: newEditing,
         editing: newEditing,
       },
     };
 
-    const layerId: LayerId = kommuneValues.editing
-      ? "edit"
-      : layerIdByKretstype[currentKretstype];
+    const layerId: LayerId = kommuneValues.editing ? "edit" : currentKretstype;
 
     closeOverlayPanel();
     removeKretserFromLayer(layerId);
 
     if (newEditing) {
-      Object.keys(values).forEach((kommuneIdInList) => {
+      disableModeTool("move");
+    } else {
+      enableModeTool("move");
+    }
+
+    if (newEditing) {
+      Object.keys(kretsStatuser).forEach((kommuneIdInList) => {
         if (kommuneId === kommuneIdInList) return;
 
         // fjern features til kretsene som var endret før klikk
         if (
-          newValues[kommuneIdInList]?.visible &&
-          newValues[kommuneIdInList]?.editing
+          newKretsStatuser[kommuneIdInList]?.visible &&
+          newKretsStatuser[kommuneIdInList]?.editing
         ) {
           removeKretserFromLayer("edit");
         }
         // hvis tidligere endret, fjern editing og visible
-        if (newValues[kommuneIdInList]?.editing) {
-          newValues[kommuneIdInList] = {
+        if (newKretsStatuser[kommuneIdInList]?.editing) {
+          newKretsStatuser[kommuneIdInList] = {
             visible: false,
             editing: false,
           };
@@ -105,12 +114,6 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
       });
 
       setFlatedata(kommune);
-
-      // hvis ikke endret fra før, endre nå
-      if (kommuneValues.visible) {
-        removeKretserFromLayer(layerIdByKretstype[currentKretstype]);
-      }
-
       addKretserToLayer("edit");
     } else {
       removeKretserFromLayer("edit");
@@ -118,19 +121,17 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
       zoomToFeatures(getAllVisibleFeatures());
     }
 
-    setMultipleValues(newValues);
+    setMultipleValues(newKretsStatuser);
   };
 
   const toggleKretser = () => {
     const newVisible = !kommuneValues.visible;
-    setObjectValue(kommuneId, {
+    setKretsStatusForKretstype(kommuneId, {
       visible: newVisible,
       editing: kommuneValues.editing,
     });
 
-    const layerId: LayerId = kommuneValues.editing
-      ? "edit"
-      : layerIdByKretstype[currentKretstype];
+    const layerId: LayerId = kommuneValues.editing ? "edit" : currentKretstype;
 
     if (newVisible) {
       addKretserToLayer(layerId);

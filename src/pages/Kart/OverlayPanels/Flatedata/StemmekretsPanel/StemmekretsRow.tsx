@@ -5,7 +5,11 @@ import { getIdFromEntity } from "utils/api";
 import EditAndSaveButton from "../EditAndSaveButton";
 import InputCell from "../InputCell";
 import { ValidationError } from "components/Input";
-import { StemmekretsEntry, useHistory } from "contexts/HistoryContext";
+import {
+  HistoryDirection,
+  StemmekretsEntry,
+  useHistory,
+} from "contexts/HistoryContext";
 import { RegisterOptions, FieldError, useForm } from "react-hook-form";
 import { updateEditFeatureText } from "utils/map/layerStyles";
 import { getRepresentasjonspunktId } from "utils/map/source";
@@ -64,7 +68,10 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
   }, [getValues, setValue, stemmekrets]);
 
   const setFormValues = useCallback(
-    (change: StemmekretsEntry["changes"][number], direction: "to" | "from") => {
+    (
+      change: StemmekretsEntry["changes"][number],
+      direction: HistoryDirection,
+    ) => {
       const newName = change[direction]?.stemmekretsnavn;
       const newNumber = change[direction]?.stemmekretsnummer;
       setValue("stemmekretsnavn", newName ?? "");

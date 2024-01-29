@@ -182,9 +182,10 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     if (features && endredeFeatures) {
       for (const feature of features) {
         const id = feature.getId();
-        if (id && endredeFeatures[id]) {
+        const endretFeature = endredeFeatures.find((feat) => feat.id === id);
+        if (id && endretFeature) {
           // Avgjør hvilken type endringsfarge featuren skal ha
-          if (endredeFeatures[id].properties.shouldArchive) {
+          if (endretFeature.properties.shouldArchive) {
             archivedFeatureIds.push(id.toString());
           } else {
             dirtyFeatureIds.push(id.toString());

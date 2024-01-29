@@ -48,4 +48,4 @@ const customRender = (
 
 export * from "@testing-library/react";
 // override render fra pakken over for å alltid wrappe i Providers
-export { customRender as render };
+export { customRender as render, userEvent };

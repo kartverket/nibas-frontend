@@ -46,7 +46,7 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
       selectedProperties &&
       selectedProperties.metadata &&
       !isWFSGrense ? (
-        <MetadataGenerelt feature={selectedFeature} flatedata={flatedata} />
+        <MetadataGenerelt feature={selectedFeature} />
       ) : (
         <p>Valgt grense har ikke metadata</p>
       )}

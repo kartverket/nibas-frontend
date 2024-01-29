@@ -1,33 +1,37 @@
-import { Divider, Text } from "@kvib/react";
+import { Container, Divider, Icon, Text, Tooltip } from "@kvib/react";
 import { styled } from "styled-components";
 import EditAndSaveButton from "../Flatedata/EditAndSaveButton";
 import { useEffect, useState } from "react";
 import { Geometry } from "ol/geom";
 import { Feature } from "ol";
-import { Container } from "./MetadataGenerelt";
 
 interface Props {
   feature: Feature<Geometry>;
   name: string;
-  valueLabel: () => string;
+  valueLabel: string;
+  tooltipLabel: string;
   children: React.ReactNode;
   onMetadataSubmit: () => void;
   isDisabled?: boolean;
   isDirty: boolean;
+  isUneditable?: boolean;
   reset: () => void;
 }
 
 const MetadataRow = ({
   feature,
   name,
+  tooltipLabel,
   valueLabel,
   children,
   onMetadataSubmit,
   isDisabled,
   isDirty,
+  isUneditable,
   reset,
 }: Props) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [iconHovered, setIconHovered] = useState(false);
 
   useEffect(() => {
     setIsEditing(false);
@@ -50,38 +54,83 @@ const MetadataRow = ({
   return (
     <Container>
       <EditContent>
-        <Text>{name}</Text>
+        <Row>
+          <Tooltip label={tooltipLabel} hasArrow placement="bottom">
+            <TextWithIcon
+              onMouseOver={() => setIconHovered(true)}
+              onMouseOut={() => setIconHovered(false)}
+            >
+              <Text as="b">{name}</Text>
+              <InfoIcon>
+                <Icon
+                  size={24}
+                  color="var(--kvib-colors-blue-500)"
+                  isFilled={iconHovered}
+                  icon={"info"}
+                ></Icon>
+              </InfoIcon>
+            </TextWithIcon>
+          </Tooltip>
 
-        {!isEditing && <Text as="b">{valueLabel()}</Text>}
-
-        <EditButton
-          isDisabled={isDisabled}
-          isEditing={isEditing}
-          canSave={isDirty}
-          onSubmit={handleMetadataSubmit}
-          toggleEditing={toggleEditing}
-        />
-        <Field $isEditing={isEditing}>{children}</Field>
+          {!isUneditable && (
+            <EditAndSaveButton
+              isDisabled={isDisabled}
+              isEditing={isEditing}
+              size="sm"
+              onSubmit={() => {
+                if (isDirty) {
+                  onMetadataSubmit();
+                }
+                setIsEditing(false);
+              }}
+              toggleEditing={() =>
+                setIsEditing((prevState) => {
+                  if (isEditing) {
+                    reset();
+                  }
+                  return !prevState;
+                })
+              }
+            />
+          )}
+        </Row>
+        {isEditing ? (
+          <Field>{children}</Field>
+        ) : (
+          <Field>{valueLabel || "Ikke spesifisert"}</Field>
+        )}
       </EditContent>
       <Divider />
     </Container>
   );
 };
 
+const InfoIcon = styled.div`
+  margin-left: 8px;
+  display: flex;
+  align-items: center;
+  cursor: default;
+`;
+
 const EditContent = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 16px;
+  display: flex;
+  flex-direction: column;
 `;
 
-const Field = styled.div<{ $isEditing: boolean }>`
-  grid-row: 2;
-  grid-column: 1 / -1;
-  ${(props) => !props.$isEditing && "display: none"};
+const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 `;
 
-const EditButton = styled(EditAndSaveButton)`
-  grid-column: 3;
+const TextWithIcon = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const Field = styled.div`
+  margin-top: 8px;
 `;
 
 export default MetadataRow;

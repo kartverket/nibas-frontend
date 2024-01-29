@@ -3,12 +3,18 @@ export type Shortcut =
   | "redo"
   | "undo"
   | "edit"
+  | "edit_point"
+  | "move"
   | "add"
   | "remove"
   | "merge"
   | "layers"
   | "snap"
-  | "open";
+  | "open"
+  | "grenseinfo"
+  | "archive"
+  | "matrikkel"
+  | "flate";
 
 type KeyboardShortcut = {
   displayString: string;
@@ -70,7 +76,9 @@ const createShortcut = (
 });
 
 export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
-  edit: createShortcut("f", { control: true, shift: true }),
+  move: createShortcut("v", {}),
+  edit: createShortcut("r", {}),
+  edit_point: createShortcut("f", { control: true }),
   add: createShortcut("l", { control: true }),
   remove: createShortcut("l", { control: true, shift: true }),
   merge: createShortcut("m", { control: true }),
@@ -80,4 +88,8 @@ export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
   undo: createShortcut("z", { control: true }),
   save: createShortcut("s", { control: true }),
   open: createShortcut("o", { control: true }),
+  grenseinfo: createShortcut("i", { control: true }),
+  flate: createShortcut("i", { control: true, shift: true }),
+  archive: createShortcut("a", { control: true }),
+  matrikkel: createShortcut("e", { control: true }),
 };

@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { GrunnkretsEntry, useHistory } from "contexts/HistoryContext";
+import {
+  GrunnkretsEntry,
+  HistoryDirection,
+  useHistory,
+} from "contexts/HistoryContext";
 import { useHistoryFormSync } from "contexts/HistoryContext/useHistoryFormSync";
 import { GrunnkretsRequest, GrunnkretsResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
@@ -62,7 +66,10 @@ const GrunnkretsRow = ({ grunnkrets, kommuneId }: Props) => {
   }, [getValues, setValue, grunnkrets]);
 
   const setFormValues = useCallback(
-    (change: GrunnkretsEntry["changes"][number], direction: "to" | "from") => {
+    (
+      change: GrunnkretsEntry["changes"][number],
+      direction: HistoryDirection,
+    ) => {
       const newName = change[direction]?.navn;
       const newNumber = change[direction]?.grunnkretsnummer;
       setValue("grunnkretsnavn", newName ?? "");

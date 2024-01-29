@@ -29,8 +29,8 @@ const fylkesgrenserFetcher = async ([fylkeIds, token]: [
 };
 
 const useFylkesgrenser = () => {
-  const { value: editgrenseValue } = useEditGrenseValue("fylke", "fylker");
-  const shouldFetch = editgrenseValue.editing || editgrenseValue.visible;
+  const { kretsStatus } = useEditGrenseValue("fylke", "fylker");
+  const shouldFetch = kretsStatus.editing || kretsStatus.visible;
   const [isFetching, setIsFetching] = useState(false);
   const { fylker } = useFylker(shouldFetch);
   const fylkeIds = fylker?.map(getIdFromEntity) ?? [];

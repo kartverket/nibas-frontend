@@ -1,20 +1,48 @@
 import LineString from "ol/geom/LineString";
-import { GrenseEntry, GrenseTilhorighetEntry, MetadataEntry } from "./types";
+import {
+  HistoryDirection,
+  GrenseEntry,
+  GrenseTilhorighetEntry,
+  HistoryChange,
+  MetadataEntry,
+} from "./types";
 import { editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
 
+const getFeatureFromChange = (
+  change: HistoryChange<number[][]>,
+  direction: HistoryDirection,
+) => {
+  const existingFeature = editSource.getFeatureById(
+    change.id,
+  ) as Feature<Geometry> | null;
+  if (!existingFeature && direction === "to" && change[direction]) {
+    const newFeature = new Feature({
+      geometry: new LineString(change[direction]),
+    });
+    newFeature.setId(change.id);
+    editSource.addFeature(newFeature);
+    return newFeature;
+  }
+
+  return existingFeature;
+};
+
 export const setFeatureCoordinatesForEntry = (
   entry: GrenseEntry,
-  direction: "from" | "to",
+  direction: HistoryDirection,
 ) => {
   entry.changes.forEach((change) => {
-    const feature = editSource.getFeatureById(
-      change.id,
-    ) as Feature<Geometry> | null;
+    const feature = getFeatureFromChange(change, direction);
     if (!feature) return;
 
     const lineString = feature.getGeometry() as LineString;
+
+    if (direction === "from" && !change[direction]) {
+      editSource.removeFeature(feature);
+    }
+
     const coordinates = change[direction];
     if (!coordinates) return;
 
@@ -30,7 +58,7 @@ export const setFeatureCoordinatesForEntry = (
 
 export const setFeatureMetadataForEntry = (
   entry: MetadataEntry,
-  direction: "from" | "to",
+  direction: HistoryDirection,
 ) => {
   entry.changes.forEach((change) => {
     const feature = editSource.getFeatureById(
@@ -48,7 +76,7 @@ export const setFeatureMetadataForEntry = (
 
 export const setKontekstEgenskaperForEntry = (
   entry: GrenseTilhorighetEntry,
-  direction: "from" | "to",
+  direction: HistoryDirection,
 ) => {
   entry.changes.forEach((change) => {
     const feature = editSource.getFeatureById(

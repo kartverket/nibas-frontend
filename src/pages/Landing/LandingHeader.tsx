@@ -35,6 +35,7 @@ const Container = styled.div`
   display: flex;
   padding: 24px 64px;
   justify-content: space-between;
+  background: var(--kvib-colors-white);
 `;
 
 const Section = styled.section`

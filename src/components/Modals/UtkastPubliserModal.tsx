@@ -30,6 +30,8 @@ import { statusCode } from "utils/api";
 import { useUtkast } from "contexts/UtkastContext";
 import { useMatch, useNavigate } from "react-router-dom";
 import { routes } from "utils/routes";
+import { GrenseType } from "hooks/layers/types";
+import { isAdministrativGrense } from "utils/grenser";
 
 type Props = {
   isOpen: boolean;
@@ -101,6 +103,14 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
     }
   };
 
+  const utkastHarEndringAdministrativeGrenser = (): boolean => {
+    const endredeFeatures = utkast.operasjoner.grenseendringer.endredeFeatures;
+
+    return Object.values(endredeFeatures).some((feature) =>
+      isAdministrativGrense(feature.properties.type as GrenseType),
+    );
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered size="2xl">
       <ModalOverlay />
@@ -118,13 +128,34 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
               </AlertDescription>
             </div>
           </Alert>
+
+          {
+            // TODO Fjern når vi har delt geometri?
+            utkastHarEndringAdministrativeGrenser() && (
+              <Alert status="warning">
+                <AlertIcon />
+                <div>
+                  <AlertTitle>
+                    Utkastet ditt inneholder endringer på administrative grenser
+                  </AlertTitle>
+                  <AlertDescription>
+                    Pass på at du er sikker på endringene dine, og husk å gjøre
+                    tilsvarende endring for både grunnkretsgrense og
+                    stemmekretsgrense.
+                  </AlertDescription>
+                </div>
+              </Alert>
+            )
+          }
           <EndringsloggAccordion utkast={utkast} />
           <Datepickerlabel>
             Fra hvilken dato skal endringene utkastet tre i kraft?
             <Datepicker
               fromDate={new Date()}
               defaultSelected={new Date()}
-              onChange={() => setPubliseringsdato}
+              onChange={(event) =>
+                setPubliseringsdato(new Date(event.target.value))
+              }
             />
           </Datepickerlabel>
         </Body>

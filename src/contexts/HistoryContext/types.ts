@@ -81,3 +81,5 @@ export type HistoryContextValue = {
   undo: (() => void) | undefined;
   redo: (() => void) | undefined;
 };
+
+export type HistoryDirection = "from" | "to";

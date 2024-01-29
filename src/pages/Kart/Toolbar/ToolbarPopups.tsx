@@ -14,7 +14,6 @@ import { useErrorHandling } from "contexts/ErrorHandlingContext";
 const ToolbarPopups = () => {
   const [matrikkelIsLoading, setMatrikkelIsLoading] = useState(false);
   const { setError } = useErrorHandling();
-
   const toast = useToast();
   const { split } = useSplit();
   const { addHistoryEntry } = useHistory();
@@ -34,13 +33,27 @@ const ToolbarPopups = () => {
       addArchivingEntryFromFeature(selectedFeature, addHistoryEntry),
         clearSelection();
       toast({ status: "success", title: "Grensen ble arkivert" });
+      toast({
+        status: "warning",
+        title: "Husk å sette tilhørighet på berørte grenser",
+        description: `For øyeblikket må alle flatetilhørigheter på grensene legges til manuelt. 
+        Husk å se gjennom og sørg for at alle tilhørighetene stemmer. 
+        Er ikke de satt ordentlig vil ikke publiseringen kunne gjennomføres uten feil. 
+        Tilhørigheten kan settes ved å bruke "Se og endre 
+        grenseinformasjon"-verktøyet.`,
+        isClosable: true,
+        duration: null,
+      });
     }
   };
 
   const handleSplit = () => {
     split();
     clearSelection();
-    toast({ status: "success", title: "Grensen ble splittet" });
+    toast({
+      status: "success",
+      title: "Grensen ble splittet",
+    });
   };
 
   const handleMatrikkel = async () => {

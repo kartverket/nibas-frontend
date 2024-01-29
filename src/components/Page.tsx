@@ -1,11 +1,12 @@
 import { styled } from "styled-components";
 
-export const BasePage = styled.main`
-  background: var(--kvib-colors-gray-50);
+export const PageContainer = styled.div`
+  display: grid;
+  grid-template-rows: auto 1fr auto;
   min-height: 100%;
 `;
 
-export const Page = styled(BasePage)`
+export const Page = styled.main`
   display: grid;
   justify-content: center;
   justify-items: center;
@@ -14,4 +15,5 @@ export const Page = styled(BasePage)`
   gap: 18px 0;
   height: 100%;
   padding: 128px 20px;
+  background: var(--kvib-colors-gray-50);
 `;

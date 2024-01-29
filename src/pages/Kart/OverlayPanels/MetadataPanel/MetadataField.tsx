@@ -5,15 +5,17 @@ import { Feature } from "ol";
 import { FeatureProperties, Metadata } from "types/api";
 import React, { useEffect } from "react";
 import useIsMetadataDisabled from "../hooks/useIsMetadataDisabled";
-import { Inputs } from "./MetadataGenerelt";
 import { UseFormRegisterReturn } from "react-hook-form";
+import { Inputs } from "./MetadataGenerelt";
 
 type Props = {
   feature: Feature<Geometry>;
   fieldKey: keyof Inputs;
   fieldLabel: string;
+  tooltipLabel: string;
   valueLabelFormatter?: (fieldLabel: string) => string | null;
-  disabledByFeatureLock?: boolean;
+  isDisabled?: boolean;
+  isUneditable?: boolean;
   renderItem: (register: UseFormRegisterReturn<"metadata">) => React.ReactNode;
 };
 
@@ -21,8 +23,10 @@ export const MetadataField = ({
   feature,
   fieldKey,
   fieldLabel,
+  tooltipLabel,
   valueLabelFormatter,
-  disabledByFeatureLock,
+  isDisabled,
+  isUneditable,
   renderItem,
 }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
@@ -50,19 +54,19 @@ export const MetadataField = ({
     <MetadataRow
       feature={feature}
       name={fieldLabel}
-      valueLabel={() =>
+      tooltipLabel={tooltipLabel}
+      valueLabel={
         valueLabelFormatter
           ? valueLabelFormatter(getValues().metadata) ?? "Ukjent"
           : getValues().metadata
       }
       onMetadataSubmit={onSubmit}
       isDisabled={
-        metadataIsDisabled ||
-        disabledByFeatureLock ||
-        metadata.common?.gyldigTil != null
+        metadataIsDisabled || isDisabled || metadata.common?.gyldigTil != null
       }
       isDirty={isDirty}
       reset={reset}
+      isUneditable={isUneditable}
     >
       {renderItem(register("metadata"))}
     </MetadataRow>

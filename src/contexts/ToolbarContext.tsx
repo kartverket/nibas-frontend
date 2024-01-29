@@ -10,6 +10,17 @@ export type Tool =
   | "metadata"
   | "koordinater"
   | "archive";
+
+const editTools: Tool[] = [
+  "add",
+  "remove",
+  "draw",
+  "split",
+  "detach",
+  "koordinater",
+  "archive",
+];
+
 type ModeTool = "move" | "snap" | "matrikkel";
 
 export type ToolbarContextValue = {
@@ -19,6 +30,8 @@ export type ToolbarContextValue = {
 
   activeModeTools: ModeTool[];
   toggleModeTool: (modeTool: ModeTool) => void;
+  enableModeTool: (modeTool: ModeTool) => void;
+  disableModeTool: (modeTool: ModeTool) => void;
   resetModeTools: () => void;
 };
 
@@ -43,6 +56,9 @@ export const ToolbarProvider = ({
       setActiveTool(null);
     } else {
       setActiveTool(tool);
+      if (editTools.includes(tool)) {
+        disableModeTool("move");
+      }
     }
   };
 
@@ -51,6 +67,18 @@ export const ToolbarProvider = ({
       setActiveModeTools(activeModeTools.filter((em) => em !== modeTool));
     } else {
       setActiveModeTools(activeModeTools.concat(modeTool));
+    }
+  };
+
+  const enableModeTool = (modeTool: ModeTool) => {
+    if (!activeModeTools.includes(modeTool)) {
+      setActiveModeTools(activeModeTools.concat(modeTool));
+    }
+  };
+
+  const disableModeTool = (modeTool: ModeTool) => {
+    if (activeModeTools.includes(modeTool)) {
+      setActiveModeTools(activeModeTools.filter((em) => em !== modeTool));
     }
   };
 
@@ -68,6 +96,8 @@ export const ToolbarProvider = ({
     toggleTool,
     activeModeTools,
     toggleModeTool,
+    enableModeTool,
+    disableModeTool,
     resetTool: () => setActiveTool(defaultTool),
     resetModeTools,
   };

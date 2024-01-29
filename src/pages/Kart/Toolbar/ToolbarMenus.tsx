@@ -1,4 +1,3 @@
-import { styled } from "styled-components";
 import {
   Icon,
   Menu,
@@ -7,12 +6,14 @@ import {
   MenuItemProps,
   MenuList,
 } from "@kvib/react";
-import ModeButton from "./ModeButton";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
+import { styled } from "styled-components";
 import CustomTooltip from "./CustomTooltip";
+import ModeButton from "./ModeButton";
+import { KeyboardShortcuts } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
 
 type MenuItems = (MenuItemProps & {
   $isActive: boolean;
@@ -54,7 +55,7 @@ const ToolbarMenus = () => {
     }
   };
 
-  const toggleMove = () => {
+  const toggleMovePoint = () => {
     toggleTool("koordinater");
 
     if (activeOverlayPanel === "koordinater") {
@@ -73,9 +74,12 @@ const ToolbarMenus = () => {
   const isEditMode = !!editingType;
   useKeyboardShortcut("add", () => toggleTool("add"), isEditMode);
   useKeyboardShortcut("remove", () => toggleTool("remove"), isEditMode);
-  useKeyboardShortcut("edit", toggleMove, isEditMode);
+  useKeyboardShortcut("edit_point", toggleMovePoint, isEditMode);
   useKeyboardShortcut("snap", () => toggleModeTool("snap"), isEditMode);
   useKeyboardShortcut("merge", toggleMergePanel, editingType === "stemmekrets");
+  useKeyboardShortcut("grenseinfo", toggleMetadata);
+  useKeyboardShortcut("archive", () => toggleTool("archive"), isEditMode);
+  useKeyboardShortcut("flate", toggleFlatedetaljer);
 
   // For å kunne vise at en meny er aktiv må vi kunne sjekke hvorvidt noen av menuitems er aktive
   // Korteste vei til mål da blir å kunne iterere gjennom menu items
@@ -109,6 +113,7 @@ const ToolbarMenus = () => {
     {
       label: "Se/endre grenseinformasjon",
       icon: <Icon icon="live_help" />,
+      command: KeyboardShortcuts["grenseinfo"].displayString,
       $isActive: activeTool === "metadata",
       isDisabled: false,
       onClick: toggleMetadata,
@@ -117,6 +122,7 @@ const ToolbarMenus = () => {
     {
       label: "Arkiver grense",
       icon: <Icon icon="archive" />,
+      command: KeyboardShortcuts["archive"].displayString,
       $isActive: activeTool === "archive",
       isDisabled: !isEditMode,
       onClick: () => toggleTool("archive"),
@@ -127,14 +133,16 @@ const ToolbarMenus = () => {
     {
       label: "Flytt punkt med koordinater",
       icon: <Icon icon="ads_click" />,
+      command: KeyboardShortcuts["edit_point"].displayString,
       $isActive: activeTool === "koordinater",
       isDisabled: !isEditMode,
-      onClick: toggleMove,
+      onClick: toggleMovePoint,
       "aria-label": "Flytt punkt med koordinater",
     },
     {
       label: "Legg til punkt",
       icon: <Icon icon="add_location_alt" />,
+      command: KeyboardShortcuts["add"].displayString,
       $isActive: activeTool === "add",
       isDisabled: !isEditMode,
       onClick: () => toggleTool("add"),
@@ -143,6 +151,7 @@ const ToolbarMenus = () => {
     {
       label: "Fjern punkt",
       icon: <Icon icon="wrong_location" />,
+      command: KeyboardShortcuts["remove"].displayString,
       $isActive: activeTool === "remove",
       isDisabled: !isEditMode,
       onClick: () => toggleTool("remove"),
@@ -153,6 +162,7 @@ const ToolbarMenus = () => {
     {
       label: "Se/endre flatedetaljer",
       icon: <Icon icon="edit_location_alt" />,
+      command: KeyboardShortcuts["flate"].displayString,
       isDisabled: !isEditMode,
       $isActive: flatedetaljerIsActive,
       onClick: toggleFlatedetaljer,
@@ -161,6 +171,7 @@ const ToolbarMenus = () => {
     {
       label: "Slå sammen flater",
       icon: <Icon icon="merge" />,
+      command: KeyboardShortcuts["merge"].displayString,
       $isActive: mergeIsActive,
       isDisabled: editingType !== "stemmekrets",
       onClick: toggleMergePanel,

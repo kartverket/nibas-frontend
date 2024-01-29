@@ -1,18 +1,22 @@
-import { styled } from "styled-components";
-import { map } from "../constants";
-import ModeButton from "./ModeButton";
+import { Divider } from "@kvib/react";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
-import CustomTooltip from "./CustomTooltip";
-import { Divider } from "@kvib/react";
-import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
-import ToolbarPopups from "./ToolbarPopups";
-import ToolbarMenus from "./ToolbarMenus";
+import {
+  useHoldButtonToggle,
+  useKeyboardShortcut,
+} from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
+import { styled } from "styled-components";
 import { getLayerById } from "utils/map/layers";
+import { map } from "../constants";
+import CustomTooltip from "./CustomTooltip";
+import ModeButton from "./ModeButton";
+import ToolbarMenus from "./ToolbarMenus";
+import ToolbarPopups from "./ToolbarPopups";
 
 const Toolbar = () => {
-  const { activeModeTools, toggleModeTool } = useToolbar();
+  const { activeModeTools, toggleModeTool, enableModeTool, disableModeTool } =
+    useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const editingType = getCurrentlyEditingType();
   const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } =
@@ -45,26 +49,40 @@ const Toolbar = () => {
   };
 
   useKeyboardShortcut("layers", toggleKartlag);
+  useKeyboardShortcut("move", () => enableModeTool("move"));
+  useKeyboardShortcut("edit", () => disableModeTool("move"), !!editingType);
+  useKeyboardShortcut("matrikkel", () => toggleModeTool("matrikkel"));
+  useHoldButtonToggle(
+    "alt",
+    activeModeTools.includes("move"),
+    () => enableModeTool("move"),
+    () => disableModeTool("move"),
+    !!editingType,
+  );
 
   return (
     <OuterContainer>
       <ToolbarPopups />
       <Container>
         <ToolbarButtons>
-          <CustomTooltip text="Panorer i kartet">
+          <CustomTooltip
+            text="Panorer i kartet"
+            shortcut="move"
+            holdButton="ALT-tasten"
+          >
             <ModeButton
               icon="pan_tool"
-              onClick={() => toggleModeTool("move")}
+              onClick={() => enableModeTool("move")}
               isActive={activeModeTools.includes("move")}
               ariaLabel="Panorer i kartet"
             >
               Panorer
             </ModeButton>
           </CustomTooltip>
-          <CustomTooltip text="Rediger grenser i kartet">
+          <CustomTooltip text="Rediger grenser i kartet" shortcut="edit">
             <ModeButton
               icon="arrow_selector_tool"
-              onClick={() => toggleModeTool("move")}
+              onClick={() => disableModeTool("move")}
               isActive={!activeModeTools.includes("move")}
               ariaLabel="Rediger grenser i kartet"
               isDisabled={!editingType}
@@ -88,14 +106,19 @@ const Toolbar = () => {
               Kartlag
             </ModeButton>
           </CustomTooltip>
-          <ModeButton
-            icon="holiday_village"
-            ariaLabel="Vis grenser fra matrikkelen"
-            isActive={activeModeTools.includes("matrikkel")}
-            onClick={toggleMatrikkel}
+          <CustomTooltip
+            text="Vis grenser fra matrikkelen"
+            shortcut="matrikkel"
           >
-            Matrikkel
-          </ModeButton>
+            <ModeButton
+              icon="holiday_village"
+              ariaLabel="Vis grenser fra matrikkelen"
+              isActive={activeModeTools.includes("matrikkel")}
+              onClick={toggleMatrikkel}
+            >
+              Matrikkel
+            </ModeButton>
+          </CustomTooltip>
           <CustomTooltip
             text="Skru av/på snapping mot kartlag."
             shortcut="snap"

@@ -8,6 +8,7 @@ import { useCallback, useEffect } from "react";
 import {
   GrenseEntry,
   HistoryChange,
+  HistoryDirection,
   useHistory,
 } from "contexts/HistoryContext";
 import { SelectedPoint, useFeatureStyle } from "contexts/FeatureStyleContext";
@@ -59,6 +60,10 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
     };
   };
 
+  const coordinateDecimalPattern = /^\d+(\.\d+)?$/;
+  const coordinateDecimalPatternHelperText =
+    "Koordinatet ditt må være et tall med eventuell punktum-separator";
+
   const {
     register,
     handleSubmit,
@@ -72,7 +77,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
   // Hjelpefunksjon for å gå gjennom en feature og finne punktet som er påvirket av grensejustering
   const getCoordinateFromChange = (
     change: HistoryChange<number[][]>,
-    direction: "to" | "from",
+    direction: HistoryDirection,
   ) => {
     for (let index = 0; index < change.from.length; index++) {
       const fromCoord = change.from[index];
@@ -84,7 +89,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
   };
 
   const setFormValues = useCallback(
-    (e: CustomEvent, direction: "to" | "from") => {
+    (e: CustomEvent, direction: HistoryDirection) => {
       // Dette skal bare kjøres dersom et punkt er valgt, ikke ved alle grensendringer
       if (selectedPoint) {
         const entry = e.detail.entry as GrenseEntry;
@@ -193,8 +198,22 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
       </PanelHeader>
       <Form onSubmit={handleSubmit(movePoint)}>
         <InputRow>
-          <Input label="Nord" {...register("north")} />
-          <Input label="Øst" {...register("east")} />
+          <Input
+            type="text"
+            inputMode="decimal"
+            pattern={coordinateDecimalPattern.source}
+            title={coordinateDecimalPatternHelperText}
+            label="Nord"
+            {...register("north")}
+          />
+          <Input
+            type="text"
+            inputMode="decimal"
+            pattern={coordinateDecimalPattern.source}
+            title={coordinateDecimalPatternHelperText}
+            label="Øst"
+            {...register("east")}
+          />
         </InputRow>
         <Button type="submit" isDisabled={!isDirty}>
           Flytt punkt til koordinater
