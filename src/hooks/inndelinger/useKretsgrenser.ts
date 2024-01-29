@@ -27,8 +27,6 @@ import { stemmekretsgrenserFetcher } from "api/stemmekrets";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { getAllVisibleFeatures, getZoomMode, zoomToFeatures } from "utils/map";
 import { getLayerById } from "utils/map/layers";
-import { getTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
-import { LineString } from "ol/geom";
 
 const endpointByKretstype = {
   grunnkrets: "grunnkretser",
@@ -181,7 +179,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
       utkast?.operasjoner.grenseendringer?.endredeFeatures;
     const dirtyFeatureIds: string[] = [];
     const archivedFeatureIds: string[] = [];
-    console.log(endredeFeatures);
+
     if (features && endredeFeatures) {
       for (const feature of endredeFeatures) {
         const id = feature.id;
@@ -195,8 +193,6 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
         }
       }
     }
-
-    console.log(dirtyFeatureIds);
 
     const sammenslaaing = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
     const innlemmedeStemmekretsIder =
