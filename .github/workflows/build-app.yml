@@ -76,7 +76,7 @@ jobs:
           rm .npmrc
           mv .npmrc-copy .npmrc
       - name: Login to Github Container Registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ${{ env.registry }}
           username: ${{ github.actor }}
