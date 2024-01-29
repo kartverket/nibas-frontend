@@ -27,6 +27,7 @@ import useNibasApi from "hooks/useNibasApi";
 import {
   ApiErrorResponse,
   OppdaterUtkastRequest,
+  UtkastOperasjoner,
   UtkastResponse,
 } from "types/api";
 import { resetMapView } from "utils/map";
@@ -131,11 +132,30 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [fetchedUtkast, utkastId, mutate, utkast, closeUtkast]);
 
+  const operasjonerIsValid = (operasjoner: UtkastOperasjoner): boolean => {
+    const endredeFeatures = operasjoner.grenseendringer.endredeFeatures;
+
+    for (const feature of endredeFeatures) {
+      if (feature.properties.kontekstEgenskaper.length < 2) {
+        toast({
+          status: "error",
+          title: "Utkast feilet validering",
+          description: `Feature med ID ${feature.id} mangler kontekstegenskaper. Husk at nye grenser må få tilhørighet`,
+        });
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   const getUpdateUtkastRequestFromHistory =
     (): OppdaterUtkastRequest | null => {
       if (!utkast) return null;
 
       const operasjoner = historyToUtkastOperations(history, utkast);
+
+      if (!operasjonerIsValid(operasjoner)) return null;
 
       const updatedUtkast: OppdaterUtkastRequest = {
         endringstype: utkast.endringstype,
