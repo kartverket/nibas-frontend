@@ -29,13 +29,10 @@ export const ReferanseInput = ({
   }
   return (
     <DokrefRow tooltipLabel={tooltipLabel} name={title}>
-      <Input
-        hidden
-        placeholder={placeholder}
-        {...register(inputCollectionName)}
-      />
+      <Input hidden {...register(inputCollectionName)} />
       <Input
         {...register(inputName)}
+        placeholder={placeholder}
         backgroundColor={"white"}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
