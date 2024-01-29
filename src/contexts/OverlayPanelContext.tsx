@@ -9,9 +9,9 @@ type OverlayPanel =
   | "tegnforklaring"
   | "koordinater"
   | "kartlag";
+export type Flatedata = KommuneRef | null;
 
 type OverlayModal = "stemmekrets" | "grunnkrets";
-type Flatedata = KommuneRef | null;
 
 export type OverlayPanelContextValue = {
   activeOverlayPanel: OverlayPanel | null;

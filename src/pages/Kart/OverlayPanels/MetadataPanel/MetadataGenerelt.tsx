@@ -10,11 +10,11 @@ import {
 } from "@kvib/react";
 import { GrenseType } from "../../../../hooks/layers/types";
 import { styled } from "styled-components";
-import { MetadataField } from "./MetadataField";
 import { getDateInFriendlyString } from "./utils";
 import useNibasApi from "hooks/useNibasApi";
 import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
 import { TilhorighetField } from "./TilhorighetField";
+import { MetadataField } from "./MetadataField";
 
 export type Inputs = {
   uuid: string;

@@ -1,10 +1,9 @@
-import { Divider, Icon, Text, Tooltip } from "@kvib/react";
+import { Container, Divider, Icon, Text, Tooltip } from "@kvib/react";
 import { styled } from "styled-components";
 import EditAndSaveButton from "../Flatedata/EditAndSaveButton";
 import { useEffect, useState } from "react";
 import { Geometry } from "ol/geom";
 import { Feature } from "ol";
-import { Container } from "./MetadataGenerelt";
 
 interface Props {
   feature: Feature<Geometry>;
@@ -37,6 +36,20 @@ const MetadataRow = ({
   useEffect(() => {
     setIsEditing(false);
   }, [feature]);
+
+  const handleMetadataSubmit = () => {
+    onMetadataSubmit();
+    setIsEditing(false);
+  };
+
+  const toggleEditing = () => {
+    setIsEditing((prevState) => {
+      if (isEditing) {
+        reset();
+      }
+      return !prevState;
+    });
+  };
 
   return (
     <Container>

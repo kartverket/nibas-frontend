@@ -5,8 +5,8 @@ import { Feature } from "ol";
 import { FeatureProperties, Metadata } from "types/api";
 import React, { useEffect } from "react";
 import useIsMetadataDisabled from "../hooks/useIsMetadataDisabled";
-import { Inputs } from "./MetadataGenerelt";
 import { UseFormRegisterReturn } from "react-hook-form";
+import { Inputs } from "./MetadataGenerelt";
 
 type Props = {
   feature: Feature<Geometry>;
