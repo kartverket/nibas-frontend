@@ -12,10 +12,6 @@ const useIsMetadataDisabled = (
     properties.inndelingerKontekst?.type ?? "fylke",
   );
 
-  // const featureKontekstId = properties.inndelingerKontekst?.id;
-
-  // if (!featureKontekstId) return true;
-
   const kretsStatus = kretsStatuser[feature.getId() ?? ""];
 
   const borderIsNotEditable = !featureIsEditable(feature);
