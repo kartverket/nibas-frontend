@@ -6,6 +6,7 @@ import {
   GridItem,
   Icon,
   Input,
+  Link,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -23,13 +24,9 @@ import {
 } from "@kvib/react";
 import { styled } from "styled-components";
 import { InfoIcon } from "./MetadataGenerelt";
-import { DokrefField } from "./dokref_old/DokrefField";
 import { Feature } from "ol";
-import { useForm } from "react-hook-form";
 import { DokrefRow } from "./DokrefRow";
-import { useEffect, useState } from "react";
 import { useDokumentreferanser } from "./useDokumentreferanser";
-import { addCoordinateTransforms } from "ol/proj";
 
 // TODO:
 // * Vise referanseoversikt i metadata
@@ -37,9 +34,43 @@ import { addCoordinateTransforms } from "ol/proj";
 //   ** Tooltip button skal bytte farge ved hover
 //   ** Riktig farge på "ny referanse"
 // * Modal for å legge til referanser
+//   ** legge til URLer                                     OK
+//   ** legge til referanser                                OK
+//   ** resterende felter
+//   ** oppdatere historikk
 // * Modal for å vise referansedetaljer
+//   ** sendes med fra feature
+//   ** helst gjenbruke modal og skjema
 
-export const OversiktReferanser = ({ feature }: { feature: Feature }) => {
+type Referanse = {
+  beskrivelse: string;
+  apiId?: string;
+};
+
+type DokrefForm = {
+  apiId?: string;
+  dokumentlenker: Referanse[];
+  leggTilDokumentlenke?: string;
+  fastsettingsdato: string;
+  fastsettingsmyndighet?: string;
+  hjemmel?: string;
+  internreferanserKartverket: Referanse[];
+  leggTilInternreferanse?: string;
+  rettskildeId?: string;
+  rettskildeTittel: string;
+};
+
+type InputCollection = {
+  dokumentlenker: string;
+  internreferanserKartverket: string;
+};
+
+type InputName = {
+  leggTilDokumentlenke: string;
+  leggTilInternreferanse: string;
+};
+
+const OversiktReferanser = ({ feature }: { feature: Feature }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -65,7 +96,12 @@ export const OversiktReferanser = ({ feature }: { feature: Feature }) => {
           </EditButton>
         </OversiktHeader>
       </Tooltip>
-      <ReferanserDetaljer isOpen={isOpen} onClose={onClose} feature={feature} />
+      <ReferanserDetaljer
+        isOpen={isOpen}
+        onClose={onClose}
+        feature={feature}
+        displayMode={false}
+      />
     </div>
   );
 };
@@ -74,7 +110,9 @@ const ReferanserDetaljer = ({
   isOpen,
   onClose,
   feature,
+  displayMode,
 }: {
+  displayMode: boolean;
   feature: Feature;
   isOpen: boolean;
   onClose: () => void;
@@ -93,26 +131,14 @@ const ReferanserDetaljer = ({
         <BorderTop>
           <ModalFooter>
             <Button colorScheme="blue" mr={3} onClick={onClose}>
-              Lukk
+              Avbryt
             </Button>
-            <Button>Ta en kikk</Button>
+            <Button>Bekreft</Button>
           </ModalFooter>
         </BorderTop>
       </ModalContent>
     </Modal>
   );
-};
-
-export type DokrefForm = {
-  apiId?: string;
-  dokumentlenker: string[];
-  leggTilDokumentlenke: string;
-  fastsettingsdato: string;
-  fastsettingsmyndighet?: string;
-  hjemmel?: string;
-  internreferanserKartverket: string[];
-  rettskildeId?: string;
-  rettskildeTittel: string;
 };
 
 const ReferanseBody = ({ feature }: { feature: Feature }) => {
@@ -143,14 +169,23 @@ const ReferanseBody = ({ feature }: { feature: Feature }) => {
                 </Tab>
                 <Tab>
                   Interne referanser
-                  <AntallReferanser count={0} colorScheme="gray" />
+                  <AntallReferanser
+                    count={internreferanser.length}
+                    colorScheme="gray"
+                  />
                 </Tab>
               </TabList>
               <TabPanels>
                 <TabPanel>
-                  {dokumentlenker.map((it: string) => (
-                    <Card key={it}>{it}</Card>
+                  {dokumentlenker.map((it: Referanse) => (
+                    <ReferanseCard
+                      key={it.beskrivelse}
+                      ref={it}
+                      urlMode={true}
+                      displayMode={false}
+                    />
                   ))}
+
                   <BorderTop />
                   <ReferanseInput
                     appendFn={addDokumentlenke}
@@ -163,8 +198,8 @@ const ReferanseBody = ({ feature }: { feature: Feature }) => {
                   />
                 </TabPanel>
                 <TabPanel>
-                  {internreferanser.map((it: string) => (
-                    <Card key={it}>{it}</Card>
+                  {internreferanser.map((it: Referanse) => (
+                    <Card key={it.beskrivelse}>{it.beskrivelse}</Card>
                   ))}
                   <BorderTop />
                   <ReferanseInput
@@ -186,16 +221,6 @@ const ReferanseBody = ({ feature }: { feature: Feature }) => {
   );
 };
 
-type InputCollection = {
-  dokumentlenker: string;
-  internreferanserKartverket: string;
-};
-
-type InputName = {
-  leggTilDokumentlenke: string;
-  leggTilInternreferanse: string;
-};
-
 const ReferanseInput = ({
   feature,
   inputName,
@@ -211,7 +236,7 @@ const ReferanseInput = ({
   placeholder: string;
   tooltipLabel: string;
   title: string;
-  appendFn: (item: string) => void;
+  appendFn: (item: Referanse) => void;
 }) => {
   const { register } = useDokumentreferanser(feature);
 
@@ -232,25 +257,25 @@ const ReferanseInput = ({
           if (e.key === "Enter") {
             const element = e.target as HTMLInputElement;
             if (element?.value) {
-              appendFn(element.value);
+              appendFn({ beskrivelse: element.value });
               clearInput(element);
             }
           }
         }}
       />
-      <Button
+      <LeggTilKnapp
         onClick={() => {
           const element = document.querySelector(
             `input[name=${inputName}]`,
           ) as HTMLInputElement;
           if (element?.value) {
-            appendFn(element.value);
+            appendFn({ beskrivelse: element.value });
             clearInput(element);
-          } else throw Error(`Kunne ikke finne inputelement: ${inputName} `);
+          }
         }}
       >
         Legg til
-      </Button>
+      </LeggTilKnapp>
     </DokrefRow>
   );
 };
@@ -273,12 +298,30 @@ const AntallReferanser = ({
   );
 };
 
-export const TextWithIcon = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+const ReferanseCard = ({
+  ref,
+  displayMode,
+  urlMode,
+}: {
+  ref: Referanse;
+  displayMode: boolean;
+  urlMode: boolean;
+}) => {
+  console.log(ref);
+  return (
+    <Card>
+      <Text>{ref.beskrivelse}</Text>
+      {urlMode && (
+        <Link href={ref.beskrivelse}>
+          <Icon icon="open_in_new" />
+        </Link>
+      )}
+    </Card>
+  );
+};
+const LeggTilKnapp = styled(Button)`
+  margin-left: 20px;
 `;
-
 const BadgeWrapper = styled.div`
   padding-left: 5px;
 `;
@@ -306,3 +349,6 @@ const OversiktHeader = styled.div`
   align-items: center;
   justify-content: space-between;
 `;
+
+export type { DokrefForm, Referanse };
+export { OversiktReferanser };
