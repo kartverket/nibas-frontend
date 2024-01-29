@@ -8,15 +8,21 @@ import { editSource } from "hooks/layers/constants";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { getGrenseTypeFromEditingType } from "hooks/layers/types";
 import { useToast } from "@kvib/react";
-import { MapBrowserEvent } from "ol";
+import { Feature, MapBrowserEvent } from "ol";
 import { useHistory } from "contexts/HistoryContext";
 import { getTempFeatureId } from "./tempFeatureIdUtil";
-import { createHistoryChangesFromFeatures } from "./historyUtil";
+import { createNyGrenseHistoryChanges } from "./historyUtil";
+import { setDefaultFeatureProperties } from "utils/features";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { useFeatureStyle } from "contexts/FeatureStyleContext";
+import LineString from "ol/geom/LineString";
 
 const useDraw = () => {
   const { activeTool } = useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const { addHistoryEntry } = useHistory();
+  const { openOverlayPanel } = useOverlayPanel();
+  const { selectFeatures } = useFeatureStyle();
   const toast = useToast();
 
   // TODO: fungerer ikke uten snap, vet ikke hvorfor
@@ -37,10 +43,16 @@ const useDraw = () => {
   useEffect(() => {
     const addDrawToHistory = (e: DrawEvent) => {
       const feature = e.feature;
+      const editingType = getCurrentlyEditingType();
+      if (!editingType) return;
+
       if (feature) {
         addHistoryEntry({
-          type: "grense",
-          changes: createHistoryChangesFromFeatures([feature]),
+          type: "nygrense",
+          changes: createNyGrenseHistoryChanges(
+            [feature],
+            getGrenseTypeFromEditingType(editingType) || undefined,
+          ),
         });
       }
     };
@@ -52,19 +64,19 @@ const useDraw = () => {
       if (!editingType) return;
 
       e.feature.setId(getTempFeatureId());
-      e.feature.setProperties({
-        // Setter grensetypen til featuren lik typen man redigerer, kanskje naivt
-        type: getGrenseTypeFromEditingType(editingType),
-      });
+      setDefaultFeatureProperties(
+        e.feature,
+        getGrenseTypeFromEditingType(editingType),
+      );
 
       addDrawToHistory(e);
 
       toast({ status: "success", title: "Grensen ble lagt til i kartet" });
 
-      // TODO: bruk isFeatureDeadEnd for å avgjøre om den nye grensen danner en lukket flate
+      selectFeatures([e.feature as Feature<LineString>]);
+      openOverlayPanel("metadata");
 
-      // TODO: her skal vi på sikt legge til history
-      // slik at den nye grensen blir sendt til backend via utkastet
+      // TODO: bruk isFeatureDeadEnd for å avgjøre om den nye grensen danner en lukket flate
 
       // TODO: dersom man ønsker å utvide en grense ønsker vi nok å slå sammen den nye grensen med den gamle her
       // i så fall må vi holde styr på hvilken grense som skal utvides, og fra hvilket punkt. selectPoint kan være nyttig her
@@ -74,7 +86,14 @@ const useDraw = () => {
     return () => {
       draw.un("drawend", onDrawEnd);
     };
-  }, [addHistoryEntry, draw, getCurrentlyEditingType, toast]);
+  }, [
+    addHistoryEntry,
+    draw,
+    getCurrentlyEditingType,
+    openOverlayPanel,
+    selectFeatures,
+    toast,
+  ]);
 
   return { draw };
 };

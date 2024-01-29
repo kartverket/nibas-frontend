@@ -179,13 +179,13 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
       utkast?.operasjoner.grenseendringer?.endredeFeatures;
     const dirtyFeatureIds: string[] = [];
     const archivedFeatureIds: string[] = [];
+
     if (features && endredeFeatures) {
-      for (const feature of features) {
-        const id = feature.getId();
-        const endretFeature = endredeFeatures.find((feat) => feat.id === id);
-        if (id && endretFeature) {
+      for (const feature of endredeFeatures) {
+        const id = feature.id;
+        if (id) {
           // Avgjør hvilken type endringsfarge featuren skal ha
-          if (endretFeature.properties.shouldArchive) {
+          if (feature.properties.shouldArchive) {
             archivedFeatureIds.push(id.toString());
           } else {
             dirtyFeatureIds.push(id.toString());
@@ -193,6 +193,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
         }
       }
     }
+
     const sammenslaaing = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
     const innlemmedeStemmekretsIder =
       sammenslaaing?.stemmekretserTilSammenslaaing.map(
