@@ -1,4 +1,4 @@
-import { DokrefRow } from "../DokrefRow";
+import { DokrefRow } from "../Vedtaksinformasjon/DokrefRow";
 import { Feature } from "ol";
 
 type Props = {

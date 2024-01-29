@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 import { Tooltip, Text, Icon } from "@kvib/react";
-import { InfoIcon, TextWithIcon } from "./MetadataGenerelt";
+import { InfoIcon, TextWithIcon } from "../MetadataGenerelt";
 import { useState } from "react";
 
 type Props = {

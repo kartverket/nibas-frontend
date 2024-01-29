@@ -7,7 +7,7 @@ import Input from "components/Input";
 import { Button } from "@kvib/react";
 import { useDokumentreferanser } from "./useDokumentreferanser_old";
 import { DokrefField } from "./DokrefField";
-import { DokrefRow } from "../DokrefRow";
+import { DokrefRow } from "../Vedtaksinformasjon/DokrefRow";
 
 export type Value = {
   beskrivelse: string;

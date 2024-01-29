@@ -2,23 +2,23 @@ import { Feature } from "ol";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Dokref } from "types/api";
-import { DokrefForm, Referanse } from "./OversiktReferanser";
+import { VedtakinfoForm, Referanse } from "./OversiktReferanser";
 
-const mapFromApiToForm = (dokref: Dokref): DokrefForm => {
+const mapFromApiToForm = (dokref: Dokref): VedtakinfoForm => {
   return {
-    apiId: dokref.id,
+    id: dokref.id,
     fastsettingsdato: dokref.fastsettingsdato,
     fastsettingsmyndighet: dokref.fastsettingsmyndighet ?? "",
     hjemmel: dokref.hjemmel ?? "",
     rettskildeId: dokref.rettskildeId ?? "",
     rettskildeTittel: dokref.rettskildeTittel,
     dokumentlenker: dokref.dokumentlenker.map((lenke) => ({
-      apiId: lenke.id,
+      id: lenke.id,
       beskrivelse: lenke.beskrivelse,
     })),
     internreferanserKartverket: dokref.internReferanserKartverket.map(
       (ref) => ({
-        apiId: ref.id,
+        id: ref.id,
         beskrivelse: ref.beskrivelse,
       }),
     ),
@@ -26,7 +26,7 @@ const mapFromApiToForm = (dokref: Dokref): DokrefForm => {
 };
 
 export const useDokumentreferanser = (feature: Feature) => {
-  const { register, setValue, watch } = useForm<DokrefForm>();
+  const { register, setValue, watch } = useForm<VedtakinfoForm>();
   const dokumentlenker = watch("dokumentlenker", []);
   const internreferanser = watch("internreferanserKartverket", []);
 

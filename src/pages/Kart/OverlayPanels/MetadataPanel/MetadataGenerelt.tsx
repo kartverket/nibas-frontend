@@ -18,7 +18,7 @@ import { getDateInFriendlyString } from "./utils";
 import useNibasApi from "hooks/useNibasApi";
 import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
 import { TilhorighetField } from "./TilhorighetField";
-import { OversiktReferanser } from "./OversiktReferanser";
+import { OversiktReferanser } from "./Vedtaksinformasjon/OversiktReferanser";
 
 export type Inputs = {
   uuid: string;
