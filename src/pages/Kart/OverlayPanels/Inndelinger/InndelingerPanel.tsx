@@ -7,22 +7,24 @@ import {
 } from "@kvib/react";
 import { Panel, PanelHeader, PanelProps } from "../Panel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { styled } from "styled-components";
 import {
   KRETSTYPER,
   Kretstype,
+  useInndelinger,
 } from "contexts/InndelingerContekst/InndelingerContext";
 import { getIdFromEntity } from "utils/api";
 import { getNavnInSpraak } from "utils/language/language";
 import { useState } from "react";
 import useFylker from "hooks/inndelinger/useFylker";
 import useKommuner from "hooks/inndelinger/useKommuner";
+import { styled } from "styled-components";
 
 const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
   const [selectedKretstype, setSelectedKretstype] = useState<Kretstype | null>(
     null,
   );
   const { fylker } = useFylker();
+  const { inndelinger } = useInndelinger();
 
   const [selectedFylkeId, setSelectedFylkeId] = useState<string>("");
   const { kommuner } = useKommuner(selectedFylkeId);
@@ -30,6 +32,8 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
   const { activeOverlayModal, closeOverlayModal } = useOverlayPanel();
 
   const isEditing = activeOverlayModal === "inndelinger-redigering";
+
+  const { selectInndeling } = useInndelinger();
 
   const resetInndelingerPanel = () => {
     closeOverlayModal();
@@ -42,10 +46,10 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
     setSelectedFylkeId("");
   };
 
-  // TODO: avhengig av kretstype ønsker vi enten å bare se kommuner, eller legge til i kartet?
+  // TODO: Overlapper en del med selectKommune, kanskje lurt å slå sammen
   const selectFylke = (fylkeId: string) => {
     if (selectedKretstype === "fylker") {
-      // startEditingFylke();
+      selectInndeling(fylkeId, "fylker", isEditing);
       if (isEditing) {
         resetInndelingerPanel();
       }
@@ -54,15 +58,10 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
     }
   };
 
-  // TODO: avhengig av kretstype ønsker vi å aktivere redigering eller synliggjøre visse kretser
-  // mye av dette bør nok bo i inndelingercontext
-  const selectKommune = (selectedKommuneId: string) => {
-    if (selectedKretstype === "kommuner") {
-      // startEditingKommune(selectedKommuneId);
-    } else if (selectedKretstype === "stemmekretser") {
-      // startEditingStemmekretser(selectedKommuneId)
-    } else if (selectedKretstype === "grunnkretser") {
-      // startEditingGrunnkretser(selectedKommuneId)
+  // TODO: Overlapper en del med selectFylke, kanskje lurt å slå sammen
+  const selectKommune = (kommuneId: string) => {
+    if (selectedKretstype) {
+      selectInndeling(kommuneId, selectedKretstype, isEditing);
     }
     if (isEditing) {
       resetInndelingerPanel();
@@ -71,6 +70,17 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
 
   const capitalize = (str: string) =>
     str.charAt(0).toUpperCase() + str.slice(1);
+
+  const inndelingIcon = (id: string, fylkeIcon?: boolean) => {
+    const inndeling = inndelinger[id];
+    if (isEditing || (fylkeIcon && selectedKretstype !== "fylker")) {
+      return "chevron_right";
+    }
+    if (inndeling && inndeling.isVisible) {
+      return "visibility";
+    }
+    return "visibility_off";
+  };
 
   return (
     <Modal
@@ -88,8 +98,8 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
             {KRETSTYPER.map((kretstype) => (
               <Inndeling
                 key={kretstype}
-                onClick={() => selectKretstype(kretstype)}
                 isActive={selectedKretstype === kretstype}
+                onClick={() => selectKretstype(kretstype)}
                 rightIcon="chevron_right"
               >
                 {capitalize(kretstype)}
@@ -99,60 +109,48 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
           <Divider orientation="vertical" />
           <InndelingerList>
             {selectedKretstype &&
-              fylker.map((fylke) => (
-                <Inndeling
-                  key={getIdFromEntity(fylke)}
-                  onClick={() => selectFylke(getIdFromEntity(fylke))}
-                  isActive={selectedFylkeId === getIdFromEntity(fylke)}
-                  rightIcon={
-                    !isEditing && selectedKretstype === "fylker"
-                      ? "visibility_off"
-                      : "chevron_right"
-                  }
-                >
-                  {`${fylke.fylkesnummer.kodeverdi} ${getNavnInSpraak(
-                    fylke.navn,
-                    "nor",
-                  )}`}
-                </Inndeling>
-              ))}
+              fylker.map((fylke) => {
+                const fylkeId = getIdFromEntity(fylke);
+                return (
+                  <Inndeling
+                    key={fylkeId}
+                    isActive={selectedFylkeId === fylkeId}
+                    onClick={() => selectFylke(fylkeId)}
+                    rightIcon={inndelingIcon(fylkeId, true)}
+                  >
+                    {`${fylke.fylkesnummer.kodeverdi} ${getNavnInSpraak(
+                      fylke.navn,
+                      "nor",
+                    )}`}
+                  </Inndeling>
+                );
+              })}
           </InndelingerList>
           <Divider orientation="vertical" />
           <InndelingerList>
             {selectedFylkeId &&
-              kommuner.map((kommune) => (
-                <Inndeling
-                  key={getIdFromEntity(kommune)}
-                  onClick={() => selectKommune(getIdFromEntity(kommune))}
-                  rightIcon={isEditing ? "chevron_right" : "visibility_off"}
-                >
-                  {`${kommune.kommunenummer.kodeverdi} ${getNavnInSpraak(
-                    kommune.navn,
-                    "nor",
-                  )}`}
-                </Inndeling>
-              ))}
+              kommuner.map((kommune) => {
+                const kommuneId = getIdFromEntity(kommune);
+                return (
+                  <Inndeling
+                    key={kommuneId}
+                    isActive={selectedFylkeId === kommuneId}
+                    onClick={() => selectKommune(kommuneId)}
+                    rightIcon={inndelingIcon(kommuneId)}
+                  >
+                    {`${kommune.kommunenummer.kodeverdi} ${getNavnInSpraak(
+                      kommune.navn,
+                      "nor",
+                    )}`}
+                  </Inndeling>
+                );
+              })}
           </InndelingerList>
         </InndelingerLayout>
       </ModalContent>
     </Modal>
   );
 };
-
-const InndelingerLayout = styled.div`
-  display: grid;
-  grid-template-columns: 1fr auto 1fr auto 1fr;
-  gap: 16px;
-  padding: 8px 0 24px;
-  overflow: hidden;
-`;
-
-const InndelingerList = styled.section`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  overflow-y: auto;
-`;
 
 const Inndeling = styled(Button).attrs({
   variant: "ghost",
@@ -166,6 +164,25 @@ const Inndeling = styled(Button).attrs({
     width: 100%;
     justify-content: space-between;
   }
+
+  &[data-active] {
+    background: var(--kvib-colors-blue-50);
+  }
+`;
+
+export const InndelingerLayout = styled.div`
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  gap: 16px;
+  padding: 8px 0 24px;
+  overflow: hidden;
+`;
+
+export const InndelingerList = styled.section`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
 `;
 
 export default InndelingerPanel;

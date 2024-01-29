@@ -1,10 +1,4 @@
 import { createContext, useContext, useState } from "react";
-import {
-  FylkeRef,
-  GrunnkretsResponse,
-  KommuneResponse,
-  StemmekretsResponse,
-} from "types/api";
 
 export const KRETSTYPER = [
   "fylker",
@@ -15,31 +9,24 @@ export const KRETSTYPER = [
 type Kretstyper = typeof KRETSTYPER;
 export type Kretstype = Kretstyper[number];
 
-type Inndeling<T> = {
-  data: T;
+type Inndeling = {
+  id: string;
+  kretstype: Kretstype;
   isVisible: boolean;
   isEditing: boolean;
 };
 
 type Inndelinger = {
-  fylker: {
-    [fylkeId: string]: Inndeling<FylkeRef> & {
-      kommuner: {
-        [kommuneId: string]: Inndeling<KommuneResponse> & {
-          stemmekretser: {
-            [stemmekretsId: string]: Inndeling<StemmekretsResponse>;
-          };
-          grunnkretser: {
-            [grunnkretsId: string]: Inndeling<GrunnkretsResponse>;
-          };
-        };
-      };
-    };
-  };
+  [id: string]: Inndeling;
 };
 
 export type InndelingerContextValue = {
   inndelinger: Inndelinger;
+  selectInndeling: (
+    fylkeId: string,
+    kretstype: Kretstype,
+    isEditingPanel: boolean,
+  ) => void;
 };
 
 export const InndelingerContext = createContext<
@@ -51,11 +38,68 @@ export const InndelingerProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [inndelinger, setInndelinger] = useState<Inndelinger>({
-    fylker: {},
-  });
+  const [inndelinger, setInndelinger] = useState<Inndelinger>({});
 
-  const value = { inndelinger };
+  /**
+   * Sjekker om det er en inndeling som redigeres
+   * @returns Inndelingen som redigeres dersom den finnes, null ellers
+   */
+  const isEditingInndelinger = () => {
+    const activeEditingInndeling = Object.values(inndelinger).find(
+      (inndeling) => inndeling.isEditing,
+    );
+    return activeEditingInndeling ?? null;
+  };
+
+  const selectInndeling = (
+    id: string,
+    kretstype: Kretstype,
+    isEditingPanel: boolean,
+  ) => {
+    const setNyeInndelinger = (isVisible: boolean, isEditing: boolean) => {
+      const nyeInndelinger: Inndelinger = {
+        ...inndelinger,
+        [id]: { id, kretstype, isVisible, isEditing },
+      };
+
+      // Hvis man skal skru på redigering må vi skru det av på andre inndelinger
+      if (isEditing) {
+        const activeEditingInndeling = isEditingInndelinger();
+        if (activeEditingInndeling) {
+          nyeInndelinger[activeEditingInndeling.id] = {
+            ...activeEditingInndeling,
+            isVisible: false,
+            isEditing: false,
+          };
+        }
+      }
+
+      setInndelinger(nyeInndelinger);
+    };
+
+    const existingInndeling = inndelinger[id];
+
+    if (isEditingPanel) {
+      if (existingInndeling?.isEditing) {
+        // Dersom man er i redigeringspanelet skal inndelingen skrus helt av
+        setNyeInndelinger(false, false);
+      } else {
+        // Man skrur på redigering for en inndeling
+        // TODO: legg til håndtering av at kun én ting skal kunne redigeres om gangen
+        setNyeInndelinger(true, true);
+      }
+    } else {
+      if (existingInndeling?.isVisible) {
+        // Dersom inndelingen er synlig skal den ikke være synlig lengre
+        setNyeInndelinger(false, existingInndeling?.isEditing ?? false);
+      } else {
+        // Man skrur på visning for en inndeling
+        setNyeInndelinger(true, false);
+      }
+    }
+  };
+
+  const value = { inndelinger, selectInndeling };
 
   return (
     <InndelingerContext.Provider value={value}>
