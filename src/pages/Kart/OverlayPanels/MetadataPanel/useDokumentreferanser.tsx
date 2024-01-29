@@ -1,18 +1,28 @@
 import { Feature } from "ol";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { Dokref } from "types/api";
+import { DokrefForm, Referanse } from "./OversiktReferanser";
 
-export type DokrefForm = {
-  apiId?: string;
-  dokumentlenker: string[];
-  leggTilDokumentlenke: string;
-  fastsettingsdato: string;
-  fastsettingsmyndighet?: string;
-  hjemmel?: string;
-  internreferanserKartverket: string[];
-  leggTilInternreferanse: string;
-  rettskildeId?: string;
-  rettskildeTittel: string;
+const mapFromApiToForm = (dokref: Dokref): DokrefForm => {
+  return {
+    apiId: dokref.id,
+    fastsettingsdato: dokref.fastsettingsdato,
+    fastsettingsmyndighet: dokref.fastsettingsmyndighet ?? "",
+    hjemmel: dokref.hjemmel ?? "",
+    rettskildeId: dokref.rettskildeId ?? "",
+    rettskildeTittel: dokref.rettskildeTittel,
+    dokumentlenker: dokref.dokumentlenker.map((lenke) => ({
+      apiId: lenke.id,
+      beskrivelse: lenke.beskrivelse,
+    })),
+    internreferanserKartverket: dokref.internReferanserKartverket.map(
+      (ref) => ({
+        apiId: ref.id,
+        beskrivelse: ref.beskrivelse,
+      }),
+    ),
+  };
 };
 
 export const useDokumentreferanser = (feature: Feature) => {
@@ -29,12 +39,12 @@ export const useDokumentreferanser = (feature: Feature) => {
     console.log(dokumentlenker);
   }, [dokumentlenker]);
 
-  const addDokumentlenke = (lenke: string) => {
+  const addDokumentlenke = (lenke: Referanse) => {
     const oppdaterteLenker = [...dokumentlenker, lenke];
     setValue("dokumentlenker", oppdaterteLenker);
   };
 
-  const addInternreferanse = (referanse: string) => {
+  const addInternreferanse = (referanse: Referanse) => {
     const oppdaterteReferanser = [...internreferanser, referanse];
     setValue("internreferanserKartverket", oppdaterteReferanser);
   };
