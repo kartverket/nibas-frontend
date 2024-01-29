@@ -25,10 +25,7 @@ import {
 } from "types/api";
 import { featureToGeoJson } from "utils/map/geoJson";
 import { getIdFromEntity } from "utils/api";
-import {
-  getTempFeatureId,
-  isTempFeatureId,
-} from "pages/Kart/interactions/tempFeatureIdUtil";
+import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 
 const getCombinedEntity = <T extends ResponseWithId>(
   entity: T,
@@ -127,32 +124,6 @@ const reduceMetadataOperations = (
   }
 };
 
-const reduceGrenseOperations = (
-  editedFeatures: GeoJSONFeature[],
-  entry: HistoryEntry,
-): GeoJSONFeature[] => {
-  entry.changes.forEach((change) => {
-    if (!change.to) return editedFeatures;
-
-    const feature = editSource.getFeatureById(change.id) as Feature<LineString>;
-
-    console.log("feature in reducregrenseops", feature);
-
-    if (!feature) return editedFeatures;
-
-    // Skal kun legge til én feature for en gitt id
-    const featureAsGeoJson = featureToGeoJson(feature);
-
-    return editedFeatures
-      .filter((editedFeature) => editedFeature.id != featureAsGeoJson.id)
-      .concat(featureAsGeoJson);
-  });
-
-  console.log("testing");
-
-  return editedFeatures;
-};
-
 //Antas at det bare er en entry i changes
 const reduceStemmekretssammenslaingsOperations = (
   operations: StemmekretsSammenslaaingsendringRequest,
@@ -230,8 +201,6 @@ export const historyToUtkastOperations = (
     editedFeatureHistoryEntries.includes(entry.type),
   );
 
-  console.log("relevant history", relevantHistoryEntries);
-
   // hent grenseendringer og gjør endringene om til en liste av features
   const editedFeatures: GeoJSONFeature[] =
     utkastOperations.grenseendringer.endredeFeatures;
@@ -252,6 +221,8 @@ export const historyToUtkastOperations = (
         (geoJsonFeature) => featureAsGeoJson.id === geoJsonFeature.id,
       );
 
+      // Hvis vi allerede har lagt inn featuren tidligere i historikken,
+      // ønsker vi å overskrive den hvis den samme featuren endres senere i historikken
       if (index >= 0) {
         editedFeatures[index] = featureAsGeoJson;
         return;
@@ -260,19 +231,6 @@ export const historyToUtkastOperations = (
       editedFeatures.push(featureAsGeoJson);
     });
   });
-
-  console.log("edited features", editedFeatures);
-
-  // // hvis det er noen endringer, slå sammen tidligere endringer og nye endringer til ny liste
-  // if (editedFeatures.length > 0) {
-  //   const utkastEndredeFeatures =
-  //     utkastOperations.grenseendringer?.endredeFeatures || [];
-
-  //   console.log("utkastoperations", utkastEndredeFeatures);
-  //   utkastOperations.grenseendringer = {
-  //     endredeFeatures: utkastEndredeFeatures.concat(editedFeatures),
-  //   };
-  // }
 
   utkastOperations.grenseendringer = {
     endredeFeatures: editedFeatures,
