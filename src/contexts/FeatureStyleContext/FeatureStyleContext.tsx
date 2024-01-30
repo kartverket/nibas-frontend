@@ -95,6 +95,13 @@ export const FeatureStyleProvider = ({
   };
 
   useEffect(() => {
+    const dirtyHistoryTypes = [
+      "grense",
+      "metadata",
+      "grensetilhorighetendring",
+      "nygrense",
+    ];
+
     // Når vi lagrer blir history entries tømt, så vi lagrer stilene som er satt
     if (history.entries.length === 0) {
       if (history.hasPreviouslySavedHistory) {
@@ -115,12 +122,7 @@ export const FeatureStyleProvider = ({
 
     const dirtyFeatures = history.entries
       .slice(0, history.index)
-      .filter(
-        (entry) =>
-          entry.type === "grense" ||
-          entry.type === "metadata" ||
-          entry.type === "grensetilhorighetendring",
-      )
+      .filter((entry) => dirtyHistoryTypes.includes(entry.type))
       .reduce(getFeatureIdsFromEntries, [])
       .flatMap((id) => id);
 
