@@ -31,6 +31,8 @@ type VedtakinfoForm = {
   dokumentlenker: Referanse[];
   leggTilDokumentlenke?: string;
   fastsettingsdato: string;
+  gyldigFra: Date;
+  gyldigTil: Date;
   fastsettingsmyndighet?: string;
   hjemmel?: string;
   internreferanserKartverket: Referanse[];
@@ -39,12 +41,7 @@ type VedtakinfoForm = {
   rettskildeTittel: string;
 };
 
-export type InputCollection = {
-  dokumentlenker: string;
-  internreferanserKartverket: string;
-};
-
-export type InputName = {
+type InputName = {
   leggTilDokumentlenke: string;
   leggTilInternreferanse: string;
 };
@@ -52,9 +49,9 @@ export type InputName = {
 const OversiktReferanser = ({ feature }: { feature: Feature }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [displayMode, setDisplayMode] = useState(false);
+  const [iconHovered, setIconHovered] = useState(false);
   const metadata = feature.getProperties()?.metadata as Metadata;
   const vedtaksinfoCollection = metadata.dokumentasjonsreferanser;
-  const [iconHovered, setIconHovered] = useState(false);
   const [selectedVedtaksinfoIndex, setSelectedVedtaksinfoIndex] = useState<
     number | undefined
   >(undefined);
@@ -149,5 +146,5 @@ const OversiktHeader = styled.div`
   justify-content: space-between;
 `;
 
-export type { VedtakinfoForm, Referanse };
+export type { VedtakinfoForm, Referanse, InputName };
 export { OversiktReferanser };
