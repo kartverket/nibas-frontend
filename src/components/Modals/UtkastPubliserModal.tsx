@@ -25,13 +25,18 @@ import { EndringsloggAccordion } from "pages/Utkast/UtkastEndringslogg";
 import { useState } from "react";
 import { useSWRConfig } from "swr";
 import { isToday, format } from "date-fns";
-import { ApiErrorResponse, UtkastResponse } from "types/api";
+import {
+  ApiErrorResponse,
+  OppdaterUtkastRequest,
+  UtkastResponse,
+} from "types/api";
 import { statusCode } from "utils/api";
 import { useUtkast } from "contexts/UtkastContext";
 import { useMatch, useNavigate } from "react-router-dom";
 import { routes } from "utils/routes";
 import { GrenseType } from "hooks/layers/types";
 import { isAdministrativGrense } from "utils/grenser";
+import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 
 type Props = {
   isOpen: boolean;
@@ -41,7 +46,7 @@ type Props = {
 
 const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
   const toast = useToast();
-  const { closeUtkast } = useUtkast();
+  const { closeUtkast, updateUtkast } = useUtkast();
   const [publiseringsdato, setPubliseringsdato] = useState(new Date());
   const [isLoading, setIsLoading] = useState(false);
   const { tokenHolderFunc } = useAuthenticationFlow();
@@ -54,8 +59,29 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
     mutate(["/v1/utkast", tokenHolderFunc()?.token]);
   };
 
+  const toCleanUtkast = (
+    utkastToClean: OppdaterUtkastRequest,
+  ): OppdaterUtkastRequest => {
+    const utkastCopy = structuredClone(utkastToClean);
+
+    // Fjerner ID fra alle nye grenser, da dette ikke er forventet fra backend
+    const endredeFeatures =
+      utkastCopy.operasjoner.grenseendringer.endredeFeatures;
+
+    endredeFeatures.forEach((endretFeature) => {
+      if (endretFeature.id && isTempFeatureId(endretFeature.id))
+        endretFeature.id = undefined;
+    });
+
+    return utkastCopy;
+  };
+
   const publiserUtkast = async () => {
+    // Utkastet ryddes og oppdateres før publisering
+    const newUtkast = toCleanUtkast(utkast);
     setIsLoading(true);
+    await updateUtkast(utkast.id, newUtkast);
+
     const publiseringDateString = format(publiseringsdato, "yyyy-MM-dd");
 
     const response = await publishUtkast(

@@ -1,6 +1,7 @@
 import React, { createContext, useContext } from "react";
 import { HistoryContextValue, HistoryEntry } from "./types";
 import {
+  setFeatureCoordinatesAndMetadataForEntry,
   setFeatureCoordinatesForEntry,
   setFeatureMetadataForEntry,
   setKontekstEgenskaperForEntry,
@@ -17,6 +18,9 @@ const onUndo = (entry: HistoryEntry) => {
     }
     case "metadata": {
       return setFeatureMetadataForEntry(entry, "from");
+    }
+    case "nygrense": {
+      return setFeatureCoordinatesAndMetadataForEntry(entry, "from");
     }
     case "grunnkrets": {
       return document.dispatchEvent(
@@ -70,6 +74,9 @@ const onRedo = (entry: HistoryEntry) => {
     case "metadata": {
       //skal den kanskje bare gå inn under det her?
       return setFeatureMetadataForEntry(entry, "to");
+    }
+    case "nygrense": {
+      return setFeatureCoordinatesAndMetadataForEntry(entry, "to");
     }
     case "grunnkrets": {
       return document.dispatchEvent(
