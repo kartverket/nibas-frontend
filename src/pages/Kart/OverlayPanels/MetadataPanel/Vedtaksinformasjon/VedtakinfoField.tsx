@@ -3,7 +3,7 @@ import { VedtakinfoRow } from "./VedtakinfoRow";
 import { useDokumentreferanser } from "./useDokumentreferanser";
 import { Input, Text } from "@kvib/react";
 import { VedtakinfoForm } from "./OversiktReferanser";
-import { UseFormRegister, UseFormRegisterReturn } from "react-hook-form";
+import { UseFormRegister } from "react-hook-form";
 
 export const VedtakinfoField = ({
   displayMode,

@@ -15,21 +15,23 @@ import {
   mapFromFormToApi,
   useDokumentreferanser,
 } from "./useDokumentreferanser";
+import { Dokref, Metadata } from "types/api";
 
 export const VedtaksinfoDetaljer = ({
   isOpen,
   onClose,
   feature,
   displayMode,
-  vedtaksinfoId,
+  selectedVedtaksinfoIndex,
 }: {
   displayMode: boolean;
   feature: Feature;
   isOpen: boolean;
   onClose: () => void;
-  vedtaksinfoId?: string;
+  selectedVedtaksinfoIndex?: number;
 }) => {
   const erRedigeringsModus = true; //!displayMode && vedtaksinfoId;
+  const metadata = feature.getProperties().metadata as Metadata;
   const {
     register,
     reset,
@@ -39,7 +41,7 @@ export const VedtaksinfoDetaljer = ({
     internref,
     setInternref,
     updateDraftFromFeature,
-  } = useDokumentreferanser(feature);
+  } = useDokumentreferanser(feature, selectedVedtaksinfoIndex);
 
   const onSubmit = (data: VedtakinfoForm) => {
     const postValues = mapFromFormToApi(data, dokref, internref);

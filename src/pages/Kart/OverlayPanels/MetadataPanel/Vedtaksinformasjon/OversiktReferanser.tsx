@@ -3,7 +3,7 @@ import { styled } from "styled-components";
 import { InfoIcon } from "../MetadataGenerelt";
 import { Feature } from "ol";
 import { VedtaksinfoDetaljer } from "./VedtaksinfoDetaljer";
-import { Metadata } from "types/api";
+import { Dokref, Metadata } from "types/api";
 import { useState } from "react";
 
 // TODO:
@@ -55,6 +55,15 @@ const OversiktReferanser = ({ feature }: { feature: Feature }) => {
   const metadata = feature.getProperties()?.metadata as Metadata;
   const vedtaksinfoCollection = metadata.dokumentasjonsreferanser;
   const [iconHovered, setIconHovered] = useState(false);
+  const [selectedVedtaksinfoIndex, setSelectedVedtaksinfoIndex] = useState<
+    number | undefined
+  >(undefined);
+
+  const closeModal = () => {
+    setDisplayMode(false);
+    setSelectedVedtaksinfoIndex(undefined);
+    onClose();
+  };
 
   return (
     <div>
@@ -75,26 +84,31 @@ const OversiktReferanser = ({ feature }: { feature: Feature }) => {
           <EditButton
             colorScheme="gray"
             aria-label="Legg til dokumentreferanse"
-            onClick={onOpen}
+            onClick={() => {
+              setDisplayMode(false);
+              onOpen();
+            }}
           >
             <p>Ny referanse</p>
             <Icon icon="add" />
           </EditButton>
         </OversiktHeader>
       </Tooltip>
-      {vedtaksinfoCollection?.map((vedtak) => (
+      {vedtaksinfoCollection?.map((vedtak, index) => (
         <VedtaksinfoCard
           key={vedtak.id || vedtak.rettskildeTittel}
           title={vedtak.rettskildeTittel}
           onClick={() => {
-            // TODO: Sett modal displaymode true, sett editing/viewing-ID, sett isOpen
-            console.log(vedtak.id);
+            setDisplayMode(false);
+            setSelectedVedtaksinfoIndex(index);
+            onOpen();
           }}
         />
       ))}
       <VedtaksinfoDetaljer
+        selectedVedtaksinfoIndex={selectedVedtaksinfoIndex}
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={closeModal}
         feature={feature}
         displayMode={displayMode}
       />

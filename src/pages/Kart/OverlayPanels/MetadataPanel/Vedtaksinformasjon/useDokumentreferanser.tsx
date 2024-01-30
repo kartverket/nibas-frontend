@@ -67,20 +67,42 @@ const addMetadataEntryFromFeature = (
   });
 };
 
-export const useDokumentreferanser = (feature: Feature, dokrefId?: string) => {
+export const useDokumentreferanser = (
+  feature: Feature,
+  selectedVedtaksinfoIndex?: number,
+) => {
+  const defaultValues: Dokref =
+    selectedVedtaksinfoIndex !== undefined
+      ? feature.getProperties().metadata.dokumentasjonsreferanser[
+          selectedVedtaksinfoIndex
+        ]
+      : {};
+
   const { register, setValue, getValues, reset, handleSubmit } =
-    useForm<VedtakinfoForm>();
+    useForm<VedtakinfoForm>({ defaultValues: defaultValues });
 
   const [dokref, setDokref] = useState<Referanse[]>([]);
   const [internref, setInternref] = useState<Referanse[]>([]);
   const { addHistoryEntry } = useHistory();
 
+  // Setter input-feltene til eksisterende skjema, dersom det redigeres
+  if (selectedVedtaksinfoIndex !== undefined) {
+    for (const key of Object.keys(defaultValues)) {
+      setValue(
+        key as keyof VedtakinfoForm,
+        feature.getProperties().metadata.dokumentasjonsreferanser[
+          selectedVedtaksinfoIndex
+        ][key],
+      );
+    }
+  }
+
   const updateDraftFromFeature = (vedtaksinfo: Dokref) => {
     const metadata = feature.getProperties().metadata as Metadata;
 
-    if (!dokrefId) {
-      // Implisitt en ny dokumentasjonsreferanse ved mangel av id.
-      // Finner eksisterende dokumentasjonsreferanser, tar en shallow kopi av listen, og oppdaterer deretter featuren og historikken.
+    if (selectedVedtaksinfoIndex === undefined) {
+      // Implisitt en ny dokumentasjonsreferanse ved mangel av index.
+      // Finner eksisterende dokumentasjonsreferanser, tar en overfladisk kopi av listen, og oppdaterer deretter featuren og historikken.
       const oldDokrefs: Dokref[] = metadata.dokumentasjonsreferanser
         ? metadata.dokumentasjonsreferanser
         : [];
@@ -101,16 +123,8 @@ export const useDokumentreferanser = (feature: Feature, dokrefId?: string) => {
         ? metadata.dokumentasjonsreferanser
         : [];
       const dokrefsCopy = oldDokrefs.slice();
-      const oldDokrefIndex = dokrefsCopy.findIndex(
-        (ref) => ref.id === dokrefId,
-      );
 
-      if (oldDokrefIndex === -1)
-        throw Error(
-          "Kunne ikke finne dokumentasjonsreferanse med id: " + dokrefId,
-        );
-
-      dokrefsCopy[oldDokrefIndex] = vedtaksinfo;
+      dokrefsCopy[selectedVedtaksinfoIndex] = vedtaksinfo;
 
       addMetadataEntryFromFeature(
         feature as Feature<LineString>,
