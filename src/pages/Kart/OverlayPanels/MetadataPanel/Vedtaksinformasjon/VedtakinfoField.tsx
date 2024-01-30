@@ -1,40 +1,22 @@
-import { Feature } from "ol";
 import { VedtakinfoRow } from "./VedtakinfoRow";
-import { useDokumentreferanser } from "./useDokumentreferanser";
-import { Input, Text } from "@kvib/react";
-import { VedtakinfoForm } from "./OversiktReferanser";
-import { UseFormRegister } from "react-hook-form";
+import { Text } from "@kvib/react";
 
 export const VedtakinfoField = ({
   displayMode,
-  feature,
-  name,
-  placeholder,
   tooltipLabel,
   title,
   value,
-  register,
+  children,
 }: {
   displayMode: boolean;
-  feature: Feature;
-  name: keyof VedtakinfoForm;
-  placeholder: string;
   tooltipLabel: string;
   title: string;
   value?: string;
-  register: UseFormRegister<VedtakinfoForm>;
+  children: React.ReactNode;
 }) => {
   return (
     <VedtakinfoRow tooltipLabel={tooltipLabel} name={title}>
-      {displayMode ? (
-        <Text>{value}</Text>
-      ) : (
-        <Input
-          {...register(name)}
-          backgroundColor={"white"}
-          placeholder={placeholder}
-        />
-      )}
+      {displayMode ? <Text>{value}</Text> : children}
     </VedtakinfoRow>
   );
 };
