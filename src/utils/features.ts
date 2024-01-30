@@ -11,10 +11,15 @@ export const setDefaultFeatureProperties = (
   if (!grenseType) return;
 
   feature.setProperties({
-    // TODO: Should set some default metadata?
+    // Metadata er satt kun for at en grense kan valideres før opprettelse uten å endre på metadatafelter.
     metadata: {
       discriminator: getGrenseDiscriminatorFromType(grenseType),
-      common: {},
+      common: {
+        gyldigFra: new Date().toISOString(),
+        identifikasjon: {
+          lokalid: "NotARealID",
+        },
+      },
       commonGrense: {},
     } as Metadata,
     type: grenseType,

@@ -102,9 +102,8 @@ const MetadataGenerelt = ({ feature }: Props) => {
         fieldLabel="Identifikator (UUID)"
         valueLabelFormatter={() => {
           const featureId = feature.getId()?.toString();
-          if (!featureId) return null;
 
-          if (isTempFeatureId(featureId))
+          if (featureId && isTempFeatureId(featureId))
             return `Ny grense - ID blir satt ved publisering - Midlertidig ID: ${featureId}`;
 
           return feature.getId()?.toString() || null;
@@ -126,9 +125,11 @@ const MetadataGenerelt = ({ feature }: Props) => {
         valueLabelFormatter={(date) => {
           const formattedDate = getDateInFriendlyString(date);
           const featureId = feature.getId()?.toString();
-          if (!formattedDate && featureId && isTempFeatureId(featureId))
+
+          if (featureId && isTempFeatureId(featureId))
             return "Ny grense - Dato blir satt ved publisering";
-          return formattedDate;
+
+          return formattedDate || null;
         }}
         renderItem={(register) => <Datepicker {...register} />}
       />
@@ -142,9 +143,11 @@ const MetadataGenerelt = ({ feature }: Props) => {
         valueLabelFormatter={(date) => {
           const formattedDate = getDateInFriendlyString(date);
           const featureId = feature.getId()?.toString();
-          if (!formattedDate && featureId && isTempFeatureId(featureId))
+
+          if (featureId && isTempFeatureId(featureId))
             return "Ny grense - Dato blir satt ved publisering";
-          return formattedDate;
+
+          return formattedDate || null;
         }}
         renderItem={(register) => <Datepicker {...register} />}
       />
