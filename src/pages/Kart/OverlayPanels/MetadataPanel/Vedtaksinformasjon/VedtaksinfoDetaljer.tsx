@@ -31,8 +31,8 @@ export const VedtaksinfoDetaljer = ({
   selectedVedtaksinfoIndex?: number;
 }) => {
   const erRedigeringsModus = true; //!displayMode && vedtaksinfoId;
-  const metadata = feature.getProperties().metadata as Metadata;
   const {
+    isDirty,
     register,
     reset,
     handleSubmit,
@@ -44,10 +44,11 @@ export const VedtaksinfoDetaljer = ({
   } = useDokumentreferanser(feature, selectedVedtaksinfoIndex);
 
   const onSubmit = (data: VedtakinfoForm) => {
-    const postValues = mapFromFormToApi(data, dokref, internref);
-    console.log(data);
-    updateDraftFromFeature(postValues);
-    reset();
+    if (isDirty) {
+      const postValues = mapFromFormToApi(data, dokref, internref);
+      updateDraftFromFeature(postValues);
+      reset();
+    }
     onClose();
   };
 

@@ -2,6 +2,7 @@ import {
   Card,
   Grid,
   GridItem,
+  Input,
   Tab,
   TabList,
   TabPanel,
@@ -65,44 +66,52 @@ export const ReferanseBody = ({
         <GridItem>
           <Vedtaksfelter>
             <VedtakinfoField
-              register={register}
               displayMode={displayMode}
-              feature={feature}
-              name="rettskildeTittel"
-              placeholder={"Ikke spesifisert"}
               tooltipLabel="tooltip"
               title="Rettskildetittel (obligatorisk)"
               value={vedtaksinformasjon?.rettskildeTittel}
-            />
+            >
+              <Input
+                {...register("rettskildeTittel")}
+                backgroundColor={"white"}
+                placeholder={"Ikke spesifisert"}
+              />
+            </VedtakinfoField>
             <VedtakinfoField
-              register={register}
               displayMode={displayMode}
-              feature={feature}
-              name="rettskildeId"
-              placeholder={"Ikke spesifisert"}
               tooltipLabel="tooltip"
               title="Rettskilde-ID"
-            />
+            >
+              <Input
+                {...register("rettskildeId")}
+                backgroundColor={"white"}
+                placeholder={"Ikke spesifisert"}
+              />
+            </VedtakinfoField>
             <VedtakinfoField
-              register={register}
               displayMode={displayMode}
-              feature={feature}
-              name="hjemmel"
-              placeholder={"Ikke spesifisert"}
               tooltipLabel="tooltip"
               title="Hjemmel"
               value={vedtaksinformasjon?.hjemmel}
-            />
+            >
+              <Input
+                {...register("hjemmel")}
+                backgroundColor={"white"}
+                placeholder={"Ikke spesifisert"}
+              />
+            </VedtakinfoField>
             <VedtakinfoField
-              register={register}
               displayMode={displayMode}
-              feature={feature}
-              name="fastsettingsmyndighet"
-              placeholder={"Ikke spesifisert"}
               tooltipLabel="tooltip"
               title="Fastsettingsmyndighet"
               value={vedtaksinformasjon?.fastsettingsmyndighet}
-            />
+            >
+              <Input
+                {...register("fastsettingsmyndighet")}
+                backgroundColor={"white"}
+                placeholder={"Ikke spesifisert"}
+              />
+            </VedtakinfoField>
           </Vedtaksfelter>
         </GridItem>
         <GridItem>
@@ -141,8 +150,7 @@ export const ReferanseBody = ({
                     <ReferanseInput
                       register={register}
                       appendFn={addDokumentlenke}
-                      inputName="leggTilDokumentlenke"
-                      inputCollectionName="dokumentlenker"
+                      registerName="leggTilDokumentlenke"
                       tooltipLabel="Tooltip"
                       placeholder="URL til dokument"
                       title="Legg til nytt dokument (URL)"
@@ -161,8 +169,7 @@ export const ReferanseBody = ({
                     <ReferanseInput
                       register={register}
                       appendFn={addInternreferanse}
-                      inputName="leggTilInternreferanse"
-                      inputCollectionName="internreferanserKartverket"
+                      registerName="leggTilInternreferanse"
                       tooltipLabel="Tooltip"
                       placeholder="Internreferanse"
                       title="Legg til ny internreferanse"

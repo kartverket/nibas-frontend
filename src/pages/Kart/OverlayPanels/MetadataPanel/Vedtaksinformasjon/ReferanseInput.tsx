@@ -1,28 +1,18 @@
 import { Button, Input } from "@kvib/react";
-import { Feature } from "ol";
 import { VedtakinfoRow } from "./VedtakinfoRow";
-import { useDokumentreferanser } from "./useDokumentreferanser";
-import {
-  InputName,
-  InputCollection,
-  Referanse,
-  VedtakinfoForm,
-} from "./OversiktReferanser";
+import { InputName, Referanse, VedtakinfoForm } from "./OversiktReferanser";
 import { styled } from "styled-components";
 import { UseFormRegister } from "react-hook-form";
-import { useEffect } from "react";
 
 export const ReferanseInput = ({
-  inputName,
-  inputCollectionName,
+  registerName,
   placeholder,
   tooltipLabel,
   title,
   appendFn,
   register,
 }: {
-  inputName: keyof InputName;
-  inputCollectionName: keyof InputCollection;
+  registerName: keyof InputName;
   placeholder: string;
   tooltipLabel: string;
   title: string;
@@ -35,9 +25,8 @@ export const ReferanseInput = ({
 
   return (
     <VedtakinfoRow tooltipLabel={tooltipLabel} name={title}>
-      <Input hidden {...register(inputCollectionName)} />
       <Input
-        {...register(inputName)}
+        {...register(registerName)}
         placeholder={placeholder}
         backgroundColor={"white"}
         onKeyDown={(e) => {
@@ -53,7 +42,7 @@ export const ReferanseInput = ({
       <LeggTilKnapp
         onClick={() => {
           const element = document.querySelector(
-            `input[name=${inputName}]`,
+            `input[name=${registerName}]`,
           ) as HTMLInputElement;
           if (element?.value) {
             appendFn({ beskrivelse: element.value });

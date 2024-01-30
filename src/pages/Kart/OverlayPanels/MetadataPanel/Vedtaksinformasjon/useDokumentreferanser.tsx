@@ -47,9 +47,9 @@ const addMetadataEntryFromFeature = (
   updatedMetadata: Metadata,
 ) => {
   const id = feature.getId();
-
-  // TODO: Lag en dyp kopi
-  const oldMetadata = feature.getProperties().metadata as Metadata;
+  const oldMetadata = structuredClone(
+    feature.getProperties().metadata,
+  ) as Metadata;
 
   if (!id) return;
 
@@ -78,11 +78,20 @@ export const useDokumentreferanser = (
         ]
       : {};
 
-  const { register, setValue, getValues, reset, handleSubmit } =
-    useForm<VedtakinfoForm>({ defaultValues: defaultValues });
-
-  const [dokref, setDokref] = useState<Referanse[]>([]);
-  const [internref, setInternref] = useState<Referanse[]>([]);
+  const {
+    register,
+    setValue,
+    getValues,
+    reset,
+    handleSubmit,
+    formState: { isDirty },
+  } = useForm<VedtakinfoForm>({ defaultValues: defaultValues });
+  const [dokref, setDokref] = useState<Referanse[]>(
+    defaultValues.dokumentlenker || [],
+  );
+  const [internref, setInternref] = useState<Referanse[]>(
+    defaultValues.internReferanserKartverket || [],
+  );
   const { addHistoryEntry } = useHistory();
 
   // Setter input-feltene til eksisterende skjema, dersom det redigeres
@@ -138,6 +147,7 @@ export const useDokumentreferanser = (
   };
 
   return {
+    isDirty,
     updateDraftFromFeature,
     dokref,
     setDokref,
