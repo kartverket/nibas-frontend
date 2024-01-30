@@ -7,7 +7,7 @@ import Input from "components/Input";
 import { Button } from "@kvib/react";
 import { useDokumentreferanser } from "./useDokumentreferanser_old";
 import { DokrefField } from "./DokrefField";
-import { DokrefRow } from "../Vedtaksinformasjon/DokrefRow";
+import { VedtakinfoRow } from "../Vedtaksinformasjon/VedtakinfoRow";
 
 export type Value = {
   beskrivelse: string;
@@ -68,7 +68,7 @@ const FieldArray = ({
 
   return (
     <FieldArrayWrapper>
-      <DokrefRow tooltipLabel={itemName} name={itemName}>
+      <VedtakinfoRow tooltipLabel={itemName} name={itemName}>
         {fields.map((field, nestedIndex) => (
           <FieldWrapper key={field.id}>
             <a href={field.beskrivelse} target="_blank" rel="noreferrer">
@@ -98,7 +98,7 @@ const FieldArray = ({
             Legg til
           </Button>
         </div>
-      </DokrefRow>
+      </VedtakinfoRow>
     </FieldArrayWrapper>
   );
 };

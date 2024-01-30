@@ -1,34 +1,40 @@
 import { Button, Input } from "@kvib/react";
 import { Feature } from "ol";
-import { DokrefRow } from "./DokrefRow";
+import { VedtakinfoRow } from "./VedtakinfoRow";
 import { useDokumentreferanser } from "./useDokumentreferanser";
-import { InputName, InputCollection, Referanse } from "./OversiktReferanser";
+import {
+  InputName,
+  InputCollection,
+  Referanse,
+  VedtakinfoForm,
+} from "./OversiktReferanser";
 import { styled } from "styled-components";
+import { UseFormRegister } from "react-hook-form";
+import { useEffect } from "react";
 
 export const ReferanseInput = ({
-  feature,
   inputName,
   inputCollectionName,
   placeholder,
   tooltipLabel,
   title,
   appendFn,
+  register,
 }: {
-  feature: Feature;
   inputName: keyof InputName;
   inputCollectionName: keyof InputCollection;
   placeholder: string;
   tooltipLabel: string;
   title: string;
   appendFn: (item: Referanse) => void;
+  register: UseFormRegister<VedtakinfoForm>;
 }) => {
-  const { register } = useDokumentreferanser(feature);
-
   function clearInput(element: HTMLInputElement) {
     element.value = "";
   }
+
   return (
-    <DokrefRow tooltipLabel={tooltipLabel} name={title}>
+    <VedtakinfoRow tooltipLabel={tooltipLabel} name={title}>
       <Input hidden {...register(inputCollectionName)} />
       <Input
         {...register(inputName)}
@@ -57,7 +63,7 @@ export const ReferanseInput = ({
       >
         Legg til
       </LeggTilKnapp>
-    </DokrefRow>
+    </VedtakinfoRow>
   );
 };
 

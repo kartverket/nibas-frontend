@@ -9,18 +9,7 @@ type Props = {
   name: string;
 };
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const Row = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-`;
-
-export const DokrefRow = ({ children, tooltipLabel, name }: Props) => {
+export const VedtakinfoRow = ({ children, tooltipLabel, name }: Props) => {
   const [iconHovered, setIconHovered] = useState(false);
 
   return (
@@ -47,3 +36,15 @@ export const DokrefRow = ({ children, tooltipLabel, name }: Props) => {
     </Container>
   );
 };
+
+const Container = styled.div`
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+`;
+
+const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`;

@@ -1,4 +1,4 @@
-import { DokrefRow } from "../Vedtaksinformasjon/DokrefRow";
+import { VedtakinfoRow } from "../Vedtaksinformasjon/VedtakinfoRow";
 import { Feature } from "ol";
 
 type Props = {
@@ -22,8 +22,8 @@ export type DokrefForm = {
 
 export const DokrefField = ({ children, name, tooltipLabel }: Props) => {
   return (
-    <DokrefRow tooltipLabel={tooltipLabel} name={name}>
+    <VedtakinfoRow tooltipLabel={tooltipLabel} name={name}>
       {children}
-    </DokrefRow>
+    </VedtakinfoRow>
   );
 };

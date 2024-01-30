@@ -1,8 +1,10 @@
-import { Button, Icon, Text, Tooltip, useDisclosure } from "@kvib/react";
+import { Button, Card, Icon, Text, Tooltip, useDisclosure } from "@kvib/react";
 import { styled } from "styled-components";
 import { InfoIcon } from "../MetadataGenerelt";
 import { Feature } from "ol";
-import { ReferanserDetaljer } from "./ReferanserDetaljer";
+import { VedtaksinfoDetaljer } from "./VedtaksinfoDetaljer";
+import { Metadata } from "types/api";
+import { useState } from "react";
 
 // TODO:
 // * Vise referanseoversikt i metadata
@@ -17,6 +19,7 @@ import { ReferanserDetaljer } from "./ReferanserDetaljer";
 // * Modal for å vise referansedetaljer
 //   ** sendes med fra feature
 //   ** helst gjenbruke modal og skjema
+// * Slett gammel kode
 
 type Referanse = {
   beskrivelse: string;
@@ -48,17 +51,24 @@ export type InputName = {
 
 const OversiktReferanser = ({ feature }: { feature: Feature }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [displayMode, setDisplayMode] = useState(false);
+  const metadata = feature.getProperties()?.metadata as Metadata;
+  const vedtaksinfoCollection = metadata.dokumentasjonsreferanser;
+  const [iconHovered, setIconHovered] = useState(false);
 
   return (
     <div>
       <Tooltip label={"tooltipLabel"} hasArrow placement="bottom">
         <OversiktHeader>
           <Text as="b">Dokumentreferanser</Text>
-          <InfoIcon>
+          <InfoIcon
+            onMouseOver={() => setIconHovered(true)}
+            onMouseOut={() => setIconHovered(false)}
+          >
             <Icon
               size={24}
               color="var(--kvib-colors-blue-500)"
-              isFilled={true}
+              isFilled={iconHovered}
               icon={"info"}
             ></Icon>
           </InfoIcon>
@@ -72,16 +82,35 @@ const OversiktReferanser = ({ feature }: { feature: Feature }) => {
           </EditButton>
         </OversiktHeader>
       </Tooltip>
-      <ReferanserDetaljer
+      {vedtaksinfoCollection?.map((vedtak) => (
+        <VedtaksinfoCard
+          key={vedtak.id || vedtak.rettskildeTittel}
+          title={vedtak.rettskildeTittel}
+          onClick={() => {
+            // TODO: Sett modal displaymode true, sett editing/viewing-ID, sett isOpen
+            console.log(vedtak.id);
+          }}
+        />
+      ))}
+      <VedtaksinfoDetaljer
         isOpen={isOpen}
         onClose={onClose}
         feature={feature}
-        displayMode={false}
+        displayMode={displayMode}
       />
     </div>
   );
 };
 
+const VedtaksinfoCard = ({
+  title,
+  onClick,
+}: {
+  title: string;
+  onClick: () => void;
+}) => {
+  return <Card onClick={onClick}>{title}</Card>;
+};
 export const BorderTop = styled.div`
   border-top: 1px;
   border-color: var(--kvib-colors-gray-300);
