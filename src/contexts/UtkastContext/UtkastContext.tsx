@@ -27,6 +27,7 @@ import useNibasApi from "hooks/useNibasApi";
 import {
   ApiErrorResponse,
   OppdaterUtkastRequest,
+  UtkastOperasjoner,
   UtkastResponse,
 } from "types/api";
 import { resetMapView } from "utils/map";
@@ -127,11 +128,34 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [fetchedUtkast, utkastId, mutate, utkast, closeUtkast]);
 
+  const operasjonerIsValid = (operasjoner: UtkastOperasjoner): boolean => {
+    const endredeFeatures = operasjoner.grenseendringer.endredeFeatures;
+
+    for (const feature of endredeFeatures) {
+      const featureProperties = feature.properties;
+      if (
+        !featureProperties.kontekstEgenskaper ||
+        feature.properties.kontekstEgenskaper.length < 2
+      ) {
+        toast({
+          status: "error",
+          title: "Grense mangler tilhørighet",
+          description: `Grense med ID ${feature.id} mangler obligatorisk grenseinformasjon. Husk at nye grenser må få satt tilhørighet før lagring,`,
+        });
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   const getUpdateUtkastRequestFromHistory =
     (): OppdaterUtkastRequest | null => {
       if (!utkast) return null;
 
       const operasjoner = historyToUtkastOperations(history, utkast);
+
+      if (!operasjonerIsValid(operasjoner)) return null;
 
       const updatedUtkast: OppdaterUtkastRequest = {
         endringstype: utkast.endringstype,
@@ -140,6 +164,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
         operasjoner,
         version: utkast.version,
       };
+
       const utkastEntry = history.entries
         .slice(0, history.index)
         .reverse() // siste entry inneholder alle endringene på utkastet
@@ -177,6 +202,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
       setUtkast(updatedUtkast);
     } else if (statusCode.isError(response.status)) {
       const wrapper = (await response.json()) as ApiErrorResponse;
+
       setError({
         title: "Oppdatering av utkast feilet",
         description: wrapper.errorDescription.description,

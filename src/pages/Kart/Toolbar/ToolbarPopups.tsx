@@ -17,7 +17,7 @@ const ToolbarPopups = () => {
   const toast = useToast();
   const { split } = useSplit();
   const { addHistoryEntry } = useHistory();
-  const { activeModeTools, activeTool, resetModeTools, resetTool } =
+  const { activeModeTools, activeTool, resetModeTools, resetTool, isDrawing } =
     useToolbar();
   const {
     selectedFeatures,
@@ -104,7 +104,14 @@ const ToolbarPopups = () => {
           isLoading={matrikkelIsLoading}
         />
       )}
-      {activeTool === "draw" && (
+      {activeTool === "draw" && !isDrawing && (
+        <ToolbarPopup
+          text="Start tegning ved å klikke på kartet"
+          subtext="Tegninger kan snappes til punkter eller startes fritt utenfor andre grenser"
+          onClose={resetTool}
+        />
+      )}
+      {activeTool === "draw" && isDrawing && (
         <ToolbarPopup
           text="Dobbeltklikk for å avslutte tegningen"
           onClose={resetTool}

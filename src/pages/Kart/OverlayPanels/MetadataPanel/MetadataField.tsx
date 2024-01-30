@@ -62,7 +62,7 @@ export const MetadataField = ({
       }
       onMetadataSubmit={onSubmit}
       isDisabled={
-        metadataIsDisabled || isDisabled || metadata.common?.gyldigTil != null
+        metadataIsDisabled || isDisabled || metadata?.common?.gyldigTil != null
       }
       isDirty={isDirty}
       reset={reset}

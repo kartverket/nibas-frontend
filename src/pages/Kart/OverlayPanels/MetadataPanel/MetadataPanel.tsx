@@ -31,7 +31,7 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
     selectedProperties && selectedProperties.metadata
       ? getDateInFriendlyString(
           (selectedProperties.metadata as Metadata).common?.sporingsinformasjon
-            .oppdateringsdato,
+            ?.oppdateringsdato,
         )
       : "Ukjent"
   }`;
@@ -41,10 +41,7 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
       <PanelHeader onClose={closeOverlayPanel} subHeading={sistOppdatertString}>
         Informasjon om grense
       </PanelHeader>
-      {selectedFeature &&
-      selectedProperties &&
-      selectedProperties.metadata &&
-      !isWFSGrense ? (
+      {selectedFeature && selectedProperties && !isWFSGrense ? (
         <MetadataGenerelt feature={selectedFeature} />
       ) : (
         <p>Valgt grense har ikke metadata</p>
