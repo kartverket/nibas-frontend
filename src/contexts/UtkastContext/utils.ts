@@ -3,10 +3,8 @@ import { GeoJSONFeature, GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import LineString from "ol/geom/LineString";
 import { EntityUtkastType, UtkastEntity, ResponseWithId } from "./types";
 import {
-  GrenseEntry,
   GrunnkretsEntry,
   HistoryState,
-  MetadataEntry,
   StemmekretsEntry,
   StemmekretsSammenslaaingsendringEntry,
 } from "contexts/HistoryContext";
@@ -117,27 +115,6 @@ const reduceMetadataOperations = (
   }
 };
 
-const reduceGrenseOperations = (
-  editedFeatures: GeoJSONFeature[],
-  entry: GrenseEntry | MetadataEntry,
-): GeoJSONFeature[] => {
-  entry.changes.forEach((change) => {
-    if (!change.to) return editedFeatures;
-
-    const feature = editSource.getFeatureById(change.id) as Feature<LineString>;
-
-    if (!feature) return editedFeatures;
-
-    // Skal kun legge til én feature for en gitt id
-    const featureAsGeoJson = featureToGeoJson(feature);
-    return editedFeatures
-      .filter((editedFeature) => editedFeature.id != featureAsGeoJson.id)
-      .concat(featureAsGeoJson);
-  });
-
-  return editedFeatures;
-};
-
 //Antas at det bare er en entry i changes
 const reduceStemmekretssammenslaingsOperations = (
   operations: StemmekretsSammenslaaingsendringRequest,
@@ -203,26 +180,52 @@ export const historyToUtkastOperations = (
       sammenslaaingsOperations;
   }
 
-  // hent grenseendringer og gjør endringene om til en liste av features
-  const editedFeatures: GeoJSONFeature[] = (
-    historyToCurrentIndex.filter(
-      (entry) =>
-        entry.type === "grense" ||
-        entry.type === "metadata" ||
-        entry.type === "grensearkivering" ||
-        entry.type === "grensetilhorighetendring",
-    ) as (GrenseEntry | MetadataEntry)[]
-  ).reduce(reduceGrenseOperations, [] as GeoJSONFeature[]);
+  const editedFeatureHistoryEntries = [
+    "grense",
+    "metadata",
+    "grensearkivering",
+    "grensetilhorighetendring",
+    "nygrense",
+  ];
 
-  // hvis det er noen endringer, slå sammen tidligere endringer og nye endringer til ny liste
-  if (Object.keys(editedFeatures).length > 0) {
-    utkastOperations.grenseendringer = {
-      endredeFeatures:
-        utkastOperations.grenseendringer?.endredeFeatures.concat(
-          editedFeatures,
-        ),
-    };
-  }
+  const relevantHistoryEntries = historyToCurrentIndex.filter((entry) =>
+    editedFeatureHistoryEntries.includes(entry.type),
+  );
+
+  // hent grenseendringer og gjør endringene om til en liste av features
+  const editedFeatures: GeoJSONFeature[] =
+    utkastOperations.grenseendringer.endredeFeatures;
+
+  relevantHistoryEntries.forEach((entry) => {
+    entry.changes.forEach((change) => {
+      if (!change.to) return;
+
+      const feature = editSource.getFeatureById(
+        change.id,
+      ) as Feature<LineString>;
+
+      if (!feature) return;
+
+      const featureAsGeoJson = featureToGeoJson(feature);
+
+      const index = editedFeatures.findIndex(
+        (geoJsonFeature) => featureAsGeoJson.id === geoJsonFeature.id,
+      );
+
+      // Hvis vi allerede har lagt inn featuren tidligere i historikken,
+      // ønsker vi å overskrive den hvis den samme featuren endres senere i historikken
+      if (index >= 0) {
+        editedFeatures[index] = featureAsGeoJson;
+        return;
+      }
+
+      editedFeatures.push(featureAsGeoJson);
+    });
+  });
+
+  utkastOperations.grenseendringer = {
+    endredeFeatures: editedFeatures,
+  };
 
   return utkastOperations;
 };
