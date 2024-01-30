@@ -14,6 +14,8 @@ export const setDefaultFeatureProperties = (
     // TODO: Should set some default metadata?
     metadata: {
       discriminator: getGrenseDiscriminatorFromType(grenseType),
+      common: {},
+      commonGrense: {},
     } as Metadata,
     type: grenseType,
     version: 1,
