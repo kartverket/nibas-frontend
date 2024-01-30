@@ -18,7 +18,7 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import LineString from "ol/geom/LineString";
 
 const useDraw = () => {
-  const { activeTool, setIsDrawing } = useToolbar();
+  const { activeTool } = useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const { addHistoryEntry } = useHistory();
   const { openOverlayPanel } = useOverlayPanel();
@@ -57,8 +57,6 @@ const useDraw = () => {
     };
 
     const onDrawEnd = (e: DrawEvent) => {
-      setIsDrawing(false);
-
       const drawnFeature = e.feature as Feature<LineString>;
       const editingType = getCurrentlyEditingType();
 
@@ -105,17 +103,8 @@ const useDraw = () => {
     openOverlayPanel,
     selectFeatures,
     selectedFeatures,
-    setIsDrawing,
     toast,
   ]);
-
-  useEffect(() => {
-    const onDrawStart = () => {
-      setIsDrawing(true);
-    };
-
-    draw.on("drawstart", onDrawStart);
-  }, [draw, setIsDrawing]);
 
   return { draw };
 };
