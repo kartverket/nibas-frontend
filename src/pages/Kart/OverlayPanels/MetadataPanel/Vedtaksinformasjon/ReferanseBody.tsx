@@ -1,5 +1,6 @@
 import {
   Card,
+  Datepicker,
   Grid,
   GridItem,
   Input,
@@ -68,26 +69,39 @@ export const ReferanseBody = ({
             <VedtakinfoField
               displayMode={displayMode}
               tooltipLabel="tooltip"
-              title="Rettskildetittel (obligatorisk)"
+              title="Vedtakstittel"
               value={vedtaksinformasjon?.rettskildeTittel}
             >
               <Input
                 {...register("rettskildeTittel")}
                 backgroundColor={"white"}
-                placeholder={"Ikke spesifisert"}
+                placeholder={"Skriv inn tittelen på vedtaket"}
               />
             </VedtakinfoField>
-            <VedtakinfoField
-              displayMode={displayMode}
-              tooltipLabel="tooltip"
-              title="Rettskilde-ID"
-            >
-              <Input
-                {...register("rettskildeId")}
-                backgroundColor={"white"}
-                placeholder={"Ikke spesifisert"}
-              />
-            </VedtakinfoField>
+            <Row>
+              <VedtakinfoField
+                displayMode={displayMode}
+                tooltipLabel="tooltip"
+                title="Fastsettingsdato"
+              >
+                <Datepicker
+                  {...register("fastsettingsdato")}
+                  backgroundColor={"white"}
+                  placeholder={"Velg dato"}
+                />
+              </VedtakinfoField>
+              <VedtakinfoField
+                displayMode={displayMode}
+                tooltipLabel="tooltip"
+                title="Rettskilde-ID"
+              >
+                <Input
+                  {...register("rettskildeId")}
+                  backgroundColor={"white"}
+                  placeholder={"Ikke spesifisert"}
+                />
+              </VedtakinfoField>
+            </Row>
             <VedtakinfoField
               displayMode={displayMode}
               tooltipLabel="tooltip"
@@ -184,6 +198,12 @@ export const ReferanseBody = ({
     </>
   );
 };
+
+const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`;
 
 const Referanser = styled.div`
   margin-top: 30px;

@@ -41,6 +41,7 @@ const Container = styled.div`
   margin: 10px;
   display: flex;
   flex-direction: column;
+  width: 100%;
 `;
 
 const Row = styled.div`

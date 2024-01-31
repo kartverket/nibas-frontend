@@ -147,7 +147,7 @@ export const historyToUtkastOperations = (
   previousUtkast?: UtkastResponse,
 ) => {
   const historyToCurrentIndex = history.entries.slice(0, history.index);
-
+  console.log("historyToUtkastOperations", history);
   // hent endringer på enheter og gjør endringene om til utkastoperasjoner
   const utkastOperations = (
     historyToCurrentIndex.filter(

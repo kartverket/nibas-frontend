@@ -97,7 +97,7 @@ const OversiktReferanser = ({ feature }: { feature: Feature }) => {
           key={vedtak.id || vedtak.rettskildeTittel}
           title={vedtak.rettskildeTittel}
           onClick={() => {
-            setDisplayMode(false);
+            setDisplayMode(true);
             setSelectedVedtaksinfoIndex(index);
             onOpen();
           }}
@@ -109,6 +109,7 @@ const OversiktReferanser = ({ feature }: { feature: Feature }) => {
         onClose={closeModal}
         feature={feature}
         displayMode={displayMode}
+        setDisplayMode={setDisplayMode}
       />
     </div>
   );

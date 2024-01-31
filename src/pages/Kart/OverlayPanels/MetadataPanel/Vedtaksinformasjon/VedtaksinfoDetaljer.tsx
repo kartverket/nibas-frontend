@@ -16,21 +16,23 @@ import {
   useDokumentreferanser,
 } from "./useDokumentreferanser";
 import { Dokref, Metadata } from "types/api";
+import { useState } from "react";
 
 export const VedtaksinfoDetaljer = ({
   isOpen,
   onClose,
   feature,
   displayMode,
+  setDisplayMode,
   selectedVedtaksinfoIndex,
 }: {
   displayMode: boolean;
   feature: Feature;
   isOpen: boolean;
   onClose: () => void;
+  setDisplayMode: React.Dispatch<React.SetStateAction<boolean>>;
   selectedVedtaksinfoIndex?: number;
 }) => {
-  const erRedigeringsModus = true; //!displayMode && vedtaksinfoId;
   const {
     isDirty,
     register,
@@ -42,6 +44,7 @@ export const VedtaksinfoDetaljer = ({
     setInternref,
     updateDraftFromFeature,
   } = useDokumentreferanser(feature, selectedVedtaksinfoIndex);
+  const [redigeringsmodus, setRedigeringsmodus] = useState(false);
 
   const onSubmit = (data: VedtakinfoForm) => {
     if (isDirty) {
@@ -74,20 +77,97 @@ export const VedtaksinfoDetaljer = ({
 
           <BorderTop>
             <ControlsContainer>
-              <ButtonsContainer>
-                {erRedigeringsModus && <Text>Arkiver</Text>}
-              </ButtonsContainer>
-              <ButtonsContainer>
-                <Button colorScheme="blue" mr={3} onClick={onClose}>
-                  Avbryt
-                </Button>
-                <Button type="submit">Bekreft</Button>
-              </ButtonsContainer>
+              <VedtaksFooter
+                redigeringsmodus={redigeringsmodus}
+                setRedigeringsmodus={setRedigeringsmodus}
+                displayMode={displayMode}
+                setDisplayMode={setDisplayMode}
+                onClose={onClose}
+              />
             </ControlsContainer>
           </BorderTop>
         </form>
       </ModalContent>
     </Modal>
+  );
+};
+
+const VedtaksFooter = ({
+  redigeringsmodus,
+  setRedigeringsmodus,
+  displayMode,
+  onClose,
+  setDisplayMode,
+}: {
+  redigeringsmodus: boolean;
+  setRedigeringsmodus: React.Dispatch<React.SetStateAction<boolean>>;
+  setDisplayMode: React.Dispatch<React.SetStateAction<boolean>>;
+  displayMode: boolean;
+  onClose: () => void;
+}) => {
+  if (displayMode)
+    return (
+      <VisVedtakFooter
+        setRedigeringsmodus={setRedigeringsmodus}
+        setDisplayMode={setDisplayMode}
+      />
+    );
+  else if (redigeringsmodus)
+    return <EndreVedtakFooter onClose={onClose} onArchive={() => {}} />;
+  else return <NyttVedtakFooter onClose={onClose} />;
+};
+
+const VisVedtakFooter = ({
+  setRedigeringsmodus,
+  setDisplayMode,
+}: {
+  setRedigeringsmodus: React.Dispatch<React.SetStateAction<boolean>>;
+  setDisplayMode: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
+  return (
+    <ButtonsContainer>
+      <Button
+        mr={3}
+        onClick={() => {
+          setRedigeringsmodus(true);
+          setDisplayMode(false);
+        }}
+      >
+        Endre vedtaksinformasjon
+      </Button>
+    </ButtonsContainer>
+  );
+};
+
+const NyttVedtakFooter = ({ onClose }: { onClose: () => void }) => {
+  return (
+    <ButtonsContainer>
+      <Button colorScheme="blue" mr={3} onClick={onClose}>
+        Avbryt
+      </Button>
+      <Button type="submit">Legg til vedtaksinformasjon</Button>
+    </ButtonsContainer>
+  );
+};
+const EndreVedtakFooter = ({
+  onClose,
+  onArchive,
+}: {
+  onClose: () => void;
+  onArchive: () => void;
+}) => {
+  return (
+    <>
+      <ButtonsContainer>
+        <Text>Arkiver</Text>
+      </ButtonsContainer>
+      <ButtonsContainer>
+        <Button colorScheme="blue" mr={3} onClick={onClose}>
+          Avbryt
+        </Button>
+        <Button type="submit">Bekreft</Button>
+      </ButtonsContainer>
+    </>
   );
 };
 
