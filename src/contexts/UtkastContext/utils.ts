@@ -13,6 +13,7 @@ import {
   FylkeRequest,
   GrunnkretsRequest,
   KommuneRequest,
+  KretsDelingEndringRequest,
   NasjonRequest,
   StemmekretsRef,
   StemmekretsRequest,
@@ -238,6 +239,7 @@ export const createUtkastOperations = ({
   nasjonsendringer = {},
   stemmekretsendringer = {},
   stemmekretssammenslaaingsendringer,
+  kretsDelingEndringer = [],
 }: {
   endredeFeatures?: GeoJSONFeature[];
   fylkesendringer?: Record<string, FylkeRequest>;
@@ -246,6 +248,7 @@ export const createUtkastOperations = ({
   nasjonsendringer?: Record<string, NasjonRequest>;
   stemmekretsendringer?: Record<string, StemmekretsRequest>;
   stemmekretssammenslaaingsendringer?: StemmekretsSammenslaaingsendringRequest;
+  kretsDelingEndringer?: KretsDelingEndringRequest[];
 }): UtkastOperasjoner => ({
   grenseendringer: {
     endredeFeatures,
@@ -258,4 +261,5 @@ export const createUtkastOperations = ({
     stemmekretsendringer,
   },
   stemmekretsSammenslaaingsendring: stemmekretssammenslaaingsendringer,
+  kretsDelingEndringer: kretsDelingEndringer,
 });
