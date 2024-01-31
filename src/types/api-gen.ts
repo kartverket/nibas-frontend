@@ -422,6 +422,7 @@ export interface components {
     /** @description Representasjon av deling av en krets som ender i to kretser der én er videreført og én er ny */
     KretsDelingEndringRequest: {
       opprinneligKrets: components["schemas"]["IdentifikatorMedVersjon"];
+      kommuneId: components["schemas"]["ObjektIdentifikator"];
       /**
        * @description Flatetypen som skal deles
        * @enum {string}
@@ -433,9 +434,14 @@ export interface components {
         | "GRUNNKRETS"
         | "STEMMEKRETS"
         | "SKOLEKRETS";
-      /** @description Navnet til den nye kretsen */
+      /** @description Navn og nummer for de nye kretsene som skal utledes fra opprinnelig krets */
+      nyeKretser: components["schemas"]["KretsNavnOgNummer"][];
+    };
+    /** @description Representasjon av navn og nummer for en ny krets */
+    KretsNavnOgNummer: {
+      /** @description Navne til den nye kretsen som skal dannes fra opprinneligKrets */
       kretsNavn: string;
-      /** @description Grunnkrets/stemmekrets-nummmeret til den nye kretsen */
+      /** @description Grunnkrets/stemmekrets-nummmer til den nye kretsen */
       kretsNummer: string;
     };
     /** @description Wrapper-objekt rundt en JTS LineString. */
@@ -509,7 +515,8 @@ export interface components {
       metadataendringer: components["schemas"]["Metadataendringer"];
       grenseendringer: components["schemas"]["Grenseendringer"];
       stemmekretsSammenslaaingsendring?: components["schemas"]["StemmekretsSammenslaaingsendringRequest"];
-      kretsDelingEndring?: components["schemas"]["KretsDelingEndringRequest"];
+      /** @description Deling av en stemmekrets eller grunnkrets */
+      kretsDelingEndringer: components["schemas"]["KretsDelingEndringRequest"][];
     };
     /** @description Representasjon for oppdatering av utkast */
     OppdaterUtkastRequest: {
