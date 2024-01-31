@@ -16,6 +16,8 @@ import { setDefaultFeatureProperties } from "utils/features";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import LineString from "ol/geom/LineString";
+import { findNearbyVertexOnFeature } from "utils/map";
+import { useGetFeatures } from "./utils";
 
 const useDraw = () => {
   const { activeTool } = useToolbar();
@@ -23,6 +25,7 @@ const useDraw = () => {
   const { addHistoryEntry } = useHistory();
   const { openOverlayPanel } = useOverlayPanel();
   const { selectFeatures, selectedFeatures } = useFeatureStyle();
+  const { getActiveFeaturesAtPixel, coordinatesAreEqual } = useGetFeatures();
   const toast = useToast();
 
   // TODO: fungerer ikke uten snap, vet ikke hvorfor
@@ -34,10 +37,61 @@ const useDraw = () => {
         snapTolerance: pixelTolerance,
         style: grenseStyles.select,
         freehandCondition: () => false,
-        condition: (event: MapBrowserEvent<MouseEvent>) =>
-          noModifierKeys(event) && activeTool === "draw",
+        condition: (event: MapBrowserEvent<MouseEvent>) => {
+          if (!noModifierKeys(event) || activeTool !== "draw") return false;
+
+          const featuresAtPixel = getActiveFeaturesAtPixel(event, "edit");
+
+          if (featuresAtPixel.length === 0) return true;
+
+          let isAllowedOperation = true;
+
+          for (const featureLike of featuresAtPixel) {
+            const feature = featureLike as Feature<LineString>;
+            const geometry = feature.getGeometry();
+
+            if (!geometry) continue;
+
+            const firstCoordinate = geometry.getFirstCoordinate();
+            const lastCoordinate = geometry.getLastCoordinate();
+
+            const clickedCoordinate = findNearbyVertexOnFeature(
+              feature,
+              event.coordinate,
+            );
+
+            if (!clickedCoordinate) {
+              isAllowedOperation = false;
+              break;
+            }
+
+            const pointOnFeature = geometry.getClosestPoint(clickedCoordinate);
+
+            if (
+              !coordinatesAreEqual(pointOnFeature, firstCoordinate) &&
+              !coordinatesAreEqual(pointOnFeature, lastCoordinate)
+            ) {
+              isAllowedOperation = false;
+              break;
+            }
+          }
+
+          if (!isAllowedOperation) {
+            toast({
+              status: "warning",
+              title:
+                "Nye grensepunkter kan kun plasseres på en eksisterende grenses endepunkter",
+            });
+            return false;
+          }
+
+          return true;
+        },
+        finishCondition: (event: MapBrowserEvent<MouseEvent>) => {
+          return true;
+        },
       }),
-    [activeTool],
+    [activeTool, coordinatesAreEqual, getActiveFeaturesAtPixel, toast],
   );
 
   useEffect(() => {
@@ -80,9 +134,6 @@ const useDraw = () => {
 
       openOverlayPanel("metadata");
       selectFeatures([drawnFeature as Feature<LineString>]);
-
-      // Selected features is empty here, shouldn't be?
-      console.log(selectedFeatures);
 
       e.stopPropagation();
 
