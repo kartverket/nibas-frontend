@@ -16,6 +16,7 @@ import { useState } from "react";
 //   ** legge til referanser                                OK
 //   ** resterende felter
 //   ** oppdatere historikk
+//   ** implementere isDirty for referanser
 // * Modal for å vise referansedetaljer
 //   ** sendes med fra feature
 //   ** helst gjenbruke modal og skjema
