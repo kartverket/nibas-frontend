@@ -4,7 +4,6 @@ import { FeatureProperties } from "types/api";
 import useIsMetadataDisabled from "../hooks/useIsMetadataDisabled";
 import MetadataRow from "./MetadataRow";
 import { Select, Stack } from "@kvib/react";
-import { GrenseType } from "hooks/layers/types";
 import { useTilhorighet } from "../hooks/useTilhorighet";
 import { useEffect } from "react";
 
@@ -16,22 +15,16 @@ enum Tilhorighet {
 type TilhorighetProps = {
   feature: Feature<Geometry>;
   isDisabled?: boolean;
-  tilhorighetToChange: "grunnkretser" | "stemmekretser";
 };
 
-export const TilhorighetField = ({
-  feature,
-  isDisabled,
-  tilhorighetToChange,
-}: TilhorighetProps) => {
+export const TilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
   const properties = feature.getProperties() as FeatureProperties;
   const kontekstEgenskaper = properties.kontekstEgenskaper;
 
   const metadataIsDisabled = useIsMetadataDisabled(feature, properties);
 
-  const grenseType = properties.type as GrenseType;
-
   const {
+    tilhorighetToChange,
     data: tilhorighetOptions,
     isDirty,
     getValuesFormatted,
@@ -39,16 +32,12 @@ export const TilhorighetField = ({
     getTilhorighetData,
     register,
     updateDraftFromFeature,
-  } = useTilhorighet(
-    feature,
-    grenseType,
-    tilhorighetToChange,
-    kontekstEgenskaper,
-  );
+  } = useTilhorighet(feature, kontekstEgenskaper);
 
   useEffect(() => {
     resetTilhorighet();
   }, [getTilhorighetData, feature, tilhorighetOptions, resetTilhorighet]);
+
   return (
     <MetadataRow
       feature={feature}
@@ -60,24 +49,26 @@ export const TilhorighetField = ({
       reset={resetTilhorighet}
       tooltipLabel="Definerer hvilke inndelinger grensen har på hver sin side. Obs! Endring av dette feltet kan forårsake geometriendringer."
     >
-      <Stack>
-        {Object.values(Tilhorighet).map((tilhorighet) => (
-          <Select
-            key={tilhorighet}
-            {...register(`${tilhorighetToChange}.${tilhorighet}`)}
-          >
-            {tilhorighetOptions &&
-              tilhorighetOptions.map((krets) => {
-                const uid = `${tilhorighet}_${krets.id.lokalid.value}`;
-                return (
-                  <option key={uid} value={krets.id.lokalid.value}>
-                    {krets.nummer} {krets.navn}
-                  </option>
-                );
-              })}
-          </Select>
-        ))}
-      </Stack>
+      {tilhorighetToChange && (
+        <Stack>
+          {Object.values(Tilhorighet).map((tilhorighet) => (
+            <Select
+              key={tilhorighet}
+              {...register(`${tilhorighetToChange}.${tilhorighet}`)}
+            >
+              {tilhorighetOptions &&
+                tilhorighetOptions[tilhorighet].map((krets) => {
+                  const uid = `${tilhorighet}_${krets.id.lokalid.value}`;
+                  return (
+                    <option key={uid} value={krets.id.lokalid.value}>
+                      {krets.nummer} {krets.navn}
+                    </option>
+                  );
+                })}
+            </Select>
+          ))}
+        </Stack>
+      )}
     </MetadataRow>
   );
 };
