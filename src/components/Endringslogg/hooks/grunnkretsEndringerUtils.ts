@@ -1,157 +1,121 @@
-import {
-  GrunnkretsResponse,
-  KommuneRef,
-  UtkastOperasjoner,
-} from "../../../types/api";
+import { GrunnkretsResponse, KommuneRef, UtkastOperasjoner } from "../../../types/api";
 import { deduplicate, removeNull } from "utils/list-utils";
 import {
-  GrunnkretsEndringstype,
-  Grunnkretsendringer,
-  GrunnkretsMetadataEndring,
-  Endring,
+    GrunnkretsEndringstype,
+    Grunnkretsendringer,
+    GrunnkretsMetadataEndring,
+    Endring,
 } from "./utkastEndringerTypes";
 import {
-  findKrets,
-  getKretserMedGrensejusteringer,
-  groupEndringerByKommune,
-  OperasjonerOrNull,
+    findKrets,
+    getKretserMedGrensejusteringer,
+    groupEndringerByKommune,
+    OperasjonerOrNull,
 } from "./endringerUtils";
 import { getNavnInSpraak } from "utils/language/language";
 
-export const getGrunnkretserMedEndringer = (
-  operasjoner: OperasjonerOrNull,
-): string[] => {
-  const endringerResponse = operasjoner?.metadataendringer?.grunnkretsendringer;
+export const getGrunnkretserMedEndringer = (operasjoner: OperasjonerOrNull): string[] => {
+    const endringerResponse = operasjoner?.metadataendringer?.grunnkretsendringer;
 
-  if (endringerResponse == null && operasjoner == null) {
-    return [];
-  }
+    if (endringerResponse == null && operasjoner == null) {
+        return [];
+    }
 
-  const grunnkretsMetadataEndringer = removeNull(
-    Object.keys(operasjoner?.metadataendringer?.grunnkretsendringer ?? {}),
-  );
+    const grunnkretsMetadataEndringer = removeNull(
+        Object.keys(operasjoner?.metadataendringer?.grunnkretsendringer ?? {}),
+    );
 
-  const alleGrunnkretserMedEndringer = getKretserMedGrensejusteringer(
-    operasjoner,
-    "GRUNNKRETS",
-  ).concat(grunnkretsMetadataEndringer);
+    const alleGrunnkretserMedEndringer = getKretserMedGrensejusteringer(operasjoner, "GRUNNKRETS").concat(
+        grunnkretsMetadataEndringer,
+    );
 
-  return deduplicate(alleGrunnkretserMedEndringer);
+    return deduplicate(alleGrunnkretserMedEndringer);
 };
 
 const getEndringAvTypeForId = (
-  type: GrunnkretsEndringstype,
-  grunnkretsId: string,
-  operasjoner: UtkastOperasjoner,
-  alleGrunnkretser: GrunnkretsResponse[],
+    type: GrunnkretsEndringstype,
+    grunnkretsId: string,
+    operasjoner: UtkastOperasjoner,
+    alleGrunnkretser: GrunnkretsResponse[],
 ): Endring | null => {
-  const gammelGrunnkrets = findKrets(grunnkretsId, alleGrunnkretser);
-  const nyVerdi =
-    operasjoner.metadataendringer.grunnkretsendringer?.[grunnkretsId]?.[
-      type
-    ]?.trim();
+    const gammelGrunnkrets = findKrets(grunnkretsId, alleGrunnkretser);
+    const nyVerdi = operasjoner.metadataendringer.grunnkretsendringer?.[grunnkretsId]?.[type]?.trim();
 
-  const gammelVerdi = gammelGrunnkrets[type]?.trim() ?? "";
+    const gammelVerdi = gammelGrunnkrets[type]?.trim() ?? "";
 
-  if (gammelVerdi === nyVerdi || nyVerdi == null) {
-    return null;
-  }
+    if (gammelVerdi === nyVerdi || nyVerdi == null) {
+        return null;
+    }
 
-  return {
-    fra: gammelVerdi,
-    til: nyVerdi,
-  };
+    return {
+        fra: gammelVerdi,
+        til: nyVerdi,
+    };
 };
 
-const harMetadataEndring = (
-  metadatEndring: GrunnkretsMetadataEndring,
-): boolean => {
-  const fieldsToCheck = [metadatEndring.navn, metadatEndring.grunnkretsnummer];
-  return fieldsToCheck.some((field) => field != null);
+const harMetadataEndring = (metadatEndring: GrunnkretsMetadataEndring): boolean => {
+    const fieldsToCheck = [metadatEndring.navn, metadatEndring.grunnkretsnummer];
+    return fieldsToCheck.some((field) => field != null);
 };
 
 const getMetadataEndringer = (
-  grunnkretser: string[],
-  operasjoner: UtkastOperasjoner,
-  alleGrunnkretser: GrunnkretsResponse[],
+    grunnkretser: string[],
+    operasjoner: UtkastOperasjoner,
+    alleGrunnkretser: GrunnkretsResponse[],
 ): GrunnkretsMetadataEndring[] => {
-  return grunnkretser
-    .map((grunnkretsId) => {
-      const getEndringAvType = (type: GrunnkretsEndringstype) =>
-        getEndringAvTypeForId(
-          type,
-          grunnkretsId,
-          operasjoner,
-          alleGrunnkretser,
-        );
+    return grunnkretser
+        .map((grunnkretsId) => {
+            const getEndringAvType = (type: GrunnkretsEndringstype) =>
+                getEndringAvTypeForId(type, grunnkretsId, operasjoner, alleGrunnkretser);
 
-      return {
-        kretsEndret: findKrets(grunnkretsId, alleGrunnkretser),
-        navn: getEndringAvType("navn"),
-        grunnkretsnummer: getEndringAvType("grunnkretsnummer"),
-      };
-    })
-    .filter(harMetadataEndring);
+            return {
+                kretsEndret: findKrets(grunnkretsId, alleGrunnkretser),
+                navn: getEndringAvType("navn"),
+                grunnkretsnummer: getEndringAvType("grunnkretsnummer"),
+            };
+        })
+        .filter(harMetadataEndring);
 };
 
 const getEndringerForKommune = (
-  kommuneId: string,
-  grunnkretserMedEndringer: string[],
-  operasjoner: UtkastOperasjoner,
-  alleGrunnkretser: GrunnkretsResponse[],
-  alleKommuner: KommuneRef[],
+    kommuneId: string,
+    grunnkretserMedEndringer: string[],
+    operasjoner: UtkastOperasjoner,
+    alleGrunnkretser: GrunnkretsResponse[],
+    alleKommuner: KommuneRef[],
 ): Grunnkretsendringer => {
-  const grunnkretserMedGrensejusteringer = getKretserMedGrensejusteringer(
-    operasjoner,
-    "GRUNNKRETS",
-  );
+    const grunnkretserMedGrensejusteringer = getKretserMedGrensejusteringer(operasjoner, "GRUNNKRETS");
 
-  const kommune = alleKommuner.find(
-    (kommuneRef) => kommuneRef.kommunenummer.id === kommuneId,
-  );
+    const kommune = alleKommuner.find((kommuneRef) => kommuneRef.kommunenummer.id === kommuneId);
 
-  return {
-    kommune: {
-      id: kommune?.id.lokalid.value ?? "",
-      nummer: kommune?.kommunenummer.kodeverdi ?? "",
-      navn: getNavnInSpraak(kommune?.navn, "nor"),
-    },
-    metadataendringer: getMetadataEndringer(
-      grunnkretserMedEndringer,
-      operasjoner,
-      alleGrunnkretser,
-    ),
-    grensejusteringer: removeNull(
-      grunnkretserMedEndringer
-        .filter((id) => grunnkretserMedGrensejusteringer.includes(id))
-        .map((grunnkretsId) => findKrets(grunnkretsId, alleGrunnkretser)),
-    ),
-  };
+    return {
+        kommune: {
+            id: kommune?.id.lokalid.value ?? "",
+            nummer: kommune?.kommunenummer.kodeverdi ?? "",
+            navn: getNavnInSpraak(kommune?.navn, "nor"),
+        },
+        metadataendringer: getMetadataEndringer(grunnkretserMedEndringer, operasjoner, alleGrunnkretser),
+        grensejusteringer: removeNull(
+            grunnkretserMedEndringer
+                .filter((id) => grunnkretserMedGrensejusteringer.includes(id))
+                .map((grunnkretsId) => findKrets(grunnkretsId, alleGrunnkretser)),
+        ),
+    };
 };
 
 export const getGrunnkretsEndringer = (
-  endredeGrunnkretser: string[],
-  operasjoner: OperasjonerOrNull,
-  alleGrunnkretser: GrunnkretsResponse[],
-  alleKommuner: KommuneRef[],
+    endredeGrunnkretser: string[],
+    operasjoner: OperasjonerOrNull,
+    alleGrunnkretser: GrunnkretsResponse[],
+    alleKommuner: KommuneRef[],
 ): Grunnkretsendringer[] | null => {
-  if (operasjoner == null || endredeGrunnkretser.length == 0) {
-    return null;
-  }
+    if (operasjoner == null || endredeGrunnkretser.length == 0) {
+        return null;
+    }
 
-  const endredeGrunnkretserGroupedBykommuneId = groupEndringerByKommune(
-    endredeGrunnkretser,
-    alleGrunnkretser,
-  );
+    const endredeGrunnkretserGroupedBykommuneId = groupEndringerByKommune(endredeGrunnkretser, alleGrunnkretser);
 
-  return Object.entries(endredeGrunnkretserGroupedBykommuneId).map(
-    ([kommune, stemmekretser]) =>
-      getEndringerForKommune(
-        kommune,
-        stemmekretser,
-        operasjoner,
-        alleGrunnkretser,
-        alleKommuner,
-      ),
-  );
+    return Object.entries(endredeGrunnkretserGroupedBykommuneId).map(([kommune, stemmekretser]) =>
+        getEndringerForKommune(kommune, stemmekretser, operasjoner, alleGrunnkretser, alleKommuner),
+    );
 };

@@ -9,66 +9,59 @@ import { Inputs } from "./MetadataGenerelt";
 import { UseFormRegisterReturn } from "react-hook-form";
 
 type Props = {
-  feature: Feature<Geometry>;
-  fieldKey: keyof Inputs;
-  fieldLabel: string;
-  tooltipLabel: string;
-  valueLabelFormatter?: (fieldLabel: string) => string | null;
-  isDisabled?: boolean;
-  isUneditable?: boolean;
-  renderItem: (register: UseFormRegisterReturn<"metadata">) => React.ReactNode;
+    feature: Feature<Geometry>;
+    fieldKey: keyof Inputs;
+    fieldLabel: string;
+    tooltipLabel: string;
+    valueLabelFormatter?: (fieldLabel: string) => string | null;
+    isDisabled?: boolean;
+    isUneditable?: boolean;
+    renderItem: (register: UseFormRegisterReturn<"metadata">) => React.ReactNode;
 };
 
 export const MetadataField = ({
-  feature,
-  fieldKey,
-  fieldLabel,
-  tooltipLabel,
-  valueLabelFormatter,
-  isDisabled,
-  isUneditable,
-  renderItem,
+    feature,
+    fieldKey,
+    fieldLabel,
+    tooltipLabel,
+    valueLabelFormatter,
+    isDisabled,
+    isUneditable,
+    renderItem,
 }: Props) => {
-  const properties = feature.getProperties() as FeatureProperties;
-  const metadata = properties.metadata as Metadata;
-  const {
-    register,
-    isDirty,
-    updateDraftFromFeature,
-    reset,
-    getValues,
-    getFieldFromMetadata,
-  } = useMetadataField(fieldKey, metadata, feature);
+    const properties = feature.getProperties() as FeatureProperties;
+    const metadata = properties.metadata as Metadata;
+    const { register, isDirty, updateDraftFromFeature, reset, getValues, getFieldFromMetadata } = useMetadataField(
+        fieldKey,
+        metadata,
+        feature,
+    );
 
-  // Still tilbake til default-verdi dersom man bytter valgt feature
-  useEffect(() => {
-    reset(getFieldFromMetadata(metadata, fieldKey));
-  }, [getFieldFromMetadata, metadata, reset, fieldKey]);
+    // Still tilbake til default-verdi dersom man bytter valgt feature
+    useEffect(() => {
+        reset(getFieldFromMetadata(metadata, fieldKey));
+    }, [getFieldFromMetadata, metadata, reset, fieldKey]);
 
-  const onSubmit = () => {
-    updateDraftFromFeature();
-  };
-  const metadataIsDisabled = useIsMetadataDisabled(feature, properties);
+    const onSubmit = () => {
+        updateDraftFromFeature();
+    };
+    const metadataIsDisabled = useIsMetadataDisabled(feature, properties);
 
-  return (
-    <MetadataRow
-      feature={feature}
-      name={fieldLabel}
-      tooltipLabel={tooltipLabel}
-      valueLabel={
-        valueLabelFormatter
-          ? valueLabelFormatter(getValues().metadata) ?? "Ukjent"
-          : getValues().metadata
-      }
-      onMetadataSubmit={onSubmit}
-      isDisabled={
-        metadataIsDisabled || isDisabled || metadata.common?.gyldigTil != null
-      }
-      isDirty={isDirty}
-      reset={reset}
-      isUneditable={isUneditable}
-    >
-      {renderItem(register("metadata"))}
-    </MetadataRow>
-  );
+    return (
+        <MetadataRow
+            feature={feature}
+            name={fieldLabel}
+            tooltipLabel={tooltipLabel}
+            valueLabel={
+                valueLabelFormatter ? valueLabelFormatter(getValues().metadata) ?? "Ukjent" : getValues().metadata
+            }
+            onMetadataSubmit={onSubmit}
+            isDisabled={metadataIsDisabled || isDisabled || metadata.common?.gyldigTil != null}
+            isDirty={isDirty}
+            reset={reset}
+            isUneditable={isUneditable}
+        >
+            {renderItem(register("metadata"))}
+        </MetadataRow>
+    );
 };

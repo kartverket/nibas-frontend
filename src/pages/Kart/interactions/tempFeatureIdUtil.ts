@@ -4,12 +4,12 @@ let idCounter: number = 1000;
 const tempIdPrefix = "temp-feature-id-";
 
 export const getTempFeatureId = (): string => {
-  const id = tempIdPrefix + String(idCounter);
-  idCounter++;
+    const id = tempIdPrefix + String(idCounter);
+    idCounter++;
 
-  return id;
+    return id;
 };
 
 export const isTempFeatureId = (id: string): boolean => {
-  return id.includes(tempIdPrefix);
+    return id.includes(tempIdPrefix);
 };

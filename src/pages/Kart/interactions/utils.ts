@@ -8,26 +8,22 @@ import { getLayerById } from "utils/map/layers";
 import { LayerId } from "hooks/layers/types";
 
 export const useGetFeatures = () => {
-  const { featureIsArchived } = useFeatureStyle();
+    const { featureIsArchived } = useFeatureStyle();
 
-  const getFeaturesAtPixel = (
-    event: MapBrowserEvent<MouseEvent>,
-    layerIdToFilter: LayerId | null,
-  ): FeatureLike[] =>
-    map.getFeaturesAtPixel(event.pixel, {
-      layerFilter: (layer) =>
-        layerIdToFilter ? layer === getLayerById(layerIdToFilter) : true,
-      hitTolerance: pixelTolerance,
-    });
+    const getFeaturesAtPixel = (event: MapBrowserEvent<MouseEvent>, layerIdToFilter: LayerId | null): FeatureLike[] =>
+        map.getFeaturesAtPixel(event.pixel, {
+            layerFilter: (layer) => (layerIdToFilter ? layer === getLayerById(layerIdToFilter) : true),
+            hitTolerance: pixelTolerance,
+        });
 
-  const getActiveFeaturesAtPixel = (
-    event: MapBrowserEvent<MouseEvent>,
-    layerIdToFilter: LayerId | null,
-  ): FeatureLike[] => {
-    return getFeaturesAtPixel(event, layerIdToFilter)
-      .filter((feature) => feature.getGeometry() instanceof LineString)
-      .filter((feature) => !featureIsArchived(feature));
-  };
+    const getActiveFeaturesAtPixel = (
+        event: MapBrowserEvent<MouseEvent>,
+        layerIdToFilter: LayerId | null,
+    ): FeatureLike[] => {
+        return getFeaturesAtPixel(event, layerIdToFilter)
+            .filter((feature) => feature.getGeometry() instanceof LineString)
+            .filter((feature) => !featureIsArchived(feature));
+    };
 
-  return { getActiveFeaturesAtPixel, getFeaturesAtPixel };
+    return { getActiveFeaturesAtPixel, getFeaturesAtPixel };
 };

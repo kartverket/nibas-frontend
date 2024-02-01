@@ -7,56 +7,49 @@ import { toggleWMSLayer, toggleWMTSLayer } from "./utils";
 import { kartlagLayers } from "hooks/layers/constants";
 
 type Props = {
-  mappedLayer: MappedLayer;
-  isMainLayer?: boolean;
+    mappedLayer: MappedLayer;
+    isMainLayer?: boolean;
 };
 
 const KartlagInner = ({ mappedLayer, isMainLayer }: Props) => {
-  const layer = kartlagLayers[mappedLayer.sourceId];
-  const { layerIsVisible, subLayerIsVisible, toggleLayerVisibility } =
-    useKartlag();
+    const layer = kartlagLayers[mappedLayer.sourceId];
+    const { layerIsVisible, subLayerIsVisible, toggleLayerVisibility } = useKartlag();
 
-  const isVisible = isMainLayer
-    ? layerIsVisible(mappedLayer.sourceId)
-    : subLayerIsVisible(mappedLayer.sourceId, mappedLayer.title);
+    const isVisible = isMainLayer
+        ? layerIsVisible(mappedLayer.sourceId)
+        : subLayerIsVisible(mappedLayer.sourceId, mappedLayer.title);
 
-  const handleToggle = () => {
-    if (isWMSLayer(layer)) toggleWMSLayer(mappedLayer, isVisible);
-    if (isWMTSLayer(layer)) toggleWMTSLayer(mappedLayer);
+    const handleToggle = () => {
+        if (isWMSLayer(layer)) toggleWMSLayer(mappedLayer, isVisible);
+        if (isWMTSLayer(layer)) toggleWMTSLayer(mappedLayer);
 
-    if (isMainLayer) {
-      toggleLayerVisibility(mappedLayer.sourceId);
-    } else {
-      toggleLayerVisibility(
-        mappedLayer.sourceId,
-        mappedLayer.title,
-        isWMTSLayer(layer),
-      );
-    }
-  };
-
-  return (
-    <Container>
-      <span>{mappedLayer.title}</span>
-      <IconButton
-        colorScheme="gray"
-        variant="secondary"
-        icon={isVisible ? "visibility" : "visibility_off"}
-        aria-label={
-          isVisible ? `Fjern ${mappedLayer.title}` : `Vis ${mappedLayer.title}`
+        if (isMainLayer) {
+            toggleLayerVisibility(mappedLayer.sourceId);
+        } else {
+            toggleLayerVisibility(mappedLayer.sourceId, mappedLayer.title, isWMTSLayer(layer));
         }
-        onClick={handleToggle}
-      />
-    </Container>
-  );
+    };
+
+    return (
+        <Container>
+            <span>{mappedLayer.title}</span>
+            <IconButton
+                colorScheme="gray"
+                variant="secondary"
+                icon={isVisible ? "visibility" : "visibility_off"}
+                aria-label={isVisible ? `Fjern ${mappedLayer.title}` : `Vis ${mappedLayer.title}`}
+                onClick={handleToggle}
+            />
+        </Container>
+    );
 };
 
 const Container = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 16px;
-  background: var(--kvib-colors-chakra-body-bg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    background: var(--kvib-colors-chakra-body-bg);
 `;
 
 export default KartlagInner;

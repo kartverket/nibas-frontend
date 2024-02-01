@@ -11,31 +11,31 @@ import { getAllVisibleFeatures, zoomToFeatures } from "utils/map";
  * @returns Funksjon for å sette hvilken source featurene skal legges i
  */
 const useAsyncFeatures = (
-  features: Feature<Geometry>[] | null,
-  zoomMode: "edit" | "view" | "none",
-  callback?: () => void,
+    features: Feature<Geometry>[] | null,
+    zoomMode: "edit" | "view" | "none",
+    callback?: () => void,
 ) => {
-  const [layerToAddTo, setLayerToAddTo] = useState<LayerId | null>(null);
+    const [layerToAddTo, setLayerToAddTo] = useState<LayerId | null>(null);
 
-  // sett features inn i layer når features har blitt hentet
-  useEffect(() => {
-    if (!layerToAddTo || !features) return;
+    // sett features inn i layer når features har blitt hentet
+    useEffect(() => {
+        if (!layerToAddTo || !features) return;
 
-    addFeaturesToSource(layerToAddTo, features, callback);
-    setLayerToAddTo(null);
+        addFeaturesToSource(layerToAddTo, features, callback);
+        setLayerToAddTo(null);
 
-    if (zoomMode === "edit") {
-      zoomToFeatures(features);
-    }
+        if (zoomMode === "edit") {
+            zoomToFeatures(features);
+        }
 
-    if (zoomMode === "view") {
-      zoomToFeatures(getAllVisibleFeatures());
-    }
+        if (zoomMode === "view") {
+            zoomToFeatures(getAllVisibleFeatures());
+        }
 
-    setLayerToAddTo(null);
-  }, [layerToAddTo, features, callback, zoomMode]);
+        setLayerToAddTo(null);
+    }, [layerToAddTo, features, callback, zoomMode]);
 
-  return { addFeaturesToLayer: setLayerToAddTo };
+    return { addFeaturesToLayer: setLayerToAddTo };
 };
 
 export default useAsyncFeatures;
