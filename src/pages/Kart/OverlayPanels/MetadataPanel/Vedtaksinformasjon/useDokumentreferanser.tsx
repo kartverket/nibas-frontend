@@ -12,6 +12,7 @@ export const mapFromFormToApi = (
   dokrefs: Referanse[],
   internrefs: Referanse[],
 ): Dokref => {
+  console.log(formValues);
   return {
     id: formValues.id,
     rettskildeTittel: formValues.rettskildeTittel,
@@ -111,11 +112,10 @@ export const useDokumentreferanser = (
 
     if (selectedVedtaksinfoIndex === undefined) {
       // Implisitt en ny dokumentasjonsreferanse ved mangel av index.
-      // Finner eksisterende dokumentasjonsreferanser, tar en overfladisk kopi av listen, og oppdaterer deretter featuren og historikken.
       const oldDokrefs: Dokref[] = metadata.dokumentasjonsreferanser
         ? metadata.dokumentasjonsreferanser
         : [];
-      const dokrefsCopy = oldDokrefs.slice();
+      const dokrefsCopy = structuredClone(oldDokrefs);
       dokrefsCopy.push(vedtaksinfo);
 
       addMetadataEntryFromFeature(
@@ -131,8 +131,7 @@ export const useDokumentreferanser = (
       const oldDokrefs: Dokref[] = metadata.dokumentasjonsreferanser
         ? metadata.dokumentasjonsreferanser
         : [];
-      const dokrefsCopy = oldDokrefs.slice();
-
+      const dokrefsCopy = structuredClone(oldDokrefs);
       dokrefsCopy[selectedVedtaksinfoIndex] = vedtaksinfo;
 
       addMetadataEntryFromFeature(
