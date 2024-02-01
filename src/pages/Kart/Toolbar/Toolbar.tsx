@@ -164,12 +164,15 @@ const OuterContainer = styled.div`
   gap: 16px;
   margin-bottom: 16px;
   pointer-events: none;
+
+  & > * {
+    pointer-events: auto;
+  }
 `;
 
 const Container = styled.div`
   display: flex;
   gap: 24px;
-  pointer-events: auto;
 `;
 
 const ToolbarButtons = styled.div`

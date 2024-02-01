@@ -61,7 +61,6 @@ const ToolbarPopupBody = styled.div`
   border-radius: 8px;
   background: var(--kvib-colors-chakra-body-bg);
   box-shadow: var(--kvib-shadows-base);
-  pointer-events: auto;
 `;
 
 const TextRows = styled.div`
