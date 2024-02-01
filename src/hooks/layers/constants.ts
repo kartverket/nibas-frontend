@@ -87,4 +87,5 @@ export const editableBorderTypes = [
   "Delområdegrense",
   "Grunnkretsgrense",
   "Stemmekretsgrense",
+  "Kommunegrense",
 ];

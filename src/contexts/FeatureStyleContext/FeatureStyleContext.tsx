@@ -7,6 +7,8 @@ import { getArchiveLayerStyle, grenseStyles } from "utils/map/layerStyles";
 import useArchiveStyles from "./useArchiveStyles";
 import { FeatureLike } from "ol/Feature";
 import { editableBorderTypes } from "hooks/layers/constants";
+import { isAdministrativGrense } from "utils/grenser";
+import { GrenseType } from "hooks/layers/types";
 
 export const FeatureStyleContext = createContext<
   FeatureStyleContextValue | undefined
@@ -174,9 +176,16 @@ export const FeatureStyleProvider = ({
     return false;
   };
 
-  const featureIsEditable = (feature: FeatureLike) =>
-    editableBorderTypes.includes(feature.get("type")) &&
-    !featureIsArchived(feature);
+  const featureIsEditable = (feature: FeatureLike) => {
+    const grenseType = feature.get("type") as GrenseType;
+    if (isAdministrativGrense(grenseType)) {
+      //
+    }
+
+    return (
+      editableBorderTypes.includes(grenseType) && !featureIsArchived(feature)
+    );
+  };
 
   const value = {
     selectedPoint,
