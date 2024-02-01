@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import LineString from "ol/geom/LineString";
 import { useCallback, useEffect } from "react";
-import { GrenseEntry, HistoryChange, HistoryDirection, useHistory } from "contexts/HistoryContext";
+import { GrenseEntry, HistoryChange, HistoryDirection, MinimalGrense, useHistory } from "contexts/HistoryContext";
 import { SelectedPoint, useFeatureStyle } from "contexts/FeatureStyleContext";
 import Point from "ol/geom/Point";
 import { Button, useToast } from "@kvib/react";
@@ -68,12 +68,12 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
   });
 
   // Hjelpefunksjon for å gå gjennom en feature og finne punktet som er påvirket av grensejustering
-  const getCoordinateFromChange = (change: HistoryChange<number[][]>, direction: HistoryDirection) => {
-    for (let index = 0; index < change.from.length; index++) {
-      const fromCoord = change.from[index];
-      const toCoord = change.to[index];
+  const getCoordinateFromChange = (change: HistoryChange<MinimalGrense>, direction: HistoryDirection) => {
+    for (let index = 0; index < change.from.coordinates.length; index++) {
+      const fromCoord = change.from.coordinates[index];
+      const toCoord = change.to.coordinates[index];
       if (fromCoord[0] !== toCoord[0] || fromCoord[1] !== toCoord[1]) {
-        return change[direction][index];
+        return change[direction].coordinates[index];
       }
     }
   };
@@ -134,7 +134,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
       const oldGeometry = selectedPoint.getGeometry() as Point;
       const oldCoordinates = oldGeometry.getCoordinates();
 
-      const changes: HistoryChange<number[][]>[] = [];
+      const changes: HistoryChange<MinimalGrense>[] = [];
 
       for (const feature of selectedFeatures) {
         const featureId = feature.getId() as string;
@@ -156,8 +156,12 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
 
         changes.push({
           id: featureId,
-          from: originalCoordinates,
-          to: updatedCoordinates,
+          from: {
+            coordinates: originalCoordinates,
+          },
+          to: {
+            coordinates: updatedCoordinates,
+          },
         });
       }
 
