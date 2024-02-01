@@ -9,14 +9,19 @@ import {
 } from "@kvib/react";
 import { Feature } from "ol";
 import { ReferanseBody } from "./ReferanseBody";
-import { BorderBottom, BorderTop, VedtakinfoForm } from "./OversiktReferanser";
+import {
+  BorderBottom,
+  BorderTop,
+  Referanse,
+  VedtakinfoForm,
+} from "./OversiktReferanser";
 import { styled } from "styled-components";
 import {
   mapFromFormToApi,
   useDokumentreferanser,
 } from "./useDokumentreferanser";
 import { Dokref, Metadata } from "types/api";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export const VedtaksinfoDetaljer = ({
   isOpen,
@@ -33,30 +38,64 @@ export const VedtaksinfoDetaljer = ({
   setDisplayMode: React.Dispatch<React.SetStateAction<boolean>>;
   selectedVedtaksinfoIndex?: number;
 }) => {
+  const metadata = feature.getProperties().metadata as Metadata;
+  const [redigeringsmodus, setRedigeringsmodus] = useState(false);
+  const [dokref, setDokref] = useState<Referanse[] | undefined>([]);
+  const [internref, setInternref] = useState<Referanse[] | undefined>([]);
+
   const {
     isDirty,
     register,
     reset,
     handleSubmit,
-    dokref,
-    setDokref,
-    internref,
-    setInternref,
     updateDraftFromFeature,
+    watch,
+    setValue,
   } = useDokumentreferanser(feature, selectedVedtaksinfoIndex);
-  const [redigeringsmodus, setRedigeringsmodus] = useState(false);
+
+  const cleanForm = () => {
+    reset();
+    setDokref(undefined);
+    setInternref(undefined);
+  };
 
   const onSubmit = (data: VedtakinfoForm) => {
     if (isDirty) {
       const postValues = mapFromFormToApi(data, dokref, internref);
       updateDraftFromFeature(postValues);
-      reset();
     }
+    cleanForm();
     onClose();
   };
 
+  const closeModal = () => {
+    cleanForm();
+    onClose();
+  };
+
+  // TODO: Er det noen måte å gjøre dette penere på uten at man får en ininite loop med re-rendring?
+  if (isOpen) {
+    if (dokref === undefined && selectedVedtaksinfoIndex !== undefined) {
+      setDokref(
+        metadata?.dokumentasjonsreferanser?.at(selectedVedtaksinfoIndex)
+          ?.dokumentlenker || [],
+      );
+    }
+    if (internref === undefined && selectedVedtaksinfoIndex !== undefined) {
+      setInternref(
+        metadata?.dokumentasjonsreferanser?.at(selectedVedtaksinfoIndex)
+          ?.internReferanserKartverket || [],
+      );
+    }
+  }
+
+  const toggleEndreVedtak = () => {
+    setDisplayMode(!displayMode);
+    setRedigeringsmodus(!redigeringsmodus);
+  };
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered size={"5xl"}>
+    <Modal isOpen={isOpen} onClose={closeModal} isCentered size={"5xl"}>
       <ModalContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <BorderBottom>
@@ -72,16 +111,18 @@ export const VedtaksinfoDetaljer = ({
               internref={internref}
               setDokref={setDokref}
               setInternref={setInternref}
+              vedtaksinfoIndex={selectedVedtaksinfoIndex}
+              watch={watch}
+              setValue={setValue}
             />
           </ModalBody>
 
           <BorderTop>
             <ControlsContainer>
               <VedtaksFooter
+                toggleEndreVedtak={toggleEndreVedtak}
                 redigeringsmodus={redigeringsmodus}
-                setRedigeringsmodus={setRedigeringsmodus}
                 displayMode={displayMode}
-                setDisplayMode={setDisplayMode}
                 onClose={onClose}
               />
             </ControlsContainer>
@@ -94,45 +135,37 @@ export const VedtaksinfoDetaljer = ({
 
 const VedtaksFooter = ({
   redigeringsmodus,
-  setRedigeringsmodus,
   displayMode,
   onClose,
-  setDisplayMode,
+  toggleEndreVedtak,
 }: {
   redigeringsmodus: boolean;
-  setRedigeringsmodus: React.Dispatch<React.SetStateAction<boolean>>;
-  setDisplayMode: React.Dispatch<React.SetStateAction<boolean>>;
   displayMode: boolean;
   onClose: () => void;
+  toggleEndreVedtak: () => void;
 }) => {
   if (displayMode)
+    return <VisVedtakFooter toggleEndreVedtak={toggleEndreVedtak} />;
+  else if (redigeringsmodus)
     return (
-      <VisVedtakFooter
-        setRedigeringsmodus={setRedigeringsmodus}
-        setDisplayMode={setDisplayMode}
+      <EndreVedtakFooter
+        onClose={onClose}
+        onArchive={() => {
+          console.log("archived");
+        }}
       />
     );
-  else if (redigeringsmodus)
-    return <EndreVedtakFooter onClose={onClose} onArchive={() => {}} />;
   else return <NyttVedtakFooter onClose={onClose} />;
 };
 
 const VisVedtakFooter = ({
-  setRedigeringsmodus,
-  setDisplayMode,
+  toggleEndreVedtak,
 }: {
-  setRedigeringsmodus: React.Dispatch<React.SetStateAction<boolean>>;
-  setDisplayMode: React.Dispatch<React.SetStateAction<boolean>>;
+  toggleEndreVedtak: () => void;
 }) => {
   return (
     <ButtonsContainer>
-      <Button
-        mr={3}
-        onClick={() => {
-          setRedigeringsmodus(true);
-          setDisplayMode(false);
-        }}
-      >
+      <Button mr={3} onClick={() => toggleEndreVedtak()}>
         Endre vedtaksinformasjon
       </Button>
     </ButtonsContainer>
@@ -149,6 +182,7 @@ const NyttVedtakFooter = ({ onClose }: { onClose: () => void }) => {
     </ButtonsContainer>
   );
 };
+
 const EndreVedtakFooter = ({
   onClose,
   onArchive,
@@ -159,7 +193,7 @@ const EndreVedtakFooter = ({
   return (
     <>
       <ButtonsContainer>
-        <Text>Arkiver</Text>
+        <Text onClick={onArchive}>Arkiver</Text>
       </ButtonsContainer>
       <ButtonsContainer>
         <Button colorScheme="blue" mr={3} onClick={onClose}>

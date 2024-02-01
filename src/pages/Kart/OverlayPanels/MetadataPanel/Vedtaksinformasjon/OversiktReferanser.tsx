@@ -5,6 +5,7 @@ import { Feature } from "ol";
 import { VedtaksinfoDetaljer } from "./VedtaksinfoDetaljer";
 import { Dokref, Metadata } from "types/api";
 import { useState } from "react";
+import { on } from "events";
 
 // TODO:
 // * Vise referanseoversikt i metadata
@@ -45,6 +46,11 @@ type VedtakinfoForm = {
 type InputName = {
   leggTilDokumentlenke: string;
   leggTilInternreferanse: string;
+};
+
+type InputCollectionName = {
+  dokumentlenker: string;
+  internreferanserKartverket: string;
 };
 
 const OversiktReferanser = ({ feature }: { feature: Feature }) => {
@@ -148,5 +154,5 @@ const OversiktHeader = styled.div`
   justify-content: space-between;
 `;
 
-export type { VedtakinfoForm, Referanse, InputName };
+export type { VedtakinfoForm, Referanse, InputName, InputCollectionName };
 export { OversiktReferanser };

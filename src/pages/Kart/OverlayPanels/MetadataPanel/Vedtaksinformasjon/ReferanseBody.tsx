@@ -24,42 +24,60 @@ import { ReferanseInput } from "./ReferanseInput";
 import { VedtakinfoField } from "./VedtakinfoField";
 import { Metadata } from "types/api";
 import styled from "styled-components";
-import { UseFormRegister } from "react-hook-form";
+import {
+  UseFormRegister,
+  UseFormSetValue,
+  UseFormWatch,
+} from "react-hook-form";
+import { isUndefined } from "swr/_internal";
+import { useEffect } from "react";
 
 export const ReferanseBody = ({
   feature,
   displayMode,
-  vedtaksinfoId,
+  vedtaksinfoIndex,
   register,
   internref,
   dokref,
   setDokref,
   setInternref,
+  watch,
+  setValue,
 }: {
+  setValue: UseFormSetValue<VedtakinfoForm>;
   feature: Feature;
   displayMode: boolean;
-  vedtaksinfoId?: string;
+  vedtaksinfoIndex?: number;
   register: UseFormRegister<VedtakinfoForm>;
-  dokref: Referanse[];
-  setDokref: React.Dispatch<React.SetStateAction<Referanse[]>>;
-  internref: Referanse[];
-  setInternref: React.Dispatch<React.SetStateAction<Referanse[]>>;
+  dokref?: Referanse[];
+  setDokref: React.Dispatch<React.SetStateAction<Referanse[] | undefined>>;
+  internref?: Referanse[];
+  setInternref: React.Dispatch<React.SetStateAction<Referanse[] | undefined>>;
+  watch: UseFormWatch<VedtakinfoForm>;
 }) => {
   const addDokumentlenke = (lenke: Referanse) => {
-    setDokref((prevState) => [...prevState, lenke]);
+    setDokref((prevState) => {
+      if (prevState !== undefined) {
+        return [...prevState, lenke];
+      } else return [lenke];
+    });
   };
 
   const addInternreferanse = (lenke: Referanse) => {
-    setInternref((prevState) => [...prevState, lenke]);
+    setInternref((prevState) => {
+      if (prevState !== undefined) {
+        return [...prevState, lenke];
+      } else return [lenke];
+    });
   };
 
-  const vedtaksinformasjon = displayMode
-    ? undefined
-    : (
-        feature.getProperties().Metadata as Metadata
-      )?.dokumentasjonsreferanser?.find((ref) => ref.id === vedtaksinfoId);
+  const metadata = feature.getProperties().metadata as Metadata;
+  const vedtaksinformasjon =
+    vedtaksinfoIndex !== undefined
+      ? metadata.dokumentasjonsreferanser?.at(vedtaksinfoIndex)
+      : undefined;
 
-  const erNyVedtaksinformasjon = !vedtaksinfoId && !displayMode;
+  console.log("vedtaksinfo body", vedtaksinformasjon);
 
   return (
     <>
@@ -83,6 +101,7 @@ export const ReferanseBody = ({
                 displayMode={displayMode}
                 tooltipLabel="tooltip"
                 title="Fastsettingsdato"
+                value={vedtaksinformasjon?.fastsettingsdato?.toLocaleLowerCase()}
               >
                 <Datepicker
                   {...register("fastsettingsdato")}
@@ -94,6 +113,7 @@ export const ReferanseBody = ({
                 displayMode={displayMode}
                 tooltipLabel="tooltip"
                 title="Rettskilde-ID"
+                value={vedtaksinformasjon?.rettskildeId}
               >
                 <Input
                   {...register("rettskildeId")}
@@ -137,14 +157,14 @@ export const ReferanseBody = ({
                   <Tab>
                     Dokumenter
                     <AntallReferanser
-                      count={dokref.length}
+                      count={dokref?.length || 0}
                       colorScheme="blue"
                     />
                   </Tab>
                   <Tab>
                     Interne referanser
                     <AntallReferanser
-                      count={internref.length}
+                      count={internref?.length || 0}
                       colorScheme="gray"
                     />
                   </Tab>
@@ -162,6 +182,8 @@ export const ReferanseBody = ({
 
                     <BorderTop />
                     <ReferanseInput
+                      collectionRegisterName="dokumentlenker"
+                      watch={watch}
                       register={register}
                       appendFn={addDokumentlenke}
                       registerName="leggTilDokumentlenke"
@@ -181,6 +203,8 @@ export const ReferanseBody = ({
                     ))}
                     <BorderTop />
                     <ReferanseInput
+                      collectionRegisterName="internreferanserKartverket"
+                      watch={watch}
                       register={register}
                       appendFn={addInternreferanse}
                       registerName="leggTilInternreferanse"

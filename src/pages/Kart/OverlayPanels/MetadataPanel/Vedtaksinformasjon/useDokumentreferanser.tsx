@@ -9,10 +9,9 @@ import { useHistory } from "contexts/HistoryContext";
 
 export const mapFromFormToApi = (
   formValues: VedtakinfoForm,
-  dokrefs: Referanse[],
-  internrefs: Referanse[],
+  dokrefs: Referanse[] | undefined,
+  internrefs: Referanse[] | undefined,
 ): Dokref => {
-  console.log(formValues);
   return {
     id: formValues.id,
     rettskildeTittel: formValues.rettskildeTittel,
@@ -20,15 +19,30 @@ export const mapFromFormToApi = (
     fastsettingsmyndighet: formValues.fastsettingsmyndighet,
     hjemmel: formValues.hjemmel,
     rettskildeId: formValues.rettskildeId,
-    dokumentlenker: dokrefs.map((ref) => ({
-      id: ref.id,
-      beskrivelse: ref.beskrivelse,
-    })),
-    internReferanserKartverket: internrefs.map((ref) => ({
-      id: ref.id,
-      beskrivelse: ref.beskrivelse,
-    })),
+    dokumentlenker:
+      dokrefs?.map((ref) => ({
+        id: ref.id,
+        beskrivelse: ref.beskrivelse,
+      })) || [],
+    internReferanserKartverket:
+      internrefs?.map((ref) => ({
+        id: ref.id,
+        beskrivelse: ref.beskrivelse,
+      })) || [],
   };
+};
+
+const emptyVedtaksinformasjon = {
+  id: undefined,
+  rettskildeTittel: "",
+  rettskildeId: "",
+  dokumentlenker: [],
+  internreferanserKartverket: [],
+  fastsettingsdato: "",
+  fastsettingsmyndighet: "",
+  hjemmel: "",
+  leggTilInternreferanse: undefined,
+  leggTilDokumentlenke: undefined,
 };
 
 const updateFeatureWithNewMetadata = (
@@ -72,12 +86,12 @@ export const useDokumentreferanser = (
   feature: Feature,
   selectedVedtaksinfoIndex?: number,
 ) => {
-  const defaultValues: Dokref =
+  const defaultValues: VedtakinfoForm =
     selectedVedtaksinfoIndex !== undefined
       ? feature.getProperties().metadata.dokumentasjonsreferanser[
           selectedVedtaksinfoIndex
         ]
-      : {};
+      : emptyVedtaksinformasjon;
 
   const {
     register,
@@ -86,24 +100,19 @@ export const useDokumentreferanser = (
     reset,
     handleSubmit,
     formState: { isDirty },
+    watch,
   } = useForm<VedtakinfoForm>({ defaultValues: defaultValues });
-  const [dokref, setDokref] = useState<Referanse[]>(
-    defaultValues.dokumentlenker || [],
-  );
-  const [internref, setInternref] = useState<Referanse[]>(
-    defaultValues.internReferanserKartverket || [],
-  );
+
   const { addHistoryEntry } = useHistory();
 
   // Setter input-feltene til eksisterende skjema, dersom det redigeres
   if (selectedVedtaksinfoIndex !== undefined) {
     for (const key of Object.keys(defaultValues)) {
-      setValue(
-        key as keyof VedtakinfoForm,
+      const value =
         feature.getProperties().metadata.dokumentasjonsreferanser[
           selectedVedtaksinfoIndex
-        ][key],
-      );
+        ][key];
+      setValue(key as keyof VedtakinfoForm, value);
     }
   }
 
@@ -148,14 +157,11 @@ export const useDokumentreferanser = (
   return {
     isDirty,
     updateDraftFromFeature,
-    dokref,
-    setDokref,
-    internref,
-    setInternref,
     handleSubmit,
     register,
     reset,
     getValues,
     setValue,
+    watch,
   };
 };

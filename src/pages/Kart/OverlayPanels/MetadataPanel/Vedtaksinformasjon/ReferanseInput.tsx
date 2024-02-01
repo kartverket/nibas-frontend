@@ -1,30 +1,49 @@
 import { Button, Input } from "@kvib/react";
 import { VedtakinfoRow } from "./VedtakinfoRow";
-import { InputName, Referanse, VedtakinfoForm } from "./OversiktReferanser";
+import {
+  InputCollectionName,
+  InputName,
+  Referanse,
+  VedtakinfoForm,
+} from "./OversiktReferanser";
 import { styled } from "styled-components";
-import { UseFormRegister } from "react-hook-form";
+import {
+  UseFormRegister,
+  UseFormSetValue,
+  UseFormWatch,
+} from "react-hook-form";
+import { useEffect } from "react";
+import { Dokref } from "types/api";
 
 export const ReferanseInput = ({
+  defaultValues,
+  collectionRegisterName,
   registerName,
   placeholder,
   tooltipLabel,
   title,
   appendFn,
   register,
+  watch,
 }: {
+  defaultValues?: Referanse[];
   registerName: keyof InputName;
+  collectionRegisterName: keyof InputCollectionName;
   placeholder: string;
   tooltipLabel: string;
   title: string;
   appendFn: (item: Referanse) => void;
   register: UseFormRegister<VedtakinfoForm>;
+  watch: UseFormWatch<VedtakinfoForm>;
 }) => {
   function clearInput(element: HTMLInputElement) {
     element.value = "";
   }
 
+  console.log("default values refinput", defaultValues);
   return (
     <VedtakinfoRow tooltipLabel={tooltipLabel} name={title}>
+      {/* <Input {...register(collectionRegisterName)} hidden /> */}
       <Input
         {...register(registerName)}
         placeholder={placeholder}
@@ -33,6 +52,9 @@ export const ReferanseInput = ({
           if (e.key === "Enter") {
             const element = e.target as HTMLInputElement;
             if (element?.value) {
+              // const newVals = [...collection, { beskrivelse: element.value }];
+              // setValue(collectionRegisterName, newVals);
+              // console.log(collection);
               appendFn({ beskrivelse: element.value });
               clearInput(element);
             }
@@ -45,6 +67,9 @@ export const ReferanseInput = ({
             `input[name=${registerName}]`,
           ) as HTMLInputElement;
           if (element?.value) {
+            // const newVals = [...collection, { beskrivelse: element.value }];
+            // setValue(collectionRegisterName, newVals);
+            // console.log(collection);
             appendFn({ beskrivelse: element.value });
             clearInput(element);
           }
