@@ -189,12 +189,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
           <Textarea placeholder="Fyll inn ekstra informasjon" {...register} />
         )}
       />
-      {tilhorighetToChange && (
-        <TilhorighetField
-          feature={feature}
-          tilhorighetToChange={tilhorighetToChange}
-        />
-      )}
+      {tilhorighetToChange && <TilhorighetField feature={feature} />}
     </Container>
   );
 };
