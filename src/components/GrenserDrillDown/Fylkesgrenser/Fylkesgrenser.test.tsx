@@ -10,9 +10,7 @@ describe("Fylkesgrenser", () => {
     });
     await user.click(fylkesGrenserAccordionButton);
 
-    expect(
-      await screen.findByText("38 Vestfold og Telemark"),
-    ).toBeInTheDocument();
+    expect(await screen.findByText("38 Vestfold og Telemark")).toBeInTheDocument();
     expect(await screen.findByText("42 Agder")).toBeInTheDocument();
   });
 
@@ -22,8 +20,6 @@ describe("Fylkesgrenser", () => {
     await user.click(screen.getByRole("button", { name: "Vis Fylker" }));
     await user.click(screen.getByRole("button", { name: "Skjul Fylker" }));
 
-    expect(
-      screen.getByRole("button", { name: "Vis Fylker" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Vis Fylker" })).toBeInTheDocument();
   });
 });

@@ -1,9 +1,4 @@
-export type EditingType =
-  | "fylke"
-  | "kommune"
-  | "nasjon"
-  | "grunnkrets"
-  | "stemmekrets";
+export type EditingType = "fylke" | "kommune" | "nasjon" | "grunnkrets" | "stemmekrets";
 
 export type KretsStatus = {
   editing?: boolean;
@@ -11,6 +6,4 @@ export type KretsStatus = {
 };
 
 export type KretsStatusPerKretstype = Record<string, KretsStatus>;
-export type KretsStatusAlle = Partial<
-  Record<EditingType, KretsStatusPerKretstype>
->;
+export type KretsStatusAlle = Partial<Record<EditingType, KretsStatusPerKretstype>>;

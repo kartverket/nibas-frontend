@@ -10,13 +10,9 @@ import { LayerId } from "hooks/layers/types";
 export const useGetFeatures = () => {
   const { featureIsArchived } = useFeatureStyle();
 
-  const getFeaturesAtPixel = (
-    event: MapBrowserEvent<MouseEvent>,
-    layerIdToFilter: LayerId | null,
-  ): FeatureLike[] =>
+  const getFeaturesAtPixel = (event: MapBrowserEvent<MouseEvent>, layerIdToFilter: LayerId | null): FeatureLike[] =>
     map.getFeaturesAtPixel(event.pixel, {
-      layerFilter: (layer) =>
-        layerIdToFilter ? layer === getLayerById(layerIdToFilter) : true,
+      layerFilter: (layer) => (layerIdToFilter ? layer === getLayerById(layerIdToFilter) : true),
       hitTolerance: pixelTolerance,
     });
 

@@ -13,44 +13,30 @@ type MetadataField = {
   metadata: string;
 };
 
-const getUpdatedMetadata = (
-  data: MetadataField,
-  oldMetadata: Metadata,
-  field: keyof Inputs,
-) => {
+const getUpdatedMetadata = (data: MetadataField, oldMetadata: Metadata, field: keyof Inputs) => {
   const newMetadata = {
     ...(oldMetadata ?? {}),
     common: {
       ...(oldMetadata.common ?? {}),
-      informasjon:
-        field === "informasjon"
-          ? data.metadata
-          : oldMetadata.common?.informasjon,
+      informasjon: field === "informasjon" ? data.metadata : oldMetadata.common?.informasjon,
       datafangstdato:
         field === "datafangstdato"
           ? formatISO(startOfDay(new Date(data.metadata)))
           : oldMetadata.common?.datafangstdato,
       opphav: field === "opphav" ? data.metadata : oldMetadata.common?.opphav,
-      gyldigFra:
-        field === "gyldigFra" ? data.metadata : oldMetadata.common?.gyldigFra,
-      gyldigTil:
-        field === "gyldigTil" ? data.metadata : oldMetadata.common?.gyldigTil,
+      gyldigFra: field === "gyldigFra" ? data.metadata : oldMetadata.common?.gyldigFra,
+      gyldigTil: field === "gyldigTil" ? data.metadata : oldMetadata.common?.gyldigTil,
     },
     commonGrense: {
       ...(oldMetadata.commonGrense ?? {}),
       posisjonskvalitet: {
         ...(oldMetadata?.commonGrense?.posisjonskvalitet ?? {}),
         maalemetode: {
-          id:
-            field === "maalemetode"
-              ? data.metadata
-              : oldMetadata.commonGrense?.posisjonskvalitet?.maalemetode.id,
+          id: field === "maalemetode" ? data.metadata : oldMetadata.commonGrense?.posisjonskvalitet?.maalemetode.id,
           href: "",
         },
         noeyaktighet:
-          field === "noeyaktighet"
-            ? data.metadata
-            : oldMetadata.commonGrense?.posisjonskvalitet?.noeyaktighet,
+          field === "noeyaktighet" ? data.metadata : oldMetadata.commonGrense?.posisjonskvalitet?.noeyaktighet,
       },
     },
   } as Metadata;
@@ -91,11 +77,7 @@ const getFieldFromMetadata = (metadata: Metadata, field: keyof Inputs) => {
   return { metadata: value?.toString() };
 };
 
-export const useMetadataField = (
-  field: keyof Inputs,
-  metadata: Metadata,
-  feature: Feature,
-) => {
+export const useMetadataField = (field: keyof Inputs, metadata: Metadata, feature: Feature) => {
   const {
     register,
     handleSubmit,
@@ -128,11 +110,7 @@ export const useMetadataField = (
     addMetadataEntryFromFeature(
       feature as Feature<LineString>,
       addHistoryEntry,
-      getUpdatedMetadata(
-        getValues(),
-        feature.getProperties().metadata as Metadata,
-        field,
-      ),
+      getUpdatedMetadata(getValues(), feature.getProperties().metadata as Metadata, field),
     );
   };
 

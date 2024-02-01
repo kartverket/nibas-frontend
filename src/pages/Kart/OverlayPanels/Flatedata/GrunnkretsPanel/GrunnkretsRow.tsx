@@ -1,10 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import {
-  GrunnkretsEntry,
-  HistoryDirection,
-  useHistory,
-} from "contexts/HistoryContext";
+import { GrunnkretsEntry, HistoryDirection, useHistory } from "contexts/HistoryContext";
 import { useHistoryFormSync } from "contexts/HistoryContext/useHistoryFormSync";
 import { GrunnkretsRequest, GrunnkretsResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
@@ -21,10 +17,7 @@ type GrunnkretsInputs = {
   grunnkretsnummer: string;
 };
 
-const fromFormToRequest = (
-  data: GrunnkretsInputs,
-  grunnkrets: GrunnkretsResponse,
-): GrunnkretsRequest => ({
+const fromFormToRequest = (data: GrunnkretsInputs, grunnkrets: GrunnkretsResponse): GrunnkretsRequest => ({
   identifikasjon: {
     lokalid: getIdFromEntity(grunnkrets),
   },
@@ -66,10 +59,7 @@ const GrunnkretsRow = ({ grunnkrets, kommuneId }: Props) => {
   }, [getValues, setValue, grunnkrets]);
 
   const setFormValues = useCallback(
-    (
-      change: GrunnkretsEntry["changes"][number],
-      direction: HistoryDirection,
-    ) => {
+    (change: GrunnkretsEntry["changes"][number], direction: HistoryDirection) => {
       const newName = change[direction]?.navn;
       const newNumber = change[direction]?.grunnkretsnummer;
       setValue("grunnkretsnavn", newName ?? "");
@@ -77,11 +67,7 @@ const GrunnkretsRow = ({ grunnkrets, kommuneId }: Props) => {
 
       previousValues.current = getValues();
 
-      updateEditFeatureText(
-        getRepresentasjonspunktId(grunnkretsId),
-        newName,
-        newNumber,
-      );
+      updateEditFeatureText(getRepresentasjonspunktId(grunnkretsId), newName, newNumber);
     },
     [getValues, grunnkretsId, setValue],
   );
@@ -126,16 +112,8 @@ const GrunnkretsRow = ({ grunnkrets, kommuneId }: Props) => {
 
   return (
     <KretsRow>
-      <InputCell
-        isEditing={isEditing}
-        data={getValues("grunnkretsnummer")}
-        {...register("grunnkretsnummer")}
-      />
-      <InputCell
-        isEditing={isEditing}
-        data={getValues("grunnkretsnavn")}
-        {...register("grunnkretsnavn")}
-      />
+      <InputCell isEditing={isEditing} data={getValues("grunnkretsnummer")} {...register("grunnkretsnummer")} />
+      <InputCell isEditing={isEditing} data={getValues("grunnkretsnavn")} {...register("grunnkretsnavn")} />
       <td>{/* Tom plass for mellomrom */}</td>
       {utkast && (
         <Cell>

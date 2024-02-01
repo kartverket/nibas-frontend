@@ -28,8 +28,7 @@ const useDraw = () => {
         snapTolerance: pixelTolerance,
         style: grenseStyles.dirty,
         freehandCondition: () => false,
-        condition: (event: MapBrowserEvent<MouseEvent>) =>
-          noModifierKeys(event) && activeTool === "draw",
+        condition: (event: MapBrowserEvent<MouseEvent>) => noModifierKeys(event) && activeTool === "draw",
       }),
     [activeTool],
   );

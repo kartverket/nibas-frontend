@@ -1,13 +1,5 @@
 import { styled } from "styled-components";
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  Skeleton,
-} from "@kvib/react";
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, Skeleton } from "@kvib/react";
 import { EndringsloggGrunnkretsendringer } from "./EndringsloggGrunnkretsendringer";
 import { EndringsloggStemmekretsendringer } from "./EndringsloggStemmekretsendringer";
 import { useUtkastEndringer } from "./hooks/useUtkastEndringer";
@@ -20,28 +12,18 @@ type Props = {
 };
 
 const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
-  const { harEndringer, laster, stemmekretsendringer, grunnkretsendringer } =
-    useUtkastEndringer(utkast);
+  const { harEndringer, laster, stemmekretsendringer, grunnkretsendringer } = useUtkastEndringer(utkast);
 
-  const harLastetData =
-    !laster || !!stemmekretsendringer || !!grunnkretsendringer;
+  const harLastetData = !laster || !!stemmekretsendringer || !!grunnkretsendringer;
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      size="xl"
-      isCentered
-      scrollBehavior="inside"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} size="xl" isCentered scrollBehavior="inside">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Endringer i dette utkastet</ModalHeader>
         <ModalCloseButton aria-label="Lukk" />
         <ModalBody>
-          {!harEndringer && (
-            <Empty>Det er ingen endringer i dette utkastet</Empty>
-          )}
+          {!harEndringer && <Empty>Det er ingen endringer i dette utkastet</Empty>}
 
           {stemmekretsendringer?.map((endringer) => (
             <Skeleton key={endringer.kommune.id} isLoaded={harLastetData}>

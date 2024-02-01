@@ -5,11 +5,7 @@ import { getIdFromEntity } from "utils/api";
 import EditAndSaveButton from "../EditAndSaveButton";
 import InputCell from "../InputCell";
 import { ValidationError } from "components/Input";
-import {
-  HistoryDirection,
-  StemmekretsEntry,
-  useHistory,
-} from "contexts/HistoryContext";
+import { HistoryDirection, StemmekretsEntry, useHistory } from "contexts/HistoryContext";
 import { RegisterOptions, FieldError, useForm } from "react-hook-form";
 import { updateEditFeatureText } from "utils/map/layerStyles";
 import { getRepresentasjonspunktId } from "utils/map/source";
@@ -22,10 +18,7 @@ type StemmekretsInputs = {
   stemmekretsnummer: string;
 };
 
-const fromFormToRequest = (
-  data: StemmekretsInputs,
-  stemmekrets: StemmekretsResponse,
-): StemmekretsRequest => ({
+const fromFormToRequest = (data: StemmekretsInputs, stemmekrets: StemmekretsResponse): StemmekretsRequest => ({
   identifikasjon: {
     lokalid: getIdFromEntity(stemmekrets),
   },
@@ -68,10 +61,7 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
   }, [getValues, setValue, stemmekrets]);
 
   const setFormValues = useCallback(
-    (
-      change: StemmekretsEntry["changes"][number],
-      direction: HistoryDirection,
-    ) => {
+    (change: StemmekretsEntry["changes"][number], direction: HistoryDirection) => {
       const newName = change[direction]?.stemmekretsnavn;
       const newNumber = change[direction]?.stemmekretsnummer;
       setValue("stemmekretsnavn", newName ?? "");
@@ -79,11 +69,7 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
 
       previousValues.current = getValues();
 
-      updateEditFeatureText(
-        getRepresentasjonspunktId(stemmekretsId),
-        newName,
-        newNumber,
-      );
+      updateEditFeatureText(getRepresentasjonspunktId(stemmekretsId), newName, newNumber);
     },
     [getValues, setValue, stemmekretsId],
   );
@@ -101,10 +87,7 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
     stemmekretsnummer: {
       required: "Stemmekretsnummer kan ikke være tomt",
       validate: (stemmekretsnummer: string) => {
-        if (
-          !isInteger(stemmekretsnummer) ||
-          parseInt(stemmekretsnummer) > 9999
-        ) {
+        if (!isInteger(stemmekretsnummer) || parseInt(stemmekretsnummer) > 9999) {
           return "Stemmekretsnummer må kun inneholde siffer (maks 4)";
         }
         if (parseInt(stemmekretsnummer) <= 0) {

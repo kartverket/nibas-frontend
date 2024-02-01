@@ -1,49 +1,13 @@
 import { ReactNode } from "react";
-import {
-  KartlagProvider,
-  KartlagContext,
-  KartlagContextValue,
-} from "contexts/KartlagContext/KartlagContext";
-import {
-  EditGrenserProvider,
-  EditGrenserContext,
-  EditGrenserContextValue,
-} from "contexts/EditGrenserContext";
-import {
-  OverlayPanelProvider,
-  OverlayPanelContext,
-  OverlayPanelContextValue,
-} from "contexts/OverlayPanelContext";
-import {
-  SidebarPanelProvider,
-  SidebarPanelContext,
-  SidebarPanelContextValue,
-} from "contexts/SidebarPanelContext";
-import {
-  HistoryProvider,
-  HistoryContext,
-  HistoryContextValue,
-} from "contexts/HistoryContext";
-import {
-  ToolbarProvider,
-  ToolbarContext,
-  ToolbarContextValue,
-} from "contexts/ToolbarContext";
-import {
-  FeatureStyleProvider,
-  FeatureStyleContext,
-  FeatureStyleContextValue,
-} from "contexts/FeatureStyleContext";
-import {
-  UtkastProvider,
-  UtkastContext,
-  UtkastContextValue,
-} from "contexts/UtkastContext";
-import {
-  ErrorHandlingContext,
-  ErrorHandlingContextValue,
-  ErrorHandlingProvider,
-} from "contexts/ErrorHandlingContext";
+import { KartlagProvider, KartlagContext, KartlagContextValue } from "contexts/KartlagContext/KartlagContext";
+import { EditGrenserProvider, EditGrenserContext, EditGrenserContextValue } from "contexts/EditGrenserContext";
+import { OverlayPanelProvider, OverlayPanelContext, OverlayPanelContextValue } from "contexts/OverlayPanelContext";
+import { SidebarPanelProvider, SidebarPanelContext, SidebarPanelContextValue } from "contexts/SidebarPanelContext";
+import { HistoryProvider, HistoryContext, HistoryContextValue } from "contexts/HistoryContext";
+import { ToolbarProvider, ToolbarContext, ToolbarContextValue } from "contexts/ToolbarContext";
+import { FeatureStyleProvider, FeatureStyleContext, FeatureStyleContextValue } from "contexts/FeatureStyleContext";
+import { UtkastProvider, UtkastContext, UtkastContextValue } from "contexts/UtkastContext";
+import { ErrorHandlingContext, ErrorHandlingContextValue, ErrorHandlingProvider } from "contexts/ErrorHandlingContext";
 import ThirdPartyProviders from "pages/App/ThirdPartyProviders";
 import { BrowserRouter } from "react-router-dom";
 
@@ -86,10 +50,7 @@ export type TestProviderValues = {
 
 type ProviderName = keyof typeof defaultProviderMap;
 
-export const renderWithProviders = (
-  ui: ReactNode,
-  providerValues: TestProviderValues = {},
-) => (
+export const renderWithProviders = (ui: ReactNode, providerValues: TestProviderValues = {}) => (
   <ThirdPartyProviders>
     <BrowserRouter>
       {Object.keys(defaultProviderMap).reduceRight((acc, name) => {

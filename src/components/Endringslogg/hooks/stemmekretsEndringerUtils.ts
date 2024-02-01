@@ -1,8 +1,4 @@
-import {
-  KommuneRef,
-  StemmekretsResponse,
-  UtkastOperasjoner,
-} from "../../../types/api";
+import { KommuneRef, StemmekretsResponse, UtkastOperasjoner } from "../../../types/api";
 import { deduplicate, removeNull } from "utils/list-utils";
 import {
   StemmekretsMetadataEndringstype,
@@ -19,11 +15,8 @@ import {
 } from "./endringerUtils";
 import { getNavnInSpraak } from "utils/language/language";
 
-export const getStemmekretserMedEndringer = (
-  operasjoner: OperasjonerOrNull,
-): string[] => {
-  const endringerResponse =
-    operasjoner?.metadataendringer?.stemmekretsendringer;
+export const getStemmekretserMedEndringer = (operasjoner: OperasjonerOrNull): string[] => {
+  const endringerResponse = operasjoner?.metadataendringer?.stemmekretsendringer;
 
   if (endringerResponse == null || operasjoner == null) {
     return [];
@@ -33,23 +26,14 @@ export const getStemmekretserMedEndringer = (
     Object.keys(operasjoner?.metadataendringer?.stemmekretsendringer),
   );
 
-  const viderefoertStemmekrets =
-    operasjoner?.stemmekretsSammenslaaingsendring?.viderefoertStemmekrets
-      ?.lokalId;
+  const viderefoertStemmekrets = operasjoner?.stemmekretsSammenslaaingsendring?.viderefoertStemmekrets?.lokalId;
 
   const gamleKretser =
-    operasjoner?.stemmekretsSammenslaaingsendring?.stemmekretserTilSammenslaaing.map(
-      (krets) => krets.lokalId,
-    ) ?? [];
+    operasjoner?.stemmekretsSammenslaaingsendring?.stemmekretserTilSammenslaaing.map((krets) => krets.lokalId) ?? [];
 
-  const stemmekretserMedSammenslaaing = removeNull(
-    gamleKretser.concat(viderefoertStemmekrets ?? []),
-  );
+  const stemmekretserMedSammenslaaing = removeNull(gamleKretser.concat(viderefoertStemmekrets ?? []));
 
-  const alleStemmekretserMedEndringer = getKretserMedGrensejusteringer(
-    operasjoner,
-    "STEMMEKRETS",
-  )
+  const alleStemmekretserMedEndringer = getKretserMedGrensejusteringer(operasjoner, "STEMMEKRETS")
     .concat(stemmekretserMedMetadataEndringer)
     .concat(stemmekretserMedSammenslaaing);
 
@@ -63,10 +47,7 @@ const getEndringAvTypeForId = (
   alleStemmekretser: StemmekretsResponse[],
 ): Endring | null => {
   const gammelStemmekrets = findKrets(stemmekrets, alleStemmekretser);
-  const nyVerdi =
-    operasjoner.metadataendringer.stemmekretsendringer?.[stemmekrets]?.[
-      type
-    ]?.trim();
+  const nyVerdi = operasjoner.metadataendringer.stemmekretsendringer?.[stemmekrets]?.[type]?.trim();
 
   const gammelVerdi = gammelStemmekrets[type]?.trim() ?? "";
 
@@ -80,9 +61,7 @@ const getEndringAvTypeForId = (
   };
 };
 
-const harMetadataEndring = (
-  metadatEndring: StemmekretsMetadataEndring,
-): boolean => {
+const harMetadataEndring = (metadatEndring: StemmekretsMetadataEndring): boolean => {
   const fieldsToCheck = [
     metadatEndring.stemmekretsnavn,
     metadatEndring.stemmekretsnummer,
@@ -100,12 +79,7 @@ const getMetadataEndringer = (
   return stemmekretser
     .map((stemmekretsId) => {
       const getEndringAvType = (type: StemmekretsMetadataEndringstype) =>
-        getEndringAvTypeForId(
-          type,
-          stemmekretsId,
-          operasjoner,
-          alleStemmekretser,
-        );
+        getEndringAvTypeForId(type, stemmekretsId, operasjoner, alleStemmekretser);
 
       return {
         kretsEndret: findKrets(stemmekretsId, alleStemmekretser),
@@ -122,8 +96,7 @@ const getSammenslaaingEndring = (
   operasjoner: UtkastOperasjoner,
   alleStemmekretser: StemmekretsResponse[],
 ): StemmekretsSammenslaaingEndring | null => {
-  const viderefoertKrets =
-    operasjoner.stemmekretsSammenslaaingsendring?.viderefoertStemmekrets;
+  const viderefoertKrets = operasjoner.stemmekretsSammenslaaingsendring?.viderefoertStemmekrets;
   const stemmekretsMedSammenslaaing = viderefoertKrets?.lokalId;
   const sammenslaaing = operasjoner.stemmekretsSammenslaaingsendring;
 
@@ -161,14 +134,9 @@ const getEndringerForKommune = (
   alleStemmekretser: StemmekretsResponse[],
   alleKommuner: KommuneRef[],
 ): Stemmekretsendringer => {
-  const stemmekretserMedGrensejusteringer = getKretserMedGrensejusteringer(
-    operasjoner,
-    "STEMMEKRETS",
-  );
+  const stemmekretserMedGrensejusteringer = getKretserMedGrensejusteringer(operasjoner, "STEMMEKRETS");
 
-  const kommune = alleKommuner.find(
-    (kommuneRef) => kommuneRef.kommunenummer.id === kommuneId,
-  );
+  const kommune = alleKommuner.find((kommuneRef) => kommuneRef.kommunenummer.id === kommuneId);
 
   return {
     kommune: {
@@ -176,21 +144,13 @@ const getEndringerForKommune = (
       nummer: kommune?.kommunenummer.kodeverdi ?? "",
       navn: getNavnInSpraak(kommune?.navn, "nor"),
     },
-    metadataendringer: getMetadataEndringer(
-      stemmekretserMedEndring,
-      operasjoner,
-      alleStemmekretser,
-    ),
+    metadataendringer: getMetadataEndringer(stemmekretserMedEndring, operasjoner, alleStemmekretser),
     grensejusteringer: removeNull(
       stemmekretserMedEndring
         .filter((id) => stemmekretserMedGrensejusteringer.includes(id))
         .map((stemmekretsId) => findKrets(stemmekretsId, alleStemmekretser)),
     ),
-    sammenslaaing: getSammenslaaingEndring(
-      stemmekretserMedEndring,
-      operasjoner,
-      alleStemmekretser,
-    ),
+    sammenslaaing: getSammenslaaingEndring(stemmekretserMedEndring, operasjoner, alleStemmekretser),
   };
 };
 
@@ -204,19 +164,9 @@ export const getStemmekretsEndringer = (
     return null;
   }
 
-  const endredeStemmekretserGroupedBykommuneId = groupEndringerByKommune(
-    endredeStemmekretser,
-    alleStemmekretser,
-  );
+  const endredeStemmekretserGroupedBykommuneId = groupEndringerByKommune(endredeStemmekretser, alleStemmekretser);
 
-  return Object.entries(endredeStemmekretserGroupedBykommuneId).map(
-    ([kommune, stemmekretser]) =>
-      getEndringerForKommune(
-        kommune,
-        stemmekretser,
-        operasjoner,
-        alleStemmekretser,
-        alleKommuner,
-      ),
+  return Object.entries(endredeStemmekretserGroupedBykommuneId).map(([kommune, stemmekretser]) =>
+    getEndringerForKommune(kommune, stemmekretser, operasjoner, alleStemmekretser, alleKommuner),
   );
 };

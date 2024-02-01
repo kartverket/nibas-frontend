@@ -10,9 +10,7 @@ type MergeMultiselectProps = {
   alleStemmekretser: StemmekretsResponse[];
 };
 
-export const MergeMultiselect = ({
-  alleStemmekretser,
-}: MergeMultiselectProps) => {
+export const MergeMultiselect = ({ alleStemmekretser }: MergeMultiselectProps) => {
   const {
     control,
     register,
@@ -25,10 +23,7 @@ export const MergeMultiselect = ({
     name: "stemmekretsNummerTilSammenslaaing",
   });
 
-  const triggerRevalidateOnChange = ({
-    onChange,
-    ...restProps
-  }: SelectProps) => {
+  const triggerRevalidateOnChange = ({ onChange, ...restProps }: SelectProps) => {
     return {
       onChange: (e: ChangeEvent<HTMLSelectElement>) => {
         if (onChange) {
@@ -64,27 +59,18 @@ export const MergeMultiselect = ({
         <MergeSelect
           key={field.id}
           {...triggerRevalidateOnChange(
-            register(
-              `stemmekretsNummerTilSammenslaaing.${index}.value`,
-              multiselectValidator,
-            ),
+            register(`stemmekretsNummerTilSammenslaaing.${index}.value`, multiselectValidator),
           )}
           onRemove={() => remove(index)}
           stemmekretser={alleStemmekretser}
           showRemoveButton={fields.length > 1}
           validationError={{
             showError: !!errors?.stemmekretsNummerTilSammenslaaing?.[index],
-            message:
-              errors?.stemmekretsNummerTilSammenslaaing?.[index]?.value
-                ?.message ?? "",
+            message: errors?.stemmekretsNummerTilSammenslaaing?.[index]?.value?.message ?? "",
           }}
         />
       ))}
-      <LeggTilFlerButton
-        variant="secondary"
-        rightIcon="add"
-        onClick={() => append({ value: "default" })}
-      >
+      <LeggTilFlerButton variant="secondary" rightIcon="add" onClick={() => append({ value: "default" })}>
         Legg til flere sammenslåinger
       </LeggTilFlerButton>
     </MultiSelectWrapper>

@@ -12,19 +12,8 @@ type HeaderButtonProps = {
   tooltip: { text: string; shortcut?: Shortcut };
 };
 
-const HeaderButton = ({
-  icon,
-  label,
-  labelIsHidden,
-  onClick,
-  isDisabled,
-  tooltip,
-}: HeaderButtonProps) => (
-  <Tooltip
-    hasArrow
-    label={<TooltipBody text={tooltip.text} shortcut={tooltip.shortcut} />}
-    isDisabled={!tooltip}
-  >
+const HeaderButton = ({ icon, label, labelIsHidden, onClick, isDisabled, tooltip }: HeaderButtonProps) => (
+  <Tooltip hasArrow label={<TooltipBody text={tooltip.text} shortcut={tooltip.shortcut} />} isDisabled={!tooltip}>
     <Label $isDisabled={isDisabled}>
       <HeaderIconButton
         variant="secondary"

@@ -27,10 +27,7 @@ type ModifierKeysOption = {
   shift?: boolean;
 };
 
-const checkModifierKeys = (
-  event: KeyboardEvent,
-  modifierKeys: ModifierKeysOption,
-): boolean => {
+const checkModifierKeys = (event: KeyboardEvent, modifierKeys: ModifierKeysOption): boolean => {
   if (!!modifierKeys.control != (event.ctrlKey || event.metaKey)) {
     return false;
   }
@@ -46,10 +43,7 @@ const checkModifierKeys = (
   return true;
 };
 
-const keyComboToString = (
-  key: string,
-  modifierKeys: ModifierKeysOption,
-): string => {
+const keyComboToString = (key: string, modifierKeys: ModifierKeysOption): string => {
   const keys = [];
   if (modifierKeys.control) {
     keys.push("CTRL");
@@ -65,14 +59,10 @@ const keyComboToString = (
   return keys.join(" + ");
 };
 
-const createShortcut = (
-  key: string,
-  modifierKeys: ModifierKeysOption,
-): KeyboardShortcut => ({
+const createShortcut = (key: string, modifierKeys: ModifierKeysOption): KeyboardShortcut => ({
   displayString: keyComboToString(key, modifierKeys),
   checkEvent: (event: KeyboardEvent) =>
-    checkModifierKeys(event, modifierKeys) &&
-    event.key.toLowerCase() === key.toLowerCase(),
+    checkModifierKeys(event, modifierKeys) && event.key.toLowerCase() === key.toLowerCase(),
 });
 
 export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {

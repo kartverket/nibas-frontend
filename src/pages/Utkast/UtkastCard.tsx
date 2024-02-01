@@ -1,14 +1,6 @@
 import { styled } from "styled-components";
 import { useNavigate } from "react-router-dom";
-import {
-  Heading,
-  IconButton,
-  Menu,
-  MenuButton,
-  MenuDivider,
-  MenuList,
-  Text,
-} from "@kvib/react";
+import { Heading, IconButton, Menu, MenuButton, MenuDivider, MenuList, Text } from "@kvib/react";
 import { getDateInFriendlyString } from "pages/Kart/OverlayPanels/MetadataPanel/utils";
 import { UtkastResponse } from "types/api";
 import UtkastSlett from "./UtkastSlett";
@@ -25,9 +17,7 @@ const UtkastCard = ({ utkast }: { utkast: UtkastResponse }) => {
         <Heading as="h3" size="sm">
           {utkast.navn}
         </Heading>
-        <Date fontSize="xs">
-          {`Opprettet: ${getDateInFriendlyString(utkast.opprettetDato)}`}
-        </Date>
+        <Date fontSize="xs">{`Opprettet: ${getDateInFriendlyString(utkast.opprettetDato)}`}</Date>
       </Info>
       <Menu>
         <MenuButton

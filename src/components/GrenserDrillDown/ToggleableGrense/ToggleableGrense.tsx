@@ -15,17 +15,8 @@ type Props<T extends GrenseRef> = {
   features: Feature<Geometry>[] | null;
 };
 
-const ToggleableGrense = <T extends GrenseRef>({
-  grense,
-  title,
-  type,
-  features,
-}: Props<T>) => {
-  const { kretsStatus, toggleVisible, isLoading } = useEditGrense(
-    type,
-    getIdFromEntity(grense),
-    features,
-  );
+const ToggleableGrense = <T extends GrenseRef>({ grense, title, type, features }: Props<T>) => {
+  const { kretsStatus, toggleVisible, isLoading } = useEditGrense(type, getIdFromEntity(grense), features);
 
   return (
     <Wrapper $isVisible={kretsStatus.visible ? true : false}>
@@ -53,13 +44,10 @@ const Wrapper = styled.div<{ $isVisible: boolean }>`
 
   > :first-child {
     color: ${({ $isVisible }) =>
-      $isVisible
-        ? "var(--kvib-colors-chakra-inverse-text)"
-        : "var(--kvib-colors-blue-500)"};
+      $isVisible ? "var(--kvib-colors-chakra-inverse-text)" : "var(--kvib-colors-blue-500)"};
     padding: 8px;
     border-radius: 50%;
-    background: ${({ $isVisible }) =>
-      $isVisible ? "var(--kvib-colors-blue-500)" : "transparent"};
+    background: ${({ $isVisible }) => ($isVisible ? "var(--kvib-colors-blue-500)" : "transparent")};
 
     &:hover {
       background: var(--kvib-colors-blue-50);

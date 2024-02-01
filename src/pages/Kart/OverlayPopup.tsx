@@ -20,10 +20,7 @@ const OverlayPopup = () => {
   }, []);
 
   // OverlayPopup skal kun vises når man har valgt én linje
-  const properties =
-    selectedFeatures.length === 1
-      ? selectedFeatures[0].getProperties()
-      : undefined;
+  const properties = selectedFeatures.length === 1 ? selectedFeatures[0].getProperties() : undefined;
 
   return (
     <Popup ref={overlayRef}>
@@ -31,12 +28,8 @@ const OverlayPopup = () => {
         <div>
           <Value>{`Målemetode: ${properties?.MALEMETODE ?? "---"}`}</Value>
           <Value>{`Nøyaktighet: ${properties?.NOYAKTIGHET ?? "---"}`}</Value>
-          <Value>
-            {`Nøyaktighetsklasse: ${properties?.NOYAKTIGHETSKLASSE ?? "---"}`}
-          </Value>
-          <Value>
-            {`Omtvistet: ${properties?.OMTVISTET === 1 ? "Ja" : "Nei"}`}
-          </Value>
+          <Value>{`Nøyaktighetsklasse: ${properties?.NOYAKTIGHETSKLASSE ?? "---"}`}</Value>
+          <Value>{`Omtvistet: ${properties?.OMTVISTET === 1 ? "Ja" : "Nei"}`}</Value>
         </div>
       )}
     </Popup>

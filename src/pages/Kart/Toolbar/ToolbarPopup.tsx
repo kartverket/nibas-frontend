@@ -11,15 +11,7 @@ type Props = {
   isLoading?: boolean;
 };
 
-const ToolbarPopup = ({
-  text,
-  subtext,
-  buttonText,
-  onClick,
-  onClose,
-  isDisabled,
-  isLoading,
-}: Props) => {
+const ToolbarPopup = ({ text, subtext, buttonText, onClick, onClose, isDisabled, isLoading }: Props) => {
   return (
     <ToolbarPopupBody>
       <TextRows>
@@ -29,21 +21,11 @@ const ToolbarPopup = ({
         {subtext && <Text fontSize="sm">{subtext}</Text>}
       </TextRows>
       {buttonText && (
-        <Button
-          size="sm"
-          isDisabled={isDisabled}
-          onClick={onClick}
-          isLoading={isLoading}
-        >
+        <Button size="sm" isDisabled={isDisabled} onClick={onClick} isLoading={isLoading}>
           {buttonText}
         </Button>
       )}
-      <Button
-        size="sm"
-        variant="secondary"
-        colorScheme="gray"
-        onClick={onClose}
-      >
+      <Button size="sm" variant="secondary" colorScheme="gray" onClick={onClose}>
         Lukk
       </Button>
     </ToolbarPopupBody>

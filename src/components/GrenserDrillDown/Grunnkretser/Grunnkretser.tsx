@@ -20,21 +20,14 @@ const Grunnkretser = () => {
             {fylker.map((fylke) => (
               <ListItemAccordion
                 key={getIdFromEntity(fylke)}
-                title={`${fylke.fylkesnummer.kodeverdi} ${getNavnInSpraak(
-                  fylke.navn,
-                  "nor",
-                )}`}
+                title={`${fylke.fylkesnummer.kodeverdi} ${getNavnInSpraak(fylke.navn, "nor")}`}
               >
                 <KommuneList fylke={fylke} />
               </ListItemAccordion>
             ))}
           </List>
         ) : (
-          <p>
-            {isAuthenticatedFunc()
-              ? "Henter fylker..."
-              : "Logg inn for å se listen"}
-          </p>
+          <p>{isAuthenticatedFunc() ? "Henter fylker..." : "Logg inn for å se listen"}</p>
         )}
       </InndelingerKretsProvider>
     </ListItemAccordion>
