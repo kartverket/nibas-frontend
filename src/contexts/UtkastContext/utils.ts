@@ -13,7 +13,6 @@ import {
   FylkeRequest,
   GrunnkretsRequest,
   KommuneRequest,
-  KretsDelingEndringRequest,
   NasjonRequest,
   StemmekretsRef,
   StemmekretsRequest,
@@ -25,6 +24,7 @@ import {
 } from "types/api";
 import { featureToGeoJson } from "utils/map/geoJson";
 import { getIdFromEntity } from "utils/api";
+import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 
 const getCombinedEntity = <T extends ResponseWithId>(
   entity: T,
@@ -42,7 +42,13 @@ const getCombinedFeatures = (
   featureCollection: GeoJSONFeatureCollection,
   featuresSlice: NonNullable<UtkastGrenseendringer["endredeFeatures"]>,
 ) => {
-  return featureCollection.features.map((feature: GeoJSONFeature) => featuresSlice[feature.id] ?? feature);
+  const updatedFeaturesFromCollection = featureCollection.features.map(
+    (feature: GeoJSONFeature) => featuresSlice.find((f) => f.id === feature.id) ?? feature,
+  );
+
+  const newFeatures = featuresSlice.filter((f) => isTempFeatureId(f.id as string));
+
+  return updatedFeaturesFromCollection.concat(newFeatures);
 };
 
 export const applyNonFeatureUtkast = <T extends NonNullable<UtkastEntity>>(
@@ -208,7 +214,6 @@ export const createUtkastOperations = ({
   nasjonsendringer = {},
   stemmekretsendringer = {},
   stemmekretssammenslaaingsendringer,
-  kretsDelingEndringer = [],
 }: {
   endredeFeatures?: GeoJSONFeature[];
   fylkesendringer?: Record<string, FylkeRequest>;
@@ -217,7 +222,6 @@ export const createUtkastOperations = ({
   nasjonsendringer?: Record<string, NasjonRequest>;
   stemmekretsendringer?: Record<string, StemmekretsRequest>;
   stemmekretssammenslaaingsendringer?: StemmekretsSammenslaaingsendringRequest;
-  kretsDelingEndringer?: KretsDelingEndringRequest[];
 }): UtkastOperasjoner => ({
   grenseendringer: {
     endredeFeatures,
@@ -230,5 +234,4 @@ export const createUtkastOperations = ({
     stemmekretsendringer,
   },
   stemmekretsSammenslaaingsendring: stemmekretssammenslaaingsendringer,
-  kretsDelingEndringer: kretsDelingEndringer,
 });
