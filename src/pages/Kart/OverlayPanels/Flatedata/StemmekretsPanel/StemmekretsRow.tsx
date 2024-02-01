@@ -14,171 +14,171 @@ import { useUtkast } from "contexts/UtkastContext";
 import { styled } from "styled-components";
 
 type StemmekretsInputs = {
-    stemmekretsnavn: string;
-    stemmekretsnummer: string;
+  stemmekretsnavn: string;
+  stemmekretsnummer: string;
 };
 
 const fromFormToRequest = (data: StemmekretsInputs, stemmekrets: StemmekretsResponse): StemmekretsRequest => ({
-    identifikasjon: {
-        lokalid: getIdFromEntity(stemmekrets),
-    },
-    valgdistriktsnummer: stemmekrets.valgdistriktsnummer,
-    version: stemmekrets.version,
-    stemmekretsnavn: data.stemmekretsnavn,
-    stemmekretsnummer: data.stemmekretsnummer,
+  identifikasjon: {
+    lokalid: getIdFromEntity(stemmekrets),
+  },
+  valgdistriktsnummer: stemmekrets.valgdistriktsnummer,
+  version: stemmekrets.version,
+  stemmekretsnavn: data.stemmekretsnavn,
+  stemmekretsnummer: data.stemmekretsnummer,
 });
 
 type Props = {
-    stemmekrets: StemmekretsResponse;
-    kommuneId: string;
+  stemmekrets: StemmekretsResponse;
+  kommuneId: string;
 };
 
 const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
-    const { utkast } = useUtkast();
-    const stemmekretsId = getIdFromEntity(stemmekrets);
-    const { addHistoryEntry } = useHistory();
-    const [isEditing, setIsEditing] = useState(false);
+  const { utkast } = useUtkast();
+  const stemmekretsId = getIdFromEntity(stemmekrets);
+  const { addHistoryEntry } = useHistory();
+  const [isEditing, setIsEditing] = useState(false);
 
-    const {
-        register,
-        setValue,
-        getValues,
-        handleSubmit,
-        reset,
-        formState: { errors, isDirty },
-    } = useForm<StemmekretsInputs>({
-        defaultValues: {
-            stemmekretsnavn: stemmekrets.stemmekretsnavn,
-            stemmekretsnummer: stemmekrets.stemmekretsnummer,
-        },
-    });
-    const previousValues = useRef<StemmekretsInputs>(getValues());
+  const {
+    register,
+    setValue,
+    getValues,
+    handleSubmit,
+    reset,
+    formState: { errors, isDirty },
+  } = useForm<StemmekretsInputs>({
+    defaultValues: {
+      stemmekretsnavn: stemmekrets.stemmekretsnavn,
+      stemmekretsnummer: stemmekrets.stemmekretsnummer,
+    },
+  });
+  const previousValues = useRef<StemmekretsInputs>(getValues());
 
-    useEffect(() => {
-        setValue("stemmekretsnavn", stemmekrets.stemmekretsnavn);
-        setValue("stemmekretsnummer", stemmekrets.stemmekretsnummer);
-        previousValues.current = getValues();
-    }, [getValues, setValue, stemmekrets]);
+  useEffect(() => {
+    setValue("stemmekretsnavn", stemmekrets.stemmekretsnavn);
+    setValue("stemmekretsnummer", stemmekrets.stemmekretsnummer);
+    previousValues.current = getValues();
+  }, [getValues, setValue, stemmekrets]);
 
-    const setFormValues = useCallback(
-        (change: StemmekretsEntry["changes"][number], direction: HistoryDirection) => {
-            const newName = change[direction]?.stemmekretsnavn;
-            const newNumber = change[direction]?.stemmekretsnummer;
-            setValue("stemmekretsnavn", newName ?? "");
-            setValue("stemmekretsnummer", newNumber ?? "");
+  const setFormValues = useCallback(
+    (change: StemmekretsEntry["changes"][number], direction: HistoryDirection) => {
+      const newName = change[direction]?.stemmekretsnavn;
+      const newNumber = change[direction]?.stemmekretsnummer;
+      setValue("stemmekretsnavn", newName ?? "");
+      setValue("stemmekretsnummer", newNumber ?? "");
 
-            previousValues.current = getValues();
+      previousValues.current = getValues();
 
-            updateEditFeatureText(getRepresentasjonspunktId(stemmekretsId), newName, newNumber);
-        },
-        [getValues, setValue, stemmekretsId],
-    );
+      updateEditFeatureText(getRepresentasjonspunktId(stemmekretsId), newName, newNumber);
+    },
+    [getValues, setValue, stemmekretsId],
+  );
 
-    useHistoryFormSync<StemmekretsEntry>({
-        entityId: stemmekretsId,
-        redoEventKey: "stemmekretsRedo",
-        undoEventKey: "stemmekretsUndo",
-        setFormValues,
-    });
+  useHistoryFormSync<StemmekretsEntry>({
+    entityId: stemmekretsId,
+    redoEventKey: "stemmekretsRedo",
+    undoEventKey: "stemmekretsUndo",
+    setFormValues,
+  });
 
-    const isInteger = (s: string) => s.match(/^-?\d+$/) !== null;
+  const isInteger = (s: string) => s.match(/^-?\d+$/) !== null;
 
-    const formOptions: Record<string, RegisterOptions> = {
-        stemmekretsnummer: {
-            required: "Stemmekretsnummer kan ikke være tomt",
-            validate: (stemmekretsnummer: string) => {
-                if (!isInteger(stemmekretsnummer) || parseInt(stemmekretsnummer) > 9999) {
-                    return "Stemmekretsnummer må kun inneholde siffer (maks 4)";
-                }
-                if (parseInt(stemmekretsnummer) <= 0) {
-                    return "Stemmekretsnummer kan ikke være 0 eller et negativt tall";
-                }
-                return true;
-            },
-        },
-        stemmekretsnavn: {
-            required: "Stemmekretsnavn kan ikke være tomt",
-        },
-    };
-
-    const validationError = (error: FieldError | undefined) => {
-        if (error) {
-            return {
-                showError: error !== undefined,
-                message: error.message,
-            } as ValidationError;
+  const formOptions: Record<string, RegisterOptions> = {
+    stemmekretsnummer: {
+      required: "Stemmekretsnummer kan ikke være tomt",
+      validate: (stemmekretsnummer: string) => {
+        if (!isInteger(stemmekretsnummer) || parseInt(stemmekretsnummer) > 9999) {
+          return "Stemmekretsnummer må kun inneholde siffer (maks 4)";
         }
-    };
-
-    const saveAndAddHistoryEntry = () => {
-        const newValues = getValues();
-        addHistoryEntry({
-            type: "stemmekrets",
-            kommuneId,
-            changes: [
-                {
-                    from: fromFormToRequest(previousValues.current, stemmekrets),
-                    to: fromFormToRequest(newValues, stemmekrets),
-                    id: stemmekretsId,
-                },
-            ],
-        });
-        previousValues.current = newValues;
-        updateEditFeatureText(
-            getRepresentasjonspunktId(stemmekretsId),
-            newValues.stemmekretsnavn,
-            newValues.stemmekretsnummer,
-        );
-        toggleEditing();
-    };
-
-    const onSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault();
-        handleSubmit(saveAndAddHistoryEntry)(event);
-    };
-
-    const toggleEditing = () => {
-        reset(previousValues.current);
-        if (isEditing) {
-            setIsEditing(false);
-        } else {
-            setIsEditing(true);
+        if (parseInt(stemmekretsnummer) <= 0) {
+          return "Stemmekretsnummer kan ikke være 0 eller et negativt tall";
         }
-    };
+        return true;
+      },
+    },
+    stemmekretsnavn: {
+      required: "Stemmekretsnavn kan ikke være tomt",
+    },
+  };
 
-    return (
-        <KretsRow>
-            <InputCell
-                isEditing={isEditing}
-                data={getValues("stemmekretsnummer")}
-                validationError={validationError(errors.stemmekretsnummer)}
-                {...register("stemmekretsnummer", formOptions.stemmekretsnummer)}
-            />
-            <InputCell
-                isEditing={isEditing}
-                data={getValues("stemmekretsnavn")}
-                validationError={validationError(errors.stemmekretsnavn)}
-                {...register("stemmekretsnavn", formOptions.stemmekretsnavn)}
-            />
-            <td>{stemmekrets.valgdistriktsnummer ?? ""}</td>
-            {utkast && (
-                <Cell>
-                    <EditAndSaveButton
-                        isEditing={isEditing}
-                        toggleEditing={toggleEditing}
-                        canSave={isDirty}
-                        onSubmit={onSubmit}
-                    />
-                </Cell>
-            )}
-        </KretsRow>
+  const validationError = (error: FieldError | undefined) => {
+    if (error) {
+      return {
+        showError: error !== undefined,
+        message: error.message,
+      } as ValidationError;
+    }
+  };
+
+  const saveAndAddHistoryEntry = () => {
+    const newValues = getValues();
+    addHistoryEntry({
+      type: "stemmekrets",
+      kommuneId,
+      changes: [
+        {
+          from: fromFormToRequest(previousValues.current, stemmekrets),
+          to: fromFormToRequest(newValues, stemmekrets),
+          id: stemmekretsId,
+        },
+      ],
+    });
+    previousValues.current = newValues;
+    updateEditFeatureText(
+      getRepresentasjonspunktId(stemmekretsId),
+      newValues.stemmekretsnavn,
+      newValues.stemmekretsnummer,
     );
+    toggleEditing();
+  };
+
+  const onSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    handleSubmit(saveAndAddHistoryEntry)(event);
+  };
+
+  const toggleEditing = () => {
+    reset(previousValues.current);
+    if (isEditing) {
+      setIsEditing(false);
+    } else {
+      setIsEditing(true);
+    }
+  };
+
+  return (
+    <KretsRow>
+      <InputCell
+        isEditing={isEditing}
+        data={getValues("stemmekretsnummer")}
+        validationError={validationError(errors.stemmekretsnummer)}
+        {...register("stemmekretsnummer", formOptions.stemmekretsnummer)}
+      />
+      <InputCell
+        isEditing={isEditing}
+        data={getValues("stemmekretsnavn")}
+        validationError={validationError(errors.stemmekretsnavn)}
+        {...register("stemmekretsnavn", formOptions.stemmekretsnavn)}
+      />
+      <td>{stemmekrets.valgdistriktsnummer ?? ""}</td>
+      {utkast && (
+        <Cell>
+          <EditAndSaveButton
+            isEditing={isEditing}
+            toggleEditing={toggleEditing}
+            canSave={isDirty}
+            onSubmit={onSubmit}
+          />
+        </Cell>
+      )}
+    </KretsRow>
+  );
 };
 
 const Cell = styled.td`
-    display: flex;
-    justify-content: end;
-    padding: 12px !important;
+  display: flex;
+  justify-content: end;
+  padding: 12px !important;
 `;
 
 export default StemmekretsRow;

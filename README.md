@@ -8,9 +8,9 @@ Foreløpig kun create-react-app med typescript
 
 Prosjektet trenger pakke(r) fra github package registry. For å kunne installere disse pakkene må man gjøre følgende:
 
--   Opprette et personal access token på github (https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-to-github-packages)
--   Autorisere personal access token for bruk med SSO (https://docs.github.com/en/enterprise-cloud@latest/authentication/authenticating-with-saml-single-sign-on/authorizing-a-personal-access-token-for-use-with-saml-single-sign-on)
--   Autoriser deg mot GitHub Packages med npm ved å bruke kommandoen: `npm login --scope=@kartverket --registry=https://npm.pkg.github.com`. Her vil du bli promptet til å logge inn med GitHub brukernavnet ditt. Passord vil være access token du lagde i et tidligere steg. (https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-with-a-personal-access-token)
+- Opprette et personal access token på github (https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-to-github-packages)
+- Autorisere personal access token for bruk med SSO (https://docs.github.com/en/enterprise-cloud@latest/authentication/authenticating-with-saml-single-sign-on/authorizing-a-personal-access-token-for-use-with-saml-single-sign-on)
+- Autoriser deg mot GitHub Packages med npm ved å bruke kommandoen: `npm login --scope=@kartverket --registry=https://npm.pkg.github.com`. Her vil du bli promptet til å logge inn med GitHub brukernavnet ditt. Passord vil være access token du lagde i et tidligere steg. (https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-with-a-personal-access-token)
 
 ### Oppstart av applikasjonen
 
@@ -82,19 +82,19 @@ For å få låste kartlag til å fungere lokalt må du også få tak i brukernav
 
 ## Autentisering
 
--   Vær logget inn på enten kartverkets nett, VPN eller VDI.
--   Gå til et av testmiljøene
-    -   Test: [nibas.test.skip.statkart.no](https://nibas.test.skip.statkart.no/)
-    -   Dev: [nibas.dev.skip.statkart.no](https://nibas.dev.skip.statkart.no/)
--   Velg "Logg inn i Nasjonal inndelingsbase"
--   Anbefalt metode: logg inn med TestID
-    -   Oppgi personidentifikator fra en av de syntetiske brukerne her: [Testbrukere](https://kartverket.atlassian.net/wiki/spaces/TNIBAS/pages/534282277/Testbrukere)
-    -   Dersom du får beskjed om å fylle inn mobil/epost er det bare å bruke et dummy-mobilnummer, eksempelvis 44556677
--   Det er også i en overgangsperiode mulig å logge inn med BankID
-    -   Skriv inn personnummer
-    -   Velg BankID med kodebrikke
-    -   Skriv inn engangspassord
-    -   Skriv inn passord
+- Vær logget inn på enten kartverkets nett, VPN eller VDI.
+- Gå til et av testmiljøene
+  - Test: [nibas.test.skip.statkart.no](https://nibas.test.skip.statkart.no/)
+  - Dev: [nibas.dev.skip.statkart.no](https://nibas.dev.skip.statkart.no/)
+- Velg "Logg inn i Nasjonal inndelingsbase"
+- Anbefalt metode: logg inn med TestID
+  - Oppgi personidentifikator fra en av de syntetiske brukerne her: [Testbrukere](https://kartverket.atlassian.net/wiki/spaces/TNIBAS/pages/534282277/Testbrukere)
+  - Dersom du får beskjed om å fylle inn mobil/epost er det bare å bruke et dummy-mobilnummer, eksempelvis 44556677
+- Det er også i en overgangsperiode mulig å logge inn med BankID
+  - Skriv inn personnummer
+  - Velg BankID med kodebrikke
+  - Skriv inn engangspassord
+  - Skriv inn passord
 
 ### BankID
 

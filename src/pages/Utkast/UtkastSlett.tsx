@@ -3,26 +3,26 @@ import { UtkastResponse } from "types/api";
 import UtkastSlettModal from "components/Modals/UtkastSlettModal";
 
 type Props = {
-    utkast: UtkastResponse;
+  utkast: UtkastResponse;
 };
 
 const UtkastSlett = ({ utkast }: Props) => {
-    const { isOpen, onClose, onOpen } = useDisclosure();
+  const { isOpen, onClose, onOpen } = useDisclosure();
 
-    return (
-        <>
-            <MenuItem
-                icon={<Icon icon="delete" />}
-                onClick={(e) => {
-                    e.stopPropagation();
-                    onOpen();
-                }}
-            >
-                Slett
-            </MenuItem>
-            <UtkastSlettModal isOpen={isOpen} onClose={onClose} utkast={utkast} />
-        </>
-    );
+  return (
+    <>
+      <MenuItem
+        icon={<Icon icon="delete" />}
+        onClick={(e) => {
+          e.stopPropagation();
+          onOpen();
+        }}
+      >
+        Slett
+      </MenuItem>
+      <UtkastSlettModal isOpen={isOpen} onClose={onClose} utkast={utkast} />
+    </>
+  );
 };
 
 export default UtkastSlett;

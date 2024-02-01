@@ -1,51 +1,51 @@
 name: Release app
 on:
-    push:
-        branches: [main]
-    workflow_dispatch:
+  push:
+    branches: [main]
+  workflow_dispatch:
 
 env:
-    image_name: nibas-frontend
-    registry: ghcr.io
-    registry_path: kartverket
+  image_name: nibas-frontend
+  registry: ghcr.io
+  registry_path: kartverket
 
 jobs:
-    build:
-        permissions:
-            contents: write
-            packages: write
-            security-events: write
-            actions: read
-        uses: kartverket/nibas-frontend/.github/workflows/build-app.yml@main
-        with:
-            deploy_ghcr: true
-        secrets: inherit
+  build:
+    permissions:
+      contents: write
+      packages: write
+      security-events: write
+      actions: read
+    uses: kartverket/nibas-frontend/.github/workflows/build-app.yml@main
+    with:
+      deploy_ghcr: true
+    secrets: inherit
 
-    pharos:
-        name: Run Pharos security scan
-        needs: build
-        permissions:
-            actions: read
-            packages: read
-            contents: read
-            security-events: write
-        runs-on: ubuntu-latest
-        steps:
-            - name: "Run Pharos"
-              uses: kartverket/pharos@v0.1.5
-              with:
-                  allow_severity_level: critical
-                  image_url: ${{ needs.build.outputs.image_url }}
-
-    deploy-argo:
-        needs: build
-        uses: kartverket/smia-apps/.github/workflows/release-app.yml@main
+  pharos:
+    name: Run Pharos security scan
+    needs: build
+    permissions:
+      actions: read
+      packages: read
+      contents: read
+      security-events: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Run Pharos"
+        uses: kartverket/pharos@v0.1.5
         with:
-            application: nibas-frontend
-            version: ${{ needs.build.outputs.version }}
-            digest: ${{ needs.build.outputs.digest }}
-            deploy_dev: true
-            deploy_test: true
-            deploy_prod: true
-        secrets:
-            PAT_TOKEN: ${{ secrets.PAT_ARGOCD }}
+          allow_severity_level: critical
+          image_url: ${{ needs.build.outputs.image_url }}
+
+  deploy-argo:
+    needs: build
+    uses: kartverket/smia-apps/.github/workflows/release-app.yml@main
+    with:
+      application: nibas-frontend
+      version: ${{ needs.build.outputs.version }}
+      digest: ${{ needs.build.outputs.digest }}
+      deploy_dev: true
+      deploy_test: true
+      deploy_prod: true
+    secrets:
+      PAT_TOKEN: ${{ secrets.PAT_ARGOCD }}

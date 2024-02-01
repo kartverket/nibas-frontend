@@ -2,13 +2,13 @@ import { components, paths } from "./api-gen";
 import { EditingType } from "contexts/EditGrenserContext";
 
 export type Spraak = {
-    navn: string;
-    spraak: string;
+  navn: string;
+  spraak: string;
 };
 
 export type InndelingerKontekst = {
-    id: string;
-    type: EditingType;
+  id: string;
+  type: EditingType;
 };
 
 // renaming av typer fra generert api doc
@@ -19,7 +19,7 @@ export type CommonMetadata = components["schemas"]["CommonMetadata"];
 export type Dokref = components["schemas"]["Dokref"];
 export type FeatureCollection = components["schemas"]["FeatureCollection"];
 export type FeatureProperties = components["schemas"]["FeatureProperties"] & {
-    inndelingerKontekst: InndelingerKontekst;
+  inndelingerKontekst: InndelingerKontekst;
 };
 export type FylkeRef = components["schemas"]["FylkeRef"];
 export type FylkeRequest = components["schemas"]["FylkeRequest"];
@@ -51,7 +51,7 @@ export type StemmekretsResponse = components["schemas"]["StemmekretsResponse"];
 export type StemmekretsRequest = components["schemas"]["StemmekretsRequest"];
 export type StemmekretsSammenslaaingsendringRequest = components["schemas"]["StemmekretsSammenslaaingsendringRequest"];
 export type StatistiskGrenseMetadata = components["schemas"]["StatistiskgrenseMetadata"] & {
-    dokumentasjonsreferanser: undefined;
+  dokumentasjonsreferanser: undefined;
 };
 export type ObjektIdentifikator = components["schemas"]["ObjektIdentifikator"];
 export type OpprettUtkastRequest = components["schemas"]["OpprettUtkastRequest"];
@@ -67,18 +67,18 @@ export type ApiErrorResponse = components["schemas"]["ApiErrorResponse"];
 // custom typer basert på api doc
 export type ApiPath = keyof paths;
 export type KodelistePath =
-    | "/v1/kodeliste/maalemetode-koder"
-    | "/v1/kodeliste/landkoder"
-    | "/v1/kodeliste/kommunenumre"
-    | "/v1/kodeliste/grensetyper"
-    | "/v1/kodeliste/fylkesnumre";
+  | "/v1/kodeliste/maalemetode-koder"
+  | "/v1/kodeliste/landkoder"
+  | "/v1/kodeliste/kommunenumre"
+  | "/v1/kodeliste/grensetyper"
+  | "/v1/kodeliste/fylkesnumre";
 export type Metadata =
-    | AvtaltAvgrensningslinjeMetadata
-    | AdministrativGrenseMetadata
-    | GrunnlinjeMetadata
-    | RiksgrenseMetadata
-    | TerritorialgrenseMetadata
-    | StatistiskGrenseMetadata;
+  | AvtaltAvgrensningslinjeMetadata
+  | AdministrativGrenseMetadata
+  | GrunnlinjeMetadata
+  | RiksgrenseMetadata
+  | TerritorialgrenseMetadata
+  | StatistiskGrenseMetadata;
 export type KretsRef = GrunnkretsRef | StemmekretsRef;
 export type GrenseRef = FylkeRef | KommuneRef | KretsRef;
 export type UtkastOperasjoner = UtkastResponse["operasjoner"];

@@ -4,64 +4,64 @@ import { KretsStatus } from "contexts/EditGrenserContext";
 import { mockBasicFeature } from "mocks/handlers/responses";
 
 const defaultProps: React.ComponentProps<typeof ToggleableGrense> = {
-    grense: {
-        id: {
-            gyldighetsdato: "",
-            lokalid: {
-                value: "1",
-            },
-        },
-        href: "",
-        navn: [
-            {
-                navn: "",
-                spraak: "",
-                version: 1,
-            },
-        ],
-        kommunenummer: {
-            id: "id",
-            kodeverdi: "1234",
-        },
-        antallFramtidigeVersjoner: 0,
+  grense: {
+    id: {
+      gyldighetsdato: "",
+      lokalid: {
+        value: "1",
+      },
     },
-    title: "Grense",
-    type: "fylke",
-    features: [mockBasicFeature],
+    href: "",
+    navn: [
+      {
+        navn: "",
+        spraak: "",
+        version: 1,
+      },
+    ],
+    kommunenummer: {
+      id: "id",
+      kodeverdi: "1234",
+    },
+    antallFramtidigeVersjoner: 0,
+  },
+  title: "Grense",
+  type: "fylke",
+  features: [mockBasicFeature],
 };
 
 beforeEach(() => {
-    vi.clearAllMocks();
+  vi.clearAllMocks();
 });
 
 const renderWithProvider = (ui: React.ReactNode, kretsStatus: KretsStatus = { editing: false, visible: false }) => {
-    render(ui, {
-        EditGrenserProvider: {
-            alleKretserStatuser: { fylke: { "1": kretsStatus } },
-            setKretsStatus: vi.fn(),
-            setAlleKretserStatuser: vi.fn(),
-            resetAndClearAllLayers: vi.fn(),
-            getCurrentlyEditingType: vi.fn(),
-            setOtherEditingTypes: vi.fn(),
-        },
-    });
+  render(ui, {
+    EditGrenserProvider: {
+      alleKretserStatuser: { fylke: { "1": kretsStatus } },
+      setKretsStatus: vi.fn(),
+      setAlleKretserStatuser: vi.fn(),
+      resetAndClearAllLayers: vi.fn(),
+      getCurrentlyEditingType: vi.fn(),
+      setOtherEditingTypes: vi.fn(),
+    },
+  });
 };
 
 describe("ToggleableGrense", () => {
-    it("should show eye closed and unchecked checkbox when kretsstatus is undefined", () => {
-        renderWithProvider(<ToggleableGrense {...defaultProps} />);
+  it("should show eye closed and unchecked checkbox when kretsstatus is undefined", () => {
+    renderWithProvider(<ToggleableGrense {...defaultProps} />);
 
-        expect(screen.getByText(defaultProps.title)).toBeInTheDocument();
-        expect(screen.getByRole("button", { name: "Usynlig" })).toBeInTheDocument();
+    expect(screen.getByText(defaultProps.title)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Usynlig" })).toBeInTheDocument();
+  });
+
+  it("should show open eye and checked checkbox when kretsstatus values are true", () => {
+    renderWithProvider(<ToggleableGrense {...defaultProps} />, {
+      editing: true,
+      visible: true,
     });
 
-    it("should show open eye and checked checkbox when kretsstatus values are true", () => {
-        renderWithProvider(<ToggleableGrense {...defaultProps} />, {
-            editing: true,
-            visible: true,
-        });
-
-        expect(screen.getByText(defaultProps.title)).toBeInTheDocument();
-        expect(screen.getByRole("button", { name: "Synlig" })).toBeInTheDocument();
-    });
+    expect(screen.getByText(defaultProps.title)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Synlig" })).toBeInTheDocument();
+  });
 });

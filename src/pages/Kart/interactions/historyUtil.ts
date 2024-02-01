@@ -5,32 +5,32 @@ import { LineString } from "ol/geom";
 import { previousCoordinateKey } from "./constants";
 
 export const getInfoFromFeature = (featureLike: FeatureLike) => {
-    const featureId = featureLike.getId();
-    const geometry = featureLike.getGeometry() as LineString;
-    return { coordinates: geometry.getCoordinates(), featureId };
+  const featureId = featureLike.getId();
+  const geometry = featureLike.getGeometry() as LineString;
+  return { coordinates: geometry.getCoordinates(), featureId };
 };
 
 export const createHistoryChangesFromFeatures = (features: Feature[]) => {
-    const changes: HistoryChange<number[][]>[] = [];
+  const changes: HistoryChange<number[][]>[] = [];
 
-    features.forEach((feature) => {
-        if (feature instanceof Feature) {
-            const geometry = feature.getGeometry();
+  features.forEach((feature) => {
+    if (feature instanceof Feature) {
+      const geometry = feature.getGeometry();
 
-            // Filtrerer ut representasjonspunkt og flate fra å bli satt inn i history
-            if (geometry instanceof LineString) {
-                const { coordinates, featureId } = getInfoFromFeature(feature);
+      // Filtrerer ut representasjonspunkt og flate fra å bli satt inn i history
+      if (geometry instanceof LineString) {
+        const { coordinates, featureId } = getInfoFromFeature(feature);
 
-                if (!coordinates || !featureId) return;
-                changes.push({
-                    id: featureId as string,
-                    from: feature.get(previousCoordinateKey),
-                    to: coordinates,
-                });
-                feature.unset(previousCoordinateKey);
-            }
-        }
-    });
+        if (!coordinates || !featureId) return;
+        changes.push({
+          id: featureId as string,
+          from: feature.get(previousCoordinateKey),
+          to: coordinates,
+        });
+        feature.unset(previousCoordinateKey);
+      }
+    }
+  });
 
-    return changes;
+  return changes;
 };

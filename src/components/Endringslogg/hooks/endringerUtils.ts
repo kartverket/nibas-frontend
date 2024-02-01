@@ -4,34 +4,34 @@ import { GrunnkretsResponse, StemmekretsResponse, UtkastOperasjoner } from "../.
 
 export type OperasjonerOrNull = UtkastOperasjoner | null | undefined;
 export const getKretserMedGrensejusteringer = (
-    operasjoner: OperasjonerOrNull,
-    type: "STEMMEKRETS" | "GRUNNKRETS",
+  operasjoner: OperasjonerOrNull,
+  type: "STEMMEKRETS" | "GRUNNKRETS",
 ): string[] => {
-    const endredeFeaturesMap = operasjoner?.grenseendringer?.endredeFeatures;
+  const endredeFeaturesMap = operasjoner?.grenseendringer?.endredeFeatures;
 
-    if (endredeFeaturesMap == null || operasjoner == null) {
-        return [];
-    }
+  if (endredeFeaturesMap == null || operasjoner == null) {
+    return [];
+  }
 
-    const endredeFeatures = removeNull(Object.values(endredeFeaturesMap)) as components["schemas"]["Feature"][];
+  const endredeFeatures = removeNull(Object.values(endredeFeaturesMap)) as components["schemas"]["Feature"][];
 
-    return removeNull(
-        endredeFeatures
-            .filter((feature) => feature.properties.kontekstEgenskaper !== null)
-            .flatMap((feature) => {
-                const kontekstEgenskaperArray = Array.isArray(feature.properties.kontekstEgenskaper)
-                    ? feature.properties.kontekstEgenskaper
-                    : feature.properties.kontekstEgenskaper
-                      ? [feature.properties.kontekstEgenskaper]
-                      : [];
+  return removeNull(
+    endredeFeatures
+      .filter((feature) => feature.properties.kontekstEgenskaper !== null)
+      .flatMap((feature) => {
+        const kontekstEgenskaperArray = Array.isArray(feature.properties.kontekstEgenskaper)
+          ? feature.properties.kontekstEgenskaper
+          : feature.properties.kontekstEgenskaper
+            ? [feature.properties.kontekstEgenskaper]
+            : [];
 
-                const filteredKontekstEgenskaper = kontekstEgenskaperArray.filter(
-                    (kontekstEgenskaper) => kontekstEgenskaper && kontekstEgenskaper.type === type,
-                );
+        const filteredKontekstEgenskaper = kontekstEgenskaperArray.filter(
+          (kontekstEgenskaper) => kontekstEgenskaper && kontekstEgenskaper.type === type,
+        );
 
-                return filteredKontekstEgenskaper.map((kontekstEgenskaper) => kontekstEgenskaper.id?.lokalid?.value);
-            }),
-    );
+        return filteredKontekstEgenskaper.map((kontekstEgenskaper) => kontekstEgenskaper.id?.lokalid?.value);
+      }),
+  );
 };
 
 /**
@@ -41,28 +41,28 @@ export const getKretserMedGrensejusteringer = (
 
 type groupEndringerByKommuneReturnType = { [kommuneid: string]: string[] };
 export function groupEndringerByKommune(
-    endredeKretser: string[],
-    alleKretser: (StemmekretsResponse | GrunnkretsResponse)[],
+  endredeKretser: string[],
+  alleKretser: (StemmekretsResponse | GrunnkretsResponse)[],
 ): groupEndringerByKommuneReturnType {
-    return endredeKretser
-        .map((kretsId) => {
-            const krets = alleKretser.find((s) => s.id.lokalid.value === kretsId);
-            return [kretsId, krets?.kommunenummer.id];
-        })
-        .reduce((acc: { [key: string]: string[] }, [stemmekretsid, kommune]) => {
-            if (kommune == null) {
-                return acc;
-            }
-            return { ...acc, [kommune]: addToList(stemmekretsid, acc[kommune]) };
-        }, {});
+  return endredeKretser
+    .map((kretsId) => {
+      const krets = alleKretser.find((s) => s.id.lokalid.value === kretsId);
+      return [kretsId, krets?.kommunenummer.id];
+    })
+    .reduce((acc: { [key: string]: string[] }, [stemmekretsid, kommune]) => {
+      if (kommune == null) {
+        return acc;
+      }
+      return { ...acc, [kommune]: addToList(stemmekretsid, acc[kommune]) };
+    }, {});
 }
 
 export function findKrets<T extends StemmekretsResponse | GrunnkretsResponse>(id: string, kretser: T[]): T {
-    const resultat = kretser.find((krets) => krets.id.lokalid.value === id);
-    if (resultat == null) {
-        throw Error(
-            `Kunne ikke finne krets med id: ${id}. Dette skal egentlig ikke skje, og kan tyde på feil i implementasjonen. Gjerne ta kontakt med Team Smia om feilen vedvarer.`,
-        );
-    }
-    return resultat;
+  const resultat = kretser.find((krets) => krets.id.lokalid.value === id);
+  if (resultat == null) {
+    throw Error(
+      `Kunne ikke finne krets med id: ${id}. Dette skal egentlig ikke skje, og kan tyde på feil i implementasjonen. Gjerne ta kontakt med Team Smia om feilen vedvarer.`,
+    );
+  }
+  return resultat;
 }

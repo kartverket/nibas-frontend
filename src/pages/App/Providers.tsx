@@ -10,27 +10,27 @@ import { FeatureStyleProvider } from "contexts/FeatureStyleContext";
 import { ToolbarProvider } from "contexts/ToolbarContext";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
-    return (
-        <ThirdPartyProviders>
-            <ErrorHandlingProvider>
-                <HistoryProvider>
-                    <FeatureStyleProvider>
-                        <ToolbarProvider>
-                            <SidebarPanelProvider>
-                                <OverlayPanelProvider>
-                                    <EditGrenserProvider>
-                                        <KartlagProvider>
-                                            <UtkastProvider>{children}</UtkastProvider>
-                                        </KartlagProvider>
-                                    </EditGrenserProvider>
-                                </OverlayPanelProvider>
-                            </SidebarPanelProvider>
-                        </ToolbarProvider>
-                    </FeatureStyleProvider>
-                </HistoryProvider>
-            </ErrorHandlingProvider>
-        </ThirdPartyProviders>
-    );
+  return (
+    <ThirdPartyProviders>
+      <ErrorHandlingProvider>
+        <HistoryProvider>
+          <FeatureStyleProvider>
+            <ToolbarProvider>
+              <SidebarPanelProvider>
+                <OverlayPanelProvider>
+                  <EditGrenserProvider>
+                    <KartlagProvider>
+                      <UtkastProvider>{children}</UtkastProvider>
+                    </KartlagProvider>
+                  </EditGrenserProvider>
+                </OverlayPanelProvider>
+              </SidebarPanelProvider>
+            </ToolbarProvider>
+          </FeatureStyleProvider>
+        </HistoryProvider>
+      </ErrorHandlingProvider>
+    </ThirdPartyProviders>
+  );
 };
 
 export default Providers;

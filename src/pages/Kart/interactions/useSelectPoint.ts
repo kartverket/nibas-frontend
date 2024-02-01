@@ -9,70 +9,67 @@ import { useToast } from "@kvib/react";
 import { useGetFeatures } from "./utils";
 
 const useSelectPoint = () => {
-    const toast = useToast();
-    const { activeTool } = useToolbar();
-    const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } = useOverlayPanel();
-    const { selectPointOnFeature, selectedPoint, clearSelection, featureIsEditable } = useFeatureStyle();
-    const { getFeaturesAtPixel } = useGetFeatures();
+  const toast = useToast();
+  const { activeTool } = useToolbar();
+  const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } = useOverlayPanel();
+  const { selectPointOnFeature, selectedPoint, clearSelection, featureIsEditable } = useFeatureStyle();
+  const { getFeaturesAtPixel } = useGetFeatures();
 
-    const allowedPointModes: Tool[] = useMemo(() => ["koordinater", "split"], []);
+  const allowedPointModes: Tool[] = useMemo(() => ["koordinater", "split"], []);
 
-    // Dersom man har byttet verktøy ønsker vi å tilbakestille punktet
-    useEffect(() => {
-        if (selectedPoint && !allowedPointModes.includes(activeTool)) {
-            clearSelection();
+  // Dersom man har byttet verktøy ønsker vi å tilbakestille punktet
+  useEffect(() => {
+    if (selectedPoint && !allowedPointModes.includes(activeTool)) {
+      clearSelection();
 
-            if (activeOverlayPanel === "koordinater") {
-                closeOverlayPanel();
-            }
+      if (activeOverlayPanel === "koordinater") {
+        closeOverlayPanel();
+      }
+    }
+  }, [activeOverlayPanel, activeTool, allowedPointModes, clearSelection, closeOverlayPanel, selectedPoint]);
+
+  const selectPoint = (event: MapBrowserEvent<MouseEvent>) => {
+    if (allowedPointModes.includes(activeTool) && !event.dragging) {
+      event.stopPropagation();
+
+      const features = getFeaturesAtPixel(event, "edit");
+
+      if (features.length === 0) {
+        clearSelection();
+        closeOverlayPanel();
+        return;
+      }
+
+      // Valgt punkt kan ikke være en del av en ikke-redigerbar grense
+      if (features.every(featureIsEditable)) {
+        // Må estimere hvilket punkt på linjen man prøvde å trykke på
+        const nearbyVertexCoordinate = findNearbyVertexOnFeature(features[0] as Feature<LineString>, event.coordinate);
+
+        if (nearbyVertexCoordinate) {
+          if (activeTool === "split" && features.length > 1) {
+            toast({
+              status: "error",
+              title: "Man kan ikke splitte på et endepunkt",
+            });
+            return;
+          }
+
+          selectPointOnFeature(nearbyVertexCoordinate, features as Feature<LineString>[]);
+
+          if (activeTool === "koordinater") {
+            openOverlayPanel("koordinater");
+          }
         }
-    }, [activeOverlayPanel, activeTool, allowedPointModes, clearSelection, closeOverlayPanel, selectedPoint]);
+      } else {
+        toast({
+          status: "error",
+          title: "Denne grensen er ikke redigerbar",
+        });
+      }
+    }
+  };
 
-    const selectPoint = (event: MapBrowserEvent<MouseEvent>) => {
-        if (allowedPointModes.includes(activeTool) && !event.dragging) {
-            event.stopPropagation();
-
-            const features = getFeaturesAtPixel(event, "edit");
-
-            if (features.length === 0) {
-                clearSelection();
-                closeOverlayPanel();
-                return;
-            }
-
-            // Valgt punkt kan ikke være en del av en ikke-redigerbar grense
-            if (features.every(featureIsEditable)) {
-                // Må estimere hvilket punkt på linjen man prøvde å trykke på
-                const nearbyVertexCoordinate = findNearbyVertexOnFeature(
-                    features[0] as Feature<LineString>,
-                    event.coordinate,
-                );
-
-                if (nearbyVertexCoordinate) {
-                    if (activeTool === "split" && features.length > 1) {
-                        toast({
-                            status: "error",
-                            title: "Man kan ikke splitte på et endepunkt",
-                        });
-                        return;
-                    }
-
-                    selectPointOnFeature(nearbyVertexCoordinate, features as Feature<LineString>[]);
-
-                    if (activeTool === "koordinater") {
-                        openOverlayPanel("koordinater");
-                    }
-                }
-            } else {
-                toast({
-                    status: "error",
-                    title: "Denne grensen er ikke redigerbar",
-                });
-            }
-        }
-    };
-
-    return { selectPoint };
+  return { selectPoint };
 };
 
 export default useSelectPoint;

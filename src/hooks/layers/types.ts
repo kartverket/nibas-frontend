@@ -1,56 +1,56 @@
 import { EditingType } from "contexts/EditGrenserContext";
 
 export type KartlagId =
-    | "cachetjenester"
-    | "matrikkelenWMS"
-    | "administrativeGrenser"
-    | "administrativeGrenserHistorisk"
-    | "grunnkretserWMS"
-    | "stedsnavn"
-    | "stedsnavnSSR"
-    | "kartbladinndelinger"
-    | "sjokartDybdedata"
-    | "n5Raster2"
-    | "historiskeKart"
-    | "norgeIBilder"
-    | "norgesMaritimeGrenser"
-    | "sjokartElektroniske";
+  | "cachetjenester"
+  | "matrikkelenWMS"
+  | "administrativeGrenser"
+  | "administrativeGrenserHistorisk"
+  | "grunnkretserWMS"
+  | "stedsnavn"
+  | "stedsnavnSSR"
+  | "kartbladinndelinger"
+  | "sjokartDybdedata"
+  | "n5Raster2"
+  | "historiskeKart"
+  | "norgeIBilder"
+  | "norgesMaritimeGrenser"
+  | "sjokartElektroniske";
 
 export type GrenseId = "matrikkel" | "fylke" | "kommune" | "nasjon" | "grunnkrets" | "stemmekrets" | "edit";
 
 export type GrenseType =
-    | "Kommunegrense"
-    | "Fylkesgrense"
-    | "Riksgrense"
-    | "AvtaltAvgrensningslinje"
-    | "Territorialgrense"
-    | "Grunnkretsgrense"
-    | "Delområdegrense"
-    | "Posisjon"
-    | "Stemmekretsgrense"
-    | "GRUNNKRETS"
-    | "STEMMEKRETS";
+  | "Kommunegrense"
+  | "Fylkesgrense"
+  | "Riksgrense"
+  | "AvtaltAvgrensningslinje"
+  | "Territorialgrense"
+  | "Grunnkretsgrense"
+  | "Delområdegrense"
+  | "Posisjon"
+  | "Stemmekretsgrense"
+  | "GRUNNKRETS"
+  | "STEMMEKRETS";
 
 export const getGrenseTypeFromEditingType = (editingType: EditingType) => {
-    switch (editingType) {
-        case "nasjon":
-            return "Riksgrense";
+  switch (editingType) {
+    case "nasjon":
+      return "Riksgrense";
 
-        case "fylke":
-            return "Fylkesgrense";
+    case "fylke":
+      return "Fylkesgrense";
 
-        case "kommune":
-            return "Kommunegrense";
+    case "kommune":
+      return "Kommunegrense";
 
-        case "stemmekrets":
-            return "Stemmekretsgrense";
+    case "stemmekrets":
+      return "Stemmekretsgrense";
 
-        case "grunnkrets":
-            return "Grunnkretsgrense";
+    case "grunnkrets":
+      return "Grunnkretsgrense";
 
-        default:
-            break;
-    }
+    default:
+      break;
+  }
 };
 
 // denne iden brukes både til Sources og Layers

@@ -1,65 +1,65 @@
 {
-    "env": {
-        "browser": true,
-        "es2021": true,
-        "node": true
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
     },
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaFeatures": {
-            "jsx": true
-        },
-        "ecmaVersion": 12,
-        "sourceType": "module"
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "plugins": ["react", "@typescript-eslint", "import"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:react/jsx-runtime",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
+    "plugin:prettier/recommended"
+  ],
+  "settings": {
+    "react": {
+      "version": "detect"
     },
-    "plugins": ["react", "@typescript-eslint", "import"],
-    "extends": [
-        "eslint:recommended",
-        "plugin:react/recommended",
-        "plugin:react/jsx-runtime",
-        "plugin:@typescript-eslint/recommended",
-        "plugin:react-hooks/recommended",
-        "plugin:import/recommended",
-        "plugin:import/typescript",
-        "plugin:prettier/recommended"
-    ],
-    "settings": {
-        "react": {
-            "version": "detect"
-        },
-        "import/parsers": {
-            "@typescript-eslint/parser": [".ts", ".tsx"]
-        },
-        "import/resolver": {
-            "typescript": {
-                "alwaysTryTypes": true // always try to resolve types under `<root>@types` directory even it doesn't contain any source code, like `@types/unist`
-            }
-        }
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"]
     },
-    "rules": {
-        "react/function-component-definition": [
-            2,
-            {
-                "namedComponents": "arrow-function",
-                "unnamedComponents": "arrow-function"
-            }
-        ],
-        "no-unused-vars": "off",
-        "@typescript-eslint/no-unused-vars": ["warn"],
-        "@typescript-eslint/explicit-module-boundary-types": "off",
-        "react-hooks/exhaustive-deps": "error",
-        "no-console": "warn",
-        "prettier/prettier": [
-            "warn",
-            {
-                "endOfLine": "auto"
-            }
-        ],
-        "react/prop-types": "off",
-        "import/no-unresolved": "error",
-        "import/no-named-as-default-member": "off",
-        "no-shadow": "off",
-        "@typescript-eslint/no-shadow": ["error"],
-        "no-restricted-imports": ["warn", { "patterns": ["@chakra-ui/*"] }]
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true // always try to resolve types under `<root>@types` directory even it doesn't contain any source code, like `@types/unist`
+      }
     }
+  },
+  "rules": {
+    "react/function-component-definition": [
+      2,
+      {
+        "namedComponents": "arrow-function",
+        "unnamedComponents": "arrow-function"
+      }
+    ],
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": ["warn"],
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "react-hooks/exhaustive-deps": "error",
+    "no-console": "warn",
+    "prettier/prettier": [
+      "warn",
+      {
+        "endOfLine": "auto"
+      }
+    ],
+    "react/prop-types": "off",
+    "import/no-unresolved": "error",
+    "import/no-named-as-default-member": "off",
+    "no-shadow": "off",
+    "@typescript-eslint/no-shadow": ["error"],
+    "no-restricted-imports": ["warn", { "patterns": ["@chakra-ui/*"] }]
+  }
 }

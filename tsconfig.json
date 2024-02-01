@@ -1,31 +1,31 @@
 {
-    "compilerOptions": {
-        "baseUrl": "src",
-        "paths": {
-            "utils/*": ["utils/*"],
-            "components/*": ["components/*"],
-            "pages/*": ["pages/*"],
-            "contexts/*": ["contexts/*"],
-            "hooks/*": ["hooks/*"],
-            "api/*": ["api/*"]
-        },
-        "target": "ES6",
-        "lib": ["dom", "dom.iterable", "esnext"],
-        "allowJs": true,
-        "skipLibCheck": true,
-        "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true,
-        "strict": true,
-        "forceConsistentCasingInFileNames": true,
-        "noFallthroughCasesInSwitch": true,
-        "module": "esnext",
-        "moduleResolution": "node",
-        "resolveJsonModule": true,
-        "isolatedModules": true,
-        "noEmit": true,
-        "jsx": "react-jsx",
-        "types": ["vite/client", "vitest/globals"]
+  "compilerOptions": {
+    "baseUrl": "src",
+    "paths": {
+      "utils/*": ["utils/*"],
+      "components/*": ["components/*"],
+      "pages/*": ["pages/*"],
+      "contexts/*": ["contexts/*"],
+      "hooks/*": ["hooks/*"],
+      "api/*": ["api/*"]
     },
-    "references": [{ "path": "./tsconfig.node.json" }],
-    "include": ["src"]
+    "target": "ES6",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "types": ["vite/client", "vitest/globals"]
+  },
+  "references": [{ "path": "./tsconfig.node.json" }],
+  "include": ["src"]
 }

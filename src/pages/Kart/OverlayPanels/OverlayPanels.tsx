@@ -8,20 +8,20 @@ import { TegnforklaringPanel } from "./Tegnforklaring/TegnforklaringPanel";
 import KartlagPanel from "./Kartlag/KartlagPanel";
 
 const OverlayPanels = () => {
-    const { activeOverlayPanel, activeOverlayModal } = useOverlayPanel();
+  const { activeOverlayPanel, activeOverlayModal } = useOverlayPanel();
 
-    return (
-        <>
-            <MetadataPanel isOpen={activeOverlayPanel === "metadata"} />
-            <MergePanel isOpen={activeOverlayPanel === "sammenslåing"} />
-            <KoordinaterPanel isOpen={activeOverlayPanel === "koordinater"} />
-            <TegnforklaringPanel isOpen={activeOverlayPanel === "tegnforklaring"} />
-            <KartlagPanel isOpen={activeOverlayPanel === "kartlag"} />
+  return (
+    <>
+      <MetadataPanel isOpen={activeOverlayPanel === "metadata"} />
+      <MergePanel isOpen={activeOverlayPanel === "sammenslåing"} />
+      <KoordinaterPanel isOpen={activeOverlayPanel === "koordinater"} />
+      <TegnforklaringPanel isOpen={activeOverlayPanel === "tegnforklaring"} />
+      <KartlagPanel isOpen={activeOverlayPanel === "kartlag"} />
 
-            <GrunnkretsPanel isOpen={activeOverlayModal === "grunnkrets"} />
-            <StemmekretsPanel isOpen={activeOverlayModal === "stemmekrets"} />
-        </>
-    );
+      <GrunnkretsPanel isOpen={activeOverlayModal === "grunnkrets"} />
+      <StemmekretsPanel isOpen={activeOverlayModal === "stemmekrets"} />
+    </>
+  );
 };
 
 export default OverlayPanels;

@@ -3,232 +3,232 @@ import { GeoJSONFeature, GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import LineString from "ol/geom/LineString";
 import { EntityUtkastType, UtkastEntity, ResponseWithId } from "./types";
 import {
-    GrunnkretsEntry,
-    HistoryState,
-    StemmekretsEntry,
-    StemmekretsSammenslaaingsendringEntry,
+  GrunnkretsEntry,
+  HistoryState,
+  StemmekretsEntry,
+  StemmekretsSammenslaaingsendringEntry,
 } from "contexts/HistoryContext";
 import { editSource } from "hooks/layers/constants";
 import {
-    FylkeRequest,
-    GrunnkretsRequest,
-    KommuneRequest,
-    KretsDelingEndringRequest,
-    NasjonRequest,
-    StemmekretsRef,
-    StemmekretsRequest,
-    StemmekretsSammenslaaingsendringRequest,
-    UtkastGrenseendringer,
-    UtkastMetadataendringer,
-    UtkastOperasjoner,
-    UtkastResponse,
+  FylkeRequest,
+  GrunnkretsRequest,
+  KommuneRequest,
+  KretsDelingEndringRequest,
+  NasjonRequest,
+  StemmekretsRef,
+  StemmekretsRequest,
+  StemmekretsSammenslaaingsendringRequest,
+  UtkastGrenseendringer,
+  UtkastMetadataendringer,
+  UtkastOperasjoner,
+  UtkastResponse,
 } from "types/api";
 import { featureToGeoJson } from "utils/map/geoJson";
 import { getIdFromEntity } from "utils/api";
 
 const getCombinedEntity = <T extends ResponseWithId>(
-    entity: T,
-    utkastSlice: NonNullable<NonNullable<UtkastMetadataendringer>[EntityUtkastType]>,
+  entity: T,
+  utkastSlice: NonNullable<NonNullable<UtkastMetadataendringer>[EntityUtkastType]>,
 ) => {
-    const utkastForEntity = utkastSlice[getIdFromEntity(entity)];
+  const utkastForEntity = utkastSlice[getIdFromEntity(entity)];
 
-    return {
-        ...entity,
-        ...utkastForEntity,
-    } as T;
+  return {
+    ...entity,
+    ...utkastForEntity,
+  } as T;
 };
 
 const getCombinedFeatures = (
-    featureCollection: GeoJSONFeatureCollection,
-    featuresSlice: NonNullable<UtkastGrenseendringer["endredeFeatures"]>,
+  featureCollection: GeoJSONFeatureCollection,
+  featuresSlice: NonNullable<UtkastGrenseendringer["endredeFeatures"]>,
 ) => {
-    return featureCollection.features.map((feature: GeoJSONFeature) => featuresSlice[feature.id] ?? feature);
+  return featureCollection.features.map((feature: GeoJSONFeature) => featuresSlice[feature.id] ?? feature);
 };
 
 export const applyNonFeatureUtkast = <T extends NonNullable<UtkastEntity>>(
-    entity: T,
-    utkast: UtkastResponse,
-    type: EntityUtkastType,
+  entity: T,
+  utkast: UtkastResponse,
+  type: EntityUtkastType,
 ) => {
-    const utkastSlice = utkast.operasjoner.metadataendringer?.[type];
+  const utkastSlice = utkast.operasjoner.metadataendringer?.[type];
 
-    if (!utkastSlice) return entity;
+  if (!utkastSlice) return entity;
 
-    if (Array.isArray(entity) && type === "stemmekretsendringer") {
-        // navn på stemmekrets har forskjellig field på StemmekretsRef og StemmekretsRequest
+  if (Array.isArray(entity) && type === "stemmekretsendringer") {
+    // navn på stemmekrets har forskjellig field på StemmekretsRef og StemmekretsRequest
 
-        return entity.map((e) => {
-            const utkastForEntity = utkast.operasjoner.metadataendringer?.[type]?.[getIdFromEntity(e)];
+    return entity.map((e) => {
+      const utkastForEntity = utkast.operasjoner.metadataendringer?.[type]?.[getIdFromEntity(e)];
 
-            return {
-                ...e,
-                ...utkastForEntity,
-                navn: utkastForEntity?.stemmekretsnavn ?? (e as StemmekretsRef).navn,
-            };
-        });
-    } else if (Array.isArray(entity)) {
-        return entity.map((e) => getCombinedEntity(e, utkastSlice));
-    }
+      return {
+        ...e,
+        ...utkastForEntity,
+        navn: utkastForEntity?.stemmekretsnavn ?? (e as StemmekretsRef).navn,
+      };
+    });
+  } else if (Array.isArray(entity)) {
+    return entity.map((e) => getCombinedEntity(e, utkastSlice));
+  }
 
-    return getCombinedEntity(entity, utkastSlice);
+  return getCombinedEntity(entity, utkastSlice);
 };
 
 export const applyFeatureUtkast = (featureCollection: GeoJSONFeatureCollection, utkast: UtkastResponse) => {
-    const featuresSlice = utkast.operasjoner.grenseendringer?.endredeFeatures;
+  const featuresSlice = utkast.operasjoner.grenseendringer?.endredeFeatures;
 
-    if (!featuresSlice) return featureCollection;
+  if (!featuresSlice) return featureCollection;
 
-    const newFeatures = getCombinedFeatures(featureCollection, featuresSlice);
+  const newFeatures = getCombinedFeatures(featureCollection, featuresSlice);
 
-    return {
-        ...featureCollection,
-        features: newFeatures,
-    };
+  return {
+    ...featureCollection,
+    features: newFeatures,
+  };
 };
 
 const reduceMetadataOperations = (utkastOperations: UtkastOperasjoner, entry: GrunnkretsEntry | StemmekretsEntry) => {
-    switch (entry.type) {
-        case "grunnkrets": {
-            return addKretsChangeToOperations(utkastOperations, entry, "grunnkretsendringer");
-        }
-        case "stemmekrets": {
-            return addKretsChangeToOperations(utkastOperations, entry, "stemmekretsendringer");
-        }
+  switch (entry.type) {
+    case "grunnkrets": {
+      return addKretsChangeToOperations(utkastOperations, entry, "grunnkretsendringer");
     }
+    case "stemmekrets": {
+      return addKretsChangeToOperations(utkastOperations, entry, "stemmekretsendringer");
+    }
+  }
 };
 
 //Antas at det bare er en entry i changes
 const reduceStemmekretssammenslaingsOperations = (
-    operations: StemmekretsSammenslaaingsendringRequest,
-    entry: StemmekretsSammenslaaingsendringEntry,
+  operations: StemmekretsSammenslaaingsendringRequest,
+  entry: StemmekretsSammenslaaingsendringEntry,
 ): StemmekretsSammenslaaingsendringRequest => {
-    entry.changes.forEach((change) => {
-        if (!change.to) return operations;
+  entry.changes.forEach((change) => {
+    if (!change.to) return operations;
 
-        operations = change.to;
-    });
-    return operations;
+    operations = change.to;
+  });
+  return operations;
 };
 
 const addKretsChangeToOperations = (
-    operations: UtkastOperasjoner,
-    entry: GrunnkretsEntry | StemmekretsEntry,
-    endringerKey: "grunnkretsendringer" | "stemmekretsendringer",
+  operations: UtkastOperasjoner,
+  entry: GrunnkretsEntry | StemmekretsEntry,
+  endringerKey: "grunnkretsendringer" | "stemmekretsendringer",
 ) => {
-    entry.changes.forEach((change) => {
-        if (change.to && operations.metadataendringer[endringerKey]) {
-            operations.metadataendringer[endringerKey][change.id] = change.to;
-        }
-    });
+  entry.changes.forEach((change) => {
+    if (change.to && operations.metadataendringer[endringerKey]) {
+      operations.metadataendringer[endringerKey][change.id] = change.to;
+    }
+  });
 
-    return operations;
+  return operations;
 };
 
 export const historyToUtkastOperations = (history: HistoryState, previousUtkast?: UtkastResponse) => {
-    const historyToCurrentIndex = history.entries.slice(0, history.index);
+  const historyToCurrentIndex = history.entries.slice(0, history.index);
 
-    // hent endringer på enheter og gjør endringene om til utkastoperasjoner
-    const utkastOperations = (
-        historyToCurrentIndex.filter((entry) => entry.type === "stemmekrets" || entry.type === "grunnkrets") as (
-            | GrunnkretsEntry
-            | StemmekretsEntry
-        )[]
-    ).reduce(
-        reduceMetadataOperations,
-        createUtkastOperations({
-            ...{
-                ...previousUtkast?.operasjoner.grenseendringer,
-                ...previousUtkast?.operasjoner.metadataendringer,
-                stemmekretssammenslaaingsendringer: previousUtkast?.operasjoner.stemmekretsSammenslaaingsendring,
-            },
-        }),
-    ) as UtkastOperasjoner;
+  // hent endringer på enheter og gjør endringene om til utkastoperasjoner
+  const utkastOperations = (
+    historyToCurrentIndex.filter((entry) => entry.type === "stemmekrets" || entry.type === "grunnkrets") as (
+      | GrunnkretsEntry
+      | StemmekretsEntry
+    )[]
+  ).reduce(
+    reduceMetadataOperations,
+    createUtkastOperations({
+      ...{
+        ...previousUtkast?.operasjoner.grenseendringer,
+        ...previousUtkast?.operasjoner.metadataendringer,
+        stemmekretssammenslaaingsendringer: previousUtkast?.operasjoner.stemmekretsSammenslaaingsendring,
+      },
+    }),
+  ) as UtkastOperasjoner;
 
-    const sammenslaaingsOperations = (
-        historyToCurrentIndex.filter(
-            (entry) => entry.type === "stemmekretssammenslaaingsendring",
-        ) as StemmekretsSammenslaaingsendringEntry[]
-    ).reduce(reduceStemmekretssammenslaingsOperations, {} as StemmekretsSammenslaaingsendringRequest);
+  const sammenslaaingsOperations = (
+    historyToCurrentIndex.filter(
+      (entry) => entry.type === "stemmekretssammenslaaingsendring",
+    ) as StemmekretsSammenslaaingsendringEntry[]
+  ).reduce(reduceStemmekretssammenslaingsOperations, {} as StemmekretsSammenslaaingsendringRequest);
 
-    //Antar her at det bare er en sammenslåing per utkast
-    if (Object.keys(sammenslaaingsOperations).length > 0) {
-        utkastOperations.stemmekretsSammenslaaingsendring = sammenslaaingsOperations;
-    }
+  //Antar her at det bare er en sammenslåing per utkast
+  if (Object.keys(sammenslaaingsOperations).length > 0) {
+    utkastOperations.stemmekretsSammenslaaingsendring = sammenslaaingsOperations;
+  }
 
-    const editedFeatureHistoryEntries = [
-        "grense",
-        "metadata",
-        "grensearkivering",
-        "grensetilhorighetendring",
-        "nygrense",
-    ];
+  const editedFeatureHistoryEntries = [
+    "grense",
+    "metadata",
+    "grensearkivering",
+    "grensetilhorighetendring",
+    "nygrense",
+  ];
 
-    const relevantHistoryEntries = historyToCurrentIndex.filter((entry) =>
-        editedFeatureHistoryEntries.includes(entry.type),
-    );
+  const relevantHistoryEntries = historyToCurrentIndex.filter((entry) =>
+    editedFeatureHistoryEntries.includes(entry.type),
+  );
 
-    // hent grenseendringer og gjør endringene om til en liste av features
-    const editedFeatures: GeoJSONFeature[] = utkastOperations.grenseendringer.endredeFeatures;
+  // hent grenseendringer og gjør endringene om til en liste av features
+  const editedFeatures: GeoJSONFeature[] = utkastOperations.grenseendringer.endredeFeatures;
 
-    relevantHistoryEntries.forEach((entry) => {
-        entry.changes.forEach((change) => {
-            if (!change.to) return;
+  relevantHistoryEntries.forEach((entry) => {
+    entry.changes.forEach((change) => {
+      if (!change.to) return;
 
-            const feature = editSource.getFeatureById(change.id) as Feature<LineString>;
+      const feature = editSource.getFeatureById(change.id) as Feature<LineString>;
 
-            if (!feature) return;
+      if (!feature) return;
 
-            const featureAsGeoJson = featureToGeoJson(feature);
+      const featureAsGeoJson = featureToGeoJson(feature);
 
-            const index = editedFeatures.findIndex((geoJsonFeature) => featureAsGeoJson.id === geoJsonFeature.id);
+      const index = editedFeatures.findIndex((geoJsonFeature) => featureAsGeoJson.id === geoJsonFeature.id);
 
-            // Hvis vi allerede har lagt inn featuren tidligere i historikken,
-            // ønsker vi å overskrive den hvis den samme featuren endres senere i historikken
-            if (index >= 0) {
-                editedFeatures[index] = featureAsGeoJson;
-                return;
-            }
+      // Hvis vi allerede har lagt inn featuren tidligere i historikken,
+      // ønsker vi å overskrive den hvis den samme featuren endres senere i historikken
+      if (index >= 0) {
+        editedFeatures[index] = featureAsGeoJson;
+        return;
+      }
 
-            editedFeatures.push(featureAsGeoJson);
-        });
+      editedFeatures.push(featureAsGeoJson);
     });
+  });
 
-    utkastOperations.grenseendringer = {
-        endredeFeatures: editedFeatures,
-    };
+  utkastOperations.grenseendringer = {
+    endredeFeatures: editedFeatures,
+  };
 
-    return utkastOperations;
+  return utkastOperations;
 };
 
 export const createUtkastOperations = ({
-    endredeFeatures = [],
-    fylkesendringer = {},
-    grunnkretsendringer = {},
-    kommuneendringer = {},
-    nasjonsendringer = {},
-    stemmekretsendringer = {},
-    stemmekretssammenslaaingsendringer,
-    kretsDelingEndringer = [],
+  endredeFeatures = [],
+  fylkesendringer = {},
+  grunnkretsendringer = {},
+  kommuneendringer = {},
+  nasjonsendringer = {},
+  stemmekretsendringer = {},
+  stemmekretssammenslaaingsendringer,
+  kretsDelingEndringer = [],
 }: {
-    endredeFeatures?: GeoJSONFeature[];
-    fylkesendringer?: Record<string, FylkeRequest>;
-    grunnkretsendringer?: Record<string, GrunnkretsRequest>;
-    kommuneendringer?: Record<string, KommuneRequest>;
-    nasjonsendringer?: Record<string, NasjonRequest>;
-    stemmekretsendringer?: Record<string, StemmekretsRequest>;
-    stemmekretssammenslaaingsendringer?: StemmekretsSammenslaaingsendringRequest;
-    kretsDelingEndringer?: KretsDelingEndringRequest[];
+  endredeFeatures?: GeoJSONFeature[];
+  fylkesendringer?: Record<string, FylkeRequest>;
+  grunnkretsendringer?: Record<string, GrunnkretsRequest>;
+  kommuneendringer?: Record<string, KommuneRequest>;
+  nasjonsendringer?: Record<string, NasjonRequest>;
+  stemmekretsendringer?: Record<string, StemmekretsRequest>;
+  stemmekretssammenslaaingsendringer?: StemmekretsSammenslaaingsendringRequest;
+  kretsDelingEndringer?: KretsDelingEndringRequest[];
 }): UtkastOperasjoner => ({
-    grenseendringer: {
-        endredeFeatures,
-    },
-    metadataendringer: {
-        fylkesendringer,
-        grunnkretsendringer,
-        kommuneendringer,
-        nasjonsendringer,
-        stemmekretsendringer,
-    },
-    stemmekretsSammenslaaingsendring: stemmekretssammenslaaingsendringer,
-    kretsDelingEndringer: kretsDelingEndringer,
+  grenseendringer: {
+    endredeFeatures,
+  },
+  metadataendringer: {
+    fylkesendringer,
+    grunnkretsendringer,
+    kommuneendringer,
+    nasjonsendringer,
+    stemmekretsendringer,
+  },
+  stemmekretsSammenslaaingsendring: stemmekretssammenslaaingsendringer,
+  kretsDelingEndringer: kretsDelingEndringer,
 });

@@ -4,35 +4,35 @@ import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Button } from "@kvib/react";
 
 type ErrorBoxProps = {
-    title: string | ReactElement | ReactNode;
-    text: string | ReactElement | ReactNode;
+  title: string | ReactElement | ReactNode;
+  text: string | ReactElement | ReactNode;
 };
 
 export const ErrorBox = ({ title, text }: ErrorBoxProps) => {
-    const { handleLogoutFunc } = useAuthenticationFlow();
+  const { handleLogoutFunc } = useAuthenticationFlow();
 
-    return (
-        <AlertWithButton status="error">
-            <AlertIcon />
-            <TextContainer>
-                <AlertTitle>{title}</AlertTitle>
-                <AlertDescription>{text}</AlertDescription>
-            </TextContainer>
-            <LogoutButton variant="ghost" onClick={handleLogoutFunc}>
-                Logg ut
-            </LogoutButton>
-        </AlertWithButton>
-    );
+  return (
+    <AlertWithButton status="error">
+      <AlertIcon />
+      <TextContainer>
+        <AlertTitle>{title}</AlertTitle>
+        <AlertDescription>{text}</AlertDescription>
+      </TextContainer>
+      <LogoutButton variant="ghost" onClick={handleLogoutFunc}>
+        Logg ut
+      </LogoutButton>
+    </AlertWithButton>
+  );
 };
 
 const AlertWithButton = styled(Alert)`
-    justify-content: space-between;
+  justify-content: space-between;
 `;
 
 const TextContainer = styled(Box)`
-    flex: 1;
+  flex: 1;
 `;
 
 const LogoutButton = styled(Button)`
-    min-width: 6rem;
+  min-width: 6rem;
 `;

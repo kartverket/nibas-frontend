@@ -11,7 +11,7 @@ import { useToolbar } from "./ToolbarContext";
 export type Kretstype = "grunnkrets" | "stemmekrets";
 
 type InndelingerKretsContextValue = {
-    currentKretstype: Kretstype;
+  currentKretstype: Kretstype;
 };
 
 /**
@@ -20,115 +20,115 @@ type InndelingerKretsContextValue = {
 const InndelingerKretsContext = createContext<InndelingerKretsContextValue | undefined>(undefined);
 
 type Props = {
-    kretstype: Kretstype;
-    children?: React.ReactNode;
+  kretstype: Kretstype;
+  children?: React.ReactNode;
 };
 
 export const InndelingerKretsProvider = ({ children, kretstype }: Props) => {
-    const [currentKretstype, setCurrentKretstype] = useState<Kretstype>(kretstype);
+  const [currentKretstype, setCurrentKretstype] = useState<Kretstype>(kretstype);
 
-    useEffect(() => {
-        setCurrentKretstype(kretstype);
-    }, [kretstype]);
+  useEffect(() => {
+    setCurrentKretstype(kretstype);
+  }, [kretstype]);
 
-    const value = { currentKretstype };
+  const value = { currentKretstype };
 
-    return <InndelingerKretsContext.Provider value={value}>{children}</InndelingerKretsContext.Provider>;
+  return <InndelingerKretsContext.Provider value={value}>{children}</InndelingerKretsContext.Provider>;
 };
 
 export const useInndelingerKrets = (kommune: KommuneRef) => {
-    const kommuneId = getIdFromEntity(kommune);
-    const context = useContext(InndelingerKretsContext);
+  const kommuneId = getIdFromEntity(kommune);
+  const context = useContext(InndelingerKretsContext);
 
-    if (!context) {
-        throw new Error("useInndelingerKrets must be used within a InndelingerKretsContext");
+  if (!context) {
+    throw new Error("useInndelingerKrets must be used within a InndelingerKretsContext");
+  }
+
+  const { currentKretstype } = context;
+
+  const { kretsStatuser, setKretsStatusForKretstype, setMultipleValues, setOtherEditingTypes } =
+    useEditGrenser(currentKretstype);
+  const { setFlatedata, closeOverlayPanel } = useOverlayPanel();
+  const { addKretserToLayer, removeKretserFromLayer, lasterData } = useKretsgrenser(kommuneId, currentKretstype);
+  const { enableModeTool, disableModeTool } = useToolbar();
+
+  const kommuneValues = kretsStatuser[kommuneId] ?? {};
+
+  // TODO Burde ikke cleare synlighet på kretser man har synlige hvis man skrur på redigering for en annen type krets
+  // Det er veldig knotete nå da contextene er kretsavhengige
+  const toggleEditKretser = () => {
+    setOtherEditingTypes(currentKretstype, false);
+    removeKretserFromLayer("edit");
+    const newEditing = !kommuneValues.editing;
+    const newKretsStatuser = {
+      ...kretsStatuser,
+      [kommuneId]: {
+        visible: newEditing,
+        editing: newEditing,
+      },
+    };
+
+    const layerId: LayerId = kommuneValues.editing ? "edit" : currentKretstype;
+
+    closeOverlayPanel();
+    removeKretserFromLayer(layerId);
+
+    if (newEditing) {
+      disableModeTool("move");
+    } else {
+      enableModeTool("move");
     }
 
-    const { currentKretstype } = context;
+    if (newEditing) {
+      Object.keys(kretsStatuser).forEach((kommuneIdInList) => {
+        if (kommuneId === kommuneIdInList) return;
 
-    const { kretsStatuser, setKretsStatusForKretstype, setMultipleValues, setOtherEditingTypes } =
-        useEditGrenser(currentKretstype);
-    const { setFlatedata, closeOverlayPanel } = useOverlayPanel();
-    const { addKretserToLayer, removeKretserFromLayer, lasterData } = useKretsgrenser(kommuneId, currentKretstype);
-    const { enableModeTool, disableModeTool } = useToolbar();
-
-    const kommuneValues = kretsStatuser[kommuneId] ?? {};
-
-    // TODO Burde ikke cleare synlighet på kretser man har synlige hvis man skrur på redigering for en annen type krets
-    // Det er veldig knotete nå da contextene er kretsavhengige
-    const toggleEditKretser = () => {
-        setOtherEditingTypes(currentKretstype, false);
-        removeKretserFromLayer("edit");
-        const newEditing = !kommuneValues.editing;
-        const newKretsStatuser = {
-            ...kretsStatuser,
-            [kommuneId]: {
-                visible: newEditing,
-                editing: newEditing,
-            },
-        };
-
-        const layerId: LayerId = kommuneValues.editing ? "edit" : currentKretstype;
-
-        closeOverlayPanel();
-        removeKretserFromLayer(layerId);
-
-        if (newEditing) {
-            disableModeTool("move");
-        } else {
-            enableModeTool("move");
+        // fjern features til kretsene som var endret før klikk
+        if (newKretsStatuser[kommuneIdInList]?.visible && newKretsStatuser[kommuneIdInList]?.editing) {
+          removeKretserFromLayer("edit");
         }
-
-        if (newEditing) {
-            Object.keys(kretsStatuser).forEach((kommuneIdInList) => {
-                if (kommuneId === kommuneIdInList) return;
-
-                // fjern features til kretsene som var endret før klikk
-                if (newKretsStatuser[kommuneIdInList]?.visible && newKretsStatuser[kommuneIdInList]?.editing) {
-                    removeKretserFromLayer("edit");
-                }
-                // hvis tidligere endret, fjern editing og visible
-                if (newKretsStatuser[kommuneIdInList]?.editing) {
-                    newKretsStatuser[kommuneIdInList] = {
-                        visible: false,
-                        editing: false,
-                    };
-                }
-            });
-
-            setFlatedata(kommune);
-            addKretserToLayer("edit");
-        } else {
-            removeKretserFromLayer("edit");
-            closeOverlayPanel();
-            zoomToFeatures(getAllVisibleFeatures());
+        // hvis tidligere endret, fjern editing og visible
+        if (newKretsStatuser[kommuneIdInList]?.editing) {
+          newKretsStatuser[kommuneIdInList] = {
+            visible: false,
+            editing: false,
+          };
         }
+      });
 
-        setMultipleValues(newKretsStatuser);
-    };
+      setFlatedata(kommune);
+      addKretserToLayer("edit");
+    } else {
+      removeKretserFromLayer("edit");
+      closeOverlayPanel();
+      zoomToFeatures(getAllVisibleFeatures());
+    }
 
-    const toggleKretser = () => {
-        const newVisible = !kommuneValues.visible;
-        setKretsStatusForKretstype(kommuneId, {
-            visible: newVisible,
-            editing: kommuneValues.editing,
-        });
+    setMultipleValues(newKretsStatuser);
+  };
 
-        const layerId: LayerId = kommuneValues.editing ? "edit" : currentKretstype;
+  const toggleKretser = () => {
+    const newVisible = !kommuneValues.visible;
+    setKretsStatusForKretstype(kommuneId, {
+      visible: newVisible,
+      editing: kommuneValues.editing,
+    });
 
-        if (newVisible) {
-            addKretserToLayer(layerId);
-        } else {
-            // hvis ikke lenger skal være synlig
-            removeKretserFromLayer(layerId);
-        }
-    };
+    const layerId: LayerId = kommuneValues.editing ? "edit" : currentKretstype;
 
-    return {
-        toggleEditKretser,
-        toggleKretser,
-        kommuneValues,
-        lasterData,
-        currentKretstype,
-    };
+    if (newVisible) {
+      addKretserToLayer(layerId);
+    } else {
+      // hvis ikke lenger skal være synlig
+      removeKretserFromLayer(layerId);
+    }
+  };
+
+  return {
+    toggleEditKretser,
+    toggleKretser,
+    kommuneValues,
+    lasterData,
+    currentKretstype,
+  };
 };

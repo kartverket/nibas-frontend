@@ -1,17 +1,17 @@
 name: Cleanup old images
 on:
-    workflow_dispatch:
-    schedule:
-        - cron: "00 1 * * 1" # 01:00 on Mondays.
+  workflow_dispatch:
+  schedule:
+    - cron: "00 1 * * 1" # 01:00 on Mondays.
 
 jobs:
-    clean:
-        runs-on: ubuntu-latest
-        permissions:
-            packages: write
-        steps:
-            - uses: actions/delete-package-versions@v4
-              with:
-                  package-name: "nibas-frontend"
-                  package-type: "container"
-                  min-versions-to-keep: 20
+  clean:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      - uses: actions/delete-package-versions@v4
+        with:
+          package-name: "nibas-frontend"
+          package-type: "container"
+          min-versions-to-keep: 20

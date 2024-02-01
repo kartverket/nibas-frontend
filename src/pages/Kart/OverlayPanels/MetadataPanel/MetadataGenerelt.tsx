@@ -10,175 +10,173 @@ import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
 import { TilhorighetField } from "./TilhorighetField";
 
 export type Inputs = {
-    uuid: string;
-    grenseType: string;
-    maalemetode: string;
-    datafangstdato: string;
-    noeyaktighet: number;
-    informasjon: string;
-    opphav: string;
-    gyldigFra: string;
-    gyldigTil: string;
-    tilhorighet: string[];
+  uuid: string;
+  grenseType: string;
+  maalemetode: string;
+  datafangstdato: string;
+  noeyaktighet: number;
+  informasjon: string;
+  opphav: string;
+  gyldigFra: string;
+  gyldigTil: string;
+  tilhorighet: string[];
 };
 
 const GrenseTypeValues: GrenseType[] = [
-    "Kommunegrense",
-    "Fylkesgrense",
-    "Riksgrense",
-    "AvtaltAvgrensningslinje",
-    "Territorialgrense",
-    "Grunnkretsgrense",
-    "Delområdegrense",
-    "Posisjon",
-    "Stemmekretsgrense",
+  "Kommunegrense",
+  "Fylkesgrense",
+  "Riksgrense",
+  "AvtaltAvgrensningslinje",
+  "Territorialgrense",
+  "Grunnkretsgrense",
+  "Delområdegrense",
+  "Posisjon",
+  "Stemmekretsgrense",
 ];
 
 type Props = {
-    feature: Feature<Geometry>;
+  feature: Feature<Geometry>;
 };
 
 export const Container = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 `;
 
 const MetadataGenerelt = ({ feature }: Props) => {
-    const properties = feature.getProperties() as FeatureProperties;
-    const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
+  const properties = feature.getProperties() as FeatureProperties;
+  const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
 
-    const gyldigTil = (properties.metadata as Metadata).common?.gyldigTil;
+  const gyldigTil = (properties.metadata as Metadata).common?.gyldigTil;
 
-    const getMaalemetodeFromId = (maalemetoder: KodelisteRespons, id: string) =>
-        maalemetoder.items.find((item) => item.id === id)?.label ?? null;
+  const getMaalemetodeFromId = (maalemetoder: KodelisteRespons, id: string) =>
+    maalemetoder.items.find((item) => item.id === id)?.label ?? null;
 
-    const grenseType = properties.type as GrenseType;
+  const grenseType = properties.type as GrenseType;
 
-    const tilhorighetToChange =
-        grenseType === "Grunnkretsgrense" || grenseType === "Delområdegrense"
-            ? "grunnkretser"
-            : grenseType === "Stemmekretsgrense"
-              ? "stemmekretser"
-              : null;
+  const tilhorighetToChange =
+    grenseType === "Grunnkretsgrense" || grenseType === "Delområdegrense"
+      ? "grunnkretser"
+      : grenseType === "Stemmekretsgrense"
+        ? "stemmekretser"
+        : null;
 
-    return (
-        <Container>
-            <MetadataField
-                feature={feature}
-                tooltipLabel="Hvilken type grense som er valgt."
-                fieldKey="grenseType"
-                fieldLabel="Grensetype"
-                valueLabelFormatter={() => {
-                    // Henter fra dataen i stedet for å formattere
-                    return properties.type;
-                }}
-                isDisabled
-                isUneditable
-                renderItem={(register) => (
-                    <Select {...register}>
-                        {GrenseTypeValues.map((type) => (
-                            <option key={type}>{type}</option>
-                        ))}
-                    </Select>
-                )}
-            />
-            <MetadataField
-                feature={feature}
-                tooltipLabel="Grensen sin unike identifikator"
-                fieldKey="uuid"
-                fieldLabel="Identifikator (UUID)"
-                isDisabled
-                isUneditable
-                renderItem={(register) => <Input placeholder={feature.getId()?.toString()} {...register} />}
-            />
+  return (
+    <Container>
+      <MetadataField
+        feature={feature}
+        tooltipLabel="Hvilken type grense som er valgt."
+        fieldKey="grenseType"
+        fieldLabel="Grensetype"
+        valueLabelFormatter={() => {
+          // Henter fra dataen i stedet for å formattere
+          return properties.type;
+        }}
+        isDisabled
+        isUneditable
+        renderItem={(register) => (
+          <Select {...register}>
+            {GrenseTypeValues.map((type) => (
+              <option key={type}>{type}</option>
+            ))}
+          </Select>
+        )}
+      />
+      <MetadataField
+        feature={feature}
+        tooltipLabel="Grensen sin unike identifikator"
+        fieldKey="uuid"
+        fieldLabel="Identifikator (UUID)"
+        isDisabled
+        isUneditable
+        renderItem={(register) => <Input placeholder={feature.getId()?.toString()} {...register} />}
+      />
 
-            <MetadataField
-                feature={feature}
-                tooltipLabel="Dato når grensen skal være gyldig fra. Fra-dato settes automatisk til publiseringsdato for utkastet ditt."
-                fieldLabel="Gyldig fra"
-                fieldKey="gyldigFra"
-                isDisabled
-                isUneditable
-                valueLabelFormatter={getDateInFriendlyString}
-                renderItem={(register) => <Datepicker {...register} />}
-            />
+      <MetadataField
+        feature={feature}
+        tooltipLabel="Dato når grensen skal være gyldig fra. Fra-dato settes automatisk til publiseringsdato for utkastet ditt."
+        fieldLabel="Gyldig fra"
+        fieldKey="gyldigFra"
+        isDisabled
+        isUneditable
+        valueLabelFormatter={getDateInFriendlyString}
+        renderItem={(register) => <Datepicker {...register} />}
+      />
 
-            <MetadataField
-                feature={feature}
-                tooltipLabel="Dato når grensen siste gang ble registert, observert eller målt. Oppdateres automatisk ved lagring av ny metadata for grense."
-                fieldLabel="Datafangsdato"
-                fieldKey="datafangstdato"
-                isUneditable
-                valueLabelFormatter={getDateInFriendlyString}
-                renderItem={(register) => <Datepicker {...register} />}
-            />
+      <MetadataField
+        feature={feature}
+        tooltipLabel="Dato når grensen siste gang ble registert, observert eller målt. Oppdateres automatisk ved lagring av ny metadata for grense."
+        fieldLabel="Datafangsdato"
+        fieldKey="datafangstdato"
+        isUneditable
+        valueLabelFormatter={getDateInFriendlyString}
+        renderItem={(register) => <Datepicker {...register} />}
+      />
 
-            {gyldigTil && (
-                <div>
-                    <MetadataField
-                        feature={feature}
-                        tooltipLabel="Dato når grensen skal være gyldig til."
-                        fieldLabel="Gyldig til"
-                        fieldKey="gyldigTil"
-                        isDisabled
-                        valueLabelFormatter={getDateInFriendlyString}
-                        renderItem={(register) => <Datepicker {...register} />}
-                    />
-                    <Alert status="warning" variant="top-accent">
-                        <AlertIcon />
-                        Grensen er satt til å utgå ved en fremtidig dato, og du vil derfor ikke kunne gjøre noen
-                        endringer på denne grensen.
-                    </Alert>
-                </div>
-            )}
+      {gyldigTil && (
+        <div>
+          <MetadataField
+            feature={feature}
+            tooltipLabel="Dato når grensen skal være gyldig til."
+            fieldLabel="Gyldig til"
+            fieldKey="gyldigTil"
+            isDisabled
+            valueLabelFormatter={getDateInFriendlyString}
+            renderItem={(register) => <Datepicker {...register} />}
+          />
+          <Alert status="warning" variant="top-accent">
+            <AlertIcon />
+            Grensen er satt til å utgå ved en fremtidig dato, og du vil derfor ikke kunne gjøre noen endringer på denne
+            grensen.
+          </Alert>
+        </div>
+      )}
 
-            <MetadataField
-                feature={feature}
-                tooltipLabel="Metode som ligger til grunn for registrering av posisjon."
-                fieldLabel="Målemetode"
-                fieldKey="maalemetode"
-                valueLabelFormatter={(valueLabel) =>
-                    kodeliste ? getMaalemetodeFromId(kodeliste, valueLabel) : valueLabel
-                }
-                renderItem={(register) =>
-                    kodeliste && (
-                        <Select {...register}>
-                            <option value="">Velg målemetode</option>
-                            {kodeliste.items.map((item) => (
-                                <option key={item.id} value={item.id}>
-                                    {item.label}
-                                </option>
-                            ))}
-                        </Select>
-                    )
-                }
-            />
-            <MetadataField
-                feature={feature}
-                tooltipLabel="Antatt posisjonsnøyaktighet i grunnriss (x, y) oppgitt i cm. Den nøyaktigheten som angis bør være så nær det virkelige objektet som mulig."
-                fieldKey="noeyaktighet"
-                fieldLabel="Nøyaktighet (cm)"
-                renderItem={(register) => <Input type="number" {...register} />}
-            />
+      <MetadataField
+        feature={feature}
+        tooltipLabel="Metode som ligger til grunn for registrering av posisjon."
+        fieldLabel="Målemetode"
+        fieldKey="maalemetode"
+        valueLabelFormatter={(valueLabel) => (kodeliste ? getMaalemetodeFromId(kodeliste, valueLabel) : valueLabel)}
+        renderItem={(register) =>
+          kodeliste && (
+            <Select {...register}>
+              <option value="">Velg målemetode</option>
+              {kodeliste.items.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.label}
+                </option>
+              ))}
+            </Select>
+          )
+        }
+      />
+      <MetadataField
+        feature={feature}
+        tooltipLabel="Antatt posisjonsnøyaktighet i grunnriss (x, y) oppgitt i cm. Den nøyaktigheten som angis bør være så nær det virkelige objektet som mulig."
+        fieldKey="noeyaktighet"
+        fieldLabel="Nøyaktighet (cm)"
+        renderItem={(register) => <Input type="number" {...register} />}
+      />
 
-            <MetadataField
-                feature={feature}
-                tooltipLabel="Ansvarlig organisasjon som er opphav til grensedataene."
-                fieldKey="opphav"
-                fieldLabel="Opphav"
-                renderItem={(register) => <Input placeholder="Fyll inn informasjon om opphav" {...register} />}
-            />
-            <MetadataField
-                feature={feature}
-                tooltipLabel="Åpent felt med ekstra informasjon om grensen"
-                fieldKey="informasjon"
-                fieldLabel="Ekstra informasjon"
-                renderItem={(register) => <Textarea placeholder="Fyll inn ekstra informasjon" {...register} />}
-            />
-            {tilhorighetToChange && <TilhorighetField feature={feature} tilhorighetToChange={tilhorighetToChange} />}
-        </Container>
-    );
+      <MetadataField
+        feature={feature}
+        tooltipLabel="Ansvarlig organisasjon som er opphav til grensedataene."
+        fieldKey="opphav"
+        fieldLabel="Opphav"
+        renderItem={(register) => <Input placeholder="Fyll inn informasjon om opphav" {...register} />}
+      />
+      <MetadataField
+        feature={feature}
+        tooltipLabel="Åpent felt med ekstra informasjon om grensen"
+        fieldKey="informasjon"
+        fieldLabel="Ekstra informasjon"
+        renderItem={(register) => <Textarea placeholder="Fyll inn ekstra informasjon" {...register} />}
+      />
+      {tilhorighetToChange && <TilhorighetField feature={feature} tilhorighetToChange={tilhorighetToChange} />}
+    </Container>
+  );
 };
 
 export default MetadataGenerelt;

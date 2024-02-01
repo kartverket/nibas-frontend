@@ -1,40 +1,40 @@
 import { HttpHandler, HttpResponse, http } from "msw";
 
 const getFailingRequests = () => {
-    const requestUrls = [
-        "https://opencache.statkart.no/gatekeeper/gk/gk.open_wmts",
-        "https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm33_wmts_v2",
-        "https://cache.kartverket.no/topo4/v1/wmts/1.0.0/",
-        "https://cache.kartverket.no/europa_forenklet/v1/wmts/1.0.0/",
-        "https://wms.geonorge.no/skwms1/wms.adm_enheter2",
-        "https://openwms.statkart.no/skwms1/wms.stedsnavnenkel",
-        "https://openwms.statkart.no/skwms1/wms.nmg",
-        "https://wms.geonorge.no/skwms1/wms.adm_enheter_historisk",
-        "https://openwms.statkart.no/skwms1/wms.grunnkretser",
-        "https://openwms.statkart.no/skwms1/wms.n5raster2",
-        "https://openwms.statkart.no/skwms1/wms.kartblad",
-        "https://wms.geonorge.no/skwms1/wms.dybdedata2",
-        "https://openwms.statkart.no/skwms1/wms.ssr2",
-        "https://wms.geonorge.no/skwms1/wms.historiskekart",
-    ];
+  const requestUrls = [
+    "https://opencache.statkart.no/gatekeeper/gk/gk.open_wmts",
+    "https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm33_wmts_v2",
+    "https://cache.kartverket.no/topo4/v1/wmts/1.0.0/",
+    "https://cache.kartverket.no/europa_forenklet/v1/wmts/1.0.0/",
+    "https://wms.geonorge.no/skwms1/wms.adm_enheter2",
+    "https://openwms.statkart.no/skwms1/wms.stedsnavnenkel",
+    "https://openwms.statkart.no/skwms1/wms.nmg",
+    "https://wms.geonorge.no/skwms1/wms.adm_enheter_historisk",
+    "https://openwms.statkart.no/skwms1/wms.grunnkretser",
+    "https://openwms.statkart.no/skwms1/wms.n5raster2",
+    "https://openwms.statkart.no/skwms1/wms.kartblad",
+    "https://wms.geonorge.no/skwms1/wms.dybdedata2",
+    "https://openwms.statkart.no/skwms1/wms.ssr2",
+    "https://wms.geonorge.no/skwms1/wms.historiskekart",
+  ];
 
-    return requestUrls.map((url) => http.get(url, () => new HttpResponse(null, { status: 501 })));
+  return requestUrls.map((url) => http.get(url, () => new HttpResponse(null, { status: 501 })));
 };
 
 export const geonorgeHandlers: HttpHandler[] = [
-    // vi mocker alle requests til WMS servere
-    ...getFailingRequests(),
-    http.get("https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm33_wmts_v2", ({ request }) => {
-        const url = new URL(request.url);
-        if (
-            url.searchParams.get("service")?.toLowerCase() !== "wmts" ||
-            url.searchParams.get("request")?.toLowerCase() !== "getcapabilities"
-        ) {
-            return new HttpResponse(null, { status: 501 });
-        }
+  // vi mocker alle requests til WMS servere
+  ...getFailingRequests(),
+  http.get("https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm33_wmts_v2", ({ request }) => {
+    const url = new URL(request.url);
+    if (
+      url.searchParams.get("service")?.toLowerCase() !== "wmts" ||
+      url.searchParams.get("request")?.toLowerCase() !== "getcapabilities"
+    ) {
+      return new HttpResponse(null, { status: 501 });
+    }
 
-        return HttpResponse.xml(
-            `<?xml version="1.0" encoding="UTF-8"?>
+    return HttpResponse.xml(
+      `<?xml version="1.0" encoding="UTF-8"?>
       <Capabilities xmlns="http://www.opengis.net/wmts/1.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml" xsi:schemaLocation="http://www.opengis.net/wmts/1.0 http://schemas.opengis.net/wmts/1.0/wmtsGetCapabilities_response.xsd" version="1.0.0">
         <!-- Service Identification --> 
        <ows:ServiceIdentification>
@@ -281,22 +281,22 @@ export const geonorgeHandlers: HttpHandler[] = [
       <ServiceMetadataURL xlink:href="https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm33_wmts_v2?request=GetCapabilities&amp;service=WMTS" /> 
       </Capabilities>
       `,
-            { status: 200 },
-        );
-    }),
-    http.get("https://wms.geonorge.no/skwms1/wms.adm_enheter2", ({ request }) => {
-        const url = new URL(request.url);
-        if (
-            url.searchParams.get("service")?.toLowerCase() !== "wms" ||
-            url.searchParams.get("request")?.toLowerCase() !== "getcapabilities"
-        ) {
-            return new HttpResponse(null, {
-                status: 501,
-            });
-        }
+      { status: 200 },
+    );
+  }),
+  http.get("https://wms.geonorge.no/skwms1/wms.adm_enheter2", ({ request }) => {
+    const url = new URL(request.url);
+    if (
+      url.searchParams.get("service")?.toLowerCase() !== "wms" ||
+      url.searchParams.get("request")?.toLowerCase() !== "getcapabilities"
+    ) {
+      return new HttpResponse(null, {
+        status: 501,
+      });
+    }
 
-        return HttpResponse.xml(
-            `<?xml version="1.0" encoding="UTF-8"?>
+    return HttpResponse.xml(
+      `<?xml version="1.0" encoding="UTF-8"?>
     <WMS_Capabilities xmlns="http://www.opengis.net/wms" xmlns:sld="http://www.opengis.net/sld" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ms="http://mapserver.gis.umn.edu/mapserver" xmlns:inspire_common="http://inspire.ec.europa.eu/schemas/common/1.0" xmlns:inspire_vs="http://inspire.ec.europa.eu/schemas/inspire_vs/1.0" version="1.3.0" xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd  http://www.opengis.net/sld http://schemas.opengis.net/sld/1.1.0/sld_capabilities.xsd  http://inspire.ec.europa.eu/schemas/inspire_vs/1.0  http://inspire.ec.europa.eu/schemas/inspire_vs/1.0/inspire_vs.xsd http://mapserver.gis.umn.edu/mapserver https://wms.geonorge.no:80/cgi-bin/adm_enheter2?language=nor&amp;service=WMS&amp;version=1.3.0&amp;request=GetSchemaExtension">
     
     <!-- MapServer version 7.4.2 OUTPUT=PNG OUTPUT=JPEG SUPPORTS=PROJ SUPPORTS=AGG SUPPORTS=FREETYPE SUPPORTS=CAIRO SUPPORTS=SVG_SYMBOLS SUPPORTS=RSVG SUPPORTS=ICONV SUPPORTS=FRIBIDI SUPPORTS=WMS_SERVER SUPPORTS=WMS_CLIENT SUPPORTS=WFS_SERVER SUPPORTS=WFS_CLIENT SUPPORTS=WCS_SERVER SUPPORTS=SOS_SERVER SUPPORTS=FASTCGI SUPPORTS=GEOS SUPPORTS=PBF INPUT=JPEG INPUT=POSTGIS INPUT=OGR INPUT=GDAL INPUT=SHAPEFILE -->
@@ -915,7 +915,7 @@ export const geonorgeHandlers: HttpHandler[] = [
     </Capability>
     </WMS_Capabilities>
     `,
-            { status: 200 },
-        );
-    }),
+      { status: 200 },
+    );
+  }),
 ];

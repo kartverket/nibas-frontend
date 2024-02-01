@@ -4,33 +4,33 @@ import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 
 const emotionCache = createCache({
-    key: "emotion-css-cache",
-    prepend: true, // ensures styles are prepended to the <head>, instead of appended
+  key: "emotion-css-cache",
+  prepend: true, // ensures styles are prepended to the <head>, instead of appended
 });
 
 const swrGlobalConfig = {
-    revalidateOnFocus: false,
+  revalidateOnFocus: false,
 };
 
 const customTheme = extendTheme(withDefaultColorScheme({ colorScheme: "blue" }), theme);
 
 const defaultToastOptions: UseToastOptions = {
-    position: "top",
-    isClosable: true,
-    duration: 7500,
-    containerStyle: {
-        marginTop: "24px",
-    },
+  position: "top",
+  isClosable: true,
+  duration: 7500,
+  containerStyle: {
+    marginTop: "24px",
+  },
 };
 
 const ThirdPartyProviders = ({ children }: { children: React.ReactNode }) => {
-    return (
-        <CacheProvider value={emotionCache}>
-            <KvibProvider theme={customTheme} toastOptions={{ defaultOptions: defaultToastOptions }}>
-                <SWRConfig value={swrGlobalConfig}>{children}</SWRConfig>
-            </KvibProvider>
-        </CacheProvider>
-    );
+  return (
+    <CacheProvider value={emotionCache}>
+      <KvibProvider theme={customTheme} toastOptions={{ defaultOptions: defaultToastOptions }}>
+        <SWRConfig value={swrGlobalConfig}>{children}</SWRConfig>
+      </KvibProvider>
+    </CacheProvider>
+  );
 };
 
 export default ThirdPartyProviders;

@@ -3,17 +3,17 @@ import { useToolbar } from "contexts/ToolbarContext";
 import { DragPan } from "ol/interaction";
 
 const useDragPan = () => {
-    const { activeModeTools } = useToolbar();
+  const { activeModeTools } = useToolbar();
 
-    const dragPan = useMemo(
-        () =>
-            new DragPan({
-                condition: () => activeModeTools.includes("move"),
-            }),
-        [activeModeTools],
-    );
+  const dragPan = useMemo(
+    () =>
+      new DragPan({
+        condition: () => activeModeTools.includes("move"),
+      }),
+    [activeModeTools],
+  );
 
-    return { dragPan };
+  return { dragPan };
 };
 
 export default useDragPan;

@@ -11,50 +11,50 @@ import { useToolbar } from "contexts/ToolbarContext";
 import { pixelTolerance } from "./constants";
 
 const useInteractions = () => {
-    const { modify } = useModify();
-    const { dragPan } = useDragPan();
-    const { select } = useSelect();
-    const { draw } = useDraw();
-    const { selectPoint } = useSelectPoint();
-    const { activeModeTools } = useToolbar();
+  const { modify } = useModify();
+  const { dragPan } = useDragPan();
+  const { select } = useSelect();
+  const { draw } = useDraw();
+  const { selectPoint } = useSelectPoint();
+  const { activeModeTools } = useToolbar();
 
-    useEffect(() => {
-        const vectorLayers = getVectorLayers();
-        const snaps: Snap[] = [];
+  useEffect(() => {
+    const vectorLayers = getVectorLayers();
+    const snaps: Snap[] = [];
 
-        vectorLayers.forEach((layer) => {
-            const source = layer.getSource();
-            if (source) {
-                const snap = new Snap({ source, pixelTolerance });
-                snaps.push(snap);
-            }
-        });
+    vectorLayers.forEach((layer) => {
+      const source = layer.getSource();
+      if (source) {
+        const snap = new Snap({ source, pixelTolerance });
+        snaps.push(snap);
+      }
+    });
 
-        // Rekkefølgen her er potensielt viktig for at events skal avbryte hverandre i riktig rekkefølge
-        map.on("click", select);
-        map.on("click", selectPoint);
-        map.addInteraction(dragPan);
-        map.addInteraction(modify);
-        map.addInteraction(draw);
+    // Rekkefølgen her er potensielt viktig for at events skal avbryte hverandre i riktig rekkefølge
+    map.on("click", select);
+    map.on("click", selectPoint);
+    map.addInteraction(dragPan);
+    map.addInteraction(modify);
+    map.addInteraction(draw);
 
-        // snaps må legges til etter modify og draw interactions
-        if (activeModeTools.includes("snap")) {
-            snaps.forEach((snap) => {
-                map.addInteraction(snap);
-            });
-        }
+    // snaps må legges til etter modify og draw interactions
+    if (activeModeTools.includes("snap")) {
+      snaps.forEach((snap) => {
+        map.addInteraction(snap);
+      });
+    }
 
-        return () => {
-            map.un("click", select);
-            map.un("click", selectPoint);
-            map.removeInteraction(dragPan);
-            map.removeInteraction(modify);
-            map.removeInteraction(draw);
-            snaps.forEach((snap) => {
-                map.removeInteraction(snap);
-            });
-        };
-    }, [activeModeTools, dragPan, draw, modify, select, selectPoint]);
+    return () => {
+      map.un("click", select);
+      map.un("click", selectPoint);
+      map.removeInteraction(dragPan);
+      map.removeInteraction(modify);
+      map.removeInteraction(draw);
+      snaps.forEach((snap) => {
+        map.removeInteraction(snap);
+      });
+    };
+  }, [activeModeTools, dragPan, draw, modify, select, selectPoint]);
 };
 
 export default useInteractions;

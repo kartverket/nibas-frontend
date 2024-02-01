@@ -8,19 +8,19 @@ import { UnstyledList } from "components/UnstyledList";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 
 const GrenserDrillDown = () => {
-    const { activeSidebarPanel, closeSidebarPanel } = useSidebarPanel();
+  const { activeSidebarPanel, closeSidebarPanel } = useSidebarPanel();
 
-    return (
-        <SidebarPanel $isOpen={activeSidebarPanel === "inndelinger"}>
-            <SidebarPanelTitle closePanel={closeSidebarPanel} title="Inndelinger" />
-            <UnstyledList>
-                <Fylkesgrenser />
-                <Kommunegrenser />
-                <Stemmekretser />
-                <Grunnkretser />
-            </UnstyledList>
-        </SidebarPanel>
-    );
+  return (
+    <SidebarPanel $isOpen={activeSidebarPanel === "inndelinger"}>
+      <SidebarPanelTitle closePanel={closeSidebarPanel} title="Inndelinger" />
+      <UnstyledList>
+        <Fylkesgrenser />
+        <Kommunegrenser />
+        <Stemmekretser />
+        <Grunnkretser />
+      </UnstyledList>
+    </SidebarPanel>
+  );
 };
 
 export default GrenserDrillDown;

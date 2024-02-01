@@ -7,110 +7,105 @@ import { Feature } from "ol";
 import { Container } from "./MetadataGenerelt";
 
 interface Props {
-    feature: Feature<Geometry>;
-    name: string;
-    valueLabel: string;
-    tooltipLabel: string;
-    children: React.ReactNode;
-    onMetadataSubmit: () => void;
-    isDisabled?: boolean;
-    isDirty: boolean;
-    isUneditable?: boolean;
-    reset: () => void;
+  feature: Feature<Geometry>;
+  name: string;
+  valueLabel: string;
+  tooltipLabel: string;
+  children: React.ReactNode;
+  onMetadataSubmit: () => void;
+  isDisabled?: boolean;
+  isDirty: boolean;
+  isUneditable?: boolean;
+  reset: () => void;
 }
 
 const MetadataRow = ({
-    feature,
-    name,
-    tooltipLabel,
-    valueLabel,
-    children,
-    onMetadataSubmit,
-    isDisabled,
-    isDirty,
-    isUneditable,
-    reset,
+  feature,
+  name,
+  tooltipLabel,
+  valueLabel,
+  children,
+  onMetadataSubmit,
+  isDisabled,
+  isDirty,
+  isUneditable,
+  reset,
 }: Props) => {
-    const [isEditing, setIsEditing] = useState(false);
-    const [iconHovered, setIconHovered] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [iconHovered, setIconHovered] = useState(false);
 
-    useEffect(() => {
-        setIsEditing(false);
-    }, [feature]);
+  useEffect(() => {
+    setIsEditing(false);
+  }, [feature]);
 
-    return (
-        <Container>
-            <EditContent>
-                <Row>
-                    <Tooltip label={tooltipLabel} hasArrow placement="bottom">
-                        <TextWithIcon onMouseOver={() => setIconHovered(true)} onMouseOut={() => setIconHovered(false)}>
-                            <Text as="b">{name}</Text>
-                            <InfoIcon>
-                                <Icon
-                                    size={24}
-                                    color="var(--kvib-colors-blue-500)"
-                                    isFilled={iconHovered}
-                                    icon={"info"}
-                                ></Icon>
-                            </InfoIcon>
-                        </TextWithIcon>
-                    </Tooltip>
+  return (
+    <Container>
+      <EditContent>
+        <Row>
+          <Tooltip label={tooltipLabel} hasArrow placement="bottom">
+            <TextWithIcon onMouseOver={() => setIconHovered(true)} onMouseOut={() => setIconHovered(false)}>
+              <Text as="b">{name}</Text>
+              <InfoIcon>
+                <Icon size={24} color="var(--kvib-colors-blue-500)" isFilled={iconHovered} icon={"info"}></Icon>
+              </InfoIcon>
+            </TextWithIcon>
+          </Tooltip>
 
-                    {!isUneditable && (
-                        <EditAndSaveButton
-                            isDisabled={isDisabled}
-                            isEditing={isEditing}
-                            size="sm"
-                            onSubmit={() => {
-                                if (isDirty) {
-                                    onMetadataSubmit();
-                                }
-                                setIsEditing(false);
-                            }}
-                            toggleEditing={() =>
-                                setIsEditing((prevState) => {
-                                    if (isEditing) {
-                                        reset();
-                                    }
-                                    return !prevState;
-                                })
-                            }
-                        />
-                    )}
-                </Row>
-                {isEditing ? <Field>{children}</Field> : <Field>{valueLabel || "Ikke spesifisert"}</Field>}
-            </EditContent>
-            <Divider />
-        </Container>
-    );
+          {!isUneditable && (
+            <EditAndSaveButton
+              isDisabled={isDisabled}
+              isEditing={isEditing}
+              size="sm"
+              onSubmit={() => {
+                if (isDirty) {
+                  onMetadataSubmit();
+                }
+                setIsEditing(false);
+              }}
+              toggleEditing={() =>
+                setIsEditing((prevState) => {
+                  if (isEditing) {
+                    reset();
+                  }
+                  return !prevState;
+                })
+              }
+            />
+          )}
+        </Row>
+        {isEditing ? <Field>{children}</Field> : <Field>{valueLabel || "Ikke spesifisert"}</Field>}
+      </EditContent>
+      <Divider />
+    </Container>
+  );
 };
 
 const InfoIcon = styled.div`
-    margin-left: 8px;
-    display: flex;
-    align-items: center;
-    cursor: default;
+  margin-left: 8px;
+  display: flex;
+  align-items: center;
+  cursor: default;
 `;
 
 const EditContent = styled.div`
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 `;
 
 const Row = styled.div`
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 `;
 
 const TextWithIcon = styled.div`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 `;
 
 const Field = styled.div`
-    margin-top: 8px;
+  margin-top: 8px;
 `;
 
 export default MetadataRow;

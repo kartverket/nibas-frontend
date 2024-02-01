@@ -6,34 +6,34 @@ import useNibasApi from "hooks/useNibasApi";
 import { UtkastResponse } from "types/api";
 
 type useUtkastStemmekretsEndringerReturnType = {
-    harEndringer: boolean;
-    laster: boolean;
-    endringer: Stemmekretsendringer[] | null;
+  harEndringer: boolean;
+  laster: boolean;
+  endringer: Stemmekretsendringer[] | null;
 };
 
 export const useUtkastStemmekretsEndringer = (utkast: UtkastResponse): useUtkastStemmekretsEndringerReturnType => {
-    const [endringer, setEndringer] = useState<Stemmekretsendringer[] | null>(null);
+  const [endringer, setEndringer] = useState<Stemmekretsendringer[] | null>(null);
 
-    const { data: kommuner, isValidating: lasterKommuner } = useNibasApi("/v1/kommuner");
-    const operasjoner = utkast.operasjoner;
+  const { data: kommuner, isValidating: lasterKommuner } = useNibasApi("/v1/kommuner");
+  const operasjoner = utkast.operasjoner;
 
-    const stemmekretserMedEndringer = useMemo(() => {
-        return getStemmekretserMedEndringer(operasjoner);
-    }, [operasjoner]);
+  const stemmekretserMedEndringer = useMemo(() => {
+    return getStemmekretserMedEndringer(operasjoner);
+  }, [operasjoner]);
 
-    const { data: stemmekretser, isValidating: lasterStemmekretser } = useStemmekretser(stemmekretserMedEndringer);
+  const { data: stemmekretser, isValidating: lasterStemmekretser } = useStemmekretser(stemmekretserMedEndringer);
 
-    const lasterData = lasterStemmekretser || lasterKommuner;
+  const lasterData = lasterStemmekretser || lasterKommuner;
 
-    useEffect(() => {
-        if (!lasterData && stemmekretser && kommuner) {
-            setEndringer(getStemmekretsEndringer(stemmekretserMedEndringer, operasjoner, stemmekretser, kommuner));
-        }
-    }, [stemmekretserMedEndringer, operasjoner, kommuner, lasterData, stemmekretser]);
+  useEffect(() => {
+    if (!lasterData && stemmekretser && kommuner) {
+      setEndringer(getStemmekretsEndringer(stemmekretserMedEndringer, operasjoner, stemmekretser, kommuner));
+    }
+  }, [stemmekretserMedEndringer, operasjoner, kommuner, lasterData, stemmekretser]);
 
-    return {
-        harEndringer: stemmekretserMedEndringer.length > 0,
-        laster: lasterData,
-        endringer,
-    };
+  return {
+    harEndringer: stemmekretserMedEndringer.length > 0,
+    laster: lasterData,
+    endringer,
+  };
 };
