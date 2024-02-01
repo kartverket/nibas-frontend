@@ -17,21 +17,14 @@ const ToolbarPopups = () => {
   const toast = useToast();
   const { split } = useSplit();
   const { addHistoryEntry } = useHistory();
-  const { activeModeTools, activeTool, resetModeTools, resetTool } =
-    useToolbar();
-  const {
-    selectedFeatures,
-    selectedPoint,
-    setArchivedFeatures,
-    clearSelection,
-  } = useFeatureStyle();
+  const { activeModeTools, activeTool, resetModeTools, resetTool } = useToolbar();
+  const { selectedFeatures, selectedPoint, setArchivedFeatures, clearSelection } = useFeatureStyle();
 
   const archiveFeatures = () => {
     const selectedFeature = selectedFeatures[0];
     if (selectedFeature) {
       setArchivedFeatures([getFeatureId(selectedFeature)]);
-      addArchivingEntryFromFeature(selectedFeature, addHistoryEntry),
-        clearSelection();
+      addArchivingEntryFromFeature(selectedFeature, addHistoryEntry), clearSelection();
       toast({ status: "success", title: "Grensen ble arkivert" });
       toast({
         status: "warning",
@@ -61,8 +54,7 @@ const ToolbarPopups = () => {
     if (!zoom || zoom < 15) {
       toast({
         status: "error",
-        title:
-          "Kartutsnittet er for stort. Zoom inn nærmere før du henter inn eiendomsgrensene",
+        title: "Kartutsnittet er for stort. Zoom inn nærmere før du henter inn eiendomsgrensene",
       });
     } else {
       setMatrikkelIsLoading(true);
@@ -71,8 +63,7 @@ const ToolbarPopups = () => {
         if (matrikkelFeatures.length === 10000) {
           toast({
             status: "warning",
-            title:
-              "Utsnittet inneholder for mange grenser. Zoom nærmere, og prøv igjen.",
+            title: "Utsnittet inneholder for mange grenser. Zoom nærmere, og prøv igjen.",
           });
         } else {
           toast({
@@ -112,10 +103,7 @@ const ToolbarPopups = () => {
         />
       )}
       {activeTool === "split" && selectedFeatures.length === 0 && (
-        <ToolbarPopup
-          text="Velg grensen du ønsker å splitte"
-          onClose={resetTool}
-        />
+        <ToolbarPopup text="Velg grensen du ønsker å splitte" onClose={resetTool} />
       )}
       {activeTool === "split" && selectedFeatures.length === 1 && (
         <ToolbarPopup
@@ -127,22 +115,13 @@ const ToolbarPopups = () => {
         />
       )}
       {activeTool === "detach" && selectedFeatures.length === 0 && (
-        <ToolbarPopup
-          text="Velg grensen du ønsker å løsrive fra andre grenser"
-          onClose={resetTool}
-        />
+        <ToolbarPopup text="Velg grensen du ønsker å løsrive fra andre grenser" onClose={resetTool} />
       )}
       {activeTool === "detach" && selectedFeatures.length === 1 && (
-        <ToolbarPopup
-          text="Dra på et knutepunkt for å løsrive grensen"
-          onClose={resetTool}
-        />
+        <ToolbarPopup text="Dra på et knutepunkt for å løsrive grensen" onClose={resetTool} />
       )}
       {activeTool === "metadata" && (
-        <ToolbarPopup
-          text="Velg en grense i kartet for å se grenseinformasjon"
-          onClose={resetTool}
-        />
+        <ToolbarPopup text="Velg en grense i kartet for å se grenseinformasjon" onClose={resetTool} />
       )}
       {activeTool === "archive" && (
         <ToolbarPopup
@@ -154,22 +133,11 @@ const ToolbarPopups = () => {
         />
       )}
       {activeTool === "koordinater" && (
-        <ToolbarPopup
-          text="Velg et punkt på en grense for å åpne koordinatmenyen"
-          onClose={resetTool}
-        />
+        <ToolbarPopup text="Velg et punkt på en grense for å åpne koordinatmenyen" onClose={resetTool} />
       )}
-      {activeTool === "add" && (
-        <ToolbarPopup
-          text="Trykk på en grense for å legge til et punkt"
-          onClose={resetTool}
-        />
-      )}
+      {activeTool === "add" && <ToolbarPopup text="Trykk på en grense for å legge til et punkt" onClose={resetTool} />}
       {activeTool === "remove" && (
-        <ToolbarPopup
-          text="Trykk på et punkt for å fjerne punktet fra grensen"
-          onClose={resetTool}
-        />
+        <ToolbarPopup text="Trykk på et punkt for å fjerne punktet fra grensen" onClose={resetTool} />
       )}
     </>
   );

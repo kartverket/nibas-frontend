@@ -25,11 +25,7 @@ import { EndringsloggAccordion } from "pages/Utkast/UtkastEndringslogg";
 import { useState } from "react";
 import { useSWRConfig } from "swr";
 import { isToday, format } from "date-fns";
-import {
-  ApiErrorResponse,
-  OppdaterUtkastRequest,
-  UtkastResponse,
-} from "types/api";
+import { ApiErrorResponse, OppdaterUtkastRequest, UtkastResponse } from "types/api";
 import { statusCode } from "utils/api";
 import { useUtkast } from "contexts/UtkastContext";
 import { useMatch, useNavigate } from "react-router-dom";
@@ -59,18 +55,14 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
     mutate(["/v1/utkast", tokenHolderFunc()?.token]);
   };
 
-  const toCleanUtkast = (
-    utkastToClean: OppdaterUtkastRequest,
-  ): OppdaterUtkastRequest => {
+  const toCleanUtkast = (utkastToClean: OppdaterUtkastRequest): OppdaterUtkastRequest => {
     const utkastCopy = structuredClone(utkastToClean);
 
     // Fjerner ID fra alle nye grenser, da dette ikke er forventet fra backend
-    const endredeFeatures =
-      utkastCopy.operasjoner.grenseendringer.endredeFeatures;
+    const endredeFeatures = utkastCopy.operasjoner.grenseendringer.endredeFeatures;
 
     endredeFeatures.forEach((endretFeature) => {
-      if (endretFeature.id && isTempFeatureId(endretFeature.id))
-        endretFeature.id = undefined;
+      if (endretFeature.id && isTempFeatureId(endretFeature.id)) endretFeature.id = undefined;
     });
 
     return utkastCopy;
@@ -84,16 +76,10 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
 
     const publiseringDateString = format(publiseringsdato, "yyyy-MM-dd");
 
-    const response = await publishUtkast(
-      utkast.id,
-      publiseringDateString,
-      tokenHolderFunc()?.token,
-    );
+    const response = await publishUtkast(utkast.id, publiseringDateString, tokenHolderFunc()?.token);
     setIsLoading(false);
 
-    const publishDateText = isToday(publiseringsdato)
-      ? "umiddelbart"
-      : getDateInFriendlyString(publiseringDateString);
+    const publishDateText = isToday(publiseringsdato) ? "umiddelbart" : getDateInFriendlyString(publiseringDateString);
 
     if (statusCode.isSuccessful(response.status)) {
       toast({
@@ -149,8 +135,7 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
             <div>
               <AlertTitle>Du er i ferd med å publisere et utkast</AlertTitle>
               <AlertDescription>
-                Endringene i utkastet vil bli tilgjengelig for alle etter den
-                valgte publiseringsdatoen.
+                Endringene i utkastet vil bli tilgjengelig for alle etter den valgte publiseringsdatoen.
               </AlertDescription>
             </div>
           </Alert>
@@ -161,13 +146,10 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
               <Alert status="warning">
                 <AlertIcon />
                 <div>
-                  <AlertTitle>
-                    Utkastet ditt inneholder endringer på administrative grenser
-                  </AlertTitle>
+                  <AlertTitle>Utkastet ditt inneholder endringer på administrative grenser</AlertTitle>
                   <AlertDescription>
-                    Pass på at du er sikker på endringene dine, og husk å gjøre
-                    tilsvarende endring for både grunnkretsgrense og
-                    stemmekretsgrense.
+                    Pass på at du er sikker på endringene dine, og husk å gjøre tilsvarende endring for både
+                    grunnkretsgrense og stemmekretsgrense.
                   </AlertDescription>
                 </div>
               </Alert>
@@ -179,9 +161,7 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
             <Datepicker
               fromDate={new Date()}
               defaultSelected={new Date()}
-              onChange={(event) =>
-                setPubliseringsdato(new Date(event.target.value))
-              }
+              onChange={(event) => setPubliseringsdato(new Date(event.target.value))}
             />
           </Datepickerlabel>
         </Body>

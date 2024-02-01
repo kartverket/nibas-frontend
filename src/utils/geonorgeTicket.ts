@@ -14,8 +14,7 @@ const removeTicketInLocalStorage = (tjenesteId: string) =>
   window.localStorage.removeItem(`${ticketPrefix}${tjenesteId}`);
 const setTicketInLocalStorage = (tjenesteId: string, ticket: string) =>
   window.localStorage.setItem(`${ticketPrefix}${tjenesteId}`, ticket);
-const getTicketInLocalStorage = (tjenesteId: string) =>
-  window.localStorage.getItem(`${ticketPrefix}${tjenesteId}`);
+const getTicketInLocalStorage = (tjenesteId: string) => window.localStorage.getItem(`${ticketPrefix}${tjenesteId}`);
 
 export const getSrcWithTicket = async (tjenesteId: string, src: string) => {
   const ticket = await getTicketForTjeneste(tjenesteId, src);
@@ -27,9 +26,7 @@ const fetchNewTicket = async (tjenesteId: string) => {
   if (!ticketConfigSetUpCorrectly) return "*";
 
   try {
-    const ticketResponse = await fetch(
-      getUrlForPath(`/skbaatts/req?tjenesteid=${tjenesteId}`),
-    );
+    const ticketResponse = await fetch(getUrlForPath(`/skbaatts/req?tjenesteid=${tjenesteId}`));
     return ticketResponse.text();
   } catch {
     return "*";

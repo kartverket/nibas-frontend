@@ -18,19 +18,13 @@ const Kommune = ({ kommune }: Props) => {
   const { utkast } = useUtkast();
   const { history, clearHistory } = useHistory();
   const { openOverlayModal, setFlatedata } = useOverlayPanel();
-  const {
-    kommuneValues,
-    toggleEditKretser,
-    toggleKretser,
-    lasterData,
-    currentKretstype,
-  } = useInndelingerKrets(kommune);
+  const { kommuneValues, toggleEditKretser, toggleKretser, lasterData, currentKretstype } =
+    useInndelingerKrets(kommune);
 
-  const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } =
-    useAlertModal(
-      "Du har endringer i utkastet som ikke er lagret",
-      "Er du sikker på at du vil avslutte redigering av denne kommunen? Dersom du avslutter redigering nå mister du alle ulagrede endringer.",
-    );
+  const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } = useAlertModal(
+    "Du har endringer i utkastet som ikke er lagret",
+    "Er du sikker på at du vil avslutte redigering av denne kommunen? Dersom du avslutter redigering nå mister du alle ulagrede endringer.",
+  );
 
   const closeEditing = () => {
     closeModal();
@@ -62,10 +56,7 @@ const Kommune = ({ kommune }: Props) => {
           aria-label={kommuneValues.visible ? "Synlig" : "Usynlig"}
           icon={kommuneValues.visible ? "visibility" : "visibility_off"}
         />
-        <Title>{`${kommune.kommunenummer.kodeverdi} ${getNavnInSpraak(
-          kommune.navn,
-          "nor",
-        )}`}</Title>
+        <Title>{`${kommune.kommunenummer.kodeverdi} ${getNavnInSpraak(kommune.navn, "nor")}`}</Title>
         {lasterData ? (
           <Spinner size="lg" color="var(--kvib-colors-blue-500)" />
         ) : utkast ? (
@@ -113,12 +104,8 @@ const EditButton = styled(Button)`
 `;
 
 const VisibilityButton = styled(IconButton)<{ $isVisible?: boolean }>`
-  color: ${({ $isVisible }) =>
-    $isVisible
-      ? "var(--kvib-colors-chakra-inverse-text)"
-      : "var(--kvib-colors-blue-500)"};
-  background: ${({ $isVisible }) =>
-    $isVisible ? "var(--kvib-colors-blue-500)" : "transparent"};
+  color: ${({ $isVisible }) => ($isVisible ? "var(--kvib-colors-chakra-inverse-text)" : "var(--kvib-colors-blue-500)")};
+  background: ${({ $isVisible }) => ($isVisible ? "var(--kvib-colors-blue-500)" : "transparent")};
   border-radius: 50%;
   padding: 8px;
 

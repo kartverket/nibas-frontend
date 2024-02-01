@@ -1,13 +1,6 @@
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
-import {
-  Alert,
-  AlertIcon,
-  Datepicker,
-  Input,
-  Select,
-  Textarea,
-} from "@kvib/react";
+import { Alert, AlertIcon, Datepicker, Input, Select, Textarea } from "@kvib/react";
 import { GrenseType } from "../../../../hooks/layers/types";
 import { styled } from "styled-components";
 import { MetadataField } from "./MetadataField";
@@ -58,9 +51,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
 
   const metadata = properties.metadata as Metadata;
 
-  const gyldigTil = properties.metadata
-    ? metadata.common?.gyldigTil
-    : undefined;
+  const gyldigTil = properties.metadata ? metadata.common?.gyldigTil : undefined;
 
   const getMaalemetodeFromId = (maalemetoder: KodelisteRespons, id: string) =>
     maalemetoder.items.find((item) => item.id === id)?.label ?? null;
@@ -110,9 +101,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
         }}
         isDisabled
         isUneditable
-        renderItem={(register) => (
-          <Input placeholder={feature.getId()?.toString()} {...register} />
-        )}
+        renderItem={(register) => <Input placeholder={feature.getId()?.toString()} {...register} />}
       />
 
       <MetadataField
@@ -126,8 +115,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
           const formattedDate = getDateInFriendlyString(date);
           const featureId = feature.getId()?.toString();
 
-          if (featureId && isTempFeatureId(featureId))
-            return "Ny grense - Dato blir satt ved publisering";
+          if (featureId && isTempFeatureId(featureId)) return "Ny grense - Dato blir satt ved publisering";
 
           return formattedDate || null;
         }}
@@ -144,8 +132,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
           const formattedDate = getDateInFriendlyString(date);
           const featureId = feature.getId()?.toString();
 
-          if (featureId && isTempFeatureId(featureId))
-            return "Ny grense - Dato blir satt ved publisering";
+          if (featureId && isTempFeatureId(featureId)) return "Ny grense - Dato blir satt ved publisering";
 
           return formattedDate || null;
         }}
@@ -165,8 +152,8 @@ const MetadataGenerelt = ({ feature }: Props) => {
           />
           <Alert status="warning" variant="top-accent">
             <AlertIcon />
-            Grensen er satt til å utgå ved en fremtidig dato, og du vil derfor
-            ikke kunne gjøre noen endringer på denne grensen.
+            Grensen er satt til å utgå ved en fremtidig dato, og du vil derfor ikke kunne gjøre noen endringer på denne
+            grensen.
           </Alert>
         </div>
       )}
@@ -176,9 +163,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
         tooltipLabel="Metode som ligger til grunn for registrering av posisjon."
         fieldLabel="Målemetode"
         fieldKey="maalemetode"
-        valueLabelFormatter={(valueLabel) =>
-          kodeliste ? getMaalemetodeFromId(kodeliste, valueLabel) : valueLabel
-        }
+        valueLabelFormatter={(valueLabel) => (kodeliste ? getMaalemetodeFromId(kodeliste, valueLabel) : valueLabel)}
         renderItem={(register) =>
           kodeliste && (
             <Select {...register}>
@@ -205,25 +190,16 @@ const MetadataGenerelt = ({ feature }: Props) => {
         tooltipLabel="Ansvarlig organisasjon som er opphav til grensedataene."
         fieldKey="opphav"
         fieldLabel="Opphav"
-        renderItem={(register) => (
-          <Input placeholder="Fyll inn informasjon om opphav" {...register} />
-        )}
+        renderItem={(register) => <Input placeholder="Fyll inn informasjon om opphav" {...register} />}
       />
       <MetadataField
         feature={feature}
         tooltipLabel="Åpent felt med ekstra informasjon om grensen"
         fieldKey="informasjon"
         fieldLabel="Ekstra informasjon"
-        renderItem={(register) => (
-          <Textarea placeholder="Fyll inn ekstra informasjon" {...register} />
-        )}
+        renderItem={(register) => <Textarea placeholder="Fyll inn ekstra informasjon" {...register} />}
       />
-      {tilhorighetToChange && (
-        <TilhorighetField
-          feature={feature}
-          tilhorighetToChange={tilhorighetToChange}
-        />
-      )}
+      {tilhorighetToChange && <TilhorighetField feature={feature} tilhorighetToChange={tilhorighetToChange} />}
     </Container>
   );
 };

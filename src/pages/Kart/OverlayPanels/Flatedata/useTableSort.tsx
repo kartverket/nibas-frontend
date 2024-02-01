@@ -1,9 +1,7 @@
 import { useState } from "react";
 
 export const useTableSort = (properties: string[]) => {
-  const [sortProperty, setSortProperty] = useState<(typeof properties)[number]>(
-    properties[0],
-  );
+  const [sortProperty, setSortProperty] = useState<(typeof properties)[number]>(properties[0]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const onSort = (property: string) => {

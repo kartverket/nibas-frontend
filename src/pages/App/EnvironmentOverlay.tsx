@@ -1,7 +1,4 @@
-import {
-  Environment,
-  getCurrentEnvironment,
-} from "components/FeatureToggle/FeatureToggle";
+import { Environment, getCurrentEnvironment } from "components/FeatureToggle/FeatureToggle";
 import { styled } from "styled-components";
 import { zindex } from "utils/constants";
 

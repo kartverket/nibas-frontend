@@ -21,16 +21,10 @@ type EndringsloggStemmekretsendringerProps = {
   endringer: Stemmekretsendringer;
 };
 
-export const EndringsloggStemmekretsendringer = ({
-  endringer,
-}: EndringsloggStemmekretsendringerProps) => (
+export const EndringsloggStemmekretsendringer = ({ endringer }: EndringsloggStemmekretsendringerProps) => (
   <EndringSection>
-    <Underoverskrift>
-      {`Stemmekretser i ${endringer.kommune.nummer} ${endringer.kommune.navn}`}
-    </Underoverskrift>
-    <StemmekretsGrensejusteringer
-      grendejusteringer={endringer.grensejusteringer}
-    />
+    <Underoverskrift>{`Stemmekretser i ${endringer.kommune.nummer} ${endringer.kommune.navn}`}</Underoverskrift>
+    <StemmekretsGrensejusteringer grendejusteringer={endringer.grensejusteringer} />
     {endringer.metadataendringer.map((metadataendring) => (
       <StemmekretsMetadataEndringer
         key={metadataendring.kretsEndret.id.lokalid.value}
@@ -45,18 +39,14 @@ type StemmekretsGrensejusteringerProps = {
   grendejusteringer: StemmekretsResponse[];
 };
 
-const StemmekretsGrensejusteringer = ({
-  grendejusteringer,
-}: StemmekretsGrensejusteringerProps) => {
+const StemmekretsGrensejusteringer = ({ grendejusteringer }: StemmekretsGrensejusteringerProps) => {
   if (grendejusteringer == null || grendejusteringer.length === 0) {
     return null;
   }
 
   return (
     <EndringSection>
-      <Seksjonsoverskrift>
-        Stemmekretser påvirket av grensejusteringer
-      </Seksjonsoverskrift>
+      <Seksjonsoverskrift>Stemmekretser påvirket av grensejusteringer</Seksjonsoverskrift>
       <UnstyledList>
         {grendejusteringer.map((grensjustering) => (
           <EndringsradListItem key={grensjustering.id.lokalid.value}>
@@ -72,9 +62,7 @@ type StemmekretsSammenslaaingProps = {
   sammenslaaing: StemmekretsSammenslaaingEndring | null;
 };
 
-const StemmekretsSammenslaaing = ({
-  sammenslaaing,
-}: StemmekretsSammenslaaingProps) => {
+const StemmekretsSammenslaaing = ({ sammenslaaing }: StemmekretsSammenslaaingProps) => {
   if (sammenslaaing == null) {
     return null;
   }
@@ -131,15 +119,9 @@ type StemmekretsMetadataEndringerProps = {
   metadataendring: StemmekretsMetadataEndring;
 };
 
-const StemmekretsMetadataEndringer = ({
-  metadataendring,
-}: StemmekretsMetadataEndringerProps) => {
-  const navn =
-    metadataendring.stemmekretsnavn?.til ??
-    metadataendring.kretsEndret.stemmekretsnavn;
-  const nummer =
-    metadataendring.stemmekretsnummer?.til ??
-    metadataendring.kretsEndret.stemmekretsnummer;
+const StemmekretsMetadataEndringer = ({ metadataendring }: StemmekretsMetadataEndringerProps) => {
+  const navn = metadataendring.stemmekretsnavn?.til ?? metadataendring.kretsEndret.stemmekretsnavn;
+  const nummer = metadataendring.stemmekretsnummer?.til ?? metadataendring.kretsEndret.stemmekretsnummer;
 
   return (
     <EndringSection>
@@ -151,22 +133,13 @@ const StemmekretsMetadataEndringer = ({
       </Seksjonsoverskrift>
       <UnstyledList>
         {metadataendring.stemmekretsnavn && (
-          <Endringsrad
-            tittel="Stemmekretsnavn"
-            endring={metadataendring.stemmekretsnavn}
-          />
+          <Endringsrad tittel="Stemmekretsnavn" endring={metadataendring.stemmekretsnavn} />
         )}
         {metadataendring.stemmekretsnummer && (
-          <Endringsrad
-            tittel="Stemmekretsnummer"
-            endring={metadataendring.stemmekretsnummer}
-          />
+          <Endringsrad tittel="Stemmekretsnummer" endring={metadataendring.stemmekretsnummer} />
         )}
         {metadataendring.valgdistriktsnummer && (
-          <Endringsrad
-            tittel="Valgdistriktsnummer"
-            endring={metadataendring.valgdistriktsnummer}
-          />
+          <Endringsrad tittel="Valgdistriktsnummer" endring={metadataendring.valgdistriktsnummer} />
         )}
       </UnstyledList>
     </EndringSection>

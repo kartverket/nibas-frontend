@@ -1,22 +1,14 @@
 import { useEffect } from "react";
 import { HistoryDirection, HistoryEntry } from "contexts/HistoryContext";
 
-const getChangeForId = <EntryType extends HistoryEntry>(
-  entry: EntryType,
-  id?: string,
-) =>
+const getChangeForId = <EntryType extends HistoryEntry>(entry: EntryType, id?: string) =>
   // https://github.com/microsoft/TypeScript/issues/33591
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (entry.changes as any[]).find((change) => change.id === id) as
-    | EntryType["changes"][number]
-    | undefined;
+  (entry.changes as any[]).find((change) => change.id === id) as EntryType["changes"][number] | undefined;
 
 type Parameters<EntryType extends HistoryEntry> = {
   entityId: string | undefined;
-  setFormValues: (
-    change: EntryType["changes"][number],
-    direction: HistoryDirection,
-  ) => void;
+  setFormValues: (change: EntryType["changes"][number], direction: HistoryDirection) => void;
   undoEventKey: string;
   redoEventKey: string;
 };

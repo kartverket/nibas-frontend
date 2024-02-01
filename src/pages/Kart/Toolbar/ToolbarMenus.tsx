@@ -1,11 +1,4 @@
-import {
-  Icon,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItemProps,
-  MenuList,
-} from "@kvib/react";
+import { Icon, Menu, MenuButton, MenuItem, MenuItemProps, MenuList } from "@kvib/react";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
@@ -36,8 +29,7 @@ const ToolbarMenus = () => {
 
   const mergeIsActive = activeOverlayPanel === "sammenslåing";
 
-  const flatedetaljerIsActive =
-    activeOverlayModal === "grunnkrets" || activeOverlayModal === "stemmekrets";
+  const flatedetaljerIsActive = activeOverlayModal === "grunnkrets" || activeOverlayModal === "stemmekrets";
 
   const toggleMetadata = () => {
     toggleTool("metadata");
@@ -246,8 +238,7 @@ const ToolbarMenus = () => {
 };
 
 const ToolbarMenuItem = styled(MenuItem)<{ $isActive: boolean }>`
-  background-color: ${(props) =>
-    props.$isActive && "var(--kvib-colors-blue-50)"};
+  background-color: ${(props) => props.$isActive && "var(--kvib-colors-blue-50)"};
 `;
 
 export default ToolbarMenus;

@@ -13,11 +13,7 @@ const useSplit = () => {
   const { selectedFeatures, selectedPoint } = useFeatureStyle();
 
   const split = () => {
-    if (
-      activeTool === "split" &&
-      selectedFeatures.length === 1 &&
-      selectedPoint
-    ) {
+    if (activeTool === "split" && selectedFeatures.length === 1 && selectedPoint) {
       const feature = selectedFeatures[0];
       const geometry = feature.getGeometry();
       if (geometry instanceof LineString) {
@@ -34,9 +30,7 @@ const useSplit = () => {
           if (pointGeometry instanceof Point) {
             const coordinatesToSplit = pointGeometry.getCoordinates();
             const splitIndex = coordinates.findIndex(
-              (v) =>
-                v[0] === coordinatesToSplit[0] &&
-                v[1] === coordinatesToSplit[1],
+              (v) => v[0] === coordinatesToSplit[0] && v[1] === coordinatesToSplit[1],
             );
 
             // Dette verifiserer at det valgte punktet er et gyldig punkt å splitte på grensen

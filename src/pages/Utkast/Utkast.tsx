@@ -26,10 +26,8 @@ const endringstypeOrder: Record<Endringstype, "left" | "right"> = {
 
 type UtkastGroup = Record<UtkastResponse["endringstype"], UtkastResponse[]>;
 
-const sortUtkastByCreatedDesc = (
-  a: UtkastResponse,
-  b: UtkastResponse,
-): number => b.opprettetDato.localeCompare(a.opprettetDato);
+const sortUtkastByCreatedDesc = (a: UtkastResponse, b: UtkastResponse): number =>
+  b.opprettetDato.localeCompare(a.opprettetDato);
 
 const Utkast = () => {
   const { error, setError } = useErrorHandling();

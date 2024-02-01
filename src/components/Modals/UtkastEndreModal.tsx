@@ -63,13 +63,9 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
             <Section>
               <FormLabel>Navn på utkastet</FormLabel>
               <FormHelperText>
-                Velg et beskrivende navn som gjør at andre kan forstå hva
-                utkastet inneholder.
+                Velg et beskrivende navn som gjør at andre kan forstå hva utkastet inneholder.
               </FormHelperText>
-              <Input
-                placeholder="f.eks. Sammenslåing av Rosenborg og Sentrum i Trondheim"
-                {...register("navn")}
-              />
+              <Input placeholder="f.eks. Sammenslåing av Rosenborg og Sentrum i Trondheim" {...register("navn")} />
             </Section>
           </ModalBody>
           <ModalFooter>

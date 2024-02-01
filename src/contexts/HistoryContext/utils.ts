@@ -14,10 +14,7 @@ import { Geometry } from "ol/geom";
 import { setDefaultFeatureProperties } from "utils/features";
 import { Metadata } from "types/api";
 
-const getFeatureFromChange = (
-  change: HistoryChange<MinimalGrense>,
-  direction: HistoryDirection,
-) => {
+const getFeatureFromChange = (change: HistoryChange<MinimalGrense>, direction: HistoryDirection) => {
   const existingFeature = getFeatureIfExists(change.id);
   if (!existingFeature && direction === "to" && change[direction].coordinates) {
     const newFeature = new Feature({
@@ -36,10 +33,7 @@ const getFeatureIfExists = (featureId: string) => {
   return editSource.getFeatureById(featureId) as Feature<Geometry> | null;
 };
 
-const setCoordinatesFromChange = (
-  change: HistoryChange<MinimalGrense>,
-  direction: HistoryDirection,
-) => {
+const setCoordinatesFromChange = (change: HistoryChange<MinimalGrense>, direction: HistoryDirection) => {
   const feature = getFeatureFromChange(change, direction);
   if (!feature) return;
 
@@ -55,13 +49,8 @@ const setCoordinatesFromChange = (
   lineString.setCoordinates(coordinates);
 };
 
-export const setFeatureCoordinatesForEntry = (
-  entry: GrenseEntry,
-  direction: HistoryDirection,
-) => {
-  entry.changes.forEach((change) =>
-    setCoordinatesFromChange(change, direction),
-  );
+export const setFeatureCoordinatesForEntry = (entry: GrenseEntry, direction: HistoryDirection) => {
+  entry.changes.forEach((change) => setCoordinatesFromChange(change, direction));
 
   return document.dispatchEvent(
     new CustomEvent(direction === "from" ? "grenseUndo" : "grenseRedo", {
@@ -70,10 +59,7 @@ export const setFeatureCoordinatesForEntry = (
   );
 };
 
-const setMetadataFromChange = (
-  change: HistoryChange<Metadata>,
-  direction: HistoryDirection,
-) => {
+const setMetadataFromChange = (change: HistoryChange<Metadata>, direction: HistoryDirection) => {
   const feature = getFeatureIfExists(change.id);
   if (!feature) return;
 
@@ -84,27 +70,18 @@ const setMetadataFromChange = (
   feature.setProperties({ ...feature.getProperties(), metadata });
 };
 
-export const setFeatureMetadataForEntry = (
-  entry: MetadataEntry,
-  direction: HistoryDirection,
-) => {
+export const setFeatureMetadataForEntry = (entry: MetadataEntry, direction: HistoryDirection) => {
   entry.changes.forEach((change) => setMetadataFromChange(change, direction));
 };
 
-export const setFeatureCoordinatesAndMetadataForEntry = (
-  entry: NyGrenseEntry,
-  direction: HistoryDirection,
-) => {
+export const setFeatureCoordinatesAndMetadataForEntry = (entry: NyGrenseEntry, direction: HistoryDirection) => {
   entry.changes.forEach((change) => {
     setMetadataFromChange(change, direction);
     setCoordinatesFromChange(change, direction);
   });
 };
 
-export const setKontekstEgenskaperForEntry = (
-  entry: GrenseTilhorighetEntry,
-  direction: HistoryDirection,
-) => {
+export const setKontekstEgenskaperForEntry = (entry: GrenseTilhorighetEntry, direction: HistoryDirection) => {
   entry.changes.forEach((change) => {
     const feature = getFeatureIfExists(change.id);
     if (!feature) return;

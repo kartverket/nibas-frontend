@@ -1,10 +1,6 @@
 import { Feature } from "ol";
 import LineString from "ol/geom/LineString";
-import {
-  GrenseArkiveringsEntry,
-  GrenseTilhorighetEntry,
-  MetadataEntry,
-} from "contexts/HistoryContext";
+import { GrenseArkiveringsEntry, GrenseTilhorighetEntry, MetadataEntry } from "contexts/HistoryContext";
 import { FeatureProperties, KontekstEgenskaper, Metadata } from "types/api";
 
 export const getDateInFriendlyString = (dateString?: string) => {
@@ -15,10 +11,7 @@ export const getDateInFriendlyString = (dateString?: string) => {
   return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
 };
 
-const updateFeatureWithNewMetadata = (
-  feature: Feature<LineString>,
-  newMetadata: Metadata,
-) => {
+const updateFeatureWithNewMetadata = (feature: Feature<LineString>, newMetadata: Metadata) => {
   const properties = feature.getProperties() as FeatureProperties;
   feature.setProperties({
     ...properties,

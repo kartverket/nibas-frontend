@@ -48,11 +48,7 @@ export default defineConfig(({ mode }) => {
           target: "https://prodtest.matrikkel.no",
           changeOrigin: true,
           headers: {
-            Authorization:
-              "Basic " +
-              new Buffer(matWfsUsername + ":" + matWfsPassword).toString(
-                "base64",
-              ),
+            Authorization: "Basic " + new Buffer(matWfsUsername + ":" + matWfsPassword).toString("base64"),
           },
         },
         "/skbaatts/req": {

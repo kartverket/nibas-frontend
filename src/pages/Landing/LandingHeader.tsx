@@ -3,8 +3,7 @@ import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { Button, Icon, Logo, Text } from "@kvib/react";
 
 const LandingHeader = () => {
-  const { isAuthenticatedFunc, handleLogoutFunc, tokenHolderFunc } =
-    useAuthenticationFlow();
+  const { isAuthenticatedFunc, handleLogoutFunc, tokenHolderFunc } = useAuthenticationFlow();
 
   const personId = tokenHolderFunc()?.personId;
 
@@ -17,12 +16,7 @@ const LandingHeader = () => {
         <Section>
           <LoginIcon icon="person" isFilled />
           {personId && <Text as="b">{personId.substring(0, 6) + "*****"}</Text>}
-          <Button
-            variant="secondary"
-            aria-label="Logg ut"
-            leftIcon="logout"
-            onClick={handleLogoutFunc}
-          >
+          <Button variant="secondary" aria-label="Logg ut" leftIcon="logout" onClick={handleLogoutFunc}>
             Logg ut
           </Button>
         </Section>

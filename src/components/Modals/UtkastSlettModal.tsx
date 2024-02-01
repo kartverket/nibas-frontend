@@ -68,13 +68,8 @@ const UtkastSlettModal = ({ isOpen, onClose, utkast }: Props) => {
           <Alert status="warning">
             <AlertIcon />
             <div>
-              <AlertTitle>
-                Ved å slette utkastet mister du alle endringene som er gjort i
-                utkastet.
-              </AlertTitle>
-              <AlertDescription>
-                Denne handlingen kan ikke angres.
-              </AlertDescription>
+              <AlertTitle>Ved å slette utkastet mister du alle endringene som er gjort i utkastet.</AlertTitle>
+              <AlertDescription>Denne handlingen kan ikke angres.</AlertDescription>
             </div>
           </Alert>
           <EndringsloggAccordion utkast={utkast} />
@@ -84,11 +79,7 @@ const UtkastSlettModal = ({ isOpen, onClose, utkast }: Props) => {
             <Button variant="tertiary" onClick={onClose}>
               Avbryt
             </Button>
-            <Button
-              colorScheme="red"
-              isLoading={isLoading}
-              onClick={slettUtkast}
-            >
+            <Button colorScheme="red" isLoading={isLoading} onClick={slettUtkast}>
               Slett utkast
             </Button>
           </ButtonGroup>

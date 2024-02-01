@@ -7,13 +7,9 @@ import { getIdFromEntity, fetcherWithToken } from "utils/api";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 import useKommuner from "./useKommuner";
 
-const kommunegrenserFetcher = async ([kommuneIds, token]: [
-  string[],
-  string | undefined,
-]) => {
-  const promises: Promise<FeatureCollection>[] = kommuneIds.map(
-    async (kommuneId) =>
-      fetcherWithToken([`/v1/kommuner/${kommuneId}/grenser`, token]),
+const kommunegrenserFetcher = async ([kommuneIds, token]: [string[], string | undefined]) => {
+  const promises: Promise<FeatureCollection>[] = kommuneIds.map(async (kommuneId) =>
+    fetcherWithToken([`/v1/kommuner/${kommuneId}/grenser`, token]),
   );
 
   const settledPromises = await Promise.allSettled(promises);

@@ -4,10 +4,7 @@ import { Geometry } from "ol/geom";
 import { Metadata } from "types/api";
 import { getGrenseDiscriminatorFromType } from "./grenser";
 
-export const setDefaultFeatureProperties = (
-  feature: Feature<Geometry>,
-  grenseType: GrenseType | undefined,
-) => {
+export const setDefaultFeatureProperties = (feature: Feature<Geometry>, grenseType: GrenseType | undefined) => {
   if (!grenseType) return;
 
   feature.setProperties({

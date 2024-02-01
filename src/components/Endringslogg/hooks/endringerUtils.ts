@@ -1,10 +1,6 @@
 import { addToList, removeNull } from "utils/list-utils";
 import { components } from "../../../types/api-gen";
-import {
-  GrunnkretsResponse,
-  StemmekretsResponse,
-  UtkastOperasjoner,
-} from "../../../types/api";
+import { GrunnkretsResponse, StemmekretsResponse, UtkastOperasjoner } from "../../../types/api";
 
 export type OperasjonerOrNull = UtkastOperasjoner | null | undefined;
 export const getKretserMedGrensejusteringer = (
@@ -17,30 +13,23 @@ export const getKretserMedGrensejusteringer = (
     return [];
   }
 
-  const endredeFeatures = removeNull(
-    Object.values(endredeFeaturesMap),
-  ) as components["schemas"]["Feature"][];
+  const endredeFeatures = removeNull(Object.values(endredeFeaturesMap)) as components["schemas"]["Feature"][];
 
   return removeNull(
     endredeFeatures
       .filter((feature) => feature.properties.kontekstEgenskaper !== null)
       .flatMap((feature) => {
-        const kontekstEgenskaperArray = Array.isArray(
-          feature.properties.kontekstEgenskaper,
-        )
+        const kontekstEgenskaperArray = Array.isArray(feature.properties.kontekstEgenskaper)
           ? feature.properties.kontekstEgenskaper
           : feature.properties.kontekstEgenskaper
             ? [feature.properties.kontekstEgenskaper]
             : [];
 
         const filteredKontekstEgenskaper = kontekstEgenskaperArray.filter(
-          (kontekstEgenskaper) =>
-            kontekstEgenskaper && kontekstEgenskaper.type === type,
+          (kontekstEgenskaper) => kontekstEgenskaper && kontekstEgenskaper.type === type,
         );
 
-        return filteredKontekstEgenskaper.map(
-          (kontekstEgenskaper) => kontekstEgenskaper.id?.lokalid?.value,
-        );
+        return filteredKontekstEgenskaper.map((kontekstEgenskaper) => kontekstEgenskaper.id?.lokalid?.value);
       }),
   );
 };
@@ -68,10 +57,7 @@ export function groupEndringerByKommune(
     }, {});
 }
 
-export function findKrets<T extends StemmekretsResponse | GrunnkretsResponse>(
-  id: string,
-  kretser: T[],
-): T {
+export function findKrets<T extends StemmekretsResponse | GrunnkretsResponse>(id: string, kretser: T[]): T {
   const resultat = kretser.find((krets) => krets.id.lokalid.value === id);
   if (resultat == null) {
     throw Error(

@@ -1,16 +1,6 @@
-import {
-  Icon,
-  MaterialSymbol,
-  Stack,
-  Text,
-  Tooltip,
-  TooltipProps,
-} from "@kvib/react";
+import { Icon, MaterialSymbol, Stack, Text, Tooltip, TooltipProps } from "@kvib/react";
 import { styled } from "styled-components";
-import {
-  KeyboardShortcuts,
-  Shortcut,
-} from "hooks/keyboard-shortcuts/keyboard-shortcuts";
+import { KeyboardShortcuts, Shortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
 
 type BodyProps = {
   text: string;
@@ -27,8 +17,7 @@ type ShortcutTextProps = {
 };
 
 const ShortcutText = ({ shortcut, holdButton }: ShortcutTextProps) => {
-  const shortcutString =
-    shortcut != null ? KeyboardShortcuts[shortcut].displayString : null;
+  const shortcutString = shortcut != null ? KeyboardShortcuts[shortcut].displayString : null;
 
   if (shortcutString && holdButton) {
     return (
@@ -44,12 +33,7 @@ const ShortcutText = ({ shortcut, holdButton }: ShortcutTextProps) => {
   return null;
 };
 
-export const TooltipBody = ({
-  text,
-  icon,
-  shortcut,
-  holdButton,
-}: BodyProps) => (
+export const TooltipBody = ({ text, icon, shortcut, holdButton }: BodyProps) => (
   <BodyWrapper>
     <IconText>
       {text}
@@ -60,27 +44,13 @@ export const TooltipBody = ({
   </BodyWrapper>
 );
 
-const CustomTooltip = ({
-  text,
-  icon,
-  shortcut,
-  children,
-  holdButton,
-  ...restProps
-}: Props) => {
+const CustomTooltip = ({ text, icon, shortcut, children, holdButton, ...restProps }: Props) => {
   return (
     <Tooltip
       hasArrow
       placement="top"
       {...restProps}
-      label={
-        <TooltipBody
-          text={text}
-          shortcut={shortcut}
-          holdButton={holdButton}
-          icon={icon}
-        />
-      }
+      label={<TooltipBody text={text} shortcut={shortcut} holdButton={holdButton} icon={icon} />}
     >
       <div>{children}</div>
     </Tooltip>

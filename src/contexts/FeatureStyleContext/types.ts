@@ -12,16 +12,10 @@ export type FeatureStyleContextValue = {
   selectedFeatures: SelectedFeatures;
   clearSelection: () => void;
   selectFeatures: (features: SelectedFeatures) => void;
-  selectPointOnFeature: (
-    coordinate: Coordinate,
-    features: SelectedFeatures,
-  ) => void;
+  selectPointOnFeature: (coordinate: Coordinate, features: SelectedFeatures) => void;
 
   setAndSaveUtkastFeatures: (features: string[]) => void;
-  setAndSaveSammenslaaingsFeatures: (
-    features: string[],
-    overlappingFeatures: string[],
-  ) => void;
+  setAndSaveSammenslaaingsFeatures: (features: string[], overlappingFeatures: string[]) => void;
   clearFeatureStyles: () => void;
 
   featureIsEditable: (feature: FeatureLike) => boolean;

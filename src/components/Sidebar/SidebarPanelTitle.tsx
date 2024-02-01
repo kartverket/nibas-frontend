@@ -12,11 +12,7 @@ const SidebarPanelTitle = ({ title, closePanel }: Props) => {
       <Heading as="h2" size="md">
         {title}
       </Heading>
-      <CloseButton
-        onClick={closePanel}
-        aria-label={`Lukk ${title}`}
-        size="lg"
-      />
+      <CloseButton onClick={closePanel} aria-label={`Lukk ${title}`} size="lg" />
     </TitleWrapper>
   );
 };

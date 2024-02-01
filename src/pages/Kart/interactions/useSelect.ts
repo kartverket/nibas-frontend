@@ -19,15 +19,8 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 const useSelect = () => {
   const toast = useToast();
   const { activeTool } = useToolbar();
-  const {
-    selectFeatures,
-    selectedFeatures,
-    clearSelection,
-    featureIsArchived,
-    featureIsEditable,
-  } = useFeatureStyle();
-  const { activeOverlayPanel, closeOverlayPanel, openOverlayPanel } =
-    useOverlayPanel();
+  const { selectFeatures, selectedFeatures, clearSelection, featureIsArchived, featureIsEditable } = useFeatureStyle();
+  const { activeOverlayPanel, closeOverlayPanel, openOverlayPanel } = useOverlayPanel();
   const previousPointMode = usePrevious(activeTool);
   const { getActiveFeaturesAtPixel } = useGetFeatures();
 
@@ -42,14 +35,7 @@ const useSelect = () => {
         closeOverlayPanel();
       }
     }
-  }, [
-    activeOverlayPanel,
-    activeTool,
-    clearSelection,
-    closeOverlayPanel,
-    previousPointMode,
-    selectedFeatures.length,
-  ]);
+  }, [activeOverlayPanel, activeTool, clearSelection, closeOverlayPanel, previousPointMode, selectedFeatures.length]);
 
   const select = (event: MapBrowserEvent<MouseEvent>) => {
     if (allowedPointModes.includes(activeTool) && !event.dragging) {
@@ -67,10 +53,7 @@ const useSelect = () => {
       const clickedFeature = filteredFeatures[0] as Feature<LineString>;
 
       // I noen verktøy skal man ikke kunne velge ikke-redigerbare grenser
-      if (
-        dangerousPointModes.includes(activeTool) &&
-        !featureIsEditable(clickedFeature)
-      ) {
+      if (dangerousPointModes.includes(activeTool) && !featureIsEditable(clickedFeature)) {
         toast({ status: "error", title: "Denne grensen er ikke redigerbar" });
         event.stopPropagation();
         return;
@@ -90,10 +73,7 @@ const useSelect = () => {
         }
 
         // Dersom vi er i split-modus og allerede har valgt denne grensen
-        if (
-          selectedFeatures.length === 1 &&
-          clickedFeature.getId() === selectedFeatures[0].getId()
-        ) {
+        if (selectedFeatures.length === 1 && clickedFeature.getId() === selectedFeatures[0].getId()) {
           // ...ønsker vi å returnere tidlig og la eventet propagere til selectPoint
           return;
         }

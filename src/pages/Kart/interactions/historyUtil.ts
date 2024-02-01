@@ -12,10 +12,7 @@ export const getInfoFromFeature = (featureLike: FeatureLike) => {
   return { coordinates: geometry.getCoordinates(), featureId };
 };
 
-export const createGrenseHistoryChange = (
-  features: Feature[],
-  grenseType?: GrenseType,
-) => {
+export const createGrenseHistoryChange = (features: Feature[], grenseType?: GrenseType) => {
   const changes: HistoryChange<MinimalGrense>[] = [];
 
   features.forEach((feature) => {
@@ -43,10 +40,7 @@ export const createGrenseHistoryChange = (
   return changes;
 };
 
-export const createNyGrenseHistoryChanges = (
-  features: Feature[],
-  grenseType?: GrenseType,
-) => {
+export const createNyGrenseHistoryChanges = (features: Feature[], grenseType?: GrenseType) => {
   const changes: HistoryChange<MinimalGrense & Metadata>[] = [];
 
   features.forEach((feature) => {

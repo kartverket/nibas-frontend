@@ -24,12 +24,7 @@ const calculateFeaturesExtent = (features: Feature<Geometry>[]) => {
     if (!featureExtent) return acc;
 
     if (!acc) {
-      return [
-        featureExtent[0],
-        featureExtent[1],
-        featureExtent[2],
-        featureExtent[3],
-      ];
+      return [featureExtent[0], featureExtent[1], featureExtent[2], featureExtent[3]];
     }
 
     return [
@@ -70,10 +65,7 @@ export const getAllVisibleFeatures = () => {
   });
 };
 
-export const getZoomMode = (
-  isEditing: boolean,
-  hasEditingInMap: boolean,
-): "edit" | "view" | "none" => {
+export const getZoomMode = (isEditing: boolean, hasEditingInMap: boolean): "edit" | "view" | "none" => {
   if (isEditing) {
     return "edit";
   }
@@ -90,18 +82,13 @@ export const isCoordinateEqual = (a: Coordinate, b: Coordinate) => {
 };
 
 /** Sjekker om en feature har et punkt på gitt koordinat */
-const isFeatureConnectedToCoordinate = (
-  feature: FeatureLike,
-  coordinate: Coordinate,
-): boolean => {
+const isFeatureConnectedToCoordinate = (feature: FeatureLike, coordinate: Coordinate): boolean => {
   // TODO: dersom featuren er arkivert skal den alltid returnere false?
   if (feature instanceof Feature) {
     const geometry = feature.getGeometry();
     if (geometry instanceof LineString) {
       const featureCoordinates = geometry?.getCoordinates();
-      return featureCoordinates.some((featureCoordinate) =>
-        isCoordinateEqual(featureCoordinate, coordinate),
-      );
+      return featureCoordinates.some((featureCoordinate) => isCoordinateEqual(featureCoordinate, coordinate));
     }
   }
   return false;
@@ -122,12 +109,8 @@ export const isFeatureDeadEnd = (feature: Feature<Geometry>) => {
     .getFeaturesAtPixel(map.getPixelFromCoordinate(tail))
     .filter((tailFeature) => tailFeature.getId() !== feature.getId());
 
-  const headConnected = headFeatures.some((f) =>
-    isFeatureConnectedToCoordinate(f, head),
-  );
-  const tailConnected = tailFeatures.some((f) =>
-    isFeatureConnectedToCoordinate(f, tail),
-  );
+  const headConnected = headFeatures.some((f) => isFeatureConnectedToCoordinate(f, head));
+  const tailConnected = tailFeatures.some((f) => isFeatureConnectedToCoordinate(f, tail));
 
   return !(headConnected && tailConnected);
 };
@@ -142,10 +125,7 @@ export const pixelDistance = (coord1: Coordinate, coord2: Coordinate) => {
   return Math.sqrt(squaredPixelDistance);
 };
 
-export const findNearbyVertexOnFeature = (
-  feature: Feature<LineString>,
-  coordinate: Coordinate,
-): Coordinate | null => {
+export const findNearbyVertexOnFeature = (feature: Feature<LineString>, coordinate: Coordinate): Coordinate | null => {
   const geometry = feature.getGeometry() as LineString;
   const coordinates = geometry.getCoordinates();
 

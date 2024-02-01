@@ -1,15 +1,9 @@
 import { useState } from "react";
-import {
-  getArchiveLayerStyle,
-  grenseStyles,
-  setFeatureStyle,
-} from "utils/map/layerStyles";
+import { getArchiveLayerStyle, grenseStyles, setFeatureStyle } from "utils/map/layerStyles";
 
 const useArchiveStyles = () => {
   const [archivedFeatureIds, setArchivedFeatureIds] = useState<string[]>([]);
-  const [savedArchivedFeatureIds, setSavedArchivedFeatureIds] = useState<
-    string[]
-  >([]);
+  const [savedArchivedFeatureIds, setSavedArchivedFeatureIds] = useState<string[]>([]);
 
   // TODO: denne bør være felles for både dirty og archive, fordi den gjør mer magi
   const setArchivedFeaturesToEdit = (features: string[]) => {
@@ -18,9 +12,7 @@ const useArchiveStyles = () => {
         setFeatureStyle(featureId, grenseStyles.edit);
       }
     }
-    setArchivedFeatureIds(
-      archivedFeatureIds.filter((afi) => !features.includes(afi)),
-    );
+    setArchivedFeatureIds(archivedFeatureIds.filter((afi) => !features.includes(afi)));
   };
 
   const setArchivedFeatures = (features: string[]) => {
@@ -34,10 +26,7 @@ const useArchiveStyles = () => {
   };
 
   const saveArchivedFeatureIds = () => {
-    setSavedArchivedFeatureIds([
-      ...savedArchivedFeatureIds,
-      ...archivedFeatureIds,
-    ]);
+    setSavedArchivedFeatureIds([...savedArchivedFeatureIds, ...archivedFeatureIds]);
     setArchivedFeatureIds([]);
   };
 

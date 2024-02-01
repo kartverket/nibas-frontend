@@ -6,11 +6,7 @@ export type TegnforklaringProps = {
   text: string;
 };
 
-export const Tegnforklaring = ({
-  color,
-  dotted,
-  text,
-}: TegnforklaringProps) => {
+export const Tegnforklaring = ({ color, dotted, text }: TegnforklaringProps) => {
   return (
     <Wrapper>
       <LineWrapper>
@@ -44,6 +40,5 @@ type LineProps = {
 
 const Line = styled.div<LineProps>`
   margin-top: 12px;
-  border-bottom: ${(props) =>
-    `4px ${props.$dotted ? "dotted" : "solid"} ${props.$color}`};
+  border-bottom: ${(props) => `4px ${props.$dotted ? "dotted" : "solid"} ${props.$color}`};
 `;

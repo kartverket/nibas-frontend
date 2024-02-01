@@ -2,11 +2,7 @@ import { styled, css } from "styled-components";
 import { Accordion, AccordionPanel } from "@kvib/react";
 import { MappedLayer } from "utils/getLayersFromWMS";
 import KartlagInner from "./KartlagInner";
-import {
-  KartlagAccordionItem,
-  KartlagAccordionButton,
-  KartlagAccordionIcon,
-} from "./components";
+import { KartlagAccordionItem, KartlagAccordionButton, KartlagAccordionIcon } from "./components";
 
 type Props = {
   mappedLayer: MappedLayer;
@@ -25,11 +21,7 @@ const KartlagMiddle = ({ mappedLayer, isNested = false }: Props) => {
         <KartlagAccordionPanel $isNested={isNested}>
           {mappedLayer.layers.map((subLayer) =>
             subLayer.layers.length > 0 ? (
-              <KartlagMiddle
-                key={subLayer.id}
-                mappedLayer={subLayer}
-                isNested
-              />
+              <KartlagMiddle key={subLayer.id} mappedLayer={subLayer} isNested />
             ) : (
               <KartlagInner key={subLayer.id} mappedLayer={subLayer} />
             ),

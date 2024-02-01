@@ -24,11 +24,7 @@ const authSwrConfig: SWRConfiguration = {
 export const useAuthorization = (): AuthHookReturnValue => {
   const { isAuthenticatedFunc } = useAuthenticationFlow();
   const isAuthenticated = isAuthenticatedFunc();
-  const { data, error } = useNibasApi(
-    isAuthenticated ? "/v1/authz/status" : null,
-    undefined,
-    authSwrConfig,
-  );
+  const { data, error } = useNibasApi(isAuthenticated ? "/v1/authz/status" : null, undefined, authSwrConfig);
 
   if (!isAuthenticated) {
     return {

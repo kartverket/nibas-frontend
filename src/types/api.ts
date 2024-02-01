@@ -12,12 +12,9 @@ export type InndelingerKontekst = {
 };
 
 // renaming av typer fra generert api doc
-export type AdministrativEnhetNavn =
-  components["schemas"]["AdministrativEnhetNavn"];
-export type AdministrativGrenseMetadata =
-  components["schemas"]["AdministrativGrenseMetadata"];
-export type AvtaltAvgrensningslinjeMetadata =
-  components["schemas"]["AvtaltAvgrensningslinjeMetadata"];
+export type AdministrativEnhetNavn = components["schemas"]["AdministrativEnhetNavn"];
+export type AdministrativGrenseMetadata = components["schemas"]["AdministrativGrenseMetadata"];
+export type AvtaltAvgrensningslinjeMetadata = components["schemas"]["AvtaltAvgrensningslinjeMetadata"];
 export type CommonMetadata = components["schemas"]["CommonMetadata"];
 export type Dokref = components["schemas"]["Dokref"];
 export type FeatureCollection = components["schemas"]["FeatureCollection"];
@@ -43,34 +40,27 @@ export type NasjonRequest = components["schemas"]["NasjonRequest"];
 export type NasjonResponse = components["schemas"]["NasjonResponse"];
 export type Posisjonskvalitet = components["schemas"]["Posisjonskvalitet"];
 export type RiksgrenseMetadata = components["schemas"]["RiksgrenseMetadata"];
-export type TerritorialgrenseMetadata =
-  components["schemas"]["TerritorialgrenseMetadata"];
-export type CommonGrenseMetadata =
-  components["schemas"]["CommonGrenseMetadata"];
+export type TerritorialgrenseMetadata = components["schemas"]["TerritorialgrenseMetadata"];
+export type CommonGrenseMetadata = components["schemas"]["CommonGrenseMetadata"];
 export type GrunnkretsRef = components["schemas"]["GrunnkretsRef"];
 export type GrunnkretsRequest = components["schemas"]["GrunnkretsRequest"];
 export type GrunnkretsResponse = components["schemas"]["GrunnkretsResponse"];
-export type StatistiskgrenseMetadata =
-  components["schemas"]["StatistiskgrenseMetadata"];
+export type StatistiskgrenseMetadata = components["schemas"]["StatistiskgrenseMetadata"];
 export type StemmekretsRef = components["schemas"]["StemmekretsRef"];
 export type StemmekretsResponse = components["schemas"]["StemmekretsResponse"];
 export type StemmekretsRequest = components["schemas"]["StemmekretsRequest"];
-export type StemmekretsSammenslaaingsendringRequest =
-  components["schemas"]["StemmekretsSammenslaaingsendringRequest"];
-export type StatistiskGrenseMetadata =
-  components["schemas"]["StatistiskgrenseMetadata"] & {
-    dokumentasjonsreferanser: undefined;
-  };
+export type StemmekretsSammenslaaingsendringRequest = components["schemas"]["StemmekretsSammenslaaingsendringRequest"];
+export type StatistiskGrenseMetadata = components["schemas"]["StatistiskgrenseMetadata"] & {
+  dokumentasjonsreferanser: undefined;
+};
 export type ObjektIdentifikator = components["schemas"]["ObjektIdentifikator"];
-export type OpprettUtkastRequest =
-  components["schemas"]["OpprettUtkastRequest"];
-export type OppdaterUtkastRequest =
-  components["schemas"]["OppdaterUtkastRequest"];
+export type OpprettUtkastRequest = components["schemas"]["OpprettUtkastRequest"];
+export type OppdaterUtkastRequest = components["schemas"]["OppdaterUtkastRequest"];
 export type UtkastResponse = components["schemas"]["UtkastResponse"];
 export type UtkastRef = components["schemas"]["UtkastRef"];
-export type UtkastMetadataendringer =
-  components["schemas"]["Metadataendringer"];
+export type UtkastMetadataendringer = components["schemas"]["Metadataendringer"];
 export type UtkastGrenseendringer = components["schemas"]["Grenseendringer"];
+export type KretsDelingEndringRequest = components["schemas"]["KretsDelingEndringRequest"];
 export type Point = components["schemas"]["Point"];
 export type ApiErrorResponse = components["schemas"]["ApiErrorResponse"];
 

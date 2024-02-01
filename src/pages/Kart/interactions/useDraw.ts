@@ -55,10 +55,7 @@ const useDraw = () => {
             const firstCoordinate = geometry.getFirstCoordinate();
             const lastCoordinate = geometry.getLastCoordinate();
 
-            const clickedCoordinate = findNearbyVertexOnFeature(
-              feature,
-              event.coordinate,
-            );
+            const clickedCoordinate = findNearbyVertexOnFeature(feature, event.coordinate);
 
             if (!clickedCoordinate) {
               isAllowedOperation = false;
@@ -79,8 +76,7 @@ const useDraw = () => {
           if (!isAllowedOperation) {
             toast({
               status: "warning",
-              title:
-                "Nye grensepunkter kan kun plasseres på en eksisterende grenses endepunkter",
+              title: "Nye grensepunkter kan kun plasseres på en eksisterende grenses endepunkter",
             });
             return false;
           }
@@ -102,10 +98,7 @@ const useDraw = () => {
       if (drawnFeature) {
         addHistoryEntry({
           type: "nygrense",
-          changes: createNyGrenseHistoryChanges(
-            [drawnFeature],
-            getGrenseTypeFromEditingType(editingType) || undefined,
-          ),
+          changes: createNyGrenseHistoryChanges([drawnFeature], getGrenseTypeFromEditingType(editingType) || undefined),
         });
       }
     };
@@ -118,18 +111,14 @@ const useDraw = () => {
       if (!editingType) return;
 
       drawnFeature.setId(getTempFeatureId());
-      setDefaultFeatureProperties(
-        drawnFeature,
-        getGrenseTypeFromEditingType(editingType),
-      );
+      setDefaultFeatureProperties(drawnFeature, getGrenseTypeFromEditingType(editingType));
 
       addDrawToHistory(drawnFeature);
 
       toast({
         status: "success",
         title: "Grensen ble lagt til i kartet",
-        description:
-          "Grense lagt til med standardmetadata. Husk at du må sette tilhørighet på nye grenser.",
+        description: "Grense lagt til med standardmetadata. Husk at du må sette tilhørighet på nye grenser.",
       });
 
       openOverlayPanel("metadata");
@@ -147,15 +136,7 @@ const useDraw = () => {
     return () => {
       draw.un("drawend", onDrawEnd);
     };
-  }, [
-    addHistoryEntry,
-    draw,
-    getCurrentlyEditingType,
-    openOverlayPanel,
-    selectFeatures,
-    selectedFeatures,
-    toast,
-  ]);
+  }, [addHistoryEntry, draw, getCurrentlyEditingType, openOverlayPanel, selectFeatures, selectedFeatures, toast]);
 
   return { draw };
 };
