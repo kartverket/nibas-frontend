@@ -1,37 +1,35 @@
 import { ApiErrorResponse } from "../types/api";
 
 type ApiEntity = {
-  id: {
-    lokalid: {
-      value: string;
+    id: {
+        lokalid: {
+            value: string;
+        };
     };
-  };
 };
 
 type ApiEntityWithIdentifikasjon = {
-  identifikasjon: {
-    lokalid: string;
-  };
+    identifikasjon: {
+        lokalid: string;
+    };
 };
 
-export const getIdFromEntity = (
-  entity: ApiEntity | ApiEntityWithIdentifikasjon,
-) => {
-  if ((entity as ApiEntityWithIdentifikasjon).identifikasjon) {
-    return (entity as ApiEntityWithIdentifikasjon).identifikasjon.lokalid;
-  } else if ((entity as ApiEntity).id) {
-    return (entity as ApiEntity).id.lokalid.value;
-  }
+export const getIdFromEntity = (entity: ApiEntity | ApiEntityWithIdentifikasjon) => {
+    if ((entity as ApiEntityWithIdentifikasjon).identifikasjon) {
+        return (entity as ApiEntityWithIdentifikasjon).identifikasjon.lokalid;
+    } else if ((entity as ApiEntity).id) {
+        return (entity as ApiEntity).id.lokalid.value;
+    }
 
-  return "";
+    return "";
 };
 
 class ResponseError extends Error {
-  response: Response;
-  constructor(message: string, response: Response) {
-    super(message);
-    this.response = response;
-  }
+    response: Response;
+    constructor(message: string, response: Response) {
+        super(message);
+        this.response = response;
+    }
 }
 
 /**
@@ -44,46 +42,43 @@ class ResponseError extends Error {
  * @returns En string som er en gyldig URI for gitt path.
  */
 export const getUrlForPath = (path: string): string => {
-  const baseUrl = document.location.origin ?? "http://localhost:3000";
+    const baseUrl = document.location.origin ?? "http://localhost:3000";
 
-  if (path.startsWith("http")) {
-    return path;
-  }
+    if (path.startsWith("http")) {
+        return path;
+    }
 
-  if (path.startsWith("/")) {
-    return baseUrl + path;
-  }
-  return `${baseUrl}/${path}`;
+    if (path.startsWith("/")) {
+        return baseUrl + path;
+    }
+    return `${baseUrl}/${path}`;
 };
 
-export const fetcherWithToken = async ([url, token]: [
-  string | null,
-  string | undefined,
-]) => {
-  if (!url) return;
+export const fetcherWithToken = async ([url, token]: [string | null, string | undefined]) => {
+    if (!url) return;
 
-  const res = await fetch(getUrlForPath(url), {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+    const res = await fetch(getUrlForPath(url), {
+        headers: { Authorization: `Bearer ${token}` },
+    });
 
-  if (!res.ok) {
-    throw new ResponseError("Fikk ikke hentet data.", res);
-  }
+    if (!res.ok) {
+        throw new ResponseError("Fikk ikke hentet data.", res);
+    }
 
-  return res.json();
+    return res.json();
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isApiError = (err: any): err is ApiErrorResponse => {
-  return err.errorCode != null && err.errorDescription != null;
+    return err.errorCode != null && err.errorDescription != null;
 };
 
 export const statusCode = {
-  isInformational: (code: number) => code >= 100 && code < 200,
-  isSuccessful: (code: number) => code >= 200 && code < 300,
-  isConflict: (code: number) => code === 409,
-  isRedirection: (code: number) => code >= 300 && code < 400,
-  isClientError: (code: number) => code >= 400 && code < 500,
-  isServerError: (code: number) => code >= 500 && code < 600,
-  isError: (code: number) => code >= 400 && code < 600,
+    isInformational: (code: number) => code >= 100 && code < 200,
+    isSuccessful: (code: number) => code >= 200 && code < 300,
+    isConflict: (code: number) => code === 409,
+    isRedirection: (code: number) => code >= 300 && code < 400,
+    isClientError: (code: number) => code >= 400 && code < 500,
+    isServerError: (code: number) => code >= 500 && code < 600,
+    isError: (code: number) => code >= 400 && code < 600,
 };

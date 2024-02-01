@@ -8,106 +8,94 @@ import { getFeatureId, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { getZoomMode } from "utils/map";
 
 export const useEditGrenseValue = (kretsType: EditingType, kretsId: string) => {
-  const context = useContext(EditGrenserContext);
+    const context = useContext(EditGrenserContext);
 
-  if (!context) {
-    throw new Error(
-      "useIsEditingGrense must be used within a EditGrenserProvider",
-    );
-  }
+    if (!context) {
+        throw new Error("useIsEditingGrense must be used within a EditGrenserProvider");
+    }
 
-  const kretsStatus = context.alleKretserStatuser[kretsType]?.[kretsId] ?? {};
+    const kretsStatus = context.alleKretserStatuser[kretsType]?.[kretsId] ?? {};
 
-  const setKretsStatus = (newStatus: KretsStatus) => {
-    context.setKretsStatus(kretsType, kretsId, newStatus);
-  };
-
-  return { kretsStatus, setKretsStatus };
-};
-
-export const useEditGrense = (
-  kretsType: EditingType,
-  kretsId: string,
-  features: Feature<Geometry>[] | null,
-) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const context = useContext(EditGrenserContext);
-
-  const { resetAndClearAllLayers } = useEditGrenser(kretsType);
-  const { kretsStatus, setKretsStatus } = useEditGrenseValue(
-    kretsType,
-    kretsId,
-  );
-  const { addFeaturesToLayer } = useAsyncFeatures(
-    features,
-    getZoomMode(
-      !!kretsStatus.editing,
-      context?.getCurrentlyEditingType() != null,
-    ),
-    () => setIsLoading(false),
-  );
-
-  const toggleVisible = () => {
-    setIsLoading(true);
-    const newKretsStatus = {
-      ...kretsStatus,
-      visible: !kretsStatus.visible,
+    const setKretsStatus = (newStatus: KretsStatus) => {
+        context.setKretsStatus(kretsType, kretsId, newStatus);
     };
 
-    setKretsStatus(newKretsStatus);
+    return { kretsStatus, setKretsStatus };
+};
 
-    if (!newKretsStatus.visible) {
-      if (!features) return;
+export const useEditGrense = (kretsType: EditingType, kretsId: string, features: Feature<Geometry>[] | null) => {
+    const [isLoading, setIsLoading] = useState(false);
+    const context = useContext(EditGrenserContext);
 
-      if (newKretsStatus?.editing) {
-        removeFeaturesFromSourceByIds("edit", features.map(getFeatureId));
-      } else {
-        removeFeaturesFromSourceByIds(kretsType, features.map(getFeatureId));
-      }
-      setIsLoading(false);
-    } else if (newKretsStatus?.editing) {
-      // hvis editing skal features legges tilbake til edit-laget
-      addFeaturesToLayer("edit");
-    } else {
-      addFeaturesToLayer(kretsType);
-    }
-  };
+    const { resetAndClearAllLayers } = useEditGrenser(kretsType);
+    const { kretsStatus, setKretsStatus } = useEditGrenseValue(kretsType, kretsId);
+    const { addFeaturesToLayer } = useAsyncFeatures(
+        features,
+        getZoomMode(!!kretsStatus.editing, context?.getCurrentlyEditingType() != null),
+        () => setIsLoading(false),
+    );
 
-  const toggleEditing = async () => {
-    const newKretsStatus = { ...kretsStatus };
+    const toggleVisible = () => {
+        setIsLoading(true);
+        const newKretsStatus = {
+            ...kretsStatus,
+            visible: !kretsStatus.visible,
+        };
 
-    resetAndClearAllLayers();
+        setKretsStatus(newKretsStatus);
 
-    newKretsStatus.editing = !newKretsStatus.editing;
+        if (!newKretsStatus.visible) {
+            if (!features) return;
 
-    if (kretsStatus.visible && !kretsStatus.editing) {
-      newKretsStatus.visible = true;
-    } else if (!kretsStatus.visible && kretsStatus.editing) {
-      newKretsStatus.visible = false;
-    } else {
-      newKretsStatus.visible = !newKretsStatus.visible;
-    }
+            if (newKretsStatus?.editing) {
+                removeFeaturesFromSourceByIds("edit", features.map(getFeatureId));
+            } else {
+                removeFeaturesFromSourceByIds(kretsType, features.map(getFeatureId));
+            }
+            setIsLoading(false);
+        } else if (newKretsStatus?.editing) {
+            // hvis editing skal features legges tilbake til edit-laget
+            addFeaturesToLayer("edit");
+        } else {
+            addFeaturesToLayer(kretsType);
+        }
+    };
 
-    setKretsStatus(newKretsStatus);
+    const toggleEditing = async () => {
+        const newKretsStatus = { ...kretsStatus };
 
-    if (newKretsStatus.visible) {
-      // legg til i edit fordi dette er etter checkbox click
-      addFeaturesToLayer("edit");
+        resetAndClearAllLayers();
 
-      // hvis var synlig før editing ble true, fjern fra gamle layer
-      if (!kretsStatus?.visible || !features) return;
+        newKretsStatus.editing = !newKretsStatus.editing;
 
-      removeFeaturesFromSourceByIds(kretsType, features.map(getFeatureId));
-    } else if (!newKretsStatus.editing) {
-      if (!features) return;
-      removeFeaturesFromSourceByIds("edit", features.map(getFeatureId));
-    }
-  };
+        if (kretsStatus.visible && !kretsStatus.editing) {
+            newKretsStatus.visible = true;
+        } else if (!kretsStatus.visible && kretsStatus.editing) {
+            newKretsStatus.visible = false;
+        } else {
+            newKretsStatus.visible = !newKretsStatus.visible;
+        }
 
-  return {
-    kretsStatus,
-    toggleEditing,
-    toggleVisible,
-    isLoading,
-  };
+        setKretsStatus(newKretsStatus);
+
+        if (newKretsStatus.visible) {
+            // legg til i edit fordi dette er etter checkbox click
+            addFeaturesToLayer("edit");
+
+            // hvis var synlig før editing ble true, fjern fra gamle layer
+            if (!kretsStatus?.visible || !features) return;
+
+            removeFeaturesFromSourceByIds(kretsType, features.map(getFeatureId));
+        } else if (!newKretsStatus.editing) {
+            if (!features) return;
+            removeFeaturesFromSourceByIds("edit", features.map(getFeatureId));
+        }
+    };
+
+    return {
+        kretsStatus,
+        toggleEditing,
+        toggleVisible,
+        isLoading,
+    };
 };

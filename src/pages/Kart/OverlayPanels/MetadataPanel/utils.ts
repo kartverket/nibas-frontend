@@ -1,107 +1,100 @@
 import { Feature } from "ol";
 import LineString from "ol/geom/LineString";
-import {
-  GrenseArkiveringsEntry,
-  GrenseTilhorighetEntry,
-  MetadataEntry,
-} from "contexts/HistoryContext";
+import { GrenseArkiveringsEntry, GrenseTilhorighetEntry, MetadataEntry } from "contexts/HistoryContext";
 import { FeatureProperties, KontekstEgenskaper, Metadata } from "types/api";
 
 export const getDateInFriendlyString = (dateString?: string) => {
-  if (!dateString) return null;
+    if (!dateString) return null;
 
-  const date = new Date(dateString);
+    const date = new Date(dateString);
 
-  return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+    return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
 };
 
-const updateFeatureWithNewMetadata = (
-  feature: Feature<LineString>,
-  newMetadata: Metadata,
-) => {
-  const properties = feature.getProperties() as FeatureProperties;
-  feature.setProperties({
-    ...properties,
-    metadata: newMetadata,
-  });
+const updateFeatureWithNewMetadata = (feature: Feature<LineString>, newMetadata: Metadata) => {
+    const properties = feature.getProperties() as FeatureProperties;
+    feature.setProperties({
+        ...properties,
+        metadata: newMetadata,
+    });
 };
 
 export const addMetadataEntryFromFeature = (
-  feature: Feature<LineString>,
-  addHistoryEntry: (entry: MetadataEntry) => void,
-  updatedMetadata: Metadata,
+    feature: Feature<LineString>,
+    addHistoryEntry: (entry: MetadataEntry) => void,
+    updatedMetadata: Metadata,
 ) => {
-  const id = feature.getId();
+    const id = feature.getId();
 
-  if (!id) return;
+    if (!id) return;
 
-  const oldMetadata = feature.getProperties().metadata as Metadata;
+    const oldMetadata = feature.getProperties().metadata as Metadata;
 
-  updateFeatureWithNewMetadata(feature as Feature<LineString>, updatedMetadata);
+    updateFeatureWithNewMetadata(feature as Feature<LineString>, updatedMetadata);
 
-  addHistoryEntry({
-    type: "metadata",
-    changes: [
-      {
-        id: id as string,
-        from: oldMetadata,
-        to: feature.getProperties().metadata as Metadata,
-      },
-    ],
-  });
+    addHistoryEntry({
+        type: "metadata",
+        changes: [
+            {
+                id: id as string,
+                from: oldMetadata,
+                to: feature.getProperties().metadata as Metadata,
+            },
+        ],
+    });
 };
 
 export const addArchivingEntryFromFeature = (
-  feature: Feature<LineString>,
-  addHistoryEntry: (entry: GrenseArkiveringsEntry) => void,
+    feature: Feature<LineString>,
+    addHistoryEntry: (entry: GrenseArkiveringsEntry) => void,
 ) => {
-  const id = feature.getId();
-  if (!id) return;
+    const id = feature.getId();
+    if (!id) return;
 
-  const oldProperties = feature.getProperties() as FeatureProperties;
-  const newProperties: FeatureProperties = {
-    ...oldProperties,
-    shouldArchive: true,
-  };
-  feature.setProperties(newProperties);
+    const oldProperties = feature.getProperties() as FeatureProperties;
+    const newProperties: FeatureProperties = {
+        ...oldProperties,
+        shouldArchive: true,
+    };
+    feature.setProperties(newProperties);
 
-  addHistoryEntry({
-    type: "grensearkivering",
-    changes: [
-      {
-        id: id as string,
-        from: oldProperties,
-        to: newProperties,
-      },
-    ],
-  });
+    addHistoryEntry({
+        type: "grensearkivering",
+        changes: [
+            {
+                id: id as string,
+                from: oldProperties,
+                to: newProperties,
+            },
+        ],
+    });
 };
 
 export const addKontekstEntryFromFeature = (
-  feature: Feature<LineString>,
-  updatedKontekstEgenskaper: KontekstEgenskaper[],
-  addHistoryEntry: (entry: GrenseTilhorighetEntry) => void,
+    feature: Feature<LineString>,
+    updatedKontekstEgenskaper: KontekstEgenskaper[],
+    addHistoryEntry: (entry: GrenseTilhorighetEntry) => void,
 ) => {
-  const id = feature.getId();
-  if (!id) return;
+    const id = feature.getId();
+    if (!id) return;
 
-  const oldProperties = feature.getProperties() as FeatureProperties;
-  const oldKontekstEgenskaper = oldProperties.kontekstEgenskaper;
-  if (!oldKontekstEgenskaper) return;
-  const newProperties: FeatureProperties = {
-    ...oldProperties,
-    kontekstEgenskaper: updatedKontekstEgenskaper,
-  };
-  feature.setProperties(newProperties);
+    const oldProperties = feature.getProperties() as FeatureProperties;
+    const oldKontekstEgenskaper = oldProperties.kontekstEgenskaper;
+    if (!oldKontekstEgenskaper) return;
+    const newProperties: FeatureProperties = {
+        ...oldProperties,
+        kontekstEgenskaper: updatedKontekstEgenskaper,
+    };
+    feature.setProperties(newProperties);
 
-  addHistoryEntry({
-    type: "grensetilhorighetendring",
-    changes: [
-      {
-        id: id as string,
-        from: oldKontekstEgenskaper,
-        to: updatedKontekstEgenskaper,
-      },
-    ],
-  });
+    addHistoryEntry({
+        type: "grensetilhorighetendring",
+        changes: [
+            {
+                id: id as string,
+                from: oldKontekstEgenskaper,
+                to: updatedKontekstEgenskaper,
+            },
+        ],
+    });
 };

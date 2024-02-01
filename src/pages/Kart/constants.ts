@@ -12,37 +12,37 @@ export const initialMapZoom = 6;
 
 // referansene til DOM elementer på objektene under gjøres i Kart.tsx
 export const map = new Map({
-  view: new View({
-    zoom: initialMapZoom,
-    minZoom: initialMapZoom,
-    maxZoom: 30,
-    center: initialMapCenter,
-    projection: "EPSG:25833",
-  }),
-  layers: [],
-  controls: [],
-  overlays: [],
-  keyboardEventTarget: window.document,
-  interactions: defaults({ dragPan: false }),
+    view: new View({
+        zoom: initialMapZoom,
+        minZoom: initialMapZoom,
+        maxZoom: 30,
+        center: initialMapCenter,
+        projection: "EPSG:25833",
+    }),
+    layers: [],
+    controls: [],
+    overlays: [],
+    keyboardEventTarget: window.document,
+    interactions: defaults({ dragPan: false }),
 });
 
 export const overlayPopup = new Overlay({
-  autoPan: {
-    animation: {
-      duration: 250,
+    autoPan: {
+        animation: {
+            duration: 250,
+        },
     },
-  },
-  offset: [0, 0],
+    offset: [0, 0],
 });
 
 export const endringstyper = [
-  "Vedtatt grensejustering",
-  "Vedtatt sammenslåing",
-  "Vedtatt deling",
-  "Fastsetting",
-  "Kvalitetsheving",
-  "Navneendring",
-  "Nummerendring",
-  "Retting",
+    "Vedtatt grensejustering",
+    "Vedtatt sammenslåing",
+    "Vedtatt deling",
+    "Fastsetting",
+    "Kvalitetsheving",
+    "Navneendring",
+    "Nummerendring",
+    "Retting",
 ] as const;
 export type Endringstype = (typeof endringstyper)[number];

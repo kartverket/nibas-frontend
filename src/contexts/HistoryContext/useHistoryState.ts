@@ -2,94 +2,89 @@ import { useCallback, useState } from "react";
 import { HistoryState, HistoryEntry } from "./types";
 
 type Options = {
-  onUndo: (entry: HistoryEntry) => void;
-  onRedo: (entry: HistoryEntry) => void;
+    onUndo: (entry: HistoryEntry) => void;
+    onRedo: (entry: HistoryEntry) => void;
 };
 
 const useHistoryState = ({ onUndo, onRedo }: Options) => {
-  const [history, setHistory] = useState<HistoryState>({
-    index: 0,
-    entries: [],
-    hasPreviouslySavedHistory: false,
-  });
-
-  const addHistoryEntry = useCallback(
-    (entry: HistoryEntry) => {
-      setHistory((prevHistory) => ({
-        index: prevHistory.index + 1,
-        entries: [...prevHistory.entries.slice(0, prevHistory.index), entry],
-        hasPreviouslySavedHistory: prevHistory.hasPreviouslySavedHistory,
-      }));
-    },
-    [setHistory],
-  );
-
-  const clearHistory = ({
-    hasPreviouslySavedHistory,
-  }: {
-    hasPreviouslySavedHistory: boolean;
-  }) => {
-    setHistory({
-      entries: [],
-      index: 0,
-      hasPreviouslySavedHistory: hasPreviouslySavedHistory,
+    const [history, setHistory] = useState<HistoryState>({
+        index: 0,
+        entries: [],
+        hasPreviouslySavedHistory: false,
     });
-  };
 
-  const revert = (amount: number) => {
-    const { index, entries, hasPreviouslySavedHistory } = history;
+    const addHistoryEntry = useCallback(
+        (entry: HistoryEntry) => {
+            setHistory((prevHistory) => ({
+                index: prevHistory.index + 1,
+                entries: [...prevHistory.entries.slice(0, prevHistory.index), entry],
+                hasPreviouslySavedHistory: prevHistory.hasPreviouslySavedHistory,
+            }));
+        },
+        [setHistory],
+    );
 
-    if (index === 0 || entries.length === 0) return;
+    const clearHistory = ({ hasPreviouslySavedHistory }: { hasPreviouslySavedHistory: boolean }) => {
+        setHistory({
+            entries: [],
+            index: 0,
+            hasPreviouslySavedHistory: hasPreviouslySavedHistory,
+        });
+    };
 
-    const newIndex = index - (amount > index ? index : amount);
+    const revert = (amount: number) => {
+        const { index, entries, hasPreviouslySavedHistory } = history;
 
-    // gå bakover til nye indexen og sett koordinater for alle features
-    // frem til nye index
-    for (let i = newIndex; i > newIndex - 1; i--) {
-      onUndo(history.entries[i]);
-    }
+        if (index === 0 || entries.length === 0) return;
 
-    setHistory({
-      entries,
-      index: newIndex,
-      hasPreviouslySavedHistory,
-    });
-  };
+        const newIndex = index - (amount > index ? index : amount);
 
-  const reapply = (amount: number) => {
-    const { index, entries, hasPreviouslySavedHistory } = history;
+        // gå bakover til nye indexen og sett koordinater for alle features
+        // frem til nye index
+        for (let i = newIndex; i > newIndex - 1; i--) {
+            onUndo(history.entries[i]);
+        }
 
-    if (index >= entries.length) return;
+        setHistory({
+            entries,
+            index: newIndex,
+            hasPreviouslySavedHistory,
+        });
+    };
 
-    const newIndex =
-      index + amount > entries.length ? entries.length : index + amount;
+    const reapply = (amount: number) => {
+        const { index, entries, hasPreviouslySavedHistory } = history;
 
-    for (let i = index; i < newIndex; i++) {
-      onRedo(history.entries[i]);
-    }
+        if (index >= entries.length) return;
 
-    setHistory({
-      entries,
-      index: newIndex,
-      hasPreviouslySavedHistory,
-    });
-  };
+        const newIndex = index + amount > entries.length ? entries.length : index + amount;
 
-  const undo = () => {
-    revert(1);
-  };
+        for (let i = index; i < newIndex; i++) {
+            onRedo(history.entries[i]);
+        }
 
-  const redo = () => {
-    reapply(1);
-  };
+        setHistory({
+            entries,
+            index: newIndex,
+            hasPreviouslySavedHistory,
+        });
+    };
 
-  return {
-    history,
-    addHistoryEntry,
-    clearHistory,
-    undo,
-    redo,
-  };
+    const undo = () => {
+        revert(1);
+    };
+
+    const redo = () => {
+        reapply(1);
+    };
+
+    return {
+        history,
+        addHistoryEntry,
+        clearHistory,
+        undo,
+        redo,
+    };
 };
 
 export default useHistoryState;

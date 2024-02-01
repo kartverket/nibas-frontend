@@ -4,28 +4,28 @@ import UtkastPubliserModal from "components/Modals/UtkastPubliserModal";
 import { useUtkastEndringer } from "components/Endringslogg/hooks/useUtkastEndringer";
 
 type Props = {
-  utkast: UtkastResponse;
+    utkast: UtkastResponse;
 };
 
 const UtkastPubliser = ({ utkast }: Props) => {
-  const { harEndringer } = useUtkastEndringer(utkast);
-  const { isOpen, onClose, onOpen } = useDisclosure();
+    const { harEndringer } = useUtkastEndringer(utkast);
+    const { isOpen, onClose, onOpen } = useDisclosure();
 
-  return (
-    <>
-      <MenuItem
-        icon={<Icon icon="publish" />}
-        onClick={(e) => {
-          e.stopPropagation();
-          onOpen();
-        }}
-        isDisabled={!harEndringer}
-      >
-        Publiser
-      </MenuItem>
-      <UtkastPubliserModal isOpen={isOpen} onClose={onClose} utkast={utkast} />
-    </>
-  );
+    return (
+        <>
+            <MenuItem
+                icon={<Icon icon="publish" />}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onOpen();
+                }}
+                isDisabled={!harEndringer}
+            >
+                Publiser
+            </MenuItem>
+            <UtkastPubliserModal isOpen={isOpen} onClose={onClose} utkast={utkast} />
+        </>
+    );
 };
 
 export default UtkastPubliser;

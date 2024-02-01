@@ -8,59 +8,56 @@ import { getIdFromEntity, fetcherWithToken } from "utils/api";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 import { useEditGrenseValue } from "contexts/EditGrenserContext/useEditGrense";
 
-const fylkesgrenserFetcher = async ([fylkeIds, token]: [
-  string[],
-  string | undefined,
-]) => {
-  const promises: Promise<FeatureCollection>[] = fylkeIds.map(async (fylkeId) =>
-    fetcherWithToken([`/v1/fylker/${fylkeId}/grenser`, token]),
-  );
+const fylkesgrenserFetcher = async ([fylkeIds, token]: [string[], string | undefined]) => {
+    const promises: Promise<FeatureCollection>[] = fylkeIds.map(async (fylkeId) =>
+        fetcherWithToken([`/v1/fylker/${fylkeId}/grenser`, token]),
+    );
 
-  const settledPromises = await Promise.allSettled(promises);
-  const geoJsons = settledPromises.reduce((acc, promise) => {
-    if (promise.status === "fulfilled") {
-      acc.push(promise.value);
-    }
+    const settledPromises = await Promise.allSettled(promises);
+    const geoJsons = settledPromises.reduce((acc, promise) => {
+        if (promise.status === "fulfilled") {
+            acc.push(promise.value);
+        }
 
-    return acc;
-  }, [] as FeatureCollection[]);
+        return acc;
+    }, [] as FeatureCollection[]);
 
-  return geoJsons.flatMap((geoJson) => geoJson.features);
+    return geoJsons.flatMap((geoJson) => geoJson.features);
 };
 
 const useFylkesgrenser = () => {
-  const { kretsStatus } = useEditGrenseValue("fylke", "fylker");
-  const shouldFetch = kretsStatus.editing || kretsStatus.visible;
-  const [isFetching, setIsFetching] = useState(false);
-  const { fylker } = useFylker(shouldFetch);
-  const fylkeIds = fylker?.map(getIdFromEntity) ?? [];
-  const { tokenHolderFunc } = useAuthenticationFlow();
-  const { data: geoJsonFeatures } = useSWRImmutable(
-    shouldFetch ? [fylkeIds, tokenHolderFunc()?.token] : null,
-    fylkesgrenserFetcher,
-  );
+    const { kretsStatus } = useEditGrenseValue("fylke", "fylker");
+    const shouldFetch = kretsStatus.editing || kretsStatus.visible;
+    const [isFetching, setIsFetching] = useState(false);
+    const { fylker } = useFylker(shouldFetch);
+    const fylkeIds = fylker?.map(getIdFromEntity) ?? [];
+    const { tokenHolderFunc } = useAuthenticationFlow();
+    const { data: geoJsonFeatures } = useSWRImmutable(
+        shouldFetch ? [fylkeIds, tokenHolderFunc()?.token] : null,
+        fylkesgrenserFetcher,
+    );
 
-  useEffect(() => {
-    if (!shouldFetch) return;
+    useEffect(() => {
+        if (!shouldFetch) return;
 
-    if (fylker && geoJsonFeatures) {
-      setIsFetching(false);
-    } else {
-      setIsFetching(true);
-    }
-  }, [fylker, geoJsonFeatures, shouldFetch]);
+        if (fylker && geoJsonFeatures) {
+            setIsFetching(false);
+        } else {
+            setIsFetching(true);
+        }
+    }, [fylker, geoJsonFeatures, shouldFetch]);
 
-  const features = useMemo(() => {
-    if (!geoJsonFeatures) {
-      return null;
-    }
+    const features = useMemo(() => {
+        if (!geoJsonFeatures) {
+            return null;
+        }
 
-    return geoJsonFeatures.flatMap(getFeaturesFromGeoJson);
-  }, [geoJsonFeatures]);
+        return geoJsonFeatures.flatMap(getFeaturesFromGeoJson);
+    }, [geoJsonFeatures]);
 
-  useAddInndelingerKontekst(features, "fylke", "fylker");
+    useAddInndelingerKontekst(features, "fylke", "fylker");
 
-  return { fylkesgrenser: features, isFetching };
+    return { fylkesgrenser: features, isFetching };
 };
 
 export default useFylkesgrenser;

@@ -3,19 +3,19 @@ import FylkeList from "./FylkeList";
 import EditableGrenseAccordion from "../EditableGrenseAccordion";
 
 const Fylkesgrenser = () => {
-  const { fylkesgrenser, isFetching } = useFylkesgrenser();
+    const { fylkesgrenser, isFetching } = useFylkesgrenser();
 
-  return (
-    <EditableGrenseAccordion
-      features={fylkesgrenser}
-      grenseId="fylker"
-      grenseType="fylke"
-      isFetching={isFetching}
-      title="Fylker"
-    >
-      <FylkeList />
-    </EditableGrenseAccordion>
-  );
+    return (
+        <EditableGrenseAccordion
+            features={fylkesgrenser}
+            grenseId="fylker"
+            grenseType="fylke"
+            isFetching={isFetching}
+            title="Fylker"
+        >
+            <FylkeList />
+        </EditableGrenseAccordion>
+    );
 };
 
 export default Fylkesgrenser;

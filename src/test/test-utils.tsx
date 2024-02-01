@@ -9,28 +9,12 @@ import { renderWithProviders, TestProviderValues } from "./test-providers";
 type Options = RenderOptions & TestProviderValues;
 
 const customRender = (
-  ui: ReactNode,
-  options: Options = {},
+    ui: ReactNode,
+    options: Options = {},
 ): RenderResult & { user: ReturnType<typeof userEvent.setup> } => {
-  const user = userEvent.setup();
+    const user = userEvent.setup();
 
-  const {
-    ErrorHandlingProvider,
-    HistoryProvider,
-    ToolbarProvider,
-    FeatureStyleProvider,
-    SidebarPanelProvider,
-    OverlayPanelProvider,
-    EditGrenserProvider,
-    KartlagProvider,
-    UtkastProvider,
-    ...rltOptions
-  } = options;
-
-  return {
-    user,
-    ...render(
-      renderWithProviders(ui, {
+    const {
         ErrorHandlingProvider,
         HistoryProvider,
         ToolbarProvider,
@@ -40,10 +24,26 @@ const customRender = (
         EditGrenserProvider,
         KartlagProvider,
         UtkastProvider,
-      }),
-      rltOptions,
-    ),
-  };
+        ...rltOptions
+    } = options;
+
+    return {
+        user,
+        ...render(
+            renderWithProviders(ui, {
+                ErrorHandlingProvider,
+                HistoryProvider,
+                ToolbarProvider,
+                FeatureStyleProvider,
+                SidebarPanelProvider,
+                OverlayPanelProvider,
+                EditGrenserProvider,
+                KartlagProvider,
+                UtkastProvider,
+            }),
+            rltOptions,
+        ),
+    };
 };
 
 export * from "@testing-library/react";
