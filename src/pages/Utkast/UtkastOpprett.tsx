@@ -58,7 +58,6 @@ const UtkastOpprett = () => {
       {
         navn: getValues("navn"),
         endringstype: getValues("endringstype"),
-        operasjoner: historyToUtkastOperations(history),
       },
       tokenHolderFunc()?.token,
     );
