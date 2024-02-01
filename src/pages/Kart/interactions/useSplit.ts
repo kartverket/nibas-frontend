@@ -63,13 +63,13 @@ const useSplit = () => {
                   changes: [
                     {
                       id: featureId,
-                      from: originalCoordinates,
-                      to: coordinates,
+                      from: { coordinates: originalCoordinates },
+                      to: { coordinates },
                     },
                     {
                       id: clonedFeatureId,
-                      from: [],
-                      to: clonedCoordinates,
+                      from: { coordinates: [] },
+                      to: { coordinates: clonedCoordinates },
                     },
                   ],
                 });
