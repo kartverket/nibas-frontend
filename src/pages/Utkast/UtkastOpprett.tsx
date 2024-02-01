@@ -19,8 +19,6 @@ import {
 } from "@kvib/react";
 import { createUtkast } from "api/utkast";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
-import { useHistory } from "contexts/HistoryContext";
-import { historyToUtkastOperations } from "contexts/UtkastContext/utils";
 import { endringstyper } from "pages/Kart/constants";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -38,7 +36,6 @@ const UtkastOpprett = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
   const { tokenHolderFunc } = useAuthenticationFlow();
-  const { history } = useHistory();
   const toast = useToast();
   const navigate = useNavigate();
   const { setError } = useErrorHandling();
