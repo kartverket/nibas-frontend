@@ -14,8 +14,6 @@ import {
 } from "types/api";
 import { addKontekstEntryFromFeature } from "../MetadataPanel/utils";
 import LineString from "ol/geom/LineString";
-import { getIdFromEntity } from "utils/api";
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
 
 export type Krets = {
   id: ObjektIdentifikator;
@@ -40,6 +38,7 @@ type TilhorighetForm = {
   stemmekretser: TilhorighetChoice;
 };
 
+// Tar api respons for grunnkretser og stemmekretser og gir det tilbake på Krets typen pakket inn i TilhorighetOptions
 const getMuligeKretserForGrense = (
   grenseType: GrenseType,
   grunnkretser: GrunnkretsResponse[],
@@ -132,15 +131,21 @@ export const useTilhorighet = (
   feature: Feature,
   kontekstEgenskaper: KontekstEgenskaper[] | undefined,
 ) => {
-  const { flatedata } = useOverlayPanel();
-  const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
   const [tilhorighetToChange, setTilhorighetToChange] = useState<
     "grunnkretser" | "stemmekretser" | null
   >(null);
   const grenseType = (feature.getProperties() as FeatureProperties)
     .type as GrenseType;
-  const { data: grunnkretser } = useKommuneGrunnkretser(kommuneId);
-  const { data: stemmekretser } = useKommuneStemmekretser(kommuneId);
+
+  const kommunerID = [
+    ...new Set(
+      kontekstEgenskaper?.map((kontekst) => kontekst.kommuneId?.lokalid.value),
+    ),
+  ].filter((id) => id != null) as string[];
+  console.log(kommunerID)
+
+  const { data: grunnkretser } = useKommuneGrunnkretser(kommunerID[0]);
+  const { data: stemmekretser } = useKommuneStemmekretser(kommunerID[0]);
 
   useEffect(() => {
     setTilhorighetToChange(
