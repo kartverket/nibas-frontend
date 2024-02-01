@@ -3,12 +3,9 @@ import { KommuneRef } from "types/api";
 import { sortGrenserAlphabetically } from "utils/language/language";
 
 const useKommuner = (fylkeId: string, shouldFetch = true) => {
-  const { data: kommuner, ...rest } = useNibasApi(
-    shouldFetch ? "/v1/kommuner" : null,
-    {
-      fylkeid: fylkeId,
-    },
-  );
+  const { data: kommuner, ...rest } = useNibasApi(shouldFetch ? "/v1/kommuner" : null, {
+    fylkeid: fylkeId,
+  });
 
   const sortedKommuner = sortGrenserAlphabetically(kommuner) as KommuneRef[];
 

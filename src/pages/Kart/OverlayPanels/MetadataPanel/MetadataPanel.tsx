@@ -10,8 +10,7 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
   const { selectedFeatures } = useFeatureStyle();
   const { activeOverlayPanel, closeOverlayPanel } = useOverlayPanel();
 
-  const selectedFeature =
-    selectedFeatures.length === 1 ? selectedFeatures[0] : undefined;
+  const selectedFeature = selectedFeatures.length === 1 ? selectedFeatures[0] : undefined;
 
   useEffect(() => {
     if (activeOverlayPanel === "metadata" && selectedFeatures.length === 0) {
@@ -19,20 +18,13 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
     }
   }, [activeOverlayPanel, closeOverlayPanel, selectedFeatures.length]);
 
-  const isWFSGrense = selectedFeature
-    ?.getId()
-    ?.toString()
-    .includes("TEIGGRENSEWFS");
+  const isWFSGrense = selectedFeature?.getId()?.toString().includes("TEIGGRENSEWFS");
 
-  const selectedProperties =
-    selectedFeature?.getProperties() as FeatureProperties;
+  const selectedProperties = selectedFeature?.getProperties() as FeatureProperties;
 
   const sistOppdatertString = `Sist oppdatert: ${
     selectedProperties && selectedProperties.metadata
-      ? getDateInFriendlyString(
-          (selectedProperties.metadata as Metadata).common?.sporingsinformasjon
-            .oppdateringsdato,
-        )
+      ? getDateInFriendlyString((selectedProperties.metadata as Metadata).common?.sporingsinformasjon.oppdateringsdato)
       : "Ukjent"
   }`;
 
@@ -41,10 +33,7 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
       <PanelHeader onClose={closeOverlayPanel} subHeading={sistOppdatertString}>
         Informasjon om grense
       </PanelHeader>
-      {selectedFeature &&
-      selectedProperties &&
-      selectedProperties.metadata &&
-      !isWFSGrense ? (
+      {selectedFeature && selectedProperties && selectedProperties.metadata && !isWFSGrense ? (
         <MetadataGenerelt feature={selectedFeature} />
       ) : (
         <p>Valgt grense har ikke metadata</p>

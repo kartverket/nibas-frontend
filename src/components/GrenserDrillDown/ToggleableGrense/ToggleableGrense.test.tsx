@@ -34,10 +34,7 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
-const renderWithProvider = (
-  ui: React.ReactNode,
-  kretsStatus: KretsStatus = { editing: false, visible: false },
-) => {
+const renderWithProvider = (ui: React.ReactNode, kretsStatus: KretsStatus = { editing: false, visible: false }) => {
   render(ui, {
     EditGrenserProvider: {
       alleKretserStatuser: { fylke: { "1": kretsStatus } },

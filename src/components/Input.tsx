@@ -1,11 +1,5 @@
 import { forwardRef } from "react";
-import {
-  FormControl,
-  FormLabel,
-  InputProps,
-  Input,
-  FormErrorMessage,
-} from "@kvib/react";
+import { FormControl, FormLabel, InputProps, Input, FormErrorMessage } from "@kvib/react";
 
 export type ValidationError = {
   message: string;

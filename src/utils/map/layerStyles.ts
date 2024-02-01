@@ -19,9 +19,7 @@ const getPointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
 
   if (zoom < 11) return;
 
-  const coordinates = (feature as Feature<LineString>)
-    .getGeometry()
-    ?.getCoordinates();
+  const coordinates = (feature as Feature<LineString>).getGeometry()?.getCoordinates();
   return new MultiPoint(coordinates ?? []);
 };
 
@@ -96,10 +94,7 @@ export const grenseStyles = {
   archivedDelomraade: lineAndPointStyles({ color: "#5952D2", dashed: true }),
 };
 
-const grenseStyleFromType = (
-  grenseType: GrenseType,
-  archived: boolean,
-): Style[] => {
+const grenseStyleFromType = (grenseType: GrenseType, archived: boolean): Style[] => {
   switch (grenseType) {
     case "Fylkesgrense": {
       return archived ? grenseStyles.archivedFylke : grenseStyles.fylke;
@@ -114,19 +109,13 @@ const grenseStyleFromType = (
       return archived ? grenseStyles.archivedNasjon : grenseStyles.nasjon;
     }
     case "Delområdegrense": {
-      return archived
-        ? grenseStyles.archivedDelomraade
-        : grenseStyles.delomraade;
+      return archived ? grenseStyles.archivedDelomraade : grenseStyles.delomraade;
     }
     case "Grunnkretsgrense": {
-      return archived
-        ? grenseStyles.archivedGrunnkrets
-        : grenseStyles.grunnkrets;
+      return archived ? grenseStyles.archivedGrunnkrets : grenseStyles.grunnkrets;
     }
     case "Stemmekretsgrense": {
-      return archived
-        ? grenseStyles.archivedStemmekrets
-        : grenseStyles.stemmekrets;
+      return archived ? grenseStyles.archivedStemmekrets : grenseStyles.stemmekrets;
     }
     case "GRUNNKRETS":
     case "STEMMEKRETS": {
@@ -135,30 +124,19 @@ const grenseStyleFromType = (
   }
 };
 
-export const getLayerStyle = (
-  feature: Feature<Geometry> | RenderFeature,
-  grenseId: GrenseId,
-  archived: boolean,
-) => {
+export const getLayerStyle = (feature: Feature<Geometry> | RenderFeature, grenseId: GrenseId, archived: boolean) => {
   if (grenseId == "edit" && editableBorderTypes.includes(feature.get("type"))) {
     return grenseStyles.edit;
   } else {
-    return grenseStyleFromType(
-      feature.getProperties().type as GrenseType,
-      archived,
-    );
+    return grenseStyleFromType(feature.getProperties().type as GrenseType, archived);
   }
 };
 
-export const getArchiveLayerStyle = (
-  feature: Feature<Geometry> | RenderFeature,
-) => {
+export const getArchiveLayerStyle = (feature: Feature<Geometry> | RenderFeature) => {
   return grenseStyleFromType(feature.getProperties().type as GrenseType, true);
 };
 
-export const getPointOverlayStyle = (
-  feature: Feature<Geometry> | RenderFeature,
-) => {
+export const getPointOverlayStyle = (feature: Feature<Geometry> | RenderFeature) => {
   if (!feature.get("name") || !feature.get("number")) return new Style();
 
   return new Style({
@@ -182,14 +160,8 @@ export const getPointOverlayStyle = (
   });
 };
 
-export const updateEditFeatureText = (
-  featureId: string,
-  name?: string,
-  number?: string,
-) => {
-  const feature = editSource.getFeatureById(
-    featureId,
-  ) as Feature<Geometry> | null;
+export const updateEditFeatureText = (featureId: string, name?: string, number?: string) => {
+  const feature = editSource.getFeatureById(featureId) as Feature<Geometry> | null;
   if (feature) {
     if (name) {
       feature.set("name", name);
@@ -205,12 +177,7 @@ export const updateEditFeatureText = (
  * @param featureId En gitt feature i editSource som skal få ny stil
  * @param style Stil fra grenseStyles eller en stilfunksjon
  */
-export const setFeatureStyle = (
-  featureId: string,
-  style: Style[] | StyleFunction,
-) => {
-  const feature = editSource.getFeatureById(
-    featureId,
-  ) as Feature<Geometry> | null;
+export const setFeatureStyle = (featureId: string, style: Style[] | StyleFunction) => {
+  const feature = editSource.getFeatureById(featureId) as Feature<Geometry> | null;
   feature?.setStyle(style);
 };

@@ -11,9 +11,7 @@ export const useEditGrenseValue = (kretsType: EditingType, kretsId: string) => {
   const context = useContext(EditGrenserContext);
 
   if (!context) {
-    throw new Error(
-      "useIsEditingGrense must be used within a EditGrenserProvider",
-    );
+    throw new Error("useIsEditingGrense must be used within a EditGrenserProvider");
   }
 
   const kretsStatus = context.alleKretserStatuser[kretsType]?.[kretsId] ?? {};
@@ -25,25 +23,15 @@ export const useEditGrenseValue = (kretsType: EditingType, kretsId: string) => {
   return { kretsStatus, setKretsStatus };
 };
 
-export const useEditGrense = (
-  kretsType: EditingType,
-  kretsId: string,
-  features: Feature<Geometry>[] | null,
-) => {
+export const useEditGrense = (kretsType: EditingType, kretsId: string, features: Feature<Geometry>[] | null) => {
   const [isLoading, setIsLoading] = useState(false);
   const context = useContext(EditGrenserContext);
 
   const { resetAndClearAllLayers } = useEditGrenser(kretsType);
-  const { kretsStatus, setKretsStatus } = useEditGrenseValue(
-    kretsType,
-    kretsId,
-  );
+  const { kretsStatus, setKretsStatus } = useEditGrenseValue(kretsType, kretsId);
   const { addFeaturesToLayer } = useAsyncFeatures(
     features,
-    getZoomMode(
-      !!kretsStatus.editing,
-      context?.getCurrentlyEditingType() != null,
-    ),
+    getZoomMode(!!kretsStatus.editing, context?.getCurrentlyEditingType() != null),
     () => setIsLoading(false),
   );
 

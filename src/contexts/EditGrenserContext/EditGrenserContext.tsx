@@ -1,50 +1,25 @@
 import React, { createContext, useContext, useState } from "react";
 import { removeAllFeatures } from "utils/map/layers";
-import {
-  KretsStatusAlle,
-  EditingType,
-  KretsStatusPerKretstype,
-  KretsStatus,
-} from "./types";
+import { KretsStatusAlle, EditingType, KretsStatusPerKretstype, KretsStatus } from "./types";
 
 export type EditGrenserContextValue = {
   alleKretserStatuser: KretsStatusAlle;
-  setAlleKretserStatuser: React.Dispatch<
-    React.SetStateAction<Partial<Record<EditingType, KretsStatusPerKretstype>>>
-  >;
-  setKretsStatus: (
-    type: EditingType,
-    grenseId: string,
-    values?: KretsStatus,
-  ) => void;
+  setAlleKretserStatuser: React.Dispatch<React.SetStateAction<Partial<Record<EditingType, KretsStatusPerKretstype>>>>;
+  setKretsStatus: (type: EditingType, grenseId: string, values?: KretsStatus) => void;
   resetAndClearAllLayers: () => void;
   getCurrentlyEditingType: () => EditingType | null;
-  setOtherEditingTypes: (
-    currentType: EditingType,
-    shouldBeEditable?: boolean,
-  ) => void;
+  setOtherEditingTypes: (currentType: EditingType, shouldBeEditable?: boolean) => void;
 };
 
 /**
  * Bruk heller EditGrenserProvider i koden
  */
-export const EditGrenserContext = createContext<
-  EditGrenserContextValue | undefined
->(undefined);
+export const EditGrenserContext = createContext<EditGrenserContextValue | undefined>(undefined);
 
-export const EditGrenserProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  const [alleKretserStatuser, setAlleKretserStatuser] =
-    useState<KretsStatusAlle>({});
+export const EditGrenserProvider = ({ children }: { children: React.ReactNode }) => {
+  const [alleKretserStatuser, setAlleKretserStatuser] = useState<KretsStatusAlle>({});
 
-  const setKretsStatus = (
-    type: EditingType,
-    kretsId: string,
-    status: KretsStatus = {},
-  ) => {
+  const setKretsStatus = (type: EditingType, kretsId: string, status: KretsStatus = {}) => {
     setAlleKretserStatuser((prevState) => ({
       ...prevState,
       [type]: {
@@ -59,9 +34,8 @@ export const EditGrenserProvider = ({
    * @returns Hvilken grensetype man er i redigeringsmodus for, eller null hvis det er ingenting
    */
   const getCurrentlyEditingType = () => {
-    const currentlyEditingType = Object.entries(alleKretserStatuser).find(
-      ([, grensevalues]) =>
-        Object.values(grensevalues).some((grense) => grense.editing),
+    const currentlyEditingType = Object.entries(alleKretserStatuser).find(([, grensevalues]) =>
+      Object.values(grensevalues).some((grense) => grense.editing),
     );
 
     if (currentlyEditingType) {
@@ -74,10 +48,7 @@ export const EditGrenserProvider = ({
    * Går gjennom alle type krester sine statuser og henter alle typer kretser utenom currentType, og setter redigeringsstatus til innsendt parameter.
    * Brukes kun som en workaround for å komme seg unna kretsavhengige contexter for redigering.
    */
-  const setOtherEditingTypes = (
-    currentType: EditingType,
-    shouldBeEditable?: boolean,
-  ) => {
+  const setOtherEditingTypes = (currentType: EditingType, shouldBeEditable?: boolean) => {
     const otherEditingTypes = Object.entries(alleKretserStatuser).filter(
       ([editingType]) => editingType !== currentType,
     );
@@ -107,20 +78,14 @@ export const EditGrenserProvider = ({
     setOtherEditingTypes,
   };
 
-  return (
-    <EditGrenserContext.Provider value={value}>
-      {children}
-    </EditGrenserContext.Provider>
-  );
+  return <EditGrenserContext.Provider value={value}>{children}</EditGrenserContext.Provider>;
 };
 
 export const useEditAllGrenser = () => {
   const context = useContext(EditGrenserContext);
 
   if (!context) {
-    throw new Error(
-      "useEditAllGrenser must be used within a EditGrenserProvider",
-    );
+    throw new Error("useEditAllGrenser must be used within a EditGrenserProvider");
   }
 
   return context;
@@ -133,20 +98,13 @@ export const useEditGrenser = (kretsType: EditingType) => {
     throw new Error("useEditGrenser must be used within a EditGrenserProvider");
   }
 
-  const {
-    alleKretserStatuser,
-    setKretsStatus,
-    setAlleKretserStatuser,
-    resetAndClearAllLayers,
-    setOtherEditingTypes,
-  } = context;
+  const { alleKretserStatuser, setKretsStatus, setAlleKretserStatuser, resetAndClearAllLayers, setOtherEditingTypes } =
+    context;
 
   const kretsStatuser = alleKretserStatuser[kretsType] ?? {};
 
-  const setKretsStatusForKretstype = (
-    grenseId: string,
-    kretsStatus: KretsStatus,
-  ) => setKretsStatus(kretsType, grenseId, kretsStatus);
+  const setKretsStatusForKretstype = (grenseId: string, kretsStatus: KretsStatus) =>
+    setKretsStatus(kretsType, grenseId, kretsStatus);
 
   const setMultipleValues = (kretsStatus: KretsStatusPerKretstype) => {
     setAlleKretserStatuser((gammelAlleKretserStatuser) => ({
@@ -168,9 +126,7 @@ export const useEditGrenseValue = (kretsType: EditingType, kretsId: string) => {
   const context = useContext(EditGrenserContext);
 
   if (!context) {
-    throw new Error(
-      "useEditGrenseValue must be used within a EditGrenserProvider",
-    );
+    throw new Error("useEditGrenseValue must be used within a EditGrenserProvider");
   }
 
   const { alleKretserStatuser } = context;

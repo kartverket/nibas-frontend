@@ -43,18 +43,10 @@ const MetadataRow = ({
       <EditContent>
         <Row>
           <Tooltip label={tooltipLabel} hasArrow placement="bottom">
-            <TextWithIcon
-              onMouseOver={() => setIconHovered(true)}
-              onMouseOut={() => setIconHovered(false)}
-            >
+            <TextWithIcon onMouseOver={() => setIconHovered(true)} onMouseOut={() => setIconHovered(false)}>
               <Text as="b">{name}</Text>
               <InfoIcon>
-                <Icon
-                  size={24}
-                  color="var(--kvib-colors-blue-500)"
-                  isFilled={iconHovered}
-                  icon={"info"}
-                ></Icon>
+                <Icon size={24} color="var(--kvib-colors-blue-500)" isFilled={iconHovered} icon={"info"}></Icon>
               </InfoIcon>
             </TextWithIcon>
           </Tooltip>
@@ -81,11 +73,7 @@ const MetadataRow = ({
             />
           )}
         </Row>
-        {isEditing ? (
-          <Field>{children}</Field>
-        ) : (
-          <Field>{valueLabel || "Ikke spesifisert"}</Field>
-        )}
+        {isEditing ? <Field>{children}</Field> : <Field>{valueLabel || "Ikke spesifisert"}</Field>}
       </EditContent>
       <Divider />
     </Container>

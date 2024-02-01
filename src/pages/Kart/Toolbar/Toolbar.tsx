@@ -2,10 +2,7 @@ import { Divider } from "@kvib/react";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
-import {
-  useHoldButtonToggle,
-  useKeyboardShortcut,
-} from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
+import { useHoldButtonToggle, useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import { styled } from "styled-components";
 import { getLayerById } from "utils/map/layers";
 import { map } from "../constants";
@@ -15,12 +12,10 @@ import ToolbarMenus from "./ToolbarMenus";
 import ToolbarPopups from "./ToolbarPopups";
 
 const Toolbar = () => {
-  const { activeModeTools, toggleModeTool, enableModeTool, disableModeTool } =
-    useToolbar();
+  const { activeModeTools, toggleModeTool, enableModeTool, disableModeTool } = useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const editingType = getCurrentlyEditingType();
-  const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } =
-    useOverlayPanel();
+  const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } = useOverlayPanel();
 
   const toggleKartlag = () => {
     if (activeOverlayPanel === "kartlag") {
@@ -65,11 +60,7 @@ const Toolbar = () => {
       <ToolbarPopups />
       <Container>
         <ToolbarButtons>
-          <CustomTooltip
-            text="Panorer i kartet"
-            shortcut="move"
-            holdButton="ALT-tasten"
-          >
+          <CustomTooltip text="Panorer i kartet" shortcut="move" holdButton="ALT-tasten">
             <ModeButton
               icon="pan_tool"
               onClick={() => enableModeTool("move")}
@@ -93,10 +84,7 @@ const Toolbar = () => {
           <Divider orientation="vertical" />
           <ToolbarMenus />
           <Divider orientation="vertical" />
-          <CustomTooltip
-            text="Legg til, endre rekkefølge og fjern kartlag fra kartet."
-            shortcut="layers"
-          >
+          <CustomTooltip text="Legg til, endre rekkefølge og fjern kartlag fra kartet." shortcut="layers">
             <ModeButton
               icon="map"
               ariaLabel="Åpne kartlagsmenyen"
@@ -106,10 +94,7 @@ const Toolbar = () => {
               Kartlag
             </ModeButton>
           </CustomTooltip>
-          <CustomTooltip
-            text="Vis grenser fra matrikkelen"
-            shortcut="matrikkel"
-          >
+          <CustomTooltip text="Vis grenser fra matrikkelen" shortcut="matrikkel">
             <ModeButton
               icon="holiday_village"
               ariaLabel="Vis grenser fra matrikkelen"
@@ -119,10 +104,7 @@ const Toolbar = () => {
               Matrikkel
             </ModeButton>
           </CustomTooltip>
-          <CustomTooltip
-            text="Skru av/på snapping mot kartlag."
-            shortcut="snap"
-          >
+          <CustomTooltip text="Skru av/på snapping mot kartlag." shortcut="snap">
             <ModeButton
               icon="layers"
               ariaLabel="Snap til kartlag"
@@ -136,19 +118,11 @@ const Toolbar = () => {
         </ToolbarButtons>
         <ZoomButtons>
           <CustomTooltip text="Zoom inn på kartet" icon="add">
-            <ModeButton
-              icon="add"
-              onClick={() => zoom(1)}
-              ariaLabel="Zoom inn på kartet"
-            />
+            <ModeButton icon="add" onClick={() => zoom(1)} ariaLabel="Zoom inn på kartet" />
           </CustomTooltip>
           <Divider />
           <CustomTooltip text="Zoom ut fra kartet" icon="remove">
-            <ModeButton
-              icon="remove"
-              onClick={() => zoom(-1)}
-              ariaLabel="Zoom ut på kartet"
-            />
+            <ModeButton icon="remove" onClick={() => zoom(-1)} ariaLabel="Zoom ut på kartet" />
           </CustomTooltip>
         </ZoomButtons>
       </Container>

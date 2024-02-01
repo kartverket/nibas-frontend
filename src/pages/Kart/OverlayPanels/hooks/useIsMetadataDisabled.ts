@@ -3,14 +3,9 @@ import { FeatureProperties } from "types/api";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { Feature } from "ol";
 
-const useIsMetadataDisabled = (
-  feature: Feature,
-  properties: FeatureProperties,
-) => {
+const useIsMetadataDisabled = (feature: Feature, properties: FeatureProperties) => {
   const { featureIsEditable } = useFeatureStyle();
-  const { kretsStatuser } = useEditGrenser(
-    properties.inndelingerKontekst?.type ?? "fylke",
-  );
+  const { kretsStatuser } = useEditGrenser(properties.inndelingerKontekst?.type ?? "fylke");
 
   const featureKontekstId = properties.inndelingerKontekst?.id;
 

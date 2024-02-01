@@ -16,9 +16,7 @@ import { addFeaturesToSource } from "./source";
 const getLayersArray = () => map.getLayers().getArray() ?? [];
 
 export const getLayerById = <T extends LayerId>(id: T) => {
-  const layersWithId = getLayersArray().filter(
-    (layer) => layer.get("id") === id,
-  );
+  const layersWithId = getLayersArray().filter((layer) => layer.get("id") === id);
 
   if (layersWithId.length !== 1) {
     throw new Error(
@@ -65,9 +63,7 @@ export const initGrenserLayers = () => {
 export const getVectorLayers = () => {
   const layers = getLayersArray();
 
-  return layers.filter(
-    (layer) => layer instanceof VectorLayer,
-  ) as VectorLayer<VectorSource>[];
+  return layers.filter((layer) => layer instanceof VectorLayer) as VectorLayer<VectorSource>[];
 };
 
 export const isWMTSLayer = (layer: BaseLayer): layer is TileLayer<WMTS> => {
@@ -78,9 +74,7 @@ export const isWMSLayer = (layer: BaseLayer): layer is TileLayer<TileWMS> => {
   return layer instanceof TileLayer && layer.getSource() instanceof TileWMS;
 };
 
-export const isVectorLayer = (
-  layer: BaseLayer,
-): layer is VectorLayer<VectorSource> => {
+export const isVectorLayer = (layer: BaseLayer): layer is VectorLayer<VectorSource> => {
   return layer instanceof VectorLayer;
 };
 

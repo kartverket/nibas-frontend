@@ -1,14 +1,7 @@
 import { styled } from "styled-components";
 import { ReactElement, ReactNode } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
-  Box,
-  Button,
-} from "@kvib/react";
+import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Button } from "@kvib/react";
 
 type ErrorBoxProps = {
   title: string | ReactElement | ReactNode;

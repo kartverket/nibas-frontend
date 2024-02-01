@@ -106,9 +106,7 @@ const AlertModal = ({
         <Body>
           <BodyText>{description}</BodyText>
           {additionalInfo && <BodyTextExtra>{additionalInfo}</BodyTextExtra>}
-          {errorCode && (
-            <BodyTextExtra>{`Feilkode ${errorCode}`}</BodyTextExtra>
-          )}
+          {errorCode && <BodyTextExtra>{`Feilkode ${errorCode}`}</BodyTextExtra>}
         </Body>
         {(primaryAction || secondaryAction) && (
           <ModalFooter>

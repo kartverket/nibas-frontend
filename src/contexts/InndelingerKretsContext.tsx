@@ -17,9 +17,7 @@ type InndelingerKretsContextValue = {
 /**
  * Bruk heller InndelingerKretsProvider i koden
  */
-const InndelingerKretsContext = createContext<
-  InndelingerKretsContextValue | undefined
->(undefined);
+const InndelingerKretsContext = createContext<InndelingerKretsContextValue | undefined>(undefined);
 
 type Props = {
   kretstype: Kretstype;
@@ -27,8 +25,7 @@ type Props = {
 };
 
 export const InndelingerKretsProvider = ({ children, kretstype }: Props) => {
-  const [currentKretstype, setCurrentKretstype] =
-    useState<Kretstype>(kretstype);
+  const [currentKretstype, setCurrentKretstype] = useState<Kretstype>(kretstype);
 
   useEffect(() => {
     setCurrentKretstype(kretstype);
@@ -36,11 +33,7 @@ export const InndelingerKretsProvider = ({ children, kretstype }: Props) => {
 
   const value = { currentKretstype };
 
-  return (
-    <InndelingerKretsContext.Provider value={value}>
-      {children}
-    </InndelingerKretsContext.Provider>
-  );
+  return <InndelingerKretsContext.Provider value={value}>{children}</InndelingerKretsContext.Provider>;
 };
 
 export const useInndelingerKrets = (kommune: KommuneRef) => {
@@ -48,22 +41,15 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
   const context = useContext(InndelingerKretsContext);
 
   if (!context) {
-    throw new Error(
-      "useInndelingerKrets must be used within a InndelingerKretsContext",
-    );
+    throw new Error("useInndelingerKrets must be used within a InndelingerKretsContext");
   }
 
   const { currentKretstype } = context;
 
-  const {
-    kretsStatuser,
-    setKretsStatusForKretstype,
-    setMultipleValues,
-    setOtherEditingTypes,
-  } = useEditGrenser(currentKretstype);
+  const { kretsStatuser, setKretsStatusForKretstype, setMultipleValues, setOtherEditingTypes } =
+    useEditGrenser(currentKretstype);
   const { setFlatedata, closeOverlayPanel } = useOverlayPanel();
-  const { addKretserToLayer, removeKretserFromLayer, lasterData } =
-    useKretsgrenser(kommuneId, currentKretstype);
+  const { addKretserToLayer, removeKretserFromLayer, lasterData } = useKretsgrenser(kommuneId, currentKretstype);
   const { enableModeTool, disableModeTool } = useToolbar();
 
   const kommuneValues = kretsStatuser[kommuneId] ?? {};
@@ -98,10 +84,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
         if (kommuneId === kommuneIdInList) return;
 
         // fjern features til kretsene som var endret før klikk
-        if (
-          newKretsStatuser[kommuneIdInList]?.visible &&
-          newKretsStatuser[kommuneIdInList]?.editing
-        ) {
+        if (newKretsStatuser[kommuneIdInList]?.visible && newKretsStatuser[kommuneIdInList]?.editing) {
           removeKretserFromLayer("edit");
         }
         // hvis tidligere endret, fjern editing og visible

@@ -23,10 +23,9 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
   const { flatedata, closeOverlayModal } = useOverlayPanel();
   const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
   const { data: stemmekretserByKommune } = useKommuneStemmekretser(kommuneId);
-  const utkastStemmekretser = useUtkastEntity(
-    stemmekretserByKommune,
-    "stemmekretsendringer",
-  ) as StemmekretsResponse[] | undefined;
+  const utkastStemmekretser = useUtkastEntity(stemmekretserByKommune, "stemmekretsendringer") as
+    | StemmekretsResponse[]
+    | undefined;
 
   return (
     <Modal isOpen={isOpen} onClose={closeOverlayModal} scrollBehavior="inside">
@@ -39,28 +38,16 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
           <KretsTable $hasUtkast={utkast !== undefined}>
             <thead>
               <tr>
-                <SortHeader {...sortHeaderProps("stemmekretsnummer")}>
-                  Stemmekretsnummer
-                </SortHeader>
-                <SortHeader {...sortHeaderProps("stemmekretsnavn")}>
-                  Stemmekretsnavn
-                </SortHeader>
-                <SortHeader {...sortHeaderProps("valgdistriktsnummer")}>
-                  Valgdistriktsnummer
-                </SortHeader>
+                <SortHeader {...sortHeaderProps("stemmekretsnummer")}>Stemmekretsnummer</SortHeader>
+                <SortHeader {...sortHeaderProps("stemmekretsnavn")}>Stemmekretsnavn</SortHeader>
+                <SortHeader {...sortHeaderProps("valgdistriktsnummer")}>Valgdistriktsnummer</SortHeader>
                 {utkast && <th>{/* Tom plass for knapp i rader */}</th>}
               </tr>
             </thead>
             <tbody>
-              {orderBy(utkastStemmekretser, sortProperty, sortOrder).map(
-                (stemmekrets) => (
-                  <StemmekretsRow
-                    key={getIdFromEntity(stemmekrets)}
-                    stemmekrets={stemmekrets}
-                    kommuneId={kommuneId}
-                  />
-                ),
-              )}
+              {orderBy(utkastStemmekretser, sortProperty, sortOrder).map((stemmekrets) => (
+                <StemmekretsRow key={getIdFromEntity(stemmekrets)} stemmekrets={stemmekrets} kommuneId={kommuneId} />
+              ))}
             </tbody>
           </KretsTable>
         ) : (

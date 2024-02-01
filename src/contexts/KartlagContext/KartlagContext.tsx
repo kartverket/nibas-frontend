@@ -1,20 +1,14 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { kartlagLayers } from "hooks/layers/constants";
 import { KartlagId } from "hooks/layers/types";
-import useVisibleLayers, {
-  VisibleLayer,
-} from "contexts/KartlagContext/useVisibleLayers";
+import useVisibleLayers, { VisibleLayer } from "contexts/KartlagContext/useVisibleLayers";
 import getSubLayersFromWMSSource, { MappedLayer } from "utils/getLayersFromWMS";
 import { isVectorLayer } from "utils/map/layers";
 
 export type KartlagContextValue = {
   mappedLayers: MappedLayer[];
   visibleLayers: VisibleLayer[];
-  toggleLayerVisibility: (
-    layerId: KartlagId,
-    subLayer?: string,
-    replaceSubLayer?: boolean,
-  ) => void;
+  toggleLayerVisibility: (layerId: KartlagId, subLayer?: string, replaceSubLayer?: boolean) => void;
   layerIsVisible: (layerId: KartlagId) => boolean;
   subLayerIsVisible: (mainLayer: KartlagId, subLayer: string) => boolean;
   moveLayer: (direction: "up" | "down", layerId: KartlagId) => void;
@@ -24,53 +18,37 @@ export type KartlagContextValue = {
 /**
  * Bruk heller KartlagProvider i koden
  */
-export const KartlagContext = createContext<KartlagContextValue | undefined>(
-  undefined,
-);
+export const KartlagContext = createContext<KartlagContextValue | undefined>(undefined);
 
-export const KartlagProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+export const KartlagProvider = ({ children }: { children: React.ReactNode }) => {
   const [mappedLayers, setMappedLayers] = useState<MappedLayer[]>([]);
 
-  const {
-    visibleLayers,
-    moveLayer,
-    toggleLayerVisibility,
-    layerIsVisible,
-    subLayerIsVisible,
-    resetVisibleLayers,
-  } = useVisibleLayers();
+  const { visibleLayers, moveLayer, toggleLayerVisibility, layerIsVisible, subLayerIsVisible, resetVisibleLayers } =
+    useVisibleLayers();
 
   useEffect(() => {
     let isMounted = true;
 
     const updateMappedLayers = async () => {
-      const mappedLayerPromises = Object.entries(kartlagLayers).map(
-        ([id, layer]) => {
-          if (isVectorLayer(layer)) {
-            return {
-              layers: [],
-              queryable: true,
-              sourceId: id,
-              title: id,
-              id: id,
-            };
-          }
-          const source = layer.getSource();
-          if (source) {
-            return getSubLayersFromWMSSource(source);
-          }
-        },
-      );
+      const mappedLayerPromises = Object.entries(kartlagLayers).map(([id, layer]) => {
+        if (isVectorLayer(layer)) {
+          return {
+            layers: [],
+            queryable: true,
+            sourceId: id,
+            title: id,
+            id: id,
+          };
+        }
+        const source = layer.getSource();
+        if (source) {
+          return getSubLayersFromWMSSource(source);
+        }
+      });
 
       const layers = await Promise.all(mappedLayerPromises);
 
-      const nonNullLayers = layers.filter(
-        (layer) => layer !== null,
-      ) as MappedLayer[];
+      const nonNullLayers = layers.filter((layer) => layer !== null) as MappedLayer[];
 
       if (isMounted) {
         setMappedLayers(nonNullLayers);
@@ -98,9 +76,7 @@ export const KartlagProvider = ({
     resetKartlag,
   };
 
-  return (
-    <KartlagContext.Provider value={value}>{children}</KartlagContext.Provider>
-  );
+  return <KartlagContext.Provider value={value}>{children}</KartlagContext.Provider>;
 };
 
 export const useKartlag = () => {

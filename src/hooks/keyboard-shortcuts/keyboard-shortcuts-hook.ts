@@ -11,33 +11,19 @@ const isValidTarget = (target: EventTarget | null): boolean => {
   }
 
   const targetTag = (target as HTMLElement).tagName.toLowerCase();
-  if (
-    targetTag === "input" ||
-    targetTag === "select" ||
-    targetTag === "textarea"
-  ) {
+  if (targetTag === "input" || targetTag === "select" || targetTag === "textarea") {
     return false;
   }
 
   return true;
 };
 
-export const useKeyboardShortcut = (
-  shortcut: Shortcut,
-  callback?: () => unknown,
-  enabled: boolean = true,
-) => {
+export const useKeyboardShortcut = (shortcut: Shortcut, callback?: () => unknown, enabled: boolean = true) => {
   useEffect(() => {
     const kbShortcut = KeyboardShortcuts[shortcut];
 
     const eventListener = (event: Event) => {
-      if (
-        callback &&
-        isValidTarget(event.target) &&
-        isKeydownEvent(event) &&
-        kbShortcut.checkEvent(event) &&
-        enabled
-      ) {
+      if (callback && isValidTarget(event.target) && isKeydownEvent(event) && kbShortcut.checkEvent(event) && enabled) {
         event.preventDefault();
         event.stopPropagation();
         callback();
@@ -66,11 +52,7 @@ export const useHoldButtonToggle = (
     const keyboardEventHandler = (event: KeyboardEvent) => {
       const isKeyDownEvent = event.type === "keydown";
 
-      if (
-        enabled &&
-        event.key.toLowerCase() === button.toLowerCase() &&
-        isValidTarget(event.target)
-      ) {
+      if (enabled && event.key.toLowerCase() === button.toLowerCase() && isValidTarget(event.target)) {
         event.stopPropagation();
         event.preventDefault();
 

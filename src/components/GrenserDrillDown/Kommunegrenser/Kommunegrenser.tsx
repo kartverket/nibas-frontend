@@ -20,11 +20,7 @@ const Kommunegrenser = () => {
             ))}
           </List>
         ) : (
-          <p>
-            {isAuthenticatedFunc()
-              ? "Henter fylker..."
-              : "Logg inn for å se listen"}
-          </p>
+          <p>{isAuthenticatedFunc() ? "Henter fylker..." : "Logg inn for å se listen"}</p>
         )}
       </div>
     </ListItemAccordion>

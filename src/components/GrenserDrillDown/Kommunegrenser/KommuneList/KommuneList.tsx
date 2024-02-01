@@ -17,10 +17,7 @@ const KommuneList = ({ fylke }: Props) => {
   const fylkeId = getIdFromEntity(fylke);
   const { kommuner, error } = useKommuner(fylkeId);
   const [shouldFetch, setShouldFetch] = useState(false);
-  const { kommunegrenser, isFetching } = useKommunegrenser(
-    fylkeId,
-    shouldFetch,
-  );
+  const { kommunegrenser, isFetching } = useKommunegrenser(fylkeId, shouldFetch);
   const { kretsStatus } = useEditGrense("kommune", fylkeId, kommunegrenser);
 
   useEffect(() => {
@@ -39,10 +36,7 @@ const KommuneList = ({ fylke }: Props) => {
       grenseId={fylkeId}
       grenseType="kommune"
       isFetching={isFetching}
-      title={`${fylke.fylkesnummer.kodeverdi} ${getNavnInSpraak(
-        fylke.navn,
-        "nor",
-      )}`}
+      title={`${fylke.fylkesnummer.kodeverdi} ${getNavnInSpraak(fylke.navn, "nor")}`}
     >
       <Wrapper>
         {kommuner.map((kommune) => (

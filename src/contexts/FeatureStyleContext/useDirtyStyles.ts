@@ -3,9 +3,7 @@ import { grenseStyles, setFeatureStyle } from "utils/map/layerStyles";
 
 const useDirtyStyles = () => {
   const [dirtyFeatureIds, setDirtyFeatureIds] = useState<string[]>([]);
-  const [savedDirtyFeatureIds, setSavedDirtyFeatureIds] = useState<string[]>(
-    [],
-  );
+  const [savedDirtyFeatureIds, setSavedDirtyFeatureIds] = useState<string[]>([]);
 
   // TODO: denne bør være felles for både dirty og archive, fordi den gjør mer magi
   const setDirtyFeaturesToEdit = (features: string[]) => {
@@ -14,9 +12,7 @@ const useDirtyStyles = () => {
         setFeatureStyle(featureId, grenseStyles.dirty);
       }
     }
-    setDirtyFeatureIds(
-      dirtyFeatureIds.filter((dfi) => !features.includes(dfi)),
-    );
+    setDirtyFeatureIds(dirtyFeatureIds.filter((dfi) => !features.includes(dfi)));
   };
 
   const setDirtyFeatures = (features: string[]) => {

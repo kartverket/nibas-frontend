@@ -5,10 +5,7 @@ export type Endring = {
   til: string;
 };
 
-export type StemmekretsMetadataEndringstype =
-  | "stemmekretsnavn"
-  | "stemmekretsnummer"
-  | "valgdistriktsnummer";
+export type StemmekretsMetadataEndringstype = "stemmekretsnavn" | "stemmekretsnummer" | "valgdistriktsnummer";
 
 export type GrunnkretsEndringstype = "navn" | "grunnkretsnummer";
 
