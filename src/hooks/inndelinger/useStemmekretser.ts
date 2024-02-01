@@ -33,3 +33,25 @@ export const useKommuneStemmekretser = (kommuneId: string) => {
     stemmekretserFetcher,
   );
 };
+
+export const useToKommunerStemmekretser = (
+  kommunerId: (string | undefined)[],
+) => {
+  const { data: stemmekretserA, isLoading: k1Loading } = useNibasApi(
+    kommunerId[0] ? "/v1/kommuner/{id}/stemmekretser" : null,
+    {
+      id: kommunerId[0] as string,
+    },
+  );
+  const { data: stemmekretserB, isLoading: k2Loading } = useNibasApi(
+    kommunerId[1] ? "/v1/kommuner/{id}/stemmekretser" : null,
+    {
+      id: kommunerId[1] as string,
+    },
+  );
+  return {
+    kommuneA: stemmekretserA,
+    kommuneB: stemmekretserB,
+    stemmekretserIsLoading: k1Loading || k2Loading,
+  };
+};
