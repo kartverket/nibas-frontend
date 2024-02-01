@@ -80,7 +80,7 @@ export const addKontekstEntryFromFeature = (
 
   const oldProperties = feature.getProperties() as FeatureProperties;
   const oldKontekstEgenskaper = oldProperties.kontekstEgenskaper;
-  if (!oldKontekstEgenskaper) return;
+
   const newProperties: FeatureProperties = {
     ...oldProperties,
     kontekstEgenskaper: updatedKontekstEgenskaper,
@@ -92,7 +92,7 @@ export const addKontekstEntryFromFeature = (
     changes: [
       {
         id: id as string,
-        from: oldKontekstEgenskaper,
+        from: oldKontekstEgenskaper || ({} as KontekstEgenskaper),
         to: updatedKontekstEgenskaper,
       },
     ],
