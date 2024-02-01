@@ -83,9 +83,6 @@ const useDraw = () => {
 
           return true;
         },
-        finishCondition: (event: MapBrowserEvent<MouseEvent>) => {
-          return true;
-        },
       }),
     [activeTool, coordinatesAreEqual, getActiveFeaturesAtPixel, toast],
   );
