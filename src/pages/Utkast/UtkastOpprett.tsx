@@ -94,8 +94,7 @@ const UtkastOpprett = () => {
               <Section>
                 <FormLabel>Navn på utkastet</FormLabel>
                 <FormHelperText>
-                  Velg et beskrivende navn som gjør at andre kan forstå hva
-                  utkastet inneholder.
+                  Velg et beskrivende navn som gjør at andre kan forstå hva utkastet inneholder.
                 </FormHelperText>
 
                 <Input
@@ -106,14 +105,8 @@ const UtkastOpprett = () => {
               </Section>
               <Section>
                 <FormLabel>Endringstype</FormLabel>
-                <FormHelperText>
-                  Typen påvirker hvilke verktøy som er tilgjengelig under
-                  redigeringen.
-                </FormHelperText>
-                <Select
-                  placeholder="Velg en endringstype fra listen"
-                  {...register("endringstype")}
-                >
+                <FormHelperText>Typen påvirker hvilke verktøy som er tilgjengelig under redigeringen.</FormHelperText>
+                <Select placeholder="Velg en endringstype fra listen" {...register("endringstype")}>
                   {endringstyper.map((type) => (
                     <option key={type} value={type}>
                       {type}

@@ -31,8 +31,6 @@ describe("Kommunegrenser", () => {
     await user.click(screen.getByRole("button", { name: "Vis 42 Agder" }));
     await user.click(screen.getByRole("button", { name: "Skjul 42 Agder" }));
 
-    expect(
-      screen.getByRole("button", { name: "Vis 42 Agder" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Vis 42 Agder" })).toBeInTheDocument();
   });
 });

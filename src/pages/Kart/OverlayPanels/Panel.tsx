@@ -122,12 +122,7 @@ type PanelHeaderProps = {
   size?: PanelHeaderSizes;
 };
 
-export const PanelHeader = ({
-  children,
-  subHeading,
-  onClose,
-  size = "md",
-}: PanelHeaderProps) => (
+export const PanelHeader = ({ children, subHeading, onClose, size = "md" }: PanelHeaderProps) => (
   <PanelHeaderContainer $size={size}>
     <PanelHeaderText>
       <Heading as="h3" size={size}>
@@ -135,10 +130,6 @@ export const PanelHeader = ({
       </Heading>
       {subHeading && <Text fontSize="sm">{subHeading}</Text>}
     </PanelHeaderText>
-    <CloseButton
-      size={getCloseButtonSize(size)}
-      onClick={onClose}
-      aria-label="Lukk"
-    />
+    <CloseButton size={getCloseButtonSize(size)} onClick={onClose} aria-label="Lukk" />
   </PanelHeaderContainer>
 );

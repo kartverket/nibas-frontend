@@ -12,15 +12,9 @@ export type ErrorHandlingContextValue = {
   setError: (error: Error) => void;
 };
 
-export const ErrorHandlingContext = createContext<
-  ErrorHandlingContextValue | undefined
->(undefined);
+export const ErrorHandlingContext = createContext<ErrorHandlingContextValue | undefined>(undefined);
 
-export const ErrorHandlingProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+export const ErrorHandlingProvider = ({ children }: { children: React.ReactNode }) => {
   const [error, setError] = useState<Error>(null);
 
   const value = {
@@ -28,19 +22,13 @@ export const ErrorHandlingProvider = ({
     setError,
   };
 
-  return (
-    <ErrorHandlingContext.Provider value={value}>
-      {children}
-    </ErrorHandlingContext.Provider>
-  );
+  return <ErrorHandlingContext.Provider value={value}>{children}</ErrorHandlingContext.Provider>;
 };
 
 export const useErrorHandling = () => {
   const context = useContext(ErrorHandlingContext);
   if (!context) {
-    throw new Error(
-      "useErrorHandling must be used within a ErrorHandlingContext",
-    );
+    throw new Error("useErrorHandling must be used within a ErrorHandlingContext");
   }
 
   return context;

@@ -1,12 +1,6 @@
 import React from "react";
 import { styled } from "styled-components";
-import {
-  Heading,
-  IconButton,
-  Divider,
-  ButtonGroup,
-  Spinner,
-} from "@kvib/react";
+import { Heading, IconButton, Divider, ButtonGroup, Spinner } from "@kvib/react";
 import ActiveKartlagOpacity from "./ActiveKartlagOpacity";
 import { VisibleLayer } from "contexts/KartlagContext/useVisibleLayers";
 import { useKartlag } from "contexts/KartlagContext/KartlagContext";
@@ -20,9 +14,7 @@ type Props = {
 const ActiveKartlag = ({ layer, index, maxIndex }: Props) => {
   const { mappedLayers, moveLayer, toggleLayerVisibility } = useKartlag();
 
-  const mappedLayer = mappedLayers.find(
-    (ml) => ml.sourceId === layer.mainLayer,
-  );
+  const mappedLayer = mappedLayers.find((ml) => ml.sourceId === layer.mainLayer);
 
   return (
     <>
@@ -70,9 +62,7 @@ const ActiveKartlag = ({ layer, index, maxIndex }: Props) => {
                     aria-label={`Fjern ${subLayer}`}
                     variant="ghost"
                     icon="close"
-                    onClick={() =>
-                      toggleLayerVisibility(layer.mainLayer, subLayer)
-                    }
+                    onClick={() => toggleLayerVisibility(layer.mainLayer, subLayer)}
                   />
                 </ActiveSublag>
               </React.Fragment>

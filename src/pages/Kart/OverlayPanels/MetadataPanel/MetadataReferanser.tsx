@@ -44,12 +44,10 @@ const mapFromApiToForm = (dokrefs: Dokref[] = []): DokrefForm[] => {
       apiId: lenke.id,
       beskrivelse: lenke.beskrivelse,
     })),
-    internReferanserKartverket: dokref.internReferanserKartverket.map(
-      (ref) => ({
-        apiId: ref.id,
-        beskrivelse: ref.beskrivelse,
-      }),
-    ),
+    internReferanserKartverket: dokref.internReferanserKartverket.map((ref) => ({
+      apiId: ref.id,
+      beskrivelse: ref.beskrivelse,
+    })),
   }));
 };
 
@@ -65,12 +63,10 @@ const mapFromFormToApi = (data: Inputs): Dokref[] => {
       id: lenke.apiId,
       beskrivelse: lenke.beskrivelse,
     })),
-    internReferanserKartverket: dokref.internReferanserKartverket.map(
-      (ref) => ({
-        id: ref.apiId,
-        beskrivelse: ref.beskrivelse,
-      }),
-    ),
+    internReferanserKartverket: dokref.internReferanserKartverket.map((ref) => ({
+      id: ref.apiId,
+      beskrivelse: ref.beskrivelse,
+    })),
   }));
 };
 
@@ -79,18 +75,10 @@ type FieldArrayProps = {
   itemName: string;
   updateDraft: () => void;
   disabled: boolean;
-  name:
-    | `dokrefs.${number}.dokumentlenker`
-    | `dokrefs.${number}.internReferanserKartverket`;
+  name: `dokrefs.${number}.dokumentlenker` | `dokrefs.${number}.internReferanserKartverket`;
 };
 
-const FieldArray = ({
-  control,
-  name,
-  itemName,
-  disabled,
-  updateDraft,
-}: FieldArrayProps) => {
+const FieldArray = ({ control, name, itemName, disabled, updateDraft }: FieldArrayProps) => {
   const [newLenke, setNewLenke] = useState("");
   const { fields, append, remove } = useFieldArray({
     control,
@@ -121,11 +109,7 @@ const FieldArray = ({
             {field.beskrivelse}
           </a>
           <div>
-            <Button
-              rightIcon="remove"
-              onClick={() => remove(nestedIndex)}
-              isDisabled={disabled}
-            >
+            <Button rightIcon="remove" onClick={() => remove(nestedIndex)} isDisabled={disabled}>
               Slett
             </Button>
           </div>
@@ -183,13 +167,9 @@ const MetadataReferanser = ({ feature }: Props) => {
 
   useEffect(() => {
     const updateFormOnPropertyChange = (e: ObjectEvent) => {
-      const newMetadata = (e.target as Feature<LineString>).getProperties()
-        .metadata as Metadata;
+      const newMetadata = (e.target as Feature<LineString>).getProperties().metadata as Metadata;
 
-      setValue(
-        "dokrefs",
-        mapFromApiToForm(newMetadata.dokumentasjonsreferanser),
-      );
+      setValue("dokrefs", mapFromApiToForm(newMetadata.dokumentasjonsreferanser));
     };
 
     feature.on("propertychange", updateFormOnPropertyChange);
@@ -201,14 +181,10 @@ const MetadataReferanser = ({ feature }: Props) => {
 
   const updateDraftFromFeature = () => {
     const metadata = feature.getProperties().metadata as Metadata;
-    addMetadataEntryFromFeature(
-      feature as Feature<LineString>,
-      addHistoryEntry,
-      {
-        ...metadata,
-        dokumentasjonsreferanser: mapFromFormToApi(getValues()),
-      },
-    );
+    addMetadataEntryFromFeature(feature as Feature<LineString>, addHistoryEntry, {
+      ...metadata,
+      dokumentasjonsreferanser: mapFromFormToApi(getValues()),
+    });
   };
 
   const metadataIsDisabled = useIsMetadataDisabled(feature, properties);

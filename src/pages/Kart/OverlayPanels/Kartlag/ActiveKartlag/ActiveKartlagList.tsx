@@ -9,12 +9,7 @@ const ActiveKartlagList = () => {
     <>
       {visibleLayers.length > 0 ? (
         visibleLayers.map((layer, index) => (
-          <ActiveKartlag
-            key={layer.mainLayer}
-            layer={layer}
-            index={index}
-            maxIndex={visibleLayers.length - 1}
-          />
+          <ActiveKartlag key={layer.mainLayer} layer={layer} index={index} maxIndex={visibleLayers.length - 1} />
         ))
       ) : (
         <Alert>

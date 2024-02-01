@@ -17,19 +17,15 @@ import { Modal, ModalContent, ModalOverlay, Spinner } from "@kvib/react";
 
 const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
   const { utkast } = useUtkast();
-  const { sortProperty, sortOrder, sortHeaderProps } = useTableSort([
-    "grunnkretsnummer",
-    "navn",
-  ]);
+  const { sortProperty, sortOrder, sortHeaderProps } = useTableSort(["grunnkretsnummer", "navn"]);
   const { flatedata, closeOverlayModal } = useOverlayPanel();
   const { searchValue, setInputValue } = useSearch();
 
   const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
   const { data: grunnkretserByKommune } = useKommuneGrunnkretser(kommuneId);
-  const utkastGrunnkretser = useUtkastEntity(
-    grunnkretserByKommune,
-    "grunnkretsendringer",
-  ) as GrunnkretsResponse[] | undefined;
+  const utkastGrunnkretser = useUtkastEntity(grunnkretserByKommune, "grunnkretsendringer") as
+    | GrunnkretsResponse[]
+    | undefined;
 
   const filteredGrunnkretser = useMemo(() => {
     if (!searchValue) return utkastGrunnkretser;
@@ -52,31 +48,18 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
           <KretsTable $hasUtkast={utkast !== undefined}>
             <thead>
               <tr>
-                <SortHeader {...sortHeaderProps("grunnkretsnummer")}>
-                  Grunnkretsnummer
-                </SortHeader>
-                <SortHeader {...sortHeaderProps("navn")}>
-                  Grunnkretsnavn
-                </SortHeader>
+                <SortHeader {...sortHeaderProps("grunnkretsnummer")}>Grunnkretsnummer</SortHeader>
+                <SortHeader {...sortHeaderProps("navn")}>Grunnkretsnavn</SortHeader>
                 {utkast && <th>{/* Tom plass for mellomrom */}</th>}
                 <th>
-                  <Input
-                    placeholder="Søk på navn"
-                    onChange={(e) => setInputValue(e.currentTarget.value)}
-                  />
+                  <Input placeholder="Søk på navn" onChange={(e) => setInputValue(e.currentTarget.value)} />
                 </th>
               </tr>
             </thead>
             <tbody>
-              {orderBy(filteredGrunnkretser, sortProperty, sortOrder).map(
-                (grunnkrets) => (
-                  <GrunnkretsRow
-                    key={getIdFromEntity(grunnkrets)}
-                    grunnkrets={grunnkrets}
-                    kommuneId={kommuneId}
-                  />
-                ),
-              )}
+              {orderBy(filteredGrunnkretser, sortProperty, sortOrder).map((grunnkrets) => (
+                <GrunnkretsRow key={getIdFromEntity(grunnkrets)} grunnkrets={grunnkrets} kommuneId={kommuneId} />
+              ))}
             </tbody>
           </KretsTable>
         ) : (

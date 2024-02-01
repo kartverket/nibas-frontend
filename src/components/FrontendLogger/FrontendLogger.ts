@@ -23,28 +23,16 @@ class FrontendLogger {
     this.logRemote(message, "ERROR", error);
   };
 
-  private logRemote = async (
-    message: string,
-    level: LogLevels,
-    error: Error | null | undefined,
-  ) => {
+  private logRemote = async (message: string, level: LogLevels, error: Error | null | undefined) => {
     if (error == null) {
       this.sendLogToRemote(message, level, null);
     } else {
       const parsedStackFrames = await StackTrace.fromError(error);
-      this.sendLogToRemote(
-        message,
-        level,
-        parsedStackFrames.map((frame) => frame.toString()).join("\n  "),
-      );
+      this.sendLogToRemote(message, level, parsedStackFrames.map((frame) => frame.toString()).join("\n  "));
     }
   };
 
-  private sendLogToRemote = (
-    message: string,
-    level: LogLevels,
-    stacktrace: string | null | undefined,
-  ) => {
+  private sendLogToRemote = (message: string, level: LogLevels, stacktrace: string | null | undefined) => {
     const token = getTokenHolder()?.token;
     fetch(getUrlForPath("/v1/frontendlogger"), {
       method: "POST",

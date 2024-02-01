@@ -3,11 +3,7 @@ import { Accordion, AccordionPanel } from "@kvib/react";
 import { MappedLayer } from "utils/getLayersFromWMS";
 import KartlagMiddle from "./KartlagMiddle";
 import KartlagInner from "./KartlagInner";
-import {
-  KartlagAccordionItem,
-  KartlagAccordionButton,
-  KartlagAccordionIcon,
-} from "./components";
+import { KartlagAccordionItem, KartlagAccordionButton, KartlagAccordionIcon } from "./components";
 
 type Props = {
   mappedLayer: MappedLayer;

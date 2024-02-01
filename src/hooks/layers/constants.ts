@@ -11,18 +11,11 @@ import { kartlagSources } from "./kartlagSources";
 const createTileLayerFromKartlagSource = (id: keyof typeof kartlagSources) =>
   new TileLayer({ source: kartlagSources[id] });
 
-export const kartlagLayers: Record<
-  KartlagId,
-  TileLayer<TileWMS | WMTS> | VectorLayer<VectorSource>
-> = {
+export const kartlagLayers: Record<KartlagId, TileLayer<TileWMS | WMTS> | VectorLayer<VectorSource>> = {
   cachetjenester: createTileLayerFromKartlagSource("cachetjenester"),
   matrikkelenWMS: createTileLayerFromKartlagSource("matrikkelenWMS"),
-  administrativeGrenser: createTileLayerFromKartlagSource(
-    "administrativeGrenser",
-  ),
-  administrativeGrenserHistorisk: createTileLayerFromKartlagSource(
-    "administrativeGrenserHistorisk",
-  ),
+  administrativeGrenser: createTileLayerFromKartlagSource("administrativeGrenser"),
+  administrativeGrenserHistorisk: createTileLayerFromKartlagSource("administrativeGrenserHistorisk"),
   grunnkretserWMS: createTileLayerFromKartlagSource("grunnkretserWMS"),
   stedsnavn: createTileLayerFromKartlagSource("stedsnavn"),
   stedsnavnSSR: createTileLayerFromKartlagSource("stedsnavnSSR"),
@@ -31,9 +24,7 @@ export const kartlagLayers: Record<
   n5Raster2: createTileLayerFromKartlagSource("n5Raster2"),
   historiskeKart: createTileLayerFromKartlagSource("historiskeKart"),
   norgeIBilder: createTileLayerFromKartlagSource("norgeIBilder"),
-  norgesMaritimeGrenser: createTileLayerFromKartlagSource(
-    "norgesMaritimeGrenser",
-  ),
+  norgesMaritimeGrenser: createTileLayerFromKartlagSource("norgesMaritimeGrenser"),
   sjokartElektroniske: createTileLayerFromKartlagSource("sjokartElektroniske"),
 };
 
@@ -41,10 +32,7 @@ export const editSource = new VectorSource({ useSpatialIndex: false });
 
 const grenseStyle =
   (grenseId: GrenseId): StyleFunction =>
-  (feature) => [
-    ...getLayerStyle(feature, grenseId, false),
-    getPointOverlayStyle(feature),
-  ];
+  (feature) => [...getLayerStyle(feature, grenseId, false), getPointOverlayStyle(feature)];
 
 export const grenserLayers = {
   // ingen source betyr at source settes async
@@ -83,9 +71,4 @@ export const grenserLayers = {
   }),
 };
 
-export const editableBorderTypes = [
-  "Delområdegrense",
-  "Grunnkretsgrense",
-  "Stemmekretsgrense",
-  "Kommunegrense",
-];
+export const editableBorderTypes = ["Delområdegrense", "Grunnkretsgrense", "Stemmekretsgrense"];

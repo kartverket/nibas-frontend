@@ -35,12 +35,7 @@ const SortHeader = ({ children, onClick, isActivated, isReversed }: Props) => {
 
   return (
     <th>
-      <ClickableHeader
-        variant="ghost"
-        $isActivated={isActivated}
-        onClick={onClick}
-        rightIcon={getRightIcon()}
-      >
+      <ClickableHeader variant="ghost" $isActivated={isActivated} onClick={onClick} rightIcon={getRightIcon()}>
         {children}
       </ClickableHeader>
     </th>

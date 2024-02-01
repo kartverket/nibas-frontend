@@ -2,14 +2,7 @@ import { forwardRef } from "react";
 import { styled } from "styled-components";
 import { StemmekretsResponse } from "types/api";
 import { ValidationError } from "components/Input";
-import {
-  Button,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Select,
-  SelectProps,
-} from "@kvib/react";
+import { Button, FormControl, FormErrorMessage, FormLabel, Select, SelectProps } from "@kvib/react";
 
 const MergeSelectWrapper = styled(FormControl)`
   display: grid;
@@ -42,24 +35,11 @@ type MergeSelectProps = {
 } & SelectProps;
 
 export const MergeSelect = forwardRef<HTMLSelectElement, MergeSelectProps>(
-  (
-    {
-      onRemove,
-      stemmekretser,
-      showRemoveButton,
-      validationError,
-      ...inputProps
-    },
-    ref,
-  ) => (
+  ({ onRemove, stemmekretser, showRemoveButton, validationError, ...inputProps }, ref) => (
     <MergeSelectWrapper isInvalid={validationError?.showError}>
       <SelectLabel>Navn eller nummer på stemmekrets</SelectLabel>
       <div>
-        <Select
-          {...inputProps}
-          ref={ref}
-          placeholder="Velg en stemmekrets fra listen"
-        >
+        <Select {...inputProps} ref={ref} placeholder="Velg en stemmekrets fra listen">
           {stemmekretser.map((s) => (
             <option key={s.stemmekretsnummer} value={s.stemmekretsnummer}>
               {`${s.stemmekretsnummer} - ${s.stemmekretsnavn}`}
@@ -72,9 +52,7 @@ export const MergeSelect = forwardRef<HTMLSelectElement, MergeSelectProps>(
           Fjern
         </RemoveButton>
       )}
-      <MergeSelectErrorMessage>
-        {validationError?.message}
-      </MergeSelectErrorMessage>
+      <MergeSelectErrorMessage>{validationError?.message}</MergeSelectErrorMessage>
     </MergeSelectWrapper>
   ),
 );

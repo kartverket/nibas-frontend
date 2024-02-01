@@ -18,8 +18,7 @@ const defaultLayers = [
 ];
 
 const useVisibleLayers = () => {
-  const [visibleLayers, setVisibleLayers] =
-    useState<VisibleLayer[]>(defaultLayers);
+  const [visibleLayers, setVisibleLayers] = useState<VisibleLayer[]>(defaultLayers);
 
   const resetVisibleLayers = () => {
     setVisibleLayers(defaultLayers);
@@ -53,18 +52,12 @@ const useVisibleLayers = () => {
     });
   }, [visibleLayers]);
 
-  const toggleLayerVisibility = (
-    layerId: KartlagId,
-    subLayer?: string,
-    replaceSubLayer?: boolean,
-  ) => {
+  const toggleLayerVisibility = (layerId: KartlagId, subLayer?: string, replaceSubLayer?: boolean) => {
     if (!subLayer) {
       toggleLayerWithOutSublayer(layerId);
       return;
     }
-    const layer = visibleLayers.find(
-      (visibleLayer) => visibleLayer.mainLayer === layerId,
-    );
+    const layer = visibleLayers.find((visibleLayer) => visibleLayer.mainLayer === layerId);
 
     if (!layer) {
       addNewMainLayer(layerId, subLayer);
@@ -89,9 +82,7 @@ const useVisibleLayers = () => {
       ]);
     } else if (layer && !visible) {
       // Treffer når man velger et annet underlag på et synlig hovedlag
-      const newSubLayers = replaceSubLayer
-        ? [subLayer]
-        : layer.subLayers.concat(subLayer);
+      const newSubLayers = replaceSubLayer ? [subLayer] : layer.subLayers.concat(subLayer);
       setVisibleLayers([
         ...visibleLayers.slice(0, index),
         { mainLayer: layerId, subLayers: newSubLayers },
@@ -101,19 +92,14 @@ const useVisibleLayers = () => {
   };
 
   const toggleLayerWithOutSublayer = (layerId: KartlagId) => {
-    const layer = visibleLayers.find(
-      (visibleLayer) => visibleLayer.mainLayer === layerId,
-    );
+    const layer = visibleLayers.find((visibleLayer) => visibleLayer.mainLayer === layerId);
 
     const visible = layer ? true : false;
 
     if (visible) {
       setVisibleLayers(visibleLayers.filter((vl) => vl !== layer));
     } else {
-      setVisibleLayers([
-        { mainLayer: layerId, subLayers: [] },
-        ...visibleLayers,
-      ]);
+      setVisibleLayers([{ mainLayer: layerId, subLayers: [] }, ...visibleLayers]);
     }
   };
 
@@ -122,30 +108,21 @@ const useVisibleLayers = () => {
       toggleLayerWithOutSublayer(mainLayer);
       return;
     }
-    setVisibleLayers([
-      { mainLayer: mainLayer, subLayers: [subLayer] },
-      ...visibleLayers,
-    ]);
+    setVisibleLayers([{ mainLayer: mainLayer, subLayers: [subLayer] }, ...visibleLayers]);
   };
 
   const layerIsVisible = (layerId: KartlagId) => {
-    return visibleLayers.some(
-      (visibleLayer) => visibleLayer.mainLayer === layerId,
-    );
+    return visibleLayers.some((visibleLayer) => visibleLayer.mainLayer === layerId);
   };
 
   const subLayerIsVisible = (mainLayer: KartlagId, subLayer: string) => {
     return visibleLayers.some(
-      (visibleLayer) =>
-        visibleLayer.mainLayer === mainLayer &&
-        visibleLayer.subLayers.includes(subLayer),
+      (visibleLayer) => visibleLayer.mainLayer === mainLayer && visibleLayer.subLayers.includes(subLayer),
     );
   };
 
   const moveLayer = (direction: "up" | "down", layerId: KartlagId) => {
-    const layer = visibleLayers.find(
-      (visibleLayer) => visibleLayer.mainLayer === layerId,
-    );
+    const layer = visibleLayers.find((visibleLayer) => visibleLayer.mainLayer === layerId);
 
     if (layer) {
       const indexDifference = direction === "up" ? -1 : 1;

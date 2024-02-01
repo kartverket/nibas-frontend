@@ -1,8 +1,4 @@
-import {
-  GrunnkretsResponse,
-  KommuneRef,
-  UtkastOperasjoner,
-} from "../../../types/api";
+import { GrunnkretsResponse, KommuneRef, UtkastOperasjoner } from "../../../types/api";
 import { deduplicate, removeNull } from "utils/list-utils";
 import {
   GrunnkretsEndringstype,
@@ -18,9 +14,7 @@ import {
 } from "./endringerUtils";
 import { getNavnInSpraak } from "utils/language/language";
 
-export const getGrunnkretserMedEndringer = (
-  operasjoner: OperasjonerOrNull,
-): string[] => {
+export const getGrunnkretserMedEndringer = (operasjoner: OperasjonerOrNull): string[] => {
   const endringerResponse = operasjoner?.metadataendringer?.grunnkretsendringer;
 
   if (endringerResponse == null && operasjoner == null) {
@@ -31,10 +25,9 @@ export const getGrunnkretserMedEndringer = (
     Object.keys(operasjoner?.metadataendringer?.grunnkretsendringer ?? {}),
   );
 
-  const alleGrunnkretserMedEndringer = getKretserMedGrensejusteringer(
-    operasjoner,
-    "GRUNNKRETS",
-  ).concat(grunnkretsMetadataEndringer);
+  const alleGrunnkretserMedEndringer = getKretserMedGrensejusteringer(operasjoner, "GRUNNKRETS").concat(
+    grunnkretsMetadataEndringer,
+  );
 
   return deduplicate(alleGrunnkretserMedEndringer);
 };
@@ -46,10 +39,7 @@ const getEndringAvTypeForId = (
   alleGrunnkretser: GrunnkretsResponse[],
 ): Endring | null => {
   const gammelGrunnkrets = findKrets(grunnkretsId, alleGrunnkretser);
-  const nyVerdi =
-    operasjoner.metadataendringer.grunnkretsendringer?.[grunnkretsId]?.[
-      type
-    ]?.trim();
+  const nyVerdi = operasjoner.metadataendringer.grunnkretsendringer?.[grunnkretsId]?.[type]?.trim();
 
   const gammelVerdi = gammelGrunnkrets[type]?.trim() ?? "";
 
@@ -63,9 +53,7 @@ const getEndringAvTypeForId = (
   };
 };
 
-const harMetadataEndring = (
-  metadatEndring: GrunnkretsMetadataEndring,
-): boolean => {
+const harMetadataEndring = (metadatEndring: GrunnkretsMetadataEndring): boolean => {
   const fieldsToCheck = [metadatEndring.navn, metadatEndring.grunnkretsnummer];
   return fieldsToCheck.some((field) => field != null);
 };
@@ -78,12 +66,7 @@ const getMetadataEndringer = (
   return grunnkretser
     .map((grunnkretsId) => {
       const getEndringAvType = (type: GrunnkretsEndringstype) =>
-        getEndringAvTypeForId(
-          type,
-          grunnkretsId,
-          operasjoner,
-          alleGrunnkretser,
-        );
+        getEndringAvTypeForId(type, grunnkretsId, operasjoner, alleGrunnkretser);
 
       return {
         kretsEndret: findKrets(grunnkretsId, alleGrunnkretser),
@@ -101,14 +84,9 @@ const getEndringerForKommune = (
   alleGrunnkretser: GrunnkretsResponse[],
   alleKommuner: KommuneRef[],
 ): Grunnkretsendringer => {
-  const grunnkretserMedGrensejusteringer = getKretserMedGrensejusteringer(
-    operasjoner,
-    "GRUNNKRETS",
-  );
+  const grunnkretserMedGrensejusteringer = getKretserMedGrensejusteringer(operasjoner, "GRUNNKRETS");
 
-  const kommune = alleKommuner.find(
-    (kommuneRef) => kommuneRef.kommunenummer.id === kommuneId,
-  );
+  const kommune = alleKommuner.find((kommuneRef) => kommuneRef.kommunenummer.id === kommuneId);
 
   return {
     kommune: {
@@ -116,11 +94,7 @@ const getEndringerForKommune = (
       nummer: kommune?.kommunenummer.kodeverdi ?? "",
       navn: getNavnInSpraak(kommune?.navn, "nor"),
     },
-    metadataendringer: getMetadataEndringer(
-      grunnkretserMedEndringer,
-      operasjoner,
-      alleGrunnkretser,
-    ),
+    metadataendringer: getMetadataEndringer(grunnkretserMedEndringer, operasjoner, alleGrunnkretser),
     grensejusteringer: removeNull(
       grunnkretserMedEndringer
         .filter((id) => grunnkretserMedGrensejusteringer.includes(id))
@@ -139,19 +113,9 @@ export const getGrunnkretsEndringer = (
     return null;
   }
 
-  const endredeGrunnkretserGroupedBykommuneId = groupEndringerByKommune(
-    endredeGrunnkretser,
-    alleGrunnkretser,
-  );
+  const endredeGrunnkretserGroupedBykommuneId = groupEndringerByKommune(endredeGrunnkretser, alleGrunnkretser);
 
-  return Object.entries(endredeGrunnkretserGroupedBykommuneId).map(
-    ([kommune, stemmekretser]) =>
-      getEndringerForKommune(
-        kommune,
-        stemmekretser,
-        operasjoner,
-        alleGrunnkretser,
-        alleKommuner,
-      ),
+  return Object.entries(endredeGrunnkretserGroupedBykommuneId).map(([kommune, stemmekretser]) =>
+    getEndringerForKommune(kommune, stemmekretser, operasjoner, alleGrunnkretser, alleKommuner),
   );
 };

@@ -4,10 +4,7 @@ import WMTS from "ol/source/WMTS";
 import { MappedLayer } from "utils/getLayersFromWMS";
 import { getLayerById, isWMTSLayer } from "utils/map/layers";
 
-const getLayersStringToReplace = (
-  layersInParams: string,
-  mappedLayerName: string,
-) => {
+const getLayersStringToReplace = (layersInParams: string, mappedLayerName: string) => {
   const commaRegex = new RegExp(`(,{0,1})(${mappedLayerName})(,{0,1})`, "i");
   const match = commaRegex.exec(layersInParams);
 
@@ -31,10 +28,7 @@ const getLayersStringToReplace = (
   return replaceString;
 };
 
-export const toggleWMSLayer = (
-  mappedLayer: MappedLayer,
-  isVisible: boolean,
-) => {
+export const toggleWMSLayer = (mappedLayer: MappedLayer, isVisible: boolean) => {
   const source = kartlagLayers[mappedLayer.sourceId].getSource() as TileWMS;
   const layersInParams = source.getParams().LAYERS as string;
   const mappedLayerId = mappedLayer.id;
@@ -44,10 +38,7 @@ export const toggleWMSLayer = (
   let newParamsLayerString = "";
 
   if (isVisible) {
-    const replaceString = getLayersStringToReplace(
-      layersInParams,
-      mappedLayerId,
-    );
+    const replaceString = getLayersStringToReplace(layersInParams, mappedLayerId);
 
     if (!replaceString) return;
 

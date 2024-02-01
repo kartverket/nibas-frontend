@@ -55,24 +55,11 @@ type Props = {
 };
 
 const InnerModeButton = (
-  {
-    icon,
-    ariaLabel,
-    children,
-    onClick,
-    isActive = false,
-    isDisabled = false,
-  }: Props,
+  { icon, ariaLabel, children, onClick, isActive = false, isDisabled = false }: Props,
   ref: React.ForwardedRef<HTMLButtonElement>,
 ) => {
   return (
-    <Container
-      onClick={onClick}
-      aria-label={ariaLabel}
-      $isActive={isActive}
-      disabled={isDisabled}
-      ref={ref}
-    >
+    <Container onClick={onClick} aria-label={ariaLabel} $isActive={isActive} disabled={isDisabled} ref={ref}>
       <Icon icon={icon} />
       {children}
     </Container>

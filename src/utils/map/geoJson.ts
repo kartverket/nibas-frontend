@@ -1,24 +1,17 @@
 import Feature from "ol/Feature";
-import GeoJSON, {
-  GeoJSONFeature,
-  GeoJSONFeatureCollection,
-} from "ol/format/GeoJSON";
+import GeoJSON, { GeoJSONFeature, GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { Geometry } from "ol/geom";
 import VectorSource from "ol/source/Vector";
 
 const geoJson = new GeoJSON();
 
-export const getFeaturesFromGeoJson = (
-  json: GeoJSONFeature | GeoJSONFeatureCollection,
-) => {
+export const getFeaturesFromGeoJson = (json: GeoJSONFeature | GeoJSONFeatureCollection) => {
   return geoJson.readFeatures(json, {
     dataProjection: "EPSG:25833",
   }) as Feature<Geometry>[];
 };
 
-export const geoJsonToSource = (
-  json: GeoJSONFeature | GeoJSONFeatureCollection,
-) => {
+export const geoJsonToSource = (json: GeoJSONFeature | GeoJSONFeatureCollection) => {
   return new VectorSource({
     features: getFeaturesFromGeoJson(json),
   });

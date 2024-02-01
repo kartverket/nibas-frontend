@@ -8,17 +8,10 @@ import { editSource } from "hooks/layers/constants";
 import { removeFeaturesFromSourceByIds } from "utils/map/source";
 
 export const useSelectStyles = () => {
-  const [selectedPoint, setSelectedPoint] = useState<Feature<Point> | null>(
-    null,
-  );
-  const [selectedFeatures, setSelectedFeatures] = useState<SelectedFeatures>(
-    [],
-  );
+  const [selectedPoint, setSelectedPoint] = useState<Feature<Point> | null>(null);
+  const [selectedFeatures, setSelectedFeatures] = useState<SelectedFeatures>([]);
 
-  const selectPointOnFeature = (
-    coordinate: Coordinate,
-    features: SelectedFeatures,
-  ) => {
+  const selectPointOnFeature = (coordinate: Coordinate, features: SelectedFeatures) => {
     selectFeatures(features);
 
     if (selectedPoint) {

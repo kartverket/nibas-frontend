@@ -10,22 +10,10 @@ import { editableBorderTypes } from "hooks/layers/constants";
 import { isAdministrativGrense } from "utils/grenser";
 import { GrenseType } from "hooks/layers/types";
 
-export const FeatureStyleContext = createContext<
-  FeatureStyleContextValue | undefined
->(undefined);
+export const FeatureStyleContext = createContext<FeatureStyleContextValue | undefined>(undefined);
 
-export const FeatureStyleProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  const {
-    selectedPoint,
-    selectFeatures,
-    selectedFeatures,
-    selectPointOnFeature,
-    clearSelection,
-  } = useSelectStyles();
+export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }) => {
+  const { selectedPoint, selectFeatures, selectedFeatures, selectPointOnFeature, clearSelection } = useSelectStyles();
   const {
     dirtyFeatureIds,
     setDirtyFeatures,
@@ -71,24 +59,12 @@ export const FeatureStyleProvider = ({
     }
 
     previousSelectedFeatures.current = selectedFeatures;
-  }, [
-    dirtyFeatureIds,
-    selectedFeatures,
-    archivedFeatureIds,
-    savedDirtyFeatureIds,
-    savedArchivedFeatureIds,
-  ]);
+  }, [dirtyFeatureIds, selectedFeatures, archivedFeatureIds, savedDirtyFeatureIds, savedArchivedFeatureIds]);
 
-  const getFeatureIdsFromEntries = (
-    accumulator: string[][],
-    entry: HistoryEntry,
-  ) => {
+  const getFeatureIdsFromEntries = (accumulator: string[][], entry: HistoryEntry) => {
     const featureIds: string[] = [];
     entry.changes.forEach((change) => {
-      if (
-        change.to &&
-        !accumulator.some((value) => value.includes(change.id))
-      ) {
+      if (change.to && !accumulator.some((value) => value.includes(change.id))) {
         featureIds.push(change.id);
       }
     });
@@ -118,10 +94,7 @@ export const FeatureStyleProvider = ({
     const dirtyFeatures = history.entries
       .slice(0, history.index)
       .filter(
-        (entry) =>
-          entry.type === "grense" ||
-          entry.type === "metadata" ||
-          entry.type === "grensetilhorighetendring",
+        (entry) => entry.type === "grense" || entry.type === "metadata" || entry.type === "grensetilhorighetendring",
       )
       .reduce(getFeatureIdsFromEntries, [])
       .flatMap((id) => id);
@@ -133,10 +106,7 @@ export const FeatureStyleProvider = ({
       .flatMap((id) => id);
 
     // For å forhindre uendelig løkke
-    if (
-      dirtyFeatureIds.length === dirtyFeatures.length &&
-      archivedFeatureIds.length === archivedFeatures.length
-    ) {
+    if (dirtyFeatureIds.length === dirtyFeatures.length && archivedFeatureIds.length === archivedFeatures.length) {
       return;
     }
 
@@ -168,24 +138,13 @@ export const FeatureStyleProvider = ({
   const featureIsArchived = (feature: FeatureLike) => {
     const featureId = feature.getId();
     if (featureId) {
-      return (
-        archivedFeatureIds.includes(featureId as string) ||
-        savedArchivedFeatureIds.includes(featureId as string)
-      );
+      return archivedFeatureIds.includes(featureId as string) || savedArchivedFeatureIds.includes(featureId as string);
     }
     return false;
   };
 
-  const featureIsEditable = (feature: FeatureLike) => {
-    const grenseType = feature.get("type") as GrenseType;
-    if (isAdministrativGrense(grenseType)) {
-      //
-    }
-
-    return (
-      editableBorderTypes.includes(grenseType) && !featureIsArchived(feature)
-    );
-  };
+  const featureIsEditable = (feature: FeatureLike) =>
+    editableBorderTypes.includes(feature.get("type")) && !featureIsArchived(feature);
 
   const value = {
     selectedPoint,
@@ -202,19 +161,13 @@ export const FeatureStyleProvider = ({
     setAndSaveUtkastArchivedFeatures,
   };
 
-  return (
-    <FeatureStyleContext.Provider value={value}>
-      {children}
-    </FeatureStyleContext.Provider>
-  );
+  return <FeatureStyleContext.Provider value={value}>{children}</FeatureStyleContext.Provider>;
 };
 
 export const useFeatureStyle = () => {
   const context = useContext(FeatureStyleContext);
   if (!context) {
-    throw new Error(
-      "useFeatureStyle must be used within a FeatureStyleContext",
-    );
+    throw new Error("useFeatureStyle must be used within a FeatureStyleContext");
   }
 
   return context;
