@@ -137,6 +137,11 @@ const OuterContainer = styled.div`
   align-items: center;
   gap: 16px;
   margin-bottom: 16px;
+  pointer-events: none;
+
+  & > * {
+    pointer-events: auto;
+  }
 `;
 
 const Container = styled.div`
