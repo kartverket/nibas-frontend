@@ -24,7 +24,7 @@ export const getDefaultFeatureMetadata = (discriminator: MetadataDiscriminator):
         lokalid: "NotARealID",
       },
       sporingsinformasjon: {
-        oppdateringsdato: "",
+        oppdateringsdato: new Date().toISOString(),
       },
       datafangstdato: "",
     },
@@ -43,6 +43,7 @@ export const getDefaultFeatureProperties = (grenseType: GrenseType): FeatureProp
 
   const properties: FeatureProperties = {
     inndelingerKontekst: {
+      // Burde sette ID her fra noe? Vet ikke hvordan man kan hente ut inndelingskonteksten automatisk
       id: "",
       type: editingType,
     },
