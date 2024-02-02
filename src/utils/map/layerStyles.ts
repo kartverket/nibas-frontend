@@ -23,6 +23,44 @@ const getPointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
   return new MultiPoint(coordinates ?? []);
 };
 
+const getNonEndpointsOnFeature = (
+  feature: Feature<Geometry> | RenderFeature,
+): MultiPoint => {
+  const allPoints = getPointsOnFeature(feature);
+  const endPoints = getEndPointsOnFeature(feature);
+
+  if (!allPoints) return new MultiPoint([]);
+  if (!endPoints) return allPoints;
+
+  const nonEndpointCoordinates = allPoints
+    .getCoordinates()
+    .filter((coordinate) => {
+      const endPointCoordinates = endPoints.getCoordinates();
+
+      return !endPointCoordinates.some((endPointCoordinate) => {
+        return (
+          endPointCoordinate[0] === coordinate[0] &&
+          endPointCoordinate[1] === coordinate[1]
+        );
+      });
+    });
+
+  return new MultiPoint(nonEndpointCoordinates);
+};
+
+const getEndPointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
+  const allPoints = getPointsOnFeature(feature);
+
+  if (!allPoints) return new MultiPoint([]);
+
+  const endCoordinates = [
+    allPoints.getFirstCoordinate(),
+    allPoints.getLastCoordinate(),
+  ];
+
+  return new MultiPoint(endCoordinates ?? []);
+};
+
 const lineAndPointStyles = ({
   color,
   dashed = false,
@@ -46,7 +84,20 @@ const lineAndPointStyles = ({
         color,
       }),
     }),
-    geometry: getPointsOnFeature,
+    geometry: getNonEndpointsOnFeature,
+  }),
+  new Style({
+    image: new Circle({
+      radius: points ? 2.5 : 0,
+      fill: new Fill({
+        color: "#FFFFFF",
+      }),
+      stroke: new Stroke({
+        color: color,
+        width: 2,
+      }),
+    }),
+    geometry: getEndPointsOnFeature,
   }),
 ];
 
