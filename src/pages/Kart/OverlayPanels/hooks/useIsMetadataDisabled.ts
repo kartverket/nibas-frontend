@@ -7,14 +7,13 @@ const useIsMetadataDisabled = (feature: Feature, properties: FeatureProperties) 
   const { featureIsEditable } = useFeatureStyle();
   const { kretsStatuser } = useEditGrenser(properties.inndelingerKontekst?.type ?? "fylke");
 
-  const featureKontekstId = properties.inndelingerKontekst?.id;
-
-  if (!featureKontekstId) return true;
-
-  const value = kretsStatuser[featureKontekstId];
+  const kretsStatus = kretsStatuser[feature.getId() ?? ""];
 
   const borderIsNotEditable = !featureIsEditable(feature);
-  return ((value?.visible && !value?.editing) || borderIsNotEditable) ?? true;
+  return (
+    ((kretsStatus?.visible && !kretsStatus?.editing) || borderIsNotEditable) ??
+    true
+  );
 };
 
 export default useIsMetadataDisabled;

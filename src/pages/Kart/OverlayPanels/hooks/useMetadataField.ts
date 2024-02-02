@@ -17,26 +17,36 @@ const getUpdatedMetadata = (data: MetadataField, oldMetadata: Metadata, field: k
   const newMetadata = {
     ...(oldMetadata ?? {}),
     common: {
-      ...(oldMetadata.common ?? {}),
-      informasjon: field === "informasjon" ? data.metadata : oldMetadata.common?.informasjon,
+      ...(oldMetadata?.common ?? {}),
+      informasjon:
+        field === "informasjon"
+          ? data.metadata
+          : oldMetadata?.common?.informasjon,
       datafangstdato:
         field === "datafangstdato"
           ? formatISO(startOfDay(new Date(data.metadata)))
-          : oldMetadata.common?.datafangstdato,
-      opphav: field === "opphav" ? data.metadata : oldMetadata.common?.opphav,
-      gyldigFra: field === "gyldigFra" ? data.metadata : oldMetadata.common?.gyldigFra,
-      gyldigTil: field === "gyldigTil" ? data.metadata : oldMetadata.common?.gyldigTil,
+          : oldMetadata?.common?.datafangstdato,
+      opphav: field === "opphav" ? data.metadata : oldMetadata?.common?.opphav,
+      gyldigFra:
+        field === "gyldigFra" ? data.metadata : oldMetadata?.common?.gyldigFra,
+      gyldigTil:
+        field === "gyldigTil" ? data.metadata : oldMetadata?.common?.gyldigTil,
     },
     commonGrense: {
-      ...(oldMetadata.commonGrense ?? {}),
+      ...(oldMetadata?.commonGrense ?? {}),
       posisjonskvalitet: {
         ...(oldMetadata?.commonGrense?.posisjonskvalitet ?? {}),
         maalemetode: {
-          id: field === "maalemetode" ? data.metadata : oldMetadata.commonGrense?.posisjonskvalitet?.maalemetode.id,
+          id:
+            field === "maalemetode"
+              ? data.metadata
+              : oldMetadata?.commonGrense?.posisjonskvalitet?.maalemetode.id,
           href: "",
         },
         noeyaktighet:
-          field === "noeyaktighet" ? data.metadata : oldMetadata.commonGrense?.posisjonskvalitet?.noeyaktighet,
+          field === "noeyaktighet"
+            ? data.metadata
+            : oldMetadata?.commonGrense?.posisjonskvalitet?.noeyaktighet,
       },
     },
   } as Metadata;
@@ -47,7 +57,7 @@ const getFieldFromMetadata = (metadata: Metadata, field: keyof Inputs) => {
   let value;
   switch (field) {
     case "uuid":
-      value = metadata.common?.identifikasjon.lokalid;
+      value = metadata?.common?.identifikasjon?.lokalid;
       break;
     case "informasjon":
       value = metadata?.common?.informasjon;
@@ -56,7 +66,7 @@ const getFieldFromMetadata = (metadata: Metadata, field: keyof Inputs) => {
       value = metadata?.discriminator;
       break;
     case "datafangstdato":
-      value = metadata.common?.datafangstdato?.split("T")[0];
+      value = metadata?.common?.datafangstdato?.split("T")[0];
       break;
     case "noeyaktighet":
       value = metadata?.commonGrense?.posisjonskvalitet?.noeyaktighet;
@@ -71,7 +81,7 @@ const getFieldFromMetadata = (metadata: Metadata, field: keyof Inputs) => {
       value = metadata?.common?.gyldigTil;
       break;
     case "maalemetode":
-      value = metadata.commonGrense?.posisjonskvalitet?.maalemetode.id;
+      value = metadata?.commonGrense?.posisjonskvalitet?.maalemetode?.id;
       break;
   }
   return { metadata: value?.toString() };
