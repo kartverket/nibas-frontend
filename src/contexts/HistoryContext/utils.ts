@@ -10,6 +10,7 @@ import {
 import { editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
+import { setDefaultFeatureProperties } from "utils/features";
 
 const getFeatureFromChange = (
   change: HistoryChange<MinimalGrense>,
@@ -21,9 +22,7 @@ const getFeatureFromChange = (
       geometry: new LineString(change[direction].coordinates),
     });
     newFeature.setId(change.id);
-    newFeature.setProperties({
-      type: change.to.type,
-    });
+    setDefaultFeatureProperties(newFeature, change.to.type);
     editSource.addFeature(newFeature);
     return newFeature;
   }

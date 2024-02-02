@@ -148,6 +148,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
       setUtkast(updatedUtkast);
     } else if (statusCode.isError(response.status)) {
       const wrapper = (await response.json()) as ApiErrorResponse;
+      console.log(wrapper);
       setError({
         title: "Oppdatering av utkast feilet",
         description: wrapper.errorDescription.description,
