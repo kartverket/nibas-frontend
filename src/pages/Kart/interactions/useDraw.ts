@@ -18,6 +18,8 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import LineString from "ol/geom/LineString";
 import { findNearbyVertexOnFeature } from "utils/map";
 import { useGetFeatures } from "./utils";
+import { FeatureLike } from "ol/Feature";
+import { Coordinate } from "ol/coordinate";
 
 const useDraw = () => {
   const { activeTool } = useToolbar();
@@ -29,67 +31,63 @@ const useDraw = () => {
   const toast = useToast();
 
   // TODO: fungerer ikke uten snap, vet ikke hvorfor
-  const draw = useMemo(
-    () =>
-      new Draw({
-        type: "LineString",
-        source: editSource,
-        snapTolerance: pixelTolerance,
-        style: grenseStyles.select,
-        freehandCondition: () => false,
-        condition: (event: MapBrowserEvent<MouseEvent>) => {
-          if (!noModifierKeys(event) || activeTool !== "draw") return false;
+  const draw = useMemo(() => {
+    const isAllowedDrawOperationOnFeature = (featureLike: FeatureLike, eventCoordinate: Coordinate): boolean => {
+      const feature = featureLike as Feature<LineString>;
+      const geometry = feature.getGeometry();
 
-          const featuresAtPixel = getActiveFeaturesAtPixel(event, "edit");
+      if (!geometry) return true;
 
-          if (featuresAtPixel.length === 0) return true;
+      const firstCoordinate = geometry.getFirstCoordinate();
+      const lastCoordinate = geometry.getLastCoordinate();
 
-          let isAllowedOperation = true;
+      const clickedCoordinate = findNearbyVertexOnFeature(feature, eventCoordinate);
 
-          for (const featureLike of featuresAtPixel) {
-            const feature = featureLike as Feature<LineString>;
-            const geometry = feature.getGeometry();
+      if (!clickedCoordinate) {
+        return false;
+      }
 
-            if (!geometry) continue;
+      const pointOnFeature = geometry.getClosestPoint(clickedCoordinate);
 
-            const firstCoordinate = geometry.getFirstCoordinate();
-            const lastCoordinate = geometry.getLastCoordinate();
+      if (
+        !coordinatesAreEqual(pointOnFeature, firstCoordinate) &&
+        !coordinatesAreEqual(pointOnFeature, lastCoordinate)
+      ) {
+        return false;
+      }
 
-            const clickedCoordinate = findNearbyVertexOnFeature(
-              feature,
-              event.coordinate,
-            );
+      return true;
+    };
 
-            if (!clickedCoordinate) {
-              isAllowedOperation = false;
-              break;
-            }
+    return new Draw({
+      type: "LineString",
+      source: editSource,
+      snapTolerance: pixelTolerance,
+      style: grenseStyles.select,
+      freehandCondition: () => false,
+      condition: (event: MapBrowserEvent<MouseEvent>) => {
+        if (!noModifierKeys(event) || activeTool !== "draw") return false;
 
-            const pointOnFeature = geometry.getClosestPoint(clickedCoordinate);
+        const featuresAtPixel = getActiveFeaturesAtPixel(event, "edit");
 
-            if (
-              !coordinatesAreEqual(pointOnFeature, firstCoordinate) &&
-              !coordinatesAreEqual(pointOnFeature, lastCoordinate)
-            ) {
-              isAllowedOperation = false;
-              break;
-            }
-          }
+        if (featuresAtPixel.length === 0) return true;
 
-          if (!isAllowedOperation) {
-            toast({
-              status: "warning",
-              title:
-                "Nye grensepunkter kan kun plasseres på en eksisterende grenses endepunkter",
-            });
-            return false;
-          }
+        const isAllowedOperation = featuresAtPixel.every((featureLike) =>
+          isAllowedDrawOperationOnFeature(featureLike, event.coordinate),
+        );
 
-          return true;
-        },
-      }),
-    [activeTool, coordinatesAreEqual, getActiveFeaturesAtPixel, toast],
-  );
+        if (!isAllowedOperation) {
+          toast({
+            status: "warning",
+            title: "Nye grensepunkter kan kun plasseres på en eksisterende grenses endepunkter",
+          });
+          return false;
+        }
+
+        return true;
+      },
+    });
+  }, [activeTool, coordinatesAreEqual, getActiveFeaturesAtPixel, toast]);
 
   useEffect(() => {
     const addDrawToHistory = (drawnFeature: Feature<LineString>) => {
