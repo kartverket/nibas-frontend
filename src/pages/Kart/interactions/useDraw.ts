@@ -64,6 +64,7 @@ const useDraw = () => {
       freehandCondition: () => false,
       condition: (event: MapBrowserEvent<MouseEvent>) => {
         if (!noModifierKeys(event) || activeTool !== "draw") return false;
+        draw.changed();
 
         const featuresAtPixel = getActiveFeaturesAtPixel(event, "edit");
 
@@ -78,6 +79,12 @@ const useDraw = () => {
             status: "warning",
             title: "Nye grensepunkter kan kun plasseres på en eksisterende grenses endepunkter",
           });
+          return false;
+        }
+
+        if (draw.getRevision() > 1) {
+          draw.appendCoordinates([event.coordinate]);
+          draw.finishDrawing();
           return false;
         }
 
