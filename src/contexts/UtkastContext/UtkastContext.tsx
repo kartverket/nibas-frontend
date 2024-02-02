@@ -4,7 +4,13 @@ import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { useMatch } from "react-router-dom";
 import { useSWRConfig } from "swr";
 import { EntityUtkastType, UtkastContextValue, UtkastEntity, UtkastRequestWithoutOperations } from "./types";
-import { applyFeatureUtkast, applyNonFeatureUtkast, historyToUtkastOperations } from "./utils";
+import {
+  addTempFeatureIdToNewFeaturesInUtkast,
+  applyFeatureUtkast,
+  applyNonFeatureUtkast,
+  historyToUtkastOperations,
+  toCleanUtkast,
+} from "./utils";
 import { updateUtkastApi } from "api/utkast";
 import { HistoryChange, useHistory } from "contexts/HistoryContext";
 import useNibasApi from "hooks/useNibasApi";
@@ -94,7 +100,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (fetchedUtkast && !utkast) {
-      setUtkast(fetchedUtkast);
+      setUtkast(addTempFeatureIdToNewFeaturesInUtkast(fetchedUtkast));
     }
 
     // fjern utkast hvis utkastid ikke er i url
@@ -183,7 +189,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (!updatedUtkast || !utkast) return;
 
-    await updateUtkast(utkast.id, updatedUtkast);
+    await updateUtkast(utkast.id, toCleanUtkast(updatedUtkast));
     toast({ status: "success", title: "Utkastet er lagret" });
   };
 
