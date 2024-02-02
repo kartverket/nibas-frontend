@@ -12,7 +12,7 @@ export const isAdministrativGrense = (grenseType: GrenseType): boolean => {
   return administrativeGrenser.includes(grenseType);
 };
 
-type MetadataDiscriminator =
+export type MetadataDiscriminator =
   | "FlateMetadata"
   | "AdministrativGrenseMetadata"
   | "RiksgrenseMetadata"
