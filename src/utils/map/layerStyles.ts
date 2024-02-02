@@ -13,52 +13,22 @@ import Point from "ol/geom/Point";
 import { editSource, editableBorderTypes } from "hooks/layers/constants";
 import { GrenseId, GrenseType } from "hooks/layers/types";
 
-const getPointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
-  // hent punkter når zoomet langt nok inn
-  const zoom = map.getView().getZoom() ?? 0;
+const getNonEndpointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
+  const featureGeometry = feature.getGeometry();
+  if (!(featureGeometry instanceof LineString) || !featureGeometry) return;
 
-  if (zoom < 11) return;
+  const coordinates = featureGeometry.getCoordinates();
 
-  const coordinates = (feature as Feature<LineString>).getGeometry()?.getCoordinates();
-  return new MultiPoint(coordinates ?? []);
-};
-
-const getNonEndpointsOnFeature = (
-  feature: Feature<Geometry> | RenderFeature,
-): MultiPoint => {
-  const allPoints = getPointsOnFeature(feature);
-  const endPoints = getEndPointsOnFeature(feature);
-
-  if (!allPoints) return new MultiPoint([]);
-  if (!endPoints) return allPoints;
-
-  const nonEndpointCoordinates = allPoints
-    .getCoordinates()
-    .filter((coordinate) => {
-      const endPointCoordinates = endPoints.getCoordinates();
-
-      return !endPointCoordinates.some((endPointCoordinate) => {
-        return (
-          endPointCoordinate[0] === coordinate[0] &&
-          endPointCoordinate[1] === coordinate[1]
-        );
-      });
-    });
-
-  return new MultiPoint(nonEndpointCoordinates);
+  return new MultiPoint(coordinates.slice(1, -1));
 };
 
 const getEndPointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
-  const allPoints = getPointsOnFeature(feature);
+  const featureGeometry = feature.getGeometry();
+  if (!(featureGeometry instanceof LineString) || !featureGeometry) return;
 
-  if (!allPoints) return new MultiPoint([]);
+  const endCoordinates = [featureGeometry.getFirstCoordinate(), featureGeometry.getLastCoordinate()];
 
-  const endCoordinates = [
-    allPoints.getFirstCoordinate(),
-    allPoints.getLastCoordinate(),
-  ];
-
-  return new MultiPoint(endCoordinates ?? []);
+  return new MultiPoint(endCoordinates);
 };
 
 const lineAndPointStyles = ({
