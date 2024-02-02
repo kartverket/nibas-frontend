@@ -86,7 +86,7 @@ export const useDokumentreferanser = (
   feature: Feature,
   selectedVedtaksinfoIndex?: number,
 ) => {
-  const defaultValues: VedtakinfoForm =
+  const values: VedtakinfoForm =
     selectedVedtaksinfoIndex !== undefined
       ? feature.getProperties().metadata.dokumentasjonsreferanser[
           selectedVedtaksinfoIndex
@@ -101,21 +101,12 @@ export const useDokumentreferanser = (
     handleSubmit,
     formState: { isDirty },
     watch,
-  } = useForm<VedtakinfoForm>({ defaultValues: defaultValues });
+  } = useForm<VedtakinfoForm>({
+    defaultValues: emptyVedtaksinformasjon,
+    values: values,
+  });
 
   const { addHistoryEntry } = useHistory();
-
-  // Setter input-feltene til eksisterende skjema, dersom det redigeres
-  if (selectedVedtaksinfoIndex !== undefined) {
-    for (const key of Object.keys(defaultValues)) {
-      const value =
-        feature.getProperties().metadata.dokumentasjonsreferanser[
-          selectedVedtaksinfoIndex
-        ][key];
-      setValue(key as keyof VedtakinfoForm, value);
-    }
-  }
-
   const updateDraftFromFeature = (vedtaksinfo: Dokref) => {
     const metadata = feature.getProperties().metadata as Metadata;
 
