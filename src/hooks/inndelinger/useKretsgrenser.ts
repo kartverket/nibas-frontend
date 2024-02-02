@@ -19,6 +19,8 @@ import { stemmekretsgrenserFetcher } from "api/stemmekrets";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { getAllVisibleFeatures, getZoomMode, zoomToFeatures } from "utils/map";
 import { getLayerById } from "utils/map/layers";
+import { getTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
+import { LineString } from "ol/geom";
 
 const endpointByKretstype = {
   grunnkrets: "grunnkretser",
@@ -133,6 +135,12 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
       .flatMap(getFeaturesFromGeoJson)
       .concat(kretsGeometries.flat().flatMap(getFeaturesFromGeoJson));
 
+    // for (const feature of features) {
+    //   if (feature.getGeometry() instanceof LineString && !feature.getId()) {
+    //     feature.setId(getTempFeatureId());
+    //   }
+    // }
+
     return features;
   }, [kretsGeometries, utkastGeoJsons]);
 
@@ -145,13 +153,13 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     const endredeFeatures = utkast?.operasjoner.grenseendringer?.endredeFeatures;
     const dirtyFeatureIds: string[] = [];
     const archivedFeatureIds: string[] = [];
+    console.log(endredeFeatures);
     if (features && endredeFeatures) {
-      for (const feature of features) {
-        const id = feature.getId();
-        const endretFeature = endredeFeatures.find((feat) => feat.id === id);
-        if (id && endretFeature) {
+      for (const feature of endredeFeatures) {
+        const id = feature.id;
+        if (id) {
           // Avgjør hvilken type endringsfarge featuren skal ha
-          if (endretFeature.properties.shouldArchive) {
+          if (feature.properties.shouldArchive) {
             archivedFeatureIds.push(id.toString());
           } else {
             dirtyFeatureIds.push(id.toString());
@@ -159,6 +167,9 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
         }
       }
     }
+
+    console.log(dirtyFeatureIds);
+
     const sammenslaaing = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
     const innlemmedeStemmekretsIder = sammenslaaing?.stemmekretserTilSammenslaaing.map(
       (stemmekrets) => stemmekrets.lokalId,

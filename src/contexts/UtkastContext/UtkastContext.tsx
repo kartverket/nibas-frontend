@@ -20,6 +20,10 @@ import { routes } from "utils/routes";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useKartlag } from "contexts/KartlagContext/KartlagContext";
+import {
+  getTempFeatureId,
+  isTempFeatureId,
+} from "pages/Kart/interactions/tempFeatureIdUtil";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 

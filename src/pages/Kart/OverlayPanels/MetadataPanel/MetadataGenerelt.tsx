@@ -8,6 +8,7 @@ import { getDateInFriendlyString } from "./utils";
 import useNibasApi from "hooks/useNibasApi";
 import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
 import { TilhorighetField } from "./TilhorighetField";
+import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 
 export type Inputs = {
   uuid: string;
@@ -93,6 +94,12 @@ const MetadataGenerelt = ({ feature }: Props) => {
         fieldKey="uuid"
         fieldLabel="Identifikator (UUID)"
         valueLabelFormatter={() => {
+          const featureId = feature.getId()?.toString();
+          if (!featureId) return null;
+
+          if (isTempFeatureId(featureId))
+            return `Ny grense - ID blir satt ved publisering - Midlertidig ID: ${featureId}`;
+
           return feature.getId()?.toString() || null;
         }}
         isDisabled
@@ -107,7 +114,13 @@ const MetadataGenerelt = ({ feature }: Props) => {
         fieldKey="gyldigFra"
         isDisabled
         isUneditable
-        valueLabelFormatter={getDateInFriendlyString}
+        valueLabelFormatter={(date) => {
+          const formattedDate = getDateInFriendlyString(date);
+          const featureId = feature.getId()?.toString();
+          if (!formattedDate && featureId && isTempFeatureId(featureId))
+            return "Ny grense - Dato blir satt ved publisering";
+          return formattedDate;
+        }}
         renderItem={(register) => <Datepicker {...register} />}
       />
 
@@ -117,7 +130,13 @@ const MetadataGenerelt = ({ feature }: Props) => {
         fieldLabel="Datafangsdato"
         fieldKey="datafangstdato"
         isUneditable
-        valueLabelFormatter={getDateInFriendlyString}
+        valueLabelFormatter={(date) => {
+          const formattedDate = getDateInFriendlyString(date);
+          const featureId = feature.getId()?.toString();
+          if (!formattedDate && featureId && isTempFeatureId(featureId))
+            return "Ny grense - Dato blir satt ved publisering";
+          return formattedDate;
+        }}
         renderItem={(register) => <Datepicker {...register} />}
       />
 

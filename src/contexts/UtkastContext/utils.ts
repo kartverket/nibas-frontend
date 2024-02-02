@@ -4,6 +4,7 @@ import LineString from "ol/geom/LineString";
 import { EntityUtkastType, UtkastEntity, ResponseWithId } from "./types";
 import {
   GrunnkretsEntry,
+  HistoryEntry,
   HistoryState,
   StemmekretsEntry,
   StemmekretsSammenslaaingsendringEntry,
@@ -25,7 +26,7 @@ import {
 } from "types/api";
 import { featureToGeoJson } from "utils/map/geoJson";
 import { getIdFromEntity } from "utils/api";
-import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
+import { getTempFeatureId, isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 
 const getCombinedEntity = <T extends ResponseWithId>(
   entity: T,
@@ -43,7 +44,13 @@ const getCombinedFeatures = (
   featureCollection: GeoJSONFeatureCollection,
   featuresSlice: NonNullable<UtkastGrenseendringer["endredeFeatures"]>,
 ) => {
-  return featureCollection.features.map((feature: GeoJSONFeature) => featuresSlice[feature.id] ?? feature);
+  const updatedFeaturesFromCollection = featureCollection.features.map(
+    (feature: GeoJSONFeature) => featuresSlice.find((f) => f.id === feature.id) ?? feature,
+  );
+
+  const newFeatures = featuresSlice.filter((f) => isTempFeatureId(f.id as string));
+
+  return updatedFeaturesFromCollection.concat(newFeatures);
 };
 
 export const applyNonFeatureUtkast = <T extends NonNullable<UtkastEntity>>(

@@ -10,6 +10,10 @@ export const getTempFeatureId = (): string => {
   return id;
 };
 
-export const isTempFeatureId = (id: string): boolean => {
-  return id.includes(tempIdPrefix);
+export const isTempFeatureId = (id: string | null | undefined): boolean => {
+  if (id && id.length > 0) {
+    return id.includes(tempIdPrefix);
+  }
+
+  return false;
 };
