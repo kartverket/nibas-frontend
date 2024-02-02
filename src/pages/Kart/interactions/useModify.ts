@@ -12,7 +12,7 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { selectedPointStyle } from "utils/map/layerStyles";
 import { useToast } from "@kvib/react";
 import { Style } from "ol/style";
-import { createHistoryChangesFromFeatures, getInfoFromFeature } from "./historyUtil";
+import { createGrenseHistoryChange, getInfoFromFeature } from "./historyUtil";
 import { useGetFeatures } from "./utils";
 
 const useModify = () => {
@@ -150,7 +150,7 @@ const useModify = () => {
       if (features.length > 0) {
         addHistoryEntry({
           type: "grense",
-          changes: createHistoryChangesFromFeatures(features),
+          changes: createGrenseHistoryChange(features),
         });
       }
       // TODO: hvis man har kjørt en detach vil vi kanskje sjekke om featuren nå er en løs tråd

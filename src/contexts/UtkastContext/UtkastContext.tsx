@@ -4,11 +4,17 @@ import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { useMatch } from "react-router-dom";
 import { useSWRConfig } from "swr";
 import { EntityUtkastType, UtkastContextValue, UtkastEntity, UtkastRequestWithoutOperations } from "./types";
-import { applyFeatureUtkast, applyNonFeatureUtkast, historyToUtkastOperations } from "./utils";
+import {
+  addTempFeatureIdToNewFeaturesInUtkast,
+  applyFeatureUtkast,
+  applyNonFeatureUtkast,
+  historyToUtkastOperations,
+  toCleanUtkast,
+} from "./utils";
 import { updateUtkastApi } from "api/utkast";
 import { HistoryChange, useHistory } from "contexts/HistoryContext";
 import useNibasApi from "hooks/useNibasApi";
-import { ApiErrorResponse, OppdaterUtkastRequest, UtkastResponse } from "types/api";
+import { ApiErrorResponse, OppdaterUtkastRequest, UtkastOperasjoner, UtkastResponse } from "types/api";
 import { resetMapView } from "utils/map";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
@@ -94,7 +100,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (fetchedUtkast && !utkast) {
-      setUtkast(fetchedUtkast);
+      setUtkast(addTempFeatureIdToNewFeaturesInUtkast(fetchedUtkast));
     }
 
     // fjern utkast hvis utkastid ikke er i url
@@ -105,10 +111,30 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [fetchedUtkast, utkastId, mutate, utkast, closeUtkast]);
 
+  const operasjonerIsValid = (operasjoner: UtkastOperasjoner): boolean => {
+    const endredeFeatures = operasjoner.grenseendringer.endredeFeatures;
+
+    for (const feature of endredeFeatures) {
+      const featureProperties = feature.properties;
+      if (!featureProperties.kontekstEgenskaper || feature.properties.kontekstEgenskaper.length < 2) {
+        toast({
+          status: "error",
+          title: "Grense mangler tilhørighet",
+          description: `Grense med ID ${feature.id} mangler obligatorisk grenseinformasjon. Husk at nye grenser må få satt tilhørighet før lagring,`,
+        });
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   const getUpdateUtkastRequestFromHistory = (): OppdaterUtkastRequest | null => {
     if (!utkast) return null;
 
     const operasjoner = historyToUtkastOperations(history, utkast);
+
+    if (!operasjonerIsValid(operasjoner)) return null;
 
     const updatedUtkast: OppdaterUtkastRequest = {
       endringstype: utkast.endringstype,
@@ -117,6 +143,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
       operasjoner,
       version: utkast.version,
     };
+
     const utkastEntry = history.entries
       .slice(0, history.index)
       .reverse() // siste entry inneholder alle endringene på utkastet
@@ -148,6 +175,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
       setUtkast(updatedUtkast);
     } else if (statusCode.isError(response.status)) {
       const wrapper = (await response.json()) as ApiErrorResponse;
+
       setError({
         title: "Oppdatering av utkast feilet",
         description: wrapper.errorDescription.description,
@@ -161,7 +189,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (!updatedUtkast || !utkast) return;
 
-    await updateUtkast(utkast.id, updatedUtkast);
+    await updateUtkast(utkast.id, toCleanUtkast(updatedUtkast));
     toast({ status: "success", title: "Utkastet er lagret" });
   };
 
