@@ -4,6 +4,7 @@ import { FeatureLike } from "ol/Feature";
 import { LineString } from "ol/geom";
 import { previousCoordinateKey } from "./constants";
 import { GrenseType } from "hooks/layers/types";
+import { Metadata } from "types/api";
 
 export const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
@@ -33,6 +34,41 @@ export const createGrenseHistoryChange = (
             type: grenseType,
           },
           to: { coordinates, type: grenseType },
+        });
+        feature.unset(previousCoordinateKey);
+      }
+    }
+  });
+
+  return changes;
+};
+
+export const createNyGrenseHistoryChanges = (
+  features: Feature[],
+  grenseType?: GrenseType,
+) => {
+  const changes: HistoryChange<MinimalGrense & Metadata>[] = [];
+
+  features.forEach((feature) => {
+    if (feature instanceof Feature) {
+      const geometry = feature.getGeometry();
+
+      if (geometry instanceof LineString) {
+        const { coordinates, featureId } = getInfoFromFeature(feature);
+
+        if (!coordinates || !featureId) return;
+        changes.push({
+          id: featureId as string,
+          from: {
+            coordinates: feature.get(previousCoordinateKey) || [],
+            type: grenseType,
+            ...({} as Metadata),
+          } as MinimalGrense & Metadata,
+          to: {
+            coordinates,
+            type: grenseType,
+            ...(feature.getProperties().metadata as Metadata),
+          } as MinimalGrense & Metadata,
         });
         feature.unset(previousCoordinateKey);
       }

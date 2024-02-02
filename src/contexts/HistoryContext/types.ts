@@ -51,6 +51,11 @@ export type GrenseArkiveringsEntry = BaseHistoryEntry<"grensearkivering", Featur
 
 export type GrenseTilhorighetEntry = BaseHistoryEntry<"grensetilhorighetendring", KontekstEgenskaper[]>;
 
+export type NyGrenseEntry = BaseHistoryEntry<
+  "nygrense",
+  MinimalGrense & Metadata
+>;
+
 // endringer skal kunne gjøres i bulk, feks et punkt på to features endrer to features i en entry
 export type HistoryEntry =
   | GrenseEntry
@@ -60,7 +65,8 @@ export type HistoryEntry =
   | UtkastEntry
   | StemmekretsSammenslaaingsendringEntry
   | GrenseArkiveringsEntry
-  | GrenseTilhorighetEntry;
+  | GrenseTilhorighetEntry
+  | NyGrenseEntry;
 
 export type HistoryContextValue = {
   addHistoryEntry: (entry: HistoryEntry) => void;
