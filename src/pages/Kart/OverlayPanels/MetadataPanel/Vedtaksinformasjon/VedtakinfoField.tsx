@@ -1,5 +1,5 @@
 import { VedtakinfoRow } from "./VedtakinfoRow";
-import { Text } from "@kvib/react";
+import { FormControl, Text } from "@kvib/react";
 
 export const VedtakinfoField = ({
   displayMode,
@@ -7,16 +7,20 @@ export const VedtakinfoField = ({
   title,
   value,
   children,
+  isRequired = false,
 }: {
   displayMode: boolean;
   tooltipLabel: string;
   title: string;
   value?: string;
   children: React.ReactNode;
+  isRequired?: boolean;
 }) => {
   return (
-    <VedtakinfoRow tooltipLabel={tooltipLabel} name={title}>
-      {displayMode ? <Text>{value}</Text> : children}
-    </VedtakinfoRow>
+    <FormControl isRequired={isRequired}>
+      <VedtakinfoRow tooltipLabel={tooltipLabel} name={title}>
+        {displayMode ? <Text>{value}</Text> : children}
+      </VedtakinfoRow>
+    </FormControl>
   );
 };
