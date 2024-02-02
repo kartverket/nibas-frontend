@@ -21,9 +21,9 @@ export type DokrefForm = {
 };
 
 export const DokrefField = ({ children, name, tooltipLabel }: Props) => {
-  return (
-    <VedtakinfoRow tooltipLabel={tooltipLabel} name={name}>
-      {children}
-    </VedtakinfoRow>
-  );
+  // return (
+  //   // <VedtakinfoRow tooltipLabel={tooltipLabel} name={name}>
+  //   //   {children}
+  //   // </VedtakinfoRow>
+  // );
 };

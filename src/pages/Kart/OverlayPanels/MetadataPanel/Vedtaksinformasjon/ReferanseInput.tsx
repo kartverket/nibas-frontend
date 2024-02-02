@@ -8,6 +8,8 @@ import {
 } from "./OversiktReferanser";
 import { styled } from "styled-components";
 import {
+  FieldError,
+  FieldErrors,
   UseFormRegister,
   UseFormSetValue,
   UseFormWatch,
@@ -23,6 +25,8 @@ export const ReferanseInput = ({
   title,
   appendFn,
   register,
+  pattern,
+  errors,
 }: {
   defaultValues?: Referanse[];
   registerName: keyof InputName;
@@ -31,28 +35,30 @@ export const ReferanseInput = ({
   title: string;
   appendFn: (item: Referanse) => void;
   register: UseFormRegister<VedtakinfoForm>;
+  pattern?: RegExp;
+  errors: FieldError | undefined;
 }) => {
   function clearInput(element: HTMLInputElement) {
     element.value = "";
   }
 
   console.log("default values refinput", defaultValues);
+  const appendReferanse = (element: HTMLInputElement) => {
+    if (element?.value) {
+      appendFn({ beskrivelse: element.value });
+      clearInput(element);
+    }
+  };
   return (
-    <VedtakinfoRow tooltipLabel={tooltipLabel} name={title}>
+    <VedtakinfoRow tooltipLabel={tooltipLabel} name={title} errors={errors}>
       <Input
-        {...register(registerName)}
+        {...register(registerName, { pattern: pattern })}
         placeholder={placeholder}
         backgroundColor={"white"}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             const element = e.target as HTMLInputElement;
-            if (element?.value) {
-              // const newVals = [...collection, { beskrivelse: element.value }];
-              // setValue(collectionRegisterName, newVals);
-              // console.log(collection);
-              appendFn({ beskrivelse: element.value });
-              clearInput(element);
-            }
+            appendReferanse(element);
           }
         }}
       />
@@ -61,13 +67,7 @@ export const ReferanseInput = ({
           const element = document.querySelector(
             `input[name=${registerName}]`,
           ) as HTMLInputElement;
-          if (element?.value) {
-            // const newVals = [...collection, { beskrivelse: element.value }];
-            // setValue(collectionRegisterName, newVals);
-            // console.log(collection);
-            appendFn({ beskrivelse: element.value });
-            clearInput(element);
-          }
+          appendReferanse(element);
         }}
       >
         Legg til

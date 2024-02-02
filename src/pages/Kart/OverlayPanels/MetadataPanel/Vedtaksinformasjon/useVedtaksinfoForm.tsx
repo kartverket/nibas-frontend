@@ -99,7 +99,7 @@ export const useVedtaksinfoForm = (
     getValues,
     reset,
     handleSubmit,
-    formState: { isDirty },
+    formState: { isDirty, errors },
     watch,
   } = useForm<VedtakinfoForm>({
     defaultValues: emptyVedtaksinformasjon,
@@ -144,9 +144,13 @@ export const useVedtaksinfoForm = (
       );
     }
   };
-
+  const setFastsettingsdato = (date: string) => {
+    setValue("fastsettingsdato", date);
+  };
   return {
+    setFastsettingsdato,
     isDirty,
+    errors,
     updateDraftFromFeature,
     handleSubmit,
     register,

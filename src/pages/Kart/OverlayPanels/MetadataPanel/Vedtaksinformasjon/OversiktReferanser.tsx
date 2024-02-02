@@ -9,18 +9,21 @@ import { on } from "events";
 
 // TODO:
 // * Vise referanseoversikt i metadata
-//   ** Hente fra feature properties
-//   ** Tooltip button skal bytte farge ved hover
+//   ** Hente fra feature properties                        OK
+//   ** Tooltip button skal bytte farge ved hover           OK
 //   ** Riktig farge på "ny referanse"
 // * Modal for å legge til referanser
 //   ** legge til URLer                                     OK
+//      ** Validere URL
 //   ** legge til referanser                                OK
 //   ** resterende felter
-//   ** oppdatere historikk
+//      ** Mangler nye datofelt
+//      ** Datofelt reagerer ikke på register :S
+//   ** oppdatere historikk                                 OK
 //   ** implementere isDirty for referanser
 // * Modal for å vise referansedetaljer
-//   ** sendes med fra feature
-//   ** helst gjenbruke modal og skjema
+//   ** sendes med fra feature                              OK
+//   ** helst gjenbruke modal og skjema                     OK
 // * Slett gammel kode
 
 type Referanse = {
@@ -33,8 +36,8 @@ type VedtakinfoForm = {
   dokumentlenker: Referanse[];
   leggTilDokumentlenke?: string;
   fastsettingsdato: string;
-  gyldigFra: Date;
-  gyldigTil: Date;
+  gyldigFra: string;
+  gyldigTil: string;
   fastsettingsmyndighet?: string;
   hjemmel?: string;
   internreferanserKartverket: Referanse[];

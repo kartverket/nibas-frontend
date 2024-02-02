@@ -1,15 +1,30 @@
 import { styled } from "styled-components";
-import { Tooltip, Text, Icon, FormLabel } from "@kvib/react";
+import {
+  Tooltip,
+  Text,
+  Icon,
+  FormLabel,
+  AlertIcon,
+  AlertDescription,
+  Alert,
+} from "@kvib/react";
 import { InfoIcon, TextWithIcon } from "../MetadataGenerelt";
 import { useState } from "react";
+import { FieldError } from "react-hook-form";
 
 type Props = {
   children: React.ReactNode;
   tooltipLabel: string;
   name: string;
+  errors: FieldError | undefined;
 };
 
-export const VedtakinfoRow = ({ children, tooltipLabel, name }: Props) => {
+export const VedtakinfoRow = ({
+  children,
+  tooltipLabel,
+  name,
+  errors,
+}: Props) => {
   const [iconHovered, setIconHovered] = useState(false);
 
   return (
@@ -20,7 +35,7 @@ export const VedtakinfoRow = ({ children, tooltipLabel, name }: Props) => {
             onMouseOver={() => setIconHovered(true)}
             onMouseOut={() => setIconHovered(false)}
           >
-            <FormLabel as="b">{name}</FormLabel>
+            <Text as="b">{name}</Text>
             <InfoIcon>
               <Icon
                 size={24}
@@ -33,9 +48,27 @@ export const VedtakinfoRow = ({ children, tooltipLabel, name }: Props) => {
         </Tooltip>
       </Row>
       <Row>{children}</Row>
+      <Row>
+        {errors?.message && (
+          <AlertContainer status="error" variant={"solid"}>
+            <AlertIcon />
+            <AlertContent>
+              <AlertDescription>{errors.message}</AlertDescription>
+            </AlertContent>
+          </AlertContainer>
+        )}
+      </Row>
     </Container>
   );
 };
+
+const AlertContainer = styled(Alert)`
+  margin-top: 5px;
+`;
+
+const AlertContent = styled.div`
+  padding: 5px;
+`;
 
 const Container = styled.div`
   margin: 10px;
@@ -48,4 +81,5 @@ const Row = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  padding-bottom: 3px;
 `;

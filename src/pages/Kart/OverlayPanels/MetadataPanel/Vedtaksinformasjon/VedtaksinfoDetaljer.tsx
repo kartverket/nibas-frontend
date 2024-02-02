@@ -19,6 +19,7 @@ import { styled } from "styled-components";
 import { mapFromFormToApi, useVedtaksinfoForm } from "./useVedtaksinfoForm";
 import { Dokref, Metadata } from "types/api";
 import { useEffect, useState } from "react";
+import { error } from "console";
 
 export const VedtaksinfoDetaljer = ({
   isOpen,
@@ -46,8 +47,8 @@ export const VedtaksinfoDetaljer = ({
     reset,
     handleSubmit,
     updateDraftFromFeature,
-    watch,
-    setValue,
+    errors,
+    setFastsettingsdato,
   } = useVedtaksinfoForm(feature, selectedVedtaksinfoIndex);
 
   const cleanForm = () => {
@@ -57,6 +58,7 @@ export const VedtaksinfoDetaljer = ({
   };
 
   const onSubmit = (data: VedtakinfoForm) => {
+    console.log(data);
     if (isDirty) {
       const postValues = mapFromFormToApi(data, dokref, internref);
       updateDraftFromFeature(postValues);
@@ -93,11 +95,12 @@ export const VedtaksinfoDetaljer = ({
       <ModalContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <BorderBottom>
-            <ModalHeader>Model header</ModalHeader>
+            <ModalHeader>Se eller endre på vedtaksinformasjon</ModalHeader>
           </BorderBottom>
           <ModalCloseButton />
           <ModalBody>
             <ReferanseBody
+              errors={errors}
               feature={feature}
               displayMode={displayMode}
               register={register}
@@ -106,8 +109,7 @@ export const VedtaksinfoDetaljer = ({
               setDokref={setDokref}
               setInternref={setInternref}
               vedtaksinfoIndex={selectedVedtaksinfoIndex}
-              watch={watch}
-              setValue={setValue}
+              setFastsettingsdato={setFastsettingsdato}
             />
           </ModalBody>
 

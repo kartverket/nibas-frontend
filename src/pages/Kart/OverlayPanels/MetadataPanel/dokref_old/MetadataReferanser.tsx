@@ -68,7 +68,7 @@ const FieldArray = ({
 
   return (
     <FieldArrayWrapper>
-      <VedtakinfoRow tooltipLabel={itemName} name={itemName}>
+      {/* <VedtakinfoRow tooltipLabel={itemName} name={itemName}>
         {fields.map((field, nestedIndex) => (
           <FieldWrapper key={field.id}>
             <a href={field.beskrivelse} target="_blank" rel="noreferrer">
@@ -98,7 +98,7 @@ const FieldArray = ({
             Legg til
           </Button>
         </div>
-      </VedtakinfoRow>
+      </VedtakinfoRow> */}
     </FieldArrayWrapper>
   );
 };
