@@ -64,12 +64,16 @@ const useDraw = () => {
       freehandCondition: () => false,
       condition: (event: MapBrowserEvent<MouseEvent>) => {
         if (!noModifierKeys(event) || activeTool !== "draw") return false;
-        draw.changed();
 
         const featuresAtPixel = getActiveFeaturesAtPixel(event, "edit");
 
-        if (featuresAtPixel.length === 0) return true;
+        // Legg til feature hvis vi ikke treffer noen andre features
+        if (featuresAtPixel.length === 0) {
+          draw.changed();
+          return true;
+        }
 
+        // Hvis vi treffer andre features, må vi sjekke om det er et endepunkt
         const isAllowedOperation = featuresAtPixel.every((featureLike) =>
           isAllowedDrawOperationOnFeature(featureLike, event.coordinate),
         );
@@ -82,12 +86,16 @@ const useDraw = () => {
           return false;
         }
 
+        // Vi ønsker å avslutte tegningen hvis man har startet en tegning, og så treffer et endepunkt, så vi unngår rar geometri
+        // Dette gjøres ved å bumpe et versjonstall med draw.changed() hvis denne conditionen returnerer true. Hvis versjonen da er høyere
+        // enn én (som den blir av første endring), vil vi avslutte tegningen
         if (draw.getRevision() > 1) {
           draw.appendCoordinates([event.coordinate]);
           draw.finishDrawing();
           return false;
         }
 
+        draw.changed();
         return true;
       },
     });
