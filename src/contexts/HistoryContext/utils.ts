@@ -12,7 +12,9 @@ import { editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
 import { setDefaultFeatureProperties } from "utils/features";
-import { Metadata } from "types/api";
+import { FeatureProperties, Metadata } from "types/api";
+import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
+import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 
 const getFeatureFromChange = (change: HistoryChange<MinimalGrense>, direction: HistoryDirection) => {
   const existingFeature = getFeatureIfExists(change.id);
@@ -92,4 +94,28 @@ export const setKontekstEgenskaperForEntry = (entry: GrenseTilhorighetEntry, dir
 
     feature.setProperties({ ...feature.getProperties(), kontekstEgenskaper });
   });
+};
+
+export const redoSplitting = (splittedFeature: Feature, newFeaturesFromsSplit: Feature[]) => {
+  const properties = splittedFeature.getProperties() as FeatureProperties;
+  splittedFeature.setProperties({ ...properties, shouldArchive: true });
+  addFeaturesToSource("edit", newFeaturesFromsSplit);
+
+  // Hvis featuren som ble splittet er en ny feature så ønsker vi ikke å vise den som arkivert, så vi fjerner den fra OL
+  const splittedFeatureId = splittedFeature.getId() as string;
+  if (isTempFeatureId(splittedFeatureId)) {
+    removeFeaturesFromSourceByIds("edit", [splittedFeatureId]);
+  }
+};
+
+export const undoSplitting = (splittedFeature: Feature, newFeaturesFromsSplit: Feature[]) => {
+  const idsToRemove = newFeaturesFromsSplit.map((feature) => feature.getId() as string);
+  const properties = splittedFeature.getProperties() as FeatureProperties;
+  splittedFeature.setProperties({ ...properties, shouldArchive: false });
+  removeFeaturesFromSourceByIds("edit", idsToRemove);
+
+  // Om featuren som ble splittet var en ny grense så har vi fjernet den fra OL, vi må derfor legge den tilbake
+  if (isTempFeatureId(splittedFeature.getId())) {
+    addFeaturesToSource("edit", [splittedFeature]);
+  }
 };
