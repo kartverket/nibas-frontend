@@ -1,10 +1,4 @@
-import {
-  Button,
-  Divider,
-  Modal,
-  ModalContent,
-  ModalOverlay,
-} from "@kvib/react";
+import { Divider, Modal, ModalContent, ModalOverlay } from "@kvib/react";
 import { Panel, PanelHeader, PanelProps } from "../Panel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import {
@@ -18,22 +12,20 @@ import { useState } from "react";
 import useFylker from "hooks/inndelinger/useFylker";
 import useKommuner from "hooks/inndelinger/useKommuner";
 import { styled } from "styled-components";
+import Inndeling from "./Inndeling";
 
 const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
   const [selectedKretstype, setSelectedKretstype] = useState<Kretstype | null>(
     null,
   );
-  const { fylker } = useFylker();
-  const { inndelinger } = useInndelinger();
-
   const [selectedFylkeId, setSelectedFylkeId] = useState<string>("");
-  const { kommuner } = useKommuner(selectedFylkeId);
-
+  const { inndelinger, selectInndeling } = useInndelinger();
   const { activeOverlayModal, closeOverlayModal } = useOverlayPanel();
 
-  const isEditing = activeOverlayModal === "inndelinger-redigering";
+  const { fylker } = useFylker();
+  const { kommuner } = useKommuner(selectedFylkeId);
 
-  const { selectInndeling } = useInndelinger();
+  const isEditing = activeOverlayModal === "inndelinger-redigering";
 
   const resetInndelingerPanel = () => {
     closeOverlayModal();
@@ -46,7 +38,6 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
     setSelectedFylkeId("");
   };
 
-  // TODO: Overlapper en del med selectKommune, kanskje lurt å slå sammen
   const selectFylke = (fylkeId: string) => {
     if (selectedKretstype === "fylker") {
       selectInndeling(fylkeId, "fylker", isEditing);
@@ -58,7 +49,6 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
     }
   };
 
-  // TODO: Overlapper en del med selectFylke, kanskje lurt å slå sammen
   const selectKommune = (kommuneId: string) => {
     if (selectedKretstype) {
       selectInndeling(kommuneId, selectedKretstype, isEditing);
@@ -101,6 +91,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
                 isActive={selectedKretstype === kretstype}
                 onClick={() => selectKretstype(kretstype)}
                 rightIcon="chevron_right"
+                kretstype={null}
               >
                 {capitalize(kretstype)}
               </Inndeling>
@@ -117,6 +108,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
                     isActive={selectedFylkeId === fylkeId}
                     onClick={() => selectFylke(fylkeId)}
                     rightIcon={inndelingIcon(fylkeId, true)}
+                    kretstype="fylker"
                   >
                     {`${fylke.fylkesnummer.kodeverdi} ${getNavnInSpraak(
                       fylke.navn,
@@ -137,6 +129,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
                     isActive={selectedFylkeId === kommuneId}
                     onClick={() => selectKommune(kommuneId)}
                     rightIcon={inndelingIcon(kommuneId)}
+                    kretstype={selectedKretstype}
                   >
                     {`${kommune.kommunenummer.kodeverdi} ${getNavnInSpraak(
                       kommune.navn,
@@ -151,24 +144,6 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
     </Modal>
   );
 };
-
-const Inndeling = styled(Button).attrs({
-  variant: "ghost",
-})`
-  height: unset;
-  padding: 24px 16px;
-  color: var(--kvib-colors-black);
-  font-weight: var(--kvib-fontWeights-normal);
-
-  & > div {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  &[data-active] {
-    background: var(--kvib-colors-blue-50);
-  }
-`;
 
 export const InndelingerLayout = styled.div`
   display: grid;
