@@ -92,6 +92,9 @@ const MetadataGenerelt = ({ feature }: Props) => {
         tooltipLabel="Grensen sin unike identifikator"
         fieldKey="uuid"
         fieldLabel="Identifikator (UUID)"
+        valueLabelFormatter={() => {
+          return feature.getId()?.toString() || null;
+        }}
         isDisabled
         isUneditable
         renderItem={(register) => <Input placeholder={feature.getId()?.toString()} {...register} />}

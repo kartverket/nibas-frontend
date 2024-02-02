@@ -119,7 +119,11 @@ export const useTilhorighet = (
 
   useEffect(() => {
     if (grunnkretser && stemmekretser) {
-      setTilhorighetOptions(getMuligeKretserForGrense(grenseType, grunnkretser, stemmekretser));
+      setTilhorighetOptions(
+        getMuligeKretserForGrense(grenseType, grunnkretser, stemmekretser).sort((a, b) => {
+          return Number(a.nummer) - Number(b.nummer);
+        }),
+      );
     }
   }, [grenseType, grunnkretser, stemmekretser]);
 

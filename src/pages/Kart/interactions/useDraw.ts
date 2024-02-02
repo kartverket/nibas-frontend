@@ -8,16 +8,22 @@ import { editSource } from "hooks/layers/constants";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { getGrenseTypeFromEditingType } from "hooks/layers/types";
 import { useToast } from "@kvib/react";
-import { MapBrowserEvent } from "ol";
+import { Feature, MapBrowserEvent } from "ol";
 import { useHistory } from "contexts/HistoryContext";
 import { getTempFeatureId } from "./tempFeatureIdUtil";
 import { createGrenseHistoryChange } from "./historyUtil";
 import { setDefaultFeatureProperties } from "utils/features";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { useFeatureStyle } from "contexts/FeatureStyleContext";
+import LineString from "ol/geom/LineString";
+import { Metadata } from "types/api";
 
 const useDraw = () => {
   const { activeTool } = useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const { addHistoryEntry } = useHistory();
+  const { openOverlayPanel } = useOverlayPanel();
+  const { selectFeatures } = useFeatureStyle();
   const toast = useToast();
 
   // TODO: fungerer ikke uten snap, vet ikke hvorfor
@@ -42,6 +48,16 @@ const useDraw = () => {
           type: "grense",
           changes: createGrenseHistoryChange([feature]),
         });
+        addHistoryEntry({
+          type: "metadata",
+          changes: [
+            {
+              id: e.feature.getId() as string,
+              from: {} as Metadata,
+              to: feature.getProperties().metadata as Metadata,
+            },
+          ],
+        });
       }
     };
 
@@ -61,6 +77,9 @@ const useDraw = () => {
 
       toast({ status: "success", title: "Grensen ble lagt til i kartet" });
 
+      selectFeatures([e.feature as Feature<LineString>]);
+      openOverlayPanel("metadata");
+
       // TODO: bruk isFeatureDeadEnd for å avgjøre om den nye grensen danner en lukket flate
 
       // TODO: dersom man ønsker å utvide en grense ønsker vi nok å slå sammen den nye grensen med den gamle her
@@ -71,7 +90,14 @@ const useDraw = () => {
     return () => {
       draw.un("drawend", onDrawEnd);
     };
-  }, [addHistoryEntry, draw, getCurrentlyEditingType, toast]);
+  }, [
+    addHistoryEntry,
+    draw,
+    getCurrentlyEditingType,
+    openOverlayPanel,
+    selectFeatures,
+    toast,
+  ]);
 
   return { draw };
 };
