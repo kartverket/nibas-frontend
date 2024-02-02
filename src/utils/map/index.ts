@@ -3,7 +3,7 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import VectorSource from "ol/source/Vector";
 import { LineString } from "ol/geom";
-import { Coordinate } from "ol/coordinate";
+import { Coordinate, equals } from "ol/coordinate";
 import { FeatureLike } from "ol/Feature";
 import { pixelTolerance } from "pages/Kart/interactions/constants";
 
@@ -77,10 +77,6 @@ export const getZoomMode = (isEditing: boolean, hasEditingInMap: boolean): "edit
   return "view";
 };
 
-export const isCoordinateEqual = (a: Coordinate, b: Coordinate) => {
-  return a[0] === b[0] && a[1] === b[1];
-};
-
 /** Sjekker om en feature har et punkt på gitt koordinat */
 const isFeatureConnectedToCoordinate = (feature: FeatureLike, coordinate: Coordinate): boolean => {
   // TODO: dersom featuren er arkivert skal den alltid returnere false?
@@ -88,7 +84,7 @@ const isFeatureConnectedToCoordinate = (feature: FeatureLike, coordinate: Coordi
     const geometry = feature.getGeometry();
     if (geometry instanceof LineString) {
       const featureCoordinates = geometry?.getCoordinates();
-      return featureCoordinates.some((featureCoordinate) => isCoordinateEqual(featureCoordinate, coordinate));
+      return featureCoordinates.some((featureCoordinate) => equals(featureCoordinate, coordinate));
     }
   }
   return false;
