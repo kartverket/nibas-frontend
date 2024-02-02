@@ -82,7 +82,7 @@ const addMetadataEntryFromFeature = (
   });
 };
 
-export const useDokumentreferanser = (
+export const useVedtaksinfoForm = (
   feature: Feature,
   selectedVedtaksinfoIndex?: number,
 ) => {

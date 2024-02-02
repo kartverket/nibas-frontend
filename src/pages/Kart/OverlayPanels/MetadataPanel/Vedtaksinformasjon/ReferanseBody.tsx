@@ -11,7 +11,7 @@ import {
   Tabs,
 } from "@kvib/react";
 import { Feature } from "ol";
-import { useDokumentreferanser } from "./useDokumentreferanser";
+import { useVedtaksinfoForm } from "./useVedtaksinfoForm";
 import {
   BorderBottom,
   BorderTop,
@@ -86,6 +86,7 @@ export const ReferanseBody = ({
           <Vedtaksfelter>
             <VedtakinfoField
               displayMode={displayMode}
+              isRequired
               tooltipLabel="tooltip"
               title="Vedtakstittel"
               value={vedtaksinformasjon?.rettskildeTittel}
@@ -112,7 +113,7 @@ export const ReferanseBody = ({
               <VedtakinfoField
                 displayMode={displayMode}
                 tooltipLabel="tooltip"
-                title="Rettskilde-ID"
+                title="Rettskilde-ID (frivillig)"
                 value={vedtaksinformasjon?.rettskildeId}
               >
                 <Input
@@ -125,7 +126,7 @@ export const ReferanseBody = ({
             <VedtakinfoField
               displayMode={displayMode}
               tooltipLabel="tooltip"
-              title="Hjemmel"
+              title="Hjemmel (frivillig)"
               value={vedtaksinformasjon?.hjemmel}
             >
               <Input
@@ -137,7 +138,7 @@ export const ReferanseBody = ({
             <VedtakinfoField
               displayMode={displayMode}
               tooltipLabel="tooltip"
-              title="Fastsettingsmyndighet"
+              title="Fastsettingsmyndighet (frivillig)"
               value={vedtaksinformasjon?.fastsettingsmyndighet}
             >
               <Input

@@ -16,10 +16,7 @@ import {
   VedtakinfoForm,
 } from "./OversiktReferanser";
 import { styled } from "styled-components";
-import {
-  mapFromFormToApi,
-  useDokumentreferanser,
-} from "./useDokumentreferanser";
+import { mapFromFormToApi, useVedtaksinfoForm } from "./useVedtaksinfoForm";
 import { Dokref, Metadata } from "types/api";
 import { useEffect, useState } from "react";
 
@@ -51,7 +48,7 @@ export const VedtaksinfoDetaljer = ({
     updateDraftFromFeature,
     watch,
     setValue,
-  } = useDokumentreferanser(feature, selectedVedtaksinfoIndex);
+  } = useVedtaksinfoForm(feature, selectedVedtaksinfoIndex);
 
   const cleanForm = () => {
     reset();
