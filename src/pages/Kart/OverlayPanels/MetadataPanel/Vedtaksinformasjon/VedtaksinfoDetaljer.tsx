@@ -74,18 +74,15 @@ export const VedtaksinfoDetaljer = ({
   };
 
   // TODO: Er det noen måte å gjøre dette penere på uten at man får en ininite loop med re-rendring?
-  if (isOpen) {
-    if (dokref === undefined && selectedVedtaksinfoIndex !== undefined) {
-      setDokref(
-        metadata?.dokumentasjonsreferanser?.at(selectedVedtaksinfoIndex)
-          ?.dokumentlenker || [],
-      );
+  if (isOpen && selectedVedtaksinfoIndex !== undefined) {
+    const vedtaksinformasjon = metadata?.dokumentasjonsreferanser?.at(
+      selectedVedtaksinfoIndex,
+    );
+    if (dokref === undefined) {
+      setDokref(vedtaksinformasjon?.dokumentlenker || []);
     }
-    if (internref === undefined && selectedVedtaksinfoIndex !== undefined) {
-      setInternref(
-        metadata?.dokumentasjonsreferanser?.at(selectedVedtaksinfoIndex)
-          ?.internReferanserKartverket || [],
-      );
+    if (internref === undefined) {
+      setInternref(vedtaksinformasjon?.internReferanserKartverket || []);
     }
   }
 
