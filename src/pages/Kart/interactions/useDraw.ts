@@ -11,7 +11,7 @@ import { useToast } from "@kvib/react";
 import { MapBrowserEvent } from "ol";
 import { useHistory } from "contexts/HistoryContext";
 import { getTempFeatureId } from "./tempFeatureIdUtil";
-import { createHistoryChangesFromFeatures } from "./historyUtil";
+import { createGrenseHistoryChange } from "./historyUtil";
 
 const useDraw = () => {
   const { activeTool } = useToolbar();
@@ -39,7 +39,7 @@ const useDraw = () => {
       if (feature) {
         addHistoryEntry({
           type: "grense",
-          changes: createHistoryChangesFromFeatures([feature]),
+          changes: createGrenseHistoryChange([feature]),
         });
       }
     };
@@ -61,9 +61,6 @@ const useDraw = () => {
       toast({ status: "success", title: "Grensen ble lagt til i kartet" });
 
       // TODO: bruk isFeatureDeadEnd for å avgjøre om den nye grensen danner en lukket flate
-
-      // TODO: her skal vi på sikt legge til history
-      // slik at den nye grensen blir sendt til backend via utkastet
 
       // TODO: dersom man ønsker å utvide en grense ønsker vi nok å slå sammen den nye grensen med den gamle her
       // i så fall må vi holde styr på hvilken grense som skal utvides, og fra hvilket punkt. selectPoint kan være nyttig her

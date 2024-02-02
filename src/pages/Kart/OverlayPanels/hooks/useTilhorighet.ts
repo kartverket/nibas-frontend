@@ -140,6 +140,8 @@ export const useTilhorighet = (
 
   const getValuesFormatted = () => {
     const value = getValues(tilhorighetToChange);
+    if (!value) return;
+
     if (value.a !== undefined && value.b !== undefined && tilhorighetOptions) {
       return Object.values(value)
         .map((id) => {

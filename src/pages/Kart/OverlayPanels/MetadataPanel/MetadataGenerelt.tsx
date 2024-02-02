@@ -48,7 +48,11 @@ const MetadataGenerelt = ({ feature }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
   const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
 
-  const gyldigTil = (properties.metadata as Metadata).common?.gyldigTil;
+  const metadata = properties.metadata as Metadata;
+
+  const gyldigTil = properties.metadata
+    ? metadata.common?.gyldigTil
+    : undefined;
 
   const getMaalemetodeFromId = (maalemetoder: KodelisteRespons, id: string) =>
     maalemetoder.items.find((item) => item.id === id)?.label ?? null;
