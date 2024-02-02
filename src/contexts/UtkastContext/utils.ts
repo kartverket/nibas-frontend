@@ -4,6 +4,7 @@ import LineString from "ol/geom/LineString";
 import { EntityUtkastType, UtkastEntity, ResponseWithId } from "./types";
 import {
   GrunnkretsEntry,
+  HistoryChange,
   HistoryState,
   StemmekretsEntry,
   StemmekretsSammenslaaingsendringEntry,
@@ -169,6 +170,7 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
     "grensearkivering",
     "grensetilhorighetendring",
     "nygrense",
+    "grensesplitting",
   ];
 
   const relevantHistoryEntries = historyToCurrentIndex.filter((entry) =>
@@ -178,26 +180,37 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
   // hent grenseendringer og gjør endringene om til en liste av features
   const editedFeatures: GeoJSONFeature[] = utkastOperations.grenseendringer.endredeFeatures;
 
+  const addFeatureToEditedFeaturesIfNotAlreadyAdded = (featureId: string) => {
+    const feature = editSource.getFeatureById(featureId) as Feature<LineString>;
+
+    if (!feature) return;
+
+    const featureAsGeoJson = featureToGeoJson(feature);
+
+    const index = editedFeatures.findIndex((geoJsonFeature) => featureAsGeoJson.id === geoJsonFeature.id);
+
+    // Hvis vi allerede har lagt inn featuren tidligere i historikken,
+    // ønsker vi å overskrive den hvis den samme featuren endres senere i historikken
+    if (index != -1) {
+      editedFeatures[index] = featureAsGeoJson;
+      return;
+    }
+
+    editedFeatures.push(featureAsGeoJson);
+  };
+
   relevantHistoryEntries.forEach((entry) => {
     entry.changes.forEach((change) => {
       if (!change.to) return;
+      addFeatureToEditedFeaturesIfNotAlreadyAdded(change.id);
 
-      const feature = editSource.getFeatureById(change.id) as Feature<LineString>;
-
-      if (!feature) return;
-
-      const featureAsGeoJson = featureToGeoJson(feature);
-
-      const index = editedFeatures.findIndex((geoJsonFeature) => featureAsGeoJson.id === geoJsonFeature.id);
-
-      // Hvis vi allerede har lagt inn featuren tidligere i historikken,
-      // ønsker vi å overskrive den hvis den samme featuren endres senere i historikken
-      if (index >= 0) {
-        editedFeatures[index] = featureAsGeoJson;
-        return;
+      if (entry.type === "grensesplitting") {
+        // Spltitting er en litt sær grense-endring siden den påvirker flere features på en gang og trenger derfor egen implementasjon
+        const newFeatures = (change as HistoryChange<Feature[]>).to.map((f) => f.getId() as string);
+        newFeatures.forEach((id) => {
+          addFeatureToEditedFeaturesIfNotAlreadyAdded(id);
+        });
       }
-
-      editedFeatures.push(featureAsGeoJson);
     });
   });
 
@@ -210,14 +223,20 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
 
 export const toCleanUtkast = (utkastToClean: OppdaterUtkastRequest): OppdaterUtkastRequest => {
   const utkastCopy = structuredClone(utkastToClean);
+  const featureIsNotAnArchivedNewFeature = (feature: GeoJSONFeature): boolean =>
+    !(isTempFeatureId(feature.id) && feature.properties.shouldArchive === true);
+
+  // Nye features som har blitt arkivert kan vi bare filtrere bort
+  const endredeFeatures = utkastCopy.operasjoner.grenseendringer.endredeFeatures.filter(
+    featureIsNotAnArchivedNewFeature,
+  );
 
   // Fjerner ID fra alle nye grenser, da dette ikke er forventet fra backend
-  const endredeFeatures = utkastCopy.operasjoner.grenseendringer.endredeFeatures;
-
   endredeFeatures.forEach((endretFeature) => {
     if (endretFeature.id && isTempFeatureId(endretFeature.id)) endretFeature.id = undefined;
   });
 
+  utkastCopy.operasjoner.grenseendringer.endredeFeatures = endredeFeatures;
   return utkastCopy;
 };
 

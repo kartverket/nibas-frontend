@@ -8,6 +8,7 @@ import {
   StemmekretsRequest,
   StemmekretsSammenslaaingsendringRequest,
 } from "types/api";
+import { Feature } from "ol";
 
 // Obs: navnsetting for å unngå overlapp med innebygd History type
 export type HistoryState = {
@@ -53,6 +54,8 @@ export type GrenseTilhorighetEntry = BaseHistoryEntry<"grensetilhorighetendring"
 
 export type NyGrenseEntry = BaseHistoryEntry<"nygrense", MinimalGrense & Metadata>;
 
+export type GrenseSplittingEntry = BaseHistoryEntry<"grensesplitting", Feature[]>;
+
 // endringer skal kunne gjøres i bulk, feks et punkt på to features endrer to features i en entry
 export type HistoryEntry =
   | GrenseEntry
@@ -63,6 +66,7 @@ export type HistoryEntry =
   | StemmekretsSammenslaaingsendringEntry
   | GrenseArkiveringsEntry
   | GrenseTilhorighetEntry
+  | GrenseSplittingEntry
   | NyGrenseEntry;
 
 export type HistoryContextValue = {

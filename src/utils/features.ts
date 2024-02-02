@@ -3,6 +3,7 @@ import { Feature } from "ol";
 import { Geometry } from "ol/geom";
 import { FeatureProperties, Metadata } from "types/api";
 import { MetadataDiscriminator, getGrenseDiscriminatorFromType } from "./grenser";
+import { FeatureLike } from "ol/Feature";
 
 export const setDefaultFeatureProperties = (feature: Feature<Geometry>, grenseType: GrenseType | undefined) => {
   if (!grenseType) return;
@@ -56,4 +57,9 @@ export const getDefaultFeatureProperties = (grenseType: GrenseType): FeatureProp
   };
 
   return properties;
+};
+
+export const featureIsArchived = (feature: Feature | FeatureLike): boolean => {
+  const properties = feature.getProperties() as FeatureProperties;
+  return properties.shouldArchive;
 };
