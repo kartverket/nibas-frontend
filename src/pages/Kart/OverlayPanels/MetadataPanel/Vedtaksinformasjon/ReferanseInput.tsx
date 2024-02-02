@@ -17,24 +17,20 @@ import { Dokref } from "types/api";
 
 export const ReferanseInput = ({
   defaultValues,
-  collectionRegisterName,
   registerName,
   placeholder,
   tooltipLabel,
   title,
   appendFn,
   register,
-  watch,
 }: {
   defaultValues?: Referanse[];
   registerName: keyof InputName;
-  collectionRegisterName: keyof InputCollectionName;
   placeholder: string;
   tooltipLabel: string;
   title: string;
   appendFn: (item: Referanse) => void;
   register: UseFormRegister<VedtakinfoForm>;
-  watch: UseFormWatch<VedtakinfoForm>;
 }) => {
   function clearInput(element: HTMLInputElement) {
     element.value = "";
@@ -43,7 +39,6 @@ export const ReferanseInput = ({
   console.log("default values refinput", defaultValues);
   return (
     <VedtakinfoRow tooltipLabel={tooltipLabel} name={title}>
-      {/* <Input {...register(collectionRegisterName)} hidden /> */}
       <Input
         {...register(registerName)}
         placeholder={placeholder}
