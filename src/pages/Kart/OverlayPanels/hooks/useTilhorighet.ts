@@ -159,7 +159,7 @@ export const useTilhorighet = (
   };
 
   const updateDraftFromFeature = () => {
-    if (kontekstEgenskaper && tilhorighetOptions) {
+    if (tilhorighetOptions) {
       const oppdaterteKontekstEgenskaper = getUpdatedKontekstEgenskaper(
         getValues(tilhorighetToChange),
         tilhorighetOptions,
