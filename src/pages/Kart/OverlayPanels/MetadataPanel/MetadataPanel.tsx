@@ -5,6 +5,8 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { FeatureProperties, Metadata } from "types/api";
 import { getDateInFriendlyString } from "./utils";
 import { useEffect } from "react";
+import { Feature } from "ol";
+import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 
 const MetadataPanel = ({ isOpen, className }: PanelProps) => {
   const { selectedFeatures } = useFeatureStyle();
@@ -22,26 +24,38 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
 
   const selectedProperties = selectedFeature?.getProperties() as FeatureProperties;
 
-  const sistOppdatertString = `Sist oppdatert: ${
-    selectedProperties && selectedProperties.metadata
-      ? getDateInFriendlyString(
-          (selectedProperties.metadata as Metadata).common?.sporingsinformasjon
-            ?.oppdateringsdato,
-        )
-      : "Ukjent"
-  }`;
+  const getSistOppdatert = (feature: Feature) => {
+    if (isTempFeatureId(feature.getId()?.toString()))
+      return "Ny grense, aldri oppdatert";
+
+    const featureProperties = feature.getProperties() as FeatureProperties;
+    const metadata = featureProperties.metadata as Metadata;
+    const oppdateringsDato =
+      metadata.common?.sporingsinformasjon.oppdateringsdato;
+
+    if (oppdateringsDato) {
+      return getDateInFriendlyString(oppdateringsDato);
+    }
+
+    return "Ukjent";
+  };
 
   return (
-    <SidePanel $isOpen={isOpen} className={className}>
-      <PanelHeader onClose={closeOverlayPanel} subHeading={sistOppdatertString}>
-        Informasjon om grense
-      </PanelHeader>
-      {selectedFeature && selectedProperties && selectedProperties.metadata && !isWFSGrense ? (
-        <MetadataGenerelt feature={selectedFeature} />
-      ) : (
-        <p>Valgt grense har ikke metadata</p>
-      )}
-    </SidePanel>
+    selectedFeature && (
+      <SidePanel $isOpen={isOpen} className={className}>
+        <PanelHeader
+          onClose={closeOverlayPanel}
+          subHeading={`Sist oppdatert: ${getSistOppdatert(selectedFeature)}`}
+        >
+          Informasjon om grense
+        </PanelHeader>
+        {selectedFeature && selectedProperties && !isWFSGrense ? (
+          <MetadataGenerelt feature={selectedFeature} />
+        ) : (
+          <p>Valgt grense har ikke metadata</p>
+        )}
+      </SidePanel>
+    )
   );
 };
 
