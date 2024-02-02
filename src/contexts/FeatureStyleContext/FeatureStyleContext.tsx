@@ -7,8 +7,9 @@ import { getArchiveLayerStyle, grenseStyles } from "utils/map/layerStyles";
 import useArchiveStyles from "./useArchiveStyles";
 import { FeatureLike } from "ol/Feature";
 import { editableBorderTypes } from "hooks/layers/constants";
-import { isAdministrativGrense } from "utils/grenser";
 import { GrenseType } from "hooks/layers/types";
+import { isAdministrativGrense } from "utils/grenser";
+import { FeatureProperties, KontekstEgenskaper, Metadata } from "types/api";
 
 export const FeatureStyleContext = createContext<FeatureStyleContextValue | undefined>(undefined);
 
@@ -143,8 +144,18 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     return false;
   };
 
-  const featureIsEditable = (feature: FeatureLike) =>
-    editableBorderTypes.includes(feature.get("type")) && !featureIsArchived(feature);
+  const featureIsEditable = (feature: FeatureLike) => {
+    const featureType = feature.get("type") as GrenseType;
+
+    if (isAdministrativGrense(featureType)) {
+      const properties = feature.getProperties() as FeatureProperties;
+      const kontekstEgenskaper = properties.kontekstEgenskaper as KontekstEgenskaper[];
+
+      if (!kontekstEgenskaper || kontekstEgenskaper.length == 0) return false;
+    }
+
+    return editableBorderTypes.includes(feature.get("type")) && !featureIsArchived(feature);
+  };
 
   const value = {
     selectedPoint,
