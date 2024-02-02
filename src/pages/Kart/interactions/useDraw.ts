@@ -123,10 +123,7 @@ const useDraw = () => {
       });
 
       openOverlayPanel("metadata");
-      selectFeatures([drawnFeature as Feature<LineString>]);
-
-      e.stopPropagation();
-
+      selectFeatures([drawnFeature]);
       // TODO: bruk isFeatureDeadEnd for å avgjøre om den nye grensen danner en lukket flate
 
       // TODO: dersom man ønsker å utvide en grense ønsker vi nok å slå sammen den nye grensen med den gamle her
