@@ -76,7 +76,6 @@ const ToolbarMenus = () => {
   // For å kunne vise at en meny er aktiv må vi kunne sjekke hvorvidt noen av menuitems er aktive
   // Korteste vei til mål da blir å kunne iterere gjennom menu items
   const grenseMenuItems: MenuItems = [
-    /*
     {
       label: "Tegn ny grense",
       icon: <Icon icon="edit" />,
@@ -85,6 +84,7 @@ const ToolbarMenus = () => {
       onClick: () => toggleTool("draw"),
       "aria-label": "Tegn en ny grense fra et punkt",
     },
+    /*
     {
       label: "Splitt grense",
       icon: <Icon icon="location_off" />,
@@ -93,6 +93,7 @@ const ToolbarMenus = () => {
       onClick: () => toggleTool("split"),
       "aria-label": "Del en grense i to fra et punkt",
     },
+    */
     {
       label: "Løsriv grense",
       icon: <Icon icon="edit_location_alt" />,
@@ -101,7 +102,6 @@ const ToolbarMenus = () => {
       onClick: () => toggleTool("detach"),
       "aria-label": "Løsriv grense fra et knutepunkt",
     },
-    */
     {
       label: "Se/endre grenseinformasjon",
       icon: <Icon icon="live_help" />,

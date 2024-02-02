@@ -119,7 +119,11 @@ export const useTilhorighet = (
 
   useEffect(() => {
     if (grunnkretser && stemmekretser) {
-      setTilhorighetOptions(getMuligeKretserForGrense(grenseType, grunnkretser, stemmekretser));
+      setTilhorighetOptions(
+        getMuligeKretserForGrense(grenseType, grunnkretser, stemmekretser).sort((a, b) => {
+          return Number(a.nummer) - Number(b.nummer);
+        }),
+      );
     }
   }, [grenseType, grunnkretser, stemmekretser]);
 
@@ -140,6 +144,8 @@ export const useTilhorighet = (
 
   const getValuesFormatted = () => {
     const value = getValues(tilhorighetToChange);
+    if (!value) return;
+
     if (value.a !== undefined && value.b !== undefined && tilhorighetOptions) {
       return Object.values(value)
         .map((id) => {
@@ -153,11 +159,12 @@ export const useTilhorighet = (
   };
 
   const updateDraftFromFeature = () => {
-    if (kontekstEgenskaper && tilhorighetOptions) {
+    if (tilhorighetOptions) {
       const oppdaterteKontekstEgenskaper = getUpdatedKontekstEgenskaper(
         getValues(tilhorighetToChange),
         tilhorighetOptions,
       );
+
       addKontekstEntryFromFeature(feature as Feature<LineString>, oppdaterteKontekstEgenskaper, addHistoryEntry);
     }
   };
