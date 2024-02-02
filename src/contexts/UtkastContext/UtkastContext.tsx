@@ -114,11 +114,15 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     const endredeFeatures = operasjoner.grenseendringer.endredeFeatures;
 
     for (const feature of endredeFeatures) {
-      if (feature.properties.kontekstEgenskaper.length < 2) {
+      const featureProperties = feature.properties;
+      if (
+        !featureProperties.kontekstEgenskaper ||
+        feature.properties.kontekstEgenskaper.length < 2
+      ) {
         toast({
           status: "error",
-          title: "Utkast feilet validering",
-          description: `Feature med ID ${feature.id} mangler kontekstegenskaper. Husk at nye grenser må få tilhørighet`,
+          title: "Grense mangler tilhørighet",
+          description: `Grense med ID ${feature.id} mangler obligatorisk grenseinformasjon. Husk at nye grenser må få satt tilhørighet før lagring,`,
         });
         return false;
       }

@@ -18,11 +18,11 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import LineString from "ol/geom/LineString";
 
 const useDraw = () => {
-  const { activeTool } = useToolbar();
+  const { activeTool, setIsDrawing } = useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const { addHistoryEntry } = useHistory();
   const { openOverlayPanel } = useOverlayPanel();
-  const { selectFeatures } = useFeatureStyle();
+  const { selectFeatures, selectedFeatures } = useFeatureStyle();
   const toast = useToast();
 
   // TODO: fungerer ikke uten snap, vet ikke hvorfor
@@ -32,7 +32,7 @@ const useDraw = () => {
         type: "LineString",
         source: editSource,
         snapTolerance: pixelTolerance,
-        style: grenseStyles.dirty,
+        style: grenseStyles.select,
         freehandCondition: () => false,
         condition: (event: MapBrowserEvent<MouseEvent>) => noModifierKeys(event) && activeTool === "draw",
       }),
@@ -40,16 +40,15 @@ const useDraw = () => {
   );
 
   useEffect(() => {
-    const addDrawToHistory = (e: DrawEvent) => {
-      const feature = e.feature;
+    const addDrawToHistory = (drawnFeature: Feature<LineString>) => {
       const editingType = getCurrentlyEditingType();
       if (!editingType) return;
 
-      if (feature) {
+      if (drawnFeature) {
         addHistoryEntry({
           type: "nygrense",
           changes: createNyGrenseHistoryChanges(
-            [feature],
+            [drawnFeature],
             getGrenseTypeFromEditingType(editingType) || undefined,
           ),
         });
@@ -57,23 +56,36 @@ const useDraw = () => {
     };
 
     const onDrawEnd = (e: DrawEvent) => {
+      setIsDrawing(false);
+
+      const drawnFeature = e.feature as Feature<LineString>;
       const editingType = getCurrentlyEditingType();
 
       // Skal ikke være mulig da tegneverktøyet bare skal være tilgjengelig i redigering
       if (!editingType) return;
 
-      e.feature.setId(getTempFeatureId());
+      drawnFeature.setId(getTempFeatureId());
       setDefaultFeatureProperties(
-        e.feature,
+        drawnFeature,
         getGrenseTypeFromEditingType(editingType),
       );
 
-      addDrawToHistory(e);
+      addDrawToHistory(drawnFeature);
 
-      toast({ status: "success", title: "Grensen ble lagt til i kartet" });
+      toast({
+        status: "success",
+        title: "Grensen ble lagt til i kartet",
+        description:
+          "Grense lagt til med standardmetadata. Husk at du må sette tilhørighet på nye grenser.",
+      });
 
-      selectFeatures([e.feature as Feature<LineString>]);
       openOverlayPanel("metadata");
+      selectFeatures([drawnFeature as Feature<LineString>]);
+
+      // Selected features is empty here, shouldn't be?
+      console.log(selectedFeatures);
+
+      e.stopPropagation();
 
       // TODO: bruk isFeatureDeadEnd for å avgjøre om den nye grensen danner en lukket flate
 
@@ -91,8 +103,18 @@ const useDraw = () => {
     getCurrentlyEditingType,
     openOverlayPanel,
     selectFeatures,
+    selectedFeatures,
+    setIsDrawing,
     toast,
   ]);
+
+  useEffect(() => {
+    const onDrawStart = () => {
+      setIsDrawing(true);
+    };
+
+    draw.on("drawstart", onDrawStart);
+  }, [draw, setIsDrawing]);
 
   return { draw };
 };

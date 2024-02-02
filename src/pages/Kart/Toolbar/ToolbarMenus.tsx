@@ -93,6 +93,7 @@ const ToolbarMenus = () => {
       onClick: () => toggleTool("split"),
       "aria-label": "Del en grense i to fra et punkt",
     },
+    */
     {
       label: "Løsriv grense",
       icon: <Icon icon="edit_location_alt" />,
@@ -101,7 +102,6 @@ const ToolbarMenus = () => {
       onClick: () => toggleTool("detach"),
       "aria-label": "Løsriv grense fra et knutepunkt",
     },
-    */
     {
       label: "Se/endre grenseinformasjon",
       icon: <Icon icon="live_help" />,

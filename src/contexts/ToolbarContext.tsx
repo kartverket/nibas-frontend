@@ -16,6 +16,9 @@ export type ToolbarContextValue = {
   enableModeTool: (modeTool: ModeTool) => void;
   disableModeTool: (modeTool: ModeTool) => void;
   resetModeTools: () => void;
+
+  isDrawing: boolean;
+  setIsDrawing: (isDrawing: boolean) => void;
 };
 
 export const ToolbarContext = createContext<ToolbarContextValue | undefined>(undefined);
@@ -23,6 +26,7 @@ export const ToolbarContext = createContext<ToolbarContextValue | undefined>(und
 export const ToolbarProvider = ({ children }: { children: React.ReactNode }) => {
   const defaultTool = null;
   const [activeTool, setActiveTool] = useState<Tool>(defaultTool);
+  const [isDrawing, setIsDrawing] = useState(false);
 
   const defaultModeTools: ModeTool[] = ["move", "snap"];
   const [activeModeTools, setActiveModeTools] = useState<ModeTool[]>(defaultModeTools);
@@ -76,6 +80,8 @@ export const ToolbarProvider = ({ children }: { children: React.ReactNode }) => 
     disableModeTool,
     resetTool: () => setActiveTool(defaultTool),
     resetModeTools,
+    isDrawing,
+    setIsDrawing,
   };
 
   return <ToolbarContext.Provider value={value}>{children}</ToolbarContext.Provider>;

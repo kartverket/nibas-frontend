@@ -17,8 +17,14 @@ const ToolbarPopups = () => {
   const toast = useToast();
   const { split } = useSplit();
   const { addHistoryEntry } = useHistory();
-  const { activeModeTools, activeTool, resetModeTools, resetTool } = useToolbar();
-  const { selectedFeatures, selectedPoint, setArchivedFeatures, clearSelection } = useFeatureStyle();
+  const { activeModeTools, activeTool, resetModeTools, resetTool } =
+    useToolbar();
+  const {
+    selectedFeatures,
+    selectedPoint,
+    setArchivedFeatures,
+    clearSelection,
+  } = useFeatureStyle();
 
   const archiveFeatures = () => {
     const selectedFeature = selectedFeatures[0];
@@ -95,7 +101,13 @@ const ToolbarPopups = () => {
           isLoading={matrikkelIsLoading}
         />
       )}
-      {activeTool === "draw" && <ToolbarPopup text="Dobbeltklikk for å avslutte tegningen" onClose={resetTool} />}
+      {activeTool === "draw" && (
+        <ToolbarPopup
+          text="Start tegning ved å klikke på kartet"
+          subtext="Tegninger kan snappes til punkter eller startes fritt utenfor andre grenser. Dobbeltklikk for å avslutte tegningen"
+          onClose={resetTool}
+        />
+      )}
       {activeTool === "split" && selectedFeatures.length === 0 && (
         <ToolbarPopup text="Velg grensen du ønsker å splitte" onClose={resetTool} />
       )}
