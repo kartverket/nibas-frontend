@@ -77,10 +77,11 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
   };
 
   const publiserUtkast = async () => {
+    // Utkastet ryddes og oppdateres før publisering
     const newUtkast = toCleanUtkast(utkast);
-    updateUtkast(utkast.id, newUtkast);
-
     setIsLoading(true);
+    await updateUtkast(utkast.id, newUtkast);
+
     const publiseringDateString = format(publiseringsdato, "yyyy-MM-dd");
 
     const response = await publishUtkast(utkast.id, publiseringDateString, tokenHolderFunc()?.token);

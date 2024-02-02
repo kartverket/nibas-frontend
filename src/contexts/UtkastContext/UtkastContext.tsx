@@ -8,7 +8,12 @@ import { applyFeatureUtkast, applyNonFeatureUtkast, historyToUtkastOperations } 
 import { updateUtkastApi } from "api/utkast";
 import { HistoryChange, useHistory } from "contexts/HistoryContext";
 import useNibasApi from "hooks/useNibasApi";
-import { ApiErrorResponse, OppdaterUtkastRequest, UtkastResponse } from "types/api";
+import {
+  ApiErrorResponse,
+  OppdaterUtkastRequest,
+  UtkastOperasjoner,
+  UtkastResponse,
+} from "types/api";
 import { resetMapView } from "utils/map";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
@@ -20,10 +25,6 @@ import { routes } from "utils/routes";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useKartlag } from "contexts/KartlagContext/KartlagContext";
-import {
-  getTempFeatureId,
-  isTempFeatureId,
-} from "pages/Kart/interactions/tempFeatureIdUtil";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
@@ -109,19 +110,40 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [fetchedUtkast, utkastId, mutate, utkast, closeUtkast]);
 
-  const getUpdateUtkastRequestFromHistory = (): OppdaterUtkastRequest | null => {
-    if (!utkast) return null;
+  const operasjonerIsValid = (operasjoner: UtkastOperasjoner): boolean => {
+    const endredeFeatures = operasjoner.grenseendringer.endredeFeatures;
+
+    for (const feature of endredeFeatures) {
+      if (feature.properties.kontekstEgenskaper.length < 2) {
+        toast({
+          status: "error",
+          title: "Utkast feilet validering",
+          description: `Feature med ID ${feature.id} mangler kontekstegenskaper. Husk at nye grenser må få tilhørighet`,
+        });
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  const getUpdateUtkastRequestFromHistory =
+    (): OppdaterUtkastRequest | null => {
+      if (!utkast) return null;
 
     const operasjoner = historyToUtkastOperations(history, utkast);
 
-    const updatedUtkast: OppdaterUtkastRequest = {
-      endringstype: utkast.endringstype,
-      navn: utkast.navn,
-      gyldigFra: utkast.gyldigFra,
-      operasjoner,
-      version: utkast.version,
-    };
-    const utkastEntry = history.entries
+      if (!operasjonerIsValid(operasjoner)) return null;
+
+      const updatedUtkast: OppdaterUtkastRequest = {
+        endringstype: utkast.endringstype,
+        navn: utkast.navn,
+        gyldigFra: utkast.gyldigFra,
+        operasjoner,
+        version: utkast.version,
+      };
+
+      const utkastEntry = history.entries
       .slice(0, history.index)
       .reverse() // siste entry inneholder alle endringene på utkastet
       .find((entry) => entry.changes.some((change) => change.id === utkast.id));
