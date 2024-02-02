@@ -54,7 +54,9 @@ export const MetadataField = ({
       tooltipLabel={tooltipLabel}
       valueLabel={valueLabelFormatter ? valueLabelFormatter(getValues().metadata) ?? "Ukjent" : getValues().metadata}
       onMetadataSubmit={onSubmit}
-      isDisabled={metadataIsDisabled || isDisabled || metadata.common?.gyldigTil != null}
+      isDisabled={
+        metadataIsDisabled || isDisabled || metadata?.common?.gyldigTil != null
+      }
       isDirty={isDirty}
       reset={reset}
       isUneditable={isUneditable}

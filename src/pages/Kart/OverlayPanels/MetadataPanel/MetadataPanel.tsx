@@ -24,7 +24,10 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
 
   const sistOppdatertString = `Sist oppdatert: ${
     selectedProperties && selectedProperties.metadata
-      ? getDateInFriendlyString((selectedProperties.metadata as Metadata).common?.sporingsinformasjon.oppdateringsdato)
+      ? getDateInFriendlyString(
+          (selectedProperties.metadata as Metadata).common?.sporingsinformasjon
+            ?.oppdateringsdato,
+        )
       : "Ukjent"
   }`;
 
