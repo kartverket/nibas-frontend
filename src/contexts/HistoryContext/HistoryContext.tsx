@@ -1,6 +1,8 @@
 import React, { createContext, useContext } from "react";
 import { HistoryContextValue, HistoryEntry } from "./types";
 import {
+  redoSplitting,
+  undoSplitting,
   setFeatureCoordinatesAndMetadataForEntry,
   setFeatureCoordinatesForEntry,
   setFeatureMetadataForEntry,
@@ -60,6 +62,12 @@ const onUndo = (entry: HistoryEntry) => {
     case "grensetilhorighetendring": {
       return setKontekstEgenskaperForEntry(entry, "from");
     }
+    case "grensesplitting": {
+      return undoSplitting(
+        entry.changes.flatMap((e) => e.from)[0],
+        entry.changes.flatMap((e) => e.to),
+      );
+    }
   }
   ensureAllCasesCovered(type);
 };
@@ -115,6 +123,12 @@ const onRedo = (entry: HistoryEntry) => {
     }
     case "grensetilhorighetendring": {
       return setKontekstEgenskaperForEntry(entry, "to");
+    }
+    case "grensesplitting": {
+      return redoSplitting(
+        entry.changes.flatMap((e) => e.from)[0],
+        entry.changes.flatMap((e) => e.to),
+      );
     }
   }
   ensureAllCasesCovered(type);

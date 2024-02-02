@@ -33,39 +33,45 @@ const useSelectPoint = () => {
     if (allowedPointModes.includes(activeTool) && !event.dragging) {
       event.stopPropagation();
 
-      const features = getFeaturesAtPixel(event, "edit");
+      const allFeaturesAtPixel = getFeaturesAtPixel(event, "edit");
+      const ikkeArkiverteFeatures = allFeaturesAtPixel.filter((f) => !featureIsArchived(f));
 
-      if (features.length === 0) {
+      if (allFeaturesAtPixel.length === 0) {
         clearSelection();
         closeOverlayPanel();
         return;
       }
 
       // Valgt punkt kan ikke være en del av en ikke-redigerbar grense
-      if (features.every((feature) => isFeatureEditable(feature, featureIsArchived(feature)))) {
-        // Må estimere hvilket punkt på linjen man prøvde å trykke på
-        const nearbyVertexCoordinate = findNearbyVertexOnFeature(features[0] as Feature<LineString>, event.coordinate);
-
-        if (nearbyVertexCoordinate) {
-          if (activeTool === "split" && features.length > 1) {
-            toast({
-              status: "error",
-              title: "Man kan ikke splitte på et endepunkt",
-            });
-            return;
-          }
-
-          selectPointOnFeature(nearbyVertexCoordinate, features as Feature<LineString>[]);
-
-          if (activeTool === "koordinater") {
-            openOverlayPanel("koordinater");
-          }
-        }
-      } else {
+      if (!allFeaturesAtPixel.every((feature) => isFeatureEditable(feature, featureIsArchived(feature)))) {
         toast({
           status: "error",
-          title: "Denne grensen er ikke redigerbar",
+          title: "Denne grensen er ikke redigerbar.",
         });
+        return;
+      }
+
+      // Må estimere hvilket punkt på linjen man prøvde å trykke på
+      const nearbyVertexCoordinate = findNearbyVertexOnFeature(
+        ikkeArkiverteFeatures[0] as Feature<LineString>,
+        event.coordinate,
+      );
+
+      if (nearbyVertexCoordinate) {
+        // Om man punktet har mer enn 1 ikke-arkivert feature betyr det at det er et endepunkt.
+        if (activeTool === "split" && ikkeArkiverteFeatures.length > 1) {
+          toast({
+            status: "error",
+            title: "Man kan ikke splitte på et endepunkt",
+          });
+          return;
+        }
+
+        selectPointOnFeature(nearbyVertexCoordinate, ikkeArkiverteFeatures as Feature<LineString>[]);
+
+        if (activeTool === "koordinater") {
+          openOverlayPanel("koordinater");
+        }
       }
     }
   };
