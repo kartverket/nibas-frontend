@@ -5,6 +5,8 @@ import { LineString } from "ol/geom";
 import { previousCoordinateKey } from "./constants";
 import { GrenseType } from "hooks/layers/types";
 import { Metadata } from "types/api";
+import { getDefaultFeatureMetadata } from "utils/features";
+import { getGrenseDiscriminatorFromType } from "utils/grenser";
 
 export const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
@@ -43,37 +45,40 @@ export const createGrenseHistoryChange = (
   return changes;
 };
 
-export const createNyGrenseHistoryChanges = (
-  features: Feature[],
-  grenseType?: GrenseType,
-) => {
+export const createNyGrenseHistoryChanges = (features: Feature[], grenseType: GrenseType) => {
   const changes: HistoryChange<MinimalGrense & Metadata>[] = [];
 
-  features.forEach((feature) => {
+  for (const feature of features) {
     if (feature instanceof Feature) {
       const geometry = feature.getGeometry();
+      const grenseDiscriminator = getGrenseDiscriminatorFromType(grenseType);
 
       if (geometry instanceof LineString) {
         const { coordinates, featureId } = getInfoFromFeature(feature);
+        if (!coordinates || !featureId || !grenseDiscriminator) continue;
 
-        if (!coordinates || !featureId) return;
+        const defaultMetadata = getDefaultFeatureMetadata(grenseDiscriminator);
+        const fromChange: MinimalGrense & Metadata = {
+          ...defaultMetadata,
+          coordinates: [],
+          type: grenseType,
+        };
+        const toChange: MinimalGrense & Metadata = {
+          ...defaultMetadata,
+          coordinates: coordinates,
+          type: grenseType,
+        };
+
         changes.push({
           id: featureId as string,
-          from: {
-            coordinates: feature.get(previousCoordinateKey) || [],
-            type: grenseType,
-            ...({} as Metadata),
-          } as MinimalGrense & Metadata,
-          to: {
-            coordinates,
-            type: grenseType,
-            ...(feature.getProperties().metadata as Metadata),
-          } as MinimalGrense & Metadata,
+          from: fromChange,
+          to: toChange,
         });
+
         feature.unset(previousCoordinateKey);
       }
     }
-  });
+  }
 
   return changes;
 };

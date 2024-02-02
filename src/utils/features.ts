@@ -1,8 +1,8 @@
-import { GrenseType } from "hooks/layers/types";
+import { GrenseType, getEditingTypeFromGrenseType } from "hooks/layers/types";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
-import { Metadata } from "types/api";
-import { getGrenseDiscriminatorFromType } from "./grenser";
+import { FeatureProperties, Metadata } from "types/api";
+import { MetadataDiscriminator, getGrenseDiscriminatorFromType } from "./grenser";
 
 export const setDefaultFeatureProperties = (
   feature: Feature<Geometry>,
@@ -10,19 +10,52 @@ export const setDefaultFeatureProperties = (
 ) => {
   if (!grenseType) return;
 
+  const properties = getDefaultFeatureProperties(grenseType);
+  if (!properties) return;
+
   feature.setProperties({
-    // Metadata er satt kun for at en grense kan valideres før opprettelse uten å endre på metadatafelter.
-    metadata: {
-      discriminator: getGrenseDiscriminatorFromType(grenseType),
-      common: {
-        gyldigFra: new Date().toISOString(),
-        identifikasjon: {
-          lokalid: "NotARealID",
-        },
+    ...properties,
+  });
+};
+
+export const getDefaultFeatureMetadata = (discriminator: MetadataDiscriminator): Metadata => {
+  return {
+    discriminator: discriminator,
+    common: {
+      gyldigFra: new Date().toISOString(),
+      identifikasjon: {
+        lokalid: "NotARealID",
       },
-      commonGrense: {},
-    } as Metadata,
+      sporingsinformasjon: {
+        oppdateringsdato: "",
+      },
+      datafangstdato: "",
+    },
+    commonGrense: {},
+    dokumentasjonsreferanser: [],
+  };
+};
+
+export const getDefaultFeatureProperties = (grenseType: GrenseType): FeatureProperties | null => {
+  const grenseDiscriminator = getGrenseDiscriminatorFromType(grenseType);
+  const editingType = getEditingTypeFromGrenseType(grenseType);
+
+  if (!grenseDiscriminator || !editingType) return null;
+
+  const metadata: Metadata = getDefaultFeatureMetadata(grenseDiscriminator);
+
+  const properties: FeatureProperties = {
+    inndelingerKontekst: {
+      id: "",
+      type: editingType,
+    },
+    kontekstEgenskaper: [],
+    shouldArchive: false,
+    srid: 25833,
     type: grenseType,
     version: 1,
-  });
+    metadata: metadata,
+  };
+
+  return properties;
 };
