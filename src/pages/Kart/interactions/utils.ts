@@ -6,7 +6,6 @@ import { pixelTolerance } from "./constants";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { getLayerById } from "utils/map/layers";
 import { LayerId } from "hooks/layers/types";
-import { Coordinate } from "ol/coordinate";
 
 export const useGetFeatures = () => {
   const { featureIsArchived } = useFeatureStyle();
@@ -26,13 +25,5 @@ export const useGetFeatures = () => {
       .filter((feature) => !featureIsArchived(feature));
   };
 
-  const coordinatesAreEqual = (a: Coordinate, b: Coordinate): boolean => {
-    if (a && b) {
-      return a.toString() === b.toString();
-    }
-
-    return false;
-  };
-
-  return { getActiveFeaturesAtPixel, getFeaturesAtPixel, coordinatesAreEqual };
+  return { getActiveFeaturesAtPixel, getFeaturesAtPixel };
 };

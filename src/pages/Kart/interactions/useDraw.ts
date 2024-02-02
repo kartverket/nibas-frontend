@@ -19,7 +19,7 @@ import LineString from "ol/geom/LineString";
 import { findNearbyVertexOnFeature } from "utils/map";
 import { useGetFeatures } from "./utils";
 import { FeatureLike } from "ol/Feature";
-import { Coordinate } from "ol/coordinate";
+import { Coordinate, equals } from "ol/coordinate";
 
 const useDraw = () => {
   const { activeTool } = useToolbar();
@@ -27,7 +27,7 @@ const useDraw = () => {
   const { addHistoryEntry } = useHistory();
   const { openOverlayPanel } = useOverlayPanel();
   const { selectFeatures, selectedFeatures } = useFeatureStyle();
-  const { getActiveFeaturesAtPixel, coordinatesAreEqual } = useGetFeatures();
+  const { getActiveFeaturesAtPixel } = useGetFeatures();
   const toast = useToast();
 
   // TODO: fungerer ikke uten snap, vet ikke hvorfor
@@ -49,10 +49,7 @@ const useDraw = () => {
 
       const pointOnFeature = geometry.getClosestPoint(clickedCoordinate);
 
-      if (
-        !coordinatesAreEqual(pointOnFeature, firstCoordinate) &&
-        !coordinatesAreEqual(pointOnFeature, lastCoordinate)
-      ) {
+      if (!equals(pointOnFeature, firstCoordinate) && !equals(pointOnFeature, lastCoordinate)) {
         return false;
       }
 
@@ -87,7 +84,7 @@ const useDraw = () => {
         return true;
       },
     });
-  }, [activeTool, coordinatesAreEqual, getActiveFeaturesAtPixel, toast]);
+  }, [activeTool, getActiveFeaturesAtPixel, toast]);
 
   useEffect(() => {
     const addDrawToHistory = (drawnFeature: Feature<LineString>) => {
