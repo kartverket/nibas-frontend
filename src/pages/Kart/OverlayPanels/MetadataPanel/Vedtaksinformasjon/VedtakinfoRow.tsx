@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { Tooltip, Text, Icon } from "@kvib/react";
+import { Tooltip, Text, Icon, FormLabel } from "@kvib/react";
 import { InfoIcon, TextWithIcon } from "../MetadataGenerelt";
 import { useState } from "react";
 
@@ -20,7 +20,7 @@ export const VedtakinfoRow = ({ children, tooltipLabel, name }: Props) => {
             onMouseOver={() => setIconHovered(true)}
             onMouseOut={() => setIconHovered(false)}
           >
-            <Text as="b">{name}</Text>
+            <FormLabel as="b">{name}</FormLabel>
             <InfoIcon>
               <Icon
                 size={24}
