@@ -11,28 +11,14 @@ import {
   Tabs,
 } from "@kvib/react";
 import { Feature } from "ol";
-import { useVedtaksinfoForm } from "./useVedtaksinfoForm";
-import {
-  BorderBottom,
-  BorderTop,
-  Referanse,
-  VedtakinfoForm,
-} from "./OversiktReferanser";
+import { Referanse, VedtakinfoForm } from "./OversiktReferanser";
 import { ReferanseCard } from "./ReferanseCard";
 import { AntallReferanser } from "./AntallReferanser";
 import { ReferanseInput } from "./ReferanseInput";
 import { VedtakinfoField } from "./VedtakinfoField";
 import { Metadata } from "types/api";
-import styled from "styled-components";
-import {
-  FieldErrors,
-  UseFormRegister,
-  UseFormSetValue,
-  UseFormWatch,
-} from "react-hook-form";
-import { isUndefined } from "swr/_internal";
-import { useEffect, useState } from "react";
-import { add } from "date-fns";
+import { styled } from "styled-components";
+import { FieldErrors, UseFormRegister } from "react-hook-form";
 
 export const ReferanseBody = ({
   feature,
@@ -45,7 +31,9 @@ export const ReferanseBody = ({
   setInternref,
   errors,
   setFastsettingsdato,
+  getFastsettingsdato,
 }: {
+  getFastsettingsdato: () => string;
   setFastsettingsdato: (date: string) => void;
   errors: FieldErrors<VedtakinfoForm>;
   feature: Feature;
@@ -80,15 +68,15 @@ export const ReferanseBody = ({
       : undefined;
 
   console.log("vedtaksinfo body", vedtaksinformasjon);
-  const addDate = () => {
-    const dateField = document.getElementById(
-      "fastsettingsdato",
-    ) as HTMLInputElement;
+  // const addDate = () => {
+  //   const dateField = document.getElementById(
+  //     "fastsettingsdato",
+  //   ) as HTMLInputElement;
 
-    if (dateField.value) {
-      return new Date(dateField.value);
-    } else return new Date();
-  };
+  //   if (dateField.value) {
+  //     return new Date(dateField.value);
+  //   } else return new Date();
+  // };
 
   return (
     <>
@@ -116,16 +104,23 @@ export const ReferanseBody = ({
                 displayMode={displayMode}
                 tooltipLabel="tooltip"
                 title="Fastsettingsdato"
-                value={vedtaksinformasjon?.fastsettingsdato?.toLocaleLowerCase()}
+                value={vedtaksinformasjon?.fastsettingsdato}
               >
-                <Input
+                {/* <Input
                   {...register("fastsettingsdato")}
                   id="fastsettingsdato"
                   hidden
-                />
-
+                /> */}
                 <Datepicker
+                  {...register("fastsettingsdato")}
+                  defaultSelected={
+                    vedtaksinformasjon?.fastsettingsdato
+                      ? new Date(vedtaksinformasjon.fastsettingsdato)
+                      : undefined
+                  }
                   onChange={(e) => {
+                    // Har også prøvd string som datatype. Får ikke skjemaet til å
+                    // lytte til endringer i denne komponenten out of the box
                     setFastsettingsdato(e.target.value);
                   }}
                 />
@@ -207,10 +202,9 @@ const Referanser = ({
 
   return (
     <ReferanserWrapper>
-      <Card variant={"filled"}>
-        <BorderBottom />
-        <Tabs colorScheme="blue" size="md">
-          <TabList>
+      <Card variant={"filled"} height={"100%"}>
+        <Tabs colorScheme="blue" size="md" width={"100%"} height="100%">
+          <TabList width={"100%"}>
             <Tab>
               Dokumenter
               <AntallReferanser
@@ -226,48 +220,57 @@ const Referanser = ({
               />
             </Tab>
           </TabList>
-          <TabPanels>
-            <TabPanel>
-              {dokref?.map((ref: Referanse) => (
-                <ReferanseCard
-                  key={ref.beskrivelse}
-                  referanse={ref}
-                  urlMode={true}
-                  displayMode={false}
+          <TabPanels width="100%" height="100%">
+            <TabPanel height="100%">
+              <Column>
+                <ReferanseCardWrapper>
+                  {dokref && dokref.length > 0
+                    ? dokref?.map((ref: Referanse) => (
+                        <ReferanseCard
+                          key={ref.beskrivelse}
+                          referanse={ref}
+                          urlMode={true}
+                          displayMode={false}
+                        />
+                      ))
+                    : "Det finnes ingen dokumenter for denne referansen"}
+                </ReferanseCardWrapper>
+                <ReferanseInput
+                  errors={errors.leggTilDokumentlenke}
+                  pattern={regexUrlPattern}
+                  register={register}
+                  appendFn={addDokumentlenke}
+                  registerName="leggTilDokumentlenke"
+                  tooltipLabel="Tooltip"
+                  placeholder="URL til dokument"
+                  title="Legg til nytt dokument (URL)"
                 />
-              ))}
-
-              <BorderTop />
-              <ReferanseInput
-                errors={errors.leggTilDokumentlenke}
-                pattern={regexUrlPattern}
-                register={register}
-                appendFn={addDokumentlenke}
-                registerName="leggTilDokumentlenke"
-                tooltipLabel="Tooltip"
-                placeholder="URL til dokument"
-                title="Legg til nytt dokument (URL)"
-              />
+              </Column>
             </TabPanel>
-            <TabPanel>
-              {internref?.map((ref: Referanse) => (
-                <ReferanseCard
-                  key={ref.beskrivelse}
-                  referanse={ref}
-                  urlMode={false}
-                  displayMode={false}
+            <TabPanel height="100%">
+              <Column>
+                <ReferanseCardWrapper>
+                  {internref && internref.length > 0
+                    ? internref?.map((ref: Referanse) => (
+                        <ReferanseCard
+                          key={ref.beskrivelse}
+                          referanse={ref}
+                          urlMode={false}
+                          displayMode={false}
+                        />
+                      ))
+                    : "Det finnes ingen dokumenter for denne referansen"}
+                </ReferanseCardWrapper>
+                <ReferanseInput
+                  errors={errors.leggTilInternreferanse}
+                  register={register}
+                  appendFn={addInternreferanse}
+                  registerName="leggTilInternreferanse"
+                  tooltipLabel="Tooltip"
+                  placeholder="Internreferanse"
+                  title="Legg til ny internreferanse"
                 />
-              ))}
-              <BorderTop />
-              <ReferanseInput
-                errors={errors.leggTilInternreferanse}
-                register={register}
-                appendFn={addInternreferanse}
-                registerName="leggTilInternreferanse"
-                tooltipLabel="Tooltip"
-                placeholder="Internreferanse"
-                title="Legg til ny internreferanse"
-              />
+              </Column>
             </TabPanel>
           </TabPanels>
         </Tabs>
@@ -275,6 +278,18 @@ const Referanser = ({
     </ReferanserWrapper>
   );
 };
+
+const ReferanseCardWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+`;
+const Column = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 90%;
+`;
 
 const Row = styled.div`
   display: flex;
@@ -287,6 +302,8 @@ const Row = styled.div`
 
 const ReferanserWrapper = styled.div`
   margin-top: 30px;
+  margin-left: 30px;
+  height: 90%;
 `;
 
 const Vedtaksfelter = styled.div`

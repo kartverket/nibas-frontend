@@ -13,27 +13,25 @@ export const ReferanseCard = ({
 }) => {
   // TODO: Hvorfor er referanse.beskrivelse undefined når man legger til noe?
   return (
-    <CardWrapper>
-      <Card>
-        <Row>
-          <Text>{referanse?.beskrivelse}</Text>
-          {urlMode && (
-            <Link href={referanse?.beskrivelse}>
-              <Icon icon="open_in_new" />
-            </Link>
-          )}
-        </Row>
-      </Card>
-    </CardWrapper>
+    <StyledCard>
+      <Row>
+        <Text colorScheme="gray" noOfLines={1} textOverflow="clip">
+          {referanse?.beskrivelse}
+        </Text>
+        {urlMode && <Link href={referanse?.beskrivelse} />}
+      </Row>
+    </StyledCard>
   );
 };
 
-const CardWrapper = styled.div`
+const StyledCard = styled(Card)`
+  padding: 10px;
   margin-bottom: 5px;
   width: 100%;
 `;
 const Row = styled.div`
   display: flex;
+  flex-wrap: nowrap;
   flex-direction: row;
   justify-content: space-between;
   padding: 5px 10px 5px 10px;

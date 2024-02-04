@@ -49,6 +49,7 @@ export const VedtaksinfoDetaljer = ({
     updateDraftFromFeature,
     errors,
     setFastsettingsdato,
+    getFastsettingsdato,
   } = useVedtaksinfoForm(feature, selectedVedtaksinfoIndex);
 
   const cleanForm = () => {
@@ -58,9 +59,10 @@ export const VedtaksinfoDetaljer = ({
   };
 
   const onSubmit = (data: VedtakinfoForm) => {
-    console.log(data);
+    console.log("DATA ", data);
     if (isDirty) {
       const postValues = mapFromFormToApi(data, dokref, internref);
+      console.log("Post values", postValues);
       updateDraftFromFeature(postValues);
     }
     cleanForm();
@@ -100,6 +102,7 @@ export const VedtaksinfoDetaljer = ({
           <ModalCloseButton />
           <ModalBody>
             <ReferanseBody
+              getFastsettingsdato={getFastsettingsdato}
               errors={errors}
               feature={feature}
               displayMode={displayMode}

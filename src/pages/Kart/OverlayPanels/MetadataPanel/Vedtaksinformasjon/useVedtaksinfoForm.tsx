@@ -15,7 +15,7 @@ export const mapFromFormToApi = (
   return {
     id: formValues.id,
     rettskildeTittel: formValues.rettskildeTittel,
-    fastsettingsdato: formValues.fastsettingsdato,
+    fastsettingsdato: formValues.fastsettingsdato.toISOString(),
     fastsettingsmyndighet: formValues.fastsettingsmyndighet,
     hjemmel: formValues.hjemmel,
     rettskildeId: formValues.rettskildeId,
@@ -38,7 +38,7 @@ const emptyVedtaksinformasjon = {
   rettskildeId: "",
   dokumentlenker: [],
   internreferanserKartverket: [],
-  fastsettingsdato: "",
+  fastsettingsdato: new Date(),
   fastsettingsmyndighet: "",
   hjemmel: "",
   leggTilInternreferanse: undefined,
@@ -88,11 +88,13 @@ export const useVedtaksinfoForm = (
 ) => {
   const values: VedtakinfoForm =
     selectedVedtaksinfoIndex !== undefined
-      ? feature.getProperties().metadata.dokumentasjonsreferanser[
-          selectedVedtaksinfoIndex
-        ]
+      ? structuredClone(
+          feature.getProperties().metadata.dokumentasjonsreferanser[
+            selectedVedtaksinfoIndex
+          ],
+        )
       : emptyVedtaksinformasjon;
-
+  values.fastsettingsdato = new Date(values.fastsettingsdato);
   const {
     register,
     setValue,
@@ -145,9 +147,13 @@ export const useVedtaksinfoForm = (
     }
   };
   const setFastsettingsdato = (date: string) => {
-    setValue("fastsettingsdato", date);
+    setValue("fastsettingsdato", new Date(date), { shouldDirty: true });
+  };
+  const getFastsettingsdato = () => {
+    return getValues("fastsettingsdato").toDateString();
   };
   return {
+    getFastsettingsdato,
     setFastsettingsdato,
     isDirty,
     errors,

@@ -35,7 +35,7 @@ type VedtakinfoForm = {
   id?: string;
   dokumentlenker: Referanse[];
   leggTilDokumentlenke?: string;
-  fastsettingsdato: string;
+  fastsettingsdato: Date;
   gyldigFra: string;
   gyldigTil: string;
   fastsettingsmyndighet?: string;
@@ -105,6 +105,7 @@ const OversiktReferanser = ({ feature }: { feature: Feature }) => {
         <VedtaksinfoCard
           key={vedtak.id || vedtak.rettskildeTittel}
           title={vedtak.rettskildeTittel}
+          date={vedtak.fastsettingsdato}
           onClick={() => {
             setDisplayMode(true);
             setSelectedVedtaksinfoIndex(index);
@@ -127,16 +128,50 @@ const OversiktReferanser = ({ feature }: { feature: Feature }) => {
 const VedtaksinfoCard = ({
   title,
   onClick,
+  date,
 }: {
   title: string;
+  date: string;
   onClick: () => void;
 }) => {
-  return <Card onClick={onClick}>{title}</Card>;
+  return (
+    <VedtaksinfoContent>
+      <Datofelt>{date}</Datofelt>
+      <VedtaksinfoTitle>{title}</VedtaksinfoTitle>
+      <Button
+        onClick={onClick}
+        rightIcon="folder_open"
+        variant="secondary"
+        colorScheme="gray"
+        size="xs"
+      >
+        Åpne
+      </Button>
+    </VedtaksinfoContent>
+  );
 };
+
+const Datofelt = styled.strong`
+  margin-right: 20px;
+`;
+
+const VedtaksinfoContent = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between:;
+  margin-top: 10px;
+  width: 100%
+`;
+
+const VedtaksinfoTitle = styled.div`
+  flex: 1;
+`;
+
 export const BorderTop = styled.div`
   border-top: 1px;
   border-color: var(--kvib-colors-gray-300);
   border-style: solid;
+  margin: 10px;
 `;
 
 export const BorderBottom = styled.div`

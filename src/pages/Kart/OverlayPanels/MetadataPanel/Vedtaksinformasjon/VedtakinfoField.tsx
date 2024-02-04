@@ -19,6 +19,8 @@ export const VedtakinfoField = ({
   isRequired?: boolean;
   errors: FieldError | undefined;
 }) => {
+  console.log("value", value);
+  console.log("typeof ", typeof value);
   return (
     <FormControl isRequired={isRequired}>
       <VedtakinfoRow tooltipLabel={tooltipLabel} name={title} errors={errors}>

@@ -1,6 +1,7 @@
 import { Button, Input } from "@kvib/react";
 import { VedtakinfoRow } from "./VedtakinfoRow";
 import {
+  BorderTop,
   InputCollectionName,
   InputName,
   Referanse,
@@ -50,29 +51,31 @@ export const ReferanseInput = ({
     }
   };
   return (
-    <VedtakinfoRow tooltipLabel={tooltipLabel} name={title} errors={errors}>
-      <Input
-        {...register(registerName, { pattern: pattern })}
-        placeholder={placeholder}
-        backgroundColor={"white"}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            const element = e.target as HTMLInputElement;
+    <BorderTop>
+      <VedtakinfoRow tooltipLabel={tooltipLabel} name={title} errors={errors}>
+        <Input
+          {...register(registerName, { pattern: pattern })}
+          placeholder={placeholder}
+          backgroundColor={"white"}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              const element = e.target as HTMLInputElement;
+              appendReferanse(element);
+            }
+          }}
+        />
+        <LeggTilKnapp
+          onClick={() => {
+            const element = document.querySelector(
+              `input[name=${registerName}]`,
+            ) as HTMLInputElement;
             appendReferanse(element);
-          }
-        }}
-      />
-      <LeggTilKnapp
-        onClick={() => {
-          const element = document.querySelector(
-            `input[name=${registerName}]`,
-          ) as HTMLInputElement;
-          appendReferanse(element);
-        }}
-      >
-        Legg til
-      </LeggTilKnapp>
-    </VedtakinfoRow>
+          }}
+        >
+          Legg til
+        </LeggTilKnapp>
+      </VedtakinfoRow>
+    </BorderTop>
   );
 };
 
