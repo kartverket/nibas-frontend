@@ -50,6 +50,7 @@ export const VedtaksinfoDetaljer = ({
     errors,
     setFastsettingsdato,
     getFastsettingsdato,
+    control,
   } = useVedtaksinfoForm(feature, selectedVedtaksinfoIndex);
 
   const cleanForm = () => {
@@ -102,6 +103,7 @@ export const VedtaksinfoDetaljer = ({
           <ModalCloseButton />
           <ModalBody>
             <ReferanseBody
+              control={control}
               getFastsettingsdato={getFastsettingsdato}
               errors={errors}
               feature={feature}

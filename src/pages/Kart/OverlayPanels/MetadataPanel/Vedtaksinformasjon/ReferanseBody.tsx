@@ -18,7 +18,12 @@ import { ReferanseInput } from "./ReferanseInput";
 import { VedtakinfoField } from "./VedtakinfoField";
 import { Metadata } from "types/api";
 import { styled } from "styled-components";
-import { FieldErrors, UseFormRegister } from "react-hook-form";
+import {
+  Control,
+  Controller,
+  FieldErrors,
+  UseFormRegister,
+} from "react-hook-form";
 
 export const ReferanseBody = ({
   feature,
@@ -32,7 +37,9 @@ export const ReferanseBody = ({
   errors,
   setFastsettingsdato,
   getFastsettingsdato,
+  control,
 }: {
+  control: Control<VedtakinfoForm>;
   getFastsettingsdato: () => string;
   setFastsettingsdato: (date: string) => void;
   errors: FieldErrors<VedtakinfoForm>;
@@ -99,32 +106,43 @@ export const ReferanseBody = ({
               />
             </VedtakinfoField>
             <Row>
-              <VedtakinfoField
-                errors={errors.fastsettingsdato}
-                displayMode={displayMode}
-                tooltipLabel="tooltip"
-                title="Fastsettingsdato"
-                value={vedtaksinformasjon?.fastsettingsdato}
-              >
-                {/* <Input
+              <Controller
+                control={control}
+                name="fastsettingsdato"
+                render={({ field }) => {
+                  return (
+                    <VedtakinfoField
+                      errors={errors.fastsettingsdato}
+                      displayMode={displayMode}
+                      tooltipLabel="tooltip"
+                      title="Fastsettingsdato"
+                      value={vedtaksinformasjon?.fastsettingsdato}
+                    >
+                      {/* <Input
                   {...register("fastsettingsdato")}
                   id="fastsettingsdato"
                   hidden
                 /> */}
-                <Datepicker
-                  {...register("fastsettingsdato")}
-                  defaultSelected={
-                    vedtaksinformasjon?.fastsettingsdato
-                      ? new Date(vedtaksinformasjon.fastsettingsdato)
-                      : undefined
-                  }
-                  onChange={(e) => {
-                    // Har også prøvd string som datatype. Får ikke skjemaet til å
-                    // lytte til endringer i denne komponenten out of the box
-                    setFastsettingsdato(e.target.value);
-                  }}
-                />
-              </VedtakinfoField>
+                      <Datepicker
+                        //     {...register("fastsettingsdato")}
+                        // defaultSelected={
+                        //   vedtaksinformasjon?.fastsettingsdato
+                        //     ? new Date(vedtaksinformasjon.fastsettingsdato)
+                        //     : undefined
+                        defaultSelected={field.value}
+                        onChange={(e) => {
+                          // Har også prøvd string som datatype. Får ikke skjemaet til å
+                          // lytte til endringer i denne komponenten out of the box
+                          //setFastsettingsdato(e.target.value);
+                          //return { value: new Date(e.target.value) };
+                          field.onChange(new Date(e.target.value));
+                        }}
+                      />
+                    </VedtakinfoField>
+                  );
+                }}
+              />
+
               <VedtakinfoField
                 errors={errors.rettskildeId}
                 displayMode={displayMode}

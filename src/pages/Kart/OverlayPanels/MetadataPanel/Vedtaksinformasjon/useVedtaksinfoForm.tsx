@@ -103,6 +103,7 @@ export const useVedtaksinfoForm = (
     handleSubmit,
     formState: { isDirty, errors },
     watch,
+    control,
   } = useForm<VedtakinfoForm>({
     defaultValues: emptyVedtaksinformasjon,
     values: values,
@@ -164,5 +165,6 @@ export const useVedtaksinfoForm = (
     getValues,
     setValue,
     watch,
+    control,
   };
 };
