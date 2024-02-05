@@ -146,6 +146,7 @@ const grenseStyleFromType = (grenseType: GrenseType, archived: boolean): Style[]
 };
 
 export const getLayerStyle = (feature: Feature<Geometry> | RenderFeature, grenseId: GrenseId, archived: boolean) => {
+  // TODO Denne burde på et vis bruke "isFeatureEditable"
   if (grenseId == "edit" && editableBorderTypes.includes(feature.get("type"))) {
     return grenseStyles.edit;
   } else {
