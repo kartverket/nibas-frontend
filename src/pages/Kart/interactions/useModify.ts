@@ -21,7 +21,7 @@ const useModify = () => {
   const { addHistoryEntry } = useHistory();
   const { activeTool, activeModeTools } = useToolbar();
   const { selectedFeatures, featureIsArchived } = useFeatureStyle();
-  const { featureIsEditable } = useFeature();
+  const { isFeatureEditable: featureIsEditable } = useFeature();
   const toast = useToast();
   const { getActiveFeaturesAtPixel, getFeaturesAtPixel } = useGetFeatures();
 

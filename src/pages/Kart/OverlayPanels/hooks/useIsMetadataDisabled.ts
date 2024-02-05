@@ -6,7 +6,7 @@ import useFeature from "hooks/useFeature";
 
 const useIsMetadataDisabled = (feature: Feature, properties: FeatureProperties) => {
   const { featureIsArchived } = useFeatureStyle();
-  const { featureIsEditable } = useFeature();
+  const { isFeatureEditable: featureIsEditable } = useFeature();
   const { kretsStatuser } = useEditGrenser(properties.inndelingerKontekst?.type ?? "fylke");
 
   const kretsStatus = kretsStatuser[feature.getId() ?? ""];

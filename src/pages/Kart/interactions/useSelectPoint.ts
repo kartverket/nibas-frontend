@@ -14,7 +14,7 @@ const useSelectPoint = () => {
   const { activeTool } = useToolbar();
   const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } = useOverlayPanel();
   const { selectPointOnFeature, selectedPoint, clearSelection, featureIsArchived } = useFeatureStyle();
-  const { featureIsEditable } = useFeature();
+  const { isFeatureEditable: featureIsEditable } = useFeature();
   const { getFeaturesAtPixel } = useGetFeatures();
 
   const allowedPointModes: Tool[] = useMemo(() => ["koordinater", "split"], []);

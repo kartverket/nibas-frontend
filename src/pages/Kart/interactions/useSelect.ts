@@ -21,7 +21,7 @@ const useSelect = () => {
   const toast = useToast();
   const { activeTool } = useToolbar();
   const { selectFeatures, selectedFeatures, clearSelection, featureIsArchived } = useFeatureStyle();
-  const { featureIsEditable } = useFeature();
+  const { isFeatureEditable: featureIsEditable } = useFeature();
   const { activeOverlayPanel, closeOverlayPanel, openOverlayPanel } = useOverlayPanel();
   const previousPointMode = usePrevious(activeTool);
   const { getActiveFeaturesAtPixel } = useGetFeatures();

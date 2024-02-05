@@ -44,7 +44,7 @@ const useFeature = () => {
   };
 
   return {
-    featureIsEditable: isFeatureEditable,
+    isFeatureEditable,
   };
 };
 
