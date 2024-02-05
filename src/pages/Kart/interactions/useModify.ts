@@ -21,7 +21,7 @@ const useModify = () => {
   const { addHistoryEntry } = useHistory();
   const { activeTool, activeModeTools } = useToolbar();
   const { selectedFeatures, featureIsArchived } = useFeatureStyle();
-  const { isFeatureEditable: featureIsEditable } = useFeature();
+  const { isFeatureEditable } = useFeature();
   const toast = useToast();
   const { getActiveFeaturesAtPixel, getFeaturesAtPixel } = useGetFeatures();
 
@@ -53,7 +53,7 @@ const useModify = () => {
         const activeFeatures = getActiveFeaturesAtPixel(event, "edit");
 
         // Sjekk alle featurene i punktet, hvis en av dem ikke skal kunne endres ønsker vi ikke å endre noe
-        if (!activeFeatures.every((feature) => featureIsEditable(feature, featureIsArchived(feature)))) {
+        if (!activeFeatures.every((feature) => isFeatureEditable(feature, featureIsArchived(feature)))) {
           toast({
             status: "error",
             title: "Denne grensen er ikke redigerbar",
@@ -81,7 +81,7 @@ const useModify = () => {
         if (activeTool === "remove" && click(event)) {
           const activeFeatures = getActiveFeaturesAtPixel(event, "edit");
 
-          if (!activeFeatures.every((feature) => featureIsEditable(feature, featureIsArchived(feature)))) {
+          if (!activeFeatures.every((feature) => isFeatureEditable(feature, featureIsArchived(feature)))) {
             return false;
           }
 
@@ -124,7 +124,7 @@ const useModify = () => {
     activeTool,
     disallowedPointModes,
     featureIsArchived,
-    featureIsEditable,
+    isFeatureEditable,
     getActiveFeaturesAtPixel,
     getFeaturesAtPixel,
     selectedFeatures,

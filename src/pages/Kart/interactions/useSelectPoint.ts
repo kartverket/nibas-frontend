@@ -14,7 +14,7 @@ const useSelectPoint = () => {
   const { activeTool } = useToolbar();
   const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } = useOverlayPanel();
   const { selectPointOnFeature, selectedPoint, clearSelection, featureIsArchived } = useFeatureStyle();
-  const { isFeatureEditable: featureIsEditable } = useFeature();
+  const { isFeatureEditable } = useFeature();
   const { getFeaturesAtPixel } = useGetFeatures();
 
   const allowedPointModes: Tool[] = useMemo(() => ["koordinater", "split"], []);
@@ -43,7 +43,7 @@ const useSelectPoint = () => {
       }
 
       // Valgt punkt kan ikke være en del av en ikke-redigerbar grense
-      if (features.every((feature) => featureIsEditable(feature, featureIsArchived(feature)))) {
+      if (features.every((feature) => isFeatureEditable(feature, featureIsArchived(feature)))) {
         // Må estimere hvilket punkt på linjen man prøvde å trykke på
         const nearbyVertexCoordinate = findNearbyVertexOnFeature(features[0] as Feature<LineString>, event.coordinate);
 

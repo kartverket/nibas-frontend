@@ -6,12 +6,12 @@ import useFeature from "hooks/useFeature";
 
 const useIsMetadataDisabled = (feature: Feature, properties: FeatureProperties) => {
   const { featureIsArchived } = useFeatureStyle();
-  const { isFeatureEditable: featureIsEditable } = useFeature();
+  const { isFeatureEditable } = useFeature();
   const { kretsStatuser } = useEditGrenser(properties.inndelingerKontekst?.type ?? "fylke");
 
   const kretsStatus = kretsStatuser[feature.getId() ?? ""];
 
-  const borderIsNotEditable = !featureIsEditable(feature, featureIsArchived(feature));
+  const borderIsNotEditable = !isFeatureEditable(feature, featureIsArchived(feature));
   return ((kretsStatus?.visible && !kretsStatus?.editing) || borderIsNotEditable) ?? true;
 };
 

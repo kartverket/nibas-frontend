@@ -21,7 +21,7 @@ const useSelect = () => {
   const toast = useToast();
   const { activeTool } = useToolbar();
   const { selectFeatures, selectedFeatures, clearSelection, featureIsArchived } = useFeatureStyle();
-  const { isFeatureEditable: featureIsEditable } = useFeature();
+  const { isFeatureEditable } = useFeature();
   const { activeOverlayPanel, closeOverlayPanel, openOverlayPanel } = useOverlayPanel();
   const previousPointMode = usePrevious(activeTool);
   const { getActiveFeaturesAtPixel } = useGetFeatures();
@@ -57,7 +57,7 @@ const useSelect = () => {
       // I noen verktøy skal man ikke kunne velge ikke-redigerbare grenser
       if (
         dangerousPointModes.includes(activeTool) &&
-        !featureIsEditable(clickedFeature, featureIsArchived(clickedFeature))
+        !isFeatureEditable(clickedFeature, featureIsArchived(clickedFeature))
       ) {
         toast({ status: "error", title: "Denne grensen er ikke redigerbar" });
         event.stopPropagation();
