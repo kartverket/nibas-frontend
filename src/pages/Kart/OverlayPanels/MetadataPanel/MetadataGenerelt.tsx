@@ -3,10 +3,7 @@ import Geometry from "ol/geom/Geometry";
 import {
   Alert,
   AlertIcon,
-  Button,
   Datepicker,
-  Icon,
-  IconButton,
   Input,
   Select,
   Textarea,
@@ -199,7 +196,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
           tilhorighetToChange={tilhorighetToChange}
         />
       )}
-      <OversiktReferanser feature={feature} />
+      {/* <OversiktReferanser feature={feature} /> */}
     </Container>
   );
 };
