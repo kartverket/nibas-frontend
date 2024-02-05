@@ -1,8 +1,8 @@
 import { GrenseType, getEditingTypeFromGrenseType } from "hooks/layers/types";
+import { MetadataDiscriminator, getGrenseDiscriminatorFromType } from "./grenser";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
 import { FeatureProperties, Metadata } from "types/api";
-import { MetadataDiscriminator, getGrenseDiscriminatorFromType } from "./grenser";
 
 export const setDefaultFeatureProperties = (feature: Feature<Geometry>, grenseType: GrenseType | undefined) => {
   if (!grenseType) return;
