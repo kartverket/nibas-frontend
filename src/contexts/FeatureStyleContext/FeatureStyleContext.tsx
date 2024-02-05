@@ -6,12 +6,6 @@ import { useSelectStyles } from "./useSelectStyles";
 import { getArchiveLayerStyle, grenseStyles } from "utils/map/layerStyles";
 import useArchiveStyles from "./useArchiveStyles";
 import { FeatureLike } from "ol/Feature";
-import { editableBorderTypes } from "hooks/layers/constants";
-import { GrenseType } from "hooks/layers/types";
-import { isAdministrativGrense } from "utils/grenser";
-import { FeatureProperties, KontekstEgenskaper, Metadata } from "types/api";
-import { useEditGrenser } from "contexts/EditGrenserContext";
-import useKretsgrenser from "hooks/inndelinger/useKretsgrenser";
 
 export const FeatureStyleContext = createContext<FeatureStyleContextValue | undefined>(undefined);
 

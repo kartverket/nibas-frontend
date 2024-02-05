@@ -14,12 +14,14 @@ import { useToast } from "@kvib/react";
 import { Style } from "ol/style";
 import { createGrenseHistoryChange, getInfoFromFeature } from "./historyUtil";
 import { useGetFeatures } from "./utils";
-import { featureIsEditable } from "utils/features";
+import useFeature from "hooks/useFeatures";
+import { isAdministrativGrense } from "utils/grenser";
 
 const useModify = () => {
   const { addHistoryEntry } = useHistory();
   const { activeTool, activeModeTools } = useToolbar();
   const { selectedFeatures, featureIsArchived } = useFeatureStyle();
+  const { featureIsEditable } = useFeature();
   const toast = useToast();
   const { getActiveFeaturesAtPixel, getFeaturesAtPixel } = useGetFeatures();
 
@@ -52,10 +54,12 @@ const useModify = () => {
 
         // Sjekk alle featurene i punktet, hvis en av dem ikke skal kunne endres ønsker vi ikke å endre noe
         if (!activeFeatures.every((feature) => featureIsEditable(feature, featureIsArchived(feature)))) {
-          console.log(activeFeatures);
           toast({
             status: "error",
             title: "Denne grensen er ikke redigerbar",
+            description: activeFeatures.some((feature) => isAdministrativGrense(feature.get("type")))
+              ? "Ved endring av administrative grenser må du skru på visning for alle kretser som er knyttet til grensen"
+              : undefined,
           });
           return false;
         }
@@ -120,6 +124,7 @@ const useModify = () => {
     activeTool,
     disallowedPointModes,
     featureIsArchived,
+    featureIsEditable,
     getActiveFeaturesAtPixel,
     getFeaturesAtPixel,
     selectedFeatures,

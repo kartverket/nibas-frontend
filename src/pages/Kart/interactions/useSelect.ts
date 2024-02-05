@@ -8,7 +8,7 @@ import { useToast } from "@kvib/react";
 import { useEffect } from "react";
 import { usePrevious } from "hooks/usePrevious";
 import { useGetFeatures } from "./utils";
-import { featureIsEditable } from "utils/features";
+import useFeature from "hooks/useFeatures";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -21,6 +21,7 @@ const useSelect = () => {
   const toast = useToast();
   const { activeTool } = useToolbar();
   const { selectFeatures, selectedFeatures, clearSelection, featureIsArchived } = useFeatureStyle();
+  const { featureIsEditable } = useFeature();
   const { activeOverlayPanel, closeOverlayPanel, openOverlayPanel } = useOverlayPanel();
   const previousPointMode = usePrevious(activeTool);
   const { getActiveFeaturesAtPixel } = useGetFeatures();

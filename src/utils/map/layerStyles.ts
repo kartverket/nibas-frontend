@@ -10,9 +10,8 @@ import Style, { StyleFunction } from "ol/style/Style";
 import { map } from "pages/Kart/constants";
 import Text from "ol/style/Text";
 import Point from "ol/geom/Point";
-import { editSource } from "hooks/layers/constants";
+import { editSource, editableBorderTypes } from "hooks/layers/constants";
 import { GrenseId, GrenseType } from "hooks/layers/types";
-import { featureIsEditable } from "utils/features";
 
 const getNonEndpointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
   const featureGeometry = feature.getGeometry();
@@ -147,7 +146,8 @@ const grenseStyleFromType = (grenseType: GrenseType, archived: boolean): Style[]
 };
 
 export const getLayerStyle = (feature: Feature<Geometry> | RenderFeature, grenseId: GrenseId, archived: boolean) => {
-  if (grenseId == "edit" && featureIsEditable(feature, archived)) {
+  // TODO Denne burde på et vis bruke "isFeatureEditable"
+  if (grenseId == "edit" && editableBorderTypes.includes(feature.get("type"))) {
     return grenseStyles.edit;
   } else {
     return grenseStyleFromType(feature.getProperties().type as GrenseType, archived);

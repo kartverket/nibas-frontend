@@ -2,10 +2,11 @@ import { useEditGrenser } from "contexts/EditGrenserContext";
 import { FeatureProperties } from "types/api";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { Feature } from "ol";
-import { featureIsEditable } from "utils/features";
+import useFeature from "hooks/useFeatures";
 
 const useIsMetadataDisabled = (feature: Feature, properties: FeatureProperties) => {
   const { featureIsArchived } = useFeatureStyle();
+  const { featureIsEditable } = useFeature();
   const { kretsStatuser } = useEditGrenser(properties.inndelingerKontekst?.type ?? "fylke");
 
   const kretsStatus = kretsStatuser[feature.getId() ?? ""];
