@@ -8,6 +8,7 @@ import { useToast } from "@kvib/react";
 import { useEffect } from "react";
 import { usePrevious } from "hooks/usePrevious";
 import { useGetFeatures } from "./utils";
+import useFeature from "hooks/useFeatures";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -19,7 +20,8 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 const useSelect = () => {
   const toast = useToast();
   const { activeTool } = useToolbar();
-  const { selectFeatures, selectedFeatures, clearSelection, featureIsArchived, featureIsEditable } = useFeatureStyle();
+  const { selectFeatures, selectedFeatures, clearSelection, featureIsArchived } = useFeatureStyle();
+  const { featureIsEditable } = useFeature();
   const { activeOverlayPanel, closeOverlayPanel, openOverlayPanel } = useOverlayPanel();
   const previousPointMode = usePrevious(activeTool);
   const { getActiveFeaturesAtPixel } = useGetFeatures();
@@ -53,7 +55,10 @@ const useSelect = () => {
       const clickedFeature = filteredFeatures[0] as Feature<LineString>;
 
       // I noen verktøy skal man ikke kunne velge ikke-redigerbare grenser
-      if (dangerousPointModes.includes(activeTool) && !featureIsEditable(clickedFeature)) {
+      if (
+        dangerousPointModes.includes(activeTool) &&
+        !featureIsEditable(clickedFeature, featureIsArchived(clickedFeature))
+      ) {
         toast({ status: "error", title: "Denne grensen er ikke redigerbar" });
         event.stopPropagation();
         return;
