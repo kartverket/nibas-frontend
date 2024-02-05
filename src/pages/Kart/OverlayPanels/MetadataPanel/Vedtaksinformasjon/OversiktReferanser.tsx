@@ -1,30 +1,10 @@
-import { Button, Card, Icon, Text, Tooltip, useDisclosure } from "@kvib/react";
+import { Button, Icon, Text, Tooltip, useDisclosure } from "@kvib/react";
 import { styled } from "styled-components";
 import { InfoIcon } from "../MetadataGenerelt";
 import { Feature } from "ol";
 import { VedtaksinfoDetaljer } from "./VedtaksinfoDetaljer";
-import { Dokref, Metadata } from "types/api";
+import { Metadata } from "types/api";
 import { useState } from "react";
-import { on } from "events";
-
-// TODO:
-// * Vise referanseoversikt i metadata
-//   ** Hente fra feature properties                        OK
-//   ** Tooltip button skal bytte farge ved hover           OK
-//   ** Riktig farge på "ny referanse"
-// * Modal for å legge til referanser
-//   ** legge til URLer                                     OK
-//      ** Validere URL
-//   ** legge til referanser                                OK
-//   ** resterende felter
-//      ** Mangler nye datofelt
-//      ** Datofelt reagerer ikke på register :S
-//   ** oppdatere historikk                                 OK
-//   ** implementere isDirty for referanser
-// * Modal for å vise referansedetaljer
-//   ** sendes med fra feature                              OK
-//   ** helst gjenbruke modal og skjema                     OK
-// * Slett gammel kode
 
 type Referanse = {
   beskrivelse: string;

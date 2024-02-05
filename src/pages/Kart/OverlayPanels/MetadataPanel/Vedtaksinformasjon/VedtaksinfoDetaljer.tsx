@@ -9,7 +9,7 @@ import {
   useToast,
 } from "@kvib/react";
 import { Feature } from "ol";
-import { ReferanseBody } from "./ReferanseBody";
+import { VedtaksinfoBody } from "./VedtaksinfoBody";
 import {
   BorderBottom,
   BorderTop,
@@ -116,7 +116,7 @@ export const VedtaksinfoDetaljer = ({
           </BorderBottom>
           <ModalCloseButton />
           <ModalBody minHeight={"500px"}>
-            <ReferanseBody
+            <VedtaksinfoBody
               control={control}
               errors={errors}
               feature={feature}
@@ -167,7 +167,6 @@ const VedtaksFooter = ({
         onClose={onClose}
         onArchive={() => {
           // TODO: Endepunkt må opprettes
-          console.log("archived");
         }}
       />
     );

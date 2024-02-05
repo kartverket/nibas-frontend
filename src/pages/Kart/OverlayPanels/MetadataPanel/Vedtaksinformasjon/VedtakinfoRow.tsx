@@ -3,7 +3,6 @@ import {
   Tooltip,
   Text,
   Icon,
-  FormLabel,
   AlertIcon,
   AlertDescription,
   Alert,

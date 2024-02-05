@@ -2,34 +2,14 @@ import { Button, Input } from "@kvib/react";
 import { VedtakinfoRow } from "./VedtakinfoRow";
 import {
   BorderTop,
-  InputCollectionName,
   InputName,
   Referanse,
   VedtakinfoForm,
 } from "./OversiktReferanser";
 import { styled } from "styled-components";
-import {
-  FieldError,
-  FieldErrors,
-  UseFormRegister,
-  UseFormSetValue,
-  UseFormWatch,
-} from "react-hook-form";
-import { useEffect } from "react";
-import { Dokref } from "types/api";
+import { FieldError, UseFormRegister } from "react-hook-form";
 
-export const ReferanseInput = ({
-  defaultValues,
-  registerName,
-  placeholder,
-  tooltipLabel,
-  title,
-  appendFn,
-  register,
-  pattern,
-  errors,
-}: {
-  defaultValues?: Referanse[];
+type ReferanseInputProps = {
   registerName: keyof InputName;
   placeholder: string;
   tooltipLabel: string;
@@ -38,7 +18,18 @@ export const ReferanseInput = ({
   register: UseFormRegister<VedtakinfoForm>;
   pattern?: RegExp;
   errors: FieldError | undefined;
-}) => {
+};
+
+export const ReferanseInput = ({
+  registerName,
+  placeholder,
+  tooltipLabel,
+  title,
+  appendFn,
+  register,
+  pattern,
+  errors,
+}: ReferanseInputProps) => {
   function clearInput(element: HTMLInputElement) {
     element.value = "";
   }
