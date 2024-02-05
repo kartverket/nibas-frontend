@@ -134,7 +134,6 @@ const addKretsChangeToOperations = (
 
 export const historyToUtkastOperations = (history: HistoryState, previousUtkast?: UtkastResponse) => {
   const historyToCurrentIndex = history.entries.slice(0, history.index);
-
   // hent endringer på enheter og gjør endringene om til utkastoperasjoner
   const utkastOperations = (
     historyToCurrentIndex.filter((entry) => entry.type === "stemmekrets" || entry.type === "grunnkrets") as (

@@ -9,6 +9,7 @@ import useNibasApi from "hooks/useNibasApi";
 import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
 import { TilhorighetField } from "./TilhorighetField";
 import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
+import { OversiktReferanser } from "./Vedtaksinformasjon/OversiktReferanser";
 
 export type Inputs = {
   uuid: string;
@@ -200,8 +201,21 @@ const MetadataGenerelt = ({ feature }: Props) => {
         renderItem={(register) => <Textarea placeholder="Fyll inn ekstra informasjon" {...register} />}
       />
       {tilhorighetToChange && <TilhorighetField feature={feature} tilhorighetToChange={tilhorighetToChange} />}
+      {/* <OversiktReferanser feature={feature} /> */}
     </Container>
   );
 };
 
+export const TextWithIcon = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+export const InfoIcon = styled.div`
+  margin-left: 8px;
+  display: flex;
+  align-items: center;
+  cursor: default;
+`;
 export default MetadataGenerelt;
