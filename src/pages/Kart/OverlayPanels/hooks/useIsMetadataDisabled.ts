@@ -2,7 +2,7 @@ import { useEditGrenser } from "contexts/EditGrenserContext";
 import { FeatureProperties } from "types/api";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { Feature } from "ol";
-import useFeature from "hooks/useFeatures";
+import useFeature from "hooks/useFeature";
 
 const useIsMetadataDisabled = (feature: Feature, properties: FeatureProperties) => {
   const { featureIsArchived } = useFeatureStyle();

@@ -8,7 +8,7 @@ import { useToast } from "@kvib/react";
 import { useEffect } from "react";
 import { usePrevious } from "hooks/usePrevious";
 import { useGetFeatures } from "./utils";
-import useFeature from "hooks/useFeatures";
+import useFeature from "hooks/useFeature";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];

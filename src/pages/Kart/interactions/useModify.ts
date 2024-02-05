@@ -14,7 +14,7 @@ import { useToast } from "@kvib/react";
 import { Style } from "ol/style";
 import { createGrenseHistoryChange, getInfoFromFeature } from "./historyUtil";
 import { useGetFeatures } from "./utils";
-import useFeature from "hooks/useFeatures";
+import useFeature from "hooks/useFeature";
 import { isAdministrativGrense } from "utils/grenser";
 
 const useModify = () => {

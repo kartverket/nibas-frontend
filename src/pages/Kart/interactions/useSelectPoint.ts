@@ -7,7 +7,7 @@ import { useEffect, useMemo } from "react";
 import { findNearbyVertexOnFeature } from "utils/map";
 import { useToast } from "@kvib/react";
 import { useGetFeatures } from "./utils";
-import useFeature from "hooks/useFeatures";
+import useFeature from "hooks/useFeature";
 
 const useSelectPoint = () => {
   const toast = useToast();
