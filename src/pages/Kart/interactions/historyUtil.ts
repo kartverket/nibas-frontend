@@ -5,8 +5,8 @@ import { LineString } from "ol/geom";
 import { previousCoordinateKey } from "./constants";
 import { GrenseType } from "hooks/layers/types";
 import { Metadata } from "types/api";
-import { getGrenseDiscriminatorFromType } from "utils/grenser";
 import { getDefaultFeatureMetadata } from "utils/features";
+import { getGrenseDiscriminatorFromType } from "utils/grenser";
 
 export const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
