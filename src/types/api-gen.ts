@@ -778,7 +778,6 @@ export interface components {
       navn: string;
       /** @description Typen endring utkastet representerer. */
       endringstype: string;
-      operasjoner: components["schemas"]["Operasjoner"];
     };
     /** @description Requestbody for publisering av utkast. */
     PubliserUtkastRequest: {
@@ -1114,6 +1113,12 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["UtkastResponse"];
+        };
+      };
+      /** Bad request. Check the request body and path */
+      400: {
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
         };
       };
       /** Not Found */
