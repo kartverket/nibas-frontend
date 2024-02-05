@@ -71,4 +71,4 @@ export const grenserLayers = {
   }),
 };
 
-export const editableBorderTypes = ["Delområdegrense", "Grunnkretsgrense", "Stemmekretsgrense"];
+export const editableBorderTypes = ["Delområdegrense", "Grunnkretsgrense", "Stemmekretsgrense", "Kommunegrense"];
