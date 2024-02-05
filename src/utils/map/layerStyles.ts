@@ -13,14 +13,22 @@ import Point from "ol/geom/Point";
 import { editSource, editableBorderTypes } from "hooks/layers/constants";
 import { GrenseId, GrenseType } from "hooks/layers/types";
 
-const getPointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
-  // hent punkter når zoomet langt nok inn
-  const zoom = map.getView().getZoom() ?? 0;
+const getNonEndpointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
+  const featureGeometry = feature.getGeometry();
+  if (!(featureGeometry instanceof LineString) || !featureGeometry) return;
 
-  if (zoom < 11) return;
+  const coordinates = featureGeometry.getCoordinates();
 
-  const coordinates = (feature as Feature<LineString>).getGeometry()?.getCoordinates();
-  return new MultiPoint(coordinates ?? []);
+  return new MultiPoint(coordinates.slice(1, -1));
+};
+
+const getEndPointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
+  const featureGeometry = feature.getGeometry();
+  if (!(featureGeometry instanceof LineString) || !featureGeometry) return;
+
+  const endCoordinates = [featureGeometry.getFirstCoordinate(), featureGeometry.getLastCoordinate()];
+
+  return new MultiPoint(endCoordinates);
 };
 
 const lineAndPointStyles = ({
@@ -46,7 +54,20 @@ const lineAndPointStyles = ({
         color,
       }),
     }),
-    geometry: getPointsOnFeature,
+    geometry: getNonEndpointsOnFeature,
+  }),
+  new Style({
+    image: new Circle({
+      radius: points ? 2.5 : 0,
+      fill: new Fill({
+        color: "#FFFFFF",
+      }),
+      stroke: new Stroke({
+        color: color,
+        width: 2,
+      }),
+    }),
+    geometry: getEndPointsOnFeature,
   }),
 ];
 

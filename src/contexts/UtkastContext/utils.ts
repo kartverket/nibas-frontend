@@ -15,6 +15,7 @@ import {
   KommuneRequest,
   KretsDelingEndringRequest,
   NasjonRequest,
+  OppdaterUtkastRequest,
   StemmekretsRef,
   StemmekretsRequest,
   StemmekretsSammenslaaingsendringRequest,
@@ -25,6 +26,7 @@ import {
 } from "types/api";
 import { featureToGeoJson } from "utils/map/geoJson";
 import { getIdFromEntity } from "utils/api";
+import { getTempFeatureId, isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 
 const getCombinedEntity = <T extends ResponseWithId>(
   entity: T,
@@ -42,7 +44,13 @@ const getCombinedFeatures = (
   featureCollection: GeoJSONFeatureCollection,
   featuresSlice: NonNullable<UtkastGrenseendringer["endredeFeatures"]>,
 ) => {
-  return featureCollection.features.map((feature: GeoJSONFeature) => featuresSlice[feature.id] ?? feature);
+  const updatedFeaturesFromCollection = featureCollection.features.map(
+    (feature: GeoJSONFeature) => featuresSlice.find((f) => f.id === feature.id) ?? feature,
+  );
+
+  const newFeatures = featuresSlice.filter((f) => isTempFeatureId(f.id as string));
+
+  return updatedFeaturesFromCollection.concat(newFeatures);
 };
 
 export const applyNonFeatureUtkast = <T extends NonNullable<UtkastEntity>>(
@@ -198,6 +206,34 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
   };
 
   return utkastOperations;
+};
+
+export const toCleanUtkast = (utkastToClean: OppdaterUtkastRequest): OppdaterUtkastRequest => {
+  const utkastCopy = structuredClone(utkastToClean);
+
+  // Fjerner ID fra alle nye grenser, da dette ikke er forventet fra backend
+  const endredeFeatures = utkastCopy.operasjoner.grenseendringer.endredeFeatures;
+
+  endredeFeatures.forEach((endretFeature) => {
+    if (endretFeature.id && isTempFeatureId(endretFeature.id)) endretFeature.id = undefined;
+  });
+
+  return utkastCopy;
+};
+
+export const addTempFeatureIdToNewFeaturesInUtkast = (utkast: UtkastResponse): UtkastResponse => {
+  const utkastCopy = structuredClone(utkast);
+
+  // Fjerner ID fra alle nye grenser, da dette ikke er forventet fra backend
+  const endredeFeatures = utkastCopy.operasjoner.grenseendringer.endredeFeatures;
+
+  endredeFeatures
+    .filter((feature) => feature.id == null)
+    .forEach((feature) => {
+      feature.id = getTempFeatureId();
+    });
+
+  return utkastCopy;
 };
 
 export const createUtkastOperations = ({
