@@ -1,13 +1,5 @@
 import { styled } from "styled-components";
-import {
-  Tooltip,
-  Text,
-  Icon,
-  AlertIcon,
-  AlertDescription,
-  Alert,
-} from "@kvib/react";
-import { InfoIcon, TextWithIcon } from "../MetadataGenerelt";
+import { Tooltip, Text, Icon, AlertIcon, AlertDescription, Alert } from "@kvib/react";
 import { useState } from "react";
 import { FieldError } from "react-hook-form";
 
@@ -18,30 +10,17 @@ type Props = {
   errors: FieldError | undefined;
 };
 
-export const VedtakinfoRow = ({
-  children,
-  tooltipLabel,
-  name,
-  errors,
-}: Props) => {
+export const VedtakinfoRow = ({ children, tooltipLabel, name, errors }: Props) => {
   const [iconHovered, setIconHovered] = useState(false);
 
   return (
     <Container>
       <Row>
         <Tooltip label={tooltipLabel} hasArrow placement="bottom">
-          <TextWithIcon
-            onMouseOver={() => setIconHovered(true)}
-            onMouseOut={() => setIconHovered(false)}
-          >
+          <TextWithIcon onMouseOver={() => setIconHovered(true)} onMouseOut={() => setIconHovered(false)}>
             <Text as="b">{name}</Text>
             <InfoIcon>
-              <Icon
-                size={24}
-                color="var(--kvib-colors-blue-500)"
-                isFilled={iconHovered}
-                icon={"info"}
-              ></Icon>
+              <Icon size={24} color="var(--kvib-colors-blue-500)" isFilled={iconHovered} icon={"info"}></Icon>
             </InfoIcon>
           </TextWithIcon>
         </Tooltip>
@@ -81,4 +60,17 @@ const Row = styled.div`
   flex-direction: row;
   justify-content: space-between;
   padding-bottom: 3px;
+`;
+
+const TextWithIcon = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const InfoIcon = styled.div`
+  margin-left: 8px;
+  display: flex;
+  align-items: center;
+  cursor: default;
 `;

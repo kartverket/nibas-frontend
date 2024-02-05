@@ -1,6 +1,5 @@
 import { Button, Icon, Text, Tooltip, useDisclosure } from "@kvib/react";
 import { styled } from "styled-components";
-import { InfoIcon } from "../MetadataGenerelt";
 import { Feature } from "ol";
 import { VedtaksinfoDetaljer } from "./VedtaksinfoDetaljer";
 import { Metadata } from "types/api";
@@ -36,15 +35,13 @@ type InputCollectionName = {
   internreferanserKartverket: string;
 };
 
-const OversiktReferanser = ({ feature }: { feature: Feature }) => {
+export const OversiktReferanser = ({ feature }: { feature: Feature }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [displayMode, setDisplayMode] = useState(false);
   const [iconHovered, setIconHovered] = useState(false);
   const metadata = feature.getProperties()?.metadata as Metadata;
   const vedtaksinfoCollection = metadata.dokumentasjonsreferanser;
-  const [selectedVedtaksinfoIndex, setSelectedVedtaksinfoIndex] = useState<
-    number | undefined
-  >(undefined);
+  const [selectedVedtaksinfoIndex, setSelectedVedtaksinfoIndex] = useState<number | undefined>(undefined);
 
   const closeModal = () => {
     setDisplayMode(false);
@@ -57,16 +54,8 @@ const OversiktReferanser = ({ feature }: { feature: Feature }) => {
       <Tooltip label={"tooltipLabel"} hasArrow placement="bottom">
         <OversiktHeader>
           <Text as="b">Dokumentreferanser</Text>
-          <InfoIcon
-            onMouseOver={() => setIconHovered(true)}
-            onMouseOut={() => setIconHovered(false)}
-          >
-            <Icon
-              size={24}
-              color="var(--kvib-colors-blue-500)"
-              isFilled={iconHovered}
-              icon={"info"}
-            ></Icon>
+          <InfoIcon onMouseOver={() => setIconHovered(true)} onMouseOut={() => setIconHovered(false)}>
+            <Icon size={24} color="var(--kvib-colors-blue-500)" isFilled={iconHovered} icon={"info"}></Icon>
           </InfoIcon>
           <EditButton
             colorScheme="gray"
@@ -105,27 +94,13 @@ const OversiktReferanser = ({ feature }: { feature: Feature }) => {
   );
 };
 
-const VedtaksinfoCard = ({
-  title,
-  onClick,
-  date,
-}: {
-  title: string;
-  date: string;
-  onClick: () => void;
-}) => {
+const VedtaksinfoCard = ({ title, onClick, date }: { title: string; date: string; onClick: () => void }) => {
   const formattedDate = new Date(date).toLocaleDateString("nb-NO");
   return (
     <VedtaksinfoContent>
       <Datofelt>{formattedDate}</Datofelt>
       <VedtaksinfoTitle>{title}</VedtaksinfoTitle>
-      <Button
-        onClick={onClick}
-        rightIcon="folder_open"
-        variant="secondary"
-        colorScheme="gray"
-        size="xs"
-      >
+      <Button onClick={onClick} rightIcon="folder_open" variant="secondary" colorScheme="gray" size="xs">
         Åpne
       </Button>
     </VedtaksinfoContent>
@@ -173,5 +148,11 @@ const OversiktHeader = styled.div`
   justify-content: space-between;
 `;
 
+const InfoIcon = styled.div`
+  margin-left: 8px;
+  display: flex;
+  align-items: center;
+  cursor: default;
+`;
+
 export type { VedtakinfoForm, Referanse, InputName, InputCollectionName };
-export { OversiktReferanser };

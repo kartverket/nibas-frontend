@@ -206,16 +206,4 @@ const MetadataGenerelt = ({ feature }: Props) => {
   );
 };
 
-export const TextWithIcon = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-`;
-
-export const InfoIcon = styled.div`
-  margin-left: 8px;
-  display: flex;
-  align-items: center;
-  cursor: default;
-`;
 export default MetadataGenerelt;
