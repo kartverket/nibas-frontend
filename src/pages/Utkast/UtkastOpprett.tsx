@@ -19,8 +19,6 @@ import {
 } from "@kvib/react";
 import { createUtkast } from "api/utkast";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
-import { useHistory } from "contexts/HistoryContext";
-import { historyToUtkastOperations } from "contexts/UtkastContext/utils";
 import { endringstyper } from "pages/Kart/constants";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -38,7 +36,6 @@ const UtkastOpprett = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
   const { tokenHolderFunc } = useAuthenticationFlow();
-  const { history } = useHistory();
   const toast = useToast();
   const navigate = useNavigate();
   const { setError } = useErrorHandling();
@@ -58,7 +55,6 @@ const UtkastOpprett = () => {
       {
         navn: getValues("navn"),
         endringstype: getValues("endringstype"),
-        operasjoner: historyToUtkastOperations(history),
       },
       tokenHolderFunc()?.token,
     );
@@ -94,8 +90,7 @@ const UtkastOpprett = () => {
               <Section>
                 <FormLabel>Navn på utkastet</FormLabel>
                 <FormHelperText>
-                  Velg et beskrivende navn som gjør at andre kan forstå hva
-                  utkastet inneholder.
+                  Velg et beskrivende navn som gjør at andre kan forstå hva utkastet inneholder.
                 </FormHelperText>
 
                 <Input
@@ -106,14 +101,8 @@ const UtkastOpprett = () => {
               </Section>
               <Section>
                 <FormLabel>Endringstype</FormLabel>
-                <FormHelperText>
-                  Typen påvirker hvilke verktøy som er tilgjengelig under
-                  redigeringen.
-                </FormHelperText>
-                <Select
-                  placeholder="Velg en endringstype fra listen"
-                  {...register("endringstype")}
-                >
+                <FormHelperText>Typen påvirker hvilke verktøy som er tilgjengelig under redigeringen.</FormHelperText>
+                <Select placeholder="Velg en endringstype fra listen" {...register("endringstype")}>
                   {endringstyper.map((type) => (
                     <option key={type} value={type}>
                       {type}

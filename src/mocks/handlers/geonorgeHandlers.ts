@@ -18,27 +18,23 @@ const getFailingRequests = () => {
     "https://wms.geonorge.no/skwms1/wms.historiskekart",
   ];
 
-  return requestUrls.map((url) =>
-    http.get(url, () => new HttpResponse(null, { status: 501 })),
-  );
+  return requestUrls.map((url) => http.get(url, () => new HttpResponse(null, { status: 501 })));
 };
 
 export const geonorgeHandlers: HttpHandler[] = [
   // vi mocker alle requests til WMS servere
   ...getFailingRequests(),
-  http.get(
-    "https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm33_wmts_v2",
-    ({ request }) => {
-      const url = new URL(request.url);
-      if (
-        url.searchParams.get("service")?.toLowerCase() !== "wmts" ||
-        url.searchParams.get("request")?.toLowerCase() !== "getcapabilities"
-      ) {
-        return new HttpResponse(null, { status: 501 });
-      }
+  http.get("https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm33_wmts_v2", ({ request }) => {
+    const url = new URL(request.url);
+    if (
+      url.searchParams.get("service")?.toLowerCase() !== "wmts" ||
+      url.searchParams.get("request")?.toLowerCase() !== "getcapabilities"
+    ) {
+      return new HttpResponse(null, { status: 501 });
+    }
 
-      return HttpResponse.xml(
-        `<?xml version="1.0" encoding="UTF-8"?>
+    return HttpResponse.xml(
+      `<?xml version="1.0" encoding="UTF-8"?>
       <Capabilities xmlns="http://www.opengis.net/wmts/1.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml" xsi:schemaLocation="http://www.opengis.net/wmts/1.0 http://schemas.opengis.net/wmts/1.0/wmtsGetCapabilities_response.xsd" version="1.0.0">
         <!-- Service Identification --> 
        <ows:ServiceIdentification>
@@ -285,10 +281,9 @@ export const geonorgeHandlers: HttpHandler[] = [
       <ServiceMetadataURL xlink:href="https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm33_wmts_v2?request=GetCapabilities&amp;service=WMTS" /> 
       </Capabilities>
       `,
-        { status: 200 },
-      );
-    },
-  ),
+      { status: 200 },
+    );
+  }),
   http.get("https://wms.geonorge.no/skwms1/wms.adm_enheter2", ({ request }) => {
     const url = new URL(request.url);
     if (

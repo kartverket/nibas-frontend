@@ -1,8 +1,5 @@
 import { useUtkastStemmekretsEndringer } from "./useUtkastStemmekretsEndringer";
-import {
-  Grunnkretsendringer,
-  Stemmekretsendringer,
-} from "./utkastEndringerTypes";
+import { Grunnkretsendringer, Stemmekretsendringer } from "./utkastEndringerTypes";
 import { useUtkastGrunnkretsEndringer } from "./useUtkastGrunnkretsEndringer";
 import { UtkastResponse } from "types/api";
 
@@ -13,9 +10,7 @@ type UseUtkastEndringerReturnType = {
   grunnkretsendringer: Grunnkretsendringer[] | null;
 };
 
-export const useUtkastEndringer = (
-  utkast: UtkastResponse,
-): UseUtkastEndringerReturnType => {
+export const useUtkastEndringer = (utkast: UtkastResponse): UseUtkastEndringerReturnType => {
   const {
     endringer: stemmekretsEndringer,
     harEndringer: harStemmekretsEndringer,

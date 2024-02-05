@@ -14,18 +14,12 @@ export type UtkastContextValue = {
   utkast: UtkastResponse | undefined;
   utkastHarEndringer: () => boolean;
   updateUtkastWithHistory: () => Promise<unknown>;
-  updateUtkast: (
-    id: string,
-    newUtkast: OppdaterUtkastRequest,
-  ) => Promise<unknown>;
+  updateUtkast: (id: string, newUtkast: OppdaterUtkastRequest) => Promise<unknown>;
   getUpdateUtkastRequestFromHistory: () => OppdaterUtkastRequest | null;
   closeUtkast: () => void;
   isValidating: boolean;
 };
 
-export type UtkastRequestWithoutOperations = Omit<
-  OppdaterUtkastRequest,
-  "operasjoner"
->;
+export type UtkastRequestWithoutOperations = Omit<OppdaterUtkastRequest, "operasjoner">;
 
 export type UtkastEntity = ResponseWithId | ResponseWithId[] | undefined;

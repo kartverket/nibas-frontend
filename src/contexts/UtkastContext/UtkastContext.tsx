@@ -1,34 +1,20 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { useMatch } from "react-router-dom";
 import { useSWRConfig } from "swr";
+import { EntityUtkastType, UtkastContextValue, UtkastEntity, UtkastRequestWithoutOperations } from "./types";
 import {
-  EntityUtkastType,
-  UtkastContextValue,
-  UtkastEntity,
-  UtkastRequestWithoutOperations,
-} from "./types";
-import {
+  addTempFeatureIdToNewFeaturesInUtkast,
   applyFeatureUtkast,
   applyNonFeatureUtkast,
   historyToUtkastOperations,
+  toCleanUtkast,
 } from "./utils";
 import { updateUtkastApi } from "api/utkast";
 import { HistoryChange, useHistory } from "contexts/HistoryContext";
 import useNibasApi from "hooks/useNibasApi";
-import {
-  ApiErrorResponse,
-  OppdaterUtkastRequest,
-  UtkastResponse,
-} from "types/api";
+import { ApiErrorResponse, OppdaterUtkastRequest, UtkastOperasjoner, UtkastResponse } from "types/api";
 import { resetMapView } from "utils/map";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
@@ -46,9 +32,7 @@ import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 /**
  * Bruk heller UtkastProvider i koden
  */
-export const UtkastContext = createContext<UtkastContextValue | undefined>(
-  undefined,
-);
+export const UtkastContext = createContext<UtkastContextValue | undefined>(undefined);
 
 export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const [utkast, setUtkast] = useState<UtkastResponse>();
@@ -116,7 +100,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (fetchedUtkast && !utkast) {
-      setUtkast(fetchedUtkast);
+      setUtkast(addTempFeatureIdToNewFeaturesInUtkast(fetchedUtkast));
     }
 
     // fjern utkast hvis utkastid ikke er i url
@@ -127,47 +111,61 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [fetchedUtkast, utkastId, mutate, utkast, closeUtkast]);
 
-  const getUpdateUtkastRequestFromHistory =
-    (): OppdaterUtkastRequest | null => {
-      if (!utkast) return null;
+  const operasjonerIsValid = (operasjoner: UtkastOperasjoner): boolean => {
+    const endredeFeatures = operasjoner.grenseendringer.endredeFeatures;
 
-      const operasjoner = historyToUtkastOperations(history, utkast);
-
-      const updatedUtkast: OppdaterUtkastRequest = {
-        endringstype: utkast.endringstype,
-        navn: utkast.navn,
-        gyldigFra: utkast.gyldigFra,
-        operasjoner,
-        version: utkast.version,
-      };
-      const utkastEntry = history.entries
-        .slice(0, history.index)
-        .reverse() // siste entry inneholder alle endringene på utkastet
-        .find((entry) =>
-          entry.changes.some((change) => change.id === utkast.id),
-        );
-
-      if (utkastEntry) {
-        const change = (
-          utkastEntry.changes as HistoryChange<UtkastRequestWithoutOperations>[]
-        ).find((c) => c.id === utkast.id);
-
-        if (change?.to) {
-          updatedUtkast.endringstype = change.to.endringstype;
-          updatedUtkast.navn = change.to.navn;
-          updatedUtkast.gyldigFra = change.to.gyldigFra;
-        }
+    for (const feature of endredeFeatures) {
+      const featureProperties = feature.properties;
+      if (!featureProperties.kontekstEgenskaper || feature.properties.kontekstEgenskaper.length < 2) {
+        toast({
+          status: "error",
+          title: "Grense mangler tilhørighet",
+          description: `Grense med ID ${feature.id} mangler obligatorisk grenseinformasjon. Husk at nye grenser må få satt tilhørighet før lagring,`,
+        });
+        return false;
       }
+    }
 
-      return updatedUtkast;
+    return true;
+  };
+
+  const getUpdateUtkastRequestFromHistory = (): OppdaterUtkastRequest | null => {
+    if (!utkast) return null;
+
+    const operasjoner = historyToUtkastOperations(history, utkast);
+
+    if (!operasjonerIsValid(operasjoner)) return null;
+
+    const updatedUtkast: OppdaterUtkastRequest = {
+      endringstype: utkast.endringstype,
+      navn: utkast.navn,
+      gyldigFra: utkast.gyldigFra,
+      operasjoner,
+      version: utkast.version,
     };
 
+    const utkastEntry = history.entries
+      .slice(0, history.index)
+      .reverse() // siste entry inneholder alle endringene på utkastet
+      .find((entry) => entry.changes.some((change) => change.id === utkast.id));
+
+    if (utkastEntry) {
+      const change = (utkastEntry.changes as HistoryChange<UtkastRequestWithoutOperations>[]).find(
+        (c) => c.id === utkast.id,
+      );
+
+      if (change?.to) {
+        updatedUtkast.endringstype = change.to.endringstype;
+        updatedUtkast.navn = change.to.navn;
+        updatedUtkast.gyldigFra = change.to.gyldigFra;
+      }
+    }
+
+    return updatedUtkast;
+  };
+
   const updateUtkast = async (id: string, newUtkast: OppdaterUtkastRequest) => {
-    const response = await updateUtkastApi(
-      id,
-      newUtkast,
-      tokenHolderFunc()?.token,
-    );
+    const response = await updateUtkastApi(id, newUtkast, tokenHolderFunc()?.token);
 
     if (statusCode.isSuccessful(response.status)) {
       const updatedUtkast = (await response.json()) as UtkastResponse;
@@ -177,6 +175,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
       setUtkast(updatedUtkast);
     } else if (statusCode.isError(response.status)) {
       const wrapper = (await response.json()) as ApiErrorResponse;
+
       setError({
         title: "Oppdatering av utkast feilet",
         description: wrapper.errorDescription.description,
@@ -190,7 +189,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (!updatedUtkast || !utkast) return;
 
-    await updateUtkast(utkast.id, updatedUtkast);
+    await updateUtkast(utkast.id, toCleanUtkast(updatedUtkast));
     toast({ status: "success", title: "Utkastet er lagret" });
   };
 
@@ -204,9 +203,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     if (Object.keys(endredeFeatures).length > 0) return true;
 
     // Går gjennom metadataendringsobjektene og sjekker om de er tomme
-    for (const endringstype of Object.values(
-      utkast.operasjoner.metadataendringer,
-    )) {
+    for (const endringstype of Object.values(utkast.operasjoner.metadataendringer)) {
       if (Object.keys(endringstype).length > 0) {
         return true;
       }
@@ -225,9 +222,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     isValidating,
   };
 
-  return (
-    <UtkastContext.Provider value={value}>{children}</UtkastContext.Provider>
-  );
+  return <UtkastContext.Provider value={value}>{children}</UtkastContext.Provider>;
 };
 
 export const useUtkast = () => {
@@ -240,10 +235,7 @@ export const useUtkast = () => {
   return context;
 };
 
-export const useUtkastEntity = <T extends UtkastEntity>(
-  entity: T,
-  type: EntityUtkastType,
-) => {
+export const useUtkastEntity = <T extends UtkastEntity>(entity: T, type: EntityUtkastType) => {
   const { utkast } = useUtkast();
 
   return useMemo(() => {
@@ -261,9 +253,7 @@ export const useUtkastFeature = (
     if (!featureCollection || !utkast) return featureCollection;
 
     if (Array.isArray(featureCollection)) {
-      return featureCollection.map((collection) =>
-        applyFeatureUtkast(collection, utkast),
-      );
+      return featureCollection.map((collection) => applyFeatureUtkast(collection, utkast));
     }
 
     return applyFeatureUtkast(featureCollection, utkast);

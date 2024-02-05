@@ -13,11 +13,7 @@ const InputCell = forwardRef<HTMLInputElement, Props>(function InputCell(
   { data, isEditing, ...inputProps }: Props,
   ref,
 ) {
-  return (
-    <Cell $isEditing={isEditing}>
-      {isEditing ? <InlineInput {...inputProps} ref={ref} /> : data}
-    </Cell>
-  );
+  return <Cell $isEditing={isEditing}>{isEditing ? <InlineInput {...inputProps} ref={ref} /> : data}</Cell>;
 });
 
 const Cell = styled.td<{ $isEditing: boolean }>`

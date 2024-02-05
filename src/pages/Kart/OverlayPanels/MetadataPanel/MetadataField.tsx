@@ -31,14 +31,11 @@ export const MetadataField = ({
 }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
   const metadata = properties.metadata as Metadata;
-  const {
-    register,
-    isDirty,
-    updateDraftFromFeature,
-    reset,
-    getValues,
-    getFieldFromMetadata,
-  } = useMetadataField(fieldKey, metadata, feature);
+  const { register, isDirty, updateDraftFromFeature, reset, getValues, getFieldFromMetadata } = useMetadataField(
+    fieldKey,
+    metadata,
+    feature,
+  );
 
   // Still tilbake til default-verdi dersom man bytter valgt feature
   useEffect(() => {
@@ -55,15 +52,9 @@ export const MetadataField = ({
       feature={feature}
       name={fieldLabel}
       tooltipLabel={tooltipLabel}
-      valueLabel={
-        valueLabelFormatter
-          ? valueLabelFormatter(getValues().metadata) ?? "Ukjent"
-          : getValues().metadata
-      }
+      valueLabel={valueLabelFormatter ? valueLabelFormatter(getValues().metadata) ?? "Ukjent" : getValues().metadata}
       onMetadataSubmit={onSubmit}
-      isDisabled={
-        metadataIsDisabled || isDisabled || metadata.common?.gyldigTil != null
-      }
+      isDisabled={metadataIsDisabled || isDisabled || metadata?.common?.gyldigTil != null}
       isDirty={isDirty}
       reset={reset}
       isUneditable={isUneditable}

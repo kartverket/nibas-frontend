@@ -24,11 +24,7 @@ const useHistoryState = ({ onUndo, onRedo }: Options) => {
     [setHistory],
   );
 
-  const clearHistory = ({
-    hasPreviouslySavedHistory,
-  }: {
-    hasPreviouslySavedHistory: boolean;
-  }) => {
+  const clearHistory = ({ hasPreviouslySavedHistory }: { hasPreviouslySavedHistory: boolean }) => {
     setHistory({
       entries: [],
       index: 0,
@@ -61,8 +57,7 @@ const useHistoryState = ({ onUndo, onRedo }: Options) => {
 
     if (index >= entries.length) return;
 
-    const newIndex =
-      index + amount > entries.length ? entries.length : index + amount;
+    const newIndex = index + amount > entries.length ? entries.length : index + amount;
 
     for (let i = index; i < newIndex; i++) {
       onRedo(history.entries[i]);

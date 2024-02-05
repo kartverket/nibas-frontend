@@ -39,11 +39,9 @@ const UtkastEndringslogg = ({ utkast }: Props) => {
 };
 
 export const EndringsloggAccordion = ({ utkast }: Props) => {
-  const { harEndringer, laster, stemmekretsendringer, grunnkretsendringer } =
-    useUtkastEndringer(utkast);
+  const { harEndringer, laster, stemmekretsendringer, grunnkretsendringer } = useUtkastEndringer(utkast);
 
-  const harLastetData =
-    !laster || !!stemmekretsendringer || !!grunnkretsendringer;
+  const harLastetData = !laster || !!stemmekretsendringer || !!grunnkretsendringer;
 
   return (
     <Accordion allowToggle defaultIndex={[0]}>

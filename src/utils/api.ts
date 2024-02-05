@@ -14,9 +14,7 @@ type ApiEntityWithIdentifikasjon = {
   };
 };
 
-export const getIdFromEntity = (
-  entity: ApiEntity | ApiEntityWithIdentifikasjon,
-) => {
+export const getIdFromEntity = (entity: ApiEntity | ApiEntityWithIdentifikasjon) => {
   if ((entity as ApiEntityWithIdentifikasjon).identifikasjon) {
     return (entity as ApiEntityWithIdentifikasjon).identifikasjon.lokalid;
   } else if ((entity as ApiEntity).id) {
@@ -56,10 +54,7 @@ export const getUrlForPath = (path: string): string => {
   return `${baseUrl}/${path}`;
 };
 
-export const fetcherWithToken = async ([url, token]: [
-  string | null,
-  string | undefined,
-]) => {
+export const fetcherWithToken = async ([url, token]: [string | null, string | undefined]) => {
   if (!url) return;
 
   const res = await fetch(getUrlForPath(url), {

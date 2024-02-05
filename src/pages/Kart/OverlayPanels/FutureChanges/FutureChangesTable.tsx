@@ -17,9 +17,7 @@ type Props<T extends GrunnkretsResponse | StemmekretsResponse> = {
   getRows: (futureChanges: T[]) => TableRow[];
 };
 
-const FutureChangesTable = <
-  T extends GrunnkretsResponse | StemmekretsResponse,
->({
+const FutureChangesTable = <T extends GrunnkretsResponse | StemmekretsResponse>({
   id,
   futureChangesUrl,
   headers,
@@ -29,10 +27,7 @@ const FutureChangesTable = <
     lokalid: id,
   });
 
-  const rows = useMemo(
-    () => (futureChanges ? getRows(futureChanges as T[]) : null),
-    [futureChanges, getRows],
-  );
+  const rows = useMemo(() => (futureChanges ? getRows(futureChanges as T[]) : null), [futureChanges, getRows]);
 
   if (!rows) return null;
 

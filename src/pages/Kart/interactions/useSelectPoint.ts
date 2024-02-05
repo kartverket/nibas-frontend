@@ -11,14 +11,8 @@ import { useGetFeatures } from "./utils";
 const useSelectPoint = () => {
   const toast = useToast();
   const { activeTool } = useToolbar();
-  const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } =
-    useOverlayPanel();
-  const {
-    selectPointOnFeature,
-    selectedPoint,
-    clearSelection,
-    featureIsEditable,
-  } = useFeatureStyle();
+  const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } = useOverlayPanel();
+  const { selectPointOnFeature, selectedPoint, clearSelection, featureIsEditable } = useFeatureStyle();
   const { getFeaturesAtPixel } = useGetFeatures();
 
   const allowedPointModes: Tool[] = useMemo(() => ["koordinater", "split"], []);
@@ -32,14 +26,7 @@ const useSelectPoint = () => {
         closeOverlayPanel();
       }
     }
-  }, [
-    activeOverlayPanel,
-    activeTool,
-    allowedPointModes,
-    clearSelection,
-    closeOverlayPanel,
-    selectedPoint,
-  ]);
+  }, [activeOverlayPanel, activeTool, allowedPointModes, clearSelection, closeOverlayPanel, selectedPoint]);
 
   const selectPoint = (event: MapBrowserEvent<MouseEvent>) => {
     if (allowedPointModes.includes(activeTool) && !event.dragging) {
@@ -56,10 +43,7 @@ const useSelectPoint = () => {
       // Valgt punkt kan ikke være en del av en ikke-redigerbar grense
       if (features.every(featureIsEditable)) {
         // Må estimere hvilket punkt på linjen man prøvde å trykke på
-        const nearbyVertexCoordinate = findNearbyVertexOnFeature(
-          features[0] as Feature<LineString>,
-          event.coordinate,
-        );
+        const nearbyVertexCoordinate = findNearbyVertexOnFeature(features[0] as Feature<LineString>, event.coordinate);
 
         if (nearbyVertexCoordinate) {
           if (activeTool === "split" && features.length > 1) {
@@ -70,10 +54,7 @@ const useSelectPoint = () => {
             return;
           }
 
-          selectPointOnFeature(
-            nearbyVertexCoordinate,
-            features as Feature<LineString>[],
-          );
+          selectPointOnFeature(nearbyVertexCoordinate, features as Feature<LineString>[]);
 
           if (activeTool === "koordinater") {
             openOverlayPanel("koordinater");

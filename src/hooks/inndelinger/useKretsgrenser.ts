@@ -4,22 +4,14 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import useSWR from "swr";
 import useNibasApi from "../useNibasApi";
-import {
-  EditGrenserContext,
-  useEditGrenseValue,
-} from "contexts/EditGrenserContext";
+import { EditGrenserContext, useEditGrenseValue } from "contexts/EditGrenserContext";
 import { Kretstype } from "contexts/InndelingerKretsContext";
 import { useUtkast, useUtkastFeature } from "contexts/UtkastContext";
 import { LayerId } from "hooks/layers/types";
 import useAsyncFeatures from "hooks/useAsyncFeatures";
 import { GrunnkretsResponse, KretsRef, StemmekretsResponse } from "types/api";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
-import {
-  removeFeaturesFromSourceByIds,
-  getFeatureId,
-  getRepresentasjonspunktId,
-  getFlateId,
-} from "utils/map/source";
+import { removeFeaturesFromSourceByIds, getFeatureId, getRepresentasjonspunktId, getFlateId } from "utils/map/source";
 import { fetcherWithToken, getIdFromEntity } from "utils/api";
 import { isNotNullOrUndefined } from "types/common";
 import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
@@ -33,11 +25,11 @@ const endpointByKretstype = {
   stemmekrets: "stemmekretser",
 } as const;
 
-type KretsResponse<T extends (typeof endpointByKretstype)[Kretstype]> =
-  T extends "grunnkretser" ? GrunnkretsResponse : StemmekretsResponse;
+type KretsResponse<T extends (typeof endpointByKretstype)[Kretstype]> = T extends "grunnkretser"
+  ? GrunnkretsResponse
+  : StemmekretsResponse;
 
-const mapKretserToIds = (kretser?: KretsRef[]) =>
-  kretser?.map((krets) => getIdFromEntity(krets));
+const mapKretserToIds = (kretser?: KretsRef[]) => kretser?.map((krets) => getIdFromEntity(krets));
 
 // fetch alle kretsgrenser i en kommune
 const kretserByKommuneFetcher = async ([kretsIds, token, type, endpoint]: [
@@ -48,31 +40,22 @@ const kretserByKommuneFetcher = async ([kretsIds, token, type, endpoint]: [
 ]) => {
   const typeUrl = endpointByKretstype[type];
 
-  const kretsFeaturesPromises: Promise<string>[] = kretsIds.map(
-    async (kretsId) =>
-      fetcherWithToken([`/v1/${typeUrl}/${kretsId}/${endpoint}`, token]),
+  const kretsFeaturesPromises: Promise<string>[] = kretsIds.map(async (kretsId) =>
+    fetcherWithToken([`/v1/${typeUrl}/${kretsId}/${endpoint}`, token]),
   );
 
   return Promise.all(kretsFeaturesPromises);
 };
 
 // Henter tilleggsgeometri som representasjonspunkter og flater
-const kretsGeometryFetcher = async ([kretsIds, token, type]: [
-  string[],
-  string | undefined,
-  Kretstype,
-]) => {
+const kretsGeometryFetcher = async ([kretsIds, token, type]: [string[], string | undefined, Kretstype]) => {
   const typeUrl = endpointByKretstype[type];
 
   const kretsGeometryPromises = kretsIds.map(async (kretsId) => {
-    const krets = (await fetcherWithToken([
-      `v1/${typeUrl}/${kretsId}`,
-      token,
-    ])) as KretsResponse<typeof typeUrl>;
+    const krets = (await fetcherWithToken([`v1/${typeUrl}/${kretsId}`, token])) as KretsResponse<typeof typeUrl>;
 
     if (krets && krets.features.features.length > 0) {
-      const [representasjonspunktFeature, flateFeature] =
-        krets.features.features;
+      const [representasjonspunktFeature, flateFeature] = krets.features.features;
 
       const shouldRenderFlater = false;
       const featuresWithId = [
@@ -81,12 +64,8 @@ const kretsGeometryFetcher = async ([kretsIds, token, type]: [
           id: getRepresentasjonspunktId(kretsId),
           properties: {
             ...representasjonspunktFeature.properties,
-            name:
-              (krets as StemmekretsResponse).stemmekretsnavn ||
-              (krets as GrunnkretsResponse).navn,
-            number:
-              (krets as StemmekretsResponse).stemmekretsnummer ||
-              (krets as GrunnkretsResponse).grunnkretsnummer,
+            name: (krets as StemmekretsResponse).stemmekretsnavn || (krets as GrunnkretsResponse).navn,
+            number: (krets as StemmekretsResponse).stemmekretsnummer || (krets as GrunnkretsResponse).grunnkretsnummer,
           },
         },
         shouldRenderFlater && {
@@ -94,12 +73,8 @@ const kretsGeometryFetcher = async ([kretsIds, token, type]: [
           id: getFlateId(kretsId),
           properties: {
             ...flateFeature.properties,
-            name:
-              (krets as StemmekretsResponse).stemmekretsnavn ||
-              (krets as GrunnkretsResponse).navn,
-            number:
-              (krets as StemmekretsResponse).stemmekretsnummer ||
-              (krets as GrunnkretsResponse).grunnkretsnummer,
+            name: (krets as StemmekretsResponse).stemmekretsnavn || (krets as GrunnkretsResponse).navn,
+            number: (krets as StemmekretsResponse).stemmekretsnummer || (krets as GrunnkretsResponse).grunnkretsnummer,
           },
         },
       ];
@@ -126,20 +101,14 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   const { visible } = grenseValue;
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { utkast } = useUtkast();
-  const {
-    setAndSaveUtkastFeatures,
-    setAndSaveSammenslaaingsFeatures,
-    setAndSaveUtkastArchivedFeatures,
-  } = useFeatureStyle();
+  const { setAndSaveUtkastFeatures, setAndSaveSammenslaaingsFeatures, setAndSaveUtkastArchivedFeatures } =
+    useFeatureStyle();
 
   const context = useContext(EditGrenserContext);
 
-  const { data: kretserByKommune } = useNibasApi(
-    visible ? getKretserByKommuneUrl(type) : null,
-    {
-      id: kommuneId,
-    },
-  );
+  const { data: kretserByKommune } = useNibasApi(visible ? getKretserByKommuneUrl(type) : null, {
+    id: kommuneId,
+  });
 
   const kretsIds = mapKretserToIds(kretserByKommune);
   const { data: grenserGeoJsons } = useSWR(
@@ -168,24 +137,21 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   }, [kretsGeometries, utkastGeoJsons]);
 
   const getOverlappingStemmekretsFeatureIds = (featureIds: string[]) => {
-    return featureIds.filter(
-      (featureId, index) => featureIds.indexOf(featureId) !== index,
-    );
+    return featureIds.filter((featureId, index) => featureIds.indexOf(featureId) !== index);
   };
 
   // Endrede features skal markeres med riktig stil når man åpner utkastet
   const applyDirtyStylesToUtkastFeatures = (features: Feature<Geometry>[]) => {
-    const endredeFeatures =
-      utkast?.operasjoner.grenseendringer?.endredeFeatures;
+    const endredeFeatures = utkast?.operasjoner.grenseendringer?.endredeFeatures;
     const dirtyFeatureIds: string[] = [];
     const archivedFeatureIds: string[] = [];
+
     if (features && endredeFeatures) {
-      for (const feature of features) {
-        const id = feature.getId();
-        const endretFeature = endredeFeatures.find((feat) => feat.id === id);
-        if (id && endretFeature) {
+      for (const feature of endredeFeatures) {
+        const id = feature.id;
+        if (id) {
           // Avgjør hvilken type endringsfarge featuren skal ha
-          if (endretFeature.properties.shouldArchive) {
+          if (feature.properties.shouldArchive) {
             archivedFeatureIds.push(id.toString());
           } else {
             dirtyFeatureIds.push(id.toString());
@@ -193,37 +159,26 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
         }
       }
     }
+
     const sammenslaaing = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
-    const innlemmedeStemmekretsIder =
-      sammenslaaing?.stemmekretserTilSammenslaaing.map(
-        (stemmekrets) => stemmekrets.lokalId,
-      );
+    const innlemmedeStemmekretsIder = sammenslaaing?.stemmekretserTilSammenslaaing.map(
+      (stemmekrets) => stemmekrets.lokalId,
+    );
 
     let sammenslaaingsIder: string[] = [];
     if (innlemmedeStemmekretsIder && sammenslaaing) {
-      sammenslaaingsIder = [
-        sammenslaaing.viderefoertStemmekrets.lokalId,
-        ...innlemmedeStemmekretsIder,
-      ];
+      sammenslaaingsIder = [sammenslaaing.viderefoertStemmekrets.lokalId, ...innlemmedeStemmekretsIder];
     }
 
-    const promiseStemmemkretsFeatureIds = stemmekretsgrenserFetcher(
-      sammenslaaingsIder,
-      tokenHolderFunc()?.token,
-    );
+    const promiseStemmemkretsFeatureIds = stemmekretsgrenserFetcher(sammenslaaingsIder, tokenHolderFunc()?.token);
 
     promiseStemmemkretsFeatureIds.then((resolvedValue) => {
       const stemmekretsFeatureIds: string[] = resolvedValue
         ? resolvedValue.filter((x) => x !== undefined).map((x) => String(x))
         : [];
-      const overlappingFeatureIds = getOverlappingStemmekretsFeatureIds(
-        stemmekretsFeatureIds,
-      );
+      const overlappingFeatureIds = getOverlappingStemmekretsFeatureIds(stemmekretsFeatureIds);
 
-      setAndSaveSammenslaaingsFeatures(
-        stemmekretsFeatureIds,
-        overlappingFeatureIds,
-      );
+      setAndSaveSammenslaaingsFeatures(stemmekretsFeatureIds, overlappingFeatureIds);
     });
 
     setAndSaveUtkastFeatures(dirtyFeatureIds);
@@ -234,10 +189,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
 
   const { addFeaturesToLayer } = useAsyncFeatures(
     allFeatures,
-    getZoomMode(
-      !!grenseValue.editing,
-      context?.getCurrentlyEditingType() != null,
-    ),
+    getZoomMode(!!grenseValue.editing, context?.getCurrentlyEditingType() != null),
     () => applyDirtyStylesToUtkastFeatures(allFeatures ?? []),
   );
 

@@ -16,14 +16,7 @@ export type KartlagId =
   | "norgesMaritimeGrenser"
   | "sjokartElektroniske";
 
-export type GrenseId =
-  | "matrikkel"
-  | "fylke"
-  | "kommune"
-  | "nasjon"
-  | "grunnkrets"
-  | "stemmekrets"
-  | "edit";
+export type GrenseId = "matrikkel" | "fylke" | "kommune" | "nasjon" | "grunnkrets" | "stemmekrets" | "edit";
 
 export type GrenseType =
   | "Kommunegrense"
@@ -38,7 +31,7 @@ export type GrenseType =
   | "GRUNNKRETS"
   | "STEMMEKRETS";
 
-export const getGrenseTypeFromEditingType = (editingType: EditingType) => {
+export const getGrenseTypeFromEditingType = (editingType: EditingType): GrenseType | undefined => {
   switch (editingType) {
     case "nasjon":
       return "Riksgrense";
@@ -54,6 +47,28 @@ export const getGrenseTypeFromEditingType = (editingType: EditingType) => {
 
     case "grunnkrets":
       return "Grunnkretsgrense";
+
+    default:
+      break;
+  }
+};
+
+export const getEditingTypeFromGrenseType = (grenseType: GrenseType): EditingType | undefined => {
+  switch (grenseType) {
+    case "Riksgrense":
+      return "nasjon";
+
+    case "Fylkesgrense":
+      return "fylke";
+
+    case "Kommunegrense":
+      return "kommune";
+
+    case "Stemmekretsgrense":
+      return "stemmekrets";
+
+    case "Grunnkretsgrense":
+      return "grunnkrets";
 
     default:
       break;

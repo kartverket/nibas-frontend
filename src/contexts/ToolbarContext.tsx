@@ -1,25 +1,8 @@
 import React, { createContext, useContext, useState } from "react";
 
-export type Tool =
-  | null
-  | "add"
-  | "remove"
-  | "draw"
-  | "split"
-  | "detach"
-  | "metadata"
-  | "koordinater"
-  | "archive";
+export type Tool = null | "add" | "remove" | "draw" | "split" | "detach" | "metadata" | "koordinater" | "archive";
 
-const editTools: Tool[] = [
-  "add",
-  "remove",
-  "draw",
-  "split",
-  "detach",
-  "koordinater",
-  "archive",
-];
+const editTools: Tool[] = ["add", "remove", "draw", "split", "detach", "koordinater", "archive"];
 
 type ModeTool = "move" | "snap" | "matrikkel";
 
@@ -35,21 +18,14 @@ export type ToolbarContextValue = {
   resetModeTools: () => void;
 };
 
-export const ToolbarContext = createContext<ToolbarContextValue | undefined>(
-  undefined,
-);
+export const ToolbarContext = createContext<ToolbarContextValue | undefined>(undefined);
 
-export const ToolbarProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+export const ToolbarProvider = ({ children }: { children: React.ReactNode }) => {
   const defaultTool = null;
   const [activeTool, setActiveTool] = useState<Tool>(defaultTool);
 
   const defaultModeTools: ModeTool[] = ["move", "snap"];
-  const [activeModeTools, setActiveModeTools] =
-    useState<ModeTool[]>(defaultModeTools);
+  const [activeModeTools, setActiveModeTools] = useState<ModeTool[]>(defaultModeTools);
 
   const toggleTool = (tool: Tool) => {
     if (tool === activeTool) {
@@ -102,9 +78,7 @@ export const ToolbarProvider = ({
     resetModeTools,
   };
 
-  return (
-    <ToolbarContext.Provider value={value}>{children}</ToolbarContext.Provider>
-  );
+  return <ToolbarContext.Provider value={value}>{children}</ToolbarContext.Provider>;
 };
 
 export const useToolbar = () => {

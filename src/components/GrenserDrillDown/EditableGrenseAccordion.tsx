@@ -16,20 +16,9 @@ type Props = {
   children?: React.ReactNode;
 };
 
-const EditableGrenseAccordion = ({
-  grenseId,
-  grenseType,
-  children,
-  features,
-  isFetching,
-  title,
-}: Props) => {
+const EditableGrenseAccordion = ({ grenseId, grenseType, children, features, isFetching, title }: Props) => {
   const accordion = useVisibility();
-  const { kretsStatus, toggleVisible } = useEditGrense(
-    grenseType,
-    grenseId,
-    features,
-  );
+  const { kretsStatus, toggleVisible } = useEditGrense(grenseType, grenseId, features);
 
   return (
     <ListItem>
@@ -43,13 +32,7 @@ const EditableGrenseAccordion = ({
         <TextContent>
           <span>{title}</span>
         </TextContent>
-        {isFetching && (
-          <Spinner
-            size="lg"
-            color="var(--kvib-colors-blue-500)"
-            aria-label={`Henter ${title}`}
-          />
-        )}
+        {isFetching && <Spinner size="lg" color="var(--kvib-colors-blue-500)" aria-label={`Henter ${title}`} />}
         <Caret
           $isVisible={accordion.isVisible}
           variant="ghost"
@@ -86,12 +69,8 @@ const VisibilityButton = styled(IconButton)<{ $isVisible: boolean }>`
   width: fit-content;
   height: 100%;
   margin-right: 16px;
-  color: ${({ $isVisible }) =>
-    $isVisible
-      ? "var(--kvib-colors-chakra-inverse-text)"
-      : "var(--kvib-colors-blue-500)"};
-  background: ${({ $isVisible }) =>
-    $isVisible ? "var(--kvib-colors-blue-500)" : "transparent"};
+  color: ${({ $isVisible }) => ($isVisible ? "var(--kvib-colors-chakra-inverse-text)" : "var(--kvib-colors-blue-500)")};
+  background: ${({ $isVisible }) => ($isVisible ? "var(--kvib-colors-blue-500)" : "transparent")};
   padding: 8px;
   border-radius: 50%;
 
@@ -107,12 +86,8 @@ const VisibilityButton = styled(IconButton)<{ $isVisible: boolean }>`
 const Caret = styled(IconButton)<{ $isVisible: boolean }>`
   width: fit-content;
   height: 100%;
-  color: ${({ $isVisible }) =>
-    $isVisible
-      ? "var(--kvib-colors-chakra-inverse-text)"
-      : "var(--kvib-colors-blue-500)"};
-  background: ${({ $isVisible }) =>
-    $isVisible ? "var(--kvib-colors-blue-500)" : "transparent"};
+  color: ${({ $isVisible }) => ($isVisible ? "var(--kvib-colors-chakra-inverse-text)" : "var(--kvib-colors-blue-500)")};
+  background: ${({ $isVisible }) => ($isVisible ? "var(--kvib-colors-blue-500)" : "transparent")};
   padding: 16px 12px;
   border-radius: 0;
 

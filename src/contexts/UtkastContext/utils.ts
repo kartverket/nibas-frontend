@@ -15,6 +15,7 @@ import {
   KommuneRequest,
   KretsDelingEndringRequest,
   NasjonRequest,
+  OppdaterUtkastRequest,
   StemmekretsRef,
   StemmekretsRequest,
   StemmekretsSammenslaaingsendringRequest,
@@ -25,12 +26,11 @@ import {
 } from "types/api";
 import { featureToGeoJson } from "utils/map/geoJson";
 import { getIdFromEntity } from "utils/api";
+import { getTempFeatureId, isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 
 const getCombinedEntity = <T extends ResponseWithId>(
   entity: T,
-  utkastSlice: NonNullable<
-    NonNullable<UtkastMetadataendringer>[EntityUtkastType]
-  >,
+  utkastSlice: NonNullable<NonNullable<UtkastMetadataendringer>[EntityUtkastType]>,
 ) => {
   const utkastForEntity = utkastSlice[getIdFromEntity(entity)];
 
@@ -44,9 +44,13 @@ const getCombinedFeatures = (
   featureCollection: GeoJSONFeatureCollection,
   featuresSlice: NonNullable<UtkastGrenseendringer["endredeFeatures"]>,
 ) => {
-  return featureCollection.features.map(
-    (feature: GeoJSONFeature) => featuresSlice[feature.id] ?? feature,
+  const updatedFeaturesFromCollection = featureCollection.features.map(
+    (feature: GeoJSONFeature) => featuresSlice.find((f) => f.id === feature.id) ?? feature,
   );
+
+  const newFeatures = featuresSlice.filter((f) => isTempFeatureId(f.id as string));
+
+  return updatedFeaturesFromCollection.concat(newFeatures);
 };
 
 export const applyNonFeatureUtkast = <T extends NonNullable<UtkastEntity>>(
@@ -62,8 +66,7 @@ export const applyNonFeatureUtkast = <T extends NonNullable<UtkastEntity>>(
     // navn på stemmekrets har forskjellig field på StemmekretsRef og StemmekretsRequest
 
     return entity.map((e) => {
-      const utkastForEntity =
-        utkast.operasjoner.metadataendringer?.[type]?.[getIdFromEntity(e)];
+      const utkastForEntity = utkast.operasjoner.metadataendringer?.[type]?.[getIdFromEntity(e)];
 
       return {
         ...e,
@@ -78,10 +81,7 @@ export const applyNonFeatureUtkast = <T extends NonNullable<UtkastEntity>>(
   return getCombinedEntity(entity, utkastSlice);
 };
 
-export const applyFeatureUtkast = (
-  featureCollection: GeoJSONFeatureCollection,
-  utkast: UtkastResponse,
-) => {
+export const applyFeatureUtkast = (featureCollection: GeoJSONFeatureCollection, utkast: UtkastResponse) => {
   const featuresSlice = utkast.operasjoner.grenseendringer?.endredeFeatures;
 
   if (!featuresSlice) return featureCollection;
@@ -94,24 +94,13 @@ export const applyFeatureUtkast = (
   };
 };
 
-const reduceMetadataOperations = (
-  utkastOperations: UtkastOperasjoner,
-  entry: GrunnkretsEntry | StemmekretsEntry,
-) => {
+const reduceMetadataOperations = (utkastOperations: UtkastOperasjoner, entry: GrunnkretsEntry | StemmekretsEntry) => {
   switch (entry.type) {
     case "grunnkrets": {
-      return addKretsChangeToOperations(
-        utkastOperations,
-        entry,
-        "grunnkretsendringer",
-      );
+      return addKretsChangeToOperations(utkastOperations, entry, "grunnkretsendringer");
     }
     case "stemmekrets": {
-      return addKretsChangeToOperations(
-        utkastOperations,
-        entry,
-        "stemmekretsendringer",
-      );
+      return addKretsChangeToOperations(utkastOperations, entry, "stemmekretsendringer");
     }
   }
 };
@@ -143,24 +132,21 @@ const addKretsChangeToOperations = (
   return operations;
 };
 
-export const historyToUtkastOperations = (
-  history: HistoryState,
-  previousUtkast?: UtkastResponse,
-) => {
+export const historyToUtkastOperations = (history: HistoryState, previousUtkast?: UtkastResponse) => {
   const historyToCurrentIndex = history.entries.slice(0, history.index);
   // hent endringer på enheter og gjør endringene om til utkastoperasjoner
   const utkastOperations = (
-    historyToCurrentIndex.filter(
-      (entry) => entry.type === "stemmekrets" || entry.type === "grunnkrets",
-    ) as (GrunnkretsEntry | StemmekretsEntry)[]
+    historyToCurrentIndex.filter((entry) => entry.type === "stemmekrets" || entry.type === "grunnkrets") as (
+      | GrunnkretsEntry
+      | StemmekretsEntry
+    )[]
   ).reduce(
     reduceMetadataOperations,
     createUtkastOperations({
       ...{
         ...previousUtkast?.operasjoner.grenseendringer,
         ...previousUtkast?.operasjoner.metadataendringer,
-        stemmekretssammenslaaingsendringer:
-          previousUtkast?.operasjoner.stemmekretsSammenslaaingsendring,
+        stemmekretssammenslaaingsendringer: previousUtkast?.operasjoner.stemmekretsSammenslaaingsendring,
       },
     }),
   ) as UtkastOperasjoner;
@@ -169,15 +155,11 @@ export const historyToUtkastOperations = (
     historyToCurrentIndex.filter(
       (entry) => entry.type === "stemmekretssammenslaaingsendring",
     ) as StemmekretsSammenslaaingsendringEntry[]
-  ).reduce(
-    reduceStemmekretssammenslaingsOperations,
-    {} as StemmekretsSammenslaaingsendringRequest,
-  );
+  ).reduce(reduceStemmekretssammenslaingsOperations, {} as StemmekretsSammenslaaingsendringRequest);
 
   //Antar her at det bare er en sammenslåing per utkast
   if (Object.keys(sammenslaaingsOperations).length > 0) {
-    utkastOperations.stemmekretsSammenslaaingsendring =
-      sammenslaaingsOperations;
+    utkastOperations.stemmekretsSammenslaaingsendring = sammenslaaingsOperations;
   }
 
   const editedFeatureHistoryEntries = [
@@ -193,24 +175,19 @@ export const historyToUtkastOperations = (
   );
 
   // hent grenseendringer og gjør endringene om til en liste av features
-  const editedFeatures: GeoJSONFeature[] =
-    utkastOperations.grenseendringer.endredeFeatures;
+  const editedFeatures: GeoJSONFeature[] = utkastOperations.grenseendringer.endredeFeatures;
 
   relevantHistoryEntries.forEach((entry) => {
     entry.changes.forEach((change) => {
       if (!change.to) return;
 
-      const feature = editSource.getFeatureById(
-        change.id,
-      ) as Feature<LineString>;
+      const feature = editSource.getFeatureById(change.id) as Feature<LineString>;
 
       if (!feature) return;
 
       const featureAsGeoJson = featureToGeoJson(feature);
 
-      const index = editedFeatures.findIndex(
-        (geoJsonFeature) => featureAsGeoJson.id === geoJsonFeature.id,
-      );
+      const index = editedFeatures.findIndex((geoJsonFeature) => featureAsGeoJson.id === geoJsonFeature.id);
 
       // Hvis vi allerede har lagt inn featuren tidligere i historikken,
       // ønsker vi å overskrive den hvis den samme featuren endres senere i historikken
@@ -228,6 +205,34 @@ export const historyToUtkastOperations = (
   };
 
   return utkastOperations;
+};
+
+export const toCleanUtkast = (utkastToClean: OppdaterUtkastRequest): OppdaterUtkastRequest => {
+  const utkastCopy = structuredClone(utkastToClean);
+
+  // Fjerner ID fra alle nye grenser, da dette ikke er forventet fra backend
+  const endredeFeatures = utkastCopy.operasjoner.grenseendringer.endredeFeatures;
+
+  endredeFeatures.forEach((endretFeature) => {
+    if (endretFeature.id && isTempFeatureId(endretFeature.id)) endretFeature.id = undefined;
+  });
+
+  return utkastCopy;
+};
+
+export const addTempFeatureIdToNewFeaturesInUtkast = (utkast: UtkastResponse): UtkastResponse => {
+  const utkastCopy = structuredClone(utkast);
+
+  // Fjerner ID fra alle nye grenser, da dette ikke er forventet fra backend
+  const endredeFeatures = utkastCopy.operasjoner.grenseendringer.endredeFeatures;
+
+  endredeFeatures
+    .filter((feature) => feature.id == null)
+    .forEach((feature) => {
+      feature.id = getTempFeatureId();
+    });
+
+  return utkastCopy;
 };
 
 export const createUtkastOperations = ({

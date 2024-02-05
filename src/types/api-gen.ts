@@ -427,13 +427,7 @@ export interface components {
        * @description Flatetypen som skal deles
        * @enum {string}
        */
-      flatetype:
-        | "FYLKE"
-        | "KOMMUNE"
-        | "NASJON"
-        | "GRUNNKRETS"
-        | "STEMMEKRETS"
-        | "SKOLEKRETS";
+      flatetype: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
       /** @description Navn og nummer for de nye kretsene som skal utledes fra opprinnelig krets */
       nyeKretser: components["schemas"]["KretsNavnOgNummer"][];
     };
@@ -784,7 +778,6 @@ export interface components {
       navn: string;
       /** @description Typen endring utkastet representerer. */
       endringstype: string;
-      operasjoner: components["schemas"]["Operasjoner"];
     };
     /** @description Requestbody for publisering av utkast. */
     PubliserUtkastRequest: {
@@ -1120,6 +1113,12 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["UtkastResponse"];
+        };
+      };
+      /** Bad request. Check the request body and path */
+      400: {
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
         };
       };
       /** Not Found */

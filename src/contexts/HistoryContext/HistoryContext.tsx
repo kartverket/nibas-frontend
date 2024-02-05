@@ -1,6 +1,7 @@
 import React, { createContext, useContext } from "react";
 import { HistoryContextValue, HistoryEntry } from "./types";
 import {
+  setFeatureCoordinatesAndMetadataForEntry,
   setFeatureCoordinatesForEntry,
   setFeatureMetadataForEntry,
   setKontekstEgenskaperForEntry,
@@ -17,6 +18,9 @@ const onUndo = (entry: HistoryEntry) => {
     }
     case "metadata": {
       return setFeatureMetadataForEntry(entry, "from");
+    }
+    case "nygrense": {
+      return setFeatureCoordinatesAndMetadataForEntry(entry, "from");
     }
     case "grunnkrets": {
       return document.dispatchEvent(
@@ -71,6 +75,9 @@ const onRedo = (entry: HistoryEntry) => {
       //skal den kanskje bare gå inn under det her?
       return setFeatureMetadataForEntry(entry, "to");
     }
+    case "nygrense": {
+      return setFeatureCoordinatesAndMetadataForEntry(entry, "to");
+    }
     case "grunnkrets": {
       return document.dispatchEvent(
         new CustomEvent("grunnkretsRedo", {
@@ -113,36 +120,24 @@ const onRedo = (entry: HistoryEntry) => {
   ensureAllCasesCovered(type);
 };
 
-export const HistoryContext = createContext<HistoryContextValue | undefined>(
-  undefined,
-);
+export const HistoryContext = createContext<HistoryContextValue | undefined>(undefined);
 
-export const HistoryProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  const { history, addHistoryEntry, clearHistory, undo, redo } =
-    useHistoryState({
-      onUndo,
-      onRedo,
-    });
+export const HistoryProvider = ({ children }: { children: React.ReactNode }) => {
+  const { history, addHistoryEntry, clearHistory, undo, redo } = useHistoryState({
+    onUndo,
+    onRedo,
+  });
 
   const value = {
     history,
     clearHistory,
     canSave: history.entries.length > 0 && history.index > 0,
     undo: history.index > 0 ? undo : undefined,
-    redo:
-      history.entries.length > 0 && history.index < history.entries.length
-        ? redo
-        : undefined,
+    redo: history.entries.length > 0 && history.index < history.entries.length ? redo : undefined,
     addHistoryEntry,
   };
 
-  return (
-    <HistoryContext.Provider value={value}>{children}</HistoryContext.Provider>
-  );
+  return <HistoryContext.Provider value={value}>{children}</HistoryContext.Provider>;
 };
 
 export const useHistory = () => {

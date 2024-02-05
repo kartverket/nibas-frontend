@@ -16,14 +16,11 @@ enum Tilhorighet {
 type TilhorighetProps = {
   feature: Feature<Geometry>;
   isDisabled?: boolean;
+
   tilhorighetToChange: "grunnkretser" | "stemmekretser";
 };
 
-export const TilhorighetField = ({
-  feature,
-  isDisabled,
-  tilhorighetToChange,
-}: TilhorighetProps) => {
+export const TilhorighetField = ({ feature, isDisabled, tilhorighetToChange }: TilhorighetProps) => {
   const properties = feature.getProperties() as FeatureProperties;
   const kontekstEgenskaper = properties.kontekstEgenskaper;
 
@@ -39,12 +36,7 @@ export const TilhorighetField = ({
     getTilhorighetData,
     register,
     updateDraftFromFeature,
-  } = useTilhorighet(
-    feature,
-    grenseType,
-    tilhorighetToChange,
-    kontekstEgenskaper,
-  );
+  } = useTilhorighet(feature, grenseType, tilhorighetToChange, kontekstEgenskaper);
 
   useEffect(() => {
     resetTilhorighet();
@@ -62,10 +54,7 @@ export const TilhorighetField = ({
     >
       <Stack>
         {Object.values(Tilhorighet).map((tilhorighet) => (
-          <Select
-            key={tilhorighet}
-            {...register(`${tilhorighetToChange}.${tilhorighet}`)}
-          >
+          <Select key={tilhorighet} {...register(`${tilhorighetToChange}.${tilhorighet}`)}>
             {tilhorighetOptions &&
               tilhorighetOptions.map((krets) => {
                 const uid = `${tilhorighet}_${krets.id.lokalid.value}`;

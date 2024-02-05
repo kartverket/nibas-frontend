@@ -13,8 +13,7 @@ type Props = {
 
 const KartlagInner = ({ mappedLayer, isMainLayer }: Props) => {
   const layer = kartlagLayers[mappedLayer.sourceId];
-  const { layerIsVisible, subLayerIsVisible, toggleLayerVisibility } =
-    useKartlag();
+  const { layerIsVisible, subLayerIsVisible, toggleLayerVisibility } = useKartlag();
 
   const isVisible = isMainLayer
     ? layerIsVisible(mappedLayer.sourceId)
@@ -27,11 +26,7 @@ const KartlagInner = ({ mappedLayer, isMainLayer }: Props) => {
     if (isMainLayer) {
       toggleLayerVisibility(mappedLayer.sourceId);
     } else {
-      toggleLayerVisibility(
-        mappedLayer.sourceId,
-        mappedLayer.title,
-        isWMTSLayer(layer),
-      );
+      toggleLayerVisibility(mappedLayer.sourceId, mappedLayer.title, isWMTSLayer(layer));
     }
   };
 
@@ -42,9 +37,7 @@ const KartlagInner = ({ mappedLayer, isMainLayer }: Props) => {
         colorScheme="gray"
         variant="secondary"
         icon={isVisible ? "visibility" : "visibility_off"}
-        aria-label={
-          isVisible ? `Fjern ${mappedLayer.title}` : `Vis ${mappedLayer.title}`
-        }
+        aria-label={isVisible ? `Fjern ${mappedLayer.title}` : `Vis ${mappedLayer.title}`}
         onClick={handleToggle}
       />
     </Container>

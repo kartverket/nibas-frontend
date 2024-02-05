@@ -5,12 +5,7 @@ import { GrenseType } from "hooks/layers/types";
 import { Feature } from "ol";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import {
-  GrunnkretsResponse,
-  KontekstEgenskaper,
-  ObjektIdentifikator,
-  StemmekretsResponse,
-} from "types/api";
+import { GrunnkretsResponse, KontekstEgenskaper, ObjektIdentifikator, StemmekretsResponse } from "types/api";
 import { addKontekstEntryFromFeature } from "../MetadataPanel/utils";
 import LineString from "ol/geom/LineString";
 import { getIdFromEntity } from "utils/api";
@@ -64,9 +59,7 @@ const getMuligeKretserForGrense = (
   }
 };
 
-const getTilhorighetData = (
-  tilhorigheter: KontekstEgenskaper[] | undefined,
-): TilhorighetForm | undefined => {
+const getTilhorighetData = (tilhorigheter: KontekstEgenskaper[] | undefined): TilhorighetForm | undefined => {
   if (tilhorigheter) {
     const grunnkretser = tilhorigheter
       .filter((kontekstEgenskaper) => kontekstEgenskaper.type === "GRUNNKRETS")
@@ -94,9 +87,7 @@ const getUpdatedKontekstEgenskaper = (
   newKretsIds: TilhorighetChoice,
   kretsValg: TilhorighetOptions,
 ): KontekstEgenskaper[] => {
-  const kretser = Object.values(newKretsIds).map(
-    (id) => kretsValg.find((krets) => krets.id.lokalid.value === id)!,
-  );
+  const kretser = Object.values(newKretsIds).map((id) => kretsValg.find((krets) => krets.id.lokalid.value === id)!);
   const nyeKontekstEgenskaper = kretser.map((krets) => {
     return {
       id: krets.id,
@@ -123,14 +114,15 @@ export const useTilhorighet = (
   const { data: grunnkretser } = useKommuneGrunnkretser(kommuneId);
   const { data: stemmekretser } = useKommuneStemmekretser(kommuneId);
 
-  const [tilhorighetOptions, setTilhorighetOptions] =
-    useState<TilhorighetOptions>();
+  const [tilhorighetOptions, setTilhorighetOptions] = useState<TilhorighetOptions>();
   const { addHistoryEntry } = useHistory();
 
   useEffect(() => {
     if (grunnkretser && stemmekretser) {
       setTilhorighetOptions(
-        getMuligeKretserForGrense(grenseType, grunnkretser, stemmekretser),
+        getMuligeKretserForGrense(grenseType, grunnkretser, stemmekretser).sort((a, b) => {
+          return Number(a.nummer) - Number(b.nummer);
+        }),
       );
     }
   }, [grenseType, grunnkretser, stemmekretser]);
@@ -152,12 +144,12 @@ export const useTilhorighet = (
 
   const getValuesFormatted = () => {
     const value = getValues(tilhorighetToChange);
+    if (!value) return;
+
     if (value.a !== undefined && value.b !== undefined && tilhorighetOptions) {
       return Object.values(value)
         .map((id) => {
-          const krets = tilhorighetOptions.find(
-            (opt) => opt.id.lokalid.value === id,
-          );
+          const krets = tilhorighetOptions.find((opt) => opt.id.lokalid.value === id);
           if (krets?.nummer && krets.navn) {
             return krets.nummer + " " + krets.navn;
           }
@@ -167,16 +159,13 @@ export const useTilhorighet = (
   };
 
   const updateDraftFromFeature = () => {
-    if (kontekstEgenskaper && tilhorighetOptions) {
+    if (tilhorighetOptions) {
       const oppdaterteKontekstEgenskaper = getUpdatedKontekstEgenskaper(
         getValues(tilhorighetToChange),
         tilhorighetOptions,
       );
-      addKontekstEntryFromFeature(
-        feature as Feature<LineString>,
-        oppdaterteKontekstEgenskaper,
-        addHistoryEntry,
-      );
+
+      addKontekstEntryFromFeature(feature as Feature<LineString>, oppdaterteKontekstEgenskaper, addHistoryEntry);
     }
   };
 

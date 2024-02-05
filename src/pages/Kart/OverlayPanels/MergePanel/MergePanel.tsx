@@ -2,10 +2,7 @@ import { styled } from "styled-components";
 import { PanelHeader, PanelProps, SidePanel } from "../Panel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useUtkast, useUtkastEntity } from "contexts/UtkastContext";
-import {
-  StemmekretsResponse,
-  StemmekretsSammenslaaingsendringRequest,
-} from "types/api";
+import { StemmekretsResponse, StemmekretsSammenslaaingsendringRequest } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { FormProvider, useForm } from "react-hook-form";
 import { MergeFormData } from "./MergeForm";
@@ -18,17 +15,7 @@ import { deduplicate, removeNull } from "utils/list-utils";
 import { MergeMultiselect } from "./MergeMultiselect";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import {
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  Button,
-  Divider,
-  FormControl,
-  FormLabel,
-  Heading,
-  Select,
-} from "@kvib/react";
+import { Alert, AlertIcon, AlertTitle, Button, Divider, FormControl, FormLabel, Heading, Select } from "@kvib/react";
 import { useHistory } from "contexts/HistoryContext";
 
 const Form = styled.form`
@@ -57,14 +44,11 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { setAndSaveSammenslaaingsFeatures } = useFeatureStyle();
   const { history } = useHistory();
-  const { data: stemmekretserByKommune } = useKommuneStemmekretser(
-    flatedata ? getIdFromEntity(flatedata) : "",
-  );
+  const { data: stemmekretserByKommune } = useKommuneStemmekretser(flatedata ? getIdFromEntity(flatedata) : "");
 
-  const utkastStemmekretser = useUtkastEntity(
-    stemmekretserByKommune,
-    "stemmekretsendringer",
-  ) as StemmekretsResponse[] | undefined;
+  const utkastStemmekretser = useUtkastEntity(stemmekretserByKommune, "stemmekretsendringer") as
+    | StemmekretsResponse[]
+    | undefined;
 
   const formMethods = useForm<MergeFormData>({
     defaultValues: {
@@ -102,19 +86,13 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
 
   const getStemmekretsByNummer = useCallback(
     (nummer: string): StemmekretsResponse | null => {
-      return (
-        utkastStemmekretser?.find(
-          (krets) => krets.stemmekretsnummer === nummer,
-        ) ?? null
-      );
+      return utkastStemmekretser?.find((krets) => krets.stemmekretsnummer === nummer) ?? null;
     },
     [utkastStemmekretser],
   );
 
   const getOverlappingStemmekretsFeatureIds = (featureIds: string[]) => {
-    return featureIds.filter(
-      (featureId, index) => featureIds.indexOf(featureId) !== index,
-    );
+    return featureIds.filter((featureId, index) => featureIds.indexOf(featureId) !== index);
   };
 
   const fromFormToRequest = (
@@ -125,12 +103,10 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
       lokalId: stemmekretsRespons.id.lokalid.value,
       version: stemmekretsRespons.version,
     },
-    stemmekretserTilSammenslaaing: deduplicate(sammenslaaingsStemmekretser).map(
-      (sammenslaaingsStemmekrets) => ({
-        lokalId: sammenslaaingsStemmekrets.id.lokalid.value,
-        version: sammenslaaingsStemmekrets.version,
-      }),
-    ),
+    stemmekretserTilSammenslaaing: deduplicate(sammenslaaingsStemmekretser).map((sammenslaaingsStemmekrets) => ({
+      lokalId: sammenslaaingsStemmekrets.id.lokalid.value,
+      version: sammenslaaingsStemmekrets.version,
+    })),
     stemmekretsNavn: getValues("stemmekretsnavn"),
     stemmekretsNummer: getValues("stemmekretsnummer"),
   });
@@ -140,13 +116,11 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
     if (!utkast) return;
 
     const selectedStemmekretsValue = getValues("stemmekrets");
-    const stemmekretsNummerTilSammenslaaing: string[] = getValues(
-      "stemmekretsNummerTilSammenslaaing",
-    ).map((s) => s.value);
-
-    const selectedStemmekrets = getStemmekretsByNummer(
-      selectedStemmekretsValue,
+    const stemmekretsNummerTilSammenslaaing: string[] = getValues("stemmekretsNummerTilSammenslaaing").map(
+      (s) => s.value,
     );
+
+    const selectedStemmekrets = getStemmekretsByNummer(selectedStemmekretsValue);
 
     const stemmekretsTilSammenslaaingListe = removeNull(
       stemmekretsNummerTilSammenslaaing.map((s) => getStemmekretsByNummer(s)),
@@ -159,43 +133,25 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
         endringstype: utkast.endringstype,
         operasjoner: {
           ...utkast.operasjoner,
-          stemmekretsSammenslaaingsendring: fromFormToRequest(
-            selectedStemmekrets,
-            stemmekretsTilSammenslaaingListe,
-          ),
+          stemmekretsSammenslaaingsendring: fromFormToRequest(selectedStemmekrets, stemmekretsTilSammenslaaingListe),
         },
       };
       updateUtkast(utkast.id, updateUtkastRequest);
-      const sammenslaaingsStemmekretsIder = getStemmekretsIdList(
-        selectedStemmekrets,
-        stemmekretsTilSammenslaaingListe,
-      );
+      const sammenslaaingsStemmekretsIder = getStemmekretsIdList(selectedStemmekrets, stemmekretsTilSammenslaaingListe);
 
-      const stemmekretsFeatureIds: string[] = await fetchStemmekretsgrenser(
-        sammenslaaingsStemmekretsIder,
-      );
-      const overlappingFeatureIds = getOverlappingStemmekretsFeatureIds(
-        stemmekretsFeatureIds,
-      );
+      const stemmekretsFeatureIds: string[] = await fetchStemmekretsgrenser(sammenslaaingsStemmekretsIder);
+      const overlappingFeatureIds = getOverlappingStemmekretsFeatureIds(stemmekretsFeatureIds);
 
-      setAndSaveSammenslaaingsFeatures(
-        stemmekretsFeatureIds,
-        overlappingFeatureIds,
-      );
+      setAndSaveSammenslaaingsFeatures(stemmekretsFeatureIds, overlappingFeatureIds);
     }
     closeOverlayPanel();
     reset();
   };
 
   const fetchStemmekretsgrenser = async (stemmekretsIder: string[]) => {
-    const stemmekretsgrenserResponse = await stemmekretsgrenserFetcher(
-      stemmekretsIder,
-      tokenHolderFunc()?.token,
-    );
+    const stemmekretsgrenserResponse = await stemmekretsgrenserFetcher(stemmekretsIder, tokenHolderFunc()?.token);
     return stemmekretsgrenserResponse
-      ? stemmekretsgrenserResponse
-          .filter((value) => value != null)
-          .map((value) => String(value))
+      ? stemmekretsgrenserResponse.filter((value) => value != null).map((value) => String(value))
       : [];
   };
 
@@ -207,9 +163,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
       (stemmekretsRef) => stemmekretsRef.id.lokalid.value,
     );
     if (selectedStemmekrets) {
-      stemmekretsIderTilSammenslaaing.push(
-        selectedStemmekrets.id.lokalid.value,
-      );
+      stemmekretsIderTilSammenslaaing.push(selectedStemmekrets.id.lokalid.value);
     }
 
     return stemmekretsIderTilSammenslaaing;
@@ -237,17 +191,13 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
 
   return (
     <SidePanel $isOpen={isOpen} className={className}>
-      <PanelHeader onClose={closeOverlayPanel}>
-        Slå sammen stemmekretser
-      </PanelHeader>
-      {(history.entries.length > 0 && history.index > 0) ||
-      utkastHarEndringer() ? (
+      <PanelHeader onClose={closeOverlayPanel}>Slå sammen stemmekretser</PanelHeader>
+      {(history.entries.length > 0 && history.index > 0) || utkastHarEndringer() ? (
         <Alert>
           <AlertIcon />
           <AlertTitle>
-            Du kan ikke gjøre en sammenslåing i et eksisterende utkast som har
-            andre endringer. Avslutt redigeringen av dette utkastet før du
-            gjennomfører sammenslåingen.
+            Du kan ikke gjøre en sammenslåing i et eksisterende utkast som har andre endringer. Avslutt redigeringen av
+            dette utkastet før du gjennomfører sammenslåingen.
           </AlertTitle>
         </Alert>
       ) : (
@@ -271,16 +221,9 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
                     Velg en stemmekrets fra listen
                   </option>
                   {utkastStemmekretser
-                    .sort(
-                      (a, b) =>
-                        parseInt(a.stemmekretsnummer) -
-                        parseInt(b.stemmekretsnummer),
-                    )
+                    .sort((a, b) => parseInt(a.stemmekretsnummer) - parseInt(b.stemmekretsnummer))
                     .map((stemmekrets) => (
-                      <option
-                        key={stemmekrets.id.lokalid.value}
-                        value={stemmekrets.stemmekretsnummer}
-                      >
+                      <option key={stemmekrets.id.lokalid.value} value={stemmekrets.stemmekretsnummer}>
                         {`${stemmekrets.stemmekretsnummer} - ${stemmekrets.stemmekretsnavn}`}
                       </option>
                     ))}
@@ -289,10 +232,8 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
               <Alert>
                 <AlertIcon />
                 <AlertTitle>
-                  Legg merke til at det er informasjonen fra denne stemmekretsen
-                  som vil beholdes, mens all informasjon om de resterende
-                  stemmekretsene vil bli fjernet i sin helhet fra
-                  inndelingsbasen.
+                  Legg merke til at det er informasjonen fra denne stemmekretsen som vil beholdes, mens all informasjon
+                  om de resterende stemmekretsene vil bli fjernet i sin helhet fra inndelingsbasen.
                 </AlertTitle>
               </Alert>
               <Divider />

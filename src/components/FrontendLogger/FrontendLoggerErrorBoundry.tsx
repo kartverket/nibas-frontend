@@ -1,14 +1,7 @@
 import React from "react";
 import { Outlet } from "react-router";
 import frontendLogger from "./FrontendLogger";
-import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
-  Box,
-  Logo,
-} from "@kvib/react";
+import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Logo } from "@kvib/react";
 import { styled } from "styled-components";
 import ThirdPartyProviders from "pages/App/ThirdPartyProviders";
 
@@ -16,10 +9,7 @@ type ErrorState = {
   hasError: boolean;
 };
 
-export class ErrorBoundaryWithFrontendLogger extends React.Component<
-  unknown,
-  ErrorState
-> {
+export class ErrorBoundaryWithFrontendLogger extends React.Component<unknown, ErrorState> {
   constructor(props: unknown) {
     super(props);
     this.state = { hasError: false };
@@ -46,8 +36,8 @@ export class ErrorBoundaryWithFrontendLogger extends React.Component<
               <Box>
                 <AlertTitle>En ukjent feil har oppstått</AlertTitle>
                 <AlertDescription>
-                  Noe gikk galt med siden, men vi vet ikke hvorfor. Kontakt oss
-                  om feilen vedvarer. Kontaktinformasjon finnes i{" "}
+                  Noe gikk galt med siden, men vi vet ikke hvorfor. Kontakt oss om feilen vedvarer. Kontaktinformasjon
+                  finnes i{" "}
                   <UnderlinedLink href="https://kartverket.atlassian.net/wiki/spaces/NIBAS/pages/685342721/Brukerveiledning">
                     brukerveiledningen.
                   </UnderlinedLink>

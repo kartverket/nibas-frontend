@@ -3,12 +3,7 @@ import { KommuneRef } from "types/api";
 import { useSidebarPanel } from "./SidebarPanelContext";
 import { useFeatureStyle } from "./FeatureStyleContext";
 
-type OverlayPanel =
-  | "metadata"
-  | "sammenslåing"
-  | "tegnforklaring"
-  | "koordinater"
-  | "kartlag";
+type OverlayPanel = "metadata" | "sammenslåing" | "tegnforklaring" | "koordinater" | "kartlag";
 
 type OverlayModal = "stemmekrets" | "grunnkrets";
 type Flatedata = KommuneRef | null;
@@ -26,21 +21,13 @@ export type OverlayPanelContextValue = {
   setFlatedata: (flatedata: Flatedata) => void;
 };
 
-export const OverlayPanelContext = createContext<
-  OverlayPanelContextValue | undefined
->(undefined);
+export const OverlayPanelContext = createContext<OverlayPanelContextValue | undefined>(undefined);
 
-export const OverlayPanelProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+export const OverlayPanelProvider = ({ children }: { children: React.ReactNode }) => {
   const { closeSidebarPanel } = useSidebarPanel();
   const { clearSelection } = useFeatureStyle();
-  const [activeOverlayModal, setActiveOverlayModal] =
-    useState<OverlayModal | null>(null);
-  const [activeOverlayPanel, setActiveOverlayPanel] =
-    useState<OverlayPanel | null>(null);
+  const [activeOverlayModal, setActiveOverlayModal] = useState<OverlayModal | null>(null);
+  const [activeOverlayPanel, setActiveOverlayPanel] = useState<OverlayPanel | null>(null);
 
   const openOverlayPanel = (panelType: OverlayPanel) => {
     setActiveOverlayPanel(panelType);
@@ -74,19 +61,13 @@ export const OverlayPanelProvider = ({
     setFlatedata,
   };
 
-  return (
-    <OverlayPanelContext.Provider value={value}>
-      {children}
-    </OverlayPanelContext.Provider>
-  );
+  return <OverlayPanelContext.Provider value={value}>{children}</OverlayPanelContext.Provider>;
 };
 
 export const useOverlayPanel = () => {
   const context = useContext(OverlayPanelContext);
   if (!context) {
-    throw new Error(
-      "useOverlayPanel must be used within a OverlayPanelContext",
-    );
+    throw new Error("useOverlayPanel must be used within a OverlayPanelContext");
   }
 
   return context;

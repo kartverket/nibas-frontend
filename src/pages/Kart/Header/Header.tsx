@@ -12,8 +12,7 @@ import { zindex } from "utils/constants";
 
 const Header = () => {
   const { utkast } = useUtkast();
-  const { activeSidebarPanel, openSidebarPanel, closeSidebarPanel } =
-    useSidebarPanel();
+  const { activeSidebarPanel, openSidebarPanel, closeSidebarPanel } = useSidebarPanel();
   const { closeOverlayPanel } = useOverlayPanel();
 
   const toggleSidebar = () => {

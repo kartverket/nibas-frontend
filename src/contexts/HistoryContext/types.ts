@@ -1,4 +1,5 @@
 import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
+import { GrenseType } from "hooks/layers/types";
 import {
   FeatureProperties,
   GrunnkretsRequest,
@@ -26,18 +27,17 @@ type BaseHistoryEntry<Type extends string, Model> = {
   changes: HistoryChange<Model>[];
 };
 
-export type GrenseEntry = BaseHistoryEntry<"grense", number[][]>;
+export type MinimalGrense = {
+  coordinates: number[][];
+  type?: GrenseType | undefined;
+};
+
+export type GrenseEntry = BaseHistoryEntry<"grense", MinimalGrense>;
 export type MetadataEntry = BaseHistoryEntry<"metadata", Metadata>;
-export type GrunnkretsEntry = BaseHistoryEntry<
-  "grunnkrets",
-  GrunnkretsRequest
-> & {
+export type GrunnkretsEntry = BaseHistoryEntry<"grunnkrets", GrunnkretsRequest> & {
   kommuneId: string;
 };
-export type StemmekretsEntry = BaseHistoryEntry<
-  "stemmekrets",
-  StemmekretsRequest
-> & {
+export type StemmekretsEntry = BaseHistoryEntry<"stemmekrets", StemmekretsRequest> & {
   kommuneId: string;
 };
 type UtkastEntry = BaseHistoryEntry<"utkast", UtkastRequestWithoutOperations>;
@@ -47,15 +47,11 @@ export type StemmekretsSammenslaaingsendringEntry = BaseHistoryEntry<
   StemmekretsSammenslaaingsendringRequest
 >;
 
-export type GrenseArkiveringsEntry = BaseHistoryEntry<
-  "grensearkivering",
-  FeatureProperties
->;
+export type GrenseArkiveringsEntry = BaseHistoryEntry<"grensearkivering", FeatureProperties>;
 
-export type GrenseTilhorighetEntry = BaseHistoryEntry<
-  "grensetilhorighetendring",
-  KontekstEgenskaper[]
->;
+export type GrenseTilhorighetEntry = BaseHistoryEntry<"grensetilhorighetendring", KontekstEgenskaper[]>;
+
+export type NyGrenseEntry = BaseHistoryEntry<"nygrense", MinimalGrense & Metadata>;
 
 // endringer skal kunne gjøres i bulk, feks et punkt på to features endrer to features i en entry
 export type HistoryEntry =
@@ -66,16 +62,13 @@ export type HistoryEntry =
   | UtkastEntry
   | StemmekretsSammenslaaingsendringEntry
   | GrenseArkiveringsEntry
-  | GrenseTilhorighetEntry;
+  | GrenseTilhorighetEntry
+  | NyGrenseEntry;
 
 export type HistoryContextValue = {
   addHistoryEntry: (entry: HistoryEntry) => void;
   history: HistoryState;
-  clearHistory: ({
-    hasPreviouslySavedHistory,
-  }: {
-    hasPreviouslySavedHistory: boolean;
-  }) => void;
+  clearHistory: ({ hasPreviouslySavedHistory }: { hasPreviouslySavedHistory: boolean }) => void;
 
   canSave: boolean;
   undo: (() => void) | undefined;

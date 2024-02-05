@@ -27,8 +27,7 @@ type GetQueryParameters<T extends ApiPath> = paths[T] extends {
   : unknown;
 
 // slå sammen path og query parametere
-type GetParameters<T extends ApiPath> = GetPathParameters<T> &
-  GetQueryParameters<T> extends Record<string, unknown>
+type GetParameters<T extends ApiPath> = GetPathParameters<T> & GetQueryParameters<T> extends Record<string, unknown>
   ? GetPathParameters<T> & GetQueryParameters<T>
   : never;
 
@@ -73,11 +72,7 @@ const useNibasApi = <Path extends ApiPath>(
     const paramKeys = Object.keys(params);
     let pathParams = "";
 
-    for (
-      let replaceIndex = 0;
-      replaceIndex < paramKeys.length;
-      replaceIndex++
-    ) {
+    for (let replaceIndex = 0; replaceIndex < paramKeys.length; replaceIndex++) {
       const match = pathRegex.exec(modifiedUrl);
 
       if (match) {
@@ -104,11 +99,7 @@ const useNibasApi = <Path extends ApiPath>(
     modifiedUrl = modifiedUrl.concat(pathParams);
   }
 
-  return useSWR<ResponseType<Path>>(
-    [modifiedUrl, tokenHolderFunc()?.token],
-    fetcherWithToken,
-    swrOptions,
-  );
+  return useSWR<ResponseType<Path>>([modifiedUrl, tokenHolderFunc()?.token], fetcherWithToken, swrOptions);
 };
 
 export default useNibasApi;

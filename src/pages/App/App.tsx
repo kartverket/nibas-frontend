@@ -1,7 +1,4 @@
-import {
-  ConfigureAuthFlowProps,
-  useConfigureAuthFlow,
-} from "@kartverket/frontend-aut-lib";
+import { ConfigureAuthFlowProps, useConfigureAuthFlow } from "@kartverket/frontend-aut-lib";
 import {
   Route,
   Navigate,
@@ -13,10 +10,7 @@ import {
 import Providers from "./Providers";
 import PageLayout from "../Kart/PageLayout";
 import { Suspense } from "react";
-import {
-  AuthorizationStatus,
-  useAuthorization,
-} from "../Authentication/AuthHooks";
+import { AuthorizationStatus, useAuthorization } from "../Authentication/AuthHooks";
 import Loading from "./Loading";
 import Authentication from "pages/Authentication/Authentication";
 import Landing from "pages/Landing/Landing";
@@ -41,8 +35,7 @@ const App = () => {
    * Denne returnerer 2 <Route>-objekter som brukes i routingen (se lenger ned) for å kunne initialisere logikk knyttet
    * til autentiseringsflyten, samt utloggingsflyt.
    */
-  const [redirectAfterLogon, redirectAfterLogout]: JSX.Element[] =
-    useConfigureAuthFlow(authFlowProps);
+  const [redirectAfterLogon, redirectAfterLogout]: JSX.Element[] = useConfigureAuthFlow(authFlowProps);
 
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -75,8 +68,7 @@ const useAuthentication = () => {
   const { status } = useAuthorization();
   const isAuthorized = status === AuthorizationStatus.AUTHORIZED;
   const isLocalhost = window.location.hostname === "localhost";
-  const authIsEnabled =
-    !isLocalhost || import.meta.env["VITE_AUTH_ENABLED"] === "true";
+  const authIsEnabled = !isLocalhost || import.meta.env["VITE_AUTH_ENABLED"] === "true";
   return { shouldAuthenticate: !isAuthorized && authIsEnabled };
 };
 
@@ -93,8 +85,7 @@ const ExternalPage = () => {
 const ProtectedPage = () => {
   const outlet = useOutlet();
   const { shouldAuthenticate } = useAuthentication();
-  if (shouldAuthenticate)
-    return <Navigate to={routes.authentication} replace={true} />;
+  if (shouldAuthenticate) return <Navigate to={routes.authentication} replace={true} />;
   return <Providers>{outlet}</Providers>;
 };
 
