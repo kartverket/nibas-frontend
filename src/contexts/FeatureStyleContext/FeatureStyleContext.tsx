@@ -6,9 +6,6 @@ import { useSelectStyles } from "./useSelectStyles";
 import { getArchiveLayerStyle, grenseStyles } from "utils/map/layerStyles";
 import useArchiveStyles from "./useArchiveStyles";
 import { FeatureLike } from "ol/Feature";
-import { editableBorderTypes } from "hooks/layers/constants";
-import { isAdministrativGrense } from "utils/grenser";
-import { GrenseType } from "hooks/layers/types";
 
 export const FeatureStyleContext = createContext<FeatureStyleContextValue | undefined>(undefined);
 
@@ -143,24 +140,12 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     return false;
   };
 
-  const featureIsEditable = (feature: FeatureLike) => {
-    const grenseType = feature.get("type") as GrenseType;
-    if (isAdministrativGrense(grenseType)) {
-      //
-    }
-
-    return (
-      editableBorderTypes.includes(grenseType) && !featureIsArchived(feature)
-    );
-  };
-
   const value = {
     selectedPoint,
     selectedFeatures,
     selectFeatures,
     clearSelection,
     featureIsArchived,
-    featureIsEditable,
     selectPointOnFeature,
     setAndSaveUtkastFeatures,
     setAndSaveSammenslaaingsFeatures,
