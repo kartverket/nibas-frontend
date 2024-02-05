@@ -3,12 +3,14 @@ import {
   Datepicker,
   Grid,
   GridItem,
+  IconButton,
   Input,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
+  Text,
 } from "@kvib/react";
 import { Feature } from "ol";
 import { Referanse, VedtakinfoForm } from "./OversiktReferanser";
@@ -24,6 +26,7 @@ import {
   FieldErrors,
   UseFormRegister,
 } from "react-hook-form";
+import { useState } from "react";
 
 export const ReferanseBody = ({
   feature,
@@ -34,14 +37,14 @@ export const ReferanseBody = ({
   dokref,
   setDokref,
   setInternref,
+  deleteInternref,
+  deleteDokref,
   errors,
-  setFastsettingsdato,
-  getFastsettingsdato,
   control,
 }: {
+  deleteInternref: (index: number) => void;
+  deleteDokref: (index: number) => void;
   control: Control<VedtakinfoForm>;
-  getFastsettingsdato: () => string;
-  setFastsettingsdato: (date: string) => void;
   errors: FieldErrors<VedtakinfoForm>;
   feature: Feature;
   displayMode: boolean;
@@ -74,17 +77,6 @@ export const ReferanseBody = ({
       ? metadata.dokumentasjonsreferanser?.at(vedtaksinfoIndex)
       : undefined;
 
-  console.log("vedtaksinfo body", vedtaksinformasjon);
-  // const addDate = () => {
-  //   const dateField = document.getElementById(
-  //     "fastsettingsdato",
-  //   ) as HTMLInputElement;
-
-  //   if (dateField.value) {
-  //     return new Date(dateField.value);
-  //   } else return new Date();
-  // };
-
   return (
     <>
       <Grid templateColumns={"4fr 3fr"}>
@@ -107,6 +99,7 @@ export const ReferanseBody = ({
             </VedtakinfoField>
             <Row>
               <Controller
+                rules={{ required: "Feltet er påkrevd" }}
                 control={control}
                 name="fastsettingsdato"
                 render={({ field }) => {
@@ -116,25 +109,17 @@ export const ReferanseBody = ({
                       displayMode={displayMode}
                       tooltipLabel="tooltip"
                       title="Fastsettingsdato"
-                      value={vedtaksinformasjon?.fastsettingsdato}
+                      value={
+                        vedtaksinformasjon?.fastsettingsdato
+                          ? new Date(
+                              vedtaksinformasjon?.fastsettingsdato,
+                            ).toLocaleDateString("nb-NO")
+                          : undefined
+                      }
                     >
-                      {/* <Input
-                  {...register("fastsettingsdato")}
-                  id="fastsettingsdato"
-                  hidden
-                /> */}
                       <Datepicker
-                        //     {...register("fastsettingsdato")}
-                        // defaultSelected={
-                        //   vedtaksinformasjon?.fastsettingsdato
-                        //     ? new Date(vedtaksinformasjon.fastsettingsdato)
-                        //     : undefined
                         defaultSelected={field.value}
-                        onChange={(e) => {
-                          // Har også prøvd string som datatype. Får ikke skjemaet til å
-                          // lytte til endringer i denne komponenten out of the box
-                          //setFastsettingsdato(e.target.value);
-                          //return { value: new Date(e.target.value) };
+                        onChange={(e): void => {
                           field.onChange(new Date(e.target.value));
                         }}
                       />
@@ -142,13 +127,12 @@ export const ReferanseBody = ({
                   );
                 }}
               />
-
               <VedtakinfoField
                 errors={errors.rettskildeId}
                 displayMode={displayMode}
                 tooltipLabel="tooltip"
                 title="Rettskilde-ID (frivillig)"
-                value={vedtaksinformasjon?.rettskildeId}
+                value={vedtaksinformasjon?.rettskildeId || "Ingen ID satt."}
               >
                 <Input
                   {...register("rettskildeId")}
@@ -157,12 +141,58 @@ export const ReferanseBody = ({
                 />
               </VedtakinfoField>
             </Row>
+            <Row>
+              <Controller
+                control={control}
+                name="gyldigFra"
+                render={({ field }) => {
+                  return (
+                    <VedtakinfoField
+                      errors={errors.gyldigFra}
+                      displayMode={displayMode}
+                      tooltipLabel="tooltip"
+                      title="Gyldig fra"
+                      value={"Må implementeres i backend"}
+                    >
+                      <Datepicker
+                        defaultSelected={field.value}
+                        onChange={(e): void => {
+                          field.onChange(new Date(e.target.value));
+                        }}
+                      />
+                    </VedtakinfoField>
+                  );
+                }}
+              />
+              <Controller
+                control={control}
+                name="gyldigTil"
+                render={({ field }) => {
+                  return (
+                    <VedtakinfoField
+                      errors={errors.gyldigTil}
+                      displayMode={displayMode}
+                      tooltipLabel="tooltip"
+                      title="Gyldig til"
+                      value={"Må implementeres i backend"}
+                    >
+                      <Datepicker
+                        defaultSelected={field.value}
+                        onChange={(e): void => {
+                          field.onChange(new Date(e.target.value));
+                        }}
+                      />
+                    </VedtakinfoField>
+                  );
+                }}
+              />
+            </Row>
             <VedtakinfoField
               errors={errors.hjemmel}
               displayMode={displayMode}
               tooltipLabel="tooltip"
               title="Hjemmel (frivillig)"
-              value={vedtaksinformasjon?.hjemmel}
+              value={vedtaksinformasjon?.hjemmel || "Ingen hjemmel satt."}
             >
               <Input
                 {...register("hjemmel")}
@@ -175,7 +205,10 @@ export const ReferanseBody = ({
               displayMode={displayMode}
               tooltipLabel="tooltip"
               title="Fastsettingsmyndighet (frivillig)"
-              value={vedtaksinformasjon?.fastsettingsmyndighet}
+              value={
+                vedtaksinformasjon?.fastsettingsmyndighet ||
+                "Ingen myndighet satt"
+              }
             >
               <Input
                 {...register("fastsettingsmyndighet")}
@@ -185,8 +218,11 @@ export const ReferanseBody = ({
             </VedtakinfoField>
           </Vedtaksfelter>
         </GridItem>
-        <GridItem>
+        <GridItem minHeight={"450px"}>
           <Referanser
+            deleteInternref={deleteInternref}
+            deleteDokref={deleteDokref}
+            displayMode={displayMode}
             errors={errors}
             register={register}
             dokref={dokref}
@@ -207,7 +243,13 @@ const Referanser = ({
   addDokumentlenke,
   register,
   errors,
+  displayMode,
+  deleteInternref,
+  deleteDokref,
 }: {
+  deleteInternref: (index: number) => void;
+  deleteDokref: (index: number) => void;
+  displayMode: boolean;
   dokref: Referanse[] | undefined;
   internref: Referanse[] | undefined;
   addInternreferanse: (ref: Referanse) => void;
@@ -241,53 +283,45 @@ const Referanser = ({
           <TabPanels width="100%" height="100%">
             <TabPanel height="100%">
               <Column>
-                <ReferanseCardWrapper>
-                  {dokref && dokref.length > 0
-                    ? dokref?.map((ref: Referanse) => (
-                        <ReferanseCard
-                          key={ref.beskrivelse}
-                          referanse={ref}
-                          urlMode={true}
-                          displayMode={false}
-                        />
-                      ))
-                    : "Det finnes ingen dokumenter for denne referansen"}
-                </ReferanseCardWrapper>
-                <ReferanseInput
-                  errors={errors.leggTilDokumentlenke}
-                  pattern={regexUrlPattern}
-                  register={register}
-                  appendFn={addDokumentlenke}
-                  registerName="leggTilDokumentlenke"
-                  tooltipLabel="Tooltip"
-                  placeholder="URL til dokument"
-                  title="Legg til nytt dokument (URL)"
+                <ReferanserPaginated
+                  deleteRef={(index) => deleteDokref(index)}
+                  referanser={dokref}
+                  urlMode={true}
+                  displayMode={displayMode}
                 />
+                {!displayMode && (
+                  <ReferanseInput
+                    errors={errors.leggTilDokumentlenke}
+                    pattern={regexUrlPattern}
+                    register={register}
+                    appendFn={addDokumentlenke}
+                    registerName="leggTilDokumentlenke"
+                    tooltipLabel="Tooltip"
+                    placeholder="URL til dokument"
+                    title="Legg til nytt dokument (URL)"
+                  />
+                )}
               </Column>
             </TabPanel>
             <TabPanel height="100%">
               <Column>
-                <ReferanseCardWrapper>
-                  {internref && internref.length > 0
-                    ? internref?.map((ref: Referanse) => (
-                        <ReferanseCard
-                          key={ref.beskrivelse}
-                          referanse={ref}
-                          urlMode={false}
-                          displayMode={false}
-                        />
-                      ))
-                    : "Det finnes ingen dokumenter for denne referansen"}
-                </ReferanseCardWrapper>
-                <ReferanseInput
-                  errors={errors.leggTilInternreferanse}
-                  register={register}
-                  appendFn={addInternreferanse}
-                  registerName="leggTilInternreferanse"
-                  tooltipLabel="Tooltip"
-                  placeholder="Internreferanse"
-                  title="Legg til ny internreferanse"
+                <ReferanserPaginated
+                  deleteRef={(index) => deleteInternref(index)}
+                  referanser={internref}
+                  urlMode={false}
+                  displayMode={displayMode}
                 />
+                {!displayMode && (
+                  <ReferanseInput
+                    errors={errors.leggTilInternreferanse}
+                    register={register}
+                    appendFn={addInternreferanse}
+                    registerName="leggTilInternreferanse"
+                    tooltipLabel="Tooltip"
+                    placeholder="Internreferanse"
+                    title="Legg til ny internreferanse"
+                  />
+                )}
               </Column>
             </TabPanel>
           </TabPanels>
@@ -297,6 +331,92 @@ const Referanser = ({
   );
 };
 
+const ReferanserPaginated = ({
+  referanser,
+  urlMode,
+  displayMode,
+  deleteRef,
+}: {
+  deleteRef: (index: number) => void;
+  referanser: Referanse[] | undefined;
+  displayMode: boolean;
+  urlMode: boolean;
+}) => {
+  const [page, setPage] = useState(0);
+  const pageSize = displayMode ? 4 : 3;
+  const startIndex = Math.floor(page * pageSize);
+  const displayItems = structuredClone(referanser);
+  const itemsToShow = displayItems?.splice(startIndex, pageSize);
+  const numberOfPages =
+    referanser && referanser.length > 0
+      ? Math.ceil(referanser.length / pageSize)
+      : 1;
+  return (
+    <ReferanseItemsContainer>
+      <ReferanseCardWrapper>
+        {itemsToShow && itemsToShow.length > 0
+          ? itemsToShow?.map((ref: Referanse, index: number) => (
+              <ReferanseCard
+                key={ref.beskrivelse}
+                referanse={ref}
+                urlMode={urlMode}
+                displayMode={displayMode}
+                deleteRef={() => {
+                  deleteRef(page * pageSize + index);
+                }}
+              />
+            ))
+          : "Det finnes ingen dokumenter for denne referansen"}
+      </ReferanseCardWrapper>
+      <PaginationRow>
+        <IconButton
+          aria-label="Forrige side"
+          variant="secondary"
+          size="xs"
+          icon="chevron_left"
+          width="24px"
+          height="24px"
+          onClick={() => {
+            if (page <= 0) return;
+            setPage(page - 1);
+          }}
+        >
+          left
+        </IconButton>
+        <Text>
+          Side {page + 1} av {numberOfPages}
+        </Text>
+        <IconButton
+          width="24px"
+          height="24px"
+          aria-label="Neste side"
+          variant="secondary"
+          size="xs"
+          icon="chevron_right"
+          onClick={() => {
+            if (page + 1 >= numberOfPages) return;
+            setPage(page + 1);
+          }}
+        >
+          right
+        </IconButton>
+      </PaginationRow>
+    </ReferanseItemsContainer>
+  );
+};
+
+const ReferanseItemsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+`;
+
+const PaginationRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+`;
 const ReferanseCardWrapper = styled.div`
   display: flex;
   flex-direction: column;

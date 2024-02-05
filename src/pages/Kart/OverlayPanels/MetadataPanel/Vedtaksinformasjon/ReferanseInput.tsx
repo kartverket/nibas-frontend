@@ -43,7 +43,6 @@ export const ReferanseInput = ({
     element.value = "";
   }
 
-  console.log("default values refinput", defaultValues);
   const appendReferanse = (element: HTMLInputElement) => {
     if (element?.value) {
       appendFn({ beskrivelse: element.value });
@@ -61,6 +60,7 @@ export const ReferanseInput = ({
             if (e.key === "Enter") {
               const element = e.target as HTMLInputElement;
               appendReferanse(element);
+              e.preventDefault();
             }
           }}
         />

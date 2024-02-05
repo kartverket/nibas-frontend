@@ -1,5 +1,4 @@
 import { Feature } from "ol";
-import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Dokref, FeatureProperties, Metadata } from "types/api";
 import { VedtakinfoForm, Referanse } from "./OversiktReferanser";
@@ -43,6 +42,8 @@ const emptyVedtaksinformasjon = {
   hjemmel: "",
   leggTilInternreferanse: undefined,
   leggTilDokumentlenke: undefined,
+  gyldigFra: undefined,
+  gyldigTil: undefined,
 };
 
 const updateFeatureWithNewMetadata = (
@@ -147,15 +148,8 @@ export const useVedtaksinfoForm = (
       );
     }
   };
-  const setFastsettingsdato = (date: string) => {
-    setValue("fastsettingsdato", new Date(date), { shouldDirty: true });
-  };
-  const getFastsettingsdato = () => {
-    return getValues("fastsettingsdato").toDateString();
-  };
+
   return {
-    getFastsettingsdato,
-    setFastsettingsdato,
     isDirty,
     errors,
     updateDraftFromFeature,

@@ -36,8 +36,8 @@ type VedtakinfoForm = {
   dokumentlenker: Referanse[];
   leggTilDokumentlenke?: string;
   fastsettingsdato: Date;
-  gyldigFra: string;
-  gyldigTil: string;
+  gyldigFra: Date | undefined;
+  gyldigTil: Date | undefined;
   fastsettingsmyndighet?: string;
   hjemmel?: string;
   internreferanserKartverket: Referanse[];
@@ -134,9 +134,10 @@ const VedtaksinfoCard = ({
   date: string;
   onClick: () => void;
 }) => {
+  const formattedDate = new Date(date).toLocaleDateString("nb-NO");
   return (
     <VedtaksinfoContent>
-      <Datofelt>{date}</Datofelt>
+      <Datofelt>{formattedDate}</Datofelt>
       <VedtaksinfoTitle>{title}</VedtaksinfoTitle>
       <Button
         onClick={onClick}

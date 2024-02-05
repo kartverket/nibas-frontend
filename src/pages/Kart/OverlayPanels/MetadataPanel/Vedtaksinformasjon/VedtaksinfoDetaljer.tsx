@@ -6,6 +6,7 @@ import {
   ModalContent,
   ModalHeader,
   Text,
+  useToast,
 } from "@kvib/react";
 import { Feature } from "ol";
 import { ReferanseBody } from "./ReferanseBody";
@@ -17,9 +18,8 @@ import {
 } from "./OversiktReferanser";
 import { styled } from "styled-components";
 import { mapFromFormToApi, useVedtaksinfoForm } from "./useVedtaksinfoForm";
-import { Dokref, Metadata } from "types/api";
-import { useEffect, useState } from "react";
-import { error } from "console";
+import { Metadata } from "types/api";
+import { useState } from "react";
 
 export const VedtaksinfoDetaljer = ({
   isOpen,
@@ -48,22 +48,36 @@ export const VedtaksinfoDetaljer = ({
     handleSubmit,
     updateDraftFromFeature,
     errors,
-    setFastsettingsdato,
-    getFastsettingsdato,
     control,
   } = useVedtaksinfoForm(feature, selectedVedtaksinfoIndex);
 
+  const deleteDokref = (index: number) => {
+    const dokrefCopy = structuredClone(dokref);
+    dokrefCopy?.splice(index, 1);
+    setDokref(dokrefCopy);
+  };
+
+  const deleteInternref = (index: number) => {
+    const internrefCopy = structuredClone(internref);
+    internrefCopy?.splice(index, 1);
+    setInternref(internrefCopy);
+  };
   const cleanForm = () => {
     reset();
     setDokref(undefined);
     setInternref(undefined);
   };
+  const toast = useToast();
 
   const onSubmit = (data: VedtakinfoForm) => {
-    console.log("DATA ", data);
     if (isDirty) {
+      toast({
+        status: "success",
+        title: `Vedtaksinformasjonen er ${
+          selectedVedtaksinfoIndex === undefined ? "lagt til" : "oppdatert"
+        }`,
+      });
       const postValues = mapFromFormToApi(data, dokref, internref);
-      console.log("Post values", postValues);
       updateDraftFromFeature(postValues);
     }
     cleanForm();
@@ -94,17 +108,16 @@ export const VedtaksinfoDetaljer = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={closeModal} isCentered size={"5xl"}>
+    <Modal isOpen={isOpen} onClose={closeModal} isCentered size={"6xl"}>
       <ModalContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <BorderBottom>
             <ModalHeader>Se eller endre på vedtaksinformasjon</ModalHeader>
           </BorderBottom>
           <ModalCloseButton />
-          <ModalBody>
+          <ModalBody minHeight={"500px"}>
             <ReferanseBody
               control={control}
-              getFastsettingsdato={getFastsettingsdato}
               errors={errors}
               feature={feature}
               displayMode={displayMode}
@@ -113,8 +126,9 @@ export const VedtaksinfoDetaljer = ({
               internref={internref}
               setDokref={setDokref}
               setInternref={setInternref}
+              deleteInternref={deleteInternref}
+              deleteDokref={deleteDokref}
               vedtaksinfoIndex={selectedVedtaksinfoIndex}
-              setFastsettingsdato={setFastsettingsdato}
             />
           </ModalBody>
 
@@ -152,6 +166,7 @@ const VedtaksFooter = ({
       <EndreVedtakFooter
         onClose={onClose}
         onArchive={() => {
+          // TODO: Endepunkt må opprettes
           console.log("archived");
         }}
       />
@@ -165,22 +180,35 @@ const VisVedtakFooter = ({
   toggleEndreVedtak: () => void;
 }) => {
   return (
-    <ButtonsContainer>
-      <Button mr={3} onClick={() => toggleEndreVedtak()}>
-        Endre vedtaksinformasjon
-      </Button>
-    </ButtonsContainer>
+    <>
+      <ButtonsContainer />
+      <ButtonsContainer>
+        <Button size="md" onClick={() => toggleEndreVedtak()}>
+          Endre vedtaksinformasjon
+        </Button>
+      </ButtonsContainer>
+    </>
   );
 };
 
 const NyttVedtakFooter = ({ onClose }: { onClose: () => void }) => {
   return (
-    <ButtonsContainer>
-      <Button colorScheme="blue" mr={3} onClick={onClose}>
-        Avbryt
-      </Button>
-      <Button type="submit">Legg til vedtaksinformasjon</Button>
-    </ButtonsContainer>
+    <>
+      <ButtonsContainer />
+      <ButtonsContainer>
+        <Button
+          variant="tertiary"
+          colorScheme="blue"
+          size="md"
+          onClick={onClose}
+        >
+          Avbryt
+        </Button>
+        <Button type="submit" size="md">
+          Legg til vedtaksinformasjon
+        </Button>
+      </ButtonsContainer>
+    </>
   );
 };
 
@@ -197,10 +225,17 @@ const EndreVedtakFooter = ({
         <Text onClick={onArchive}>Arkiver</Text>
       </ButtonsContainer>
       <ButtonsContainer>
-        <Button colorScheme="blue" mr={3} onClick={onClose}>
+        <Button
+          colorScheme="blue"
+          size="md"
+          onClick={onClose}
+          variant="tertiary"
+        >
           Avbryt
         </Button>
-        <Button type="submit">Bekreft</Button>
+        <Button type="submit" size="md">
+          Bekreft
+        </Button>
       </ButtonsContainer>
     </>
   );

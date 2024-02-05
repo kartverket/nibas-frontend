@@ -1,24 +1,36 @@
-import { Card, Icon, Link, Text } from "@kvib/react";
+import { Button, Card, Icon, IconButton, Link, Text } from "@kvib/react";
 import { Referanse } from "./OversiktReferanser";
-import styled from "styled-components";
+import { styled } from "styled-components";
 
 export const ReferanseCard = ({
   referanse,
   displayMode,
   urlMode,
+  deleteRef,
 }: {
+  deleteRef: () => void;
   referanse: Referanse;
   displayMode: boolean;
   urlMode: boolean;
 }) => {
-  // TODO: Hvorfor er referanse.beskrivelse undefined når man legger til noe?
+  console.log("display mode", displayMode);
   return (
     <StyledCard>
       <Row>
         <Text colorScheme="gray" noOfLines={1} textOverflow="clip">
           {referanse?.beskrivelse}
         </Text>
-        {urlMode && <Link href={referanse?.beskrivelse} />}
+        {urlMode && displayMode && <Link href={referanse?.beskrivelse} />}
+        {!displayMode && (
+          <IconButton
+            aria-label="Slett referanse"
+            colorScheme="red"
+            icon="delete"
+            size="md"
+            variant="tertiary"
+            onClick={() => deleteRef()}
+          />
+        )}
       </Row>
     </StyledCard>
   );
