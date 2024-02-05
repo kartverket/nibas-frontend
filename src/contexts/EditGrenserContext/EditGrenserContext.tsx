@@ -88,7 +88,14 @@ export const useEditAllGrenser = () => {
     throw new Error("useEditAllGrenser must be used within a EditGrenserProvider");
   }
 
-  return context;
+  const { alleKretserStatuser, resetAndClearAllLayers, setOtherEditingTypes, getCurrentlyEditingType } = context;
+
+  return {
+    alleKretserStatuser,
+    resetAndClearAllLayers,
+    setOtherEditingTypes,
+    getCurrentlyEditingType,
+  };
 };
 
 export const useEditGrenser = (kretsType: EditingType) => {
@@ -114,6 +121,7 @@ export const useEditGrenser = (kretsType: EditingType) => {
   };
 
   return {
+    alleKretserStatuser,
     kretsStatuser,
     setKretsStatusForKretstype,
     setMultipleValues,

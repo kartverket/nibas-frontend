@@ -6,7 +6,6 @@ import { useSelectStyles } from "./useSelectStyles";
 import { getArchiveLayerStyle, grenseStyles } from "utils/map/layerStyles";
 import useArchiveStyles from "./useArchiveStyles";
 import { FeatureLike } from "ol/Feature";
-import { editableBorderTypes } from "hooks/layers/constants";
 
 export const FeatureStyleContext = createContext<FeatureStyleContextValue | undefined>(undefined);
 
@@ -141,16 +140,12 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     return false;
   };
 
-  const featureIsEditable = (feature: FeatureLike) =>
-    editableBorderTypes.includes(feature.get("type")) && !featureIsArchived(feature);
-
   const value = {
     selectedPoint,
     selectedFeatures,
     selectFeatures,
     clearSelection,
     featureIsArchived,
-    featureIsEditable,
     selectPointOnFeature,
     setAndSaveUtkastFeatures,
     setAndSaveSammenslaaingsFeatures,
