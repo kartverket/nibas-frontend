@@ -1,4 +1,3 @@
-import { Divider, IconButton } from "@kvib/react";
 import { styled } from "styled-components";
 import { map } from "./constants";
 import { useEffect } from "react";
@@ -38,50 +37,48 @@ const Kartinformasjon = () => {
 
   return (
     <>
+      <ScaleIndicator id="scale-line" />
       <Container>
-        <Section>
-          <IconButton
-            size="sm"
-            aria-label="Koordinatsystem"
-            variant="secondary"
-            colorScheme="gray"
-            icon="language"
-            isDisabled
-          />
-          <CoordinateSystem>EUREF89 UTM33</CoordinateSystem>
-          <Position id="mouse-position" />
-        </Section>
-        <Divider orientation="vertical" />
+        <Position id="mouse-position" />
         <Scale id="scale-bar" />
       </Container>
-      <ScaleIndicator id="scale-line" />
     </>
   );
 };
 
 const Container = styled.div`
   position: absolute;
-  top: 16px;
-  left: 16px;
+  bottom: 0;
+  left: 0;
 
   display: flex;
+  padding: 2px 8px;
+  gap: 12px;
 
   background: white;
   box-shadow: var(--kvib-shadows-base);
+  font-size: var(--kvib-fontSizes-sm);
   border-radius: 8px;
-  margin-bottom: auto;
+  border-top-right-radius: 0;
+  border-bottom-left-radius: 0;
   z-index: ${zindex.farBack};
 `;
 
-const Section = styled.section`
+const ScaleIndicator = styled.span`
+  position: absolute;
+  bottom: 32px;
+  left: 8px;
+  z-index: ${zindex.farBack};
+
+  border: 2px solid var(--kvib-colors-gray-700);
+  border-top: none;
+  text-align: center;
+`;
+
+const Scale = styled.section`
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px;
-`;
-
-const Scale = styled(Section)`
-  border-left: 1px solid var(--kvib-colors-chakra-border-color);
 
   // Vi hindrer OpenLayers sin innebygde styling fra å sette bredde ved å bare ha inline-elementer
   .ol-scale-bar-inner {
@@ -97,27 +94,12 @@ const Scale = styled(Section)`
   }
 `;
 
-const CoordinateSystem = styled.span`
-  color: var(--kvib-colors-gray-500);
-`;
-
 const Position = styled.span`
   color: var(--kvib-colors-black);
 
   div {
     white-space: pre;
   }
-`;
-
-const ScaleIndicator = styled.span`
-  position: absolute;
-  bottom: 16px;
-  left: 16px;
-  z-index: ${zindex.farBack};
-
-  border: 2px solid var(--kvib-colors-gray-900);
-  border-top: none;
-  text-align: center;
 `;
 
 export default Kartinformasjon;

@@ -1,5 +1,5 @@
 import { useHistory } from "contexts/HistoryContext";
-import HeaderButton from "./HeaderButton";
+import HeaderButton, { HeaderSection } from "./HeaderButton";
 import { styled } from "styled-components";
 import { useUtkast } from "contexts/UtkastContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
@@ -24,7 +24,7 @@ const HeaderHistoryOperations = () => {
   if (!utkast) return null;
 
   return (
-    <Section>
+    <HeaderSection>
       <HeaderButton
         label="Angre"
         icon="undo"
@@ -64,14 +64,8 @@ const HeaderHistoryOperations = () => {
         }}
       />
       <EndringsloggModal isOpen={isOpen} onClose={onClose} utkast={utkast} />
-    </Section>
+    </HeaderSection>
   );
 };
-
-const Section = styled.section`
-  display: flex;
-  align-items: center;
-  gap: 16px;
-`;
 
 export default HeaderHistoryOperations;

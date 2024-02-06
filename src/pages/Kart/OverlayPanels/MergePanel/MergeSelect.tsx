@@ -2,7 +2,7 @@ import { forwardRef } from "react";
 import { styled } from "styled-components";
 import { StemmekretsResponse } from "types/api";
 import { ValidationError } from "components/Input";
-import { Button, FormControl, FormErrorMessage, FormLabel, Select, SelectProps } from "@kvib/react";
+import { CloseButton, FormControl, FormErrorMessage, FormLabel, Select, SelectProps } from "@kvib/react";
 
 const MergeSelectWrapper = styled(FormControl)`
   display: grid;
@@ -19,7 +19,7 @@ const MergeSelectErrorMessage = styled(FormErrorMessage)`
   grid-area: error;
 `;
 
-const RemoveButton = styled(Button)`
+const RemoveButton = styled(CloseButton)`
   grid-area: fjern;
 `;
 
@@ -47,11 +47,7 @@ export const MergeSelect = forwardRef<HTMLSelectElement, MergeSelectProps>(
           ))}
         </Select>
       </div>
-      {showRemoveButton && (
-        <RemoveButton variant="ghost" onClick={onRemove}>
-          Fjern
-        </RemoveButton>
-      )}
+      {showRemoveButton && <RemoveButton variant="ghost" onClick={onRemove} />}
       <MergeSelectErrorMessage>{validationError?.message}</MergeSelectErrorMessage>
     </MergeSelectWrapper>
   ),

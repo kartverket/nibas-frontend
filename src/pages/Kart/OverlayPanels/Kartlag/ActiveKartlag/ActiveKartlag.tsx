@@ -22,16 +22,14 @@ const ActiveKartlag = ({ layer, index, maxIndex }: Props) => {
         <Container>
           <ArrowButtons>
             <IconButton
-              variant="secondary"
-              colorScheme="gray"
+              variant="ghost"
               icon="arrow_upward"
               aria-label="Flytt kartlag opp"
               onClick={() => moveLayer("up", mappedLayer.sourceId)}
               isDisabled={index === 0}
             />
             <IconButton
-              variant="secondary"
-              colorScheme="gray"
+              variant="ghost"
               icon="arrow_downward"
               aria-label="Flytt kartlag ned"
               onClick={() => moveLayer("down", mappedLayer.sourceId)}
