@@ -10,7 +10,7 @@ import Style, { StyleFunction } from "ol/style/Style";
 import { map } from "pages/Kart/constants";
 import Text from "ol/style/Text";
 import Point from "ol/geom/Point";
-import { editSource, editableBorderTypes } from "hooks/layers/constants";
+import { editSource } from "hooks/layers/constants";
 import { GrenseId, GrenseType } from "hooks/layers/types";
 import { isFeatureEditable } from "utils/features";
 
