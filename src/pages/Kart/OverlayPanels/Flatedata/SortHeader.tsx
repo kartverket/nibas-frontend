@@ -11,7 +11,7 @@ type Props = {
 const SortHeader = ({ children, onClick, isActivated, isReversed }: Props) => {
   const getRightIcon = () => {
     if (!isActivated) {
-      return "unfold_more";
+      return undefined;
     }
     return isReversed ? "keyboard_arrow_up" : "keyboard_arrow_down";
   };

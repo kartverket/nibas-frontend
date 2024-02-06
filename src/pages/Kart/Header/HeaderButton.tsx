@@ -1,22 +1,40 @@
-import { Button, MaterialSymbol, Tooltip } from "@kvib/react";
-import { TooltipBody } from "../Toolbar/CustomTooltip";
-import { Shortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
+import { Button, ButtonProps, IconButton, MaterialSymbol, Tooltip } from "@kvib/react";
+import { CustomTooltipProps, TooltipBody } from "../Toolbar/CustomTooltip";
+import { styled } from "styled-components";
 
 type HeaderButtonProps = {
   icon: MaterialSymbol;
-  label: string;
   onClick?: () => void;
-  labelIsHidden?: boolean;
   isDisabled?: boolean;
-  tooltip: { text: string; shortcut?: Shortcut };
-};
+  tooltip: CustomTooltipProps;
+  label: string;
+  isLabelHidden?: boolean;
+} & ButtonProps;
 
-const HeaderButton = ({ icon, label, labelIsHidden, onClick, isDisabled, tooltip }: HeaderButtonProps) => (
+const HeaderButton = ({ icon, label, onClick, isDisabled, tooltip, isLabelHidden, ...props }: HeaderButtonProps) => (
   <Tooltip hasArrow label={<TooltipBody text={tooltip.text} shortcut={tooltip.shortcut} />} isDisabled={!tooltip}>
-    <Button size="xs" variant="ghost" leftIcon={icon} aria-label={label} onClick={onClick} isDisabled={isDisabled}>
-      {!labelIsHidden && label}
-    </Button>
+    {isLabelHidden ? (
+      <IconButton
+        size="sm"
+        variant="ghost"
+        icon={icon}
+        aria-label={label}
+        onClick={onClick}
+        isDisabled={isDisabled}
+        {...props}
+      />
+    ) : (
+      <Button size="sm" variant="ghost" leftIcon={icon} onClick={onClick} isDisabled={isDisabled} {...props}>
+        {label}
+      </Button>
+    )}
   </Tooltip>
 );
+
+export const HeaderSection = styled.section`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
 
 export default HeaderButton;

@@ -34,8 +34,7 @@ const KartlagInner = ({ mappedLayer, isMainLayer }: Props) => {
     <Container>
       <span>{mappedLayer.title}</span>
       <IconButton
-        colorScheme="gray"
-        variant="secondary"
+        variant="ghost"
         icon={isVisible ? "visibility" : "visibility_off"}
         aria-label={isVisible ? `Fjern ${mappedLayer.title}` : `Vis ${mappedLayer.title}`}
         onClick={handleToggle}
