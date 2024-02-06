@@ -12,6 +12,7 @@ import Text from "ol/style/Text";
 import Point from "ol/geom/Point";
 import { editSource, editableBorderTypes } from "hooks/layers/constants";
 import { GrenseId, GrenseType } from "hooks/layers/types";
+import { isFeatureEditable } from "utils/features";
 
 const getNonEndpointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
   const featureGeometry = feature.getGeometry();
@@ -146,7 +147,7 @@ const grenseStyleFromType = (grenseType: GrenseType, archived: boolean): Style[]
 };
 
 export const getLayerStyle = (feature: Feature<Geometry> | RenderFeature, grenseId: GrenseId, archived: boolean) => {
-  if (grenseId == "edit" && editableBorderTypes.includes(feature.get("type"))) {
+  if (grenseId == "edit" && isFeatureEditable(feature, archived)) {
     return grenseStyles.edit;
   } else {
     return grenseStyleFromType(feature.getProperties().type as GrenseType, archived);
