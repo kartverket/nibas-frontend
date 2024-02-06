@@ -12,7 +12,6 @@ import { Feature, MapBrowserEvent } from "ol";
 import { useHistory } from "contexts/HistoryContext";
 import { getTempFeatureId } from "./tempFeatureIdUtil";
 import { createNyGrenseHistoryChanges } from "./historyUtil";
-import { setDefaultFeatureProperties } from "utils/features";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import LineString from "ol/geom/LineString";
@@ -20,6 +19,7 @@ import { findNearbyVertexOnFeature } from "utils/map";
 import { useGetFeatures } from "./utils";
 import { FeatureLike } from "ol/Feature";
 import { Coordinate, equals } from "ol/coordinate";
+import { setDefaultFeatureProperties } from "utils/features";
 
 const useDraw = () => {
   const { activeTool } = useToolbar();
