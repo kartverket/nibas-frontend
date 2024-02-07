@@ -8,7 +8,7 @@ import { useCallback, useEffect } from "react";
 import { GrenseEntry, HistoryChange, HistoryDirection, MinimalGrense, useHistory } from "contexts/HistoryContext";
 import { SelectedPoint, useFeatureStyle } from "contexts/FeatureStyleContext";
 import Point from "ol/geom/Point";
-import { Button, useToast } from "@kvib/react";
+import { Button, Spacer, useToast } from "@kvib/react";
 import { editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
 import { useToolbar } from "contexts/ToolbarContext";
@@ -22,7 +22,7 @@ const Form = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 24px;
   padding-bottom: 16px;
 `;
 
@@ -179,7 +179,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
 
   return (
     <AbsolutePanel $isOpen={isOpen} className={className}>
-      <PanelHeader onClose={closeOverlayPanel} size="sm">
+      <PanelHeader onClose={closeOverlayPanel} isSmall>
         Flytt punkt med koordinater
       </PanelHeader>
       <Form onSubmit={handleSubmit(movePoint)}>
@@ -201,18 +201,21 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
             {...register("east")}
           />
         </InputRow>
-        <Button type="submit" isDisabled={!isDirty}>
-          Flytt punkt til koordinater
-        </Button>
-        <Button
-          variant="tertiary"
-          onClick={() => {
-            reset();
-            resetTool();
-          }}
-        >
-          Avbryt
-        </Button>
+        <InputRow>
+          <Spacer />
+          <Button
+            variant="tertiary"
+            onClick={() => {
+              reset();
+              resetTool();
+            }}
+          >
+            Avbryt
+          </Button>
+          <Button type="submit" isDisabled={!isDirty}>
+            Flytt punkt til koordinater
+          </Button>
+        </InputRow>
       </Form>
     </AbsolutePanel>
   );

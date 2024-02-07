@@ -5,7 +5,7 @@ import useSearch from "hooks/useSearch";
 import { GrunnkretsResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { Panel, PanelHeader, PanelProps } from "../../Panel";
+import { ModalPanel, PanelHeader, PanelProps } from "../../Panel";
 import { KretsTable } from "../KretsTable";
 import { useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import Input from "components/Input";
@@ -40,7 +40,7 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
   return (
     <Modal isOpen={isOpen} onClose={closeOverlayModal} scrollBehavior="inside">
       <ModalOverlay />
-      <ModalContent as={Panel} $isOpen={isOpen} className={className}>
+      <ModalContent as={ModalPanel} $isOpen={isOpen} className={className}>
         <PanelHeader onClose={closeOverlayModal}>
           Flateinformasjon for {getNavnInSpraak(flatedata?.navn, "nor")}
         </PanelHeader>

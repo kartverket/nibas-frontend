@@ -25,11 +25,11 @@ const HeaderHome = () => {
   return (
     <>
       <HeaderButton
-        label="Utkast"
+        label="Startside"
         icon="home"
         onClick={handleHome}
-        labelIsHidden
         tooltip={{ text: "Gå tilbake til startsiden" }}
+        isLabelHidden={true}
       />
       <AlertModal
         status="warning"

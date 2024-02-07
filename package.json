@@ -5,7 +5,7 @@
   "type": "module",
   "dependencies": {
     "@kartverket/frontend-aut-lib": "0.0.29",
-    "@kvib/react": "^3.4.0",
+    "@kvib/react": "^3.5.1",
     "date-fns": "^2.30.0",
     "lodash.get": "^4.4.2",
     "material-symbols": "^0.14.1",
