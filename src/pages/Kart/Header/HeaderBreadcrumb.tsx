@@ -1,7 +1,7 @@
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, Icon, Text, useDisclosure } from "@kvib/react";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, Hide, Icon, Text, useDisclosure } from "@kvib/react";
 import { useUtkast } from "contexts/UtkastContext";
 import { styled } from "styled-components";
-import HeaderButton from "./HeaderButton";
+import HeaderButton, { HeaderSection } from "./HeaderButton";
 import UtkastEndreModal from "components/Modals/UtkastEndreModal";
 import HeaderHome from "./HeaderHome";
 import { useNavigate } from "react-router-dom";
@@ -33,7 +33,7 @@ const HeaderBreadcrumb = () => {
   if (!utkast) return null;
 
   return (
-    <Section>
+    <HeaderSection>
       <HeaderHome />
       <Breadcrumb separator={<Separator icon="chevron_right" />} spacing={1}>
         <BreadcrumbItem>
@@ -41,9 +41,11 @@ const HeaderBreadcrumb = () => {
             <BreadcrumbLink onClick={handleHome}>Utkast</BreadcrumbLink>
           </CustomTooltip>
         </BreadcrumbItem>
-        <BreadcrumbItem>
-          <Crumb>{utkast.endringstype}</Crumb>
-        </BreadcrumbItem>
+        <Hide below="xl">
+          <BreadcrumbItem>
+            <Crumb>{utkast.endringstype}</Crumb>
+          </BreadcrumbItem>
+        </Hide>
         <BreadcrumbItem>
           <Text noOfLines={1}>{utkast.navn}</Text>
         </BreadcrumbItem>
@@ -52,7 +54,7 @@ const HeaderBreadcrumb = () => {
         label="Rediger utkast"
         icon="edit_note"
         onClick={onOpen}
-        labelIsHidden
+        isLabelHidden={true}
         tooltip={{ text: "Rediger detaljene til dette utkastet" }}
       />
       <UtkastEndreModal isOpen={isOpen} onClose={onClose} utkast={utkast} />
@@ -71,15 +73,9 @@ const HeaderBreadcrumb = () => {
           onClick: closeModal,
         }}
       />
-    </Section>
+    </HeaderSection>
   );
 };
-
-const Section = styled.section`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
 
 const Separator = styled(Icon)`
   line-height: 30px;
