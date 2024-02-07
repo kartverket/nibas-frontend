@@ -10,8 +10,8 @@ export const getTempFeatureId = (): string => {
   return id;
 };
 
-export const isTempFeatureId = (id: string | null | undefined): boolean => {
-  if (id && id.length > 0) {
+export const isTempFeatureId = (id: string | number | null | undefined): boolean => {
+  if (id && typeof id === "string" && id.length > 0) {
     return id.includes(tempIdPrefix);
   }
 
