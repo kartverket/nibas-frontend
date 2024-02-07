@@ -38,13 +38,7 @@ const EditAndSaveButton = ({
     {isEditing ? (
       <CombinedButton>
         <IconButton aria-label="Lagre endringer" onClick={onSubmit} icon="check" isDisabled={!canSave} size={size} />
-        <IconButton
-          colorScheme="gray"
-          aria-label="Forkast endringer"
-          onClick={toggleEditing}
-          icon="close"
-          size={size}
-        />
+        <IconButton variant="ghost" aria-label="Forkast endringer" onClick={toggleEditing} icon="close" size={size} />
       </CombinedButton>
     ) : (
       <EditButton
@@ -52,7 +46,6 @@ const EditAndSaveButton = ({
         aria-label="Åpne redigering"
         onClick={toggleEditing}
         variant="secondary"
-        colorScheme="gray"
         size={size}
       >
         Rediger
