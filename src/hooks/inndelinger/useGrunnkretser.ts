@@ -30,3 +30,26 @@ export const useKommuneGrunnkretser = (kommuneId: string) => {
     grunnkretsFetcher,
   );
 };
+
+export const useToKommunerGrunnkretser = (
+  kommunerId: (string | undefined)[],
+) => {
+  const { data: grunnkretserA, isLoading: k1Loading } = useNibasApi(
+    kommunerId[0] ? "/v1/kommuner/{id}/grunnkretser" : null,
+    {
+      id: kommunerId[0] as string,
+    },
+  );
+
+  const { data: grunnkretserB, isLoading: k2Loading } = useNibasApi(
+    kommunerId[1] ? "/v1/kommuner/{id}/grunnkretser" : null,
+    {
+      id: kommunerId[1] as string,
+    },
+  );
+  return {
+    kommuneA: grunnkretserA,
+    kommuneB: grunnkretserB,
+    grunnkretserIsLoading: k1Loading || k2Loading,
+  };
+};
