@@ -7,8 +7,8 @@ import { MetadataField } from "./MetadataField";
 import { getDateInFriendlyString } from "./utils";
 import useNibasApi from "hooks/useNibasApi";
 import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
-import { TilhorighetField } from "./TilhorighetField";
 import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
+import { TilhorighetField } from "./TilhorighetField";
 
 export type Inputs = {
   uuid: string;
@@ -55,15 +55,6 @@ const MetadataGenerelt = ({ feature }: Props) => {
 
   const getMaalemetodeFromId = (maalemetoder: KodelisteRespons, id: string) =>
     maalemetoder.items.find((item) => item.id === id)?.label ?? null;
-
-  const grenseType = properties.type as GrenseType;
-
-  const tilhorighetToChange =
-    grenseType === "Grunnkretsgrense" || grenseType === "Delområdegrense"
-      ? "grunnkretser"
-      : grenseType === "Stemmekretsgrense"
-        ? "stemmekretser"
-        : null;
 
   return (
     <Container>
@@ -121,6 +112,8 @@ const MetadataGenerelt = ({ feature }: Props) => {
         }}
         renderItem={(register) => <Datepicker {...register} />}
       />
+
+      <TilhorighetField feature={feature} />
 
       <MetadataField
         feature={feature}
@@ -199,7 +192,6 @@ const MetadataGenerelt = ({ feature }: Props) => {
         fieldLabel="Ekstra informasjon"
         renderItem={(register) => <Textarea placeholder="Fyll inn ekstra informasjon" {...register} />}
       />
-      {tilhorighetToChange && <TilhorighetField feature={feature} tilhorighetToChange={tilhorighetToChange} />}
     </Container>
   );
 };
