@@ -855,6 +855,7 @@ export interface components {
       /** @description Stemmekretsnummeret til stemmekretsen */
       stemmekretsnummer: string;
       kommunenummer: components["schemas"]["Kommunenummer"];
+      kommuneIdentifikator: components["schemas"]["ObjektIdentifikator"];
       /** @description Tellekretsnummer til stemmekretsen */
       tellekretsnummer?: string;
       /** @description Tellekretsnavn til stemmekretsen */
@@ -937,6 +938,7 @@ export interface components {
       /** @description URL til full representasjon av stemmekrets */
       href: string;
       kommunenummer: components["schemas"]["Kommunenummer"];
+      kommuneIdentifikator: components["schemas"]["ObjektIdentifikator"];
       /**
        * Format: int32
        * @description Antall publiserte framtidige gyldige versjoner.
@@ -956,6 +958,7 @@ export interface components {
       /** @description URL til full representasjon av grunnkretsen */
       href: string;
       kommunenummer: components["schemas"]["Kommunenummer"];
+      kommuneIdentifikator: components["schemas"]["ObjektIdentifikator"];
       /** @description Nummeret til grunnkretsen */
       grunnkretsnummer: string;
       /**
@@ -963,6 +966,11 @@ export interface components {
        * @description Antall publiserte framtidige gyldige versjoner.
        */
       antallFramtidigeVersjoner: number;
+      /**
+       * Format: int32
+       * @description Teknisk versjon for å støtte samhandling og redigering
+       */
+      version: number;
     };
     /** @description Liste av kodeliste-elementer. */
     KodelisteItem: {
@@ -1008,6 +1016,7 @@ export interface components {
        */
       datafangstdato?: string;
       kommunenummer: components["schemas"]["Kommunenummer"];
+      kommuneIdentifikator: components["schemas"]["ObjektIdentifikator"];
       /** @description Typen endring som ble gjort på objektet */
       endringstype?: string;
       features: components["schemas"]["FeatureCollection"];
@@ -1092,6 +1101,12 @@ export interface operations {
           "application/json": components["schemas"]["UtkastResponse"];
         };
       };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
       /** Not Found */
       404: {
         content: {
@@ -1151,6 +1166,12 @@ export interface operations {
     responses: {
       /** Successful operation */
       200: unknown;
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
       /** Not Found */
       404: {
         content: {
@@ -1164,6 +1185,12 @@ export interface operations {
     responses: {
       /** Successful operation */
       200: unknown;
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
     };
   };
   /** Henter alle utkast i status Opprettet sortert på navn. */
@@ -1175,6 +1202,12 @@ export interface operations {
           "application/json": components["schemas"]["UtkastRef"][];
         };
       };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
     };
   };
   /** Oppretter et utkast og returnerer id. */
@@ -1184,6 +1217,12 @@ export interface operations {
       201: {
         content: {
           "application/json": string;
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
         };
       };
     };
@@ -1233,6 +1272,12 @@ export interface operations {
     responses: {
       /** Successful operation */
       200: unknown;
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
     };
     requestBody: {
       content: {
@@ -1259,6 +1304,12 @@ export interface operations {
           "application/json": components["schemas"]["StemmekretsResponse"][];
         };
       };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
     };
   };
   /** Henter stemmekrets med gitt id */
@@ -1278,6 +1329,12 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["StemmekretsResponse"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
         };
       };
       /** Not Found */
@@ -1307,6 +1364,12 @@ export interface operations {
           "application/json": components["schemas"]["FeatureCollection"];
         };
       };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
       /** Not Found */
       404: {
         content: {
@@ -1330,6 +1393,12 @@ export interface operations {
           "application/json": components["schemas"]["NasjonRef"][];
         };
       };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
     };
   };
   /** Henter nasjon med gitt id */
@@ -1349,6 +1418,12 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["NasjonRef"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
         };
       };
       /** Not Found */
@@ -1378,6 +1453,12 @@ export interface operations {
           "application/json": components["schemas"]["FeatureCollection"];
         };
       };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
       /** Not Found */
       404: {
         content: {
@@ -1403,6 +1484,12 @@ export interface operations {
           "application/json": components["schemas"]["KommuneRef"][];
         };
       };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
     };
   };
   /** Henter kommune med gitt id */
@@ -1422,6 +1509,12 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["KommuneResponse"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
         };
       };
       /** Not Found */
@@ -1450,6 +1543,12 @@ export interface operations {
           "application/json": components["schemas"]["StemmekretsRef"][];
         };
       };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
     };
   };
   /** Henter alle grunnkretser som tilhører en kommune. */
@@ -1469,6 +1568,12 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["GrunnkretsRef"][];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
         };
       };
     };
@@ -1492,6 +1597,12 @@ export interface operations {
           "application/json": components["schemas"]["FeatureCollection"];
         };
       };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
       /** Not Found */
       404: {
         content: {
@@ -1508,6 +1619,12 @@ export interface operations {
           "application/json": components["schemas"]["KodelisteRespons"];
         };
       };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
     };
   };
   fetchLandkoder: {
@@ -1516,6 +1633,12 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["KodelisteRespons"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
         };
       };
     };
@@ -1528,6 +1651,12 @@ export interface operations {
           "application/json": components["schemas"]["KodelisteRespons"];
         };
       };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
     };
   };
   fetchGrensetyper: {
@@ -1538,6 +1667,12 @@ export interface operations {
           "application/json": components["schemas"]["KodelisteRespons"];
         };
       };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
     };
   };
   fetchFylkesnumre: {
@@ -1546,6 +1681,12 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["KodelisteRespons"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
         };
       };
     };
@@ -1569,6 +1710,12 @@ export interface operations {
           "application/json": components["schemas"]["GrunnkretsResponse"][];
         };
       };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
     };
   };
   /** Henter grunnkrets med gitt id */
@@ -1588,6 +1735,12 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["GrunnkretsResponse"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
         };
       };
       /** Not Found */
@@ -1617,6 +1770,12 @@ export interface operations {
           "application/json": components["schemas"]["FeatureCollection"];
         };
       };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
       /** Not Found */
       404: {
         content: {
@@ -1644,6 +1803,12 @@ export interface operations {
           "application/json": components["schemas"]["Feature"];
         };
       };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
       /** Not Found */
       404: {
         content: {
@@ -1667,6 +1832,12 @@ export interface operations {
           "application/json": components["schemas"]["FylkeRef"][];
         };
       };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
     };
   };
   /** Henter fylke med gitt id */
@@ -1686,6 +1857,12 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["FylkeResponse"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
         };
       };
       /** Not Found */
@@ -1715,6 +1892,12 @@ export interface operations {
           "application/json": components["schemas"]["FeatureCollection"];
         };
       };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
       /** Not Found */
       404: {
         content: {
@@ -1738,6 +1921,12 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["KretsResponse"][];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
         };
       };
       /** Not Found */
@@ -1767,6 +1956,12 @@ export interface operations {
           "application/json": components["schemas"]["StemmekretsResponse"];
         };
       };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
       /** Not Found */
       404: {
         content: {
@@ -1794,6 +1989,12 @@ export interface operations {
           "application/json": components["schemas"]["FeatureCollection"];
         };
       };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
       /** Not Found */
       404: {
         content: {
@@ -1819,6 +2020,12 @@ export interface operations {
           "application/json": components["schemas"]["KommuneRef"][];
         };
       };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
     };
   };
   /** Henter alle stemmekretser med detaljer for gitt kommunenummer. Denne brukes for uthenting av data til dataplattform. */
@@ -1838,6 +2045,12 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["KretsResponse"][];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
         };
       };
       /** Not Found */
@@ -1867,6 +2080,12 @@ export interface operations {
           "application/json": components["schemas"]["KretsResponse"][];
         };
       };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
       /** Not Found */
       404: {
         content: {
@@ -1892,6 +2111,12 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["KretsResponse"][];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
         };
       };
       /** Not Found */
@@ -1921,6 +2146,12 @@ export interface operations {
           "application/json": components["schemas"]["KretsResponse"][];
         };
       };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
       /** Not Found */
       404: {
         content: {
@@ -1948,6 +2179,12 @@ export interface operations {
           "application/json": components["schemas"]["KommuneResponse"];
         };
       };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
       /** Not Found */
       404: {
         content: {
@@ -1971,6 +2208,12 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["KretsResponse"][];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
         };
       };
       /** Not Found */
@@ -1999,6 +2242,12 @@ export interface operations {
           "application/json": components["schemas"]["FeatureCollection"];
         };
       };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
       /** Not Found */
       404: {
         content: {
@@ -2022,6 +2271,12 @@ export interface operations {
           "application/json": components["schemas"]["FylkeRef"][];
         };
       };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
     };
   };
   /** Henter fylke med gitt id */
@@ -2043,6 +2298,12 @@ export interface operations {
           "application/json": components["schemas"]["FylkeResponse"];
         };
       };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
       /** Not Found */
       404: {
         content: {
@@ -2058,6 +2319,12 @@ export interface operations {
       200: {
         content: {
           "application/json": components["schemas"]["AuthZStatusResponse"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
         };
       };
       /** Bruker er ikke autorisert */

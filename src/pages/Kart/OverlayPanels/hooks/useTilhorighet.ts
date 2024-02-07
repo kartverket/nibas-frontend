@@ -1,181 +1,69 @@
-import { useHistory } from "contexts/HistoryContext";
-import { useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
-import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
-import { GrenseType } from "hooks/layers/types";
+import { useKommuneGrunnkretserRef } from "hooks/inndelinger/useGrunnkretser";
+import { useKommuneStemmekretserRef } from "hooks/inndelinger/useStemmekretser";
 import { Feature } from "ol";
-import { useCallback, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { GrunnkretsResponse, KontekstEgenskaper, ObjektIdentifikator, StemmekretsResponse } from "types/api";
-import { addKontekstEntryFromFeature } from "../MetadataPanel/utils";
-import LineString from "ol/geom/LineString";
-import { getIdFromEntity } from "utils/api";
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { useEffect } from "react";
+import { GrunnkretsRef, StemmekretsRef } from "types/api";
+import {
+  KontekstType,
+  TilhorighetOptions,
+  getTilhorighetData,
+  mapGrunnkretsRefToKrets,
+  mapStemmekretRefToKrets,
+} from "./tilhorighetUtils";
+import { useTilhorighetForm } from "./useTilhorighetForm";
 
-export type Krets = {
-  id: ObjektIdentifikator;
-  version: number;
-  nummer: string;
-  navn: string;
-  type: "GRUNNKRETS" | "STEMMEKRETS";
-};
-
-type TilhorighetOptions = Krets[];
-
-type TilhorighetChoice = {
-  a: string | undefined;
-  b: string | undefined;
-};
-
-type TilhorighetForm = {
-  grunnkretser: TilhorighetChoice;
-  stemmekretser: TilhorighetChoice;
-};
-
+// Tar api respons for grunnkretser og stemmekretser og gir det tilbake på Krets typen pakket inn i TilhorighetOptions
 const getMuligeKretserForGrense = (
-  grenseType: GrenseType,
-  grunnkretser: GrunnkretsResponse[],
-  stemmekretser: StemmekretsResponse[],
-): Krets[] => {
-  if (grenseType === "Stemmekretsgrense") {
-    return stemmekretser.map((stemmekrets) => {
-      return {
-        id: stemmekrets.id,
-        version: stemmekrets.version,
-        nummer: stemmekrets.stemmekretsnummer,
-        navn: stemmekrets.stemmekretsnavn,
-        type: "STEMMEKRETS",
-      };
-    });
-  } else {
-    return grunnkretser.map((grunnkrets) => {
-      return {
-        id: grunnkrets.id,
-        version: grunnkrets.version,
-        nummer: grunnkrets.grunnkretsnummer,
-        navn: grunnkrets.navn,
-        type: "GRUNNKRETS",
-      };
-    });
-  }
-};
-
-const getTilhorighetData = (tilhorigheter: KontekstEgenskaper[] | undefined): TilhorighetForm | undefined => {
-  if (tilhorigheter) {
-    const grunnkretser = tilhorigheter
-      .filter((kontekstEgenskaper) => kontekstEgenskaper.type === "GRUNNKRETS")
-      .map((grunnkrets) => grunnkrets.id?.lokalid.value);
-    const stemmekretser = tilhorigheter
-      .filter((kontekstEgenskaper) => kontekstEgenskaper.type === "STEMMEKRETS")
-      .map((stemmekrets) => stemmekrets.id?.lokalid.value);
-
-    if (grunnkretser && stemmekretser) {
-      return {
-        grunnkretser: {
-          a: grunnkretser[0],
-          b: grunnkretser[1],
-        },
-        stemmekretser: {
-          a: stemmekretser[0],
-          b: stemmekretser[1],
-        },
-      };
-    }
-  }
-};
-
-const getUpdatedKontekstEgenskaper = (
-  newKretsIds: TilhorighetChoice,
-  kretsValg: TilhorighetOptions,
-): KontekstEgenskaper[] => {
-  const kretser = Object.values(newKretsIds).map((id) => kretsValg.find((krets) => krets.id.lokalid.value === id)!);
-  const nyeKontekstEgenskaper = kretser.map((krets) => {
+  kontekstType: KontekstType,
+  grunnkretser: GrunnkretsRef[],
+  stemmekretser: StemmekretsRef[],
+): TilhorighetOptions => {
+  if (kontekstType === KontekstType.STEMMEKRETS) {
+    const mappedStemmekretser = mapStemmekretRefToKrets(stemmekretser);
     return {
-      id: krets.id,
-      type: krets.type,
-      version: krets.version,
-      retningMedKlokken: true,
-      rekkefoelge: 0,
-      flateIndeks: 0,
-      hullIndeks: 0,
+      a: mappedStemmekretser,
+      b: mappedStemmekretser,
     };
-  });
-  return nyeKontekstEgenskaper;
+  } else {
+    const mappedGrunnkretser = mapGrunnkretsRefToKrets(grunnkretser);
+    return {
+      a: mappedGrunnkretser,
+      b: mappedGrunnkretser,
+    };
+  }
 };
 
-export const useTilhorighet = (
-  feature: Feature,
-  grenseType: GrenseType,
-  tilhorighetToChange: "grunnkretser" | "stemmekretser",
-  kontekstEgenskaper: KontekstEgenskaper[] | undefined,
-) => {
-  const { flatedata } = useOverlayPanel();
-  const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
+export const useTilhorighet = (feature: Feature) => {
+  const {
+    setTilhorighetOptions,
+    tilhorighetOptions,
+    register,
+    getValues,
+    isDirty,
+    resetTilhorighet,
+    updateDraftFromFeature,
+    kommunerId,
+    kontekstType,
+  } = useTilhorighetForm(feature);
 
-  const { data: grunnkretser } = useKommuneGrunnkretser(kommuneId);
-  const { data: stemmekretser } = useKommuneStemmekretser(kommuneId);
-
-  const [tilhorighetOptions, setTilhorighetOptions] = useState<TilhorighetOptions>();
-  const { addHistoryEntry } = useHistory();
+  const { data: grunnkretser, isLoading: grunnkretserIsLoading } = useKommuneGrunnkretserRef(kommunerId[0]);
+  const { data: stemmekretser, isLoading: stemmekretserIsLoading } = useKommuneStemmekretserRef(kommunerId[0]);
 
   useEffect(() => {
     if (grunnkretser && stemmekretser) {
-      setTilhorighetOptions(
-        getMuligeKretserForGrense(grenseType, grunnkretser, stemmekretser).sort((a, b) => {
-          return Number(a.nummer) - Number(b.nummer);
-        }),
-      );
+      setTilhorighetOptions(getMuligeKretserForGrense(kontekstType, grunnkretser, stemmekretser));
     }
-  }, [grenseType, grunnkretser, stemmekretser]);
-
-  const {
-    register,
-    getValues,
-    formState: { isDirty },
-    reset,
-  } = useForm<TilhorighetForm>({
-    defaultValues: getTilhorighetData(kontekstEgenskaper),
-  });
-
-  const resetTilhorighet = useCallback(() => {
-    if (tilhorighetOptions) {
-      reset(getTilhorighetData(kontekstEgenskaper));
-    }
-  }, [kontekstEgenskaper, reset, tilhorighetOptions]);
-
-  const getValuesFormatted = () => {
-    const value = getValues(tilhorighetToChange);
-    if (!value) return;
-
-    if (value.a !== undefined && value.b !== undefined && tilhorighetOptions) {
-      return Object.values(value)
-        .map((id) => {
-          const krets = tilhorighetOptions.find((opt) => opt.id.lokalid.value === id);
-          if (krets?.nummer && krets.navn) {
-            return krets.nummer + " " + krets.navn;
-          }
-        })
-        .join(", ");
-    }
-  };
-
-  const updateDraftFromFeature = () => {
-    if (tilhorighetOptions) {
-      const oppdaterteKontekstEgenskaper = getUpdatedKontekstEgenskaper(
-        getValues(tilhorighetToChange),
-        tilhorighetOptions,
-      );
-
-      addKontekstEntryFromFeature(feature as Feature<LineString>, oppdaterteKontekstEgenskaper, addHistoryEntry);
-    }
-  };
+  }, [grunnkretser, stemmekretser, kontekstType, setTilhorighetOptions]);
 
   return {
+    kontekstType,
     data: tilhorighetOptions,
     isDirty,
     register,
-    getValuesFormatted,
     resetTilhorighet,
     getTilhorighetData,
     updateDraftFromFeature,
+    getValues,
+    isLoading: kontekstType === KontekstType.GRUNNKRETS ? grunnkretserIsLoading : stemmekretserIsLoading,
   };
 };
