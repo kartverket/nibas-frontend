@@ -12,7 +12,8 @@ const useSelectPoint = () => {
   const toast = useToast();
   const { activeTool } = useToolbar();
   const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } = useOverlayPanel();
-  const { selectPointOnFeature, selectedPoint, clearSelection, featureIsEditable } = useFeatureStyle();
+  const { selectPointOnFeature, selectedPoint, clearSelection, featureIsEditable, featureIsArchived } =
+    useFeatureStyle();
   const { getFeaturesAtPixel } = useGetFeatures();
 
   const allowedPointModes: Tool[] = useMemo(() => ["koordinater", "split"], []);
@@ -32,21 +33,31 @@ const useSelectPoint = () => {
     if (allowedPointModes.includes(activeTool) && !event.dragging) {
       event.stopPropagation();
 
-      const features = getFeaturesAtPixel(event, "edit");
+      const allFeaturesAtPixel = getFeaturesAtPixel(event, "edit");
+      const ikkeArkiverteFeatures = allFeaturesAtPixel.filter((f) => !featureIsArchived(f));
 
-      if (features.length === 0) {
+      if (allFeaturesAtPixel.length === 0) {
         clearSelection();
         closeOverlayPanel();
         return;
       }
 
-      // Valgt punkt kan ikke være en del av en ikke-redigerbar grense
-      if (features.every(featureIsEditable)) {
+      // Hvis alle features på punktet er arkiverte er den ikke redigerbar
+      if (ikkeArkiverteFeatures.length === 0 && allFeaturesAtPixel.length > 0) {
+        toast({
+          status: "error",
+          title: "Kan ikke redigere en arkivert grense",
+        });
+      } else if (ikkeArkiverteFeatures.every(featureIsEditable)) {
+        // Valgt punkt kan ikke være en del av en ikke-redigerbar grense
         // Må estimere hvilket punkt på linjen man prøvde å trykke på
-        const nearbyVertexCoordinate = findNearbyVertexOnFeature(features[0] as Feature<LineString>, event.coordinate);
+        const nearbyVertexCoordinate = findNearbyVertexOnFeature(
+          ikkeArkiverteFeatures[0] as Feature<LineString>,
+          event.coordinate,
+        );
 
         if (nearbyVertexCoordinate) {
-          if (activeTool === "split" && features.length > 1) {
+          if (activeTool === "split" && ikkeArkiverteFeatures.length > 1) {
             toast({
               status: "error",
               title: "Man kan ikke splitte på et endepunkt",
@@ -54,7 +65,7 @@ const useSelectPoint = () => {
             return;
           }
 
-          selectPointOnFeature(nearbyVertexCoordinate, features as Feature<LineString>[]);
+          selectPointOnFeature(nearbyVertexCoordinate, ikkeArkiverteFeatures as Feature<LineString>[]);
 
           if (activeTool === "koordinater") {
             openOverlayPanel("koordinater");
