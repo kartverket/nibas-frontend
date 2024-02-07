@@ -35,15 +35,17 @@ const HeaderBreadcrumb = () => {
   return (
     <HeaderSection>
       <HeaderHome />
-      <Breadcrumb separator={<Separator icon="chevron_right" />} spacing={1}>
-        <BreadcrumbItem>
-          <CustomTooltip text="Gå tilbake til utkastoversikten" hasArrow>
+      <Breadcrumb separator="">
+        <CustomTooltip text="Gå tilbake til utkastoversikten" hasArrow>
+          <BreadcrumbItem>
             <BreadcrumbLink onClick={handleHome}>Utkast</BreadcrumbLink>
-          </CustomTooltip>
-        </BreadcrumbItem>
+            <Separator icon="chevron_right" />
+          </BreadcrumbItem>
+        </CustomTooltip>
         <Hide below="xl">
           <BreadcrumbItem>
             <Crumb>{utkast.endringstype}</Crumb>
+            <Separator icon="chevron_right" />
           </BreadcrumbItem>
         </Hide>
         <BreadcrumbItem>
