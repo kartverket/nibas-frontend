@@ -194,6 +194,12 @@ export const mockDetailedGrunnkrets1: GrunnkretsResponse = {
   },
   oppdateringsdato: "2022-12-31",
   endringstype: "Retting",
+  kommuneIdentifikator: {
+    gyldighetsdato: "2022-06-16",
+    lokalid: {
+      value: "2",
+    },
+  },
 };
 
 export const mockDetailedGrunnkrets2: GrunnkretsResponse = {
@@ -217,6 +223,12 @@ export const mockDetailedGrunnkrets2: GrunnkretsResponse = {
   },
   oppdateringsdato: "2022-12-31",
   endringstype: "Retting",
+  kommuneIdentifikator: {
+    gyldighetsdato: "2022-06-16",
+    lokalid: {
+      value: "2",
+    },
+  },
 };
 
 export const mockGrunnkrets1: GrunnkretsRef = {
@@ -234,6 +246,13 @@ export const mockGrunnkrets1: GrunnkretsRef = {
   navn: "Mosekollen øst",
   grunnkretsnummer: "12345678",
   antallFramtidigeVersjoner: 1,
+  version: 0,
+  kommuneIdentifikator: {
+    gyldighetsdato: mockDetailedGrunnkrets1.gyldighet.gyldigFra,
+    lokalid: {
+      value: mockDetailedGrunnkrets1.id.lokalid.value,
+    },
+  },
 };
 
 export const mockGrunnkrets2: GrunnkretsRef = {
@@ -251,6 +270,13 @@ export const mockGrunnkrets2: GrunnkretsRef = {
   navn: "Dåsvatn",
   grunnkretsnummer: "12345679",
   antallFramtidigeVersjoner: 0,
+  version: 0,
+  kommuneIdentifikator: {
+    gyldighetsdato: mockDetailedGrunnkrets1.gyldighet.gyldigFra,
+    lokalid: {
+      value: mockDetailedGrunnkrets1.id.lokalid.value,
+    },
+  },
 };
 
 export const mockGrunnkretsRequest: GrunnkretsRequest = {
@@ -356,6 +382,12 @@ export const mockStemmekrets1: StemmekretsResponse = {
     gyldigFra: "2022-01-01",
     gyldigTil: "2022-07-01",
   },
+  kommuneIdentifikator: {
+    gyldighetsdato: "2022-06-16",
+    lokalid: {
+      value: "2",
+    },
+  },
 };
 
 export const mockStemmekrets2: StemmekretsResponse = {
@@ -378,6 +410,12 @@ export const mockStemmekrets2: StemmekretsResponse = {
     gyldigFra: "2022-01-01",
     gyldigTil: "2022-07-01",
   },
+  kommuneIdentifikator: {
+    gyldighetsdato: "2022-06-16",
+    lokalid: {
+      value: "2",
+    },
+  },
 };
 
 export const mockStemmekretser: StemmekretsRef[] = [
@@ -398,6 +436,12 @@ export const mockStemmekretser: StemmekretsRef[] = [
     href: "http://localhost:8080/v1/stemmekretser/1",
     antallFramtidigeVersjoner: 0,
     version: 0,
+    kommuneIdentifikator: {
+      gyldighetsdato: mockDetailedGrunnkrets1.gyldighet.gyldigFra,
+      lokalid: {
+        value: mockDetailedGrunnkrets1.id.lokalid.value,
+      },
+    },
   },
   {
     id: {
@@ -415,6 +459,12 @@ export const mockStemmekretser: StemmekretsRef[] = [
     href: "http://localhost:8080/v1/stemmekretser/2",
     antallFramtidigeVersjoner: 0,
     version: 0,
+    kommuneIdentifikator: {
+      gyldighetsdato: mockDetailedGrunnkrets1.gyldighet.gyldigFra,
+      lokalid: {
+        value: mockDetailedGrunnkrets1.id.lokalid.value,
+      },
+    },
   },
 ];
 
