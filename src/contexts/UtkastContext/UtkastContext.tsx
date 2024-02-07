@@ -165,7 +165,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const updateUtkast = async (id: string, newUtkast: OppdaterUtkastRequest) => {
-    const response = await updateUtkastApi(id, newUtkast, tokenHolderFunc()?.token);
+    const response = await updateUtkastApi(id, toCleanUtkast(newUtkast), tokenHolderFunc()?.token);
 
     if (statusCode.isSuccessful(response.status)) {
       const updatedUtkast = (await response.json()) as UtkastResponse;
@@ -189,7 +189,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (!updatedUtkast || !utkast) return;
 
-    await updateUtkast(utkast.id, toCleanUtkast(updatedUtkast));
+    await updateUtkast(utkast.id, updatedUtkast);
     toast({ status: "success", title: "Utkastet er lagret" });
   };
 
