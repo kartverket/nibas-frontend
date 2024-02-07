@@ -21,11 +21,15 @@ export const useStemmekretser = (stemmekretsIds: string[]) => {
   );
 };
 
+export const useKommuneStemmekretserRef = (kommuneId: string | undefined) => {
+  return useNibasApi(kommuneId ? "/v1/kommuner/{id}/stemmekretser" : null, {
+    id: kommuneId!,
+  });
+};
+
 export const useKommuneStemmekretser = (kommuneId: string) => {
   const { tokenHolderFunc } = useAuthenticationFlow();
-  const { data: stemmekretser } = useNibasApi(kommuneId ? "/v1/kommuner/{id}/stemmekretser" : null, {
-    id: kommuneId,
-  });
+  const { data: stemmekretser } = useKommuneStemmekretserRef(kommuneId);
 
   const stemmekretsIds = stemmekretser?.map(getIdFromEntity) || [];
   return useSWRImmutable(
@@ -35,18 +39,8 @@ export const useKommuneStemmekretser = (kommuneId: string) => {
 };
 
 export const useToKommunerStemmekretser = (kommunerId: (string | undefined)[]) => {
-  const { data: stemmekretserA, isLoading: k1Loading } = useNibasApi(
-    kommunerId[0] ? "/v1/kommuner/{id}/stemmekretser" : null,
-    {
-      id: kommunerId[0] as string,
-    },
-  );
-  const { data: stemmekretserB, isLoading: k2Loading } = useNibasApi(
-    kommunerId[1] ? "/v1/kommuner/{id}/stemmekretser" : null,
-    {
-      id: kommunerId[1] as string,
-    },
-  );
+  const { data: stemmekretserA, isLoading: k1Loading } = useKommuneStemmekretserRef(kommunerId[0]);
+  const { data: stemmekretserB, isLoading: k2Loading } = useKommuneStemmekretserRef(kommunerId[1]);
   return {
     kommuneA: stemmekretserA,
     kommuneB: stemmekretserB,

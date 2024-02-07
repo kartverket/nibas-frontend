@@ -1,41 +1,31 @@
-import { useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
-import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
+import { useKommuneGrunnkretserRef } from "hooks/inndelinger/useGrunnkretser";
+import { useKommuneStemmekretserRef } from "hooks/inndelinger/useStemmekretser";
 import { Feature } from "ol";
 import { useEffect } from "react";
-import { GrunnkretsResponse, StemmekretsResponse } from "types/api";
-import { KontekstType, Krets, TilhorighetOptions, getTilhorighetData } from "./tilhorighetUtils";
+import { GrunnkretsRef, StemmekretsRef } from "types/api";
+import {
+  KontekstType,
+  TilhorighetOptions,
+  getTilhorighetData,
+  mapGrunnkretsRefToKrets,
+  mapStemmekretRefToKrets,
+} from "./tilhorighetUtils";
 import { useTilhorighetForm } from "./useTilhorighetForm";
 
 // Tar api respons for grunnkretser og stemmekretser og gir det tilbake på Krets typen pakket inn i TilhorighetOptions
 const getMuligeKretserForGrense = (
   kontekstType: KontekstType,
-  grunnkretser: GrunnkretsResponse[],
-  stemmekretser: StemmekretsResponse[],
+  grunnkretser: GrunnkretsRef[],
+  stemmekretser: StemmekretsRef[],
 ): TilhorighetOptions => {
   if (kontekstType === KontekstType.STEMMEKRETS) {
-    const mappedStemmekretser = stemmekretser.map(
-      ({ id, version, stemmekretsnummer, stemmekretsnavn, kommuneIdentifikator }) => ({
-        id,
-        kommuneId: kommuneIdentifikator,
-        version,
-        nummer: stemmekretsnummer,
-        navn: stemmekretsnavn,
-        type: KontekstType.STEMMEKRETS,
-      }),
-    ) as Krets[];
+    const mappedStemmekretser = mapStemmekretRefToKrets(stemmekretser);
     return {
       a: mappedStemmekretser,
       b: mappedStemmekretser,
     };
   } else {
-    const mappedGrunnkretser = grunnkretser.map(({ id, version, grunnkretsnummer, navn, kommuneIdentifikator }) => ({
-      id,
-      kommuneId: kommuneIdentifikator,
-      version,
-      nummer: grunnkretsnummer,
-      navn: navn,
-      type: KontekstType.GRUNNKRETS,
-    })) as Krets[];
+    const mappedGrunnkretser = mapGrunnkretsRefToKrets(grunnkretser);
     return {
       a: mappedGrunnkretser,
       b: mappedGrunnkretser,
@@ -56,8 +46,8 @@ export const useTilhorighet = (feature: Feature) => {
     kontekstType,
   } = useTilhorighetForm(feature);
 
-  const { data: grunnkretser } = useKommuneGrunnkretser(kommunerId[0]);
-  const { data: stemmekretser } = useKommuneStemmekretser(kommunerId[0]);
+  const { data: grunnkretser, isLoading: grunnkretserIsLoading } = useKommuneGrunnkretserRef(kommunerId[0]);
+  const { data: stemmekretser, isLoading: stemmekretserIsLoading } = useKommuneStemmekretserRef(kommunerId[0]);
 
   useEffect(() => {
     if (grunnkretser && stemmekretser) {
@@ -74,5 +64,6 @@ export const useTilhorighet = (feature: Feature) => {
     getTilhorighetData,
     updateDraftFromFeature,
     getValues,
+    isLoading: kontekstType === KontekstType.GRUNNKRETS ? grunnkretserIsLoading : stemmekretserIsLoading,
   };
 };

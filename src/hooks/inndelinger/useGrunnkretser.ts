@@ -18,11 +18,15 @@ export const useGrunnkretser = (grunnkretsId: string[]) => {
   return useSWRImmutable(grunnkretsId.length > 0 ? [grunnkretsId, tokenHolderFunc()?.token] : null, grunnkretsFetcher);
 };
 
+export const useKommuneGrunnkretserRef = (kommuneId: string | undefined) => {
+  return useNibasApi(kommuneId ? "/v1/kommuner/{id}/grunnkretser" : null, {
+    id: kommuneId!,
+  });
+};
+
 export const useKommuneGrunnkretser = (kommuneId: string) => {
   const { tokenHolderFunc } = useAuthenticationFlow();
-  const { data: grunnkretser } = useNibasApi(kommuneId ? "/v1/kommuner/{id}/grunnkretser" : null, {
-    id: kommuneId,
-  });
+  const { data: grunnkretser } = useKommuneGrunnkretserRef(kommuneId);
 
   const grunnkretsIds = grunnkretser?.map(getIdFromEntity) || [];
   return useSWRImmutable(
@@ -32,19 +36,8 @@ export const useKommuneGrunnkretser = (kommuneId: string) => {
 };
 
 export const useToKommunerGrunnkretser = (kommunerId: (string | undefined)[]) => {
-  const { data: grunnkretserA, isLoading: k1Loading } = useNibasApi(
-    kommunerId[0] ? "/v1/kommuner/{id}/grunnkretser" : null,
-    {
-      id: kommunerId[0] as string,
-    },
-  );
-
-  const { data: grunnkretserB, isLoading: k2Loading } = useNibasApi(
-    kommunerId[1] ? "/v1/kommuner/{id}/grunnkretser" : null,
-    {
-      id: kommunerId[1] as string,
-    },
-  );
+  const { data: grunnkretserA, isLoading: k1Loading } = useKommuneGrunnkretserRef(kommunerId[0]);
+  const { data: grunnkretserB, isLoading: k2Loading } = useKommuneGrunnkretserRef(kommunerId[1]);
   return {
     kommuneA: grunnkretserA,
     kommuneB: grunnkretserB,

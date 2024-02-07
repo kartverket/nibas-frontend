@@ -1,4 +1,4 @@
-import { KontekstEgenskaper, ObjektIdentifikator } from "types/api";
+import { GrunnkretsRef, KontekstEgenskaper, ObjektIdentifikator, StemmekretsRef } from "types/api";
 
 export enum Tilhorighet {
   A = "a",
@@ -101,4 +101,26 @@ export const getKommunerIdFromKontekstEgenskaper = (kontekstEgenskaper: Kontekst
   return kontekstEgenskaper
     .filter((kontekst) => kontekst.kommuneId !== null)
     .map((kontekst) => kontekst.kommuneId!.lokalid.value);
+};
+
+export const mapGrunnkretsRefToKrets = (grunnkretser: GrunnkretsRef[]): Krets[] => {
+  return grunnkretser.map(({ id, version, grunnkretsnummer, navn, kommuneIdentifikator }) => ({
+    id,
+    kommuneId: kommuneIdentifikator,
+    version,
+    nummer: grunnkretsnummer,
+    navn: navn,
+    type: KontekstType.GRUNNKRETS,
+  }));
+};
+
+export const mapStemmekretRefToKrets = (stemmekretser: StemmekretsRef[]): Krets[] => {
+  return stemmekretser.map(({ id, version, nummer, navn, kommuneIdentifikator }) => ({
+    id,
+    kommuneId: kommuneIdentifikator,
+    version,
+    nummer: nummer,
+    navn: navn,
+    type: KontekstType.STEMMEKRETS,
+  }));
 };

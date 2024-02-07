@@ -1,32 +1,17 @@
-import { Feature } from "ol";
-import { GrunnkretsRef, StemmekretsRef } from "types/api";
 import { useToKommunerGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import { useToKommunerStemmekretser } from "hooks/inndelinger/useStemmekretser";
+import { Feature } from "ol";
 import { useEffect } from "react";
+import { GrunnkretsRef, StemmekretsRef } from "types/api";
+import {
+  KontekstType,
+  Tilhorighet,
+  TilhorighetOptions,
+  getTilhorighetData,
+  mapGrunnkretsRefToKrets,
+  mapStemmekretRefToKrets,
+} from "./tilhorighetUtils";
 import { useTilhorighetForm } from "./useTilhorighetForm";
-import { KontekstType, Krets, Tilhorighet, TilhorighetOptions, getTilhorighetData } from "./tilhorighetUtils";
-
-const mapGrunnkretsRefToKrets = (grunnkretser: GrunnkretsRef[]): Krets[] => {
-  return grunnkretser.map(({ id, version, grunnkretsnummer, navn, kommuneIdentifikator }) => ({
-    id,
-    kommuneId: kommuneIdentifikator,
-    version,
-    nummer: grunnkretsnummer,
-    navn: navn,
-    type: KontekstType.GRUNNKRETS,
-  }));
-};
-
-const mapStemmekretRefToKrets = (stemmekretser: StemmekretsRef[]): Krets[] => {
-  return stemmekretser.map(({ id, version, nummer, navn, kommuneIdentifikator }) => ({
-    id,
-    kommuneId: kommuneIdentifikator,
-    version,
-    nummer: nummer,
-    navn: navn,
-    type: KontekstType.STEMMEKRETS,
-  }));
-};
 
 const getMuligeKretserForAdministrativGrense = (
   kontekstType: KontekstType,

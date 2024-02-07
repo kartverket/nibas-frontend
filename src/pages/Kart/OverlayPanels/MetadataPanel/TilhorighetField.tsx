@@ -30,6 +30,7 @@ const DefaultTilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
     register,
     updateDraftFromFeature,
     getValues,
+    isLoading,
   } = useTilhorighet(feature);
 
   useEffect(() => {
@@ -44,6 +45,7 @@ const DefaultTilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
       onMetadataSubmit={() => updateDraftFromFeature()}
       isDisabled={metadataIsDisabled || isDisabled}
       isDirty={isDirty}
+      isLoading={isLoading}
       reset={resetTilhorighet}
       tooltipLabel="Definerer hvilke inndelinger grensen har på hver sin side. Obs! Endring av dette feltet kan forårsake geometriendringer."
     >
