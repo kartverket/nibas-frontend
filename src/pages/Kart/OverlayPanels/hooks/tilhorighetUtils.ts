@@ -35,21 +35,13 @@ export type TilhorighetForm = {
 };
 
 // tar to kontekstEgenskaper og mapper de til TilhorighetForm
-export const getTilhorighetData = (
-  tilhorigheter: KontekstEgenskaper[] | undefined,
-): TilhorighetForm | undefined => {
+export const getTilhorighetData = (tilhorigheter: KontekstEgenskaper[] | undefined): TilhorighetForm | undefined => {
   if (tilhorigheter && tilhorigheter.length == 2) {
     const grunnkretser = tilhorigheter
-      .filter(
-        (kontekstEgenskaper) =>
-          kontekstEgenskaper.type === KontekstType.GRUNNKRETS,
-      )
+      .filter((kontekstEgenskaper) => kontekstEgenskaper.type === KontekstType.GRUNNKRETS)
       .map((grunnkrets) => grunnkrets.id?.lokalid.value);
     const stemmekretser = tilhorigheter
-      .filter(
-        (kontekstEgenskaper) =>
-          kontekstEgenskaper.type === KontekstType.STEMMEKRETS,
-      )
+      .filter((kontekstEgenskaper) => kontekstEgenskaper.type === KontekstType.STEMMEKRETS)
       .map((stemmekrets) => stemmekrets.id?.lokalid.value);
 
     if (grunnkretser.length === 2 || stemmekretser.length === 2) {
@@ -73,10 +65,7 @@ export const getUpdatedKontekstEgenskaper = (
   kretsValg: TilhorighetOptions,
 ): KontekstEgenskaper[] => {
   const kretser = Object.values(newKretsIds).map(
-    (id) =>
-      kretsValg.a
-        .concat(kretsValg.b)
-        .find((krets) => krets.id.lokalid.value === id)!,
+    (id) => kretsValg.a.concat(kretsValg.b).find((krets) => krets.id.lokalid.value === id)!,
   );
   const nyeKontekstEgenskaper = kretser.map((krets) => ({
     id: krets.id,
@@ -95,11 +84,7 @@ export const getTilhorighetValuesFormatted = (
   formState: TilhorighetChoice,
   tilhorighetOptions: TilhorighetOptions | undefined,
 ) => {
-  if (
-    formState.a !== undefined &&
-    formState.b !== undefined &&
-    tilhorighetOptions
-  ) {
+  if (formState.a !== undefined && formState.b !== undefined && tilhorighetOptions) {
     const kretsA = tilhorighetOptions[Tilhorighet.A].find(
       (krets) => krets.id.lokalid.value === formState[Tilhorighet.A],
     );
@@ -112,9 +97,7 @@ export const getTilhorighetValuesFormatted = (
   }
 };
 
-export const getKommunerIdFromKontekstEgenskaper = (
-  kontekstEgenskaper: KontekstEgenskaper[],
-): string[] => {
+export const getKommunerIdFromKontekstEgenskaper = (kontekstEgenskaper: KontekstEgenskaper[]): string[] => {
   return kontekstEgenskaper
     .filter((kontekst) => kontekst.kommuneId !== null)
     .map((kontekst) => kontekst.kommuneId!.lokalid.value);

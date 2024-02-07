@@ -34,9 +34,7 @@ export const useKommuneStemmekretser = (kommuneId: string) => {
   );
 };
 
-export const useToKommunerStemmekretser = (
-  kommunerId: (string | undefined)[],
-) => {
+export const useToKommunerStemmekretser = (kommunerId: (string | undefined)[]) => {
   const { data: stemmekretserA, isLoading: k1Loading } = useNibasApi(
     kommunerId[0] ? "/v1/kommuner/{id}/stemmekretser" : null,
     {

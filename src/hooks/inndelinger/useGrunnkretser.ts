@@ -31,9 +31,7 @@ export const useKommuneGrunnkretser = (kommuneId: string) => {
   );
 };
 
-export const useToKommunerGrunnkretser = (
-  kommunerId: (string | undefined)[],
-) => {
+export const useToKommunerGrunnkretser = (kommunerId: (string | undefined)[]) => {
   const { data: grunnkretserA, isLoading: k1Loading } = useNibasApi(
     kommunerId[0] ? "/v1/kommuner/{id}/grunnkretser" : null,
     {

@@ -22,8 +22,7 @@ export const useTilhorighetForm = (feature: Feature) => {
   const kontekstEgenskaper = featureProperties.kontekstEgenskaper;
   const kontekstType = kontekstEgenskaper.map((k) => k.type as KontekstType)[0];
   const kommunerId = getKommunerIdFromKontekstEgenskaper(kontekstEgenskaper);
-  const [tilhorighetOptions, setTilhorighetOptions] =
-    useState<TilhorighetOptions>();
+  const [tilhorighetOptions, setTilhorighetOptions] = useState<TilhorighetOptions>();
 
   const {
     register,
@@ -42,15 +41,8 @@ export const useTilhorighetForm = (feature: Feature) => {
 
   const updateDraftFromFeature = () => {
     if (kontekstType && kontekstEgenskaper && tilhorighetOptions) {
-      const oppdaterteKontekstEgenskaper = getUpdatedKontekstEgenskaper(
-        getValues(kontekstType),
-        tilhorighetOptions,
-      );
-      addKontekstEntryFromFeature(
-        feature as Feature<LineString>,
-        oppdaterteKontekstEgenskaper,
-        addHistoryEntry,
-      );
+      const oppdaterteKontekstEgenskaper = getUpdatedKontekstEgenskaper(getValues(kontekstType), tilhorighetOptions);
+      addKontekstEntryFromFeature(feature as Feature<LineString>, oppdaterteKontekstEgenskaper, addHistoryEntry);
     }
   };
 

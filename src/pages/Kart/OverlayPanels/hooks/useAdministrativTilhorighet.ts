@@ -4,38 +4,28 @@ import { useToKommunerGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import { useToKommunerStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useEffect } from "react";
 import { useTilhorighetForm } from "./useTilhorighetForm";
-import {
-  KontekstType,
-  Krets,
-  Tilhorighet,
-  TilhorighetOptions,
-  getTilhorighetData,
-} from "./tilhorighetUtils";
+import { KontekstType, Krets, Tilhorighet, TilhorighetOptions, getTilhorighetData } from "./tilhorighetUtils";
 
 const mapGrunnkretsRefToKrets = (grunnkretser: GrunnkretsRef[]): Krets[] => {
-  return grunnkretser.map(
-    ({ id, version, grunnkretsnummer, navn, kommuneIdentifikator }) => ({
-      id,
-      kommuneId: kommuneIdentifikator,
-      version,
-      nummer: grunnkretsnummer,
-      navn: navn,
-      type: KontekstType.GRUNNKRETS,
-    }),
-  );
+  return grunnkretser.map(({ id, version, grunnkretsnummer, navn, kommuneIdentifikator }) => ({
+    id,
+    kommuneId: kommuneIdentifikator,
+    version,
+    nummer: grunnkretsnummer,
+    navn: navn,
+    type: KontekstType.GRUNNKRETS,
+  }));
 };
 
 const mapStemmekretRefToKrets = (stemmekretser: StemmekretsRef[]): Krets[] => {
-  return stemmekretser.map(
-    ({ id, version, nummer, navn, kommuneIdentifikator }) => ({
-      id,
-      kommuneId: kommuneIdentifikator,
-      version,
-      nummer: nummer,
-      navn: navn,
-      type: KontekstType.STEMMEKRETS,
-    }),
-  );
+  return stemmekretser.map(({ id, version, nummer, navn, kommuneIdentifikator }) => ({
+    id,
+    kommuneId: kommuneIdentifikator,
+    version,
+    nummer: nummer,
+    navn: navn,
+    type: KontekstType.STEMMEKRETS,
+  }));
 };
 
 const getMuligeKretserForAdministrativGrense = (
@@ -82,13 +72,7 @@ export const useAdministrativTilhorighet = (feature: Feature) => {
   } = useToKommunerStemmekretser(kommunerId);
 
   useEffect(() => {
-    if (
-      kontekstType &&
-      grunnkretserA &&
-      grunnkretserB &&
-      stemmekretserA &&
-      stemmekretserB
-    ) {
+    if (kontekstType && grunnkretserA && grunnkretserB && stemmekretserA && stemmekretserB) {
       setTilhorighetOptions(
         getMuligeKretserForAdministrativGrense(
           kontekstType,
@@ -97,14 +81,7 @@ export const useAdministrativTilhorighet = (feature: Feature) => {
         ),
       );
     }
-  }, [
-    kontekstType,
-    grunnkretserA,
-    grunnkretserB,
-    stemmekretserA,
-    stemmekretserB,
-    setTilhorighetOptions,
-  ]);
+  }, [kontekstType, grunnkretserA, grunnkretserB, stemmekretserA, stemmekretserB, setTilhorighetOptions]);
 
   return {
     kontekstType,
@@ -115,9 +92,6 @@ export const useAdministrativTilhorighet = (feature: Feature) => {
     getTilhorighetData,
     updateDraftFromFeature,
     getValues,
-    isLoading:
-      kontekstType === KontekstType.GRUNNKRETS
-        ? grunnkretserIsLoading
-        : stemmekretserIsLoading,
+    isLoading: kontekstType === KontekstType.GRUNNKRETS ? grunnkretserIsLoading : stemmekretserIsLoading,
   };
 };
