@@ -30,14 +30,14 @@ export const useTilhorighetForm = (feature: Feature) => {
     formState: { isDirty },
     reset,
   } = useForm<TilhorighetForm>({
-    values: getTilhorighetData(kontekstEgenskaper),
+    defaultValues: getTilhorighetData(kontekstEgenskaper),
   });
 
   const resetTilhorighet = useCallback(() => {
-    if (tilhorighetOptions) {
-      reset(getTilhorighetData(kontekstEgenskaper));
-    }
-  }, [kontekstEgenskaper, reset, tilhorighetOptions]);
+    reset(
+      kontekstEgenskaper.length === 2 ? getTilhorighetData(kontekstEgenskaper) : { GRUNNKRETS: {}, STEMMEKRETS: {} },
+    );
+  }, [kontekstEgenskaper, reset]);
 
   const updateDraftFromFeature = () => {
     if (kontekstType && kontekstEgenskaper && tilhorighetOptions) {

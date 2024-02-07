@@ -3,13 +3,7 @@ import { useKommuneStemmekretserRef } from "hooks/inndelinger/useStemmekretser";
 import { Feature } from "ol";
 import { useEffect } from "react";
 import { GrunnkretsRef, StemmekretsRef } from "types/api";
-import {
-  KontekstType,
-  TilhorighetOptions,
-  getTilhorighetData,
-  mapGrunnkretsRefToKrets,
-  mapStemmekretRefToKrets,
-} from "./tilhorighetUtils";
+import { KontekstType, TilhorighetOptions, mapGrunnkretsRefToKrets, mapStemmekretRefToKrets } from "./tilhorighetUtils";
 import { useTilhorighetForm } from "./useTilhorighetForm";
 
 // Tar api respons for grunnkretser og stemmekretser og gir det tilbake på Krets typen pakket inn i TilhorighetOptions
@@ -61,7 +55,6 @@ export const useTilhorighet = (feature: Feature) => {
     isDirty,
     register,
     resetTilhorighet,
-    getTilhorighetData,
     updateDraftFromFeature,
     getValues,
     isLoading: kontekstType === KontekstType.GRUNNKRETS ? grunnkretserIsLoading : stemmekretserIsLoading,

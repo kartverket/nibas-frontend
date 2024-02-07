@@ -26,7 +26,6 @@ const DefaultTilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
     data: tilhorighetOptions,
     isDirty,
     resetTilhorighet,
-    getTilhorighetData,
     register,
     updateDraftFromFeature,
     getValues,
@@ -35,7 +34,7 @@ const DefaultTilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
 
   useEffect(() => {
     resetTilhorighet();
-  }, [getTilhorighetData, feature, tilhorighetOptions, resetTilhorighet]);
+  }, [resetTilhorighet]);
 
   return (
     <MetadataRow
@@ -76,7 +75,6 @@ const AdministrativTilhorighetField = ({ feature, isDisabled }: TilhorighetProps
     data: tilhorighetOptions,
     register,
     resetTilhorighet,
-    getTilhorighetData,
     isDirty,
     updateDraftFromFeature,
     getValues,
@@ -85,7 +83,7 @@ const AdministrativTilhorighetField = ({ feature, isDisabled }: TilhorighetProps
 
   useEffect(() => {
     resetTilhorighet();
-  }, [getTilhorighetData, feature, tilhorighetOptions, resetTilhorighet]);
+  }, [resetTilhorighet]);
 
   return (
     <MetadataRow
@@ -121,9 +119,9 @@ const AdministrativTilhorighetField = ({ feature, isDisabled }: TilhorighetProps
 };
 
 export const TilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
-  const properties = feature.getProperties() as FeatureProperties;
-  return isAdministrativGrense(properties.type as GrenseType) ? (
-    <AdministrativTilhorighetField feature={feature} isDisabled={false} />
+  const grenseType = feature.getProperties().type as GrenseType;
+  return isAdministrativGrense(grenseType) ? (
+    <AdministrativTilhorighetField feature={feature} isDisabled={grenseType !== "Kommunegrense"} />
   ) : (
     <DefaultTilhorighetField feature={feature} isDisabled={isDisabled} />
   );

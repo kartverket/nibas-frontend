@@ -84,7 +84,7 @@ export const getTilhorighetValuesFormatted = (
   formState: TilhorighetChoice,
   tilhorighetOptions: TilhorighetOptions | undefined,
 ) => {
-  if (formState.a !== undefined && formState.b !== undefined && tilhorighetOptions) {
+  if (formState && formState.a !== undefined && formState.b !== undefined && tilhorighetOptions) {
     const kretsA = tilhorighetOptions[Tilhorighet.A].find(
       (krets) => krets.id.lokalid.value === formState[Tilhorighet.A],
     );

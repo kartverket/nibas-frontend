@@ -7,7 +7,6 @@ import {
   KontekstType,
   Tilhorighet,
   TilhorighetOptions,
-  getTilhorighetData,
   mapGrunnkretsRefToKrets,
   mapStemmekretRefToKrets,
 } from "./tilhorighetUtils";
@@ -57,7 +56,7 @@ export const useAdministrativTilhorighet = (feature: Feature) => {
   } = useToKommunerStemmekretser(kommunerId);
 
   useEffect(() => {
-    if (kontekstType && grunnkretserA && grunnkretserB && stemmekretserA && stemmekretserB) {
+    if (grunnkretserA && grunnkretserB && stemmekretserA && stemmekretserB) {
       setTilhorighetOptions(
         getMuligeKretserForAdministrativGrense(
           kontekstType,
@@ -74,7 +73,6 @@ export const useAdministrativTilhorighet = (feature: Feature) => {
     isDirty,
     register,
     resetTilhorighet,
-    getTilhorighetData,
     updateDraftFromFeature,
     getValues,
     isLoading: kontekstType === KontekstType.GRUNNKRETS ? grunnkretserIsLoading : stemmekretserIsLoading,
