@@ -1,6 +1,5 @@
 import { useHistory } from "contexts/HistoryContext";
 import HeaderButton, { HeaderSection } from "./HeaderButton";
-import { styled } from "styled-components";
 import { useUtkast } from "contexts/UtkastContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import { useDisclosure } from "@kvib/react";
