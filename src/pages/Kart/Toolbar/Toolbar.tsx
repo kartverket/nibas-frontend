@@ -6,16 +6,25 @@ import { useHoldButtonToggle, useKeyboardShortcut } from "hooks/keyboard-shortcu
 import { styled } from "styled-components";
 import { getLayerById } from "utils/map/layers";
 import { map } from "../constants";
-import CustomTooltip from "./CustomTooltip";
-import ModeButton from "./ModeButton";
+import ToolbarButton from "./ToolbarButton";
 import ToolbarMenus from "./ToolbarMenus";
 import ToolbarPopups from "./ToolbarPopups";
+import { ConditionalHide } from "components/ConditionalShowHide";
 
 const Toolbar = () => {
-  const { activeModeTools, toggleModeTool, enableModeTool, disableModeTool } = useToolbar();
+  const { activeTool, activeModeTools, toggleTool, toggleModeTool, enableModeTool, disableModeTool } = useToolbar();
+  const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } = useOverlayPanel();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const editingType = getCurrentlyEditingType();
-  const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } = useOverlayPanel();
+  const isEditMode = !!editingType;
+
+  const toggleMetadata = () => {
+    toggleTool("metadata");
+
+    if (activeOverlayPanel === "metadata") {
+      closeOverlayPanel();
+    }
+  };
 
   const toggleKartlag = () => {
     if (activeOverlayPanel === "kartlag") {
@@ -45,14 +54,15 @@ const Toolbar = () => {
 
   useKeyboardShortcut("layers", toggleKartlag);
   useKeyboardShortcut("move", () => enableModeTool("move"));
-  useKeyboardShortcut("edit", () => disableModeTool("move"), !!editingType);
+  useKeyboardShortcut("edit", () => disableModeTool("move"), isEditMode);
   useKeyboardShortcut("matrikkel", () => toggleModeTool("matrikkel"));
+  useKeyboardShortcut("grenseinfo", toggleMetadata);
   useHoldButtonToggle(
     "alt",
     activeModeTools.includes("move"),
     () => enableModeTool("move"),
     () => disableModeTool("move"),
-    !!editingType,
+    isEditMode,
   );
 
   return (
@@ -60,70 +70,82 @@ const Toolbar = () => {
       <ToolbarPopups />
       <Container>
         <ToolbarButtons>
-          <CustomTooltip text="Panorer i kartet" shortcut="move" holdButton="ALT-tasten">
-            <ModeButton
-              icon="pan_tool"
-              onClick={() => enableModeTool("move")}
-              isActive={activeModeTools.includes("move")}
-              ariaLabel="Panorer i kartet"
-            >
-              Panorer
-            </ModeButton>
-          </CustomTooltip>
-          <CustomTooltip text="Rediger grenser i kartet" shortcut="edit">
-            <ModeButton
+          <ToolbarButton
+            icon="back_hand"
+            onClick={() => enableModeTool("move")}
+            isActive={activeModeTools.includes("move")}
+            aria-label="Panorer i kartet"
+            tooltip={{ text: "Panorer i kartet", shortcut: "move", holdButton: "ALT-tasten" }}
+          >
+            Panorer
+          </ToolbarButton>
+          <ConditionalHide below="xl" condition={!!activeOverlayPanel}>
+            <ToolbarButton
               icon="arrow_selector_tool"
               onClick={() => disableModeTool("move")}
               isActive={!activeModeTools.includes("move")}
-              ariaLabel="Rediger grenser i kartet"
+              aria-label="Rediger grenser i kartet"
               isDisabled={!editingType}
+              tooltip={{ text: "Rediger grenser i kartet", shortcut: "edit" }}
             >
               Rediger
-            </ModeButton>
-          </CustomTooltip>
-          <Divider orientation="vertical" />
-          <ToolbarMenus />
-          <Divider orientation="vertical" />
-          <CustomTooltip text="Legg til, endre rekkefølge og fjern kartlag fra kartet." shortcut="layers">
-            <ModeButton
-              icon="map"
-              ariaLabel="Åpne kartlagsmenyen"
-              isActive={activeOverlayPanel === "kartlag"}
-              onClick={toggleKartlag}
-            >
-              Kartlag
-            </ModeButton>
-          </CustomTooltip>
-          <CustomTooltip text="Vis grenser fra matrikkelen" shortcut="matrikkel">
-            <ModeButton
-              icon="holiday_village"
-              ariaLabel="Vis grenser fra matrikkelen"
-              isActive={activeModeTools.includes("matrikkel")}
-              onClick={toggleMatrikkel}
-            >
-              Matrikkel
-            </ModeButton>
-          </CustomTooltip>
-          <CustomTooltip text="Skru av/på snapping mot kartlag." shortcut="snap">
-            <ModeButton
+            </ToolbarButton>
+            <ToolbarMenus />
+          </ConditionalHide>
+          <ToolbarButton
+            icon="live_help"
+            isActive={activeTool === "metadata"}
+            onClick={toggleMetadata}
+            aria-label="Se informasjon om grensen"
+            tooltip={{ text: "Se informasjon om grensen", shortcut: "grenseinfo" }}
+          >
+            Informasjon
+          </ToolbarButton>
+          <ToolbarButton
+            icon="map"
+            aria-label="Åpne kartlagsmenyen"
+            isActive={activeOverlayPanel === "kartlag"}
+            onClick={toggleKartlag}
+            tooltip={{ text: "Legg til, endre rekkefølge og fjern kartlag fra kartet.", shortcut: "layers" }}
+          >
+            Kartlag
+          </ToolbarButton>
+          <ToolbarButton
+            icon="holiday_village"
+            aria-label="Vis grenser fra matrikkelen"
+            isActive={activeModeTools.includes("matrikkel")}
+            onClick={toggleMatrikkel}
+            tooltip={{ text: "Vis grenser fra matrikkelen", shortcut: "matrikkel" }}
+          >
+            Matrikkel
+          </ToolbarButton>
+          <ConditionalHide below="xl" condition={!!activeOverlayPanel}>
+            <ToolbarButton
               icon="layers"
-              ariaLabel="Snap til kartlag"
+              aria-label="Snap til kartlag"
               isActive={activeModeTools.includes("snap")}
               onClick={() => toggleModeTool("snap")}
               isDisabled={!editingType}
+              tooltip={{ text: "Skru av/på snapping mot kartlag.", shortcut: "snap" }}
             >
               Snap
-            </ModeButton>
-          </CustomTooltip>
+            </ToolbarButton>
+          </ConditionalHide>
         </ToolbarButtons>
         <ZoomButtons>
-          <CustomTooltip text="Zoom inn på kartet" icon="add">
-            <ModeButton icon="add" onClick={() => zoom(1)} ariaLabel="Zoom inn på kartet" />
-          </CustomTooltip>
+          <ToolbarButton
+            icon="add"
+            onClick={() => zoom(1)}
+            aria-label="Zoom inn på kartet"
+            tooltip={{ text: "Zoom inn på kartet" }}
+          />
           <Divider />
-          <CustomTooltip text="Zoom ut fra kartet" icon="remove">
-            <ModeButton icon="remove" onClick={() => zoom(-1)} ariaLabel="Zoom ut på kartet" />
-          </CustomTooltip>
+          <ToolbarButton
+            icon="remove"
+            onClick={() => zoom(-1)}
+            aria-label="Zoom ut fra kartet"
+            tooltip={{ text: "Zoom ut fra kartet" }}
+          />
         </ZoomButtons>
       </Container>
     </OuterContainer>
@@ -136,7 +158,7 @@ const OuterContainer = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 16px;
-  margin-bottom: 16px;
+  margin-bottom: 32px;
   pointer-events: none;
 
   & > * {
@@ -146,15 +168,16 @@ const OuterContainer = styled.div`
 
 const Container = styled.div`
   display: flex;
-  gap: 24px;
+  gap: 16px;
 `;
 
 const ToolbarButtons = styled.div`
   display: flex;
-  gap: 32px;
+  align-items: center;
+  gap: 28px;
 
   width: fit-content;
-  padding: 16px 24px;
+  padding: 16px 20px;
   background: white;
   border-radius: 10px;
   box-shadow: var(--kvib-shadows-base);
@@ -163,14 +186,12 @@ const ToolbarButtons = styled.div`
 const ZoomButtons = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 4px;
   justify-content: space-between;
 
   width: fit-content;
   border-radius: 10px;
   background: white;
   box-shadow: var(--kvib-shadows-base);
-  padding: 8px 4px;
 `;
 
 export default Toolbar;
