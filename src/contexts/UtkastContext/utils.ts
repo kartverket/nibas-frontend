@@ -243,7 +243,6 @@ export const toCleanUtkast = (utkastToClean: OppdaterUtkastRequest): OppdaterUtk
 export const addTempFeatureIdToNewFeaturesInUtkast = (utkast: UtkastResponse): UtkastResponse => {
   const utkastCopy = structuredClone(utkast);
 
-  // Fjerner ID fra alle nye grenser, da dette ikke er forventet fra backend
   const endredeFeatures = utkastCopy.operasjoner.grenseendringer.endredeFeatures;
 
   endredeFeatures
