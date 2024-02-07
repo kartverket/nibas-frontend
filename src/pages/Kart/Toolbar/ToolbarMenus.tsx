@@ -17,7 +17,7 @@ import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts
 import { styled } from "styled-components";
 import ToolbarButton from "./ToolbarButton";
 import { KeyboardShortcuts } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
-import { ConditionalHide } from "components/ConditionalShowHide";
+import { ConditionalHide, ConditionalShow } from "components/ConditionalShowHide";
 
 type MenuItems = (MenuItemProps & {
   $isActive: boolean;
@@ -229,7 +229,7 @@ const ToolbarMenus = () => {
           </Menu>
         </ConditionalHide>
       </Hide>
-      <ConditionalHide above="xl" condition={!activeOverlayPanel}>
+      <ConditionalShow below="xl" condition={!activeOverlayPanel}>
         <Menu autoSelect={false}>
           <MenuButton
             as={ToolbarButton}
@@ -275,7 +275,7 @@ const ToolbarMenus = () => {
             </MenuOptionGroup>
           </MenuList>
         </Menu>
-      </ConditionalHide>
+      </ConditionalShow>
       <Divider orientation="vertical" />
     </>
   );
