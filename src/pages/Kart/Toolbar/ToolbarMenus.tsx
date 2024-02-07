@@ -1,12 +1,23 @@
-import { Icon, Menu, MenuButton, MenuItem, MenuItemProps, MenuList } from "@kvib/react";
+import {
+  Divider,
+  Hide,
+  Icon,
+  Menu,
+  MenuButton,
+  MenuDivider,
+  MenuItem,
+  MenuItemProps,
+  MenuList,
+  MenuOptionGroup,
+} from "@kvib/react";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import { styled } from "styled-components";
-import CustomTooltip from "./CustomTooltip";
-import ModeButton from "./ModeButton";
+import ToolbarButton from "./ToolbarButton";
 import { KeyboardShortcuts } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
+import { ConditionalHide, ConditionalShow } from "components/ConditionalShowHide";
 
 type MenuItems = (MenuItemProps & {
   $isActive: boolean;
@@ -30,14 +41,6 @@ const ToolbarMenus = () => {
   const mergeIsActive = activeOverlayPanel === "sammenslåing";
 
   const flatedetaljerIsActive = activeOverlayModal === "grunnkrets" || activeOverlayModal === "stemmekrets";
-
-  const toggleMetadata = () => {
-    toggleTool("metadata");
-
-    if (activeOverlayPanel === "metadata") {
-      closeOverlayPanel();
-    }
-  };
 
   const toggleFlatedetaljer = () => {
     if (flatedetaljerIsActive) {
@@ -69,7 +72,6 @@ const ToolbarMenus = () => {
   useKeyboardShortcut("edit_point", toggleMovePoint, isEditMode);
   useKeyboardShortcut("snap", () => toggleModeTool("snap"), isEditMode);
   useKeyboardShortcut("merge", toggleMergePanel, editingType === "stemmekrets");
-  useKeyboardShortcut("grenseinfo", toggleMetadata);
   useKeyboardShortcut("archive", () => toggleTool("archive"), isEditMode);
   useKeyboardShortcut("flate", toggleFlatedetaljer);
 
@@ -102,15 +104,7 @@ const ToolbarMenus = () => {
       onClick: () => toggleTool("detach"),
       "aria-label": "Løsriv grense fra et knutepunkt",
     },
-    {
-      label: "Se/endre grenseinformasjon",
-      icon: <Icon icon="live_help" />,
-      command: KeyboardShortcuts["grenseinfo"].displayString,
-      $isActive: activeTool === "metadata",
-      isDisabled: false,
-      onClick: toggleMetadata,
-      "aria-label": "Se informasjon om grensen",
-    },
+
     {
       label: "Arkiver grense",
       icon: <Icon icon="archive" />,
@@ -173,72 +167,122 @@ const ToolbarMenus = () => {
 
   return (
     <>
-      <Menu autoSelect={false}>
-        <CustomTooltip text={"Vis grenseverktøy"}>
+      <Divider orientation="vertical" />
+      <Hide below="xl">
+        <ConditionalHide above="xl" condition={!!activeOverlayPanel}>
+          <Menu autoSelect={false}>
+            <MenuButton
+              as={ToolbarButton}
+              aria-label="Grenseverktøy"
+              icon="timeline"
+              isDisabled={grenseMenuItems.every((gmi) => gmi.isDisabled)}
+              isActive={grenseMenuItems.some((gmi) => gmi.$isActive)}
+              tooltip={{ text: "Vis grenseverktøy" }}
+            >
+              Grense
+            </MenuButton>
+            <MenuList>
+              {grenseMenuItems.map((gmi) => (
+                <ToolbarMenuItem key={gmi.label} {...gmi}>
+                  {gmi.label}
+                </ToolbarMenuItem>
+              ))}
+            </MenuList>
+          </Menu>
+          <Menu autoSelect={false}>
+            <MenuButton
+              as={ToolbarButton}
+              aria-label="Punktverktøy"
+              icon="radio_button_checked"
+              isDisabled={punktMenuItems.every((pmi) => pmi.isDisabled)}
+              isActive={punktMenuItems.some((pmi) => pmi.$isActive)}
+              tooltip={{ text: "Vis punktverktøy" }}
+            >
+              Punkt
+            </MenuButton>
+            <MenuList>
+              {punktMenuItems.map((pmi) => (
+                <ToolbarMenuItem key={pmi.label} {...pmi}>
+                  {pmi.label}
+                </ToolbarMenuItem>
+              ))}
+            </MenuList>
+          </Menu>
+          <Menu autoSelect={false}>
+            <MenuButton
+              as={ToolbarButton}
+              aria-label="Flateverktøy"
+              icon="crop_landscape"
+              isDisabled={flateMenuItems.every((fmi) => fmi.isDisabled)}
+              isActive={flateMenuItems.some((fmi) => fmi.$isActive)}
+              tooltip={{ text: "Vis flateverktøy" }}
+            >
+              Flate
+            </MenuButton>
+            <MenuList>
+              {flateMenuItems.map((fmi) => (
+                <ToolbarMenuItem key={fmi.label} {...fmi}>
+                  {fmi.label}
+                </ToolbarMenuItem>
+              ))}
+            </MenuList>
+          </Menu>
+        </ConditionalHide>
+      </Hide>
+      <ConditionalShow below="xl" condition={!activeOverlayPanel}>
+        <Menu autoSelect={false}>
           <MenuButton
-            as={ModeButton}
-            aria-label="Grenseverktøy"
-            icon="show_chart"
-            isDisabled={grenseMenuItems.every((gmi) => gmi.isDisabled)}
-            isActive={grenseMenuItems.some((gmi) => gmi.$isActive)}
+            as={ToolbarButton}
+            aria-label="Verktøy"
+            icon="timeline"
+            isDisabled={
+              grenseMenuItems.every((gmi) => gmi.isDisabled) &&
+              punktMenuItems.every((pmi) => pmi.isDisabled) &&
+              flateMenuItems.every((fmi) => fmi.isDisabled)
+            }
+            isActive={
+              grenseMenuItems.some((gmi) => gmi.$isActive) &&
+              punktMenuItems.some((pmi) => pmi.$isActive) &&
+              flateMenuItems.some((fmi) => fmi.$isActive)
+            }
+            tooltip={{ text: "Vis verktøy" }}
           >
-            Grense
+            Verktøy
           </MenuButton>
-        </CustomTooltip>
-        <MenuList>
-          {grenseMenuItems.map((gmi) => (
-            <ToolbarMenuItem key={gmi.label} {...gmi}>
-              {gmi.label}
-            </ToolbarMenuItem>
-          ))}
-        </MenuList>
-      </Menu>
-      <Menu autoSelect={false}>
-        <CustomTooltip text="Vis punktverktøy">
-          <MenuButton
-            as={ModeButton}
-            aria-label="Punktverktøy"
-            icon="conversion_path"
-            isDisabled={punktMenuItems.every((pmi) => pmi.isDisabled)}
-            isActive={punktMenuItems.some((pmi) => pmi.$isActive)}
-          >
-            Punkt
-          </MenuButton>
-        </CustomTooltip>
-        <MenuList>
-          {punktMenuItems.map((pmi) => (
-            <ToolbarMenuItem key={pmi.label} {...pmi}>
-              {pmi.label}
-            </ToolbarMenuItem>
-          ))}
-        </MenuList>
-      </Menu>
-      <Menu autoSelect={false}>
-        <CustomTooltip text="Vis flateverktøy">
-          <MenuButton
-            as={ModeButton}
-            aria-label="Flateverktøy"
-            icon="area_chart"
-            isDisabled={flateMenuItems.every((fmi) => fmi.isDisabled)}
-            isActive={flateMenuItems.some((fmi) => fmi.$isActive)}
-          >
-            Flate
-          </MenuButton>
-        </CustomTooltip>
-        <MenuList>
-          {flateMenuItems.map((fmi) => (
-            <ToolbarMenuItem key={fmi.label} {...fmi}>
-              {fmi.label}
-            </ToolbarMenuItem>
-          ))}
-        </MenuList>
-      </Menu>
+          <MenuList>
+            <MenuOptionGroup title="Grense">
+              {grenseMenuItems.map((gmi) => (
+                <ToolbarMenuItem key={gmi.label} {...gmi}>
+                  {gmi.label}
+                </ToolbarMenuItem>
+              ))}
+            </MenuOptionGroup>
+            <MenuDivider />
+            <MenuOptionGroup title="Punkt">
+              {punktMenuItems.map((pmi) => (
+                <ToolbarMenuItem key={pmi.label} {...pmi}>
+                  {pmi.label}
+                </ToolbarMenuItem>
+              ))}
+            </MenuOptionGroup>
+            <MenuDivider />
+            <MenuOptionGroup title="Flate">
+              {flateMenuItems.map((fmi) => (
+                <ToolbarMenuItem key={fmi.label} {...fmi}>
+                  {fmi.label}
+                </ToolbarMenuItem>
+              ))}
+            </MenuOptionGroup>
+          </MenuList>
+        </Menu>
+      </ConditionalShow>
+      <Divider orientation="vertical" />
     </>
   );
 };
 
 const ToolbarMenuItem = styled(MenuItem)<{ $isActive: boolean }>`
-  background-color: ${(props) => props.$isActive && "var(--kvib-colors-blue-50)"};
+  background: ${(props) => props.$isActive && "var(--kvib-colors-blue-50)"};
 `;
 
 export default ToolbarMenus;

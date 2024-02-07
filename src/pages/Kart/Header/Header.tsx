@@ -2,7 +2,7 @@ import { styled } from "styled-components";
 import HeaderBreadcrumb from "./HeaderBreadcrumb";
 import HeaderHistoryOperations from "./HeaderHistoryOperations";
 import HeaderUtkastOperations from "./HeaderUtkastOperations";
-import HeaderButton from "./HeaderButton";
+import HeaderButton, { HeaderSection } from "./HeaderButton";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useUtkast } from "contexts/UtkastContext";
@@ -32,10 +32,11 @@ const Header = () => {
         <HeaderBreadcrumb />
         <HeaderHistoryOperations />
       </UtkastBar>
-      <SubBar>
-        <Section>
+      <Bar>
+        <HeaderSection>
           {!utkast && <HeaderHome />}
           <HeaderButton
+            variant="primary"
             label="Åpne en inndeling"
             icon="travel_explore"
             onClick={toggleSidebar}
@@ -44,9 +45,9 @@ const Header = () => {
               shortcut: "open",
             }}
           />
-        </Section>
+        </HeaderSection>
         {utkast && <HeaderUtkastOperations utkast={utkast} />}
-      </SubBar>
+      </Bar>
     </Container>
   );
 };
@@ -55,12 +56,13 @@ const Container = styled.header`
   grid-area: header;
   box-shadow: var(--kvib-shadows-base);
   z-index: ${zindex.mapHeader};
+  font-size: var(--kvib-fontSizes-sm);
 `;
 
 const Bar = styled.article`
   display: flex;
   justify-content: space-between;
-  padding: 12px 18px;
+  padding: 10px 18px;
   gap: 64px;
 
   &:empty {
@@ -71,16 +73,6 @@ const Bar = styled.article`
 const UtkastBar = styled(Bar)`
   background: var(--kvib-colors-chakra-body-bg);
   border-bottom: 1px solid var(--kvib-colors-chakra-border-color);
-`;
-
-const SubBar = styled(Bar)`
-  background: var(--kvib-colors-gray-50);
-`;
-
-const Section = styled.section`
-  display: flex;
-  align-items: center;
-  gap: 16px;
 `;
 
 export default Header;

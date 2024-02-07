@@ -4,7 +4,7 @@ import { useUtkast, useUtkastEntity } from "contexts/UtkastContext";
 import { StemmekretsResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { PanelProps, PanelHeader, Panel } from "../../Panel";
+import { PanelProps, PanelHeader, ModalPanel } from "../../Panel";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import SortHeader from "../SortHeader";
 import { useTableSort } from "../useTableSort";
@@ -30,7 +30,7 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
   return (
     <Modal isOpen={isOpen} onClose={closeOverlayModal} scrollBehavior="inside">
       <ModalOverlay />
-      <ModalContent as={Panel} $isOpen={isOpen} className={className}>
+      <ModalContent as={ModalPanel} $isOpen={isOpen} className={className}>
         <PanelHeader onClose={closeOverlayModal}>
           Flateinformasjon for {getNavnInSpraak(flatedata?.navn, "nor")}
         </PanelHeader>
