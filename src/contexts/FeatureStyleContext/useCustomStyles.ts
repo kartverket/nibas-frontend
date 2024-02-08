@@ -7,23 +7,28 @@ const useCustomStyles = (customStyle: StyleFunction | Style[]) => {
   const [customFeatureIds, setCustomFeatureIds] = useState<string[]>([]);
   const [savedCustomFeatureIds, setSavedCustomFeatureIds] = useState<string[]>([]);
 
-  // Setter en custom stil på gitte features, samt lagrede features som skal ha samme stil
-  const setCustomStyles = (featureIds: string[]) => {
+  const renderCustomStyles = (featureIds: string[]) => {
     for (const featureId of featureIds) {
       setFeatureStyle(featureId, customStyle);
     }
-    for (const featureId of savedCustomFeatureIds) {
-      setFeatureStyle(featureId, customStyle);
-    }
+  };
+  const renderSavedCustomStyles = () => renderCustomStyles(savedCustomFeatureIds);
+
+  // Setter en custom stil på gitte features, samt lagrede features som skal ha samme stil
+  const setCustomStyles = (featureIds: string[]) => {
+    renderCustomStyles(featureIds);
     setCustomFeatureIds(featureIds);
   };
 
   // Legger til custom stil på features gitt at de ikke allerede har den
   const addCustomStyles = (featureIds: string[]) => {
-    for (const featureId of featureIds) {
-      setFeatureStyle(featureId, customStyle);
-    }
+    renderCustomStyles(featureIds);
     setCustomFeatureIds(customFeatureIds.concat(featureIds.filter((fid) => !customFeatureIds.includes(fid))));
+  };
+
+  // Fjerner custom stil fra gitte features, tilbakestiller til edit-stil
+  const removeCustomStyles = (featureIds: string[]) => {
+    setCustomFeatureIds(customFeatureIds.filter((cfi) => !featureIds.includes(cfi)));
   };
 
   // Mellomlagrer lagrede features med den gitte stilen slik at de ikke blir tilbakestilt til edit-stil
@@ -34,9 +39,7 @@ const useCustomStyles = (customStyle: StyleFunction | Style[]) => {
 
   // Sender features med lagrede stiler fra utkastet direkte til listen av lagrede features
   const setAndSaveCustomStyles = (featureIds: string[]) => {
-    for (const featureId of featureIds) {
-      setFeatureStyle(featureId, customStyle);
-    }
+    renderCustomStyles(featureIds);
     setSavedCustomFeatureIds([...savedCustomFeatureIds, ...featureIds]);
   };
 
@@ -51,9 +54,11 @@ const useCustomStyles = (customStyle: StyleFunction | Style[]) => {
     savedCustomFeatureIds,
     setCustomStyles,
     addCustomStyles,
+    removeCustomStyles,
     saveCustomStyles,
     setAndSaveCustomStyles,
     clearCustomStyles,
+    renderSavedCustomStyles,
   };
 };
 

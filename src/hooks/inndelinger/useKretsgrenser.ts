@@ -101,8 +101,12 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   const { visible } = grenseValue;
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { utkast } = useUtkast();
-  const { setAndSaveUtkastFeatures, setAndSaveSammenslaaingsFeatures, setAndSaveUtkastArchivedFeatures } =
-    useFeatureStyle();
+  const {
+    setAndSaveDirtyStyles,
+    setAndSaveArchivedStyles,
+    setAndSaveSammenslaaingStyles,
+    setAndSaveSammenslaaingOverlappingStyles,
+  } = useFeatureStyle();
 
   const context = useContext(EditGrenserContext);
 
@@ -170,19 +174,23 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
       sammenslaaingsIder = [sammenslaaing.viderefoertStemmekrets.lokalId, ...innlemmedeStemmekretsIder];
     }
 
-    const promiseStemmemkretsFeatureIds = stemmekretsgrenserFetcher(sammenslaaingsIder, tokenHolderFunc()?.token);
+    const promiseStemmekretsFeatureIds = stemmekretsgrenserFetcher(sammenslaaingsIder, tokenHolderFunc()?.token);
 
-    promiseStemmemkretsFeatureIds.then((resolvedValue) => {
+    promiseStemmekretsFeatureIds.then((resolvedValue) => {
       const stemmekretsFeatureIds: string[] = resolvedValue
         ? resolvedValue.filter((x) => x !== undefined).map((x) => String(x))
         : [];
       const overlappingFeatureIds = getOverlappingStemmekretsFeatureIds(stemmekretsFeatureIds);
+      const uniqueStemmekretsFeatureIds = stemmekretsFeatureIds.filter(
+        (sfi) => !overlappingFeatureIds.some((ofi) => sfi === ofi),
+      );
 
-      setAndSaveSammenslaaingsFeatures(stemmekretsFeatureIds, overlappingFeatureIds);
+      setAndSaveSammenslaaingStyles(uniqueStemmekretsFeatureIds);
+      setAndSaveSammenslaaingOverlappingStyles(overlappingFeatureIds);
     });
 
-    setAndSaveUtkastFeatures(dirtyFeatureIds);
-    setAndSaveUtkastArchivedFeatures(archivedFeatureIds);
+    setAndSaveDirtyStyles(dirtyFeatureIds);
+    setAndSaveArchivedStyles(archivedFeatureIds);
   };
 
   useAddInndelingerKontekst(allFeatures, type, kommuneId);

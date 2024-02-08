@@ -42,7 +42,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
   const { setError } = useErrorHandling();
   const { utkast, updateUtkast, utkastHarEndringer } = useUtkast();
   const { tokenHolderFunc } = useAuthenticationFlow();
-  const { setAndSaveSammenslaaingsFeatures } = useFeatureStyle();
+  const { setAndSaveSammenslaaingStyles, setAndSaveSammenslaaingOverlappingStyles } = useFeatureStyle();
   const { history } = useHistory();
   const { data: stemmekretserByKommune } = useKommuneStemmekretser(flatedata ? getIdFromEntity(flatedata) : "");
 
@@ -141,8 +141,12 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
 
       const stemmekretsFeatureIds: string[] = await fetchStemmekretsgrenser(sammenslaaingsStemmekretsIder);
       const overlappingFeatureIds = getOverlappingStemmekretsFeatureIds(stemmekretsFeatureIds);
+      const uniqueStemmekretsFeatureIds = stemmekretsFeatureIds.filter(
+        (sfi) => !overlappingFeatureIds.some((ofi) => sfi === ofi),
+      );
 
-      setAndSaveSammenslaaingsFeatures(stemmekretsFeatureIds, overlappingFeatureIds);
+      setAndSaveSammenslaaingStyles(uniqueStemmekretsFeatureIds);
+      setAndSaveSammenslaaingOverlappingStyles(overlappingFeatureIds);
     }
     closeOverlayPanel();
     reset();

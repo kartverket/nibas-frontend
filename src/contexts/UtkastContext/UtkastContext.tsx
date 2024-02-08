@@ -29,7 +29,6 @@ import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
-import useDirtyStyles from "contexts/FeatureStyleContext/useDirtyStyles";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
@@ -42,8 +41,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const [utkast, setUtkast] = useState<UtkastResponse>();
 
   const { history, clearHistory } = useHistory();
-  const { clearFeatureStyles } = useFeatureStyle();
-  const { addDirtyFeatures } = useDirtyStyles();
+  const { addDirtyStyles, clearFeatureStyles } = useFeatureStyle();
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { resetAndClearAllLayers } = useEditAllGrenser();
   const { closeOverlayPanel } = useOverlayPanel();
@@ -201,7 +199,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
       const featuresToBeAddedToSource = geoJsonFeaturesToBeAddedToSource.flatMap(getFeaturesFromGeoJson);
 
       addFeaturesToSource("edit", featuresToBeAddedToSource);
-      addDirtyFeatures(featuresToBeAddedToSource.map((feature) => feature.getId() as string));
+      addDirtyStyles(featuresToBeAddedToSource.map((feature) => feature.getId() as string));
 
       setUtkast(updatedUtkastWithTempFeatureIds);
     } else if (statusCode.isError(response.status)) {
