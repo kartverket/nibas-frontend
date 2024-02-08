@@ -1,5 +1,4 @@
-import { styled } from "styled-components";
-import HeaderButton from "./HeaderButton";
+import HeaderButton, { HeaderSection } from "./HeaderButton";
 import { useDisclosure } from "@kvib/react";
 import UtkastSlettModal from "components/Modals/UtkastSlettModal";
 import UtkastPubliserModal from "components/Modals/UtkastPubliserModal";
@@ -12,7 +11,7 @@ const HeaderUtkastOperations = ({ utkast }: { utkast: UtkastResponse }) => {
   const { isOpen: isSlettOpen, onClose: onSlettClose, onOpen: onSlettOpen } = useDisclosure();
 
   return (
-    <Section>
+    <HeaderSection>
       <HeaderButton
         label="Publiser utkast"
         icon="upload"
@@ -28,14 +27,8 @@ const HeaderUtkastOperations = ({ utkast }: { utkast: UtkastResponse }) => {
       />
       <UtkastPubliserModal isOpen={isPubliserOpen} onClose={onPubliserClose} utkast={utkast} />
       <UtkastSlettModal isOpen={isSlettOpen} onClose={onSlettClose} utkast={utkast} />
-    </Section>
+    </HeaderSection>
   );
 };
-
-const Section = styled.section`
-  display: flex;
-  align-items: center;
-  gap: 16px;
-`;
 
 export default HeaderUtkastOperations;

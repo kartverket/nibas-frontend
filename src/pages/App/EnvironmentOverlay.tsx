@@ -43,12 +43,14 @@ const Overlay = styled.div<{ color: string }>`
 const OverlayLabel = styled.span<{ color: string }>`
   display: inline-block;
   position: relative;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 50%;
+  writing-mode: vertical-lr;
+
+  transform: translateY(-50%);
   font-weight: bold;
   background: ${(props) => props.color};
-  padding: 4px 16px 8px;
-  border-bottom-left-radius: 8px;
+  padding: 16px 8px 16px 4px;
+  border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
 `;
 

@@ -1,12 +1,11 @@
-import React, { createContext, useContext, useEffect, useRef } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useRef } from "react";
 import useDirtyStyles from "./useDirtyStyles";
 import { HistoryEntry, useHistory } from "contexts/HistoryContext";
 import { FeatureStyleContextValue } from "./types";
 import { useSelectStyles } from "./useSelectStyles";
-import { getArchiveLayerStyle, grenseStyles } from "utils/map/layerStyles";
+import { getArchiveLayerStyle, grenseStyles, setFeatureStyle } from "utils/map/layerStyles";
 import useArchiveStyles from "./useArchiveStyles";
 import { FeatureLike } from "ol/Feature";
-import { editableBorderTypes } from "hooks/layers/constants";
 
 export const FeatureStyleContext = createContext<FeatureStyleContextValue | undefined>(undefined);
 
@@ -16,7 +15,6 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     dirtyFeatureIds,
     setDirtyFeatures,
     clearDirtyStyles,
-    setDirtyFeaturesToEdit,
     saveDirtyFeatureIds,
     savedDirtyFeatureIds,
     setAndSaveUtkastFeatures,
@@ -29,7 +27,6 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     saveArchivedFeatureIds,
     savedArchivedFeatureIds,
     setAndSaveUtkastArchivedFeatures,
-    setArchivedFeaturesToEdit,
   } = useArchiveStyles();
   const { history } = useHistory();
   const previousSelectedFeatures = useRef(selectedFeatures);
@@ -70,6 +67,26 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     return accumulator;
   };
 
+  const resetFeaturesToEditStyle = useCallback(
+    (featureIds: string[]) => {
+      for (const featureId of featureIds) {
+        if (!savedArchivedFeatureIds.includes(featureId) && !savedDirtyFeatureIds.includes(featureId)) {
+          setFeatureStyle(featureId, grenseStyles.edit);
+        }
+      }
+      setDirtyFeatures(dirtyFeatureIds.filter((dfi) => !featureIds.includes(dfi)));
+      setArchivedFeatures(archivedFeatureIds.filter((afi) => !featureIds.includes(afi)));
+    },
+    [
+      archivedFeatureIds,
+      dirtyFeatureIds,
+      savedArchivedFeatureIds,
+      savedDirtyFeatureIds,
+      setArchivedFeatures,
+      setDirtyFeatures,
+    ],
+  );
+
   useEffect(() => {
     const dirtyHistoryTypes = ["grense", "metadata", "grensetilhorighetendring", "nygrense"];
 
@@ -90,7 +107,6 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       .flatMap((id) => id);
 
     // Entries før index skal fargelegges basert på endringen som er gjort
-
     const dirtyFeatures = history.entries
       .slice(0, history.index)
       .filter((entry) => dirtyHistoryTypes.includes(entry.type))
@@ -99,7 +115,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
 
     const archivedFeatures = history.entries
       .slice(0, history.index)
-      .filter((entry) => entry.type === "grensearkivering")
+      .filter((entry) => entry.type === "grensearkivering" || entry.type === "grensesplitting")
       .reduce(getFeatureIdsFromEntries, [])
       .flatMap((id) => id);
 
@@ -108,8 +124,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       return;
     }
 
-    setDirtyFeaturesToEdit(editFeatures);
-    setArchivedFeaturesToEdit(editFeatures);
+    resetFeaturesToEditStyle(editFeatures);
     setDirtyFeatures(dirtyFeatures);
     setArchivedFeatures(archivedFeatures);
   }, [
@@ -122,10 +137,11 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     archivedFeatureIds.length,
     saveArchivedFeatureIds,
     setArchivedFeatures,
-    setDirtyFeaturesToEdit,
-    setArchivedFeaturesToEdit,
     archivedFeatureIds,
     savedArchivedFeatureIds,
+    dirtyFeatureIds,
+    savedDirtyFeatureIds,
+    resetFeaturesToEditStyle,
   ]);
 
   const clearFeatureStyles = () => {
@@ -141,16 +157,12 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     return false;
   };
 
-  const featureIsEditable = (feature: FeatureLike) =>
-    editableBorderTypes.includes(feature.get("type")) && !featureIsArchived(feature);
-
   const value = {
     selectedPoint,
     selectedFeatures,
     selectFeatures,
     clearSelection,
     featureIsArchived,
-    featureIsEditable,
     selectPointOnFeature,
     setAndSaveUtkastFeatures,
     setAndSaveSammenslaaingsFeatures,

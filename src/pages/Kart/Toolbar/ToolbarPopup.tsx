@@ -25,7 +25,7 @@ const ToolbarPopup = ({ text, subtext, buttonText, onClick, onClose, isDisabled,
           {buttonText}
         </Button>
       )}
-      <Button size="sm" variant="secondary" colorScheme="gray" onClick={onClose}>
+      <Button size="sm" variant="ghost" onClick={onClose}>
         Lukk
       </Button>
     </ToolbarPopupBody>

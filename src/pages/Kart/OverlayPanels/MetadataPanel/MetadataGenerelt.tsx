@@ -95,8 +95,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
         valueLabelFormatter={() => {
           const featureId = feature.getId()?.toString();
 
-          if (featureId && isTempFeatureId(featureId))
-            return `Ny grense - ID blir satt ved publisering - Midlertidig ID: ${featureId}`;
+          if (featureId && isTempFeatureId(featureId)) return `Ny grense - ID blir satt ved publisering`;
 
           return feature.getId()?.toString() || null;
         }}
