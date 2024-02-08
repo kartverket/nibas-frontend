@@ -97,30 +97,39 @@ export const getTilhorighetValuesFormatted = (
   }
 };
 
-export const getKommunerIdFromKontekstEgenskaper = (kontekstEgenskaper: KontekstEgenskaper[]): string[] => {
-  return kontekstEgenskaper
+export const getKommunerIdFromKontekstEgenskaper = (kontekstEgenskaper: KontekstEgenskaper[]): string[] | null => {
+  const kommuner = kontekstEgenskaper
     .filter((kontekst) => kontekst.kommuneId !== null)
     .map((kontekst) => kontekst.kommuneId!.lokalid.value);
+  return kommuner.length > 0 ? kommuner : null;
 };
 
 export const mapGrunnkretsRefToKrets = (grunnkretser: GrunnkretsRef[]): Krets[] => {
-  return grunnkretser.map(({ id, version, grunnkretsnummer, navn, kommuneIdentifikator }) => ({
-    id,
-    kommuneId: kommuneIdentifikator,
-    version,
-    nummer: grunnkretsnummer,
-    navn: navn,
-    type: KontekstType.GRUNNKRETS,
-  }));
+  return grunnkretser
+    .map(({ id, version, grunnkretsnummer, navn, kommuneIdentifikator }) => ({
+      id,
+      kommuneId: kommuneIdentifikator,
+      version,
+      nummer: grunnkretsnummer,
+      navn: navn,
+      type: KontekstType.GRUNNKRETS,
+    }))
+    .sort((a, b) => {
+      return Number(a.nummer) - Number(b.nummer);
+    });
 };
 
 export const mapStemmekretRefToKrets = (stemmekretser: StemmekretsRef[]): Krets[] => {
-  return stemmekretser.map(({ id, version, nummer, navn, kommuneIdentifikator }) => ({
-    id,
-    kommuneId: kommuneIdentifikator,
-    version,
-    nummer: nummer,
-    navn: navn,
-    type: KontekstType.STEMMEKRETS,
-  }));
+  return stemmekretser
+    .map(({ id, version, nummer, navn, kommuneIdentifikator }) => ({
+      id,
+      kommuneId: kommuneIdentifikator,
+      version,
+      nummer: nummer,
+      navn: navn,
+      type: KontekstType.STEMMEKRETS,
+    }))
+    .sort((a, b) => {
+      return Number(a.nummer) - Number(b.nummer);
+    });
 };
