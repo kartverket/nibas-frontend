@@ -50,6 +50,7 @@ const useCustomStyles = (customStyle: StyleFunction | Style[]) => {
   };
 
   return {
+    customStyle,
     customFeatureIds,
     savedCustomFeatureIds,
     setCustomStyles,
