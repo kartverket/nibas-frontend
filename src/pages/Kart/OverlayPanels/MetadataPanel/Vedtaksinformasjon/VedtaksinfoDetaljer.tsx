@@ -1,21 +1,7 @@
-import {
-  Button,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  Text,
-  useToast,
-} from "@kvib/react";
+import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, Text, useToast } from "@kvib/react";
 import { Feature } from "ol";
 import { VedtaksinfoBody } from "./VedtaksinfoBody";
-import {
-  BorderBottom,
-  BorderTop,
-  Referanse,
-  VedtakinfoForm,
-} from "./OversiktReferanser";
+import { BorderBottom, BorderTop, Referanse, VedtakinfoForm } from "./OversiktReferanser";
 import { styled } from "styled-components";
 import { mapFromFormToApi, useVedtaksinfoForm } from "./useVedtaksinfoForm";
 import { Metadata } from "types/api";
@@ -41,15 +27,10 @@ export const VedtaksinfoDetaljer = ({
   const [dokref, setDokref] = useState<Referanse[] | undefined>([]);
   const [internref, setInternref] = useState<Referanse[] | undefined>([]);
 
-  const {
-    isDirty,
-    register,
-    reset,
-    handleSubmit,
-    updateDraftFromFeature,
-    errors,
-    control,
-  } = useVedtaksinfoForm(feature, selectedVedtaksinfoIndex);
+  const { isDirty, register, reset, handleSubmit, updateDraftFromFeature, errors, control } = useVedtaksinfoForm(
+    feature,
+    selectedVedtaksinfoIndex,
+  );
 
   const deleteDokref = (index: number) => {
     const dokrefCopy = structuredClone(dokref);
@@ -73,9 +54,7 @@ export const VedtaksinfoDetaljer = ({
     if (isDirty) {
       toast({
         status: "success",
-        title: `Vedtaksinformasjonen er ${
-          selectedVedtaksinfoIndex === undefined ? "lagt til" : "oppdatert"
-        }`,
+        title: `Vedtaksinformasjonen er ${selectedVedtaksinfoIndex === undefined ? "lagt til" : "oppdatert"}`,
       });
       const postValues = mapFromFormToApi(data, dokref, internref);
       updateDraftFromFeature(postValues);
@@ -91,9 +70,7 @@ export const VedtaksinfoDetaljer = ({
 
   // TODO: Er det noen måte å gjøre dette penere på uten at man får en ininite loop med re-rendring?
   if (isOpen && selectedVedtaksinfoIndex !== undefined) {
-    const vedtaksinformasjon = metadata?.dokumentasjonsreferanser?.at(
-      selectedVedtaksinfoIndex,
-    );
+    const vedtaksinformasjon = metadata?.dokumentasjonsreferanser?.at(selectedVedtaksinfoIndex);
     if (dokref === undefined) {
       setDokref(vedtaksinformasjon?.dokumentlenker || []);
     }
@@ -159,8 +136,7 @@ const VedtaksFooter = ({
   onClose: () => void;
   toggleEndreVedtak: () => void;
 }) => {
-  if (displayMode)
-    return <VisVedtakFooter toggleEndreVedtak={toggleEndreVedtak} />;
+  if (displayMode) return <VisVedtakFooter toggleEndreVedtak={toggleEndreVedtak} />;
   else if (redigeringsmodus)
     return (
       <EndreVedtakFooter
@@ -173,11 +149,7 @@ const VedtaksFooter = ({
   else return <NyttVedtakFooter onClose={onClose} />;
 };
 
-const VisVedtakFooter = ({
-  toggleEndreVedtak,
-}: {
-  toggleEndreVedtak: () => void;
-}) => {
+const VisVedtakFooter = ({ toggleEndreVedtak }: { toggleEndreVedtak: () => void }) => {
   return (
     <>
       <ButtonsContainer />
@@ -195,12 +167,7 @@ const NyttVedtakFooter = ({ onClose }: { onClose: () => void }) => {
     <>
       <ButtonsContainer />
       <ButtonsContainer>
-        <Button
-          variant="tertiary"
-          colorScheme="blue"
-          size="md"
-          onClick={onClose}
-        >
+        <Button variant="tertiary" colorScheme="blue" size="md" onClick={onClose}>
           Avbryt
         </Button>
         <Button type="submit" size="md">
@@ -211,25 +178,14 @@ const NyttVedtakFooter = ({ onClose }: { onClose: () => void }) => {
   );
 };
 
-const EndreVedtakFooter = ({
-  onClose,
-  onArchive,
-}: {
-  onClose: () => void;
-  onArchive: () => void;
-}) => {
+const EndreVedtakFooter = ({ onClose, onArchive }: { onClose: () => void; onArchive: () => void }) => {
   return (
     <>
       <ButtonsContainer>
         <Text onClick={onArchive}>Arkiver</Text>
       </ButtonsContainer>
       <ButtonsContainer>
-        <Button
-          colorScheme="blue"
-          size="md"
-          onClick={onClose}
-          variant="tertiary"
-        >
+        <Button colorScheme="blue" size="md" onClick={onClose} variant="tertiary">
           Avbryt
         </Button>
         <Button type="submit" size="md">

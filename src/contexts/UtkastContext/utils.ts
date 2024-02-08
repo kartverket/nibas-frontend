@@ -150,7 +150,7 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
       },
     }),
   ) as UtkastOperasjoner;
-
+  console.log("UtkastContext operasjoner", utkastOperations);
   const sammenslaaingsOperations = (
     historyToCurrentIndex.filter(
       (entry) => entry.type === "stemmekretssammenslaaingsendring",

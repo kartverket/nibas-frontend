@@ -4,12 +4,7 @@ import { Referanse, VedtakinfoForm } from "./OversiktReferanser";
 import { VedtakinfoField } from "./VedtakinfoField";
 import { Metadata } from "types/api";
 import { styled } from "styled-components";
-import {
-  Control,
-  Controller,
-  FieldErrors,
-  UseFormRegister,
-} from "react-hook-form";
+import { Control, Controller, FieldErrors, UseFormRegister } from "react-hook-form";
 import { Referanser } from "./Referanser";
 
 type ReferanseBodyProps = {
@@ -59,9 +54,7 @@ export const VedtaksinfoBody = ({
 
   const metadata = feature.getProperties().metadata as Metadata;
   const vedtaksinformasjon =
-    vedtaksinfoIndex !== undefined
-      ? metadata.dokumentasjonsreferanser?.at(vedtaksinfoIndex)
-      : undefined;
+    vedtaksinfoIndex !== undefined ? metadata.dokumentasjonsreferanser?.at(vedtaksinfoIndex) : undefined;
 
   return (
     <>
@@ -97,9 +90,7 @@ export const VedtaksinfoBody = ({
                       title="Fastsettingsdato"
                       value={
                         vedtaksinformasjon?.fastsettingsdato
-                          ? new Date(
-                              vedtaksinformasjon?.fastsettingsdato,
-                            ).toLocaleDateString("nb-NO")
+                          ? new Date(vedtaksinformasjon?.fastsettingsdato).toLocaleDateString("nb-NO")
                           : undefined
                       }
                     >
@@ -120,11 +111,7 @@ export const VedtaksinfoBody = ({
                 title="Rettskilde-ID (frivillig)"
                 value={vedtaksinformasjon?.rettskildeId || "Ingen ID satt."}
               >
-                <Input
-                  {...register("rettskildeId")}
-                  backgroundColor={"white"}
-                  placeholder={"Ikke spesifisert"}
-                />
+                <Input {...register("rettskildeId")} backgroundColor={"white"} placeholder={"Ikke spesifisert"} />
               </VedtakinfoField>
             </Row>
             <Row>
@@ -180,21 +167,14 @@ export const VedtaksinfoBody = ({
               title="Hjemmel (frivillig)"
               value={vedtaksinformasjon?.hjemmel || "Ingen hjemmel satt."}
             >
-              <Input
-                {...register("hjemmel")}
-                backgroundColor={"white"}
-                placeholder={"Ikke spesifisert"}
-              />
+              <Input {...register("hjemmel")} backgroundColor={"white"} placeholder={"Ikke spesifisert"} />
             </VedtakinfoField>
             <VedtakinfoField
               errors={errors.fastsettingsmyndighet}
               displayMode={displayMode}
               tooltipLabel="Offentlig instans som har fastsatt en grense."
               title="Fastsettingsmyndighet (frivillig)"
-              value={
-                vedtaksinformasjon?.fastsettingsmyndighet ||
-                "Ingen myndighet satt"
-              }
+              value={vedtaksinformasjon?.fastsettingsmyndighet || "Ingen myndighet satt"}
             >
               <Input
                 {...register("fastsettingsmyndighet")}

@@ -18,6 +18,8 @@ export const mapFromFormToApi = (
     fastsettingsmyndighet: formValues.fastsettingsmyndighet,
     hjemmel: formValues.hjemmel,
     rettskildeId: formValues.rettskildeId,
+    gyldigFra: formValues.gyldigFra?.toISOString(),
+    gyldigTil: formValues.gyldigTil?.toISOString(),
     dokumentlenker:
       dokrefs?.map((ref) => ({
         id: ref.id,
@@ -46,10 +48,7 @@ const emptyVedtaksinformasjon = {
   gyldigTil: undefined,
 };
 
-const updateFeatureWithNewMetadata = (
-  feature: Feature<LineString>,
-  newMetadata: Metadata,
-) => {
+const updateFeatureWithNewMetadata = (feature: Feature<LineString>, newMetadata: Metadata) => {
   const properties = feature.getProperties() as FeatureProperties;
   feature.setProperties({
     ...properties,
@@ -63,9 +62,7 @@ const addMetadataEntryFromFeature = (
   updatedMetadata: Metadata,
 ) => {
   const id = feature.getId();
-  const oldMetadata = structuredClone(
-    feature.getProperties().metadata,
-  ) as Metadata;
+  const oldMetadata = structuredClone(feature.getProperties().metadata) as Metadata;
 
   if (!id) return;
 
@@ -83,17 +80,10 @@ const addMetadataEntryFromFeature = (
   });
 };
 
-export const useVedtaksinfoForm = (
-  feature: Feature,
-  selectedVedtaksinfoIndex?: number,
-) => {
+export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoIndex?: number) => {
   const values: VedtakinfoForm =
     selectedVedtaksinfoIndex !== undefined
-      ? structuredClone(
-          feature.getProperties().metadata.dokumentasjonsreferanser[
-            selectedVedtaksinfoIndex
-          ],
-        )
+      ? structuredClone(feature.getProperties().metadata.dokumentasjonsreferanser[selectedVedtaksinfoIndex])
       : emptyVedtaksinformasjon;
   values.fastsettingsdato = new Date(values.fastsettingsdato);
   const {
@@ -116,36 +106,24 @@ export const useVedtaksinfoForm = (
 
     if (selectedVedtaksinfoIndex === undefined) {
       // Implisitt en ny dokumentasjonsreferanse ved mangel av index.
-      const oldDokrefs: Dokref[] = metadata.dokumentasjonsreferanser
-        ? metadata.dokumentasjonsreferanser
-        : [];
+      const oldDokrefs: Dokref[] = metadata.dokumentasjonsreferanser ? metadata.dokumentasjonsreferanser : [];
       const dokrefsCopy = structuredClone(oldDokrefs);
       dokrefsCopy.push(vedtaksinfo);
 
-      addMetadataEntryFromFeature(
-        feature as Feature<LineString>,
-        addHistoryEntry,
-        {
-          ...metadata,
-          dokumentasjonsreferanser: dokrefsCopy,
-        },
-      );
+      addMetadataEntryFromFeature(feature as Feature<LineString>, addHistoryEntry, {
+        ...metadata,
+        dokumentasjonsreferanser: dokrefsCopy,
+      });
     } else {
       // Oppdaterer eksisterende dokumentasjonsreferanse
-      const oldDokrefs: Dokref[] = metadata.dokumentasjonsreferanser
-        ? metadata.dokumentasjonsreferanser
-        : [];
+      const oldDokrefs: Dokref[] = metadata.dokumentasjonsreferanser ? metadata.dokumentasjonsreferanser : [];
       const dokrefsCopy = structuredClone(oldDokrefs);
       dokrefsCopy[selectedVedtaksinfoIndex] = vedtaksinfo;
 
-      addMetadataEntryFromFeature(
-        feature as Feature<LineString>,
-        addHistoryEntry,
-        {
-          ...metadata,
-          dokumentasjonsreferanser: dokrefsCopy,
-        },
-      );
+      addMetadataEntryFromFeature(feature as Feature<LineString>, addHistoryEntry, {
+        ...metadata,
+        dokumentasjonsreferanser: dokrefsCopy,
+      });
     }
   };
 

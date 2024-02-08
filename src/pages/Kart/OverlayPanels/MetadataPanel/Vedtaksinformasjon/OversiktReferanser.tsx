@@ -15,7 +15,7 @@ type VedtakinfoForm = {
   dokumentlenker: Referanse[];
   leggTilDokumentlenke?: string;
   fastsettingsdato: Date;
-  gyldigFra: Date | undefined;
+  gyldigFra: Date;
   gyldigTil: Date | undefined;
   fastsettingsmyndighet?: string;
   hjemmel?: string;
