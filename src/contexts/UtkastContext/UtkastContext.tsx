@@ -30,6 +30,7 @@ import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/so
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 import useDirtyStyles from "contexts/FeatureStyleContext/useDirtyStyles";
+import { CustomOption } from "pages/Kart/OverlayPanels/hooks/tilhorighetUtils";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
@@ -121,7 +122,11 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
 
     for (const feature of endredeFeatures) {
       const featureProperties = feature.properties;
-      if (!featureProperties.kontekstEgenskaper || feature.properties.kontekstEgenskaper.length < 2) {
+      if (
+        !featureProperties.kontekstEgenskaper ||
+        feature.properties.kontekstEgenskaper.length < 2 ||
+        featureProperties.kontekstEgenskaper.find((kontekst) => kontekst.id?.lokalid.value === CustomOption.NOT_CHOSEN)
+      ) {
         toast({
           status: "error",
           title: "Grense mangler tilhørighet",
