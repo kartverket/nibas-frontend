@@ -8,7 +8,7 @@ import { GrenseType } from "hooks/layers/types";
 import { useTilhorighet } from "../hooks/useTilhorighet";
 import { useEffect } from "react";
 
-enum Tilhorighet {
+export enum Tilhorighet {
   A = "a",
   B = "b",
 }
@@ -26,8 +26,21 @@ export const TilhorighetField = ({
 }: TilhorighetProps) => {
   const properties = feature.getProperties() as FeatureProperties;
   const kontekstEgenskaper = properties.kontekstEgenskaper;
+  const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
+  const [isFlateModalOpen, setIsFlateModalOpen] = useState(false);
+  const [nyFlateForTilhorighet, setNyFlateForTilhorighet] = useState<
+    Tilhorighet | undefined
+  >(undefined);
 
   const metadataIsDisabled = useIsMetadataDisabled(feature, properties);
+
+  const openModal = (
+    open: boolean,
+    tilhorighetContext: Tilhorighet | undefined,
+  ) => {
+    setIsFlateModalOpen(open);
+    setNyFlateForTilhorighet(tilhorighetContext);
+  };
 
   const grenseType = properties.type as GrenseType;
 
@@ -39,6 +52,7 @@ export const TilhorighetField = ({
     getTilhorighetData,
     register,
     updateDraftFromFeature,
+    setValue,
   } = useTilhorighet(
     feature,
     grenseType,
@@ -50,34 +64,57 @@ export const TilhorighetField = ({
     resetTilhorighet();
   }, [getTilhorighetData, feature, tilhorighetOptions, resetTilhorighet]);
   return (
-    <MetadataRow
-      feature={feature}
-      name="Tilhørighet"
-      valueLabel={getValuesFormatted() ?? "Ikke definert"}
-      onMetadataSubmit={() => updateDraftFromFeature()}
-      isDisabled={metadataIsDisabled || isDisabled}
-      isDirty={isDirty}
-      reset={resetTilhorighet}
-      tooltipLabel="Definerer hvilke inndelinger grensen har på hver sin side. Obs! Endring av dette feltet kan forårsake geometriendringer."
-    >
-      <Stack>
-        {Object.values(Tilhorighet).map((tilhorighet) => (
-          <Select
-            key={tilhorighet}
-            {...register(`${tilhorighetToChange}.${tilhorighet}`)}
-          >
-            {tilhorighetOptions &&
-              tilhorighetOptions.map((krets) => {
-                const uid = `${tilhorighet}_${krets.id.lokalid.value}`;
-                return (
-                  <option key={uid} value={krets.id.lokalid.value}>
-                    {krets.nummer} {krets.navn}
-                  </option>
-                );
-              })}
-          </Select>
-        ))}
-      </Stack>
-    </MetadataRow>
+    <>
+      <MetadataRow
+        feature={feature}
+        name={"Tilhørighet"}
+        valueLabel={getValuesFormatted() ?? "Ikke definert"}
+        onMetadataSubmit={() => updateDraftFromFeature()}
+        isDisabled={metadataIsDisabled}
+        isDirty={isDirty}
+        reset={resetTilhorighet}
+        tooltipLabel={""}
+      >
+        <Stack>
+          {Object.values(Tilhorighet).map((tilhorighet) => (
+            <Select
+              key={tilhorighet}
+              {...tilhorighetRegisters[tilhorighet]}
+              onChange={(e) => {
+                tilhorighetRegisters[tilhorighet].onChange(e);
+                if (e.target.value === Option.NY_FLATE) {
+                  openModal(true, tilhorighet);
+                }
+              }}
+            >
+              <option
+                key={Option.NY_FLATE}
+                value={`${Option.NY_FLATE}.${tilhorighet}`}
+              >
+                {"<Opprett ny flate>"}
+              </option>
+              {tilhorighetOptions &&
+                tilhorighetOptions.map((krets) => {
+                  const uid = `${tilhorighet}_${krets.id.lokalid.value}`;
+                  return (
+                    <option key={uid} value={krets.id.lokalid.value}>
+                      {krets.nummer} {krets.navn}
+                    </option>
+                  );
+                })}
+            </Select>
+          ))}
+        </Stack>
+      </MetadataRow>
+      <FlateFormModal
+        isOpen={isFlateModalOpen}
+        onClose={() => openModal(false, undefined)}
+        featureProps={properties}
+        flatedata={flatedata}
+        tilhorighet={nyFlateForTilhorighet}
+        setTilhorighet={setValue}
+        updateTilhorighet={updateDraftFromFeature}
+      />
+    </>
   );
 };

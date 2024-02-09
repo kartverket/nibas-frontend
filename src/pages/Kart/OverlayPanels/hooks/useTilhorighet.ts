@@ -1,4 +1,4 @@
-import { useHistory } from "contexts/HistoryContext";
+import { HistoryEntry, useHistory } from "contexts/HistoryContext";
 import { useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { GrenseType } from "hooks/layers/types";
@@ -111,6 +111,12 @@ const getUpdatedKontekstEgenskaper = (
   return nyeKontekstEgenskaper;
 };
 
+const mapNyKretsHistoryEntryToKrets = (
+  entries: HistoryEntry[],
+): TilhorighetOptions => {
+  return {} as Krets[];
+};
+
 export const useTilhorighet = (
   feature: Feature,
   grenseType: GrenseType,
@@ -125,7 +131,7 @@ export const useTilhorighet = (
 
   const [tilhorighetOptions, setTilhorighetOptions] =
     useState<TilhorighetOptions>();
-  const { addHistoryEntry } = useHistory();
+  const { addHistoryEntry, history } = useHistory();
 
   useEffect(() => {
     if (grunnkretser && stemmekretser) {
@@ -138,6 +144,7 @@ export const useTilhorighet = (
   const {
     register,
     getValues,
+    setValue,
     formState: { isDirty },
     reset,
   } = useForm<TilhorighetForm>({
@@ -168,9 +175,17 @@ export const useTilhorighet = (
 
   const updateDraftFromFeature = () => {
     if (kontekstEgenskaper && tilhorighetOptions) {
+
+      // henter nye kretser fra history
+      const kretsValg = tilhorighetOptions.concat(
+        mapNyKretsHistoryEntryToKrets(
+          history.entries.filter((entry) => entry.type === "grense"), // TODO lag egen hisotry entry for nye kretser
+        ),
+      );
+
       const oppdaterteKontekstEgenskaper = getUpdatedKontekstEgenskaper(
         getValues(tilhorighetToChange),
-        tilhorighetOptions,
+        kretsValg,
       );
       addKontekstEntryFromFeature(
         feature as Feature<LineString>,
@@ -188,5 +203,6 @@ export const useTilhorighet = (
     resetTilhorighet,
     getTilhorighetData,
     updateDraftFromFeature,
+    setValue,
   };
 };

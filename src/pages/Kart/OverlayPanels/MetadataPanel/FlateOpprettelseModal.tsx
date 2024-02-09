@@ -28,6 +28,9 @@ import { FeatureProperties } from "types/api";
 import { useFlateForm } from "../hooks/useFlateForm";
 import { Flatedata } from "contexts/OverlayPanelContext";
 import useFylker from "hooks/inndelinger/useFylker";
+import { UseFormGetValues, UseFormSetValue } from "react-hook-form";
+import { TilhorighetForm } from "../hooks/useTilhorighet";
+import { Tilhorighet } from "./TilhorighetField";
 
 const FlateOpprettelseAlert = () => {
   return (
@@ -50,6 +53,9 @@ interface Props {
   onClose: () => void;
   featureProps: FeatureProperties;
   flatedata: Flatedata;
+  tilhorighet: Tilhorighet | undefined;
+  setTilhorighet: UseFormSetValue<TilhorighetForm>;
+  updateTilhorighet: () => void;
 }
 
 export const FlateFormModal = ({
@@ -57,9 +63,12 @@ export const FlateFormModal = ({
   onClose,
   featureProps,
   flatedata,
+  tilhorighet,
+  setTilhorighet,
+  updateTilhorighet,
 }: Props) => {
   const { type, flateRegisters, reset, isDirty, updateDraftFromFeature } =
-    useFlateForm(featureProps);
+    useFlateForm(featureProps, tilhorighet, setTilhorighet, updateTilhorighet);
 
   const { fylker } = useFylker();
 
