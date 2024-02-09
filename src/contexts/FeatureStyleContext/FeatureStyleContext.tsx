@@ -1,34 +1,33 @@
-import React, { createContext, useCallback, useContext, useEffect, useRef } from "react";
-import useDirtyStyles from "./useDirtyStyles";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef } from "react";
 import { HistoryEntry, useHistory } from "contexts/HistoryContext";
 import { FeatureStyleContextValue } from "./types";
 import { useSelectStyles } from "./useSelectStyles";
 import { getArchiveLayerStyle, grenseStyles, setFeatureStyle } from "utils/map/layerStyles";
-import useArchiveStyles from "./useArchiveStyles";
 import { FeatureLike } from "ol/Feature";
+import useCustomStyles from "./useCustomStyles";
 
 export const FeatureStyleContext = createContext<FeatureStyleContextValue | undefined>(undefined);
 
 export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }) => {
-  const { selectedPoint, selectFeatures, selectedFeatures, selectPointOnFeature, clearSelection } = useSelectStyles();
-  const {
-    dirtyFeatureIds,
-    setDirtyFeatures,
-    clearDirtyStyles,
-    saveDirtyFeatureIds,
-    savedDirtyFeatureIds,
-    setAndSaveUtkastFeatures,
-    setAndSaveSammenslaaingsFeatures,
-  } = useDirtyStyles();
-  const {
-    archivedFeatureIds,
-    setArchivedFeatures,
-    clearArchivedStyles,
-    saveArchivedFeatureIds,
-    savedArchivedFeatureIds,
-    setAndSaveUtkastArchivedFeatures,
-  } = useArchiveStyles();
   const { history } = useHistory();
+  const { selectedPoint, selectFeatures, selectedFeatures, selectPointOnFeature, clearSelection } = useSelectStyles();
+
+  const sammenslaaingOverlappingStyleFunctions = useCustomStyles(grenseStyles.sammenslaaingOverlapping);
+  const sammenslaaingStyleFunctions = useCustomStyles(grenseStyles.sammenslaaing);
+  const archivedStyleFunctions = useCustomStyles(getArchiveLayerStyle);
+  const dirtyStyleFunctions = useCustomStyles(grenseStyles.dirty);
+
+  // OBS! Rekkefølgen avgjør prioriteten til stilene, høyest i listen er høyest prioritet.
+  const customStyles = useMemo(
+    () => [
+      sammenslaaingOverlappingStyleFunctions,
+      sammenslaaingStyleFunctions,
+      archivedStyleFunctions,
+      dirtyStyleFunctions,
+    ],
+    [archivedStyleFunctions, dirtyStyleFunctions, sammenslaaingOverlappingStyleFunctions, sammenslaaingStyleFunctions],
+  );
+
   const previousSelectedFeatures = useRef(selectedFeatures);
 
   // Når en feature ikke er valgt lengre må vi avgjøre hvilken stil den skal ha
@@ -38,23 +37,18 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     );
 
     for (const feature of deselectedFeatures) {
-      if (
-        dirtyFeatureIds.some((id) => id === feature.getId()) ||
-        savedDirtyFeatureIds.some((id) => id === feature.getId())
-      ) {
-        feature.setStyle(grenseStyles.dirty);
-      } else if (
-        archivedFeatureIds.some((id) => id === feature.getId()) ||
-        savedArchivedFeatureIds.some((id) => id === feature.getId())
-      ) {
-        feature.setStyle(getArchiveLayerStyle(feature));
-      } else {
-        feature.setStyle();
+      const featureId = feature.getId() as string;
+      for (const customStyle of customStyles) {
+        if (customStyle.customFeatureIds.includes(featureId) || customStyle.savedCustomFeatureIds.includes(featureId)) {
+          feature.setStyle(customStyle.customStyle);
+          return;
+        }
       }
-    }
 
+      feature.setStyle();
+    }
     previousSelectedFeatures.current = selectedFeatures;
-  }, [dirtyFeatureIds, selectedFeatures, archivedFeatureIds, savedDirtyFeatureIds, savedArchivedFeatureIds]);
+  }, [selectedFeatures, customStyles]);
 
   const getFeatureIdsFromEntries = (accumulator: string[][], entry: HistoryEntry) => {
     const featureIds: string[] = [];
@@ -67,24 +61,20 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     return accumulator;
   };
 
-  const resetFeaturesToEditStyle = useCallback(
+  const undoFeatureStyles = useCallback(
     (featureIds: string[]) => {
       for (const featureId of featureIds) {
-        if (!savedArchivedFeatureIds.includes(featureId) && !savedDirtyFeatureIds.includes(featureId)) {
+        if (customStyles.every((cs) => !cs.savedCustomFeatureIds.includes(featureId))) {
           setFeatureStyle(featureId, grenseStyles.edit);
         }
       }
-      setDirtyFeatures(dirtyFeatureIds.filter((dfi) => !featureIds.includes(dfi)));
-      setArchivedFeatures(archivedFeatureIds.filter((afi) => !featureIds.includes(afi)));
+
+      for (const customStyle of customStyles) {
+        customStyle.renderSavedCustomStyles();
+        customStyle.removeCustomStyles(featureIds);
+      }
     },
-    [
-      archivedFeatureIds,
-      dirtyFeatureIds,
-      savedArchivedFeatureIds,
-      savedDirtyFeatureIds,
-      setArchivedFeatures,
-      setDirtyFeatures,
-    ],
+    [customStyles],
   );
 
   useEffect(() => {
@@ -93,8 +83,8 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     // Når vi lagrer blir history entries tømt, så vi lagrer stilene som er satt
     if (history.entries.length === 0) {
       if (history.hasPreviouslySavedHistory) {
-        if (dirtyFeatureIds.length !== 0) saveDirtyFeatureIds();
-        if (archivedFeatureIds.length !== 0) saveArchivedFeatureIds();
+        if (dirtyStyleFunctions.customFeatureIds.length !== 0) dirtyStyleFunctions.saveCustomStyles();
+        if (archivedStyleFunctions.customFeatureIds.length !== 0) archivedStyleFunctions.saveCustomStyles();
       }
       // Dersom vi ikke har lagret history fra før returnerer vi for å forhindre uendelig løkke
       return;
@@ -120,55 +110,61 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       .flatMap((id) => id);
 
     // For å forhindre uendelig løkke
-    if (dirtyFeatureIds.length === dirtyFeatures.length && archivedFeatureIds.length === archivedFeatures.length) {
+    if (
+      dirtyStyleFunctions.customFeatureIds.length === dirtyFeatures.length &&
+      archivedStyleFunctions.customFeatureIds.length === archivedFeatures.length
+    ) {
       return;
     }
 
-    resetFeaturesToEditStyle(editFeatures);
-    setDirtyFeatures(dirtyFeatures);
-    setArchivedFeatures(archivedFeatures);
+    // Obs: sammenslåing skal egentlig være her også, men den lagres umiddelbart og kan uansett ikke angres
+    undoFeatureStyles(editFeatures);
+    dirtyStyleFunctions.setCustomStyles(dirtyFeatures);
+    archivedStyleFunctions.setCustomStyles(archivedFeatures);
   }, [
-    dirtyFeatureIds.length,
     history.entries,
     history.index,
     history.hasPreviouslySavedHistory,
-    saveDirtyFeatureIds,
-    setDirtyFeatures,
-    archivedFeatureIds.length,
-    saveArchivedFeatureIds,
-    setArchivedFeatures,
-    archivedFeatureIds,
-    savedArchivedFeatureIds,
-    dirtyFeatureIds,
-    savedDirtyFeatureIds,
-    resetFeaturesToEditStyle,
+    history,
+    undoFeatureStyles,
+    dirtyStyleFunctions,
+    archivedStyleFunctions,
   ]);
 
   const clearFeatureStyles = () => {
-    clearDirtyStyles();
-    clearArchivedStyles();
+    for (const customStyle of customStyles) {
+      customStyle.clearCustomStyles();
+    }
   };
 
   const featureIsArchived = (feature: FeatureLike) => {
-    const featureId = feature.getId();
+    const featureId = feature.getId() as string;
     if (featureId) {
-      return archivedFeatureIds.includes(featureId as string) || savedArchivedFeatureIds.includes(featureId as string);
+      return (
+        archivedStyleFunctions.customFeatureIds.includes(featureId) ||
+        archivedStyleFunctions.customFeatureIds.includes(featureId)
+      );
     }
     return false;
   };
 
   const value = {
-    selectedPoint,
-    selectedFeatures,
     selectFeatures,
-    clearSelection,
-    featureIsArchived,
     selectPointOnFeature,
-    setAndSaveUtkastFeatures,
-    setAndSaveSammenslaaingsFeatures,
+    selectedFeatures,
+    selectedPoint,
+    clearSelection,
+
+    addDirtyStyles: dirtyStyleFunctions.addCustomStyles,
+    setAndSaveDirtyStyles: dirtyStyleFunctions.setAndSaveCustomStyles,
+
+    addArchivedStyles: archivedStyleFunctions.addCustomStyles,
+    setAndSaveArchivedStyles: archivedStyleFunctions.setAndSaveCustomStyles,
+    featureIsArchived,
+
+    setAndSaveSammenslaaingStyles: sammenslaaingStyleFunctions.setAndSaveCustomStyles,
+    setAndSaveSammenslaaingOverlappingStyles: sammenslaaingOverlappingStyleFunctions.setAndSaveCustomStyles,
     clearFeatureStyles,
-    setArchivedFeatures,
-    setAndSaveUtkastArchivedFeatures,
   };
 
   return <FeatureStyleContext.Provider value={value}>{children}</FeatureStyleContext.Provider>;
