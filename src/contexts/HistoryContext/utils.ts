@@ -7,6 +7,7 @@ import {
   MetadataEntry,
   MinimalGrense,
   NyGrenseEntry,
+  PropertyEntry,
 } from "./types";
 import { editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
@@ -72,8 +73,23 @@ const setMetadataFromChange = (change: HistoryChange<Metadata>, direction: Histo
   feature.setProperties({ ...feature.getProperties(), metadata });
 };
 
+const setPropertiesFromChange = (change: HistoryChange<FeatureProperties>, direction: HistoryDirection) => {
+  const feature = getFeatureIfExists(change.id);
+  if (!feature) return;
+
+  const properties = change[direction];
+
+  if (!properties) return;
+
+  feature.setProperties({ ...properties });
+};
+
 export const setFeatureMetadataForEntry = (entry: MetadataEntry, direction: HistoryDirection) => {
   entry.changes.forEach((change) => setMetadataFromChange(change, direction));
+};
+
+export const setFeaturePropertiesForEntry = (entry: PropertyEntry, direction: HistoryDirection) => {
+  entry.changes.forEach((change) => setPropertiesFromChange(change, direction));
 };
 
 export const setFeatureCoordinatesAndMetadataForEntry = (entry: NyGrenseEntry, direction: HistoryDirection) => {

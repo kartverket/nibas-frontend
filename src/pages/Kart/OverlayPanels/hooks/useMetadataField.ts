@@ -14,8 +14,10 @@ type MetadataField = {
 };
 
 const getUpdatedMetadata = (data: MetadataField, oldMetadata: Metadata, field: keyof Inputs) => {
+  console.log(oldMetadata);
   const newMetadata = {
     ...(oldMetadata ?? {}),
+    discriminator: field === "grenseType" ? data.metadata : oldMetadata?.discriminator,
     common: {
       ...(oldMetadata?.common ?? {}),
       informasjon: field === "informasjon" ? data.metadata : oldMetadata?.common?.informasjon,
@@ -97,6 +99,8 @@ export const useMetadataField = (field: keyof Inputs, metadata: Metadata, featur
         field,
       );
       setValue("metadata", newMetadata.metadata ?? "");
+
+      console.log(newMetadata);
     };
 
     feature.on("propertychange", updateFormOnPropertyChange);

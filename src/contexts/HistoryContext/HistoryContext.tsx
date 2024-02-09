@@ -7,6 +7,7 @@ import {
   setFeatureCoordinatesForEntry,
   setFeatureMetadataForEntry,
   setKontekstEgenskaperForEntry,
+  setFeaturePropertiesForEntry,
 } from "./utils";
 import useHistoryState from "contexts/HistoryContext/useHistoryState";
 import { ensureAllCasesCovered } from "utils/typeHelpers";
@@ -20,6 +21,9 @@ const onUndo = (entry: HistoryEntry) => {
     }
     case "metadata": {
       return setFeatureMetadataForEntry(entry, "from");
+    }
+    case "property": {
+      return setFeaturePropertiesForEntry(entry, "from");
     }
     case "nygrense": {
       return setFeatureCoordinatesAndMetadataForEntry(entry, "from");
@@ -82,6 +86,9 @@ const onRedo = (entry: HistoryEntry) => {
     case "metadata": {
       //skal den kanskje bare gå inn under det her?
       return setFeatureMetadataForEntry(entry, "to");
+    }
+    case "property": {
+      return setFeaturePropertiesForEntry(entry, "to");
     }
     case "nygrense": {
       return setFeatureCoordinatesAndMetadataForEntry(entry, "to");

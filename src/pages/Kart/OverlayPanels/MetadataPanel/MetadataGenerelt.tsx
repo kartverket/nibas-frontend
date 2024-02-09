@@ -9,6 +9,8 @@ import useNibasApi from "hooks/useNibasApi";
 import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
 import { TilhorighetField } from "./TilhorighetField";
 import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
+import { EditingType, useEditAllGrenser, useEditGrenser } from "contexts/EditGrenserContext";
+import { PropertyField } from "./PropertyField";
 
 export type Inputs = {
   uuid: string;
@@ -48,6 +50,7 @@ export const Container = styled.div`
 const MetadataGenerelt = ({ feature }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
   const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
+  const { getCurrentlyEditingType } = useEditAllGrenser();
 
   const metadata = properties.metadata as Metadata;
 
@@ -67,22 +70,25 @@ const MetadataGenerelt = ({ feature }: Props) => {
 
   return (
     <Container>
-      <MetadataField
+      <PropertyField
         feature={feature}
         tooltipLabel="Hvilken type grense som er valgt."
         fieldKey="grenseType"
         fieldLabel="Grensetype"
         valueLabelFormatter={() => {
           // Henter fra dataen i stedet for å formattere
-          return properties.type;
+          return (feature.getProperties() as FeatureProperties).metadata?.discriminator || null;
         }}
-        isDisabled
-        isUneditable
         renderItem={(register) => (
           <Select {...register}>
-            {GrenseTypeValues.map((type) => (
-              <option key={type}>{type}</option>
+            {getPossibleGrenseTypesFromEditingType(getCurrentlyEditingType()).map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
             ))}
+            {/* {GrenseTypeValues.map((type) => (
+              <option key={type}>{type}</option>
+            ))} */}
           </Select>
         )}
       />

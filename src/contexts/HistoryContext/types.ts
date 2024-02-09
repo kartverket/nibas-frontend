@@ -35,6 +35,7 @@ export type MinimalGrense = {
 
 export type GrenseEntry = BaseHistoryEntry<"grense", MinimalGrense>;
 export type MetadataEntry = BaseHistoryEntry<"metadata", Metadata>;
+export type PropertyEntry = BaseHistoryEntry<"property", FeatureProperties>;
 export type GrunnkretsEntry = BaseHistoryEntry<"grunnkrets", GrunnkretsRequest> & {
   kommuneId: string;
 };
@@ -67,7 +68,8 @@ export type HistoryEntry =
   | GrenseArkiveringsEntry
   | GrenseTilhorighetEntry
   | GrenseSplittingEntry
-  | NyGrenseEntry;
+  | NyGrenseEntry
+  | PropertyEntry;
 
 export type HistoryContextValue = {
   addHistoryEntry: (entry: HistoryEntry) => void;
