@@ -18,12 +18,12 @@ const ToolbarPopups = () => {
   const { split } = useSplit();
   const { addHistoryEntry } = useHistory();
   const { activeModeTools, activeTool, resetModeTools, resetTool } = useToolbar();
-  const { selectedFeatures, selectedPoint, setArchivedFeatures, clearSelection } = useFeatureStyle();
+  const { selectedFeatures, selectedPoint, addArchivedStyles, clearSelection } = useFeatureStyle();
 
   const archiveFeatures = () => {
     const selectedFeature = selectedFeatures[0];
     if (selectedFeature) {
-      setArchivedFeatures([getFeatureId(selectedFeature)]);
+      addArchivedStyles([getFeatureId(selectedFeature)]);
       addArchivingEntryFromFeature(selectedFeature, addHistoryEntry), clearSelection();
       toast({ status: "success", title: "Grensen ble arkivert" });
       toast({
