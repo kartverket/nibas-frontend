@@ -120,7 +120,7 @@ export const getTilhorighetValuesFormatted = (
   formState: TilhorighetChoice,
   tilhorighetOptions: TilhorighetOptions | undefined,
 ) => {
-  if (formState && formState.a !== undefined && formState.b !== undefined && tilhorighetOptions) {
+  if (formState && formState.a != undefined && formState.b != undefined && tilhorighetOptions) {
     const kretsA = tilhorighetOptions[Tilhorighet.A].find(
       (krets) => krets.id.lokalid.value === formState[Tilhorighet.A],
     );
@@ -138,7 +138,7 @@ export const getTilhorighetValuesFormatted = (
 
 export const getKommunerIdFromKontekstEgenskaper = (kontekstEgenskaper: KontekstEgenskaper[]): string[] | null => {
   const kommuner = kontekstEgenskaper
-    .filter((kontekst) => kontekst.kommuneId !== null)
+    .filter((kontekst) => kontekst.kommuneId != null)
     .map((kontekst) => kontekst.kommuneId!.lokalid.value);
   return kommuner.length > 0 ? kommuner : null;
 };

@@ -38,9 +38,9 @@ export const useKommuneStemmekretser = (kommuneId: string) => {
   );
 };
 
-export const useToKommunerStemmekretser = (kommunerId: (string | undefined)[]) => {
-  const { data: stemmekretserA, isLoading: k1Loading } = useKommuneStemmekretserRef(kommunerId[0]);
-  const { data: stemmekretserB, isLoading: k2Loading } = useKommuneStemmekretserRef(kommunerId[1]);
+export const useToKommunerStemmekretser = (kommuneAId: string | undefined, kommuneBId: string | undefined) => {
+  const { data: stemmekretserA, isLoading: k1Loading } = useKommuneStemmekretserRef(kommuneAId);
+  const { data: stemmekretserB, isLoading: k2Loading } = useKommuneStemmekretserRef(kommuneBId);
   return {
     kommuneA: stemmekretserA,
     kommuneB: stemmekretserB,

@@ -45,7 +45,7 @@ export const useTilhorighetForm = (feature: Feature) => {
   const kommunerId =
     getKommunerIdFromKontekstEgenskaper(
       kontekstEgenskaper.filter((k) => k.id?.lokalid.value !== CustomOption.NOT_CHOSEN),
-    ) ?? (flatedata ? [getIdFromEntity(flatedata!)] : []);
+    ) ?? (flatedata ? [getIdFromEntity(flatedata)] : []);
   const [tilhorighetOptions, setTilhorighetOptions] = useState<TilhorighetOptions>();
 
   const {

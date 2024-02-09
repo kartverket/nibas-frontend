@@ -35,9 +35,9 @@ export const useKommuneGrunnkretser = (kommuneId: string) => {
   );
 };
 
-export const useToKommunerGrunnkretser = (kommunerId: (string | undefined)[]) => {
-  const { data: grunnkretserA, isLoading: k1Loading } = useKommuneGrunnkretserRef(kommunerId[0]);
-  const { data: grunnkretserB, isLoading: k2Loading } = useKommuneGrunnkretserRef(kommunerId[1]);
+export const useToKommunerGrunnkretser = (kommuneAId: string | undefined, kommuneBId: string | undefined) => {
+  const { data: grunnkretserA, isLoading: k1Loading } = useKommuneGrunnkretserRef(kommuneAId);
+  const { data: grunnkretserB, isLoading: k2Loading } = useKommuneGrunnkretserRef(kommuneBId);
   return {
     kommuneA: grunnkretserA,
     kommuneB: grunnkretserB,
