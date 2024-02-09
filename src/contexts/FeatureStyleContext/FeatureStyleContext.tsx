@@ -141,8 +141,8 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     const featureId = feature.getId() as string;
     if (featureId) {
       return (
-        archivedStyleFunctions.customFeatureIds.includes(featureId as string) ||
-        archivedStyleFunctions.customFeatureIds.includes(featureId as string)
+        archivedStyleFunctions.customFeatureIds.includes(featureId) ||
+        archivedStyleFunctions.customFeatureIds.includes(featureId)
       );
     }
     return false;
