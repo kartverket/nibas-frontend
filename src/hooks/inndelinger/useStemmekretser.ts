@@ -21,15 +21,29 @@ export const useStemmekretser = (stemmekretsIds: string[]) => {
   );
 };
 
+export const useKommuneStemmekretserRef = (kommuneId: string | undefined) => {
+  return useNibasApi(kommuneId ? "/v1/kommuner/{id}/stemmekretser" : null, {
+    id: kommuneId!,
+  });
+};
+
 export const useKommuneStemmekretser = (kommuneId: string) => {
   const { tokenHolderFunc } = useAuthenticationFlow();
-  const { data: stemmekretser } = useNibasApi(kommuneId ? "/v1/kommuner/{id}/stemmekretser" : null, {
-    id: kommuneId,
-  });
+  const { data: stemmekretser } = useKommuneStemmekretserRef(kommuneId);
 
   const stemmekretsIds = stemmekretser?.map(getIdFromEntity) || [];
   return useSWRImmutable(
     stemmekretsIds.length > 0 ? [stemmekretsIds, tokenHolderFunc()?.token] : null,
     stemmekretserFetcher,
   );
+};
+
+export const useToKommunerStemmekretser = (kommuneAId: string | undefined, kommuneBId: string | undefined) => {
+  const { data: stemmekretserA, isLoading: k1Loading } = useKommuneStemmekretserRef(kommuneAId);
+  const { data: stemmekretserB, isLoading: k2Loading } = useKommuneStemmekretserRef(kommuneBId);
+  return {
+    kommuneA: stemmekretserA,
+    kommuneB: stemmekretserB,
+    stemmekretserIsLoading: k1Loading || k2Loading,
+  };
 };
