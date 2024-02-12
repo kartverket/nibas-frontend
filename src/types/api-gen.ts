@@ -855,6 +855,7 @@ export interface components {
       /** @description Stemmekretsnummeret til stemmekretsen */
       stemmekretsnummer: string;
       kommunenummer: components["schemas"]["Kommunenummer"];
+      kommuneIdentifikator: components["schemas"]["ObjektIdentifikator"];
       /** @description Tellekretsnummer til stemmekretsen */
       tellekretsnummer?: string;
       /** @description Tellekretsnavn til stemmekretsen */
@@ -937,6 +938,7 @@ export interface components {
       /** @description URL til full representasjon av stemmekrets */
       href: string;
       kommunenummer: components["schemas"]["Kommunenummer"];
+      kommuneIdentifikator: components["schemas"]["ObjektIdentifikator"];
       /**
        * Format: int32
        * @description Antall publiserte framtidige gyldige versjoner.
@@ -956,6 +958,7 @@ export interface components {
       /** @description URL til full representasjon av grunnkretsen */
       href: string;
       kommunenummer: components["schemas"]["Kommunenummer"];
+      kommuneIdentifikator: components["schemas"]["ObjektIdentifikator"];
       /** @description Nummeret til grunnkretsen */
       grunnkretsnummer: string;
       /**
@@ -963,6 +966,11 @@ export interface components {
        * @description Antall publiserte framtidige gyldige versjoner.
        */
       antallFramtidigeVersjoner: number;
+      /**
+       * Format: int32
+       * @description Teknisk versjon for å støtte samhandling og redigering
+       */
+      version: number;
     };
     /** @description Liste av kodeliste-elementer. */
     KodelisteItem: {
@@ -1008,6 +1016,7 @@ export interface components {
        */
       datafangstdato?: string;
       kommunenummer: components["schemas"]["Kommunenummer"];
+      kommuneIdentifikator: components["schemas"]["ObjektIdentifikator"];
       /** @description Typen endring som ble gjort på objektet */
       endringstype?: string;
       features: components["schemas"]["FeatureCollection"];

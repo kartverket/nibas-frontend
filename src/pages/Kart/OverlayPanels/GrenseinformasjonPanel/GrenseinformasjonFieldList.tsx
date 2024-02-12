@@ -1,15 +1,15 @@
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { Alert, AlertIcon, Datepicker, Input, Select, Textarea } from "@kvib/react";
-import { GrenseType } from "../../../../hooks/layers/types";
+import { GrenseType } from "hooks/layers/types";
 import { styled } from "styled-components";
 import { GrenseinformasjonField } from "./GrenseinformasjonField";
 import { getDateInFriendlyString } from "./utils";
 import useNibasApi from "hooks/useNibasApi";
 import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
-import { TilhorighetField } from "./TilhorighetField";
 import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 import { EditingType, useEditAllGrenser } from "contexts/EditGrenserContext";
+import { TilhorighetField } from "./TilhorighetField";
 
 export type Inputs = {
   uuid: string;
@@ -45,15 +45,6 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
 
   const getMaalemetodeFromId = (maalemetoder: KodelisteRespons, id: string) =>
     maalemetoder.items.find((item) => item.id === id)?.label ?? null;
-
-  const grenseType = properties.type as GrenseType;
-
-  const tilhorighetToChange =
-    grenseType === "Grunnkretsgrense" || grenseType === "Delområdegrense"
-      ? "grunnkretser"
-      : grenseType === "Stemmekretsgrense"
-        ? "stemmekretser"
-        : null;
 
   const getPossibleGrenseTypesFromEditingType = (editingType: EditingType | null): GrenseType[] => {
     if (editingType === "stemmekrets") {
@@ -117,6 +108,8 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
         }}
         renderItem={(register) => <Datepicker {...register} />}
       />
+
+      <TilhorighetField feature={feature} />
 
       <GrenseinformasjonField
         feature={feature}
@@ -195,7 +188,6 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
         fieldLabel="Ekstra informasjon"
         renderItem={(register) => <Textarea placeholder="Fyll inn ekstra informasjon" {...register} />}
       />
-      {tilhorighetToChange && <TilhorighetField feature={feature} tilhorighetToChange={tilhorighetToChange} />}
     </Container>
   );
 };

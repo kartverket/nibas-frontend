@@ -1,4 +1,4 @@
-import { Divider, Icon, Text, Tooltip } from "@kvib/react";
+import { Divider, Icon, SkeletonText, Text, Tooltip } from "@kvib/react";
 import { styled } from "styled-components";
 import EditAndSaveButton from "../Flatedata/EditAndSaveButton";
 import { useEffect, useState } from "react";
@@ -9,13 +9,14 @@ import { Container } from "./GrenseinformasjonFieldList";
 interface Props {
   feature: Feature<Geometry>;
   name: string;
-  valueLabel: string;
+  valueLabel?: string;
   tooltipLabel: string;
   children: React.ReactNode;
   onMetadataSubmit: () => void;
   isDisabled?: boolean;
   isDirty: boolean;
   isUneditable?: boolean;
+  isLoading?: boolean;
   reset: () => void;
 }
 
@@ -29,6 +30,7 @@ const GrenseinformasjonRow = ({
   isDisabled,
   isDirty,
   isUneditable,
+  isLoading,
   reset,
 }: Props) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -73,7 +75,13 @@ const GrenseinformasjonRow = ({
             />
           )}
         </Row>
-        {isEditing ? <Field>{children}</Field> : <Field>{valueLabel || "Ikke spesifisert"}</Field>}
+        {isEditing ? (
+          <Field>{children}</Field>
+        ) : isLoading ? (
+          <SkeletonText noOfLines={1} skeletonHeight={5} marginTop={"8px"} />
+        ) : (
+          <Field>{valueLabel || "Ikke spesifisert"}</Field>
+        )}
       </EditContent>
       <Divider />
     </Container>

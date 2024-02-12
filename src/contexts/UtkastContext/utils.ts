@@ -5,7 +5,6 @@ import { EntityUtkastType, UtkastEntity, ResponseWithId } from "./types";
 import {
   GrunnkretsEntry,
   HistoryChange,
-  HistoryEntry,
   HistoryState,
   HistoryTypeValues,
   StemmekretsEntry,
