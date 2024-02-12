@@ -14,7 +14,7 @@ import { useHistory } from "contexts/HistoryContext";
 import { Feature } from "ol";
 import { LineString } from "ol/geom";
 import { FeatureProperties } from "types/api";
-import { addKontekstEntryFromFeature } from "../MetadataPanel/utils";
+import { addKontekstEntryFromFeature } from "../GrenseinformasjonPanel/utils";
 import { GrenseType } from "hooks/layers/types";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { getIdFromEntity } from "utils/api";

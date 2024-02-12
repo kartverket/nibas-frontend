@@ -13,8 +13,8 @@ import {
   getTilhorighetValuesFormatted,
 } from "../hooks/tilhorighetUtils";
 import { useAdministrativTilhorighet } from "../hooks/useAdministrativTilhorighet";
+import GrenseinformasjonRow from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/GrenseinformasjonRow";
 import { useTilhorighet } from "../hooks/useTilhorighet";
-import MetadataRow from "./MetadataRow";
 
 type TilhorighetRowProps = {
   feature: Feature;
@@ -54,7 +54,7 @@ const TilhorighetRow = ({
   }, [resetTilhorighet]);
 
   return (
-    <MetadataRow
+    <GrenseinformasjonRow
       feature={feature}
       name="Tilhørighet"
       valueLabel={
@@ -86,7 +86,7 @@ const TilhorighetRow = ({
           ))}
         </Stack>
       )}
-    </MetadataRow>
+    </GrenseinformasjonRow>
   );
 };
 

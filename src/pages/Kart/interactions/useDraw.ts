@@ -134,7 +134,7 @@ const useDraw = () => {
         description: "Grense lagt til med standardmetadata. Husk at du må sette tilhørighet på nye grenser.",
       });
 
-      openOverlayPanel("metadata");
+      openOverlayPanel("grenseinfo");
       selectFeatures([drawnFeature]);
       // TODO: bruk isFeatureDeadEnd for å avgjøre om den nye grensen danner en lukket flate
 

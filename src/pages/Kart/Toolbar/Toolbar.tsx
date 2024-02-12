@@ -18,10 +18,10 @@ const Toolbar = () => {
   const editingType = getCurrentlyEditingType();
   const isEditMode = !!editingType;
 
-  const toggleMetadata = () => {
-    toggleTool("metadata");
+  const toggleGrenseinfo = () => {
+    toggleTool("grenseinfo");
 
-    if (activeOverlayPanel === "metadata") {
+    if (activeOverlayPanel === "grenseinfo") {
       closeOverlayPanel();
     }
   };
@@ -56,7 +56,7 @@ const Toolbar = () => {
   useKeyboardShortcut("move", () => enableModeTool("move"));
   useKeyboardShortcut("edit", () => disableModeTool("move"), isEditMode);
   useKeyboardShortcut("matrikkel", () => toggleModeTool("matrikkel"));
-  useKeyboardShortcut("grenseinfo", toggleMetadata);
+  useKeyboardShortcut("grenseinfo", toggleGrenseinfo);
   useHoldButtonToggle(
     "alt",
     activeModeTools.includes("move"),
@@ -94,8 +94,8 @@ const Toolbar = () => {
           </ConditionalHide>
           <ToolbarButton
             icon="live_help"
-            isActive={activeTool === "metadata"}
-            onClick={toggleMetadata}
+            isActive={activeTool === "grenseinfo"}
+            onClick={toggleGrenseinfo}
             aria-label="Se informasjon om grensen"
             tooltip={{ text: "Se informasjon om grensen", shortcut: "grenseinfo" }}
           >

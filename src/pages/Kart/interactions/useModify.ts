@@ -25,7 +25,7 @@ const useModify = () => {
   const { getActiveFeaturesAtPixel, getFeaturesAtPixel } = useGetFeatures();
 
   // Ønsker helst at redigering ikke skal være aktiv under enkelte verktøy
-  const disallowedPointModes: Tool[] = useMemo(() => ["draw", "split", "metadata", "archive", "koordinater"], []);
+  const disallowedPointModes: Tool[] = useMemo(() => ["draw", "split", "grenseinfo", "archive", "koordinater"], []);
 
   const modify = useMemo(() => {
     // TODO: Vi burde finne et felles sett med sjekker som alle modifications går gjennom.
