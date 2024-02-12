@@ -44,7 +44,7 @@ export const VedtaksinfoDetaljer = ({
     setInternref(internrefCopy);
   };
   const cleanForm = () => {
-    reset();
+    reset(undefined, { keepDefaultValues: true });
     setDokref(undefined);
     setInternref(undefined);
   };
