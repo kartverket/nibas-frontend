@@ -6,7 +6,7 @@ import { Feature } from "ol";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { GrunnkretsResponse, KontekstEgenskaper, ObjektIdentifikator, StemmekretsResponse } from "types/api";
-import { addKontekstEntryFromFeature } from "../MetadataPanel/utils";
+import { addKontekstEntryFromFeature } from "../GrenseinformasjonPanel/utils";
 import LineString from "ol/geom/LineString";
 import { getIdFromEntity } from "utils/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";

@@ -4,7 +4,7 @@ import EditAndSaveButton from "../Flatedata/EditAndSaveButton";
 import { useEffect, useState } from "react";
 import { Geometry } from "ol/geom";
 import { Feature } from "ol";
-import { Container } from "./MetadataGenerelt";
+import { Container } from "./GrenseinformasjonFieldList";
 
 interface Props {
   feature: Feature<Geometry>;
@@ -19,7 +19,7 @@ interface Props {
   reset: () => void;
 }
 
-const MetadataRow = ({
+const GrenseinformasjonRow = ({
   feature,
   name,
   tooltipLabel,
@@ -108,4 +108,4 @@ const Field = styled.div`
   margin-top: 8px;
 `;
 
-export default MetadataRow;
+export default GrenseinformasjonRow;

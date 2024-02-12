@@ -4,7 +4,7 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import useSplit from "../interactions/useSplit";
 import { getFeatureId } from "utils/map/source";
 import { useToast } from "@kvib/react";
-import { addArchivingEntryFromFeature } from "../OverlayPanels/MetadataPanel/utils";
+import { addArchivingEntryFromFeature } from "../OverlayPanels/GrenseinformasjonPanel/utils";
 import { useHistory } from "contexts/HistoryContext";
 import { getMatrikkelFeatures } from "utils/map/layers";
 import { map } from "../constants";
@@ -120,7 +120,7 @@ const ToolbarPopups = () => {
       {activeTool === "detach" && selectedFeatures.length === 1 && (
         <ToolbarPopup text="Dra på et knutepunkt for å løsrive grensen" onClose={resetTool} />
       )}
-      {activeTool === "metadata" && (
+      {activeTool === "grenseinfo" && (
         <ToolbarPopup text="Velg en grense i kartet for å se grenseinformasjon" onClose={resetTool} />
       )}
       {activeTool === "archive" && (

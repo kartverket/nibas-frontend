@@ -25,6 +25,31 @@ const updateFeatureWithNewProperties = (feature: Feature<LineString>, newPropert
   });
 };
 
+export const addFeaturePropertiesEntryFromFeature = (
+  feature: Feature<LineString>,
+  addHistoryEntry: (entry: PropertyEntry) => void,
+  updatedFeatureProperties: FeatureProperties,
+) => {
+  const id = feature.getId();
+
+  if (!id) return;
+
+  const oldFeatureProperties = feature.getProperties() as FeatureProperties;
+
+  updateFeatureWithNewProperties(feature as Feature<LineString>, updatedFeatureProperties);
+
+  addHistoryEntry({
+    type: "property",
+    changes: [
+      {
+        id: id as string,
+        from: oldFeatureProperties,
+        to: updatedFeatureProperties,
+      },
+    ],
+  });
+};
+
 export const addMetadataEntryFromFeature = (
   feature: Feature<LineString>,
   addHistoryEntry: (entry: MetadataEntry) => void,

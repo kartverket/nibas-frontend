@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
 
-export type Tool = null | "add" | "remove" | "draw" | "split" | "detach" | "metadata" | "koordinater" | "archive";
+export type Tool = null | "add" | "remove" | "draw" | "split" | "detach" | "grenseinfo" | "koordinater" | "archive";
 
 const editTools: Tool[] = ["add", "remove", "draw", "split", "detach", "koordinater", "archive"];
 

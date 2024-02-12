@@ -1,8 +1,8 @@
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
 import { FeatureProperties } from "types/api";
-import useIsMetadataDisabled from "../hooks/useIsMetadataDisabled";
-import MetadataRow from "./MetadataRow";
+import useIsGrenseinformasjonPanelDisabled from "../hooks/useIsGrenseInformasjonPanelDisabled";
+import GrenseinformasjonRow from "./GrenseinformasjonRow";
 import { Select, Stack } from "@kvib/react";
 import { GrenseType } from "hooks/layers/types";
 import { useTilhorighet } from "../hooks/useTilhorighet";
@@ -24,7 +24,7 @@ export const TilhorighetField = ({ feature, isDisabled, tilhorighetToChange }: T
   const properties = feature.getProperties() as FeatureProperties;
   const kontekstEgenskaper = properties.kontekstEgenskaper;
 
-  const metadataIsDisabled = useIsMetadataDisabled(feature, properties);
+  const metadataIsDisabled = useIsGrenseinformasjonPanelDisabled(feature, properties);
 
   const grenseType = properties.type as GrenseType;
 
@@ -42,7 +42,7 @@ export const TilhorighetField = ({ feature, isDisabled, tilhorighetToChange }: T
     resetTilhorighet();
   }, [getTilhorighetData, feature, tilhorighetOptions, resetTilhorighet]);
   return (
-    <MetadataRow
+    <GrenseinformasjonRow
       feature={feature}
       name="Tilhørighet"
       valueLabel={getValuesFormatted() ?? "Ikke definert"}
@@ -67,6 +67,6 @@ export const TilhorighetField = ({ feature, isDisabled, tilhorighetToChange }: T
           </Select>
         ))}
       </Stack>
-    </MetadataRow>
+    </GrenseinformasjonRow>
   );
 };

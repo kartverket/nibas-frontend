@@ -26,13 +26,13 @@ const useSelect = () => {
   const { getActiveFeaturesAtPixel } = useGetFeatures();
 
   const dangerousPointModes: Tool[] = ["archive", "split", "detach"];
-  const allowedPointModes: Tool[] = [...dangerousPointModes, "metadata"];
+  const allowedPointModes: Tool[] = [...dangerousPointModes, "grenseinfo"];
 
   // Dersom man bytter verktøy ønsker vi å cleare selection
   useEffect(() => {
     if (activeTool !== previousPointMode && selectedFeatures.length > 0) {
       clearSelection();
-      if (activeOverlayPanel === "metadata") {
+      if (activeOverlayPanel === "grenseinfo") {
         closeOverlayPanel();
       }
     }
@@ -83,13 +83,13 @@ const useSelect = () => {
         }
       }
 
-      if (activeTool === "metadata") {
+      if (activeTool === "grenseinfo") {
         // Dersom den valgte grensen er en WFS-grense skal vi vise et eget panel for det
         if (clickedFeature?.getId()?.toString().includes("TEIGGRENSEWFS")) {
           overlayPopup.setPosition(getOverlayPosition(clickedFeature));
         } else {
           overlayPopup.setPosition(undefined);
-          openOverlayPanel("metadata");
+          openOverlayPanel("grenseinfo");
         }
       }
 

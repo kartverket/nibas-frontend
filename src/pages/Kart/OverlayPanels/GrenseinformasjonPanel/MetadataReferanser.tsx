@@ -9,7 +9,7 @@ import { addMetadataEntryFromFeature } from "./utils";
 import Input from "components/Input";
 import { useHistory } from "contexts/HistoryContext";
 import { Dokref, FeatureProperties, Metadata } from "types/api";
-import useIsMetadataDisabled from "../hooks/useIsMetadataDisabled";
+import useIsGrenseinformasjonPanelDisabled from "../hooks/useIsGrenseInformasjonPanelDisabled";
 import { Button } from "@kvib/react";
 
 type Value = {
@@ -187,7 +187,7 @@ const MetadataReferanser = ({ feature }: Props) => {
     });
   };
 
-  const metadataIsDisabled = useIsMetadataDisabled(feature, properties);
+  const metadataIsDisabled = useIsGrenseinformasjonPanelDisabled(feature, properties);
 
   return (
     <form>
