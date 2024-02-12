@@ -5,7 +5,9 @@ import { EntityUtkastType, UtkastEntity, ResponseWithId } from "./types";
 import {
   GrunnkretsEntry,
   HistoryChange,
+  HistoryEntry,
   HistoryState,
+  HistoryTypeValues,
   StemmekretsEntry,
   StemmekretsSammenslaaingsendringEntry,
 } from "contexts/HistoryContext";
@@ -164,9 +166,9 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
     utkastOperations.stemmekretsSammenslaaingsendring = sammenslaaingsOperations;
   }
 
-  const editedFeatureHistoryEntries = [
+  const editedFeatureHistoryEntries: HistoryTypeValues[] = [
     "grense",
-    "metadata",
+    "property",
     "grensearkivering",
     "grensetilhorighetendring",
     "nygrense",

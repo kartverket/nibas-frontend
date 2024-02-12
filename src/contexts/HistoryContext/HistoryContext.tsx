@@ -5,7 +5,6 @@ import {
   undoSplitting,
   setFeatureCoordinatesAndMetadataForEntry,
   setFeatureCoordinatesForEntry,
-  setFeatureMetadataForEntry,
   setKontekstEgenskaperForEntry,
   setFeaturePropertiesForEntry,
 } from "./utils";
@@ -18,9 +17,6 @@ const onUndo = (entry: HistoryEntry) => {
   switch (type) {
     case "grense": {
       return setFeatureCoordinatesForEntry(entry, "from");
-    }
-    case "metadata": {
-      return setFeatureMetadataForEntry(entry, "from");
     }
     case "property": {
       return setFeaturePropertiesForEntry(entry, "from");
@@ -82,10 +78,6 @@ const onRedo = (entry: HistoryEntry) => {
   switch (type) {
     case "grense": {
       return setFeatureCoordinatesForEntry(entry, "to");
-    }
-    case "metadata": {
-      //skal den kanskje bare gå inn under det her?
-      return setFeatureMetadataForEntry(entry, "to");
     }
     case "property": {
       return setFeaturePropertiesForEntry(entry, "to");

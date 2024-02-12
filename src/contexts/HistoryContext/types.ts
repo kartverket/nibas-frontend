@@ -22,9 +22,20 @@ export type HistoryChange<T> = {
   from: T;
   to: T;
 };
+export type HistoryTypeValues =
+  | "grense"
+  | "property"
+  | "grunnkrets"
+  | "stemmekrets"
+  | "utkast"
+  | "stemmekretssammenslaaingsendring"
+  | "grensearkivering"
+  | "grensetilhorighetendring"
+  | "nygrense"
+  | "grensesplitting";
 
-type BaseHistoryEntry<Type extends string, Model> = {
-  type: Type;
+type BaseHistoryEntry<HistoryType extends HistoryTypeValues, Model> = {
+  type: HistoryType;
   changes: HistoryChange<Model>[];
 };
 
@@ -34,7 +45,6 @@ export type MinimalGrense = {
 };
 
 export type GrenseEntry = BaseHistoryEntry<"grense", MinimalGrense>;
-export type MetadataEntry = BaseHistoryEntry<"metadata", Metadata>;
 export type PropertyEntry = BaseHistoryEntry<"property", FeatureProperties>;
 export type GrunnkretsEntry = BaseHistoryEntry<"grunnkrets", GrunnkretsRequest> & {
   kommuneId: string;
@@ -60,7 +70,6 @@ export type GrenseSplittingEntry = BaseHistoryEntry<"grensesplitting", Feature[]
 // endringer skal kunne gjøres i bulk, feks et punkt på to features endrer to features i en entry
 export type HistoryEntry =
   | GrenseEntry
-  | MetadataEntry
   | GrunnkretsEntry
   | StemmekretsEntry
   | UtkastEntry

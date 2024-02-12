@@ -1,7 +1,7 @@
 import { Feature } from "ol";
 import LineString from "ol/geom/LineString";
-import { GrenseArkiveringsEntry, GrenseTilhorighetEntry, MetadataEntry, PropertyEntry } from "contexts/HistoryContext";
-import { FeatureProperties, KontekstEgenskaper, Metadata } from "types/api";
+import { GrenseArkiveringsEntry, GrenseTilhorighetEntry, PropertyEntry } from "contexts/HistoryContext";
+import { FeatureProperties, KontekstEgenskaper } from "types/api";
 
 export const getDateInFriendlyString = (dateString?: string) => {
   if (!dateString) return null;
@@ -9,14 +9,6 @@ export const getDateInFriendlyString = (dateString?: string) => {
   const date = new Date(dateString);
 
   return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
-};
-
-const updateFeatureWithNewMetadata = (feature: Feature<LineString>, newMetadata: Metadata) => {
-  const properties = feature.getProperties() as FeatureProperties;
-  feature.setProperties({
-    ...properties,
-    metadata: newMetadata,
-  });
 };
 
 const updateFeatureWithNewProperties = (feature: Feature<LineString>, newProperties: FeatureProperties) => {
@@ -45,31 +37,6 @@ export const addFeaturePropertiesEntryFromFeature = (
         id: id as string,
         from: oldFeatureProperties,
         to: updatedFeatureProperties,
-      },
-    ],
-  });
-};
-
-export const addMetadataEntryFromFeature = (
-  feature: Feature<LineString>,
-  addHistoryEntry: (entry: MetadataEntry) => void,
-  updatedMetadata: Metadata,
-) => {
-  const id = feature.getId();
-
-  if (!id) return;
-
-  const oldMetadata = feature.getProperties().metadata as Metadata;
-
-  updateFeatureWithNewMetadata(feature as Feature<LineString>, updatedMetadata);
-
-  addHistoryEntry({
-    type: "metadata",
-    changes: [
-      {
-        id: id as string,
-        from: oldMetadata,
-        to: feature.getProperties().metadata as Metadata,
       },
     ],
   });

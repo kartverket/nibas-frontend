@@ -4,7 +4,6 @@ import {
   GrenseEntry,
   GrenseTilhorighetEntry,
   HistoryChange,
-  MetadataEntry,
   MinimalGrense,
   NyGrenseEntry,
   PropertyEntry,
@@ -81,11 +80,7 @@ const setPropertiesFromChange = (change: HistoryChange<FeatureProperties>, direc
 
   if (!properties) return;
 
-  feature.setProperties({ ...properties });
-};
-
-export const setFeatureMetadataForEntry = (entry: MetadataEntry, direction: HistoryDirection) => {
-  entry.changes.forEach((change) => setMetadataFromChange(change, direction));
+  feature.setProperties(properties);
 };
 
 export const setFeaturePropertiesForEntry = (entry: PropertyEntry, direction: HistoryDirection) => {
