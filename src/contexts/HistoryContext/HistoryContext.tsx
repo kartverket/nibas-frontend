@@ -3,7 +3,7 @@ import { HistoryContextValue, HistoryEntry } from "./types";
 import {
   redoSplitting,
   undoSplitting,
-  setFeatureCoordinatesAndMetadataForEntry,
+  setFeatureCoordinatesAndPropertiesForEntry,
   setFeatureCoordinatesForEntry,
   setKontekstEgenskaperForEntry,
   setFeaturePropertiesForEntry,
@@ -22,7 +22,7 @@ const onUndo = (entry: HistoryEntry) => {
       return setFeaturePropertiesForEntry(entry, "from");
     }
     case "nygrense": {
-      return setFeatureCoordinatesAndMetadataForEntry(entry, "from");
+      return setFeatureCoordinatesAndPropertiesForEntry(entry, "from");
     }
     case "grunnkrets": {
       return document.dispatchEvent(
@@ -83,7 +83,7 @@ const onRedo = (entry: HistoryEntry) => {
       return setFeaturePropertiesForEntry(entry, "to");
     }
     case "nygrense": {
-      return setFeatureCoordinatesAndMetadataForEntry(entry, "to");
+      return setFeatureCoordinatesAndPropertiesForEntry(entry, "to");
     }
     case "grunnkrets": {
       return document.dispatchEvent(

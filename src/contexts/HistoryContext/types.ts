@@ -4,7 +4,6 @@ import {
   FeatureProperties,
   GrunnkretsRequest,
   KontekstEgenskaper,
-  Metadata,
   StemmekretsRequest,
   StemmekretsSammenslaaingsendringRequest,
 } from "types/api";
@@ -63,7 +62,7 @@ export type GrenseArkiveringsEntry = BaseHistoryEntry<"grensearkivering", Featur
 
 export type GrenseTilhorighetEntry = BaseHistoryEntry<"grensetilhorighetendring", KontekstEgenskaper[]>;
 
-export type NyGrenseEntry = BaseHistoryEntry<"nygrense", MinimalGrense & Metadata>;
+export type NyGrenseEntry = BaseHistoryEntry<"nygrense", MinimalGrense & FeatureProperties>;
 
 export type GrenseSplittingEntry = BaseHistoryEntry<"grensesplitting", Feature[]>;
 
