@@ -38,14 +38,22 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
 
     for (const feature of deselectedFeatures) {
       const featureId = feature.getId() as string;
-      for (const customStyle of customStyles) {
-        if (customStyle.customFeatureIds.includes(featureId) || customStyle.savedCustomFeatureIds.includes(featureId)) {
-          feature.setStyle(customStyle.customStyle);
-          return;
-        }
-      }
 
-      feature.setStyle();
+      // Dersom featuren har en aktiv stil faller vi tilbake til den
+      const matchingCustomStyle = customStyles.find((customStyle) => customStyle.customFeatureIds.includes(featureId));
+
+      // Dersom featuren ikke har en aktiv stil faller vi tilbake til den lagrede stilen
+      const matchingSavedCustomStyle = customStyles.find((customStyle) =>
+        customStyle.savedCustomFeatureIds.includes(featureId),
+      );
+
+      if (matchingCustomStyle) {
+        feature.setStyle(matchingCustomStyle.customStyle);
+      } else if (matchingSavedCustomStyle) {
+        feature.setStyle(matchingSavedCustomStyle.customStyle);
+      } else {
+        feature.setStyle();
+      }
     }
     previousSelectedFeatures.current = selectedFeatures;
   }, [selectedFeatures, customStyles]);
