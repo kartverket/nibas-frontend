@@ -1,4 +1,4 @@
-import { UseFormRegister, UseFormGetValues } from "react-hook-form";
+import { UseFormGetValues, UseFormRegisterReturn, UseFormSetValue } from "react-hook-form";
 import { GrunnkretsRef, KontekstEgenskaper, ObjektIdentifikator, StemmekretsRef } from "types/api";
 
 export enum Tilhorighet {
@@ -14,8 +14,8 @@ export enum KontekstType {
 export type Krets = {
   id: ObjektIdentifikator;
   kommuneId: ObjektIdentifikator;
-  version: number;
   nummer: string;
+  version: number;
   navn: string;
   type: KontekstType;
 };
@@ -27,6 +27,7 @@ export type TilhorighetOptions = {
 
 export enum CustomOption {
   NOT_CHOSEN = "NOT_CHOSEN",
+  NY_KRETS = "NY_KRETS",
 }
 
 export type TilhorighetChoice = {
@@ -42,12 +43,16 @@ export type TilhorighetForm = {
 export interface UseTilhorighet {
   kontekstType: KontekstType;
   tilhorighetOptions: TilhorighetOptions | undefined;
+  isLoading: boolean;
+  registers: {
+    [Tilhorighet.A]: UseFormRegisterReturn<"GRUNNKRETS.a" | "STEMMEKRETS.a">;
+    [Tilhorighet.B]: UseFormRegisterReturn<"GRUNNKRETS.b" | "STEMMEKRETS.b">;
+  };
+  getValues: UseFormGetValues<TilhorighetForm>;
+  setValue: UseFormSetValue<TilhorighetForm>;
   isDirty: boolean;
-  register: UseFormRegister<TilhorighetForm>;
   resetTilhorighet: () => void;
   updateDraftFromFeature: () => void;
-  getValues: UseFormGetValues<TilhorighetForm>;
-  isLoading: boolean;
 }
 
 // tar to kontekstEgenskaper og mapper de til TilhorighetForm
@@ -100,10 +105,11 @@ export const getUpdatedKontekstEgenskaper = (
   kretsValg: TilhorighetOptions,
 ): KontekstEgenskaper[] => {
   const allPossibleOptions = kretsValg.a.concat(kretsValg.b);
-  const kretser = Object.values(newKretsIds).map(
+
+  const existingKretser = Object.values(newKretsIds).map(
     (id) => allPossibleOptions.find((krets) => krets.id.lokalid.value === id) ?? getDefaultKrets(kontekstType),
   );
-  const nyeKontekstEgenskaper = kretser.map((krets) => ({
+  const nyeKontekstEgenskaper = existingKretser.map((krets) => ({
     id: krets.id,
     kommuneId: krets.kommuneId,
     type: krets.type,

@@ -36,13 +36,14 @@ export const useAdministrativTilhorighet = (feature: Feature): UseTilhorighet =>
   const {
     setTilhorighetOptions,
     tilhorighetOptions,
-    register,
+    registers,
     getValues,
     isDirty,
     resetTilhorighet,
     updateDraftFromFeature,
     kommunerId,
     kontekstType,
+    setValue,
   } = useTilhorighetForm(feature);
 
   const {
@@ -72,10 +73,11 @@ export const useAdministrativTilhorighet = (feature: Feature): UseTilhorighet =>
     kontekstType,
     tilhorighetOptions,
     isDirty,
-    register,
+    registers,
     resetTilhorighet,
     updateDraftFromFeature,
     getValues,
     isLoading: kontekstType === KontekstType.GRUNNKRETS ? grunnkretserIsLoading : stemmekretserIsLoading,
+    setValue,
   };
 };

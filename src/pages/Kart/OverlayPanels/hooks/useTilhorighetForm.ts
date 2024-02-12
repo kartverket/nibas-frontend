@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import {
   CustomOption,
   KontekstType,
+  Tilhorighet,
   TilhorighetForm,
   TilhorighetOptions,
   getKommunerIdFromKontekstEgenskaper,
@@ -51,11 +52,17 @@ export const useTilhorighetForm = (feature: Feature) => {
   const {
     register,
     getValues,
+    setValue,
     formState: { isDirty },
     reset,
   } = useForm<TilhorighetForm>({
     defaultValues: getTilhorighetData(kontekstEgenskaper),
   });
+
+  const registers = {
+    [Tilhorighet.A]: register(`${kontekstType}.a`),
+    [Tilhorighet.B]: register(`${kontekstType}.b`),
+  };
 
   const resetTilhorighet = useCallback(() => {
     reset(kontekstEgenskaper.length === 2 ? getTilhorighetData(kontekstEgenskaper) : getDefaultTilhorighetData());
@@ -75,12 +82,13 @@ export const useTilhorighetForm = (feature: Feature) => {
   return {
     setTilhorighetOptions,
     tilhorighetOptions,
-    register,
+    registers,
     getValues,
     isDirty,
     resetTilhorighet,
     updateDraftFromFeature,
     kommunerId,
     kontekstType,
+    setValue,
   };
 };
