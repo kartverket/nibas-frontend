@@ -22,7 +22,7 @@ export type MetadataDiscriminator =
   | "StatistiskgrenseMetadata"
   | "KommunalKretsgrenseMetadata";
 
-export const getGrenseDiscriminatorFromType = (grenseType: GrenseType): MetadataDiscriminator | null => {
+export const getMetadataDiscriminatorFromType = (grenseType: GrenseType | string): MetadataDiscriminator | null => {
   switch (grenseType) {
     case "Fylkesgrense":
     case "Kommunegrense":
