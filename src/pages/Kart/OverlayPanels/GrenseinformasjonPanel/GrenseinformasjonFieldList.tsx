@@ -1,13 +1,14 @@
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { Alert, AlertIcon, Datepicker, Input, Select, Textarea } from "@kvib/react";
-import { GrenseType } from "../../../../hooks/layers/types";
+import { GrenseType } from "hooks/layers/types";
 import { styled } from "styled-components";
-import { MetadataField } from "./MetadataField";
+import { GrenseinformasjonField } from "./GrenseinformasjonField";
 import { getDateInFriendlyString } from "./utils";
 import useNibasApi from "hooks/useNibasApi";
 import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
 import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
+import { EditingType, useEditAllGrenser } from "contexts/EditGrenserContext";
 import { TilhorighetField } from "./TilhorighetField";
 
 export type Inputs = {
@@ -23,18 +24,6 @@ export type Inputs = {
   tilhorighet: string[];
 };
 
-const GrenseTypeValues: GrenseType[] = [
-  "Kommunegrense",
-  "Fylkesgrense",
-  "Riksgrense",
-  "AvtaltAvgrensningslinje",
-  "Territorialgrense",
-  "Grunnkretsgrense",
-  "Delområdegrense",
-  "Posisjon",
-  "Stemmekretsgrense",
-];
-
 type Props = {
   feature: Feature<Geometry>;
 };
@@ -45,9 +34,10 @@ export const Container = styled.div`
   gap: 16px;
 `;
 
-const MetadataGenerelt = ({ feature }: Props) => {
+const GrenseinformasjonFieldList = ({ feature }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
   const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
+  const { getCurrentlyEditingType } = useEditAllGrenser();
 
   const metadata = properties.metadata as Metadata;
 
@@ -56,28 +46,35 @@ const MetadataGenerelt = ({ feature }: Props) => {
   const getMaalemetodeFromId = (maalemetoder: KodelisteRespons, id: string) =>
     maalemetoder.items.find((item) => item.id === id)?.label ?? null;
 
+  const getPossibleGrenseTypesFromEditingType = (editingType: EditingType | null): GrenseType[] => {
+    if (editingType === "stemmekrets") {
+      return ["Stemmekretsgrense", "Kommunegrense"];
+    }
+    if (editingType === "grunnkrets") {
+      return ["Grunnkretsgrense", "Delområdegrense", "Kommunegrense"];
+    }
+
+    return [];
+  };
+
   return (
     <Container>
-      <MetadataField
+      <GrenseinformasjonField
         feature={feature}
         tooltipLabel="Hvilken type grense som er valgt."
         fieldKey="grenseType"
         fieldLabel="Grensetype"
-        valueLabelFormatter={() => {
-          // Henter fra dataen i stedet for å formattere
-          return properties.type;
-        }}
-        isDisabled
-        isUneditable
         renderItem={(register) => (
           <Select {...register}>
-            {GrenseTypeValues.map((type) => (
-              <option key={type}>{type}</option>
+            {getPossibleGrenseTypesFromEditingType(getCurrentlyEditingType()).map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
             ))}
           </Select>
         )}
       />
-      <MetadataField
+      <GrenseinformasjonField
         feature={feature}
         tooltipLabel="Grensen sin unike identifikator"
         fieldKey="uuid"
@@ -94,7 +91,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
         renderItem={(register) => <Input placeholder={feature.getId()?.toString()} {...register} />}
       />
 
-      <MetadataField
+      <GrenseinformasjonField
         feature={feature}
         tooltipLabel="Dato når grensen skal være gyldig fra. Fra-dato settes automatisk til publiseringsdato for utkastet ditt."
         fieldLabel="Gyldig fra"
@@ -114,7 +111,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
 
       <TilhorighetField feature={feature} />
 
-      <MetadataField
+      <GrenseinformasjonField
         feature={feature}
         tooltipLabel="Dato når grensen siste gang ble registert, observert eller målt. Oppdateres automatisk ved lagring av ny metadata for grense."
         fieldLabel="Datafangsdato"
@@ -133,7 +130,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
 
       {gyldigTil && (
         <div>
-          <MetadataField
+          <GrenseinformasjonField
             feature={feature}
             tooltipLabel="Dato når grensen skal være gyldig til."
             fieldLabel="Gyldig til"
@@ -150,7 +147,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
         </div>
       )}
 
-      <MetadataField
+      <GrenseinformasjonField
         feature={feature}
         tooltipLabel="Metode som ligger til grunn for registrering av posisjon."
         fieldLabel="Målemetode"
@@ -169,7 +166,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
           )
         }
       />
-      <MetadataField
+      <GrenseinformasjonField
         feature={feature}
         tooltipLabel="Antatt posisjonsnøyaktighet i grunnriss (x, y) oppgitt i cm. Den nøyaktigheten som angis bør være så nær det virkelige objektet som mulig."
         fieldKey="noeyaktighet"
@@ -177,14 +174,14 @@ const MetadataGenerelt = ({ feature }: Props) => {
         renderItem={(register) => <Input type="number" {...register} />}
       />
 
-      <MetadataField
+      <GrenseinformasjonField
         feature={feature}
         tooltipLabel="Ansvarlig organisasjon som er opphav til grensedataene."
         fieldKey="opphav"
         fieldLabel="Opphav"
         renderItem={(register) => <Input placeholder="Fyll inn informasjon om opphav" {...register} />}
       />
-      <MetadataField
+      <GrenseinformasjonField
         feature={feature}
         tooltipLabel="Åpent felt med ekstra informasjon om grensen"
         fieldKey="informasjon"
@@ -195,4 +192,4 @@ const MetadataGenerelt = ({ feature }: Props) => {
   );
 };
 
-export default MetadataGenerelt;
+export default GrenseinformasjonFieldList;

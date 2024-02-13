@@ -1,6 +1,6 @@
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { PanelHeader, PanelProps, SidePanel } from "../Panel";
-import MetadataGenerelt from "./MetadataGenerelt";
+import GrenseinformasjonFieldList from "./GrenseinformasjonFieldList";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { FeatureProperties, Metadata } from "types/api";
 import { getDateInFriendlyString } from "./utils";
@@ -8,14 +8,14 @@ import { useEffect } from "react";
 import { Feature } from "ol";
 import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 
-const MetadataPanel = ({ isOpen, className }: PanelProps) => {
+const GrenseinformasjonPanel = ({ isOpen, className }: PanelProps) => {
   const { selectedFeatures } = useFeatureStyle();
   const { activeOverlayPanel, closeOverlayPanel } = useOverlayPanel();
 
   const selectedFeature = selectedFeatures.length === 1 ? selectedFeatures[0] : undefined;
 
   useEffect(() => {
-    if (activeOverlayPanel === "metadata" && selectedFeatures.length === 0) {
+    if (activeOverlayPanel === "grenseinfo" && selectedFeatures.length === 0) {
       closeOverlayPanel();
     }
   }, [activeOverlayPanel, closeOverlayPanel, selectedFeatures.length]);
@@ -45,7 +45,7 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
           Informasjon om grense
         </PanelHeader>
         {selectedFeature && selectedProperties && !isWFSGrense ? (
-          <MetadataGenerelt feature={selectedFeature} />
+          <GrenseinformasjonFieldList feature={selectedFeature} />
         ) : (
           <p>Valgt grense har ikke metadata</p>
         )}
@@ -54,4 +54,4 @@ const MetadataPanel = ({ isOpen, className }: PanelProps) => {
   );
 };
 
-export default MetadataPanel;
+export default GrenseinformasjonPanel;
