@@ -6,7 +6,7 @@ import { previousCoordinateKey } from "./constants";
 import { GrenseType } from "hooks/layers/types";
 import { FeatureProperties } from "types/api";
 import { getGrenseDiscriminatorFromType } from "utils/grenser";
-import { getDefaultFeatureMetadata, getDefaultFeatureProperties } from "utils/features";
+import { getDefaultFeatureProperties } from "utils/features";
 
 export const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
