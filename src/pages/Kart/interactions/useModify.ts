@@ -38,9 +38,8 @@ const useModify = () => {
             return selectedFeatures.some((sf) => sf.getId() === feature.getId());
           }
 
-          // Arkiverte features skal ikke kunne modifiseres
           // Representasjonspunkter skal ikke kunne modifiseres
-          return !featureIsArchived(feature) && !(feature.getId() as string).includes("representasjonspunkt");
+          return !(feature.getId() as string).includes("representasjonspunkt");
         }),
       ),
       pixelTolerance: pixelTolerance,
