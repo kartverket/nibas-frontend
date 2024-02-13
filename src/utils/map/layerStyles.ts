@@ -150,7 +150,7 @@ export const getLayerStyle = (feature: Feature<Geometry> | RenderFeature, grense
   if (grenseId == "edit" && isFeatureEditable(feature, archived)) {
     return grenseStyles.edit;
   } else {
-    return grenseStyleFromType(feature.getProperties().type as GrenseType, archived);
+    return grenseStyleFromType(feature.getProperties().type as GrenseType, archived || grenseId === "archived");
   }
 };
 

@@ -4,6 +4,21 @@ import VectorLayer from "ol/layer/Vector";
 import { getLayerById } from "./layers";
 import { LayerId } from "hooks/layers/types";
 import VectorSource from "ol/source/Vector";
+import { FeatureProperties } from "../../types/api";
+
+export const addEditedFeaturesToSource = (features: Feature<Geometry>[], callback?: () => void) => {
+  const editedFeatured = features.filter((f) => !(f.getProperties() as FeatureProperties).shouldArchive);
+  const archivedFeatures = features.filter((f) => (f.getProperties() as FeatureProperties).shouldArchive);
+
+  addFeaturesToSource("archived", archivedFeatures, () => {
+    addFeaturesToSource("edit", editedFeatured, callback);
+  });
+};
+
+export const removeEditedFeaturesFromSourceByIds = (featureIds: string[]) => {
+  removeFeaturesFromSourceByIds("edit", featureIds);
+  removeFeaturesFromSourceByIds("archived", featureIds);
+};
 
 export const addFeaturesToSource = (sourceId: LayerId, features: Feature<Geometry>[], callback?: () => void) => {
   const layer = getLayerById(sourceId) as VectorLayer<VectorSource>;
