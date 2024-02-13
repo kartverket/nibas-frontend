@@ -32,7 +32,7 @@ const getMuligeKretserForAdministrativGrense = (
   }
 };
 
-export const useAdministrativTilhorighet = (feature: Feature): UseTilhorighet => {
+export const useTilhorighetAdministrativ = (feature: Feature): UseTilhorighet => {
   const {
     setTilhorighetOptions,
     tilhorighetOptions,
