@@ -9,7 +9,7 @@ import {
   TilhorighetOptions,
   UseTilhorighet,
   mapGrunnkretsRefToKrets,
-  mapStemmekretRefToKrets,
+  mapStemmekretsRefToKrets,
 } from "./tilhorighetUtils";
 import { useTilhorighetForm } from "./useTilhorighetForm";
 
@@ -26,8 +26,8 @@ const getMuligeKretserForAdministrativGrense = (
       };
     case KontekstType.STEMMEKRETS:
       return {
-        [Tilhorighet.A]: mapStemmekretRefToKrets(stemmekretser[0]),
-        [Tilhorighet.B]: mapStemmekretRefToKrets(stemmekretser[1]),
+        [Tilhorighet.A]: mapStemmekretsRefToKrets(stemmekretser[0]),
+        [Tilhorighet.B]: mapStemmekretsRefToKrets(stemmekretser[1]),
       };
   }
 };

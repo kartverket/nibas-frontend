@@ -8,7 +8,7 @@ import {
   TilhorighetOptions,
   UseTilhorighet,
   mapGrunnkretsRefToKrets,
-  mapStemmekretRefToKrets,
+  mapStemmekretsRefToKrets,
 } from "./tilhorighetUtils";
 import { useTilhorighetForm } from "./useTilhorighetForm";
 
@@ -19,7 +19,7 @@ const getMuligeKretserForCommonGrense = (
   stemmekretser: StemmekretsRef[],
 ): TilhorighetOptions => {
   if (kontekstType === KontekstType.STEMMEKRETS) {
-    const mappedStemmekretser = mapStemmekretRefToKrets(stemmekretser);
+    const mappedStemmekretser = mapStemmekretsRefToKrets(stemmekretser);
     return {
       a: mappedStemmekretser,
       b: mappedStemmekretser,

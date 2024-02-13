@@ -6,7 +6,7 @@ import { useFeatureStyle } from "./FeatureStyleContext";
 type OverlayPanel = "metadata" | "sammenslåing" | "splitting" | "tegnforklaring" | "koordinater" | "kartlag";
 
 type OverlayModal = "stemmekrets" | "grunnkrets";
-type Flatedata = KommuneRef | null;
+export type Flatedata = KommuneRef | null;
 
 export type OverlayPanelContextValue = {
   activeOverlayPanel: OverlayPanel | null;

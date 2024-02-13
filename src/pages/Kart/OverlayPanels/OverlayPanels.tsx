@@ -6,7 +6,7 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import KoordinaterPanel from "./KoordinaterPanel";
 import { TegnforklaringPanel } from "./Tegnforklaring/TegnforklaringPanel";
 import KartlagPanel from "./Kartlag/KartlagPanel";
-import { SplittPanel } from "./SplittPanel/SplittPanel";
+import { SplittPanel } from "./SplittPanel/SplitPanel";
 
 const OverlayPanels = () => {
   const { activeOverlayPanel, activeOverlayModal } = useOverlayPanel();

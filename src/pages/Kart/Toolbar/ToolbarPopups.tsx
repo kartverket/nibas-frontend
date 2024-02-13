@@ -32,8 +32,7 @@ const ToolbarPopups = () => {
         description: `For øyeblikket må alle flatetilhørigheter på grensene legges til manuelt. 
         Husk å se gjennom og sørg for at alle tilhørighetene stemmer. 
         Er ikke de satt ordentlig vil ikke publiseringen kunne gjennomføres uten feil. 
-        Tilhørigheten kan settes ved å bruke "Se og endre 
-        grenseinformasjon"-verktøyet.`,
+        Tilhørigheten kan settes ved å bruke "informasjon"-verktøyet.`,
         isClosable: true,
         duration: null,
       });

@@ -174,7 +174,6 @@ const ToolbarMenus = () => {
       "aria-label": "Splitt en flate",
     },
   ];
-  console.log(editingType);
   return (
     <>
       <Divider orientation="vertical" />

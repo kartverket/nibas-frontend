@@ -158,7 +158,7 @@ export const mapGrunnkretsRefToKrets = (grunnkretser: GrunnkretsRef[]): Krets[] 
     });
 };
 
-export const mapStemmekretRefToKrets = (stemmekretser: StemmekretsRef[]): Krets[] => {
+export const mapStemmekretsRefToKrets = (stemmekretser: StemmekretsRef[]): Krets[] => {
   return stemmekretser
     .map(({ id, version, nummer, navn, kommuneIdentifikator }) => ({
       id,
