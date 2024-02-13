@@ -3,7 +3,7 @@ import { KommuneRef } from "types/api";
 import { useSidebarPanel } from "./SidebarPanelContext";
 import { useFeatureStyle } from "./FeatureStyleContext";
 
-type OverlayPanel = "metadata" | "sammenslåing" | "tegnforklaring" | "koordinater" | "kartlag";
+type OverlayPanel = "grenseinfo" | "sammenslåing" | "tegnforklaring" | "koordinater" | "kartlag";
 
 type OverlayModal = "stemmekrets" | "grunnkrets";
 type Flatedata = KommuneRef | null;

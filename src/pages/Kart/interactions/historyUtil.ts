@@ -4,9 +4,9 @@ import { FeatureLike } from "ol/Feature";
 import { LineString } from "ol/geom";
 import { previousCoordinateKey } from "./constants";
 import { GrenseType } from "hooks/layers/types";
-import { Metadata } from "types/api";
+import { FeatureProperties } from "types/api";
 import { getGrenseDiscriminatorFromType } from "utils/grenser";
-import { getDefaultFeatureMetadata } from "utils/features";
+import { getDefaultFeatureProperties } from "utils/features";
 
 export const getInfoFromFeature = (featureLike: FeatureLike) => {
   const featureId = featureLike.getId();
@@ -43,7 +43,7 @@ export const createGrenseHistoryChange = (features: Feature[], grenseType?: Gren
 };
 
 export const createNyGrenseHistoryChanges = (features: Feature[], grenseType: GrenseType) => {
-  const changes: HistoryChange<MinimalGrense & Metadata>[] = [];
+  const changes: HistoryChange<MinimalGrense & FeatureProperties>[] = [];
 
   for (const feature of features) {
     if (feature instanceof Feature) {
@@ -54,14 +54,16 @@ export const createNyGrenseHistoryChanges = (features: Feature[], grenseType: Gr
         const { coordinates, featureId } = getInfoFromFeature(feature);
         if (!coordinates || !featureId || !grenseDiscriminator) continue;
 
-        const defaultMetadata = getDefaultFeatureMetadata(grenseDiscriminator);
-        const fromChange: MinimalGrense & Metadata = {
-          ...defaultMetadata,
+        const defaultFeatureProperties = getDefaultFeatureProperties(grenseType);
+        if (!defaultFeatureProperties) continue;
+
+        const fromChange: MinimalGrense & FeatureProperties = {
+          ...defaultFeatureProperties,
           coordinates: [],
           type: grenseType,
         };
-        const toChange: MinimalGrense & Metadata = {
-          ...defaultMetadata,
+        const toChange: MinimalGrense & FeatureProperties = {
+          ...defaultFeatureProperties,
           coordinates: coordinates,
           type: grenseType,
         };
