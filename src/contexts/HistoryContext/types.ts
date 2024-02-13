@@ -13,7 +13,6 @@ import { Feature } from "ol";
 export type HistoryState = {
   index: number;
   entries: HistoryEntry[];
-  hasPreviouslySavedHistory: boolean;
 };
 
 export type HistoryChange<T> = {
@@ -82,7 +81,7 @@ export type HistoryEntry =
 export type HistoryContextValue = {
   addHistoryEntry: (entry: HistoryEntry) => void;
   history: HistoryState;
-  clearHistory: ({ hasPreviouslySavedHistory }: { hasPreviouslySavedHistory: boolean }) => void;
+  clearHistory: () => void;
 
   canSave: boolean;
   undo: (() => void) | undefined;
