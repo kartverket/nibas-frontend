@@ -4,15 +4,15 @@ import {
   GrenseEntry,
   GrenseTilhorighetEntry,
   HistoryChange,
-  MetadataEntry,
   MinimalGrense,
   NyGrenseEntry,
+  PropertyEntry,
 } from "./types";
 import { editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
 import { setDefaultFeatureProperties } from "utils/features";
-import { FeatureProperties, Metadata } from "types/api";
+import { FeatureProperties } from "types/api";
 import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 
@@ -61,24 +61,24 @@ export const setFeatureCoordinatesForEntry = (entry: GrenseEntry, direction: His
   );
 };
 
-const setMetadataFromChange = (change: HistoryChange<Metadata>, direction: HistoryDirection) => {
+const setPropertiesFromChange = (change: HistoryChange<FeatureProperties>, direction: HistoryDirection) => {
   const feature = getFeatureIfExists(change.id);
   if (!feature) return;
 
-  const metadata = change[direction];
+  const properties = change[direction];
 
-  if (!metadata) return;
+  if (!properties) return;
 
-  feature.setProperties({ ...feature.getProperties(), metadata });
+  feature.setProperties(properties);
 };
 
-export const setFeatureMetadataForEntry = (entry: MetadataEntry, direction: HistoryDirection) => {
-  entry.changes.forEach((change) => setMetadataFromChange(change, direction));
+export const setFeaturePropertiesForEntry = (entry: PropertyEntry, direction: HistoryDirection) => {
+  entry.changes.forEach((change) => setPropertiesFromChange(change, direction));
 };
 
-export const setFeatureCoordinatesAndMetadataForEntry = (entry: NyGrenseEntry, direction: HistoryDirection) => {
+export const setFeatureCoordinatesAndPropertiesForEntry = (entry: NyGrenseEntry, direction: HistoryDirection) => {
   entry.changes.forEach((change) => {
-    setMetadataFromChange(change, direction);
+    setPropertiesFromChange(change, direction);
     setCoordinatesFromChange(change, direction);
   });
 };

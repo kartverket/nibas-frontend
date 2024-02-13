@@ -3,10 +3,10 @@ import { HistoryContextValue, HistoryEntry } from "./types";
 import {
   redoSplitting,
   undoSplitting,
-  setFeatureCoordinatesAndMetadataForEntry,
+  setFeatureCoordinatesAndPropertiesForEntry,
   setFeatureCoordinatesForEntry,
-  setFeatureMetadataForEntry,
   setKontekstEgenskaperForEntry,
+  setFeaturePropertiesForEntry,
 } from "./utils";
 import useHistoryState from "contexts/HistoryContext/useHistoryState";
 import { ensureAllCasesCovered } from "utils/typeHelpers";
@@ -18,11 +18,11 @@ const onUndo = (entry: HistoryEntry) => {
     case "grense": {
       return setFeatureCoordinatesForEntry(entry, "from");
     }
-    case "metadata": {
-      return setFeatureMetadataForEntry(entry, "from");
+    case "property": {
+      return setFeaturePropertiesForEntry(entry, "from");
     }
     case "nygrense": {
-      return setFeatureCoordinatesAndMetadataForEntry(entry, "from");
+      return setFeatureCoordinatesAndPropertiesForEntry(entry, "from");
     }
     case "grunnkrets": {
       return document.dispatchEvent(
@@ -79,12 +79,11 @@ const onRedo = (entry: HistoryEntry) => {
     case "grense": {
       return setFeatureCoordinatesForEntry(entry, "to");
     }
-    case "metadata": {
-      //skal den kanskje bare gå inn under det her?
-      return setFeatureMetadataForEntry(entry, "to");
+    case "property": {
+      return setFeaturePropertiesForEntry(entry, "to");
     }
     case "nygrense": {
-      return setFeatureCoordinatesAndMetadataForEntry(entry, "to");
+      return setFeatureCoordinatesAndPropertiesForEntry(entry, "to");
     }
     case "grunnkrets": {
       return document.dispatchEvent(

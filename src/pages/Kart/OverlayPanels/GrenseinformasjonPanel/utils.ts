@@ -1,7 +1,7 @@
 import { Feature } from "ol";
 import LineString from "ol/geom/LineString";
-import { GrenseArkiveringsEntry, GrenseTilhorighetEntry, MetadataEntry } from "contexts/HistoryContext";
-import { FeatureProperties, KontekstEgenskaper, Metadata } from "types/api";
+import { GrenseArkiveringsEntry, GrenseTilhorighetEntry, PropertyEntry } from "contexts/HistoryContext";
+import { FeatureProperties, KontekstEgenskaper } from "types/api";
 
 export const getDateInFriendlyString = (dateString?: string) => {
   if (!dateString) return null;
@@ -11,34 +11,57 @@ export const getDateInFriendlyString = (dateString?: string) => {
   return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
 };
 
-const updateFeatureWithNewMetadata = (feature: Feature<LineString>, newMetadata: Metadata) => {
-  const properties = feature.getProperties() as FeatureProperties;
+const updateFeatureWithNewProperties = (feature: Feature<LineString>, newProperties: FeatureProperties) => {
   feature.setProperties({
-    ...properties,
-    metadata: newMetadata,
+    ...newProperties,
   });
 };
 
-export const addMetadataEntryFromFeature = (
+export const addFeaturePropertiesEntryFromFeature = (
   feature: Feature<LineString>,
-  addHistoryEntry: (entry: MetadataEntry) => void,
-  updatedMetadata: Metadata,
+  addHistoryEntry: (entry: PropertyEntry) => void,
+  updatedFeatureProperties: FeatureProperties,
 ) => {
   const id = feature.getId();
 
   if (!id) return;
 
-  const oldMetadata = feature.getProperties().metadata as Metadata;
+  const oldFeatureProperties = feature.getProperties() as FeatureProperties;
 
-  updateFeatureWithNewMetadata(feature as Feature<LineString>, updatedMetadata);
+  updateFeatureWithNewProperties(feature as Feature<LineString>, updatedFeatureProperties);
 
   addHistoryEntry({
-    type: "metadata",
+    type: "property",
     changes: [
       {
         id: id as string,
-        from: oldMetadata,
-        to: feature.getProperties().metadata as Metadata,
+        from: oldFeatureProperties,
+        to: updatedFeatureProperties,
+      },
+    ],
+  });
+};
+
+export const addPropertyEntryFromFeature = (
+  feature: Feature<LineString>,
+  addHistoryEntry: (entry: PropertyEntry) => void,
+  updatedProperties: FeatureProperties,
+) => {
+  const id = feature.getId();
+
+  if (!id) return;
+
+  const oldProperties = feature.getProperties() as FeatureProperties;
+
+  updateFeatureWithNewProperties(feature as Feature<LineString>, updatedProperties);
+
+  addHistoryEntry({
+    type: "property",
+    changes: [
+      {
+        id: id as string,
+        from: oldProperties,
+        to: feature.getProperties() as FeatureProperties,
       },
     ],
   });

@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef } from "react";
-import { HistoryEntry, useHistory } from "contexts/HistoryContext";
+import { HistoryEntry, HistoryTypeValues, useHistory } from "contexts/HistoryContext";
 import { FeatureStyleContextValue } from "./types";
 import { useSelectStyles } from "./useSelectStyles";
 import { getArchiveLayerStyle, grenseStyles, setFeatureStyle } from "utils/map/layerStyles";
@@ -86,7 +86,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
   );
 
   useEffect(() => {
-    const dirtyHistoryTypes = ["grense", "metadata", "grensetilhorighetendring", "nygrense"];
+    const dirtyHistoryTypes: HistoryTypeValues[] = ["grense", "property", "grensetilhorighetendring", "nygrense"];
 
     // Når vi lagrer blir history entries tømt, så vi lagrer stilene som er satt
     if (history.entries.length === 0) {
