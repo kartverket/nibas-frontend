@@ -14,7 +14,7 @@ import { FeatureProperties } from "../../../types/api";
 const useSplit = () => {
   const { addHistoryEntry } = useHistory();
   const { activeTool } = useToolbar();
-  const { selectedFeatures, selectedPoint } = useFeatureStyle();
+  const { selectedFeatures, selectedPoint, addArchivedStyles } = useFeatureStyle();
 
   const createCloneOfFeatureWithPartsOfCoordinates = (
     feature: Feature,
@@ -61,16 +61,18 @@ const useSplit = () => {
               );
 
               const properties = oldFeature.getProperties() as FeatureProperties;
+              addArchivedStyles([oldFeatureId]);
               oldFeature.setProperties({ ...properties, shouldArchive: true });
               addFeaturesToSource("edit", [newFeature1, newFeature2]);
+              removeFeaturesFromSourceByIds("edit", [oldFeatureId]);
               addHistoryEntry({
-                type: "grensesplitting",
+                type: "grensedeling",
                 changes: [{ id: oldFeatureId, from: [oldFeature], to: [newFeature1, newFeature2] }],
               });
 
-              // Hvis featuren som ble splittet er en ny feature så ønsker vi ikke vise den som arkivert
-              if (isTempFeatureId(oldFeatureId)) {
-                removeFeaturesFromSourceByIds("edit", [oldFeatureId]);
+              // Hvis featuren som ble splittet er en gammel feature med ID ønsker vi å vise den som arkivert
+              if (!isTempFeatureId(oldFeatureId)) {
+                addFeaturesToSource("archived", [oldFeature]);
               }
             }
           }

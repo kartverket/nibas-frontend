@@ -10,7 +10,7 @@ import {
   StemmekretsEntry,
   StemmekretsSammenslaaingsendringEntry,
 } from "contexts/HistoryContext";
-import { editSource } from "hooks/layers/constants";
+import { archivedSource, editSource } from "hooks/layers/constants";
 import {
   FylkeRequest,
   GrunnkretsRequest,
@@ -171,7 +171,7 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
     "grensearkivering",
     "grensetilhorighetendring",
     "nygrense",
-    "grensesplitting",
+    "grensedeling",
   ];
 
   const relevantHistoryEntries = historyToCurrentIndex.filter((entry) =>
@@ -182,7 +182,9 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
   const editedFeatures: GeoJSONFeature[] = utkastOperations.grenseendringer.endredeFeatures;
 
   const addFeatureToEditedFeaturesIfNotAlreadyAdded = (featureId: string) => {
-    const feature = editSource.getFeatureById(featureId) as Feature<LineString>;
+    const editFeature = editSource.getFeatureById(featureId) as Feature<LineString> | null;
+    const archivedFeature = archivedSource.getFeatureById(featureId) as Feature<LineString> | null;
+    const feature = editFeature ?? archivedFeature;
 
     if (!feature) return;
 
@@ -205,8 +207,8 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
       if (!change.to) return;
       addFeatureToEditedFeaturesIfNotAlreadyAdded(change.id);
 
-      if (entry.type === "grensesplitting") {
-        // Spltitting er en litt sær grense-endring siden den påvirker flere features på en gang og trenger derfor egen implementasjon
+      if (entry.type === "grensedeling") {
+        // Grensedeling er en litt sær grense-endring siden den påvirker flere features på en gang og trenger derfor egen implementasjon
         const newFeatures = (change as HistoryChange<Feature[]>).to.map((f) => f.getId() as string);
         newFeatures.forEach((id) => {
           addFeatureToEditedFeaturesIfNotAlreadyAdded(id);
