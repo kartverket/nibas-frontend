@@ -88,7 +88,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       for (const customStyle of customStyles) {
         if (customStyle.customFeatureIds.length !== 0) customStyle.saveCustomStyles();
       }
-      // Dersom vi ikke har lagret history fra før returnerer vi for å forhindre uendelig løkke
+      // Forhindre uendelig løkke når history er tom
       return;
     }
 

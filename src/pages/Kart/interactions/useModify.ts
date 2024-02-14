@@ -9,7 +9,6 @@ import { editSource } from "hooks/layers/constants";
 import { pixelTolerance, previousCoordinateKey } from "./constants";
 import { Tool, useToolbar } from "contexts/ToolbarContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
-import { selectedPointStyle } from "utils/map/layerStyles";
 import { useToast } from "@kvib/react";
 import { Style } from "ol/style";
 import { createGrenseHistoryChange, getInfoFromFeature } from "./historyUtil";
@@ -30,19 +29,12 @@ const useModify = () => {
   const modify = useMemo(() => {
     // TODO: Vi burde finne et felles sett med sjekker som alle modifications går gjennom.
     // Det er per nå flere sjekker som blir gjort flere steder, hvorav vi bare på noen av dem ønsker å sende inn en toast til brukeren.
-    return new Modify({
-      features: new Collection(
-        (editSource.getFeaturesCollection()!.getArray() ?? []).filter((feature) => {
-          // Ved løsriving ønsker vi kun å kunne påvirke valgte features
-          if (activeTool === "detach") {
-            return selectedFeatures.some((sf) => sf.getId() === feature.getId());
-          }
 
-          // Arkiverte features skal ikke kunne modifiseres
-          // Representasjonspunkter skal ikke kunne modifiseres
-          return !featureIsArchived(feature) && !(feature.getId() as string).includes("representasjonspunkt");
-        }),
-      ),
+    const detachMode = activeTool === "detach" && selectedFeatures.length > 0;
+
+    return new Modify({
+      features: detachMode ? new Collection(selectedFeatures) : undefined,
+      source: detachMode ? undefined : editSource,
       pixelTolerance: pixelTolerance,
       condition: (event: MapBrowserEvent<MouseEvent>) => {
         if (activeModeTools.includes("move")) return false;
@@ -50,6 +42,11 @@ const useModify = () => {
         if (activeTool === "detach" && selectedFeatures.length === 0) return false;
 
         const activeFeatures = getActiveFeaturesAtPixel(event, "edit");
+
+        // Unngå interaksjon med inaktive features (representasjonspunkter f.eks.)
+        if (activeFeatures.length === 0) {
+          return false;
+        }
 
         // Sjekk alle featurene i punktet, hvis en av dem ikke skal kunne endres ønsker vi ikke å endre noe
         if (!activeFeatures.every((feature) => isFeatureEditable(feature, featureIsArchived(feature)))) {
@@ -66,7 +63,7 @@ const useModify = () => {
         // Hvis vi ikke har en spesiell regel bruker vi default condition, som er primaryAction her
         return primaryAction(event);
       },
-      style: activeModeTools.includes("move") ? new Style() : selectedPointStyle,
+      style: new Style(),
       insertVertexCondition: () => {
         if (activeTool === "add") {
           toast({ description: "Punktet ble lagt til", status: "success" });

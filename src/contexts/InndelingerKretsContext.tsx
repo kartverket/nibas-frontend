@@ -7,7 +7,7 @@ import { getIdFromEntity } from "utils/api";
 import { useOverlayPanel } from "./OverlayPanelContext";
 import { getAllVisibleFeatures, zoomToFeatures } from "utils/map";
 import { useToolbar } from "./ToolbarContext";
-import { getLayerById } from "utils/map/layers";
+import { editSource } from "hooks/layers/constants";
 
 export type Kretstype = "grunnkrets" | "stemmekrets";
 
@@ -126,7 +126,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
 
     // .changed() forcer en rerender av layers
     // rerender av edit er nødvendig for å sikre at lag som påvirker redigerbarhet til edit-layer også viser dette visuelt
-    getLayerById("edit").getSource()?.changed();
+    editSource.changed();
   };
 
   return {
