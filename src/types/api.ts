@@ -16,7 +16,6 @@ export type AdministrativEnhetNavn = components["schemas"]["AdministrativEnhetNa
 export type AdministrativGrenseMetadata = components["schemas"]["AdministrativGrenseMetadata"];
 export type AvtaltAvgrensningslinjeMetadata = components["schemas"]["AvtaltAvgrensningslinjeMetadata"];
 export type CommonMetadata = components["schemas"]["CommonMetadata"];
-export type Dokref = components["schemas"]["Dokref"];
 export type FeatureCollection = components["schemas"]["FeatureCollection"];
 export type FeatureProperties = components["schemas"]["FeatureProperties"] & {
   inndelingerKontekst: InndelingerKontekst;
@@ -35,18 +34,14 @@ export type KommuneResponse = components["schemas"]["KommuneResponse"];
 export type Kommunenummer = components["schemas"]["Kommunenummer"];
 export type KontekstEgenskaper = components["schemas"]["KontekstEgenskaper"];
 export type Land = components["schemas"]["TekstHolder"];
-export type NasjonRef = components["schemas"]["NasjonRef"];
 export type NasjonRequest = components["schemas"]["NasjonRequest"];
-export type NasjonResponse = components["schemas"]["NasjonResponse"];
 export type Posisjonskvalitet = components["schemas"]["Posisjonskvalitet"];
 export type RiksgrenseMetadata = components["schemas"]["RiksgrenseMetadata"];
 export type TerritorialgrenseMetadata = components["schemas"]["TerritorialgrenseMetadata"];
 export type CommonGrenseMetadata = components["schemas"]["CommonGrenseMetadata"];
-export type GrunnkretsRef = components["schemas"]["GrunnkretsRef"];
 export type GrunnkretsRequest = components["schemas"]["GrunnkretsRequest"];
 export type GrunnkretsResponse = components["schemas"]["GrunnkretsResponse"];
 export type StatistiskgrenseMetadata = components["schemas"]["StatistiskgrenseMetadata"];
-export type StemmekretsRef = components["schemas"]["StemmekretsRef"];
 export type StemmekretsResponse = components["schemas"]["StemmekretsResponse"];
 export type StemmekretsRequest = components["schemas"]["StemmekretsRequest"];
 export type StemmekretsSammenslaaingsendringRequest = components["schemas"]["StemmekretsSammenslaaingsendringRequest"];
@@ -79,6 +74,6 @@ export type Metadata =
   | RiksgrenseMetadata
   | TerritorialgrenseMetadata
   | StatistiskGrenseMetadata;
-export type KretsRef = GrunnkretsRef | StemmekretsRef;
-export type GrenseRef = FylkeRef | KommuneRef | KretsRef;
+export type KretsResponse = GrunnkretsResponse | StemmekretsResponse;
+export type GrenseRef = FylkeRef | KommuneRef;
 export type UtkastOperasjoner = UtkastResponse["operasjoner"];

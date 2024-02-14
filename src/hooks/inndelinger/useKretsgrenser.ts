@@ -2,90 +2,19 @@ import { useContext, useMemo } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
-import useSWR from "swr";
 import useNibasApi from "../useNibasApi";
 import { EditGrenserContext, useEditGrenseValue } from "contexts/EditGrenserContext";
 import { Kretstype } from "contexts/InndelingerKretsContext";
 import { useUtkast, useUtkastFeature } from "contexts/UtkastContext";
 import { LayerId } from "hooks/layers/types";
 import useAsyncFeatures from "hooks/useAsyncFeatures";
-import { GrunnkretsResponse, KretsRef, StemmekretsResponse } from "types/api";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
-import { removeFeaturesFromSourceByIds, getFeatureId, getRepresentasjonspunktId, getFlateId } from "utils/map/source";
-import { fetcherWithToken, getIdFromEntity } from "utils/api";
-import { isNotNullOrUndefined } from "types/common";
+import { removeFeaturesFromSourceByIds, getFeatureId } from "utils/map/source";
 import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
 import { stemmekretsgrenserFetcher } from "api/stemmekrets";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { getAllVisibleFeatures, getZoomMode, zoomToFeatures } from "utils/map";
 import { getLayerById } from "utils/map/layers";
-
-const endpointByKretstype = {
-  grunnkrets: "grunnkretser",
-  stemmekrets: "stemmekretser",
-} as const;
-
-type KretsResponse<T extends (typeof endpointByKretstype)[Kretstype]> = T extends "grunnkretser"
-  ? GrunnkretsResponse
-  : StemmekretsResponse;
-
-const mapKretserToIds = (kretser?: KretsRef[]) => kretser?.map((krets) => getIdFromEntity(krets));
-
-// fetch alle kretsgrenser i en kommune
-const kretserByKommuneFetcher = async ([kretsIds, token, type, endpoint]: [
-  string[],
-  string | undefined,
-  Kretstype,
-  string,
-]) => {
-  const typeUrl = endpointByKretstype[type];
-
-  const kretsFeaturesPromises: Promise<string>[] = kretsIds.map(async (kretsId) =>
-    fetcherWithToken([`/v1/${typeUrl}/${kretsId}/${endpoint}`, token]),
-  );
-
-  return Promise.all(kretsFeaturesPromises);
-};
-
-// Henter tilleggsgeometri som representasjonspunkter og flater
-const kretsGeometryFetcher = async ([kretsIds, token, type]: [string[], string | undefined, Kretstype]) => {
-  const typeUrl = endpointByKretstype[type];
-
-  const kretsGeometryPromises = kretsIds.map(async (kretsId) => {
-    const krets = (await fetcherWithToken([`v1/${typeUrl}/${kretsId}`, token])) as KretsResponse<typeof typeUrl>;
-
-    if (krets && krets.features.features.length > 0) {
-      const [representasjonspunktFeature, flateFeature] = krets.features.features;
-
-      const shouldRenderFlater = false;
-      const featuresWithId = [
-        {
-          ...representasjonspunktFeature,
-          id: getRepresentasjonspunktId(kretsId),
-          properties: {
-            ...representasjonspunktFeature.properties,
-            name: (krets as StemmekretsResponse).stemmekretsnavn || (krets as GrunnkretsResponse).navn,
-            number: (krets as StemmekretsResponse).stemmekretsnummer || (krets as GrunnkretsResponse).grunnkretsnummer,
-          },
-        },
-        shouldRenderFlater && {
-          ...flateFeature,
-          id: getFlateId(kretsId),
-          properties: {
-            ...flateFeature.properties,
-            name: (krets as StemmekretsResponse).stemmekretsnavn || (krets as GrunnkretsResponse).navn,
-            number: (krets as StemmekretsResponse).stemmekretsnummer || (krets as GrunnkretsResponse).grunnkretsnummer,
-          },
-        },
-      ];
-
-      return featuresWithId;
-    }
-  });
-
-  const representasjonspunktFeatures = await Promise.all(kretsGeometryPromises);
-  return representasjonspunktFeatures.filter(isNotNullOrUndefined);
-};
 
 const getKretserByKommuneUrl = (type: Kretstype) => {
   if (type === "grunnkrets") {
@@ -94,6 +23,15 @@ const getKretserByKommuneUrl = (type: Kretstype) => {
 
   // her må det være stemmekrets
   return "/v1/kommuner/{id}/stemmekretser";
+};
+
+const getGrenserForKretserByKommuneUrl = (type: Kretstype) => {
+  if (type === "grunnkrets") {
+    return "/v1/kommuner/{id}/grunnkretsgrenser";
+  }
+
+  // her må det være stemmekrets
+  return "/v1/kommuner/{id}/stemmekretsgrenser";
 };
 
 const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
@@ -114,31 +52,21 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     id: kommuneId,
   });
 
-  const kretsIds = mapKretserToIds(kretserByKommune);
-  const { data: grenserGeoJsons } = useSWR(
-    kretsIds ? [kretsIds, tokenHolderFunc()?.token, type, "grenser"] : null,
-    kretserByKommuneFetcher,
-  );
+  const { data: grenserGeoJsons } = useNibasApi(visible ? getGrenserForKretserByKommuneUrl(type) : null, {
+    id: kommuneId,
+  });
 
-  const { data: kretsGeometries } = useSWR(
-    kretsIds ? [kretsIds, tokenHolderFunc()?.token, type] : null,
-    kretsGeometryFetcher,
-  );
-
-  // TODO: vi får doble grenser ut av grenserGeoJsons
-  // det gir mening når to kretser deler grenser mellom seg
-  // men vi bør kanskje filtrere det ned, med mindre vi må ha to versjoner av hver feature
   const utkastGeoJsons = useUtkastFeature(grenserGeoJsons, utkast);
 
   const allFeatures = useMemo(() => {
-    if (!utkastGeoJsons || !kretsGeometries) return null;
+    if (!utkastGeoJsons || !kretserByKommune) return null;
 
-    const features: Feature<Geometry>[] = utkastGeoJsons
-      .flatMap(getFeaturesFromGeoJson)
-      .concat(kretsGeometries.flat().flatMap(getFeaturesFromGeoJson));
+    const representasjonspunktFeatures = kretserByKommune?.flatMap((krets) =>
+      getFeaturesFromGeoJson(krets.representasjonspunkt),
+    );
 
-    return features;
-  }, [kretsGeometries, utkastGeoJsons]);
+    return utkastGeoJsons.features.flatMap(getFeaturesFromGeoJson).concat(representasjonspunktFeatures);
+  }, [kretserByKommune, utkastGeoJsons]);
 
   const getOverlappingStemmekretsFeatureIds = (featureIds: string[]) => {
     return featureIds.filter((featureId, index) => featureIds.indexOf(featureId) !== index);
