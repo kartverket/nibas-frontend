@@ -23,8 +23,9 @@ const ToolbarPopups = () => {
   const archiveFeatures = () => {
     const selectedFeature = selectedFeatures[0];
     if (selectedFeature) {
+      clearSelection();
       addArchivedStyles([getFeatureId(selectedFeature)]);
-      addArchivingEntryFromFeature(selectedFeature, addHistoryEntry), clearSelection();
+      addArchivingEntryFromFeature(selectedFeature, addHistoryEntry);
       toast({ status: "success", title: "Grensen ble arkivert" });
       toast({
         status: "warning",

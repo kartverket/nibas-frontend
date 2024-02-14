@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo } from "react";
 import { HistoryEntry, HistoryTypeValues, useHistory } from "contexts/HistoryContext";
 import { FeatureStyleContextValue } from "./types";
 import { useSelectStyles } from "./useSelectStyles";
@@ -10,7 +10,7 @@ export const FeatureStyleContext = createContext<FeatureStyleContextValue | unde
 
 export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }) => {
   const { history } = useHistory();
-  const { selectedPoint, selectFeatures, selectedFeatures, selectPointOnFeature, clearSelection } = useSelectStyles();
+  const { selectedPoint, selectFeatures, selectedFeatures, selectPointOnFeature, removeSelection } = useSelectStyles();
 
   const sammenslaaingOverlappingStyleFunctions = useCustomStyles(grenseStyles.sammenslaaingOverlapping);
   const sammenslaaingStyleFunctions = useCustomStyles(grenseStyles.sammenslaaing);
@@ -28,27 +28,29 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     [archivedStyleFunctions, dirtyStyleFunctions, sammenslaaingOverlappingStyleFunctions, sammenslaaingStyleFunctions],
   );
 
-  const previousSelectedFeatures = useRef(selectedFeatures);
-
   // Når en feature ikke er valgt lengre må vi avgjøre hvilken stil den skal ha
-  useEffect(() => {
-    const deselectedFeatures = previousSelectedFeatures.current.filter(
-      (psf) => !selectedFeatures.some((sf) => psf.getId() === sf.getId()),
-    );
-
+  const clearSelection = () => {
+    const deselectedFeatures = removeSelection();
     for (const feature of deselectedFeatures) {
       const featureId = feature.getId() as string;
-      for (const customStyle of customStyles) {
-        if (customStyle.customFeatureIds.includes(featureId) || customStyle.savedCustomFeatureIds.includes(featureId)) {
-          feature.setStyle(customStyle.customStyle);
-          return;
-        }
-      }
 
-      feature.setStyle();
+      // Dersom featuren har en aktiv stil faller vi tilbake til den
+      const matchingCustomStyle = customStyles.find((customStyle) => customStyle.customFeatureIds.includes(featureId));
+
+      // Dersom featuren ikke har en aktiv stil faller vi tilbake til den lagrede stilen
+      const matchingSavedCustomStyle = customStyles.find((customStyle) =>
+        customStyle.savedCustomFeatureIds.includes(featureId),
+      );
+
+      if (matchingCustomStyle) {
+        feature.setStyle(matchingCustomStyle.customStyle);
+      } else if (matchingSavedCustomStyle) {
+        feature.setStyle(matchingSavedCustomStyle.customStyle);
+      } else {
+        feature.setStyle();
+      }
     }
-    previousSelectedFeatures.current = selectedFeatures;
-  }, [selectedFeatures, customStyles]);
+  };
 
   const getFeatureIdsFromEntries = (accumulator: string[][], entry: HistoryEntry) => {
     const featureIds: string[] = [];
@@ -79,14 +81,14 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
 
   useEffect(() => {
     const dirtyHistoryTypes: HistoryTypeValues[] = ["grense", "property", "grensetilhorighetendring", "nygrense"];
+    const archivedHistoryTypes: HistoryTypeValues[] = ["grensearkivering", "grensesplitting"];
 
     // Når vi lagrer blir history entries tømt, så vi lagrer stilene som er satt
     if (history.entries.length === 0) {
-      if (history.hasPreviouslySavedHistory) {
-        if (dirtyStyleFunctions.customFeatureIds.length !== 0) dirtyStyleFunctions.saveCustomStyles();
-        if (archivedStyleFunctions.customFeatureIds.length !== 0) archivedStyleFunctions.saveCustomStyles();
+      for (const customStyle of customStyles) {
+        if (customStyle.customFeatureIds.length !== 0) customStyle.saveCustomStyles();
       }
-      // Dersom vi ikke har lagret history fra før returnerer vi for å forhindre uendelig løkke
+      // Forhindre uendelig løkke når history er tom
       return;
     }
 
@@ -105,7 +107,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
 
     const archivedFeatures = history.entries
       .slice(0, history.index)
-      .filter((entry) => entry.type === "grensearkivering" || entry.type === "grensesplitting")
+      .filter((entry) => archivedHistoryTypes.includes(entry.type))
       .reduce(getFeatureIdsFromEntries, [])
       .flatMap((id) => id);
 
@@ -121,15 +123,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     undoFeatureStyles(editFeatures);
     dirtyStyleFunctions.setCustomStyles(dirtyFeatures);
     archivedStyleFunctions.setCustomStyles(archivedFeatures);
-  }, [
-    history.entries,
-    history.index,
-    history.hasPreviouslySavedHistory,
-    history,
-    undoFeatureStyles,
-    dirtyStyleFunctions,
-    archivedStyleFunctions,
-  ]);
+  }, [archivedStyleFunctions, customStyles, dirtyStyleFunctions, history, undoFeatureStyles]);
 
   const clearFeatureStyles = () => {
     for (const customStyle of customStyles) {
@@ -142,7 +136,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     if (featureId) {
       return (
         archivedStyleFunctions.customFeatureIds.includes(featureId) ||
-        archivedStyleFunctions.customFeatureIds.includes(featureId)
+        archivedStyleFunctions.savedCustomFeatureIds.includes(featureId)
       );
     }
     return false;
