@@ -7,6 +7,7 @@ import {
   MinimalGrense,
   NyGrenseEntry,
   PropertyEntry,
+  GrenseArkiveringsEntry,
 } from "./types";
 import { editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
@@ -96,26 +97,56 @@ export const setKontekstEgenskaperForEntry = (entry: GrenseTilhorighetEntry, dir
   });
 };
 
-export const redoSplitting = (splittedFeature: Feature, newFeaturesFromsSplit: Feature[]) => {
-  const properties = splittedFeature.getProperties() as FeatureProperties;
-  splittedFeature.setProperties({ ...properties, shouldArchive: true });
-  addFeaturesToSource("edit", newFeaturesFromsSplit);
+export const redoArchiving = (entry: GrenseArkiveringsEntry) => {
+  const features = entry.changes.map((c) => editSource.getFeatureById(c.id) as Feature<Geometry>);
+  const featureIds = entry.changes.map((c) => c.id);
 
-  // Hvis featuren som ble splittet er en ny feature så ønsker vi ikke å vise den som arkivert, så vi fjerner den fra OL
-  const splittedFeatureId = splittedFeature.getId() as string;
-  if (isTempFeatureId(splittedFeatureId)) {
-    removeFeaturesFromSourceByIds("edit", [splittedFeatureId]);
+  addFeaturesToSource("archived", features);
+  removeFeaturesFromSourceByIds("edit", featureIds);
+
+  return document.dispatchEvent(
+    new CustomEvent("grensearkiveringRedo", {
+      detail: { entry },
+    }),
+  );
+};
+
+export const undoArchving = (entry: GrenseArkiveringsEntry) => {
+  const features = entry.changes.map((c) => editSource.getFeatureById(c.id) as Feature<Geometry>);
+  const featureIds = entry.changes.map((c) => c.id);
+
+  addFeaturesToSource("edit", features);
+  removeFeaturesFromSourceByIds("archived", featureIds);
+
+  return document.dispatchEvent(
+    new CustomEvent("grensearkiveringUndo", {
+      detail: { entry },
+    }),
+  );
+};
+
+export const redoGrenseDeling = (deltFeature: Feature, newFeaturesFromsDeling: Feature[]) => {
+  const properties = deltFeature.getProperties() as FeatureProperties;
+  deltFeature.setProperties({ ...properties, shouldArchive: true });
+  const deltFeatureId = deltFeature.getId() as string;
+  addFeaturesToSource("edit", newFeaturesFromsDeling);
+  removeFeaturesFromSourceByIds("edit", [deltFeatureId]);
+
+  // Hvis featuren som ble delt er en eksisterende feature vil vi vise den som arkivert
+  if (!isTempFeatureId(deltFeatureId)) {
+    addFeaturesToSource("archived", [deltFeature]);
   }
 };
 
-export const undoSplitting = (splittedFeature: Feature, newFeaturesFromsSplit: Feature[]) => {
-  const idsToRemove = newFeaturesFromsSplit.map((feature) => feature.getId() as string);
-  const properties = splittedFeature.getProperties() as FeatureProperties;
-  splittedFeature.setProperties({ ...properties, shouldArchive: false });
+export const undoGrenseDeling = (deltFeature: Feature, newFeaturesFromsDeling: Feature[]) => {
+  const idsToRemove = newFeaturesFromsDeling.map((feature) => feature.getId() as string);
+  const properties = deltFeature.getProperties() as FeatureProperties;
+  deltFeature.setProperties({ ...properties, shouldArchive: false });
   removeFeaturesFromSourceByIds("edit", idsToRemove);
+  addFeaturesToSource("edit", [deltFeature]);
 
-  // Om featuren som ble splittet var en ny grense så har vi fjernet den fra OL, vi må derfor legge den tilbake
-  if (isTempFeatureId(splittedFeature.getId())) {
-    addFeaturesToSource("edit", [splittedFeature]);
+  // Om featuren som ble splittet ikke var en ny grense vises den som artkivert, vi må derfor fjerne den fra archived layer
+  if (!isTempFeatureId(deltFeature.getId())) {
+    removeFeaturesFromSourceByIds("archived", [deltFeature.getId() as string]);
   }
 };

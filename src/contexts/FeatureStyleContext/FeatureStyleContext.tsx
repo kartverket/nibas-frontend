@@ -105,7 +105,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
 
     const archivedFeatures = history.entries
       .slice(0, history.index)
-      .filter((entry) => entry.type === "grensearkivering" || entry.type === "grensesplitting")
+      .filter((entry) => entry.type === "grensearkivering" || entry.type === "grensedeling")
       .reduce(getFeatureIdsFromEntries, [])
       .flatMap((id) => id);
 

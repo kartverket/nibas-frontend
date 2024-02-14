@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { LayerId } from "./layers/types";
-import { addFeaturesToSource } from "utils/map/source";
+import { addEditedFeaturesToSource, addFeaturesToSource } from "utils/map/source";
 import { getAllVisibleFeatures, zoomToFeatures } from "utils/map";
 
 /**
@@ -21,8 +21,12 @@ const useAsyncFeatures = (
   useEffect(() => {
     if (!layerToAddTo || !features) return;
 
-    addFeaturesToSource(layerToAddTo, features, callback);
-    setLayerToAddTo(null);
+    // Om man skal legge til edit eller arhived layer så legger vi til i begge, og deler de opp basert på om feature er arkivert
+    if (layerToAddTo === "edit" || layerToAddTo === "archived") {
+      addEditedFeaturesToSource(features, callback);
+    } else {
+      addFeaturesToSource(layerToAddTo, features, callback);
+    }
 
     if (zoomMode === "edit") {
       zoomToFeatures(features);
