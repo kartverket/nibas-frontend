@@ -28,7 +28,7 @@ const GrenseinformasjonPanel = ({ isOpen, className }: PanelProps) => {
     if (isTempFeatureId(feature.getId()?.toString())) return "Ny grense, aldri oppdatert";
 
     const featureProperties = feature.getProperties() as FeatureProperties;
-    const metadata = featureProperties.metadata as Metadata;
+    const metadata = featureProperties.metadata as Metadata | null;
 
     if (metadata) {
       const oppdateringsDato = metadata.common?.sporingsinformasjon.oppdateringsdato;
