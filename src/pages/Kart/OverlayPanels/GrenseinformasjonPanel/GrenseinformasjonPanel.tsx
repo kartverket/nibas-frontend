@@ -27,12 +27,17 @@ const GrenseinformasjonPanel = ({ isOpen, className }: PanelProps) => {
   const getSistOppdatert = (feature: Feature) => {
     if (isTempFeatureId(feature.getId()?.toString())) return "Ny grense, aldri oppdatert";
 
+    if (isWFSGrense) return "Matrikkelgrense, ikke kjent";
+
     const featureProperties = feature.getProperties() as FeatureProperties;
     const metadata = featureProperties.metadata as Metadata;
-    const oppdateringsDato = metadata.common?.sporingsinformasjon.oppdateringsdato;
 
-    if (oppdateringsDato) {
-      return getDateInFriendlyString(oppdateringsDato);
+    if (metadata) {
+      const oppdateringsDato = metadata.common?.sporingsinformasjon.oppdateringsdato;
+
+      if (oppdateringsDato) {
+        return getDateInFriendlyString(oppdateringsDato);
+      }
     }
 
     return "Ukjent";
