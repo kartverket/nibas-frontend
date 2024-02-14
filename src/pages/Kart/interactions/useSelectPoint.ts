@@ -13,7 +13,7 @@ const useSelectPoint = () => {
   const toast = useToast();
   const { activeTool } = useToolbar();
   const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } = useOverlayPanel();
-  const { selectPointOnFeature, selectedPoint, clearSelection, featureIsArchived } = useFeatureStyle();
+  const { selectPointOnFeature, selectedPoint, clearSelection } = useFeatureStyle();
   const { getFeaturesAtPixel } = useGetFeatures();
 
   const allowedPointModes: Tool[] = useMemo(() => ["koordinater", "split"], []);
@@ -33,8 +33,9 @@ const useSelectPoint = () => {
     if (allowedPointModes.includes(activeTool) && !event.dragging) {
       event.stopPropagation();
 
-      const allFeaturesAtPixel = getFeaturesAtPixel(event, "edit");
-      const ikkeArkiverteFeatures = allFeaturesAtPixel.filter((f) => !featureIsArchived(f));
+      const nonArchivedFeatured = getFeaturesAtPixel(event, "edit");
+      const archivedFeatures = getFeaturesAtPixel(event, "archived");
+      const allFeaturesAtPixel = nonArchivedFeatured.concat(archivedFeatures);
 
       if (allFeaturesAtPixel.length === 0) {
         clearSelection();
@@ -43,7 +44,7 @@ const useSelectPoint = () => {
       }
 
       // Valgt punkt kan ikke være en del av en ikke-redigerbar grense
-      if (!allFeaturesAtPixel.every((feature) => isFeatureEditable(feature, featureIsArchived(feature)))) {
+      if (!nonArchivedFeatured.every((feature) => isFeatureEditable(feature, false))) {
         toast({
           status: "error",
           title: "Denne grensen er ikke redigerbar.",
@@ -53,24 +54,32 @@ const useSelectPoint = () => {
 
       // Må estimere hvilket punkt på linjen man prøvde å trykke på
       const nearbyVertexCoordinate = findNearbyVertexOnFeature(
-        ikkeArkiverteFeatures[0] as Feature<LineString>,
+        nonArchivedFeatured[0] as Feature<LineString>,
         event.coordinate,
       );
 
       if (nearbyVertexCoordinate) {
         // Om man punktet har mer enn 1 ikke-arkivert feature betyr det at det er et endepunkt.
-        if (activeTool === "split" && ikkeArkiverteFeatures.length > 1) {
+        if (activeTool === "split" && nonArchivedFeatured.length > 1) {
           toast({
             status: "error",
-            title: "Man kan ikke splitte på et endepunkt",
+            title: "Man kan ikke dele grensen på et endepunkt",
           });
           return;
         }
 
-        selectPointOnFeature(nearbyVertexCoordinate, ikkeArkiverteFeatures as Feature<LineString>[]);
+        selectPointOnFeature(nearbyVertexCoordinate, nonArchivedFeatured as Feature<LineString>[]);
 
         if (activeTool === "koordinater") {
           openOverlayPanel("koordinater");
+        }
+      } else {
+        if (activeTool === "split") {
+          toast({
+            status: "error",
+            title: "Du kan kun dele grensen i et eksisterende grensepunkt ",
+          });
+          return;
         }
       }
     }
