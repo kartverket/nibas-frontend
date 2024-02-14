@@ -41,6 +41,9 @@ const useModify = () => {
         if (disallowedPointModes.includes(activeTool)) return false;
         if (activeTool === "detach" && selectedFeatures.length === 0) return false;
 
+        // TODO: håndteringen her er halvveis etter omskriving tilbake til feature/source-split
+        // man kan endre arkiverte features via endepunkter
+        // løsningen er å ha arkiverte features i eget lag, som steffen jobber med iirc
         const activeFeatures = getActiveFeaturesAtPixel(event, "edit");
 
         // Unngå interaksjon med inaktive features (representasjonspunkter f.eks.)
@@ -49,7 +52,7 @@ const useModify = () => {
         }
 
         // Sjekk alle featurene i punktet, hvis en av dem ikke skal kunne endres ønsker vi ikke å endre noe
-        if (!activeFeatures.every((feature) => isFeatureEditable(feature, featureIsArchived(feature)))) {
+        if (activeFeatures.some((feature) => !isFeatureEditable(feature, featureIsArchived(feature)))) {
           toast({
             status: "error",
             title: "Denne grensen er ikke redigerbar",
