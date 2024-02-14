@@ -29,22 +29,26 @@ const GrenseinformasjonPanel = ({ isOpen, className }: PanelProps) => {
 
     const featureProperties = feature.getProperties() as FeatureProperties;
     const metadata = featureProperties.metadata as Metadata;
-    const oppdateringsDato = metadata.common?.sporingsinformasjon.oppdateringsdato;
 
-    if (oppdateringsDato) {
-      return getDateInFriendlyString(oppdateringsDato);
+    if (metadata) {
+      const oppdateringsDato = metadata.common?.sporingsinformasjon.oppdateringsdato;
+
+      if (oppdateringsDato) {
+        return getDateInFriendlyString(oppdateringsDato);
+      }
     }
 
     return "Ukjent";
   };
 
   return (
-    selectedFeature && (
+    selectedFeature &&
+    !isWFSGrense && (
       <SidePanel $isOpen={isOpen} className={className}>
         <PanelHeader onClose={closeOverlayPanel} subHeading={`Sist oppdatert: ${getSistOppdatert(selectedFeature)}`}>
           Informasjon om grense
         </PanelHeader>
-        {selectedFeature && selectedProperties && !isWFSGrense ? (
+        {selectedFeature && selectedProperties ? (
           <GrenseinformasjonFieldList feature={selectedFeature} />
         ) : (
           <p>Valgt grense har ikke metadata</p>
