@@ -26,7 +26,7 @@ import { routes } from "utils/routes";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useKartlag } from "contexts/KartlagContext/KartlagContext";
-import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
+import { addEditedFeaturesToSource, removeEditedFeaturesFromSourceByIds } from "utils/map/source";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 import { CustomOption } from "pages/Kart/OverlayPanels/hooks/tilhorighetUtils";
@@ -190,8 +190,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
         const oldFeaturesWithTempId = oldFeatures
           .filter((feature) => isTempFeatureId(feature.id))
           .map((feature) => feature.id as string);
-
-        removeFeaturesFromSourceByIds("edit", oldFeaturesWithTempId);
+        removeEditedFeaturesFromSourceByIds(oldFeaturesWithTempId);
       }
 
       const updatedUtkastWithTempFeatureIds = addTempFeatureIdToNewFeaturesInUtkast(updatedUtkast);
@@ -203,7 +202,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
 
       const featuresToBeAddedToSource = geoJsonFeaturesToBeAddedToSource.flatMap(getFeaturesFromGeoJson);
 
-      addFeaturesToSource("edit", featuresToBeAddedToSource);
+      addEditedFeaturesToSource(featuresToBeAddedToSource);
       addDirtyStyles(featuresToBeAddedToSource.map((feature) => feature.getId() as string));
 
       setUtkast(updatedUtkastWithTempFeatureIds);
