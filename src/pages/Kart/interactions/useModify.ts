@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo } from "react";
 import Feature from "ol/Feature";
 import LineString from "ol/geom/LineString";
 import Modify, { ModifyEvent } from "ol/interaction/Modify";
@@ -17,13 +17,15 @@ import { useGetFeatures } from "./utils";
 import { isAdministrativGrense } from "utils/grenser";
 import { isFeatureEditable } from "utils/features";
 import { findNearbyVertexOnFeature } from "utils/map";
+import useToastCounter from "hooks/useToastCounter";
 
 const useModify = () => {
   const { addHistoryEntry } = useHistory();
   const { activeTool, activeModeTools } = useToolbar();
   const { selectedFeatures, featureIsArchived } = useFeatureStyle();
   const toast = useToast();
-  const toastIdRef = useRef<string | number>("");
+  const { toastCounter: removeToast } = useToastCounter("success", "Punktet ble fjernet", "punkter ble fjernet");
+  const { toastCounter: addToast } = useToastCounter("success", "Punktet ble lagt til", "punkter ble lagt til");
   const { getActiveFeaturesAtPixel, getFeaturesAtPixel } = useGetFeatures();
 
   // Ønsker helst at redigering ikke skal være aktiv under enkelte verktøy
@@ -70,10 +72,7 @@ const useModify = () => {
       style: activeModeTools.includes("move") ? new Style() : selectedPointStyle,
       insertVertexCondition: () => {
         if (activeTool === "add") {
-          if (toastIdRef.current) {
-            toast.close(toastIdRef.current);
-          }
-          toastIdRef.current = toast({ description: "Punktet ble lagt til", status: "success" });
+          addToast();
           return true;
         }
         return false;
@@ -125,10 +124,7 @@ const useModify = () => {
             return false;
           }
 
-          if (toastIdRef.current) {
-            toast.close(toastIdRef.current);
-          }
-          toastIdRef.current = toast({ description: "Punktet ble fjernet", status: "success" });
+          removeToast();
 
           // Hvis alt ellers ser greit ut så fjernes punktet på klikk
           return true;
@@ -139,12 +135,14 @@ const useModify = () => {
   }, [
     activeModeTools,
     activeTool,
-    disallowedPointModes,
-    featureIsArchived,
-    getActiveFeaturesAtPixel,
-    getFeaturesAtPixel,
     selectedFeatures,
+    disallowedPointModes,
+    getActiveFeaturesAtPixel,
+    featureIsArchived,
     toast,
+    addToast,
+    getFeaturesAtPixel,
+    removeToast,
   ]);
 
   useEffect(() => {
