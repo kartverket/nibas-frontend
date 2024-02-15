@@ -30,17 +30,16 @@ const ToolbarPopups = () => {
       addArchivingEntryFromFeature(selectedFeature, addHistoryEntry);
       clearSelection();
       toast({ status: "success", title: "Grensen ble arkivert" });
-      if (toastIdRef.current) {
-        toast.close(toastIdRef.current);
+      if (!toastIdRef.current) {
+        toastIdRef.current = toast({
+          status: "warning",
+          title: "Husk å sette tilhørighet på berørte grenser",
+          description: `For øyeblikket må alle flatetilhørigheter på grensene legges til manuelt. 
+          Tilhørigheten kan settes ved å bruke "Informasjon"-verktøyet.`,
+          isClosable: true,
+          duration: null,
+        });
       }
-      toastIdRef.current = toast({
-        status: "warning",
-        title: "Husk å sette tilhørighet på berørte grenser",
-        description: `For øyeblikket må alle flatetilhørigheter på grensene legges til manuelt. 
-        Tilhørigheten kan settes ved å bruke "Informasjon"-verktøyet.`,
-        isClosable: true,
-        duration: null,
-      });
     }
   };
 
