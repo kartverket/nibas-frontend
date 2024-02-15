@@ -28,7 +28,7 @@ const Kommune = ({ kommune }: Props) => {
 
   const closeEditing = () => {
     closeModal();
-    clearHistory({ hasPreviouslySavedHistory: true });
+    clearHistory();
     toggleEditKretser();
   };
 
