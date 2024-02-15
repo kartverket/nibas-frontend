@@ -12,7 +12,7 @@ import {
   mapGrunnkretsRefToKrets,
   mapStemmekretsRefToKrets,
 } from "../hooks/tilhorighetUtils";
-import { addKretsDelingHistoryEntry } from "./utils";
+import { addKretsDelingHistoryEntry, getExistingKretsDelingForKrets } from "./utils";
 
 export type DelingForm = Pick<KretsDelingEndringRequest, "opprinneligKrets" | "nyeKretser">;
 
@@ -21,10 +21,7 @@ export const getCurrentDelingOnKrets = (
   currentHistory: HistoryState,
 ): DelingForm | null => {
   if (kretsLokalid) {
-    const existingKretsDelingForKrets = currentHistory.entries
-      .filter((entry) => entry.type === "kretsdeling")
-      .flatMap((delingEntry) => delingEntry.changes.map((change) => change.to) as KretsDelingEndringRequest[])
-      .findLast((kretsDeling) => kretsDeling.opprinneligKrets.lokalId === kretsLokalid);
+    const existingKretsDelingForKrets = getExistingKretsDelingForKrets(kretsLokalid, currentHistory);
     return {
       opprinneligKrets: existingKretsDelingForKrets?.opprinneligKrets ?? getDefaultDelingValue().opprinneligKrets,
       nyeKretser: existingKretsDelingForKrets?.nyeKretser ?? getDefaultDelingValue().nyeKretser,
@@ -67,7 +64,7 @@ export const useDelingForm = (flatedata: Flatedata) => {
     setValue,
   } = useForm<DelingForm>({ defaultValues: getDefaultDelingValue() });
 
-  const { fields, append, remove, prepend } = useFieldArray({
+  const { fields, append, remove, prepend, replace } = useFieldArray({
     control,
     name: "nyeKretser",
   });
@@ -82,8 +79,8 @@ export const useDelingForm = (flatedata: Flatedata) => {
       : mapStemmekretsRefToKrets(stemmekretser ?? []);
 
   const handleOpprinneligKretsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    remove(0); // vi vet at opprinneligKrets alltid vil være på indeks 0 fordi vi alltid legger den til med prepend
     const lokalid = e.target.value;
+    replace(getCurrentDelingOnKrets(lokalid, history)?.nyeKretser ?? getDefaultDelingValue().nyeKretser);
     setValue("opprinneligKrets.lokalId", lokalid, { shouldDirty: true });
     const kretsForNewOpprinneligKrets = opprinneligFlateOptions.find((krets) => krets.id.lokalid.value === lokalid);
     if (
