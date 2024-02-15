@@ -17,7 +17,7 @@ const customTheme = extendTheme(withDefaultColorScheme({ colorScheme: "blue" }),
 const defaultToastOptions: UseToastOptions = {
   position: "top",
   isClosable: true,
-  duration: 7500,
+  duration: 5000,
   containerStyle: {
     marginTop: "24px",
   },
