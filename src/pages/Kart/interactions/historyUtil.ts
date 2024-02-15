@@ -5,7 +5,7 @@ import { LineString } from "ol/geom";
 import { previousCoordinateKey } from "./constants";
 import { GrenseType } from "hooks/layers/types";
 import { FeatureProperties } from "types/api";
-import { getGrenseDiscriminatorFromType } from "utils/grenser";
+import { getMetadataDiscriminatorFromType } from "utils/grenser";
 import { getDefaultFeatureProperties } from "utils/features";
 
 export const getInfoFromFeature = (featureLike: FeatureLike) => {
@@ -48,7 +48,7 @@ export const createNyGrenseHistoryChanges = (features: Feature[], grenseType: Gr
   for (const feature of features) {
     if (feature instanceof Feature) {
       const geometry = feature.getGeometry();
-      const grenseDiscriminator = getGrenseDiscriminatorFromType(grenseType);
+      const grenseDiscriminator = getMetadataDiscriminatorFromType(grenseType);
 
       if (geometry instanceof LineString) {
         const { coordinates, featureId } = getInfoFromFeature(feature);

@@ -143,32 +143,40 @@ export const getKommunerIdFromKontekstEgenskaper = (kontekstEgenskaper: Kontekst
   return kommuner.length > 0 ? kommuner : null;
 };
 
+export const sortKretserOptionsByName = (kretser: Krets[] | undefined): Krets[] => {
+  if (!kretser) return [];
+
+  return kretser.sort((a, b) => a.navn.localeCompare(b.navn));
+};
+
+export const sortKretserOptionsByNumber = (kretser: Krets[] | undefined): Krets[] => {
+  if (!kretser) return [];
+
+  return kretser.sort((a, b) => Number(a.nummer) - Number(b.nummer));
+};
+
 export const mapGrunnkretsRefToKrets = (grunnkretser: GrunnkretsRef[]): Krets[] => {
-  return grunnkretser
-    .map(({ id, version, grunnkretsnummer, navn, kommuneIdentifikator }) => ({
+  return sortKretserOptionsByNumber(
+    grunnkretser.map(({ id, version, grunnkretsnummer, navn, kommuneIdentifikator }) => ({
       id,
       kommuneId: kommuneIdentifikator,
       version,
       nummer: grunnkretsnummer,
       navn: navn,
       type: KontekstType.GRUNNKRETS,
-    }))
-    .sort((a, b) => {
-      return Number(a.nummer) - Number(b.nummer);
-    });
+    })),
+  );
 };
 
 export const mapStemmekretRefToKrets = (stemmekretser: StemmekretsRef[]): Krets[] => {
-  return stemmekretser
-    .map(({ id, version, nummer, navn, kommuneIdentifikator }) => ({
+  return sortKretserOptionsByNumber(
+    stemmekretser.map(({ id, version, nummer, navn, kommuneIdentifikator }) => ({
       id,
       kommuneId: kommuneIdentifikator,
       version,
       nummer: nummer,
       navn: navn,
       type: KontekstType.STEMMEKRETS,
-    }))
-    .sort((a, b) => {
-      return Number(a.nummer) - Number(b.nummer);
-    });
+    })),
+  );
 };

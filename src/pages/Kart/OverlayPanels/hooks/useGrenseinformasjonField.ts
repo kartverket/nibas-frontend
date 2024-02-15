@@ -8,6 +8,7 @@ import { addFeaturePropertiesEntryFromFeature } from "../GrenseinformasjonPanel/
 import { useHistory } from "contexts/HistoryContext";
 import { Inputs } from "../GrenseinformasjonPanel/GrenseinformasjonFieldList";
 import { formatISO, startOfDay } from "date-fns";
+import { getMetadataDiscriminatorFromType } from "utils/grenser";
 
 type GrenseinformasjonField = {
   value: string;
@@ -21,7 +22,7 @@ const getUpdatedFeatureProperties = (
   const oldMetadata = oldProperties.metadata as Metadata;
   const newMetadata = {
     ...(oldMetadata ?? {}),
-    discriminator: field === "grenseType" ? data.value : oldMetadata?.discriminator,
+    discriminator: field === "grenseType" ? getMetadataDiscriminatorFromType(data.value) : oldMetadata?.discriminator,
     common: {
       ...(oldMetadata?.common ?? {}),
       informasjon: field === "informasjon" ? data.value : oldMetadata?.common?.informasjon,
@@ -49,6 +50,8 @@ const getUpdatedFeatureProperties = (
     ...(oldProperties ?? {}),
     type: field === "grenseType" ? data.value : oldProperties.type,
     metadata: newMetadata,
+    // Når vi bytter grensetype må vi fjerne kontekstegenskaper, da disse ikke stemmer overens mellom grensetyper
+    kontekstEgenskaper: field === "grenseType" ? [] : oldProperties.kontekstEgenskaper,
   };
 
   return newProperties;
