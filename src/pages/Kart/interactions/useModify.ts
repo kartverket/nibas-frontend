@@ -16,6 +16,8 @@ import { createGrenseHistoryChange, getInfoFromFeature } from "./historyUtil";
 import { useGetFeatures } from "./utils";
 import { isAdministrativGrense } from "utils/grenser";
 import { isFeatureEditable } from "utils/features";
+import { findNearbyVertexOnFeature } from "utils/map";
+import { Geometry } from "ol/geom";
 
 const useModify = () => {
   const { addHistoryEntry } = useHistory();
@@ -148,8 +150,7 @@ const useModify = () => {
   }, [modify]);
 
   useEffect(() => {
-    const addModificationToHistory = (e: ModifyEvent) => {
-      const features = e.features.getArray();
+    const addModificationToHistory = (features: Feature<Geometry>[]) => {
       if (features.length > 0) {
         addHistoryEntry({
           type: "grense",
@@ -158,13 +159,52 @@ const useModify = () => {
       }
       // TODO: hvis man har kjørt en detach vil vi kanskje sjekke om featuren nå er en løs tråd
     };
+    const updateFeatureOnModification = (event: ModifyEvent) => {
+      // console.log(event.features);
+      if (activeTool === "detach") {
+        if (selectedFeatures.length === 0) return;
 
-    modify.on("modifyend", addModificationToHistory);
+        const activeFeatures = getActiveFeaturesAtPixel(event.mapBrowserEvent, "edit");
+
+        const selectedFeatureIds = selectedFeatures.map((feature) => feature.getId());
+        if (selectedFeatureIds.length !== 1) return; // Dette burde ikke skje
+        const selectedFeature = selectedFeatures[0];
+
+        const nonSelectedActiveFeatures = activeFeatures.filter(
+          (feature) => selectedFeature.getId() !== feature.getId(),
+        );
+
+        // Hvis vi ender opp på én grense, må vi sjekke om det er et endepunkt vi har landet på, for ikke-endepunkter oppfører seg annerledes
+        if (nonSelectedActiveFeatures.length === 1) {
+          const nearbyVertex = findNearbyVertexOnFeature(
+            nonSelectedActiveFeatures[0].getGeometry() as LineString,
+            event.mapBrowserEvent.coordinate,
+          );
+
+          if (nearbyVertex) {
+            // TODO Dele grense her
+          } else {
+            const previousFeatureCoordinates = selectedFeature.get(previousCoordinateKey);
+
+            if (previousFeatureCoordinates) {
+              const geometry = selectedFeature.getGeometry();
+              geometry?.setCoordinates(previousFeatureCoordinates);
+
+              toast({ title: "Løsrevede punkter kan kun plasseres på andre punkter", status: "warning" });
+              return;
+            }
+          }
+        }
+      }
+      addModificationToHistory(event.features.getArray());
+    };
+
+    modify.on("modifyend", updateFeatureOnModification);
 
     return () => {
-      modify.un("modifyend", addModificationToHistory);
+      modify.un("modifyend", updateFeatureOnModification);
     };
-  }, [activeTool, addHistoryEntry, modify, toast]);
+  }, [activeTool, addHistoryEntry, getActiveFeaturesAtPixel, modify, selectedFeatures, toast]);
 
   return { modify };
 };
