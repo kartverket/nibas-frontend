@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import Feature from "ol/Feature";
 import LineString from "ol/geom/LineString";
 import Modify, { ModifyEvent } from "ol/interaction/Modify";
@@ -16,12 +16,14 @@ import { createGrenseHistoryChange, getInfoFromFeature } from "./historyUtil";
 import { useGetFeatures } from "./utils";
 import { isAdministrativGrense } from "utils/grenser";
 import { isFeatureEditable } from "utils/features";
+import { findNearbyVertexOnFeature } from "utils/map";
 
 const useModify = () => {
   const { addHistoryEntry } = useHistory();
   const { activeTool, activeModeTools } = useToolbar();
   const { selectedFeatures, featureIsArchived } = useFeatureStyle();
   const toast = useToast();
+  const toastIdRef = useRef<string | number>("");
   const { getActiveFeaturesAtPixel, getFeaturesAtPixel } = useGetFeatures();
 
   // Ønsker helst at redigering ikke skal være aktiv under enkelte verktøy
@@ -68,7 +70,10 @@ const useModify = () => {
       style: activeModeTools.includes("move") ? new Style() : selectedPointStyle,
       insertVertexCondition: () => {
         if (activeTool === "add") {
-          toast({ description: "Punktet ble lagt til", status: "success" });
+          if (toastIdRef.current) {
+            toast.close(toastIdRef.current);
+          }
+          toastIdRef.current = toast({ description: "Punktet ble lagt til", status: "success" });
           return true;
         }
         return false;
@@ -110,8 +115,22 @@ const useModify = () => {
             return false;
           }
 
+          const nearbyVertexCoordinate = findNearbyVertexOnFeature(
+            lineStringsAtPixel[0] as Feature<LineString>,
+            event.coordinate,
+          );
+
+          // Vi trykket bare på en linje, ikke et punkt
+          if (!nearbyVertexCoordinate) {
+            return false;
+          }
+
+          if (toastIdRef.current) {
+            toast.close(toastIdRef.current);
+          }
+          toastIdRef.current = toast({ description: "Punktet ble fjernet", status: "success" });
+
           // Hvis alt ellers ser greit ut så fjernes punktet på klikk
-          toast({ description: "Punktet ble fjernet", status: "success" });
           return true;
         }
         return false;
