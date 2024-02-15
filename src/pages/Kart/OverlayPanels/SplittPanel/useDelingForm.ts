@@ -65,9 +65,9 @@ export const useDelingForm = (flatedata: Flatedata) => {
     formState: { dirtyFields, isValid },
     control,
     setValue,
-  } = useForm<DelingForm>({ defaultValues: getCurrentDelingOnKrets(null, history) ?? getDefaultDelingValue() });
+  } = useForm<DelingForm>({ defaultValues: getDefaultDelingValue() });
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, prepend } = useFieldArray({
     control,
     name: "nyeKretser",
   });
@@ -79,6 +79,22 @@ export const useDelingForm = (flatedata: Flatedata) => {
     editingType === "grunnkrets"
       ? mapGrunnkretsRefToKrets(grunnkretser ?? [])
       : mapStemmekretsRefToKrets(stemmekretser ?? []);
+
+  const handleOpprinneligKretsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    remove(0); // vi vet at opprinneligKrets alltid vil være på indeks 0 fordi vi alltid legger den til med prepend
+    const lokalid = e.target.value;
+    setValue("opprinneligKrets.lokalId", lokalid, { shouldDirty: true });
+    const kretsForNewOpprinneligKrets = opprinneligFlateOptions.find((krets) => krets.id.lokalid.value === lokalid);
+    if (
+      kretsForNewOpprinneligKrets &&
+      !fields.find((field) => field.kretsNummer === kretsForNewOpprinneligKrets?.id.lokalid.value)
+    ) {
+      prepend({
+        kretsNummer: kretsForNewOpprinneligKrets?.nummer,
+        kretsNavn: kretsForNewOpprinneligKrets?.navn,
+      });
+    }
+  };
 
   const updateDraftWithDelingEntry = () => {
     if (editingType && grunnkretser && stemmekretser) {
@@ -105,7 +121,7 @@ export const useDelingForm = (flatedata: Flatedata) => {
           },
           kommuneId: kommuneIdentifikator,
           flatetype: editingType === "grunnkrets" ? KontekstType.GRUNNKRETS : KontekstType.STEMMEKRETS,
-          nyeKretser: nyeKretser,
+          nyeKretser: nyeKretser.slice(1), // må fjerne opprinnelig krets her fordi vi legger de i field
         };
         addKretsDelingHistoryEntry(history, addHistoryEntry, kretsDelingEndringRequest);
       }
@@ -124,5 +140,7 @@ export const useDelingForm = (flatedata: Flatedata) => {
     reset,
     updateDraftWithDelingEntry,
     setValue,
+    getValues,
+    handleOpprinneligKretsChange,
   };
 };
