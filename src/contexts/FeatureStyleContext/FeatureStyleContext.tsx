@@ -71,9 +71,11 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
         }
       }
 
-      for (const customStyle of customStyles) {
-        customStyle.renderSavedCustomStyles();
-        customStyle.removeCustomStyles(featureIds);
+      if (featureIds.length > 0) {
+        for (const customStyle of customStyles) {
+          customStyle.renderSavedCustomStyles();
+          customStyle.removeCustomStyles(featureIds);
+        }
       }
     },
     [customStyles],
