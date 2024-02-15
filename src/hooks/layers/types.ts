@@ -16,7 +16,15 @@ export type KartlagId =
   | "norgesMaritimeGrenser"
   | "sjokartElektroniske";
 
-export type GrenseId = "matrikkel" | "fylke" | "kommune" | "nasjon" | "grunnkrets" | "stemmekrets" | "edit";
+export type GrenseId =
+  | "matrikkel"
+  | "fylke"
+  | "kommune"
+  | "nasjon"
+  | "grunnkrets"
+  | "stemmekrets"
+  | "archived"
+  | "edit";
 
 export type GrenseType =
   | "Kommunegrense"

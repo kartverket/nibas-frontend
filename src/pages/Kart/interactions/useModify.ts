@@ -30,6 +30,9 @@ const useModify = () => {
     // TODO: Vi burde finne et felles sett med sjekker som alle modifications går gjennom.
     // Det er per nå flere sjekker som blir gjort flere steder, hvorav vi bare på noen av dem ønsker å sende inn en toast til brukeren.
 
+    // TODO: håndtering av representasjonspunkt
+    //      return !(feature.getId() as string).includes("representasjonspunkt");
+
     const detachMode = activeTool === "detach" && selectedFeatures.length > 0;
 
     return new Modify({

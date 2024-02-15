@@ -30,7 +30,7 @@ export type HistoryTypeValues =
   | "grensearkivering"
   | "grensetilhorighetendring"
   | "nygrense"
-  | "grensesplitting";
+  | "grensedeling";
 
 type BaseHistoryEntry<HistoryType extends HistoryTypeValues, Model> = {
   type: HistoryType;
@@ -63,7 +63,7 @@ export type GrenseTilhorighetEntry = BaseHistoryEntry<"grensetilhorighetendring"
 
 export type NyGrenseEntry = BaseHistoryEntry<"nygrense", MinimalGrense & FeatureProperties>;
 
-export type GrenseSplittingEntry = BaseHistoryEntry<"grensesplitting", Feature[]>;
+export type GrenseDelingEntry = BaseHistoryEntry<"grensedeling", Feature[]>;
 
 // endringer skal kunne gjøres i bulk, feks et punkt på to features endrer to features i en entry
 export type HistoryEntry =
@@ -74,7 +74,7 @@ export type HistoryEntry =
   | StemmekretsSammenslaaingsendringEntry
   | GrenseArkiveringsEntry
   | GrenseTilhorighetEntry
-  | GrenseSplittingEntry
+  | GrenseDelingEntry
   | NyGrenseEntry
   | PropertyEntry;
 

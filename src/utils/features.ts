@@ -1,5 +1,5 @@
 import { GrenseType, getEditingTypeFromGrenseType } from "hooks/layers/types";
-import { MetadataDiscriminator, getGrenseDiscriminatorFromType, isAdministrativGrense } from "./grenser";
+import { MetadataDiscriminator, getMetadataDiscriminatorFromType, isAdministrativGrense } from "./grenser";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
 import { FeatureProperties, KontekstEgenskaper, Metadata } from "types/api";
@@ -7,6 +7,7 @@ import { FeatureLike } from "ol/Feature";
 import { grenserLayers, editableBorderTypes } from "hooks/layers/constants";
 import { isNotNullOrUndefined } from "types/common";
 import { getRepresentasjonspunktId } from "./map/source";
+import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 
 export const setDefaultFeatureProperties = (feature: Feature<Geometry>, grenseType: GrenseType | undefined) => {
   if (!grenseType) return;
@@ -38,12 +39,12 @@ export const getDefaultFeatureMetadata = (discriminator: MetadataDiscriminator):
 };
 
 export const getDefaultFeatureProperties = (grenseType: GrenseType): FeatureProperties | null => {
-  const grenseDiscriminator = getGrenseDiscriminatorFromType(grenseType);
+  const metadataDiscriminator = getMetadataDiscriminatorFromType(grenseType);
   const editingType = getEditingTypeFromGrenseType(grenseType);
 
-  if (!grenseDiscriminator || !editingType) return null;
+  if (!metadataDiscriminator || !editingType) return null;
 
-  const metadata: Metadata = getDefaultFeatureMetadata(grenseDiscriminator);
+  const metadata: Metadata = getDefaultFeatureMetadata(metadataDiscriminator);
 
   const properties: FeatureProperties = {
     inndelingerKontekst: {
@@ -67,6 +68,8 @@ export const isFeatureEditable = (feature: FeatureLike, isArchived: boolean) => 
   const featureType = feature.get("type") as GrenseType;
 
   if (isAdministrativGrense(featureType)) {
+    if (isTempFeatureId(feature.getId())) return true;
+
     const properties = feature.getProperties() as FeatureProperties;
     const kontekstEgenskaper = properties.kontekstEgenskaper as KontekstEgenskaper[];
 

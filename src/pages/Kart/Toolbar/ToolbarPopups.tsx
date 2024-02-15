@@ -2,7 +2,7 @@ import { useToolbar } from "contexts/ToolbarContext";
 import ToolbarPopup from "./ToolbarPopup";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import useSplit from "../interactions/useSplit";
-import { getFeatureId } from "utils/map/source";
+import { addFeaturesToSource, getFeatureId, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { useToast } from "@kvib/react";
 import { addArchivingEntryFromFeature } from "../OverlayPanels/GrenseinformasjonPanel/utils";
 import { useHistory } from "contexts/HistoryContext";
@@ -25,6 +25,8 @@ const ToolbarPopups = () => {
     if (selectedFeature) {
       clearSelection();
       addArchivedStyles([getFeatureId(selectedFeature)]);
+      removeFeaturesFromSourceByIds("edit", [getFeatureId(selectedFeature)]);
+      addFeaturesToSource("archived", [selectedFeature]);
       addArchivingEntryFromFeature(selectedFeature, addHistoryEntry);
       toast({ status: "success", title: "Grensen ble arkivert" });
       toast({
@@ -46,7 +48,7 @@ const ToolbarPopups = () => {
     clearSelection();
     toast({
       status: "success",
-      title: "Grensen ble splittet",
+      title: "Grensen ble delt",
     });
   };
 
@@ -104,12 +106,12 @@ const ToolbarPopups = () => {
         />
       )}
       {activeTool === "split" && selectedFeatures.length === 0 && (
-        <ToolbarPopup text="Velg grensen du ønsker å splitte" onClose={resetTool} />
+        <ToolbarPopup text="Velg grensen du ønsker å dele" onClose={resetTool} />
       )}
       {activeTool === "split" && selectedFeatures.length === 1 && (
         <ToolbarPopup
-          text="Velg hvilket punkt du ønsker å splitte grensen på"
-          buttonText="Splitt grense"
+          text="Velg hvilket punkt du ønsker å dele grensen på"
+          buttonText="Del grense"
           onClick={() => handleSplit()}
           isDisabled={selectedPoint === null}
           onClose={resetTool}
