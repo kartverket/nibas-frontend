@@ -39,8 +39,10 @@ const useCustomStyles = (customStyle: StyleFunction | Style[]) => {
 
   // Sender features med lagrede stiler fra utkastet direkte til listen av lagrede features
   const setAndSaveCustomStyles = (featureIds: string[]) => {
-    renderCustomStyles(featureIds);
-    setSavedCustomFeatureIds([...savedCustomFeatureIds, ...featureIds]);
+    if (featureIds.length > 0) {
+      renderCustomStyles(featureIds);
+      setSavedCustomFeatureIds([...savedCustomFeatureIds, ...featureIds]);
+    }
   };
 
   // Tilbakestiller kun React-staten, ikke selve featurene i kartet

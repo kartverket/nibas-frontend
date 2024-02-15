@@ -146,11 +146,12 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
 
   // Endrede features skal markeres med riktig stil når man åpner utkastet
   const applyDirtyStylesToUtkastFeatures = (features: Feature<Geometry>[]) => {
-    const endredeFeatures = utkast?.operasjoner.grenseendringer?.endredeFeatures;
+    if (!utkast) return;
+    const endredeFeatures = utkast.operasjoner.grenseendringer?.endredeFeatures;
     const dirtyFeatureIds: string[] = [];
     const archivedFeatureIds: string[] = [];
 
-    if (features && endredeFeatures) {
+    if (features.length > 0 && endredeFeatures.length > 0) {
       for (const feature of endredeFeatures) {
         const id = feature.id;
         if (id) {
@@ -162,6 +163,8 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
           }
         }
       }
+      setAndSaveDirtyStyles(dirtyFeatureIds);
+      setAndSaveArchivedStyles(archivedFeatureIds);
     }
 
     const sammenslaaing = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
@@ -180,17 +183,17 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
       const stemmekretsFeatureIds: string[] = resolvedValue
         ? resolvedValue.filter((x) => x !== undefined).map((x) => String(x))
         : [];
-      const overlappingFeatureIds = getOverlappingStemmekretsFeatureIds(stemmekretsFeatureIds);
-      const uniqueStemmekretsFeatureIds = stemmekretsFeatureIds.filter(
-        (sfi) => !overlappingFeatureIds.some((ofi) => sfi === ofi),
-      );
 
-      setAndSaveSammenslaaingStyles(uniqueStemmekretsFeatureIds);
-      setAndSaveSammenslaaingOverlappingStyles(overlappingFeatureIds);
+      if (stemmekretsFeatureIds.length > 0) {
+        const overlappingFeatureIds = getOverlappingStemmekretsFeatureIds(stemmekretsFeatureIds);
+        const uniqueStemmekretsFeatureIds = stemmekretsFeatureIds.filter(
+          (sfi) => !overlappingFeatureIds.some((ofi) => sfi === ofi),
+        );
+
+        setAndSaveSammenslaaingStyles(uniqueStemmekretsFeatureIds);
+        setAndSaveSammenslaaingOverlappingStyles(overlappingFeatureIds);
+      }
     });
-
-    setAndSaveDirtyStyles(dirtyFeatureIds);
-    setAndSaveArchivedStyles(archivedFeatureIds);
   };
 
   useAddInndelingerKontekst(allFeatures, type, kommuneId);
