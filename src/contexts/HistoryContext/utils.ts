@@ -119,3 +119,7 @@ export const undoSplitting = (splittedFeature: Feature, newFeaturesFromsSplit: F
     addFeaturesToSource("edit", [splittedFeature]);
   }
 };
+
+export const undoKretsDelingForKrets = () => {};
+
+export const redoKretsDelingForKrets = () => {};

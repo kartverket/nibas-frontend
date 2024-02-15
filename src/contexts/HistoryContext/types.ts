@@ -4,6 +4,7 @@ import {
   FeatureProperties,
   GrunnkretsRequest,
   KontekstEgenskaper,
+  KretsDelingEndringRequest,
   Metadata,
   StemmekretsRequest,
   StemmekretsSammenslaaingsendringRequest,
@@ -56,6 +57,8 @@ export type NyGrenseEntry = BaseHistoryEntry<"nygrense", MinimalGrense & Metadat
 
 export type GrenseSplittingEntry = BaseHistoryEntry<"grensesplitting", Feature[]>;
 
+export type KretsDelingEntry = BaseHistoryEntry<"kretsdeling", KretsDelingEndringRequest>;
+
 // endringer skal kunne gjøres i bulk, feks et punkt på to features endrer to features i en entry
 export type HistoryEntry =
   | GrenseEntry
@@ -67,7 +70,8 @@ export type HistoryEntry =
   | GrenseArkiveringsEntry
   | GrenseTilhorighetEntry
   | GrenseSplittingEntry
-  | NyGrenseEntry;
+  | NyGrenseEntry
+  | KretsDelingEntry;
 
 export type HistoryContextValue = {
   addHistoryEntry: (entry: HistoryEntry) => void;

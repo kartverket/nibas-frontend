@@ -1,4 +1,5 @@
 import { EditingType, useEditAllGrenser } from "contexts/EditGrenserContext";
+import { HistoryState, useHistory } from "contexts/HistoryContext";
 import { Flatedata } from "contexts/OverlayPanelContext";
 import { useKommuneGrunnkretserRef } from "hooks/inndelinger/useGrunnkretser";
 import { useKommuneStemmekretserRef } from "hooks/inndelinger/useStemmekretser";
@@ -11,14 +12,29 @@ import {
   mapGrunnkretsRefToKrets,
   mapStemmekretsRefToKrets,
 } from "../hooks/tilhorighetUtils";
+import { addKretsDelingHistoryEntry } from "./utils";
 
-type SplitForm = Pick<KretsDelingEndringRequest, "opprinneligKrets" | "nyeKretser">;
+export type DelingForm = Pick<KretsDelingEndringRequest, "opprinneligKrets" | "nyeKretser">;
 
-const getCurrentSplitOnKrets = (): SplitForm | null => {
+export const getCurrentDelingOnKrets = (
+  kretsLokalid: string | null,
+  currentHistory: HistoryState,
+): DelingForm | null => {
+  if (kretsLokalid) {
+    const existingKretsDelingForKrets = currentHistory.entries
+      .filter((entry) => entry.type === "kretsdeling")
+      .flatMap((delingEntry) => delingEntry.changes.map((change) => change.to) as KretsDelingEndringRequest[])
+      .findLast((kretsDeling) => kretsDeling.opprinneligKrets.lokalId === kretsLokalid);
+    return {
+      opprinneligKrets: existingKretsDelingForKrets?.opprinneligKrets ?? getDefaultDelingValue().opprinneligKrets,
+      nyeKretser: existingKretsDelingForKrets?.nyeKretser ?? getDefaultDelingValue().nyeKretser,
+    };
+  }
+
   return null;
 };
 
-const getDefaultSplitValue = () => ({
+export const getDefaultDelingValue = () => ({
   opprinneligKrets: {
     lokalId: CustomOption.NOT_CHOSEN,
     version: 0,
@@ -39,15 +55,17 @@ const getKommuneIdentifikatorFromOptions = (
   }
 };
 
-export const useSplitForm = (flatedata: Flatedata) => {
+export const useDelingForm = (flatedata: Flatedata) => {
+  const { history, addHistoryEntry } = useHistory();
+
   const {
     register,
     getValues,
     reset,
-    formState: { dirtyFields },
+    formState: { dirtyFields, isValid },
     control,
     setValue,
-  } = useForm<SplitForm>({ defaultValues: getCurrentSplitOnKrets() ?? getDefaultSplitValue() });
+  } = useForm<DelingForm>({ defaultValues: getCurrentDelingOnKrets(null, history) ?? getDefaultDelingValue() });
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -62,23 +80,34 @@ export const useSplitForm = (flatedata: Flatedata) => {
       ? mapGrunnkretsRefToKrets(grunnkretser ?? [])
       : mapStemmekretsRefToKrets(stemmekretser ?? []);
 
-  const updateDraftWithSplitEntry = () => {
+  const updateDraftWithDelingEntry = () => {
     if (editingType && grunnkretser && stemmekretser) {
       const { opprinneligKrets, nyeKretser } = getValues();
+      const opprinneligKretsVersion = opprinneligFlateOptions.find(
+        (krets) => krets.id.lokalid.value === opprinneligKrets.lokalId,
+      )?.version;
       const kommuneIdentifikator = getKommuneIdentifikatorFromOptions(
         editingType,
         opprinneligKrets.lokalId,
         grunnkretser,
         stemmekretser,
       );
-      if (kommuneIdentifikator && opprinneligKrets.lokalId.length > 0 /*&& nyeKretser.length > 0*/) {
+      if (
+        kommuneIdentifikator &&
+        opprinneligKrets.lokalId.length > 0 &&
+        nyeKretser.length > 0 &&
+        opprinneligKretsVersion
+      ) {
         const kretsDelingEndringRequest = {
-          opprinneligKrets: opprinneligKrets,
+          opprinneligKrets: {
+            lokalId: opprinneligKrets.lokalId,
+            version: opprinneligKretsVersion,
+          },
           kommuneId: kommuneIdentifikator,
           flatetype: editingType === "grunnkrets" ? KontekstType.GRUNNKRETS : KontekstType.STEMMEKRETS,
           nyeKretser: nyeKretser,
         };
-        console.log(kretsDelingEndringRequest);
+        addKretsDelingHistoryEntry(history, addHistoryEntry, kretsDelingEndringRequest);
       }
     }
   };
@@ -90,9 +119,10 @@ export const useSplitForm = (flatedata: Flatedata) => {
     register,
     append,
     remove,
-    isDirty: dirtyFields.opprinneligKrets,
+    isDirty: dirtyFields.opprinneligKrets && dirtyFields.nyeKretser,
+    isValid,
     reset,
-    updateDraftWithSplitEntry,
+    updateDraftWithDelingEntry,
     setValue,
   };
 };

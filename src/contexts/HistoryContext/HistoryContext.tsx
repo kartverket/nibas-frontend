@@ -68,6 +68,8 @@ const onUndo = (entry: HistoryEntry) => {
         entry.changes.flatMap((e) => e.to),
       );
     }
+    case "kretsdeling":
+      return null;
   }
   ensureAllCasesCovered(type);
 };
@@ -129,6 +131,9 @@ const onRedo = (entry: HistoryEntry) => {
         entry.changes.flatMap((e) => e.from)[0],
         entry.changes.flatMap((e) => e.to),
       );
+    }
+    case "kretsdeling": {
+      return null;
     }
   }
   ensureAllCasesCovered(type);
