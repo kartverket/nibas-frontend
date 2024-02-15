@@ -8,13 +8,14 @@ import { addArchivingEntryFromFeature } from "../OverlayPanels/Grenseinformasjon
 import { useHistory } from "contexts/HistoryContext";
 import { getMatrikkelFeatures } from "utils/map/layers";
 import { map } from "../constants";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 
 const ToolbarPopups = () => {
   const [matrikkelIsLoading, setMatrikkelIsLoading] = useState(false);
   const { setError } = useErrorHandling();
   const toast = useToast();
+  const toastIdRef = useRef<string | number>("");
   const { split } = useSplit();
   const { addHistoryEntry } = useHistory();
   const { activeModeTools, activeTool, resetModeTools, resetTool } = useToolbar();
@@ -29,17 +30,16 @@ const ToolbarPopups = () => {
       addArchivingEntryFromFeature(selectedFeature, addHistoryEntry);
       clearSelection();
       toast({ status: "success", title: "Grensen ble arkivert" });
-      toast({
-        status: "warning",
-        title: "Husk å sette tilhørighet på berørte grenser",
-        description: `For øyeblikket må alle flatetilhørigheter på grensene legges til manuelt. 
-        Husk å se gjennom og sørg for at alle tilhørighetene stemmer. 
-        Er ikke de satt ordentlig vil ikke publiseringen kunne gjennomføres uten feil. 
-        Tilhørigheten kan settes ved å bruke "Se og endre 
-        grenseinformasjon"-verktøyet.`,
-        isClosable: true,
-        duration: null,
-      });
+      if (!toastIdRef.current) {
+        toastIdRef.current = toast({
+          status: "warning",
+          title: "Husk å sette tilhørighet på berørte grenser",
+          description: `For øyeblikket må alle flatetilhørigheter på grensene legges til manuelt. 
+          Tilhørigheten kan settes ved å bruke "Informasjon"-verktøyet.`,
+          isClosable: true,
+          duration: null,
+        });
+      }
     }
   };
 

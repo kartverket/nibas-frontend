@@ -16,12 +16,16 @@ import { createGrenseHistoryChange, getInfoFromFeature } from "./historyUtil";
 import { useGetFeatures } from "./utils";
 import { isAdministrativGrense } from "utils/grenser";
 import { isFeatureEditable } from "utils/features";
+import { findNearbyVertexOnFeature } from "utils/map";
+import useToastCounter from "hooks/useToastCounter";
 
 const useModify = () => {
   const { addHistoryEntry } = useHistory();
   const { activeTool, activeModeTools } = useToolbar();
   const { selectedFeatures, featureIsArchived } = useFeatureStyle();
   const toast = useToast();
+  const { toastCounter: removeToast } = useToastCounter("success", "Punktet ble fjernet", "punkter ble fjernet");
+  const { toastCounter: addToast } = useToastCounter("success", "Punktet ble lagt til", "punkter ble lagt til");
   const { getActiveFeaturesAtPixel, getFeaturesAtPixel } = useGetFeatures();
 
   // Ønsker helst at redigering ikke skal være aktiv under enkelte verktøy
@@ -68,7 +72,7 @@ const useModify = () => {
       style: activeModeTools.includes("move") ? new Style() : selectedPointStyle,
       insertVertexCondition: () => {
         if (activeTool === "add") {
-          toast({ description: "Punktet ble lagt til", status: "success" });
+          addToast();
           return true;
         }
         return false;
@@ -110,8 +114,19 @@ const useModify = () => {
             return false;
           }
 
+          const nearbyVertexCoordinate = findNearbyVertexOnFeature(
+            lineStringsAtPixel[0] as Feature<LineString>,
+            event.coordinate,
+          );
+
+          // Vi trykket bare på en linje, ikke et punkt
+          if (!nearbyVertexCoordinate) {
+            return false;
+          }
+
+          removeToast();
+
           // Hvis alt ellers ser greit ut så fjernes punktet på klikk
-          toast({ description: "Punktet ble fjernet", status: "success" });
           return true;
         }
         return false;
@@ -120,12 +135,14 @@ const useModify = () => {
   }, [
     activeModeTools,
     activeTool,
-    disallowedPointModes,
-    featureIsArchived,
-    getActiveFeaturesAtPixel,
-    getFeaturesAtPixel,
     selectedFeatures,
+    disallowedPointModes,
+    getActiveFeaturesAtPixel,
+    featureIsArchived,
     toast,
+    addToast,
+    getFeaturesAtPixel,
+    removeToast,
   ]);
 
   useEffect(() => {
