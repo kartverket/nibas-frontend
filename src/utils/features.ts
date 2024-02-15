@@ -63,7 +63,6 @@ export const getDefaultFeatureProperties = (grenseType: GrenseType): FeatureProp
   return properties;
 };
 
-// TODO: bør håndtere representasjonspunkter
 export const isFeatureEditable = (feature: FeatureLike, isArchived: boolean) => {
   const featureType = feature.get("type") as GrenseType;
 
