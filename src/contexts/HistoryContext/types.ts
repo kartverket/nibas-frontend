@@ -1,15 +1,14 @@
 import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
 import { GrenseType } from "hooks/layers/types";
+import { Feature } from "ol";
 import {
   FeatureProperties,
   GrunnkretsRequest,
   KontekstEgenskaper,
-  KretsDelingEndringRequest,
   Metadata,
   StemmekretsRequest,
   StemmekretsSammenslaaingsendringRequest,
 } from "types/api";
-import { Feature } from "ol";
 
 // Obs: navnsetting for å unngå overlapp med innebygd History type
 export type HistoryState = {
@@ -57,8 +56,6 @@ export type NyGrenseEntry = BaseHistoryEntry<"nygrense", MinimalGrense & Metadat
 
 export type GrenseSplittingEntry = BaseHistoryEntry<"grensesplitting", Feature[]>;
 
-export type KretsDelingEntry = BaseHistoryEntry<"kretsdeling", KretsDelingEndringRequest>;
-
 // endringer skal kunne gjøres i bulk, feks et punkt på to features endrer to features i en entry
 export type HistoryEntry =
   | GrenseEntry
@@ -70,8 +67,7 @@ export type HistoryEntry =
   | GrenseArkiveringsEntry
   | GrenseTilhorighetEntry
   | GrenseSplittingEntry
-  | NyGrenseEntry
-  | KretsDelingEntry;
+  | NyGrenseEntry;
 
 export type HistoryContextValue = {
   addHistoryEntry: (entry: HistoryEntry) => void;

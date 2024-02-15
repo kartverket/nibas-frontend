@@ -1,5 +1,4 @@
 import { EditingType, useEditAllGrenser } from "contexts/EditGrenserContext";
-import { HistoryState, useHistory } from "contexts/HistoryContext";
 import { Flatedata } from "contexts/OverlayPanelContext";
 import { useKommuneGrunnkretserRef } from "hooks/inndelinger/useGrunnkretser";
 import { useKommuneStemmekretserRef } from "hooks/inndelinger/useStemmekretser";
@@ -12,24 +11,8 @@ import {
   mapGrunnkretsRefToKrets,
   mapStemmekretsRefToKrets,
 } from "../hooks/tilhorighetUtils";
-import { addKretsDelingHistoryEntry, getExistingKretsDelingForKrets } from "./utils";
 
 export type DelingForm = Pick<KretsDelingEndringRequest, "opprinneligKrets" | "nyeKretser">;
-
-export const getCurrentDelingOnKrets = (
-  kretsLokalid: string | null,
-  currentHistory: HistoryState,
-): DelingForm | null => {
-  if (kretsLokalid) {
-    const existingKretsDelingForKrets = getExistingKretsDelingForKrets(kretsLokalid, currentHistory);
-    return {
-      opprinneligKrets: existingKretsDelingForKrets?.opprinneligKrets ?? getDefaultDelingValue().opprinneligKrets,
-      nyeKretser: existingKretsDelingForKrets?.nyeKretser ?? getDefaultDelingValue().nyeKretser,
-    };
-  }
-
-  return null;
-};
 
 export const getDefaultDelingValue = () => ({
   opprinneligKrets: {
@@ -53,8 +36,6 @@ const getKommuneIdentifikatorFromOptions = (
 };
 
 export const useDelingForm = (flatedata: Flatedata) => {
-  const { history, addHistoryEntry } = useHistory();
-
   const {
     register,
     getValues,
@@ -80,7 +61,7 @@ export const useDelingForm = (flatedata: Flatedata) => {
 
   const handleOpprinneligKretsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const lokalid = e.target.value;
-    replace(getCurrentDelingOnKrets(lokalid, history)?.nyeKretser ?? getDefaultDelingValue().nyeKretser);
+    replace(getDefaultDelingValue().nyeKretser);
     setValue("opprinneligKrets.lokalId", lokalid, { shouldDirty: true });
     const kretsForNewOpprinneligKrets = opprinneligFlateOptions.find((krets) => krets.id.lokalid.value === lokalid);
     if (
@@ -121,7 +102,7 @@ export const useDelingForm = (flatedata: Flatedata) => {
           flatetype: editingType === "grunnkrets" ? KontekstType.GRUNNKRETS : KontekstType.STEMMEKRETS,
           nyeKretser: nyeKretser.slice(1), // må fjerne opprinnelig krets her fordi vi legger den i field
         };
-        addKretsDelingHistoryEntry(history, addHistoryEntry, kretsDelingEndringRequest);
+        console.log(kretsDelingEndringRequest);
       }
     }
   };

@@ -1,15 +1,15 @@
+import useHistoryState from "contexts/HistoryContext/useHistoryState";
 import React, { createContext, useContext } from "react";
+import { ensureAllCasesCovered } from "utils/typeHelpers";
 import { HistoryContextValue, HistoryEntry } from "./types";
 import {
   redoSplitting,
-  undoSplitting,
   setFeatureCoordinatesAndMetadataForEntry,
   setFeatureCoordinatesForEntry,
   setFeatureMetadataForEntry,
   setKontekstEgenskaperForEntry,
+  undoSplitting,
 } from "./utils";
-import useHistoryState from "contexts/HistoryContext/useHistoryState";
-import { ensureAllCasesCovered } from "utils/typeHelpers";
 
 const onUndo = (entry: HistoryEntry) => {
   const { type } = entry;
@@ -68,8 +68,6 @@ const onUndo = (entry: HistoryEntry) => {
         entry.changes.flatMap((e) => e.to),
       );
     }
-    case "kretsdeling":
-      return null;
   }
   ensureAllCasesCovered(type);
 };
@@ -131,9 +129,6 @@ const onRedo = (entry: HistoryEntry) => {
         entry.changes.flatMap((e) => e.from)[0],
         entry.changes.flatMap((e) => e.to),
       );
-    }
-    case "kretsdeling": {
-      return null;
     }
   }
   ensureAllCasesCovered(type);

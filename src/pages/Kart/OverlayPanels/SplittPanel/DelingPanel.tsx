@@ -27,7 +27,6 @@ export const DelingPanel = ({ isOpen, className }: PanelProps) => {
     canSubmit,
     reset,
     updateDraftWithDelingEntry,
-
     getValues,
     handleOpprinneligKretsChange,
   } = useDelingForm(flatedata);
@@ -78,7 +77,7 @@ export const DelingPanel = ({ isOpen, className }: PanelProps) => {
 
         {getValues("opprinneligKrets.lokalId") !== CustomOption.NOT_CHOSEN && (
           <Stack spacing={4}>
-            <Heading as="h3" size="sm">{`Hva skal <${editingType}> deles til?`}</Heading>
+            <Heading as="h3" size="sm">{`Hva skal ${fields[0].kretsNavn} deles til?`}</Heading>
             {fields.map((field, index) => (
               <NyKretsField key={field.id}>
                 <FormControl>
