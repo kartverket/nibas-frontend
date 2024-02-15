@@ -10,6 +10,11 @@ const NyKretsField = styled.div`
   column-gap: 12px;
 `;
 
+const FillerDiv = styled.div`
+  min-width: 40px;
+  min-height: 40px;
+`;
+
 export const DelingPanel = ({ isOpen, className }: PanelProps) => {
   const { flatedata, closeOverlayPanel } = useOverlayPanel();
   const {
@@ -19,8 +24,7 @@ export const DelingPanel = ({ isOpen, className }: PanelProps) => {
     register,
     append,
     remove,
-    isDirty,
-    isValid,
+    canSubmit,
     reset,
     updateDraftWithDelingEntry,
 
@@ -79,20 +83,23 @@ export const DelingPanel = ({ isOpen, className }: PanelProps) => {
               <NyKretsField key={field.id}>
                 <FormControl>
                   <FormLabel>Nytt nummer</FormLabel>
-                  <Input type="number" {...register(`nyeKretser.${index}.kretsNummer`)} />
+                  <Input disabled={index === 0} type="number" {...register(`nyeKretser.${index}.kretsNummer`)} />
                 </FormControl>
                 <FormControl>
                   <FormLabel>Nytt navn</FormLabel>
-                  <Input {...register(`nyeKretser.${index}.kretsNavn`)} />
+                  <Input disabled={index === 0} {...register(`nyeKretser.${index}.kretsNavn`)} />
                 </FormControl>
-
-                <IconButton
-                  onClick={() => remove(index)}
-                  aria-label={"fjern del"}
-                  icon={"close"}
-                  variant={"tertiary"}
-                  alignSelf={"flex-end"}
-                />
+                {index !== 0 ? (
+                  <IconButton
+                    onClick={() => remove(index)}
+                    aria-label={"fjern del"}
+                    icon={"close"}
+                    variant={"tertiary"}
+                    alignSelf={"flex-end"}
+                  />
+                ) : (
+                  <FillerDiv />
+                )}
               </NyKretsField>
             ))}
             <Button onClick={() => append({ kretsNavn: "", kretsNummer: "" })} variant={"secondary"} leftIcon={"add"}>
@@ -105,7 +112,7 @@ export const DelingPanel = ({ isOpen, className }: PanelProps) => {
           <Button variant="tertiary" onClick={closeAndResetForm}>
             Avbryt
           </Button>
-          <Button onClick={updateDraftWithDelingEntry} isDisabled={!isDirty && isValid}>
+          <Button onClick={updateDraftWithDelingEntry} isDisabled={!canSubmit()}>
             Del
           </Button>
         </ButtonGroup>

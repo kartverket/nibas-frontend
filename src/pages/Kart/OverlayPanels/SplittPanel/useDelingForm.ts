@@ -62,7 +62,7 @@ export const useDelingForm = (flatedata: Flatedata) => {
     register,
     getValues,
     reset,
-    formState: { dirtyFields, isValid },
+    formState: { dirtyFields },
     control,
     setValue,
   } = useForm<DelingForm>({ defaultValues: getDefaultDelingValue() });
@@ -71,6 +71,7 @@ export const useDelingForm = (flatedata: Flatedata) => {
     control,
     name: "nyeKretser",
   });
+
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const editingType = getCurrentlyEditingType();
   const { data: stemmekretser } = useKommuneStemmekretserRef(flatedata ? getIdFromEntity(flatedata) : "");
@@ -121,11 +122,15 @@ export const useDelingForm = (flatedata: Flatedata) => {
           },
           kommuneId: kommuneIdentifikator,
           flatetype: editingType === "grunnkrets" ? KontekstType.GRUNNKRETS : KontekstType.STEMMEKRETS,
-          nyeKretser: nyeKretser.slice(1), // må fjerne opprinnelig krets her fordi vi legger de i field
+          nyeKretser: nyeKretser.slice(1), // må fjerne opprinnelig krets her fordi vi legger den i field
         };
         addKretsDelingHistoryEntry(history, addHistoryEntry, kretsDelingEndringRequest);
       }
     }
+  };
+
+  const canSubmit = () => {
+    return dirtyFields.opprinneligKrets && fields.length > 1;
   };
 
   return {
@@ -135,8 +140,7 @@ export const useDelingForm = (flatedata: Flatedata) => {
     register,
     append,
     remove,
-    isDirty: dirtyFields.opprinneligKrets && dirtyFields.nyeKretser,
-    isValid,
+    canSubmit,
     reset,
     updateDraftWithDelingEntry,
     setValue,
