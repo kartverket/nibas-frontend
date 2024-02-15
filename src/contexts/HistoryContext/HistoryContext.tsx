@@ -1,12 +1,14 @@
 import React, { createContext, useContext } from "react";
 import { HistoryContextValue, HistoryEntry } from "./types";
 import {
-  redoSplitting,
-  undoSplitting,
   setFeatureCoordinatesAndPropertiesForEntry,
   setFeatureCoordinatesForEntry,
   setKontekstEgenskaperForEntry,
   setFeaturePropertiesForEntry,
+  redoArchiving,
+  undoArchving,
+  undoGrensedeling,
+  redoGrensedeling,
 } from "./utils";
 import useHistoryState from "contexts/HistoryContext/useHistoryState";
 import { ensureAllCasesCovered } from "utils/typeHelpers";
@@ -53,17 +55,13 @@ const onUndo = (entry: HistoryEntry) => {
       );
     }
     case "grensearkivering": {
-      return document.dispatchEvent(
-        new CustomEvent("grensearkiveringUndo", {
-          detail: { entry },
-        }),
-      );
+      return undoArchving(entry);
     }
     case "grensetilhorighetendring": {
       return setKontekstEgenskaperForEntry(entry, "from");
     }
-    case "grensesplitting": {
-      return undoSplitting(
+    case "grensedeling": {
+      return undoGrensedeling(
         entry.changes.flatMap((e) => e.from)[0],
         entry.changes.flatMap((e) => e.to),
       );
@@ -114,17 +112,13 @@ const onRedo = (entry: HistoryEntry) => {
       );
     }
     case "grensearkivering": {
-      return document.dispatchEvent(
-        new CustomEvent("grensearkiveringRedo", {
-          detail: { entry },
-        }),
-      );
+      return redoArchiving(entry);
     }
     case "grensetilhorighetendring": {
       return setKontekstEgenskaperForEntry(entry, "to");
     }
-    case "grensesplitting": {
-      return redoSplitting(
+    case "grensedeling": {
+      return redoGrensedeling(
         entry.changes.flatMap((e) => e.from)[0],
         entry.changes.flatMap((e) => e.to),
       );
