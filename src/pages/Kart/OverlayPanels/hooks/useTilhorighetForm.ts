@@ -15,38 +15,44 @@ import { Feature } from "ol";
 import { LineString } from "ol/geom";
 import { FeatureProperties } from "types/api";
 import { addKontekstEntryFromFeature } from "../GrenseinformasjonPanel/utils";
-import { GrenseType } from "hooks/layers/types";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { getIdFromEntity } from "utils/api";
+import { EditingType, useEditAllGrenser } from "contexts/EditGrenserContext";
 
-const mapGrenseTypeTilKontekstType = (grenseType: GrenseType): KontekstType => {
-  switch (grenseType) {
-    case "Stemmekretsgrense":
+const getKontekstTypeFromEditingType = (editingType: EditingType | null): KontekstType | null => {
+  if (!editingType) return null;
+
+  switch (editingType) {
+    case "stemmekrets":
       return KontekstType.STEMMEKRETS;
-    default:
+    case "grunnkrets":
       return KontekstType.GRUNNKRETS;
   }
+
+  return null;
 };
 
-const getDefaultTilhorighetData = () => ({
+export const getDefaultTilhorighetData = () => ({
   GRUNNKRETS: { a: CustomOption.NOT_CHOSEN, b: CustomOption.NOT_CHOSEN },
   STEMMEKRETS: { a: CustomOption.NOT_CHOSEN, b: CustomOption.NOT_CHOSEN },
 });
 
 export const useTilhorighetForm = (feature: Feature) => {
   const { addHistoryEntry } = useHistory();
+  const { getCurrentlyEditingType } = useEditAllGrenser();
 
   const featureProperties = feature.getProperties() as FeatureProperties;
   const kontekstEgenskaper = featureProperties.kontekstEgenskaper;
   const kontekstType =
     kontekstEgenskaper.map((k) => k.type as KontekstType)[0] ??
-    mapGrenseTypeTilKontekstType(featureProperties.type as GrenseType);
+    getKontekstTypeFromEditingType(getCurrentlyEditingType());
   const { flatedata } = useOverlayPanel();
   const kommunerId =
     getKommunerIdFromKontekstEgenskaper(
       kontekstEgenskaper.filter((k) => k.id?.lokalid.value !== CustomOption.NOT_CHOSEN),
     ) ?? (flatedata ? [getIdFromEntity(flatedata)] : []);
   const [tilhorighetOptions, setTilhorighetOptions] = useState<TilhorighetOptions>();
+  const featureType = featureProperties.type;
 
   const {
     register,
@@ -58,8 +64,12 @@ export const useTilhorighetForm = (feature: Feature) => {
   });
 
   const resetTilhorighet = useCallback(() => {
-    reset(kontekstEgenskaper.length === 2 ? getTilhorighetData(kontekstEgenskaper) : getDefaultTilhorighetData());
-  }, [kontekstEgenskaper, reset]);
+    reset(
+      kontekstEgenskaper.length === 2 && featureType
+        ? getTilhorighetData(kontekstEgenskaper)
+        : getDefaultTilhorighetData(),
+    );
+  }, [featureType, kontekstEgenskaper, reset]);
 
   const updateDraftFromFeature = () => {
     if (kontekstType && tilhorighetOptions) {

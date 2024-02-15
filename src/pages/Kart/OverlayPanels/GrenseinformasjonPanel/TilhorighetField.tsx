@@ -12,9 +12,10 @@ import {
   UseTilhorighet,
   getTilhorighetValuesFormatted,
 } from "../hooks/tilhorighetUtils";
-import { useAdministrativTilhorighet } from "../hooks/useAdministrativTilhorighet";
+import { useTilhorighetAdministrativ } from "../hooks/useTilhorighetAdministrativ";
 import GrenseinformasjonRow from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/GrenseinformasjonRow";
 import { useTilhorighet } from "../hooks/useTilhorighet";
+import { useTilhorighetNyAdministrativ } from "../hooks/useTilhorighetNyAdministrativ";
 
 type TilhorighetRowProps = {
   feature: Feature;
@@ -101,15 +102,24 @@ const CommonTilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
 
 const AdministrativTilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
   return (
-    <TilhorighetRow feature={feature} useTilhorighet={useAdministrativTilhorighet(feature)} isDisabled={isDisabled} />
+    <TilhorighetRow feature={feature} useTilhorighet={useTilhorighetAdministrativ(feature)} isDisabled={isDisabled} />
+  );
+};
+
+const NyAdministrativTilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
+  return (
+    <TilhorighetRow feature={feature} useTilhorighet={useTilhorighetNyAdministrativ(feature)} isDisabled={isDisabled} />
   );
 };
 
 export const TilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
   const grenseType = feature.getProperties().type as GrenseType;
-  return isAdministrativGrense(grenseType) ? (
-    <AdministrativTilhorighetField feature={feature} isDisabled={grenseType !== "Kommunegrense"} />
-  ) : (
-    <CommonTilhorighetField feature={feature} isDisabled={isDisabled} />
-  );
+  if (isAdministrativGrense(grenseType)) {
+    if (isTempFeatureId(feature.getId())) {
+      return <NyAdministrativTilhorighetField feature={feature} isDisabled={grenseType !== "Kommunegrense"} />;
+    }
+    return <AdministrativTilhorighetField feature={feature} isDisabled={grenseType !== "Kommunegrense"} />;
+  }
+
+  return <CommonTilhorighetField feature={feature} isDisabled={isDisabled} />;
 };
