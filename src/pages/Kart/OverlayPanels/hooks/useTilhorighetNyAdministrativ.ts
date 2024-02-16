@@ -128,6 +128,10 @@ export const useTilhorighetNyAdministrativ = (feature: Feature): UseTilhorighet 
     kontekstType,
   } = useTilhorighetForm(feature);
 
+  // Vet setting av tilhørighet på nye grenser så er det ikke mulig å utlede hvilke muligheter man skal ha for endring av tilhørighet,
+  // siden kontekstegenskapene ikke er satt. kommunerId blir da satt til en fallback som er den kommunen man aktivt redigerer
+  // Vi kan da hente kretsene til den kommunen som blir satt som fallback, hente kontekstegenskapene som er satt på
+  // alle administrative grenser og gjøre dette til de andre mulige tilhørighetvalgene
   const { data: grunnkretsRefsFromContext } = useKommuneGrunnkretserRef(kommunerId[0]);
   const { data: stemmekretRefsFromContext } = useKommuneStemmekretserRef(kommunerId[0]);
 
