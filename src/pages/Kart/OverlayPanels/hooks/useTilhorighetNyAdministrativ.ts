@@ -84,17 +84,25 @@ const useGetMuligeKretserForNyAdministrativGrense = (
       } as Krets;
     });
 
+    const fullGrunnkretser = mapGrunnkretsRefToKrets(grunnkretser).concat(
+      sortKretserOptionsByNumber(grunnkretserAsTilhorighetKrets),
+    );
+
+    const fullStemmekretser = mapStemmekretRefToKrets(stemmekretser).concat(
+      sortKretserOptionsByNumber(stemmekretserAsTilhorighetKrets),
+    );
+
     switch (kontekstType) {
       case KontekstType.GRUNNKRETS: {
         return {
-          [Tilhorighet.A]: mapGrunnkretsRefToKrets(grunnkretser),
-          [Tilhorighet.B]: sortKretserOptionsByNumber(grunnkretserAsTilhorighetKrets),
+          [Tilhorighet.A]: fullGrunnkretser,
+          [Tilhorighet.B]: fullGrunnkretser,
         };
       }
       case KontekstType.STEMMEKRETS: {
         return {
-          [Tilhorighet.A]: mapStemmekretRefToKrets(stemmekretser),
-          [Tilhorighet.B]: sortKretserOptionsByNumber(stemmekretserAsTilhorighetKrets),
+          [Tilhorighet.A]: fullStemmekretser,
+          [Tilhorighet.B]: fullStemmekretser,
         };
       }
     }
