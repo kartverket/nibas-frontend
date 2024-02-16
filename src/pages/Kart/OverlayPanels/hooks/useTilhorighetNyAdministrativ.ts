@@ -38,8 +38,8 @@ const filterKontekstEgenskaperOnType = (egenskaper: KontekstEgenskaper[], type: 
 
 const useGetMuligeKretserForNyAdministrativGrense = (
   kontekstType: KontekstType,
-  grunnkretser: GrunnkretsRef[],
-  stemmekretser: StemmekretsRef[],
+  grunnkretsRefsFromContext: GrunnkretsRef[],
+  stemmekretsRefsFromContext: StemmekretsRef[],
 ) => {
   const administrativeFeatures = getAdministrativeFeatures(editSource.getFeatures());
 
@@ -47,22 +47,22 @@ const useGetMuligeKretserForNyAdministrativGrense = (
     (feature) => (feature.getProperties() as FeatureProperties).kontekstEgenskaper,
   );
 
-  const grunnkretsEgenskapIDer = filterKontekstEgenskaperOnType(
+  const grunnkretsKontekstEgenskapIDer = filterKontekstEgenskaperOnType(
     kontekstEgenskaperForAdministrativeFeatures,
     "GRUNNKRETS",
   );
 
-  const stemmekretsEgenskapIDer = filterKontekstEgenskaperOnType(
+  const stemmekretsKontekstEgenskapIDer = filterKontekstEgenskaperOnType(
     kontekstEgenskaperForAdministrativeFeatures,
     "STEMMEKRETS",
   );
 
-  const { data: grunnkretserIfExists } = useGrunnkretser(grunnkretsEgenskapIDer);
-  const { data: stemmekretserIfExists } = useStemmekretser(stemmekretsEgenskapIDer);
+  const { data: grunnkretserIfExists } = useGrunnkretser(grunnkretsKontekstEgenskapIDer);
+  const { data: stemmekretserIfExists } = useStemmekretser(stemmekretsKontekstEgenskapIDer);
 
   return useMemo(() => {
     if (!grunnkretserIfExists && !stemmekretserIfExists) return null;
-    const grunnkretserAsTilhorighetKrets = grunnkretserIfExists?.map((grunnkrets) => {
+    const grunnkretserFraGrenseKontekstegenskaper = grunnkretserIfExists?.map((grunnkrets) => {
       return {
         id: grunnkrets.id,
         kommuneId: grunnkrets.kommuneIdentifikator,
@@ -73,7 +73,7 @@ const useGetMuligeKretserForNyAdministrativGrense = (
       } as Krets;
     });
 
-    const stemmekretserAsTilhorighetKrets = stemmekretserIfExists?.map((stemmekrets) => {
+    const stemmekretserFraGrenseKontekstEgenskaper = stemmekretserIfExists?.map((stemmekrets) => {
       return {
         id: stemmekrets.id,
         kommuneId: stemmekrets.kommuneIdentifikator,
@@ -84,12 +84,12 @@ const useGetMuligeKretserForNyAdministrativGrense = (
       } as Krets;
     });
 
-    const fullGrunnkretser = mapGrunnkretsRefToKrets(grunnkretser).concat(
-      sortKretserOptionsByNumber(grunnkretserAsTilhorighetKrets),
+    const fullGrunnkretser = mapGrunnkretsRefToKrets(grunnkretsRefsFromContext).concat(
+      sortKretserOptionsByNumber(grunnkretserFraGrenseKontekstegenskaper),
     );
 
-    const fullStemmekretser = mapStemmekretRefToKrets(stemmekretser).concat(
-      sortKretserOptionsByNumber(stemmekretserAsTilhorighetKrets),
+    const fullStemmekretser = mapStemmekretRefToKrets(stemmekretsRefsFromContext).concat(
+      sortKretserOptionsByNumber(stemmekretserFraGrenseKontekstEgenskaper),
     );
 
     switch (kontekstType) {
@@ -106,7 +106,13 @@ const useGetMuligeKretserForNyAdministrativGrense = (
         };
       }
     }
-  }, [grunnkretser, grunnkretserIfExists, kontekstType, stemmekretser, stemmekretserIfExists]);
+  }, [
+    grunnkretsRefsFromContext,
+    grunnkretserIfExists,
+    kontekstType,
+    stemmekretsRefsFromContext,
+    stemmekretserIfExists,
+  ]);
 };
 
 export const useTilhorighetNyAdministrativ = (feature: Feature): UseTilhorighet => {
@@ -122,18 +128,18 @@ export const useTilhorighetNyAdministrativ = (feature: Feature): UseTilhorighet 
     kontekstType,
   } = useTilhorighetForm(feature);
 
-  const { data: grunnkretserFromContext } = useKommuneGrunnkretserRef(kommunerId[0]);
-  const { data: stemmekretserFromContext } = useKommuneStemmekretserRef(kommunerId[0]);
+  const { data: grunnkretsRefsFromContext } = useKommuneGrunnkretserRef(kommunerId[0]);
+  const { data: stemmekretRefsFromContext } = useKommuneStemmekretserRef(kommunerId[0]);
 
   const muligeKretserForNyGrense = useGetMuligeKretserForNyAdministrativGrense(
     kontekstType,
-    grunnkretserFromContext ?? [],
-    stemmekretserFromContext ?? [],
+    grunnkretsRefsFromContext ?? [],
+    stemmekretRefsFromContext ?? [],
   );
 
   useEffect(() => {
     if (isTempFeatureId(feature.getId())) {
-      if (grunnkretserFromContext && stemmekretserFromContext && kontekstType) {
+      if (grunnkretsRefsFromContext && stemmekretRefsFromContext && kontekstType) {
         if (muligeKretserForNyGrense) {
           setTilhorighetOptions(muligeKretserForNyGrense);
         }
@@ -142,11 +148,11 @@ export const useTilhorighetNyAdministrativ = (feature: Feature): UseTilhorighet 
     }
   }, [
     feature,
-    grunnkretserFromContext,
+    grunnkretsRefsFromContext,
     kontekstType,
     muligeKretserForNyGrense,
     setTilhorighetOptions,
-    stemmekretserFromContext,
+    stemmekretRefsFromContext,
   ]);
 
   return {
