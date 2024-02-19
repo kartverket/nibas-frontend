@@ -1,10 +1,11 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo } from "react";
 import { HistoryEntry, HistoryTypeValues, useHistory } from "contexts/HistoryContext";
-import { FeatureStyleContextValue } from "./types";
+import { FeatureStyleContextValue, SelectedFeatures } from "./types";
 import { useSelectStyles } from "./useSelectStyles";
 import { getArchiveLayerStyle, grenseStyles, setFeatureStyle } from "utils/map/layerStyles";
 import { FeatureLike } from "ol/Feature";
 import useCustomStyles from "./useCustomStyles";
+import { Coordinate } from "ol/coordinate";
 
 export const FeatureStyleContext = createContext<FeatureStyleContextValue | undefined>(undefined);
 
@@ -50,6 +51,16 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
         feature.setStyle();
       }
     }
+  };
+
+  const clearAndSelectPointOnFeature = (coordinate: Coordinate, features: SelectedFeatures) => {
+    clearAndSelectFeatures(features);
+    selectPointOnFeature(coordinate);
+  };
+
+  const clearAndSelectFeatures = (features: SelectedFeatures) => {
+    clearSelection();
+    selectFeatures(features);
   };
 
   const getFeatureIdsFromEntries = (accumulator: string[][], entry: HistoryEntry) => {
@@ -145,8 +156,8 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
   };
 
   const value = {
-    selectFeatures,
-    selectPointOnFeature,
+    selectFeatures: clearAndSelectFeatures,
+    selectPointOnFeature: clearAndSelectPointOnFeature,
     selectedFeatures,
     selectedPoint,
     clearSelection,
