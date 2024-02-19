@@ -109,6 +109,7 @@ export const VedtaksinfoBody = ({
                         }
                       >
                         <Datepicker
+                          colorScheme="blue"
                           defaultSelected={field.value}
                           onChange={(e): void => {
                             field.onChange(new Date(e.target.value));
@@ -153,6 +154,7 @@ export const VedtaksinfoBody = ({
                           onChange={(e): void => {
                             field.onChange(new Date(e.target.value));
                           }}
+                          colorScheme="blue"
                         />
                       </VedtakinfoField>
                     );
@@ -179,6 +181,7 @@ export const VedtaksinfoBody = ({
                           onChange={(e): void => {
                             field.onChange(new Date(e.target.value));
                           }}
+                          colorScheme="blue"
                         />
                       </VedtakinfoField>
                     );

@@ -13,7 +13,7 @@ import { Feature } from "ol";
 import { VedtaksinfoBody } from "./VedtaksinfoBody";
 import { BorderBottom, BorderTop, Referanse, VedtakinfoForm } from "./OversiktReferanser";
 import { styled } from "styled-components";
-import { mapFromFormToApi, useVedtaksinfoForm } from "./useVedtaksinfoForm";
+import { mapFromFormToApi, useVedtaksinfoForm } from "../../hooks/useVedtaksinfoForm";
 import { Metadata } from "types/api";
 import { useState } from "react";
 import { id } from "date-fns/locale";
@@ -70,9 +70,7 @@ export const VedtaksinfoDetaljer = ({
   };
   const toast = useToast();
 
-  const onSubmit = (data: VedtakinfoForm) => {
-    console.log("isDirty ", isDirty);
-    console.log(data);
+  const updateFeature = (data: VedtakinfoForm) => {
     if (isDirty) {
       toast({
         status: "success",
@@ -81,15 +79,24 @@ export const VedtaksinfoDetaljer = ({
       const postValues = mapFromFormToApi(data, dokref, internref);
       updateDraftFromFeature(postValues);
     }
-    closeModal();
   };
 
-  const closeModal = () => {
-    cleanForm();
+  const onSubmit = (data: VedtakinfoForm) => {
+    updateFeature(data);
     if (redigeringsmodus) {
       toggleEndreVedtak();
       return;
     }
+    closeModal();
+  };
+
+  const onAvbryt = () => {
+    cleanForm();
+    toggleEndreVedtak();
+  };
+
+  const closeModal = () => {
+    cleanForm();
     onClose();
   };
 
@@ -138,6 +145,7 @@ export const VedtaksinfoDetaljer = ({
           <BorderTop>
             <VedtakFooterContainer>
               <VedtaksFooter
+                onAvbryt={onAvbryt}
                 toggleEndreVedtak={toggleEndreVedtak}
                 redigeringsmodus={redigeringsmodus}
                 displayMode={displayMode}
@@ -163,7 +171,9 @@ const VedtaksFooter = ({
   toggleEndreVedtak,
   deleteOrArchive,
   vedtaksinfoIsPersisted,
+  onAvbryt,
 }: {
+  onAvbryt: () => void;
   vedtaksinfoIsPersisted: boolean;
   redigeringsmodus: boolean;
   displayMode: boolean;
@@ -175,6 +185,7 @@ const VedtaksFooter = ({
   else if (redigeringsmodus)
     return (
       <EndreVedtakFooter
+        onAvbryt={onAvbryt}
         onClose={onClose}
         deleteOrArchive={deleteOrArchive}
         vedtaksinfoIsPersisted={vedtaksinfoIsPersisted}
@@ -212,9 +223,11 @@ const NyttVedtakFooter = ({ onClose }: { onClose: () => void }) => {
 
 const EndreVedtakFooter = ({
   onClose,
+  onAvbryt,
   deleteOrArchive: onArchive,
   vedtaksinfoIsPersisted,
 }: {
+  onAvbryt: () => void;
   onClose: () => void;
   deleteOrArchive: () => void;
   vedtaksinfoIsPersisted: boolean;
@@ -248,7 +261,7 @@ const EndreVedtakFooter = ({
       </VedtakFooterLeft>
       <VedtakFooterRight>
         <ButtonsContainer>
-          <Button colorScheme="blue" size="md" onClick={onClose} variant="tertiary">
+          <Button colorScheme="blue" size="md" onClick={onAvbryt} variant="tertiary">
             Avbryt
           </Button>
           <Button type="submit" size="md">

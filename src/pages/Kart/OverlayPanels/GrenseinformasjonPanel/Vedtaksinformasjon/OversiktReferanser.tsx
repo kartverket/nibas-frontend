@@ -48,7 +48,7 @@ export const OversiktReferanser = ({ feature }: { feature: Feature }) => {
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const isAllowedGrense =
     (feature.getProperties() as FeatureProperties).type === "Kommunegrense" &&
-    getCurrentlyEditingType() === "grunnkrets";
+    (getCurrentlyEditingType() === "grunnkrets" || getCurrentlyEditingType() == "stemmekrets");
 
   const closeModal = () => {
     setDisplayMode(false);
@@ -72,7 +72,7 @@ export const OversiktReferanser = ({ feature }: { feature: Feature }) => {
           size={"sm"}
           variant="secondary"
           rightIcon="add"
-          colorScheme="gray"
+          colorScheme="blue"
           aria-label="Legg til dokumentreferanse"
           onClick={() => {
             setDisplayMode(false);
@@ -129,7 +129,7 @@ const VedtaksinfoCard = ({
         onClick={onClick}
         rightIcon="folder_open"
         variant="secondary"
-        colorScheme="gray"
+        colorScheme="blue"
         size="xs"
         isDisabled={!isAllowedGrense}
       >

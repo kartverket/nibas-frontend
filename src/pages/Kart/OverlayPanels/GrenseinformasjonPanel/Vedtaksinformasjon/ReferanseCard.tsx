@@ -14,7 +14,7 @@ export const ReferanseCard = ({ referanse, displayMode, urlMode, deleteRef }: Pr
   return (
     <StyledCard>
       <Row>
-        <Text colorScheme="gray" noOfLines={1} textOverflow="clip" paddingTop={"5px"}>
+        <Text colorScheme="gray" noOfLines={1} textOverflow="clip">
           {referanse?.beskrivelse}
         </Text>
         {urlMode && displayMode && (
@@ -43,13 +43,18 @@ export const ReferanseCard = ({ referanse, displayMode, urlMode, deleteRef }: Pr
 };
 
 const StyledCard = styled(Card)`
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
   padding: 5px;
   margin-bottom: 5px;
   width: 100%;
   min-height: 60px;
 `;
 const Row = styled.div`
+  width: 100%;
   display: flex;
+  align-items: center;
   flex-wrap: nowrap;
   flex-direction: row;
   justify-content: space-between;

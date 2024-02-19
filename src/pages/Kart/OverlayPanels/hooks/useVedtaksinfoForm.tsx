@@ -1,7 +1,7 @@
 import { Feature } from "ol";
 import { useForm } from "react-hook-form";
 import { Dokref, FeatureProperties, Metadata } from "types/api";
-import { VedtakinfoForm, Referanse } from "./OversiktReferanser";
+import { VedtakinfoForm, Referanse } from "../GrenseinformasjonPanel/Vedtaksinformasjon/OversiktReferanser";
 import { LineString } from "ol/geom";
 import { PropertyEntry, useHistory } from "contexts/HistoryContext";
 
