@@ -41,18 +41,6 @@ export interface paths {
     /** Henter grensene til en stemmekrets med gitt id */
     get: operations["hentGrenserForStemmekrets"];
   };
-  "/v1/nasjoner": {
-    /** Henter alle nasjoner i Nasjonal inndelingsbase. */
-    get: operations["hentNasjoner"];
-  };
-  "/v1/nasjoner/{id}": {
-    /** Henter nasjon med gitt id */
-    get: operations["hentNasjon"];
-  };
-  "/v1/nasjoner/{id}/grenser": {
-    /** Henter grensene til en nasjon med gitt id */
-    get: operations["hentGrenserForNasjon"];
-  };
   "/v1/kommuner": {
     /** Henter alle kommuner i Nasjonal inndelingsbase. */
     get: operations["hentKommuner"];
@@ -61,8 +49,15 @@ export interface paths {
     /** Henter kommune med gitt id */
     get: operations["hentKommune"];
   };
+  "/v1/kommuner/{id}/stemmekretsgrenser": {
+    get: operations["hentKommunesStemmekretsgrenser"];
+  };
   "/v1/kommuner/{id}/stemmekretser": {
+    /** Henter alle stemmekretser som tilhører en kommune. */
     get: operations["hentKommunesStemmekretser"];
+  };
+  "/v1/kommuner/{id}/grunnkretsgrenser": {
+    get: operations["hentKommunesGrunnkretsgrenser"];
   };
   "/v1/kommuner/{id}/grunnkretser": {
     /** Henter alle grunnkretser som tilhører en kommune. */
@@ -75,18 +70,6 @@ export interface paths {
   "/v1/kodeliste/maalemetode-koder": {
     get: operations["fetchMaalemetodeKoder"];
   };
-  "/v1/kodeliste/landkoder": {
-    get: operations["fetchLandkoder"];
-  };
-  "/v1/kodeliste/kommunenumre": {
-    get: operations["fetchKommunenumre"];
-  };
-  "/v1/kodeliste/grensetyper": {
-    get: operations["fetchGrensetyper"];
-  };
-  "/v1/kodeliste/fylkesnumre": {
-    get: operations["fetchFylkesnumre"];
-  };
   "/v1/grunnkretser/{lokalid}/framtidigeversjoner": {
     /** Returnerer en liste av nåværende Grunnkrets og eventuelt publiserte framtidige versjoner som matcher lokalid. */
     get: operations["hentFramtidigeVersjonerForGrunnkrets"];
@@ -98,10 +81,6 @@ export interface paths {
   "/v1/grunnkretser/{id}/grenser": {
     /** Henter grensene til en grunnkrets med gitt id */
     get: operations["hentGrenserForGrunnkrets"];
-  };
-  "/v1/grenser/{id}": {
-    /** Henter grense med gitt id */
-    get: operations["hentGrense"];
   };
   "/v1/fylker": {
     /** Henter alle fylker i Nasjonal inndelingsbase. */
@@ -156,6 +135,7 @@ export interface paths {
     get: operations["hentGrunnkretserForIds"];
   };
   "/v1/ekstern/grunnkretser/{id}/grenser": {
+    /** Henter grensene til en grunnkrets med gitt id */
     get: operations["hentGrenserForGrunnkrets_1"];
   };
   "/v1/ekstern/fylker": {
@@ -196,7 +176,7 @@ export interface components {
       common?: components["schemas"]["CommonMetadata"];
       commonGrense?: components["schemas"]["CommonGrenseMetadata"];
       /** @description Henviser til fastsettings- eller lovinformasjon. */
-      dokumentasjonsreferanser?: components["schemas"]["Dokref"][];
+      dokumentasjonsreferanser?: components["schemas"]["DokumentasjonsreferanseDTO"][];
     } & {
       common: unknown;
       commonGrense: unknown;
@@ -207,7 +187,7 @@ export interface components {
       common?: components["schemas"]["CommonMetadata"];
       commonGrense?: components["schemas"]["CommonGrenseMetadata"];
       /** @description Henviser til fastsettings- eller lovinformasjon. */
-      dokumentasjonsreferanser?: components["schemas"]["Dokref"][];
+      dokumentasjonsreferanser?: components["schemas"]["DokumentasjonsreferanseDTO"][];
     } & {
       common: unknown;
       commonGrense: unknown;
@@ -242,7 +222,7 @@ export interface components {
       opphav?: string;
     };
     /** @description Henviser til fastsettings- eller lovinformasjon. */
-    Dokref: {
+    DokumentasjonsreferanseDTO: {
       /** @description ID for dokumentasjonsreferansen. */
       id?: string;
       /** @description URL til saksdokument. */
@@ -262,6 +242,18 @@ export interface components {
       rettskildeId?: string;
       /** @description Navn på lov, forskrift, vedtak, dom eller traktat. */
       rettskildeTittel: string;
+      /**
+       * Format: date
+       * @description Tidspunktet når objektet oppstod i den virkelige verden (Vedtakets gyldighet). Påkrevd for alle nye dokumentasjonsreferanser.
+       */
+      vedtakGyldigFra?: string;
+      /**
+       * Format: date
+       * @description Tidspunktet når objektet opphørte å eksistere i den virkelige verden (Vedtakets gyldighet)
+       */
+      vedtakGyldigTil?: string;
+      /** @description Egenskap som sier om en dokumentasjonsreferanse skal arkiveres */
+      shouldArchive: boolean;
     };
     /** @description Liste av features som holder på dataene */
     Feature: {
@@ -341,7 +333,7 @@ export interface components {
       common?: components["schemas"]["CommonMetadata"];
       commonGrense?: components["schemas"]["CommonGrenseMetadata"];
       /** @description Henviser til fastsettings- eller lovinformasjon. */
-      dokumentasjonsreferanser?: components["schemas"]["Dokref"][];
+      dokumentasjonsreferanser?: components["schemas"]["DokumentasjonsreferanseDTO"][];
     } & {
       common: unknown;
       commonGrense: unknown;
@@ -427,7 +419,13 @@ export interface components {
        * @description Flatetypen som skal deles
        * @enum {string}
        */
-      flatetype: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
+      flatetype:
+        | "FYLKE"
+        | "KOMMUNE"
+        | "NASJON"
+        | "GRUNNKRETS"
+        | "STEMMEKRETS"
+        | "SKOLEKRETS";
       /** @description Navn og nummer for de nye kretsene som skal utledes fra opprinnelig krets */
       nyeKretser: components["schemas"]["KretsNavnOgNummer"][];
     };
@@ -554,7 +552,7 @@ export interface components {
       common?: components["schemas"]["CommonMetadata"];
       commonGrense?: components["schemas"]["CommonGrenseMetadata"];
       /** @description Henviser til fastsettings- eller lovinformasjon. */
-      dokumentasjonsreferanser?: components["schemas"]["Dokref"][];
+      dokumentasjonsreferanser?: components["schemas"]["DokumentasjonsreferanseDTO"][];
     } & {
       common: unknown;
       commonGrense: unknown;
@@ -619,28 +617,14 @@ export interface components {
       common?: components["schemas"]["CommonMetadata"];
       commonGrense?: components["schemas"]["CommonGrenseMetadata"];
       /** @description Henviser til fastsettings- eller lovinformasjon. */
-      dokumentasjonsreferanser?: components["schemas"]["Dokref"][];
+      dokumentasjonsreferanser?: components["schemas"]["DokumentasjonsreferanseDTO"][];
     } & {
       common: unknown;
       commonGrense: unknown;
       dokumentasjonsreferanser: unknown;
     };
-    ApiErrorResponse: {
-      /** @description En unik feilkode for denne feilen som kan vises til bruker. Denne feilkoden burde også være med i loggene så man finner igjen feilen som oppstod. */
-      errorCode: string;
-      errorDescription: components["schemas"]["ErrorDescription"];
-    };
-    /** @description En forklaring av feilen som oppstod. Denne er ment til å kunne vises direkte til brukeren. */
-    ErrorDescription: {
-      /** @description Tittelen på feilmeldingen som skal vises. */
-      title: string;
-      /** @description En beskrivende forklaring av feilen som oppstod. */
-      description: string;
-      /** @description Litt tilleggsinfo relatert til feilen om man vil gi noe mer forklaring av konteksten. Ikke obligatorisk. */
-      additionalInfo?: string;
-    };
     /** @description Feil som har oppstått pga optimistisk lås. */
-    OptimistiskLaarResponse: {
+    OptimistiskLaasResponse: {
       /** @description Identifikatoren til objektet som er utdatert. */
       id: string;
       /** @description Typen til objektet som er utdatert. */
@@ -658,7 +642,7 @@ export interface components {
       /** @description Beskrivelse av hva som har gått galt. */
       melding?: string;
     };
-    OptimistiskLaarWrapper: {
+    OptimistiskLaasWrapper: {
       /**
        * @description HttpStatus for responsen.
        * @enum {string}
@@ -734,7 +718,21 @@ export interface components {
         | "510 NOT_EXTENDED"
         | "511 NETWORK_AUTHENTICATION_REQUIRED";
       /** @description Feil som har oppstått pga optimistisk lås. */
-      optimisticLockExceptions: components["schemas"]["OptimistiskLaarResponse"][];
+      optimisticLockExceptions: components["schemas"]["OptimistiskLaasResponse"][];
+    };
+    ApiErrorResponse: {
+      /** @description En unik feilkode for denne feilen som kan vises til bruker. Denne feilkoden burde også være med i loggene så man finner igjen feilen som oppstod. */
+      errorCode: string;
+      errorDescription: components["schemas"]["ErrorDescription"];
+    };
+    /** @description En forklaring av feilen som oppstod. Denne er ment til å kunne vises direkte til brukeren. */
+    ErrorDescription: {
+      /** @description Tittelen på feilmeldingen som skal vises. */
+      title: string;
+      /** @description En beskrivende forklaring av feilen som oppstod. */
+      description: string;
+      /** @description Litt tilleggsinfo relatert til feilen om man vil gi noe mer forklaring av konteksten. Ikke obligatorisk. */
+      additionalInfo?: string;
     };
     /** @description Representasjon av audit info for et objekt. */
     AuditInfoResponse: {
@@ -807,13 +805,6 @@ export interface components {
        */
       opprettetDato: string;
     };
-    /** @description Geometrien til fylket. Ikke grenser */
-    FeatureCollection: {
-      /** @description Toppnivå for geojson-strukturen, definert av en konstant med navn type og verdi FeatureCollection */
-      type: string;
-      /** @description Liste av features som holder på dataene */
-      features: components["schemas"]["Feature"][];
-    };
     /** @description Gyldighetsintervall for objektet */
     GyldighetResponse: {
       /**
@@ -862,37 +853,19 @@ export interface components {
       tellekretsnavn?: string;
       /** @description Valgdistriktsnummer til stemmekretsen */
       valgdistriktsnummer?: string;
-      features: components["schemas"]["FeatureCollection"];
+      representasjonspunkt: components["schemas"]["Feature"];
       /**
        * Format: int32
        * @description Teknisk versjon for å støtte samhandling og redigering
        */
       version: number;
     };
-    /** @description En referanse til en nasjon */
-    NasjonRef: {
-      id: components["schemas"]["ObjektIdentifikator"];
-      /** @description Liste over navn til nasjonen */
-      navn: components["schemas"]["AdministrativEnhetNavn"][];
-      /** @description URL til full representasjon av nasjonen */
-      href: string;
-      /**
-       * Format: int32
-       * @description Antall publiserte framtidige gyldige versjoner.
-       */
-      antallFramtidigeVersjoner: number;
-    };
-    /** @description Representasjon av en nasjon */
-    NasjonResponse: {
-      id: components["schemas"]["ObjektIdentifikator"];
-      /** @description Liste over navn til nasjonen */
-      administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
-      features: components["schemas"]["FeatureCollection"];
-      /**
-       * Format: int32
-       * @description Teknisk versjon for å støtte samhandling og redigering
-       */
-      version: number;
+    /** @description Geometrien til fylket. Ikke grenser */
+    FeatureCollection: {
+      /** @description Toppnivå for geojson-strukturen, definert av en konstant med navn type og verdi FeatureCollection */
+      type: string;
+      /** @description Liste av features som holder på dataene */
+      features: components["schemas"]["Feature"][];
     };
     /** @description En referanse til en kommune */
     KommuneRef: {
@@ -921,81 +894,12 @@ export interface components {
        * @description Angir når denne kommunen ble sist oppdatert
        */
       oppdateringsdato: string;
-      features: components["schemas"]["FeatureCollection"];
+      representasjonspunkt: components["schemas"]["Feature"];
       /**
        * Format: int32
        * @description Teknisk versjon for å støtte samhandling og redigering
        */
       version: number;
-    };
-    /** @description En referanse til en stemmekrets */
-    StemmekretsRef: {
-      id: components["schemas"]["ObjektIdentifikator"];
-      /** @description Navnet på stemmekretsen */
-      navn: string;
-      /** @description Nummeret til stemmekretsen */
-      nummer: string;
-      /** @description URL til full representasjon av stemmekrets */
-      href: string;
-      kommunenummer: components["schemas"]["Kommunenummer"];
-      kommuneIdentifikator: components["schemas"]["ObjektIdentifikator"];
-      /**
-       * Format: int32
-       * @description Antall publiserte framtidige gyldige versjoner.
-       */
-      antallFramtidigeVersjoner: number;
-      /**
-       * Format: int32
-       * @description Teknisk versjon for å støtte samhandling og redigering
-       */
-      version: number;
-    };
-    /** @description En referanse til en grunnkrets */
-    GrunnkretsRef: {
-      id: components["schemas"]["ObjektIdentifikator"];
-      /** @description Navnet på grunnkretser */
-      navn: string;
-      /** @description URL til full representasjon av grunnkretsen */
-      href: string;
-      kommunenummer: components["schemas"]["Kommunenummer"];
-      kommuneIdentifikator: components["schemas"]["ObjektIdentifikator"];
-      /** @description Nummeret til grunnkretsen */
-      grunnkretsnummer: string;
-      /**
-       * Format: int32
-       * @description Antall publiserte framtidige gyldige versjoner.
-       */
-      antallFramtidigeVersjoner: number;
-      /**
-       * Format: int32
-       * @description Teknisk versjon for å støtte samhandling og redigering
-       */
-      version: number;
-    };
-    /** @description Liste av kodeliste-elementer. */
-    KodelisteItem: {
-      /** @description Id til kodeliste-innslaget. */
-      id: string;
-      /** @description Beskrivelse av kodeliste-innslaget. */
-      label: string;
-    };
-    KodelisteRespons: {
-      /**
-       * @description Angir typen av kodeliste.
-       * @enum {string}
-       */
-      type:
-        | "KOMMUNENUMMER"
-        | "FYLKESNUMMER"
-        | "MAALEMETODE_KODE"
-        | "LAND"
-        | "TERRENGDETALJ"
-        | "NOEYAKTIGHETSKLASSE"
-        | "GRENSETYPE"
-        | "FASTSETTINGSTYPE"
-        | "GRENSESTATUS";
-      /** @description Liste av kodeliste-elementer. */
-      items: components["schemas"]["KodelisteItem"][];
     };
     /** @description Representasjon av en grunnkrets */
     GrunnkretsResponse: {
@@ -1019,12 +923,28 @@ export interface components {
       kommuneIdentifikator: components["schemas"]["ObjektIdentifikator"];
       /** @description Typen endring som ble gjort på objektet */
       endringstype?: string;
-      features: components["schemas"]["FeatureCollection"];
+      representasjonspunkt: components["schemas"]["Feature"];
       /**
        * Format: int32
        * @description Teknisk versjon for å støtte samhandling og redigering
        */
       version: number;
+    };
+    /** @description Liste av kodeliste-elementer. */
+    KodelisteItem: {
+      /** @description Id til kodeliste-innslaget. */
+      id: string;
+      /** @description Beskrivelse av kodeliste-innslaget. */
+      label: string;
+    };
+    KodelisteRespons: {
+      /**
+       * @description Angir typen av kodeliste.
+       * @enum {string}
+       */
+      type: "KOMMUNENUMMER" | "FYLKESNUMMER" | "MAALEMETODE_KODE";
+      /** @description Liste av kodeliste-elementer. */
+      items: components["schemas"]["KodelisteItem"][];
     };
     /** @description En referanse til et fylke */
     FylkeRef: {
@@ -1060,7 +980,7 @@ export interface components {
        * @description Angir når dette fylket ble sist oppdatert
        */
       oppdateringsdato: string;
-      features: components["schemas"]["FeatureCollection"];
+      representasjonspunkt: components["schemas"]["Feature"];
       /**
        * Format: int32
        * @description Teknisk versjon for å støtte samhandling og redigering
@@ -1068,7 +988,7 @@ export interface components {
       version: number;
     };
     /** @description Representasjon av en krets. Response-type kun for Matrikkelen. Kan være grunnkrets, stemmekrets etc. */
-    KretsResponse: {
+    EksternKretsResponse: {
       /** @description Lokalid-en til kretsen. */
       id: string;
       /** @description Navnet på kretsen. */
@@ -1077,6 +997,136 @@ export interface components {
       nummer: string;
       kommunenummer: components["schemas"]["Kommunenummer"];
       features: components["schemas"]["FeatureCollection"];
+    };
+    /** @description Representasjon av en stemmekrets */
+    EksternStemmekretsResponse: {
+      id: components["schemas"]["ObjektIdentifikator"];
+      gyldighet: components["schemas"]["GyldighetResponse"];
+      /** @description Typen endring som ble gjort på objektet */
+      endringstype?: string;
+      /**
+       * Format: date-time
+       * @description Siste oppdateringstidspunkt for objektet
+       */
+      oppdateringsdato: string;
+      /**
+       * Format: date-time
+       * @description Datafangsdato for objektet
+       */
+      datafangstdato?: string;
+      /** @description Navnet på stemmekretsen */
+      stemmekretsnavn: string;
+      /** @description Stemmekretsnummeret til stemmekretsen */
+      stemmekretsnummer: string;
+      kommunenummer: components["schemas"]["Kommunenummer"];
+      /** @description Tellekretsnummer til stemmekretsen */
+      tellekretsnummer?: string;
+      /** @description Tellekretsnavn til stemmekretsen */
+      tellekretsnavn?: string;
+      /** @description Valgdistriktsnummer til stemmekretsen */
+      valgdistriktsnummer?: string;
+      features: components["schemas"]["FeatureCollection"];
+      /**
+       * Format: int32
+       * @description Teknisk versjon for å støtte samhandling og redigering
+       */
+      version: number;
+    };
+    /** @description En referanse til en kommune */
+    EksternKommuneRef: {
+      id: components["schemas"]["ObjektIdentifikator"];
+      /** @description Liste over navn til kommunen */
+      navn: components["schemas"]["AdministrativEnhetNavn"][];
+      /** @description URL til full representasjon av kommunen */
+      href: string;
+      kommunenummer: components["schemas"]["Kommunenummer"];
+      /**
+       * Format: int32
+       * @description Antall publiserte framtidige gyldige versjoner.
+       */
+      antallFramtidigeVersjoner: number;
+    };
+    /** @description Representasjon av en grunnkrets */
+    EksternGrunnkretsResponse: {
+      id: components["schemas"]["ObjektIdentifikator"];
+      /** @description Navnet på grunnkretsen */
+      navn: string;
+      /** @description Grunnkretsnummeret til grunnkretsen */
+      grunnkretsnummer: string;
+      gyldighet: components["schemas"]["GyldighetResponse"];
+      /**
+       * Format: date-time
+       * @description Siste oppdateringstidspunkt for objektet
+       */
+      oppdateringsdato: string;
+      /**
+       * Format: date-time
+       * @description Datafangsdato for objektet
+       */
+      datafangstdato?: string;
+      kommunenummer: components["schemas"]["Kommunenummer"];
+      /** @description Typen endring som ble gjort på objektet */
+      endringstype?: string;
+      features: components["schemas"]["FeatureCollection"];
+      /**
+       * Format: int32
+       * @description Teknisk versjon for å støtte samhandling og redigering
+       */
+      version: number;
+    };
+    /** @description Representasjon av en kommune */
+    EksternKommuneResponse: {
+      id: components["schemas"]["ObjektIdentifikator"];
+      /** @description Liste over navn til kommunen */
+      administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
+      kommunenummer: components["schemas"]["Kommunenummer"];
+      /** @description Angir om kommunen er et samisk forvaltningsområde eller ikke */
+      samiskforvaltningsomraade: boolean;
+      /**
+       * Format: date-time
+       * @description Angir når denne kommunen ble sist oppdatert
+       */
+      oppdateringsdato: string;
+      features: components["schemas"]["FeatureCollection"];
+      /**
+       * Format: int32
+       * @description Teknisk versjon for å støtte samhandling og redigering
+       */
+      version: number;
+    };
+    /** @description En referanse til et fylke */
+    EksternFylkeRef: {
+      id: components["schemas"]["ObjektIdentifikator"];
+      /** @description Liste over navn til fylket */
+      navn: components["schemas"]["AdministrativEnhetNavn"][];
+      /** @description URL til full representasjon av fylket */
+      href: string;
+      fylkesnummer: components["schemas"]["Fylkesnummer"];
+      /**
+       * Format: int32
+       * @description Antall publiserte framtidige gyldige versjoner.
+       */
+      antallFramtidigeVersjoner: number;
+    };
+    /** @description Representasjon av et fylke */
+    EksternFylkeResponse: {
+      id: components["schemas"]["ObjektIdentifikator"];
+      /** @description Liste over navn til fylket */
+      administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
+      fylkesnummer: components["schemas"]["Fylkesnummer"];
+      /** @description Angir om fylket er et samisk forvaltningsområde eller ikke */
+      samiskforvaltningsomraade: boolean;
+      /**
+       * Format: date-time
+       * @description Angir når dette fylket ble sist oppdatert
+       */
+      oppdateringsdato: string;
+      features: components["schemas"]["FeatureCollection"];
+      /**
+       * Format: int32
+       * @description Teknisk versjon for å støtte samhandling og redigering
+       */
+      version: number;
     };
     AuthZStatusResponse: {
       /** @description Status for autorisering */
@@ -1145,7 +1195,7 @@ export interface operations {
       /** Conflict */
       409: {
         content: {
-          "application/json": components["schemas"]["OptimistiskLaarWrapper"];
+          "application/json": components["schemas"]["OptimistiskLaasWrapper"];
         };
       };
     };
@@ -1258,7 +1308,7 @@ export interface operations {
       /** Conflict */
       409: {
         content: {
-          "application/json": components["schemas"]["OptimistiskLaarWrapper"];
+          "application/json": components["schemas"]["OptimistiskLaasWrapper"];
         };
       };
     };
@@ -1378,95 +1428,6 @@ export interface operations {
       };
     };
   };
-  /** Henter alle nasjoner i Nasjonal inndelingsbase. */
-  hentNasjoner: {
-    parameters: {
-      query: {
-        /** Eventuell gyldighetsdato for nasjonene (default = dagens dato */
-        gyldighetsdato?: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["NasjonRef"][];
-        };
-      };
-      /** Bad Request */
-      400: {
-        content: {
-          "*/*": { [key: string]: unknown };
-        };
-      };
-    };
-  };
-  /** Henter nasjon med gitt id */
-  hentNasjon: {
-    parameters: {
-      path: {
-        /** ID-en til nasjonen man vil hente */
-        id: string;
-      };
-      query: {
-        /** Eventuell gyldighetsdato for nasjon (default = dagens dato */
-        gyldighetsdato?: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["NasjonRef"];
-        };
-      };
-      /** Bad Request */
-      400: {
-        content: {
-          "*/*": { [key: string]: unknown };
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "application/json": components["schemas"]["NasjonResponse"];
-        };
-      };
-    };
-  };
-  /** Henter grensene til en nasjon med gitt id */
-  hentGrenserForNasjon: {
-    parameters: {
-      path: {
-        /** ID-en til nasjonen man vil hente */
-        id: string;
-      };
-      query: {
-        /** Eventuell gyldighetsdato for nasjon (default = dagens dato */
-        gyldighetsdato?: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["FeatureCollection"];
-        };
-      };
-      /** Bad Request */
-      400: {
-        content: {
-          "*/*": { [key: string]: unknown };
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "application/json": components["schemas"]["FeatureCollection"];
-        };
-      };
-    };
-  };
   /** Henter alle kommuner i Nasjonal inndelingsbase. */
   hentKommuner: {
     parameters: {
@@ -1525,6 +1486,39 @@ export interface operations {
       };
     };
   };
+  hentKommunesStemmekretsgrenser: {
+    parameters: {
+      path: {
+        /** ID til kommunen man vil hente stemmekretsgrensene til */
+        id: string;
+      };
+      query: {
+        /** Eventuell gyldighetsdato for kommune (default = dagens dato */
+        gyldighetsdato?: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["FeatureCollection"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["FeatureCollection"];
+        };
+      };
+    };
+  };
+  /** Henter alle stemmekretser som tilhører en kommune. */
   hentKommunesStemmekretser: {
     parameters: {
       path: {
@@ -1537,16 +1531,48 @@ export interface operations {
       };
     };
     responses: {
-      /** OK */
+      /** Successful operation */
       200: {
         content: {
-          "application/json": components["schemas"]["StemmekretsRef"][];
+          "application/json": components["schemas"]["StemmekretsResponse"][];
         };
       };
       /** Bad Request */
       400: {
         content: {
           "*/*": { [key: string]: unknown };
+        };
+      };
+    };
+  };
+  hentKommunesGrunnkretsgrenser: {
+    parameters: {
+      path: {
+        /** ID til kommunen man vil hente grunnkretsgrensene til */
+        id: string;
+      };
+      query: {
+        /** Eventuell gyldighetsdato for kommune (default = dagens dato */
+        gyldighetsdato?: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["FeatureCollection"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["FeatureCollection"];
         };
       };
     };
@@ -1567,7 +1593,7 @@ export interface operations {
       /** Successful operation */
       200: {
         content: {
-          "application/json": components["schemas"]["GrunnkretsRef"][];
+          "application/json": components["schemas"]["GrunnkretsResponse"][];
         };
       };
       /** Bad Request */
@@ -1612,70 +1638,6 @@ export interface operations {
     };
   };
   fetchMaalemetodeKoder: {
-    responses: {
-      /** OK */
-      200: {
-        content: {
-          "application/json": components["schemas"]["KodelisteRespons"];
-        };
-      };
-      /** Bad Request */
-      400: {
-        content: {
-          "*/*": { [key: string]: unknown };
-        };
-      };
-    };
-  };
-  fetchLandkoder: {
-    responses: {
-      /** OK */
-      200: {
-        content: {
-          "application/json": components["schemas"]["KodelisteRespons"];
-        };
-      };
-      /** Bad Request */
-      400: {
-        content: {
-          "*/*": { [key: string]: unknown };
-        };
-      };
-    };
-  };
-  fetchKommunenumre: {
-    responses: {
-      /** OK */
-      200: {
-        content: {
-          "application/json": components["schemas"]["KodelisteRespons"];
-        };
-      };
-      /** Bad Request */
-      400: {
-        content: {
-          "*/*": { [key: string]: unknown };
-        };
-      };
-    };
-  };
-  fetchGrensetyper: {
-    responses: {
-      /** OK */
-      200: {
-        content: {
-          "application/json": components["schemas"]["KodelisteRespons"];
-        };
-      };
-      /** Bad Request */
-      400: {
-        content: {
-          "*/*": { [key: string]: unknown };
-        };
-      };
-    };
-  };
-  fetchFylkesnumre: {
     responses: {
       /** OK */
       200: {
@@ -1784,39 +1746,6 @@ export interface operations {
       };
     };
   };
-  /** Henter grense med gitt id */
-  hentGrense: {
-    parameters: {
-      path: {
-        /** ID-en til grensen man vil hente */
-        id: string;
-      };
-      query: {
-        /** Eventuell gyldighetsdato for grense (default = dagens dato */
-        gyldighetsdato?: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["Feature"];
-        };
-      };
-      /** Bad Request */
-      400: {
-        content: {
-          "*/*": { [key: string]: unknown };
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "*/*": components["schemas"]["Feature"];
-        };
-      };
-    };
-  };
   /** Henter alle fylker i Nasjonal inndelingsbase. */
   hentFylker: {
     parameters: {
@@ -1920,7 +1849,7 @@ export interface operations {
       /** Successful operation */
       200: {
         content: {
-          "application/json": components["schemas"]["KretsResponse"][];
+          "application/json": components["schemas"]["EksternKretsResponse"][];
         };
       };
       /** Bad Request */
@@ -1932,7 +1861,7 @@ export interface operations {
       /** Not Found */
       404: {
         content: {
-          "application/json": components["schemas"]["KretsResponse"][];
+          "application/json": components["schemas"]["EksternKretsResponse"][];
         };
       };
     };
@@ -1953,7 +1882,7 @@ export interface operations {
       /** Successful operation */
       200: {
         content: {
-          "application/json": components["schemas"]["StemmekretsResponse"];
+          "application/json": components["schemas"]["EksternStemmekretsResponse"];
         };
       };
       /** Bad Request */
@@ -1965,7 +1894,7 @@ export interface operations {
       /** Not Found */
       404: {
         content: {
-          "application/json": components["schemas"]["StemmekretsResponse"];
+          "application/json": components["schemas"]["EksternStemmekretsResponse"];
         };
       };
     };
@@ -2017,7 +1946,7 @@ export interface operations {
       /** Successful operation */
       200: {
         content: {
-          "application/json": components["schemas"]["KommuneRef"][];
+          "application/json": components["schemas"]["EksternKommuneRef"][];
         };
       };
       /** Bad Request */
@@ -2044,7 +1973,7 @@ export interface operations {
       /** Successful operation */
       200: {
         content: {
-          "application/json": components["schemas"]["KretsResponse"][];
+          "application/json": components["schemas"]["EksternKretsResponse"][];
         };
       };
       /** Bad Request */
@@ -2056,7 +1985,7 @@ export interface operations {
       /** Not Found */
       404: {
         content: {
-          "application/json": components["schemas"]["StemmekretsResponse"][];
+          "application/json": components["schemas"]["EksternStemmekretsResponse"][];
         };
       };
     };
@@ -2077,7 +2006,7 @@ export interface operations {
       /** Successful operation */
       200: {
         content: {
-          "application/json": components["schemas"]["KretsResponse"][];
+          "application/json": components["schemas"]["EksternKretsResponse"][];
         };
       };
       /** Bad Request */
@@ -2089,7 +2018,7 @@ export interface operations {
       /** Not Found */
       404: {
         content: {
-          "application/json": components["schemas"]["KretsResponse"][];
+          "application/json": components["schemas"]["EksternKretsResponse"][];
         };
       };
     };
@@ -2110,7 +2039,7 @@ export interface operations {
       /** Successful operation */
       200: {
         content: {
-          "application/json": components["schemas"]["KretsResponse"][];
+          "application/json": components["schemas"]["EksternKretsResponse"][];
         };
       };
       /** Bad Request */
@@ -2122,7 +2051,7 @@ export interface operations {
       /** Not Found */
       404: {
         content: {
-          "application/json": components["schemas"]["GrunnkretsResponse"][];
+          "application/json": components["schemas"]["EksternGrunnkretsResponse"][];
         };
       };
     };
@@ -2143,7 +2072,7 @@ export interface operations {
       /** Successful operation */
       200: {
         content: {
-          "application/json": components["schemas"]["KretsResponse"][];
+          "application/json": components["schemas"]["EksternKretsResponse"][];
         };
       };
       /** Bad Request */
@@ -2155,7 +2084,7 @@ export interface operations {
       /** Not Found */
       404: {
         content: {
-          "application/json": components["schemas"]["KretsResponse"][];
+          "application/json": components["schemas"]["EksternKretsResponse"][];
         };
       };
     };
@@ -2176,7 +2105,7 @@ export interface operations {
       /** Successful operation */
       200: {
         content: {
-          "application/json": components["schemas"]["KommuneResponse"];
+          "application/json": components["schemas"]["EksternKommuneResponse"];
         };
       };
       /** Bad Request */
@@ -2188,7 +2117,7 @@ export interface operations {
       /** Not Found */
       404: {
         content: {
-          "application/json": components["schemas"]["KommuneResponse"];
+          "application/json": components["schemas"]["EksternKommuneResponse"];
         };
       };
     };
@@ -2207,7 +2136,7 @@ export interface operations {
       /** Successful operation */
       200: {
         content: {
-          "application/json": components["schemas"]["KretsResponse"][];
+          "application/json": components["schemas"]["EksternKretsResponse"][];
         };
       };
       /** Bad Request */
@@ -2219,11 +2148,12 @@ export interface operations {
       /** Not Found */
       404: {
         content: {
-          "application/json": components["schemas"]["KretsResponse"][];
+          "application/json": components["schemas"]["EksternKretsResponse"][];
         };
       };
     };
   };
+  /** Henter grensene til en grunnkrets med gitt id */
   hentGrenserForGrunnkrets_1: {
     parameters: {
       path: {
@@ -2268,7 +2198,7 @@ export interface operations {
       /** Successful operation */
       200: {
         content: {
-          "application/json": components["schemas"]["FylkeRef"][];
+          "application/json": components["schemas"]["EksternFylkeRef"][];
         };
       };
       /** Bad Request */
@@ -2295,7 +2225,7 @@ export interface operations {
       /** Successful operation */
       200: {
         content: {
-          "application/json": components["schemas"]["FylkeResponse"];
+          "application/json": components["schemas"]["EksternFylkeResponse"];
         };
       };
       /** Bad Request */
@@ -2307,7 +2237,7 @@ export interface operations {
       /** Not Found */
       404: {
         content: {
-          "application/json": components["schemas"]["FylkeResponse"];
+          "application/json": components["schemas"]["EksternFylkeResponse"];
         };
       };
     };
