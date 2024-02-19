@@ -4,7 +4,6 @@ import {
   FeatureProperties,
   GrunnkretsRequest,
   KontekstEgenskaper,
-  Metadata,
   StemmekretsRequest,
   StemmekretsSammenslaaingsendringRequest,
 } from "types/api";
@@ -14,7 +13,6 @@ import { Feature } from "ol";
 export type HistoryState = {
   index: number;
   entries: HistoryEntry[];
-  hasPreviouslySavedHistory: boolean;
 };
 
 export type HistoryChange<T> = {
@@ -22,9 +20,20 @@ export type HistoryChange<T> = {
   from: T;
   to: T;
 };
+export type HistoryTypeValues =
+  | "grense"
+  | "property"
+  | "grunnkrets"
+  | "stemmekrets"
+  | "utkast"
+  | "stemmekretssammenslaaingsendring"
+  | "grensearkivering"
+  | "grensetilhorighetendring"
+  | "nygrense"
+  | "grensedeling";
 
-type BaseHistoryEntry<Type extends string, Model> = {
-  type: Type;
+type BaseHistoryEntry<HistoryType extends HistoryTypeValues, Model> = {
+  type: HistoryType;
   changes: HistoryChange<Model>[];
 };
 
@@ -34,7 +43,7 @@ export type MinimalGrense = {
 };
 
 export type GrenseEntry = BaseHistoryEntry<"grense", MinimalGrense>;
-export type MetadataEntry = BaseHistoryEntry<"metadata", Metadata>;
+export type PropertyEntry = BaseHistoryEntry<"property", FeatureProperties>;
 export type GrunnkretsEntry = BaseHistoryEntry<"grunnkrets", GrunnkretsRequest> & {
   kommuneId: string;
 };
@@ -52,27 +61,27 @@ export type GrenseArkiveringsEntry = BaseHistoryEntry<"grensearkivering", Featur
 
 export type GrenseTilhorighetEntry = BaseHistoryEntry<"grensetilhorighetendring", KontekstEgenskaper[]>;
 
-export type NyGrenseEntry = BaseHistoryEntry<"nygrense", MinimalGrense & Metadata>;
+export type NyGrenseEntry = BaseHistoryEntry<"nygrense", MinimalGrense & FeatureProperties>;
 
-export type GrenseSplittingEntry = BaseHistoryEntry<"grensesplitting", Feature[]>;
+export type GrenseDelingEntry = BaseHistoryEntry<"grensedeling", Feature[]>;
 
 // endringer skal kunne gjøres i bulk, feks et punkt på to features endrer to features i en entry
 export type HistoryEntry =
   | GrenseEntry
-  | MetadataEntry
   | GrunnkretsEntry
   | StemmekretsEntry
   | UtkastEntry
   | StemmekretsSammenslaaingsendringEntry
   | GrenseArkiveringsEntry
   | GrenseTilhorighetEntry
-  | GrenseSplittingEntry
-  | NyGrenseEntry;
+  | GrenseDelingEntry
+  | NyGrenseEntry
+  | PropertyEntry;
 
 export type HistoryContextValue = {
   addHistoryEntry: (entry: HistoryEntry) => void;
   history: HistoryState;
-  clearHistory: ({ hasPreviouslySavedHistory }: { hasPreviouslySavedHistory: boolean }) => void;
+  clearHistory: () => void;
 
   canSave: boolean;
   undo: (() => void) | undefined;

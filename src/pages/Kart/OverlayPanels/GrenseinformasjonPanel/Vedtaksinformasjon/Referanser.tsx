@@ -45,7 +45,7 @@ export const Referanser = ({
     <ReferanserWrapper>
       <Card variant={"filled"} height={"100%"}>
         <Tabs colorScheme="blue" size="md" width={"100%"} height="100%">
-          <TabList width={"100%"}>
+          <TabList width={"100%"} paddingLeft={"20px"}>
             <Tab onClick={toggleSelected}>
               Dokumenter
               <AntallReferanser count={dokref?.length || 0} isSelected={dokrefSelected} />

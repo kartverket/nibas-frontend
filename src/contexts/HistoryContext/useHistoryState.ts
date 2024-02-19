@@ -7,33 +7,24 @@ type Options = {
 };
 
 const useHistoryState = ({ onUndo, onRedo }: Options) => {
-  const [history, setHistory] = useState<HistoryState>({
-    index: 0,
-    entries: [],
-    hasPreviouslySavedHistory: false,
-  });
+  const [history, setHistory] = useState<HistoryState>({ index: 0, entries: [] });
 
   const addHistoryEntry = useCallback(
     (entry: HistoryEntry) => {
       setHistory((prevHistory) => ({
         index: prevHistory.index + 1,
         entries: [...prevHistory.entries.slice(0, prevHistory.index), entry],
-        hasPreviouslySavedHistory: prevHistory.hasPreviouslySavedHistory,
       }));
     },
     [setHistory],
   );
 
-  const clearHistory = ({ hasPreviouslySavedHistory }: { hasPreviouslySavedHistory: boolean }) => {
-    setHistory({
-      entries: [],
-      index: 0,
-      hasPreviouslySavedHistory: hasPreviouslySavedHistory,
-    });
+  const clearHistory = () => {
+    setHistory({ index: 0, entries: [] });
   };
 
   const revert = (amount: number) => {
-    const { index, entries, hasPreviouslySavedHistory } = history;
+    const { index, entries } = history;
 
     if (index === 0 || entries.length === 0) return;
 
@@ -45,15 +36,11 @@ const useHistoryState = ({ onUndo, onRedo }: Options) => {
       onUndo(history.entries[i]);
     }
 
-    setHistory({
-      entries,
-      index: newIndex,
-      hasPreviouslySavedHistory,
-    });
+    setHistory({ index: newIndex, entries });
   };
 
   const reapply = (amount: number) => {
-    const { index, entries, hasPreviouslySavedHistory } = history;
+    const { index, entries } = history;
 
     if (index >= entries.length) return;
 
@@ -63,11 +50,7 @@ const useHistoryState = ({ onUndo, onRedo }: Options) => {
       onRedo(history.entries[i]);
     }
 
-    setHistory({
-      entries,
-      index: newIndex,
-      hasPreviouslySavedHistory,
-    });
+    setHistory({ index: newIndex, entries });
   };
 
   const undo = () => {

@@ -1,6 +1,7 @@
 import { Card, IconButton, Link, Text } from "@kvib/react";
 import { Referanse } from "./OversiktReferanser";
 import { styled } from "styled-components";
+import { Icon } from "@chakra-ui/icon";
 
 type Props = {
   deleteRef: () => void;
@@ -9,24 +10,23 @@ type Props = {
   urlMode: boolean;
 };
 
-export const ReferanseCard = ({
-  referanse,
-  displayMode,
-  urlMode,
-  deleteRef,
-}: Props) => {
+export const ReferanseCard = ({ referanse, displayMode, urlMode, deleteRef }: Props) => {
   return (
     <StyledCard>
       <Row>
-        <Text
-          colorScheme="gray"
-          noOfLines={1}
-          textOverflow="clip"
-          paddingTop={"6px"}
-        >
+        <Text colorScheme="gray" noOfLines={1} textOverflow="clip" paddingTop={"5px"}>
           {referanse?.beskrivelse}
         </Text>
-        {urlMode && displayMode && <Link href={referanse?.beskrivelse} />}
+        {urlMode && displayMode && (
+          <a href={referanse?.beskrivelse} rel="noreferrer" target="_blank">
+            <IconButton
+              aria-label={`Åpne nettadressen ${referanse.beskrivelse} i et nytt vindu.`}
+              icon="open_in_new"
+              size={"md"}
+              variant="tertiary"
+            />
+          </a>
+        )}
         {!displayMode && (
           <IconButton
             aria-label="Slett referanse"
@@ -46,6 +46,7 @@ const StyledCard = styled(Card)`
   padding: 5px;
   margin-bottom: 5px;
   width: 100%;
+  min-height: 60px;
 `;
 const Row = styled.div`
   display: flex;

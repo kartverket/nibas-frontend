@@ -26,9 +26,10 @@ import { routes } from "utils/routes";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useKartlag } from "contexts/KartlagContext/KartlagContext";
-import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
+import { addEditedFeaturesToSource, removeEditedFeaturesFromSourceByIds } from "utils/map/source";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
+import { CustomOption } from "pages/Kart/OverlayPanels/hooks/tilhorighetUtils";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
@@ -83,7 +84,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     setUtkast(undefined);
     resetMapView();
     resetKartlag();
-    clearHistory({ hasPreviouslySavedHistory: false });
+    clearHistory();
     clearFeatureStyles();
     resetAndClearAllLayers();
     closeOverlayPanel();
@@ -119,7 +120,11 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
 
     for (const feature of endredeFeatures) {
       const featureProperties = feature.properties;
-      if (!featureProperties.kontekstEgenskaper || feature.properties.kontekstEgenskaper.length < 2) {
+      if (
+        !featureProperties.kontekstEgenskaper ||
+        feature.properties.kontekstEgenskaper.length < 2 ||
+        featureProperties.kontekstEgenskaper.find((kontekst) => kontekst.id?.lokalid.value === CustomOption.NOT_CHOSEN)
+      ) {
         toast({
           status: "error",
           title: "Grense mangler tilhørighet",
@@ -174,7 +179,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
       const updatedUtkast = (await response.json()) as UtkastResponse;
       await mutate(updatedUtkast);
       await globalMutate(["/v1/utkast", tokenHolderFunc()?.token]);
-      clearHistory({ hasPreviouslySavedHistory: true });
+      clearHistory();
 
       // Ved lagring av utkast ble det mismatch mellom state i OpenLayers og state i react
       // For å forhindre dette sletter vi alle grenser med midlertidig id fra det gamle utkastet, slik at disse ikke lenger kan redigeres i OL
@@ -185,8 +190,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
         const oldFeaturesWithTempId = oldFeatures
           .filter((feature) => isTempFeatureId(feature.id))
           .map((feature) => feature.id as string);
-
-        removeFeaturesFromSourceByIds("edit", oldFeaturesWithTempId);
+        removeEditedFeaturesFromSourceByIds(oldFeaturesWithTempId);
       }
 
       const updatedUtkastWithTempFeatureIds = addTempFeatureIdToNewFeaturesInUtkast(updatedUtkast);
@@ -198,7 +202,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
 
       const featuresToBeAddedToSource = geoJsonFeaturesToBeAddedToSource.flatMap(getFeaturesFromGeoJson);
 
-      addFeaturesToSource("edit", featuresToBeAddedToSource);
+      addEditedFeaturesToSource(featuresToBeAddedToSource);
       addDirtyStyles(featuresToBeAddedToSource.map((feature) => feature.getId() as string));
 
       setUtkast(updatedUtkastWithTempFeatureIds);

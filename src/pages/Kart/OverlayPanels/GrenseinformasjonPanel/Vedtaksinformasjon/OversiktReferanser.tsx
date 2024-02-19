@@ -2,10 +2,11 @@ import { Button, Icon, Text, Tooltip, useDisclosure } from "@kvib/react";
 import { styled } from "styled-components";
 import { Feature } from "ol";
 import { VedtaksinfoDetaljer } from "./VedtaksinfoDetaljer";
-import { Metadata } from "types/api";
+import { FeatureProperties, Metadata } from "types/api";
 import { useState } from "react";
 import { GrenseType } from "hooks/layers/types";
-import { GrenseTypeValues } from "../MetadataGenerelt";
+import useIsGrenseinformasjonPanelDisabled from "../../hooks/useIsGrenseInformasjonPanelDisabled";
+import { useEditAllGrenser } from "contexts/EditGrenserContext";
 
 type Referanse = {
   beskrivelse: string;
@@ -37,14 +38,17 @@ type InputCollectionName = {
   internreferanserKartverket: string;
 };
 
-export const OversiktReferanser = ({ feature, grensetype }: { feature: Feature; grensetype: GrenseType }) => {
+export const OversiktReferanser = ({ feature }: { feature: Feature }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [displayMode, setDisplayMode] = useState(false);
   const [iconHovered, setIconHovered] = useState(false);
   const metadata = feature.getProperties()?.metadata as Metadata;
   const vedtaksinfoCollection = metadata.dokumentasjonsreferanser;
   const [selectedVedtaksinfoIndex, setSelectedVedtaksinfoIndex] = useState<number | undefined>(undefined);
-  const isAllowedGrense = grensetype === "Kommunegrense";
+  const { getCurrentlyEditingType } = useEditAllGrenser();
+  const isAllowedGrense =
+    (feature.getProperties() as FeatureProperties).type === "Kommunegrense" &&
+    getCurrentlyEditingType() === "grunnkrets";
 
   const closeModal = () => {
     setDisplayMode(false);
@@ -82,6 +86,7 @@ export const OversiktReferanser = ({ feature, grensetype }: { feature: Feature; 
         ?.filter((vedtak) => !vedtak.shouldArchive)
         .map((vedtak, index) => (
           <VedtaksinfoCard
+            isAllowedGrense={isAllowedGrense}
             key={vedtak.id || vedtak.rettskildeTittel}
             title={vedtak.rettskildeTittel}
             date={vedtak.fastsettingsdato}
@@ -104,13 +109,30 @@ export const OversiktReferanser = ({ feature, grensetype }: { feature: Feature; 
   );
 };
 
-const VedtaksinfoCard = ({ title, onClick, date }: { title: string; date: string; onClick: () => void }) => {
+const VedtaksinfoCard = ({
+  title,
+  onClick,
+  date,
+  isAllowedGrense,
+}: {
+  isAllowedGrense: boolean;
+  title: string;
+  date: string;
+  onClick: () => void;
+}) => {
   const formattedDate = new Date(date).toLocaleDateString("nb-NO");
   return (
     <VedtaksinfoContent>
       <Datofelt>{formattedDate}</Datofelt>
       <VedtaksinfoTitle>{title}</VedtaksinfoTitle>
-      <Button onClick={onClick} rightIcon="folder_open" variant="secondary" colorScheme="gray" size="xs">
+      <Button
+        onClick={onClick}
+        rightIcon="folder_open"
+        variant="secondary"
+        colorScheme="gray"
+        size="xs"
+        isDisabled={!isAllowedGrense}
+      >
         Åpne
       </Button>
     </VedtaksinfoContent>
@@ -126,6 +148,7 @@ const VedtaksinfoContent = styled.div`
   flex-direction: row;
   justify-content: space-between:;
   margin-top: 10px;
+  margin-bottom: 15px;
   width: 100%
 `;
 
@@ -137,7 +160,7 @@ export const BorderTop = styled.div`
   border-top: 1px;
   border-color: var(--kvib-colors-gray-300);
   border-style: solid;
-  margin: 10px;
+  margin: 10px 0px 10px 0px;
 `;
 
 export const BorderBottom = styled.div`

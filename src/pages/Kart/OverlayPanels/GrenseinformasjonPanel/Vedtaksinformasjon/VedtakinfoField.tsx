@@ -22,7 +22,13 @@ export const VedtakinfoField = ({
   return (
     <FormControl isRequired={isRequired}>
       <VedtakinfoRow tooltipLabel={tooltipLabel} name={title} errors={errors}>
-        {displayMode ? <Text>{value}</Text> : children}
+        {displayMode ? (
+          <Text paddingTop={"8px"} paddingBottom={"8px"}>
+            {value}
+          </Text>
+        ) : (
+          children
+        )}
       </VedtakinfoRow>
     </FormControl>
   );

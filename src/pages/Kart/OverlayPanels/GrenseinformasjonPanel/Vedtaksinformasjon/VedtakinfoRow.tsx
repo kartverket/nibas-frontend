@@ -49,7 +49,7 @@ const AlertContent = styled.div`
 `;
 
 const Container = styled.div`
-  margin: 10px;
+  margin-top: 5px;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -59,10 +59,10 @@ const Row = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding-bottom: 3px;
 `;
 
 const TextWithIcon = styled.div`
+  margin-bottom: 10px;
   display: flex;
   flex-direction: row;
   align-items: center;

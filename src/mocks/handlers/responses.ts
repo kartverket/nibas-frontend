@@ -33,8 +33,8 @@ export const mockGeoJsonFeatureResponse: GeoJSONFeatureCollection = {
               versjonid: undefined,
             },
             datafangstdato: "2020-06-15",
-            vedtakGyldigFra: "2020-06-16",
-            vedtakGyldigTil: "2020-06-17",
+            gyldigFra: "2020-06-16",
+            gyldigTil: "2020-06-17",
             informasjon: "Informasjon",
             opphav: "Opphav",
             fastsettingstype: undefined,
@@ -198,10 +198,10 @@ export const mockDetailedGrunnkrets1: GrunnkretsResponse = {
   oppdateringsdato: "2022-12-31",
   endringstype: "Retting",
   kommuneIdentifikator: {
+    gyldighetsdato: "2022-06-16",
     lokalid: {
-      value: "a379eb0a-7bae-4fc9-ab07-cf0c7a28bdb7",
+      value: "2",
     },
-    gyldighetsdato: "2022-07-01",
   },
 };
 
@@ -249,13 +249,13 @@ export const mockGrunnkrets1: GrunnkretsRef = {
   navn: "Mosekollen øst",
   grunnkretsnummer: "12345678",
   antallFramtidigeVersjoner: 1,
-  kommuneIdentifikator: {
-    lokalid: {
-      value: "a379eb0a-7bae-4fc9-ab07-cf0c7a28bdb7",
-    },
-    gyldighetsdato: "2022-07-01",
-  },
   version: 0,
+  kommuneIdentifikator: {
+    gyldighetsdato: mockDetailedGrunnkrets1.gyldighet.gyldigFra,
+    lokalid: {
+      value: mockDetailedGrunnkrets1.id.lokalid.value,
+    },
+  },
 };
 
 export const mockGrunnkrets2: GrunnkretsRef = {
@@ -273,13 +273,13 @@ export const mockGrunnkrets2: GrunnkretsRef = {
   navn: "Dåsvatn",
   grunnkretsnummer: "12345679",
   antallFramtidigeVersjoner: 0,
-  kommuneIdentifikator: {
-    lokalid: {
-      value: "a379eb0a-7bae-4fc9-ab07-cf0c7a28bdb7",
-    },
-    gyldighetsdato: "2022-07-01",
-  },
   version: 0,
+  kommuneIdentifikator: {
+    gyldighetsdato: mockDetailedGrunnkrets1.gyldighet.gyldigFra,
+    lokalid: {
+      value: mockDetailedGrunnkrets1.id.lokalid.value,
+    },
+  },
 };
 
 export const mockGrunnkretsRequest: GrunnkretsRequest = {
@@ -386,10 +386,10 @@ export const mockStemmekrets1: StemmekretsResponse = {
     gyldigTil: "2022-07-01",
   },
   kommuneIdentifikator: {
+    gyldighetsdato: "2022-06-16",
     lokalid: {
-      value: "a379eb0a-7bae-4fc9-ab07-cf0c7a28bdb7",
+      value: "2",
     },
-    gyldighetsdato: "2022-07-01",
   },
 };
 
@@ -414,10 +414,10 @@ export const mockStemmekrets2: StemmekretsResponse = {
     gyldigTil: "2022-07-01",
   },
   kommuneIdentifikator: {
+    gyldighetsdato: "2022-06-16",
     lokalid: {
-      value: "a379eb0a-7bae-4fc9-ab07-cf0c7a28bdb7",
+      value: "2",
     },
-    gyldighetsdato: "2022-07-01",
   },
 };
 
@@ -429,12 +429,6 @@ export const mockStemmekretser: StemmekretsRef[] = [
         value: mockStemmekrets1.id.lokalid.value,
       },
     },
-    kommuneIdentifikator: {
-      lokalid: {
-        value: "a379eb0a-7bae-4fc9-ab07-cf0c7a28bdb7",
-      },
-      gyldighetsdato: "2022-07-01",
-    },
     kommunenummer: {
       id: "12345",
       kodeverdi: "4321",
@@ -444,6 +438,12 @@ export const mockStemmekretser: StemmekretsRef[] = [
     href: "http://localhost:8080/v1/stemmekretser/1",
     antallFramtidigeVersjoner: 0,
     version: 0,
+    kommuneIdentifikator: {
+      gyldighetsdato: mockDetailedGrunnkrets1.gyldighet.gyldigFra,
+      lokalid: {
+        value: mockDetailedGrunnkrets1.id.lokalid.value,
+      },
+    },
   },
   {
     id: {
@@ -451,12 +451,6 @@ export const mockStemmekretser: StemmekretsRef[] = [
       lokalid: {
         value: mockStemmekrets2.id.lokalid.value,
       },
-    },
-    kommuneIdentifikator: {
-      lokalid: {
-        value: "a379eb0a-7bae-4fc9-ab07-cf0c7a28bdb7",
-      },
-      gyldighetsdato: "2022-07-01",
     },
     kommunenummer: {
       id: "12345",
@@ -467,6 +461,12 @@ export const mockStemmekretser: StemmekretsRef[] = [
     href: "http://localhost:8080/v1/stemmekretser/2",
     antallFramtidigeVersjoner: 0,
     version: 0,
+    kommuneIdentifikator: {
+      gyldighetsdato: mockDetailedGrunnkrets1.gyldighet.gyldigFra,
+      lokalid: {
+        value: mockDetailedGrunnkrets1.id.lokalid.value,
+      },
+    },
   },
 ];
 

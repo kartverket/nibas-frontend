@@ -46,32 +46,37 @@ export const ReferanseInput = ({
   };
   return (
     <BorderTop>
-      <VedtakinfoRow tooltipLabel={tooltipLabel} name={title} errors={errors}>
-        <Input
-          {...register(registerName, { pattern: pattern })}
-          placeholder={placeholder}
-          backgroundColor={"white"}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              const element = e.target as HTMLInputElement;
+      <InputContainer>
+        <VedtakinfoRow tooltipLabel={tooltipLabel} name={title} errors={errors}>
+          <Input
+            {...register(registerName, { pattern: pattern })}
+            placeholder={placeholder}
+            backgroundColor={"white"}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                const element = e.target as HTMLInputElement;
+                appendReferanse(element);
+                e.preventDefault();
+              }
+            }}
+          />
+          <LeggTilKnapp
+            onClick={() => {
+              const element = document.querySelector(`input[name=${registerName}]`) as HTMLInputElement;
               appendReferanse(element);
-              e.preventDefault();
-            }
-          }}
-        />
-        <LeggTilKnapp
-          onClick={() => {
-            const element = document.querySelector(`input[name=${registerName}]`) as HTMLInputElement;
-            appendReferanse(element);
-          }}
-        >
-          Legg til
-        </LeggTilKnapp>
-      </VedtakinfoRow>
+            }}
+          >
+            Legg til
+          </LeggTilKnapp>
+        </VedtakinfoRow>
+      </InputContainer>
     </BorderTop>
   );
 };
 
+const InputContainer = styled.div`
+  padding-top: 10px;
+`;
 const inputIsValid = (input: string, pattern?: RegExp) => {
   if (!pattern) return true;
   return input.match(pattern) !== null;

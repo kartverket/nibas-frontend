@@ -86,4 +86,5 @@ const PaginationRow = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  margin-bottom: 10px;
 `;

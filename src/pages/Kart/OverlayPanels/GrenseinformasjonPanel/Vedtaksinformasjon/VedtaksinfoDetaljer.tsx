@@ -71,6 +71,8 @@ export const VedtaksinfoDetaljer = ({
   const toast = useToast();
 
   const onSubmit = (data: VedtakinfoForm) => {
+    console.log("isDirty ", isDirty);
+    console.log(data);
     if (isDirty) {
       toast({
         status: "success",
@@ -185,7 +187,7 @@ const VisVedtakFooter = ({ toggleEndreVedtak }: { toggleEndreVedtak: () => void 
   return (
     <VedtakFooterRight>
       <ButtonsContainer>
-        <Button size="md" onClick={() => toggleEndreVedtak()}>
+        <Button size="md" variant="secondary" onClick={() => toggleEndreVedtak()}>
           Endre vedtaksinformasjon
         </Button>
       </ButtonsContainer>

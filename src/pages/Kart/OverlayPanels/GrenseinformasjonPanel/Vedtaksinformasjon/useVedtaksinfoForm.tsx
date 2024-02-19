@@ -3,8 +3,7 @@ import { useForm } from "react-hook-form";
 import { Dokref, FeatureProperties, Metadata } from "types/api";
 import { VedtakinfoForm, Referanse } from "./OversiktReferanser";
 import { LineString } from "ol/geom";
-import { MetadataEntry } from "contexts/HistoryContext/types";
-import { useHistory } from "contexts/HistoryContext";
+import { PropertyEntry, useHistory } from "contexts/HistoryContext";
 
 export const mapFromFormToApi = (
   formValues: VedtakinfoForm,
@@ -60,23 +59,23 @@ const updateFeatureWithNewMetadata = (feature: Feature<LineString>, newMetadata:
 
 const addMetadataEntryFromFeature = (
   feature: Feature<LineString>,
-  addHistoryEntry: (entry: MetadataEntry) => void,
+  addHistoryEntry: (entry: PropertyEntry) => void,
   updatedMetadata: Metadata,
 ) => {
   const id = feature.getId();
-  const oldMetadata = structuredClone(feature.getProperties().metadata) as Metadata;
+  const oldProperties = feature.getProperties() as FeatureProperties;
 
   if (!id) return;
 
   updateFeatureWithNewMetadata(feature as Feature<LineString>, updatedMetadata);
 
   addHistoryEntry({
-    type: "metadata",
+    type: "property",
     changes: [
       {
         id: id as string,
-        from: oldMetadata,
-        to: feature.getProperties().metadata as Metadata,
+        from: oldProperties,
+        to: feature.getProperties() as FeatureProperties,
       },
     ],
   });
