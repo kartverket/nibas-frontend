@@ -1,5 +1,5 @@
 import { Card, IconButton, Link, Text } from "@kvib/react";
-import { Referanse } from "./OversiktReferanser";
+import { Referanse } from "./OversiktVedtaksinfo";
 import { styled } from "styled-components";
 import { Icon } from "@chakra-ui/icon";
 

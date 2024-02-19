@@ -38,7 +38,7 @@ type InputCollectionName = {
   internreferanserKartverket: string;
 };
 
-export const OversiktReferanser = ({ feature }: { feature: Feature }) => {
+export const OversiktVedtaksinfo = ({ feature }: { feature: Feature }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [displayMode, setDisplayMode] = useState(false);
   const [iconHovered, setIconHovered] = useState(false);
@@ -48,6 +48,7 @@ export const OversiktReferanser = ({ feature }: { feature: Feature }) => {
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const isAllowedGrense =
     (feature.getProperties() as FeatureProperties).type === "Kommunegrense" &&
+    metadata.common?.gyldigTil === undefined &&
     (getCurrentlyEditingType() === "grunnkrets" || getCurrentlyEditingType() == "stemmekrets");
 
   const closeModal = () => {

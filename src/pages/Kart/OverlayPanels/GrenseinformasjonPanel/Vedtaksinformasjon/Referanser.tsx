@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { Referanse, VedtakinfoForm } from "./OversiktReferanser";
+import { Referanse, VedtakinfoForm } from "./OversiktVedtaksinfo";
 import { FieldErrors, UseFormClearErrors, UseFormRegister, UseFormSetError } from "react-hook-form";
 import { Card, Tab, TabList, TabPanel, TabPanels, Tabs } from "@kvib/react";
 import { AntallReferanser } from "./AntallReferanser";

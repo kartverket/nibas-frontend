@@ -1,5 +1,5 @@
 import { IconButton, Text } from "@kvib/react";
-import { Referanse } from "./OversiktReferanser";
+import { Referanse } from "./OversiktVedtaksinfo";
 import { ReferanseCard } from "./ReferanseCard";
 import { useState } from "react";
 import { ReferanseItemsContainer, ReferanseCardWrapper } from "./VedtaksinfoBody";

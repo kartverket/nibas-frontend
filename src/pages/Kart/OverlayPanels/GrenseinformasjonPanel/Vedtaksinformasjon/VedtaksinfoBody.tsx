@@ -1,6 +1,6 @@
 import { Datepicker, Grid, GridItem, Input } from "@kvib/react";
 import { Feature } from "ol";
-import { Referanse, VedtakinfoForm } from "./OversiktReferanser";
+import { Referanse, VedtakinfoForm } from "./OversiktVedtaksinfo";
 import { VedtakinfoField } from "./VedtakinfoField";
 import { Metadata } from "types/api";
 import { styled } from "styled-components";

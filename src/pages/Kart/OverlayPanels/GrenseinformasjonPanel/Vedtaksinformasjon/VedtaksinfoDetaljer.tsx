@@ -11,7 +11,7 @@ import {
 } from "@kvib/react";
 import { Feature } from "ol";
 import { VedtaksinfoBody } from "./VedtaksinfoBody";
-import { BorderBottom, BorderTop, Referanse, VedtakinfoForm } from "./OversiktReferanser";
+import { BorderBottom, BorderTop, Referanse, VedtakinfoForm } from "./OversiktVedtaksinfo";
 import { styled } from "styled-components";
 import { mapFromFormToApi, useVedtaksinfoForm } from "../../hooks/useVedtaksinfoForm";
 import { Metadata } from "types/api";
