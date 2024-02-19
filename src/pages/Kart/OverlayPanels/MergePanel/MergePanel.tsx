@@ -164,7 +164,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
     stemmekretserTilSammenslaaing: StemmekretsResponse[],
   ) => {
     const stemmekretsIderTilSammenslaaing = stemmekretserTilSammenslaaing.map(
-      (stemmekretsRef) => stemmekretsRef.id.lokalid.value,
+      (stemmekretsResponse) => stemmekretsResponse.id.lokalid.value,
     );
     if (selectedStemmekrets) {
       stemmekretsIderTilSammenslaaing.push(selectedStemmekrets.id.lokalid.value);
