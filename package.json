@@ -23,6 +23,7 @@
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build",
+    "dev": "vite --debug",
     "serve": "vite preview",
     "test": "vitest",
     "test:coverage": "npm test -- src/* --coverage",
