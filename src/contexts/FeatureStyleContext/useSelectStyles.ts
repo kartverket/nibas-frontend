@@ -11,9 +11,7 @@ export const useSelectStyles = () => {
   const [selectedPoint, setSelectedPoint] = useState<Feature<Point> | null>(null);
   const [selectedFeatures, setSelectedFeatures] = useState<SelectedFeatures>([]);
 
-  const selectPointOnFeature = (coordinate: Coordinate, features: SelectedFeatures) => {
-    selectFeatures(features);
-
+  const selectPointOnFeature = (coordinate: Coordinate) => {
     if (selectedPoint) {
       const geometry = selectedPoint.getGeometry() as Point;
       geometry.setCoordinates(coordinate);
