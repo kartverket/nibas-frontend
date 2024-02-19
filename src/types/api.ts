@@ -16,7 +16,7 @@ export type AdministrativEnhetNavn = components["schemas"]["AdministrativEnhetNa
 export type AdministrativGrenseMetadata = components["schemas"]["AdministrativGrenseMetadata"];
 export type AvtaltAvgrensningslinjeMetadata = components["schemas"]["AvtaltAvgrensningslinjeMetadata"];
 export type CommonMetadata = components["schemas"]["CommonMetadata"];
-export type Dokref = components["schemas"]["Dokref"];
+export type Dokref = components["schemas"]["DokumentasjonsreferanseDTO"];
 export type FeatureCollection = components["schemas"]["FeatureCollection"];
 export type FeatureProperties = components["schemas"]["FeatureProperties"] & {
   inndelingerKontekst: InndelingerKontekst;

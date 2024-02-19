@@ -4,7 +4,14 @@ import { Referanse, VedtakinfoForm } from "./OversiktReferanser";
 import { VedtakinfoField } from "./VedtakinfoField";
 import { Metadata } from "types/api";
 import { styled } from "styled-components";
-import { Control, Controller, FieldErrors, UseFormRegister } from "react-hook-form";
+import {
+  Control,
+  Controller,
+  FieldErrors,
+  UseFormClearErrors,
+  UseFormRegister,
+  UseFormSetError,
+} from "react-hook-form";
 import { Referanser } from "./Referanser";
 
 type ReferanseBodyProps = {
@@ -20,6 +27,8 @@ type ReferanseBodyProps = {
   setDokref: React.Dispatch<React.SetStateAction<Referanse[] | undefined>>;
   internref?: Referanse[];
   setInternref: React.Dispatch<React.SetStateAction<Referanse[] | undefined>>;
+  setError: UseFormSetError<VedtakinfoForm>;
+  clearErrors: UseFormClearErrors<VedtakinfoForm>;
 };
 
 export const VedtaksinfoBody = ({
@@ -34,6 +43,8 @@ export const VedtaksinfoBody = ({
   deleteInternref,
   deleteDokref,
   errors,
+  setError,
+  clearErrors,
   control,
 }: ReferanseBodyProps) => {
   const addDokumentlenke = (lenke: Referanse) => {
@@ -117,15 +128,20 @@ export const VedtaksinfoBody = ({
             <Row>
               <Controller
                 control={control}
-                name="gyldigFra"
+                rules={{ required: "Feltet er påkrevd" }}
+                name="vedtakGyldigFra"
                 render={({ field }) => {
                   return (
                     <VedtakinfoField
-                      errors={errors.gyldigFra}
+                      errors={errors.vedtakGyldigFra}
                       displayMode={displayMode}
                       tooltipLabel="tooltip"
                       title="Gyldig fra"
-                      value={"Må implementeres i backend"}
+                      value={
+                        vedtaksinformasjon?.vedtakGyldigFra
+                          ? new Date(vedtaksinformasjon?.vedtakGyldigFra).toLocaleDateString("nb-NO")
+                          : "Ingen gyldig fra satt."
+                      }
                     >
                       <Datepicker
                         defaultSelected={field.value}
@@ -139,15 +155,19 @@ export const VedtaksinfoBody = ({
               />
               <Controller
                 control={control}
-                name="gyldigTil"
+                name="vedtakGyldigTil"
                 render={({ field }) => {
                   return (
                     <VedtakinfoField
-                      errors={errors.gyldigTil}
+                      errors={errors.vedtakGyldigTil}
                       displayMode={displayMode}
                       tooltipLabel=""
                       title="Gyldig til"
-                      value={"Må implementeres i backend"}
+                      value={
+                        vedtaksinformasjon?.vedtakGyldigTil
+                          ? new Date(vedtaksinformasjon?.vedtakGyldigTil).toLocaleDateString("nb-NO")
+                          : "Ingen gyldig til satt."
+                      }
                     >
                       <Datepicker
                         defaultSelected={field.value}
@@ -190,6 +210,8 @@ export const VedtaksinfoBody = ({
             deleteDokref={deleteDokref}
             displayMode={displayMode}
             errors={errors}
+            setError={setError}
+            clearErrors={clearErrors}
             register={register}
             dokref={dokref}
             internref={internref}
@@ -209,11 +231,6 @@ export const ReferanseItemsContainer = styled.div`
   height: 100%;
 `;
 
-export const PaginationRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-`;
 export const ReferanseCardWrapper = styled.div`
   display: flex;
   flex-direction: column;

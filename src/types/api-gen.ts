@@ -196,7 +196,7 @@ export interface components {
       common?: components["schemas"]["CommonMetadata"];
       commonGrense?: components["schemas"]["CommonGrenseMetadata"];
       /** @description Henviser til fastsettings- eller lovinformasjon. */
-      dokumentasjonsreferanser?: components["schemas"]["Dokref"][];
+      dokumentasjonsreferanser?: components["schemas"]["DokumentasjonsreferanseDTO"][];
     } & {
       common: unknown;
       commonGrense: unknown;
@@ -207,7 +207,7 @@ export interface components {
       common?: components["schemas"]["CommonMetadata"];
       commonGrense?: components["schemas"]["CommonGrenseMetadata"];
       /** @description Henviser til fastsettings- eller lovinformasjon. */
-      dokumentasjonsreferanser?: components["schemas"]["Dokref"][];
+      dokumentasjonsreferanser?: components["schemas"]["DokumentasjonsreferanseDTO"][];
     } & {
       common: unknown;
       commonGrense: unknown;
@@ -242,7 +242,7 @@ export interface components {
       opphav?: string;
     };
     /** @description Henviser til fastsettings- eller lovinformasjon. */
-    Dokref: {
+    DokumentasjonsreferanseDTO: {
       /** @description ID for dokumentasjonsreferansen. */
       id?: string;
       /** @description URL til saksdokument. */
@@ -264,14 +264,16 @@ export interface components {
       rettskildeTittel: string;
       /**
        * Format: date
-       * @description Tidspunktet når objektet oppstod i den virkelige verden
+       * @description Tidspunktet når objektet oppstod i den virkelige verden (Vedtakets gyldighet). Påkrevd for alle nye dokumentasjonsreferanser.
        */
-      gyldigFra: string;
+      vedtakGyldigFra?: string;
       /**
        * Format: date
-       * @description Tidspunktet når objektet opphørte å eksistere i den virkelige verden
+       * @description Tidspunktet når objektet opphørte å eksistere i den virkelige verden (Vedtakets gyldighet)
        */
-      gyldigTil?: string;
+      vedtakGyldigTil?: string;
+      /** @description Egenskap som sier om en dokumentasjonsreferanse skal arkiveres */
+      shouldArchive: boolean;
     };
     /** @description Liste av features som holder på dataene */
     Feature: {
@@ -351,7 +353,7 @@ export interface components {
       common?: components["schemas"]["CommonMetadata"];
       commonGrense?: components["schemas"]["CommonGrenseMetadata"];
       /** @description Henviser til fastsettings- eller lovinformasjon. */
-      dokumentasjonsreferanser?: components["schemas"]["Dokref"][];
+      dokumentasjonsreferanser?: components["schemas"]["DokumentasjonsreferanseDTO"][];
     } & {
       common: unknown;
       commonGrense: unknown;
@@ -437,13 +439,7 @@ export interface components {
        * @description Flatetypen som skal deles
        * @enum {string}
        */
-      flatetype:
-        | "FYLKE"
-        | "KOMMUNE"
-        | "NASJON"
-        | "GRUNNKRETS"
-        | "STEMMEKRETS"
-        | "SKOLEKRETS";
+      flatetype: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
       /** @description Navn og nummer for de nye kretsene som skal utledes fra opprinnelig krets */
       nyeKretser: components["schemas"]["KretsNavnOgNummer"][];
     };
@@ -570,7 +566,7 @@ export interface components {
       common?: components["schemas"]["CommonMetadata"];
       commonGrense?: components["schemas"]["CommonGrenseMetadata"];
       /** @description Henviser til fastsettings- eller lovinformasjon. */
-      dokumentasjonsreferanser?: components["schemas"]["Dokref"][];
+      dokumentasjonsreferanser?: components["schemas"]["DokumentasjonsreferanseDTO"][];
     } & {
       common: unknown;
       commonGrense: unknown;
@@ -635,25 +631,11 @@ export interface components {
       common?: components["schemas"]["CommonMetadata"];
       commonGrense?: components["schemas"]["CommonGrenseMetadata"];
       /** @description Henviser til fastsettings- eller lovinformasjon. */
-      dokumentasjonsreferanser?: components["schemas"]["Dokref"][];
+      dokumentasjonsreferanser?: components["schemas"]["DokumentasjonsreferanseDTO"][];
     } & {
       common: unknown;
       commonGrense: unknown;
       dokumentasjonsreferanser: unknown;
-    };
-    ApiErrorResponse: {
-      /** @description En unik feilkode for denne feilen som kan vises til bruker. Denne feilkoden burde også være med i loggene så man finner igjen feilen som oppstod. */
-      errorCode: string;
-      errorDescription: components["schemas"]["ErrorDescription"];
-    };
-    /** @description En forklaring av feilen som oppstod. Denne er ment til å kunne vises direkte til brukeren. */
-    ErrorDescription: {
-      /** @description Tittelen på feilmeldingen som skal vises. */
-      title: string;
-      /** @description En beskrivende forklaring av feilen som oppstod. */
-      description: string;
-      /** @description Litt tilleggsinfo relatert til feilen om man vil gi noe mer forklaring av konteksten. Ikke obligatorisk. */
-      additionalInfo?: string;
     };
     /** @description Feil som har oppstått pga optimistisk lås. */
     OptimistiskLaarResponse: {
@@ -751,6 +733,20 @@ export interface components {
         | "511 NETWORK_AUTHENTICATION_REQUIRED";
       /** @description Feil som har oppstått pga optimistisk lås. */
       optimisticLockExceptions: components["schemas"]["OptimistiskLaarResponse"][];
+    };
+    ApiErrorResponse: {
+      /** @description En unik feilkode for denne feilen som kan vises til bruker. Denne feilkoden burde også være med i loggene så man finner igjen feilen som oppstod. */
+      errorCode: string;
+      errorDescription: components["schemas"]["ErrorDescription"];
+    };
+    /** @description En forklaring av feilen som oppstod. Denne er ment til å kunne vises direkte til brukeren. */
+    ErrorDescription: {
+      /** @description Tittelen på feilmeldingen som skal vises. */
+      title: string;
+      /** @description En beskrivende forklaring av feilen som oppstod. */
+      description: string;
+      /** @description Litt tilleggsinfo relatert til feilen om man vil gi noe mer forklaring av konteksten. Ikke obligatorisk. */
+      additionalInfo?: string;
     };
     /** @description Representasjon av audit info for et objekt. */
     AuditInfoResponse: {

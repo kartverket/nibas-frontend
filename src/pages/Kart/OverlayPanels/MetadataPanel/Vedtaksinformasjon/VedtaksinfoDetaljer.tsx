@@ -1,4 +1,14 @@
-import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, Text, useToast } from "@kvib/react";
+import {
+  Button,
+  IconButton,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  Text,
+  useToast,
+} from "@kvib/react";
 import { Feature } from "ol";
 import { VedtaksinfoBody } from "./VedtaksinfoBody";
 import { BorderBottom, BorderTop, Referanse, VedtakinfoForm } from "./OversiktReferanser";
@@ -6,6 +16,7 @@ import { styled } from "styled-components";
 import { mapFromFormToApi, useVedtaksinfoForm } from "./useVedtaksinfoForm";
 import { Metadata } from "types/api";
 import { useState } from "react";
+import { id } from "date-fns/locale";
 
 export const VedtaksinfoDetaljer = ({
   isOpen,
@@ -27,10 +38,18 @@ export const VedtaksinfoDetaljer = ({
   const [dokref, setDokref] = useState<Referanse[] | undefined>([]);
   const [internref, setInternref] = useState<Referanse[] | undefined>([]);
 
-  const { isDirty, register, reset, handleSubmit, updateDraftFromFeature, errors, control } = useVedtaksinfoForm(
-    feature,
-    selectedVedtaksinfoIndex,
-  );
+  const {
+    isDirty,
+    register,
+    reset,
+    handleSubmit,
+    updateDraftFromFeature,
+    errors,
+    control,
+    deleteOrArchive,
+    setError,
+    clearErrors,
+  } = useVedtaksinfoForm(feature, selectedVedtaksinfoIndex);
 
   const deleteDokref = (index: number) => {
     const dokrefCopy = structuredClone(dokref);
@@ -43,6 +62,7 @@ export const VedtaksinfoDetaljer = ({
     internrefCopy?.splice(index, 1);
     setInternref(internrefCopy);
   };
+
   const cleanForm = () => {
     reset(undefined, { keepDefaultValues: true });
     setDokref(undefined);
@@ -59,16 +79,18 @@ export const VedtaksinfoDetaljer = ({
       const postValues = mapFromFormToApi(data, dokref, internref);
       updateDraftFromFeature(postValues);
     }
-    cleanForm();
-    onClose();
+    closeModal();
   };
 
   const closeModal = () => {
     cleanForm();
+    if (redigeringsmodus) {
+      toggleEndreVedtak();
+      return;
+    }
     onClose();
   };
 
-  // TODO: Er det noen måte å gjøre dette penere på uten at man får en ininite loop med re-rendring?
   if (isOpen && selectedVedtaksinfoIndex !== undefined) {
     const vedtaksinformasjon = metadata?.dokumentasjonsreferanser?.at(selectedVedtaksinfoIndex);
     if (dokref === undefined) {
@@ -94,8 +116,10 @@ export const VedtaksinfoDetaljer = ({
           <ModalCloseButton />
           <ModalBody minHeight={"500px"}>
             <VedtaksinfoBody
+              clearErrors={clearErrors}
               control={control}
               errors={errors}
+              setError={setError}
               feature={feature}
               displayMode={displayMode}
               register={register}
@@ -110,14 +134,19 @@ export const VedtaksinfoDetaljer = ({
           </ModalBody>
 
           <BorderTop>
-            <ControlsContainer>
+            <VedtakFooterContainer>
               <VedtaksFooter
                 toggleEndreVedtak={toggleEndreVedtak}
                 redigeringsmodus={redigeringsmodus}
                 displayMode={displayMode}
-                onClose={onClose}
+                onClose={closeModal}
+                deleteOrArchive={() => {
+                  deleteOrArchive();
+                  closeModal();
+                }}
+                vedtaksinfoIsPersisted={isVedtakPersisted(selectedVedtaksinfoIndex, metadata)}
               />
-            </ControlsContainer>
+            </VedtakFooterContainer>
           </BorderTop>
         </form>
       </ModalContent>
@@ -130,20 +159,23 @@ const VedtaksFooter = ({
   displayMode,
   onClose,
   toggleEndreVedtak,
+  deleteOrArchive,
+  vedtaksinfoIsPersisted,
 }: {
+  vedtaksinfoIsPersisted: boolean;
   redigeringsmodus: boolean;
   displayMode: boolean;
   onClose: () => void;
   toggleEndreVedtak: () => void;
+  deleteOrArchive: () => void;
 }) => {
   if (displayMode) return <VisVedtakFooter toggleEndreVedtak={toggleEndreVedtak} />;
   else if (redigeringsmodus)
     return (
       <EndreVedtakFooter
         onClose={onClose}
-        onArchive={() => {
-          // TODO: Endepunkt må opprettes
-        }}
+        deleteOrArchive={deleteOrArchive}
+        vedtaksinfoIsPersisted={vedtaksinfoIsPersisted}
       />
     );
   else return <NyttVedtakFooter onClose={onClose} />;
@@ -151,21 +183,19 @@ const VedtaksFooter = ({
 
 const VisVedtakFooter = ({ toggleEndreVedtak }: { toggleEndreVedtak: () => void }) => {
   return (
-    <>
-      <ButtonsContainer />
+    <VedtakFooterRight>
       <ButtonsContainer>
         <Button size="md" onClick={() => toggleEndreVedtak()}>
           Endre vedtaksinformasjon
         </Button>
       </ButtonsContainer>
-    </>
+    </VedtakFooterRight>
   );
 };
 
 const NyttVedtakFooter = ({ onClose }: { onClose: () => void }) => {
   return (
-    <>
-      <ButtonsContainer />
+    <VedtakFooterRight>
       <ButtonsContainer>
         <Button variant="tertiary" colorScheme="blue" size="md" onClick={onClose}>
           Avbryt
@@ -174,35 +204,84 @@ const NyttVedtakFooter = ({ onClose }: { onClose: () => void }) => {
           Legg til vedtaksinformasjon
         </Button>
       </ButtonsContainer>
-    </>
+    </VedtakFooterRight>
   );
 };
 
-const EndreVedtakFooter = ({ onClose, onArchive }: { onClose: () => void; onArchive: () => void }) => {
+const EndreVedtakFooter = ({
+  onClose,
+  deleteOrArchive: onArchive,
+  vedtaksinfoIsPersisted,
+}: {
+  onClose: () => void;
+  deleteOrArchive: () => void;
+  vedtaksinfoIsPersisted: boolean;
+}) => {
   return (
     <>
-      <ButtonsContainer>
-        <Text onClick={onArchive}>Arkiver</Text>
-      </ButtonsContainer>
-      <ButtonsContainer>
-        <Button colorScheme="blue" size="md" onClick={onClose} variant="tertiary">
-          Avbryt
-        </Button>
-        <Button type="submit" size="md">
-          Bekreft
-        </Button>
-      </ButtonsContainer>
+      <VedtakFooterLeft>
+        <ButtonsContainer>
+          {vedtaksinfoIsPersisted ? (
+            <Button
+              rightIcon="archive"
+              variant="tertiary"
+              colorScheme="blue"
+              aria-label="Arkver referansen"
+              onClick={onArchive}
+            >
+              <p>Arkiver referansen</p>
+            </Button>
+          ) : (
+            <Button
+              rightIcon="delete_forever"
+              variant="tertiary"
+              colorScheme="red"
+              aria-label="Slett referansen"
+              onClick={onArchive}
+            >
+              <p>Slett referansen</p>
+            </Button>
+          )}
+        </ButtonsContainer>
+      </VedtakFooterLeft>
+      <VedtakFooterRight>
+        <ButtonsContainer>
+          <Button colorScheme="blue" size="md" onClick={onClose} variant="tertiary">
+            Avbryt
+          </Button>
+          <Button type="submit" size="md">
+            Bekreft
+          </Button>
+        </ButtonsContainer>
+      </VedtakFooterRight>
     </>
   );
 };
 
-const ControlsContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  flex-direction: row;
-  margin: 20px;
-  padding-left: 10px;
+const VedtakFooterContainer = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 15px 12px 5px 12px;
 `;
+
+const VedtakFooterLeft = styled.div`
+  grid-column: 1;
+  display: flex;
+  justify-content: start;
+`;
+
+const VedtakFooterRight = styled.div`
+  grid-column: 2;
+  display: flex;
+  justify-content: end;
+`;
+
+function isVedtakPersisted(selectedVedtaksinfoIndex: number | undefined, metadata: Metadata) {
+  if (selectedVedtaksinfoIndex === undefined) return false;
+  else if (metadata.dokumentasjonsreferanser === undefined) return false;
+  else if (metadata.dokumentasjonsreferanser.at(selectedVedtaksinfoIndex)?.id === undefined) return false;
+  return true;
+}
 
 const ButtonsContainer = styled.div`
   display: inline-block;

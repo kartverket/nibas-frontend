@@ -33,8 +33,8 @@ export const mockGeoJsonFeatureResponse: GeoJSONFeatureCollection = {
               versjonid: undefined,
             },
             datafangstdato: "2020-06-15",
-            gyldigFra: "2020-06-16",
-            gyldigTil: "2020-06-17",
+            vedtakGyldigFra: "2020-06-16",
+            vedtakGyldigTil: "2020-06-17",
             informasjon: "Informasjon",
             opphav: "Opphav",
             fastsettingstype: undefined,
@@ -56,6 +56,7 @@ export const mockGeoJsonFeatureResponse: GeoJSONFeatureCollection = {
           },
           dokumentasjonsreferanser: [
             {
+              shouldArchive: false,
               id: "123",
               dokumentlenker: [
                 {
@@ -74,8 +75,8 @@ export const mockGeoJsonFeatureResponse: GeoJSONFeatureCollection = {
               ],
               rettskildeId: "RID",
               rettskildeTittel: "Rettskildetittel",
-              gyldigFra: "2020-06-16",
-              gyldigTil: "2020-06-17",
+              vedtakGyldigFra: "2020-06-16",
+              vedtakGyldigTil: "2020-06-17",
             },
           ],
           foelgerTerrengdetalj: { id: "IKA", href: "" },

@@ -1,10 +1,12 @@
 import { styled } from "styled-components";
 import { Referanse, VedtakinfoForm } from "./OversiktReferanser";
-import { FieldErrors, UseFormRegister } from "react-hook-form";
+import { FieldErrors, UseFormClearErrors, UseFormRegister, UseFormSetError } from "react-hook-form";
 import { Card, Tab, TabList, TabPanel, TabPanels, Tabs } from "@kvib/react";
 import { AntallReferanser } from "./AntallReferanser";
 import { ReferanserPaginated } from "./ReferanserPaginated";
 import { ReferanseInput } from "./ReferanseInput";
+import { useState } from "react";
+import { clear } from "console";
 export type ReferanserProps = {
   deleteInternref: (index: number) => void;
   deleteDokref: (index: number) => void;
@@ -15,6 +17,8 @@ export type ReferanserProps = {
   addDokumentlenke: (ref: Referanse) => void;
   register: UseFormRegister<VedtakinfoForm>;
   errors: FieldErrors<VedtakinfoForm>;
+  setError: UseFormSetError<VedtakinfoForm>;
+  clearErrors: UseFormClearErrors<VedtakinfoForm>;
 };
 
 export const Referanser = ({
@@ -24,31 +28,31 @@ export const Referanser = ({
   addDokumentlenke,
   register,
   errors,
+  setError,
+  clearErrors,
   displayMode,
   deleteInternref,
   deleteDokref,
 }: ReferanserProps) => {
-  const regexUrlPattern =
-    /(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?\/[a-zA-Z0-9]{2,}|((https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?)|(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})?/g;
+  const [dokrefSelected, setDokrefSelected] = useState(true);
+  const [internrefSelected, setInternrefSelected] = useState(false);
 
+  const toggleSelected = () => {
+    setDokrefSelected(!dokrefSelected);
+    setInternrefSelected(!internrefSelected);
+  };
   return (
     <ReferanserWrapper>
       <Card variant={"filled"} height={"100%"}>
         <Tabs colorScheme="blue" size="md" width={"100%"} height="100%">
           <TabList width={"100%"}>
-            <Tab>
+            <Tab onClick={toggleSelected}>
               Dokumenter
-              <AntallReferanser
-                count={dokref?.length || 0}
-                colorScheme="blue"
-              />
+              <AntallReferanser count={dokref?.length || 0} isSelected={dokrefSelected} />
             </Tab>
-            <Tab>
+            <Tab onClick={toggleSelected}>
               Interne referanser
-              <AntallReferanser
-                count={internref?.length || 0}
-                colorScheme="gray"
-              />
+              <AntallReferanser count={internref?.length || 0} isSelected={internrefSelected} />
             </Tab>
           </TabList>
           <TabPanels width="100%" height="100%">
@@ -63,7 +67,9 @@ export const Referanser = ({
                 {!displayMode && (
                   <ReferanseInput
                     errors={errors.leggTilDokumentlenke}
-                    pattern={regexUrlPattern}
+                    clearErrors={clearErrors}
+                    pattern={/^http[s]?:\/\/.+/}
+                    setError={setError}
                     register={register}
                     appendFn={addDokumentlenke}
                     registerName="leggTilDokumentlenke"
@@ -85,6 +91,8 @@ export const Referanser = ({
                 {!displayMode && (
                   <ReferanseInput
                     errors={errors.leggTilInternreferanse}
+                    setError={setError}
+                    clearErrors={clearErrors}
                     register={register}
                     appendFn={addInternreferanse}
                     registerName="leggTilInternreferanse"

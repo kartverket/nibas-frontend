@@ -1,13 +1,8 @@
 import { Button, Input } from "@kvib/react";
 import { VedtakinfoRow } from "./VedtakinfoRow";
-import {
-  BorderTop,
-  InputName,
-  Referanse,
-  VedtakinfoForm,
-} from "./OversiktReferanser";
+import { BorderTop, InputName, Referanse, VedtakinfoForm } from "./OversiktReferanser";
 import { styled } from "styled-components";
-import { FieldError, UseFormRegister } from "react-hook-form";
+import { FieldError, UseFormClearErrors, UseFormRegister, UseFormSetError } from "react-hook-form";
 
 type ReferanseInputProps = {
   registerName: keyof InputName;
@@ -18,6 +13,8 @@ type ReferanseInputProps = {
   register: UseFormRegister<VedtakinfoForm>;
   pattern?: RegExp;
   errors: FieldError | undefined;
+  setError: UseFormSetError<VedtakinfoForm>;
+  clearErrors: UseFormClearErrors<VedtakinfoForm>;
 };
 
 export const ReferanseInput = ({
@@ -29,6 +26,8 @@ export const ReferanseInput = ({
   register,
   pattern,
   errors,
+  setError,
+  clearErrors,
 }: ReferanseInputProps) => {
   function clearInput(element: HTMLInputElement) {
     element.value = "";
@@ -36,6 +35,11 @@ export const ReferanseInput = ({
 
   const appendReferanse = (element: HTMLInputElement) => {
     if (element?.value) {
+      clearErrors();
+      if (!inputIsValid(element.value, pattern)) {
+        setError(registerName, { type: "manual", message: 'Lenker må starte med "http(s)"' });
+        return;
+      }
       appendFn({ beskrivelse: element.value });
       clearInput(element);
     }
@@ -57,9 +61,7 @@ export const ReferanseInput = ({
         />
         <LeggTilKnapp
           onClick={() => {
-            const element = document.querySelector(
-              `input[name=${registerName}]`,
-            ) as HTMLInputElement;
+            const element = document.querySelector(`input[name=${registerName}]`) as HTMLInputElement;
             appendReferanse(element);
           }}
         >
@@ -70,6 +72,10 @@ export const ReferanseInput = ({
   );
 };
 
+const inputIsValid = (input: string, pattern?: RegExp) => {
+  if (!pattern) return true;
+  return input.match(pattern) !== null;
+};
 const LeggTilKnapp = styled(Button)`
   margin-left: 20px;
 `;

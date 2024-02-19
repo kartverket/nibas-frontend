@@ -11,15 +11,17 @@ export const mapFromFormToApi = (
   dokrefs: Referanse[] | undefined,
   internrefs: Referanse[] | undefined,
 ): Dokref => {
+  if (!formValues.vedtakGyldigFra) throw Error("Gyldig fra er påkrevd!");
   return {
+    shouldArchive: false,
     id: formValues.id,
     rettskildeTittel: formValues.rettskildeTittel,
     fastsettingsdato: formValues.fastsettingsdato.toISOString(),
     fastsettingsmyndighet: formValues.fastsettingsmyndighet,
     hjemmel: formValues.hjemmel,
     rettskildeId: formValues.rettskildeId,
-    gyldigFra: formValues.gyldigFra?.toISOString(),
-    gyldigTil: formValues.gyldigTil?.toISOString(),
+    vedtakGyldigFra: formValues.vedtakGyldigFra?.toISOString(),
+    vedtakGyldigTil: formValues.vedtakGyldigTil?.toISOString(),
     dokumentlenker:
       dokrefs?.map((ref) => ({
         id: ref.id,
@@ -86,6 +88,8 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoIndex?: 
       ? structuredClone(feature.getProperties().metadata.dokumentasjonsreferanser[selectedVedtaksinfoIndex])
       : emptyVedtaksinformasjon;
   values.fastsettingsdato = new Date(values.fastsettingsdato);
+  values.vedtakGyldigFra = values.vedtakGyldigFra ? new Date(values.vedtakGyldigFra) : undefined;
+  values.vedtakGyldigTil = values.vedtakGyldigTil ? new Date(values.vedtakGyldigTil) : undefined;
   const {
     register,
     setValue,
@@ -95,12 +99,40 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoIndex?: 
     formState: { isDirty, errors },
     watch,
     control,
+    setError,
+    clearErrors,
   } = useForm<VedtakinfoForm>({
     defaultValues: emptyVedtaksinformasjon,
     values: values,
   });
 
   const { addHistoryEntry } = useHistory();
+
+  const deleteOrArchive = () => {
+    if (selectedVedtaksinfoIndex == undefined) return;
+
+    const metadata = feature.getProperties().metadata as Metadata;
+    const oldDokrefs: Dokref[] = metadata.dokumentasjonsreferanser ? metadata.dokumentasjonsreferanser : [];
+
+    if (!oldDokrefs[selectedVedtaksinfoIndex].id) {
+      // Vedtaksinformasjonen er ikke tidligere publisert. Fjern fra front end
+      const updatedDokrefs = structuredClone(oldDokrefs);
+      updatedDokrefs.splice(selectedVedtaksinfoIndex, 1);
+      addMetadataEntryFromFeature(feature as Feature<LineString>, addHistoryEntry, {
+        ...metadata,
+        dokumentasjonsreferanser: updatedDokrefs,
+      });
+    } else {
+      // Arkiver eksisterende dokumentasjonsreferanse
+      const dokrefsCopy = structuredClone(oldDokrefs);
+      dokrefsCopy[selectedVedtaksinfoIndex].shouldArchive = true;
+      addMetadataEntryFromFeature(feature as Feature<LineString>, addHistoryEntry, {
+        ...metadata,
+        dokumentasjonsreferanser: dokrefsCopy,
+      });
+    }
+  };
+
   const updateDraftFromFeature = (vedtaksinfo: Dokref) => {
     const metadata = feature.getProperties().metadata as Metadata;
 
@@ -138,5 +170,8 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoIndex?: 
     setValue,
     watch,
     control,
+    deleteOrArchive,
+    setError,
+    clearErrors,
   };
 };

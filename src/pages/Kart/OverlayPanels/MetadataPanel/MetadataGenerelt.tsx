@@ -24,7 +24,7 @@ export type Inputs = {
   tilhorighet: string[];
 };
 
-const GrenseTypeValues: GrenseType[] = [
+export const GrenseTypeValues: GrenseType[] = [
   "Kommunegrense",
   "Fylkesgrense",
   "Riksgrense",
@@ -200,7 +200,7 @@ const MetadataGenerelt = ({ feature }: Props) => {
         renderItem={(register) => <Textarea placeholder="Fyll inn ekstra informasjon" {...register} />}
       />
       {tilhorighetToChange && <TilhorighetField feature={feature} tilhorighetToChange={tilhorighetToChange} />}
-      <OversiktReferanser feature={feature} />
+      <OversiktReferanser feature={feature} grensetype={grenseType} />
     </Container>
   );
 };
