@@ -1,9 +1,10 @@
 import { styled } from "styled-components";
-import { Accordion, AccordionPanel } from "@kvib/react";
+import { Accordion, AccordionPanel, Spacer } from "@kvib/react";
 import { MappedLayer } from "utils/getLayersFromWMS";
 import KartlagMiddle from "./KartlagMiddle";
 import KartlagInner from "./KartlagInner";
 import { KartlagAccordionItem, KartlagAccordionButton, KartlagAccordionIcon } from "./components";
+import ActiveKartlagOpacity from "./KartlagOpacity";
 
 type Props = {
   mappedLayer: MappedLayer;
@@ -11,10 +12,12 @@ type Props = {
 
 const KartlagOuter = ({ mappedLayer }: Props) => {
   return (
-    <Accordion allowToggle>
+    <KartlagAccordion allowToggle>
       <KartlagAccordionItem>
         <KartlagOuterAccordionButton>
           <span>{mappedLayer.title}</span>
+          <Spacer />
+          <ActiveKartlagOpacity layerId={mappedLayer.sourceId} />
           <KartlagAccordionIcon />
         </KartlagOuterAccordionButton>
         <KartlagAccordionPanel>
@@ -27,21 +30,26 @@ const KartlagOuter = ({ mappedLayer }: Props) => {
           )}
         </KartlagAccordionPanel>
       </KartlagAccordionItem>
-    </Accordion>
+    </KartlagAccordion>
   );
 };
 
+const KartlagAccordion = styled(Accordion)`
+  width: 100%;
+`;
+
 const KartlagOuterAccordionButton = styled(KartlagAccordionButton)`
-  &[aria-expanded="true"] {
-    background: var(--kvib-colors-gray-50);
-  }
+  padding: 16px;
+  background: var(--kvib-colors-gray-50);
 `;
 
 const KartlagAccordionPanel = styled(AccordionPanel)`
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   background: var(--kvib-colors-gray-50);
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
 `;
 
 export default KartlagOuter;

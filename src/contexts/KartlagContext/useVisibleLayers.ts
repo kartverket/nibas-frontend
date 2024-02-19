@@ -108,6 +108,7 @@ const useVisibleLayers = () => {
       toggleLayerWithOutSublayer(mainLayer);
       return;
     }
+    // TODO: må sette inn i riktig plass i forhold til mappedLayers, ikke bare på topp
     setVisibleLayers([{ mainLayer: mainLayer, subLayers: [subLayer] }, ...visibleLayers]);
   };
 
@@ -121,22 +122,8 @@ const useVisibleLayers = () => {
     );
   };
 
-  const moveLayer = (direction: "up" | "down", layerId: KartlagId) => {
-    const layer = visibleLayers.find((visibleLayer) => visibleLayer.mainLayer === layerId);
-
-    if (layer) {
-      const indexDifference = direction === "up" ? -1 : 1;
-      const index = visibleLayers.indexOf(layer);
-      const newZIndexes = [...visibleLayers];
-      newZIndexes.splice(index, 1);
-      newZIndexes.splice(index + indexDifference, 0, layer);
-      setVisibleLayers(newZIndexes);
-    }
-  };
-
   return {
     visibleLayers,
-    moveLayer,
     toggleLayerVisibility,
     layerIsVisible,
     subLayerIsVisible,

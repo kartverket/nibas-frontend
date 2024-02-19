@@ -35,11 +35,11 @@ const KartlagMiddle = ({ mappedLayer, isNested = false }: Props) => {
 const KartlagAccordionPanel = styled(AccordionPanel)<{ $isNested: boolean }>`
   position: relative;
   padding: 0;
-  padding-left: 16px;
 
   ${(props) =>
     props.$isNested &&
     css`
+      padding-left: 16px;
       &::before {
         position: absolute;
         top: 0;

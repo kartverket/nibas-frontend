@@ -12,13 +12,13 @@ const createTileLayerFromKartlagSource = (id: keyof typeof kartlagSources) =>
   new TileLayer({ source: kartlagSources[id] });
 
 export const kartlagLayers: Record<KartlagId, TileLayer<TileWMS | WMTS> | VectorLayer<VectorSource>> = {
-  cachetjenester: createTileLayerFromKartlagSource("cachetjenester"),
   matrikkelenWMS: createTileLayerFromKartlagSource("matrikkelenWMS"),
   administrativeGrenser: createTileLayerFromKartlagSource("administrativeGrenser"),
   administrativeGrenserHistorisk: createTileLayerFromKartlagSource("administrativeGrenserHistorisk"),
   grunnkretserWMS: createTileLayerFromKartlagSource("grunnkretserWMS"),
   stedsnavn: createTileLayerFromKartlagSource("stedsnavn"),
   stedsnavnSSR: createTileLayerFromKartlagSource("stedsnavnSSR"),
+  cachetjenester: createTileLayerFromKartlagSource("cachetjenester"),
   kartbladinndelinger: createTileLayerFromKartlagSource("kartbladinndelinger"),
   sjokartDybdedata: createTileLayerFromKartlagSource("sjokartDybdedata"),
   n5Raster2: createTileLayerFromKartlagSource("n5Raster2"),

@@ -23,8 +23,22 @@ export const KartlagContext = createContext<KartlagContextValue | undefined>(und
 export const KartlagProvider = ({ children }: { children: React.ReactNode }) => {
   const [mappedLayers, setMappedLayers] = useState<MappedLayer[]>([]);
 
-  const { visibleLayers, moveLayer, toggleLayerVisibility, layerIsVisible, subLayerIsVisible, resetVisibleLayers } =
+  const { visibleLayers, toggleLayerVisibility, layerIsVisible, subLayerIsVisible, resetVisibleLayers } =
     useVisibleLayers();
+
+  // TODO: visible layers må slås inn i mappedlayers for at dette skal ha noe effekt i kartet
+  const moveLayer = (direction: "up" | "down", layerId: KartlagId) => {
+    const layer = mappedLayers.find((mappedLayer) => mappedLayer.sourceId === layerId);
+
+    if (layer) {
+      const indexDifference = direction === "up" ? -1 : 1;
+      const index = mappedLayers.indexOf(layer);
+      const newZIndexes = [...mappedLayers];
+      newZIndexes.splice(index, 1);
+      newZIndexes.splice(index + indexDifference, 0, layer);
+      setMappedLayers(newZIndexes);
+    }
+  };
 
   useEffect(() => {
     let isMounted = true;

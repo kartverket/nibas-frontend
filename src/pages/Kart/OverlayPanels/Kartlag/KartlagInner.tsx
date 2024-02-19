@@ -1,4 +1,4 @@
-import { IconButton } from "@kvib/react";
+import { Checkbox } from "@kvib/react";
 import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { styled } from "styled-components";
 import { MappedLayer } from "utils/getLayersFromWMS";
@@ -32,23 +32,17 @@ const KartlagInner = ({ mappedLayer, isMainLayer }: Props) => {
 
   return (
     <Container>
-      <span>{mappedLayer.title}</span>
-      <IconButton
-        variant="ghost"
-        icon={isVisible ? "visibility" : "visibility_off"}
-        aria-label={isVisible ? `Fjern ${mappedLayer.title}` : `Vis ${mappedLayer.title}`}
-        onClick={handleToggle}
-      />
+      <Checkbox isChecked={isVisible} onChange={handleToggle}>
+        {mappedLayer.title}
+      </Checkbox>
     </Container>
   );
 };
 
 const Container = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 16px;
+  padding: 16px;
   background: var(--kvib-colors-chakra-body-bg);
+  border-radius: 8px;
 `;
 
 export default KartlagInner;
