@@ -10,6 +10,7 @@ import useSelectPoint from "./useSelectPoint";
 import { useToolbar } from "contexts/ToolbarContext";
 import { pixelTolerance } from "./constants";
 import { selectedPointStyle } from "utils/map/layerStyles";
+import { Collection } from "ol";
 
 const useInteractions = () => {
   const { modify } = useModify();
@@ -31,10 +32,12 @@ const useInteractions = () => {
         snaps.push(snap);
         hovers.push(
           new Modify({
-            source,
             condition: () => false,
             style: selectedPointStyle,
             pixelTolerance: pixelTolerance,
+            features: new Collection(
+              source.getFeatures().filter((feature) => !feature.getId()?.toString().includes("representasjonspunkt")),
+            ),
           }),
         );
       }
