@@ -10,6 +10,7 @@ import ToolbarButton from "./ToolbarButton";
 import ToolbarMenus from "./ToolbarMenus";
 import ToolbarPopups from "./ToolbarPopups";
 import { ConditionalHide } from "components/ConditionalShowHide";
+import { Draw } from "ol/interaction";
 
 const Toolbar = () => {
   const { activeTool, activeModeTools, toggleTool, toggleModeTool, enableModeTool, disableModeTool } = useToolbar();
@@ -52,6 +53,25 @@ const Toolbar = () => {
     });
   };
 
+  const isPanningAllowed = (): boolean => {
+    if (!isEditMode) return false;
+
+    const drawInteraction = map
+      .getInteractions()
+      .getArray()
+      .find((interaction) => interaction instanceof Draw);
+
+    if (drawInteraction) {
+      const revision = drawInteraction.getRevision();
+
+      if (revision) {
+        return revision === 0;
+      }
+    }
+
+    return true;
+  };
+
   useKeyboardShortcut("layers", toggleKartlag);
   useKeyboardShortcut("move", () => enableModeTool("move"));
   useKeyboardShortcut("edit", () => disableModeTool("move"), isEditMode);
@@ -62,7 +82,7 @@ const Toolbar = () => {
     activeModeTools.includes("move"),
     () => enableModeTool("move"),
     () => disableModeTool("move"),
-    isEditMode,
+    isPanningAllowed,
   );
 
   return (
