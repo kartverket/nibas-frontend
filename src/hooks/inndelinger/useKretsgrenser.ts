@@ -8,13 +8,15 @@ import { Kretstype } from "contexts/InndelingerKretsContext";
 import { useUtkast, useUtkastFeature } from "contexts/UtkastContext";
 import { LayerId } from "hooks/layers/types";
 import useAsyncFeatures from "hooks/useAsyncFeatures";
-import { getFeaturesFromGeoJson } from "utils/map/geoJson";
-import { removeFeaturesFromSourceByIds, getFeatureId } from "utils/map/source";
+import { getFeatureFromGeoJson, getFeaturesFromGeoJson } from "utils/map/geoJson";
+import { removeFeaturesFromSourceByIds, getFeatureId, getRepresentasjonspunktId } from "utils/map/source";
 import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
 import { stemmekretsgrenserFetcher } from "api/stemmekrets";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { getAllVisibleFeatures, getZoomMode, zoomToFeatures } from "utils/map";
 import { getLayerById } from "utils/map/layers";
+import { GrunnkretsResponse, StemmekretsResponse } from "../../types/api";
+import { GeoJSONFeature } from "ol/format/GeoJSON";
 
 const getKretserByKommuneUrl = (type: Kretstype) => {
   if (type === "grunnkrets") {
@@ -32,6 +34,18 @@ const getGrenserForKretserByKommuneUrl = (type: Kretstype) => {
 
   // her må det være stemmekrets
   return "/v1/kommuner/{id}/stemmekretsgrenser";
+};
+
+const getRepresentasjonspunktFeatureForKrets = (krets: StemmekretsResponse | GrunnkretsResponse): GeoJSONFeature => {
+  return getFeatureFromGeoJson({
+    ...krets.representasjonspunkt,
+    id: getRepresentasjonspunktId(krets.id.lokalid.value),
+    properties: {
+      ...krets.representasjonspunkt.properties,
+      name: (krets as StemmekretsResponse).stemmekretsnavn || (krets as GrunnkretsResponse).navn,
+      number: (krets as StemmekretsResponse).stemmekretsnummer || (krets as GrunnkretsResponse).grunnkretsnummer,
+    },
+  });
 };
 
 const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
@@ -61,8 +75,8 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   const allFeatures = useMemo(() => {
     if (!utkastGeoJsons || !kretserByKommune) return null;
 
-    const representasjonspunktFeatures = kretserByKommune?.flatMap((krets) =>
-      getFeaturesFromGeoJson(krets.representasjonspunkt),
+    const representasjonspunktFeatures = kretserByKommune?.map((krets) =>
+      getRepresentasjonspunktFeatureForKrets(krets),
     );
 
     return utkastGeoJsons.features.flatMap(getFeaturesFromGeoJson).concat(representasjonspunktFeatures);
