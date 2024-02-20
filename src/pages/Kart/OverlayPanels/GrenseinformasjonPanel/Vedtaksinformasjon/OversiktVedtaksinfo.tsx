@@ -48,7 +48,7 @@ export const OversiktVedtaksinfo = ({ feature }: { feature: Feature }) => {
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const isAllowedGrense =
     (feature.getProperties() as FeatureProperties).type === "Kommunegrense" &&
-    metadata.common?.gyldigTil === undefined &&
+    !metadata.common?.gyldigTil &&
     (getCurrentlyEditingType() === "grunnkrets" || getCurrentlyEditingType() == "stemmekrets");
 
   const closeModal = () => {
