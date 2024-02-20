@@ -10,7 +10,13 @@ export const Tegnforklaring = ({ color, dotted, text }: TegnforklaringProps) => 
   return (
     <Wrapper>
       <LineWrapper>
-        <Line $dotted={dotted} $color={color} />
+        <Line $dotted={dotted} $color={color}>
+          <DotWrapper>
+            <Dot $color={color} />
+            <Dot $color={color} $endPoint={false} />
+            <Dot $color={color} />
+          </DotWrapper>
+        </Line>
       </LineWrapper>
       <TextContent>{text}</TextContent>
     </Wrapper>
@@ -20,16 +26,17 @@ export const Tegnforklaring = ({ color, dotted, text }: TegnforklaringProps) => 
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
-  margin-bottom: 10px;
+  margin-bottom: 14px;
 `;
 
 const TextContent = styled.div`
-  flex: 3;
-  margin-left: 20px;
+  flex: 4;
+  margin-left: 16px;
   font-weight: 600;
 `;
 
 const LineWrapper = styled.div`
+  position: relative;
   flex: 1;
 `;
 
@@ -38,7 +45,29 @@ type LineProps = {
   $dotted: boolean;
 };
 
+type DotProps = {
+  $color: string;
+  $endPoint?: boolean;
+};
+
 const Line = styled.div<LineProps>`
-  margin-top: 12px;
-  border-bottom: ${(props) => `4px ${props.$dotted ? "dotted" : "solid"} ${props.$color}`};
+  margin-top: 10px;
+  border-bottom: ${(props) => `4px ${props.$dotted ? "dashed" : "solid"} ${props.$color}`};
+`;
+
+const DotWrapper = styled.div`
+  position: absolute;
+  top: 7px;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+const Dot = styled.div<DotProps>`
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  background: ${(props) => (props.$endPoint !== false ? "white" : props.$color)};
+  border: ${(props) => `${props.$endPoint !== false ? "3px" : "0"} solid ${props.$color}`};
 `;
