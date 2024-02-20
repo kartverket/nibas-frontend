@@ -2,7 +2,7 @@ import { Button, Icon, Text, Tooltip, useDisclosure } from "@kvib/react";
 import { styled } from "styled-components";
 import { Feature } from "ol";
 import { VedtaksinfoDetaljer } from "./VedtaksinfoDetaljer";
-import { FeatureProperties, Metadata } from "types/api";
+import { Metadata } from "types/api";
 import { useState } from "react";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 
