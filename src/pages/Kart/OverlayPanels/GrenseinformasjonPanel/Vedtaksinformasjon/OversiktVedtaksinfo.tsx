@@ -121,7 +121,7 @@ const Datofelt = styled.div`
 const VedtaksinfoContent = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-between:;
+  justify-content: space-between;
   margin-top: 10px;
   margin-bottom: 15px;
   width: 100%
