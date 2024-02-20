@@ -257,11 +257,8 @@ const FieldContainer = styled.div`
 `;
 const Row = styled.div`
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
   gap: 20px;
-  margin: 0px;
-  padding: 0px;
 `;
 
 const Vedtaksfelter = styled.div`
