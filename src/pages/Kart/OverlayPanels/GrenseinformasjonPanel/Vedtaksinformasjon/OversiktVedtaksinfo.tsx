@@ -4,8 +4,6 @@ import { Feature } from "ol";
 import { VedtaksinfoDetaljer } from "./VedtaksinfoDetaljer";
 import { FeatureProperties, Metadata } from "types/api";
 import { useState } from "react";
-import { GrenseType } from "hooks/layers/types";
-import useIsGrenseinformasjonPanelDisabled from "../../hooks/useIsGrenseInformasjonPanelDisabled";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 
 type Referanse = {

@@ -1,7 +1,6 @@
-import { Card, IconButton, Link, Text } from "@kvib/react";
+import { Card, IconButton, Text } from "@kvib/react";
 import { Referanse } from "./OversiktVedtaksinfo";
 import { styled } from "styled-components";
-import { Icon } from "@chakra-ui/icon";
 
 type Props = {
   deleteRef: () => void;
