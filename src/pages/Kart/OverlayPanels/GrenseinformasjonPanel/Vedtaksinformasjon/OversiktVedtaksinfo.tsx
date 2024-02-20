@@ -4,7 +4,6 @@ import { Feature } from "ol";
 import { VedtaksinfoDetaljer } from "./VedtaksinfoDetaljer";
 import { Metadata } from "types/api";
 import { useState } from "react";
-import { useEditAllGrenser } from "contexts/EditGrenserContext";
 
 type Referanse = {
   beskrivelse: string;
