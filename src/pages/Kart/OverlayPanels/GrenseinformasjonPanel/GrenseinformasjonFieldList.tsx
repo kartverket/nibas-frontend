@@ -11,6 +11,7 @@ import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 import { EditingType, useEditAllGrenser } from "contexts/EditGrenserContext";
 import { TilhorighetField } from "./TilhorighetField";
 import { OversiktVedtaksinfo } from "./Vedtaksinformasjon/OversiktVedtaksinfo";
+import { isAdministrativGrense } from "utils/grenser";
 
 export type Inputs = {
   uuid: string;
@@ -59,8 +60,8 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
   };
 
   const shouldDisplayDokumentasjonsreferanse =
-    (feature.getProperties() as FeatureProperties).type === "Kommunegrense" &&
-    !metadata.common?.gyldigTil &&
+    isAdministrativGrense(properties.type as GrenseType) &&
+    !gyldigTil &&
     (getCurrentlyEditingType() === "grunnkrets" || getCurrentlyEditingType() == "stemmekrets");
 
   return (
