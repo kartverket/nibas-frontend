@@ -3,6 +3,7 @@ import { VedtakinfoRow } from "./VedtakinfoRow";
 import { BorderTop, InputName, Referanse, VedtakinfoForm } from "./OversiktVedtaksinfo";
 import { styled } from "styled-components";
 import { FieldError, UseFormClearErrors, UseFormRegister, UseFormSetError } from "react-hook-form";
+import { useState } from "react";
 
 type ReferanseInputProps = {
   registerName: keyof InputName;
@@ -29,6 +30,7 @@ export const ReferanseInput = ({
   setError,
   clearErrors,
 }: ReferanseInputProps) => {
+  const [appendButtonDisabled, setAppendButtonDisabled] = useState(true);
   function clearInput(element: HTMLInputElement) {
     element.value = "";
   }
@@ -52,6 +54,10 @@ export const ReferanseInput = ({
             {...register(registerName, { pattern: pattern })}
             placeholder={placeholder}
             backgroundColor={"white"}
+            onChange={(e) => {
+              if (e.target.value == "") setAppendButtonDisabled(true);
+              else setAppendButtonDisabled(false);
+            }}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 const element = e.target as HTMLInputElement;
@@ -61,6 +67,7 @@ export const ReferanseInput = ({
             }}
           />
           <LeggTilKnapp
+            isDisabled={appendButtonDisabled}
             onClick={() => {
               const element = document.querySelector(`input[name=${registerName}]`) as HTMLInputElement;
               appendReferanse(element);

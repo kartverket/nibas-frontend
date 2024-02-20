@@ -83,6 +83,7 @@ export const VedtaksinfoBody = ({
                 <Input
                   {...register("rettskildeTittel", {
                     required: "Feltet er påkrevd",
+                    maxLength: 256,
                   })}
                   backgroundColor={"white"}
                   placeholder={"Skriv inn tittelen på vedtaket"}
@@ -150,6 +151,7 @@ export const VedtaksinfoBody = ({
                         }
                       >
                         <Datepicker
+                          id={"vedtakGyldigFra"}
                           defaultSelected={field.value}
                           onChange={(e): void => {
                             field.onChange(new Date(e.target.value));
@@ -177,6 +179,7 @@ export const VedtaksinfoBody = ({
                         }
                       >
                         <Datepicker
+                          fromDate={new Date()}
                           defaultSelected={field.value}
                           onChange={(e): void => {
                             field.onChange(new Date(e.target.value));

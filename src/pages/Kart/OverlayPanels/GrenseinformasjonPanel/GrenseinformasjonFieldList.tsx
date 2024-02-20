@@ -58,6 +58,11 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
     return [];
   };
 
+  const shouldDisplayDokumentasjonsreferanse =
+    (feature.getProperties() as FeatureProperties).type === "Kommunegrense" &&
+    !metadata.common?.gyldigTil &&
+    (getCurrentlyEditingType() === "grunnkrets" || getCurrentlyEditingType() == "stemmekrets");
+
   return (
     <Container>
       <GrenseinformasjonField
@@ -189,7 +194,7 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
         fieldLabel="Ekstra informasjon"
         renderItem={(register) => <Textarea placeholder="Fyll inn ekstra informasjon" {...register} />}
       />
-      <OversiktVedtaksinfo feature={feature} />
+      {shouldDisplayDokumentasjonsreferanse && <OversiktVedtaksinfo feature={feature} />}
     </Container>
   );
 };

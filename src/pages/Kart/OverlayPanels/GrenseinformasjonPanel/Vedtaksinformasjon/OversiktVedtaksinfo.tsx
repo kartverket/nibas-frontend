@@ -43,11 +43,6 @@ export const OversiktVedtaksinfo = ({ feature }: { feature: Feature }) => {
   const metadata = feature.getProperties()?.metadata as Metadata;
   const vedtaksinfoCollection = metadata.dokumentasjonsreferanser;
   const [selectedVedtaksinfoIndex, setSelectedVedtaksinfoIndex] = useState<number | undefined>(undefined);
-  const { getCurrentlyEditingType } = useEditAllGrenser();
-  const isAllowedGrense =
-    (feature.getProperties() as FeatureProperties).type === "Kommunegrense" &&
-    !metadata.common?.gyldigTil &&
-    (getCurrentlyEditingType() === "grunnkrets" || getCurrentlyEditingType() == "stemmekrets");
 
   const closeModal = () => {
     setDisplayMode(false);
@@ -67,7 +62,6 @@ export const OversiktVedtaksinfo = ({ feature }: { feature: Feature }) => {
           </InfoIcon>
         </Tooltip>
         <Button
-          isDisabled={!isAllowedGrense}
           size={"sm"}
           variant="secondary"
           rightIcon="add"
@@ -85,7 +79,6 @@ export const OversiktVedtaksinfo = ({ feature }: { feature: Feature }) => {
         ?.filter((vedtak) => !vedtak.shouldArchive)
         .map((vedtak, index) => (
           <VedtaksinfoCard
-            isAllowedGrense={isAllowedGrense}
             key={vedtak.id || vedtak.rettskildeTittel}
             title={vedtak.rettskildeTittel}
             date={vedtak.fastsettingsdato}
@@ -108,30 +101,13 @@ export const OversiktVedtaksinfo = ({ feature }: { feature: Feature }) => {
   );
 };
 
-const VedtaksinfoCard = ({
-  title,
-  onClick,
-  date,
-  isAllowedGrense,
-}: {
-  isAllowedGrense: boolean;
-  title: string;
-  date: string;
-  onClick: () => void;
-}) => {
+const VedtaksinfoCard = ({ title, onClick, date }: { title: string; date: string; onClick: () => void }) => {
   const formattedDate = new Date(date).toLocaleDateString("nb-NO");
   return (
     <VedtaksinfoContent>
       <Datofelt>{formattedDate}</Datofelt>
       <VedtaksinfoTitle>{title}</VedtaksinfoTitle>
-      <Button
-        onClick={onClick}
-        rightIcon="folder_open"
-        variant="secondary"
-        colorScheme="blue"
-        size="xs"
-        isDisabled={!isAllowedGrense}
-      >
+      <Button onClick={onClick} rightIcon="folder_open" variant="secondary" colorScheme="blue" size="xs">
         Åpne
       </Button>
     </VedtaksinfoContent>

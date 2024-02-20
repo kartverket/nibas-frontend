@@ -1,14 +1,4 @@
-import {
-  Button,
-  IconButton,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  Text,
-  useToast,
-} from "@kvib/react";
+import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, useToast } from "@kvib/react";
 import { Feature } from "ol";
 import { VedtaksinfoBody } from "./VedtaksinfoBody";
 import { BorderBottom, BorderTop, Referanse, VedtakinfoForm } from "./OversiktVedtaksinfo";
@@ -16,7 +6,6 @@ import { styled } from "styled-components";
 import { mapFromFormToApi, useVedtaksinfoForm } from "../../hooks/useVedtaksinfoForm";
 import { Metadata } from "types/api";
 import { useState } from "react";
-import { id } from "date-fns/locale";
 
 export const VedtaksinfoDetaljer = ({
   isOpen,
@@ -67,6 +56,7 @@ export const VedtaksinfoDetaljer = ({
     reset(undefined, { keepDefaultValues: true });
     setDokref(undefined);
     setInternref(undefined);
+    setRedigeringsmodus(false);
   };
   const toast = useToast();
 
@@ -81,7 +71,20 @@ export const VedtaksinfoDetaljer = ({
     }
   };
 
+  const isFormValidOnSubmit = (data: VedtakinfoForm) => {
+    if (data.vedtakGyldigTil && data.vedtakGyldigFra && data.vedtakGyldigFra > data.vedtakGyldigTil) {
+      setError("vedtakGyldigTil", {
+        message: 'Vedtakets "gyldig fra"-dato kan ikke overskride vedtakets "gyldig til"-dato.',
+      });
+      return false;
+    }
+
+    return true;
+  };
+
   const onSubmit = (data: VedtakinfoForm) => {
+    if (!isFormValidOnSubmit(data)) return;
+
     updateFeature(data);
     if (redigeringsmodus) {
       toggleEndreVedtak();
