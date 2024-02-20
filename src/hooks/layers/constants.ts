@@ -28,8 +28,8 @@ export const kartlagLayers: Record<KartlagId, TileLayer<TileWMS | WMTS> | Vector
   sjokartElektroniske: createTileLayerFromKartlagSource("sjokartElektroniske"),
 };
 
-export const editSource = new VectorSource({ useSpatialIndex: false });
-export const archivedSource = new VectorSource({ useSpatialIndex: false });
+export const editSource = new VectorSource();
+export const archivedSource = new VectorSource();
 
 const grenseStyle =
   (grenseId: GrenseId): StyleFunction =>

@@ -84,7 +84,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     setUtkast(undefined);
     resetMapView();
     resetKartlag();
-    clearHistory({ hasPreviouslySavedHistory: false });
+    clearHistory();
     clearFeatureStyles();
     resetAndClearAllLayers();
     closeOverlayPanel();
@@ -179,7 +179,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
       const updatedUtkast = (await response.json()) as UtkastResponse;
       await mutate(updatedUtkast);
       await globalMutate(["/v1/utkast", tokenHolderFunc()?.token]);
-      clearHistory({ hasPreviouslySavedHistory: true });
+      clearHistory();
 
       // Ved lagring av utkast ble det mismatch mellom state i OpenLayers og state i react
       // For å forhindre dette sletter vi alle grenser med midlertidig id fra det gamle utkastet, slik at disse ikke lenger kan redigeres i OL
