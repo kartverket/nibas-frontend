@@ -30,7 +30,7 @@ type Props = {
   feature: Feature<Geometry>;
 };
 
-export const Container = styled.div`
+const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -173,6 +173,7 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
           )
         }
       />
+
       <GrenseinformasjonField
         feature={feature}
         tooltipLabel="Antatt posisjonsnøyaktighet i grunnriss (x, y) oppgitt i cm. Den nøyaktigheten som angis bør være så nær det virkelige objektet som mulig."

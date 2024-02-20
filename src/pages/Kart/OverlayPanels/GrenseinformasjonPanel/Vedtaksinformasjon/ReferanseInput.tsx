@@ -53,7 +53,7 @@ export const ReferanseInput = ({
           <Input
             {...register(registerName, { pattern: pattern })}
             placeholder={placeholder}
-            backgroundColor={"white"}
+            backgroundColor="white"
             onChange={(e) => {
               if (e.target.value == "") setAppendButtonDisabled(true);
               else setAppendButtonDisabled(false);

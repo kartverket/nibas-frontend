@@ -6,7 +6,7 @@ import { AntallReferanser } from "./AntallReferanser";
 import { ReferanserPaginated } from "./ReferanserPaginated";
 import { ReferanseInput } from "./ReferanseInput";
 import { useState } from "react";
-import { clear } from "console";
+
 export type ReferanserProps = {
   deleteInternref: (index: number) => void;
   deleteDokref: (index: number) => void;

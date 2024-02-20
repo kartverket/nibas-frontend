@@ -39,9 +39,12 @@ export const OversiktVedtaksinfo = ({ feature }: { feature: Feature }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [displayMode, setDisplayMode] = useState(false);
   const [iconHovered, setIconHovered] = useState(false);
-  const metadata = feature.getProperties()?.metadata as Metadata;
-  const vedtaksinfoCollection = metadata.dokumentasjonsreferanser;
   const [selectedVedtaksinfoIndex, setSelectedVedtaksinfoIndex] = useState<number | undefined>(undefined);
+
+  if (!feature.getProperties()?.metadata) return;
+
+  const metadata = feature.getProperties().metadata as Metadata;
+  const vedtaksinfoCollection = metadata.dokumentasjonsreferanser;
 
   const closeModal = () => {
     setDisplayMode(false);
@@ -50,7 +53,7 @@ export const OversiktVedtaksinfo = ({ feature }: { feature: Feature }) => {
   };
 
   return (
-    <div>
+    <Container>
       <OversiktHeader>
         <Tooltip label="Henvisning til dokumenter som er med å fastlegge aktuell grense." hasArrow placement="bottom">
           <InfoIcon onMouseOver={() => setIconHovered(true)} onMouseOut={() => setIconHovered(false)}>
@@ -96,7 +99,7 @@ export const OversiktVedtaksinfo = ({ feature }: { feature: Feature }) => {
         displayMode={displayMode}
         setDisplayMode={setDisplayMode}
       />
-    </div>
+    </Container>
   );
 };
 
@@ -113,6 +116,10 @@ const VedtaksinfoCard = ({ title, onClick, date }: { title: string; date: string
   );
 };
 
+const Container = styled.div`
+  padding-bottom: 32px;
+`;
+
 const Datofelt = styled.div`
   margin-right: 20px;
 `;
@@ -123,7 +130,7 @@ const VedtaksinfoContent = styled.div`
   justify-content: space-between;
   margin-top: 10px;
   margin-bottom: 15px;
-  width: 100%
+  width: 100%;
 `;
 
 const VedtaksinfoTitle = styled.div`
