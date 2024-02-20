@@ -168,8 +168,8 @@ export const VedtaksinfoBody = ({
                       <VedtakinfoField
                         errors={errors.vedtakGyldigTil}
                         displayMode={displayMode}
-                        tooltipLabel=""
-                        title="Tidspunktet når objektet opphørte å eksistere i den virkelige verden"
+                        tooltipLabel="Tidspunktet når objektet opphørte å eksistere i den virkelige verden"
+                        title="Gyldig til"
                         value={
                           vedtaksinformasjon?.vedtakGyldigTil
                             ? new Date(vedtaksinformasjon?.vedtakGyldigTil).toLocaleDateString("nb-NO")
