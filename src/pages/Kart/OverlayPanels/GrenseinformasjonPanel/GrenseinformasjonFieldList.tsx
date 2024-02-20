@@ -10,6 +10,8 @@ import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
 import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 import { EditingType, useEditAllGrenser } from "contexts/EditGrenserContext";
 import { TilhorighetField } from "./TilhorighetField";
+import { OversiktVedtaksinfo } from "./Vedtaksinformasjon/OversiktVedtaksinfo";
+import { isAdministrativGrense } from "utils/grenser";
 
 export type Inputs = {
   uuid: string;
@@ -56,6 +58,11 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
 
     return [];
   };
+
+  const shouldDisplayDokumentasjonsreferanse =
+    isAdministrativGrense(properties.type as GrenseType) &&
+    !gyldigTil &&
+    (getCurrentlyEditingType() === "grunnkrets" || getCurrentlyEditingType() == "stemmekrets");
 
   return (
     <Container>
@@ -188,6 +195,7 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
         fieldLabel="Ekstra informasjon"
         renderItem={(register) => <Textarea placeholder="Fyll inn ekstra informasjon" {...register} />}
       />
+      {shouldDisplayDokumentasjonsreferanse && <OversiktVedtaksinfo feature={feature} />}
     </Container>
   );
 };
