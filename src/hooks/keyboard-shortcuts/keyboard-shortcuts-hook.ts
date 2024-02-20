@@ -43,7 +43,7 @@ export const useHoldButtonToggle = (
   currentState: boolean,
   onClick?: () => unknown,
   onRelease?: () => unknown,
-  enabled: boolean = true,
+  condition?: () => boolean,
 ) => {
   const [keyIsDown, setKeyIsDown] = useState(false);
   const [isSetByHolding, setIsSetByHolding] = useState(false);
@@ -52,7 +52,9 @@ export const useHoldButtonToggle = (
     const keyboardEventHandler = (event: KeyboardEvent) => {
       const isKeyDownEvent = event.type === "keydown";
 
-      if (enabled && event.key.toLowerCase() === button.toLowerCase() && isValidTarget(event.target)) {
+      if (event.key.toLowerCase() === button.toLowerCase() && isValidTarget(event.target)) {
+        if (condition && !condition()) return;
+
         event.stopPropagation();
         event.preventDefault();
 
