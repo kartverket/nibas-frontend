@@ -11,6 +11,12 @@ export const getFeaturesFromGeoJson = (json: GeoJSONFeature | GeoJSONFeatureColl
   }) as Feature<Geometry>[];
 };
 
+export const getFeatureFromGeoJson = (json: GeoJSONFeature) => {
+  return geoJson.readFeature(json, {
+    dataProjection: "EPSG:25833",
+  }) as Feature<Geometry>;
+};
+
 export const geoJsonToSource = (json: GeoJSONFeature | GeoJSONFeatureCollection) => {
   return new VectorSource({
     features: getFeaturesFromGeoJson(json),
