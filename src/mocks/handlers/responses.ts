@@ -56,6 +56,7 @@ export const mockGeoJsonFeatureResponse: GeoJSONFeatureCollection = {
           },
           dokumentasjonsreferanser: [
             {
+              shouldArchive: false,
               id: "123",
               dokumentlenker: [
                 {
@@ -74,6 +75,8 @@ export const mockGeoJsonFeatureResponse: GeoJSONFeatureCollection = {
               ],
               rettskildeId: "RID",
               rettskildeTittel: "Rettskildetittel",
+              vedtakGyldigFra: "2020-06-16",
+              vedtakGyldigTil: "2020-06-17",
             },
           ],
           foelgerTerrengdetalj: { id: "IKA", href: "" },
@@ -224,10 +227,10 @@ export const mockDetailedGrunnkrets2: GrunnkretsResponse = {
   oppdateringsdato: "2022-12-31",
   endringstype: "Retting",
   kommuneIdentifikator: {
-    gyldighetsdato: "2022-06-16",
     lokalid: {
-      value: "2",
+      value: "a379eb0a-7bae-4fc9-ab07-cf0c7a28bdb7",
     },
+    gyldighetsdato: "2022-07-01",
   },
 };
 
@@ -426,7 +429,6 @@ export const mockStemmekretser: StemmekretsRef[] = [
         value: mockStemmekrets1.id.lokalid.value,
       },
     },
-
     kommunenummer: {
       id: "12345",
       kodeverdi: "4321",
