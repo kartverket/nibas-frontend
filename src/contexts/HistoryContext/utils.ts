@@ -9,7 +9,7 @@ import {
   PropertyEntry,
   GrenseArkiveringsEntry,
 } from "./types";
-import { editSource } from "hooks/layers/constants";
+import { archivedSource, editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
 import { setDefaultFeatureProperties } from "utils/features";
@@ -112,7 +112,7 @@ export const redoArchiving = (entry: GrenseArkiveringsEntry) => {
 };
 
 export const undoArchving = (entry: GrenseArkiveringsEntry) => {
-  const features = entry.changes.map((c) => editSource.getFeatureById(c.id) as Feature<Geometry>);
+  const features = entry.changes.map((c) => archivedSource.getFeatureById(c.id) as Feature<Geometry>);
   const featureIds = entry.changes.map((c) => c.id);
 
   addFeaturesToSource("edit", features);
