@@ -89,7 +89,7 @@ const useDraw = () => {
         // Vi ønsker å avslutte tegningen hvis man har startet en tegning, og så treffer et endepunkt, så vi unngår rar geometri
         // Dette gjøres ved å bumpe et versjonstall med draw.changed() hvis denne conditionen returnerer true. Hvis versjonen da er høyere
         // enn én (som den blir av første endring), vil vi avslutte tegningen
-        if (draw.getRevision() > 1) {
+        if (draw.getRevision() > 0) {
           draw.appendCoordinates([event.coordinate]);
           draw.finishDrawing();
           return false;
