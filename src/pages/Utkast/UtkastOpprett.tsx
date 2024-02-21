@@ -16,6 +16,7 @@ import {
   FormHelperText,
   Select,
   useToast,
+  FormErrorMessage,
 } from "@kvib/react";
 import { createUtkast } from "api/utkast";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
@@ -42,10 +43,12 @@ const UtkastOpprett = () => {
 
   const {
     register,
+    formState: { errors },
     handleSubmit,
     getValues,
-    formState: { dirtyFields },
   } = useForm<UtkastFormData>({
+    mode: "onSubmit",
+    reValidateMode: "onChange",
     defaultValues: { navn: "", endringstype: "" },
   });
 
@@ -83,64 +86,66 @@ const UtkastOpprett = () => {
       <Modal isOpen={isOpen} onClose={onClose} size="xl" isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Opprett et nytt utkast</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Form onSubmit={handleSubmit(opprettUtkast)}>
-              <Section>
-                <FormLabel>Navn på utkastet</FormLabel>
-                <FormHelperText>
-                  Velg et beskrivende navn som gjør at andre kan forstå hva utkastet inneholder.
-                </FormHelperText>
+          <form onSubmit={handleSubmit(opprettUtkast)}>
+            <ModalHeader>Opprett et nytt utkast</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <FormContent onSubmit={handleSubmit(opprettUtkast)}>
+                <FormSection isInvalid={!!errors.navn}>
+                  <FormLabel>Navn på utkastet</FormLabel>
+                  <FormHelperText>
+                    Velg et beskrivende navn som gjør at andre kan forstå hva utkastet inneholder.
+                  </FormHelperText>
 
-                <Input
-                  {...register("navn")}
-                  type="text"
-                  placeholder="f.eks. Sammenslåing av Rosenborg og Sentrum i Trondheim"
-                />
-              </Section>
-              <Section>
-                <FormLabel>Endringstype</FormLabel>
-                <FormHelperText>Typen påvirker hvilke verktøy som er tilgjengelig under redigeringen.</FormHelperText>
-                <Select placeholder="Velg en endringstype fra listen" {...register("endringstype")}>
-                  {endringstyper.map((type) => (
-                    <option key={type} value={type}>
-                      {type}
-                    </option>
-                  ))}
-                </Select>
-              </Section>
-            </Form>
-          </ModalBody>
-          <ModalFooter>
-            <ButtonGroup>
-              <Button variant="tertiary" onClick={onClose}>
-                Avbryt
-              </Button>
-              <Button
-                type="submit"
-                onClick={opprettUtkast}
-                isLoading={isLoading}
-                isDisabled={!(dirtyFields.navn && dirtyFields.endringstype)}
-              >
-                Opprett utkast
-              </Button>
-            </ButtonGroup>
-          </ModalFooter>
+                  <Input
+                    {...register("navn", { required: "Utkastet må ha et navn" })}
+                    type="text"
+                    placeholder="f.eks. Sammenslåing av Rosenborg og Sentrum i Trondheim"
+                  />
+                  {!!errors.navn && <FormErrorMessage errorMessage={errors.navn.message} />}
+                </FormSection>
+                <FormSection isInvalid={!!errors.endringstype}>
+                  <FormLabel>Endringstype</FormLabel>
+                  <FormHelperText>Typen påvirker hvilke verktøy som er tilgjengelig under redigeringen.</FormHelperText>
+                  <Select
+                    placeholder="Velg en endringstype fra listen"
+                    {...register("endringstype", { required: "Du må velge en endringstype for utkastet" })}
+                  >
+                    {endringstyper.map((type) => (
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
+                    ))}
+                  </Select>
+                  {!!errors.endringstype && <FormErrorMessage errorMessage={errors.endringstype.message} />}
+                </FormSection>
+              </FormContent>
+            </ModalBody>
+            <ModalFooter>
+              <ButtonGroup>
+                <Button variant="tertiary" onClick={handleSubmit(opprettUtkast)}>
+                  Avbryt
+                </Button>
+                <Button type="submit" isLoading={isLoading}>
+                  Opprett utkast
+                </Button>
+              </ButtonGroup>
+            </ModalFooter>
+          </form>
         </ModalContent>
       </Modal>
     </>
   );
 };
 
-const Form = styled.form`
+const FormContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: 32px;
 `;
 
 // TODO: kvib har ikke 500-variant av mulish, bruker bold i mellomtiden
-const Section = styled(FormControl)`
+const FormSection = styled(FormControl)`
   display: flex;
   flex-direction: column;
   gap: 8px;
