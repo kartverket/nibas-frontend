@@ -20,6 +20,7 @@ import useToastCounter from "hooks/useToastCounter";
 import { Geometry } from "ol/geom";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import useSplit from "./useSplit";
+import { equals } from "ol/coordinate";
 
 const useModify = () => {
   const { addHistoryEntry } = useHistory();
@@ -55,8 +56,12 @@ const useModify = () => {
       condition: (event: MapBrowserEvent<MouseEvent>) => {
         if (activeModeTools.includes("move")) return false;
         if (disallowedPointModes.includes(activeTool)) return false;
-        if (activeTool === "detach" && selectedFeatures.length === 0) return false;
+        if (activeTool === "detach") {
+          if (selectedFeatures.length !== 1) return false;
 
+          // Ved detach mode så er den eneste featuren som kan modifiseres den valgte featuren, så kan anta at condition er god her
+          return true;
+        }
         // TODO: håndteringen her er halvveis etter omskriving tilbake til feature/source-split
         // man kan endre arkiverte features via endepunkter
         // løsningen er å ha arkiverte features i eget lag, som steffen jobber med iirc
@@ -198,7 +203,6 @@ const useModify = () => {
     };
 
     const updateFeatureOnModification = async (event: ModifyEvent) => {
-      // console.log(event.features);
       if (activeTool === "detach") {
         if (selectedFeatures.length === 0) return;
 
@@ -215,12 +219,25 @@ const useModify = () => {
         // Hvis vi ender opp på én grense, må vi sjekke om det er et endepunkt vi har landet på, for ikke-endepunkter oppfører seg annerledes
         if (nonSelectedActiveFeatures.length === 1) {
           const nonSelectedActiveFeature = nonSelectedActiveFeatures[0] as Feature<LineString>;
+          const nonSelectedActiveFeatureGeometry = nonSelectedActiveFeature.getGeometry() as LineString;
+          if (!nonSelectedActiveFeatureGeometry) return;
+
           const nearbyVertex = findNearbyVertexOnFeature(
-            nonSelectedActiveFeature.getGeometry() as LineString,
+            nonSelectedActiveFeatureGeometry,
             event.mapBrowserEvent.coordinate,
           );
 
           if (nearbyVertex) {
+            const nonSelectedActiveFeatureCoordinates = nonSelectedActiveFeatureGeometry.getCoordinates();
+
+            // Vi trenger ikke gjøre noe hvis man ende opp på samme punkt som man løsrev fra
+            if (
+              equals(nearbyVertex, nonSelectedActiveFeatureCoordinates[0]) ||
+              equals(nearbyVertex, nonSelectedActiveFeatureCoordinates[nonSelectedActiveFeatureCoordinates.length - 1])
+            ) {
+              return;
+            }
+
             const isAccepted = await openAsync();
 
             if (isAccepted) {
@@ -236,6 +253,7 @@ const useModify = () => {
           }
         }
       }
+
       addModificationToHistory(event.features.getArray());
     };
 
