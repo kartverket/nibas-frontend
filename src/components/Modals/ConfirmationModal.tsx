@@ -7,22 +7,30 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  useDisclosure,
 } from "@kvib/react";
 import { ConfirmationModalProps } from "contexts/ConfirmationModalContext";
 
-const ConfirmationModal = ({ title, description, isOpen, onAccept, onDeny }: ConfirmationModalProps) => {
-  const { onClose } = useDisclosure();
+const ConfirmationModal = ({
+  title,
+  description,
+  acceptText,
+  onAccept,
+  declineText,
+  onDecline: onDeny,
+}: ConfirmationModalProps) => {
   return (
-    <Modal isOpen={isOpen} onClose={onDeny ? onDeny : onClose}>
+    <Modal isOpen={true} onClose={onDeny}>
       <ModalOverlay></ModalOverlay>
       <ModalContent>
         <ModalHeader>{title}</ModalHeader>
+        <ModalCloseButton />
         <ModalBody>{description}</ModalBody>
         <ModalFooter>
-          <Button onClick={onAccept}>Ja</Button>
+          <Button variant="ghost" onClick={onDeny}>
+            {declineText ?? "Nei"}
+          </Button>
+          <Button onClick={onAccept}>{acceptText ?? "Ja"}</Button>
         </ModalFooter>
-        <ModalCloseButton>Nei</ModalCloseButton>
       </ModalContent>
     </Modal>
   );

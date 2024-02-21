@@ -18,6 +18,8 @@ import { isFeatureEditable } from "utils/features";
 import { findNearbyVertexOnFeature } from "utils/map";
 import useToastCounter from "hooks/useToastCounter";
 import { Geometry } from "ol/geom";
+import { useConfirmationModal } from "contexts/ConfirmationModalContext";
+import useSplit from "./useSplit";
 
 const useModify = () => {
   const { addHistoryEntry } = useHistory();
@@ -27,6 +29,15 @@ const useModify = () => {
   const { toastCounter: removeToast } = useToastCounter("success", "Punktet ble fjernet", "punkter ble fjernet");
   const { toastCounter: addToast } = useToastCounter("success", "Punktet ble lagt til", "punkter ble lagt til");
   const { getActiveFeaturesAtPixel, getFeaturesAtPixel } = useGetFeatures();
+  const { performFeatureSplit } = useSplit();
+
+  const { openAsync } = useConfirmationModal({
+    title: "Deling av grense",
+    description:
+      "Plasserer man et punkt på noe annet enn et endepunkt vil grensen deles i to deler. Er du sikker på at du vil dele grensen?",
+    acceptText: "Del grense",
+    declineText: "Avbryt",
+  });
 
   // Ønsker helst at redigering ikke skal være aktiv under enkelte verktøy
   const disallowedPointModes: Tool[] = useMemo(() => ["draw", "split", "grenseinfo", "archive", "koordinater"], []);
@@ -176,12 +187,24 @@ const useModify = () => {
       }
       // TODO: hvis man har kjørt en detach vil vi kanskje sjekke om featuren nå er en løs tråd
     };
-    const updateFeatureOnModification = (event: ModifyEvent) => {
+
+    const setPreviousCoordinatesForFeature = (feature: Feature<LineString>) => {
+      const previousFeatureCoordinates = feature.get(previousCoordinateKey);
+
+      if (previousFeatureCoordinates) {
+        const geometry = feature.getGeometry();
+        geometry?.setCoordinates(previousFeatureCoordinates);
+      }
+    };
+
+    const updateFeatureOnModification = async (event: ModifyEvent) => {
       // console.log(event.features);
       if (activeTool === "detach") {
         if (selectedFeatures.length === 0) return;
 
         const activeFeatures = getActiveFeaturesAtPixel(event.mapBrowserEvent, "edit");
+
+        console.log(activeFeatures);
 
         const selectedFeatureIds = selectedFeatures.map((feature) => feature.getId());
         if (selectedFeatureIds.length !== 1) return; // Dette burde ikke skje
@@ -193,23 +216,25 @@ const useModify = () => {
 
         // Hvis vi ender opp på én grense, må vi sjekke om det er et endepunkt vi har landet på, for ikke-endepunkter oppfører seg annerledes
         if (nonSelectedActiveFeatures.length === 1) {
+          const nonSelectedActiveFeature = nonSelectedActiveFeatures[0] as Feature<LineString>;
           const nearbyVertex = findNearbyVertexOnFeature(
-            nonSelectedActiveFeatures[0].getGeometry() as LineString,
+            nonSelectedActiveFeature.getGeometry() as LineString,
             event.mapBrowserEvent.coordinate,
           );
 
           if (nearbyVertex) {
-            // TODO Dele grense her
-          } else {
-            const previousFeatureCoordinates = selectedFeature.get(previousCoordinateKey);
+            const isAccepted = await openAsync();
 
-            if (previousFeatureCoordinates) {
-              const geometry = selectedFeature.getGeometry();
-              geometry?.setCoordinates(previousFeatureCoordinates);
-
-              toast({ title: "Løsrevede punkter kan kun plasseres på andre punkter", status: "warning" });
+            if (isAccepted) {
+              performFeatureSplit(nonSelectedActiveFeature, nearbyVertex);
+            } else {
+              setPreviousCoordinatesForFeature(selectedFeature);
               return;
             }
+          } else {
+            setPreviousCoordinatesForFeature(selectedFeature);
+            toast({ title: "Løsrevede punkter kan kun plasseres på andre punkter", status: "warning" });
+            return;
           }
         }
       }
@@ -221,7 +246,16 @@ const useModify = () => {
     return () => {
       modify.un("modifyend", updateFeatureOnModification);
     };
-  }, [activeTool, addHistoryEntry, getActiveFeaturesAtPixel, modify, selectedFeatures, toast]);
+  }, [
+    activeTool,
+    addHistoryEntry,
+    getActiveFeaturesAtPixel,
+    modify,
+    openAsync,
+    performFeatureSplit,
+    selectedFeatures,
+    toast,
+  ]);
 
   return { modify };
 };
