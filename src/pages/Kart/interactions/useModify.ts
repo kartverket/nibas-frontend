@@ -204,8 +204,6 @@ const useModify = () => {
 
         const activeFeatures = getActiveFeaturesAtPixel(event.mapBrowserEvent, "edit");
 
-        console.log(activeFeatures);
-
         const selectedFeatureIds = selectedFeatures.map((feature) => feature.getId());
         if (selectedFeatureIds.length !== 1) return; // Dette burde ikke skje
         const selectedFeature = selectedFeatures[0];
