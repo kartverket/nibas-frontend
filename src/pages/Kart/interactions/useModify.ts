@@ -206,7 +206,9 @@ const useModify = () => {
       if (activeTool === "detach") {
         if (selectedFeatures.length === 0) return;
 
-        const activeFeatures = getActiveFeaturesAtPixel(event.mapBrowserEvent, "edit");
+        // TODO Kan hende man må gjøre noe mer filtrering her. Det er ikke vits å hente fra kun "edit"
+        // ettersom man må kunne løsrive en grense fra en administrativ grense som per nå ikke er redigerbar
+        const activeFeatures = getActiveFeaturesAtPixel(event.mapBrowserEvent, null);
 
         const selectedFeatureIds = selectedFeatures.map((feature) => feature.getId());
         if (selectedFeatureIds.length !== 1) return; // Dette burde ikke skje
