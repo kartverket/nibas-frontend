@@ -10,7 +10,7 @@ import Style, { StyleFunction } from "ol/style/Style";
 import { map } from "pages/Kart/constants";
 import Text from "ol/style/Text";
 import Point from "ol/geom/Point";
-import { editSource } from "hooks/layers/constants";
+import { archivedSource, editSource } from "hooks/layers/constants";
 import { GrenseId, GrenseType } from "hooks/layers/types";
 import { isFeatureEditable } from "utils/features";
 
@@ -196,10 +196,13 @@ export const updateEditFeatureText = (featureId: string, name?: string, number?:
 
 /**
  * Liten hjelpefunksjon for å slippe så mye typehåndtering når man skal sette stiler
- * @param featureId En gitt feature i editSource som skal få ny stil
+ * @param featureId En gitt feature i editSource eller archivedSource som skal få ny stil
  * @param style Stil fra grenseStyles eller en stilfunksjon
  */
 export const setFeatureStyle = (featureId: string, style: Style[] | StyleFunction) => {
-  const feature = editSource.getFeatureById(featureId) as Feature<Geometry> | null;
-  feature?.setStyle(style);
+  const sources = [archivedSource, editSource];
+  sources.forEach((source) => {
+    const feature = source.getFeatureById(featureId) as Feature<Geometry> | null;
+    feature?.setStyle(style);
+  });
 };
