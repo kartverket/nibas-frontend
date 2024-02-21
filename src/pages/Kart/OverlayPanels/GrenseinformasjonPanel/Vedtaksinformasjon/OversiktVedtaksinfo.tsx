@@ -146,7 +146,6 @@ export const BorderBottom = styled.div`
 const OversiktHeader = styled.div`
   margin-left: 0px !important;
   display: flex;
-  flex-direction: row;
   align-items: center;
   justify-content: space-between;
 `;
