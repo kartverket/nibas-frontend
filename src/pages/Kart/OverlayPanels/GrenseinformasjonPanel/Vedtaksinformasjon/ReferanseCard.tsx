@@ -21,7 +21,6 @@ export const ReferanseCard = ({ referanse, displayMode, urlMode, deleteRef }: Pr
             <IconButton
               aria-label={`Åpne nettadressen ${referanse.beskrivelse} i et nytt vindu.`}
               icon="open_in_new"
-              size={"md"}
               variant="tertiary"
             />
           </a>
