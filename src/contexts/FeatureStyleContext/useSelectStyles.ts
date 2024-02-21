@@ -22,7 +22,6 @@ export const useSelectStyles = () => {
       highlightPoint.setStyle(selectedPointStyle);
       editSource.addFeatures([highlightPoint]);
       setSelectedPoint(highlightPoint);
-      console.log("here");
     }
   };
 
