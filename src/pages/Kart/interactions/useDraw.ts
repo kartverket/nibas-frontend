@@ -88,8 +88,8 @@ const useDraw = () => {
 
         // Vi ønsker å avslutte tegningen hvis man har startet en tegning, og så treffer et endepunkt, så vi unngår rar geometri
         // Dette gjøres ved å bumpe et versjonstall med draw.changed() hvis denne conditionen returnerer true. Hvis versjonen da er høyere
-        // enn én (som den blir av første endring), vil vi avslutte tegningen
-        if (draw.getRevision() > 1) {
+        // enn null (som den blir av første endring), vil vi avslutte tegningen
+        if (draw.getRevision() > 0) {
           draw.appendCoordinates([event.coordinate]);
           draw.finishDrawing();
           return false;
@@ -134,7 +134,7 @@ const useDraw = () => {
         description: "Grense lagt til med standardmetadata. Husk at du må sette tilhørighet på nye grenser.",
       });
 
-      openOverlayPanel("metadata");
+      openOverlayPanel("grenseinfo");
       selectFeatures([drawnFeature]);
       // TODO: bruk isFeatureDeadEnd for å avgjøre om den nye grensen danner en lukket flate
 

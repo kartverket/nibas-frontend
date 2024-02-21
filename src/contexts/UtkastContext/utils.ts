@@ -6,10 +6,11 @@ import {
   GrunnkretsEntry,
   HistoryChange,
   HistoryState,
+  HistoryTypeValues,
   StemmekretsEntry,
   StemmekretsSammenslaaingsendringEntry,
 } from "contexts/HistoryContext";
-import { editSource } from "hooks/layers/constants";
+import { archivedSource, editSource } from "hooks/layers/constants";
 import {
   FylkeRequest,
   GrunnkretsRequest,
@@ -17,7 +18,6 @@ import {
   KretsDelingEndringRequest,
   NasjonRequest,
   OppdaterUtkastRequest,
-  StemmekretsRef,
   StemmekretsRequest,
   StemmekretsSammenslaaingsendringRequest,
   UtkastGrenseendringer,
@@ -64,7 +64,7 @@ export const applyNonFeatureUtkast = <T extends NonNullable<UtkastEntity>>(
   if (!utkastSlice) return entity;
 
   if (Array.isArray(entity) && type === "stemmekretsendringer") {
-    // navn på stemmekrets har forskjellig field på StemmekretsRef og StemmekretsRequest
+    // navn på stemmekrets har forskjellig field på StemmekretsResponse og StemmekretsRequest
 
     return entity.map((e) => {
       const utkastForEntity = utkast.operasjoner.metadataendringer?.[type]?.[getIdFromEntity(e)];
@@ -72,7 +72,7 @@ export const applyNonFeatureUtkast = <T extends NonNullable<UtkastEntity>>(
       return {
         ...e,
         ...utkastForEntity,
-        navn: utkastForEntity?.stemmekretsnavn ?? (e as StemmekretsRef).navn,
+        navn: utkastForEntity?.stemmekretsnavn,
       };
     });
   } else if (Array.isArray(entity)) {
@@ -165,13 +165,13 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
     utkastOperations.stemmekretsSammenslaaingsendring = sammenslaaingsOperations;
   }
 
-  const editedFeatureHistoryEntries = [
+  const editedFeatureHistoryEntries: HistoryTypeValues[] = [
     "grense",
-    "metadata",
+    "property",
     "grensearkivering",
     "grensetilhorighetendring",
     "nygrense",
-    "grensesplitting",
+    "grensedeling",
   ];
 
   const relevantHistoryEntries = historyToCurrentIndex.filter((entry) =>
@@ -182,7 +182,9 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
   const editedFeatures: GeoJSONFeature[] = utkastOperations.grenseendringer.endredeFeatures;
 
   const addFeatureToEditedFeaturesIfNotAlreadyAdded = (featureId: string) => {
-    const feature = editSource.getFeatureById(featureId) as Feature<LineString>;
+    const editFeature = editSource.getFeatureById(featureId) as Feature<LineString> | null;
+    const archivedFeature = archivedSource.getFeatureById(featureId) as Feature<LineString> | null;
+    const feature = editFeature ?? archivedFeature;
 
     if (!feature) return;
 
@@ -205,8 +207,8 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
       if (!change.to) return;
       addFeatureToEditedFeaturesIfNotAlreadyAdded(change.id);
 
-      if (entry.type === "grensesplitting") {
-        // Spltitting er en litt sær grense-endring siden den påvirker flere features på en gang og trenger derfor egen implementasjon
+      if (entry.type === "grensedeling") {
+        // Grensedeling er en litt sær grense-endring siden den påvirker flere features på en gang og trenger derfor egen implementasjon
         const newFeatures = (change as HistoryChange<Feature[]>).to.map((f) => f.getId() as string);
         newFeatures.forEach((id) => {
           addFeatureToEditedFeaturesIfNotAlreadyAdded(id);

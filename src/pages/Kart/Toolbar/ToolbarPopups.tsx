@@ -2,19 +2,20 @@ import { useToolbar } from "contexts/ToolbarContext";
 import ToolbarPopup from "./ToolbarPopup";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import useSplit from "../interactions/useSplit";
-import { getFeatureId } from "utils/map/source";
+import { addFeaturesToSource, getFeatureId, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { useToast } from "@kvib/react";
-import { addArchivingEntryFromFeature } from "../OverlayPanels/MetadataPanel/utils";
+import { addArchivingEntryFromFeature } from "../OverlayPanels/GrenseinformasjonPanel/utils";
 import { useHistory } from "contexts/HistoryContext";
 import { getMatrikkelFeatures } from "utils/map/layers";
 import { map } from "../constants";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 
 const ToolbarPopups = () => {
   const [matrikkelIsLoading, setMatrikkelIsLoading] = useState(false);
   const { setError } = useErrorHandling();
   const toast = useToast();
+  const toastIdRef = useRef<string | number>("");
   const { split } = useSplit();
   const { addHistoryEntry } = useHistory();
   const { activeModeTools, activeTool, resetModeTools, resetTool } = useToolbar();
@@ -23,19 +24,22 @@ const ToolbarPopups = () => {
   const archiveFeatures = () => {
     const selectedFeature = selectedFeatures[0];
     if (selectedFeature) {
+      clearSelection();
       addArchivedStyles([getFeatureId(selectedFeature)]);
-      addArchivingEntryFromFeature(selectedFeature, addHistoryEntry), clearSelection();
+      removeFeaturesFromSourceByIds("edit", [getFeatureId(selectedFeature)]);
+      addFeaturesToSource("archived", [selectedFeature]);
+      addArchivingEntryFromFeature(selectedFeature, addHistoryEntry);
       toast({ status: "success", title: "Grensen ble arkivert" });
-      toast({
-        status: "warning",
-        title: "Husk å sette tilhørighet på berørte grenser",
-        description: `For øyeblikket må alle flatetilhørigheter på grensene legges til manuelt. 
-        Husk å se gjennom og sørg for at alle tilhørighetene stemmer. 
-        Er ikke de satt ordentlig vil ikke publiseringen kunne gjennomføres uten feil. 
-        Tilhørigheten kan settes ved å bruke "informasjon"-verktøyet.`,
-        isClosable: true,
-        duration: null,
-      });
+      if (!toastIdRef.current) {
+        toastIdRef.current = toast({
+          status: "warning",
+          title: "Husk å sette tilhørighet på berørte grenser",
+          description: `For øyeblikket må alle flatetilhørigheter på grensene legges til manuelt. 
+          Tilhørigheten kan settes ved å bruke "Informasjon"-verktøyet.`,
+          isClosable: true,
+          duration: null,
+        });
+      }
     }
   };
 
@@ -44,7 +48,7 @@ const ToolbarPopups = () => {
     clearSelection();
     toast({
       status: "success",
-      title: "Grensen ble splittet",
+      title: "Grensen ble delt",
     });
   };
 
@@ -102,12 +106,12 @@ const ToolbarPopups = () => {
         />
       )}
       {activeTool === "split" && selectedFeatures.length === 0 && (
-        <ToolbarPopup text="Velg grensen du ønsker å splitte" onClose={resetTool} />
+        <ToolbarPopup text="Velg grensen du ønsker å dele" onClose={resetTool} />
       )}
       {activeTool === "split" && selectedFeatures.length === 1 && (
         <ToolbarPopup
-          text="Velg hvilket punkt du ønsker å splitte grensen på"
-          buttonText="Splitt grense"
+          text="Velg hvilket punkt du ønsker å dele grensen på"
+          buttonText="Del grense"
           onClick={() => handleSplit()}
           isDisabled={selectedPoint === null}
           onClose={resetTool}
@@ -119,7 +123,7 @@ const ToolbarPopups = () => {
       {activeTool === "detach" && selectedFeatures.length === 1 && (
         <ToolbarPopup text="Dra på et knutepunkt for å løsrive grensen" onClose={resetTool} />
       )}
-      {activeTool === "metadata" && (
+      {activeTool === "grenseinfo" && (
         <ToolbarPopup text="Velg en grense i kartet for å se grenseinformasjon" onClose={resetTool} />
       )}
       {activeTool === "archive" && (

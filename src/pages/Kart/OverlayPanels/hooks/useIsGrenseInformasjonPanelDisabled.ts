@@ -4,7 +4,7 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { Feature } from "ol";
 import { isFeatureEditable } from "utils/features";
 
-const useIsMetadataDisabled = (feature: Feature, properties: FeatureProperties) => {
+const useIsGrenseinformasjonPanelDisabled = (feature: Feature, properties: FeatureProperties) => {
   const { featureIsArchived } = useFeatureStyle();
   const { kretsStatuser } = useEditGrenser(properties.inndelingerKontekst?.type ?? "fylke");
 
@@ -14,4 +14,4 @@ const useIsMetadataDisabled = (feature: Feature, properties: FeatureProperties) 
   return ((kretsStatus?.visible && !kretsStatus?.editing) || borderIsNotEditable) ?? true;
 };
 
-export default useIsMetadataDisabled;
+export default useIsGrenseinformasjonPanelDisabled;

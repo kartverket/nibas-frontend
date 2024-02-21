@@ -8,7 +8,6 @@ import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FeatureProperties, KontekstEgenskaper, KretsDelingEndringRequest } from "types/api";
 import { getIdFromEntity } from "utils/api";
-import { addKontekstEntryFromFeature } from "../MetadataPanel/utils";
 import {
   CustomOption,
   KontekstType,
@@ -20,6 +19,7 @@ import {
   getTilhorighetData,
   getUpdatedKontekstEgenskaper,
 } from "./tilhorighetUtils";
+import { addKontekstEntryFromFeature } from "../GrenseinformasjonPanel/utils";
 
 const mapGrenseTypeTilKontekstType = (grenseType: GrenseType): KontekstType => {
   switch (grenseType) {

@@ -1,17 +1,17 @@
 import { EditingType, useEditAllGrenser } from "contexts/EditGrenserContext";
 import { Flatedata } from "contexts/OverlayPanelContext";
 import { useUtkast } from "contexts/UtkastContext";
-import { useKommuneGrunnkretserRef } from "hooks/inndelinger/useGrunnkretser";
-import { useKommuneStemmekretserRef } from "hooks/inndelinger/useStemmekretser";
-import { useFieldArray, useForm } from "react-hook-form";
-import { GrunnkretsRef, KretsDelingEndringRequest, StemmekretsRef } from "types/api";
+import { useForm, useFieldArray } from "react-hook-form";
+import { GrunnkretsResponse, KretsDelingEndringRequest, StemmekretsResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import {
   CustomOption,
   KontekstType,
-  mapGrunnkretsRefToKrets,
-  mapStemmekretsRefToKrets,
+  mapGrunnkretsResponseToKrets,
+  mapStemmekretResponseToKrets,
 } from "../hooks/tilhorighetUtils";
+import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
+import { useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 
 export type DelingForm = Pick<KretsDelingEndringRequest, "opprinneligKrets" | "nyeKretser">;
 
@@ -26,8 +26,8 @@ export const getDefaultDelingValue = () => ({
 const getKommuneIdentifikatorFromOptions = (
   editingType: EditingType,
   opprinneligKretsId: string,
-  grunnkretser: GrunnkretsRef[],
-  stemmekretser: StemmekretsRef[],
+  grunnkretser: GrunnkretsResponse[],
+  stemmekretser: StemmekretsResponse[],
 ) => {
   if (editingType == "stemmekrets") {
     return stemmekretser?.find((opt) => opt.id.lokalid.value === opprinneligKretsId)?.kommuneIdentifikator;
@@ -54,12 +54,12 @@ export const useDelingForm = (flatedata: Flatedata) => {
 
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const editingType = getCurrentlyEditingType();
-  const { data: stemmekretser } = useKommuneStemmekretserRef(flatedata ? getIdFromEntity(flatedata) : "");
-  const { data: grunnkretser } = useKommuneGrunnkretserRef(flatedata ? getIdFromEntity(flatedata) : "");
+  const { data: stemmekretser } = useKommuneStemmekretser(flatedata ? getIdFromEntity(flatedata) : "");
+  const { data: grunnkretser } = useKommuneGrunnkretser(flatedata ? getIdFromEntity(flatedata) : "");
   const opprinneligFlateOptions =
     editingType === "grunnkrets"
-      ? mapGrunnkretsRefToKrets(grunnkretser ?? [])
-      : mapStemmekretsRefToKrets(stemmekretser ?? []);
+      ? mapGrunnkretsResponseToKrets(grunnkretser ?? [])
+      : mapStemmekretResponseToKrets(stemmekretser ?? []);
 
   const handleOpprinneligKretsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const lokalid = e.target.value;

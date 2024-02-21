@@ -1,31 +1,31 @@
-import { useKommuneGrunnkretserRef } from "hooks/inndelinger/useGrunnkretser";
-import { useKommuneStemmekretserRef } from "hooks/inndelinger/useStemmekretser";
+import { useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
+import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { Feature } from "ol";
 import { useEffect } from "react";
-import { GrunnkretsRef, StemmekretsRef } from "types/api";
 import {
   KontekstType,
   TilhorighetOptions,
   UseTilhorighet,
-  mapGrunnkretsRefToKrets,
-  mapStemmekretsRefToKrets,
+  mapGrunnkretsResponseToKrets,
+  mapStemmekretResponseToKrets,
 } from "./tilhorighetUtils";
+import { GrunnkretsResponse, StemmekretsResponse } from "../../../../types/api";
 import { useTilhorighetForm } from "./useTilhorighetForm";
 
 // Tar api respons for grunnkretser og stemmekretser og gir det tilbake på Krets typen pakket inn i TilhorighetOptions
 const getMuligeKretserForCommonGrense = (
   kontekstType: KontekstType,
-  grunnkretser: GrunnkretsRef[],
-  stemmekretser: StemmekretsRef[],
+  grunnkretser: GrunnkretsResponse[],
+  stemmekretser: StemmekretsResponse[],
 ): TilhorighetOptions => {
   if (kontekstType === KontekstType.STEMMEKRETS) {
-    const mappedStemmekretser = mapStemmekretsRefToKrets(stemmekretser);
+    const mappedStemmekretser = mapStemmekretResponseToKrets(stemmekretser);
     return {
       a: mappedStemmekretser,
       b: mappedStemmekretser,
     };
   } else {
-    const mappedGrunnkretser = mapGrunnkretsRefToKrets(grunnkretser);
+    const mappedGrunnkretser = mapGrunnkretsResponseToKrets(grunnkretser);
     return {
       a: mappedGrunnkretser,
       b: mappedGrunnkretser,
@@ -46,8 +46,8 @@ export const useTilhorighet = (feature: Feature): UseTilhorighet => {
     kontekstType,
   } = useTilhorighetForm(feature);
 
-  const { data: grunnkretser, isLoading: grunnkretserIsLoading } = useKommuneGrunnkretserRef(kommunerId[0]);
-  const { data: stemmekretser, isLoading: stemmekretserIsLoading } = useKommuneStemmekretserRef(kommunerId[0]);
+  const { data: grunnkretser, isLoading: grunnkretserIsLoading } = useKommuneGrunnkretser(kommunerId[0]);
+  const { data: stemmekretser, isLoading: stemmekretserIsLoading } = useKommuneStemmekretser(kommunerId[0]);
 
   useEffect(() => {
     if (grunnkretser && stemmekretser) {

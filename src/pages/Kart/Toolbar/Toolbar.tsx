@@ -10,6 +10,7 @@ import ToolbarButton from "./ToolbarButton";
 import ToolbarMenus from "./ToolbarMenus";
 import ToolbarPopups from "./ToolbarPopups";
 import { ConditionalHide } from "components/ConditionalShowHide";
+import { Draw } from "ol/interaction";
 
 const Toolbar = () => {
   const { activeTool, activeModeTools, toggleTool, toggleModeTool, enableModeTool, disableModeTool } = useToolbar();
@@ -18,10 +19,10 @@ const Toolbar = () => {
   const editingType = getCurrentlyEditingType();
   const isEditMode = !!editingType;
 
-  const toggleMetadata = () => {
-    toggleTool("metadata");
+  const toggleGrenseinfo = () => {
+    toggleTool("grenseinfo");
 
-    if (activeOverlayPanel === "metadata") {
+    if (activeOverlayPanel === "grenseinfo") {
       closeOverlayPanel();
     }
   };
@@ -52,17 +53,36 @@ const Toolbar = () => {
     });
   };
 
+  const isPanningAllowed = (): boolean => {
+    if (!isEditMode) return false;
+
+    const drawInteraction = map
+      .getInteractions()
+      .getArray()
+      .find((interaction) => interaction instanceof Draw);
+
+    if (drawInteraction) {
+      const revision = drawInteraction.getRevision();
+
+      if (revision) {
+        return revision === 0;
+      }
+    }
+
+    return true;
+  };
+
   useKeyboardShortcut("layers", toggleKartlag);
   useKeyboardShortcut("move", () => enableModeTool("move"));
   useKeyboardShortcut("edit", () => disableModeTool("move"), isEditMode);
   useKeyboardShortcut("matrikkel", () => toggleModeTool("matrikkel"));
-  useKeyboardShortcut("grenseinfo", toggleMetadata);
+  useKeyboardShortcut("grenseinfo", toggleGrenseinfo);
   useHoldButtonToggle(
     "alt",
     activeModeTools.includes("move"),
     () => enableModeTool("move"),
     () => disableModeTool("move"),
-    isEditMode,
+    isPanningAllowed,
   );
 
   return (
@@ -94,8 +114,8 @@ const Toolbar = () => {
           </ConditionalHide>
           <ToolbarButton
             icon="live_help"
-            isActive={activeTool === "metadata"}
-            onClick={toggleMetadata}
+            isActive={activeTool === "grenseinfo"}
+            onClick={toggleGrenseinfo}
             aria-label="Se informasjon om grensen"
             tooltip={{ text: "Se informasjon om grensen", shortcut: "grenseinfo" }}
           >

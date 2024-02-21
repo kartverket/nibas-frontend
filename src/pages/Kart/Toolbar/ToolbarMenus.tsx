@@ -90,7 +90,7 @@ const ToolbarMenus = () => {
       "aria-label": "Tegn en ny grense fra et punkt",
     },
     {
-      label: "Splitt grense",
+      label: "Del grense",
       icon: <Icon icon="location_off" />,
       $isActive: activeTool === "split",
       isDisabled: !isEditMode,

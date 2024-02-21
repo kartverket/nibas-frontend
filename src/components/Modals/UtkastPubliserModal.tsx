@@ -20,7 +20,7 @@ import {
 } from "@kvib/react";
 import { publishUtkast } from "api/utkast";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
-import { getDateInFriendlyString } from "pages/Kart/OverlayPanels/MetadataPanel/utils";
+import { getDateInFriendlyString } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/utils";
 import { EndringsloggAccordion } from "pages/Utkast/UtkastEndringslogg";
 import { useState } from "react";
 import { useSWRConfig } from "swr";
@@ -52,6 +52,16 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
 
   const cleanUpUtkast = () => {
     mutate(["/v1/utkast", tokenHolderFunc()?.token]);
+
+    // Mutate alle grense-ressurser som kan ha vært endret
+    mutate(
+      (key) =>
+        Array.isArray(key) &&
+        typeof key[0] === "string" &&
+        (key[0].endsWith("/grenser") ||
+          key[0].endsWith("/stemmekretsgrenser") ||
+          key[0].endsWith("/grunnkretsgrenser")),
+    );
   };
 
   const publiserUtkast = async () => {

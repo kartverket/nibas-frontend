@@ -14,7 +14,13 @@ import {
 import { updateUtkastApi } from "api/utkast";
 import { HistoryChange, useHistory } from "contexts/HistoryContext";
 import useNibasApi from "hooks/useNibasApi";
-import { ApiErrorResponse, OppdaterUtkastRequest, UtkastOperasjoner, UtkastResponse } from "types/api";
+import {
+  ApiErrorResponse,
+  FeatureCollection,
+  OppdaterUtkastRequest,
+  UtkastOperasjoner,
+  UtkastResponse,
+} from "types/api";
 import { resetMapView } from "utils/map";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
@@ -26,7 +32,7 @@ import { routes } from "utils/routes";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useKartlag } from "contexts/KartlagContext/KartlagContext";
-import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
+import { addEditedFeaturesToSource, removeEditedFeaturesFromSourceByIds } from "utils/map/source";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 import { CustomOption } from "pages/Kart/OverlayPanels/hooks/tilhorighetUtils";
@@ -84,7 +90,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     setUtkast(undefined);
     resetMapView();
     resetKartlag();
-    clearHistory({ hasPreviouslySavedHistory: false });
+    clearHistory();
     clearFeatureStyles();
     resetAndClearAllLayers();
     closeOverlayPanel();
@@ -179,7 +185,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
       const updatedUtkast = (await response.json()) as UtkastResponse;
       await mutate(updatedUtkast);
       await globalMutate(["/v1/utkast", tokenHolderFunc()?.token]);
-      clearHistory({ hasPreviouslySavedHistory: true });
+      clearHistory();
 
       // Ved lagring av utkast ble det mismatch mellom state i OpenLayers og state i react
       // For å forhindre dette sletter vi alle grenser med midlertidig id fra det gamle utkastet, slik at disse ikke lenger kan redigeres i OL
@@ -190,8 +196,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
         const oldFeaturesWithTempId = oldFeatures
           .filter((feature) => isTempFeatureId(feature.id))
           .map((feature) => feature.id as string);
-
-        removeFeaturesFromSourceByIds("edit", oldFeaturesWithTempId);
+        removeEditedFeaturesFromSourceByIds(oldFeaturesWithTempId);
       }
 
       const updatedUtkastWithTempFeatureIds = addTempFeatureIdToNewFeaturesInUtkast(updatedUtkast);
@@ -203,7 +208,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
 
       const featuresToBeAddedToSource = geoJsonFeaturesToBeAddedToSource.flatMap(getFeaturesFromGeoJson);
 
-      addFeaturesToSource("edit", featuresToBeAddedToSource);
+      addEditedFeaturesToSource(featuresToBeAddedToSource);
       addDirtyStyles(featuresToBeAddedToSource.map((feature) => feature.getId() as string));
 
       setUtkast(updatedUtkastWithTempFeatureIds);
@@ -282,7 +287,7 @@ export const useUtkastEntity = <T extends UtkastEntity>(entity: T, type: EntityU
 export const useUtkastFeature = (
   featureCollection: GeoJSONFeatureCollection | GeoJSONFeatureCollection[],
   utkast?: UtkastResponse,
-) => {
+): FeatureCollection => {
   return useMemo(() => {
     if (!featureCollection || !utkast) return featureCollection;
 

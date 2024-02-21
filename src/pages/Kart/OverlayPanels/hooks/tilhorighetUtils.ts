@@ -1,5 +1,5 @@
 import { UseFormRegister, UseFormGetValues } from "react-hook-form";
-import { GrunnkretsRef, KontekstEgenskaper, ObjektIdentifikator, StemmekretsRef } from "types/api";
+import { GrunnkretsResponse, KontekstEgenskaper, ObjektIdentifikator, StemmekretsResponse } from "types/api";
 
 export enum Tilhorighet {
   A = "a",
@@ -144,32 +144,40 @@ export const getKommunerIdFromKontekstEgenskaper = (kontekstEgenskaper: Kontekst
   return kommuner.length > 0 ? kommuner : null;
 };
 
-export const mapGrunnkretsRefToKrets = (grunnkretser: GrunnkretsRef[]): Krets[] => {
-  return grunnkretser
-    .map(({ id, version, grunnkretsnummer, navn, kommuneIdentifikator }) => ({
+export const sortKretserOptionsByName = (kretser: Krets[] | undefined): Krets[] => {
+  if (!kretser) return [];
+
+  return kretser.sort((a, b) => a.navn.localeCompare(b.navn));
+};
+
+export const sortKretserOptionsByNumber = (kretser: Krets[] | undefined): Krets[] => {
+  if (!kretser) return [];
+
+  return kretser.sort((a, b) => Number(a.nummer) - Number(b.nummer));
+};
+
+export const mapGrunnkretsResponseToKrets = (grunnkretser: GrunnkretsResponse[]): Krets[] => {
+  return sortKretserOptionsByNumber(
+    grunnkretser.map(({ id, version, grunnkretsnummer, navn, kommuneIdentifikator }) => ({
       id,
       kommuneId: kommuneIdentifikator,
       version,
       nummer: grunnkretsnummer,
       navn: navn,
       type: KontekstType.GRUNNKRETS,
-    }))
-    .sort((a, b) => {
-      return Number(a.nummer) - Number(b.nummer);
-    });
+    })),
+  );
 };
 
-export const mapStemmekretsRefToKrets = (stemmekretser: StemmekretsRef[]): Krets[] => {
-  return stemmekretser
-    .map(({ id, version, nummer, navn, kommuneIdentifikator }) => ({
+export const mapStemmekretResponseToKrets = (stemmekretser: StemmekretsResponse[]): Krets[] => {
+  return sortKretserOptionsByNumber(
+    stemmekretser.map(({ id, version, stemmekretsnummer, stemmekretsnavn, kommuneIdentifikator }) => ({
       id,
       kommuneId: kommuneIdentifikator,
       version,
-      nummer: nummer,
-      navn: navn,
+      nummer: stemmekretsnummer,
+      navn: stemmekretsnavn,
       type: KontekstType.STEMMEKRETS,
-    }))
-    .sort((a, b) => {
-      return Number(a.nummer) - Number(b.nummer);
-    });
+    })),
+  );
 };

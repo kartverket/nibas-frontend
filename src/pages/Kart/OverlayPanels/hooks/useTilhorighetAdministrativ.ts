@@ -2,37 +2,37 @@ import { useToKommunerGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import { useToKommunerStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { Feature } from "ol";
 import { useEffect } from "react";
-import { GrunnkretsRef, StemmekretsRef } from "types/api";
 import {
   KontekstType,
   Tilhorighet,
   TilhorighetOptions,
   UseTilhorighet,
-  mapGrunnkretsRefToKrets,
-  mapStemmekretsRefToKrets,
+  mapGrunnkretsResponseToKrets,
+  mapStemmekretResponseToKrets,
 } from "./tilhorighetUtils";
 import { useTilhorighetForm } from "./useTilhorighetForm";
+import { GrunnkretsResponse, StemmekretsResponse } from "../../../../types/api";
 
 const getMuligeKretserForAdministrativGrense = (
   kontekstType: KontekstType,
-  grunnkretser: [GrunnkretsRef[], GrunnkretsRef[]],
-  stemmekretser: [StemmekretsRef[], StemmekretsRef[]],
+  grunnkretser: [GrunnkretsResponse[], GrunnkretsResponse[]],
+  stemmekretser: [StemmekretsResponse[], StemmekretsResponse[]],
 ): TilhorighetOptions => {
   switch (kontekstType) {
     case KontekstType.GRUNNKRETS:
       return {
-        [Tilhorighet.A]: mapGrunnkretsRefToKrets(grunnkretser[0]),
-        [Tilhorighet.B]: mapGrunnkretsRefToKrets(grunnkretser[1]),
+        [Tilhorighet.A]: mapGrunnkretsResponseToKrets(grunnkretser[0]),
+        [Tilhorighet.B]: mapGrunnkretsResponseToKrets(grunnkretser[1]),
       };
     case KontekstType.STEMMEKRETS:
       return {
-        [Tilhorighet.A]: mapStemmekretsRefToKrets(stemmekretser[0]),
-        [Tilhorighet.B]: mapStemmekretsRefToKrets(stemmekretser[1]),
+        [Tilhorighet.A]: mapStemmekretResponseToKrets(stemmekretser[0]),
+        [Tilhorighet.B]: mapStemmekretResponseToKrets(stemmekretser[1]),
       };
   }
 };
 
-export const useAdministrativTilhorighet = (feature: Feature): UseTilhorighet => {
+export const useTilhorighetAdministrativ = (feature: Feature): UseTilhorighet => {
   const {
     setTilhorighetOptions,
     tilhorighetOptions,

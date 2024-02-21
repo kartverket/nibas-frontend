@@ -3,12 +3,14 @@ import React, { createContext, useContext } from "react";
 import { ensureAllCasesCovered } from "utils/typeHelpers";
 import { HistoryContextValue, HistoryEntry } from "./types";
 import {
-  redoSplitting,
-  setFeatureCoordinatesAndMetadataForEntry,
+  setFeatureCoordinatesAndPropertiesForEntry,
   setFeatureCoordinatesForEntry,
-  setFeatureMetadataForEntry,
   setKontekstEgenskaperForEntry,
-  undoSplitting,
+  setFeaturePropertiesForEntry,
+  redoArchiving,
+  undoArchving,
+  undoGrensedeling,
+  redoGrensedeling,
 } from "./utils";
 
 const onUndo = (entry: HistoryEntry) => {
@@ -18,11 +20,11 @@ const onUndo = (entry: HistoryEntry) => {
     case "grense": {
       return setFeatureCoordinatesForEntry(entry, "from");
     }
-    case "metadata": {
-      return setFeatureMetadataForEntry(entry, "from");
+    case "property": {
+      return setFeaturePropertiesForEntry(entry, "from");
     }
     case "nygrense": {
-      return setFeatureCoordinatesAndMetadataForEntry(entry, "from");
+      return setFeatureCoordinatesAndPropertiesForEntry(entry, "from");
     }
     case "grunnkrets": {
       return document.dispatchEvent(
@@ -53,17 +55,13 @@ const onUndo = (entry: HistoryEntry) => {
       );
     }
     case "grensearkivering": {
-      return document.dispatchEvent(
-        new CustomEvent("grensearkiveringUndo", {
-          detail: { entry },
-        }),
-      );
+      return undoArchving(entry);
     }
     case "grensetilhorighetendring": {
       return setKontekstEgenskaperForEntry(entry, "from");
     }
-    case "grensesplitting": {
-      return undoSplitting(
+    case "grensedeling": {
+      return undoGrensedeling(
         entry.changes.flatMap((e) => e.from)[0],
         entry.changes.flatMap((e) => e.to),
       );
@@ -79,12 +77,11 @@ const onRedo = (entry: HistoryEntry) => {
     case "grense": {
       return setFeatureCoordinatesForEntry(entry, "to");
     }
-    case "metadata": {
-      //skal den kanskje bare gå inn under det her?
-      return setFeatureMetadataForEntry(entry, "to");
+    case "property": {
+      return setFeaturePropertiesForEntry(entry, "to");
     }
     case "nygrense": {
-      return setFeatureCoordinatesAndMetadataForEntry(entry, "to");
+      return setFeatureCoordinatesAndPropertiesForEntry(entry, "to");
     }
     case "grunnkrets": {
       return document.dispatchEvent(
@@ -115,17 +112,13 @@ const onRedo = (entry: HistoryEntry) => {
       );
     }
     case "grensearkivering": {
-      return document.dispatchEvent(
-        new CustomEvent("grensearkiveringRedo", {
-          detail: { entry },
-        }),
-      );
+      return redoArchiving(entry);
     }
     case "grensetilhorighetendring": {
       return setKontekstEgenskaperForEntry(entry, "to");
     }
-    case "grensesplitting": {
-      return redoSplitting(
+    case "grensedeling": {
+      return redoGrensedeling(
         entry.changes.flatMap((e) => e.from)[0],
         entry.changes.flatMap((e) => e.to),
       );
