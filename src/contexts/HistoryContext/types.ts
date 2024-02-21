@@ -1,5 +1,6 @@
 import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
 import { GrenseType } from "hooks/layers/types";
+import { Feature } from "ol";
 import {
   FeatureProperties,
   GrunnkretsRequest,
@@ -7,7 +8,6 @@ import {
   StemmekretsRequest,
   StemmekretsSammenslaaingsendringRequest,
 } from "types/api";
-import { Feature } from "ol";
 
 // Obs: navnsetting for å unngå overlapp med innebygd History type
 export type HistoryState = {
