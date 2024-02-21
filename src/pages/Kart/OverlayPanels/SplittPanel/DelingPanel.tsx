@@ -26,7 +26,7 @@ export const DelingPanel = ({ isOpen, className }: PanelProps) => {
     remove,
     canSubmit,
     reset,
-    updateDraftWithDelingEntry,
+    updateDraftWithDelingRequest,
     getValues,
     handleOpprinneligKretsChange,
   } = useDelingForm(flatedata);
@@ -111,7 +111,7 @@ export const DelingPanel = ({ isOpen, className }: PanelProps) => {
           <Button variant="tertiary" onClick={closeAndResetForm}>
             Avbryt
           </Button>
-          <Button onClick={updateDraftWithDelingEntry} isDisabled={!canSubmit()}>
+          <Button onClick={updateDraftWithDelingRequest} isDisabled={!canSubmit()}>
             Del
           </Button>
         </ButtonGroup>

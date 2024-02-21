@@ -149,6 +149,7 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
         ...previousUtkast?.operasjoner.grenseendringer,
         ...previousUtkast?.operasjoner.metadataendringer,
         stemmekretssammenslaaingsendringer: previousUtkast?.operasjoner.stemmekretsSammenslaaingsendring,
+        kretsDelingEndringer: previousUtkast?.operasjoner.kretsDelingEndringer,
       },
     }),
   ) as UtkastOperasjoner;
@@ -217,7 +218,6 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
   utkastOperations.grenseendringer = {
     endredeFeatures: editedFeatures,
   };
-
   return utkastOperations;
 };
 

@@ -1,5 +1,6 @@
 import { EditingType, useEditAllGrenser } from "contexts/EditGrenserContext";
 import { Flatedata } from "contexts/OverlayPanelContext";
+import { useUtkast } from "contexts/UtkastContext";
 import { useKommuneGrunnkretserRef } from "hooks/inndelinger/useGrunnkretser";
 import { useKommuneStemmekretserRef } from "hooks/inndelinger/useStemmekretser";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -36,6 +37,7 @@ const getKommuneIdentifikatorFromOptions = (
 };
 
 export const useDelingForm = (flatedata: Flatedata) => {
+  const { utkast, updateUtkast } = useUtkast();
   const {
     register,
     getValues,
@@ -75,7 +77,7 @@ export const useDelingForm = (flatedata: Flatedata) => {
     }
   };
 
-  const updateDraftWithDelingEntry = () => {
+  const updateDraftWithDelingRequest = () => {
     if (editingType && grunnkretser && stemmekretser) {
       const { opprinneligKrets, nyeKretser } = getValues();
       const opprinneligKretsVersion = opprinneligFlateOptions.find(
@@ -100,9 +102,21 @@ export const useDelingForm = (flatedata: Flatedata) => {
           },
           kommuneId: kommuneIdentifikator,
           flatetype: editingType === "grunnkrets" ? KontekstType.GRUNNKRETS : KontekstType.STEMMEKRETS,
-          nyeKretser: nyeKretser.slice(1), // må fjerne opprinnelig krets her fordi vi legger den i field
+          nyeKretser: nyeKretser.slice(1), // må fjerne opprinnelig krets her fordi vi har den i field
         };
         console.log(kretsDelingEndringRequest);
+        if (utkast) {
+          updateUtkast(utkast.id, {
+            ...utkast,
+            operasjoner: {
+              ...utkast.operasjoner,
+              kretsDelingEndringer: [...utkast.operasjoner.kretsDelingEndringer, kretsDelingEndringRequest],
+            },
+          });
+          reset(getDefaultDelingValue());
+        }
+
+        // gi en feedback på at den ble delt (evt at bruker oppdaterte delingen sin på gitt krets)
       }
     }
   };
@@ -120,7 +134,7 @@ export const useDelingForm = (flatedata: Flatedata) => {
     remove,
     canSubmit,
     reset,
-    updateDraftWithDelingEntry,
+    updateDraftWithDelingRequest,
     setValue,
     getValues,
     handleOpprinneligKretsChange,
