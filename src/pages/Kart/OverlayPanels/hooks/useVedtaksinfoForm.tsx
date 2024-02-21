@@ -89,6 +89,7 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoIndex?: 
   values.fastsettingsdato = new Date(values.fastsettingsdato);
   values.vedtakGyldigFra = values.vedtakGyldigFra ? new Date(values.vedtakGyldigFra) : undefined;
   values.vedtakGyldigTil = values.vedtakGyldigTil ? new Date(values.vedtakGyldigTil) : undefined;
+
   const {
     register,
     setValue,

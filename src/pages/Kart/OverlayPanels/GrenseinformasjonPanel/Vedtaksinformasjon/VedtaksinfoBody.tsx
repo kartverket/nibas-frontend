@@ -222,6 +222,7 @@ export const VedtaksinfoBody = ({
         </GridItem>
         <GridItem minHeight={"450px"}>
           <Referanser
+            control={control}
             deleteInternref={deleteInternref}
             deleteDokref={deleteDokref}
             displayMode={displayMode}

@@ -2,7 +2,7 @@ import { Button, Divider, Input } from "@kvib/react";
 import { VedtakinfoRow } from "./VedtakinfoRow";
 import { InputName, Referanse, VedtakinfoForm } from "./OversiktVedtaksinfo";
 import { styled } from "styled-components";
-import { FieldError, UseFormClearErrors, UseFormRegister, UseFormSetError } from "react-hook-form";
+import { Control, Controller, FieldError, UseFormClearErrors, UseFormRegister, UseFormSetError } from "react-hook-form";
 import { useState } from "react";
 
 type ReferanseInputProps = {
@@ -16,6 +16,7 @@ type ReferanseInputProps = {
   errors: FieldError | undefined;
   setError: UseFormSetError<VedtakinfoForm>;
   clearErrors: UseFormClearErrors<VedtakinfoForm>;
+  control: Control<VedtakinfoForm>;
 };
 
 export const ReferanseInput = ({
@@ -29,6 +30,7 @@ export const ReferanseInput = ({
   errors,
   setError,
   clearErrors,
+  control,
 }: ReferanseInputProps) => {
   const [appendButtonDisabled, setAppendButtonDisabled] = useState(true);
   function clearInput(element: HTMLInputElement) {
@@ -44,38 +46,52 @@ export const ReferanseInput = ({
       }
       appendFn({ beskrivelse: element.value });
       clearInput(element);
+      setAppendButtonDisabled(true);
     }
   };
+  /**
+   * Inputfeltet er et hjelpe-felt, og er registrert i formet hovedsaklig for å sette isDirty.
+   * Feltet blir ikke med videre i historikken, verdiene til referanser legges til i egne lister.
+   * FieldArray fra react-hook-form kunne nok vært benyttet.
+   **/
   return (
     <InputContainer>
       <Divider />
-      <VedtakinfoRow tooltipLabel={tooltipLabel} name={title} errors={errors}>
-        <Input
-          {...register(registerName, { pattern: pattern })}
-          placeholder={placeholder}
-          backgroundColor="white"
-          onChange={(e) => {
-            if (e.target.value == "") setAppendButtonDisabled(true);
-            else setAppendButtonDisabled(false);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              const element = e.target as HTMLInputElement;
-              appendReferanse(element);
-              e.preventDefault();
-            }
-          }}
-        />
-        <LeggTilKnapp
-          isDisabled={appendButtonDisabled}
-          onClick={() => {
-            const element = document.querySelector(`input[name=${registerName}]`) as HTMLInputElement;
-            appendReferanse(element);
-          }}
-        >
-          Legg til
-        </LeggTilKnapp>
-      </VedtakinfoRow>
+      <Controller
+        control={control}
+        name={registerName}
+        render={({ field }) => {
+          return (
+            <VedtakinfoRow tooltipLabel={tooltipLabel} name={title} errors={errors}>
+              <Input
+                placeholder={placeholder}
+                backgroundColor="white"
+                onChange={(e) => {
+                  if (field.value == "") setAppendButtonDisabled(true);
+                  else setAppendButtonDisabled(false);
+                  field.onChange(e.target.value);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    const element = e.target as HTMLInputElement;
+                    appendReferanse(element);
+                    e.preventDefault();
+                  }
+                }}
+              />
+              <LeggTilKnapp
+                isDisabled={appendButtonDisabled}
+                onClick={() => {
+                  const element = document.querySelector(`input[name=${registerName}]`) as HTMLInputElement;
+                  appendReferanse(element);
+                }}
+              >
+                Legg til
+              </LeggTilKnapp>
+            </VedtakinfoRow>
+          );
+        }}
+      />
     </InputContainer>
   );
 };

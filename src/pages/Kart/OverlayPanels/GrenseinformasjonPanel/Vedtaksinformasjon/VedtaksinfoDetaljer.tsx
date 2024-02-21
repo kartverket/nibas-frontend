@@ -1,7 +1,7 @@
 import { Button, Modal, ModalBody, ModalContent, Text, ModalOverlay, useToast, Divider } from "@kvib/react";
 import { Feature } from "ol";
 import { VedtaksinfoBody } from "./VedtaksinfoBody";
-import { BorderTop, Referanse, VedtakinfoForm } from "./OversiktVedtaksinfo";
+import { Referanse, VedtakinfoForm } from "./OversiktVedtaksinfo";
 import { styled } from "styled-components";
 import { mapFromFormToApi, useVedtaksinfoForm } from "../../hooks/useVedtaksinfoForm";
 import { Metadata } from "types/api";
@@ -25,8 +25,8 @@ export const VedtaksinfoDetaljer = ({
 }) => {
   const metadata = feature.getProperties()?.metadata as Metadata | undefined;
   const [redigeringsmodus, setRedigeringsmodus] = useState(false);
-  const [dokref, setDokref] = useState<Referanse[] | undefined>([]);
-  const [internref, setInternref] = useState<Referanse[] | undefined>([]);
+  const [dokref, setDokref] = useState<Referanse[] | undefined>(undefined);
+  const [internref, setInternref] = useState<Referanse[] | undefined>(undefined);
   const {
     isDirty,
     register,
@@ -103,8 +103,11 @@ export const VedtaksinfoDetaljer = ({
     onClose();
   };
 
+  if (!metadata) return;
+
   if (isOpen && selectedVedtaksinfoIndex !== undefined) {
     const vedtaksinformasjon = metadata?.dokumentasjonsreferanser?.at(selectedVedtaksinfoIndex);
+
     if (dokref === undefined) {
       setDokref(vedtaksinformasjon?.dokumentlenker || []);
     }
@@ -117,8 +120,6 @@ export const VedtaksinfoDetaljer = ({
     setDisplayMode(!displayMode);
     setRedigeringsmodus(!redigeringsmodus);
   };
-
-  if (!metadata) return;
 
   return (
     <Modal isOpen={isOpen} onClose={closeModal} isCentered size={"6xl"}>

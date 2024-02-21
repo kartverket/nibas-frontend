@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 import { Referanse, VedtakinfoForm } from "./OversiktVedtaksinfo";
-import { FieldErrors, UseFormClearErrors, UseFormRegister, UseFormSetError } from "react-hook-form";
+import { Control, FieldErrors, UseFormClearErrors, UseFormRegister, UseFormSetError } from "react-hook-form";
 import { Card, Tab, TabList, TabPanel, TabPanels, Tabs } from "@kvib/react";
 import { AntallReferanser } from "./AntallReferanser";
 import { ReferanserPaginated } from "./ReferanserPaginated";
@@ -19,6 +19,7 @@ export type ReferanserProps = {
   errors: FieldErrors<VedtakinfoForm>;
   setError: UseFormSetError<VedtakinfoForm>;
   clearErrors: UseFormClearErrors<VedtakinfoForm>;
+  control: Control<VedtakinfoForm>;
 };
 
 export const Referanser = ({
@@ -33,6 +34,7 @@ export const Referanser = ({
   displayMode,
   deleteInternref,
   deleteDokref,
+  control,
 }: ReferanserProps) => {
   const [dokrefSelected, setDokrefSelected] = useState(true);
   const [internrefSelected, setInternrefSelected] = useState(false);
@@ -66,6 +68,7 @@ export const Referanser = ({
                 />
                 {!displayMode && (
                   <ReferanseInput
+                    control={control}
                     errors={errors.leggTilDokumentlenke}
                     clearErrors={clearErrors}
                     pattern={/^http[s]?:\/\/.+/}
@@ -90,6 +93,7 @@ export const Referanser = ({
                 />
                 {!displayMode && (
                   <ReferanseInput
+                    control={control}
                     errors={errors.leggTilInternreferanse}
                     setError={setError}
                     clearErrors={clearErrors}
