@@ -34,6 +34,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
+  padding-bottom: 32px;
 `;
 
 const GrenseinformasjonFieldList = ({ feature }: Props) => {

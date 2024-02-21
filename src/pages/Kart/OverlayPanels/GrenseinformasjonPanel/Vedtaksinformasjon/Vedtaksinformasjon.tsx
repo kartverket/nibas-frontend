@@ -55,7 +55,7 @@ export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
   if (!metadata) return;
 
   return (
-    <Container>
+    <>
       <OversiktHeader>
         <Tooltip label="Henvisning til dokumenter som er med å fastlegge aktuell grense." hasArrow placement="bottom">
           <InfoIcon onMouseOver={() => setIconHovered(true)} onMouseOut={() => setIconHovered(false)}>
@@ -101,7 +101,7 @@ export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
         onClose={closeModal}
         feature={feature}
       />
-    </Container>
+    </>
   );
 };
 
@@ -117,10 +117,6 @@ const VedtaksinfoCard = ({ title, onClick, date }: { title: string; date: string
     </VedtaksinfoContent>
   );
 };
-
-const Container = styled.div`
-  padding-bottom: 32px;
-`;
 
 const Datofelt = styled.div`
   margin-right: 20px;
