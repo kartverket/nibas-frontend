@@ -1,11 +1,12 @@
-import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, useToast } from "@kvib/react";
+import { Button, Modal, ModalBody, ModalContent, Text, ModalOverlay, useToast, Divider } from "@kvib/react";
 import { Feature } from "ol";
 import { VedtaksinfoBody } from "./VedtaksinfoBody";
-import { BorderBottom, BorderTop, Referanse, VedtakinfoForm } from "./OversiktVedtaksinfo";
+import { BorderTop, Referanse, VedtakinfoForm } from "./OversiktVedtaksinfo";
 import { styled } from "styled-components";
 import { mapFromFormToApi, useVedtaksinfoForm } from "../../hooks/useVedtaksinfoForm";
 import { Metadata } from "types/api";
 import { useState } from "react";
+import { PanelHeader } from "../../Panel";
 
 export const VedtaksinfoDetaljer = ({
   isOpen,
@@ -22,11 +23,10 @@ export const VedtaksinfoDetaljer = ({
   setDisplayMode: React.Dispatch<React.SetStateAction<boolean>>;
   selectedVedtaksinfoIndex?: number;
 }) => {
-  const metadata = feature.getProperties().metadata as Metadata;
+  const metadata = feature.getProperties()?.metadata as Metadata | undefined;
   const [redigeringsmodus, setRedigeringsmodus] = useState(false);
   const [dokref, setDokref] = useState<Referanse[] | undefined>([]);
   const [internref, setInternref] = useState<Referanse[] | undefined>([]);
-
   const {
     isDirty,
     register,
@@ -118,15 +118,16 @@ export const VedtaksinfoDetaljer = ({
     setRedigeringsmodus(!redigeringsmodus);
   };
 
+  if (!metadata) return;
+
   return (
     <Modal isOpen={isOpen} onClose={closeModal} isCentered size={"6xl"}>
       <ModalOverlay />
       <ModalContent>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <BorderBottom>
-            <ModalHeader>Se eller endre på vedtaksinformasjon</ModalHeader>
-          </BorderBottom>
-          <ModalCloseButton />
+          <PanelHeader onClose={closeModal}>
+            <Text marginLeft={"24px"}>Se eller endre på vedtaksinformasjon</Text>
+          </PanelHeader>
           <ModalBody minHeight={"500px"}>
             <VedtaksinfoBody
               clearErrors={clearErrors}
@@ -146,22 +147,21 @@ export const VedtaksinfoDetaljer = ({
             />
           </ModalBody>
 
-          <BorderTop>
-            <VedtakFooterContainer>
-              <VedtaksFooter
-                onAvbryt={onAvbryt}
-                toggleEndreVedtak={toggleEndreVedtak}
-                redigeringsmodus={redigeringsmodus}
-                displayMode={displayMode}
-                onClose={closeModal}
-                deleteOrArchive={() => {
-                  deleteOrArchive();
-                  closeModal();
-                }}
-                vedtaksinfoIsPersisted={isVedtakPersisted(selectedVedtaksinfoIndex, metadata)}
-              />
-            </VedtakFooterContainer>
-          </BorderTop>
+          <Divider />
+          <VedtakFooterContainer>
+            <VedtaksFooter
+              onAvbryt={onAvbryt}
+              toggleEndreVedtak={toggleEndreVedtak}
+              redigeringsmodus={redigeringsmodus}
+              displayMode={displayMode}
+              onClose={closeModal}
+              deleteOrArchive={() => {
+                deleteOrArchive();
+                closeModal();
+              }}
+              vedtaksinfoIsPersisted={isVedtakPersisted(selectedVedtaksinfoIndex, metadata)}
+            />
+          </VedtakFooterContainer>
         </form>
       </ModalContent>
     </Modal>
@@ -190,7 +190,6 @@ const VedtaksFooter = ({
     return (
       <EndreVedtakFooter
         onAvbryt={onAvbryt}
-        onClose={onClose}
         deleteOrArchive={deleteOrArchive}
         vedtaksinfoIsPersisted={vedtaksinfoIsPersisted}
       />
@@ -226,13 +225,11 @@ const NyttVedtakFooter = ({ onClose }: { onClose: () => void }) => {
 };
 
 const EndreVedtakFooter = ({
-  onClose,
   onAvbryt,
   deleteOrArchive: onArchive,
   vedtaksinfoIsPersisted,
 }: {
   onAvbryt: () => void;
-  onClose: () => void;
   deleteOrArchive: () => void;
   vedtaksinfoIsPersisted: boolean;
 }) => {
@@ -280,7 +277,7 @@ const EndreVedtakFooter = ({
 const VedtakFooterContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  padding: 15px 12px 5px 12px;
+  padding: 12px;
 `;
 
 const VedtakFooterLeft = styled.div`

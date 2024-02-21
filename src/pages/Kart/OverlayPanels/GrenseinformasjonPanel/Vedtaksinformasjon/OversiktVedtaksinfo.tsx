@@ -40,17 +40,16 @@ export const OversiktVedtaksinfo = ({ feature }: { feature: Feature }) => {
   const [displayMode, setDisplayMode] = useState(false);
   const [iconHovered, setIconHovered] = useState(false);
   const [selectedVedtaksinfoIndex, setSelectedVedtaksinfoIndex] = useState<number | undefined>(undefined);
-
-  if (!feature.getProperties()?.metadata) return;
-
-  const metadata = feature.getProperties().metadata as Metadata;
-  const vedtaksinfoCollection = metadata.dokumentasjonsreferanser;
+  const metadata = feature.getProperties()?.metadata as Metadata | undefined;
+  const vedtaksinfoCollection = metadata?.dokumentasjonsreferanser;
 
   const closeModal = () => {
     setDisplayMode(false);
     setSelectedVedtaksinfoIndex(undefined);
     onClose();
   };
+
+  if (!metadata) return;
 
   return (
     <Container>
@@ -137,21 +136,7 @@ const VedtaksinfoTitle = styled.div`
   flex: 1;
 `;
 
-export const BorderTop = styled.div`
-  border-top: 1px;
-  border-color: var(--kvib-colors-gray-300);
-  border-style: solid;
-  margin: 10px 0px 10px 0px;
-`;
-
-export const BorderBottom = styled.div`
-  border-bottom: 1px;
-  border-color: var(--kvib-colors-gray-300);
-  border-style: solid;
-`;
-
 const OversiktHeader = styled.div`
-  margin-left: 0px !important;
   display: flex;
   align-items: center;
   justify-content: space-between;

@@ -1,6 +1,6 @@
-import { Button, Input } from "@kvib/react";
+import { Button, Divider, Input } from "@kvib/react";
 import { VedtakinfoRow } from "./VedtakinfoRow";
-import { BorderTop, InputName, Referanse, VedtakinfoForm } from "./OversiktVedtaksinfo";
+import { InputName, Referanse, VedtakinfoForm } from "./OversiktVedtaksinfo";
 import { styled } from "styled-components";
 import { FieldError, UseFormClearErrors, UseFormRegister, UseFormSetError } from "react-hook-form";
 import { useState } from "react";
@@ -47,42 +47,42 @@ export const ReferanseInput = ({
     }
   };
   return (
-    <BorderTop>
-      <InputContainer>
-        <VedtakinfoRow tooltipLabel={tooltipLabel} name={title} errors={errors}>
-          <Input
-            {...register(registerName, { pattern: pattern })}
-            placeholder={placeholder}
-            backgroundColor="white"
-            onChange={(e) => {
-              if (e.target.value == "") setAppendButtonDisabled(true);
-              else setAppendButtonDisabled(false);
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                const element = e.target as HTMLInputElement;
-                appendReferanse(element);
-                e.preventDefault();
-              }
-            }}
-          />
-          <LeggTilKnapp
-            isDisabled={appendButtonDisabled}
-            onClick={() => {
-              const element = document.querySelector(`input[name=${registerName}]`) as HTMLInputElement;
+    <InputContainer>
+      <Divider />
+      <VedtakinfoRow tooltipLabel={tooltipLabel} name={title} errors={errors}>
+        <Input
+          {...register(registerName, { pattern: pattern })}
+          placeholder={placeholder}
+          backgroundColor="white"
+          onChange={(e) => {
+            if (e.target.value == "") setAppendButtonDisabled(true);
+            else setAppendButtonDisabled(false);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              const element = e.target as HTMLInputElement;
               appendReferanse(element);
-            }}
-          >
-            Legg til
-          </LeggTilKnapp>
-        </VedtakinfoRow>
-      </InputContainer>
-    </BorderTop>
+              e.preventDefault();
+            }
+          }}
+        />
+        <LeggTilKnapp
+          isDisabled={appendButtonDisabled}
+          onClick={() => {
+            const element = document.querySelector(`input[name=${registerName}]`) as HTMLInputElement;
+            appendReferanse(element);
+          }}
+        >
+          Legg til
+        </LeggTilKnapp>
+      </VedtakinfoRow>
+    </InputContainer>
   );
 };
 
 const InputContainer = styled.div`
-  padding-top: 10px;
+  padding-top: 12px;
+  padding-bottom: 12px;
 `;
 const inputIsValid = (input: string, pattern?: RegExp) => {
   if (!pattern) return true;
