@@ -4,6 +4,7 @@ import { Feature } from "ol";
 import { VedtaksinfoDetaljer } from "./VedtaksinfoDetaljer";
 import { Metadata } from "types/api";
 import { useState } from "react";
+import { createUniqueIshValue } from "./util/vedtaksinfoHelperMethods";
 
 type Referanse = {
   beskrivelse: string;
@@ -35,16 +36,18 @@ type InputCollectionName = {
   internreferanserKartverket: string;
 };
 
-export const OversiktVedtaksinfo = ({ feature }: { feature: Feature }) => {
+type FormViewState = "editing" | "viewing" | "creating";
+
+export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [displayMode, setDisplayMode] = useState(false);
+  const [formViewState, setFormViewState] = useState<FormViewState>("creating");
   const [iconHovered, setIconHovered] = useState(false);
   const [selectedVedtaksinfoIndex, setSelectedVedtaksinfoIndex] = useState<number | undefined>(undefined);
   const metadata = feature.getProperties()?.metadata as Metadata | undefined;
   const vedtaksinfoCollection = metadata?.dokumentasjonsreferanser;
 
   const closeModal = () => {
-    setDisplayMode(false);
+    setFormViewState("creating");
     setSelectedVedtaksinfoIndex(undefined);
     onClose();
   };
@@ -69,7 +72,7 @@ export const OversiktVedtaksinfo = ({ feature }: { feature: Feature }) => {
           colorScheme="blue"
           aria-label="Legg til dokumentreferanse"
           onClick={() => {
-            setDisplayMode(false);
+            setFormViewState("creating");
             onOpen();
           }}
         >
@@ -80,23 +83,23 @@ export const OversiktVedtaksinfo = ({ feature }: { feature: Feature }) => {
         ?.filter((vedtak) => !vedtak.shouldArchive)
         .map((vedtak, index) => (
           <VedtaksinfoCard
-            key={vedtak.id || vedtak.rettskildeTittel}
+            key={createUniqueIshValue(20)}
             title={vedtak.rettskildeTittel}
             date={vedtak.fastsettingsdato}
             onClick={() => {
-              setDisplayMode(true);
+              setFormViewState("viewing");
               setSelectedVedtaksinfoIndex(index);
               onOpen();
             }}
           />
         ))}
       <VedtaksinfoDetaljer
+        setFormViewState={setFormViewState}
+        formViewState={formViewState}
         selectedVedtaksinfoIndex={selectedVedtaksinfoIndex}
         isOpen={isOpen}
         onClose={closeModal}
         feature={feature}
-        displayMode={displayMode}
-        setDisplayMode={setDisplayMode}
       />
     </Container>
   );
@@ -148,4 +151,4 @@ const InfoIcon = styled.div`
   cursor: default;
 `;
 
-export type { VedtakinfoForm, Referanse, InputName, InputCollectionName };
+export type { VedtakinfoForm, Referanse, InputName, InputCollectionName, FormViewState };

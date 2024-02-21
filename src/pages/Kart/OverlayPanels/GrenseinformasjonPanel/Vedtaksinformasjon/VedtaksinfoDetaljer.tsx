@@ -1,32 +1,34 @@
 import { Button, Modal, ModalBody, ModalContent, Text, ModalOverlay, useToast, Divider } from "@kvib/react";
 import { Feature } from "ol";
 import { VedtaksinfoBody } from "./VedtaksinfoBody";
-import { Referanse, VedtakinfoForm } from "./OversiktVedtaksinfo";
+import { FormViewState, Referanse, VedtakinfoForm } from "./Vedtaksinformasjon";
 import { styled } from "styled-components";
 import { mapFromFormToApi, useVedtaksinfoForm } from "../../hooks/useVedtaksinfoForm";
 import { Metadata } from "types/api";
 import { useState } from "react";
 import { PanelHeader } from "../../Panel";
 
-export const VedtaksinfoDetaljer = ({
-  isOpen,
-  onClose,
-  feature,
-  displayMode,
-  setDisplayMode,
-  selectedVedtaksinfoIndex,
-}: {
-  displayMode: boolean;
+type DetaljerProps = {
+  setFormViewState: React.Dispatch<React.SetStateAction<FormViewState>>;
+  formViewState: FormViewState;
   feature: Feature;
   isOpen: boolean;
   onClose: () => void;
-  setDisplayMode: React.Dispatch<React.SetStateAction<boolean>>;
   selectedVedtaksinfoIndex?: number;
-}) => {
-  const metadata = feature.getProperties()?.metadata as Metadata | undefined;
-  const [redigeringsmodus, setRedigeringsmodus] = useState(false);
+};
+
+export const VedtaksinfoDetaljer = ({
+  formViewState,
+  setFormViewState,
+  isOpen,
+  onClose,
+  feature,
+  selectedVedtaksinfoIndex,
+}: DetaljerProps) => {
   const [dokref, setDokref] = useState<Referanse[] | undefined>(undefined);
   const [internref, setInternref] = useState<Referanse[] | undefined>(undefined);
+  const metadata = feature.getProperties()?.metadata as Metadata | undefined;
+  const toast = useToast();
   const {
     isDirty,
     register,
@@ -56,9 +58,7 @@ export const VedtaksinfoDetaljer = ({
     reset(undefined, { keepDefaultValues: true });
     setDokref(undefined);
     setInternref(undefined);
-    setRedigeringsmodus(false);
   };
-  const toast = useToast();
 
   const updateFeature = (data: VedtakinfoForm) => {
     if (isDirty) {
@@ -86,7 +86,7 @@ export const VedtaksinfoDetaljer = ({
     if (!isFormValidOnSubmit(data)) return;
 
     updateFeature(data);
-    if (redigeringsmodus) {
+    if (formViewState === "editing") {
       toggleEndreVedtak();
       return;
     }
@@ -117,8 +117,7 @@ export const VedtaksinfoDetaljer = ({
   }
 
   const toggleEndreVedtak = () => {
-    setDisplayMode(!displayMode);
-    setRedigeringsmodus(!redigeringsmodus);
+    setFormViewState(formViewState === "editing" ? "viewing" : "editing");
   };
 
   return (
@@ -126,17 +125,19 @@ export const VedtaksinfoDetaljer = ({
       <ModalOverlay />
       <ModalContent>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <PanelHeader onClose={closeModal}>
-            <Text marginLeft={"24px"}>Se eller endre på vedtaksinformasjon</Text>
-          </PanelHeader>
+          <VedtakHeaderContainer>
+            <PanelHeader onClose={closeModal}>
+              <Text>Se eller endre på vedtaksinformasjon</Text>
+            </PanelHeader>
+          </VedtakHeaderContainer>
           <ModalBody minHeight={"500px"}>
             <VedtaksinfoBody
+              formViewState={formViewState}
               clearErrors={clearErrors}
               control={control}
               errors={errors}
               setError={setError}
               feature={feature}
-              displayMode={displayMode}
               register={register}
               dokref={dokref}
               internref={internref}
@@ -153,8 +154,7 @@ export const VedtaksinfoDetaljer = ({
             <VedtaksFooter
               onAvbryt={onAvbryt}
               toggleEndreVedtak={toggleEndreVedtak}
-              redigeringsmodus={redigeringsmodus}
-              displayMode={displayMode}
+              formViewState={formViewState}
               onClose={closeModal}
               deleteOrArchive={() => {
                 deleteOrArchive();
@@ -169,25 +169,25 @@ export const VedtaksinfoDetaljer = ({
   );
 };
 
+type FooterProps = {
+  formViewState: FormViewState;
+  onAvbryt: () => void;
+  vedtaksinfoIsPersisted: boolean;
+  onClose: () => void;
+  toggleEndreVedtak: () => void;
+  deleteOrArchive: () => void;
+};
+
 const VedtaksFooter = ({
-  redigeringsmodus,
-  displayMode,
+  formViewState,
   onClose,
   toggleEndreVedtak,
   deleteOrArchive,
   vedtaksinfoIsPersisted,
   onAvbryt,
-}: {
-  onAvbryt: () => void;
-  vedtaksinfoIsPersisted: boolean;
-  redigeringsmodus: boolean;
-  displayMode: boolean;
-  onClose: () => void;
-  toggleEndreVedtak: () => void;
-  deleteOrArchive: () => void;
-}) => {
-  if (displayMode) return <VisVedtakFooter toggleEndreVedtak={toggleEndreVedtak} />;
-  else if (redigeringsmodus)
+}: FooterProps) => {
+  if (formViewState === "viewing") return <VisVedtakFooter toggleEndreVedtak={toggleEndreVedtak} />;
+  else if (formViewState === "editing")
     return (
       <EndreVedtakFooter
         onAvbryt={onAvbryt}
@@ -274,6 +274,10 @@ const EndreVedtakFooter = ({
     </>
   );
 };
+
+const VedtakHeaderContainer = styled.div`
+  margin-left: 28px;
+`;
 
 const VedtakFooterContainer = styled.div`
   display: grid;

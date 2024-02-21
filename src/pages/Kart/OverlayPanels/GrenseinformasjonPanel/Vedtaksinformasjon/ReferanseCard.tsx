@@ -1,22 +1,22 @@
 import { Card, IconButton, Text } from "@kvib/react";
-import { Referanse } from "./OversiktVedtaksinfo";
+import { FormViewState, Referanse } from "./Vedtaksinformasjon";
 import { styled } from "styled-components";
 
 type Props = {
   deleteRef: () => void;
   referanse: Referanse;
-  displayMode: boolean;
   urlMode: boolean;
+  formViewState: FormViewState;
 };
 
-export const ReferanseCard = ({ referanse, displayMode, urlMode, deleteRef }: Props) => {
+export const ReferanseCard = ({ referanse, urlMode, deleteRef, formViewState }: Props) => {
   return (
     <StyledCard>
       <Row>
         <Text colorScheme="gray" noOfLines={1} textOverflow="clip">
           {referanse?.beskrivelse}
         </Text>
-        {urlMode && displayMode && (
+        {urlMode && formViewState === "viewing" && (
           <a href={referanse?.beskrivelse} rel="noreferrer" target="_blank">
             <IconButton
               aria-label={`Åpne nettadressen ${referanse.beskrivelse} i et nytt vindu.`}
@@ -25,7 +25,7 @@ export const ReferanseCard = ({ referanse, displayMode, urlMode, deleteRef }: Pr
             />
           </a>
         )}
-        {!displayMode && (
+        {!(formViewState === "viewing") && (
           <IconButton
             aria-label="Slett referanse"
             colorScheme="red"

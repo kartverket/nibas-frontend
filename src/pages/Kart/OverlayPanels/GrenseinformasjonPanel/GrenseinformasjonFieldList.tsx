@@ -10,7 +10,7 @@ import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
 import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 import { EditingType, useEditAllGrenser } from "contexts/EditGrenserContext";
 import { TilhorighetField } from "./TilhorighetField";
-import { OversiktVedtaksinfo } from "./Vedtaksinformasjon/OversiktVedtaksinfo";
+import { Vedtaksinformasjon } from "./Vedtaksinformasjon/Vedtaksinformasjon";
 import { isAdministrativGrense } from "utils/grenser";
 
 export type Inputs = {
@@ -196,7 +196,7 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
         fieldLabel="Ekstra informasjon"
         renderItem={(register) => <Textarea placeholder="Fyll inn ekstra informasjon" {...register} />}
       />
-      {shouldDisplayDokumentasjonsreferanse && <OversiktVedtaksinfo feature={feature} />}
+      {shouldDisplayDokumentasjonsreferanse && <Vedtaksinformasjon feature={feature} />}
     </Container>
   );
 };

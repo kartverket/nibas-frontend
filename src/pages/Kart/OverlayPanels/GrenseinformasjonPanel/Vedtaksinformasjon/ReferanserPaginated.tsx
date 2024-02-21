@@ -1,20 +1,21 @@
 import { IconButton, Text } from "@kvib/react";
-import { Referanse } from "./OversiktVedtaksinfo";
+import { FormViewState, Referanse } from "./Vedtaksinformasjon";
 import { ReferanseCard } from "./ReferanseCard";
 import { useState } from "react";
 import { ReferanseItemsContainer, ReferanseCardWrapper } from "./VedtaksinfoBody";
 import { styled } from "styled-components";
+import { createUniqueIshValue } from "./util/vedtaksinfoHelperMethods";
 
 type ReferanserPaginatedProps = {
   deleteRef: (index: number) => void;
   referanser: Referanse[] | undefined;
-  displayMode: boolean;
   urlMode: boolean;
+  formViewState: FormViewState;
 };
 
-export const ReferanserPaginated = ({ referanser, urlMode, displayMode, deleteRef }: ReferanserPaginatedProps) => {
+export const ReferanserPaginated = ({ referanser, urlMode, deleteRef, formViewState }: ReferanserPaginatedProps) => {
   const [page, setPage] = useState(0);
-  const pageSize = displayMode ? 4 : 3;
+  const pageSize = formViewState === "viewing" ? 4 : 3;
   const startIndex = page * pageSize;
   const refCopy = structuredClone(referanser);
   const itemsToShow = refCopy?.splice(startIndex, pageSize);
@@ -26,10 +27,10 @@ export const ReferanserPaginated = ({ referanser, urlMode, displayMode, deleteRe
         {itemsToShow && itemsToShow.length > 0
           ? itemsToShow?.map((ref: Referanse, index: number) => (
               <ReferanseCard
-                key={ref.beskrivelse}
+                key={createUniqueIshValue(10)}
                 referanse={ref}
                 urlMode={urlMode}
-                displayMode={displayMode}
+                formViewState={formViewState}
                 deleteRef={() => {
                   deleteRef(page * pageSize + index);
                 }}

@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { Referanse, VedtakinfoForm } from "./OversiktVedtaksinfo";
+import { FormViewState, Referanse, VedtakinfoForm } from "./Vedtaksinformasjon";
 import { Control, FieldErrors, UseFormClearErrors, UseFormRegister, UseFormSetError } from "react-hook-form";
 import { Card, Tab, TabList, TabPanel, TabPanels, Tabs } from "@kvib/react";
 import { AntallReferanser } from "./AntallReferanser";
@@ -8,9 +8,9 @@ import { ReferanseInput } from "./ReferanseInput";
 import { useState } from "react";
 
 export type ReferanserProps = {
+  formViewState: FormViewState;
   deleteInternref: (index: number) => void;
   deleteDokref: (index: number) => void;
-  displayMode: boolean;
   dokref: Referanse[] | undefined;
   internref: Referanse[] | undefined;
   addInternreferanse: (ref: Referanse) => void;
@@ -31,10 +31,10 @@ export const Referanser = ({
   errors,
   setError,
   clearErrors,
-  displayMode,
   deleteInternref,
   deleteDokref,
   control,
+  formViewState,
 }: ReferanserProps) => {
   const [dokrefSelected, setDokrefSelected] = useState(true);
   const [internrefSelected, setInternrefSelected] = useState(false);
@@ -64,9 +64,9 @@ export const Referanser = ({
                   deleteRef={(index) => deleteDokref(index)}
                   referanser={dokref}
                   urlMode={true}
-                  displayMode={displayMode}
+                  formViewState={formViewState}
                 />
-                {!displayMode && (
+                {!(formViewState === "viewing") && (
                   <ReferanseInput
                     control={control}
                     errors={errors.leggTilDokumentlenke}
@@ -89,9 +89,9 @@ export const Referanser = ({
                   deleteRef={(index) => deleteInternref(index)}
                   referanser={internref}
                   urlMode={false}
-                  displayMode={displayMode}
+                  formViewState={formViewState}
                 />
-                {!displayMode && (
+                {!(formViewState === "viewing") && (
                   <ReferanseInput
                     control={control}
                     errors={errors.leggTilInternreferanse}

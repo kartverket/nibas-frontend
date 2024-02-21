@@ -1,6 +1,6 @@
 import { Button, Divider, Input } from "@kvib/react";
 import { VedtakinfoRow } from "./VedtakinfoRow";
-import { InputName, Referanse, VedtakinfoForm } from "./OversiktVedtaksinfo";
+import { InputName, Referanse, VedtakinfoForm } from "./Vedtaksinformasjon";
 import { styled } from "styled-components";
 import { Control, Controller, FieldError, UseFormClearErrors, UseFormRegister, UseFormSetError } from "react-hook-form";
 import { useState } from "react";
