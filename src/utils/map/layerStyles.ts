@@ -44,8 +44,8 @@ const lineAndPointStyles = ({
   new Style({
     stroke: new Stroke({
       color,
-      lineDash: dashed ? [4, 6] : [],
-      width: dashed ? 3 : 2,
+      lineDash: dashed ? [6, 8] : [],
+      width: 1.25,
     }),
   }),
   new Style({
@@ -59,7 +59,7 @@ const lineAndPointStyles = ({
   }),
   new Style({
     image: new Circle({
-      radius: points ? 2.5 : 0,
+      radius: points ? 3.5 : 0,
       fill: new Fill({
         color: "#FFFFFF",
       }),
@@ -75,11 +75,11 @@ const lineAndPointStyles = ({
 export const selectedPointStyle = new Style({
   image: new Circle({
     radius: 6,
-    stroke: new Stroke({ color: "#ffffff", width: 2 }),
-    fill: new Fill({ color: "#00A76C" }),
+    stroke: new Stroke({ color: "#D163E6FF", width: 3 }),
+    fill: new Fill({ color: "#ffffff" }),
   }),
-  fill: new Fill({ color: "#00A76C" }),
-  stroke: new Stroke({ color: "#ffffff" }),
+  fill: new Fill({ color: "#ffffff" }),
+  stroke: new Stroke({ color: "#D163E6FF" }),
   zIndex: 10,
 });
 
