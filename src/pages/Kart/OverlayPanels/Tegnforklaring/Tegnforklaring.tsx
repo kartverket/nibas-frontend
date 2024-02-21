@@ -52,20 +52,21 @@ type DotProps = {
 
 const Line = styled.div<LineProps>`
   margin-top: 10px;
-  border-bottom: ${(props) => `4px ${props.$dotted ? "dashed" : "solid"} ${props.$color}`};
+  border-bottom: ${(props) => `3px ${props.$dotted ? "dashed" : "solid"} ${props.$color}`};
 `;
 
 const DotWrapper = styled.div`
   position: absolute;
-  top: 7px;
   display: flex;
+  top: 5px;
+  align-items: center;
   justify-content: space-between;
   width: 100%;
 `;
 
 const Dot = styled.div<DotProps>`
-  height: 10px;
-  width: 10px;
+  height: ${(props) => (props.$endPoint !== false ? "12px" : "7px")};
+  width: ${(props) => (props.$endPoint !== false ? "12px" : "7px")};
   border-radius: 50%;
   display: inline-block;
   background: ${(props) => (props.$endPoint !== false ? "white" : props.$color)};
