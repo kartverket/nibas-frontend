@@ -10,6 +10,8 @@ import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
 import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 import { EditingType, useEditAllGrenser } from "contexts/EditGrenserContext";
 import { TilhorighetField } from "./TilhorighetField";
+import { Vedtaksinformasjon } from "./Vedtaksinformasjon/Vedtaksinformasjon";
+import { isAdministrativGrense } from "utils/grenser";
 
 export type Inputs = {
   uuid: string;
@@ -28,10 +30,11 @@ type Props = {
   feature: Feature<Geometry>;
 };
 
-export const Container = styled.div`
+const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
+  padding-bottom: 32px;
 `;
 
 const GrenseinformasjonFieldList = ({ feature }: Props) => {
@@ -56,6 +59,11 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
 
     return [];
   };
+
+  const shouldDisplayDokumentasjonsreferanse =
+    isAdministrativGrense(properties.type as GrenseType) &&
+    !gyldigTil &&
+    (getCurrentlyEditingType() === "grunnkrets" || getCurrentlyEditingType() == "stemmekrets");
 
   return (
     <Container>
@@ -166,6 +174,7 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
           )
         }
       />
+
       <GrenseinformasjonField
         feature={feature}
         tooltipLabel="Antatt posisjonsnøyaktighet i grunnriss (x, y) oppgitt i cm. Den nøyaktigheten som angis bør være så nær det virkelige objektet som mulig."
@@ -188,6 +197,7 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
         fieldLabel="Ekstra informasjon"
         renderItem={(register) => <Textarea placeholder="Fyll inn ekstra informasjon" {...register} />}
       />
+      {shouldDisplayDokumentasjonsreferanse && <Vedtaksinformasjon feature={feature} />}
     </Container>
   );
 };
