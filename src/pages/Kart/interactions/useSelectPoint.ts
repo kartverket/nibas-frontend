@@ -54,7 +54,7 @@ const useSelectPoint = () => {
 
       // Må estimere hvilket punkt på linjen man prøvde å trykke på
       const nearbyVertexCoordinate = findNearbyVertexOnFeature(
-        nonArchivedFeatures[0] as Feature<LineString>,
+        nonArchivedFeatures[0].getGeometry() as LineString,
         event.coordinate,
       );
 
