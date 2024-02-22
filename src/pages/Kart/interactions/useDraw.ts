@@ -41,7 +41,7 @@ const useDraw = () => {
       const firstCoordinate = geometry.getFirstCoordinate();
       const lastCoordinate = geometry.getLastCoordinate();
 
-      const clickedCoordinate = findNearbyVertexOnFeature(feature, eventCoordinate);
+      const clickedCoordinate = findNearbyVertexOnFeature(feature.getGeometry() as LineString, eventCoordinate);
 
       if (!clickedCoordinate) {
         return false;
