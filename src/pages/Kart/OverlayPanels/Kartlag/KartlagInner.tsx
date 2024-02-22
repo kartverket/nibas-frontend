@@ -1,7 +1,6 @@
 import { Checkbox } from "@kvib/react";
-import { useKartlag } from "contexts/KartlagContext/KartlagContext";
+import { MappedLayer, useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { styled } from "styled-components";
-import { MappedLayer } from "utils/getLayersFromWMS";
 import { isWMSLayer, isWMTSLayer } from "utils/map/layers";
 import { toggleWMSLayer, toggleWMTSLayer } from "./utils";
 import { kartlagLayers } from "hooks/layers/constants";
@@ -11,16 +10,13 @@ type Props = {
   isMainLayer?: boolean;
 };
 
+// TODO: denne må kanskje også ha en opacity-slider hvis det er et mainlayer?
 const KartlagInner = ({ mappedLayer, isMainLayer }: Props) => {
   const layer = kartlagLayers[mappedLayer.sourceId];
-  const { layerIsVisible, subLayerIsVisible, toggleLayerVisibility } = useKartlag();
-
-  const isVisible = isMainLayer
-    ? layerIsVisible(mappedLayer.sourceId)
-    : subLayerIsVisible(mappedLayer.sourceId, mappedLayer.title);
+  const { toggleLayerVisibility } = useKartlag();
 
   const handleToggle = () => {
-    if (isWMSLayer(layer)) toggleWMSLayer(mappedLayer, isVisible);
+    if (isWMSLayer(layer)) toggleWMSLayer(mappedLayer, mappedLayer.isVisible);
     if (isWMTSLayer(layer)) toggleWMTSLayer(mappedLayer);
 
     if (isMainLayer) {
@@ -32,7 +28,7 @@ const KartlagInner = ({ mappedLayer, isMainLayer }: Props) => {
 
   return (
     <Container>
-      <Checkbox isChecked={isVisible} onChange={handleToggle}>
+      <Checkbox isChecked={mappedLayer.isVisible} onChange={handleToggle}>
         {mappedLayer.title}
       </Checkbox>
     </Container>

@@ -11,7 +11,7 @@ const WMSParser = new WMSCapabilities();
 const WMTSParser = new WMTSCapabilities();
 
 type WMSResponseLayer = {
-  Name: string | undefined;
+  Name: string;
   Title: string;
   queryable: boolean;
   Layer: WMSResponseLayer[];
@@ -30,11 +30,10 @@ const mapWMSLayer = (responseLayer: WMSResponseLayer, sourceId: KartlagId) => {
   }
 
   const mappedLayer: MappedLayer = {
+    sourceId,
     id: responseLayer.Name,
     title: responseLayer.Title,
-    sourceId,
     layers,
-    queryable: responseLayer.queryable,
     isVisible: false,
   };
 
@@ -42,11 +41,10 @@ const mapWMSLayer = (responseLayer: WMSResponseLayer, sourceId: KartlagId) => {
 };
 
 const mapWMTSLayer = (responseLayer: WMTSResponseLayer, sourceId: KartlagId): MappedLayer => ({
+  sourceId: sourceId,
   id: responseLayer.Identifier,
   title: responseLayer.Title,
-  sourceId: sourceId,
   layers: [],
-  queryable: true,
   isVisible: false,
 });
 
@@ -105,11 +103,10 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
       const sourceId = source.get("id") as KartlagId;
 
       const mappedWMTSLayer: MappedLayer = {
-        layers: json.Contents.Layer.map((l: WMTSResponseLayer) => mapWMTSLayer(l, sourceId)),
-        queryable: true,
         sourceId: sourceId,
-        title: json.ServiceIdentification.Title ?? source.getLayer(),
         id: sourceId,
+        title: json.ServiceIdentification.Title ?? source.getLayer(),
+        layers: json.Contents.Layer.map((l: WMTSResponseLayer) => mapWMTSLayer(l, sourceId)),
         isVisible: false,
       };
 

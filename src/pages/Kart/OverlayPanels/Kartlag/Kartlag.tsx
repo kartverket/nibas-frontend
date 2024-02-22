@@ -1,9 +1,8 @@
-import { useKartlag } from "contexts/KartlagContext/KartlagContext";
+import { MappedLayer, useKartlag } from "contexts/KartlagContext/KartlagContext";
 import KartlagInner from "./KartlagInner";
 import KartlagOuter from "./KartlagOuter";
 import { styled } from "styled-components";
 import { IconButton } from "@kvib/react";
-import { MappedLayer } from "utils/getLayersFromWMS";
 
 type Props = {
   index: number;

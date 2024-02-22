@@ -6,19 +6,16 @@ import getSubLayersFromWMSSource from "utils/getLayersFromWMS";
 import { isVectorLayer } from "utils/map/layers";
 
 export type MappedLayer = {
-  layers: MappedLayer[];
-  title: string;
-  id?: string;
-  queryable: boolean;
   sourceId: KartlagId;
+  id: string;
+  title: string;
+  layers: MappedLayer[];
   isVisible: boolean;
 };
 
 export type KartlagContextValue = {
   mappedLayers: MappedLayer[];
   toggleLayerVisibility: (layerId: KartlagId, subLayer?: string, replaceSubLayer?: boolean) => void;
-  layerIsVisible: (layerId: KartlagId) => boolean;
-  subLayerIsVisible: (mainLayer: KartlagId, subLayer: string) => boolean;
   moveLayer: (direction: "up" | "down", layerId: KartlagId) => void;
   resetKartlag: () => void;
 };
@@ -31,7 +28,7 @@ export const KartlagContext = createContext<KartlagContextValue | undefined>(und
 export const KartlagProvider = ({ children }: { children: React.ReactNode }) => {
   const [mappedLayers, setMappedLayers] = useState<MappedLayer[]>([]);
 
-  const { toggleLayerVisibility, layerIsVisible, subLayerIsVisible, resetVisibleLayers } = useVisibleLayers();
+  const { toggleLayerVisibility, resetVisibleLayers } = useVisibleLayers();
 
   // TODO: visible layers må slås inn i mappedlayers for at dette skal ha noe effekt i kartet
   const moveLayer = (direction: "up" | "down", layerId: KartlagId) => {
@@ -53,11 +50,10 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
     const mappedLayerPromises = Object.entries(kartlagLayers).map(([id, layer]) => {
       if (isVectorLayer(layer)) {
         const mappedLayer: MappedLayer = {
-          layers: [],
-          queryable: true,
           sourceId: id as KartlagId,
-          title: id,
           id: id,
+          title: id,
+          layers: [],
           isVisible: false,
         };
         return mappedLayer;
@@ -86,8 +82,6 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
     mappedLayers,
     toggleLayerVisibility,
     moveLayer,
-    layerIsVisible,
-    subLayerIsVisible,
     resetKartlag,
   };
 

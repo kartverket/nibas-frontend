@@ -1,10 +1,10 @@
 import { styled } from "styled-components";
 import { Accordion, AccordionPanel, Spacer } from "@kvib/react";
-import { MappedLayer } from "utils/getLayersFromWMS";
 import KartlagMiddle from "./KartlagMiddle";
 import KartlagInner from "./KartlagInner";
 import { KartlagAccordionItem, KartlagAccordionButton, KartlagAccordionIcon } from "./components";
 import ActiveKartlagOpacity from "./KartlagOpacity";
+import { MappedLayer } from "contexts/KartlagContext/KartlagContext";
 
 type Props = {
   mappedLayer: MappedLayer;

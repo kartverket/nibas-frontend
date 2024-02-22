@@ -1,7 +1,7 @@
+import { MappedLayer } from "contexts/KartlagContext/KartlagContext";
 import { kartlagLayers } from "hooks/layers/constants";
 import TileWMS from "ol/source/TileWMS";
 import WMTS from "ol/source/WMTS";
-import { MappedLayer } from "utils/getLayersFromWMS";
 import { getLayerById, isWMTSLayer } from "utils/map/layers";
 
 const getLayersStringToReplace = (layersInParams: string, mappedLayerName: string) => {

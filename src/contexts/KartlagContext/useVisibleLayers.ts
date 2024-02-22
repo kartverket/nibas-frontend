@@ -112,20 +112,8 @@ const useVisibleLayers = () => {
     setVisibleLayers([{ mainLayer: mainLayer, subLayers: [subLayer] }, ...visibleLayers]);
   };
 
-  const layerIsVisible = (layerId: KartlagId) => {
-    return visibleLayers.some((visibleLayer) => visibleLayer.mainLayer === layerId);
-  };
-
-  const subLayerIsVisible = (mainLayer: KartlagId, subLayer: string) => {
-    return visibleLayers.some(
-      (visibleLayer) => visibleLayer.mainLayer === mainLayer && visibleLayer.subLayers.includes(subLayer),
-    );
-  };
-
   return {
     toggleLayerVisibility,
-    layerIsVisible,
-    subLayerIsVisible,
     resetVisibleLayers,
   };
 };
