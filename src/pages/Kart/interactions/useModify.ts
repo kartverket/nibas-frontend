@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import Feature from "ol/Feature";
 import LineString from "ol/geom/LineString";
 import Modify, { ModifyEvent } from "ol/interaction/Modify";
@@ -14,7 +14,7 @@ import { Style } from "ol/style";
 import { createGrenseHistoryChange, getInfoFromFeature } from "./historyUtil";
 import { useGetFeatures } from "./utils";
 import { isAdministrativGrense } from "utils/grenser";
-import { isFeatureEditable } from "utils/features";
+import { isFeatureEditable, isPreviousAndCurrentCoordinatesEqual } from "utils/features";
 import { findNearbyVertexOnFeature } from "utils/map";
 import useToastCounter from "hooks/useToastCounter";
 import { Geometry } from "ol/geom";
@@ -27,6 +27,7 @@ const useModify = () => {
   const { activeTool, activeModeTools } = useToolbar();
   const { selectedFeatures, featureIsArchived } = useFeatureStyle();
   const toast = useToast();
+  const toastIdRef = useRef<string | number>("");
   const { toastCounter: removeToast } = useToastCounter("success", "Punktet ble fjernet", "punkter ble fjernet");
   const { toastCounter: addToast } = useToastCounter("success", "Punktet ble lagt til", "punkter ble lagt til");
   const { getActiveFeaturesAtPixel, getFeaturesAtPixel } = useGetFeatures();
@@ -204,24 +205,31 @@ const useModify = () => {
 
     const updateFeatureOnModification = async (event: ModifyEvent) => {
       if (activeTool === "detach") {
-        if (selectedFeatures.length === 0) return;
-
-        // TODO Kan hende man må gjøre noe mer filtrering her. Det er ikke vits å hente fra kun "edit"
-        // ettersom man må kunne løsrive en grense fra en administrativ grense som per nå ikke er redigerbar
-        const activeFeatures = getActiveFeaturesAtPixel(event.mapBrowserEvent, null);
-
-        const selectedFeatureIds = selectedFeatures.map((feature) => feature.getId());
-        if (selectedFeatureIds.length !== 1) return; // Dette burde ikke skje
+        if (selectedFeatures.length !== 1) return;
         const selectedFeature = selectedFeatures[0];
+        if (isPreviousAndCurrentCoordinatesEqual(selectedFeature)) return;
+
+        const activeFeatures = getActiveFeaturesAtPixel(event.mapBrowserEvent, "edit");
 
         const nonSelectedActiveFeatures = activeFeatures.filter(
           (feature) => selectedFeature.getId() !== feature.getId(),
         );
 
+        if (!nonSelectedActiveFeatures.every((feature) => isFeatureEditable(feature, false))) {
+          toast({
+            status: "error",
+            title: "Grensen er ikke redigerbar",
+            description: "Du kan ikke sette en løsrevet grense på en ikke-redigerbar grense",
+          });
+          setPreviousCoordinatesForFeature(selectedFeature);
+          return;
+        }
+
         // Hvis vi ender opp på én grense, må vi sjekke om det er et endepunkt vi har landet på, for ikke-endepunkter oppfører seg annerledes
         if (nonSelectedActiveFeatures.length === 1) {
           const nonSelectedActiveFeature = nonSelectedActiveFeatures[0] as Feature<LineString>;
           const nonSelectedActiveFeatureGeometry = nonSelectedActiveFeature.getGeometry() as LineString;
+
           if (!nonSelectedActiveFeatureGeometry) return;
 
           const nearbyVertex = findNearbyVertexOnFeature(
@@ -244,6 +252,16 @@ const useModify = () => {
 
             if (isAccepted) {
               performFeatureSplit(nonSelectedActiveFeature, nearbyVertex);
+              if (!toastIdRef.current) {
+                toastIdRef.current = toast({
+                  status: "warning",
+                  title: "Husk å sette tilhørighet på berørte grenser",
+                  description: `For øyeblikket må alle flatetilhørigheter på grensene legges til manuelt. 
+                            Tilhørigheten kan settes ved å bruke "Informasjon"-verktøyet.`,
+                  isClosable: true,
+                  duration: null,
+                });
+              }
             } else {
               setPreviousCoordinatesForFeature(selectedFeature);
               return;
