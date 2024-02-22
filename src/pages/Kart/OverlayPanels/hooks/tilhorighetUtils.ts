@@ -97,15 +97,16 @@ const getDefaultKrets = (kontekstType: KontekstType): Krets => {
 export const getUpdatedKontekstEgenskaper = (
   kontekstType: KontekstType,
   newKretsIds: TilhorighetChoice,
-  kretsValg: TilhorighetOptions,
+  kretsOptions: TilhorighetOptions,
 ): KontekstEgenskaper[] => {
-  const allPossibleOptions = kretsValg.a.concat(kretsValg.b);
+  const allPossibleOptions = kretsOptions.a.concat(kretsOptions.b);
   const kretser = Object.values(newKretsIds).map(
     (id) => allPossibleOptions.find((krets) => krets.id.lokalid.value === id) ?? getDefaultKrets(kontekstType),
   );
   const nyeKontekstEgenskaper = kretser.map((krets) => ({
-    id: krets.id,
+    id: krets.id.lokalid.value.startsWith("NY_KRETS") ? undefined : krets.id, // fjerner tempid når vi setter kontekstEgenskapene på featuren
     kommuneId: krets.kommuneId,
+    kretsNummer: krets.nummer,
     type: krets.type,
     version: krets.version,
     retningMedKlokken: true,
@@ -157,34 +158,26 @@ export const sortKretserOptionsByNumber = (kretser: Krets[] | undefined): Krets[
 
 export const mapGrunnkretsResponseToKrets = (grunnkretser: GrunnkretsResponse[]): Krets[] => {
   return sortKretserOptionsByNumber(
-    grunnkretser
-      .map(({ id, version, grunnkretsnummer, navn, kommuneIdentifikator }) => ({
-        id,
-        kommuneId: kommuneIdentifikator,
-        version,
-        nummer: grunnkretsnummer,
-        navn: navn,
-        type: KontekstType.GRUNNKRETS,
-      }))
-      .sort((a, b) => {
-        return Number(a.nummer) - Number(b.nummer);
-      }),
+    grunnkretser.map(({ id, version, grunnkretsnummer, navn, kommuneIdentifikator }) => ({
+      id,
+      kommuneId: kommuneIdentifikator,
+      version,
+      nummer: grunnkretsnummer,
+      navn: navn,
+      type: KontekstType.GRUNNKRETS,
+    })),
   );
 };
 
 export const mapStemmekretResponseToKrets = (stemmekretser: StemmekretsResponse[]): Krets[] => {
   return sortKretserOptionsByNumber(
-    stemmekretser
-      .map(({ id, version, stemmekretsnummer, stemmekretsnavn, kommuneIdentifikator }) => ({
-        id,
-        kommuneId: kommuneIdentifikator,
-        version,
-        nummer: stemmekretsnummer,
-        navn: stemmekretsnavn,
-        type: KontekstType.STEMMEKRETS,
-      }))
-      .sort((a, b) => {
-        return Number(a.nummer) - Number(b.nummer);
-      }),
+    stemmekretser.map(({ id, version, stemmekretsnummer, stemmekretsnavn, kommuneIdentifikator }) => ({
+      id,
+      kommuneId: kommuneIdentifikator,
+      version,
+      nummer: stemmekretsnummer,
+      navn: stemmekretsnavn,
+      type: KontekstType.STEMMEKRETS,
+    })),
   );
 };

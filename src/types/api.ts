@@ -49,6 +49,7 @@ export type StatistiskGrenseMetadata = components["schemas"]["StatistiskgrenseMe
   dokumentasjonsreferanser: undefined;
 };
 export type ObjektIdentifikator = components["schemas"]["ObjektIdentifikator"];
+export type IdentifikatorMedVersjon = components["schemas"]["IdentifikatorMedVersjon"];
 export type OpprettUtkastRequest = components["schemas"]["OpprettUtkastRequest"];
 export type OppdaterUtkastRequest = components["schemas"]["OppdaterUtkastRequest"];
 export type UtkastResponse = components["schemas"]["UtkastResponse"];
