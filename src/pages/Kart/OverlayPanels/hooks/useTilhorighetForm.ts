@@ -6,7 +6,7 @@ import { Feature } from "ol";
 import { LineString } from "ol/geom";
 import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { FeatureProperties, KontekstEgenskaper, KretsDelingEndringRequest } from "types/api";
+import { FeatureProperties, KontekstEgenskaper, KretsDelingEndringRequest, UtkastOperasjoner } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import {
   CustomOption,
@@ -54,15 +54,34 @@ const getKretserFromKretsDelingEndringer = (
     );
 };
 
-const getTempIdForNyKretsKontekstEgenskaper = (kontekstEgenskaper: KontekstEgenskaper): KontekstEgenskaper => {
+const getIdForKontekstEgenskaper = (
+  kontekstEgenskaper: KontekstEgenskaper,
+  currentOperasjoner: UtkastOperasjoner | undefined,
+): KontekstEgenskaper => {
   if (kontekstEgenskaper.id) return kontekstEgenskaper;
-  return {
-    ...kontekstEgenskaper,
-    id: {
-      lokalid: { value: `NY_KRETS_${kontekstEgenskaper.kretsNummer}_${kontekstEgenskaper.kommuneId?.lokalid.value}` },
-      gyldighetsdato: "",
-    },
-  };
+  // hvis det ikke finnes noen deling operasjoner som har kommuneId lik kontekstEgenskapen sin kommuneId og kontekstEgenskapen ikke har en krets med samme nummer betyr det at den ikke eksisterer lengre
+  // i dette tilfellet setter vi lokalid til "Not Chosen"
+  else if (
+    !currentOperasjoner?.kretsDelingEndringer
+      .filter((deling) => deling.kommuneId.lokalid.value === kontekstEgenskaper.kommuneId?.lokalid.value)
+      .find((deling) => deling.nyeKretser.find((krets) => krets.kretsNummer === kontekstEgenskaper.kretsNummer))
+  ) {
+    return {
+      ...kontekstEgenskaper,
+      id: {
+        lokalid: { value: CustomOption.NOT_CHOSEN },
+        gyldighetsdato: "",
+      },
+    };
+    // hvis det finnes en ny krets med nummer og kommuneid lik en ny krets i utkastet OG kontekstegenskaper har id lik undefined lager vi en unik referanse til denne kretsen
+  } else
+    return {
+      ...kontekstEgenskaper,
+      id: {
+        lokalid: { value: `NY_KRETS_${kontekstEgenskaper.kretsNummer}_${kontekstEgenskaper.kommuneId?.lokalid.value}` },
+        gyldighetsdato: "",
+      },
+    };
 };
 
 const getDefaultTilhorighetData = () => ({
@@ -76,8 +95,8 @@ export const useTilhorighetForm = (feature: Feature) => {
 
   const featureProperties = feature.getProperties() as FeatureProperties;
   const kontekstEgenskaper = useMemo(
-    () => featureProperties.kontekstEgenskaper.map((ke) => getTempIdForNyKretsKontekstEgenskaper(ke)), // kontekster som peker til nye kretser har undefined som id
-    [featureProperties.kontekstEgenskaper],
+    () => featureProperties.kontekstEgenskaper.map((ke) => getIdForKontekstEgenskaper(ke, utkast?.operasjoner)), // kontekster som peker til nye kretser i utkastet har undefined som id.
+    [featureProperties.kontekstEgenskaper, utkast],
   );
   const kontekstType =
     kontekstEgenskaper.map((k) => k.type as KontekstType)[0] ??
@@ -132,8 +151,6 @@ export const useTilhorighetForm = (feature: Feature) => {
       addKontekstEntryFromFeature(feature as Feature<LineString>, oppdaterteKontekstEgenskaper, addHistoryEntry);
     }
   };
-
-  console.log(kontekstEgenskaper);
 
   return {
     setTilhorighetOptions,

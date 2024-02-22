@@ -7,11 +7,13 @@ import { getIdFromEntity } from "utils/api";
 import {
   CustomOption,
   KontekstType,
+  Krets,
   mapGrunnkretsResponseToKrets,
   mapStemmekretResponseToKrets,
 } from "../hooks/tilhorighetUtils";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
+import { useToast } from "@kvib/react";
 
 export type DelingForm = Pick<KretsDelingEndringRequest, "opprinneligKrets" | "nyeKretser">;
 
@@ -37,7 +39,9 @@ const getKommuneIdentifikatorFromOptions = (
 };
 
 export const useDelingForm = (flatedata: Flatedata) => {
-  const { utkast, updateUtkast } = useUtkast();
+  const { utkast, updateUtkast, getUpdateUtkastRequestFromHistory } = useUtkast();
+  const toast = useToast();
+
   const {
     register,
     getValues,
@@ -77,12 +81,31 @@ export const useDelingForm = (flatedata: Flatedata) => {
     }
   };
 
+  const showDelingSuccessToast = (
+    opprinneligKretsInfo: Krets,
+    nyeKretser: { kretsNavn: string; kretsNummer: string }[],
+    isUpdateOfDeling: boolean,
+  ) => {
+    const nyeKretserFormatted = nyeKretser.map((k) => `${k.kretsNummer} ${k.kretsNavn}`);
+    const nyeKretserString = nyeKretserFormatted
+      .slice(0, nyeKretserFormatted.length - 1)
+      .join(", ")
+      .concat(` og ${nyeKretserFormatted[nyeKretserFormatted.length - 1]}`);
+
+    toast({
+      status: "success",
+      title: !isUpdateOfDeling
+        ? `Du opprettet ${nyeKretserString} ved å dele ${opprinneligKretsInfo.nummer} ${opprinneligKretsInfo.navn}`
+        : `Oppdaterte delingen av ${opprinneligKretsInfo.nummer} ${opprinneligKretsInfo.navn} til å inneholde ${nyeKretserString}. Husk å sjekke at tilhørigheten til nærliggende grenser er korrekt.`,
+    });
+  };
+
   const updateDraftWithDelingRequest = () => {
     if (editingType && grunnkretser && stemmekretser) {
       const { opprinneligKrets, nyeKretser } = getValues();
-      const opprinneligKretsVersion = opprinneligFlateOptions.find(
+      const opprinneligKretsInfo = opprinneligFlateOptions.find(
         (krets) => krets.id.lokalid.value === opprinneligKrets.lokalId,
-      )?.version;
+      );
       const kommuneIdentifikator = getKommuneIdentifikatorFromOptions(
         editingType,
         opprinneligKrets.lokalId,
@@ -93,30 +116,42 @@ export const useDelingForm = (flatedata: Flatedata) => {
         kommuneIdentifikator &&
         opprinneligKrets.lokalId.length > 0 &&
         nyeKretser.length > 0 &&
-        opprinneligKretsVersion
+        opprinneligKretsInfo?.version
       ) {
-        const kretsDelingEndringRequest = {
+        const newKretsDelingEndringRequest = {
           opprinneligKrets: {
             lokalId: opprinneligKrets.lokalId,
-            version: opprinneligKretsVersion,
+            version: opprinneligKretsInfo.version,
           },
           kommuneId: kommuneIdentifikator,
           flatetype: editingType === "grunnkrets" ? KontekstType.GRUNNKRETS : KontekstType.STEMMEKRETS,
           nyeKretser: nyeKretser.slice(1), // må fjerne opprinnelig krets her fordi vi har den i field
         };
-        console.log(kretsDelingEndringRequest);
-        if (utkast) {
+
+        const latestOperasjoner = getUpdateUtkastRequestFromHistory()?.operasjoner; // Vi vil lagre utkastet med de eksisterende endringene også
+        if (utkast && latestOperasjoner) {
+          let isUpdateOfDeling = false;
+          if (
+            latestOperasjoner.kretsDelingEndringer.find(
+              (deling) => deling.opprinneligKrets.lokalId === opprinneligKrets.lokalId,
+            )
+          ) {
+            isUpdateOfDeling = true;
+          }
           updateUtkast(utkast.id, {
             ...utkast,
             operasjoner: {
-              ...utkast.operasjoner,
-              kretsDelingEndringer: [...utkast.operasjoner.kretsDelingEndringer, kretsDelingEndringRequest],
+              ...latestOperasjoner,
+              kretsDelingEndringer: [
+                ...utkast.operasjoner.kretsDelingEndringer.filter(
+                  (deling) => deling.opprinneligKrets.lokalId !== newKretsDelingEndringRequest.opprinneligKrets.lokalId,
+                ),
+                newKretsDelingEndringRequest,
+              ],
             },
           });
-          reset(getDefaultDelingValue());
+          showDelingSuccessToast(opprinneligKretsInfo, nyeKretser.slice(1), isUpdateOfDeling);
         }
-
-        // gi en feedback på at den ble delt (evt at bruker oppdaterte delingen sin på gitt krets)
       }
     }
   };
