@@ -5,7 +5,7 @@ import { getLayerById } from "utils/map/layers";
 import WMTS from "ol/source/WMTS";
 import TileLayer from "ol/layer/Tile";
 
-export type VisibleLayer = {
+type VisibleLayer = {
   mainLayer: KartlagId;
   subLayers: string[];
 };
@@ -123,7 +123,6 @@ const useVisibleLayers = () => {
   };
 
   return {
-    visibleLayers,
     toggleLayerVisibility,
     layerIsVisible,
     subLayerIsVisible,

@@ -5,6 +5,7 @@ import WMTS from "ol/source/WMTS";
 import { getTicketForTjeneste } from "./geonorgeTicket";
 import { KartlagId } from "hooks/layers/types";
 import { getUrlForPath } from "utils/api";
+import { MappedLayer } from "contexts/KartlagContext/KartlagContext";
 
 const WMSParser = new WMSCapabilities();
 const WMTSParser = new WMTSCapabilities();
@@ -21,14 +22,6 @@ type WMTSResponseLayer = {
   Title: string;
 };
 
-export type MappedLayer = {
-  layers: MappedLayer[];
-  title: string;
-  id?: string;
-  queryable: boolean;
-  sourceId: KartlagId;
-};
-
 const mapWMSLayer = (responseLayer: WMSResponseLayer, sourceId: KartlagId) => {
   let layers: MappedLayer[] = [];
 
@@ -36,21 +29,25 @@ const mapWMSLayer = (responseLayer: WMSResponseLayer, sourceId: KartlagId) => {
     layers = responseLayer.Layer.map((nestedLayer: WMSResponseLayer) => mapWMSLayer(nestedLayer, sourceId));
   }
 
-  return {
-    sourceId,
-    layers,
+  const mappedLayer: MappedLayer = {
     id: responseLayer.Name,
     title: responseLayer.Title,
+    sourceId,
+    layers,
     queryable: responseLayer.queryable,
-  } as MappedLayer;
+    isVisible: false,
+  };
+
+  return mappedLayer;
 };
 
 const mapWMTSLayer = (responseLayer: WMTSResponseLayer, sourceId: KartlagId): MappedLayer => ({
+  id: responseLayer.Identifier,
+  title: responseLayer.Title,
+  sourceId: sourceId,
   layers: [],
   queryable: true,
-  title: responseLayer.Title,
-  id: responseLayer.Identifier,
-  sourceId: sourceId,
+  isVisible: false,
 });
 
 const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
@@ -96,9 +93,8 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
 
       const mainLayer = json.Capability.Layer;
       const sourceId = source.get("id") as KartlagId;
-      const transformedLayer = mapWMSLayer(mainLayer, sourceId) as MappedLayer;
 
-      return transformedLayer;
+      return mapWMSLayer(mainLayer, sourceId);
     }
 
     if (source instanceof WMTS) {
@@ -114,11 +110,13 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
         sourceId: sourceId,
         title: json.ServiceIdentification.Title ?? source.getLayer(),
         id: sourceId,
+        isVisible: false,
       };
 
       return mappedWMTSLayer;
     }
   } catch {
+    // TODO: bedre feilhåndtering
     return null;
   }
 };
