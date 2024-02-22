@@ -121,9 +121,8 @@ export const pixelDistance = (coord1: Coordinate, coord2: Coordinate) => {
   return Math.sqrt(squaredPixelDistance);
 };
 
-export const findNearbyVertexOnFeature = (feature: Feature<LineString>, coordinate: Coordinate): Coordinate | null => {
-  const geometry = feature.getGeometry() as LineString;
-  const coordinates = geometry.getCoordinates();
+export const findNearbyVertexOnFeature = (lineString: LineString, coordinate: Coordinate): Coordinate | null => {
+  const coordinates = lineString.getCoordinates();
 
   const coordinatesWithDistanceToClick = coordinates
     .map((coord) => ({

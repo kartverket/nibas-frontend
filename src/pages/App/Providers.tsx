@@ -8,26 +8,29 @@ import { ErrorHandlingProvider } from "contexts/ErrorHandlingContext";
 import { OverlayPanelProvider } from "contexts/OverlayPanelContext";
 import { FeatureStyleProvider } from "contexts/FeatureStyleContext";
 import { ToolbarProvider } from "contexts/ToolbarContext";
+import { ConfirmationModalProvider } from "contexts/ConfirmationModalContext";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
     <ThirdPartyProviders>
       <ErrorHandlingProvider>
-        <HistoryProvider>
-          <FeatureStyleProvider>
-            <ToolbarProvider>
-              <SidebarPanelProvider>
-                <OverlayPanelProvider>
-                  <EditGrenserProvider>
-                    <KartlagProvider>
-                      <UtkastProvider>{children}</UtkastProvider>
-                    </KartlagProvider>
-                  </EditGrenserProvider>
-                </OverlayPanelProvider>
-              </SidebarPanelProvider>
-            </ToolbarProvider>
-          </FeatureStyleProvider>
-        </HistoryProvider>
+        <ConfirmationModalProvider>
+          <HistoryProvider>
+            <FeatureStyleProvider>
+              <ToolbarProvider>
+                <SidebarPanelProvider>
+                  <OverlayPanelProvider>
+                    <EditGrenserProvider>
+                      <KartlagProvider>
+                        <UtkastProvider>{children}</UtkastProvider>
+                      </KartlagProvider>
+                    </EditGrenserProvider>
+                  </OverlayPanelProvider>
+                </SidebarPanelProvider>
+              </ToolbarProvider>
+            </FeatureStyleProvider>
+          </HistoryProvider>
+        </ConfirmationModalProvider>
       </ErrorHandlingProvider>
     </ThirdPartyProviders>
   );
