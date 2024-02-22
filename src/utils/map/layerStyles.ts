@@ -10,7 +10,7 @@ import Style, { StyleFunction } from "ol/style/Style";
 import { map } from "pages/Kart/constants";
 import Text from "ol/style/Text";
 import Point from "ol/geom/Point";
-import { editSource } from "hooks/layers/constants";
+import { archivedSource, editSource } from "hooks/layers/constants";
 import { GrenseId, GrenseType } from "hooks/layers/types";
 import { isFeatureEditable } from "utils/features";
 
@@ -44,8 +44,8 @@ const lineAndPointStyles = ({
   new Style({
     stroke: new Stroke({
       color,
-      lineDash: dashed ? [4, 6] : [],
-      width: dashed ? 3 : 2,
+      lineDash: dashed ? [6, 8] : [],
+      width: 1.25,
     }),
   }),
   new Style({
@@ -59,7 +59,7 @@ const lineAndPointStyles = ({
   }),
   new Style({
     image: new Circle({
-      radius: points ? 2.5 : 0,
+      radius: points ? 3.5 : 0,
       fill: new Fill({
         color: "#FFFFFF",
       }),
@@ -75,11 +75,11 @@ const lineAndPointStyles = ({
 export const selectedPointStyle = new Style({
   image: new Circle({
     radius: 6,
-    stroke: new Stroke({ color: "#ffffff", width: 2 }),
-    fill: new Fill({ color: "#00A76C" }),
+    stroke: new Stroke({ color: "#D163E6FF", width: 3 }),
+    fill: new Fill({ color: "#ffffff" }),
   }),
-  fill: new Fill({ color: "#00A76C" }),
-  stroke: new Stroke({ color: "#ffffff" }),
+  fill: new Fill({ color: "#ffffff" }),
+  stroke: new Stroke({ color: "#D163E6FF" }),
   zIndex: 10,
 });
 
@@ -92,28 +92,28 @@ const flateStyles = [
 ];
 
 export const grenseStyles = {
-  fylke: lineAndPointStyles({ color: "#B92659" }),
-  kommune: lineAndPointStyles({ color: "#F15D4E" }),
-  nasjon: lineAndPointStyles({ color: "#91120A" }),
-  grunnkrets: lineAndPointStyles({ color: "#3E8DF6" }),
-  stemmekrets: lineAndPointStyles({ color: "#EBAB3B" }),
-  delomraade: lineAndPointStyles({ color: "#5952D2" }),
+  fylke: lineAndPointStyles({ color: "#E54848FF" }),
+  kommune: lineAndPointStyles({ color: "#FF9287FF" }),
+  nasjon: lineAndPointStyles({ color: "#8A034FFF" }),
+  grunnkrets: lineAndPointStyles({ color: "#537EFFFF" }),
+  stemmekrets: lineAndPointStyles({ color: "#FFAE49FF" }),
+  delomraade: lineAndPointStyles({ color: "#00BEFFFF" }),
   edit: lineAndPointStyles({ color: "#000000" }),
-  select: lineAndPointStyles({ color: "#00CB85FF", dashed: true }),
-  dirty: lineAndPointStyles({ color: "#005900E6", dashed: true }),
-  sammenslaaing: lineAndPointStyles({ color: "#D163E6" }),
+  select: lineAndPointStyles({ color: "#D163E6FF" }),
+  dirty: lineAndPointStyles({ color: "#00CB85FF" }),
+  sammenslaaing: lineAndPointStyles({ color: "#D3C439B3" }),
   flate: flateStyles,
   sammenslaaingOverlapping: lineAndPointStyles({
-    color: "#D163E6",
+    color: "#D3C439B3",
     dashed: true,
     points: false,
   }),
-  archivedFylke: lineAndPointStyles({ color: "#B92659", dashed: true }),
-  archivedKommune: lineAndPointStyles({ color: "#F15D4E", dashed: true }),
-  archivedNasjon: lineAndPointStyles({ color: "#91120A", dashed: true }),
-  archivedGrunnkrets: lineAndPointStyles({ color: "#3E8DF6", dashed: true }),
-  archivedStemmekrets: lineAndPointStyles({ color: "#EBAB3B", dashed: true }),
-  archivedDelomraade: lineAndPointStyles({ color: "#5952D2", dashed: true }),
+  archivedFylke: lineAndPointStyles({ color: "#E54848FF", dashed: true }),
+  archivedKommune: lineAndPointStyles({ color: "#FF9287FF", dashed: true }),
+  archivedNasjon: lineAndPointStyles({ color: "#8A034FFF", dashed: true }),
+  archivedGrunnkrets: lineAndPointStyles({ color: "#537EFFFF", dashed: true }),
+  archivedStemmekrets: lineAndPointStyles({ color: "#FFAE49FF", dashed: true }),
+  archivedDelomraade: lineAndPointStyles({ color: "#00BEFFFF", dashed: true }),
 };
 
 const grenseStyleFromType = (grenseType: GrenseType, archived: boolean): Style[] => {
@@ -196,10 +196,13 @@ export const updateEditFeatureText = (featureId: string, name?: string, number?:
 
 /**
  * Liten hjelpefunksjon for å slippe så mye typehåndtering når man skal sette stiler
- * @param featureId En gitt feature i editSource som skal få ny stil
+ * @param featureId En gitt feature i editSource eller archivedSource som skal få ny stil
  * @param style Stil fra grenseStyles eller en stilfunksjon
  */
 export const setFeatureStyle = (featureId: string, style: Style[] | StyleFunction) => {
-  const feature = editSource.getFeatureById(featureId) as Feature<Geometry> | null;
-  feature?.setStyle(style);
+  const sources = [archivedSource, editSource];
+  sources.forEach((source) => {
+    const feature = source.getFeatureById(featureId) as Feature<Geometry> | null;
+    feature?.setStyle(style);
+  });
 };

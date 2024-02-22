@@ -1,17 +1,17 @@
-import { useGrunnkretser, useKommuneGrunnkretserRef } from "hooks/inndelinger/useGrunnkretser";
-import { useKommuneStemmekretserRef, useStemmekretser } from "hooks/inndelinger/useStemmekretser";
+import { useGrunnkretser, useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
+import { useKommuneStemmekretser, useStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { Feature } from "ol";
 import { useEffect, useMemo } from "react";
-import { FeatureProperties, GrunnkretsRef, KontekstEgenskaper, StemmekretsRef } from "types/api";
+import { FeatureProperties, KontekstEgenskaper, GrunnkretsResponse, StemmekretsResponse } from "types/api";
 import {
   CustomOption,
   KontekstType,
   Krets,
   Tilhorighet,
   UseTilhorighet,
-  mapGrunnkretsRefToKrets,
-  mapStemmekretRefToKrets,
   sortKretserOptionsByNumber,
+  mapGrunnkretsResponseToKrets,
+  mapStemmekretResponseToKrets,
 } from "./tilhorighetUtils";
 import { useTilhorighetForm } from "./useTilhorighetForm";
 import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
@@ -38,8 +38,8 @@ const filterKontekstEgenskaperOnType = (egenskaper: KontekstEgenskaper[], type: 
 
 const useGetMuligeKretserForNyAdministrativGrense = (
   kontekstType: KontekstType,
-  grunnkretser: GrunnkretsRef[],
-  stemmekretser: StemmekretsRef[],
+  grunnkretserFromContext: GrunnkretsResponse[],
+  stemmekretserFromContext: StemmekretsResponse[],
 ) => {
   const administrativeFeatures = getAdministrativeFeatures(editSource.getFeatures());
 
@@ -47,22 +47,22 @@ const useGetMuligeKretserForNyAdministrativGrense = (
     (feature) => (feature.getProperties() as FeatureProperties).kontekstEgenskaper,
   );
 
-  const grunnkretsEgenskapIDer = filterKontekstEgenskaperOnType(
+  const grunnkretsKontekstEgenskapIDer = filterKontekstEgenskaperOnType(
     kontekstEgenskaperForAdministrativeFeatures,
     "GRUNNKRETS",
   );
 
-  const stemmekretsEgenskapIDer = filterKontekstEgenskaperOnType(
+  const stemmekretsKontekstEgenskapIDer = filterKontekstEgenskaperOnType(
     kontekstEgenskaperForAdministrativeFeatures,
     "STEMMEKRETS",
   );
 
-  const { data: grunnkretserIfExists } = useGrunnkretser(grunnkretsEgenskapIDer);
-  const { data: stemmekretserIfExists } = useStemmekretser(stemmekretsEgenskapIDer);
+  const { data: grunnkretserIfExists } = useGrunnkretser(grunnkretsKontekstEgenskapIDer);
+  const { data: stemmekretserIfExists } = useStemmekretser(stemmekretsKontekstEgenskapIDer);
 
   return useMemo(() => {
     if (!grunnkretserIfExists && !stemmekretserIfExists) return null;
-    const grunnkretserAsTilhorighetKrets = grunnkretserIfExists?.map((grunnkrets) => {
+    const grunnkretserFraGrenseKontekstegenskaper = grunnkretserIfExists?.map((grunnkrets) => {
       return {
         id: grunnkrets.id,
         kommuneId: grunnkrets.kommuneIdentifikator,
@@ -73,7 +73,7 @@ const useGetMuligeKretserForNyAdministrativGrense = (
       } as Krets;
     });
 
-    const stemmekretserAsTilhorighetKrets = stemmekretserIfExists?.map((stemmekrets) => {
+    const stemmekretserFraGrenseKontekstEgenskaper = stemmekretserIfExists?.map((stemmekrets) => {
       return {
         id: stemmekrets.id,
         kommuneId: stemmekrets.kommuneIdentifikator,
@@ -84,21 +84,29 @@ const useGetMuligeKretserForNyAdministrativGrense = (
       } as Krets;
     });
 
+    const fullGrunnkretser = mapGrunnkretsResponseToKrets(grunnkretserFromContext).concat(
+      sortKretserOptionsByNumber(grunnkretserFraGrenseKontekstegenskaper),
+    );
+
+    const fullStemmekretser = mapStemmekretResponseToKrets(stemmekretserFromContext).concat(
+      sortKretserOptionsByNumber(stemmekretserFraGrenseKontekstEgenskaper),
+    );
+
     switch (kontekstType) {
       case KontekstType.GRUNNKRETS: {
         return {
-          [Tilhorighet.A]: mapGrunnkretsRefToKrets(grunnkretser),
-          [Tilhorighet.B]: sortKretserOptionsByNumber(grunnkretserAsTilhorighetKrets),
+          [Tilhorighet.A]: fullGrunnkretser,
+          [Tilhorighet.B]: fullGrunnkretser,
         };
       }
       case KontekstType.STEMMEKRETS: {
         return {
-          [Tilhorighet.A]: mapStemmekretRefToKrets(stemmekretser),
-          [Tilhorighet.B]: sortKretserOptionsByNumber(stemmekretserAsTilhorighetKrets),
+          [Tilhorighet.A]: fullStemmekretser,
+          [Tilhorighet.B]: fullStemmekretser,
         };
       }
     }
-  }, [grunnkretser, grunnkretserIfExists, kontekstType, stemmekretser, stemmekretserIfExists]);
+  }, [grunnkretserFromContext, grunnkretserIfExists, kontekstType, stemmekretserFromContext, stemmekretserIfExists]);
 };
 
 export const useTilhorighetNyAdministrativ = (feature: Feature): UseTilhorighet => {
@@ -114,18 +122,22 @@ export const useTilhorighetNyAdministrativ = (feature: Feature): UseTilhorighet 
     kontekstType,
   } = useTilhorighetForm(feature);
 
-  const { data: grunnkretserFromContext } = useKommuneGrunnkretserRef(kommunerId[0]);
-  const { data: stemmekretserFromContext } = useKommuneStemmekretserRef(kommunerId[0]);
+  // Vet setting av tilhørighet på nye grenser så er det ikke mulig å utlede hvilke muligheter man skal ha for endring av tilhørighet,
+  // siden kontekstegenskapene ikke er satt. kommunerId blir da satt til en fallback som er den kommunen man aktivt redigerer
+  // Vi kan da hente kretsene til den kommunen som blir satt som fallback, hente kontekstegenskapene som er satt på
+  // alle administrative grenser og gjøre dette til de andre mulige tilhørighetvalgene
+  const { data: grunnkretserFromContext } = useKommuneGrunnkretser(kommunerId[0]);
+  const { data: stemmekreterFromContext } = useKommuneStemmekretser(kommunerId[0]);
 
   const muligeKretserForNyGrense = useGetMuligeKretserForNyAdministrativGrense(
     kontekstType,
     grunnkretserFromContext ?? [],
-    stemmekretserFromContext ?? [],
+    stemmekreterFromContext ?? [],
   );
 
   useEffect(() => {
     if (isTempFeatureId(feature.getId())) {
-      if (grunnkretserFromContext && stemmekretserFromContext && kontekstType) {
+      if (grunnkretserFromContext && stemmekreterFromContext && kontekstType) {
         if (muligeKretserForNyGrense) {
           setTilhorighetOptions(muligeKretserForNyGrense);
         }
@@ -138,7 +150,7 @@ export const useTilhorighetNyAdministrativ = (feature: Feature): UseTilhorighet 
     kontekstType,
     muligeKretserForNyGrense,
     setTilhorighetOptions,
-    stemmekretserFromContext,
+    stemmekreterFromContext,
   ]);
 
   return {

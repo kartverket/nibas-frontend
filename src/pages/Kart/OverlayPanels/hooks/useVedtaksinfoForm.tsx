@@ -1,6 +1,6 @@
 import { Feature } from "ol";
 import { useForm } from "react-hook-form";
-import { Dokref, FeatureProperties, Metadata } from "types/api";
+import { DokumentasjonsreferanseDTO, FeatureProperties, Metadata } from "types/api";
 import { VedtakinfoForm, Referanse } from "../GrenseinformasjonPanel/Vedtaksinformasjon/Vedtaksinformasjon";
 import { LineString } from "ol/geom";
 import { PropertyEntry, useHistory } from "contexts/HistoryContext";
@@ -9,7 +9,7 @@ export const mapFromFormToApi = (
   formValues: VedtakinfoForm,
   dokrefs: Referanse[] | undefined,
   internrefs: Referanse[] | undefined,
-): Dokref => {
+): DokumentasjonsreferanseDTO => {
   if (!formValues.vedtakGyldigFra) throw Error("Gyldig fra er påkrevd!");
   return {
     shouldArchive: false,
@@ -112,7 +112,9 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoIndex?: 
     if (selectedVedtaksinfoIndex == undefined) return;
 
     const metadata = feature.getProperties().metadata as Metadata;
-    const oldDokrefs: Dokref[] = metadata.dokumentasjonsreferanser ? metadata.dokumentasjonsreferanser : [];
+    const oldDokrefs: DokumentasjonsreferanseDTO[] = metadata.dokumentasjonsreferanser
+      ? metadata.dokumentasjonsreferanser
+      : [];
 
     if (!oldDokrefs[selectedVedtaksinfoIndex].id) {
       // Vedtaksinformasjonen er ikke tidligere publisert. Fjern fra front end
@@ -133,12 +135,14 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoIndex?: 
     }
   };
 
-  const updateDraftFromFeature = (vedtaksinfo: Dokref) => {
+  const updateDraftFromFeature = (vedtaksinfo: DokumentasjonsreferanseDTO) => {
     const metadata = feature.getProperties().metadata as Metadata;
 
     if (selectedVedtaksinfoIndex === undefined) {
       // Implisitt en ny dokumentasjonsreferanse ved mangel av index.
-      const oldDokrefs: Dokref[] = metadata.dokumentasjonsreferanser ? metadata.dokumentasjonsreferanser : [];
+      const oldDokrefs: DokumentasjonsreferanseDTO[] = metadata.dokumentasjonsreferanser
+        ? metadata.dokumentasjonsreferanser
+        : [];
       const dokrefsCopy = structuredClone(oldDokrefs);
       dokrefsCopy.push(vedtaksinfo);
 
@@ -148,7 +152,9 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoIndex?: 
       });
     } else {
       // Oppdaterer eksisterende dokumentasjonsreferanse
-      const oldDokrefs: Dokref[] = metadata.dokumentasjonsreferanser ? metadata.dokumentasjonsreferanser : [];
+      const oldDokrefs: DokumentasjonsreferanseDTO[] = metadata.dokumentasjonsreferanser
+        ? metadata.dokumentasjonsreferanser
+        : [];
       const dokrefsCopy = structuredClone(oldDokrefs);
       dokrefsCopy[selectedVedtaksinfoIndex] = vedtaksinfo;
 
