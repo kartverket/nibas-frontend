@@ -6,8 +6,8 @@ import { IconButton } from "@kvib/react";
 
 type Props = {
   index: number;
-  mappedLayer: MappedLayer;
   maxIndex: number;
+  mappedLayer: MappedLayer;
 };
 
 const Kartlag = ({ mappedLayer, index, maxIndex }: Props) => {
@@ -34,9 +34,9 @@ const Kartlag = ({ mappedLayer, index, maxIndex }: Props) => {
         />
       </ArrowButtons>
       {mappedLayer.layers.length > 0 ? (
-        <KartlagOuter mappedLayer={mappedLayer} />
+        <KartlagOuter indexPath={[index]} mappedLayer={mappedLayer} />
       ) : (
-        <KartlagInner mappedLayer={mappedLayer} isMainLayer />
+        <KartlagInner indexPath={[index]} mappedLayer={mappedLayer} />
       )}
     </Container>
   );

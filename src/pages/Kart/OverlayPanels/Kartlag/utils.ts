@@ -28,6 +28,7 @@ const getLayersStringToReplace = (layersInParams: string, mappedLayerName: strin
   return replaceString;
 };
 
+// TODO: opplever at laget henger igjen inntil man oppdaterer kartet, har vi en måte å cleare?
 export const toggleWMSLayer = (mappedLayer: MappedLayer, isVisible: boolean) => {
   const source = kartlagLayers[mappedLayer.sourceId].getSource() as TileWMS;
   const layersInParams = source.getParams().LAYERS as string;

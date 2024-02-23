@@ -1,29 +1,38 @@
 import { styled, css } from "styled-components";
-import { Accordion, AccordionPanel } from "@kvib/react";
+import { Accordion, AccordionPanel, Checkbox, Spacer } from "@kvib/react";
 import KartlagInner from "./KartlagInner";
 import { KartlagAccordionItem, KartlagAccordionButton, KartlagAccordionIcon } from "./components";
-import { MappedLayer } from "contexts/KartlagContext/KartlagContext";
+import { MappedLayer, useKartlag } from "contexts/KartlagContext/KartlagContext";
 
 type Props = {
+  indexPath: number[];
   mappedLayer: MappedLayer;
   isNested?: boolean;
 };
 
 // Obs! Denne komponenten kan være nøstet i seg selv dersom det er flere underlag
-const KartlagMiddle = ({ mappedLayer, isNested = false }: Props) => {
+const KartlagMiddle = ({ mappedLayer, indexPath, isNested = false }: Props) => {
+  const { toggleLayer } = useKartlag();
+  const handleToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // TODO: denne (eller noe relatert) er wack av og til når man toggler av, kan være re-rendringsproblemer
+    e.stopPropagation();
+    toggleLayer(indexPath, !mappedLayer.isVisible);
+  };
   return (
     <Accordion allowToggle>
       <KartlagAccordionItem>
         <KartlagAccordionButton>
-          <span>{mappedLayer.title}</span>
+          <Checkbox isChecked={mappedLayer.isVisible} onChange={handleToggle} />
+          <KartlagTitle>{mappedLayer.title}</KartlagTitle>
+          <Spacer />
           <KartlagAccordionIcon />
         </KartlagAccordionButton>
         <KartlagAccordionPanel $isNested={isNested}>
-          {mappedLayer.layers.map((subLayer) =>
+          {mappedLayer.layers.map((subLayer, i) =>
             subLayer.layers.length > 0 ? (
-              <KartlagMiddle key={subLayer.id} mappedLayer={subLayer} isNested />
+              <KartlagMiddle key={subLayer.id} indexPath={[...indexPath, i]} mappedLayer={subLayer} isNested />
             ) : (
-              <KartlagInner key={subLayer.id} mappedLayer={subLayer} />
+              <KartlagInner key={subLayer.id} indexPath={[...indexPath, i]} mappedLayer={subLayer} />
             ),
           )}
         </KartlagAccordionPanel>
@@ -31,6 +40,10 @@ const KartlagMiddle = ({ mappedLayer, isNested = false }: Props) => {
     </Accordion>
   );
 };
+
+const KartlagTitle = styled.span`
+  margin-left: 8px;
+`;
 
 const KartlagAccordionPanel = styled(AccordionPanel)<{ $isNested: boolean }>`
   position: relative;

@@ -1,31 +1,21 @@
 import { Checkbox } from "@kvib/react";
 import { MappedLayer, useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { styled } from "styled-components";
-import { isWMSLayer, isWMTSLayer } from "utils/map/layers";
-import { toggleWMSLayer, toggleWMTSLayer } from "./utils";
-import { kartlagLayers } from "hooks/layers/constants";
 
 type Props = {
+  indexPath: number[];
   mappedLayer: MappedLayer;
-  isMainLayer?: boolean;
 };
 
 // TODO: denne må kanskje også ha en opacity-slider hvis det er et mainlayer?
-const KartlagInner = ({ mappedLayer, isMainLayer }: Props) => {
-  const layer = kartlagLayers[mappedLayer.sourceId];
-  const { toggleLayerVisibility } = useKartlag();
+const KartlagInner = ({ indexPath, mappedLayer }: Props) => {
+  const { toggleLayer } = useKartlag();
 
   const handleToggle = () => {
-    if (isWMSLayer(layer)) toggleWMSLayer(mappedLayer, mappedLayer.isVisible);
-    if (isWMTSLayer(layer)) toggleWMTSLayer(mappedLayer);
-
-    if (isMainLayer) {
-      toggleLayerVisibility(mappedLayer.sourceId);
-    } else {
-      toggleLayerVisibility(mappedLayer.sourceId, mappedLayer.title, isWMTSLayer(layer));
-    }
+    toggleLayer(indexPath, !mappedLayer.isVisible);
   };
 
+  // TODO: WMTS-lag skal ha radio button, ikke checkbox, selvsagt.
   return (
     <Container>
       <Checkbox isChecked={mappedLayer.isVisible} onChange={handleToggle}>
