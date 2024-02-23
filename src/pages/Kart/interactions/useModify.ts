@@ -251,16 +251,6 @@ const useModify = () => {
 
             if (isAccepted) {
               performFeatureSplit(nonSelectedActiveFeature, nearbyVertex);
-              if (!toastIdRef.current) {
-                toastIdRef.current = toast({
-                  status: "warning",
-                  title: "Husk å sette tilhørighet på berørte grenser",
-                  description: `For øyeblikket må alle flatetilhørigheter på grensene legges til manuelt. 
-                            Tilhørigheten kan settes ved å bruke "Informasjon"-verktøyet.`,
-                  isClosable: true,
-                  duration: null,
-                });
-              }
             } else {
               setPreviousCoordinatesForFeature(selectedFeature);
               return;
@@ -271,6 +261,17 @@ const useModify = () => {
             return;
           }
         }
+      }
+
+      if (!toastIdRef.current) {
+        toastIdRef.current = toast({
+          status: "warning",
+          title: "Husk å sette tilhørighet på berørte grenser",
+          description: `For øyeblikket må alle flatetilhørigheter på grensene legges til manuelt. 
+                            Tilhørigheten kan settes ved å bruke "Informasjon"-verktøyet.`,
+          isClosable: true,
+          duration: null,
+        });
       }
 
       addModificationToHistory(event.features.getArray());
