@@ -32,14 +32,7 @@ const useModify = () => {
   const { toastCounter: addToast } = useToastCounter("success", "Punktet ble lagt til", "punkter ble lagt til");
   const { getActiveFeaturesAtPixel, getFeaturesAtPixel } = useGetFeatures();
   const { performFeatureSplit } = useSplit();
-
-  const { openAsync } = useConfirmationModal({
-    title: "Deling av grense",
-    description:
-      "Plasserer man et punkt på noe annet enn et endepunkt vil grensen deles i to deler. Er du sikker på at du vil dele grensen?",
-    acceptText: "Del grense",
-    declineText: "Avbryt",
-  });
+  const confirmationModal = useConfirmationModal();
 
   // Ønsker helst at redigering ikke skal være aktiv under enkelte verktøy
   const disallowedPointModes: Tool[] = useMemo(() => ["draw", "split", "grenseinfo", "archive", "koordinater"], []);
@@ -248,7 +241,13 @@ const useModify = () => {
               return;
             }
 
-            const isAccepted = await openAsync();
+            const isAccepted = await confirmationModal.openAsync({
+              title: "Deling av grense",
+              description:
+                "Plasserer man et punkt på noe annet enn et endepunkt vil grensen deles i to deler. Er du sikker på at du vil dele grensen?",
+              acceptText: "Del grense",
+              declineText: "Avbryt",
+            });
 
             if (isAccepted) {
               performFeatureSplit(nonSelectedActiveFeature, nearbyVertex);
@@ -285,9 +284,9 @@ const useModify = () => {
   }, [
     activeTool,
     addHistoryEntry,
+    confirmationModal,
     getActiveFeaturesAtPixel,
     modify,
-    openAsync,
     performFeatureSplit,
     selectedFeatures,
     toast,

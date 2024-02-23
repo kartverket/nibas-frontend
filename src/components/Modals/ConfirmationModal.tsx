@@ -16,17 +16,17 @@ const ConfirmationModal = ({
   acceptText,
   onAccept,
   declineText,
-  onDecline: onDeny,
+  onDecline,
 }: ConfirmationModalProps) => {
   return (
-    <Modal isOpen={true} onClose={onDeny}>
-      <ModalOverlay></ModalOverlay>
+    <Modal isOpen onClose={onDecline}>
+      <ModalOverlay />
       <ModalContent>
         <ModalHeader>{title}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>{description}</ModalBody>
         <ModalFooter>
-          <Button variant="ghost" onClick={onDeny}>
+          <Button variant="ghost" onClick={onDecline}>
             {declineText ?? "Nei"}
           </Button>
           <Button onClick={onAccept}>{acceptText ?? "Ja"}</Button>

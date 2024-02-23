@@ -10,7 +10,7 @@ export type ConfirmationModalProps = {
   onDecline: () => void;
 };
 
-export type ConfirmationModalInstance = {
+export type ConfirmationModalOptions = {
   title: string;
   description: string;
   acceptText?: string;
@@ -20,100 +20,77 @@ export type ConfirmationModalInstance = {
 };
 
 export type ConfirmationModalContextValue = {
-  modals: ConfirmationModalProps[];
-  setModals: (modals: ConfirmationModalProps[]) => void;
-  addModal: (modal: ConfirmationModalProps) => void;
-  removeModal: (modalKey: string) => void;
+  open: (options: ConfirmationModalOptions) => void;
+  openAsync: (options: ConfirmationModalOptions) => Promise<boolean>;
 };
 
 export const ConfirmationModalContext = createContext<ConfirmationModalContextValue | undefined>(undefined);
 
 export const ConfirmationModalProvider = ({ children }: { children: React.ReactNode }) => {
-  const [modals, setModals] = useState<ConfirmationModalProps[]>([]);
+  const [modal, setModal] = useState<ConfirmationModalProps | null>(null);
 
-  const addModal = (props: ConfirmationModalProps) => {
-    const modalWithSameKeyExists = modals.findIndex((modal) => modal.title === props.title) >= 0;
-
-    if (!modalWithSameKeyExists) {
-      setModals(modals.concat(props));
-    }
-  };
-
-  const removeModal = (modalKey: string) => {
-    const filteredModals = modals.filter((modal) => modal.title !== modalKey);
-
-    setModals(filteredModals);
-  };
-
-  const value = {
-    modals,
-    setModals,
-    addModal,
-    removeModal,
-  };
-
-  return (
-    <ConfirmationModalContext.Provider value={value}>
-      {children}
-      {modals.map((modal: ConfirmationModalProps) => {
-        return <ConfirmationModal key={modal.title} {...modal}></ConfirmationModal>;
-      })}
-    </ConfirmationModalContext.Provider>
-  );
-};
-
-export const useConfirmationModal = (modal: ConfirmationModalInstance) => {
-  const context = useContext(ConfirmationModalContext);
-  if (!context) {
-    throw new Error("useConfirmationModal must be used within a ConfirmationModalContext");
-  }
-
-  const getDefaultModalPropsFromOptions = (): ConfirmationModalProps => {
+  const getModalPropsFromOptions = (modalOptions: ConfirmationModalOptions): ConfirmationModalProps => {
     return {
-      ...modal,
+      ...modalOptions,
       onAccept: () => {
-        if (modal.onAccept) modal.onAccept();
+        if (modalOptions.onAccept) modalOptions.onAccept();
 
-        context.removeModal(modal.title);
+        setModal(null);
       },
       onDecline: () => {
-        if (modal.onDecline) modal.onDecline();
+        if (modalOptions.onDecline) modalOptions.onDecline();
 
-        context.removeModal(modal.title);
+        setModal(null);
       },
     };
   };
 
-  const open = () => {
-    context.addModal(getDefaultModalPropsFromOptions());
+  const open = (modalOptions: ConfirmationModalOptions) => {
+    setModal(getModalPropsFromOptions(modalOptions));
   };
 
-  const openAsync = (): Promise<boolean> => {
+  const openAsync = (modalOptions: ConfirmationModalOptions): Promise<boolean> => {
     return new Promise((resolve) => {
-      const props = getDefaultModalPropsFromOptions();
+      const props = getModalPropsFromOptions(modalOptions);
 
       props.onAccept = () => {
-        if (modal.onAccept) modal.onAccept();
+        if (modalOptions.onAccept) modalOptions.onAccept();
 
-        context.removeModal(modal.title);
+        setModal(null);
 
         resolve(true);
       };
 
       props.onDecline = () => {
-        if (modal.onDecline) modal.onDecline();
+        if (modalOptions.onDecline) modalOptions.onDecline();
 
-        context.removeModal(modal.title);
+        setModal(null);
 
         resolve(false);
       };
 
-      context.addModal(props);
+      setModal(props);
     });
   };
 
-  return {
+  const value = {
     open,
     openAsync,
   };
+
+  return (
+    <ConfirmationModalContext.Provider value={value}>
+      {children}
+      {modal && <ConfirmationModal {...modal}></ConfirmationModal>}
+    </ConfirmationModalContext.Provider>
+  );
+};
+
+export const useConfirmationModal = () => {
+  const context = useContext(ConfirmationModalContext);
+  if (!context) {
+    throw new Error("useConfirmationModal must be used within a ConfirmationModalContext");
+  }
+
+  return context;
 };
