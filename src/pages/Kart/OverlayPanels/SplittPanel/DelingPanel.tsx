@@ -1,4 +1,15 @@
-import { Button, ButtonGroup, FormControl, FormLabel, Heading, IconButton, Input, Select, Stack } from "@kvib/react";
+import {
+  Button,
+  ButtonGroup,
+  FormControl,
+  FormLabel,
+  Heading,
+  Icon,
+  IconButton,
+  Input,
+  Select,
+  Stack,
+} from "@kvib/react";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { styled } from "styled-components";
 import { PanelHeader, PanelProps, SidePanel } from "../Panel";
@@ -15,6 +26,21 @@ const FillerDiv = styled.div`
   min-height: 40px;
 `;
 
+const CustomFormErrorMessage = styled.div`
+  display: flex;
+  align-items: center;
+  --form-error-color: var(--kvib-colors-red-500);
+  color: var(--form-error-color);
+  margin-top: var(--kvib-space-2);
+  font-size: var(--kvib-fontSizes-sm);
+  line-height: var(--kvib-lineHeights-normal);
+  background: var(--kvib-colors-red-50);
+  padding: 8px;
+  border: 2px var(--kvib-colors-red-100) solid;
+  border-radius: 8px;
+  gap: 5px;
+`;
+
 export const DelingPanel = ({ isOpen, className }: PanelProps) => {
   const { flatedata, closeOverlayPanel } = useOverlayPanel();
   const {
@@ -24,11 +50,12 @@ export const DelingPanel = ({ isOpen, className }: PanelProps) => {
     register,
     append,
     remove,
-    canSubmit,
     reset,
     updateDraftWithDelingRequest,
     getValues,
     handleOpprinneligKretsChange,
+    handleSubmit,
+    errors,
   } = useDelingForm(flatedata);
 
   const closeAndResetForm = () => {
@@ -76,45 +103,71 @@ export const DelingPanel = ({ isOpen, className }: PanelProps) => {
         </FormControl>
 
         {getValues("opprinneligKrets.lokalId") !== CustomOption.NOT_CHOSEN && (
-          <Stack spacing={4}>
-            <Heading as="h3" size="sm">{`Hva skal ${fields[0].kretsNavn} deles til?`}</Heading>
-            {fields.map((field, index) => (
-              <NyKretsField key={field.id}>
-                <FormControl>
-                  <FormLabel>Nytt nummer</FormLabel>
-                  <Input disabled={index === 0} type="number" {...register(`nyeKretser.${index}.kretsNummer`)} />
-                </FormControl>
-                <FormControl>
-                  <FormLabel>Nytt navn</FormLabel>
-                  <Input disabled={index === 0} {...register(`nyeKretser.${index}.kretsNavn`)} />
-                </FormControl>
-                {index !== 0 ? (
-                  <IconButton
-                    onClick={() => remove(index)}
-                    aria-label={"fjern del"}
-                    icon={"close"}
-                    variant={"tertiary"}
-                    alignSelf={"flex-end"}
-                  />
-                ) : (
-                  <FillerDiv />
-                )}
-              </NyKretsField>
-            ))}
-            <Button onClick={() => append({ kretsNavn: "", kretsNummer: "" })} variant={"secondary"} leftIcon={"add"}>
-              Legg til ny del
-            </Button>
-          </Stack>
+          <>
+            <Stack spacing={4}>
+              <Heading as="h3" size="sm">{`Hva skal ${fields[0].kretsNavn} deles til?`}</Heading>
+              {fields.map((field, index) => (
+                <div key={field.id}>
+                  <NyKretsField>
+                    <FormControl isInvalid={!!errors.nyeKretser?.[index]?.kretsNummer}>
+                      <FormLabel>Nytt nummer</FormLabel>
+                      <Input
+                        disabled={index === 0}
+                        type="number"
+                        {...register(`nyeKretser.${index}.kretsNummer`, {
+                          required: `Ny ${editingType} må ha et nummer`,
+                        })}
+                      />
+                    </FormControl>
+                    <FormControl isInvalid={!!errors.nyeKretser?.[index]?.kretsNavn} key={field.id}>
+                      <FormLabel>Nytt navn</FormLabel>
+                      <Input
+                        disabled={index === 0}
+                        {...register(`nyeKretser.${index}.kretsNavn`, { required: `Ny ${editingType} må ha et navn` })}
+                      />
+                    </FormControl>
+                    {index !== 0 ? (
+                      <IconButton
+                        onClick={() => remove(index)}
+                        aria-label={"fjern del"}
+                        icon={"close"}
+                        variant={"tertiary"}
+                        alignSelf={"flex-end"}
+                      />
+                    ) : (
+                      <FillerDiv />
+                    )}
+                  </NyKretsField>
+                  {!!errors.nyeKretser?.[index] && (
+                    <CustomFormErrorMessage>
+                      <Icon icon={"error"} />
+                      {[
+                        errors.nyeKretser?.[index]?.kretsNavn?.message,
+                        errors.nyeKretser?.[index]?.kretsNummer?.message,
+                      ]
+                        .filter((e) => e !== undefined)
+                        .join(". ")}
+                    </CustomFormErrorMessage>
+                  )}
+                </div>
+              ))}
+              <Button onClick={() => append({ kretsNavn: "", kretsNummer: "" })} variant={"secondary"} leftIcon={"add"}>
+                Legg til ny del
+              </Button>
+            </Stack>
+            <ButtonGroup alignSelf={"flex-end"}>
+              <Button variant="tertiary" onClick={closeAndResetForm}>
+                Avbryt
+              </Button>
+              <Button
+                onClick={handleSubmit(updateDraftWithDelingRequest)}
+                isDisabled={getValues("nyeKretser").slice(1).length < 1}
+              >
+                Del
+              </Button>
+            </ButtonGroup>
+          </>
         )}
-
-        <ButtonGroup alignSelf={"flex-end"}>
-          <Button variant="tertiary" onClick={closeAndResetForm}>
-            Avbryt
-          </Button>
-          <Button onClick={updateDraftWithDelingRequest} isDisabled={!canSubmit()}>
-            Del
-          </Button>
-        </ButtonGroup>
       </Stack>
     </SidePanel>
   );

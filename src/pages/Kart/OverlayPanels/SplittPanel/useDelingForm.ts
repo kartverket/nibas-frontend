@@ -46,10 +46,11 @@ export const useDelingForm = (flatedata: Flatedata) => {
     register,
     getValues,
     reset,
-    formState: { dirtyFields },
+    formState: { errors },
     control,
     setValue,
-  } = useForm<DelingForm>({ defaultValues: getDefaultDelingValue() });
+    handleSubmit,
+  } = useForm<DelingForm>({ mode: "onSubmit", reValidateMode: "onChange", defaultValues: getDefaultDelingValue() });
 
   const { fields, append, remove, prepend, replace } = useFieldArray({
     control,
@@ -87,10 +88,12 @@ export const useDelingForm = (flatedata: Flatedata) => {
     isUpdateOfDeling: boolean,
   ) => {
     const nyeKretserFormatted = nyeKretser.map((k) => `${k.kretsNummer} ${k.kretsNavn}`);
-    const nyeKretserString = nyeKretserFormatted
-      .slice(0, nyeKretserFormatted.length - 1)
+    const allButLastKretserFormatted = nyeKretserFormatted.slice(0, nyeKretserFormatted.length - 1);
+    const nyeKretserString = allButLastKretserFormatted
       .join(", ")
-      .concat(` og ${nyeKretserFormatted[nyeKretserFormatted.length - 1]}`);
+      .concat(
+        ` ${allButLastKretserFormatted.length > 0 ? "og" : ""} ${nyeKretserFormatted[nyeKretserFormatted.length - 1]}`,
+      );
 
     toast({
       status: "success",
@@ -156,10 +159,6 @@ export const useDelingForm = (flatedata: Flatedata) => {
     }
   };
 
-  const canSubmit = () => {
-    return dirtyFields.opprinneligKrets && fields.length > 1;
-  };
-
   return {
     editingType,
     opprinneligFlateOptions,
@@ -167,11 +166,12 @@ export const useDelingForm = (flatedata: Flatedata) => {
     register,
     append,
     remove,
-    canSubmit,
     reset,
     updateDraftWithDelingRequest,
     setValue,
     getValues,
     handleOpprinneligKretsChange,
+    handleSubmit,
+    errors,
   };
 };
