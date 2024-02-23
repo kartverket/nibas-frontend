@@ -49,6 +49,7 @@ export type StatistiskGrenseMetadata = components["schemas"]["StatistiskgrenseMe
   dokumentasjonsreferanser: undefined;
 };
 export type ObjektIdentifikator = components["schemas"]["ObjektIdentifikator"];
+export type IdentifikatorMedVersjon = components["schemas"]["IdentifikatorMedVersjon"];
 export type OpprettUtkastRequest = components["schemas"]["OpprettUtkastRequest"];
 export type OppdaterUtkastRequest = components["schemas"]["OppdaterUtkastRequest"];
 export type UtkastResponse = components["schemas"]["UtkastResponse"];
@@ -58,6 +59,7 @@ export type UtkastGrenseendringer = components["schemas"]["Grenseendringer"];
 export type KretsDelingEndringRequest = components["schemas"]["KretsDelingEndringRequest"];
 export type Point = components["schemas"]["Point"];
 export type ApiErrorResponse = components["schemas"]["ApiErrorResponse"];
+export type KretsNavnOgNummer = components["schemas"]["KretsNavnOgNummer"];
 
 // custom typer basert på api doc
 export type ApiPath = keyof paths;

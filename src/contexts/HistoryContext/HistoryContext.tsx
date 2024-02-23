@@ -1,4 +1,6 @@
+import useHistoryState from "contexts/HistoryContext/useHistoryState";
 import React, { createContext, useContext } from "react";
+import { ensureAllCasesCovered } from "utils/typeHelpers";
 import { HistoryContextValue, HistoryEntry } from "./types";
 import {
   setFeatureCoordinatesAndPropertiesForEntry,
@@ -10,8 +12,6 @@ import {
   undoGrensedeling,
   redoGrensedeling,
 } from "./utils";
-import useHistoryState from "contexts/HistoryContext/useHistoryState";
-import { ensureAllCasesCovered } from "utils/typeHelpers";
 
 const onUndo = (entry: HistoryEntry) => {
   const { type } = entry;
