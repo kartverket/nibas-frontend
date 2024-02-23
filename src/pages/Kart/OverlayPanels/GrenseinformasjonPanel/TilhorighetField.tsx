@@ -28,7 +28,7 @@ type CustomOptionProps = {
   kontekstType: KontekstType;
 };
 
-const NotChosenSelectOption = ({ feature, kontekstType }: CustomOptionProps) => {
+export const NotChosenSelectOption = ({ feature, kontekstType }: CustomOptionProps) => {
   return (
     isTempFeatureId(feature.getId()?.toString()) && (
       <option value={CustomOption.NOT_CHOSEN}>Velg {kontekstType.toLocaleLowerCase()}</option>
