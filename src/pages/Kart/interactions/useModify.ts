@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import Feature from "ol/Feature";
 import LineString from "ol/geom/LineString";
 import Modify, { ModifyEvent } from "ol/interaction/Modify";
@@ -14,18 +14,25 @@ import { Style } from "ol/style";
 import { createGrenseHistoryChange, getInfoFromFeature } from "./historyUtil";
 import { useGetFeatures } from "./utils";
 import { isAdministrativGrense } from "utils/grenser";
-import { isFeatureEditable } from "utils/features";
+import { isFeatureEditable, isPreviousAndCurrentCoordinatesEqual } from "utils/features";
 import { findNearbyVertexOnFeature } from "utils/map";
 import useToastCounter from "hooks/useToastCounter";
+import { Geometry } from "ol/geom";
+import { useConfirmationModal } from "contexts/ConfirmationModalContext";
+import useSplit from "./useSplit";
+import { equals } from "ol/coordinate";
 
 const useModify = () => {
   const { addHistoryEntry } = useHistory();
   const { activeTool, activeModeTools } = useToolbar();
   const { selectedFeatures, featureIsArchived } = useFeatureStyle();
   const toast = useToast();
+  const toastIdRef = useRef<string | number>("");
   const { toastCounter: removeToast } = useToastCounter("success", "Punktet ble fjernet", "punkter ble fjernet");
   const { toastCounter: addToast } = useToastCounter("success", "Punktet ble lagt til", "punkter ble lagt til");
   const { getActiveFeaturesAtPixel, getFeaturesAtPixel } = useGetFeatures();
+  const { performFeatureSplit } = useSplit();
+  const confirmationModal = useConfirmationModal();
 
   // Ønsker helst at redigering ikke skal være aktiv under enkelte verktøy
   const disallowedPointModes: Tool[] = useMemo(() => ["draw", "split", "grenseinfo", "archive", "koordinater"], []);
@@ -43,8 +50,12 @@ const useModify = () => {
       condition: (event: MapBrowserEvent<MouseEvent>) => {
         if (activeModeTools.includes("move")) return false;
         if (disallowedPointModes.includes(activeTool)) return false;
-        if (activeTool === "detach" && selectedFeatures.length === 0) return false;
+        if (activeTool === "detach") {
+          if (selectedFeatures.length !== 1) return false;
 
+          // Ved detach mode så er den eneste featuren som kan modifiseres den valgte featuren, så kan anta at condition er god her
+          return true;
+        }
         // TODO: håndteringen her er halvveis etter omskriving tilbake til feature/source-split
         // man kan endre arkiverte features via endepunkter
         // løsningen er å ha arkiverte features i eget lag, som steffen jobber med iirc
@@ -116,7 +127,7 @@ const useModify = () => {
           }
 
           const nearbyVertexCoordinate = findNearbyVertexOnFeature(
-            lineStringsAtPixel[0] as Feature<LineString>,
+            lineStringsAtPixel[0].getGeometry() as LineString,
             event.coordinate,
           );
 
@@ -166,8 +177,7 @@ const useModify = () => {
   }, [modify]);
 
   useEffect(() => {
-    const addModificationToHistory = (e: ModifyEvent) => {
-      const features = e.features.getArray();
+    const addModificationToHistory = (features: Feature<Geometry>[]) => {
       if (features.length > 0) {
         addHistoryEntry({
           type: "grense",
@@ -177,12 +187,110 @@ const useModify = () => {
       // TODO: hvis man har kjørt en detach vil vi kanskje sjekke om featuren nå er en løs tråd
     };
 
-    modify.on("modifyend", addModificationToHistory);
+    const setPreviousCoordinatesForFeature = (feature: Feature<LineString>) => {
+      const previousFeatureCoordinates = feature.get(previousCoordinateKey);
+
+      if (previousFeatureCoordinates) {
+        const geometry = feature.getGeometry();
+        geometry?.setCoordinates(previousFeatureCoordinates);
+      }
+    };
+
+    const updateFeatureOnModification = async (event: ModifyEvent) => {
+      if (activeTool === "detach") {
+        if (selectedFeatures.length !== 1) return;
+        const selectedFeature = selectedFeatures[0];
+        if (isPreviousAndCurrentCoordinatesEqual(selectedFeature)) return;
+
+        const activeFeatures = getActiveFeaturesAtPixel(event.mapBrowserEvent, "edit");
+
+        const nonSelectedActiveFeatures = activeFeatures.filter(
+          (feature) => selectedFeature.getId() !== feature.getId(),
+        );
+
+        if (!nonSelectedActiveFeatures.every((feature) => isFeatureEditable(feature, false))) {
+          toast({
+            status: "error",
+            title: "Grensen er ikke redigerbar",
+            description: "Du kan ikke sette en løsrevet grense på en ikke-redigerbar grense",
+          });
+          setPreviousCoordinatesForFeature(selectedFeature);
+          return;
+        }
+
+        // Hvis vi ender opp på én grense, må vi sjekke om det er et endepunkt vi har landet på, for ikke-endepunkter oppfører seg annerledes
+        if (nonSelectedActiveFeatures.length === 1) {
+          const nonSelectedActiveFeature = nonSelectedActiveFeatures[0] as Feature<LineString>;
+          const nonSelectedActiveFeatureGeometry = nonSelectedActiveFeature.getGeometry() as LineString;
+
+          if (!nonSelectedActiveFeatureGeometry) return;
+
+          const nearbyVertex = findNearbyVertexOnFeature(
+            nonSelectedActiveFeatureGeometry,
+            event.mapBrowserEvent.coordinate,
+          );
+
+          if (nearbyVertex) {
+            const nonSelectedActiveFeatureCoordinates = nonSelectedActiveFeatureGeometry.getCoordinates();
+
+            // Vi trenger ikke gjøre noe hvis man ende opp på samme punkt som man løsrev fra
+            if (
+              equals(nearbyVertex, nonSelectedActiveFeatureCoordinates[0]) ||
+              equals(nearbyVertex, nonSelectedActiveFeatureCoordinates[nonSelectedActiveFeatureCoordinates.length - 1])
+            ) {
+              return;
+            }
+
+            const isAccepted = await confirmationModal.openAsync({
+              title: "Deling av grense",
+              description:
+                "Plasserer man et punkt på noe annet enn et endepunkt vil grensen deles i to deler. Er du sikker på at du vil dele grensen?",
+              acceptText: "Del grense",
+              declineText: "Avbryt",
+            });
+
+            if (isAccepted) {
+              performFeatureSplit(nonSelectedActiveFeature, nearbyVertex);
+              if (!toastIdRef.current) {
+                toastIdRef.current = toast({
+                  status: "warning",
+                  title: "Husk å sette tilhørighet på berørte grenser",
+                  description: `For øyeblikket må alle flatetilhørigheter på grensene legges til manuelt. 
+                            Tilhørigheten kan settes ved å bruke "Informasjon"-verktøyet.`,
+                  isClosable: true,
+                  duration: null,
+                });
+              }
+            } else {
+              setPreviousCoordinatesForFeature(selectedFeature);
+              return;
+            }
+          } else {
+            setPreviousCoordinatesForFeature(selectedFeature);
+            toast({ title: "Løsrevede punkter kan kun plasseres på andre punkter", status: "warning" });
+            return;
+          }
+        }
+      }
+
+      addModificationToHistory(event.features.getArray());
+    };
+
+    modify.on("modifyend", updateFeatureOnModification);
 
     return () => {
-      modify.un("modifyend", addModificationToHistory);
+      modify.un("modifyend", updateFeatureOnModification);
     };
-  }, [activeTool, addHistoryEntry, modify, toast]);
+  }, [
+    activeTool,
+    addHistoryEntry,
+    confirmationModal,
+    getActiveFeaturesAtPixel,
+    modify,
+    performFeatureSplit,
+    selectedFeatures,
+    toast,
+  ]);
 
   return { modify };
 };
