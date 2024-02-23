@@ -25,7 +25,7 @@ export const ReferanseCard = ({ referanse, urlMode, deleteRef, formViewState }: 
             />
           </a>
         )}
-        {!(formViewState === "viewing") && (
+        {formViewState !== "viewing" && (
           <IconButton
             aria-label="Slett referanse"
             colorScheme="red"
