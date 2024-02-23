@@ -5,6 +5,7 @@ import {
   Grunnkretsendringer,
   GrunnkretsMetadataEndring,
   Endring,
+  KretsDelingEndring,
 } from "./utkastEndringerTypes";
 import {
   findKrets,
@@ -77,6 +78,27 @@ const getMetadataEndringer = (
     .filter(harMetadataEndring);
 };
 
+const getGrunnkretsDelingEndringer = (
+  operasjoner: UtkastOperasjoner,
+  alleStemmekretser: GrunnkretsResponse[],
+): KretsDelingEndring[] | null => {
+  return operasjoner.kretsDelingEndringer.map((deling) => {
+    const opprinneligKrets = alleStemmekretser.find(
+      (stemmekrets) => stemmekrets.id.lokalid.value === deling.opprinneligKrets.lokalId,
+    );
+
+    return {
+      opprinneligKrets: opprinneligKrets
+        ? {
+            kretsNavn: opprinneligKrets.navn,
+            kretsNummer: opprinneligKrets.grunnkretsnummer,
+          }
+        : null,
+      nyeKretser: deling.nyeKretser,
+    } as KretsDelingEndring;
+  });
+};
+
 const getEndringerForKommune = (
   kommuneId: string,
   grunnkretserMedEndringer: string[],
@@ -100,6 +122,7 @@ const getEndringerForKommune = (
         .filter((id) => grunnkretserMedGrensejusteringer.includes(id))
         .map((grunnkretsId) => findKrets(grunnkretsId, alleGrunnkretser)),
     ),
+    delinger: getGrunnkretsDelingEndringer(operasjoner, alleGrunnkretser),
   };
 };
 
