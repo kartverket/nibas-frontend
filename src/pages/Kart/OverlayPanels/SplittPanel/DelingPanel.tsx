@@ -119,7 +119,7 @@ export const DelingPanel = ({ isOpen, className }: PanelProps) => {
                         })}
                       />
                     </FormControl>
-                    <FormControl isInvalid={!!errors.nyeKretser?.[index]?.kretsNavn} key={field.id}>
+                    <FormControl isInvalid={!!errors.nyeKretser?.[index]?.kretsNavn}>
                       <FormLabel>Nytt navn</FormLabel>
                       <Input
                         disabled={index === 0}

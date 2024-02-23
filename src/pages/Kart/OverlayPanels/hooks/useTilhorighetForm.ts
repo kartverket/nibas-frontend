@@ -118,14 +118,14 @@ export const useTilhorighetForm = (feature: Feature) => {
       if (!utkast || !commonOptions) return;
       const tilhorighetOptionsFromUtkast = getKretserFromKretsDelingEndringer(
         kommunerId,
-        utkast.operasjoner.kretsDelingEndringer,
+        utkast.operasjoner.kretsDelingEndringer.filter((deling) => deling.flatetype === kontekstType),
       );
       setTilhorighetValg({
         [Tilhorighet.A]: [...commonOptions[Tilhorighet.A], ...tilhorighetOptionsFromUtkast],
         [Tilhorighet.B]: [...commonOptions[Tilhorighet.B], ...tilhorighetOptionsFromUtkast],
       });
     },
-    [kommunerId, utkast],
+    [kommunerId, kontekstType, utkast],
   );
 
   const {

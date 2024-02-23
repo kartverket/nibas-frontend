@@ -14,11 +14,12 @@ import {
   OperasjonerOrNull,
 } from "./endringerUtils";
 import { getNavnInSpraak } from "utils/language/language";
+import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighetUtils";
 
 export const getGrunnkretserMedEndringer = (operasjoner: OperasjonerOrNull): string[] => {
   const endringerResponse = operasjoner?.metadataendringer?.grunnkretsendringer;
 
-  if (endringerResponse == null && operasjoner == null) {
+  if (endringerResponse == null || operasjoner == null) {
     return [];
   }
 
@@ -26,9 +27,15 @@ export const getGrunnkretserMedEndringer = (operasjoner: OperasjonerOrNull): str
     Object.keys(operasjoner?.metadataendringer?.grunnkretsendringer ?? {}),
   );
 
-  const alleGrunnkretserMedEndringer = getKretserMedGrensejusteringer(operasjoner, "GRUNNKRETS").concat(
-    grunnkretsMetadataEndringer,
-  );
+  const grunnkretserMedDeling = [
+    ...operasjoner.kretsDelingEndringer
+      .filter((deling) => deling.flatetype === KontekstType.GRUNNKRETS)
+      .map((deling) => deling.opprinneligKrets.lokalId),
+  ];
+
+  const alleGrunnkretserMedEndringer = getKretserMedGrensejusteringer(operasjoner, "GRUNNKRETS")
+    .concat(grunnkretsMetadataEndringer)
+    .concat(grunnkretserMedDeling);
 
   return deduplicate(alleGrunnkretserMedEndringer);
 };
@@ -80,23 +87,25 @@ const getMetadataEndringer = (
 
 const getGrunnkretsDelingEndringer = (
   operasjoner: UtkastOperasjoner,
-  alleStemmekretser: GrunnkretsResponse[],
+  alleGrunnkretser: GrunnkretsResponse[],
 ): KretsDelingEndring[] | null => {
-  return operasjoner.kretsDelingEndringer.map((deling) => {
-    const opprinneligKrets = alleStemmekretser.find(
-      (stemmekrets) => stemmekrets.id.lokalid.value === deling.opprinneligKrets.lokalId,
-    );
+  return operasjoner.kretsDelingEndringer
+    .filter((deling) => deling.flatetype === KontekstType.GRUNNKRETS)
+    .map((deling) => {
+      const opprinneligKrets = alleGrunnkretser.find(
+        (grunnkrets) => grunnkrets.id.lokalid.value === deling.opprinneligKrets.lokalId,
+      );
 
-    return {
-      opprinneligKrets: opprinneligKrets
-        ? {
-            kretsNavn: opprinneligKrets.navn,
-            kretsNummer: opprinneligKrets.grunnkretsnummer,
-          }
-        : null,
-      nyeKretser: deling.nyeKretser,
-    } as KretsDelingEndring;
-  });
+      return {
+        opprinneligKrets: opprinneligKrets
+          ? {
+              kretsNavn: opprinneligKrets.navn,
+              kretsNummer: opprinneligKrets.grunnkretsnummer,
+            }
+          : null,
+        nyeKretser: deling.nyeKretser,
+      } as KretsDelingEndring;
+    });
 };
 
 const getEndringerForKommune = (
