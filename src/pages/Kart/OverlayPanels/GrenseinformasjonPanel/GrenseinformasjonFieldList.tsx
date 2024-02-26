@@ -44,7 +44,6 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
   const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const { featureIsArchived } = useFeatureStyle();
-  console.log(kodeliste);
 
   const metadata = properties.metadata as Metadata;
 
