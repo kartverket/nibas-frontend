@@ -93,7 +93,6 @@ export const useTilhorighetForm = (feature: Feature) => {
     () => featureProperties.kontekstEgenskaper.map((ke) => getIdForKontekstEgenskaper(ke, utkast?.operasjoner)), // kontekster som peker til nye kretser i utkastet har undefined som id.
     [featureProperties.kontekstEgenskaper, utkast],
   );
-  console.log("kontekstEgenskaper", kontekstEgenskaper);
   const kontekstType =
     kontekstEgenskaper.map((k) => k.type as KontekstType)[0] ??
     mapGrenseTypeTilKontekstType(featureProperties.type as GrenseType);

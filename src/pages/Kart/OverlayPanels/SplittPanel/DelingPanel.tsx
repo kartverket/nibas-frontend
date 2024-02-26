@@ -38,7 +38,7 @@ const CustomFormErrorMessage = styled.div`
   padding: 8px;
   border: 2px var(--kvib-colors-red-100) solid;
   border-radius: 8px;
-  gap: 5px;
+  gap: 25px;
 `;
 
 export const DelingPanel = ({ isOpen, className }: PanelProps) => {
@@ -61,6 +61,28 @@ export const DelingPanel = ({ isOpen, className }: PanelProps) => {
   const closeAndResetForm = () => {
     closeOverlayPanel();
     reset(getDefaultDelingValue());
+  };
+
+  const kretsNumberValidator = {
+    required: `Ny ${editingType} må ha et nummer`,
+    pattern: {
+      value: /^\d+$/,
+      message: `Nytt ${editingType}nummer må være et gyldig positivt tall`,
+    },
+    minValue: {
+      value: 1,
+      message: `Nytt ${editingType}nummer må være et gyldig positivt tall`,
+    },
+    minLength: {
+      value: editingType === "stemmekrets" ? 1 : 8,
+      message: `Nytt ${editingType}nummer må være ${
+        editingType === "stemmekrets" ? "minst 1 tegn langt" : "nøyaktig 8 tegn langt"
+      }`,
+    },
+    maxLength: {
+      value: editingType === "stemmekrets" ? 4 : 8,
+      message: `Nytt ${editingType}nummer kan ikke være lengre enn ${editingType === "stemmekrets" ? 4 : 8} tegn`,
+    },
   };
 
   const opprinneligKretsRegister = register("opprinneligKrets.lokalId");
@@ -114,16 +136,16 @@ export const DelingPanel = ({ isOpen, className }: PanelProps) => {
                       <Input
                         disabled={index === 0}
                         type="number"
-                        {...register(`nyeKretser.${index}.kretsNummer`, {
-                          required: `Ny ${editingType} må ha et nummer`,
-                        })}
+                        {...register(`nyeKretser.${index}.kretsNummer`, kretsNumberValidator)}
                       />
                     </FormControl>
                     <FormControl isInvalid={!!errors.nyeKretser?.[index]?.kretsNavn}>
                       <FormLabel>Nytt navn</FormLabel>
                       <Input
                         disabled={index === 0}
-                        {...register(`nyeKretser.${index}.kretsNavn`, { required: `Ny ${editingType} må ha et navn` })}
+                        {...register(`nyeKretser.${index}.kretsNavn`, {
+                          required: `Ny ${editingType} må ha et navn`,
+                        })}
                       />
                     </FormControl>
                     {index !== 0 ? (
@@ -141,12 +163,16 @@ export const DelingPanel = ({ isOpen, className }: PanelProps) => {
                   {!!errors.nyeKretser?.[index] && (
                     <CustomFormErrorMessage>
                       <Icon icon={"error"} />
-                      {[
-                        errors.nyeKretser?.[index]?.kretsNavn?.message,
-                        errors.nyeKretser?.[index]?.kretsNummer?.message,
-                      ]
-                        .filter((e) => e !== undefined)
-                        .join(". ")}
+                      <ul>
+                        {[
+                          errors.nyeKretser?.[index]?.kretsNavn?.message,
+                          errors.nyeKretser?.[index]?.kretsNummer?.message,
+                        ]
+                          .filter((e) => e !== undefined)
+                          .map((error, indexE) => (
+                            <li key={indexE}>{error}</li>
+                          ))}
+                      </ul>
                     </CustomFormErrorMessage>
                   )}
                 </div>
