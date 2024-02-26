@@ -55,6 +55,7 @@ const UtkastOpprett = () => {
       {
         navn: getValues("navn"),
         endringstype: getValues("endringstype"),
+        opprettetAv: tokenHolderFunc()?.personId ?? "DUMMY",
       },
       tokenHolderFunc()?.token,
     );

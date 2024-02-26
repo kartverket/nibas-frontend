@@ -172,6 +172,10 @@ export const mockDetailedKommune: KommuneResponse = {
   },
   oppdateringsdato: "2022-12-31",
   samiskforvaltningsomraade: false,
+  features: {
+    type: "",
+    features: []
+  }
 };
 
 export const mockDetailedGrunnkrets1: GrunnkretsResponse = {
@@ -201,6 +205,10 @@ export const mockDetailedGrunnkrets1: GrunnkretsResponse = {
       value: "2",
     },
   },
+  features: {
+    type: "",
+    features: []
+  }
 };
 
 export const mockDetailedGrunnkrets2: GrunnkretsResponse = {
@@ -230,6 +238,10 @@ export const mockDetailedGrunnkrets2: GrunnkretsResponse = {
     },
     gyldighetsdato: "2022-07-01",
   },
+  features: {
+    type: "",
+    features: []
+  }
 };
 
 export const mockGrunnkretsRequest: GrunnkretsRequest = {
@@ -321,6 +333,12 @@ export const mockStemmekrets1: StemmekretsResponse = {
       value: "2",
     },
   },
+  navn: "",
+  nummer: "",
+  features: {
+    type: "",
+    features: []
+  }
 };
 
 export const mockStemmekrets2: StemmekretsResponse = {
@@ -349,6 +367,12 @@ export const mockStemmekrets2: StemmekretsResponse = {
       value: "2",
     },
   },
+  navn: "",
+  nummer: "",
+  features: {
+    type: "",
+    features: []
+  }
 };
 
 export const mockStemmekretser: StemmekretsResponse[] = [mockStemmekrets1, mockStemmekrets2];

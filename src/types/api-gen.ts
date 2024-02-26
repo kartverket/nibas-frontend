@@ -623,6 +623,20 @@ export interface components {
       commonGrense: unknown;
       dokumentasjonsreferanser: unknown;
     };
+    ApiErrorResponse: {
+      /** @description En unik feilkode for denne feilen som kan vises til bruker. Denne feilkoden burde også være med i loggene så man finner igjen feilen som oppstod. */
+      errorCode: string;
+      errorDescription: components["schemas"]["ErrorDescription"];
+    };
+    /** @description En forklaring av feilen som oppstod. Denne er ment til å kunne vises direkte til brukeren. */
+    ErrorDescription: {
+      /** @description Tittelen på feilmeldingen som skal vises. */
+      title: string;
+      /** @description En beskrivende forklaring av feilen som oppstod. */
+      description: string;
+      /** @description Litt tilleggsinfo relatert til feilen om man vil gi noe mer forklaring av konteksten. Ikke obligatorisk. */
+      additionalInfo?: string;
+    };
     /** @description Feil som har oppstått pga optimistisk lås. */
     OptimistiskLaasResponse: {
       /** @description Identifikatoren til objektet som er utdatert. */
@@ -720,20 +734,6 @@ export interface components {
       /** @description Feil som har oppstått pga optimistisk lås. */
       optimisticLockExceptions: components["schemas"]["OptimistiskLaasResponse"][];
     };
-    ApiErrorResponse: {
-      /** @description En unik feilkode for denne feilen som kan vises til bruker. Denne feilkoden burde også være med i loggene så man finner igjen feilen som oppstod. */
-      errorCode: string;
-      errorDescription: components["schemas"]["ErrorDescription"];
-    };
-    /** @description En forklaring av feilen som oppstod. Denne er ment til å kunne vises direkte til brukeren. */
-    ErrorDescription: {
-      /** @description Tittelen på feilmeldingen som skal vises. */
-      title: string;
-      /** @description En beskrivende forklaring av feilen som oppstod. */
-      description: string;
-      /** @description Litt tilleggsinfo relatert til feilen om man vil gi noe mer forklaring av konteksten. Ikke obligatorisk. */
-      additionalInfo?: string;
-    };
     /** @description Representasjon av audit info for et objekt. */
     AuditInfoResponse: {
       /**
@@ -776,6 +776,8 @@ export interface components {
       navn: string;
       /** @description Typen endring utkastet representerer. */
       endringstype: string;
+      /** @description Bruker som har opprettet utkastet. */
+      opprettetAv: string;
     };
     /** @description Requestbody for publisering av utkast. */
     PubliserUtkastRequest: {
@@ -804,6 +806,13 @@ export interface components {
        * @description Tidspunktet utkastet ble opprettet.
        */
       opprettetDato: string;
+    };
+    /** @description Geometrien til fylket. Ikke grenser */
+    FeatureCollection: {
+      /** @description Toppnivå for geojson-strukturen, definert av en konstant med navn type og verdi FeatureCollection */
+      type: string;
+      /** @description Liste av features som holder på dataene */
+      features: components["schemas"]["Feature"][];
     };
     /** @description Gyldighetsintervall for objektet */
     GyldighetResponse: {
@@ -845,6 +854,10 @@ export interface components {
       stemmekretsnavn: string;
       /** @description Stemmekretsnummeret til stemmekretsen */
       stemmekretsnummer: string;
+      /** @description Navnet på stemmekretsen */
+      navn: string;
+      /** @description Stemmekretsnummeret til stemmekretsen */
+      nummer: string;
       kommunenummer: components["schemas"]["Kommunenummer"];
       kommuneIdentifikator: components["schemas"]["ObjektIdentifikator"];
       /** @description Tellekretsnummer til stemmekretsen */
@@ -853,19 +866,13 @@ export interface components {
       tellekretsnavn?: string;
       /** @description Valgdistriktsnummer til stemmekretsen */
       valgdistriktsnummer?: string;
+      features: components["schemas"]["FeatureCollection"];
       representasjonspunkt: components["schemas"]["Feature"];
       /**
        * Format: int32
        * @description Teknisk versjon for å støtte samhandling og redigering
        */
       version: number;
-    };
-    /** @description Geometrien til fylket. Ikke grenser */
-    FeatureCollection: {
-      /** @description Toppnivå for geojson-strukturen, definert av en konstant med navn type og verdi FeatureCollection */
-      type: string;
-      /** @description Liste av features som holder på dataene */
-      features: components["schemas"]["Feature"][];
     };
     /** @description En referanse til en kommune */
     KommuneRef: {
@@ -894,6 +901,7 @@ export interface components {
        * @description Angir når denne kommunen ble sist oppdatert
        */
       oppdateringsdato: string;
+      features: components["schemas"]["FeatureCollection"];
       representasjonspunkt: components["schemas"]["Feature"];
       /**
        * Format: int32
@@ -923,6 +931,7 @@ export interface components {
       kommuneIdentifikator: components["schemas"]["ObjektIdentifikator"];
       /** @description Typen endring som ble gjort på objektet */
       endringstype?: string;
+      features: components["schemas"]["FeatureCollection"];
       representasjonspunkt: components["schemas"]["Feature"];
       /**
        * Format: int32
@@ -980,6 +989,7 @@ export interface components {
        * @description Angir når dette fylket ble sist oppdatert
        */
       oppdateringsdato: string;
+      features: components["schemas"]["FeatureCollection"];
       representasjonspunkt: components["schemas"]["Feature"];
       /**
        * Format: int32
