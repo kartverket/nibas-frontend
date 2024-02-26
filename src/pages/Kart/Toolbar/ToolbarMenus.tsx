@@ -39,6 +39,7 @@ const ToolbarMenus = () => {
   } = useOverlayPanel();
 
   const mergeIsActive = activeOverlayPanel === "sammenslåing";
+  const splitIsActive = activeOverlayPanel === "deling";
 
   const flatedetaljerIsActive = activeOverlayModal === "grunnkrets" || activeOverlayModal === "stemmekrets";
 
@@ -65,6 +66,8 @@ const ToolbarMenus = () => {
       openOverlayPanel("sammenslåing");
     }
   };
+
+  const toggleSplitPanel = () => (splitIsActive ? closeOverlayPanel() : openOverlayPanel("deling"));
 
   const isEditMode = !!editingType;
   useKeyboardShortcut("add", () => toggleTool("add"), isEditMode);
@@ -161,8 +164,15 @@ const ToolbarMenus = () => {
       onClick: toggleMergePanel,
       "aria-label": "Slå sammen stemmekretser",
     },
+    {
+      label: "Del en flate",
+      icon: <Icon icon="cut" />,
+      $isActive: splitIsActive,
+      isDisabled: !(editingType == "stemmekrets" || editingType == "grunnkrets"),
+      onClick: toggleSplitPanel,
+      "aria-label": "Del en flate",
+    },
   ];
-
   return (
     <>
       <Divider orientation="vertical" />
