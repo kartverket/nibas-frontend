@@ -1,6 +1,8 @@
 import { styled } from "styled-components";
-import { Endring } from "./hooks/utkastEndringerTypes";
+import { Endring, KretsDelingEndring } from "./hooks/utkastEndringerTypes";
 import { Heading, Icon } from "@kvib/react";
+import { UnstyledList } from "components/UnstyledList";
+import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighetUtils";
 
 export const EndringSection = styled.section`
   &:not(:last-of-type) {
@@ -100,9 +102,45 @@ const KursivTekst = styled(EndringTekst)`
   font-style: italic;
 `;
 
-const RightArrow = styled(Icon)`
+export const RightArrow = styled(Icon)`
   color: var(--kvib-colors-blue-500);
   font-size: 20px;
   margin: 0 8px 0 0;
   vertical-align: middle;
 `;
+
+type DelingEndringerProps = {
+  kontekstType: KontekstType;
+  delinger: KretsDelingEndring[] | null;
+};
+
+export const DelingEndringer = ({ delinger, kontekstType }: DelingEndringerProps) => {
+  return delinger?.map((deling, index) => (
+    <EndringSection key={deling.opprinneligKrets.kretsNavn}>
+      <Seksjonsoverskrift>
+        {`${deling.opprinneligKrets.kretsNummer} ${deling.opprinneligKrets.kretsNavn}`}
+        <EndringstypeTag>Deling</EndringstypeTag>
+      </Seksjonsoverskrift>
+      <EndringsradListItem>
+        <EndringsradLabel>{kontekstType.slice(0, 1) + kontekstType.slice(1).toLowerCase() + "er"}</EndringsradLabel>
+        <EndringsradEndring>
+          <UnstyledList>
+            <EndringTekst $isBold={false} key={index + deling.opprinneligKrets.kretsNavn}>
+              {deling.opprinneligKrets.kretsNummer} {deling.opprinneligKrets.kretsNavn}
+            </EndringTekst>
+            <RightArrow icon="arrow_right_alt" />
+            <EndringTekst $isBold={false} key={index + 1 + deling.opprinneligKrets.kretsNavn}>
+              {deling.opprinneligKrets.kretsNummer} {deling.opprinneligKrets.kretsNavn},
+            </EndringTekst>
+            {deling.nyeKretser.map((nykrets, indexNK) => (
+              <EndringTekst $isBold key={nykrets.kretsNavn}>
+                {nykrets.kretsNummer} {nykrets.kretsNavn}
+                {indexNK === deling.nyeKretser.length - 1 ? "" : ","}
+              </EndringTekst>
+            ))}
+          </UnstyledList>
+        </EndringsradEndring>
+      </EndringsradListItem>
+    </EndringSection>
+  ));
+};
