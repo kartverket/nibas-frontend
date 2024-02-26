@@ -84,11 +84,6 @@ const getIdForKontekstEgenskaper = (
     };
 };
 
-const getDefaultTilhorighetData = () => ({
-  GRUNNKRETS: { a: CustomOption.NOT_CHOSEN, b: CustomOption.NOT_CHOSEN },
-  STEMMEKRETS: { a: CustomOption.NOT_CHOSEN, b: CustomOption.NOT_CHOSEN },
-});
-
 export const useTilhorighetForm = (feature: Feature) => {
   const { addHistoryEntry } = useHistory();
   const { utkast } = useUtkast();
@@ -98,6 +93,7 @@ export const useTilhorighetForm = (feature: Feature) => {
     () => featureProperties.kontekstEgenskaper.map((ke) => getIdForKontekstEgenskaper(ke, utkast?.operasjoner)), // kontekster som peker til nye kretser i utkastet har undefined som id.
     [featureProperties.kontekstEgenskaper, utkast],
   );
+  console.log("kontekstEgenskaper", kontekstEgenskaper);
   const kontekstType =
     kontekstEgenskaper.map((k) => k.type as KontekstType)[0] ??
     mapGrenseTypeTilKontekstType(featureProperties.type as GrenseType);
@@ -138,7 +134,7 @@ export const useTilhorighetForm = (feature: Feature) => {
   });
 
   const resetTilhorighet = useCallback(() => {
-    reset(kontekstEgenskaper.length === 2 ? getTilhorighetData(kontekstEgenskaper) : getDefaultTilhorighetData());
+    reset(getTilhorighetData(kontekstEgenskaper));
   }, [kontekstEgenskaper, reset]);
 
   const updateDraftFromFeature = () => {

@@ -50,8 +50,13 @@ export interface UseTilhorighet {
   isLoading: boolean;
 }
 
+const getDefaultTilhorighetData = () => ({
+  GRUNNKRETS: { a: CustomOption.NOT_CHOSEN, b: CustomOption.NOT_CHOSEN },
+  STEMMEKRETS: { a: CustomOption.NOT_CHOSEN, b: CustomOption.NOT_CHOSEN },
+});
+
 // tar to kontekstEgenskaper og mapper de til TilhorighetForm
-export const getTilhorighetData = (tilhorigheter: KontekstEgenskaper[] | undefined): TilhorighetForm | undefined => {
+export const getTilhorighetData = (tilhorigheter: KontekstEgenskaper[] | undefined): TilhorighetForm => {
   if (tilhorigheter && tilhorigheter.length == 2) {
     const grunnkretser = tilhorigheter
       .filter((kontekstEgenskaper) => kontekstEgenskaper.type === KontekstType.GRUNNKRETS)
@@ -59,7 +64,6 @@ export const getTilhorighetData = (tilhorigheter: KontekstEgenskaper[] | undefin
     const stemmekretser = tilhorigheter
       .filter((kontekstEgenskaper) => kontekstEgenskaper.type === KontekstType.STEMMEKRETS)
       .map((stemmekrets) => stemmekrets.id?.lokalid.value);
-
     if (grunnkretser.length === 2 || stemmekretser.length === 2) {
       return {
         [KontekstType.GRUNNKRETS]: {
@@ -73,6 +77,7 @@ export const getTilhorighetData = (tilhorigheter: KontekstEgenskaper[] | undefin
       };
     }
   }
+  return getDefaultTilhorighetData();
 };
 
 // Gir en krets med lokalid lik Default option slik at default verdien kan sendes som data slik som vanlige kretser.
