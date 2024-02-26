@@ -150,7 +150,3 @@ export const undoGrensedeling = (deltFeature: Feature, newFeaturesFromsDeling: F
     removeFeaturesFromSourceByIds("archived", [deltFeature.getId() as string]);
   }
 };
-
-export const undoKretsDelingForKrets = () => {};
-
-export const redoKretsDelingForKrets = () => {};
