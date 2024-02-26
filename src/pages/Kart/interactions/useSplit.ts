@@ -15,7 +15,7 @@ import { Coordinate } from "ol/coordinate";
 const useSplit = () => {
   const { addHistoryEntry } = useHistory();
   const { activeTool } = useToolbar();
-  const { selectedFeatures, selectedPoint, addArchivedStyles } = useFeatureStyle();
+  const { selectedFeatures, selectedPoint, addArchivedStyles, addDirtyStyles } = useFeatureStyle();
 
   const createCloneOfFeatureWithPartsOfCoordinates = (
     feature: Feature,
@@ -65,6 +65,13 @@ const useSplit = () => {
             type: "grensedeling",
             changes: [{ id: oldFeatureId, from: [oldFeature], to: [newFeature1, newFeature2] }],
           });
+
+          const newFeature1Id = newFeature1.getId()?.toString(),
+            newFeature2Id = newFeature2.getId()?.toString();
+
+          if (newFeature1Id && newFeature2Id) {
+            addDirtyStyles([newFeature1Id, newFeature2Id]);
+          }
 
           // Hvis featuren som ble splittet er en gammel feature med ID ønsker vi å vise den som arkivert
           if (!isTempFeatureId(oldFeatureId)) {
