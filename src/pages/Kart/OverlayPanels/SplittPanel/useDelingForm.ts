@@ -14,6 +14,7 @@ import {
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import { useToast } from "@kvib/react";
+import { useCallback } from "react";
 
 export type DelingForm = Pick<KretsDelingEndringRequest, "opprinneligKrets" | "nyeKretser">;
 
@@ -159,6 +160,10 @@ export const useDelingForm = (flatedata: Flatedata) => {
     }
   };
 
+  const resetDeling = useCallback(() => {
+    reset(getDefaultDelingValue());
+  }, [reset]);
+
   return {
     editingType,
     opprinneligFlateOptions,
@@ -166,7 +171,7 @@ export const useDelingForm = (flatedata: Flatedata) => {
     register,
     append,
     remove,
-    reset,
+    resetDeling,
     updateDraftWithDelingRequest,
     setValue,
     getValues,

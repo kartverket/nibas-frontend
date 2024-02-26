@@ -15,6 +15,7 @@ import { styled } from "styled-components";
 import { PanelHeader, PanelProps, SidePanel } from "../Panel";
 import { CustomOption } from "../hooks/tilhorighetUtils";
 import { getDefaultDelingValue, useDelingForm } from "./useDelingForm";
+import { useEffect } from "react";
 
 const NyKretsField = styled.div`
   display: flex;
@@ -50,7 +51,7 @@ export const DelingPanel = ({ isOpen, className }: PanelProps) => {
     register,
     append,
     remove,
-    reset,
+    resetDeling,
     updateDraftWithDelingRequest,
     getValues,
     handleOpprinneligKretsChange,
@@ -58,9 +59,13 @@ export const DelingPanel = ({ isOpen, className }: PanelProps) => {
     errors,
   } = useDelingForm(flatedata);
 
+  useEffect(() => {
+    resetDeling();
+  }, [flatedata, resetDeling]); // Vi ønsker å kalle reset hvis vi bytter inndeling
+
   const closeAndResetForm = () => {
     closeOverlayPanel();
-    reset(getDefaultDelingValue());
+    resetDeling();
   };
 
   const kretsNumberValidator = {
