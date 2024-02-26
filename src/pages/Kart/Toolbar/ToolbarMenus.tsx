@@ -167,7 +167,6 @@ const ToolbarMenus = () => {
     {
       label: "Del en flate",
       icon: <Icon icon="cut" />,
-      command: KeyboardShortcuts["del"].displayString,
       $isActive: splitIsActive,
       isDisabled: !(editingType == "stemmekrets" || editingType == "grunnkrets"),
       onClick: toggleSplitPanel,

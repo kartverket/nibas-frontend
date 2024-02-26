@@ -8,7 +8,6 @@ export type Shortcut =
   | "add"
   | "remove"
   | "merge"
-  | "del"
   | "layers"
   | "snap"
   | "open"
@@ -83,5 +82,4 @@ export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
   flate: createShortcut("i", { control: true, shift: true }),
   archive: createShortcut("a", { control: true }),
   matrikkel: createShortcut("e", { control: true }),
-  del: createShortcut("n", { control: true }),
 };
