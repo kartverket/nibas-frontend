@@ -934,7 +934,13 @@ export interface components {
     KodelisteItem: {
       /** @description Id til kodeliste-innslaget. */
       id: string;
-      /** @description Beskrivelse av kodeliste-innslaget. */
+      /** @description kode til kodeliste-innslaget. */
+      kode: string;
+      /** @description Utfyllende beskrivelse av kodeliste-innslaget. */
+      beskrivelse: string;
+      /** @description Status på kodeliste-innslaget */
+      status: string;
+      /** @description Navnet til kodeliste-innslaget. */
       label: string;
     };
     KodelisteRespons: {
