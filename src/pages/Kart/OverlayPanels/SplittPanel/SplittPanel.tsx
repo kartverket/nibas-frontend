@@ -140,7 +140,7 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
                 <div key={field.id}>
                   <NyKretsField>
                     <FormControl isInvalid={!!errors.nyeKretser?.[index]?.kretsNummer}>
-                      <FormLabel>Nytt nummer</FormLabel>
+                      {index != 0 && <FormLabel>Nytt nummer</FormLabel>}
                       <Input
                         disabled={index === 0}
                         type="number"
@@ -148,7 +148,7 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
                       />
                     </FormControl>
                     <FormControl isInvalid={!!errors.nyeKretser?.[index]?.kretsNavn}>
-                      <FormLabel>Nytt navn</FormLabel>
+                      {index != 0 && <FormLabel>Nytt navn</FormLabel>}
                       <Input
                         disabled={index === 0}
                         {...register(`nyeKretser.${index}.kretsNavn`, {
