@@ -99,6 +99,13 @@ export const tegnforklaringer: TegnforklaringProps[][] = [
   ],
   [
     {
+      text: "Matrikkelgrense",
+      dotted: isDottedStyle(grenseStyles.matrikkel),
+      color: getColorFromStyle(grenseStyles.matrikkel),
+    },
+  ],
+  [
+    {
       text: "Mulig å redigere",
       dotted: isDottedStyle(grenseStyles.edit),
       color: getColorFromStyle(grenseStyles.edit),
