@@ -14,8 +14,8 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { styled } from "styled-components";
 import { PanelHeader, PanelProps, SidePanel } from "../Panel";
 import { CustomOption } from "../hooks/tilhorighetUtils";
-import { getDefaultDelingValue, useDelingForm } from "./useDelingForm";
 import { useEffect } from "react";
+import { useSplittingForm } from "./useSplittingForm";
 
 const NyKretsField = styled.div`
   display: flex;
@@ -42,7 +42,7 @@ const CustomFormErrorMessage = styled.div`
   gap: 25px;
 `;
 
-export const DelingPanel = ({ isOpen, className }: PanelProps) => {
+export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
   const { flatedata, closeOverlayPanel } = useOverlayPanel();
   const {
     editingType,
@@ -51,21 +51,21 @@ export const DelingPanel = ({ isOpen, className }: PanelProps) => {
     register,
     append,
     remove,
-    resetDeling,
-    updateDraftWithDelingRequest,
+    resetSplitting,
+    updateDraftWithSplittingRequest,
     getValues,
     handleOpprinneligKretsChange,
     handleSubmit,
     errors,
-  } = useDelingForm(flatedata);
+  } = useSplittingForm(flatedata);
 
   useEffect(() => {
-    resetDeling();
-  }, [flatedata, resetDeling]); // Vi ønsker å kalle reset hvis vi bytter inndeling
+    resetSplitting();
+  }, [flatedata, resetSplitting]); // Vi ønsker å kalle reset hvis vi bytter inndeling
 
   const closeAndResetForm = () => {
     closeOverlayPanel();
-    resetDeling();
+    resetSplitting();
   };
 
   const kretsNumberValidator = {
@@ -96,14 +96,14 @@ export const DelingPanel = ({ isOpen, className }: PanelProps) => {
     <SidePanel $isOpen={isOpen} className={className}>
       <PanelHeader
         onClose={closeAndResetForm}
-        subHeading={`Ved å dele en flate kan du opprette en eller flere nye flater`}
+        subHeading={`Ved å splitte en flate kan du opprette en eller flere nye flater`}
       >
-        Del en flate
+        Splitt en flate
       </PanelHeader>
 
       <Stack spacing={8}>
         <Heading as="h3" size="sm">
-          {`Hvilken ${editingType} skal deles?`}
+          {`Hvilken ${editingType} skal splittes?`}
         </Heading>
         <FormControl>
           <FormLabel>
@@ -132,7 +132,7 @@ export const DelingPanel = ({ isOpen, className }: PanelProps) => {
         {getValues("opprinneligKrets.lokalId") !== CustomOption.NOT_CHOSEN && (
           <>
             <Stack spacing={4}>
-              <Heading as="h3" size="sm">{`Hva skal ${fields[0].kretsNavn} deles til?`}</Heading>
+              <Heading as="h3" size="sm">{`Hva skal ${fields[0].kretsNavn} splittes til?`}</Heading>
               {fields.map((field, index) => (
                 <div key={field.id}>
                   <NyKretsField>
@@ -156,7 +156,7 @@ export const DelingPanel = ({ isOpen, className }: PanelProps) => {
                     {index !== 0 ? (
                       <IconButton
                         onClick={() => remove(index)}
-                        aria-label={"fjern del"}
+                        aria-label={"fjern splitt"}
                         icon={"close"}
                         variant={"tertiary"}
                         alignSelf={"flex-end"}
@@ -183,7 +183,7 @@ export const DelingPanel = ({ isOpen, className }: PanelProps) => {
                 </div>
               ))}
               <Button onClick={() => append({ kretsNavn: "", kretsNummer: "" })} variant={"secondary"} leftIcon={"add"}>
-                Legg til ny del
+                Legg til ny splitt
               </Button>
             </Stack>
             <ButtonGroup alignSelf={"flex-end"}>
@@ -191,10 +191,10 @@ export const DelingPanel = ({ isOpen, className }: PanelProps) => {
                 Avbryt
               </Button>
               <Button
-                onClick={handleSubmit(updateDraftWithDelingRequest)}
+                onClick={handleSubmit(updateDraftWithSplittingRequest)}
                 isDisabled={getValues("nyeKretser").slice(1).length < 1}
               >
-                Del
+                Splitt
               </Button>
             </ButtonGroup>
           </>

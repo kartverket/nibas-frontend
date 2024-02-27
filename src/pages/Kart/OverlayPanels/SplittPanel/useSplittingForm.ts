@@ -16,9 +16,9 @@ import { useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import { useToast } from "@kvib/react";
 import { useCallback } from "react";
 
-export type DelingForm = Pick<KretsDelingEndringRequest, "opprinneligKrets" | "nyeKretser">;
+export type SplittingForm = Pick<KretsDelingEndringRequest, "opprinneligKrets" | "nyeKretser">;
 
-export const getDefaultDelingValue = () => ({
+export const getDefaultSplittingValue = () => ({
   opprinneligKrets: {
     lokalId: CustomOption.NOT_CHOSEN,
     version: 0,
@@ -39,7 +39,7 @@ const getKommuneIdentifikatorFromOptions = (
   }
 };
 
-export const useDelingForm = (flatedata: Flatedata) => {
+export const useSplittingForm = (flatedata: Flatedata) => {
   const { utkast, updateUtkast, getUpdateUtkastRequestFromHistory } = useUtkast();
   const toast = useToast();
 
@@ -51,7 +51,11 @@ export const useDelingForm = (flatedata: Flatedata) => {
     control,
     setValue,
     handleSubmit,
-  } = useForm<DelingForm>({ mode: "onSubmit", reValidateMode: "onChange", defaultValues: getDefaultDelingValue() });
+  } = useForm<SplittingForm>({
+    mode: "onSubmit",
+    reValidateMode: "onChange",
+    defaultValues: getDefaultSplittingValue(),
+  });
 
   const { fields, append, remove, prepend, replace } = useFieldArray({
     control,
@@ -69,7 +73,7 @@ export const useDelingForm = (flatedata: Flatedata) => {
 
   const handleOpprinneligKretsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const lokalid = e.target.value;
-    replace(getDefaultDelingValue().nyeKretser);
+    replace(getDefaultSplittingValue().nyeKretser);
     setValue("opprinneligKrets.lokalId", lokalid, { shouldDirty: true });
     const kretsForNewOpprinneligKrets = opprinneligFlateOptions.find((krets) => krets.id.lokalid.value === lokalid);
     if (
@@ -83,10 +87,10 @@ export const useDelingForm = (flatedata: Flatedata) => {
     }
   };
 
-  const showDelingSuccessToast = (
+  const showSplittingSuccessToast = (
     opprinneligKretsInfo: Krets,
     nyeKretser: { kretsNavn: string; kretsNummer: string }[],
-    isUpdateOfDeling: boolean,
+    isUpdateOfSplitting: boolean,
   ) => {
     const nyeKretserFormatted = nyeKretser.map((k) => `${k.kretsNummer} ${k.kretsNavn}`);
     const allButLastKretserFormatted = nyeKretserFormatted.slice(0, nyeKretserFormatted.length - 1);
@@ -98,13 +102,13 @@ export const useDelingForm = (flatedata: Flatedata) => {
 
     toast({
       status: "success",
-      title: !isUpdateOfDeling
-        ? `Du opprettet ${nyeKretserString} ved å dele ${opprinneligKretsInfo.nummer} ${opprinneligKretsInfo.navn}`
-        : `Oppdaterte delingen av ${opprinneligKretsInfo.nummer} ${opprinneligKretsInfo.navn} til å inneholde ${nyeKretserString}. Husk å sjekke at tilhørigheten til nærliggende grenser er korrekt.`,
+      title: !isUpdateOfSplitting
+        ? `Du opprettet ${nyeKretserString} ved å splitte ${opprinneligKretsInfo.nummer} ${opprinneligKretsInfo.navn}`
+        : `Oppdaterte splittingen av ${opprinneligKretsInfo.nummer} ${opprinneligKretsInfo.navn} til å inneholde ${nyeKretserString}. Husk å sjekke at tilhørigheten til nærliggende grenser er korrekt.`,
     });
   };
 
-  const updateDraftWithDelingRequest = () => {
+  const updateDraftWithSplittingRequest = () => {
     if (editingType && grunnkretser && stemmekretser) {
       const { opprinneligKrets, nyeKretser } = getValues();
       const opprinneligKretsInfo = opprinneligFlateOptions.find(
@@ -134,13 +138,13 @@ export const useDelingForm = (flatedata: Flatedata) => {
 
         const latestOperasjoner = getUpdateUtkastRequestFromHistory()?.operasjoner; // Vi vil lagre utkastet med de eksisterende endringene også
         if (utkast && latestOperasjoner) {
-          let isUpdateOfDeling = false;
+          let isUpdateOfSplitting = false;
           if (
             latestOperasjoner.kretsDelingEndringer.find(
-              (deling) => deling.opprinneligKrets.lokalId === opprinneligKrets.lokalId,
+              (splitting) => splitting.opprinneligKrets.lokalId === opprinneligKrets.lokalId,
             )
           ) {
-            isUpdateOfDeling = true;
+            isUpdateOfSplitting = true;
           }
           updateUtkast(utkast.id, {
             ...utkast,
@@ -148,20 +152,21 @@ export const useDelingForm = (flatedata: Flatedata) => {
               ...latestOperasjoner,
               kretsDelingEndringer: [
                 ...utkast.operasjoner.kretsDelingEndringer.filter(
-                  (deling) => deling.opprinneligKrets.lokalId !== newKretsDelingEndringRequest.opprinneligKrets.lokalId,
+                  (splitting) =>
+                    splitting.opprinneligKrets.lokalId !== newKretsDelingEndringRequest.opprinneligKrets.lokalId,
                 ),
                 newKretsDelingEndringRequest,
               ],
             },
           });
-          showDelingSuccessToast(opprinneligKretsInfo, nyeKretser.slice(1), isUpdateOfDeling);
+          showSplittingSuccessToast(opprinneligKretsInfo, nyeKretser.slice(1), isUpdateOfSplitting);
         }
       }
     }
   };
 
-  const resetDeling = useCallback(() => {
-    reset(getDefaultDelingValue());
+  const resetSplitting = useCallback(() => {
+    reset(getDefaultSplittingValue());
   }, [reset]);
 
   return {
@@ -171,8 +176,8 @@ export const useDelingForm = (flatedata: Flatedata) => {
     register,
     append,
     remove,
-    resetDeling,
-    updateDraftWithDelingRequest,
+    resetSplitting,
+    updateDraftWithSplittingRequest,
     setValue,
     getValues,
     handleOpprinneligKretsChange,

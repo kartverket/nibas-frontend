@@ -1,9 +1,4 @@
-import {
-  GrunnkretsResponse,
-  KretsDelingEndringRequest,
-  KretsNavnOgNummer,
-  StemmekretsResponse,
-} from "../../../types/api";
+import { GrunnkretsResponse, KretsNavnOgNummer, StemmekretsResponse } from "../../../types/api";
 
 export type Endring = {
   fra: string;
@@ -36,7 +31,7 @@ export type Stemmekretsendringer = {
   metadataendringer: StemmekretsMetadataEndring[];
   grensejusteringer: StemmekretsResponse[];
   sammenslaaing: StemmekretsSammenslaaingEndring | null;
-  deling: KretsDelingEndring[] | null;
+  splitting: KretsSplittingEndring[] | null;
 };
 
 export type Grunnkretsendringer = {
@@ -47,10 +42,10 @@ export type Grunnkretsendringer = {
   };
   metadataendringer: GrunnkretsMetadataEndring[];
   grensejusteringer: GrunnkretsResponse[];
-  delinger: KretsDelingEndring[] | null;
+  splittinger: KretsSplittingEndring[] | null;
 };
 
-export type KretsDelingEndring = { opprinneligKrets: KretsNavnOgNummer; nyeKretser: KretsNavnOgNummer[] };
+export type KretsSplittingEndring = { opprinneligKrets: KretsNavnOgNummer; nyeKretser: KretsNavnOgNummer[] };
 
 export type StemmekretsSammenslaaingEndring = {
   viderefoertKrets: StemmekretsResponse;

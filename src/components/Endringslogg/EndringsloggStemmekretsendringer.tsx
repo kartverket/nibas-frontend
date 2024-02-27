@@ -4,7 +4,7 @@ import {
   StemmekretsSammenslaaingEndring,
 } from "components/Endringslogg/hooks/utkastEndringerTypes";
 import {
-  DelingEndringer,
+  SplittingEndringer,
   EndringSection,
   Endringsrad,
   EndringsradEndring,
@@ -34,7 +34,7 @@ export const EndringsloggStemmekretsendringer = ({ endringer }: EndringsloggStem
       />
     ))}
     <StemmekretsSammenslaaing sammenslaaing={endringer.sammenslaaing} />
-    <DelingEndringer delinger={endringer.deling} kontekstType={KontekstType.STEMMEKRETS} />
+    <SplittingEndringer splittinger={endringer.splitting} kontekstType={KontekstType.STEMMEKRETS} />
   </EndringSection>
 );
 

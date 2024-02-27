@@ -1,6 +1,6 @@
 import { Grunnkretsendringer, GrunnkretsMetadataEndring } from "components/Endringslogg/hooks/utkastEndringerTypes";
 import {
-  DelingEndringer,
+  SplittingEndringer,
   EndringSection,
   Endringsrad,
   EndringsradListItem,
@@ -27,7 +27,7 @@ export const EndringsloggGrunnkretsendringer = ({ endringer }: EndringsloggGrunn
           metadataendring={metadataendring}
         />
       ))}
-      <DelingEndringer kontekstType={KontekstType.GRUNNKRETS} delinger={endringer.delinger} />
+      <SplittingEndringer kontekstType={KontekstType.GRUNNKRETS} splittinger={endringer.splittinger} />
     </EndringSection>
   );
 };

@@ -5,7 +5,7 @@ import {
   Grunnkretsendringer,
   GrunnkretsMetadataEndring,
   Endring,
-  KretsDelingEndring,
+  KretsSplittingEndring,
 } from "./utkastEndringerTypes";
 import {
   findKrets,
@@ -27,15 +27,15 @@ export const getGrunnkretserMedEndringer = (operasjoner: OperasjonerOrNull): str
     Object.keys(operasjoner?.metadataendringer?.grunnkretsendringer ?? {}),
   );
 
-  const grunnkretserMedDeling = [
+  const grunnkretserMedSplitting = [
     ...operasjoner.kretsDelingEndringer
-      .filter((deling) => deling.flatetype === KontekstType.GRUNNKRETS)
-      .map((deling) => deling.opprinneligKrets.lokalId),
+      .filter((splitting) => splitting.flatetype === KontekstType.GRUNNKRETS)
+      .map((splitting) => splitting.opprinneligKrets.lokalId),
   ];
 
   const alleGrunnkretserMedEndringer = getKretserMedGrensejusteringer(operasjoner, "GRUNNKRETS")
     .concat(grunnkretsMetadataEndringer)
-    .concat(grunnkretserMedDeling);
+    .concat(grunnkretserMedSplitting);
 
   return deduplicate(alleGrunnkretserMedEndringer);
 };
@@ -85,15 +85,15 @@ const getMetadataEndringer = (
     .filter(harMetadataEndring);
 };
 
-const getGrunnkretsDelingEndringer = (
+const getGrunnkretsSplittingEndringer = (
   operasjoner: UtkastOperasjoner,
   alleGrunnkretser: GrunnkretsResponse[],
-): KretsDelingEndring[] | null => {
+): KretsSplittingEndring[] | null => {
   return operasjoner.kretsDelingEndringer
-    .filter((deling) => deling.flatetype === KontekstType.GRUNNKRETS)
-    .map((deling) => {
+    .filter((splitting) => splitting.flatetype === KontekstType.GRUNNKRETS)
+    .map((splitting) => {
       const opprinneligKrets = alleGrunnkretser.find(
-        (grunnkrets) => grunnkrets.id.lokalid.value === deling.opprinneligKrets.lokalId,
+        (grunnkrets) => grunnkrets.id.lokalid.value === splitting.opprinneligKrets.lokalId,
       );
 
       return {
@@ -103,8 +103,8 @@ const getGrunnkretsDelingEndringer = (
               kretsNummer: opprinneligKrets.grunnkretsnummer,
             }
           : null,
-        nyeKretser: deling.nyeKretser,
-      } as KretsDelingEndring;
+        nyeKretser: splitting.nyeKretser,
+      } as KretsSplittingEndring;
     });
 };
 
@@ -131,7 +131,7 @@ const getEndringerForKommune = (
         .filter((id) => grunnkretserMedGrensejusteringer.includes(id))
         .map((grunnkretsId) => findKrets(grunnkretsId, alleGrunnkretser)),
     ),
-    delinger: getGrunnkretsDelingEndringer(operasjoner, alleGrunnkretser),
+    splittinger: getGrunnkretsSplittingEndringer(operasjoner, alleGrunnkretser),
   };
 };
 

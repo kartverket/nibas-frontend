@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { Endring, KretsDelingEndring } from "./hooks/utkastEndringerTypes";
+import { Endring, KretsSplittingEndring } from "./hooks/utkastEndringerTypes";
 import { Heading, Icon } from "@kvib/react";
 import { UnstyledList } from "components/UnstyledList";
 import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighetUtils";
@@ -109,33 +109,33 @@ export const RightArrow = styled(Icon)`
   vertical-align: middle;
 `;
 
-type DelingEndringerProps = {
+type SplittingEndringerProps = {
   kontekstType: KontekstType;
-  delinger: KretsDelingEndring[] | null;
+  splittinger: KretsSplittingEndring[] | null;
 };
 
-export const DelingEndringer = ({ delinger, kontekstType }: DelingEndringerProps) => {
-  return delinger?.map((deling, index) => (
-    <EndringSection key={deling.opprinneligKrets.kretsNavn}>
+export const SplittingEndringer = ({ splittinger, kontekstType }: SplittingEndringerProps) => {
+  return splittinger?.map((splitting, index) => (
+    <EndringSection key={splitting.opprinneligKrets.kretsNavn}>
       <Seksjonsoverskrift>
-        {`${deling.opprinneligKrets.kretsNummer} ${deling.opprinneligKrets.kretsNavn}`}
-        <EndringstypeTag>Deling</EndringstypeTag>
+        {`${splitting.opprinneligKrets.kretsNummer} ${splitting.opprinneligKrets.kretsNavn}`}
+        <EndringstypeTag>Splitting</EndringstypeTag>
       </Seksjonsoverskrift>
       <EndringsradListItem>
         <EndringsradLabel>{kontekstType.slice(0, 1) + kontekstType.slice(1).toLowerCase() + "er"}</EndringsradLabel>
         <EndringsradEndring>
           <UnstyledList>
-            <EndringTekst $isBold={false} key={index + deling.opprinneligKrets.kretsNavn}>
-              {deling.opprinneligKrets.kretsNummer} {deling.opprinneligKrets.kretsNavn}
+            <EndringTekst $isBold={false} key={index + splitting.opprinneligKrets.kretsNavn}>
+              {splitting.opprinneligKrets.kretsNummer} {splitting.opprinneligKrets.kretsNavn}
             </EndringTekst>
             <RightArrow icon="arrow_right_alt" />
-            <EndringTekst $isBold={false} key={index + 1 + deling.opprinneligKrets.kretsNavn}>
-              {deling.opprinneligKrets.kretsNummer} {deling.opprinneligKrets.kretsNavn},
+            <EndringTekst $isBold={false} key={index + 1 + splitting.opprinneligKrets.kretsNavn}>
+              {splitting.opprinneligKrets.kretsNummer} {splitting.opprinneligKrets.kretsNavn},
             </EndringTekst>
-            {deling.nyeKretser.map((nykrets, indexNK) => (
+            {splitting.nyeKretser.map((nykrets, indexNK) => (
               <EndringTekst $isBold key={nykrets.kretsNavn}>
                 {nykrets.kretsNummer} {nykrets.kretsNavn}
-                {indexNK === deling.nyeKretser.length - 1 ? "" : ","}
+                {indexNK === splitting.nyeKretser.length - 1 ? "" : ","}
               </EndringTekst>
             ))}
           </UnstyledList>
