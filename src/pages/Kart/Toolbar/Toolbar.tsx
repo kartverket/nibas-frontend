@@ -62,9 +62,9 @@ const Toolbar = () => {
       .getArray()
       .find((interaction) => interaction instanceof Draw);
 
+    if (activeTool === "draw" && !drawInteraction) return true;
     if (drawInteraction) {
       const revision = drawInteraction.getRevision();
-
       if (revision) {
         return revision === 0;
       }
@@ -76,7 +76,7 @@ const Toolbar = () => {
   const [panningEnabled, setPanningEnabled] = useState(true);
 
   addEventListener("mouseup", () => {
-    if (activeTool !== "draw") return;
+    if (activeTool == null || activeTool !== "draw") return;
 
     if (isPanningAllowed()) setPanningEnabled(true);
     else setPanningEnabled(false);
