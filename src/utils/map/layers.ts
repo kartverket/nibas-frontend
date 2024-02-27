@@ -11,7 +11,7 @@ import { KartlagId, GrenseId, LayerId } from "hooks/layers/types";
 import VectorSource from "ol/source/Vector";
 import { WFS } from "ol/format";
 import { getFeaturesFromGeoJson } from "./geoJson";
-import { addFeaturesToSource } from "./source";
+import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "./source";
 
 const getLayersArray = () => map.getLayers().getArray() ?? [];
 
@@ -110,14 +110,22 @@ export const getMatrikkelFeatures = async () => {
     const json = await response.json();
     const fetchedFeatures = getFeaturesFromGeoJson(json);
     if (fetchedFeatures) {
-      const source = getLayerById("matrikkel").getSource();
-      if (source) {
-        source.clear(true);
-      }
+      clearMatrikkelLayer();
       addFeaturesToSource("matrikkel", fetchedFeatures);
       return fetchedFeatures;
     }
   } catch {
     return;
   }
+};
+
+export const clearMatrikkelLayer = () => {
+  const source = getLayerById("matrikkel").getSource();
+
+  if (source) {
+    source.clear();
+    return true;
+  }
+
+  return false;
 };
