@@ -1,58 +1,127 @@
-import { useCallback, useState } from "react";
+import { useHistory } from "contexts/HistoryContext";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { useUtkast } from "contexts/UtkastContext";
+import { GrenseType } from "hooks/layers/types";
+import { Feature } from "ol";
+import { LineString } from "ol/geom";
+import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-
+import { FeatureProperties, KontekstEgenskaper, KretsDelingEndringRequest, UtkastOperasjoner } from "types/api";
+import { getIdFromEntity } from "utils/api";
 import {
   CustomOption,
   KontekstType,
+  Krets,
+  Tilhorighet,
   TilhorighetForm,
   TilhorighetOptions,
   getKommunerIdFromKontekstEgenskaper,
   getTilhorighetData,
   getUpdatedKontekstEgenskaper,
 } from "./tilhorighetUtils";
-import { useHistory } from "contexts/HistoryContext";
-import { Feature } from "ol";
-import { LineString } from "ol/geom";
-import { FeatureProperties } from "types/api";
 import { addKontekstEntryFromFeature } from "../GrenseinformasjonPanel/utils";
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { getIdFromEntity } from "utils/api";
-import { EditingType, useEditAllGrenser } from "contexts/EditGrenserContext";
 
-const getKontekstTypeFromEditingType = (editingType: EditingType | null): KontekstType | null => {
-  if (!editingType) return null;
-
-  switch (editingType) {
-    case "stemmekrets":
+const mapGrenseTypeTilKontekstType = (grenseType: GrenseType): KontekstType => {
+  switch (grenseType) {
+    case "Stemmekretsgrense":
       return KontekstType.STEMMEKRETS;
-    case "grunnkrets":
+    default:
       return KontekstType.GRUNNKRETS;
   }
-
-  return null;
 };
 
-export const getDefaultTilhorighetData = () => ({
-  GRUNNKRETS: { a: CustomOption.NOT_CHOSEN, b: CustomOption.NOT_CHOSEN },
-  STEMMEKRETS: { a: CustomOption.NOT_CHOSEN, b: CustomOption.NOT_CHOSEN },
-});
+const getKretserFromKretsDelingEndringer = (
+  kommunerId: string[],
+  kretsDelingEndringRequests: KretsDelingEndringRequest[],
+): Krets[] => {
+  return kretsDelingEndringRequests
+    .filter((kretsDeling) => kommunerId.includes(kretsDeling.kommuneId.lokalid.value))
+    .flatMap((kretsDeling) =>
+      kretsDeling.nyeKretser.map(
+        (nyKrets) =>
+          ({
+            id: {
+              lokalid: { value: `NY_KRETS_${nyKrets.kretsNummer}_${kretsDeling.kommuneId.lokalid.value}` },
+              gyldighetsdato: "",
+            },
+            kommuneId: kretsDeling.kommuneId,
+            version: kretsDeling.opprinneligKrets.version,
+            type: kretsDeling.flatetype,
+            navn: nyKrets.kretsNavn,
+            nummer: nyKrets.kretsNummer,
+          }) as Krets,
+      ),
+    );
+};
+
+const getIdForKontekstEgenskaper = (
+  kontekstEgenskaper: KontekstEgenskaper,
+  currentOperasjoner: UtkastOperasjoner | undefined,
+): KontekstEgenskaper => {
+  if (kontekstEgenskaper.id) return kontekstEgenskaper;
+  // hvis det ikke finnes noen deling operasjoner som har kommuneId lik kontekstEgenskapen sin kommuneId og kontekstEgenskapen ikke har en krets med samme nummer betyr det at den ikke eksisterer lengre
+  // i dette tilfellet setter vi lokalid til "Not Chosen"
+  else if (
+    !currentOperasjoner?.kretsDelingEndringer
+      .filter((deling) => deling.kommuneId.lokalid.value === kontekstEgenskaper.kommuneId?.lokalid.value)
+      .find((deling) => deling.nyeKretser.find((krets) => krets.kretsNummer === kontekstEgenskaper.kretsNummer))
+  ) {
+    return {
+      ...kontekstEgenskaper,
+      id: {
+        lokalid: { value: CustomOption.NOT_CHOSEN },
+        gyldighetsdato: "",
+      },
+    };
+    // hvis det finnes en ny krets med nummer og kommuneid lik en ny krets i utkastet OG kontekstegenskaper har id lik undefined lager vi en unik referanse til denne kretsen
+  } else
+    return {
+      ...kontekstEgenskaper,
+      id: {
+        lokalid: { value: `NY_KRETS_${kontekstEgenskaper.kretsNummer}_${kontekstEgenskaper.kommuneId?.lokalid.value}` },
+        gyldighetsdato: "",
+      },
+    };
+};
 
 export const useTilhorighetForm = (feature: Feature) => {
   const { addHistoryEntry } = useHistory();
-  const { getCurrentlyEditingType } = useEditAllGrenser();
+  const { utkast } = useUtkast();
 
   const featureProperties = feature.getProperties() as FeatureProperties;
-  const kontekstEgenskaper = featureProperties.kontekstEgenskaper;
+  const kontekstEgenskaper = useMemo(
+    () => featureProperties.kontekstEgenskaper.map((ke) => getIdForKontekstEgenskaper(ke, utkast?.operasjoner)), // kontekster som peker til nye kretser i utkastet har undefined som id.
+    [featureProperties.kontekstEgenskaper, utkast],
+  );
   const kontekstType =
     kontekstEgenskaper.map((k) => k.type as KontekstType)[0] ??
-    getKontekstTypeFromEditingType(getCurrentlyEditingType());
+    mapGrenseTypeTilKontekstType(featureProperties.type as GrenseType);
   const { flatedata } = useOverlayPanel();
-  const kommunerId =
-    getKommunerIdFromKontekstEgenskaper(
-      kontekstEgenskaper.filter((k) => k.id?.lokalid.value !== CustomOption.NOT_CHOSEN),
-    ) ?? (flatedata ? [getIdFromEntity(flatedata)] : []);
-  const [tilhorighetOptions, setTilhorighetOptions] = useState<TilhorighetOptions>();
-  const featureType = featureProperties.type;
+
+  const kommunerId = useMemo(
+    () =>
+      getKommunerIdFromKontekstEgenskaper(
+        kontekstEgenskaper.filter((k) => k.id?.lokalid.value !== CustomOption.NOT_CHOSEN),
+      ) ?? (flatedata ? [getIdFromEntity(flatedata)] : []),
+    [flatedata, kontekstEgenskaper],
+  );
+
+  const [tilhorighetOptions, setTilhorighetValg] = useState<TilhorighetOptions>();
+
+  const setTilhorighetOptions = useCallback(
+    (commonOptions: TilhorighetOptions | undefined) => {
+      if (!utkast || !commonOptions) return;
+      const tilhorighetOptionsFromUtkast = getKretserFromKretsDelingEndringer(
+        kommunerId,
+        utkast.operasjoner.kretsDelingEndringer.filter((deling) => deling.flatetype === kontekstType),
+      );
+      setTilhorighetValg({
+        [Tilhorighet.A]: [...commonOptions[Tilhorighet.A], ...tilhorighetOptionsFromUtkast],
+        [Tilhorighet.B]: [...commonOptions[Tilhorighet.B], ...tilhorighetOptionsFromUtkast],
+      });
+    },
+    [kommunerId, kontekstType, utkast],
+  );
 
   const {
     register,
@@ -64,12 +133,8 @@ export const useTilhorighetForm = (feature: Feature) => {
   });
 
   const resetTilhorighet = useCallback(() => {
-    reset(
-      kontekstEgenskaper.length === 2 && featureType
-        ? getTilhorighetData(kontekstEgenskaper)
-        : getDefaultTilhorighetData(),
-    );
-  }, [featureType, kontekstEgenskaper, reset]);
+    reset(getTilhorighetData(kontekstEgenskaper));
+  }, [kontekstEgenskaper, reset]);
 
   const updateDraftFromFeature = () => {
     if (kontekstType && tilhorighetOptions) {
