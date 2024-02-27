@@ -5,6 +5,7 @@ import {
   Grunnkretsendringer,
   GrunnkretsMetadataEndring,
   Endring,
+  KretsSplittingEndring,
 } from "./utkastEndringerTypes";
 import {
   findKrets,
@@ -13,11 +14,12 @@ import {
   OperasjonerOrNull,
 } from "./endringerUtils";
 import { getNavnInSpraak } from "utils/language/language";
+import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighetUtils";
 
 export const getGrunnkretserMedEndringer = (operasjoner: OperasjonerOrNull): string[] => {
   const endringerResponse = operasjoner?.metadataendringer?.grunnkretsendringer;
 
-  if (endringerResponse == null && operasjoner == null) {
+  if (endringerResponse == null || operasjoner == null) {
     return [];
   }
 
@@ -25,9 +27,15 @@ export const getGrunnkretserMedEndringer = (operasjoner: OperasjonerOrNull): str
     Object.keys(operasjoner?.metadataendringer?.grunnkretsendringer ?? {}),
   );
 
-  const alleGrunnkretserMedEndringer = getKretserMedGrensejusteringer(operasjoner, "GRUNNKRETS").concat(
-    grunnkretsMetadataEndringer,
-  );
+  const grunnkretserMedSplitting = [
+    ...operasjoner.kretsDelingEndringer
+      .filter((splitting) => splitting.flatetype === KontekstType.GRUNNKRETS)
+      .map((splitting) => splitting.opprinneligKrets.lokalId),
+  ];
+
+  const alleGrunnkretserMedEndringer = getKretserMedGrensejusteringer(operasjoner, "GRUNNKRETS")
+    .concat(grunnkretsMetadataEndringer)
+    .concat(grunnkretserMedSplitting);
 
   return deduplicate(alleGrunnkretserMedEndringer);
 };
@@ -77,6 +85,29 @@ const getMetadataEndringer = (
     .filter(harMetadataEndring);
 };
 
+const getGrunnkretsSplittingEndringer = (
+  operasjoner: UtkastOperasjoner,
+  alleGrunnkretser: GrunnkretsResponse[],
+): KretsSplittingEndring[] | null => {
+  return operasjoner.kretsDelingEndringer
+    .filter((splitting) => splitting.flatetype === KontekstType.GRUNNKRETS)
+    .map((splitting) => {
+      const opprinneligKrets = alleGrunnkretser.find(
+        (grunnkrets) => grunnkrets.id.lokalid.value === splitting.opprinneligKrets.lokalId,
+      );
+
+      return {
+        opprinneligKrets: opprinneligKrets
+          ? {
+              kretsNavn: opprinneligKrets.navn,
+              kretsNummer: opprinneligKrets.grunnkretsnummer,
+            }
+          : null,
+        nyeKretser: splitting.nyeKretser,
+      } as KretsSplittingEndring;
+    });
+};
+
 const getEndringerForKommune = (
   kommuneId: string,
   grunnkretserMedEndringer: string[],
@@ -100,6 +131,7 @@ const getEndringerForKommune = (
         .filter((id) => grunnkretserMedGrensejusteringer.includes(id))
         .map((grunnkretsId) => findKrets(grunnkretsId, alleGrunnkretser)),
     ),
+    splittinger: getGrunnkretsSplittingEndringer(operasjoner, alleGrunnkretser),
   };
 };
 
