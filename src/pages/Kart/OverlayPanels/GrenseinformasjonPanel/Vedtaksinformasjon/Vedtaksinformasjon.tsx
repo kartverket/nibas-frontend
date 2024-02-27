@@ -42,13 +42,13 @@ export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [formViewState, setFormViewState] = useState<FormViewState>("creating");
   const [iconHovered, setIconHovered] = useState(false);
-  const [selectedVedtaksinfoIndex, setSelectedVedtaksinfoIndex] = useState<number | undefined>(undefined);
+  const [selectedVedtaksinfoId, setSelectedVedtaksinfoId] = useState<string | undefined>(undefined);
   const metadata = feature.getProperties()?.metadata as Metadata | undefined;
   const vedtaksinfoCollection = metadata?.dokumentasjonsreferanser;
 
   const closeModal = () => {
     setFormViewState("creating");
-    setSelectedVedtaksinfoIndex(undefined);
+    setSelectedVedtaksinfoId(undefined);
     onClose();
   };
 
@@ -81,14 +81,14 @@ export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
       </OversiktHeader>
       {vedtaksinfoCollection
         ?.filter((vedtak) => !vedtak.shouldArchive)
-        .map((vedtak, index) => (
+        .map((vedtak) => (
           <VedtaksinfoCard
-            key={createUniqueIshValue(20)}
+            key={vedtak.id}
             title={vedtak.rettskildeTittel}
             date={vedtak.fastsettingsdato}
             onClick={() => {
               setFormViewState("viewing");
-              setSelectedVedtaksinfoIndex(index);
+              setSelectedVedtaksinfoId(vedtak.id);
               onOpen();
             }}
           />
@@ -96,7 +96,7 @@ export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
       <VedtaksinfoDetaljer
         setFormViewState={setFormViewState}
         formViewState={formViewState}
-        selectedVedtaksinfoIndex={selectedVedtaksinfoIndex}
+        selectedVedtaksinfoId={selectedVedtaksinfoId}
         isOpen={isOpen}
         onClose={closeModal}
         feature={feature}
