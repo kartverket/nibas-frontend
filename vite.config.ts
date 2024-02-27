@@ -7,8 +7,7 @@ import { checker } from "vite-plugin-checker";
 export default defineConfig(({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
 
-  const matWfsUsername = process.env.VITE_MATRIKKELWFS_USERNAME;
-  const matWfsPassword = process.env.VITE_MATRIKKELWFS_PASSWORD;
+  const matWfsAuth = process.env.VITE_MATRIKKELWFS_AUTH;
 
   const baatUsername = process.env.VITE_BAAT_USERNAME;
   const baatPassword = process.env.VITE_BAAT_PASSWORD;
@@ -48,7 +47,7 @@ export default defineConfig(({ mode }) => {
           target: "https://prodtest.matrikkel.no",
           changeOrigin: true,
           headers: {
-            Authorization: "Basic " + new Buffer(matWfsUsername + ":" + matWfsPassword).toString("base64"),
+            Authorization: `Basic ${matWfsAuth}`,
           },
         },
         "/skbaatts/req": {
