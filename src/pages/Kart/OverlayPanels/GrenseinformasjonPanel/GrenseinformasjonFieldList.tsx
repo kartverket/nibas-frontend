@@ -51,7 +51,10 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
 
   const getMaalemetodeFromId = (maalemetoder: KodelisteRespons, id: string) => {
     const maalemetode = maalemetoder.items.find((item) => item.id === id);
-    return maalemetode?.kode + " " + maalemetode?.label;
+    if (maalemetode) {
+      return maalemetode?.kode + " " + maalemetode?.label;
+    }
+    return "Ukjent målemetode er registrert på grensen";
   };
 
   const getPossibleGrenseTypesFromEditingType = (editingType: EditingType | null): GrenseType[] => {
