@@ -37,20 +37,17 @@ const getKretserFromKretsDelingEndringer = (
   return kretsDelingEndringRequests
     .filter((kretsDeling) => kommunerId.includes(kretsDeling.kommuneId.lokalid.value))
     .flatMap((kretsDeling) =>
-      kretsDeling.nyeKretser.map(
-        (nyKrets) =>
-          ({
-            id: {
-              lokalid: { value: `NY_KRETS_${nyKrets.kretsNummer}_${kretsDeling.kommuneId.lokalid.value}` },
-              gyldighetsdato: "",
-            },
-            kommuneId: kretsDeling.kommuneId,
-            version: kretsDeling.opprinneligKrets.version,
-            type: kretsDeling.flatetype,
-            navn: nyKrets.kretsNavn,
-            nummer: nyKrets.kretsNummer,
-          }) as Krets,
-      ),
+      kretsDeling.nyeKretser.map((nyKrets) => ({
+        id: {
+          lokalid: { value: `NY_KRETS_${nyKrets.kretsNummer}_${kretsDeling.kommuneId.lokalid.value}` },
+          gyldighetsdato: "",
+        },
+        kommuneId: kretsDeling.kommuneId,
+        version: kretsDeling.opprinneligKrets.version,
+        type: kretsDeling.flatetype === "STEMMEKRETS" ? KontekstType.STEMMEKRETS : KontekstType.GRUNNKRETS,
+        navn: nyKrets.kretsNavn,
+        nummer: nyKrets.kretsNummer,
+      })),
     );
 };
 

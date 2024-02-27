@@ -92,7 +92,7 @@ const TekstEllerTom = ({ tekst, bold = false }: TekstEllerTomProps) => {
   return <EndringTekst $isBold={bold}>{tekst.trim()}</EndringTekst>;
 };
 
-export const EndringTekst = styled.span<{ $isBold: boolean }>`
+export const EndringTekst = styled.span<{ $isBold?: boolean }>`
   font-weight: ${({ $isBold }) => ($isBold ? "900" : "300")};
   white-space: nowrap;
   margin-right: 8px;
@@ -102,7 +102,7 @@ const KursivTekst = styled(EndringTekst)`
   font-style: italic;
 `;
 
-export const RightArrow = styled(Icon)`
+const RightArrow = styled(Icon)`
   color: var(--kvib-colors-blue-500);
   font-size: 20px;
   margin: 0 8px 0 0;
@@ -125,11 +125,11 @@ export const SplittingEndringer = ({ splittinger, kontekstType }: SplittingEndri
         <EndringsradLabel>{kontekstType.slice(0, 1) + kontekstType.slice(1).toLowerCase() + "er"}</EndringsradLabel>
         <EndringsradEndring>
           <UnstyledList>
-            <EndringTekst $isBold={false} key={index + splitting.opprinneligKrets.kretsNavn}>
+            <EndringTekst key={index + splitting.opprinneligKrets.kretsNavn}>
               {splitting.opprinneligKrets.kretsNummer} {splitting.opprinneligKrets.kretsNavn}
             </EndringTekst>
             <RightArrow icon="arrow_right_alt" />
-            <EndringTekst $isBold={false} key={index + 1 + splitting.opprinneligKrets.kretsNavn}>
+            <EndringTekst key={index + 1 + splitting.opprinneligKrets.kretsNavn}>
               {splitting.opprinneligKrets.kretsNummer} {splitting.opprinneligKrets.kretsNavn},
             </EndringTekst>
             {splitting.nyeKretser.map((nykrets, indexNK) => (

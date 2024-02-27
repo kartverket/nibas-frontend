@@ -151,15 +151,16 @@ const getStemmekretsSplittingEndringer = (
         (stemmekrets) => stemmekrets.id.lokalid.value === splitting.opprinneligKrets.lokalId,
       );
 
-      return {
+      const kretsSplittingEndring: KretsSplittingEndring = {
         opprinneligKrets: opprinneligKrets
           ? {
               kretsNavn: opprinneligKrets.stemmekretsnavn,
               kretsNummer: opprinneligKrets.stemmekretsnummer,
             }
-          : null,
+          : { kretsNavn: "ukjent", kretsNummer: "ukjent" },
         nyeKretser: splitting.nyeKretser,
-      } as KretsSplittingEndring;
+      };
+      return kretsSplittingEndring;
     });
 };
 

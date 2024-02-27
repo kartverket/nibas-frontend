@@ -30,8 +30,7 @@ const FillerDiv = styled.div`
 const CustomFormErrorMessage = styled.div`
   display: flex;
   align-items: center;
-  --form-error-color: var(--kvib-colors-red-500);
-  color: var(--form-error-color);
+  color: var(--kvib-colors-red-500);
   margin-top: var(--kvib-space-2);
   font-size: var(--kvib-fontSizes-sm);
   line-height: var(--kvib-lineHeights-normal);
@@ -40,6 +39,10 @@ const CustomFormErrorMessage = styled.div`
   border: 2px var(--kvib-colors-red-100) solid;
   border-radius: 8px;
   gap: 25px;
+`;
+
+const StyledButtonGroup = styled(ButtonGroup)`
+  align-self: flex-end;
 `;
 
 export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
@@ -96,7 +99,7 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
     <SidePanel $isOpen={isOpen} className={className}>
       <PanelHeader
         onClose={closeAndResetForm}
-        subHeading={`Ved å splitte en flate kan du opprette en eller flere nye flater`}
+        subHeading="Ved å splitte en flate kan du opprette en eller flere nye flater"
       >
         Splitt en flate
       </PanelHeader>
@@ -156,10 +159,10 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
                     {index !== 0 ? (
                       <IconButton
                         onClick={() => remove(index)}
-                        aria-label={"fjern splitt"}
-                        icon={"close"}
-                        variant={"tertiary"}
-                        alignSelf={"flex-end"}
+                        aria-label="fjern splitt"
+                        icon="close"
+                        variant="tertiary"
+                        alignSelf="flex-end"
                       />
                     ) : (
                       <FillerDiv />
@@ -167,7 +170,7 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
                   </NyKretsField>
                   {!!errors.nyeKretser?.[index] && (
                     <CustomFormErrorMessage>
-                      <Icon icon={"error"} />
+                      <Icon icon="error" />
                       <ul>
                         {[
                           errors.nyeKretser?.[index]?.kretsNavn?.message,
@@ -182,11 +185,11 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
                   )}
                 </div>
               ))}
-              <Button onClick={() => append({ kretsNavn: "", kretsNummer: "" })} variant={"secondary"} leftIcon={"add"}>
+              <Button onClick={() => append({ kretsNavn: "", kretsNummer: "" })} variant="secondary" leftIcon="add">
                 Legg til ny splitt
               </Button>
             </Stack>
-            <ButtonGroup alignSelf={"flex-end"}>
+            <StyledButtonGroup>
               <Button variant="tertiary" onClick={closeAndResetForm}>
                 Avbryt
               </Button>
@@ -196,7 +199,7 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
               >
                 Splitt
               </Button>
-            </ButtonGroup>
+            </StyledButtonGroup>
           </>
         )}
       </Stack>

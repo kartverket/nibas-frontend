@@ -14,13 +14,7 @@ import {
 import { updateUtkastApi } from "api/utkast";
 import { HistoryChange, useHistory } from "contexts/HistoryContext";
 import useNibasApi from "hooks/useNibasApi";
-import {
-  ApiErrorResponse,
-  FeatureCollection,
-  OppdaterUtkastRequest,
-  UtkastOperasjoner,
-  UtkastResponse,
-} from "types/api";
+import { ApiErrorResponse, FeatureCollection, OppdaterUtkastRequest, UtkastResponse } from "types/api";
 import { resetMapView } from "utils/map";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
@@ -35,7 +29,6 @@ import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { addEditedFeaturesToSource, removeEditedFeaturesFromSourceByIds } from "utils/map/source";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
-import { CustomOption } from "pages/Kart/OverlayPanels/hooks/tilhorighetUtils";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
