@@ -49,8 +49,13 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
 
   const gyldigTil = properties.metadata ? metadata.common?.gyldigTil : undefined;
 
-  const getMaalemetodeFromId = (maalemetoder: KodelisteRespons, id: string) =>
-    maalemetoder.items.find((item) => item.id === id)?.label ?? null;
+  const getMaalemetodeFromId = (maalemetoder: KodelisteRespons, id: string) => {
+    const maalemetode = maalemetoder.items.find((item) => item.id === id);
+    if (maalemetode) {
+      return maalemetode?.kode + " " + maalemetode?.label;
+    }
+    return "Ukjent målemetode er registrert på grensen";
+  };
 
   const getPossibleGrenseTypesFromEditingType = (editingType: EditingType | null): GrenseType[] => {
     if (editingType === "stemmekrets") {
@@ -168,11 +173,15 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
           kodeliste && (
             <Select {...register}>
               <option value="">Velg målemetode</option>
-              {kodeliste.items.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.label}
-                </option>
-              ))}
+              {kodeliste.items
+                .sort((a, b) => {
+                  return Number(a.kode) - Number(b.kode);
+                })
+                .map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.kode} {item.label}
+                  </option>
+                ))}
             </Select>
           )
         }
