@@ -115,3 +115,13 @@ export const isPreviousAndCurrentCoordinatesEqual = (feature: Feature<LineString
   }
   return true;
 };
+
+export const isMatrikkelFeature = (feature: FeatureLike) => {
+  const featureId = feature.getId()?.toString();
+
+  if (featureId) {
+    return featureId.includes("TEIGGRENSEWFS");
+  }
+
+  return false;
+};
