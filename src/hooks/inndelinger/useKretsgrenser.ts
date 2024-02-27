@@ -104,7 +104,6 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
           if (endretFeature.properties.shouldArchive) {
             archivedFeatureIds.push(id.toString());
           } else if (actualFeature && isFeatureDeadEnd(actualFeature)) {
-            // TODO Det virker som isFeatureDeadEnd alltid er true for dirty features her, antakeligvis fordi ting ikke er lagt inn i kartet før etter denne funksjonen er kjørt
             errorFeatureIds.push(id.toString());
           } else {
             dirtyFeatureIds.push(id.toString());
