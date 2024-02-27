@@ -123,7 +123,7 @@ export const clearMatrikkelLayer = () => {
   const source = grenserLayers.matrikkel.getSource();
 
   if (source) {
-    source.clear();
+    source.clear(true);
     return true;
   }
 
