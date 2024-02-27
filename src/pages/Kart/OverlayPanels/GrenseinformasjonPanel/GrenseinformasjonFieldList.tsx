@@ -174,9 +174,7 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
             <Select {...register}>
               <option value="">Velg målemetode</option>
               {kodeliste.items
-                .sort((a, b) => {
-                  return Number(a.kode) - Number(b.kode);
-                })
+                .sort((a, b) => Number(a.kode) - Number(b.kode))
                 .map((item) => (
                   <option key={item.id} value={item.id}>
                     {item.kode} {item.label}
