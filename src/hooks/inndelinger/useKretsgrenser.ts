@@ -13,7 +13,7 @@ import { removeFeaturesFromSourceByIds, getFeatureId, getRepresentasjonspunktId 
 import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
 import { stemmekretsgrenserFetcher } from "api/stemmekrets";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import { getAllVisibleFeatures, getZoomMode, zoomToFeatures } from "utils/map";
+import { getAllVisibleFeatures, getZoomMode, isFeatureDeadEnd, zoomToFeatures } from "utils/map";
 import { getLayerById } from "utils/map/layers";
 import { GrunnkretsResponse, StemmekretsResponse } from "../../types/api";
 import { GeoJSONFeature } from "ol/format/GeoJSON";
@@ -56,6 +56,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   const {
     setAndSaveDirtyStyles,
     setAndSaveArchivedStyles,
+    setAndSaveErrorStyles,
     setAndSaveSammenslaaingStyles,
     setAndSaveSammenslaaingOverlappingStyles,
   } = useFeatureStyle();
@@ -92,14 +93,18 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     const endredeFeatures = utkast.operasjoner.grenseendringer?.endredeFeatures;
     const dirtyFeatureIds: string[] = [];
     const archivedFeatureIds: string[] = [];
+    const errorFeatureIds: string[] = [];
 
     if (features.length > 0 && endredeFeatures.length > 0) {
-      for (const feature of endredeFeatures) {
-        const id = feature.id;
+      for (const endretFeature of endredeFeatures) {
+        const id = endretFeature.id;
+        const actualFeature = features.find((feature) => feature.getId() == id);
         if (id) {
           // Avgjør hvilken type endringsfarge featuren skal ha
-          if (feature.properties.shouldArchive) {
+          if (endretFeature.properties.shouldArchive) {
             archivedFeatureIds.push(id.toString());
+          } else if (actualFeature && isFeatureDeadEnd(actualFeature)) {
+            errorFeatureIds.push(id.toString());
           } else {
             dirtyFeatureIds.push(id.toString());
           }
@@ -107,6 +112,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
       }
       setAndSaveDirtyStyles(dirtyFeatureIds);
       setAndSaveArchivedStyles(archivedFeatureIds);
+      setAndSaveErrorStyles(errorFeatureIds);
     }
 
     const sammenslaaing = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
