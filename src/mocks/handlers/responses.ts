@@ -286,8 +286,6 @@ export const mockMaalemetodeResponse: KodelisteRespons = {
       label: "Terrengmålt: Uspesifisert måleinstrument",
       id: "9b4ab6bb-878f-472a-9243-64e2bdc48b8c",
       kode: "1",
-      status: "gyldig",
-      beskrivelse: "noe",
     },
   ],
 };
