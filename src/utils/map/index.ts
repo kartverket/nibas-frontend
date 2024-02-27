@@ -4,8 +4,9 @@ import Geometry from "ol/geom/Geometry";
 import VectorSource from "ol/source/Vector";
 import { LineString } from "ol/geom";
 import { Coordinate, equals } from "ol/coordinate";
-import { FeatureLike } from "ol/Feature";
 import { pixelTolerance } from "pages/Kart/interactions/constants";
+import { grenserLayers } from "hooks/layers/constants";
+import { LayerId } from "hooks/layers/types";
 
 export const resetMapView = () => {
   const view = map.getView();
@@ -77,19 +78,6 @@ export const getZoomMode = (isEditing: boolean, hasEditingInMap: boolean): "edit
   return "view";
 };
 
-/** Sjekker om en feature har et punkt på gitt koordinat */
-const isFeatureConnectedToCoordinate = (feature: FeatureLike, coordinate: Coordinate): boolean => {
-  // TODO: dersom featuren er arkivert skal den alltid returnere false?
-  if (feature instanceof Feature) {
-    const geometry = feature.getGeometry();
-    if (geometry instanceof LineString) {
-      const featureCoordinates = geometry?.getCoordinates();
-      return featureCoordinates.some((featureCoordinate) => equals(featureCoordinate, coordinate));
-    }
-  }
-  return false;
-};
-
 /** Tar inn en grense og prøver å avgjøre om den er koblet til andre grenser i begge ender */
 export const isFeatureDeadEnd = (feature: Feature<Geometry>) => {
   const geometry = feature.getGeometry() as LineString;
@@ -98,17 +86,30 @@ export const isFeatureDeadEnd = (feature: Feature<Geometry>) => {
   const head = coordinates[0];
   const tail = coordinates[coordinates.length - 1];
 
-  const headFeatures = map
-    .getFeaturesAtPixel(map.getPixelFromCoordinate(head))
-    .filter((headFeature) => headFeature.getId() !== feature.getId());
-  const tailFeatures = map
-    .getFeaturesAtPixel(map.getPixelFromCoordinate(tail))
-    .filter((tailFeature) => tailFeature.getId() !== feature.getId());
+  const disallowedLayers: LayerId[] = ["matrikkel", "archived"];
+  const allFeatureEndpointCoordinates = Object.entries(grenserLayers)
+    .flatMap(([key, layer]) => {
+      if (disallowedLayers.includes(key as LayerId)) return [];
 
-  const headConnected = headFeatures.some((f) => isFeatureConnectedToCoordinate(f, head));
-  const tailConnected = tailFeatures.some((f) => isFeatureConnectedToCoordinate(f, tail));
+      const source = layer.getSource();
+      if (source) return source.getFeatures();
 
-  return !(headConnected && tailConnected);
+      return [];
+    })
+    .flatMap((f) => {
+      // Vi burde ikke legge til featuren vi ønsker å sjekke sine koordinater
+      if (feature.getId() === f.getId()) return [];
+
+      const geom = f.getGeometry();
+      if (geom && geom instanceof LineString) return [geom.getFirstCoordinate(), geom.getLastCoordinate()];
+
+      return [];
+    });
+
+  const isHeadConnected = allFeatureEndpointCoordinates.find((coord) => equals(head, coord));
+  const isTailConnected = allFeatureEndpointCoordinates.find((coord) => equals(tail, coord));
+
+  return !(isHeadConnected && isTailConnected);
 };
 
 /** Euklidisk avstand mellom to koordinater i piksler */
