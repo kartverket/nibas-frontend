@@ -137,11 +137,15 @@ const getSammenslaaingEndring = (
 };
 
 const getStemmekretsSplittingEndringer = (
+  kommuneId: string | undefined,
   operasjoner: UtkastOperasjoner,
   alleStemmekretser: StemmekretsResponse[],
 ): KretsSplittingEndring[] | null => {
   return operasjoner.kretsDelingEndringer
-    .filter((splitting) => splitting.flatetype === KontekstType.STEMMEKRETS)
+    .filter(
+      (splitting) =>
+        splitting.flatetype === KontekstType.STEMMEKRETS && splitting.kommuneId.lokalid.value === kommuneId,
+    )
     .map((splitting) => {
       const opprinneligKrets = alleStemmekretser.find(
         (stemmekrets) => stemmekrets.id.lokalid.value === splitting.opprinneligKrets.lokalId,
@@ -183,7 +187,7 @@ const getEndringerForKommune = (
         .map((stemmekretsId) => findKrets(stemmekretsId, alleStemmekretser)),
     ),
     sammenslaaing: getSammenslaaingEndring(stemmekretserMedEndring, operasjoner, alleStemmekretser),
-    splitting: getStemmekretsSplittingEndringer(operasjoner, alleStemmekretser),
+    splitting: getStemmekretsSplittingEndringer(kommune?.id.lokalid.value, operasjoner, alleStemmekretser),
   };
 };
 

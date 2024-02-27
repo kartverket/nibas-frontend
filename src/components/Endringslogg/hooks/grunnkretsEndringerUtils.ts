@@ -86,11 +86,14 @@ const getMetadataEndringer = (
 };
 
 const getGrunnkretsSplittingEndringer = (
+  kommuneId: string | undefined,
   operasjoner: UtkastOperasjoner,
   alleGrunnkretser: GrunnkretsResponse[],
 ): KretsSplittingEndring[] | null => {
   return operasjoner.kretsDelingEndringer
-    .filter((splitting) => splitting.flatetype === KontekstType.GRUNNKRETS)
+    .filter(
+      (splitting) => splitting.flatetype === KontekstType.GRUNNKRETS && splitting.kommuneId.lokalid.value === kommuneId,
+    )
     .map((splitting) => {
       const opprinneligKrets = alleGrunnkretser.find(
         (grunnkrets) => grunnkrets.id.lokalid.value === splitting.opprinneligKrets.lokalId,
@@ -131,7 +134,7 @@ const getEndringerForKommune = (
         .filter((id) => grunnkretserMedGrensejusteringer.includes(id))
         .map((grunnkretsId) => findKrets(grunnkretsId, alleGrunnkretser)),
     ),
-    splittinger: getGrunnkretsSplittingEndringer(operasjoner, alleGrunnkretser),
+    splittinger: getGrunnkretsSplittingEndringer(kommune?.id.lokalid.value, operasjoner, alleGrunnkretser),
   };
 };
 
