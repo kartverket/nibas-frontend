@@ -104,18 +104,31 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
   };
 
   const toggleLayer = (mappedLayer: MappedLayer, indexPath: number[]) => {
-    const modifiedLayers = findRecursively(mappedLayers, indexPath, !mappedLayer.isVisible);
+    const modifiedLayers = findRecursively(0, mappedLayers, indexPath, !mappedLayer.isVisible);
     setMappedLayers(modifiedLayers);
   };
 
   // TODO: må gjøre noe med det at man lett bare kan skru på to wmts lag
   // TODO: hvis jeg skal toggle et wmts-lag så skal alt i wmts-laget være false først?
-  const findRecursively = (layers: MappedLayer[], indexPath: number[], willBeVisible: boolean): MappedLayer[] => {
+  const findRecursively = (
+    depth: number,
+    layers: MappedLayer[],
+    indexPath: number[],
+    willBeVisible: boolean,
+  ): MappedLayer[] => {
     let modifiedLayer: MappedLayer;
-    const nextLayer = layers[indexPath[0]];
+    let nextLayer: MappedLayer = layers[indexPath[depth]];
+
+    // WMTS-lag kan kun ha ett underlag på om gangen, så alle lagene tilbakestilles i starten
+    if (depth === 0 && nextLayer.type === "wmts") {
+      nextLayer = {
+        ...nextLayer,
+        layers: nextLayer.layers.map((ml) => checkLayerRecursively(ml, false)),
+      };
+    }
 
     // Når vi når enden av indexPath har vi funnet laget vi skal endre, og må da oppdatere alle barna den har rekursivt
-    if (indexPath.length === 1) {
+    if (depth === indexPath.length - 1) {
       if (nextLayer.type === "wmts") {
         modifiedLayer = checkWMTSLayer(nextLayer, willBeVisible);
       } else {
@@ -123,7 +136,7 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
       }
     } else {
       // Hvis vi ikke har nådd enden enda fortsetter vi å søke lengre ned rekursivt
-      const newSublayers = findRecursively(nextLayer.layers, indexPath.slice(1), willBeVisible);
+      const newSublayers = findRecursively(depth + 1, nextLayer.layers, indexPath, willBeVisible);
 
       // Et lag skal kun vises som synlig dersom alle etterkommere vises som synlig også
       modifiedLayer = {
@@ -136,8 +149,8 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
       };
     }
     // Vi må opprette treet av mappedLayers på nytt med de endrede lagene
-    const head = layers.slice(0, indexPath[0]);
-    const tail = layers.slice(indexPath[0] + 1);
+    const head = layers.slice(0, indexPath[depth]);
+    const tail = layers.slice(indexPath[depth] + 1);
     return [...head, modifiedLayer, ...tail];
   };
 
@@ -184,7 +197,7 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
   const checkLayerRecursively = (layer: MappedLayer, willBeVisible: boolean): MappedLayer => {
     // Dersom laget ikke har barn kan vi avslutte rekursjon og skru av eller på kartlaget
     if (layer.layers.length === 0) {
-      toggleWMSLayer(layer, willBeVisible);
+      if (layer.type === "wms") toggleWMSLayer(layer, willBeVisible);
       return { ...layer, isVisible: willBeVisible };
     }
     // Dersom laget har barn må vi passe på at alle etterkommere blir skrudd av eller på også
