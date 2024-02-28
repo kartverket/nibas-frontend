@@ -1,4 +1,4 @@
-import { Button, Modal, ModalBody, ModalContent, Text, ModalOverlay, useToast, Divider } from "@kvib/react";
+import { Button, Modal, ModalBody, ModalContent, Text, ModalOverlay, useToast } from "@kvib/react";
 import { Feature } from "ol";
 import { VedtaksinfoBody } from "./VedtaksinfoBody";
 import { FormViewState, Referanse, VedtakinfoForm } from "./Vedtaksinformasjon";
@@ -16,6 +16,7 @@ type DetaljerProps = {
   isOpen: boolean;
   onClose: () => void;
   selectedVedtaksinfoId?: string;
+  isDisabled: boolean;
 };
 
 export const VedtaksinfoDetaljer = ({
@@ -25,6 +26,7 @@ export const VedtaksinfoDetaljer = ({
   onClose,
   feature,
   selectedVedtaksinfoId,
+  isDisabled,
 }: DetaljerProps) => {
   const [dokref, setDokref] = useState<Referanse[] | undefined>(undefined);
   const [internref, setInternref] = useState<Referanse[] | undefined>(undefined);
@@ -130,7 +132,7 @@ export const VedtaksinfoDetaljer = ({
         <form onSubmit={handleSubmit(onSubmit)}>
           <VedtakHeaderContainer>
             <PanelHeader onClose={closeModal}>
-              <Text>Se eller endre på vedtaksinformasjon</Text>
+              <Text>{`Se ${!isDisabled ? "eller endre på" : ""} vedtaksinformasjon`}</Text>
             </PanelHeader>
           </VedtakHeaderContainer>
           <ModalBody>
@@ -152,19 +154,21 @@ export const VedtaksinfoDetaljer = ({
             />
           </ModalBody>
 
-          <VedtakFooterContainer>
-            <VedtaksFooter
-              onAvbryt={onAvbryt}
-              toggleEndreVedtak={toggleEndreVedtak}
-              formViewState={formViewState}
-              onClose={closeModal}
-              deleteOrArchive={async () => {
-                const didDeleteOrArchive = await deleteOrArchive();
-                if (didDeleteOrArchive) closeModal();
-              }}
-              vedtaksinfoIsPersisted={isVedtakPersisted(selectedVedtaksinfoId, metadata)}
-            />
-          </VedtakFooterContainer>
+          {!isDisabled && (
+            <VedtakFooterContainer>
+              <VedtaksFooter
+                onAvbryt={onAvbryt}
+                toggleEndreVedtak={toggleEndreVedtak}
+                formViewState={formViewState}
+                onClose={closeModal}
+                deleteOrArchive={async () => {
+                  const didDeleteOrArchive = await deleteOrArchive();
+                  if (didDeleteOrArchive) closeModal();
+                }}
+                vedtaksinfoIsPersisted={isVedtakPersisted(selectedVedtaksinfoId, metadata)}
+              />
+            </VedtakFooterContainer>
+          )}
         </form>
       </ModalContent>
     </Modal>

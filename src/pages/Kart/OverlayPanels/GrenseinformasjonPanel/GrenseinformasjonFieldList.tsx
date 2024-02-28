@@ -12,8 +12,9 @@ import { EditingType, useEditAllGrenser } from "contexts/EditGrenserContext";
 import { TilhorighetField } from "./TilhorighetField";
 import { Vedtaksinformasjon } from "./Vedtaksinformasjon/Vedtaksinformasjon";
 import { isAdministrativGrense } from "utils/grenser";
-import { isFeatureEditable } from "utils/features";
+import { isFeatureMetadataEditable } from "utils/features";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
+import useIsGrenseinformasjonPanelDisabled from "../hooks/useIsGrenseInformasjonPanelDisabled";
 
 export type Inputs = {
   uuid: string;
@@ -62,12 +63,6 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
 
     return [];
   };
-
-  const shouldDisplayDokumentasjonsreferanse =
-    isFeatureEditable(feature, featureIsArchived(feature)) &&
-    isAdministrativGrense(properties.type as GrenseType) &&
-    !gyldigTil &&
-    (getCurrentlyEditingType() === "grunnkrets" || getCurrentlyEditingType() == "stemmekrets");
 
   return (
     <Container>
@@ -200,7 +195,8 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
         fieldLabel="Ekstra informasjon"
         renderItem={(register) => <Textarea placeholder="Fyll inn ekstra informasjon" {...register} />}
       />
-      {shouldDisplayDokumentasjonsreferanse && <Vedtaksinformasjon feature={feature} />}
+
+      <Vedtaksinformasjon feature={feature} />
     </Container>
   );
 };
