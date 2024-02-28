@@ -13,7 +13,7 @@ export const createUniqueIshValue = (length: number) => {
   return tmp;
 };
 
-export const isUniqueIshValue = (id: string | number | null | undefined): boolean => {
+export const isTempDokrefId = (id: string | number | null | undefined): boolean => {
   if (id && typeof id === "string" && id.length > 0) {
     return id.includes("temp-");
   }
