@@ -1,11 +1,12 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo } from "react";
-import { HistoryEntry, HistoryTypeValues, useHistory } from "contexts/HistoryContext";
+import { GrenseDelingEntry, HistoryChange, HistoryEntry, HistoryTypeValues, useHistory } from "contexts/HistoryContext";
 import { FeatureStyleContextValue, SelectedFeatures } from "./types";
 import { useSelectStyles } from "./useSelectStyles";
 import { getArchiveLayerStyle, grenseStyles, setFeatureStyle } from "utils/map/layerStyles";
-import { FeatureLike } from "ol/Feature";
+import Feature, { FeatureLike } from "ol/Feature";
 import useCustomStyles from "./useCustomStyles";
 import { Coordinate } from "ol/coordinate";
+import { Geometry } from "ol/geom";
 
 export const FeatureStyleContext = createContext<FeatureStyleContextValue | undefined>(undefined);
 
@@ -66,8 +67,15 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
   const getFeatureIdsFromEntries = (accumulator: string[][], entry: HistoryEntry) => {
     const featureIds: string[] = [];
     entry.changes.forEach((change) => {
-      if (change.to && !accumulator.some((value) => value.includes(change.id))) {
+      if (change.to && !accumulator.some((value) => value.includes(change.id)) && entry.type !== "grensedeling") {
         featureIds.push(change.id);
+      }
+
+      //change.id har den gamle grensens ID, vi trenger de to nye grensene!
+      if (entry.type === "grensedeling") {
+        const changesTo = change.to as Feature<Geometry>[];
+        const idsToAppend = changesTo?.map((feature) => feature.getId() as string);
+        idsToAppend && featureIds.push(...idsToAppend);
       }
     });
     accumulator.push(featureIds);
@@ -93,8 +101,14 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
   );
 
   useEffect(() => {
-    const dirtyHistoryTypes: HistoryTypeValues[] = ["grense", "property", "grensetilhorighetendring", "nygrense"];
-    const archivedHistoryTypes: HistoryTypeValues[] = ["grensearkivering", "grensedeling"];
+    const dirtyHistoryTypes: HistoryTypeValues[] = [
+      "grense",
+      "property",
+      "grensetilhorighetendring",
+      "nygrense",
+      "grensedeling",
+    ];
+    const archivedHistoryTypes: HistoryTypeValues[] = ["grensearkivering"];
 
     // Når vi lagrer blir history entries tømt, så vi lagrer stilene som er satt
     if (history.entries.length === 0) {
