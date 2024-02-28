@@ -133,6 +133,7 @@ const VedtaksinfoContent = styled.div`
 
 const VedtaksinfoTitle = styled.div`
   flex: 1;
+  overflow: hidden;
 `;
 
 const OversiktHeader = styled.div`

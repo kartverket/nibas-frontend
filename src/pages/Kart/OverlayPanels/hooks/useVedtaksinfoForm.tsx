@@ -4,6 +4,7 @@ import { DokumentasjonsreferanseDTO, FeatureProperties, Metadata } from "types/a
 import { VedtakinfoForm, Referanse } from "../GrenseinformasjonPanel/Vedtaksinformasjon/Vedtaksinformasjon";
 import { LineString } from "ol/geom";
 import { PropertyEntry, useHistory } from "contexts/HistoryContext";
+import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 
 export const mapFromFormToApi = (
   formValues: VedtakinfoForm,
@@ -91,6 +92,8 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoIndex?: 
   values.vedtakGyldigFra = values.vedtakGyldigFra ? new Date(values.vedtakGyldigFra) : undefined;
   values.vedtakGyldigTil = values.vedtakGyldigTil ? new Date(values.vedtakGyldigTil) : undefined;
 
+  const { openAsync } = useConfirmationModal();
+
   const {
     register,
     setValue,
@@ -109,15 +112,24 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoIndex?: 
 
   const { addHistoryEntry } = useHistory();
 
-  const deleteOrArchive = () => {
-    if (selectedVedtaksinfoIndex == undefined) return;
+  const deleteOrArchive = async (): Promise<boolean> => {
+    if (selectedVedtaksinfoIndex == undefined) return false;
 
     const metadata = feature.getProperties().metadata as Metadata;
     const oldDokrefs: DokumentasjonsreferanseDTO[] = metadata.dokumentasjonsreferanser
       ? metadata.dokumentasjonsreferanser
       : [];
 
-    if (!oldDokrefs[selectedVedtaksinfoIndex].id) {
+    const shouldDelete = !oldDokrefs[selectedVedtaksinfoIndex].id ? true : false;
+
+    const shouldDeleteOrArchive = await openAsync({
+      title: `${shouldDelete ? "Sletting" : "Arkivering"} av referanse`,
+      description: `Er du sikker på at du ønsker å ${shouldDelete ? "slette" : "arkivere"} referansen?`,
+    });
+
+    if (!shouldDeleteOrArchive) return false;
+
+    if (shouldDelete) {
       // Vedtaksinformasjonen er ikke tidligere publisert. Fjern fra front end
       const updatedDokrefs = structuredClone(oldDokrefs);
       updatedDokrefs.splice(selectedVedtaksinfoIndex, 1);
@@ -134,6 +146,8 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoIndex?: 
         dokumentasjonsreferanser: dokrefsCopy,
       });
     }
+
+    return true;
   };
 
   const updateDraftFromFeature = (vedtaksinfo: DokumentasjonsreferanseDTO) => {

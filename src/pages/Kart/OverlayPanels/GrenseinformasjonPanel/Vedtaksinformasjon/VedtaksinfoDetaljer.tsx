@@ -130,7 +130,7 @@ export const VedtaksinfoDetaljer = ({
               <Text>Se eller endre på vedtaksinformasjon</Text>
             </PanelHeader>
           </VedtakHeaderContainer>
-          <ModalBody minHeight={"500px"}>
+          <ModalBody>
             <VedtaksinfoBody
               formViewState={formViewState}
               clearErrors={clearErrors}
@@ -149,16 +149,15 @@ export const VedtaksinfoDetaljer = ({
             />
           </ModalBody>
 
-          <Divider />
           <VedtakFooterContainer>
             <VedtaksFooter
               onAvbryt={onAvbryt}
               toggleEndreVedtak={toggleEndreVedtak}
               formViewState={formViewState}
               onClose={closeModal}
-              deleteOrArchive={() => {
-                deleteOrArchive();
-                closeModal();
+              deleteOrArchive={async () => {
+                const didDeleteOrArchive = await deleteOrArchive();
+                if (didDeleteOrArchive) closeModal();
               }}
               vedtaksinfoIsPersisted={isVedtakPersisted(selectedVedtaksinfoIndex, metadata)}
             />
@@ -227,7 +226,7 @@ const NyttVedtakFooter = ({ onClose }: { onClose: () => void }) => {
 
 const EndreVedtakFooter = ({
   onAvbryt,
-  deleteOrArchive: onArchive,
+  deleteOrArchive,
   vedtaksinfoIsPersisted,
 }: {
   onAvbryt: () => void;
@@ -243,8 +242,9 @@ const EndreVedtakFooter = ({
               rightIcon="archive"
               variant="tertiary"
               colorScheme="blue"
+              padding="6px"
               aria-label="Arkver referansen"
-              onClick={onArchive}
+              onClick={deleteOrArchive}
             >
               <p>Arkiver referansen</p>
             </Button>
@@ -253,8 +253,9 @@ const EndreVedtakFooter = ({
               rightIcon="delete_forever"
               variant="tertiary"
               colorScheme="red"
+              padding="6px"
               aria-label="Slett referansen"
-              onClick={onArchive}
+              onClick={deleteOrArchive}
             >
               <p>Slett referansen</p>
             </Button>
@@ -276,13 +277,16 @@ const EndreVedtakFooter = ({
 };
 
 const VedtakHeaderContainer = styled.div`
-  margin-left: 28px;
+  padding: 0 24px 0 24px;
+  margin-bottom: -20px;
 `;
 
 const VedtakFooterContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  padding: 12px;
+  margin: 0 24px 0 24px;
+  padding: 12px 0 12px 0;
+  border-top: 2px solid var(--kvib-colors-gray-50);
 `;
 
 const VedtakFooterLeft = styled.div`
@@ -305,5 +309,5 @@ function isVedtakPersisted(selectedVedtaksinfoIndex: number | undefined, metadat
 }
 
 const ButtonsContainer = styled.div`
-  display: inline-block;
+  /* display: inline-block; */
 `;
