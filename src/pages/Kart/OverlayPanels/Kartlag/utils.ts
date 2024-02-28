@@ -29,18 +29,27 @@ const getLayersStringToReplace = (layersInParams: string, mappedLayerName: strin
 };
 
 // TODO: opplever at laget henger igjen inntil man oppdaterer kartet, har vi en måte å cleare?
-export const toggleWMSLayer = (mappedLayer: MappedLayer, isVisible: boolean) => {
-  const source = kartlagLayers[mappedLayer.sourceId].getSource() as TileWMS;
+export const toggleWMSLayer = (mappedLayer: MappedLayer, willBeVisible: boolean) => {
+  const layer = kartlagLayers[mappedLayer.sourceId];
+  const source = layer.getSource() as TileWMS;
   const layersInParams = source.getParams().LAYERS as string;
-  const mappedLayerId = mappedLayer.id;
-
-  if (!mappedLayerId) return;
 
   let newParamsLayerString = "";
 
-  if (isVisible) {
-    const replaceString = getLayersStringToReplace(layersInParams, mappedLayerId);
+  if (willBeVisible) {
+    layer.setVisible(true);
+    let newLayers = "";
 
+    if (!layersInParams || mappedLayer.sourceId === layersInParams) {
+      newLayers = `${mappedLayer.id}`;
+    } else {
+      newLayers = `${layersInParams},${mappedLayer.id}`;
+    }
+
+    newParamsLayerString = newLayers;
+  } else {
+    layer.setVisible(false);
+    const replaceString = getLayersStringToReplace(layersInParams, mappedLayer.id);
     if (!replaceString) return;
 
     const layersReplacedString = layersInParams.replace(replaceString, "");
@@ -51,34 +60,28 @@ export const toggleWMSLayer = (mappedLayer: MappedLayer, isVisible: boolean) => 
     } else {
       newParamsLayerString = layersReplacedString;
     }
-  } else {
-    let newLayers = "";
-
-    if (!layersInParams || mappedLayer.sourceId === layersInParams) {
-      newLayers = `${mappedLayerId}`;
-    } else {
-      newLayers = `${layersInParams},${mappedLayerId}`;
-    }
-
-    newParamsLayerString = newLayers;
   }
 
   source.updateParams({ LAYERS: newParamsLayerString });
 };
 
-export const toggleWMTSLayer = (mappedLayer: MappedLayer) => {
+export const toggleWMTSLayer = (mappedLayer: MappedLayer, willBeVisible: boolean, useDefaultLayer: boolean) => {
   const layer = getLayerById(mappedLayer.sourceId);
   if (isWMTSLayer(layer)) {
     const source = layer.getSource();
     if (source) {
       // OpenLayers lar deg ikke sette layer for WMTS-lag, så vi må bytte ut hele sourcen med ny layer-verdi
       const config = source.get("config");
+      const newLayer = useDefaultLayer ? (config.layer as string) : mappedLayer.id;
       const newSource = new WMTS({
         ...config,
-        layer: mappedLayer.id,
+        layer: newLayer,
       });
       newSource.set("config", config);
       layer.setSource(newSource);
+      layer.setVisible(willBeVisible);
+      return newLayer;
     }
   }
+  return "";
 };

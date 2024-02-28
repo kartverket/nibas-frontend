@@ -16,7 +16,7 @@ const KartlagOuter = ({ indexPath, mappedLayer }: Props) => {
   const handleToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     // TODO: denne (eller noe relatert) er wack av og til når man toggler av, kan være re-rendringsproblemer
     e.stopPropagation();
-    toggleLayer(indexPath, !mappedLayer.isVisible);
+    toggleLayer(mappedLayer, indexPath);
     // TODO: åpne accordion når man har togglet på? lukk når man har togglet av? samme gjelder kartlagmiddle
   };
   return (

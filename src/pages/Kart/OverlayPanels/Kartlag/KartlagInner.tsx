@@ -12,7 +12,7 @@ const KartlagInner = ({ indexPath, mappedLayer }: Props) => {
   const { toggleLayer } = useKartlag();
 
   const handleToggle = () => {
-    toggleLayer(indexPath, !mappedLayer.isVisible);
+    toggleLayer(mappedLayer, indexPath);
   };
 
   // TODO: WMTS-lag skal ha radio button, ikke checkbox, selvsagt.

@@ -16,7 +16,7 @@ const KartlagMiddle = ({ mappedLayer, indexPath, isNested = false }: Props) => {
   const handleToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     // TODO: denne (eller noe relatert) er wack av og til når man toggler av, kan være re-rendringsproblemer
     e.stopPropagation();
-    toggleLayer(indexPath, !mappedLayer.isVisible);
+    toggleLayer(mappedLayer, indexPath);
   };
   return (
     <Accordion allowToggle>

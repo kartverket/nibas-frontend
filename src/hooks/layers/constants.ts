@@ -9,7 +9,7 @@ import TileWMS from "ol/source/TileWMS";
 import { kartlagSources } from "./kartlagSources";
 
 const createTileLayerFromKartlagSource = (id: keyof typeof kartlagSources) =>
-  new TileLayer({ source: kartlagSources[id] });
+  new TileLayer({ source: kartlagSources[id], visible: false });
 
 export const kartlagLayers: Record<KartlagId, TileLayer<TileWMS | WMTS> | VectorLayer<VectorSource>> = {
   matrikkelenWMS: createTileLayerFromKartlagSource("matrikkelenWMS"),

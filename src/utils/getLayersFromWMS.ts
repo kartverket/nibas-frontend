@@ -30,6 +30,7 @@ const mapWMSLayer = (responseLayer: WMSResponseLayer, sourceId: KartlagId) => {
   }
 
   const mappedLayer: MappedLayer = {
+    type: "wms",
     sourceId,
     id: responseLayer.Name,
     title: responseLayer.Title,
@@ -41,6 +42,7 @@ const mapWMSLayer = (responseLayer: WMSResponseLayer, sourceId: KartlagId) => {
 };
 
 const mapWMTSLayer = (responseLayer: WMTSResponseLayer, sourceId: KartlagId): MappedLayer => ({
+  type: "wmts",
   sourceId: sourceId,
   id: responseLayer.Identifier,
   title: responseLayer.Title,
@@ -103,6 +105,7 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
       const sourceId = source.get("id") as KartlagId;
 
       const mappedWMTSLayer: MappedLayer = {
+        type: "wmts",
         sourceId: sourceId,
         id: sourceId,
         title: json.ServiceIdentification.Title ?? source.getLayer(),
