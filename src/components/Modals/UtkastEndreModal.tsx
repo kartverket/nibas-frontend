@@ -12,6 +12,7 @@ import {
   ButtonGroup,
   Button,
   FormControl,
+  useToast,
 } from "@kvib/react";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -36,20 +37,28 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
     register,
     handleSubmit,
     getValues,
+    reset,
     formState: { isDirty },
   } = useForm<UtkastFormData>({ defaultValues: { navn: utkast.navn } });
-  const { updateUtkast } = useUtkast();
+  const { updateUtkast, getUpdateUtkastRequestFromHistory } = useUtkast();
+  const toast = useToast();
   const { mutate } = useUtkasts();
 
-  const previousValues = useRef<UtkastFormData>(getValues());
-
   const editUtkast = async () => {
-    setIsLoading(true);
-    await updateUtkast(utkast.id, { ...utkast, navn: getValues("navn") });
-    setIsLoading(false);
-    onClose();
-    previousValues.current = getValues();
-    mutate();
+    const currentUtkastWithHistory = getUpdateUtkastRequestFromHistory(); // returnerer null hvis det ikke er et utkast i utkastprovider
+    if (currentUtkastWithHistory) {
+      setIsLoading(true);
+      const updatedUtkast = { ...currentUtkastWithHistory, navn: getValues("navn") };
+      await updateUtkast(utkast.id, updatedUtkast);
+      reset(getValues());
+      mutate();
+      setIsLoading(false);
+      onClose();
+    } else
+      toast({
+        status: "error",
+        title: "Oppdatering av utkast feilet",
+      });
   };
 
   return (
