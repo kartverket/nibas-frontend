@@ -17,19 +17,18 @@ const KartlagOuter = ({ indexPath, mappedLayer }: Props) => {
     // TODO: denne (eller noe relatert) er wack av og til når man toggler av, kan være re-rendringsproblemer
     e.stopPropagation();
     toggleLayer(mappedLayer, indexPath);
-    // TODO: åpne accordion når man har togglet på? lukk når man har togglet av? samme gjelder kartlagmiddle
   };
   return (
     <KartlagAccordion allowToggle>
       <KartlagAccordionItem>
-        <KartlagOuterAccordionButton>
+        <KartlagOuterAccordionButton $isVisible={mappedLayer.isVisible}>
           <Checkbox isChecked={mappedLayer.isVisible} onChange={handleToggle} />
           <KartlagTitle>{mappedLayer.title}</KartlagTitle>
           <Spacer />
           <ActiveKartlagOpacity layerId={mappedLayer.sourceId} />
           <KartlagAccordionIcon />
         </KartlagOuterAccordionButton>
-        <KartlagAccordionPanel>
+        <KartlagAccordionPanel $isVisible={mappedLayer.isVisible}>
           {mappedLayer.layers.map((subLayer, i) =>
             subLayer.layers.length > 0 ? (
               <KartlagMiddle key={subLayer.id} indexPath={[...indexPath, i]} mappedLayer={subLayer} />
@@ -51,16 +50,20 @@ const KartlagAccordion = styled(Accordion)`
   width: 100%;
 `;
 
-const KartlagOuterAccordionButton = styled(KartlagAccordionButton)`
+const KartlagOuterAccordionButton = styled(KartlagAccordionButton)<{ $isVisible: boolean }>`
   padding: 16px;
-  background: var(--kvib-colors-gray-50);
+  background: ${(props) => (props.$isVisible ? "var(--kvib-colors-blue-50)" : "var(--kvib-colors-gray-50)")};
+
+  &:hover {
+    background: ${(props) => (props.$isVisible ? "var(--kvib-colors-blue-100)" : "var(--kvib-colors-gray-200)")};
+  }
 `;
 
-const KartlagAccordionPanel = styled(AccordionPanel)`
+const KartlagAccordionPanel = styled(AccordionPanel)<{ $isVisible: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 12px;
-  background: var(--kvib-colors-gray-50);
+  background: ${(props) => (props.$isVisible ? "var(--kvib-colors-blue-50)" : "var(--kvib-colors-gray-50)")};
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
 `;
