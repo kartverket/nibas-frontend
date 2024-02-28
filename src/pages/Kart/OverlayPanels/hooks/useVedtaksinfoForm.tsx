@@ -7,7 +7,6 @@ import { PropertyEntry, useHistory } from "contexts/HistoryContext";
 import {
   createUniqueIshValue,
   getDokumentasjonsReferanseFromFeature,
-  isUniqueIshValue,
 } from "../GrenseinformasjonPanel/Vedtaksinformasjon/util/vedtaksinfoHelperMethods";
 
 export const mapFromFormToApi = (
