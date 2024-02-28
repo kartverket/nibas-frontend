@@ -1,4 +1,4 @@
-import { Checkbox } from "@kvib/react";
+import { Checkbox, Radio } from "@kvib/react";
 import { MappedLayer, useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { styled } from "styled-components";
 
@@ -18,9 +18,15 @@ const KartlagInner = ({ indexPath, mappedLayer }: Props) => {
   // TODO: WMTS-lag skal ha radio button, ikke checkbox, selvsagt.
   return (
     <Container>
-      <Checkbox isChecked={mappedLayer.isVisible} onChange={handleToggle}>
-        {mappedLayer.title}
-      </Checkbox>
+      {mappedLayer.type === "wmts" ? (
+        <Radio isChecked={mappedLayer.isVisible} onChange={handleToggle}>
+          {mappedLayer.title}
+        </Radio>
+      ) : (
+        <Checkbox isChecked={mappedLayer.isVisible} onChange={handleToggle}>
+          {mappedLayer.title}
+        </Checkbox>
+      )}
     </Container>
   );
 };
