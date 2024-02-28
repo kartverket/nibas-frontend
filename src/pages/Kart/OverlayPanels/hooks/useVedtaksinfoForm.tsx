@@ -7,6 +7,7 @@ import { PropertyEntry, useHistory } from "contexts/HistoryContext";
 import {
   createUniqueIshValue,
   getDokumentasjonsReferanseFromFeature,
+  isUniqueIshValue,
 } from "../GrenseinformasjonPanel/Vedtaksinformasjon/util/vedtaksinfoHelperMethods";
 
 export const mapFromFormToApi = (
@@ -146,7 +147,10 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoId?: str
       ? metadata.dokumentasjonsreferanser
       : [];
 
-    if (!oldDokrefs.find((dokref) => dokref.id == selectedVedtaksinfoId)) {
+    const selectedDokref = oldDokrefs.find((dokref) => dokref.id == selectedVedtaksinfoId);
+    if (!selectedDokref) return;
+
+    if (isUniqueIshValue(selectedDokref.id)) {
       // Vedtaksinformasjonen er ikke tidligere publisert. Fjern fra front end
       const updatedDokrefs = oldDokrefs.filter((dokref) => dokref.id !== selectedVedtaksinfoId);
       addMetadataEntryFromFeature(feature as Feature<LineString>, addHistoryEntry, {
