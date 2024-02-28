@@ -13,7 +13,7 @@ import {
   Button,
   FormControl,
 } from "@kvib/react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import { UtkastResponse } from "types/api";
@@ -36,20 +36,20 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
     register,
     handleSubmit,
     getValues,
+    reset,
     formState: { isDirty },
   } = useForm<UtkastFormData>({ defaultValues: { navn: utkast.navn } });
   const { updateUtkast } = useUtkast();
-  const { mutate } = useUtkasts();
 
-  const previousValues = useRef<UtkastFormData>(getValues());
+  const { mutate } = useUtkasts();
 
   const editUtkast = async () => {
     setIsLoading(true);
-    await updateUtkast(utkast.id, { ...utkast, navn: getValues("navn") });
+    await updateUtkast(utkast.id, { ...utkast, navn: getValues("navn") }, false);
+    mutate();
+    reset(getValues());
     setIsLoading(false);
     onClose();
-    previousValues.current = getValues();
-    mutate();
   };
 
   return (
