@@ -7,7 +7,7 @@ import { mapFromFormToApi, useVedtaksinfoForm } from "../../hooks/useVedtaksinfo
 import { Metadata } from "types/api";
 import { useState } from "react";
 import { PanelHeader } from "../../Panel";
-import { isUniqueIshValue } from "./util/vedtaksinfoHelperMethods";
+import { isTempDokrefId } from "./util/vedtaksinfoHelperMethods";
 
 type DetaljerProps = {
   setFormViewState: React.Dispatch<React.SetStateAction<FormViewState>>;
@@ -307,7 +307,7 @@ function isVedtakPersisted(selectedVedtaksinfoId: string | undefined, metadata: 
   const dokref = metadata.dokumentasjonsreferanser.find((ref) => ref.id === selectedVedtaksinfoId);
 
   if (dokref) {
-    return !isUniqueIshValue(dokref.id);
+    return !isTempDokrefId(dokref.id);
   }
 
   return true;

@@ -30,7 +30,7 @@ import {
 import { featureToGeoJson } from "utils/map/geoJson";
 import { getIdFromEntity } from "utils/api";
 import { getTempFeatureId, isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
-import { isUniqueIshValue } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/Vedtaksinformasjon/util/vedtaksinfoHelperMethods";
+import { isTempDokrefId } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/Vedtaksinformasjon/util/vedtaksinfoHelperMethods";
 
 const getCombinedEntity = <T extends ResponseWithId>(
   entity: T,
@@ -244,7 +244,7 @@ export const toCleanUtkast = (utkastToClean: OppdaterUtkastRequest): OppdaterUtk
     const metadata = properties.metadata as Metadata;
 
     metadata.dokumentasjonsreferanser?.forEach((dokref) => {
-      if (isUniqueIshValue(dokref.id)) dokref.id = undefined;
+      if (isTempDokrefId(dokref.id)) dokref.id = undefined;
     });
   });
 
