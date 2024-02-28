@@ -21,7 +21,7 @@ type ReferanseBodyProps = {
   control: Control<VedtakinfoForm>;
   errors: FieldErrors<VedtakinfoForm>;
   feature: Feature;
-  vedtaksinfoIndex?: number;
+  vedtaksinfoId?: string;
   register: UseFormRegister<VedtakinfoForm>;
   dokref?: Referanse[];
   setDokref: React.Dispatch<React.SetStateAction<Referanse[] | undefined>>;
@@ -34,7 +34,7 @@ type ReferanseBodyProps = {
 export const VedtaksinfoBody = ({
   formViewState,
   feature,
-  vedtaksinfoIndex,
+  vedtaksinfoId,
   register,
   internref,
   dokref,
@@ -65,7 +65,9 @@ export const VedtaksinfoBody = ({
 
   const metadata = feature.getProperties().metadata as Metadata;
   const vedtaksinformasjon =
-    vedtaksinfoIndex !== undefined ? metadata.dokumentasjonsreferanser?.at(vedtaksinfoIndex) : undefined;
+    vedtaksinfoId !== undefined
+      ? metadata.dokumentasjonsreferanser?.find((ref) => ref.id === vedtaksinfoId)
+      : undefined;
 
   return (
     <Grid templateColumns={"4fr 3fr"}>
