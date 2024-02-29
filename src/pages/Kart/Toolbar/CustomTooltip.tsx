@@ -39,6 +39,7 @@ export const TooltipBody = ({ text, icon, shortcut, holdButton }: CustomTooltipP
       {icon && <Icon size={24} icon={icon} />}
     </IconText>
     <ShortcutText shortcut={shortcut} holdButton={holdButton} />
+    <ShortcutTextStyle>Hold inne Shift + marker i kartet for å zoome</ShortcutTextStyle>
   </BodyWrapper>
 );
 
