@@ -12,6 +12,7 @@ import {
   ButtonGroup,
   Button,
   FormControl,
+  FormErrorMessage,
 } from "@kvib/react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -37,9 +38,8 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
     handleSubmit,
     getValues,
     reset,
-    formState: { isDirty },
-  } = useForm<UtkastFormData>({ defaultValues: { navn: utkast.navn } });
-  const { updateUtkast } = useUtkast();
+    formState: { errors, isDirty },
+  } = useForm<UtkastFormData>({ mode: "onSubmit", reValidateMode: "onChange", defaultValues: { navn: utkast.navn } });  const { updateUtkast } = useUtkast();
 
   const { mutate } = useUtkasts();
 
@@ -60,12 +60,16 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
           <ModalHeader>Endre detaljer</ModalHeader>
           <ModalCloseButton aria-label="Lukk" />
           <ModalBody>
-            <Section>
+            <Section isInvalid={!!errors.navn}>
               <FormLabel>Navn på utkastet</FormLabel>
               <FormHelperText>
                 Velg et beskrivende navn som gjør at andre kan forstå hva utkastet inneholder.
               </FormHelperText>
-              <Input placeholder="f.eks. Sammenslåing av Rosenborg og Sentrum i Trondheim" {...register("navn")} />
+              <Input
+                placeholder="f.eks. Sammenslåing av Rosenborg og Sentrum i Trondheim"
+                {...register("navn", { required: "Utkastet må ha et navn" })}
+              />
+              {!!errors.navn && <FormErrorMessage errorMessage={errors.navn.message} />}
             </Section>
           </ModalBody>
           <ModalFooter>
