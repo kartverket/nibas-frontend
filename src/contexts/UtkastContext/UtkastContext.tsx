@@ -178,14 +178,14 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     return updatedUtkast;
   };
 
-  const updateUtkast = async (id: string, newUtkast: OppdaterUtkastRequest) => {
+  const updateUtkast = async (id: string, newUtkast: OppdaterUtkastRequest, shouldClearHistory: boolean = true) => {
     const response = await updateUtkastApi(id, toCleanUtkast(newUtkast), tokenHolderFunc()?.token);
 
     if (statusCode.isSuccessful(response.status)) {
       const updatedUtkast = (await response.json()) as UtkastResponse;
       await mutate(updatedUtkast);
       await globalMutate(["/v1/utkast", tokenHolderFunc()?.token]);
-      clearHistory();
+      if (shouldClearHistory) clearHistory();
 
       // Ved lagring av utkast ble det mismatch mellom state i OpenLayers og state i react
       // For å forhindre dette sletter vi alle grenser med midlertidig id fra det gamle utkastet, slik at disse ikke lenger kan redigeres i OL

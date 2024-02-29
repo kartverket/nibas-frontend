@@ -52,7 +52,31 @@ export const mockGeoJsonFeatureResponse: GeoJSONFeatureCollection = {
             fastsettingstype: { id: "", href: "" },
             grensestatus: { id: "", href: "" },
           },
-          dokumentasjonsreferanser: [],
+          dokumentasjonsreferanser: [
+            {
+              shouldArchive: false,
+              id: "123",
+              dokumentlenker: [
+                {
+                  id: "doklenke",
+                  beskrivelse: "Doklenke",
+                },
+              ],
+              fastsettingsdato: "2022-12-31",
+              fastsettingsmyndighet: "Fastsettingsmyndighet",
+              hjemmel: "Hjemmel",
+              internReferanserKartverket: [
+                {
+                  id: "internref",
+                  beskrivelse: "Internrefeferanse",
+                },
+              ],
+              rettskildeId: "RID",
+              rettskildeTittel: "Rettskildetittel",
+              vedtakGyldigFra: "2020-06-16",
+              vedtakGyldigTil: "2020-06-17",
+            },
+          ],
           foelgerTerrengdetalj: { id: "IKA", href: "" },
           noeyaktighetsklasse: { id: "IngenNøyaktighet", href: "" },
         } as AdministrativGrenseMetadata,
@@ -201,10 +225,10 @@ export const mockDetailedGrunnkrets2: GrunnkretsResponse = {
   oppdateringsdato: "2022-12-31",
   endringstype: "Retting",
   kommuneIdentifikator: {
-    gyldighetsdato: "2022-06-16",
     lokalid: {
       value: "2",
     },
+    gyldighetsdato: "2022-07-01",
   },
 };
 
@@ -261,6 +285,7 @@ export const mockMaalemetodeResponse: KodelisteRespons = {
     {
       label: "Terrengmålt: Uspesifisert måleinstrument",
       id: "9b4ab6bb-878f-472a-9243-64e2bdc48b8c",
+      kode: "1",
     },
   ],
 };

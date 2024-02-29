@@ -10,6 +10,10 @@ import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
 import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 import { EditingType, useEditAllGrenser } from "contexts/EditGrenserContext";
 import { TilhorighetField } from "./TilhorighetField";
+import { Vedtaksinformasjon } from "./Vedtaksinformasjon/Vedtaksinformasjon";
+import { isAdministrativGrense } from "utils/grenser";
+import { isFeatureEditable } from "utils/features";
+import { useFeatureStyle } from "contexts/FeatureStyleContext";
 
 export type Inputs = {
   uuid: string;
@@ -28,23 +32,30 @@ type Props = {
   feature: Feature<Geometry>;
 };
 
-export const Container = styled.div`
+const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
+  padding-bottom: 32px;
 `;
 
 const GrenseinformasjonFieldList = ({ feature }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
   const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
   const { getCurrentlyEditingType } = useEditAllGrenser();
+  const { featureIsArchived } = useFeatureStyle();
 
   const metadata = properties.metadata as Metadata;
 
   const gyldigTil = properties.metadata ? metadata.common?.gyldigTil : undefined;
 
-  const getMaalemetodeFromId = (maalemetoder: KodelisteRespons, id: string) =>
-    maalemetoder.items.find((item) => item.id === id)?.label ?? null;
+  const getMaalemetodeFromId = (maalemetoder: KodelisteRespons, id: string) => {
+    const maalemetode = maalemetoder.items.find((item) => item.id === id);
+    if (maalemetode) {
+      return maalemetode?.kode + " " + maalemetode?.label;
+    }
+    return "Ukjent målemetode er registrert på grensen";
+  };
 
   const getPossibleGrenseTypesFromEditingType = (editingType: EditingType | null): GrenseType[] => {
     if (editingType === "stemmekrets") {
@@ -56,6 +67,12 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
 
     return [];
   };
+
+  const shouldDisplayDokumentasjonsreferanse =
+    isFeatureEditable(feature, featureIsArchived(feature)) &&
+    isAdministrativGrense(properties.type as GrenseType) &&
+    !gyldigTil &&
+    (getCurrentlyEditingType() === "grunnkrets" || getCurrentlyEditingType() == "stemmekrets");
 
   return (
     <Container>
@@ -127,7 +144,6 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
         }}
         renderItem={(register) => <Datepicker {...register} />}
       />
-
       {gyldigTil && (
         <div>
           <GrenseinformasjonField
@@ -157,15 +173,18 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
           kodeliste && (
             <Select {...register}>
               <option value="">Velg målemetode</option>
-              {kodeliste.items.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.label}
-                </option>
-              ))}
+              {kodeliste.items
+                .sort((a, b) => Number(a.kode) - Number(b.kode))
+                .map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.kode} {item.label}
+                  </option>
+                ))}
             </Select>
           )
         }
       />
+
       <GrenseinformasjonField
         feature={feature}
         tooltipLabel="Antatt posisjonsnøyaktighet i grunnriss (x, y) oppgitt i cm. Den nøyaktigheten som angis bør være så nær det virkelige objektet som mulig."
@@ -188,6 +207,7 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
         fieldLabel="Ekstra informasjon"
         renderItem={(register) => <Textarea placeholder="Fyll inn ekstra informasjon" {...register} />}
       />
+      {shouldDisplayDokumentasjonsreferanse && <Vedtaksinformasjon feature={feature} />}
     </Container>
   );
 };
