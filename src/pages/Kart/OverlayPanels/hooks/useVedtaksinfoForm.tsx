@@ -4,6 +4,7 @@ import { DokumentasjonsreferanseDTO, FeatureProperties, Metadata } from "types/a
 import { VedtakinfoForm, Referanse } from "../GrenseinformasjonPanel/Vedtaksinformasjon/Vedtaksinformasjon";
 import { LineString } from "ol/geom";
 import { PropertyEntry, useHistory } from "contexts/HistoryContext";
+import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import {
   createUniqueIshValue,
   getDokumentasjonsReferanseFromFeature,
@@ -66,7 +67,7 @@ const emptyVedtaksinformasjon: VedtakinfoForm = {
   hjemmel: "",
   leggTilInternreferanse: undefined,
   leggTilDokumentlenke: undefined,
-  vedtakGyldigFra: undefined,
+  vedtakGyldigFra: new Date(),
   vedtakGyldigTil: undefined,
 };
 
@@ -121,6 +122,8 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoId?: str
   values.vedtakGyldigFra = values.vedtakGyldigFra ? new Date(values.vedtakGyldigFra) : undefined;
   values.vedtakGyldigTil = values.vedtakGyldigTil ? new Date(values.vedtakGyldigTil) : undefined;
 
+  const { openAsync } = useConfirmationModal();
+
   const {
     register,
     setValue,
@@ -139,16 +142,26 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoId?: str
 
   const { addHistoryEntry } = useHistory();
 
-  const deleteOrArchive = () => {
-    if (selectedVedtaksinfoId == undefined) return;
-
+  const deleteOrArchive = async (): Promise<boolean> => {
+    if (selectedVedtaksinfoId == undefined) return false;
     const metadata = feature.getProperties().metadata as Metadata;
     const oldDokrefs: DokumentasjonsreferanseDTO[] = metadata.dokumentasjonsreferanser
       ? metadata.dokumentasjonsreferanser
       : [];
 
     const selectedDokref = oldDokrefs.find((dokref) => dokref.id == selectedVedtaksinfoId);
-    if (!selectedDokref) return;
+    if (!selectedDokref) return false;
+
+    const isDeleting = isTempDokrefId(selectedDokref.id);
+
+    const shouldDeleteOrArchive = await openAsync({
+      title: `${isDeleting ? "Sletting" : "Arkivering"} av referanse`,
+      description: `Er du sikker på at du ønsker å ${isDeleting ? "slette" : "arkivere"} referansen?`,
+      acceptText: `Ja, ${isDeleting ? "slett" : "arkiver"}`,
+      declineText: "Avbryt",
+    });
+
+    if (!shouldDeleteOrArchive) return false;
 
     if (isTempDokrefId(selectedDokref.id)) {
       // Vedtaksinformasjonen er ikke tidligere publisert. Fjern fra front end
@@ -167,6 +180,8 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoId?: str
         dokumentasjonsreferanser: dokrefsCopy,
       });
     }
+
+    return true;
   };
 
   const updateDraftFromFeature = (vedtaksinfo: DokumentasjonsreferanseDTO) => {
