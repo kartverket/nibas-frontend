@@ -7,6 +7,7 @@ import { getDateInFriendlyString } from "./utils";
 import { useEffect } from "react";
 import { Feature } from "ol";
 import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
+import { isMatrikkelFeature } from "utils/features";
 
 const GrenseinformasjonPanel = ({ isOpen, className }: PanelProps) => {
   const { selectedFeatures } = useFeatureStyle();
@@ -19,8 +20,6 @@ const GrenseinformasjonPanel = ({ isOpen, className }: PanelProps) => {
       closeOverlayPanel();
     }
   }, [activeOverlayPanel, closeOverlayPanel, selectedFeatures.length]);
-
-  const isWFSGrense = selectedFeature?.getId()?.toString().includes("TEIGGRENSEWFS");
 
   const selectedProperties = selectedFeature?.getProperties() as FeatureProperties;
 
@@ -43,7 +42,7 @@ const GrenseinformasjonPanel = ({ isOpen, className }: PanelProps) => {
 
   return (
     selectedFeature &&
-    !isWFSGrense && (
+    !isMatrikkelFeature(selectedFeature) && (
       <SidePanel $isOpen={isOpen} className={className}>
         <PanelHeader onClose={closeOverlayPanel} subHeading={`Sist oppdatert: ${getSistOppdatert(selectedFeature)}`}>
           Informasjon om grense
