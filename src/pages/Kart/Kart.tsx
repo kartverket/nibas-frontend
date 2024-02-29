@@ -70,9 +70,10 @@ const KartTarget = styled.div`
   }
   /* dragzoom kan kun få style via vanlig css tydeligvis */
   .ol-dragzoom {
-    background: rgba(186, 215, 248, 0.25);
+    background: var(--kvib-colors-blue-200);
+    opacity: 0.25;
     border-radius: 6px;
-    border: solid 2px #2472c4;
+    border: solid 2px var(--kvib-colors-blue-700);
   }
 `;
 

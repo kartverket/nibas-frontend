@@ -5,7 +5,7 @@ import { getVectorLayers } from "utils/map/layers";
 import useModify from "./useModify";
 import useSelect from "./useSelect";
 import useDraw from "./useDraw";
-import useDragPan from "./useDragPan";
+import useDragInteractions from "./useDragInteractions";
 import useSelectPoint from "./useSelectPoint";
 import { useToolbar } from "contexts/ToolbarContext";
 import { pixelTolerance } from "./constants";
@@ -14,7 +14,7 @@ import { Collection } from "ol";
 
 const useInteractions = () => {
   const { modify } = useModify();
-  const { dragPan, dragZoom } = useDragPan();
+  const { dragPan, dragZoom } = useDragInteractions();
   const { select } = useSelect();
   const { draw } = useDraw();
   const { selectPoint } = useSelectPoint();
