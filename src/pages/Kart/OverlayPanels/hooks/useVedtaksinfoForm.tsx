@@ -67,7 +67,7 @@ const emptyVedtaksinformasjon: VedtakinfoForm = {
   hjemmel: "",
   leggTilInternreferanse: undefined,
   leggTilDokumentlenke: undefined,
-  vedtakGyldigFra: undefined,
+  vedtakGyldigFra: new Date(),
   vedtakGyldigTil: undefined,
 };
 
@@ -152,11 +152,13 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoId?: str
     const selectedDokref = oldDokrefs.find((dokref) => dokref.id == selectedVedtaksinfoId);
     if (!selectedDokref) return false;
 
-    const isDeleting = !!selectedDokref;
+    const isDeleting = isTempDokrefId(selectedDokref.id);
 
     const shouldDeleteOrArchive = await openAsync({
       title: `${isDeleting ? "Sletting" : "Arkivering"} av referanse`,
       description: `Er du sikker på at du ønsker å ${isDeleting ? "slette" : "arkivere"} referansen?`,
+      acceptText: `Ja, ${isDeleting ? "slett" : "arkiver"}`,
+      declineText: "Avbryt",
     });
 
     if (!shouldDeleteOrArchive) return false;

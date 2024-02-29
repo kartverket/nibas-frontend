@@ -2,7 +2,7 @@ import { IconButton, Text } from "@kvib/react";
 import { FormViewState, Referanse } from "./Vedtaksinformasjon";
 import { ReferanseCard } from "./ReferanseCard";
 import { useState } from "react";
-import { ReferanseItemsContainer, ReferanseCardWrapper } from "./VedtaksinfoBody";
+import { ReferanseCardWrapper } from "./VedtaksinfoBody";
 import { styled } from "styled-components";
 import { createUniqueIshValue } from "./util/vedtaksinfoHelperMethods";
 
@@ -78,6 +78,13 @@ export const ReferanserPaginated = ({ referanser, urlMode, deleteRef, formViewSt
     </ReferanseItemsContainer>
   );
 };
+
+const ReferanseItemsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+`;
 
 const PaginationControls = styled.div`
   display: flex;

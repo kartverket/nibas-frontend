@@ -75,10 +75,19 @@ export const VedtaksinfoDetaljer = ({
   };
 
   const isFormValidOnSubmit = (data: VedtakinfoForm) => {
-    if (data.vedtakGyldigTil && data.vedtakGyldigFra && data.vedtakGyldigFra > data.vedtakGyldigTil) {
-      setError("vedtakGyldigTil", {
-        message: 'Vedtakets "gyldig fra"-dato kan ikke overskride vedtakets "gyldig til"-dato.',
-      });
+    if (data.vedtakGyldigTil && data.vedtakGyldigFra) {
+      if (data.vedtakGyldigFra >= data.vedtakGyldigTil) {
+        setError("vedtakGyldigTil", {
+          message: "Gyldig til må være satt til en dato etter gyldig fra dato.",
+        });
+      }
+
+      if (new Date() >= data.vedtakGyldigTil) {
+        setError("vedtakGyldigTil", {
+          message: "Kan ikke sette gyldighetsdato til dagens dato eller tidligere.",
+        });
+      }
+
       return false;
     }
 

@@ -11,10 +11,6 @@ import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 import { EditingType, useEditAllGrenser } from "contexts/EditGrenserContext";
 import { TilhorighetField } from "./TilhorighetField";
 import { Vedtaksinformasjon } from "./Vedtaksinformasjon/Vedtaksinformasjon";
-import { isAdministrativGrense } from "utils/grenser";
-import { isFeatureMetadataEditable } from "utils/features";
-import { useFeatureStyle } from "contexts/FeatureStyleContext";
-import useIsGrenseinformasjonPanelDisabled from "../hooks/useIsGrenseInformasjonPanelDisabled";
 
 export type Inputs = {
   uuid: string;
@@ -44,7 +40,6 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
   const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
   const { getCurrentlyEditingType } = useEditAllGrenser();
-  const { featureIsArchived } = useFeatureStyle();
 
   const metadata = properties.metadata as Metadata;
 
