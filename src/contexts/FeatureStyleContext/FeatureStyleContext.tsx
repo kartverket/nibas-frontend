@@ -8,6 +8,8 @@ import useCustomStyles from "./useCustomStyles";
 import { Coordinate } from "ol/coordinate";
 import { Geometry } from "ol/geom";
 import { archivedSource } from "hooks/layers/constants";
+import { getFeatureIfExists } from "contexts/HistoryContext/utils";
+import { isFeatureDeadEnd } from "utils/map";
 
 export const FeatureStyleContext = createContext<FeatureStyleContextValue | undefined>(undefined);
 
@@ -19,6 +21,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
   const sammenslaaingStyleFunctions = useCustomStyles(grenseStyles.sammenslaaing);
   const archivedStyleFunctions = useCustomStyles(getArchiveLayerStyle);
   const dirtyStyleFunctions = useCustomStyles(grenseStyles.dirty);
+  const errorStyleFunctions = useCustomStyles(grenseStyles.error);
 
   // OBS! Rekkefølgen avgjør prioriteten til stilene, høyest i listen er høyest prioritet.
   const customStyles = useMemo(
@@ -27,8 +30,15 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       sammenslaaingStyleFunctions,
       archivedStyleFunctions,
       dirtyStyleFunctions,
+      errorStyleFunctions,
     ],
-    [archivedStyleFunctions, dirtyStyleFunctions, sammenslaaingOverlappingStyleFunctions, sammenslaaingStyleFunctions],
+    [
+      archivedStyleFunctions,
+      dirtyStyleFunctions,
+      errorStyleFunctions,
+      sammenslaaingOverlappingStyleFunctions,
+      sammenslaaingStyleFunctions,
+    ],
   );
 
   // Når en feature ikke er valgt lengre må vi avgjøre hvilken stil den skal ha
@@ -109,6 +119,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       "nygrense",
       "grensedeling",
     ];
+    const errorHistoryTypes: HistoryTypeValues[] = ["grense", "property", "nygrense", "grensedeling"];
 
     // Når vi lagrer blir history entries tømt, så vi lagrer stilene som er satt
     if (history.entries.length === 0) {
@@ -125,19 +136,32 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       .reduce(getFeatureIdsFromEntries, [])
       .flatMap((id) => id);
 
+    const errorFeatures = history.entries
+      .slice(0, history.index)
+      .filter((entry) => errorHistoryTypes.includes(entry.type))
+      .reduce(getFeatureIdsFromEntries, [])
+      .flatMap((id) => id)
+      .map((id) => getFeatureIfExists(id))
+      .filter((feature) => {
+        if (feature) return isFeatureDeadEnd(feature);
+      })
+      .map((feature) => feature?.getId()?.toString() || "");
+
     // Entries før index skal fargelegges basert på endringen som er gjort
     const dirtyFeatures = history.entries
       .slice(0, history.index)
       .filter((entry) => dirtyHistoryTypes.includes(entry.type))
       .reduce(getFeatureIdsFromEntries, [])
-      .flatMap((id) => id);
+      .flatMap((id) => id)
+      .filter((id) => !errorFeatures.includes(id));
 
-    const archivedFeatures = archivedSource.getFeatures().map((f) => f.getId() as string);
+    const archivedFeatures = archivedSource.getFeatures().map((f) => f.getId()?.toString() || "");
 
     // For å forhindre uendelig løkke
     if (
       dirtyStyleFunctions.customFeatureIds.length === dirtyFeatures.length &&
-      archivedStyleFunctions.customFeatureIds.length === archivedFeatures.length
+      archivedStyleFunctions.customFeatureIds.length === archivedFeatures.length &&
+      errorStyleFunctions.customFeatureIds.length === errorFeatures.length
     ) {
       return;
     }
@@ -146,7 +170,8 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     undoFeatureStyles(editFeatures);
     dirtyStyleFunctions.setCustomStyles(dirtyFeatures);
     archivedStyleFunctions.setCustomStyles(archivedFeatures);
-  }, [archivedStyleFunctions, customStyles, dirtyStyleFunctions, history, undoFeatureStyles]);
+    errorStyleFunctions.setCustomStyles(errorFeatures);
+  }, [archivedStyleFunctions, customStyles, dirtyStyleFunctions, errorStyleFunctions, history, undoFeatureStyles]);
 
   const clearFeatureStyles = () => {
     for (const customStyle of customStyles) {
@@ -174,6 +199,9 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
 
     addDirtyStyles: dirtyStyleFunctions.addCustomStyles,
     setAndSaveDirtyStyles: dirtyStyleFunctions.setAndSaveCustomStyles,
+
+    addErrorStyles: errorStyleFunctions.addCustomStyles,
+    setAndSaveErrorStyles: errorStyleFunctions.setAndSaveCustomStyles,
 
     addArchivedStyles: archivedStyleFunctions.addCustomStyles,
     setAndSaveArchivedStyles: archivedStyleFunctions.setAndSaveCustomStyles,
