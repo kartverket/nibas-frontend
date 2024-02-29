@@ -68,6 +68,12 @@ const KartTarget = styled.div`
   .ol-control {
     text-align: center;
   }
+  /* dragzoom kan kun få style via vanlig css tydeligvis */
+  .ol-dragzoom {
+    background: rgba(186, 215, 248, 0.25);
+    border-radius: 6px;
+    border: solid 2px #2472c4;
+  }
 `;
 
 const KartOverlay = styled.div`

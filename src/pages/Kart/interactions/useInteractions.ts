@@ -14,7 +14,7 @@ import { Collection } from "ol";
 
 const useInteractions = () => {
   const { modify } = useModify();
-  const { dragPan } = useDragPan();
+  const { dragPan, dragZoom } = useDragPan();
   const { select } = useSelect();
   const { draw } = useDraw();
   const { selectPoint } = useSelectPoint();
@@ -47,6 +47,7 @@ const useInteractions = () => {
     map.on("click", select);
     map.on("click", selectPoint);
     map.addInteraction(dragPan);
+    map.addInteraction(dragZoom);
     map.addInteraction(modify);
     map.addInteraction(draw);
 
@@ -60,12 +61,13 @@ const useInteractions = () => {
       map.un("click", select);
       map.un("click", selectPoint);
       map.removeInteraction(dragPan);
+      map.removeInteraction(dragZoom);
       map.removeInteraction(modify);
       map.removeInteraction(draw);
       snaps.forEach((snap) => map.removeInteraction(snap));
       hovers.forEach((hover) => map.removeInteraction(hover));
     };
-  }, [activeModeTools, dragPan, draw, modify, select, selectPoint]);
+  }, [activeModeTools, dragPan, dragZoom, draw, modify, select, selectPoint]);
 };
 
 export default useInteractions;
