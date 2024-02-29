@@ -6,7 +6,7 @@ import { addFeaturesToSource, getFeatureId, removeFeaturesFromSourceByIds } from
 import { useToast } from "@kvib/react";
 import { addArchivingEntryFromFeature } from "../OverlayPanels/GrenseinformasjonPanel/utils";
 import { useHistory } from "contexts/HistoryContext";
-import { getMatrikkelFeatures } from "utils/map/layers";
+import { clearMatrikkelLayer, getMatrikkelFeatures } from "utils/map/layers";
 import { map } from "../constants";
 import { useRef, useState } from "react";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
@@ -85,6 +85,14 @@ const ToolbarPopups = () => {
     }
   };
 
+  const handleClearMatrikkel = () => {
+    if (clearMatrikkelLayer())
+      toast({
+        status: "success",
+        title: "Teiggrensene ble fjernet fra kartet",
+      });
+  };
+
   return (
     <>
       {activeModeTools.includes("matrikkel") && (
@@ -92,7 +100,9 @@ const ToolbarPopups = () => {
           text="Hent og vis eiendomsgrenser fra matrikkelen"
           subtext="Grensene hentes ut basert på kartutsnittet du ser på. Flytt kartet til hvor du ønsker å hente frem eiendomsgrensene."
           buttonText="Hent grenser"
+          secondaryButtonText="Nullstill"
           onClick={handleMatrikkel}
+          secondaryOnClick={handleClearMatrikkel}
           onClose={resetModeTools}
           isDisabled={matrikkelIsLoading}
           isLoading={matrikkelIsLoading}

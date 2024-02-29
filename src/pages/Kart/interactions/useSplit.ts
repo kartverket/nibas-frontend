@@ -57,7 +57,6 @@ const useSplit = () => {
           );
 
           const properties = oldFeature.getProperties() as FeatureProperties;
-          addArchivedStyles([oldFeatureId]);
           oldFeature.setProperties({ ...properties, shouldArchive: true });
           addFeaturesToSource("edit", [newFeature1, newFeature2]);
           removeFeaturesFromSourceByIds("edit", [oldFeatureId]);

@@ -1,9 +1,11 @@
 import useNibasApi from "../useNibasApi";
-import { sortGrenserAlphabetically } from "utils/language/language";
 
 const useFylker = (shouldFetch = true) => {
   const { data: fylker, ...rest } = useNibasApi(shouldFetch ? "/v1/fylker" : null);
-  const sortedFylker = sortGrenserAlphabetically(fylker);
+
+  const sortedFylker = fylker?.sort((a, b) => {
+    return Number(a.fylkesnummer.kodeverdi) - Number(b.fylkesnummer.kodeverdi);
+  });
 
   return {
     fylker: sortedFylker,

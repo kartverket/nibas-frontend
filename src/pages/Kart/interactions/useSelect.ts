@@ -8,7 +8,7 @@ import { useToast } from "@kvib/react";
 import { useEffect } from "react";
 import { usePrevious } from "hooks/usePrevious";
 import { useGetFeatures } from "./utils";
-import { isFeatureEditable } from "utils/features";
+import { isFeatureEditable, isMatrikkelFeature } from "utils/features";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -85,7 +85,7 @@ const useSelect = () => {
 
       if (activeTool === "grenseinfo") {
         // Dersom den valgte grensen er en WFS-grense skal vi vise et eget panel for det
-        if (clickedFeature?.getId()?.toString().includes("TEIGGRENSEWFS")) {
+        if (isMatrikkelFeature(clickedFeature)) {
           overlayPopup.setPosition(getOverlayPosition(clickedFeature));
         } else {
           overlayPopup.setPosition(undefined);

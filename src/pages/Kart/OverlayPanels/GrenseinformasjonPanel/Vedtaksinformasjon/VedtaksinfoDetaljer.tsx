@@ -7,6 +7,7 @@ import { mapFromFormToApi, useVedtaksinfoForm } from "../../hooks/useVedtaksinfo
 import { Metadata } from "types/api";
 import { useState } from "react";
 import { PanelHeader } from "../../Panel";
+import { isTempDokrefId } from "./util/vedtaksinfoHelperMethods";
 
 type DetaljerProps = {
   setFormViewState: React.Dispatch<React.SetStateAction<FormViewState>>;
@@ -14,7 +15,7 @@ type DetaljerProps = {
   feature: Feature;
   isOpen: boolean;
   onClose: () => void;
-  selectedVedtaksinfoIndex?: number;
+  selectedVedtaksinfoId?: string;
 };
 
 export const VedtaksinfoDetaljer = ({
@@ -23,7 +24,7 @@ export const VedtaksinfoDetaljer = ({
   isOpen,
   onClose,
   feature,
-  selectedVedtaksinfoIndex,
+  selectedVedtaksinfoId,
 }: DetaljerProps) => {
   const [dokref, setDokref] = useState<Referanse[] | undefined>(undefined);
   const [internref, setInternref] = useState<Referanse[] | undefined>(undefined);
@@ -40,7 +41,7 @@ export const VedtaksinfoDetaljer = ({
     deleteOrArchive,
     setError,
     clearErrors,
-  } = useVedtaksinfoForm(feature, selectedVedtaksinfoIndex);
+  } = useVedtaksinfoForm(feature, selectedVedtaksinfoId);
 
   const deleteDokref = (index: number) => {
     const dokrefCopy = structuredClone(dokref);
@@ -62,11 +63,11 @@ export const VedtaksinfoDetaljer = ({
 
   const updateFeature = (data: VedtakinfoForm) => {
     if (isDirty) {
+      const postValues = mapFromFormToApi(data, dokref, internref);
       toast({
         status: "success",
-        title: `Vedtaksinformasjonen er ${selectedVedtaksinfoIndex === undefined ? "lagt til" : "oppdatert"}`,
+        title: `Vedtaksinformasjonen er ${postValues.id ? "oppdatert" : "lagt til"}`,
       });
-      const postValues = mapFromFormToApi(data, dokref, internref);
       updateDraftFromFeature(postValues);
     }
   };
@@ -105,14 +106,16 @@ export const VedtaksinfoDetaljer = ({
 
   if (!metadata) return;
 
-  if (isOpen && selectedVedtaksinfoIndex !== undefined) {
-    const vedtaksinformasjon = metadata?.dokumentasjonsreferanser?.at(selectedVedtaksinfoIndex);
-
-    if (dokref === undefined) {
-      setDokref(vedtaksinformasjon?.dokumentlenker || []);
-    }
-    if (internref === undefined) {
-      setInternref(vedtaksinformasjon?.internReferanserKartverket || []);
+  if (isOpen && selectedVedtaksinfoId !== undefined) {
+    const dokumentasjonsRef = metadata.dokumentasjonsreferanser;
+    if (dokumentasjonsRef) {
+      const vedtaksinformasjon = dokumentasjonsRef.find((ref) => ref.id === selectedVedtaksinfoId);
+      if (dokref === undefined) {
+        setDokref(vedtaksinformasjon?.dokumentlenker || []);
+      }
+      if (internref === undefined) {
+        setInternref(vedtaksinformasjon?.internReferanserKartverket || []);
+      }
     }
   }
 
@@ -145,7 +148,7 @@ export const VedtaksinfoDetaljer = ({
               setInternref={setInternref}
               deleteInternref={deleteInternref}
               deleteDokref={deleteDokref}
-              vedtaksinfoIndex={selectedVedtaksinfoIndex}
+              vedtaksinfoId={selectedVedtaksinfoId}
             />
           </ModalBody>
 
@@ -160,7 +163,7 @@ export const VedtaksinfoDetaljer = ({
                 deleteOrArchive();
                 closeModal();
               }}
-              vedtaksinfoIsPersisted={isVedtakPersisted(selectedVedtaksinfoIndex, metadata)}
+              vedtaksinfoIsPersisted={isVedtakPersisted(selectedVedtaksinfoId, metadata)}
             />
           </VedtakFooterContainer>
         </form>
@@ -297,10 +300,16 @@ const VedtakFooterRight = styled.div`
   justify-content: end;
 `;
 
-function isVedtakPersisted(selectedVedtaksinfoIndex: number | undefined, metadata: Metadata) {
-  if (selectedVedtaksinfoIndex === undefined) return false;
-  else if (metadata.dokumentasjonsreferanser === undefined) return false;
-  else if (metadata.dokumentasjonsreferanser.at(selectedVedtaksinfoIndex)?.id === undefined) return false;
+function isVedtakPersisted(selectedVedtaksinfoId: string | undefined, metadata: Metadata) {
+  if (selectedVedtaksinfoId === undefined) return false;
+  if (metadata.dokumentasjonsreferanser === undefined) return false;
+
+  const dokref = metadata.dokumentasjonsreferanser.find((ref) => ref.id === selectedVedtaksinfoId);
+
+  if (dokref) {
+    return !isTempDokrefId(dokref.id);
+  }
+
   return true;
 }
 

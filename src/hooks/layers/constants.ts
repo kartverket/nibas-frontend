@@ -39,6 +39,8 @@ export const grenserLayers = {
   // ingen source betyr at source settes async
   matrikkel: new VectorLayer({
     source: new VectorSource(),
+    style: grenseStyle("matrikkel"),
+    declutter: true,
   }),
   fylke: new VectorLayer({
     source: new VectorSource(),

@@ -3,9 +3,11 @@ import { HistoryEntry, HistoryTypeValues, useHistory } from "contexts/HistoryCon
 import { FeatureStyleContextValue, SelectedFeatures } from "./types";
 import { useSelectStyles } from "./useSelectStyles";
 import { getArchiveLayerStyle, grenseStyles, setFeatureStyle } from "utils/map/layerStyles";
-import { FeatureLike } from "ol/Feature";
+import Feature, { FeatureLike } from "ol/Feature";
 import useCustomStyles from "./useCustomStyles";
 import { Coordinate } from "ol/coordinate";
+import { Geometry } from "ol/geom";
+import { archivedSource } from "hooks/layers/constants";
 import { getFeatureIfExists } from "contexts/HistoryContext/utils";
 import { isFeatureDeadEnd } from "utils/map";
 
@@ -79,6 +81,13 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       if (change.to && !accumulator.some((value) => value.includes(change.id))) {
         featureIds.push(change.id);
       }
+
+      //change.id har den gamle grensens ID, vi trenger de to nye grensene!
+      if (entry.type === "grensedeling") {
+        const changesTo = change.to as Feature<Geometry>[];
+        const idsToAppend = changesTo?.map((feature) => feature.getId() as string);
+        if (idsToAppend) featureIds.push(...idsToAppend);
+      }
     });
     accumulator.push(featureIds);
     return accumulator;
@@ -103,8 +112,13 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
   );
 
   useEffect(() => {
-    const dirtyHistoryTypes: HistoryTypeValues[] = ["grense", "property", "grensetilhorighetendring", "nygrense"];
-    const archivedHistoryTypes: HistoryTypeValues[] = ["grensearkivering", "grensedeling"];
+    const dirtyHistoryTypes: HistoryTypeValues[] = [
+      "grense",
+      "property",
+      "grensetilhorighetendring",
+      "nygrense",
+      "grensedeling",
+    ];
     const errorHistoryTypes: HistoryTypeValues[] = ["grense", "property", "nygrense", "grensedeling"];
 
     // Når vi lagrer blir history entries tømt, så vi lagrer stilene som er satt
@@ -141,12 +155,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       .flatMap((id) => id)
       .filter((id) => !errorFeatures.includes(id));
 
-    const archivedFeatures = history.entries
-      .slice(0, history.index)
-      .filter((entry) => archivedHistoryTypes.includes(entry.type))
-      .reduce(getFeatureIdsFromEntries, [])
-      .flatMap((id) => id)
-      .filter((id) => !errorFeatures.includes(id));
+    const archivedFeatures = archivedSource.getFeatures().map((f) => f.getId()?.toString() || "");
 
     // For å forhindre uendelig løkke
     if (
