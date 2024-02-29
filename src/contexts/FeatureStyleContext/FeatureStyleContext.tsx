@@ -109,7 +109,6 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       "nygrense",
       "grensedeling",
     ];
-    const archivedHistoryTypes: HistoryTypeValues[] = ["grensearkivering", "grensedeling"];
 
     // Når vi lagrer blir history entries tømt, så vi lagrer stilene som er satt
     if (history.entries.length === 0) {
