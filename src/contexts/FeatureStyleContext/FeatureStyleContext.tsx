@@ -76,7 +76,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       if (entry.type === "grensedeling") {
         const changesTo = change.to as Feature<Geometry>[];
         const idsToAppend = changesTo?.map((feature) => feature.getId() as string);
-        idsToAppend && featureIds.push(...idsToAppend);
+        if (idsToAppend) featureIds.push(...idsToAppend);
       }
     });
     accumulator.push(featureIds);
