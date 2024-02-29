@@ -106,7 +106,12 @@ const Toolbar = () => {
             isActive={activeModeTools.includes("move")}
             isDisabled={!panningEnabled}
             aria-label="Panorer i kartet"
-            tooltip={{ text: "Panorer i kartet", shortcut: "move", holdButton: "ALT-tasten" }}
+            tooltip={{
+              text: "Panorer i kartet",
+              shortcut: "move",
+              holdButton: "ALT-tasten",
+              additionalInfo: "Hold inne Shift + marker i kartet for å zoome",
+            }}
           >
             Panorer
           </ToolbarButton>
