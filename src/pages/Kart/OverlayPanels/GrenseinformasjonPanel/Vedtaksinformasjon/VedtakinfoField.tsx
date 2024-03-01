@@ -10,8 +10,7 @@ type FieldProps = {
   value?: string;
   children: React.ReactNode;
   isRequired?: boolean;
-  errors: FieldError | undefined;
-  errorMessage?: string | undefined;
+  error: FieldError | undefined;
   maxWidth?: string;
 };
 
@@ -22,13 +21,12 @@ export const VedtakinfoField = ({
   value,
   children,
   isRequired = false,
-  errors,
-  errorMessage = undefined,
+  error,
   maxWidth = "290px",
 }: FieldProps) => {
   return (
-    <FormControl isRequired={isRequired}>
-      <VedtakinfoRow tooltipLabel={tooltipLabel} name={title} errors={errors} errorMessage={errorMessage}>
+    <FormControl isRequired={formViewState !== "viewing" ? isRequired : false} isInvalid={!!error}>
+      <VedtakinfoRow isRequired={isRequired} tooltipLabel={tooltipLabel} name={title} error={error}>
         {formViewState === "viewing" ? (
           <Text paddingTop={"8px"} paddingBottom={"8px"} maxWidth={maxWidth}>
             {value}

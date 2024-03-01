@@ -60,7 +60,7 @@ export const ReferanseInput = ({
         name={registerName}
         render={({ field }) => {
           return (
-            <VedtakinfoRow tooltipLabel={tooltipLabel} name={title} errors={errors}>
+            <VedtakinfoRow tooltipLabel={tooltipLabel} name={title} error={errors}>
               <Input
                 id={registerName}
                 placeholder={placeholder}
@@ -96,8 +96,9 @@ export const ReferanseInput = ({
 };
 
 const InputContainer = styled.div`
-  padding-top: 12px;
-  padding-bottom: 12px;
+  display: flex;
+  gap: 8px;
+  flex-direction: column;
 `;
 const inputIsValid = (input: string, pattern?: RegExp) => {
   if (!pattern) return true;

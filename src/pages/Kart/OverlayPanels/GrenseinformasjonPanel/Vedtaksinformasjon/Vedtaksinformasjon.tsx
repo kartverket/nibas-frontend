@@ -2,8 +2,11 @@ import { Button, Icon, Text, Tooltip, useDisclosure } from "@kvib/react";
 import { styled } from "styled-components";
 import { Feature } from "ol";
 import { VedtaksinfoDetaljer } from "./VedtaksinfoDetaljer";
-import { Metadata } from "types/api";
+import { FeatureProperties, Metadata } from "types/api";
 import { useState } from "react";
+import useIsGrenseinformasjonPanelDisabled from "../../hooks/useIsGrenseInformasjonPanelDisabled";
+import { isAdministrativGrense } from "utils/grenser";
+import { GrenseType } from "hooks/layers/types";
 
 type Referanse = {
   beskrivelse: string;
@@ -42,8 +45,11 @@ export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
   const [formViewState, setFormViewState] = useState<FormViewState>("creating");
   const [iconHovered, setIconHovered] = useState(false);
   const [selectedVedtaksinfoId, setSelectedVedtaksinfoId] = useState<string | undefined>(undefined);
-  const metadata = feature.getProperties()?.metadata as Metadata | undefined;
+  const properties = feature.getProperties() as FeatureProperties;
+  const metadata = properties.metadata as Metadata | undefined;
   const vedtaksinfoCollection = metadata?.dokumentasjonsreferanser;
+
+  const isGrenseinfoPanelDisabled = useIsGrenseinformasjonPanelDisabled(feature, properties);
 
   const closeModal = () => {
     setFormViewState("creating");
@@ -51,7 +57,7 @@ export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
     onClose();
   };
 
-  if (!metadata) return;
+  if (!metadata || !isAdministrativGrense(properties.type as GrenseType)) return;
 
   return (
     <>
@@ -69,6 +75,7 @@ export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
           variant="secondary"
           rightIcon="add"
           colorScheme="blue"
+          isDisabled={isGrenseinfoPanelDisabled}
           aria-label="Legg til dokumentreferanse"
           onClick={() => {
             setFormViewState("creating");
@@ -99,6 +106,7 @@ export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
         isOpen={isOpen}
         onClose={closeModal}
         feature={feature}
+        isDisabled={isGrenseinfoPanelDisabled}
       />
     </>
   );
@@ -132,6 +140,7 @@ const VedtaksinfoContent = styled.div`
 
 const VedtaksinfoTitle = styled.div`
   flex: 1;
+  overflow: hidden;
 `;
 
 const OversiktHeader = styled.div`
