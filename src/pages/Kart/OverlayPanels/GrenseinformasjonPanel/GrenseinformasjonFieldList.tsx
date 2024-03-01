@@ -11,9 +11,6 @@ import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 import { EditingType, useEditAllGrenser } from "contexts/EditGrenserContext";
 import { TilhorighetField } from "./TilhorighetField";
 import { Vedtaksinformasjon } from "./Vedtaksinformasjon/Vedtaksinformasjon";
-import { isAdministrativGrense } from "utils/grenser";
-import { isFeatureEditable } from "utils/features";
-import { useFeatureStyle } from "contexts/FeatureStyleContext";
 
 export type Inputs = {
   uuid: string;
@@ -43,7 +40,6 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
   const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
   const { getCurrentlyEditingType } = useEditAllGrenser();
-  const { featureIsArchived } = useFeatureStyle();
 
   const metadata = properties.metadata as Metadata;
 
@@ -67,12 +63,6 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
 
     return [];
   };
-
-  const shouldDisplayDokumentasjonsreferanse =
-    isFeatureEditable(feature, featureIsArchived(feature)) &&
-    isAdministrativGrense(properties.type as GrenseType) &&
-    !gyldigTil &&
-    (getCurrentlyEditingType() === "grunnkrets" || getCurrentlyEditingType() == "stemmekrets");
 
   return (
     <Container>
@@ -207,7 +197,8 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
         fieldLabel="Ekstra informasjon"
         renderItem={(register) => <Textarea placeholder="Fyll inn ekstra informasjon" {...register} />}
       />
-      {shouldDisplayDokumentasjonsreferanse && <Vedtaksinformasjon feature={feature} />}
+
+      <Vedtaksinformasjon feature={feature} />
     </Container>
   );
 };

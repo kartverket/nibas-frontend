@@ -9,6 +9,7 @@ import {
   ModalOverlay,
 } from "@kvib/react";
 import { ConfirmationModalProps } from "contexts/ConfirmationModalContext";
+import { styled } from "styled-components";
 
 const ConfirmationModal = ({
   title,
@@ -25,15 +26,19 @@ const ConfirmationModal = ({
         <ModalHeader>{title}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>{description}</ModalBody>
-        <ModalFooter>
+        <ModalFooterWithSpacing>
           <Button variant="ghost" onClick={onDecline}>
             {declineText ?? "Nei"}
           </Button>
           <Button onClick={onAccept}>{acceptText ?? "Ja"}</Button>
-        </ModalFooter>
+        </ModalFooterWithSpacing>
       </ModalContent>
     </Modal>
   );
 };
+
+const ModalFooterWithSpacing = styled(ModalFooter)`
+  gap: 8px;
+`;
 
 export default ConfirmationModal;
