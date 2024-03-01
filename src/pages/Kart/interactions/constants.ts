@@ -1,3 +1,3 @@
-export const pixelTolerance = 20;
+export const pixelTolerance = 10;
 
 export const previousCoordinateKey = "previousCoordinates";
