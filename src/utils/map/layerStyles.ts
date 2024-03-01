@@ -109,6 +109,7 @@ export const grenseStyles = {
   edit: lineAndPointStyles({ color: "#000000" }),
   select: lineAndPointStyles({ color: "#D163E6FF" }),
   dirty: lineAndPointStyles({ color: "#00CB85FF" }),
+  error: lineAndPointStyles({ color: "#FF0000FF" }),
   matrikkel: lineAndPointStyles({ color: "#C0AFFBFF", pointRadius: 1.5, endpointRadius: 2 }),
   sammenslaaing: lineAndPointStyles({ color: "#D3C439B3" }),
   flate: flateStyles,
