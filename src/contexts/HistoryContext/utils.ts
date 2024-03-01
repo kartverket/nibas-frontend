@@ -32,7 +32,7 @@ const getFeatureFromChange = (change: HistoryChange<MinimalGrense>, direction: H
   return existingFeature;
 };
 
-const getFeatureIfExists = (featureId: string) => {
+export const getFeatureIfExists = (featureId: string) => {
   return editSource.getFeatureById(featureId) as Feature<Geometry> | null;
 };
 
