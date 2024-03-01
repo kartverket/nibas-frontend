@@ -96,7 +96,6 @@ export const ReferanseInput = ({
 };
 
 const InputContainer = styled.div`
-  padding: 0 0 12px 0;
   display: flex;
   gap: 8px;
   flex-direction: column;
