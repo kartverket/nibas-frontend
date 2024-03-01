@@ -3,10 +3,8 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import VectorSource from "ol/source/Vector";
 import { LineString } from "ol/geom";
-import { Coordinate, equals } from "ol/coordinate";
+import { Coordinate } from "ol/coordinate";
 import { pixelTolerance } from "pages/Kart/interactions/constants";
-import { grenserLayers } from "hooks/layers/constants";
-import { LayerId } from "hooks/layers/types";
 
 export const resetMapView = () => {
   const view = map.getView();
@@ -76,40 +74,6 @@ export const getZoomMode = (isEditing: boolean, hasEditingInMap: boolean): "edit
   }
 
   return "view";
-};
-
-/** Tar inn en grense og prøver å avgjøre om den er koblet til andre grenser i begge ender */
-export const isFeatureDeadEnd = (feature: Feature<Geometry>) => {
-  const geometry = feature.getGeometry() as LineString;
-  const coordinates = geometry?.getCoordinates() as Coordinate[];
-
-  const head = coordinates[0];
-  const tail = coordinates[coordinates.length - 1];
-
-  const disallowedLayers: LayerId[] = ["matrikkel", "archived"];
-  const allFeatureEndpointCoordinates = Object.entries(grenserLayers)
-    .flatMap(([key, layer]) => {
-      if (disallowedLayers.includes(key as LayerId)) return [];
-
-      const source = layer.getSource();
-      if (source) return source.getFeatures();
-
-      return [];
-    })
-    .flatMap((f) => {
-      // Vi burde ikke legge til featuren vi ønsker å sjekke sine koordinater
-      if (feature.getId() === f.getId()) return [];
-
-      const geom = f.getGeometry();
-      if (geom && geom instanceof LineString) return [geom.getFirstCoordinate(), geom.getLastCoordinate()];
-
-      return [];
-    });
-
-  const isHeadConnected = allFeatureEndpointCoordinates.find((coord) => equals(head, coord));
-  const isTailConnected = allFeatureEndpointCoordinates.find((coord) => equals(tail, coord));
-
-  return !(isHeadConnected && isTailConnected);
 };
 
 /** Euklidisk avstand mellom to koordinater i piksler */

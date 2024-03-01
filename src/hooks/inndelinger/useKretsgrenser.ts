@@ -13,10 +13,16 @@ import { removeFeaturesFromSourceByIds, getFeatureId, getRepresentasjonspunktId 
 import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
 import { stemmekretsgrenserFetcher } from "api/stemmekrets";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import { getAllVisibleFeatures, getZoomMode, isFeatureDeadEnd, zoomToFeatures } from "utils/map";
+import { getAllVisibleFeatures, getZoomMode, zoomToFeatures } from "utils/map";
 import { getLayerById } from "utils/map/layers";
 import { GrunnkretsResponse, StemmekretsResponse } from "../../types/api";
 import { GeoJSONFeature } from "ol/format/GeoJSON";
+import {
+  FeatureIdWithEndpoints,
+  getAllFeatureEndPointCoordinates,
+  getFeaturesConnectedToFeatureAtEndpoints,
+  isFeatureDeadEnd,
+} from "utils/features";
 
 const getKretserByKommuneUrl = (type: Kretstype) => {
   if (type === "grunnkrets") {
@@ -95,21 +101,34 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     const archivedFeatureIds: string[] = [];
     const errorFeatureIds: string[] = [];
 
+    const allFeatureEndpoints = getAllFeatureEndPointCoordinates(["matrikkel", "archived"]).filter(
+      (featureEndpoint) => featureEndpoint !== null,
+    ) as FeatureIdWithEndpoints[];
+
     if (features.length > 0 && endredeFeatures.length > 0) {
       for (const endretFeature of endredeFeatures) {
         const id = endretFeature.id;
         const actualFeature = features.find((feature) => feature.getId() == id);
-        if (id) {
+        if (id && actualFeature) {
           // Avgjør hvilken type endringsfarge featuren skal ha
           if (endretFeature.properties.shouldArchive) {
             archivedFeatureIds.push(id.toString());
-          } else if (actualFeature && isFeatureDeadEnd(actualFeature)) {
+
+            const connectedFeatures = getFeaturesConnectedToFeatureAtEndpoints(actualFeature);
+
+            for (const connectedFeature of connectedFeatures) {
+              const connectedFeatureId = connectedFeature.getId()?.toString();
+              if (!connectedFeatureId) continue;
+              if (isFeatureDeadEnd(connectedFeature, allFeatureEndpoints)) errorFeatureIds.push(connectedFeatureId);
+            }
+          } else if (isFeatureDeadEnd(actualFeature, allFeatureEndpoints)) {
             errorFeatureIds.push(id.toString());
           } else {
             dirtyFeatureIds.push(id.toString());
           }
         }
       }
+
       setAndSaveDirtyStyles(dirtyFeatureIds);
       setAndSaveArchivedStyles(archivedFeatureIds);
       setAndSaveErrorStyles(errorFeatureIds);

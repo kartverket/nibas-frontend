@@ -8,8 +8,13 @@ import useCustomStyles from "./useCustomStyles";
 import { Coordinate } from "ol/coordinate";
 import { Geometry } from "ol/geom";
 import { archivedSource } from "hooks/layers/constants";
-import { getFeatureIfExists } from "contexts/HistoryContext/utils";
-import { isFeatureDeadEnd } from "utils/map";
+import {
+  FeatureIdWithEndpoints,
+  getAllFeatureEndPointCoordinates,
+  getFeatureIfExistsInAnyLayer,
+  getFeaturesConnectedToFeatureAtEndpoints,
+  isFeatureDeadEnd,
+} from "utils/features";
 
 export const FeatureStyleContext = createContext<FeatureStyleContextValue | undefined>(undefined);
 
@@ -93,6 +98,28 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     return accumulator;
   };
 
+  const getAffectedFeaturesForErrorEntries = (accumulator: Feature<Geometry>[][], entry: HistoryEntry) => {
+    const changes = entry.changes;
+
+    for (const change of changes) {
+      const feature = getFeatureIfExistsInAnyLayer(change.id);
+
+      if (!feature) continue;
+
+      if (entry.type === "nygrense" || entry.type === "grense") {
+        accumulator.push([feature]);
+        continue;
+      }
+
+      if (entry.type === "grensearkivering") {
+        accumulator = accumulator.concat(getFeaturesConnectedToFeatureAtEndpoints(feature));
+        continue;
+      }
+    }
+
+    return accumulator;
+  };
+
   const undoFeatureStyles = useCallback(
     (featureIds: string[]) => {
       for (const featureId of featureIds) {
@@ -119,7 +146,8 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       "nygrense",
       "grensedeling",
     ];
-    const errorHistoryTypes: HistoryTypeValues[] = ["grense", "property", "nygrense", "grensedeling"];
+
+    const errorHistoryTypes: HistoryTypeValues[] = ["grense", "nygrense", "grensearkivering"];
 
     // Når vi lagrer blir history entries tømt, så vi lagrer stilene som er satt
     if (history.entries.length === 0) {
@@ -130,22 +158,19 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       return;
     }
 
-    // Alle entries etter index (angrede endringer) skal tilbakestilles
-    const editFeatures = history.entries
-      .slice(history.index)
-      .reduce(getFeatureIdsFromEntries, [])
-      .flatMap((id) => id);
+    const allFeatureEndpoints = getAllFeatureEndPointCoordinates(["matrikkel", "archived"]).filter(
+      (featureEndpoint) => featureEndpoint !== null,
+    ) as FeatureIdWithEndpoints[];
 
     const errorFeatures = history.entries
       .slice(0, history.index)
       .filter((entry) => errorHistoryTypes.includes(entry.type))
-      .reduce(getFeatureIdsFromEntries, [])
-      .flatMap((id) => id)
-      .map((id) => getFeatureIfExists(id))
+      .reduce(getAffectedFeaturesForErrorEntries, [])
+      .flat()
       .filter((feature) => {
-        if (feature) return isFeatureDeadEnd(feature);
+        if (feature) return isFeatureDeadEnd(feature, allFeatureEndpoints);
       })
-      .map((feature) => feature?.getId()?.toString() || "");
+      .map((feature) => feature.getId()?.toString() || "");
 
     // Entries før index skal fargelegges basert på endringen som er gjort
     const dirtyFeatures = history.entries
@@ -166,8 +191,14 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       return;
     }
 
+    // Først må vi fjerne alle satte styles, slik at vi ikke må beregne oss til en differense
+    const allStyledFeatures = dirtyStyleFunctions.customFeatureIds
+      .concat(archivedStyleFunctions.customFeatureIds)
+      .concat(errorStyleFunctions.customFeatureIds);
+
+    undoFeatureStyles(allStyledFeatures);
+
     // Obs: sammenslåing skal egentlig være her også, men den lagres umiddelbart og kan uansett ikke angres
-    undoFeatureStyles(editFeatures);
     dirtyStyleFunctions.setCustomStyles(dirtyFeatures);
     archivedStyleFunctions.setCustomStyles(archivedFeatures);
     errorStyleFunctions.setCustomStyles(errorFeatures);
