@@ -8,11 +8,11 @@ const useIsGrenseinformasjonPanelDisabled = (feature: Feature) => {
 
   const isMetadataEditable = isFeatureMetadataEditable(feature, featureIsArchived(feature));
 
+  if (!isMetadataEditable) return true;
+
   const isFeatureInEditLayer = editSource.getFeatures().some((editFeature) => editFeature.getId() === feature.getId());
 
-  const canEdit = isMetadataEditable && isFeatureInEditLayer;
-
-  return !canEdit;
+  return !isFeatureInEditLayer;
 };
 
 export default useIsGrenseinformasjonPanelDisabled;
