@@ -14,7 +14,10 @@ const useIsGrenseinformasjonPanelDisabled = (feature: Feature, properties: Featu
 
   const kretsStatusTilFeature = kretsStatuser[featureInndelingsKontekst.id];
 
-  const canEdit = isFeatureMetadataEditable(feature, featureIsArchived(feature)) && kretsStatusTilFeature.editing;
+  const canEdit =
+    kretsStatusTilFeature &&
+    isFeatureMetadataEditable(feature, featureIsArchived(feature)) &&
+    kretsStatusTilFeature.editing;
 
   return !canEdit;
 };

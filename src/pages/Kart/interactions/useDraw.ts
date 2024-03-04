@@ -20,6 +20,7 @@ import { useGetFeatures } from "./utils";
 import { FeatureLike } from "ol/Feature";
 import { Coordinate, equals } from "ol/coordinate";
 import { setDefaultFeatureProperties } from "utils/features";
+import { map } from "../constants";
 
 const useDraw = () => {
   const { activeTool, activeModeTools } = useToolbar();
@@ -147,6 +148,25 @@ const useDraw = () => {
       draw.un("drawend", onDrawEnd);
     };
   }, [addHistoryEntry, draw, getCurrentlyEditingType, openOverlayPanel, selectFeatures, selectedFeatures, toast]);
+
+  useEffect(() => {
+    const mapViewport = map.getViewport();
+
+    const handleMouseMove = () => {
+      mapViewport.style.cursor = "crosshair";
+    };
+
+    if (activeTool == "draw" && !activeModeTools.includes("move")) {
+      map.on("pointermove", handleMouseMove);
+    } else {
+      mapViewport.style.cursor = "";
+    }
+
+    return () => {
+      map.un("pointermove", handleMouseMove);
+      mapViewport.style.cursor = "";
+    };
+  }, [activeModeTools, activeTool]);
 
   return { draw };
 };
