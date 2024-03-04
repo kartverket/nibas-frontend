@@ -1,5 +1,5 @@
 import { GrunnkretsResponse } from "../../types/api";
-import { fetcherWithToken, getIdFromEntity } from "utils/api";
+import { fetcherWithToken } from "utils/api";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import useSWRImmutable from "swr/immutable";
 import useNibasApi from "hooks/useNibasApi";
@@ -18,26 +18,15 @@ export const useGrunnkretser = (grunnkretsId: string[]) => {
   return useSWRImmutable(grunnkretsId.length > 0 ? [grunnkretsId, tokenHolderFunc()?.token] : null, grunnkretsFetcher);
 };
 
-export const useKommuneGrunnkretserRef = (kommuneId: string | undefined) => {
+export const useKommuneGrunnkretser = (kommuneId: string | undefined) => {
   return useNibasApi(kommuneId ? "/v1/kommuner/{id}/grunnkretser" : null, {
     id: kommuneId!,
   });
 };
 
-export const useKommuneGrunnkretser = (kommuneId: string) => {
-  const { tokenHolderFunc } = useAuthenticationFlow();
-  const { data: grunnkretser } = useKommuneGrunnkretserRef(kommuneId);
-
-  const grunnkretsIds = grunnkretser?.map(getIdFromEntity) || [];
-  return useSWRImmutable(
-    grunnkretsIds.length > 0 ? [grunnkretsIds, tokenHolderFunc()?.token] : null,
-    grunnkretsFetcher,
-  );
-};
-
 export const useToKommunerGrunnkretser = (kommuneAId: string | undefined, kommuneBId: string | undefined) => {
-  const { data: grunnkretserA, isLoading: k1Loading } = useKommuneGrunnkretserRef(kommuneAId);
-  const { data: grunnkretserB, isLoading: k2Loading } = useKommuneGrunnkretserRef(kommuneBId);
+  const { data: grunnkretserA, isLoading: k1Loading } = useKommuneGrunnkretser(kommuneAId);
+  const { data: grunnkretserB, isLoading: k2Loading } = useKommuneGrunnkretser(kommuneBId);
   return {
     kommuneA: grunnkretserA,
     kommuneB: grunnkretserB,

@@ -40,10 +40,10 @@ const grenseStyle =
   (grenseId: GrenseId): StyleFunction =>
   (feature) => [...getLayerStyle(feature, grenseId, false), getPointOverlayStyle(feature)];
 
-const createVectorLayer = (id: keyof typeof grenserLayers, style?: StyleLike, source?: VectorSource) => {
+const createVectorLayer = (id: GrenseId, source?: VectorSource) => {
   const newLayer = new VectorLayer({
     source: source ?? new VectorSource(),
-    style,
+    style: grenseStyle(id),
     declutter: true,
   });
   newLayer.set("id", id);
@@ -53,13 +53,13 @@ const createVectorLayer = (id: keyof typeof grenserLayers, style?: StyleLike, so
 
 export const grenserLayers: Record<GrenseId, VectorLayer<VectorSource>> = {
   matrikkel: createVectorLayer("matrikkel"),
-  fylke: createVectorLayer("fylke", grenseStyle("fylke")),
-  kommune: createVectorLayer("kommune", grenseStyle("kommune")),
-  nasjon: createVectorLayer("nasjon", grenseStyle("nasjon")),
-  grunnkrets: createVectorLayer("grunnkrets", grenseStyle("grunnkrets")),
-  stemmekrets: createVectorLayer("stemmekrets", grenseStyle("stemmekrets")),
-  archived: createVectorLayer("archived", grenseStyle("archived"), archivedSource),
-  edit: createVectorLayer("edit", grenseStyle("edit"), editSource),
+  fylke: createVectorLayer("fylke"),
+  kommune: createVectorLayer("kommune"),
+  nasjon: createVectorLayer("nasjon"),
+  grunnkrets: createVectorLayer("grunnkrets"),
+  stemmekrets: createVectorLayer("stemmekrets"),
+  archived: createVectorLayer("archived", archivedSource),
+  edit: createVectorLayer("edit", editSource),
 };
 
 export const editableBorderTypes = ["Delområdegrense", "Grunnkretsgrense", "Stemmekretsgrense", "Kommunegrense"];

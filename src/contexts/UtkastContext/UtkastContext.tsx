@@ -14,7 +14,13 @@ import {
 import { updateUtkastApi } from "api/utkast";
 import { HistoryChange, useHistory } from "contexts/HistoryContext";
 import useNibasApi from "hooks/useNibasApi";
-import { ApiErrorResponse, OppdaterUtkastRequest, UtkastOperasjoner, UtkastResponse } from "types/api";
+import {
+  ApiErrorResponse,
+  FeatureCollection,
+  OppdaterUtkastRequest,
+  UtkastOperasjoner,
+  UtkastResponse,
+} from "types/api";
 import { resetMapView } from "utils/map";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
@@ -172,14 +178,14 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     return updatedUtkast;
   };
 
-  const updateUtkast = async (id: string, newUtkast: OppdaterUtkastRequest) => {
+  const updateUtkast = async (id: string, newUtkast: OppdaterUtkastRequest, shouldClearHistory: boolean = true) => {
     const response = await updateUtkastApi(id, toCleanUtkast(newUtkast), tokenHolderFunc()?.token);
 
     if (statusCode.isSuccessful(response.status)) {
       const updatedUtkast = (await response.json()) as UtkastResponse;
       await mutate(updatedUtkast);
       await globalMutate(["/v1/utkast", tokenHolderFunc()?.token]);
-      clearHistory();
+      if (shouldClearHistory) clearHistory();
 
       // Ved lagring av utkast ble det mismatch mellom state i OpenLayers og state i react
       // For å forhindre dette sletter vi alle grenser med midlertidig id fra det gamle utkastet, slik at disse ikke lenger kan redigeres i OL
@@ -281,7 +287,7 @@ export const useUtkastEntity = <T extends UtkastEntity>(entity: T, type: EntityU
 export const useUtkastFeature = (
   featureCollection: GeoJSONFeatureCollection | GeoJSONFeatureCollection[],
   utkast?: UtkastResponse,
-) => {
+): FeatureCollection => {
   return useMemo(() => {
     if (!featureCollection || !utkast) return featureCollection;
 

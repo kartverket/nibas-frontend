@@ -1,13 +1,13 @@
 import useNibasApi from "../useNibasApi";
-import { KommuneRef } from "types/api";
-import { sortGrenserAlphabetically } from "utils/language/language";
 
 const useKommuner = (fylkeId: string, shouldFetch = true) => {
   const { data: kommuner, ...rest } = useNibasApi(shouldFetch ? "/v1/kommuner" : null, {
     fylkeid: fylkeId,
   });
 
-  const sortedKommuner = sortGrenserAlphabetically(kommuner) as KommuneRef[];
+  const sortedKommuner = kommuner?.sort((a, b) => {
+    return Number(a.kommunenummer.kodeverdi) - Number(b.kommunenummer.kodeverdi);
+  });
 
   return {
     kommuner: sortedKommuner,

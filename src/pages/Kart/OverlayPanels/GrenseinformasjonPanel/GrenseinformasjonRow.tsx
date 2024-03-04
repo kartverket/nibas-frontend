@@ -4,7 +4,6 @@ import EditAndSaveButton from "../Flatedata/EditAndSaveButton";
 import { useEffect, useState } from "react";
 import { Geometry } from "ol/geom";
 import { Feature } from "ol";
-import { Container } from "./GrenseinformasjonFieldList";
 
 interface Props {
   feature: Feature<Geometry>;
@@ -114,6 +113,12 @@ const TextWithIcon = styled.div`
 
 const Field = styled.div`
   margin-top: 8px;
+`;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 `;
 
 export default GrenseinformasjonRow;

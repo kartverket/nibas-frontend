@@ -22,7 +22,7 @@ import { Coordinate, equals } from "ol/coordinate";
 import { setDefaultFeatureProperties } from "utils/features";
 
 const useDraw = () => {
-  const { activeTool } = useToolbar();
+  const { activeTool, activeModeTools } = useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const { addHistoryEntry } = useHistory();
   const { openOverlayPanel } = useOverlayPanel();
@@ -41,7 +41,7 @@ const useDraw = () => {
       const firstCoordinate = geometry.getFirstCoordinate();
       const lastCoordinate = geometry.getLastCoordinate();
 
-      const clickedCoordinate = findNearbyVertexOnFeature(feature, eventCoordinate);
+      const clickedCoordinate = findNearbyVertexOnFeature(feature.getGeometry() as LineString, eventCoordinate);
 
       if (!clickedCoordinate) {
         return false;
@@ -63,7 +63,7 @@ const useDraw = () => {
       style: grenseStyles.select,
       freehandCondition: () => false,
       condition: (event: MapBrowserEvent<MouseEvent>) => {
-        if (!noModifierKeys(event) || activeTool !== "draw") return false;
+        if (!noModifierKeys(event) || activeTool !== "draw" || activeModeTools.includes("move")) return false;
 
         const featuresAtPixel = getActiveFeaturesAtPixel(event, "edit");
 
@@ -88,8 +88,8 @@ const useDraw = () => {
 
         // Vi ønsker å avslutte tegningen hvis man har startet en tegning, og så treffer et endepunkt, så vi unngår rar geometri
         // Dette gjøres ved å bumpe et versjonstall med draw.changed() hvis denne conditionen returnerer true. Hvis versjonen da er høyere
-        // enn én (som den blir av første endring), vil vi avslutte tegningen
-        if (draw.getRevision() > 1) {
+        // enn null (som den blir av første endring), vil vi avslutte tegningen
+        if (draw.getRevision() > 0) {
           draw.appendCoordinates([event.coordinate]);
           draw.finishDrawing();
           return false;
@@ -99,7 +99,7 @@ const useDraw = () => {
         return true;
       },
     });
-  }, [activeTool, getActiveFeaturesAtPixel, toast]);
+  }, [activeTool, getActiveFeaturesAtPixel, toast, activeModeTools]);
 
   useEffect(() => {
     const addDrawToHistory = (drawnFeature: Feature<LineString>) => {

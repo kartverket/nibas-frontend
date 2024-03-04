@@ -5,15 +5,16 @@ import { getVectorLayers } from "utils/map/layers";
 import useModify from "./useModify";
 import useSelect from "./useSelect";
 import useDraw from "./useDraw";
-import useDragPan from "./useDragPan";
+import useDragInteractions from "./useDragInteractions";
 import useSelectPoint from "./useSelectPoint";
 import { useToolbar } from "contexts/ToolbarContext";
 import { pixelTolerance } from "./constants";
 import { selectedPointStyle } from "utils/map/layerStyles";
+import { Collection } from "ol";
 
 const useInteractions = () => {
   const { modify } = useModify();
-  const { dragPan } = useDragPan();
+  const { dragPan, dragZoom } = useDragInteractions();
   const { select } = useSelect();
   const { draw } = useDraw();
   const { selectPoint } = useSelectPoint();
@@ -31,10 +32,12 @@ const useInteractions = () => {
         snaps.push(snap);
         hovers.push(
           new Modify({
-            source,
             condition: () => false,
             style: selectedPointStyle,
             pixelTolerance: pixelTolerance,
+            features: new Collection(
+              source.getFeatures().filter((feature) => !feature.getId()?.toString().includes("representasjonspunkt")),
+            ),
           }),
         );
       }
@@ -44,6 +47,7 @@ const useInteractions = () => {
     map.on("click", select);
     map.on("click", selectPoint);
     map.addInteraction(dragPan);
+    map.addInteraction(dragZoom);
     map.addInteraction(modify);
     map.addInteraction(draw);
 
@@ -57,12 +61,13 @@ const useInteractions = () => {
       map.un("click", select);
       map.un("click", selectPoint);
       map.removeInteraction(dragPan);
+      map.removeInteraction(dragZoom);
       map.removeInteraction(modify);
       map.removeInteraction(draw);
       snaps.forEach((snap) => map.removeInteraction(snap));
       hovers.forEach((hover) => map.removeInteraction(hover));
     };
-  }, [activeModeTools, dragPan, draw, modify, select, selectPoint]);
+  }, [activeModeTools, dragPan, dragZoom, draw, modify, select, selectPoint]);
 };
 
 export default useInteractions;

@@ -23,64 +23,64 @@ const isDottedStyle = (styles: Style[]): boolean => {
 export const tegnforklaringer: TegnforklaringProps[][] = [
   [
     {
-      text: "Nasjon",
+      text: "Riksgrense",
       dotted: isDottedStyle(grenseStyles.nasjon),
       color: getColorFromStyle(grenseStyles.nasjon),
     },
     {
-      text: "Arkivert nasjon",
+      text: "Arkivert riksgrense",
       dotted: isDottedStyle(grenseStyles.archivedNasjon),
       color: getColorFromStyle(grenseStyles.archivedNasjon),
     },
     {
-      text: "Fylke",
+      text: "Fylkesgrense",
       dotted: isDottedStyle(grenseStyles.fylke),
       color: getColorFromStyle(grenseStyles.fylke),
     },
     {
-      text: "Arkivert fylke",
+      text: "Arkivert fylkesgrense",
       dotted: isDottedStyle(grenseStyles.archivedFylke),
       color: getColorFromStyle(grenseStyles.archivedFylke),
     },
     {
-      text: "Kommune",
+      text: "Kommunegrense",
       dotted: isDottedStyle(grenseStyles.kommune),
       color: getColorFromStyle(grenseStyles.kommune),
     },
     {
-      text: "Arkivert kommune",
+      text: "Arkivert kommunegrense",
       dotted: isDottedStyle(grenseStyles.archivedKommune),
       color: getColorFromStyle(grenseStyles.archivedKommune),
     },
   ],
   [
     {
-      text: "Stemmekrets",
+      text: "Stemmekretsgrense",
       dotted: isDottedStyle(grenseStyles.stemmekrets),
       color: getColorFromStyle(grenseStyles.stemmekrets),
     },
     {
-      text: "Arkivert stemmekrets",
+      text: "Arkivert stemmekretsgrense",
       dotted: isDottedStyle(grenseStyles.archivedStemmekrets),
       color: getColorFromStyle(grenseStyles.archivedStemmekrets),
     },
     {
-      text: "Grunnkrets",
+      text: "Grunnkretsgrense",
       dotted: isDottedStyle(grenseStyles.grunnkrets),
       color: getColorFromStyle(grenseStyles.grunnkrets),
     },
     {
-      text: "Arkivert grunnkrets",
+      text: "Arkivert grunnkretsgrense",
       dotted: isDottedStyle(grenseStyles.archivedGrunnkrets),
       color: getColorFromStyle(grenseStyles.archivedGrunnkrets),
     },
     {
-      text: "Delområde",
+      text: "Delområdegrense",
       dotted: isDottedStyle(grenseStyles.delomraade),
       color: getColorFromStyle(grenseStyles.delomraade),
     },
     {
-      text: "Arkivert delområde",
+      text: "Arkivert delområdegrense",
       dotted: isDottedStyle(grenseStyles.archivedDelomraade),
       color: getColorFromStyle(grenseStyles.archivedDelomraade),
     },
@@ -99,6 +99,13 @@ export const tegnforklaringer: TegnforklaringProps[][] = [
   ],
   [
     {
+      text: "Matrikkelgrense",
+      dotted: isDottedStyle(grenseStyles.matrikkel),
+      color: getColorFromStyle(grenseStyles.matrikkel),
+    },
+  ],
+  [
+    {
       text: "Mulig å redigere",
       dotted: isDottedStyle(grenseStyles.edit),
       color: getColorFromStyle(grenseStyles.edit),
@@ -109,7 +116,7 @@ export const tegnforklaringer: TegnforklaringProps[][] = [
       color: getColorFromStyle(grenseStyles.select),
     },
     {
-      text: "Har blitt redigert",
+      text: "Redigert/Ny grense",
       dotted: isDottedStyle(grenseStyles.dirty),
       color: getColorFromStyle(grenseStyles.dirty),
     },

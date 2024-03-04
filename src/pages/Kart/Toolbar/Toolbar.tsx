@@ -10,6 +10,8 @@ import ToolbarButton from "./ToolbarButton";
 import ToolbarMenus from "./ToolbarMenus";
 import ToolbarPopups from "./ToolbarPopups";
 import { ConditionalHide } from "components/ConditionalShowHide";
+import { Draw } from "ol/interaction";
+import { useState } from "react";
 
 const Toolbar = () => {
   const { activeTool, activeModeTools, toggleTool, toggleModeTool, enableModeTool, disableModeTool } = useToolbar();
@@ -52,8 +54,36 @@ const Toolbar = () => {
     });
   };
 
+  const isPanningAllowed = (): boolean => {
+    if (!isEditMode) return false;
+
+    const drawInteraction = map
+      .getInteractions()
+      .getArray()
+      .find((interaction) => interaction instanceof Draw);
+
+    if (activeTool === "draw" && !drawInteraction) return true;
+    if (drawInteraction) {
+      const revision = drawInteraction.getRevision();
+      if (revision) {
+        return revision === 0;
+      }
+    }
+
+    return true;
+  };
+
+  const [panningEnabled, setPanningEnabled] = useState(true);
+
+  addEventListener("mouseup", () => {
+    if (activeTool == null || activeTool !== "draw") return;
+
+    if (isPanningAllowed()) setPanningEnabled(true);
+    else setPanningEnabled(false);
+  });
+
   useKeyboardShortcut("layers", toggleKartlag);
-  useKeyboardShortcut("move", () => enableModeTool("move"));
+  useKeyboardShortcut("move", () => enableModeTool("move"), panningEnabled);
   useKeyboardShortcut("edit", () => disableModeTool("move"), isEditMode);
   useKeyboardShortcut("matrikkel", () => toggleModeTool("matrikkel"));
   useKeyboardShortcut("grenseinfo", toggleGrenseinfo);
@@ -62,7 +92,7 @@ const Toolbar = () => {
     activeModeTools.includes("move"),
     () => enableModeTool("move"),
     () => disableModeTool("move"),
-    isEditMode,
+    isPanningAllowed,
   );
 
   return (
@@ -74,8 +104,14 @@ const Toolbar = () => {
             icon="back_hand"
             onClick={() => enableModeTool("move")}
             isActive={activeModeTools.includes("move")}
+            isDisabled={!panningEnabled}
             aria-label="Panorer i kartet"
-            tooltip={{ text: "Panorer i kartet", shortcut: "move", holdButton: "ALT-tasten" }}
+            tooltip={{
+              text: "Panorer i kartet",
+              shortcut: "move",
+              holdButton: "ALT-tasten",
+              additionalInfo: "Hold inne Shift + marker i kartet for å zoome",
+            }}
           >
             Panorer
           </ToolbarButton>
