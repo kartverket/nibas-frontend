@@ -21,6 +21,7 @@ import { FeatureLike } from "ol/Feature";
 import { Coordinate, equals } from "ol/coordinate";
 import { setDefaultFeatureProperties } from "utils/features";
 import { map } from "../constants";
+import { EventAndHandlerMap, useCursorStyles } from "./useCursorStyles";
 
 const useDraw = () => {
   const { activeTool, activeModeTools } = useToolbar();
@@ -149,24 +150,16 @@ const useDraw = () => {
     };
   }, [addHistoryEntry, draw, getCurrentlyEditingType, openOverlayPanel, selectFeatures, selectedFeatures, toast]);
 
-  useEffect(() => {
-    const mapViewport = map.getViewport();
+  const eventsAndHandlers: EventAndHandlerMap = [
+    {
+      name: ["pointermove"],
+      handler: (mapViewport: HTMLElement) => {
+        mapViewport.style.cursor = "crosshair";
+      },
+    },
+  ];
 
-    const handleMouseMove = () => {
-      mapViewport.style.cursor = "crosshair";
-    };
-
-    if (activeTool == "draw" && !activeModeTools.includes("move")) {
-      map.on("pointermove", handleMouseMove);
-    } else {
-      mapViewport.style.cursor = "";
-    }
-
-    return () => {
-      map.un("pointermove", handleMouseMove);
-      mapViewport.style.cursor = "";
-    };
-  }, [activeModeTools, activeTool]);
+  useCursorStyles(activeTool == "draw" && !activeModeTools.includes("move"), eventsAndHandlers);
 
   return { draw };
 };

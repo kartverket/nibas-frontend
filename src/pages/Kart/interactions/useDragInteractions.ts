@@ -1,11 +1,28 @@
 import { useToolbar } from "contexts/ToolbarContext";
 import { shiftKeyOnly } from "ol/events/condition";
 import { DragPan, DragZoom } from "ol/interaction";
-import { useEffect, useMemo } from "react";
-import { map } from "../constants";
+import { useMemo } from "react";
+import { EventAndHandlerMap, useCursorStyles } from "./useCursorStyles";
 
 const useDragInteractions = () => {
   const { activeModeTools } = useToolbar();
+
+  const eventsAndHandlers: EventAndHandlerMap = [
+    {
+      name: ["pointermove"],
+      handler: (mapViewport: HTMLElement) => {
+        mapViewport.style.cursor = "grab";
+      },
+    },
+    {
+      name: ["pointerdrag"],
+      handler: (mapViewport: HTMLElement) => {
+        mapViewport.style.cursor = "grabbing";
+      },
+    },
+  ];
+
+  useCursorStyles(activeModeTools.includes("move"), eventsAndHandlers);
 
   const dragPan = useMemo(
     () =>
@@ -22,29 +39,6 @@ const useDragInteractions = () => {
       }),
     [activeModeTools],
   );
-
-  useEffect(() => {
-    const mapViewport = map.getViewport();
-    const handleMouseDown = () => {
-      mapViewport.style.cursor = "grabbing";
-    };
-    const handleMouseMove = () => {
-      mapViewport.style.cursor = "grab";
-    };
-
-    if (activeModeTools.includes("move")) {
-      map.on("pointerdrag", handleMouseDown);
-      map.on("pointermove", handleMouseMove);
-    } else {
-      mapViewport.style.cursor = "";
-    }
-
-    return () => {
-      map.un("pointerdrag", handleMouseDown);
-      map.un("pointermove", handleMouseMove);
-      mapViewport.style.cursor = "";
-    };
-  }, [activeModeTools]);
 
   return { dragPan, dragZoom };
 };
