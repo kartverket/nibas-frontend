@@ -1,4 +1,4 @@
-import { Datepicker, Grid, GridItem, Input } from "@kvib/react";
+import { Datepicker, Grid, Input } from "@kvib/react";
 import { Feature } from "ol";
 import { FormViewState, Referanse, VedtakinfoForm } from "./Vedtaksinformasjon";
 import { VedtakinfoField } from "./VedtakinfoField";

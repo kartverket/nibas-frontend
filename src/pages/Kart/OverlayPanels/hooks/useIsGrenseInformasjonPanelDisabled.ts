@@ -1,20 +1,16 @@
-import { useEditGrenser } from "contexts/EditGrenserContext";
-import { FeatureProperties } from "types/api";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { Feature } from "ol";
 import { isFeatureMetadataEditable } from "utils/features";
+import { editSource } from "hooks/layers/constants";
 
-const useIsGrenseinformasjonPanelDisabled = (feature: Feature, properties: FeatureProperties) => {
+const useIsGrenseinformasjonPanelDisabled = (feature: Feature) => {
   const { featureIsArchived } = useFeatureStyle();
 
-  const featureInndelingsKontekst = properties.inndelingerKontekst;
-  const { kretsStatuser } = useEditGrenser(featureInndelingsKontekst.type);
+  const isMetadataEditable = isFeatureMetadataEditable(feature, featureIsArchived(feature));
 
-  if (!kretsStatuser) return true;
+  const isFeatureInEditLayer = editSource.getFeatures().some((editFeature) => editFeature.getId() === feature.getId());
 
-  const kretsStatusTilFeature = kretsStatuser[featureInndelingsKontekst.id];
-
-  const canEdit = isFeatureMetadataEditable(feature, featureIsArchived(feature)) && kretsStatusTilFeature.editing;
+  const canEdit = isMetadataEditable && isFeatureInEditLayer;
 
   return !canEdit;
 };
