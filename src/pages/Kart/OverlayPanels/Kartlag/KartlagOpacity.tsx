@@ -31,9 +31,14 @@ const ActiveKartlagOpacity = ({ layerId }: Props) => {
   return (
     <Popover>
       <PopoverTrigger>
-        <IconButton aria-label="Juster gjennomsiktighet" variant="ghost" icon="opacity" />
+        <IconButton
+          aria-label="Juster gjennomsiktighet"
+          variant="ghost"
+          icon="tonality"
+          onClick={(e) => e.stopPropagation()}
+        />
       </PopoverTrigger>
-      <PopoverContent>
+      <PopoverContent onClick={(e) => e.stopPropagation()}>
         <PopoverArrow />
         <PopoverCloseButton />
         <PopoverHeader>Juster gjennomsiktighet</PopoverHeader>
@@ -49,4 +54,5 @@ const ActiveKartlagOpacity = ({ layerId }: Props) => {
     </Popover>
   );
 };
+
 export default ActiveKartlagOpacity;
