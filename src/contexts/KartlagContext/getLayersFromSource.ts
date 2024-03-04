@@ -50,7 +50,7 @@ const mapWMTSLayer = (responseLayer: WMTSResponseLayer, sourceId: KartlagId): Ma
   isVisible: false,
 });
 
-export const getLayersFromSource = async (source: TileWMS | WMTS) => {
+export const getLayersFromSource = async (layerId: KartlagId, source: TileWMS | WMTS) => {
   const urls = source.getUrls();
 
   if (!urls || urls.length === 0) return null;
@@ -92,9 +92,8 @@ export const getLayersFromSource = async (source: TileWMS | WMTS) => {
       if (!json?.Capability) return null;
 
       const mainLayer = json.Capability.Layer;
-      const sourceId = source.get("id") as KartlagId;
 
-      return mapWMSLayer(mainLayer, sourceId);
+      return mapWMSLayer(mainLayer, layerId);
     }
 
     if (source instanceof WMTS) {
@@ -102,14 +101,12 @@ export const getLayersFromSource = async (source: TileWMS | WMTS) => {
 
       if (!json?.Contents) return null;
 
-      const sourceId = source.get("id") as KartlagId;
-
       const mappedWMTSLayer: MappedLayer = {
         type: "wmts",
-        sourceId: sourceId,
-        id: sourceId,
+        sourceId: layerId,
+        id: layerId,
         title: json.ServiceIdentification.Title ?? source.getLayer(),
-        layers: json.Contents.Layer.map((l: WMTSResponseLayer) => mapWMTSLayer(l, sourceId)),
+        layers: json.Contents.Layer.map((l: WMTSResponseLayer) => mapWMTSLayer(l, layerId)),
         isVisible: false,
       };
 

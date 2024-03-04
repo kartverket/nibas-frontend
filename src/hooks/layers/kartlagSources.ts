@@ -103,6 +103,7 @@ const createAuthedTileWMS = (id: KartlagId, url: string, tjenesteId: string) => 
   tileWMS.setTileGridForProjection("EPSG:25833", tileGrid);
   return tileWMS;
 };
+
 export const kartlagSources: Record<KartlagId, WMTS | TileWMS> = {
   cachetjenester: createWMTS("cachetjenester", cachetjenesterConfig),
   norgeIBilder: createWMTS("norgeIBilder", norgeIBilderConfig),

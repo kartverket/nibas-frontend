@@ -1,13 +1,11 @@
 import BaseLayer from "ol/layer/Base";
-import Layer from "ol/layer/Layer";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
-import Source from "ol/source/Source";
 import TileWMS from "ol/source/TileWMS";
 import WMTS from "ol/source/WMTS";
 import { map } from "pages/Kart/constants";
 import { kartlagLayers, grenserLayers } from "hooks/layers/constants";
-import { KartlagId, GrenseId, LayerId } from "hooks/layers/types";
+import { LayerId } from "hooks/layers/types";
 import VectorSource from "ol/source/Vector";
 import { WFS } from "ol/format";
 import { getFeaturesFromGeoJson } from "./geoJson";
@@ -25,39 +23,6 @@ export const getLayerById = <T extends LayerId>(id: T) => {
   }
 
   return layersWithId[0] as (typeof kartlagLayers & typeof grenserLayers)[T];
-};
-
-const layerExistsInMap = (id: LayerId) => {
-  try {
-    const layer = getLayerById(id);
-
-    return !!layer;
-  } catch {
-    return false;
-  }
-};
-
-const addLayerIfNotExists = (layer: Layer<Source>) => {
-  if (!layerExistsInMap(layer.get("id"))) {
-    map.addLayer(layer);
-  }
-};
-
-const initLayer = (layer: Layer<Source>, layerId: LayerId) => {
-  layer.set("id", layerId);
-  addLayerIfNotExists(layer);
-};
-
-export const initKartlagLayers = () => {
-  Object.keys(kartlagLayers).map((layerId) => {
-    initLayer(kartlagLayers[layerId as KartlagId], layerId as KartlagId);
-  });
-};
-
-export const initGrenserLayers = () => {
-  Object.keys(grenserLayers).map((layerId) => {
-    initLayer(grenserLayers[layerId as GrenseId], layerId as GrenseId);
-  });
 };
 
 export const getVectorLayers = () => {

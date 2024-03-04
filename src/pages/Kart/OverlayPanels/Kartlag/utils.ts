@@ -1,87 +1,83 @@
-import { MappedLayer } from "contexts/KartlagContext/KartlagContext";
-import { kartlagLayers } from "hooks/layers/constants";
+import TileLayer from "ol/layer/Tile";
+import TileSource from "ol/source/Tile";
 import TileWMS from "ol/source/TileWMS";
 import WMTS from "ol/source/WMTS";
-import { getLayerById, isWMTSLayer } from "utils/map/layers";
 
-const getLayersStringToReplace = (layersInParams: string, mappedLayerName: string) => {
-  const commaRegex = new RegExp(`(,{0,1})(${mappedLayerName})(,{0,1})`, "i");
-  const match = commaRegex.exec(layersInParams);
+const removeLayer = (layers: string, layerId: string) => {
+  const commaRegex = new RegExp(`(,?)(${layerId})(,?)`, "i");
+  const matches = commaRegex.exec(layers);
+  if (!matches) return layers;
 
-  if (!match) return;
-
-  const prefixComma = match[1];
-  const trailingComma = match[3];
+  const prefixComma = matches.at(1);
+  const trailingComma = matches.at(3);
   let replaceString = "";
 
   if (trailingComma) {
     // komma på slutten, potensielt på starten i tillegg men spiller ingen rolle
-    replaceString = `${mappedLayerName},`;
-  } else if (prefixComma && !trailingComma) {
+    replaceString = `${layerId},`;
+  } else if (prefixComma) {
     // bare komma på starten
-    replaceString = `,${mappedLayerName}`;
-  } else if (!prefixComma && !trailingComma) {
-    // ikke noe komma
-    replaceString = `${mappedLayerName}`;
-  }
-
-  return replaceString;
-};
-
-// TODO: opplever at laget henger igjen inntil man oppdaterer kartet, har vi en måte å cleare?
-export const toggleWMSLayer = (mappedLayer: MappedLayer, willBeVisible: boolean) => {
-  const layer = kartlagLayers[mappedLayer.sourceId];
-  const source = layer.getSource() as TileWMS;
-  const layersInParams = source.getParams().LAYERS as string;
-
-  let newParamsLayerString = "";
-
-  if (willBeVisible) {
-    layer.setVisible(true);
-    let newLayers = "";
-
-    if (!layersInParams || mappedLayer.sourceId === layersInParams) {
-      newLayers = `${mappedLayer.id}`;
-    } else {
-      newLayers = `${layersInParams},${mappedLayer.id}`;
-    }
-
-    newParamsLayerString = newLayers;
+    replaceString = `,${layerId}`;
   } else {
-    layer.setVisible(false);
-    const replaceString = getLayersStringToReplace(layersInParams, mappedLayer.id);
-    if (!replaceString) return;
-
-    const layersReplacedString = layersInParams.replace(replaceString, "");
-
-    // hvis param layer ville vært tom, gjør den til hovedlaget igjen
-    if (!layersReplacedString) {
-      newParamsLayerString = mappedLayer.sourceId;
-    } else {
-      newParamsLayerString = layersReplacedString;
-    }
+    // ikke noe komma
+    replaceString = `${layerId}`;
   }
 
-  source.updateParams({ LAYERS: newParamsLayerString });
+  return layers.replace(replaceString, "");
 };
 
-export const toggleWMTSLayer = (mappedLayer: MappedLayer, willBeVisible: boolean, useDefaultLayer: boolean) => {
-  const layer = getLayerById(mappedLayer.sourceId);
-  if (isWMTSLayer(layer)) {
-    const source = layer.getSource();
-    if (source) {
-      // OpenLayers lar deg ikke sette layer for WMTS-lag, så vi må bytte ut hele sourcen med ny layer-verdi
-      const config = source.get("config");
-      const newLayer = useDefaultLayer ? (config.layer as string) : mappedLayer.id;
-      const newSource = new WMTS({
-        ...config,
-        layer: newLayer,
-      });
-      newSource.set("config", config);
-      layer.setSource(newSource);
-      layer.setVisible(willBeVisible);
-      return newLayer;
+export const toggleWMSLayer = (layer: TileLayer<TileSource>, willBeVisible: boolean, layerId: string) => {
+  const source = layer.getSource();
+  if (source instanceof TileWMS) {
+    const layers = source.getParams().LAYERS as string;
+
+    if (willBeVisible) {
+      layer.setVisible(true);
+      source.updateParams({ LAYERS: layers ? `${layers},${layerId}` : layerId });
+    } else {
+      const newLayers = removeLayer(layers, layerId);
+      if (!newLayers) layer.setVisible(false);
+      source.updateParams({ LAYERS: newLayers });
     }
+  }
+};
+
+export const resetWMSLayer = (layer: TileLayer<TileSource>) => {
+  const source = layer.getSource();
+  if (source instanceof TileWMS) {
+    source.updateParams({ LAYERS: "" });
+    layer.setVisible(false);
+  }
+};
+
+export const resetWMTSLayer = (layer: TileLayer<TileSource>) => {
+  const source = layer.getSource();
+  if (source instanceof WMTS) {
+    const config = source.get("config");
+    const newSource = new WMTS({
+      ...config,
+      layer: config.layer as string,
+    });
+    newSource.set("config", config);
+    layer.setSource(newSource);
+    layer.setVisible(false);
+  }
+};
+
+export const toggleWMTSLayer = (layer: TileLayer<TileSource>, willBeVisible: boolean, newLayerId?: string) => {
+  const source = layer.getSource();
+  if (source instanceof WMTS) {
+    // OpenLayers lar deg ikke sette layer for WMTS-lag, så vi må bytte ut hele sourcen med ny layer-verdi
+    const config = source.get("config");
+    const newLayer = newLayerId ?? (config.layer as string);
+    const newSource = new WMTS({
+      ...config,
+      layer: newLayer,
+    });
+    newSource.set("config", config);
+    layer.setSource(newSource);
+    layer.setVisible(willBeVisible);
+    return newLayer;
   }
   return "";
 };

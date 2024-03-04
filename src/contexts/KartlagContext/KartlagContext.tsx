@@ -2,10 +2,8 @@ import React, { createContext, useCallback, useContext, useEffect, useRef, useSt
 import { kartlagLayers } from "hooks/layers/constants";
 import { KartlagId } from "hooks/layers/types";
 import { getLayersFromSource } from "contexts/KartlagContext/getLayersFromSource";
-import { getLayerById } from "utils/map/layers";
-import TileLayer from "ol/layer/Tile";
-import WMTS from "ol/source/WMTS";
-import { toggleWMSLayer, toggleWMTSLayer } from "pages/Kart/OverlayPanels/Kartlag/utils";
+import { getLayerById, isWMSLayer, isWMTSLayer } from "utils/map/layers";
+import { resetWMSLayer, resetWMTSLayer, toggleWMSLayer, toggleWMTSLayer } from "pages/Kart/OverlayPanels/Kartlag/utils";
 
 export type MappedLayer = {
   type: "wms" | "wmts";
@@ -35,12 +33,14 @@ export const KartlagContext = createContext<KartlagContextValue | undefined>(und
 export const KartlagProvider = ({ children }: { children: React.ReactNode }) => {
   const [mappedLayers, setMappedLayers] = useState<MappedLayer[]>([]);
 
+  // Litt støttestate for å gjøre det lettere å tilbakestille senere
+  const [defaultLayers, setDefaultLayers] = useState<MappedLayer[]>([]);
   const areLayersInitialized = useRef(false);
 
   const toggleSublayersRecursively = useCallback((layer: MappedLayer, willBeVisible: boolean): MappedLayer => {
     // Dersom laget ikke har barn kan vi avslutte rekursjon og skru av eller på kartlaget
     if (layer.layers.length === 0) {
-      if (layer.type === "wms") toggleWMSLayer(layer, willBeVisible);
+      if (layer.type === "wms") toggleWMSLayer(getLayerById(layer.sourceId), willBeVisible, layer.id);
       return { ...layer, isVisible: willBeVisible };
     }
     // Dersom laget har barn må vi passe på at alle etterkommere blir skrudd av eller på også
@@ -71,9 +71,11 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
   // Kun ett lag kan være skrudd på om gangen for WMTS-lag, så de må håndteres på en spesiell måte
   const toggleWMTSLayerRecursively = useCallback(
     (layer: MappedLayer, willBeVisible: boolean): MappedLayer => {
+      const sourceLayer = getLayerById(layer.sourceId);
+
       // Dersom laget som skal toggles ikke har barn setter vi det bare til riktig verdi
       if (layer.layers.length === 0) {
-        toggleWMTSLayer(layer, willBeVisible, false);
+        toggleWMTSLayer(sourceLayer, willBeVisible, layer.id);
         return {
           ...layer,
           isVisible: willBeVisible,
@@ -81,7 +83,7 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
       }
 
       // Dersom laget har barn må vi sjekke hvilket barn som skal bli markert som synlig
-      const toggledLayerId = toggleWMTSLayer(layer, willBeVisible, true);
+      const toggledLayerId = toggleWMTSLayer(sourceLayer, willBeVisible);
 
       return {
         ...layer,
@@ -172,10 +174,10 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
   // Henter XML-data fra hver av tjenestene i kartlagslisten og mapper det over til noe mer brukbart
   useEffect(() => {
     if (!areLayersInitialized.current) {
-      const mappedLayerPromises = Object.values(kartlagLayers).map((layer) => {
+      const mappedLayerPromises = Object.entries(kartlagLayers).map(([layerId, layer]) => {
         const source = layer.getSource();
         if (source) {
-          return getLayersFromSource(source);
+          return getLayersFromSource(layerId as KartlagId, source);
         }
       });
 
@@ -187,6 +189,7 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
         const nonNullLayers = layers.filter(isMappedLayer);
         const initialLayers = toggleDefaultLayer(nonNullLayers);
         setMappedLayers(initialLayers);
+        setDefaultLayers(initialLayers);
         areLayersInitialized.current = true;
       });
     }
@@ -223,23 +226,19 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
     setMappedLayers(modifiedLayers);
   };
 
-  // TODO: gjør noe med defaults
   const resetKartlag = () => {
-    // TODO: gå gjennom alle mappedlayers rekursivt og sett isVisible til false
-    // ...med mindre det er en default
+    // Sett React-state tilbake til lagrede defaults så vi slipper rekursjon igjen
+    setMappedLayers(defaultLayers);
 
-    // TODO: flytte denne ut eget sted, den er vel relativt felles?
-    const layer = getLayerById("cachetjenester") as TileLayer<WMTS>;
-    const source = layer.getSource();
-    if (source) {
-      const newSource = new WMTS({
-        ...source.get("config"),
-        layer: "norges_grunnkart_graatone",
-      });
-      newSource.set("id", source.get("id"));
-      newSource.set("config", source.get("config"));
-      layer.setSource(newSource);
-    }
+    // Skru av alle kartlagene i OpenLayers
+    Object.values(kartlagLayers).forEach((layer, index) => {
+      layer.setZIndex(-index);
+      if (isWMSLayer(layer)) resetWMSLayer(layer);
+      if (isWMTSLayer(layer)) resetWMTSLayer(layer);
+    });
+
+    // Obs! Hardkodet toggling av defaultlaget vårt
+    toggleWMTSLayer(getLayerById("cachetjenester"), true, defaultKartlag);
   };
 
   const value = {
