@@ -18,7 +18,6 @@ import { useTilhorighet } from "../hooks/useTilhorighet";
 import { useTilhorighetNyAdministrativ } from "../hooks/useTilhorighetNyAdministrativ";
 import { isFeatureEditable } from "utils/features";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
-import { FeatureProperties } from "types/api";
 import useIsGrenseinformasjonPanelDisabled from "../hooks/useIsGrenseInformasjonPanelDisabled";
 
 type TilhorighetRowProps = {
@@ -119,10 +118,7 @@ const NyAdministrativTilhorighetField = ({ feature, isDisabled }: TilhorighetPro
 export const TilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
   const { featureIsArchived } = useFeatureStyle();
 
-  const isGrensePanelDisabled = useIsGrenseinformasjonPanelDisabled(
-    feature,
-    feature.getProperties() as FeatureProperties,
-  );
+  const isGrensePanelDisabled = useIsGrenseinformasjonPanelDisabled(feature);
 
   const grenseType = feature.getProperties().type as GrenseType;
 
