@@ -7,7 +7,6 @@ type Props = {
   mappedLayer: MappedLayer;
 };
 
-// TODO: denne må kanskje også ha en opacity-slider hvis det er et mainlayer?
 const KartlagInner = ({ indexPath, mappedLayer }: Props) => {
   const { toggleLayer } = useKartlag();
 
@@ -15,7 +14,6 @@ const KartlagInner = ({ indexPath, mappedLayer }: Props) => {
     toggleLayer(mappedLayer, indexPath);
   };
 
-  // TODO: WMTS-lag skal ha radio button, ikke checkbox, selvsagt.
   return (
     <Container>
       {mappedLayer.type === "wmts" ? (

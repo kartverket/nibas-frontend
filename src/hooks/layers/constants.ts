@@ -11,7 +11,7 @@ import { kartlagSources } from "./kartlagSources";
 const createTileLayerFromKartlagSource = (id: keyof typeof kartlagSources) =>
   new TileLayer({ source: kartlagSources[id], visible: false });
 
-export const kartlagLayers: Record<KartlagId, TileLayer<TileWMS | WMTS> | VectorLayer<VectorSource>> = {
+export const kartlagLayers: Record<KartlagId, TileLayer<TileWMS | WMTS>> = {
   matrikkelenWMS: createTileLayerFromKartlagSource("matrikkelenWMS"),
   administrativeGrenser: createTileLayerFromKartlagSource("administrativeGrenser"),
   administrativeGrenserHistorisk: createTileLayerFromKartlagSource("administrativeGrenserHistorisk"),

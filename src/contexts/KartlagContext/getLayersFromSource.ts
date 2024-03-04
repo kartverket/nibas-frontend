@@ -2,7 +2,7 @@ import WMSCapabilities from "ol/format/WMSCapabilities";
 import WMTSCapabilities from "ol/format/WMTSCapabilities";
 import TileWMS from "ol/source/TileWMS";
 import WMTS from "ol/source/WMTS";
-import { getTicketForTjeneste } from "./geonorgeTicket";
+import { getTicketForTjeneste } from "../../utils/geonorgeTicket";
 import { KartlagId } from "hooks/layers/types";
 import { getUrlForPath } from "utils/api";
 import { MappedLayer } from "contexts/KartlagContext/KartlagContext";
@@ -50,7 +50,7 @@ const mapWMTSLayer = (responseLayer: WMTSResponseLayer, sourceId: KartlagId): Ma
   isVisible: false,
 });
 
-const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
+export const getLayersFromSource = async (source: TileWMS | WMTS) => {
   const urls = source.getUrls();
 
   if (!urls || urls.length === 0) return null;
@@ -120,5 +120,3 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
     return null;
   }
 };
-
-export default getSubLayersFromWMSSource;

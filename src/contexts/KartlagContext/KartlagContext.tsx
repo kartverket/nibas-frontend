@@ -1,14 +1,14 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { kartlagLayers } from "hooks/layers/constants";
 import { KartlagId } from "hooks/layers/types";
-import getSubLayersFromWMSSource from "utils/getLayersFromWMS";
-import { getLayerById, isVectorLayer } from "utils/map/layers";
+import { getLayersFromSource } from "contexts/KartlagContext/getLayersFromSource";
+import { getLayerById } from "utils/map/layers";
 import TileLayer from "ol/layer/Tile";
 import WMTS from "ol/source/WMTS";
 import { toggleWMSLayer, toggleWMTSLayer } from "pages/Kart/OverlayPanels/Kartlag/utils";
 
 export type MappedLayer = {
-  type: "wms" | "wmts" | "wfs";
+  type: "wms" | "wmts";
   sourceId: KartlagId;
   id: string;
   title: string;
@@ -23,23 +23,9 @@ export type KartlagContextValue = {
   resetKartlag: () => void;
 };
 
-/* TODO: smalere definisjon her, bare id'er elns som skal være default
-const defaultLayers = [
-  {
-    mainLayer: "cachetjenester" as KartlagId,
-    subLayers: ["Norges grunnkart gråtone"],
-  },
-];
-*/
-
 // Obs! Vi hardkoder et lag som er skrudd på når man åpner applikasjonen
 // men den vil ikke fungere dersom tjenesten endrer navn på kartlaget
-/* TODO
-const defaultLayer = {
-  sourceId: "cachetjenester",
-  id: "norges_grunnkart_graatone",
-};
-*/
+export const defaultKartlag = "norges_grunnkart_graatone";
 
 /**
  * Bruk heller KartlagProvider i koden
@@ -49,39 +35,168 @@ export const KartlagContext = createContext<KartlagContextValue | undefined>(und
 export const KartlagProvider = ({ children }: { children: React.ReactNode }) => {
   const [mappedLayers, setMappedLayers] = useState<MappedLayer[]>([]);
 
-  // Henter XML-data fra hver av tjenestene i kartlagslisten og mapper det over til noe mer brukbart
-  useEffect(() => {
-    // TODO: ta en sjekk et sted her for om laget vi mapper ligger i default layers, så skal isvisible være true?
-    const mappedLayerPromises = Object.entries(kartlagLayers).map(([id, layer]) => {
-      if (isVectorLayer(layer)) {
-        const mappedLayer: MappedLayer = {
-          type: "wfs",
-          sourceId: id as KartlagId,
-          id: id,
-          title: id,
-          layers: [],
-          isVisible: false,
-        };
-        return mappedLayer;
-      }
-      const source = layer.getSource();
-      if (source) {
-        return getSubLayersFromWMSSource(source);
-      }
-    });
+  const areLayersInitialized = useRef(false);
 
-    const isMappedLayer = (layer: MappedLayer | null | undefined): layer is MappedLayer => {
-      return !!layer;
+  const toggleSublayersRecursively = useCallback((layer: MappedLayer, willBeVisible: boolean): MappedLayer => {
+    // Dersom laget ikke har barn kan vi avslutte rekursjon og skru av eller på kartlaget
+    if (layer.layers.length === 0) {
+      if (layer.type === "wms") toggleWMSLayer(layer, willBeVisible);
+      return { ...layer, isVisible: willBeVisible };
+    }
+    // Dersom laget har barn må vi passe på at alle etterkommere blir skrudd av eller på også
+    return {
+      ...layer,
+      isVisible: willBeVisible,
+      layers: layer.layers.map((sublayer) => toggleSublayersRecursively(sublayer, willBeVisible)),
     };
-
-    Promise.all(mappedLayerPromises).then((layers) => {
-      const nonNullLayers = layers.filter(isMappedLayer);
-      setMappedLayers(nonNullLayers);
-    });
   }, []);
 
-  // Når mappedLayers blir oppdatert setter vi zIndex på nytt for å sikre riktig rekkefølge i kartet
+  const findDefaultWMTSLayerRecursively = useCallback(
+    (layer: MappedLayer, toggledLayerId: string, willBeVisible: boolean): MappedLayer => {
+      if (layer.layers.length === 0) {
+        if (layer.id === toggledLayerId) return { ...layer, isVisible: willBeVisible };
+        return layer;
+      }
+      return {
+        ...layer,
+        isVisible: willBeVisible,
+        layers: layer.layers.map((sublayer) =>
+          findDefaultWMTSLayerRecursively(sublayer, toggledLayerId, willBeVisible),
+        ),
+      };
+    },
+    [],
+  );
+
+  // Kun ett lag kan være skrudd på om gangen for WMTS-lag, så de må håndteres på en spesiell måte
+  const toggleWMTSLayerRecursively = useCallback(
+    (layer: MappedLayer, willBeVisible: boolean): MappedLayer => {
+      // Dersom laget som skal toggles ikke har barn setter vi det bare til riktig verdi
+      if (layer.layers.length === 0) {
+        toggleWMTSLayer(layer, willBeVisible, false);
+        return {
+          ...layer,
+          isVisible: willBeVisible,
+        };
+      }
+
+      // Dersom laget har barn må vi sjekke hvilket barn som skal bli markert som synlig
+      const toggledLayerId = toggleWMTSLayer(layer, willBeVisible, true);
+
+      return {
+        ...layer,
+        isVisible: willBeVisible,
+        layers: layer.layers.map((sublayer) =>
+          findDefaultWMTSLayerRecursively(sublayer, toggledLayerId, willBeVisible),
+        ),
+      };
+    },
+    [findDefaultWMTSLayerRecursively],
+  );
+
+  const toggleLayerRecursively = useCallback(
+    (depth: number, layers: MappedLayer[], indexPath: number[], willBeVisible: boolean): MappedLayer[] => {
+      let modifiedLayer: MappedLayer;
+      let nextLayer: MappedLayer = layers[indexPath[depth]];
+
+      // WMTS-lag kan kun ha ett underlag på om gangen, så alle lagene tilbakestilles i starten
+      if (depth === 0 && nextLayer.type === "wmts") {
+        nextLayer = {
+          ...nextLayer,
+          layers: nextLayer.layers.map((ml) => toggleSublayersRecursively(ml, false)),
+        };
+      }
+
+      // Når vi når enden av indexPath har vi funnet laget vi skal endre, og må da oppdatere alle barna den har rekursivt
+      if (depth === indexPath.length - 1) {
+        if (nextLayer.type === "wmts") {
+          modifiedLayer = toggleWMTSLayerRecursively(nextLayer, willBeVisible);
+        } else {
+          modifiedLayer = toggleSublayersRecursively(nextLayer, willBeVisible);
+        }
+      } else {
+        // Hvis vi ikke har nådd enden enda fortsetter vi å søke lengre ned rekursivt
+        const newSublayers = toggleLayerRecursively(depth + 1, nextLayer.layers, indexPath, willBeVisible);
+
+        // Et lag skal kun vises som synlig dersom alle etterkommere vises som synlig også
+        modifiedLayer = {
+          ...nextLayer,
+          layers: newSublayers,
+          isVisible:
+            nextLayer.type === "wmts"
+              ? newSublayers.some((sl) => sl.isVisible)
+              : newSublayers.every((sl) => sl.isVisible),
+        };
+      }
+      // Vi må opprette treet av mappedLayers på nytt med de endrede lagene
+      const head = layers.slice(0, indexPath[depth]);
+      const tail = layers.slice(indexPath[depth] + 1);
+      return [...head, modifiedLayer, ...tail];
+    },
+    [toggleSublayersRecursively, toggleWMTSLayerRecursively],
+  );
+
+  // Prøver å finne et lag med en gitt id i trestrukturen uten å endre på trestrukturen
+  const findMappedLayerRecursively = useCallback(
+    (id: string, layers: MappedLayer[]): { mappedLayer: MappedLayer; indexPath: number[] } | undefined => {
+      // Utrolig nok er en god gammel for-løkke best ytelse her, da vi trenger index og må returnere fra løkken
+      for (let index = 0; index < layers.length; index++) {
+        const layer = layers[index];
+        if (layer.id === id) {
+          return { mappedLayer: layer, indexPath: [index] };
+        }
+        const findings = findMappedLayerRecursively(id, layer.layers);
+        if (findings) {
+          return { mappedLayer: findings.mappedLayer, indexPath: [index, ...findings.indexPath] };
+        }
+      }
+      return undefined;
+    },
+    [],
+  );
+
+  const toggleDefaultLayer = useCallback(
+    (layers: MappedLayer[]) => {
+      // Må finne ut hvor i trestrukturen defaultlaget er
+      const findings = findMappedLayerRecursively(defaultKartlag, layers);
+      if (findings) {
+        // Og deretter må vi gjennom standard rekursjon og bubbling for å toggle på defaultlaget
+        return toggleLayerRecursively(0, layers, findings.indexPath, !findings.mappedLayer.isVisible);
+      }
+      // Hvis vi ikke fant default-laget i trestrukturen bare returnerer vi trestrukturen som den var
+      return layers;
+    },
+    [findMappedLayerRecursively, toggleLayerRecursively],
+  );
+
+  // Henter XML-data fra hver av tjenestene i kartlagslisten og mapper det over til noe mer brukbart
   useEffect(() => {
+    if (!areLayersInitialized.current) {
+      const mappedLayerPromises = Object.values(kartlagLayers).map((layer) => {
+        const source = layer.getSource();
+        if (source) {
+          return getLayersFromSource(source);
+        }
+      });
+
+      const isMappedLayer = (layer: MappedLayer | null | undefined): layer is MappedLayer => {
+        return !!layer;
+      };
+
+      Promise.all(mappedLayerPromises).then((layers) => {
+        const nonNullLayers = layers.filter(isMappedLayer);
+        const initialLayers = toggleDefaultLayer(nonNullLayers);
+        setMappedLayers(initialLayers);
+        areLayersInitialized.current = true;
+      });
+    }
+    return () => {
+      areLayersInitialized.current = true;
+    };
+  }, [toggleDefaultLayer]);
+
+  useEffect(() => {
+    // Når mappedLayers blir oppdatert setter vi zIndex på nytt for å sikre riktig rekkefølge i kartet
     mappedLayers.forEach((mappedLayer, index) => {
       const layer = getLayerById(mappedLayer.sourceId);
       layer.setZIndex(-index);
@@ -104,108 +219,8 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
   };
 
   const toggleLayer = (mappedLayer: MappedLayer, indexPath: number[]) => {
-    const modifiedLayers = findRecursively(0, mappedLayers, indexPath, !mappedLayer.isVisible);
+    const modifiedLayers = toggleLayerRecursively(0, mappedLayers, indexPath, !mappedLayer.isVisible);
     setMappedLayers(modifiedLayers);
-  };
-
-  // TODO: må gjøre noe med det at man lett bare kan skru på to wmts lag
-  // TODO: hvis jeg skal toggle et wmts-lag så skal alt i wmts-laget være false først?
-  const findRecursively = (
-    depth: number,
-    layers: MappedLayer[],
-    indexPath: number[],
-    willBeVisible: boolean,
-  ): MappedLayer[] => {
-    let modifiedLayer: MappedLayer;
-    let nextLayer: MappedLayer = layers[indexPath[depth]];
-
-    // WMTS-lag kan kun ha ett underlag på om gangen, så alle lagene tilbakestilles i starten
-    if (depth === 0 && nextLayer.type === "wmts") {
-      nextLayer = {
-        ...nextLayer,
-        layers: nextLayer.layers.map((ml) => checkLayerRecursively(ml, false)),
-      };
-    }
-
-    // Når vi når enden av indexPath har vi funnet laget vi skal endre, og må da oppdatere alle barna den har rekursivt
-    if (depth === indexPath.length - 1) {
-      if (nextLayer.type === "wmts") {
-        modifiedLayer = checkWMTSLayer(nextLayer, willBeVisible);
-      } else {
-        modifiedLayer = checkLayerRecursively(nextLayer, willBeVisible);
-      }
-    } else {
-      // Hvis vi ikke har nådd enden enda fortsetter vi å søke lengre ned rekursivt
-      const newSublayers = findRecursively(depth + 1, nextLayer.layers, indexPath, willBeVisible);
-
-      // Et lag skal kun vises som synlig dersom alle etterkommere vises som synlig også
-      modifiedLayer = {
-        ...nextLayer,
-        layers: newSublayers,
-        isVisible:
-          nextLayer.type === "wmts"
-            ? newSublayers.some((sl) => sl.isVisible)
-            : newSublayers.every((sl) => sl.isVisible),
-      };
-    }
-    // Vi må opprette treet av mappedLayers på nytt med de endrede lagene
-    const head = layers.slice(0, indexPath[depth]);
-    const tail = layers.slice(indexPath[depth] + 1);
-    return [...head, modifiedLayer, ...tail];
-  };
-
-  // Kun ett lag kan være skrudd på om gangen for WMTS-lag, så de må håndteres på en spesiell måte
-  const checkWMTSLayer = (layer: MappedLayer, willBeVisible: boolean): MappedLayer => {
-    // Dersom laget som skal toggles ikke har barn setter vi det bare til riktig verdi
-    if (layer.layers.length === 0) {
-      toggleWMTSLayer(layer, willBeVisible, false);
-      return {
-        ...layer,
-        isVisible: willBeVisible,
-      };
-    }
-
-    // Dersom laget har barn må vi sjekke hvilket barn som skal bli markert som synlig
-    const toggledLayerId = toggleWMTSLayer(layer, willBeVisible, true);
-
-    // TODO: rekursjon gjennom eventuelle mapper for å finne barnet som ble skrudd på og sette react state rett
-    return {
-      ...layer,
-      isVisible: willBeVisible,
-      layers: layer.layers.map((sublayer) => findDefaultWMTSLayerRecursively(sublayer, toggledLayerId, willBeVisible)),
-    };
-  };
-
-  // TODO: fungerer bra for å toggle på default, men noe går galt når man toggler kartlaginner
-  const findDefaultWMTSLayerRecursively = (
-    layer: MappedLayer,
-    toggledLayerId: string,
-    willBeVisible: boolean,
-  ): MappedLayer => {
-    if (layer.layers.length === 0) {
-      if (layer.id === toggledLayerId) return { ...layer, isVisible: willBeVisible };
-      return layer;
-    }
-    return {
-      ...layer,
-      isVisible: willBeVisible,
-      layers: layer.layers.map((sublayer) => findDefaultWMTSLayerRecursively(sublayer, toggledLayerId, willBeVisible)),
-    };
-  };
-
-  // Går gjennom laget sine underlag for å rekursivt skru på eller av visning av lagene
-  const checkLayerRecursively = (layer: MappedLayer, willBeVisible: boolean): MappedLayer => {
-    // Dersom laget ikke har barn kan vi avslutte rekursjon og skru av eller på kartlaget
-    if (layer.layers.length === 0) {
-      if (layer.type === "wms") toggleWMSLayer(layer, willBeVisible);
-      return { ...layer, isVisible: willBeVisible };
-    }
-    // Dersom laget har barn må vi passe på at alle etterkommere blir skrudd av eller på også
-    return {
-      ...layer,
-      isVisible: willBeVisible,
-      layers: layer.layers.map((sublayer) => checkLayerRecursively(sublayer, willBeVisible)),
-    };
   };
 
   // TODO: gjør noe med defaults

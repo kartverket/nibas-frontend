@@ -74,10 +74,6 @@ export const isWMSLayer = (layer: BaseLayer): layer is TileLayer<TileWMS> => {
   return layer instanceof TileLayer && layer.getSource() instanceof TileWMS;
 };
 
-export const isVectorLayer = (layer: BaseLayer): layer is VectorLayer<VectorSource> => {
-  return layer instanceof VectorLayer;
-};
-
 export const removeAllFeatures = () => {
   Object.values(grenserLayers).forEach((layer) => {
     const source = layer.getSource();
