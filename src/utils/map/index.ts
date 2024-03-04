@@ -3,8 +3,7 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import VectorSource from "ol/source/Vector";
 import { LineString } from "ol/geom";
-import { Coordinate, equals } from "ol/coordinate";
-import { FeatureLike } from "ol/Feature";
+import { Coordinate } from "ol/coordinate";
 import { pixelTolerance } from "pages/Kart/interactions/constants";
 
 export const resetMapView = () => {
@@ -75,40 +74,6 @@ export const getZoomMode = (isEditing: boolean, hasEditingInMap: boolean): "edit
   }
 
   return "view";
-};
-
-/** Sjekker om en feature har et punkt på gitt koordinat */
-const isFeatureConnectedToCoordinate = (feature: FeatureLike, coordinate: Coordinate): boolean => {
-  // TODO: dersom featuren er arkivert skal den alltid returnere false?
-  if (feature instanceof Feature) {
-    const geometry = feature.getGeometry();
-    if (geometry instanceof LineString) {
-      const featureCoordinates = geometry?.getCoordinates();
-      return featureCoordinates.some((featureCoordinate) => equals(featureCoordinate, coordinate));
-    }
-  }
-  return false;
-};
-
-/** Tar inn en grense og prøver å avgjøre om den er koblet til andre grenser i begge ender */
-export const isFeatureDeadEnd = (feature: Feature<Geometry>) => {
-  const geometry = feature.getGeometry() as LineString;
-  const coordinates = geometry?.getCoordinates() as Coordinate[];
-
-  const head = coordinates[0];
-  const tail = coordinates[coordinates.length - 1];
-
-  const headFeatures = map
-    .getFeaturesAtPixel(map.getPixelFromCoordinate(head))
-    .filter((headFeature) => headFeature.getId() !== feature.getId());
-  const tailFeatures = map
-    .getFeaturesAtPixel(map.getPixelFromCoordinate(tail))
-    .filter((tailFeature) => tailFeature.getId() !== feature.getId());
-
-  const headConnected = headFeatures.some((f) => isFeatureConnectedToCoordinate(f, head));
-  const tailConnected = tailFeatures.some((f) => isFeatureConnectedToCoordinate(f, tail));
-
-  return !(headConnected && tailConnected);
 };
 
 /** Euklidisk avstand mellom to koordinater i piksler */
