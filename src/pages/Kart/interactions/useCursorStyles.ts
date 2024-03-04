@@ -37,8 +37,8 @@ const mapViewport = map.getViewport();
  * @param {EventAndHandlerMap[]} eventsAndHandlers - Array av OpenLayers-hendelser og deres tilsvarende handlers.
  * @example
  * useCursorStyles(true, [
- *   { key: 'click', handler: handleClick },
- *   { key: 'pointermove', handler: handlePointerMove },
+ *   { name: 'pointermove', cursor: 'grab' },
+ *   { name: 'pointerdrag', cursor: 'grabbing' },
  * ]);
  */
 export const useCursorStyles = (isEnabled: boolean, eventsAndHandlers: EventAndHandlerMap) => {
