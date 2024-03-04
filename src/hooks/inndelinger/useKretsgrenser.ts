@@ -15,7 +15,7 @@ import { stemmekretsgrenserFetcher } from "api/stemmekrets";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { getAllVisibleFeatures, getZoomMode, zoomToFeatures } from "utils/map";
 import { getLayerById } from "utils/map/layers";
-import { GrunnkretsResponse, StemmekretsResponse } from "../../types/api";
+import { FeatureProperties, GrunnkretsResponse, StemmekretsResponse } from "../../types/api";
 import { GeoJSONFeature } from "ol/format/GeoJSON";
 import {
   FeatureIdWithEndpoints,
@@ -118,8 +118,11 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
 
             for (const connectedFeature of connectedFeatures) {
               const connectedFeatureId = connectedFeature.getId()?.toString();
-              if (!connectedFeatureId) continue;
-              if (isFeatureDeadEnd(connectedFeature, allFeatureEndpoints)) errorFeatureIds.push(connectedFeatureId);
+              const connectedFeatureProperties = connectedFeature.getProperties() as FeatureProperties;
+              if (!connectedFeatureId || !connectedFeatureProperties) continue;
+
+              if (!connectedFeatureProperties.shouldArchive && isFeatureDeadEnd(connectedFeature, allFeatureEndpoints))
+                errorFeatureIds.push(connectedFeatureId);
             }
           } else if (isFeatureDeadEnd(actualFeature, allFeatureEndpoints)) {
             errorFeatureIds.push(id.toString());

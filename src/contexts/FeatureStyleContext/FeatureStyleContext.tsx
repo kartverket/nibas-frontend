@@ -162,13 +162,20 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       (featureEndpoint) => featureEndpoint !== null,
     ) as FeatureIdWithEndpoints[];
 
+    const archivedFeatures = archivedSource.getFeatures().map((f) => f.getId()?.toString() || "");
+
     const errorFeatures = history.entries
       .slice(0, history.index)
       .filter((entry) => errorHistoryTypes.includes(entry.type))
       .reduce(getAffectedFeaturesForErrorEntries, [])
       .flat()
       .filter((feature) => {
-        if (feature) return isFeatureDeadEnd(feature, allFeatureEndpoints);
+        const featureId = feature.getId()?.toString();
+        if (feature && featureId && !archivedFeatures.includes(featureId)) {
+          return isFeatureDeadEnd(feature, allFeatureEndpoints);
+        }
+
+        return false;
       })
       .map((feature) => feature.getId()?.toString() || "");
 
@@ -179,8 +186,6 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       .reduce(getFeatureIdsFromEntries, [])
       .flatMap((id) => id)
       .filter((id) => !errorFeatures.includes(id));
-
-    const archivedFeatures = archivedSource.getFeatures().map((f) => f.getId()?.toString() || "");
 
     // For å forhindre uendelig løkke
     if (
