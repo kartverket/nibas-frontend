@@ -34,7 +34,7 @@ const mapViewport = map.getViewport();
 /**
  * Hook for å håndtere cursorsstiler basert på OpenLayers-hendelser.
  * @param {boolean} isEnabled - Indikerer om cursorsstilene skal være aktivert.
- * @param {EventAndHandlerMap[]} eventsAndHandlers - Array av OpenLayers-hendelser og deres tilsvarende handlers.
+ * @param {EventAndHandlerMap[]} eventsAndHandlers - Array av OpenLayers-hendelser og deres tilsvarende cursor.
  * @example
  * useCursorStyles(true, [
  *   { name: 'pointermove', cursor: 'grab' },
