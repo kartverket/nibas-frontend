@@ -1,27 +1,26 @@
-import { useEffect, useMemo } from "react";
-import Draw, { DrawEvent } from "ol/interaction/Draw";
-import { pixelTolerance } from "./constants";
-import { useToolbar } from "contexts/ToolbarContext";
-import { noModifierKeys } from "ol/events/condition";
-import { grenseStyles } from "utils/map/layerStyles";
-import { editSource } from "hooks/layers/constants";
-import { useEditAllGrenser } from "contexts/EditGrenserContext";
-import { getGrenseTypeFromEditingType } from "hooks/layers/types";
 import { useToast } from "@kvib/react";
-import { Feature, MapBrowserEvent } from "ol";
-import { useHistory } from "contexts/HistoryContext";
-import { getTempFeatureId } from "./tempFeatureIdUtil";
-import { createNyGrenseHistoryChanges } from "./historyUtil";
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
-import LineString from "ol/geom/LineString";
-import { findNearbyVertexOnFeature } from "utils/map";
-import { useGetFeatures } from "./utils";
+import { useHistory } from "contexts/HistoryContext";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { useToolbar } from "contexts/ToolbarContext";
+import { editSource } from "hooks/layers/constants";
+import { getGrenseTypeFromEditingType } from "hooks/layers/types";
+import { Feature, MapBrowserEvent } from "ol";
 import { FeatureLike } from "ol/Feature";
 import { Coordinate, equals } from "ol/coordinate";
+import { noModifierKeys } from "ol/events/condition";
+import LineString from "ol/geom/LineString";
+import Draw, { DrawEvent } from "ol/interaction/Draw";
+import { useEffect, useMemo } from "react";
 import { setDefaultFeatureProperties } from "utils/features";
-import { map } from "../constants";
-import { EventAndHandlerMap, useCursorStyles } from "./useCursorStyles";
+import { findNearbyVertexOnFeature } from "utils/map";
+import { grenseStyles } from "utils/map/layerStyles";
+import { pixelTolerance } from "./constants";
+import { createNyGrenseHistoryChanges } from "./historyUtil";
+import { getTempFeatureId } from "./tempFeatureIdUtil";
+import { useCursorStyles } from "./useCursorStyles";
+import { useGetFeatures } from "./utils";
 
 const useDraw = () => {
   const { activeTool, activeModeTools } = useToolbar();
@@ -31,6 +30,12 @@ const useDraw = () => {
   const { selectFeatures, selectedFeatures } = useFeatureStyle();
   const { getActiveFeaturesAtPixel } = useGetFeatures();
   const toast = useToast();
+  useCursorStyles(activeTool == "draw" && !activeModeTools.includes("move"), [
+    {
+      name: ["pointermove"],
+      cursor: "crosshair",
+    },
+  ]);
 
   // TODO: fungerer ikke uten snap, vet ikke hvorfor
   const draw = useMemo(() => {
@@ -149,17 +154,6 @@ const useDraw = () => {
       draw.un("drawend", onDrawEnd);
     };
   }, [addHistoryEntry, draw, getCurrentlyEditingType, openOverlayPanel, selectFeatures, selectedFeatures, toast]);
-
-  const eventsAndHandlers: EventAndHandlerMap = [
-    {
-      name: ["pointermove"],
-      handler: (mapViewport: HTMLElement) => {
-        mapViewport.style.cursor = "crosshair";
-      },
-    },
-  ];
-
-  useCursorStyles(activeTool == "draw" && !activeModeTools.includes("move"), eventsAndHandlers);
 
   return { draw };
 };

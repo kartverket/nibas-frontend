@@ -26,7 +26,7 @@ type OpenLayersEvent = (
 
 export type EventAndHandlerMap = {
   name: OpenLayersEvent;
-  handler: (mapViewport: HTMLElement) => void;
+  cursor: string;
   callback?: () => void;
 }[];
 const mapViewport = map.getViewport();
@@ -44,7 +44,7 @@ const mapViewport = map.getViewport();
 export const useCursorStyles = (isEnabled: boolean, eventsAndHandlers: EventAndHandlerMap) => {
   const addEventListeners = (events: EventAndHandlerMap) => {
     events.forEach((event) => {
-      const callback = () => event.handler(mapViewport); // må sørge for at vi bruker samme funksjon (referanse) ellers vil unregister av event feile
+      const callback = () => (mapViewport.style.cursor = event.cursor); // må sørge for at vi bruker samme funksjon (referanse) ellers vil unregister av event feile
       map.on(event.name, callback);
       event.callback = callback;
     });
