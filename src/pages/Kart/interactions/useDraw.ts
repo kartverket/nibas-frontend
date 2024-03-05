@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import Draw, { DrawEvent } from "ol/interaction/Draw";
 import { pixelTolerance } from "./constants";
 import { useToolbar } from "contexts/ToolbarContext";
