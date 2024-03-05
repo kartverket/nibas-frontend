@@ -174,6 +174,8 @@ export const getDefaultFeatureProperties = (grenseType: GrenseType): FeatureProp
 };
 
 export const isFeatureEditable = (feature: FeatureLike, isArchived: boolean) => {
+  const isMetadataEditable = isFeatureMetadataEditable(feature, isArchived);
+
   const featureType = feature.get("type") as GrenseType;
 
   if (isAdministrativGrense(featureType)) {
@@ -204,6 +206,12 @@ export const isFeatureEditable = (feature: FeatureLike, isArchived: boolean) => 
 
     if (!alleKretserIKontekstEgenskaperErSynlig) return false;
   }
+
+  return isMetadataEditable;
+};
+
+export const isFeatureMetadataEditable = (feature: FeatureLike, isArchived: boolean) => {
+  const featureType = feature.get("type") as GrenseType;
 
   const isEditableFeatureType = editableBorderTypes.includes(featureType);
 

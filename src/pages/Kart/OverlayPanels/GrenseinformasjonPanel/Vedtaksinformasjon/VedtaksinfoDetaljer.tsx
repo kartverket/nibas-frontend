@@ -1,4 +1,4 @@
-import { Button, Modal, ModalBody, ModalContent, Text, ModalOverlay, useToast, Divider } from "@kvib/react";
+import { Button, Modal, ModalBody, ModalContent, Text, ModalOverlay, useToast } from "@kvib/react";
 import { Feature } from "ol";
 import { VedtaksinfoBody } from "./VedtaksinfoBody";
 import { FormViewState, Referanse, VedtakinfoForm } from "./Vedtaksinformasjon";
@@ -16,6 +16,7 @@ type DetaljerProps = {
   isOpen: boolean;
   onClose: () => void;
   selectedVedtaksinfoId?: string;
+  isDisabled: boolean;
 };
 
 export const VedtaksinfoDetaljer = ({
@@ -25,6 +26,7 @@ export const VedtaksinfoDetaljer = ({
   onClose,
   feature,
   selectedVedtaksinfoId,
+  isDisabled,
 }: DetaljerProps) => {
   const [dokref, setDokref] = useState<Referanse[] | undefined>(undefined);
   const [internref, setInternref] = useState<Referanse[] | undefined>(undefined);
@@ -73,10 +75,19 @@ export const VedtaksinfoDetaljer = ({
   };
 
   const isFormValidOnSubmit = (data: VedtakinfoForm) => {
-    if (data.vedtakGyldigTil && data.vedtakGyldigFra && data.vedtakGyldigFra > data.vedtakGyldigTil) {
-      setError("vedtakGyldigTil", {
-        message: 'Vedtakets "gyldig fra"-dato kan ikke overskride vedtakets "gyldig til"-dato.',
-      });
+    if (data.vedtakGyldigTil && data.vedtakGyldigFra) {
+      if (data.vedtakGyldigFra >= data.vedtakGyldigTil) {
+        setError("vedtakGyldigTil", {
+          message: "Gyldig til må være satt til en dato etter gyldig fra dato.",
+        });
+      }
+
+      if (new Date() >= data.vedtakGyldigTil) {
+        setError("vedtakGyldigTil", {
+          message: "Kan ikke sette gyldighetsdato til dagens dato eller tidligere.",
+        });
+      }
+
       return false;
     }
 
@@ -130,10 +141,10 @@ export const VedtaksinfoDetaljer = ({
         <form onSubmit={handleSubmit(onSubmit)}>
           <VedtakHeaderContainer>
             <PanelHeader onClose={closeModal}>
-              <Text>Se eller endre på vedtaksinformasjon</Text>
+              <Text>{`Se ${!isDisabled ? "eller endre på" : ""} vedtaksinformasjon`}</Text>
             </PanelHeader>
           </VedtakHeaderContainer>
-          <ModalBody minHeight={"500px"}>
+          <ModalBody>
             <VedtaksinfoBody
               formViewState={formViewState}
               clearErrors={clearErrors}
@@ -152,20 +163,21 @@ export const VedtaksinfoDetaljer = ({
             />
           </ModalBody>
 
-          <Divider />
-          <VedtakFooterContainer>
-            <VedtaksFooter
-              onAvbryt={onAvbryt}
-              toggleEndreVedtak={toggleEndreVedtak}
-              formViewState={formViewState}
-              onClose={closeModal}
-              deleteOrArchive={() => {
-                deleteOrArchive();
-                closeModal();
-              }}
-              vedtaksinfoIsPersisted={isVedtakPersisted(selectedVedtaksinfoId, metadata)}
-            />
-          </VedtakFooterContainer>
+          {!isDisabled && (
+            <VedtakFooterContainer>
+              <VedtaksFooter
+                onAvbryt={onAvbryt}
+                toggleEndreVedtak={toggleEndreVedtak}
+                formViewState={formViewState}
+                onClose={closeModal}
+                deleteOrArchive={async () => {
+                  const didDeleteOrArchive = await deleteOrArchive();
+                  if (didDeleteOrArchive) closeModal();
+                }}
+                vedtaksinfoIsPersisted={isVedtakPersisted(selectedVedtaksinfoId, metadata)}
+              />
+            </VedtakFooterContainer>
+          )}
         </form>
       </ModalContent>
     </Modal>
@@ -230,7 +242,7 @@ const NyttVedtakFooter = ({ onClose }: { onClose: () => void }) => {
 
 const EndreVedtakFooter = ({
   onAvbryt,
-  deleteOrArchive: onArchive,
+  deleteOrArchive,
   vedtaksinfoIsPersisted,
 }: {
   onAvbryt: () => void;
@@ -246,8 +258,9 @@ const EndreVedtakFooter = ({
               rightIcon="archive"
               variant="tertiary"
               colorScheme="blue"
+              padding="6px"
               aria-label="Arkver referansen"
-              onClick={onArchive}
+              onClick={deleteOrArchive}
             >
               <p>Arkiver referansen</p>
             </Button>
@@ -256,8 +269,9 @@ const EndreVedtakFooter = ({
               rightIcon="delete_forever"
               variant="tertiary"
               colorScheme="red"
+              padding="6px"
               aria-label="Slett referansen"
-              onClick={onArchive}
+              onClick={deleteOrArchive}
             >
               <p>Slett referansen</p>
             </Button>
@@ -279,13 +293,16 @@ const EndreVedtakFooter = ({
 };
 
 const VedtakHeaderContainer = styled.div`
-  margin-left: 28px;
+  padding: 0 24px 0 24px;
+  margin-bottom: -20px;
 `;
 
 const VedtakFooterContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  padding: 12px;
+  margin: 0 24px 0 24px;
+  padding: 12px 0 12px 0;
+  border-top: 2px solid var(--kvib-colors-gray-50);
 `;
 
 const VedtakFooterLeft = styled.div`
@@ -314,5 +331,5 @@ function isVedtakPersisted(selectedVedtaksinfoId: string | undefined, metadata: 
 }
 
 const ButtonsContainer = styled.div`
-  display: inline-block;
+  /* display: inline-block; */
 `;
