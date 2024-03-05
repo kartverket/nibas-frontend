@@ -46,11 +46,17 @@ const UtkastOpprett = () => {
     formState: { errors },
     handleSubmit,
     getValues,
+    reset,
   } = useForm<UtkastFormData>({
     mode: "onSubmit",
     reValidateMode: "onChange",
     defaultValues: { navn: "", endringstype: "" },
   });
+
+  const handleCloseModal = () => {
+    reset();
+    onClose();
+  };
 
   const opprettUtkast = async () => {
     setIsLoading(true);
@@ -83,7 +89,7 @@ const UtkastOpprett = () => {
         Opprett et nytt utkast
       </Button>
 
-      <Modal isOpen={isOpen} onClose={onClose} size="xl" isCentered>
+      <Modal isOpen={isOpen} onClose={handleCloseModal} size="xl" isCentered>
         <ModalOverlay />
         <ModalContent>
           <form onSubmit={handleSubmit(opprettUtkast)}>
@@ -123,7 +129,7 @@ const UtkastOpprett = () => {
             </ModalBody>
             <ModalFooter>
               <ButtonGroup>
-                <Button variant="tertiary" onClick={handleSubmit(opprettUtkast)}>
+                <Button variant="tertiary" onClick={handleCloseModal}>
                   Avbryt
                 </Button>
                 <Button type="submit" isLoading={isLoading}>
