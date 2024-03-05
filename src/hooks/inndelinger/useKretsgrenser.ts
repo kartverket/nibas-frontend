@@ -1,4 +1,4 @@
-import { useContext, useMemo } from "react";
+import { useContext, useMemo, useState } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
@@ -68,6 +68,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   } = useFeatureStyle();
 
   const context = useContext(EditGrenserContext);
+  const [lasterData, setLasterData] = useState(false);
 
   const { data: kretserByKommune } = useNibasApi(visible ? getKretserByKommuneUrl(type) : null, {
     id: kommuneId,
@@ -171,7 +172,10 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   const { addFeaturesToLayer } = useAsyncFeatures(
     allFeatures,
     getZoomMode(!!grenseValue.editing, context?.getCurrentlyEditingType() != null),
-    () => applyDirtyStylesToUtkastFeatures(allFeatures ?? []),
+    () => {
+      applyDirtyStylesToUtkastFeatures(allFeatures ?? []);
+      setLasterData(false);
+    },
   );
 
   const addKretserToLayer = (layerId: LayerId) => {
@@ -198,12 +202,11 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     }
   };
 
-  const lasterData = visible && !allFeatures;
-
   return {
     addKretserToLayer,
     removeKretserFromLayer,
     lasterData,
+    setLasterData,
   };
 };
 
