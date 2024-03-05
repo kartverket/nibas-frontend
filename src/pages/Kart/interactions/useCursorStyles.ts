@@ -1,7 +1,8 @@
-import { useEffect } from "react";
+import BaseEvent from "ol/events/Event";
+import { useCallback, useEffect } from "react";
 import { map } from "../constants";
 
-type OpenLayersEvent = (
+type OpenLayersEvents = (
   | "change"
   | "change:layergroup"
   | "change:size"
@@ -24,33 +25,38 @@ type OpenLayersEvent = (
   | "singleclick"
 )[];
 
-export type EventAndHandlerMap = {
-  name: OpenLayersEvent;
+export type EventsAndCursor = {
+  name: OpenLayersEvents;
   cursor: string;
-  callback?: () => void;
-}[];
+  condition?: (e: Event | BaseEvent) => boolean;
+  callback?: (e: Event | BaseEvent) => void;
+};
 const mapViewport = map.getViewport();
 
 /**
  * Hook for å håndtere cursorsstiler basert på OpenLayers-hendelser.
  * @param {boolean} isEnabled - Indikerer om cursorsstilene skal være aktivert.
- * @param {EventAndHandlerMap[]} eventsAndHandlers - Array av OpenLayers-hendelser og deres tilsvarende cursor.
+ * @param {EventsAndCursor[]} eventsAndCursor - Array av OpenLayers-hendelser og deres tilsvarende cursor.
  * @example
  * useCursorStyles(true, [
  *   { name: 'pointermove', cursor: 'grab' },
  *   { name: 'pointerdrag', cursor: 'grabbing' },
  * ]);
  */
-export const useCursorStyles = (isEnabled: boolean, eventsAndHandlers: EventAndHandlerMap) => {
-  const addEventListeners = (events: EventAndHandlerMap) => {
+export const useCursorStyles = (isEnabled: boolean, eventsAndCursor: EventsAndCursor[], defaultCursor?: string) => {
+  const addEventListeners = (events: EventsAndCursor[]) => {
     events.forEach((event) => {
-      const callback = () => (mapViewport.style.cursor = event.cursor); // må sørge for at vi bruker samme funksjon (referanse) ellers vil unregister av event feile
+      const callback = (e: Event | BaseEvent) => {
+        if (event.condition) {
+          mapViewport.style.cursor = event.condition(e) ? event.cursor : "";
+        } else mapViewport.style.cursor = event.cursor;
+      };
+
       map.on(event.name, callback);
       event.callback = callback;
     });
   };
-
-  const removeEventListeners = (events: EventAndHandlerMap) => {
+  const removeEventListeners = (events: EventsAndCursor[]) => {
     events.forEach((event) => {
       if (event.callback) {
         map.un(event.name, event.callback);
@@ -60,14 +66,14 @@ export const useCursorStyles = (isEnabled: boolean, eventsAndHandlers: EventAndH
 
   useEffect(() => {
     if (isEnabled) {
-      addEventListeners(eventsAndHandlers);
+      addEventListeners(eventsAndCursor);
     } else {
       mapViewport.style.cursor = "";
     }
 
     return () => {
-      removeEventListeners(eventsAndHandlers);
+      removeEventListeners(eventsAndCursor);
       mapViewport.style.cursor = "";
     };
-  }, [eventsAndHandlers, isEnabled]);
+  }, [eventsAndCursor, isEnabled]);
 };

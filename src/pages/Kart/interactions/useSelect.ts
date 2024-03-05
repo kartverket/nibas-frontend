@@ -10,7 +10,6 @@ import { usePrevious } from "hooks/usePrevious";
 import { useGetFeatures } from "./utils";
 import { isFeatureEditable, isMatrikkelFeature } from "utils/features";
 import { useCursorStyles } from "./useCursorStyles";
-import removeIcon from "../../../assets/archive.svg";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -26,12 +25,6 @@ const useSelect = () => {
   const { activeOverlayPanel, closeOverlayPanel, openOverlayPanel } = useOverlayPanel();
   const previousPointMode = usePrevious(activeTool);
   const { getActiveFeaturesAtPixel } = useGetFeatures();
-  useCursorStyles(activeTool === "archive" || activeTool === "remove", [
-    {
-      name: ["pointermove"],
-      cursor: `url('${removeIcon}') 16 16, auto`,
-    },
-  ]);
   useCursorStyles(activeTool === "add", [
     {
       name: ["pointermove"],
