@@ -121,7 +121,7 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
       <GrenseinformasjonField
         feature={feature}
         tooltipLabel="Dato når grensen siste gang ble registert, observert eller målt."
-        fieldLabel="Datafangtsdato"
+        fieldLabel="Datafangstdato"
         fieldKey="datafangstdato"
         isUneditable
         valueLabelFormatter={(date) => {
