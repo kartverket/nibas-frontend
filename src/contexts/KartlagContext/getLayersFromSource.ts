@@ -23,18 +23,16 @@ type WMTSResponseLayer = {
 };
 
 const mapWMSLayer = (responseLayer: WMSResponseLayer, sourceId: KartlagId) => {
-  let layers: MappedLayer[] = [];
-
-  if (responseLayer.Layer) {
-    layers = responseLayer.Layer.map((nestedLayer: WMSResponseLayer) => mapWMSLayer(nestedLayer, sourceId));
-  }
+  const sublayers = responseLayer.Layer
+    ? responseLayer.Layer.map((nestedLayer: WMSResponseLayer) => mapWMSLayer(nestedLayer, sourceId))
+    : [];
 
   const mappedLayer: MappedLayer = {
     type: "wms",
     sourceId,
     id: responseLayer.Name,
     title: responseLayer.Title,
-    layers,
+    sublayers,
     isVisible: false,
   };
 
@@ -46,7 +44,7 @@ const mapWMTSLayer = (responseLayer: WMTSResponseLayer, sourceId: KartlagId): Ma
   sourceId: sourceId,
   id: responseLayer.Identifier,
   title: responseLayer.Title,
-  layers: [],
+  sublayers: [],
   isVisible: false,
 });
 
@@ -106,7 +104,7 @@ export const getLayersFromSource = async (layerId: KartlagId, source: TileWMS | 
         sourceId: layerId,
         id: layerId,
         title: json.ServiceIdentification.Title ?? source.getLayer(),
-        layers: json.Contents.Layer.map((l: WMTSResponseLayer) => mapWMTSLayer(l, layerId)),
+        sublayers: json.Contents.Layer.map((l: WMTSResponseLayer) => mapWMTSLayer(l, layerId)),
         isVisible: false,
       };
 

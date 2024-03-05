@@ -10,7 +10,7 @@ export type MappedLayer = {
   sourceId: KartlagId;
   id: string;
   title: string;
-  layers: MappedLayer[];
+  sublayers: MappedLayer[];
   isVisible: boolean;
 };
 
@@ -39,7 +39,7 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
 
   const toggleSublayersRecursively = useCallback((layer: MappedLayer, willBeVisible: boolean): MappedLayer => {
     // Dersom laget ikke har barn kan vi avslutte rekursjon og skru av eller på kartlaget
-    if (layer.layers.length === 0) {
+    if (layer.sublayers.length === 0) {
       if (layer.type === "wms") toggleWMSLayer(getLayerById(layer.sourceId), willBeVisible, layer.id);
       return { ...layer, isVisible: willBeVisible };
     }
@@ -47,20 +47,20 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
     return {
       ...layer,
       isVisible: willBeVisible,
-      layers: layer.layers.map((sublayer) => toggleSublayersRecursively(sublayer, willBeVisible)),
+      sublayers: layer.sublayers.map((sublayer) => toggleSublayersRecursively(sublayer, willBeVisible)),
     };
   }, []);
 
   const findDefaultWMTSLayerRecursively = useCallback(
     (layer: MappedLayer, toggledLayerId: string, willBeVisible: boolean): MappedLayer => {
-      if (layer.layers.length === 0) {
+      if (layer.sublayers.length === 0) {
         if (layer.id === toggledLayerId) return { ...layer, isVisible: willBeVisible };
         return layer;
       }
       return {
         ...layer,
         isVisible: willBeVisible,
-        layers: layer.layers.map((sublayer) =>
+        sublayers: layer.sublayers.map((sublayer) =>
           findDefaultWMTSLayerRecursively(sublayer, toggledLayerId, willBeVisible),
         ),
       };
@@ -74,7 +74,7 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
       const sourceLayer = getLayerById(layer.sourceId);
 
       // Dersom laget som skal toggles ikke har barn setter vi det bare til riktig verdi
-      if (layer.layers.length === 0) {
+      if (layer.sublayers.length === 0) {
         toggleWMTSLayer(sourceLayer, willBeVisible, layer.id);
         return {
           ...layer,
@@ -88,7 +88,7 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
       return {
         ...layer,
         isVisible: willBeVisible,
-        layers: layer.layers.map((sublayer) =>
+        sublayers: layer.sublayers.map((sublayer) =>
           findDefaultWMTSLayerRecursively(sublayer, toggledLayerId, willBeVisible),
         ),
       };
@@ -105,7 +105,7 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
       if (depth === 0 && nextLayer.type === "wmts") {
         nextLayer = {
           ...nextLayer,
-          layers: nextLayer.layers.map((ml) => toggleSublayersRecursively(ml, false)),
+          sublayers: nextLayer.sublayers.map((ml) => toggleSublayersRecursively(ml, false)),
         };
       }
 
@@ -118,16 +118,13 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
         }
       } else {
         // Hvis vi ikke har nådd enden enda fortsetter vi å søke lengre ned rekursivt
-        const newSublayers = toggleLayerRecursively(depth + 1, nextLayer.layers, indexPath, willBeVisible);
+        const newSublayers = toggleLayerRecursively(depth + 1, nextLayer.sublayers, indexPath, willBeVisible);
 
         // Et lag skal kun vises som synlig dersom alle etterkommere vises som synlig også
         modifiedLayer = {
           ...nextLayer,
-          layers: newSublayers,
-          isVisible:
-            nextLayer.type === "wmts"
-              ? newSublayers.some((sl) => sl.isVisible)
-              : newSublayers.every((sl) => sl.isVisible),
+          sublayers: newSublayers,
+          isVisible: newSublayers.some((sl) => sl.isVisible),
         };
       }
       // Vi må opprette treet av mappedLayers på nytt med de endrede lagene
@@ -147,7 +144,7 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
         if (layer.id === id) {
           return { mappedLayer: layer, indexPath: [index] };
         }
-        const findings = findMappedLayerRecursively(id, layer.layers);
+        const findings = findMappedLayerRecursively(id, layer.sublayers);
         if (findings) {
           return { mappedLayer: findings.mappedLayer, indexPath: [index, ...findings.indexPath] };
         }

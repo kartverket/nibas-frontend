@@ -13,26 +13,28 @@ type Props = {
 // Obs! Denne komponenten kan være nøstet i seg selv dersom det er flere underlag
 const KartlagMiddle = ({ mappedLayer, indexPath, isNested = false }: Props) => {
   const { toggleLayer } = useKartlag();
+
   const handleToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // TODO: denne (eller noe relatert) er wack av og til når man toggler av, kan være re-rendringsproblemer
     e.stopPropagation();
     toggleLayer(mappedLayer, indexPath);
   };
   return (
     <Accordion allowToggle>
       <KartlagAccordionItem>
-        <KartlagMiddleAccordionButton $isVisible={mappedLayer.isVisible}>
-          <Checkbox isChecked={mappedLayer.isVisible} onChange={handleToggle} />
-          <KartlagTitle>{mappedLayer.title}</KartlagTitle>
-          <Spacer />
-          <KartlagAccordionIcon />
-        </KartlagMiddleAccordionButton>
+        <h4>
+          <KartlagMiddleAccordionButton $isVisible={mappedLayer.isVisible}>
+            <Checkbox isChecked={mappedLayer.isVisible} onChange={handleToggle} />
+            <KartlagTitle>{mappedLayer.title}</KartlagTitle>
+            <Spacer />
+            <KartlagAccordionIcon />
+          </KartlagMiddleAccordionButton>
+        </h4>
         <KartlagAccordionPanel $isNested={isNested}>
-          {mappedLayer.layers.map((subLayer, i) =>
-            subLayer.layers.length > 0 ? (
-              <KartlagMiddle key={subLayer.id} indexPath={[...indexPath, i]} mappedLayer={subLayer} />
+          {mappedLayer.sublayers.map((sublayer, i) =>
+            sublayer.sublayers.length > 0 ? (
+              <KartlagMiddle key={sublayer.id} indexPath={[...indexPath, i]} mappedLayer={sublayer} />
             ) : (
-              <KartlagInner key={subLayer.id} indexPath={[...indexPath, i]} mappedLayer={subLayer} />
+              <KartlagInner key={sublayer.id} indexPath={[...indexPath, i]} mappedLayer={sublayer} />
             ),
           )}
         </KartlagAccordionPanel>

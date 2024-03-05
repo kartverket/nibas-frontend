@@ -13,27 +13,30 @@ type Props = {
 
 const KartlagOuter = ({ indexPath, mappedLayer }: Props) => {
   const { toggleLayer } = useKartlag();
+
   const handleToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // TODO: denne (eller noe relatert) er wack av og til når man toggler av, kan være re-rendringsproblemer
     e.stopPropagation();
     toggleLayer(mappedLayer, indexPath);
   };
+
   return (
     <KartlagAccordion allowToggle>
       <KartlagAccordionItem>
-        <KartlagOuterAccordionButton $isVisible={mappedLayer.isVisible}>
-          <Checkbox isChecked={mappedLayer.isVisible} onChange={handleToggle} />
-          <KartlagTitle>{mappedLayer.title}</KartlagTitle>
-          <Spacer />
-          <ActiveKartlagOpacity layerId={mappedLayer.sourceId} />
-          <KartlagAccordionIcon />
-        </KartlagOuterAccordionButton>
+        <h4>
+          <KartlagOuterAccordionButton $isVisible={mappedLayer.isVisible}>
+            <Checkbox isChecked={mappedLayer.isVisible} onChange={handleToggle} />
+            <KartlagTitle>{mappedLayer.title}</KartlagTitle>
+            <Spacer />
+            <ActiveKartlagOpacity layerId={mappedLayer.sourceId} />
+            <KartlagAccordionIcon />
+          </KartlagOuterAccordionButton>
+        </h4>
         <KartlagAccordionPanel $isVisible={mappedLayer.isVisible}>
-          {mappedLayer.layers.map((subLayer, i) =>
-            subLayer.layers.length > 0 ? (
-              <KartlagMiddle key={subLayer.id} indexPath={[...indexPath, i]} mappedLayer={subLayer} />
+          {mappedLayer.sublayers.map((sublayer, i) =>
+            sublayer.sublayers.length > 0 ? (
+              <KartlagMiddle key={sublayer.id} indexPath={[...indexPath, i]} mappedLayer={sublayer} />
             ) : (
-              <KartlagInner key={subLayer.id} indexPath={[...indexPath, i]} mappedLayer={subLayer} />
+              <KartlagInner key={sublayer.id} indexPath={[...indexPath, i]} mappedLayer={sublayer} />
             ),
           )}
         </KartlagAccordionPanel>

@@ -32,12 +32,12 @@ export const toggleWMSLayer = (layer: TileLayer<TileSource>, willBeVisible: bool
     const layers = source.getParams().LAYERS as string;
 
     if (willBeVisible) {
-      layer.setVisible(true);
       source.updateParams({ LAYERS: layers ? `${layers},${layerId}` : layerId });
+      layer.setVisible(true);
     } else {
       const newLayers = removeLayer(layers, layerId);
-      if (!newLayers) layer.setVisible(false);
       source.updateParams({ LAYERS: newLayers });
+      if (!newLayers) layer.setVisible(false);
     }
   }
 };

@@ -18,10 +18,8 @@ export const KartlagAccordionButton = styled(AccordionButton)`
   }
 
   &[aria-expanded="true"] {
-    font-weight: var(--kvib-fontWeights-bold);
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
-    padding-bottom: 8px;
   }
 `;
 
