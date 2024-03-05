@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Draw, { DrawEvent } from "ol/interaction/Draw";
 import { pixelTolerance } from "./constants";
 import { useToolbar } from "contexts/ToolbarContext";
@@ -20,6 +20,7 @@ import { useGetFeatures } from "./utils";
 import { FeatureLike } from "ol/Feature";
 import { Coordinate, equals } from "ol/coordinate";
 import { setDefaultFeatureProperties } from "utils/features";
+import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 
 const useDraw = () => {
   const { activeTool, activeModeTools } = useToolbar();
@@ -99,7 +100,7 @@ const useDraw = () => {
         return true;
       },
     });
-  }, [activeTool, getActiveFeaturesAtPixel, toast, activeModeTools]);
+  }, [activeTool, activeModeTools, getActiveFeaturesAtPixel, toast]);
 
   useEffect(() => {
     const addDrawToHistory = (drawnFeature: Feature<LineString>) => {
@@ -147,6 +148,10 @@ const useDraw = () => {
       draw.un("drawend", onDrawEnd);
     };
   }, [addHistoryEntry, draw, getCurrentlyEditingType, openOverlayPanel, selectFeatures, selectedFeatures, toast]);
+
+  useKeyboardShortcut("escape", () => {
+    draw.abortDrawing();
+  });
 
   return { draw };
 };
