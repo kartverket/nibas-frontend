@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Draw, { DrawEvent } from "ol/interaction/Draw";
 import { pixelTolerance } from "./constants";
 import { useToolbar } from "contexts/ToolbarContext";
@@ -20,16 +20,17 @@ import { useGetFeatures } from "./utils";
 import { FeatureLike } from "ol/Feature";
 import { Coordinate, equals } from "ol/coordinate";
 import { setDefaultFeatureProperties } from "utils/features";
-import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 
 const useDraw = () => {
-  const { activeTool, activeModeTools } = useToolbar();
+  const { activeTool, activeModeTools, toggleTool } = useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const { addHistoryEntry } = useHistory();
   const { openOverlayPanel } = useOverlayPanel();
   const { selectFeatures, selectedFeatures } = useFeatureStyle();
   const { getActiveFeaturesAtPixel } = useGetFeatures();
   const toast = useToast();
+
+  const [abortDrawMemoHelper, setAbortDrawMemoHelper] = useState(0);
 
   // TODO: fungerer ikke uten snap, vet ikke hvorfor
   const draw = useMemo(() => {
@@ -100,7 +101,8 @@ const useDraw = () => {
         return true;
       },
     });
-  }, [activeTool, activeModeTools, getActiveFeaturesAtPixel, toast]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [abortDrawMemoHelper, activeTool, activeModeTools, getActiveFeaturesAtPixel, toast]);
 
   useEffect(() => {
     const addDrawToHistory = (drawnFeature: Feature<LineString>) => {
@@ -115,6 +117,17 @@ const useDraw = () => {
           changes: createNyGrenseHistoryChanges([drawnFeature], grenseType),
         });
       }
+    };
+
+    const onDrawAbort = () => {
+      // Ønsket her er egentlig å sette draw.revision_ til 0. Beklageligvis gir ikke OL noen måte å resette en revision på.
+      // Av den grunn så har vi lagt inn en hjelper som re-memoiserer draw, sånn at vi kan tilbakestille revision til 0.
+      // Antakeligvis hadde det vært mer hensiktsmessig å finne en god måte å vurdere om man tegner på som ikke er revision, men dette funker.
+      // Jeg har brukt masse timer på å finne en god løsning for aktiv tegning vs. inaktiv tegning allerede, og det er tilsynelatende ikke helt trivielt
+
+      // PS: Det virker som at drawEnd kun resetter revision siden vi legger til i history, som gjør at hele useDraw blir kalt på nytt, og dermed revision tilbakestilt.
+      // Alltid en mulighet på at dette er noe som kan brekke i fremtiden, og vi bør sikkert revurdere approachen her generelt.
+      setAbortDrawMemoHelper((a) => a + 1);
     };
 
     const onDrawEnd = (e: DrawEvent) => {
@@ -144,14 +157,21 @@ const useDraw = () => {
     };
 
     draw.on("drawend", onDrawEnd);
+    draw.on("drawabort", onDrawAbort);
     return () => {
       draw.un("drawend", onDrawEnd);
+      draw.un("drawabort", onDrawAbort);
     };
-  }, [addHistoryEntry, draw, getCurrentlyEditingType, openOverlayPanel, selectFeatures, selectedFeatures, toast]);
-
-  useKeyboardShortcut("escape", () => {
-    draw.abortDrawing();
-  });
+  }, [
+    addHistoryEntry,
+    draw,
+    getCurrentlyEditingType,
+    openOverlayPanel,
+    selectFeatures,
+    selectedFeatures,
+    toast,
+    toggleTool,
+  ]);
 
   return { draw };
 };

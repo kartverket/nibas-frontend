@@ -1,4 +1,3 @@
-import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import Fylkesgrenser from "./Fylkesgrenser";
 import Grunnkretser from "./Grunnkretser";
 import Kommunegrenser from "./Kommunegrenser";
@@ -10,7 +9,6 @@ import { useSidebarPanel } from "contexts/SidebarPanelContext";
 
 const GrenserDrillDown = () => {
   const { activeSidebarPanel, closeSidebarPanel } = useSidebarPanel();
-  useKeyboardShortcut("escape", closeSidebarPanel);
 
   return (
     <SidebarPanel $isOpen={activeSidebarPanel === "inndelinger"}>
