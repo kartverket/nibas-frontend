@@ -30,12 +30,10 @@ const useDraw = () => {
   const { selectFeatures, selectedFeatures } = useFeatureStyle();
   const { getActiveFeaturesAtPixel } = useGetFeatures();
   const toast = useToast();
-  useCursorStyles(activeTool == "draw" && !activeModeTools.includes("move"), [
-    {
-      name: ["pointermove"],
-      cursor: "crosshair",
-    },
-  ]);
+  useCursorStyles({
+    isEnabled: activeTool == "draw" && !activeModeTools.includes("move"),
+    defaultCursor: { style: "crosshair" },
+  });
 
   // TODO: fungerer ikke uten snap, vet ikke hvorfor
   const draw = useMemo(() => {

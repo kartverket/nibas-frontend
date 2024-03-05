@@ -6,16 +6,16 @@ import { useCursorStyles } from "./useCursorStyles";
 
 const useDragInteractions = () => {
   const { activeModeTools } = useToolbar();
-  useCursorStyles(activeModeTools.includes("move"), [
-    {
-      name: ["pointermove"],
-      cursor: "grab",
-    },
-    {
-      name: ["pointerdrag"],
-      cursor: "grabbing",
-    },
-  ]);
+  useCursorStyles({
+    isEnabled: activeModeTools.includes("move"),
+    defaultCursor: { style: "grab" },
+    eventsAndCursor: [
+      {
+        name: ["pointerdrag"],
+        cursor: { style: "grabbing" },
+      },
+    ],
+  });
 
   const dragPan = useMemo(
     () =>

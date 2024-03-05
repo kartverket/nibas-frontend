@@ -25,55 +25,65 @@ type OpenLayersEvents = (
   | "singleclick"
 )[];
 
+type ConditionalCursorStyle = {
+  style: string;
+  condition?: (e: Event | BaseEvent) => boolean;
+};
+
 export type EventsAndCursor = {
   name: OpenLayersEvents;
-  cursor: string;
-  condition?: (e: Event | BaseEvent) => boolean;
+  cursor: ConditionalCursorStyle;
   callback?: (e: Event | BaseEvent) => void;
 };
-const mapViewport = map.getViewport();
 
-/**
- * Hook for å håndtere cursorsstiler basert på OpenLayers-hendelser.
- * @param {boolean} isEnabled - Indikerer om cursorsstilene skal være aktivert.
- * @param {EventsAndCursor[]} eventsAndCursor - Array av OpenLayers-hendelser og deres tilsvarende cursor.
- * @example
- * useCursorStyles(true, [
- *   { name: 'pointermove', cursor: 'grab' },
- *   { name: 'pointerdrag', cursor: 'grabbing' },
- * ]);
- */
-export const useCursorStyles = (isEnabled: boolean, eventsAndCursor: EventsAndCursor[], defaultCursor?: string) => {
-  const addEventListeners = (events: EventsAndCursor[]) => {
-    events.forEach((event) => {
-      const callback = (e: Event | BaseEvent) => {
-        if (event.condition) {
-          mapViewport.style.cursor = event.condition(e) ? event.cursor : "";
-        } else mapViewport.style.cursor = event.cursor;
-      };
+type CursorStyleProps = {
+  isEnabled: boolean;
+  defaultCursor?: ConditionalCursorStyle;
+  eventsAndCursor?: EventsAndCursor[];
+};
 
-      map.on(event.name, callback);
-      event.callback = callback;
-    });
-  };
-  const removeEventListeners = (events: EventsAndCursor[]) => {
-    events.forEach((event) => {
-      if (event.callback) {
-        map.un(event.name, event.callback);
-      }
-    });
-  };
-
+export const useCursorStyles = ({ isEnabled, eventsAndCursor, defaultCursor }: CursorStyleProps) => {
+  const mapViewport = map.getViewport();
   useEffect(() => {
+    const setDefaultCursor = (e?: Event | BaseEvent) => {
+      if (defaultCursor?.condition && e) {
+        if (defaultCursor?.condition(e)) {
+          mapViewport.style.cursor = defaultCursor?.style;
+        } else mapViewport.style.cursor = "";
+      } else mapViewport.style.cursor = defaultCursor?.style || "";
+    };
+
+    const addEventListeners = (events?: EventsAndCursor[]) => {
+      events?.forEach((event) => {
+        const callback = (e: Event | BaseEvent) => {
+          if (event.cursor.condition) {
+            event.cursor.condition(e) ? (mapViewport.style.cursor = event.cursor.style) : setDefaultCursor(e);
+          } else mapViewport.style.cursor = event.cursor.style;
+        };
+
+        map.on(event.name, callback);
+        event.callback = callback;
+      });
+      map.on("pointermove", setDefaultCursor);
+    };
+
+    const removeEventListeners = (events?: EventsAndCursor[]) => {
+      events?.forEach((event) => {
+        if (event.callback) {
+          map.un(event.name, event.callback);
+        }
+      });
+      map.un("pointermove", setDefaultCursor);
+    };
+
     if (isEnabled) {
       addEventListeners(eventsAndCursor);
     } else {
       mapViewport.style.cursor = "";
     }
-
     return () => {
       removeEventListeners(eventsAndCursor);
       mapViewport.style.cursor = "";
     };
-  }, [eventsAndCursor, isEnabled]);
+  }, [defaultCursor, eventsAndCursor, isEnabled, mapViewport.style]);
 };

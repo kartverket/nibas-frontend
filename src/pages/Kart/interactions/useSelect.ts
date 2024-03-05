@@ -25,12 +25,7 @@ const useSelect = () => {
   const { activeOverlayPanel, closeOverlayPanel, openOverlayPanel } = useOverlayPanel();
   const previousPointMode = usePrevious(activeTool);
   const { getActiveFeaturesAtPixel } = useGetFeatures();
-  useCursorStyles(activeTool === "add", [
-    {
-      name: ["pointermove"],
-      cursor: "crosshair",
-    },
-  ]);
+  useCursorStyles({ isEnabled: activeTool === "add", defaultCursor: { style: "crosshair" } });
 
   const dangerousPointModes: Tool[] = ["archive", "split", "detach"];
   const allowedPointModes: Tool[] = [...dangerousPointModes, "grenseinfo"];
