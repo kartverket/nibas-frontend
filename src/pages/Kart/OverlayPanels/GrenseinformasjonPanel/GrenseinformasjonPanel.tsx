@@ -8,12 +8,15 @@ import { useEffect } from "react";
 import { Feature } from "ol";
 import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 import { isMatrikkelFeature } from "utils/features";
+import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 
 const GrenseinformasjonPanel = ({ isOpen, className }: PanelProps) => {
   const { selectedFeatures } = useFeatureStyle();
   const { activeOverlayPanel, closeOverlayPanel } = useOverlayPanel();
 
   const selectedFeature = selectedFeatures.length === 1 ? selectedFeatures[0] : undefined;
+
+  useKeyboardShortcut("escape", closeOverlayPanel);
 
   useEffect(() => {
     if (activeOverlayPanel === "grenseinfo" && selectedFeatures.length === 0) {
