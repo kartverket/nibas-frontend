@@ -12,11 +12,11 @@ type Props = {
 
 // Obs! Denne komponenten kan være nøstet i seg selv dersom det er flere underlag
 const KartlagMiddle = ({ mappedLayer, indexPath, isNested = false }: Props) => {
-  const { toggleLayer } = useKartlag();
+  const { toggleKartlag } = useKartlag();
 
   const handleToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation();
-    toggleLayer(mappedLayer, indexPath);
+    toggleKartlag(mappedLayer, indexPath);
   };
   return (
     <Accordion allowToggle>

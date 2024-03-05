@@ -8,10 +8,10 @@ type Props = {
 };
 
 const KartlagInner = ({ indexPath, mappedLayer }: Props) => {
-  const { toggleLayer } = useKartlag();
+  const { toggleKartlag } = useKartlag();
 
   const handleToggle = () => {
-    toggleLayer(mappedLayer, indexPath);
+    toggleKartlag(mappedLayer, indexPath);
   };
 
   return (

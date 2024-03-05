@@ -26,7 +26,7 @@ const removeLayer = (layers: string, layerId: string) => {
   return layers.replace(replaceString, "");
 };
 
-export const toggleWMSLayer = (layer: TileLayer<TileSource>, willBeVisible: boolean, layerId: string) => {
+export const setWMSLayerVisibility = (layer: TileLayer<TileSource>, willBeVisible: boolean, layerId: string) => {
   const source = layer.getSource();
   if (source instanceof TileWMS) {
     const layers = source.getParams().LAYERS as string;
@@ -50,21 +50,7 @@ export const resetWMSLayer = (layer: TileLayer<TileSource>) => {
   }
 };
 
-export const resetWMTSLayer = (layer: TileLayer<TileSource>) => {
-  const source = layer.getSource();
-  if (source instanceof WMTS) {
-    const config = source.get("config");
-    const newSource = new WMTS({
-      ...config,
-      layer: config.layer as string,
-    });
-    newSource.set("config", config);
-    layer.setSource(newSource);
-    layer.setVisible(false);
-  }
-};
-
-export const toggleWMTSLayer = (layer: TileLayer<TileSource>, willBeVisible: boolean, newLayerId?: string) => {
+export const setWMTSLayerVisibility = (layer: TileLayer<TileSource>, willBeVisible: boolean, newLayerId?: string) => {
   const source = layer.getSource();
   if (source instanceof WMTS) {
     // OpenLayers lar deg ikke sette layer for WMTS-lag, så vi må bytte ut hele sourcen med ny layer-verdi
@@ -80,4 +66,18 @@ export const toggleWMTSLayer = (layer: TileLayer<TileSource>, willBeVisible: boo
     return newLayer;
   }
   return "";
+};
+
+export const resetWMTSLayer = (layer: TileLayer<TileSource>) => {
+  const source = layer.getSource();
+  if (source instanceof WMTS) {
+    const config = source.get("config");
+    const newSource = new WMTS({
+      ...config,
+      layer: config.layer as string,
+    });
+    newSource.set("config", config);
+    layer.setSource(newSource);
+    layer.setVisible(false);
+  }
 };

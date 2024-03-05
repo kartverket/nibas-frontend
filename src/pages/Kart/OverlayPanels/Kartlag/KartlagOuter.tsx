@@ -12,11 +12,11 @@ type Props = {
 };
 
 const KartlagOuter = ({ indexPath, mappedLayer }: Props) => {
-  const { toggleLayer } = useKartlag();
+  const { toggleKartlag } = useKartlag();
 
   const handleToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation();
-    toggleLayer(mappedLayer, indexPath);
+    toggleKartlag(mappedLayer, indexPath);
   };
 
   return (
