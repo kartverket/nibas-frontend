@@ -1,6 +1,5 @@
 import { Feature } from "ol";
 import { GeoJSONFeature, GeoJSONFeatureCollection } from "ol/format/GeoJSON";
-import LineString from "ol/geom/LineString";
 import { EntityUtkastType, UtkastEntity, ResponseWithId } from "./types";
 import {
   GrunnkretsEntry,
@@ -184,8 +183,8 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
   const editedFeatures: GeoJSONFeature[] = utkastOperations.grenseendringer.endredeFeatures;
 
   const addFeatureToEditedFeaturesIfNotAlreadyAdded = (featureId: string) => {
-    const editFeature = editSource.getFeatureById(featureId) as Feature<LineString> | null;
-    const archivedFeature = archivedSource.getFeatureById(featureId) as Feature<LineString> | null;
+    const editFeature = editSource.getFeatureById(featureId);
+    const archivedFeature = archivedSource.getFeatureById(featureId);
     const feature = editFeature ?? archivedFeature;
 
     if (!feature) return;
@@ -196,7 +195,7 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
 
     // Hvis vi allerede har lagt inn featuren tidligere i historikken,
     // ønsker vi å overskrive den hvis den samme featuren endres senere i historikken
-    if (index != -1) {
+    if (index !== -1) {
       editedFeatures[index] = featureAsGeoJson;
       return;
     }
@@ -258,7 +257,7 @@ export const addTempFeatureIdToNewFeaturesInUtkast = (utkast: UtkastResponse): U
   const endredeFeatures = utkastCopy.operasjoner.grenseendringer.endredeFeatures;
 
   endredeFeatures
-    .filter((feature) => feature.id == null)
+    .filter((feature) => feature.id === null)
     .forEach((feature) => {
       feature.id = getTempFeatureId();
     });

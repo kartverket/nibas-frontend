@@ -142,7 +142,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
 
   const { addFeaturesToLayer } = useAsyncFeatures(
     allFeatures,
-    getZoomMode(!!grenseValue.editing, context?.getCurrentlyEditingType() != null),
+    getZoomMode(!!grenseValue.editing, context?.getCurrentlyEditingType() !== null),
     () => applyDirtyStylesToUtkastFeatures(allFeatures ?? []),
   );
 

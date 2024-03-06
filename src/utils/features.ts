@@ -76,7 +76,7 @@ export const isFeatureEditable = (feature: FeatureLike, isArchived: boolean) => 
     const properties = feature.getProperties() as FeatureProperties;
     const kontekstEgenskaper = properties.kontekstEgenskaper as KontekstEgenskaper[];
 
-    if (!kontekstEgenskaper || kontekstEgenskaper.length == 0) return false;
+    if (!kontekstEgenskaper || kontekstEgenskaper.length === 0) return false;
 
     const layerSources = Object.values(grenserLayers)
       .map((layer) => layer.getSource())
@@ -91,9 +91,7 @@ export const isFeatureEditable = (feature: FeatureLike, isArchived: boolean) => 
       if (!lokalId) return false;
 
       // TODO Velge riktig layerSource basert på kontekstegenskaptype?
-      return layerSources.some((source) => {
-        return source.getFeatureById(getRepresentasjonspunktId(lokalId)) != null;
-      });
+      return layerSources.some((source) => source.getFeatureById(getRepresentasjonspunktId(lokalId)) !== null);
     });
 
     if (!alleKretserIKontekstEgenskaperErSynlig) return false;

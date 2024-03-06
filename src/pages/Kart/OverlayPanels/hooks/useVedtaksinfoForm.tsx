@@ -143,13 +143,13 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoId?: str
   const { addHistoryEntry } = useHistory();
 
   const deleteOrArchive = async (): Promise<boolean> => {
-    if (selectedVedtaksinfoId == undefined) return false;
+    if (selectedVedtaksinfoId === undefined) return false;
     const metadata = feature.getProperties().metadata as Metadata;
     const oldDokrefs: DokumentasjonsreferanseDTO[] = metadata.dokumentasjonsreferanser
       ? metadata.dokumentasjonsreferanser
       : [];
 
-    const selectedDokref = oldDokrefs.find((dokref) => dokref.id == selectedVedtaksinfoId);
+    const selectedDokref = oldDokrefs.find((dokref) => dokref.id === selectedVedtaksinfoId);
     if (!selectedDokref) return false;
 
     const isDeleting = isTempDokrefId(selectedDokref.id);

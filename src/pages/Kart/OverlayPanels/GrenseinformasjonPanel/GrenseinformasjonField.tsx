@@ -53,7 +53,7 @@ export const GrenseinformasjonField = ({
       tooltipLabel={tooltipLabel}
       valueLabel={formattedLabel}
       onMetadataSubmit={onSubmit}
-      isDisabled={isGrenseinformasjonPanelDisabled || isDisabled || metadata?.common?.gyldigTil != null}
+      isDisabled={isGrenseinformasjonPanelDisabled || isDisabled || metadata?.common?.gyldigTil !== null}
       isDirty={isDirty}
       reset={reset}
       isUneditable={isUneditable}

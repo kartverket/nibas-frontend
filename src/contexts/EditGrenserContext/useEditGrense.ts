@@ -31,7 +31,7 @@ export const useEditGrense = (kretsType: EditingType, kretsId: string, features:
   const { kretsStatus, setKretsStatus } = useEditGrenseValue(kretsType, kretsId);
   const { addFeaturesToLayer } = useAsyncFeatures(
     features,
-    getZoomMode(!!kretsStatus.editing, context?.getCurrentlyEditingType() != null),
+    getZoomMode(!!kretsStatus.editing, context?.getCurrentlyEditingType() !== null),
     () => setIsLoading(false),
   );
 

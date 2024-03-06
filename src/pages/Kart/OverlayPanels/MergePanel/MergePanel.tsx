@@ -154,9 +154,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
 
   const fetchStemmekretsgrenser = async (stemmekretsIder: string[]) => {
     const stemmekretsgrenserResponse = await stemmekretsgrenserFetcher(stemmekretsIder, tokenHolderFunc()?.token);
-    return stemmekretsgrenserResponse
-      ? stemmekretsgrenserResponse.filter((value) => value != null).map((value) => String(value))
-      : [];
+    return stemmekretsgrenserResponse ? removeNull(stemmekretsgrenserResponse).map((value) => String(value)) : [];
   };
 
   const getStemmekretsIdList = (

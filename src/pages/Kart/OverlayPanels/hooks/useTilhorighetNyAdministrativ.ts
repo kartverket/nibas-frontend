@@ -30,10 +30,10 @@ const getAdministrativeFeatures = (features: Feature<Geometry>[]) => {
 
 const filterKontekstEgenskaperOnType = (egenskaper: KontekstEgenskaper[], type: string) => {
   return egenskaper
-    .filter((egenskap) => egenskap.type == type)
+    .filter((egenskap) => egenskap.type === type)
     .map((egenskap) => egenskap.id?.lokalid.value || "")
     .filter((egenskap, index, workingList) => workingList.indexOf(egenskap) === index)
-    .filter((id) => id.length > 0 && id != CustomOption.NOT_CHOSEN);
+    .filter((id) => id.length > 0 && id !== CustomOption.NOT_CHOSEN);
 };
 
 const useGetMuligeKretserForNyAdministrativGrense = (

@@ -76,7 +76,7 @@ const Toolbar = () => {
   const [panningEnabled, setPanningEnabled] = useState(true);
 
   addEventListener("mouseup", () => {
-    if (activeTool == null || activeTool !== "draw") return;
+    if (activeTool === null || activeTool !== "draw") return;
 
     if (isPanningAllowed()) setPanningEnabled(true);
     else setPanningEnabled(false);

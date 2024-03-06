@@ -10,8 +10,8 @@ import { SelectedPoint, useFeatureStyle } from "contexts/FeatureStyleContext";
 import Point from "ol/geom/Point";
 import { Button, Spacer, useToast } from "@kvib/react";
 import { editSource } from "hooks/layers/constants";
-import { Feature } from "ol";
 import { useToolbar } from "contexts/ToolbarContext";
+import { Feature } from "ol";
 
 type KoordinaterFormData = {
   north: number;
@@ -92,7 +92,10 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
           if (coordinate) {
             const features = [];
             for (const change of entry.changes) {
-              features.push(editSource.getFeatureById(change.id) as Feature<LineString>);
+              const editFeature = editSource.getFeatureById(change.id) as Feature<LineString> | null;
+              if (editFeature) {
+                features.push(editFeature);
+              }
             }
             selectPointOnFeature(coordinate, features);
           }
