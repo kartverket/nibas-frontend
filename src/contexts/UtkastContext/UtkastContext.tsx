@@ -37,11 +37,6 @@ import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 import { CustomOption } from "pages/Kart/OverlayPanels/hooks/tilhorighetUtils";
 
-// down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
-
-/**
- * Bruk heller UtkastProvider i koden
- */
 export const UtkastContext = createContext<UtkastContextValue | undefined>(undefined);
 
 export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {

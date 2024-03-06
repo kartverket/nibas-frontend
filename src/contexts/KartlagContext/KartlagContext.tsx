@@ -15,9 +15,6 @@ export type KartlagContextValue = {
   resetKartlag: () => void;
 };
 
-/**
- * Bruk heller KartlagProvider i koden
- */
 export const KartlagContext = createContext<KartlagContextValue | undefined>(undefined);
 
 export const KartlagProvider = ({ children }: { children: React.ReactNode }) => {

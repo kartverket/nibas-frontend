@@ -15,9 +15,6 @@ type InndelingerKretsContextValue = {
   currentKretstype: Kretstype;
 };
 
-/**
- * Bruk heller InndelingerKretsProvider i koden
- */
 const InndelingerKretsContext = createContext<InndelingerKretsContextValue | undefined>(undefined);
 
 type Props = {
