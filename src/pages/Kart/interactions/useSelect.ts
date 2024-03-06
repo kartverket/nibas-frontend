@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { usePrevious } from "hooks/usePrevious";
 import { useGetFeatures } from "./utils";
 import { isFeatureEditable, isMatrikkelFeature } from "utils/features";
+import { useCursorStyles } from "./useCursorStyles";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -24,6 +25,7 @@ const useSelect = () => {
   const { activeOverlayPanel, closeOverlayPanel, openOverlayPanel } = useOverlayPanel();
   const previousPointMode = usePrevious(activeTool);
   const { getActiveFeaturesAtPixel } = useGetFeatures();
+  useCursorStyles({ isEnabled: activeTool === "add", defaultCursor: { style: "crosshair" } });
 
   const dangerousPointModes: Tool[] = ["archive", "split", "detach"];
   const allowedPointModes: Tool[] = [...dangerousPointModes, "grenseinfo"];

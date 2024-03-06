@@ -1,10 +1,21 @@
-import { useMemo } from "react";
 import { useToolbar } from "contexts/ToolbarContext";
-import { DragPan, DragZoom } from "ol/interaction";
 import { shiftKeyOnly } from "ol/events/condition";
+import { DragPan, DragZoom } from "ol/interaction";
+import { useMemo } from "react";
+import { useCursorStyles } from "./useCursorStyles";
 
 const useDragInteractions = () => {
   const { activeModeTools } = useToolbar();
+  useCursorStyles({
+    isEnabled: activeModeTools.includes("move"),
+    defaultCursor: { style: "grab" },
+    eventsAndCursor: [
+      {
+        name: ["pointerdrag"],
+        cursor: { style: "grabbing" },
+      },
+    ],
+  });
 
   const dragPan = useMemo(
     () =>

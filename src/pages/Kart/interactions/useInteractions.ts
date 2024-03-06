@@ -1,6 +1,6 @@
 import { map } from "pages/Kart/constants";
 import { Modify, Snap } from "ol/interaction";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { getVectorLayers } from "utils/map/layers";
 import useModify from "./useModify";
 import useSelect from "./useSelect";
@@ -10,7 +10,10 @@ import useSelectPoint from "./useSelectPoint";
 import { useToolbar } from "contexts/ToolbarContext";
 import { pixelTolerance } from "./constants";
 import { selectedPointStyle } from "utils/map/layerStyles";
-import { Collection } from "ol";
+import { Collection, MapBrowserEvent } from "ol";
+import { useCursorStyles } from "./useCursorStyles";
+import { useGetFeatures } from "./utils";
+import BaseEvent from "ol/events/Event";
 
 const useInteractions = () => {
   const { modify } = useModify();
@@ -18,7 +21,21 @@ const useInteractions = () => {
   const { select } = useSelect();
   const { draw } = useDraw();
   const { selectPoint } = useSelectPoint();
-  const { activeModeTools } = useToolbar();
+  const { activeTool, activeModeTools } = useToolbar();
+  const { getActiveFeaturesAtPixel } = useGetFeatures();
+
+  const memoizedCondition = useMemo(
+    () => (e: Event | BaseEvent) => getActiveFeaturesAtPixel(e as MapBrowserEvent<MouseEvent>, null).length > 0,
+    [getActiveFeaturesAtPixel],
+  );
+
+  useCursorStyles({
+    isEnabled: !activeModeTools.includes("move") && activeTool !== "draw",
+    defaultCursor: {
+      style: "move",
+      condition: memoizedCondition,
+    },
+  });
 
   useEffect(() => {
     const vectorLayers = getVectorLayers();
