@@ -20,7 +20,7 @@ const Toolbar = () => {
   const { activeTool, activeModeTools, toggleTool, toggleModeTool, enableModeTool, disableModeTool, resetTool } =
     useToolbar();
   const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } = useOverlayPanel();
-  const { selectedFeatures, selectedPoint, selectFeatures, clearSelectedPoint } = useFeatureStyle();
+  const { selectedFeatures, selectedPoint, clearSelectedPoint, clearSelection } = useFeatureStyle();
   const { activeSidebarPanel, closeSidebarPanel } = useSidebarPanel();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const editingType = getCurrentlyEditingType();
@@ -140,7 +140,7 @@ const Toolbar = () => {
     }
 
     if (selectedFeatures.length > 0) {
-      selectFeatures([]);
+      clearSelection();
       return;
     }
 

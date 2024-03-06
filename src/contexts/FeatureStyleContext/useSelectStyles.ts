@@ -33,11 +33,8 @@ export const useSelectStyles = () => {
   };
 
   const removeSelection = () => {
-    if (selectedPoint) {
-      removeFeaturesFromSourceByIds("edit", [selectedPoint.getId() as string]);
-    }
+    clearSelectedPoint();
     setSelectedFeatures([]);
-    setSelectedPoint(null);
     return selectedFeatures;
   };
 
