@@ -1,37 +1,15 @@
 import BaseEvent from "ol/events/Event";
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import { map } from "../constants";
-
-type OpenLayersEvents = (
-  | "change"
-  | "change:layergroup"
-  | "change:size"
-  | "change:target"
-  | "change:view"
-  | "click"
-  | "dblclick"
-  | "error"
-  | "loadend"
-  | "loadstart"
-  | "moveend"
-  | "movestart"
-  | "pointerdrag"
-  | "pointermove"
-  | "postcompose"
-  | "postrender"
-  | "precompose"
-  | "propertychange"
-  | "rendercomplete"
-  | "singleclick"
-)[];
+import { Types as MapBrowserEventType } from "ol/MapBrowserEventType";
 
 type ConditionalCursorStyle = {
   style: string;
   condition?: (e: Event | BaseEvent) => boolean;
 };
 
-export type EventsAndCursor = {
-  name: OpenLayersEvents;
+type EventsAndCursor = {
+  name: MapBrowserEventType[];
   cursor: ConditionalCursorStyle;
   callback?: (e: Event | BaseEvent) => void;
 };
@@ -49,16 +27,26 @@ export const useCursorStyles = ({ isEnabled, eventsAndCursor, defaultCursor }: C
       if (defaultCursor?.condition && e) {
         if (defaultCursor?.condition(e)) {
           mapViewport.style.cursor = defaultCursor?.style;
-        } else mapViewport.style.cursor = "";
-      } else mapViewport.style.cursor = defaultCursor?.style || "";
+        } else {
+          mapViewport.style.cursor = "";
+        }
+      } else {
+        mapViewport.style.cursor = defaultCursor?.style || "";
+      }
     };
 
     const addEventListeners = (events?: EventsAndCursor[]) => {
       events?.forEach((event) => {
         const callback = (e: Event | BaseEvent) => {
           if (event.cursor.condition) {
-            event.cursor.condition(e) ? (mapViewport.style.cursor = event.cursor.style) : setDefaultCursor(e);
-          } else mapViewport.style.cursor = event.cursor.style;
+            if (event.cursor.condition(e)) {
+              mapViewport.style.cursor = event.cursor.style;
+            } else {
+              setDefaultCursor(e);
+            }
+          } else {
+            mapViewport.style.cursor = event.cursor.style;
+          }
         };
 
         map.on(event.name, callback);
