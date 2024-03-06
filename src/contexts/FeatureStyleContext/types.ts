@@ -13,6 +13,7 @@ export type FeatureStyleContextValue = {
   selectFeatures: (features: SelectedFeatures) => void;
   selectedPoint: SelectedPoint;
   clearSelection: () => void;
+  clearSelectedPoint: () => void;
 
   addDirtyStyles: (featureIds: string[]) => void;
   setAndSaveDirtyStyles: (featureIds: string[]) => void;

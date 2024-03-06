@@ -13,9 +13,15 @@ import { ConditionalHide } from "components/ConditionalShowHide";
 import { Draw } from "ol/interaction";
 import { useState } from "react";
 
+import { useSidebarPanel } from "contexts/SidebarPanelContext";
+import { useFeatureStyle } from "contexts/FeatureStyleContext";
+
 const Toolbar = () => {
-  const { activeTool, activeModeTools, toggleTool, toggleModeTool, enableModeTool, disableModeTool } = useToolbar();
+  const { activeTool, activeModeTools, toggleTool, toggleModeTool, enableModeTool, disableModeTool, resetTool } =
+    useToolbar();
   const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } = useOverlayPanel();
+  const { selectedFeatures, selectedPoint, clearSelectedPoint, clearSelection } = useFeatureStyle();
+  const { activeSidebarPanel, closeSidebarPanel } = useSidebarPanel();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const editingType = getCurrentlyEditingType();
   const isEditMode = !!editingType;
@@ -94,6 +100,52 @@ const Toolbar = () => {
     () => disableModeTool("move"),
     isPanningAllowed,
   );
+
+  // Alt her er en prioritert rekkefølge på hva som bør "exites" først. Det kan sikkert itereres litt på, men dette er et foreløpig forslag
+  useKeyboardShortcut("escape", () => {
+    if (activeTool === "draw") {
+      const drawInteraction = map
+        .getInteractions()
+        .getArray()
+        .find((interaction) => interaction instanceof Draw);
+      if (drawInteraction) {
+        const revision = drawInteraction.getRevision();
+        if (revision && revision > 0) {
+          const test = drawInteraction as Draw;
+          test.abortDrawing();
+
+          return;
+        }
+      }
+    }
+
+    if (activeOverlayPanel) {
+      closeOverlayPanel();
+      return;
+    }
+
+    if (activeSidebarPanel) {
+      closeSidebarPanel();
+      return;
+    }
+
+    if (!activeTool && activeModeTools.includes("matrikkel")) {
+      toggleModeTool("matrikkel");
+      return;
+    }
+
+    if (selectedPoint) {
+      clearSelectedPoint();
+      return;
+    }
+
+    if (selectedFeatures.length > 0) {
+      clearSelection();
+      return;
+    }
+
+    resetTool();
+  });
 
   return (
     <OuterContainer>
