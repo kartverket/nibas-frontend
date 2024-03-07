@@ -1,7 +1,7 @@
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { styled } from "styled-components";
 import ListItemAccordion from "../ListItemAccordion";
-import KommuneList from "./KommuneList";
+import KommuneList from "./KommuneList/KommuneList";
 import { UnstyledList } from "components/UnstyledList";
 import useFylker from "hooks/inndelinger/useFylker";
 import { getIdFromEntity } from "utils/api";

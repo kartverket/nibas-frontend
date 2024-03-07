@@ -12,13 +12,13 @@ import {
   getKretserMedGrensejusteringer,
   groupEndringerByKommune,
   OperasjonerOrNull,
-} from "./endringerUtils";
+} from "./endringer-utils";
 import { getNavnInSpraak } from "utils/language/language";
 
 export const getStemmekretserMedEndringer = (operasjoner: OperasjonerOrNull): string[] => {
   const endringerResponse = operasjoner?.metadataendringer?.stemmekretsendringer;
 
-  if (endringerResponse == null || operasjoner == null) {
+  if (!endringerResponse || !operasjoner) {
     return [];
   }
 
@@ -51,7 +51,7 @@ const getEndringAvTypeForId = (
 
   const gammelVerdi = gammelStemmekrets[type]?.trim() ?? "";
 
-  if (gammelVerdi === nyVerdi || nyVerdi == null) {
+  if (!nyVerdi || gammelVerdi === nyVerdi) {
     return null;
   }
 
@@ -68,7 +68,7 @@ const harMetadataEndring = (metadatEndring: StemmekretsMetadataEndring): boolean
     metadatEndring.valgdistriktsnummer,
   ];
 
-  return fieldsToCheck.some((field) => field != null);
+  return fieldsToCheck.some((field) => field !== null);
 };
 
 const getMetadataEndringer = (
@@ -101,9 +101,9 @@ const getSammenslaaingEndring = (
   const sammenslaaing = operasjoner.stemmekretsSammenslaaingsendring;
 
   const harSammenslaaingsEndring =
-    sammenslaaing != null &&
-    viderefoertKrets != null &&
-    stemmekretsMedSammenslaaing != null &&
+    sammenslaaing &&
+    viderefoertKrets &&
+    stemmekretsMedSammenslaaing &&
     stemmekretser.includes(stemmekretsMedSammenslaaing);
 
   if (!harSammenslaaingsEndring) {
@@ -112,7 +112,7 @@ const getSammenslaaingEndring = (
 
   const krets = findKrets(viderefoertKrets.lokalId, alleStemmekretser);
 
-  const gamleKretser = sammenslaaing?.stemmekretserTilSammenslaaing
+  const gamleKretser = sammenslaaing.stemmekretserTilSammenslaaing
     .map((gammelKrets) => findKrets(gammelKrets.lokalId, alleStemmekretser))
     .map((gammelKrets) => ({
       navn: gammelKrets.stemmekretsnavn,
@@ -121,8 +121,8 @@ const getSammenslaaingEndring = (
 
   return {
     viderefoertKrets: krets,
-    nyttNavn: sammenslaaing?.stemmekretsNavn ?? "",
-    nyttNummer: sammenslaaing?.stemmekretsNummer ?? "",
+    nyttNavn: sammenslaaing.stemmekretsNavn ?? "",
+    nyttNummer: sammenslaaing.stemmekretsNummer ?? "",
     gamleKretser,
   };
 };
@@ -160,7 +160,7 @@ export const getStemmekretsEndringer = (
   alleStemmekretser: StemmekretsResponse[],
   alleKommuner: KommuneRef[],
 ): Stemmekretsendringer[] | null => {
-  if (operasjoner == null || endredeStemmekretser.length == 0) {
+  if (!operasjoner || endredeStemmekretser.length === 0) {
     return null;
   }
 

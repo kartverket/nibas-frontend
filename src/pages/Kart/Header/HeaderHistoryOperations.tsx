@@ -1,6 +1,6 @@
-import { useHistory } from "contexts/HistoryContext";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import HeaderButton, { HeaderSection } from "./HeaderButton";
-import { useUtkast } from "contexts/UtkastContext";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import { useDisclosure } from "@kvib/react";
 import EndringsloggModal from "components/Endringslogg/EndringsloggModal";

@@ -34,7 +34,7 @@ type GrunnkretsGrensejusteringerProps = {
 };
 
 const GrunnkretsGrensejusteringer = ({ grendejusteringer }: GrunnkretsGrensejusteringerProps) => {
-  if (grendejusteringer == null || grendejusteringer.length === 0) {
+  if (grendejusteringer === null || grendejusteringer.length === 0) {
     return null;
   }
 

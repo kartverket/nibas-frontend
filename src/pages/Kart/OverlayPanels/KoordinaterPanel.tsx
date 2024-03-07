@@ -5,13 +5,15 @@ import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import LineString from "ol/geom/LineString";
 import { useCallback, useEffect } from "react";
-import { GrenseEntry, HistoryChange, HistoryDirection, MinimalGrense, useHistory } from "contexts/HistoryContext";
-import { SelectedPoint, useFeatureStyle } from "contexts/FeatureStyleContext";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { HistoryChange, MinimalGrense, HistoryDirection, GrenseEntry } from "contexts/HistoryContext/types";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
+import { SelectedPoint } from "contexts/FeatureStyleContext/types";
 import Point from "ol/geom/Point";
 import { Button, Spacer, useToast } from "@kvib/react";
 import { editSource } from "hooks/layers/constants";
-import { Feature } from "ol";
 import { useToolbar } from "contexts/ToolbarContext";
+import { Feature } from "ol";
 
 type KoordinaterFormData = {
   north: number;
@@ -92,7 +94,10 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
           if (coordinate) {
             const features = [];
             for (const change of entry.changes) {
-              features.push(editSource.getFeatureById(change.id) as Feature<LineString>);
+              const editFeature = editSource.getFeatureById(change.id) as Feature<LineString> | null;
+              if (editFeature) {
+                features.push(editFeature);
+              }
             }
             selectPointOnFeature(coordinate, features);
           }

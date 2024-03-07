@@ -6,7 +6,7 @@ function isKeydownEvent(event: Event): event is KeyboardEvent {
 }
 
 const isValidTarget = (target: EventTarget | null): boolean => {
-  if (target === document.body || target == null) {
+  if (!target || target === document.body) {
     return true;
   }
 

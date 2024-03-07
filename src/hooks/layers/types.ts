@@ -1,4 +1,4 @@
-import { EditingType } from "contexts/EditGrenserContext";
+import { EditingType } from "contexts/EditGrenserContext/types";
 
 export type KartlagId =
   | "cachetjenester"

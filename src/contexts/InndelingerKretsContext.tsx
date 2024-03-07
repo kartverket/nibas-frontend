@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { useEditGrenser } from "./EditGrenserContext";
+import { useEditGrenser } from "./EditGrenserContext/EditGrenserContext";
 import useKretsgrenser from "hooks/inndelinger/useKretsgrenser";
 import { LayerId } from "hooks/layers/types";
 import { KommuneRef } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { useOverlayPanel } from "./OverlayPanelContext";
-import { getAllVisibleFeatures, zoomToFeatures } from "utils/map";
+import { getAllVisibleFeatures, zoomToFeatures } from "utils/map/map-utils";
 import { useToolbar } from "./ToolbarContext";
 import { editSource } from "hooks/layers/constants";
 
@@ -15,9 +15,6 @@ type InndelingerKretsContextValue = {
   currentKretstype: Kretstype;
 };
 
-/**
- * Bruk heller InndelingerKretsProvider i koden
- */
 const InndelingerKretsContext = createContext<InndelingerKretsContextValue | undefined>(undefined);
 
 type Props = {

@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo } from "react";
-import { HistoryEntry, HistoryTypeValues, useHistory } from "contexts/HistoryContext";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { FeatureStyleContextValue, SelectedFeatures } from "./types";
 import { useSelectStyles } from "./useSelectStyles";
 import { getArchiveLayerStyle, grenseStyles, setFeatureStyle } from "utils/map/layerStyles";
@@ -8,6 +8,7 @@ import useCustomStyles from "./useCustomStyles";
 import { Coordinate } from "ol/coordinate";
 import { Geometry } from "ol/geom";
 import { archivedSource } from "hooks/layers/constants";
+import { HistoryEntry, HistoryTypeValues } from "contexts/HistoryContext/types";
 
 export const FeatureStyleContext = createContext<FeatureStyleContextValue | undefined>(undefined);
 

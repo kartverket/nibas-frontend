@@ -84,7 +84,7 @@ type TekstEllerTomProps = {
 };
 
 const TekstEllerTom = ({ tekst, bold = false }: TekstEllerTomProps) => {
-  if (tekst == null || tekst.trim() === "") {
+  if (tekst === null || tekst.trim() === "") {
     return <KursivTekst $isBold={bold}>(tom)</KursivTekst>;
   }
   return <EndringTekst $isBold={bold}>{tekst.trim()}</EndringTekst>;

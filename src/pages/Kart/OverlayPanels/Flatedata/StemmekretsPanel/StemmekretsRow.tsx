@@ -5,12 +5,13 @@ import { getIdFromEntity } from "utils/api";
 import EditAndSaveButton from "../EditAndSaveButton";
 import InputCell from "../InputCell";
 import { ValidationError } from "components/Input";
-import { HistoryDirection, StemmekretsEntry, useHistory } from "contexts/HistoryContext";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { StemmekretsEntry, HistoryDirection } from "contexts/HistoryContext/types";
 import { RegisterOptions, FieldError, useForm } from "react-hook-form";
 import { updateEditFeatureText } from "utils/map/layerStyles";
 import { getRepresentasjonspunktId } from "utils/map/source";
 import { useHistoryFormSync } from "contexts/HistoryContext/useHistoryFormSync";
-import { useUtkast } from "contexts/UtkastContext";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { styled } from "styled-components";
 
 type StemmekretsInputs = {
