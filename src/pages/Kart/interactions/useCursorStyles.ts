@@ -1,12 +1,15 @@
 import BaseEvent from "ol/events/Event";
 import { useEffect } from "react";
 import { map } from "../constants";
-import { Types as MapBrowserEventType } from "ol/MapBrowserEventType";
+import { Types } from "ol/MapBrowserEventType";
 
 type ConditionalCursorStyle = (e?: Event | BaseEvent) => string;
 
+type OmitPointerMove<T extends string> = T extends "pointermove" ? never : T;
+type MapBrowserEvent = OmitPointerMove<Types>;
+
 type EventsAndCursor = {
-  name: MapBrowserEventType[];
+  name: MapBrowserEvent[];
   cursor: ConditionalCursorStyle;
   callback?: (e: Event | BaseEvent) => void;
 };
@@ -17,7 +20,24 @@ type CursorStyleProps = {
   eventsAndCursor?: EventsAndCursor[];
 };
 
-export const useCursorStyles = ({ isEnabled, eventsAndCursor, defaultCursor }: CursorStyleProps) => {
+/**
+ * Hook for å håndtere cursorsstiler i kartet basert på en gitt state og/eller OpenLayers-hendelser.
+ * @param {boolean} isEnabled - Indikerer om cursorsstilene skal være aktivert.
+ * @param {EventsAndCursor[]} eventsAndCursor - Liste med MapBrowserEvents knyttet til en cursorstil.
+ * @param {ConditionalCursorStyle} defaultCursor - Cursorstilen som skal gjelde hvis ingen events i eventsAndCursor har blitt utløst. defaultCursor blir automatisk knyttet til "pointermove" eventet i OpenLayers.
+ * @example
+ * useCursorStyles({
+    isEnabled: activeModeTools.includes("move"),
+    defaultCursor: () => "grab",
+    eventsAndCursor: [
+      {
+        name: ["pointerdrag"],
+        cursor: (e) => (shiftKeyOnly(e) ? "zoom-in" : "grabbing"),
+      },
+    ],
+  });
+ */
+export const useCursorStyles = ({ isEnabled, defaultCursor, eventsAndCursor }: CursorStyleProps) => {
   const mapViewport = map.getViewport();
 
   useEffect(() => {
@@ -56,6 +76,7 @@ export const useCursorStyles = ({ isEnabled, eventsAndCursor, defaultCursor }: C
     }
     return () => {
       removeEventListeners(eventsAndCursor);
+      mapViewport.style.cursor = "";
     };
   }, [defaultCursor, eventsAndCursor, isEnabled, mapViewport.style]);
 };
