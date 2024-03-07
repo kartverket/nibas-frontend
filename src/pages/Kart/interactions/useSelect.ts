@@ -1,14 +1,14 @@
-import { useToast } from "@kvib/react";
-import { useFeatureStyle } from "contexts/FeatureStyleContext";
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { Tool, useToolbar } from "contexts/ToolbarContext";
-import { usePrevious } from "hooks/usePrevious";
 import { Feature, MapBrowserEvent } from "ol";
-import LineString from "ol/geom/LineString";
-import { useEffect } from "react";
-import { isFeatureEditable, isMatrikkelFeature } from "utils/features";
 import { overlayPopup } from "../constants";
+import { useFeatureStyle } from "contexts/FeatureStyleContext";
+import LineString from "ol/geom/LineString";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { useToast } from "@kvib/react";
+import { useEffect } from "react";
+import { usePrevious } from "hooks/usePrevious";
 import { useGetFeatures } from "./utils";
+import { isFeatureEditable, isMatrikkelFeature } from "utils/features";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
