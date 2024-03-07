@@ -4,7 +4,7 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContex
 import useSplit from "../interactions/useSplit";
 import { addFeaturesToSource, getFeatureId, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { useToast } from "@kvib/react";
-import { addArchivingEntryFromFeature } from "../OverlayPanels/GrenseinformasjonPanel/utils";
+import { addArchivingEntryFromFeature } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { clearMatrikkelLayer, getMatrikkelFeatures } from "utils/map/layers";
 import { map } from "../constants";

@@ -9,12 +9,12 @@ import {
   getKommunerIdFromKontekstEgenskaper,
   getTilhorighetData,
   getUpdatedKontekstEgenskaper,
-} from "./tilhorighetUtils";
+} from "./tilhorighet-utils";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { Feature } from "ol";
 import { LineString } from "ol/geom";
 import { FeatureProperties } from "types/api";
-import { addKontekstEntryFromFeature } from "../GrenseinformasjonPanel/utils";
+import { addKontekstEntryFromFeature } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { getIdFromEntity } from "utils/api";
 import { useEditAllGrenser } from "contexts/EditGrenserContext/EditGrenserContext";

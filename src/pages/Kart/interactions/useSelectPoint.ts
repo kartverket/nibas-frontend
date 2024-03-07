@@ -6,7 +6,7 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContex
 import { useEffect, useMemo } from "react";
 import { findNearbyVertexOnFeature } from "utils/map/map-utils";
 import { useToast } from "@kvib/react";
-import { useGetFeatures } from "./utils";
+import { useGetFeatures } from "./interaction-utils";
 import { isFeatureEditable } from "utils/features";
 
 const useSelectPoint = () => {

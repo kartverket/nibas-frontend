@@ -7,7 +7,7 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToast } from "@kvib/react";
 import { useEffect } from "react";
 import { usePrevious } from "hooks/usePrevious";
-import { useGetFeatures } from "./utils";
+import { useGetFeatures } from "./interaction-utils";
 import { isFeatureEditable, isMatrikkelFeature } from "utils/features";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {

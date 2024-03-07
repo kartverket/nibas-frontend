@@ -4,7 +4,7 @@ import { LineString } from "ol/geom";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { FeatureProperties, Metadata } from "types/api";
-import { addFeaturePropertiesEntryFromFeature } from "../GrenseinformasjonPanel/utils";
+import { addFeaturePropertiesEntryFromFeature } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { Inputs } from "../GrenseinformasjonPanel/GrenseinformasjonFieldList";
 import { formatISO, startOfDay } from "date-fns";

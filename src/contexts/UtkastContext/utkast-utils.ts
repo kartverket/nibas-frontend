@@ -28,7 +28,7 @@ import {
 } from "types/api";
 import { featureToGeoJson } from "utils/map/geoJson";
 import { getIdFromEntity } from "utils/api";
-import { getTempFeatureId, isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
+import { getTempFeatureId, isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { isTempDokrefId } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/Vedtaksinformasjon/util/vedtaksinfoHelperMethods";
 
 const getCombinedEntity = <T extends ResponseWithId>(

@@ -9,7 +9,7 @@ import {
   undoArchving,
   undoGrensedeling,
   redoGrensedeling,
-} from "./utils";
+} from "./history-utils";
 import useHistoryState from "contexts/HistoryContext/useHistoryState";
 import { ensureAllCasesCovered } from "utils/typeHelpers";
 

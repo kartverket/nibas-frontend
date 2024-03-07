@@ -20,7 +20,7 @@ import {
 } from "@kvib/react";
 import { publishUtkast } from "api/utkast";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
-import { getDateInFriendlyString } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/utils";
+import { getDateInFriendlyString } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
 import { EndringsloggAccordion } from "pages/Utkast/UtkastEndringslogg";
 import { useState } from "react";
 import { useSWRConfig } from "swr";

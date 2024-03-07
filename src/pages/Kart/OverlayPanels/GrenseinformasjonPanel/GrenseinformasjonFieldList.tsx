@@ -4,10 +4,10 @@ import { Alert, AlertIcon, Datepicker, Input, Select, Textarea } from "@kvib/rea
 import { GrenseType } from "hooks/layers/types";
 import { styled } from "styled-components";
 import { GrenseinformasjonField } from "./GrenseinformasjonField";
-import { getDateInFriendlyString } from "./utils";
+import { getDateInFriendlyString } from "./grenseinformasjon-utils";
 import useNibasApi from "hooks/useNibasApi";
 import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
-import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
+import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { useEditAllGrenser } from "contexts/EditGrenserContext/EditGrenserContext";
 import { EditingType } from "contexts/EditGrenserContext/types";
 import { TilhorighetField } from "./TilhorighetField";

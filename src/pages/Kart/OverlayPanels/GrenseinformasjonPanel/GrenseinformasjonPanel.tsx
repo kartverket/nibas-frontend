@@ -3,10 +3,10 @@ import { PanelHeader, PanelProps, SidePanel } from "../Panel";
 import GrenseinformasjonFieldList from "./GrenseinformasjonFieldList";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { FeatureProperties, Metadata } from "types/api";
-import { getDateInFriendlyString } from "./utils";
+import { getDateInFriendlyString } from "./grenseinformasjon-utils";
 import { useEffect } from "react";
 import { Feature } from "ol";
-import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
+import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { isMatrikkelFeature } from "utils/features";
 
 const GrenseinformasjonPanel = ({ isOpen, className }: PanelProps) => {

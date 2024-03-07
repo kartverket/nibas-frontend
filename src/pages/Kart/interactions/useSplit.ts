@@ -4,7 +4,7 @@ import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/so
 import { useToolbar } from "contexts/ToolbarContext";
 import { Point } from "ol/geom";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import { getTempFeatureId, isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
+import { getTempFeatureId, isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { FeatureProperties } from "../../../types/api";
