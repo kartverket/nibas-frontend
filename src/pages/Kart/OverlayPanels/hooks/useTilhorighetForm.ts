@@ -33,7 +33,7 @@ const getKontekstTypeFromEditingType = (editingType: EditingType | null): Kontek
   return null;
 };
 
-export const getDefaultTilhorighetData = () => ({
+const getDefaultTilhorighetData = () => ({
   GRUNNKRETS: { a: CustomOption.NOT_CHOSEN, b: CustomOption.NOT_CHOSEN },
   STEMMEKRETS: { a: CustomOption.NOT_CHOSEN, b: CustomOption.NOT_CHOSEN },
 });

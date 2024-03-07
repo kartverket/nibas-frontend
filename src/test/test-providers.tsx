@@ -17,10 +17,16 @@ import { UtkastContextValue } from "contexts/UtkastContext/types";
 import { ErrorHandlingContext, ErrorHandlingContextValue, ErrorHandlingProvider } from "contexts/ErrorHandlingContext";
 import ThirdPartyProviders from "pages/App/ThirdPartyProviders";
 import { BrowserRouter } from "react-router-dom";
+import {
+  ConfirmationModalContext,
+  ConfirmationModalContextValue,
+  ConfirmationModalProvider,
+} from "contexts/ConfirmationModalContext";
 
 // OBS! Rekkefølgen her må være den samme som i Providers.tsx
 const defaultProviderMap = {
   ErrorHandlingProvider,
+  ConfirmationModalProvider,
   HistoryProvider,
   FeatureStyleProvider,
   ToolbarProvider,
@@ -33,6 +39,7 @@ const defaultProviderMap = {
 
 const contextMap = {
   ErrorHandlingProvider: ErrorHandlingContext.Provider,
+  ConfirmationModalProvider: ConfirmationModalContext.Provider,
   HistoryProvider: HistoryContext.Provider,
   ToolbarProvider: ToolbarContext.Provider,
   FeatureStyleProvider: FeatureStyleContext.Provider,
@@ -45,6 +52,7 @@ const contextMap = {
 
 export type TestProviderValues = {
   ErrorHandlingProvider?: ErrorHandlingContextValue | boolean;
+  ConfirmationModalProvider?: ConfirmationModalContextValue | boolean;
   HistoryProvider?: HistoryContextValue | boolean;
   ToolbarProvider?: ToolbarContextValue | boolean;
   FeatureStyleProvider?: FeatureStyleContextValue | boolean;

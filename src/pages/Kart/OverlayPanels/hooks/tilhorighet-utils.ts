@@ -29,7 +29,7 @@ export enum CustomOption {
   NOT_CHOSEN = "NOT_CHOSEN",
 }
 
-export type TilhorighetChoice = {
+type TilhorighetChoice = {
   [Tilhorighet.A]: string | undefined;
   [Tilhorighet.B]: string | undefined;
 };

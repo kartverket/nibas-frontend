@@ -22,7 +22,7 @@ export const setDefaultFeatureProperties = (feature: Feature<Geometry>, grenseTy
   });
 };
 
-export const getDefaultFeatureMetadata = (discriminator: MetadataDiscriminator): Metadata => {
+const getDefaultFeatureMetadata = (discriminator: MetadataDiscriminator): Metadata => {
   return {
     discriminator: discriminator,
     common: {
