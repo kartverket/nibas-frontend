@@ -3,9 +3,7 @@ import { useEffect } from "react";
 import { map } from "../constants";
 import { Types as MapBrowserEventType } from "ol/MapBrowserEventType";
 
-type ConditionalCursorStyle = {
-  style: (e?: Event | BaseEvent) => string;
-};
+type ConditionalCursorStyle = (e?: Event | BaseEvent) => string;
 
 type EventsAndCursor = {
   name: MapBrowserEventType[];
@@ -21,12 +19,11 @@ type CursorStyleProps = {
 
 export const useCursorStyles = ({ isEnabled, eventsAndCursor, defaultCursor }: CursorStyleProps) => {
   const mapViewport = map.getViewport();
+
   useEffect(() => {
     const setDefaultCursor = (e?: Event | BaseEvent) => {
       if (defaultCursor && e) {
-        mapViewport.style.cursor = defaultCursor.style(e);
-      } else {
-        mapViewport.style.cursor = "";
+        mapViewport.style.cursor = defaultCursor(e);
       }
     };
 
@@ -34,7 +31,7 @@ export const useCursorStyles = ({ isEnabled, eventsAndCursor, defaultCursor }: C
       map.on("pointermove", setDefaultCursor);
       events?.forEach((event) => {
         const callback = (e: Event | BaseEvent) => {
-          mapViewport.style.cursor = event.cursor.style(e);
+          mapViewport.style.cursor = event.cursor(e);
         };
 
         map.on(event.name, callback);
@@ -56,6 +53,7 @@ export const useCursorStyles = ({ isEnabled, eventsAndCursor, defaultCursor }: C
     } else {
       mapViewport.style.cursor = "";
     }
+
     return () => {
       removeEventListeners(eventsAndCursor);
     };

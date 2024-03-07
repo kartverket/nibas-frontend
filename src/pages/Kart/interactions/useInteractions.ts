@@ -1,20 +1,17 @@
-import { map } from "pages/Kart/constants";
+import { useToolbar } from "contexts/ToolbarContext";
+import { Collection } from "ol";
 import { Modify, Snap } from "ol/interaction";
-import { useEffect, useMemo } from "react";
+import { map } from "pages/Kart/constants";
+import { useEffect } from "react";
+import { selectedPointStyle } from "utils/map/layerStyles";
 import { getVectorLayers } from "utils/map/layers";
+import { pixelTolerance } from "./constants";
+import { useCursorStyles } from "./useCursorStyles";
+import useDragInteractions from "./useDragInteractions";
+import useDraw from "./useDraw";
 import useModify from "./useModify";
 import useSelect from "./useSelect";
-import useDraw from "./useDraw";
-import useDragInteractions from "./useDragInteractions";
 import useSelectPoint from "./useSelectPoint";
-import { useToolbar } from "contexts/ToolbarContext";
-import { pixelTolerance } from "./constants";
-import { selectedPointStyle } from "utils/map/layerStyles";
-import { Collection, MapBrowserEvent } from "ol";
-import { useCursorStyles } from "./useCursorStyles";
-import { useGetFeatures } from "./utils";
-import BaseEvent from "ol/events/Event";
-import { shiftKeyOnly } from "ol/events/condition";
 
 const useInteractions = () => {
   const { modify } = useModify();
@@ -23,38 +20,13 @@ const useInteractions = () => {
   const { draw } = useDraw();
   const { selectPoint } = useSelectPoint();
   const { activeTool, activeModeTools } = useToolbar();
-  const { getActiveFeaturesAtPixel } = useGetFeatures();
 
-  const memoizedCondition = useMemo(
-    () => (e: Event | BaseEvent | undefined) =>
-      e ? getActiveFeaturesAtPixel(e as MapBrowserEvent<MouseEvent>, null).length > 0 : false,
-    [getActiveFeaturesAtPixel],
-  );
-
-  // Kun i rediger ("move"-cursor på hover over active feature)
+  // I redigering, tegning av ny grense, legg til punkt, eller fjern punkt
   useCursorStyles({
-    isEnabled: activeTool === null && !activeModeTools.includes("move"),
-    defaultCursor: { style: (e) => (memoizedCondition(e) ? "move" : "crosshair") },
-  });
-
-  // Tegning av ny grense, legg til punkt, eller fjern punkt
-  useCursorStyles({
-    isEnabled: activeTool === "draw" || activeTool === "add" || activeTool === "remove",
-    defaultCursor: {
-      style: () => "crosshair",
-    },
-  });
-
-  // DragPan og DragZoom
-  useCursorStyles({
-    isEnabled: activeModeTools.includes("move"),
-    defaultCursor: { style: () => "grab" },
-    eventsAndCursor: [
-      {
-        name: ["pointerdrag"],
-        cursor: { style: (e) => (shiftKeyOnly(e as MapBrowserEvent<UIEvent>) ? "zoom-in" : "grabbing") },
-      },
-    ],
+    isEnabled:
+      !activeModeTools.includes("move") &&
+      (activeTool === "draw" || activeTool === "add" || activeTool === "remove" || activeTool === null),
+    defaultCursor: () => "crosshair",
   });
 
   useEffect(() => {
