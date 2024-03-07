@@ -4,8 +4,7 @@ import { map } from "../constants";
 import { Types as MapBrowserEventType } from "ol/MapBrowserEventType";
 
 type ConditionalCursorStyle = {
-  style: string;
-  condition?: (e: Event | BaseEvent) => boolean;
+  style: (e?: Event | BaseEvent) => string;
 };
 
 type EventsAndCursor = {
@@ -24,44 +23,32 @@ export const useCursorStyles = ({ isEnabled, eventsAndCursor, defaultCursor }: C
   const mapViewport = map.getViewport();
   useEffect(() => {
     const setDefaultCursor = (e?: Event | BaseEvent) => {
-      if (defaultCursor?.condition && e) {
-        if (defaultCursor?.condition(e)) {
-          mapViewport.style.cursor = defaultCursor?.style;
-        } else {
-          mapViewport.style.cursor = "";
-        }
+      if (defaultCursor && e) {
+        mapViewport.style.cursor = defaultCursor.style(e);
       } else {
-        mapViewport.style.cursor = defaultCursor?.style || "";
+        mapViewport.style.cursor = "";
       }
     };
 
     const addEventListeners = (events?: EventsAndCursor[]) => {
+      map.on("pointermove", setDefaultCursor);
       events?.forEach((event) => {
         const callback = (e: Event | BaseEvent) => {
-          if (event.cursor.condition) {
-            if (event.cursor.condition(e)) {
-              mapViewport.style.cursor = event.cursor.style;
-            } else {
-              setDefaultCursor(e);
-            }
-          } else {
-            mapViewport.style.cursor = event.cursor.style;
-          }
+          mapViewport.style.cursor = event.cursor.style(e);
         };
 
         map.on(event.name, callback);
         event.callback = callback;
       });
-      map.on("pointermove", setDefaultCursor);
     };
 
     const removeEventListeners = (events?: EventsAndCursor[]) => {
+      map.un("pointermove", setDefaultCursor);
       events?.forEach((event) => {
         if (event.callback) {
           map.un(event.name, event.callback);
         }
       });
-      map.un("pointermove", setDefaultCursor);
     };
 
     if (isEnabled) {
@@ -71,7 +58,6 @@ export const useCursorStyles = ({ isEnabled, eventsAndCursor, defaultCursor }: C
     }
     return () => {
       removeEventListeners(eventsAndCursor);
-      mapViewport.style.cursor = "";
     };
   }, [defaultCursor, eventsAndCursor, isEnabled, mapViewport.style]);
 };

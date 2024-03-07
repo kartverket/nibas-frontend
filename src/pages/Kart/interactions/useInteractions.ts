@@ -14,6 +14,7 @@ import { Collection, MapBrowserEvent } from "ol";
 import { useCursorStyles } from "./useCursorStyles";
 import { useGetFeatures } from "./utils";
 import BaseEvent from "ol/events/Event";
+import { shiftKeyOnly } from "ol/events/condition";
 
 const useInteractions = () => {
   const { modify } = useModify();
@@ -25,16 +26,35 @@ const useInteractions = () => {
   const { getActiveFeaturesAtPixel } = useGetFeatures();
 
   const memoizedCondition = useMemo(
-    () => (e: Event | BaseEvent) => getActiveFeaturesAtPixel(e as MapBrowserEvent<MouseEvent>, null).length > 0,
+    () => (e: Event | BaseEvent | undefined) =>
+      e ? getActiveFeaturesAtPixel(e as MapBrowserEvent<MouseEvent>, null).length > 0 : false,
     [getActiveFeaturesAtPixel],
   );
 
+  // Kun i rediger ("move"-cursor på hover over active feature)
   useCursorStyles({
-    isEnabled: !activeModeTools.includes("move") && activeTool !== "draw",
+    isEnabled: activeTool === null && !activeModeTools.includes("move"),
+    defaultCursor: { style: (e) => (memoizedCondition(e) ? "move" : "crosshair") },
+  });
+
+  // Tegning av ny grense, legg til punkt, eller fjern punkt
+  useCursorStyles({
+    isEnabled: activeTool === "draw" || activeTool === "add" || activeTool === "remove",
     defaultCursor: {
-      style: "move",
-      condition: memoizedCondition,
+      style: () => "crosshair",
     },
+  });
+
+  // DragPan og DragZoom
+  useCursorStyles({
+    isEnabled: activeModeTools.includes("move"),
+    defaultCursor: { style: () => "grab" },
+    eventsAndCursor: [
+      {
+        name: ["pointermove"],
+        cursor: { style: (e) => (shiftKeyOnly(e as MapBrowserEvent<UIEvent>) ? "zoom-in" : "grabbing") },
+      },
+    ],
   });
 
   useEffect(() => {

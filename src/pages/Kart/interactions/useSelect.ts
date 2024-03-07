@@ -1,15 +1,14 @@
-import { Tool, useToolbar } from "contexts/ToolbarContext";
-import { Feature, MapBrowserEvent } from "ol";
-import { overlayPopup } from "../constants";
-import { useFeatureStyle } from "contexts/FeatureStyleContext";
-import LineString from "ol/geom/LineString";
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToast } from "@kvib/react";
-import { useEffect } from "react";
+import { useFeatureStyle } from "contexts/FeatureStyleContext";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { Tool, useToolbar } from "contexts/ToolbarContext";
 import { usePrevious } from "hooks/usePrevious";
-import { useGetFeatures } from "./utils";
+import { Feature, MapBrowserEvent } from "ol";
+import LineString from "ol/geom/LineString";
+import { useEffect } from "react";
 import { isFeatureEditable, isMatrikkelFeature } from "utils/features";
-import { useCursorStyles } from "./useCursorStyles";
+import { overlayPopup } from "../constants";
+import { useGetFeatures } from "./utils";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -25,7 +24,6 @@ const useSelect = () => {
   const { activeOverlayPanel, closeOverlayPanel, openOverlayPanel } = useOverlayPanel();
   const previousPointMode = usePrevious(activeTool);
   const { getActiveFeaturesAtPixel } = useGetFeatures();
-  useCursorStyles({ isEnabled: activeTool === "add", defaultCursor: { style: "crosshair" } });
 
   const dangerousPointModes: Tool[] = ["archive", "split", "detach"];
   const allowedPointModes: Tool[] = [...dangerousPointModes, "grenseinfo"];
