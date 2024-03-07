@@ -29,6 +29,16 @@ const useInteractions = () => {
     defaultCursor: () => "crosshair",
   });
 
+  useCursorStyles({
+    isEnabled:
+      activeTool === "archive" ||
+      activeTool === "detach" ||
+      activeTool === "grenseinfo" ||
+      activeTool === "koordinater" ||
+      activeTool === "split",
+    defaultCursor: () => "pointer",
+  });
+
   useEffect(() => {
     const vectorLayers = getVectorLayers();
     const snaps: Snap[] = [];
