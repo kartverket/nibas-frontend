@@ -91,7 +91,7 @@ const InfoIcon = styled.div`
   margin-left: 8px;
   display: flex;
   align-items: center;
-  cursor: default;
+  cursor: help;
 `;
 
 const EditContent = styled.div`
