@@ -38,9 +38,6 @@ const useModify = () => {
   const disallowedPointModes: Tool[] = useMemo(() => ["draw", "split", "grenseinfo", "archive", "koordinater"], []);
 
   const modify = useMemo(() => {
-    // TODO: Vi burde finne et felles sett med sjekker som alle modifications går gjennom.
-    // Det er per nå flere sjekker som blir gjort flere steder, hvorav vi bare på noen av dem ønsker å sende inn en toast til brukeren.
-
     const detachMode = activeTool === "detach" && selectedFeatures.length > 0;
 
     return new Modify({
@@ -56,9 +53,7 @@ const useModify = () => {
           // Ved detach mode så er den eneste featuren som kan modifiseres den valgte featuren, så kan anta at condition er god her
           return true;
         }
-        // TODO: håndteringen her er halvveis etter omskriving tilbake til feature/source-split
-        // man kan endre arkiverte features via endepunkter
-        // løsningen er å ha arkiverte features i eget lag, som steffen jobber med iirc
+
         const activeFeatures = getActiveFeaturesAtPixel(event, "edit");
 
         // Unngå interaksjon med inaktive features (representasjonspunkter f.eks.)
