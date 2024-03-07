@@ -5,7 +5,7 @@ import { EditGrenserContext, useEditGrenser } from "./EditGrenserContext";
 import { EditingType, KretsStatus } from "./types";
 import useAsyncFeatures from "hooks/useAsyncFeatures";
 import { getFeatureId, removeFeaturesFromSourceByIds } from "utils/map/source";
-import { getZoomMode } from "utils/map";
+import { getZoomMode } from "utils/map/map-utils";
 
 export const useEditGrenseValue = (kretsType: EditingType, kretsId: string) => {
   const context = useContext(EditGrenserContext);

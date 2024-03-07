@@ -10,9 +10,10 @@ import {
   applyNonFeatureUtkast,
   historyToUtkastOperations,
   toCleanUtkast,
-} from "./utils";
+} from "./utkast-utils";
 import { updateUtkastApi } from "api/utkast";
-import { HistoryChange, useHistory } from "contexts/HistoryContext";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { HistoryChange } from "contexts/HistoryContext/types";
 import useNibasApi from "hooks/useNibasApi";
 import {
   ApiErrorResponse,
@@ -21,8 +22,8 @@ import {
   UtkastOperasjoner,
   UtkastResponse,
 } from "types/api";
-import { resetMapView } from "utils/map";
-import { useEditAllGrenser } from "contexts/EditGrenserContext";
+import { resetMapView } from "utils/map/map-utils";
+import { useEditAllGrenser } from "contexts/EditGrenserContext/EditGrenserContext";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
@@ -34,8 +35,8 @@ import { useToolbar } from "contexts/ToolbarContext";
 import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { addEditedFeaturesToSource, removeEditedFeaturesFromSourceByIds } from "utils/map/source";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
-import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
-import { CustomOption } from "pages/Kart/OverlayPanels/hooks/tilhorighetUtils";
+import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
+import { CustomOption } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 
 export const UtkastContext = createContext<UtkastContextValue | undefined>(undefined);
 

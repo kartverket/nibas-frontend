@@ -3,6 +3,7 @@ import { components } from "../../../types/api-gen";
 import { GrunnkretsResponse, StemmekretsResponse, UtkastOperasjoner } from "../../../types/api";
 
 export type OperasjonerOrNull = UtkastOperasjoner | null | undefined;
+
 export const getKretserMedGrensejusteringer = (
   operasjoner: OperasjonerOrNull,
   type: "STEMMEKRETS" | "GRUNNKRETS",

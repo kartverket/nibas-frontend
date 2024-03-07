@@ -12,9 +12,9 @@ import {
   sortKretserOptionsByNumber,
   mapGrunnkretsResponseToKrets,
   mapStemmekretResponseToKrets,
-} from "./tilhorighetUtils";
+} from "./tilhorighet-utils";
 import { useTilhorighetForm } from "./useTilhorighetForm";
-import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
+import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { editSource } from "hooks/layers/constants";
 import { Geometry } from "ol/geom";
 import { GrenseType } from "hooks/layers/types";

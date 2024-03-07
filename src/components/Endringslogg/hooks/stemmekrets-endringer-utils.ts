@@ -12,7 +12,7 @@ import {
   getKretserMedGrensejusteringer,
   groupEndringerByKommune,
   OperasjonerOrNull,
-} from "./endringerUtils";
+} from "./endringer-utils";
 import { getNavnInSpraak } from "utils/language/language";
 
 export const getStemmekretserMedEndringer = (operasjoner: OperasjonerOrNull): string[] => {

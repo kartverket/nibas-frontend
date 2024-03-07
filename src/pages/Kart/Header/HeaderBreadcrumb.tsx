@@ -1,5 +1,5 @@
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, Hide, Icon, Text, useDisclosure } from "@kvib/react";
-import { useUtkast } from "contexts/UtkastContext";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { styled } from "styled-components";
 import HeaderButton, { HeaderSection } from "./HeaderButton";
 import UtkastEndreModal from "components/Modals/UtkastEndreModal";
@@ -7,7 +7,7 @@ import HeaderHome from "./HeaderHome";
 import { useNavigate } from "react-router-dom";
 import { routes } from "utils/routes";
 import useAlertModal from "hooks/useAlertModal";
-import { useHistory } from "contexts/HistoryContext";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import AlertModal from "components/Modals/AlertModal";
 import CustomTooltip from "../Toolbar/CustomTooltip";
 

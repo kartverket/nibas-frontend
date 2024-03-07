@@ -3,7 +3,8 @@ import { useForm } from "react-hook-form";
 import { DokumentasjonsreferanseDTO, FeatureProperties, Metadata } from "types/api";
 import { VedtakinfoForm, Referanse } from "../GrenseinformasjonPanel/Vedtaksinformasjon/Vedtaksinformasjon";
 import { LineString } from "ol/geom";
-import { PropertyEntry, useHistory } from "contexts/HistoryContext";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { PropertyEntry } from "contexts/HistoryContext/types";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import {
   createUniqueIshValue,

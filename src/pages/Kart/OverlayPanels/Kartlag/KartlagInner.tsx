@@ -3,7 +3,7 @@ import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { styled } from "styled-components";
 import { MappedLayer } from "utils/getLayersFromWMS";
 import { isWMSLayer, isWMTSLayer } from "utils/map/layers";
-import { toggleWMSLayer, toggleWMTSLayer } from "./utils";
+import { toggleWMSLayer, toggleWMTSLayer } from "./kartlag-utils";
 import { kartlagLayers } from "hooks/layers/constants";
 
 type Props = {

@@ -14,7 +14,7 @@ import { Feature } from "ol";
 import { setDefaultFeatureProperties } from "utils/features";
 import { FeatureProperties } from "types/api";
 import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
-import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
+import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { removeNull } from "utils/list-utils";
 
 const getFeatureFromChange = (change: HistoryChange<MinimalGrense>, direction: HistoryDirection) => {
