@@ -58,6 +58,11 @@ const useDraw = () => {
       return true;
     };
 
+    // Denne er kun her for å få ESLint til å ikke ønske å legge til en regel-ignorering, da det ikke går an å legge til
+    // ignoreringer for spesifikke dependencies i dependency arrayet.
+    // It ain't clean, but it works.
+    abortDrawMemoHelper;
+
     return new Draw({
       type: "LineString",
       source: editSource,
@@ -101,7 +106,6 @@ const useDraw = () => {
         return true;
       },
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [abortDrawMemoHelper, activeTool, activeModeTools, getActiveFeaturesAtPixel, toast]);
 
   useEffect(() => {
