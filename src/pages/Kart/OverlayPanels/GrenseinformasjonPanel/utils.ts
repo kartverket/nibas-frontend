@@ -1,6 +1,6 @@
 import { Feature } from "ol";
 import LineString from "ol/geom/LineString";
-import { GrenseArkiveringsEntry, GrenseTilhorighetEntry, PropertyEntry } from "contexts/HistoryContext";
+import { PropertyEntry, GrenseArkiveringsEntry, GrenseTilhorighetEntry } from "contexts/HistoryContext/types";
 import { FeatureProperties, KontekstEgenskaper } from "types/api";
 
 export const getDateInFriendlyString = (dateString?: string) => {

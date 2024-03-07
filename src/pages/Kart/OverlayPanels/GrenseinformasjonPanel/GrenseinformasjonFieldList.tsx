@@ -8,7 +8,8 @@ import { getDateInFriendlyString } from "./utils";
 import useNibasApi from "hooks/useNibasApi";
 import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
 import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
-import { EditingType, useEditAllGrenser } from "contexts/EditGrenserContext";
+import { useEditAllGrenser } from "contexts/EditGrenserContext/EditGrenserContext";
+import { EditingType } from "contexts/EditGrenserContext/types";
 import { TilhorighetField } from "./TilhorighetField";
 import { Vedtaksinformasjon } from "./Vedtaksinformasjon/Vedtaksinformasjon";
 

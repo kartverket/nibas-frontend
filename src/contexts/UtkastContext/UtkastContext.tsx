@@ -12,7 +12,8 @@ import {
   toCleanUtkast,
 } from "./utils";
 import { updateUtkastApi } from "api/utkast";
-import { HistoryChange, useHistory } from "contexts/HistoryContext";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { HistoryChange } from "contexts/HistoryContext/types";
 import useNibasApi from "hooks/useNibasApi";
 import {
   ApiErrorResponse,
@@ -21,8 +22,8 @@ import {
   UtkastOperasjoner,
   UtkastResponse,
 } from "types/api";
-import { resetMapView } from "utils/map";
-import { useEditAllGrenser } from "contexts/EditGrenserContext";
+import { resetMapView } from "utils/map/map-utils";
+import { useEditAllGrenser } from "contexts/EditGrenserContext/EditGrenserContext";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";

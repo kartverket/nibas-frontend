@@ -10,14 +10,15 @@ import {
   getTilhorighetData,
   getUpdatedKontekstEgenskaper,
 } from "./tilhorighetUtils";
-import { useHistory } from "contexts/HistoryContext";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { Feature } from "ol";
 import { LineString } from "ol/geom";
 import { FeatureProperties } from "types/api";
 import { addKontekstEntryFromFeature } from "../GrenseinformasjonPanel/utils";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { getIdFromEntity } from "utils/api";
-import { EditingType, useEditAllGrenser } from "contexts/EditGrenserContext";
+import { useEditAllGrenser } from "contexts/EditGrenserContext/EditGrenserContext";
+import { EditingType } from "contexts/EditGrenserContext/types";
 
 const getKontekstTypeFromEditingType = (editingType: EditingType | null): KontekstType | null => {
   if (!editingType) return null;

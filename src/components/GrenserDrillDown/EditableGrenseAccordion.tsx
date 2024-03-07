@@ -1,7 +1,7 @@
 import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
 import { styled } from "styled-components";
 import useVisibility from "hooks/useVisibility";
-import { EditingType } from "contexts/EditGrenserContext";
+import { EditingType } from "contexts/EditGrenserContext/types";
 import { Feature } from "ol";
 import { Outline } from "style/mixins";
 import { Geometry } from "ol/geom";

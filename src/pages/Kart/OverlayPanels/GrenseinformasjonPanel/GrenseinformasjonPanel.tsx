@@ -1,7 +1,7 @@
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { PanelHeader, PanelProps, SidePanel } from "../Panel";
 import GrenseinformasjonFieldList from "./GrenseinformasjonFieldList";
-import { useFeatureStyle } from "contexts/FeatureStyleContext";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { FeatureProperties, Metadata } from "types/api";
 import { getDateInFriendlyString } from "./utils";
 import { useEffect } from "react";

@@ -8,7 +8,7 @@ import {
   HistoryTypeValues,
   StemmekretsEntry,
   StemmekretsSammenslaaingsendringEntry,
-} from "contexts/HistoryContext";
+} from "contexts/HistoryContext/types";
 import { archivedSource, editSource } from "hooks/layers/constants";
 import {
   FeatureProperties,

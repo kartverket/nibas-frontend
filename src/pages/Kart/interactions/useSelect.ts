@@ -1,7 +1,7 @@
 import { Tool, useToolbar } from "contexts/ToolbarContext";
 import { Feature, MapBrowserEvent } from "ol";
 import { overlayPopup } from "../constants";
-import { useFeatureStyle } from "contexts/FeatureStyleContext";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import LineString from "ol/geom/LineString";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToast } from "@kvib/react";

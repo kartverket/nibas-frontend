@@ -1,12 +1,19 @@
 import { ReactNode } from "react";
 import { KartlagProvider, KartlagContext, KartlagContextValue } from "contexts/KartlagContext/KartlagContext";
-import { EditGrenserProvider, EditGrenserContext, EditGrenserContextValue } from "contexts/EditGrenserContext";
+import {
+  EditGrenserProvider,
+  EditGrenserContext,
+  EditGrenserContextValue,
+} from "contexts/EditGrenserContext/EditGrenserContext";
 import { OverlayPanelProvider, OverlayPanelContext, OverlayPanelContextValue } from "contexts/OverlayPanelContext";
 import { SidebarPanelProvider, SidebarPanelContext, SidebarPanelContextValue } from "contexts/SidebarPanelContext";
-import { HistoryProvider, HistoryContext, HistoryContextValue } from "contexts/HistoryContext";
+import { HistoryProvider, HistoryContext } from "contexts/HistoryContext/HistoryContext";
+import { HistoryContextValue } from "contexts/HistoryContext/types";
 import { ToolbarProvider, ToolbarContext, ToolbarContextValue } from "contexts/ToolbarContext";
-import { FeatureStyleProvider, FeatureStyleContext, FeatureStyleContextValue } from "contexts/FeatureStyleContext";
-import { UtkastProvider, UtkastContext, UtkastContextValue } from "contexts/UtkastContext";
+import { FeatureStyleProvider, FeatureStyleContext } from "contexts/FeatureStyleContext/FeatureStyleContext";
+import { FeatureStyleContextValue } from "contexts/FeatureStyleContext/types";
+import { UtkastProvider, UtkastContext } from "contexts/UtkastContext/UtkastContext";
+import { UtkastContextValue } from "contexts/UtkastContext/types";
 import { ErrorHandlingContext, ErrorHandlingContextValue, ErrorHandlingProvider } from "contexts/ErrorHandlingContext";
 import ThirdPartyProviders from "pages/App/ThirdPartyProviders";
 import { BrowserRouter } from "react-router-dom";

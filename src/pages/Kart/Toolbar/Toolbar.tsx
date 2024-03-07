@@ -1,5 +1,5 @@
 import { Divider } from "@kvib/react";
-import { useEditAllGrenser } from "contexts/EditGrenserContext";
+import { useEditAllGrenser } from "contexts/EditGrenserContext/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useHoldButtonToggle, useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";

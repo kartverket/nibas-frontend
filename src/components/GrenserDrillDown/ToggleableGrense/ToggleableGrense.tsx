@@ -1,7 +1,7 @@
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { styled } from "styled-components";
-import { EditingType } from "contexts/EditGrenserContext";
+import { EditingType } from "contexts/EditGrenserContext/types";
 import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
 import { GrenseRef } from "types/api";
 import { getIdFromEntity } from "utils/api";

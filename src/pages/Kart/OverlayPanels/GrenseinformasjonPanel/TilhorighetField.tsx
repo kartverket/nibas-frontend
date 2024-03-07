@@ -17,7 +17,7 @@ import GrenseinformasjonRow from "pages/Kart/OverlayPanels/GrenseinformasjonPane
 import { useTilhorighet } from "../hooks/useTilhorighet";
 import { useTilhorighetNyAdministrativ } from "../hooks/useTilhorighetNyAdministrativ";
 import { isFeatureEditable } from "utils/features";
-import { useFeatureStyle } from "contexts/FeatureStyleContext";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import useIsGrenseinformasjonPanelDisabled from "../hooks/useIsGrenseInformasjonPanelDisabled";
 
 type TilhorighetRowProps = {
