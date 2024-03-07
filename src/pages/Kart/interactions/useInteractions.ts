@@ -1,16 +1,17 @@
-import { map } from "pages/Kart/constants";
+import { useToolbar } from "contexts/ToolbarContext";
+import { Collection } from "ol";
 import { Modify, Snap } from "ol/interaction";
+import { map } from "pages/Kart/constants";
 import { useEffect } from "react";
+import { selectedPointStyle } from "utils/map/layerStyles";
 import { getVectorLayers } from "utils/map/layers";
+import { pixelTolerance } from "./constants";
+import { useCursorStyles } from "./useCursorStyles";
+import useDragInteractions from "./useDragInteractions";
+import useDraw from "./useDraw";
 import useModify from "./useModify";
 import useSelect from "./useSelect";
-import useDraw from "./useDraw";
-import useDragInteractions from "./useDragInteractions";
 import useSelectPoint from "./useSelectPoint";
-import { useToolbar } from "contexts/ToolbarContext";
-import { pixelTolerance } from "./constants";
-import { selectedPointStyle } from "utils/map/layerStyles";
-import { Collection } from "ol";
 
 const useInteractions = () => {
   const { modify } = useModify();
@@ -18,7 +19,15 @@ const useInteractions = () => {
   const { select } = useSelect();
   const { draw } = useDraw();
   const { selectPoint } = useSelectPoint();
-  const { activeModeTools } = useToolbar();
+  const { activeTool, activeModeTools } = useToolbar();
+
+  // I redigering, tegning av ny grense, legg til punkt, eller fjern punkt
+  useCursorStyles({
+    isEnabled:
+      !activeModeTools.includes("move") &&
+      (activeTool === "draw" || activeTool === "add" || activeTool === "remove" || activeTool === null),
+    defaultCursor: () => "crosshair",
+  });
 
   useEffect(() => {
     const vectorLayers = getVectorLayers();
