@@ -1,7 +1,7 @@
-import { useMemo } from "react";
 import { useToolbar } from "contexts/ToolbarContext";
-import { DragPan, DragZoom } from "ol/interaction";
 import { shiftKeyOnly } from "ol/events/condition";
+import { DragPan, DragZoom } from "ol/interaction";
+import { useMemo } from "react";
 
 const useDragInteractions = () => {
   const { activeModeTools } = useToolbar();
