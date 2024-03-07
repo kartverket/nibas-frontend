@@ -24,6 +24,8 @@ export const useCursorStyles = ({ isEnabled, eventsAndCursor, defaultCursor }: C
     const setDefaultCursor = (e?: Event | BaseEvent) => {
       if (defaultCursor && e) {
         mapViewport.style.cursor = defaultCursor(e);
+      } else if (defaultCursor) {
+        mapViewport.style.cursor = defaultCursor();
       }
     };
 
@@ -50,10 +52,8 @@ export const useCursorStyles = ({ isEnabled, eventsAndCursor, defaultCursor }: C
 
     if (isEnabled) {
       addEventListeners(eventsAndCursor);
-    } else {
-      mapViewport.style.cursor = "";
+      mapViewport.style.cursor = defaultCursor ? defaultCursor() : "";
     }
-
     return () => {
       removeEventListeners(eventsAndCursor);
     };
