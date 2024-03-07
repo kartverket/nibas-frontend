@@ -92,11 +92,12 @@ const PanelHeaderText = styled.div`
 type PanelHeaderProps = {
   onClose: () => void;
   children: React.ReactNode;
+  button?: React.ReactNode;
   subHeading?: string;
   isSmall?: boolean;
 };
 
-export const PanelHeader = ({ children, subHeading, onClose, isSmall }: PanelHeaderProps) => (
+export const PanelHeader = ({ children, subHeading, onClose, isSmall, button }: PanelHeaderProps) => (
   <PanelHeaderContainer $isSmall={isSmall}>
     <PanelHeaderText>
       <Heading as="h3" size={isSmall ? "sm" : "md"}>
@@ -104,6 +105,19 @@ export const PanelHeader = ({ children, subHeading, onClose, isSmall }: PanelHea
       </Heading>
       {subHeading && <Text fontSize="sm">{subHeading}</Text>}
     </PanelHeaderText>
-    <CloseButton size={isSmall ? "md" : "lg"} onClick={onClose} aria-label="Lukk" />
+    {button ? (
+      <ButtonGroup>
+        {button}
+        <CloseButton size={isSmall ? "md" : "lg"} onClick={onClose} aria-label="Lukk" />
+      </ButtonGroup>
+    ) : (
+      <CloseButton size={isSmall ? "md" : "lg"} onClick={onClose} aria-label="Lukk" />
+    )}
   </PanelHeaderContainer>
 );
+
+const ButtonGroup = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+`;

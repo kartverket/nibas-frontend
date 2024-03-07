@@ -1,32 +1,29 @@
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
-import { Alert, AlertIcon, Datepicker, Input, Select, Textarea } from "@kvib/react";
+import { Alert, AlertIcon, Button, Datepicker, Input, Select, Textarea } from "@kvib/react";
 import { GrenseType } from "hooks/layers/types";
 import { styled } from "styled-components";
-import { GrenseinformasjonField } from "./GrenseinformasjonField";
-import { getDateInFriendlyString } from "./utils";
+import { addFeaturePropertiesEntryFromFeature, dateToFriendlyDatestring, getDateInFriendlyString } from "./utils";
 import useNibasApi from "hooks/useNibasApi";
-import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
+import { FeatureProperties, KodelisteRespons, KontekstEgenskaper, Metadata } from "types/api";
 import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 import { EditingType, useEditAllGrenser } from "contexts/EditGrenserContext";
-import { TilhorighetField } from "./TilhorighetField";
 import { Vedtaksinformasjon } from "./Vedtaksinformasjon/Vedtaksinformasjon";
-
-export type Inputs = {
-  uuid: string;
-  grenseType: string;
-  maalemetode: string;
-  datafangstdato: string;
-  noeyaktighet: number;
-  informasjon: string;
-  opphav: string;
-  gyldigFra: string;
-  gyldigTil: string;
-  tilhorighet: string[];
-};
+import GrenseinformasjonRow from "./GrenseinformasjonRow";
+import useIsGrenseinformasjonPanelDisabled from "../hooks/useIsGrenseInformasjonPanelDisabled";
+import { GrenseinformasjonFormProps, useGrenseinformasjonForm } from "../hooks/useGrenseinformasjonForm";
+import { PanelHeader } from "../Panel";
+import { useEffect, useState } from "react";
+import { Controller, SubmitHandler } from "react-hook-form";
+import { getMetadataDiscriminatorFromType } from "utils/grenser";
+import { formatISO, startOfDay } from "date-fns";
+import { LineString } from "ol/geom";
+import { useHistory } from "contexts/HistoryContext";
+import { TilhorighetField } from "./TilhorighetField";
 
 type Props = {
   feature: Feature<Geometry>;
+  onClose: () => void;
 };
 
 const Container = styled.div`
@@ -36,14 +33,42 @@ const Container = styled.div`
   padding-bottom: 32px;
 `;
 
-const GrenseinformasjonFieldList = ({ feature }: Props) => {
-  const properties = feature.getProperties() as FeatureProperties;
+type EditGrenseInfoButtonProps = {
+  isEditing: boolean;
+  handleSubmit: () => void;
+  toggleEdit: () => void;
+};
+
+const EditGrenseInfoButton = ({ isEditing, handleSubmit, toggleEdit }: EditGrenseInfoButtonProps) => {
+  return isEditing ? (
+    <Button
+      onClick={() => {
+        handleSubmit();
+        toggleEdit();
+      }}
+      rightIcon="check_circle"
+    >
+      Fullfør redigering
+    </Button>
+  ) : (
+    <Button onClick={() => toggleEdit()}>Rediger</Button>
+  );
+};
+
+const GrenseinformasjonFieldList = ({ feature, onClose }: Props) => {
   const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
   const { getCurrentlyEditingType } = useEditAllGrenser();
+  const { addHistoryEntry } = useHistory();
+  const [isEditing, setIsEditing] = useState(false);
+  const isGrenseinformasjonPanelDisabled = useIsGrenseinformasjonPanelDisabled(feature);
 
+  const { register, handleSubmit, formState, getValues, control, reset, getDefaultValues } =
+    useGrenseinformasjonForm(feature);
+
+  const properties = feature.getProperties() as FeatureProperties;
   const metadata = properties.metadata as Metadata;
-
   const gyldigTil = properties.metadata ? metadata.common?.gyldigTil : undefined;
+  const isCommonFieldDisabled = isGrenseinformasjonPanelDisabled || metadata?.common?.gyldigTil != null;
 
   const getMaalemetodeFromId = (maalemetoder: KodelisteRespons, id: string) => {
     const maalemetode = maalemetoder.items.find((item) => item.id === id);
@@ -64,104 +89,196 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
     return [];
   };
 
+  const getSistOppdatert = () => {
+    if (isTempFeatureId(feature.getId()?.toString())) return "Ny grense, aldri oppdatert";
+
+    if (metadata) {
+      const oppdateringsDato = metadata.common?.sporingsinformasjon.oppdateringsdato;
+
+      if (oppdateringsDato) {
+        return getDateInFriendlyString(oppdateringsDato);
+      }
+    }
+
+    return "Ukjent";
+  };
+
+  const onSubmit: SubmitHandler<GrenseinformasjonFormProps> = (data) => {
+    console.log(data);
+    if (formState.isDirty) {
+      const metadataDiscriminator = getMetadataDiscriminatorFromType(data.grenseType);
+      if (!metadataDiscriminator) return; // errorhåndtering på noe vis her
+
+      const newMetadata: Metadata = {
+        ...metadata,
+        common: {
+          ...metadata.common!, // TODO ikke !
+          datafangstdato: data.datafangstDato
+            ? formatISO(startOfDay(data.datafangstDato))
+            : metadata.common?.datafangstdato,
+          informasjon: data.informasjon,
+          opphav: data.opphav,
+        },
+        commonGrense: {
+          posisjonskvalitet: {
+            maalemetode: {
+              id: data.maalemetode,
+              // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+              href: metadata.commonGrense?.posisjonskvalitet?.maalemetode.href!, // TODO dont
+            },
+            noeyaktighet: data.noeyaktighet,
+          },
+        },
+        discriminator: metadataDiscriminator,
+        dokumentasjonsreferanser: [],
+      };
+
+      // const newKontekstEgenskaper: KontekstEgenskaper[] = Object.entries(data.tilhorighet).map(
+      //   ([kretsType, choices]) => {
+      //     const bothChoices = [choices["a"], choices["b"]];
+      //   },
+      // );
+
+      const newProperties: FeatureProperties = {
+        ...properties,
+        type: data.grenseType,
+        metadata: newMetadata,
+      };
+
+      addFeaturePropertiesEntryFromFeature(feature as Feature<LineString>, addHistoryEntry, newProperties);
+
+      reset(getDefaultValues(feature));
+    }
+  };
+
+  useEffect(() => {
+    reset(getDefaultValues(feature));
+  }, [feature, getDefaultValues, reset]);
+
   return (
     <Container>
-      <GrenseinformasjonField
-        feature={feature}
-        tooltipLabel="Hvilken type grense som er valgt."
-        fieldKey="grenseType"
-        fieldLabel="Grensetype"
-        renderItem={(register) => (
-          <Select {...register}>
+      <form>
+        <PanelHeader
+          onClose={onClose}
+          subHeading={`Sist oppdatert: ${getSistOppdatert()}`}
+          button={
+            !isCommonFieldDisabled
+              ? EditGrenseInfoButton({
+                  isEditing: isEditing,
+                  handleSubmit: handleSubmit(onSubmit),
+                  toggleEdit: () => setIsEditing(!isEditing),
+                })
+              : null
+          }
+        >
+          Informasjon om grense
+        </PanelHeader>
+
+        <GrenseinformasjonRow
+          name="Identifikator (UUID)"
+          tooltipLabel="Grensen sin unike identifikator"
+          valueLabel={(() => {
+            const featureId = feature.getId()?.toString();
+
+            if (featureId && isTempFeatureId(featureId)) return `Ny grense - ID blir satt ved publisering`;
+
+            return feature.getId()?.toString() || null;
+          })()}
+        />
+
+        <GrenseinformasjonRow
+          name="Gyldig fra"
+          tooltipLabel="Dato når grensen skal være gyldig fra. Fra-dato settes automatisk til publiseringsdato for utkastet ditt."
+          valueLabel={(() => {
+            const date = metadata.common?.gyldigFra;
+            const formattedDate = getDateInFriendlyString(date);
+            const featureId = feature.getId()?.toString();
+
+            if (featureId && isTempFeatureId(featureId)) return "Ny grense - Dato blir satt ved publisering";
+
+            return formattedDate || null;
+          })()}
+        />
+
+        <GrenseinformasjonRow
+          name="Grensetype"
+          tooltipLabel="Hvilken type grense som er valgt."
+          valueLabel={getValues("grenseType")}
+          isEditing={isEditing}
+        >
+          <Select {...register("grenseType")}>
             {getPossibleGrenseTypesFromEditingType(getCurrentlyEditingType()).map((type) => (
               <option key={type} value={type}>
                 {type}
               </option>
             ))}
           </Select>
+        </GrenseinformasjonRow>
+
+        {gyldigTil && (
+          <div>
+            <GrenseinformasjonRow
+              name="Gyldig til"
+              tooltipLabel="Dato når grensen skal være gyldig til."
+              valueLabel={getDateInFriendlyString(gyldigTil)}
+            />
+            <Alert status="warning" variant="top-accent">
+              <AlertIcon />
+              Grensen er satt til å utgå ved en fremtidig dato, og du vil derfor ikke kunne gjøre noen endringer på
+              denne grensen.
+            </Alert>
+          </div>
         )}
-      />
-      <GrenseinformasjonField
-        feature={feature}
-        tooltipLabel="Grensen sin unike identifikator"
-        fieldKey="uuid"
-        fieldLabel="Identifikator (UUID)"
-        valueLabelFormatter={() => {
-          const featureId = feature.getId()?.toString();
 
-          if (featureId && isTempFeatureId(featureId)) return `Ny grense - ID blir satt ved publisering`;
+        <GrenseinformasjonRow
+          name="Datafangstdato"
+          tooltipLabel="Dato når grensen siste gang ble registert, observert eller målt."
+          valueLabel={(() => {
+            const date = getValues("datafangstDato");
 
-          return feature.getId()?.toString() || null;
-        }}
-        isDisabled
-        isUneditable
-        renderItem={(register) => <Input placeholder={feature.getId()?.toString()} {...register} />}
-      />
+            if (!date) return undefined;
 
-      <GrenseinformasjonField
-        feature={feature}
-        tooltipLabel="Dato når grensen skal være gyldig fra. Fra-dato settes automatisk til publiseringsdato for utkastet ditt."
-        fieldLabel="Gyldig fra"
-        fieldKey="gyldigFra"
-        isDisabled
-        isUneditable
-        valueLabelFormatter={(date) => {
-          const formattedDate = getDateInFriendlyString(date);
-          const featureId = feature.getId()?.toString();
+            const formattedDate = dateToFriendlyDatestring(date);
 
-          if (featureId && isTempFeatureId(featureId)) return "Ny grense - Dato blir satt ved publisering";
+            const featureId = feature.getId()?.toString();
 
-          return formattedDate || null;
-        }}
-        renderItem={(register) => <Datepicker {...register} />}
-      />
+            if (featureId && isTempFeatureId(featureId)) return "Ny grense - Dato blir satt ved publisering";
 
-      <TilhorighetField feature={feature} />
+            return formattedDate || undefined;
+          })()}
+          isEditing={isEditing}
+        >
+          <Controller
+            control={control}
+            name="datafangstDato"
+            render={({ field }) => {
+              const date = field.value;
 
-      <GrenseinformasjonField
-        feature={feature}
-        tooltipLabel="Dato når grensen siste gang ble registert, observert eller målt."
-        fieldLabel="Datafangstdato"
-        fieldKey="datafangstdato"
-        isUneditable
-        valueLabelFormatter={(date) => {
-          const formattedDate = getDateInFriendlyString(date);
-          const featureId = feature.getId()?.toString();
-
-          if (featureId && isTempFeatureId(featureId)) return "Ny grense - Dato blir satt ved publisering";
-
-          return formattedDate || null;
-        }}
-        renderItem={(register) => <Datepicker {...register} />}
-      />
-      {gyldigTil && (
-        <div>
-          <GrenseinformasjonField
-            feature={feature}
-            tooltipLabel="Dato når grensen skal være gyldig til."
-            fieldLabel="Gyldig til"
-            fieldKey="gyldigTil"
-            isDisabled
-            valueLabelFormatter={getDateInFriendlyString}
-            renderItem={(register) => <Datepicker {...register} />}
+              return (
+                <Datepicker
+                  onChange={(e): void => {
+                    const eventDate = new Date(e.target.value);
+                    if (eventDate.toDateString() !== date?.toDateString()) {
+                      field.onChange(new Date(e.target.value));
+                    }
+                  }}
+                  defaultSelected={date}
+                />
+              );
+            }}
           />
-          <Alert status="warning" variant="top-accent">
-            <AlertIcon />
-            Grensen er satt til å utgå ved en fremtidig dato, og du vil derfor ikke kunne gjøre noen endringer på denne
-            grensen.
-          </Alert>
-        </div>
-      )}
+        </GrenseinformasjonRow>
 
-      <GrenseinformasjonField
-        feature={feature}
-        tooltipLabel="Metode som ligger til grunn for registrering av posisjon."
-        fieldLabel="Målemetode"
-        fieldKey="maalemetode"
-        valueLabelFormatter={(valueLabel) => (kodeliste ? getMaalemetodeFromId(kodeliste, valueLabel) : valueLabel)}
-        renderItem={(register) =>
-          kodeliste && (
-            <Select {...register}>
+        <TilhorighetField feature={feature} isEditing={isEditing} getValues={getValues} register={register} />
+
+        <GrenseinformasjonRow
+          name="Målemetode"
+          tooltipLabel="Metode som ligger til grunn for registrering av posisjon."
+          valueLabel={kodeliste ? getMaalemetodeFromId(kodeliste, getValues("maalemetode")) : getValues("maalemetode")}
+          isEditing={isEditing}
+        >
+          {kodeliste && (
+            <Select {...register("maalemetode")}>
               <option value="">Velg målemetode</option>
               {kodeliste.items
                 .sort((a, b) => Number(a.kode) - Number(b.kode))
@@ -171,34 +288,38 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
                   </option>
                 ))}
             </Select>
-          )
-        }
-      />
+          )}
+        </GrenseinformasjonRow>
 
-      <GrenseinformasjonField
-        feature={feature}
-        tooltipLabel="Antatt posisjonsnøyaktighet i grunnriss (x, y) oppgitt i cm. Den nøyaktigheten som angis bør være så nær det virkelige objektet som mulig."
-        fieldKey="noeyaktighet"
-        fieldLabel="Nøyaktighet (cm)"
-        renderItem={(register) => <Input type="number" {...register} />}
-      />
+        <GrenseinformasjonRow
+          name="Nøyaktighet (cm)"
+          tooltipLabel="Antatt posisjonsnøyaktighet i grunnriss (x, y) oppgitt i cm. Den nøyaktigheten som angis bør være så nær det virkelige objektet som mulig."
+          valueLabel={getValues("noeyaktighet")}
+          isEditing={isEditing}
+        >
+          <Input type="number" {...register("noeyaktighet")} />
+        </GrenseinformasjonRow>
 
-      <GrenseinformasjonField
-        feature={feature}
-        tooltipLabel="Ansvarlig organisasjon som er opphav til grensedataene."
-        fieldKey="opphav"
-        fieldLabel="Opphav"
-        renderItem={(register) => <Input placeholder="Fyll inn informasjon om opphav" {...register} />}
-      />
-      <GrenseinformasjonField
-        feature={feature}
-        tooltipLabel="Åpent felt med ekstra informasjon om grensen"
-        fieldKey="informasjon"
-        fieldLabel="Ekstra informasjon"
-        renderItem={(register) => <Textarea placeholder="Fyll inn ekstra informasjon" {...register} />}
-      />
+        <GrenseinformasjonRow
+          name="Opphav"
+          tooltipLabel="Ansvarlig organisasjon som er opphav til grensedataene."
+          valueLabel={getValues("opphav")}
+          isEditing={isEditing}
+        >
+          <Input placeholder="Fyll inn informasjon om opphav" {...register("opphav")} />
+        </GrenseinformasjonRow>
 
-      <Vedtaksinformasjon feature={feature} />
+        <GrenseinformasjonRow
+          name={"Ekstra informasjon"}
+          tooltipLabel={"Åpent felt med ekstra informasjon om grensen"}
+          valueLabel={getValues("informasjon")}
+          isEditing={isEditing}
+        >
+          {<Textarea placeholder="Fyll inn ekstra informasjon" {...register("informasjon")} />}
+        </GrenseinformasjonRow>
+
+        <Vedtaksinformasjon feature={feature} />
+      </form>
     </Container>
   );
 };
