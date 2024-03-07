@@ -23,8 +23,8 @@ type CursorStyleProps = {
 /**
  * Hook for å håndtere cursorsstiler i kartet basert på en gitt state og/eller OpenLayers-hendelser.
  * @param {boolean} isEnabled - Indikerer om cursorsstilene skal være aktivert.
- * @param {EventsAndCursor[]} eventsAndCursor - Liste med MapBrowserEvents knyttet til en cursorstil.
- * @param {ConditionalCursorStyle} defaultCursor - Cursorstilen som skal gjelde hvis ingen events i eventsAndCursor har blitt utløst. defaultCursor blir automatisk knyttet til "pointermove" eventet i OpenLayers.
+ * @param {EventsAndCursor[]} eventsAndCursor - Liste med EventsAndCursor-objekter som knytter MapBrowserEvents opp mot et callback som returnerer en cursorstil.
+ * @param {ConditionalCursorStyle} defaultCursor - Cursorstilen som skal gjelde hvis ingen events i eventsAndCursor har blitt utløst.
  * @example
  * useCursorStyles({
     isEnabled: activeModeTools.includes("move"),
