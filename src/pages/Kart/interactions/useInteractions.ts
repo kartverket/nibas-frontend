@@ -51,7 +51,7 @@ const useInteractions = () => {
     defaultCursor: { style: () => "grab" },
     eventsAndCursor: [
       {
-        name: ["pointermove"],
+        name: ["pointerdrag"],
         cursor: { style: (e) => (shiftKeyOnly(e as MapBrowserEvent<UIEvent>) ? "zoom-in" : "grabbing") },
       },
     ],
