@@ -2,15 +2,16 @@ import WMSCapabilities from "ol/format/WMSCapabilities";
 import WMTSCapabilities from "ol/format/WMTSCapabilities";
 import TileWMS from "ol/source/TileWMS";
 import WMTS from "ol/source/WMTS";
-import { getTicketForTjeneste } from "./geonorgeTicket";
+import { getTicketForTjeneste } from "../../utils/geonorgeTicket";
 import { KartlagId } from "hooks/layers/types";
 import { getUrlForPath } from "utils/api";
+import { MappedLayer } from "contexts/KartlagContext/KartlagContext";
 
 const WMSParser = new WMSCapabilities();
 const WMTSParser = new WMTSCapabilities();
 
 type WMSResponseLayer = {
-  Name: string | undefined;
+  Name: string;
   Title: string;
   queryable: boolean;
   Layer: WMSResponseLayer[];
@@ -21,39 +22,33 @@ type WMTSResponseLayer = {
   Title: string;
 };
 
-export type MappedLayer = {
-  layers: MappedLayer[];
-  title: string;
-  id?: string;
-  queryable: boolean;
-  sourceId: KartlagId;
-};
-
 const mapWMSLayer = (responseLayer: WMSResponseLayer, sourceId: KartlagId) => {
-  let layers: MappedLayer[] = [];
+  const sublayers = responseLayer.Layer
+    ? responseLayer.Layer.map((nestedLayer: WMSResponseLayer) => mapWMSLayer(nestedLayer, sourceId))
+    : [];
 
-  if (responseLayer.Layer) {
-    layers = responseLayer.Layer.map((nestedLayer: WMSResponseLayer) => mapWMSLayer(nestedLayer, sourceId));
-  }
-
-  return {
+  const mappedLayer: MappedLayer = {
+    type: "wms",
     sourceId,
-    layers,
     id: responseLayer.Name,
     title: responseLayer.Title,
-    queryable: responseLayer.queryable,
-  } as MappedLayer;
+    sublayers,
+    isVisible: false,
+  };
+
+  return mappedLayer;
 };
 
 const mapWMTSLayer = (responseLayer: WMTSResponseLayer, sourceId: KartlagId): MappedLayer => ({
-  layers: [],
-  queryable: true,
-  title: responseLayer.Title,
-  id: responseLayer.Identifier,
+  type: "wmts",
   sourceId: sourceId,
+  id: responseLayer.Identifier,
+  title: responseLayer.Title,
+  sublayers: [],
+  isVisible: false,
 });
 
-const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
+export const getLayersFromSource = async (layerId: KartlagId, source: TileWMS | WMTS) => {
   const urls = source.getUrls();
 
   if (!urls || urls.length === 0) return null;
@@ -95,10 +90,8 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
       if (!json?.Capability) return null;
 
       const mainLayer = json.Capability.Layer;
-      const sourceId = source.get("id") as KartlagId;
-      const transformedLayer = mapWMSLayer(mainLayer, sourceId) as MappedLayer;
 
-      return transformedLayer;
+      return mapWMSLayer(mainLayer, layerId);
     }
 
     if (source instanceof WMTS) {
@@ -106,21 +99,19 @@ const getSubLayersFromWMSSource = async (source: TileWMS | WMTS) => {
 
       if (!json?.Contents) return null;
 
-      const sourceId = source.get("id") as KartlagId;
-
       const mappedWMTSLayer: MappedLayer = {
-        layers: json.Contents.Layer.map((l: WMTSResponseLayer) => mapWMTSLayer(l, sourceId)),
-        queryable: true,
-        sourceId: sourceId,
+        type: "wmts",
+        sourceId: layerId,
+        id: layerId,
         title: json.ServiceIdentification.Title ?? source.getLayer(),
-        id: sourceId,
+        sublayers: json.Contents.Layer.map((l: WMTSResponseLayer) => mapWMTSLayer(l, layerId)),
+        isVisible: false,
       };
 
       return mappedWMTSLayer;
     }
   } catch {
+    // TODO: bedre feilhåndtering
     return null;
   }
 };
-
-export default getSubLayersFromWMSSource;
