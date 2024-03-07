@@ -45,7 +45,7 @@ const Kartlag = ({ mappedLayer, index, maxIndex }: Props) => {
 const Container = styled.div`
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 `;
 
 const ArrowButtons = styled.div`

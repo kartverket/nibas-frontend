@@ -1,7 +1,7 @@
 import { styled } from "styled-components";
 import { Accordion, AccordionPanel, Checkbox, Spacer } from "@kvib/react";
 import KartlagInner from "./KartlagInner";
-import { KartlagAccordionItem, KartlagAccordionButton, KartlagAccordionIcon } from "./components";
+import { KartlagAccordionItem, KartlagAccordionIcon, KartlagControls, KartlagAccordionButton } from "./components";
 import { MappedLayer, useKartlag } from "contexts/KartlagContext/KartlagContext";
 
 type Props = {
@@ -21,37 +21,32 @@ const KartlagMiddle = ({ mappedLayer, indexPath, isNested = false }: Props) => {
   return (
     <Accordion allowToggle>
       <KartlagAccordionItem>
-        <h4>
-          <KartlagMiddleAccordionButton $isVisible={mappedLayer.isVisible}>
-            <Checkbox isChecked={mappedLayer.isVisible} onChange={handleToggle} />
-            <KartlagTitle>{mappedLayer.title}</KartlagTitle>
-            <Spacer />
-            <KartlagAccordionIcon />
-          </KartlagMiddleAccordionButton>
-        </h4>
-        <KartlagAccordionPanel $isNested={isNested}>
-          {mappedLayer.sublayers.map((sublayer, i) =>
-            sublayer.sublayers.length > 0 ? (
-              <KartlagMiddle key={sublayer.id} indexPath={[...indexPath, i]} mappedLayer={sublayer} />
-            ) : (
-              <KartlagInner key={sublayer.id} indexPath={[...indexPath, i]} mappedLayer={sublayer} />
-            ),
-          )}
-        </KartlagAccordionPanel>
+        {({ isExpanded }) => (
+          <>
+            <KartlagControls $isExpanded={isExpanded}>
+              <Checkbox isChecked={mappedLayer.isVisible} onChange={handleToggle}>
+                {mappedLayer.title}
+              </Checkbox>
+              <Spacer />
+              <KartlagAccordionButton $isVisible={mappedLayer.isVisible}>
+                <KartlagAccordionIcon />
+              </KartlagAccordionButton>
+            </KartlagControls>
+            <KartlagAccordionPanel $isNested={isNested}>
+              {mappedLayer.sublayers.map((sublayer, i) =>
+                sublayer.sublayers.length > 0 ? (
+                  <KartlagMiddle key={sublayer.id} indexPath={[...indexPath, i]} mappedLayer={sublayer} />
+                ) : (
+                  <KartlagInner key={sublayer.id} indexPath={[...indexPath, i]} mappedLayer={sublayer} />
+                ),
+              )}
+            </KartlagAccordionPanel>
+          </>
+        )}
       </KartlagAccordionItem>
     </Accordion>
   );
 };
-
-const KartlagMiddleAccordionButton = styled(KartlagAccordionButton)<{ $isVisible: boolean }>`
-  &:hover {
-    background: ${(props) => (props.$isVisible ? "var(--kvib-colors-blue-100)" : "var(--kvib-colors-gray-200)")};
-  }
-`;
-
-const KartlagTitle = styled.span`
-  margin-left: 8px;
-`;
 
 const KartlagAccordionPanel = styled(AccordionPanel)`
   position: relative;
