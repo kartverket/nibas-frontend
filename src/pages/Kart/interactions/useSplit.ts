@@ -8,6 +8,7 @@ import { getTempFeatureId, isTempFeatureId } from "pages/Kart/interactions/tempF
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { FeatureProperties } from "../../../types/api";
+import { Coordinate } from "ol/coordinate";
 
 // OBS! Per nå skiller denne seg fra de andre interaksjonene ved at den ikke legges til som et event i kartet
 // I stedet bruker man select og selectPoint etter hverandre, og utløser handlingen ved en knapp i React
@@ -33,54 +34,57 @@ const useSplit = () => {
     return newFeature;
   };
 
-  const split = () => {
-    if (activeTool === "split" && selectedFeatures.length === 1 && selectedPoint) {
-      const oldFeature = selectedFeatures[0];
-      const oldGeometry = oldFeature.getGeometry();
-      if (oldGeometry instanceof LineString) {
-        const allFeatureCoordinates = oldGeometry.getCoordinates();
-        const oldFeatureId = oldFeature.getId() as string;
+  const performFeatureSplit = (featureToSplit: Feature<Geometry>, coordinatesToSplit: Coordinate) => {
+    const oldFeature = featureToSplit;
+    const oldGeometry = oldFeature.getGeometry();
+    if (oldGeometry instanceof LineString) {
+      const allFeatureCoordinates = oldGeometry.getCoordinates();
+      const oldFeatureId = oldFeature.getId() as string;
 
-        // Ikke vits å gjøre splitting med mindre du har en linje med minst tre punkter
-        if (allFeatureCoordinates.length > 2) {
-          const pointGeometry = selectedPoint.getGeometry();
+      // Ikke vits å gjøre splitting med mindre du har en linje med minst tre punkter
+      if (allFeatureCoordinates.length > 2) {
+        const splitIndex = allFeatureCoordinates.findIndex(
+          (v) => v[0] === coordinatesToSplit[0] && v[1] === coordinatesToSplit[1],
+        );
 
-          if (pointGeometry instanceof Point) {
-            const coordinatesToSplit = pointGeometry.getCoordinates();
-            const splitIndex = allFeatureCoordinates.findIndex(
-              (v) => v[0] === coordinatesToSplit[0] && v[1] === coordinatesToSplit[1],
-            );
+        // Dette verifiserer at det valgte punktet er et gyldig punkt å splitte på grensen
+        if (splitIndex > 0 && splitIndex < allFeatureCoordinates.length - 1) {
+          const newFeature1 = createCloneOfFeatureWithPartsOfCoordinates(oldFeature, 0, splitIndex + 1);
+          const newFeature2 = createCloneOfFeatureWithPartsOfCoordinates(
+            oldFeature,
+            splitIndex,
+            allFeatureCoordinates.length,
+          );
 
-            // Dette verifiserer at det valgte punktet er et gyldig punkt å splitte på grensen
-            if (splitIndex > 0 && splitIndex < allFeatureCoordinates.length - 1) {
-              const newFeature1 = createCloneOfFeatureWithPartsOfCoordinates(oldFeature, 0, splitIndex + 1);
-              const newFeature2 = createCloneOfFeatureWithPartsOfCoordinates(
-                oldFeature,
-                splitIndex,
-                allFeatureCoordinates.length,
-              );
+          const properties = oldFeature.getProperties() as FeatureProperties;
+          oldFeature.setProperties({ ...properties, shouldArchive: true });
+          addFeaturesToSource("edit", [newFeature1, newFeature2]);
+          removeFeaturesFromSourceByIds("edit", [oldFeatureId]);
+          addHistoryEntry({
+            type: "grensedeling",
+            changes: [{ id: oldFeatureId, from: [oldFeature], to: [newFeature1, newFeature2] }],
+          });
 
-              const properties = oldFeature.getProperties() as FeatureProperties;
-              addArchivedStyles([oldFeatureId]);
-              oldFeature.setProperties({ ...properties, shouldArchive: true });
-              addFeaturesToSource("edit", [newFeature1, newFeature2]);
-              removeFeaturesFromSourceByIds("edit", [oldFeatureId]);
-              addHistoryEntry({
-                type: "grensedeling",
-                changes: [{ id: oldFeatureId, from: [oldFeature], to: [newFeature1, newFeature2] }],
-              });
-
-              // Hvis featuren som ble splittet er en gammel feature med ID ønsker vi å vise den som arkivert
-              if (!isTempFeatureId(oldFeatureId)) {
-                addFeaturesToSource("archived", [oldFeature]);
-              }
-            }
+          // Hvis featuren som ble splittet er en gammel feature med ID ønsker vi å vise den som arkivert
+          if (!isTempFeatureId(oldFeatureId)) {
+            addFeaturesToSource("archived", [oldFeature]);
           }
         }
       }
     }
   };
-  return { split };
+
+  const split = () => {
+    if (activeTool === "split" && selectedFeatures.length === 1 && selectedPoint) {
+      const selectedPointGeometry = selectedPoint.getGeometry();
+      if (selectedPointGeometry instanceof Point) {
+        const coordinatesToSplit = selectedPointGeometry.getCoordinates();
+
+        performFeatureSplit(selectedFeatures[0], coordinatesToSplit);
+      }
+    }
+  };
+  return { split, performFeatureSplit };
 };
 
 export default useSplit;

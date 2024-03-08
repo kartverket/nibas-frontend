@@ -12,8 +12,9 @@ import {
   ButtonGroup,
   Button,
   FormControl,
+  FormErrorMessage,
 } from "@kvib/react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import { UtkastResponse } from "types/api";
@@ -36,20 +37,20 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
     register,
     handleSubmit,
     getValues,
-    formState: { isDirty },
-  } = useForm<UtkastFormData>({ defaultValues: { navn: utkast.navn } });
+    reset,
+    formState: { errors, isDirty },
+  } = useForm<UtkastFormData>({ mode: "onSubmit", reValidateMode: "onChange", defaultValues: { navn: utkast.navn } });
   const { updateUtkast } = useUtkast();
-  const { mutate } = useUtkasts();
 
-  const previousValues = useRef<UtkastFormData>(getValues());
+  const { mutate } = useUtkasts();
 
   const editUtkast = async () => {
     setIsLoading(true);
-    await updateUtkast(utkast.id, { ...utkast, navn: getValues("navn") });
+    await updateUtkast(utkast.id, { ...utkast, navn: getValues("navn") }, false);
+    mutate();
+    reset(getValues());
     setIsLoading(false);
     onClose();
-    previousValues.current = getValues();
-    mutate();
   };
 
   return (
@@ -60,12 +61,16 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
           <ModalHeader>Endre detaljer</ModalHeader>
           <ModalCloseButton aria-label="Lukk" />
           <ModalBody>
-            <Section>
+            <Section isInvalid={!!errors.navn}>
               <FormLabel>Navn på utkastet</FormLabel>
               <FormHelperText>
                 Velg et beskrivende navn som gjør at andre kan forstå hva utkastet inneholder.
               </FormHelperText>
-              <Input placeholder="f.eks. Sammenslåing av Rosenborg og Sentrum i Trondheim" {...register("navn")} />
+              <Input
+                placeholder="f.eks. Sammenslåing av Rosenborg og Sentrum i Trondheim"
+                {...register("navn", { required: "Utkastet må ha et navn" })}
+              />
+              {!!errors.navn && <FormErrorMessage errorMessage={errors.navn.message} />}
             </Section>
           </ModalBody>
           <ModalFooter>

@@ -1,13 +1,15 @@
 import { GrenseType, getEditingTypeFromGrenseType } from "hooks/layers/types";
 import { MetadataDiscriminator, getMetadataDiscriminatorFromType, isAdministrativGrense } from "./grenser";
 import { Feature } from "ol";
-import { Geometry } from "ol/geom";
+import { Geometry, LineString } from "ol/geom";
 import { FeatureProperties, KontekstEgenskaper, Metadata } from "types/api";
 import { FeatureLike } from "ol/Feature";
 import { grenserLayers, editableBorderTypes } from "hooks/layers/constants";
 import { isNotNullOrUndefined } from "types/common";
 import { getRepresentasjonspunktId } from "./map/source";
 import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
+import { previousCoordinateKey } from "pages/Kart/interactions/constants";
+import { Coordinate, equals } from "ol/coordinate";
 
 export const setDefaultFeatureProperties = (feature: Feature<Geometry>, grenseType: GrenseType | undefined) => {
   if (!grenseType) return;
@@ -64,6 +66,8 @@ export const getDefaultFeatureProperties = (grenseType: GrenseType): FeatureProp
 };
 
 export const isFeatureEditable = (feature: FeatureLike, isArchived: boolean) => {
+  const isMetadataEditable = isFeatureMetadataEditable(feature, isArchived);
+
   const featureType = feature.get("type") as GrenseType;
 
   if (isAdministrativGrense(featureType)) {
@@ -95,7 +99,37 @@ export const isFeatureEditable = (feature: FeatureLike, isArchived: boolean) => 
     if (!alleKretserIKontekstEgenskaperErSynlig) return false;
   }
 
+  return isMetadataEditable;
+};
+
+export const isFeatureMetadataEditable = (feature: FeatureLike, isArchived: boolean) => {
+  const featureType = feature.get("type") as GrenseType;
+
   const isEditableFeatureType = editableBorderTypes.includes(featureType);
 
   return isEditableFeatureType && !isArchived;
+};
+
+export const isPreviousAndCurrentCoordinatesEqual = (feature: Feature<LineString>) => {
+  const previousFeatureCoordinates = feature.get(previousCoordinateKey);
+  const currentFeatureCoordinates = feature.getGeometry()?.getCoordinates();
+  if (previousFeatureCoordinates && currentFeatureCoordinates) {
+    const coordinates = previousFeatureCoordinates as Coordinate[];
+    for (let i = 0; i < coordinates.length; i++) {
+      if (equals(coordinates[i], currentFeatureCoordinates[i])) continue;
+
+      return false;
+    }
+  }
+  return true;
+};
+
+export const isMatrikkelFeature = (feature: FeatureLike) => {
+  const featureId = feature.getId()?.toString();
+
+  if (featureId) {
+    return featureId.includes("TEIGGRENSEWFS");
+  }
+
+  return false;
 };

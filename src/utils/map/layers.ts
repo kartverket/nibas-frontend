@@ -110,14 +110,22 @@ export const getMatrikkelFeatures = async () => {
     const json = await response.json();
     const fetchedFeatures = getFeaturesFromGeoJson(json);
     if (fetchedFeatures) {
-      const source = getLayerById("matrikkel").getSource();
-      if (source) {
-        source.clear(true);
-      }
+      clearMatrikkelLayer();
       addFeaturesToSource("matrikkel", fetchedFeatures);
       return fetchedFeatures;
     }
   } catch {
     return;
   }
+};
+
+export const clearMatrikkelLayer = () => {
+  const source = grenserLayers.matrikkel.getSource();
+
+  if (source) {
+    source.clear();
+    return true;
+  }
+
+  return false;
 };

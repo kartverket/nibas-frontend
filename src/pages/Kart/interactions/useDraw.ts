@@ -22,7 +22,7 @@ import { Coordinate, equals } from "ol/coordinate";
 import { setDefaultFeatureProperties } from "utils/features";
 
 const useDraw = () => {
-  const { activeTool } = useToolbar();
+  const { activeTool, activeModeTools } = useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const { addHistoryEntry } = useHistory();
   const { openOverlayPanel } = useOverlayPanel();
@@ -41,7 +41,7 @@ const useDraw = () => {
       const firstCoordinate = geometry.getFirstCoordinate();
       const lastCoordinate = geometry.getLastCoordinate();
 
-      const clickedCoordinate = findNearbyVertexOnFeature(feature, eventCoordinate);
+      const clickedCoordinate = findNearbyVertexOnFeature(feature.getGeometry() as LineString, eventCoordinate);
 
       if (!clickedCoordinate) {
         return false;
@@ -63,7 +63,7 @@ const useDraw = () => {
       style: grenseStyles.select,
       freehandCondition: () => false,
       condition: (event: MapBrowserEvent<MouseEvent>) => {
-        if (!noModifierKeys(event) || activeTool !== "draw") return false;
+        if (!noModifierKeys(event) || activeTool !== "draw" || activeModeTools.includes("move")) return false;
 
         const featuresAtPixel = getActiveFeaturesAtPixel(event, "edit");
 
@@ -99,7 +99,7 @@ const useDraw = () => {
         return true;
       },
     });
-  }, [activeTool, getActiveFeaturesAtPixel, toast]);
+  }, [activeTool, getActiveFeaturesAtPixel, toast, activeModeTools]);
 
   useEffect(() => {
     const addDrawToHistory = (drawnFeature: Feature<LineString>) => {

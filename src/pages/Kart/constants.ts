@@ -23,7 +23,7 @@ export const map = new Map({
   controls: [],
   overlays: [],
   keyboardEventTarget: window.document,
-  interactions: defaults({ altShiftDragRotate: false, dragPan: false }),
+  interactions: defaults({ altShiftDragRotate: false, dragPan: false, shiftDragZoom: false }),
 });
 
 export const overlayPopup = new Overlay({

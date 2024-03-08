@@ -12,7 +12,7 @@ import Text from "ol/style/Text";
 import Point from "ol/geom/Point";
 import { archivedSource, editSource } from "hooks/layers/constants";
 import { GrenseId, GrenseType } from "hooks/layers/types";
-import { isFeatureEditable } from "utils/features";
+import { isFeatureEditable, isMatrikkelFeature } from "utils/features";
 
 const getNonEndpointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
   const featureGeometry = feature.getGeometry();
@@ -36,21 +36,29 @@ const lineAndPointStyles = ({
   color,
   dashed = false,
   points = true,
+  lineStrokeWidth = 1.25,
+  pointRadius = 2.5,
+  endpointStrokeWidth = 2,
+  endpointRadius = 3.5,
 }: {
   color: string;
   dashed?: boolean;
   points?: boolean;
+  lineStrokeWidth?: number;
+  pointRadius?: number;
+  endpointStrokeWidth?: number;
+  endpointRadius?: number;
 }) => [
   new Style({
     stroke: new Stroke({
       color,
-      lineDash: dashed ? [4, 6] : [],
-      width: dashed ? 3 : 2,
+      lineDash: dashed ? [6, 8] : [],
+      width: lineStrokeWidth,
     }),
   }),
   new Style({
     image: new Circle({
-      radius: points ? 2.5 : 0,
+      radius: points ? pointRadius : 0,
       fill: new Fill({
         color,
       }),
@@ -59,13 +67,13 @@ const lineAndPointStyles = ({
   }),
   new Style({
     image: new Circle({
-      radius: points ? 2.5 : 0,
+      radius: points ? endpointRadius : 0,
       fill: new Fill({
         color: "#FFFFFF",
       }),
       stroke: new Stroke({
         color: color,
-        width: 2,
+        width: endpointStrokeWidth,
       }),
     }),
     geometry: getEndPointsOnFeature,
@@ -75,11 +83,11 @@ const lineAndPointStyles = ({
 export const selectedPointStyle = new Style({
   image: new Circle({
     radius: 6,
-    stroke: new Stroke({ color: "#ffffff", width: 2 }),
-    fill: new Fill({ color: "#00A76C" }),
+    stroke: new Stroke({ color: "#D163E6FF", width: 3 }),
+    fill: new Fill({ color: "#ffffff" }),
   }),
-  fill: new Fill({ color: "#00A76C" }),
-  stroke: new Stroke({ color: "#ffffff" }),
+  fill: new Fill({ color: "#ffffff" }),
+  stroke: new Stroke({ color: "#D163E6FF" }),
   zIndex: 10,
 });
 
@@ -101,6 +109,7 @@ export const grenseStyles = {
   edit: lineAndPointStyles({ color: "#000000" }),
   select: lineAndPointStyles({ color: "#D163E6FF" }),
   dirty: lineAndPointStyles({ color: "#00CB85FF" }),
+  matrikkel: lineAndPointStyles({ color: "#C0AFFBFF", pointRadius: 1.5, endpointRadius: 2 }),
   sammenslaaing: lineAndPointStyles({ color: "#D3C439B3" }),
   flate: flateStyles,
   sammenslaaingOverlapping: lineAndPointStyles({
@@ -149,9 +158,13 @@ const grenseStyleFromType = (grenseType: GrenseType, archived: boolean): Style[]
 export const getLayerStyle = (feature: Feature<Geometry> | RenderFeature, grenseId: GrenseId, archived: boolean) => {
   if (grenseId == "edit" && isFeatureEditable(feature, archived)) {
     return grenseStyles.edit;
-  } else {
-    return grenseStyleFromType(feature.getProperties().type as GrenseType, archived || grenseId === "archived");
   }
+
+  if (isMatrikkelFeature(feature)) {
+    return grenseStyles.matrikkel;
+  }
+
+  return grenseStyleFromType(feature.getProperties().type as GrenseType, archived || grenseId === "archived");
 };
 
 export const getArchiveLayerStyle = (feature: Feature<Geometry> | RenderFeature) => {

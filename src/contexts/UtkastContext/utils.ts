@@ -12,10 +12,12 @@ import {
 } from "contexts/HistoryContext";
 import { archivedSource, editSource } from "hooks/layers/constants";
 import {
+  FeatureProperties,
   FylkeRequest,
   GrunnkretsRequest,
   KommuneRequest,
   KretsDelingEndringRequest,
+  Metadata,
   NasjonRequest,
   OppdaterUtkastRequest,
   StemmekretsRequest,
@@ -28,6 +30,7 @@ import {
 import { featureToGeoJson } from "utils/map/geoJson";
 import { getIdFromEntity } from "utils/api";
 import { getTempFeatureId, isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
+import { isTempDokrefId } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/Vedtaksinformasjon/util/vedtaksinfoHelperMethods";
 
 const getCombinedEntity = <T extends ResponseWithId>(
   entity: T,
@@ -233,9 +236,16 @@ export const toCleanUtkast = (utkastToClean: OppdaterUtkastRequest): OppdaterUtk
     featureIsNotAnArchivedNewFeature,
   );
 
-  // Fjerner ID fra alle nye grenser, da dette ikke er forventet fra backend
+  // Fjerner midlertigie ID fra alle nye grenser og deres dokumentasjonsreferanser, da dette ikke er forventet fra backend
   endredeFeatures.forEach((endretFeature) => {
     if (endretFeature.id && isTempFeatureId(endretFeature.id)) endretFeature.id = undefined;
+
+    const properties = endretFeature.properties as FeatureProperties;
+    const metadata = properties.metadata as Metadata;
+
+    metadata.dokumentasjonsreferanser?.forEach((dokref) => {
+      if (isTempDokrefId(dokref.id)) dokref.id = undefined;
+    });
   });
 
   utkastCopy.operasjoner.grenseendringer.endredeFeatures = endredeFeatures;

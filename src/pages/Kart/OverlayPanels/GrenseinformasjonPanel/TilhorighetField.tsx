@@ -16,6 +16,10 @@ import { useTilhorighetAdministrativ } from "../hooks/useTilhorighetAdministrati
 import GrenseinformasjonRow from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/GrenseinformasjonRow";
 import { useTilhorighet } from "../hooks/useTilhorighet";
 import { useTilhorighetNyAdministrativ } from "../hooks/useTilhorighetNyAdministrativ";
+import { isFeatureEditable } from "utils/features";
+import { useFeatureStyle } from "contexts/FeatureStyleContext";
+import { FeatureProperties } from "types/api";
+import useIsGrenseinformasjonPanelDisabled from "../hooks/useIsGrenseInformasjonPanelDisabled";
 
 type TilhorighetRowProps = {
   feature: Feature;
@@ -108,13 +112,25 @@ const NyAdministrativTilhorighetField = ({ feature, isDisabled }: TilhorighetPro
 };
 
 export const TilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
+  const { featureIsArchived } = useFeatureStyle();
+
+  const isGrensePanelDisabled = useIsGrenseinformasjonPanelDisabled(
+    feature,
+    feature.getProperties() as FeatureProperties,
+  );
+
   const grenseType = feature.getProperties().type as GrenseType;
+
   if (isAdministrativGrense(grenseType)) {
+    const isEditable = isFeatureEditable(feature, featureIsArchived(feature));
+
+    const shouldBeDisabled = isDisabled || isGrensePanelDisabled || !isEditable;
     if (isTempFeatureId(feature.getId())) {
-      return <NyAdministrativTilhorighetField feature={feature} isDisabled={grenseType !== "Kommunegrense"} />;
+      return <NyAdministrativTilhorighetField feature={feature} isDisabled={shouldBeDisabled} />;
     }
-    return <AdministrativTilhorighetField feature={feature} isDisabled={grenseType !== "Kommunegrense"} />;
+    return <AdministrativTilhorighetField feature={feature} isDisabled={shouldBeDisabled} />;
   }
 
-  return <CommonTilhorighetField feature={feature} isDisabled={isDisabled} />;
+  const shouldBeDisabled = isDisabled || isGrensePanelDisabled;
+  return <CommonTilhorighetField feature={feature} isDisabled={shouldBeDisabled} />;
 };

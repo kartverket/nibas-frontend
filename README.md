@@ -49,6 +49,12 @@ VITE_BAAT_USERNAME=Ditt_BAAT_brukernavn
 VITE_BAAT_PASSWORD=Ditt_BAAT_passord
 ```
 
+Credentials for matrikkel-wfs finnes i Vault, og settes med miljøvariabelen:
+
+```
+VITE_MATRIKKELWFS_AUTH
+```
+
 ### Linting
 
 eslint blir installert på npm install. Men husk å aktivere plugin. For IntelliJ: Languages & Frameworks -> Javascript ->

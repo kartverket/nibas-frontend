@@ -45,6 +45,7 @@ export type StatistiskgrenseMetadata = components["schemas"]["StatistiskgrenseMe
 export type StemmekretsResponse = components["schemas"]["StemmekretsResponse"];
 export type StemmekretsRequest = components["schemas"]["StemmekretsRequest"];
 export type StemmekretsSammenslaaingsendringRequest = components["schemas"]["StemmekretsSammenslaaingsendringRequest"];
+export type DokumentasjonsreferanseDTO = components["schemas"]["DokumentasjonsreferanseDTO"];
 export type StatistiskGrenseMetadata = components["schemas"]["StatistiskgrenseMetadata"] & {
   dokumentasjonsreferanser: undefined;
 };

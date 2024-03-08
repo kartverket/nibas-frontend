@@ -5,6 +5,7 @@ import { KeyboardShortcuts, Shortcut } from "hooks/keyboard-shortcuts/keyboard-s
 export type CustomTooltipProps = {
   text: string;
   icon?: MaterialSymbol;
+  additionalInfo?: string;
 } & ShortcutTextProps;
 
 type ShortcutTextProps = {
@@ -31,7 +32,7 @@ const ShortcutText = ({ shortcut, holdButton }: ShortcutTextProps) => {
   return null;
 };
 
-export const TooltipBody = ({ text, icon, shortcut, holdButton }: CustomTooltipProps) => (
+export const TooltipBody = ({ text, icon, shortcut, holdButton, additionalInfo }: CustomTooltipProps) => (
   <BodyWrapper>
     <IconText>
       {text}
@@ -39,16 +40,25 @@ export const TooltipBody = ({ text, icon, shortcut, holdButton }: CustomTooltipP
       {icon && <Icon size={24} icon={icon} />}
     </IconText>
     <ShortcutText shortcut={shortcut} holdButton={holdButton} />
+    {additionalInfo && <ShortcutTextStyle>{additionalInfo}</ShortcutTextStyle>}
   </BodyWrapper>
 );
 
-const CustomTooltip = ({ text, icon, shortcut, children, holdButton, ...restProps }: Props) => {
+const CustomTooltip = ({ text, icon, shortcut, children, holdButton, additionalInfo, ...restProps }: Props) => {
   return (
     <Tooltip
       hasArrow
       placement="top"
       {...restProps}
-      label={<TooltipBody text={text} shortcut={shortcut} holdButton={holdButton} icon={icon} />}
+      label={
+        <TooltipBody
+          text={text}
+          shortcut={shortcut}
+          holdButton={holdButton}
+          icon={icon}
+          additionalInfo={additionalInfo}
+        />
+      }
     >
       <div>{children}</div>
     </Tooltip>
