@@ -7,7 +7,7 @@ import { ReferanserPaginated } from "./ReferanserPaginated";
 import { ReferanseInput } from "./ReferanseInput";
 import { useState } from "react";
 
-export type ReferanserProps = {
+type ReferanserProps = {
   formViewState: FormViewState;
   deleteInternref: (index: number) => void;
   deleteDokref: (index: number) => void;

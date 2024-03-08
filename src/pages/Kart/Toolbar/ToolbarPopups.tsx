@@ -1,11 +1,11 @@
 import { useToolbar } from "contexts/ToolbarContext";
 import ToolbarPopup from "./ToolbarPopup";
-import { useFeatureStyle } from "contexts/FeatureStyleContext";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import useSplit from "../interactions/useSplit";
 import { addFeaturesToSource, getFeatureId, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { useToast } from "@kvib/react";
-import { addArchivingEntryFromFeature } from "../OverlayPanels/GrenseinformasjonPanel/utils";
-import { useHistory } from "contexts/HistoryContext";
+import { addArchivingEntryFromFeature } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { clearMatrikkelLayer, getMatrikkelFeatures } from "utils/map/layers";
 import { map } from "../constants";
 import { useRef, useState } from "react";

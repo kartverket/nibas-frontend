@@ -1,12 +1,12 @@
 import ThirdPartyProviders from "./ThirdPartyProviders";
 import { KartlagProvider } from "contexts/KartlagContext/KartlagContext";
-import { EditGrenserProvider } from "contexts/EditGrenserContext";
+import { EditGrenserProvider } from "contexts/EditGrenserContext/EditGrenserContext";
 import { SidebarPanelProvider } from "contexts/SidebarPanelContext";
-import { HistoryProvider } from "contexts/HistoryContext";
-import { UtkastProvider } from "contexts/UtkastContext";
+import { HistoryProvider } from "contexts/HistoryContext/HistoryContext";
+import { UtkastProvider } from "contexts/UtkastContext/UtkastContext";
 import { ErrorHandlingProvider } from "contexts/ErrorHandlingContext";
 import { OverlayPanelProvider } from "contexts/OverlayPanelContext";
-import { FeatureStyleProvider } from "contexts/FeatureStyleContext";
+import { FeatureStyleProvider } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { ToolbarProvider } from "contexts/ToolbarContext";
 import { ConfirmationModalProvider } from "contexts/ConfirmationModalContext";
 

@@ -11,9 +11,6 @@ export type EditGrenserContextValue = {
   setOtherEditingTypes: (currentType: EditingType, shouldBeEditable?: boolean) => void;
 };
 
-/**
- * Bruk heller EditGrenserProvider i koden
- */
 export const EditGrenserContext = createContext<EditGrenserContextValue | undefined>(undefined);
 
 export const EditGrenserProvider = ({ children }: { children: React.ReactNode }) => {

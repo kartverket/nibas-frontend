@@ -1,4 +1,4 @@
-import { HistoryChange, MinimalGrense } from "contexts/HistoryContext";
+import { HistoryChange, MinimalGrense } from "contexts/HistoryContext/types";
 import { Feature } from "ol";
 import { FeatureLike } from "ol/Feature";
 import { LineString } from "ol/geom";

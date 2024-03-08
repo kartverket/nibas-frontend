@@ -1,7 +1,7 @@
 import { Grunnkretsendringer } from "./utkastEndringerTypes";
 import { useEffect, useMemo, useState } from "react";
 import useNibasApi from "hooks/useNibasApi";
-import { getGrunnkretsEndringer, getGrunnkretserMedEndringer } from "./grunnkretsEndringerUtils";
+import { getGrunnkretsEndringer, getGrunnkretserMedEndringer } from "./grunnkrets-endringer-utils";
 import { useGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import { UtkastResponse } from "types/api";
 
