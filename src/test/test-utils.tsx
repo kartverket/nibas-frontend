@@ -1,7 +1,7 @@
 /* eslint-disable import/export */
 import { ReactNode } from "react";
 import { render, RenderOptions, RenderResult } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { userEvent } from "@testing-library/user-event";
 import { renderWithProviders, TestProviderValues } from "./test-providers";
 
 // https://testing-library.com/docs/react-testing-library/setup/#custom-render
