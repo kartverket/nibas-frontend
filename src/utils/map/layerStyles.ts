@@ -100,12 +100,12 @@ const flateStyles = [
 ];
 
 export const grenseStyles = {
-  fylke: lineAndPointStyles({ color: "#E54848FF" }),
-  kommune: lineAndPointStyles({ color: "#FF9287FF" }),
-  nasjon: lineAndPointStyles({ color: "#8A034FFF" }),
-  grunnkrets: lineAndPointStyles({ color: "#537EFFFF" }),
+  fylke: lineAndPointStyles({ color: "#170CEB" }),
+  kommune: lineAndPointStyles({ color: "#637DF3" }),
+  nasjon: lineAndPointStyles({ color: "#61538B" }),
+  grunnkrets: lineAndPointStyles({ color: "#4D94AF" }),
   stemmekrets: lineAndPointStyles({ color: "#FFAE49FF" }),
-  delomraade: lineAndPointStyles({ color: "#00BEFFFF" }),
+  delomraade: lineAndPointStyles({ color: "#5DB9DC" }),
   edit: lineAndPointStyles({ color: "#000000" }),
   select: lineAndPointStyles({ color: "#D163E6FF" }),
   dirty: lineAndPointStyles({ color: "#00CB85FF" }),
@@ -118,12 +118,12 @@ export const grenseStyles = {
     dashed: true,
     points: false,
   }),
-  archivedFylke: lineAndPointStyles({ color: "#E54848FF", dashed: true }),
-  archivedKommune: lineAndPointStyles({ color: "#FF9287FF", dashed: true }),
-  archivedNasjon: lineAndPointStyles({ color: "#8A034FFF", dashed: true }),
-  archivedGrunnkrets: lineAndPointStyles({ color: "#537EFFFF", dashed: true }),
+  archivedFylke: lineAndPointStyles({ color: "#170CEB", dashed: true }),
+  archivedKommune: lineAndPointStyles({ color: "#637DF3", dashed: true }),
+  archivedNasjon: lineAndPointStyles({ color: "#61538B", dashed: true }),
+  archivedGrunnkrets: lineAndPointStyles({ color: "#4D94AF", dashed: true }),
   archivedStemmekrets: lineAndPointStyles({ color: "#FFAE49FF", dashed: true }),
-  archivedDelomraade: lineAndPointStyles({ color: "#00BEFFFF", dashed: true }),
+  archivedDelomraade: lineAndPointStyles({ color: "#5DB9DC", dashed: true }),
 };
 
 const grenseStyleFromType = (grenseType: GrenseType, archived: boolean): Style[] => {
