@@ -9,15 +9,16 @@ import {
   getKommunerIdFromKontekstEgenskaper,
   getTilhorighetData,
   getUpdatedKontekstEgenskaper,
-} from "./tilhorighetUtils";
-import { useHistory } from "contexts/HistoryContext";
+} from "./tilhorighet-utils";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { Feature } from "ol";
 import { LineString } from "ol/geom";
 import { FeatureProperties } from "types/api";
-import { addKontekstEntryFromFeature } from "../GrenseinformasjonPanel/utils";
+import { addKontekstEntryFromFeature } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { getIdFromEntity } from "utils/api";
-import { EditingType, useEditAllGrenser } from "contexts/EditGrenserContext";
+import { useEditAllGrenser } from "contexts/EditGrenserContext/EditGrenserContext";
+import { EditingType } from "contexts/EditGrenserContext/types";
 
 const getKontekstTypeFromEditingType = (editingType: EditingType | null): KontekstType | null => {
   if (!editingType) return null;
@@ -32,7 +33,7 @@ const getKontekstTypeFromEditingType = (editingType: EditingType | null): Kontek
   return null;
 };
 
-export const getDefaultTilhorighetData = () => ({
+const getDefaultTilhorighetData = () => ({
   GRUNNKRETS: { a: CustomOption.NOT_CHOSEN, b: CustomOption.NOT_CHOSEN },
   STEMMEKRETS: { a: CustomOption.NOT_CHOSEN, b: CustomOption.NOT_CHOSEN },
 });

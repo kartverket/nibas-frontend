@@ -1,10 +1,10 @@
 import LineString from "ol/geom/LineString";
-import { useHistory } from "contexts/HistoryContext";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { useToolbar } from "contexts/ToolbarContext";
 import { Point } from "ol/geom";
-import { useFeatureStyle } from "contexts/FeatureStyleContext";
-import { getTempFeatureId, isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
+import { getTempFeatureId, isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { FeatureProperties } from "../../../types/api";

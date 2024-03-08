@@ -18,7 +18,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import { UtkastResponse } from "types/api";
-import { useUtkast } from "contexts/UtkastContext";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useUtkasts } from "hooks/inndelinger/useUtkasts";
 
 type Props = {

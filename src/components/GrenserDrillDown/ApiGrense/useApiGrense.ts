@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
-import { useUtkast, useUtkastFeature } from "contexts/UtkastContext";
+import { useUtkast, useUtkastFeature } from "contexts/UtkastContext/UtkastContext";
 import { geoJsonToSource } from "utils/map/geoJson";
 import { getLayerById } from "utils/map/layers";
 import useNibasApi from "hooks/useNibasApi";

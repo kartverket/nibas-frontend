@@ -24,7 +24,7 @@ class FrontendLogger {
   };
 
   private logRemote = async (message: string, level: LogLevels, error: Error | null | undefined) => {
-    if (error == null) {
+    if (!error) {
       this.sendLogToRemote(message, level, null);
     } else {
       const parsedStackFrames = await StackTrace.fromError(error);

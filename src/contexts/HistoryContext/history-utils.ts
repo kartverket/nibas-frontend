@@ -11,11 +11,11 @@ import {
 } from "./types";
 import { archivedSource, editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
-import { Geometry } from "ol/geom";
 import { setDefaultFeatureProperties } from "utils/features";
 import { FeatureProperties } from "types/api";
 import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
-import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
+import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
+import { removeNull } from "utils/list-utils";
 
 const getFeatureFromChange = (change: HistoryChange<MinimalGrense>, direction: HistoryDirection) => {
   const existingFeature = getFeatureIfExists(change.id);
@@ -33,7 +33,7 @@ const getFeatureFromChange = (change: HistoryChange<MinimalGrense>, direction: H
 };
 
 const getFeatureIfExists = (featureId: string) => {
-  return editSource.getFeatureById(featureId) as Feature<Geometry> | null;
+  return editSource.getFeatureById(featureId);
 };
 
 const setCoordinatesFromChange = (change: HistoryChange<MinimalGrense>, direction: HistoryDirection) => {
@@ -98,7 +98,7 @@ export const setKontekstEgenskaperForEntry = (entry: GrenseTilhorighetEntry, dir
 };
 
 export const redoArchiving = (entry: GrenseArkiveringsEntry) => {
-  const features = entry.changes.map((c) => editSource.getFeatureById(c.id) as Feature<Geometry>);
+  const features = removeNull(entry.changes.map((c) => editSource.getFeatureById(c.id)));
   const featureIds = entry.changes.map((c) => c.id);
 
   addFeaturesToSource("archived", features);
@@ -112,7 +112,7 @@ export const redoArchiving = (entry: GrenseArkiveringsEntry) => {
 };
 
 export const undoArchving = (entry: GrenseArkiveringsEntry) => {
-  const features = entry.changes.map((c) => archivedSource.getFeatureById(c.id) as Feature<Geometry>);
+  const features = removeNull(entry.changes.map((c) => archivedSource.getFeatureById(c.id)));
   const featureIds = entry.changes.map((c) => c.id);
 
   addFeaturesToSource("edit", features);
