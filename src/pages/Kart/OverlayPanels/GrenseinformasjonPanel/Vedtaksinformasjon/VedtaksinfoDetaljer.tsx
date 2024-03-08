@@ -135,7 +135,7 @@ export const VedtaksinfoDetaljer = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={closeModal} isCentered size={"6xl"}>
+    <Modal isOpen={isOpen} onClose={closeModal} isCentered size="6xl">
       <ModalOverlay />
       <ModalContent>
         <form onSubmit={handleSubmit(onSubmit)}>
