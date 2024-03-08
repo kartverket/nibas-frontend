@@ -49,7 +49,7 @@ export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
   const metadata = properties.metadata as Metadata | undefined;
   const vedtaksinfoCollection = metadata?.dokumentasjonsreferanser;
 
-  const isGrenseinfoPanelDisabled = useIsGrenseinformasjonPanelDisabled(feature, properties);
+  const isGrenseinfoPanelDisabled = useIsGrenseinformasjonPanelDisabled(feature);
 
   const closeModal = () => {
     setFormViewState("creating");

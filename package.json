@@ -7,6 +7,7 @@
     "@kartverket/frontend-aut-lib": "0.0.29",
     "@kvib/react": "^3.5.1",
     "date-fns": "^2.30.0",
+    "framer-motion": "^9.1.7",
     "lodash.get": "^4.4.2",
     "material-symbols": "^0.14.1",
     "ol": "^8.2.0",

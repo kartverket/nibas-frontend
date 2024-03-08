@@ -15,7 +15,7 @@ import { Coordinate } from "ol/coordinate";
 const useSplit = () => {
   const { addHistoryEntry } = useHistory();
   const { activeTool } = useToolbar();
-  const { selectedFeatures, selectedPoint, addArchivedStyles } = useFeatureStyle();
+  const { selectedFeatures, selectedPoint } = useFeatureStyle();
 
   const createCloneOfFeatureWithPartsOfCoordinates = (
     feature: Feature,

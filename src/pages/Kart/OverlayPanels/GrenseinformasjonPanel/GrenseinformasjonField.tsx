@@ -42,7 +42,7 @@ export const GrenseinformasjonField = ({
   const onSubmit = () => {
     updateDraftFromFeature();
   };
-  const isGrenseinformasjonPanelDisabled = useIsGrenseinformasjonPanelDisabled(feature, properties);
+  const isGrenseinformasjonPanelDisabled = useIsGrenseinformasjonPanelDisabled(feature);
 
   const formattedLabel = valueLabelFormatter ? valueLabelFormatter(getValues().value) ?? "Ukjent" : getValues().value;
 
