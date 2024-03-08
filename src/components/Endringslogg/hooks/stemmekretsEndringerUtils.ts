@@ -35,11 +35,9 @@ export const getStemmekretserMedEndringer = (operasjoner: OperasjonerOrNull): st
 
   const stemmekretserMedSammenslaaing = removeNull(gamleKretser.concat(viderefoertStemmekrets ?? []));
 
-  const stemmekretserMedSplitting = [
-    ...operasjoner.kretsDelingEndringer
-      .filter((splitting) => splitting.flatetype === KontekstType.STEMMEKRETS)
-      .map((splitting) => splitting.opprinneligKrets.lokalId),
-  ];
+  const stemmekretserMedSplitting = operasjoner.kretsDelingEndringer
+    .filter((splitting) => splitting.flatetype === KontekstType.STEMMEKRETS)
+    .map((splitting) => splitting.opprinneligKrets.lokalId);
 
   const alleStemmekretserMedEndringer = getKretserMedGrensejusteringer(operasjoner, "STEMMEKRETS")
     .concat(stemmekretserMedMetadataEndringer)

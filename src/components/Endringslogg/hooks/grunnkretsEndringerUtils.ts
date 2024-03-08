@@ -27,11 +27,9 @@ export const getGrunnkretserMedEndringer = (operasjoner: OperasjonerOrNull): str
     Object.keys(operasjoner?.metadataendringer?.grunnkretsendringer ?? {}),
   );
 
-  const grunnkretserMedSplitting = [
-    ...operasjoner.kretsDelingEndringer
-      .filter((splitting) => splitting.flatetype === KontekstType.GRUNNKRETS)
-      .map((splitting) => splitting.opprinneligKrets.lokalId),
-  ];
+  const grunnkretserMedSplitting = operasjoner.kretsDelingEndringer
+    .filter((splitting) => splitting.flatetype === KontekstType.GRUNNKRETS)
+    .map((splitting) => splitting.opprinneligKrets.lokalId);
 
   const alleGrunnkretserMedEndringer = getKretserMedGrensejusteringer(operasjoner, "GRUNNKRETS")
     .concat(grunnkretsMetadataEndringer)

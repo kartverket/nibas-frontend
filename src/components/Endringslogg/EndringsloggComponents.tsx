@@ -115,32 +115,32 @@ type SplittingEndringerProps = {
 };
 
 export const SplittingEndringer = ({ splittinger, kontekstType }: SplittingEndringerProps) => {
-  return splittinger?.map((splitting, index) => (
-    <EndringSection key={splitting.opprinneligKrets.kretsNavn}>
-      <Seksjonsoverskrift>
-        {`${splitting.opprinneligKrets.kretsNummer} ${splitting.opprinneligKrets.kretsNavn}`}
-        <EndringstypeTag>Splitting</EndringstypeTag>
-      </Seksjonsoverskrift>
-      <EndringsradListItem>
-        <EndringsradLabel>{kontekstType.slice(0, 1) + kontekstType.slice(1).toLowerCase() + "er"}</EndringsradLabel>
-        <EndringsradEndring>
-          <UnstyledList>
-            <EndringTekst key={index + splitting.opprinneligKrets.kretsNavn}>
-              {splitting.opprinneligKrets.kretsNummer} {splitting.opprinneligKrets.kretsNavn}
-            </EndringTekst>
-            <RightArrow icon="arrow_right_alt" />
-            <EndringTekst key={index + 1 + splitting.opprinneligKrets.kretsNavn}>
-              {splitting.opprinneligKrets.kretsNummer} {splitting.opprinneligKrets.kretsNavn},
-            </EndringTekst>
-            {splitting.nyeKretser.map((nykrets, indexNK) => (
-              <EndringTekst $isBold key={nykrets.kretsNavn}>
-                {nykrets.kretsNummer} {nykrets.kretsNavn}
-                {indexNK === splitting.nyeKretser.length - 1 ? "" : ","}
-              </EndringTekst>
-            ))}
-          </UnstyledList>
-        </EndringsradEndring>
-      </EndringsradListItem>
-    </EndringSection>
-  ));
+  return splittinger?.map((splitting, index) => {
+    const opprinneligKretsFormatted = `${splitting.opprinneligKrets.kretsNummer} ${splitting.opprinneligKrets.kretsNavn}`;
+    const opprinneligKretsNavn = splitting.opprinneligKrets.kretsNavn;
+    return (
+      <EndringSection key={opprinneligKretsNavn}>
+        <Seksjonsoverskrift>
+          {opprinneligKretsFormatted}
+          <EndringstypeTag>Splitting</EndringstypeTag>
+        </Seksjonsoverskrift>
+        <EndringsradListItem>
+          <EndringsradLabel>{kontekstType.slice(0, 1) + kontekstType.slice(1).toLowerCase() + "er"}</EndringsradLabel>
+          <EndringsradEndring>
+            <UnstyledList>
+              <EndringTekst key={index + opprinneligKretsNavn}>{opprinneligKretsFormatted}</EndringTekst>
+              <RightArrow icon="arrow_right_alt" />
+              <EndringTekst key={index + 1 + opprinneligKretsNavn}>{opprinneligKretsFormatted},</EndringTekst>
+              {splitting.nyeKretser.map((nykrets, indexNK) => (
+                <EndringTekst $isBold key={nykrets.kretsNavn}>
+                  {nykrets.kretsNummer} {nykrets.kretsNavn}
+                  {indexNK === splitting.nyeKretser.length - 1 ? "" : ","}
+                </EndringTekst>
+              ))}
+            </UnstyledList>
+          </EndringsradEndring>
+        </EndringsradListItem>
+      </EndringSection>
+    );
+  });
 };
