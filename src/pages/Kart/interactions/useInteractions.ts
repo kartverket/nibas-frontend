@@ -1,4 +1,4 @@
-import { useToolbar } from "contexts/ToolbarContext";
+import { Tool, useToolbar } from "contexts/ToolbarContext";
 import { Collection } from "ol";
 import { Modify, Snap } from "ol/interaction";
 import { map } from "pages/Kart/constants";
@@ -21,21 +21,16 @@ const useInteractions = () => {
   const { selectPoint } = useSelectPoint();
   const { activeTool, activeModeTools } = useToolbar();
 
-  // I redigering, tegning av ny grense, legg til punkt, eller fjern punkt
+  const crosshairCursorTools: Tool[] = ["draw", "add", "remove", null];
+  const pointerCursorTools: Tool[] = ["archive", "detach", "grenseinfo", "koordinater", "split"];
+
   useCursorStyles({
-    isEnabled:
-      !activeModeTools.includes("move") &&
-      (activeTool === "draw" || activeTool === "add" || activeTool === "remove" || activeTool === null),
+    isEnabled: !activeModeTools.includes("move") && crosshairCursorTools.includes(activeTool),
     defaultCursor: () => "crosshair",
   });
 
   useCursorStyles({
-    isEnabled:
-      activeTool === "archive" ||
-      activeTool === "detach" ||
-      activeTool === "grenseinfo" ||
-      activeTool === "koordinater" ||
-      activeTool === "split",
+    isEnabled: pointerCursorTools.includes(activeTool),
     defaultCursor: () => "pointer",
   });
 

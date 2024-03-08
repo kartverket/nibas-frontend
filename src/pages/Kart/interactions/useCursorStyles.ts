@@ -4,12 +4,10 @@ import { map } from "../constants";
 import { Types } from "ol/MapBrowserEventType";
 
 type ConditionalCursorStyle = (e?: Event | BaseEvent) => string;
-
-type OmitPointerMove<T extends string> = T extends "pointermove" ? never : T;
-type MapBrowserEvent = OmitPointerMove<Types>;
+type EventName = Exclude<Types, "pointermove">;
 
 type EventsAndCursor = {
-  name: MapBrowserEvent[];
+  name: EventName[];
   cursor: ConditionalCursorStyle;
   callback?: (e: Event | BaseEvent) => void;
 };
