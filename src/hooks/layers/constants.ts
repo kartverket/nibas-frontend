@@ -7,18 +7,23 @@ import { GrenseId, KartlagId } from "./types";
 import WMTS from "ol/source/WMTS";
 import TileWMS from "ol/source/TileWMS";
 import { kartlagSources } from "./kartlagSources";
+import { map } from "pages/Kart/constants";
 
-const createTileLayerFromKartlagSource = (id: keyof typeof kartlagSources) =>
-  new TileLayer({ source: kartlagSources[id] });
+const createTileLayerFromKartlagSource = (id: keyof typeof kartlagSources) => {
+  const newLayer = new TileLayer({ source: kartlagSources[id], visible: false });
+  newLayer.set("id", id);
+  map.addLayer(newLayer);
+  return newLayer;
+};
 
-export const kartlagLayers: Record<KartlagId, TileLayer<TileWMS | WMTS> | VectorLayer<VectorSource>> = {
-  cachetjenester: createTileLayerFromKartlagSource("cachetjenester"),
+export const kartlagLayers: Record<KartlagId, TileLayer<TileWMS | WMTS>> = {
   matrikkelenWMS: createTileLayerFromKartlagSource("matrikkelenWMS"),
   administrativeGrenser: createTileLayerFromKartlagSource("administrativeGrenser"),
   administrativeGrenserHistorisk: createTileLayerFromKartlagSource("administrativeGrenserHistorisk"),
   grunnkretserWMS: createTileLayerFromKartlagSource("grunnkretserWMS"),
   stedsnavn: createTileLayerFromKartlagSource("stedsnavn"),
   stedsnavnSSR: createTileLayerFromKartlagSource("stedsnavnSSR"),
+  cachetjenester: createTileLayerFromKartlagSource("cachetjenester"),
   kartbladinndelinger: createTileLayerFromKartlagSource("kartbladinndelinger"),
   sjokartDybdedata: createTileLayerFromKartlagSource("sjokartDybdedata"),
   n5Raster2: createTileLayerFromKartlagSource("n5Raster2"),
@@ -35,48 +40,26 @@ const grenseStyle =
   (grenseId: GrenseId): StyleFunction =>
   (feature) => [...getLayerStyle(feature, grenseId, false), getPointOverlayStyle(feature)];
 
-export const grenserLayers = {
-  // ingen source betyr at source settes async
-  matrikkel: new VectorLayer({
-    source: new VectorSource(),
-    style: grenseStyle("matrikkel"),
+const createVectorLayer = (id: GrenseId, source?: VectorSource) => {
+  const newLayer = new VectorLayer({
+    source: source ?? new VectorSource(),
+    style: grenseStyle(id),
     declutter: true,
-  }),
-  fylke: new VectorLayer({
-    source: new VectorSource(),
-    style: grenseStyle("fylke"),
-    declutter: true,
-  }),
-  kommune: new VectorLayer({
-    source: new VectorSource(),
-    style: grenseStyle("kommune"),
-    declutter: true,
-  }),
-  nasjon: new VectorLayer({
-    source: new VectorSource(),
-    style: grenseStyle("nasjon"),
-    declutter: true,
-  }),
-  grunnkrets: new VectorLayer({
-    source: new VectorSource(),
-    style: grenseStyle("grunnkrets"),
-    declutter: true,
-  }),
-  stemmekrets: new VectorLayer({
-    source: new VectorSource(),
-    style: grenseStyle("stemmekrets"),
-    declutter: true,
-  }),
-  archived: new VectorLayer({
-    source: archivedSource,
-    style: grenseStyle("archived"),
-    declutter: true,
-  }),
-  edit: new VectorLayer({
-    source: editSource,
-    style: grenseStyle("edit"),
-    declutter: true,
-  }),
+  });
+  newLayer.set("id", id);
+  map.addLayer(newLayer);
+  return newLayer;
+};
+
+export const grenserLayers: Record<GrenseId, VectorLayer<VectorSource>> = {
+  matrikkel: createVectorLayer("matrikkel"),
+  fylke: createVectorLayer("fylke"),
+  kommune: createVectorLayer("kommune"),
+  nasjon: createVectorLayer("nasjon"),
+  grunnkrets: createVectorLayer("grunnkrets"),
+  stemmekrets: createVectorLayer("stemmekrets"),
+  archived: createVectorLayer("archived", archivedSource),
+  edit: createVectorLayer("edit", editSource),
 };
 
 export const editableBorderTypes = ["Delområdegrense", "Grunnkretsgrense", "Stemmekretsgrense", "Kommunegrense"];

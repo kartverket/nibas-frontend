@@ -1,16 +1,17 @@
-import { map } from "pages/Kart/constants";
+import { Tool, useToolbar } from "contexts/ToolbarContext";
+import { Collection } from "ol";
 import { Modify, Snap } from "ol/interaction";
+import { map } from "pages/Kart/constants";
 import { useEffect } from "react";
+import { selectedPointStyle } from "utils/map/layerStyles";
 import { getVectorLayers } from "utils/map/layers";
+import { pixelTolerance } from "./constants";
+import { useCursorStyles } from "./useCursorStyles";
+import useDragInteractions from "./useDragInteractions";
+import useDraw from "./useDraw";
 import useModify from "./useModify";
 import useSelect from "./useSelect";
-import useDraw from "./useDraw";
-import useDragInteractions from "./useDragInteractions";
 import useSelectPoint from "./useSelectPoint";
-import { useToolbar } from "contexts/ToolbarContext";
-import { pixelTolerance } from "./constants";
-import { selectedPointStyle } from "utils/map/layerStyles";
-import { Collection } from "ol";
 
 const useInteractions = () => {
   const { modify } = useModify();
@@ -18,7 +19,20 @@ const useInteractions = () => {
   const { select } = useSelect();
   const { draw } = useDraw();
   const { selectPoint } = useSelectPoint();
-  const { activeModeTools } = useToolbar();
+  const { activeTool, activeModeTools } = useToolbar();
+
+  const crosshairCursorTools: Tool[] = ["draw", "add", "remove", null];
+  const pointerCursorTools: Tool[] = ["archive", "detach", "grenseinfo", "koordinater", "split"];
+
+  useCursorStyles({
+    isEnabled: !activeModeTools.includes("move") && crosshairCursorTools.includes(activeTool),
+    defaultCursor: () => "crosshair",
+  });
+
+  useCursorStyles({
+    isEnabled: pointerCursorTools.includes(activeTool),
+    defaultCursor: () => "pointer",
+  });
 
   useEffect(() => {
     const vectorLayers = getVectorLayers();

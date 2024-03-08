@@ -1,35 +1,36 @@
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { PanelHeader, PanelProps, SidePanel } from "../Panel";
 import { styled } from "styled-components";
-import { Divider, Heading } from "@kvib/react";
 import Kartlag from "./Kartlag";
-import { kartlagLayers } from "hooks/layers/constants";
-import { KartlagId } from "hooks/layers/types";
-import ActiveKartlagList from "./ActiveKartlag/ActiveKartlagList";
+import { useKartlag } from "contexts/KartlagContext/KartlagContext";
+import { Spinner } from "@kvib/react";
 
 const KartlagPanel = ({ isOpen, className }: PanelProps) => {
+  const { mappedLayers } = useKartlag();
   const { closeOverlayPanel } = useOverlayPanel();
 
   return (
     <SidePanel $isOpen={isOpen} className={className}>
       <PanelHeader onClose={closeOverlayPanel}>Kartlag</PanelHeader>
-      <Section>
-        <ActiveKartlagList />
-      </Section>
-      <Divider />
-      <Section>
-        <Heading as="h3" size="md">
-          Legg til et nytt kartlag
-        </Heading>
-        {Object.keys(kartlagLayers).map((layerId) => (
-          <Kartlag key={layerId} layerId={layerId as KartlagId} />
-        ))}
-      </Section>
+      <KartlagList>
+        {mappedLayers.length > 0 ? (
+          mappedLayers.map((mappedLayer, index) => (
+            <Kartlag
+              key={mappedLayer.sourceId}
+              mappedLayer={mappedLayer}
+              index={index}
+              maxIndex={mappedLayers.length - 1}
+            />
+          ))
+        ) : (
+          <Spinner />
+        )}
+      </KartlagList>
     </SidePanel>
   );
 };
 
-const Section = styled.section`
+const KartlagList = styled.section`
   display: flex;
   flex-direction: column;
   gap: 16px;

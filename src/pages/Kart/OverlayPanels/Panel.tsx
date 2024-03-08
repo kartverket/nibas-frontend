@@ -50,7 +50,7 @@ export const ModalPanel = styled(Panel)`
 
 export const SidePanel = styled(Panel)`
   grid-area: sidepanel;
-  width: 500px;
+  width: 520px;
   border-radius: unset;
   border-top: none;
   margin: unset;

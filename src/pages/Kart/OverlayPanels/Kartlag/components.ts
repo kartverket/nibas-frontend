@@ -1,27 +1,38 @@
-import { styled } from "styled-components";
-import { AccordionItem, AccordionButton, AccordionIcon } from "@kvib/react";
+import { css, styled } from "styled-components";
+import { AccordionItem, AccordionIcon, AccordionButton } from "@kvib/react";
 
 export const KartlagAccordionItem = styled(AccordionItem)`
+  width: 100%;
   background: var(--kvib-colors-chakra-body-bg);
   border: none;
+  border-radius: 8px;
 `;
 
-export const KartlagAccordionButton = styled(AccordionButton)`
+export const KartlagControls = styled.div<{ $isExpanded: boolean }>`
   display: flex;
-  justify-content: space-between;
+  gap: 4px;
   padding: 8px 16px;
+  border-radius: 8px;
 
-  &:hover {
-    background: var(--kvib-colors-gray-50);
-  }
-
-  &[aria-expanded="true"] {
-    font-weight: var(--kvib-fontWeights-bold);
-  }
+  ${(props) =>
+    props.$isExpanded &&
+    css`
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    `};
 `;
 
 export const KartlagAccordionIcon = styled(AccordionIcon)`
   width: 40px;
   height: 40px;
   padding: 8px;
+`;
+
+export const KartlagAccordionButton = styled(AccordionButton)<{ $isVisible: boolean }>`
+  width: fit-content;
+  padding: 0;
+  border-radius: 6px;
+  &:hover {
+    background: var(--kvib-colors-blue-100);
+  }
 `;

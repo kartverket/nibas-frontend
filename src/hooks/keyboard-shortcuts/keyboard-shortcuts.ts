@@ -14,7 +14,8 @@ export type Shortcut =
   | "grenseinfo"
   | "archive"
   | "matrikkel"
-  | "flate";
+  | "flate"
+  | "escape";
 
 type KeyboardShortcut = {
   displayString: string;
@@ -66,6 +67,7 @@ const createShortcut = (key: string, modifierKeys: ModifierKeysOption): Keyboard
 });
 
 export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
+  escape: createShortcut("Escape", {}),
   move: createShortcut("v", {}),
   edit: createShortcut("r", {}),
   edit_point: createShortcut("f", { control: true }),
