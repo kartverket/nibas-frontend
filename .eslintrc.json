@@ -60,6 +60,7 @@
     "import/no-named-as-default-member": "off",
     "no-shadow": "off",
     "@typescript-eslint/no-shadow": ["error"],
-    "no-restricted-imports": ["warn", { "patterns": ["@chakra-ui/*"] }]
+    "no-restricted-imports": ["warn", { "patterns": ["@chakra-ui/*"] }],
+    "react/jsx-curly-brace-presence": ["warn", {"props": "never", "children": "never", "propElementValues": "always" }]
   }
 }
