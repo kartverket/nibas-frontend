@@ -3,20 +3,17 @@ import Geometry from "ol/geom/Geometry";
 import { Alert, AlertIcon, Button, Datepicker, Input, Select, Textarea } from "@kvib/react";
 import { GrenseType } from "hooks/layers/types";
 import { styled } from "styled-components";
-import { addFeaturePropertiesEntryFromFeature, dateToFriendlyDatestring, getDateInFriendlyString } from "./utils";
+import { dateToFriendlyDatestring, getDateInFriendlyString } from "./utils";
 import useNibasApi from "hooks/useNibasApi";
 import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
 import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 import { EditingType, useEditAllGrenser } from "contexts/EditGrenserContext";
 import GrenseinformasjonRow from "./GrenseinformasjonRow";
 import useIsGrenseinformasjonPanelDisabled from "../hooks/useIsGrenseInformasjonPanelDisabled";
-import { GrenseinformasjonFormProps, useGrenseinformasjonForm } from "../hooks/useGrenseinformasjonForm";
+import { useGrenseinformasjonForm } from "../hooks/useGrenseinformasjonForm";
 import { PanelHeader } from "../Panel";
 import { useEffect, useState } from "react";
-import { Controller, SubmitHandler } from "react-hook-form";
-import { getMetadataDiscriminatorFromType } from "utils/grenser";
-import { formatISO, startOfDay } from "date-fns";
-import { LineString } from "ol/geom";
+import { Controller } from "react-hook-form";
 import { useHistory } from "contexts/HistoryContext";
 
 type Props = {
@@ -55,11 +52,11 @@ const EditGrenseInfoButton = ({ isEditing, handleSubmit, toggleEdit }: EditGrens
 const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
   const { getCurrentlyEditingType } = useEditAllGrenser();
-  const { addHistoryEntry, history } = useHistory();
+  const { history } = useHistory();
   const [isEditing, setIsEditing] = useState(false);
   const isGrenseinformasjonPanelDisabled = useIsGrenseinformasjonPanelDisabled(feature);
 
-  const { register, handleSubmit, formState, getValues, control, reset, getDefaultValues } =
+  const { register, handleSubmit, getValues, control, reset, getDefaultValues, onSubmit } =
     useGrenseinformasjonForm(feature);
 
   const properties = feature.getProperties() as FeatureProperties;
@@ -98,51 +95,6 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
     }
 
     return "Ukjent";
-  };
-
-  const onSubmit: SubmitHandler<GrenseinformasjonFormProps> = (data) => {
-    // DirtyFields blir satt riktig ved første submit, men isDirty blir ikke det, skjønner ikke hvorfor?
-    if (Object.values(formState.dirtyFields).length > 0) {
-      const metadataDiscriminator = getMetadataDiscriminatorFromType(data.grenseType);
-      const commonMetadata = metadata.common;
-
-      if (!metadataDiscriminator || !commonMetadata) return; // errorhåndtering på noe vis her
-
-      // Vi trenger sårt MetadataRequest/MetadataUpdate her. Merker det er veldig knotete å sende inn en request på metadata for felter som backenden *egentlig*
-      // ikke trenger blir likevel satt som påkrevd fra klienten. Må gjøre unødvendig spreading på common og sette en fallback på maalemetode.href på grunn av dette
-      const newMetadata: Metadata = {
-        ...metadata,
-        common: {
-          ...commonMetadata,
-          datafangstdato: data.datafangstDato
-            ? formatISO(startOfDay(data.datafangstDato))
-            : metadata.common?.datafangstdato,
-          informasjon: data.informasjon,
-          opphav: data.opphav,
-        },
-        commonGrense: {
-          posisjonskvalitet: {
-            maalemetode: {
-              id: data.maalemetode,
-              href: metadata.commonGrense?.posisjonskvalitet?.maalemetode.href ?? "",
-            },
-            noeyaktighet: data.noeyaktighet,
-          },
-        },
-        discriminator: metadataDiscriminator,
-        dokumentasjonsreferanser: metadata.dokumentasjonsreferanser,
-      };
-
-      const newProperties: FeatureProperties = {
-        ...properties,
-        type: data.grenseType,
-        metadata: newMetadata,
-      };
-
-      addFeaturePropertiesEntryFromFeature(feature as Feature<LineString>, addHistoryEntry, newProperties);
-
-      reset(getDefaultValues(feature));
-    }
   };
 
   useEffect(() => {
