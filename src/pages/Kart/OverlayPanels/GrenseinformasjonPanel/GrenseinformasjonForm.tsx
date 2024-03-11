@@ -27,7 +27,7 @@ type Props = {
 const FormContainer = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 18px;
 `;
 
 type EditGrenseInfoButtonProps = {
@@ -55,7 +55,7 @@ const EditGrenseInfoButton = ({ isEditing, handleSubmit, toggleEdit }: EditGrens
 const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
   const { getCurrentlyEditingType } = useEditAllGrenser();
-  const { addHistoryEntry } = useHistory();
+  const { addHistoryEntry, history } = useHistory();
   const [isEditing, setIsEditing] = useState(false);
   const isGrenseinformasjonPanelDisabled = useIsGrenseinformasjonPanelDisabled(feature);
 
@@ -87,8 +87,6 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   };
 
   const getSistOppdatert = () => {
-    if (isTempFeatureId(feature.getId()?.toString())) return "Ny grense, aldri oppdatert";
-
     if (metadata) {
       const oppdateringsDato = metadata.common?.sporingsinformasjon.oppdateringsdato;
 
@@ -101,14 +99,19 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   };
 
   const onSubmit: SubmitHandler<GrenseinformasjonFormProps> = (data) => {
-    if (formState.isDirty) {
+    // DirtyFields blir satt riktig ved første submit, men isDirty blir ikke det, skjønner ikke hvorfor?
+    if (Object.values(formState.dirtyFields).length > 0) {
       const metadataDiscriminator = getMetadataDiscriminatorFromType(data.grenseType);
-      if (!metadataDiscriminator) return; // errorhåndtering på noe vis her
+      const commonMetadata = metadata.common;
 
+      if (!metadataDiscriminator || !commonMetadata) return; // errorhåndtering på noe vis her
+
+      // Vi trenger sårt MetadataRequest/MetadataUpdate her. Merker det er veldig knotete å sende inn en request på metadata for felter som backenden *egentlig*
+      // ikke trenger blir likevel satt som påkrevd fra klienten. Må gjøre unødvendig spreading på common og sette en fallback på maalemetode.href på grunn av dette
       const newMetadata: Metadata = {
         ...metadata,
         common: {
-          ...metadata.common!, // TODO ikke !
+          ...commonMetadata,
           datafangstdato: data.datafangstDato
             ? formatISO(startOfDay(data.datafangstDato))
             : metadata.common?.datafangstdato,
@@ -119,14 +122,13 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
           posisjonskvalitet: {
             maalemetode: {
               id: data.maalemetode,
-              // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-              href: metadata.commonGrense?.posisjonskvalitet?.maalemetode.href!, // TODO dont
+              href: metadata.commonGrense?.posisjonskvalitet?.maalemetode.href ?? "",
             },
             noeyaktighet: data.noeyaktighet,
           },
         },
         discriminator: metadataDiscriminator,
-        dokumentasjonsreferanser: [],
+        dokumentasjonsreferanser: metadata.dokumentasjonsreferanser,
       };
 
       const newProperties: FeatureProperties = {
@@ -144,13 +146,14 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   useEffect(() => {
     setIsEditing(false);
     reset(getDefaultValues(feature));
-  }, [feature, getDefaultValues, reset]);
+  }, [feature, getDefaultValues, reset, history]);
 
   return (
     <FormContainer>
       <PanelHeader
         onClose={onClose}
-        subHeading={`Sist oppdatert: ${getSistOppdatert()}`}
+        subHeading={`${isTempFeatureId(feature.getId()) ? "" : `Sist oppdatert: ${getSistOppdatert()}`}`}
+        noMargin
         button={
           !isCommonFieldDisabled
             ? EditGrenseInfoButton({
@@ -166,12 +169,13 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
             : null
         }
       >
-        Informasjon om grense
+        Informasjon
       </PanelHeader>
 
       <GrenseinformasjonRow
         name="Identifikator (UUID)"
         tooltipLabel="Grensen sin unike identifikator"
+        isRequired
         valueLabel={(() => {
           const featureId = feature.getId()?.toString();
 
@@ -184,6 +188,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
       <GrenseinformasjonRow
         name="Gyldig fra"
         tooltipLabel="Dato når grensen skal være gyldig fra. Fra-dato settes automatisk til publiseringsdato for utkastet ditt."
+        isRequired
         valueLabel={(() => {
           const date = metadata.common?.gyldigFra;
           const formattedDate = getDateInFriendlyString(date);
@@ -200,6 +205,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         tooltipLabel="Hvilken type grense som er valgt."
         valueLabel={getValues("grenseType")}
         isEditing={isEditing}
+        isRequired
       >
         <Select {...register("grenseType")}>
           {getPossibleGrenseTypesFromEditingType(getCurrentlyEditingType()).map((type) => (

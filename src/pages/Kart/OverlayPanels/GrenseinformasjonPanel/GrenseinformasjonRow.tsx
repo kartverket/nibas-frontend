@@ -1,4 +1,4 @@
-import { Divider, Icon, SkeletonText, Text, Tooltip } from "@kvib/react";
+import { Icon, SkeletonText, Text, Tooltip } from "@kvib/react";
 import { styled } from "styled-components";
 import { useState } from "react";
 
@@ -9,9 +9,18 @@ interface Props {
   children?: React.ReactNode;
   isLoading?: boolean;
   isEditing?: boolean;
+  isRequired?: boolean;
 }
 
-const GrenseinformasjonRow = ({ isEditing, name, tooltipLabel, valueLabel, children, isLoading }: Props) => {
+const GrenseinformasjonRow = ({
+  isEditing,
+  name,
+  tooltipLabel,
+  valueLabel,
+  children,
+  isLoading,
+  isRequired,
+}: Props) => {
   const [iconHovered, setIconHovered] = useState(false);
 
   return (
@@ -20,7 +29,7 @@ const GrenseinformasjonRow = ({ isEditing, name, tooltipLabel, valueLabel, child
         <Row>
           <Tooltip label={tooltipLabel} hasArrow placement="bottom">
             <TextWithIcon onMouseOver={() => setIconHovered(true)} onMouseOut={() => setIconHovered(false)}>
-              <Text as="b">{name}</Text>
+              <Text as="b">{`${name}${isRequired ? "" : " (valgfri)"}`}</Text>
               <InfoIcon>
                 <Icon size={24} color="var(--kvib-colors-blue-500)" isFilled={iconHovered} icon={"info"}></Icon>
               </InfoIcon>
@@ -35,7 +44,6 @@ const GrenseinformasjonRow = ({ isEditing, name, tooltipLabel, valueLabel, child
           <Field>{valueLabel || "Ikke spesifisert"}</Field>
         )}
       </EditContent>
-      <Divider />
     </Container>
   );
 };

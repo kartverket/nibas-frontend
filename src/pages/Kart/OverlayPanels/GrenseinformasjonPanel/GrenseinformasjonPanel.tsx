@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { isMatrikkelFeature } from "utils/features";
 import { TilhorighetField } from "./TilhorighetField";
 import { Vedtaksinformasjon } from "./Vedtaksinformasjon/Vedtaksinformasjon";
+import { Card, CardBody, CardHeader, Divider, Heading } from "@kvib/react";
 import { styled } from "styled-components";
 
 const GrenseinformasjonPanel = ({ isOpen, className }: PanelProps) => {
@@ -30,8 +31,18 @@ const GrenseinformasjonPanel = ({ isOpen, className }: PanelProps) => {
         {selectedProperties ? (
           <GrensePanelContent>
             <GrenseinformasjonForm onClose={closeOverlayPanel} feature={selectedFeature} />
-            <TilhorighetField feature={selectedFeature} />
-            <Vedtaksinformasjon feature={selectedFeature} />
+            <Divider />
+            <Card variant={"filled"}>
+              <GrenseInfoExtraCardHeader>
+                <Heading size="md">Ytterligere informasjon</Heading>
+              </GrenseInfoExtraCardHeader>
+              <GrenseInfoExtraCardBody>
+                <Divider />
+                <TilhorighetField feature={selectedFeature} />
+                <Divider />
+                <Vedtaksinformasjon feature={selectedFeature} />
+              </GrenseInfoExtraCardBody>
+            </Card>
           </GrensePanelContent>
         ) : (
           <p>Valgt grense har ikke metadata</p>
@@ -44,8 +55,18 @@ const GrenseinformasjonPanel = ({ isOpen, className }: PanelProps) => {
 const GrensePanelContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 24px;
   padding-bottom: 24px;
+`;
+
+const GrenseInfoExtraCardBody = styled(CardBody)`
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+`;
+
+const GrenseInfoExtraCardHeader = styled(CardHeader)`
+  padding-bottom: 0;
 `;
 
 export default GrenseinformasjonPanel;

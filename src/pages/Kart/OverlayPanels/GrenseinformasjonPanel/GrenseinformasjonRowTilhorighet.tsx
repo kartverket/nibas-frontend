@@ -1,5 +1,5 @@
 // TODO Skal slettes i TS-1579, kun brukt som en kopi av den gamle GrenseinformasjonRow slik at vi ikke trenger å lage en midlertidig "smart" GrenseinformasjonRow som håndterer tilhørighet i tillegg
-import { Divider, Icon, SkeletonText, Text, Tooltip } from "@kvib/react";
+import { Icon, SkeletonText, Text, Tooltip } from "@kvib/react";
 import { styled } from "styled-components";
 import EditAndSaveButton from "../Flatedata/EditAndSaveButton";
 import { useEffect, useState } from "react";
@@ -83,7 +83,6 @@ const GrenseinformasjonRow = ({
           <Field>{valueLabel || "Ikke spesifisert"}</Field>
         )}
       </EditContent>
-      <Divider />
     </Container>
   );
 };
