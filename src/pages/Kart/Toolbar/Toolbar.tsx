@@ -349,7 +349,6 @@ const SnappingTitle = styled.strong`
 
 const SnappingMenuHeader = styled.div`
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
 `;
 
