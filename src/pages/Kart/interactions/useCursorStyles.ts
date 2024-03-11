@@ -7,7 +7,7 @@ type ConditionalCursorStyle = (e?: Event | BaseEvent) => string;
 type EventName = Exclude<Types, "pointermove">;
 type CustomEventName = "mouseup" | "mousedown";
 
-type EventsAndCursor = {
+type EventAndCursor = {
   name: EventName | CustomEventName;
   cursor: ConditionalCursorStyle;
   callback?: (e: Event | BaseEvent) => void;
@@ -16,7 +16,7 @@ type EventsAndCursor = {
 type CursorStyleProps = {
   isEnabled: boolean;
   defaultCursor?: ConditionalCursorStyle;
-  eventsAndCursor?: EventsAndCursor[];
+  eventsAndCursor?: EventAndCursor[];
 };
 
 const isCustomEventName = (value: string): value is CustomEventName => {
@@ -26,7 +26,7 @@ const isCustomEventName = (value: string): value is CustomEventName => {
 /**
  * Hook for å håndtere cursorsstiler i kartet basert på en gitt state og/eller OpenLayers-hendelser.
  * @param {boolean} isEnabled - Indikerer om cursorsstilene skal være aktivert.
- * @param {EventsAndCursor[]} eventsAndCursor - Liste med EventsAndCursor-objekter som knytter MapBrowserEvents opp mot et callback som returnerer en cursorstil.
+ * @param {EventAndCursor[]} eventsAndCursor - Liste med EventsAndCursor-objekter som knytter MapBrowserEvents opp mot et callback som returnerer en cursorstil.
  * @param {ConditionalCursorStyle} defaultCursor - Cursorstilen som skal gjelde hvis ingen events i eventsAndCursor har blitt utløst.
  * @example
  * useCursorStyles({
@@ -65,7 +65,7 @@ export const useCursorStyles = ({ isEnabled, defaultCursor, eventsAndCursor }: C
       });
     };
 
-    const addEventListeners = (events?: EventsAndCursor[]) => {
+    const addEventListeners = (events?: EventAndCursor[]) => {
       map.on("pointermove", setDefaultCursor);
 
       const olEvents = events?.filter((event) => !isCustomEventName(event.name));
@@ -82,7 +82,7 @@ export const useCursorStyles = ({ isEnabled, defaultCursor, eventsAndCursor }: C
       map.once("postrender", addCustomEventListeners); // legger til dom events når mappet har rendret ferdig
     };
 
-    const removeEventListeners = (events?: EventsAndCursor[]) => {
+    const removeEventListeners = (events?: EventAndCursor[]) => {
       map.un("pointermove", setDefaultCursor);
 
       const customEvents = events?.filter((event) => isCustomEventName(event.name));
