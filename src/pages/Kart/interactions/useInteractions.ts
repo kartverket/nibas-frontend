@@ -45,7 +45,7 @@ const useInteractions = () => {
     kartlagSnapData.current = createKartlagSnapsData(activeModeTools, activeTool);
     Object.values(kartlagSnapData.current).forEach((snapData) => {
       if (snapData?.snap) map.addInteraction(snapData.snap);
-      if (snapData?.hover) map.addInteraction(snapData?.hover);
+      if (snapData?.hover) map.addInteraction(snapData.hover);
     });
 
     return () => {
