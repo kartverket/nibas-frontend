@@ -355,7 +355,6 @@ const SnappingMenuHeader = styled.div`
 
 const SnappingToggle = styled.div`
   display: flex;
-  flex-direction: row;
   padding: 5px 10px 5px 10px;
 `;
 
