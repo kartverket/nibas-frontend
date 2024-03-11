@@ -44,6 +44,11 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
 
   const { mutate } = useUtkasts();
 
+  const handleCloseModal = () => {
+    reset();
+    onClose();
+  };
+
   const editUtkast = async () => {
     setIsLoading(true);
     await updateUtkast(utkast.id, { ...utkast, navn: getValues("navn") }, false);
@@ -54,7 +59,7 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered>
+    <Modal isOpen={isOpen} onClose={handleCloseModal} isCentered>
       <ModalOverlay />
       <ModalContent>
         <form onSubmit={handleSubmit(editUtkast)}>
@@ -75,7 +80,7 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
           </ModalBody>
           <ModalFooter>
             <ButtonGroup>
-              <Button variant="tertiary" onClick={onClose}>
+              <Button variant="tertiary" onClick={handleCloseModal}>
                 Avbryt
               </Button>
               <Button type="submit" isDisabled={!isDirty} isLoading={isLoading}>

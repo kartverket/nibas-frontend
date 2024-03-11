@@ -1,16 +1,14 @@
 import { map } from "pages/Kart/constants";
-import { Modify, Snap } from "ol/interaction";
-import { useEffect } from "react";
-import { getVectorLayers } from "utils/map/layers";
+import useDragInteractions from "./useDragInteractions";
+import useDraw from "./useDraw";
+import { useEffect, useRef } from "react";
 import useModify from "./useModify";
 import useSelect from "./useSelect";
-import useDraw from "./useDraw";
-import useDragInteractions from "./useDragInteractions";
 import useSelectPoint from "./useSelectPoint";
-import { useToolbar } from "contexts/ToolbarContext";
-import { pixelTolerance } from "./constants";
-import { selectedPointStyle } from "utils/map/layerStyles";
-import { Collection } from "ol";
+import { Tool, useToolbar } from "contexts/ToolbarContext";
+import { GrenseId } from "hooks/layers/types";
+import { useCursorStyles } from "./useCursorStyles";
+import { SnapData, createKartlagSnapsData } from "./snappingUtil";
 
 const useInteractions = () => {
   const { modify } = useModify();
@@ -18,31 +16,23 @@ const useInteractions = () => {
   const { select } = useSelect();
   const { draw } = useDraw();
   const { selectPoint } = useSelectPoint();
-  const { activeModeTools } = useToolbar();
+  const { activeModeTools, activeTool } = useToolbar();
+  const kartlagSnapData = useRef<Record<GrenseId, SnapData | null>>();
+
+  const crosshairCursorTools: Tool[] = ["draw", "add", "remove", null];
+  const pointerCursorTools: Tool[] = ["archive", "detach", "grenseinfo", "koordinater", "split"];
+
+  useCursorStyles({
+    isEnabled: !activeModeTools.includes("move") && crosshairCursorTools.includes(activeTool),
+    defaultCursor: () => "crosshair",
+  });
+
+  useCursorStyles({
+    isEnabled: pointerCursorTools.includes(activeTool),
+    defaultCursor: () => "pointer",
+  });
 
   useEffect(() => {
-    const vectorLayers = getVectorLayers();
-    const snaps: Snap[] = [];
-    const hovers: Modify[] = [];
-
-    vectorLayers.forEach((layer) => {
-      const source = layer.getSource();
-      if (source) {
-        const snap = new Snap({ source, pixelTolerance });
-        snaps.push(snap);
-        hovers.push(
-          new Modify({
-            condition: () => false,
-            style: selectedPointStyle,
-            pixelTolerance: pixelTolerance,
-            features: new Collection(
-              source.getFeatures().filter((feature) => !feature.getId()?.toString().includes("representasjonspunkt")),
-            ),
-          }),
-        );
-      }
-    });
-
     // Rekkefølgen her er potensielt viktig for at events skal avbryte hverandre i riktig rekkefølge
     map.on("click", select);
     map.on("click", selectPoint);
@@ -52,10 +42,11 @@ const useInteractions = () => {
     map.addInteraction(draw);
 
     // snaps må legges til etter modify og draw interactions
-    if (activeModeTools.includes("snap")) {
-      snaps.forEach((snap) => map.addInteraction(snap));
-    }
-    hovers.forEach((hover) => map.addInteraction(hover));
+    kartlagSnapData.current = createKartlagSnapsData(activeModeTools, activeTool);
+    Object.values(kartlagSnapData.current).forEach((snapData) => {
+      if (snapData?.snap) map.addInteraction(snapData.snap);
+      if (snapData?.hover) map.addInteraction(snapData.hover);
+    });
 
     return () => {
       map.un("click", select);
@@ -64,10 +55,13 @@ const useInteractions = () => {
       map.removeInteraction(dragZoom);
       map.removeInteraction(modify);
       map.removeInteraction(draw);
-      snaps.forEach((snap) => map.removeInteraction(snap));
-      hovers.forEach((hover) => map.removeInteraction(hover));
+      if (kartlagSnapData.current)
+        Object.values(kartlagSnapData.current).forEach((snapData) => {
+          if (snapData?.hover) map.removeInteraction(snapData.hover);
+          if (snapData?.snap) map.removeInteraction(snapData.snap);
+        });
     };
-  }, [activeModeTools, dragPan, dragZoom, draw, modify, select, selectPoint]);
+  }, [activeModeTools, activeTool, dragPan, dragZoom, draw, modify, select, selectPoint]);
 };
 
 export default useInteractions;
