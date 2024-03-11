@@ -11,6 +11,10 @@ export const getDateInFriendlyString = (dateString?: string) => {
   return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
 };
 
+export const dateToFriendlyDatestring = (date: Date) => {
+  return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+};
+
 const updateFeatureWithNewProperties = (feature: Feature<LineString>, newProperties: FeatureProperties) => {
   feature.setProperties({
     ...newProperties,

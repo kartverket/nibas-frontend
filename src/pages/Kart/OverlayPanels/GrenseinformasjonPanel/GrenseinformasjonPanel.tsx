@@ -1,13 +1,13 @@
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { PanelHeader, PanelProps, SidePanel } from "../Panel";
-import GrenseinformasjonFieldList from "./GrenseinformasjonFieldList";
+import { PanelProps, SidePanel } from "../Panel";
+import GrenseinformasjonForm from "./GrenseinformasjonForm";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
-import { FeatureProperties, Metadata } from "types/api";
-import { getDateInFriendlyString } from "./utils";
+import { FeatureProperties } from "types/api";
 import { useEffect } from "react";
-import { Feature } from "ol";
-import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 import { isMatrikkelFeature } from "utils/features";
+import { TilhorighetField } from "./TilhorighetField";
+import { Vedtaksinformasjon } from "./Vedtaksinformasjon/Vedtaksinformasjon";
+import { styled } from "styled-components";
 
 const GrenseinformasjonPanel = ({ isOpen, className }: PanelProps) => {
   const { selectedFeatures } = useFeatureStyle();
@@ -23,32 +23,16 @@ const GrenseinformasjonPanel = ({ isOpen, className }: PanelProps) => {
 
   const selectedProperties = selectedFeature?.getProperties() as FeatureProperties;
 
-  const getSistOppdatert = (feature: Feature) => {
-    if (isTempFeatureId(feature.getId()?.toString())) return "Ny grense, aldri oppdatert";
-
-    const featureProperties = feature.getProperties() as FeatureProperties;
-    const metadata = featureProperties.metadata as Metadata | null;
-
-    if (metadata) {
-      const oppdateringsDato = metadata.common?.sporingsinformasjon.oppdateringsdato;
-
-      if (oppdateringsDato) {
-        return getDateInFriendlyString(oppdateringsDato);
-      }
-    }
-
-    return "Ukjent";
-  };
-
   return (
     selectedFeature &&
     !isMatrikkelFeature(selectedFeature) && (
       <SidePanel $isOpen={isOpen} className={className}>
-        <PanelHeader onClose={closeOverlayPanel} subHeading={`Sist oppdatert: ${getSistOppdatert(selectedFeature)}`}>
-          Informasjon om grense
-        </PanelHeader>
-        {selectedFeature && selectedProperties ? (
-          <GrenseinformasjonFieldList feature={selectedFeature} />
+        {selectedProperties ? (
+          <GrensePanelContent>
+            <GrenseinformasjonForm onClose={closeOverlayPanel} feature={selectedFeature} />
+            <TilhorighetField feature={selectedFeature} />
+            <Vedtaksinformasjon feature={selectedFeature} />
+          </GrensePanelContent>
         ) : (
           <p>Valgt grense har ikke metadata</p>
         )}
@@ -56,5 +40,12 @@ const GrenseinformasjonPanel = ({ isOpen, className }: PanelProps) => {
     )
   );
 };
+
+const GrensePanelContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 24px;
+`;
 
 export default GrenseinformasjonPanel;
