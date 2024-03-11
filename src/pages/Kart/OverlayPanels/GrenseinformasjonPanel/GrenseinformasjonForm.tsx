@@ -67,7 +67,9 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   const gyldigTil = properties.metadata ? metadata.common?.gyldigTil : undefined;
   const isCommonFieldDisabled = isGrenseinformasjonPanelDisabled || metadata?.common?.gyldigTil != null;
 
-  const getMaalemetodeFromId = (maalemetoder: KodelisteRespons, id: string) => {
+  const getMaalemetodeText = (maalemetoder: KodelisteRespons, id: string) => {
+    if (!id) return "Ikke spesifisert";
+
     const maalemetode = maalemetoder.items.find((item) => item.id === id);
     if (maalemetode) {
       return maalemetode?.kode + " " + maalemetode?.label;
@@ -273,7 +275,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
       <GrenseinformasjonRow
         name="Målemetode"
         tooltipLabel="Metode som ligger til grunn for registrering av posisjon."
-        valueLabel={kodeliste ? getMaalemetodeFromId(kodeliste, getValues("maalemetode")) : getValues("maalemetode")}
+        valueLabel={kodeliste ? getMaalemetodeText(kodeliste, getValues("maalemetode")) : getValues("maalemetode")}
         isEditing={isEditing}
       >
         {kodeliste && (
