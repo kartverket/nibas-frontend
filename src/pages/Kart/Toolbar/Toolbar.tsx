@@ -26,7 +26,6 @@ const Toolbar = () => {
   const editingType = getCurrentlyEditingType();
   const isEditMode = !!editingType;
 
-
   const toggleSnapping = () => {
     const isMatrikkelToggled = activeModeTools.includes("snap_matrikkel");
     const isNibasToggled = activeModeTools.includes("snap_nibas");
@@ -221,52 +220,57 @@ const Toolbar = () => {
             Matrikkel
           </ToolbarButton>
           <ConditionalHide below="xl" condition={!!activeOverlayPanel}>
-            <Menu
-              closeOnSelect={false}
-              closeOnBlur={false}
-            >
-              <MenuButton
-                as={ToolbarButton}
-                isActive={false}
-                aria-label="Snap til kartlag"
-                icon="layers"
-                tooltip={{ text: "Skru av/på snapping mot kartlag." }}
-              >
-                Snap
-              </MenuButton>
-              <MenuList minWidth="240px" marginBottom={"10px"}>
-                <SnappingMenuHeader>
-                  <SnappingToggle>
-                    <Switch
-                      aria-label="Switch medium"
-                      marginRight={"5px"}
-                      isChecked={activeModeTools.includes("snap_matrikkel") || activeModeTools.includes("snap_nibas")}
-                      onChange={() => toggleSnapping()}
-                    />
-                    <SnappingTitle>Snapping</SnappingTitle>
-                  </SnappingToggle>
-                  <CloseButton marginRight={"8px"} onClick={onClose} />
-                </SnappingMenuHeader>
-                <MenuDivider />
-                <MenuItem>
-                  <Checkbox
-                    value="egne"
-                    onChange={() => toggleModeTool("snap_nibas")}
-                    isChecked={activeModeTools.includes("snap_nibas")}
-                  >
-                    Snap til egne grenser
-                  </Checkbox>
-                </MenuItem>
-                <MenuItem>
-                  <Checkbox
-                    value="matrikkel"
-                    onChange={() => toggleModeTool("snap_matrikkel")}
-                    isChecked={activeModeTools.includes("snap_matrikkel")}
-                  >
-                    Snap til teiggrenser
-                  </Checkbox>
-                </MenuItem>
-              </MenuList>
+            <Menu closeOnSelect={false} closeOnBlur={false}>
+              {({ onClose }) => {
+                return (
+                  <>
+                    <MenuButton
+                      as={ToolbarButton}
+                      isActive={false}
+                      aria-label="Snap til kartlag"
+                      icon="layers"
+                      tooltip={{ text: "Skru av/på snapping mot kartlag." }}
+                    >
+                      Snap
+                    </MenuButton>
+                    <MenuList minWidth="240px" marginBottom={"10px"}>
+                      <SnappingMenuHeader>
+                        <SnappingToggle>
+                          <Switch
+                            aria-label="Switch medium"
+                            marginRight={"5px"}
+                            isChecked={
+                              activeModeTools.includes("snap_matrikkel") || activeModeTools.includes("snap_nibas")
+                            }
+                            onChange={() => toggleSnapping()}
+                          />
+                          <SnappingTitle>Snapping</SnappingTitle>
+                        </SnappingToggle>
+                        <CloseButton marginRight={"8px"} onClick={onClose} />
+                      </SnappingMenuHeader>
+                      <MenuDivider />
+                      <MenuItem>
+                        <Checkbox
+                          value="egne"
+                          onChange={() => toggleModeTool("snap_nibas")}
+                          isChecked={activeModeTools.includes("snap_nibas")}
+                        >
+                          Snap til egne grenser
+                        </Checkbox>
+                      </MenuItem>
+                      <MenuItem>
+                        <Checkbox
+                          value="matrikkel"
+                          onChange={() => toggleModeTool("snap_matrikkel")}
+                          isChecked={activeModeTools.includes("snap_matrikkel")}
+                        >
+                          Snap til teiggrenser
+                        </Checkbox>
+                      </MenuItem>
+                    </MenuList>
+                  </>
+                );
+              }}
             </Menu>
           </ConditionalHide>
         </ToolbarButtons>
