@@ -4,7 +4,9 @@ export type Tool = null | "add" | "remove" | "draw" | "split" | "detach" | "gren
 
 const editTools: Tool[] = ["add", "remove", "draw", "split", "detach", "koordinater", "archive"];
 
-type ModeTool = "move" | "snap" | "matrikkel";
+export type SnapType = "snap_nibas" | "snap_matrikkel";
+
+export type ModeTool = "move" | "matrikkel" | SnapType;
 
 export type ToolbarContextValue = {
   activeTool: Tool;
@@ -24,7 +26,7 @@ export const ToolbarProvider = ({ children }: { children: React.ReactNode }) => 
   const defaultTool = null;
   const [activeTool, setActiveTool] = useState<Tool>(defaultTool);
 
-  const defaultModeTools: ModeTool[] = ["move", "snap"];
+  const defaultModeTools: ModeTool[] = ["move", "snap_matrikkel", "snap_nibas"];
   const [activeModeTools, setActiveModeTools] = useState<ModeTool[]>(defaultModeTools);
 
   const toggleTool = (tool: Tool) => {
@@ -40,9 +42,9 @@ export const ToolbarProvider = ({ children }: { children: React.ReactNode }) => 
 
   const toggleModeTool = (modeTool: ModeTool) => {
     if (activeModeTools.includes(modeTool)) {
-      setActiveModeTools(activeModeTools.filter((em) => em !== modeTool));
+      setActiveModeTools((prevTools) => prevTools.filter((em) => em !== modeTool));
     } else {
-      setActiveModeTools(activeModeTools.concat(modeTool));
+      setActiveModeTools((prevTools) => prevTools.concat(modeTool));
     }
   };
 
