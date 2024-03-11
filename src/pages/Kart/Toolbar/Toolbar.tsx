@@ -1,4 +1,4 @@
-import { Divider } from "@kvib/react";
+import { Checkbox, CloseButton, Divider, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Switch } from "@kvib/react";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
@@ -13,12 +13,30 @@ import { ConditionalHide } from "components/ConditionalShowHide";
 import { Draw } from "ol/interaction";
 import { useState } from "react";
 
+import { useSidebarPanel } from "contexts/SidebarPanelContext";
+import { useFeatureStyle } from "contexts/FeatureStyleContext";
+
 const Toolbar = () => {
-  const { activeTool, activeModeTools, toggleTool, toggleModeTool, enableModeTool, disableModeTool } = useToolbar();
+  const { activeTool, activeModeTools, toggleTool, toggleModeTool, enableModeTool, disableModeTool, resetTool } =
+    useToolbar();
   const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } = useOverlayPanel();
+  const { selectedFeatures, selectedPoint, clearSelectedPoint, clearSelection } = useFeatureStyle();
+  const { activeSidebarPanel, closeSidebarPanel } = useSidebarPanel();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const editingType = getCurrentlyEditingType();
   const isEditMode = !!editingType;
+
+  const toggleSnapping = () => {
+    const isMatrikkelToggled = activeModeTools.includes("snap_matrikkel");
+    const isNibasToggled = activeModeTools.includes("snap_nibas");
+
+    if (isMatrikkelToggled === isNibasToggled) {
+      toggleModeTool("snap_matrikkel");
+      toggleModeTool("snap_nibas");
+    } else if (isMatrikkelToggled) {
+      toggleModeTool("snap_matrikkel");
+    } else toggleModeTool("snap_nibas");
+  };
 
   const toggleGrenseinfo = () => {
     toggleTool("grenseinfo");
@@ -95,6 +113,52 @@ const Toolbar = () => {
     isPanningAllowed,
   );
 
+  // Alt her er en prioritert rekkefølge på hva som bør "exites" først. Det kan sikkert itereres litt på, men dette er et foreløpig forslag
+  useKeyboardShortcut("escape", () => {
+    if (activeTool === "draw") {
+      const drawInteraction = map
+        .getInteractions()
+        .getArray()
+        .find((interaction) => interaction instanceof Draw);
+      if (drawInteraction) {
+        const revision = drawInteraction.getRevision();
+        if (revision && revision > 0) {
+          const test = drawInteraction as Draw;
+          test.abortDrawing();
+
+          return;
+        }
+      }
+    }
+
+    if (activeOverlayPanel) {
+      closeOverlayPanel();
+      return;
+    }
+
+    if (activeSidebarPanel) {
+      closeSidebarPanel();
+      return;
+    }
+
+    if (!activeTool && activeModeTools.includes("matrikkel")) {
+      toggleModeTool("matrikkel");
+      return;
+    }
+
+    if (selectedPoint) {
+      clearSelectedPoint();
+      return;
+    }
+
+    if (selectedFeatures.length > 0) {
+      clearSelection();
+      return;
+    }
+
+    resetTool();
+  });
+
   return (
     <OuterContainer>
       <ToolbarPopups />
@@ -156,16 +220,58 @@ const Toolbar = () => {
             Matrikkel
           </ToolbarButton>
           <ConditionalHide below="xl" condition={!!activeOverlayPanel}>
-            <ToolbarButton
-              icon="layers"
-              aria-label="Snap til kartlag"
-              isActive={activeModeTools.includes("snap")}
-              onClick={() => toggleModeTool("snap")}
-              isDisabled={!editingType}
-              tooltip={{ text: "Skru av/på snapping mot kartlag.", shortcut: "snap" }}
-            >
-              Snap
-            </ToolbarButton>
+            <Menu closeOnSelect={false} closeOnBlur={false}>
+              {({ onClose }) => {
+                return (
+                  <>
+                    <MenuButton
+                      as={ToolbarButton}
+                      isActive={false}
+                      aria-label="Snap til kartlag"
+                      icon="layers"
+                      tooltip={{ text: "Skru av/på snapping mot kartlag." }}
+                    >
+                      Snap
+                    </MenuButton>
+                    <MenuList minWidth="240px" marginBottom={"10px"}>
+                      <SnappingMenuHeader>
+                        <SnappingToggle>
+                          <Switch
+                            aria-label="Switch medium"
+                            marginRight={"5px"}
+                            isChecked={
+                              activeModeTools.includes("snap_matrikkel") || activeModeTools.includes("snap_nibas")
+                            }
+                            onChange={() => toggleSnapping()}
+                          />
+                          <SnappingTitle>Snapping</SnappingTitle>
+                        </SnappingToggle>
+                        <CloseButton marginRight={"8px"} onClick={onClose} />
+                      </SnappingMenuHeader>
+                      <MenuDivider />
+                      <MenuItem>
+                        <Checkbox
+                          value="egne"
+                          onChange={() => toggleModeTool("snap_nibas")}
+                          isChecked={activeModeTools.includes("snap_nibas")}
+                        >
+                          Snap til egne grenser
+                        </Checkbox>
+                      </MenuItem>
+                      <MenuItem>
+                        <Checkbox
+                          value="matrikkel"
+                          onChange={() => toggleModeTool("snap_matrikkel")}
+                          isChecked={activeModeTools.includes("snap_matrikkel")}
+                        >
+                          Snap til teiggrenser
+                        </Checkbox>
+                      </MenuItem>
+                    </MenuList>
+                  </>
+                );
+              }}
+            </Menu>
           </ConditionalHide>
         </ToolbarButtons>
         <ZoomButtons>
@@ -233,6 +339,20 @@ const ZoomButtons = styled.div`
   border-radius: 10px;
   background: white;
   box-shadow: var(--kvib-shadows-base);
+`;
+
+const SnappingTitle = styled.strong`
+  padding-left: 10px;
+`;
+
+const SnappingMenuHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+const SnappingToggle = styled.div`
+  display: flex;
+  padding: 5px 10px 5px 10px;
 `;
 
 export default Toolbar;
