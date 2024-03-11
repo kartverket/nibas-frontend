@@ -26,7 +26,7 @@ type MenuItems = (MenuItemProps & {
 })[];
 
 const ToolbarMenus = () => {
-  const { activeTool, toggleTool, toggleModeTool } = useToolbar();
+  const { activeTool, toggleTool } = useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const editingType = getCurrentlyEditingType();
   const {
@@ -70,7 +70,6 @@ const ToolbarMenus = () => {
   useKeyboardShortcut("add", () => toggleTool("add"), isEditMode);
   useKeyboardShortcut("remove", () => toggleTool("remove"), isEditMode);
   useKeyboardShortcut("edit_point", toggleMovePoint, isEditMode);
-  useKeyboardShortcut("snap", () => toggleModeTool("snap"), isEditMode);
   useKeyboardShortcut("merge", toggleMergePanel, editingType === "stemmekrets");
   useKeyboardShortcut("archive", () => toggleTool("archive"), isEditMode);
   useKeyboardShortcut("flate", toggleFlatedetaljer);
