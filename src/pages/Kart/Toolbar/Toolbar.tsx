@@ -225,10 +225,6 @@ const Toolbar = () => {
             <Menu
               closeOnSelect={false}
               closeOnBlur={false}
-              isOpen={isSnappingMenuOpen}
-              onOpen={() => {
-                setIsSnappingMenuOpen(true);
-              }}
             >
               <MenuButton
                 as={ToolbarButton}
