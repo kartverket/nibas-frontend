@@ -32,7 +32,7 @@ const Toolbar = () => {
     const isMatrikkelToggled = activeModeTools.includes("snap_matrikkel");
     const isNibasToggled = activeModeTools.includes("snap_nibas");
 
-    if ((isMatrikkelToggled && isNibasToggled) || (!isNibasToggled && !isMatrikkelToggled)) {
+    if (isMatrikkelToggled === isNibasToggled) {
       toggleModeTool("snap_matrikkel");
       toggleModeTool("snap_nibas");
     } else if (isMatrikkelToggled) {
