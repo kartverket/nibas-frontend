@@ -244,7 +244,6 @@ const Toolbar = () => {
                   <SnappingToggle>
                     <Switch
                       aria-label="Switch medium"
-                      size="md"
                       marginRight={"5px"}
                       isChecked={activeModeTools.includes("snap_matrikkel") || activeModeTools.includes("snap_nibas")}
                       onChange={() => toggleSnapping()}
