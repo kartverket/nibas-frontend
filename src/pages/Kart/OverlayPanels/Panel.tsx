@@ -68,7 +68,7 @@ export const AbsolutePanel = styled(Panel)`
   animation: ${slideIn} 0.25s ease-in-out;
 `;
 
-const PanelHeaderContainer = styled.div<{ $isSmall?: boolean }>`
+const PanelHeaderContainer = styled.div<{ $isSmall?: boolean; $noMargin?: boolean }>`
   position: sticky;
   top: 0;
   z-index: ${zindex.panel};
@@ -77,7 +77,7 @@ const PanelHeaderContainer = styled.div<{ $isSmall?: boolean }>`
   justify-content: space-between;
   align-items: center;
   padding: ${({ $isSmall }) => ($isSmall ? "12px 0 8px" : "16px 0 12px")};
-  margin-bottom: ${({ $isSmall }) => ($isSmall ? "16px" : "20px")};
+  margin-bottom: ${({ $isSmall, $noMargin }) => ($noMargin ? "" : $isSmall ? "16px" : "20px")};
   border-bottom: 2px solid var(--kvib-colors-gray-50);
   background: var(--kvib-colors-chakra-body-bg);
 `;
@@ -92,18 +92,33 @@ const PanelHeaderText = styled.div`
 type PanelHeaderProps = {
   onClose: () => void;
   children: React.ReactNode;
+  button?: React.ReactNode;
   subHeading?: string;
   isSmall?: boolean;
+  noMargin?: boolean;
 };
 
-export const PanelHeader = ({ children, subHeading, onClose, isSmall }: PanelHeaderProps) => (
-  <PanelHeaderContainer $isSmall={isSmall}>
+export const PanelHeader = ({ children, subHeading, onClose, isSmall, button, noMargin }: PanelHeaderProps) => (
+  <PanelHeaderContainer $isSmall={isSmall} $noMargin={noMargin}>
     <PanelHeaderText>
       <Heading as="h3" size={isSmall ? "sm" : "md"}>
         {children}
       </Heading>
       {subHeading && <Text fontSize="sm">{subHeading}</Text>}
     </PanelHeaderText>
-    <CloseButton size={isSmall ? "md" : "lg"} onClick={onClose} aria-label="Lukk" />
+    {button ? (
+      <ButtonGroup>
+        {button}
+        <CloseButton size={isSmall ? "md" : "lg"} onClick={onClose} aria-label="Lukk" />
+      </ButtonGroup>
+    ) : (
+      <CloseButton size={isSmall ? "md" : "lg"} onClick={onClose} aria-label="Lukk" />
+    )}
   </PanelHeaderContainer>
 );
+
+const ButtonGroup = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+`;
