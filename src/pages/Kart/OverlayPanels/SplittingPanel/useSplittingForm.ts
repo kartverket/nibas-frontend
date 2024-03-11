@@ -71,6 +71,7 @@ export const useSplittingForm = (flatedata: Flatedata) => {
       ? mapGrunnkretsResponseToKrets(grunnkretser ?? [])
       : mapStemmekretResponseToKrets(stemmekretser ?? []);
 
+  // Legger opprinnelig krets på første indeks i nyeKretser ved å tømme den gamle lista og så legge
   const handleOpprinneligKretsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const lokalid = e.target.value;
     replace(getDefaultSplittingValue().nyeKretser);
@@ -108,6 +109,7 @@ export const useSplittingForm = (flatedata: Flatedata) => {
     });
   };
 
+  // en del sjekker her for å vite om vi har dataen vi trenger for å utføre operasjonen
   const updateDraftWithSplittingRequest = () => {
     if (editingType && grunnkretser && stemmekretser) {
       const { opprinneligKrets, nyeKretser } = getValues();

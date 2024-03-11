@@ -55,6 +55,7 @@ const getIdForKontekstEgenskaper = (
   kontekstEgenskaper: KontekstEgenskaper,
   currentOperasjoner: UtkastOperasjoner | undefined,
 ): KontekstEgenskaper => {
+  // Hvis konteksten har en id betyr det at den ikke peker til en nyopprettet krets, og vi kan derfor bruke den IDen for å identifisere kretsen.
   if (kontekstEgenskaper.id) return kontekstEgenskaper;
   // hvis det ikke finnes noen deling operasjoner som har kommuneId lik kontekstEgenskapen sin kommuneId og kontekstEgenskapen ikke har en krets med samme nummer betyr det at den ikke eksisterer lengre
   // i dette tilfellet setter vi lokalid til "Not Chosen"
@@ -87,7 +88,7 @@ export const useTilhorighetForm = (feature: Feature) => {
 
   const featureProperties = feature.getProperties() as FeatureProperties;
   const kontekstEgenskaper = useMemo(
-    () => featureProperties.kontekstEgenskaper.map((ke) => getIdForKontekstEgenskaper(ke, utkast?.operasjoner)), // kontekster som peker til nye kretser i utkastet har undefined som id.
+    () => featureProperties.kontekstEgenskaper.map((ke) => getIdForKontekstEgenskaper(ke, utkast?.operasjoner)), // kontekster som peker til nye kretser i utkastet har undefined som id. Vi må gi disse en unik id også som kan brukes i formet.
     [featureProperties.kontekstEgenskaper, utkast],
   );
   const kontekstType =
@@ -105,6 +106,7 @@ export const useTilhorighetForm = (feature: Feature) => {
 
   const [tilhorighetOptions, setTilhorighetValg] = useState<TilhorighetOptions>();
 
+  // wrapper for setter av tilhørighetoptions. Spreader inn nye kretser i hver dropdown.
   const setTilhorighetOptions = useCallback(
     (commonOptions: TilhorighetOptions | undefined) => {
       if (!utkast || !commonOptions) return;
