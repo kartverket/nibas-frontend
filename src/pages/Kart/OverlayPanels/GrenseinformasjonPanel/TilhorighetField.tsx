@@ -13,12 +13,13 @@ import {
   getTilhorighetValuesFormatted,
 } from "../hooks/tilhorighetUtils";
 import { useTilhorighetAdministrativ } from "../hooks/useTilhorighetAdministrativ";
-import GrenseinformasjonRow from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/GrenseinformasjonRow";
 import { useTilhorighet } from "../hooks/useTilhorighet";
 import { useTilhorighetNyAdministrativ } from "../hooks/useTilhorighetNyAdministrativ";
 import { isFeatureEditable } from "utils/features";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import useIsGrenseinformasjonPanelDisabled from "../hooks/useIsGrenseInformasjonPanelDisabled";
+import GrenseinformasjonRowTilhorighet from "./GrenseinformasjonRowTilhorighet";
+import { styled } from "styled-components";
 
 type TilhorighetRowProps = {
   feature: Feature;
@@ -39,6 +40,11 @@ const NotChosenSelectOption = ({ feature, kontekstType }: CustomOptionProps) => 
   );
 };
 
+// Dette er default, men en annen farge blir satt fra containeren
+const WhiteSelect = styled(Select)`
+  background-color: white;
+`;
+
 const TilhorighetRow = ({
   feature,
   useTilhorighet: {
@@ -58,7 +64,7 @@ const TilhorighetRow = ({
   }, [resetTilhorighet]);
 
   return (
-    <GrenseinformasjonRow
+    <GrenseinformasjonRowTilhorighet
       feature={feature}
       name="Tilhørighet"
       valueLabel={
@@ -75,7 +81,7 @@ const TilhorighetRow = ({
       {kontekstType && (
         <Stack>
           {Object.values(Tilhorighet).map((tilhorighet) => (
-            <Select key={tilhorighet} {...register(`${kontekstType}.${tilhorighet}`)}>
+            <WhiteSelect key={tilhorighet} isDisabled={isDisabled} {...register(`${kontekstType}.${tilhorighet}`)}>
               <NotChosenSelectOption feature={feature} kontekstType={kontekstType} />
               {tilhorighetOptions &&
                 tilhorighetOptions[tilhorighet].map((krets) => {
@@ -86,11 +92,11 @@ const TilhorighetRow = ({
                     </option>
                   );
                 })}
-            </Select>
+            </WhiteSelect>
           ))}
         </Stack>
       )}
-    </GrenseinformasjonRow>
+    </GrenseinformasjonRowTilhorighet>
   );
 };
 
