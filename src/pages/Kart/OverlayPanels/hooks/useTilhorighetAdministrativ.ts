@@ -33,7 +33,17 @@ const getMuligeKretserForAdministrativGrense = (
 };
 
 export const useTilhorighetAdministrativ = (feature: Feature): UseTilhorighet => {
-  const { setTilhorighetOptions, tilhorighetOptions, kommunerId, kontekstType } = useTilhorighetForm(feature);
+  const {
+    setTilhorighetOptions,
+    tilhorighetOptions,
+    register,
+    getValues,
+    isDirty,
+    resetTilhorighet,
+    updateDraftFromFeature,
+    kommunerId,
+    kontekstType,
+  } = useTilhorighetForm(feature);
 
   const {
     kommuneA: grunnkretserA,
@@ -61,6 +71,11 @@ export const useTilhorighetAdministrativ = (feature: Feature): UseTilhorighet =>
   return {
     kontekstType,
     tilhorighetOptions,
+    isDirty,
+    register,
+    resetTilhorighet,
+    updateDraftFromFeature,
+    getValues,
     isLoading: kontekstType === KontekstType.GRUNNKRETS ? grunnkretserIsLoading : stemmekretserIsLoading,
   };
 };

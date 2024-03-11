@@ -3,6 +3,7 @@ import { GrenseType } from "hooks/layers/types";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
 import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
+import { useEffect } from "react";
 import { isAdministrativGrense } from "utils/grenser";
 import {
   CustomOption,
@@ -12,17 +13,17 @@ import {
   getTilhorighetValuesFormatted,
 } from "../hooks/tilhorighetUtils";
 import { useTilhorighetAdministrativ } from "../hooks/useTilhorighetAdministrativ";
-import GrenseinformasjonRow from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/GrenseinformasjonRow";
 import { useTilhorighet } from "../hooks/useTilhorighet";
 import { useTilhorighetNyAdministrativ } from "../hooks/useTilhorighetNyAdministrativ";
 import { isFeatureEditable } from "utils/features";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import useIsGrenseinformasjonPanelDisabled from "../hooks/useIsGrenseInformasjonPanelDisabled";
-import { UseFormGetValues, UseFormRegister } from "react-hook-form";
-import { GrenseinformasjonFormProps } from "../hooks/useGrenseinformasjonForm";
+import GrenseinformasjonRowTilhorighet from "./GrenseinformasjonRowTilhorighet";
 
-type TilhorighetRowProps = TilhorighetProps & {
+type TilhorighetRowProps = {
+  feature: Feature;
   useTilhorighet: UseTilhorighet;
+  isDisabled?: boolean;
 };
 
 type CustomOptionProps = {
@@ -40,26 +41,41 @@ const NotChosenSelectOption = ({ feature, kontekstType }: CustomOptionProps) => 
 
 const TilhorighetRow = ({
   feature,
-  isEditing,
-  getValues,
-  register,
-  useTilhorighet: { kontekstType, tilhorighetOptions, isLoading },
+  useTilhorighet: {
+    kontekstType,
+    tilhorighetOptions,
+    isDirty,
+    register,
+    resetTilhorighet,
+    updateDraftFromFeature,
+    getValues,
+    isLoading,
+  },
+  isDisabled,
 }: TilhorighetRowProps) => {
+  useEffect(() => {
+    resetTilhorighet();
+  }, [resetTilhorighet]);
+
   return (
-    kontekstType && (
-      <GrenseinformasjonRow
-        name="Tilhørighet"
-        tooltipLabel="Definerer hvilke inndelinger grensen har på hver sin side. Obs! Endring av dette feltet kan forårsake geometriendringer."
-        valueLabel={
-          getTilhorighetValuesFormatted(getValues(`tilhorighet.${kontekstType}`), tilhorighetOptions) ??
-          (isTempFeatureId(feature.getId()?.toString()) ? "Ny grense - Mangler tilhørighet" : undefined)
-        }
-        isLoading={isLoading}
-        isEditing={isEditing}
-      >
+    <GrenseinformasjonRowTilhorighet
+      feature={feature}
+      name="Tilhørighet"
+      valueLabel={
+        getTilhorighetValuesFormatted(getValues(kontekstType), tilhorighetOptions) ??
+        (isTempFeatureId(feature.getId()?.toString()) ? "Ny grense - Mangler tilhørighet" : undefined)
+      }
+      onMetadataSubmit={() => updateDraftFromFeature()}
+      isDisabled={isDisabled}
+      isDirty={isDirty}
+      isLoading={isLoading}
+      reset={resetTilhorighet}
+      tooltipLabel="Definerer hvilke inndelinger grensen har på hver sin side. Obs! Endring av dette feltet kan forårsake geometriendringer."
+    >
+      {kontekstType && (
         <Stack>
           {Object.values(Tilhorighet).map((tilhorighet) => (
-            <Select key={tilhorighet} {...register(`tilhorighet.${kontekstType}.${tilhorighet}`)}>
+            <Select key={tilhorighet} isDisabled={isDisabled} {...register(`${kontekstType}.${tilhorighet}`)}>
               <NotChosenSelectOption feature={feature} kontekstType={kontekstType} />
               {tilhorighetOptions &&
                 tilhorighetOptions[tilhorighet].map((krets) => {
@@ -73,59 +89,33 @@ const TilhorighetRow = ({
             </Select>
           ))}
         </Stack>
-      </GrenseinformasjonRow>
-    )
+      )}
+    </GrenseinformasjonRowTilhorighet>
   );
 };
 
 type TilhorighetProps = {
   feature: Feature<Geometry>;
   isDisabled?: boolean;
-  isEditing?: boolean;
-  getValues: UseFormGetValues<GrenseinformasjonFormProps>;
-  register: UseFormRegister<GrenseinformasjonFormProps>;
 };
 
-const CommonTilhorighetField = ({ feature, isDisabled, isEditing, register, getValues }: TilhorighetProps) => {
+const CommonTilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
+  return <TilhorighetRow feature={feature} useTilhorighet={useTilhorighet(feature)} isDisabled={isDisabled} />;
+};
+
+const AdministrativTilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
   return (
-    <TilhorighetRow
-      feature={feature}
-      useTilhorighet={useTilhorighet(feature)}
-      isEditing={isEditing}
-      isDisabled={isDisabled}
-      register={register}
-      getValues={getValues}
-    />
+    <TilhorighetRow feature={feature} useTilhorighet={useTilhorighetAdministrativ(feature)} isDisabled={isDisabled} />
   );
 };
 
-const AdministrativTilhorighetField = ({ feature, isDisabled, isEditing, register, getValues }: TilhorighetProps) => {
+const NyAdministrativTilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
   return (
-    <TilhorighetRow
-      feature={feature}
-      useTilhorighet={useTilhorighetAdministrativ(feature)}
-      isEditing={isEditing}
-      isDisabled={isDisabled}
-      register={register}
-      getValues={getValues}
-    />
+    <TilhorighetRow feature={feature} useTilhorighet={useTilhorighetNyAdministrativ(feature)} isDisabled={isDisabled} />
   );
 };
 
-const NyAdministrativTilhorighetField = ({ feature, isDisabled, isEditing, register, getValues }: TilhorighetProps) => {
-  return (
-    <TilhorighetRow
-      feature={feature}
-      useTilhorighet={useTilhorighetNyAdministrativ(feature)}
-      isEditing={isEditing}
-      isDisabled={isDisabled}
-      register={register}
-      getValues={getValues}
-    />
-  );
-};
-
-export const TilhorighetField = ({ feature, isDisabled, isEditing, register, getValues }: TilhorighetProps) => {
+export const TilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
   const { featureIsArchived } = useFeatureStyle();
 
   const isGrensePanelDisabled = useIsGrenseinformasjonPanelDisabled(feature);
@@ -137,35 +127,11 @@ export const TilhorighetField = ({ feature, isDisabled, isEditing, register, get
 
     const shouldBeDisabled = isDisabled || isGrensePanelDisabled || !isEditable;
     if (isTempFeatureId(feature.getId())) {
-      return (
-        <NyAdministrativTilhorighetField
-          feature={feature}
-          isEditing={isEditing}
-          isDisabled={shouldBeDisabled}
-          register={register}
-          getValues={getValues}
-        />
-      );
+      return <NyAdministrativTilhorighetField feature={feature} isDisabled={shouldBeDisabled} />;
     }
-    return (
-      <AdministrativTilhorighetField
-        feature={feature}
-        isEditing={isEditing}
-        isDisabled={shouldBeDisabled}
-        register={register}
-        getValues={getValues}
-      />
-    );
+    return <AdministrativTilhorighetField feature={feature} isDisabled={shouldBeDisabled} />;
   }
 
   const shouldBeDisabled = isDisabled || isGrensePanelDisabled;
-  return (
-    <CommonTilhorighetField
-      feature={feature}
-      isEditing={isEditing}
-      isDisabled={shouldBeDisabled}
-      register={register}
-      getValues={getValues}
-    />
-  );
+  return <CommonTilhorighetField feature={feature} isDisabled={shouldBeDisabled} />;
 };

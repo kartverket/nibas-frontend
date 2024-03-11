@@ -110,7 +110,17 @@ const useGetMuligeKretserForNyAdministrativGrense = (
 };
 
 export const useTilhorighetNyAdministrativ = (feature: Feature): UseTilhorighet => {
-  const { setTilhorighetOptions, tilhorighetOptions, kommunerId, kontekstType } = useTilhorighetForm(feature);
+  const {
+    setTilhorighetOptions,
+    tilhorighetOptions,
+    register,
+    getValues,
+    isDirty,
+    resetTilhorighet,
+    updateDraftFromFeature,
+    kommunerId,
+    kontekstType,
+  } = useTilhorighetForm(feature);
 
   // Vet setting av tilhørighet på nye grenser så er det ikke mulig å utlede hvilke muligheter man skal ha for endring av tilhørighet,
   // siden kontekstegenskapene ikke er satt. kommunerId blir da satt til en fallback som er den kommunen man aktivt redigerer
@@ -146,6 +156,11 @@ export const useTilhorighetNyAdministrativ = (feature: Feature): UseTilhorighet 
   return {
     kontekstType,
     tilhorighetOptions,
+    isDirty,
+    register,
+    resetTilhorighet,
+    updateDraftFromFeature,
+    getValues,
     isLoading: muligeKretserForNyGrense ? false : true,
   };
 };

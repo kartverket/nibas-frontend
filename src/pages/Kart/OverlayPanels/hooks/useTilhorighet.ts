@@ -34,7 +34,17 @@ const getMuligeKretserForCommonGrense = (
 };
 
 export const useTilhorighet = (feature: Feature): UseTilhorighet => {
-  const { setTilhorighetOptions, tilhorighetOptions, kommunerId, kontekstType } = useTilhorighetForm(feature);
+  const {
+    setTilhorighetOptions,
+    tilhorighetOptions,
+    register,
+    getValues,
+    isDirty,
+    resetTilhorighet,
+    updateDraftFromFeature,
+    kommunerId,
+    kontekstType,
+  } = useTilhorighetForm(feature);
 
   const { data: grunnkretser, isLoading: grunnkretserIsLoading } = useKommuneGrunnkretser(kommunerId[0]);
   const { data: stemmekretser, isLoading: stemmekretserIsLoading } = useKommuneStemmekretser(kommunerId[0]);
@@ -48,6 +58,11 @@ export const useTilhorighet = (feature: Feature): UseTilhorighet => {
   return {
     kontekstType,
     tilhorighetOptions,
+    isDirty,
+    register,
+    resetTilhorighet,
+    updateDraftFromFeature,
+    getValues,
     isLoading: kontekstType === KontekstType.GRUNNKRETS ? grunnkretserIsLoading : stemmekretserIsLoading,
   };
 };

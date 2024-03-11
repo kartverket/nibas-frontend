@@ -1,13 +1,20 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { useForm } from "react-hook-form";
 
 import {
   CustomOption,
   KontekstType,
+  TilhorighetForm,
   TilhorighetOptions,
   getKommunerIdFromKontekstEgenskaper,
+  getTilhorighetData,
+  getUpdatedKontekstEgenskaper,
 } from "./tilhorighetUtils";
+import { useHistory } from "contexts/HistoryContext";
 import { Feature } from "ol";
+import { LineString } from "ol/geom";
 import { FeatureProperties } from "types/api";
+import { addKontekstEntryFromFeature } from "../GrenseinformasjonPanel/utils";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { getIdFromEntity } from "utils/api";
 import { EditingType, useEditAllGrenser } from "contexts/EditGrenserContext";
@@ -31,6 +38,7 @@ export const getDefaultTilhorighetData = () => ({
 });
 
 export const useTilhorighetForm = (feature: Feature) => {
+  const { addHistoryEntry } = useHistory();
   const { getCurrentlyEditingType } = useEditAllGrenser();
 
   const featureProperties = feature.getProperties() as FeatureProperties;
@@ -44,10 +52,44 @@ export const useTilhorighetForm = (feature: Feature) => {
       kontekstEgenskaper.filter((k) => k.id?.lokalid.value !== CustomOption.NOT_CHOSEN),
     ) ?? (flatedata ? [getIdFromEntity(flatedata)] : []);
   const [tilhorighetOptions, setTilhorighetOptions] = useState<TilhorighetOptions>();
+  const featureType = featureProperties.type;
+
+  const {
+    register,
+    getValues,
+    formState: { isDirty },
+    reset,
+  } = useForm<TilhorighetForm>({
+    defaultValues: getTilhorighetData(kontekstEgenskaper),
+  });
+
+  const resetTilhorighet = useCallback(() => {
+    reset(
+      kontekstEgenskaper.length === 2 && featureType
+        ? getTilhorighetData(kontekstEgenskaper)
+        : getDefaultTilhorighetData(),
+    );
+  }, [featureType, kontekstEgenskaper, reset]);
+
+  const updateDraftFromFeature = () => {
+    if (kontekstType && tilhorighetOptions) {
+      const oppdaterteKontekstEgenskaper = getUpdatedKontekstEgenskaper(
+        kontekstType,
+        getValues(kontekstType),
+        tilhorighetOptions,
+      );
+      addKontekstEntryFromFeature(feature as Feature<LineString>, oppdaterteKontekstEgenskaper, addHistoryEntry);
+    }
+  };
 
   return {
     setTilhorighetOptions,
     tilhorighetOptions,
+    register,
+    getValues,
+    isDirty,
+    resetTilhorighet,
+    updateDraftFromFeature,
     kommunerId,
     kontekstType,
   };

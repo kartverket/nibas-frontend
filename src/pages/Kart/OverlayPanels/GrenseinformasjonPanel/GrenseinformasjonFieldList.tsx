@@ -5,7 +5,7 @@ import { GrenseType } from "hooks/layers/types";
 import { styled } from "styled-components";
 import { addFeaturePropertiesEntryFromFeature, dateToFriendlyDatestring, getDateInFriendlyString } from "./utils";
 import useNibasApi from "hooks/useNibasApi";
-import { FeatureProperties, KodelisteRespons, KontekstEgenskaper, Metadata } from "types/api";
+import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
 import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
 import { EditingType, useEditAllGrenser } from "contexts/EditGrenserContext";
 import { Vedtaksinformasjon } from "./Vedtaksinformasjon/Vedtaksinformasjon";
@@ -104,7 +104,6 @@ const GrenseinformasjonFieldList = ({ feature, onClose }: Props) => {
   };
 
   const onSubmit: SubmitHandler<GrenseinformasjonFormProps> = (data) => {
-    console.log(data);
     if (formState.isDirty) {
       const metadataDiscriminator = getMetadataDiscriminatorFromType(data.grenseType);
       if (!metadataDiscriminator) return; // errorhåndtering på noe vis her
@@ -269,8 +268,6 @@ const GrenseinformasjonFieldList = ({ feature, onClose }: Props) => {
           />
         </GrenseinformasjonRow>
 
-        <TilhorighetField feature={feature} isEditing={isEditing} getValues={getValues} register={register} />
-
         <GrenseinformasjonRow
           name="Målemetode"
           tooltipLabel="Metode som ligger til grunn for registrering av posisjon."
@@ -317,6 +314,8 @@ const GrenseinformasjonFieldList = ({ feature, onClose }: Props) => {
         >
           {<Textarea placeholder="Fyll inn ekstra informasjon" {...register("informasjon")} />}
         </GrenseinformasjonRow>
+
+        <TilhorighetField feature={feature} />
 
         <Vedtaksinformasjon feature={feature} />
       </form>

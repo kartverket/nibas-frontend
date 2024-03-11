@@ -1,3 +1,4 @@
+import { UseFormRegister, UseFormGetValues } from "react-hook-form";
 import { GrunnkretsResponse, KontekstEgenskaper, ObjektIdentifikator, StemmekretsResponse } from "types/api";
 
 export enum Tilhorighet {
@@ -41,6 +42,11 @@ export type TilhorighetForm = {
 export interface UseTilhorighet {
   kontekstType: KontekstType;
   tilhorighetOptions: TilhorighetOptions | undefined;
+  isDirty: boolean;
+  register: UseFormRegister<TilhorighetForm>;
+  resetTilhorighet: () => void;
+  updateDraftFromFeature: () => void;
+  getValues: UseFormGetValues<TilhorighetForm>;
   isLoading: boolean;
 }
 
