@@ -26,7 +26,6 @@ const Toolbar = () => {
   const editingType = getCurrentlyEditingType();
   const isEditMode = !!editingType;
 
-  const [isSnappingMenuOpen, setIsSnappingMenuOpen] = useState(false);
 
   const toggleSnapping = () => {
     const isMatrikkelToggled = activeModeTools.includes("snap_matrikkel");
