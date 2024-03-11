@@ -246,7 +246,7 @@ const Toolbar = () => {
                     />
                     <SnappingTitle>Snapping</SnappingTitle>
                   </SnappingToggle>
-                  <CloseButton marginRight={"8px"} onClick={() => setIsSnappingMenuOpen(false)} />
+                  <CloseButton marginRight={"8px"} onClick={onClose} />
                 </SnappingMenuHeader>
                 <MenuDivider />
                 <MenuItem>
