@@ -8,6 +8,13 @@ import useCustomStyles from "./useCustomStyles";
 import { Coordinate } from "ol/coordinate";
 import { Geometry } from "ol/geom";
 import { archivedSource } from "hooks/layers/constants";
+import {
+  FeatureIdWithEndpoints,
+  getAllFeatureEndPointCoordinates,
+  getFeatureIfExistsInAnyLayer,
+  getFeaturesConnectedToFeatureAtEndpoints,
+  isFeatureDeadEnd,
+} from "utils/features";
 
 export const FeatureStyleContext = createContext<FeatureStyleContextValue | undefined>(undefined);
 
@@ -20,6 +27,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
   const sammenslaaingStyleFunctions = useCustomStyles(grenseStyles.sammenslaaing);
   const archivedStyleFunctions = useCustomStyles(getArchiveLayerStyle);
   const dirtyStyleFunctions = useCustomStyles(grenseStyles.dirty);
+  const errorStyleFunctions = useCustomStyles(grenseStyles.error);
 
   // OBS! Rekkefølgen avgjør prioriteten til stilene, høyest i listen er høyest prioritet.
   const customStyles = useMemo(
@@ -28,8 +36,15 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       sammenslaaingStyleFunctions,
       archivedStyleFunctions,
       dirtyStyleFunctions,
+      errorStyleFunctions,
     ],
-    [archivedStyleFunctions, dirtyStyleFunctions, sammenslaaingOverlappingStyleFunctions, sammenslaaingStyleFunctions],
+    [
+      archivedStyleFunctions,
+      dirtyStyleFunctions,
+      errorStyleFunctions,
+      sammenslaaingOverlappingStyleFunctions,
+      sammenslaaingStyleFunctions,
+    ],
   );
 
   // Når en feature ikke er valgt lengre må vi avgjøre hvilken stil den skal ha
@@ -84,6 +99,28 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     return accumulator;
   };
 
+  const getAffectedFeaturesForErrorEntries = (accumulator: Feature<Geometry>[][], entry: HistoryEntry) => {
+    const changes = entry.changes;
+
+    for (const change of changes) {
+      const feature = getFeatureIfExistsInAnyLayer(change.id);
+
+      if (!feature) continue;
+
+      if (entry.type === "nygrense" || entry.type === "grense") {
+        accumulator.push([feature]);
+        continue;
+      }
+
+      if (entry.type === "grensearkivering") {
+        accumulator = accumulator.concat(getFeaturesConnectedToFeatureAtEndpoints(feature));
+        continue;
+      }
+    }
+
+    return accumulator;
+  };
+
   const undoFeatureStyles = useCallback(
     (featureIds: string[]) => {
       for (const featureId of featureIds) {
@@ -111,6 +148,8 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       "grensedeling",
     ];
 
+    const errorHistoryTypes: HistoryTypeValues[] = ["grense", "nygrense", "grensearkivering"];
+
     // Når vi lagrer blir history entries tømt, så vi lagrer stilene som er satt
     if (history.entries.length === 0) {
       for (const customStyle of customStyles) {
@@ -120,34 +159,56 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       return;
     }
 
-    // Alle entries etter index (angrede endringer) skal tilbakestilles
-    const editFeatures = history.entries
-      .slice(history.index)
-      .reduce(getFeatureIdsFromEntries, [])
-      .flatMap((id) => id);
+    const allFeatureEndpoints = getAllFeatureEndPointCoordinates(["matrikkel", "archived"]).filter(
+      (featureEndpoint) => featureEndpoint !== null,
+    ) as FeatureIdWithEndpoints[];
+
+    const archivedFeatures = archivedSource.getFeatures().map((f) => f.getId()?.toString() || "");
+
+    const errorFeatures = history.entries
+      .slice(0, history.index)
+      .filter((entry) => errorHistoryTypes.includes(entry.type))
+      .reduce(getAffectedFeaturesForErrorEntries, [])
+      .flat()
+      .filter((feature) => {
+        const featureId = feature.getId()?.toString();
+        if (feature && featureId && !archivedFeatures.includes(featureId)) {
+          return isFeatureDeadEnd(feature, allFeatureEndpoints);
+        }
+
+        return false;
+      })
+      .map((feature) => feature.getId()?.toString() || "");
 
     // Entries før index skal fargelegges basert på endringen som er gjort
     const dirtyFeatures = history.entries
       .slice(0, history.index)
       .filter((entry) => dirtyHistoryTypes.includes(entry.type))
       .reduce(getFeatureIdsFromEntries, [])
-      .flatMap((id) => id);
-
-    const archivedFeatures = archivedSource.getFeatures().map((f) => f.getId() as string);
+      .flatMap((id) => id)
+      .filter((id) => !errorFeatures.includes(id));
 
     // For å forhindre uendelig løkke
     if (
       dirtyStyleFunctions.customFeatureIds.length === dirtyFeatures.length &&
-      archivedStyleFunctions.customFeatureIds.length === archivedFeatures.length
+      archivedStyleFunctions.customFeatureIds.length === archivedFeatures.length &&
+      errorStyleFunctions.customFeatureIds.length === errorFeatures.length
     ) {
       return;
     }
 
+    // Først må vi fjerne alle satte styles, slik at vi ikke må beregne oss til en differense
+    const allStyledFeatures = dirtyStyleFunctions.customFeatureIds
+      .concat(archivedStyleFunctions.customFeatureIds)
+      .concat(errorStyleFunctions.customFeatureIds);
+
+    undoFeatureStyles(allStyledFeatures);
+
     // Obs: sammenslåing skal egentlig være her også, men den lagres umiddelbart og kan uansett ikke angres
-    undoFeatureStyles(editFeatures);
     dirtyStyleFunctions.setCustomStyles(dirtyFeatures);
     archivedStyleFunctions.setCustomStyles(archivedFeatures);
-  }, [archivedStyleFunctions, customStyles, dirtyStyleFunctions, history, undoFeatureStyles]);
+    errorStyleFunctions.setCustomStyles(errorFeatures);
+  }, [archivedStyleFunctions, customStyles, dirtyStyleFunctions, errorStyleFunctions, history, undoFeatureStyles]);
 
   const clearFeatureStyles = () => {
     for (const customStyle of customStyles) {
@@ -176,6 +237,9 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
 
     addDirtyStyles: dirtyStyleFunctions.addCustomStyles,
     setAndSaveDirtyStyles: dirtyStyleFunctions.setAndSaveCustomStyles,
+
+    addErrorStyles: errorStyleFunctions.addCustomStyles,
+    setAndSaveErrorStyles: errorStyleFunctions.setAndSaveCustomStyles,
 
     addArchivedStyles: archivedStyleFunctions.addCustomStyles,
     setAndSaveArchivedStyles: archivedStyleFunctions.setAndSaveCustomStyles,

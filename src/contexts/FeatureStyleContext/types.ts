@@ -18,6 +18,9 @@ export type FeatureStyleContextValue = {
   addDirtyStyles: (featureIds: string[]) => void;
   setAndSaveDirtyStyles: (featureIds: string[]) => void;
 
+  addErrorStyles: (featureIds: string[]) => void;
+  setAndSaveErrorStyles: (featureIds: string[]) => void;
+
   addArchivedStyles: (featureIds: string[]) => void;
   setAndSaveArchivedStyles: (features: string[]) => void;
   featureIsArchived: (feature: FeatureLike) => boolean;
