@@ -32,7 +32,7 @@ const GrenseinformasjonPanel = ({ isOpen, className }: PanelProps) => {
     if (metadata) {
       const oppdateringsDato = metadata.common?.sporingsinformasjon.oppdateringsdato;
 
-      if (oppdateringsDato) {
+      if (oppdateringsDato !== undefined) {
         return getDateInFriendlyString(oppdateringsDato);
       }
     }
@@ -41,13 +41,13 @@ const GrenseinformasjonPanel = ({ isOpen, className }: PanelProps) => {
   };
 
   return (
-    selectedFeature &&
+    selectedFeature !== undefined &&
     !isMatrikkelFeature(selectedFeature) && (
       <SidePanel $isOpen={isOpen} className={className}>
         <PanelHeader onClose={closeOverlayPanel} subHeading={`Sist oppdatert: ${getSistOppdatert(selectedFeature)}`}>
           Informasjon om grense
         </PanelHeader>
-        {selectedFeature && selectedProperties ? (
+        {selectedProperties !== undefined ? (
           <GrenseinformasjonFieldList feature={selectedFeature} />
         ) : (
           <p>Valgt grense har ikke metadata</p>

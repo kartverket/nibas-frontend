@@ -10,7 +10,7 @@ export function deduplicate<T>(list: T[]): T[] {
 
 export function addToList<T>(element: T | null | undefined, list: T[] | null): T[] {
   const listToUse = list ?? [];
-  return element ? [...listToUse, element] : listToUse;
+  return element !== null && element !== undefined ? [...listToUse, element] : listToUse;
 }
 
 export function replaceInList<T>(index: number, newValue: T, list: T[]): T[] {

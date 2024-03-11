@@ -66,7 +66,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     mutate,
     isValidating,
   } = useNibasApi(
-    utkastId ? "/v1/utkast/{id}" : null,
+    utkastId !== null ? "/v1/utkast/{id}" : null,
     {
       // id blir ikke brukt før den er truthy, så vi kan trygt si at den
       // ikke er null her
@@ -110,7 +110,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     // fjern utkast hvis utkastid ikke er i url
-    if (!utkastId && utkast) {
+    if (utkastId === null && utkast) {
       setUtkast(undefined);
       closeUtkast();
       mutate();
@@ -123,8 +123,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     for (const feature of endredeFeatures) {
       const featureProperties = feature.properties;
       if (
-        !featureProperties.kontekstEgenskaper ||
-        feature.properties.kontekstEgenskaper.length < 2 ||
+        featureProperties.kontekstEgenskaper.length < 2 ||
         featureProperties.kontekstEgenskaper.find((kontekst) => kontekst.id?.lokalid.value === CustomOption.NOT_CHOSEN)
       ) {
         toast({
@@ -188,7 +187,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
       // Grensene vi får fra det oppdaterte utkastet kan da legges tilbake igjen slik at staten vi har i utkastet stemmer overens med staten vi har i OL
       const oldFeatures = newUtkast.operasjoner.grenseendringer.endredeFeatures;
 
-      if (oldFeatures) {
+      if (oldFeatures.length > 0) {
         const oldFeaturesWithTempId = oldFeatures
           .filter((feature) => isTempFeatureId(feature.id))
           .map((feature) => feature.id as string);
@@ -285,7 +284,8 @@ export const useUtkastFeature = (
   utkast?: UtkastResponse,
 ): FeatureCollection => {
   return useMemo(() => {
-    if (!featureCollection || !utkast) return featureCollection;
+    // TODO: featureCollection gir any-typing for en eller annen grunn, mulig hull som bør tettes
+    if (featureCollection === undefined || featureCollection === null || !utkast) return featureCollection;
 
     if (Array.isArray(featureCollection)) {
       return featureCollection.map((collection) => applyFeatureUtkast(collection, utkast));

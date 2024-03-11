@@ -4,8 +4,7 @@ import { Button, Icon, Logo, Text } from "@kvib/react";
 
 const LandingHeader = () => {
   const { isAuthenticatedFunc, handleLogoutFunc, tokenHolderFunc } = useAuthenticationFlow();
-
-  const personId = tokenHolderFunc()?.personId;
+  const personId = tokenHolderFunc()?.personId ?? "";
 
   return (
     <Container>

@@ -16,7 +16,7 @@ import { isFeatureEditable, isMatrikkelFeature } from "utils/features";
 
 const getNonEndpointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
   const featureGeometry = feature.getGeometry();
-  if (!(featureGeometry instanceof LineString) || !featureGeometry) return;
+  if (!(featureGeometry instanceof LineString)) return;
 
   const coordinates = featureGeometry.getCoordinates();
 
@@ -25,7 +25,7 @@ const getNonEndpointsOnFeature = (feature: Feature<Geometry> | RenderFeature) =>
 
 const getEndPointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
   const featureGeometry = feature.getGeometry();
-  if (!(featureGeometry instanceof LineString) || !featureGeometry) return;
+  if (!(featureGeometry instanceof LineString)) return;
 
   const endCoordinates = [featureGeometry.getFirstCoordinate(), featureGeometry.getLastCoordinate()];
 
@@ -172,11 +172,14 @@ export const getArchiveLayerStyle = (feature: Feature<Geometry> | RenderFeature)
 };
 
 export const getPointOverlayStyle = (feature: Feature<Geometry> | RenderFeature) => {
-  if (!feature.get("name") || !feature.get("number")) return new Style();
+  const name = feature.get("name") as string;
+  const number = feature.get("number") as string;
+
+  if (!name || !number) return new Style();
 
   return new Style({
     text: new Text({
-      text: `${feature.get("number")} ${feature.get("name")}`,
+      text: `${number} ${name}`,
       font: "bold 16px Mulish, sans-serif",
       fill: new Fill({ color: "#FFF" }),
       stroke: new Stroke({ width: 2 }),
@@ -198,10 +201,10 @@ export const getPointOverlayStyle = (feature: Feature<Geometry> | RenderFeature)
 export const updateEditFeatureText = (featureId: string, name?: string, number?: string) => {
   const feature = editSource.getFeatureById(featureId) as Feature<Geometry> | null;
   if (feature) {
-    if (name) {
+    if (name !== undefined) {
       feature.set("name", name);
     }
-    if (number) {
+    if (number !== undefined) {
       feature.set("number", number);
     }
   }

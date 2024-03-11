@@ -18,7 +18,7 @@ import { getNavnInSpraak } from "utils/language/language";
 export const getStemmekretserMedEndringer = (operasjoner: OperasjonerOrNull): string[] => {
   const endringerResponse = operasjoner?.metadataendringer?.stemmekretsendringer;
 
-  if (!endringerResponse || !operasjoner) {
+  if (!endringerResponse || operasjoner === null || operasjoner === undefined) {
     return [];
   }
 
@@ -51,7 +51,7 @@ const getEndringAvTypeForId = (
 
   const gammelVerdi = gammelStemmekrets[type]?.trim() ?? "";
 
-  if (!nyVerdi || gammelVerdi === nyVerdi) {
+  if (nyVerdi === undefined || nyVerdi === "" || gammelVerdi === nyVerdi) {
     return null;
   }
 
@@ -101,9 +101,9 @@ const getSammenslaaingEndring = (
   const sammenslaaing = operasjoner.stemmekretsSammenslaaingsendring;
 
   const harSammenslaaingsEndring =
-    sammenslaaing &&
-    viderefoertKrets &&
-    stemmekretsMedSammenslaaing &&
+    sammenslaaing !== undefined &&
+    viderefoertKrets !== undefined &&
+    stemmekretsMedSammenslaaing !== undefined &&
     stemmekretser.includes(stemmekretsMedSammenslaaing);
 
   if (!harSammenslaaingsEndring) {

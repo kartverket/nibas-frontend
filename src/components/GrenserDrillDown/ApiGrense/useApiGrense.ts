@@ -16,7 +16,7 @@ const useApiGrense = (featuresUrl: string, shouldFetchInitially = false) => {
   const utkastGeoJson = useUtkastFeature(geoJson, utkast);
 
   const features = useMemo(() => {
-    if (!utkastGeoJson) return null;
+    if (utkastGeoJson === null || utkastGeoJson === undefined) return null;
 
     const geoJsonFeatures = geoJsonToSource(utkastGeoJson).getFeatures() as Feature<Geometry>[];
 

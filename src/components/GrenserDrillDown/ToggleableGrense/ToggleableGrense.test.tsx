@@ -34,7 +34,7 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
-const renderWithProvider = (ui: React.ReactNode, kretsStatus: KretsStatus = { editing: false, visible: false }) => {
+const renderWithProvider = (ui: React.ReactNode, kretsStatus: KretsStatus = { isEditing: false, isVisible: false }) => {
   render(ui, {
     EditGrenserProvider: {
       alleKretserStatuser: { fylke: { "1": kretsStatus } },
@@ -57,8 +57,8 @@ describe("ToggleableGrense", () => {
 
   it("should show open eye and checked checkbox when kretsstatus values are true", () => {
     renderWithProvider(<ToggleableGrense {...defaultProps} />, {
-      editing: true,
-      visible: true,
+      isEditing: true,
+      isVisible: true,
     });
 
     expect(screen.getByText(defaultProps.title)).toBeInTheDocument();

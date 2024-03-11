@@ -49,8 +49,8 @@ export const mapFromApiToForm = (dokrefDTO: DokumentasjonsreferanseDTO): Vedtaki
     internreferanserKartverket: dokrefDTO.internReferanserKartverket,
     rettskildeId: dokrefDTO.rettskildeId,
     rettskildeTittel: dokrefDTO.rettskildeTittel,
-    vedtakGyldigFra: dokrefDTO.vedtakGyldigFra ? new Date(dokrefDTO.vedtakGyldigFra) : undefined,
-    vedtakGyldigTil: dokrefDTO.vedtakGyldigTil ? new Date(dokrefDTO.vedtakGyldigTil) : undefined,
+    vedtakGyldigFra: dokrefDTO.vedtakGyldigFra !== undefined ? new Date(dokrefDTO.vedtakGyldigFra) : undefined,
+    vedtakGyldigTil: dokrefDTO.vedtakGyldigTil !== undefined ? new Date(dokrefDTO.vedtakGyldigTil) : undefined,
     fastsettingsmyndighet: dokrefDTO.fastsettingsmyndighet,
     hjemmel: dokrefDTO.hjemmel,
     id: dokrefDTO.id,
@@ -88,7 +88,7 @@ const addMetadataEntryFromFeature = (
   const id = feature.getId();
   const oldProperties = feature.getProperties() as FeatureProperties;
 
-  if (!id) return;
+  if (id === null || id === undefined) return;
 
   updateFeatureWithNewMetadata(feature as Feature<LineString>, updatedMetadata);
 
@@ -106,7 +106,7 @@ const addMetadataEntryFromFeature = (
 
 export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoId?: string) => {
   const getFormValues = (): VedtakinfoForm => {
-    if (selectedVedtaksinfoId) {
+    if (selectedVedtaksinfoId !== undefined) {
       const dokrefFromFeature = getDokumentasjonsReferanseFromFeature(feature, selectedVedtaksinfoId);
 
       if (dokrefFromFeature) {
@@ -175,7 +175,7 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoId?: str
       // Arkiver eksisterende dokumentasjonsreferanse
       const dokrefsCopy = structuredClone(oldDokrefs);
       const selectedVedtakIndex = dokrefsCopy.findIndex((dokref) => dokref.id === selectedVedtaksinfoId);
-      if (dokrefsCopy[selectedVedtakIndex]) dokrefsCopy[selectedVedtakIndex].shouldArchive = true;
+      if (dokrefsCopy.at(selectedVedtakIndex) !== undefined) dokrefsCopy[selectedVedtakIndex].shouldArchive = true;
       addMetadataEntryFromFeature(feature as Feature<LineString>, addHistoryEntry, {
         ...metadata,
         dokumentasjonsreferanser: dokrefsCopy,

@@ -28,8 +28,8 @@ const GrenseinformasjonRow = ({
   onMetadataSubmit,
   isDisabled,
   isDirty,
-  isUneditable,
-  isLoading,
+  isUneditable = false,
+  isLoading = false,
   reset,
 }: Props) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -79,7 +79,7 @@ const GrenseinformasjonRow = ({
         ) : isLoading ? (
           <SkeletonText noOfLines={1} skeletonHeight={5} marginTop={"8px"} />
         ) : (
-          <Field>{valueLabel || "Ikke spesifisert"}</Field>
+          <Field>{valueLabel ?? "Ikke spesifisert"}</Field>
         )}
       </EditContent>
       <Divider />

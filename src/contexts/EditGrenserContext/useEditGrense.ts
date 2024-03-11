@@ -14,7 +14,10 @@ export const useEditGrenseValue = (kretsType: EditingType, kretsId: string) => {
     throw new Error("useIsEditingGrense must be used within a EditGrenserProvider");
   }
 
-  const kretsStatus = context.alleKretserStatuser[kretsType]?.[kretsId] ?? {};
+  const kretsStatus: KretsStatus = context.alleKretserStatuser[kretsType]?.[kretsId] ?? {
+    isEditing: false,
+    isVisible: false,
+  };
 
   const setKretsStatus = (newStatus: KretsStatus) => {
     context.setKretsStatus(kretsType, kretsId, newStatus);
@@ -29,31 +32,32 @@ export const useEditGrense = (kretsType: EditingType, kretsId: string, features:
 
   const { resetAndClearAllLayers } = useEditGrenser(kretsType);
   const { kretsStatus, setKretsStatus } = useEditGrenseValue(kretsType, kretsId);
+
   const { addFeaturesToLayer } = useAsyncFeatures(
     features,
-    getZoomMode(!!kretsStatus.editing, context?.getCurrentlyEditingType() !== null),
+    getZoomMode(kretsStatus.isEditing, context?.getCurrentlyEditingType() !== null),
     () => setIsLoading(false),
   );
 
   const toggleVisible = () => {
     setIsLoading(true);
-    const newKretsStatus = {
+    const newKretsStatus: KretsStatus = {
       ...kretsStatus,
-      visible: !kretsStatus.visible,
+      isVisible: !kretsStatus.isVisible,
     };
 
     setKretsStatus(newKretsStatus);
 
-    if (!newKretsStatus.visible) {
+    if (!newKretsStatus.isVisible) {
       if (!features) return;
 
-      if (newKretsStatus?.editing) {
+      if (newKretsStatus.isEditing) {
         removeFeaturesFromSourceByIds("edit", features.map(getFeatureId));
       } else {
         removeFeaturesFromSourceByIds(kretsType, features.map(getFeatureId));
       }
       setIsLoading(false);
-    } else if (newKretsStatus?.editing) {
+    } else if (newKretsStatus.isEditing) {
       // hvis editing skal features legges tilbake til edit-laget
       addFeaturesToLayer("edit");
     } else {
@@ -66,27 +70,27 @@ export const useEditGrense = (kretsType: EditingType, kretsId: string, features:
 
     resetAndClearAllLayers();
 
-    newKretsStatus.editing = !newKretsStatus.editing;
+    newKretsStatus.isEditing = !newKretsStatus.isEditing;
 
-    if (kretsStatus.visible && !kretsStatus.editing) {
-      newKretsStatus.visible = true;
-    } else if (!kretsStatus.visible && kretsStatus.editing) {
-      newKretsStatus.visible = false;
+    if (kretsStatus.isVisible && !kretsStatus.isEditing) {
+      newKretsStatus.isVisible = true;
+    } else if (!kretsStatus.isVisible && kretsStatus.isEditing) {
+      newKretsStatus.isVisible = false;
     } else {
-      newKretsStatus.visible = !newKretsStatus.visible;
+      newKretsStatus.isVisible = !newKretsStatus.isVisible;
     }
 
     setKretsStatus(newKretsStatus);
 
-    if (newKretsStatus.visible) {
+    if (newKretsStatus.isVisible) {
       // legg til i edit fordi dette er etter checkbox click
       addFeaturesToLayer("edit");
 
       // hvis var synlig før editing ble true, fjern fra gamle layer
-      if (!kretsStatus?.visible || !features) return;
+      if (!kretsStatus.isVisible || !features) return;
 
       removeFeaturesFromSourceByIds(kretsType, features.map(getFeatureId));
-    } else if (!newKretsStatus.editing) {
+    } else if (!newKretsStatus.isEditing) {
       if (!features) return;
       removeFeaturesFromSourceByIds("edit", features.map(getFeatureId));
     }

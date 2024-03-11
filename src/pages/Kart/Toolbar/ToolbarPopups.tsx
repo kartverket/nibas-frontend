@@ -23,14 +23,14 @@ const ToolbarPopups = () => {
 
   const archiveFeatures = () => {
     const selectedFeature = selectedFeatures[0];
-    if (selectedFeature) {
+    if (selectedFeature !== undefined) {
       clearSelection();
       addArchivedStyles([getFeatureId(selectedFeature)]);
       removeFeaturesFromSourceByIds("edit", [getFeatureId(selectedFeature)]);
       addFeaturesToSource("archived", [selectedFeature]);
       addArchivingEntryFromFeature(selectedFeature, addHistoryEntry);
       toast({ status: "success", title: "Grensen ble arkivert" });
-      if (!toastIdRef.current) {
+      if (toastIdRef.current === "") {
         toastIdRef.current = toast({
           status: "warning",
           title: "Husk å sette tilhørighet på berørte grenser",
@@ -54,7 +54,7 @@ const ToolbarPopups = () => {
 
   const handleMatrikkel = async () => {
     const zoom = map.getView().getZoom();
-    if (!zoom || zoom < 15) {
+    if (zoom === undefined || zoom < 15) {
       toast({
         status: "error",
         title: "Kartutsnittet er for stort. Zoom inn nærmere før du henter inn eiendomsgrensene",

@@ -47,11 +47,11 @@ export const Referanser = ({
         <TabList>
           <Tab onClick={toggleSelected}>
             Dokumenter
-            <AntallReferanser count={dokref?.length || 0} isSelected={dokrefSelected} />
+            <AntallReferanser count={dokref !== undefined ? dokref.length : 0} isSelected={dokrefSelected} />
           </Tab>
           <Tab onClick={toggleSelected}>
             Interne referanser
-            <AntallReferanser count={internref?.length || 0} isSelected={internrefSelected} />
+            <AntallReferanser count={internref !== undefined ? internref.length : 0} isSelected={internrefSelected} />
           </Tab>
         </TabList>
         <PanelsContainer>

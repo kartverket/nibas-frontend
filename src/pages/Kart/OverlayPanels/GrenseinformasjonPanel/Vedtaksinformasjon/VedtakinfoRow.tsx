@@ -31,7 +31,7 @@ export const VedtakinfoRow = ({ children, tooltipLabel, name, error }: Props) =>
         </Tooltip>
       </Row>
       <Row>{children}</Row>
-      {errorMessage && <FormErrorMessage>{errorMessage}</FormErrorMessage>}
+      {errorMessage !== null && <FormErrorMessage>{errorMessage}</FormErrorMessage>}
     </>
   );
 };

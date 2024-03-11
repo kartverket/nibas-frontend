@@ -76,7 +76,7 @@ export const isFeatureEditable = (feature: FeatureLike, isArchived: boolean) => 
     const properties = feature.getProperties() as FeatureProperties;
     const kontekstEgenskaper = properties.kontekstEgenskaper as KontekstEgenskaper[];
 
-    if (!kontekstEgenskaper || kontekstEgenskaper.length === 0) return false;
+    if (kontekstEgenskaper.length === 0) return false;
 
     const layerSources = Object.values(grenserLayers)
       .map((layer) => layer.getSource())
@@ -88,7 +88,7 @@ export const isFeatureEditable = (feature: FeatureLike, isArchived: boolean) => 
     // Dersom den er tilgjengelig, kan vi anta at kretsen er synlig
     const alleKretserIKontekstEgenskaperErSynlig = kontekstEgenskaper.every((egenskap) => {
       const lokalId = egenskap.id?.lokalid.value;
-      if (!lokalId) return false;
+      if (lokalId === undefined) return false;
 
       // TODO Velge riktig layerSource basert på kontekstegenskaptype?
       return layerSources.some((source) => source.getFeatureById(getRepresentasjonspunktId(lokalId)) !== null);
@@ -111,7 +111,7 @@ export const isFeatureMetadataEditable = (feature: FeatureLike, isArchived: bool
 export const isPreviousAndCurrentCoordinatesEqual = (feature: Feature<LineString>) => {
   const previousFeatureCoordinates = feature.get(previousCoordinateKey);
   const currentFeatureCoordinates = feature.getGeometry()?.getCoordinates();
-  if (previousFeatureCoordinates && currentFeatureCoordinates) {
+  if (previousFeatureCoordinates !== undefined && currentFeatureCoordinates) {
     const coordinates = previousFeatureCoordinates as Coordinate[];
     for (let i = 0; i < coordinates.length; i++) {
       if (equals(coordinates[i], currentFeatureCoordinates[i])) continue;
@@ -125,7 +125,7 @@ export const isPreviousAndCurrentCoordinatesEqual = (feature: Feature<LineString
 export const isMatrikkelFeature = (feature: FeatureLike) => {
   const featureId = feature.getId()?.toString();
 
-  if (featureId) {
+  if (featureId !== undefined) {
     return featureId.includes("TEIGGRENSEWFS");
   }
 

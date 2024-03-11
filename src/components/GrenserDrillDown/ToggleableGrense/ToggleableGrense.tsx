@@ -19,11 +19,11 @@ const ToggleableGrense = <T extends GrenseRef>({ grense, title, type, features }
   const { kretsStatus, toggleVisible, isLoading } = useEditGrense(type, getIdFromEntity(grense), features);
 
   return (
-    <Wrapper $isVisible={kretsStatus.visible ? true : false}>
+    <Wrapper $isVisible={kretsStatus.isVisible ? true : false}>
       <IconButton
         onClick={toggleVisible}
-        aria-label={kretsStatus.visible ? "Synlig" : "Usynlig"}
-        icon={kretsStatus.visible ? "visibility" : "visibility_off"}
+        aria-label={kretsStatus.isVisible ? "Synlig" : "Usynlig"}
+        icon={kretsStatus.isVisible ? "visibility" : "visibility_off"}
       />
       <Title>{title}</Title>
       {isLoading && <Spinner size="lg" color="var(--kvib-colors-blue-500)" />}

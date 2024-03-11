@@ -49,8 +49,7 @@ const getRepresentasjonspunktFeatureForKrets = (krets: StemmekretsResponse | Gru
 };
 
 const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
-  const grenseValue = useEditGrenseValue(type, kommuneId);
-  const { visible } = grenseValue;
+  const kretsStatus = useEditGrenseValue(type, kommuneId);
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { utkast } = useUtkast();
   const {
@@ -62,18 +61,18 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
 
   const context = useContext(EditGrenserContext);
 
-  const { data: kretserByKommune } = useNibasApi(visible ? getKretserByKommuneUrl(type) : null, {
+  const { data: kretserByKommune } = useNibasApi(kretsStatus.isVisible ? getKretserByKommuneUrl(type) : null, {
     id: kommuneId,
   });
 
-  const { data: grenserGeoJsons } = useNibasApi(visible ? getGrenserForKretserByKommuneUrl(type) : null, {
+  const { data: grenserGeoJsons } = useNibasApi(kretsStatus.isVisible ? getGrenserForKretserByKommuneUrl(type) : null, {
     id: kommuneId,
   });
 
   const utkastGeoJsons = useUtkastFeature(grenserGeoJsons, utkast);
 
   const allFeatures = useMemo(() => {
-    if (!utkastGeoJsons || !kretserByKommune) return null;
+    if (utkastGeoJsons === undefined || utkastGeoJsons === null || !kretserByKommune) return null;
 
     const representasjonspunktFeatures = kretserByKommune?.map((krets) =>
       getRepresentasjonspunktFeatureForKrets(krets),
@@ -96,7 +95,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     if (features.length > 0 && endredeFeatures.length > 0) {
       for (const feature of endredeFeatures) {
         const id = feature.id;
-        if (id) {
+        if (id !== undefined) {
           // Avgjør hvilken type endringsfarge featuren skal ha
           if (feature.properties.shouldArchive) {
             archivedFeatureIds.push(id.toString());
@@ -122,9 +121,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     const promiseStemmekretsFeatureIds = stemmekretsgrenserFetcher(sammenslaaingsIder, tokenHolderFunc()?.token);
 
     promiseStemmekretsFeatureIds.then((resolvedValue) => {
-      const stemmekretsFeatureIds: string[] = resolvedValue
-        ? resolvedValue.filter((x) => x !== undefined).map((x) => String(x))
-        : [];
+      const stemmekretsFeatureIds: string[] = resolvedValue.filter((x) => x !== undefined).map((x) => String(x));
 
       if (stemmekretsFeatureIds.length > 0) {
         const overlappingFeatureIds = getOverlappingStemmekretsFeatureIds(stemmekretsFeatureIds);
@@ -142,7 +139,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
 
   const { addFeaturesToLayer } = useAsyncFeatures(
     allFeatures,
-    getZoomMode(!!grenseValue.editing, context?.getCurrentlyEditingType() !== null),
+    getZoomMode(kretsStatus.isEditing, context?.getCurrentlyEditingType() !== null),
     () => applyDirtyStylesToUtkastFeatures(allFeatures ?? []),
   );
 
@@ -170,7 +167,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     }
   };
 
-  const lasterData = visible && !allFeatures;
+  const lasterData = kretsStatus.isVisible && !allFeatures;
 
   return {
     addKretserToLayer,

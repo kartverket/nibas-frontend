@@ -31,7 +31,7 @@ const getAdministrativeFeatures = (features: Feature<Geometry>[]) => {
 const filterKontekstEgenskaperOnType = (egenskaper: KontekstEgenskaper[], type: string) => {
   return egenskaper
     .filter((egenskap) => egenskap.type === type)
-    .map((egenskap) => egenskap.id?.lokalid.value || "")
+    .map((egenskap) => egenskap.id?.lokalid.value ?? "")
     .filter((egenskap, index, workingList) => workingList.indexOf(egenskap) === index)
     .filter((id) => id.length > 0 && id !== CustomOption.NOT_CHOSEN);
 };
@@ -137,7 +137,7 @@ export const useTilhorighetNyAdministrativ = (feature: Feature): UseTilhorighet 
 
   useEffect(() => {
     if (isTempFeatureId(feature.getId())) {
-      if (grunnkretserFromContext && stemmekreterFromContext && kontekstType) {
+      if (grunnkretserFromContext && stemmekreterFromContext && kontekstType !== null) {
         if (muligeKretserForNyGrense) {
           setTilhorighetOptions(muligeKretserForNyGrense);
         }

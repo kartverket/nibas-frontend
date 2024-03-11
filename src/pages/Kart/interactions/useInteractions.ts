@@ -50,7 +50,9 @@ const useInteractions = () => {
             style: selectedPointStyle,
             pixelTolerance: pixelTolerance,
             features: new Collection(
-              source.getFeatures().filter((feature) => !feature.getId()?.toString().includes("representasjonspunkt")),
+              source
+                .getFeatures()
+                .filter((feature) => !(feature.getId()?.toString() ?? "").includes("representasjonspunkt")),
             ),
           }),
         );

@@ -68,7 +68,7 @@ export const AbsolutePanel = styled(Panel)`
   animation: ${slideIn} 0.25s ease-in-out;
 `;
 
-const PanelHeaderContainer = styled.div<{ $isSmall?: boolean }>`
+const PanelHeaderContainer = styled.div<{ $isSmall: boolean }>`
   position: sticky;
   top: 0;
   z-index: ${zindex.panel};
@@ -96,7 +96,7 @@ type PanelHeaderProps = {
   isSmall?: boolean;
 };
 
-export const PanelHeader = ({ children, subHeading, onClose, isSmall }: PanelHeaderProps) => (
+export const PanelHeader = ({ children, subHeading = "", onClose, isSmall = false }: PanelHeaderProps) => (
   <PanelHeaderContainer $isSmall={isSmall}>
     <PanelHeaderText>
       <Heading as="h3" size={isSmall ? "sm" : "md"}>

@@ -2,11 +2,11 @@ import { Icon, MaterialSymbol, Stack, Text, Tooltip, TooltipProps } from "@kvib/
 import { styled } from "styled-components";
 import { KeyboardShortcuts, Shortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
 
-export type CustomTooltipProps = {
+export type CustomTooltipProps = ShortcutTextProps & {
   text: string;
   icon?: MaterialSymbol;
   additionalInfo?: string;
-} & ShortcutTextProps;
+};
 
 type ShortcutTextProps = {
   shortcut?: Shortcut;
@@ -15,8 +15,8 @@ type ShortcutTextProps = {
 
 type Props = CustomTooltipProps & Omit<TooltipProps, "label">;
 
-const ShortcutText = ({ shortcut, holdButton }: ShortcutTextProps) => {
-  const shortcutString = shortcut ? KeyboardShortcuts[shortcut].displayString : null;
+const ShortcutText = ({ shortcut, holdButton = "" }: ShortcutTextProps) => {
+  const shortcutString = shortcut ? KeyboardShortcuts[shortcut].displayString : "";
 
   if (shortcutString && holdButton) {
     return (
@@ -32,7 +32,7 @@ const ShortcutText = ({ shortcut, holdButton }: ShortcutTextProps) => {
   return null;
 };
 
-export const TooltipBody = ({ text, icon, shortcut, holdButton, additionalInfo }: CustomTooltipProps) => (
+export const TooltipBody = ({ text, icon, shortcut, holdButton, additionalInfo = "" }: CustomTooltipProps) => (
   <BodyWrapper>
     <IconText>
       {text}

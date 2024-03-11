@@ -72,7 +72,7 @@ const TilhorighetRow = ({
       reset={resetTilhorighet}
       tooltipLabel="Definerer hvilke inndelinger grensen har på hver sin side. Obs! Endring av dette feltet kan forårsake geometriendringer."
     >
-      {kontekstType && (
+      {kontekstType !== undefined && (
         <Stack>
           {Object.values(Tilhorighet).map((tilhorighet) => (
             <Select key={tilhorighet} {...register(`${kontekstType}.${tilhorighet}`)}>
@@ -115,7 +115,7 @@ const NyAdministrativTilhorighetField = ({ feature, isDisabled }: TilhorighetPro
   );
 };
 
-export const TilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
+export const TilhorighetField = ({ feature, isDisabled = false }: TilhorighetProps) => {
   const { featureIsArchived } = useFeatureStyle();
 
   const isGrensePanelDisabled = useIsGrenseinformasjonPanelDisabled(feature);

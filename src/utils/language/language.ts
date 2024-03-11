@@ -1,7 +1,7 @@
 import type { Spraak } from "types/api";
 
 export const getNavnInSpraak = (spraak: Spraak[] | string | undefined, language: string) => {
-  if (!spraak) {
+  if (spraak === undefined) {
     return "";
   }
 

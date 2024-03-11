@@ -36,10 +36,10 @@ const fetchNewTicket = async (tjenesteId: string) => {
 export const getTicketForTjeneste = async (tjenesteId: string, src: string) => {
   let existingTicket = getTicketInLocalStorage(tjenesteId);
 
-  if (existingTicket) {
+  if (existingTicket !== null) {
     const isValid = await isTicketValid(existingTicket, src);
 
-    if (isValid) {
+    if (isValid !== undefined && isValid !== null) {
       return existingTicket;
     } else {
       removeTicketInLocalStorage(tjenesteId);
@@ -58,7 +58,7 @@ export const getTicketForTjeneste = async (tjenesteId: string, src: string) => {
 
   // ticket fetching er async, så vi må sjekke om ticket har blitt satt etter requesten ble fyrt av
   existingTicket = getTicketInLocalStorage(tjenesteId);
-  if (existingTicket) {
+  if (existingTicket !== null) {
     return existingTicket;
   }
 

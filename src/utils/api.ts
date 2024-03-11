@@ -15,10 +15,10 @@ type ApiEntityWithIdentifikasjon = {
 };
 
 export const getIdFromEntity = (entity: ApiEntity | ApiEntityWithIdentifikasjon) => {
-  if ((entity as ApiEntityWithIdentifikasjon).identifikasjon) {
-    return (entity as ApiEntityWithIdentifikasjon).identifikasjon.lokalid;
-  } else if ((entity as ApiEntity).id) {
-    return (entity as ApiEntity).id.lokalid.value;
+  if ("identifikasjon" in entity) {
+    return entity.identifikasjon.lokalid;
+  } else if ("id" in entity) {
+    return entity.id.lokalid.value;
   }
 
   return "";
@@ -55,7 +55,7 @@ export const getUrlForPath = (path: string): string => {
 };
 
 export const fetcherWithToken = async ([url, token]: [string | null, string | undefined]) => {
-  if (!url) return;
+  if (url === null) return;
 
   const res = await fetch(getUrlForPath(url), {
     headers: { Authorization: `Bearer ${token}` },

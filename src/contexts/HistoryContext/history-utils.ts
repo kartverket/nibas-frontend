@@ -19,7 +19,7 @@ import { removeNull } from "utils/list-utils";
 
 const getFeatureFromChange = (change: HistoryChange<MinimalGrense>, direction: HistoryDirection) => {
   const existingFeature = getFeatureIfExists(change.id);
-  if (!existingFeature && direction === "to" && change[direction].coordinates) {
+  if (!existingFeature && direction === "to" && change[direction].coordinates !== undefined) {
     const newFeature = new Feature({
       geometry: new LineString(change[direction].coordinates),
     });
@@ -42,12 +42,12 @@ const setCoordinatesFromChange = (change: HistoryChange<MinimalGrense>, directio
 
   const lineString = feature.getGeometry() as LineString;
 
-  if (direction === "from" && !change[direction].coordinates) {
+  if (direction === "from" && change[direction].coordinates === undefined) {
     editSource.removeFeature(feature);
   }
 
   const coordinates = change[direction].coordinates;
-  if (!coordinates) return;
+  if (coordinates === undefined) return;
 
   lineString.setCoordinates(coordinates);
 };
@@ -68,7 +68,7 @@ const setPropertiesFromChange = (change: HistoryChange<FeatureProperties>, direc
 
   const properties = change[direction];
 
-  if (!properties) return;
+  if (properties === undefined) return;
 
   feature.setProperties(properties);
 };
@@ -91,7 +91,7 @@ export const setKontekstEgenskaperForEntry = (entry: GrenseTilhorighetEntry, dir
 
     const kontekstEgenskaper = change[direction];
 
-    if (!kontekstEgenskaper) return;
+    if (kontekstEgenskaper === undefined) return;
 
     feature.setProperties({ ...feature.getProperties(), kontekstEgenskaper });
   });

@@ -10,7 +10,7 @@ export const getKretserMedGrensejusteringer = (
 ): string[] => {
   const endredeFeaturesMap = operasjoner?.grenseendringer?.endredeFeatures;
 
-  if (!endredeFeaturesMap || !operasjoner) {
+  if (!endredeFeaturesMap || operasjoner === undefined || operasjoner === null) {
     return [];
   }
 
@@ -27,7 +27,7 @@ export const getKretserMedGrensejusteringer = (
             : [];
 
         const filteredKontekstEgenskaper = kontekstEgenskaperArray.filter(
-          (kontekstEgenskaper) => kontekstEgenskaper && kontekstEgenskaper.type === type,
+          (kontekstEgenskaper) => kontekstEgenskaper.type === type,
         );
 
         return filteredKontekstEgenskaper.map((kontekstEgenskaper) => kontekstEgenskaper.id?.lokalid?.value);
@@ -51,7 +51,7 @@ export function groupEndringerByKommune(
       return [kretsId, krets?.kommunenummer.id];
     })
     .reduce((acc: { [key: string]: string[] }, [stemmekretsid, kommune]) => {
-      if (!kommune) {
+      if (kommune === undefined || kommune === "") {
         return acc;
       }
       return { ...acc, [kommune]: addToList(stemmekretsid, acc[kommune]) };

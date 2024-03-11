@@ -154,15 +154,12 @@ const useModify = () => {
 
   useEffect(() => {
     const saveCoordinatesBeforeModification = (e: ModifyEvent) => {
-      if (e.features) {
-        e.features.forEach((featureLike) => {
-          if (featureLike instanceof Feature) {
-            const { featureId, coordinates } = getInfoFromFeature(featureLike);
-            if (!featureId || !coordinates) return;
-            featureLike.set(previousCoordinateKey, coordinates);
-          }
-        });
-      }
+      e.features.forEach((featureLike) => {
+        if (featureLike instanceof Feature) {
+          const { coordinates } = getInfoFromFeature(featureLike);
+          featureLike.set(previousCoordinateKey, coordinates);
+        }
+      });
     };
     modify.on("modifystart", saveCoordinatesBeforeModification);
 
@@ -185,7 +182,7 @@ const useModify = () => {
     const setPreviousCoordinatesForFeature = (feature: Feature<LineString>) => {
       const previousFeatureCoordinates = feature.get(previousCoordinateKey);
 
-      if (previousFeatureCoordinates) {
+      if (previousFeatureCoordinates !== undefined) {
         const geometry = feature.getGeometry();
         geometry?.setCoordinates(previousFeatureCoordinates);
       }
@@ -216,9 +213,8 @@ const useModify = () => {
         // Hvis vi ender opp på én grense, må vi sjekke om det er et endepunkt vi har landet på, for ikke-endepunkter oppfører seg annerledes
         if (nonSelectedActiveFeatures.length === 1) {
           const nonSelectedActiveFeature = nonSelectedActiveFeatures[0] as Feature<LineString>;
-          const nonSelectedActiveFeatureGeometry = nonSelectedActiveFeature.getGeometry() as LineString;
-
-          if (!nonSelectedActiveFeatureGeometry) return;
+          const nonSelectedActiveFeatureGeometry = nonSelectedActiveFeature.getGeometry();
+          if (nonSelectedActiveFeatureGeometry === undefined) return;
 
           const nearbyVertex = findNearbyVertexOnFeature(
             nonSelectedActiveFeatureGeometry,
@@ -257,7 +253,7 @@ const useModify = () => {
           }
         }
 
-        if (!toastIdRef.current) {
+        if (toastIdRef.current === "") {
           toastIdRef.current = toast({
             status: "warning",
             title: "Husk å sette tilhørighet på berørte grenser",

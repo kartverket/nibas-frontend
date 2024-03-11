@@ -22,7 +22,7 @@ export const useStemmekretser = (stemmekretsIds: string[]) => {
 };
 
 export const useKommuneStemmekretser = (kommuneId: string | undefined) => {
-  return useNibasApi(kommuneId ? "/v1/kommuner/{id}/stemmekretser" : null, {
+  return useNibasApi(kommuneId !== undefined ? "/v1/kommuner/{id}/stemmekretser" : null, {
     id: kommuneId!,
   });
 };

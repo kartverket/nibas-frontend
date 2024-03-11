@@ -3,11 +3,8 @@ import LineString from "ol/geom/LineString";
 import { PropertyEntry, GrenseArkiveringsEntry, GrenseTilhorighetEntry } from "contexts/HistoryContext/types";
 import { FeatureProperties, KontekstEgenskaper } from "types/api";
 
-export const getDateInFriendlyString = (dateString?: string) => {
-  if (!dateString) return null;
-
+export const getDateInFriendlyString = (dateString: string) => {
   const date = new Date(dateString);
-
   return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
 };
 
@@ -23,8 +20,7 @@ export const addFeaturePropertiesEntryFromFeature = (
   updatedFeatureProperties: FeatureProperties,
 ) => {
   const id = feature.getId();
-
-  if (!id) return;
+  if (id === undefined) return;
 
   const oldFeatureProperties = feature.getProperties() as FeatureProperties;
 
@@ -48,8 +44,7 @@ export const addPropertyEntryFromFeature = (
   updatedProperties: FeatureProperties,
 ) => {
   const id = feature.getId();
-
-  if (!id) return;
+  if (id === undefined) return;
 
   const oldProperties = feature.getProperties() as FeatureProperties;
 
@@ -72,7 +67,7 @@ export const addArchivingEntryFromFeature = (
   addHistoryEntry: (entry: GrenseArkiveringsEntry) => void,
 ) => {
   const id = feature.getId();
-  if (!id) return;
+  if (id === undefined) return;
 
   const oldProperties = feature.getProperties() as FeatureProperties;
   const newProperties: FeatureProperties = {
@@ -99,7 +94,7 @@ export const addKontekstEntryFromFeature = (
   addHistoryEntry: (entry: GrenseTilhorighetEntry) => void,
 ) => {
   const id = feature.getId();
-  if (!id) return;
+  if (id === undefined) return;
 
   const oldProperties = feature.getProperties() as FeatureProperties;
   const oldKontekstEgenskaper = oldProperties.kontekstEgenskaper;
@@ -115,7 +110,7 @@ export const addKontekstEntryFromFeature = (
     changes: [
       {
         id: id as string,
-        from: oldKontekstEgenskaper || ({} as KontekstEgenskaper),
+        from: oldKontekstEgenskaper ?? ({} as KontekstEgenskaper),
         to: updatedKontekstEgenskaper,
       },
     ],

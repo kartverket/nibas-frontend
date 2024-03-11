@@ -25,11 +25,11 @@ export const createGrenseHistoryChange = (features: Feature[], grenseType?: Gren
       if (geometry instanceof LineString) {
         const { coordinates, featureId } = getInfoFromFeature(feature);
 
-        if (!coordinates || !featureId) return;
+        if (featureId === undefined || featureId === null) return;
         changes.push({
-          id: featureId as string,
+          id: String(featureId),
           from: {
-            coordinates: feature.get(previousCoordinateKey) || [],
+            coordinates: feature.get(previousCoordinateKey) ?? [],
             type: grenseType,
           },
           to: { coordinates, type: grenseType },
@@ -52,7 +52,7 @@ export const createNyGrenseHistoryChanges = (features: Feature[], grenseType: Gr
 
       if (geometry instanceof LineString) {
         const { coordinates, featureId } = getInfoFromFeature(feature);
-        if (!coordinates || !featureId || !grenseDiscriminator) continue;
+        if (featureId === undefined || featureId === null || !grenseDiscriminator) continue;
 
         const defaultFeatureProperties = getDefaultFeatureProperties(grenseType);
         if (!defaultFeatureProperties) continue;

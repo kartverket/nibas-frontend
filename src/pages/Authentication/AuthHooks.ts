@@ -38,7 +38,7 @@ export const useAuthorization = (): AuthHookReturnValue => {
     };
   }
 
-  if (error && error.status === 403) {
+  if (error !== undefined && error !== null && error.status === 403) {
     return {
       status: AuthorizationStatus.NOT_AUTHORIZED,
     };

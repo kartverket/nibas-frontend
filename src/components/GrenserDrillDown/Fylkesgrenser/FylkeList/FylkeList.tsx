@@ -5,7 +5,7 @@ import { getIdFromEntity } from "utils/api";
 
 const FylkeList = () => {
   const { fylker, error } = useFylker();
-  if (error) {
+  if (error !== undefined || error !== null) {
     return <p>Logg inn for å se listen</p>;
   }
 

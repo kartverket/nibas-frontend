@@ -65,6 +65,8 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
     return [];
   };
 
+  const featureId = feature.getId()?.toString();
+
   return (
     <Container>
       <GrenseinformasjonField
@@ -88,11 +90,8 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
         fieldKey="uuid"
         fieldLabel="Identifikator (UUID)"
         valueLabelFormatter={() => {
-          const featureId = feature.getId()?.toString();
-
-          if (featureId && isTempFeatureId(featureId)) return `Ny grense - ID blir satt ved publisering`;
-
-          return feature.getId()?.toString() || null;
+          if (isTempFeatureId(featureId)) return "Ny grense - ID blir satt ved publisering";
+          return feature.getId()?.toString() ?? null;
         }}
         isDisabled
         isUneditable
@@ -107,12 +106,8 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
         isDisabled
         isUneditable
         valueLabelFormatter={(date) => {
-          const formattedDate = getDateInFriendlyString(date);
-          const featureId = feature.getId()?.toString();
-
-          if (featureId && isTempFeatureId(featureId)) return "Ny grense - Dato blir satt ved publisering";
-
-          return formattedDate || null;
+          if (isTempFeatureId(featureId)) return "Ny grense - Dato blir satt ved publisering";
+          return getDateInFriendlyString(date) ?? null;
         }}
         renderItem={(register) => <Datepicker {...register} />}
       />
@@ -126,16 +121,12 @@ const GrenseinformasjonFieldList = ({ feature }: Props) => {
         fieldKey="datafangstdato"
         isUneditable
         valueLabelFormatter={(date) => {
-          const formattedDate = getDateInFriendlyString(date);
-          const featureId = feature.getId()?.toString();
-
-          if (featureId && isTempFeatureId(featureId)) return "Ny grense - Dato blir satt ved publisering";
-
-          return formattedDate || null;
+          if (isTempFeatureId(featureId)) return "Ny grense - Dato blir satt ved publisering";
+          return getDateInFriendlyString(date) ?? null;
         }}
         renderItem={(register) => <Datepicker {...register} />}
       />
-      {gyldigTil && (
+      {gyldigTil !== undefined && (
         <div>
           <GrenseinformasjonField
             feature={feature}

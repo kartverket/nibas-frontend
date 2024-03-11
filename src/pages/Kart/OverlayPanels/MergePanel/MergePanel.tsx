@@ -154,7 +154,9 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
 
   const fetchStemmekretsgrenser = async (stemmekretsIder: string[]) => {
     const stemmekretsgrenserResponse = await stemmekretsgrenserFetcher(stemmekretsIder, tokenHolderFunc()?.token);
-    return stemmekretsgrenserResponse ? removeNull(stemmekretsgrenserResponse).map((value) => String(value)) : [];
+    return stemmekretsgrenserResponse.length > 0
+      ? removeNull(stemmekretsgrenserResponse).map((value) => String(value))
+      : [];
   };
 
   const getStemmekretsIdList = (
@@ -164,10 +166,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
     const stemmekretsIderTilSammenslaaing = stemmekretserTilSammenslaaing.map(
       (stemmekretsResponse) => stemmekretsResponse.id.lokalid.value,
     );
-    if (selectedStemmekrets) {
-      stemmekretsIderTilSammenslaaing.push(selectedStemmekrets.id.lokalid.value);
-    }
-
+    stemmekretsIderTilSammenslaaing.push(selectedStemmekrets.id.lokalid.value);
     return stemmekretsIderTilSammenslaaing;
   };
 

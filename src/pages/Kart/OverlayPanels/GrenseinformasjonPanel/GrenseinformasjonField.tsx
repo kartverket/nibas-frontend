@@ -25,7 +25,7 @@ export const GrenseinformasjonField = ({
   fieldLabel,
   tooltipLabel,
   valueLabelFormatter,
-  isDisabled,
+  isDisabled = false,
   isUneditable,
   renderItem,
 }: Props) => {

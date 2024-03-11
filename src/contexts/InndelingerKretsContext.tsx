@@ -8,6 +8,7 @@ import { useOverlayPanel } from "./OverlayPanelContext";
 import { getAllVisibleFeatures, zoomToFeatures } from "utils/map/map-utils";
 import { useToolbar } from "./ToolbarContext";
 import { editSource } from "hooks/layers/constants";
+import { KretsStatus } from "./EditGrenserContext/types";
 
 export type Kretstype = "grunnkrets" | "stemmekrets";
 
@@ -57,16 +58,16 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
   const toggleEditKretser = () => {
     setOtherEditingTypes(currentKretstype, false);
     removeKretserFromLayer("edit");
-    const newEditing = !kommuneValues.editing;
-    const newKretsStatuser = {
+    const newEditing = !kommuneValues.isEditing;
+    const newKretsStatuser: Record<string, KretsStatus> = {
       ...kretsStatuser,
       [kommuneId]: {
-        visible: newEditing,
-        editing: newEditing,
+        isVisible: newEditing,
+        isEditing: newEditing,
       },
     };
 
-    const layerId: LayerId = kommuneValues.editing ? "edit" : currentKretstype;
+    const layerId: LayerId = kommuneValues.isEditing ? "edit" : currentKretstype;
 
     closeOverlayPanel();
     removeKretserFromLayer(layerId);
@@ -82,14 +83,14 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
         if (kommuneId === kommuneIdInList) return;
 
         // fjern features til kretsene som var endret før klikk
-        if (newKretsStatuser[kommuneIdInList]?.visible && newKretsStatuser[kommuneIdInList]?.editing) {
+        if (newKretsStatuser[kommuneIdInList].isVisible && newKretsStatuser[kommuneIdInList].isEditing) {
           removeKretserFromLayer("edit");
         }
         // hvis tidligere endret, fjern editing og visible
-        if (newKretsStatuser[kommuneIdInList]?.editing) {
+        if (newKretsStatuser[kommuneIdInList].isEditing) {
           newKretsStatuser[kommuneIdInList] = {
-            visible: false,
-            editing: false,
+            isVisible: false,
+            isEditing: false,
           };
         }
       });
@@ -106,13 +107,13 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
   };
 
   const toggleKretser = () => {
-    const newVisible = !kommuneValues.visible;
+    const newVisible = !kommuneValues.isVisible;
     setKretsStatusForKretstype(kommuneId, {
-      visible: newVisible,
-      editing: kommuneValues.editing,
+      isVisible: newVisible,
+      isEditing: kommuneValues.isEditing,
     });
 
-    const layerId: LayerId = kommuneValues.editing ? "edit" : currentKretstype;
+    const layerId: LayerId = kommuneValues.isEditing ? "edit" : currentKretstype;
 
     if (newVisible) {
       addKretserToLayer(layerId);

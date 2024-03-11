@@ -70,15 +70,15 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
   const getFeatureIdsFromEntries = (accumulator: string[][], entry: HistoryEntry) => {
     const featureIds: string[] = [];
     entry.changes.forEach((change) => {
-      if (change.to && !accumulator.some((value) => value.includes(change.id))) {
+      if (change.to !== undefined && change.to !== null && !accumulator.some((value) => value.includes(change.id))) {
         featureIds.push(change.id);
       }
 
       //change.id har den gamle grensens ID, vi trenger de to nye grensene!
       if (entry.type === "grensedeling") {
         const changesTo = change.to as Feature<Geometry>[];
-        const idsToAppend = changesTo?.map((feature) => feature.getId() as string);
-        if (idsToAppend) featureIds.push(...idsToAppend);
+        const idsToAppend = changesTo.map((feature) => feature.getId() as string);
+        if (idsToAppend.length > 0) featureIds.push(...idsToAppend);
       }
     });
     accumulator.push(featureIds);
