@@ -1,43 +1,18 @@
 import { Divider, Icon, SkeletonText, Text, Tooltip } from "@kvib/react";
 import { styled } from "styled-components";
-import EditAndSaveButton from "../Flatedata/EditAndSaveButton";
-import { useEffect, useState } from "react";
-import { Geometry } from "ol/geom";
-import { Feature } from "ol";
+import { useState } from "react";
 
 interface Props {
-  feature: Feature<Geometry>;
   name: string;
-  valueLabel?: string;
+  valueLabel?: string | number | null;
   tooltipLabel: string;
-  children: React.ReactNode;
-  onMetadataSubmit: () => void;
-  isDisabled?: boolean;
-  isDirty: boolean;
-  isUneditable?: boolean;
+  children?: React.ReactNode;
   isLoading?: boolean;
-  reset: () => void;
+  isEditing?: boolean;
 }
 
-const GrenseinformasjonRow = ({
-  feature,
-  name,
-  tooltipLabel,
-  valueLabel,
-  children,
-  onMetadataSubmit,
-  isDisabled,
-  isDirty,
-  isUneditable,
-  isLoading,
-  reset,
-}: Props) => {
-  const [isEditing, setIsEditing] = useState(false);
+const GrenseinformasjonRow = ({ isEditing, name, tooltipLabel, valueLabel, children, isLoading }: Props) => {
   const [iconHovered, setIconHovered] = useState(false);
-
-  useEffect(() => {
-    setIsEditing(false);
-  }, [feature]);
 
   return (
     <Container>
@@ -51,28 +26,6 @@ const GrenseinformasjonRow = ({
               </InfoIcon>
             </TextWithIcon>
           </Tooltip>
-
-          {!isUneditable && (
-            <EditAndSaveButton
-              isDisabled={isDisabled}
-              isEditing={isEditing}
-              size="sm"
-              onSubmit={() => {
-                if (isDirty) {
-                  onMetadataSubmit();
-                }
-                setIsEditing(false);
-              }}
-              toggleEditing={() =>
-                setIsEditing((prevState) => {
-                  if (isEditing) {
-                    reset();
-                  }
-                  return !prevState;
-                })
-              }
-            />
-          )}
         </Row>
         {isEditing ? (
           <Field>{children}</Field>
