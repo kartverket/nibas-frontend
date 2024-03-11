@@ -128,7 +128,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
 
     if (stemmekretsTilSammenslaaingListe.length > 0 && selectedStemmekrets) {
       const updateUtkastRequest = {
-        version: utkast.version,
+        version: 1,
         navn: utkast.navn,
         endringstype: utkast.endringstype,
         operasjoner: {
