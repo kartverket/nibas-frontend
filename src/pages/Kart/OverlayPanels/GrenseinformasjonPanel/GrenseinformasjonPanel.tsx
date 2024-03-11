@@ -1,10 +1,13 @@
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { PanelProps, SidePanel } from "../Panel";
-import GrenseinformasjonFieldList from "./GrenseinformasjonFieldList";
+import GrenseinformasjonForm from "./GrenseinformasjonForm";
 import { useFeatureStyle } from "contexts/FeatureStyleContext";
 import { FeatureProperties } from "types/api";
 import { useEffect } from "react";
 import { isMatrikkelFeature } from "utils/features";
+import { TilhorighetField } from "./TilhorighetField";
+import { Vedtaksinformasjon } from "./Vedtaksinformasjon/Vedtaksinformasjon";
+import { styled } from "styled-components";
 
 const GrenseinformasjonPanel = ({ isOpen, className }: PanelProps) => {
   const { selectedFeatures } = useFeatureStyle();
@@ -25,7 +28,11 @@ const GrenseinformasjonPanel = ({ isOpen, className }: PanelProps) => {
     !isMatrikkelFeature(selectedFeature) && (
       <SidePanel $isOpen={isOpen} className={className}>
         {selectedProperties ? (
-          <GrenseinformasjonFieldList onClose={closeOverlayPanel} feature={selectedFeature} />
+          <GrensePanelContent>
+            <GrenseinformasjonForm onClose={closeOverlayPanel} feature={selectedFeature} />
+            <TilhorighetField feature={selectedFeature} />
+            <Vedtaksinformasjon feature={selectedFeature} />
+          </GrensePanelContent>
         ) : (
           <p>Valgt grense har ikke metadata</p>
         )}
@@ -33,5 +40,12 @@ const GrenseinformasjonPanel = ({ isOpen, className }: PanelProps) => {
     )
   );
 };
+
+const GrensePanelContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 24px;
+`;
 
 export default GrenseinformasjonPanel;
