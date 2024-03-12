@@ -59,10 +59,10 @@ const getIdForKontekstEgenskaper = (
   if (kontekstEgenskaper.id) {
     return kontekstEgenskaper;
   } else {
-    const notExistsNewKretsWithEqualKommuneAndKretsnummer = !currentOperasjoner?.kretsDelingEndringer
+    const newKretsWithEqualKommuneAndKretsNummerExists = currentOperasjoner?.kretsDelingEndringer
       .filter((deling) => deling.kommuneId.lokalid.value === kontekstEgenskaper.kommuneId?.lokalid.value)
       .find((deling) => deling.nyeKretser.find((krets) => krets.kretsNummer === kontekstEgenskaper.kretsNummer));
-    if (notExistsNewKretsWithEqualKommuneAndKretsnummer) {
+    if (!newKretsWithEqualKommuneAndKretsNummerExists) {
       return {
         ...kontekstEgenskaper,
         id: {
