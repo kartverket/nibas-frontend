@@ -13,8 +13,12 @@ const useDragInteractions = () => {
     defaultCursor: () => "grab",
     eventsAndCursor: [
       {
-        name: ["pointerdrag"],
+        name: "pointerdrag",
         cursor: (e) => (shiftKeyOnly(e as MapBrowserEvent<UIEvent>) ? "zoom-in" : "grabbing"),
+      },
+      {
+        name: "mouseup",
+        cursor: () => "grab",
       },
     ],
   });
