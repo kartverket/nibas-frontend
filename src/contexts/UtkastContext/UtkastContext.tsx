@@ -29,6 +29,7 @@ import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { addEditedFeaturesToSource, removeEditedFeaturesFromSourceByIds } from "utils/map/source";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
+import { FeatureIdWithEndpoints, getAllFeatureEndPointCoordinates, isFeatureDeadEnd } from "utils/features";
 
 // down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
 
@@ -41,7 +42,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const [utkast, setUtkast] = useState<UtkastResponse>();
 
   const { history, clearHistory } = useHistory();
-  const { addDirtyStyles, clearFeatureStyles } = useFeatureStyle();
+  const { addDirtyStyles, addErrorStyles, clearFeatureStyles } = useFeatureStyle();
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { resetAndClearAllLayers } = useEditAllGrenser();
   const { closeOverlayPanel } = useOverlayPanel();
@@ -177,8 +178,24 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
 
       const featuresToBeAddedToSource = geoJsonFeaturesToBeAddedToSource.flatMap(getFeaturesFromGeoJson);
 
-      addEditedFeaturesToSource(featuresToBeAddedToSource);
-      addDirtyStyles(featuresToBeAddedToSource.map((feature) => feature.getId() as string));
+      // Liker ikke at jeg må legge til dette her også, burde sikkert kunne bli fikset med at useKretsgrenser er litt smartere i når den må oppdatere seg
+      if (featuresToBeAddedToSource.length > 0) {
+        addEditedFeaturesToSource(featuresToBeAddedToSource);
+        const coords = getAllFeatureEndPointCoordinates(["archived", "matrikkel"]).filter(
+          (coord) => !!coord,
+        ) as FeatureIdWithEndpoints[];
+        featuresToBeAddedToSource.forEach((feature) => {
+          const featureId = feature.getId()?.toString();
+
+          if (featureId) {
+            if (isFeatureDeadEnd(feature, coords)) {
+              addErrorStyles([featureId]);
+            } else {
+              addDirtyStyles([featureId]);
+            }
+          }
+        });
+      }
 
       setUtkast(updatedUtkastWithTempFeatureIds);
     } else if (statusCode.isError(response.status)) {
