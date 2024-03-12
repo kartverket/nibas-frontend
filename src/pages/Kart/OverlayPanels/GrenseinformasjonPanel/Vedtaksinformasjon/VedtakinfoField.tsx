@@ -28,7 +28,7 @@ export const VedtakinfoField = ({
     <FormControl isRequired={formViewState !== "viewing" ? isRequired : false} isInvalid={!!error}>
       <VedtakinfoRow isRequired={isRequired} tooltipLabel={tooltipLabel} name={title} error={error}>
         {formViewState === "viewing" ? (
-          <Text paddingTop={"8px"} paddingBottom={"8px"} maxWidth={maxWidth}>
+          <Text paddingTop="8px" paddingBottom="8px" maxWidth={maxWidth}>
             {value}
           </Text>
         ) : (

@@ -6,6 +6,7 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import KoordinaterPanel from "./KoordinaterPanel";
 import { TegnforklaringPanel } from "./Tegnforklaring/TegnforklaringPanel";
 import KartlagPanel from "./Kartlag/KartlagPanel";
+import { SplittingPanel } from "./SplittingPanel/SplittingPanel";
 
 const OverlayPanels = () => {
   const { activeOverlayPanel, activeOverlayModal } = useOverlayPanel();
@@ -14,6 +15,7 @@ const OverlayPanels = () => {
     <>
       <GrenseinformasjonPanel isOpen={activeOverlayPanel === "grenseinfo"} />
       <MergePanel isOpen={activeOverlayPanel === "sammenslåing"} />
+      <SplittingPanel isOpen={activeOverlayPanel === "splitting"} />
       <KoordinaterPanel isOpen={activeOverlayPanel === "koordinater"} />
       <TegnforklaringPanel isOpen={activeOverlayPanel === "tegnforklaring"} />
       <KartlagPanel isOpen={activeOverlayPanel === "kartlag"} />
