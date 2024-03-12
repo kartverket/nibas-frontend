@@ -71,10 +71,10 @@ export const useSplittingForm = (flatedata: Flatedata) => {
       ? mapGrunnkretsResponseToKrets(grunnkretser ?? [])
       : mapStemmekretResponseToKrets(stemmekretser ?? []);
 
-  // Legger opprinnelig krets på første indeks i nyeKretser ved å tømme den gamle lista og så legge
+  // Vi ønsker å håndtere opprinnelig krets som en "ny del", og derfor vil vi at den skal vises sammen med de nye kretsene også.
   const handleOpprinneligKretsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const lokalid = e.target.value;
-    replace(getDefaultSplittingValue().nyeKretser);
+    replace(getDefaultSplittingValue().nyeKretser); // vi ønsker å resette til en tom liste ved bytte av opprinnelig krets
     setValue("opprinneligKrets.lokalId", lokalid, { shouldDirty: true });
     const kretsForNewOpprinneligKrets = opprinneligFlateOptions.find((krets) => krets.id.lokalid.value === lokalid);
     if (
@@ -109,7 +109,8 @@ export const useSplittingForm = (flatedata: Flatedata) => {
     });
   };
 
-  // en del sjekker her for å vite om vi har dataen vi trenger for å utføre operasjonen
+  // en del if-tester her for å forsikre typescript om at variablene vi bruker ikke er null.
+  // (hadde ikke vært mulig å komme seg hit hvis noe var null, men typescript er typescript)
   const updateDraftWithSplittingRequest = () => {
     if (editingType && grunnkretser && stemmekretser) {
       const { opprinneligKrets, nyeKretser } = getValues();
@@ -128,6 +129,7 @@ export const useSplittingForm = (flatedata: Flatedata) => {
         nyeKretser.length > 0 &&
         opprinneligKretsInfo?.version
       ) {
+        const exclusivelyNewKretser = nyeKretser.slice(1); // må fjerne opprinnelig krets her fordi vi har den i field
         const newKretsDelingEndringRequest = {
           opprinneligKrets: {
             lokalId: opprinneligKrets.lokalId,
@@ -135,33 +137,32 @@ export const useSplittingForm = (flatedata: Flatedata) => {
           },
           kommuneId: kommuneIdentifikator,
           flatetype: editingType === "grunnkrets" ? KontekstType.GRUNNKRETS : KontekstType.STEMMEKRETS,
-          nyeKretser: nyeKretser.slice(1), // må fjerne opprinnelig krets her fordi vi har den i field
+          nyeKretser: exclusivelyNewKretser,
         };
 
         const latestOperasjoner = getUpdateUtkastRequestFromHistory()?.operasjoner; // Vi vil lagre utkastet med de eksisterende endringene også
         if (utkast && latestOperasjoner) {
-          let isUpdateOfSplitting = false;
-          if (
-            latestOperasjoner.kretsDelingEndringer.find(
+          const isUpdateOfSplitting = // hvis vi allerede har en splitting på samme krets ønsker vi å erstatte den med den nye splittingen
+            latestOperasjoner.kretsDelingEndringer.some(
               (splitting) => splitting.opprinneligKrets.lokalId === opprinneligKrets.lokalId,
-            )
-          ) {
-            isUpdateOfSplitting = true;
-          }
+            );
+          const previousSplitsWithoutSplitOnCurrentOpprinneligKrets = [
+            ...utkast.operasjoner.kretsDelingEndringer.filter(
+              (splitting) =>
+                splitting.opprinneligKrets.lokalId !== newKretsDelingEndringRequest.opprinneligKrets.lokalId,
+            ),
+          ];
           updateUtkast(utkast.id, {
             ...utkast,
             operasjoner: {
               ...latestOperasjoner,
               kretsDelingEndringer: [
-                ...utkast.operasjoner.kretsDelingEndringer.filter(
-                  (splitting) =>
-                    splitting.opprinneligKrets.lokalId !== newKretsDelingEndringRequest.opprinneligKrets.lokalId,
-                ),
+                ...previousSplitsWithoutSplitOnCurrentOpprinneligKrets,
                 newKretsDelingEndringRequest,
               ],
             },
           });
-          showSplittingSuccessToast(opprinneligKretsInfo, nyeKretser.slice(1), isUpdateOfSplitting);
+          showSplittingSuccessToast(opprinneligKretsInfo, exclusivelyNewKretser, isUpdateOfSplitting);
         }
       }
     }

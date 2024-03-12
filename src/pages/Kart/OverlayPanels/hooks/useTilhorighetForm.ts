@@ -56,30 +56,32 @@ const getIdForKontekstEgenskaper = (
   currentOperasjoner: UtkastOperasjoner | undefined,
 ): KontekstEgenskaper => {
   // Hvis konteksten har en id betyr det at den ikke peker til en nyopprettet krets, og vi kan derfor bruke den IDen for å identifisere kretsen.
-  if (kontekstEgenskaper.id) return kontekstEgenskaper;
-  // hvis det ikke finnes noen deling operasjoner som har kommuneId lik kontekstEgenskapen sin kommuneId og kontekstEgenskapen ikke har en krets med samme nummer betyr det at den ikke eksisterer lengre
-  // i dette tilfellet setter vi lokalid til "Not Chosen"
-  else if (
-    !currentOperasjoner?.kretsDelingEndringer
+  if (kontekstEgenskaper.id) {
+    return kontekstEgenskaper;
+  } else {
+    const notExistsNewKretsWithEqualKommuneAndKretsnummer = !currentOperasjoner?.kretsDelingEndringer
       .filter((deling) => deling.kommuneId.lokalid.value === kontekstEgenskaper.kommuneId?.lokalid.value)
-      .find((deling) => deling.nyeKretser.find((krets) => krets.kretsNummer === kontekstEgenskaper.kretsNummer))
-  ) {
-    return {
-      ...kontekstEgenskaper,
-      id: {
-        lokalid: { value: CustomOption.NOT_CHOSEN },
-        gyldighetsdato: "",
-      },
-    };
-    // hvis det finnes en ny krets med nummer og kommuneid lik en ny krets i utkastet OG kontekstegenskaper har id lik undefined lager vi en unik referanse til denne kretsen
-  } else
-    return {
-      ...kontekstEgenskaper,
-      id: {
-        lokalid: { value: `NY_KRETS_${kontekstEgenskaper.kretsNummer}_${kontekstEgenskaper.kommuneId?.lokalid.value}` },
-        gyldighetsdato: "",
-      },
-    };
+      .find((deling) => deling.nyeKretser.find((krets) => krets.kretsNummer === kontekstEgenskaper.kretsNummer));
+    if (notExistsNewKretsWithEqualKommuneAndKretsnummer) {
+      return {
+        ...kontekstEgenskaper,
+        id: {
+          lokalid: { value: CustomOption.NOT_CHOSEN },
+          gyldighetsdato: "",
+        },
+      };
+      // hvis det finnes en ny krets med nummer og kommuneid lik en ny krets i utkastet OG kontekstegenskaper har id lik undefined lager vi en unik referanse til denne kretsen
+    } else
+      return {
+        ...kontekstEgenskaper,
+        id: {
+          lokalid: {
+            value: `NY_KRETS_${kontekstEgenskaper.kretsNummer}_${kontekstEgenskaper.kommuneId?.lokalid.value}`,
+          },
+          gyldighetsdato: "",
+        },
+      };
+  }
 };
 
 export const useTilhorighetForm = (feature: Feature) => {
