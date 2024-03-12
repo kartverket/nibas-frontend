@@ -111,7 +111,7 @@ const ToolbarPopups = () => {
       {activeTool === "draw" && (
         <ToolbarPopup
           text="Start tegning ved å klikke på kartet"
-          subtext="Tegninger kan snappes til punkter eller startes fritt utenfor andre grenser. Dobbelklikk for å avslutte tegning"
+          subtext="Tegninger kan snappes til punkter eller startes fritt utenfor andre grenser. Dobbelklikk for å avslutte tegning. Ønsker du å panorere underveis, bruk piltastene."
           onClose={resetTool}
         />
       )}

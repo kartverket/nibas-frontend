@@ -50,8 +50,13 @@ export interface UseTilhorighet {
   isLoading: boolean;
 }
 
+const getDefaultTilhorighetData = () => ({
+  GRUNNKRETS: { a: CustomOption.NOT_CHOSEN, b: CustomOption.NOT_CHOSEN },
+  STEMMEKRETS: { a: CustomOption.NOT_CHOSEN, b: CustomOption.NOT_CHOSEN },
+});
+
 // tar to kontekstEgenskaper og mapper de til TilhorighetForm
-export const getTilhorighetData = (tilhorigheter: KontekstEgenskaper[] | undefined): TilhorighetForm | undefined => {
+export const getTilhorighetData = (tilhorigheter: KontekstEgenskaper[] | undefined): TilhorighetForm => {
   if (tilhorigheter && tilhorigheter.length === 2) {
     const grunnkretser = tilhorigheter
       .filter((kontekstEgenskaper) => kontekstEgenskaper.type === KontekstType.GRUNNKRETS)
@@ -59,7 +64,6 @@ export const getTilhorighetData = (tilhorigheter: KontekstEgenskaper[] | undefin
     const stemmekretser = tilhorigheter
       .filter((kontekstEgenskaper) => kontekstEgenskaper.type === KontekstType.STEMMEKRETS)
       .map((stemmekrets) => stemmekrets.id?.lokalid.value);
-
     if (grunnkretser.length === 2 || stemmekretser.length === 2) {
       return {
         [KontekstType.GRUNNKRETS]: {
@@ -73,6 +77,7 @@ export const getTilhorighetData = (tilhorigheter: KontekstEgenskaper[] | undefin
       };
     }
   }
+  return getDefaultTilhorighetData();
 };
 
 // Gir en krets med lokalid lik Default option slik at default verdien kan sendes som data slik som vanlige kretser.
@@ -97,15 +102,16 @@ const getDefaultKrets = (kontekstType: KontekstType): Krets => {
 export const getUpdatedKontekstEgenskaper = (
   kontekstType: KontekstType,
   newKretsIds: TilhorighetChoice,
-  kretsValg: TilhorighetOptions,
+  kretsOptions: TilhorighetOptions,
 ): KontekstEgenskaper[] => {
-  const allPossibleOptions = kretsValg.a.concat(kretsValg.b);
+  const allPossibleOptions = kretsOptions.a.concat(kretsOptions.b);
   const kretser = Object.values(newKretsIds).map(
     (id) => allPossibleOptions.find((krets) => krets.id.lokalid.value === id) ?? getDefaultKrets(kontekstType),
   );
   const nyeKontekstEgenskaper = kretser.map((krets) => ({
-    id: krets.id,
+    id: krets.id.lokalid.value.startsWith("NY_KRETS") ? undefined : krets.id, // fjerner tempid når vi setter kontekstEgenskapene på featuren
     kommuneId: krets.kommuneId,
+    kretsNummer: krets.nummer,
     type: krets.type,
     version: krets.version,
     retningMedKlokken: true,
@@ -157,34 +163,26 @@ export const sortKretserOptionsByNumber = (kretser: Krets[] | undefined): Krets[
 
 export const mapGrunnkretsResponseToKrets = (grunnkretser: GrunnkretsResponse[]): Krets[] => {
   return sortKretserOptionsByNumber(
-    grunnkretser
-      .map(({ id, version, grunnkretsnummer, navn, kommuneIdentifikator }) => ({
-        id,
-        kommuneId: kommuneIdentifikator,
-        version,
-        nummer: grunnkretsnummer,
-        navn: navn,
-        type: KontekstType.GRUNNKRETS,
-      }))
-      .sort((a, b) => {
-        return Number(a.nummer) - Number(b.nummer);
-      }),
+    grunnkretser.map(({ id, version, grunnkretsnummer, navn, kommuneIdentifikator }) => ({
+      id,
+      kommuneId: kommuneIdentifikator,
+      version,
+      nummer: grunnkretsnummer,
+      navn: navn,
+      type: KontekstType.GRUNNKRETS,
+    })),
   );
 };
 
 export const mapStemmekretResponseToKrets = (stemmekretser: StemmekretsResponse[]): Krets[] => {
   return sortKretserOptionsByNumber(
-    stemmekretser
-      .map(({ id, version, stemmekretsnummer, stemmekretsnavn, kommuneIdentifikator }) => ({
-        id,
-        kommuneId: kommuneIdentifikator,
-        version,
-        nummer: stemmekretsnummer,
-        navn: stemmekretsnavn,
-        type: KontekstType.STEMMEKRETS,
-      }))
-      .sort((a, b) => {
-        return Number(a.nummer) - Number(b.nummer);
-      }),
+    stemmekretser.map(({ id, version, stemmekretsnummer, stemmekretsnavn, kommuneIdentifikator }) => ({
+      id,
+      kommuneId: kommuneIdentifikator,
+      version,
+      nummer: stemmekretsnummer,
+      navn: stemmekretsnavn,
+      type: KontekstType.STEMMEKRETS,
+    })),
   );
 };

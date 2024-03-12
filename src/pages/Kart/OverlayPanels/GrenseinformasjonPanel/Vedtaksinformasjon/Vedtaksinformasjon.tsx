@@ -64,14 +64,14 @@ export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
       <OversiktHeader>
         <Tooltip label="Henvisning til dokumenter som er med å fastlegge aktuell grense." hasArrow placement="bottom">
           <InfoIcon onMouseOver={() => setIconHovered(true)} onMouseOut={() => setIconHovered(false)}>
-            <Text as="b" paddingRight={"8px"}>
+            <Text as="b" paddingRight="8px">
               Vedtaksinformasjon
             </Text>
-            <Icon size={24} color="var(--kvib-colors-blue-500)" isFilled={iconHovered} icon={"info"}></Icon>
+            <Icon size={24} color="var(--kvib-colors-blue-500)" isFilled={iconHovered} icon="info"></Icon>
           </InfoIcon>
         </Tooltip>
         <Button
-          size={"sm"}
+          size="sm"
           variant="secondary"
           rightIcon="add"
           colorScheme="blue"

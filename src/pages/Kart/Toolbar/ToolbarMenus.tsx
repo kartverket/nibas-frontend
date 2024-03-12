@@ -26,7 +26,7 @@ type MenuItems = (MenuItemProps & {
 })[];
 
 const ToolbarMenus = () => {
-  const { activeTool, toggleTool, toggleModeTool } = useToolbar();
+  const { activeTool, toggleTool } = useToolbar();
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const editingType = getCurrentlyEditingType();
   const {
@@ -39,6 +39,7 @@ const ToolbarMenus = () => {
   } = useOverlayPanel();
 
   const mergeIsActive = activeOverlayPanel === "sammenslåing";
+  const splitIsActive = activeOverlayPanel === "splitting";
 
   const flatedetaljerIsActive = activeOverlayModal === "grunnkrets" || activeOverlayModal === "stemmekrets";
 
@@ -66,11 +67,12 @@ const ToolbarMenus = () => {
     }
   };
 
+  const toggleSplitPanel = () => (splitIsActive ? closeOverlayPanel() : openOverlayPanel("splitting"));
+
   const isEditMode = !!editingType;
   useKeyboardShortcut("add", () => toggleTool("add"), isEditMode);
   useKeyboardShortcut("remove", () => toggleTool("remove"), isEditMode);
   useKeyboardShortcut("edit_point", toggleMovePoint, isEditMode);
-  useKeyboardShortcut("snap", () => toggleModeTool("snap"), isEditMode);
   useKeyboardShortcut("merge", toggleMergePanel, editingType === "stemmekrets");
   useKeyboardShortcut("archive", () => toggleTool("archive"), isEditMode);
   useKeyboardShortcut("flate", toggleFlatedetaljer);
@@ -161,8 +163,15 @@ const ToolbarMenus = () => {
       onClick: toggleMergePanel,
       "aria-label": "Slå sammen stemmekretser",
     },
+    {
+      label: "Splitt en flate",
+      icon: <Icon icon="cut" />,
+      $isActive: splitIsActive,
+      isDisabled: !(editingType == "stemmekrets" || editingType == "grunnkrets"),
+      onClick: toggleSplitPanel,
+      "aria-label": "Splitt en flate",
+    },
   ];
-
   return (
     <>
       <Divider orientation="vertical" />

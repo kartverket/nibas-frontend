@@ -120,5 +120,10 @@ export const tegnforklaringer: TegnforklaringProps[][] = [
       dotted: isDottedStyle(grenseStyles.dirty),
       color: getColorFromStyle(grenseStyles.dirty),
     },
+    {
+      text: "Ugyldig grense",
+      dotted: isDottedStyle(grenseStyles.error),
+      color: getColorFromStyle(grenseStyles.error),
+    },
   ],
 ];

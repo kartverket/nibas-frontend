@@ -47,7 +47,10 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
   const { kretsStatuser, setKretsStatusForKretstype, setMultipleValues, setOtherEditingTypes } =
     useEditGrenser(currentKretstype);
   const { setFlatedata, closeOverlayPanel } = useOverlayPanel();
-  const { addKretserToLayer, removeKretserFromLayer, lasterData } = useKretsgrenser(kommuneId, currentKretstype);
+  const { addKretserToLayer, removeKretserFromLayer, lasterData, setLasterData } = useKretsgrenser(
+    kommuneId,
+    currentKretstype,
+  );
   const { enableModeTool, disableModeTool } = useToolbar();
 
   const kommuneValues = kretsStatuser[kommuneId] ?? {};
@@ -100,6 +103,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
       removeKretserFromLayer("edit");
       closeOverlayPanel();
       zoomToFeatures(getAllVisibleFeatures());
+      setLasterData(false);
     }
 
     setMultipleValues(newKretsStatuser);
@@ -119,6 +123,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
     } else {
       // hvis ikke lenger skal være synlig
       removeKretserFromLayer(layerId);
+      setLasterData(false);
     }
 
     // .changed() forcer en rerender av layers
@@ -132,5 +137,6 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
     kommuneValues,
     lasterData,
     currentKretstype,
+    setLasterData,
   };
 };

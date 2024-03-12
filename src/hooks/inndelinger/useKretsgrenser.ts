@@ -1,4 +1,4 @@
-import { useContext, useMemo } from "react";
+import { useContext, useMemo, useState } from "react";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
@@ -15,8 +15,14 @@ import { stemmekretsgrenserFetcher } from "api/stemmekrets";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { getAllVisibleFeatures, getZoomMode, zoomToFeatures } from "utils/map/map-utils";
 import { getLayerById } from "utils/map/layers";
-import { GrunnkretsResponse, StemmekretsResponse } from "../../types/api";
+import { FeatureProperties, GrunnkretsResponse, StemmekretsResponse } from "../../types/api";
 import { GeoJSONFeature } from "ol/format/GeoJSON";
+import {
+  FeatureIdWithEndpoints,
+  getAllFeatureEndPointCoordinates,
+  getFeaturesConnectedToFeatureAtEndpoints,
+  isFeatureDeadEnd,
+} from "utils/features";
 
 const getKretserByKommuneUrl = (type: Kretstype) => {
   if (type === "grunnkrets") {
@@ -56,11 +62,13 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   const {
     setAndSaveDirtyStyles,
     setAndSaveArchivedStyles,
+    setAndSaveErrorStyles,
     setAndSaveSammenslaaingStyles,
     setAndSaveSammenslaaingOverlappingStyles,
   } = useFeatureStyle();
 
   const context = useContext(EditGrenserContext);
+  const [lasterData, setLasterData] = useState(false);
 
   const { data: kretserByKommune } = useNibasApi(visible ? getKretserByKommuneUrl(type) : null, {
     id: kommuneId,
@@ -92,21 +100,42 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     const endredeFeatures = utkast.operasjoner.grenseendringer?.endredeFeatures;
     const dirtyFeatureIds: string[] = [];
     const archivedFeatureIds: string[] = [];
+    const errorFeatureIds: string[] = [];
+
+    const allFeatureEndpoints = getAllFeatureEndPointCoordinates(["matrikkel", "archived"]).filter(
+      (featureEndpoint) => featureEndpoint !== null,
+    ) as FeatureIdWithEndpoints[];
 
     if (features.length > 0 && endredeFeatures.length > 0) {
-      for (const feature of endredeFeatures) {
-        const id = feature.id;
-        if (id) {
+      for (const endretFeature of endredeFeatures) {
+        const id = endretFeature.id;
+        const actualFeature = features.find((feature) => feature.getId() == id);
+        if (id && actualFeature) {
           // Avgjør hvilken type endringsfarge featuren skal ha
-          if (feature.properties.shouldArchive) {
+          if (endretFeature.properties.shouldArchive) {
             archivedFeatureIds.push(id.toString());
+
+            const connectedFeatures = getFeaturesConnectedToFeatureAtEndpoints(actualFeature);
+
+            for (const connectedFeature of connectedFeatures) {
+              const connectedFeatureId = connectedFeature.getId()?.toString();
+              const connectedFeatureProperties = connectedFeature.getProperties() as FeatureProperties;
+              if (!connectedFeatureId || !connectedFeatureProperties) continue;
+
+              if (!connectedFeatureProperties.shouldArchive && isFeatureDeadEnd(connectedFeature, allFeatureEndpoints))
+                errorFeatureIds.push(connectedFeatureId);
+            }
+          } else if (isFeatureDeadEnd(actualFeature, allFeatureEndpoints)) {
+            errorFeatureIds.push(id.toString());
           } else {
             dirtyFeatureIds.push(id.toString());
           }
         }
       }
+
       setAndSaveDirtyStyles(dirtyFeatureIds);
       setAndSaveArchivedStyles(archivedFeatureIds);
+      setAndSaveErrorStyles(errorFeatureIds);
     }
 
     const sammenslaaing = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
@@ -143,7 +172,10 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   const { addFeaturesToLayer } = useAsyncFeatures(
     allFeatures,
     getZoomMode(!!grenseValue.editing, context?.getCurrentlyEditingType() !== null),
-    () => applyDirtyStylesToUtkastFeatures(allFeatures ?? []),
+    () => {
+      applyDirtyStylesToUtkastFeatures(allFeatures ?? []);
+      setLasterData(false);
+    },
   );
 
   const addKretserToLayer = (layerId: LayerId) => {
@@ -170,12 +202,11 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     }
   };
 
-  const lasterData = visible && !allFeatures;
-
   return {
     addKretserToLayer,
     removeKretserFromLayer,
     lasterData,
+    setLasterData,
   };
 };
 
