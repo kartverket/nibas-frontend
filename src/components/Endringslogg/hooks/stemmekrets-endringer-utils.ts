@@ -15,7 +15,7 @@ import {
   OperasjonerOrNull,
 } from "./endringer-utils";
 import { getNavnInSpraak } from "utils/language/language";
-import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighetUtils";
+import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 
 export const getStemmekretserMedEndringer = (operasjoner: OperasjonerOrNull): string[] => {
   const endringerResponse = operasjoner?.metadataendringer?.stemmekretsendringer;

@@ -109,7 +109,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     if (features.length > 0 && endredeFeatures.length > 0) {
       for (const endretFeature of endredeFeatures) {
         const id = endretFeature.id;
-        const actualFeature = features.find((feature) => feature.getId() == id);
+        const actualFeature = features.find((feature) => feature.getId() === id);
         if (id && actualFeature) {
           // Avgjør hvilken type endringsfarge featuren skal ha
           if (endretFeature.properties.shouldArchive) {

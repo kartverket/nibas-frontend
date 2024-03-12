@@ -167,7 +167,7 @@ const ToolbarMenus = () => {
       label: "Splitt en flate",
       icon: <Icon icon="cut" />,
       $isActive: splitIsActive,
-      isDisabled: !(editingType == "stemmekrets" || editingType == "grunnkrets"),
+      isDisabled: !(editingType === "stemmekrets" || editingType === "grunnkrets"),
       onClick: toggleSplitPanel,
       "aria-label": "Splitt en flate",
     },

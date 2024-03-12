@@ -16,8 +16,6 @@ import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { HistoryChange } from "contexts/HistoryContext/types";
 import useNibasApi from "hooks/useNibasApi";
 import { ApiErrorResponse, FeatureCollection, OppdaterUtkastRequest, UtkastResponse } from "types/api";
-import { resetMapView } from "utils/map";
-import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
@@ -30,8 +28,9 @@ import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { addEditedFeaturesToSource, removeEditedFeaturesFromSourceByIds } from "utils/map/source";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
-import { CustomOption } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 import { FeatureIdWithEndpoints, getAllFeatureEndPointCoordinates, isFeatureDeadEnd } from "utils/features";
+import { useEditAllGrenser } from "contexts/EditGrenserContext/EditGrenserContext";
+import { resetMapView } from "utils/map/map-utils";
 
 export const UtkastContext = createContext<UtkastContextValue | undefined>(undefined);
 

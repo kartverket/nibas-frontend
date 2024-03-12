@@ -1,6 +1,6 @@
-import { EditingType, useEditAllGrenser } from "contexts/EditGrenserContext";
+import { useEditAllGrenser } from "contexts/EditGrenserContext/EditGrenserContext";
 import { Flatedata } from "contexts/OverlayPanelContext";
-import { useUtkast } from "contexts/UtkastContext";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useForm, useFieldArray } from "react-hook-form";
 import { GrunnkretsResponse, KretsDelingEndringRequest, StemmekretsResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
@@ -10,11 +10,12 @@ import {
   Krets,
   mapGrunnkretsResponseToKrets,
   mapStemmekretResponseToKrets,
-} from "../hooks/tilhorighetUtils";
+} from "../hooks/tilhorighet-utils";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import { useToast } from "@kvib/react";
 import { useCallback } from "react";
+import { EditingType } from "contexts/EditGrenserContext/types";
 
 export type SplittingForm = Pick<KretsDelingEndringRequest, "opprinneligKrets" | "nyeKretser">;
 
@@ -32,7 +33,7 @@ const getKommuneIdentifikatorFromOptions = (
   grunnkretser: GrunnkretsResponse[],
   stemmekretser: StemmekretsResponse[],
 ) => {
-  if (editingType == "stemmekrets") {
+  if (editingType === "stemmekrets") {
     return stemmekretser?.find((opt) => opt.id.lokalid.value === opprinneligKretsId)?.kommuneIdentifikator;
   } else {
     return grunnkretser?.find((opt) => opt.id.lokalid.value === opprinneligKretsId)?.kommuneIdentifikator;

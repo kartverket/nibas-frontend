@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FeatureProperties, KontekstEgenskaper, KretsDelingEndringRequest, UtkastOperasjoner } from "types/api";
 import { getIdFromEntity } from "utils/api";
@@ -16,12 +16,10 @@ import {
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { Feature } from "ol";
 import { LineString } from "ol/geom";
-import { FeatureProperties } from "types/api";
 import { addKontekstEntryFromFeature } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { getIdFromEntity } from "utils/api";
-import { useEditAllGrenser } from "contexts/EditGrenserContext/EditGrenserContext";
-import { EditingType } from "contexts/EditGrenserContext/types";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import { GrenseType } from "hooks/layers/types";
 
 const mapGrenseTypeTilKontekstType = (grenseType: GrenseType): KontekstType => {
   switch (grenseType) {
@@ -85,11 +83,6 @@ const getIdForKontekstEgenskaper = (
       };
   }
 };
-
-const getDefaultTilhorighetData = () => ({
-  GRUNNKRETS: { a: CustomOption.NOT_CHOSEN, b: CustomOption.NOT_CHOSEN },
-  STEMMEKRETS: { a: CustomOption.NOT_CHOSEN, b: CustomOption.NOT_CHOSEN },
-});
 
 export const useTilhorighetForm = (feature: Feature) => {
   const { addHistoryEntry } = useHistory();

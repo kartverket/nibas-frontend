@@ -233,12 +233,12 @@ const Toolbar = () => {
                     >
                       Snap
                     </MenuButton>
-                    <MenuList minWidth="240px" marginBottom={"10px"}>
+                    <MenuList minWidth="240px" marginBottom="10px">
                       <SnappingMenuHeader>
                         <SnappingToggle>
                           <Switch
                             aria-label="Switch medium"
-                            marginRight={"5px"}
+                            marginRight="5px"
                             isChecked={
                               activeModeTools.includes("snap_matrikkel") || activeModeTools.includes("snap_nibas")
                             }
@@ -246,7 +246,7 @@ const Toolbar = () => {
                           />
                           <SnappingTitle>Snapping</SnappingTitle>
                         </SnappingToggle>
-                        <CloseButton marginRight={"8px"} onClick={onClose} />
+                        <CloseButton marginRight="8px" onClick={onClose} />
                       </SnappingMenuHeader>
                       <MenuDivider />
                       <MenuItem>

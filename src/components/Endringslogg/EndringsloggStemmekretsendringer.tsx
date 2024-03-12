@@ -17,7 +17,7 @@ import {
 } from "./EndringsloggComponents";
 import { UnstyledList } from "../UnstyledList";
 import { StemmekretsResponse } from "../../types/api";
-import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighetUtils";
+import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 
 type EndringsloggStemmekretsendringerProps = {
   endringer: Stemmekretsendringer;

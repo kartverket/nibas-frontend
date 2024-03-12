@@ -13,7 +13,7 @@ import {
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { styled } from "styled-components";
 import { PanelHeader, PanelProps, SidePanel } from "../Panel";
-import { CustomOption } from "../hooks/tilhorighetUtils";
+import { CustomOption } from "../hooks/tilhorighet-utils";
 import { useEffect } from "react";
 import { useSplittingForm } from "./useSplittingForm";
 
@@ -140,7 +140,7 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
                 <div key={field.id}>
                   <NyKretsField>
                     <FormControl isInvalid={!!errors.nyeKretser?.[index]?.kretsNummer}>
-                      {index != 0 && <FormLabel>Nytt nummer</FormLabel>}
+                      {index !== 0 && <FormLabel>Nytt nummer</FormLabel>}
                       <Input
                         disabled={index === 0}
                         type="number"
@@ -148,7 +148,7 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
                       />
                     </FormControl>
                     <FormControl isInvalid={!!errors.nyeKretser?.[index]?.kretsNavn}>
-                      {index != 0 && <FormLabel>Nytt navn</FormLabel>}
+                      {index !== 0 && <FormLabel>Nytt navn</FormLabel>}
                       <Input
                         disabled={index === 0}
                         {...register(`nyeKretser.${index}.kretsNavn`, {

@@ -2,7 +2,7 @@ import { styled } from "styled-components";
 import { Endring, KretsSplittingEndring } from "./hooks/utkastEndringerTypes";
 import { Heading, Icon } from "@kvib/react";
 import { UnstyledList } from "components/UnstyledList";
-import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighetUtils";
+import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 
 export const EndringSection = styled.section`
   &:not(:last-of-type) {
