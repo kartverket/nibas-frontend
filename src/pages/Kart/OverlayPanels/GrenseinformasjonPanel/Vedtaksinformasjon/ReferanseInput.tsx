@@ -67,7 +67,7 @@ export const ReferanseInput = ({
                   placeholder={placeholder}
                   backgroundColor="white"
                   onChange={(e) => {
-                    if (field.value == "") setAppendButtonDisabled(true);
+                    if (field.value === "") setAppendButtonDisabled(true);
                     else setAppendButtonDisabled(false);
                     field.onChange(e.target.value);
                   }}

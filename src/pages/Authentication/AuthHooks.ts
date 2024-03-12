@@ -32,7 +32,7 @@ export const useAuthorization = (): AuthHookReturnValue => {
     };
   }
 
-  if (data == null && error == null) {
+  if (data === null && error === null) {
     return {
       status: AuthorizationStatus.PENDING,
     };

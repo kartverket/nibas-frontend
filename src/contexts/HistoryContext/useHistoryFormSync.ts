@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { HistoryDirection, HistoryEntry } from "contexts/HistoryContext";
+import { HistoryDirection, HistoryEntry } from "contexts/HistoryContext/types";
 
 const getChangeForId = <EntryType extends HistoryEntry>(entry: EntryType, id?: string) =>
   // https://github.com/microsoft/TypeScript/issues/33591

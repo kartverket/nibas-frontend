@@ -3,7 +3,7 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { LayerId } from "./layers/types";
 import { addEditedFeaturesToSource, addFeaturesToSource } from "utils/map/source";
-import { getAllVisibleFeatures, zoomToFeatures } from "utils/map";
+import { getAllVisibleFeatures, zoomToFeatures } from "utils/map/map-utils";
 
 /**
  * Hook for å sette features som kommer async inn i en layer sin source. Venter til features

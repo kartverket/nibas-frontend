@@ -3,8 +3,13 @@ import { kartlagLayers } from "hooks/layers/constants";
 import { KartlagId } from "hooks/layers/types";
 import { getLayersFromSource } from "contexts/KartlagContext/getLayersFromSource";
 import { getLayerById, isWMSLayer, isWMTSLayer } from "utils/map/layers";
-import { resetWMSLayer, resetWMTSLayer, setWMTSLayerVisibility } from "pages/Kart/OverlayPanels/Kartlag/utils";
-import { findAndToggleLayer, toggleLayerVisibility } from "./utils";
+import {
+  findAndToggleLayer,
+  resetWMSLayer,
+  resetWMTSLayer,
+  setWMTSLayerVisibility,
+  toggleLayerVisibility,
+} from "./kartlag-utils";
 
 export type MappedLayer = {
   type: "wms" | "wmts";
@@ -26,9 +31,6 @@ export type KartlagContextValue = {
 // men den vil ikke fungere dersom tjenesten endrer navn på kartlaget
 export const defaultKartlag = "norges_grunnkart_graatone";
 
-/**
- * Bruk heller KartlagProvider i koden
- */
 export const KartlagContext = createContext<KartlagContextValue | undefined>(undefined);
 
 export const KartlagProvider = ({ children }: { children: React.ReactNode }) => {

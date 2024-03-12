@@ -8,9 +8,9 @@ import {
   UseTilhorighet,
   mapGrunnkretsResponseToKrets,
   mapStemmekretResponseToKrets,
-} from "./tilhorighetUtils";
-import { GrunnkretsResponse, StemmekretsResponse } from "../../../../types/api";
+} from "./tilhorighet-utils";
 import { useTilhorighetForm } from "./useTilhorighetForm";
+import { GrunnkretsResponse, StemmekretsResponse } from "../../../../types/api";
 
 // Tar api respons for grunnkretser og stemmekretser og gir det tilbake på Krets typen pakket inn i TilhorighetOptions
 const getMuligeKretserForCommonGrense = (

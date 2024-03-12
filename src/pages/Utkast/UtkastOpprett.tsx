@@ -150,7 +150,6 @@ const FormContent = styled.div`
   gap: 32px;
 `;
 
-// TODO: kvib har ikke 500-variant av mulish, bruker bold i mellomtiden
 const FormSection = styled(FormControl)`
   display: flex;
   flex-direction: column;

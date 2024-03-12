@@ -3,13 +3,14 @@ import { components } from "../../../types/api-gen";
 import { GrunnkretsResponse, StemmekretsResponse, UtkastOperasjoner } from "../../../types/api";
 
 export type OperasjonerOrNull = UtkastOperasjoner | null | undefined;
+
 export const getKretserMedGrensejusteringer = (
   operasjoner: OperasjonerOrNull,
   type: "STEMMEKRETS" | "GRUNNKRETS",
 ): string[] => {
   const endredeFeaturesMap = operasjoner?.grenseendringer?.endredeFeatures;
 
-  if (endredeFeaturesMap == null || operasjoner == null) {
+  if (!endredeFeaturesMap || !operasjoner) {
     return [];
   }
 
@@ -50,7 +51,7 @@ export function groupEndringerByKommune(
       return [kretsId, krets?.kommunenummer.id];
     })
     .reduce((acc: { [key: string]: string[] }, [stemmekretsid, kommune]) => {
-      if (kommune == null) {
+      if (!kommune) {
         return acc;
       }
       return { ...acc, [kommune]: addToList(stemmekretsid, acc[kommune]) };
@@ -59,7 +60,7 @@ export function groupEndringerByKommune(
 
 export function findKrets<T extends StemmekretsResponse | GrunnkretsResponse>(id: string, kretser: T[]): T {
   const resultat = kretser.find((krets) => krets.id.lokalid.value === id);
-  if (resultat == null) {
+  if (!resultat) {
     throw Error(
       `Kunne ikke finne krets med id: ${id}. Dette skal egentlig ikke skje, og kan tyde på feil i implementasjonen. Gjerne ta kontakt med Team Smia om feilen vedvarer.`,
     );
