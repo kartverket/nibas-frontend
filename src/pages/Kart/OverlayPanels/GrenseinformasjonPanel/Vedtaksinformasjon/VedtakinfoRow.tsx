@@ -25,7 +25,7 @@ export const VedtakinfoRow = ({ children, tooltipLabel, name, error }: Props) =>
           <TextWithIcon onMouseOver={() => setIconHovered(true)} onMouseOut={() => setIconHovered(false)}>
             <Label>{name}</Label>
             <InfoIcon>
-              <Icon size={24} color="var(--kvib-colors-blue-500)" isFilled={iconHovered} icon={"info"}></Icon>
+              <Icon size={24} color="var(--kvib-colors-blue-500)" isFilled={iconHovered} icon="info"></Icon>
             </InfoIcon>
           </TextWithIcon>
         </Tooltip>
