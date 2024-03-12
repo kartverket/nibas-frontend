@@ -10,13 +10,13 @@ import { useHistory } from "contexts/HistoryContext";
 export type GrenseinformasjonFormProps = {
   grenseType: string;
   datafangstDato: Date | undefined;
-  maalemetode: string;
-  noeyaktighet: number;
-  opphav: string;
-  informasjon: string;
+  maalemetode: string | undefined;
+  noeyaktighet: number | undefined;
+  opphav: string | undefined;
+  informasjon: string | undefined;
 };
 
-const getDefaultValuesFromFeature = (feature: Feature) => {
+const getDefaultValuesFromFeature = (feature: Feature): GrenseinformasjonFormProps => {
   const featureProperties = feature.getProperties() as FeatureProperties;
   const metadata = featureProperties.metadata as Metadata;
 

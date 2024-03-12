@@ -4,7 +4,7 @@ import { useState } from "react";
 
 interface Props {
   name: string;
-  valueLabel?: string | number | null;
+  valueLabel?: string | null;
   tooltipLabel: string;
   children?: React.ReactNode;
   isLoading?: boolean;
@@ -62,13 +62,11 @@ const EditContent = styled.div`
 
 const Row = styled.div`
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
 `;
 
 const TextWithIcon = styled.div`
   display: flex;
-  flex-direction: row;
   align-items: center;
 `;
 

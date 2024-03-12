@@ -61,10 +61,10 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
 
   const properties = feature.getProperties() as FeatureProperties;
   const metadata = properties.metadata as Metadata;
-  const gyldigTil = properties.metadata ? metadata.common?.gyldigTil : undefined;
+  const gyldigTil = metadata.common?.gyldigTil;
   const isCommonFieldDisabled = isGrenseinformasjonPanelDisabled || metadata?.common?.gyldigTil != null;
 
-  const getMaalemetodeText = (maalemetoder: KodelisteRespons, id: string) => {
+  const getMaalemetodeText = (maalemetoder: KodelisteRespons, id: string | undefined) => {
     if (!id) return "Ikke spesifisert";
 
     const maalemetode = maalemetoder.items.find((item) => item.id === id);
@@ -247,7 +247,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
       <GrenseinformasjonRow
         name="Nøyaktighet (cm)"
         tooltipLabel="Antatt posisjonsnøyaktighet i grunnriss (x, y) oppgitt i cm. Den nøyaktigheten som angis bør være så nær det virkelige objektet som mulig."
-        valueLabel={getValues("noeyaktighet")}
+        valueLabel={getValues("noeyaktighet")?.toString()}
         isEditing={isEditing}
       >
         <Input type="number" {...register("noeyaktighet")} />
@@ -263,12 +263,12 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
       </GrenseinformasjonRow>
 
       <GrenseinformasjonRow
-        name={"Ekstra informasjon"}
-        tooltipLabel={"Åpent felt med ekstra informasjon om grensen"}
+        name="Ekstra informasjon"
+        tooltipLabel="Åpent felt med ekstra informasjon om grensen"
         valueLabel={getValues("informasjon")}
         isEditing={isEditing}
       >
-        {<Textarea placeholder="Fyll inn ekstra informasjon" {...register("informasjon")} />}
+        <Textarea placeholder="Fyll inn ekstra informasjon" {...register("informasjon")} />
       </GrenseinformasjonRow>
     </FormContainer>
   );
