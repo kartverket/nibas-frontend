@@ -1,4 +1,15 @@
-import { Checkbox, CloseButton, Divider, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Switch } from "@kvib/react";
+import {
+  Button,
+  Checkbox,
+  CloseButton,
+  Divider,
+  Menu,
+  MenuButton,
+  MenuDivider,
+  MenuItem,
+  MenuList,
+  Switch,
+} from "@kvib/react";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
@@ -113,6 +124,7 @@ const Toolbar = () => {
     isPanningAllowed,
   );
 
+  const [isSnappingMenuOpen, setIsSnappingMenuOpen] = useState(false);
   // Alt her er en prioritert rekkefølge på hva som bør "exites" først. Det kan sikkert itereres litt på, men dette er et foreløpig forslag
   useKeyboardShortcut("escape", () => {
     if (activeTool === "draw") {
@@ -129,6 +141,11 @@ const Toolbar = () => {
           return;
         }
       }
+    }
+
+    if (isSnappingMenuOpen) {
+      setIsSnappingMenuOpen(false);
+      return;
     }
 
     if (activeOverlayPanel) {
@@ -220,13 +237,19 @@ const Toolbar = () => {
             Matrikkel
           </ToolbarButton>
           <ConditionalHide below="xl" condition={!!activeOverlayPanel}>
-            <Menu closeOnSelect={false} closeOnBlur={false}>
+            <Menu
+              closeOnSelect={false}
+              closeOnBlur={false}
+              onClose={() => setIsSnappingMenuOpen(false)}
+              isOpen={isSnappingMenuOpen}
+            >
               {({ onClose }) => {
                 return (
                   <>
                     <MenuButton
+                      onClick={() => setIsSnappingMenuOpen(!isSnappingMenuOpen)}
+                      isActive={activeModeTools.includes("snap_nibas") || activeModeTools.includes("snap_matrikkel")}
                       as={ToolbarButton}
-                      isActive={false}
                       aria-label="Snap til kartlag"
                       icon="layers"
                       tooltip={{ text: "Skru av/på snapping mot kartlag." }}
