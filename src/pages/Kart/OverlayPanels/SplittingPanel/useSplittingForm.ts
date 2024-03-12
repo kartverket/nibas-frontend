@@ -91,7 +91,7 @@ export const useSplittingForm = (flatedata: Flatedata) => {
   const showSplittingSuccessToast = (
     opprinneligKretsInfo: Krets,
     nyeKretser: { kretsNavn: string; kretsNummer: string }[],
-    isUpdateOfSplitting: boolean,
+    isUpdateOfPreviouslyPerformedSplit: boolean,
   ) => {
     const nyeKretserFormatted = nyeKretser.map((k) => `${k.kretsNummer} ${k.kretsNavn}`);
     const allButLastKretserFormatted = nyeKretserFormatted.slice(0, nyeKretserFormatted.length - 1);
@@ -103,7 +103,7 @@ export const useSplittingForm = (flatedata: Flatedata) => {
 
     toast({
       status: "success",
-      title: !isUpdateOfSplitting
+      title: !isUpdateOfPreviouslyPerformedSplit
         ? `Du opprettet ${nyeKretserString} ved å splitte ${opprinneligKretsInfo.nummer} ${opprinneligKretsInfo.navn}`
         : `Oppdaterte splittingen av ${opprinneligKretsInfo.nummer} ${opprinneligKretsInfo.navn} til å inneholde ${nyeKretserString}. Husk å sjekke at tilhørigheten til nærliggende grenser er korrekt.`,
     });
@@ -142,7 +142,7 @@ export const useSplittingForm = (flatedata: Flatedata) => {
 
         const latestOperasjoner = getUpdateUtkastRequestFromHistory()?.operasjoner; // Vi vil lagre utkastet med de eksisterende endringene også
         if (utkast && latestOperasjoner) {
-          const isUpdateOfSplitting = // hvis vi allerede har en splitting på samme krets ønsker vi å erstatte den med den nye splittingen
+          const isUpdateOfPreviouslyPerformedSplit = // hvis vi allerede har en splitting på samme krets ønsker vi å erstatte den med den nye splittingen
             latestOperasjoner.kretsDelingEndringer.some(
               (splitting) => splitting.opprinneligKrets.lokalId === opprinneligKrets.lokalId,
             );
@@ -162,7 +162,7 @@ export const useSplittingForm = (flatedata: Flatedata) => {
               ],
             },
           });
-          showSplittingSuccessToast(opprinneligKretsInfo, exclusivelyNewKretser, isUpdateOfSplitting);
+          showSplittingSuccessToast(opprinneligKretsInfo, exclusivelyNewKretser, isUpdateOfPreviouslyPerformedSplit);
         }
       }
     }
