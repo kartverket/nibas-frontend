@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import GrunnkretsRow from "./GrunnkretsRow";
-import { useUtkast, useUtkastEntity } from "contexts/UtkastContext";
+import { useUtkast, useUtkastEntity } from "contexts/UtkastContext/UtkastContext";
 import useSearch from "hooks/useSearch";
 import { GrunnkretsResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";

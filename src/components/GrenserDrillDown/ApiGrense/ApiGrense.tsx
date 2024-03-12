@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import ToggleableGrense from "../ToggleableGrense";
+import ToggleableGrense from "../ToggleableGrense/ToggleableGrense";
 import useApiGrense from "./useApiGrense";
-import { EditingType } from "contexts/EditGrenserContext";
+import { EditingType } from "contexts/EditGrenserContext/types";
 import { useEditGrenseValue } from "contexts/EditGrenserContext/EditGrenserContext";
 import { FylkeRef, GrenseRef, KommuneRef } from "types/api";
 import { getNavnInSpraak } from "utils/language/language";

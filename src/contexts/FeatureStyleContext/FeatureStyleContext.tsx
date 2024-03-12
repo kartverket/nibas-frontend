@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo } from "react";
-import { HistoryEntry, HistoryTypeValues, useHistory } from "contexts/HistoryContext";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { FeatureStyleContextValue, SelectedFeatures } from "./types";
 import { useSelectStyles } from "./useSelectStyles";
 import { getArchiveLayerStyle, grenseStyles, setFeatureStyle } from "utils/map/layerStyles";
@@ -15,6 +15,7 @@ import {
   getFeaturesConnectedToFeatureAtEndpoints,
   isFeatureDeadEnd,
 } from "utils/features";
+import { HistoryEntry, HistoryTypeValues } from "contexts/HistoryContext/types";
 
 export const FeatureStyleContext = createContext<FeatureStyleContextValue | undefined>(undefined);
 

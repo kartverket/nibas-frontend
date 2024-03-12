@@ -1,7 +1,7 @@
 import { styled } from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { Heading, IconButton, Menu, MenuButton, MenuDivider, MenuList, Text } from "@kvib/react";
-import { getDateInFriendlyString } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/utils";
+import { getDateInFriendlyString } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
 import { UtkastResponse } from "types/api";
 import UtkastSlett from "./UtkastSlett";
 import UtkastPubliser from "./UtkastPubliser";
