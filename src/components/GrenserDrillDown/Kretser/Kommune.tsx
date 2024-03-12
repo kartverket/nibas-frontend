@@ -18,7 +18,7 @@ const Kommune = ({ kommune }: Props) => {
   const { utkast } = useUtkast();
   const { history, clearHistory } = useHistory();
   const { openOverlayModal, setFlatedata } = useOverlayPanel();
-  const { kommuneValues, toggleEditKretser, toggleKretser, lasterData, currentKretstype } =
+  const { kommuneValues, toggleEditKretser, toggleKretser, lasterData, currentKretstype, setLasterData } =
     useInndelingerKrets(kommune);
 
   const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } = useAlertModal(
@@ -36,6 +36,7 @@ const Kommune = ({ kommune }: Props) => {
     if (history.entries.length > 0) {
       openModal();
     } else {
+      setLasterData(true);
       toggleEditKretser();
     }
   };
