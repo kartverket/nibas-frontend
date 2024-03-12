@@ -1,6 +1,6 @@
 import { render, screen } from "test/test-utils";
 import ToggleableGrense from "./ToggleableGrense";
-import { KretsStatus } from "contexts/EditGrenserContext";
+import { KretsStatus } from "contexts/EditGrenserContext/types";
 import { mockBasicFeature } from "mocks/handlers/responses";
 
 const defaultProps: React.ComponentProps<typeof ToggleableGrense> = {

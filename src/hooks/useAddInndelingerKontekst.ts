@@ -1,4 +1,4 @@
-import { EditingType } from "contexts/EditGrenserContext";
+import { EditingType } from "contexts/EditGrenserContext/types";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { useEffect } from "react";

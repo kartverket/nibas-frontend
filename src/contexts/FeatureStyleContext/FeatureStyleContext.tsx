@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo } from "react";
-import { HistoryEntry, HistoryTypeValues, useHistory } from "contexts/HistoryContext";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { FeatureStyleContextValue, SelectedFeatures } from "./types";
 import { useSelectStyles } from "./useSelectStyles";
 import { getArchiveLayerStyle, grenseStyles, setFeatureStyle } from "utils/map/layerStyles";
@@ -15,6 +15,8 @@ import {
   getFeaturesConnectedToFeatureAtEndpoints,
   isFeatureDeadEnd,
 } from "utils/features";
+import { HistoryEntry, HistoryTypeValues } from "contexts/HistoryContext/types";
+import { removeNull } from "utils/list-utils";
 
 export const FeatureStyleContext = createContext<FeatureStyleContextValue | undefined>(undefined);
 
@@ -51,7 +53,8 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
   const clearSelection = () => {
     const deselectedFeatures = removeSelection();
     for (const feature of deselectedFeatures) {
-      const featureId = feature.getId() as string;
+      const featureId = feature.getId()?.toString();
+      if (!featureId) continue;
 
       // Dersom featuren har en aktiv stil faller vi tilbake til den
       const matchingCustomStyle = customStyles.find((customStyle) => customStyle.customFeatureIds.includes(featureId));
@@ -91,7 +94,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       //change.id har den gamle grensens ID, vi trenger de to nye grensene!
       if (entry.type === "grensedeling") {
         const changesTo = change.to as Feature<Geometry>[];
-        const idsToAppend = changesTo?.map((feature) => feature.getId() as string);
+        const idsToAppend = removeNull(changesTo?.map((feature) => feature.getId()?.toString()));
         if (idsToAppend) featureIds.push(...idsToAppend);
       }
     });
@@ -217,7 +220,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
   };
 
   const featureIsArchived = (feature: FeatureLike) => {
-    const featureId = feature.getId() as string;
+    const featureId = feature.getId()?.toString();
     if (featureId) {
       return (
         archivedStyleFunctions.customFeatureIds.includes(featureId) ||

@@ -29,15 +29,15 @@ type ModifierKeysOption = {
 };
 
 const checkModifierKeys = (event: KeyboardEvent, modifierKeys: ModifierKeysOption): boolean => {
-  if (!!modifierKeys.control != (event.ctrlKey || event.metaKey)) {
+  if (!!modifierKeys.control !== (event.ctrlKey || event.metaKey)) {
     return false;
   }
 
-  if (!!modifierKeys.shift != event.shiftKey) {
+  if (!!modifierKeys.shift !== event.shiftKey) {
     return false;
   }
 
-  if (!!modifierKeys.alt != event.altKey) {
+  if (!!modifierKeys.alt !== event.altKey) {
     return false;
   }
 

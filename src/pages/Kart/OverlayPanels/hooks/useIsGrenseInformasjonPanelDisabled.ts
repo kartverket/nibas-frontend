@@ -1,4 +1,4 @@
-import { useFeatureStyle } from "contexts/FeatureStyleContext";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { Feature } from "ol";
 import { isFeatureMetadataEditable } from "utils/features";
 import { editSource } from "hooks/layers/constants";

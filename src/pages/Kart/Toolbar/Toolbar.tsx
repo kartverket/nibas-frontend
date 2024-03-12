@@ -1,5 +1,5 @@
 import { Checkbox, CloseButton, Divider, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Switch } from "@kvib/react";
-import { useEditAllGrenser } from "contexts/EditGrenserContext";
+import { useEditAllGrenser } from "contexts/EditGrenserContext/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useHoldButtonToggle, useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
@@ -14,7 +14,7 @@ import { Draw } from "ol/interaction";
 import { useState } from "react";
 
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
-import { useFeatureStyle } from "contexts/FeatureStyleContext";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 
 const Toolbar = () => {
   const { activeTool, activeModeTools, toggleTool, toggleModeTool, enableModeTool, disableModeTool, resetTool } =
@@ -94,7 +94,7 @@ const Toolbar = () => {
   const [panningEnabled, setPanningEnabled] = useState(true);
 
   addEventListener("mouseup", () => {
-    if (activeTool == null || activeTool !== "draw") return;
+    if (activeTool === null || activeTool !== "draw") return;
 
     if (isPanningAllowed()) setPanningEnabled(true);
     else setPanningEnabled(false);
@@ -245,12 +245,12 @@ const Toolbar = () => {
                     >
                       Snap
                     </MenuButton>
-                    <MenuList minWidth="240px" marginBottom={"10px"}>
+                    <MenuList minWidth="240px" marginBottom="10px">
                       <SnappingMenuHeader>
                         <SnappingToggle>
                           <Switch
                             aria-label="Switch medium"
-                            marginRight={"5px"}
+                            marginRight="5px"
                             isChecked={
                               activeModeTools.includes("snap_matrikkel") || activeModeTools.includes("snap_nibas")
                             }
@@ -258,7 +258,7 @@ const Toolbar = () => {
                           />
                           <SnappingTitle>Snapping</SnappingTitle>
                         </SnappingToggle>
-                        <CloseButton marginRight={"8px"} onClick={onClose} />
+                        <CloseButton marginRight="8px" onClick={onClose} />
                       </SnappingMenuHeader>
                       <MenuDivider />
                       <MenuItem>

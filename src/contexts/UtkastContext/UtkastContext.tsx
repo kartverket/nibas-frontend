@@ -10,13 +10,12 @@ import {
   applyNonFeatureUtkast,
   historyToUtkastOperations,
   toCleanUtkast,
-} from "./utils";
+} from "./utkast-utils";
 import { updateUtkastApi } from "api/utkast";
-import { HistoryChange, useHistory } from "contexts/HistoryContext";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { HistoryChange } from "contexts/HistoryContext/types";
 import useNibasApi from "hooks/useNibasApi";
 import { ApiErrorResponse, FeatureCollection, OppdaterUtkastRequest, UtkastResponse } from "types/api";
-import { resetMapView } from "utils/map";
-import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
@@ -28,14 +27,12 @@ import { useToolbar } from "contexts/ToolbarContext";
 import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { addEditedFeaturesToSource, removeEditedFeaturesFromSourceByIds } from "utils/map/source";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
-import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
+import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { FeatureIdWithEndpoints, getAllFeatureEndPointCoordinates, isFeatureDeadEnd } from "utils/features";
+import { useEditAllGrenser } from "contexts/EditGrenserContext/EditGrenserContext";
+import { resetMapView } from "utils/map/map-utils";
+import { removeNull } from "utils/list-utils";
 
-// down the line kan vi kalle mutate på URLen etter lagring for å oppdatere staten!
-
-/**
- * Bruk heller UtkastProvider i koden
- */
 export const UtkastContext = createContext<UtkastContextValue | undefined>(undefined);
 
 export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
@@ -165,8 +162,8 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
       if (oldFeatures) {
         const oldFeaturesWithTempId = oldFeatures
           .filter((feature) => isTempFeatureId(feature.id))
-          .map((feature) => feature.id as string);
-        removeEditedFeaturesFromSourceByIds(oldFeaturesWithTempId);
+          .map((feature) => feature.id);
+        removeEditedFeaturesFromSourceByIds(removeNull(oldFeaturesWithTempId));
       }
 
       const updatedUtkastWithTempFeatureIds = addTempFeatureIdToNewFeaturesInUtkast(updatedUtkast);

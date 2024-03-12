@@ -1,6 +1,6 @@
 import { KretsTable } from "../KretsTable";
 import StemmekretsRow from "./StemmekretsRow";
-import { useUtkast, useUtkastEntity } from "contexts/UtkastContext";
+import { useUtkast, useUtkastEntity } from "contexts/UtkastContext/UtkastContext";
 import { StemmekretsResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
