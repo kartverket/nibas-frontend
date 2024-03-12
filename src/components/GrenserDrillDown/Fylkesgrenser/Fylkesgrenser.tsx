@@ -1,5 +1,5 @@
 import useFylkesgrenser from "hooks/inndelinger/useFylkesgrenser";
-import FylkeList from "./FylkeList";
+import FylkeList from "./FylkeList/FylkeList";
 import EditableGrenseAccordion from "../EditableGrenseAccordion";
 
 const Fylkesgrenser = () => {

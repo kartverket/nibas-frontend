@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { styled } from "styled-components";
 import { map, overlayPopup } from "./constants";
-import { useFeatureStyle } from "contexts/FeatureStyleContext";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 
 const OverlayPopup = () => {
   const { selectedFeatures } = useFeatureStyle();

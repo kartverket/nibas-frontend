@@ -8,7 +8,7 @@ import useSelectPoint from "./useSelectPoint";
 import { Tool, useToolbar } from "contexts/ToolbarContext";
 import { GrenseId } from "hooks/layers/types";
 import { useCursorStyles } from "./useCursorStyles";
-import { SnapData, createKartlagSnapsData } from "./snappingUtil";
+import { SnapData, createKartlagSnapsData } from "./snapping-utils";
 
 const useInteractions = () => {
   const { modify } = useModify();

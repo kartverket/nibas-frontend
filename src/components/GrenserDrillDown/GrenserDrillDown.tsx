@@ -1,7 +1,7 @@
-import Fylkesgrenser from "./Fylkesgrenser";
-import Grunnkretser from "./Grunnkretser";
-import Kommunegrenser from "./Kommunegrenser";
-import Stemmekretser from "./Stemmekretser";
+import Fylkesgrenser from "./Fylkesgrenser/Fylkesgrenser";
+import Grunnkretser from "./Grunnkretser/Grunnkretser";
+import Kommunegrenser from "./Kommunegrenser/Kommunegrenser";
+import Stemmekretser from "./Stemmekretser/Stemmekretser";
 import { SidebarPanel } from "components/Sidebar/SidebarPanel";
 import SidebarPanelTitle from "components/Sidebar/SidebarPanelTitle";
 import { UnstyledList } from "components/UnstyledList";

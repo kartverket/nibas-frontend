@@ -40,7 +40,10 @@ export const useSelectStyles = () => {
 
   const clearSelectedPoint = () => {
     if (selectedPoint) {
-      removeFeaturesFromSourceByIds("edit", [selectedPoint.getId() as string]);
+      const selectedPointId = selectedPoint.getId()?.toString();
+      if (selectedPointId) {
+        removeFeaturesFromSourceByIds("edit", [selectedPointId]);
+      }
     }
     setSelectedPoint(null);
   };
