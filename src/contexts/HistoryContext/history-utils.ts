@@ -128,25 +128,32 @@ export const undoArchving = (entry: GrenseArkiveringsEntry) => {
 export const redoGrensedeling = (deltFeature: Feature, newFeaturesFromsDeling: Feature[]) => {
   const properties = deltFeature.getProperties() as FeatureProperties;
   deltFeature.setProperties({ ...properties, shouldArchive: true });
-  const deltFeatureId = deltFeature.getId() as string;
-  addFeaturesToSource("edit", newFeaturesFromsDeling);
-  removeFeaturesFromSourceByIds("edit", [deltFeatureId]);
+  const deltFeatureId = deltFeature.getId()?.toString();
+  if (deltFeatureId) {
+    addFeaturesToSource("edit", newFeaturesFromsDeling);
+    removeFeaturesFromSourceByIds("edit", [deltFeatureId]);
 
-  // Hvis featuren som ble delt er en eksisterende feature vil vi vise den som arkivert
-  if (!isTempFeatureId(deltFeatureId)) {
-    addFeaturesToSource("archived", [deltFeature]);
+    // Hvis featuren som ble delt er en eksisterende feature vil vi vise den som arkivert
+    if (!isTempFeatureId(deltFeatureId)) {
+      addFeaturesToSource("archived", [deltFeature]);
+    }
   }
 };
 
 export const undoGrensedeling = (deltFeature: Feature, newFeaturesFromsDeling: Feature[]) => {
-  const idsToRemove = newFeaturesFromsDeling.map((feature) => feature.getId() as string);
+  const idsToRemove = removeNull(newFeaturesFromsDeling.map((feature) => feature.getId()?.toString()));
   const properties = deltFeature.getProperties() as FeatureProperties;
   deltFeature.setProperties({ ...properties, shouldArchive: false });
+
   removeFeaturesFromSourceByIds("edit", idsToRemove);
   addFeaturesToSource("edit", [deltFeature]);
 
-  // Om featuren som ble splittet ikke var en ny grense vises den som artkivert, vi må derfor fjerne den fra archived layer
-  if (!isTempFeatureId(deltFeature.getId())) {
-    removeFeaturesFromSourceByIds("archived", [deltFeature.getId() as string]);
+  const deltFeatureId = deltFeature.getId()?.toString();
+
+  if (deltFeatureId) {
+    if (!isTempFeatureId(deltFeatureId)) {
+      removeFeaturesFromSourceByIds("archived", [deltFeatureId]);
+    }
   }
+  // Om featuren som ble splittet ikke var en ny grense vises den som artkivert, vi må derfor fjerne den fra archived layer
 };

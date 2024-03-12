@@ -142,9 +142,11 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
       const changes: HistoryChange<MinimalGrense>[] = [];
 
       for (const feature of selectedFeatures) {
-        const featureId = feature.getId() as string;
+        const featureId = feature.getId()?.toString();
         const geometry = feature.getGeometry() as LineString;
         const coordinates = geometry.getCoordinates();
+
+        if (!featureId) continue;
 
         // Siden OL-objekter er mutable og vi trenger dette til senere:
         const originalCoordinates = [...coordinates];

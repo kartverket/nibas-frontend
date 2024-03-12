@@ -85,7 +85,7 @@ const addMetadataEntryFromFeature = (
   addHistoryEntry: (entry: PropertyEntry) => void,
   updatedMetadata: Metadata,
 ) => {
-  const id = feature.getId();
+  const id = feature.getId()?.toString();
   const oldProperties = feature.getProperties() as FeatureProperties;
 
   if (!id) return;
@@ -96,7 +96,7 @@ const addMetadataEntryFromFeature = (
     type: "property",
     changes: [
       {
-        id: id as string,
+        id: id,
         from: oldProperties,
         to: feature.getProperties() as FeatureProperties,
       },

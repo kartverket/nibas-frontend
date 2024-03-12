@@ -39,7 +39,9 @@ const useSplit = () => {
     const oldGeometry = oldFeature.getGeometry();
     if (oldGeometry instanceof LineString) {
       const allFeatureCoordinates = oldGeometry.getCoordinates();
-      const oldFeatureId = oldFeature.getId() as string;
+      const oldFeatureId = oldFeature.getId()?.toString();
+
+      if (!oldFeatureId) return;
 
       // Ikke vits å gjøre splitting med mindre du har en linje med minst tre punkter
       if (allFeatureCoordinates.length > 2) {

@@ -9,7 +9,7 @@ import { getMetadataDiscriminatorFromType } from "utils/grenser";
 import { getDefaultFeatureProperties } from "utils/features";
 
 export const getInfoFromFeature = (featureLike: FeatureLike) => {
-  const featureId = featureLike.getId();
+  const featureId = featureLike.getId()?.toString();
   const geometry = featureLike.getGeometry() as LineString;
   return { coordinates: geometry.getCoordinates(), featureId };
 };
@@ -27,7 +27,7 @@ export const createGrenseHistoryChange = (features: Feature[], grenseType?: Gren
 
         if (!coordinates || !featureId) return;
         changes.push({
-          id: featureId as string,
+          id: featureId,
           from: {
             coordinates: feature.get(previousCoordinateKey) || [],
             type: grenseType,
@@ -69,7 +69,7 @@ export const createNyGrenseHistoryChanges = (features: Feature[], grenseType: Gr
         };
 
         changes.push({
-          id: featureId as string,
+          id: featureId,
           from: fromChange,
           to: toChange,
         });

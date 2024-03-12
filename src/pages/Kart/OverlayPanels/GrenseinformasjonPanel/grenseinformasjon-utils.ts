@@ -22,7 +22,7 @@ export const addFeaturePropertiesEntryFromFeature = (
   addHistoryEntry: (entry: PropertyEntry) => void,
   updatedFeatureProperties: FeatureProperties,
 ) => {
-  const id = feature.getId();
+  const id = feature.getId()?.toString();
 
   if (!id) return;
 
@@ -34,7 +34,7 @@ export const addFeaturePropertiesEntryFromFeature = (
     type: "property",
     changes: [
       {
-        id: id as string,
+        id: id,
         from: oldFeatureProperties,
         to: updatedFeatureProperties,
       },
@@ -47,7 +47,7 @@ export const addPropertyEntryFromFeature = (
   addHistoryEntry: (entry: PropertyEntry) => void,
   updatedProperties: FeatureProperties,
 ) => {
-  const id = feature.getId();
+  const id = feature.getId()?.toString();
 
   if (!id) return;
 
@@ -59,7 +59,7 @@ export const addPropertyEntryFromFeature = (
     type: "property",
     changes: [
       {
-        id: id as string,
+        id: id,
         from: oldProperties,
         to: feature.getProperties() as FeatureProperties,
       },
@@ -71,7 +71,7 @@ export const addArchivingEntryFromFeature = (
   feature: Feature<LineString>,
   addHistoryEntry: (entry: GrenseArkiveringsEntry) => void,
 ) => {
-  const id = feature.getId();
+  const id = feature.getId()?.toString();
   if (!id) return;
 
   const oldProperties = feature.getProperties() as FeatureProperties;
@@ -85,7 +85,7 @@ export const addArchivingEntryFromFeature = (
     type: "grensearkivering",
     changes: [
       {
-        id: id as string,
+        id: id,
         from: oldProperties,
         to: newProperties,
       },
@@ -98,7 +98,7 @@ export const addKontekstEntryFromFeature = (
   updatedKontekstEgenskaper: KontekstEgenskaper[],
   addHistoryEntry: (entry: GrenseTilhorighetEntry) => void,
 ) => {
-  const id = feature.getId();
+  const id = feature.getId()?.toString();
   if (!id) return;
 
   const oldProperties = feature.getProperties() as FeatureProperties;
@@ -114,7 +114,7 @@ export const addKontekstEntryFromFeature = (
     type: "grensetilhorighetendring",
     changes: [
       {
-        id: id as string,
+        id: id,
         from: oldKontekstEgenskaper || ({} as KontekstEgenskaper),
         to: updatedKontekstEgenskaper,
       },
