@@ -27,9 +27,10 @@ type GetQueryParameters<T extends ApiPath> = paths[T] extends {
   : unknown;
 
 // slå sammen path og query parametere
-type GetParameters<T extends ApiPath> = GetPathParameters<T> & GetQueryParameters<T> extends Record<string, unknown>
-  ? GetPathParameters<T> & GetQueryParameters<T>
-  : never;
+type GetParameters<T extends ApiPath> =
+  GetPathParameters<T> & GetQueryParameters<T> extends Record<string, unknown>
+    ? GetPathParameters<T> & GetQueryParameters<T>
+    : never;
 
 // hvis URLen inneholder en get, hent typen som endepunktet skal returnere
 type ResponseType<Path extends ApiPath> = paths[Path] extends {

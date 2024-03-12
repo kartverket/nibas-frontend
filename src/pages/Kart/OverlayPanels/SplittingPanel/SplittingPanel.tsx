@@ -109,12 +109,7 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
           {`Hvilken ${editingType} skal splittes?`}
         </Heading>
         <FormControl>
-          <FormLabel>
-            {editingType
-              ?.charAt(0)
-              .toUpperCase()
-              .concat(editingType?.slice(1))}
-          </FormLabel>
+          <FormLabel>{editingType?.charAt(0).toUpperCase().concat(editingType?.slice(1))}</FormLabel>
           <Select
             {...opprinneligKretsRegister}
             onChange={(e) => {
