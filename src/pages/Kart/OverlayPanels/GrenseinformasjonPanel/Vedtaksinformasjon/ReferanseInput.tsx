@@ -1,4 +1,4 @@
-import { Button, Divider, Input } from "@kvib/react";
+import { Button, Divider, FormControl, Input } from "@kvib/react";
 import { VedtakinfoRow } from "./VedtakinfoRow";
 import { InputName, Referanse, VedtakinfoForm } from "./Vedtaksinformasjon";
 import { styled } from "styled-components";
@@ -39,7 +39,7 @@ export const ReferanseInput = ({
     if (element?.value) {
       clearErrors();
       if (!inputIsValid(element.value, pattern)) {
-        setError(registerName, { type: "manual", message: 'Lenker må starte med "http(s)"' });
+        setError(registerName, { type: "manual", message: 'Lenker må starte med "http(s)://"' });
         return;
       }
       appendFn({ beskrivelse: element.value });
@@ -60,34 +60,36 @@ export const ReferanseInput = ({
         name={registerName}
         render={({ field }) => {
           return (
-            <VedtakinfoRow tooltipLabel={tooltipLabel} name={title} error={errors}>
-              <Input
-                id={registerName}
-                placeholder={placeholder}
-                backgroundColor="white"
-                onChange={(e) => {
-                  if (field.value === "") setAppendButtonDisabled(true);
-                  else setAppendButtonDisabled(false);
-                  field.onChange(e.target.value);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    const element = e.target as HTMLInputElement;
+            <FormControl isInvalid={!!errors}>
+              <VedtakinfoRow tooltipLabel={tooltipLabel} name={title} error={errors}>
+                <Input
+                  id={registerName}
+                  placeholder={placeholder}
+                  backgroundColor="white"
+                  onChange={(e) => {
+                    if (field.value === "") setAppendButtonDisabled(true);
+                    else setAppendButtonDisabled(false);
+                    field.onChange(e.target.value);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      const element = e.target as HTMLInputElement;
+                      appendReferanse(element);
+                      e.preventDefault();
+                    }
+                  }}
+                />
+                <LeggTilKnapp
+                  isDisabled={appendButtonDisabled}
+                  onClick={() => {
+                    const element = document.getElementById(registerName) as HTMLInputElement;
                     appendReferanse(element);
-                    e.preventDefault();
-                  }
-                }}
-              />
-              <LeggTilKnapp
-                isDisabled={appendButtonDisabled}
-                onClick={() => {
-                  const element = document.getElementById(registerName) as HTMLInputElement;
-                  appendReferanse(element);
-                }}
-              >
-                Legg til
-              </LeggTilKnapp>
-            </VedtakinfoRow>
+                  }}
+                >
+                  Legg til
+                </LeggTilKnapp>
+              </VedtakinfoRow>
+            </FormControl>
           );
         }}
       />
