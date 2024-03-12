@@ -66,7 +66,7 @@ const getSnapDataConfig = (grense: GrenseId, activeModeTools: ModeTool[], active
     (grenseType.isMatrikkel && snapTypes.includesMatrikkel) ||
     (snapTypes.includesMatrikkel && snapTypes.includesNibas);
 
-  const config = {
+  const config: SnapDataOptions = {
     snapEnabled: isSnappingEnabled,
     hoverEnabled: false,
   };
