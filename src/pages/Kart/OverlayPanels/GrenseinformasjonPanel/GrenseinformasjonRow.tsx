@@ -1,43 +1,27 @@
-import { Divider, Icon, SkeletonText, Text, Tooltip } from "@kvib/react";
+import { Icon, SkeletonText, Text, Tooltip } from "@kvib/react";
 import { styled } from "styled-components";
-import EditAndSaveButton from "../Flatedata/EditAndSaveButton";
-import { useEffect, useState } from "react";
-import { Geometry } from "ol/geom";
-import { Feature } from "ol";
+import { useState } from "react";
 
 interface Props {
-  feature: Feature<Geometry>;
   name: string;
-  valueLabel?: string;
+  valueLabel?: string | number | null;
   tooltipLabel: string;
-  children: React.ReactNode;
-  onMetadataSubmit: () => void;
-  isDisabled?: boolean;
-  isDirty: boolean;
-  isUneditable?: boolean;
+  children?: React.ReactNode;
   isLoading?: boolean;
-  reset: () => void;
+  isEditing?: boolean;
+  isRequired?: boolean;
 }
 
 const GrenseinformasjonRow = ({
-  feature,
+  isEditing,
   name,
   tooltipLabel,
   valueLabel,
   children,
-  onMetadataSubmit,
-  isDisabled,
-  isDirty,
-  isUneditable,
   isLoading,
-  reset,
+  isRequired,
 }: Props) => {
-  const [isEditing, setIsEditing] = useState(false);
   const [iconHovered, setIconHovered] = useState(false);
-
-  useEffect(() => {
-    setIsEditing(false);
-  }, [feature]);
 
   return (
     <Container>
@@ -45,34 +29,12 @@ const GrenseinformasjonRow = ({
         <Row>
           <Tooltip label={tooltipLabel} hasArrow placement="bottom">
             <TextWithIcon onMouseOver={() => setIconHovered(true)} onMouseOut={() => setIconHovered(false)}>
-              <Text as="b">{name}</Text>
+              <Text as="b">{`${name}${isRequired ? "" : " (valgfri)"}`}</Text>
               <InfoIcon>
                 <Icon size={24} color="var(--kvib-colors-blue-500)" isFilled={iconHovered} icon="info"></Icon>
               </InfoIcon>
             </TextWithIcon>
           </Tooltip>
-
-          {!isUneditable && (
-            <EditAndSaveButton
-              isDisabled={isDisabled}
-              isEditing={isEditing}
-              size="sm"
-              onSubmit={() => {
-                if (isDirty) {
-                  onMetadataSubmit();
-                }
-                setIsEditing(false);
-              }}
-              toggleEditing={() =>
-                setIsEditing((prevState) => {
-                  if (isEditing) {
-                    reset();
-                  }
-                  return !prevState;
-                })
-              }
-            />
-          )}
         </Row>
         {isEditing ? (
           <Field>{children}</Field>
@@ -82,7 +44,6 @@ const GrenseinformasjonRow = ({
           <Field>{valueLabel || "Ikke spesifisert"}</Field>
         )}
       </EditContent>
-      <Divider />
     </Container>
   );
 };
