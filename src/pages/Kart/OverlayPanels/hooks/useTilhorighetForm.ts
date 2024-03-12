@@ -1,9 +1,3 @@
-import { useHistory } from "contexts/HistoryContext";
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { useUtkast } from "contexts/UtkastContext";
-import { GrenseType } from "hooks/layers/types";
-import { Feature } from "ol";
-import { LineString } from "ol/geom";
 import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FeatureProperties, KontekstEgenskaper, KretsDelingEndringRequest, UtkastOperasjoner } from "types/api";
@@ -18,8 +12,14 @@ import {
   getKommunerIdFromKontekstEgenskaper,
   getTilhorighetData,
   getUpdatedKontekstEgenskaper,
-} from "./tilhorighetUtils";
-import { addKontekstEntryFromFeature } from "../GrenseinformasjonPanel/utils";
+} from "./tilhorighet-utils";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { Feature } from "ol";
+import { LineString } from "ol/geom";
+import { addKontekstEntryFromFeature } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import { GrenseType } from "hooks/layers/types";
 
 const mapGrenseTypeTilKontekstType = (grenseType: GrenseType): KontekstType => {
   switch (grenseType) {

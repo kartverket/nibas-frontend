@@ -12,9 +12,9 @@ import {
   getKretserMedGrensejusteringer,
   groupEndringerByKommune,
   OperasjonerOrNull,
-} from "./endringerUtils";
+} from "./endringer-utils";
 import { getNavnInSpraak } from "utils/language/language";
-import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighetUtils";
+import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 
 export const getGrunnkretserMedEndringer = (operasjoner: OperasjonerOrNull): string[] => {
   const endringerResponse = operasjoner?.metadataendringer?.grunnkretsendringer;
@@ -49,7 +49,7 @@ const getEndringAvTypeForId = (
 
   const gammelVerdi = gammelGrunnkrets[type]?.trim() ?? "";
 
-  if (gammelVerdi === nyVerdi || nyVerdi == null) {
+  if (gammelVerdi === nyVerdi || nyVerdi === null) {
     return null;
   }
 
@@ -61,7 +61,7 @@ const getEndringAvTypeForId = (
 
 const harMetadataEndring = (metadatEndring: GrunnkretsMetadataEndring): boolean => {
   const fieldsToCheck = [metadatEndring.navn, metadatEndring.grunnkretsnummer];
-  return fieldsToCheck.some((field) => field != null);
+  return fieldsToCheck.some((field) => field !== null);
 };
 
 const getMetadataEndringer = (
@@ -144,7 +144,7 @@ export const getGrunnkretsEndringer = (
   alleGrunnkretser: GrunnkretsResponse[],
   alleKommuner: KommuneRef[],
 ): Grunnkretsendringer[] | null => {
-  if (operasjoner == null || endredeGrunnkretser.length == 0) {
+  if (!operasjoner || endredeGrunnkretser.length === 0) {
     return null;
   }
 

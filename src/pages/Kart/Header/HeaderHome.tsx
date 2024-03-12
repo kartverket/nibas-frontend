@@ -1,4 +1,4 @@
-import { useHistory } from "contexts/HistoryContext";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import useAlertModal from "hooks/useAlertModal";
 import HeaderButton from "./HeaderButton";
 import AlertModal from "components/Modals/AlertModal";

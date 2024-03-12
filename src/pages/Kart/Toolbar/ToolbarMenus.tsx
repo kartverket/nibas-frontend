@@ -10,7 +10,7 @@ import {
   MenuList,
   MenuOptionGroup,
 } from "@kvib/react";
-import { useEditAllGrenser } from "contexts/EditGrenserContext";
+import { useEditAllGrenser } from "contexts/EditGrenserContext/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
@@ -167,7 +167,7 @@ const ToolbarMenus = () => {
       label: "Splitt en flate",
       icon: <Icon icon="cut" />,
       $isActive: splitIsActive,
-      isDisabled: !(editingType == "stemmekrets" || editingType == "grunnkrets"),
+      isDisabled: !(editingType === "stemmekrets" || editingType === "grunnkrets"),
       onClick: toggleSplitPanel,
       "aria-label": "Splitt en flate",
     },

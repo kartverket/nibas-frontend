@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { GrunnkretsEntry, HistoryDirection, useHistory } from "contexts/HistoryContext";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { GrunnkretsEntry, HistoryDirection } from "contexts/HistoryContext/types";
 import { useHistoryFormSync } from "contexts/HistoryContext/useHistoryFormSync";
 import { GrunnkretsRequest, GrunnkretsResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
@@ -9,7 +10,7 @@ import { getRepresentasjonspunktId } from "utils/map/source";
 import InputCell from "../InputCell";
 import { KretsRow } from "../KretsTable";
 import EditAndSaveButton from "../EditAndSaveButton";
-import { useUtkast } from "contexts/UtkastContext";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { styled } from "styled-components";
 
 type GrunnkretsInputs = {

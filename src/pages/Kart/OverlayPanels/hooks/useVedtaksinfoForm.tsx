@@ -3,7 +3,8 @@ import { useForm } from "react-hook-form";
 import { DokumentasjonsreferanseDTO, FeatureProperties, Metadata } from "types/api";
 import { VedtakinfoForm, Referanse } from "../GrenseinformasjonPanel/Vedtaksinformasjon/Vedtaksinformasjon";
 import { LineString } from "ol/geom";
-import { PropertyEntry, useHistory } from "contexts/HistoryContext";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { PropertyEntry } from "contexts/HistoryContext/types";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import {
   createUniqueIshValue,
@@ -84,7 +85,7 @@ const addMetadataEntryFromFeature = (
   addHistoryEntry: (entry: PropertyEntry) => void,
   updatedMetadata: Metadata,
 ) => {
-  const id = feature.getId();
+  const id = feature.getId()?.toString();
   const oldProperties = feature.getProperties() as FeatureProperties;
 
   if (!id) return;
@@ -95,7 +96,7 @@ const addMetadataEntryFromFeature = (
     type: "property",
     changes: [
       {
-        id: id as string,
+        id: id,
         from: oldProperties,
         to: feature.getProperties() as FeatureProperties,
       },
@@ -143,13 +144,13 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoId?: str
   const { addHistoryEntry } = useHistory();
 
   const deleteOrArchive = async (): Promise<boolean> => {
-    if (selectedVedtaksinfoId == undefined) return false;
+    if (selectedVedtaksinfoId === undefined) return false;
     const metadata = feature.getProperties().metadata as Metadata;
     const oldDokrefs: DokumentasjonsreferanseDTO[] = metadata.dokumentasjonsreferanser
       ? metadata.dokumentasjonsreferanser
       : [];
 
-    const selectedDokref = oldDokrefs.find((dokref) => dokref.id == selectedVedtaksinfoId);
+    const selectedDokref = oldDokrefs.find((dokref) => dokref.id === selectedVedtaksinfoId);
     if (!selectedDokref) return false;
 
     const isDeleting = isTempDokrefId(selectedDokref.id);

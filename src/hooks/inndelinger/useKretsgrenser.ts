@@ -3,9 +3,9 @@ import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import useNibasApi from "../useNibasApi";
-import { EditGrenserContext, useEditGrenseValue } from "contexts/EditGrenserContext";
+import { EditGrenserContext, useEditGrenseValue } from "contexts/EditGrenserContext/EditGrenserContext";
 import { Kretstype } from "contexts/InndelingerKretsContext";
-import { useUtkast, useUtkastFeature } from "contexts/UtkastContext";
+import { useUtkast, useUtkastFeature } from "contexts/UtkastContext/UtkastContext";
 import { LayerId } from "hooks/layers/types";
 import useAsyncFeatures from "hooks/useAsyncFeatures";
 import { getFeatureFromGeoJson, getFeaturesFromGeoJson } from "utils/map/geoJson";
@@ -13,7 +13,7 @@ import { removeFeaturesFromSourceByIds, getFeatureId, getRepresentasjonspunktId 
 import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
 import { stemmekretsgrenserFetcher } from "api/stemmekrets";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import { getAllVisibleFeatures, getZoomMode, zoomToFeatures } from "utils/map";
+import { getAllVisibleFeatures, getZoomMode, zoomToFeatures } from "utils/map/map-utils";
 import { getLayerById } from "utils/map/layers";
 import { FeatureProperties, GrunnkretsResponse, StemmekretsResponse } from "../../types/api";
 import { GeoJSONFeature } from "ol/format/GeoJSON";
@@ -109,7 +109,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     if (features.length > 0 && endredeFeatures.length > 0) {
       for (const endretFeature of endredeFeatures) {
         const id = endretFeature.id;
-        const actualFeature = features.find((feature) => feature.getId() == id);
+        const actualFeature = features.find((feature) => feature.getId() === id);
         if (id && actualFeature) {
           // Avgjør hvilken type endringsfarge featuren skal ha
           if (endretFeature.properties.shouldArchive) {
@@ -171,7 +171,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
 
   const { addFeaturesToLayer } = useAsyncFeatures(
     allFeatures,
-    getZoomMode(!!grenseValue.editing, context?.getCurrentlyEditingType() != null),
+    getZoomMode(!!grenseValue.editing, context?.getCurrentlyEditingType() !== null),
     () => {
       applyDirtyStylesToUtkastFeatures(allFeatures ?? []);
       setLasterData(false);

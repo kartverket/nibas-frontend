@@ -2,7 +2,7 @@ import { styled } from "styled-components";
 import { Endring, KretsSplittingEndring } from "./hooks/utkastEndringerTypes";
 import { Heading, Icon } from "@kvib/react";
 import { UnstyledList } from "components/UnstyledList";
-import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighetUtils";
+import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 
 export const EndringSection = styled.section`
   &:not(:last-of-type) {
@@ -86,7 +86,7 @@ type TekstEllerTomProps = {
 };
 
 const TekstEllerTom = ({ tekst, bold = false }: TekstEllerTomProps) => {
-  if (tekst == null || tekst.trim() === "") {
+  if (tekst === null || tekst.trim() === "") {
     return <KursivTekst $isBold={bold}>(tom)</KursivTekst>;
   }
   return <EndringTekst $isBold={bold}>{tekst.trim()}</EndringTekst>;

@@ -1,7 +1,7 @@
 import { styled } from "styled-components";
 import { PanelHeader, PanelProps, SidePanel } from "../Panel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { useUtkast, useUtkastEntity } from "contexts/UtkastContext";
+import { useUtkast, useUtkastEntity } from "contexts/UtkastContext/UtkastContext";
 import { StemmekretsResponse, StemmekretsSammenslaaingsendringRequest } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { FormProvider, useForm } from "react-hook-form";
@@ -16,7 +16,7 @@ import { MergeMultiselect } from "./MergeMultiselect";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { Alert, AlertIcon, AlertTitle, Button, Divider, FormControl, FormLabel, Heading, Select } from "@kvib/react";
-import { useHistory } from "contexts/HistoryContext";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
 
 const Form = styled.form`
   display: flex;
@@ -154,9 +154,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
 
   const fetchStemmekretsgrenser = async (stemmekretsIder: string[]) => {
     const stemmekretsgrenserResponse = await stemmekretsgrenserFetcher(stemmekretsIder, tokenHolderFunc()?.token);
-    return stemmekretsgrenserResponse
-      ? stemmekretsgrenserResponse.filter((value) => value != null).map((value) => String(value))
-      : [];
+    return stemmekretsgrenserResponse ? removeNull(stemmekretsgrenserResponse).map((value) => String(value)) : [];
   };
 
   const getStemmekretsIdList = (

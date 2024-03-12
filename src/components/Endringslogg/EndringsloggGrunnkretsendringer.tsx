@@ -10,7 +10,7 @@ import {
 } from "./EndringsloggComponents";
 import { GrunnkretsResponse } from "../../types/api";
 import { UnstyledList } from "../UnstyledList";
-import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighetUtils";
+import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 
 type EndringsloggGrunnkretsendringerProps = {
   endringer: Grunnkretsendringer;
@@ -37,7 +37,7 @@ type GrunnkretsGrensejusteringerProps = {
 };
 
 const GrunnkretsGrensejusteringer = ({ grendejusteringer }: GrunnkretsGrensejusteringerProps) => {
-  if (grendejusteringer == null || grendejusteringer.length === 0) {
+  if (grendejusteringer === null || grendejusteringer.length === 0) {
     return null;
   }
 

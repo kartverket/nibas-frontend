@@ -2,11 +2,11 @@ import { Feature, MapBrowserEvent } from "ol";
 import LineString from "ol/geom/LineString";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { Tool, useToolbar } from "contexts/ToolbarContext";
-import { useFeatureStyle } from "contexts/FeatureStyleContext";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useEffect, useMemo } from "react";
-import { findNearbyVertexOnFeature } from "utils/map";
+import { findNearbyVertexOnFeature } from "utils/map/map-utils";
 import { useToast } from "@kvib/react";
-import { useGetFeatures } from "./utils";
+import { useGetFeatures } from "./interaction-utils";
 import { isFeatureEditable } from "utils/features";
 
 const useSelectPoint = () => {

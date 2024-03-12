@@ -8,9 +8,6 @@ export type SidebarPanelContextValue = {
   closeSidebarPanel: () => void;
 };
 
-/**
- * Bruk heller SidebarPanelProvider i koden
- */
 export const SidebarPanelContext = createContext<SidebarPanelContextValue | undefined>(undefined);
 
 export const SidebarPanelProvider = ({ children }: { children: React.ReactNode }) => {

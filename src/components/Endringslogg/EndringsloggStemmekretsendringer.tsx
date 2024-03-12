@@ -17,7 +17,7 @@ import {
 } from "./EndringsloggComponents";
 import { UnstyledList } from "../UnstyledList";
 import { StemmekretsResponse } from "../../types/api";
-import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighetUtils";
+import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 
 type EndringsloggStemmekretsendringerProps = {
   endringer: Stemmekretsendringer;
@@ -43,7 +43,7 @@ type StemmekretsGrensejusteringerProps = {
 };
 
 const StemmekretsGrensejusteringer = ({ grendejusteringer }: StemmekretsGrensejusteringerProps) => {
-  if (grendejusteringer == null || grendejusteringer.length === 0) {
+  if (grendejusteringer === null || grendejusteringer.length === 0) {
     return null;
   }
 
@@ -66,7 +66,7 @@ type StemmekretsSammenslaaingProps = {
 };
 
 const StemmekretsSammenslaaing = ({ sammenslaaing }: StemmekretsSammenslaaingProps) => {
-  if (sammenslaaing == null) {
+  if (sammenslaaing === null) {
     return null;
   }
 

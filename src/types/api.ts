@@ -1,5 +1,5 @@
 import { components, paths } from "./api-gen";
-import { EditingType } from "contexts/EditGrenserContext";
+import { EditingType } from "contexts/EditGrenserContext/types";
 
 export type Spraak = {
   navn: string;

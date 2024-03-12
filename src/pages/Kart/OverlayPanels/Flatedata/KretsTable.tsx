@@ -32,8 +32,3 @@ export const KretsRow = styled.tr`
     border-bottom: 2px solid var(--kvib-colors-gray-50);
   }
 `;
-
-export const ButtonCell = styled.td`
-  width: 1%;
-  white-space: nowrap;
-`;

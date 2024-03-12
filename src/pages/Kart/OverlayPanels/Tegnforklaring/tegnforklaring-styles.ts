@@ -3,21 +3,21 @@ import { TegnforklaringProps } from "./Tegnforklaring";
 import { grenseStyles } from "utils/map/layerStyles";
 
 const getColorFromStyle = (styles: Style[]): string => {
-  const strokeStyle = styles.find((style) => style.getStroke() != null);
-  if (strokeStyle == null) {
+  const strokeStyle = styles.find((style) => style.getStroke() !== null);
+  if (!strokeStyle) {
     return "#000000";
   }
   return strokeStyle.getStroke()?.getColor().toLocaleString() ?? "";
 };
 
 const isDottedStyle = (styles: Style[]): boolean => {
-  const strokeStyle = styles.find((style) => style.getStroke() != null);
-  if (strokeStyle == null) {
+  const strokeStyle = styles.find((style) => style.getStroke() !== null);
+  if (!strokeStyle) {
     return false;
   }
 
   const dash = strokeStyle.getStroke()?.getLineDash();
-  return dash != null && dash.length > 0;
+  return !!dash && dash.length > 0;
 };
 
 export const tegnforklaringer: TegnforklaringProps[][] = [

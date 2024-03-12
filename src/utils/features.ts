@@ -7,7 +7,7 @@ import { FeatureLike } from "ol/Feature";
 import { grenserLayers, editableBorderTypes } from "hooks/layers/constants";
 import { isNotNullOrUndefined } from "types/common";
 import { getRepresentasjonspunktId } from "./map/source";
-import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
+import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { previousCoordinateKey } from "pages/Kart/interactions/constants";
 import { Coordinate, equals } from "ol/coordinate";
 
@@ -130,7 +130,7 @@ export const isFeatureDeadEnd = (feature: Feature<Geometry>, allFeatureEndpoints
   return test;
 };
 
-export const getDefaultFeatureMetadata = (discriminator: MetadataDiscriminator): Metadata => {
+const getDefaultFeatureMetadata = (discriminator: MetadataDiscriminator): Metadata => {
   return {
     discriminator: discriminator,
     common: {
@@ -184,7 +184,7 @@ export const isFeatureEditable = (feature: FeatureLike, isArchived: boolean) => 
     const properties = feature.getProperties() as FeatureProperties;
     const kontekstEgenskaper = properties.kontekstEgenskaper as KontekstEgenskaper[];
 
-    if (!kontekstEgenskaper || kontekstEgenskaper.length == 0) return false;
+    if (!kontekstEgenskaper || kontekstEgenskaper.length === 0) return false;
 
     const layerSources = Object.values(grenserLayers)
       .map((layer) => layer.getSource())
@@ -199,9 +199,7 @@ export const isFeatureEditable = (feature: FeatureLike, isArchived: boolean) => 
       if (!lokalId) return false;
 
       // TODO Velge riktig layerSource basert på kontekstegenskaptype?
-      return layerSources.some((source) => {
-        return source.getFeatureById(getRepresentasjonspunktId(lokalId)) != null;
-      });
+      return layerSources.some((source) => source.getFeatureById(getRepresentasjonspunktId(lokalId)) !== null);
     });
 
     if (!alleKretserIKontekstEgenskaperErSynlig) return false;
