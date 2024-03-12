@@ -28,16 +28,11 @@ type TilhorighetRowProps = {
 };
 
 type CustomOptionProps = {
-  feature: Feature;
   kontekstType: KontekstType;
 };
 
-const NotChosenSelectOption = ({ feature, kontekstType }: CustomOptionProps) => {
-  return (
-    isTempFeatureId(feature.getId()?.toString()) && (
-      <option value={CustomOption.NOT_CHOSEN}>Velg {kontekstType.toLocaleLowerCase()}</option>
-    )
-  );
+const NotChosenSelectOption = ({ kontekstType }: CustomOptionProps) => {
+  return <option value={CustomOption.NOT_CHOSEN}>Velg {kontekstType.toLocaleLowerCase()}</option>;
 };
 
 // Dette er default, men en annen farge blir satt fra containeren
@@ -82,7 +77,7 @@ const TilhorighetRow = ({
         <Stack>
           {Object.values(Tilhorighet).map((tilhorighet) => (
             <WhiteSelect key={tilhorighet} isDisabled={isDisabled} {...register(`${kontekstType}.${tilhorighet}`)}>
-              <NotChosenSelectOption feature={feature} kontekstType={kontekstType} />
+              <NotChosenSelectOption kontekstType={kontekstType} />
               {tilhorighetOptions &&
                 tilhorighetOptions[tilhorighet].map((krets) => {
                   const uid = `${tilhorighet}_${krets.id.lokalid.value}`;

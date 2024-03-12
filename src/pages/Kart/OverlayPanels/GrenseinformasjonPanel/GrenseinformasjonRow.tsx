@@ -31,7 +31,7 @@ const GrenseinformasjonRow = ({
             <TextWithIcon onMouseOver={() => setIconHovered(true)} onMouseOut={() => setIconHovered(false)}>
               <Text as="b">{`${name}${isRequired ? "" : " (valgfri)"}`}</Text>
               <InfoIcon>
-                <Icon size={24} color="var(--kvib-colors-blue-500)" isFilled={iconHovered} icon={"info"}></Icon>
+                <Icon size={24} color="var(--kvib-colors-blue-500)" isFilled={iconHovered} icon="info"></Icon>
               </InfoIcon>
             </TextWithIcon>
           </Tooltip>
@@ -39,7 +39,7 @@ const GrenseinformasjonRow = ({
         {isEditing ? (
           <Field>{children}</Field>
         ) : isLoading ? (
-          <SkeletonText noOfLines={1} skeletonHeight={5} marginTop={"8px"} />
+          <SkeletonText noOfLines={1} skeletonHeight={5} marginTop="8px" />
         ) : (
           <Field>{valueLabel || "Ikke spesifisert"}</Field>
         )}
