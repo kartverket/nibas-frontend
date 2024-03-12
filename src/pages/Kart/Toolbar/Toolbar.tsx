@@ -1,15 +1,4 @@
-import {
-  Button,
-  Checkbox,
-  CloseButton,
-  Divider,
-  Menu,
-  MenuButton,
-  MenuDivider,
-  MenuItem,
-  MenuList,
-  Switch,
-} from "@kvib/react";
+import { Checkbox, CloseButton, Divider, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Switch } from "@kvib/react";
 import { useEditAllGrenser } from "contexts/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";

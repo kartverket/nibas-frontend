@@ -42,6 +42,11 @@ const createSnapDataForSource = (
   return { snap, hover: modify };
 };
 
+const isNibasgrense = (grense: GrenseId) => {
+  const nibasGrenser: GrenseId[] = ["archived", "edit", "fylke", "grunnkrets", "kommune", "nasjon", "stemmekrets"];
+  return nibasGrenser.includes(grense);
+};
+
 /*
  * Definerer regler for når snapping og hover er aktivert
  */
@@ -50,10 +55,12 @@ const getSnapDataConfig = (grense: GrenseId, activeModeTools: ModeTool[], active
     includesNibas: activeModeTools.includes("snap_nibas"),
     includesMatrikkel: activeModeTools.includes("snap_matrikkel"),
   };
+
   const grenseType = {
-    isNibas: ["archived", "edit", "fylke", "grunnkrets", "kommune", "nasjon", "stemmekrets"].includes(grense),
+    isNibas: isNibasgrense(grense),
     isMatrikkel: grense === "matrikkel",
   };
+
   const isSnappingEnabled =
     (grenseType.isNibas && snapTypes.includesNibas) ||
     (grenseType.isMatrikkel && snapTypes.includesMatrikkel) ||
@@ -75,28 +82,58 @@ const getSnapDataConfig = (grense: GrenseId, activeModeTools: ModeTool[], active
     "draw",
   ];
 
+  // Redigering og ingen verktøy eller snapping er valgt
+  if (
+    !snapTypes.includesNibas &&
+    !snapTypes.includesMatrikkel &&
+    !activeTool &&
+    !activeModeTools.includes("move") &&
+    grenseType.isNibas
+  ) {
+    config.hoverEnabled = true;
+    return config;
+  }
+
+  // Default er av hvis snapping er av
   if (!snapTypes.includesNibas && !snapTypes.includesMatrikkel) return config;
 
+  // Grenseinfo med kun nibas valgt
   if (activeTool === "grenseinfo" && snapTypes.includesNibas && !snapTypes.includesMatrikkel) {
     config.hoverEnabled = true;
     return config;
   }
 
-  if (snapTypes.includesNibas && snapTypes.includesMatrikkel && !activeTool) {
+  // Kun nibas er valgt i redigering uten verktøy, og grensetypen er matrikkel
+  if (
+    snapTypes.includesNibas &&
+    !snapTypes.includesMatrikkel &&
+    grenseType.isMatrikkel &&
+    !activeTool &&
+    !activeModeTools.includes("move")
+  ) {
+    config.hoverEnabled = false;
+    return config;
+  }
+
+  // Redigering dersom matrikkel er valgt
+  if (!activeTool && !activeModeTools.includes("move")) {
     config.hoverEnabled = true;
     return config;
   }
 
+  // Kun nibas er valgt med grensetype matrikkel
   if (snapTypes.includesNibas && !snapTypes.includesMatrikkel && grenseType.isMatrikkel) {
     config.hoverEnabled = false;
     return config;
   }
 
+  // Panorering
   if (activeModeTools.includes("move")) {
     config.hoverEnabled = false;
     return config;
   }
 
+  // På for verktøy
   if (enableHoverPointForTools.includes(activeTool)) {
     config.hoverEnabled = true;
     return config;
