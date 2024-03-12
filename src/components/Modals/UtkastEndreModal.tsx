@@ -1,6 +1,7 @@
 import {
   Button,
   ButtonGroup,
+  FormControl,
   FormErrorMessage,
   FormHelperText,
   FormLabel,
@@ -17,15 +18,20 @@ import {
 import { useUtkast } from "contexts/UtkastContext";
 import { useUtkasts } from "hooks/inndelinger/useUtkasts";
 import { endringstyper } from "pages/Kart/constants";
-import { FormContent, FormSection, UtkastFormData } from "pages/Utkast/UtkastOpprett";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { styled } from "styled-components";
 import { UtkastResponse } from "types/api";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   utkast: UtkastResponse;
+};
+
+type UtkastFormData = {
+  navn: string;
+  endringstype: string;
 };
 
 const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
@@ -96,7 +102,7 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
                     </option>
                   ))}
                 </Select>
-                {!!errors.endringstype && <FormErrorMessage errorMessage={errors.endringstype?.message} />}
+                {!!errors.endringstype && <FormErrorMessage errorMessage={errors.endringstype.message} />}
               </FormSection>
             </FormContent>
           </ModalBody>
@@ -115,5 +121,26 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
     </Modal>
   );
 };
+
+const FormContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+`;
+
+// TODO: kvib har ikke 500-variant av mulish, bruker bold i mellomtiden
+const FormSection = styled(FormControl)`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  label {
+    font-weight: var(--kvib-fontWeights-bold);
+  }
+
+  & > * {
+    margin: 0;
+  }
+`;
 
 export default UtkastEndreModal;

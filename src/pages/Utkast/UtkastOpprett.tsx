@@ -28,7 +28,7 @@ import { styled } from "styled-components";
 import { ApiErrorResponse } from "types/api";
 import { statusCode } from "utils/api";
 
-export type UtkastFormData = {
+type UtkastFormData = {
   navn: string;
   endringstype: string;
 };
@@ -144,14 +144,14 @@ const UtkastOpprett = () => {
   );
 };
 
-export const FormContent = styled.div`
+const FormContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: 32px;
 `;
 
 // TODO: kvib har ikke 500-variant av mulish, bruker bold i mellomtiden
-export const FormSection = styled(FormControl)`
+const FormSection = styled(FormControl)`
   display: flex;
   flex-direction: column;
   gap: 8px;
