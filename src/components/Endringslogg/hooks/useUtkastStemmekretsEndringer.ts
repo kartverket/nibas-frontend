@@ -1,5 +1,5 @@
 import { Stemmekretsendringer } from "./utkastEndringerTypes";
-import { getStemmekretserMedEndringer, getStemmekretsEndringer } from "./stemmekretsEndringerUtils";
+import { getStemmekretserMedEndringer, getStemmekretsEndringer } from "./stemmekrets-endringer-utils";
 import { useEffect, useMemo, useState } from "react";
 import { useStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import useNibasApi from "hooks/useNibasApi";

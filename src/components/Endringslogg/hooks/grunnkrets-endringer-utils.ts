@@ -5,19 +5,21 @@ import {
   Grunnkretsendringer,
   GrunnkretsMetadataEndring,
   Endring,
+  KretsSplittingEndring,
 } from "./utkastEndringerTypes";
 import {
   findKrets,
   getKretserMedGrensejusteringer,
   groupEndringerByKommune,
   OperasjonerOrNull,
-} from "./endringerUtils";
+} from "./endringer-utils";
 import { getNavnInSpraak } from "utils/language/language";
+import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 
 export const getGrunnkretserMedEndringer = (operasjoner: OperasjonerOrNull): string[] => {
   const endringerResponse = operasjoner?.metadataendringer?.grunnkretsendringer;
 
-  if (endringerResponse == null && operasjoner == null) {
+  if (endringerResponse == null || operasjoner == null) {
     return [];
   }
 
@@ -25,9 +27,13 @@ export const getGrunnkretserMedEndringer = (operasjoner: OperasjonerOrNull): str
     Object.keys(operasjoner?.metadataendringer?.grunnkretsendringer ?? {}),
   );
 
-  const alleGrunnkretserMedEndringer = getKretserMedGrensejusteringer(operasjoner, "GRUNNKRETS").concat(
-    grunnkretsMetadataEndringer,
-  );
+  const grunnkretserMedSplitting = operasjoner.kretsDelingEndringer
+    .filter((splitting) => splitting.flatetype === KontekstType.GRUNNKRETS)
+    .map((splitting) => splitting.opprinneligKrets.lokalId);
+
+  const alleGrunnkretserMedEndringer = getKretserMedGrensejusteringer(operasjoner, "GRUNNKRETS")
+    .concat(grunnkretsMetadataEndringer)
+    .concat(grunnkretserMedSplitting);
 
   return deduplicate(alleGrunnkretserMedEndringer);
 };
@@ -43,7 +49,7 @@ const getEndringAvTypeForId = (
 
   const gammelVerdi = gammelGrunnkrets[type]?.trim() ?? "";
 
-  if (gammelVerdi === nyVerdi || nyVerdi == null) {
+  if (gammelVerdi === nyVerdi || nyVerdi === null) {
     return null;
   }
 
@@ -55,7 +61,7 @@ const getEndringAvTypeForId = (
 
 const harMetadataEndring = (metadatEndring: GrunnkretsMetadataEndring): boolean => {
   const fieldsToCheck = [metadatEndring.navn, metadatEndring.grunnkretsnummer];
-  return fieldsToCheck.some((field) => field != null);
+  return fieldsToCheck.some((field) => field !== null);
 };
 
 const getMetadataEndringer = (
@@ -75,6 +81,34 @@ const getMetadataEndringer = (
       };
     })
     .filter(harMetadataEndring);
+};
+
+const getGrunnkretsSplittingEndringer = (
+  kommuneId: string | undefined,
+  operasjoner: UtkastOperasjoner,
+  alleGrunnkretser: GrunnkretsResponse[],
+): KretsSplittingEndring[] | null => {
+  return operasjoner.kretsDelingEndringer
+    .filter(
+      (splitting) => splitting.flatetype === KontekstType.GRUNNKRETS && splitting.kommuneId.lokalid.value === kommuneId,
+    )
+    .map((splitting) => {
+      const opprinneligKrets = alleGrunnkretser.find(
+        (grunnkrets) => grunnkrets.id.lokalid.value === splitting.opprinneligKrets.lokalId,
+      );
+
+      const kretsSplittingEndring: KretsSplittingEndring = {
+        opprinneligKrets: opprinneligKrets
+          ? {
+              kretsNavn: opprinneligKrets.navn,
+              kretsNummer: opprinneligKrets.grunnkretsnummer,
+            }
+          : { kretsNavn: "ukjent", kretsNummer: "ukjent" },
+        nyeKretser: splitting.nyeKretser,
+      };
+
+      return kretsSplittingEndring;
+    });
 };
 
 const getEndringerForKommune = (
@@ -100,6 +134,7 @@ const getEndringerForKommune = (
         .filter((id) => grunnkretserMedGrensejusteringer.includes(id))
         .map((grunnkretsId) => findKrets(grunnkretsId, alleGrunnkretser)),
     ),
+    splittinger: getGrunnkretsSplittingEndringer(kommune?.id.lokalid.value, operasjoner, alleGrunnkretser),
   };
 };
 
@@ -109,7 +144,7 @@ export const getGrunnkretsEndringer = (
   alleGrunnkretser: GrunnkretsResponse[],
   alleKommuner: KommuneRef[],
 ): Grunnkretsendringer[] | null => {
-  if (operasjoner == null || endredeGrunnkretser.length == 0) {
+  if (!operasjoner || endredeGrunnkretser.length === 0) {
     return null;
   }
 

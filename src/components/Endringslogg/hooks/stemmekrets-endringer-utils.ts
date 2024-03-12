@@ -1,24 +1,26 @@
-import { KommuneRef, StemmekretsResponse, UtkastOperasjoner } from "../../../types/api";
 import { deduplicate, removeNull } from "utils/list-utils";
+import { KommuneRef, StemmekretsResponse, UtkastOperasjoner } from "../../../types/api";
 import {
   StemmekretsMetadataEndringstype,
   Endring,
   Stemmekretsendringer,
   StemmekretsMetadataEndring,
   StemmekretsSammenslaaingEndring,
+  KretsSplittingEndring,
 } from "./utkastEndringerTypes";
 import {
   findKrets,
   getKretserMedGrensejusteringer,
   groupEndringerByKommune,
   OperasjonerOrNull,
-} from "./endringerUtils";
+} from "./endringer-utils";
 import { getNavnInSpraak } from "utils/language/language";
+import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 
 export const getStemmekretserMedEndringer = (operasjoner: OperasjonerOrNull): string[] => {
   const endringerResponse = operasjoner?.metadataendringer?.stemmekretsendringer;
 
-  if (endringerResponse == null || operasjoner == null) {
+  if (!endringerResponse || !operasjoner) {
     return [];
   }
 
@@ -33,9 +35,14 @@ export const getStemmekretserMedEndringer = (operasjoner: OperasjonerOrNull): st
 
   const stemmekretserMedSammenslaaing = removeNull(gamleKretser.concat(viderefoertStemmekrets ?? []));
 
+  const stemmekretserMedSplitting = operasjoner.kretsDelingEndringer
+    .filter((splitting) => splitting.flatetype === KontekstType.STEMMEKRETS)
+    .map((splitting) => splitting.opprinneligKrets.lokalId);
+
   const alleStemmekretserMedEndringer = getKretserMedGrensejusteringer(operasjoner, "STEMMEKRETS")
     .concat(stemmekretserMedMetadataEndringer)
-    .concat(stemmekretserMedSammenslaaing);
+    .concat(stemmekretserMedSammenslaaing)
+    .concat(stemmekretserMedSplitting);
 
   return deduplicate(alleStemmekretserMedEndringer);
 };
@@ -51,7 +58,7 @@ const getEndringAvTypeForId = (
 
   const gammelVerdi = gammelStemmekrets[type]?.trim() ?? "";
 
-  if (gammelVerdi === nyVerdi || nyVerdi == null) {
+  if (!nyVerdi || gammelVerdi === nyVerdi) {
     return null;
   }
 
@@ -68,7 +75,7 @@ const harMetadataEndring = (metadatEndring: StemmekretsMetadataEndring): boolean
     metadatEndring.valgdistriktsnummer,
   ];
 
-  return fieldsToCheck.some((field) => field != null);
+  return fieldsToCheck.some((field) => field !== null);
 };
 
 const getMetadataEndringer = (
@@ -101,9 +108,9 @@ const getSammenslaaingEndring = (
   const sammenslaaing = operasjoner.stemmekretsSammenslaaingsendring;
 
   const harSammenslaaingsEndring =
-    sammenslaaing != null &&
-    viderefoertKrets != null &&
-    stemmekretsMedSammenslaaing != null &&
+    sammenslaaing &&
+    viderefoertKrets &&
+    stemmekretsMedSammenslaaing &&
     stemmekretser.includes(stemmekretsMedSammenslaaing);
 
   if (!harSammenslaaingsEndring) {
@@ -112,7 +119,7 @@ const getSammenslaaingEndring = (
 
   const krets = findKrets(viderefoertKrets.lokalId, alleStemmekretser);
 
-  const gamleKretser = sammenslaaing?.stemmekretserTilSammenslaaing
+  const gamleKretser = sammenslaaing.stemmekretserTilSammenslaaing
     .map((gammelKrets) => findKrets(gammelKrets.lokalId, alleStemmekretser))
     .map((gammelKrets) => ({
       navn: gammelKrets.stemmekretsnavn,
@@ -121,10 +128,38 @@ const getSammenslaaingEndring = (
 
   return {
     viderefoertKrets: krets,
-    nyttNavn: sammenslaaing?.stemmekretsNavn ?? "",
-    nyttNummer: sammenslaaing?.stemmekretsNummer ?? "",
+    nyttNavn: sammenslaaing.stemmekretsNavn ?? "",
+    nyttNummer: sammenslaaing.stemmekretsNummer ?? "",
     gamleKretser,
   };
+};
+
+const getStemmekretsSplittingEndringer = (
+  kommuneId: string | undefined,
+  operasjoner: UtkastOperasjoner,
+  alleStemmekretser: StemmekretsResponse[],
+): KretsSplittingEndring[] | null => {
+  return operasjoner.kretsDelingEndringer
+    .filter(
+      (splitting) =>
+        splitting.flatetype === KontekstType.STEMMEKRETS && splitting.kommuneId.lokalid.value === kommuneId,
+    )
+    .map((splitting) => {
+      const opprinneligKrets = alleStemmekretser.find(
+        (stemmekrets) => stemmekrets.id.lokalid.value === splitting.opprinneligKrets.lokalId,
+      );
+
+      const kretsSplittingEndring: KretsSplittingEndring = {
+        opprinneligKrets: opprinneligKrets
+          ? {
+              kretsNavn: opprinneligKrets.stemmekretsnavn,
+              kretsNummer: opprinneligKrets.stemmekretsnummer,
+            }
+          : { kretsNavn: "ukjent", kretsNummer: "ukjent" },
+        nyeKretser: splitting.nyeKretser,
+      };
+      return kretsSplittingEndring;
+    });
 };
 
 const getEndringerForKommune = (
@@ -151,6 +186,7 @@ const getEndringerForKommune = (
         .map((stemmekretsId) => findKrets(stemmekretsId, alleStemmekretser)),
     ),
     sammenslaaing: getSammenslaaingEndring(stemmekretserMedEndring, operasjoner, alleStemmekretser),
+    splitting: getStemmekretsSplittingEndringer(kommune?.id.lokalid.value, operasjoner, alleStemmekretser),
   };
 };
 
@@ -160,7 +196,7 @@ export const getStemmekretsEndringer = (
   alleStemmekretser: StemmekretsResponse[],
   alleKommuner: KommuneRef[],
 ): Stemmekretsendringer[] | null => {
-  if (operasjoner == null || endredeStemmekretser.length == 0) {
+  if (!operasjoner || endredeStemmekretser.length === 0) {
     return null;
   }
 

@@ -1,11 +1,11 @@
 import { useToolbar } from "contexts/ToolbarContext";
 import ToolbarPopup from "./ToolbarPopup";
-import { useFeatureStyle } from "contexts/FeatureStyleContext";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import useSplit from "../interactions/useSplit";
 import { addFeaturesToSource, getFeatureId, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { useToast } from "@kvib/react";
-import { addArchivingEntryFromFeature } from "../OverlayPanels/GrenseinformasjonPanel/utils";
-import { useHistory } from "contexts/HistoryContext";
+import { addArchivingEntryFromFeature } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { clearMatrikkelLayer, getMatrikkelFeatures } from "utils/map/layers";
 import { map } from "../constants";
 import { useRef, useState } from "react";
@@ -111,7 +111,7 @@ const ToolbarPopups = () => {
       {activeTool === "draw" && (
         <ToolbarPopup
           text="Start tegning ved å klikke på kartet"
-          subtext="Tegninger kan snappes til punkter eller startes fritt utenfor andre grenser. Dobbelklikk for å avslutte tegning"
+          subtext="Tegninger kan snappes til punkter eller startes fritt utenfor andre grenser. Dobbelklikk for å avslutte tegning. Ønsker du å panorere underveis, bruk piltastene."
           onClose={resetTool}
         />
       )}

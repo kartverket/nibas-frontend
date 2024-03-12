@@ -1,6 +1,5 @@
 import { Feature } from "ol";
 import { GeoJSONFeature, GeoJSONFeatureCollection } from "ol/format/GeoJSON";
-import LineString from "ol/geom/LineString";
 import { EntityUtkastType, UtkastEntity, ResponseWithId } from "./types";
 import {
   GrunnkretsEntry,
@@ -9,7 +8,7 @@ import {
   HistoryTypeValues,
   StemmekretsEntry,
   StemmekretsSammenslaaingsendringEntry,
-} from "contexts/HistoryContext";
+} from "contexts/HistoryContext/types";
 import { archivedSource, editSource } from "hooks/layers/constants";
 import {
   FeatureProperties,
@@ -29,8 +28,9 @@ import {
 } from "types/api";
 import { featureToGeoJson } from "utils/map/geoJson";
 import { getIdFromEntity } from "utils/api";
-import { getTempFeatureId, isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
+import { getTempFeatureId, isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { isTempDokrefId } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/Vedtaksinformasjon/util/vedtaksinfoHelperMethods";
+import { removeNull } from "utils/list-utils";
 
 const getCombinedEntity = <T extends ResponseWithId>(
   entity: T,
@@ -52,7 +52,7 @@ const getCombinedFeatures = (
     (feature: GeoJSONFeature) => featuresSlice.find((f) => f.id === feature.id) ?? feature,
   );
 
-  const newFeatures = featuresSlice.filter((f) => isTempFeatureId(f.id as string));
+  const newFeatures = featuresSlice.filter((f) => isTempFeatureId(f.id));
 
   return updatedFeaturesFromCollection.concat(newFeatures);
 };
@@ -152,6 +152,7 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
         ...previousUtkast?.operasjoner.grenseendringer,
         ...previousUtkast?.operasjoner.metadataendringer,
         stemmekretssammenslaaingsendringer: previousUtkast?.operasjoner.stemmekretsSammenslaaingsendring,
+        kretsDelingEndringer: previousUtkast?.operasjoner.kretsDelingEndringer,
       },
     }),
   ) as UtkastOperasjoner;
@@ -184,8 +185,8 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
   const editedFeatures: GeoJSONFeature[] = utkastOperations.grenseendringer.endredeFeatures;
 
   const addFeatureToEditedFeaturesIfNotAlreadyAdded = (featureId: string) => {
-    const editFeature = editSource.getFeatureById(featureId) as Feature<LineString> | null;
-    const archivedFeature = archivedSource.getFeatureById(featureId) as Feature<LineString> | null;
+    const editFeature = editSource.getFeatureById(featureId);
+    const archivedFeature = archivedSource.getFeatureById(featureId);
     const feature = editFeature ?? archivedFeature;
 
     if (!feature) return;
@@ -196,7 +197,7 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
 
     // Hvis vi allerede har lagt inn featuren tidligere i historikken,
     // ønsker vi å overskrive den hvis den samme featuren endres senere i historikken
-    if (index != -1) {
+    if (index !== -1) {
       editedFeatures[index] = featureAsGeoJson;
       return;
     }
@@ -211,7 +212,7 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
 
       if (entry.type === "grensedeling") {
         // Grensedeling er en litt sær grense-endring siden den påvirker flere features på en gang og trenger derfor egen implementasjon
-        const newFeatures = (change as HistoryChange<Feature[]>).to.map((f) => f.getId() as string);
+        const newFeatures = removeNull((change as HistoryChange<Feature[]>).to.map((f) => f.getId()?.toString()));
         newFeatures.forEach((id) => {
           addFeatureToEditedFeaturesIfNotAlreadyAdded(id);
         });
@@ -222,7 +223,6 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
   utkastOperations.grenseendringer = {
     endredeFeatures: editedFeatures,
   };
-
   return utkastOperations;
 };
 
@@ -258,7 +258,7 @@ export const addTempFeatureIdToNewFeaturesInUtkast = (utkast: UtkastResponse): U
   const endredeFeatures = utkastCopy.operasjoner.grenseendringer.endredeFeatures;
 
   endredeFeatures
-    .filter((feature) => feature.id == null)
+    .filter((feature) => feature.id === null)
     .forEach((feature) => {
       feature.id = getTempFeatureId();
     });

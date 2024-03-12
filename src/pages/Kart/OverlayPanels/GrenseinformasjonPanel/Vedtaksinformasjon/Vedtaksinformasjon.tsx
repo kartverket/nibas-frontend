@@ -8,12 +8,12 @@ import useIsGrenseinformasjonPanelDisabled from "../../hooks/useIsGrenseInformas
 import { isAdministrativGrense } from "utils/grenser";
 import { GrenseType } from "hooks/layers/types";
 
-type Referanse = {
+export type Referanse = {
   beskrivelse: string;
   id?: string;
 };
 
-type VedtakinfoForm = {
+export type VedtakinfoForm = {
   id?: string;
   dokumentlenker: Referanse[];
   leggTilDokumentlenke?: string;
@@ -28,17 +28,17 @@ type VedtakinfoForm = {
   rettskildeTittel: string;
 };
 
-type InputName = {
+export type InputName = {
   leggTilDokumentlenke: string;
   leggTilInternreferanse: string;
 };
 
-type InputCollectionName = {
+export type InputCollectionName = {
   dokumentlenker: string;
   internreferanserKartverket: string;
 };
 
-type FormViewState = "editing" | "viewing" | "creating";
+export type FormViewState = "editing" | "viewing" | "creating";
 
 export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -64,14 +64,14 @@ export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
       <OversiktHeader>
         <Tooltip label="Henvisning til dokumenter som er med å fastlegge aktuell grense." hasArrow placement="bottom">
           <InfoIcon onMouseOver={() => setIconHovered(true)} onMouseOut={() => setIconHovered(false)}>
-            <Text as="b" paddingRight={"8px"}>
+            <Text as="b" paddingRight="8px">
               Vedtaksinformasjon
             </Text>
-            <Icon size={24} color="var(--kvib-colors-blue-500)" isFilled={iconHovered} icon={"info"}></Icon>
+            <Icon size={24} color="var(--kvib-colors-blue-500)" isFilled={iconHovered} icon="info"></Icon>
           </InfoIcon>
         </Tooltip>
         <Button
-          size={"sm"}
+          size="sm"
           variant="secondary"
           rightIcon="add"
           colorScheme="blue"
@@ -154,5 +154,3 @@ const InfoIcon = styled.div`
   align-items: center;
   cursor: default;
 `;
-
-export type { VedtakinfoForm, Referanse, InputName, InputCollectionName, FormViewState };

@@ -4,6 +4,7 @@ import {
   StemmekretsSammenslaaingEndring,
 } from "components/Endringslogg/hooks/utkastEndringerTypes";
 import {
+  SplittingEndringer,
   EndringSection,
   Endringsrad,
   EndringsradEndring,
@@ -16,6 +17,7 @@ import {
 } from "./EndringsloggComponents";
 import { UnstyledList } from "../UnstyledList";
 import { StemmekretsResponse } from "../../types/api";
+import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 
 type EndringsloggStemmekretsendringerProps = {
   endringer: Stemmekretsendringer;
@@ -32,6 +34,7 @@ export const EndringsloggStemmekretsendringer = ({ endringer }: EndringsloggStem
       />
     ))}
     <StemmekretsSammenslaaing sammenslaaing={endringer.sammenslaaing} />
+    <SplittingEndringer splittinger={endringer.splitting} kontekstType={KontekstType.STEMMEKRETS} />
   </EndringSection>
 );
 
@@ -40,7 +43,7 @@ type StemmekretsGrensejusteringerProps = {
 };
 
 const StemmekretsGrensejusteringer = ({ grendejusteringer }: StemmekretsGrensejusteringerProps) => {
-  if (grendejusteringer == null || grendejusteringer.length === 0) {
+  if (grendejusteringer === null || grendejusteringer.length === 0) {
     return null;
   }
 
@@ -63,7 +66,7 @@ type StemmekretsSammenslaaingProps = {
 };
 
 const StemmekretsSammenslaaing = ({ sammenslaaing }: StemmekretsSammenslaaingProps) => {
-  if (sammenslaaing == null) {
+  if (sammenslaaing === null) {
     return null;
   }
 
@@ -100,7 +103,7 @@ const StemmekretsSammenslaaing = ({ sammenslaaing }: StemmekretsSammenslaaingPro
             <UnstyledList>
               {gamleKretser.map((gammelKrets) => (
                 <li key={gammelKrets.nummer}>
-                  <EndringTekst $isBold={true}>
+                  <EndringTekst $isBold>
                     {gammelKrets.nummer} {gammelKrets.navn}
                   </EndringTekst>
                 </li>

@@ -1,4 +1,4 @@
-import { GrenseType, getEditingTypeFromGrenseType } from "hooks/layers/types";
+import { GrenseType, LayerId, getEditingTypeFromGrenseType } from "hooks/layers/types";
 import { MetadataDiscriminator, getMetadataDiscriminatorFromType, isAdministrativGrense } from "./grenser";
 import { Feature } from "ol";
 import { Geometry, LineString } from "ol/geom";
@@ -7,7 +7,7 @@ import { FeatureLike } from "ol/Feature";
 import { grenserLayers, editableBorderTypes } from "hooks/layers/constants";
 import { isNotNullOrUndefined } from "types/common";
 import { getRepresentasjonspunktId } from "./map/source";
-import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
+import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { previousCoordinateKey } from "pages/Kart/interactions/constants";
 import { Coordinate, equals } from "ol/coordinate";
 
@@ -22,7 +22,115 @@ export const setDefaultFeatureProperties = (feature: Feature<Geometry>, grenseTy
   });
 };
 
-export const getDefaultFeatureMetadata = (discriminator: MetadataDiscriminator): Metadata => {
+/**
+ * Returns the first feature found which matches the featureId parameter. If not present returns null
+ * @param featureId Feature to find
+ * @returns Feature<Geometry> | null
+ */
+export const getFeatureIfExistsInAnyLayer = (featureId: string) => {
+  for (const layer of Object.values(grenserLayers)) {
+    const source = layer.getSource();
+
+    if (source) {
+      const feature = source.getFeatureById(featureId);
+
+      if (feature) return feature as Feature<Geometry>;
+    }
+  }
+
+  return null;
+};
+
+export const getFeaturesConnectedToFeatureAtEndpoints = (connectedToFeature: Feature<Geometry>) => {
+  const connectedFeatures: Feature<Geometry>[] = [];
+  const geometry = connectedToFeature.getGeometry();
+  if (!geometry || !(geometry instanceof LineString)) return [];
+
+  const firstCoordConnectedFeature = geometry.getFirstCoordinate();
+  const lastCoordConnectedFeature = geometry.getLastCoordinate();
+
+  for (const layer of Object.values(grenserLayers)) {
+    const source = layer.getSource();
+
+    if (!source) continue;
+
+    for (const feature of source.getFeatures()) {
+      if (feature.getId() !== connectedToFeature.getId()) {
+        const featureToCheckGeometry = feature.getGeometry();
+        if (!featureToCheckGeometry || !(featureToCheckGeometry instanceof LineString)) continue;
+
+        const firstCoordFeatureToCheck = featureToCheckGeometry.getFirstCoordinate();
+        const lastCoordFeatureToCheck = featureToCheckGeometry.getLastCoordinate();
+
+        if (
+          equals(firstCoordConnectedFeature, firstCoordFeatureToCheck) ||
+          equals(firstCoordConnectedFeature, lastCoordFeatureToCheck) ||
+          equals(lastCoordConnectedFeature, firstCoordFeatureToCheck) ||
+          equals(lastCoordConnectedFeature, lastCoordFeatureToCheck)
+        ) {
+          connectedFeatures.push(feature);
+        }
+      }
+    }
+  }
+
+  return connectedFeatures;
+};
+
+export const getAllFeatureEndPointCoordinates = (layerIdsToFilter: LayerId[]): (FeatureIdWithEndpoints | null)[] => {
+  return Object.entries(grenserLayers)
+    .flatMap(([key, layer]) => {
+      if (layerIdsToFilter.includes(key as LayerId)) return [];
+
+      const source = layer.getSource();
+      if (source) return source.getFeatures();
+
+      return [];
+    })
+    .flatMap((f) => {
+      const geom = f.getGeometry();
+      const id = f.getId()?.toString();
+      if (geom && geom instanceof LineString && id)
+        return { featureId: id, endpoints: { first: geom.getFirstCoordinate(), last: geom.getLastCoordinate() } };
+
+      return null;
+    });
+};
+
+export type FeatureIdWithEndpoints = {
+  featureId: string;
+  endpoints: {
+    first: Coordinate;
+    last: Coordinate;
+  };
+};
+
+/** Tar inn en grense og prøver å avgjøre om den er koblet til andre grenser i begge ender */
+export const isFeatureDeadEnd = (feature: Feature<Geometry>, allFeatureEndpoints: FeatureIdWithEndpoints[]) => {
+  const geometry = feature.getGeometry() as LineString;
+  const coordinates = geometry?.getCoordinates() as Coordinate[];
+
+  const head = coordinates[0];
+  const tail = coordinates[coordinates.length - 1];
+
+  const featureEndpointsToCheck = allFeatureEndpoints.filter(
+    (featureEndpoint) => featureEndpoint.featureId !== feature.getId()?.toString(),
+  );
+
+  const isHeadConnected2 = featureEndpointsToCheck.find(
+    (featureEndPoint) => equals(featureEndPoint.endpoints.first, head) || equals(featureEndPoint.endpoints.last, head),
+  );
+
+  const isTailConnected2 = featureEndpointsToCheck.find(
+    (featureEndPoint) => equals(featureEndPoint.endpoints.first, tail) || equals(featureEndPoint.endpoints.last, tail),
+  );
+
+  const test = !(isHeadConnected2 && isTailConnected2);
+
+  return test;
+};
+
+const getDefaultFeatureMetadata = (discriminator: MetadataDiscriminator): Metadata => {
   return {
     discriminator: discriminator,
     common: {
@@ -76,7 +184,7 @@ export const isFeatureEditable = (feature: FeatureLike, isArchived: boolean) => 
     const properties = feature.getProperties() as FeatureProperties;
     const kontekstEgenskaper = properties.kontekstEgenskaper as KontekstEgenskaper[];
 
-    if (!kontekstEgenskaper || kontekstEgenskaper.length == 0) return false;
+    if (!kontekstEgenskaper || kontekstEgenskaper.length === 0) return false;
 
     const layerSources = Object.values(grenserLayers)
       .map((layer) => layer.getSource())
@@ -91,9 +199,7 @@ export const isFeatureEditable = (feature: FeatureLike, isArchived: boolean) => 
       if (!lokalId) return false;
 
       // TODO Velge riktig layerSource basert på kontekstegenskaptype?
-      return layerSources.some((source) => {
-        return source.getFeatureById(getRepresentasjonspunktId(lokalId)) != null;
-      });
+      return layerSources.some((source) => source.getFeatureById(getRepresentasjonspunktId(lokalId)) !== null);
     });
 
     if (!alleKretserIKontekstEgenskaperErSynlig) return false;

@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { styled } from "styled-components";
 import { SWRConfig } from "swr";
-import Kart from "pages/Kart";
+import Kart from "./Kart";
 import AlertModal from "components/Modals/AlertModal";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { isApiError, statusCode } from "utils/api";

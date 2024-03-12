@@ -16,7 +16,7 @@ type ShortcutTextProps = {
 type Props = CustomTooltipProps & Omit<TooltipProps, "label">;
 
 const ShortcutText = ({ shortcut, holdButton }: ShortcutTextProps) => {
-  const shortcutString = shortcut != null ? KeyboardShortcuts[shortcut].displayString : null;
+  const shortcutString = shortcut ? KeyboardShortcuts[shortcut].displayString : null;
 
   if (shortcutString && holdButton) {
     return (

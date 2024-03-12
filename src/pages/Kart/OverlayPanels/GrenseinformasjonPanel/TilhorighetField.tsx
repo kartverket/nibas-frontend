@@ -2,7 +2,7 @@ import { Select, Stack } from "@kvib/react";
 import { GrenseType } from "hooks/layers/types";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
-import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
+import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { useEffect } from "react";
 import { isAdministrativGrense } from "utils/grenser";
 import {
@@ -11,13 +11,13 @@ import {
   Tilhorighet,
   UseTilhorighet,
   getTilhorighetValuesFormatted,
-} from "../hooks/tilhorighetUtils";
+} from "../hooks/tilhorighet-utils";
 import { useTilhorighetAdministrativ } from "../hooks/useTilhorighetAdministrativ";
 import GrenseinformasjonRow from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/GrenseinformasjonRow";
 import { useTilhorighet } from "../hooks/useTilhorighet";
 import { useTilhorighetNyAdministrativ } from "../hooks/useTilhorighetNyAdministrativ";
 import { isFeatureEditable } from "utils/features";
-import { useFeatureStyle } from "contexts/FeatureStyleContext";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import useIsGrenseinformasjonPanelDisabled from "../hooks/useIsGrenseInformasjonPanelDisabled";
 
 type TilhorighetRowProps = {
@@ -27,16 +27,11 @@ type TilhorighetRowProps = {
 };
 
 type CustomOptionProps = {
-  feature: Feature;
   kontekstType: KontekstType;
 };
 
-const NotChosenSelectOption = ({ feature, kontekstType }: CustomOptionProps) => {
-  return (
-    isTempFeatureId(feature.getId()?.toString()) && (
-      <option value={CustomOption.NOT_CHOSEN}>Velg {kontekstType.toLocaleLowerCase()}</option>
-    )
-  );
+const NotChosenSelectOption = ({ kontekstType }: CustomOptionProps) => {
+  return <option value={CustomOption.NOT_CHOSEN}>Velg {kontekstType.toLocaleLowerCase()}</option>;
 };
 
 const TilhorighetRow = ({
@@ -76,7 +71,7 @@ const TilhorighetRow = ({
         <Stack>
           {Object.values(Tilhorighet).map((tilhorighet) => (
             <Select key={tilhorighet} {...register(`${kontekstType}.${tilhorighet}`)}>
-              <NotChosenSelectOption feature={feature} kontekstType={kontekstType} />
+              <NotChosenSelectOption kontekstType={kontekstType} />
               {tilhorighetOptions &&
                 tilhorighetOptions[tilhorighet].map((krets) => {
                   const uid = `${tilhorighet}_${krets.id.lokalid.value}`;

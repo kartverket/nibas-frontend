@@ -15,13 +15,13 @@ import {
   ModalOverlay,
   Select,
 } from "@kvib/react";
-import { useUtkast } from "contexts/UtkastContext";
-import { useUtkasts } from "hooks/inndelinger/useUtkasts";
 import { endringstyper } from "pages/Kart/constants";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import { UtkastResponse } from "types/api";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import { useUtkasts } from "hooks/inndelinger/useUtkasts";
 
 type Props = {
   isOpen: boolean;

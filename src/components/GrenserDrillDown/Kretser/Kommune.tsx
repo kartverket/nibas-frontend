@@ -5,9 +5,9 @@ import { getNavnInSpraak } from "utils/language/language";
 import { Outline } from "style/mixins";
 import AlertModal from "components/Modals/AlertModal";
 import useAlertModal from "hooks/useAlertModal";
-import { useHistory } from "contexts/HistoryContext";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { Button, IconButton, Spinner } from "@kvib/react";
-import { useUtkast } from "contexts/UtkastContext";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 
 type Props = {
@@ -18,7 +18,7 @@ const Kommune = ({ kommune }: Props) => {
   const { utkast } = useUtkast();
   const { history, clearHistory } = useHistory();
   const { openOverlayModal, setFlatedata } = useOverlayPanel();
-  const { kommuneValues, toggleEditKretser, toggleKretser, lasterData, currentKretstype } =
+  const { kommuneValues, toggleEditKretser, toggleKretser, lasterData, currentKretstype, setLasterData } =
     useInndelingerKrets(kommune);
 
   const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } = useAlertModal(
@@ -36,6 +36,7 @@ const Kommune = ({ kommune }: Props) => {
     if (history.entries.length > 0) {
       openModal();
     } else {
+      setLasterData(true);
       toggleEditKretser();
     }
   };

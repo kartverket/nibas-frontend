@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { useEditGrenser } from "./EditGrenserContext";
+import { useEditGrenser } from "./EditGrenserContext/EditGrenserContext";
 import useKretsgrenser from "hooks/inndelinger/useKretsgrenser";
 import { LayerId } from "hooks/layers/types";
 import { KommuneRef } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { useOverlayPanel } from "./OverlayPanelContext";
-import { getAllVisibleFeatures, zoomToFeatures } from "utils/map";
+import { getAllVisibleFeatures, zoomToFeatures } from "utils/map/map-utils";
 import { useToolbar } from "./ToolbarContext";
 import { editSource } from "hooks/layers/constants";
 
@@ -15,9 +15,6 @@ type InndelingerKretsContextValue = {
   currentKretstype: Kretstype;
 };
 
-/**
- * Bruk heller InndelingerKretsProvider i koden
- */
 const InndelingerKretsContext = createContext<InndelingerKretsContextValue | undefined>(undefined);
 
 type Props = {
@@ -50,7 +47,10 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
   const { kretsStatuser, setKretsStatusForKretstype, setMultipleValues, setOtherEditingTypes } =
     useEditGrenser(currentKretstype);
   const { setFlatedata, closeOverlayPanel } = useOverlayPanel();
-  const { addKretserToLayer, removeKretserFromLayer, lasterData } = useKretsgrenser(kommuneId, currentKretstype);
+  const { addKretserToLayer, removeKretserFromLayer, lasterData, setLasterData } = useKretsgrenser(
+    kommuneId,
+    currentKretstype,
+  );
   const { enableModeTool, disableModeTool } = useToolbar();
 
   const kommuneValues = kretsStatuser[kommuneId] ?? {};
@@ -103,6 +103,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
       removeKretserFromLayer("edit");
       closeOverlayPanel();
       zoomToFeatures(getAllVisibleFeatures());
+      setLasterData(false);
     }
 
     setMultipleValues(newKretsStatuser);
@@ -122,6 +123,7 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
     } else {
       // hvis ikke lenger skal være synlig
       removeKretserFromLayer(layerId);
+      setLasterData(false);
     }
 
     // .changed() forcer en rerender av layers
@@ -135,5 +137,6 @@ export const useInndelingerKrets = (kommune: KommuneRef) => {
     kommuneValues,
     lasterData,
     currentKretstype,
+    setLasterData,
   };
 };

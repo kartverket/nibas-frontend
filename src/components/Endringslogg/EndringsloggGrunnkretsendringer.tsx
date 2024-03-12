@@ -1,5 +1,6 @@
 import { Grunnkretsendringer, GrunnkretsMetadataEndring } from "components/Endringslogg/hooks/utkastEndringerTypes";
 import {
+  SplittingEndringer,
   EndringSection,
   Endringsrad,
   EndringsradListItem,
@@ -9,6 +10,7 @@ import {
 } from "./EndringsloggComponents";
 import { GrunnkretsResponse } from "../../types/api";
 import { UnstyledList } from "../UnstyledList";
+import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 
 type EndringsloggGrunnkretsendringerProps = {
   endringer: Grunnkretsendringer;
@@ -25,6 +27,7 @@ export const EndringsloggGrunnkretsendringer = ({ endringer }: EndringsloggGrunn
           metadataendring={metadataendring}
         />
       ))}
+      <SplittingEndringer kontekstType={KontekstType.GRUNNKRETS} splittinger={endringer.splittinger} />
     </EndringSection>
   );
 };
@@ -34,7 +37,7 @@ type GrunnkretsGrensejusteringerProps = {
 };
 
 const GrunnkretsGrensejusteringer = ({ grendejusteringer }: GrunnkretsGrensejusteringerProps) => {
-  if (grendejusteringer == null || grendejusteringer.length === 0) {
+  if (grendejusteringer === null || grendejusteringer.length === 0) {
     return null;
   }
 

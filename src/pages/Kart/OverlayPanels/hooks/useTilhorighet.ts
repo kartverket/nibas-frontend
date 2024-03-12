@@ -8,7 +8,7 @@ import {
   UseTilhorighet,
   mapGrunnkretsResponseToKrets,
   mapStemmekretResponseToKrets,
-} from "./tilhorighetUtils";
+} from "./tilhorighet-utils";
 import { useTilhorighetForm } from "./useTilhorighetForm";
 import { GrunnkretsResponse, StemmekretsResponse } from "../../../../types/api";
 

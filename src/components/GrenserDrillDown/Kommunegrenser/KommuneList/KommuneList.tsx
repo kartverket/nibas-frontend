@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import ApiGrense from "components/GrenserDrillDown/ApiGrense";
+import ApiGrense from "components/GrenserDrillDown/ApiGrense/ApiGrense";
 import useKommuner from "hooks/inndelinger/useKommuner";
 import { FylkeRef } from "types/api";
 import useKommunegrenser from "hooks/inndelinger/useKommunegrenser";
