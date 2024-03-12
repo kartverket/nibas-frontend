@@ -55,7 +55,7 @@ export const ReferanserPaginated = ({ referanser, urlMode, deleteRef, formViewSt
           >
             left
           </IconButton>
-          <Text marginLeft={"10px"} marginRight={"10px"}>
+          <Text marginLeft="10px" marginRight="10px">
             Side {page + 1} av {numberOfPages}
           </Text>
           <IconButton

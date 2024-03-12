@@ -70,7 +70,7 @@ export const VedtaksinfoBody = ({
       : undefined;
 
   return (
-    <VedtakinfoContainer templateColumns={"4fr 3fr"}>
+    <VedtakinfoContainer templateColumns="4fr 3fr">
       <Vedtaksfelter>
         <FieldContainer>
           <VedtakinfoField
@@ -90,8 +90,8 @@ export const VedtaksinfoBody = ({
                 },
               })}
               isRequired={false}
-              backgroundColor={"white"}
-              placeholder={"Skriv inn tittelen på vedtaket"}
+              backgroundColor="white"
+              placeholder="Skriv inn tittelen på vedtaket"
             />
           </VedtakinfoField>
         </FieldContainer>
@@ -136,7 +136,7 @@ export const VedtaksinfoBody = ({
               title="Rettskilde-ID"
               value={vedtaksinformasjon?.rettskildeId || "Ingen ID satt."}
             >
-              <Input {...register("rettskildeId")} backgroundColor={"white"} placeholder={"Ikke spesifisert"} />
+              <Input {...register("rettskildeId")} backgroundColor="white" placeholder="Ikke spesifisert" />
             </VedtakinfoField>
           </Row>
         </FieldContainer>
@@ -164,7 +164,7 @@ export const VedtaksinfoBody = ({
                       {...register("vedtakGyldigFra", {
                         required: "Feltet er påkrevd",
                       })}
-                      id={"vedtakGyldigFra"}
+                      id="vedtakGyldigFra"
                       defaultSelected={field.value}
                       onChange={(e): void => {
                         field.onChange(new Date(e.target.value));
@@ -210,7 +210,7 @@ export const VedtaksinfoBody = ({
                           return true;
                         },
                       })}
-                      id={"vedtakGyldigTil"}
+                      id="vedtakGyldigTil"
                       fromDate={new Date()}
                       defaultSelected={field.value}
                       onChange={(e): void => {
@@ -233,7 +233,7 @@ export const VedtaksinfoBody = ({
             title="Hjemmel"
             value={vedtaksinformasjon?.hjemmel || "Ingen hjemmel satt."}
           >
-            <Input {...register("hjemmel")} backgroundColor={"white"} placeholder={"Ikke spesifisert"} />
+            <Input {...register("hjemmel")} backgroundColor="white" placeholder="Ikke spesifisert" />
           </VedtakinfoField>
         </FieldContainer>
         <FieldContainer>
@@ -245,7 +245,7 @@ export const VedtaksinfoBody = ({
             title="Fastsettingsmyndighet"
             value={vedtaksinformasjon?.fastsettingsmyndighet || "Ingen myndighet satt"}
           >
-            <Input {...register("fastsettingsmyndighet")} backgroundColor={"white"} placeholder={"Ikke spesifisert"} />
+            <Input {...register("fastsettingsmyndighet")} backgroundColor="white" placeholder="Ikke spesifisert" />
           </VedtakinfoField>
         </FieldContainer>
       </Vedtaksfelter>
