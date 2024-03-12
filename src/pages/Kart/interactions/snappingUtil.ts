@@ -82,7 +82,18 @@ const getSnapDataConfig = (grense: GrenseId, activeModeTools: ModeTool[], active
     return config;
   }
 
-  if (snapTypes.includesNibas && snapTypes.includesMatrikkel && !activeTool) {
+  if (
+    snapTypes.includesNibas &&
+    !snapTypes.includesMatrikkel &&
+    grenseType.isMatrikkel &&
+    !activeTool &&
+    !activeModeTools.includes("move")
+  ) {
+    config.hoverEnabled = false;
+    return config;
+  }
+
+  if (!activeTool && !activeModeTools.includes("move")) {
     config.hoverEnabled = true;
     return config;
   }
