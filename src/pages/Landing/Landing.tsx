@@ -1,13 +1,13 @@
 import ActionCard from "components/ActionCard";
 import { Page, PageContainer } from "components/Page";
-import { useEditAllGrenser } from "contexts/EditGrenserContext";
+import { useEditAllGrenser } from "contexts/EditGrenserContext/EditGrenserContext";
 import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllVisibleFeatures, resetMapView } from "utils/map";
+import { getAllVisibleFeatures, resetMapView } from "utils/map/map-utils";
 import { routes } from "utils/routes";
 import Greeting from "./Greeting";
 import LandingHeader from "./LandingHeader";

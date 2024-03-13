@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import GrenserDrillDown from "components/GrenserDrillDown";
+import GrenserDrillDown from "components/GrenserDrillDown/GrenserDrillDown";
 
 const SidebarPanels = () => {
   return (

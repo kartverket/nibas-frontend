@@ -1,5 +1,5 @@
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
-import { createUtkastOperations } from "contexts/UtkastContext/utils";
+import { createUtkastOperations } from "contexts/UtkastContext/utkast-utils";
 import {
   AdministrativGrenseMetadata,
   FylkeRef,

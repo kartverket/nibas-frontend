@@ -1,19 +1,32 @@
 import { ReactNode } from "react";
 import { KartlagProvider, KartlagContext, KartlagContextValue } from "contexts/KartlagContext/KartlagContext";
-import { EditGrenserProvider, EditGrenserContext, EditGrenserContextValue } from "contexts/EditGrenserContext";
+import {
+  EditGrenserProvider,
+  EditGrenserContext,
+  EditGrenserContextValue,
+} from "contexts/EditGrenserContext/EditGrenserContext";
 import { OverlayPanelProvider, OverlayPanelContext, OverlayPanelContextValue } from "contexts/OverlayPanelContext";
 import { SidebarPanelProvider, SidebarPanelContext, SidebarPanelContextValue } from "contexts/SidebarPanelContext";
-import { HistoryProvider, HistoryContext, HistoryContextValue } from "contexts/HistoryContext";
+import { HistoryProvider, HistoryContext } from "contexts/HistoryContext/HistoryContext";
+import { HistoryContextValue } from "contexts/HistoryContext/types";
 import { ToolbarProvider, ToolbarContext, ToolbarContextValue } from "contexts/ToolbarContext";
-import { FeatureStyleProvider, FeatureStyleContext, FeatureStyleContextValue } from "contexts/FeatureStyleContext";
-import { UtkastProvider, UtkastContext, UtkastContextValue } from "contexts/UtkastContext";
+import { FeatureStyleProvider, FeatureStyleContext } from "contexts/FeatureStyleContext/FeatureStyleContext";
+import { FeatureStyleContextValue } from "contexts/FeatureStyleContext/types";
+import { UtkastProvider, UtkastContext } from "contexts/UtkastContext/UtkastContext";
+import { UtkastContextValue } from "contexts/UtkastContext/types";
 import { ErrorHandlingContext, ErrorHandlingContextValue, ErrorHandlingProvider } from "contexts/ErrorHandlingContext";
 import ThirdPartyProviders from "pages/App/ThirdPartyProviders";
 import { BrowserRouter } from "react-router-dom";
+import {
+  ConfirmationModalContext,
+  ConfirmationModalContextValue,
+  ConfirmationModalProvider,
+} from "contexts/ConfirmationModalContext";
 
 // OBS! Rekkefølgen her må være den samme som i Providers.tsx
 const defaultProviderMap = {
   ErrorHandlingProvider,
+  ConfirmationModalProvider,
   HistoryProvider,
   FeatureStyleProvider,
   ToolbarProvider,
@@ -26,6 +39,7 @@ const defaultProviderMap = {
 
 const contextMap = {
   ErrorHandlingProvider: ErrorHandlingContext.Provider,
+  ConfirmationModalProvider: ConfirmationModalContext.Provider,
   HistoryProvider: HistoryContext.Provider,
   ToolbarProvider: ToolbarContext.Provider,
   FeatureStyleProvider: FeatureStyleContext.Provider,
@@ -38,6 +52,7 @@ const contextMap = {
 
 export type TestProviderValues = {
   ErrorHandlingProvider?: ErrorHandlingContextValue | boolean;
+  ConfirmationModalProvider?: ConfirmationModalContextValue | boolean;
   HistoryProvider?: HistoryContextValue | boolean;
   ToolbarProvider?: ToolbarContextValue | boolean;
   FeatureStyleProvider?: FeatureStyleContextValue | boolean;

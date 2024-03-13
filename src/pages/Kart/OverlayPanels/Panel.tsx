@@ -29,7 +29,7 @@ const slideIn = keyframes`
   }
 `;
 
-export const Panel = styled.div<{ $isOpen: boolean }>`
+const Panel = styled.div<{ $isOpen: boolean }>`
   width: 100%;
   padding: 0 18px;
   background: white;

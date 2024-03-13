@@ -10,7 +10,7 @@ export type ConfirmationModalProps = {
   onDecline: () => void;
 };
 
-export type ConfirmationModalOptions = {
+type ConfirmationModalOptions = {
   title: string;
   description: string;
   acceptText?: string;

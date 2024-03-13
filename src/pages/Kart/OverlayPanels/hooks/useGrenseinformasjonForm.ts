@@ -1,11 +1,11 @@
 import { Feature } from "ol";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { FeatureProperties, Metadata } from "types/api";
-import { addFeaturePropertiesEntryFromFeature } from "../GrenseinformasjonPanel/utils";
+import { addFeaturePropertiesEntryFromFeature } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
 import { getMetadataDiscriminatorFromType } from "utils/grenser";
 import { formatISO, startOfDay } from "date-fns";
 import { LineString } from "ol/geom";
-import { useHistory } from "contexts/HistoryContext";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
 
 export type GrenseinformasjonFormProps = {
   grenseType: string;

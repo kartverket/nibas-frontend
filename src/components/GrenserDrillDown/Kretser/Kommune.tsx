@@ -5,9 +5,9 @@ import { getNavnInSpraak } from "utils/language/language";
 import { Outline } from "style/mixins";
 import AlertModal from "components/Modals/AlertModal";
 import useAlertModal from "hooks/useAlertModal";
-import { useHistory } from "contexts/HistoryContext";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { Button, IconButton, Spinner } from "@kvib/react";
-import { useUtkast } from "contexts/UtkastContext";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 
 type Props = {

@@ -1,8 +1,8 @@
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { PanelProps, SidePanel } from "../Panel";
-import GrenseinformasjonForm from "./GrenseinformasjonForm";
-import { useFeatureStyle } from "contexts/FeatureStyleContext";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { FeatureProperties } from "types/api";
+import GrenseinformasjonForm from "./GrenseinformasjonForm";
 import { useEffect } from "react";
 import { isMatrikkelFeature } from "utils/features";
 import { TilhorighetField } from "./TilhorighetField";
@@ -32,7 +32,7 @@ const GrenseinformasjonPanel = ({ isOpen, className }: PanelProps) => {
           <GrensePanelContent>
             <GrenseinformasjonForm onClose={closeOverlayPanel} feature={selectedFeature} />
             <Divider />
-            <Card variant={"filled"}>
+            <Card variant="filled">
               <GrenseInfoExtraCardHeader>
                 <Heading size="md">Ytterligere informasjon</Heading>
               </GrenseInfoExtraCardHeader>

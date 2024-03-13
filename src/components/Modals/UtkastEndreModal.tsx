@@ -1,24 +1,26 @@
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  FormLabel,
-  FormHelperText,
-  Input,
-  ModalFooter,
-  ButtonGroup,
   Button,
+  ButtonGroup,
   FormControl,
   FormErrorMessage,
+  FormHelperText,
+  FormLabel,
+  Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Select,
 } from "@kvib/react";
+import { endringstyper } from "pages/Kart/constants";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import { UtkastResponse } from "types/api";
-import { useUtkast } from "contexts/UtkastContext";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useUtkasts } from "hooks/inndelinger/useUtkasts";
 
 type Props = {
@@ -29,6 +31,7 @@ type Props = {
 
 type UtkastFormData = {
   navn: string;
+  endringstype: string;
 };
 
 const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
@@ -39,7 +42,11 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
     getValues,
     reset,
     formState: { errors, isDirty },
-  } = useForm<UtkastFormData>({ mode: "onSubmit", reValidateMode: "onChange", defaultValues: { navn: utkast.navn } });
+  } = useForm<UtkastFormData>({
+    mode: "onSubmit",
+    reValidateMode: "onChange",
+    defaultValues: { navn: utkast.navn, endringstype: utkast.endringstype },
+  });
   const { updateUtkast } = useUtkast();
 
   const { mutate } = useUtkasts();
@@ -51,7 +58,11 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
 
   const editUtkast = async () => {
     setIsLoading(true);
-    await updateUtkast(utkast.id, { ...utkast, navn: getValues("navn") }, false);
+    await updateUtkast(
+      utkast.id,
+      { ...utkast, navn: getValues("navn"), endringstype: getValues("endringstype") },
+      false,
+    );
     mutate();
     reset(getValues());
     setIsLoading(false);
@@ -66,17 +77,34 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
           <ModalHeader>Endre detaljer</ModalHeader>
           <ModalCloseButton aria-label="Lukk" />
           <ModalBody>
-            <Section isInvalid={!!errors.navn}>
-              <FormLabel>Navn på utkastet</FormLabel>
-              <FormHelperText>
-                Velg et beskrivende navn som gjør at andre kan forstå hva utkastet inneholder.
-              </FormHelperText>
-              <Input
-                placeholder="f.eks. Sammenslåing av Rosenborg og Sentrum i Trondheim"
-                {...register("navn", { required: "Utkastet må ha et navn" })}
-              />
-              {!!errors.navn && <FormErrorMessage errorMessage={errors.navn.message} />}
-            </Section>
+            <FormContent>
+              <FormSection isInvalid={!!errors.navn}>
+                <FormLabel>Navn på utkastet</FormLabel>
+                <FormHelperText>
+                  Velg et beskrivende navn som gjør at andre kan forstå hva utkastet inneholder.
+                </FormHelperText>
+                <Input
+                  placeholder="f.eks. Sammenslåing av Rosenborg og Sentrum i Trondheim"
+                  {...register("navn", { required: "Utkastet må ha et navn" })}
+                />
+                {!!errors.navn && <FormErrorMessage errorMessage={errors.navn.message} />}
+              </FormSection>
+              <FormSection isInvalid={!!errors.endringstype}>
+                <FormLabel>Endringstype</FormLabel>
+                <FormHelperText>Typen påvirker hvilke verktøy som er tilgjengelig under redigeringen.</FormHelperText>
+                <Select
+                  placeholder="Velg en endringstype fra listen"
+                  {...register("endringstype", { required: "Du må velge en endringstype for utkastet" })}
+                >
+                  {endringstyper.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </Select>
+                {!!errors.endringstype && <FormErrorMessage errorMessage={errors.endringstype.message} />}
+              </FormSection>
+            </FormContent>
           </ModalBody>
           <ModalFooter>
             <ButtonGroup>
@@ -94,7 +122,14 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
   );
 };
 
-const Section = styled(FormControl)`
+const FormContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+`;
+
+// TODO: kvib har ikke 500-variant av mulish, bruker bold i mellomtiden
+const FormSection = styled(FormControl)`
   display: flex;
   flex-direction: column;
   gap: 8px;

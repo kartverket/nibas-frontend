@@ -22,7 +22,7 @@ import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useState } from "react";
 import { mutate } from "swr";
 import { statusCode } from "utils/api";
-import { useUtkast } from "contexts/UtkastContext";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useMatch, useNavigate } from "react-router-dom";
 import { routes } from "utils/routes";
 

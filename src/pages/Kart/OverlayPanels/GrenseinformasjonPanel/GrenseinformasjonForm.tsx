@@ -3,18 +3,19 @@ import Geometry from "ol/geom/Geometry";
 import { Alert, AlertIcon, Button, Datepicker, Input, Select, Textarea } from "@kvib/react";
 import { GrenseType } from "hooks/layers/types";
 import { styled } from "styled-components";
-import { dateToFriendlyDatestring, getDateInFriendlyString } from "./utils";
+import { dateToFriendlyDatestring, getDateInFriendlyString } from "./grenseinformasjon-utils";
 import useNibasApi from "hooks/useNibasApi";
 import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
-import { isTempFeatureId } from "pages/Kart/interactions/tempFeatureIdUtil";
-import { EditingType, useEditAllGrenser } from "contexts/EditGrenserContext";
+import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
+import { useEditAllGrenser } from "contexts/EditGrenserContext/EditGrenserContext";
 import GrenseinformasjonRow from "./GrenseinformasjonRow";
 import useIsGrenseinformasjonPanelDisabled from "../hooks/useIsGrenseInformasjonPanelDisabled";
 import { useGrenseinformasjonForm } from "../hooks/useGrenseinformasjonForm";
 import { PanelHeader } from "../Panel";
 import { useEffect, useState } from "react";
 import { Controller } from "react-hook-form";
-import { useHistory } from "contexts/HistoryContext";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { EditingType } from "contexts/EditGrenserContext/types";
 
 type Props = {
   feature: Feature<Geometry>;
