@@ -96,7 +96,7 @@ const UtkastOpprett = () => {
             <ModalHeader>Opprett et nytt utkast</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              <FormContent onSubmit={handleSubmit(opprettUtkast)}>
+              <FormContent>
                 <FormSection isInvalid={!!errors.navn}>
                   <FormLabel>Navn på utkastet</FormLabel>
                   <FormHelperText>
