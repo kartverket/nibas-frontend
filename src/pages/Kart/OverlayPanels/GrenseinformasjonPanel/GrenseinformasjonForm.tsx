@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import { Controller } from "react-hook-form";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { EditingType } from "contexts/EditGrenserContext/types";
+import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 
 type Props = {
   feature: Feature<Geometry>;
@@ -56,8 +57,9 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   const { history } = useHistory();
   const [isEditing, setIsEditing] = useState(false);
   const isGrenseinformasjonPanelDisabled = useIsGrenseinformasjonPanelDisabled(feature);
+  const { openAsync } = useConfirmationModal();
 
-  const { register, handleSubmit, getValues, control, reset, getDefaultValues, onSubmit } =
+  const { register, handleSubmit, getValues, control, reset, getDefaultValues, onSubmit, isDirty } =
     useGrenseinformasjonForm(feature);
 
   const properties = feature.getProperties() as FeatureProperties;
@@ -106,7 +108,21 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   return (
     <FormContainer>
       <PanelHeader
-        onClose={onClose}
+        onClose={async () => {
+          if (!isDirty) {
+            onClose();
+            return;
+          }
+
+          const shouldNotClose = await openAsync({
+            title: "Du har ulagrede endringer",
+            description:
+              "Hvis du går ut av informasjonspanelet uten å fullføre redigering vil du miste endringer du har gjort.",
+            acceptText: "Gå tilbake til redigering",
+            declineText: "Forkast endringene",
+          });
+          if (!shouldNotClose) onClose();
+        }}
         subHeading={`${isTempFeatureId(feature.getId()) ? "" : `Sist oppdatert: ${getSistOppdatert()}`}`}
         noMargin
         button={

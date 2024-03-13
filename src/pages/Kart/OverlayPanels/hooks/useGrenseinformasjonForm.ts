@@ -40,9 +40,11 @@ export const useGrenseinformasjonForm = (feature: Feature) => {
   const featureProperties = feature.getProperties() as FeatureProperties;
   const metadata = featureProperties.metadata as Metadata;
 
+  // formState.dirtyFields blir satt riktig ved første submit, men formState.isDirty blir ikke det, skjønner ikke hvorfor?
+  const isDirty = Object.values(formState.dirtyFields).length > 0;
+
   const onSubmit: SubmitHandler<GrenseinformasjonFormProps> = (data) => {
-    // DirtyFields blir satt riktig ved første submit, men isDirty blir ikke det, skjønner ikke hvorfor?
-    if (Object.values(formState.dirtyFields).length > 0) {
+    if (isDirty) {
       const metadataDiscriminator = getMetadataDiscriminatorFromType(data.grenseType);
       const commonMetadata = metadata.common;
 
@@ -94,5 +96,6 @@ export const useGrenseinformasjonForm = (feature: Feature) => {
     control,
     getDefaultValues: getDefaultValuesFromFeature,
     onSubmit,
+    isDirty,
   };
 };
