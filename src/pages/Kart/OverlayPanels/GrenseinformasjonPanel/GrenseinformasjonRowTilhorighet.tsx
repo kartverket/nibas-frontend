@@ -1,27 +1,44 @@
+// TODO Skal slettes i TS-1579, kun brukt som en kopi av den gamle GrenseinformasjonRow slik at vi ikke trenger å lage en midlertidig "smart" GrenseinformasjonRow som håndterer tilhørighet i tillegg
 import { Icon, SkeletonText, Text, Tooltip } from "@kvib/react";
 import { styled } from "styled-components";
-import { useState } from "react";
+import EditAndSaveButton from "../Flatedata/EditAndSaveButton";
+import { useEffect, useState } from "react";
+import { Geometry } from "ol/geom";
+import { Feature } from "ol";
 
 interface Props {
+  feature: Feature<Geometry>;
   name: string;
-  valueLabel?: string | null;
+  valueLabel?: string;
   tooltipLabel: string;
-  children?: React.ReactNode;
+  children: React.ReactNode;
+  onMetadataSubmit: () => void;
+  isDisabled?: boolean;
+  isDirty: boolean;
+  isUneditable?: boolean;
   isLoading?: boolean;
-  isEditing?: boolean;
-  isRequired?: boolean;
+  reset: () => void;
 }
 
 const GrenseinformasjonRow = ({
-  isEditing,
+  feature,
   name,
   tooltipLabel,
   valueLabel,
   children,
+  onMetadataSubmit,
+  isDisabled,
+  isDirty,
+  isUneditable,
   isLoading,
-  isRequired,
+  reset,
 }: Props) => {
+  const [isEditing, setIsEditing] = useState(false);
   const [iconHovered, setIconHovered] = useState(false);
+
+  useEffect(() => {
+    setIsEditing(false);
+  }, [feature]);
 
   return (
     <Container>
@@ -29,12 +46,34 @@ const GrenseinformasjonRow = ({
         <Row>
           <Tooltip label={tooltipLabel} hasArrow placement="bottom">
             <TextWithIcon onMouseOver={() => setIconHovered(true)} onMouseOut={() => setIconHovered(false)}>
-              <Text as="b">{`${name}${isRequired ? "" : " (valgfri)"}`}</Text>
+              <Text as="b">{name}</Text>
               <InfoIcon>
                 <Icon size={24} color="var(--kvib-colors-blue-500)" isFilled={iconHovered} icon="info"></Icon>
               </InfoIcon>
             </TextWithIcon>
           </Tooltip>
+
+          {!isUneditable && (
+            <EditAndSaveButton
+              isDisabled={isDisabled}
+              isEditing={isEditing}
+              size="sm"
+              onSubmit={() => {
+                if (isDirty) {
+                  onMetadataSubmit();
+                }
+                setIsEditing(false);
+              }}
+              toggleEditing={() =>
+                setIsEditing((prevState) => {
+                  if (isEditing) {
+                    reset();
+                  }
+                  return !prevState;
+                })
+              }
+            />
+          )}
         </Row>
         {isEditing ? (
           <Field>{children}</Field>
@@ -47,37 +86,30 @@ const GrenseinformasjonRow = ({
     </Container>
   );
 };
-
 const InfoIcon = styled.div`
   margin-left: 8px;
   display: flex;
   align-items: center;
-  cursor: help;
+  cursor: default;
 `;
-
 const EditContent = styled.div`
   display: flex;
   flex-direction: column;
 `;
-
 const Row = styled.div`
   display: flex;
   justify-content: space-between;
 `;
-
 const TextWithIcon = styled.div`
   display: flex;
   align-items: center;
 `;
-
 const Field = styled.div`
   margin-top: 8px;
 `;
-
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
 `;
-
 export default GrenseinformasjonRow;
