@@ -4,30 +4,40 @@ import { KretsStatus } from "contexts/EditGrenserContext/types";
 import { mockBasicFeature } from "mocks/handlers/responses";
 
 const defaultProps: React.ComponentProps<typeof ToggleableGrense> = {
-  grense: {
-    id: {
-      gyldighetsdato: "",
-      lokalid: {
-        value: "1",
-      },
-    },
-    href: "",
-    navn: [
-      {
-        navn: "",
-        spraak: "",
-        version: 1,
-      },
-    ],
-    kommunenummer: {
-      id: "id",
-      kodeverdi: "1234",
-    },
-    antallFramtidigeVersjoner: 0,
-  },
   title: "Grense",
   type: "fylke",
   features: [mockBasicFeature],
+  grense: {
+    id: {
+      lokalid: {
+        value: "",
+      },
+      gyldighetsdato: "",
+    },
+    administrativenhetnavn: [],
+    fylkesnummer: {
+      id: "",
+      kodeverdi: "",
+    },
+    samiskforvaltningsomraade: false,
+    oppdateringsdato: "",
+    representasjonspunkt: {
+      type: "",
+      id: undefined,
+      properties: {
+        type: "",
+        srid: 0,
+        metadata: undefined,
+        kontekstEgenskaper: [],
+        version: 0,
+        shouldArchive: false,
+      },
+      geometry: {
+        type: "",
+      },
+    },
+    version: 0,
+  },
 };
 
 beforeEach(() => {

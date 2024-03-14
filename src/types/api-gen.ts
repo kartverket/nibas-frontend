@@ -393,23 +393,6 @@ export interface components {
        * @description Teknisk versjon til referert objekt for å støtte samhandling og redigering
        */
       version: number;
-      /** @description Angir om grensen skal leses med klokken for å danne flate. */
-      retningMedKlokken: boolean;
-      /**
-       * Format: int32
-       * @description Angir rekkefølgen på gitt grenselinje i flatedanningen.
-       */
-      rekkefoelge: number;
-      /**
-       * Format: int32
-       * @description Angir hvilken flate for enheten grensen er en del av.
-       */
-      flateIndeks: number;
-      /**
-       * Format: int32
-       * @description Angir om grensen er en del av et hull, og i så fall index på gitt hull.
-       */
-      hullIndeks?: number;
     };
     /** @description Representasjon av deling av en krets som ender i to kretser der én er videreført og én er ny */
     KretsDelingEndringRequest: {
@@ -419,7 +402,13 @@ export interface components {
        * @description Flatetypen som skal deles
        * @enum {string}
        */
-      flatetype: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
+      flatetype:
+        | "FYLKE"
+        | "KOMMUNE"
+        | "NASJON"
+        | "GRUNNKRETS"
+        | "STEMMEKRETS"
+        | "SKOLEKRETS";
       /** @description Navn og nummer for de nye kretsene som skal utledes fra opprinnelig krets */
       nyeKretser: components["schemas"]["KretsNavnOgNummer"][];
     };
@@ -861,20 +850,6 @@ export interface components {
       /** @description Liste av features som holder på dataene */
       features: components["schemas"]["Feature"][];
     };
-    /** @description En referanse til en kommune */
-    KommuneRef: {
-      id: components["schemas"]["ObjektIdentifikator"];
-      /** @description Liste over navn til kommunen */
-      navn: components["schemas"]["AdministrativEnhetNavn"][];
-      /** @description URL til full representasjon av kommunen */
-      href: string;
-      kommunenummer: components["schemas"]["Kommunenummer"];
-      /**
-       * Format: int32
-       * @description Antall publiserte framtidige gyldige versjoner.
-       */
-      antallFramtidigeVersjoner: number;
-    };
     /** @description Representasjon av en kommune */
     KommuneResponse: {
       id: components["schemas"]["ObjektIdentifikator"];
@@ -942,27 +917,6 @@ export interface components {
       /** @description Liste av kodeliste-elementer. */
       items: components["schemas"]["KodelisteItem"][];
     };
-    /** @description En referanse til et fylke */
-    FylkeRef: {
-      id: components["schemas"]["ObjektIdentifikator"];
-      /** @description Liste over navn til fylket */
-      navn: components["schemas"]["AdministrativEnhetNavn"][];
-      /** @description URL til full representasjon av fylket */
-      href: string;
-      fylkesnummer: components["schemas"]["Fylkesnummer"];
-      /**
-       * Format: int32
-       * @description Antall publiserte framtidige gyldige versjoner.
-       */
-      antallFramtidigeVersjoner: number;
-    };
-    /** @description Representasjon av et fylkesnummer */
-    Fylkesnummer: {
-      /** @description Unik UUID for fylkesnummeret */
-      id: string;
-      /** @description Det faktiske fylkesnummeret */
-      kodeverdi: string;
-    };
     /** @description Representasjon av et fylke */
     FylkeResponse: {
       id: components["schemas"]["ObjektIdentifikator"];
@@ -982,6 +936,13 @@ export interface components {
        * @description Teknisk versjon for å støtte samhandling og redigering
        */
       version: number;
+    };
+    /** @description Representasjon av et fylkesnummer */
+    Fylkesnummer: {
+      /** @description Unik UUID for fylkesnummeret */
+      id: string;
+      /** @description Det faktiske fylkesnummeret */
+      kodeverdi: string;
     };
     /** @description Representasjon av en krets. Response-type kun for Matrikkelen. Kan være grunnkrets, stemmekrets etc. */
     EksternKretsResponse: {
@@ -1438,7 +1399,7 @@ export interface operations {
       /** Successful operation */
       200: {
         content: {
-          "application/json": components["schemas"]["KommuneRef"][];
+          "application/json": components["schemas"]["KommuneResponse"][];
         };
       };
       /** Bad Request */
@@ -1754,7 +1715,7 @@ export interface operations {
       /** Successful operation */
       200: {
         content: {
-          "application/json": components["schemas"]["FylkeRef"][];
+          "application/json": components["schemas"]["FylkeResponse"][];
         };
       };
       /** Bad Request */

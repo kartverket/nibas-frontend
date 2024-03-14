@@ -1,15 +1,15 @@
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import { useFylkerResponse } from "hooks/inndelinger/useFylker";
+import { useEditGrenseValue } from "contexts/EditGrenserContext/useEditGrense";
+import useFylker from "hooks/inndelinger/useFylker";
 import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
+import { GeoJSONFeature } from "ol/format/GeoJSON";
 import { useEffect, useMemo, useState } from "react";
 import useSWRImmutable from "swr/immutable";
 import { FeatureCollection, FylkeResponse } from "types/api";
-import { getIdFromEntity, fetcherWithToken } from "utils/api";
-import { getFeatureFromGeoJson, getFeaturesFromGeoJson } from "utils/map/geoJson";
-import { useEditGrenseValue } from "contexts/EditGrenserContext/useEditGrense";
-import { GeoJSONFeature } from "ol/format/GeoJSON";
-import { getRepresentasjonspunktId } from "utils/map/source";
+import { fetcherWithToken, getIdFromEntity } from "utils/api";
 import { getNavnInSpraak } from "utils/language/language";
+import { getFeatureFromGeoJson, getFeaturesFromGeoJson } from "utils/map/geoJson";
+import { getRepresentasjonspunktId } from "utils/map/source";
 
 const fylkesgrenserFetcher = async ([fylkeIds, token]: [string[], string | undefined]) => {
   const promises: Promise<FeatureCollection>[] = fylkeIds.map(async (fylkeId) =>
@@ -44,7 +44,7 @@ const useFylkesgrenser = () => {
   const { kretsStatus } = useEditGrenseValue("fylke", "fylker");
   const shouldFetch = kretsStatus.editing || kretsStatus.visible;
   const [isFetching, setIsFetching] = useState(false);
-  const { fylker } = useFylkerResponse(shouldFetch);
+  const { fylker } = useFylker(shouldFetch);
   const fylkeIds = fylker?.map(getIdFromEntity) ?? [];
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { data: geoJsonFeatures } = useSWRImmutable(

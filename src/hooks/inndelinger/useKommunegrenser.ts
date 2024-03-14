@@ -1,14 +1,14 @@
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
+import { GeoJSONFeature } from "ol/format/GeoJSON";
 import { useEffect, useMemo, useState } from "react";
 import useSWRImmutable from "swr/immutable";
 import { FeatureCollection, KommuneResponse } from "types/api";
-import { getIdFromEntity, fetcherWithToken } from "utils/api";
-import { getFeatureFromGeoJson, getFeaturesFromGeoJson } from "utils/map/geoJson";
-import { useKommunerResponse } from "./useKommuner";
-import { GeoJSONFeature } from "ol/format/GeoJSON";
-import { getRepresentasjonspunktId } from "utils/map/source";
+import { fetcherWithToken, getIdFromEntity } from "utils/api";
 import { getNavnInSpraak } from "utils/language/language";
+import { getFeatureFromGeoJson, getFeaturesFromGeoJson } from "utils/map/geoJson";
+import { getRepresentasjonspunktId } from "utils/map/source";
+import useKommuner from "./useKommuner";
 
 const kommunegrenserFetcher = async ([kommuneIds, token]: [string[], string | undefined]) => {
   const promises: Promise<FeatureCollection>[] = kommuneIds.map(async (kommuneId) =>
@@ -40,7 +40,7 @@ const getRepresentasjonspunktFeatureForKommune = (kommune: KommuneResponse): Geo
 
 const useKommunegrenser = (fylkeId: string, shouldFetch: boolean) => {
   const [isFetching, setIsFetching] = useState(false);
-  const { kommuner: kommunerResponse } = useKommunerResponse(fylkeId, shouldFetch);
+  const { kommuner: kommunerResponse } = useKommuner(fylkeId, shouldFetch);
   const kommuneIds = kommunerResponse?.map(getIdFromEntity) ?? [];
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { data: geoJsonFeatures } = useSWRImmutable(
