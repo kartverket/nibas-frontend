@@ -97,7 +97,6 @@ const getSnapDataConfig = (grense: GrenseId, activeModeTools: ModeTool[], active
   // Default er av hvis snapping er av
   if (!snapTypes.includesNibas && !snapTypes.includesMatrikkel) return config;
 
-  // Grenseinfo med kun nibas valgt
   if (activeTool === "grenseinfo" && snapTypes.includesNibas && !snapTypes.includesMatrikkel) {
     config.hoverEnabled = true;
     return config;
