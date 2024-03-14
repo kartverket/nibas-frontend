@@ -190,7 +190,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     const featureIdsToIgnore = allFeatureIds.filter((id) => shouldIgnoreFeatureId(id, featureIdsUpToCurrentIndex));
 
     const featureEndpointsToCheck = getAllFeatureEndPointCoordinates(["matrikkel", "archived"]).filter(
-      (featureEndpoint) => featureEndpoint !== null && !featureIdsToIgnore.includes(featureEndpoint.featureId),
+      (featureEndpoint) => featureEndpoint != null && !featureIdsToIgnore.includes(featureEndpoint.featureId),
     ) as FeatureIdWithEndpoints[];
 
     const archivedFeatures = archivedSource.getFeatures().map((f) => f.getId()?.toString() || "");
