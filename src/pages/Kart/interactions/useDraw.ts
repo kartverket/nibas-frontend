@@ -20,6 +20,8 @@ import { useGetFeatures } from "./interaction-utils";
 import { FeatureLike } from "ol/Feature";
 import { Coordinate, equals } from "ol/coordinate";
 import { setDefaultFeatureProperties } from "utils/features";
+import useSplit from "./useSplit";
+import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 
 const useDraw = () => {
   const { activeTool, activeModeTools, toggleTool } = useToolbar();
@@ -29,6 +31,8 @@ const useDraw = () => {
   const { selectFeatures, selectedFeatures } = useFeatureStyle();
   const { getActiveFeaturesAtPixel } = useGetFeatures();
   const toast = useToast();
+  const { performFeatureSplit } = useSplit();
+  const { openAsync } = useConfirmationModal();
 
   const [abortDrawMemoHelper, setAbortDrawMemoHelper] = useState(0);
 
@@ -58,6 +62,40 @@ const useDraw = () => {
       return true;
     };
 
+    const handleSplit = async (featuresAtPixel: FeatureLike[], coordinate: Coordinate) => {
+      if (featuresAtPixel.length > 1) {
+        toast({
+          status: "warning",
+          title: "Fyfy med flere grensedelinger på en gang!",
+        });
+        return;
+      }
+
+      const shouldSplit = await openAsync({
+        title: "Deling av grense",
+        description:
+          "Plasserer man et punkt på noe annet enn et endepunkt vil grensen deles i to deler. Er du sikker på at du vil dele grensen? Velger du å avbryte vil den nye grensen bli slettet.",
+        acceptText: "Del grense",
+        declineText: "Avbryt",
+      });
+      if (!shouldSplit) {
+        toast({
+          status: "warning",
+          title: "Grense ikke delt",
+        });
+        return;
+      }
+
+      const featureId = featuresAtPixel[0].getId()?.toString();
+
+      if (featureId) {
+        const actualFeature = editSource.getFeatureById(featureId);
+        if (actualFeature) {
+          performFeatureSplit(actualFeature, coordinate);
+        }
+      }
+    };
+
     // Denne er kun her for å få ESLint til å ikke ønske å legge til en regel-ignorering, da det ikke går an å legge til
     // ignoreringer for spesifikke dependencies i dependency arrayet.
     // It ain't clean, but it works.
@@ -81,16 +119,15 @@ const useDraw = () => {
         }
 
         // Hvis vi treffer andre features, må vi sjekke om det er et endepunkt
-        const isAllowedOperation = featuresAtPixel.every((featureLike) =>
+        const isEndpointOnEveryFeature = featuresAtPixel.every((featureLike) =>
           isAllowedDrawOperationOnFeature(featureLike, event.coordinate),
         );
 
-        if (!isAllowedOperation) {
-          toast({
-            status: "warning",
-            title: "Nye grensepunkter kan kun plasseres på en eksisterende grenses endepunkter",
-          });
-          return false;
+        if (!isEndpointOnEveryFeature) {
+          if (draw.getRevision() === 0) {
+            // don't split
+          }
+          handleSplit(featuresAtPixel, event.coordinate);
         }
 
         // Vi ønsker å avslutte tegningen hvis man har startet en tegning, og så treffer et endepunkt, så vi unngår rar geometri
@@ -106,7 +143,15 @@ const useDraw = () => {
         return true;
       },
     });
-  }, [abortDrawMemoHelper, activeTool, activeModeTools, getActiveFeaturesAtPixel, toast]);
+  }, [
+    abortDrawMemoHelper,
+    openAsync,
+    toast,
+    performFeatureSplit,
+    activeTool,
+    activeModeTools,
+    getActiveFeaturesAtPixel,
+  ]);
 
   useEffect(() => {
     const addDrawToHistory = (drawnFeature: Feature<LineString>) => {
