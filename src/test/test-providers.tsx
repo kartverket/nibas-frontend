@@ -72,7 +72,7 @@ export const renderWithProviders = (ui: ReactNode, providerValues: TestProviderV
         const providerName = name as ProviderName;
         const value = providerValues[providerName];
 
-        if (value === true || value === undefined) {
+        if (value === true || value == null) {
           // hvis ikke satt eller eksplisitt satt til true, wrap i default provider
           const Provider = defaultProviderMap[providerName];
           return <Provider>{acc}</Provider>;
