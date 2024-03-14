@@ -9,6 +9,7 @@ import { getFeatureFromGeoJson, getFeaturesFromGeoJson } from "utils/map/geoJson
 import { useEditGrenseValue } from "contexts/EditGrenserContext/useEditGrense";
 import { GeoJSONFeature } from "ol/format/GeoJSON";
 import { getRepresentasjonspunktId } from "utils/map/source";
+import { getNavnInSpraak } from "utils/language/language";
 
 const fylkesgrenserFetcher = async ([fylkeIds, token]: [string[], string | undefined]) => {
   const promises: Promise<FeatureCollection>[] = fylkeIds.map(async (fylkeId) =>
@@ -33,7 +34,7 @@ const getRepresentasjonspunktFeatureForFylke = (fylke: FylkeResponse): GeoJSONFe
     id: getRepresentasjonspunktId(fylke.id.lokalid.value),
     properties: {
       ...fylke.representasjonspunkt.properties,
-      name: fylke.administrativenhetnavn[0].navn,
+      name: getNavnInSpraak(fylke.administrativenhetnavn, "nor"),
       number: fylke.fylkesnummer.kodeverdi,
     },
   });

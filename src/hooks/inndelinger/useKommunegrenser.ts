@@ -8,6 +8,7 @@ import { getFeatureFromGeoJson, getFeaturesFromGeoJson } from "utils/map/geoJson
 import { useKommunerResponse } from "./useKommuner";
 import { GeoJSONFeature } from "ol/format/GeoJSON";
 import { getRepresentasjonspunktId } from "utils/map/source";
+import { getNavnInSpraak } from "utils/language/language";
 
 const kommunegrenserFetcher = async ([kommuneIds, token]: [string[], string | undefined]) => {
   const promises: Promise<FeatureCollection>[] = kommuneIds.map(async (kommuneId) =>
@@ -31,7 +32,7 @@ const getRepresentasjonspunktFeatureForKommune = (kommune: KommuneResponse): Geo
     id: getRepresentasjonspunktId(kommune.id.lokalid.value),
     properties: {
       ...kommune.representasjonspunkt.properties,
-      name: kommune.administrativenhetnavn[0].navn,
+      name: getNavnInSpraak(kommune.administrativenhetnavn, "nor"),
       number: kommune.kommunenummer.kodeverdi,
     },
   });
