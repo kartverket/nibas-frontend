@@ -123,7 +123,7 @@ const ToolbarPopups = () => {
           text="Velg hvilket punkt du ønsker å dele grensen på"
           buttonText="Del grense"
           onClick={() => handleSplit()}
-          isDisabled={selectedPoint === null}
+          isDisabled={selectedPoint == null}
           onClose={resetTool}
         />
       )}
