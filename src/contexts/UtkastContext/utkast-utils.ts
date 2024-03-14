@@ -258,7 +258,7 @@ export const addTempFeatureIdToNewFeaturesInUtkast = (utkast: UtkastResponse): U
   const endredeFeatures = utkastCopy.operasjoner.grenseendringer.endredeFeatures;
 
   endredeFeatures
-    .filter((feature) => feature.id === null)
+    .filter((feature) => feature.id == null)
     .forEach((feature) => {
       feature.id = getTempFeatureId();
     });
