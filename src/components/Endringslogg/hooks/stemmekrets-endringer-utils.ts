@@ -1,5 +1,5 @@
 import { deduplicate, removeNull } from "utils/list-utils";
-import { KommuneRef, StemmekretsResponse, UtkastOperasjoner } from "../../../types/api";
+import { KommuneResponse, StemmekretsResponse, UtkastOperasjoner } from "../../../types/api";
 import {
   StemmekretsMetadataEndringstype,
   Endring,
@@ -167,7 +167,7 @@ const getEndringerForKommune = (
   stemmekretserMedEndring: string[],
   operasjoner: UtkastOperasjoner,
   alleStemmekretser: StemmekretsResponse[],
-  alleKommuner: KommuneRef[],
+  alleKommuner: KommuneResponse[],
 ): Stemmekretsendringer => {
   const stemmekretserMedGrensejusteringer = getKretserMedGrensejusteringer(operasjoner, "STEMMEKRETS");
 
@@ -177,7 +177,7 @@ const getEndringerForKommune = (
     kommune: {
       id: kommune?.id.lokalid.value ?? "",
       nummer: kommune?.kommunenummer.kodeverdi ?? "",
-      navn: getNavnInSpraak(kommune?.navn, "nor"),
+      navn: getNavnInSpraak(kommune?.administrativenhetnavn, "nor"),
     },
     metadataendringer: getMetadataEndringer(stemmekretserMedEndring, operasjoner, alleStemmekretser),
     grensejusteringer: removeNull(
@@ -194,7 +194,7 @@ export const getStemmekretsEndringer = (
   endredeStemmekretser: string[],
   operasjoner: OperasjonerOrNull,
   alleStemmekretser: StemmekretsResponse[],
-  alleKommuner: KommuneRef[],
+  alleKommuner: KommuneResponse[],
 ): Stemmekretsendringer[] | null => {
   if (!operasjoner || endredeStemmekretser.length === 0) {
     return null;

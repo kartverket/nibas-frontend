@@ -1,10 +1,13 @@
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
+import { GeoJSONFeature } from "ol/format/GeoJSON";
 import { useEffect, useMemo, useState } from "react";
 import useSWRImmutable from "swr/immutable";
-import { FeatureCollection } from "types/api";
-import { getIdFromEntity, fetcherWithToken } from "utils/api";
-import { getFeaturesFromGeoJson } from "utils/map/geoJson";
+import { FeatureCollection, KommuneResponse } from "types/api";
+import { fetcherWithToken, getIdFromEntity } from "utils/api";
+import { getNavnInSpraak } from "utils/language/language";
+import { getFeatureFromGeoJson, getFeaturesFromGeoJson } from "utils/map/geoJson";
+import { getRepresentasjonspunktId } from "utils/map/source";
 import useKommuner from "./useKommuner";
 
 const kommunegrenserFetcher = async ([kommuneIds, token]: [string[], string | undefined]) => {
@@ -20,37 +23,51 @@ const kommunegrenserFetcher = async ([kommuneIds, token]: [string[], string | un
 
     return acc;
   }, [] as FeatureCollection[]);
-
   return geoJsons.flatMap((geoJson) => geoJson.features);
+};
+
+const getRepresentasjonspunktFeatureForKommune = (kommune: KommuneResponse): GeoJSONFeature => {
+  return getFeatureFromGeoJson({
+    ...kommune.representasjonspunkt,
+    id: getRepresentasjonspunktId(kommune.id.lokalid.value),
+    properties: {
+      ...kommune.representasjonspunkt.properties,
+      name: getNavnInSpraak(kommune.administrativenhetnavn, "nor"),
+      number: kommune.kommunenummer.kodeverdi,
+    },
+  });
 };
 
 const useKommunegrenser = (fylkeId: string, shouldFetch: boolean) => {
   const [isFetching, setIsFetching] = useState(false);
-  const { kommuner } = useKommuner(fylkeId, shouldFetch);
-  const kommuneIds = kommuner?.map(getIdFromEntity) ?? [];
+  const { kommuner: kommunerResponse } = useKommuner(fylkeId, shouldFetch);
+  const kommuneIds = kommunerResponse?.map(getIdFromEntity) ?? [];
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { data: geoJsonFeatures } = useSWRImmutable(
     shouldFetch ? [kommuneIds, tokenHolderFunc()?.token] : null,
     kommunegrenserFetcher,
   );
-
   useEffect(() => {
     if (!shouldFetch) return;
 
-    if (kommuner && geoJsonFeatures) {
+    if (kommunerResponse && geoJsonFeatures) {
       setIsFetching(false);
     } else {
       setIsFetching(true);
     }
-  }, [kommuner, geoJsonFeatures, shouldFetch]);
+  }, [geoJsonFeatures, shouldFetch, kommunerResponse]);
 
   const features = useMemo(() => {
-    if (!geoJsonFeatures) {
+    if (!geoJsonFeatures || !kommunerResponse) {
       return null;
     }
 
-    return geoJsonFeatures.flatMap(getFeaturesFromGeoJson);
-  }, [geoJsonFeatures]);
+    const representasjonspunktFeatures = kommunerResponse?.map((kommune) =>
+      getRepresentasjonspunktFeatureForKommune(kommune),
+    );
+
+    return geoJsonFeatures.flatMap(getFeaturesFromGeoJson).concat(representasjonspunktFeatures);
+  }, [geoJsonFeatures, kommunerResponse]);
 
   useAddInndelingerKontekst(features, "kommune", fylkeId);
 

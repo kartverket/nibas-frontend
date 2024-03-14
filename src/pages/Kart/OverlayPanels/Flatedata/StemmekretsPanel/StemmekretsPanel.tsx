@@ -32,7 +32,7 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
       <ModalOverlay />
       <ModalContent as={ModalPanel} $isOpen={isOpen} className={className}>
         <PanelHeader onClose={closeOverlayModal}>
-          Flateinformasjon for {getNavnInSpraak(flatedata?.navn, "nor")}
+          Flateinformasjon for {getNavnInSpraak(flatedata?.administrativenhetnavn, "nor")}
         </PanelHeader>
         {utkastStemmekretser ? (
           <KretsTable $hasUtkast={utkast !== undefined}>

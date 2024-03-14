@@ -2,17 +2,50 @@ import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { createUtkastOperations } from "contexts/UtkastContext/utkast-utils";
 import {
   AdministrativGrenseMetadata,
-  FylkeRef,
+  FylkeResponse,
   GrunnkretsRequest,
   GrunnkretsResponse,
   KodelisteRespons,
-  KommuneRef,
   KommuneResponse,
   StemmekretsResponse,
   UtkastRef,
   UtkastResponse,
 } from "types/api";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
+
+export const mockFylker: FylkeResponse[] = [
+  {
+    id: {
+      lokalid: {
+        value: "",
+      },
+      gyldighetsdato: "",
+    },
+    administrativenhetnavn: [],
+    fylkesnummer: {
+      id: "",
+      kodeverdi: "",
+    },
+    samiskforvaltningsomraade: false,
+    oppdateringsdato: "",
+    representasjonspunkt: {
+      type: "",
+      id: undefined,
+      properties: {
+        type: "",
+        srid: 0,
+        metadata: undefined,
+        kontekstEgenskaper: [],
+        version: 0,
+        shouldArchive: false,
+      },
+      geometry: {
+        type: "",
+      },
+    },
+    version: 0,
+  },
+];
 
 export const mockGeoJsonFeatureResponse: GeoJSONFeatureCollection = {
   type: "FeatureCollection",
@@ -107,50 +140,7 @@ export const mockGeoJsonFeatureResponse: GeoJSONFeatureCollection = {
 
 export const mockBasicFeature = getFeaturesFromGeoJson(mockGeoJsonFeatureResponse)[0];
 
-export const mockFylker = [
-  {
-    id: {
-      gyldighetsdato: "2022-01-01",
-      lokalid: {
-        value: "1",
-      },
-    },
-    navn: [
-      {
-        navn: "Vestfold og Telemark",
-        spraak: "nor",
-      },
-    ],
-    href: "http://localhost:8080/v1/fylker/1",
-    fylkesnummer: {
-      id: "id1",
-      kodeverdi: "38",
-    },
-    antallFramtidigeVersjoner: 0,
-  },
-  {
-    id: {
-      gyldighetsdato: "2022-01-01",
-      lokalid: {
-        value: "2",
-      },
-    },
-    navn: [
-      {
-        navn: "Agder",
-        spraak: "nor",
-      },
-    ],
-    href: "http://localhost:8080/v1/fylker/2",
-    fylkesnummer: {
-      id: "id2",
-      kodeverdi: "42",
-    },
-    antallFramtidigeVersjoner: 0,
-  },
-] as FylkeRef[];
-
-export const mockDetailedKommune: KommuneResponse = {
+export const mockKommune: KommuneResponse = {
   representasjonspunkt: mockGeoJsonFeatureResponse.features[0],
   administrativenhetnavn: [
     {
@@ -173,6 +163,8 @@ export const mockDetailedKommune: KommuneResponse = {
   oppdateringsdato: "2022-12-31",
   samiskforvaltningsomraade: false,
 };
+
+export const mockKommuner = [mockKommune];
 
 export const mockDetailedGrunnkrets1: GrunnkretsResponse = {
   grunnkretsnummer: "22345678",
@@ -240,44 +232,6 @@ export const mockGrunnkretsRequest: GrunnkretsRequest = {
   },
   version: 1,
 };
-
-export const mockKommuner = [
-  {
-    id: {
-      gyldighetsdato: "2022-01-01",
-      lokalid: {
-        value: "1",
-      },
-    },
-    navn: [{ navn: "Malvik", spraak: "nor" }],
-    kommunenummer: {
-      id: "12345",
-      kodeverdi: "5031",
-    },
-    href: "http://localhost:8080/v1/kommuner/1",
-    antallFramtidigeVersjoner: 0,
-  },
-  {
-    id: {
-      gyldighetsdato: "2022-01-01",
-      lokalid: {
-        value: "2",
-      },
-    },
-    navn: [
-      {
-        navn: "Giske",
-        spraak: "nor",
-      },
-    ],
-    kommunenummer: {
-      id: "12345",
-      kodeverdi: "1532",
-    },
-    href: "http://localhost:8080/v1/kommuner/2",
-    antallFramtidigeVersjoner: 0,
-  },
-] as KommuneRef[];
 
 export const mockMaalemetodeResponse: KodelisteRespons = {
   type: "MAALEMETODE_KODE",
