@@ -197,7 +197,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
       if (!allFeatures) return;
       removeFeaturesFromSourceByIds(layerId, allFeatures.map(getFeatureId));
     }
-    if (context?.getCurrentlyEditingType() === null) {
+    if (context?.getCurrentlyEditingType() == null) {
       zoomToFeatures(getAllVisibleFeatures());
     }
   };
