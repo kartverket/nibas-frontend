@@ -9,7 +9,7 @@ export const nibasApiHandlers: HttpHandler[] = [
   http.get("/v1/fylker/:fylkeId/grenser", () => HttpResponse.json(mocks.mockGeoJsonFeatureResponse, { status: 200 })),
   http.get("/v1/kodeliste/maalemetode-koder", () => HttpResponse.json(mocks.mockMaalemetodeResponse, { status: 200 })),
   http.post("/v1/grenser", () => new HttpResponse(null, { status: 200 })),
-  http.get("/v1/kommuner/:id", () => HttpResponse.json(mocks.mockDetailedKommune, { status: 200 })),
+  http.get("/v1/kommuner/:id", () => HttpResponse.json(mocks.mockKommune, { status: 200 })),
   http.get("/v1/kommuner/:id/grunnkretser", () => {
     return HttpResponse.json([mocks.mockDetailedGrunnkrets1, mocks.mockDetailedGrunnkrets2], {
       status: 200,
