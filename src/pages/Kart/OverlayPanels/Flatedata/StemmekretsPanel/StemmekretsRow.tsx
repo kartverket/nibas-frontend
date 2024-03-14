@@ -102,10 +102,10 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
     },
   };
 
-  const validationError = (error: FieldError | undefined) => {
+  const validationError = (error: FieldError | undefined | null) => {
     if (error) {
       return {
-        showError: error !== undefined,
+        showError: true,
         message: error.message,
       } as ValidationError;
     }

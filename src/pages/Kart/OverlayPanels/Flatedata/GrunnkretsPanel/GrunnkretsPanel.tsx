@@ -45,7 +45,7 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
           Flateinformasjon for {getNavnInSpraak(flatedata?.navn, "nor")}
         </PanelHeader>
         {filteredGrunnkretser ? (
-          <KretsTable $hasUtkast={utkast !== undefined}>
+          <KretsTable $hasUtkast={utkast != null}>
             <thead>
               <tr>
                 <SortHeader {...sortHeaderProps("grunnkretsnummer")}>Grunnkretsnummer</SortHeader>

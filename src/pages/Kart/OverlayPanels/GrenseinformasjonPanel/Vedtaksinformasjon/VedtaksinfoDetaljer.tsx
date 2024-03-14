@@ -117,14 +117,14 @@ export const VedtaksinfoDetaljer = ({
 
   if (!metadata) return;
 
-  if (isOpen && selectedVedtaksinfoId !== undefined) {
+  if (isOpen && selectedVedtaksinfoId != null) {
     const dokumentasjonsRef = metadata.dokumentasjonsreferanser;
     if (dokumentasjonsRef) {
       const vedtaksinformasjon = dokumentasjonsRef.find((ref) => ref.id === selectedVedtaksinfoId);
-      if (dokref === undefined) {
+      if (dokref == null) {
         setDokref(vedtaksinformasjon?.dokumentlenker || []);
       }
-      if (internref === undefined) {
+      if (internref == null) {
         setInternref(vedtaksinformasjon?.internReferanserKartverket || []);
       }
     }
@@ -318,8 +318,8 @@ const VedtakFooterRight = styled.div`
 `;
 
 function isVedtakPersisted(selectedVedtaksinfoId: string | undefined, metadata: Metadata) {
-  if (selectedVedtaksinfoId === undefined) return false;
-  if (metadata.dokumentasjonsreferanser === undefined) return false;
+  if (selectedVedtaksinfoId == null) return false;
+  if (metadata.dokumentasjonsreferanser == null) return false;
 
   const dokref = metadata.dokumentasjonsreferanser.find((ref) => ref.id === selectedVedtaksinfoId);
 

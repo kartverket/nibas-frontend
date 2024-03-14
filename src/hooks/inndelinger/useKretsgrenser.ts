@@ -152,7 +152,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
 
     promiseStemmekretsFeatureIds.then((resolvedValue) => {
       const stemmekretsFeatureIds: string[] = resolvedValue
-        ? resolvedValue.filter((x) => x !== undefined).map((x) => String(x))
+        ? resolvedValue.filter((x) => x != null).map((x) => String(x))
         : [];
 
       if (stemmekretsFeatureIds.length > 0) {
@@ -197,7 +197,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
       if (!allFeatures) return;
       removeFeaturesFromSourceByIds(layerId, allFeatures.map(getFeatureId));
     }
-    if (context?.getCurrentlyEditingType() === null) {
+    if (context?.getCurrentlyEditingType() == null) {
       zoomToFeatures(getAllVisibleFeatures());
     }
   };
