@@ -15,10 +15,32 @@ import {
   getFeaturesConnectedToFeatureAtEndpoints,
   isFeatureDeadEnd,
 } from "utils/features";
-import { HistoryEntry, HistoryTypeValues } from "contexts/HistoryContext/types";
+import { HistoryEntry, HistoryState, HistoryTypeValues } from "contexts/HistoryContext/types";
 import { removeNull } from "utils/list-utils";
 
 export const FeatureStyleContext = createContext<FeatureStyleContextValue | undefined>(undefined);
+
+/**
+ * @param filter valgfritt filter for history entries
+ * @returns En delmengde av HistoryEntries i historikken opp til nåværende index.
+ */
+const getEntriesUpToIndex = (
+  history: HistoryState,
+  filter?: (value: HistoryEntry, index: number, array: HistoryEntry[]) => boolean,
+): HistoryEntry[] => {
+  const filterFn = filter ? filter : () => true;
+  return history.entries.slice(0, history.index).filter(filterFn);
+};
+
+/**
+ * Hjelpefunksjon for å lete etter featureIds som kun eksisterer etter nåværende indexposisjon
+ * @param featureId ID å sjekke mot
+ * @param idsUpToIndex IDer slicet mot index
+ * @returns true dersom IDen ikke finnes i nåværende delmengde av history, ellers false.
+ */
+const shouldIgnoreFeatureId = (featureId: string, idsUpToIndex: string[]) => {
+  return !idsUpToIndex.includes(featureId);
+};
 
 export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }) => {
   const { history } = useHistory();
@@ -162,31 +184,31 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       return;
     }
 
-    const allFeatureEndpoints = getAllFeatureEndPointCoordinates(["matrikkel", "archived"]).filter(
-      (featureEndpoint) => featureEndpoint !== null,
+    const allFeatureIds = history.entries.reduce(getFeatureIdsFromEntries, []).flat();
+    const featureIdsUpToCurrentIndex = getEntriesUpToIndex(history).reduce(getFeatureIdsFromEntries, []).flat();
+    // Finn IDer som er med i historien etter index, men ikke før
+    const featureIdsToIgnore = allFeatureIds.filter((id) => shouldIgnoreFeatureId(id, featureIdsUpToCurrentIndex));
+
+    const featureEndpointsToCheck = getAllFeatureEndPointCoordinates(["matrikkel", "archived"]).filter(
+      (featureEndpoint) => featureEndpoint !== null && !featureIdsToIgnore.includes(featureEndpoint.featureId),
     ) as FeatureIdWithEndpoints[];
 
     const archivedFeatures = archivedSource.getFeatures().map((f) => f.getId()?.toString() || "");
 
-    const errorFeatures = history.entries
-      .slice(0, history.index)
-      .filter((entry) => errorHistoryTypes.includes(entry.type))
+    const errorFeatures = getEntriesUpToIndex(history, (entry) => errorHistoryTypes.includes(entry.type))
       .reduce(getAffectedFeaturesForErrorEntries, [])
       .flat()
       .filter((feature) => {
         const featureId = feature.getId()?.toString();
         if (feature && featureId && !archivedFeatures.includes(featureId)) {
-          return isFeatureDeadEnd(feature, allFeatureEndpoints);
+          return isFeatureDeadEnd(feature, featureEndpointsToCheck);
         }
-
         return false;
       })
       .map((feature) => feature.getId()?.toString() || "");
 
     // Entries før index skal fargelegges basert på endringen som er gjort
-    const dirtyFeatures = history.entries
-      .slice(0, history.index)
-      .filter((entry) => dirtyHistoryTypes.includes(entry.type))
+    const dirtyFeatures = getEntriesUpToIndex(history, (entry) => dirtyHistoryTypes.includes(entry.type))
       .reduce(getFeatureIdsFromEntries, [])
       .flatMap((id) => id)
       .filter((id) => !errorFeatures.includes(id));
