@@ -137,7 +137,6 @@ const useDraw = () => {
         });
 
         if (shouldSplit) {
-          // TODO pass på å ikke ha samme feature her, da håndterer performFeatureSplit det
           for (const feature of uniqueFeaturesToBeSplit) {
             const geometry = feature.getGeometry();
             if (geometry && geometry instanceof LineString) {
