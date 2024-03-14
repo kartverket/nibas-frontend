@@ -17,7 +17,7 @@ export const mockFylker: FylkeResponse[] = [
   {
     id: {
       lokalid: {
-        value: "",
+        value: "1",
       },
       gyldighetsdato: "",
     },
