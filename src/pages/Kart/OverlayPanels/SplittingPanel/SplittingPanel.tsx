@@ -71,6 +71,21 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
     resetSplitting();
   };
 
+  const validateNotDuplicateKretsnummer = (value: string) => {
+    const conflictingKrets = opprinneligFlateOptions.find((krets) => krets.nummer === value);
+    if (conflictingKrets) {
+      return `Nytt ${editingType}nummer er allerede i bruk av ${conflictingKrets.nummer} ${conflictingKrets.navn}`;
+    }
+
+    const nyeKretsNummere = getValues("nyeKretser").map((k) => k.kretsNummer);
+    const uniqueKretsNummere = new Set(nyeKretsNummere);
+    if (uniqueKretsNummere.size !== nyeKretsNummere.length) {
+      return `Nytt ${editingType}nummer er allerede i bruk i denne splittingen`;
+    }
+
+    return true;
+  };
+
   const kretsNumberValidator = {
     required: `Ny ${editingType} må ha et nummer`,
     pattern: {
@@ -91,6 +106,7 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
       value: editingType === "stemmekrets" ? 4 : 8,
       message: `Nytt ${editingType}nummer kan ikke være lengre enn ${editingType === "stemmekrets" ? 4 : 8} tegn`,
     },
+    validate: validateNotDuplicateKretsnummer,
   };
 
   const opprinneligKretsRegister = register("opprinneligKrets.lokalId");
@@ -139,7 +155,7 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
                       <Input
                         disabled={index === 0}
                         type="number"
-                        {...register(`nyeKretser.${index}.kretsNummer`, kretsNumberValidator)}
+                        {...register(`nyeKretser.${index}.kretsNummer`, index !== 0 ? kretsNumberValidator : {})}
                       />
                     </FormControl>
                     <FormControl isInvalid={!!errors.nyeKretser?.[index]?.kretsNavn}>
