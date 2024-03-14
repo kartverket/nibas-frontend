@@ -10,14 +10,14 @@ const defaultProps: React.ComponentProps<typeof ToggleableGrense> = {
   grense: {
     id: {
       lokalid: {
-        value: "",
+        value: "1",
       },
       gyldighetsdato: "",
     },
-    administrativenhetnavn: [],
+    administrativenhetnavn: [{ navn: "", spraak: "", version: 1 }],
     fylkesnummer: {
-      id: "",
-      kodeverdi: "",
+      id: "id",
+      kodeverdi: "1234",
     },
     samiskforvaltningsomraade: false,
     oppdateringsdato: "",

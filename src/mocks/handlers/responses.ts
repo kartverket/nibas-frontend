@@ -21,10 +21,53 @@ export const mockFylker: FylkeResponse[] = [
       },
       gyldighetsdato: "",
     },
-    administrativenhetnavn: [],
+    administrativenhetnavn: [
+      {
+        navn: "Vestfold og Telemark",
+        spraak: "nor",
+        version: 1,
+      },
+    ],
     fylkesnummer: {
-      id: "",
-      kodeverdi: "",
+      id: "id1",
+      kodeverdi: "38",
+    },
+    samiskforvaltningsomraade: false,
+    oppdateringsdato: "",
+    representasjonspunkt: {
+      type: "",
+      id: undefined,
+      properties: {
+        type: "",
+        srid: 0,
+        metadata: undefined,
+        kontekstEgenskaper: [],
+        version: 0,
+        shouldArchive: false,
+      },
+      geometry: {
+        type: "",
+      },
+    },
+    version: 0,
+  },
+  {
+    id: {
+      lokalid: {
+        value: "2",
+      },
+      gyldighetsdato: "",
+    },
+    administrativenhetnavn: [
+      {
+        navn: "Agder",
+        spraak: "nor",
+        version: 1,
+      },
+    ],
+    fylkesnummer: {
+      id: "id2",
+      kodeverdi: "42",
     },
     samiskforvaltningsomraade: false,
     oppdateringsdato: "",
@@ -158,13 +201,37 @@ export const mockKommune: KommuneResponse = {
   version: 1,
   kommunenummer: {
     id: "a379eb0a-7bae-4fc9-ab07-cf0c7a28bdb7",
-    kodeverdi: "12345678",
+    kodeverdi: "5031",
   },
   oppdateringsdato: "2022-12-31",
   samiskforvaltningsomraade: false,
 };
 
-export const mockKommuner = [mockKommune];
+export const mockKommuneGiske: KommuneResponse = {
+  representasjonspunkt: mockGeoJsonFeatureResponse.features[0],
+  administrativenhetnavn: [
+    {
+      navn: "Giske",
+      spraak: "nor",
+      version: 1,
+    },
+  ],
+  id: {
+    gyldighetsdato: "2022-01-01",
+    lokalid: {
+      value: "2",
+    },
+  },
+  version: 1,
+  kommunenummer: {
+    id: "12345",
+    kodeverdi: "1532",
+  },
+  oppdateringsdato: "2022-12-31",
+  samiskforvaltningsomraade: false,
+};
+
+export const mockKommuner = [mockKommune, mockKommuneGiske];
 
 export const mockDetailedGrunnkrets1: GrunnkretsResponse = {
   grunnkretsnummer: "22345678",
