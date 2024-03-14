@@ -1,11 +1,11 @@
+import { useEditGrenseValue } from "contexts/EditGrenserContext/EditGrenserContext";
+import { EditingType } from "contexts/EditGrenserContext/types";
 import { useEffect } from "react";
+import { FylkeResponse, GrenseRef, KommuneResponse } from "types/api";
+import { getIdFromEntity } from "utils/api";
+import { getNavnInSpraak } from "utils/language/language";
 import ToggleableGrense from "../ToggleableGrense/ToggleableGrense";
 import useApiGrense from "./useApiGrense";
-import { EditingType } from "contexts/EditGrenserContext/types";
-import { useEditGrenseValue } from "contexts/EditGrenserContext/EditGrenserContext";
-import { FylkeRef, GrenseRef, KommuneRef } from "types/api";
-import { getNavnInSpraak } from "utils/language/language";
-import { getIdFromEntity } from "utils/api";
 
 type Props<T> = {
   grense: T;
@@ -37,8 +37,10 @@ const ApiGrense = <T extends GrenseRef>({ grense, type, featuresUrl }: Props<T>)
   }, [visible, features, fetchFeatures]);
 
   const nummer =
-    type === "fylke" ? (grense as FylkeRef).fylkesnummer.kodeverdi : (grense as KommuneRef).kommunenummer.kodeverdi;
-  const navn = getNavnInSpraak(grense.navn, "nor");
+    type === "fylke"
+      ? (grense as FylkeResponse).fylkesnummer.kodeverdi
+      : (grense as KommuneResponse).kommunenummer.kodeverdi;
+  const navn = getNavnInSpraak(grense.administrativenhetnavn, "nor");
 
   return <ToggleableGrense key={navn} grense={grense} type={type} title={`${nummer} ${navn}`} features={features} />;
 };
