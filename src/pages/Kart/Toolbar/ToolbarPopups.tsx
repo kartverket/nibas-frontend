@@ -16,7 +16,6 @@ const ToolbarPopups = () => {
   const [matrikkelIsLoading, setMatrikkelIsLoading] = useState(false);
   const { setError } = useErrorHandling();
   const toast = useToast();
-  // const toastIdRef = useRef<string | number>("");
   const { split } = useSplit();
   const { addHistoryEntry } = useHistory();
   const { activeModeTools, activeTool, resetModeTools, resetTool } = useToolbar();
