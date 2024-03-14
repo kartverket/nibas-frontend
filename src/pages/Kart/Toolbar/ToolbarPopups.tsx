@@ -2,45 +2,40 @@ import { useToolbar } from "contexts/ToolbarContext";
 import ToolbarPopup from "./ToolbarPopup";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import useSplit from "../interactions/useSplit";
-import { addFeaturesToSource, getFeatureId, removeFeaturesFromSourceByIds } from "utils/map/source";
+import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { useToast } from "@kvib/react";
-import { addArchivingEntryFromFeature } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
+import { addArchivingEntryFromFeatureList } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { clearMatrikkelLayer, getMatrikkelFeatures } from "utils/map/layers";
 import { map } from "../constants";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
+import { removeNull } from "utils/list-utils";
 
 const ToolbarPopups = () => {
   const [matrikkelIsLoading, setMatrikkelIsLoading] = useState(false);
   const { setError } = useErrorHandling();
   const toast = useToast();
-  const toastIdRef = useRef<string | number>("");
   const { split } = useSplit();
   const { addHistoryEntry } = useHistory();
   const { activeModeTools, activeTool, resetModeTools, resetTool } = useToolbar();
   const { selectedFeatures, selectedPoint, addArchivedStyles, clearSelection } = useFeatureStyle();
 
   const archiveFeatures = () => {
-    const selectedFeature = selectedFeatures[0];
-    if (selectedFeature) {
-      clearSelection();
-      addArchivedStyles([getFeatureId(selectedFeature)]);
-      removeFeaturesFromSourceByIds("edit", [getFeatureId(selectedFeature)]);
-      addFeaturesToSource("archived", [selectedFeature]);
-      addArchivingEntryFromFeature(selectedFeature, addHistoryEntry);
-      toast({ status: "success", title: "Grensen ble arkivert" });
-      if (!toastIdRef.current) {
-        toastIdRef.current = toast({
-          status: "warning",
-          title: "Husk å sette tilhørighet på berørte grenser",
-          description: `For øyeblikket må alle flatetilhørigheter på grensene legges til manuelt. 
-          Tilhørigheten kan settes ved å bruke "Informasjon"-verktøyet.`,
-          isClosable: true,
-          duration: null,
-        });
-      }
-    }
+    const selectedFeatureIds = removeNull(selectedFeatures.map((feature) => feature.getId()?.toString()));
+
+    clearSelection();
+    addArchivedStyles(selectedFeatureIds);
+    removeFeaturesFromSourceByIds("edit", selectedFeatureIds);
+    addFeaturesToSource("archived", selectedFeatures);
+
+    addArchivingEntryFromFeatureList(selectedFeatures, addHistoryEntry);
+
+    toast({
+      status: "success",
+      title: `${selectedFeatureIds.length} grense${selectedFeatureIds.length > 1 && "r"} ble arkivert`,
+      description: "Husk å eventuelt sette tilhørighet på berørte grenser",
+    });
   };
 
   const handleSplit = () => {
@@ -138,10 +133,10 @@ const ToolbarPopups = () => {
       )}
       {activeTool === "archive" && (
         <ToolbarPopup
-          text="Velg grensen du ønsker å arkivere"
+          text="Velg en eller flere grenser du ønsker å arkivere"
           buttonText="Arkiver"
           onClick={archiveFeatures}
-          isDisabled={selectedFeatures.length !== 1}
+          isDisabled={selectedFeatures.length === 0}
           onClose={resetTool}
         />
       )}
