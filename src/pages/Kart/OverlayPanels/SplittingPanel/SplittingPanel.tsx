@@ -81,8 +81,10 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
     }
 
     const nyeKretsNummere = getValues("nyeKretser").map((k) => k.kretsNummer);
-    const uniqueKretsNummere = new Set(nyeKretsNummere);
-    if (uniqueKretsNummere.size !== nyeKretsNummere.length) {
+    const indexOfCurrentNummer = nyeKretsNummere.findIndex((n) => n === value);
+    nyeKretsNummere.splice(indexOfCurrentNummer, 1); // fjerner value fra lista
+    if (nyeKretsNummere.includes(value)) {
+      // hvis et nummer lik value fremdeles er i lista har vi duplikat for value
       return `Nytt ${editingType}nummer er allerede i bruk i denne splittingen`;
     }
 
@@ -193,7 +195,10 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
                     </FormControl>
                     {index !== 0 ? (
                       <IconButton
-                        onClick={() => remove(index)}
+                        onClick={() => {
+                          remove(index);
+                          trigger();
+                        }}
                         aria-label="fjern splitt"
                         icon="close"
                         variant="tertiary"
