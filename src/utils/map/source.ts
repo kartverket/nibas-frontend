@@ -62,7 +62,7 @@ export const removeFeaturesFromSourceByIds = (sourceId: LayerId, featureIds: str
     // hvis delt, ikke slett
     const sharedIndex = featureToRemove.get("sharedIndex");
 
-    if (sharedIndex !== undefined && sharedIndex > 0) {
+    if (sharedIndex != null && sharedIndex > 0) {
       featureToRemove.set("sharedIndex", sharedIndex - 1);
       return;
     }

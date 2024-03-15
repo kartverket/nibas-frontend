@@ -87,9 +87,9 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
       }
     } else if (statusCode.isConflict(response.status)) {
       setError({
-        title: "Utkastet er utdatert",
+        title: "Publisering av utkastet feilet",
         description:
-          "Du har gjort endringer på en gammel versjon av en krets. Du må gjennomføre endringene på nytt i et nytt utkast.",
+          "Det oppstod en konflikt ved publisering av utkastet. Dette kan oppstå om to eller flere personer har jobbet samtidig på det samme utkastet, eller om utkastet allerede er publisert.\n\n Vennligst oppdater siden og forsøk publiseringen på nytt.",
       });
     } else {
       try {

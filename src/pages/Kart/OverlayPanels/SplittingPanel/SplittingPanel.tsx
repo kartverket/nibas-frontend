@@ -171,7 +171,7 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
                           errors.nyeKretser?.[index]?.kretsNavn?.message,
                           errors.nyeKretser?.[index]?.kretsNummer?.message,
                         ]
-                          .filter((e) => e !== undefined)
+                          .filter((e) => e != null)
                           .map((error, indexE) => (
                             <li key={indexE}>{error}</li>
                           ))}
