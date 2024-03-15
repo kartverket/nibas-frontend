@@ -47,11 +47,12 @@
         "unnamedComponents": "arrow-function"
       }
     ],
-    "@typescript-eslint/no-unused-vars": ["warn"],
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-shadow": ["error"],
-    "@typescript-eslint/switch-exhaustiveness-check": "error",
+    "@typescript-eslint/no-unused-vars": ["warn"],
     "@typescript-eslint/prefer-optional-chain": "error",
+    "@typescript-eslint/strict-boolean-expressions": "error",
+    "@typescript-eslint/switch-exhaustiveness-check": "error",
     "no-unused-vars": "off",
     "no-shadow": "off",
     "no-restricted-imports": ["warn", { "patterns": ["@chakra-ui/*"] }],
