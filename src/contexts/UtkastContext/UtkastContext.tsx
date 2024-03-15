@@ -195,6 +195,12 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       setUtkast(updatedUtkastWithTempFeatureIds);
+    } else if (statusCode.isConflict(response.status)) {
+      setError({
+        title: "Konflikt ved lagring av utkast",
+        description:
+          "Det oppstod en konflikt ved lagring av utkastet. Dette kan oppstå om to eller flere personer har jobbet samtidig på det samme utkastet.\n\n Vennligst oppdater siden og forsøk å gjøre føringen på nytt, eventuelt kan du gjøre det i et nytt utkast.",
+      });
     } else if (statusCode.isError(response.status)) {
       const wrapper = (await response.json()) as ApiErrorResponse;
 
@@ -203,7 +209,14 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
         description: wrapper.errorDescription.description,
         errorCode: wrapper.errorCode,
       });
+    } else {
+      setError({
+        title: "Oppdatering av utkast feilet",
+        description: "En ukjent feil oppstod ved lagring av utkastet.",
+      });
     }
+
+    return statusCode.isSuccessful(response.status);
   };
 
   const updateUtkastWithHistory = async () => {
@@ -211,8 +224,9 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (!updatedUtkast || !utkast) return;
 
-    await updateUtkast(utkast.id, updatedUtkast);
-    toast({ status: "success", title: "Utkastet er lagret" });
+    if (await updateUtkast(utkast.id, updatedUtkast)) {
+      toast({ status: "success", title: "Utkastet er lagret" });
+    }
   };
 
   /**
