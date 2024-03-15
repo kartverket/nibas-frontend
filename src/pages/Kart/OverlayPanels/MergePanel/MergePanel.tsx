@@ -44,7 +44,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { setAndSaveSammenslaaingStyles, setAndSaveSammenslaaingOverlappingStyles } = useFeatureStyle();
   const { history } = useHistory();
-  const { data: stemmekretserByKommune } = useKommuneStemmekretser(flatedata ? getIdFromEntity(flatedata) : "");
+  const { data: stemmekretserByKommune } = useKommuneStemmekretser(flatedata ? getIdFromEntity(flatedata) : null);
 
   const utkastStemmekretser = useUtkastEntity(stemmekretserByKommune, "stemmekretsendringer") as
     | StemmekretsResponse[]

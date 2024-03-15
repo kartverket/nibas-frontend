@@ -80,7 +80,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   const utkastGeoJsons = useUtkastFeature(grenserGeoJsons, utkast);
 
   const allFeatures = useMemo(() => {
-    if (!kretserByKommune) return null;
+    if (!kretserByKommune || utkastGeoJsons == null) return null;
 
     const representasjonspunktFeatures = kretserByKommune?.map((krets) =>
       getRepresentasjonspunktFeatureForKrets(krets),

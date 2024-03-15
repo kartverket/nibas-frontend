@@ -65,8 +65,8 @@ export const useSplittingForm = (flatedata: Flatedata) => {
 
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const editingType = getCurrentlyEditingType();
-  const { data: stemmekretser } = useKommuneStemmekretser(flatedata ? getIdFromEntity(flatedata) : "");
-  const { data: grunnkretser } = useKommuneGrunnkretser(flatedata ? getIdFromEntity(flatedata) : "");
+  const { data: stemmekretser } = useKommuneStemmekretser(flatedata ? getIdFromEntity(flatedata) : null);
+  const { data: grunnkretser } = useKommuneGrunnkretser(flatedata ? getIdFromEntity(flatedata) : null);
   const opprinneligFlateOptions =
     editingType === "grunnkrets"
       ? mapGrunnkretsResponseToKrets(grunnkretser ?? [])
