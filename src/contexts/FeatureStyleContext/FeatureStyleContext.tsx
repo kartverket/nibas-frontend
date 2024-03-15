@@ -3,20 +3,20 @@ import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { FeatureStyleContextValue, SelectedFeatures } from "./types";
 import { useSelectStyles } from "./useSelectStyles";
 import { getArchiveLayerStyle, grenseStyles, setFeatureStyle } from "utils/map/layerStyles";
-import Feature, { FeatureLike } from "ol/Feature";
+import { FeatureLike } from "ol/Feature";
 import useCustomStyles from "./useCustomStyles";
 import { Coordinate } from "ol/coordinate";
-import { Geometry } from "ol/geom";
 import { archivedSource } from "hooks/layers/constants";
+import { FeatureIdWithEndpoints, getAllFeatureEndPointCoordinates } from "utils/features";
+import { HistoryTypeValues } from "contexts/HistoryContext/types";
+import { getChangeIds } from "contexts/HistoryContext/history-utils";
 import {
-  FeatureIdWithEndpoints,
-  getAllFeatureEndPointCoordinates,
-  getFeatureIfExistsInAnyLayer,
-  getFeaturesConnectedToFeatureAtEndpoints,
-  isFeatureDeadEnd,
-} from "utils/features";
-import { HistoryEntry, HistoryTypeValues } from "contexts/HistoryContext/types";
-import { removeNull } from "utils/list-utils";
+  filterOnlyDeadEnds,
+  getEntriesUpToIndex,
+  mapAffectedFeaturesForErrorEntries,
+  removeDuplicateIds,
+  shouldIgnoreFeatureId,
+} from "./feature-style-utils";
 
 export const FeatureStyleContext = createContext<FeatureStyleContextValue | undefined>(undefined);
 
@@ -84,46 +84,6 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     selectFeatures(features);
   };
 
-  const getFeatureIdsFromEntries = (accumulator: string[][], entry: HistoryEntry) => {
-    const featureIds: string[] = [];
-    entry.changes.forEach((change) => {
-      if (change.to && !accumulator.some((value) => value.includes(change.id))) {
-        featureIds.push(change.id);
-      }
-
-      //change.id har den gamle grensens ID, vi trenger de to nye grensene!
-      if (entry.type === "grensedeling") {
-        const changesTo = change.to as Feature<Geometry>[];
-        const idsToAppend = removeNull(changesTo?.map((feature) => feature.getId()?.toString()));
-        if (idsToAppend) featureIds.push(...idsToAppend);
-      }
-    });
-    accumulator.push(featureIds);
-    return accumulator;
-  };
-
-  const getAffectedFeaturesForErrorEntries = (accumulator: Feature<Geometry>[][], entry: HistoryEntry) => {
-    const changes = entry.changes;
-
-    for (const change of changes) {
-      const feature = getFeatureIfExistsInAnyLayer(change.id);
-
-      if (!feature) continue;
-
-      if (entry.type === "nygrense" || entry.type === "grense") {
-        accumulator.push([feature]);
-        continue;
-      }
-
-      if (entry.type === "grensearkivering") {
-        accumulator = accumulator.concat(getFeaturesConnectedToFeatureAtEndpoints(feature));
-        continue;
-      }
-    }
-
-    return accumulator;
-  };
-
   const undoFeatureStyles = useCallback(
     (featureIds: string[]) => {
       for (const featureId of featureIds) {
@@ -162,34 +122,25 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       return;
     }
 
-    const allFeatureEndpoints = getAllFeatureEndPointCoordinates(["matrikkel", "archived"]).filter(
-      (featureEndpoint) => featureEndpoint !== null,
+    const allFeatureIds = removeDuplicateIds(history.entries.flatMap(getChangeIds));
+    const featureIdsUpToCurrentIndex = removeDuplicateIds(getEntriesUpToIndex(history).flatMap(getChangeIds));
+    // Finn IDer som er med i historikken etter index, men ikke før
+    const featureIdsToIgnore = allFeatureIds.filter((id) => shouldIgnoreFeatureId(id, featureIdsUpToCurrentIndex));
+    const featureEndpointsToCheck = getAllFeatureEndPointCoordinates(["matrikkel", "archived"]).filter(
+      (featureEndpoint) => featureEndpoint != null && !featureIdsToIgnore.includes(featureEndpoint.featureId),
     ) as FeatureIdWithEndpoints[];
 
     const archivedFeatures = archivedSource.getFeatures().map((f) => f.getId()?.toString() || "");
 
-    const errorFeatures = history.entries
-      .slice(0, history.index)
-      .filter((entry) => errorHistoryTypes.includes(entry.type))
-      .reduce(getAffectedFeaturesForErrorEntries, [])
-      .flat()
-      .filter((feature) => {
-        const featureId = feature.getId()?.toString();
-        if (feature && featureId && !archivedFeatures.includes(featureId)) {
-          return isFeatureDeadEnd(feature, allFeatureEndpoints);
-        }
-
-        return false;
-      })
+    const errorFeatures = getEntriesUpToIndex(history, (entry) => errorHistoryTypes.includes(entry.type))
+      .flatMap(mapAffectedFeaturesForErrorEntries)
+      .filter(filterOnlyDeadEnds(featureEndpointsToCheck, archivedFeatures))
       .map((feature) => feature.getId()?.toString() || "");
 
     // Entries før index skal fargelegges basert på endringen som er gjort
-    const dirtyFeatures = history.entries
-      .slice(0, history.index)
-      .filter((entry) => dirtyHistoryTypes.includes(entry.type))
-      .reduce(getFeatureIdsFromEntries, [])
-      .flatMap((id) => id)
-      .filter((id) => !errorFeatures.includes(id));
+    const dirtyFeatures = removeDuplicateIds(
+      getEntriesUpToIndex(history, (entry) => dirtyHistoryTypes.includes(entry.type)).flatMap(getChangeIds),
+    ).filter((id) => !errorFeatures.includes(id));
 
     // For å forhindre uendelig løkke
     if (
