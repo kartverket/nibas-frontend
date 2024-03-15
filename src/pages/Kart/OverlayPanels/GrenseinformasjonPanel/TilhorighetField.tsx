@@ -78,15 +78,14 @@ const TilhorighetRow = ({
           {Object.values(Tilhorighet).map((tilhorighet) => (
             <WhiteSelect key={tilhorighet} isDisabled={isDisabled} {...register(`${kontekstType}.${tilhorighet}`)}>
               <NotChosenSelectOption kontekstType={kontekstType} />
-              {tilhorighetOptions &&
-                tilhorighetOptions[tilhorighet].map((krets) => {
-                  const uid = `${tilhorighet}_${krets.id.lokalid.value}`;
-                  return (
-                    <option key={uid} value={krets.id.lokalid.value}>
-                      {krets.nummer} {krets.navn}
-                    </option>
-                  );
-                })}
+              {tilhorighetOptions?.[tilhorighet].map((krets) => {
+                const uid = `${tilhorighet}_${krets.id.lokalid.value}`;
+                return (
+                  <option key={uid} value={krets.id.lokalid.value}>
+                    {krets.nummer} {krets.navn}
+                  </option>
+                );
+              })}
             </WhiteSelect>
           ))}
         </Stack>

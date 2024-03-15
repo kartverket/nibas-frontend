@@ -5,11 +5,11 @@ import { Geometry, LineString } from "ol/geom";
 import { FeatureProperties, KontekstEgenskaper, Metadata } from "types/api";
 import { FeatureLike } from "ol/Feature";
 import { grenserLayers, editableBorderTypes } from "hooks/layers/constants";
-import { isNotNullOrUndefined } from "types/common";
 import { getRepresentasjonspunktId } from "./map/source";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { previousCoordinateKey } from "pages/Kart/interactions/constants";
 import { Coordinate, equals } from "ol/coordinate";
+import { isNotNil } from "./type-utils";
 
 export const setDefaultFeatureProperties = (feature: Feature<Geometry>, grenseType: GrenseType | undefined) => {
   if (!grenseType) return;
@@ -90,7 +90,7 @@ export const getAllFeatureEndPointCoordinates = (layerIdsToFilter: LayerId[]): (
     .flatMap((f) => {
       const geom = f.getGeometry();
       const id = f.getId()?.toString();
-      if (geom && geom instanceof LineString && id)
+      if (geom && geom instanceof LineString && isNotNil(id))
         return { featureId: id, endpoints: { first: geom.getFirstCoordinate(), last: geom.getLastCoordinate() } };
 
       return null;
@@ -188,7 +188,7 @@ export const isFeatureEditable = (feature: FeatureLike, isArchived: boolean) => 
 
     const layerSources = Object.values(grenserLayers)
       .map((layer) => layer.getSource())
-      .filter(isNotNullOrUndefined);
+      .filter(isNotNil);
 
     // Kontekstegenskaper inneholder hvilke kretser som grensen tilhører (f. eks stemme/grunnkrets)
     // Alle disse kretsene må være synlige for at en administrativ grense skal være synlig
