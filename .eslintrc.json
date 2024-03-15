@@ -47,10 +47,10 @@
         "unnamedComponents": "arrow-function"
       }
     ],
-    "@typescript-eslint/explicit-module-boundary-types": "off",
-    "@typescript-eslint/no-shadow": ["error"],
-    "@typescript-eslint/no-unused-vars": ["warn"],
-    "@typescript-eslint/prefer-optional-chain": "error",
+    "@typescript-eslint/array-type": "warn",
+    "@typescript-eslint/no-shadow": "error",
+    "@typescript-eslint/no-unused-vars": "warn",
+    "@typescript-eslint/prefer-optional-chain": "warn",
     "@typescript-eslint/strict-boolean-expressions": "error",
     "@typescript-eslint/switch-exhaustiveness-check": "error",
     "no-unused-vars": "off",
@@ -59,12 +59,7 @@
     "no-console": "warn",
     "import/no-unresolved": "error",
     "import/no-named-as-default-member": "off",
-    "prettier/prettier": [
-      "warn",
-      {
-        "endOfLine": "auto"
-      }
-    ],
+    "prettier/prettier": ["warn", { "endOfLine": "auto" }],
     "eqeqeq": ["error", "smart"]
   }
 }

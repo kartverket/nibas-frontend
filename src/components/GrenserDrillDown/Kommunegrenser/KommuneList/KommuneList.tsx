@@ -8,6 +8,7 @@ import { getNavnInSpraak } from "utils/language/language";
 import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
 import EditableGrenseAccordion from "components/GrenserDrillDown/EditableGrenseAccordion";
 import { getIdFromEntity } from "utils/api";
+import { isNotNil } from "utils/type-utils";
 
 type Props = {
   fylke: FylkeRef;
@@ -21,12 +22,12 @@ const KommuneList = ({ fylke }: Props) => {
   const { kretsStatus } = useEditGrense("kommune", fylkeId, kommunegrenser);
 
   useEffect(() => {
-    if (kretsStatus.editing || kretsStatus.visible) {
+    if (kretsStatus.isVisible || kretsStatus.isEditing) {
       setShouldFetch(true);
     }
   }, [kretsStatus]);
 
-  if (error) return <p>Fikk ikke hentet kommuner</p>;
+  if (isNotNil(error)) return <p>Fikk ikke hentet kommuner</p>;
 
   if (!kommuner) return null;
 

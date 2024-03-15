@@ -55,8 +55,7 @@ const getRepresentasjonspunktFeatureForKrets = (krets: StemmekretsResponse | Gru
 };
 
 const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
-  const grenseValue = useEditGrenseValue(type, kommuneId);
-  const { visible } = grenseValue;
+  const kretsStatus = useEditGrenseValue(type, kommuneId);
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { utkast } = useUtkast();
   const {
@@ -70,11 +69,11 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   const context = useContext(EditGrenserContext);
   const [lasterData, setLasterData] = useState(false);
 
-  const { data: kretserByKommune } = useNibasApi(visible ? getKretserByKommuneUrl(type) : null, {
+  const { data: kretserByKommune } = useNibasApi(kretsStatus.isVisible ? getKretserByKommuneUrl(type) : null, {
     id: kommuneId,
   });
 
-  const { data: grenserGeoJsons } = useNibasApi(visible ? getGrenserForKretserByKommuneUrl(type) : null, {
+  const { data: grenserGeoJsons } = useNibasApi(kretsStatus.isVisible ? getGrenserForKretserByKommuneUrl(type) : null, {
     id: kommuneId,
   });
 
@@ -171,7 +170,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
 
   const { addFeaturesToLayer } = useAsyncFeatures(
     allFeatures,
-    getZoomMode(!!grenseValue.editing, context?.getCurrentlyEditingType() !== null),
+    getZoomMode(kretsStatus.isEditing, context?.getCurrentlyEditingType() !== null),
     () => {
       applyDirtyStylesToUtkastFeatures(allFeatures ?? []);
       setLasterData(false);
