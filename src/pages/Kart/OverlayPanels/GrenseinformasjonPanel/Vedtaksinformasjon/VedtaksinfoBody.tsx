@@ -49,7 +49,7 @@ export const VedtaksinfoBody = ({
 }: ReferanseBodyProps) => {
   const addDokumentlenke = (lenke: Referanse) => {
     setDokref((prevState) => {
-      if (prevState !== undefined) {
+      if (prevState != null) {
         return [...prevState, lenke];
       } else return [lenke];
     });
@@ -57,7 +57,7 @@ export const VedtaksinfoBody = ({
 
   const addInternreferanse = (lenke: Referanse) => {
     setInternref((prevState) => {
-      if (prevState !== undefined) {
+      if (prevState != null) {
         return [...prevState, lenke];
       } else return [lenke];
     });
@@ -65,9 +65,7 @@ export const VedtaksinfoBody = ({
 
   const metadata = feature.getProperties().metadata as Metadata;
   const vedtaksinformasjon =
-    vedtaksinfoId !== undefined
-      ? metadata.dokumentasjonsreferanser?.find((ref) => ref.id === vedtaksinfoId)
-      : undefined;
+    vedtaksinfoId != null ? metadata.dokumentasjonsreferanser?.find((ref) => ref.id === vedtaksinfoId) : undefined;
 
   return (
     <VedtakinfoContainer templateColumns="4fr 3fr">

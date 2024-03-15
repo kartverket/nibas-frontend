@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo } from "react";
 import Feature from "ol/Feature";
 import LineString from "ol/geom/LineString";
 import Modify, { ModifyEvent } from "ol/interaction/Modify";
@@ -27,7 +27,6 @@ const useModify = () => {
   const { activeTool, activeModeTools } = useToolbar();
   const { selectedFeatures, featureIsArchived } = useFeatureStyle();
   const toast = useToast();
-  const toastIdRef = useRef<string | number>("");
   const { toastCounter: removeToast } = useToastCounter("success", "Punktet ble fjernet", "punkter ble fjernet");
   const { toastCounter: addToast } = useToastCounter("success", "Punktet ble lagt til", "punkter ble lagt til");
   const { getActiveFeaturesAtPixel, getFeaturesAtPixel } = useGetFeatures();
@@ -257,16 +256,11 @@ const useModify = () => {
           }
         }
 
-        if (!toastIdRef.current) {
-          toastIdRef.current = toast({
-            status: "warning",
-            title: "Husk å sette tilhørighet på berørte grenser",
-            description: `For øyeblikket må alle flatetilhørigheter på grensene legges til manuelt. 
-                            Tilhørigheten kan settes ved å bruke "Informasjon"-verktøyet.`,
-            isClosable: true,
-            duration: null,
-          });
-        }
+        toast({
+          status: "success",
+          title: "Grense ble løsrevet",
+          description: "Husk å eventuelt sette tilhørighet på berørte grenser",
+        });
       }
 
       addModificationToHistory(event.features.getArray());
