@@ -14,7 +14,7 @@ const defaultProps: React.ComponentProps<typeof ToggleableGrense> = {
       },
       gyldighetsdato: "",
     },
-    administrativenhetnavn: [{ navn: "", spraak: "", version: 1 }],
+    navn: [{ navn: "", spraak: "", version: 1 }],
     fylkesnummer: {
       id: "id",
       kodeverdi: "1234",

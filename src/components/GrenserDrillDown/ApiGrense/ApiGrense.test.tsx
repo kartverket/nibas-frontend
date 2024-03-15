@@ -12,7 +12,7 @@ const defaultProps: React.ComponentProps<typeof ApiGrense> = {
       },
       gyldighetsdato: "",
     },
-    administrativenhetnavn: [{ navn: "Grense", spraak: "nor", version: 1 }],
+    navn: [{ navn: "Grense", spraak: "nor", version: 1 }],
     fylkesnummer: {
       id: "id",
       kodeverdi: "1234",

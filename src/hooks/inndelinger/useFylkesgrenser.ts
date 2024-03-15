@@ -34,7 +34,7 @@ const getRepresentasjonspunktFeatureForFylke = (fylke: FylkeResponse): GeoJSONFe
     id: getRepresentasjonspunktId(fylke.id.lokalid.value),
     properties: {
       ...fylke.representasjonspunkt.properties,
-      name: getNavnInSpraak(fylke.administrativenhetnavn, "nor"),
+      name: getNavnInSpraak(fylke.navn, "nor"),
       number: fylke.fylkesnummer.kodeverdi,
     },
   });

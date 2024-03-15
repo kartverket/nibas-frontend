@@ -21,7 +21,7 @@ export const mockFylker: FylkeResponse[] = [
       },
       gyldighetsdato: "",
     },
-    administrativenhetnavn: [
+    navn: [
       {
         navn: "Vestfold og Telemark",
         spraak: "nor",
@@ -58,7 +58,7 @@ export const mockFylker: FylkeResponse[] = [
       },
       gyldighetsdato: "",
     },
-    administrativenhetnavn: [
+    navn: [
       {
         navn: "Agder",
         spraak: "nor",
@@ -185,7 +185,7 @@ export const mockBasicFeature = getFeaturesFromGeoJson(mockGeoJsonFeatureRespons
 
 export const mockKommune: KommuneResponse = {
   representasjonspunkt: mockGeoJsonFeatureResponse.features[0],
-  administrativenhetnavn: [
+  navn: [
     {
       navn: "Malvik",
       spraak: "nor",
@@ -209,7 +209,7 @@ export const mockKommune: KommuneResponse = {
 
 export const mockKommuneGiske: KommuneResponse = {
   representasjonspunkt: mockGeoJsonFeatureResponse.features[0],
-  administrativenhetnavn: [
+  navn: [
     {
       navn: "Giske",
       spraak: "nor",

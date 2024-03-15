@@ -8,7 +8,7 @@ const defaultProps: React.ComponentProps<typeof KommuneList> = {
       gyldighetsdato: "",
       lokalid: { value: "2" },
     },
-    administrativenhetnavn: [{ navn: "Fylke", spraak: "nor", version: 1 }],
+    navn: [{ navn: "Fylke", spraak: "nor", version: 1 }],
     fylkesnummer: {
       id: "id",
       kodeverdi: "1234",

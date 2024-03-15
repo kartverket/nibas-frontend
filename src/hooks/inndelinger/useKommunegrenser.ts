@@ -32,7 +32,7 @@ const getRepresentasjonspunktFeatureForKommune = (kommune: KommuneResponse): Geo
     id: getRepresentasjonspunktId(kommune.id.lokalid.value),
     properties: {
       ...kommune.representasjonspunkt.properties,
-      name: getNavnInSpraak(kommune.administrativenhetnavn, "nor"),
+      name: getNavnInSpraak(kommune.navn, "nor"),
       number: kommune.kommunenummer.kodeverdi,
     },
   });

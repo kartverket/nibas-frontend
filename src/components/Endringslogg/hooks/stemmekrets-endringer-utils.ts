@@ -177,7 +177,7 @@ const getEndringerForKommune = (
     kommune: {
       id: kommune?.id.lokalid.value ?? "",
       nummer: kommune?.kommunenummer.kodeverdi ?? "",
-      navn: getNavnInSpraak(kommune?.administrativenhetnavn, "nor"),
+      navn: getNavnInSpraak(kommune?.navn, "nor"),
     },
     metadataendringer: getMetadataEndringer(stemmekretserMedEndring, operasjoner, alleStemmekretser),
     grensejusteringer: removeNull(

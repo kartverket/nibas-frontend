@@ -20,7 +20,7 @@ const Stemmekretser = () => {
             {fylker.map((fylke) => (
               <ListItemAccordion
                 key={getIdFromEntity(fylke)}
-                title={`${fylke.fylkesnummer.kodeverdi} ${getNavnInSpraak(fylke.administrativenhetnavn, "nor")}`}
+                title={`${fylke.fylkesnummer.kodeverdi} ${getNavnInSpraak(fylke.navn, "nor")}`}
               >
                 <KommuneList fylke={fylke} />
               </ListItemAccordion>

@@ -36,7 +36,7 @@ const KommuneList = ({ fylke }: Props) => {
       grenseId={fylkeId}
       grenseType="kommune"
       isFetching={isFetching}
-      title={`${fylke.fylkesnummer.kodeverdi} ${getNavnInSpraak(fylke.administrativenhetnavn, "nor")}`}
+      title={`${fylke.fylkesnummer.kodeverdi} ${getNavnInSpraak(fylke.navn, "nor")}`}
     >
       <Wrapper>
         {kommuner.map((kommune) => (

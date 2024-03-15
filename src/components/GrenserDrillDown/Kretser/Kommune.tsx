@@ -57,7 +57,7 @@ const Kommune = ({ kommune }: Props) => {
           aria-label={kommuneValues.visible ? "Synlig" : "Usynlig"}
           icon={kommuneValues.visible ? "visibility" : "visibility_off"}
         />
-        <Title>{`${kommune.kommunenummer.kodeverdi} ${getNavnInSpraak(kommune.administrativenhetnavn, "nor")}`}</Title>
+        <Title>{`${kommune.kommunenummer.kodeverdi} ${getNavnInSpraak(kommune.navn, "nor")}`}</Title>
         {lasterData ? (
           <Spinner size="lg" color="var(--kvib-colors-blue-500)" />
         ) : utkast ? (
