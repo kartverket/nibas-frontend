@@ -49,7 +49,7 @@ const ToolbarPopups = () => {
 
   const handleMatrikkel = async () => {
     const zoom = map.getView().getZoom();
-    if (!zoom || zoom < 15) {
+    if (zoom == null || zoom < 15) {
       toast({
         status: "error",
         title: "Kartutsnittet er for stort. Zoom inn nærmere før du henter inn eiendomsgrensene",

@@ -80,7 +80,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   const utkastGeoJsons = useUtkastFeature(grenserGeoJsons, utkast);
 
   const allFeatures = useMemo(() => {
-    if (!utkastGeoJsons || !kretserByKommune) return null;
+    if (!kretserByKommune) return null;
 
     const representasjonspunktFeatures = kretserByKommune?.map((krets) =>
       getRepresentasjonspunktFeatureForKrets(krets),
@@ -109,7 +109,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
       for (const endretFeature of endredeFeatures) {
         const id = endretFeature.id;
         const actualFeature = features.find((feature) => feature.getId() === id);
-        if (id && actualFeature) {
+        if (id != null && actualFeature) {
           // Avgjør hvilken type endringsfarge featuren skal ha
           if (endretFeature.properties.shouldArchive) {
             archivedFeatureIds.push(id.toString());
@@ -118,8 +118,8 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
 
             for (const connectedFeature of connectedFeatures) {
               const connectedFeatureId = connectedFeature.getId()?.toString();
-              const connectedFeatureProperties = connectedFeature.getProperties() as FeatureProperties;
-              if (!connectedFeatureId || !connectedFeatureProperties) continue;
+              const connectedFeatureProperties = connectedFeature.getProperties() as FeatureProperties | undefined;
+              if (connectedFeatureId == null || !connectedFeatureProperties) continue;
 
               if (!connectedFeatureProperties.shouldArchive && isFeatureDeadEnd(connectedFeature, allFeatureEndpoints))
                 errorFeatureIds.push(connectedFeatureId);
@@ -149,11 +149,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
 
     const promiseStemmekretsFeatureIds = stemmekretsgrenserFetcher(sammenslaaingsIder, tokenHolderFunc()?.token);
 
-    promiseStemmekretsFeatureIds.then((resolvedValue) => {
-      const stemmekretsFeatureIds: string[] = resolvedValue
-        ? resolvedValue.filter((x) => x != null).map((x) => String(x))
-        : [];
-
+    promiseStemmekretsFeatureIds.then((stemmekretsFeatureIds) => {
       if (stemmekretsFeatureIds.length > 0) {
         const overlappingFeatureIds = getOverlappingStemmekretsFeatureIds(stemmekretsFeatureIds);
         const uniqueStemmekretsFeatureIds = stemmekretsFeatureIds.filter(

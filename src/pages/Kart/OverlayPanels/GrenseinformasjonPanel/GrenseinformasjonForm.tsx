@@ -62,13 +62,14 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   const { register, handleSubmit, getValues, control, reset, getDefaultValues, onSubmit, isDirty } =
     useGrenseinformasjonForm(feature);
 
+  const featureId = feature.getId()?.toString();
   const properties = feature.getProperties() as FeatureProperties;
   const metadata = properties.metadata as Metadata;
   const gyldigTil = metadata.common?.gyldigTil;
   const isCommonFieldDisabled = isGrenseinformasjonPanelDisabled || metadata?.common?.gyldigTil != null;
 
   const getMaalemetodeText = (maalemetoder: KodelisteRespons, id: string | undefined) => {
-    if (!id) return "Ikke spesifisert";
+    if (id === undefined) return "Ikke spesifisert";
 
     const maalemetode = maalemetoder.items.find((item) => item.id === id);
     if (maalemetode) {
@@ -89,15 +90,8 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   };
 
   const getSistOppdatert = () => {
-    if (metadata) {
-      const oppdateringsDato = metadata.common?.sporingsinformasjon.oppdateringsdato;
-
-      if (oppdateringsDato) {
-        return getDateInFriendlyString(oppdateringsDato);
-      }
-    }
-
-    return "Ukjent";
+    const oppdateringsDato = metadata?.common?.sporingsinformasjon.oppdateringsdato;
+    return oppdateringsDato !== undefined ? getDateInFriendlyString(oppdateringsDato) : "Ukjent";
   };
 
   useEffect(() => {
@@ -123,7 +117,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
           });
           if (!shouldNotClose) onClose();
         }}
-        subHeading={`${isTempFeatureId(feature.getId()) ? "" : `Sist oppdatert: ${getSistOppdatert()}`}`}
+        subHeading={`${isTempFeatureId(featureId) ? "" : `Sist oppdatert: ${getSistOppdatert()}`}`}
         noMargin
         button={
           !isCommonFieldDisabled
@@ -148,11 +142,8 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         tooltipLabel="Grensen sin unike identifikator"
         isRequired
         valueLabel={(() => {
-          const featureId = feature.getId()?.toString();
-
-          if (featureId && isTempFeatureId(featureId)) return `Ny grense - ID blir satt ved publisering`;
-
-          return feature.getId()?.toString() || null;
+          if (isTempFeatureId(featureId)) return `Ny grense - ID blir satt ved publisering`;
+          return featureId ?? null;
         })()}
       />
 
@@ -161,13 +152,9 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         tooltipLabel="Dato når grensen skal være gyldig fra. Fra-dato settes automatisk til publiseringsdato for utkastet ditt."
         isRequired
         valueLabel={(() => {
+          if (isTempFeatureId(featureId)) return "Ny grense - Dato blir satt ved publisering";
           const date = metadata.common?.gyldigFra;
-          const formattedDate = getDateInFriendlyString(date);
-          const featureId = feature.getId()?.toString();
-
-          if (featureId && isTempFeatureId(featureId)) return "Ny grense - Dato blir satt ved publisering";
-
-          return formattedDate || null;
+          return date !== undefined ? getDateInFriendlyString(date) : null;
         })()}
       />
 
@@ -187,7 +174,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         </Select>
       </GrenseinformasjonRow>
 
-      {gyldigTil && (
+      {gyldigTil !== undefined && (
         <div>
           <GrenseinformasjonRow
             name="Gyldig til"
@@ -212,9 +199,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
 
           const formattedDate = dateToFriendlyDatestring(date);
 
-          const featureId = feature.getId()?.toString();
-
-          if (featureId && isTempFeatureId(featureId)) return "Ny grense - Dato blir satt ved publisering";
+          if (isTempFeatureId(featureId)) return "Ny grense - Dato blir satt ved publisering";
 
           return formattedDate || undefined;
         })()}

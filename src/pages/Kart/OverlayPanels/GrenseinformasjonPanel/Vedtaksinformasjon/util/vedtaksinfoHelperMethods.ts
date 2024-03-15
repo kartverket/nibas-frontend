@@ -14,7 +14,7 @@ export const createUniqueIshValue = (length: number) => {
 };
 
 export const isTempDokrefId = (id: string | number | null | undefined): boolean => {
-  if (id && typeof id === "string" && id.length > 0) {
+  if (typeof id === "string" && id.length > 0) {
     return id.includes("temp-");
   }
 

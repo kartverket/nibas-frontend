@@ -8,7 +8,6 @@ import { getNavnInSpraak } from "utils/language/language";
 import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
 import EditableGrenseAccordion from "components/GrenserDrillDown/EditableGrenseAccordion";
 import { getIdFromEntity } from "utils/api";
-import { isNotNil } from "utils/type-utils";
 
 type Props = {
   fylke: FylkeRef;
@@ -27,7 +26,7 @@ const KommuneList = ({ fylke }: Props) => {
     }
   }, [kretsStatus]);
 
-  if (isNotNil(error)) return <p>Fikk ikke hentet kommuner</p>;
+  if (error != null) return <p>Fikk ikke hentet kommuner</p>;
 
   if (!kommuner) return null;
 

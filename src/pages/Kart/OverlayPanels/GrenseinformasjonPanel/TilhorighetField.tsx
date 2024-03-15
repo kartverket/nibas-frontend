@@ -73,23 +73,21 @@ const TilhorighetRow = ({
       reset={resetTilhorighet}
       tooltipLabel="Definerer hvilke inndelinger grensen har på hver sin side. Obs! Endring av dette feltet kan forårsake geometriendringer."
     >
-      {kontekstType && (
-        <Stack>
-          {Object.values(Tilhorighet).map((tilhorighet) => (
-            <WhiteSelect key={tilhorighet} isDisabled={isDisabled} {...register(`${kontekstType}.${tilhorighet}`)}>
-              <NotChosenSelectOption kontekstType={kontekstType} />
-              {tilhorighetOptions?.[tilhorighet].map((krets) => {
-                const uid = `${tilhorighet}_${krets.id.lokalid.value}`;
-                return (
-                  <option key={uid} value={krets.id.lokalid.value}>
-                    {krets.nummer} {krets.navn}
-                  </option>
-                );
-              })}
-            </WhiteSelect>
-          ))}
-        </Stack>
-      )}
+      <Stack>
+        {Object.values(Tilhorighet).map((tilhorighet) => (
+          <WhiteSelect key={tilhorighet} isDisabled={isDisabled} {...register(`${kontekstType}.${tilhorighet}`)}>
+            <NotChosenSelectOption kontekstType={kontekstType} />
+            {tilhorighetOptions?.[tilhorighet].map((krets) => {
+              const uid = `${tilhorighet}_${krets.id.lokalid.value}`;
+              return (
+                <option key={uid} value={krets.id.lokalid.value}>
+                  {krets.nummer} {krets.navn}
+                </option>
+              );
+            })}
+          </WhiteSelect>
+        ))}
+      </Stack>
     </GrenseinformasjonRowTilhorighet>
   );
 };
@@ -115,7 +113,7 @@ const NyAdministrativTilhorighetField = ({ feature, isDisabled }: TilhorighetPro
   );
 };
 
-export const TilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
+export const TilhorighetField = ({ feature, isDisabled = false }: TilhorighetProps) => {
   const { featureIsArchived } = useFeatureStyle();
 
   const isGrensePanelDisabled = useIsGrenseinformasjonPanelDisabled(feature);

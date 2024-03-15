@@ -54,7 +54,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     const deselectedFeatures = removeSelection();
     for (const feature of deselectedFeatures) {
       const featureId = feature.getId()?.toString();
-      if (!featureId) continue;
+      if (featureId == null) continue;
 
       // Dersom featuren har en aktiv stil faller vi tilbake til den
       const matchingCustomStyle = customStyles.find((customStyle) => customStyle.customFeatureIds.includes(featureId));
@@ -87,7 +87,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
   const getFeatureIdsFromEntries = (accumulator: string[][], entry: HistoryEntry) => {
     const featureIds: string[] = [];
     entry.changes.forEach((change) => {
-      if (change.to && !accumulator.some((value) => value.includes(change.id))) {
+      if (change.to != null && !accumulator.some((value) => value.includes(change.id))) {
         featureIds.push(change.id);
       }
 
@@ -95,7 +95,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       if (entry.type === "grensedeling") {
         const changesTo = change.to as Feature<Geometry>[];
         const idsToAppend = removeNull(changesTo?.map((feature) => feature.getId()?.toString()));
-        if (idsToAppend) featureIds.push(...idsToAppend);
+        featureIds.push(...idsToAppend);
       }
     });
     accumulator.push(featureIds);
@@ -166,7 +166,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       (featureEndpoint) => featureEndpoint !== null,
     ) as FeatureIdWithEndpoints[];
 
-    const archivedFeatures = archivedSource.getFeatures().map((f) => f.getId()?.toString() || "");
+    const archivedFeatures = archivedSource.getFeatures().map((f) => f.getId()?.toString() ?? "");
 
     const errorFeatures = history.entries
       .slice(0, history.index)
@@ -175,13 +175,13 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       .flat()
       .filter((feature) => {
         const featureId = feature.getId()?.toString();
-        if (feature && featureId && !archivedFeatures.includes(featureId)) {
+        if (featureId != null && !archivedFeatures.includes(featureId)) {
           return isFeatureDeadEnd(feature, allFeatureEndpoints);
         }
 
         return false;
       })
-      .map((feature) => feature.getId()?.toString() || "");
+      .map((feature) => feature.getId()?.toString() ?? "");
 
     // Entries før index skal fargelegges basert på endringen som er gjort
     const dirtyFeatures = history.entries
@@ -221,7 +221,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
 
   const featureIsArchived = (feature: FeatureLike) => {
     const featureId = feature.getId()?.toString();
-    if (featureId) {
+    if (featureId != null) {
       return (
         archivedStyleFunctions.customFeatureIds.includes(featureId) ||
         archivedStyleFunctions.savedCustomFeatureIds.includes(featureId)

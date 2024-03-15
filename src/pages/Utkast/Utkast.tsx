@@ -40,9 +40,9 @@ const Utkast = () => {
   utkasts?.forEach((u) => {
     // Grupperer utkast etter endringstype
     if (endringstypeOrder[u.endringstype as Endringstype] === "left") {
-      leftColumn[u.endringstype] = [...(leftColumn[u.endringstype] || []), u];
+      leftColumn[u.endringstype] = [...(leftColumn[u.endringstype] ?? []), u];
     } else {
-      rightColumn[u.endringstype] = [...(rightColumn[u.endringstype] || []), u];
+      rightColumn[u.endringstype] = [...(rightColumn[u.endringstype] ?? []), u];
     }
   });
 

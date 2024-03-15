@@ -146,7 +146,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
         const geometry = feature.getGeometry() as LineString;
         const coordinates = geometry.getCoordinates();
 
-        if (!featureId) continue;
+        if (featureId == null) continue;
 
         // Siden OL-objekter er mutable og vi trenger dette til senere:
         const originalCoordinates = [...coordinates];

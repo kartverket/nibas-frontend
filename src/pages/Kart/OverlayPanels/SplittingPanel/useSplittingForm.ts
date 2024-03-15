@@ -128,7 +128,7 @@ export const useSplittingForm = (flatedata: Flatedata) => {
         kommuneIdentifikator &&
         opprinneligKrets.lokalId.length > 0 &&
         nyeKretser.length > 0 &&
-        opprinneligKretsInfo?.version
+        opprinneligKretsInfo?.version != null
       ) {
         const exclusivelyNewKretser = nyeKretser.slice(1); // må fjerne opprinnelig krets her fordi vi har den i field
         const newKretsDelingEndringRequest = {

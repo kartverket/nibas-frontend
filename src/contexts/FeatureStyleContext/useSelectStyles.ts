@@ -41,7 +41,7 @@ export const useSelectStyles = () => {
   const clearSelectedPoint = () => {
     if (selectedPoint) {
       const selectedPointId = selectedPoint.getId()?.toString();
-      if (selectedPointId) {
+      if (selectedPointId != null) {
         removeFeaturesFromSourceByIds("edit", [selectedPointId]);
       }
     }

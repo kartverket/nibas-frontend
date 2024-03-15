@@ -19,7 +19,7 @@ export const useGrunnkretser = (grunnkretsId: string[]) => {
 };
 
 export const useKommuneGrunnkretser = (kommuneId: string | undefined) => {
-  return useNibasApi(kommuneId ? "/v1/kommuner/{id}/grunnkretser" : null, {
+  return useNibasApi(kommuneId != null ? "/v1/kommuner/{id}/grunnkretser" : null, {
     id: kommuneId!,
   });
 };

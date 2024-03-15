@@ -137,9 +137,11 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
         },
       };
       updateUtkast(utkast.id, updateUtkastRequest);
-      const sammenslaaingsStemmekretsIder = getStemmekretsIdList(selectedStemmekrets, stemmekretsTilSammenslaaingListe);
-
-      const stemmekretsFeatureIds: string[] = await fetchStemmekretsgrenser(sammenslaaingsStemmekretsIder);
+      const sammenslaaingsStemmekretsIds = getStemmekretsIdList(selectedStemmekrets, stemmekretsTilSammenslaaingListe);
+      const stemmekretsFeatureIds = await stemmekretsgrenserFetcher(
+        sammenslaaingsStemmekretsIds,
+        tokenHolderFunc()?.token,
+      );
       const overlappingFeatureIds = getOverlappingStemmekretsFeatureIds(stemmekretsFeatureIds);
       const uniqueStemmekretsFeatureIds = stemmekretsFeatureIds.filter(
         (sfi) => !overlappingFeatureIds.some((ofi) => sfi === ofi),
@@ -152,24 +154,13 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
     reset();
   };
 
-  const fetchStemmekretsgrenser = async (stemmekretsIder: string[]) => {
-    const stemmekretsgrenserResponse = await stemmekretsgrenserFetcher(stemmekretsIder, tokenHolderFunc()?.token);
-    return stemmekretsgrenserResponse ? removeNull(stemmekretsgrenserResponse).map((value) => String(value)) : [];
-  };
-
   const getStemmekretsIdList = (
     selectedStemmekrets: StemmekretsResponse,
     stemmekretserTilSammenslaaing: StemmekretsResponse[],
-  ) => {
-    const stemmekretsIderTilSammenslaaing = stemmekretserTilSammenslaaing.map(
-      (stemmekretsResponse) => stemmekretsResponse.id.lokalid.value,
-    );
-    if (selectedStemmekrets) {
-      stemmekretsIderTilSammenslaaing.push(selectedStemmekrets.id.lokalid.value);
-    }
-
-    return stemmekretsIderTilSammenslaaing;
-  };
+  ) =>
+    stemmekretserTilSammenslaaing
+      .map((stemmekretsResponse) => stemmekretsResponse.id.lokalid.value)
+      .concat(selectedStemmekrets.id.lokalid.value);
 
   const handleMerge = () => {
     if (history.entries.length > 0 && history.index > 0) {
