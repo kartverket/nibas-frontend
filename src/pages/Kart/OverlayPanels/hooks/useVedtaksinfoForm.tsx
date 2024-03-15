@@ -144,7 +144,7 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoId?: str
   const { addHistoryEntry } = useHistory();
 
   const deleteOrArchive = async (): Promise<boolean> => {
-    if (selectedVedtaksinfoId === undefined) return false;
+    if (selectedVedtaksinfoId == null) return false;
     const metadata = feature.getProperties().metadata as Metadata;
     const oldDokrefs: DokumentasjonsreferanseDTO[] = metadata.dokumentasjonsreferanser
       ? metadata.dokumentasjonsreferanser
@@ -188,7 +188,7 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoId?: str
   const updateDraftFromFeature = (vedtaksinfo: DokumentasjonsreferanseDTO) => {
     const metadata = feature.getProperties().metadata as Metadata;
 
-    if (selectedVedtaksinfoId === undefined) {
+    if (selectedVedtaksinfoId == null) {
       // Implisitt en ny dokumentasjonsreferanse ved mangel av index.
       const oldDokrefs: DokumentasjonsreferanseDTO[] = metadata.dokumentasjonsreferanser
         ? metadata.dokumentasjonsreferanser

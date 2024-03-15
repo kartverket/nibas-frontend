@@ -35,7 +35,7 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
           Flateinformasjon for {getNavnInSpraak(flatedata?.navn, "nor")}
         </PanelHeader>
         {utkastStemmekretser ? (
-          <KretsTable $hasUtkast={utkast !== undefined}>
+          <KretsTable $hasUtkast={utkast != null}>
             <thead>
               <tr>
                 <SortHeader {...sortHeaderProps("stemmekretsnummer")}>Stemmekretsnummer</SortHeader>
