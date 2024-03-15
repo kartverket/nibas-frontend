@@ -1,11 +1,11 @@
 import { styled } from "styled-components";
 import Kommune from "./Kommune";
 import useKommuner from "hooks/inndelinger/useKommuner";
-import { GrenseRef } from "types/api";
+import { GrenseResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
 
 type Props = {
-  fylke: GrenseRef;
+  fylke: GrenseResponse;
 };
 
 const KommuneList = ({ fylke }: Props) => {

@@ -1,17 +1,17 @@
-import { styled } from "styled-components";
-import { useInndelingerKrets } from "contexts/InndelingerKretsContext";
-import { KommuneRef } from "types/api";
-import { getNavnInSpraak } from "utils/language/language";
-import { Outline } from "style/mixins";
-import AlertModal from "components/Modals/AlertModal";
-import useAlertModal from "hooks/useAlertModal";
-import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { Button, IconButton, Spinner } from "@kvib/react";
-import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import AlertModal from "components/Modals/AlertModal";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { useInndelingerKrets } from "contexts/InndelingerKretsContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import useAlertModal from "hooks/useAlertModal";
+import { Outline } from "style/mixins";
+import { styled } from "styled-components";
+import { KommuneResponse } from "types/api";
+import { getNavnInSpraak } from "utils/language/language";
 
 type Props = {
-  kommune: KommuneRef;
+  kommune: KommuneResponse;
 };
 
 const Kommune = ({ kommune }: Props) => {

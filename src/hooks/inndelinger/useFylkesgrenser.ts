@@ -1,12 +1,15 @@
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
+import { useEditGrenseValue } from "contexts/EditGrenserContext/useEditGrense";
 import useFylker from "hooks/inndelinger/useFylker";
 import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
+import { GeoJSONFeature } from "ol/format/GeoJSON";
 import { useEffect, useMemo, useState } from "react";
 import useSWRImmutable from "swr/immutable";
-import { FeatureCollection } from "types/api";
-import { getIdFromEntity, fetcherWithToken } from "utils/api";
-import { getFeaturesFromGeoJson } from "utils/map/geoJson";
-import { useEditGrenseValue } from "contexts/EditGrenserContext/useEditGrense";
+import { FeatureCollection, FylkeResponse } from "types/api";
+import { fetcherWithToken, getIdFromEntity } from "utils/api";
+import { getNavnInSpraak } from "utils/language/language";
+import { getFeatureFromGeoJson, getFeaturesFromGeoJson } from "utils/map/geoJson";
+import { getRepresentasjonspunktId } from "utils/map/source";
 
 const fylkesgrenserFetcher = async ([fylkeIds, token]: [string[], string | undefined]) => {
   const promises: Promise<FeatureCollection>[] = fylkeIds.map(async (fylkeId) =>
@@ -23,6 +26,18 @@ const fylkesgrenserFetcher = async ([fylkeIds, token]: [string[], string | undef
   }, [] as FeatureCollection[]);
 
   return geoJsons.flatMap((geoJson) => geoJson.features);
+};
+
+const getRepresentasjonspunktFeatureForFylke = (fylke: FylkeResponse): GeoJSONFeature => {
+  return getFeatureFromGeoJson({
+    ...fylke.representasjonspunkt,
+    id: getRepresentasjonspunktId(fylke.id.lokalid.value),
+    properties: {
+      ...fylke.representasjonspunkt.properties,
+      name: getNavnInSpraak(fylke.navn, "nor"),
+      number: fylke.fylkesnummer.kodeverdi,
+    },
+  });
 };
 
 const useFylkesgrenser = () => {
@@ -48,12 +63,14 @@ const useFylkesgrenser = () => {
   }, [fylker, geoJsonFeatures, shouldFetch]);
 
   const features = useMemo(() => {
-    if (!geoJsonFeatures) {
+    if (!geoJsonFeatures || !fylker) {
       return null;
     }
 
-    return geoJsonFeatures.flatMap(getFeaturesFromGeoJson);
-  }, [geoJsonFeatures]);
+    const representasjonspunktFeatures = fylker?.map((fylke) => getRepresentasjonspunktFeatureForFylke(fylke));
+
+    return geoJsonFeatures.flatMap(getFeaturesFromGeoJson).concat(representasjonspunktFeatures);
+  }, [fylker, geoJsonFeatures]);
 
   useAddInndelingerKontekst(features, "fylke", "fylker");
 
