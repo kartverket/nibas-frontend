@@ -33,7 +33,7 @@ const ToolbarPopups = () => {
 
     toast({
       status: "success",
-      title: `${selectedFeatureIds.length} grense${selectedFeatureIds.length > 1 && "r"} ble arkivert`,
+      title: `${selectedFeatureIds.length} grense${selectedFeatureIds.length > 1 ? "r" : ""} ble arkivert`,
       description: "Husk å eventuelt sette tilhørighet på berørte grenser",
     });
   };
