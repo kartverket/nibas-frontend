@@ -9,6 +9,7 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { FeatureProperties } from "../../../types/api";
 import { Coordinate } from "ol/coordinate";
+import { equals } from "ol/array";
 
 // OBS! Per nå skiller denne seg fra de andre interaksjonene ved at den ikke legges til som et event i kartet
 // I stedet bruker man select og selectPoint etter hverandre, og utløser handlingen ved en knapp i React
@@ -34,7 +35,7 @@ const useSplit = () => {
     return newFeature;
   };
 
-  const performFeatureSplit = (featureToSplit: Feature<Geometry>, coordinatesToSplit: Coordinate) => {
+  const performFeatureSplit = (featureToSplit: Feature<Geometry>, coordinatesToSplit: Coordinate[]) => {
     const oldFeature = featureToSplit;
     const oldGeometry = oldFeature.getGeometry();
     if (oldGeometry instanceof LineString) {
@@ -45,26 +46,44 @@ const useSplit = () => {
 
       // Ikke vits å gjøre splitting med mindre du har en linje med minst tre punkter
       if (allFeatureCoordinates.length > 2) {
-        const splitIndex = allFeatureCoordinates.findIndex(
-          (v) => v[0] === coordinatesToSplit[0] && v[1] === coordinatesToSplit[1],
+        const splitIndices = coordinatesToSplit
+          .map((coordinateToSplit) => {
+            const splitIndex = allFeatureCoordinates.findIndex((coordinate) => equals(coordinate, coordinateToSplit));
+
+            return splitIndex;
+          })
+          .sort();
+
+        // Dette verifiserer at de valgte punktene er gyldige punkter å splitte på grensen
+        const allSplitIndicesAreValid = splitIndices.every(
+          (index) => index > 0 && index < allFeatureCoordinates.length - 1,
         );
 
-        // Dette verifiserer at det valgte punktet er et gyldig punkt å splitte på grensen
-        if (splitIndex > 0 && splitIndex < allFeatureCoordinates.length - 1) {
-          const newFeature1 = createCloneOfFeatureWithPartsOfCoordinates(oldFeature, 0, splitIndex + 1);
-          const newFeature2 = createCloneOfFeatureWithPartsOfCoordinates(
-            oldFeature,
-            splitIndex,
-            allFeatureCoordinates.length,
-          );
+        if (allSplitIndicesAreValid) {
+          const newIndices: number[][] = [];
+
+          for (let i = 0; i < splitIndices.length + 1; i++) {
+            if (i === 0) {
+              newIndices.push([0, splitIndices[0] + 1]);
+            } else if (i === splitIndices.length) {
+              newIndices.push([splitIndices[splitIndices.length - 1], allFeatureCoordinates.length]);
+            } else {
+              newIndices.push([splitIndices[i - 1], splitIndices[i]]);
+            }
+          }
+
+          const newFeatures = newIndices.map((indices) => {
+            return createCloneOfFeatureWithPartsOfCoordinates(oldFeature, indices[0], indices[1]);
+          });
 
           const properties = oldFeature.getProperties() as FeatureProperties;
           oldFeature.setProperties({ ...properties, shouldArchive: true });
-          addFeaturesToSource("edit", [newFeature1, newFeature2]);
+          addFeaturesToSource("edit", newFeatures);
           removeFeaturesFromSourceByIds("edit", [oldFeatureId]);
+
           addHistoryEntry({
             type: "grensedeling",
-            changes: [{ id: oldFeatureId, from: [oldFeature], to: [newFeature1, newFeature2] }],
+            changes: [{ id: oldFeatureId, from: [oldFeature], to: newFeatures }],
           });
 
           // Hvis featuren som ble splittet er en gammel feature med ID ønsker vi å vise den som arkivert
@@ -82,7 +101,7 @@ const useSplit = () => {
       if (selectedPointGeometry instanceof Point) {
         const coordinatesToSplit = selectedPointGeometry.getCoordinates();
 
-        performFeatureSplit(selectedFeatures[0], coordinatesToSplit);
+        performFeatureSplit(selectedFeatures[0], [coordinatesToSplit]);
       }
     }
   };
