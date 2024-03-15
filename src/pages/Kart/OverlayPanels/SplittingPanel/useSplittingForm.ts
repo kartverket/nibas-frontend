@@ -112,7 +112,7 @@ export const useSplittingForm = (flatedata: Flatedata) => {
 
   // en del if-tester her for å forsikre typescript om at variablene vi bruker ikke er null.
   // (hadde ikke vært mulig å komme seg hit hvis noe var null, men typescript er typescript)
-  const updateDraftWithSplittingRequest = () => {
+  const updateDraftWithSplittingRequest = async () => {
     if (editingType && grunnkretser && stemmekretser) {
       const { opprinneligKrets, nyeKretser } = getValues();
       const opprinneligKretsInfo = opprinneligFlateOptions.find(
@@ -153,7 +153,8 @@ export const useSplittingForm = (flatedata: Flatedata) => {
                 splitting.opprinneligKrets.lokalId !== newKretsDelingEndringRequest.opprinneligKrets.lokalId,
             ),
           ];
-          updateUtkast(utkast.id, {
+
+          const updateUtkastSuccessfull = await updateUtkast(utkast.id, {
             ...utkast,
             operasjoner: {
               ...latestOperasjoner,
@@ -163,7 +164,10 @@ export const useSplittingForm = (flatedata: Flatedata) => {
               ],
             },
           });
-          showSplittingSuccessToast(opprinneligKretsInfo, exclusivelyNewKretser, isUpdateOfPreviouslyPerformedSplit);
+
+          if (updateUtkastSuccessfull) {
+            showSplittingSuccessToast(opprinneligKretsInfo, exclusivelyNewKretser, isUpdateOfPreviouslyPerformedSplit);
+          }
         }
       }
     }
