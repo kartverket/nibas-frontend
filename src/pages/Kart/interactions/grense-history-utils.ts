@@ -1,18 +1,11 @@
 import { HistoryChange, MinimalGrense } from "contexts/HistoryContext/types";
 import { Feature } from "ol";
-import { FeatureLike } from "ol/Feature";
 import { LineString } from "ol/geom";
 import { previousCoordinateKey } from "./constants";
 import { GrenseType } from "hooks/layers/types";
 import { FeatureProperties } from "types/api";
 import { getMetadataDiscriminatorFromType } from "utils/grenser";
 import { getDefaultFeatureProperties } from "utils/features";
-
-export const getInfoFromFeature = (featureLike: FeatureLike) => {
-  const featureId = featureLike.getId()?.toString();
-  const geometry = featureLike.getGeometry() as LineString;
-  return { coordinates: geometry.getCoordinates(), featureId };
-};
 
 export const createGrenseHistoryChange = (features: Feature[], grenseType?: GrenseType) => {
   const changes: HistoryChange<MinimalGrense>[] = [];
@@ -23,16 +16,16 @@ export const createGrenseHistoryChange = (features: Feature[], grenseType?: Gren
 
       // Filtrerer ut representasjonspunkt og flate fra å bli satt inn i history
       if (geometry instanceof LineString) {
-        const { coordinates, featureId } = getInfoFromFeature(feature);
+        const featureId = feature.getId()?.toString();
+        if (featureId === undefined) return;
 
-        if (!coordinates || !featureId) return;
         changes.push({
           id: featureId,
           from: {
-            coordinates: feature.get(previousCoordinateKey) || [],
+            coordinates: feature.get(previousCoordinateKey) ?? [],
             type: grenseType,
           },
-          to: { coordinates, type: grenseType },
+          to: { coordinates: geometry.getCoordinates(), type: grenseType },
         });
         feature.unset(previousCoordinateKey);
       }
@@ -51,8 +44,9 @@ export const createNyGrenseHistoryChanges = (features: Feature[], grenseType: Gr
       const grenseDiscriminator = getMetadataDiscriminatorFromType(grenseType);
 
       if (geometry instanceof LineString) {
-        const { coordinates, featureId } = getInfoFromFeature(feature);
-        if (!coordinates || !featureId || !grenseDiscriminator) continue;
+        const featureId = feature.getId()?.toString();
+
+        if (featureId === undefined || !grenseDiscriminator) continue;
 
         const defaultFeatureProperties = getDefaultFeatureProperties(grenseType);
         if (!defaultFeatureProperties) continue;
@@ -64,7 +58,7 @@ export const createNyGrenseHistoryChanges = (features: Feature[], grenseType: Gr
         };
         const toChange: MinimalGrense & FeatureProperties = {
           ...defaultFeatureProperties,
-          coordinates: coordinates,
+          coordinates: geometry.getCoordinates(),
           type: grenseType,
         };
 

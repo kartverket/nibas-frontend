@@ -29,8 +29,7 @@ export const addFeaturesToSource = (sourceId: LayerId, features: Feature<Geometr
 
   features.forEach((feature) => {
     const id = feature.getId();
-
-    if (!id) return;
+    if (id == null) return;
 
     const existingFeature = source.getFeatureById(id) as Feature<Geometry> | null;
 

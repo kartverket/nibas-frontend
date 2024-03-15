@@ -11,7 +11,7 @@ export const getTempFeatureId = (): string => {
 };
 
 export const isTempFeatureId = (id: string | number | null | undefined): boolean => {
-  if (id && typeof id === "string" && id.length > 0) {
+  if (typeof id === "string" && id.length > 0) {
     return id.includes(tempIdPrefix);
   }
 

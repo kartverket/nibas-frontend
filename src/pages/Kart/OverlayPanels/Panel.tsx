@@ -68,7 +68,7 @@ export const AbsolutePanel = styled(Panel)`
   animation: ${slideIn} 0.25s ease-in-out;
 `;
 
-const PanelHeaderContainer = styled.div<{ $isSmall?: boolean; $noMargin?: boolean }>`
+const PanelHeaderContainer = styled.div<{ $isSmall: boolean; $noMargin: boolean }>`
   position: sticky;
   top: 0;
   z-index: ${zindex.panel};
@@ -98,7 +98,14 @@ type PanelHeaderProps = {
   noMargin?: boolean;
 };
 
-export const PanelHeader = ({ children, subHeading, onClose, isSmall, button, noMargin }: PanelHeaderProps) => (
+export const PanelHeader = ({
+  children,
+  onClose,
+  button,
+  subHeading = "",
+  isSmall = false,
+  noMargin = false,
+}: PanelHeaderProps) => (
   <PanelHeaderContainer $isSmall={isSmall} $noMargin={noMargin}>
     <PanelHeaderText>
       <Heading as="h3" size={isSmall ? "sm" : "md"}>
@@ -106,7 +113,7 @@ export const PanelHeader = ({ children, subHeading, onClose, isSmall, button, no
       </Heading>
       {subHeading && <Text fontSize="sm">{subHeading}</Text>}
     </PanelHeaderText>
-    {button ? (
+    {button != null ? (
       <ButtonGroup>
         {button}
         <CloseButton size={isSmall ? "md" : "lg"} onClick={onClose} aria-label="Lukk" />

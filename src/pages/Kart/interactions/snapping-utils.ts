@@ -33,7 +33,7 @@ const createSnapDataForSource = (
     style: selectedPointStyle,
     pixelTolerance,
     features: new Collection(
-      source.getFeatures().filter((feature) => !feature.getId()?.toString().includes("representasjonspunkt")),
+      source.getFeatures().filter((feature) => !(feature.getId() ?? "").toString().includes("representasjonspunkt")),
     ),
   });
 

@@ -149,10 +149,10 @@ const removeLayer = (layers: string, layerId: string) => {
   const trailingComma = matches.at(3);
   let replaceString = "";
 
-  if (trailingComma) {
+  if (trailingComma != null) {
     // komma på slutten, potensielt på starten i tillegg men spiller ingen rolle
     replaceString = `${layerId},`;
-  } else if (prefixComma) {
+  } else if (prefixComma != null) {
     // bare komma på starten
     replaceString = `,${layerId}`;
   } else {

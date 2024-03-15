@@ -91,7 +91,7 @@ const useNibasApi = <Path extends ApiPath>(
         const parameter = params[key];
 
         // hvis parameteret er undefined, ikke send det med i requesten
-        if (parameter) {
+        if (parameter != null) {
           pathParams = pathParams.concat(`${key}=${parameter}`);
         }
       }
