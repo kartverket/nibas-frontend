@@ -48,13 +48,13 @@ export const useSplittingForm = (flatedata: Flatedata) => {
     register,
     getValues,
     reset,
-    formState: { errors },
+    formState: { errors, isSubmitted },
     control,
     setValue,
     handleSubmit,
+    trigger,
   } = useForm<SplittingForm>({
     mode: "onSubmit",
-    reValidateMode: "onChange",
     defaultValues: getDefaultSplittingValue(),
   });
 
@@ -187,5 +187,7 @@ export const useSplittingForm = (flatedata: Flatedata) => {
     handleOpprinneligKretsChange,
     handleSubmit,
     errors,
+    trigger,
+    isSubmitted,
   };
 };

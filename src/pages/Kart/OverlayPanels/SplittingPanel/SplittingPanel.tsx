@@ -7,6 +7,7 @@ import {
   Icon,
   IconButton,
   Input,
+  InputProps,
   Select,
   Stack,
 } from "@kvib/react";
@@ -14,7 +15,7 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { styled } from "styled-components";
 import { PanelHeader, PanelProps, SidePanel } from "../Panel";
 import { CustomOption } from "../hooks/tilhorighet-utils";
-import { useEffect } from "react";
+import { ChangeEvent, useEffect } from "react";
 import { useSplittingForm } from "./useSplittingForm";
 
 const NyKretsField = styled.div`
@@ -60,6 +61,8 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
     handleOpprinneligKretsChange,
     handleSubmit,
     errors,
+    trigger,
+    isSubmitted,
   } = useSplittingForm(flatedata);
 
   useEffect(() => {
@@ -107,6 +110,20 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
       message: `Nytt ${editingType}nummer kan ikke være lengre enn ${editingType === "stemmekrets" ? 4 : 8} tegn`,
     },
     validate: validateNotDuplicateKretsnummer,
+  };
+
+  const triggerRevalidateOnChangeAfterSubmit = ({ onChange, ...restProps }: InputProps) => {
+    return {
+      onChange: (e: ChangeEvent<HTMLInputElement>) => {
+        if (onChange) {
+          onChange(e);
+        }
+        if (isSubmitted) {
+          trigger();
+        }
+      },
+      ...restProps,
+    };
   };
 
   const opprinneligKretsRegister = register("opprinneligKrets.lokalId");
@@ -160,7 +177,9 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
                       <Input
                         disabled={index === 0}
                         type="number"
-                        {...register(`nyeKretser.${index}.kretsNummer`, index !== 0 ? kretsNumberValidator : {})}
+                        {...triggerRevalidateOnChangeAfterSubmit(
+                          register(`nyeKretser.${index}.kretsNummer`, index !== 0 ? kretsNumberValidator : {}),
+                        )}
                       />
                     </FormControl>
                     <FormControl isInvalid={!!errors.nyeKretser?.[index]?.kretsNavn}>
