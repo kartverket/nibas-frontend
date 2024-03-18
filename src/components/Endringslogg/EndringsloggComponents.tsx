@@ -93,7 +93,7 @@ const TekstEllerTom = ({ tekst, bold = false }: TekstEllerTomProps) => {
 };
 
 export const EndringTekst = styled.span<{ $isBold?: boolean }>`
-  font-weight: ${({ $isBold }) => ($isBold ? "900" : "300")};
+  font-weight: ${({ $isBold = false }) => ($isBold ? "900" : "300")};
   white-space: nowrap;
   margin-right: 8px;
 `;

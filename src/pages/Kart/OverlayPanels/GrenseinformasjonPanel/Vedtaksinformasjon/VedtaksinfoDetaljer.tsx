@@ -68,7 +68,7 @@ export const VedtaksinfoDetaljer = ({
       const postValues = mapFromFormToApi(data, dokref, internref);
       toast({
         status: "success",
-        title: `Vedtaksinformasjonen er ${postValues.id ? "oppdatert" : "lagt til"}`,
+        title: `Vedtaksinformasjonen er ${postValues.id != null ? "oppdatert" : "lagt til"}`,
       });
       updateDraftFromFeature(postValues);
     }

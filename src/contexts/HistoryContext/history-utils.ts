@@ -12,14 +12,15 @@ import {
 import { archivedSource, editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
 import { setDefaultFeatureProperties } from "utils/features";
-import { FeatureProperties } from "types/api";
+import { FeatureProperties, KontekstEgenskaper } from "types/api";
 import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { removeNull } from "utils/list-utils";
+import { Coordinate } from "ol/coordinate";
 
 const getFeatureFromChange = (change: HistoryChange<MinimalGrense>, direction: HistoryDirection) => {
   const existingFeature = getFeatureIfExists(change.id);
-  if (!existingFeature && direction === "to" && change[direction].coordinates) {
+  if (!existingFeature && direction === "to") {
     const newFeature = new Feature({
       geometry: new LineString(change[direction].coordinates),
     });
@@ -41,12 +42,11 @@ const setCoordinatesFromChange = (change: HistoryChange<MinimalGrense>, directio
   if (!feature) return;
 
   const lineString = feature.getGeometry() as LineString;
+  const coordinates = change[direction].coordinates as Coordinate[] | undefined;
 
-  if (direction === "from" && !change[direction].coordinates) {
+  if (direction === "from" && !coordinates) {
     editSource.removeFeature(feature);
   }
-
-  const coordinates = change[direction].coordinates;
   if (!coordinates) return;
 
   lineString.setCoordinates(coordinates);
@@ -66,8 +66,7 @@ const setPropertiesFromChange = (change: HistoryChange<FeatureProperties>, direc
   const feature = getFeatureIfExists(change.id);
   if (!feature) return;
 
-  const properties = change[direction];
-
+  const properties = change[direction] as FeatureProperties | undefined;
   if (!properties) return;
 
   feature.setProperties(properties);
@@ -89,7 +88,7 @@ export const setKontekstEgenskaperForEntry = (entry: GrenseTilhorighetEntry, dir
     const feature = getFeatureIfExists(change.id);
     if (!feature) return;
 
-    const kontekstEgenskaper = change[direction];
+    const kontekstEgenskaper = change[direction] as KontekstEgenskaper[] | undefined;
 
     if (!kontekstEgenskaper) return;
 
@@ -129,7 +128,7 @@ export const redoGrensedeling = (deltFeature: Feature, newFeaturesFromsDeling: F
   const properties = deltFeature.getProperties() as FeatureProperties;
   deltFeature.setProperties({ ...properties, shouldArchive: true });
   const deltFeatureId = deltFeature.getId()?.toString();
-  if (deltFeatureId) {
+  if (deltFeatureId != null) {
     addFeaturesToSource("edit", newFeaturesFromsDeling);
     removeFeaturesFromSourceByIds("edit", [deltFeatureId]);
 
@@ -150,7 +149,7 @@ export const undoGrensedeling = (deltFeature: Feature, newFeaturesFromsDeling: F
 
   const deltFeatureId = deltFeature.getId()?.toString();
 
-  if (deltFeatureId) {
+  if (deltFeatureId != null) {
     if (!isTempFeatureId(deltFeatureId)) {
       removeFeaturesFromSourceByIds("archived", [deltFeatureId]);
     }

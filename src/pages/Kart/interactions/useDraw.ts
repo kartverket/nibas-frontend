@@ -115,7 +115,7 @@ const useDraw = () => {
 
       const grenseType = getGrenseTypeFromEditingType(editingType);
 
-      if (drawnFeature && grenseType) {
+      if (grenseType) {
         addHistoryEntry({
           type: "nygrense",
           changes: createNyGrenseHistoryChanges([drawnFeature], grenseType),
