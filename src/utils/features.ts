@@ -6,9 +6,9 @@ import { FeatureProperties, KontekstEgenskaper, Metadata } from "types/api";
 import { FeatureLike } from "ol/Feature";
 import { grenserLayers, editableBorderTypes } from "hooks/layers/constants";
 import { getRepresentasjonspunktId } from "./map/source";
-import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { previousCoordinateKey } from "pages/Kart/interactions/constants";
 import { Coordinate, equals } from "ol/coordinate";
+import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { isNotNil } from "./type-utils";
 
 export const setDefaultFeatureProperties = (feature: Feature<Geometry>, grenseType: GrenseType | undefined) => {
@@ -39,6 +39,27 @@ export const getFeatureIfExistsInAnyLayer = (featureId: string) => {
   }
 
   return null;
+};
+
+/**
+ * Removes the feature from all and any layer it may exist in.
+ * @param featureId Feature to remove
+ * @returns Integer. The number of layers it was removed from, or -1 if none.
+ */
+export const removeFeatureFromAllLayers = (featureId: string) => {
+  let numberOfRemoves = 0;
+  for (const layer of Object.values(grenserLayers)) {
+    const source = layer.getSource();
+
+    if (source) {
+      const feature = source.getFeatureById(featureId);
+      if (feature) {
+        source.removeFeature(feature);
+        ++numberOfRemoves;
+      }
+    }
+  }
+  return numberOfRemoves > 0 ? numberOfRemoves : -1;
 };
 
 export const getFeaturesConnectedToFeatureAtEndpoints = (connectedToFeature: Feature<Geometry>) => {
