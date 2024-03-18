@@ -150,7 +150,7 @@ const useDraw = () => {
                 }
               });
 
-              if (coordinatesToSplitAt != null) {
+              if (coordinatesToSplitAt.length > 0) {
                 performFeatureSplit(feature, coordinatesToSplitAt);
               }
             }
