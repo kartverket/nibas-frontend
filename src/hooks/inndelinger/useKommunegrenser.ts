@@ -1,13 +1,11 @@
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
+import { getRepresentasjonspunktFeatureForGrenseResponse } from "components/GrenserDrillDown/ApiGrense/ApiGrense";
 import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
-import { GeoJSONFeature } from "ol/format/GeoJSON";
 import { useEffect, useMemo, useState } from "react";
 import useSWRImmutable from "swr/immutable";
-import { FeatureCollection, KommuneResponse } from "types/api";
+import { FeatureCollection } from "types/api";
 import { fetcherWithToken, getIdFromEntity } from "utils/api";
-import { getNavnInSpraak } from "utils/language/language";
-import { getFeatureFromGeoJson, getFeaturesFromGeoJson } from "utils/map/geoJson";
-import { getRepresentasjonspunktId } from "utils/map/source";
+import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 import useKommuner from "./useKommuner";
 
 const kommunegrenserFetcher = async ([kommuneIds, token]: [string[], string | undefined]) => {
@@ -24,18 +22,6 @@ const kommunegrenserFetcher = async ([kommuneIds, token]: [string[], string | un
     return acc;
   }, [] as FeatureCollection[]);
   return geoJsons.flatMap((geoJson) => geoJson.features);
-};
-
-const getRepresentasjonspunktFeatureForKommune = (kommune: KommuneResponse): GeoJSONFeature => {
-  return getFeatureFromGeoJson({
-    ...kommune.representasjonspunkt,
-    id: getRepresentasjonspunktId(kommune.id.lokalid.value),
-    properties: {
-      ...kommune.representasjonspunkt.properties,
-      name: getNavnInSpraak(kommune.navn, "nor"),
-      number: kommune.kommunenummer.kodeverdi,
-    },
-  });
 };
 
 const useKommunegrenser = (fylkeId: string, shouldFetch: boolean) => {
@@ -63,7 +49,7 @@ const useKommunegrenser = (fylkeId: string, shouldFetch: boolean) => {
     }
 
     const representasjonspunktFeatures = kommunerResponse?.map((kommune) =>
-      getRepresentasjonspunktFeatureForKommune(kommune),
+      getRepresentasjonspunktFeatureForGrenseResponse(kommune),
     );
 
     return geoJsonFeatures.flatMap(getFeaturesFromGeoJson).concat(representasjonspunktFeatures);

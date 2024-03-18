@@ -1,15 +1,13 @@
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
+import { getRepresentasjonspunktFeatureForGrenseResponse } from "components/GrenserDrillDown/ApiGrense/ApiGrense";
 import { useEditGrenseValue } from "contexts/EditGrenserContext/useEditGrense";
 import useFylker from "hooks/inndelinger/useFylker";
 import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
-import { GeoJSONFeature } from "ol/format/GeoJSON";
 import { useEffect, useMemo, useState } from "react";
 import useSWRImmutable from "swr/immutable";
-import { FeatureCollection, FylkeResponse } from "types/api";
+import { FeatureCollection } from "types/api";
 import { fetcherWithToken, getIdFromEntity } from "utils/api";
-import { getNavnInSpraak } from "utils/language/language";
-import { getFeatureFromGeoJson, getFeaturesFromGeoJson } from "utils/map/geoJson";
-import { getRepresentasjonspunktId } from "utils/map/source";
+import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 
 const fylkesgrenserFetcher = async ([fylkeIds, token]: [string[], string | undefined]) => {
   const promises: Promise<FeatureCollection>[] = fylkeIds.map(async (fylkeId) =>
@@ -26,18 +24,6 @@ const fylkesgrenserFetcher = async ([fylkeIds, token]: [string[], string | undef
   }, [] as FeatureCollection[]);
 
   return geoJsons.flatMap((geoJson) => geoJson.features);
-};
-
-const getRepresentasjonspunktFeatureForFylke = (fylke: FylkeResponse): GeoJSONFeature => {
-  return getFeatureFromGeoJson({
-    ...fylke.representasjonspunkt,
-    id: getRepresentasjonspunktId(fylke.id.lokalid.value),
-    properties: {
-      ...fylke.representasjonspunkt.properties,
-      name: getNavnInSpraak(fylke.navn, "nor"),
-      number: fylke.fylkesnummer.kodeverdi,
-    },
-  });
 };
 
 const useFylkesgrenser = () => {
@@ -67,7 +53,7 @@ const useFylkesgrenser = () => {
       return null;
     }
 
-    const representasjonspunktFeatures = fylker?.map((fylke) => getRepresentasjonspunktFeatureForFylke(fylke));
+    const representasjonspunktFeatures = fylker?.map((fylke) => getRepresentasjonspunktFeatureForGrenseResponse(fylke));
 
     return geoJsonFeatures.flatMap(getFeaturesFromGeoJson).concat(representasjonspunktFeatures);
   }, [fylker, geoJsonFeatures]);
