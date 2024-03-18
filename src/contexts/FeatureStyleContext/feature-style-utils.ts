@@ -52,7 +52,7 @@ export const removeDuplicateIds = (featureIds: string[]) => [...new Set(featureI
 export const filterOnlyDeadEnds = (featureEndpointsToCheck: FeatureIdWithEndpoints[], excludedFeatureIds: string[]) => {
   return function (feature: Feature<Geometry>) {
     const featureId = feature.getId()?.toString();
-    if (feature && featureId && !excludedFeatureIds.includes(featureId)) {
+    if (feature != null && featureId != null && !excludedFeatureIds.includes(featureId)) {
       return isFeatureDeadEnd(feature, featureEndpointsToCheck);
     }
     return false;

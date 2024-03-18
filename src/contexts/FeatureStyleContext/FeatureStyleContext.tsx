@@ -9,7 +9,6 @@ import { Coordinate } from "ol/coordinate";
 import { archivedSource } from "hooks/layers/constants";
 import { FeatureIdWithEndpoints, getAllFeatureEndPointCoordinates } from "utils/features";
 import { HistoryTypeValues } from "contexts/HistoryContext/types";
-import { getChangeIds } from "contexts/HistoryContext/history-utils";
 import {
   filterOnlyDeadEnds,
   getEntriesUpToIndex,
@@ -17,6 +16,7 @@ import {
   removeDuplicateIds,
   shouldIgnoreFeatureId,
 } from "./feature-style-utils";
+import { getChangeIds } from "contexts/HistoryContext/history-utils";
 
 export const FeatureStyleContext = createContext<FeatureStyleContextValue | undefined>(undefined);
 
@@ -54,7 +54,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     const deselectedFeatures = removeSelection();
     for (const feature of deselectedFeatures) {
       const featureId = feature.getId()?.toString();
-      if (!featureId) continue;
+      if (featureId == null) continue;
 
       // Dersom featuren har en aktiv stil faller vi tilbake til den
       const matchingCustomStyle = customStyles.find((customStyle) => customStyle.customFeatureIds.includes(featureId));
@@ -130,12 +130,12 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       (featureEndpoint) => featureEndpoint != null && !featureIdsToIgnore.includes(featureEndpoint.featureId),
     ) as FeatureIdWithEndpoints[];
 
-    const archivedFeatures = archivedSource.getFeatures().map((f) => f.getId()?.toString() || "");
+    const archivedFeatures = removeDuplicateIds(archivedSource.getFeatures().map((f) => f.getId()?.toString() ?? ""));
     const errorFeatures = removeDuplicateIds(
       getEntriesUpToIndex(history, (entry) => errorHistoryTypes.includes(entry.type))
         .flatMap(mapAffectedFeaturesForErrorEntries)
         .filter(filterOnlyDeadEnds(featureEndpointsToCheck, archivedFeatures))
-        .map((feature) => feature.getId()?.toString() || ""),
+        .map((feature) => feature.getId()?.toString() ?? ""),
     );
 
     // Entries før index skal fargelegges basert på endringen som er gjort
@@ -173,7 +173,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
 
   const featureIsArchived = (feature: FeatureLike) => {
     const featureId = feature.getId()?.toString();
-    if (featureId) {
+    if (featureId != null) {
       return (
         archivedStyleFunctions.customFeatureIds.includes(featureId) ||
         archivedStyleFunctions.savedCustomFeatureIds.includes(featureId)

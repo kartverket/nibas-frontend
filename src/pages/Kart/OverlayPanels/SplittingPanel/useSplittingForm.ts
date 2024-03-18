@@ -65,8 +65,8 @@ export const useSplittingForm = (flatedata: Flatedata) => {
 
   const { getCurrentlyEditingType } = useEditAllGrenser();
   const editingType = getCurrentlyEditingType();
-  const { data: stemmekretser } = useKommuneStemmekretser(flatedata ? getIdFromEntity(flatedata) : "");
-  const { data: grunnkretser } = useKommuneGrunnkretser(flatedata ? getIdFromEntity(flatedata) : "");
+  const { data: stemmekretser } = useKommuneStemmekretser(flatedata ? getIdFromEntity(flatedata) : null);
+  const { data: grunnkretser } = useKommuneGrunnkretser(flatedata ? getIdFromEntity(flatedata) : null);
   const opprinneligFlateOptions =
     editingType === "grunnkrets"
       ? mapGrunnkretsResponseToKrets(grunnkretser ?? [])
@@ -128,7 +128,7 @@ export const useSplittingForm = (flatedata: Flatedata) => {
         kommuneIdentifikator &&
         opprinneligKrets.lokalId.length > 0 &&
         nyeKretser.length > 0 &&
-        opprinneligKretsInfo?.version
+        opprinneligKretsInfo?.version != null
       ) {
         const exclusivelyNewKretser = nyeKretser.slice(1); // må fjerne opprinnelig krets her fordi vi har den i field
         const newKretsDelingEndringRequest = {

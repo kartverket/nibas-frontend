@@ -21,7 +21,7 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
   ]);
 
   const { flatedata, closeOverlayModal } = useOverlayPanel();
-  const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
+  const kommuneId = flatedata ? getIdFromEntity(flatedata) : null;
   const { data: stemmekretserByKommune } = useKommuneStemmekretser(kommuneId);
   const utkastStemmekretser = useUtkastEntity(stemmekretserByKommune, "stemmekretsendringer") as
     | StemmekretsResponse[]
@@ -46,7 +46,11 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
             </thead>
             <tbody>
               {orderBy(utkastStemmekretser, sortProperty, sortOrder).map((stemmekrets) => (
-                <StemmekretsRow key={getIdFromEntity(stemmekrets)} stemmekrets={stemmekrets} kommuneId={kommuneId} />
+                <StemmekretsRow
+                  key={getIdFromEntity(stemmekrets)}
+                  stemmekrets={stemmekrets}
+                  kommuneId={kommuneId ?? ""}
+                />
               ))}
             </tbody>
           </KretsTable>

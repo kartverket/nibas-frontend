@@ -21,13 +21,13 @@ export const useStemmekretser = (stemmekretsIds: string[]) => {
   );
 };
 
-export const useKommuneStemmekretser = (kommuneId: string | undefined) => {
-  return useNibasApi(kommuneId ? "/v1/kommuner/{id}/stemmekretser" : null, {
+export const useKommuneStemmekretser = (kommuneId: string | null) => {
+  return useNibasApi(kommuneId != null ? "/v1/kommuner/{id}/stemmekretser" : null, {
     id: kommuneId!,
   });
 };
 
-export const useToKommunerStemmekretser = (kommuneAId: string | undefined, kommuneBId: string | undefined) => {
+export const useToKommunerStemmekretser = (kommuneAId: string | null, kommuneBId: string | null) => {
   const { data: stemmekretserA, isLoading: k1Loading } = useKommuneStemmekretser(kommuneAId);
   const { data: stemmekretserB, isLoading: k2Loading } = useKommuneStemmekretser(kommuneBId);
   return {

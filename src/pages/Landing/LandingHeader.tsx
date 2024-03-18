@@ -15,7 +15,7 @@ const LandingHeader = () => {
       {isAuthenticatedFunc() && (
         <Section>
           <LoginIcon icon="person" isFilled />
-          {personId && <Text as="b">{personId.substring(0, 6) + "*****"}</Text>}
+          {personId != null && <Text as="b">{personId.substring(0, 6) + "*****"}</Text>}
           <Button variant="secondary" aria-label="Logg ut" leftIcon="logout" onClick={handleLogoutFunc}>
             Logg ut
           </Button>

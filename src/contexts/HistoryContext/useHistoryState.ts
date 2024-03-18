@@ -1,8 +1,8 @@
 import { useCallback, useState } from "react";
 import { HistoryState, HistoryEntry } from "./types";
-import { removeFeatureFromAllLayers } from "utils/features";
-import { getChangeIds } from "./history-utils";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
+import { getChangeIds } from "./history-utils";
+import { removeFeatureFromAllLayers } from "utils/features";
 
 type Options = {
   onUndo: (entry: HistoryEntry) => void;

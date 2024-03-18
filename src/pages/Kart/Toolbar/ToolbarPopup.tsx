@@ -15,14 +15,14 @@ type Props = {
 
 const ToolbarPopup = ({
   text,
-  subtext,
-  buttonText,
+  subtext = "",
+  buttonText = "",
   onClick,
   onClose,
-  secondaryButtonText,
+  secondaryButtonText = "",
   secondaryOnClick,
-  isDisabled,
-  isLoading,
+  isDisabled = false,
+  isLoading = false,
 }: Props) => {
   return (
     <ToolbarPopupBody>
@@ -37,7 +37,7 @@ const ToolbarPopup = ({
           {buttonText}
         </Button>
       )}
-      {secondaryButtonText && (
+      {secondaryButtonText && secondaryOnClick && (
         <Button size="sm" isDisabled={isDisabled || isLoading} onClick={secondaryOnClick} variant="secondary">
           {secondaryButtonText}
         </Button>

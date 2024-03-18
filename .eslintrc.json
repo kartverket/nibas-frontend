@@ -10,7 +10,8 @@
       "jsx": true
     },
     "ecmaVersion": 12,
-    "sourceType": "module"
+    "sourceType": "module",
+    "project": "./tsconfig.json"
   },
   "plugins": ["react", "@typescript-eslint", "import"],
   "extends": [
@@ -37,6 +38,8 @@
     }
   },
   "rules": {
+    "react/prop-types": "off",
+    "react-hooks/exhaustive-deps": "error",
     "react/function-component-definition": [
       2,
       {
@@ -44,24 +47,19 @@
         "unnamedComponents": "arrow-function"
       }
     ],
+    "@typescript-eslint/array-type": "warn",
+    "@typescript-eslint/no-shadow": "error",
+    "@typescript-eslint/no-unused-vars": "warn",
+    "@typescript-eslint/prefer-optional-chain": "warn",
+    "@typescript-eslint/strict-boolean-expressions": "error",
+    "@typescript-eslint/switch-exhaustiveness-check": "error",
     "no-unused-vars": "off",
-    "@typescript-eslint/no-unused-vars": ["error"],
-    "@typescript-eslint/explicit-module-boundary-types": "off",
-    "react-hooks/exhaustive-deps": "error",
+    "no-shadow": "off",
+    "no-restricted-imports": ["warn", { "patterns": ["@chakra-ui/*"] }],
     "no-console": "warn",
-    "prettier/prettier": [
-      "warn",
-      {
-        "endOfLine": "auto"
-      }
-    ],
-    "react/prop-types": "off",
     "import/no-unresolved": "error",
     "import/no-named-as-default-member": "off",
-    "no-shadow": "off",
-    "@typescript-eslint/no-shadow": ["error"],
-    "no-restricted-imports": ["error", { "patterns": ["@chakra-ui/*"] }],
-    "react/jsx-curly-brace-presence": ["error", {"props": "never", "children": "never", "propElementValues": "always" }],
+    "prettier/prettier": ["warn", { "endOfLine": "auto" }],
     "eqeqeq": ["error", "smart"]
   }
 }
