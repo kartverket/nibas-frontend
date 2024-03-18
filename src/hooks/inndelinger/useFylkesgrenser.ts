@@ -1,12 +1,13 @@
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
+import { getRepresentasjonspunktFeatureForGrenseResponse } from "components/GrenserDrillDown/ApiGrense/ApiGrense";
+import { useEditGrenseValue } from "contexts/EditGrenserContext/useEditGrense";
 import useFylker from "hooks/inndelinger/useFylker";
 import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
 import { useEffect, useMemo, useState } from "react";
 import useSWRImmutable from "swr/immutable";
 import { FeatureCollection } from "types/api";
-import { getIdFromEntity, fetcherWithToken } from "utils/api";
+import { fetcherWithToken, getIdFromEntity } from "utils/api";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
-import { useEditGrenseValue } from "contexts/EditGrenserContext/useEditGrense";
 
 const fylkesgrenserFetcher = async ([fylkeIds, token]: [string[], string | undefined]) => {
   const promises: Promise<FeatureCollection>[] = fylkeIds.map(async (fylkeId) =>
@@ -48,12 +49,14 @@ const useFylkesgrenser = () => {
   }, [fylker, geoJsonFeatures, shouldFetch]);
 
   const features = useMemo(() => {
-    if (!geoJsonFeatures) {
+    if (!geoJsonFeatures || !fylker) {
       return null;
     }
 
-    return geoJsonFeatures.flatMap(getFeaturesFromGeoJson);
-  }, [geoJsonFeatures]);
+    const representasjonspunktFeatures = fylker?.map((fylke) => getRepresentasjonspunktFeatureForGrenseResponse(fylke));
+
+    return geoJsonFeatures.flatMap(getFeaturesFromGeoJson).concat(representasjonspunktFeatures);
+  }, [fylker, geoJsonFeatures]);
 
   useAddInndelingerKontekst(features, "fylke", "fylker");
 
