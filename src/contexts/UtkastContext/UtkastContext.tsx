@@ -61,7 +61,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     mutate,
     isValidating,
   } = useNibasApi(
-    utkastId ? "/v1/utkast/{id}" : null,
+    utkastId != null ? "/v1/utkast/{id}" : null,
     {
       // id blir ikke brukt før den er truthy, så vi kan trygt si at den
       // ikke er null her
@@ -105,7 +105,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     // fjern utkast hvis utkastid ikke er i url
-    if (!utkastId && utkast) {
+    if (utkastId == null && utkast) {
       setUtkast(undefined);
       closeUtkast();
       mutate();
@@ -159,7 +159,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
       // Grensene vi får fra det oppdaterte utkastet kan da legges tilbake igjen slik at staten vi har i utkastet stemmer overens med staten vi har i OL
       const oldFeatures = newUtkast.operasjoner.grenseendringer.endredeFeatures;
 
-      if (oldFeatures) {
+      if (oldFeatures.length > 0) {
         const oldFeaturesWithTempId = oldFeatures
           .filter((feature) => isTempFeatureId(feature.id))
           .map((feature) => feature.id);
@@ -184,7 +184,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
         featuresToBeAddedToSource.forEach((feature) => {
           const featureId = feature.getId()?.toString();
 
-          if (featureId) {
+          if (featureId != null) {
             if (isFeatureDeadEnd(feature, coords)) {
               addErrorStyles([featureId]);
             } else {
@@ -195,6 +195,12 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       setUtkast(updatedUtkastWithTempFeatureIds);
+    } else if (statusCode.isConflict(response.status)) {
+      setError({
+        title: "Konflikt ved lagring av utkast",
+        description:
+          "Det oppstod en konflikt ved lagring av utkastet. Dette kan oppstå om to eller flere personer har jobbet samtidig på det samme utkastet.\n\n Vennligst oppdater siden og forsøk å gjøre føringen på nytt, eventuelt kan du gjøre det i et nytt utkast.",
+      });
     } else if (statusCode.isError(response.status)) {
       const wrapper = (await response.json()) as ApiErrorResponse;
 
@@ -203,7 +209,14 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
         description: wrapper.errorDescription.description,
         errorCode: wrapper.errorCode,
       });
+    } else {
+      setError({
+        title: "Oppdatering av utkast feilet",
+        description: "En ukjent feil oppstod ved lagring av utkastet.",
+      });
     }
+
+    return statusCode.isSuccessful(response.status);
   };
 
   const updateUtkastWithHistory = async () => {
@@ -211,8 +224,9 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (!updatedUtkast || !utkast) return;
 
-    await updateUtkast(utkast.id, updatedUtkast);
-    toast({ status: "success", title: "Utkastet er lagret" });
+    if (await updateUtkast(utkast.id, updatedUtkast)) {
+      toast({ status: "success", title: "Utkastet er lagret" });
+    }
   };
 
   /**
@@ -267,12 +281,13 @@ export const useUtkastEntity = <T extends UtkastEntity>(entity: T, type: EntityU
   }, [entity, utkast, type]);
 };
 
+// TODO: noe er galt med typingen her, geojsonfeaturecollection betyr bare any, den fanger ikke at den returnerer undefined
 export const useUtkastFeature = (
   featureCollection: GeoJSONFeatureCollection | GeoJSONFeatureCollection[],
   utkast?: UtkastResponse,
-): FeatureCollection => {
+): FeatureCollection | undefined => {
   return useMemo(() => {
-    if (!featureCollection || !utkast) return featureCollection;
+    if (featureCollection == null || !utkast) return featureCollection;
 
     if (Array.isArray(featureCollection)) {
       return featureCollection.map((collection) => applyFeatureUtkast(collection, utkast));

@@ -1,13 +1,14 @@
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { PanelHeader, PanelProps, SidePanel } from "../Panel";
-import GrenseinformasjonFieldList from "./GrenseinformasjonFieldList";
+import { PanelProps, SidePanel } from "../Panel";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import { FeatureProperties, Metadata } from "types/api";
-import { getDateInFriendlyString } from "./grenseinformasjon-utils";
+import { FeatureProperties } from "types/api";
+import GrenseinformasjonForm from "./GrenseinformasjonForm";
 import { useEffect } from "react";
-import { Feature } from "ol";
-import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { isMatrikkelFeature } from "utils/features";
+import { TilhorighetField } from "./TilhorighetField";
+import { Vedtaksinformasjon } from "./Vedtaksinformasjon/Vedtaksinformasjon";
+import { Card, CardBody, CardHeader, Divider, Heading } from "@kvib/react";
+import { styled } from "styled-components";
 
 const GrenseinformasjonPanel = ({ isOpen, className }: PanelProps) => {
   const { selectedFeatures } = useFeatureStyle();
@@ -21,34 +22,28 @@ const GrenseinformasjonPanel = ({ isOpen, className }: PanelProps) => {
     }
   }, [activeOverlayPanel, closeOverlayPanel, selectedFeatures.length]);
 
-  const selectedProperties = selectedFeature?.getProperties() as FeatureProperties;
-
-  const getSistOppdatert = (feature: Feature) => {
-    if (isTempFeatureId(feature.getId()?.toString())) return "Ny grense, aldri oppdatert";
-
-    const featureProperties = feature.getProperties() as FeatureProperties;
-    const metadata = featureProperties.metadata as Metadata | null;
-
-    if (metadata) {
-      const oppdateringsDato = metadata.common?.sporingsinformasjon.oppdateringsdato;
-
-      if (oppdateringsDato) {
-        return getDateInFriendlyString(oppdateringsDato);
-      }
-    }
-
-    return "Ukjent";
-  };
+  const selectedProperties = selectedFeature?.getProperties() as FeatureProperties | undefined;
 
   return (
     selectedFeature &&
     !isMatrikkelFeature(selectedFeature) && (
       <SidePanel $isOpen={isOpen} className={className}>
-        <PanelHeader onClose={closeOverlayPanel} subHeading={`Sist oppdatert: ${getSistOppdatert(selectedFeature)}`}>
-          Informasjon om grense
-        </PanelHeader>
-        {selectedFeature && selectedProperties ? (
-          <GrenseinformasjonFieldList feature={selectedFeature} />
+        {selectedProperties ? (
+          <GrensePanelContent>
+            <GrenseinformasjonForm onClose={closeOverlayPanel} feature={selectedFeature} />
+            <Divider />
+            <Card variant="filled">
+              <GrenseInfoExtraCardHeader>
+                <Heading size="md">Ytterligere informasjon</Heading>
+              </GrenseInfoExtraCardHeader>
+              <GrenseInfoExtraCardBody>
+                <Divider />
+                <TilhorighetField feature={selectedFeature} />
+                <Divider />
+                <Vedtaksinformasjon feature={selectedFeature} />
+              </GrenseInfoExtraCardBody>
+            </Card>
+          </GrensePanelContent>
         ) : (
           <p>Valgt grense har ikke metadata</p>
         )}
@@ -56,5 +51,22 @@ const GrenseinformasjonPanel = ({ isOpen, className }: PanelProps) => {
     )
   );
 };
+
+const GrensePanelContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-bottom: 24px;
+`;
+
+const GrenseInfoExtraCardBody = styled(CardBody)`
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+`;
+
+const GrenseInfoExtraCardHeader = styled(CardHeader)`
+  padding-bottom: 0;
+`;
 
 export default GrenseinformasjonPanel;

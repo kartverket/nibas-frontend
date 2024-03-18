@@ -11,7 +11,6 @@ import {
   redoGrensedeling,
 } from "./history-utils";
 import useHistoryState from "contexts/HistoryContext/useHistoryState";
-import { ensureAllCasesCovered } from "utils/typeHelpers";
 
 const onUndo = (entry: HistoryEntry) => {
   const { type } = entry;
@@ -67,7 +66,6 @@ const onUndo = (entry: HistoryEntry) => {
       );
     }
   }
-  ensureAllCasesCovered(type);
 };
 
 const onRedo = (entry: HistoryEntry) => {
@@ -124,7 +122,6 @@ const onRedo = (entry: HistoryEntry) => {
       );
     }
   }
-  ensureAllCasesCovered(type);
 };
 
 export const HistoryContext = createContext<HistoryContextValue | undefined>(undefined);

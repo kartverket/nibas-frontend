@@ -41,8 +41,8 @@ export const getRepresentasjonspunktFeatureForAdministrativEnhet = (administrati
 
 const ToggleableAdministrativEnhet = ({ administrativEnhet, type, featuresUrl }: Props) => {
   const adminEnhetId = getIdFromEntity(administrativEnhet);
-  const { editing, visible } = useEditGrenseValue(type, adminEnhetId);
-  const { features, fetchFeatures } = useApiGrense(featuresUrl, editing || visible);
+  const { isVisible, isEditing } = useEditGrenseValue(type, adminEnhetId);
+  const { features, fetchFeatures } = useApiGrense(featuresUrl, isEditing || isVisible);
 
   useEffect(() => {
     features?.forEach((feature) => {
@@ -57,10 +57,10 @@ const ToggleableAdministrativEnhet = ({ administrativEnhet, type, featuresUrl }:
   }, [features, adminEnhetId, type]);
 
   useEffect(() => {
-    if (features || !visible) return;
+    if (features || isVisible === false) return;
 
     fetchFeatures();
-  }, [visible, features, fetchFeatures]);
+  }, [isVisible, features, fetchFeatures]);
 
   const memoizedFeatures = useMemo(() => {
     if (!features) {
@@ -79,11 +79,11 @@ const ToggleableAdministrativEnhet = ({ administrativEnhet, type, featuresUrl }:
   );
 
   return (
-    <Wrapper $isVisible={kretsStatus.visible ? true : false}>
+    <Wrapper $isVisible={kretsStatus.isVisible ? true : false}>
       <IconButton
         onClick={toggleVisible}
-        aria-label={kretsStatus.visible ? "Synlig" : "Usynlig"}
-        icon={kretsStatus.visible ? "visibility" : "visibility_off"}
+        aria-label={kretsStatus.isVisible ? "Synlig" : "Usynlig"}
+        icon={kretsStatus.isVisible ? "visibility" : "visibility_off"}
       />
       <Title>{`${getAdmistrativEnhetNummer(administrativEnhet)} ${getNavnInSpraak(
         administrativEnhet.navn,

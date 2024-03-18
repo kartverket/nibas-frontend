@@ -20,18 +20,16 @@ import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 export const getStemmekretserMedEndringer = (operasjoner: OperasjonerOrNull): string[] => {
   const endringerResponse = operasjoner?.metadataendringer?.stemmekretsendringer;
 
-  if (!endringerResponse || !operasjoner) {
+  if (!endringerResponse) {
     return [];
   }
 
-  const stemmekretserMedMetadataEndringer = removeNull(
-    Object.keys(operasjoner?.metadataendringer?.stemmekretsendringer),
-  );
+  const stemmekretserMedMetadataEndringer = removeNull(Object.keys(endringerResponse));
 
-  const viderefoertStemmekrets = operasjoner?.stemmekretsSammenslaaingsendring?.viderefoertStemmekrets?.lokalId;
+  const viderefoertStemmekrets = operasjoner.stemmekretsSammenslaaingsendring?.viderefoertStemmekrets?.lokalId;
 
   const gamleKretser =
-    operasjoner?.stemmekretsSammenslaaingsendring?.stemmekretserTilSammenslaaing.map((krets) => krets.lokalId) ?? [];
+    operasjoner.stemmekretsSammenslaaingsendring?.stemmekretserTilSammenslaaing.map((krets) => krets.lokalId) ?? [];
 
   const stemmekretserMedSammenslaaing = removeNull(gamleKretser.concat(viderefoertStemmekrets ?? []));
 
@@ -58,7 +56,7 @@ const getEndringAvTypeForId = (
 
   const gammelVerdi = gammelStemmekrets[type]?.trim() ?? "";
 
-  if (!nyVerdi || gammelVerdi === nyVerdi) {
+  if (nyVerdi == null || gammelVerdi === nyVerdi) {
     return null;
   }
 
@@ -108,9 +106,9 @@ const getSammenslaaingEndring = (
   const sammenslaaing = operasjoner.stemmekretsSammenslaaingsendring;
 
   const harSammenslaaingsEndring =
-    sammenslaaing &&
-    viderefoertKrets &&
-    stemmekretsMedSammenslaaing &&
+    sammenslaaing != null &&
+    viderefoertKrets != null &&
+    stemmekretsMedSammenslaaing != null &&
     stemmekretser.includes(stemmekretsMedSammenslaaing);
 
   if (!harSammenslaaingsEndring) {

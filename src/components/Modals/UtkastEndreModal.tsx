@@ -58,15 +58,17 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
 
   const editUtkast = async () => {
     setIsLoading(true);
-    await updateUtkast(
+    const isUpdateSuccessfull = await updateUtkast(
       utkast.id,
       { ...utkast, navn: getValues("navn"), endringstype: getValues("endringstype") },
       false,
     );
-    mutate();
-    reset(getValues());
     setIsLoading(false);
-    onClose();
+    if (isUpdateSuccessfull) {
+      mutate();
+      reset(getValues());
+      onClose();
+    }
   };
 
   return (

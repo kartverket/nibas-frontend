@@ -18,13 +18,13 @@ export const useGrunnkretser = (grunnkretsId: string[]) => {
   return useSWRImmutable(grunnkretsId.length > 0 ? [grunnkretsId, tokenHolderFunc()?.token] : null, grunnkretsFetcher);
 };
 
-export const useKommuneGrunnkretser = (kommuneId: string | undefined) => {
-  return useNibasApi(kommuneId ? "/v1/kommuner/{id}/grunnkretser" : null, {
+export const useKommuneGrunnkretser = (kommuneId: string | null) => {
+  return useNibasApi(kommuneId != null ? "/v1/kommuner/{id}/grunnkretser" : null, {
     id: kommuneId!,
   });
 };
 
-export const useToKommunerGrunnkretser = (kommuneAId: string | undefined, kommuneBId: string | undefined) => {
+export const useToKommunerGrunnkretser = (kommuneAId: string | null, kommuneBId: string | null) => {
   const { data: grunnkretserA, isLoading: k1Loading } = useKommuneGrunnkretser(kommuneAId);
   const { data: grunnkretserB, isLoading: k2Loading } = useKommuneGrunnkretser(kommuneBId);
   return {

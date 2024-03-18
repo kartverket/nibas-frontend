@@ -49,7 +49,7 @@ const getEndringAvTypeForId = (
 
   const gammelVerdi = gammelGrunnkrets[type]?.trim() ?? "";
 
-  if (gammelVerdi === nyVerdi || nyVerdi === null) {
+  if (gammelVerdi === nyVerdi || nyVerdi == null) {
     return null;
   }
 

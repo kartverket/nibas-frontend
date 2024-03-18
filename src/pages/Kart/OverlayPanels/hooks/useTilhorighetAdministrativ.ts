@@ -49,12 +49,12 @@ export const useTilhorighetAdministrativ = (feature: Feature): UseTilhorighet =>
     kommuneA: grunnkretserA,
     kommuneB: grunnkretserB,
     grunnkretserIsLoading,
-  } = useToKommunerGrunnkretser(kommunerId[0], kommunerId[1]);
+  } = useToKommunerGrunnkretser(kommunerId[0] ?? null, kommunerId[1] ?? null);
   const {
     kommuneA: stemmekretserA,
     kommuneB: stemmekretserB,
     stemmekretserIsLoading,
-  } = useToKommunerStemmekretser(kommunerId[0], kommunerId[1]);
+  } = useToKommunerStemmekretser(kommunerId[0] ?? null, kommunerId[1] ?? null);
 
   useEffect(() => {
     if (grunnkretserA && grunnkretserB && stemmekretserA && stemmekretserB) {

@@ -124,9 +124,9 @@ export const getUpdatedKontekstEgenskaper = (
 
 export const getTilhorighetValuesFormatted = (
   formState: TilhorighetChoice,
-  tilhorighetOptions: TilhorighetOptions | undefined,
+  tilhorighetOptions: TilhorighetOptions | null | undefined,
 ) => {
-  if (formState.a !== undefined && formState.b !== undefined && tilhorighetOptions) {
+  if (formState.a != null && formState.b != null && tilhorighetOptions) {
     const kretsA = tilhorighetOptions[Tilhorighet.A].find(
       (krets) => krets.id.lokalid.value === formState[Tilhorighet.A],
     );

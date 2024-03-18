@@ -1,8 +1,8 @@
 export type EditingType = "fylke" | "kommune" | "nasjon" | "grunnkrets" | "stemmekrets";
 
 export type KretsStatus = {
-  editing?: boolean;
-  visible?: boolean;
+  isEditing: boolean;
+  isVisible: boolean;
 };
 
 export type KretsStatusPerKretstype = Record<string, KretsStatus>;

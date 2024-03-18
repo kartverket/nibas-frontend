@@ -138,7 +138,7 @@ export const useTilhorighetForm = (feature: Feature) => {
   }, [kontekstEgenskaper, reset]);
 
   const updateDraftFromFeature = () => {
-    if (kontekstType && tilhorighetOptions) {
+    if (tilhorighetOptions) {
       const oppdaterteKontekstEgenskaper = getUpdatedKontekstEgenskaper(
         kontekstType,
         getValues(kontekstType),
