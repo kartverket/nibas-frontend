@@ -21,7 +21,8 @@ import { setDefaultFeatureProperties } from "utils/features";
 import useSplit from "./useSplit";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import { Geometry } from "ol/geom";
-import { removeFeaturesFromSourceByIds } from "utils/map/source";
+import { findNearbyVertexOnFeature } from "utils/map/map-utils";
+import useToastUnique from "hooks/toast/useToastUnique";
 
 const useDraw = () => {
   const { activeTool, activeModeTools, toggleTool } = useToolbar();
@@ -35,6 +36,11 @@ const useDraw = () => {
   const { openAsync } = useConfirmationModal();
 
   const [abortDrawMemoHelper, setAbortDrawMemoHelper] = useState(0);
+
+  const { toastUnique: endpointToast } = useToastUnique({
+    status: "warning",
+    description: "Valgt punkt er ikke et endepunkt og vil resultere i en grensedeling ved avsluttet tegning",
+  });
 
   // TODO: fungerer ikke uten snap, vet ikke hvorfor
   const draw = useMemo(() => {
@@ -60,6 +66,33 @@ const useDraw = () => {
           return true;
         }
 
+        for (const feature of featuresAtPixel) {
+          const geometry = feature.getGeometry();
+
+          if (geometry instanceof LineString) {
+            const nearbyVertex = findNearbyVertexOnFeature(geometry, event.coordinate);
+
+            if (nearbyVertex == null) {
+              toast({
+                status: "warning",
+                title: "Punkter kan kun plasseres fritt eller på andre punkter",
+              });
+              return false;
+            }
+
+            const firstCoordinate = geometry.getFirstCoordinate();
+            const lastCoordinate = geometry.getLastCoordinate();
+
+            const isClickedPointEndPoint = [firstCoordinate, lastCoordinate].some((endpoint) =>
+              equals(endpoint, event.coordinate),
+            );
+
+            if (!isClickedPointEndPoint) {
+              endpointToast();
+            }
+          }
+        }
+
         // Vi ønsker å avslutte tegningen hvis man har startet en tegning, og så treffer et punkt, så vi unngår rar geometri
         // Dette gjøres ved å bumpe et versjonstall med draw.changed() hvis denne conditionen returnerer true. Hvis versjonen da er høyere
         // enn null (som den blir av første endring), vil vi avslutte tegningen
@@ -73,7 +106,7 @@ const useDraw = () => {
         return true;
       },
     });
-  }, [abortDrawMemoHelper, activeTool, activeModeTools, getActiveFeaturesAtPixel]);
+  }, [abortDrawMemoHelper, activeTool, activeModeTools, getActiveFeaturesAtPixel, toast, endpointToast]);
 
   useEffect(() => {
     const addDrawToHistory = (drawnFeature: Feature<LineString>) => {
@@ -128,36 +161,23 @@ const useDraw = () => {
       );
 
       if (uniqueFeaturesToBeSplit.length > 0) {
-        const shouldSplit = await openAsync({
-          title: "Deling av grense",
-          description:
-            "Plasserer man et punkt på noe annet enn et endepunkt vil grensen deles i to deler. Er du sikker på at du vil dele grensen? Velger du å avbryte vil den nye grensen bli slettet.",
-          acceptText: "Del grense",
-          declineText: "Avbryt",
-        });
+        for (const feature of uniqueFeaturesToBeSplit) {
+          const geometry = feature.getGeometry();
+          if (geometry && geometry instanceof LineString) {
+            const coordinates = geometry.getCoordinates();
+            const head = geometry.getFirstCoordinate();
+            const tail = geometry.getLastCoordinate();
 
-        if (shouldSplit) {
-          for (const feature of uniqueFeaturesToBeSplit) {
-            const geometry = feature.getGeometry();
-            if (geometry && geometry instanceof LineString) {
-              const coordinates = geometry.getCoordinates();
-              const head = geometry.getFirstCoordinate();
-              const tail = geometry.getLastCoordinate();
-
-              const coordinatesToSplitAt = [drawnFeatureHead, drawnFeatureTail].filter((coordinate) => {
-                if (!equals(coordinate, head) && !equals(coordinate, tail)) {
-                  return coordinates.some((toBeSplitCoordinate) => equals(toBeSplitCoordinate, coordinate));
-                }
-              });
-
-              if (coordinatesToSplitAt.length > 0) {
-                performFeatureSplit(feature, coordinatesToSplitAt);
+            const coordinatesToSplitAt = [drawnFeatureHead, drawnFeatureTail].filter((coordinate) => {
+              if (!equals(coordinate, head) && !equals(coordinate, tail)) {
+                return coordinates.some((toBeSplitCoordinate) => equals(toBeSplitCoordinate, coordinate));
               }
+            });
+
+            if (coordinatesToSplitAt.length > 0) {
+              performFeatureSplit(feature, coordinatesToSplitAt);
             }
           }
-        } else {
-          removeFeaturesFromSourceByIds("edit", [newId]);
-          return;
         }
       }
 
@@ -173,7 +193,6 @@ const useDraw = () => {
 
       openOverlayPanel("grenseinfo");
       selectFeatures([drawnFeature]);
-      // TODO: bruk isFeatureDeadEnd for å avgjøre om den nye grensen danner en lukket flate
 
       // TODO: dersom man ønsker å utvide en grense ønsker vi nok å slå sammen den nye grensen med den gamle her
       // i så fall må vi holde styr på hvilken grense som skal utvides, og fra hvilket punkt. selectPoint kan være nyttig her
