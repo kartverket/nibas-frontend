@@ -66,6 +66,8 @@ const useDraw = () => {
           return true;
         }
 
+        // Tror egentlig ikke det er nødvendig å sjekke alle features her, da vi vet at om man treffer et punkt på én så treffer man det samme punktet på andre
+        // samtidig så er dette en særdeles lav performance kost (treffer sjelden mange features), og det er kanskje safere å helgardere oss
         for (const feature of featuresAtPixel) {
           const geometry = feature.getGeometry();
 
