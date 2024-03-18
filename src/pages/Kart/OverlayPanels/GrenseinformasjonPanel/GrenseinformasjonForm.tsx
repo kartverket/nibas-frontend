@@ -69,7 +69,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   const isCommonFieldDisabled = isGrenseinformasjonPanelDisabled || metadata?.common?.gyldigTil != null;
 
   const getMaalemetodeText = (maalemetoder: KodelisteRespons, id: string | undefined) => {
-    if (id === undefined) return "Ikke spesifisert";
+    if (id === undefined || id.length === 0) return "Ikke spesifisert";
 
     const maalemetode = maalemetoder.items.find((item) => item.id === id);
     if (maalemetode) {
@@ -143,7 +143,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         isRequired
         valueLabel={(() => {
           if (isTempFeatureId(featureId)) return `Ny grense - ID blir satt ved publisering`;
-          return featureId ?? null;
+          return featureId;
         })()}
       />
 
@@ -195,13 +195,9 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         valueLabel={(() => {
           const date = getValues("datafangstDato");
 
-          if (!date) return undefined;
-
-          const formattedDate = dateToFriendlyDatestring(date);
+          if (date) return dateToFriendlyDatestring(date);
 
           if (isTempFeatureId(featureId)) return "Ny grense - Dato blir satt ved publisering";
-
-          return formattedDate || undefined;
         })()}
         isEditing={isEditing}
       >
