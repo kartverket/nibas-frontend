@@ -58,7 +58,7 @@ const ApiGrense = <T extends GrenseResponse>({ grense, type, featuresUrl }: Prop
   }, [visible, features, fetchFeatures]);
 
   const memoizedFeatures = useMemo(() => {
-    if (!grense || !features) {
+    if (!features) {
       return null;
     }
 
