@@ -211,16 +211,16 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
                   {!!errors.nyeKretser?.[index] && (
                     <CustomFormErrorMessage>
                       <Icon icon="error" />
-                      <ul>
-                        {[
-                          errors.nyeKretser?.[index]?.kretsNavn?.message,
-                          errors.nyeKretser?.[index]?.kretsNummer?.message,
-                        ]
-                          .filter((e) => e !== undefined)
-                          .map((error, indexE) => (
-                            <li key={indexE}>{error}</li>
-                          ))}
-                      </ul>
+                      {[
+                        errors.nyeKretser?.[index]?.kretsNavn?.message,
+                        errors.nyeKretser?.[index]?.kretsNummer?.message,
+                      ]
+                        .filter((e) => e !== undefined)
+                        .map((error) => (
+                          <>
+                            {error} <br />
+                          </>
+                        ))}
                     </CustomFormErrorMessage>
                   )}
                 </div>
