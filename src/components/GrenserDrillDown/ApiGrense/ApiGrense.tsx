@@ -1,11 +1,13 @@
-import { useEffect } from "react";
+import { useEditGrenseValue } from "contexts/EditGrenserContext/EditGrenserContext";
+import { EditingType } from "contexts/EditGrenserContext/types";
+import { useEffect, useMemo } from "react";
+import { GrenseResponse } from "types/api";
+import { getIdFromEntity } from "utils/api";
+import { getNavnInSpraak } from "utils/language/language";
+import { getFeatureFromGeoJson } from "utils/map/geoJson";
+import { getRepresentasjonspunktId } from "utils/map/source";
 import ToggleableGrense from "../ToggleableGrense/ToggleableGrense";
 import useApiGrense from "./useApiGrense";
-import { EditingType } from "contexts/EditGrenserContext/types";
-import { useEditGrenseValue } from "contexts/EditGrenserContext/EditGrenserContext";
-import { FylkeRef, GrenseRef, KommuneRef } from "types/api";
-import { getNavnInSpraak } from "utils/language/language";
-import { getIdFromEntity } from "utils/api";
 
 type Props<T> = {
   grense: T;
@@ -13,7 +15,26 @@ type Props<T> = {
   featuresUrl: string;
 };
 
-const ApiGrense = <T extends GrenseRef>({ grense, type, featuresUrl }: Props<T>) => {
+const getGrenseResponseNummer = (grense: GrenseResponse) =>
+  "fylkesnummer" in grense
+    ? grense.fylkesnummer.kodeverdi
+    : "kommunenummer" in grense
+      ? grense.kommunenummer.kodeverdi
+      : "0";
+
+export const getRepresentasjonspunktFeatureForGrenseResponse = (grense: GrenseResponse) => {
+  return getFeatureFromGeoJson({
+    ...grense.representasjonspunkt,
+    id: getRepresentasjonspunktId(grense.id.lokalid.value),
+    properties: {
+      ...grense.representasjonspunkt.properties,
+      name: getNavnInSpraak(grense.navn, "nor"),
+      number: getGrenseResponseNummer(grense),
+    },
+  });
+};
+
+const ApiGrense = <T extends GrenseResponse>({ grense, type, featuresUrl }: Props<T>) => {
   const grenseId = getIdFromEntity(grense);
   const { isEditing, isVisible } = useEditGrenseValue(type, grenseId);
   const { features, fetchFeatures } = useApiGrense(featuresUrl, isEditing || isVisible);
@@ -36,11 +57,25 @@ const ApiGrense = <T extends GrenseRef>({ grense, type, featuresUrl }: Props<T>)
     fetchFeatures();
   }, [isVisible, features, fetchFeatures]);
 
-  const nummer =
-    type === "fylke" ? (grense as FylkeRef).fylkesnummer.kodeverdi : (grense as KommuneRef).kommunenummer.kodeverdi;
-  const navn = getNavnInSpraak(grense.navn, "nor");
+  const memoizedFeatures = useMemo(() => {
+    if (!grense || !features) {
+      return null;
+    }
 
-  return <ToggleableGrense key={navn} grense={grense} type={type} title={`${nummer} ${navn}`} features={features} />;
+    const representasjonspunktFeatures = getRepresentasjonspunktFeatureForGrenseResponse(grense);
+
+    return features.concat(representasjonspunktFeatures);
+  }, [features, grense]);
+
+  return (
+    <ToggleableGrense
+      key={grense.id.lokalid.value}
+      grense={grense}
+      type={type}
+      title={`${getGrenseResponseNummer(grense)} ${getNavnInSpraak(grense.navn, "nor")}`}
+      features={memoizedFeatures}
+    />
+  );
 };
 
 export default ApiGrense;

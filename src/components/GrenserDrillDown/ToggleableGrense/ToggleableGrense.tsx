@@ -3,19 +3,19 @@ import Geometry from "ol/geom/Geometry";
 import { styled } from "styled-components";
 import { EditingType } from "contexts/EditGrenserContext/types";
 import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
-import { GrenseRef } from "types/api";
+import { GrenseResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { Outline } from "style/mixins";
 import { IconButton, Spinner } from "@kvib/react";
 
-type Props<T extends GrenseRef> = {
+type Props<T extends GrenseResponse> = {
   grense: T;
   title: string;
   type: EditingType;
   features: Feature<Geometry>[] | null;
 };
 
-const ToggleableGrense = <T extends GrenseRef>({ grense, title, type, features }: Props<T>) => {
+const ToggleableGrense = <T extends GrenseResponse>({ grense, title, type, features }: Props<T>) => {
   const { kretsStatus, toggleVisible, isLoading } = useEditGrense(type, getIdFromEntity(grense), features);
 
   return (

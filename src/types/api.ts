@@ -20,7 +20,6 @@ export type FeatureCollection = components["schemas"]["FeatureCollection"];
 export type FeatureProperties = components["schemas"]["FeatureProperties"] & {
   inndelingerKontekst: InndelingerKontekst;
 };
-export type FylkeRef = components["schemas"]["FylkeRef"];
 export type FylkeRequest = components["schemas"]["FylkeRequest"];
 export type FylkeResponse = components["schemas"]["FylkeResponse"];
 export type Fylkesnummer = components["schemas"]["Fylkesnummer"];
@@ -28,7 +27,6 @@ export type GrunnlinjeMetadata = components["schemas"]["GrunnlinjeMetadata"];
 export type Identifikasjon = components["schemas"]["Identifikasjon"];
 export type KodelisteItem = components["schemas"]["KodelisteItem"];
 export type KodelisteRespons = components["schemas"]["KodelisteRespons"];
-export type KommuneRef = components["schemas"]["KommuneRef"];
 export type KommuneRequest = components["schemas"]["KommuneRequest"];
 export type KommuneResponse = components["schemas"]["KommuneResponse"];
 export type Kommunenummer = components["schemas"]["Kommunenummer"];
@@ -78,5 +76,5 @@ export type Metadata =
   | TerritorialgrenseMetadata
   | StatistiskGrenseMetadata;
 export type KretsResponse = GrunnkretsResponse | StemmekretsResponse;
-export type GrenseRef = FylkeRef | KommuneRef;
+export type GrenseResponse = FylkeResponse | KommuneResponse;
 export type UtkastOperasjoner = UtkastResponse["operasjoner"];
