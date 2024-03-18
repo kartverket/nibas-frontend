@@ -15,11 +15,14 @@ import { createNyGrenseHistoryChanges } from "./grense-history-utils";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import LineString from "ol/geom/LineString";
-import { findNearbyVertexOnFeature } from "utils/map/map-utils";
 import { useGetFeatures } from "./interaction-utils";
-import { FeatureLike } from "ol/Feature";
-import { Coordinate, equals } from "ol/coordinate";
+import { equals } from "ol/coordinate";
 import { setDefaultFeatureProperties } from "utils/features";
+import useSplit from "./useSplit";
+import { useConfirmationModal } from "contexts/ConfirmationModalContext";
+import { Geometry } from "ol/geom";
+import { findNearbyVertexOnFeature } from "utils/map/map-utils";
+import useToastUnique from "hooks/toast/useToastUnique";
 
 const useDraw = () => {
   const { activeTool, activeModeTools, toggleTool } = useToolbar();
@@ -29,35 +32,18 @@ const useDraw = () => {
   const { selectFeatures, selectedFeatures } = useFeatureStyle();
   const { getActiveFeaturesAtPixel } = useGetFeatures();
   const toast = useToast();
+  const { performFeatureSplit } = useSplit();
+  const { openAsync } = useConfirmationModal();
 
   const [abortDrawMemoHelper, setAbortDrawMemoHelper] = useState(0);
 
+  const { toastUnique: endpointToast } = useToastUnique({
+    status: "warning",
+    description: "Valgt punkt er ikke et endepunkt og vil resultere i en grensedeling ved avsluttet tegning",
+  });
+
   // TODO: fungerer ikke uten snap, vet ikke hvorfor
   const draw = useMemo(() => {
-    const isAllowedDrawOperationOnFeature = (featureLike: FeatureLike, eventCoordinate: Coordinate): boolean => {
-      const feature = featureLike as Feature<LineString>;
-      const geometry = feature.getGeometry();
-
-      if (!geometry) return true;
-
-      const firstCoordinate = geometry.getFirstCoordinate();
-      const lastCoordinate = geometry.getLastCoordinate();
-
-      const clickedCoordinate = findNearbyVertexOnFeature(feature.getGeometry() as LineString, eventCoordinate);
-
-      if (!clickedCoordinate) {
-        return false;
-      }
-
-      const pointOnFeature = geometry.getClosestPoint(clickedCoordinate);
-
-      if (!equals(pointOnFeature, firstCoordinate) && !equals(pointOnFeature, lastCoordinate)) {
-        return false;
-      }
-
-      return true;
-    };
-
     // Denne er kun her for å få ESLint til å ikke ønske å legge til en regel-ignorering, da det ikke går an å legge til
     // ignoreringer for spesifikke dependencies i dependency arrayet.
     // It ain't clean, but it works.
@@ -80,20 +66,34 @@ const useDraw = () => {
           return true;
         }
 
-        // Hvis vi treffer andre features, må vi sjekke om det er et endepunkt
-        const isAllowedOperation = featuresAtPixel.every((featureLike) =>
-          isAllowedDrawOperationOnFeature(featureLike, event.coordinate),
-        );
+        for (const feature of featuresAtPixel) {
+          const geometry = feature.getGeometry();
 
-        if (!isAllowedOperation) {
-          toast({
-            status: "warning",
-            title: "Nye grensepunkter kan kun plasseres på en eksisterende grenses endepunkter",
-          });
-          return false;
+          if (geometry instanceof LineString) {
+            const nearbyVertex = findNearbyVertexOnFeature(geometry, event.coordinate);
+
+            if (nearbyVertex == null) {
+              toast({
+                status: "warning",
+                title: "Punkter kan kun plasseres fritt eller på andre punkter",
+              });
+              return false;
+            }
+
+            const firstCoordinate = geometry.getFirstCoordinate();
+            const lastCoordinate = geometry.getLastCoordinate();
+
+            const isClickedPointEndPoint = [firstCoordinate, lastCoordinate].some((endpoint) =>
+              equals(endpoint, event.coordinate),
+            );
+
+            if (!isClickedPointEndPoint) {
+              endpointToast();
+            }
+          }
         }
 
-        // Vi ønsker å avslutte tegningen hvis man har startet en tegning, og så treffer et endepunkt, så vi unngår rar geometri
+        // Vi ønsker å avslutte tegningen hvis man har startet en tegning, og så treffer et punkt, så vi unngår rar geometri
         // Dette gjøres ved å bumpe et versjonstall med draw.changed() hvis denne conditionen returnerer true. Hvis versjonen da er høyere
         // enn null (som den blir av første endring), vil vi avslutte tegningen
         if (draw.getRevision() > 0) {
@@ -106,7 +106,7 @@ const useDraw = () => {
         return true;
       },
     });
-  }, [abortDrawMemoHelper, activeTool, activeModeTools, getActiveFeaturesAtPixel, toast]);
+  }, [abortDrawMemoHelper, activeTool, activeModeTools, getActiveFeaturesAtPixel, toast, endpointToast]);
 
   useEffect(() => {
     const addDrawToHistory = (drawnFeature: Feature<LineString>) => {
@@ -134,14 +134,53 @@ const useDraw = () => {
       setAbortDrawMemoHelper((a) => a + 1);
     };
 
-    const onDrawEnd = (e: DrawEvent) => {
-      const drawnFeature = e.feature as Feature<LineString>;
+    const onDrawEnd = async (e: DrawEvent) => {
       const editingType = getCurrentlyEditingType();
+      const drawnFeature = e.feature as Feature<LineString>;
+      const drawnFeatureGeometry = drawnFeature.getGeometry();
 
       // Skal ikke være mulig da tegneverktøyet bare skal være tilgjengelig i redigering
-      if (!editingType) return;
+      if (!editingType || !drawnFeatureGeometry) return;
 
-      drawnFeature.setId(getTempFeatureId());
+      const newId = getTempFeatureId();
+      drawnFeature.setId(newId);
+
+      const drawnFeatureHead = drawnFeatureGeometry.getFirstCoordinate();
+      const drawnFeatureTail = drawnFeatureGeometry.getLastCoordinate();
+
+      const featuresAtHead = editSource.getFeaturesAtCoordinate(drawnFeatureHead);
+      const featuresAtTail = editSource.getFeaturesAtCoordinate(drawnFeatureTail);
+
+      // Hvis det er akkurat én feature på koordinatet til halen/hodet til den nye featuren, så betyr det at koordinatet treffer et punkt som ikke er endepunkt
+      const featuresToBeSplit: Feature<Geometry>[] = [];
+      if (featuresAtHead.length === 1) featuresToBeSplit.push(featuresAtHead[0]);
+      if (featuresAtTail.length === 1) featuresToBeSplit.push(featuresAtTail[0]);
+
+      const uniqueFeaturesToBeSplit = featuresToBeSplit.filter(
+        (feature, index, allFeatures) => allFeatures.map((f) => f.getId()).indexOf(feature.getId()) === index,
+      );
+
+      if (uniqueFeaturesToBeSplit.length > 0) {
+        for (const feature of uniqueFeaturesToBeSplit) {
+          const geometry = feature.getGeometry();
+          if (geometry && geometry instanceof LineString) {
+            const coordinates = geometry.getCoordinates();
+            const head = geometry.getFirstCoordinate();
+            const tail = geometry.getLastCoordinate();
+
+            const coordinatesToSplitAt = [drawnFeatureHead, drawnFeatureTail].filter((coordinate) => {
+              if (!equals(coordinate, head) && !equals(coordinate, tail)) {
+                return coordinates.some((toBeSplitCoordinate) => equals(toBeSplitCoordinate, coordinate));
+              }
+            });
+
+            if (coordinatesToSplitAt.length > 0) {
+              performFeatureSplit(feature, coordinatesToSplitAt);
+            }
+          }
+        }
+      }
+
       setDefaultFeatureProperties(drawnFeature, getGrenseTypeFromEditingType(editingType));
 
       addDrawToHistory(drawnFeature);
@@ -154,7 +193,6 @@ const useDraw = () => {
 
       openOverlayPanel("grenseinfo");
       selectFeatures([drawnFeature]);
-      // TODO: bruk isFeatureDeadEnd for å avgjøre om den nye grensen danner en lukket flate
 
       // TODO: dersom man ønsker å utvide en grense ønsker vi nok å slå sammen den nye grensen med den gamle her
       // i så fall må vi holde styr på hvilken grense som skal utvides, og fra hvilket punkt. selectPoint kan være nyttig her
@@ -170,7 +208,9 @@ const useDraw = () => {
     addHistoryEntry,
     draw,
     getCurrentlyEditingType,
+    openAsync,
     openOverlayPanel,
+    performFeatureSplit,
     selectFeatures,
     selectedFeatures,
     toast,
