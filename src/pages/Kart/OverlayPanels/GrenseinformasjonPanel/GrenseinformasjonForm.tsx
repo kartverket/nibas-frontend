@@ -174,7 +174,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         </Select>
       </GrenseinformasjonRow>
 
-      {gyldigTil !== undefined && (
+      {gyldigTil != null && (
         <div>
           <GrenseinformasjonRow
             name="Gyldig til"
