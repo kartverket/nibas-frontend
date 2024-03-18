@@ -46,6 +46,10 @@ const StyledButtonGroup = styled(ButtonGroup)`
   align-self: flex-end;
 `;
 
+const StyledList = styled.ul`
+  list-style-type: none;
+`;
+
 export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
   const { flatedata, closeOverlayPanel } = useOverlayPanel();
   const {
@@ -144,12 +148,7 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
           {`Hvilken ${editingType} skal splittes?`}
         </Heading>
         <FormControl>
-          <FormLabel>
-            {editingType
-              ?.charAt(0)
-              .toUpperCase()
-              .concat(editingType?.slice(1))}
-          </FormLabel>
+          <FormLabel>{editingType?.charAt(0).toUpperCase().concat(editingType?.slice(1))}</FormLabel>
           <Select
             {...opprinneligKretsRegister}
             onChange={(e) => {
@@ -211,16 +210,16 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
                   {!!errors.nyeKretser?.[index] && (
                     <CustomFormErrorMessage>
                       <Icon icon="error" />
-                      {[
-                        errors.nyeKretser?.[index]?.kretsNavn?.message,
-                        errors.nyeKretser?.[index]?.kretsNummer?.message,
-                      ]
-                        .filter((e) => e !== undefined)
-                        .map((error) => (
-                          <>
-                            {error} <br />
-                          </>
-                        ))}
+                      <StyledList>
+                        {[
+                          errors.nyeKretser?.[index]?.kretsNavn?.message,
+                          errors.nyeKretser?.[index]?.kretsNummer?.message,
+                        ]
+                          .filter((e) => e !== undefined)
+                          .map((error, indexE) => (
+                            <li key={indexE}>{error}</li>
+                          ))}
+                      </StyledList>
                     </CustomFormErrorMessage>
                   )}
                 </div>
