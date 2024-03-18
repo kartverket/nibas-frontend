@@ -244,7 +244,7 @@ const useModify = () => {
             });
 
             if (isAccepted) {
-              performFeatureSplit(nonSelectedActiveFeature, nearbyVertex);
+              performFeatureSplit(nonSelectedActiveFeature, [nearbyVertex]);
             } else {
               setPreviousCoordinatesForFeature(selectedFeature);
               return;
