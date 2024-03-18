@@ -8,6 +8,7 @@ import {
   NyGrenseEntry,
   PropertyEntry,
   GrenseArkiveringsEntry,
+  HistoryEntry,
 } from "./types";
 import { archivedSource, editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
@@ -16,6 +17,7 @@ import { FeatureProperties } from "types/api";
 import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { removeNull } from "utils/list-utils";
+import { Geometry } from "ol/geom";
 
 const getFeatureFromChange = (change: HistoryChange<MinimalGrense>, direction: HistoryDirection) => {
   const existingFeature = getFeatureIfExists(change.id);
@@ -156,4 +158,18 @@ export const undoGrensedeling = (deltFeature: Feature, newFeaturesFromsDeling: F
     }
   }
   // Om featuren som ble splittet ikke var en ny grense vises den som artkivert, vi må derfor fjerne den fra archived layer
+};
+export const getChangeIds = (historyEntry: HistoryEntry): string[] => {
+  const changedFeatureIds: string[] = [];
+  historyEntry.changes.forEach((change) => {
+    if (!change.to) return;
+
+    if (historyEntry.type === "grensedeling") {
+      const changesTo = change.to as Feature<Geometry>[];
+      const idsToAppend = removeNull(changesTo.map((feature) => feature.getId()?.toString()).filter(Boolean));
+      changedFeatureIds.push(...idsToAppend);
+    }
+    changedFeatureIds.push(change.id);
+  });
+  return changedFeatureIds;
 };
