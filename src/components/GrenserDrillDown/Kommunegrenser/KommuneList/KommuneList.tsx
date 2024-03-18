@@ -1,16 +1,16 @@
 import { styled } from "styled-components";
-import ApiGrense from "components/GrenserDrillDown/ApiGrense/ApiGrense";
+import ToggleableAdministrativEnhet from "components/GrenserDrillDown/ToggleableAdministrativEnhet/ToggleableAdministrativEnhet";
 import useKommuner from "hooks/inndelinger/useKommuner";
-import { FylkeRef } from "types/api";
 import useKommunegrenser from "hooks/inndelinger/useKommunegrenser";
 import { useEffect, useState } from "react";
 import { getNavnInSpraak } from "utils/language/language";
 import { useEditGrense } from "contexts/EditGrenserContext/useEditGrense";
 import EditableGrenseAccordion from "components/GrenserDrillDown/EditableGrenseAccordion";
 import { getIdFromEntity } from "utils/api";
+import { FylkeResponse } from "types/api";
 
 type Props = {
-  fylke: FylkeRef;
+  fylke: FylkeResponse;
 };
 
 const KommuneList = ({ fylke }: Props) => {
@@ -40,9 +40,9 @@ const KommuneList = ({ fylke }: Props) => {
     >
       <Wrapper>
         {kommuner.map((kommune) => (
-          <ApiGrense
+          <ToggleableAdministrativEnhet
             key={getIdFromEntity(kommune)}
-            grense={kommune}
+            administrativEnhet={kommune}
             featuresUrl={`/v1/kommuner/${getIdFromEntity(kommune)}/grenser`}
             type="kommune"
           />

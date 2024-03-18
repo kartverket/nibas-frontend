@@ -7,7 +7,6 @@ import Circle from "ol/style/Circle";
 import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
 import Style, { StyleFunction } from "ol/style/Style";
-import { map } from "pages/Kart/constants";
 import Text from "ol/style/Text";
 import Point from "ol/geom/Point";
 import { archivedSource, editSource } from "hooks/layers/constants";
@@ -188,9 +187,7 @@ export const getPointOverlayStyle = (feature: Feature<Geometry> | RenderFeature)
       textAlign: "center",
     }),
     geometry: () => {
-      const zoom = map.getView().getZoom() ?? 0;
-
-      if (!(feature.getGeometry() instanceof Point) || zoom < 12) {
+      if (!(feature.getGeometry() instanceof Point)) {
         return;
       }
 

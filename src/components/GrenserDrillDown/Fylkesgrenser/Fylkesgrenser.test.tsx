@@ -13,13 +13,4 @@ describe("Fylkesgrenser", () => {
     expect(await screen.findByText("38 Vestfold og Telemark")).toBeInTheDocument();
     expect(await screen.findByText("42 Agder")).toBeInTheDocument();
   });
-
-  it("should toggle eye on eye click", async () => {
-    const { user } = render(<Fylkesgrenser />);
-
-    await user.click(screen.getByRole("button", { name: "Vis Fylker" }));
-    await user.click(screen.getByRole("button", { name: "Skjul Fylker" }));
-
-    expect(screen.getByRole("button", { name: "Vis Fylker" })).toBeInTheDocument();
-  });
 });

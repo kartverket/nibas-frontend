@@ -2,12 +2,12 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { useEditGrenser } from "./EditGrenserContext/EditGrenserContext";
 import useKretsgrenser from "hooks/inndelinger/useKretsgrenser";
 import { LayerId } from "hooks/layers/types";
-import { KommuneRef } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { useOverlayPanel } from "./OverlayPanelContext";
 import { getAllVisibleFeatures, zoomToFeatures } from "utils/map/map-utils";
 import { useToolbar } from "./ToolbarContext";
 import { editSource } from "hooks/layers/constants";
+import { KommuneResponse } from "types/api";
 
 export type Kretstype = "grunnkrets" | "stemmekrets";
 
@@ -34,7 +34,7 @@ export const InndelingerKretsProvider = ({ children, kretstype }: Props) => {
   return <InndelingerKretsContext.Provider value={value}>{children}</InndelingerKretsContext.Provider>;
 };
 
-export const useInndelingerKrets = (kommune: KommuneRef) => {
+export const useInndelingerKrets = (kommune: KommuneResponse) => {
   const kommuneId = getIdFromEntity(kommune);
   const context = useContext(InndelingerKretsContext);
 
