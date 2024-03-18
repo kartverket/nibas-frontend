@@ -46,8 +46,8 @@ export const useTilhorighet = (feature: Feature): UseTilhorighet => {
     kontekstType,
   } = useTilhorighetForm(feature);
 
-  const { data: grunnkretser, isLoading: grunnkretserIsLoading } = useKommuneGrunnkretser(kommunerId[0]);
-  const { data: stemmekretser, isLoading: stemmekretserIsLoading } = useKommuneStemmekretser(kommunerId[0]);
+  const { data: grunnkretser, isLoading: grunnkretserIsLoading } = useKommuneGrunnkretser(kommunerId[0] ?? null);
+  const { data: stemmekretser, isLoading: stemmekretserIsLoading } = useKommuneStemmekretser(kommunerId[0] ?? null);
 
   useEffect(() => {
     if (grunnkretser && stemmekretser) {

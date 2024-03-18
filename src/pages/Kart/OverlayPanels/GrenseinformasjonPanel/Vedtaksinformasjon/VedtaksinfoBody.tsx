@@ -49,7 +49,7 @@ export const VedtaksinfoBody = ({
 }: ReferanseBodyProps) => {
   const addDokumentlenke = (lenke: Referanse) => {
     setDokref((prevState) => {
-      if (prevState !== undefined) {
+      if (prevState != null) {
         return [...prevState, lenke];
       } else return [lenke];
     });
@@ -57,7 +57,7 @@ export const VedtaksinfoBody = ({
 
   const addInternreferanse = (lenke: Referanse) => {
     setInternref((prevState) => {
-      if (prevState !== undefined) {
+      if (prevState != null) {
         return [...prevState, lenke];
       } else return [lenke];
     });
@@ -65,9 +65,7 @@ export const VedtaksinfoBody = ({
 
   const metadata = feature.getProperties().metadata as Metadata;
   const vedtaksinformasjon =
-    vedtaksinfoId !== undefined
-      ? metadata.dokumentasjonsreferanser?.find((ref) => ref.id === vedtaksinfoId)
-      : undefined;
+    vedtaksinfoId != null ? metadata.dokumentasjonsreferanser?.find((ref) => ref.id === vedtaksinfoId) : undefined;
 
   return (
     <VedtakinfoContainer templateColumns="4fr 3fr">
@@ -110,7 +108,7 @@ export const VedtaksinfoBody = ({
                     title="Fastsettingsdato"
                     isRequired
                     value={
-                      vedtaksinformasjon?.fastsettingsdato
+                      vedtaksinformasjon?.fastsettingsdato != null
                         ? new Date(vedtaksinformasjon?.fastsettingsdato).toLocaleDateString("nb-NO")
                         : undefined
                     }
@@ -134,7 +132,7 @@ export const VedtaksinfoBody = ({
               formViewState={formViewState}
               tooltipLabel="Referanse til lov, forskrift, vedtak, dom eller traktat i form av kode som angir type dokument, dato og nummer For eksempel: LOV-2012-09-07-65."
               title="Rettskilde-ID"
-              value={vedtaksinformasjon?.rettskildeId || "Ingen ID satt."}
+              value={vedtaksinformasjon?.rettskildeId ?? "Ingen ID satt."}
             >
               <Input {...register("rettskildeId")} backgroundColor="white" placeholder="Ikke spesifisert" />
             </VedtakinfoField>
@@ -155,7 +153,7 @@ export const VedtaksinfoBody = ({
                     title="Gyldig fra"
                     isRequired
                     value={
-                      vedtaksinformasjon?.vedtakGyldigFra
+                      vedtaksinformasjon?.vedtakGyldigFra != null
                         ? new Date(vedtaksinformasjon?.vedtakGyldigFra).toLocaleDateString("nb-NO")
                         : "Ingen gyldig fra satt."
                     }
@@ -186,7 +184,7 @@ export const VedtaksinfoBody = ({
                     tooltipLabel="Tidspunktet når objektet opphørte å eksistere i den virkelige verden"
                     title="Gyldig til"
                     value={
-                      vedtaksinformasjon?.vedtakGyldigTil
+                      vedtaksinformasjon?.vedtakGyldigTil != null
                         ? new Date(vedtaksinformasjon?.vedtakGyldigTil).toLocaleDateString("nb-NO")
                         : "Ingen gyldig til satt."
                     }
@@ -231,7 +229,7 @@ export const VedtaksinfoBody = ({
             formViewState={formViewState}
             tooltipLabel="Lov som rettskilden er begrunnet i."
             title="Hjemmel"
-            value={vedtaksinformasjon?.hjemmel || "Ingen hjemmel satt."}
+            value={vedtaksinformasjon?.hjemmel ?? "Ingen hjemmel satt."}
           >
             <Input {...register("hjemmel")} backgroundColor="white" placeholder="Ikke spesifisert" />
           </VedtakinfoField>
@@ -243,7 +241,7 @@ export const VedtaksinfoBody = ({
             formViewState={formViewState}
             tooltipLabel="Offentlig instans som har fastsatt en grense."
             title="Fastsettingsmyndighet"
-            value={vedtaksinformasjon?.fastsettingsmyndighet || "Ingen myndighet satt"}
+            value={vedtaksinformasjon?.fastsettingsmyndighet ?? "Ingen myndighet satt"}
           >
             <Input {...register("fastsettingsmyndighet")} backgroundColor="white" placeholder="Ikke spesifisert" />
           </VedtakinfoField>

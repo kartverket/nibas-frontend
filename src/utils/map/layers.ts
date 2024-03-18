@@ -70,7 +70,7 @@ export const getMatrikkelFeatures = async () => {
 
     const json = await response.json();
     const fetchedFeatures = getFeaturesFromGeoJson(json);
-    if (fetchedFeatures) {
+    if (fetchedFeatures.length > 0) {
       clearMatrikkelLayer();
       addFeaturesToSource("matrikkel", fetchedFeatures);
       return fetchedFeatures;

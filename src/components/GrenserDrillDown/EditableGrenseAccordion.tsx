@@ -25,9 +25,9 @@ const EditableGrenseAccordion = ({ grenseId, grenseType, children, features, isF
       <Header>
         <VisibilityButton
           onClick={toggleVisible}
-          $isVisible={kretsStatus.visible ? true : false}
-          aria-label={kretsStatus.visible ? `Skjul ${title}` : `Vis ${title}`}
-          icon={kretsStatus.visible ? "visibility" : "visibility_off"}
+          $isVisible={kretsStatus.isVisible}
+          aria-label={kretsStatus.isVisible ? `Skjul ${title}` : `Vis ${title}`}
+          icon={kretsStatus.isVisible ? "visibility" : "visibility_off"}
         />
         <TextContent>
           <span>{title}</span>

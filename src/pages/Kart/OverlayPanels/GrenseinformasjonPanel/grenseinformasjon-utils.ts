@@ -1,13 +1,20 @@
 import { Feature } from "ol";
 import LineString from "ol/geom/LineString";
-import { PropertyEntry, GrenseArkiveringsEntry, GrenseTilhorighetEntry } from "contexts/HistoryContext/types";
+import {
+  PropertyEntry,
+  GrenseArkiveringsEntry,
+  GrenseTilhorighetEntry,
+  HistoryChange,
+} from "contexts/HistoryContext/types";
 import { FeatureProperties, KontekstEgenskaper } from "types/api";
+import { removeNull } from "utils/list-utils";
 
-export const getDateInFriendlyString = (dateString?: string) => {
-  if (!dateString) return null;
-
+export const getDateInFriendlyString = (dateString: string) => {
   const date = new Date(dateString);
+  return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+};
 
+export const dateToFriendlyDatestring = (date: Date) => {
   return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
 };
 
@@ -23,8 +30,7 @@ export const addFeaturePropertiesEntryFromFeature = (
   updatedFeatureProperties: FeatureProperties,
 ) => {
   const id = feature.getId()?.toString();
-
-  if (!id) return;
+  if (id == null) return;
 
   const oldFeatureProperties = feature.getProperties() as FeatureProperties;
 
@@ -49,7 +55,7 @@ export const addPropertyEntryFromFeature = (
 ) => {
   const id = feature.getId()?.toString();
 
-  if (!id) return;
+  if (id == null) return;
 
   const oldProperties = feature.getProperties() as FeatureProperties;
 
@@ -67,29 +73,33 @@ export const addPropertyEntryFromFeature = (
   });
 };
 
-export const addArchivingEntryFromFeature = (
-  feature: Feature<LineString>,
+export const addArchivingEntryFromFeatureList = (
+  features: Feature<LineString>[],
   addHistoryEntry: (entry: GrenseArkiveringsEntry) => void,
 ) => {
-  const id = feature.getId()?.toString();
-  if (!id) return;
+  const changeEntries: HistoryChange<FeatureProperties>[] = removeNull(
+    features.map((feature) => {
+      const id = feature.getId()?.toString();
+      if (id == null) return;
 
-  const oldProperties = feature.getProperties() as FeatureProperties;
-  const newProperties: FeatureProperties = {
-    ...oldProperties,
-    shouldArchive: true,
-  };
-  feature.setProperties(newProperties);
+      const oldProperties = feature.getProperties() as FeatureProperties;
+      const newProperties: FeatureProperties = {
+        ...oldProperties,
+        shouldArchive: true,
+      };
+      feature.setProperties(newProperties);
 
-  addHistoryEntry({
-    type: "grensearkivering",
-    changes: [
-      {
+      return {
         id: id,
         from: oldProperties,
         to: newProperties,
-      },
-    ],
+      };
+    }),
+  );
+
+  addHistoryEntry({
+    type: "grensearkivering",
+    changes: changeEntries,
   });
 };
 
@@ -99,7 +109,7 @@ export const addKontekstEntryFromFeature = (
   addHistoryEntry: (entry: GrenseTilhorighetEntry) => void,
 ) => {
   const id = feature.getId()?.toString();
-  if (!id) return;
+  if (id == null) return;
 
   const oldProperties = feature.getProperties() as FeatureProperties;
   const oldKontekstEgenskaper = oldProperties.kontekstEgenskaper;
@@ -115,7 +125,7 @@ export const addKontekstEntryFromFeature = (
     changes: [
       {
         id: id,
-        from: oldKontekstEgenskaper || ({} as KontekstEgenskaper),
+        from: oldKontekstEgenskaper ?? ({} as KontekstEgenskaper),
         to: updatedKontekstEgenskaper,
       },
     ],

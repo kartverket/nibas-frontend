@@ -14,7 +14,7 @@ export type UtkastContextValue = {
   utkast: UtkastResponse | undefined;
   utkastHarEndringer: () => boolean;
   updateUtkastWithHistory: () => Promise<unknown>;
-  updateUtkast: (id: string, newUtkast: OppdaterUtkastRequest, shouldClearHistory?: boolean) => Promise<unknown>;
+  updateUtkast: (id: string, newUtkast: OppdaterUtkastRequest, shouldClearHistory?: boolean) => Promise<boolean>;
   getUpdateUtkastRequestFromHistory: () => OppdaterUtkastRequest | null;
   closeUtkast: () => void;
   isValidating: boolean;

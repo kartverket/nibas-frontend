@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo } from "react";
 import Feature from "ol/Feature";
 import LineString from "ol/geom/LineString";
 import Modify, { ModifyEvent } from "ol/interaction/Modify";
@@ -11,7 +11,7 @@ import { Tool, useToolbar } from "contexts/ToolbarContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useToast } from "@kvib/react";
 import { Style } from "ol/style";
-import { createGrenseHistoryChange, getInfoFromFeature } from "./grense-history-utils";
+import { createGrenseHistoryChange } from "./grense-history-utils";
 import { useGetFeatures } from "./interaction-utils";
 import { isAdministrativGrense } from "utils/grenser";
 import { isFeatureEditable, isPreviousAndCurrentCoordinatesEqual } from "utils/features";
@@ -20,14 +20,13 @@ import useToastCounter from "hooks/useToastCounter";
 import { Geometry } from "ol/geom";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import useSplit from "./useSplit";
-import { equals } from "ol/coordinate";
+import { Coordinate, equals } from "ol/coordinate";
 
 const useModify = () => {
   const { addHistoryEntry } = useHistory();
   const { activeTool, activeModeTools } = useToolbar();
   const { selectedFeatures, featureIsArchived } = useFeatureStyle();
   const toast = useToast();
-  const toastIdRef = useRef<string | number>("");
   const { toastCounter: removeToast } = useToastCounter("success", "Punktet ble fjernet", "punkter ble fjernet");
   const { toastCounter: addToast } = useToastCounter("success", "Punktet ble lagt til", "punkter ble lagt til");
   const { getActiveFeaturesAtPixel, getFeaturesAtPixel } = useGetFeatures();
@@ -154,15 +153,15 @@ const useModify = () => {
 
   useEffect(() => {
     const saveCoordinatesBeforeModification = (e: ModifyEvent) => {
-      if (e.features) {
-        e.features.forEach((featureLike) => {
-          if (featureLike instanceof Feature) {
-            const { featureId, coordinates } = getInfoFromFeature(featureLike);
-            if (!featureId || !coordinates) return;
-            featureLike.set(previousCoordinateKey, coordinates);
-          }
-        });
-      }
+      e.features.forEach((feature) => {
+        const featureId = feature.getId()?.toString();
+        if (featureId === undefined) return;
+
+        const geometry = feature.getGeometry();
+        if (geometry instanceof LineString) {
+          feature.set(previousCoordinateKey, geometry.getCoordinates());
+        }
+      });
     };
     modify.on("modifystart", saveCoordinatesBeforeModification);
 
@@ -183,9 +182,9 @@ const useModify = () => {
     };
 
     const setPreviousCoordinatesForFeature = (feature: Feature<LineString>) => {
-      const previousFeatureCoordinates = feature.get(previousCoordinateKey);
+      const previousFeatureCoordinates = feature.get(previousCoordinateKey) as Coordinate[] | undefined;
 
-      if (previousFeatureCoordinates) {
+      if (previousFeatureCoordinates !== undefined) {
         const geometry = feature.getGeometry();
         geometry?.setCoordinates(previousFeatureCoordinates);
       }
@@ -216,7 +215,7 @@ const useModify = () => {
         // Hvis vi ender opp på én grense, må vi sjekke om det er et endepunkt vi har landet på, for ikke-endepunkter oppfører seg annerledes
         if (nonSelectedActiveFeatures.length === 1) {
           const nonSelectedActiveFeature = nonSelectedActiveFeatures[0] as Feature<LineString>;
-          const nonSelectedActiveFeatureGeometry = nonSelectedActiveFeature.getGeometry() as LineString;
+          const nonSelectedActiveFeatureGeometry = nonSelectedActiveFeature.getGeometry();
 
           if (!nonSelectedActiveFeatureGeometry) return;
 
@@ -257,16 +256,11 @@ const useModify = () => {
           }
         }
 
-        if (!toastIdRef.current) {
-          toastIdRef.current = toast({
-            status: "warning",
-            title: "Husk å sette tilhørighet på berørte grenser",
-            description: `For øyeblikket må alle flatetilhørigheter på grensene legges til manuelt. 
-                            Tilhørigheten kan settes ved å bruke "Informasjon"-verktøyet.`,
-            isClosable: true,
-            duration: null,
-          });
-        }
+        toast({
+          status: "success",
+          title: "Grense ble løsrevet",
+          description: "Husk å eventuelt sette tilhørighet på berørte grenser",
+        });
       }
 
       addModificationToHistory(event.features.getArray());

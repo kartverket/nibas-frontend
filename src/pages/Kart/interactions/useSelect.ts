@@ -102,6 +102,12 @@ const useSelect = () => {
           event.stopPropagation();
           return;
         }
+
+        const newSelectedFeatures = selectedFeatures.concat(clickedFeature);
+        selectFeatures(newSelectedFeatures);
+
+        event.stopPropagation();
+        return;
       }
 
       selectFeatures([clickedFeature]);

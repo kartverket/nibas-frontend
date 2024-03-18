@@ -21,7 +21,7 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
   const { flatedata, closeOverlayModal } = useOverlayPanel();
   const { searchValue, setInputValue } = useSearch();
 
-  const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
+  const kommuneId = flatedata ? getIdFromEntity(flatedata) : null;
   const { data: grunnkretserByKommune } = useKommuneGrunnkretser(kommuneId);
   const utkastGrunnkretser = useUtkastEntity(grunnkretserByKommune, "grunnkretsendringer") as
     | GrunnkretsResponse[]
@@ -45,7 +45,7 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
           Flateinformasjon for {getNavnInSpraak(flatedata?.navn, "nor")}
         </PanelHeader>
         {filteredGrunnkretser ? (
-          <KretsTable $hasUtkast={utkast !== undefined}>
+          <KretsTable $hasUtkast={utkast != null}>
             <thead>
               <tr>
                 <SortHeader {...sortHeaderProps("grunnkretsnummer")}>Grunnkretsnummer</SortHeader>
@@ -58,7 +58,7 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
             </thead>
             <tbody>
               {orderBy(filteredGrunnkretser, sortProperty, sortOrder).map((grunnkrets) => (
-                <GrunnkretsRow key={getIdFromEntity(grunnkrets)} grunnkrets={grunnkrets} kommuneId={kommuneId} />
+                <GrunnkretsRow key={getIdFromEntity(grunnkrets)} grunnkrets={grunnkrets} kommuneId={kommuneId ?? ""} />
               ))}
             </tbody>
           </KretsTable>

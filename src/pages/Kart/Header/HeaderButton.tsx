@@ -11,8 +11,16 @@ type HeaderButtonProps = {
   isLabelHidden?: boolean;
 } & ButtonProps;
 
-const HeaderButton = ({ icon, label, onClick, isDisabled, tooltip, isLabelHidden, ...props }: HeaderButtonProps) => (
-  <Tooltip hasArrow label={<TooltipBody text={tooltip.text} shortcut={tooltip.shortcut} />} isDisabled={!tooltip}>
+const HeaderButton = ({
+  icon,
+  label,
+  onClick,
+  isDisabled,
+  tooltip,
+  isLabelHidden = false,
+  ...props
+}: HeaderButtonProps) => (
+  <Tooltip hasArrow label={<TooltipBody text={tooltip.text} shortcut={tooltip.shortcut} />}>
     {isLabelHidden ? (
       <IconButton
         size="sm"

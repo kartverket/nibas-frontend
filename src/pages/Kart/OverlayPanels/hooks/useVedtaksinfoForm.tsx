@@ -49,8 +49,8 @@ export const mapFromApiToForm = (dokrefDTO: DokumentasjonsreferanseDTO): Vedtaki
     internreferanserKartverket: dokrefDTO.internReferanserKartverket,
     rettskildeId: dokrefDTO.rettskildeId,
     rettskildeTittel: dokrefDTO.rettskildeTittel,
-    vedtakGyldigFra: dokrefDTO.vedtakGyldigFra ? new Date(dokrefDTO.vedtakGyldigFra) : undefined,
-    vedtakGyldigTil: dokrefDTO.vedtakGyldigTil ? new Date(dokrefDTO.vedtakGyldigTil) : undefined,
+    vedtakGyldigFra: dokrefDTO.vedtakGyldigFra != null ? new Date(dokrefDTO.vedtakGyldigFra) : undefined,
+    vedtakGyldigTil: dokrefDTO.vedtakGyldigTil != null ? new Date(dokrefDTO.vedtakGyldigTil) : undefined,
     fastsettingsmyndighet: dokrefDTO.fastsettingsmyndighet,
     hjemmel: dokrefDTO.hjemmel,
     id: dokrefDTO.id,
@@ -88,7 +88,7 @@ const addMetadataEntryFromFeature = (
   const id = feature.getId()?.toString();
   const oldProperties = feature.getProperties() as FeatureProperties;
 
-  if (!id) return;
+  if (id == null) return;
 
   updateFeatureWithNewMetadata(feature as Feature<LineString>, updatedMetadata);
 
@@ -106,7 +106,7 @@ const addMetadataEntryFromFeature = (
 
 export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoId?: string) => {
   const getFormValues = (): VedtakinfoForm => {
-    if (selectedVedtaksinfoId) {
+    if (selectedVedtaksinfoId != null) {
       const dokrefFromFeature = getDokumentasjonsReferanseFromFeature(feature, selectedVedtaksinfoId);
 
       if (dokrefFromFeature) {
@@ -144,7 +144,7 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoId?: str
   const { addHistoryEntry } = useHistory();
 
   const deleteOrArchive = async (): Promise<boolean> => {
-    if (selectedVedtaksinfoId === undefined) return false;
+    if (selectedVedtaksinfoId == null) return false;
     const metadata = feature.getProperties().metadata as Metadata;
     const oldDokrefs: DokumentasjonsreferanseDTO[] = metadata.dokumentasjonsreferanser
       ? metadata.dokumentasjonsreferanser
@@ -175,7 +175,7 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoId?: str
       // Arkiver eksisterende dokumentasjonsreferanse
       const dokrefsCopy = structuredClone(oldDokrefs);
       const selectedVedtakIndex = dokrefsCopy.findIndex((dokref) => dokref.id === selectedVedtaksinfoId);
-      if (dokrefsCopy[selectedVedtakIndex]) dokrefsCopy[selectedVedtakIndex].shouldArchive = true;
+      if (dokrefsCopy[selectedVedtakIndex] != null) dokrefsCopy[selectedVedtakIndex].shouldArchive = true;
       addMetadataEntryFromFeature(feature as Feature<LineString>, addHistoryEntry, {
         ...metadata,
         dokumentasjonsreferanser: dokrefsCopy,
@@ -188,7 +188,7 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoId?: str
   const updateDraftFromFeature = (vedtaksinfo: DokumentasjonsreferanseDTO) => {
     const metadata = feature.getProperties().metadata as Metadata;
 
-    if (selectedVedtaksinfoId === undefined) {
+    if (selectedVedtaksinfoId == null) {
       // Implisitt en ny dokumentasjonsreferanse ved mangel av index.
       const oldDokrefs: DokumentasjonsreferanseDTO[] = metadata.dokumentasjonsreferanser
         ? metadata.dokumentasjonsreferanser
