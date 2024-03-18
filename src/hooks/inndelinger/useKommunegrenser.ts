@@ -1,5 +1,5 @@
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import { getRepresentasjonspunktFeatureForGrenseResponse } from "components/GrenserDrillDown/ApiGrense/ApiGrense";
+import { getRepresentasjonspunktFeatureForAdministrativEnhet } from "components/GrenserDrillDown/ToggleableAdministrativEnhet/ToggleableAdministrativEnhet";
 import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
 import { useEffect, useMemo, useState } from "react";
 import useSWRImmutable from "swr/immutable";
@@ -49,7 +49,7 @@ const useKommunegrenser = (fylkeId: string, shouldFetch: boolean) => {
     }
 
     const representasjonspunktFeatures = kommunerResponse?.map((kommune) =>
-      getRepresentasjonspunktFeatureForGrenseResponse(kommune),
+      getRepresentasjonspunktFeatureForAdministrativEnhet(kommune),
     );
 
     return geoJsonFeatures.flatMap(getFeaturesFromGeoJson).concat(representasjonspunktFeatures);

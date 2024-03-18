@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import ApiGrense from "../../ApiGrense/ApiGrense";
+import ToggleableAdministrativEnhet from "../../ToggleableAdministrativEnhet/ToggleableAdministrativEnhet";
 import useFylker from "hooks/inndelinger/useFylker";
 import { getIdFromEntity } from "utils/api";
 
@@ -14,9 +14,9 @@ const FylkeList = () => {
   return (
     <Wrapper>
       {fylker.map((fylke) => (
-        <ApiGrense
+        <ToggleableAdministrativEnhet
           key={getIdFromEntity(fylke)}
-          grense={fylke}
+          administrativEnhet={fylke}
           featuresUrl={`/v1/fylker/${getIdFromEntity(fylke)}/grenser`}
           type="fylke"
         />

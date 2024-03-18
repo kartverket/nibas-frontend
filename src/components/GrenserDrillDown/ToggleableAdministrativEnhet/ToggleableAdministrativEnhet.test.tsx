@@ -1,11 +1,11 @@
 import { render, screen } from "test/test-utils";
-import ApiGrense from "./ApiGrense";
+import ToggleableAdministrativEnhet from "./ToggleableAdministrativEnhet";
 
-const defaultProps: React.ComponentProps<typeof ApiGrense> = {
+const defaultProps: React.ComponentProps<typeof ToggleableAdministrativEnhet> = {
   featuresUrl: "/",
 
   type: "fylke",
-  grense: {
+  administrativEnhet: {
     id: {
       lokalid: {
         value: "",
@@ -40,7 +40,7 @@ const defaultProps: React.ComponentProps<typeof ApiGrense> = {
 
 describe("ApiGrense", () => {
   it("should render name in Norwegian", () => {
-    render(<ApiGrense {...defaultProps} />);
+    render(<ToggleableAdministrativEnhet {...defaultProps} />);
 
     expect(screen.getByText("1234 Grense")).toBeInTheDocument();
   });

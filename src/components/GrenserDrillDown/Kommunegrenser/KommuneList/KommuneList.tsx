@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import ApiGrense from "components/GrenserDrillDown/ApiGrense/ApiGrense";
+import ToggleableAdministrativEnhet from "components/GrenserDrillDown/ToggleableAdministrativEnhet/ToggleableAdministrativEnhet";
 import useKommuner from "hooks/inndelinger/useKommuner";
 import useKommunegrenser from "hooks/inndelinger/useKommunegrenser";
 import { useEffect, useState } from "react";
@@ -40,9 +40,9 @@ const KommuneList = ({ fylke }: Props) => {
     >
       <Wrapper>
         {kommuner.map((kommune) => (
-          <ApiGrense
+          <ToggleableAdministrativEnhet
             key={getIdFromEntity(kommune)}
-            grense={kommune}
+            administrativEnhet={kommune}
             featuresUrl={`/v1/kommuner/${getIdFromEntity(kommune)}/grenser`}
             type="kommune"
           />

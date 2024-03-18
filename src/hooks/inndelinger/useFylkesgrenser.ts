@@ -1,5 +1,5 @@
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import { getRepresentasjonspunktFeatureForGrenseResponse } from "components/GrenserDrillDown/ApiGrense/ApiGrense";
+import { getRepresentasjonspunktFeatureForAdministrativEnhet } from "components/GrenserDrillDown/ToggleableAdministrativEnhet/ToggleableAdministrativEnhet";
 import { useEditGrenseValue } from "contexts/EditGrenserContext/useEditGrense";
 import useFylker from "hooks/inndelinger/useFylker";
 import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
@@ -53,7 +53,9 @@ const useFylkesgrenser = () => {
       return null;
     }
 
-    const representasjonspunktFeatures = fylker?.map((fylke) => getRepresentasjonspunktFeatureForGrenseResponse(fylke));
+    const representasjonspunktFeatures = fylker?.map((fylke) =>
+      getRepresentasjonspunktFeatureForAdministrativEnhet(fylke),
+    );
 
     return geoJsonFeatures.flatMap(getFeaturesFromGeoJson).concat(representasjonspunktFeatures);
   }, [fylker, geoJsonFeatures]);

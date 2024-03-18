@@ -2,7 +2,7 @@ import { render, screen } from "test/test-utils";
 import Kommunegrenser from "./Kommunegrenser";
 
 describe("Kommunegrenser", () => {
-  it("should show fylker and kommun on Kommuner accordion click", async () => {
+  it("should show fylker and kommuner on Kommuner accordion click", async () => {
     const { user } = render(<Kommunegrenser />);
 
     const kommuneGrenserAccordionButton = screen.getByRole("button", {
