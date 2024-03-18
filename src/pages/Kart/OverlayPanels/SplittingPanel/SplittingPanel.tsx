@@ -120,7 +120,7 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
         if (onChange) {
           onChange(e);
         }
-        if (isSubmitted) {
+        if (isSubmitted === true) {
           trigger();
         }
       },
