@@ -18,15 +18,15 @@ type Props = CustomTooltipProps & Omit<TooltipProps, "label">;
 const ShortcutText = ({ shortcut, holdButton }: ShortcutTextProps) => {
   const shortcutString = shortcut ? KeyboardShortcuts[shortcut].displayString : null;
 
-  if (shortcutString && holdButton) {
+  if (shortcutString != null && holdButton != null) {
     return (
       <ShortcutTextStyle>
         Trykk {shortcutString} eller hold inne {holdButton}
       </ShortcutTextStyle>
     );
-  } else if (holdButton) {
+  } else if (holdButton != null) {
     return <ShortcutTextStyle>Hold inne {holdButton}</ShortcutTextStyle>;
-  } else if (shortcutString) {
+  } else if (shortcutString != null) {
     return <ShortcutTextStyle>Trykk {shortcutString}</ShortcutTextStyle>;
   }
   return null;
@@ -40,7 +40,7 @@ export const TooltipBody = ({ text, icon, shortcut, holdButton, additionalInfo }
       {icon && <Icon size={24} icon={icon} />}
     </IconText>
     <ShortcutText shortcut={shortcut} holdButton={holdButton} />
-    {additionalInfo && <ShortcutTextStyle>{additionalInfo}</ShortcutTextStyle>}
+    {additionalInfo != null && <ShortcutTextStyle>{additionalInfo}</ShortcutTextStyle>}
   </BodyWrapper>
 );
 

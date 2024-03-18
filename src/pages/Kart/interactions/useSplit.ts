@@ -42,7 +42,7 @@ const useSplit = () => {
       const allFeatureCoordinates = oldGeometry.getCoordinates();
       const oldFeatureId = oldFeature.getId()?.toString();
 
-      if (!oldFeatureId) return;
+      if (oldFeatureId === undefined) return;
 
       // Ikke vits å gjøre splitting med mindre du har en linje med minst tre punkter
       if (allFeatureCoordinates.length > 2) {

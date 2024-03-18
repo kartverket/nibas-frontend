@@ -29,15 +29,15 @@ type ModifierKeysOption = {
 };
 
 const checkModifierKeys = (event: KeyboardEvent, modifierKeys: ModifierKeysOption): boolean => {
-  if (!!modifierKeys.control !== (event.ctrlKey || event.metaKey)) {
+  if ((modifierKeys.control ?? false) !== (event.ctrlKey || event.metaKey)) {
     return false;
   }
 
-  if (!!modifierKeys.shift !== event.shiftKey) {
+  if ((modifierKeys.shift ?? false) !== event.shiftKey) {
     return false;
   }
 
-  if (!!modifierKeys.alt !== event.altKey) {
+  if ((modifierKeys.alt ?? false) !== event.altKey) {
     return false;
   }
 
@@ -46,13 +46,13 @@ const checkModifierKeys = (event: KeyboardEvent, modifierKeys: ModifierKeysOptio
 
 const keyComboToString = (key: string, modifierKeys: ModifierKeysOption): string => {
   const keys = [];
-  if (modifierKeys.control) {
+  if (modifierKeys.control === true) {
     keys.push("CTRL");
   }
-  if (modifierKeys.shift) {
+  if (modifierKeys.shift === true) {
     keys.push("SHIFT");
   }
-  if (modifierKeys.alt) {
+  if (modifierKeys.alt === true) {
     keys.push("ALT");
   }
   keys.push(key.toUpperCase());

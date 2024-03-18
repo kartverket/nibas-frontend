@@ -15,8 +15,8 @@ type Props<T> = {
 
 const ApiGrense = <T extends GrenseRef>({ grense, type, featuresUrl }: Props<T>) => {
   const grenseId = getIdFromEntity(grense);
-  const { editing, visible } = useEditGrenseValue(type, grenseId);
-  const { features, fetchFeatures } = useApiGrense(featuresUrl, editing || visible);
+  const { isEditing, isVisible } = useEditGrenseValue(type, grenseId);
+  const { features, fetchFeatures } = useApiGrense(featuresUrl, isEditing || isVisible);
 
   useEffect(() => {
     features?.forEach((feature) => {
@@ -31,10 +31,10 @@ const ApiGrense = <T extends GrenseRef>({ grense, type, featuresUrl }: Props<T>)
   }, [features, grenseId, type]);
 
   useEffect(() => {
-    if (features || !visible) return;
+    if (features || !isVisible) return;
 
     fetchFeatures();
-  }, [visible, features, fetchFeatures]);
+  }, [isVisible, features, fetchFeatures]);
 
   const nummer =
     type === "fylke" ? (grense as FylkeRef).fylkesnummer.kodeverdi : (grense as KommuneRef).kommunenummer.kodeverdi;

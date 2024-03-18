@@ -5,11 +5,11 @@ import { Geometry, LineString } from "ol/geom";
 import { FeatureProperties, KontekstEgenskaper, Metadata } from "types/api";
 import { FeatureLike } from "ol/Feature";
 import { grenserLayers, editableBorderTypes } from "hooks/layers/constants";
-import { isNotNullOrUndefined } from "types/common";
 import { getRepresentasjonspunktId } from "./map/source";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { previousCoordinateKey } from "pages/Kart/interactions/constants";
 import { Coordinate, equals } from "ol/coordinate";
+import { isNotNil } from "./type-utils";
 
 export const setDefaultFeatureProperties = (feature: Feature<Geometry>, grenseType: GrenseType | undefined) => {
   if (!grenseType) return;
@@ -90,7 +90,7 @@ export const getAllFeatureEndPointCoordinates = (layerIdsToFilter: LayerId[]): (
     .flatMap((f) => {
       const geom = f.getGeometry();
       const id = f.getId()?.toString();
-      if (geom && geom instanceof LineString && id)
+      if (geom && geom instanceof LineString && id != null)
         return { featureId: id, endpoints: { first: geom.getFirstCoordinate(), last: geom.getLastCoordinate() } };
 
       return null;
@@ -184,11 +184,11 @@ export const isFeatureEditable = (feature: FeatureLike, isArchived: boolean) => 
     const properties = feature.getProperties() as FeatureProperties;
     const kontekstEgenskaper = properties.kontekstEgenskaper as KontekstEgenskaper[];
 
-    if (!kontekstEgenskaper || kontekstEgenskaper.length === 0) return false;
+    if (kontekstEgenskaper.length === 0) return false;
 
     const layerSources = Object.values(grenserLayers)
       .map((layer) => layer.getSource())
-      .filter(isNotNullOrUndefined);
+      .filter(isNotNil);
 
     // Kontekstegenskaper inneholder hvilke kretser som grensen tilhører (f. eks stemme/grunnkrets)
     // Alle disse kretsene må være synlige for at en administrativ grense skal være synlig
@@ -196,7 +196,7 @@ export const isFeatureEditable = (feature: FeatureLike, isArchived: boolean) => 
     // Dersom den er tilgjengelig, kan vi anta at kretsen er synlig
     const alleKretserIKontekstEgenskaperErSynlig = kontekstEgenskaper.every((egenskap) => {
       const lokalId = egenskap.id?.lokalid.value;
-      if (!lokalId) return false;
+      if (lokalId === undefined) return false;
 
       // TODO Velge riktig layerSource basert på kontekstegenskaptype?
       return layerSources.some((source) => source.getFeatureById(getRepresentasjonspunktId(lokalId)) !== null);
@@ -217,12 +217,12 @@ export const isFeatureMetadataEditable = (feature: FeatureLike, isArchived: bool
 };
 
 export const isPreviousAndCurrentCoordinatesEqual = (feature: Feature<LineString>) => {
-  const previousFeatureCoordinates = feature.get(previousCoordinateKey);
+  const previousFeatureCoordinates = feature.get(previousCoordinateKey) as Coordinate[] | undefined;
   const currentFeatureCoordinates = feature.getGeometry()?.getCoordinates();
+
   if (previousFeatureCoordinates && currentFeatureCoordinates) {
-    const coordinates = previousFeatureCoordinates as Coordinate[];
-    for (let i = 0; i < coordinates.length; i++) {
-      if (equals(coordinates[i], currentFeatureCoordinates[i])) continue;
+    for (let i = 0; i < previousFeatureCoordinates.length; i++) {
+      if (equals(previousFeatureCoordinates[i], currentFeatureCoordinates[i])) continue;
 
       return false;
     }
@@ -233,7 +233,7 @@ export const isPreviousAndCurrentCoordinatesEqual = (feature: Feature<LineString
 export const isMatrikkelFeature = (feature: FeatureLike) => {
   const featureId = feature.getId()?.toString();
 
-  if (featureId) {
+  if (featureId != null) {
     return featureId.includes("TEIGGRENSEWFS");
   }
 

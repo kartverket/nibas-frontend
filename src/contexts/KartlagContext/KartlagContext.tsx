@@ -10,6 +10,7 @@ import {
   setWMTSLayerVisibility,
   toggleLayerVisibility,
 } from "./kartlag-utils";
+import { isNotNil } from "utils/type-utils";
 
 export type MappedLayer = {
   type: "wms" | "wmts";
@@ -50,12 +51,8 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
         }
       });
 
-      const isMappedLayer = (layer: MappedLayer | null | undefined): layer is MappedLayer => {
-        return !!layer;
-      };
-
       Promise.all(mappedLayerPromises).then((layers) => {
-        const nonNullLayers = layers.filter(isMappedLayer);
+        const nonNullLayers = layers.filter(isNotNil);
         const initialLayers = findAndToggleLayer(defaultKartlag, nonNullLayers);
         setMappedLayers(initialLayers);
         setDefaultLayers(initialLayers);

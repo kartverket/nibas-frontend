@@ -22,7 +22,7 @@ const GrenseinformasjonPanel = ({ isOpen, className }: PanelProps) => {
     }
   }, [activeOverlayPanel, closeOverlayPanel, selectedFeatures.length]);
 
-  const selectedProperties = selectedFeature?.getProperties() as FeatureProperties;
+  const selectedProperties = selectedFeature?.getProperties() as FeatureProperties | undefined;
 
   return (
     selectedFeature &&
