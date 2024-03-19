@@ -3,7 +3,7 @@ import Geometry from "ol/geom/Geometry";
 import { Alert, AlertIcon, Button, Datepicker, Input, Select, Textarea } from "@kvib/react";
 import { GrenseType } from "hooks/layers/types";
 import { styled } from "styled-components";
-import { dateToFriendlyDatestring, getDateInFriendlyString } from "./grenseinformasjon-utils";
+import { dateToFormattedDatestring, datestringToFormattedDatestring } from "./grenseinformasjon-utils";
 import useNibasApi from "hooks/useNibasApi";
 import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
@@ -91,7 +91,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
 
   const getSistOppdatert = () => {
     const oppdateringsDato = metadata?.common?.sporingsinformasjon.oppdateringsdato;
-    return oppdateringsDato !== undefined ? getDateInFriendlyString(oppdateringsDato) : "Ukjent";
+    return oppdateringsDato !== undefined ? datestringToFormattedDatestring(oppdateringsDato) : "Ukjent";
   };
 
   useEffect(() => {
@@ -154,7 +154,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         valueLabel={(() => {
           if (isTempFeatureId(featureId)) return "Ny grense - Dato blir satt ved publisering";
           const date = metadata.common?.gyldigFra;
-          return date !== undefined ? getDateInFriendlyString(date) : null;
+          return date !== undefined ? datestringToFormattedDatestring(date) : null;
         })()}
       />
 
@@ -179,7 +179,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
           <GrenseinformasjonRow
             name="Gyldig til"
             tooltipLabel="Dato når grensen skal være gyldig til."
-            valueLabel={getDateInFriendlyString(gyldigTil)}
+            valueLabel={datestringToFormattedDatestring(gyldigTil)}
           />
           <Alert status="warning" variant="top-accent">
             <AlertIcon />
@@ -195,9 +195,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         valueLabel={(() => {
           const date = getValues("datafangstDato");
 
-          if (date) return dateToFriendlyDatestring(date);
-
-          if (isTempFeatureId(featureId)) return "Ny grense - Dato blir satt ved publisering";
+          if (date) return dateToFormattedDatestring(date);
         })()}
         isEditing={isEditing}
       >

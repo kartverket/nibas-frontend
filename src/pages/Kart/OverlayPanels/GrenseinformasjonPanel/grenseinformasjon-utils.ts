@@ -8,14 +8,18 @@ import {
 } from "contexts/HistoryContext/types";
 import { FeatureProperties, KontekstEgenskaper } from "types/api";
 import { removeNull } from "utils/list-utils";
+import { isDate } from "date-fns";
 
-export const getDateInFriendlyString = (dateString: string) => {
+export const datestringToFormattedDatestring = (dateString: string) => {
   const date = new Date(dateString);
-  return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+
+  return dateToFormattedDatestring(date);
 };
 
-export const dateToFriendlyDatestring = (date: Date) => {
-  return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+export const dateToFormattedDatestring = (date: Date): string | undefined => {
+  if (isDate(date) && !isNaN(date.getTime())) {
+    return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+  }
 };
 
 const updateFeatureWithNewProperties = (feature: Feature<LineString>, newProperties: FeatureProperties) => {
