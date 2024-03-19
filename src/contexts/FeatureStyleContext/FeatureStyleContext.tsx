@@ -14,7 +14,7 @@ import {
   getEntriesUpToIndex,
   mapAffectedFeaturesForErrorEntries,
   removeDuplicateIds,
-  shouldIgnoreFeatureId,
+  featureDoesNotExistBeforeIndex,
 } from "./feature-style-utils";
 import { getChangeIds } from "contexts/HistoryContext/history-utils";
 
@@ -123,9 +123,8 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     }
 
     const allFeatureIds = removeDuplicateIds(history.entries.flatMap(getChangeIds));
-    const featureIdsUpToCurrentIndex = removeDuplicateIds(getEntriesUpToIndex(history).flatMap(getChangeIds));
     // Finn IDer som er med i historikken etter index, men ikke før
-    const featureIdsToIgnore = allFeatureIds.filter((id) => shouldIgnoreFeatureId(id, featureIdsUpToCurrentIndex));
+    const featureIdsToIgnore = allFeatureIds.filter((id) => featureDoesNotExistBeforeIndex(id, history));
     const featureEndpointsToCheck = getAllFeatureEndPointCoordinates(["matrikkel", "archived"]).filter(
       (featureEndpoint) => featureEndpoint != null && !featureIdsToIgnore.includes(featureEndpoint.featureId),
     ) as FeatureIdWithEndpoints[];
