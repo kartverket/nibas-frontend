@@ -42,7 +42,7 @@ export const getRepresentasjonspunktFeatureForAdministrativEnhet = (administrati
 const ToggleableAdministrativEnhet = ({ administrativEnhet, type, featuresUrl }: Props) => {
   const adminEnhetId = getIdFromEntity(administrativEnhet);
   const { isVisible, isEditing } = useEditGrenseValue(type, adminEnhetId);
-  const { features, fetchFeatures } = useApiGrense(featuresUrl, isEditing || isVisible);
+  const { features, fetchFeatures } = useApiGrense(type, featuresUrl, isEditing || isVisible);
   const memoizedFeatures = useMemo(() => {
     if (!features) {
       return null;

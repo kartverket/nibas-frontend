@@ -15,6 +15,7 @@ import {
   FylkeRequest,
   GrunnkretsRequest,
   KommuneRequest,
+  KontekstEgenskaper,
   KretsDelingEndringRequest,
   Metadata,
   NasjonRequest,
@@ -31,6 +32,9 @@ import { getIdFromEntity } from "utils/api";
 import { getTempFeatureId, isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { isTempDokrefId } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/Vedtaksinformasjon/util/vedtaksinfoHelperMethods";
 import { removeNull } from "utils/list-utils";
+import { EditingType } from "contexts/EditGrenserContext/types";
+import { getGrenseTypeFromEditingType } from "hooks/layers/types";
+import { isNotNil } from "utils/type-utils";
 
 const getCombinedEntity = <T extends ResponseWithId>(
   entity: T,
@@ -44,15 +48,29 @@ const getCombinedEntity = <T extends ResponseWithId>(
   } as T;
 };
 
+const getKommuneIdsFromFeature = (feature: GeoJSONFeature): string[] => {
+  return feature.properties.kontekstEgenskaper
+    .map((k: KontekstEgenskaper) => k.kommuneId?.lokalid.value)
+    .filter(isNotNil);
+};
+
 const getCombinedFeatures = (
   featureCollection: GeoJSONFeatureCollection,
   featuresSlice: NonNullable<UtkastGrenseendringer["endredeFeatures"]>,
+  type: EditingType,
 ) => {
   const updatedFeaturesFromCollection = featureCollection.features.map(
     (feature: GeoJSONFeature) => featuresSlice.find((f) => f.id === feature.id) ?? feature,
   );
 
-  const newFeatures = featuresSlice.filter((f) => isTempFeatureId(f.id));
+  const kommuneIds = getKommuneIdsFromFeature(updatedFeaturesFromCollection[0]);
+
+  const newFeatures = featuresSlice.filter(
+    (f) =>
+      isTempFeatureId(f.id) &&
+      getGrenseTypeFromEditingType(type) === f.properties.type &&
+      getKommuneIdsFromFeature(f).some((id) => kommuneIds.includes(id)),
+  );
 
   return updatedFeaturesFromCollection.concat(newFeatures);
 };
@@ -84,9 +102,13 @@ export const applyNonFeatureUtkast = <T extends NonNullable<UtkastEntity>>(
   return getCombinedEntity(entity, utkastSlice);
 };
 
-export const applyFeatureUtkast = (featureCollection: GeoJSONFeatureCollection, utkast: UtkastResponse) => {
+export const applyFeatureUtkast = (
+  featureCollection: GeoJSONFeatureCollection,
+  utkast: UtkastResponse,
+  type: EditingType,
+) => {
   const featuresSlice = utkast.operasjoner.grenseendringer.endredeFeatures;
-  const newFeatures = getCombinedFeatures(featureCollection, featuresSlice);
+  const newFeatures = getCombinedFeatures(featureCollection, featuresSlice, type);
 
   return {
     ...featureCollection,
