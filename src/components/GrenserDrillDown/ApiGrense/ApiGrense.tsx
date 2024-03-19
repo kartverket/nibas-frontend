@@ -16,7 +16,7 @@ type Props<T> = {
 const ApiGrense = <T extends GrenseRef>({ grense, type, featuresUrl }: Props<T>) => {
   const grenseId = getIdFromEntity(grense);
   const { isEditing, isVisible } = useEditGrenseValue(type, grenseId);
-  const { features, fetchFeatures } = useApiGrense(featuresUrl, isEditing || isVisible);
+  const { features, fetchFeatures } = useApiGrense(type, featuresUrl, isEditing || isVisible);
 
   useEffect(() => {
     features?.forEach((feature) => {
