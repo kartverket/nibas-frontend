@@ -1,14 +1,18 @@
 import { render, screen } from "test/test-utils";
-import React from "react";
-import KommuneList from "./KommuneList";
+import ToggleableAdministrativEnhet from "./ToggleableAdministrativEnhet";
 
-const defaultProps: React.ComponentProps<typeof KommuneList> = {
-  fylke: {
+const defaultProps: React.ComponentProps<typeof ToggleableAdministrativEnhet> = {
+  featuresUrl: "/",
+
+  type: "fylke",
+  administrativEnhet: {
     id: {
+      lokalid: {
+        value: "",
+      },
       gyldighetsdato: "",
-      lokalid: { value: "2" },
     },
-    navn: [{ navn: "Fylke", spraak: "nor", version: 1 }],
+    navn: [{ navn: "Grense", spraak: "nor", version: 1 }],
     fylkesnummer: {
       id: "id",
       kodeverdi: "1234",
@@ -34,12 +38,10 @@ const defaultProps: React.ComponentProps<typeof KommuneList> = {
   },
 };
 
-describe("KommuneList", () => {
-  it("should render kommune from API request", async () => {
-    const { user } = render(<KommuneList {...defaultProps} />);
+describe("ApiGrense", () => {
+  it("should render name in Norwegian", () => {
+    render(<ToggleableAdministrativEnhet {...defaultProps} />);
 
-    await user.click(await screen.findByRole("button", { name: "Åpne 1234 Fylke" }));
-
-    expect(await screen.findByText("5031 Malvik")).toBeInTheDocument();
+    expect(screen.getByText("1234 Grense")).toBeInTheDocument();
   });
 });
