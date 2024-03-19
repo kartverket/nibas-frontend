@@ -4,20 +4,26 @@ import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import { useDisclosure } from "@kvib/react";
 import EndringsloggModal from "components/Endringslogg/EndringsloggModal";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
 
 const HeaderHistoryOperations = () => {
   const { utkast, updateUtkastWithHistory } = useUtkast();
-  const { canSave, undo, redo } = useHistory();
+  const { canSave, undo: undoHistory, redo } = useHistory();
   const { isOpen, onClose, onOpen } = useDisclosure();
-
+  const { activeOverlayPanel, closeOverlayPanel } = useOverlayPanel();
   const handleSave = () => {
     if (utkast && canSave) {
       updateUtkastWithHistory();
     }
   };
 
+  const undo = () => {
+    if (activeOverlayPanel === "grenseinfo") closeOverlayPanel();
+    if (undoHistory !== undefined) undoHistory();
+  };
+
   useKeyboardShortcut("save", handleSave, canSave);
-  useKeyboardShortcut("undo", undo, !!undo);
+  useKeyboardShortcut("undo", undo, !!undoHistory);
   useKeyboardShortcut("redo", redo, !!redo);
 
   if (!utkast) return null;
@@ -28,7 +34,7 @@ const HeaderHistoryOperations = () => {
         label="Angre"
         icon="undo"
         onClick={undo}
-        isDisabled={!undo}
+        isDisabled={!undoHistory}
         tooltip={{
           text: "Angre på siste handling",
           shortcut: "undo",
