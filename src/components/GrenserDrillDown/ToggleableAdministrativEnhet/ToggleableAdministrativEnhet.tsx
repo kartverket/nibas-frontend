@@ -17,12 +17,12 @@ type Props = {
   featuresUrl: string;
 };
 
-const getAdmistrativEnhetNummer = (grense: AdministrativEnhetResponse): string | null => {
-  if ("fylkesnummer" in grense) {
-    return grense.fylkesnummer.kodeverdi;
+const getAdministrativEnhetNummer = (enhet: AdministrativEnhetResponse): string | null => {
+  if ("fylkesnummer" in enhet) {
+    return enhet.fylkesnummer.kodeverdi;
   }
-  if ("kommunenummer" in grense) {
-    return grense.kommunenummer.kodeverdi;
+  if ("kommunenummer" in enhet) {
+    return enhet.kommunenummer.kodeverdi;
   }
   return null;
 };
@@ -34,7 +34,7 @@ export const getRepresentasjonspunktFeatureForAdministrativEnhet = (administrati
     properties: {
       ...administrativEnhet.representasjonspunkt.properties,
       name: getNavnInSpraak(administrativEnhet.navn, "nor"),
-      number: getAdmistrativEnhetNummer(administrativEnhet),
+      number: getAdministrativEnhetNummer(administrativEnhet),
     },
   });
 };
@@ -43,6 +43,20 @@ const ToggleableAdministrativEnhet = ({ administrativEnhet, type, featuresUrl }:
   const adminEnhetId = getIdFromEntity(administrativEnhet);
   const { isVisible, isEditing } = useEditGrenseValue(type, adminEnhetId);
   const { features, fetchFeatures } = useApiGrense(featuresUrl, isEditing || isVisible);
+  const memoizedFeatures = useMemo(() => {
+    if (!features) {
+      return null;
+    }
+
+    const representasjonspunktFeatures = getRepresentasjonspunktFeatureForAdministrativEnhet(administrativEnhet);
+
+    return features.concat(representasjonspunktFeatures);
+  }, [features, administrativEnhet]);
+  const { kretsStatus, toggleVisible, isLoading } = useEditGrense(
+    type,
+    getIdFromEntity(administrativEnhet),
+    memoizedFeatures,
+  );
 
   useEffect(() => {
     features?.forEach((feature) => {
@@ -62,22 +76,6 @@ const ToggleableAdministrativEnhet = ({ administrativEnhet, type, featuresUrl }:
     fetchFeatures();
   }, [isVisible, features, fetchFeatures]);
 
-  const memoizedFeatures = useMemo(() => {
-    if (!features) {
-      return null;
-    }
-
-    const representasjonspunktFeatures = getRepresentasjonspunktFeatureForAdministrativEnhet(administrativEnhet);
-
-    return features.concat(representasjonspunktFeatures);
-  }, [features, administrativEnhet]);
-
-  const { kretsStatus, toggleVisible, isLoading } = useEditGrense(
-    type,
-    getIdFromEntity(administrativEnhet),
-    memoizedFeatures,
-  );
-
   return (
     <Wrapper $isVisible={kretsStatus.isVisible ? true : false}>
       <IconButton
@@ -85,7 +83,7 @@ const ToggleableAdministrativEnhet = ({ administrativEnhet, type, featuresUrl }:
         aria-label={kretsStatus.isVisible ? "Synlig" : "Usynlig"}
         icon={kretsStatus.isVisible ? "visibility" : "visibility_off"}
       />
-      <Title>{`${getAdmistrativEnhetNummer(administrativEnhet)} ${getNavnInSpraak(
+      <Title>{`${getAdministrativEnhetNummer(administrativEnhet)} ${getNavnInSpraak(
         administrativEnhet.navn,
         "nor",
       )}`}</Title>
