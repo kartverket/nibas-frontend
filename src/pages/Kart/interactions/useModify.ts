@@ -16,7 +16,7 @@ import { useGetFeatures } from "./interaction-utils";
 import { isAdministrativGrense } from "utils/grenser";
 import { isFeatureEditable, isPreviousAndCurrentCoordinatesEqual } from "utils/features";
 import { findNearbyVertexOnFeature } from "utils/map/map-utils";
-import useToastCounter from "hooks/useToastCounter";
+import useToastCounter from "hooks/toast/useToastCounter";
 import { Geometry } from "ol/geom";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import useSplit from "./useSplit";
@@ -27,8 +27,16 @@ const useModify = () => {
   const { activeTool, activeModeTools } = useToolbar();
   const { selectedFeatures, featureIsArchived } = useFeatureStyle();
   const toast = useToast();
-  const { toastCounter: removeToast } = useToastCounter("success", "Punktet ble fjernet", "punkter ble fjernet");
-  const { toastCounter: addToast } = useToastCounter("success", "Punktet ble lagt til", "punkter ble lagt til");
+  const { toastCounter: removeToast } = useToastCounter(
+    { status: "success" },
+    "Punktet ble fjernet",
+    "punkter ble fjernet",
+  );
+  const { toastCounter: addToast } = useToastCounter(
+    { status: "success" },
+    "Punktet ble lagt til",
+    "punkter ble lagt til",
+  );
   const { getActiveFeaturesAtPixel, getFeaturesAtPixel } = useGetFeatures();
   const { performFeatureSplit } = useSplit();
   const confirmationModal = useConfirmationModal();
@@ -244,7 +252,7 @@ const useModify = () => {
             });
 
             if (isAccepted) {
-              performFeatureSplit(nonSelectedActiveFeature, nearbyVertex);
+              performFeatureSplit(nonSelectedActiveFeature, [nearbyVertex]);
             } else {
               setPreviousCoordinatesForFeature(selectedFeature);
               return;
