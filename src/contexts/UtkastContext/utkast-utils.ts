@@ -48,7 +48,6 @@ const getCombinedEntity = <T extends ResponseWithId>(
   } as T;
 };
 
-// TODO: obs! geojsonfeature tilsvarer any og bør endres
 const getKommuneIdsFromFeature = (feature: GeoJSONFeature): string[] => {
   return feature.properties.kontekstEgenskaper
     .map((k: KontekstEgenskaper) => k.kommuneId?.lokalid.value)

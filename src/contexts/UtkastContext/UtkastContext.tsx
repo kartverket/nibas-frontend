@@ -282,7 +282,6 @@ export const useUtkastEntity = <T extends UtkastEntity>(entity: T, type: EntityU
   }, [entity, utkast, type]);
 };
 
-// TODO: noe er galt med typingen her, geojsonfeaturecollection betyr bare any, den fanger ikke at den returnerer undefined
 export const useUtkastFeature = (
   featureCollection: GeoJSONFeatureCollection | GeoJSONFeatureCollection[],
   type: EditingType,
