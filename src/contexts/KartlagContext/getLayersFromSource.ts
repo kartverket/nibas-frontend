@@ -14,7 +14,7 @@ type WMSResponseLayer = {
   Name: string;
   Title: string;
   queryable: boolean;
-  Layer: WMSResponseLayer[];
+  Layer?: WMSResponseLayer[];
 };
 
 type WMTSResponseLayer = {
@@ -24,7 +24,7 @@ type WMTSResponseLayer = {
 
 const mapWMSLayer = (responseLayer: WMSResponseLayer, sourceId: KartlagId) => {
   const sublayers =
-    responseLayer.Layer.map((nestedLayer: WMSResponseLayer) => mapWMSLayer(nestedLayer, sourceId)) ?? [];
+    responseLayer.Layer?.map((nestedLayer: WMSResponseLayer) => mapWMSLayer(nestedLayer, sourceId)) ?? [];
 
   const mappedLayer: MappedLayer = {
     type: "wms",
