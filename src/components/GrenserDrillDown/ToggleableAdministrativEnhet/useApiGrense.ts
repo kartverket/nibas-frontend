@@ -6,14 +6,15 @@ import { getLayerById } from "utils/map/layers";
 import useNibasApi from "hooks/useNibasApi";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
+import { EditingType } from "contexts/EditGrenserContext/types";
 
-const useApiGrense = (featuresUrl: string, shouldFetchInitially = false) => {
+const useApiGrense = (type: EditingType, featuresUrl: string, shouldFetchInitially = false) => {
   const [shouldFetch, setShouldFetch] = useState(shouldFetchInitially);
   const { utkast } = useUtkast();
 
   const { data: geoJson, mutate } = useNibasApi<GeoJSONFeatureCollection>(shouldFetch ? featuresUrl : null);
 
-  const utkastGeoJson = useUtkastFeature(geoJson, utkast);
+  const utkastGeoJson = useUtkastFeature(geoJson, type, utkast);
 
   const features = useMemo(() => {
     if (utkastGeoJson == null) return null;

@@ -77,7 +77,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     id: kommuneId,
   });
 
-  const utkastGeoJsons = useUtkastFeature(grenserGeoJsons, utkast);
+  const utkastGeoJsons = useUtkastFeature(grenserGeoJsons, type, utkast);
 
   const allFeatures = useMemo(() => {
     if (!kretserByKommune || utkastGeoJsons == null) return null;

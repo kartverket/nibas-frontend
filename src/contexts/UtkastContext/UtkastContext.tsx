@@ -32,6 +32,7 @@ import { FeatureIdWithEndpoints, getAllFeatureEndPointCoordinates, isFeatureDead
 import { useEditAllGrenser } from "contexts/EditGrenserContext/EditGrenserContext";
 import { resetMapView } from "utils/map/map-utils";
 import { removeNull } from "utils/list-utils";
+import { EditingType } from "contexts/EditGrenserContext/types";
 
 export const UtkastContext = createContext<UtkastContextValue | undefined>(undefined);
 
@@ -284,15 +285,16 @@ export const useUtkastEntity = <T extends UtkastEntity>(entity: T, type: EntityU
 // TODO: noe er galt med typingen her, geojsonfeaturecollection betyr bare any, den fanger ikke at den returnerer undefined
 export const useUtkastFeature = (
   featureCollection: GeoJSONFeatureCollection | GeoJSONFeatureCollection[],
+  type: EditingType,
   utkast?: UtkastResponse,
 ): FeatureCollection | undefined => {
   return useMemo(() => {
     if (featureCollection == null || !utkast) return featureCollection;
 
     if (Array.isArray(featureCollection)) {
-      return featureCollection.map((collection) => applyFeatureUtkast(collection, utkast));
+      return featureCollection.map((collection) => applyFeatureUtkast(collection, utkast, type));
     }
 
-    return applyFeatureUtkast(featureCollection, utkast);
-  }, [featureCollection, utkast]);
+    return applyFeatureUtkast(featureCollection, utkast, type);
+  }, [featureCollection, type, utkast]);
 };
