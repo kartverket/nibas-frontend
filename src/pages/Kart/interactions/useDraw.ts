@@ -136,17 +136,7 @@ const useDraw = () => {
       setAbortDrawMemoHelper((a) => a + 1);
     };
 
-    const onDrawEnd = async (e: DrawEvent) => {
-      const editingType = getCurrentlyEditingType();
-      const drawnFeature = e.feature as Feature<LineString>;
-      const drawnFeatureGeometry = drawnFeature.getGeometry();
-
-      // Skal ikke være mulig da tegneverktøyet bare skal være tilgjengelig i redigering
-      if (!editingType || !drawnFeatureGeometry) return;
-
-      const newId = getTempFeatureId();
-      drawnFeature.setId(newId);
-
+    const getUniqueFeaturesToSplitIfExists = (drawnFeatureGeometry: LineString) => {
       const drawnFeatureHead = drawnFeatureGeometry.getFirstCoordinate();
       const drawnFeatureTail = drawnFeatureGeometry.getLastCoordinate();
 
@@ -158,29 +148,47 @@ const useDraw = () => {
       if (featuresAtHead.length === 1) featuresToBeSplit.push(featuresAtHead[0]);
       if (featuresAtTail.length === 1) featuresToBeSplit.push(featuresAtTail[0]);
 
-      const uniqueFeaturesToBeSplit = featuresToBeSplit.filter(
+      return featuresToBeSplit.filter(
         (feature, index, allFeatures) => allFeatures.map((f) => f.getId()).indexOf(feature.getId()) === index,
       );
+    };
 
-      if (uniqueFeaturesToBeSplit.length > 0) {
-        for (const feature of uniqueFeaturesToBeSplit) {
-          const geometry = feature.getGeometry();
-          if (geometry && geometry instanceof LineString) {
-            const coordinates = geometry.getCoordinates();
-            const head = geometry.getFirstCoordinate();
-            const tail = geometry.getLastCoordinate();
+    const splitFeatureAtDrawnFeatureEndpoints = (feature: Feature<Geometry>, drawnFeatureGeometry: LineString) => {
+      const drawnFeatureHead = drawnFeatureGeometry.getFirstCoordinate();
+      const drawnFeatureTail = drawnFeatureGeometry.getLastCoordinate();
+      const geometry = feature.getGeometry();
+      if (geometry && geometry instanceof LineString) {
+        const coordinates = geometry.getCoordinates();
+        const head = geometry.getFirstCoordinate();
+        const tail = geometry.getLastCoordinate();
 
-            const coordinatesToSplitAt = [drawnFeatureHead, drawnFeatureTail].filter((coordinate) => {
-              if (!equals(coordinate, head) && !equals(coordinate, tail)) {
-                return coordinates.some((toBeSplitCoordinate) => equals(toBeSplitCoordinate, coordinate));
-              }
-            });
-
-            if (coordinatesToSplitAt.length > 0) {
-              performFeatureSplit(feature, coordinatesToSplitAt);
-            }
+        const coordinatesToSplitAt = [drawnFeatureHead, drawnFeatureTail].filter((coordinate) => {
+          if (!equals(coordinate, head) && !equals(coordinate, tail)) {
+            return coordinates.some((toBeSplitCoordinate) => equals(toBeSplitCoordinate, coordinate));
           }
+        });
+
+        if (coordinatesToSplitAt.length > 0) {
+          performFeatureSplit(feature, coordinatesToSplitAt);
         }
+      }
+    };
+
+    const onDrawEnd = async (e: DrawEvent) => {
+      const editingType = getCurrentlyEditingType();
+      const drawnFeature = e.feature as Feature<LineString>;
+      const drawnFeatureGeometry = drawnFeature.getGeometry();
+
+      // Skal ikke være mulig da tegneverktøyet bare skal være tilgjengelig i redigering
+      if (!editingType || !drawnFeatureGeometry) return;
+
+      const newId = getTempFeatureId();
+      drawnFeature.setId(newId);
+
+      const uniqueFeaturesToBeSplit = getUniqueFeaturesToSplitIfExists(drawnFeatureGeometry);
+
+      for (const feature of uniqueFeaturesToBeSplit) {
+        splitFeatureAtDrawnFeatureEndpoints(feature, drawnFeatureGeometry);
       }
 
       setDefaultFeatureProperties(drawnFeature, getGrenseTypeFromEditingType(editingType));
