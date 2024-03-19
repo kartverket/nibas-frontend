@@ -19,7 +19,14 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContex
 const Toolbar = () => {
   const { activeTool, activeModeTools, toggleTool, toggleModeTool, enableModeTool, disableModeTool, resetTool } =
     useToolbar();
-  const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } = useOverlayPanel();
+  const {
+    activeOverlayPanel,
+    openOverlayPanel,
+    closeOverlayPanel,
+    activeOverlayModal,
+    openOverlayModal,
+    closeOverlayModal,
+  } = useOverlayPanel();
   const { selectedFeatures, selectedPoint, clearSelectedPoint, clearSelection } = useFeatureStyle();
   const { activeSidebarPanel, closeSidebarPanel } = useSidebarPanel();
   const { getCurrentlyEditingType } = useEditAllGrenser();
@@ -198,6 +205,15 @@ const Toolbar = () => {
             </ToolbarButton>
             <ToolbarMenus />
           </ConditionalHide>
+          <ToolbarButton
+            icon="search"
+            isActive={activeOverlayModal === "navigasjon"}
+            onClick={() => (activeOverlayModal === "navigasjon" ? closeOverlayModal() : openOverlayModal("navigasjon"))}
+            aria-label="Gå til punkt i kartet"
+            tooltip={{ text: "Gå til punkt i kartet" }}
+          >
+            Gå til ...
+          </ToolbarButton>
           <ToolbarButton
             icon="live_help"
             isActive={activeTool === "grenseinfo"}
