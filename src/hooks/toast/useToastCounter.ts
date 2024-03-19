@@ -1,7 +1,7 @@
 import { UseToastOptions, useToast } from "@kvib/react";
 import { useRef, useState } from "react";
 
-const useToastCounter = (options: UseToastOptions, singlarDescription: string, pluralDescription: string) => {
+const useToastCounter = (options: UseToastOptions, singularDescription: string, pluralDescription: string) => {
   const toast = useToast();
   const [count, setCount] = useState(0);
   const toastIdRef = useRef<string | number>("");
@@ -14,7 +14,7 @@ const useToastCounter = (options: UseToastOptions, singlarDescription: string, p
       return;
     }
 
-    toastIdRef.current = toast({ ...options, description: `${singlarDescription}` });
+    toastIdRef.current = toast({ ...options, description: `${singularDescription}` });
     setCount(1);
     return;
   };
