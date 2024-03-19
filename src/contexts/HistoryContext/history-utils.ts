@@ -9,6 +9,7 @@ import {
   PropertyEntry,
   GrenseArkiveringsEntry,
   HistoryEntry,
+  HistoryState,
 } from "./types";
 import { archivedSource, editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
@@ -19,6 +20,7 @@ import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { removeNull } from "utils/list-utils";
 import { Geometry } from "ol/geom";
 import { Coordinate } from "ol/coordinate";
+import { getEntriesUpToIndex } from "contexts/FeatureStyleContext/feature-style-utils";
 
 const getFeatureFromChange = (change: HistoryChange<MinimalGrense>, direction: HistoryDirection) => {
   const existingFeature = getFeatureIfExists(change.id);
@@ -171,4 +173,16 @@ export const getChangeIds = (historyEntry: HistoryEntry): string[] => {
     changedFeatureIds.push(change.id);
   });
   return changedFeatureIds;
+};
+/**
+ * Hjelpefunksjon for å lete etter featureIds til nye grenser som kun eksisterer etter nåværende indexposisjon
+ * @param featureId ID å sjekke mot
+ * @param idsUpToIndex IDer slicet mot index
+ * @returns true dersom IDen ikke finnes i nåværende delmengde av history, ellers false.
+ */
+
+export const featureDoesNotExistBeforeIndex = (featureId: string, history: HistoryState) => {
+  const idsUpToIndex = getEntriesUpToIndex(history).flatMap(getChangeIds);
+
+  return !idsUpToIndex.includes(featureId) && isTempFeatureId(featureId);
 };
