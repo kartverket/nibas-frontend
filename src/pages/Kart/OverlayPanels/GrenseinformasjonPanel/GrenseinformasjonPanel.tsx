@@ -26,7 +26,7 @@ const GrenseinformasjonPanel = ({ isOpen, className }: PanelProps) => {
   const selectedProperties = selectedFeature?.getProperties() as FeatureProperties | undefined;
 
   const closeGrenseinfoIfFeatureRemoved = useCallback(() => {
-    if (selectedFeature?.getId() === undefined || selectedFeature?.getId() === null) return;
+    if (selectedFeature?.getId() == null) return;
 
     const isFeatureGone = featureDoesNotExistBeforeIndex(selectedFeature!.getId()!.toString(), history);
     if (isFeatureGone && isOpen) closeOverlayPanel();
