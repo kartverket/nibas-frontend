@@ -1,4 +1,4 @@
-import { GrunnkretsResponse, KommuneRef, UtkastOperasjoner } from "../../../types/api";
+import { GrunnkretsResponse, KommuneResponse, UtkastOperasjoner } from "../../../types/api";
 import { deduplicate, removeNull } from "utils/list-utils";
 import {
   GrunnkretsEndringstype,
@@ -116,7 +116,7 @@ const getEndringerForKommune = (
   grunnkretserMedEndringer: string[],
   operasjoner: UtkastOperasjoner,
   alleGrunnkretser: GrunnkretsResponse[],
-  alleKommuner: KommuneRef[],
+  alleKommuner: KommuneResponse[],
 ): Grunnkretsendringer => {
   const grunnkretserMedGrensejusteringer = getKretserMedGrensejusteringer(operasjoner, "GRUNNKRETS");
 
@@ -142,7 +142,7 @@ export const getGrunnkretsEndringer = (
   endredeGrunnkretser: string[],
   operasjoner: OperasjonerOrNull,
   alleGrunnkretser: GrunnkretsResponse[],
-  alleKommuner: KommuneRef[],
+  alleKommuner: KommuneResponse[],
 ): Grunnkretsendringer[] | null => {
   if (!operasjoner || endredeGrunnkretser.length === 0) {
     return null;
