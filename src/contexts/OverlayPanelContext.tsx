@@ -5,7 +5,8 @@ import { KommuneResponse } from "types/api";
 
 type OverlayPanel = "grenseinfo" | "sammenslåing" | "splitting" | "tegnforklaring" | "koordinater" | "kartlag";
 
-type OverlayModal = "stemmekrets" | "grunnkrets";
+type OverlayModal = "inndelinger-redigering" | "inndelinger-visning" | "stemmekrets" | "grunnkrets";
+
 export type Flatedata = KommuneResponse | null;
 
 export type OverlayPanelContextValue = {

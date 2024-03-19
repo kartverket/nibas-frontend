@@ -9,6 +9,7 @@ import { OverlayPanelProvider } from "contexts/OverlayPanelContext";
 import { FeatureStyleProvider } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { ToolbarProvider } from "contexts/ToolbarContext";
 import { ConfirmationModalProvider } from "contexts/ConfirmationModalContext";
+import { InndelingerProvider } from "contexts/InndelingerContext/InndelingerContext";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -22,7 +23,9 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
                   <OverlayPanelProvider>
                     <EditGrenserProvider>
                       <KartlagProvider>
-                        <UtkastProvider>{children}</UtkastProvider>
+                        <UtkastProvider>
+                          <InndelingerProvider>{children}</InndelingerProvider>
+                        </UtkastProvider>
                       </KartlagProvider>
                     </EditGrenserProvider>
                   </OverlayPanelProvider>
