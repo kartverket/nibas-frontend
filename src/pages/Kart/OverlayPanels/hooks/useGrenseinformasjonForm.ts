@@ -20,9 +20,11 @@ const getDefaultValuesFromFeature = (feature: Feature): GrenseinformasjonFormPro
   const featureProperties = feature.getProperties() as FeatureProperties;
   const metadata = featureProperties.metadata as Metadata;
 
+  const datafangstDato = new Date(metadata.common?.datafangstdato ?? "");
+
   return {
     grenseType: featureProperties.type,
-    datafangstDato: metadata.common?.datafangstdato != null ? new Date(metadata.common?.datafangstdato) : undefined,
+    datafangstDato: isNaN(datafangstDato.valueOf()) ? undefined : datafangstDato,
     informasjon: metadata.common?.informasjon,
     maalemetode: metadata.commonGrense?.posisjonskvalitet?.maalemetode.id,
     noeyaktighet: metadata.commonGrense?.posisjonskvalitet?.noeyaktighet,

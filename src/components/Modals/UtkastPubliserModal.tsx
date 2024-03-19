@@ -20,7 +20,7 @@ import {
 } from "@kvib/react";
 import { publishUtkast } from "api/utkast";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
-import { getDateInFriendlyString } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
+import { datestringToFormattedDatestring } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
 import { EndringsloggAccordion } from "pages/Utkast/UtkastEndringslogg";
 import { useState } from "react";
 import { useSWRConfig } from "swr";
@@ -71,7 +71,9 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
     const response = await publishUtkast(utkast.id, publiseringDateString, tokenHolderFunc()?.token);
     setIsLoading(false);
 
-    const publishDateText = isToday(publiseringsdato) ? "umiddelbart" : getDateInFriendlyString(publiseringDateString);
+    const publishDateText = isToday(publiseringsdato)
+      ? "umiddelbart"
+      : datestringToFormattedDatestring(publiseringDateString);
 
     if (statusCode.isSuccessful(response.status)) {
       toast({
