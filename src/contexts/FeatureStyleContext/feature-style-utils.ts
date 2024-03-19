@@ -1,7 +1,6 @@
 import { HistoryEntry, HistoryState } from "contexts/HistoryContext/types";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
-import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import {
   FeatureIdWithEndpoints,
   getFeatureIfExistsInAnyLayer,
@@ -19,16 +18,6 @@ export const getEntriesUpToIndex = (
 ): HistoryEntry[] => {
   const filterFn = filter ? filter : () => true;
   return history.entries.slice(0, history.index).filter(filterFn);
-};
-
-/**
- * Hjelpefunksjon for å lete etter featureIds til nye grenser som kun eksisterer etter nåværende indexposisjon
- * @param featureId ID å sjekke mot
- * @param idsUpToIndex IDer slicet mot index
- * @returns true dersom IDen ikke finnes i nåværende delmengde av history, ellers false.
- */
-export const shouldIgnoreFeatureId = (featureId: string, idsUpToIndex: string[]) => {
-  return !idsUpToIndex.includes(featureId) && isTempFeatureId(featureId);
 };
 
 export const mapAffectedFeaturesForErrorEntries = (entry: HistoryEntry) => {
