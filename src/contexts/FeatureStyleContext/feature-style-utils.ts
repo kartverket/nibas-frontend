@@ -1,3 +1,4 @@
+import { getChangeIds } from "contexts/HistoryContext/history-utils";
 import { HistoryEntry, HistoryState } from "contexts/HistoryContext/types";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
@@ -27,7 +28,9 @@ export const getEntriesUpToIndex = (
  * @param idsUpToIndex IDer slicet mot index
  * @returns true dersom IDen ikke finnes i nåværende delmengde av history, ellers false.
  */
-export const shouldIgnoreFeatureId = (featureId: string, idsUpToIndex: string[]) => {
+export const featureDoesNotExistBeforeIndex = (featureId: string, history: HistoryState) => {
+  const idsUpToIndex = getEntriesUpToIndex(history).flatMap(getChangeIds);
+
   return !idsUpToIndex.includes(featureId) && isTempFeatureId(featureId);
 };
 
