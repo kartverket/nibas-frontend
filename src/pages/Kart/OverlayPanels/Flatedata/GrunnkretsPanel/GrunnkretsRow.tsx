@@ -14,8 +14,8 @@ import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { styled } from "styled-components";
 
 type GrunnkretsInputs = {
-  grunnkretsnavn: string;
-  grunnkretsnummer: string;
+  navn: string;
+  nummer: string;
 };
 
 const fromFormToRequest = (data: GrunnkretsInputs, grunnkrets: GrunnkretsResponse): GrunnkretsRequest => ({
@@ -23,8 +23,8 @@ const fromFormToRequest = (data: GrunnkretsInputs, grunnkrets: GrunnkretsRespons
     lokalid: getIdFromEntity(grunnkrets),
   },
   version: grunnkrets.version,
-  navn: data.grunnkretsnavn,
-  nummer: data.grunnkretsnummer,
+  navn: data.navn,
+  nummer: data.nummer,
 });
 
 type Props = {
@@ -47,15 +47,15 @@ const GrunnkretsRow = ({ grunnkrets, kommuneId }: Props) => {
     formState: { isDirty },
   } = useForm<GrunnkretsInputs>({
     defaultValues: {
-      grunnkretsnummer: grunnkrets.nummer,
-      grunnkretsnavn: grunnkrets.navn,
+      nummer: grunnkrets.nummer,
+      navn: grunnkrets.navn,
     },
   });
   const previousValues = useRef<GrunnkretsInputs>(getValues());
 
   useEffect(() => {
-    setValue("grunnkretsnavn", grunnkrets.navn);
-    setValue("grunnkretsnummer", grunnkrets.nummer);
+    setValue("navn", grunnkrets.navn);
+    setValue("nummer", grunnkrets.nummer);
     previousValues.current = getValues();
   }, [getValues, setValue, grunnkrets]);
 
@@ -63,8 +63,8 @@ const GrunnkretsRow = ({ grunnkrets, kommuneId }: Props) => {
     (change: GrunnkretsEntry["changes"][number], direction: HistoryDirection) => {
       const newName = change[direction]?.navn;
       const newNumber = change[direction]?.nummer;
-      setValue("grunnkretsnavn", newName ?? "");
-      setValue("grunnkretsnummer", newNumber ?? "");
+      setValue("navn", newName ?? "");
+      setValue("nummer", newNumber ?? "");
 
       previousValues.current = getValues();
 
@@ -94,11 +94,7 @@ const GrunnkretsRow = ({ grunnkrets, kommuneId }: Props) => {
       ],
     });
     previousValues.current = newValues;
-    updateEditFeatureText(
-      getRepresentasjonspunktId(grunnkretsId),
-      newValues.grunnkretsnavn,
-      newValues.grunnkretsnummer,
-    );
+    updateEditFeatureText(getRepresentasjonspunktId(grunnkretsId), newValues.navn, newValues.nummer);
     toggleEditing();
   };
 
@@ -113,8 +109,8 @@ const GrunnkretsRow = ({ grunnkrets, kommuneId }: Props) => {
 
   return (
     <KretsRow>
-      <InputCell isEditing={isEditing} data={getValues("grunnkretsnummer")} {...register("grunnkretsnummer")} />
-      <InputCell isEditing={isEditing} data={getValues("grunnkretsnavn")} {...register("grunnkretsnavn")} />
+      <InputCell isEditing={isEditing} data={getValues("nummer")} {...register("nummer")} />
+      <InputCell isEditing={isEditing} data={getValues("navn")} {...register("navn")} />
       <td>{/* Tom plass for mellomrom */}</td>
       {utkast && (
         <Cell>

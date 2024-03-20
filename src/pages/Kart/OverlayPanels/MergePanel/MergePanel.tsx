@@ -52,7 +52,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
 
   const formMethods = useForm<MergeFormData>({
     defaultValues: {
-      stemmekretsNummerTilSammenslaaing: [{ value: "default" }],
+      nummerTilSammenslaaing: [{ value: "default" }],
     },
   });
   const {
@@ -116,9 +116,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
     if (!utkast) return;
 
     const selectedStemmekretsValue = getValues("stemmekrets");
-    const stemmekretsNummerTilSammenslaaing: string[] = getValues("stemmekretsNummerTilSammenslaaing").map(
-      (s) => s.value,
-    );
+    const stemmekretsNummerTilSammenslaaing: string[] = getValues("nummerTilSammenslaaing").map((s) => s.value);
 
     const selectedStemmekrets = getStemmekretsByNummer(selectedStemmekretsValue);
 

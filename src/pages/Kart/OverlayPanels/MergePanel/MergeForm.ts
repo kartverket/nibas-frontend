@@ -6,5 +6,5 @@ export type MergeFormData = {
   stemmekrets: string;
   navn: string;
   nummer: string;
-  stemmekretsNummerTilSammenslaaing: MultiselectValue[];
+  nummerTilSammenslaaing: MultiselectValue[];
 };
