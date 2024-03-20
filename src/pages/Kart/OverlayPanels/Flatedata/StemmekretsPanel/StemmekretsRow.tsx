@@ -15,8 +15,8 @@ import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { styled } from "styled-components";
 
 type StemmekretsInputs = {
-  stemmekretsnavn: string;
-  stemmekretsnummer: string;
+  navn: string;
+  nummer: string;
 };
 
 const fromFormToRequest = (data: StemmekretsInputs, stemmekrets: StemmekretsResponse): StemmekretsRequest => ({
@@ -25,8 +25,8 @@ const fromFormToRequest = (data: StemmekretsInputs, stemmekrets: StemmekretsResp
   },
   valgdistriktsnummer: stemmekrets.valgdistriktsnummer,
   version: stemmekrets.version,
-  stemmekretsnavn: data.stemmekretsnavn,
-  stemmekretsnummer: data.stemmekretsnummer,
+  navn: data.navn,
+  nummer: data.nummer,
 });
 
 type Props = {
@@ -49,24 +49,24 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
     formState: { errors, isDirty },
   } = useForm<StemmekretsInputs>({
     defaultValues: {
-      stemmekretsnavn: stemmekrets.stemmekretsnavn,
-      stemmekretsnummer: stemmekrets.stemmekretsnummer,
+      navn: stemmekrets.navn,
+      nummer: stemmekrets.nummer,
     },
   });
   const previousValues = useRef<StemmekretsInputs>(getValues());
 
   useEffect(() => {
-    setValue("stemmekretsnavn", stemmekrets.stemmekretsnavn);
-    setValue("stemmekretsnummer", stemmekrets.stemmekretsnummer);
+    setValue("navn", stemmekrets.navn);
+    setValue("nummer", stemmekrets.nummer);
     previousValues.current = getValues();
   }, [getValues, setValue, stemmekrets]);
 
   const setFormValues = useCallback(
     (change: StemmekretsEntry["changes"][number], direction: HistoryDirection) => {
-      const newName = change[direction]?.stemmekretsnavn;
-      const newNumber = change[direction]?.stemmekretsnummer;
-      setValue("stemmekretsnavn", newName ?? "");
-      setValue("stemmekretsnummer", newNumber ?? "");
+      const newName = change[direction]?.navn;
+      const newNumber = change[direction]?.nummer;
+      setValue("navn", newName ?? "");
+      setValue("nummer", newNumber ?? "");
 
       previousValues.current = getValues();
 
@@ -85,19 +85,19 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
   const isInteger = (s: string) => s.match(/^-?\d+$/) !== null;
 
   const formOptions: Record<string, RegisterOptions> = {
-    stemmekretsnummer: {
+    nummer: {
       required: "Stemmekretsnummer kan ikke være tomt",
-      validate: (stemmekretsnummer: string) => {
-        if (!isInteger(stemmekretsnummer) || parseInt(stemmekretsnummer) > 9999) {
+      validate: (nummer: string) => {
+        if (!isInteger(nummer) || parseInt(nummer) > 9999) {
           return "Stemmekretsnummer må kun inneholde siffer (maks 4)";
         }
-        if (parseInt(stemmekretsnummer) <= 0) {
+        if (parseInt(nummer) <= 0) {
           return "Stemmekretsnummer kan ikke være 0 eller et negativt tall";
         }
         return true;
       },
     },
-    stemmekretsnavn: {
+    navn: {
       required: "Stemmekretsnavn kan ikke være tomt",
     },
   };
@@ -125,11 +125,7 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
       ],
     });
     previousValues.current = newValues;
-    updateEditFeatureText(
-      getRepresentasjonspunktId(stemmekretsId),
-      newValues.stemmekretsnavn,
-      newValues.stemmekretsnummer,
-    );
+    updateEditFeatureText(getRepresentasjonspunktId(stemmekretsId), newValues.navn, newValues.nummer);
     toggleEditing();
   };
 
@@ -151,15 +147,15 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
     <KretsRow>
       <InputCell
         isEditing={isEditing}
-        data={getValues("stemmekretsnummer")}
-        validationError={validationError(errors.stemmekretsnummer)}
-        {...register("stemmekretsnummer", formOptions.stemmekretsnummer)}
+        data={getValues("nummer")}
+        validationError={validationError(errors.nummer)}
+        {...register("nummer", formOptions.nummer)}
       />
       <InputCell
         isEditing={isEditing}
-        data={getValues("stemmekretsnavn")}
-        validationError={validationError(errors.stemmekretsnavn)}
-        {...register("stemmekretsnavn", formOptions.stemmekretsnavn)}
+        data={getValues("navn")}
+        validationError={validationError(errors.navn)}
+        {...register("navn", formOptions.navn)}
       />
       <td>{stemmekrets.valgdistriktsnummer ?? ""}</td>
       {utkast && (

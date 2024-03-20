@@ -47,7 +47,7 @@ const GrunnkretsGrensejusteringer = ({ grendejusteringer }: GrunnkretsGrensejust
       <UnstyledList>
         {grendejusteringer.map((grensjustering) => (
           <EndringsradListItem key={grensjustering.id.lokalid.value}>
-            {grensjustering.grunnkretsnummer} {grensjustering.navn}
+            {grensjustering.nummer} {grensjustering.navn}
           </EndringsradListItem>
         ))}
       </UnstyledList>
@@ -61,7 +61,7 @@ type GrunnkretsMetadataEndringerProps = {
 
 const GrunnkretsMetadataEndringer = ({ metadataendring }: GrunnkretsMetadataEndringerProps) => {
   const navn = metadataendring.navn?.til ?? metadataendring.kretsEndret.navn;
-  const nummer = metadataendring.grunnkretsnummer?.til ?? metadataendring.kretsEndret.grunnkretsnummer;
+  const nummer = metadataendring.nummer?.til ?? metadataendring.kretsEndret.nummer;
 
   return (
     <EndringSection>
@@ -73,9 +73,7 @@ const GrunnkretsMetadataEndringer = ({ metadataendring }: GrunnkretsMetadataEndr
       </Seksjonsoverskrift>
       <UnstyledList>
         {metadataendring.navn && <Endringsrad tittel="Grunnkretsnavn" endring={metadataendring.navn} />}
-        {metadataendring.grunnkretsnummer && (
-          <Endringsrad tittel="Grunnkretsnummer" endring={metadataendring.grunnkretsnummer} />
-        )}
+        {metadataendring.nummer && <Endringsrad tittel="Grunnkretsnummer" endring={metadataendring.nummer} />}
       </UnstyledList>
     </EndringSection>
   );

@@ -20,7 +20,7 @@ export const MergeMultiselect = ({ alleStemmekretser }: MergeMultiselectProps) =
   } = useFormContext<MergeFormData>();
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "stemmekretsNummerTilSammenslaaing",
+    name: "nummerTilSammenslaaing",
   });
 
   const triggerRevalidateOnChange = ({ onChange, ...restProps }: SelectProps) => {
@@ -39,7 +39,7 @@ export const MergeMultiselect = ({ alleStemmekretser }: MergeMultiselectProps) =
 
   const multiselectValidator = {
     validate: (value: string): string | boolean => {
-      const values = getValues("stemmekretsNummerTilSammenslaaing");
+      const values = getValues("nummerTilSammenslaaing");
       if (value.trim() === "" || value === "default") {
         return "Du må velge en stemmekrets";
       }
@@ -58,15 +58,13 @@ export const MergeMultiselect = ({ alleStemmekretser }: MergeMultiselectProps) =
       {fields.map((field, index) => (
         <MergeSelect
           key={field.id}
-          {...triggerRevalidateOnChange(
-            register(`stemmekretsNummerTilSammenslaaing.${index}.value`, multiselectValidator),
-          )}
+          {...triggerRevalidateOnChange(register(`nummerTilSammenslaaing.${index}.value`, multiselectValidator))}
           onRemove={() => remove(index)}
           stemmekretser={alleStemmekretser}
           showRemoveButton={fields.length > 1}
           validationError={{
-            showError: !!errors?.stemmekretsNummerTilSammenslaaing?.[index],
-            message: errors?.stemmekretsNummerTilSammenslaaing?.[index]?.value?.message ?? "",
+            showError: !!errors?.nummerTilSammenslaaing?.[index],
+            message: errors?.nummerTilSammenslaaing?.[index]?.value?.message ?? "",
           }}
         />
       ))}

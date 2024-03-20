@@ -41,8 +41,8 @@ export const MergeSelect = forwardRef<HTMLSelectElement, MergeSelectProps>(
       <div>
         <Select {...inputProps} ref={ref} placeholder="Velg en stemmekrets fra listen">
           {stemmekretser.map((s) => (
-            <option key={s.stemmekretsnummer} value={s.stemmekretsnummer}>
-              {`${s.stemmekretsnummer} - ${s.stemmekretsnavn}`}
+            <option key={s.nummer} value={s.nummer}>
+              {`${s.nummer} - ${s.navn}`}
             </option>
           ))}
         </Select>

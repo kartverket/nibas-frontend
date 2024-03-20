@@ -28,10 +28,7 @@ export const mockFylker: FylkeResponse[] = [
         version: 1,
       },
     ],
-    fylkesnummer: {
-      id: "id1",
-      kodeverdi: "38",
-    },
+    nummer: "38",
     samiskforvaltningsomraade: false,
     oppdateringsdato: "",
     representasjonspunkt: {
@@ -65,10 +62,7 @@ export const mockFylker: FylkeResponse[] = [
         version: 1,
       },
     ],
-    fylkesnummer: {
-      id: "id2",
-      kodeverdi: "42",
-    },
+    nummer: "42",
     samiskforvaltningsomraade: false,
     oppdateringsdato: "",
     representasjonspunkt: {
@@ -199,10 +193,7 @@ export const mockKommune: KommuneResponse = {
     },
   },
   version: 1,
-  kommunenummer: {
-    id: "a379eb0a-7bae-4fc9-ab07-cf0c7a28bdb7",
-    kodeverdi: "5031",
-  },
+  nummer: "5031",
   oppdateringsdato: "2022-12-31",
   samiskforvaltningsomraade: false,
 };
@@ -223,10 +214,7 @@ export const mockKommuneGiske: KommuneResponse = {
     },
   },
   version: 1,
-  kommunenummer: {
-    id: "12345",
-    kodeverdi: "1532",
-  },
+  nummer: "1532",
   oppdateringsdato: "2022-12-31",
   samiskforvaltningsomraade: false,
 };
@@ -234,7 +222,7 @@ export const mockKommuneGiske: KommuneResponse = {
 export const mockKommuner = [mockKommune, mockKommuneGiske];
 
 export const mockDetailedGrunnkrets1: GrunnkretsResponse = {
-  grunnkretsnummer: "22345678",
+  nummer: "22345678",
   representasjonspunkt: mockGeoJsonFeatureResponse.features[0],
   version: 1,
   id: {
@@ -263,7 +251,7 @@ export const mockDetailedGrunnkrets1: GrunnkretsResponse = {
 };
 
 export const mockDetailedGrunnkrets2: GrunnkretsResponse = {
-  grunnkretsnummer: "22345679",
+  nummer: "22345679",
   representasjonspunkt: mockGeoJsonFeatureResponse.features[0],
   kommunenummer: {
     id: "12345",
@@ -293,7 +281,7 @@ export const mockDetailedGrunnkrets2: GrunnkretsResponse = {
 
 export const mockGrunnkretsRequest: GrunnkretsRequest = {
   navn: "Mosekollen øst",
-  grunnkretsnummer: "12345678",
+  nummer: "12345678",
   identifikasjon: {
     lokalid: "1",
   },
@@ -325,8 +313,8 @@ export const mockStemmekrets1: StemmekretsResponse = {
     },
   },
   version: 1,
-  stemmekretsnavn: "Undredal",
-  stemmekretsnummer: "05",
+  navn: "Undredal",
+  nummer: "05",
   kommunenummer: { id: "c416fb1d-2124-4f71-8dfc-859c55feb437", kodeverdi: "1" },
   oppdateringsdato: "2022-01-01",
   tellekretsnummer: "tellekretsnr1",
@@ -353,8 +341,8 @@ export const mockStemmekrets2: StemmekretsResponse = {
     },
   },
   version: 1,
-  stemmekretsnavn: "Slemfjord",
-  stemmekretsnummer: "12",
+  navn: "Slemfjord",
+  nummer: "12",
   representasjonspunkt: mockDetailedGrunnkrets2.representasjonspunkt,
   kommunenummer: { id: "ec64ba19-fb37-44d4-b579-407897f871ee", kodeverdi: "2" },
   tellekretsnummer: "tellekretsnr2",
@@ -391,7 +379,7 @@ export const mockUtkast: UtkastResponse = {
       "1": {
         ...mockDetailedGrunnkrets1,
         navn: "Utkast grunnkrets",
-        grunnkretsnummer: mockDetailedGrunnkrets1.grunnkretsnummer,
+        nummer: mockDetailedGrunnkrets1.nummer,
         version: 2,
         identifikasjon: {
           lokalid: mockDetailedGrunnkrets1.id.lokalid.value,
@@ -401,7 +389,7 @@ export const mockUtkast: UtkastResponse = {
     stemmekretsendringer: {
       "1": {
         ...mockStemmekrets1,
-        stemmekretsnavn: "Utkast stemmekrets",
+        navn: "Utkast stemmekrets",
         version: 2,
         kommunenummer: mockStemmekrets1.kommunenummer.kodeverdi,
         identifikasjon: {
@@ -436,7 +424,7 @@ export const mockFutureGrunnkrets1_1: GrunnkretsResponse = {
     gyldighetsdato: "2022-04-01",
   },
   navn: "Mosekollen vest",
-  grunnkretsnummer: "22345679",
+  nummer: "22345679",
   gyldighet: {
     gyldigFra: "2022-04-01",
     gyldigTil: "2022-07-01",
@@ -452,7 +440,7 @@ export const mockFutureGrunnkrets1_2: GrunnkretsResponse = {
     gyldighetsdato: "2022-07-01",
   },
   navn: "Mosekollen nord",
-  grunnkretsnummer: "32345679",
+  nummer: "32345679",
   gyldighet: {
     gyldigFra: "2022-07-01",
   },

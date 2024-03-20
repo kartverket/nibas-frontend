@@ -32,8 +32,7 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
 
     return utkastGrunnkretser?.filter(
       (grunnkrets) =>
-        grunnkrets.grunnkretsnummer.includes(searchValue) ||
-        grunnkrets.navn.toLowerCase().includes(searchValue.toLowerCase()),
+        grunnkrets.nummer.includes(searchValue) || grunnkrets.navn.toLowerCase().includes(searchValue.toLowerCase()),
     );
   }, [searchValue, utkastGrunnkretser]);
 
