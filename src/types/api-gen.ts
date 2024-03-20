@@ -320,7 +320,7 @@ export interface components {
       /** @description Navnet på grunnkretsen */
       navn: string;
       /** @description Grunnkretsnummeret til grunnkretsen */
-      grunnkretsnummer: string;
+      nummer: string;
       identifikasjon: components["schemas"]["Identifikasjon"];
       /**
        * Format: int32
@@ -402,13 +402,7 @@ export interface components {
        * @description Flatetypen som skal deles
        * @enum {string}
        */
-      flatetype:
-        | "FYLKE"
-        | "KOMMUNE"
-        | "NASJON"
-        | "GRUNNKRETS"
-        | "STEMMEKRETS"
-        | "SKOLEKRETS";
+      flatetype: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
       /** @description Navn og nummer for de nye kretsene som skal utledes fra opprinnelig krets */
       nyeKretser: components["schemas"]["KretsNavnOgNummer"][];
     };
@@ -560,10 +554,10 @@ export interface components {
     /** @description Representasjon av en stemmekrets */
     StemmekretsRequest: {
       /** @description Stemmekretsnummeret til stemmekretsen */
-      stemmekretsnummer?: string;
+      nummer?: string;
       identifikasjon: components["schemas"]["Identifikasjon"];
       /** @description Stemmekretsnavnet til stemmekretsen */
-      stemmekretsnavn?: string;
+      navn?: string;
       /** @description Tellekretsnummeret til stemmekretsen */
       tellekretsnummer?: string;
       /** @description Tellekretsnavnet til stemmekretsen */
@@ -584,9 +578,9 @@ export interface components {
       /** @description Liste av identifikatorer som skal bli del av den videreførte stemmekretsen */
       stemmekretserTilSammenslaaing: components["schemas"]["IdentifikatorMedVersjon"][];
       /** @description Navnet til den sammenslåtte stemmekretsen */
-      stemmekretsNavn: string;
+      navn: string;
       /** @description Stemmekretsnummeret til den sammenslåtte stemmekretsen */
-      stemmekretsNummer: string;
+      nummer: string;
     };
     /** @description Henvisning til saksdokument i Kartverkets eget arkiv. */
     TekstHolder: {
@@ -811,6 +805,10 @@ export interface components {
     /** @description Representasjon av en stemmekrets */
     StemmekretsResponse: {
       id: components["schemas"]["ObjektIdentifikator"];
+      /** @description Navnet på stemmekretsen */
+      navn: string;
+      /** @description Stemmekretsnummeret til stemmekretsen */
+      nummer: string;
       gyldighet: components["schemas"]["GyldighetResponse"];
       /** @description Typen endring som ble gjort på objektet */
       endringstype?: string;
@@ -824,10 +822,6 @@ export interface components {
        * @description Datafangsdato for objektet
        */
       datafangstdato?: string;
-      /** @description Navnet på stemmekretsen */
-      stemmekretsnavn: string;
-      /** @description Stemmekretsnummeret til stemmekretsen */
-      stemmekretsnummer: string;
       kommunenummer: components["schemas"]["Kommunenummer"];
       kommuneIdentifikator: components["schemas"]["ObjektIdentifikator"];
       /** @description Tellekretsnummer til stemmekretsen */
@@ -855,7 +849,8 @@ export interface components {
       id: components["schemas"]["ObjektIdentifikator"];
       /** @description Liste over navn til kommunen */
       navn: components["schemas"]["AdministrativEnhetNavn"][];
-      kommunenummer: components["schemas"]["Kommunenummer"];
+      /** @description Kommunenummeret til kommunen */
+      nummer: string;
       /** @description Angir om kommunen er et samisk forvaltningsområde eller ikke */
       samiskforvaltningsomraade: boolean;
       /**
@@ -876,7 +871,8 @@ export interface components {
       /** @description Navnet på grunnkretsen */
       navn: string;
       /** @description Grunnkretsnummeret til grunnkretsen */
-      grunnkretsnummer: string;
+      nummer: string;
+      /** @description Grunnkretsnummeret til grunnkretsen */
       gyldighet: components["schemas"]["GyldighetResponse"];
       /**
        * Format: date-time
@@ -922,7 +918,8 @@ export interface components {
       id: components["schemas"]["ObjektIdentifikator"];
       /** @description Liste over navn til fylket */
       navn: components["schemas"]["AdministrativEnhetNavn"][];
-      fylkesnummer: components["schemas"]["Fylkesnummer"];
+      /** @description Fylkesnummeret til fylket */
+      nummer: string;
       /** @description Angir om fylket er et samisk forvaltningsområde eller ikke */
       samiskforvaltningsomraade: boolean;
       /**

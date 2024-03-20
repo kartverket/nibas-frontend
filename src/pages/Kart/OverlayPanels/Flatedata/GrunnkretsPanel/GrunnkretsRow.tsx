@@ -24,7 +24,7 @@ const fromFormToRequest = (data: GrunnkretsInputs, grunnkrets: GrunnkretsRespons
   },
   version: grunnkrets.version,
   navn: data.grunnkretsnavn,
-  grunnkretsnummer: data.grunnkretsnummer,
+  nummer: data.grunnkretsnummer,
 });
 
 type Props = {
@@ -47,7 +47,7 @@ const GrunnkretsRow = ({ grunnkrets, kommuneId }: Props) => {
     formState: { isDirty },
   } = useForm<GrunnkretsInputs>({
     defaultValues: {
-      grunnkretsnummer: grunnkrets.grunnkretsnummer,
+      grunnkretsnummer: grunnkrets.nummer,
       grunnkretsnavn: grunnkrets.navn,
     },
   });
@@ -55,14 +55,14 @@ const GrunnkretsRow = ({ grunnkrets, kommuneId }: Props) => {
 
   useEffect(() => {
     setValue("grunnkretsnavn", grunnkrets.navn);
-    setValue("grunnkretsnummer", grunnkrets.grunnkretsnummer);
+    setValue("grunnkretsnummer", grunnkrets.nummer);
     previousValues.current = getValues();
   }, [getValues, setValue, grunnkrets]);
 
   const setFormValues = useCallback(
     (change: GrunnkretsEntry["changes"][number], direction: HistoryDirection) => {
       const newName = change[direction]?.navn;
-      const newNumber = change[direction]?.grunnkretsnummer;
+      const newNumber = change[direction]?.nummer;
       setValue("grunnkretsnavn", newName ?? "");
       setValue("grunnkretsnummer", newNumber ?? "");
 
