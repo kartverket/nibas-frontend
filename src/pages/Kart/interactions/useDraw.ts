@@ -4,7 +4,6 @@ import { pixelTolerance } from "./constants";
 import { useToolbar } from "contexts/ToolbarContext";
 import { noModifierKeys } from "ol/events/condition";
 import { grenseStyles } from "utils/map/layerStyles";
-import { editSource } from "hooks/layers/constants";
 import { useEditAllGrenser } from "contexts/EditGrenserContext/EditGrenserContext";
 import { getGrenseTypeFromEditingType } from "hooks/layers/types";
 import { useToast } from "@kvib/react";
@@ -23,6 +22,8 @@ import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import { Geometry } from "ol/geom";
 import { findNearbyVertexOnFeature } from "utils/map/map-utils";
 import useToastUnique from "hooks/toast/useToastUnique";
+import { addFeaturesToSource } from "utils/map/source";
+import { editSource } from "hooks/layers/constants";
 
 const useDraw = () => {
   const { activeTool, activeModeTools, toggleTool } = useToolbar();
@@ -51,7 +52,6 @@ const useDraw = () => {
 
     return new Draw({
       type: "LineString",
-      source: editSource,
       snapTolerance: pixelTolerance,
       style: grenseStyles.select,
       freehandCondition: () => false,
@@ -180,7 +180,9 @@ const useDraw = () => {
       const drawnFeatureGeometry = drawnFeature.getGeometry();
 
       // Skal ikke være mulig da tegneverktøyet bare skal være tilgjengelig i redigering
-      if (!editingType || !drawnFeatureGeometry) return;
+      if (!editingType || !drawnFeatureGeometry || drawnFeatureGeometry.getLength() === 0 || drawnFeatureGeometry.getCoordinates().length < 2) {
+        return;
+      }
 
       const newId = getTempFeatureId();
       drawnFeature.setId(newId);
@@ -194,6 +196,7 @@ const useDraw = () => {
       setDefaultFeatureProperties(drawnFeature, getGrenseTypeFromEditingType(editingType));
 
       addDrawToHistory(drawnFeature);
+      addFeaturesToSource("edit", [drawnFeature]);
 
       toast({
         status: "success",
