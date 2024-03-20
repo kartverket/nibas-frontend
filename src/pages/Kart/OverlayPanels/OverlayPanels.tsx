@@ -8,6 +8,7 @@ import { TegnforklaringPanel } from "./Tegnforklaring/TegnforklaringPanel";
 import KartlagPanel from "./Kartlag/KartlagPanel";
 import { SplittingPanel } from "./SplittingPanel/SplittingPanel";
 import InndelingerPanel from "./Inndelinger/InndelingerPanel";
+import NavigasjonPanel from "./NavigasjonPanel";
 
 const OverlayPanels = () => {
   const { activeOverlayPanel, activeOverlayModal } = useOverlayPanel();
@@ -25,6 +26,11 @@ const OverlayPanels = () => {
         isOpen={activeOverlayModal === "inndelinger-redigering" || activeOverlayModal === "inndelinger-visning"}
       />
 
+      <InndelingerPanel
+        isOpen={activeOverlayModal === "inndelinger-redigering" || activeOverlayModal === "inndelinger-visning"}
+      />
+
+      <NavigasjonPanel isOpen={activeOverlayModal === "navigasjon"} />
       <GrunnkretsPanel isOpen={activeOverlayModal === "grunnkrets"} />
       <StemmekretsPanel isOpen={activeOverlayModal === "stemmekrets"} />
     </>
