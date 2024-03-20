@@ -67,7 +67,7 @@ const useGetMuligeKretserForNyAdministrativGrense = (
         id: grunnkrets.id,
         kommuneId: grunnkrets.kommuneIdentifikator,
         navn: grunnkrets.navn,
-        nummer: grunnkrets.grunnkretsnummer,
+        nummer: grunnkrets.nummer,
         type: "GRUNNKRETS",
         version: grunnkrets.version,
       } as Krets;
@@ -77,8 +77,8 @@ const useGetMuligeKretserForNyAdministrativGrense = (
       return {
         id: stemmekrets.id,
         kommuneId: stemmekrets.kommuneIdentifikator,
-        navn: stemmekrets.stemmekretsnavn,
-        nummer: stemmekrets.stemmekretsnummer,
+        navn: stemmekrets.navn,
+        nummer: stemmekrets.nummer,
         type: "STEMMEKRETS",
         version: stemmekrets.version,
       } as Krets;

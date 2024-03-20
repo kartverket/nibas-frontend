@@ -17,16 +17,6 @@ type Props = {
   featuresUrl: string;
 };
 
-const getAdministrativEnhetNummer = (enhet: AdministrativEnhetResponse): string | null => {
-  if ("fylkesnummer" in enhet) {
-    return enhet.fylkesnummer.kodeverdi;
-  }
-  if ("kommunenummer" in enhet) {
-    return enhet.kommunenummer.kodeverdi;
-  }
-  return null;
-};
-
 export const getRepresentasjonspunktFeatureForAdministrativEnhet = (administrativEnhet: AdministrativEnhetResponse) => {
   return getFeatureFromGeoJson({
     ...administrativEnhet.representasjonspunkt,
@@ -34,7 +24,7 @@ export const getRepresentasjonspunktFeatureForAdministrativEnhet = (administrati
     properties: {
       ...administrativEnhet.representasjonspunkt.properties,
       name: getNavnInSpraak(administrativEnhet.navn, "nor"),
-      number: getAdministrativEnhetNummer(administrativEnhet),
+      number: administrativEnhet.nummer,
     },
   });
 };
@@ -83,10 +73,7 @@ const ToggleableAdministrativEnhet = ({ administrativEnhet, type, featuresUrl }:
         aria-label={kretsStatus.isVisible ? "Synlig" : "Usynlig"}
         icon={kretsStatus.isVisible ? "visibility" : "visibility_off"}
       />
-      <Title>{`${getAdministrativEnhetNummer(administrativEnhet)} ${getNavnInSpraak(
-        administrativEnhet.navn,
-        "nor",
-      )}`}</Title>
+      <Title>{`${administrativEnhet.nummer} ${getNavnInSpraak(administrativEnhet.navn, "nor")}`}</Title>
       {isLoading && <Spinner size="lg" color="var(--kvib-colors-blue-500)" />}
     </Wrapper>
   );

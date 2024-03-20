@@ -67,11 +67,7 @@ const getEndringAvTypeForId = (
 };
 
 const harMetadataEndring = (metadatEndring: StemmekretsMetadataEndring): boolean => {
-  const fieldsToCheck = [
-    metadatEndring.stemmekretsnavn,
-    metadatEndring.stemmekretsnummer,
-    metadatEndring.valgdistriktsnummer,
-  ];
+  const fieldsToCheck = [metadatEndring.navn, metadatEndring.nummer, metadatEndring.valgdistriktsnummer];
 
   return fieldsToCheck.some((field) => field !== null);
 };
@@ -88,8 +84,8 @@ const getMetadataEndringer = (
 
       return {
         kretsEndret: findKrets(stemmekretsId, alleStemmekretser),
-        stemmekretsnavn: getEndringAvType("stemmekretsnavn"),
-        stemmekretsnummer: getEndringAvType("stemmekretsnummer"),
+        navn: getEndringAvType("navn"),
+        nummer: getEndringAvType("nummer"),
         valgdistriktsnummer: getEndringAvType("valgdistriktsnummer"),
       };
     })
@@ -120,14 +116,14 @@ const getSammenslaaingEndring = (
   const gamleKretser = sammenslaaing.stemmekretserTilSammenslaaing
     .map((gammelKrets) => findKrets(gammelKrets.lokalId, alleStemmekretser))
     .map((gammelKrets) => ({
-      navn: gammelKrets.stemmekretsnavn,
-      nummer: gammelKrets.stemmekretsnummer,
+      navn: gammelKrets.navn,
+      nummer: gammelKrets.nummer,
     }));
 
   return {
     viderefoertKrets: krets,
-    nyttNavn: sammenslaaing.stemmekretsNavn ?? "",
-    nyttNummer: sammenslaaing.stemmekretsNummer ?? "",
+    nyttNavn: sammenslaaing.navn ?? "",
+    nyttNummer: sammenslaaing.nummer ?? "",
     gamleKretser,
   };
 };
@@ -150,8 +146,8 @@ const getStemmekretsSplittingEndringer = (
       const kretsSplittingEndring: KretsSplittingEndring = {
         opprinneligKrets: opprinneligKrets
           ? {
-              kretsNavn: opprinneligKrets.stemmekretsnavn,
-              kretsNummer: opprinneligKrets.stemmekretsnummer,
+              kretsNavn: opprinneligKrets.navn,
+              kretsNummer: opprinneligKrets.nummer,
             }
           : { kretsNavn: "ukjent", kretsNummer: "ukjent" },
         nyeKretser: splitting.nyeKretser,
@@ -169,12 +165,12 @@ const getEndringerForKommune = (
 ): Stemmekretsendringer => {
   const stemmekretserMedGrensejusteringer = getKretserMedGrensejusteringer(operasjoner, "STEMMEKRETS");
 
-  const kommune = alleKommuner.find((kommuneRef) => kommuneRef.kommunenummer.id === kommuneId);
+  const kommune = alleKommuner.find((kommuneResponse) => kommuneResponse.id.lokalid.value === kommuneId);
 
   return {
     kommune: {
       id: kommune?.id.lokalid.value ?? "",
-      nummer: kommune?.kommunenummer.kodeverdi ?? "",
+      nummer: kommune?.nummer ?? "",
       navn: getNavnInSpraak(kommune?.navn, "nor"),
     },
     metadataendringer: getMetadataEndringer(stemmekretserMedEndring, operasjoner, alleStemmekretser),

@@ -60,7 +60,7 @@ const getEndringAvTypeForId = (
 };
 
 const harMetadataEndring = (metadatEndring: GrunnkretsMetadataEndring): boolean => {
-  const fieldsToCheck = [metadatEndring.navn, metadatEndring.grunnkretsnummer];
+  const fieldsToCheck = [metadatEndring.navn, metadatEndring.nummer];
   return fieldsToCheck.some((field) => field !== null);
 };
 
@@ -77,7 +77,7 @@ const getMetadataEndringer = (
       return {
         kretsEndret: findKrets(grunnkretsId, alleGrunnkretser),
         navn: getEndringAvType("navn"),
-        grunnkretsnummer: getEndringAvType("grunnkretsnummer"),
+        nummer: getEndringAvType("nummer"),
       };
     })
     .filter(harMetadataEndring);
@@ -101,7 +101,7 @@ const getGrunnkretsSplittingEndringer = (
         opprinneligKrets: opprinneligKrets
           ? {
               kretsNavn: opprinneligKrets.navn,
-              kretsNummer: opprinneligKrets.grunnkretsnummer,
+              kretsNummer: opprinneligKrets.nummer,
             }
           : { kretsNavn: "ukjent", kretsNummer: "ukjent" },
         nyeKretser: splitting.nyeKretser,
@@ -120,12 +120,12 @@ const getEndringerForKommune = (
 ): Grunnkretsendringer => {
   const grunnkretserMedGrensejusteringer = getKretserMedGrensejusteringer(operasjoner, "GRUNNKRETS");
 
-  const kommune = alleKommuner.find((kommuneRef) => kommuneRef.kommunenummer.id === kommuneId);
+  const kommune = alleKommuner.find((kommuneResponse) => kommuneResponse.id.lokalid.value === kommuneId);
 
   return {
     kommune: {
       id: kommune?.id.lokalid.value ?? "",
-      nummer: kommune?.kommunenummer.kodeverdi ?? "",
+      nummer: kommune?.nummer ?? "",
       navn: getNavnInSpraak(kommune?.navn, "nor"),
     },
     metadataendringer: getMetadataEndringer(grunnkretserMedEndringer, operasjoner, alleGrunnkretser),
