@@ -44,8 +44,6 @@ const App = () => {
         {redirectAfterLogout}
         <Route path={routes.authentication} element={<ExternalPage />} />
         <Route element={<ProtectedPage />}>
-
-        
           <Route index element={<Landing />} />
           <Route path={routes.utkast}>
             <Route index element={<Utkast />} />
