@@ -144,11 +144,8 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
       </PanelHeader>
 
       <Stack spacing={8}>
-        <Heading as="h3" size="sm">
-          {`Hvilken ${editingType} skal splittes?`}
-        </Heading>
         <FormControl>
-          <FormLabel>{editingType?.charAt(0).toUpperCase().concat(editingType?.slice(1))}</FormLabel>
+          <FormLabel>{`Hvilken ${editingType} skal splittes?`}</FormLabel>
           <Select
             {...opprinneligKretsRegister}
             onChange={(e) => {
@@ -196,7 +193,6 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
                       <IconButton
                         onClick={() => {
                           remove(index);
-                          trigger();
                         }}
                         aria-label="fjern splitt"
                         icon="close"
