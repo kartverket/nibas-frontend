@@ -2,11 +2,14 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "pages/App/App";
+import ThirdPartyProviders from "pages/App/ThirdPartyProviders";
 
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const root = createRoot(document.getElementById("root")!);
 root.render(
   <React.StrictMode>
-    <App />
+    <ThirdPartyProviders>
+      <App />
+    </ThirdPartyProviders>
   </React.StrictMode>,
 );
