@@ -1,9 +1,9 @@
 name: Cypress Tests with Dependency and Artifact Caching
 
 on:
-    merge_group:
-    pull_request:
-      branches: [main]
+  pull_request:
+    branches: [main]
+  merge_group:
 
 jobs:
   install:
@@ -12,10 +12,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@kartverket'
+
+      - name: Update npmrc with secret to install internal packages
+        run: |
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.PAT_SCOPE_READ_PACKAGE }}" > .npmrc
+          
       - name: Cypress install
         uses: cypress-io/github-action@v6
         with:
-          # Disable running of tests within install job
           runTests: false
           build: npm run build
 
