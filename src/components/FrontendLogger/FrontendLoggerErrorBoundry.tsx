@@ -9,8 +9,12 @@ type ErrorState = {
   hasError: boolean;
 };
 
-export class ErrorBoundaryWithFrontendLogger extends React.Component<unknown, ErrorState> {
-  constructor(props: unknown) {
+type Props = {
+  authToken: string | null | undefined;
+};
+
+export class ErrorBoundaryWithFrontendLogger extends React.Component<Props, ErrorState> {
+  constructor(props: Props) {
     super(props);
     this.state = { hasError: false };
   }
@@ -18,6 +22,7 @@ export class ErrorBoundaryWithFrontendLogger extends React.Component<unknown, Er
   static getDerivedStateFromError() {
     return { hasError: true };
   }
+
   componentDidCatch(error: Error) {
     frontendLogger.error(error.message, error);
   }
