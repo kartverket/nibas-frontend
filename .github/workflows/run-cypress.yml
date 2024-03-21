@@ -1,12 +1,11 @@
 name: Cypress Tests with Dependency and Artifact Caching
 
 on:
-  pull_request:
-    branches: [main]
-  merge_group:
+  workflow_dispatch:
+  workflow_call:
 
 jobs:
-  install:
+  cypress-setup:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
@@ -23,34 +22,26 @@ jobs:
         run: |
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.PAT_SCOPE_READ_PACKAGE }}" > .npmrc
           
-      - name: Cypress install
-        uses: cypress-io/github-action@v6
-        with:
-          runTests: false
-          build: npm run build
+      - name: Install Cypress
+        run: npm ci
 
-      - name: Save build folder
-        uses: actions/upload-artifact@v4
-        with:
-          name: build
-          if-no-files-found: error
-          path: build
-
-  cypress-run:
-    runs-on: ubuntu-22.04
-    needs: install
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Download the build folder
+      - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
-          name: build
-          path: build
+          name: build-artifact
+          path: ./
+
+      - name: Install server to serve the build
+        run: npm install -g serve
+
+      - name: Serve the app
+        run: serve -s build -l 3000 &
+        shell: bash
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
-          start: npm start
+          start: ' '
+          wait-on: 'http://localhost:3000'
+          wait-on-timeout: 60
           browser: chrome
