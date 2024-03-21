@@ -1,37 +1,33 @@
 /// <reference types="cypress" />
-// ***********************************************
-// This example commands.ts shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-//
-// declare global {
-//   namespace Cypress {
-//     interface Chainable {
-//       login(email: string, password: string): Chainable<void>
-//       drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       visit(originalFn: CommandOriginalFn, url: string, options: Partial<VisitOptions>): Chainable<Element>
-//     }
-//   }
-// }
+/* eslint-disable @typescript-eslint/no-namespace */
+
+declare namespace Cypress {
+  interface Chainable {
+    login: () => void;
+  }
+}
+
+Cypress.Commands.add("login", () => {
+  const baseUrl = Cypress.env("baseUrl") ?? "http://localhost:3000";
+
+  cy.intercept("GET", `${baseUrl}/v1/authz/status`, (req) => {
+    req.reply({
+      statusCode: 200,
+      body: { authorized: true },
+    });
+  }).as("authzStatus");
+
+  cy.visit("/auth");
+  cy.contains("Logg inn i Nasjonal inndelingsbase").click();
+  cy.origin("https://login.test.idporten.no", () => {
+    cy.contains("TestID").click();
+  });
+  cy.origin("https://testid.test.idporten.no", () => {
+    cy.contains("Hent tilfeldig person").click();
+    cy.wait(200);
+    cy.get("#pid").invoke("val").should("have.length", 11);
+    cy.contains("Autentiser").click();
+  });
+  cy.url().should("equal", `${baseUrl}/`);
+  cy.contains("Gjør en eller flere endringer").should("exist");
+});

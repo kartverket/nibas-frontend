@@ -2,6 +2,8 @@ import { SWRConfig } from "swr";
 import { KvibProvider, extendTheme, withDefaultColorScheme, UseToastOptions, defaultKvibTheme } from "@kvib/react";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
+import { AuthProvider } from "react-oidc-context";
+import { getAuthConfigForCurrentEnvironment } from "components/Authentication/AuthenticationConfig";
 
 const emotionCache = createCache({
   key: "emotion-css-cache",
@@ -25,11 +27,13 @@ const defaultToastOptions: UseToastOptions = {
 
 const ThirdPartyProviders = ({ children }: { children: React.ReactNode }) => {
   return (
-    <CacheProvider value={emotionCache}>
-      <KvibProvider theme={customTheme} toastOptions={{ defaultOptions: defaultToastOptions }}>
-        <SWRConfig value={swrGlobalConfig}>{children}</SWRConfig>
-      </KvibProvider>
-    </CacheProvider>
+    <AuthProvider {...getAuthConfigForCurrentEnvironment()}>
+      <CacheProvider value={emotionCache}>
+        <KvibProvider theme={customTheme} toastOptions={{ defaultOptions: defaultToastOptions }}>
+          <SWRConfig value={swrGlobalConfig}>{children}</SWRConfig>
+        </KvibProvider>
+      </CacheProvider>
+    </AuthProvider>
   );
 };
 
