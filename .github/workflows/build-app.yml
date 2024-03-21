@@ -73,10 +73,6 @@ jobs:
         env:
           VITE_VERSION: ${{ steps.tag_version.outputs.new_version }}
 
-      # - name: Run cypress tests
-      #   run: |
-      #     npx cypress run
-
       - name: Remove npmrc with secret
         run: |
           rm .npmrc
