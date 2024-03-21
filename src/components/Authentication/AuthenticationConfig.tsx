@@ -1,0 +1,56 @@
+import { getCurrentEnvironment } from "components/FeatureToggle";
+
+const isLocalhost = () => {
+  const { hostname } = window.location;
+  return hostname.includes("localhost") || hostname.includes("127.0.0.1");
+};
+
+export const isAuthEnabled = () => {
+  return !isAuthDisabled();
+};
+
+export const isAuthDisabled = () => {
+  return isLocalhost() && import.meta.env["VITE_DISABLE_AUTH"] === "true";
+};
+
+type AuthConfig = {
+  authority: string;
+  client_id: string;
+  redirect_uri: string;
+};
+
+const prodConfig = {
+  authority: "https://idporten.no",
+  client_id: "174ec5ec-774b-4474-93ec-deb6369f84cd",
+  redirect_uri: "https://nibas.prod.skip.statkart.no/authenticated",
+};
+
+const testConfig = {
+  authority: "https://test.idporten.no",
+  client_id: "09a1784b-08ce-40ec-a2f6-20558ce09048",
+  redirect_uri: "https://nibas.test.skip.statkart.no/authenticated",
+};
+
+const devConfig = {
+  authority: "https://test.idporten.no",
+  client_id: "5b7a1c5a-4fc9-46d6-bf4b-5292f123175d",
+  redirect_uri: "https://nibas.dev.skip.statkart.no/authenticated",
+};
+
+const localConfig = {
+  authority: "https://test.idporten.no",
+  client_id: "91a73378-76d8-40cd-af04-6b7ce3d87667",
+  redirect_uri: "http://localhost:3000/authenticated",
+};
+
+export const getAuthConfigForCurrentEnvironment = (): AuthConfig => {
+  const environment = getCurrentEnvironment();
+  switch (environment) {
+    case "dev":
+      return isLocalhost() ? localConfig : devConfig;
+    case "test":
+      return testConfig;
+    case "prod":
+      return prodConfig;
+  }
+};

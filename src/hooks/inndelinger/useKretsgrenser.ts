@@ -1,5 +1,4 @@
 import { useContext, useMemo, useState } from "react";
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import useNibasApi from "../useNibasApi";
@@ -23,6 +22,7 @@ import {
   getFeaturesConnectedToFeatureAtEndpoints,
   isFeatureDeadEnd,
 } from "utils/features";
+import { useAuthentication } from "components/Authentication/AuthenticationHook";
 
 const getKretserByKommuneUrl = (type: Kretstype) => {
   if (type === "grunnkrets") {
@@ -56,7 +56,7 @@ const getRepresentasjonspunktFeatureForKrets = (krets: StemmekretsResponse | Gru
 
 const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
   const kretsStatus = useEditGrenseValue(type, kommuneId);
-  const { tokenHolderFunc } = useAuthenticationFlow();
+  const { token } = useAuthentication();
   const { utkast } = useUtkast();
   const {
     setAndSaveDirtyStyles,
@@ -147,7 +147,7 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
       sammenslaaingsIder = [sammenslaaing.viderefoertStemmekrets.lokalId, ...innlemmedeStemmekretsIder];
     }
 
-    const promiseStemmekretsFeatureIds = stemmekretsgrenserFetcher(sammenslaaingsIder, tokenHolderFunc()?.token);
+    const promiseStemmekretsFeatureIds = stemmekretsgrenserFetcher(sammenslaaingsIder, token);
 
     promiseStemmekretsFeatureIds.then((stemmekretsFeatureIds) => {
       if (stemmekretsFeatureIds.length > 0) {

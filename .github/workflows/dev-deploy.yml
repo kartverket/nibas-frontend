@@ -13,7 +13,7 @@ jobs:
       packages: write
       security-events: write
       actions: read
-    uses: kartverket/nibas-frontend/.github/workflows/build-app.yml@main
+    uses: kartverket/nibas-frontend/.github/workflows/build-app.yml@bedre-authentication
     with:
       deploy_ghcr: true
     secrets: inherit
