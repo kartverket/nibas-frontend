@@ -1,5 +1,4 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { useMatch } from "react-router-dom";
 import { useSWRConfig } from "swr";
@@ -31,16 +30,17 @@ import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { FeatureIdWithEndpoints, getAllFeatureEndPointCoordinates, isFeatureDeadEnd } from "utils/features";
 import { useEditAllGrenser } from "contexts/EditGrenserContext/EditGrenserContext";
 import { resetMapView } from "utils/map/map-utils";
+import { useAuth } from "react-oidc-context";
 import { removeNil } from "utils/list-utils";
 
 export const UtkastContext = createContext<UtkastContextValue | undefined>(undefined);
 
 export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const [utkast, setUtkast] = useState<UtkastResponse>();
+  const auth = useAuth();
 
   const { history, clearHistory } = useHistory();
   const { addDirtyStyles, addErrorStyles, clearFeatureStyles } = useFeatureStyle();
-  const { tokenHolderFunc } = useAuthenticationFlow();
   const { resetAndClearAllLayers } = useEditAllGrenser();
   const { closeOverlayPanel } = useOverlayPanel();
   const { closeSidebarPanel } = useSidebarPanel();
@@ -146,12 +146,12 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const updateUtkast = async (id: string, newUtkast: OppdaterUtkastRequest, shouldClearHistory: boolean = true) => {
-    const response = await updateUtkastApi(id, toCleanUtkast(newUtkast), tokenHolderFunc()?.token);
+    const response = await updateUtkastApi(id, toCleanUtkast(newUtkast), auth.user?.access_token);
 
     if (statusCode.isSuccessful(response.status)) {
       const updatedUtkast = (await response.json()) as UtkastResponse;
       await mutate(updatedUtkast);
-      await globalMutate(["/v1/utkast", tokenHolderFunc()?.token]);
+      await globalMutate(["/v1/utkast", auth.user?.access_token]);
       if (shouldClearHistory) clearHistory();
 
       // Ved lagring av utkast ble det mismatch mellom state i OpenLayers og state i react
