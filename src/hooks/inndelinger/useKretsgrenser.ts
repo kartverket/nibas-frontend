@@ -48,8 +48,8 @@ const getRepresentasjonspunktFeatureForKrets = (krets: StemmekretsResponse | Gru
     id: getRepresentasjonspunktId(krets.id.lokalid.value),
     properties: {
       ...krets.representasjonspunkt.properties,
-      name: (krets as StemmekretsResponse).stemmekretsnavn || (krets as GrunnkretsResponse).navn,
-      number: (krets as StemmekretsResponse).stemmekretsnummer || (krets as GrunnkretsResponse).grunnkretsnummer,
+      name: krets.navn,
+      number: krets.nummer,
     },
   });
 };

@@ -6,7 +6,7 @@ const useKommuner = (fylkeId: string, shouldFetch = true) => {
   });
 
   const sortedKommuner = kommuner?.sort((a, b) => {
-    return Number(a.kommunenummer.kodeverdi) - Number(b.kommunenummer.kodeverdi);
+    return Number(a.nummer) - Number(b.nummer);
   });
 
   return {

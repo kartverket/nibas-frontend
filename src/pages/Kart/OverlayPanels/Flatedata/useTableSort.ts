@@ -1,10 +1,10 @@
 import { useState } from "react";
 
-export const useTableSort = (properties: string[]) => {
-  const [sortProperty, setSortProperty] = useState<(typeof properties)[number]>(properties[0]);
+export const useTableSort = <T>(properties: (keyof T)[]) => {
+  const [sortProperty, setSortProperty] = useState(properties[0]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
-  const onSort = (property: string) => {
+  const onSort = (property: keyof T) => {
     if (property === sortProperty) {
       if (sortOrder === "asc") {
         setSortOrder("desc");
@@ -19,7 +19,7 @@ export const useTableSort = (properties: string[]) => {
     }
   };
 
-  const sortHeaderProps = (property: string) => ({
+  const sortHeaderProps = (property: keyof T) => ({
     onClick: () => onSort(property),
     isActivated: sortProperty === property,
     isReversed: sortProperty === property && sortOrder === "desc",

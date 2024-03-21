@@ -14,9 +14,9 @@ import { Modal, ModalContent, ModalOverlay, Spinner } from "@kvib/react";
 
 const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
   const { utkast } = useUtkast();
-  const { sortProperty, sortOrder, sortHeaderProps } = useTableSort([
-    "stemmekretsnummer",
-    "stemmekretsnavn",
+  const { sortProperty, sortOrder, sortHeaderProps } = useTableSort<StemmekretsResponse>([
+    "nummer",
+    "navn",
     "valgdistriktsnummer",
   ]);
 
@@ -38,8 +38,8 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
           <KretsTable $hasUtkast={utkast != null}>
             <thead>
               <tr>
-                <SortHeader {...sortHeaderProps("stemmekretsnummer")}>Stemmekretsnummer</SortHeader>
-                <SortHeader {...sortHeaderProps("stemmekretsnavn")}>Stemmekretsnavn</SortHeader>
+                <SortHeader {...sortHeaderProps("nummer")}>Stemmekretsnummer</SortHeader>
+                <SortHeader {...sortHeaderProps("navn")}>Stemmekretsnavn</SortHeader>
                 <SortHeader {...sortHeaderProps("valgdistriktsnummer")}>Valgdistriktsnummer</SortHeader>
                 {utkast && <th>{/* Tom plass for knapp i rader */}</th>}
               </tr>
