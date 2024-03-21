@@ -1,4 +1,3 @@
-import ThirdPartyProviders from "./ThirdPartyProviders";
 import { KartlagProvider } from "contexts/KartlagContext/KartlagContext";
 import { EditGrenserProvider } from "contexts/EditGrenserContext/EditGrenserContext";
 import { SidebarPanelProvider } from "contexts/SidebarPanelContext";
@@ -12,27 +11,25 @@ import { ConfirmationModalProvider } from "contexts/ConfirmationModalContext";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
-    <ThirdPartyProviders>
-      <ErrorHandlingProvider>
-        <ConfirmationModalProvider>
-          <HistoryProvider>
-            <FeatureStyleProvider>
-              <ToolbarProvider>
-                <SidebarPanelProvider>
-                  <OverlayPanelProvider>
-                    <EditGrenserProvider>
-                      <KartlagProvider>
-                        <UtkastProvider>{children}</UtkastProvider>
-                      </KartlagProvider>
-                    </EditGrenserProvider>
-                  </OverlayPanelProvider>
-                </SidebarPanelProvider>
-              </ToolbarProvider>
-            </FeatureStyleProvider>
-          </HistoryProvider>
-        </ConfirmationModalProvider>
-      </ErrorHandlingProvider>
-    </ThirdPartyProviders>
+    <ErrorHandlingProvider>
+      <ConfirmationModalProvider>
+        <HistoryProvider>
+          <FeatureStyleProvider>
+            <ToolbarProvider>
+              <SidebarPanelProvider>
+                <OverlayPanelProvider>
+                  <EditGrenserProvider>
+                    <KartlagProvider>
+                      <UtkastProvider>{children}</UtkastProvider>
+                    </KartlagProvider>
+                  </EditGrenserProvider>
+                </OverlayPanelProvider>
+              </SidebarPanelProvider>
+            </ToolbarProvider>
+          </FeatureStyleProvider>
+        </HistoryProvider>
+      </ConfirmationModalProvider>
+    </ErrorHandlingProvider>
   );
 };
 

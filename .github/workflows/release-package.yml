@@ -21,6 +21,12 @@ jobs:
       deploy_ghcr: true
     secrets: inherit
 
+  test:
+    permissions:
+      actions: read
+    uses: kartverket/nibas-frontend/.github/workflows/test-app.yml@main
+    secrets: inherit
+
   pharos:
     name: Run Pharos security scan
     needs: build
@@ -38,7 +44,7 @@ jobs:
           image_url: ${{ needs.build.outputs.image_url }}
 
   deploy-argo:
-    needs: build
+    needs: [build, test]
     uses: kartverket/smia-apps/.github/workflows/release-app.yml@main
     with:
       application: nibas-frontend
