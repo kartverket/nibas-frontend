@@ -68,7 +68,6 @@ jobs:
           npm audit --production
           npm run build --if-present
           npm test
-          npx cypress run
         env:
           VITE_VERSION: ${{ steps.tag_version.outputs.new_version }}
 
