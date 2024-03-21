@@ -1,4 +1,3 @@
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { getRepresentasjonspunktFeatureForAdministrativEnhet } from "components/GrenserDrillDown/ToggleableAdministrativEnhet/ToggleableAdministrativEnhet";
 import useAddInndelingerKontekst from "hooks/useAddInndelingerKontekst";
 import { useEffect, useMemo, useState } from "react";
@@ -7,6 +6,7 @@ import { FeatureCollection } from "types/api";
 import { fetcherWithToken, getIdFromEntity } from "utils/api";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 import useKommuner from "./useKommuner";
+import { useAuth } from "react-oidc-context";
 
 const kommunegrenserFetcher = async ([kommuneIds, token]: [string[], string | undefined]) => {
   const promises: Promise<FeatureCollection>[] = kommuneIds.map(async (kommuneId) =>
@@ -27,10 +27,10 @@ const kommunegrenserFetcher = async ([kommuneIds, token]: [string[], string | un
 const useKommunegrenser = (fylkeId: string, shouldFetch: boolean) => {
   const [isFetching, setIsFetching] = useState(false);
   const { kommuner: kommunerResponse } = useKommuner(fylkeId, shouldFetch);
+  const auth = useAuth();
   const kommuneIds = kommunerResponse?.map(getIdFromEntity) ?? [];
-  const { tokenHolderFunc } = useAuthenticationFlow();
   const { data: geoJsonFeatures } = useSWRImmutable(
-    shouldFetch ? [kommuneIds, tokenHolderFunc()?.token] : null,
+    shouldFetch ? [kommuneIds, auth.user?.access_token] : null,
     kommunegrenserFetcher,
   );
   useEffect(() => {
