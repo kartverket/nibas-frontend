@@ -106,7 +106,7 @@ jobs:
           path: ./build
 
   trigger-cypress:
-    needs: [build] # Ensure this job runs after the build job
+    needs: [build]
     runs-on: ubuntu-latest
     permissions:
       actions: write
@@ -117,4 +117,4 @@ jobs:
         with:
           workflow: Cypress Tests with Dependency and Artifact Caching
           token: ${{ secrets.GITHUB_TOKEN }}
-          ref: ${{ github.ref }}
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}
