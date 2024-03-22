@@ -37,6 +37,9 @@ const Panel = styled.div<{ $isOpen: boolean }>`
   border-radius: 12px;
   box-shadow: 4px 4px 12px 0 rgba(0, 0, 0, 0.15);
   overflow: auto;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 20px;
   ${(props) => !props.$isOpen && "display: none"};
   z-index: ${zindex.panel};
 `;

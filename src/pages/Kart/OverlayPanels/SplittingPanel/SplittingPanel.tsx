@@ -143,7 +143,7 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
         Splitt en flate
       </PanelHeader>
 
-      <Stack spacing={8}>
+      <SplittPanel>
         <FormControl>
           <FormLabel>{`Hvilken ${editingType} skal splittes?`}</FormLabel>
           <Select
@@ -237,7 +237,13 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
             </StyledButtonGroup>
           </>
         )}
-      </Stack>
+      </SplittPanel>
     </SidePanel>
   );
 };
+
+const SplittPanel = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;

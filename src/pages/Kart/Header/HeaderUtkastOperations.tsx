@@ -4,11 +4,14 @@ import UtkastSlettModal from "components/Modals/UtkastSlettModal";
 import UtkastPubliserModal from "components/Modals/UtkastPubliserModal";
 import { useUtkastEndringer } from "components/Endringslogg/hooks/useUtkastEndringer";
 import { UtkastResponse } from "types/api";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
 
 const HeaderUtkastOperations = ({ utkast }: { utkast: UtkastResponse }) => {
   const { harEndringer } = useUtkastEndringer(utkast);
   const { isOpen: isPubliserOpen, onClose: onPubliserClose, onOpen: onPubliserOpen } = useDisclosure();
   const { isOpen: isSlettOpen, onClose: onSlettClose, onOpen: onSlettOpen } = useDisclosure();
+
+  const { openOverlayPanel } = useOverlayPanel();
 
   return (
     <HeaderSection>
@@ -17,7 +20,14 @@ const HeaderUtkastOperations = ({ utkast }: { utkast: UtkastResponse }) => {
         icon="upload"
         onClick={onPubliserOpen}
         isDisabled={!harEndringer}
-        tooltip={{ text: "Publiser alle endringene i dette utkastet" }}
+        tooltip={{ text: "Valider og publiser endringer i utkastet" }}
+      />
+      <HeaderButton
+        label="Valider og publiser utkast"
+        icon="checklist"
+        onClick={() => openOverlayPanel("validerpubliser")}
+        isDisabled={!harEndringer}
+        tooltip={{ text: "Valider og publiser endringer i utkastet" }}
       />
       <HeaderButton
         label="Slett utkast"
