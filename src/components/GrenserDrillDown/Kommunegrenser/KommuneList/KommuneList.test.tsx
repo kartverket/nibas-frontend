@@ -9,10 +9,7 @@ const defaultProps: React.ComponentProps<typeof KommuneList> = {
       lokalid: { value: "2" },
     },
     navn: [{ navn: "Fylke", spraak: "nor", version: 1 }],
-    fylkesnummer: {
-      id: "id",
-      kodeverdi: "1234",
-    },
+    nummer: "1234",
     samiskforvaltningsomraade: false,
     oppdateringsdato: "",
     representasjonspunkt: {

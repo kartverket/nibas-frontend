@@ -14,7 +14,7 @@ const defaultProps: React.ComponentProps<typeof FutureChangesTable<GrunnkretsRes
           id: "1",
           cells: [
             futureChange.navn,
-            futureChange.grunnkretsnummer,
+            futureChange.nummer,
             futureChange.oppdateringsdato,
             futureChange.endringstype,
             futureChange.gyldighet.gyldigFra,

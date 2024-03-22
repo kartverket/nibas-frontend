@@ -65,19 +65,7 @@ export const applyNonFeatureUtkast = <T extends NonNullable<UtkastEntity>>(
   const utkastSlice = utkast.operasjoner.metadataendringer?.[type];
   if (utkastSlice == null) return entity;
 
-  if (Array.isArray(entity) && type === "stemmekretsendringer") {
-    // navn på stemmekrets har forskjellig field på StemmekretsResponse og StemmekretsRequest
-
-    return entity.map((e) => {
-      const utkastForEntity = utkast.operasjoner.metadataendringer?.[type]?.[getIdFromEntity(e)];
-
-      return {
-        ...e,
-        ...utkastForEntity,
-        navn: utkastForEntity?.stemmekretsnavn,
-      };
-    });
-  } else if (Array.isArray(entity)) {
+  if (Array.isArray(entity)) {
     return entity.map((e) => getCombinedEntity(e, utkastSlice));
   }
 
