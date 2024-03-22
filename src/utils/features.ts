@@ -1,15 +1,15 @@
-import { GrenseType, LayerId, getEditingTypeFromGrenseType } from "hooks/layers/types";
+import { GrenseType, LayerId, editableGrenseTypes, getEditingTypeFromGrenseType } from "hooks/layers/types";
 import { MetadataDiscriminator, getMetadataDiscriminatorFromType, isAdministrativGrense } from "./grenser";
 import { Feature } from "ol";
 import { Geometry, LineString } from "ol/geom";
 import { FeatureProperties, KontekstEgenskaper, Metadata } from "types/api";
 import { FeatureLike } from "ol/Feature";
-import { grenserLayers, editableBorderTypes } from "hooks/layers/constants";
+import { grenserLayers } from "hooks/layers/constants";
 import { getRepresentasjonspunktId } from "./map/source";
 import { previousCoordinateKey } from "pages/Kart/interactions/constants";
 import { Coordinate, equals } from "ol/coordinate";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
-import { isNotNil } from "./type-utils";
+import { isGrenseType, isNotNil } from "./type-utils";
 
 export const setDefaultFeatureProperties = (feature: Feature<Geometry>, grenseType: GrenseType | undefined) => {
   if (!grenseType) return;
@@ -201,9 +201,9 @@ export const getDefaultFeatureProperties = (grenseType: GrenseType): FeatureProp
 export const isFeatureEditable = (feature: FeatureLike, isArchived: boolean) => {
   const isMetadataEditable = isFeatureMetadataEditable(feature, isArchived);
 
-  const featureType = feature.get("type") as GrenseType;
+  const featureType = feature.get("type");
 
-  if (isAdministrativGrense(featureType)) {
+  if (isGrenseType(featureType) && isAdministrativGrense(featureType)) {
     if (isTempFeatureId(feature.getId())) return true;
 
     const properties = feature.getProperties() as FeatureProperties;
@@ -234,10 +234,8 @@ export const isFeatureEditable = (feature: FeatureLike, isArchived: boolean) => 
 };
 
 export const isFeatureMetadataEditable = (feature: FeatureLike, isArchived: boolean) => {
-  const featureType = feature.get("type") as GrenseType;
-
-  const isEditableFeatureType = editableBorderTypes.includes(featureType);
-
+  const featureType = feature.get("type");
+  const isEditableFeatureType = isGrenseType(featureType) && editableGrenseTypes.includes(featureType);
   return isEditableFeatureType && !isArchived;
 };
 

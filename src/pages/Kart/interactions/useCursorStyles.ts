@@ -19,7 +19,7 @@ type CursorStyleProps = {
   eventsAndCursor?: EventAndCursor[];
 };
 
-const isCustomEventName = (value: string): value is CustomEventName => {
+const isCustomEventName = (value: EventName | CustomEventName): value is CustomEventName => {
   return value === "mouseup" || value === "mousedown";
 };
 
@@ -55,60 +55,59 @@ export const useCursorStyles = ({ isEnabled, defaultCursor, eventsAndCursor }: C
 
     const addCustomEventListeners = () => {
       // CustomEvents får ikke openlayers event sendt inn. Disse får vanlige html event basert på eventname som gis.
-      const customEvents = eventsAndCursor?.filter((event) => isCustomEventName(event.name));
-      customEvents?.forEach((event) => {
-        const callback = (e: Event | BaseEvent) => {
-          mapViewportStyle.cursor = event.cursor(e);
-        };
-        map.getTargetElement().addEventListener(event.name, callback);
-        event.callback = callback;
-      });
+      if (eventsAndCursor) {
+        const customEvents = eventsAndCursor.filter((event) => isCustomEventName(event.name));
+        for (const event of customEvents) {
+          const callback = (e: Event | BaseEvent) => {
+            mapViewportStyle.cursor = event.cursor(e);
+          };
+          map.getTargetElement().addEventListener(event.name, callback);
+          event.callback = callback;
+        }
+      }
     };
 
-    const addEventListeners = (events?: EventAndCursor[]) => {
+    const addEventListeners = (events: EventAndCursor[]) => {
       map.on("pointermove", setDefaultCursor);
 
-      const olEvents = events?.filter((event) => !isCustomEventName(event.name));
+      const olEvents = events.filter((event) => !isCustomEventName(event.name));
 
-      olEvents?.forEach((event) => {
+      for (const event of olEvents) {
         const callback = (e: Event | BaseEvent) => {
           mapViewportStyle.cursor = event.cursor(e);
         };
-        const eventName = event.name as EventName;
-        map.on(eventName, callback);
-        event.callback = callback;
-      });
+        const eventName = event.name;
+        if (!isCustomEventName(eventName)) {
+          map.on(eventName, callback);
+          event.callback = callback;
+        }
+      }
 
       map.once("postrender", addCustomEventListeners); // legger til dom events når mappet har rendret ferdig
     };
 
-    const removeEventListeners = (events?: EventAndCursor[]) => {
+    const removeEventListeners = (events: EventAndCursor[]) => {
       map.un("pointermove", setDefaultCursor);
 
-      const customEvents = events?.filter((event) => isCustomEventName(event.name));
-      const olEvents = events?.filter((event) => !isCustomEventName(event.name));
-
-      olEvents?.forEach((event) => {
+      for (const event of events) {
         if (event.callback) {
-          const eventName = event.name as EventName;
-          map.un(eventName, event.callback);
+          if (isCustomEventName(event.name)) {
+            map.getTargetElement()?.removeEventListener(event.name, event.callback);
+          } else {
+            map.un(event.name, event.callback);
+          }
         }
-      });
+      }
 
-      customEvents?.forEach((event) => {
-        if (event.callback) {
-          map.getTargetElement()?.removeEventListener(event.name, event.callback);
-        }
-      });
       map.un("postrender", addCustomEventListeners);
     };
 
     if (isEnabled) {
-      addEventListeners(eventsAndCursor);
+      if (eventsAndCursor) addEventListeners(eventsAndCursor);
       mapViewportStyle.cursor = defaultCursor ? defaultCursor() : "";
     }
     return () => {
-      removeEventListeners(eventsAndCursor);
+      if (eventsAndCursor) removeEventListeners(eventsAndCursor);
       mapViewportStyle.cursor = "";
     };
   }, [defaultCursor, eventsAndCursor, isEnabled, mapViewportStyle]);
