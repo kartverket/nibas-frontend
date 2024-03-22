@@ -48,7 +48,7 @@ export function groupEndringerByKommune(
   return endredeKretser
     .map((kretsId) => {
       const krets = alleKretser.find((s) => s.id.lokalid.value === kretsId);
-      return [kretsId, krets?.kommunenummer.id];
+      return [kretsId, krets?.kommuneIdentifikator.lokalid.value];
     })
     .reduce((acc: { [key: string]: string[] }, [stemmekretsid, kommune]) => {
       if (kommune == null) {
