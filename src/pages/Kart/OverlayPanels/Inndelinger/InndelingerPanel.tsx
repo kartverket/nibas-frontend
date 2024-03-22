@@ -8,7 +8,7 @@ import { useState } from "react";
 import useFylker from "hooks/inndelinger/useFylker";
 import useKommuner from "hooks/inndelinger/useKommuner";
 import { styled } from "styled-components";
-import { Inndeling, InndelingSelectable } from "./Inndeling";
+import Inndeling from "./Inndeling";
 
 const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
   const [selectedKretstype, setSelectedKretstype] = useState<Kretstype | null>(null);
@@ -101,7 +101,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
               fylker?.map((fylke) => {
                 const fylkeId = getIdFromEntity(fylke);
                 return (
-                  <InndelingSelectable
+                  <Inndeling
                     key={fylkeId}
                     inndelingId={fylkeId}
                     isActive={selectedFylkeId === fylkeId}
@@ -109,8 +109,8 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
                     rightIcon={inndelingIcon(fylkeId, false)}
                     kretstype="fylker"
                   >
-                    {`${fylke.fylkesnummer.kodeverdi} ${getNavnInSpraak(fylke.navn, "nor")}`}
-                  </InndelingSelectable>
+                    {`${fylke.nummer} ${getNavnInSpraak(fylke.navn, "nor")}`}
+                  </Inndeling>
                 );
               })}
           </InndelingerList>
@@ -120,7 +120,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
               kommuner?.map((kommune) => {
                 const kommuneId = getIdFromEntity(kommune);
                 return (
-                  <InndelingSelectable
+                  <Inndeling
                     key={kommuneId}
                     inndelingId={kommuneId}
                     isActive={selectedFylkeId === kommuneId}
@@ -128,8 +128,8 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
                     rightIcon={inndelingIcon(kommuneId, true)}
                     kretstype={selectedKretstype}
                   >
-                    {`${kommune.kommunenummer.kodeverdi} ${getNavnInSpraak(kommune.navn, "nor")}`}
-                  </InndelingSelectable>
+                    {`${kommune.nummer} ${getNavnInSpraak(kommune.navn, "nor")}`}
+                  </Inndeling>
                 );
               })}
           </InndelingerList>

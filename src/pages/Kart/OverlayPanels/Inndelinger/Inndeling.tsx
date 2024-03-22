@@ -8,21 +8,14 @@ type Props = {
   onClick: () => void;
   rightIcon: MaterialSymbol;
   children: React.ReactNode;
-};
-
-type SelectableProps = Props & {
-  inndelingId: string;
+  inndelingId?: string;
 };
 
 const Inndeling = (props: Props) => {
   return <Container {...props}>{props.children}</Container>;
 };
 
-const InndelingSelectable = (props: SelectableProps) => {
-  return <Inndeling {...props}>{props.children}</Inndeling>;
-};
-
-export { Inndeling, InndelingSelectable };
+export default Inndeling;
 
 const Container = styled(Button).attrs({
   variant: "ghost",
