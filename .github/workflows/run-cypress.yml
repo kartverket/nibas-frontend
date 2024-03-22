@@ -1,6 +1,7 @@
 name: Cypress Tests with Dependency and Artifact Caching
 
 on:
+  workflow_dispatch:
   workflow_call:
 
 jobs:

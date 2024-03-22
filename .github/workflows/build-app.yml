@@ -105,8 +105,22 @@ jobs:
           name: build-artifact
           path: ./build
 
-  trigger-cypress:
+  prepare_ref:
     needs: [build]
+    runs-on: ubuntu-latest
+    outputs:
+      ref: ${{ steps.set_ref.outputs.ref }}
+    steps:
+      - id: set_ref
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "::set-output name=ref::${{ github.head_ref }}"
+          else
+            echo "::set-output name=ref::${{ github.ref_name }}"
+          fi
+
+  trigger-cypress:
+    needs: [prepare_ref]
     runs-on: ubuntu-latest
     permissions:
       actions: write
@@ -117,4 +131,4 @@ jobs:
         with:
           workflow: Cypress Tests with Dependency and Artifact Caching
           token: ${{ secrets.GITHUB_TOKEN }}
-          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}
+          ref: ${{ needs.prepare_ref.outputs.ref }}
