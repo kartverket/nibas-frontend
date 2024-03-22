@@ -1,6 +1,7 @@
 import { addToList, removeNull } from "utils/list-utils";
 import { components } from "../../../types/api-gen";
 import { GrunnkretsResponse, StemmekretsResponse, UtkastOperasjoner } from "../../../types/api";
+import { isNotNil } from "utils/type-utils";
 
 export type OperasjonerOrNull = UtkastOperasjoner | null | undefined;
 
@@ -16,23 +17,22 @@ export const getKretserMedGrensejusteringer = (
 
   const endredeFeatures = removeNull(Object.values(endredeFeaturesMap)) as components["schemas"]["Feature"][];
 
-  return removeNull(
-    endredeFeatures
-      .filter((feature) => feature.properties.kontekstEgenskaper !== null)
-      .flatMap((feature) => {
-        const kontekstEgenskaperArray = Array.isArray(feature.properties.kontekstEgenskaper)
-          ? feature.properties.kontekstEgenskaper
-          : feature.properties.kontekstEgenskaper
-            ? [feature.properties.kontekstEgenskaper]
-            : [];
+  return endredeFeatures
+    .filter((feature) => feature.properties.kontekstEgenskaper !== null)
+    .flatMap((feature) => {
+      const kontekstEgenskaperArray = Array.isArray(feature.properties.kontekstEgenskaper)
+        ? feature.properties.kontekstEgenskaper
+        : feature.properties.kontekstEgenskaper
+          ? [feature.properties.kontekstEgenskaper]
+          : [];
 
-        const filteredKontekstEgenskaper = kontekstEgenskaperArray.filter(
-          (kontekstEgenskaper) => kontekstEgenskaper.type === type,
-        );
+      const filteredKontekstEgenskaper = kontekstEgenskaperArray.filter(
+        (kontekstEgenskaper) => kontekstEgenskaper.type === type,
+      );
 
-        return filteredKontekstEgenskaper.map((kontekstEgenskaper) => kontekstEgenskaper.id?.lokalid?.value);
-      }),
-  );
+      return filteredKontekstEgenskaper.map((kontekstEgenskaper) => kontekstEgenskaper.id?.lokalid?.value);
+    })
+    .filter(isNotNil);
 };
 
 /**
