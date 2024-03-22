@@ -1,9 +1,10 @@
 name: Cypress Tests with Dependency and Artifact Caching
 
 on:
-  pull_request:
-    branches: [main]
-  merge_group:
+  workflow_run:
+    workflows: ["Build app"]
+    types: 
+      - completed
 
 jobs:
   cypress-setup:
