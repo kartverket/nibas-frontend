@@ -98,3 +98,37 @@ jobs:
         run: |
           echo "image_url=${{ env.registry }}/${{ github.repository }}@${{ steps.build.outputs.digest }}" >> $GITHUB_OUTPUT
           echo "digest=${{ steps.build.outputs.digest }}" >> $GITHUB_OUTPUT
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifact
+          path: ./build
+
+  prepare_ref:
+    needs: [build]
+    runs-on: ubuntu-latest
+    outputs:
+      ref: ${{ steps.set_ref.outputs.ref }}
+    steps:
+      - id: set_ref
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "::set-output name=ref::${{ github.head_ref }}"
+          else
+            echo "::set-output name=ref::${{ github.ref_name }}"
+          fi
+
+  trigger-cypress:
+    needs: [prepare_ref]
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Trigger Cypress Workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: Cypress Tests with Dependency and Artifact Caching
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ needs.prepare_ref.outputs.ref }}

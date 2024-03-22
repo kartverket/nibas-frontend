@@ -1,0 +1,47 @@
+name: Cypress Tests with Dependency and Artifact Caching
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  cypress-setup:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@kartverket'
+
+      - name: Update npmrc with secret to install internal packages
+        run: |
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.PAT_SCOPE_READ_PACKAGE }}" > .npmrc
+          
+      - name: Install Cypress
+        run: npm ci
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifact
+          path: ./build
+
+      - name: Install server to serve the build
+        run: npm install -g serve
+
+      - name: Serve the app
+        run: serve -s build -l 3000 &
+        shell: bash
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          start: ' '
+          wait-on: 'http://localhost:3000'
+          wait-on-timeout: 60
+          browser: chrome
