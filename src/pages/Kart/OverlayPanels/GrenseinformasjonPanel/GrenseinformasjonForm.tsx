@@ -214,6 +214,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
                   }
                 }}
                 defaultSelected={date}
+                colorScheme="blue"
               />
             );
           }}
