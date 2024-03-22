@@ -98,3 +98,23 @@ jobs:
         run: |
           echo "image_url=${{ env.registry }}/${{ github.repository }}@${{ steps.build.outputs.digest }}" >> $GITHUB_OUTPUT
           echo "digest=${{ steps.build.outputs.digest }}" >> $GITHUB_OUTPUT
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifact
+          path: ./build
+
+  trigger-cypress:
+    needs: [build]
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Trigger Cypress Workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: Cypress Tests with Dependency and Artifact Caching
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}
