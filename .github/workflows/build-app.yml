@@ -104,3 +104,17 @@ jobs:
         with:
           name: build-artifact
           path: ./build
+
+  trigger-cypress:
+    needs: [build] # Ensure this job runs after the build job
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Trigger Cypress Workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: Cypress Tests with Dependency and Artifact Caching
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ github.ref }}
