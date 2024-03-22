@@ -1,4 +1,4 @@
-import { addToList, removeNull } from "utils/list-utils";
+import { addToList, removeNil } from "utils/list-utils";
 import { components } from "../../../types/api-gen";
 import { GrunnkretsResponse, StemmekretsResponse, UtkastOperasjoner } from "../../../types/api";
 
@@ -14,9 +14,9 @@ export const getKretserMedGrensejusteringer = (
     return [];
   }
 
-  const endredeFeatures = removeNull(Object.values(endredeFeaturesMap)) as components["schemas"]["Feature"][];
+  const endredeFeatures = removeNil(Object.values(endredeFeaturesMap)) as components["schemas"]["Feature"][];
 
-  return removeNull(
+  return removeNil(
     endredeFeatures
       .filter((feature) => feature.properties.kontekstEgenskaper !== null)
       .flatMap((feature) => {
