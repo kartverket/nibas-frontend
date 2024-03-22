@@ -12,6 +12,7 @@ import Point from "ol/geom/Point";
 import { archivedSource, editSource } from "hooks/layers/constants";
 import { GrenseId, GrenseType } from "hooks/layers/types";
 import { isFeatureEditable, isMatrikkelFeature } from "utils/features";
+import { isGrenseType } from "utils/type-utils";
 
 const getNonEndpointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
   const featureGeometry = feature.getGeometry();
@@ -155,20 +156,33 @@ const grenseStyleFromType = (grenseType: GrenseType, archived: boolean): Style[]
   }
 };
 
-export const getLayerStyle = (feature: Feature<Geometry> | RenderFeature, grenseId: GrenseId, archived: boolean) => {
-  if (grenseId === "edit" && isFeatureEditable(feature, archived)) {
-    return grenseStyles.edit;
-  }
+export const getLayerStyle = (
+  feature: Feature<Geometry> | RenderFeature,
+  grenseId: GrenseId,
+  archived: boolean,
+): Style[] => {
+  const grenseType = feature.get("type");
 
-  if (isMatrikkelFeature(feature)) {
-    return grenseStyles.matrikkel;
-  }
+  if (isGrenseType(grenseType)) {
+    if (grenseId === "edit" && isFeatureEditable(feature, archived)) {
+      return grenseStyles.edit;
+    }
 
-  return grenseStyleFromType(feature.getProperties().type as GrenseType, archived || grenseId === "archived");
+    if (isMatrikkelFeature(feature)) {
+      return grenseStyles.matrikkel;
+    }
+
+    return grenseStyleFromType(grenseType, archived || grenseId === "archived");
+  }
+  return [];
 };
 
-export const getArchiveLayerStyle = (feature: Feature<Geometry> | RenderFeature) => {
-  return grenseStyleFromType(feature.getProperties().type as GrenseType, true);
+export const getArchiveLayerStyle = (feature: Feature<Geometry> | RenderFeature): Style[] => {
+  const grenseType = feature.get("type");
+  if (isGrenseType(grenseType)) {
+    return grenseStyleFromType(grenseType, true);
+  }
+  return [];
 };
 
 export const getPointOverlayStyle = (feature: Feature<Geometry> | RenderFeature) => {

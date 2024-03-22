@@ -1,5 +1,4 @@
 import { Select, Stack } from "@kvib/react";
-import { GrenseType } from "hooks/layers/types";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
@@ -20,6 +19,7 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContex
 import useIsGrenseinformasjonPanelDisabled from "../hooks/useIsGrenseInformasjonPanelDisabled";
 import GrenseinformasjonRowTilhorighet from "./GrenseinformasjonRowTilhorighet";
 import { styled } from "styled-components";
+import { isGrenseType } from "utils/type-utils";
 
 type TilhorighetRowProps = {
   feature: Feature;
@@ -118,9 +118,9 @@ export const TilhorighetField = ({ feature, isDisabled = false }: TilhorighetPro
 
   const isGrensePanelDisabled = useIsGrenseinformasjonPanelDisabled(feature);
 
-  const grenseType = feature.getProperties().type as GrenseType;
+  const featureType = feature.getProperties().type;
 
-  if (isAdministrativGrense(grenseType)) {
+  if (isGrenseType(featureType) && isAdministrativGrense(featureType)) {
     const isEditable = isFeatureEditable(feature, featureIsArchived(feature));
 
     const shouldBeDisabled = isDisabled || isGrensePanelDisabled || !isEditable;
