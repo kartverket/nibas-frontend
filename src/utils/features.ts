@@ -134,6 +134,10 @@ export const isFeatureDeadEnd = (feature: Feature<Geometry>, allFeatureEndpoints
   const head = coordinates[0];
   const tail = coordinates[coordinates.length - 1];
 
+  if (equals(head, tail)) {
+    return false;
+  }
+
   const featureEndpointsToCheck = allFeatureEndpoints.filter(
     (featureEndpoint) => featureEndpoint.featureId !== feature.getId()?.toString(),
   );

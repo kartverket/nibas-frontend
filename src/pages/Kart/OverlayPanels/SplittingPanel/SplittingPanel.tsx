@@ -7,6 +7,7 @@ import {
   Icon,
   IconButton,
   Input,
+  InputProps,
   Select,
   Stack,
 } from "@kvib/react";
@@ -14,7 +15,7 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { styled } from "styled-components";
 import { PanelHeader, PanelProps, SidePanel } from "../Panel";
 import { CustomOption } from "../hooks/tilhorighet-utils";
-import { useEffect } from "react";
+import { ChangeEvent, useEffect } from "react";
 import { useSplittingForm } from "./useSplittingForm";
 
 const NyKretsField = styled.div`
@@ -45,6 +46,10 @@ const StyledButtonGroup = styled(ButtonGroup)`
   align-self: flex-end;
 `;
 
+const StyledList = styled.ul`
+  list-style-type: none;
+`;
+
 export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
   const { flatedata, closeOverlayPanel } = useOverlayPanel();
   const {
@@ -60,6 +65,8 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
     handleOpprinneligKretsChange,
     handleSubmit,
     errors,
+    trigger,
+    isSubmitted,
   } = useSplittingForm(flatedata);
 
   useEffect(() => {
@@ -69,6 +76,23 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
   const closeAndResetForm = () => {
     closeOverlayPanel();
     resetSplitting();
+  };
+
+  const validateNotDuplicateKretsnummer = (value: string) => {
+    const conflictingKrets = opprinneligFlateOptions.find((krets) => krets.nummer === value);
+    if (conflictingKrets) {
+      return `Nytt ${editingType}nummer er allerede i bruk av ${conflictingKrets.nummer} ${conflictingKrets.navn}`;
+    }
+
+    const nyeKretsNummere = getValues("nyeKretser").map((k) => k.kretsNummer);
+    const indexOfCurrentNummer = nyeKretsNummere.findIndex((n) => n === value);
+    nyeKretsNummere.splice(indexOfCurrentNummer, 1); // fjerner value fra lista
+    if (nyeKretsNummere.includes(value)) {
+      // hvis et nummer lik value fremdeles er i lista har vi duplikat for value
+      return `Nytt ${editingType}nummer er allerede i bruk i denne splittingen`;
+    }
+
+    return true;
   };
 
   const kretsNumberValidator = {
@@ -91,6 +115,21 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
       value: editingType === "stemmekrets" ? 4 : 8,
       message: `Nytt ${editingType}nummer kan ikke være lengre enn ${editingType === "stemmekrets" ? 4 : 8} tegn`,
     },
+    validate: validateNotDuplicateKretsnummer,
+  };
+
+  const triggerRevalidateOnChangeAfterSubmit = ({ onChange, ...restProps }: InputProps) => {
+    return {
+      onChange: (e: ChangeEvent<HTMLInputElement>) => {
+        if (onChange) {
+          onChange(e);
+        }
+        if (isSubmitted === true) {
+          trigger();
+        }
+      },
+      ...restProps,
+    };
   };
 
   const opprinneligKretsRegister = register("opprinneligKrets.lokalId");
@@ -105,11 +144,8 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
       </PanelHeader>
 
       <Stack spacing={8}>
-        <Heading as="h3" size="sm">
-          {`Hvilken ${editingType} skal splittes?`}
-        </Heading>
         <FormControl>
-          <FormLabel>{editingType?.charAt(0).toUpperCase().concat(editingType?.slice(1))}</FormLabel>
+          <FormLabel>{`Hvilken ${editingType} skal splittes?`}</FormLabel>
           <Select
             {...opprinneligKretsRegister}
             onChange={(e) => {
@@ -139,7 +175,9 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
                       <Input
                         disabled={index === 0}
                         type="number"
-                        {...register(`nyeKretser.${index}.kretsNummer`, kretsNumberValidator)}
+                        {...triggerRevalidateOnChangeAfterSubmit(
+                          register(`nyeKretser.${index}.kretsNummer`, index !== 0 ? kretsNumberValidator : {}),
+                        )}
                       />
                     </FormControl>
                     <FormControl isInvalid={!!errors.nyeKretser?.[index]?.kretsNavn}>
@@ -153,7 +191,9 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
                     </FormControl>
                     {index !== 0 ? (
                       <IconButton
-                        onClick={() => remove(index)}
+                        onClick={() => {
+                          remove(index);
+                        }}
                         aria-label="fjern splitt"
                         icon="close"
                         variant="tertiary"
@@ -166,16 +206,16 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
                   {!!errors.nyeKretser?.[index] && (
                     <CustomFormErrorMessage>
                       <Icon icon="error" />
-                      <ul>
+                      <StyledList>
                         {[
                           errors.nyeKretser?.[index]?.kretsNavn?.message,
                           errors.nyeKretser?.[index]?.kretsNummer?.message,
                         ]
-                          .filter((e) => e != null)
+                          .filter((e) => e !== undefined)
                           .map((error, indexE) => (
                             <li key={indexE}>{error}</li>
                           ))}
-                      </ul>
+                      </StyledList>
                     </CustomFormErrorMessage>
                   )}
                 </div>

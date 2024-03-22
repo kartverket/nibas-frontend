@@ -17,7 +17,7 @@ import { setDefaultFeatureProperties } from "utils/features";
 import { FeatureProperties, KontekstEgenskaper } from "types/api";
 import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
-import { removeNull } from "utils/list-utils";
+import { removeNil } from "utils/list-utils";
 import { Geometry } from "ol/geom";
 import { Coordinate } from "ol/coordinate";
 import { getEntriesUpToIndex } from "contexts/FeatureStyleContext/feature-style-utils";
@@ -101,7 +101,7 @@ export const setKontekstEgenskaperForEntry = (entry: GrenseTilhorighetEntry, dir
 };
 
 export const redoArchiving = (entry: GrenseArkiveringsEntry) => {
-  const features = removeNull(entry.changes.map((c) => editSource.getFeatureById(c.id)));
+  const features = removeNil(entry.changes.map((c) => editSource.getFeatureById(c.id)));
   const featureIds = entry.changes.map((c) => c.id);
 
   addFeaturesToSource("archived", features);
@@ -115,7 +115,7 @@ export const redoArchiving = (entry: GrenseArkiveringsEntry) => {
 };
 
 export const undoArchving = (entry: GrenseArkiveringsEntry) => {
-  const features = removeNull(entry.changes.map((c) => archivedSource.getFeatureById(c.id)));
+  const features = removeNil(entry.changes.map((c) => archivedSource.getFeatureById(c.id)));
   const featureIds = entry.changes.map((c) => c.id);
 
   addFeaturesToSource("edit", features);
@@ -144,7 +144,7 @@ export const redoGrensedeling = (deltFeature: Feature, newFeaturesFromsDeling: F
 };
 
 export const undoGrensedeling = (deltFeature: Feature, newFeaturesFromsDeling: Feature[]) => {
-  const idsToRemove = removeNull(newFeaturesFromsDeling.map((feature) => feature.getId()?.toString()));
+  const idsToRemove = removeNil(newFeaturesFromsDeling.map((feature) => feature.getId()?.toString()));
   const properties = deltFeature.getProperties() as FeatureProperties;
   deltFeature.setProperties({ ...properties, shouldArchive: false });
 
@@ -167,7 +167,7 @@ export const getChangeIds = (historyEntry: HistoryEntry): string[] => {
 
     if (historyEntry.type === "grensedeling") {
       const changesTo = change.to as Feature<Geometry>[];
-      const idsToAppend = removeNull(changesTo.map((feature) => feature.getId()?.toString()).filter(Boolean));
+      const idsToAppend = removeNil(changesTo.map((feature) => feature.getId()?.toString()).filter(Boolean));
       changedFeatureIds.push(...idsToAppend);
     }
     changedFeatureIds.push(change.id);

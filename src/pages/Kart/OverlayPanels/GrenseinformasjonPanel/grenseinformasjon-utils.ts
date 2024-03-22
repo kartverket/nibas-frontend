@@ -7,7 +7,7 @@ import {
   HistoryChange,
 } from "contexts/HistoryContext/types";
 import { FeatureProperties, KontekstEgenskaper } from "types/api";
-import { removeNull } from "utils/list-utils";
+import { removeNil } from "utils/list-utils";
 import { isDate } from "date-fns";
 
 export const datestringToFormattedDatestring = (dateString: string) => {
@@ -81,7 +81,7 @@ export const addArchivingEntryFromFeatureList = (
   features: Feature<LineString>[],
   addHistoryEntry: (entry: GrenseArkiveringsEntry) => void,
 ) => {
-  const changeEntries: HistoryChange<FeatureProperties>[] = removeNull(
+  const changeEntries: HistoryChange<FeatureProperties>[] = removeNil(
     features.map((feature) => {
       const id = feature.getId()?.toString();
       if (id == null) return;

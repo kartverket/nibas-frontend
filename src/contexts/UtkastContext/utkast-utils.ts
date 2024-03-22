@@ -30,7 +30,7 @@ import { featureToGeoJson } from "utils/map/geoJson";
 import { getIdFromEntity } from "utils/api";
 import { getTempFeatureId, isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { isTempDokrefId } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/Vedtaksinformasjon/util/vedtaksinfoHelperMethods";
-import { removeNull } from "utils/list-utils";
+import { removeNil } from "utils/list-utils";
 
 const getCombinedEntity = <T extends ResponseWithId>(
   entity: T,
@@ -65,19 +65,7 @@ export const applyNonFeatureUtkast = <T extends NonNullable<UtkastEntity>>(
   const utkastSlice = utkast.operasjoner.metadataendringer?.[type];
   if (utkastSlice == null) return entity;
 
-  if (Array.isArray(entity) && type === "stemmekretsendringer") {
-    // navn på stemmekrets har forskjellig field på StemmekretsResponse og StemmekretsRequest
-
-    return entity.map((e) => {
-      const utkastForEntity = utkast.operasjoner.metadataendringer?.[type]?.[getIdFromEntity(e)];
-
-      return {
-        ...e,
-        ...utkastForEntity,
-        navn: utkastForEntity?.stemmekretsnavn,
-      };
-    });
-  } else if (Array.isArray(entity)) {
+  if (Array.isArray(entity)) {
     return entity.map((e) => getCombinedEntity(e, utkastSlice));
   }
 
@@ -208,7 +196,7 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
 
       if (entry.type === "grensedeling") {
         // Grensedeling er en litt sær grense-endring siden den påvirker flere features på en gang og trenger derfor egen implementasjon
-        const newFeatures = removeNull((change as HistoryChange<Feature[]>).to.map((f) => f.getId()?.toString()));
+        const newFeatures = removeNil((change as HistoryChange<Feature[]>).to.map((f) => f.getId()?.toString()));
         newFeatures.forEach((id) => {
           addFeatureToEditedFeaturesIfNotAlreadyAdded(id);
         });

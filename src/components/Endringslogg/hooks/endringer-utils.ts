@@ -1,4 +1,4 @@
-import { addToList, removeNull } from "utils/list-utils";
+import { addToList, removeNil } from "utils/list-utils";
 import { components } from "../../../types/api-gen";
 import { GrunnkretsResponse, StemmekretsResponse, UtkastOperasjoner } from "../../../types/api";
 
@@ -14,9 +14,9 @@ export const getKretserMedGrensejusteringer = (
     return [];
   }
 
-  const endredeFeatures = removeNull(Object.values(endredeFeaturesMap)) as components["schemas"]["Feature"][];
+  const endredeFeatures = removeNil(Object.values(endredeFeaturesMap)) as components["schemas"]["Feature"][];
 
-  return removeNull(
+  return removeNil(
     endredeFeatures
       .filter((feature) => feature.properties.kontekstEgenskaper !== null)
       .flatMap((feature) => {
@@ -48,7 +48,7 @@ export function groupEndringerByKommune(
   return endredeKretser
     .map((kretsId) => {
       const krets = alleKretser.find((s) => s.id.lokalid.value === kretsId);
-      return [kretsId, krets?.kommunenummer.id];
+      return [kretsId, krets?.kommuneIdentifikator.lokalid.value];
     })
     .reduce((acc: { [key: string]: string[] }, [stemmekretsid, kommune]) => {
       if (kommune == null) {

@@ -11,7 +11,7 @@ import { useCallback } from "react";
 import Input from "components/Input";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { stemmekretsgrenserFetcher } from "api/stemmekrets";
-import { deduplicate, removeNull } from "utils/list-utils";
+import { deduplicate, removeNil } from "utils/list-utils";
 import { MergeMultiselect } from "./MergeMultiselect";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
@@ -52,7 +52,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
 
   const formMethods = useForm<MergeFormData>({
     defaultValues: {
-      stemmekretsNummerTilSammenslaaing: [{ value: "default" }],
+      nummerTilSammenslaaing: [{ value: "default" }],
     },
   });
   const {
@@ -86,7 +86,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
 
   const getStemmekretsByNummer = useCallback(
     (nummer: string): StemmekretsResponse | null => {
-      return utkastStemmekretser?.find((krets) => krets.stemmekretsnummer === nummer) ?? null;
+      return utkastStemmekretser?.find((krets) => krets.nummer === nummer) ?? null;
     },
     [utkastStemmekretser],
   );
@@ -107,8 +107,8 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
       lokalId: sammenslaaingsStemmekrets.id.lokalid.value,
       version: sammenslaaingsStemmekrets.version,
     })),
-    stemmekretsNavn: getValues("stemmekretsnavn"),
-    stemmekretsNummer: getValues("stemmekretsnummer"),
+    navn: getValues("navn"),
+    nummer: getValues("nummer"),
   });
 
   const mergeStemmekrets = async () => {
@@ -116,13 +116,11 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
     if (!utkast) return;
 
     const selectedStemmekretsValue = getValues("stemmekrets");
-    const stemmekretsNummerTilSammenslaaing: string[] = getValues("stemmekretsNummerTilSammenslaaing").map(
-      (s) => s.value,
-    );
+    const stemmekretsNummerTilSammenslaaing: string[] = getValues("nummerTilSammenslaaing").map((s) => s.value);
 
     const selectedStemmekrets = getStemmekretsByNummer(selectedStemmekretsValue);
 
-    const stemmekretsTilSammenslaaingListe = removeNull(
+    const stemmekretsTilSammenslaaingListe = removeNil(
       stemmekretsNummerTilSammenslaaing.map((s) => getStemmekretsByNummer(s)),
     );
 
@@ -178,10 +176,9 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
   const selectStemmekretsRegister = register("stemmekrets");
   const updateDefaultValues = (value: string) => {
     const selectedStemmekrets = getStemmekretsByNummer(value);
-    setValue("stemmekretsnavn", selectedStemmekrets?.stemmekretsnavn ?? "");
-    setValue("stemmekretsnummer", selectedStemmekrets?.stemmekretsnummer ?? "");
+    setValue("navn", selectedStemmekrets?.navn ?? "");
+    setValue("nummer", selectedStemmekrets?.nummer ?? "");
   };
-
   return (
     <SidePanel $isOpen={isOpen} className={className}>
       <PanelHeader onClose={closeOverlayPanel}>Slå sammen stemmekretser</PanelHeader>
@@ -214,10 +211,10 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
                     Velg en stemmekrets fra listen
                   </option>
                   {utkastStemmekretser
-                    .sort((a, b) => parseInt(a.stemmekretsnummer) - parseInt(b.stemmekretsnummer))
+                    .sort((a, b) => parseInt(a.nummer) - parseInt(b.nummer))
                     .map((stemmekrets) => (
-                      <option key={stemmekrets.id.lokalid.value} value={stemmekrets.stemmekretsnummer}>
-                        {`${stemmekrets.stemmekretsnummer} - ${stemmekrets.stemmekretsnavn}`}
+                      <option key={stemmekrets.id.lokalid.value} value={stemmekrets.nummer}>
+                        {`${stemmekrets.nummer} - ${stemmekrets.navn}`}
                       </option>
                     ))}
                 </Select>
@@ -241,18 +238,18 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
               <InputsWrapper>
                 <Input
                   label="Stemmekretsnummer"
-                  {...register("stemmekretsnummer", stemmekretsnummerValidator)}
+                  {...register("nummer", stemmekretsnummerValidator)}
                   validationError={{
-                    showError: !!errors?.stemmekretsnummer,
-                    message: errors.stemmekretsnummer?.message ?? "",
+                    showError: !!errors?.nummer,
+                    message: errors.nummer?.message ?? "",
                   }}
                 />
                 <Input
                   label="Stemmekretsnavn"
-                  {...register("stemmekretsnavn", stemmekretsnavnValidator)}
+                  {...register("navn", stemmekretsnavnValidator)}
                   validationError={{
-                    showError: !!errors.stemmekretsnavn,
-                    message: errors.stemmekretsnavn?.message ?? "",
+                    showError: !!errors.navn,
+                    message: errors.navn?.message ?? "",
                   }}
                 />
               </InputsWrapper>

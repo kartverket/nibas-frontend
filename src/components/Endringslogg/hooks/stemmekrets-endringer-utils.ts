@@ -1,4 +1,4 @@
-import { deduplicate, removeNull } from "utils/list-utils";
+import { deduplicate, removeNil } from "utils/list-utils";
 import { KommuneResponse, StemmekretsResponse, UtkastOperasjoner } from "../../../types/api";
 import {
   StemmekretsMetadataEndringstype,
@@ -24,14 +24,14 @@ export const getStemmekretserMedEndringer = (operasjoner: OperasjonerOrNull): st
     return [];
   }
 
-  const stemmekretserMedMetadataEndringer = removeNull(Object.keys(endringerResponse));
+  const stemmekretserMedMetadataEndringer = removeNil(Object.keys(endringerResponse));
 
   const viderefoertStemmekrets = operasjoner.stemmekretsSammenslaaingsendring?.viderefoertStemmekrets?.lokalId;
 
   const gamleKretser =
     operasjoner.stemmekretsSammenslaaingsendring?.stemmekretserTilSammenslaaing.map((krets) => krets.lokalId) ?? [];
 
-  const stemmekretserMedSammenslaaing = removeNull(gamleKretser.concat(viderefoertStemmekrets ?? []));
+  const stemmekretserMedSammenslaaing = removeNil(gamleKretser.concat(viderefoertStemmekrets ?? []));
 
   const stemmekretserMedSplitting = operasjoner.kretsDelingEndringer
     .filter((splitting) => splitting.flatetype === KontekstType.STEMMEKRETS)
@@ -67,11 +67,7 @@ const getEndringAvTypeForId = (
 };
 
 const harMetadataEndring = (metadatEndring: StemmekretsMetadataEndring): boolean => {
-  const fieldsToCheck = [
-    metadatEndring.stemmekretsnavn,
-    metadatEndring.stemmekretsnummer,
-    metadatEndring.valgdistriktsnummer,
-  ];
+  const fieldsToCheck = [metadatEndring.navn, metadatEndring.nummer, metadatEndring.valgdistriktsnummer];
 
   return fieldsToCheck.some((field) => field !== null);
 };
@@ -88,8 +84,8 @@ const getMetadataEndringer = (
 
       return {
         kretsEndret: findKrets(stemmekretsId, alleStemmekretser),
-        stemmekretsnavn: getEndringAvType("stemmekretsnavn"),
-        stemmekretsnummer: getEndringAvType("stemmekretsnummer"),
+        navn: getEndringAvType("navn"),
+        nummer: getEndringAvType("nummer"),
         valgdistriktsnummer: getEndringAvType("valgdistriktsnummer"),
       };
     })
@@ -120,14 +116,14 @@ const getSammenslaaingEndring = (
   const gamleKretser = sammenslaaing.stemmekretserTilSammenslaaing
     .map((gammelKrets) => findKrets(gammelKrets.lokalId, alleStemmekretser))
     .map((gammelKrets) => ({
-      navn: gammelKrets.stemmekretsnavn,
-      nummer: gammelKrets.stemmekretsnummer,
+      navn: gammelKrets.navn,
+      nummer: gammelKrets.nummer,
     }));
 
   return {
     viderefoertKrets: krets,
-    nyttNavn: sammenslaaing.stemmekretsNavn ?? "",
-    nyttNummer: sammenslaaing.stemmekretsNummer ?? "",
+    nyttNavn: sammenslaaing.navn ?? "",
+    nyttNummer: sammenslaaing.nummer ?? "",
     gamleKretser,
   };
 };
@@ -150,8 +146,8 @@ const getStemmekretsSplittingEndringer = (
       const kretsSplittingEndring: KretsSplittingEndring = {
         opprinneligKrets: opprinneligKrets
           ? {
-              kretsNavn: opprinneligKrets.stemmekretsnavn,
-              kretsNummer: opprinneligKrets.stemmekretsnummer,
+              kretsNavn: opprinneligKrets.navn,
+              kretsNummer: opprinneligKrets.nummer,
             }
           : { kretsNavn: "ukjent", kretsNummer: "ukjent" },
         nyeKretser: splitting.nyeKretser,
@@ -169,16 +165,16 @@ const getEndringerForKommune = (
 ): Stemmekretsendringer => {
   const stemmekretserMedGrensejusteringer = getKretserMedGrensejusteringer(operasjoner, "STEMMEKRETS");
 
-  const kommune = alleKommuner.find((kommuneRef) => kommuneRef.kommunenummer.id === kommuneId);
+  const kommune = alleKommuner.find((kommuneResponse) => kommuneResponse.id.lokalid.value === kommuneId);
 
   return {
     kommune: {
       id: kommune?.id.lokalid.value ?? "",
-      nummer: kommune?.kommunenummer.kodeverdi ?? "",
+      nummer: kommune?.nummer ?? "",
       navn: getNavnInSpraak(kommune?.navn, "nor"),
     },
     metadataendringer: getMetadataEndringer(stemmekretserMedEndring, operasjoner, alleStemmekretser),
-    grensejusteringer: removeNull(
+    grensejusteringer: removeNil(
       stemmekretserMedEndring
         .filter((id) => stemmekretserMedGrensejusteringer.includes(id))
         .map((stemmekretsId) => findKrets(stemmekretsId, alleStemmekretser)),
