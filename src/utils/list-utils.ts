@@ -1,8 +1,8 @@
 import get from "lodash.get";
 import { isNotNil } from "./type-utils";
 
-export function removeNull<T>(list: (T | null | undefined)[]): T[] {
-  return list.filter((element) => element !== null) as T[];
+export function removeNil<T>(list: (T | null | undefined)[]): T[] {
+  return list.filter(isNotNil);
 }
 
 export function deduplicate<T>(list: T[]): T[] {

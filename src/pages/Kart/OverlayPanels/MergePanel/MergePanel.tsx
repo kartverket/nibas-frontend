@@ -11,7 +11,7 @@ import { useCallback } from "react";
 import Input from "components/Input";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { stemmekretsgrenserFetcher } from "api/stemmekrets";
-import { deduplicate, removeNull } from "utils/list-utils";
+import { deduplicate, removeNil } from "utils/list-utils";
 import { MergeMultiselect } from "./MergeMultiselect";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
@@ -120,7 +120,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
 
     const selectedStemmekrets = getStemmekretsByNummer(selectedStemmekretsValue);
 
-    const stemmekretsTilSammenslaaingListe = removeNull(
+    const stemmekretsTilSammenslaaingListe = removeNil(
       stemmekretsNummerTilSammenslaaing.map((s) => getStemmekretsByNummer(s)),
     );
 

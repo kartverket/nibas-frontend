@@ -1,7 +1,6 @@
-import { addToList, removeNull } from "utils/list-utils";
+import { addToList, removeNil } from "utils/list-utils";
 import { components } from "../../../types/api-gen";
 import { GrunnkretsResponse, StemmekretsResponse, UtkastOperasjoner } from "../../../types/api";
-import { isNotNil } from "utils/type-utils";
 
 export type OperasjonerOrNull = UtkastOperasjoner | null | undefined;
 
@@ -15,24 +14,25 @@ export const getKretserMedGrensejusteringer = (
     return [];
   }
 
-  const endredeFeatures = removeNull(Object.values(endredeFeaturesMap)) as components["schemas"]["Feature"][];
+  const endredeFeatures = removeNil(Object.values(endredeFeaturesMap)) as components["schemas"]["Feature"][];
 
-  return endredeFeatures
-    .filter((feature) => feature.properties.kontekstEgenskaper !== null)
-    .flatMap((feature) => {
-      const kontekstEgenskaperArray = Array.isArray(feature.properties.kontekstEgenskaper)
-        ? feature.properties.kontekstEgenskaper
-        : feature.properties.kontekstEgenskaper
-          ? [feature.properties.kontekstEgenskaper]
-          : [];
+  return removeNil(
+    endredeFeatures
+      .filter((feature) => feature.properties.kontekstEgenskaper !== null)
+      .flatMap((feature) => {
+        const kontekstEgenskaperArray = Array.isArray(feature.properties.kontekstEgenskaper)
+          ? feature.properties.kontekstEgenskaper
+          : feature.properties.kontekstEgenskaper
+            ? [feature.properties.kontekstEgenskaper]
+            : [];
 
-      const filteredKontekstEgenskaper = kontekstEgenskaperArray.filter(
-        (kontekstEgenskaper) => kontekstEgenskaper.type === type,
-      );
+        const filteredKontekstEgenskaper = kontekstEgenskaperArray.filter(
+          (kontekstEgenskaper) => kontekstEgenskaper.type === type,
+        );
 
-      return filteredKontekstEgenskaper.map((kontekstEgenskaper) => kontekstEgenskaper.id?.lokalid?.value);
-    })
-    .filter(isNotNil);
+        return filteredKontekstEgenskaper.map((kontekstEgenskaper) => kontekstEgenskaper.id?.lokalid?.value);
+      }),
+  );
 };
 
 /**

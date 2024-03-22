@@ -31,7 +31,7 @@ import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { FeatureIdWithEndpoints, getAllFeatureEndPointCoordinates, isFeatureDeadEnd } from "utils/features";
 import { useEditAllGrenser } from "contexts/EditGrenserContext/EditGrenserContext";
 import { resetMapView } from "utils/map/map-utils";
-import { removeNull } from "utils/list-utils";
+import { removeNil } from "utils/list-utils";
 
 export const UtkastContext = createContext<UtkastContextValue | undefined>(undefined);
 
@@ -163,7 +163,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
         const oldFeaturesWithTempId = oldFeatures
           .filter((feature) => isTempFeatureId(feature.id))
           .map((feature) => feature.id);
-        removeEditedFeaturesFromSourceByIds(removeNull(oldFeaturesWithTempId));
+        removeEditedFeaturesFromSourceByIds(removeNil(oldFeaturesWithTempId));
       }
 
       const updatedUtkastWithTempFeatureIds = addTempFeatureIdToNewFeaturesInUtkast(updatedUtkast);

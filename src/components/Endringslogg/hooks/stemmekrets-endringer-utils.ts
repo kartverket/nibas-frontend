@@ -1,4 +1,4 @@
-import { deduplicate, removeNull } from "utils/list-utils";
+import { deduplicate, removeNil } from "utils/list-utils";
 import { KommuneResponse, StemmekretsResponse, UtkastOperasjoner } from "../../../types/api";
 import {
   StemmekretsMetadataEndringstype,
@@ -24,14 +24,14 @@ export const getStemmekretserMedEndringer = (operasjoner: OperasjonerOrNull): st
     return [];
   }
 
-  const stemmekretserMedMetadataEndringer = removeNull(Object.keys(endringerResponse));
+  const stemmekretserMedMetadataEndringer = removeNil(Object.keys(endringerResponse));
 
   const viderefoertStemmekrets = operasjoner.stemmekretsSammenslaaingsendring?.viderefoertStemmekrets?.lokalId;
 
   const gamleKretser =
     operasjoner.stemmekretsSammenslaaingsendring?.stemmekretserTilSammenslaaing.map((krets) => krets.lokalId) ?? [];
 
-  const stemmekretserMedSammenslaaing = removeNull(gamleKretser.concat(viderefoertStemmekrets ?? []));
+  const stemmekretserMedSammenslaaing = removeNil(gamleKretser.concat(viderefoertStemmekrets ?? []));
 
   const stemmekretserMedSplitting = operasjoner.kretsDelingEndringer
     .filter((splitting) => splitting.flatetype === KontekstType.STEMMEKRETS)
@@ -174,7 +174,7 @@ const getEndringerForKommune = (
       navn: getNavnInSpraak(kommune?.navn, "nor"),
     },
     metadataendringer: getMetadataEndringer(stemmekretserMedEndring, operasjoner, alleStemmekretser),
-    grensejusteringer: removeNull(
+    grensejusteringer: removeNil(
       stemmekretserMedEndring
         .filter((id) => stemmekretserMedGrensejusteringer.includes(id))
         .map((stemmekretsId) => findKrets(stemmekretsId, alleStemmekretser)),

@@ -1,5 +1,5 @@
 import { GrunnkretsResponse, KommuneResponse, UtkastOperasjoner } from "../../../types/api";
-import { deduplicate, removeNull } from "utils/list-utils";
+import { deduplicate, removeNil } from "utils/list-utils";
 import {
   GrunnkretsEndringstype,
   Grunnkretsendringer,
@@ -23,9 +23,7 @@ export const getGrunnkretserMedEndringer = (operasjoner: OperasjonerOrNull): str
     return [];
   }
 
-  const grunnkretsMetadataEndringer = removeNull(
-    Object.keys(operasjoner?.metadataendringer?.grunnkretsendringer ?? {}),
-  );
+  const grunnkretsMetadataEndringer = removeNil(Object.keys(operasjoner?.metadataendringer?.grunnkretsendringer ?? {}));
 
   const grunnkretserMedSplitting = operasjoner.kretsDelingEndringer
     .filter((splitting) => splitting.flatetype === KontekstType.GRUNNKRETS)
@@ -129,7 +127,7 @@ const getEndringerForKommune = (
       navn: getNavnInSpraak(kommune?.navn, "nor"),
     },
     metadataendringer: getMetadataEndringer(grunnkretserMedEndringer, operasjoner, alleGrunnkretser),
-    grensejusteringer: removeNull(
+    grensejusteringer: removeNil(
       grunnkretserMedEndringer
         .filter((id) => grunnkretserMedGrensejusteringer.includes(id))
         .map((grunnkretsId) => findKrets(grunnkretsId, alleGrunnkretser)),

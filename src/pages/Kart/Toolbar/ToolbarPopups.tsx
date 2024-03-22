@@ -10,7 +10,7 @@ import { clearMatrikkelLayer, getMatrikkelFeatures } from "utils/map/layers";
 import { map } from "../constants";
 import { useState } from "react";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
-import { removeNull } from "utils/list-utils";
+import { removeNil } from "utils/list-utils";
 
 const ToolbarPopups = () => {
   const [matrikkelIsLoading, setMatrikkelIsLoading] = useState(false);
@@ -22,7 +22,7 @@ const ToolbarPopups = () => {
   const { selectedFeatures, selectedPoint, addArchivedStyles, clearSelection } = useFeatureStyle();
 
   const archiveFeatures = () => {
-    const selectedFeatureIds = removeNull(selectedFeatures.map((feature) => feature.getId()?.toString()));
+    const selectedFeatureIds = removeNil(selectedFeatures.map((feature) => feature.getId()?.toString()));
 
     clearSelection();
     addArchivedStyles(selectedFeatureIds);
