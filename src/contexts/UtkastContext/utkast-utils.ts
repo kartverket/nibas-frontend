@@ -30,7 +30,7 @@ import { featureToGeoJson } from "utils/map/geoJson";
 import { getIdFromEntity } from "utils/api";
 import { getTempFeatureId, isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { isTempDokrefId } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/Vedtaksinformasjon/util/vedtaksinfoHelperMethods";
-import { removeNull } from "utils/list-utils";
+import { removeNil } from "utils/list-utils";
 
 const getCombinedEntity = <T extends ResponseWithId>(
   entity: T,
@@ -63,22 +63,9 @@ export const applyNonFeatureUtkast = <T extends NonNullable<UtkastEntity>>(
   type: EntityUtkastType,
 ) => {
   const utkastSlice = utkast.operasjoner.metadataendringer?.[type];
+  if (utkastSlice == null) return entity;
 
-  if (!utkastSlice) return entity;
-
-  if (Array.isArray(entity) && type === "stemmekretsendringer") {
-    // navn på stemmekrets har forskjellig field på StemmekretsResponse og StemmekretsRequest
-
-    return entity.map((e) => {
-      const utkastForEntity = utkast.operasjoner.metadataendringer?.[type]?.[getIdFromEntity(e)];
-
-      return {
-        ...e,
-        ...utkastForEntity,
-        navn: utkastForEntity?.stemmekretsnavn,
-      };
-    });
-  } else if (Array.isArray(entity)) {
+  if (Array.isArray(entity)) {
     return entity.map((e) => getCombinedEntity(e, utkastSlice));
   }
 
@@ -86,10 +73,7 @@ export const applyNonFeatureUtkast = <T extends NonNullable<UtkastEntity>>(
 };
 
 export const applyFeatureUtkast = (featureCollection: GeoJSONFeatureCollection, utkast: UtkastResponse) => {
-  const featuresSlice = utkast.operasjoner.grenseendringer?.endredeFeatures;
-
-  if (!featuresSlice) return featureCollection;
-
+  const featuresSlice = utkast.operasjoner.grenseendringer.endredeFeatures;
   const newFeatures = getCombinedFeatures(featureCollection, featuresSlice);
 
   return {
@@ -115,7 +99,7 @@ const reduceStemmekretssammenslaingsOperations = (
   entry: StemmekretsSammenslaaingsendringEntry,
 ): StemmekretsSammenslaaingsendringRequest => {
   entry.changes.forEach((change) => {
-    if (!change.to) return operations;
+    if (change.to == null) return operations;
 
     operations = change.to;
   });
@@ -128,7 +112,7 @@ const addKretsChangeToOperations = (
   endringerKey: "grunnkretsendringer" | "stemmekretsendringer",
 ) => {
   entry.changes.forEach((change) => {
-    if (change.to && operations.metadataendringer[endringerKey]) {
+    if (change.to != null && operations.metadataendringer[endringerKey] != null) {
       operations.metadataendringer[endringerKey][change.id] = change.to;
     }
   });
@@ -207,12 +191,12 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
 
   relevantHistoryEntries.forEach((entry) => {
     entry.changes.forEach((change) => {
-      if (!change.to) return;
+      if (change.to == null) return;
       addFeatureToEditedFeaturesIfNotAlreadyAdded(change.id);
 
       if (entry.type === "grensedeling") {
         // Grensedeling er en litt sær grense-endring siden den påvirker flere features på en gang og trenger derfor egen implementasjon
-        const newFeatures = removeNull((change as HistoryChange<Feature[]>).to.map((f) => f.getId()?.toString()));
+        const newFeatures = removeNil((change as HistoryChange<Feature[]>).to.map((f) => f.getId()?.toString()));
         newFeatures.forEach((id) => {
           addFeatureToEditedFeaturesIfNotAlreadyAdded(id);
         });
@@ -238,7 +222,7 @@ export const toCleanUtkast = (utkastToClean: OppdaterUtkastRequest): OppdaterUtk
 
   // Fjerner midlertigie ID fra alle nye grenser og deres dokumentasjonsreferanser, da dette ikke er forventet fra backend
   endredeFeatures.forEach((endretFeature) => {
-    if (endretFeature.id && isTempFeatureId(endretFeature.id)) endretFeature.id = undefined;
+    if (endretFeature.id != null && isTempFeatureId(endretFeature.id)) endretFeature.id = undefined;
 
     const properties = endretFeature.properties as FeatureProperties;
     const metadata = properties.metadata as Metadata;

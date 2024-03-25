@@ -53,7 +53,7 @@ const StemmekretsGrensejusteringer = ({ grendejusteringer }: StemmekretsGrenseju
       <UnstyledList>
         {grendejusteringer.map((grensjustering) => (
           <EndringsradListItem key={grensjustering.id.lokalid.value}>
-            {grensjustering.stemmekretsnummer} {grensjustering.stemmekretsnavn}
+            {grensjustering.nummer} {grensjustering.navn}
           </EndringsradListItem>
         ))}
       </UnstyledList>
@@ -72,8 +72,8 @@ const StemmekretsSammenslaaing = ({ sammenslaaing }: StemmekretsSammenslaaingPro
 
   const gamleKretser = [
     {
-      navn: sammenslaaing.viderefoertKrets.stemmekretsnavn,
-      nummer: sammenslaaing.viderefoertKrets.stemmekretsnummer,
+      navn: sammenslaaing.viderefoertKrets.navn,
+      nummer: sammenslaaing.viderefoertKrets.nummer,
     },
     ...sammenslaaing.gamleKretser,
   ];
@@ -123,8 +123,8 @@ type StemmekretsMetadataEndringerProps = {
 };
 
 const StemmekretsMetadataEndringer = ({ metadataendring }: StemmekretsMetadataEndringerProps) => {
-  const navn = metadataendring.stemmekretsnavn?.til ?? metadataendring.kretsEndret.stemmekretsnavn;
-  const nummer = metadataendring.stemmekretsnummer?.til ?? metadataendring.kretsEndret.stemmekretsnummer;
+  const navn = metadataendring.navn?.til ?? metadataendring.kretsEndret.navn;
+  const nummer = metadataendring.nummer?.til ?? metadataendring.kretsEndret.nummer;
 
   return (
     <EndringSection>
@@ -135,12 +135,8 @@ const StemmekretsMetadataEndringer = ({ metadataendring }: StemmekretsMetadataEn
         <EndringstypeTag>Metadataendringer</EndringstypeTag>
       </Seksjonsoverskrift>
       <UnstyledList>
-        {metadataendring.stemmekretsnavn && (
-          <Endringsrad tittel="Stemmekretsnavn" endring={metadataendring.stemmekretsnavn} />
-        )}
-        {metadataendring.stemmekretsnummer && (
-          <Endringsrad tittel="Stemmekretsnummer" endring={metadataendring.stemmekretsnummer} />
-        )}
+        {metadataendring.navn && <Endringsrad tittel="Stemmekretsnavn" endring={metadataendring.navn} />}
+        {metadataendring.nummer && <Endringsrad tittel="Stemmekretsnummer" endring={metadataendring.nummer} />}
         {metadataendring.valgdistriktsnummer && (
           <Endringsrad tittel="Valgdistriktsnummer" endring={metadataendring.valgdistriktsnummer} />
         )}

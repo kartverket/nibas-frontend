@@ -71,8 +71,8 @@ type Props = {
 const AlertModal = ({
   title,
   description,
-  additionalInfo,
-  errorCode,
+  additionalInfo = "",
+  errorCode = "",
   isOpen,
   onClose,
   primaryAction,

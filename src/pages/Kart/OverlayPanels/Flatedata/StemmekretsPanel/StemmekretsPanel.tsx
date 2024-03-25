@@ -14,14 +14,14 @@ import { Modal, ModalContent, ModalOverlay, Spinner } from "@kvib/react";
 
 const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
   const { utkast } = useUtkast();
-  const { sortProperty, sortOrder, sortHeaderProps } = useTableSort([
-    "stemmekretsnummer",
-    "stemmekretsnavn",
+  const { sortProperty, sortOrder, sortHeaderProps } = useTableSort<StemmekretsResponse>([
+    "nummer",
+    "navn",
     "valgdistriktsnummer",
   ]);
 
   const { flatedata, closeOverlayModal } = useOverlayPanel();
-  const kommuneId = flatedata ? getIdFromEntity(flatedata) : "";
+  const kommuneId = flatedata ? getIdFromEntity(flatedata) : null;
   const { data: stemmekretserByKommune } = useKommuneStemmekretser(kommuneId);
   const utkastStemmekretser = useUtkastEntity(stemmekretserByKommune, "stemmekretsendringer") as
     | StemmekretsResponse[]
@@ -38,15 +38,19 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
           <KretsTable $hasUtkast={utkast != null}>
             <thead>
               <tr>
-                <SortHeader {...sortHeaderProps("stemmekretsnummer")}>Stemmekretsnummer</SortHeader>
-                <SortHeader {...sortHeaderProps("stemmekretsnavn")}>Stemmekretsnavn</SortHeader>
+                <SortHeader {...sortHeaderProps("nummer")}>Stemmekretsnummer</SortHeader>
+                <SortHeader {...sortHeaderProps("navn")}>Stemmekretsnavn</SortHeader>
                 <SortHeader {...sortHeaderProps("valgdistriktsnummer")}>Valgdistriktsnummer</SortHeader>
                 {utkast && <th>{/* Tom plass for knapp i rader */}</th>}
               </tr>
             </thead>
             <tbody>
               {orderBy(utkastStemmekretser, sortProperty, sortOrder).map((stemmekrets) => (
-                <StemmekretsRow key={getIdFromEntity(stemmekrets)} stemmekrets={stemmekrets} kommuneId={kommuneId} />
+                <StemmekretsRow
+                  key={getIdFromEntity(stemmekrets)}
+                  stemmekrets={stemmekrets}
+                  kommuneId={kommuneId ?? ""}
+                />
               ))}
             </tbody>
           </KretsTable>

@@ -163,12 +163,12 @@ export const sortKretserOptionsByNumber = (kretser: Krets[] | undefined): Krets[
 
 export const mapGrunnkretsResponseToKrets = (grunnkretser: GrunnkretsResponse[]): Krets[] => {
   return sortKretserOptionsByNumber(
-    grunnkretser.map(({ id, version, grunnkretsnummer, navn, kommuneIdentifikator }) => ({
+    grunnkretser.map(({ id, version, nummer, navn, kommuneIdentifikator }) => ({
       id,
       kommuneId: kommuneIdentifikator,
       version,
-      nummer: grunnkretsnummer,
-      navn: navn,
+      nummer,
+      navn,
       type: KontekstType.GRUNNKRETS,
     })),
   );
@@ -176,12 +176,12 @@ export const mapGrunnkretsResponseToKrets = (grunnkretser: GrunnkretsResponse[])
 
 export const mapStemmekretResponseToKrets = (stemmekretser: StemmekretsResponse[]): Krets[] => {
   return sortKretserOptionsByNumber(
-    stemmekretser.map(({ id, version, stemmekretsnummer, stemmekretsnavn, kommuneIdentifikator }) => ({
+    stemmekretser.map(({ id, version, nummer, navn, kommuneIdentifikator }) => ({
       id,
       kommuneId: kommuneIdentifikator,
       version,
-      nummer: stemmekretsnummer,
-      navn: stemmekretsnavn,
+      nummer,
+      navn,
       type: KontekstType.STEMMEKRETS,
     })),
   );

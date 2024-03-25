@@ -7,18 +7,19 @@ import {
   HistoryChange,
 } from "contexts/HistoryContext/types";
 import { FeatureProperties, KontekstEgenskaper } from "types/api";
-import { removeNull } from "utils/list-utils";
+import { removeNil } from "utils/list-utils";
+import { isDate } from "date-fns";
 
-export const getDateInFriendlyString = (dateString?: string) => {
-  if (!dateString) return null;
-
+export const datestringToFormattedDatestring = (dateString: string) => {
   const date = new Date(dateString);
 
-  return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+  return dateToFormattedDatestring(date);
 };
 
-export const dateToFriendlyDatestring = (date: Date) => {
-  return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+export const dateToFormattedDatestring = (date: Date): string | undefined => {
+  if (isDate(date) && !isNaN(date.getTime())) {
+    return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`;
+  }
 };
 
 const updateFeatureWithNewProperties = (feature: Feature<LineString>, newProperties: FeatureProperties) => {
@@ -33,8 +34,7 @@ export const addFeaturePropertiesEntryFromFeature = (
   updatedFeatureProperties: FeatureProperties,
 ) => {
   const id = feature.getId()?.toString();
-
-  if (!id) return;
+  if (id == null) return;
 
   const oldFeatureProperties = feature.getProperties() as FeatureProperties;
 
@@ -59,7 +59,7 @@ export const addPropertyEntryFromFeature = (
 ) => {
   const id = feature.getId()?.toString();
 
-  if (!id) return;
+  if (id == null) return;
 
   const oldProperties = feature.getProperties() as FeatureProperties;
 
@@ -81,10 +81,10 @@ export const addArchivingEntryFromFeatureList = (
   features: Feature<LineString>[],
   addHistoryEntry: (entry: GrenseArkiveringsEntry) => void,
 ) => {
-  const changeEntries: HistoryChange<FeatureProperties>[] = removeNull(
+  const changeEntries: HistoryChange<FeatureProperties>[] = removeNil(
     features.map((feature) => {
       const id = feature.getId()?.toString();
-      if (!id) return;
+      if (id == null) return;
 
       const oldProperties = feature.getProperties() as FeatureProperties;
       const newProperties: FeatureProperties = {
@@ -113,7 +113,7 @@ export const addKontekstEntryFromFeature = (
   addHistoryEntry: (entry: GrenseTilhorighetEntry) => void,
 ) => {
   const id = feature.getId()?.toString();
-  if (!id) return;
+  if (id == null) return;
 
   const oldProperties = feature.getProperties() as FeatureProperties;
   const oldKontekstEgenskaper = oldProperties.kontekstEgenskaper;
@@ -129,7 +129,7 @@ export const addKontekstEntryFromFeature = (
     changes: [
       {
         id: id,
-        from: oldKontekstEgenskaper || ({} as KontekstEgenskaper),
+        from: oldKontekstEgenskaper ?? ({} as KontekstEgenskaper),
         to: updatedKontekstEgenskaper,
       },
     ],

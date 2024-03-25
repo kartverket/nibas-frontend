@@ -1,17 +1,17 @@
 import { styled } from "styled-components";
 import Kommune from "./Kommune";
 import useKommuner from "hooks/inndelinger/useKommuner";
-import { GrenseRef } from "types/api";
+import { AdministrativEnhetResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
 
 type Props = {
-  fylke: GrenseRef;
+  fylke: AdministrativEnhetResponse;
 };
 
 const KommuneList = ({ fylke }: Props) => {
   const { kommuner, error } = useKommuner(getIdFromEntity(fylke));
 
-  if (error) return <p>Fikk ikke hentet kommuner</p>;
+  if (error != null) return <p>Fikk ikke hentet kommuner</p>;
 
   if (!kommuner) return null;
 

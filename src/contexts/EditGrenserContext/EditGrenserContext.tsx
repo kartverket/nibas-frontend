@@ -5,7 +5,7 @@ import { KretsStatusAlle, EditingType, KretsStatusPerKretstype, KretsStatus } fr
 export type EditGrenserContextValue = {
   alleKretserStatuser: KretsStatusAlle;
   setAlleKretserStatuser: React.Dispatch<React.SetStateAction<Partial<Record<EditingType, KretsStatusPerKretstype>>>>;
-  setKretsStatus: (type: EditingType, grenseId: string, values?: KretsStatus) => void;
+  setKretsStatus: (type: EditingType, grenseId: string, status: KretsStatus) => void;
   resetAndClearAllLayers: () => void;
   getCurrentlyEditingType: () => EditingType | null;
   setOtherEditingTypes: (currentType: EditingType, shouldBeEditable?: boolean) => void;
@@ -16,7 +16,7 @@ export const EditGrenserContext = createContext<EditGrenserContextValue | undefi
 export const EditGrenserProvider = ({ children }: { children: React.ReactNode }) => {
   const [alleKretserStatuser, setAlleKretserStatuser] = useState<KretsStatusAlle>({});
 
-  const setKretsStatus = (type: EditingType, kretsId: string, status: KretsStatus = {}) => {
+  const setKretsStatus = (type: EditingType, kretsId: string, status: KretsStatus) => {
     setAlleKretserStatuser((prevState) => ({
       ...prevState,
       [type]: {
@@ -32,7 +32,7 @@ export const EditGrenserProvider = ({ children }: { children: React.ReactNode })
    */
   const getCurrentlyEditingType = () => {
     const currentlyEditingType = Object.entries(alleKretserStatuser).find(([, grensevalues]) =>
-      Object.values(grensevalues).some((grense) => grense.editing),
+      Object.values(grensevalues).some((grense) => grense.isEditing),
     );
 
     if (currentlyEditingType) {
@@ -53,8 +53,8 @@ export const EditGrenserProvider = ({ children }: { children: React.ReactNode })
     otherEditingTypes.forEach(([type, kretsStatuses]) => {
       Object.entries(kretsStatuses).forEach(([grenseId, kretsStatus]) => {
         setKretsStatus(type as EditingType, grenseId, {
-          visible: kretsStatus.visible,
-          editing: shouldBeEditable ?? kretsStatus.editing,
+          isVisible: kretsStatus.isVisible,
+          isEditing: shouldBeEditable ?? kretsStatus.isEditing,
         });
       });
     });

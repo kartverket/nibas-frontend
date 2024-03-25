@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useState } from "react";
-import { KommuneRef } from "types/api";
 import { useSidebarPanel } from "./SidebarPanelContext";
 import { useFeatureStyle } from "./FeatureStyleContext/FeatureStyleContext";
+import { KommuneResponse } from "types/api";
 
 type OverlayPanel = "grenseinfo" | "sammenslåing" | "splitting" | "tegnforklaring" | "koordinater" | "kartlag";
 
-type OverlayModal = "stemmekrets" | "grunnkrets";
-export type Flatedata = KommuneRef | null;
+type OverlayModal = "stemmekrets" | "grunnkrets" | "navigasjon";
+export type Flatedata = KommuneResponse | null;
 
 export type OverlayPanelContextValue = {
   activeOverlayPanel: OverlayPanel | null;

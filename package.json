@@ -28,7 +28,7 @@
     "serve": "vite preview",
     "test": "vitest",
     "test:coverage": "npm test -- src/* --coverage",
-    "lint": "eslint src",
+    "lint": "eslint src --max-warnings 0",
     "lint:fix": "npm run lint -- --fix",
     "update-api-types": "npx openapi-typescript@5 http://localhost:8080/api-docs --output src/types/api-gen.ts",
     "format": "prettier --write ."
@@ -82,6 +82,7 @@
     "vite-plugin-checker": "^0.6.4",
     "vite-plugin-eslint": "^1.8.1",
     "vite-tsconfig-paths": "^4.3.1",
-    "vitest": "^1.3.1"
+    "vitest": "^1.3.1",
+    "wait-on": "^7.2.0"
   }
 }

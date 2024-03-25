@@ -320,7 +320,7 @@ export interface components {
       /** @description Navnet på grunnkretsen */
       navn: string;
       /** @description Grunnkretsnummeret til grunnkretsen */
-      grunnkretsnummer: string;
+      nummer: string;
       identifikasjon: components["schemas"]["Identifikasjon"];
       /**
        * Format: int32
@@ -393,23 +393,6 @@ export interface components {
        * @description Teknisk versjon til referert objekt for å støtte samhandling og redigering
        */
       version: number;
-      /** @description Angir om grensen skal leses med klokken for å danne flate. */
-      retningMedKlokken: boolean;
-      /**
-       * Format: int32
-       * @description Angir rekkefølgen på gitt grenselinje i flatedanningen.
-       */
-      rekkefoelge: number;
-      /**
-       * Format: int32
-       * @description Angir hvilken flate for enheten grensen er en del av.
-       */
-      flateIndeks: number;
-      /**
-       * Format: int32
-       * @description Angir om grensen er en del av et hull, og i så fall index på gitt hull.
-       */
-      hullIndeks?: number;
     };
     /** @description Representasjon av deling av en krets som ender i to kretser der én er videreført og én er ny */
     KretsDelingEndringRequest: {
@@ -571,10 +554,10 @@ export interface components {
     /** @description Representasjon av en stemmekrets */
     StemmekretsRequest: {
       /** @description Stemmekretsnummeret til stemmekretsen */
-      stemmekretsnummer?: string;
+      nummer?: string;
       identifikasjon: components["schemas"]["Identifikasjon"];
       /** @description Stemmekretsnavnet til stemmekretsen */
-      stemmekretsnavn?: string;
+      navn?: string;
       /** @description Tellekretsnummeret til stemmekretsen */
       tellekretsnummer?: string;
       /** @description Tellekretsnavnet til stemmekretsen */
@@ -595,9 +578,9 @@ export interface components {
       /** @description Liste av identifikatorer som skal bli del av den videreførte stemmekretsen */
       stemmekretserTilSammenslaaing: components["schemas"]["IdentifikatorMedVersjon"][];
       /** @description Navnet til den sammenslåtte stemmekretsen */
-      stemmekretsNavn: string;
+      navn: string;
       /** @description Stemmekretsnummeret til den sammenslåtte stemmekretsen */
-      stemmekretsNummer: string;
+      nummer: string;
     };
     /** @description Henvisning til saksdokument i Kartverkets eget arkiv. */
     TekstHolder: {
@@ -616,20 +599,6 @@ export interface components {
       common: unknown;
       commonGrense: unknown;
       dokumentasjonsreferanser: unknown;
-    };
-    ApiErrorResponse: {
-      /** @description En unik feilkode for denne feilen som kan vises til bruker. Denne feilkoden burde også være med i loggene så man finner igjen feilen som oppstod. */
-      errorCode: string;
-      errorDescription: components["schemas"]["ErrorDescription"];
-    };
-    /** @description En forklaring av feilen som oppstod. Denne er ment til å kunne vises direkte til brukeren. */
-    ErrorDescription: {
-      /** @description Tittelen på feilmeldingen som skal vises. */
-      title: string;
-      /** @description En beskrivende forklaring av feilen som oppstod. */
-      description: string;
-      /** @description Litt tilleggsinfo relatert til feilen om man vil gi noe mer forklaring av konteksten. Ikke obligatorisk. */
-      additionalInfo?: string;
     };
     /** @description Feil som har oppstått pga optimistisk lås. */
     OptimistiskLaasResponse: {
@@ -728,6 +697,20 @@ export interface components {
       /** @description Feil som har oppstått pga optimistisk lås. */
       optimisticLockExceptions: components["schemas"]["OptimistiskLaasResponse"][];
     };
+    ApiErrorResponse: {
+      /** @description En unik feilkode for denne feilen som kan vises til bruker. Denne feilkoden burde også være med i loggene så man finner igjen feilen som oppstod. */
+      errorCode: string;
+      errorDescription: components["schemas"]["ErrorDescription"];
+    };
+    /** @description En forklaring av feilen som oppstod. Denne er ment til å kunne vises direkte til brukeren. */
+    ErrorDescription: {
+      /** @description Tittelen på feilmeldingen som skal vises. */
+      title: string;
+      /** @description En beskrivende forklaring av feilen som oppstod. */
+      description: string;
+      /** @description Litt tilleggsinfo relatert til feilen om man vil gi noe mer forklaring av konteksten. Ikke obligatorisk. */
+      additionalInfo?: string;
+    };
     /** @description Representasjon av audit info for et objekt. */
     AuditInfoResponse: {
       /**
@@ -822,6 +805,10 @@ export interface components {
     /** @description Representasjon av en stemmekrets */
     StemmekretsResponse: {
       id: components["schemas"]["ObjektIdentifikator"];
+      /** @description Navnet på stemmekretsen */
+      navn: string;
+      /** @description Stemmekretsnummeret til stemmekretsen */
+      nummer: string;
       gyldighet: components["schemas"]["GyldighetResponse"];
       /** @description Typen endring som ble gjort på objektet */
       endringstype?: string;
@@ -835,10 +822,6 @@ export interface components {
        * @description Datafangsdato for objektet
        */
       datafangstdato?: string;
-      /** @description Navnet på stemmekretsen */
-      stemmekretsnavn: string;
-      /** @description Stemmekretsnummeret til stemmekretsen */
-      stemmekretsnummer: string;
       kommunenummer: components["schemas"]["Kommunenummer"];
       kommuneIdentifikator: components["schemas"]["ObjektIdentifikator"];
       /** @description Tellekretsnummer til stemmekretsen */
@@ -861,26 +844,13 @@ export interface components {
       /** @description Liste av features som holder på dataene */
       features: components["schemas"]["Feature"][];
     };
-    /** @description En referanse til en kommune */
-    KommuneRef: {
-      id: components["schemas"]["ObjektIdentifikator"];
-      /** @description Liste over navn til kommunen */
-      navn: components["schemas"]["AdministrativEnhetNavn"][];
-      /** @description URL til full representasjon av kommunen */
-      href: string;
-      kommunenummer: components["schemas"]["Kommunenummer"];
-      /**
-       * Format: int32
-       * @description Antall publiserte framtidige gyldige versjoner.
-       */
-      antallFramtidigeVersjoner: number;
-    };
     /** @description Representasjon av en kommune */
     KommuneResponse: {
       id: components["schemas"]["ObjektIdentifikator"];
       /** @description Liste over navn til kommunen */
-      administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
-      kommunenummer: components["schemas"]["Kommunenummer"];
+      navn: components["schemas"]["AdministrativEnhetNavn"][];
+      /** @description Kommunenummeret til kommunen */
+      nummer: string;
       /** @description Angir om kommunen er et samisk forvaltningsområde eller ikke */
       samiskforvaltningsomraade: boolean;
       /**
@@ -901,7 +871,8 @@ export interface components {
       /** @description Navnet på grunnkretsen */
       navn: string;
       /** @description Grunnkretsnummeret til grunnkretsen */
-      grunnkretsnummer: string;
+      nummer: string;
+      /** @description Grunnkretsnummeret til grunnkretsen */
       gyldighet: components["schemas"]["GyldighetResponse"];
       /**
        * Format: date-time
@@ -942,33 +913,13 @@ export interface components {
       /** @description Liste av kodeliste-elementer. */
       items: components["schemas"]["KodelisteItem"][];
     };
-    /** @description En referanse til et fylke */
-    FylkeRef: {
-      id: components["schemas"]["ObjektIdentifikator"];
-      /** @description Liste over navn til fylket */
-      navn: components["schemas"]["AdministrativEnhetNavn"][];
-      /** @description URL til full representasjon av fylket */
-      href: string;
-      fylkesnummer: components["schemas"]["Fylkesnummer"];
-      /**
-       * Format: int32
-       * @description Antall publiserte framtidige gyldige versjoner.
-       */
-      antallFramtidigeVersjoner: number;
-    };
-    /** @description Representasjon av et fylkesnummer */
-    Fylkesnummer: {
-      /** @description Unik UUID for fylkesnummeret */
-      id: string;
-      /** @description Det faktiske fylkesnummeret */
-      kodeverdi: string;
-    };
     /** @description Representasjon av et fylke */
     FylkeResponse: {
       id: components["schemas"]["ObjektIdentifikator"];
       /** @description Liste over navn til fylket */
-      administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
-      fylkesnummer: components["schemas"]["Fylkesnummer"];
+      navn: components["schemas"]["AdministrativEnhetNavn"][];
+      /** @description Fylkesnummeret til fylket */
+      nummer: string;
       /** @description Angir om fylket er et samisk forvaltningsområde eller ikke */
       samiskforvaltningsomraade: boolean;
       /**
@@ -982,6 +933,13 @@ export interface components {
        * @description Teknisk versjon for å støtte samhandling og redigering
        */
       version: number;
+    };
+    /** @description Representasjon av et fylkesnummer */
+    Fylkesnummer: {
+      /** @description Unik UUID for fylkesnummeret */
+      id: string;
+      /** @description Det faktiske fylkesnummeret */
+      kodeverdi: string;
     };
     /** @description Representasjon av en krets. Response-type kun for Matrikkelen. Kan være grunnkrets, stemmekrets etc. */
     EksternKretsResponse: {
@@ -1438,7 +1396,7 @@ export interface operations {
       /** Successful operation */
       200: {
         content: {
-          "application/json": components["schemas"]["KommuneRef"][];
+          "application/json": components["schemas"]["KommuneResponse"][];
         };
       };
       /** Bad Request */
@@ -1754,7 +1712,7 @@ export interface operations {
       /** Successful operation */
       200: {
         content: {
-          "application/json": components["schemas"]["FylkeRef"][];
+          "application/json": components["schemas"]["FylkeResponse"][];
         };
       };
       /** Bad Request */

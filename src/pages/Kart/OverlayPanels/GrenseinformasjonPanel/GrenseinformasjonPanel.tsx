@@ -3,26 +3,38 @@ import { PanelProps, SidePanel } from "../Panel";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { FeatureProperties } from "types/api";
 import GrenseinformasjonForm from "./GrenseinformasjonForm";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { isMatrikkelFeature } from "utils/features";
 import { TilhorighetField } from "./TilhorighetField";
 import { Vedtaksinformasjon } from "./Vedtaksinformasjon/Vedtaksinformasjon";
 import { Card, CardBody, CardHeader, Divider, Heading } from "@kvib/react";
 import { styled } from "styled-components";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { newFeatureOnlyExistsAfterIndex } from "contexts/HistoryContext/history-utils";
 
 const GrenseinformasjonPanel = ({ isOpen, className }: PanelProps) => {
   const { selectedFeatures } = useFeatureStyle();
   const { activeOverlayPanel, closeOverlayPanel } = useOverlayPanel();
-
+  const { history } = useHistory();
   const selectedFeature = selectedFeatures.length === 1 ? selectedFeatures[0] : undefined;
-
   useEffect(() => {
     if (activeOverlayPanel === "grenseinfo" && selectedFeatures.length === 0) {
       closeOverlayPanel();
     }
   }, [activeOverlayPanel, closeOverlayPanel, selectedFeatures.length]);
 
-  const selectedProperties = selectedFeature?.getProperties() as FeatureProperties;
+  const selectedProperties = selectedFeature?.getProperties() as FeatureProperties | undefined;
+
+  const closeGrenseinfoIfFeatureRemoved = useCallback(() => {
+    if (selectedFeature?.getId() === undefined || selectedFeature?.getId() === null) return;
+
+    const isFeatureGone = newFeatureOnlyExistsAfterIndex(selectedFeature!.getId()!.toString(), history);
+    if (isFeatureGone && isOpen) closeOverlayPanel();
+  }, [closeOverlayPanel, history, isOpen, selectedFeature]);
+
+  useEffect(() => {
+    if (history.index < history.entries.length) closeGrenseinfoIfFeatureRemoved();
+  }, [closeGrenseinfoIfFeatureRemoved, history.entries.length, history.index]);
 
   return (
     selectedFeature &&

@@ -96,7 +96,7 @@ export const useCursorStyles = ({ isEnabled, defaultCursor, eventsAndCursor }: C
       });
 
       customEvents?.forEach((event) => {
-        if (event.callback && map.getTargetElement()) {
+        if (event.callback) {
           map.getTargetElement()?.removeEventListener(event.name, event.callback);
         }
       });

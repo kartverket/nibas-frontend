@@ -11,24 +11,32 @@ import { Tool, useToolbar } from "contexts/ToolbarContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useToast } from "@kvib/react";
 import { Style } from "ol/style";
-import { createGrenseHistoryChange, getInfoFromFeature } from "./grense-history-utils";
+import { createGrenseHistoryChange } from "./grense-history-utils";
 import { useGetFeatures } from "./interaction-utils";
 import { isAdministrativGrense } from "utils/grenser";
 import { isFeatureEditable, isPreviousAndCurrentCoordinatesEqual } from "utils/features";
 import { findNearbyVertexOnFeature } from "utils/map/map-utils";
-import useToastCounter from "hooks/useToastCounter";
+import useToastCounter from "hooks/toast/useToastCounter";
 import { Geometry } from "ol/geom";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import useSplit from "./useSplit";
-import { equals } from "ol/coordinate";
+import { Coordinate, equals } from "ol/coordinate";
 
 const useModify = () => {
   const { addHistoryEntry } = useHistory();
   const { activeTool, activeModeTools } = useToolbar();
   const { selectedFeatures, featureIsArchived } = useFeatureStyle();
   const toast = useToast();
-  const { toastCounter: removeToast } = useToastCounter("success", "Punktet ble fjernet", "punkter ble fjernet");
-  const { toastCounter: addToast } = useToastCounter("success", "Punktet ble lagt til", "punkter ble lagt til");
+  const { toastCounter: removeToast } = useToastCounter(
+    { status: "success" },
+    "Punktet ble fjernet",
+    "punkter ble fjernet",
+  );
+  const { toastCounter: addToast } = useToastCounter(
+    { status: "success" },
+    "Punktet ble lagt til",
+    "punkter ble lagt til",
+  );
   const { getActiveFeaturesAtPixel, getFeaturesAtPixel } = useGetFeatures();
   const { performFeatureSplit } = useSplit();
   const confirmationModal = useConfirmationModal();
@@ -153,15 +161,15 @@ const useModify = () => {
 
   useEffect(() => {
     const saveCoordinatesBeforeModification = (e: ModifyEvent) => {
-      if (e.features) {
-        e.features.forEach((featureLike) => {
-          if (featureLike instanceof Feature) {
-            const { featureId, coordinates } = getInfoFromFeature(featureLike);
-            if (!featureId || !coordinates) return;
-            featureLike.set(previousCoordinateKey, coordinates);
-          }
-        });
-      }
+      e.features.forEach((feature) => {
+        const featureId = feature.getId()?.toString();
+        if (featureId === undefined) return;
+
+        const geometry = feature.getGeometry();
+        if (geometry instanceof LineString) {
+          feature.set(previousCoordinateKey, geometry.getCoordinates());
+        }
+      });
     };
     modify.on("modifystart", saveCoordinatesBeforeModification);
 
@@ -182,9 +190,9 @@ const useModify = () => {
     };
 
     const setPreviousCoordinatesForFeature = (feature: Feature<LineString>) => {
-      const previousFeatureCoordinates = feature.get(previousCoordinateKey);
+      const previousFeatureCoordinates = feature.get(previousCoordinateKey) as Coordinate[] | undefined;
 
-      if (previousFeatureCoordinates) {
+      if (previousFeatureCoordinates !== undefined) {
         const geometry = feature.getGeometry();
         geometry?.setCoordinates(previousFeatureCoordinates);
       }
@@ -215,7 +223,7 @@ const useModify = () => {
         // Hvis vi ender opp på én grense, må vi sjekke om det er et endepunkt vi har landet på, for ikke-endepunkter oppfører seg annerledes
         if (nonSelectedActiveFeatures.length === 1) {
           const nonSelectedActiveFeature = nonSelectedActiveFeatures[0] as Feature<LineString>;
-          const nonSelectedActiveFeatureGeometry = nonSelectedActiveFeature.getGeometry() as LineString;
+          const nonSelectedActiveFeatureGeometry = nonSelectedActiveFeature.getGeometry();
 
           if (!nonSelectedActiveFeatureGeometry) return;
 
@@ -244,7 +252,7 @@ const useModify = () => {
             });
 
             if (isAccepted) {
-              performFeatureSplit(nonSelectedActiveFeature, nearbyVertex);
+              performFeatureSplit(nonSelectedActiveFeature, [nearbyVertex]);
             } else {
               setPreviousCoordinatesForFeature(selectedFeature);
               return;

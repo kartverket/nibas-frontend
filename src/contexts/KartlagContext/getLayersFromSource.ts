@@ -14,7 +14,7 @@ type WMSResponseLayer = {
   Name: string;
   Title: string;
   queryable: boolean;
-  Layer: WMSResponseLayer[];
+  Layer?: WMSResponseLayer[];
 };
 
 type WMTSResponseLayer = {
@@ -23,9 +23,8 @@ type WMTSResponseLayer = {
 };
 
 const mapWMSLayer = (responseLayer: WMSResponseLayer, sourceId: KartlagId) => {
-  const sublayers = responseLayer.Layer
-    ? responseLayer.Layer.map((nestedLayer: WMSResponseLayer) => mapWMSLayer(nestedLayer, sourceId))
-    : [];
+  const sublayers =
+    responseLayer.Layer?.map((nestedLayer: WMSResponseLayer) => mapWMSLayer(nestedLayer, sourceId)) ?? [];
 
   const mappedLayer: MappedLayer = {
     type: "wms",
@@ -73,7 +72,7 @@ export const getLayersFromSource = async (layerId: KartlagId, source: TileWMS | 
 
   capabilitiesUrl += serviceParam;
 
-  if (source.get("protectedTjenesteId")) {
+  if (source.get("protectedTjenesteId") != null) {
     const ticket = await getTicketForTjeneste(source.get("protectedTjenesteId"), url);
     capabilitiesUrl = `${capabilitiesUrl}&ticket=${ticket}`;
   }
@@ -87,7 +86,7 @@ export const getLayersFromSource = async (layerId: KartlagId, source: TileWMS | 
 
     if (source instanceof TileWMS) {
       json = WMSParser.read(xml);
-      if (!json?.Capability) return null;
+      if (json?.Capability == null) return null;
 
       const mainLayer = json.Capability.Layer;
 
@@ -97,7 +96,7 @@ export const getLayersFromSource = async (layerId: KartlagId, source: TileWMS | 
     if (source instanceof WMTS) {
       json = WMTSParser.read(xml);
 
-      if (!json?.Contents) return null;
+      if (json?.Contents == null) return null;
 
       const mappedWMTSLayer: MappedLayer = {
         type: "wmts",

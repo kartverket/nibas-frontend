@@ -13,13 +13,13 @@ interface Props {
 }
 
 const GrenseinformasjonRow = ({
-  isEditing,
   name,
   tooltipLabel,
   valueLabel,
   children,
-  isLoading,
-  isRequired,
+  isEditing = false,
+  isLoading = false,
+  isRequired = false,
 }: Props) => {
   const [iconHovered, setIconHovered] = useState(false);
 
@@ -41,7 +41,7 @@ const GrenseinformasjonRow = ({
         ) : isLoading ? (
           <SkeletonText noOfLines={1} skeletonHeight={5} marginTop="8px" />
         ) : (
-          <Field>{valueLabel || "Ikke spesifisert"}</Field>
+          <Field>{valueLabel != null && valueLabel.length > 0 ? valueLabel : "Ikke spesifisert"}</Field>
         )}
       </EditContent>
     </Container>

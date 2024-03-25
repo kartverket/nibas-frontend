@@ -34,6 +34,9 @@ const InputRow = styled.div`
   gap: 16px;
 `;
 
+export const coordinateDecimalPattern = /^-?\d+(\.\d+)?$/;
+export const coordinateDecimalPatternHelperText = "Koordinatet ditt må være et tall med eventuell punktum-separator";
+
 const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
   const { closeOverlayPanel } = useOverlayPanel();
   const { selectedPoint, selectedFeatures, selectPointOnFeature } = useFeatureStyle();
@@ -55,9 +58,6 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
       north: coordinates[1],
     };
   };
-
-  const coordinateDecimalPattern = /^\d+(\.\d+)?$/;
-  const coordinateDecimalPatternHelperText = "Koordinatet ditt må være et tall med eventuell punktum-separator";
 
   const {
     register,
@@ -146,7 +146,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
         const geometry = feature.getGeometry() as LineString;
         const coordinates = geometry.getCoordinates();
 
-        if (!featureId) continue;
+        if (featureId == null) continue;
 
         // Siden OL-objekter er mutable og vi trenger dette til senere:
         const originalCoordinates = [...coordinates];

@@ -5,21 +5,21 @@ export type Endring = {
   til: string;
 };
 
-export type StemmekretsMetadataEndringstype = "stemmekretsnavn" | "stemmekretsnummer" | "valgdistriktsnummer";
+export type StemmekretsMetadataEndringstype = "navn" | "nummer" | "valgdistriktsnummer";
 
-export type GrunnkretsEndringstype = "navn" | "grunnkretsnummer";
+export type GrunnkretsEndringstype = "navn" | "nummer";
 
 export type StemmekretsMetadataEndring = {
   kretsEndret: StemmekretsResponse;
-  stemmekretsnavn: Endring | null | undefined;
-  stemmekretsnummer: Endring | null | undefined;
+  navn: Endring | null | undefined;
+  nummer: Endring | null | undefined;
   valgdistriktsnummer: Endring | null | undefined;
 };
 
 export type GrunnkretsMetadataEndring = {
   kretsEndret: GrunnkretsResponse;
   navn: Endring | null | undefined;
-  grunnkretsnummer: Endring | null | undefined;
+  nummer: Endring | null | undefined;
 };
 
 export type Stemmekretsendringer = {
