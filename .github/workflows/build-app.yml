@@ -117,9 +117,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Serve the app in the background
-        run: npm start &
-        shell: bash
+      # - name: Serve the app in the background
+      #   run: npm start &
+      #   shell: bash
 
       - name: Wait for the app to be ready
         run: npx wait-on http://localhost:3000 -t 60000
