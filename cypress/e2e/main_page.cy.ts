@@ -1,6 +1,6 @@
 describe("main page", () => {
   beforeEach(() => {
-    cy.visit(Cypress.config("baseUrl"));
+    const baseUrl = Cypress.config("baseUrl");
   });
 
   it("should load the front page with a greeting header", () => {
