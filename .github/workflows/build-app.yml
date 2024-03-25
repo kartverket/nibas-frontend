@@ -46,7 +46,7 @@ jobs:
       - name: checkout code
         uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18.x
@@ -83,7 +83,7 @@ jobs:
         with:
           registry: ${{ env.registry }}
           username: ${{ github.actor }}
-          password: ${{ github.token }}
+          password: ${{ secrets.github_token }}
 
       - name: Build docker and push
         id: build_docker
@@ -112,17 +112,23 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
-          cache: 'npm'
+          cache: "npm"
 
-      - name: Install Cypress
+      - name: Install dependencies
         run: npm ci
 
-      - name: Serve the app
-        run: npm start
+      - name: Serve the app in the background
+        run: npm start &
+        shell: bash
 
-      - name: Cypress run
+      - name: Wait for the app to be ready
+        run: |
+          npx wait-on http://localhost:3000
+          npx wait-on timeout 60
+
+      - name: Run Cypress tests
         uses: cypress-io/github-action@v2
         with:
           start: npm run serve
-          wait-on: 'http://localhost:3000'
+          wait-on: "http://localhost:3000"
           wait-on-timeout: 60
