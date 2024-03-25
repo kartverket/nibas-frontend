@@ -1,6 +1,5 @@
 describe("utkast page", () => {
-  const baseUrl = Cypress.config("baseUrl");
-
+  const baseUrl = Cypress.env("baseUrl") || "http://localhost:3000";
   beforeEach(() => {
     cy.visit("/utkast");
   });
