@@ -55,13 +55,13 @@ jobs:
       - name: Update npmrc with secret to install internal packages
         run: |
           cp .npmrc .npmrc-copy
-          echo //npm.pkg.github.com/:_authToken=${{secrets.PAT_SCOPE_READ_PACKAGE}} >> .npmrc
+          echo //npm.pkg.github.com/:_authToken=${{ secrets.PAT_SCOPE_READ_PACKAGE }} >> .npmrc
 
       - name: Bump version and push tag
         id: tag_version
         uses: mathieudutour/github-tag-action@v6.1
         with:
-          github_token: ${{ github.token }}
+          github_token: ${{ secrets.github_token }}
 
       - name: Build and test
         run: |
@@ -122,13 +122,10 @@ jobs:
         shell: bash
 
       - name: Wait for the app to be ready
-        run: |
-          npx wait-on http://localhost:3000
-          npx wait-on timeout 60
+        run: npx wait-on http://localhost:3000 -t 60000
 
       - name: Run Cypress tests
         uses: cypress-io/github-action@v2
         with:
-          start: npm run serve
           wait-on: "http://localhost:3000"
           wait-on-timeout: 60
