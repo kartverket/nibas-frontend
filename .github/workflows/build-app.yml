@@ -105,7 +105,7 @@ jobs:
         run: npm install --save-dev serve
 
       - name: Serve the application
-        run: npx serve -s build &
+        run: npx serve -s build -l 3000 &
         env:
           CI: true
 
