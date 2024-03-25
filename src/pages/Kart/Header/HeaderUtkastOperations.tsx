@@ -1,14 +1,13 @@
 import HeaderButton, { HeaderSection } from "./HeaderButton";
 import { useDisclosure } from "@kvib/react";
 import UtkastSlettModal from "components/Modals/UtkastSlettModal";
-import UtkastPubliserModal from "components/Modals/UtkastPubliserModal";
 import { useUtkastEndringer } from "components/Endringslogg/hooks/useUtkastEndringer";
 import { UtkastResponse } from "types/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 
 const HeaderUtkastOperations = ({ utkast }: { utkast: UtkastResponse }) => {
   const { harEndringer } = useUtkastEndringer(utkast);
-  const { isOpen: isPubliserOpen, onClose: onPubliserClose, onOpen: onPubliserOpen } = useDisclosure();
+  const { onOpen: onPubliserOpen } = useDisclosure();
   const { isOpen: isSlettOpen, onClose: onSlettClose, onOpen: onSlettOpen } = useDisclosure();
 
   const { openOverlayPanel } = useOverlayPanel();
@@ -35,7 +34,6 @@ const HeaderUtkastOperations = ({ utkast }: { utkast: UtkastResponse }) => {
         onClick={onSlettOpen}
         tooltip={{ text: "Slett utkastet og alle endringene i dette utkastet" }}
       />
-      <UtkastPubliserModal isOpen={isPubliserOpen} onClose={onPubliserClose} utkast={utkast} />
       <UtkastSlettModal isOpen={isSlettOpen} onClose={onSlettClose} utkast={utkast} />
     </HeaderSection>
   );

@@ -1,23 +1,6 @@
 import { styled } from "styled-components";
 import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
-import {
-  useToast,
-  Modal,
-  ModalOverlay,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
-  ModalFooter,
-  ButtonGroup,
-  Button,
-  Datepicker,
-  FormLabel,
-} from "@kvib/react";
+import { useToast, Alert, AlertIcon, AlertTitle, AlertDescription, Datepicker, FormLabel } from "@kvib/react";
 import { publishUtkast } from "api/utkast";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { datestringToFormattedDatestring } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
@@ -32,14 +15,14 @@ import { useMatch, useNavigate } from "react-router-dom";
 import { routes } from "utils/routes";
 import { isAdministrativGrense } from "utils/grenser";
 import { isGrenseType } from "utils/type-utils";
+import StepButtonGroup from "./StepButtonGroup";
 
 type Props = {
-  isOpen: boolean;
-  onClose: () => void;
   utkast: UtkastResponse;
+  setCurrentStep: (step: number) => void;
 };
 
-const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
+const StepPubliser = ({ utkast, setCurrentStep }: Props) => {
   const toast = useToast();
   const { closeUtkast } = useUtkast();
   const [publiseringsdato, setPubliseringsdato] = useState(new Date());
@@ -118,63 +101,55 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered size="2xl">
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Publiser utkast</ModalHeader>
-        <ModalCloseButton />
-        <Body>
-          <Alert status="info">
-            <AlertIcon />
-            <div>
-              <AlertTitle>Du er i ferd med å publisere et utkast</AlertTitle>
-              <AlertDescription>
-                Endringene i utkastet vil bli tilgjengelig for alle etter den valgte publiseringsdatoen.
-              </AlertDescription>
-            </div>
-          </Alert>
+    <>
+      <PubliserContainer>
+        <Alert status="info">
+          <AlertIcon />
+          <div>
+            <AlertTitle>Du er i ferd med å publisere et utkast</AlertTitle>
+            <AlertDescription>
+              Endringene i utkastet vil bli tilgjengelig for alle etter den valgte publiseringsdatoen.
+            </AlertDescription>
+          </div>
+        </Alert>
 
-          {
-            // TODO Fjern når vi har delt geometri?
-            utkastHarEndringAdministrativeGrenser() && (
-              <Alert status="warning">
-                <AlertIcon />
-                <div>
-                  <AlertTitle>Utkastet ditt inneholder endringer på administrative grenser</AlertTitle>
-                  <AlertDescription>
-                    Pass på at du er sikker på endringene dine, og husk å gjøre tilsvarende endring for både
-                    grunnkretsgrense og stemmekretsgrense.
-                  </AlertDescription>
-                </div>
-              </Alert>
-            )
-          }
-          <EndringsloggAccordion utkast={utkast} />
-          <Datepickerlabel>
-            Fra hvilken dato skal endringene utkastet tre i kraft?
-            <Datepicker
-              fromDate={new Date()}
-              defaultSelected={new Date()}
-              onChange={(event) => setPubliseringsdato(new Date(event.target.value))}
-            />
-          </Datepickerlabel>
-        </Body>
-        <ModalFooter>
-          <ButtonGroup>
-            <Button variant="tertiary" onClick={onClose}>
-              Avbryt
-            </Button>
-            <Button isLoading={isLoading} onClick={publiserUtkast}>
-              Publiser utkast
-            </Button>
-          </ButtonGroup>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+        {
+          // TODO Fjern når vi har delt geometri?
+          utkastHarEndringAdministrativeGrenser() && (
+            <Alert status="warning">
+              <AlertIcon />
+              <div>
+                <AlertTitle>Utkastet ditt inneholder endringer på administrative grenser</AlertTitle>
+                <AlertDescription>
+                  Pass på at du er sikker på endringene dine, og husk å gjøre tilsvarende endring for både
+                  grunnkretsgrense og stemmekretsgrense.
+                </AlertDescription>
+              </div>
+            </Alert>
+          )
+        }
+        <EndringsloggAccordion utkast={utkast} />
+        <Datepickerlabel>
+          Fra hvilken dato skal endringene utkastet tre i kraft?
+          <Datepicker
+            fromDate={new Date()}
+            defaultSelected={new Date()}
+            onChange={(event) => setPubliseringsdato(new Date(event.target.value))}
+          />
+        </Datepickerlabel>
+      </PubliserContainer>
+      <StepButtonGroup
+        secondaryButtonText="Gå tilbake tilhørighet"
+        secondaryButtonOnClick={() => setCurrentStep(1)}
+        primaryButtonText="Publiser utkast"
+        primaryButtonIsLoading={isLoading}
+        primaryButtonOnClick={publiserUtkast}
+      />
+    </>
   );
 };
 
-const Body = styled(ModalBody)`
+const PubliserContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -184,4 +159,4 @@ const Datepickerlabel = styled(FormLabel)`
   margin-bottom: 16px;
 `;
 
-export default UtkastPubliserModal;
+export default StepPubliser;
