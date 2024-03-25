@@ -1,4 +1,4 @@
-name: Build app
+name: Build and test app
 on:
   merge_group:
   pull_request:
@@ -46,7 +46,7 @@ jobs:
       - name: checkout code
         uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18.x
@@ -55,12 +55,13 @@ jobs:
       - name: Update npmrc with secret to install internal packages
         run: |
           cp .npmrc .npmrc-copy
-          echo //npm.pkg.github.com/:_authToken=${{secrets.PAT_SCOPE_READ_PACKAGE}} >> .npmrc
+          echo //npm.pkg.github.com/:_authToken=${{ secrets.PAT_SCOPE_READ_PACKAGE }} >> .npmrc
+
       - name: Bump version and push tag
         id: tag_version
         uses: mathieudutour/github-tag-action@v6.1
         with:
-          github_token: ${{ github.token }}
+          github_token: ${{ secrets.github_token }}
 
       - name: Build and test
         run: |
@@ -76,25 +77,55 @@ jobs:
         run: |
           rm .npmrc
           mv .npmrc-copy .npmrc
+
       - name: Login to Github Container Registry
         uses: docker/login-action@v3
         with:
           registry: ${{ env.registry }}
           username: ${{ github.actor }}
-          password: ${{ github.token }}
+          password: ${{ secrets.github_token }}
 
       - name: Build docker and push
-        id: build
+        id: build_docker
         uses: docker/build-push-action@v5
         with:
           context: .
           push: ${{ inputs.deploy_ghcr == 'true' }}
-          tags: ${{ env.registry }}/${{ github.repository }}:${{ steps.tag_version.outputs.new_tag }} , ${{ env.registry }}/${{ github.repository }}:latest
+          tags: ${{ env.registry }}/${{ github.repository }}:${{ steps.tag_version.outputs.new_tag }}, ${{ env.registry }}/${{ github.repository }}:latest
           build-args: |
             project_version_arg=${{ steps.tag_version.outputs.new_tag }}
 
       - name: Set output with build values
         id: setOutput
         run: |
-          echo "image_url=${{ env.registry }}/${{ github.repository }}@${{ steps.build.outputs.digest }}" >> $GITHUB_OUTPUT
-          echo "digest=${{ steps.build.outputs.digest }}" >> $GITHUB_OUTPUT
+          echo "image_url=${{ env.registry }}/${{ github.repository }}@${{ steps.build_docker.outputs.digest }}" >> $GITHUB_OUTPUT
+          echo "digest=${{ steps.build_docker.outputs.digest }}" >> $GITHUB_OUTPUT
+
+  cypress-tests:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Serve the app in the background
+        run: npm start &
+        shell: bash
+
+      - name: Wait for the app to be ready
+        run: npx wait-on http://localhost:3000 -t 60000
+
+      - name: Run Cypress tests
+        uses: cypress-io/github-action@v2
+        with:
+          wait-on: "http://localhost:3000"
+          wait-on-timeout: 60
