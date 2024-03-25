@@ -19,6 +19,7 @@ import { LineString } from "ol/geom";
 import { addKontekstEntryFromFeature } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import { isGrenseType } from "utils/type-utils";
 import { GrenseType } from "hooks/layers/types";
 
 const mapGrenseTypeTilKontekstType = (grenseType: GrenseType): KontekstType => {
@@ -95,7 +96,7 @@ export const useTilhorighetForm = (feature: Feature) => {
   );
   const kontekstType =
     kontekstEgenskaper.map((k) => k.type as KontekstType)[0] ??
-    mapGrenseTypeTilKontekstType(featureProperties.type as GrenseType);
+    (isGrenseType(featureProperties.type) && mapGrenseTypeTilKontekstType(featureProperties.type));
   const { flatedata } = useOverlayPanel();
 
   const kommunerId = useMemo(

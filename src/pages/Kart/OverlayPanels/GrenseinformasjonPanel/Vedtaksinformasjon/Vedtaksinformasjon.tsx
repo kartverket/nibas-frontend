@@ -6,7 +6,7 @@ import { FeatureProperties, Metadata } from "types/api";
 import { useState } from "react";
 import useIsGrenseinformasjonPanelDisabled from "../../hooks/useIsGrenseInformasjonPanelDisabled";
 import { isAdministrativGrense } from "utils/grenser";
-import { GrenseType } from "hooks/layers/types";
+import { isGrenseType } from "utils/type-utils";
 
 export type Referanse = {
   beskrivelse: string;
@@ -57,7 +57,7 @@ export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
     onClose();
   };
 
-  if (!metadata || !isAdministrativGrense(properties.type as GrenseType)) return;
+  if (!metadata || !(isGrenseType(properties.type) && isAdministrativGrense(properties.type))) return;
 
   return (
     <>
