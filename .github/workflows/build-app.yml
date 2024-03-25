@@ -118,9 +118,7 @@ jobs:
         run: npm ci
 
       - name: Serve the app
-        run: npm start &
-        env:
-          CI: true
+        run: npm start
 
       - name: Cypress run
         uses: cypress-io/github-action@v2
