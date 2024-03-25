@@ -1,5 +1,4 @@
-name: Build and Test App
-
+name: Build and test app
 on:
   merge_group:
   pull_request:
@@ -102,15 +101,9 @@ jobs:
           echo "image_url=${{ env.registry }}/${{ github.repository }}@${{ steps.build_docker.outputs.digest }}" >> $GITHUB_OUTPUT
           echo "digest=${{ steps.build_docker.outputs.digest }}" >> $GITHUB_OUTPUT
 
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-artifact
-          path: ./build
-
   cypress-tests:
     needs: build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -119,33 +112,19 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
-          registry-url: "https://npm.pkg.github.com"
-          scope: "@kartverket"
-
-      - name: Update npmrc with secret to install internal packages
-        run: |
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.PAT_SCOPE_READ_PACKAGE }}" > .npmrc
+          cache: 'npm'
 
       - name: Install Cypress
         run: npm ci
 
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifact
-          path: ./
-
-      - name: Install server to serve the build
-        run: npm install -g serve
-
       - name: Serve the app
-        run: serve -s build -l 3000 &
-        shell: bash
+        run: npm start &
+        env:
+          CI: true
 
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v2
         with:
-          start: "npm run serve"
-          wait-on: "http://localhost:3000"
+          start: npm run serve
+          wait-on: 'http://localhost:3000'
           wait-on-timeout: 60
-          browser: chrome
