@@ -15,6 +15,7 @@ import { useState } from "react";
 
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
 const Toolbar = () => {
   const { activeTool, activeModeTools, toggleTool, toggleModeTool, enableModeTool, disableModeTool, resetTool } =
@@ -30,6 +31,8 @@ const Toolbar = () => {
   const { selectedFeatures, selectedPoint, clearSelectedPoint, clearSelection } = useFeatureStyle();
   const { activeSidebarPanel, closeSidebarPanel } = useSidebarPanel();
   const { getCurrentlyEditingType } = useEditAllGrenser();
+  const { currentlyEditedInndeling } = useInndelinger();
+  const isEditing = currentlyEditedInndeling != null;
   const editingType = getCurrentlyEditingType();
   const isEditMode = !!editingType;
 
@@ -198,7 +201,7 @@ const Toolbar = () => {
               onClick={() => disableModeTool("move")}
               isActive={!activeModeTools.includes("move")}
               aria-label="Rediger grenser i kartet"
-              isDisabled={!editingType}
+              isDisabled={!isEditing}
               tooltip={{ text: "Rediger grenser i kartet", shortcut: "edit" }}
             >
               Rediger

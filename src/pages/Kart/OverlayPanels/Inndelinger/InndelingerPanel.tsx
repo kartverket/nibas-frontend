@@ -35,9 +35,6 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
   const selectFylke = (fylkeId: string) => {
     if (selectedKretstype === "fylker") {
       selectInndeling(fylkeId, "fylker", isEditing);
-      if (isEditing) {
-        resetInndelingerPanel();
-      }
     } else {
       setSelectedFylkeId(fylkeId);
     }
@@ -46,9 +43,6 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
   const selectKommune = (kommuneId: string) => {
     if (selectedKretstype) {
       selectInndeling(kommuneId, selectedKretstype, isEditing);
-    }
-    if (isEditing) {
-      resetInndelingerPanel();
     }
   };
 
@@ -103,7 +97,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
                 return (
                   <Inndeling
                     key={fylkeId}
-                    inndelingId={fylkeId}
+                    inndelingid={selectedKretstype === "fylker" ? fylkeId : undefined}
                     isActive={selectedFylkeId === fylkeId}
                     onClick={() => selectFylke(fylkeId)}
                     rightIcon={inndelingIcon(fylkeId, false)}
@@ -122,7 +116,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
                 return (
                   <Inndeling
                     key={kommuneId}
-                    inndelingId={kommuneId}
+                    inndelingid={kommuneId}
                     isActive={selectedFylkeId === kommuneId}
                     onClick={() => selectKommune(kommuneId)}
                     rightIcon={inndelingIcon(kommuneId, true)}

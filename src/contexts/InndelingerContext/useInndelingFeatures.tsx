@@ -8,12 +8,24 @@ import { geoJsonToSource } from "utils/map/geoJson";
 import { getLayerById } from "utils/map/layers";
 import { Kretstype } from "./InndelingerContext";
 
-const useInndelingFeatures = (kretstype: Kretstype | null, id: string) => {
+const useInndelingFeatures = (kretstype: Kretstype | null, id: string | null) => {
   const { utkast } = useUtkast();
+
+  const getRequestUrl = () => {
+    if (kretstype != null && id != null) {
+      if (kretstype === "fylker" || kretstype === "kommuner") {
+        return `/v1/${kretstype}/${id}/grenser`;
+      }
+
+      return `/v1/kommuner/${id}/${kretstype?.slice(0, -2)}grenser`;
+    }
+
+    return "";
+  };
 
   // Denne henter kun dersom den har en id som ikke er en tom streng
   const { data, ...rest } = useNibasApi<GeoJSONFeatureCollection>(
-    id && kretstype != null ? `/v1/${kretstype}/${id}/grenser` : null,
+    id != null && kretstype != null ? getRequestUrl() : null,
   );
 
   const utkastGeoJson = useUtkastFeature(data, utkast);

@@ -1,4 +1,6 @@
+import { grenserLayers } from "hooks/layers/constants";
 import { createContext, useContext, useState } from "react";
+import { removeEditedFeaturesFromSourceByIds } from "utils/map/source";
 
 export const KRETSTYPER = ["fylker", "kommuner", "stemmekretser", "grunnkretser"] as const;
 type Kretstyper = typeof KRETSTYPER;
@@ -18,6 +20,7 @@ type Inndelinger = {
 export type InndelingerContextValue = {
   inndelinger: Inndelinger;
   selectInndeling: (fylkeId: string, kretstype: Kretstype, isEditingPanel: boolean) => void;
+  currentlyEditedInndeling: Inndeling | null;
 };
 
 export const InndelingerContext = createContext<InndelingerContextValue | undefined>(undefined);
@@ -62,6 +65,10 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
       if (existingInndeling?.isEditing) {
         // Dersom man er i redigeringspanelet skal inndelingen skrus helt av
         setNyeInndelinger(false, false);
+        const editSource = grenserLayers.edit.getSource();
+        if (editSource) {
+          editSource.clear(true);
+        }
       } else {
         // Man skrur på redigering for en inndeling
         // TODO: legg til håndtering av at kun én ting skal kunne redigeres om gangen
@@ -78,7 +85,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     }
   };
 
-  const value = { inndelinger, selectInndeling };
+  const value = { inndelinger, selectInndeling, currentlyEditedInndeling: isEditingInndelinger() };
 
   return <InndelingerContext.Provider value={value}>{children}</InndelingerContext.Provider>;
 };
