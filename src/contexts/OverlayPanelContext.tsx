@@ -3,7 +3,14 @@ import { useSidebarPanel } from "./SidebarPanelContext";
 import { useFeatureStyle } from "./FeatureStyleContext/FeatureStyleContext";
 import { KommuneResponse } from "types/api";
 
-type OverlayPanel = "grenseinfo" | "sammenslåing" | "splitting" | "tegnforklaring" | "koordinater" | "kartlag";
+type OverlayPanel =
+  | "grenseinfo"
+  | "sammenslåing"
+  | "splitting"
+  | "tegnforklaring"
+  | "koordinater"
+  | "kartlag"
+  | "validerpubliser";
 
 type OverlayModal = "stemmekrets" | "grunnkrets" | "navigasjon";
 export type Flatedata = KommuneResponse | null;

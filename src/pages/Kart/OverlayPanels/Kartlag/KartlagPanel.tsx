@@ -34,7 +34,6 @@ const KartlagList = styled.section`
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin: 20px 0;
 `;
 
 export default KartlagPanel;

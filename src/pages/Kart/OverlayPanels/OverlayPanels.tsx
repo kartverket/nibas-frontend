@@ -8,6 +8,7 @@ import { TegnforklaringPanel } from "./Tegnforklaring/TegnforklaringPanel";
 import KartlagPanel from "./Kartlag/KartlagPanel";
 import { SplittingPanel } from "./SplittingPanel/SplittingPanel";
 import NavigasjonPanel from "./NavigasjonPanel";
+import { ValiderPubliserPanel } from "./ValiderPubliserPanel/ValiderPubliserPanel";
 
 const OverlayPanels = () => {
   const { activeOverlayPanel, activeOverlayModal } = useOverlayPanel();
@@ -20,6 +21,7 @@ const OverlayPanels = () => {
       <KoordinaterPanel isOpen={activeOverlayPanel === "koordinater"} />
       <TegnforklaringPanel isOpen={activeOverlayPanel === "tegnforklaring"} />
       <KartlagPanel isOpen={activeOverlayPanel === "kartlag"} />
+      <ValiderPubliserPanel isOpen={activeOverlayPanel === "validerpubliser"} />
 
       <NavigasjonPanel isOpen={activeOverlayModal === "navigasjon"} />
       <GrunnkretsPanel isOpen={activeOverlayModal === "grunnkrets"} />

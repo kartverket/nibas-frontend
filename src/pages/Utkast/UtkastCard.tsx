@@ -4,7 +4,6 @@ import { Heading, IconButton, Menu, MenuButton, MenuDivider, MenuList, Text } fr
 import { datestringToFormattedDatestring } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
 import { UtkastResponse } from "types/api";
 import UtkastSlett from "./UtkastSlett";
-import UtkastPubliser from "./UtkastPubliser";
 import UtkastEndringslogg from "./UtkastEndringslogg";
 import UtkastEndre from "./UtkastEndre";
 
@@ -31,7 +30,6 @@ const UtkastCard = ({ utkast }: { utkast: UtkastResponse }) => {
           <UtkastEndre utkast={utkast} />
           <UtkastEndringslogg utkast={utkast} />
           <MenuDivider />
-          <UtkastPubliser utkast={utkast} />
           <UtkastSlett utkast={utkast} />
         </MenuList>
       </Menu>
