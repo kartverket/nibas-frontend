@@ -17,14 +17,14 @@ import { useTilhorighetForm } from "./useTilhorighetForm";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { editSource } from "hooks/layers/constants";
 import { Geometry } from "ol/geom";
-import { GrenseType } from "hooks/layers/types";
 import { isAdministrativGrense } from "utils/grenser";
+import { isGrenseType } from "utils/type-utils";
 
 const getAdministrativeFeatures = (features: Feature<Geometry>[]) => {
   return features.filter((feature) => {
     const properties = feature.getProperties() as FeatureProperties;
-    const grenseType = properties.type as GrenseType;
-    return isAdministrativGrense(grenseType);
+    const grenseType = properties.type;
+    return isGrenseType(grenseType) && isAdministrativGrense(grenseType);
   });
 };
 

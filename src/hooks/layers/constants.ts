@@ -61,5 +61,3 @@ export const grenserLayers: Record<GrenseId, VectorLayer<VectorSource>> = {
   archived: createVectorLayer("archived", archivedSource),
   edit: createVectorLayer("edit", editSource),
 };
-
-export const editableBorderTypes = ["Delområdegrense", "Grunnkretsgrense", "Stemmekretsgrense", "Kommunegrense"];
