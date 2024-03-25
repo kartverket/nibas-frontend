@@ -50,11 +50,9 @@ const StyledCard = styled(Card)`
   min-height: 60px;
 `;
 const Row = styled.div`
-  width: 100%;
   display: flex;
-  align-items: center;
-  flex-wrap: nowrap;
-  flex-direction: row;
   justify-content: space-between;
-  padding: 5px 10px 5px 10px;
+  align-items: center;
+  width: 100%;
+  padding: 5px 10px;
 `;

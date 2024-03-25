@@ -35,7 +35,7 @@ const Panel = styled.div<{ $isOpen: boolean }>`
   background: white;
   border: 2px solid var(--kvib-colors-gray-50);
   border-radius: 12px;
-  box-shadow: 4px 4px 12px 0 rgba(0, 0, 0, 0.15);
+  box-shadow: 4px 4px 12px 0 rgba(0, 0, 0, 15%);
   overflow: auto;
   ${(props) => !props.$isOpen && "display: none"};
   z-index: ${zindex.panel};

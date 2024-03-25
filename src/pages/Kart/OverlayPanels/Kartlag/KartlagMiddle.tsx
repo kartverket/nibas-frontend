@@ -54,6 +54,7 @@ const KartlagAccordionPanel = styled(AccordionPanel)`
 
   padding-left: 24px;
   padding-bottom: 24px;
+
   &::before {
     position: absolute;
     top: 0;
