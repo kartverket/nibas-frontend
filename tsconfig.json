@@ -27,5 +27,6 @@
     "types": ["vite/client", "vitest/globals"]
   },
   "references": [{ "path": "./tsconfig.node.json" }],
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["cypress.config.ts", "cypress", "node_modules"]
 }
