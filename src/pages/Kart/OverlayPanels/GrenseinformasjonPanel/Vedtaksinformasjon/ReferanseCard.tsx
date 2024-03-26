@@ -30,7 +30,6 @@ export const ReferanseCard = ({ referanse, urlMode, deleteRef, formViewState }: 
             aria-label="Slett referanse"
             colorScheme="red"
             icon="delete"
-            size="md"
             variant="tertiary"
             onClick={() => deleteRef()}
           />

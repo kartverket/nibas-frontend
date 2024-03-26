@@ -74,7 +74,6 @@ export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
           size="sm"
           variant="secondary"
           rightIcon="add"
-          colorScheme="blue"
           isDisabled={isGrenseinfoPanelDisabled}
           aria-label="Legg til dokumentreferanse"
           onClick={() => {
@@ -118,7 +117,7 @@ const VedtaksinfoCard = ({ title, onClick, date }: { title: string; date: string
     <VedtaksinfoContent>
       <Datofelt>{formattedDate}</Datofelt>
       <VedtaksinfoTitle>{title}</VedtaksinfoTitle>
-      <Button onClick={onClick} rightIcon="folder_open" variant="secondary" colorScheme="blue" size="xs">
+      <Button onClick={onClick} rightIcon="folder_open" variant="secondary" size="xs">
         Åpne
       </Button>
     </VedtaksinfoContent>
