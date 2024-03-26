@@ -78,6 +78,7 @@ const VisibilityButton = styled(IconButton)<{ $isVisible: boolean }>`
     color: var(--kvib-colors-blue-500);
     background: var(--kvib-colors-blue-50);
   }
+
   &:focus-visible {
     ${Outline}
   }

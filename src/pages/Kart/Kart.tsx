@@ -62,6 +62,7 @@ const KartTarget = styled.div`
   .ol-control {
     text-align: center;
   }
+
   /* dragzoom kan kun få style via vanlig css tydeligvis */
   .ol-dragzoom {
     background: var(--kvib-colors-blue-200);
