@@ -153,7 +153,6 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
           <Datepickerlabel>
             Fra hvilken dato skal endringene utkastet tre i kraft?
             <Datepicker
-              colorScheme="blue"
               fromDate={new Date()}
               defaultSelected={new Date()}
               onChange={(event) => setPubliseringsdato(new Date(event.target.value))}
