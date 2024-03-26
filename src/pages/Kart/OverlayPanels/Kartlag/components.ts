@@ -32,6 +32,7 @@ export const KartlagAccordionButton = styled(AccordionButton)<{ $isVisible: bool
   width: fit-content;
   padding: 0;
   border-radius: 6px;
+
   &:hover {
     background: var(--kvib-colors-blue-100);
   }
