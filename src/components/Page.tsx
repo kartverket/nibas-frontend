@@ -8,9 +8,8 @@ export const PageContainer = styled.div`
 
 export const Page = styled.main`
   display: grid;
-  justify-content: center;
   justify-items: center;
-  align-content: start;
+  place-content: start center;
   grid-template-columns: 669px;
   gap: 18px 0;
   height: 100%;

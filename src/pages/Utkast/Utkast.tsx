@@ -161,6 +161,7 @@ const ReturnButton = styled(Link).attrs({ as: RouterLink })`
     & > .material-symbols-rounded {
       transform: translateX(-4px);
     }
+
     & > span:last-child {
       text-decoration: underline;
     }
