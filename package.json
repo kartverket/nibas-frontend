@@ -94,6 +94,7 @@
       "stylelint-config-standard"
     ],
     "customSyntax": "postcss-styled-syntax",
+    "defaultSeverity": "warning",
     "rules": {
       "custom-property-pattern": "^([a-z][a-zA-Z0-9]*)(-[a-zA-Z0-9]+)*$",
       "declaration-empty-line-before": [
