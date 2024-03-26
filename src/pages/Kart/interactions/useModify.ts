@@ -170,13 +170,21 @@ const useModify = () => {
           feature.set(previousCoordinateKey, geometry.getCoordinates());
         }
       });
+
+      // insertVertex utløser ikke pointerup-events, som gjør at vi må gjøre history-endringen for å legge til punkt her
+      if (activeTool === "add" && !e.mapBrowserEvent.dragging) {
+        addHistoryEntry({
+          type: "grense",
+          changes: createGrenseHistoryChange(e.features.getArray()),
+        });
+      }
     };
     modify.on("modifystart", saveCoordinatesBeforeModification);
 
     return () => {
       modify.un("modifystart", saveCoordinatesBeforeModification);
     };
-  }, [modify]);
+  }, [activeTool, addHistoryEntry, modify]);
 
   useEffect(() => {
     const addModificationToHistory = (features: Feature<Geometry>[]) => {
