@@ -1,5 +1,5 @@
 import { SWRConfig } from "swr";
-import { KvibProvider, theme, extendTheme, withDefaultColorScheme, UseToastOptions } from "@kvib/react";
+import { KvibProvider, extendTheme, withDefaultColorScheme, UseToastOptions, defaultKvibTheme } from "@kvib/react";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 
@@ -12,7 +12,7 @@ const swrGlobalConfig = {
   revalidateOnFocus: false,
 };
 
-const customTheme = extendTheme(withDefaultColorScheme({ colorScheme: "blue" }), theme);
+const customTheme = extendTheme(withDefaultColorScheme({ colorScheme: "blue" }), defaultKvibTheme);
 
 const defaultToastOptions: UseToastOptions = {
   position: "top",
