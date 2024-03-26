@@ -271,13 +271,14 @@ export const ReferanseCardWrapper = styled.div`
 `;
 
 const VedtakinfoContainer = styled(Grid)`
-  padding: 12px 0 12px 0;
+  padding: 12px 0;
   gap: 24px;
 `;
 
 const FieldContainer = styled.div`
-  padding: 5px 0px 5px 0px;
+  padding: 5px 0;
 `;
+
 const Row = styled.div`
   display: flex;
   justify-content: space-between;
