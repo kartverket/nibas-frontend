@@ -117,7 +117,6 @@ export const VedtaksinfoBody = ({
                       {...register("fastsettingsdato", {
                         required: "Feltet er påkrevd",
                       })}
-                      colorScheme="blue"
                       defaultSelected={field.value}
                       onChange={(e): void => {
                         field.onChange(new Date(e.target.value));
@@ -167,7 +166,6 @@ export const VedtaksinfoBody = ({
                       onChange={(e): void => {
                         field.onChange(new Date(e.target.value));
                       }}
-                      colorScheme="blue"
                     />
                   </VedtakinfoField>
                 );
@@ -214,7 +212,6 @@ export const VedtaksinfoBody = ({
                       onChange={(e): void => {
                         field.onChange(new Date(e.target.value));
                       }}
-                      colorScheme="blue"
                     />
                   </VedtakinfoField>
                 );
