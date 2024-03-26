@@ -51,7 +51,7 @@ const Container = styled(Button).attrs({ variant: "ghost" })`
 `;
 
 const Title = styled(Heading)`
-  margin: 0 0 0.5rem;
+  margin: 0 0 0.5rem 0;
 `;
 
 const Description = styled(Text)`

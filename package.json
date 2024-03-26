@@ -28,7 +28,7 @@
     "serve": "vite preview",
     "test": "vitest",
     "test:coverage": "npm test -- src/* --coverage",
-    "lint": "eslint src --max-warnings 0",
+    "lint": "eslint src --max-warnings 0 && stylelint src",
     "lint:fix": "npm run lint -- --fix",
     "update-api-types": "npx openapi-typescript@5 http://localhost:8080/api-docs --output src/types/api-gen.ts",
     "format": "prettier --write ."
