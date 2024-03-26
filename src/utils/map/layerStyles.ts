@@ -168,12 +168,13 @@ export const getLayerStyle = (
       return grenseStyles.edit;
     }
 
-    if (isMatrikkelFeature(feature)) {
-      return grenseStyles.matrikkel;
-    }
-
     return grenseStyleFromType(grenseType, archived || grenseId === "archived");
   }
+
+  if (isMatrikkelFeature(feature)) {
+    return grenseStyles.matrikkel;
+  }
+
   return [];
 };
 
