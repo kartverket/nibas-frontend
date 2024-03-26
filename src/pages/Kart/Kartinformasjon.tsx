@@ -80,7 +80,7 @@ const Scale = styled.section`
   align-items: center;
   gap: 8px;
 
-  // Vi hindrer OpenLayers sin innebygde styling fra å sette bredde ved å bare ha inline-elementer
+  /* Vi hindrer OpenLayers sin innebygde styling fra å sette bredde ved å bare ha inline-elementer */
   .ol-scale-bar-inner {
     display: inline;
 
