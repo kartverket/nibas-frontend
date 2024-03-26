@@ -56,7 +56,6 @@ const CaretIcon = styled(Icon)<{ $isOpen: boolean }>`
   height: 100%;
   background: ${({ $isOpen }) => ($isOpen ? "var(--kvib-colors-blue-500)" : "var(--kvib-colors-chakra-body-bg)")};
   color: ${({ $isOpen }) => ($isOpen ? "var(--kvib-colors-chakra-inverse-text)" : "var(--kvib-colors-blue-500)")};
-  height: 100%;
   padding: 16px 12px;
   align-items: center;
   display: flex;
