@@ -22,14 +22,7 @@ const OverlayPanels = () => {
       <TegnforklaringPanel isOpen={activeOverlayPanel === "tegnforklaring"} />
       <KartlagPanel isOpen={activeOverlayPanel === "kartlag"} />
 
-      <InndelingerPanel
-        isOpen={activeOverlayModal === "inndelinger-redigering" || activeOverlayModal === "inndelinger-visning"}
-      />
-
-      <InndelingerPanel
-        isOpen={activeOverlayModal === "inndelinger-redigering" || activeOverlayModal === "inndelinger-visning"}
-      />
-
+      <InndelingerPanel isOpen={activeOverlayModal === "inndelinger"} />
       <NavigasjonPanel isOpen={activeOverlayModal === "navigasjon"} />
       <GrunnkretsPanel isOpen={activeOverlayModal === "grunnkrets"} />
       <StemmekretsPanel isOpen={activeOverlayModal === "stemmekrets"} />

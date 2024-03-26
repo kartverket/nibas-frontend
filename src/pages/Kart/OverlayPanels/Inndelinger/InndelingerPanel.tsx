@@ -14,12 +14,10 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
   const [selectedKretstype, setSelectedKretstype] = useState<Kretstype | null>(null);
   const [selectedFylkeId, setSelectedFylkeId] = useState<string>("");
   const { inndelinger, selectInndeling } = useInndelinger();
-  const { activeOverlayModal, closeOverlayModal } = useOverlayPanel();
+  const { closeOverlayModal } = useOverlayPanel();
 
   const { fylker } = useFylker();
   const { kommuner } = useKommuner(selectedFylkeId);
-
-  const isEditing = activeOverlayModal === "inndelinger-redigering";
 
   const resetInndelingerPanel = () => {
     closeOverlayModal();
@@ -34,7 +32,8 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
 
   const selectFylke = (fylkeId: string) => {
     if (selectedKretstype === "fylker") {
-      selectInndeling(fylkeId, "fylker", isEditing);
+      selectInndeling({ id: fylkeId, kretstype: "fylker", status: "editing" });
+      resetInndelingerPanel();
     } else {
       setSelectedFylkeId(fylkeId);
     }
@@ -42,13 +41,14 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
 
   const selectKommune = (kommuneId: string) => {
     if (selectedKretstype) {
-      selectInndeling(kommuneId, selectedKretstype, isEditing);
+      selectInndeling({ id: kommuneId, kretstype: selectedKretstype, status: "editing" });
+      resetInndelingerPanel();
     }
   };
 
   const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
-  const inndelingIcon = (id: string, isChoosable: boolean) => {
+  const inndelingIcon = (id: string, isKommune: boolean) => {
     const inndeling = inndelinger[id];
 
     if (selectedKretstype === "fylker") {
@@ -59,7 +59,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
       }
     }
 
-    if (!isChoosable) return "chevron_right";
+    if (!isKommune) return "chevron_right";
 
     if (inndeling != null && inndeling.kretstype === selectedKretstype) {
       return "visibility_off";
@@ -72,19 +72,11 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
     <Modal isOpen={isOpen} onClose={resetInndelingerPanel} scrollBehavior="inside">
       <ModalOverlay />
       <ModalContent as={ModalPanel} $isOpen={isOpen} className={className}>
-        <PanelHeader onClose={resetInndelingerPanel}>
-          Velg en inndeling du ønsker å {isEditing ? "redigere" : "vise"}
-        </PanelHeader>
+        <PanelHeader onClose={resetInndelingerPanel}>Velg en inndeling du ønsker å redigere</PanelHeader>
         <InndelingerLayout>
           <InndelingerList>
             {KRETSTYPER.map((kretstype) => (
-              <Inndeling
-                key={kretstype}
-                isActive={selectedKretstype === kretstype}
-                onClick={() => selectKretstype(kretstype)}
-                rightIcon="chevron_right"
-                kretstype={null}
-              >
+              <Inndeling key={kretstype} onClick={() => selectKretstype(kretstype)} rightIcon="chevron_right">
                 {capitalize(kretstype)}
               </Inndeling>
             ))}
@@ -97,11 +89,8 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
                 return (
                   <Inndeling
                     key={fylkeId}
-                    inndelingid={selectedKretstype === "fylker" ? fylkeId : undefined}
-                    isActive={selectedFylkeId === fylkeId}
                     onClick={() => selectFylke(fylkeId)}
-                    rightIcon={inndelingIcon(fylkeId, false)}
-                    kretstype="fylker"
+                    {...(selectedKretstype !== "fylker" ? { rightIcon: inndelingIcon(fylkeId, false) } : {})}
                   >
                     {`${fylke.nummer} ${getNavnInSpraak(fylke.navn, "nor")}`}
                   </Inndeling>
@@ -114,14 +103,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
               kommuner?.map((kommune) => {
                 const kommuneId = getIdFromEntity(kommune);
                 return (
-                  <Inndeling
-                    key={kommuneId}
-                    inndelingid={kommuneId}
-                    isActive={selectedFylkeId === kommuneId}
-                    onClick={() => selectKommune(kommuneId)}
-                    rightIcon={inndelingIcon(kommuneId, true)}
-                    kretstype={selectedKretstype}
-                  >
+                  <Inndeling key={kommuneId} onClick={() => selectKommune(kommuneId)}>
                     {`${kommune.nummer} ${getNavnInSpraak(kommune.navn, "nor")}`}
                   </Inndeling>
                 );
