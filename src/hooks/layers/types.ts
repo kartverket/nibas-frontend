@@ -26,18 +26,28 @@ export type GrenseId =
   | "archived"
   | "edit";
 
-export type GrenseType =
-  | "Kommunegrense"
-  | "Fylkesgrense"
-  | "Riksgrense"
-  | "AvtaltAvgrensningslinje"
-  | "Territorialgrense"
-  | "Grunnkretsgrense"
-  | "Delområdegrense"
-  | "Posisjon"
-  | "Stemmekretsgrense"
-  | "GRUNNKRETS"
-  | "STEMMEKRETS";
+export const GRENSETYPER = [
+  "Kommunegrense",
+  "Fylkesgrense",
+  "Riksgrense",
+  "AvtaltAvgrensningslinje",
+  "Territorialgrense",
+  "Grunnkretsgrense",
+  "Delområdegrense",
+  "Posisjon",
+  "Stemmekretsgrense",
+  "GRUNNKRETS",
+  "STEMMEKRETS",
+] as const;
+
+export type GrenseType = (typeof GRENSETYPER)[number];
+
+export const editableGrenseTypes: GrenseType[] = [
+  "Delområdegrense",
+  "Grunnkretsgrense",
+  "Stemmekretsgrense",
+  "Kommunegrense",
+];
 
 export const getGrenseTypeFromEditingType = (editingType: EditingType): GrenseType | undefined => {
   switch (editingType) {

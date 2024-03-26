@@ -217,7 +217,7 @@ const VisVedtakFooter = ({ toggleEndreVedtak }: { toggleEndreVedtak: () => void 
   return (
     <VedtakFooterRight>
       <ButtonsContainer>
-        <Button size="md" variant="secondary" onClick={() => toggleEndreVedtak()}>
+        <Button variant="secondary" onClick={() => toggleEndreVedtak()}>
           Endre vedtaksinformasjon
         </Button>
       </ButtonsContainer>
@@ -229,12 +229,10 @@ const NyttVedtakFooter = ({ onClose }: { onClose: () => void }) => {
   return (
     <VedtakFooterRight>
       <ButtonsContainer>
-        <Button variant="tertiary" colorScheme="blue" size="md" onClick={onClose}>
+        <Button variant="tertiary" onClick={onClose}>
           Avbryt
         </Button>
-        <Button type="submit" size="md">
-          Legg til vedtaksinformasjon
-        </Button>
+        <Button type="submit">Legg til vedtaksinformasjon</Button>
       </ButtonsContainer>
     </VedtakFooterRight>
   );
@@ -257,7 +255,6 @@ const EndreVedtakFooter = ({
             <Button
               rightIcon="archive"
               variant="tertiary"
-              colorScheme="blue"
               padding="6px"
               aria-label="Arkver referansen"
               onClick={deleteOrArchive}
@@ -280,12 +277,10 @@ const EndreVedtakFooter = ({
       </VedtakFooterLeft>
       <VedtakFooterRight>
         <ButtonsContainer>
-          <Button colorScheme="blue" size="md" onClick={onAvbryt} variant="tertiary">
+          <Button onClick={onAvbryt} variant="tertiary">
             Avbryt
           </Button>
-          <Button type="submit" size="md">
-            Bekreft
-          </Button>
+          <Button type="submit">Bekreft</Button>
         </ButtonsContainer>
       </VedtakFooterRight>
     </>
