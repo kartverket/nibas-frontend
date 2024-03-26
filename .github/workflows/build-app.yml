@@ -2,12 +2,12 @@ name: Build app
 on:
   merge_group:
   pull_request:
-    branches: [main]
+    # branches: [main]
   workflow_call:
     inputs:
       deploy_ghcr:
         description: "Deploy to ghcr?"
-        default: false
+        default: "false"
         type: string
     outputs:
       version:
@@ -15,10 +15,10 @@ on:
         value: ${{ jobs.build.outputs.new_tag }}
       image_url:
         description: "The full URL to the docker-image created"
-        value: ${{ jobs.build.outputs.image_url }}
+        value: ${{ jobs.build-image.outputs.image_url }}
       digest:
         description: "The digest of the built docker image"
-        value: ${{ jobs.build.outputs.digest }}
+        value: ${{ jobs.build-image.outputs.digest }}
     secrets:
       PAT_SCOPE_READ_PACKAGE:
         required: true
@@ -30,7 +30,9 @@ env:
 
 jobs:
   build:
+    name: Build Package
     runs-on: ubuntu-latest
+
     permissions:
       contents: write
       packages: write
@@ -39,8 +41,7 @@ jobs:
 
     outputs:
       new_tag: ${{ steps.tag_version.outputs.new_tag }}
-      image_url: ${{ steps.setOutput.outputs.image_url }}
-      digest: ${{ steps.setOutput.outputs.digest }}
+      new_version: ${{ steps.tag_version.outputs.new_version }}
 
     steps:
       - name: checkout code
@@ -56,19 +57,19 @@ jobs:
         run: |
           cp .npmrc .npmrc-copy
           echo //npm.pkg.github.com/:_authToken=${{secrets.PAT_SCOPE_READ_PACKAGE}} >> .npmrc
+
       - name: Bump version and push tag
         id: tag_version
         uses: mathieudutour/github-tag-action@v6.1
         with:
           github_token: ${{ github.token }}
 
-      - name: Build and test
+      - name: Build
         run: |
           npm ci --no-audit
           npm audit --production
           npm run lint
           npm run build --if-present
-          npm test
         env:
           VITE_VERSION: ${{ steps.tag_version.outputs.new_version }}
 
@@ -76,6 +77,26 @@ jobs:
         run: |
           rm .npmrc
           mv .npmrc-copy .npmrc
+
+      - name: Save build folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          if-no-files-found: error
+          path: build
+
+  build-image:
+    name: Build Image
+    runs-on: ubuntu-latest
+    needs: build
+    outputs:
+      image_url: ${{ steps.setOutput.outputs.image_url }}
+      digest: ${{ steps.setOutput.outputs.digest }}
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+
       - name: Login to Github Container Registry
         uses: docker/login-action@v3
         with:
@@ -89,19 +110,68 @@ jobs:
         with:
           context: .
           push: ${{ inputs.deploy_ghcr == 'true' }}
-          tags: ${{ env.registry }}/${{ github.repository }}:${{ steps.tag_version.outputs.new_tag }} , ${{ env.registry }}/${{ github.repository }}:latest
+          tags: ${{ env.registry }}/${{ github.repository }}:${{ job.build.outputs.new_tag }} , ${{ env.registry }}/${{ github.repository }}:latest
           build-args: |
-            project_version_arg=${{ steps.tag_version.outputs.new_tag }}
+            project_version_arg=${{ job.build.outputs.new_tag }}
 
       - name: Set output with build values
         id: setOutput
         run: |
           echo "image_url=${{ env.registry }}/${{ github.repository }}@${{ steps.build.outputs.digest }}" >> $GITHUB_OUTPUT
           echo "digest=${{ steps.build.outputs.digest }}" >> $GITHUB_OUTPUT
-      
+
+  test-jest:
+    name: Test Jest
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+          cache: "npm"
+
+      - name: Update npmrc with secret to install internal packages
+        run: |
+          cp .npmrc .npmrc-copy
+          echo //npm.pkg.github.com/:_authToken=${{secrets.PAT_SCOPE_READ_PACKAGE}} >> .npmrc
+
+      - name: Test
+        run: |
+          npm ci
+          npm test
+        env:
+          VITE_VERSION: ${{ job.build.outputs.new_version }}
+
+      - name: Remove npmrc with secret
+        run: |
+          rm .npmrc
+          mv .npmrc-copy .npmrc
+
+  test-cypress:
+    name: Test Cypress
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download the build folder
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: build
+
+      - name: Update npmrc with secret to install internal packages
+        run: |
+          cp .npmrc .npmrc-copy
+          echo //npm.pkg.github.com/:_authToken=${{secrets.PAT_SCOPE_READ_PACKAGE}} >> .npmrc
+
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
-          build: npm run build
           start: npm start
           browser: chrome
