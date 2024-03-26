@@ -30,7 +30,6 @@ env:
 
 jobs:
   build:
-    name: Build Package
     runs-on: ubuntu-latest
 
     permissions:
