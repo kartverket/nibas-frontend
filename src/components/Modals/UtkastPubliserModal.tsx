@@ -30,8 +30,8 @@ import { statusCode } from "utils/api";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useMatch, useNavigate } from "react-router-dom";
 import { routes } from "utils/routes";
-import { GrenseType } from "hooks/layers/types";
 import { isAdministrativGrense } from "utils/grenser";
+import { isGrenseType } from "utils/type-utils";
 
 type Props = {
   isOpen: boolean;
@@ -112,8 +112,8 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
   const utkastHarEndringAdministrativeGrenser = (): boolean => {
     const endredeFeatures = utkast.operasjoner.grenseendringer.endredeFeatures;
 
-    return Object.values(endredeFeatures).some((feature) =>
-      isAdministrativGrense(feature.properties.type as GrenseType),
+    return Object.values(endredeFeatures).some(
+      (feature) => isGrenseType(feature.properties.type) && isAdministrativGrense(feature.properties.type),
     );
   };
 
