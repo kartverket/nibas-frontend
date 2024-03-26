@@ -58,17 +58,17 @@ const Table = styled.table`
   background: var(--kvib-colors-chakra-body-bg);
   border-spacing: 0;
 
-  tr:first-child > td {
-    background: var(--kvib-colors-green-100);
-
-    &:first-child {
-      border-left: 4px solid var(--kvib-colors-green-400);
-    }
-  }
-
   td,
   th {
     font-size: 14px;
+  }
+
+  td {
+    padding: 8px;
+    color: var(--kvib-colors-gray-600);
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 2px solid var(--kvib-colors-gray-50);
   }
 
   th {
@@ -78,12 +78,12 @@ const Table = styled.table`
     padding: 8px 12px;
   }
 
-  td {
-    padding: 8px;
-    color: var(--kvib-colors-gray-600);
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-bottom: 2px solid var(--kvib-colors-gray-50);
+  tr:first-child > td {
+    background: var(--kvib-colors-green-100);
+
+    &:first-child {
+      border-left: 4px solid var(--kvib-colors-green-400);
+    }
   }
 `;
 

@@ -18,14 +18,14 @@ const SidebarPanelTitle = ({ title, closePanel }: Props) => {
 };
 
 const TitleWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
   margin-top: 8px;
   margin-bottom: 8px;
   border-bottom: 2px solid var(--kvib-colors-gray-50);
   padding: 0 3px 8px 0;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 `;
 
 export default SidebarPanelTitle;
