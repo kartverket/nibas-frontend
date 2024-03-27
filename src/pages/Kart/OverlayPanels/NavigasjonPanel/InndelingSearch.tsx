@@ -42,7 +42,6 @@ export const InndelingSearch = ({ centerOnCoordinate }: NavigasjonProps) => {
       placeholder="F.eks. «0301» eller «Eigersund»"
       onChange={handleOnChange}
       loadOptions={loadResults}
-      debounceTime={500}
     />
   );
 };
