@@ -1,4 +1,3 @@
-import { grenserLayers } from "hooks/layers/constants";
 import { createContext, useContext, useState } from "react";
 
 export const KRETSTYPER = ["fylker", "kommuner", "stemmekretser", "grunnkretser"] as const;
@@ -20,13 +19,13 @@ type Inndelinger = {
 export type InndelingerContextValue = {
   inndelinger: Inndelinger;
   selectInndeling: (inndeling: Inndeling) => void;
+  currentlyEditedInndeling: Inndeling | null;
 };
 
 export const InndelingerContext = createContext<InndelingerContextValue | undefined>(undefined);
 
 export const InndelingerProvider = ({ children }: { children: React.ReactNode }) => {
   const [inndelinger, setInndelinger] = useState<Inndelinger>({});
-  const [isLoadingFeatures, setIsLoadingFeatures] = useState(false);
 
   const getInndeling = (id: string): Inndeling | null => {
     const isInndelingPresent = id in inndelinger;
@@ -71,7 +70,11 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     setInndelinger(nyeInndelinger);
   };
 
-  const value = { inndelinger, selectInndeling, currentlyEditedInndeling: getCurrentlyEditingInndeling() };
+  const value = {
+    inndelinger,
+    selectInndeling,
+    currentlyEditedInndeling: getCurrentlyEditingInndeling(),
+  };
 
   return <InndelingerContext.Provider value={value}>{children}</InndelingerContext.Provider>;
 };
