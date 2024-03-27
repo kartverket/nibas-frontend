@@ -13,7 +13,7 @@ const Header = () => {
   const { utkast } = useUtkast();
   const { activeOverlayModal, closeOverlayModal, openOverlayModal } = useOverlayPanel();
 
-  const toggleModal = (modalName: "inndelinger") => {
+  const toggleModal = (modalName: "inndelinger" | "inndelinger-view") => {
     if (activeOverlayModal === modalName) {
       closeOverlayModal();
     } else {
@@ -38,6 +38,15 @@ const Header = () => {
             onClick={() => toggleModal("inndelinger")}
             tooltip={{
               text: "Åpne og rediger en inndeling i kartet",
+              shortcut: "open",
+            }}
+          />
+          <HeaderButton
+            label="Temp: Se inndeling"
+            icon="travel_explore"
+            onClick={() => toggleModal("inndelinger-view")}
+            tooltip={{
+              text: "Åpne og se en inndeling i kartet",
               shortcut: "open",
             }}
           />

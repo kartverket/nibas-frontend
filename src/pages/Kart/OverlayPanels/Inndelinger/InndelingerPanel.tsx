@@ -14,7 +14,9 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
   const [selectedKretstype, setSelectedKretstype] = useState<Kretstype | null>(null);
   const [selectedFylkeId, setSelectedFylkeId] = useState<string>("");
   const { inndelinger, selectInndeling } = useInndelinger();
-  const { closeOverlayModal } = useOverlayPanel();
+  const { closeOverlayModal, activeOverlayModal } = useOverlayPanel();
+
+  const isEditingPanel = activeOverlayModal === "inndelinger";
 
   const { fylker } = useFylker();
   const { kommuner } = useKommuner(selectedFylkeId);
@@ -32,7 +34,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
 
   const selectFylke = (fylkeId: string) => {
     if (selectedKretstype === "fylke") {
-      selectInndeling({ id: fylkeId, kretstype: "fylke", status: "editing" });
+      selectInndeling({ id: fylkeId, kretstype: "fylke", status: isEditingPanel ? "editing" : "visible" });
       resetInndelingerPanel();
     } else {
       setSelectedFylkeId(fylkeId);
@@ -41,7 +43,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
 
   const selectKommune = (kommuneId: string) => {
     if (selectedKretstype) {
-      selectInndeling({ id: kommuneId, kretstype: selectedKretstype, status: "editing" });
+      selectInndeling({ id: kommuneId, kretstype: selectedKretstype, status: isEditingPanel ? "editing" : "visible" });
       resetInndelingerPanel();
     }
   };
@@ -72,7 +74,9 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
     <Modal isOpen={isOpen} onClose={resetInndelingerPanel} scrollBehavior="inside">
       <ModalOverlay />
       <ModalContent as={ModalPanel} $isOpen={isOpen} className={className}>
-        <PanelHeader onClose={resetInndelingerPanel}>Velg en inndeling du ønsker å redigere</PanelHeader>
+        <PanelHeader onClose={resetInndelingerPanel}>
+          Velg en inndeling du ønsker å {isEditingPanel ? "redigere" : "se i kartet"}
+        </PanelHeader>
         <InndelingerLayout>
           <InndelingerList>
             {KRETSTYPER.map((kretstype) => (

@@ -64,18 +64,6 @@ export const getAllVisibleFeatures = () => {
   });
 };
 
-export const getZoomMode = (isEditing: boolean, hasEditingInMap: boolean): "edit" | "view" | "none" => {
-  if (isEditing) {
-    return "edit";
-  }
-
-  if (hasEditingInMap) {
-    return "none";
-  }
-
-  return "view";
-};
-
 /** Euklidisk avstand mellom to koordinater i piksler */
 export const pixelDistance = (coord1: Coordinate, coord2: Coordinate) => {
   const pixel1 = map.getPixelFromCoordinate(coord1);

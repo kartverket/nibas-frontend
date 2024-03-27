@@ -20,8 +20,6 @@ const useInndelingFeatures = () => {
     }
 
     return `/v1/kommuner/${id}/${kretstype}grenser`;
-
-    return "";
   };
 
   // Denne henter kun dersom den har en id som ikke er en tom streng
@@ -57,6 +55,7 @@ const useInndelingFeatures = () => {
   }, [inndeling, utkastGeoJson]);
 
   return {
+    inndeling,
     setInndeling,
     features,
     ...rest,

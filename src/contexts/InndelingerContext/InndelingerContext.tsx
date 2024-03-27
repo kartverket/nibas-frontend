@@ -33,22 +33,27 @@ export const InndelingerContext = createContext<InndelingerContextValue | undefi
 export const InndelingerProvider = ({ children }: { children: React.ReactNode }) => {
   const [inndelinger, setInndelinger] = useState<Inndelinger>({});
 
-  const { isLoading, setInndeling, features } = useInndelingFeatures();
+  const { isLoading, setInndeling, features, inndeling: currentIndeling } = useInndelingFeatures();
   const { utkast } = useUtkast();
 
   useEffect(() => {
-    editSource.clear(true);
-    if (features) {
-      addFeaturesToSource("edit", features, () => zoomToFeatures(features));
+    if (features && currentIndeling) {
+      const sourceToAddTo = currentIndeling.status === "editing" ? "edit" : currentIndeling.kretstype;
+
+      if (sourceToAddTo === "edit") editSource.clear();
+
+      addFeaturesToSource(sourceToAddTo, features, () => zoomToFeatures(features));
     }
-  }, [features]);
+  }, [currentIndeling, features]);
 
   useEffect(() => {
     if (!utkast) {
       editSource.clear(true);
+      setInndeling(null);
       setInndelinger({});
+      // TODO Reset zoom? Kanskje ikke egentlig?
     }
-  }, [utkast]);
+  }, [setInndeling, utkast]);
 
   const getInndeling = (id: string): Inndeling | null => {
     const isInndelingPresent = id in inndelinger;
@@ -70,7 +75,12 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
   const selectInndeling = (inndeling: Inndeling) => {
     const inndelingIfExists = getInndeling(inndeling.id);
 
-    if (inndelingIfExists && inndelingIfExists.status === inndeling.status) return;
+    if (
+      inndelingIfExists &&
+      inndelingIfExists.kretstype === inndeling.kretstype &&
+      inndelingIfExists.status === inndeling.status
+    )
+      return;
 
     const nyeInndelinger: Inndelinger = {
       ...inndelinger,
@@ -84,8 +94,6 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
           ...currentlyEditingInndeling,
           status: null,
         };
-
-        // TODO Remove inndeling her
       }
     }
 
