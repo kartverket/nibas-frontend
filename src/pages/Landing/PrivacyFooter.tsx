@@ -6,7 +6,6 @@ const PrivacyFooter = () => {
     <FooterContainer>
       <Link
         href="https://kartverket.atlassian.net/wiki/spaces/NIBAS/pages/762642534/Personvernerkl+ring"
-        colorScheme="green"
         isExternal={true}
       >
         Personvernerklæring

@@ -12,11 +12,11 @@ const LandingHeader = () => {
       <Section>
         <Logo variant="horizontal" size={128} />
       </Section>
-      {isAuthenticatedFunc() && (
+      {!isAuthenticatedFunc() && (
         <Section>
           <LoginIcon icon="person" isFilled />
           {personId != null && <Text as="b">{personId.substring(0, 6) + "*****"}</Text>}
-          <Button variant="secondary" aria-label="Logg ut" leftIcon="logout" onClick={handleLogoutFunc}>
+          <Button variant="tertiary" aria-label="Logg ut" leftIcon="logout" onClick={handleLogoutFunc}>
             Logg ut
           </Button>
         </Section>
