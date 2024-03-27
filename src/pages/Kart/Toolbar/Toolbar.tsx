@@ -215,7 +215,7 @@ const Toolbar = () => {
             Gå til ...
           </ToolbarButton>
           <ToolbarButton
-            icon="live_help"
+            icon="query_stats"
             isActive={activeTool === "grenseinfo"}
             onClick={toggleGrenseinfo}
             aria-label="Se informasjon om grensen"
@@ -255,9 +255,9 @@ const Toolbar = () => {
                       onClick={() => setIsSnappingMenuOpen(!isSnappingMenuOpen)}
                       isActive={activeModeTools.includes("snap_nibas") || activeModeTools.includes("snap_matrikkel")}
                       as={ToolbarButton}
-                      aria-label="Snap til kartlag"
-                      icon="layers"
-                      tooltip={{ text: "Skru av/på snapping mot kartlag." }}
+                      aria-label="Snap til andre grenser i kartet"
+                      icon="align_justify_space_between"
+                      tooltip={{ text: "Skru av/på snapping mot andre grenser." }}
                     >
                       Snap
                     </MenuButton>
