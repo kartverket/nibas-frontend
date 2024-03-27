@@ -22,7 +22,8 @@ export const TegnforklaringButton = () => {
 
 const RoundButton = styled(IconButton)`
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 12px;
+  right: 12px;
   border-radius: 50%;
+  box-shadow: var(--kvib-shadows-base);
 `;
