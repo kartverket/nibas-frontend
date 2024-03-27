@@ -21,7 +21,6 @@ const customRender = (
     FeatureStyleProvider,
     SidebarPanelProvider,
     OverlayPanelProvider,
-    EditGrenserProvider,
     KartlagProvider,
     UtkastProvider,
     ...rltOptions
@@ -37,7 +36,6 @@ const customRender = (
         FeatureStyleProvider,
         SidebarPanelProvider,
         OverlayPanelProvider,
-        EditGrenserProvider,
         KartlagProvider,
         UtkastProvider,
       }),

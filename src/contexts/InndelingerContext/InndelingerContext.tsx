@@ -1,12 +1,17 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import useInndelingFeatures from "./useInndelingFeatures";
+import { addFeaturesToSource } from "utils/map/source";
+import { zoomToFeatures } from "utils/map/map-utils";
+import { editSource } from "hooks/layers/constants";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 
-export const KRETSTYPER = ["fylker", "kommuner", "stemmekretser", "grunnkretser"] as const;
+export const KRETSTYPER = ["fylke", "kommune", "stemmekrets", "grunnkrets"] as const;
 type Kretstyper = typeof KRETSTYPER;
 export type Kretstype = Kretstyper[number];
 
 type InndelingStatus = "visible" | "editing" | null;
 
-type Inndeling = {
+export type Inndeling = {
   id: string;
   kretstype: Kretstype;
   status: InndelingStatus;
@@ -20,12 +25,30 @@ export type InndelingerContextValue = {
   inndelinger: Inndelinger;
   selectInndeling: (inndeling: Inndeling) => void;
   currentlyEditedInndeling: Inndeling | null;
+  isLoadingInndeling: boolean;
 };
 
 export const InndelingerContext = createContext<InndelingerContextValue | undefined>(undefined);
 
 export const InndelingerProvider = ({ children }: { children: React.ReactNode }) => {
   const [inndelinger, setInndelinger] = useState<Inndelinger>({});
+
+  const { isLoading, setInndeling, features } = useInndelingFeatures();
+  const { utkast } = useUtkast();
+
+  useEffect(() => {
+    editSource.clear(true);
+    if (features) {
+      addFeaturesToSource("edit", features, () => zoomToFeatures(features));
+    }
+  }, [features]);
+
+  useEffect(() => {
+    if (!utkast) {
+      editSource.clear(true);
+      setInndelinger({});
+    }
+  }, [utkast]);
 
   const getInndeling = (id: string): Inndeling | null => {
     const isInndelingPresent = id in inndelinger;
@@ -66,7 +89,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
       }
     }
 
-    // TODO Add inndeling her
+    setInndeling(inndeling);
     setInndelinger(nyeInndelinger);
   };
 
@@ -74,6 +97,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     inndelinger,
     selectInndeling,
     currentlyEditedInndeling: getCurrentlyEditingInndeling(),
+    isLoadingInndeling: isLoading,
   };
 
   return <InndelingerContext.Provider value={value}>{children}</InndelingerContext.Provider>;

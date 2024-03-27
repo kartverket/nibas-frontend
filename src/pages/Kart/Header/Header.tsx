@@ -3,7 +3,6 @@ import HeaderBreadcrumb from "./HeaderBreadcrumb";
 import HeaderHistoryOperations from "./HeaderHistoryOperations";
 import HeaderUtkastOperations from "./HeaderUtkastOperations";
 import HeaderButton, { HeaderSection } from "./HeaderButton";
-import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import HeaderHome from "./HeaderHome";
@@ -12,17 +11,7 @@ import { zindex } from "utils/constants";
 
 const Header = () => {
   const { utkast } = useUtkast();
-  const { activeSidebarPanel, openSidebarPanel, closeSidebarPanel } = useSidebarPanel();
-  const { closeOverlayPanel, activeOverlayModal, closeOverlayModal, openOverlayModal } = useOverlayPanel();
-
-  const toggleSidebar = () => {
-    if (activeSidebarPanel === "inndelinger") {
-      closeSidebarPanel();
-    } else {
-      openSidebarPanel("inndelinger");
-      closeOverlayPanel();
-    }
-  };
+  const { activeOverlayModal, closeOverlayModal, openOverlayModal } = useOverlayPanel();
 
   const toggleModal = (modalName: "inndelinger") => {
     if (activeOverlayModal === modalName) {
@@ -32,7 +21,7 @@ const Header = () => {
     }
   };
 
-  useKeyboardShortcut("open", toggleSidebar);
+  useKeyboardShortcut("open", () => toggleModal("inndelinger"));
 
   return (
     <Container>
@@ -43,16 +32,6 @@ const Header = () => {
       <Bar>
         <HeaderSection>
           {!utkast && <HeaderHome />}
-          <HeaderButton
-            variant="primary"
-            label="Åpne en inndeling"
-            icon="travel_explore"
-            onClick={toggleSidebar}
-            tooltip={{
-              text: "Åpne og rediger en inndeling i kartet",
-              shortcut: "open",
-            }}
-          />
           <HeaderButton
             label="Temp: Rediger en inndeling"
             icon="travel_explore"

@@ -3,41 +3,44 @@ import useNibasApi from "hooks/useNibasApi";
 import { Feature } from "ol";
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { Geometry } from "ol/geom";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { geoJsonToSource } from "utils/map/geoJson";
 import { getLayerById } from "utils/map/layers";
-import { Kretstype } from "./InndelingerContext";
+import { Inndeling, Kretstype } from "./InndelingerContext";
+import { LayerId } from "hooks/layers/types";
 
-const useInndelingFeatures = (kretstype: Kretstype | null, id: string | null) => {
+const useInndelingFeatures = () => {
+  const [inndeling, setInndeling] = useState<Inndeling | null>(null);
+
   const { utkast } = useUtkast();
 
-  const getRequestUrl = () => {
-    if (kretstype != null && id != null) {
-      if (kretstype === "fylker" || kretstype === "kommuner") {
-        return `/v1/${kretstype}/${id}/grenser`;
-      }
-
-      return `/v1/kommuner/${id}/${kretstype?.slice(0, -2)}grenser`;
+  const getRequestUrl = (kretstype: Kretstype, id: string) => {
+    if (kretstype === "fylke" || kretstype === "kommune") {
+      return `/v1/${kretstype}r/${id}/grenser`;
     }
+
+    return `/v1/kommuner/${id}/${kretstype}grenser`;
 
     return "";
   };
 
   // Denne henter kun dersom den har en id som ikke er en tom streng
   const { data, ...rest } = useNibasApi<GeoJSONFeatureCollection>(
-    id != null && kretstype != null ? getRequestUrl() : null,
+    inndeling != null ? getRequestUrl(inndeling.kretstype, inndeling.id) : null,
   );
 
   const utkastGeoJson = useUtkastFeature(data, utkast);
 
   const features = useMemo(() => {
-    if (!utkastGeoJson) return null;
+    if (!utkastGeoJson || !inndeling) return null;
 
     const geoJsonFeatures = geoJsonToSource(utkastGeoJson).getFeatures() as Feature<Geometry>[];
 
+    const sourceForInndeling: LayerId = inndeling.status === "editing" ? "edit" : inndeling.kretstype;
+
     // sjekk om features allerede ligger i kartet
     // hvis featurene er annerledes enn vanlig, så ligger de endrede featurene i edit-laget
-    const source = getLayerById("edit").getSource();
+    const source = getLayerById(sourceForInndeling).getSource();
     if (source) {
       const allFeaturesInMap = source.getFeatures();
 
@@ -51,9 +54,10 @@ const useInndelingFeatures = (kretstype: Kretstype | null, id: string | null) =>
     }
 
     return geoJsonFeatures;
-  }, [utkastGeoJson]);
+  }, [inndeling, utkastGeoJson]);
 
   return {
+    setInndeling,
     features,
     ...rest,
   };

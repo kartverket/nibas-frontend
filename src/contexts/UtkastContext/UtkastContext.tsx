@@ -29,7 +29,6 @@ import { addEditedFeaturesToSource, removeEditedFeaturesFromSourceByIds } from "
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { FeatureIdWithEndpoints, getAllFeatureEndPointCoordinates, isFeatureDeadEnd } from "utils/features";
-import { useEditAllGrenser } from "contexts/EditGrenserContext/EditGrenserContext";
 import { resetMapView } from "utils/map/map-utils";
 import { removeNil } from "utils/list-utils";
 
@@ -41,7 +40,6 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const { history, clearHistory } = useHistory();
   const { addDirtyStyles, addErrorStyles, clearFeatureStyles } = useFeatureStyle();
   const { tokenHolderFunc } = useAuthenticationFlow();
-  const { resetAndClearAllLayers } = useEditAllGrenser();
   const { closeOverlayPanel } = useOverlayPanel();
   const { closeSidebarPanel } = useSidebarPanel();
   const { setError } = useErrorHandling();
@@ -83,21 +81,11 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     resetKartlag();
     clearHistory();
     clearFeatureStyles();
-    resetAndClearAllLayers();
     closeOverlayPanel();
     closeSidebarPanel();
     resetModeTools();
     resetTool();
-  }, [
-    clearFeatureStyles,
-    clearHistory,
-    closeOverlayPanel,
-    closeSidebarPanel,
-    resetAndClearAllLayers,
-    resetKartlag,
-    resetModeTools,
-    resetTool,
-  ]);
+  }, [clearFeatureStyles, clearHistory, closeOverlayPanel, closeSidebarPanel, resetKartlag, resetModeTools, resetTool]);
 
   useEffect(() => {
     if (fetchedUtkast && !utkast) {

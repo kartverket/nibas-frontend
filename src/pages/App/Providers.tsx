@@ -1,6 +1,5 @@
 import ThirdPartyProviders from "./ThirdPartyProviders";
 import { KartlagProvider } from "contexts/KartlagContext/KartlagContext";
-import { EditGrenserProvider } from "contexts/EditGrenserContext/EditGrenserContext";
 import { SidebarPanelProvider } from "contexts/SidebarPanelContext";
 import { HistoryProvider } from "contexts/HistoryContext/HistoryContext";
 import { UtkastProvider } from "contexts/UtkastContext/UtkastContext";
@@ -21,13 +20,11 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
               <ToolbarProvider>
                 <SidebarPanelProvider>
                   <OverlayPanelProvider>
-                    <EditGrenserProvider>
-                      <KartlagProvider>
-                        <UtkastProvider>
-                          <InndelingerProvider>{children}</InndelingerProvider>
-                        </UtkastProvider>
-                      </KartlagProvider>
-                    </EditGrenserProvider>
+                    <KartlagProvider>
+                      <UtkastProvider>
+                        <InndelingerProvider>{children}</InndelingerProvider>
+                      </UtkastProvider>
+                    </KartlagProvider>
                   </OverlayPanelProvider>
                 </SidebarPanelProvider>
               </ToolbarProvider>

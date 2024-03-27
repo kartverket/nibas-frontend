@@ -31,8 +31,8 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
   };
 
   const selectFylke = (fylkeId: string) => {
-    if (selectedKretstype === "fylker") {
-      selectInndeling({ id: fylkeId, kretstype: "fylker", status: "editing" });
+    if (selectedKretstype === "fylke") {
+      selectInndeling({ id: fylkeId, kretstype: "fylke", status: "editing" });
       resetInndelingerPanel();
     } else {
       setSelectedFylkeId(fylkeId);
@@ -51,7 +51,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
   const inndelingIcon = (id: string, isKommune: boolean) => {
     const inndeling = inndelinger[id];
 
-    if (selectedKretstype === "fylker") {
+    if (selectedKretstype === "fylke") {
       if (inndeling != null) {
         return "visibility_off";
       } else {
@@ -90,7 +90,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
                   <Inndeling
                     key={fylkeId}
                     onClick={() => selectFylke(fylkeId)}
-                    {...(selectedKretstype !== "fylker" ? { rightIcon: inndelingIcon(fylkeId, false) } : {})}
+                    {...(selectedKretstype !== "fylke" ? { rightIcon: inndelingIcon(fylkeId, false) } : {})}
                   >
                     {`${fylke.nummer} ${getNavnInSpraak(fylke.navn, "nor")}`}
                   </Inndeling>

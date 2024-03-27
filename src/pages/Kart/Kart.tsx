@@ -2,16 +2,19 @@ import { Suspense, useEffect, useRef } from "react";
 import { styled } from "styled-components";
 import { map } from "./constants";
 import OverlayPopup from "./OverlayPopup";
-import SidebarPanels from "./SidebarPanels";
 import useInteractions from "./interactions/useInteractions";
 import Toolbar from "./Toolbar/Toolbar";
 import OverlayPanels from "./OverlayPanels/OverlayPanels";
 import { TegnforklaringButton } from "./OverlayPanels/Tegnforklaring/TegnforklaringButton";
 import Kartinformasjon from "./Kartinformasjon";
 import { zindex } from "utils/constants";
+import { Spinner } from "@kvib/react";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
 const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
+
+  const { isLoadingInndeling } = useInndelinger();
 
   // Legger til interactions (modify, select, osv) på kartet
   useInteractions();
@@ -32,10 +35,10 @@ const Kart = () => {
     <KartWrapper>
       <KartTarget ref={mapRef}>
         <Suspense fallback="More loading...">
-          <KartOverlay>
+          <KartOverlay $isLoadingKartdata={isLoadingInndeling}>
+            {isLoadingInndeling && <KartLoadingSpinner size={"xl"} emptyColor="white" />}
             <Kartinformasjon />
             <TegnforklaringButton />
-            <SidebarPanels />
             <OverlayPanels />
             <Toolbar />
           </KartOverlay>
@@ -71,7 +74,11 @@ const KartTarget = styled.div`
   }
 `;
 
-const KartOverlay = styled.div`
+const KartLoadingSpinner = styled(Spinner)`
+  margin: auto;
+`;
+
+const KartOverlay = styled.div<{ $isLoadingKartdata: boolean }>`
   display: grid;
   grid-template-columns: auto 1fr auto;
   grid-template-rows: 1fr auto;
@@ -86,6 +93,8 @@ const KartOverlay = styled.div`
   z-index: ${zindex.mapOverlay};
   overflow: hidden;
   pointer-events: none;
+
+  background-color: ${({ $isLoadingKartdata }) => ($isLoadingKartdata ? "#000000A0" : "")};
 
   & > * {
     pointer-events: all;

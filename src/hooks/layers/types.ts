@@ -1,4 +1,4 @@
-import { EditingType } from "contexts/EditGrenserContext/types";
+import { Kretstype } from "contexts/InndelingerContext/InndelingerContext";
 
 export type KartlagId =
   | "cachetjenester"
@@ -49,11 +49,8 @@ export const editableGrenseTypes: GrenseType[] = [
   "Kommunegrense",
 ];
 
-export const getGrenseTypeFromEditingType = (editingType: EditingType): GrenseType | undefined => {
-  switch (editingType) {
-    case "nasjon":
-      return "Riksgrense";
-
+export const getGrenseTypeFromKretstype = (kretstype: Kretstype): GrenseType | undefined => {
+  switch (kretstype) {
     case "fylke":
       return "Fylkesgrense";
 
@@ -71,11 +68,8 @@ export const getGrenseTypeFromEditingType = (editingType: EditingType): GrenseTy
   }
 };
 
-export const getEditingTypeFromGrenseType = (grenseType: GrenseType): EditingType | undefined => {
+export const getKretstypeFromGrensetype = (grenseType: GrenseType): Kretstype | undefined => {
   switch (grenseType) {
-    case "Riksgrense":
-      return "nasjon";
-
     case "Fylkesgrense":
       return "fylke";
 

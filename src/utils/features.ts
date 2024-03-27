@@ -1,4 +1,4 @@
-import { GrenseType, LayerId, editableGrenseTypes, getEditingTypeFromGrenseType } from "hooks/layers/types";
+import { GrenseType, LayerId, editableGrenseTypes, getKretstypeFromGrensetype } from "hooks/layers/types";
 import { MetadataDiscriminator, getMetadataDiscriminatorFromType, isAdministrativGrense } from "./grenser";
 import { Feature } from "ol";
 import { Geometry, LineString } from "ol/geom";
@@ -175,9 +175,9 @@ const getDefaultFeatureMetadata = (discriminator: MetadataDiscriminator): Metada
 
 export const getDefaultFeatureProperties = (grenseType: GrenseType): FeatureProperties | null => {
   const metadataDiscriminator = getMetadataDiscriminatorFromType(grenseType);
-  const editingType = getEditingTypeFromGrenseType(grenseType);
+  const kretstype = getKretstypeFromGrensetype(grenseType);
 
-  if (!metadataDiscriminator || !editingType) return null;
+  if (!metadataDiscriminator || !kretstype) return null;
 
   const metadata: Metadata = getDefaultFeatureMetadata(metadataDiscriminator);
 
@@ -185,7 +185,7 @@ export const getDefaultFeatureProperties = (grenseType: GrenseType): FeatureProp
     inndelingerKontekst: {
       // Burde sette ID her fra noe? Vet ikke hvordan man kan hente ut inndelingskonteksten automatisk
       id: "",
-      type: editingType,
+      type: kretstype,
     },
     kontekstEgenskaper: [],
     shouldArchive: false,
