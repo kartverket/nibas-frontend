@@ -12,7 +12,6 @@ import { ConditionalHide } from "components/ConditionalShowHide";
 import { Draw } from "ol/interaction";
 import { useState } from "react";
 
-import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
@@ -28,7 +27,6 @@ const Toolbar = () => {
     closeOverlayModal,
   } = useOverlayPanel();
   const { selectedFeatures, selectedPoint, clearSelectedPoint, clearSelection } = useFeatureStyle();
-  const { activeSidebarPanel, closeSidebarPanel } = useSidebarPanel();
 
   const { currentlyEditedInndeling } = useInndelinger();
   const isEditing = currentlyEditedInndeling != null;
@@ -146,11 +144,6 @@ const Toolbar = () => {
 
     if (activeOverlayPanel) {
       closeOverlayPanel();
-      return;
-    }
-
-    if (activeSidebarPanel) {
-      closeSidebarPanel();
       return;
     }
 

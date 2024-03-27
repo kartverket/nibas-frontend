@@ -80,12 +80,12 @@ const KartLoadingSpinner = styled(Spinner)`
 
 const KartOverlay = styled.div<{ $isLoadingKartdata: boolean }>`
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: 1fr auto;
   grid-template-rows: 1fr auto;
   justify-items: center;
   grid-template-areas:
-    "sidebar overlay sidepanel"
-    "sidebar toolbar sidepanel";
+    "overlay sidepanel"
+    "toolbar sidepanel";
   gap: 16px;
   width: 100%;
   height: 100%;

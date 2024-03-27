@@ -1,6 +1,5 @@
 import ThirdPartyProviders from "./ThirdPartyProviders";
 import { KartlagProvider } from "contexts/KartlagContext/KartlagContext";
-import { SidebarPanelProvider } from "contexts/SidebarPanelContext";
 import { HistoryProvider } from "contexts/HistoryContext/HistoryContext";
 import { UtkastProvider } from "contexts/UtkastContext/UtkastContext";
 import { ErrorHandlingProvider } from "contexts/ErrorHandlingContext";
@@ -18,15 +17,13 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
           <HistoryProvider>
             <FeatureStyleProvider>
               <ToolbarProvider>
-                <SidebarPanelProvider>
-                  <OverlayPanelProvider>
-                    <KartlagProvider>
-                      <UtkastProvider>
-                        <InndelingerProvider>{children}</InndelingerProvider>
-                      </UtkastProvider>
-                    </KartlagProvider>
-                  </OverlayPanelProvider>
-                </SidebarPanelProvider>
+                <OverlayPanelProvider>
+                  <KartlagProvider>
+                    <UtkastProvider>
+                      <InndelingerProvider>{children}</InndelingerProvider>
+                    </UtkastProvider>
+                  </KartlagProvider>
+                </OverlayPanelProvider>
               </ToolbarProvider>
             </FeatureStyleProvider>
           </HistoryProvider>

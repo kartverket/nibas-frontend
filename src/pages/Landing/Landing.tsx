@@ -2,7 +2,6 @@ import ActionCard from "components/ActionCard";
 import { Page, PageContainer } from "components/Page";
 import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -17,7 +16,6 @@ const Landing = () => {
   const { resetKartlag } = useKartlag();
   const { resetTool, resetModeTools } = useToolbar();
   const { activeOverlayPanel, closeOverlayPanel } = useOverlayPanel();
-  const { activeSidebarPanel, closeSidebarPanel } = useSidebarPanel();
 
   useEffect(() => {
     resetMapView();
@@ -27,16 +25,7 @@ const Landing = () => {
 
     // Disse to krever ekstra sjekking for å unngå uendelig useEffekt-løkke
     if (activeOverlayPanel) closeOverlayPanel();
-    if (activeSidebarPanel) closeSidebarPanel();
-  }, [
-    activeOverlayPanel,
-    activeSidebarPanel,
-    closeOverlayPanel,
-    closeSidebarPanel,
-    resetKartlag,
-    resetModeTools,
-    resetTool,
-  ]);
+  }, [activeOverlayPanel, closeOverlayPanel, resetKartlag, resetModeTools, resetTool]);
 
   return (
     <PageContainer>

@@ -22,7 +22,6 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useToast } from "@kvib/react";
 import { routes } from "utils/routes";
-import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { addEditedFeaturesToSource, removeEditedFeaturesFromSourceByIds } from "utils/map/source";
@@ -41,7 +40,6 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const { addDirtyStyles, addErrorStyles, clearFeatureStyles } = useFeatureStyle();
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { closeOverlayPanel } = useOverlayPanel();
-  const { closeSidebarPanel } = useSidebarPanel();
   const { setError } = useErrorHandling();
   const { resetTool, resetModeTools } = useToolbar();
   const toast = useToast();
@@ -82,10 +80,9 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     clearHistory();
     clearFeatureStyles();
     closeOverlayPanel();
-    closeSidebarPanel();
     resetModeTools();
     resetTool();
-  }, [clearFeatureStyles, clearHistory, closeOverlayPanel, closeSidebarPanel, resetKartlag, resetModeTools, resetTool]);
+  }, [clearFeatureStyles, clearHistory, closeOverlayPanel, resetKartlag, resetModeTools, resetTool]);
 
   useEffect(() => {
     if (fetchedUtkast && !utkast) {
