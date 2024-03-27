@@ -9,7 +9,6 @@ import { MergeFormData } from "./MergeForm";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useCallback } from "react";
 import Input from "components/Input";
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { stemmekretsgrenserFetcher } from "api/stemmekrets";
 import { deduplicate, removeNil } from "utils/list-utils";
 import { MergeMultiselect } from "./MergeMultiselect";
@@ -17,6 +16,7 @@ import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { Alert, AlertIcon, AlertTitle, Button, Divider, FormControl, FormLabel, Heading, Select } from "@kvib/react";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { useAuthentication } from "components/Authentication/AuthenticationHook";
 
 const Form = styled.form`
   display: flex;
@@ -41,7 +41,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
   const { flatedata, closeOverlayPanel } = useOverlayPanel();
   const { setError } = useErrorHandling();
   const { utkast, updateUtkast, utkastHarEndringer } = useUtkast();
-  const { tokenHolderFunc } = useAuthenticationFlow();
+  const auth = useAuthentication();
   const { setAndSaveSammenslaaingStyles, setAndSaveSammenslaaingOverlappingStyles } = useFeatureStyle();
   const { history } = useHistory();
   const { data: stemmekretserByKommune } = useKommuneStemmekretser(flatedata ? getIdFromEntity(flatedata) : null);
@@ -136,10 +136,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
       };
       updateUtkast(utkast.id, updateUtkastRequest);
       const sammenslaaingsStemmekretsIds = getStemmekretsIdList(selectedStemmekrets, stemmekretsTilSammenslaaingListe);
-      const stemmekretsFeatureIds = await stemmekretsgrenserFetcher(
-        sammenslaaingsStemmekretsIds,
-        tokenHolderFunc()?.token,
-      );
+      const stemmekretsFeatureIds = await stemmekretsgrenserFetcher(sammenslaaingsStemmekretsIds, auth.token);
       const overlappingFeatureIds = getOverlappingStemmekretsFeatureIds(stemmekretsFeatureIds);
       const uniqueStemmekretsFeatureIds = stemmekretsFeatureIds.filter(
         (sfi) => !overlappingFeatureIds.some((ofi) => sfi === ofi),

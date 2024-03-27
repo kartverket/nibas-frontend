@@ -1,7 +1,7 @@
 import { styled } from "styled-components";
 import { ReactElement, ReactNode } from "react";
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Button } from "@kvib/react";
+import { useAuthentication } from "components/Authentication/AuthenticationHook";
 
 type ErrorBoxProps = {
   title: string | ReactElement | ReactNode;
@@ -9,7 +9,7 @@ type ErrorBoxProps = {
 };
 
 export const ErrorBox = ({ title, text }: ErrorBoxProps) => {
-  const { handleLogoutFunc } = useAuthenticationFlow();
+  const auth = useAuthentication();
 
   return (
     <AlertWithButton status="error">
@@ -18,7 +18,7 @@ export const ErrorBox = ({ title, text }: ErrorBoxProps) => {
         <AlertTitle>{title}</AlertTitle>
         <AlertDescription>{text}</AlertDescription>
       </TextContainer>
-      <LogoutButton variant="ghost" onClick={handleLogoutFunc}>
+      <LogoutButton variant="ghost" onClick={() => auth.signOut()}>
         Logg ut
       </LogoutButton>
     </AlertWithButton>
