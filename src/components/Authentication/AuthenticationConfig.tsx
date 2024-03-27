@@ -1,0 +1,44 @@
+import { getCurrentEnvironment } from "components/FeatureToggle";
+
+const isLocalhost = () => {
+  const { hostname } = window.location;
+  return hostname.includes("localhost") || hostname.includes("127.0.0.1");
+};
+
+type AuthConfig = {
+  authority: string;
+  client_id: string;
+  redirect_uri: string;
+};
+
+const prodConfig = {
+  authority: "https://idporten.no",
+  client_id: "174ec5ec-774b-4474-93ec-deb6369f84cd",
+  redirect_uri: "https://nibas.prod.skip.statkart.no/authenticated",
+};
+
+const testConfig = {
+  authority: "https://test.idporten.no",
+  client_id: "91a73378-76d8-40cd-af04-6b7ce3d87667",
+  redirect_uri: "https://nibas.test.skip.statkart.no/authenticated",
+};
+
+const devConfig = {
+  authority: "https://test.idporten.no",
+  client_id: "91a73378-76d8-40cd-af04-6b7ce3d87667",
+  redirect_uri: isLocalhost()
+    ? "http://localhost:3000/authenticated"
+    : "https://nibas.dev.skip.statkart.no/authenticated",
+};
+
+export const getAuthConfigForCurrentEnvironment = (): AuthConfig => {
+  const environment = getCurrentEnvironment();
+  switch (environment) {
+    case "dev":
+      return devConfig;
+    case "test":
+      return testConfig;
+    case "prod":
+      return prodConfig;
+  }
+};

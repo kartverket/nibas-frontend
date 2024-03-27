@@ -1,8 +1,8 @@
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import useSWR, { BareFetcher, SWRConfiguration } from "swr";
 import { ApiPath } from "types/api";
 import { paths } from "types/api-gen";
 import { fetcherWithToken } from "utils/api";
+import { useAuth } from "react-oidc-context";
 
 // hvis pathen eksponererer et get-kall med path-parametere, returner typen til disse
 type GetPathParameters<T extends ApiPath> = paths[T] extends {
@@ -63,7 +63,7 @@ const useNibasApi = <Path extends ApiPath>(
       >
     | undefined,
 ) => {
-  const { tokenHolderFunc } = useAuthenticationFlow();
+  const auth = useAuth();
 
   let modifiedUrl: string | null = url;
 
@@ -100,7 +100,7 @@ const useNibasApi = <Path extends ApiPath>(
     modifiedUrl = modifiedUrl.concat(pathParams);
   }
 
-  return useSWR<ResponseType<Path>>([modifiedUrl, tokenHolderFunc()?.token], fetcherWithToken, swrOptions);
+  return useSWR<ResponseType<Path>>([modifiedUrl, auth.user?.access_token], fetcherWithToken, swrOptions);
 };
 
 export default useNibasApi;
