@@ -1,14 +1,14 @@
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { styled } from "styled-components";
 import ListItemAccordion from "../ListItemAccordion";
 import KommuneList from "./KommuneList/KommuneList";
 import { UnstyledList } from "components/UnstyledList";
 import useFylker from "hooks/inndelinger/useFylker";
 import { getIdFromEntity } from "utils/api";
+import { useAuthentication } from "components/Authentication/AuthenticationHook";
 
 const Kommunegrenser = () => {
   const { fylker } = useFylker();
-  const { isAuthenticatedFunc } = useAuthenticationFlow();
+  const { isAuthenticated } = useAuthentication();
 
   return (
     <ListItemAccordion title="Kommuner">
@@ -20,7 +20,7 @@ const Kommunegrenser = () => {
             ))}
           </List>
         ) : (
-          <p>{isAuthenticatedFunc() ? "Henter fylker..." : "Logg inn for å se listen"}</p>
+          <p>{isAuthenticated ? "Henter fylker..." : "Logg inn for å se listen"}</p>
         )}
       </div>
     </ListItemAccordion>
