@@ -1,4 +1,3 @@
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { getRepresentasjonspunktFeatureForAdministrativEnhet } from "components/GrenserDrillDown/ToggleableAdministrativEnhet/ToggleableAdministrativEnhet";
 import { useEditGrenseValue } from "contexts/EditGrenserContext/useEditGrense";
 import useFylker from "hooks/inndelinger/useFylker";
@@ -8,6 +7,7 @@ import useSWRImmutable from "swr/immutable";
 import { FeatureCollection } from "types/api";
 import { fetcherWithToken, getIdFromEntity } from "utils/api";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
+import { useAuthentication } from "components/Authentication/AuthenticationHook";
 
 const fylkesgrenserFetcher = async ([fylkeIds, token]: [string[], string | undefined]) => {
   const promises: Promise<FeatureCollection>[] = fylkeIds.map(async (fylkeId) =>
@@ -32,11 +32,8 @@ const useFylkesgrenser = () => {
   const [isFetching, setIsFetching] = useState(false);
   const { fylker } = useFylker(shouldFetch);
   const fylkeIds = fylker?.map(getIdFromEntity) ?? [];
-  const { tokenHolderFunc } = useAuthenticationFlow();
-  const { data: geoJsonFeatures } = useSWRImmutable(
-    shouldFetch ? [fylkeIds, tokenHolderFunc()?.token] : null,
-    fylkesgrenserFetcher,
-  );
+  const { token } = useAuthentication();
+  const { data: geoJsonFeatures } = useSWRImmutable(shouldFetch ? [fylkeIds, token] : null, fylkesgrenserFetcher);
 
   useEffect(() => {
     if (!shouldFetch) return;
