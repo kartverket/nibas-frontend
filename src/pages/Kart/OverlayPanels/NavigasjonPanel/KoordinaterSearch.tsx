@@ -10,7 +10,7 @@ const Form = styled.form`
   gap: 16px;
 `;
 
-export const KoordinaterSearch = ({ centerOnCoordinate }: NavigasjonProps) => {
+export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonProps) => {
   const {
     register,
     handleSubmit,

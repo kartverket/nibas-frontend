@@ -7,7 +7,7 @@ import { KoordinaterSearch } from "./KoordinaterSearch";
 import { InndelingSearch } from "./InndelingSearch";
 
 export type NavigasjonProps = {
-  centerOnCoordinate: (north: number | null, east: number | null) => void;
+  onSelect: (north: number | null, east: number | null) => void;
 };
 
 const NavigasjonPanel = ({ isOpen, className }: PanelProps) => {
@@ -30,10 +30,10 @@ const NavigasjonPanel = ({ isOpen, className }: PanelProps) => {
         </TabList>
         <TabPanels>
           <StyledTabPanel>
-            <InndelingSearch centerOnCoordinate={centerOnCoordinate} />
+            <InndelingSearch onSelect={centerOnCoordinate} />
           </StyledTabPanel>
           <StyledTabPanel>
-            <KoordinaterSearch centerOnCoordinate={centerOnCoordinate} />
+            <KoordinaterSearch onSelect={centerOnCoordinate} />
           </StyledTabPanel>
         </TabPanels>
       </Tabs>
