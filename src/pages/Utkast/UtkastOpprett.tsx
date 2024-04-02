@@ -1,4 +1,3 @@
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import {
   Button,
   Modal,
@@ -27,6 +26,7 @@ import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { ApiErrorResponse } from "types/api";
 import { statusCode } from "utils/api";
+import { useAuthentication } from "components/Authentication/AuthenticationHook";
 
 type UtkastFormData = {
   navn: string;
@@ -36,7 +36,7 @@ type UtkastFormData = {
 const UtkastOpprett = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
-  const { tokenHolderFunc } = useAuthenticationFlow();
+  const { token } = useAuthentication();
   const toast = useToast();
   const navigate = useNavigate();
   const { setError } = useErrorHandling();
@@ -65,7 +65,7 @@ const UtkastOpprett = () => {
         navn: getValues("navn"),
         endringstype: getValues("endringstype"),
       },
-      tokenHolderFunc()?.token,
+      token,
     );
     setIsLoading(false);
 
