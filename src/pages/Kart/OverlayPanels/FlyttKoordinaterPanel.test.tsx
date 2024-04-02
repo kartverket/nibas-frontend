@@ -1,7 +1,7 @@
 import { render, screen, userEvent } from "test/test-utils";
-import KoordinaterPanel from "./KoordinaterPanel";
+import FlyttKoordinaterPanel from "./FlyttKoordinaterPanel";
 
-const defaultProps: React.ComponentProps<typeof KoordinaterPanel> = {
+const defaultProps: React.ComponentProps<typeof FlyttKoordinaterPanel> = {
   isOpen: true,
 };
 
@@ -9,7 +9,7 @@ describe("KoordinaterPanel", async () => {
   const user = userEvent.setup();
 
   it("should allow positive and negative integers", async () => {
-    render(<KoordinaterPanel {...defaultProps} />);
+    render(<FlyttKoordinaterPanel {...defaultProps} />);
 
     const nord = await screen.findByLabelText("Nord");
     const ost = await screen.findByLabelText("Øst");
@@ -22,7 +22,7 @@ describe("KoordinaterPanel", async () => {
   });
 
   it("should allow positive and negative decimals", async () => {
-    render(<KoordinaterPanel {...defaultProps} />);
+    render(<FlyttKoordinaterPanel {...defaultProps} />);
 
     const nord = await screen.findByLabelText("Nord");
     const ost = await screen.findByLabelText("Øst");
@@ -35,7 +35,7 @@ describe("KoordinaterPanel", async () => {
   });
 
   it("should not allow text", async () => {
-    render(<KoordinaterPanel {...defaultProps} />);
+    render(<FlyttKoordinaterPanel {...defaultProps} />);
 
     const nord = await screen.findByLabelText("Nord");
     const ost = await screen.findByLabelText("Øst");
@@ -48,7 +48,7 @@ describe("KoordinaterPanel", async () => {
   });
 
   it("should not allow leading or trailing period", async () => {
-    render(<KoordinaterPanel {...defaultProps} />);
+    render(<FlyttKoordinaterPanel {...defaultProps} />);
 
     const nord = await screen.findByLabelText("Nord");
     const ost = await screen.findByLabelText("Øst");
@@ -61,7 +61,7 @@ describe("KoordinaterPanel", async () => {
   });
 
   it("should not allow whitespace", async () => {
-    render(<KoordinaterPanel {...defaultProps} />);
+    render(<FlyttKoordinaterPanel {...defaultProps} />);
 
     const nord = await screen.findByLabelText("Nord");
     const ost = await screen.findByLabelText("Øst");
