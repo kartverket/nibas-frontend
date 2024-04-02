@@ -22,6 +22,7 @@ import {
   StemmekretsRequest,
   StemmekretsSammenslaaingsendringRequest,
   UtkastGrenseendringer,
+  UtkastGrenseendringerFeatures,
   UtkastMetadataendringer,
   UtkastOperasjoner,
   UtkastResponse,
@@ -72,9 +73,11 @@ export const applyNonFeatureUtkast = <T extends NonNullable<UtkastEntity>>(
   return getCombinedEntity(entity, utkastSlice);
 };
 
-export const applyFeatureUtkast = (featureCollection: GeoJSONFeatureCollection, utkast: UtkastResponse) => {
-  const featuresSlice = utkast.operasjoner.grenseendringer.endredeFeatures;
-  const newFeatures = getCombinedFeatures(featureCollection, featuresSlice);
+export const applyFeatureUtkast = (
+  featureCollection: GeoJSONFeatureCollection,
+  endredeFeatures: UtkastGrenseendringerFeatures,
+) => {
+  const newFeatures = getCombinedFeatures(featureCollection, endredeFeatures);
 
   return {
     ...featureCollection,

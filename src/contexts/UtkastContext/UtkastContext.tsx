@@ -15,7 +15,13 @@ import { updateUtkastApi } from "api/utkast";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { HistoryChange } from "contexts/HistoryContext/types";
 import useNibasApi from "hooks/useNibasApi";
-import { ApiErrorResponse, FeatureCollection, OppdaterUtkastRequest, UtkastResponse } from "types/api";
+import {
+  ApiErrorResponse,
+  FeatureCollection,
+  OppdaterUtkastRequest,
+  UtkastGrenseendringerFeatures,
+  UtkastResponse,
+} from "types/api";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
@@ -269,15 +275,15 @@ export const useUtkastEntity = <T extends UtkastEntity>(entity: T, type: EntityU
 // TODO: noe er galt med typingen her, geojsonfeaturecollection betyr bare any, den fanger ikke at den returnerer undefined
 export const useUtkastFeature = (
   featureCollection: GeoJSONFeatureCollection | GeoJSONFeatureCollection[],
-  utkast?: UtkastResponse,
+  endredeFeatures: UtkastGrenseendringerFeatures,
 ): FeatureCollection | undefined => {
   return useMemo(() => {
-    if (featureCollection == null || !utkast) return featureCollection;
+    if (featureCollection == null || endredeFeatures.length === 0) return featureCollection;
 
     if (Array.isArray(featureCollection)) {
-      return featureCollection.map((collection) => applyFeatureUtkast(collection, utkast));
+      return featureCollection.map((collection) => applyFeatureUtkast(collection, endredeFeatures));
     }
 
-    return applyFeatureUtkast(featureCollection, utkast);
-  }, [featureCollection, utkast]);
+    return applyFeatureUtkast(featureCollection, endredeFeatures);
+  }, [featureCollection, endredeFeatures]);
 };

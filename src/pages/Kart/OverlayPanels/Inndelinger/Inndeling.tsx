@@ -5,11 +5,12 @@ type Props = {
   onClick: () => void;
   rightIcon?: MaterialSymbol;
   children: React.ReactNode;
+  isActive: boolean;
 };
 
 const Inndeling = (props: Props) => {
   return (
-    <InndelingButton variant="ghost" rightIcon={props.rightIcon} onClick={props.onClick}>
+    <InndelingButton isActive={props.isActive} variant="ghost" rightIcon={props.rightIcon} onClick={props.onClick}>
       {props.children}
     </InndelingButton>
   );

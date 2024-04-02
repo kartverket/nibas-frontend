@@ -55,6 +55,7 @@ export type UtkastResponse = components["schemas"]["UtkastResponse"];
 export type UtkastRef = components["schemas"]["UtkastRef"];
 export type UtkastMetadataendringer = components["schemas"]["Metadataendringer"];
 export type UtkastGrenseendringer = components["schemas"]["Grenseendringer"];
+export type UtkastGrenseendringerFeatures = components["schemas"]["Grenseendringer"]["endredeFeatures"];
 export type KretsDelingEndringRequest = components["schemas"]["KretsDelingEndringRequest"];
 export type Point = components["schemas"]["Point"];
 export type ApiErrorResponse = components["schemas"]["ApiErrorResponse"];

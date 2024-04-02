@@ -22,19 +22,22 @@ const useInndelingFeatures = () => {
     return `/v1/kommuner/${id}/${kretstype}grenser`;
   };
 
-  // Denne henter kun dersom den har en id som ikke er en tom streng
+  // Denne henter kun dersom den har en inndeling
   const { data, ...rest } = useNibasApi<GeoJSONFeatureCollection>(
     inndeling != null ? getRequestUrl(inndeling.kretstype, inndeling.id) : null,
   );
 
-  const utkastGeoJson = useUtkastFeature(data, utkast);
+  const utkastGeoJson = useUtkastFeature(data, utkast?.operasjoner.grenseendringer.endredeFeatures ?? []);
 
+  // TODO Denne rememoiserer når man lagrer utkastet sitt, som ikke er helt heldig imo tbh
   const features = useMemo(() => {
     if (!utkastGeoJson || !inndeling) return null;
 
-    const geoJsonFeatures = geoJsonToSource(utkastGeoJson).getFeatures() as Feature<Geometry>[];
+    console.log("memoing features", utkastGeoJson);
 
-    const sourceForInndeling: LayerId = inndeling.status === "editing" ? "edit" : inndeling.kretstype;
+    const geoJsonFeatures = geoJsonToSource(utkastGeoJson).getFeatures();
+
+    const sourceForInndeling: LayerId = inndeling.isEditing ? "edit" : inndeling.kretstype;
 
     // sjekk om features allerede ligger i kartet
     // hvis featurene er annerledes enn vanlig, så ligger de endrede featurene i edit-laget

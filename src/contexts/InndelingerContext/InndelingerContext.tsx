@@ -2,19 +2,22 @@ import { createContext, useContext, useEffect, useState } from "react";
 import useInndelingFeatures from "./useInndelingFeatures";
 import { addFeaturesToSource } from "utils/map/source";
 import { zoomToFeatures } from "utils/map/map-utils";
-import { editSource } from "hooks/layers/constants";
+import { editSource, grenserLayers } from "hooks/layers/constants";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 
 export const KRETSTYPER = ["fylke", "kommune", "stemmekrets", "grunnkrets"] as const;
 type Kretstyper = typeof KRETSTYPER;
 export type Kretstype = Kretstyper[number];
 
-type InndelingStatus = "visible" | "editing" | null;
-
 export type Inndeling = {
   id: string;
   kretstype: Kretstype;
-  status: InndelingStatus;
+  isVisible: boolean;
+  isEditing: boolean;
+};
+
+const isEqualInndelinger = (a: Inndeling, b: Inndeling): boolean => {
+  return a.id === b.id && a.kretstype === b.kretstype && a.isVisible === b.isVisible && a.isEditing && b.isEditing;
 };
 
 type Inndelinger = {
@@ -38,20 +41,31 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
   useEffect(() => {
     if (features && currentIndeling) {
-      const sourceToAddTo = currentIndeling.status === "editing" ? "edit" : currentIndeling.kretstype;
+      console.log(currentIndeling);
+      console.log(features.length);
+      const sourceToAddTo = currentIndeling.isEditing ? "edit" : currentIndeling.kretstype;
 
-      if (sourceToAddTo === "edit") editSource.clear();
+      if (sourceToAddTo === "edit") {
+        editSource.clear(true);
+      }
 
-      addFeaturesToSource(sourceToAddTo, features, () => zoomToFeatures(features));
+      // Finne ut hvordan man vil zoome her
+      // Tror også denne legger til om igjen hvis man repeater seg selv som den sikkert ikke burde
+      addFeaturesToSource(sourceToAddTo, features, () => {
+        zoomToFeatures(features);
+      });
     }
   }, [currentIndeling, features]);
 
   useEffect(() => {
     if (!utkast) {
-      editSource.clear(true);
+      for (const layer of Object.values(grenserLayers)) {
+        const source = layer.getSource();
+        source?.clear(true);
+      }
       setInndeling(null);
       setInndelinger({});
-      // TODO Reset zoom? Kanskje ikke egentlig?
+      // Reset zoom? Kanskje ikke egentlig?
     }
   }, [setInndeling, utkast]);
 
@@ -68,31 +82,32 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
    * @returns Inndelingen som redigeres dersom den finnes, null ellers
    */
   const getCurrentlyEditingInndeling = (): Inndeling | null => {
-    const activeEditingInndeling = Object.values(inndelinger).find((inndeling) => inndeling.status === "editing");
+    const activeEditingInndeling = Object.values(inndelinger).find((inndeling) => inndeling.isEditing);
     return activeEditingInndeling ?? null;
   };
 
   const selectInndeling = (inndeling: Inndeling) => {
     const inndelingIfExists = getInndeling(inndeling.id);
 
-    if (
-      inndelingIfExists &&
-      inndelingIfExists.kretstype === inndeling.kretstype &&
-      inndelingIfExists.status === inndeling.status
-    )
-      return;
+    if (inndelingIfExists) {
+      if (isEqualInndelinger(inndelingIfExists, inndeling)) {
+        // Her kan man anta at man har trykket på noe man allerede har trykket på, så kanskje man skal fjerne ting her?
+        return;
+      }
+    }
 
     const nyeInndelinger: Inndelinger = {
       ...inndelinger,
       [inndeling.id]: inndeling,
     };
 
-    if (inndeling.status === "editing") {
+    if (inndeling.isEditing) {
       const currentlyEditingInndeling = getCurrentlyEditingInndeling();
       if (currentlyEditingInndeling && currentlyEditingInndeling.id !== inndeling.id) {
         nyeInndelinger[currentlyEditingInndeling.id] = {
           ...currentlyEditingInndeling,
-          status: null,
+          isEditing: false,
+          isVisible: false,
         };
       }
     }

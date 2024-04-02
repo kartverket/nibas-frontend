@@ -34,7 +34,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
 
   const selectFylke = (fylkeId: string) => {
     if (selectedKretstype === "fylke") {
-      selectInndeling({ id: fylkeId, kretstype: "fylke", status: isEditingPanel ? "editing" : "visible" });
+      selectInndeling({ id: fylkeId, kretstype: "fylke", isEditing: isEditingPanel, isVisible: true });
       resetInndelingerPanel();
     } else {
       setSelectedFylkeId(fylkeId);
@@ -43,7 +43,12 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
 
   const selectKommune = (kommuneId: string) => {
     if (selectedKretstype) {
-      selectInndeling({ id: kommuneId, kretstype: selectedKretstype, status: isEditingPanel ? "editing" : "visible" });
+      selectInndeling({
+        id: kommuneId,
+        kretstype: selectedKretstype,
+        isEditing: isEditingPanel,
+        isVisible: true,
+      });
       resetInndelingerPanel();
     }
   };
@@ -80,7 +85,12 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
         <InndelingerLayout>
           <InndelingerList>
             {KRETSTYPER.map((kretstype) => (
-              <Inndeling key={kretstype} onClick={() => selectKretstype(kretstype)} rightIcon="chevron_right">
+              <Inndeling
+                key={kretstype}
+                isActive={selectedKretstype === kretstype}
+                onClick={() => selectKretstype(kretstype)}
+                rightIcon="chevron_right"
+              >
                 {capitalize(kretstype)}
               </Inndeling>
             ))}
@@ -92,6 +102,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
                 const fylkeId = getIdFromEntity(fylke);
                 return (
                   <Inndeling
+                    isActive={selectedFylkeId === fylkeId}
                     key={fylkeId}
                     onClick={() => selectFylke(fylkeId)}
                     {...(selectedKretstype !== "fylke" ? { rightIcon: inndelingIcon(fylkeId, false) } : {})}
@@ -107,7 +118,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
               kommuner?.map((kommune) => {
                 const kommuneId = getIdFromEntity(kommune);
                 return (
-                  <Inndeling key={kommuneId} onClick={() => selectKommune(kommuneId)}>
+                  <Inndeling isActive={false} key={kommuneId} onClick={() => selectKommune(kommuneId)}>
                     {`${kommune.nummer} ${getNavnInSpraak(kommune.navn, "nor")}`}
                   </Inndeling>
                 );
