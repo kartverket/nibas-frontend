@@ -288,15 +288,15 @@ const EndreVedtakFooter = ({
 };
 
 const VedtakHeaderContainer = styled.div`
-  padding: 0 24px 0 24px;
+  padding: 0 24px;
   margin-bottom: -20px;
 `;
 
 const VedtakFooterContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  margin: 0 24px 0 24px;
-  padding: 12px 0 12px 0;
+  margin: 0 24px;
+  padding: 12px 0;
   border-top: 2px solid var(--kvib-colors-gray-50);
 `;
 

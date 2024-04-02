@@ -373,7 +373,7 @@ const SnappingMenuHeader = styled.div`
 
 const SnappingToggle = styled.div`
   display: flex;
-  padding: 5px 10px 5px 10px;
+  padding: 5px 10px;
 `;
 
 export default Toolbar;
