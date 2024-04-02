@@ -3,7 +3,7 @@ import { InndelingResponse } from "types/api";
 import { NavigasjonProps } from "./NavigasjonPanel";
 import { useInndelingerSearch } from "./useInndelingerSearch";
 import { ReactNode } from "react";
-import styled from "styled-components";
+import { styled } from "styled-components";
 
 type InndelingOption = InndelingResponse & {
   label: string;
@@ -33,7 +33,7 @@ export const InndelingSearch = ({ onSelect: centerOnCoordinate }: NavigasjonProp
 
   const loadResults = async (term: string, resultsCallback: (options: InndelingOption[]) => void) => {
     if (term.length > 0) {
-      const inndelinger = await searchInndelinger(term);
+      const inndelinger = await searchInndelinger(term, 15);
       resultsCallback(inndelinger.map(mapInndelingResponseToOption));
     }
   };

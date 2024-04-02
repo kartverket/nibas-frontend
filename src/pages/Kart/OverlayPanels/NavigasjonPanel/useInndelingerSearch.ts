@@ -7,10 +7,10 @@ export const useInndelingerSearch = () => {
   const { tokenHolderFunc } = useAuthenticationFlow();
   const { utkast } = useUtkast();
 
-  const searchInndelinger = async (searchString: string): Promise<InndelingResponse[]> => {
+  const searchInndelinger = async (searchString: string, limit: number): Promise<InndelingResponse[]> => {
     const gyldhetsdato = utkast?.gyldigFra;
     const results = await fetch(
-      getUrlForPath(`v1/inndelinger/?searchString=${searchString}&gyldighetsdato=${gyldhetsdato}`),
+      getUrlForPath(`v1/inndelinger/?searchString=${searchString}&gyldighetsdato=${gyldhetsdato}&limit=${limit}`),
       {
         method: "GET",
         headers: {
