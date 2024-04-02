@@ -10,7 +10,6 @@ import {
   MenuList,
   MenuOptionGroup,
 } from "@kvib/react";
-import { useEditAllGrenser } from "contexts/EditGrenserContext/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
@@ -18,6 +17,7 @@ import { styled } from "styled-components";
 import ToolbarButton from "./ToolbarButton";
 import { KeyboardShortcuts } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
 import { ConditionalHide, ConditionalShow } from "components/ConditionalShowHide";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
 type MenuItems = (MenuItemProps & {
   $isActive: boolean;
@@ -27,8 +27,6 @@ type MenuItems = (MenuItemProps & {
 
 const ToolbarMenus = () => {
   const { activeTool, toggleTool } = useToolbar();
-  const { getCurrentlyEditingType } = useEditAllGrenser();
-  const editingType = getCurrentlyEditingType();
   const {
     activeOverlayPanel,
     openOverlayPanel,
@@ -38,16 +36,24 @@ const ToolbarMenus = () => {
     closeOverlayModal,
   } = useOverlayPanel();
 
+  const { currentlyEditedInndeling } = useInndelinger();
+
+  const isEditing = currentlyEditedInndeling != null;
+
   const mergeIsActive = activeOverlayPanel === "sammenslåing";
   const splitIsActive = activeOverlayPanel === "splitting";
 
   const flatedetaljerIsActive = activeOverlayModal === "grunnkrets" || activeOverlayModal === "stemmekrets";
 
   const toggleFlatedetaljer = () => {
+    const currentlyEditingKretsType = currentlyEditedInndeling?.kretstype;
     if (flatedetaljerIsActive) {
       closeOverlayModal();
-    } else if (editingType === "grunnkrets" || editingType === "stemmekrets") {
-      openOverlayModal(editingType);
+    } else if (
+      (currentlyEditingKretsType && currentlyEditingKretsType === "grunnkrets") ||
+      currentlyEditingKretsType === "stemmekrets"
+    ) {
+      openOverlayModal(currentlyEditingKretsType);
     }
   };
 
@@ -69,12 +75,11 @@ const ToolbarMenus = () => {
 
   const toggleSplitPanel = () => (splitIsActive ? closeOverlayPanel() : openOverlayPanel("splitting"));
 
-  const isEditMode = !!editingType;
-  useKeyboardShortcut("add", () => toggleTool("add"), isEditMode);
-  useKeyboardShortcut("remove", () => toggleTool("remove"), isEditMode);
-  useKeyboardShortcut("edit_point", toggleMovePoint, isEditMode);
-  useKeyboardShortcut("merge", toggleMergePanel, editingType === "stemmekrets");
-  useKeyboardShortcut("archive", () => toggleTool("archive"), isEditMode);
+  useKeyboardShortcut("add", () => toggleTool("add"), isEditing);
+  useKeyboardShortcut("remove", () => toggleTool("remove"), isEditing);
+  useKeyboardShortcut("edit_point", toggleMovePoint, isEditing);
+  useKeyboardShortcut("merge", toggleMergePanel, currentlyEditedInndeling?.kretstype === "stemmekrets");
+  useKeyboardShortcut("archive", () => toggleTool("archive"), isEditing);
   useKeyboardShortcut("flate", toggleFlatedetaljer);
 
   // For å kunne vise at en meny er aktiv må vi kunne sjekke hvorvidt noen av menuitems er aktive
@@ -84,7 +89,7 @@ const ToolbarMenus = () => {
       label: "Tegn ny grense",
       icon: <Icon icon="edit" />,
       $isActive: activeTool === "draw",
-      isDisabled: !isEditMode,
+      isDisabled: !isEditing,
       onClick: () => toggleTool("draw"),
       "aria-label": "Tegn en ny grense fra et punkt",
     },
@@ -92,7 +97,7 @@ const ToolbarMenus = () => {
       label: "Del grense",
       icon: <Icon icon="location_off" />,
       $isActive: activeTool === "split",
-      isDisabled: !isEditMode,
+      isDisabled: !isEditing,
       onClick: () => toggleTool("split"),
       "aria-label": "Del en grense i to fra et punkt",
     },
@@ -100,7 +105,7 @@ const ToolbarMenus = () => {
       label: "Løsriv grense",
       icon: <Icon icon="edit_location_alt" />,
       $isActive: activeTool === "detach",
-      isDisabled: !isEditMode,
+      isDisabled: !isEditing,
       onClick: () => toggleTool("detach"),
       "aria-label": "Løsriv grense fra et knutepunkt",
     },
@@ -110,7 +115,7 @@ const ToolbarMenus = () => {
       icon: <Icon icon="archive" />,
       command: KeyboardShortcuts["archive"].displayString,
       $isActive: activeTool === "archive",
-      isDisabled: !isEditMode,
+      isDisabled: !isEditing,
       onClick: () => toggleTool("archive"),
       "aria-label": "Arkiver grense",
     },
@@ -121,7 +126,7 @@ const ToolbarMenus = () => {
       icon: <Icon icon="ads_click" />,
       command: KeyboardShortcuts["edit_point"].displayString,
       $isActive: activeTool === "koordinater",
-      isDisabled: !isEditMode,
+      isDisabled: !isEditing,
       onClick: toggleMovePoint,
       "aria-label": "Flytt punkt med koordinater",
     },
@@ -130,7 +135,7 @@ const ToolbarMenus = () => {
       icon: <Icon icon="add_location_alt" />,
       command: KeyboardShortcuts["add"].displayString,
       $isActive: activeTool === "add",
-      isDisabled: !isEditMode,
+      isDisabled: !isEditing,
       onClick: () => toggleTool("add"),
       "aria-label": "Legg til punkter",
     },
@@ -139,7 +144,7 @@ const ToolbarMenus = () => {
       icon: <Icon icon="wrong_location" />,
       command: KeyboardShortcuts["remove"].displayString,
       $isActive: activeTool === "remove",
-      isDisabled: !isEditMode,
+      isDisabled: !isEditing,
       onClick: () => toggleTool("remove"),
       "aria-label": "Fjern punkter",
     },
@@ -149,7 +154,7 @@ const ToolbarMenus = () => {
       label: "Se/endre flatedetaljer",
       icon: <Icon icon="edit_location_alt" />,
       command: KeyboardShortcuts["flate"].displayString,
-      isDisabled: !isEditMode,
+      isDisabled: !isEditing,
       $isActive: flatedetaljerIsActive,
       onClick: toggleFlatedetaljer,
       "aria-label": "Se eller endre flatedetaljer for kretsen som redigeres",
@@ -159,7 +164,7 @@ const ToolbarMenus = () => {
       icon: <Icon icon="merge" />,
       command: KeyboardShortcuts["merge"].displayString,
       $isActive: mergeIsActive,
-      isDisabled: editingType !== "stemmekrets",
+      isDisabled: currentlyEditedInndeling?.kretstype !== "stemmekrets",
       onClick: toggleMergePanel,
       "aria-label": "Slå sammen stemmekretser",
     },
@@ -167,7 +172,9 @@ const ToolbarMenus = () => {
       label: "Splitt en flate",
       icon: <Icon icon="cut" />,
       $isActive: splitIsActive,
-      isDisabled: !(editingType === "stemmekrets" || editingType === "grunnkrets"),
+      isDisabled: !(
+        currentlyEditedInndeling?.kretstype === "stemmekrets" || currentlyEditedInndeling?.kretstype === "grunnkrets"
+      ),
       onClick: toggleSplitPanel,
       "aria-label": "Splitt en flate",
     },

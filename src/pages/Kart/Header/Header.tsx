@@ -3,7 +3,6 @@ import HeaderBreadcrumb from "./HeaderBreadcrumb";
 import HeaderHistoryOperations from "./HeaderHistoryOperations";
 import HeaderUtkastOperations from "./HeaderUtkastOperations";
 import HeaderButton, { HeaderSection } from "./HeaderButton";
-import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import HeaderHome from "./HeaderHome";
@@ -12,19 +11,17 @@ import { zindex } from "utils/constants";
 
 const Header = () => {
   const { utkast } = useUtkast();
-  const { activeSidebarPanel, openSidebarPanel, closeSidebarPanel } = useSidebarPanel();
-  const { closeOverlayPanel } = useOverlayPanel();
+  const { activeOverlayModal, closeOverlayModal, openOverlayModal } = useOverlayPanel();
 
-  const toggleSidebar = () => {
-    if (activeSidebarPanel === "inndelinger") {
-      closeSidebarPanel();
+  const toggleModal = (modalName: "inndelinger" | "inndelinger-view") => {
+    if (activeOverlayModal === modalName) {
+      closeOverlayModal();
     } else {
-      openSidebarPanel("inndelinger");
-      closeOverlayPanel();
+      openOverlayModal(modalName);
     }
   };
 
-  useKeyboardShortcut("open", toggleSidebar);
+  useKeyboardShortcut("open", () => toggleModal("inndelinger"));
 
   return (
     <Container>
@@ -36,12 +33,20 @@ const Header = () => {
         <HeaderSection>
           {!utkast && <HeaderHome />}
           <HeaderButton
-            variant="primary"
-            label="Åpne en inndeling"
+            label="Temp: Rediger en inndeling"
             icon="travel_explore"
-            onClick={toggleSidebar}
+            onClick={() => toggleModal("inndelinger")}
             tooltip={{
               text: "Åpne og rediger en inndeling i kartet",
+              shortcut: "open",
+            }}
+          />
+          <HeaderButton
+            label="Temp: Se inndeling"
+            icon="travel_explore"
+            onClick={() => toggleModal("inndelinger-view")}
+            tooltip={{
+              text: "Åpne og se en inndeling i kartet",
               shortcut: "open",
             }}
           />

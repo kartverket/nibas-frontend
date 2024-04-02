@@ -1,5 +1,5 @@
+import { Kretstype } from "contexts/InndelingerContext/InndelingerContext";
 import { components, paths } from "./api-gen";
-import { EditingType } from "contexts/EditGrenserContext/types";
 
 export type Spraak = {
   navn: string;
@@ -8,7 +8,7 @@ export type Spraak = {
 
 export type InndelingerKontekst = {
   id: string;
-  type: EditingType;
+  type: Kretstype;
 };
 
 // renaming av typer fra generert api doc

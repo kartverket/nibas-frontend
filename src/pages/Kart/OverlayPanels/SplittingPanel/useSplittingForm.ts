@@ -1,4 +1,3 @@
-import { useEditAllGrenser } from "contexts/EditGrenserContext/EditGrenserContext";
 import { Flatedata } from "contexts/OverlayPanelContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useForm, useFieldArray } from "react-hook-form";
@@ -15,7 +14,7 @@ import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import { useToast } from "@kvib/react";
 import { useCallback } from "react";
-import { EditingType } from "contexts/EditGrenserContext/types";
+import { Kretstype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
 export type SplittingForm = Pick<KretsDelingEndringRequest, "opprinneligKrets" | "nyeKretser">;
 
@@ -28,12 +27,12 @@ export const getDefaultSplittingValue = () => ({
 });
 
 const getKommuneIdentifikatorFromOptions = (
-  editingType: EditingType,
+  kretstype: Kretstype,
   opprinneligKretsId: string,
   grunnkretser: GrunnkretsResponse[],
   stemmekretser: StemmekretsResponse[],
 ) => {
-  if (editingType === "stemmekrets") {
+  if (kretstype === "stemmekrets") {
     return stemmekretser?.find((opt) => opt.id.lokalid.value === opprinneligKretsId)?.kommuneIdentifikator;
   } else {
     return grunnkretser?.find((opt) => opt.id.lokalid.value === opprinneligKretsId)?.kommuneIdentifikator;
@@ -63,12 +62,12 @@ export const useSplittingForm = (flatedata: Flatedata) => {
     name: "nyeKretser",
   });
 
-  const { getCurrentlyEditingType } = useEditAllGrenser();
-  const editingType = getCurrentlyEditingType();
+  const { currentlyEditedInndeling } = useInndelinger();
+  const kretstype = currentlyEditedInndeling?.kretstype;
   const { data: stemmekretser } = useKommuneStemmekretser(flatedata ? getIdFromEntity(flatedata) : null);
   const { data: grunnkretser } = useKommuneGrunnkretser(flatedata ? getIdFromEntity(flatedata) : null);
   const opprinneligFlateOptions =
-    editingType === "grunnkrets"
+    kretstype === "grunnkrets"
       ? mapGrunnkretsResponseToKrets(grunnkretser ?? [])
       : mapStemmekretResponseToKrets(stemmekretser ?? []);
 
@@ -113,13 +112,13 @@ export const useSplittingForm = (flatedata: Flatedata) => {
   // en del if-tester her for å forsikre typescript om at variablene vi bruker ikke er null.
   // (hadde ikke vært mulig å komme seg hit hvis noe var null, men typescript er typescript)
   const updateDraftWithSplittingRequest = async () => {
-    if (editingType && grunnkretser && stemmekretser) {
+    if (kretstype && grunnkretser && stemmekretser) {
       const { opprinneligKrets, nyeKretser } = getValues();
       const opprinneligKretsInfo = opprinneligFlateOptions.find(
         (krets) => krets.id.lokalid.value === opprinneligKrets.lokalId,
       );
       const kommuneIdentifikator = getKommuneIdentifikatorFromOptions(
-        editingType,
+        kretstype,
         opprinneligKrets.lokalId,
         grunnkretser,
         stemmekretser,
@@ -137,7 +136,7 @@ export const useSplittingForm = (flatedata: Flatedata) => {
             version: opprinneligKretsInfo.version,
           },
           kommuneId: kommuneIdentifikator,
-          flatetype: editingType === "grunnkrets" ? KontekstType.GRUNNKRETS : KontekstType.STEMMEKRETS,
+          flatetype: kretstype === "grunnkrets" ? KontekstType.GRUNNKRETS : KontekstType.STEMMEKRETS,
           nyeKretser: exclusivelyNewKretser,
         };
 
@@ -178,7 +177,7 @@ export const useSplittingForm = (flatedata: Flatedata) => {
   }, [reset]);
 
   return {
-    editingType,
+    kretstype,
     opprinneligFlateOptions,
     fields,
     register,

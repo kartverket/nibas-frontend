@@ -1,5 +1,4 @@
 import { Checkbox, CloseButton, Divider, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Switch } from "@kvib/react";
-import { useEditAllGrenser } from "contexts/EditGrenserContext/EditGrenserContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useHoldButtonToggle, useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
@@ -13,8 +12,8 @@ import { ConditionalHide } from "components/ConditionalShowHide";
 import { Draw } from "ol/interaction";
 import { useState } from "react";
 
-import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
 const Toolbar = () => {
   const { activeTool, activeModeTools, toggleTool, toggleModeTool, enableModeTool, disableModeTool, resetTool } =
@@ -28,10 +27,9 @@ const Toolbar = () => {
     closeOverlayModal,
   } = useOverlayPanel();
   const { selectedFeatures, selectedPoint, clearSelectedPoint, clearSelection } = useFeatureStyle();
-  const { activeSidebarPanel, closeSidebarPanel } = useSidebarPanel();
-  const { getCurrentlyEditingType } = useEditAllGrenser();
-  const editingType = getCurrentlyEditingType();
-  const isEditMode = !!editingType;
+
+  const { currentlyEditedInndeling } = useInndelinger();
+  const isEditing = currentlyEditedInndeling != null;
 
   const toggleSnapping = () => {
     const isMatrikkelToggled = activeModeTools.includes("snap_matrikkel");
@@ -80,7 +78,7 @@ const Toolbar = () => {
   };
 
   const isPanningAllowed = (): boolean => {
-    if (!isEditMode) return false;
+    if (!isEditing) return false;
 
     const drawInteraction = map
       .getInteractions()
@@ -109,7 +107,7 @@ const Toolbar = () => {
 
   useKeyboardShortcut("layers", toggleKartlag);
   useKeyboardShortcut("move", () => enableModeTool("move"), panningEnabled);
-  useKeyboardShortcut("edit", () => disableModeTool("move"), isEditMode);
+  useKeyboardShortcut("edit", () => disableModeTool("move"), isEditing);
   useKeyboardShortcut("matrikkel", () => toggleModeTool("matrikkel"));
   useKeyboardShortcut("grenseinfo", toggleGrenseinfo);
   useHoldButtonToggle(
@@ -146,11 +144,6 @@ const Toolbar = () => {
 
     if (activeOverlayPanel) {
       closeOverlayPanel();
-      return;
-    }
-
-    if (activeSidebarPanel) {
-      closeSidebarPanel();
       return;
     }
 
@@ -198,7 +191,7 @@ const Toolbar = () => {
               onClick={() => disableModeTool("move")}
               isActive={!activeModeTools.includes("move")}
               aria-label="Rediger grenser i kartet"
-              isDisabled={!editingType}
+              isDisabled={!isEditing}
               tooltip={{ text: "Rediger grenser i kartet", shortcut: "edit" }}
             >
               Rediger
