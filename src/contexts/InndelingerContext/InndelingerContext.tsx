@@ -1,9 +1,11 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import useInndelingFeatures from "./useInndelingFeatures";
-import { addFeaturesToSource } from "utils/map/source";
+import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { zoomToFeatures } from "utils/map/map-utils";
 import { editSource, grenserLayers } from "hooks/layers/constants";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import { isNotNil } from "utils/type-utils";
+import { removeNil } from "utils/list-utils";
 
 export const KRETSTYPER = ["fylke", "kommune", "stemmekrets", "grunnkrets"] as const;
 type Kretstyper = typeof KRETSTYPER;
@@ -17,7 +19,7 @@ export type Inndeling = {
 };
 
 export const isEqualInndelinger = (a: Inndeling, b: Inndeling): boolean => {
-  return a.id === b.id && a.kretstype === b.kretstype && a.isVisible === b.isVisible && a.isEditing && b.isEditing;
+  return a.id === b.id && a.kretstype === b.kretstype && a.isVisible === b.isVisible && a.isEditing === b.isEditing;
 };
 
 type Inndelinger = {
@@ -26,6 +28,7 @@ type Inndelinger = {
 
 export type InndelingerContextValue = {
   inndelinger: Inndelinger;
+  getInndeling: (id: string) => Inndeling | null;
   selectInndeling: (inndeling: Inndeling) => void;
   currentlyEditedInndeling: Inndeling | null;
   isLoadingInndeling: boolean;
@@ -41,22 +44,33 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
   useEffect(() => {
     if (features && fetchedInndeling) {
-      if (!fetchedInndeling.isEditing && !fetchedInndeling.isVisible) return;
+      const source = fetchedInndeling.isEditing ? "edit" : fetchedInndeling.kretstype;
+      const actualInndeling = Object.values(inndelinger).find((i) => i.id === fetchedInndeling.id);
 
-      const sourceToAddTo = fetchedInndeling.isEditing ? "edit" : fetchedInndeling.kretstype;
+      if (actualInndeling) {
+        if (!actualInndeling.isEditing && !actualInndeling.isVisible) {
+          // Hvis inndelingen som nå er fjernet er i edit laget så kan vi bare fjerne hele laget i stedet for å fjerne features
+          if (source === "edit") {
+            editSource.clear(true);
+            return;
+          }
 
-      if (sourceToAddTo === "edit") {
-        editSource.clear(true);
+          const featureIds = removeNil(features.map((feature) => feature.getId()?.toString()));
+
+          // use effecten blir kalt flere ganger her som gjør at vi potensielt fjerner for mange grenser
+          // dette skjer f. eks hvis man legger til grensende kommuner, så fjerner én av dem. først så funker det, så fjerner man overlappet ved runde to
+          removeFeaturesFromSourceByIds(source, featureIds);
+          return;
+        }
       }
 
       // Finne ut hvordan man vil zoome her
-      // Tror også denne legger til om igjen hvis man repeater seg selv som den sikkert ikke burde
       // Her må man også style featurene som kommer fra utkastet, men på et vis ikke forårsake evig loop med useEffecten
-      addFeaturesToSource(sourceToAddTo, features, () => {
+      addFeaturesToSource(source, features, () => {
         zoomToFeatures(features);
       });
     }
-  }, [fetchedInndeling, features]);
+  }, [fetchedInndeling, features, inndelinger]);
 
   useEffect(() => {
     if (!utkast) {
@@ -115,6 +129,8 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
           isEditing: false,
           isVisible: false,
         };
+
+        editSource.clear(true);
       }
     }
 
@@ -124,6 +140,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
   const value = {
     inndelinger,
+    getInndeling,
     selectInndeling,
     currentlyEditedInndeling: getCurrentlyEditingInndeling(),
     isLoadingInndeling: isLoading,
