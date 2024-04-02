@@ -1,8 +1,6 @@
 import { useUtkast, useUtkastFeature } from "contexts/UtkastContext/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
-import { Feature } from "ol";
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
-import { Geometry } from "ol/geom";
 import { useMemo, useState } from "react";
 import { geoJsonToSource } from "utils/map/geoJson";
 import { getLayerById } from "utils/map/layers";
@@ -32,8 +30,6 @@ const useInndelingFeatures = () => {
   // TODO Denne rememoiserer når man lagrer utkastet sitt, som ikke er helt heldig imo tbh
   const features = useMemo(() => {
     if (!utkastGeoJson || !inndeling) return null;
-
-    console.log("memoing features", utkastGeoJson);
 
     const geoJsonFeatures = geoJsonToSource(utkastGeoJson).getFeatures();
 

@@ -8,7 +8,7 @@ type Props = {
   isActive: boolean;
 };
 
-const Inndeling = (props: Props) => {
+const InndelingOption = (props: Props) => {
   return (
     <InndelingButton isActive={props.isActive} variant="ghost" rightIcon={props.rightIcon} onClick={props.onClick}>
       {props.children}
@@ -16,11 +16,10 @@ const Inndeling = (props: Props) => {
   );
 };
 
-export default Inndeling;
+export default InndelingOption;
 
 const InndelingButton = styled(Button)`
-  // TODO Fix height
-  padding: 24px 16px;
+  padding: 32px 16px;
   color: var(--kvib-colors-black);
   font-weight: var(--kvib-fontWeights-normal);
   & > div {

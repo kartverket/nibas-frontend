@@ -1,19 +1,25 @@
 import { Divider, Modal, ModalContent, ModalOverlay } from "@kvib/react";
 import { PanelHeader, PanelProps, ModalPanel } from "../Panel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { KRETSTYPER, Kretstype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import {
+  KRETSTYPER,
+  Kretstype,
+  isEqualInndelinger,
+  useInndelinger,
+  Inndeling,
+} from "contexts/InndelingerContext/InndelingerContext";
 import { getIdFromEntity } from "utils/api";
 import { getNavnInSpraak } from "utils/language/language";
 import { useState } from "react";
 import useFylker from "hooks/inndelinger/useFylker";
 import useKommuner from "hooks/inndelinger/useKommuner";
 import { styled } from "styled-components";
-import Inndeling from "./Inndeling";
+import InndelingOption from "./Inndeling";
 
 const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
   const [selectedKretstype, setSelectedKretstype] = useState<Kretstype | null>(null);
   const [selectedFylkeId, setSelectedFylkeId] = useState<string>("");
-  const { inndelinger, selectInndeling } = useInndelinger();
+  const { inndelinger, selectInndeling, currentlyEditedInndeling } = useInndelinger();
   const { closeOverlayModal, activeOverlayModal } = useOverlayPanel();
 
   const isEditingPanel = activeOverlayModal === "inndelinger";
@@ -34,7 +40,19 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
 
   const selectFylke = (fylkeId: string) => {
     if (selectedKretstype === "fylke") {
-      selectInndeling({ id: fylkeId, kretstype: "fylke", isEditing: isEditingPanel, isVisible: true });
+      const newInndeling: Inndeling = {
+        id: fylkeId,
+        kretstype: "fylke",
+        isEditing: isEditingPanel,
+        isVisible: true,
+      };
+
+      if (currentlyEditedInndeling && isEqualInndelinger(newInndeling, currentlyEditedInndeling)) {
+        newInndeling.isEditing = false;
+        newInndeling.isVisible = false;
+      }
+
+      selectInndeling(newInndeling);
       resetInndelingerPanel();
     } else {
       setSelectedFylkeId(fylkeId);
@@ -43,12 +61,19 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
 
   const selectKommune = (kommuneId: string) => {
     if (selectedKretstype) {
-      selectInndeling({
+      const newInndeling: Inndeling = {
         id: kommuneId,
         kretstype: selectedKretstype,
         isEditing: isEditingPanel,
         isVisible: true,
-      });
+      };
+
+      if (currentlyEditedInndeling && isEqualInndelinger(newInndeling, currentlyEditedInndeling)) {
+        newInndeling.isEditing = false;
+        newInndeling.isVisible = false;
+      }
+
+      selectInndeling(newInndeling);
       resetInndelingerPanel();
     }
   };
@@ -85,14 +110,14 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
         <InndelingerLayout>
           <InndelingerList>
             {KRETSTYPER.map((kretstype) => (
-              <Inndeling
+              <InndelingOption
                 key={kretstype}
                 isActive={selectedKretstype === kretstype}
                 onClick={() => selectKretstype(kretstype)}
                 rightIcon="chevron_right"
               >
                 {capitalize(kretstype)}
-              </Inndeling>
+              </InndelingOption>
             ))}
           </InndelingerList>
           <Divider orientation="vertical" />
@@ -101,14 +126,14 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
               fylker?.map((fylke) => {
                 const fylkeId = getIdFromEntity(fylke);
                 return (
-                  <Inndeling
+                  <InndelingOption
                     isActive={selectedFylkeId === fylkeId}
                     key={fylkeId}
                     onClick={() => selectFylke(fylkeId)}
                     {...(selectedKretstype !== "fylke" ? { rightIcon: inndelingIcon(fylkeId, false) } : {})}
                   >
                     {`${fylke.nummer} ${getNavnInSpraak(fylke.navn, "nor")}`}
-                  </Inndeling>
+                  </InndelingOption>
                 );
               })}
           </InndelingerList>
@@ -118,9 +143,9 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
               kommuner?.map((kommune) => {
                 const kommuneId = getIdFromEntity(kommune);
                 return (
-                  <Inndeling isActive={false} key={kommuneId} onClick={() => selectKommune(kommuneId)}>
+                  <InndelingOption isActive={false} key={kommuneId} onClick={() => selectKommune(kommuneId)}>
                     {`${kommune.nummer} ${getNavnInSpraak(kommune.navn, "nor")}`}
-                  </Inndeling>
+                  </InndelingOption>
                 );
               })}
           </InndelingerList>

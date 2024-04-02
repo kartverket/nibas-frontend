@@ -16,7 +16,7 @@ export type Inndeling = {
   isEditing: boolean;
 };
 
-const isEqualInndelinger = (a: Inndeling, b: Inndeling): boolean => {
+export const isEqualInndelinger = (a: Inndeling, b: Inndeling): boolean => {
   return a.id === b.id && a.kretstype === b.kretstype && a.isVisible === b.isVisible && a.isEditing && b.isEditing;
 };
 
@@ -36,14 +36,14 @@ export const InndelingerContext = createContext<InndelingerContextValue | undefi
 export const InndelingerProvider = ({ children }: { children: React.ReactNode }) => {
   const [inndelinger, setInndelinger] = useState<Inndelinger>({});
 
-  const { isLoading, setInndeling, features, inndeling: currentIndeling } = useInndelingFeatures();
+  const { isLoading, setInndeling, features, inndeling: fetchedInndeling } = useInndelingFeatures();
   const { utkast } = useUtkast();
 
   useEffect(() => {
-    if (features && currentIndeling) {
-      console.log(currentIndeling);
-      console.log(features.length);
-      const sourceToAddTo = currentIndeling.isEditing ? "edit" : currentIndeling.kretstype;
+    if (features && fetchedInndeling) {
+      if (!fetchedInndeling.isEditing && !fetchedInndeling.isVisible) return;
+
+      const sourceToAddTo = fetchedInndeling.isEditing ? "edit" : fetchedInndeling.kretstype;
 
       if (sourceToAddTo === "edit") {
         editSource.clear(true);
@@ -51,11 +51,12 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
       // Finne ut hvordan man vil zoome her
       // Tror også denne legger til om igjen hvis man repeater seg selv som den sikkert ikke burde
+      // Her må man også style featurene som kommer fra utkastet, men på et vis ikke forårsake evig loop med useEffecten
       addFeaturesToSource(sourceToAddTo, features, () => {
         zoomToFeatures(features);
       });
     }
-  }, [currentIndeling, features]);
+  }, [fetchedInndeling, features]);
 
   useEffect(() => {
     if (!utkast) {
@@ -94,6 +95,11 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         // Her kan man anta at man har trykket på noe man allerede har trykket på, så kanskje man skal fjerne ting her?
         return;
       }
+    }
+
+    if (!inndeling.isVisible && !inndeling.isEditing) {
+      // her må vi klare å cleare ut fra ikke-edit source også.. but how
+      editSource.clear(true);
     }
 
     const nyeInndelinger: Inndelinger = {
