@@ -16,7 +16,6 @@ import {
 } from "@kvib/react";
 import { ApiErrorResponse, UtkastResponse } from "types/api";
 import { EndringsloggAccordion } from "pages/Utkast/UtkastEndringslogg";
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { deleteUtkast } from "api/utkast";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useState } from "react";
@@ -25,6 +24,7 @@ import { statusCode } from "utils/api";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useMatch, useNavigate } from "react-router-dom";
 import { routes } from "utils/routes";
+import { useAuthentication } from "components/Authentication/AuthenticationHook";
 
 type Props = {
   isOpen: boolean;
@@ -35,18 +35,18 @@ type Props = {
 const UtkastSlettModal = ({ isOpen, onClose, utkast }: Props) => {
   const { closeUtkast } = useUtkast();
   const [isLoading, setIsLoading] = useState(false);
-  const { tokenHolderFunc } = useAuthenticationFlow();
+  const { token } = useAuthentication();
   const { setError } = useErrorHandling();
   const navigate = useNavigate();
   const utkastPathMatch = useMatch(`${routes.utkast}/${routes.utkastId}`);
 
   const slettUtkast = async () => {
     setIsLoading(true);
-    const response = await deleteUtkast(utkast.id, tokenHolderFunc()?.token);
+    const response = await deleteUtkast(utkast.id, token);
     setIsLoading(false);
 
     if (statusCode.isSuccessful(response.status)) {
-      await mutate(["/v1/utkast", tokenHolderFunc()?.token]);
+      await mutate(["/v1/utkast", token]);
       closeUtkast();
 
       if (utkastPathMatch) {
