@@ -4,7 +4,6 @@ import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/so
 import { zoomToFeatures } from "utils/map/map-utils";
 import { editSource, grenserLayers } from "hooks/layers/constants";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
-import { isNotNil } from "utils/type-utils";
 import { removeNil } from "utils/list-utils";
 
 export const KRETSTYPER = ["fylke", "kommune", "stemmekrets", "grunnkrets"] as const;

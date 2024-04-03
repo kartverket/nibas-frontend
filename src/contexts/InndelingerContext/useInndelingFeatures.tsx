@@ -25,6 +25,8 @@ const useInndelingFeatures = () => {
     inndeling != null ? getRequestUrl(inndeling.kretstype, inndeling.id) : null,
   );
 
+  // Burde kun legge til utkast sine features dersom vi er i redigeringsmodus til en krets
+  // Visningsmodus og se inndeling bør kun vise sånn kretsen er per nå
   const utkastGeoJson = useUtkastFeature(data, utkast?.operasjoner.grenseendringer.endredeFeatures ?? []);
 
   // TODO Denne rememoiserer når man lagrer utkastet sitt, som ikke er helt heldig imo tbh
