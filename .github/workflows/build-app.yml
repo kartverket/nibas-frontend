@@ -73,9 +73,9 @@ jobs:
         with:
           context: .
           push: ${{ inputs.deploy_ghcr == 'true' }}
-          tags: ${{ env.registry }}/${{ github.repository }}:${{ needs.build.outputs.new_tag }} , ${{ env.registry }}/${{ github.repository }}:latest
+          tags: ${{ env.registry }}/${{ github.repository }}:${{ steps.tag_version.outputs.new_tag }} , ${{ env.registry }}/${{ github.repository }}:latest
           build-args: |
-            project_version_arg=${{ needs.build.outputs.new_tag }}
+            project_version_arg=${{ steps.tag_version.outputs.new_tag }}
 
       - name: Set output with build values
         id: setOutput
