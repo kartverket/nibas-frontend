@@ -2,7 +2,7 @@ import { styled } from "styled-components";
 import { Page } from "components/Page";
 import { Logo, Spinner, Text } from "@kvib/react";
 import PrivacyFooter from "pages/Landing/PrivacyFooter";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { routes } from "utils/routes";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { useEffect } from "react";
@@ -24,11 +24,11 @@ export const AfterAuthentication = () => {
   }, [isAuthenticated, isLoading, checkAuthorization, navigate]);
 
   if (hasError) {
-    navigate(`${routes.authentication}/${routes.authError}`, { replace: true });
+    return <Navigate to={`${routes.authentication}/${routes.authError}`} replace={true} />;
   }
 
   if (!isLoading && !isAuthenticated) {
-    navigate(`${routes.authentication}/${routes.authError}`, { replace: true });
+    return <Navigate to={`${routes.authentication}/${routes.authError}`} replace={true} />;
   }
 
   return (
