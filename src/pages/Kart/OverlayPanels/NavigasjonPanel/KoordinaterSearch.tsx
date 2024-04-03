@@ -22,7 +22,7 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
   });
 
   return (
-    <Form
+    <SpacedForm
       onSubmit={handleSubmit(() => {
         centerOnCoordinate(getValues("north"), getValues("east"));
         reset();
@@ -55,6 +55,10 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
       <Button type="submit" isDisabled={!isDirty}>
         Gå til koordinater
       </Button>
-    </Form>
+    </SpacedForm>
   );
 };
+
+const SpacedForm = styled(Form)`
+  justify-content: space-between;
+`;

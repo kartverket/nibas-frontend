@@ -23,7 +23,7 @@ const NavigasjonPanel = ({ isOpen, className }: PanelProps) => {
 
   return (
     <Container $isOpen={isOpen} className={className}>
-      <Tabs size="md">
+      <CustomTabs size="md">
         <TabList>
           <Tab>Gå til inndeling</Tab>
           <Tab>Gå til koordinater</Tab>
@@ -36,10 +36,14 @@ const NavigasjonPanel = ({ isOpen, className }: PanelProps) => {
             <KoordinaterSearch onSelect={centerOnCoordinate} />
           </StyledTabPanel>
         </TabPanels>
-      </Tabs>
+      </CustomTabs>
     </Container>
   );
 };
+
+const CustomTabs = styled(Tabs)`
+  width: unset;
+`;
 
 const fadeIn = keyframes`
   from {
@@ -57,7 +61,7 @@ const Container = styled(AbsolutePanel)`
   left: 50%;
   transform: translateX(-50%);
   max-width: unset;
-  width: fit-content;
+  width: 800px;
   padding: 24px;
   animation: ${fadeIn} 0.25s ease-in-out;
   overflow: visible;
