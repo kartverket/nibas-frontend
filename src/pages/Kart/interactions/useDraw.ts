@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Draw, { DrawEvent } from "ol/interaction/Draw";
 import { pixelTolerance } from "./constants";
 import { useToolbar } from "contexts/ToolbarContext";
@@ -36,33 +36,28 @@ const useDraw = () => {
   const { performFeatureSplit } = useSplit();
   const { openAsync } = useConfirmationModal();
 
-  const [abortDrawMemoHelper, setAbortDrawMemoHelper] = useState(0);
-
   const { toastUnique: endpointToast } = useToastUnique({
     status: "warning",
     description: "Valgt punkt er ikke et endepunkt og vil resultere i en grensedeling ved avsluttet tegning",
   });
 
-  // TODO: fungerer ikke uten snap, vet ikke hvorfor
-  const draw = useMemo(() => {
-    // Denne er kun her for å få ESLint til å ikke ønske å legge til en regel-ignorering, da det ikke går an å legge til
-    // ignoreringer for spesifikke dependencies i dependency arrayet.
-    // It ain't clean, but it works.
-    abortDrawMemoHelper;
+  const [draw, setDraw] = useState<Draw | null>(null);
 
-    return new Draw({
+  // TODO: fungerer ikke uten snap, vet ikke hvorfor
+  const createDraw = useCallback(() => {
+    const drawObj: Draw = new Draw({
       type: "LineString",
       snapTolerance: pixelTolerance,
       style: grenseStyles.select,
       freehandCondition: () => false,
       condition: (event: MapBrowserEvent<MouseEvent>) => {
         if (!noModifierKeys(event) || activeTool !== "draw" || activeModeTools.includes("move")) return false;
-
+        if (drawObj == null) return false;
         const featuresAtPixel = getActiveFeaturesAtPixel(event, "edit");
 
         // Legg til feature hvis vi ikke treffer noen andre features
         if (featuresAtPixel.length === 0) {
-          draw.changed();
+          drawObj.changed();
           return true;
         }
 
@@ -98,19 +93,21 @@ const useDraw = () => {
         // Vi ønsker å avslutte tegningen hvis man har startet en tegning, og så treffer et punkt, så vi unngår rar geometri
         // Dette gjøres ved å bumpe et versjonstall med draw.changed() hvis denne conditionen returnerer true. Hvis versjonen da er høyere
         // enn null (som den blir av første endring), vil vi avslutte tegningen
-        if (draw.getRevision() > 0) {
-          draw.appendCoordinates([event.coordinate]);
-          draw.finishDrawing();
+        if (drawObj.getRevision() > 0) {
+          drawObj.appendCoordinates([event.coordinate]);
+          drawObj.finishDrawing();
           return false;
         }
 
-        draw.changed();
+        drawObj.changed();
         return true;
       },
     });
-  }, [abortDrawMemoHelper, activeTool, activeModeTools, getActiveFeaturesAtPixel, toast, endpointToast]);
+    return drawObj;
+  }, [activeModeTools, activeTool, endpointToast, getActiveFeaturesAtPixel, toast]);
 
   useEffect(() => {
+    if (draw == null) setDraw(createDraw());
     const addDrawToHistory = (drawnFeature: Feature<LineString>) => {
       const editingType = getCurrentlyEditingType();
       if (!editingType) return;
@@ -126,14 +123,7 @@ const useDraw = () => {
     };
 
     const onDrawAbort = () => {
-      // Ønsket her er egentlig å sette draw.revision_ til 0. Beklageligvis gir ikke OL noen måte å resette en revision på.
-      // Av den grunn så har vi lagt inn en hjelper som re-memoiserer draw, sånn at vi kan tilbakestille revision til 0.
-      // Antakeligvis hadde det vært mer hensiktsmessig å finne en god måte å vurdere om man tegner på som ikke er revision, men dette funker.
-      // Jeg har brukt masse timer på å finne en god løsning for aktiv tegning vs. inaktiv tegning allerede, og det er tilsynelatende ikke helt trivielt
-
-      // PS: Det virker som at drawEnd kun resetter revision siden vi legger til i history, som gjør at hele useDraw blir kalt på nytt, og dermed revision tilbakestilt.
-      // Alltid en mulighet på at dette er noe som kan brekke i fremtiden, og vi bør sikkert revurdere approachen her generelt.
-      setAbortDrawMemoHelper((a) => a + 1);
+      setDraw(createDraw());
     };
 
     const getUniqueFeaturesToSplitIfExists = (drawnFeatureGeometry: LineString) => {
@@ -186,6 +176,7 @@ const useDraw = () => {
         drawnFeatureGeometry.getLength() === 0 ||
         drawnFeatureGeometry.getCoordinates().length < 2
       ) {
+        setDraw(createDraw());
         return;
       }
 
@@ -215,15 +206,20 @@ const useDraw = () => {
       // TODO: dersom man ønsker å utvide en grense ønsker vi nok å slå sammen den nye grensen med den gamle her
       // i så fall må vi holde styr på hvilken grense som skal utvides, og fra hvilket punkt. selectPoint kan være nyttig her
     };
-
-    draw.on("drawend", onDrawEnd);
-    draw.on("drawabort", onDrawAbort);
+    if (draw != null) {
+      draw.on("drawend", onDrawEnd);
+      draw.on("drawabort", onDrawAbort);
+    }
     return () => {
-      draw.un("drawend", onDrawEnd);
-      draw.un("drawabort", onDrawAbort);
+      if (draw != null) {
+        draw.un("drawend", onDrawEnd);
+        draw.un("drawabort", onDrawAbort);
+        setDraw(null);
+      }
     };
   }, [
     addHistoryEntry,
+    createDraw,
     draw,
     getCurrentlyEditingType,
     openAsync,
@@ -231,6 +227,7 @@ const useDraw = () => {
     performFeatureSplit,
     selectFeatures,
     selectedFeatures,
+    setDraw,
     toast,
     toggleTool,
   ]);
