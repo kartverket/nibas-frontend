@@ -1,15 +1,13 @@
 import { useUtkast, useUtkastFeature } from "contexts/UtkastContext/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { geoJsonToSource } from "utils/map/geoJson";
 import { getLayerById } from "utils/map/layers";
 import { Inndeling, Kretstype } from "./InndelingerContext";
 import { LayerId } from "hooks/layers/types";
 
-const useInndelingFeatures = () => {
-  const [inndeling, setInndeling] = useState<Inndeling | null>(null);
-
+const useInndelingFeatures = (inndeling: Inndeling | null) => {
   const { utkast } = useUtkast();
 
   const getRequestUrl = (kretstype: Kretstype, id: string) => {
@@ -56,8 +54,6 @@ const useInndelingFeatures = () => {
   }, [inndeling, utkastGeoJson]);
 
   return {
-    inndeling,
-    setInndeling,
     features,
     ...rest,
   };

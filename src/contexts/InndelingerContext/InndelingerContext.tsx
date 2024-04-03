@@ -38,38 +38,52 @@ export const InndelingerContext = createContext<InndelingerContextValue | undefi
 export const InndelingerProvider = ({ children }: { children: React.ReactNode }) => {
   const [inndelinger, setInndelinger] = useState<Inndelinger>({});
 
-  const { isLoading, setInndeling, features, inndeling: fetchedInndeling } = useInndelingFeatures();
+  const [selectedInndeling, setSelectedInndeling] = useState<Inndeling | null>(null);
+
+  const { isLoading, features } = useInndelingFeatures(selectedInndeling);
   const { utkast } = useUtkast();
 
   useEffect(() => {
-    if (features && fetchedInndeling) {
-      const source = fetchedInndeling.isEditing ? "edit" : fetchedInndeling.kretstype;
-      const actualInndeling = Object.values(inndelinger).find((i) => i.id === fetchedInndeling.id);
+    if (!selectedInndeling) return;
 
-      if (actualInndeling) {
-        if (!actualInndeling.isEditing && !actualInndeling.isVisible) {
-          // Hvis inndelingen som nå er fjernet er i edit laget så kan vi bare fjerne hele laget i stedet for å fjerne features
-          if (source === "edit") {
-            editSource.clear(true);
-            return;
-          }
+    console.log(selectedInndeling);
 
-          const featureIds = removeNil(features.map((feature) => feature.getId()?.toString()));
-
-          // use effecten blir kalt flere ganger her som gjør at vi potensielt fjerner for mange grenser
-          // dette skjer f. eks hvis man legger til grensende kommuner, så fjerner én av dem. først så funker det, så fjerner man overlappet ved runde to
-          removeFeaturesFromSourceByIds(source, featureIds);
-          return;
-        }
+    if (features) {
+      if (!selectedInndeling.isEditing) {
+        // Hvis inndelingen som nå er fjernet er i edit laget så kan vi bare fjerne hele laget i stedet for å fjerne features
+        editSource.clear(true);
+        console.log("removing edit layer");
+      } else {
+        editSource.clear(true);
+        addFeaturesToSource("edit", features, () => {
+          zoomToFeatures(features);
+        });
+        console.log("adding edit layer");
       }
 
-      // Finne ut hvordan man vil zoome her
-      // Her må man også style featurene som kommer fra utkastet, men på et vis ikke forårsake evig loop med useEffecten
-      addFeaturesToSource(source, features, () => {
-        zoomToFeatures(features);
-      });
+      if (!selectedInndeling.isVisible) {
+        const featureIds = removeNil(features.map((feature) => feature.getId()?.toString()));
+
+        removeFeaturesFromSourceByIds(selectedInndeling.kretstype, featureIds);
+
+        console.log("removing visible layer");
+      } else {
+        addFeaturesToSource(selectedInndeling.kretstype, features, () => {
+          zoomToFeatures(features);
+        });
+
+        console.log("adding visible layer");
+      }
+
+      setSelectedInndeling(null);
     }
-  }, [fetchedInndeling, features, inndelinger]);
+  }, [features, selectedInndeling]);
+
+  /**
+   * 1. isEditing true |isViewing false -> skal vise edit layer
+   * 2. isEditing true |isViewing true -> skal legge til view layer, ikke slette isEditing eller cleare den
+   * 3. isEditing true |isViewing false -> skal slette view layer, ikke isEditing
+   */
 
   useEffect(() => {
     if (!utkast) {
@@ -77,11 +91,11 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         const source = layer.getSource();
         source?.clear(true);
       }
-      setInndeling(null);
+      setSelectedInndeling(null);
       setInndelinger({});
       // Reset zoom? Kanskje ikke egentlig?
     }
-  }, [setInndeling, utkast]);
+  }, [utkast]);
 
   const getInndeling = (id: string): Inndeling | null => {
     const isInndelingPresent = id in inndelinger;
@@ -104,15 +118,12 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     const inndelingIfExists = getInndeling(inndeling.id);
 
     if (inndelingIfExists) {
+      console.log("ifexists", inndelingIfExists);
+      console.log("new", inndeling);
       if (isEqualInndelinger(inndelingIfExists, inndeling)) {
         // Her kan man anta at man har trykket på noe man allerede har trykket på, så kanskje man skal fjerne ting her?
         return;
       }
-    }
-
-    if (!inndeling.isVisible && !inndeling.isEditing) {
-      // her må vi klare å cleare ut fra ikke-edit source også.. but how
-      editSource.clear(true);
     }
 
     const nyeInndelinger: Inndelinger = {
@@ -126,14 +137,11 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         nyeInndelinger[currentlyEditingInndeling.id] = {
           ...currentlyEditingInndeling,
           isEditing: false,
-          isVisible: false,
         };
-
-        editSource.clear(true);
       }
     }
 
-    setInndeling(inndeling);
+    setSelectedInndeling(inndeling);
     setInndelinger(nyeInndelinger);
   };
 

@@ -19,7 +19,7 @@ import InndelingOption from "./Inndeling";
 const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
   const [selectedKretstype, setSelectedKretstype] = useState<Kretstype | null>(null);
   const [selectedFylkeId, setSelectedFylkeId] = useState<string>("");
-  const { inndelinger, getInndeling, selectInndeling, currentlyEditedInndeling } = useInndelinger();
+  const { inndelinger, getInndeling, selectInndeling } = useInndelinger();
   const { closeOverlayModal, activeOverlayModal } = useOverlayPanel();
 
   const isEditingPanel = activeOverlayModal === "inndelinger";
@@ -44,12 +44,19 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
         id: fylkeId,
         kretstype: "fylke",
         isEditing: isEditingPanel,
-        isVisible: true,
+        isVisible: !isEditingPanel,
       };
 
-      if (currentlyEditedInndeling && isEqualInndelinger(newInndeling, currentlyEditedInndeling)) {
-        newInndeling.isEditing = false;
-        newInndeling.isVisible = false;
+      const inndelingIfAlreadySelected = getInndeling(fylkeId);
+
+      if (inndelingIfAlreadySelected) {
+        if (isEditingPanel) {
+          newInndeling.isEditing = !inndelingIfAlreadySelected.isEditing;
+          newInndeling.isVisible = inndelingIfAlreadySelected.isVisible;
+        } else {
+          newInndeling.isEditing = inndelingIfAlreadySelected.isEditing;
+          newInndeling.isVisible = !inndelingIfAlreadySelected.isVisible;
+        }
       }
 
       selectInndeling(newInndeling);
@@ -65,14 +72,19 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
         id: kommuneId,
         kretstype: selectedKretstype,
         isEditing: isEditingPanel,
-        isVisible: true,
+        isVisible: !isEditingPanel,
       };
 
       const inndelingIfAlreadySelected = getInndeling(kommuneId);
 
-      if (inndelingIfAlreadySelected && isEqualInndelinger(newInndeling, inndelingIfAlreadySelected)) {
-        newInndeling.isEditing = false;
-        newInndeling.isVisible = false;
+      if (inndelingIfAlreadySelected) {
+        if (isEditingPanel) {
+          newInndeling.isEditing = !inndelingIfAlreadySelected.isEditing;
+          newInndeling.isVisible = inndelingIfAlreadySelected.isVisible;
+        } else {
+          newInndeling.isEditing = inndelingIfAlreadySelected.isEditing;
+          newInndeling.isVisible = !inndelingIfAlreadySelected.isVisible;
+        }
       }
 
       selectInndeling(newInndeling);
