@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { useUtkast, useUtkastFeature } from "contexts/UtkastContext/UtkastContext";
 import { geoJsonToSource } from "utils/map/geoJson";
-import { getLayerById } from "utils/map/layers";
+import { getEditSource } from "utils/map/layers";
 import useNibasApi from "hooks/useNibasApi";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
@@ -22,7 +22,7 @@ const useApiGrense = (featuresUrl: string, shouldFetchInitially = false) => {
 
     // sjekk om features allerede ligger i kartet
     // hvis featurene er annerledes enn vanlig, så ligger de endrede featurene i edit-laget
-    const source = getLayerById("edit").getSource();
+    const source = getEditSource();
     if (source) {
       const allFeaturesInMap = source.getFeatures();
 

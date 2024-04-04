@@ -1,6 +1,6 @@
 import Style, { StyleFunction } from "ol/style/Style";
 import { useState } from "react";
-import { setFeatureStyle } from "utils/map/layerStyles";
+import { getArchivedSource, getEditSource } from "utils/map/layers";
 
 // Hjelpehook som holder styr på hvilke features som har en gitt custom stil
 const useCustomStyles = (customStyle: StyleFunction | Style[]) => {
@@ -63,6 +63,19 @@ const useCustomStyles = (customStyle: StyleFunction | Style[]) => {
     clearCustomStyles,
     renderSavedCustomStyles,
   };
+};
+
+/**
+ * Liten hjelpefunksjon for å slippe så mye typehåndtering når man skal sette stiler
+ * @param featureId En gitt feature i editSource eller archivedSource som skal få ny stil
+ * @param style Stil fra grenseStyles eller en stilfunksjon
+ */
+export const setFeatureStyle = (featureId: string, style: Style[] | StyleFunction) => {
+  const sources = [getArchivedSource(), getEditSource()];
+  for (const source of sources) {
+    const feature = source?.getFeatureById(featureId);
+    feature?.setStyle(style);
+  }
 };
 
 export default useCustomStyles;

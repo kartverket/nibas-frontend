@@ -25,6 +25,9 @@ export const getLayerById = <T extends LayerId>(id: T) => {
   return layersWithId[0] as (typeof kartlagLayers & typeof grenserLayers)[T];
 };
 
+export const getArchivedSource = () => getLayerById("archived").getSource();
+export const getEditSource = () => getLayerById("edit").getSource();
+
 export const getVectorLayers = () => {
   const layers = getLayersArray();
 
@@ -41,11 +44,7 @@ export const isWMSLayer = (layer: BaseLayer): layer is TileLayer<TileWMS> => {
 
 export const removeAllFeatures = () => {
   Object.values(grenserLayers).forEach((layer) => {
-    const source = layer.getSource();
-    if (source) {
-      // Obs! Bruker fast-flagget siden vi ikke lytter på removeFeature-eventet per nå
-      source.clear(true);
-    }
+    layer.setSource(new VectorSource());
   });
 };
 

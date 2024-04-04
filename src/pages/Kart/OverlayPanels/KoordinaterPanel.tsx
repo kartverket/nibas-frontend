@@ -11,7 +11,7 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContex
 import { SelectedPoint } from "contexts/FeatureStyleContext/types";
 import Point from "ol/geom/Point";
 import { Button, Spacer, useToast } from "@kvib/react";
-import { editSource } from "hooks/layers/constants";
+import { getEditSource } from "utils/map/layers";
 import { useToolbar } from "contexts/ToolbarContext";
 import { Feature } from "ol";
 
@@ -94,7 +94,7 @@ const KoordinaterPanel = ({ isOpen, className }: PanelProps) => {
           if (coordinate) {
             const features = [];
             for (const change of entry.changes) {
-              const editFeature = editSource.getFeatureById(change.id) as Feature<LineString> | null;
+              const editFeature = getEditSource()?.getFeatureById(change.id) as Feature<LineString> | null;
               if (editFeature) {
                 features.push(editFeature);
               }

@@ -33,16 +33,13 @@ export const kartlagLayers: Record<KartlagId, TileLayer<TileWMS | WMTS>> = {
   sjokartElektroniske: createTileLayerFromKartlagSource("sjokartElektroniske"),
 };
 
-export const editSource = new VectorSource();
-export const archivedSource = new VectorSource();
-
 const grenseStyle =
   (grenseId: GrenseId): StyleFunction =>
   (feature) => [...getLayerStyle(feature, grenseId, false), getPointOverlayStyle(feature)];
 
-const createVectorLayer = (id: GrenseId, source?: VectorSource) => {
+const createVectorLayer = (id: GrenseId) => {
   const newLayer = new VectorLayer({
-    source: source ?? new VectorSource(),
+    source: new VectorSource(),
     style: grenseStyle(id),
     declutter: true,
   });
@@ -58,6 +55,6 @@ export const grenserLayers: Record<GrenseId, VectorLayer<VectorSource>> = {
   nasjon: createVectorLayer("nasjon"),
   grunnkrets: createVectorLayer("grunnkrets"),
   stemmekrets: createVectorLayer("stemmekrets"),
-  archived: createVectorLayer("archived", archivedSource),
-  edit: createVectorLayer("edit", editSource),
+  archived: createVectorLayer("archived"),
+  edit: createVectorLayer("edit"),
 };

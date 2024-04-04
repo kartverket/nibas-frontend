@@ -9,7 +9,7 @@ import {
   StemmekretsEntry,
   StemmekretsSammenslaaingsendringEntry,
 } from "contexts/HistoryContext/types";
-import { archivedSource, editSource } from "hooks/layers/constants";
+import { getArchivedSource, getEditSource } from "utils/map/layers";
 import {
   FeatureProperties,
   FylkeRequest,
@@ -169,8 +169,8 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
   const editedFeatures: GeoJSONFeature[] = utkastOperations.grenseendringer.endredeFeatures;
 
   const addFeatureToEditedFeaturesIfNotAlreadyAdded = (featureId: string) => {
-    const editFeature = editSource.getFeatureById(featureId);
-    const archivedFeature = archivedSource.getFeatureById(featureId);
+    const editFeature = getEditSource()?.getFeatureById(featureId);
+    const archivedFeature = getArchivedSource()?.getFeatureById(featureId);
     const feature = editFeature ?? archivedFeature;
 
     if (!feature) return;

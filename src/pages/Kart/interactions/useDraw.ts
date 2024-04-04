@@ -23,7 +23,7 @@ import { Geometry } from "ol/geom";
 import { findNearbyVertexOnFeature } from "utils/map/map-utils";
 import useToastUnique from "hooks/toast/useToastUnique";
 import { addFeaturesToSource } from "utils/map/source";
-import { editSource } from "hooks/layers/constants";
+import { getEditSource } from "utils/map/layers";
 
 const useDraw = () => {
   const { activeTool, activeModeTools, toggleTool } = useToolbar();
@@ -140,13 +140,13 @@ const useDraw = () => {
       const drawnFeatureHead = drawnFeatureGeometry.getFirstCoordinate();
       const drawnFeatureTail = drawnFeatureGeometry.getLastCoordinate();
 
-      const featuresAtHead = editSource.getFeaturesAtCoordinate(drawnFeatureHead);
-      const featuresAtTail = editSource.getFeaturesAtCoordinate(drawnFeatureTail);
+      const featuresAtHead = getEditSource()?.getFeaturesAtCoordinate(drawnFeatureHead);
+      const featuresAtTail = getEditSource()?.getFeaturesAtCoordinate(drawnFeatureTail);
 
       // Hvis det er akkurat én feature på koordinatet til halen/hodet til den nye featuren, så betyr det at koordinatet treffer et punkt som ikke er endepunkt
       const featuresToBeSplit: Feature<Geometry>[] = [];
-      if (featuresAtHead.length === 1) featuresToBeSplit.push(featuresAtHead[0]);
-      if (featuresAtTail.length === 1) featuresToBeSplit.push(featuresAtTail[0]);
+      if (featuresAtHead && featuresAtHead.length === 1) featuresToBeSplit.push(featuresAtHead[0]);
+      if (featuresAtTail && featuresAtTail.length === 1) featuresToBeSplit.push(featuresAtTail[0]);
 
       return featuresToBeSplit.filter(
         (feature, index, allFeatures) => allFeatures.map((f) => f.getId()).indexOf(feature.getId()) === index,

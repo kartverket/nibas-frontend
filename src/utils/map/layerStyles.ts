@@ -6,10 +6,10 @@ import RenderFeature from "ol/render/Feature";
 import Circle from "ol/style/Circle";
 import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
-import Style, { StyleFunction } from "ol/style/Style";
+import Style from "ol/style/Style";
 import Text from "ol/style/Text";
 import Point from "ol/geom/Point";
-import { archivedSource, editSource } from "hooks/layers/constants";
+import { getEditSource } from "./layers";
 import { GrenseId, GrenseType } from "hooks/layers/types";
 import { isFeatureEditable, isMatrikkelFeature } from "utils/features";
 import { isGrenseType } from "utils/type-utils";
@@ -212,22 +212,9 @@ export const getPointOverlayStyle = (feature: Feature<Geometry> | RenderFeature)
 };
 
 export const updateEditFeatureText = (featureId: string, name?: string, number?: string) => {
-  const feature = editSource.getFeatureById(featureId);
+  const feature = getEditSource()?.getFeatureById(featureId);
   if (feature) {
     if (name != null) feature.set("name", name);
     if (number != null) feature.set("number", number);
   }
-};
-
-/**
- * Liten hjelpefunksjon for å slippe så mye typehåndtering når man skal sette stiler
- * @param featureId En gitt feature i editSource eller archivedSource som skal få ny stil
- * @param style Stil fra grenseStyles eller en stilfunksjon
- */
-export const setFeatureStyle = (featureId: string, style: Style[] | StyleFunction) => {
-  const sources = [archivedSource, editSource];
-  sources.forEach((source) => {
-    const feature = source.getFeatureById(featureId) as Feature<Geometry> | null;
-    feature?.setStyle(style);
-  });
 };
