@@ -27,13 +27,13 @@ const prodConfig = {
 
 const testConfig = {
   authority: "https://test.idporten.no",
-  client_id: "09a1784b-08ce-40ec-a2f6-20558ce09048",
+  client_id: "91a73378-76d8-40cd-af04-6b7ce3d87667",
   redirect_uri: "https://nibas.test.skip.statkart.no/authenticated",
 };
 
 const devConfig = {
   authority: "https://test.idporten.no",
-  client_id: "5b7a1c5a-4fc9-46d6-bf4b-5292f123175d",
+  client_id: "91a73378-76d8-40cd-af04-6b7ce3d87667",
   redirect_uri: "https://nibas.dev.skip.statkart.no/authenticated",
 };
 
