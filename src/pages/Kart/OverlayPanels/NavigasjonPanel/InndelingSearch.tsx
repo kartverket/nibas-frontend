@@ -84,7 +84,7 @@ export const InndelingSearch = ({ onSelect: centerOnCoordinate }: NavigasjonProp
         label={
           <>
             {beforeMatch}
-            <b>{matchedPart}</b>
+            <strong>{matchedPart}</strong>
             {afterMatch}
           </>
         }
@@ -103,6 +103,7 @@ export const InndelingSearch = ({ onSelect: centerOnCoordinate }: NavigasjonProp
       onChange={handleOnChange}
       loadOptions={loadResults}
       debounceTime={150}
+      autoFocus
     />
   );
 };
