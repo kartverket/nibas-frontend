@@ -21,7 +21,7 @@ type AuthConfig = {
 
 const prodConfig = {
   authority: "https://idporten.no",
-  client_id: "174ec5ec-774b-4474-93ec-deb6369f84cd",
+  client_id: "1a81c073-b363-4dce-b452-819cb7f38c2a",
   redirect_uri: "https://nibas.prod.skip.statkart.no/authenticated",
 };
 
