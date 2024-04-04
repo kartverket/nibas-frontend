@@ -78,3 +78,4 @@ export type Metadata =
 export type KretsResponse = GrunnkretsResponse | StemmekretsResponse;
 export type AdministrativEnhetResponse = FylkeResponse | KommuneResponse;
 export type UtkastOperasjoner = UtkastResponse["operasjoner"];
+export type InndelingResponse = components["schemas"]["InndelingResponse"];
