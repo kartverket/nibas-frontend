@@ -4,7 +4,7 @@ import { useState } from "react";
 import { SelectedFeatures } from "./types";
 import { grenseStyles, selectedPointStyle } from "utils/map/layerStyles";
 import Point from "ol/geom/Point";
-import { editSource } from "hooks/layers/constants";
+import { getEditSource } from "utils/map/layers";
 import { removeFeaturesFromSourceByIds } from "utils/map/source";
 
 export const useSelectStyles = () => {
@@ -20,7 +20,7 @@ export const useSelectStyles = () => {
       const highlightPoint = new Feature(geometry);
       highlightPoint.setId("temp-point-highlight");
       highlightPoint.setStyle(selectedPointStyle);
-      editSource.addFeatures([highlightPoint]);
+      getEditSource()?.addFeatures([highlightPoint]);
       setSelectedPoint(highlightPoint);
     }
   };

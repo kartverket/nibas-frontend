@@ -11,7 +11,7 @@ import {
   HistoryEntry,
   HistoryState,
 } from "./types";
-import { archivedSource, editSource } from "hooks/layers/constants";
+import { getArchivedSource, getEditSource } from "utils/map/layers";
 import { Feature } from "ol";
 import { setDefaultFeatureProperties } from "utils/features";
 import { FeatureProperties, KontekstEgenskaper } from "types/api";
@@ -30,7 +30,7 @@ const getFeatureFromChange = (change: HistoryChange<MinimalGrense>, direction: H
     });
     newFeature.setId(change.id);
     setDefaultFeatureProperties(newFeature, change.to.type);
-    editSource.addFeature(newFeature);
+    getEditSource()?.addFeature(newFeature);
     return newFeature;
   }
 
@@ -38,7 +38,7 @@ const getFeatureFromChange = (change: HistoryChange<MinimalGrense>, direction: H
 };
 
 const getFeatureIfExists = (featureId: string) => {
-  return editSource.getFeatureById(featureId);
+  return getEditSource()?.getFeatureById(featureId);
 };
 
 const setCoordinatesFromChange = (change: HistoryChange<MinimalGrense>, direction: HistoryDirection) => {
@@ -49,7 +49,7 @@ const setCoordinatesFromChange = (change: HistoryChange<MinimalGrense>, directio
   const coordinates = change[direction].coordinates as Coordinate[] | undefined;
 
   if (direction === "from" && !coordinates) {
-    editSource.removeFeature(feature);
+    getEditSource()?.removeFeature(feature);
   }
   if (!coordinates) return;
 
@@ -101,7 +101,7 @@ export const setKontekstEgenskaperForEntry = (entry: GrenseTilhorighetEntry, dir
 };
 
 export const redoArchiving = (entry: GrenseArkiveringsEntry) => {
-  const features = removeNil(entry.changes.map((c) => editSource.getFeatureById(c.id)));
+  const features = removeNil(entry.changes.map((c) => getEditSource()?.getFeatureById(c.id)));
   const featureIds = entry.changes.map((c) => c.id);
 
   addFeaturesToSource("archived", features);
@@ -115,7 +115,7 @@ export const redoArchiving = (entry: GrenseArkiveringsEntry) => {
 };
 
 export const undoArchving = (entry: GrenseArkiveringsEntry) => {
-  const features = removeNil(entry.changes.map((c) => archivedSource.getFeatureById(c.id)));
+  const features = removeNil(entry.changes.map((c) => getArchivedSource()?.getFeatureById(c.id)));
   const featureIds = entry.changes.map((c) => c.id);
 
   addFeaturesToSource("edit", features);

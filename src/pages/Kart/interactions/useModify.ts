@@ -5,7 +5,7 @@ import Modify, { ModifyEvent } from "ol/interaction/Modify";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { click, primaryAction } from "ol/events/condition";
 import { Collection, MapBrowserEvent } from "ol";
-import { editSource } from "hooks/layers/constants";
+import { getEditSource } from "utils/map/layers";
 import { pixelTolerance, previousCoordinateKey } from "./constants";
 import { Tool, useToolbar } from "contexts/ToolbarContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
@@ -21,6 +21,7 @@ import { Geometry } from "ol/geom";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import useSplit from "./useSplit";
 import { Coordinate, equals } from "ol/coordinate";
+import VectorSource from "ol/source/Vector";
 
 const useModify = () => {
   const { addHistoryEntry } = useHistory();
@@ -49,7 +50,7 @@ const useModify = () => {
 
     return new Modify({
       features: detachMode ? new Collection(selectedFeatures) : undefined,
-      source: detachMode ? undefined : editSource,
+      source: detachMode ? undefined : (getEditSource() as VectorSource),
       pixelTolerance: pixelTolerance,
       condition: (event: MapBrowserEvent<MouseEvent>) => {
         if (activeModeTools.includes("move")) return false;

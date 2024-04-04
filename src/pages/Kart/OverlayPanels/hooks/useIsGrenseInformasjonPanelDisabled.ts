@@ -1,7 +1,7 @@
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { Feature } from "ol";
 import { isFeatureMetadataEditable } from "utils/features";
-import { editSource } from "hooks/layers/constants";
+import { getEditSource } from "utils/map/layers";
 
 const useIsGrenseinformasjonPanelDisabled = (feature: Feature) => {
   const { featureIsArchived } = useFeatureStyle();
@@ -10,7 +10,10 @@ const useIsGrenseinformasjonPanelDisabled = (feature: Feature) => {
 
   if (!isMetadataEditable) return true;
 
-  const isFeatureInEditLayer = editSource.getFeatures().some((editFeature) => editFeature.getId() === feature.getId());
+  const isFeatureInEditLayer =
+    getEditSource()
+      ?.getFeatures()
+      .some((editFeature) => editFeature.getId() === feature.getId()) ?? false;
 
   return !isFeatureInEditLayer;
 };

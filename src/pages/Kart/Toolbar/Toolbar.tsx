@@ -12,7 +12,7 @@ import ToolbarPopups from "./ToolbarPopups";
 import { ConditionalHide } from "components/ConditionalShowHide";
 import { Draw } from "ol/interaction";
 import { useState } from "react";
-
+import VectorSource from "ol/source/Vector";
 import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 
@@ -65,7 +65,7 @@ const Toolbar = () => {
     if (activeModeTools.includes("matrikkel")) {
       const source = getLayerById("matrikkel").getSource();
       if (source) {
-        source.clear(true);
+        getLayerById("matrikkel").setSource(new VectorSource());
       }
     }
     toggleModeTool("matrikkel");

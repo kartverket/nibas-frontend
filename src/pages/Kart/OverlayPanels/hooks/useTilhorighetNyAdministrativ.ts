@@ -15,7 +15,7 @@ import {
 } from "./tilhorighet-utils";
 import { useTilhorighetForm } from "./useTilhorighetForm";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
-import { editSource } from "hooks/layers/constants";
+import { getEditSource } from "utils/map/layers";
 import { Geometry } from "ol/geom";
 import { isAdministrativGrense } from "utils/grenser";
 import { isGrenseType } from "utils/type-utils";
@@ -41,7 +41,7 @@ const useGetMuligeKretserForNyAdministrativGrense = (
   grunnkretserFromContext: GrunnkretsResponse[],
   stemmekretserFromContext: StemmekretsResponse[],
 ) => {
-  const administrativeFeatures = getAdministrativeFeatures(editSource.getFeatures());
+  const administrativeFeatures = getAdministrativeFeatures(getEditSource()?.getFeatures() ?? []);
 
   const kontekstEgenskaperForAdministrativeFeatures = administrativeFeatures.flatMap(
     (feature) => (feature.getProperties() as FeatureProperties).kontekstEgenskaper,

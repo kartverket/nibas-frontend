@@ -2,11 +2,11 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo } fro
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { FeatureStyleContextValue, SelectedFeatures } from "./types";
 import { useSelectStyles } from "./useSelectStyles";
-import { getArchiveLayerStyle, grenseStyles, setFeatureStyle } from "utils/map/layerStyles";
+import { getArchiveLayerStyle, grenseStyles } from "utils/map/layerStyles";
 import { FeatureLike } from "ol/Feature";
-import useCustomStyles from "./useCustomStyles";
+import useCustomStyles, { setFeatureStyle } from "./useCustomStyles";
 import { Coordinate } from "ol/coordinate";
-import { archivedSource } from "hooks/layers/constants";
+import { getArchivedSource } from "utils/map/layers";
 import { FeatureIdWithEndpoints, getAllFeatureEndPointCoordinates } from "utils/features";
 import { HistoryTypeValues } from "contexts/HistoryContext/types";
 import {
@@ -129,7 +129,11 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       (featureEndpoint) => featureEndpoint != null && !featureIdsToIgnore.includes(featureEndpoint.featureId),
     ) as FeatureIdWithEndpoints[];
 
-    const archivedFeatures = removeDuplicateIds(archivedSource.getFeatures().map((f) => f.getId()?.toString() ?? ""));
+    const archivedFeatures = removeDuplicateIds(
+      getArchivedSource()
+        ?.getFeatures()
+        .map((f) => f.getId()?.toString() ?? "") ?? [],
+    );
     const errorFeatures = removeDuplicateIds(
       getEntriesUpToIndex(history, (entry) => errorHistoryTypes.includes(entry.type))
         .flatMap(mapAffectedFeaturesForErrorEntries)

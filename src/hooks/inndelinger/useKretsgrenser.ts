@@ -23,6 +23,7 @@ import {
   getFeaturesConnectedToFeatureAtEndpoints,
   isFeatureDeadEnd,
 } from "utils/features";
+import VectorSource from "ol/source/Vector";
 
 const getKretserByKommuneUrl = (type: Kretstype) => {
   if (type === "grunnkrets") {
@@ -181,12 +182,8 @@ const useKretsgrenser = (kommuneId: string, type: Kretstype) => {
     // Edit-laget inneholder bare ett sett med kretser om gangen
     // derfor vil vi heller tømme hele laget for å få bedre ytelse
     if (layerId === "edit") {
-      const editLayer = getLayerById(layerId);
-      const archiveLayer = getLayerById("archived");
-      const editSource = editLayer.getSource();
-      const archiveSource = archiveLayer.getSource();
-      editSource?.clear(true);
-      archiveSource?.clear(true);
+      getLayerById("edit").setSource(new VectorSource());
+      getLayerById("archived").setSource(new VectorSource());
     } else {
       // I andre tilfeller kan det være flere ting i laget, så vi må fjerne features hver for seg
       if (!allFeatures) return;
