@@ -26,17 +26,18 @@ Start opp en dev-server med
 npm start
 ```
 
+Løsningen krever pålogging, som er skrudd på som default lokalt. Med helt standardoppsett er eneste autoriserte testbruker `05865396092`.
+
 For å hente ut grenser er du nødt til å klone og sette opp [nibas-backend](https://gitlab-staging.statkart.no/nibas/nibas-backend).
 Følg readme i dette repoet for å få denne kjørende.
 
-### Testing med autentisering via ID-porten lokalt
+### Testing uten autentisering via ID-porten lokalt
 
-Normalt når men kjører opp applikasjonen lokalt er pålogging deaktivert. For å skru dette på må både backend og frontend
-startes opp med autentisering påskrudd.
+Normalt når men kjører opp applikasjonen lokalt er pålogging aktivert. For å skru av dette på må både backend og frontend
+startes opp med autentisering avskrudd.
 
-1. Man må være koblet på kartverket-nett eller pålogget VPN
-2. Backend må startes opp uten spring-profilen `security-off`. Dette krever også at man enten legger inn autoriserte brukere i lokal vault, eller at man bruker vault i dev.
-3. Start opp frontenden med følgende miljøvariabel satt: `VITE_AUTH_ENABLED=true`
+1. Backend må startes opp med spring-profilen `security-off`.
+2. Start opp frontenden med følgende miljøvariabel satt: `VITE_DISABLE_AUTH=true`
 
 ### Proxy
 

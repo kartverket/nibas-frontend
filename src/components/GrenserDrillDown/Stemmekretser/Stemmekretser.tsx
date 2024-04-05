@@ -1,4 +1,3 @@
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import { styled } from "styled-components";
 import KommuneList from "../Kretser/KommuneList";
 import ListItemAccordion from "../ListItemAccordion";
@@ -7,10 +6,11 @@ import { InndelingerKretsProvider } from "contexts/InndelingerKretsContext";
 import useFylker from "hooks/inndelinger/useFylker";
 import { getNavnInSpraak } from "utils/language/language";
 import { getIdFromEntity } from "utils/api";
+import { useAuthentication } from "components/Authentication/AuthenticationHook";
 
 const Stemmekretser = () => {
   const { fylker } = useFylker();
-  const { isAuthenticatedFunc } = useAuthenticationFlow();
+  const { isAuthenticated } = useAuthentication();
 
   return (
     <ListItemAccordion title="Stemmekretser">
@@ -27,7 +27,7 @@ const Stemmekretser = () => {
             ))}
           </List>
         ) : (
-          <p>{isAuthenticatedFunc() ? "Henter fylker..." : "Logg inn for å se listen"}</p>
+          <p>{isAuthenticated ? "Henter fylker..." : "Logg inn for å se listen"}</p>
         )}
       </InndelingerKretsProvider>
     </ListItemAccordion>

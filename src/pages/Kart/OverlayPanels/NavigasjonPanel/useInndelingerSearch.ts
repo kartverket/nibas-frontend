@@ -1,10 +1,10 @@
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
+import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { InndelingResponse } from "types/api";
 import { getUrlForPath } from "utils/api";
 
 export const useInndelingerSearch = () => {
-  const { tokenHolderFunc } = useAuthenticationFlow();
+  const auth = useAuthentication();
   const { utkast } = useUtkast();
 
   const searchInndelinger = async (searchString: string, limit: number): Promise<InndelingResponse[]> => {
@@ -14,16 +14,13 @@ export const useInndelingerSearch = () => {
       return [];
     }
     const encodedURI = encodeURI(
-      `v1/inndelinger/
-        ?searchString=${encodeURIComponent(formattedSearchString)}
-        &gyldighetsdato=${encodeURIComponent(gyldhetsdato)}
-        &limit=${encodeURIComponent(limit)}`,
+      `v1/inndelinger/?searchString=${encodeURIComponent(formattedSearchString)}&gyldighetsdato=${encodeURIComponent(gyldhetsdato)}&limit=${encodeURIComponent(limit)}`,
     );
     const results = await fetch(getUrlForPath(encodedURI), {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + tokenHolderFunc()?.token,
+        Authorization: "Bearer " + auth.token,
       },
     });
     return results.json();

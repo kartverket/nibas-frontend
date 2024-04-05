@@ -48,8 +48,8 @@ const Kartinformasjon = () => {
 
 const Container = styled.div`
   position: absolute;
-  bottom: 0;
-  left: 0;
+  top: 6px;
+  left: 8px;
 
   display: flex;
   padding: 2px 8px;
@@ -59,14 +59,12 @@ const Container = styled.div`
   box-shadow: var(--kvib-shadows-base);
   font-size: var(--kvib-fontSizes-sm);
   border-radius: 8px;
-  border-top-right-radius: 0;
-  border-bottom-left-radius: 0;
   z-index: ${zindex.farBack};
 `;
 
 const ScaleIndicator = styled.span`
   position: absolute;
-  bottom: 32px;
+  bottom: 8px;
   left: 8px;
   z-index: ${zindex.farBack};
 

@@ -15,6 +15,7 @@ export type Shortcut =
   | "archive"
   | "matrikkel"
   | "flate"
+  | "draw"
   | "escape";
 
 type KeyboardShortcut = {
@@ -84,4 +85,5 @@ export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
   flate: createShortcut("i", { control: true, shift: true }),
   archive: createShortcut("a", { control: true }),
   matrikkel: createShortcut("e", { control: true }),
+  draw: createShortcut("t", { control: true }),
 };
