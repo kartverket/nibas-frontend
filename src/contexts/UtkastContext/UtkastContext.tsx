@@ -1,11 +1,9 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { useMatch } from "react-router-dom";
 import { useSWRConfig } from "swr";
 import { EntityUtkastType, UtkastContextValue, UtkastEntity, UtkastRequestWithoutOperations } from "./types";
 import {
   addTempFeatureIdToNewFeaturesInUtkast,
-  applyFeatureUtkast,
   applyNonFeatureUtkast,
   historyToUtkastOperations,
   toCleanUtkast,
@@ -14,13 +12,7 @@ import { updateUtkastApi } from "api/utkast";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { HistoryChange } from "contexts/HistoryContext/types";
 import useNibasApi from "hooks/useNibasApi";
-import {
-  ApiErrorResponse,
-  FeatureCollection,
-  OppdaterUtkastRequest,
-  UtkastGrenseendringerFeatures,
-  UtkastResponse,
-} from "types/api";
+import { ApiErrorResponse, OppdaterUtkastRequest, UtkastResponse } from "types/api";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
@@ -270,20 +262,4 @@ export const useUtkastEntity = <T extends UtkastEntity>(entity: T, type: EntityU
 
     return applyNonFeatureUtkast(entity, utkast, type);
   }, [entity, utkast, type]);
-};
-
-// TODO: noe er galt med typingen her, geojsonfeaturecollection betyr bare any, den fanger ikke at den returnerer undefined
-export const useUtkastFeature = (
-  featureCollection: GeoJSONFeatureCollection | GeoJSONFeatureCollection[],
-  endredeFeatures: UtkastGrenseendringerFeatures,
-): FeatureCollection | undefined => {
-  return useMemo(() => {
-    if (featureCollection == null || endredeFeatures.length === 0) return featureCollection;
-
-    if (Array.isArray(featureCollection)) {
-      return featureCollection.map((collection) => applyFeatureUtkast(collection, endredeFeatures));
-    }
-
-    return applyFeatureUtkast(featureCollection, endredeFeatures);
-  }, [featureCollection, endredeFeatures]);
 };

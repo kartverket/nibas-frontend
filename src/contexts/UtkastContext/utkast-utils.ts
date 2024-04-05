@@ -1,5 +1,5 @@
 import { Feature } from "ol";
-import { GeoJSONFeature, GeoJSONFeatureCollection } from "ol/format/GeoJSON";
+import { GeoJSONFeature } from "ol/format/GeoJSON";
 import { EntityUtkastType, UtkastEntity, ResponseWithId } from "./types";
 import {
   GrunnkretsEntry,
@@ -21,8 +21,6 @@ import {
   OppdaterUtkastRequest,
   StemmekretsRequest,
   StemmekretsSammenslaaingsendringRequest,
-  UtkastGrenseendringer,
-  UtkastGrenseendringerFeatures,
   UtkastMetadataendringer,
   UtkastOperasjoner,
   UtkastResponse,
@@ -45,19 +43,6 @@ const getCombinedEntity = <T extends ResponseWithId>(
   } as T;
 };
 
-const getCombinedFeatures = (
-  featureCollection: GeoJSONFeatureCollection,
-  featuresSlice: NonNullable<UtkastGrenseendringer["endredeFeatures"]>,
-) => {
-  const updatedFeaturesFromCollection = featureCollection.features.map(
-    (feature: GeoJSONFeature) => featuresSlice.find((f) => f.id === feature.id) ?? feature,
-  );
-
-  const newFeatures = featuresSlice.filter((f) => isTempFeatureId(f.id));
-
-  return updatedFeaturesFromCollection.concat(newFeatures);
-};
-
 export const applyNonFeatureUtkast = <T extends NonNullable<UtkastEntity>>(
   entity: T,
   utkast: UtkastResponse,
@@ -71,18 +56,6 @@ export const applyNonFeatureUtkast = <T extends NonNullable<UtkastEntity>>(
   }
 
   return getCombinedEntity(entity, utkastSlice);
-};
-
-export const applyFeatureUtkast = (
-  featureCollection: GeoJSONFeatureCollection,
-  endredeFeatures: UtkastGrenseendringerFeatures,
-) => {
-  const newFeatures = getCombinedFeatures(featureCollection, endredeFeatures);
-
-  return {
-    ...featureCollection,
-    features: newFeatures,
-  };
 };
 
 const reduceMetadataOperations = (utkastOperations: UtkastOperasjoner, entry: GrunnkretsEntry | StemmekretsEntry) => {
