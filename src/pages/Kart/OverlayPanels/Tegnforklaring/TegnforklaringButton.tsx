@@ -14,7 +14,7 @@ export const TegnforklaringButton = () => {
   };
 
   return (
-    <Tooltip label="Vis tegnforklaring for grensetypene i kartet" hasArrow>
+    <Tooltip label="Vis tegnforklaring for grensetypene i kartet" hasArrow placement="left">
       <RoundButton onClick={onClick} aria-label="Åpne og lukke tegnforklaring" icon="question_mark" />
     </Tooltip>
   );
@@ -22,7 +22,8 @@ export const TegnforklaringButton = () => {
 
 const RoundButton = styled(IconButton)`
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 12px;
+  right: 12px;
   border-radius: 50%;
+  box-shadow: var(--kvib-shadows-base);
 `;

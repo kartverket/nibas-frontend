@@ -1,4 +1,3 @@
-import ThirdPartyProviders from "./ThirdPartyProviders";
 import { KartlagProvider } from "contexts/KartlagContext/KartlagContext";
 import { HistoryProvider } from "contexts/HistoryContext/HistoryContext";
 import { UtkastProvider } from "contexts/UtkastContext/UtkastContext";
@@ -11,25 +10,23 @@ import { InndelingerProvider } from "contexts/InndelingerContext/InndelingerCont
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
-    <ThirdPartyProviders>
-      <ErrorHandlingProvider>
-        <ConfirmationModalProvider>
-          <HistoryProvider>
-            <FeatureStyleProvider>
-              <ToolbarProvider>
-                <OverlayPanelProvider>
-                  <KartlagProvider>
-                    <UtkastProvider>
-                      <InndelingerProvider>{children}</InndelingerProvider>
-                    </UtkastProvider>
-                  </KartlagProvider>
-                </OverlayPanelProvider>
-              </ToolbarProvider>
-            </FeatureStyleProvider>
-          </HistoryProvider>
-        </ConfirmationModalProvider>
-      </ErrorHandlingProvider>
-    </ThirdPartyProviders>
+    <ErrorHandlingProvider>
+      <ConfirmationModalProvider>
+        <HistoryProvider>
+          <FeatureStyleProvider>
+            <ToolbarProvider>
+              <OverlayPanelProvider>
+                <KartlagProvider>
+                  <UtkastProvider>
+                    <InndelingerProvider>{children}</InndelingerProvider>
+                  </UtkastProvider>
+                </KartlagProvider>
+              </OverlayPanelProvider>
+            </ToolbarProvider>
+          </FeatureStyleProvider>
+        </HistoryProvider>
+      </ConfirmationModalProvider>
+    </ErrorHandlingProvider>
   );
 };
 

@@ -80,6 +80,7 @@ const ToolbarMenus = () => {
   useKeyboardShortcut("edit_point", toggleMovePoint, isEditing);
   useKeyboardShortcut("merge", toggleMergePanel, currentlyEditedInndeling?.kretstype === "stemmekrets");
   useKeyboardShortcut("archive", () => toggleTool("archive"), isEditing);
+  useKeyboardShortcut("draw", () => toggleTool("draw"), isEditing);
   useKeyboardShortcut("flate", toggleFlatedetaljer);
 
   // For å kunne vise at en meny er aktiv må vi kunne sjekke hvorvidt noen av menuitems er aktive
@@ -87,7 +88,8 @@ const ToolbarMenus = () => {
   const grenseMenuItems: MenuItems = [
     {
       label: "Tegn ny grense",
-      icon: <Icon icon="edit" />,
+      icon: <Icon icon="draw" />,
+      command: KeyboardShortcuts["draw"].displayString,
       $isActive: activeTool === "draw",
       isDisabled: !isEditing,
       onClick: () => toggleTool("draw"),
@@ -95,7 +97,7 @@ const ToolbarMenus = () => {
     },
     {
       label: "Del grense",
-      icon: <Icon icon="location_off" />,
+      icon: <Icon icon="alt_route" />,
       $isActive: activeTool === "split",
       isDisabled: !isEditing,
       onClick: () => toggleTool("split"),
@@ -103,7 +105,7 @@ const ToolbarMenus = () => {
     },
     {
       label: "Løsriv grense",
-      icon: <Icon icon="edit_location_alt" />,
+      icon: <Icon icon="low_priority" />,
       $isActive: activeTool === "detach",
       isDisabled: !isEditing,
       onClick: () => toggleTool("detach"),
@@ -123,7 +125,7 @@ const ToolbarMenus = () => {
   const punktMenuItems: MenuItems = [
     {
       label: "Flytt punkt med koordinater",
-      icon: <Icon icon="ads_click" />,
+      icon: <Icon icon="location_on" />,
       command: KeyboardShortcuts["edit_point"].displayString,
       $isActive: activeTool === "koordinater",
       isDisabled: !isEditing,
@@ -152,7 +154,7 @@ const ToolbarMenus = () => {
   const flateMenuItems: MenuItems = [
     {
       label: "Se/endre flatedetaljer",
-      icon: <Icon icon="edit_location_alt" />,
+      icon: <Icon icon="description" />,
       command: KeyboardShortcuts["flate"].displayString,
       isDisabled: !isEditing,
       $isActive: flatedetaljerIsActive,
@@ -161,7 +163,7 @@ const ToolbarMenus = () => {
     },
     {
       label: "Slå sammen flater",
-      icon: <Icon icon="merge" />,
+      icon: <Icon icon="cell_merge" />,
       command: KeyboardShortcuts["merge"].displayString,
       $isActive: mergeIsActive,
       isDisabled: currentlyEditedInndeling?.kretstype !== "stemmekrets",
@@ -170,7 +172,7 @@ const ToolbarMenus = () => {
     },
     {
       label: "Splitt en flate",
-      icon: <Icon icon="cut" />,
+      icon: <Icon icon="splitscreen" />,
       $isActive: splitIsActive,
       isDisabled: !(
         currentlyEditedInndeling?.kretstype === "stemmekrets" || currentlyEditedInndeling?.kretstype === "grunnkrets"
