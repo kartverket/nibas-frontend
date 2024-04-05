@@ -112,15 +112,19 @@ export const useTilhorighetForm = (feature: Feature) => {
   // wrapper for setter av tilhørighetoptions. Spreader inn nye kretser i hver dropdown.
   const setTilhorighetOptions = useCallback(
     (commonOptions: TilhorighetOptions | undefined) => {
-      if (!utkast || !commonOptions) return;
-      const tilhorighetOptionsFromUtkast = getKretserFromKretsDelingEndringer(
-        kommunerId,
-        utkast.operasjoner.kretsDelingEndringer.filter((deling) => deling.flatetype === kontekstType),
-      );
-      setTilhorighetValg({
-        [Tilhorighet.A]: [...commonOptions[Tilhorighet.A], ...tilhorighetOptionsFromUtkast],
-        [Tilhorighet.B]: [...commonOptions[Tilhorighet.B], ...tilhorighetOptionsFromUtkast],
-      });
+      if (utkast && commonOptions) {
+        const tilhorighetOptionsFromUtkast = getKretserFromKretsDelingEndringer(
+          kommunerId,
+          utkast.operasjoner.kretsDelingEndringer.filter((deling) => deling.flatetype === kontekstType),
+        );
+        setTilhorighetValg({
+          [Tilhorighet.A]: [...commonOptions[Tilhorighet.A], ...tilhorighetOptionsFromUtkast],
+          [Tilhorighet.B]: [...commonOptions[Tilhorighet.B], ...tilhorighetOptionsFromUtkast],
+        });
+      }
+      else if (!utkast && commonOptions) {
+        setTilhorighetValg(commonOptions);
+      }
     },
     [kommunerId, kontekstType, utkast],
   );
