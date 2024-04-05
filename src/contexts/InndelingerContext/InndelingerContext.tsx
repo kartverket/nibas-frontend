@@ -9,6 +9,7 @@ import { getLayerById } from "utils/map/layers";
 import { GrenseId } from "hooks/layers/types";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 
 export const KRETSTYPER = ["fylke", "kommune", "stemmekrets", "grunnkrets"] as const;
 type Kretstyper = typeof KRETSTYPER;
@@ -43,6 +44,8 @@ export const InndelingerContext = createContext<InndelingerContextValue | undefi
 export const InndelingerProvider = ({ children }: { children: React.ReactNode }) => {
   const [inndelinger, setInndelinger] = useState<Inndelinger>(new Map<string, Inndeling>());
 
+  const { setFeatureStylesForUtkastFeatures } = useFeatureStyle();
+
   const previousInndelinger = useRef<Inndelinger>();
   if (previousInndelinger.current == null) previousInndelinger.current = new Map<string, Inndeling>();
 
@@ -54,7 +57,11 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
   const { utkast } = useUtkast();
 
   useEffect(() => {
-    const addInndelingToLayer = (layer: GrenseId, features: Feature<Geometry>[]) => {
+    const addInndelingToLayer = (
+      layer: GrenseId,
+      features: Feature<Geometry>[],
+      featuresToStyle: Feature<Geometry>[],
+    ) => {
       const inndelingSource = getLayerById(layer).getSource();
 
       if (inndelingSource) {
@@ -68,6 +75,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         if (!everyFetchedFeatureIsInSource) {
           addFeaturesToSource(layer, features, () => {
             zoomToFeatures(features);
+            setFeatureStylesForUtkastFeatures(featuresToStyle);
           });
         }
       }
@@ -95,7 +103,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         if (selectedInndeling.isEditing) {
           // synes dette virket litt tungvindt, men lar det være per nå
           // tanken er bare å returnere en liste over alle features i inndelingen, men bruke feature fra utkast der disse finnes
-          const inndelingFeaturesExcludedUtkastFeatures: Feature<Geometry>[] = utkastFeaturesInInndeling;
+          const inndelingFeaturesExcludedUtkastFeatures: Feature<Geometry>[] = [...utkastFeaturesInInndeling];
 
           for (const inndelingFeature of inndelingFeatures) {
             const featureIfInUtkast = inndelingFeaturesExcludedUtkastFeatures.find(
@@ -108,7 +116,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
           }
 
           // her kan det hende at features skal til archived ikke edit
-          addInndelingToLayer("edit", inndelingFeaturesExcludedUtkastFeatures);
+          addInndelingToLayer("edit", inndelingFeaturesExcludedUtkastFeatures, utkastFeaturesInInndeling);
         }
       }
 
@@ -116,14 +124,14 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         if (!selectedInndeling.isVisible) {
           removeInndelingFromLayer(selectedInndeling.kretstype, inndelingFeatures);
         } else {
-          addInndelingToLayer(selectedInndeling.kretstype, inndelingFeatures);
+          addInndelingToLayer(selectedInndeling.kretstype, inndelingFeatures, []);
         }
       }
 
       setIsHandlingFeatures(false);
       setSelectedInndeling(null);
     }
-  }, [inndelingFeatures, selectedInndeling, utkastFeaturesInInndeling]);
+  }, [inndelingFeatures, selectedInndeling, setFeatureStylesForUtkastFeatures, utkastFeaturesInInndeling]);
 
   useEffect(() => {
     if (!utkast) {

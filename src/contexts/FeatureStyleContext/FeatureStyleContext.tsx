@@ -3,11 +3,16 @@ import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { FeatureStyleContextValue, SelectedFeatures } from "./types";
 import { useSelectStyles } from "./useSelectStyles";
 import { getArchiveLayerStyle, grenseStyles, setFeatureStyle } from "utils/map/layerStyles";
-import { FeatureLike } from "ol/Feature";
+import Feature, { FeatureLike } from "ol/Feature";
 import useCustomStyles from "./useCustomStyles";
 import { Coordinate } from "ol/coordinate";
 import { archivedSource } from "hooks/layers/constants";
-import { FeatureIdWithEndpoints, getAllFeatureEndPointCoordinates } from "utils/features";
+import {
+  FeatureIdWithEndpoints,
+  getAllFeatureEndPointCoordinates,
+  getFeaturesConnectedToFeatureAtEndpoints,
+  isFeatureDeadEnd,
+} from "utils/features";
 import { HistoryTypeValues } from "contexts/HistoryContext/types";
 import {
   filterOnlyDeadEnds,
@@ -16,6 +21,8 @@ import {
   removeDuplicateIds,
 } from "./feature-style-utils";
 import { newFeatureOnlyExistsAfterIndex, getChangeIds } from "contexts/HistoryContext/history-utils";
+import { Geometry } from "ol/geom";
+import { FeatureProperties } from "types/api";
 
 export const FeatureStyleContext = createContext<FeatureStyleContextValue | undefined>(undefined);
 
@@ -181,6 +188,51 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     return false;
   };
 
+  // Endrede features skal markeres med riktig stil når man åpner utkastet
+  const setFeatureStylesForUtkastFeatures = (endredeFeatures: Feature<Geometry>[]) => {
+    const dirtyFeatureIds: string[] = [];
+    const archivedFeatureIds: string[] = [];
+    const errorFeatureIds: string[] = [];
+
+    const allFeatureEndpoints = getAllFeatureEndPointCoordinates(["matrikkel", "archived"]).filter(
+      (featureEndpoint) => featureEndpoint !== null,
+    ) as FeatureIdWithEndpoints[];
+
+    if (endredeFeatures.length > 0) {
+      for (const endretFeature of endredeFeatures) {
+        const featureId = endretFeature.getId()?.toString();
+
+        if (featureId != null) {
+          const properties = endretFeature.getProperties() as FeatureProperties | undefined;
+
+          // Avgjør hvilken type endringsfarge featuren skal ha
+          if (properties != null && properties.shouldArchive) {
+            archivedFeatureIds.push(featureId);
+
+            const connectedFeatures = getFeaturesConnectedToFeatureAtEndpoints(endretFeature);
+
+            for (const connectedFeature of connectedFeatures) {
+              const connectedFeatureId = connectedFeature.getId()?.toString();
+              const connectedFeatureProperties = connectedFeature.getProperties() as FeatureProperties | undefined;
+              if (connectedFeatureId == null || !connectedFeatureProperties) continue;
+
+              if (!connectedFeatureProperties.shouldArchive && isFeatureDeadEnd(connectedFeature, allFeatureEndpoints))
+                errorFeatureIds.push(connectedFeatureId);
+            }
+          } else if (isFeatureDeadEnd(endretFeature, allFeatureEndpoints)) {
+            errorFeatureIds.push(featureId);
+          } else {
+            dirtyFeatureIds.push(featureId);
+          }
+        }
+      }
+    }
+
+    dirtyStyleFunctions.addCustomStyles(dirtyFeatureIds);
+    errorStyleFunctions.addCustomStyles(errorFeatureIds);
+    archivedStyleFunctions.addCustomStyles(archivedFeatureIds);
+  };
+
   const value = {
     selectFeatures: clearAndSelectFeatures,
     selectPointOnFeature: clearAndSelectPointOnFeature,
@@ -199,8 +251,11 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     setAndSaveArchivedStyles: archivedStyleFunctions.setAndSaveCustomStyles,
     featureIsArchived,
 
+    setFeatureStylesForUtkastFeatures,
+
     setAndSaveSammenslaaingStyles: sammenslaaingStyleFunctions.setAndSaveCustomStyles,
     setAndSaveSammenslaaingOverlappingStyles: sammenslaaingOverlappingStyleFunctions.setAndSaveCustomStyles,
+
     clearFeatureStyles,
   };
 
