@@ -121,8 +121,7 @@ export const useTilhorighetForm = (feature: Feature) => {
           [Tilhorighet.A]: [...commonOptions[Tilhorighet.A], ...tilhorighetOptionsFromUtkast],
           [Tilhorighet.B]: [...commonOptions[Tilhorighet.B], ...tilhorighetOptionsFromUtkast],
         });
-      }
-      else if (!utkast && commonOptions) {
+      } else if (!utkast && commonOptions) {
         setTilhorighetValg(commonOptions);
       }
     },
