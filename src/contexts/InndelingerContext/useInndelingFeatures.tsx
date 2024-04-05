@@ -1,15 +1,14 @@
-import { useUtkast, useUtkastFeature } from "contexts/UtkastContext/UtkastContext";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { useMemo } from "react";
-import { geoJsonToSource, getFeaturesFromGeoJson } from "utils/map/geoJson";
-import { getLayerById } from "utils/map/layers";
+import { geoJsonToSource } from "utils/map/geoJson";
 import { Inndeling, Kretstype } from "./InndelingerContext";
-import { LayerId } from "hooks/layers/types";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
 import { FeatureCollection } from "types/api";
 import { removeNil } from "utils/list-utils";
+import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 
 const useInndelingFeatures = (inndeling: Inndeling | null) => {
   const { utkast } = useUtkast();
@@ -42,7 +41,7 @@ const useInndelingFeatures = (inndeling: Inndeling | null) => {
     return [];
   }, [data]);
 
-  const utkastFeatures: Feature<Geometry>[] = useMemo(() => {
+  const utkastFeaturesInInndeling: Feature<Geometry>[] = useMemo(() => {
     const endredeFeatures = utkast?.operasjoner.grenseendringer.endredeFeatures;
     if (endredeFeatures && endredeFeatures.length > 0 && inndelingFeatures.length > 0) {
       // Dette er en skikkelig hacky måte å få riktig type ut av endredeFeatures, but it works :s
@@ -53,9 +52,13 @@ const useInndelingFeatures = (inndeling: Inndeling | null) => {
       const featuresInUtkast = geoJsonToSource(featureCollection).getFeatures();
 
       const inndelingFeatureIds = removeNil(inndelingFeatures.map((feature) => feature.getId()?.toString()));
-      const featuresInUtkastAndInndeling = featuresInUtkast.filter((feature) =>
-        inndelingFeatureIds.includes(feature.getId()?.toString() ?? ""),
-      );
+      const featuresInUtkastAndInndeling = featuresInUtkast.filter((feature) => {
+        const featureId = feature.getId()?.toString();
+
+        if (featureId != null) {
+          return isTempFeatureId(featureId) || inndelingFeatureIds.includes(featureId);
+        }
+      });
 
       return featuresInUtkastAndInndeling;
     }
@@ -65,7 +68,7 @@ const useInndelingFeatures = (inndeling: Inndeling | null) => {
 
   return {
     inndelingFeatures,
-    inndelingWithUktastFeatures: utkastFeatures,
+    utkastFeaturesInInndeling,
     isFetchingFeatures,
     ...rest,
   };

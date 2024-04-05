@@ -50,8 +50,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
   const [isHandlingFeatures, setIsHandlingFeatures] = useState(false);
 
-  const { isFetchingFeatures, inndelingFeatures, inndelingWithUktastFeatures } =
-    useInndelingFeatures(selectedInndeling);
+  const { isFetchingFeatures, inndelingFeatures, utkastFeaturesInInndeling } = useInndelingFeatures(selectedInndeling);
   const { utkast } = useUtkast();
 
   useEffect(() => {
@@ -93,9 +92,23 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
       if (previousInndeling.isEditing !== selectedInndeling.isEditing) {
         editSource.clear(true);
-        if (selectedInndeling.isEditing && inndelingWithUktastFeatures.length > 0) {
+        if (selectedInndeling.isEditing) {
+          // synes dette virket litt tungvindt, men lar det være per nå
+          // tanken er bare å returnere en liste over alle features i inndelingen, men bruke feature fra utkast der disse finnes
+          const inndelingFeaturesExcludedUtkastFeatures: Feature<Geometry>[] = utkastFeaturesInInndeling;
+
+          for (const inndelingFeature of inndelingFeatures) {
+            const featureIfInUtkast = inndelingFeaturesExcludedUtkastFeatures.find(
+              (featureFromUtkast) => featureFromUtkast.getId()?.toString() === inndelingFeature.getId()?.toString(),
+            );
+
+            if (!featureIfInUtkast) {
+              inndelingFeaturesExcludedUtkastFeatures.push(inndelingFeature);
+            }
+          }
+
           // her kan det hende at features skal til archived ikke edit
-          addInndelingToLayer("edit", inndelingWithUktastFeatures);
+          addInndelingToLayer("edit", inndelingFeaturesExcludedUtkastFeatures);
         }
       }
 
@@ -110,7 +123,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
       setIsHandlingFeatures(false);
       setSelectedInndeling(null);
     }
-  }, [inndelingFeatures, inndelingWithUktastFeatures, selectedInndeling]);
+  }, [inndelingFeatures, selectedInndeling, utkastFeaturesInInndeling]);
 
   useEffect(() => {
     if (!utkast) {
