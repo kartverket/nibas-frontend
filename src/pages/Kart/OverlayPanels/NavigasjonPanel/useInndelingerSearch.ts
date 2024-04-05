@@ -13,9 +13,12 @@ export const useInndelingerSearch = () => {
     if (formattedSearchString.length === 0 || gyldhetsdato === undefined) {
       return [];
     }
+
     const results = await fetch(
       getUrlForPath(
-        `v1/inndelinger/?searchString=${encodeURIComponent(searchString)}&gyldighetsdato=${encodeURIComponent(gyldhetsdato)}&limit=${encodeURIComponent(limit)}`,
+        encodeURI(
+          `v1/inndelinger/?searchString=${formattedSearchString}&gyldighetsdato=${gyldhetsdato}&limit=${limit}`,
+        ),
       ),
       {
         method: "GET",
