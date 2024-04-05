@@ -1,8 +1,8 @@
 import { GrunnkretsResponse } from "../../types/api";
 import { fetcherWithToken } from "utils/api";
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import useSWRImmutable from "swr/immutable";
 import useNibasApi from "hooks/useNibasApi";
+import { useAuthentication } from "components/Authentication/AuthenticationHook";
 
 const grunnkretsFetcher = async ([grunnkretsIds, token]: [string[], string | undefined]) => {
   const promises: Promise<GrunnkretsResponse>[] = grunnkretsIds.map(async (id) =>
@@ -13,9 +13,8 @@ const grunnkretsFetcher = async ([grunnkretsIds, token]: [string[], string | und
 };
 
 export const useGrunnkretser = (grunnkretsId: string[]) => {
-  const { tokenHolderFunc } = useAuthenticationFlow();
-
-  return useSWRImmutable(grunnkretsId.length > 0 ? [grunnkretsId, tokenHolderFunc()?.token] : null, grunnkretsFetcher);
+  const auth = useAuthentication();
+  return useSWRImmutable(grunnkretsId.length > 0 ? [grunnkretsId, auth.token] : null, grunnkretsFetcher);
 };
 
 export const useKommuneGrunnkretser = (kommuneId: string | null) => {

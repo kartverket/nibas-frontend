@@ -1,5 +1,4 @@
 import { styled } from "styled-components";
-import { useAuthenticationFlow } from "@kartverket/frontend-aut-lib";
 import {
   useToast,
   Modal,
@@ -31,6 +30,7 @@ import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useMatch, useNavigate } from "react-router-dom";
 import { routes } from "utils/routes";
 import { isAdministrativGrense } from "utils/grenser";
+import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { isGrenseType } from "utils/type-utils";
 
 type Props = {
@@ -44,14 +44,14 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
   const { closeUtkast } = useUtkast();
   const [publiseringsdato, setPubliseringsdato] = useState(new Date());
   const [isLoading, setIsLoading] = useState(false);
-  const { tokenHolderFunc } = useAuthenticationFlow();
+  const { token } = useAuthentication();
   const { setError } = useErrorHandling();
   const { mutate } = useSWRConfig();
   const navigate = useNavigate();
   const utkastPathMatch = useMatch(`${routes.utkast}/${routes.utkastId}`);
 
   const cleanUpUtkast = () => {
-    mutate(["/v1/utkast", tokenHolderFunc()?.token]);
+    mutate(["/v1/utkast", token]);
 
     // Mutate alle grense-ressurser som kan ha vært endret
     mutate(
@@ -68,7 +68,7 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
     setIsLoading(true);
     const publiseringDateString = format(publiseringsdato, "yyyy-MM-dd");
 
-    const response = await publishUtkast(utkast.id, publiseringDateString, tokenHolderFunc()?.token);
+    const response = await publishUtkast(utkast.id, publiseringDateString, token);
     setIsLoading(false);
 
     const publishDateText = isToday(publiseringsdato)
