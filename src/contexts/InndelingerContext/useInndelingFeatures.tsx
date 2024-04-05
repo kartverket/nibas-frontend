@@ -2,10 +2,14 @@ import { useUtkast, useUtkastFeature } from "contexts/UtkastContext/UtkastContex
 import useNibasApi from "hooks/useNibasApi";
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { useMemo } from "react";
-import { geoJsonToSource } from "utils/map/geoJson";
+import { geoJsonToSource, getFeaturesFromGeoJson } from "utils/map/geoJson";
 import { getLayerById } from "utils/map/layers";
 import { Inndeling, Kretstype } from "./InndelingerContext";
 import { LayerId } from "hooks/layers/types";
+import { Feature } from "ol";
+import { Geometry } from "ol/geom";
+import { FeatureCollection } from "types/api";
+import { removeNil } from "utils/list-utils";
 
 const useInndelingFeatures = (inndeling: Inndeling | null) => {
   const { utkast } = useUtkast();
@@ -19,42 +23,50 @@ const useInndelingFeatures = (inndeling: Inndeling | null) => {
   };
 
   // Denne henter kun dersom den har en inndeling
-  const { data, ...rest } = useNibasApi<GeoJSONFeatureCollection>(
+  const {
+    data,
+    isLoading: isFetchingFeatures,
+    ...rest
+  } = useNibasApi<GeoJSONFeatureCollection>(
     inndeling != null ? getRequestUrl(inndeling.kretstype, inndeling.id) : null,
   );
 
-  // Burde kun legge til utkast sine features dersom vi er i redigeringsmodus til en krets
-  // Visningsmodus og se inndeling bør kun vise sånn kretsen er per nå
-  const utkastGeoJson = useUtkastFeature(data, utkast?.operasjoner.grenseendringer.endredeFeatures ?? []);
+  const inndelingFeatures: Feature<Geometry>[] = useMemo(() => {
+    if (data != null) {
+      // Dette føler jeg kan brekke på et vis, som ikke er nice. Hvordan skal man årne det?
+      const geoJsonFeatures = geoJsonToSource(data).getFeatures();
 
-  // TODO Denne rememoiserer når man lagrer utkastet sitt, som ikke er helt heldig imo tbh
-  const features = useMemo(() => {
-    if (!utkastGeoJson || !inndeling) return null;
-
-    const geoJsonFeatures = geoJsonToSource(utkastGeoJson).getFeatures();
-
-    const sourceForInndeling: LayerId = inndeling.isEditing ? "edit" : inndeling.kretstype;
-
-    // sjekk om features allerede ligger i kartet
-    // hvis featurene er annerledes enn vanlig, så ligger de endrede featurene i edit-laget
-    const source = getLayerById(sourceForInndeling).getSource();
-    if (source) {
-      const allFeaturesInMap = source.getFeatures();
-
-      const featuresInMap = allFeaturesInMap.filter((feature) =>
-        geoJsonFeatures.some((apiFeature) => apiFeature.getId() === feature.getId()),
-      );
-
-      if (featuresInMap.length === geoJsonFeatures.length) {
-        return featuresInMap;
-      }
+      return geoJsonFeatures;
     }
 
-    return geoJsonFeatures;
-  }, [inndeling, utkastGeoJson]);
+    return [];
+  }, [data]);
+
+  const utkastFeatures: Feature<Geometry>[] = useMemo(() => {
+    const endredeFeatures = utkast?.operasjoner.grenseendringer.endredeFeatures;
+    if (endredeFeatures && endredeFeatures.length > 0 && inndelingFeatures.length > 0) {
+      // Dette er en skikkelig hacky måte å få riktig type ut av endredeFeatures, but it works :s
+      const featureCollection: FeatureCollection = {
+        type: "FeatureCollection",
+        features: endredeFeatures,
+      };
+      const featuresInUtkast = geoJsonToSource(featureCollection).getFeatures();
+
+      const inndelingFeatureIds = removeNil(inndelingFeatures.map((feature) => feature.getId()?.toString()));
+      const featuresInUtkastAndInndeling = featuresInUtkast.filter((feature) =>
+        inndelingFeatureIds.includes(feature.getId()?.toString() ?? ""),
+      );
+
+      return featuresInUtkastAndInndeling;
+    }
+
+    return [];
+  }, [inndelingFeatures, utkast?.operasjoner.grenseendringer.endredeFeatures]);
 
   return {
-    features,
+    inndelingFeatures,
+    inndelingWithUktastFeatures: utkastFeatures,
+    isFetchingFeatures,
     ...rest,
   };
 };

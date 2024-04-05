@@ -4,7 +4,7 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import {
   KRETSTYPER,
   Kretstype,
-  isEqualInndelinger,
+  isSameInndelinger,
   useInndelinger,
   Inndeling,
 } from "contexts/InndelingerContext/InndelingerContext";
@@ -19,7 +19,7 @@ import InndelingOption from "./Inndeling";
 const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
   const [selectedKretstype, setSelectedKretstype] = useState<Kretstype | null>(null);
   const [selectedFylkeId, setSelectedFylkeId] = useState<string>("");
-  const { inndelinger, getInndeling, selectInndeling } = useInndelinger();
+  const { inndelinger, selectInndeling } = useInndelinger();
   const { closeOverlayModal, activeOverlayModal } = useOverlayPanel();
 
   const isEditingPanel = activeOverlayModal === "inndelinger";
@@ -47,9 +47,9 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
         isVisible: !isEditingPanel,
       };
 
-      const inndelingIfAlreadySelected = getInndeling(fylkeId);
+      const inndelingIfAlreadySelected = inndelinger.get(fylkeId);
 
-      if (inndelingIfAlreadySelected) {
+      if (inndelingIfAlreadySelected && isSameInndelinger(newInndeling, inndelingIfAlreadySelected)) {
         if (isEditingPanel) {
           newInndeling.isEditing = !inndelingIfAlreadySelected.isEditing;
           newInndeling.isVisible = inndelingIfAlreadySelected.isVisible;
@@ -75,9 +75,9 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
         isVisible: !isEditingPanel,
       };
 
-      const inndelingIfAlreadySelected = getInndeling(kommuneId);
+      const inndelingIfAlreadySelected = inndelinger.get(kommuneId);
 
-      if (inndelingIfAlreadySelected) {
+      if (inndelingIfAlreadySelected && isSameInndelinger(newInndeling, inndelingIfAlreadySelected)) {
         if (isEditingPanel) {
           newInndeling.isEditing = !inndelingIfAlreadySelected.isEditing;
           newInndeling.isVisible = inndelingIfAlreadySelected.isVisible;
@@ -95,7 +95,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
   const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
   const inndelingIcon = (id: string, isKommune: boolean) => {
-    const inndeling = inndelinger[id];
+    const inndeling = inndelinger.get(id);
 
     if (selectedKretstype === "fylke") {
       if (inndeling != null) {

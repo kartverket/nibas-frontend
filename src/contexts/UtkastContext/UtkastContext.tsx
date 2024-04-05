@@ -281,7 +281,6 @@ export const useUtkastFeature = (
     if (featureCollection == null || endredeFeatures.length === 0) return featureCollection;
 
     if (Array.isArray(featureCollection)) {
-      console.log("featurecollection er array");
       return featureCollection.map((collection) => applyFeatureUtkast(collection, endredeFeatures));
     }
 
