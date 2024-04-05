@@ -9,16 +9,23 @@ export const useInndelingerSearch = () => {
 
   const searchInndelinger = async (searchString: string, limit: number): Promise<InndelingResponse[]> => {
     const gyldhetsdato = utkast?.gyldigFra;
-    const results = await fetch(
-      getUrlForPath(`v1/inndelinger/?searchString=${searchString}&gyldighetsdato=${gyldhetsdato}&limit=${limit}`),
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + tokenHolderFunc()?.token,
-        },
-      },
+    const formattedSearchString = searchString.replaceAll(/[.*+?%^${}()|[\]\\]/g, "");
+    if (formattedSearchString.length === 0 || gyldhetsdato === undefined) {
+      return [];
+    }
+    const encodedURI = encodeURI(
+      `v1/inndelinger/
+        ?searchString=${encodeURIComponent(formattedSearchString)}
+        &gyldighetsdato=${encodeURIComponent(gyldhetsdato)}
+        &limit=${encodeURIComponent(limit)}`,
     );
+    const results = await fetch(getUrlForPath(encodedURI), {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + tokenHolderFunc()?.token,
+      },
+    });
     return results.json();
   };
 
