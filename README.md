@@ -4,14 +4,6 @@ Foreløpig kun create-react-app med typescript
 
 ## Lokal utvikling
 
-### Sette opp authZ og authN mot github package registry
-
-Prosjektet trenger pakke(r) fra github package registry. For å kunne installere disse pakkene må man gjøre følgende:
-
-- Opprette et personal access token på github (https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-to-github-packages)
-- Autorisere personal access token for bruk med SSO (https://docs.github.com/en/enterprise-cloud@latest/authentication/authenticating-with-saml-single-sign-on/authorizing-a-personal-access-token-for-use-with-saml-single-sign-on)
-- Autoriser deg mot GitHub Packages med npm ved å bruke kommandoen: `npm login --scope=@kartverket --registry=https://npm.pkg.github.com`. Her vil du bli promptet til å logge inn med GitHub brukernavnet ditt. Passord vil være access token du lagde i et tidligere steg. (https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-with-a-personal-access-token)
-
 ### Oppstart av applikasjonen
 
 Last ned dependencies med
@@ -26,7 +18,8 @@ Start opp en dev-server med
 npm start
 ```
 
-Løsningen krever pålogging, som er skrudd på som default lokalt. Med helt standardoppsett er eneste autoriserte testbruker `05865396092`.
+Løsningen krever pålogging, som er skrudd på som default lokalt. Med helt standardoppsett er eneste autoriserte testbruker 
+ved lokal utvikling `05865396092`.
 
 For å hente ut grenser er du nødt til å klone og sette opp [nibas-backend](https://gitlab-staging.statkart.no/nibas/nibas-backend).
 Følg readme i dette repoet for å få denne kjørende.
@@ -87,7 +80,7 @@ For å få låste kartlag til å fungere lokalt må du også få tak i brukernav
 
 `docker run -p 3000:8080 -e BACKEND_HOST=nibas-backend.tz2-test-apps.k8s.local:80 -e PORT=8080 -e BAAT_USERNAME=some_username -e BAAT_PASSWORD=some_password --name nibas-klient nibas-klient`
 
-## Autentisering
+## Autentisering i testmiljø
 
 - Vær logget inn på enten kartverkets nett, VPN eller VDI.
 - Gå til et av testmiljøene
