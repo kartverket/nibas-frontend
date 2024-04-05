@@ -17,6 +17,7 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContex
 import { Alert, AlertIcon, AlertTitle, Button, Divider, FormControl, FormLabel, Heading, Select } from "@kvib/react";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
 const Form = styled.form`
   display: flex;
@@ -37,14 +38,20 @@ const Buttons = styled.div`
   margin-top: auto;
 `;
 
+export const getOverlappingStemmekretsFeatureIds = (featureIds: string[]) => {
+  return featureIds.filter((featureId, index) => featureIds.indexOf(featureId) !== index);
+};
+
 const MergePanel = ({ isOpen, className }: PanelProps) => {
-  const { flatedata, closeOverlayPanel } = useOverlayPanel();
+  const { closeOverlayPanel } = useOverlayPanel();
   const { setError } = useErrorHandling();
   const { utkast, updateUtkast, utkastHarEndringer } = useUtkast();
   const auth = useAuthentication();
   const { setAndSaveSammenslaaingStyles, setAndSaveSammenslaaingOverlappingStyles } = useFeatureStyle();
   const { history } = useHistory();
-  const { data: stemmekretserByKommune } = useKommuneStemmekretser(flatedata ? getIdFromEntity(flatedata) : null);
+  const { currentlyEditedInndeling } = useInndelinger();
+
+  const { data: stemmekretserByKommune } = useKommuneStemmekretser(currentlyEditedInndeling?.id ?? null);
 
   const utkastStemmekretser = useUtkastEntity(stemmekretserByKommune, "stemmekretsendringer") as
     | StemmekretsResponse[]
@@ -90,10 +97,6 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
     },
     [utkastStemmekretser],
   );
-
-  const getOverlappingStemmekretsFeatureIds = (featureIds: string[]) => {
-    return featureIds.filter((featureId, index) => featureIds.indexOf(featureId) !== index);
-  };
 
   const fromFormToRequest = (
     stemmekretsRespons: StemmekretsResponse,

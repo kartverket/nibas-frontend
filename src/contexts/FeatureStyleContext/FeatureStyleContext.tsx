@@ -22,7 +22,9 @@ import {
 } from "./feature-style-utils";
 import { newFeatureOnlyExistsAfterIndex, getChangeIds } from "contexts/HistoryContext/history-utils";
 import { Geometry } from "ol/geom";
-import { FeatureProperties } from "types/api";
+import { FeatureProperties, UtkastResponse } from "types/api";
+import { removeNil } from "utils/list-utils";
+import { getOverlappingStemmekretsFeatureIds } from "pages/Kart/OverlayPanels/MergePanel/MergePanel";
 
 export const FeatureStyleContext = createContext<FeatureStyleContextValue | undefined>(undefined);
 
@@ -188,7 +190,6 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     return false;
   };
 
-  // Endrede features skal markeres med riktig stil når man åpner utkastet
   const setFeatureStylesForUtkastFeatures = (endredeFeatures: Feature<Geometry>[]) => {
     const dirtyFeatureIds: string[] = [];
     const archivedFeatureIds: string[] = [];
@@ -233,6 +234,20 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     archivedStyleFunctions.addCustomStyles(archivedFeatureIds);
   };
 
+  const setFeatureStylesForSammenslaaingsFeatures = (stemmekretsFeatures: Feature<Geometry>[]) => {
+    const stemmekretsFeatureIds = removeNil(stemmekretsFeatures.map((feature) => feature.getId()?.toString()));
+
+    if (stemmekretsFeatureIds.length > 0) {
+      const overlappingFeatureIds = getOverlappingStemmekretsFeatureIds(stemmekretsFeatureIds);
+      const uniqueStemmekretsFeatureIds = stemmekretsFeatureIds.filter(
+        (sfi) => !overlappingFeatureIds.some((ofi) => sfi === ofi),
+      );
+
+      sammenslaaingStyleFunctions.setAndSaveCustomStyles(uniqueStemmekretsFeatureIds);
+      sammenslaaingOverlappingStyleFunctions.setAndSaveCustomStyles(overlappingFeatureIds);
+    }
+  };
+
   const value = {
     selectFeatures: clearAndSelectFeatures,
     selectPointOnFeature: clearAndSelectPointOnFeature,
@@ -252,6 +267,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     featureIsArchived,
 
     setFeatureStylesForUtkastFeatures,
+    setFeatureStylesForSammenslaaingsFeatures,
 
     setAndSaveSammenslaaingStyles: sammenslaaingStyleFunctions.setAndSaveCustomStyles,
     setAndSaveSammenslaaingOverlappingStyles: sammenslaaingOverlappingStyleFunctions.setAndSaveCustomStyles,

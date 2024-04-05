@@ -10,6 +10,7 @@ import { GrenseId } from "hooks/layers/types";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
+import { FeatureProperties } from "types/api";
 
 export const KRETSTYPER = ["fylke", "kommune", "stemmekrets", "grunnkrets"] as const;
 type Kretstyper = typeof KRETSTYPER;
@@ -44,7 +45,7 @@ export const InndelingerContext = createContext<InndelingerContextValue | undefi
 export const InndelingerProvider = ({ children }: { children: React.ReactNode }) => {
   const [inndelinger, setInndelinger] = useState<Inndelinger>(new Map<string, Inndeling>());
 
-  const { setFeatureStylesForUtkastFeatures } = useFeatureStyle();
+  const { setFeatureStylesForUtkastFeatures, setFeatureStylesForSammenslaaingsFeatures } = useFeatureStyle();
 
   const previousInndelinger = useRef<Inndelinger>();
   if (previousInndelinger.current == null) previousInndelinger.current = new Map<string, Inndeling>();
@@ -60,7 +61,8 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     const addInndelingToLayer = (
       layer: GrenseId,
       features: Feature<Geometry>[],
-      featuresToStyle: Feature<Geometry>[],
+      changedFeaturesInUtkast: Feature<Geometry>[],
+      sammenslaaingFeaturesInUtkast: Feature<Geometry>[],
     ) => {
       const inndelingSource = getLayerById(layer).getSource();
 
@@ -75,7 +77,10 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         if (!everyFetchedFeatureIsInSource) {
           addFeaturesToSource(layer, features, () => {
             zoomToFeatures(features);
-            setFeatureStylesForUtkastFeatures(featuresToStyle);
+            if (layer === "edit") {
+              setFeatureStylesForUtkastFeatures(changedFeaturesInUtkast);
+              setFeatureStylesForSammenslaaingsFeatures(sammenslaaingFeaturesInUtkast);
+            }
           });
         }
       }
@@ -104,6 +109,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
           // synes dette virket litt tungvindt, men lar det være per nå
           // tanken er bare å returnere en liste over alle features i inndelingen, men bruke feature fra utkast der disse finnes
           const inndelingFeaturesExcludedUtkastFeatures: Feature<Geometry>[] = [...utkastFeaturesInInndeling];
+          const sammenslaaingFeaturesWithDuplicates: Feature<Geometry>[] = [];
 
           for (const inndelingFeature of inndelingFeatures) {
             const featureIfInUtkast = inndelingFeaturesExcludedUtkastFeatures.find(
@@ -115,8 +121,39 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
             }
           }
 
+          if (selectedInndeling.kretstype === "stemmekrets") {
+            const sammenslaaing = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
+            if (sammenslaaing != null) {
+              const innlemmedeStemmekretsIder = sammenslaaing.stemmekretserTilSammenslaaing.map(
+                (stemmekrets) => stemmekrets.lokalId,
+              );
+
+              const stemmekretsInSammenslaaingIds = [
+                sammenslaaing.viderefoertStemmekrets.lokalId,
+                ...innlemmedeStemmekretsIder,
+              ];
+
+              for (const feature of inndelingFeatures) {
+                const properties = feature.getProperties() as FeatureProperties;
+
+                const kontekstEgenskapIds = removeNil(
+                  properties.kontekstEgenskaper.flatMap((egenskap) => egenskap.id?.lokalid.value),
+                );
+
+                for (const id of kontekstEgenskapIds) {
+                  if (stemmekretsInSammenslaaingIds.includes(id)) sammenslaaingFeaturesWithDuplicates.push(feature);
+                }
+              }
+            }
+          }
+
           // her kan det hende at features skal til archived ikke edit
-          addInndelingToLayer("edit", inndelingFeaturesExcludedUtkastFeatures, utkastFeaturesInInndeling);
+          addInndelingToLayer(
+            "edit",
+            inndelingFeaturesExcludedUtkastFeatures,
+            utkastFeaturesInInndeling,
+            sammenslaaingFeaturesWithDuplicates,
+          );
         }
       }
 
@@ -124,14 +161,21 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         if (!selectedInndeling.isVisible) {
           removeInndelingFromLayer(selectedInndeling.kretstype, inndelingFeatures);
         } else {
-          addInndelingToLayer(selectedInndeling.kretstype, inndelingFeatures, []);
+          addInndelingToLayer(selectedInndeling.kretstype, inndelingFeatures, [], []);
         }
       }
 
       setIsHandlingFeatures(false);
       setSelectedInndeling(null);
     }
-  }, [inndelingFeatures, selectedInndeling, setFeatureStylesForUtkastFeatures, utkastFeaturesInInndeling]);
+  }, [
+    inndelingFeatures,
+    selectedInndeling,
+    setFeatureStylesForSammenslaaingsFeatures,
+    setFeatureStylesForUtkastFeatures,
+    utkast?.operasjoner.stemmekretsSammenslaaingsendring,
+    utkastFeaturesInInndeling,
+  ]);
 
   useEffect(() => {
     if (!utkast) {

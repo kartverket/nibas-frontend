@@ -14,14 +14,16 @@ import { useTableSort } from "../useTableSort";
 import { orderBy } from "utils/list-utils";
 import { getNavnInSpraak } from "utils/language/language";
 import { Modal, ModalContent, ModalOverlay, Spinner } from "@kvib/react";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
 const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
   const { utkast } = useUtkast();
   const { sortProperty, sortOrder, sortHeaderProps } = useTableSort<GrunnkretsResponse>(["nummer", "navn"]);
-  const { flatedata, closeOverlayModal } = useOverlayPanel();
+  const { closeOverlayModal } = useOverlayPanel();
   const { searchValue, setInputValue } = useSearch();
+  const { currentlyEditedInndeling } = useInndelinger();
 
-  const kommuneId = flatedata ? getIdFromEntity(flatedata) : null;
+  const kommuneId = currentlyEditedInndeling ? currentlyEditedInndeling.id : null;
   const { data: grunnkretserByKommune } = useKommuneGrunnkretser(kommuneId);
   const utkastGrunnkretser = useUtkastEntity(grunnkretserByKommune, "grunnkretsendringer") as
     | GrunnkretsResponse[]
@@ -40,9 +42,7 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
     <Modal isOpen={isOpen} onClose={closeOverlayModal} scrollBehavior="inside">
       <ModalOverlay />
       <ModalContent as={ModalPanel} $isOpen={isOpen} className={className}>
-        <PanelHeader onClose={closeOverlayModal}>
-          Flateinformasjon for {getNavnInSpraak(flatedata?.navn, "nor")}
-        </PanelHeader>
+        <PanelHeader onClose={closeOverlayModal}>Flateinformasjon for TODO</PanelHeader>
         {filteredGrunnkretser ? (
           <KretsTable $hasUtkast={utkast != null}>
             <thead>

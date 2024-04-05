@@ -17,6 +17,7 @@ import { PanelHeader, PanelProps, SidePanel } from "../Panel";
 import { CustomOption } from "../hooks/tilhorighet-utils";
 import { ChangeEvent, useEffect } from "react";
 import { useSplittingForm } from "./useSplittingForm";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
 const NyKretsField = styled.div`
   display: flex;
@@ -51,7 +52,8 @@ const StyledList = styled.ul`
 `;
 
 export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
-  const { flatedata, closeOverlayPanel } = useOverlayPanel();
+  const { closeOverlayPanel } = useOverlayPanel();
+  const { currentlyEditedInndeling } = useInndelinger();
   const {
     kretstype,
     opprinneligFlateOptions,
@@ -67,11 +69,11 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
     errors,
     trigger,
     isSubmitted,
-  } = useSplittingForm(flatedata);
+  } = useSplittingForm(currentlyEditedInndeling);
 
   useEffect(() => {
     resetSplitting();
-  }, [flatedata, resetSplitting]); // Vi ønsker å kalle reset hvis vi bytter inndeling
+  }, [currentlyEditedInndeling, resetSplitting]); // Vi ønsker å kalle reset hvis vi bytter inndeling
 
   const closeAndResetForm = () => {
     closeOverlayPanel();

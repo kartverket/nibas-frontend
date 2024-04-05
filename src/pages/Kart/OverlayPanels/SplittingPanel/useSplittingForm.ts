@@ -14,7 +14,7 @@ import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import { useToast } from "@kvib/react";
 import { useCallback } from "react";
-import { Kretstype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import { Inndeling, Kretstype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
 export type SplittingForm = Pick<KretsDelingEndringRequest, "opprinneligKrets" | "nyeKretser">;
 
@@ -39,7 +39,7 @@ const getKommuneIdentifikatorFromOptions = (
   }
 };
 
-export const useSplittingForm = (flatedata: Flatedata) => {
+export const useSplittingForm = (inndeling: Inndeling | null) => {
   const { utkast, updateUtkast, getUpdateUtkastRequestFromHistory } = useUtkast();
   const toast = useToast();
 
@@ -64,8 +64,10 @@ export const useSplittingForm = (flatedata: Flatedata) => {
 
   const { currentlyEditedInndeling } = useInndelinger();
   const kretstype = currentlyEditedInndeling?.kretstype;
-  const { data: stemmekretser } = useKommuneStemmekretser(flatedata ? getIdFromEntity(flatedata) : null);
-  const { data: grunnkretser } = useKommuneGrunnkretser(flatedata ? getIdFromEntity(flatedata) : null);
+
+  // TODO Vi trenger ikke hente begge, vi kan velge hva vi henter basert på inndelingstypen
+  const { data: stemmekretser } = useKommuneStemmekretser(inndeling?.id ?? null);
+  const { data: grunnkretser } = useKommuneGrunnkretser(inndeling?.id ?? null);
   const opprinneligFlateOptions =
     kretstype === "grunnkrets"
       ? mapGrunnkretsResponseToKrets(grunnkretser ?? [])

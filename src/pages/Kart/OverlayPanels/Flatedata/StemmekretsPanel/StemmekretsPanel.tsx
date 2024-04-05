@@ -11,6 +11,7 @@ import { useTableSort } from "../useTableSort";
 import { orderBy } from "utils/list-utils";
 import { getNavnInSpraak } from "utils/language/language";
 import { Modal, ModalContent, ModalOverlay, Spinner } from "@kvib/react";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
 const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
   const { utkast } = useUtkast();
@@ -20,8 +21,9 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
     "valgdistriktsnummer",
   ]);
 
-  const { flatedata, closeOverlayModal } = useOverlayPanel();
-  const kommuneId = flatedata ? getIdFromEntity(flatedata) : null;
+  const { closeOverlayModal } = useOverlayPanel();
+  const { currentlyEditedInndeling } = useInndelinger();
+  const kommuneId = currentlyEditedInndeling ? currentlyEditedInndeling.id : null;
   const { data: stemmekretserByKommune } = useKommuneStemmekretser(kommuneId);
   const utkastStemmekretser = useUtkastEntity(stemmekretserByKommune, "stemmekretsendringer") as
     | StemmekretsResponse[]
@@ -31,9 +33,7 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
     <Modal isOpen={isOpen} onClose={closeOverlayModal} scrollBehavior="inside">
       <ModalOverlay />
       <ModalContent as={ModalPanel} $isOpen={isOpen} className={className}>
-        <PanelHeader onClose={closeOverlayModal}>
-          Flateinformasjon for {getNavnInSpraak(flatedata?.navn, "nor")}
-        </PanelHeader>
+        <PanelHeader onClose={closeOverlayModal}>Flateinformasjon for {"TODO"}</PanelHeader>
         {utkastStemmekretser ? (
           <KretsTable $hasUtkast={utkast != null}>
             <thead>

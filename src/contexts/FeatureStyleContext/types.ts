@@ -27,6 +27,7 @@ export type FeatureStyleContextValue = {
   featureIsArchived: (feature: FeatureLike) => boolean;
 
   setFeatureStylesForUtkastFeatures: (features: Feature<Geometry>[]) => void;
+  setFeatureStylesForSammenslaaingsFeatures: (features: Feature<Geometry>[]) => void;
 
   setAndSaveSammenslaaingStyles: (features: string[]) => void;
   setAndSaveSammenslaaingOverlappingStyles: (features: string[]) => void;

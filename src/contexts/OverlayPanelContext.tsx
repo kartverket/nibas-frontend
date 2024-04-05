@@ -16,9 +16,6 @@ export type OverlayPanelContextValue = {
   activeOverlayModal: OverlayModal | null;
   openOverlayModal: (overlayModal: OverlayModal) => void;
   closeOverlayModal: () => void;
-
-  flatedata: Flatedata;
-  setFlatedata: (flatedata: Flatedata) => void;
 };
 
 export const OverlayPanelContext = createContext<OverlayPanelContextValue | undefined>(undefined);
@@ -45,9 +42,6 @@ export const OverlayPanelProvider = ({ children }: { children: React.ReactNode }
     clearSelection();
   };
 
-  // Brukes kun til paneler for stemmekrets og grunnkrets
-  const [flatedata, setFlatedata] = useState<Flatedata>(null);
-
   const value = {
     activeOverlayPanel,
     activeOverlayModal,
@@ -55,8 +49,6 @@ export const OverlayPanelProvider = ({ children }: { children: React.ReactNode }
     openOverlayModal,
     closeOverlayPanel,
     closeOverlayModal,
-    flatedata,
-    setFlatedata,
   };
 
   return <OverlayPanelContext.Provider value={value}>{children}</OverlayPanelContext.Provider>;

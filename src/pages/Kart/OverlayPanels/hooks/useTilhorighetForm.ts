@@ -21,6 +21,7 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { isGrenseType } from "utils/type-utils";
 import { GrenseType } from "hooks/layers/types";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
 const mapGrenseTypeTilKontekstType = (grenseType: GrenseType): KontekstType => {
   switch (grenseType) {
@@ -97,14 +98,15 @@ export const useTilhorighetForm = (feature: Feature) => {
   const kontekstType =
     kontekstEgenskaper.map((k) => k.type as KontekstType)[0] ??
     (isGrenseType(featureProperties.type) && mapGrenseTypeTilKontekstType(featureProperties.type));
-  const { flatedata } = useOverlayPanel();
+  const { currentlyEditedInndeling } = useInndelinger();
 
   const kommunerId = useMemo(
     () =>
       getKommunerIdFromKontekstEgenskaper(
         kontekstEgenskaper.filter((k) => k.id?.lokalid.value !== CustomOption.NOT_CHOSEN),
-      ) ?? (flatedata ? [getIdFromEntity(flatedata)] : []),
-    [flatedata, kontekstEgenskaper],
+      ) ?? [currentlyEditedInndeling != null ? currentlyEditedInndeling.id : ""] ??
+      [],
+    [currentlyEditedInndeling, kontekstEgenskaper],
   );
 
   const [tilhorighetOptions, setTilhorighetValg] = useState<TilhorighetOptions>();
