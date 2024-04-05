@@ -13,16 +13,18 @@ export const useInndelingerSearch = () => {
     if (formattedSearchString.length === 0 || gyldhetsdato === undefined) {
       return [];
     }
-    const encodedURI = encodeURI(
-      `v1/inndelinger/?searchString=${encodeURIComponent(formattedSearchString)}&gyldighetsdato=${encodeURIComponent(gyldhetsdato)}&limit=${encodeURIComponent(limit)}`,
-    );
-    const results = await fetch(getUrlForPath(encodedURI), {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + auth.token,
+    const results = await fetch(
+      getUrlForPath(
+        `v1/inndelinger/?searchString=${encodeURIComponent(searchString)}&gyldighetsdato=${encodeURIComponent(gyldhetsdato)}&limit=${encodeURIComponent(limit)}`,
+      ),
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + auth.token,
+        },
       },
-    });
+    );
     return results.json();
   };
 
