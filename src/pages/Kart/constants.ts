@@ -24,6 +24,7 @@ export const map = new Map({
   overlays: [],
   keyboardEventTarget: window.document,
   interactions: defaults({ altShiftDragRotate: false, dragPan: false, shiftDragZoom: false }),
+  maxTilesLoading: Infinity,
 });
 
 export const overlayPopup = new Overlay({
