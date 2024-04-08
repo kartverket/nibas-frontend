@@ -54,7 +54,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
   const [isHandlingFeatures, setIsHandlingFeatures] = useState(false);
 
-  const { isFetchingFeatures, inndelingFeatures, utkastFeaturesInInndeling } = useInndelingFeatures(selectedInndeling);
+  const { isFetching, inndelingFeatures, utkastFeaturesInInndeling } = useInndelingFeatures(selectedInndeling);
   const { utkast } = useUtkast();
 
   useEffect(() => {
@@ -233,7 +233,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     setInndelinger,
     selectInndeling,
     currentlyEditedInndeling: getCurrentlyEditingInndeling(),
-    isLoadingInndeling: isFetchingFeatures || isHandlingFeatures,
+    isLoadingInndeling: isFetching || isHandlingFeatures,
   };
 
   return <InndelingerContext.Provider value={value}>{children}</InndelingerContext.Provider>;

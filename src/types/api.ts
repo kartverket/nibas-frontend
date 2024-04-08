@@ -78,4 +78,5 @@ export type Metadata =
   | StatistiskGrenseMetadata;
 export type KretsResponse = GrunnkretsResponse | StemmekretsResponse;
 export type AdministrativEnhetResponse = FylkeResponse | KommuneResponse;
+export type InndelingResponse = KretsResponse | AdministrativEnhetResponse;
 export type UtkastOperasjoner = UtkastResponse["operasjoner"];

@@ -1,45 +1,90 @@
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
-import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
+import { GeoJSONFeature } from "ol/format/GeoJSON";
 import { useMemo } from "react";
-import { geoJsonToSource } from "utils/map/geoJson";
+import { geoJsonToSource, getFeatureFromGeoJson } from "utils/map/geoJson";
 import { Inndeling, Kretstype } from "./InndelingerContext";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
-import { FeatureCollection } from "types/api";
+import { FeatureCollection, InndelingResponse } from "types/api";
 import { removeNil } from "utils/list-utils";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
+import { getRepresentasjonspunktId } from "utils/map/source";
 
 const useInndelingFeatures = (inndeling: Inndeling | null) => {
   const { utkast } = useUtkast();
 
-  const getRequestUrl = (kretstype: Kretstype, id: string) => {
+  type GrenseRequestURL =
+    | "/v1/fylker/{id}/grenser"
+    | "/v1/kommuner/{id}/grenser"
+    | "/v1/kommuner/{id}/stemmekretsgrenser"
+    | "/v1/kommuner/{id}/grunnkretsgrenser";
+  const getGrenseRequestUrl = (kretstype: Kretstype): GrenseRequestURL => {
     if (kretstype === "fylke" || kretstype === "kommune") {
-      return `/v1/${kretstype}r/${id}/grenser`;
+      return `/v1/${kretstype}r/{id}/grenser`;
     }
 
-    return `/v1/kommuner/${id}/${kretstype}grenser`;
+    return `/v1/kommuner/{id}/${kretstype}grenser`;
+  };
+
+  type InndelingRequestURL =
+    | "/v1/fylker/{id}"
+    | "/v1/kommuner/{id}"
+    | "/v1/kommuner/{id}/stemmekretser"
+    | "/v1/kommuner/{id}/grunnkretser";
+  const getInndelingRequestUrl = (kretstype: Kretstype): InndelingRequestURL => {
+    if (kretstype === "fylke" || kretstype === "kommune") {
+      return `/v1/${kretstype}r/{id}`;
+    }
+
+    return `/v1/kommuner/{id}/${kretstype}er`;
   };
 
   // Denne henter kun dersom den har en inndeling
-  const {
-    data,
-    isLoading: isFetchingFeatures,
-    ...rest
-  } = useNibasApi<GeoJSONFeatureCollection>(
-    inndeling != null ? getRequestUrl(inndeling.kretstype, inndeling.id) : null,
+  const { data: featuresResponse, isLoading: isFetchingFeatures } = useNibasApi(
+    inndeling != null ? getGrenseRequestUrl(inndeling.kretstype) : null,
+    inndeling != null ? { id: inndeling.id } : null,
   );
 
-  const inndelingFeatures: Feature<Geometry>[] = useMemo(() => {
-    if (data != null) {
-      // Dette føler jeg kan brekke på et vis, som ikke er nice. Hvordan skal man årne det?
-      const geoJsonFeatures = geoJsonToSource(data).getFeatures();
+  // Denne henter kun dersom den har en inndeling
+  const { data: inndelingResponse, isLoading: isFetchingInndeling } = useNibasApi(
+    inndeling != null ? getInndelingRequestUrl(inndeling.kretstype) : null,
+    inndeling != null ? { id: inndeling.id } : null,
+  );
 
-      return geoJsonFeatures;
+  const getRepresentasjonspunktFeatureForInndeling = (
+    inndelingWithRepresentasjonspunkt: InndelingResponse,
+  ): GeoJSONFeature => {
+    const inndelingName: string = Array.isArray(inndelingWithRepresentasjonspunkt.navn)
+      ? inndelingWithRepresentasjonspunkt.navn.map((navn) => navn.navn).join(", ")
+      : inndelingWithRepresentasjonspunkt.navn;
+
+    return getFeatureFromGeoJson({
+      ...inndelingWithRepresentasjonspunkt.representasjonspunkt,
+      id: getRepresentasjonspunktId(inndelingWithRepresentasjonspunkt.id.lokalid.value),
+      properties: {
+        name: inndelingName,
+        number: inndelingWithRepresentasjonspunkt.nummer,
+      },
+    });
+  };
+
+  const inndelingFeatures: Feature<Geometry>[] = useMemo(() => {
+    if (featuresResponse != null && inndelingResponse != null) {
+      // Dette føler jeg kan brekke på et vis, som ikke er nice. Hvordan skal man årne det?
+      const representasjonspunkter = Array.isArray(inndelingResponse)
+        ? inndelingResponse.map((response) => getRepresentasjonspunktFeatureForInndeling(response))
+        : [getRepresentasjonspunktFeatureForInndeling(inndelingResponse)];
+
+      const geoJsonFeatures = geoJsonToSource(featuresResponse).getFeatures();
+
+      const geoJsonFeaturesWithRepresentasjonspunkter = geoJsonFeatures.concat(representasjonspunkter);
+
+      return geoJsonFeaturesWithRepresentasjonspunkter;
     }
 
     return [];
-  }, [data]);
+  }, [featuresResponse, inndelingResponse]);
 
   const utkastFeaturesInInndeling: Feature<Geometry>[] = useMemo(() => {
     const endredeFeatures = utkast?.operasjoner.grenseendringer.endredeFeatures;
@@ -69,8 +114,7 @@ const useInndelingFeatures = (inndeling: Inndeling | null) => {
   return {
     inndelingFeatures,
     utkastFeaturesInInndeling,
-    isFetchingFeatures,
-    ...rest,
+    isFetching: isFetchingFeatures || isFetchingInndeling,
   };
 };
 
