@@ -43,7 +43,9 @@ export const InndelingSearch = ({ onSelect: centerOnCoordinate }: NavigasjonProp
   const loadResults = async (term: string, resultsCallback: (options: InndelingOption[]) => void) => {
     if (term.length > 1) {
       const inndelinger = await searchInndelinger(term, 15);
-      resultsCallback(inndelinger.map(mapInndelingResponseToOption));
+      if (inndelinger !== null) {
+        resultsCallback(inndelinger.map(mapInndelingResponseToOption));
+      }
     }
   };
 
