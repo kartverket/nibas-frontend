@@ -16,7 +16,7 @@ const NavigasjonPanel = ({ isOpen, className }: PanelProps) => {
   const centerOnCoordinate = (north: number | null, east: number | null) => {
     if (north !== null && east !== null) {
       const view = map.getView();
-      view.animate({ duration: 0, center: [east, north], zoom: 12 });
+      view.animate({ duration: 0, center: [east, north], zoom: 18 });
       closeOverlayModal();
     }
   };
