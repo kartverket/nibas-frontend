@@ -7,6 +7,7 @@ import { styled } from "styled-components";
 const Form = styled.form`
   display: grid;
   grid-template-columns: 256px 256px min-content;
+  justify-content: space-between;
   gap: 16px;
 `;
 
@@ -22,7 +23,7 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
   });
 
   return (
-    <SpacedForm
+    <Form
       onSubmit={handleSubmit(() => {
         centerOnCoordinate(getValues("north"), getValues("east"));
         reset();
@@ -55,10 +56,6 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
       <Button type="submit" isDisabled={!isDirty}>
         Gå til koordinater
       </Button>
-    </SpacedForm>
+    </Form>
   );
 };
-
-const SpacedForm = styled(Form)`
-  justify-content: space-between;
-`;

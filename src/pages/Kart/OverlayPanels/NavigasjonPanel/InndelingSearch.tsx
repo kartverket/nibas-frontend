@@ -68,26 +68,23 @@ export const InndelingSearch = ({ onSelect: centerOnCoordinate }: NavigasjonProp
     inndeling: InndelingOption,
     formatOptionLabelMeta: FormatOptionLabelMeta<InndelingOption>,
   ) => {
-    const inputValue = formatOptionLabelMeta.inputValue;
-    const label = inndeling.label;
-    const labelRegex = new RegExp(`(${inputValue})`, "gi");
+    // Sikre at input-verdi er escapet for bruk i RegExp
+    const escapedInputValue = formatOptionLabelMeta.inputValue
+      .replace(/[|\\{}()[\]^$+*?.]/g, "\\$&")
+      .replace(/-/g, "\\x2d");
 
-    const match = label.match(labelRegex);
+    const labelRegExp = new RegExp(`(.*)(${escapedInputValue})(.*)`, "i");
+    const matches = inndeling.label.match(labelRegExp);
 
-    if (!match) return <FormattedOption label={label} type={inndeling.type} />;
-
-    const index = label.indexOf(match[0]);
-    const beforeMatch = label.slice(0, index);
-    const matchedPart = match[0];
-    const afterMatch = label.slice(index + matchedPart.length);
+    if (!matches) return <FormattedOption label={inndeling.label} type={inndeling.type} />;
 
     return (
       <FormattedOption
         label={
           <>
-            {beforeMatch}
-            <strong>{matchedPart}</strong>
-            {afterMatch}
+            {matches[1]}
+            <strong>{matches[2]}</strong>
+            {matches[3]}
           </>
         }
         type={inndeling.type}
@@ -99,7 +96,6 @@ export const InndelingSearch = ({ onSelect: centerOnCoordinate }: NavigasjonProp
     <SearchAsync
       value={selectedInndeling}
       optionLabelFormatter={highlightAndBadgeLabelFormatter}
-      size={"md"}
       placeholder="Skriv inn navnet eller nummeret til inndelingen"
       noOptionsMessage={noOptionMessage}
       onChange={handleOnChange}
