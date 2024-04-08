@@ -1,8 +1,6 @@
-import { Flatedata } from "contexts/OverlayPanelContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useForm, useFieldArray } from "react-hook-form";
 import { GrunnkretsResponse, KretsDelingEndringRequest, StemmekretsResponse } from "types/api";
-import { getIdFromEntity } from "utils/api";
 import {
   CustomOption,
   KontekstType,

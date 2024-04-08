@@ -103,7 +103,10 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         isVisible: false,
       };
 
-      if (previousInndeling.isEditing !== selectedInndeling.isEditing) {
+      if (
+        previousInndeling.kretstype !== selectedInndeling.kretstype ||
+        previousInndeling.isEditing !== selectedInndeling.isEditing
+      ) {
         editSource.clear(true);
         if (selectedInndeling.isEditing) {
           // synes dette virket litt tungvindt, men lar det være per nå

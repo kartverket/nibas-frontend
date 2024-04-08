@@ -12,7 +12,6 @@ import Input from "components/Input";
 import SortHeader from "../SortHeader";
 import { useTableSort } from "../useTableSort";
 import { orderBy } from "utils/list-utils";
-import { getNavnInSpraak } from "utils/language/language";
 import { Modal, ModalContent, ModalOverlay, Spinner } from "@kvib/react";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 

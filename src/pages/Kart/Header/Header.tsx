@@ -33,21 +33,21 @@ const Header = () => {
         <HeaderSection>
           {!utkast && <HeaderHome />}
           <HeaderButton
-            label="Temp: Rediger en inndeling"
+            label="Rediger en inndeling"
             icon="travel_explore"
             onClick={() => toggleModal("inndelinger")}
             tooltip={{
               text: "Åpne og rediger en inndeling i kartet",
               shortcut: "open",
             }}
+            isPrimary={true}
           />
           <HeaderButton
-            label="Temp: Se inndeling"
-            icon="travel_explore"
+            label="Forhåndsvis en inndeling"
+            icon="preview"
             onClick={() => toggleModal("inndelinger-view")}
             tooltip={{
               text: "Åpne og se en inndeling i kartet",
-              shortcut: "open",
             }}
           />
         </HeaderSection>

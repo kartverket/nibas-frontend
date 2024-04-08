@@ -9,6 +9,7 @@ type HeaderButtonProps = {
   tooltip: CustomTooltipProps;
   label: string;
   isLabelHidden?: boolean;
+  isPrimary?: boolean;
 } & ButtonProps;
 
 const HeaderButton = ({
@@ -18,13 +19,14 @@ const HeaderButton = ({
   isDisabled,
   tooltip,
   isLabelHidden = false,
+  isPrimary = false,
   ...props
 }: HeaderButtonProps) => (
   <Tooltip hasArrow label={<TooltipBody text={tooltip.text} shortcut={tooltip.shortcut} />}>
     {isLabelHidden ? (
       <IconButton
         size="sm"
-        variant="ghost"
+        variant={isPrimary ? "primary" : "ghost"}
         icon={icon}
         aria-label={label}
         onClick={onClick}
@@ -32,7 +34,14 @@ const HeaderButton = ({
         {...props}
       />
     ) : (
-      <Button size="sm" variant="ghost" leftIcon={icon} onClick={onClick} isDisabled={isDisabled} {...props}>
+      <Button
+        size="sm"
+        variant={isPrimary ? "primary" : "ghost"}
+        leftIcon={icon}
+        onClick={onClick}
+        isDisabled={isDisabled}
+        {...props}
+      >
         {label}
       </Button>
     )}
