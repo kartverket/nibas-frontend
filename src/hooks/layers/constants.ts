@@ -10,7 +10,7 @@ import { kartlagSources } from "./kartlagSources";
 import { map } from "pages/Kart/constants";
 
 const createTileLayerFromKartlagSource = (id: keyof typeof kartlagSources) => {
-  const newLayer = new TileLayer({ source: kartlagSources[id], visible: false });
+  const newLayer = new TileLayer({ source: kartlagSources[id], visible: false, preload: Infinity });
   newLayer.set("id", id);
   map.addLayer(newLayer);
   return newLayer;
