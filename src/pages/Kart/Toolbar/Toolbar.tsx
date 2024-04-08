@@ -237,74 +237,76 @@ const Toolbar = () => {
           >
             Kartlag
           </ToolbarButton>
-          <ToolbarButton
-            icon="holiday_village"
-            aria-label="Vis grenser fra matrikkelen"
-            isActive={activeModeTools.includes("matrikkel")}
-            onClick={toggleMatrikkel}
-            tooltip={{ text: "Vis grenser fra matrikkelen", shortcut: "matrikkel" }}
-          >
-            Matrikkel
-          </ToolbarButton>
           <ConditionalHide below="xl" condition={!!activeOverlayPanel}>
-            <Menu
-              closeOnSelect={false}
-              closeOnBlur={false}
-              onClose={() => setIsSnappingMenuOpen(false)}
-              isOpen={isSnappingMenuOpen}
-            >
-              {({ onClose }) => {
-                return (
-                  <>
-                    <MenuButton
-                      onClick={() => setIsSnappingMenuOpen(!isSnappingMenuOpen)}
-                      isActive={activeModeTools.includes("snap_nibas") || activeModeTools.includes("snap_matrikkel")}
-                      as={ToolbarButton}
-                      aria-label="Snap til andre grenser i kartet"
-                      icon="align_justify_space_between"
-                      tooltip={{ text: "Skru av/på snapping mot andre grenser." }}
-                    >
-                      Snap
-                    </MenuButton>
-                    <MenuList minWidth="240px" marginBottom="10px">
-                      <SnappingMenuHeader>
-                        <SnappingToggle>
-                          <Switch
-                            aria-label="Switch medium"
-                            marginRight="5px"
-                            isChecked={
-                              activeModeTools.includes("snap_matrikkel") || activeModeTools.includes("snap_nibas")
-                            }
-                            onChange={() => toggleSnapping()}
-                          />
-                          <SnappingTitle>Snapping</SnappingTitle>
-                        </SnappingToggle>
-                        <CloseButton marginRight="8px" onClick={onClose} />
-                      </SnappingMenuHeader>
-                      <MenuDivider />
-                      <MenuItem>
-                        <Checkbox
-                          value="egne"
-                          onChange={() => toggleModeTool("snap_nibas")}
-                          isChecked={activeModeTools.includes("snap_nibas")}
-                        >
-                          Snap til egne grenser
-                        </Checkbox>
-                      </MenuItem>
-                      <MenuItem>
-                        <Checkbox
-                          value="matrikkel"
-                          onChange={() => toggleModeTool("snap_matrikkel")}
-                          isChecked={activeModeTools.includes("snap_matrikkel")}
-                        >
-                          Snap til teiggrenser
-                        </Checkbox>
-                      </MenuItem>
-                    </MenuList>
-                  </>
-                );
-              }}
-            </Menu>
+            <>
+              <ToolbarButton
+                icon="holiday_village"
+                aria-label="Vis grenser fra matrikkelen"
+                isActive={activeModeTools.includes("matrikkel")}
+                onClick={toggleMatrikkel}
+                tooltip={{ text: "Vis grenser fra matrikkelen", shortcut: "matrikkel" }}
+              >
+                Matrikkel
+              </ToolbarButton>
+              <Menu
+                closeOnSelect={false}
+                closeOnBlur={false}
+                onClose={() => setIsSnappingMenuOpen(false)}
+                isOpen={isSnappingMenuOpen}
+              >
+                {({ onClose }) => {
+                  return (
+                    <>
+                      <MenuButton
+                        onClick={() => setIsSnappingMenuOpen(!isSnappingMenuOpen)}
+                        isActive={activeModeTools.includes("snap_nibas") || activeModeTools.includes("snap_matrikkel")}
+                        as={ToolbarButton}
+                        aria-label="Snap til andre grenser i kartet"
+                        icon="align_justify_space_between"
+                        tooltip={{ text: "Skru av/på snapping mot andre grenser." }}
+                      >
+                        Snap
+                      </MenuButton>
+                      <MenuList minWidth="240px" marginBottom="10px">
+                        <SnappingMenuHeader>
+                          <SnappingToggle>
+                            <Switch
+                              aria-label="Switch medium"
+                              marginRight="5px"
+                              isChecked={
+                                activeModeTools.includes("snap_matrikkel") || activeModeTools.includes("snap_nibas")
+                              }
+                              onChange={() => toggleSnapping()}
+                            />
+                            <SnappingTitle>Snapping</SnappingTitle>
+                          </SnappingToggle>
+                          <CloseButton marginRight="8px" onClick={onClose} />
+                        </SnappingMenuHeader>
+                        <MenuDivider />
+                        <MenuItem>
+                          <Checkbox
+                            value="egne"
+                            onChange={() => toggleModeTool("snap_nibas")}
+                            isChecked={activeModeTools.includes("snap_nibas")}
+                          >
+                            Snap til egne grenser
+                          </Checkbox>
+                        </MenuItem>
+                        <MenuItem>
+                          <Checkbox
+                            value="matrikkel"
+                            onChange={() => toggleModeTool("snap_matrikkel")}
+                            isChecked={activeModeTools.includes("snap_matrikkel")}
+                          >
+                            Snap til teiggrenser
+                          </Checkbox>
+                        </MenuItem>
+                      </MenuList>
+                    </>
+                  );
+                }}
+              </Menu>
+            </>
           </ConditionalHide>
         </ToolbarButtons>
         <ZoomButtons>
