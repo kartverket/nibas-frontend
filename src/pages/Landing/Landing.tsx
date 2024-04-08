@@ -18,7 +18,7 @@ const Landing = () => {
   const { resetKartlag } = useKartlag();
   const { resetTool, resetModeTools } = useToolbar();
   const { resetAndClearAllLayers } = useEditAllGrenser();
-  const { activeOverlayPanel, closeOverlayPanel } = useOverlayPanel();
+  const { activeOverlayPanel, closeOverlayPanel, activeOverlayModal, closeOverlayModal } = useOverlayPanel();
   const { activeSidebarPanel, closeSidebarPanel } = useSidebarPanel();
 
   useEffect(() => {
@@ -32,12 +32,15 @@ const Landing = () => {
       resetAndClearAllLayers();
     }
 
-    // Disse to krever ekstra sjekking for å unngå uendelig useEffekt-løkke
+    // Disse tre krever ekstra sjekking for å unngå uendelig useEffekt-løkke
     if (activeOverlayPanel) closeOverlayPanel();
+    if (activeOverlayModal) closeOverlayModal();
     if (activeSidebarPanel) closeSidebarPanel();
   }, [
+    activeOverlayModal,
     activeOverlayPanel,
     activeSidebarPanel,
+    closeOverlayModal,
     closeOverlayPanel,
     closeSidebarPanel,
     resetAndClearAllLayers,
