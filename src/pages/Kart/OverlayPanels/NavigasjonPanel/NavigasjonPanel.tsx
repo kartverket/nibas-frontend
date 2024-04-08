@@ -1,4 +1,4 @@
-import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@kvib/react";
+import { CloseButton, Spacer, Tab, TabList, TabPanel, TabPanels, Tabs } from "@kvib/react";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { keyframes, styled } from "styled-components";
 import { map } from "../../constants";
@@ -27,6 +27,8 @@ const NavigasjonPanel = ({ isOpen, className }: PanelProps) => {
         <TabList>
           <Tab>Gå til inndeling</Tab>
           <Tab>Gå til koordinater</Tab>
+          <Spacer />
+          <CloseButton onClick={() => closeOverlayModal()} aria-label="Lukk" />
         </TabList>
         <TabPanels>
           <StyledTabPanel>
