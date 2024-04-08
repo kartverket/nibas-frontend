@@ -70,6 +70,10 @@ export interface paths {
   "/v1/kodeliste/maalemetode-koder": {
     get: operations["fetchMaalemetodeKoder"];
   };
+  "/v1/inndelinger/": {
+    /** Søk etter inndelinger ved å bruke en søkestring */
+    get: operations["finnInndelinger"];
+  };
   "/v1/grunnkretser/{lokalid}/framtidigeversjoner": {
     /** Returnerer en liste av nåværende Grunnkrets og eventuelt publiserte framtidige versjoner som matcher lokalid. */
     get: operations["hentFramtidigeVersjonerForGrunnkrets"];
@@ -553,11 +557,11 @@ export interface components {
     };
     /** @description Representasjon av en stemmekrets */
     StemmekretsRequest: {
+      /** @description Stemmekretsnavnet til stemmekretsen */
+      navn?: string;
       /** @description Stemmekretsnummeret til stemmekretsen */
       nummer?: string;
       identifikasjon: components["schemas"]["Identifikasjon"];
-      /** @description Stemmekretsnavnet til stemmekretsen */
-      navn?: string;
       /** @description Tellekretsnummeret til stemmekretsen */
       tellekretsnummer?: string;
       /** @description Tellekretsnavnet til stemmekretsen */
@@ -599,6 +603,20 @@ export interface components {
       common: unknown;
       commonGrense: unknown;
       dokumentasjonsreferanser: unknown;
+    };
+    ApiErrorResponse: {
+      /** @description En unik feilkode for denne feilen som kan vises til bruker. Denne feilkoden burde også være med i loggene så man finner igjen feilen som oppstod. */
+      errorCode: string;
+      errorDescription: components["schemas"]["ErrorDescription"];
+    };
+    /** @description En forklaring av feilen som oppstod. Denne er ment til å kunne vises direkte til brukeren. */
+    ErrorDescription: {
+      /** @description Tittelen på feilmeldingen som skal vises. */
+      title: string;
+      /** @description En beskrivende forklaring av feilen som oppstod. */
+      description: string;
+      /** @description Litt tilleggsinfo relatert til feilen om man vil gi noe mer forklaring av konteksten. Ikke obligatorisk. */
+      additionalInfo?: string;
     };
     /** @description Feil som har oppstått pga optimistisk lås. */
     OptimistiskLaasResponse: {
@@ -696,20 +714,6 @@ export interface components {
         | "511 NETWORK_AUTHENTICATION_REQUIRED";
       /** @description Feil som har oppstått pga optimistisk lås. */
       optimisticLockExceptions: components["schemas"]["OptimistiskLaasResponse"][];
-    };
-    ApiErrorResponse: {
-      /** @description En unik feilkode for denne feilen som kan vises til bruker. Denne feilkoden burde også være med i loggene så man finner igjen feilen som oppstod. */
-      errorCode: string;
-      errorDescription: components["schemas"]["ErrorDescription"];
-    };
-    /** @description En forklaring av feilen som oppstod. Denne er ment til å kunne vises direkte til brukeren. */
-    ErrorDescription: {
-      /** @description Tittelen på feilmeldingen som skal vises. */
-      title: string;
-      /** @description En beskrivende forklaring av feilen som oppstod. */
-      description: string;
-      /** @description Litt tilleggsinfo relatert til feilen om man vil gi noe mer forklaring av konteksten. Ikke obligatorisk. */
-      additionalInfo?: string;
     };
     /** @description Representasjon av audit info for et objekt. */
     AuditInfoResponse: {
@@ -872,7 +876,6 @@ export interface components {
       navn: string;
       /** @description Grunnkretsnummeret til grunnkretsen */
       nummer: string;
-      /** @description Grunnkretsnummeret til grunnkretsen */
       gyldighet: components["schemas"]["GyldighetResponse"];
       /**
        * Format: date-time
@@ -913,6 +916,33 @@ export interface components {
       /** @description Liste av kodeliste-elementer. */
       items: components["schemas"]["KodelisteItem"][];
     };
+    /** @description Koordinatet til representasjonspunktet til inndelingen. */
+    Coordinate: {
+      /** Format: double */
+      x?: number;
+      /** Format: double */
+      y?: number;
+      /** Format: double */
+      z?: number;
+      valid?: boolean;
+      /** Format: double */
+      m?: number;
+      coordinate?: components["schemas"]["Coordinate"];
+    };
+    InndelingResponse: {
+      /** @description Lokalid til inndelingen */
+      id: string;
+      /**
+       * @description Flatetypen til inndelingen
+       * @enum {string}
+       */
+      type: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
+      /** @description Navnet til inndelingen */
+      navn: string;
+      /** @description Nummeret til inndelingen */
+      nummer: string;
+      representasjonspunkt: components["schemas"]["Coordinate"];
+    };
     /** @description Representasjon av et fylke */
     FylkeResponse: {
       id: components["schemas"]["ObjektIdentifikator"];
@@ -933,13 +963,6 @@ export interface components {
        * @description Teknisk versjon for å støtte samhandling og redigering
        */
       version: number;
-    };
-    /** @description Representasjon av et fylkesnummer */
-    Fylkesnummer: {
-      /** @description Unik UUID for fylkesnummeret */
-      id: string;
-      /** @description Det faktiske fylkesnummeret */
-      kodeverdi: string;
     };
     /** @description Representasjon av en krets. Response-type kun for Matrikkelen. Kan være grunnkrets, stemmekrets etc. */
     EksternKretsResponse: {
@@ -1061,6 +1084,13 @@ export interface components {
        * @description Antall publiserte framtidige gyldige versjoner.
        */
       antallFramtidigeVersjoner: number;
+    };
+    /** @description Representasjon av et fylkesnummer */
+    Fylkesnummer: {
+      /** @description Unik UUID for fylkesnummeret */
+      id: string;
+      /** @description Det faktiske fylkesnummeret */
+      kodeverdi: string;
     };
     /** @description Representasjon av et fylke */
     EksternFylkeResponse: {
@@ -1603,6 +1633,39 @@ export interface operations {
       400: {
         content: {
           "*/*": { [key: string]: unknown };
+        };
+      };
+    };
+  };
+  /** Søk etter inndelinger ved å bruke en søkestring */
+  finnInndelinger: {
+    parameters: {
+      query: {
+        /** Søkestring for å finne inndelinger */
+        searchString: string;
+        /** Eventuell gyldighetsdato for inndelingene (default = dagens dato) */
+        gyldighetsdato?: string;
+        /** Maksgrense for antall treff man ønsker seg */
+        limit?: number;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["InndelingResponse"][];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["InndelingResponse"][];
         };
       };
     };

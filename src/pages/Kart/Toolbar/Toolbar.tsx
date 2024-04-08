@@ -139,6 +139,11 @@ const Toolbar = () => {
       }
     }
 
+    if (activeOverlayModal === "navigasjon") {
+      closeOverlayModal();
+      return;
+    }
+
     if (isSnappingMenuOpen) {
       setIsSnappingMenuOpen(false);
       return;

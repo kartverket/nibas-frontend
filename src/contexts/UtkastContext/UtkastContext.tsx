@@ -42,7 +42,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const { history, clearHistory } = useHistory();
   const { addDirtyStyles, addErrorStyles, clearFeatureStyles } = useFeatureStyle();
   const { resetAndClearAllLayers } = useEditAllGrenser();
-  const { closeOverlayPanel } = useOverlayPanel();
+  const { closeOverlayPanel, closeOverlayModal } = useOverlayPanel();
   const { closeSidebarPanel } = useSidebarPanel();
   const { setError } = useErrorHandling();
   const { resetTool, resetModeTools } = useToolbar();
@@ -85,12 +85,14 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     clearFeatureStyles();
     resetAndClearAllLayers();
     closeOverlayPanel();
+    closeOverlayModal();
     closeSidebarPanel();
     resetModeTools();
     resetTool();
   }, [
     clearFeatureStyles,
     clearHistory,
+    closeOverlayModal,
     closeOverlayPanel,
     closeSidebarPanel,
     resetAndClearAllLayers,
