@@ -81,4 +81,4 @@ export type AdministrativEnhetResponse = FylkeResponse | KommuneResponse;
 export type InndelingResponse = KretsResponse | AdministrativEnhetResponse;
 export type InndelingNavn = components["schemas"]["AdministrativEnhetNavn"][] | string;
 export type UtkastOperasjoner = UtkastResponse["operasjoner"];
-export type InndelingResponse = components["schemas"]["InndelingResponse"];
+export type InndelingSearchResponse = components["schemas"]["InndelingResponse"];

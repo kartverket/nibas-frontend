@@ -22,7 +22,7 @@ import {
 } from "./feature-style-utils";
 import { newFeatureOnlyExistsAfterIndex, getChangeIds } from "contexts/HistoryContext/history-utils";
 import { Geometry } from "ol/geom";
-import { FeatureProperties, UtkastResponse } from "types/api";
+import { FeatureProperties } from "types/api";
 import { removeNil } from "utils/list-utils";
 import { getOverlappingStemmekretsFeatureIds } from "pages/Kart/OverlayPanels/MergePanel/MergePanel";
 
