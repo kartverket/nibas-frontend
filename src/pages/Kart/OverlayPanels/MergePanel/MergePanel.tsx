@@ -3,7 +3,6 @@ import { PanelHeader, PanelProps, SidePanel } from "../Panel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useUtkast, useUtkastEntity } from "contexts/UtkastContext/UtkastContext";
 import { StemmekretsResponse, StemmekretsSammenslaaingsendringRequest } from "types/api";
-import { getIdFromEntity } from "utils/api";
 import { FormProvider, useForm } from "react-hook-form";
 import { MergeFormData } from "./MergeForm";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";

@@ -266,8 +266,15 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     setAndSaveArchivedStyles: archivedStyleFunctions.setAndSaveCustomStyles,
     featureIsArchived,
 
-    setFeatureStylesForUtkastFeatures,
-    setFeatureStylesForSammenslaaingsFeatures,
+    setFeatureStylesForUtkastFeatures: useCallback(setFeatureStylesForUtkastFeatures, [
+      archivedStyleFunctions,
+      dirtyStyleFunctions,
+      errorStyleFunctions,
+    ]),
+    setFeatureStylesForSammenslaaingsFeatures: useCallback(setFeatureStylesForSammenslaaingsFeatures, [
+      sammenslaaingOverlappingStyleFunctions,
+      sammenslaaingStyleFunctions,
+    ]),
 
     setAndSaveSammenslaaingStyles: sammenslaaingStyleFunctions.setAndSaveCustomStyles,
     setAndSaveSammenslaaingOverlappingStyles: sammenslaaingOverlappingStyleFunctions.setAndSaveCustomStyles,

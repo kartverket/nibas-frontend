@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import useInndelingFeatures from "./useInndelingFeatures";
 import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { zoomToFeatures } from "utils/map/map-utils";
 import { editSource, grenserLayers } from "hooks/layers/constants";
@@ -8,9 +7,10 @@ import { removeNil } from "utils/list-utils";
 import { getLayerById } from "utils/map/layers";
 import { GrenseId } from "hooks/layers/types";
 import { Feature } from "ol";
-import { Geometry } from "ol/geom";
+import { Geometry, LineString } from "ol/geom";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { FeatureProperties } from "types/api";
+import useInndelingFeatures from "./useInndelingFeatures";
 
 export const INNDELINGTYPER = ["fylke", "kommune", "stemmekrets", "grunnkrets"] as const;
 type Inndelingtyper = typeof INNDELINGTYPER;
@@ -162,14 +162,19 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
               ];
 
               for (const feature of inndelingFeatures) {
-                const properties = feature.getProperties() as FeatureProperties;
+                const geometry = feature.getGeometry();
 
-                const kontekstEgenskapIds = removeNil(
-                  properties.kontekstEgenskaper.flatMap((egenskap) => egenskap.id?.lokalid.value),
-                );
+                // Filtrerer ut representasjonspunkt
+                if (geometry instanceof LineString) {
+                  const properties = feature.getProperties() as FeatureProperties;
 
-                for (const id of kontekstEgenskapIds) {
-                  if (stemmekretsInSammenslaaingIds.includes(id)) sammenslaaingFeaturesWithDuplicates.push(feature);
+                  const kontekstEgenskapIds = removeNil(
+                    properties.kontekstEgenskaper.flatMap((egenskap) => egenskap.id?.lokalid.value),
+                  );
+
+                  for (const id of kontekstEgenskapIds) {
+                    if (stemmekretsInSammenslaaingIds.includes(id)) sammenslaaingFeaturesWithDuplicates.push(feature);
+                  }
                 }
               }
             }
