@@ -25,10 +25,14 @@ export const useSelectStyles = () => {
     }
   };
 
-  const selectFeatures = (features: SelectedFeatures) => {
+  const setSelectedFeatureStyles = (features: SelectedFeatures) => {
     for (const feature of features) {
       feature.setStyle(grenseStyles.select);
     }
+  };
+
+  const selectFeatures = (features: SelectedFeatures) => {
+    setSelectedFeatureStyles(features);
     setSelectedFeatures(features);
   };
 
@@ -53,6 +57,7 @@ export const useSelectStyles = () => {
     selectFeatures,
     selectedFeatures,
     selectPointOnFeature,
+    setSelectedFeatureStyles,
     removeSelection,
     clearSelectedPoint,
   };

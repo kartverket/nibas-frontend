@@ -21,8 +21,15 @@ export const FeatureStyleContext = createContext<FeatureStyleContextValue | unde
 
 export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }) => {
   const { history } = useHistory();
-  const { selectedPoint, selectFeatures, selectedFeatures, selectPointOnFeature, removeSelection, clearSelectedPoint } =
-    useSelectStyles();
+  const {
+    selectedPoint,
+    selectFeatures,
+    selectedFeatures,
+    selectPointOnFeature,
+    removeSelection,
+    clearSelectedPoint,
+    setSelectedFeatureStyles,
+  } = useSelectStyles();
 
   const sammenslaaingOverlappingStyleFunctions = useCustomStyles(grenseStyles.sammenslaaingOverlapping);
   const sammenslaaingStyleFunctions = useCustomStyles(grenseStyles.sammenslaaing);
@@ -162,9 +169,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     dirtyStyleFunctions.setCustomStyles(dirtyFeatures);
     archivedStyleFunctions.setCustomStyles(archivedFeatures);
     errorStyleFunctions.setCustomStyles(errorFeatures);
-
-    // TODO: dette bør kanskje gjøres på en annen måte, sitter igjen etter angring og sånt
-    selectFeatures(selectedFeatures);
+    setSelectedFeatureStyles(selectedFeatures);
   }, [
     archivedStyleFunctions,
     customStyles,
@@ -173,6 +178,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     history,
     selectFeatures,
     selectedFeatures,
+    setSelectedFeatureStyles,
     undoFeatureStyles,
   ]);
 
