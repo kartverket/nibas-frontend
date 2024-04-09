@@ -1,13 +1,13 @@
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
-import VectorSource from "ol/source/Vector";
-import { getPointOverlayStyle, getLayerStyle } from "utils/map/layerStyles";
-import { StyleFunction } from "ol/style/Style";
-import { GrenseId, KartlagId } from "./types";
-import WMTS from "ol/source/WMTS";
 import TileWMS from "ol/source/TileWMS";
-import { kartlagSources } from "./kartlagSources";
+import VectorSource from "ol/source/Vector";
+import WMTS from "ol/source/WMTS";
+import { StyleFunction } from "ol/style/Style";
 import { map } from "pages/Kart/constants";
+import { getLayerStyle, getPointOverlayStyle } from "utils/map/layerStyles";
+import { kartlagSources } from "./kartlagSources";
+import { GrenseId, KartlagId } from "./types";
 
 const createTileLayerFromKartlagSource = (id: keyof typeof kartlagSources) => {
   const newLayer = new TileLayer({ source: kartlagSources[id], visible: false, preload: Infinity });
