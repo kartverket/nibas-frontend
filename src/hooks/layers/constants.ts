@@ -8,16 +8,17 @@ import WMTS from "ol/source/WMTS";
 import TileWMS from "ol/source/TileWMS";
 import { kartlagSources } from "./kartlagSources";
 import { map } from "pages/Kart/constants";
+import { Options } from "ol/layer/BaseTile";
 
-const createTileLayerFromKartlagSource = (id: keyof typeof kartlagSources) => {
-  const newLayer = new TileLayer({ source: kartlagSources[id], visible: false, preload: Infinity });
+const createTileLayerFromKartlagSource = (id: keyof typeof kartlagSources, options?: Options<WMTS | TileWMS>) => {
+  const newLayer = new TileLayer({ source: kartlagSources[id], visible: false, preload: Infinity, ...options });
   newLayer.set("id", id);
   map.addLayer(newLayer);
   return newLayer;
 };
 
 export const kartlagLayers: Record<KartlagId, TileLayer<TileWMS | WMTS>> = {
-  topograatone: createTileLayerFromKartlagSource("topograatone"),
+  topograatone: createTileLayerFromKartlagSource("topograatone", { opacity: 75 }),
   matrikkelenWMS: createTileLayerFromKartlagSource("matrikkelenWMS"),
   administrativeGrenser: createTileLayerFromKartlagSource("administrativeGrenser"),
   administrativeGrenserHistorisk: createTileLayerFromKartlagSource("administrativeGrenserHistorisk"),
