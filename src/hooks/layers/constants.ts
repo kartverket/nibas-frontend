@@ -8,9 +8,10 @@ import WMTS from "ol/source/WMTS";
 import TileWMS from "ol/source/TileWMS";
 import { kartlagSources } from "./kartlagSources";
 import { map } from "pages/Kart/constants";
+import { Options } from "ol/layer/BaseTile";
 
-const createTileLayerFromKartlagSource = (id: keyof typeof kartlagSources) => {
-  const newLayer = new TileLayer({ source: kartlagSources[id], visible: false, preload: Infinity });
+const createTileLayerFromKartlagSource = (id: keyof typeof kartlagSources, options?: Options<WMTS | TileWMS>) => {
+  const newLayer = new TileLayer({ source: kartlagSources[id], visible: false, preload: Infinity, ...options });
   newLayer.set("id", id);
   map.addLayer(newLayer);
   return newLayer;
@@ -23,7 +24,9 @@ export const kartlagLayers: Record<KartlagId, TileLayer<TileWMS | WMTS>> = {
   grunnkretserWMS: createTileLayerFromKartlagSource("grunnkretserWMS"),
   stedsnavn: createTileLayerFromKartlagSource("stedsnavn"),
   stedsnavnSSR: createTileLayerFromKartlagSource("stedsnavnSSR"),
-  cachetjenester: createTileLayerFromKartlagSource("cachetjenester"),
+  topo: createTileLayerFromKartlagSource("topo"),
+  toporaster: createTileLayerFromKartlagSource("toporaster"),
+  topograatone: createTileLayerFromKartlagSource("topograatone", { opacity: 0.75 }),
   kartbladinndelinger: createTileLayerFromKartlagSource("kartbladinndelinger"),
   sjokartDybdedata: createTileLayerFromKartlagSource("sjokartDybdedata"),
   n5Raster2: createTileLayerFromKartlagSource("n5Raster2"),
