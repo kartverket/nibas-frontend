@@ -26,11 +26,10 @@ Følg readme i dette repoet for å få denne kjørende.
 
 ### Testing uten autentisering via ID-porten lokalt
 
-Normalt når men kjører opp applikasjonen lokalt er pålogging aktivert. For å skru av dette på må både backend og frontend
+Normalt når man kjører opp applikasjonen lokalt er pålogging aktivert. For å skru av dette må frontend
 startes opp med autentisering avskrudd.
 
-1. Backend må startes opp med spring-profilen `security-off`.
-2. Start opp frontenden med følgende miljøvariabel satt: `VITE_DISABLE_AUTH=true`
+Start opp frontenden med følgende miljøvariabel satt: `VITE_DISABLE_AUTH=true`
 
 ### Proxy
 
