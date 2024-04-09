@@ -17,6 +17,7 @@ const createTileLayerFromKartlagSource = (id: keyof typeof kartlagSources) => {
 };
 
 export const kartlagLayers: Record<KartlagId, TileLayer<TileWMS | WMTS>> = {
+  topograatone: createTileLayerFromKartlagSource("topograatone"),
   matrikkelenWMS: createTileLayerFromKartlagSource("matrikkelenWMS"),
   administrativeGrenser: createTileLayerFromKartlagSource("administrativeGrenser"),
   administrativeGrenserHistorisk: createTileLayerFromKartlagSource("administrativeGrenserHistorisk"),

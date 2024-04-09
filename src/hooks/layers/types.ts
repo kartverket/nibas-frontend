@@ -1,6 +1,7 @@
 import { EditingType } from "contexts/EditGrenserContext/types";
 
 export type KartlagId =
+  | "topograatone"
   | "cachetjenester"
   | "matrikkelenWMS"
   | "administrativeGrenser"

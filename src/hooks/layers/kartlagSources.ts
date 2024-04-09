@@ -58,6 +58,15 @@ const norgeIBilderConfig: WMTSConfig = {
   format: "image/png",
 };
 
+const topograatoneWMTSConfig: WMTSConfig = {
+  url: "https://cache.kartverket.no/topograatone/v1/wmts/1.0.0/",
+  layer: "topograatone",
+  matrixSet: "utm33n",
+  tileGrid: getBaseGrid(),
+  style: "default",
+  format: "image/png",
+};
+
 const createWMTS = (id: KartlagId, config: WMTSConfig) => {
   const wmts = new WMTS(config);
 
@@ -105,6 +114,7 @@ const createAuthedTileWMS = (id: KartlagId, url: string, tjenesteId: string) => 
 };
 
 export const kartlagSources: Record<KartlagId, WMTS | TileWMS> = {
+  topograatone: createWMTS("topograatone", topograatoneWMTSConfig),
   cachetjenester: createWMTS("cachetjenester", cachetjenesterConfig),
   norgeIBilder: createWMTS("norgeIBilder", norgeIBilderConfig),
   administrativeGrenser: createTileWMS("administrativeGrenser", "https://wms.geonorge.no/skwms1/wms.adm_enheter2"),
