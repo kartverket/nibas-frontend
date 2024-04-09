@@ -5,7 +5,6 @@ import Modify, { ModifyEvent } from "ol/interaction/Modify";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { click, primaryAction } from "ol/events/condition";
 import { Collection, MapBrowserEvent } from "ol";
-import { editSource } from "hooks/layers/constants";
 import { pixelTolerance, previousCoordinateKey } from "./constants";
 import { Tool, useToolbar } from "contexts/ToolbarContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
@@ -37,7 +36,7 @@ const useModify = () => {
     "Punktet ble lagt til",
     "punkter ble lagt til",
   );
-  const { getActiveFeaturesAtPixel, getFeaturesAtPixel } = useGetFeatures();
+  const { getActiveFeaturesAtPixel } = useGetFeatures();
   const { performFeatureSplit } = useSplit();
   const confirmationModal = useConfirmationModal();
 
@@ -45,21 +44,12 @@ const useModify = () => {
   const disallowedPointModes: Tool[] = useMemo(() => ["draw", "split", "grenseinfo", "archive", "koordinater"], []);
 
   const modify = useMemo(() => {
-    const detachMode = activeTool === "detach" && selectedFeatures.length > 0;
-
     return new Modify({
-      features: detachMode ? new Collection(selectedFeatures) : undefined,
-      source: detachMode ? undefined : editSource,
+      features: new Collection(selectedFeatures),
       pixelTolerance: pixelTolerance,
       condition: (event: MapBrowserEvent<MouseEvent>) => {
         if (activeModeTools.includes("move")) return false;
         if (disallowedPointModes.includes(activeTool)) return false;
-        if (activeTool === "detach") {
-          if (selectedFeatures.length !== 1) return false;
-
-          // Ved detach mode så er den eneste featuren som kan modifiseres den valgte featuren, så kan anta at condition er god her
-          return true;
-        }
 
         const activeFeatures = getActiveFeaturesAtPixel(event, "edit");
 
@@ -69,11 +59,11 @@ const useModify = () => {
         }
 
         // Sjekk alle featurene i punktet, hvis en av dem ikke skal kunne endres ønsker vi ikke å endre noe
-        if (activeFeatures.some((feature) => !isFeatureEditable(feature, featureIsArchived(feature)))) {
+        if (selectedFeatures.some((feature) => !isFeatureEditable(feature, featureIsArchived(feature)))) {
           toast({
             status: "error",
             title: "Denne grensen er ikke redigerbar",
-            description: activeFeatures.some((feature) => isAdministrativGrense(feature.get("type")))
+            description: selectedFeatures.some((feature) => isAdministrativGrense(feature.get("type")))
               ? "Ved endring av administrative grenser må du skru på visning for alle kretser som er knyttet til grensen"
               : undefined,
           });
@@ -101,26 +91,16 @@ const useModify = () => {
             return false;
           }
 
-          const featuresAtPixel = getFeaturesAtPixel(event, "edit");
-
           // Dersom noen av featurene vi trykker på har for få punkter skal vi ikke fjerne punktet
-          for (const feature of featuresAtPixel) {
-            const geometry = feature.getGeometry();
-            if (geometry instanceof LineString) {
-              const coordinates = geometry.getCoordinates();
-              if (coordinates.length <= 2) {
-                return false;
-              }
+          for (const feature of activeFeatures) {
+            const coordinates = feature.getGeometry()?.getCoordinates() ?? [];
+            if (coordinates.length <= 2) {
+              return false;
             }
           }
 
-          // I tilfellet vi har én LineString og ett punkt er det sikkert lurt å filtrere kun etter linestrings
-          const lineStringsAtPixel = featuresAtPixel.filter((featureLike) => {
-            return featureLike.getGeometry() instanceof LineString;
-          });
-
           // Vi ønsker ikke å slette punkter i knutepunkter
-          if (lineStringsAtPixel.length > 1) {
+          if (activeFeatures.length > 1) {
             toast({
               description: "Kan ikke slette punkter i knutepunkter, løsriv grensen først",
               status: "error",
@@ -129,7 +109,7 @@ const useModify = () => {
           }
 
           const nearbyVertexCoordinate = findNearbyVertexOnFeature(
-            lineStringsAtPixel[0].getGeometry() as LineString,
+            activeFeatures[0].getGeometry() as LineString,
             event.coordinate,
           );
 
@@ -155,7 +135,6 @@ const useModify = () => {
     featureIsArchived,
     toast,
     addToast,
-    getFeaturesAtPixel,
     removeToast,
   ]);
 
@@ -194,7 +173,6 @@ const useModify = () => {
           changes: createGrenseHistoryChange(features),
         });
       }
-      // TODO: hvis man har kjørt en detach vil vi kanskje sjekke om featuren nå er en løs tråd
     };
 
     const setPreviousCoordinatesForFeature = (feature: Feature<LineString>) => {
@@ -207,76 +185,66 @@ const useModify = () => {
     };
 
     const updateFeatureOnModification = async (event: ModifyEvent) => {
-      if (activeTool === "detach") {
-        if (selectedFeatures.length !== 1) return;
-        const selectedFeature = selectedFeatures[0];
-        if (isPreviousAndCurrentCoordinatesEqual(selectedFeature)) return;
+      if (selectedFeatures.length !== 1) return;
+      const selectedFeature = selectedFeatures[0];
+      if (isPreviousAndCurrentCoordinatesEqual(selectedFeature)) return;
 
-        const activeFeatures = getActiveFeaturesAtPixel(event.mapBrowserEvent, "edit");
+      const activeFeatures = getActiveFeaturesAtPixel(event.mapBrowserEvent, "edit");
 
-        const nonSelectedActiveFeatures = activeFeatures.filter(
-          (feature) => selectedFeature.getId() !== feature.getId(),
+      const nonSelectedActiveFeatures = activeFeatures.filter((feature) => selectedFeature.getId() !== feature.getId());
+
+      if (nonSelectedActiveFeatures.some((feature) => !isFeatureEditable(feature))) {
+        toast({
+          status: "error",
+          title: "Grensen er ikke redigerbar",
+          description: "Du kan ikke sette en løsrevet grense på en ikke-redigerbar grense",
+        });
+        setPreviousCoordinatesForFeature(selectedFeature);
+        return;
+      }
+
+      // Hvis vi ender opp på én grense, må vi sjekke om det er et endepunkt vi har landet på, for ikke-endepunkter oppfører seg annerledes
+      if (nonSelectedActiveFeatures.length === 1) {
+        const nonSelectedActiveFeature = nonSelectedActiveFeatures[0] as Feature<LineString>;
+        const nonSelectedActiveFeatureGeometry = nonSelectedActiveFeature.getGeometry();
+
+        if (!nonSelectedActiveFeatureGeometry) return;
+
+        const nearbyVertex = findNearbyVertexOnFeature(
+          nonSelectedActiveFeatureGeometry,
+          event.mapBrowserEvent.coordinate,
         );
 
-        if (!nonSelectedActiveFeatures.every((feature) => isFeatureEditable(feature, false))) {
-          toast({
-            status: "error",
-            title: "Grensen er ikke redigerbar",
-            description: "Du kan ikke sette en løsrevet grense på en ikke-redigerbar grense",
-          });
-          setPreviousCoordinatesForFeature(selectedFeature);
-          return;
-        }
+        if (nearbyVertex) {
+          const nonSelectedActiveFeatureCoordinates = nonSelectedActiveFeatureGeometry.getCoordinates();
 
-        // Hvis vi ender opp på én grense, må vi sjekke om det er et endepunkt vi har landet på, for ikke-endepunkter oppfører seg annerledes
-        if (nonSelectedActiveFeatures.length === 1) {
-          const nonSelectedActiveFeature = nonSelectedActiveFeatures[0] as Feature<LineString>;
-          const nonSelectedActiveFeatureGeometry = nonSelectedActiveFeature.getGeometry();
-
-          if (!nonSelectedActiveFeatureGeometry) return;
-
-          const nearbyVertex = findNearbyVertexOnFeature(
-            nonSelectedActiveFeatureGeometry,
-            event.mapBrowserEvent.coordinate,
-          );
-
-          if (nearbyVertex) {
-            const nonSelectedActiveFeatureCoordinates = nonSelectedActiveFeatureGeometry.getCoordinates();
-
-            // Vi trenger ikke gjøre noe hvis man ende opp på samme punkt som man løsrev fra
-            if (
-              equals(nearbyVertex, nonSelectedActiveFeatureCoordinates[0]) ||
-              equals(nearbyVertex, nonSelectedActiveFeatureCoordinates[nonSelectedActiveFeatureCoordinates.length - 1])
-            ) {
-              return;
-            }
-
-            const isAccepted = await confirmationModal.openAsync({
-              title: "Deling av grense",
-              description:
-                "Plasserer man et punkt på noe annet enn et endepunkt vil grensen deles i to deler. Er du sikker på at du vil dele grensen?",
-              acceptText: "Del grense",
-              declineText: "Avbryt",
-            });
-
-            if (isAccepted) {
-              performFeatureSplit(nonSelectedActiveFeature, [nearbyVertex]);
-            } else {
-              setPreviousCoordinatesForFeature(selectedFeature);
-              return;
-            }
-          } else {
-            setPreviousCoordinatesForFeature(selectedFeature);
-            toast({ title: "Løsrevede punkter kan kun plasseres på andre punkter", status: "warning" });
+          // Vi trenger ikke gjøre noe hvis man ender opp på samme punkt som man løsrev fra
+          if (
+            equals(nearbyVertex, nonSelectedActiveFeatureCoordinates[0]) ||
+            equals(nearbyVertex, nonSelectedActiveFeatureCoordinates[nonSelectedActiveFeatureCoordinates.length - 1])
+          ) {
             return;
           }
-        }
 
-        toast({
-          status: "success",
-          title: "Grense ble løsrevet",
-          description: "Husk å eventuelt sette tilhørighet på berørte grenser",
-        });
+          const isAccepted = await confirmationModal.openAsync({
+            title: "Deling av grense",
+            description:
+              "Plasserer man et punkt på noe annet enn et endepunkt vil grensen deles i to deler. Er du sikker på at du vil dele grensen?",
+            acceptText: "Del grense",
+            declineText: "Avbryt",
+          });
+
+          if (isAccepted) {
+            performFeatureSplit(nonSelectedActiveFeature, [nearbyVertex]);
+          } else {
+            setPreviousCoordinatesForFeature(selectedFeature);
+            return;
+          }
+        } else {
+          setPreviousCoordinatesForFeature(selectedFeature);
+          toast({ title: "Løsrevede punkter kan kun plasseres på andre punkter", status: "warning" });
+          return;
+        }
       }
 
       addModificationToHistory(event.features.getArray());

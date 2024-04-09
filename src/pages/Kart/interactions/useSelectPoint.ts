@@ -13,7 +13,7 @@ const useSelectPoint = () => {
   const toast = useToast();
   const { activeTool } = useToolbar();
   const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } = useOverlayPanel();
-  const { selectPointOnFeature, selectedPoint, clearSelection } = useFeatureStyle();
+  const { selectPointOnFeature, selectedFeatures, selectedPoint, clearSelection } = useFeatureStyle();
   const { getFeaturesAtPixel } = useGetFeatures();
 
   const allowedPointModes: Tool[] = useMemo(() => ["koordinater", "split"], []);
@@ -44,7 +44,7 @@ const useSelectPoint = () => {
       }
 
       // Valgt punkt kan ikke være en del av en ikke-redigerbar grense
-      if (!nonArchivedFeatures.every((feature) => isFeatureEditable(feature, false))) {
+      if (!nonArchivedFeatures.every((feature) => isFeatureEditable(feature))) {
         toast({
           status: "error",
           title: "Denne grensen er ikke redigerbar.",
@@ -74,7 +74,7 @@ const useSelectPoint = () => {
           openOverlayPanel("koordinater");
         }
       } else {
-        if (activeTool === "split") {
+        if (activeTool === "split" && selectedFeatures.length > 0) {
           toast({
             status: "error",
             title: "Du kan kun dele grensen i et eksisterende grensepunkt ",

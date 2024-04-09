@@ -198,7 +198,7 @@ export const getDefaultFeatureProperties = (grenseType: GrenseType): FeatureProp
   return properties;
 };
 
-export const isFeatureEditable = (feature: FeatureLike, isArchived: boolean) => {
+export const isFeatureEditable = (feature: FeatureLike, isArchived = false) => {
   const isMetadataEditable = isFeatureMetadataEditable(feature, isArchived);
 
   const featureType = feature.get("type");

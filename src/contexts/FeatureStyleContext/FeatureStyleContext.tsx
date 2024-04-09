@@ -162,7 +162,19 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     dirtyStyleFunctions.setCustomStyles(dirtyFeatures);
     archivedStyleFunctions.setCustomStyles(archivedFeatures);
     errorStyleFunctions.setCustomStyles(errorFeatures);
-  }, [archivedStyleFunctions, customStyles, dirtyStyleFunctions, errorStyleFunctions, history, undoFeatureStyles]);
+
+    // TODO: dette bør kanskje gjøres på en annen måte, sitter igjen etter angring og sånt
+    selectFeatures(selectedFeatures);
+  }, [
+    archivedStyleFunctions,
+    customStyles,
+    dirtyStyleFunctions,
+    errorStyleFunctions,
+    history,
+    selectFeatures,
+    selectedFeatures,
+    undoFeatureStyles,
+  ]);
 
   const clearFeatureStyles = () => {
     for (const customStyle of customStyles) {

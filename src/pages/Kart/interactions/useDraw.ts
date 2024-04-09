@@ -157,6 +157,7 @@ const useDraw = () => {
       const drawnFeatureHead = drawnFeatureGeometry.getFirstCoordinate();
       const drawnFeatureTail = drawnFeatureGeometry.getLastCoordinate();
       const geometry = feature.getGeometry();
+
       if (geometry && geometry instanceof LineString) {
         const coordinates = geometry.getCoordinates();
         const head = geometry.getFirstCoordinate();

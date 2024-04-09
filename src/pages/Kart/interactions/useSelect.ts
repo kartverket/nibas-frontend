@@ -25,8 +25,8 @@ const useSelect = () => {
   const previousPointMode = usePrevious(activeTool);
   const { getActiveFeaturesAtPixel } = useGetFeatures();
 
-  const dangerousPointModes: Tool[] = ["archive", "split", "detach"];
-  const allowedPointModes: Tool[] = [...dangerousPointModes, "grenseinfo"];
+  const disallowedTools: Tool[] = ["draw", "koordinater"];
+  const safeTools: Tool[] = ["grenseinfo"];
 
   // Dersom man bytter verktøy ønsker vi å cleare selection
   useEffect(() => {
@@ -39,9 +39,8 @@ const useSelect = () => {
   }, [activeOverlayPanel, activeTool, clearSelection, closeOverlayPanel, previousPointMode, selectedFeatures.length]);
 
   const select = (event: MapBrowserEvent<MouseEvent>) => {
-    if (allowedPointModes.includes(activeTool) && !event.dragging) {
-      // Henter features og filtrerer ut den blå prikken som indikerer hva man trykker på
-      const filteredFeatures = getActiveFeaturesAtPixel(event, null);
+    if (!disallowedTools.includes(activeTool) && !event.dragging) {
+      const filteredFeatures = getActiveFeaturesAtPixel(event, safeTools.includes(activeTool) ? null : "edit");
 
       if (filteredFeatures.length === 0) {
         overlayPopup.setPosition(undefined);
@@ -51,13 +50,18 @@ const useSelect = () => {
         return;
       }
 
-      const clickedFeature = filteredFeatures[0] as Feature<LineString>;
+      // Stopp tidlig dersom man klikker på de samme featurene på nytt
+      if (
+        selectedFeatures.length === filteredFeatures.length &&
+        selectedFeatures.every((sf) => filteredFeatures.some((ff) => sf.getId() === ff.getId()))
+      ) {
+        return;
+      }
+
+      const clickedFeature = filteredFeatures[0];
 
       // I noen verktøy skal man ikke kunne velge ikke-redigerbare grenser
-      if (
-        dangerousPointModes.includes(activeTool) &&
-        !isFeatureEditable(clickedFeature, featureIsArchived(clickedFeature))
-      ) {
+      if (!safeTools.includes(activeTool) && !isFeatureEditable(clickedFeature, featureIsArchived(clickedFeature))) {
         toast({ status: "error", title: "Denne grensen er ikke redigerbar" });
         event.stopPropagation();
         return;
@@ -110,11 +114,7 @@ const useSelect = () => {
         return;
       }
 
-      selectFeatures([clickedFeature]);
-
-      // Vi tar denne til slutt da vi noen ganger ønsker å returnere tidlig og la eventet propagere
-      // f.eks. ønsker vi at split skal både kunne gjøre select og selectPoint
-      event.stopPropagation();
+      selectFeatures(filteredFeatures);
     }
   };
 

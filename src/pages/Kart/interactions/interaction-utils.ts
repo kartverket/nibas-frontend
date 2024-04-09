@@ -1,10 +1,11 @@
 import { MapBrowserEvent } from "ol";
-import { FeatureLike } from "ol/Feature";
+import Feature, { FeatureLike } from "ol/Feature";
 import { LineString } from "ol/geom";
 import { map } from "../constants";
 import { pixelTolerance } from "./constants";
 import { getLayerById } from "utils/map/layers";
 import { LayerId } from "hooks/layers/types";
+import { isLineStringFeature } from "utils/type-utils";
 
 export const useGetFeatures = () => {
   const getFeaturesAtPixel = (event: MapBrowserEvent<MouseEvent>, layerIdToFilter: LayerId | null): FeatureLike[] =>
@@ -16,9 +17,7 @@ export const useGetFeatures = () => {
   const getActiveFeaturesAtPixel = (
     event: MapBrowserEvent<MouseEvent>,
     layerIdToFilter: LayerId | null,
-  ): FeatureLike[] => {
-    return getFeaturesAtPixel(event, layerIdToFilter).filter((feature) => feature.getGeometry() instanceof LineString);
-  };
+  ): Feature<LineString>[] => getFeaturesAtPixel(event, layerIdToFilter).filter(isLineStringFeature);
 
   return { getActiveFeaturesAtPixel, getFeaturesAtPixel };
 };

@@ -2,7 +2,6 @@ import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import LineString from "ol/geom/LineString";
 import MultiPoint from "ol/geom/MultiPoint";
-import RenderFeature from "ol/render/Feature";
 import Circle from "ol/style/Circle";
 import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
@@ -13,23 +12,22 @@ import { archivedSource, editSource } from "hooks/layers/constants";
 import { GrenseId, GrenseType } from "hooks/layers/types";
 import { isFeatureEditable, isMatrikkelFeature } from "utils/features";
 import { isGrenseType } from "utils/type-utils";
+import { FeatureLike } from "ol/Feature";
 
-const getNonEndpointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
-  const featureGeometry = feature.getGeometry();
-  if (!(featureGeometry instanceof LineString)) return;
-
-  const coordinates = featureGeometry.getCoordinates();
-
-  return new MultiPoint(coordinates.slice(1, -1));
+const getNonEndpointsOnFeature = (feature: FeatureLike) => {
+  const geometry = feature.getGeometry();
+  if (geometry instanceof LineString) {
+    const coordinates = geometry.getCoordinates();
+    return new MultiPoint(coordinates.slice(1, -1));
+  }
 };
 
-const getEndPointsOnFeature = (feature: Feature<Geometry> | RenderFeature) => {
-  const featureGeometry = feature.getGeometry();
-  if (!(featureGeometry instanceof LineString)) return;
-
-  const endCoordinates = [featureGeometry.getFirstCoordinate(), featureGeometry.getLastCoordinate()];
-
-  return new MultiPoint(endCoordinates);
+const getEndPointsOnFeature = (feature: FeatureLike) => {
+  const geometry = feature.getGeometry();
+  if (geometry instanceof LineString) {
+    const endCoordinates = [geometry.getFirstCoordinate(), geometry.getLastCoordinate()];
+    return new MultiPoint(endCoordinates);
+  }
 };
 
 const lineAndPointStyles = ({
@@ -156,11 +154,7 @@ const grenseStyleFromType = (grenseType: GrenseType, archived: boolean): Style[]
   }
 };
 
-export const getLayerStyle = (
-  feature: Feature<Geometry> | RenderFeature,
-  grenseId: GrenseId,
-  archived: boolean,
-): Style[] => {
+export const getLayerStyle = (feature: FeatureLike, grenseId: GrenseId, archived: boolean): Style[] => {
   const grenseType = feature.get("type");
 
   if (isGrenseType(grenseType)) {
@@ -178,7 +172,7 @@ export const getLayerStyle = (
   return [];
 };
 
-export const getArchiveLayerStyle = (feature: Feature<Geometry> | RenderFeature): Style[] => {
+export const getArchiveLayerStyle = (feature: FeatureLike): Style[] => {
   const grenseType = feature.get("type");
   if (isGrenseType(grenseType)) {
     return grenseStyleFromType(grenseType, true);
@@ -186,7 +180,7 @@ export const getArchiveLayerStyle = (feature: Feature<Geometry> | RenderFeature)
   return [];
 };
 
-export const getPointOverlayStyle = (feature: Feature<Geometry> | RenderFeature) => {
+export const getPointOverlayStyle = (feature: FeatureLike) => {
   const name = feature.get("name") as string | undefined;
   const number = feature.get("number") as string | undefined;
 
