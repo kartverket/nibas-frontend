@@ -49,7 +49,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
         isVisible: !isEditingPanel,
       };
 
-      const inndelingIfAlreadySelected = inndelinger.get(fylkeId);
+      const inndelingIfAlreadySelected = inndelinger["fylke"].get(fylkeId);
 
       if (inndelingIfAlreadySelected && isSameInndelinger(newInndeling, inndelingIfAlreadySelected)) {
         if (isEditingPanel) {
@@ -78,7 +78,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
         isVisible: !isEditingPanel,
       };
 
-      const inndelingIfAlreadySelected = inndelinger.get(kommuneId);
+      const inndelingIfAlreadySelected = inndelinger[selectedKretstype].get(kommuneId);
 
       if (inndelingIfAlreadySelected && isSameInndelinger(newInndeling, inndelingIfAlreadySelected)) {
         if (isEditingPanel) {
@@ -97,8 +97,8 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
 
   const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
-  const inndelingIcon = (id: string, isKommune: boolean) => {
-    const inndeling = inndelinger.get(id);
+  const inndelingIcon = (id: string, inndelingtype: Inndelingtype, isKommune: boolean) => {
+    const inndeling = inndelinger[inndelingtype].get(id);
 
     if (selectedKretstype === "fylke") {
       if (inndeling != null) {
@@ -147,7 +147,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
                     isActive={selectedPanelFylkeId === fylkeId}
                     key={fylkeId}
                     onClick={() => selectFylke(fylkeId)}
-                    {...(selectedKretstype !== "fylke" ? { rightIcon: inndelingIcon(fylkeId, false) } : {})}
+                    {...(selectedKretstype !== "fylke" ? { rightIcon: inndelingIcon(fylkeId, "fylke", false) } : {})}
                   >
                     {`${fylke.nummer} ${getNavnInSpraak(fylke.navn, "nor")}`}
                   </InndelingOption>

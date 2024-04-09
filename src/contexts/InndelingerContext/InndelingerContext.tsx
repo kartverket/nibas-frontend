@@ -23,6 +23,20 @@ export type Inndeling = {
   isEditing: boolean;
 };
 
+type Inndelinger = {
+  [inndelingtype in Inndelingtype]: Map<string, Inndeling>;
+};
+
+function getEmptyInndelinger(): Inndelinger {
+  const inndelinger: Partial<Inndelinger> = {};
+
+  for (const type of INNDELINGTYPER) {
+    inndelinger[type] = new Map<string, Inndeling>();
+  }
+
+  return inndelinger as Inndelinger;
+}
+
 export const isEqualInndelinger = (a: Inndeling, b: Inndeling): boolean => {
   return (
     a.id === b.id && a.inndelingtype === b.inndelingtype && a.isVisible === b.isVisible && a.isEditing === b.isEditing
@@ -32,8 +46,6 @@ export const isEqualInndelinger = (a: Inndeling, b: Inndeling): boolean => {
 export const isSameInndelinger = (a: Inndeling, b: Inndeling): boolean => {
   return a.id === b.id && a.inndelingtype === b.inndelingtype;
 };
-
-type Inndelinger = Map<string, Inndeling>;
 
 export type InndelingerContextValue = {
   inndelinger: Inndelinger;
@@ -48,12 +60,12 @@ export type InndelingerContextValue = {
 export const InndelingerContext = createContext<InndelingerContextValue | undefined>(undefined);
 
 export const InndelingerProvider = ({ children }: { children: React.ReactNode }) => {
-  const [inndelinger, setInndelinger] = useState<Inndelinger>(new Map<string, Inndeling>());
+  const [inndelinger, setInndelinger] = useState<Inndelinger>(getEmptyInndelinger());
 
   const { setFeatureStylesForUtkastFeatures, setFeatureStylesForSammenslaaingsFeatures } = useFeatureStyle();
 
   const previousInndelinger = useRef<Inndelinger>();
-  if (previousInndelinger.current == null) previousInndelinger.current = new Map<string, Inndeling>();
+  if (previousInndelinger.current == null) previousInndelinger.current = getEmptyInndelinger();
 
   const [selectedFylkeId, setSelectedFylkeId] = useState("");
   const [selectedInndeling, setSelectedInndeling] = useState<Inndeling | null>(null);
@@ -102,12 +114,18 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
     if (inndelingFeatures.length > 0) {
       setIsHandlingFeatures(true);
-      const previousInndeling = previousInndelinger.current?.get(selectedInndeling.id) ?? {
+
+      const defaultPreviousinndeling = {
         id: selectedInndeling.id,
         inndelingtype: selectedInndeling.inndelingtype,
         isEditing: false,
         isVisible: false,
       };
+
+      const previousInndeling = previousInndelinger.current
+        ? previousInndelinger.current[selectedInndeling.inndelingtype].get(selectedInndeling.id) ??
+          defaultPreviousinndeling
+        : defaultPreviousinndeling;
 
       if (
         previousInndeling.inndelingtype !== selectedInndeling.inndelingtype ||
@@ -118,7 +136,6 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
           // synes dette virket litt tungvindt, men lar det være per nå
           // tanken er bare å returnere en liste over alle features i inndelingen, men bruke feature fra utkast der disse finnes
           const inndelingFeaturesExcludedUtkastFeatures: Feature<Geometry>[] = [...utkastFeaturesInInndeling];
-          const sammenslaaingFeaturesWithDuplicates: Feature<Geometry>[] = [];
 
           for (const inndelingFeature of inndelingFeatures) {
             const featureIfInUtkast = inndelingFeaturesExcludedUtkastFeatures.find(
@@ -129,6 +146,8 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
               inndelingFeaturesExcludedUtkastFeatures.push(inndelingFeature);
             }
           }
+
+          const sammenslaaingFeaturesWithDuplicates: Feature<Geometry>[] = [];
 
           if (selectedInndeling.inndelingtype === "stemmekrets") {
             const sammenslaaing = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
@@ -193,8 +212,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         source?.clear(true);
       }
       setSelectedInndeling(null);
-      setInndelinger(new Map<string, Inndeling>());
-      // Reset zoom? Kanskje ikke egentlig?
+      setInndelinger(getEmptyInndelinger());
     }
   }, [utkast]);
 
@@ -203,29 +221,39 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
    * @returns Inndelingen som redigeres dersom den finnes, null ellers
    */
   const getCurrentlyEditingInndeling = (): Inndeling | null => {
-    for (const [, inndeling] of inndelinger) {
-      if (inndeling.isEditing) return inndeling;
+    for (const inndelingerType of Object.values(inndelinger)) {
+      for (const [, inndeling] of inndelingerType) {
+        if (inndeling.isEditing) return inndeling;
+      }
     }
 
     return null;
   };
 
+  const getInndelingerWithNewInndeling = (newInndeling: Inndeling): Inndelinger => {
+    const newInndelinger: Inndelinger = structuredClone(inndelinger);
+
+    newInndelinger[newInndeling.inndelingtype].set(newInndeling.id, newInndeling);
+
+    return newInndelinger;
+  };
+
   const selectInndeling = (inndeling: Inndeling) => {
-    const inndelingIfExists = inndelinger.get(inndeling.id);
+    const inndelingIfExists = inndelinger[inndeling.inndelingtype].get(inndeling.id);
 
     if (inndelingIfExists != null) {
       if (isEqualInndelinger(inndelingIfExists, inndeling)) {
-        // Her kan man anta at man har trykket på noe man allerede har trykket på, så kanskje man skal fjerne ting her?
         return;
       }
     }
 
-    const newInndelinger: Inndelinger = new Map(inndelinger).set(inndeling.id, inndeling);
+    const newInndelinger: Inndelinger = getInndelingerWithNewInndeling(inndeling);
 
     if (inndeling.isEditing) {
       const currentlyEditingInndeling = getCurrentlyEditingInndeling();
+
       if (currentlyEditingInndeling && currentlyEditingInndeling.id !== inndeling.id) {
-        newInndelinger.set(currentlyEditingInndeling.id, {
+        newInndelinger[currentlyEditingInndeling.inndelingtype].set(currentlyEditingInndeling.id, {
           ...currentlyEditingInndeling,
           isEditing: false,
         });

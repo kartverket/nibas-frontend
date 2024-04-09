@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FeatureProperties, KontekstEgenskaper, KretsDelingEndringRequest, UtkastOperasjoner } from "types/api";
-import { getIdFromEntity } from "utils/api";
 import {
   CustomOption,
   KontekstType,
@@ -17,7 +16,6 @@ import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { Feature } from "ol";
 import { LineString } from "ol/geom";
 import { addKontekstEntryFromFeature } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { isGrenseType } from "utils/type-utils";
 import { GrenseType } from "hooks/layers/types";
