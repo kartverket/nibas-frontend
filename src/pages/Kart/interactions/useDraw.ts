@@ -184,6 +184,7 @@ const useDraw = () => {
         drawnFeatureGeometry.getLength() === 0 ||
         drawnFeatureGeometry.getCoordinates().length < 2
       ) {
+        setAbortDrawMemoHelper((a) => a + 1);
         return;
       }
 

@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@kvib/react": "^4.0.0",
+    "@kvib/react": "^4.1.0",
     "date-fns": "^3.3.1",
     "framer-motion": "^9.1.7",
     "lodash.get": "^4.4.2",

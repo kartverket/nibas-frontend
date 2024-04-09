@@ -3,12 +3,12 @@ import MergePanel from "./MergePanel/MergePanel";
 import GrenseinformasjonPanel from "./GrenseinformasjonPanel/GrenseinformasjonPanel";
 import StemmekretsPanel from "./Flatedata/StemmekretsPanel/StemmekretsPanel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import KoordinaterPanel from "./KoordinaterPanel";
+import FlyttKoordinaterPanel from "./FlyttKoordinaterPanel";
 import { TegnforklaringPanel } from "./Tegnforklaring/TegnforklaringPanel";
 import KartlagPanel from "./Kartlag/KartlagPanel";
 import { SplittingPanel } from "./SplittingPanel/SplittingPanel";
 import InndelingerPanel from "./Inndelinger/InndelingerPanel";
-import NavigasjonPanel from "./NavigasjonPanel";
+import NavigasjonPanel from "./NavigasjonPanel/NavigasjonPanel";
 
 const OverlayPanels = () => {
   const { activeOverlayPanel, activeOverlayModal } = useOverlayPanel();
@@ -18,7 +18,7 @@ const OverlayPanels = () => {
       <GrenseinformasjonPanel isOpen={activeOverlayPanel === "grenseinfo"} />
       <MergePanel isOpen={activeOverlayPanel === "sammenslåing"} />
       <SplittingPanel isOpen={activeOverlayPanel === "splitting"} />
-      <KoordinaterPanel isOpen={activeOverlayPanel === "koordinater"} />
+      <FlyttKoordinaterPanel isOpen={activeOverlayPanel === "koordinater"} />
       <TegnforklaringPanel isOpen={activeOverlayPanel === "tegnforklaring"} />
       <KartlagPanel isOpen={activeOverlayPanel === "kartlag"} />
 

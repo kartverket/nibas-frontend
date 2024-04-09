@@ -24,7 +24,7 @@ export class ErrorBoundaryWithFrontendLogger extends React.Component<Props, Erro
   }
 
   componentDidCatch(error: Error) {
-    frontendLogger.error(error.message, error);
+    frontendLogger.error(error.message, error, this.props.authToken);
   }
 
   render() {

@@ -1,0 +1,42 @@
+import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import useToastUnique from "hooks/toast/useToastUnique";
+import { InndelingResponse } from "types/api";
+import { getUrlForPath, statusCode } from "utils/api";
+
+export const useInndelingerSearch = () => {
+  const auth = useAuthentication();
+  const { utkast } = useUtkast();
+  const { toastUnique: searchErrorToast } = useToastUnique({
+    status: "error",
+    title: "Søket feilet",
+    description: "Vennligst prøv igjen. Ta kontakt med Kartverket om feilen vedvarer.",
+  });
+
+  const searchInndelinger = async (searchString: string, limit: number): Promise<InndelingResponse[] | null> => {
+    const gyldhetsdato = utkast?.gyldigFra;
+
+    const response = await fetch(
+      getUrlForPath(
+        `v1/inndelinger/?searchString=${encodeURIComponent(searchString)}&gyldighetsdato=${encodeURIComponent(gyldhetsdato ?? "")}&limit=${encodeURIComponent(limit)}`,
+      ),
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + auth.token,
+        },
+      },
+    );
+
+    if (statusCode.isSuccessful(response.status)) {
+      return response.json();
+    } else if (statusCode.isError(response.status)) {
+      searchErrorToast();
+    }
+
+    return null;
+  };
+
+  return searchInndelinger;
+};

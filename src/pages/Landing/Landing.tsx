@@ -15,7 +15,7 @@ const Landing = () => {
   const navigate = useNavigate();
   const { resetKartlag } = useKartlag();
   const { resetTool, resetModeTools } = useToolbar();
-  const { activeOverlayPanel, closeOverlayPanel } = useOverlayPanel();
+  const { activeOverlayPanel, closeOverlayPanel, activeOverlayModal, closeOverlayModal } = useOverlayPanel();
 
   useEffect(() => {
     resetMapView();
@@ -25,7 +25,16 @@ const Landing = () => {
 
     // Disse to krever ekstra sjekking for å unngå uendelig useEffekt-løkke
     if (activeOverlayPanel) closeOverlayPanel();
-  }, [activeOverlayPanel, closeOverlayPanel, resetKartlag, resetModeTools, resetTool]);
+    if (activeOverlayModal) closeOverlayModal();
+  }, [
+    activeOverlayModal,
+    activeOverlayPanel,
+    closeOverlayModal,
+    closeOverlayPanel,
+    resetKartlag,
+    resetModeTools,
+    resetTool,
+  ]);
 
   return (
     <PageContainer>

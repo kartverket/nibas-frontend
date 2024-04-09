@@ -14,7 +14,7 @@ const grunnkretsFetcher = async ([grunnkretsIds, token]: [string[], string | und
 
 export const useGrunnkretser = (grunnkretsId: string[]) => {
   const auth = useAuthentication();
-  return useSWRImmutable(grunnkretsId.length > 0 ? [grunnkretsId, auth.userId] : null, grunnkretsFetcher);
+  return useSWRImmutable(grunnkretsId.length > 0 ? [grunnkretsId, auth.token] : null, grunnkretsFetcher);
 };
 
 export const useKommuneGrunnkretser = (kommuneId: string | null) => {
