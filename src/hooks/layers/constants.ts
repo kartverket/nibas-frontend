@@ -18,14 +18,15 @@ const createTileLayerFromKartlagSource = (id: keyof typeof kartlagSources, optio
 };
 
 export const kartlagLayers: Record<KartlagId, TileLayer<TileWMS | WMTS>> = {
-  topograatone: createTileLayerFromKartlagSource("topograatone", { opacity: 75 }),
   matrikkelenWMS: createTileLayerFromKartlagSource("matrikkelenWMS"),
   administrativeGrenser: createTileLayerFromKartlagSource("administrativeGrenser"),
   administrativeGrenserHistorisk: createTileLayerFromKartlagSource("administrativeGrenserHistorisk"),
   grunnkretserWMS: createTileLayerFromKartlagSource("grunnkretserWMS"),
   stedsnavn: createTileLayerFromKartlagSource("stedsnavn"),
   stedsnavnSSR: createTileLayerFromKartlagSource("stedsnavnSSR"),
-  cachetjenester: createTileLayerFromKartlagSource("cachetjenester"),
+  topo: createTileLayerFromKartlagSource("topo"),
+  toporaster: createTileLayerFromKartlagSource("toporaster"),
+  topograatone: createTileLayerFromKartlagSource("topograatone", { opacity: 0.75 }),
   kartbladinndelinger: createTileLayerFromKartlagSource("kartbladinndelinger"),
   sjokartDybdedata: createTileLayerFromKartlagSource("sjokartDybdedata"),
   n5Raster2: createTileLayerFromKartlagSource("n5Raster2"),

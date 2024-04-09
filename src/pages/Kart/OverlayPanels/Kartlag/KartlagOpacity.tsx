@@ -23,7 +23,7 @@ type Props = {
 
 const KartlagOpacity = ({ layerId }: Props) => {
   const layer = getLayerById(layerId);
-  const [opacity, setOpacity] = useState(layer.getOpacity() ?? 100);
+  const [opacity, setOpacity] = useState(layer.getOpacity() * 100 ?? 100);
 
   useEffect(() => {
     layer.setOpacity(opacity / 100);
