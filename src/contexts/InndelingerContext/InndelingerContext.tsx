@@ -38,6 +38,9 @@ export type InndelingerContextValue = {
   selectInndeling: (inndeling: Inndeling) => void;
   currentlyEditedInndeling: Inndeling | null;
   isLoadingInndeling: boolean;
+
+  selectedFylkeId: string;
+  setSelectedFylkeId: (id: string) => void;
 };
 
 export const InndelingerContext = createContext<InndelingerContextValue | undefined>(undefined);
@@ -50,6 +53,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
   const previousInndelinger = useRef<Inndelinger>();
   if (previousInndelinger.current == null) previousInndelinger.current = new Map<string, Inndeling>();
 
+  const [selectedFylkeId, setSelectedFylkeId] = useState("");
   const [selectedInndeling, setSelectedInndeling] = useState<Inndeling | null>(null);
 
   const [isHandlingFeatures, setIsHandlingFeatures] = useState(false);
@@ -237,6 +241,9 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     selectInndeling,
     currentlyEditedInndeling: getCurrentlyEditingInndeling(),
     isLoadingInndeling: isFetching || isHandlingFeatures,
+
+    selectedFylkeId,
+    setSelectedFylkeId,
   };
 
   return <InndelingerContext.Provider value={value}>{children}</InndelingerContext.Provider>;

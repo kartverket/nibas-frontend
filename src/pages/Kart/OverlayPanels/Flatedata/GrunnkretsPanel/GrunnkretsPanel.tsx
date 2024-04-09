@@ -14,15 +14,19 @@ import { useTableSort } from "../useTableSort";
 import { orderBy } from "utils/list-utils";
 import { Modal, ModalContent, ModalOverlay, Spinner } from "@kvib/react";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import useKommuner from "hooks/inndelinger/useKommuner";
+import { inndelingResponseNavnToString } from "contexts/InndelingerContext/useInndelingFeatures";
 
 const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
   const { utkast } = useUtkast();
   const { sortProperty, sortOrder, sortHeaderProps } = useTableSort<GrunnkretsResponse>(["nummer", "navn"]);
   const { closeOverlayModal } = useOverlayPanel();
   const { searchValue, setInputValue } = useSearch();
-  const { currentlyEditedInndeling } = useInndelinger();
+  const { currentlyEditedInndeling, selectedFylkeId } = useInndelinger();
+  const { kommuner } = useKommuner(selectedFylkeId);
 
   const kommuneId = currentlyEditedInndeling ? currentlyEditedInndeling.id : null;
+  const kommune = kommuner?.find((fetchedKommune) => fetchedKommune.id.lokalid.value === kommuneId);
   const { data: grunnkretserByKommune } = useKommuneGrunnkretser(kommuneId);
   const utkastGrunnkretser = useUtkastEntity(grunnkretserByKommune, "grunnkretsendringer") as
     | GrunnkretsResponse[]
@@ -41,25 +45,33 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
     <Modal isOpen={isOpen} onClose={closeOverlayModal} scrollBehavior="inside">
       <ModalOverlay />
       <ModalContent as={ModalPanel} $isOpen={isOpen} className={className}>
-        <PanelHeader onClose={closeOverlayModal}>Flateinformasjon for TODO</PanelHeader>
-        {filteredGrunnkretser ? (
-          <KretsTable $hasUtkast={utkast != null}>
-            <thead>
-              <tr>
-                <SortHeader {...sortHeaderProps("nummer")}>Grunnkretsnummer</SortHeader>
-                <SortHeader {...sortHeaderProps("navn")}>Grunnkretsnavn</SortHeader>
-                {utkast && <th>{/* Tom plass for mellomrom */}</th>}
-                <th>
-                  <Input placeholder="Søk på navn" onChange={(e) => setInputValue(e.currentTarget.value)} />
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {orderBy(filteredGrunnkretser, sortProperty, sortOrder).map((grunnkrets) => (
-                <GrunnkretsRow key={getIdFromEntity(grunnkrets)} grunnkrets={grunnkrets} kommuneId={kommuneId ?? ""} />
-              ))}
-            </tbody>
-          </KretsTable>
+        {kommune && filteredGrunnkretser ? (
+          <>
+            <PanelHeader onClose={closeOverlayModal}>
+              Flateinformasjon for {inndelingResponseNavnToString(kommune.navn)}
+            </PanelHeader>
+            <KretsTable $hasUtkast={utkast != null}>
+              <thead>
+                <tr>
+                  <SortHeader {...sortHeaderProps("nummer")}>Grunnkretsnummer</SortHeader>
+                  <SortHeader {...sortHeaderProps("navn")}>Grunnkretsnavn</SortHeader>
+                  {utkast && <th>{/* Tom plass for mellomrom */}</th>}
+                  <th>
+                    <Input placeholder="Søk på navn" onChange={(e) => setInputValue(e.currentTarget.value)} />
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {orderBy(filteredGrunnkretser, sortProperty, sortOrder).map((grunnkrets) => (
+                  <GrunnkretsRow
+                    key={getIdFromEntity(grunnkrets)}
+                    grunnkrets={grunnkrets}
+                    kommuneId={kommuneId ?? ""}
+                  />
+                ))}
+              </tbody>
+            </KretsTable>
+          </>
         ) : (
           <Spinner />
         )}

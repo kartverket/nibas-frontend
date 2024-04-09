@@ -18,24 +18,26 @@ import InndelingOption from "./Inndeling";
 
 const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
   const [selectedKretstype, setSelectedKretstype] = useState<Kretstype | null>(null);
-  const [selectedFylkeId, setSelectedFylkeId] = useState<string>("");
-  const { inndelinger, selectInndeling } = useInndelinger();
+
+  // Bedre navn på denne for å skille den mer fra valgt fylke i context?
+  const [selectedPanelFylkeId, setSelectedPanelFylkeId] = useState<string>("");
+  const { inndelinger, selectInndeling, setSelectedFylkeId } = useInndelinger();
   const { closeOverlayModal, activeOverlayModal } = useOverlayPanel();
 
   const isEditingPanel = activeOverlayModal === "inndelinger";
 
   const { fylker } = useFylker();
-  const { kommuner } = useKommuner(selectedFylkeId);
+  const { kommuner } = useKommuner(selectedPanelFylkeId);
 
   const resetInndelingerPanel = () => {
     closeOverlayModal();
     setSelectedKretstype(null);
-    setSelectedFylkeId("");
+    setSelectedPanelFylkeId("");
   };
 
   const selectKretstype = (kretstype: Kretstype) => {
     setSelectedKretstype(kretstype);
-    setSelectedFylkeId("");
+    setSelectedPanelFylkeId("");
   };
 
   const selectFylke = (fylkeId: string) => {
@@ -62,6 +64,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
       selectInndeling(newInndeling);
       resetInndelingerPanel();
     } else {
+      setSelectedPanelFylkeId(fylkeId);
       setSelectedFylkeId(fylkeId);
     }
   };
@@ -141,7 +144,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
                 const fylkeId = getIdFromEntity(fylke);
                 return (
                   <InndelingOption
-                    isActive={selectedFylkeId === fylkeId}
+                    isActive={selectedPanelFylkeId === fylkeId}
                     key={fylkeId}
                     onClick={() => selectFylke(fylkeId)}
                     {...(selectedKretstype !== "fylke" ? { rightIcon: inndelingIcon(fylkeId, false) } : {})}
@@ -153,7 +156,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
           </InndelingerList>
           <Divider orientation="vertical" />
           <InndelingerList>
-            {selectedFylkeId &&
+            {selectedPanelFylkeId &&
               kommuner?.map((kommune) => {
                 const kommuneId = getIdFromEntity(kommune);
                 return (

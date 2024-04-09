@@ -6,10 +6,15 @@ import { geoJsonToSource, getFeatureFromGeoJson } from "utils/map/geoJson";
 import { Inndeling, Kretstype } from "./InndelingerContext";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
-import { FeatureCollection, InndelingResponse } from "types/api";
+import { FeatureCollection, InndelingNavn, InndelingResponse } from "types/api";
 import { removeNil } from "utils/list-utils";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { getRepresentasjonspunktId } from "utils/map/source";
+
+// Finn et bedre sted for denne stakkaren å leve
+export const inndelingResponseNavnToString = (inndelingNavn: InndelingNavn): string => {
+  return Array.isArray(inndelingNavn) ? inndelingNavn.map((navn) => navn.navn).join(" - ") : inndelingNavn;
+};
 
 const useInndelingFeatures = (inndeling: Inndeling | null) => {
   const { utkast } = useUtkast();
@@ -40,13 +45,11 @@ const useInndelingFeatures = (inndeling: Inndeling | null) => {
     return `/v1/kommuner/{id}/${kretstype}er`;
   };
 
-  // Denne henter kun dersom den har en inndeling
   const { data: featuresResponse, isLoading: isFetchingFeatures } = useNibasApi(
     inndeling != null ? getGrenseRequestUrl(inndeling.kretstype) : null,
     inndeling != null ? { id: inndeling.id } : null,
   );
 
-  // Denne henter kun dersom den har en inndeling
   const { data: inndelingResponse, isLoading: isFetchingInndeling } = useNibasApi(
     inndeling != null ? getInndelingRequestUrl(inndeling.kretstype) : null,
     inndeling != null ? { id: inndeling.id } : null,
@@ -55,9 +58,7 @@ const useInndelingFeatures = (inndeling: Inndeling | null) => {
   const getRepresentasjonspunktFeatureForInndeling = (
     inndelingWithRepresentasjonspunkt: InndelingResponse,
   ): GeoJSONFeature => {
-    const inndelingName: string = Array.isArray(inndelingWithRepresentasjonspunkt.navn)
-      ? inndelingWithRepresentasjonspunkt.navn.map((navn) => navn.navn).join(", ")
-      : inndelingWithRepresentasjonspunkt.navn;
+    const inndelingName: string = inndelingResponseNavnToString(inndelingWithRepresentasjonspunkt.navn);
 
     return getFeatureFromGeoJson({
       ...inndelingWithRepresentasjonspunkt.representasjonspunkt,

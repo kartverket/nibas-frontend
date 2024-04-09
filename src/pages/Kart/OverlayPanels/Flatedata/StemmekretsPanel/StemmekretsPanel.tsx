@@ -9,9 +9,10 @@ import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import SortHeader from "../SortHeader";
 import { useTableSort } from "../useTableSort";
 import { orderBy } from "utils/list-utils";
-import { getNavnInSpraak } from "utils/language/language";
 import { Modal, ModalContent, ModalOverlay, Spinner } from "@kvib/react";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import useKommuner from "hooks/inndelinger/useKommuner";
+import { inndelingResponseNavnToString } from "contexts/InndelingerContext/useInndelingFeatures";
 
 const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
   const { utkast } = useUtkast();
@@ -22,8 +23,12 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
   ]);
 
   const { closeOverlayModal } = useOverlayPanel();
-  const { currentlyEditedInndeling } = useInndelinger();
+  const { currentlyEditedInndeling, selectedFylkeId } = useInndelinger();
+  const { kommuner } = useKommuner(selectedFylkeId);
+
   const kommuneId = currentlyEditedInndeling ? currentlyEditedInndeling.id : null;
+  const kommune = kommuner?.find((fetchedKommune) => fetchedKommune.id.lokalid.value === kommuneId);
+
   const { data: stemmekretserByKommune } = useKommuneStemmekretser(kommuneId);
   const utkastStemmekretser = useUtkastEntity(stemmekretserByKommune, "stemmekretsendringer") as
     | StemmekretsResponse[]
@@ -33,27 +38,31 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
     <Modal isOpen={isOpen} onClose={closeOverlayModal} scrollBehavior="inside">
       <ModalOverlay />
       <ModalContent as={ModalPanel} $isOpen={isOpen} className={className}>
-        <PanelHeader onClose={closeOverlayModal}>Flateinformasjon for {"TODO"}</PanelHeader>
-        {utkastStemmekretser ? (
-          <KretsTable $hasUtkast={utkast != null}>
-            <thead>
-              <tr>
-                <SortHeader {...sortHeaderProps("nummer")}>Stemmekretsnummer</SortHeader>
-                <SortHeader {...sortHeaderProps("navn")}>Stemmekretsnavn</SortHeader>
-                <SortHeader {...sortHeaderProps("valgdistriktsnummer")}>Valgdistriktsnummer</SortHeader>
-                {utkast && <th>{/* Tom plass for knapp i rader */}</th>}
-              </tr>
-            </thead>
-            <tbody>
-              {orderBy(utkastStemmekretser, sortProperty, sortOrder).map((stemmekrets) => (
-                <StemmekretsRow
-                  key={getIdFromEntity(stemmekrets)}
-                  stemmekrets={stemmekrets}
-                  kommuneId={kommuneId ?? ""}
-                />
-              ))}
-            </tbody>
-          </KretsTable>
+        {utkastStemmekretser && kommune ? (
+          <>
+            <PanelHeader onClose={closeOverlayModal}>
+              Flateinformasjon for {inndelingResponseNavnToString(kommune.navn)}
+            </PanelHeader>
+            <KretsTable $hasUtkast={utkast != null}>
+              <thead>
+                <tr>
+                  <SortHeader {...sortHeaderProps("nummer")}>Stemmekretsnummer</SortHeader>
+                  <SortHeader {...sortHeaderProps("navn")}>Stemmekretsnavn</SortHeader>
+                  <SortHeader {...sortHeaderProps("valgdistriktsnummer")}>Valgdistriktsnummer</SortHeader>
+                  {utkast && <th>{/* Tom plass for knapp i rader */}</th>}
+                </tr>
+              </thead>
+              <tbody>
+                {orderBy(utkastStemmekretser, sortProperty, sortOrder).map((stemmekrets) => (
+                  <StemmekretsRow
+                    key={getIdFromEntity(stemmekrets)}
+                    stemmekrets={stemmekrets}
+                    kommuneId={kommuneId ?? ""}
+                  />
+                ))}
+              </tbody>
+            </KretsTable>
+          </>
         ) : (
           <Spinner />
         )}
