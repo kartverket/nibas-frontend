@@ -12,7 +12,7 @@ import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import { useToast } from "@kvib/react";
 import { useCallback } from "react";
-import { Inndeling, Kretstype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import { Inndeling, Inndelingtype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
 export type SplittingForm = Pick<KretsDelingEndringRequest, "opprinneligKrets" | "nyeKretser">;
 
@@ -25,7 +25,7 @@ export const getDefaultSplittingValue = () => ({
 });
 
 const getKommuneIdentifikatorFromOptions = (
-  kretstype: Kretstype,
+  kretstype: Inndelingtype,
   opprinneligKretsId: string,
   grunnkretser: GrunnkretsResponse[],
   stemmekretser: StemmekretsResponse[],
@@ -61,7 +61,7 @@ export const useSplittingForm = (inndeling: Inndeling | null) => {
   });
 
   const { currentlyEditedInndeling } = useInndelinger();
-  const kretstype = currentlyEditedInndeling?.kretstype;
+  const kretstype = currentlyEditedInndeling?.inndelingtype;
 
   // TODO Vi trenger ikke hente begge, vi kan velge hva vi henter basert på inndelingstypen
   const { data: stemmekretser } = useKommuneStemmekretser(inndeling?.id ?? null);

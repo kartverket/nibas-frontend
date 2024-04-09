@@ -114,7 +114,7 @@ const useDraw = () => {
     const addDrawToHistory = (drawnFeature: Feature<LineString>) => {
       if (currentlyEditedInndeling == null) return;
 
-      const grenseType = getGrenseTypeFromKretstype(currentlyEditedInndeling.kretstype);
+      const grenseType = getGrenseTypeFromKretstype(currentlyEditedInndeling.inndelingtype);
 
       if (grenseType) {
         addHistoryEntry({
@@ -196,7 +196,7 @@ const useDraw = () => {
         splitFeatureAtDrawnFeatureEndpoints(feature, drawnFeatureGeometry);
       }
 
-      setDefaultFeatureProperties(drawnFeature, getGrenseTypeFromKretstype(currentlyEditedInndeling.kretstype));
+      setDefaultFeatureProperties(drawnFeature, getGrenseTypeFromKretstype(currentlyEditedInndeling.inndelingtype));
 
       addDrawToHistory(drawnFeature);
       addFeaturesToSource("edit", [drawnFeature]);

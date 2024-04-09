@@ -12,23 +12,25 @@ import { Geometry } from "ol/geom";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { FeatureProperties } from "types/api";
 
-export const KRETSTYPER = ["fylke", "kommune", "stemmekrets", "grunnkrets"] as const;
-type Kretstyper = typeof KRETSTYPER;
-export type Kretstype = Kretstyper[number];
+export const INNDELINGTYPER = ["fylke", "kommune", "stemmekrets", "grunnkrets"] as const;
+type Inndelingtyper = typeof INNDELINGTYPER;
+export type Inndelingtype = Inndelingtyper[number];
 
 export type Inndeling = {
   id: string;
-  kretstype: Kretstype;
+  inndelingtype: Inndelingtype;
   isVisible: boolean;
   isEditing: boolean;
 };
 
 export const isEqualInndelinger = (a: Inndeling, b: Inndeling): boolean => {
-  return a.id === b.id && a.kretstype === b.kretstype && a.isVisible === b.isVisible && a.isEditing === b.isEditing;
+  return (
+    a.id === b.id && a.inndelingtype === b.inndelingtype && a.isVisible === b.isVisible && a.isEditing === b.isEditing
+  );
 };
 
 export const isSameInndelinger = (a: Inndeling, b: Inndeling): boolean => {
-  return a.id === b.id && a.kretstype === b.kretstype;
+  return a.id === b.id && a.inndelingtype === b.inndelingtype;
 };
 
 type Inndelinger = Map<string, Inndeling>;
@@ -102,13 +104,13 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
       setIsHandlingFeatures(true);
       const previousInndeling = previousInndelinger.current?.get(selectedInndeling.id) ?? {
         id: selectedInndeling.id,
-        kretstype: selectedInndeling.kretstype,
+        inndelingtype: selectedInndeling.inndelingtype,
         isEditing: false,
         isVisible: false,
       };
 
       if (
-        previousInndeling.kretstype !== selectedInndeling.kretstype ||
+        previousInndeling.inndelingtype !== selectedInndeling.inndelingtype ||
         previousInndeling.isEditing !== selectedInndeling.isEditing
       ) {
         editSource.clear(true);
@@ -128,7 +130,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
             }
           }
 
-          if (selectedInndeling.kretstype === "stemmekrets") {
+          if (selectedInndeling.inndelingtype === "stemmekrets") {
             const sammenslaaing = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
             if (sammenslaaing != null) {
               const innlemmedeStemmekretsIder = sammenslaaing.stemmekretserTilSammenslaaing.map(
@@ -166,9 +168,9 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
       if (previousInndeling.isVisible !== selectedInndeling.isVisible) {
         if (!selectedInndeling.isVisible) {
-          removeInndelingFromLayer(selectedInndeling.kretstype, inndelingFeatures);
+          removeInndelingFromLayer(selectedInndeling.inndelingtype, inndelingFeatures);
         } else {
-          addInndelingToLayer(selectedInndeling.kretstype, inndelingFeatures, [], []);
+          addInndelingToLayer(selectedInndeling.inndelingtype, inndelingFeatures, [], []);
         }
       }
 

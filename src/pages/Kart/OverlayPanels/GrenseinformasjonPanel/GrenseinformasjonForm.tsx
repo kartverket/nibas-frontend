@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import { Controller } from "react-hook-form";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
-import { Kretstype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import { Inndelingtype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
 type Props = {
   feature: Feature<Geometry>;
@@ -77,7 +77,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
     return "Ukjent målemetode er registrert på grensen";
   };
 
-  const getPossibleGrenseTypesFromKretstype = (kretstype: Kretstype | null): GrenseType[] => {
+  const getPossibleGrenseTypesFromKretstype = (kretstype: Inndelingtype | null): GrenseType[] => {
     if (kretstype === "stemmekrets") {
       return ["Stemmekretsgrense", "Kommunegrense"];
     }
@@ -165,7 +165,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         isRequired
       >
         <Select {...register("grenseType")}>
-          {getPossibleGrenseTypesFromKretstype(currentlyEditedInndeling?.kretstype ?? null).map((type) => (
+          {getPossibleGrenseTypesFromKretstype(currentlyEditedInndeling?.inndelingtype ?? null).map((type) => (
             <option key={type} value={type}>
               {type}
             </option>

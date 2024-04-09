@@ -1,4 +1,4 @@
-import { Kretstype } from "contexts/InndelingerContext/InndelingerContext";
+import { Inndelingtype } from "contexts/InndelingerContext/InndelingerContext";
 import { components, paths } from "./api-gen";
 
 export type Spraak = {
@@ -8,7 +8,7 @@ export type Spraak = {
 
 export type InndelingerKontekst = {
   id: string;
-  type: Kretstype;
+  type: Inndelingtype;
 };
 
 // renaming av typer fra generert api doc

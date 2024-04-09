@@ -3,7 +3,7 @@ import useNibasApi from "hooks/useNibasApi";
 import { GeoJSONFeature } from "ol/format/GeoJSON";
 import { useMemo } from "react";
 import { geoJsonToSource, getFeatureFromGeoJson } from "utils/map/geoJson";
-import { Inndeling, Kretstype } from "./InndelingerContext";
+import { Inndeling, Inndelingtype } from "./InndelingerContext";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
 import { FeatureCollection, InndelingNavn, InndelingResponse } from "types/api";
@@ -24,7 +24,7 @@ const useInndelingFeatures = (inndeling: Inndeling | null) => {
     | "/v1/kommuner/{id}/grenser"
     | "/v1/kommuner/{id}/stemmekretsgrenser"
     | "/v1/kommuner/{id}/grunnkretsgrenser";
-  const getGrenseRequestUrl = (kretstype: Kretstype): GrenseRequestURL => {
+  const getGrenseRequestUrl = (kretstype: Inndelingtype): GrenseRequestURL => {
     if (kretstype === "fylke" || kretstype === "kommune") {
       return `/v1/${kretstype}r/{id}/grenser`;
     }
@@ -37,7 +37,7 @@ const useInndelingFeatures = (inndeling: Inndeling | null) => {
     | "/v1/kommuner/{id}"
     | "/v1/kommuner/{id}/stemmekretser"
     | "/v1/kommuner/{id}/grunnkretser";
-  const getInndelingRequestUrl = (kretstype: Kretstype): InndelingRequestURL => {
+  const getInndelingRequestUrl = (kretstype: Inndelingtype): InndelingRequestURL => {
     if (kretstype === "fylke" || kretstype === "kommune") {
       return `/v1/${kretstype}r/{id}`;
     }
@@ -46,12 +46,12 @@ const useInndelingFeatures = (inndeling: Inndeling | null) => {
   };
 
   const { data: featuresResponse, isLoading: isFetchingFeatures } = useNibasApi(
-    inndeling != null ? getGrenseRequestUrl(inndeling.kretstype) : null,
+    inndeling != null ? getGrenseRequestUrl(inndeling.inndelingtype) : null,
     inndeling != null ? { id: inndeling.id } : null,
   );
 
   const { data: inndelingResponse, isLoading: isFetchingInndeling } = useNibasApi(
-    inndeling != null ? getInndelingRequestUrl(inndeling.kretstype) : null,
+    inndeling != null ? getInndelingRequestUrl(inndeling.inndelingtype) : null,
     inndeling != null ? { id: inndeling.id } : null,
   );
 

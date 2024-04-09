@@ -46,7 +46,7 @@ const ToolbarMenus = () => {
   const flatedetaljerIsActive = activeOverlayModal === "grunnkrets" || activeOverlayModal === "stemmekrets";
 
   const toggleFlatedetaljer = () => {
-    const currentlyEditingKretsType = currentlyEditedInndeling?.kretstype;
+    const currentlyEditingKretsType = currentlyEditedInndeling?.inndelingtype;
     if (flatedetaljerIsActive) {
       closeOverlayModal();
     } else if (
@@ -78,7 +78,7 @@ const ToolbarMenus = () => {
   useKeyboardShortcut("add", () => toggleTool("add"), isEditing);
   useKeyboardShortcut("remove", () => toggleTool("remove"), isEditing);
   useKeyboardShortcut("edit_point", toggleMovePoint, isEditing);
-  useKeyboardShortcut("merge", toggleMergePanel, currentlyEditedInndeling?.kretstype === "stemmekrets");
+  useKeyboardShortcut("merge", toggleMergePanel, currentlyEditedInndeling?.inndelingtype === "stemmekrets");
   useKeyboardShortcut("archive", () => toggleTool("archive"), isEditing);
   useKeyboardShortcut("draw", () => toggleTool("draw"), isEditing);
   useKeyboardShortcut("flate", toggleFlatedetaljer);
@@ -166,7 +166,7 @@ const ToolbarMenus = () => {
       icon: <Icon icon="cell_merge" />,
       command: KeyboardShortcuts["merge"].displayString,
       $isActive: mergeIsActive,
-      isDisabled: currentlyEditedInndeling?.kretstype !== "stemmekrets",
+      isDisabled: currentlyEditedInndeling?.inndelingtype !== "stemmekrets",
       onClick: toggleMergePanel,
       "aria-label": "Slå sammen stemmekretser",
     },
@@ -175,7 +175,8 @@ const ToolbarMenus = () => {
       icon: <Icon icon="splitscreen" />,
       $isActive: splitIsActive,
       isDisabled: !(
-        currentlyEditedInndeling?.kretstype === "stemmekrets" || currentlyEditedInndeling?.kretstype === "grunnkrets"
+        currentlyEditedInndeling?.inndelingtype === "stemmekrets" ||
+        currentlyEditedInndeling?.inndelingtype === "grunnkrets"
       ),
       onClick: toggleSplitPanel,
       "aria-label": "Splitt en flate",

@@ -1,4 +1,4 @@
-import { Kretstype } from "contexts/InndelingerContext/InndelingerContext";
+import { Inndelingtype } from "contexts/InndelingerContext/InndelingerContext";
 
 export type KartlagId =
   | "cachetjenester"
@@ -49,7 +49,7 @@ export const editableGrenseTypes: GrenseType[] = [
   "Kommunegrense",
 ];
 
-export const getGrenseTypeFromKretstype = (kretstype: Kretstype): GrenseType | undefined => {
+export const getGrenseTypeFromKretstype = (kretstype: Inndelingtype): GrenseType | undefined => {
   switch (kretstype) {
     case "fylke":
       return "Fylkesgrense";
@@ -68,7 +68,7 @@ export const getGrenseTypeFromKretstype = (kretstype: Kretstype): GrenseType | u
   }
 };
 
-export const getKretstypeFromGrensetype = (grenseType: GrenseType): Kretstype | undefined => {
+export const getKretstypeFromGrensetype = (grenseType: GrenseType): Inndelingtype | undefined => {
   switch (grenseType) {
     case "Fylkesgrense":
       return "fylke";

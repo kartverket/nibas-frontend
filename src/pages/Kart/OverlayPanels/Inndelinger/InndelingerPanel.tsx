@@ -2,8 +2,8 @@ import { Divider, Modal, ModalContent, ModalOverlay } from "@kvib/react";
 import { PanelHeader, PanelProps, ModalPanel } from "../Panel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import {
-  KRETSTYPER,
-  Kretstype,
+  INNDELINGTYPER,
+  Inndelingtype,
   isSameInndelinger,
   useInndelinger,
   Inndeling,
@@ -17,7 +17,7 @@ import { styled } from "styled-components";
 import InndelingOption from "./Inndeling";
 
 const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
-  const [selectedKretstype, setSelectedKretstype] = useState<Kretstype | null>(null);
+  const [selectedKretstype, setSelectedKretstype] = useState<Inndelingtype | null>(null);
 
   // Bedre navn på denne for å skille den mer fra valgt fylke i context?
   const [selectedPanelFylkeId, setSelectedPanelFylkeId] = useState<string>("");
@@ -35,7 +35,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
     setSelectedPanelFylkeId("");
   };
 
-  const selectKretstype = (kretstype: Kretstype) => {
+  const selectKretstype = (kretstype: Inndelingtype) => {
     setSelectedKretstype(kretstype);
     setSelectedPanelFylkeId("");
   };
@@ -44,7 +44,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
     if (selectedKretstype === "fylke") {
       const newInndeling: Inndeling = {
         id: fylkeId,
-        kretstype: "fylke",
+        inndelingtype: "fylke",
         isEditing: isEditingPanel,
         isVisible: !isEditingPanel,
       };
@@ -73,7 +73,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
     if (selectedKretstype) {
       const newInndeling: Inndeling = {
         id: kommuneId,
-        kretstype: selectedKretstype,
+        inndelingtype: selectedKretstype,
         isEditing: isEditingPanel,
         isVisible: !isEditingPanel,
       };
@@ -110,7 +110,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
 
     if (!isKommune) return "chevron_right";
 
-    if (inndeling != null && inndeling.kretstype === selectedKretstype) {
+    if (inndeling != null && inndeling.inndelingtype === selectedKretstype) {
       return "visibility_off";
     }
 
@@ -126,7 +126,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
         </PanelHeader>
         <InndelingerLayout>
           <InndelingerList>
-            {KRETSTYPER.map((kretstype) => (
+            {INNDELINGTYPER.map((kretstype) => (
               <InndelingOption
                 key={kretstype}
                 isActive={selectedKretstype === kretstype}
