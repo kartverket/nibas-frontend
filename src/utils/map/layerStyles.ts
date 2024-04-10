@@ -163,7 +163,7 @@ export const getLayerStyle = (
 ): Style[] => {
   const grenseType = feature.get("type");
 
-  if (isGrenseType(grenseType) === true) {
+  if (isGrenseType(grenseType)) {
     if (grenseId === "edit" && isFeatureEditable(feature, archived) === true) {
       return grenseStyles.edit;
     }
@@ -180,7 +180,7 @@ export const getLayerStyle = (
 
 export const getArchiveLayerStyle = (feature: Feature<Geometry> | RenderFeature): Style[] => {
   const grenseType = feature.get("type");
-  if (isGrenseType(grenseType) === true) {
+  if (isGrenseType(grenseType)) {
     return grenseStyleFromType(grenseType, true);
   }
   return [];
