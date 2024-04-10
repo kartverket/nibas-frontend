@@ -11,13 +11,7 @@ const UtkastSlett = ({ utkast }: Props) => {
 
   return (
     <>
-      <MenuItem
-        icon={<Icon icon="delete" />}
-        onClick={(e) => {
-          e.stopPropagation();
-          onOpen();
-        }}
-      >
+      <MenuItem icon={<Icon icon="delete" />} onClick={onOpen}>
         Slett
       </MenuItem>
       <UtkastSlettModal isOpen={isOpen} onClose={onClose} utkast={utkast} />

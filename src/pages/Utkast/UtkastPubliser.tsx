@@ -13,14 +13,7 @@ const UtkastPubliser = ({ utkast }: Props) => {
 
   return (
     <>
-      <MenuItem
-        icon={<Icon icon="publish" />}
-        onClick={(e) => {
-          e.stopPropagation();
-          onOpen();
-        }}
-        isDisabled={!harEndringer}
-      >
+      <MenuItem icon={<Icon icon="publish" />} onClick={onOpen} isDisabled={!harEndringer}>
         Publiser
       </MenuItem>
       <UtkastPubliserModal isOpen={isOpen} onClose={onClose} utkast={utkast} />
