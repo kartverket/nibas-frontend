@@ -1,16 +1,16 @@
+import { archivedSource, editSource } from "hooks/layers/constants";
+import { GrenseId, GrenseType } from "hooks/layers/types";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import LineString from "ol/geom/LineString";
 import MultiPoint from "ol/geom/MultiPoint";
+import Point from "ol/geom/Point";
 import RenderFeature from "ol/render/Feature";
 import Circle from "ol/style/Circle";
 import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
 import Style, { StyleFunction } from "ol/style/Style";
 import Text from "ol/style/Text";
-import Point from "ol/geom/Point";
-import { archivedSource, editSource } from "hooks/layers/constants";
-import { GrenseId, GrenseType } from "hooks/layers/types";
 import { isFeatureEditable, isMatrikkelFeature } from "utils/features";
 import { isGrenseType } from "utils/type-utils";
 
@@ -99,13 +99,22 @@ const flateStyles = [
   }),
 ];
 
+const inndelingColors = {
+  fylke: "#170CEB",
+  kommune: "#637DF3",
+  nasjon: "#61538B",
+  grunnkrets: "#4D94AF",
+  stemmekrets: "#FFAE49FF",
+  delomraade: "#5DB9DC",
+};
+
 export const grenseStyles = {
-  fylke: lineAndPointStyles({ color: "#170CEB" }),
-  kommune: lineAndPointStyles({ color: "#637DF3" }),
-  nasjon: lineAndPointStyles({ color: "#61538B" }),
-  grunnkrets: lineAndPointStyles({ color: "#4D94AF" }),
-  stemmekrets: lineAndPointStyles({ color: "#FFAE49FF" }),
-  delomraade: lineAndPointStyles({ color: "#5DB9DC" }),
+  fylke: lineAndPointStyles({ color: inndelingColors["fylke"] }),
+  kommune: lineAndPointStyles({ color: inndelingColors["kommune"] }),
+  nasjon: lineAndPointStyles({ color: inndelingColors["nasjon"] }),
+  grunnkrets: lineAndPointStyles({ color: inndelingColors["grunnkrets"] }),
+  stemmekrets: lineAndPointStyles({ color: inndelingColors["stemmekrets"] }),
+  delomraade: lineAndPointStyles({ color: inndelingColors["delomraade"] }),
   edit: lineAndPointStyles({ color: "#000000" }),
   select: lineAndPointStyles({ color: "#D163E6FF" }),
   dirty: lineAndPointStyles({ color: "#00CB85FF" }),
@@ -118,12 +127,12 @@ export const grenseStyles = {
     dashed: true,
     points: false,
   }),
-  archivedFylke: lineAndPointStyles({ color: "#170CEB", dashed: true }),
-  archivedKommune: lineAndPointStyles({ color: "#637DF3", dashed: true }),
-  archivedNasjon: lineAndPointStyles({ color: "#61538B", dashed: true }),
-  archivedGrunnkrets: lineAndPointStyles({ color: "#4D94AF", dashed: true }),
-  archivedStemmekrets: lineAndPointStyles({ color: "#FFAE49FF", dashed: true }),
-  archivedDelomraade: lineAndPointStyles({ color: "#5DB9DC", dashed: true }),
+  archivedFylke: lineAndPointStyles({ color: inndelingColors["fylke"], dashed: true }),
+  archivedKommune: lineAndPointStyles({ color: inndelingColors["kommune"], dashed: true }),
+  archivedNasjon: lineAndPointStyles({ color: inndelingColors["nasjon"], dashed: true }),
+  archivedGrunnkrets: lineAndPointStyles({ color: inndelingColors["grunnkrets"], dashed: true }),
+  archivedStemmekrets: lineAndPointStyles({ color: inndelingColors["stemmekrets"], dashed: true }),
+  archivedDelomraade: lineAndPointStyles({ color: inndelingColors["delomraade"], dashed: true }),
 };
 
 const grenseStyleFromType = (grenseType: GrenseType, archived: boolean): Style[] => {
@@ -164,7 +173,7 @@ export const getLayerStyle = (
   const grenseType = feature.get("type");
 
   if (isGrenseType(grenseType)) {
-    if (grenseId === "edit" && isFeatureEditable(feature, archived)) {
+    if (grenseId === "edit" && isFeatureEditable(feature, archived) === true) {
       return grenseStyles.edit;
     }
 
@@ -186,18 +195,25 @@ export const getArchiveLayerStyle = (feature: Feature<Geometry> | RenderFeature)
   return [];
 };
 
-export const getPointOverlayStyle = (feature: Feature<Geometry> | RenderFeature) => {
-  const name = feature.get("name") as string | undefined;
-  const number = feature.get("number") as string | undefined;
+export const getPointOverlayStyle = (feature: Feature<Geometry> | RenderFeature, grenseId: GrenseId) => {
+  const name = feature.get("name");
+  const number = feature.get("number");
 
-  if (name == null || number == null) return new Style();
+  if (
+    feature.get("type") !== "Posisjon" ||
+    name == null ||
+    number == null ||
+    grenseId === "archived" ||
+    grenseId === "matrikkel"
+  )
+    return new Style();
 
   return new Style({
     text: new Text({
       text: `${number} ${name}`,
       font: "bold 16px Mulish, sans-serif",
-      fill: new Fill({ color: "#FFF" }),
-      stroke: new Stroke({ width: 2 }),
+      fill: new Fill({ color: grenseId === "edit" ? "#000000" : inndelingColors[grenseId] }),
+      stroke: new Stroke({ width: 3, color: "white" }),
       textBaseline: "middle",
       textAlign: "center",
     }),
