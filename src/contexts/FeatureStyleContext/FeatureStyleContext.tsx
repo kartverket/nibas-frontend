@@ -1,9 +1,9 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo } from "react";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { FeatureStyleContextValue, SelectedFeatures } from "./types";
+import { FeatureStyleContextValue } from "./types";
 import { useSelectStyles } from "./useSelectStyles";
 import { getArchiveLayerStyle, grenseStyles, setFeatureStyle } from "utils/map/layerStyles";
-import { FeatureLike } from "ol/Feature";
+import Feature, { FeatureLike } from "ol/Feature";
 import useCustomStyles from "./useCustomStyles";
 import { Coordinate } from "ol/coordinate";
 import { archivedSource } from "hooks/layers/constants";
@@ -16,6 +16,7 @@ import {
   removeDuplicateIds,
 } from "./feature-style-utils";
 import { newFeatureOnlyExistsAfterIndex, getChangeIds } from "contexts/HistoryContext/history-utils";
+import { LineString } from "ol/geom";
 
 export const FeatureStyleContext = createContext<FeatureStyleContextValue | undefined>(undefined);
 
@@ -26,9 +27,12 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     selectFeatures,
     selectedFeatures,
     selectPointOnFeature,
-    removeSelection,
+    resetSelection,
     clearSelectedPoint,
-    setSelectedFeatureStyles,
+    renderSelectStyles,
+    addToSelection,
+    isSelectedFeature,
+    removeFromSelection: removeFromSelectionInternal,
   } = useSelectStyles();
 
   const sammenslaaingOverlappingStyleFunctions = useCustomStyles(grenseStyles.sammenslaaingOverlapping);
@@ -57,7 +61,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
 
   // Når en feature ikke er valgt lengre må vi avgjøre hvilken stil den skal ha
   const clearSelection = () => {
-    const deselectedFeatures = removeSelection();
+    const deselectedFeatures = resetSelection();
     for (const feature of deselectedFeatures) {
       const featureId = feature.getId()?.toString();
       if (featureId == null) continue;
@@ -80,12 +84,36 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     }
   };
 
-  const clearAndSelectPointOnFeature = (coordinate: Coordinate, features: SelectedFeatures) => {
+  const removeFromSelection = (feature: Feature<LineString>) => {
+    removeFromSelectionInternal(feature);
+
+    const featureId = feature.getId()?.toString();
+
+    if (featureId !== undefined) {
+      // Dersom featuren har en aktiv stil faller vi tilbake til den
+      const matchingCustomStyle = customStyles.find((customStyle) => customStyle.customFeatureIds.includes(featureId));
+
+      // Dersom featuren ikke har en aktiv stil faller vi tilbake til den lagrede stilen
+      const matchingSavedCustomStyle = customStyles.find((customStyle) =>
+        customStyle.savedCustomFeatureIds.includes(featureId),
+      );
+
+      if (matchingCustomStyle) {
+        feature.setStyle(matchingCustomStyle.customStyle);
+      } else if (matchingSavedCustomStyle) {
+        feature.setStyle(matchingSavedCustomStyle.customStyle);
+      } else {
+        feature.setStyle();
+      }
+    }
+  };
+
+  const clearAndSelectPointOnFeature = (coordinate: Coordinate, features: Feature<LineString>[]) => {
     clearAndSelectFeatures(features);
     selectPointOnFeature(coordinate);
   };
 
-  const clearAndSelectFeatures = (features: SelectedFeatures) => {
+  const clearAndSelectFeatures = (features: Feature<LineString>[]) => {
     clearSelection();
     selectFeatures(features);
   };
@@ -169,16 +197,16 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     dirtyStyleFunctions.setCustomStyles(dirtyFeatures);
     archivedStyleFunctions.setCustomStyles(archivedFeatures);
     errorStyleFunctions.setCustomStyles(errorFeatures);
-    setSelectedFeatureStyles(selectedFeatures);
+    renderSelectStyles(selectedFeatures);
   }, [
     archivedStyleFunctions,
     customStyles,
     dirtyStyleFunctions,
     errorStyleFunctions,
     history,
+    renderSelectStyles,
     selectFeatures,
     selectedFeatures,
-    setSelectedFeatureStyles,
     undoFeatureStyles,
   ]);
 
@@ -206,6 +234,9 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     selectedPoint,
     clearSelection,
     clearSelectedPoint,
+    addToSelection,
+    removeFromSelection,
+    isSelectedFeature,
 
     addDirtyStyles: dirtyStyleFunctions.addCustomStyles,
     setAndSaveDirtyStyles: dirtyStyleFunctions.setAndSaveCustomStyles,

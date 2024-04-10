@@ -1,15 +1,15 @@
 import { Feature } from "ol";
 import { Coordinate } from "ol/coordinate";
 import { useState } from "react";
-import { SelectedFeatures } from "./types";
 import { grenseStyles, selectedPointStyle } from "utils/map/layerStyles";
 import Point from "ol/geom/Point";
 import { editSource } from "hooks/layers/constants";
 import { removeFeaturesFromSourceByIds } from "utils/map/source";
+import { LineString } from "ol/geom";
 
 export const useSelectStyles = () => {
   const [selectedPoint, setSelectedPoint] = useState<Feature<Point> | null>(null);
-  const [selectedFeatures, setSelectedFeatures] = useState<SelectedFeatures>([]);
+  const [selectedFeatures, setSelectedFeatures] = useState<Feature<LineString>[]>([]);
 
   const selectPointOnFeature = (coordinate: Coordinate) => {
     if (selectedPoint) {
@@ -25,18 +25,18 @@ export const useSelectStyles = () => {
     }
   };
 
-  const setSelectedFeatureStyles = (features: SelectedFeatures) => {
+  const renderSelectStyles = (features: Feature<LineString>[]) => {
     for (const feature of features) {
       feature.setStyle(grenseStyles.select);
     }
   };
 
-  const selectFeatures = (features: SelectedFeatures) => {
-    setSelectedFeatureStyles(features);
+  const selectFeatures = (features: Feature<LineString>[]) => {
+    renderSelectStyles(features);
     setSelectedFeatures(features);
   };
 
-  const removeSelection = () => {
+  const resetSelection = () => {
     clearSelectedPoint();
     setSelectedFeatures([]);
     return selectedFeatures;
@@ -52,13 +52,32 @@ export const useSelectStyles = () => {
     setSelectedPoint(null);
   };
 
+  const isSelectedFeature = (feature: Feature<LineString>) =>
+    selectedFeatures.some((sf) => sf.getId() === feature.getId());
+
+  const addToSelection = (feature: Feature<LineString>) => {
+    if (!isSelectedFeature(feature)) {
+      renderSelectStyles([feature]);
+      setSelectedFeatures(selectedFeatures.concat(feature));
+    }
+  };
+
+  const removeFromSelection = (feature: Feature<LineString>) => {
+    if (isSelectedFeature(feature)) {
+      setSelectedFeatures(selectedFeatures.filter((sf) => sf.getId() !== feature.getId()));
+    }
+  };
+
   return {
     selectedPoint,
     selectFeatures,
     selectedFeatures,
     selectPointOnFeature,
-    setSelectedFeatureStyles,
-    removeSelection,
+    renderSelectStyles,
+    resetSelection,
     clearSelectedPoint,
+    addToSelection,
+    removeFromSelection,
+    isSelectedFeature,
   };
 };
