@@ -25,12 +25,12 @@ export const getDefaultSplittingValue = () => ({
 });
 
 const getKommuneIdentifikatorFromOptions = (
-  kretstype: Inndelingtype,
+  inndelingtype: Inndelingtype,
   opprinneligKretsId: string,
   grunnkretser: GrunnkretsResponse[],
   stemmekretser: StemmekretsResponse[],
 ) => {
-  if (kretstype === "stemmekrets") {
+  if (inndelingtype === "stemmekrets") {
     return stemmekretser?.find((opt) => opt.id.lokalid.value === opprinneligKretsId)?.kommuneIdentifikator;
   } else {
     return grunnkretser?.find((opt) => opt.id.lokalid.value === opprinneligKretsId)?.kommuneIdentifikator;
@@ -61,13 +61,13 @@ export const useSplittingForm = (inndeling: Inndeling | null) => {
   });
 
   const { currentlyEditedInndeling } = useInndelinger();
-  const kretstype = currentlyEditedInndeling?.inndelingtype;
+  const inndelingtype = currentlyEditedInndeling?.inndelingtype;
 
   // TODO Vi trenger ikke hente begge, vi kan velge hva vi henter basert på inndelingstypen
   const { data: stemmekretser } = useKommuneStemmekretser(inndeling?.id ?? null);
   const { data: grunnkretser } = useKommuneGrunnkretser(inndeling?.id ?? null);
   const opprinneligFlateOptions =
-    kretstype === "grunnkrets"
+    inndelingtype === "grunnkrets"
       ? mapGrunnkretsResponseToKrets(grunnkretser ?? [])
       : mapStemmekretResponseToKrets(stemmekretser ?? []);
 
@@ -112,13 +112,13 @@ export const useSplittingForm = (inndeling: Inndeling | null) => {
   // en del if-tester her for å forsikre typescript om at variablene vi bruker ikke er null.
   // (hadde ikke vært mulig å komme seg hit hvis noe var null, men typescript er typescript)
   const updateDraftWithSplittingRequest = async () => {
-    if (kretstype && grunnkretser && stemmekretser) {
+    if (inndelingtype && grunnkretser && stemmekretser) {
       const { opprinneligKrets, nyeKretser } = getValues();
       const opprinneligKretsInfo = opprinneligFlateOptions.find(
         (krets) => krets.id.lokalid.value === opprinneligKrets.lokalId,
       );
       const kommuneIdentifikator = getKommuneIdentifikatorFromOptions(
-        kretstype,
+        inndelingtype,
         opprinneligKrets.lokalId,
         grunnkretser,
         stemmekretser,
@@ -136,7 +136,7 @@ export const useSplittingForm = (inndeling: Inndeling | null) => {
             version: opprinneligKretsInfo.version,
           },
           kommuneId: kommuneIdentifikator,
-          flatetype: kretstype === "grunnkrets" ? KontekstType.GRUNNKRETS : KontekstType.STEMMEKRETS,
+          flatetype: inndelingtype === "grunnkrets" ? KontekstType.GRUNNKRETS : KontekstType.STEMMEKRETS,
           nyeKretser: exclusivelyNewKretser,
         };
 
@@ -177,7 +177,7 @@ export const useSplittingForm = (inndeling: Inndeling | null) => {
   }, [reset]);
 
   return {
-    kretstype,
+    inndelingtype,
     opprinneligFlateOptions,
     fields,
     register,

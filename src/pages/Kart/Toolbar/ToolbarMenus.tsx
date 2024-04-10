@@ -46,14 +46,14 @@ const ToolbarMenus = () => {
   const flatedetaljerIsActive = activeOverlayModal === "grunnkrets" || activeOverlayModal === "stemmekrets";
 
   const toggleFlatedetaljer = () => {
-    const currentlyEditingKretsType = currentlyEditedInndeling?.inndelingtype;
+    const currentlyEditingInndelingtype = currentlyEditedInndeling?.inndelingtype;
     if (flatedetaljerIsActive) {
       closeOverlayModal();
     } else if (
-      (currentlyEditingKretsType && currentlyEditingKretsType === "grunnkrets") ||
-      currentlyEditingKretsType === "stemmekrets"
+      (currentlyEditingInndelingtype && currentlyEditingInndelingtype === "grunnkrets") ||
+      currentlyEditingInndelingtype === "stemmekrets"
     ) {
-      openOverlayModal(currentlyEditingKretsType);
+      openOverlayModal(currentlyEditingInndelingtype);
     }
   };
 
@@ -147,7 +147,11 @@ const ToolbarMenus = () => {
       label: "Se/endre flatedetaljer",
       icon: <Icon icon="description" />,
       command: KeyboardShortcuts["flate"].displayString,
-      isDisabled: !isEditing,
+      // Vi har ikke laget flatedetaljerpaneler for Kommune og Fylke ennå
+      isDisabled: !(
+        currentlyEditedInndeling?.inndelingtype === "stemmekrets" ||
+        currentlyEditedInndeling?.inndelingtype === "grunnkrets"
+      ),
       $isActive: flatedetaljerIsActive,
       onClick: toggleFlatedetaljer,
       "aria-label": "Se eller endre flatedetaljer for kretsen som redigeres",

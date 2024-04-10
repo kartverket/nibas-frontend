@@ -4,7 +4,7 @@ import { pixelTolerance } from "./constants";
 import { useToolbar } from "contexts/ToolbarContext";
 import { noModifierKeys } from "ol/events/condition";
 import { grenseStyles } from "utils/map/layerStyles";
-import { getGrenseTypeFromKretstype } from "hooks/layers/types";
+import { getGrensetypeFromInndelingtype } from "hooks/layers/types";
 import { useToast } from "@kvib/react";
 import { Feature, MapBrowserEvent } from "ol";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
@@ -114,7 +114,7 @@ const useDraw = () => {
     const addDrawToHistory = (drawnFeature: Feature<LineString>) => {
       if (currentlyEditedInndeling == null) return;
 
-      const grenseType = getGrenseTypeFromKretstype(currentlyEditedInndeling.inndelingtype);
+      const grenseType = getGrensetypeFromInndelingtype(currentlyEditedInndeling.inndelingtype);
 
       if (grenseType) {
         addHistoryEntry({
@@ -198,7 +198,7 @@ const useDraw = () => {
         splitFeatureAtDrawnFeatureEndpoints(feature, drawnFeatureGeometry);
       }
 
-      setDefaultFeatureProperties(drawnFeature, getGrenseTypeFromKretstype(currentlyEditedInndeling.inndelingtype));
+      setDefaultFeatureProperties(drawnFeature, getGrensetypeFromInndelingtype(currentlyEditedInndeling.inndelingtype));
 
       addDrawToHistory(drawnFeature);
       addFeaturesToSource("edit", [drawnFeature]);

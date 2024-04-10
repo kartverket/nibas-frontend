@@ -39,8 +39,8 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
     setSelectedPanelFylkeId("");
   };
 
-  const selectKretstype = (kretstype: Inndelingtype) => {
-    setSelectedInndelingtype(kretstype);
+  const selectInndelingtype = (inndelingtype: Inndelingtype) => {
+    setSelectedInndelingtype(inndelingtype);
     setSelectedPanelFylkeId("");
   };
 
@@ -124,14 +124,14 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
         </PanelHeader>
         <InndelingerLayout>
           <InndelingerList>
-            {INNDELINGTYPER.map((kretstype) => (
+            {INNDELINGTYPER.map((inndelingtype) => (
               <InndelingOption
-                key={kretstype}
-                isActive={selectedInndelingtype === kretstype}
-                onClick={() => selectKretstype(kretstype)}
+                key={inndelingtype}
+                isActive={selectedInndelingtype === inndelingtype}
+                onClick={() => selectInndelingtype(inndelingtype)}
                 rightIcon="chevron_right"
               >
-                {capitalize(kretstype)}
+                {capitalize(inndelingtype)}
               </InndelingOption>
             ))}
           </InndelingerList>

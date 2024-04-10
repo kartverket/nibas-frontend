@@ -77,11 +77,11 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
     return "Ukjent målemetode er registrert på grensen";
   };
 
-  const getPossibleGrenseTypesFromKretstype = (kretstype: Inndelingtype | null): GrenseType[] => {
-    if (kretstype === "stemmekrets") {
+  const getPossibleGrenseTypesFromInndelingtype = (inndelingtype: Inndelingtype | null): GrenseType[] => {
+    if (inndelingtype === "stemmekrets") {
       return ["Stemmekretsgrense", "Kommunegrense"];
     }
-    if (kretstype === "grunnkrets") {
+    if (inndelingtype === "grunnkrets") {
       return ["Grunnkretsgrense", "Delområdegrense", "Kommunegrense"];
     }
 
@@ -165,7 +165,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         isRequired
       >
         <Select {...register("grenseType")}>
-          {getPossibleGrenseTypesFromKretstype(currentlyEditedInndeling?.inndelingtype ?? null).map((type) => (
+          {getPossibleGrenseTypesFromInndelingtype(currentlyEditedInndeling?.inndelingtype ?? null).map((type) => (
             <option key={type} value={type}>
               {type}
             </option>

@@ -11,7 +11,6 @@ import { removeNil } from "utils/list-utils";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { getRepresentasjonspunktId } from "utils/map/source";
 
-// Finn et bedre sted for denne stakkaren å leve
 export const inndelingResponseNavnToString = (inndelingNavn: InndelingNavn): string => {
   return Array.isArray(inndelingNavn) ? inndelingNavn.map((navn) => navn.navn).join(" - ") : inndelingNavn;
 };
@@ -24,12 +23,12 @@ const useInndelingFeatures = (inndeling: Inndeling | null) => {
     | "/v1/kommuner/{id}/grenser"
     | "/v1/kommuner/{id}/stemmekretsgrenser"
     | "/v1/kommuner/{id}/grunnkretsgrenser";
-  const getGrenseRequestUrl = (kretstype: Inndelingtype): GrenseRequestURL => {
-    if (kretstype === "fylke" || kretstype === "kommune") {
-      return `/v1/${kretstype}r/{id}/grenser`;
+  const getGrenseRequestUrl = (inndelingtype: Inndelingtype): GrenseRequestURL => {
+    if (inndelingtype === "fylke" || inndelingtype === "kommune") {
+      return `/v1/${inndelingtype}r/{id}/grenser`;
     }
 
-    return `/v1/kommuner/{id}/${kretstype}grenser`;
+    return `/v1/kommuner/{id}/${inndelingtype}grenser`;
   };
 
   type InndelingRequestURL =
@@ -37,12 +36,12 @@ const useInndelingFeatures = (inndeling: Inndeling | null) => {
     | "/v1/kommuner/{id}"
     | "/v1/kommuner/{id}/stemmekretser"
     | "/v1/kommuner/{id}/grunnkretser";
-  const getInndelingRequestUrl = (kretstype: Inndelingtype): InndelingRequestURL => {
-    if (kretstype === "fylke" || kretstype === "kommune") {
-      return `/v1/${kretstype}r/{id}`;
+  const getInndelingRequestUrl = (inndelingtype: Inndelingtype): InndelingRequestURL => {
+    if (inndelingtype === "fylke" || inndelingtype === "kommune") {
+      return `/v1/${inndelingtype}r/{id}`;
     }
 
-    return `/v1/kommuner/{id}/${kretstype}er`;
+    return `/v1/kommuner/{id}/${inndelingtype}er`;
   };
 
   const { data: featuresResponse, isValidating: isFetchingFeatures } = useNibasApi(
@@ -72,11 +71,11 @@ const useInndelingFeatures = (inndeling: Inndeling | null) => {
 
   const inndelingFeatures: Feature<Geometry>[] = useMemo(() => {
     if (featuresResponse != null && inndelingResponse != null) {
-      // Dette føler jeg kan brekke på et vis, som ikke er nice. Hvordan skal man årne det?
       const representasjonspunkter = Array.isArray(inndelingResponse)
         ? inndelingResponse.map((response) => getRepresentasjonspunktFeatureForInndeling(response))
         : [getRepresentasjonspunktFeatureForInndeling(inndelingResponse)];
 
+      // Dette føler jeg kan brekke på et vis, som ikke er nice. Hvordan skal man årne det?
       const geoJsonFeatures = geoJsonToSource(featuresResponse).getFeatures();
 
       const geoJsonFeaturesWithRepresentasjonspunkter = geoJsonFeatures.concat(representasjonspunkter);

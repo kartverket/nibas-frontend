@@ -51,8 +51,8 @@ export const editableGrenseTypes: GrenseType[] = [
   "Kommunegrense",
 ];
 
-export const getGrenseTypeFromKretstype = (kretstype: Inndelingtype): GrenseType | undefined => {
-  switch (kretstype) {
+export const getGrensetypeFromInndelingtype = (inndelingtype: Inndelingtype): GrenseType | undefined => {
+  switch (inndelingtype) {
     case "fylke":
       return "Fylkesgrense";
 
@@ -70,7 +70,7 @@ export const getGrenseTypeFromKretstype = (kretstype: Inndelingtype): GrenseType
   }
 };
 
-export const getKretstypeFromGrensetype = (grenseType: GrenseType): Inndelingtype | undefined => {
+export const getInndelingtypeFromGrensetype = (grenseType: GrenseType): Inndelingtype | undefined => {
   switch (grenseType) {
     case "Fylkesgrense":
       return "fylke";
