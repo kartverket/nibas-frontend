@@ -31,11 +31,11 @@ const useSelect = () => {
   } = useFeatureStyle();
   const { activeOverlayPanel, closeOverlayPanel, openOverlayPanel } = useOverlayPanel();
   const previousPointMode = usePrevious(activeTool);
-  const { getActiveFeaturesAtPixel } = useGetFeatures();
+  const { getLineStringFeaturesAtPixel } = useGetFeatures();
 
   const disallowedTools: Tool[] = ["draw", "koordinater"];
   const safeTools: Tool[] = ["grenseinfo"];
-  const pointModes: Tool[] = ["koordinater", "add", "remove"];
+  const pointModes: Tool[] = ["add", "remove", "split"];
 
   // Dersom man bytter verktøy ønsker vi å cleare selection
   useEffect(() => {
@@ -49,7 +49,7 @@ const useSelect = () => {
 
   const select = (event: MapBrowserEvent<MouseEvent>) => {
     if (!disallowedTools.includes(activeTool) && !event.dragging) {
-      const activeFeatures = getActiveFeaturesAtPixel(event, safeTools.includes(activeTool) ? null : "edit");
+      const activeFeatures = getLineStringFeaturesAtPixel(event, safeTools.includes(activeTool) ? null : "edit");
 
       // Dersom man har klikket på kartet skal vi kvitte oss med selection
       if (activeFeatures.length === 0) {

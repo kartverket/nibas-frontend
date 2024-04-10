@@ -31,7 +31,7 @@ const useDraw = () => {
   const { addHistoryEntry } = useHistory();
   const { openOverlayPanel } = useOverlayPanel();
   const { selectFeatures, selectedFeatures } = useFeatureStyle();
-  const { getActiveFeaturesAtPixel } = useGetFeatures();
+  const { getLineStringFeaturesAtPixel } = useGetFeatures();
   const toast = useToast();
   const { performFeatureSplit } = useSplit();
   const { openAsync } = useConfirmationModal();
@@ -58,7 +58,7 @@ const useDraw = () => {
       condition: (event: MapBrowserEvent<MouseEvent>) => {
         if (!noModifierKeys(event) || activeTool !== "draw" || activeModeTools.includes("move")) return false;
 
-        const featuresAtPixel = getActiveFeaturesAtPixel(event, "edit");
+        const featuresAtPixel = getLineStringFeaturesAtPixel(event, "edit");
 
         // Legg til feature hvis vi ikke treffer noen andre features
         if (featuresAtPixel.length === 0) {
@@ -108,7 +108,7 @@ const useDraw = () => {
         return true;
       },
     });
-  }, [abortDrawMemoHelper, activeTool, activeModeTools, getActiveFeaturesAtPixel, toast, endpointToast]);
+  }, [abortDrawMemoHelper, activeTool, activeModeTools, getLineStringFeaturesAtPixel, toast, endpointToast]);
 
   useEffect(() => {
     const addDrawToHistory = (drawnFeature: Feature<LineString>) => {

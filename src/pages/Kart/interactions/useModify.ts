@@ -36,7 +36,7 @@ const useModify = () => {
     "Punktet ble lagt til",
     "punkter ble lagt til",
   );
-  const { getActiveFeaturesAtPixel } = useGetFeatures();
+  const { getLineStringFeaturesAtPixel } = useGetFeatures();
   const { performFeatureSplit } = useSplit();
   const confirmationModal = useConfirmationModal();
 
@@ -51,7 +51,7 @@ const useModify = () => {
         if (activeModeTools.includes("move")) return false;
         if (disallowedPointModes.includes(activeTool)) return false;
 
-        const activeFeatures = getActiveFeaturesAtPixel(event, "edit");
+        const activeFeatures = getLineStringFeaturesAtPixel(event, "edit");
 
         // Unngå interaksjon med inaktive features (representasjonspunkter f.eks.)
         if (activeFeatures.length === 0) {
@@ -85,7 +85,7 @@ const useModify = () => {
         if (activeModeTools.includes("move")) return false;
 
         if (activeTool === "remove" && click(event)) {
-          const activeFeatures = getActiveFeaturesAtPixel(event, "edit");
+          const activeFeatures = getLineStringFeaturesAtPixel(event, "edit");
 
           if (!activeFeatures.every((feature) => isFeatureEditable(feature, featureIsArchived(feature)))) {
             return false;
@@ -131,7 +131,7 @@ const useModify = () => {
     activeTool,
     selectedFeatures,
     disallowedPointModes,
-    getActiveFeaturesAtPixel,
+    getLineStringFeaturesAtPixel,
     featureIsArchived,
     toast,
     addToast,
@@ -190,7 +190,7 @@ const useModify = () => {
         const selectedFeature = selectedFeatures[0];
         if (isPreviousAndCurrentCoordinatesEqual(selectedFeature)) return;
 
-        const activeFeatures = getActiveFeaturesAtPixel(event.mapBrowserEvent, "edit");
+        const activeFeatures = getLineStringFeaturesAtPixel(event.mapBrowserEvent, "edit");
 
         const nonSelectedActiveFeatures = activeFeatures.filter(
           (feature) => selectedFeature.getId() !== feature.getId(),
@@ -263,7 +263,7 @@ const useModify = () => {
     activeTool,
     addHistoryEntry,
     confirmationModal,
-    getActiveFeaturesAtPixel,
+    getLineStringFeaturesAtPixel,
     modify,
     performFeatureSplit,
     selectedFeatures,

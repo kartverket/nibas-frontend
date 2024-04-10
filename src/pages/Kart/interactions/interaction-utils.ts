@@ -14,10 +14,10 @@ export const useGetFeatures = () => {
       hitTolerance: pixelTolerance,
     });
 
-  const getActiveFeaturesAtPixel = (
+  const getLineStringFeaturesAtPixel = (
     event: MapBrowserEvent<MouseEvent>,
     layerIdToFilter: LayerId | null,
   ): Feature<LineString>[] => getFeaturesAtPixel(event, layerIdToFilter).filter(isLineStringFeature);
 
-  return { getActiveFeaturesAtPixel, getFeaturesAtPixel };
+  return { getLineStringFeaturesAtPixel, getFeaturesAtPixel };
 };

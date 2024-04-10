@@ -24,9 +24,9 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
   const { history } = useHistory();
   const {
     selectedPoint,
-    selectFeatures,
+    selectFeatures: selectFeaturesInternal,
     selectedFeatures,
-    selectPointOnFeature,
+    selectPointOnFeature: selectPointOnFeatureInternal,
     resetSelection,
     clearSelectedPoint,
     renderSelectStyles,
@@ -108,14 +108,14 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     }
   };
 
-  const clearAndSelectPointOnFeature = (coordinate: Coordinate, features: Feature<LineString>[]) => {
-    clearAndSelectFeatures(features);
-    selectPointOnFeature(coordinate);
+  const selectFeatures = (features: Feature<LineString>[]) => {
+    clearSelection();
+    selectFeaturesInternal(features);
   };
 
-  const clearAndSelectFeatures = (features: Feature<LineString>[]) => {
-    clearSelection();
+  const selectPointOnFeature = (coordinate: Coordinate, features: Feature<LineString>[]) => {
     selectFeatures(features);
+    selectPointOnFeatureInternal(coordinate);
   };
 
   const undoFeatureStyles = useCallback(
@@ -205,7 +205,6 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     errorStyleFunctions,
     history,
     renderSelectStyles,
-    selectFeatures,
     selectedFeatures,
     undoFeatureStyles,
   ]);
@@ -228,8 +227,8 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
   };
 
   const value = {
-    selectFeatures: clearAndSelectFeatures,
-    selectPointOnFeature: clearAndSelectPointOnFeature,
+    selectFeatures,
+    selectPointOnFeature,
     selectedFeatures,
     selectedPoint,
     clearSelection,

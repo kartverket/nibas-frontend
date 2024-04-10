@@ -33,11 +33,10 @@ const useSelectPoint = () => {
     if (allowedPointModes.includes(activeTool) && !event.dragging) {
       event.stopPropagation();
 
-      const nonArchivedFeatures = getFeaturesAtPixel(event, "edit");
       const archivedFeatures = getFeaturesAtPixel(event, "archived");
-      const allFeaturesAtPixel = nonArchivedFeatures.concat(archivedFeatures);
+      const nonArchivedFeatures = getFeaturesAtPixel(event, "edit");
 
-      if (allFeaturesAtPixel.length === 0) {
+      if (archivedFeatures.length === 0 && nonArchivedFeatures.length === 0) {
         clearSelection();
         closeOverlayPanel();
         return;
@@ -59,7 +58,7 @@ const useSelectPoint = () => {
       );
 
       if (nearbyVertexCoordinate) {
-        // Om man punktet har mer enn 1 ikke-arkivert feature betyr det at det er et endepunkt.
+        // Om punktet har mer enn 1 ikke-arkivert feature betyr det at det er et endepunkt.
         if (activeTool === "split" && nonArchivedFeatures.length > 1) {
           toast({
             status: "error",
