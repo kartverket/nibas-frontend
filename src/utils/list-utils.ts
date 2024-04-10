@@ -9,6 +9,16 @@ export function deduplicate<T>(list: T[]): T[] {
   return list.filter((element, index) => list.indexOf(element) === index);
 }
 
+export function deduplicateBy<T>(list: T[], selector: (item: T) => string | number | null | undefined): T[] {
+  const deduplicatedList: T[] = [];
+  for (const item of list) {
+    if (deduplicatedList.every((k) => selector(k) !== selector(item))) {
+      deduplicatedList.push(item);
+    }
+  }
+  return deduplicatedList;
+}
+
 export function addToList<T>(element: T | null | undefined, list: T[] | null): T[] {
   const listToUse = list ?? [];
   return isNotNil(element) ? [...listToUse, element] : listToUse;

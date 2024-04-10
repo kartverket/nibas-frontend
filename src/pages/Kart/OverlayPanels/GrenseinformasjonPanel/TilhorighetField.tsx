@@ -6,10 +6,11 @@ import { useEffect } from "react";
 import { isAdministrativGrense } from "utils/grenser";
 import {
   CustomOption,
+  formatKretsNavn,
+  getTilhorighetValuesFormatted,
   KontekstType,
   Tilhorighet,
   UseTilhorighet,
-  getTilhorighetValuesFormatted,
 } from "../hooks/tilhorighet-utils";
 import { useTilhorighetAdministrativ } from "../hooks/useTilhorighetAdministrativ";
 import { useTilhorighet } from "../hooks/useTilhorighet";
@@ -61,7 +62,7 @@ const TilhorighetRow = ({
   return (
     <GrenseinformasjonRowTilhorighet
       feature={feature}
-      name="Tilhørighet"
+      name={`Tilhørighet (${kontekstType.toLocaleLowerCase()})`}
       valueLabel={
         getTilhorighetValuesFormatted(getValues(kontekstType), tilhorighetOptions) ??
         (isTempFeatureId(feature.getId()?.toString()) ? "Ny grense - Mangler tilhørighet" : undefined)
@@ -81,7 +82,7 @@ const TilhorighetRow = ({
               const uid = `${tilhorighet}_${krets.id.lokalid.value}`;
               return (
                 <option key={uid} value={krets.id.lokalid.value}>
-                  {krets.nummer} {krets.navn}
+                  {formatKretsNavn(krets)}
                 </option>
               );
             })}
@@ -102,14 +103,26 @@ const CommonTilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
 };
 
 const AdministrativTilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
+  const useTilhorighetGrunnkrets = useTilhorighetAdministrativ(feature, KontekstType.GRUNNKRETS);
+  const useTilhorighetStemmekrets = useTilhorighetAdministrativ(feature, KontekstType.STEMMEKRETS);
+
   return (
-    <TilhorighetRow feature={feature} useTilhorighet={useTilhorighetAdministrativ(feature)} isDisabled={isDisabled} />
+    <>
+      <TilhorighetRow feature={feature} useTilhorighet={useTilhorighetGrunnkrets} isDisabled={isDisabled} />
+      <TilhorighetRow feature={feature} useTilhorighet={useTilhorighetStemmekrets} isDisabled={isDisabled} />
+    </>
   );
 };
 
 const NyAdministrativTilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
+  const useTilhorighetGrunnkrets = useTilhorighetNyAdministrativ(feature, KontekstType.GRUNNKRETS);
+  const useTilhorighetStemmekrets = useTilhorighetNyAdministrativ(feature, KontekstType.STEMMEKRETS);
+
   return (
-    <TilhorighetRow feature={feature} useTilhorighet={useTilhorighetNyAdministrativ(feature)} isDisabled={isDisabled} />
+    <>
+      <TilhorighetRow feature={feature} useTilhorighet={useTilhorighetGrunnkrets} isDisabled={isDisabled} />
+      <TilhorighetRow feature={feature} useTilhorighet={useTilhorighetStemmekrets} isDisabled={isDisabled} />
+    </>
   );
 };
 
@@ -121,7 +134,7 @@ export const TilhorighetField = ({ feature, isDisabled = false }: TilhorighetPro
   const featureType = feature.getProperties().type;
 
   if (isGrenseType(featureType) && isAdministrativGrense(featureType)) {
-    const isEditable = isFeatureEditable(feature, featureIsArchived(feature));
+    const isEditable = isFeatureEditable(feature, featureIsArchived(feature), false);
 
     const shouldBeDisabled = isDisabled || isGrensePanelDisabled || !isEditable;
     if (isTempFeatureId(feature.getId())) {
