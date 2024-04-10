@@ -47,22 +47,24 @@ const Header = () => {
       <Bar>
         <HeaderSection>
           {!utkast && <HeaderHome />}
-          <HeaderButton
-            label="Rediger en inndeling"
-            icon="travel_explore"
-            onClick={async () => {
-              if (hasUnsavedChangesInHistory) {
-                const shouldToggle = await confirmSelectIfDirtyModal();
-                if (!shouldToggle) return;
-              }
-              toggleModal("inndelinger");
-            }}
-            tooltip={{
-              text: "Åpne og rediger en inndeling i kartet",
-              shortcut: "open",
-            }}
-            isPrimary={true}
-          />
+          {utkast && (
+            <HeaderButton
+              label="Rediger en inndeling"
+              icon="travel_explore"
+              onClick={async () => {
+                if (hasUnsavedChangesInHistory) {
+                  const shouldToggle = await confirmSelectIfDirtyModal();
+                  if (!shouldToggle) return;
+                }
+                toggleModal("inndelinger");
+              }}
+              tooltip={{
+                text: "Åpne og rediger en inndeling i kartet",
+                shortcut: "open",
+              }}
+              isPrimary={true}
+            />
+          )}
           <HeaderButton
             label="Forhåndsvis en inndeling"
             icon="preview"
