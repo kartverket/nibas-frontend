@@ -70,8 +70,6 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
   const [selectedFylkeId, setSelectedFylkeId] = useState("");
   const [selectedInndeling, setSelectedInndeling] = useState<Inndeling | null>(null);
 
-  const [isHandlingFeatures, setIsHandlingFeatures] = useState(false);
-
   const { isFetching, inndelingFeatures, utkastFeaturesInInndeling } = useInndelingFeatures(selectedInndeling);
   const { utkast } = useUtkast();
 
@@ -94,8 +92,8 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
         if (!everyFetchedFeatureIsInSource) {
           addFeaturesToSource(layer, features, () => {
-            zoomToFeatures(features);
             if (layer === "edit") {
+              zoomToFeatures(features);
               setFeatureStylesForUtkastFeatures(changedFeaturesInUtkast);
               setFeatureStylesForSammenslaaingsFeatures(sammenslaaingFeaturesInUtkast);
             }
@@ -113,8 +111,6 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     if (!selectedInndeling) return;
 
     if (inndelingFeatures.length > 0) {
-      setIsHandlingFeatures(true);
-
       const defaultPreviousinndeling = {
         id: selectedInndeling.id,
         inndelingtype: selectedInndeling.inndelingtype,
@@ -198,7 +194,6 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         }
       }
 
-      setIsHandlingFeatures(false);
       setSelectedInndeling(null);
     }
   }, [
@@ -275,7 +270,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     setInndelinger,
     selectInndeling,
     currentlyEditedInndeling: getCurrentlyEditingInndeling(),
-    isLoadingInndeling: isFetching || isHandlingFeatures,
+    isLoadingInndeling: isFetching && inndelingFeatures.length === 0,
 
     selectedFylkeId,
     setSelectedFylkeId,

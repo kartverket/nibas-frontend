@@ -47,8 +47,8 @@ export const zoomToFeatures = (features: Feature<Geometry>[]) => {
 
   const view = map.getView();
   view.fit(extent, {
-    padding: [200, 200, 200, 200],
-    duration: 500,
+    padding: [100, 100, 200, 100],
+    duration: 750,
   });
 };
 
