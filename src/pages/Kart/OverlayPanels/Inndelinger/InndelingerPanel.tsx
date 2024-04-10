@@ -15,14 +15,18 @@ import useFylker from "hooks/inndelinger/useFylker";
 import useKommuner from "hooks/inndelinger/useKommuner";
 import { styled } from "styled-components";
 import InndelingOption from "./Inndeling";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
 
 const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
-  const [selectedKretstype, setSelectedKretstype] = useState<Inndelingtype | null>(null);
+  const [selectedInndelingtype, setSelectedInndelingtype] = useState<Inndelingtype | null>(null);
 
   // Bedre navn på denne for å skille den mer fra valgt fylke i context?
   const [selectedPanelFylkeId, setSelectedPanelFylkeId] = useState<string>("");
   const { inndelinger, selectInndeling, setSelectedFylkeId } = useInndelinger();
   const { closeOverlayModal, activeOverlayModal } = useOverlayPanel();
+
+  const { history, clearHistory } = useHistory();
+  const hasUnsavedChangesInHistory = history.entries.length > 0;
 
   const isEditingPanel = activeOverlayModal === "inndelinger";
 
@@ -31,38 +35,52 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
 
   const resetInndelingerPanel = () => {
     closeOverlayModal();
-    setSelectedKretstype(null);
+    setSelectedInndelingtype(null);
     setSelectedPanelFylkeId("");
   };
 
   const selectKretstype = (kretstype: Inndelingtype) => {
-    setSelectedKretstype(kretstype);
+    setSelectedInndelingtype(kretstype);
     setSelectedPanelFylkeId("");
   };
 
-  const selectFylke = (fylkeId: string) => {
-    if (selectedKretstype === "fylke") {
-      const newInndeling: Inndeling = {
-        id: fylkeId,
-        inndelingtype: "fylke",
-        isEditing: isEditingPanel,
-        isVisible: !isEditingPanel,
-      };
+  const getNewInndeling = (inndelingId: string, inndelingtype: Inndelingtype): Inndeling => {
+    const newInndeling: Inndeling = {
+      id: inndelingId,
+      inndelingtype: inndelingtype,
+      isEditing: isEditingPanel,
+      isVisible: !isEditingPanel,
+    };
 
-      const inndelingIfAlreadySelected = inndelinger["fylke"].get(fylkeId);
+    const inndelingIfAlreadySelected = inndelinger[inndelingtype].get(inndelingId);
 
-      if (inndelingIfAlreadySelected && isSameInndelinger(newInndeling, inndelingIfAlreadySelected)) {
-        if (isEditingPanel) {
-          newInndeling.isEditing = !inndelingIfAlreadySelected.isEditing;
-          newInndeling.isVisible = inndelingIfAlreadySelected.isVisible;
-        } else {
-          newInndeling.isEditing = inndelingIfAlreadySelected.isEditing;
-          newInndeling.isVisible = !inndelingIfAlreadySelected.isVisible;
-        }
+    if (inndelingIfAlreadySelected && isSameInndelinger(newInndeling, inndelingIfAlreadySelected)) {
+      if (isEditingPanel) {
+        newInndeling.isEditing = !inndelingIfAlreadySelected.isEditing;
+        newInndeling.isVisible = inndelingIfAlreadySelected.isVisible;
+      } else {
+        newInndeling.isEditing = inndelingIfAlreadySelected.isEditing;
+        newInndeling.isVisible = !inndelingIfAlreadySelected.isVisible;
       }
+    }
 
-      selectInndeling(newInndeling);
-      resetInndelingerPanel();
+    return newInndeling;
+  };
+
+  const selectNewInndeling = (inndelingId: string, inndelingtype: Inndelingtype) => {
+    if (hasUnsavedChangesInHistory && isEditingPanel) {
+      clearHistory();
+    }
+
+    const newInndeling = getNewInndeling(inndelingId, inndelingtype);
+
+    selectInndeling(newInndeling);
+    resetInndelingerPanel();
+  };
+
+  const selectFylke = (fylkeId: string) => {
+    if (selectedInndelingtype === "fylke") {
+      selectNewInndeling(fylkeId, "fylke");
     } else {
       setSelectedPanelFylkeId(fylkeId);
       setSelectedFylkeId(fylkeId);
@@ -70,28 +88,8 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
   };
 
   const selectKommune = (kommuneId: string) => {
-    if (selectedKretstype) {
-      const newInndeling: Inndeling = {
-        id: kommuneId,
-        inndelingtype: selectedKretstype,
-        isEditing: isEditingPanel,
-        isVisible: !isEditingPanel,
-      };
-
-      const inndelingIfAlreadySelected = inndelinger[selectedKretstype].get(kommuneId);
-
-      if (inndelingIfAlreadySelected && isSameInndelinger(newInndeling, inndelingIfAlreadySelected)) {
-        if (isEditingPanel) {
-          newInndeling.isEditing = !inndelingIfAlreadySelected.isEditing;
-          newInndeling.isVisible = inndelingIfAlreadySelected.isVisible;
-        } else {
-          newInndeling.isEditing = inndelingIfAlreadySelected.isEditing;
-          newInndeling.isVisible = !inndelingIfAlreadySelected.isVisible;
-        }
-      }
-
-      selectInndeling(newInndeling);
-      resetInndelingerPanel();
+    if (selectedInndelingtype) {
+      selectNewInndeling(kommuneId, selectedInndelingtype);
     }
   };
 
@@ -100,7 +98,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
   const inndelingIcon = (id: string, inndelingtype: Inndelingtype, isKommune: boolean) => {
     const inndeling = inndelinger[inndelingtype].get(id);
 
-    if (selectedKretstype === "fylke") {
+    if (selectedInndelingtype === "fylke") {
       if (inndeling != null) {
         return "visibility_off";
       } else {
@@ -110,7 +108,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
 
     if (!isKommune) return "chevron_right";
 
-    if (inndeling != null && inndeling.inndelingtype === selectedKretstype) {
+    if (inndeling != null && inndeling.inndelingtype === selectedInndelingtype) {
       return "visibility_off";
     }
 
@@ -129,7 +127,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
             {INNDELINGTYPER.map((kretstype) => (
               <InndelingOption
                 key={kretstype}
-                isActive={selectedKretstype === kretstype}
+                isActive={selectedInndelingtype === kretstype}
                 onClick={() => selectKretstype(kretstype)}
                 rightIcon="chevron_right"
               >
@@ -139,7 +137,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
           </InndelingerList>
           <Divider orientation="vertical" />
           <InndelingerList>
-            {selectedKretstype &&
+            {selectedInndelingtype &&
               fylker?.map((fylke) => {
                 const fylkeId = getIdFromEntity(fylke);
                 return (
@@ -147,7 +145,9 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
                     isActive={selectedPanelFylkeId === fylkeId}
                     key={fylkeId}
                     onClick={() => selectFylke(fylkeId)}
-                    {...(selectedKretstype !== "fylke" ? { rightIcon: inndelingIcon(fylkeId, "fylke", false) } : {})}
+                    {...(selectedInndelingtype !== "fylke"
+                      ? { rightIcon: inndelingIcon(fylkeId, "fylke", false) }
+                      : {})}
                   >
                     {`${fylke.nummer} ${getNavnInSpraak(fylke.navn, "nor")}`}
                   </InndelingOption>

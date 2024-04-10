@@ -79,8 +79,8 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     const addInndelingToLayer = (
       layer: GrenseId,
       features: Feature<Geometry>[],
-      changedFeaturesInUtkast: Feature<Geometry>[],
-      sammenslaaingFeaturesInUtkast: Feature<Geometry>[],
+      changedFeaturesInUtkast: Feature<Geometry>[] = [],
+      sammenslaaingFeaturesInUtkast: Feature<Geometry>[] = [],
     ) => {
       const inndelingSource = getLayerById(layer).getSource();
 
@@ -194,7 +194,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         if (!selectedInndeling.isVisible) {
           removeInndelingFromLayer(selectedInndeling.inndelingtype, inndelingFeatures);
         } else {
-          addInndelingToLayer(selectedInndeling.inndelingtype, inndelingFeatures, [], []);
+          addInndelingToLayer(selectedInndeling.inndelingtype, inndelingFeatures);
         }
       }
 

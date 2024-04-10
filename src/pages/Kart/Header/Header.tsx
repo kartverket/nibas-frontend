@@ -8,10 +8,14 @@ import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import HeaderHome from "./HeaderHome";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import { zindex } from "utils/constants";
+import { useConfirmationModal } from "contexts/ConfirmationModalContext";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
 
 const Header = () => {
   const { utkast } = useUtkast();
+  const { history } = useHistory();
   const { activeOverlayModal, closeOverlayModal, openOverlayModal } = useOverlayPanel();
+  const { openAsync } = useConfirmationModal();
 
   const toggleModal = (modalName: "inndelinger" | "inndelinger-view") => {
     if (activeOverlayModal === modalName) {
@@ -20,6 +24,17 @@ const Header = () => {
       openOverlayModal(modalName);
     }
   };
+
+  const hasUnsavedChangesInHistory = history.entries.length > 0;
+
+  const confirmSelectIfDirtyModal = () =>
+    openAsync({
+      title: "Ulagrede endringer i utkast",
+      description:
+        "Du har ulagrede endringer i utkastet ditt. Å redigere en ny inndeling vil forkaste endringene i utkastet. Ønsker du å fortsette?",
+      acceptText: "Ja",
+      declineText: "Gå tilbake",
+    });
 
   useKeyboardShortcut("open", () => toggleModal("inndelinger"));
 
@@ -35,7 +50,13 @@ const Header = () => {
           <HeaderButton
             label="Rediger en inndeling"
             icon="travel_explore"
-            onClick={() => toggleModal("inndelinger")}
+            onClick={async () => {
+              if (hasUnsavedChangesInHistory) {
+                const shouldToggle = await confirmSelectIfDirtyModal();
+                if (!shouldToggle) return;
+              }
+              toggleModal("inndelinger");
+            }}
             tooltip={{
               text: "Åpne og rediger en inndeling i kartet",
               shortcut: "open",
