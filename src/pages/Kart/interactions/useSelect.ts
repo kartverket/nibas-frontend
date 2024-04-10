@@ -20,13 +20,22 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 const useSelect = () => {
   const toast = useToast();
   const { activeTool } = useToolbar();
-  const { selectFeatures, selectedFeatures, clearSelection, featureIsArchived } = useFeatureStyle();
+  const {
+    selectFeatures,
+    selectedFeatures,
+    clearSelection,
+    featureIsArchived,
+    addToSelection,
+    removeFromSelection,
+    isSelectedFeature,
+  } = useFeatureStyle();
   const { activeOverlayPanel, closeOverlayPanel, openOverlayPanel } = useOverlayPanel();
   const previousPointMode = usePrevious(activeTool);
-  const { getActiveFeaturesAtPixel } = useGetFeatures();
+  const { getLineStringFeaturesAtPixel } = useGetFeatures();
 
-  const dangerousPointModes: Tool[] = ["archive", "split", "detach"];
-  const allowedPointModes: Tool[] = [...dangerousPointModes, "grenseinfo"];
+  const disallowedTools: Tool[] = ["draw", "koordinater"];
+  const safeTools: Tool[] = ["grenseinfo"];
+  const pointModes: Tool[] = ["add", "remove", "split"];
 
   // Dersom man bytter verktøy ønsker vi å cleare selection
   useEffect(() => {
@@ -39,11 +48,11 @@ const useSelect = () => {
   }, [activeOverlayPanel, activeTool, clearSelection, closeOverlayPanel, previousPointMode, selectedFeatures.length]);
 
   const select = (event: MapBrowserEvent<MouseEvent>) => {
-    if (allowedPointModes.includes(activeTool) && !event.dragging) {
-      // Henter features og filtrerer ut den blå prikken som indikerer hva man trykker på
-      const filteredFeatures = getActiveFeaturesAtPixel(event, null);
+    if (!disallowedTools.includes(activeTool) && !event.dragging) {
+      const activeFeatures = getLineStringFeaturesAtPixel(event, safeTools.includes(activeTool) ? null : "edit");
 
-      if (filteredFeatures.length === 0) {
+      // Dersom man har klikket på kartet skal vi kvitte oss med selection
+      if (activeFeatures.length === 0) {
         overlayPopup.setPosition(undefined);
         closeOverlayPanel();
         clearSelection();
@@ -51,13 +60,18 @@ const useSelect = () => {
         return;
       }
 
-      const clickedFeature = filteredFeatures[0] as Feature<LineString>;
+      // Vi velger kun én feature om gangen
+      const clickedFeature = activeFeatures[0];
+
+      // Hvis feature allerede er valgt skal den de-selectes
+      if (!pointModes.includes(activeTool) && isSelectedFeature(clickedFeature)) {
+        removeFromSelection(clickedFeature);
+        event.stopPropagation();
+        return;
+      }
 
       // I noen verktøy skal man ikke kunne velge ikke-redigerbare grenser
-      if (
-        dangerousPointModes.includes(activeTool) &&
-        !isFeatureEditable(clickedFeature, featureIsArchived(clickedFeature))
-      ) {
+      if (!safeTools.includes(activeTool) && !isFeatureEditable(clickedFeature, featureIsArchived(clickedFeature))) {
         toast({ status: "error", title: "Denne grensen er ikke redigerbar" });
         event.stopPropagation();
         return;
@@ -65,8 +79,8 @@ const useSelect = () => {
 
       if (activeTool === "split") {
         // Dersom featuren vi vil splitte er for liten skal vi ikke velge den
-        const geometry = clickedFeature.getGeometry() as LineString;
-        const coordinates = geometry.getCoordinates();
+        const geometry = clickedFeature.getGeometry();
+        const coordinates = geometry?.getCoordinates() ?? [];
         if (coordinates.length <= 2) {
           toast({
             status: "error",
@@ -110,11 +124,7 @@ const useSelect = () => {
         return;
       }
 
-      selectFeatures([clickedFeature]);
-
-      // Vi tar denne til slutt da vi noen ganger ønsker å returnere tidlig og la eventet propagere
-      // f.eks. ønsker vi at split skal både kunne gjøre select og selectPoint
-      event.stopPropagation();
+      addToSelection(clickedFeature);
     }
   };
 
