@@ -11,13 +11,7 @@ const UtkastEndre = ({ utkast }: Props) => {
 
   return (
     <>
-      <MenuItem
-        icon={<Icon icon="edit" />}
-        onClick={(e) => {
-          e.stopPropagation();
-          onOpen();
-        }}
-      >
+      <MenuItem icon={<Icon icon="edit" />} onClick={onOpen}>
         Endre detaljer
       </MenuItem>
       <UtkastEndreModal isOpen={isOpen} onClose={onClose} utkast={utkast} />
