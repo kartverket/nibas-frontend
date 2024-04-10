@@ -30,7 +30,10 @@ export type KartlagContextValue = {
 
 // Obs! Vi hardkoder et lag som er skrudd på når man åpner applikasjonen
 // men den vil ikke fungere dersom tjenesten endrer navn på kartlaget
-export const defaultKartlag = "norges_grunnkart_graatone";
+const defaultKartlag: { sourceId: KartlagId; layer: string } = {
+  sourceId: "topograatone",
+  layer: "topograatone",
+};
 
 export const KartlagContext = createContext<KartlagContextValue | undefined>(undefined);
 
@@ -53,7 +56,7 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
 
       Promise.all(mappedLayerPromises).then((layers) => {
         const nonNullLayers = layers.filter(isNotNil);
-        const initialLayers = findAndToggleLayer(defaultKartlag, nonNullLayers);
+        const initialLayers = findAndToggleLayer(defaultKartlag.layer, nonNullLayers);
         setMappedLayers(initialLayers);
         setDefaultLayers(initialLayers);
         areLayersInitialized.current = true;
@@ -104,7 +107,7 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
     });
 
     // Obs! Hardkodet toggling av defaultlaget vårt
-    setWMTSLayerVisibility(getLayerById("cachetjenester"), true, defaultKartlag);
+    setWMTSLayerVisibility(getLayerById(defaultKartlag.sourceId), true, defaultKartlag.layer);
   };
 
   const value = {
