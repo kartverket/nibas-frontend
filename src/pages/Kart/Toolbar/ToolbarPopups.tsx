@@ -122,12 +122,6 @@ const ToolbarPopups = () => {
           onClose={resetTool}
         />
       )}
-      {activeTool === "detach" && selectedFeatures.length === 0 && (
-        <ToolbarPopup text="Velg grensen du ønsker å løsrive fra andre grenser" onClose={resetTool} />
-      )}
-      {activeTool === "detach" && selectedFeatures.length === 1 && (
-        <ToolbarPopup text="Dra på et knutepunkt for å løsrive grensen" onClose={resetTool} />
-      )}
       {activeTool === "grenseinfo" && (
         <ToolbarPopup text="Velg en grense i kartet for å se grenseinformasjon" onClose={resetTool} />
       )}

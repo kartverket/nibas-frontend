@@ -104,15 +104,6 @@ const ToolbarMenus = () => {
       "aria-label": "Del en grense i to fra et punkt",
     },
     {
-      label: "Løsriv grense",
-      icon: <Icon icon="low_priority" />,
-      $isActive: activeTool === "detach",
-      isDisabled: !isEditing,
-      onClick: () => toggleTool("detach"),
-      "aria-label": "Løsriv grense fra et knutepunkt",
-    },
-
-    {
       label: "Arkiver grense",
       icon: <Icon icon="archive" />,
       command: KeyboardShortcuts["archive"].displayString,

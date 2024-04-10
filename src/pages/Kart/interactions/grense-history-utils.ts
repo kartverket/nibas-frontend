@@ -11,24 +11,21 @@ export const createGrenseHistoryChange = (features: Feature[], grenseType?: Gren
   const changes: HistoryChange<MinimalGrense>[] = [];
 
   features.forEach((feature) => {
-    if (feature instanceof Feature) {
-      const geometry = feature.getGeometry();
+    // Filtrerer ut representasjonspunkt og flate fra å bli satt inn i history
+    const geometry = feature.getGeometry();
+    if (geometry instanceof LineString) {
+      const featureId = feature.getId()?.toString();
+      if (featureId === undefined) return;
 
-      // Filtrerer ut representasjonspunkt og flate fra å bli satt inn i history
-      if (geometry instanceof LineString) {
-        const featureId = feature.getId()?.toString();
-        if (featureId === undefined) return;
-
-        changes.push({
-          id: featureId,
-          from: {
-            coordinates: feature.get(previousCoordinateKey) ?? [],
-            type: grenseType,
-          },
-          to: { coordinates: geometry.getCoordinates(), type: grenseType },
-        });
-        feature.unset(previousCoordinateKey);
-      }
+      changes.push({
+        id: featureId,
+        from: {
+          coordinates: feature.get(previousCoordinateKey) ?? [],
+          type: grenseType,
+        },
+        to: { coordinates: geometry.getCoordinates(), type: grenseType },
+      });
+      feature.unset(previousCoordinateKey);
     }
   });
 
@@ -39,37 +36,34 @@ export const createNyGrenseHistoryChanges = (features: Feature[], grenseType: Gr
   const changes: HistoryChange<MinimalGrense & FeatureProperties>[] = [];
 
   for (const feature of features) {
-    if (feature instanceof Feature) {
-      const geometry = feature.getGeometry();
+    const geometry = feature.getGeometry();
+    if (geometry instanceof LineString) {
       const grenseDiscriminator = getMetadataDiscriminatorFromType(grenseType);
 
-      if (geometry instanceof LineString) {
-        const featureId = feature.getId()?.toString();
+      const featureId = feature.getId()?.toString();
+      if (featureId === undefined || !grenseDiscriminator) continue;
 
-        if (featureId === undefined || !grenseDiscriminator) continue;
+      const defaultFeatureProperties = getDefaultFeatureProperties(grenseType);
+      if (!defaultFeatureProperties) continue;
 
-        const defaultFeatureProperties = getDefaultFeatureProperties(grenseType);
-        if (!defaultFeatureProperties) continue;
+      const fromChange: MinimalGrense & FeatureProperties = {
+        ...defaultFeatureProperties,
+        coordinates: [],
+        type: grenseType,
+      };
+      const toChange: MinimalGrense & FeatureProperties = {
+        ...defaultFeatureProperties,
+        coordinates: geometry.getCoordinates(),
+        type: grenseType,
+      };
 
-        const fromChange: MinimalGrense & FeatureProperties = {
-          ...defaultFeatureProperties,
-          coordinates: [],
-          type: grenseType,
-        };
-        const toChange: MinimalGrense & FeatureProperties = {
-          ...defaultFeatureProperties,
-          coordinates: geometry.getCoordinates(),
-          type: grenseType,
-        };
+      changes.push({
+        id: featureId,
+        from: fromChange,
+        to: toChange,
+      });
 
-        changes.push({
-          id: featureId,
-          from: fromChange,
-          to: toChange,
-        });
-
-        feature.unset(previousCoordinateKey);
-      }
+      feature.unset(previousCoordinateKey);
     }
   }
 

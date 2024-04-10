@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useState } from "react";
 
-export type Tool = null | "add" | "remove" | "draw" | "split" | "detach" | "grenseinfo" | "koordinater" | "archive";
+export type Tool = null | "add" | "remove" | "draw" | "split" | "grenseinfo" | "koordinater" | "archive";
 
-const editTools: Tool[] = ["add", "remove", "draw", "split", "detach", "koordinater", "archive"];
+const editTools: Tool[] = ["add", "remove", "draw", "split", "koordinater", "archive"];
 
 export type SnapType = "snap_nibas" | "snap_matrikkel";
 
