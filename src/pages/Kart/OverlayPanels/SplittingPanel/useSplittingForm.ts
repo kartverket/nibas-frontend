@@ -94,7 +94,7 @@ export const useSplittingForm = (flatedata: Flatedata) => {
     nyeKretser: { kretsNavn: string; kretsNummer: string }[],
     isUpdateOfPreviouslyPerformedSplit: boolean,
   ) => {
-    const nyeKretserFormatted = nyeKretser.map((k) => `${k.kretsNummer} ${k.kretsNavn}`);
+    const nyeKretserFormatted = nyeKretser.map((k) => `"${k.kretsNummer} ${k.kretsNavn}"`);
     const allButLastKretserFormatted = nyeKretserFormatted.slice(0, nyeKretserFormatted.length - 1);
     const nyeKretserString = allButLastKretserFormatted
       .join(", ")
@@ -104,9 +104,10 @@ export const useSplittingForm = (flatedata: Flatedata) => {
 
     toast({
       status: "success",
-      title: !isUpdateOfPreviouslyPerformedSplit
-        ? `Du opprettet ${nyeKretserString} ved å splitte ${opprinneligKretsInfo.nummer} ${opprinneligKretsInfo.navn}`
-        : `Oppdaterte splittingen av ${opprinneligKretsInfo.nummer} ${opprinneligKretsInfo.navn} til å inneholde ${nyeKretserString}. Husk å sjekke at tilhørigheten til nærliggende grenser er korrekt.`,
+      title: "Splitting utført",
+      description: !isUpdateOfPreviouslyPerformedSplit
+        ? `Du opprettet ${nyeKretserString} ved å splitte "${opprinneligKretsInfo.nummer} ${opprinneligKretsInfo.navn}"`
+        : `Oppdaterte splittingen av "${opprinneligKretsInfo.nummer} ${opprinneligKretsInfo.navn}" til å inneholde ${nyeKretserString}. Husk å sjekke at tilhørigheten til nærliggende grenser er korrekt.`,
     });
   };
 
