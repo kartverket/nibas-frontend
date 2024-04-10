@@ -54,6 +54,7 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
     mutate(["/v1/utkast", token]);
 
     // Mutate alle grense-ressurser som kan ha vært endret
+    // revalidate: false gjør at grensedata er satt til undefined når man forsøker å hente grensene på nytt igjen
     mutate(
       (key) =>
         Array.isArray(key) &&
@@ -61,6 +62,8 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
         (key[0].endsWith("/grenser") ||
           key[0].endsWith("/stemmekretsgrenser") ||
           key[0].endsWith("/grunnkretsgrenser")),
+      undefined,
+      { revalidate: false },
     );
   };
 

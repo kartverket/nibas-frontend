@@ -45,12 +45,12 @@ const useInndelingFeatures = (inndeling: Inndeling | null) => {
     return `/v1/kommuner/{id}/${kretstype}er`;
   };
 
-  const { data: featuresResponse, isLoading: isFetchingFeatures } = useNibasApi(
+  const { data: featuresResponse, isValidating: isFetchingFeatures } = useNibasApi(
     inndeling != null ? getGrenseRequestUrl(inndeling.inndelingtype) : null,
     inndeling != null ? { id: inndeling.id } : null,
   );
 
-  const { data: inndelingResponse, isLoading: isFetchingInndeling } = useNibasApi(
+  const { data: inndelingResponse, isValidating: isFetchingInndeling } = useNibasApi(
     inndeling != null ? getInndelingRequestUrl(inndeling.inndelingtype) : null,
     inndeling != null ? { id: inndeling.id } : null,
   );
