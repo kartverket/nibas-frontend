@@ -4,7 +4,6 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import {
   INNDELINGTYPER,
   Inndelingtype,
-  isSameInndelinger,
   useInndelinger,
   Inndeling,
 } from "contexts/InndelingerContext/InndelingerContext";
@@ -22,7 +21,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
 
   // Bedre navn på denne for å skille den mer fra valgt fylke i context?
   const [selectedPanelFylkeId, setSelectedPanelFylkeId] = useState<string>("");
-  const { inndelinger, selectInndeling, setSelectedFylkeId } = useInndelinger();
+  const { inndelinger, selectInndeling, setSelectedFylkeId, isSameInndelinger } = useInndelinger();
   const { closeOverlayModal, activeOverlayModal } = useOverlayPanel();
 
   const { history, clearHistory } = useHistory();
@@ -172,7 +171,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
   );
 };
 
-export const InndelingerLayout = styled.div`
+const InndelingerLayout = styled.div`
   display: grid;
   grid-template-columns: 1fr auto 1fr auto 1fr;
   gap: 16px;
@@ -180,7 +179,7 @@ export const InndelingerLayout = styled.div`
   overflow: hidden;
 `;
 
-export const InndelingerList = styled.section`
+const InndelingerList = styled.section`
   display: flex;
   flex-direction: column;
   gap: 8px;

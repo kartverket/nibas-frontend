@@ -6,11 +6,6 @@ export type Spraak = {
   spraak: string;
 };
 
-export type InndelingerKontekst = {
-  id: string;
-  type: Inndelingtype;
-};
-
 // renaming av typer fra generert api doc
 export type AdministrativEnhetNavn = components["schemas"]["AdministrativEnhetNavn"];
 export type AdministrativGrenseMetadata = components["schemas"]["AdministrativGrenseMetadata"];
@@ -18,7 +13,10 @@ export type AvtaltAvgrensningslinjeMetadata = components["schemas"]["AvtaltAvgre
 export type CommonMetadata = components["schemas"]["CommonMetadata"];
 export type FeatureCollection = components["schemas"]["FeatureCollection"];
 export type FeatureProperties = components["schemas"]["FeatureProperties"] & {
-  inndelingerKontekst: InndelingerKontekst;
+  inndelingerKontekst: {
+    id: string;
+    type: Inndelingtype;
+  };
 };
 export type FylkeRequest = components["schemas"]["FylkeRequest"];
 export type FylkeResponse = components["schemas"]["FylkeResponse"];

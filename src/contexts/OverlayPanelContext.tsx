@@ -1,12 +1,9 @@
 import React, { createContext, useContext, useState } from "react";
 import { useFeatureStyle } from "./FeatureStyleContext/FeatureStyleContext";
-import { KommuneResponse } from "types/api";
 
 type OverlayPanel = "grenseinfo" | "sammenslåing" | "splitting" | "tegnforklaring" | "koordinater" | "kartlag";
 
 type OverlayModal = "inndelinger" | "inndelinger-view" | "stemmekrets" | "grunnkrets" | "navigasjon";
-
-export type Flatedata = KommuneResponse | null;
 
 export type OverlayPanelContextValue = {
   activeOverlayPanel: OverlayPanel | null;

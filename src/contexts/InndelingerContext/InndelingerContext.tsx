@@ -27,7 +27,7 @@ type Inndelinger = {
   [inndelingtype in Inndelingtype]: Map<string, Inndeling>;
 };
 
-function getEmptyInndelinger(): Inndelinger {
+const getEmptyInndelinger = (): Inndelinger => {
   const inndelinger: Partial<Inndelinger> = {};
 
   for (const type of INNDELINGTYPER) {
@@ -35,29 +35,22 @@ function getEmptyInndelinger(): Inndelinger {
   }
 
   return inndelinger as Inndelinger;
-}
-
-export const isEqualInndelinger = (a: Inndeling, b: Inndeling): boolean => {
-  return (
-    a.id === b.id && a.inndelingtype === b.inndelingtype && a.isVisible === b.isVisible && a.isEditing === b.isEditing
-  );
 };
 
-export const isSameInndelinger = (a: Inndeling, b: Inndeling): boolean => {
-  return a.id === b.id && a.inndelingtype === b.inndelingtype;
-};
-
-export type InndelingerContextValue = {
+type InndelingerContextValue = {
   inndelinger: Inndelinger;
   selectInndeling: (inndeling: Inndeling) => void;
   currentlyEditedInndeling: Inndeling | null;
   isLoadingInndeling: boolean;
 
+  isSameInndelinger: (a: Inndeling, b: Inndeling) => boolean;
+  isEqualInndelinger: (a: Inndeling, b: Inndeling) => boolean;
+
   selectedFylkeId: string;
   setSelectedFylkeId: (id: string) => void;
 };
 
-export const InndelingerContext = createContext<InndelingerContextValue | undefined>(undefined);
+const InndelingerContext = createContext<InndelingerContextValue | undefined>(undefined);
 
 export const InndelingerProvider = ({ children }: { children: React.ReactNode }) => {
   const [inndelinger, setInndelinger] = useState<Inndelinger>(getEmptyInndelinger());
@@ -72,6 +65,16 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
   const { isFetching, inndelingFeatures, utkastFeaturesInInndeling } = useInndelingFeatures(selectedInndeling);
   const { utkast } = useUtkast();
+
+  const isSameInndelinger = (a: Inndeling, b: Inndeling): boolean => {
+    return a.id === b.id && a.inndelingtype === b.inndelingtype;
+  };
+
+  const isEqualInndelinger = (a: Inndeling, b: Inndeling): boolean => {
+    return (
+      a.id === b.id && a.inndelingtype === b.inndelingtype && a.isVisible === b.isVisible && a.isEditing === b.isEditing
+    );
+  };
 
   useEffect(() => {
     const addInndelingToLayer = (
@@ -271,6 +274,9 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     selectInndeling,
     currentlyEditedInndeling: getCurrentlyEditingInndeling(),
     isLoadingInndeling: isFetching && inndelingFeatures.length === 0,
+
+    isSameInndelinger,
+    isEqualInndelinger,
 
     selectedFylkeId,
     setSelectedFylkeId,
