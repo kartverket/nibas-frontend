@@ -196,7 +196,7 @@ export const getArchiveLayerStyle = (feature: Feature<Geometry> | RenderFeature)
   return [];
 };
 
-export const getPointOverlayStyle = (feature: Feature<Geometry> | RenderFeature) => {
+export const getPointOverlayStyle = (feature: Feature<Geometry> | RenderFeature, grenseId: GrenseId) => {
   const name = feature.get("name");
   const number = feature.get("number");
   const kretstype = (feature.get("inndelingerKontekst") as InndelingerKontekst).type;
@@ -207,7 +207,7 @@ export const getPointOverlayStyle = (feature: Feature<Geometry> | RenderFeature)
     text: new Text({
       text: `${number} ${name}`,
       font: "bold 16px Mulish, sans-serif",
-      fill: new Fill({ color: grenseColors[kretstype] }),
+      fill: new Fill({ color: grenseId === "edit" ? "black" : grenseColors[kretstype] }),
       stroke: new Stroke({ width: 3, color: "white" }),
       textBaseline: "middle",
       textAlign: "center",

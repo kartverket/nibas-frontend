@@ -38,7 +38,7 @@ export const archivedSource = new VectorSource();
 
 const grenseStyle =
   (grenseId: GrenseId): StyleFunction =>
-  (feature) => [...getLayerStyle(feature, grenseId, false), getPointOverlayStyle(feature)];
+  (feature) => [...getLayerStyle(feature, grenseId, false), getPointOverlayStyle(feature, grenseId)];
 
 const createVectorLayer = (id: GrenseId, source?: VectorSource) => {
   const newLayer = new VectorLayer({
