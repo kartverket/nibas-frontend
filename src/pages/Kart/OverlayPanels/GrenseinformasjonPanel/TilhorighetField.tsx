@@ -1,4 +1,4 @@
-import { Select, Stack } from "@kvib/react";
+import { Select, Stack, Text } from "@kvib/react";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
@@ -7,9 +7,10 @@ import { isAdministrativGrense } from "utils/grenser";
 import {
   CustomOption,
   formatKretsNavn,
-  getTilhorighetValuesFormatted,
   KontekstType,
   Tilhorighet,
+  TilhorighetChoice,
+  TilhorighetOptions,
   UseTilhorighet,
 } from "../hooks/tilhorighet-utils";
 import { useTilhorighetAdministrativ } from "../hooks/useTilhorighetAdministrativ";
@@ -145,4 +146,29 @@ export const TilhorighetField = ({ feature, isDisabled = false }: TilhorighetPro
 
   const shouldBeDisabled = isDisabled || isGrensePanelDisabled;
   return <CommonTilhorighetField feature={feature} isDisabled={shouldBeDisabled} />;
+};
+
+const getTilhorighetValuesFormatted = (
+  formState: TilhorighetChoice,
+  tilhorighetOptions: TilhorighetOptions | null | undefined,
+) => {
+  if (formState.a != null && formState.b != null && tilhorighetOptions) {
+    const kretsA = tilhorighetOptions[Tilhorighet.A].find(
+      (krets) => krets.id.lokalid.value === formState[Tilhorighet.A],
+    );
+    const kretsB = tilhorighetOptions[Tilhorighet.B].find(
+      (krets) => krets.id.lokalid.value === formState[Tilhorighet.B],
+    );
+
+    if (!kretsA && !kretsB) {
+      return undefined;
+    } else {
+      return (
+        <>
+          <Text>{formatKretsNavn(kretsA)}</Text>
+          <Text>{formatKretsNavn(kretsB)}</Text>
+        </>
+      );
+    }
+  }
 };

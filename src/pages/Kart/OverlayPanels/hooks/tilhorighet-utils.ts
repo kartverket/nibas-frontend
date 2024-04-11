@@ -30,7 +30,7 @@ export enum CustomOption {
   NOT_CHOSEN = "NOT_CHOSEN",
 }
 
-type TilhorighetChoice = {
+export type TilhorighetChoice = {
   [Tilhorighet.A]: string | undefined;
   [Tilhorighet.B]: string | undefined;
 };
@@ -120,26 +120,6 @@ export const getUpdatedKontekstEgenskaper = (
     version: krets.version,
   }));
   return kontekstEgenskaperToKeep.concat(nyeKontekstEgenskaper);
-};
-
-export const getTilhorighetValuesFormatted = (
-  formState: TilhorighetChoice,
-  tilhorighetOptions: TilhorighetOptions | null | undefined,
-) => {
-  if (formState.a != null && formState.b != null && tilhorighetOptions) {
-    const kretsA = tilhorighetOptions[Tilhorighet.A].find(
-      (krets) => krets.id.lokalid.value === formState[Tilhorighet.A],
-    );
-    const kretsB = tilhorighetOptions[Tilhorighet.B].find(
-      (krets) => krets.id.lokalid.value === formState[Tilhorighet.B],
-    );
-
-    if (!kretsA && !kretsB) {
-      return undefined;
-    } else {
-      return `${formatKretsNavn(kretsA)}, ${formatKretsNavn(kretsB)}`;
-    }
-  }
 };
 
 export const formatKretsNavn = (krets: Krets | null | undefined): string => {
