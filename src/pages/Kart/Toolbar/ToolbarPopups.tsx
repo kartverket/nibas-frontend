@@ -103,6 +103,15 @@ const ToolbarPopups = () => {
           isLoading={matrikkelIsLoading}
         />
       )}
+      {!activeModeTools.includes("move") && activeTool == null && (
+        <ToolbarPopup
+          text={
+            selectedFeatures.length === 0
+              ? "Velg én eller flere grenser du ønsker å flytte"
+              : `Flytt eller løsriv punkt på ${selectedFeatures.length === 1 ? "den valgte grensen" : "de valgte grensene"}`
+          }
+        />
+      )}
       {activeTool === "draw" && (
         <ToolbarPopup
           text="Start tegning ved å klikke på kartet"
@@ -110,17 +119,19 @@ const ToolbarPopups = () => {
           onClose={resetTool}
         />
       )}
-      {activeTool === "split" && selectedFeatures.length === 0 && (
-        <ToolbarPopup text="Velg grensen du ønsker å dele" onClose={resetTool} />
-      )}
-      {activeTool === "split" && selectedFeatures.length === 1 && (
-        <ToolbarPopup
-          text="Velg hvilket punkt du ønsker å dele grensen på"
-          buttonText="Del grense"
-          onClick={() => handleSplit()}
-          isDisabled={selectedPoint == null}
-          onClose={resetTool}
-        />
+      {activeTool === "split" && (
+        <>
+          {selectedFeatures.length === 0 && <ToolbarPopup text="Velg grensen du ønsker å dele" onClose={resetTool} />}
+          {selectedFeatures.length === 1 && (
+            <ToolbarPopup
+              text="Velg hvilket punkt du ønsker å dele grensen på"
+              buttonText="Del grense"
+              onClick={() => handleSplit()}
+              isDisabled={selectedPoint == null}
+              onClose={resetTool}
+            />
+          )}
+        </>
       )}
       {activeTool === "grenseinfo" && (
         <ToolbarPopup text="Velg en grense i kartet for å se grenseinformasjon" onClose={resetTool} />
@@ -137,9 +148,25 @@ const ToolbarPopups = () => {
       {activeTool === "koordinater" && (
         <ToolbarPopup text="Velg et punkt på en grense for å åpne koordinatmenyen" onClose={resetTool} />
       )}
-      {activeTool === "add" && <ToolbarPopup text="Trykk på en grense for å legge til et punkt" onClose={resetTool} />}
+      {activeTool === "add" && (
+        <ToolbarPopup
+          text={
+            selectedFeatures.length === 0
+              ? "Velg én eller flere grenser du ønsker å legge til punkt på"
+              : "Trykk på en grense for å legge til et punkt"
+          }
+          onClose={resetTool}
+        />
+      )}
       {activeTool === "remove" && (
-        <ToolbarPopup text="Trykk på et punkt for å fjerne punktet fra grensen" onClose={resetTool} />
+        <ToolbarPopup
+          text={
+            selectedFeatures.length === 0
+              ? "Velg én eller flere grenser du ønsker å fjerne punkt fra"
+              : "Trykk på et punkt for fjerne punktet fra grensen"
+          }
+          onClose={resetTool}
+        />
       )}
     </>
   );
