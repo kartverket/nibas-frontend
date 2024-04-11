@@ -79,7 +79,7 @@ const HeaderBreadcrumb = () => {
   );
 };
 
-const Separator = styled(Icon)`
+export const Separator = styled(Icon)`
   line-height: 30px;
   font-size: 20px;
 `;

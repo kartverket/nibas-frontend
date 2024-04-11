@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import HeaderBreadcrumb from "./HeaderBreadcrumb";
+import HeaderBreadcrumb, { Separator } from "./HeaderBreadcrumb";
 import HeaderHistoryOperations from "./HeaderHistoryOperations";
 import HeaderUtkastOperations from "./HeaderUtkastOperations";
 import HeaderButton, { HeaderSection } from "./HeaderButton";
@@ -10,12 +10,26 @@ import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts
 import { zindex } from "utils/constants";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import useFylker from "hooks/inndelinger/useFylker";
+import useKommuner from "hooks/inndelinger/useKommuner";
+import { inndelingResponseNavnToString } from "contexts/InndelingerContext/useInndelingFeatures";
+import { Hide, Text } from "@kvib/react";
+import { capitalize } from "utils/string-utils";
 
 const Header = () => {
   const { utkast } = useUtkast();
   const { history } = useHistory();
   const { activeOverlayModal, closeOverlayModal, openOverlayModal } = useOverlayPanel();
   const { openAsync } = useConfirmationModal();
+
+  const { currentlyEditedInndeling, selectedFylkeId } = useInndelinger();
+
+  const { fylker } = useFylker(selectedFylkeId.length > 0);
+  const { kommuner } = useKommuner(selectedFylkeId.length > 0 ? selectedFylkeId : "");
+
+  const activeFylke = fylker?.find((fylke) => fylke.id.lokalid.value === selectedFylkeId);
+  const activeKommune = kommuner?.find((kommune) => kommune.id.lokalid.value === currentlyEditedInndeling?.id);
 
   const toggleModal = (modalName: "inndelinger" | "inndelinger-view") => {
     if (activeOverlayModal === modalName) {
@@ -73,12 +87,40 @@ const Header = () => {
               text: "Åpne og se en inndeling i kartet",
             }}
           />
+          {activeFylke && currentlyEditedInndeling && (
+            <Hide below="xl">
+              <ActiveInndelingContainer>
+                {capitalize(currentlyEditedInndeling.inndelingtype)}
+                <Separator icon="chevron_right" />
+                <InndelingText $isBold={activeKommune == null}>
+                  {activeFylke.nummer} {inndelingResponseNavnToString(activeFylke.navn)}
+                </InndelingText>
+                {activeKommune && (
+                  <>
+                    <Separator icon="chevron_right" />
+                    <InndelingText $isBold={true}>
+                      {activeKommune.nummer} {inndelingResponseNavnToString(activeKommune.navn)}
+                    </InndelingText>
+                  </>
+                )}
+              </ActiveInndelingContainer>
+            </Hide>
+          )}
         </HeaderSection>
         {utkast && <HeaderUtkastOperations utkast={utkast} />}
       </Bar>
     </Container>
   );
 };
+
+const InndelingText = styled(Text)<{ $isBold: boolean }>`
+  font-weight: ${({ $isBold }) => ($isBold ? "var(--kvib-fontWeights-bold)" : "")};
+`;
+
+const ActiveInndelingContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
 
 const Container = styled.header`
   grid-area: header;

@@ -15,6 +15,7 @@ import useKommuner from "hooks/inndelinger/useKommuner";
 import { styled } from "styled-components";
 import InndelingOption from "./Inndeling";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { capitalize } from "utils/string-utils";
 
 const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
   const [selectedInndelingtype, setSelectedInndelingtype] = useState<Inndelingtype | null>(null);
@@ -91,8 +92,6 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
       selectNewInndeling(kommuneId, selectedInndelingtype);
     }
   };
-
-  const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
   const inndelingIcon = (id: string, inndelingtype: Inndelingtype, isKommune: boolean) => {
     const inndeling = inndelinger[inndelingtype].get(id);
