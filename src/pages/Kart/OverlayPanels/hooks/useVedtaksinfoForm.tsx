@@ -42,7 +42,7 @@ export const mapFromFormToApi = (
   };
 };
 
-export const mapFromApiToForm = (dokrefDTO: DokumentasjonsreferanseDTO): VedtakinfoForm => {
+const mapFromApiToForm = (dokrefDTO: DokumentasjonsreferanseDTO): VedtakinfoForm => {
   return {
     dokumentlenker: dokrefDTO.dokumentlenker,
     fastsettingsdato: new Date(dokrefDTO.fastsettingsdato),

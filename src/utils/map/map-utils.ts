@@ -77,7 +77,7 @@ export const getZoomMode = (isEditing: boolean, hasEditingInMap: boolean): "edit
 };
 
 /** Euklidisk avstand mellom to koordinater i piksler */
-export const pixelDistance = (coord1: Coordinate, coord2: Coordinate) => {
+const pixelDistance = (coord1: Coordinate, coord2: Coordinate) => {
   const pixel1 = map.getPixelFromCoordinate(coord1);
   const pixel2 = map.getPixelFromCoordinate(coord2);
   const dx = pixel1[0] - pixel2[0];

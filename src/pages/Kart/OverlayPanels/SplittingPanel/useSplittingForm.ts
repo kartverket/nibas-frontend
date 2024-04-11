@@ -17,9 +17,9 @@ import { useToast } from "@kvib/react";
 import { useCallback } from "react";
 import { EditingType } from "contexts/EditGrenserContext/types";
 
-export type SplittingForm = Pick<KretsDelingEndringRequest, "opprinneligKrets" | "nyeKretser">;
+type SplittingForm = Pick<KretsDelingEndringRequest, "opprinneligKrets" | "nyeKretser">;
 
-export const getDefaultSplittingValue = () => ({
+const getDefaultSplittingValue = () => ({
   opprinneligKrets: {
     lokalId: CustomOption.NOT_CHOSEN,
     version: 0,

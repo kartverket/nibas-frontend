@@ -149,12 +149,6 @@ export const getKommunerIdFromKontekstEgenskaper = (kontekstEgenskaper: Kontekst
   return kommuner.length > 0 ? kommuner : null;
 };
 
-export const sortKretserOptionsByName = (kretser: Krets[] | undefined): Krets[] => {
-  if (!kretser) return [];
-
-  return kretser.sort((a, b) => a.navn.localeCompare(b.navn));
-};
-
 export const sortKretserOptionsByNumber = (kretser: Krets[] | undefined): Krets[] => {
   if (!kretser) return [];
 

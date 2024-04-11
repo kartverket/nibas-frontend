@@ -52,31 +52,6 @@ export const addFeaturePropertiesEntryFromFeature = (
   });
 };
 
-export const addPropertyEntryFromFeature = (
-  feature: Feature<LineString>,
-  addHistoryEntry: (entry: PropertyEntry) => void,
-  updatedProperties: FeatureProperties,
-) => {
-  const id = feature.getId()?.toString();
-
-  if (id == null) return;
-
-  const oldProperties = feature.getProperties() as FeatureProperties;
-
-  updateFeatureWithNewProperties(feature as Feature<LineString>, updatedProperties);
-
-  addHistoryEntry({
-    type: "property",
-    changes: [
-      {
-        id: id,
-        from: oldProperties,
-        to: feature.getProperties() as FeatureProperties,
-      },
-    ],
-  });
-};
-
 export const addArchivingEntryFromFeatureList = (
   features: Feature<LineString>[],
   addHistoryEntry: (entry: GrenseArkiveringsEntry) => void,
