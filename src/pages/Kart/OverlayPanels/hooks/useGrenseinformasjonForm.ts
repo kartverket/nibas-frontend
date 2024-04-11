@@ -7,7 +7,7 @@ import { formatISO, startOfDay } from "date-fns";
 import { LineString } from "ol/geom";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 
-export type GrenseinformasjonFormProps = {
+type GrenseinformasjonFormProps = {
   grenseType: string;
   datafangstDato: Date | undefined;
   maalemetode: string | undefined;
