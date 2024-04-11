@@ -35,7 +35,8 @@ const useSelect = () => {
 
   const disallowedTools: Tool[] = ["draw", "koordinater"];
   const safeTools: Tool[] = ["grenseinfo"];
-  const pointModes: Tool[] = ["add", "remove", "split"];
+  const pointTools: Tool[] = ["add", "remove", "split"];
+  const exclusiveSelectTools: Tool[] = ["grenseinfo", "split"];
 
   // Dersom man bytter verktøy ønsker vi å cleare selection
   useEffect(() => {
@@ -64,7 +65,7 @@ const useSelect = () => {
       const clickedFeature = activeFeatures[0];
 
       // Hvis feature allerede er valgt skal den de-selectes
-      if (!pointModes.includes(activeTool) && isSelectedFeature(clickedFeature)) {
+      if (!pointTools.includes(activeTool) && isSelectedFeature(clickedFeature)) {
         removeFromSelection(clickedFeature);
         event.stopPropagation();
         return;
@@ -107,24 +108,21 @@ const useSelect = () => {
         }
       }
 
-      if (activeTool === "archive") {
-        if (featureIsArchived(clickedFeature)) {
-          toast({
-            status: "error",
-            title: "Kan ikke arkivere grenser som allerede er arkivert",
-          });
-          event.stopPropagation();
-          return;
-        }
-
-        const newSelectedFeatures = selectedFeatures.concat(clickedFeature);
-        selectFeatures(newSelectedFeatures);
-
+      if (activeTool === "archive" && featureIsArchived(clickedFeature)) {
+        toast({
+          status: "error",
+          title: "Kan ikke arkivere grenser som allerede er arkivert",
+        });
         event.stopPropagation();
         return;
       }
 
-      addToSelection(clickedFeature);
+      // Noen verktøy skal kun kunne velge én grense om gangen
+      if (exclusiveSelectTools.includes(activeTool)) {
+        selectFeatures([clickedFeature]);
+      } else {
+        addToSelection(clickedFeature);
+      }
     }
   };
 
