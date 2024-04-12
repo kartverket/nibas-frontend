@@ -93,8 +93,4 @@ export const removeFeaturesFromSourceByIds = (sourceId: LayerId, featureIds: str
   featureIds.forEach(removeFeature);
 };
 
-export const getFeatureId = (feature: Feature<Geometry>) => feature.getId()?.toString() ?? "";
-
 export const getRepresentasjonspunktId = (entityId: string) => `${entityId}-representasjonspunkt`;
-
-export const getFlateId = (entityId: string) => `${entityId}-flate`;

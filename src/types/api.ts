@@ -25,12 +25,12 @@ export type FylkeRequest = components["schemas"]["FylkeRequest"];
 export type FylkeResponse = components["schemas"]["FylkeResponse"];
 export type NasjonRequest = components["schemas"]["NasjonRequest"];
 
-export type KretsNavnOgNummer = components["schemas"]["KretsNavnOgNummer"];
-export type KretsResponse = GrunnkretsResponse | StemmekretsResponse;
-export type AdministrativEnhetResponse = FylkeResponse | KommuneResponse;
+type KretsResponse = GrunnkretsResponse | StemmekretsResponse;
+type AdministrativEnhetResponse = FylkeResponse | KommuneResponse;
 export type InndelingResponse = KretsResponse | AdministrativEnhetResponse;
 export type InndelingNavn = components["schemas"]["AdministrativEnhetNavn"][] | string;
 export type InndelingSearchResponse = components["schemas"]["InndelingResponse"];
+export type KretsNavnOgNummer = components["schemas"]["KretsNavnOgNummer"];
 
 /**
  * Utkast
@@ -39,8 +39,6 @@ export type UtkastOperasjoner = UtkastResponse["operasjoner"];
 export type UtkastResponse = components["schemas"]["UtkastResponse"];
 export type UtkastRef = components["schemas"]["UtkastRef"];
 export type UtkastMetadataendringer = components["schemas"]["Metadataendringer"];
-export type UtkastGrenseendringer = components["schemas"]["Grenseendringer"];
-export type UtkastGrenseendringerFeatures = components["schemas"]["Grenseendringer"]["endredeFeatures"];
 export type OpprettUtkastRequest = components["schemas"]["OpprettUtkastRequest"];
 export type OppdaterUtkastRequest = components["schemas"]["OppdaterUtkastRequest"];
 export type StemmekretsSammenslaaingsendringRequest = components["schemas"]["StemmekretsSammenslaaingsendringRequest"];
