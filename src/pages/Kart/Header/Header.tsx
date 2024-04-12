@@ -14,7 +14,7 @@ import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import useFylker from "hooks/inndelinger/useFylker";
 import useKommuner from "hooks/inndelinger/useKommuner";
 import { inndelingResponseNavnToString } from "contexts/InndelingerContext/useInndelingFeatures";
-import { Hide, Text } from "@kvib/react";
+import { Breadcrumb, BreadcrumbItem, Hide, Text } from "@kvib/react";
 import { capitalize } from "utils/string-utils";
 
 const Header = () => {
@@ -25,8 +25,8 @@ const Header = () => {
 
   const { currentlyEditedInndeling, selectedFylkeId } = useInndelinger();
 
-  const { fylker } = useFylker(selectedFylkeId.length > 0);
-  const { kommuner } = useKommuner(selectedFylkeId.length > 0 ? selectedFylkeId : "");
+  const { fylker } = useFylker(selectedFylkeId !== "");
+  const { kommuner } = useKommuner(selectedFylkeId, selectedFylkeId !== "");
 
   const activeFylke = fylker?.find((fylke) => fylke.id.lokalid.value === selectedFylkeId);
   const activeKommune = kommuner?.find((kommune) => kommune.id.lokalid.value === currentlyEditedInndeling?.id);
@@ -90,21 +90,23 @@ const Header = () => {
           />
           {activeFylke && currentlyEditedInndeling && (
             <Hide below="xl">
-              <ActiveInndelingContainer>
-                {capitalize(currentlyEditedInndeling.inndelingtype)}
-                <Separator icon="chevron_right" />
-                <InndelingText $isBold={activeKommune == null}>
-                  {activeFylke.nummer} {inndelingResponseNavnToString(activeFylke.navn)}
-                </InndelingText>
+              <Breadcrumb separator={<Separator icon="chevron_right" />} spacing={0}>
+                <BreadcrumbItem>
+                  <InndelingText>{capitalize(currentlyEditedInndeling.inndelingtype)}</InndelingText>
+                </BreadcrumbItem>
+                <BreadcrumbItem>
+                  <InndelingText $isBold={activeKommune == null}>
+                    {activeFylke.nummer} {inndelingResponseNavnToString(activeFylke.navn)}
+                  </InndelingText>
+                </BreadcrumbItem>
                 {activeKommune && (
-                  <>
-                    <Separator icon="chevron_right" />
-                    <InndelingText $isBold={true}>
+                  <BreadcrumbItem>
+                    <InndelingText $isBold>
                       {activeKommune.nummer} {inndelingResponseNavnToString(activeKommune.navn)}
                     </InndelingText>
-                  </>
+                  </BreadcrumbItem>
                 )}
-              </ActiveInndelingContainer>
+              </Breadcrumb>
             </Hide>
           )}
         </HeaderSection>
@@ -114,13 +116,8 @@ const Header = () => {
   );
 };
 
-const InndelingText = styled(Text)<{ $isBold: boolean }>`
-  ${(props) => props.$isBold && "font-weight: var(--kvib-fontWeights-bold)"};
-`;
-
-const ActiveInndelingContainer = styled.div`
-  display: flex;
-  align-items: center;
+const InndelingText = styled(Text)<{ $isBold?: boolean }>`
+  ${(props) => props.$isBold === true && "font-weight: var(--kvib-fontWeights-bold)"};
 `;
 
 const Container = styled.header`

@@ -77,7 +77,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
     return "Ukjent målemetode er registrert på grensen";
   };
 
-  const getPossibleGrenseTypesFromInndelingtype = (inndelingtype: Inndelingtype | null): GrenseType[] => {
+  const getPossibleGrenseTypesFromInndelingtype = (inndelingtype: Inndelingtype | undefined): GrenseType[] => {
     if (inndelingtype === "stemmekrets") {
       return ["Stemmekretsgrense", "Kommunegrense"];
     }
@@ -165,7 +165,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         isRequired
       >
         <Select {...register("grenseType")}>
-          {getPossibleGrenseTypesFromInndelingtype(currentlyEditedInndeling?.inndelingtype ?? null).map((type) => (
+          {getPossibleGrenseTypesFromInndelingtype(currentlyEditedInndeling?.inndelingtype).map((type) => (
             <option key={type} value={type}>
               {type}
             </option>

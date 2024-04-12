@@ -178,7 +178,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
         });
       }
 
-      setUtkast(updatedUtkastWithTempFeatureIds);
+      setUtkast(updatedUtkast);
     } else if (statusCode.isConflict(response.status)) {
       setError({
         title: "Konflikt ved lagring av utkast",

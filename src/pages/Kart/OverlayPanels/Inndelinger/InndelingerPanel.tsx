@@ -1,12 +1,7 @@
 import { Divider, Modal, ModalContent, ModalOverlay } from "@kvib/react";
 import { PanelHeader, PanelProps, ModalPanel } from "../Panel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import {
-  INNDELINGTYPER,
-  Inndelingtype,
-  useInndelinger,
-  Inndeling,
-} from "contexts/InndelingerContext/InndelingerContext";
+import { INNDELINGTYPER, Inndelingtype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { getIdFromEntity } from "utils/api";
 import { getNavnInSpraak } from "utils/language/language";
 import { useState } from "react";
@@ -16,14 +11,16 @@ import { styled } from "styled-components";
 import InndelingOption from "./Inndeling";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { capitalize } from "utils/string-utils";
+import { useToolbar } from "contexts/ToolbarContext";
 
 const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
   const [selectedInndelingtype, setSelectedInndelingtype] = useState<Inndelingtype | null>(null);
 
   // Bedre navn på denne for å skille den mer fra valgt fylke i context?
   const [selectedPanelFylkeId, setSelectedPanelFylkeId] = useState<string>("");
-  const { inndelinger, selectInndeling, setSelectedFylkeId, isSameInndelinger } = useInndelinger();
+  const { selectInndeling, setSelectedFylkeId, getNewInndeling } = useInndelinger();
   const { closeOverlayModal, activeOverlayModal } = useOverlayPanel();
+  const { disableModeTool } = useToolbar();
 
   const { history, clearHistory } = useHistory();
   const hasUnsavedChangesInHistory = history.entries.length > 0;
@@ -44,38 +41,16 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
     setSelectedPanelFylkeId("");
   };
 
-  const getNewInndeling = (inndelingId: string, inndelingtype: Inndelingtype): Inndeling => {
-    const newInndeling: Inndeling = {
-      id: inndelingId,
-      inndelingtype: inndelingtype,
-      isEditing: isEditingPanel,
-      isVisible: !isEditingPanel,
-    };
-
-    const inndelingIfAlreadySelected = inndelinger[inndelingtype].get(inndelingId);
-
-    if (inndelingIfAlreadySelected && isSameInndelinger(newInndeling, inndelingIfAlreadySelected)) {
-      if (isEditingPanel) {
-        newInndeling.isEditing = !inndelingIfAlreadySelected.isEditing;
-        newInndeling.isVisible = inndelingIfAlreadySelected.isVisible;
-      } else {
-        newInndeling.isEditing = inndelingIfAlreadySelected.isEditing;
-        newInndeling.isVisible = !inndelingIfAlreadySelected.isVisible;
-      }
-    }
-
-    return newInndeling;
-  };
-
   const selectNewInndeling = (inndelingId: string, inndelingtype: Inndelingtype) => {
     if (hasUnsavedChangesInHistory && isEditingPanel) {
       clearHistory();
     }
 
-    const newInndeling = getNewInndeling(inndelingId, inndelingtype);
+    const newInndeling = getNewInndeling(inndelingId, inndelingtype, isEditingPanel);
 
     selectInndeling(newInndeling);
     resetInndelingerPanel();
+    disableModeTool("move");
   };
 
   const selectFylke = (fylkeId: string) => {
@@ -91,26 +66,6 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
     if (selectedInndelingtype) {
       selectNewInndeling(kommuneId, selectedInndelingtype);
     }
-  };
-
-  const inndelingIcon = (id: string, inndelingtype: Inndelingtype, isKommune: boolean) => {
-    const inndeling = inndelinger[inndelingtype].get(id);
-
-    if (selectedInndelingtype === "fylke") {
-      if (inndeling != null) {
-        return "visibility_off";
-      } else {
-        return "visibility";
-      }
-    }
-
-    if (!isKommune) return "chevron_right";
-
-    if (inndeling != null && inndeling.inndelingtype === selectedInndelingtype) {
-      return "visibility_off";
-    }
-
-    return "visibility";
   };
 
   return (
@@ -143,7 +98,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
                     isActive={selectedPanelFylkeId === fylkeId}
                     key={fylkeId}
                     onClick={() => selectFylke(fylkeId)}
-                    rightIcon={selectedInndelingtype !== "fylke" ? inndelingIcon(fylkeId, "fylke", false) : undefined}
+                    rightIcon={selectedInndelingtype !== "fylke" ? "chevron_right" : undefined}
                   >
                     {`${fylke.nummer} ${getNavnInSpraak(fylke.navn, "nor")}`}
                   </InndelingOption>

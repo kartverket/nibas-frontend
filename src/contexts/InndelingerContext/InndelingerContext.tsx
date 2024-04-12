@@ -43,8 +43,7 @@ type InndelingerContextValue = {
   currentlyEditedInndeling: Inndeling | null;
   isLoadingInndeling: boolean;
 
-  isSameInndelinger: (a: Inndeling, b: Inndeling) => boolean;
-  isEqualInndelinger: (a: Inndeling, b: Inndeling) => boolean;
+  getNewInndeling: (id: string, type: Inndelingtype, isEditing: boolean) => Inndeling;
 
   selectedFylkeId: string;
   setSelectedFylkeId: (id: string) => void;
@@ -178,7 +177,6 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
             }
           }
 
-          // her kan det hende at features skal til archived ikke edit
           addInndelingToLayer(
             "edit",
             inndelingFeaturesExcludedUtkastFeatures,
@@ -232,6 +230,34 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     return null;
   };
 
+  /**
+   * Gir deg en inndeling basert på hva inndelinger allerede er. Dersom du for eksempel åpner en inndeling som allerede var åpnet, så vil denne automatisk
+   * flippe `isVisible` til `false`.
+   * @returns Inndeling med nye verdier basert på tidligere, eller en default Inndeling
+   */
+  const getNewInndeling = (inndelingId: string, inndelingtype: Inndelingtype, isEditing: boolean): Inndeling => {
+    const newInndeling: Inndeling = {
+      id: inndelingId,
+      inndelingtype: inndelingtype,
+      isEditing: isEditing,
+      isVisible: !isEditing,
+    };
+
+    const inndelingIfAlreadySelected = inndelinger[inndelingtype].get(inndelingId);
+
+    if (inndelingIfAlreadySelected && isSameInndelinger(newInndeling, inndelingIfAlreadySelected)) {
+      if (isEditing) {
+        newInndeling.isEditing = !inndelingIfAlreadySelected.isEditing;
+        newInndeling.isVisible = inndelingIfAlreadySelected.isVisible;
+      } else {
+        newInndeling.isEditing = inndelingIfAlreadySelected.isEditing;
+        newInndeling.isVisible = !inndelingIfAlreadySelected.isVisible;
+      }
+    }
+
+    return newInndeling;
+  };
+
   const getInndelingerWithNewInndeling = (newInndeling: Inndeling): Inndelinger => {
     const newInndelinger: Inndelinger = structuredClone(inndelinger);
 
@@ -273,8 +299,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     currentlyEditedInndeling: getCurrentlyEditingInndeling(),
     isLoadingInndeling: isFetching && inndelingFeatures.length === 0,
 
-    isSameInndelinger,
-    isEqualInndelinger,
+    getNewInndeling,
 
     selectedFylkeId,
     setSelectedFylkeId,

@@ -16,8 +16,7 @@ import {
 import { useTilhorighetAdministrativ } from "../hooks/useTilhorighetAdministrativ";
 import { useTilhorighet } from "../hooks/useTilhorighet";
 import { useTilhorighetNyAdministrativ } from "../hooks/useTilhorighetNyAdministrativ";
-import { isFeatureEditable } from "utils/features";
-import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
+import { isFeatureToBeArchived, isFeatureEditable } from "utils/features";
 import useIsGrenseinformasjonPanelDisabled from "../hooks/useIsGrenseInformasjonPanelDisabled";
 import GrenseinformasjonRowTilhorighet from "./GrenseinformasjonRowTilhorighet";
 import { styled } from "styled-components";
@@ -128,14 +127,12 @@ const NyAdministrativTilhorighetField = ({ feature, isDisabled }: TilhorighetPro
 };
 
 export const TilhorighetField = ({ feature, isDisabled = false }: TilhorighetProps) => {
-  const { featureIsArchived } = useFeatureStyle();
-
   const isGrensePanelDisabled = useIsGrenseinformasjonPanelDisabled(feature);
 
   const featureType = feature.getProperties().type;
 
   if (isGrenseType(featureType) && isAdministrativGrense(featureType)) {
-    const isEditable = isFeatureEditable(feature, featureIsArchived(feature), false);
+    const isEditable = isFeatureEditable(feature, isFeatureToBeArchived(feature), false);
 
     const shouldBeDisabled = isDisabled || isGrensePanelDisabled || !isEditable;
     if (isTempFeatureId(feature.getId())) {

@@ -13,7 +13,7 @@ import { Style } from "ol/style";
 import { createGrenseHistoryChange } from "./grense-history-utils";
 import { useGetFeatures } from "./interaction-utils";
 import { isAdministrativGrense } from "utils/grenser";
-import { isFeatureEditable, isPreviousAndCurrentCoordinatesEqual } from "utils/features";
+import { isFeatureToBeArchived, isFeatureEditable, isPreviousAndCurrentCoordinatesEqual } from "utils/features";
 import { findNearbyVertexOnFeature } from "utils/map/map-utils";
 import useToastCounter from "hooks/toast/useToastCounter";
 import { Geometry } from "ol/geom";
@@ -24,7 +24,7 @@ import { Coordinate, equals } from "ol/coordinate";
 const useModify = () => {
   const { addHistoryEntry } = useHistory();
   const { activeTool, activeModeTools } = useToolbar();
-  const { selectedFeatures, featureIsArchived } = useFeatureStyle();
+  const { selectedFeatures } = useFeatureStyle();
   const toast = useToast();
   const { toastCounter: removeToast } = useToastCounter(
     { status: "success" },
@@ -59,7 +59,7 @@ const useModify = () => {
         }
 
         // Sjekk alle featurene i punktet, hvis en av dem ikke skal kunne endres ønsker vi ikke å endre noe
-        if (selectedFeatures.some((feature) => !isFeatureEditable(feature, featureIsArchived(feature)))) {
+        if (selectedFeatures.some((feature) => !isFeatureEditable(feature, isFeatureToBeArchived(feature)))) {
           toast({
             status: "error",
             title: "Denne grensen er ikke redigerbar",
@@ -87,7 +87,7 @@ const useModify = () => {
         if (activeTool === "remove" && click(event)) {
           const activeFeatures = getLineStringFeaturesAtPixel(event, "edit");
 
-          if (!activeFeatures.every((feature) => isFeatureEditable(feature, featureIsArchived(feature)))) {
+          if (!activeFeatures.every((feature) => isFeatureEditable(feature, isFeatureToBeArchived(feature)))) {
             return false;
           }
 
@@ -132,7 +132,6 @@ const useModify = () => {
     selectedFeatures,
     disallowedPointModes,
     getLineStringFeaturesAtPixel,
-    featureIsArchived,
     toast,
     addToast,
     removeToast,

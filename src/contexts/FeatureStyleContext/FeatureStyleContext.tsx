@@ -3,7 +3,7 @@ import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { FeatureStyleContextValue } from "./types";
 import { useSelectStyles } from "./useSelectStyles";
 import { getArchiveLayerStyle, grenseStyles, setFeatureStyle } from "utils/map/layerStyles";
-import Feature, { FeatureLike } from "ol/Feature";
+import Feature from "ol/Feature";
 import useCustomStyles from "./useCustomStyles";
 import { Coordinate } from "ol/coordinate";
 import { archivedSource } from "hooks/layers/constants";
@@ -222,17 +222,6 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     }
   };
 
-  const featureIsArchived = (feature: FeatureLike) => {
-    const featureId = feature.getId()?.toString();
-    if (featureId != null) {
-      return (
-        archivedStyleFunctions.customFeatureIds.includes(featureId) ||
-        archivedStyleFunctions.savedCustomFeatureIds.includes(featureId)
-      );
-    }
-    return false;
-  };
-
   const setFeatureStylesForUtkastFeatures = (endredeFeatures: Feature<Geometry>[]) => {
     const dirtyFeatureIds: string[] = [];
     const archivedFeatureIds: string[] = [];
@@ -272,9 +261,9 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       }
     }
 
-    dirtyStyleFunctions.addCustomStyles(dirtyFeatureIds);
-    errorStyleFunctions.addCustomStyles(errorFeatureIds);
-    archivedStyleFunctions.addCustomStyles(archivedFeatureIds);
+    dirtyStyleFunctions.setAndSaveCustomStyles(dirtyFeatureIds);
+    errorStyleFunctions.setAndSaveCustomStyles(errorFeatureIds);
+    archivedStyleFunctions.setAndSaveCustomStyles(archivedFeatureIds);
   };
 
   const setFeatureStylesForSammenslaaingsFeatures = (stemmekretsFeatures: Feature<Geometry>[]) => {
@@ -301,14 +290,8 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     isSelectedFeature,
 
     addDirtyStyles: dirtyStyleFunctions.addCustomStyles,
-    setAndSaveDirtyStyles: dirtyStyleFunctions.setAndSaveCustomStyles,
-
     addErrorStyles: errorStyleFunctions.addCustomStyles,
-    setAndSaveErrorStyles: errorStyleFunctions.setAndSaveCustomStyles,
-
     addArchivedStyles: archivedStyleFunctions.addCustomStyles,
-    setAndSaveArchivedStyles: archivedStyleFunctions.setAndSaveCustomStyles,
-    featureIsArchived,
 
     setFeatureStylesForUtkastFeatures: useCallback(setFeatureStylesForUtkastFeatures, [
       archivedStyleFunctions,
