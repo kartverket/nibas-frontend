@@ -9,7 +9,7 @@ import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useCallback } from "react";
 import Input from "components/Input";
 import { stemmekretsgrenserFetcher } from "api/stemmekrets";
-import { deduplicate, removeNil } from "utils/list-utils";
+import { deduplicate, duplicates, removeNil } from "utils/list-utils";
 import { MergeMultiselect } from "./MergeMultiselect";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
@@ -36,10 +36,6 @@ const Buttons = styled.div`
   gap: 16px;
   margin-top: auto;
 `;
-
-export const getOverlappingStemmekretsFeatureIds = (featureIds: string[]) => {
-  return featureIds.filter((featureId, index) => featureIds.indexOf(featureId) !== index);
-};
 
 const MergePanel = ({ isOpen, className }: PanelProps) => {
   const { closeOverlayPanel } = useOverlayPanel();
@@ -139,7 +135,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
       updateUtkast(utkast.id, updateUtkastRequest);
       const sammenslaaingsStemmekretsIds = getStemmekretsIdList(selectedStemmekrets, stemmekretsTilSammenslaaingListe);
       const stemmekretsFeatureIds = await stemmekretsgrenserFetcher(sammenslaaingsStemmekretsIds, auth.token);
-      const overlappingFeatureIds = getOverlappingStemmekretsFeatureIds(stemmekretsFeatureIds);
+      const overlappingFeatureIds = duplicates(stemmekretsFeatureIds);
       const uniqueStemmekretsFeatureIds = stemmekretsFeatureIds.filter(
         (sfi) => !overlappingFeatureIds.some((ofi) => sfi === ofi),
       );

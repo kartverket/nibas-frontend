@@ -23,8 +23,7 @@ import {
 import { newFeatureOnlyExistsAfterIndex, getChangeIds } from "contexts/HistoryContext/history-utils";
 import { Geometry, LineString } from "ol/geom";
 import { FeatureProperties } from "types/api";
-import { removeNil } from "utils/list-utils";
-import { getOverlappingStemmekretsFeatureIds } from "pages/Kart/OverlayPanels/MergePanel/MergePanel";
+import { duplicates, removeNil } from "utils/list-utils";
 
 export const FeatureStyleContext = createContext<FeatureStyleContextValue | undefined>(undefined);
 
@@ -282,7 +281,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     const stemmekretsFeatureIds = removeNil(stemmekretsFeatures.map((feature) => feature.getId()?.toString()));
 
     if (stemmekretsFeatureIds.length > 0) {
-      const overlappingFeatureIds = getOverlappingStemmekretsFeatureIds(stemmekretsFeatureIds);
+      const overlappingFeatureIds = duplicates(stemmekretsFeatureIds);
       const uniqueStemmekretsFeatureIds = stemmekretsFeatureIds.filter((sfi) => !overlappingFeatureIds.includes(sfi));
 
       sammenslaaingStyleFunctions.setAndSaveCustomStyles(uniqueStemmekretsFeatureIds);
