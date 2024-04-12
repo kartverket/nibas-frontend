@@ -108,7 +108,7 @@ const ToolbarPopups = () => {
           text={
             selectedFeatures.length === 0
               ? "Velg én eller flere grenser du ønsker å flytte"
-              : `Flytt eller løsriv punkt på ${selectedFeatures.length === 1 ? "den valgte grensen" : "de valgte grensene"}`
+              : `Flytt punkt på ${selectedFeatures.length === 1 ? "den valgte grensen" : "de valgte grensene"}`
           }
         />
       )}
