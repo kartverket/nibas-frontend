@@ -1,7 +1,6 @@
 import { initialMapCenter, initialMapZoom, map } from "pages/Kart/constants";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
-import VectorSource from "ol/source/Vector";
 import { LineString } from "ol/geom";
 import { Coordinate } from "ol/coordinate";
 import { pixelTolerance } from "pages/Kart/interactions/constants";
@@ -49,18 +48,6 @@ export const zoomToFeatures = (features: Feature<Geometry>[]) => {
   view.fit(extent, {
     padding: [100, 100, 200, 100],
     duration: 750,
-  });
-};
-
-export const getAllVisibleFeatures = () => {
-  const layers = map.getAllLayers();
-
-  return layers.flatMap((layer) => {
-    const source = layer.getSource();
-    if (source instanceof VectorSource) {
-      return source.getFeatures();
-    }
-    return [];
   });
 };
 
