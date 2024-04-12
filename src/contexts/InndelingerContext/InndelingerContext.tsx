@@ -45,6 +45,8 @@ type InndelingerContextValue = {
 
   getNewInndeling: (id: string, type: Inndelingtype, isEditing: boolean) => Inndeling;
 
+  clearInndelingerAndSources: () => void;
+
   selectedFylkeId: string;
   setSelectedFylkeId: (id: string) => void;
 };
@@ -207,14 +209,18 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
   useEffect(() => {
     if (!utkast) {
-      for (const layer of Object.values(grenserLayers)) {
-        const source = layer.getSource();
-        source?.clear(true);
-      }
-      setSelectedInndeling(null);
-      setInndelinger(getEmptyInndelinger());
+      clearInndelingerAndSources();
     }
   }, [utkast]);
+
+  const clearInndelingerAndSources = () => {
+    for (const layer of Object.values(grenserLayers)) {
+      const source = layer.getSource();
+      source?.clear(true);
+    }
+    setSelectedInndeling(null);
+    setInndelinger(getEmptyInndelinger());
+  };
 
   /**
    * Sjekker om det er en inndeling som redigeres
@@ -300,6 +306,8 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     isLoadingInndeling: isFetching && inndelingFeatures.length === 0,
 
     getNewInndeling,
+
+    clearInndelingerAndSources,
 
     selectedFylkeId,
     setSelectedFylkeId,
