@@ -1,9 +1,19 @@
 import { styled } from "styled-components";
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, Skeleton } from "@kvib/react";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  Skeleton,
+  Stack,
+} from "@kvib/react";
 import { EndringsloggGrunnkretsendringer } from "./EndringsloggGrunnkretsendringer";
 import { EndringsloggStemmekretsendringer } from "./EndringsloggStemmekretsendringer";
 import { useUtkastEndringer } from "./hooks/useUtkastEndringer";
 import { UtkastResponse } from "types/api";
+import { UlagredeEndringer } from "./UlagredeEndringer";
 
 type Props = {
   isOpen: boolean;
@@ -19,31 +29,36 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl" isCentered scrollBehavior="inside">
       <ModalOverlay />
-      <ModalContent>
+      <WideModalContent>
         <ModalHeader>Endringer i dette utkastet</ModalHeader>
         <ModalCloseButton aria-label="Lukk" />
         <ModalBody>
           {!harEndringer && <Empty>Det er ingen endringer i dette utkastet</Empty>}
-
-          {stemmekretsendringer?.map((endringer) => (
-            <Skeleton key={endringer.kommune.id} isLoaded={harLastetData}>
-              <EndringsloggStemmekretsendringer endringer={endringer} />
-            </Skeleton>
-          ))}
-
-          {grunnkretsendringer?.map((endringer) => (
-            <Skeleton key={endringer.kommune.id} isLoaded={harLastetData}>
-              <EndringsloggGrunnkretsendringer endringer={endringer} />
-            </Skeleton>
-          ))}
+          <Stack spacing={6}>
+            <UlagredeEndringer />
+            {stemmekretsendringer?.map((endringer) => (
+              <Skeleton key={endringer.kommune.id} isLoaded={harLastetData}>
+                <EndringsloggStemmekretsendringer endringer={endringer} />
+              </Skeleton>
+            ))}
+            {grunnkretsendringer?.map((endringer) => (
+              <Skeleton key={endringer.kommune.id} isLoaded={harLastetData}>
+                <EndringsloggGrunnkretsendringer endringer={endringer} />
+              </Skeleton>
+            ))}
+          </Stack>
         </ModalBody>
-      </ModalContent>
+      </WideModalContent>
     </Modal>
   );
 };
 
 const Empty = styled.div`
   margin-bottom: 16px;
+`;
+
+const WideModalContent = styled(ModalContent)`
+  max-width: 800px;
 `;
 
 export default EndringsloggModal;
