@@ -143,9 +143,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
                     isActive={selectedPanelFylkeId === fylkeId}
                     key={fylkeId}
                     onClick={() => selectFylke(fylkeId)}
-                    {...(selectedInndelingtype !== "fylke"
-                      ? { rightIcon: inndelingIcon(fylkeId, "fylke", false) }
-                      : {})}
+                    rightIcon={selectedInndelingtype !== "fylke" ? inndelingIcon(fylkeId, "fylke", false) : undefined}
                   >
                     {`${fylke.nummer} ${getNavnInSpraak(fylke.navn, "nor")}`}
                   </InndelingOption>

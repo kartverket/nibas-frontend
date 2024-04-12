@@ -37,7 +37,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
 
   const { history, clearHistory } = useHistory();
   const { addDirtyStyles, addErrorStyles, clearFeatureStyles } = useFeatureStyle();
-  const { closeOverlayPanel } = useOverlayPanel();
+  const { closeOverlayPanel, closeOverlayModal } = useOverlayPanel();
   const { setError } = useErrorHandling();
   const { resetTool, resetModeTools } = useToolbar();
   const toast = useToast();
@@ -78,9 +78,10 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     clearHistory();
     clearFeatureStyles();
     closeOverlayPanel();
+    closeOverlayModal();
     resetModeTools();
     resetTool();
-  }, [clearFeatureStyles, clearHistory, closeOverlayPanel, resetKartlag, resetModeTools, resetTool]);
+  }, [clearFeatureStyles, clearHistory, closeOverlayModal, closeOverlayPanel, resetKartlag, resetModeTools, resetTool]);
 
   useEffect(() => {
     if (fetchedUtkast && !utkast) {

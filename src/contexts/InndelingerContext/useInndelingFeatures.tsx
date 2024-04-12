@@ -75,7 +75,7 @@ const useInndelingFeatures = (inndeling: Inndeling | null) => {
         ? inndelingResponse.map((response) => getRepresentasjonspunktFeatureForInndeling(response))
         : [getRepresentasjonspunktFeatureForInndeling(inndelingResponse)];
 
-      // Dette føler jeg kan brekke på et vis, som ikke er nice. Hvordan skal man årne det?
+      // TODO Håndtere feil ved dårlig formatert json her
       const geoJsonFeatures = geoJsonToSource(featuresResponse).getFeatures();
 
       const geoJsonFeaturesWithRepresentasjonspunkter = geoJsonFeatures.concat(representasjonspunkter);
@@ -89,7 +89,6 @@ const useInndelingFeatures = (inndeling: Inndeling | null) => {
   const utkastFeaturesInInndeling: Feature<Geometry>[] = useMemo(() => {
     const endredeFeatures = utkast?.operasjoner.grenseendringer.endredeFeatures;
     if (endredeFeatures && endredeFeatures.length > 0 && inndelingFeatures.length > 0) {
-      // Dette er en skikkelig hacky måte å få riktig type ut av endredeFeatures, but it works :s
       const featureCollection: FeatureCollection = {
         type: "FeatureCollection",
         features: endredeFeatures,

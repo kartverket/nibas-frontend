@@ -59,13 +59,9 @@ const PageLayout = () => {
 };
 
 const Grid = styled.div`
+  display: flex;
+  flex-direction: column;
   height: 100%;
-  display: grid;
-  grid-template-columns: auto 1fr;
-  grid-template-rows: auto 1fr;
-  grid-template-areas:
-    "header header"
-    "sidebar map";
 `;
 
 export default PageLayout;

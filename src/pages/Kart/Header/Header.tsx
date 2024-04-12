@@ -76,7 +76,7 @@ const Header = () => {
                 text: "Åpne og rediger en inndeling i kartet",
                 shortcut: "open",
               }}
-              isPrimary={true}
+              variant="primary"
             />
           )}
           <HeaderButton
@@ -86,6 +86,7 @@ const Header = () => {
             tooltip={{
               text: "Åpne og se en inndeling i kartet",
             }}
+            variant={utkast == null ? "primary" : "ghost"}
           />
           {activeFylke && currentlyEditedInndeling && (
             <Hide below="xl">
@@ -114,7 +115,7 @@ const Header = () => {
 };
 
 const InndelingText = styled(Text)<{ $isBold: boolean }>`
-  font-weight: ${({ $isBold }) => ($isBold ? "var(--kvib-fontWeights-bold)" : "")};
+  ${(props) => props.$isBold && "font-weight: var(--kvib-fontWeights-bold)"};
 `;
 
 const ActiveInndelingContainer = styled.div`
@@ -123,7 +124,6 @@ const ActiveInndelingContainer = styled.div`
 `;
 
 const Container = styled.header`
-  grid-area: header;
   box-shadow: var(--kvib-shadows-base);
   z-index: ${zindex.mapHeader};
   font-size: var(--kvib-fontSizes-sm);

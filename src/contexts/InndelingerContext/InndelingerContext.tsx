@@ -132,8 +132,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
       ) {
         editSource.clear(true);
         if (selectedInndeling.isEditing) {
-          // synes dette virket litt tungvindt, men lar det være per nå
-          // tanken er bare å returnere en liste over alle features i inndelingen, men bruke feature fra utkast der disse finnes
+          // TODO Kan man unngå så mye looping her? Er det en potensiell performance save?
           const inndelingFeaturesExcludedUtkastFeatures: Feature<Geometry>[] = [...utkastFeaturesInInndeling];
 
           for (const inndelingFeature of inndelingFeatures) {
@@ -270,7 +269,6 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
   const value = {
     inndelinger,
-    setInndelinger,
     selectInndeling,
     currentlyEditedInndeling: getCurrentlyEditingInndeling(),
     isLoadingInndeling: isFetching && inndelingFeatures.length === 0,

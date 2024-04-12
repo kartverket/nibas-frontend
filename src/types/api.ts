@@ -32,7 +32,6 @@ export type InndelingResponse = KretsResponse | AdministrativEnhetResponse;
 export type InndelingNavn = components["schemas"]["AdministrativEnhetNavn"][] | string;
 export type InndelingSearchResponse = components["schemas"]["InndelingResponse"];
 
-
 /**
  * Utkast
  */

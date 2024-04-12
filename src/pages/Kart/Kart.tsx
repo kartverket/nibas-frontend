@@ -50,7 +50,6 @@ const Kart = () => {
 };
 
 const KartWrapper = styled.div`
-  grid-area: map;
   position: relative;
   width: 100%;
   height: 100%;
@@ -95,7 +94,7 @@ const KartOverlay = styled.div<{ $isLoadingKartdata: boolean }>`
   overflow: hidden;
   pointer-events: none;
 
-  background-color: ${({ $isLoadingKartdata }) => ($isLoadingKartdata ? "#000000A0" : "")};
+  ${(props) => props.$isLoadingKartdata && "background-color: var(--kvib-colors-blackAlpha-700)"};
 
   & > * {
     pointer-events: all;

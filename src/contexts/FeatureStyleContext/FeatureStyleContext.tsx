@@ -283,9 +283,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
 
     if (stemmekretsFeatureIds.length > 0) {
       const overlappingFeatureIds = getOverlappingStemmekretsFeatureIds(stemmekretsFeatureIds);
-      const uniqueStemmekretsFeatureIds = stemmekretsFeatureIds.filter(
-        (sfi) => !overlappingFeatureIds.some((ofi) => sfi === ofi),
-      );
+      const uniqueStemmekretsFeatureIds = stemmekretsFeatureIds.filter((sfi) => !overlappingFeatureIds.includes(sfi));
 
       sammenslaaingStyleFunctions.setAndSaveCustomStyles(uniqueStemmekretsFeatureIds);
       sammenslaaingOverlappingStyleFunctions.setAndSaveCustomStyles(overlappingFeatureIds);
