@@ -265,8 +265,4 @@ export const isMatrikkelFeature = (feature: FeatureLike) => {
   return false;
 };
 
-export const isFeatureToBeArchived = (feature: FeatureLike): boolean => {
-  const toBeArchivedProp = feature.get("shouldArchive") as boolean | undefined;
-
-  return toBeArchivedProp ?? false;
-};
+export const isFeatureToBeArchived = (feature: FeatureLike): boolean => feature.get("shouldArchive") ?? false;

@@ -32,6 +32,7 @@ import { routes } from "utils/routes";
 import { isAdministrativGrense } from "utils/grenser";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { isGrenseType } from "utils/type-utils";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
 type Props = {
   isOpen: boolean;
@@ -49,6 +50,8 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
   const { mutate } = useSWRConfig();
   const navigate = useNavigate();
   const utkastPathMatch = useMatch(`${routes.utkast}/${routes.utkastId}`);
+
+  const { clearInndelingerAndSources } = useInndelinger();
 
   const cleanUpUtkast = () => {
     mutate(["/v1/utkast", token]);
@@ -86,6 +89,7 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
       });
       cleanUpUtkast();
       closeUtkast();
+      clearInndelingerAndSources();
 
       if (utkastPathMatch) {
         navigate(routes.utkast);

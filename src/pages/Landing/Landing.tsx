@@ -10,18 +10,21 @@ import { routes } from "utils/routes";
 import Greeting from "./Greeting";
 import LandingHeader from "./LandingHeader";
 import PrivacyFooter from "./PrivacyFooter";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
 const Landing = () => {
   const navigate = useNavigate();
   const { resetKartlag } = useKartlag();
   const { resetTool, resetModeTools } = useToolbar();
   const { activeOverlayPanel, closeOverlayPanel, activeOverlayModal, closeOverlayModal } = useOverlayPanel();
+  const { clearInndelingerAndSources } = useInndelinger();
 
   useEffect(() => {
     resetMapView();
     resetKartlag();
     resetTool();
     resetModeTools();
+    clearInndelingerAndSources();
 
     // Disse to krever ekstra sjekking for å unngå uendelig useEffekt-løkke
     if (activeOverlayPanel) closeOverlayPanel();
@@ -29,6 +32,7 @@ const Landing = () => {
   }, [
     activeOverlayModal,
     activeOverlayPanel,
+    clearInndelingerAndSources,
     closeOverlayModal,
     closeOverlayPanel,
     resetKartlag,

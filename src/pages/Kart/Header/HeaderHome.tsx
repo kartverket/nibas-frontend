@@ -5,18 +5,9 @@ import AlertModal from "components/Modals/AlertModal";
 import { useNavigate } from "react-router-dom";
 import { routes } from "utils/routes";
 
-import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
-
 const HeaderHome = () => {
   const { canSave } = useHistory();
   const navigate = useNavigate();
-
-  const { clearInndelingerAndSources } = useInndelinger();
-
-  const clearAndNavigate = () => {
-    clearInndelingerAndSources();
-    navigate(routes.index);
-  };
 
   const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } = useAlertModal(
     "Du har endringer i utkastet som ikke er lagret",
@@ -27,7 +18,7 @@ const HeaderHome = () => {
     if (canSave) {
       openModal();
     } else {
-      clearAndNavigate();
+      navigate(routes.index);
     }
   };
 
@@ -48,7 +39,7 @@ const HeaderHome = () => {
         onClose={closeModal}
         secondaryAction={{
           text: "Forkast endringer",
-          onClick: () => clearAndNavigate(),
+          onClick: () => navigate(routes.index),
         }}
         primaryAction={{
           text: "Fortsett redigering",

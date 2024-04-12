@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { zoomToFeatures } from "utils/map/map-utils";
 import { editSource, grenserLayers } from "hooks/layers/constants";
@@ -207,12 +207,6 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     utkastFeaturesInInndeling,
   ]);
 
-  useEffect(() => {
-    if (!utkast) {
-      clearInndelingerAndSources();
-    }
-  }, [utkast]);
-
   const clearInndelingerAndSources = () => {
     for (const layer of Object.values(grenserLayers)) {
       const source = layer.getSource();
@@ -307,7 +301,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
     getNewInndeling,
 
-    clearInndelingerAndSources,
+    clearInndelingerAndSources: useCallback(clearInndelingerAndSources, []),
 
     selectedFylkeId,
     setSelectedFylkeId,
