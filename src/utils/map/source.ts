@@ -49,7 +49,9 @@ export const addFeaturesToSource = (sourceId: LayerId, features: Feature<Geometr
 
     const shouldBeArchived = isFeatureToBeArchived(feature);
     if (shouldBeArchived) {
-      if (!setSharedIndexIfFeatureInSource(archivedSource, feature.getId()?.toString() ?? "")) {
+      const didSetSharedIndex = !setSharedIndexIfFeatureInSource(archivedSource, feature.getId()?.toString() ?? "");
+
+      if (didSetSharedIndex) {
         archivedSource.addFeature(feature);
         return;
       }
