@@ -66,6 +66,7 @@ const useInndelingFeatures = (inndeling: Inndeling | null) => {
       ...inndelingWithRepresentasjonspunkt.representasjonspunkt,
       id: getRepresentasjonspunktId(inndelingWithRepresentasjonspunkt.id.lokalid.value),
       properties: {
+        ...inndelingWithRepresentasjonspunkt.representasjonspunkt.properties,
         name: inndelingName,
         number: inndelingWithRepresentasjonspunkt.nummer,
       },
