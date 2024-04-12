@@ -9,9 +9,9 @@ import {
   Krets,
   Tilhorighet,
   UseTilhorighet,
-  sortKretserOptionsByNumber,
   mapGrunnkretsResponseToKrets,
   mapStemmekretResponseToKrets,
+  sortKretserOptionsByFormattedName,
 } from "./tilhorighet-utils";
 import { useTilhorighetForm } from "./useTilhorighetForm";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
@@ -19,6 +19,7 @@ import { editSource } from "hooks/layers/constants";
 import { Geometry } from "ol/geom";
 import { isAdministrativGrense } from "utils/grenser";
 import { isGrenseType } from "utils/type-utils";
+import { deduplicateBy } from "utils/list-utils";
 
 const getAdministrativeFeatures = (features: Feature<Geometry>[]) => {
   return features.filter((feature) => {
@@ -34,6 +35,10 @@ const filterKontekstEgenskaperOnType = (egenskaper: KontekstEgenskaper[], type: 
     .map((egenskap) => egenskap.id?.lokalid.value ?? "")
     .filter((egenskap, index, workingList) => workingList.indexOf(egenskap) === index)
     .filter((id) => id.length > 0 && id !== CustomOption.NOT_CHOSEN);
+};
+
+const deduplicateById = (kretser: Krets[]) => {
+  return deduplicateBy(kretser, (krets) => krets.id.lokalid.value);
 };
 
 const useGetMuligeKretserForNyAdministrativGrense = (
@@ -62,34 +67,42 @@ const useGetMuligeKretserForNyAdministrativGrense = (
 
   return useMemo(() => {
     if (!grunnkretserIfExists && !stemmekretserIfExists) return null;
-    const grunnkretserFraGrenseKontekstegenskaper = grunnkretserIfExists?.map((grunnkrets) => {
-      return {
-        id: grunnkrets.id,
-        kommuneId: grunnkrets.kommuneIdentifikator,
-        navn: grunnkrets.navn,
-        nummer: grunnkrets.nummer,
-        type: "GRUNNKRETS",
-        version: grunnkrets.version,
-      } as Krets;
-    });
+    const grunnkretserFraGrenseKontekstegenskaper: Krets[] =
+      grunnkretserIfExists?.map((grunnkrets) => {
+        return {
+          id: grunnkrets.id,
+          kommuneId: grunnkrets.kommuneIdentifikator,
+          kommunenummer: grunnkrets.kommunenummer.kodeverdi,
+          navn: grunnkrets.navn,
+          nummer: grunnkrets.nummer,
+          type: KontekstType.GRUNNKRETS,
+          version: grunnkrets.version,
+        };
+      }) ?? [];
 
-    const stemmekretserFraGrenseKontekstEgenskaper = stemmekretserIfExists?.map((stemmekrets) => {
-      return {
-        id: stemmekrets.id,
-        kommuneId: stemmekrets.kommuneIdentifikator,
-        navn: stemmekrets.navn,
-        nummer: stemmekrets.nummer,
-        type: "STEMMEKRETS",
-        version: stemmekrets.version,
-      } as Krets;
-    });
+    const stemmekretserFraGrenseKontekstEgenskaper: Krets[] =
+      stemmekretserIfExists?.map((stemmekrets) => {
+        return {
+          id: stemmekrets.id,
+          kommuneId: stemmekrets.kommuneIdentifikator,
+          kommunenummer: stemmekrets.kommunenummer.kodeverdi,
+          navn: stemmekrets.navn,
+          nummer: stemmekrets.nummer,
+          type: KontekstType.STEMMEKRETS,
+          version: stemmekrets.version,
+        };
+      }) ?? [];
 
-    const fullGrunnkretser = mapGrunnkretsResponseToKrets(grunnkretserFromContext).concat(
-      sortKretserOptionsByNumber(grunnkretserFraGrenseKontekstegenskaper),
+    const fullGrunnkretser = sortKretserOptionsByFormattedName(
+      deduplicateById(
+        mapGrunnkretsResponseToKrets(grunnkretserFromContext).concat(grunnkretserFraGrenseKontekstegenskaper),
+      ),
     );
 
-    const fullStemmekretser = mapStemmekretResponseToKrets(stemmekretserFromContext).concat(
-      sortKretserOptionsByNumber(stemmekretserFraGrenseKontekstEgenskaper),
+    const fullStemmekretser = sortKretserOptionsByFormattedName(
+      deduplicateById(
+        mapStemmekretResponseToKrets(stemmekretserFromContext).concat(stemmekretserFraGrenseKontekstEgenskaper),
+      ),
     );
 
     switch (kontekstType) {
@@ -109,7 +122,7 @@ const useGetMuligeKretserForNyAdministrativGrense = (
   }, [grunnkretserFromContext, grunnkretserIfExists, kontekstType, stemmekretserFromContext, stemmekretserIfExists]);
 };
 
-export const useTilhorighetNyAdministrativ = (feature: Feature): UseTilhorighet => {
+export const useTilhorighetNyAdministrativ = (feature: Feature, kontekstType: KontekstType): UseTilhorighet => {
   const {
     setTilhorighetOptions,
     tilhorighetOptions,
@@ -119,8 +132,7 @@ export const useTilhorighetNyAdministrativ = (feature: Feature): UseTilhorighet 
     resetTilhorighet,
     updateDraftFromFeature,
     kommunerId,
-    kontekstType,
-  } = useTilhorighetForm(feature);
+  } = useTilhorighetForm(feature, kontekstType);
 
   // Vet setting av tilhørighet på nye grenser så er det ikke mulig å utlede hvilke muligheter man skal ha for endring av tilhørighet,
   // siden kontekstegenskapene ikke er satt. kommunerId blir da satt til en fallback som er den kommunen man aktivt redigerer

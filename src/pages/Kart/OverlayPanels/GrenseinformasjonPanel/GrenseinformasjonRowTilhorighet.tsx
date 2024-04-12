@@ -9,7 +9,7 @@ import { Feature } from "ol";
 interface Props {
   feature: Feature<Geometry>;
   name: string;
-  valueLabel?: string;
+  valueLabel?: React.ReactNode;
   tooltipLabel: string;
   children: React.ReactNode;
   onMetadataSubmit: () => void;
@@ -86,6 +86,7 @@ const GrenseinformasjonRow = ({
     </Container>
   );
 };
+
 const InfoIcon = styled.div`
   margin-left: 8px;
   display: flex;

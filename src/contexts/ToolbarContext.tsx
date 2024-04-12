@@ -4,7 +4,7 @@ export type Tool = null | "add" | "remove" | "draw" | "split" | "grenseinfo" | "
 
 const editTools: Tool[] = ["add", "remove", "draw", "split", "koordinater", "archive"];
 
-export type SnapType = "snap_nibas" | "snap_matrikkel";
+type SnapType = "snap_nibas" | "snap_matrikkel";
 
 export type ModeTool = "move" | "matrikkel" | SnapType;
 

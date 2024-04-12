@@ -3,7 +3,6 @@ import { createUtkastOperations } from "contexts/UtkastContext/utkast-utils";
 import {
   AdministrativGrenseMetadata,
   FylkeResponse,
-  GrunnkretsRequest,
   GrunnkretsResponse,
   KodelisteRespons,
   KommuneResponse,
@@ -11,7 +10,6 @@ import {
   UtkastRef,
   UtkastResponse,
 } from "types/api";
-import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 
 export const mockFylker: FylkeResponse[] = [
   {
@@ -175,8 +173,6 @@ export const mockGeoJsonFeatureResponse: GeoJSONFeatureCollection = {
   ],
 };
 
-export const mockBasicFeature = getFeaturesFromGeoJson(mockGeoJsonFeatureResponse)[0];
-
 export const mockKommune: KommuneResponse = {
   representasjonspunkt: mockGeoJsonFeatureResponse.features[0],
   navn: [
@@ -198,7 +194,7 @@ export const mockKommune: KommuneResponse = {
   samiskforvaltningsomraade: false,
 };
 
-export const mockKommuneGiske: KommuneResponse = {
+const mockKommuneGiske: KommuneResponse = {
   representasjonspunkt: mockGeoJsonFeatureResponse.features[0],
   navn: [
     {
@@ -279,15 +275,6 @@ export const mockDetailedGrunnkrets2: GrunnkretsResponse = {
   },
 };
 
-export const mockGrunnkretsRequest: GrunnkretsRequest = {
-  navn: "Mosekollen øst",
-  nummer: "12345678",
-  identifikasjon: {
-    lokalid: "1",
-  },
-  version: 1,
-};
-
 export const mockMaalemetodeResponse: KodelisteRespons = {
   type: "MAALEMETODE_KODE",
   items: [
@@ -297,12 +284,6 @@ export const mockMaalemetodeResponse: KodelisteRespons = {
       kode: "1",
     },
   ],
-};
-
-export const mockActuatorResponse = {
-  application: {
-    version: "1.2.3",
-  },
 };
 
 export const mockStemmekrets1: StemmekretsResponse = {
@@ -415,7 +396,7 @@ export const mockUtkastRef2: UtkastRef = {
   opprettetDato: "2022-06-01",
 };
 
-export const mockFutureGrunnkrets1_1: GrunnkretsResponse = {
+const mockFutureGrunnkrets1_1: GrunnkretsResponse = {
   ...mockDetailedGrunnkrets1,
   id: {
     lokalid: {
@@ -431,7 +412,7 @@ export const mockFutureGrunnkrets1_1: GrunnkretsResponse = {
   },
 };
 
-export const mockFutureGrunnkrets1_2: GrunnkretsResponse = {
+const mockFutureGrunnkrets1_2: GrunnkretsResponse = {
   ...mockDetailedGrunnkrets1,
   id: {
     lokalid: {

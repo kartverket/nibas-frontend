@@ -33,11 +33,6 @@ export type InputName = {
   leggTilInternreferanse: string;
 };
 
-export type InputCollectionName = {
-  dokumentlenker: string;
-  internreferanserKartverket: string;
-};
-
 export type FormViewState = "editing" | "viewing" | "creating";
 
 export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {

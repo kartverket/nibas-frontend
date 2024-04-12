@@ -14,9 +14,9 @@ import { useToast } from "@kvib/react";
 import { useCallback } from "react";
 import { Inndeling, Inndelingtype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
-export type SplittingForm = Pick<KretsDelingEndringRequest, "opprinneligKrets" | "nyeKretser">;
+type SplittingForm = Pick<KretsDelingEndringRequest, "opprinneligKrets" | "nyeKretser">;
 
-export const getDefaultSplittingValue = () => ({
+const getDefaultSplittingValue = () => ({
   opprinneligKrets: {
     lokalId: CustomOption.NOT_CHOSEN,
     version: 0,
@@ -93,7 +93,7 @@ export const useSplittingForm = (inndeling: Inndeling | null) => {
     nyeKretser: { kretsNavn: string; kretsNummer: string }[],
     isUpdateOfPreviouslyPerformedSplit: boolean,
   ) => {
-    const nyeKretserFormatted = nyeKretser.map((k) => `${k.kretsNummer} ${k.kretsNavn}`);
+    const nyeKretserFormatted = nyeKretser.map((k) => `"${k.kretsNummer} ${k.kretsNavn}"`);
     const allButLastKretserFormatted = nyeKretserFormatted.slice(0, nyeKretserFormatted.length - 1);
     const nyeKretserString = allButLastKretserFormatted
       .join(", ")
@@ -103,9 +103,10 @@ export const useSplittingForm = (inndeling: Inndeling | null) => {
 
     toast({
       status: "success",
-      title: !isUpdateOfPreviouslyPerformedSplit
-        ? `Du opprettet ${nyeKretserString} ved å splitte ${opprinneligKretsInfo.nummer} ${opprinneligKretsInfo.navn}`
-        : `Oppdaterte splittingen av ${opprinneligKretsInfo.nummer} ${opprinneligKretsInfo.navn} til å inneholde ${nyeKretserString}. Husk å sjekke at tilhørigheten til nærliggende grenser er korrekt.`,
+      title: "Splitting utført",
+      description: !isUpdateOfPreviouslyPerformedSplit
+        ? `Du opprettet ${nyeKretserString} ved å splitte "${opprinneligKretsInfo.nummer} ${opprinneligKretsInfo.navn}"`
+        : `Oppdaterte splittingen av "${opprinneligKretsInfo.nummer} ${opprinneligKretsInfo.navn}" til å inneholde ${nyeKretserString}. Husk å sjekke at tilhørigheten til nærliggende grenser er korrekt.`,
     });
   };
 

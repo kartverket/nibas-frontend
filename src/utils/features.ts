@@ -150,9 +150,7 @@ export const isFeatureDeadEnd = (feature: Feature<Geometry>, allFeatureEndpoints
     (featureEndPoint) => equals(featureEndPoint.endpoints.first, tail) || equals(featureEndPoint.endpoints.last, tail),
   );
 
-  const test = !(isHeadConnected2 && isTailConnected2);
-
-  return test;
+  return !(isHeadConnected2 && isTailConnected2);
 };
 
 const getDefaultFeatureMetadata = (discriminator: MetadataDiscriminator): Metadata => {
@@ -198,12 +196,16 @@ export const getDefaultFeatureProperties = (grenseType: GrenseType): FeatureProp
   return properties;
 };
 
-export const isFeatureEditable = (feature: FeatureLike, isArchived = false) => {
+export const isFeatureEditable = (
+  feature: FeatureLike,
+  isArchived = false,
+  requireAllContextsVisible: boolean = true,
+) => {
   const isMetadataEditable = isFeatureMetadataEditable(feature, isArchived);
 
   const featureType = feature.get("type");
 
-  if (isGrenseType(featureType) && isAdministrativGrense(featureType)) {
+  if (isGrenseType(featureType) && isAdministrativGrense(featureType) && requireAllContextsVisible) {
     if (isTempFeatureId(feature.getId())) return true;
 
     const properties = feature.getProperties() as FeatureProperties;

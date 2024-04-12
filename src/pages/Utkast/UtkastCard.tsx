@@ -11,8 +11,16 @@ import UtkastEndre from "./UtkastEndre";
 const UtkastCard = ({ utkast }: { utkast: UtkastResponse }) => {
   const navigate = useNavigate();
 
+  const handleUtkastCardClick = () => {
+    navigate(utkast.id);
+  };
+
+  const handleMenuClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+  };
+
   return (
-    <Container role="link" onClick={() => navigate(utkast.id)}>
+    <Container role="link" onClick={handleUtkastCardClick}>
       <Info>
         <Heading as="h3" size="sm">
           {utkast.navn}
@@ -21,13 +29,13 @@ const UtkastCard = ({ utkast }: { utkast: UtkastResponse }) => {
       </Info>
       <Menu>
         <MenuButton
+          onClick={handleMenuClick}
           as={IconButton}
-          onClick={(e) => e.stopPropagation()}
           aria-label="Flere alternativer"
           icon="more_horiz"
           variant="ghost"
         />
-        <MenuList>
+        <MenuList onClick={handleMenuClick}>
           <UtkastEndre utkast={utkast} />
           <UtkastEndringslogg utkast={utkast} />
           <MenuDivider />

@@ -32,7 +32,7 @@ const getMuligeKretserForAdministrativGrense = (
   }
 };
 
-export const useTilhorighetAdministrativ = (feature: Feature): UseTilhorighet => {
+export const useTilhorighetAdministrativ = (feature: Feature, kontekstType: KontekstType): UseTilhorighet => {
   const {
     setTilhorighetOptions,
     tilhorighetOptions,
@@ -42,8 +42,7 @@ export const useTilhorighetAdministrativ = (feature: Feature): UseTilhorighet =>
     resetTilhorighet,
     updateDraftFromFeature,
     kommunerId,
-    kontekstType,
-  } = useTilhorighetForm(feature);
+  } = useTilhorighetForm(feature, kontekstType);
 
   const {
     kommuneA: grunnkretserA,
