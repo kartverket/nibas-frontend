@@ -14,6 +14,7 @@ export enum KontekstType {
 export type Krets = {
   id: ObjektIdentifikator;
   kommuneId: ObjektIdentifikator;
+  kommunenummer: string;
   version: number;
   nummer: string;
   navn: string;
@@ -29,7 +30,7 @@ export enum CustomOption {
   NOT_CHOSEN = "NOT_CHOSEN",
 }
 
-type TilhorighetChoice = {
+export type TilhorighetChoice = {
   [Tilhorighet.A]: string | undefined;
   [Tilhorighet.B]: string | undefined;
 };
@@ -57,7 +58,7 @@ const getDefaultTilhorighetData = () => ({
 
 // tar to kontekstEgenskaper og mapper de til TilhorighetForm
 export const getTilhorighetData = (tilhorigheter: KontekstEgenskaper[] | undefined): TilhorighetForm => {
-  if (tilhorigheter && tilhorigheter.length === 2) {
+  if (tilhorigheter && tilhorigheter.length > 0) {
     const grunnkretser = tilhorigheter
       .filter((kontekstEgenskaper) => kontekstEgenskaper.type === KontekstType.GRUNNKRETS)
       .map((grunnkrets) => grunnkrets.id?.lokalid.value);
@@ -92,6 +93,7 @@ const getDefaultKrets = (kontekstType: KontekstType): Krets => {
     id: defaultIdentifikator,
     kommuneId: defaultIdentifikator,
     version: 0,
+    kommunenummer: "",
     navn: "",
     nummer: "",
     type: kontekstType,
@@ -103,63 +105,56 @@ export const getUpdatedKontekstEgenskaper = (
   kontekstType: KontekstType,
   newKretsIds: TilhorighetChoice,
   kretsOptions: TilhorighetOptions,
+  existingKontekstEgenskaper: KontekstEgenskaper[],
 ): KontekstEgenskaper[] => {
   const allPossibleOptions = kretsOptions.a.concat(kretsOptions.b);
   const kretser = Object.values(newKretsIds).map(
     (id) => allPossibleOptions.find((krets) => krets.id.lokalid.value === id) ?? getDefaultKrets(kontekstType),
   );
+  const kontekstEgenskaperToKeep = existingKontekstEgenskaper.filter((k) => kontekstType.valueOf() !== k.type);
   const nyeKontekstEgenskaper = kretser.map((krets) => ({
     id: krets.id.lokalid.value.startsWith("NY_KRETS") ? undefined : krets.id, // fjerner tempid når vi setter kontekstEgenskapene på featuren
     kommuneId: krets.kommuneId,
     kretsNummer: krets.nummer,
     type: krets.type,
     version: krets.version,
-    retningMedKlokken: true,
-    rekkefoelge: 0,
-    flateIndeks: 0,
-    hullIndeks: 0,
   }));
-  return nyeKontekstEgenskaper;
+  return kontekstEgenskaperToKeep.concat(nyeKontekstEgenskaper);
 };
 
-export const getTilhorighetValuesFormatted = (
-  formState: TilhorighetChoice,
-  tilhorighetOptions: TilhorighetOptions | null | undefined,
-) => {
-  if (formState.a != null && formState.b != null && tilhorighetOptions) {
-    const kretsA = tilhorighetOptions[Tilhorighet.A].find(
-      (krets) => krets.id.lokalid.value === formState[Tilhorighet.A],
-    );
-    const kretsB = tilhorighetOptions[Tilhorighet.B].find(
-      (krets) => krets.id.lokalid.value === formState[Tilhorighet.B],
-    );
-    if (!kretsA && !kretsB) {
-      return undefined;
-    } else
-      return (kretsA ? `${kretsA.nummer} ${kretsA.navn}` : "Ikke valgt").concat(
-        ", " + (kretsB ? `${kretsB.nummer} ${kretsB.navn}` : "Ikke valgt"),
-      );
+export const formatKretsNavn = (krets: Krets | null | undefined): string => {
+  if (krets == null) {
+    return "Ikke valgt";
   }
+  if (krets.type === KontekstType.STEMMEKRETS) {
+    return `(${krets.kommunenummer}) ${krets.nummer} ${krets.navn}`;
+  }
+  return `${krets.nummer} ${krets.navn}`;
 };
 
-export const getKommunerIdFromKontekstEgenskaper = (kontekstEgenskaper: KontekstEgenskaper[]): string[] | null => {
+export const getKommunerIdFromKontekstEgenskaper = (
+  kontekstEgenskaper: KontekstEgenskaper[],
+  kontekstType: KontekstType,
+): string[] | null => {
   const kommuner = kontekstEgenskaper
+    .filter((kontekst) => kontekst.type === kontekstType)
     .filter((kontekst) => kontekst.kommuneId !== null)
     .map((kontekst) => kontekst.kommuneId!.lokalid.value);
   return kommuner.length > 0 ? kommuner : null;
 };
 
-export const sortKretserOptionsByNumber = (kretser: Krets[] | undefined): Krets[] => {
+export const sortKretserOptionsByFormattedName = (kretser: Krets[] | undefined): Krets[] => {
   if (!kretser) return [];
 
-  return kretser.sort((a, b) => Number(a.nummer) - Number(b.nummer));
+  return kretser.sort((a, b) => formatKretsNavn(a).localeCompare(formatKretsNavn(b)));
 };
 
 export const mapGrunnkretsResponseToKrets = (grunnkretser: GrunnkretsResponse[]): Krets[] => {
-  return sortKretserOptionsByNumber(
-    grunnkretser.map(({ id, version, nummer, navn, kommuneIdentifikator }) => ({
+  return sortKretserOptionsByFormattedName(
+    grunnkretser.map(({ id, version, nummer, navn, kommuneIdentifikator, kommunenummer }) => ({
       id,
       kommuneId: kommuneIdentifikator,
+      kommunenummer: kommunenummer.kodeverdi,
       version,
       nummer,
       navn,
@@ -169,10 +164,11 @@ export const mapGrunnkretsResponseToKrets = (grunnkretser: GrunnkretsResponse[])
 };
 
 export const mapStemmekretResponseToKrets = (stemmekretser: StemmekretsResponse[]): Krets[] => {
-  return sortKretserOptionsByNumber(
-    stemmekretser.map(({ id, version, nummer, navn, kommuneIdentifikator }) => ({
+  return sortKretserOptionsByFormattedName(
+    stemmekretser.map(({ id, version, nummer, navn, kommuneIdentifikator, kommunenummer }) => ({
       id,
       kommuneId: kommuneIdentifikator,
+      kommunenummer: kommunenummer.kodeverdi,
       version,
       nummer,
       navn,
