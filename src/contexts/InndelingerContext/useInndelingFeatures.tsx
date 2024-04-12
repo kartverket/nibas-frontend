@@ -10,39 +10,42 @@ import { FeatureCollection, InndelingNavn, InndelingResponse } from "types/api";
 import { removeNil } from "utils/list-utils";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { getRepresentasjonspunktId } from "utils/map/source";
+import { paths } from "types/api-gen";
 
 export const inndelingResponseNavnToString = (inndelingNavn: InndelingNavn): string => {
   return Array.isArray(inndelingNavn) ? inndelingNavn.map((navn) => navn.navn).join(" - ") : inndelingNavn;
 };
 
+type GrenseRequestPath = Pick<
+  paths,
+  | "/v1/fylker/{id}/grenser"
+  | "/v1/kommuner/{id}/grenser"
+  | "/v1/kommuner/{id}/stemmekretsgrenser"
+  | "/v1/kommuner/{id}/grunnkretsgrenser"
+>;
+
+type InndelingRequestPath = Pick<
+  paths,
+  "/v1/fylker/{id}" | "/v1/kommuner/{id}" | "/v1/kommuner/{id}/stemmekretser" | "/v1/kommuner/{id}/grunnkretser"
+>;
+const getGrenseRequestUrl = (inndelingtype: Inndelingtype): keyof GrenseRequestPath => {
+  if (inndelingtype === "fylke" || inndelingtype === "kommune") {
+    return `/v1/${inndelingtype}r/{id}/grenser`;
+  }
+
+  return `/v1/kommuner/{id}/${inndelingtype}grenser`;
+};
+
+const getInndelingRequestUrl = (inndelingtype: Inndelingtype): keyof InndelingRequestPath => {
+  if (inndelingtype === "fylke" || inndelingtype === "kommune") {
+    return `/v1/${inndelingtype}r/{id}`;
+  }
+
+  return `/v1/kommuner/{id}/${inndelingtype}er`;
+};
+
 const useInndelingFeatures = (inndeling: Inndeling | null) => {
   const { utkast } = useUtkast();
-
-  type GrenseRequestURL =
-    | "/v1/fylker/{id}/grenser"
-    | "/v1/kommuner/{id}/grenser"
-    | "/v1/kommuner/{id}/stemmekretsgrenser"
-    | "/v1/kommuner/{id}/grunnkretsgrenser";
-  const getGrenseRequestUrl = (inndelingtype: Inndelingtype): GrenseRequestURL => {
-    if (inndelingtype === "fylke" || inndelingtype === "kommune") {
-      return `/v1/${inndelingtype}r/{id}/grenser`;
-    }
-
-    return `/v1/kommuner/{id}/${inndelingtype}grenser`;
-  };
-
-  type InndelingRequestURL =
-    | "/v1/fylker/{id}"
-    | "/v1/kommuner/{id}"
-    | "/v1/kommuner/{id}/stemmekretser"
-    | "/v1/kommuner/{id}/grunnkretser";
-  const getInndelingRequestUrl = (inndelingtype: Inndelingtype): InndelingRequestURL => {
-    if (inndelingtype === "fylke" || inndelingtype === "kommune") {
-      return `/v1/${inndelingtype}r/{id}`;
-    }
-
-    return `/v1/kommuner/{id}/${inndelingtype}er`;
-  };
 
   const { data: featuresResponse, isValidating: isFetchingFeatures } = useNibasApi(
     inndeling != null ? getGrenseRequestUrl(inndeling.inndelingtype) : null,
