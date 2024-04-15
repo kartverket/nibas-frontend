@@ -1,11 +1,53 @@
-import { Alert, AlertIcon, AlertTitle, Button, Collapse, Box, Stack, Text } from "@kvib/react";
+import { Alert, AlertIcon, AlertTitle, Button, Collapse, Box, Text } from "@kvib/react";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { useState } from "react";
+import { HistoryEntry, HistoryTypeValues } from "contexts/HistoryContext/types";
+import { useMemo, useState } from "react";
 import { styled } from "styled-components";
+
+type MinimalHistoryEntry<T> = {
+  type: HistoryTypeValues;
+  lokalid: string;
+  from: T;
+  to: T;
+};
 
 export const UlagredeEndringer = () => {
   const { history } = useHistory();
   const [isExpanded, setIsExpanded] = useState(false);
+
+  // History lagrer absolutt alt, men vi er kun interessert i å vise bruker hva som er forskjellen sammenlignet med utkastet.
+  // Dermed må vi finne de siste endringene for hver lokalid, og sammenligne dette med den første endringen sin "from" (utgangspunktet) for å se hva som faktisk blir endringen man utfører hvis man lagrer.
+  const minimalHistory = useMemo(() => {
+    const firstEntriesForLokalids: Record<string, HistoryEntry> = {};
+    const latestEntriesForLokalids: Record<string, HistoryEntry> = {};
+
+    history.entries.forEach((entry) => {
+      const change = entry.changes[0];
+      if (!(change.id in firstEntriesForLokalids)) {
+        firstEntriesForLokalids[change.id] = entry;
+      }
+    });
+
+    history.entries
+      .slice()
+      .reverse()
+      .forEach((entry) => {
+        const change = entry.changes[0];
+        if (!(change.id in latestEntriesForLokalids)) {
+          latestEntriesForLokalids[change.id] = entry;
+        }
+      });
+
+    const minimalChanges: MinimalHistoryEntry<unknown>[] = Object.entries(firstEntriesForLokalids).map(
+      ([lokalid, entry]) => {
+        const firstFrom = entry.changes[0].from;
+        const lastTo = latestEntriesForLokalids[lokalid].changes[0].to;
+        return { type: entry.type, lokalid: lokalid, from: firstFrom, to: lastTo };
+      },
+    );
+
+    return minimalChanges;
+  }, [history.entries]);
 
   return (
     history.index > 0 && (
@@ -27,11 +69,6 @@ export const UlagredeEndringer = () => {
         </AlertWithButton>
         <EndringerContent>
           <Text fontSize={"sm"}>Publiserer du uten å lagre først vil endringene nedenfor ikke bli med.</Text>
-          <Stack>
-            {history.entries.map((entry, i) => (
-              <div key={i}>{entry.type}</div>
-            ))}
-          </Stack>
         </EndringerContent>
       </CustomCollapse>
     )
