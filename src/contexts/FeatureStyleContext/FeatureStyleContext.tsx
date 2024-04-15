@@ -60,35 +60,8 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
   );
 
   // Når en feature ikke er valgt lengre må vi avgjøre hvilken stil den skal ha
-  const clearSelection = () => {
-    const deselectedFeatures = resetSelection();
-    for (const feature of deselectedFeatures) {
-      const featureId = feature.getId()?.toString();
-      if (featureId == null) continue;
-
-      // Dersom featuren har en aktiv stil faller vi tilbake til den
-      const matchingCustomStyle = customStyles.find((customStyle) => customStyle.customFeatureIds.includes(featureId));
-
-      // Dersom featuren ikke har en aktiv stil faller vi tilbake til den lagrede stilen
-      const matchingSavedCustomStyle = customStyles.find((customStyle) =>
-        customStyle.savedCustomFeatureIds.includes(featureId),
-      );
-
-      if (matchingCustomStyle) {
-        feature.setStyle(matchingCustomStyle.customStyle);
-      } else if (matchingSavedCustomStyle) {
-        feature.setStyle(matchingSavedCustomStyle.customStyle);
-      } else {
-        feature.setStyle();
-      }
-    }
-  };
-
-  const removeFromSelection = (feature: Feature<LineString>) => {
-    removeFromSelectionInternal(feature);
-
+  const setDeselectedStyle = (feature: Feature<LineString>) => {
     const featureId = feature.getId()?.toString();
-
     if (featureId !== undefined) {
       // Dersom featuren har en aktiv stil faller vi tilbake til den
       const matchingCustomStyle = customStyles.find((customStyle) => customStyle.customFeatureIds.includes(featureId));
@@ -108,8 +81,23 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     }
   };
 
+  const clearSelection = () => {
+    const deselectedFeatures = resetSelection();
+    for (const feature of deselectedFeatures) {
+      setDeselectedStyle(feature);
+    }
+  };
+
+  const removeFromSelection = (feature: Feature<LineString>) => {
+    removeFromSelectionInternal(feature);
+    setDeselectedStyle(feature);
+  };
+
   const selectFeatures = (features: Feature<LineString>[]) => {
-    clearSelection();
+    const deselectedFeatures = selectedFeatures.filter((sf) => !features.some((f) => sf.getId() === f.getId()));
+    for (const feature of deselectedFeatures) {
+      setDeselectedStyle(feature);
+    }
     selectFeaturesInternal(features);
   };
 
