@@ -49,7 +49,11 @@ const useSelect = () => {
   }, [activeOverlayPanel, activeTool, clearSelection, closeOverlayPanel, previousPointMode, selectedFeatures.length]);
 
   const select = (event: MapBrowserEvent<MouseEvent>) => {
-    if (!activeModeTools.includes("move") && !disallowedTools.includes(activeTool) && !event.dragging) {
+    if (
+      !event.dragging &&
+      !disallowedTools.includes(activeTool) &&
+      !(activeModeTools.includes("move") && !safeTools.includes(activeTool))
+    ) {
       const activeFeatures = getLineStringFeaturesAtPixel(event, safeTools.includes(activeTool) ? null : "edit");
 
       // Dersom man har klikket på kartet skal vi kvitte oss med selection
