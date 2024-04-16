@@ -88,6 +88,91 @@ const ToolbarPopups = () => {
       });
   };
 
+  const getActiveToolPopup = () => {
+    switch (activeTool) {
+      case null:
+        if (!activeModeTools.includes("move")) {
+          return (
+            <ToolbarPopup
+              text={
+                selectedFeatures.length === 0
+                  ? "Velg én eller flere grenser du ønsker å flytte"
+                  : `Flytt punkt på ${selectedFeatures.length === 1 ? "den valgte grensen" : "de valgte grensene"}`
+              }
+            />
+          );
+        }
+        break;
+
+      case "draw":
+        return (
+          <ToolbarPopup
+            text="Start tegning ved å klikke på kartet"
+            subtext="Tegninger kan snappes til punkter eller startes fritt utenfor andre grenser. Dobbelklikk for å avslutte tegning. Ønsker du å panorere underveis, bruk piltastene."
+            onClose={resetTool}
+          />
+        );
+
+      case "split":
+        if (selectedFeatures.length === 0)
+          return <ToolbarPopup text="Velg grensen du ønsker å dele" onClose={resetTool} />;
+        if (selectedFeatures.length === 1)
+          return (
+            <ToolbarPopup
+              text="Velg hvilket punkt du ønsker å dele grensen på"
+              buttonText="Del grense"
+              onClick={() => handleSplit()}
+              isDisabled={selectedPoint == null}
+              onClose={resetTool}
+            />
+          );
+        break;
+
+      case "grenseinfo":
+        return <ToolbarPopup text="Velg en grense i kartet for å se grenseinformasjon" onClose={resetTool} />;
+
+      case "archive":
+        return (
+          <ToolbarPopup
+            text="Velg en eller flere grenser du ønsker å arkivere"
+            buttonText="Arkiver"
+            onClick={archiveFeatures}
+            isDisabled={selectedFeatures.length === 0}
+            onClose={resetTool}
+          />
+        );
+
+      case "koordinater":
+        return <ToolbarPopup text="Velg et punkt på en grense for å åpne koordinatmenyen" onClose={resetTool} />;
+
+      case "add":
+        return (
+          <ToolbarPopup
+            text={
+              selectedFeatures.length === 0
+                ? "Velg én eller flere grenser du ønsker å legge til punkt på"
+                : "Trykk på en grense for å legge til et punkt"
+            }
+            onClose={resetTool}
+          />
+        );
+
+      case "remove":
+        return (
+          <ToolbarPopup
+            text={
+              selectedFeatures.length === 0
+                ? "Velg én eller flere grenser du ønsker å fjerne punkt fra"
+                : "Trykk på et punkt for fjerne punktet fra grensen"
+            }
+            onClose={resetTool}
+          />
+        );
+      default:
+        break;
+    }
+  };
+
   return (
     <>
       {activeModeTools.includes("matrikkel") && (
@@ -103,44 +188,7 @@ const ToolbarPopups = () => {
           isLoading={matrikkelIsLoading}
         />
       )}
-      {activeTool === "draw" && (
-        <ToolbarPopup
-          text="Start tegning ved å klikke på kartet"
-          subtext="Tegninger kan snappes til punkter eller startes fritt utenfor andre grenser. Dobbelklikk for å avslutte tegning. Ønsker du å panorere underveis, bruk piltastene."
-          onClose={resetTool}
-        />
-      )}
-      {activeTool === "split" && selectedFeatures.length === 0 && (
-        <ToolbarPopup text="Velg grensen du ønsker å dele" onClose={resetTool} />
-      )}
-      {activeTool === "split" && selectedFeatures.length === 1 && (
-        <ToolbarPopup
-          text="Velg hvilket punkt du ønsker å dele grensen på"
-          buttonText="Del grense"
-          onClick={() => handleSplit()}
-          isDisabled={selectedPoint == null}
-          onClose={resetTool}
-        />
-      )}
-      {activeTool === "grenseinfo" && (
-        <ToolbarPopup text="Velg en grense i kartet for å se grenseinformasjon" onClose={resetTool} />
-      )}
-      {activeTool === "archive" && (
-        <ToolbarPopup
-          text="Velg en eller flere grenser du ønsker å arkivere"
-          buttonText="Arkiver"
-          onClick={archiveFeatures}
-          isDisabled={selectedFeatures.length === 0}
-          onClose={resetTool}
-        />
-      )}
-      {activeTool === "koordinater" && (
-        <ToolbarPopup text="Velg et punkt på en grense for å åpne koordinatmenyen" onClose={resetTool} />
-      )}
-      {activeTool === "add" && <ToolbarPopup text="Trykk på en grense for å legge til et punkt" onClose={resetTool} />}
-      {activeTool === "remove" && (
-        <ToolbarPopup text="Trykk på et punkt for å fjerne punktet fra grensen" onClose={resetTool} />
-      )}
+      {getActiveToolPopup()}
     </>
   );
 };
