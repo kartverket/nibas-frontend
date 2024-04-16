@@ -35,8 +35,12 @@ const Kart = () => {
     <KartWrapper>
       <KartTarget ref={mapRef}>
         <Suspense fallback="More loading...">
-          <KartOverlay $isLoadingKartdata={isLoadingInndeling}>
-            {isLoadingInndeling && <KartLoadingSpinner size={"xl"} emptyColor="white" />}
+          <KartOverlay>
+            {isLoadingInndeling && (
+              <SpinnerBackground>
+                <KartLoadingSpinner size="lg" />
+              </SpinnerBackground>
+            )}
             <Kartinformasjon />
             <TegnforklaringButton />
             <OverlayPanels />
@@ -74,11 +78,23 @@ const KartTarget = styled.div`
   }
 `;
 
-const KartLoadingSpinner = styled(Spinner)`
+const SpinnerBackground = styled.div`
+  display: grid;
+  place-items: center;
+  background: white;
+  padding: 12px;
+  border-radius: 50%;
+  box-shadow: var(--kvib-shadows-md);
   margin: auto;
 `;
 
-const KartOverlay = styled.div<{ $isLoadingKartdata: boolean }>`
+const KartLoadingSpinner = styled(Spinner)`
+  color: var(--kvib-colors-blue-500);
+  border-width: 3px;
+  margin: auto;
+`;
+
+const KartOverlay = styled.div`
   display: grid;
   grid-template-columns: 1fr auto;
   grid-template-rows: 1fr auto;
@@ -93,8 +109,6 @@ const KartOverlay = styled.div<{ $isLoadingKartdata: boolean }>`
   z-index: ${zindex.mapOverlay};
   overflow: hidden;
   pointer-events: none;
-
-  ${(props) => props.$isLoadingKartdata && "background-color: var(--kvib-colors-blackAlpha-700)"};
 
   & > * {
     pointer-events: all;
