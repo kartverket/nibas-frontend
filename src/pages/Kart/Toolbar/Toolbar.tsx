@@ -202,11 +202,11 @@ const Toolbar = () => {
               icon="arrow_selector_tool"
               onClick={() => disableModeTool("move")}
               isActive={!activeModeTools.includes("move")}
-              aria-label="Rediger grenser i kartet"
+              aria-label="Flytt eller rediger grenser i kartet"
               isDisabled={!editingType}
-              tooltip={{ text: "Rediger grenser i kartet", shortcut: "edit" }}
+              tooltip={{ text: "Flytt eller rediger grenser i kartet", shortcut: "edit" }}
             >
-              Rediger
+              Flytt / Rediger
             </ToolbarButton>
             <ToolbarMenus />
           </ConditionalHide>
