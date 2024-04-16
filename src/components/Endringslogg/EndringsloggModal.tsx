@@ -25,7 +25,7 @@ type Props = {
 const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
   const { harEndringer, laster, stemmekretsendringer, grunnkretsendringer } = useUtkastEndringer(utkast);
   const { history } = useHistory();
-  const harUlagredeEndringer = history.entries.length > 0;
+  const harUlagredeEndringer = history.index > 0;
   const harLastetData = !laster || !!stemmekretsendringer || !!grunnkretsendringer;
 
   return (

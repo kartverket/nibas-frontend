@@ -3,6 +3,7 @@ import { HistoryTypeValues } from "contexts/HistoryContext/types";
 import { styled } from "styled-components";
 import { EndringFraTil } from "./EndringsloggComponents";
 import { MinimalHistoryEntry } from "./UlagredeEndringer";
+import { KontekstEgenskaper } from "types/api";
 
 type EndringerProps = {
   type: HistoryTypeValues;
@@ -43,7 +44,27 @@ const DetailedFlateEndringerList = ({ endringer }: DetailedEndringerPorps) => {
 };
 
 const DetailedKontekstEgenskaperEndringerList = ({ endringer }: DetailedEndringerPorps) => {
-  return <Stack></Stack>;
+  const getFormattedKontekstEgenskaper = (kontekstEgenskaper: KontekstEgenskaper[]) => {
+    return kontekstEgenskaper.map((kontekst) => `${kontekst.kretsNummer} ${kontekst.kretsNavn}`).join(", ");
+  };
+
+  return (
+    <Stack>
+      {endringer.map((endring, i) => {
+        const fraKontekster = endring.from as KontekstEgenskaper[];
+        const tilKontekster = endring.to as KontekstEgenskaper[];
+        return (
+          <EndringFraTil
+            key={i}
+            endring={{
+              fra: getFormattedKontekstEgenskaper(fraKontekster),
+              til: getFormattedKontekstEgenskaper(tilKontekster),
+            }}
+          />
+        );
+      })}
+    </Stack>
+  );
 };
 
 const getTitleAndDescriptionFragments = (

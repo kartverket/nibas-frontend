@@ -12,10 +12,6 @@ export interface paths {
     /** Forkast angitt utkast. */
     delete: operations["forkastUtkast"];
   };
-  "/v1/admin/kodelister/invalidate": {
-    /** Invaliderer kodeliste-cache slik at kodelister refreshes. */
-    put: operations["invalidateKodelisteCache"];
-  };
   "/v1/utkast": {
     /** Henter alle utkast i status Opprettet sortert på navn. */
     get: operations["hentUtkastIStatusOpprettet"];
@@ -332,6 +328,16 @@ export interface components {
        */
       version: number;
     };
+    /** @description Representasjon av sammenslåing av en grunnkrets med 1 eller flere andre grunnkretser i samme kommune */
+    GrunnkretsSammenslaaingsendringRequest: {
+      viderefoertGrunnkrets: components["schemas"]["IdentifikatorMedVersjon"];
+      /** @description Liste av identifikatorer som skal bli del av den videreførte grunnkretsen */
+      grunnkretserTilSammenslaaing: components["schemas"]["IdentifikatorMedVersjon"][];
+      /** @description Navnet til den sammenslåtte grunnkretsen */
+      navn: string;
+      /** @description Grunnkretsnummeret til den sammenslåtte grunnkretsen */
+      nummer: string;
+    };
     /** @description Spesifikk metadata for en Grunnlinje. Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Diagram/Index/EAID_EEECEE48_B3FA_4807_AAE4_B30B63BC28E1 */
     GrunnlinjeMetadata: components["schemas"]["Metadata"] & {
       common?: components["schemas"]["CommonMetadata"];
@@ -387,6 +393,8 @@ export interface components {
       kommuneId?: components["schemas"]["ObjektIdentifikator"];
       /** @description kretsnummeret til konteksten */
       kretsNummer?: string;
+      /** @description kretsnummeret til konteksten */
+      kretsNavn?: string;
       /**
        * @description Hvilken kontekst geometrien skal sees i
        * @enum {string}
@@ -488,6 +496,7 @@ export interface components {
       metadataendringer: components["schemas"]["Metadataendringer"];
       grenseendringer: components["schemas"]["Grenseendringer"];
       stemmekretsSammenslaaingsendring?: components["schemas"]["StemmekretsSammenslaaingsendringRequest"];
+      grunnkretsSammenslaaingsendring?: components["schemas"]["GrunnkretsSammenslaaingsendringRequest"];
       /** @description Deling av en stemmekrets eller grunnkrets */
       kretsDelingEndringer: components["schemas"]["KretsDelingEndringRequest"][];
     };
@@ -786,6 +795,32 @@ export interface components {
        */
       opprettetDato: string;
     };
+    /** @description Koordinatet til representasjonspunktet til inndelingen. */
+    Coordinate: {
+      /** Format: double */
+      x?: number;
+      /** Format: double */
+      y?: number;
+      /** Format: double */
+      z?: number;
+      valid?: boolean;
+      /** Format: double */
+      m?: number;
+      coordinate?: components["schemas"]["Coordinate"];
+    };
+    /** @description Eventuelle feil som har blitt funnet i utkastet */
+    TopologyValidationError: {
+      /** Format: int32 */
+      errorType?: number;
+      message?: string;
+      coordinate?: components["schemas"]["Coordinate"];
+    };
+    UtkastValideringResponse: {
+      /** @description ID-en til utkastet som har blitt validert */
+      id: string;
+      /** @description Eventuelle feil som har blitt funnet i utkastet */
+      feil: components["schemas"]["TopologyValidationError"][];
+    };
     /** @description Gyldighetsintervall for objektet */
     GyldighetResponse: {
       /**
@@ -797,7 +832,7 @@ export interface components {
        * Format: date
        * @description Tidspunktet objektet er gyldig til. Kan være tomt/løpende.
        */
-      gyldigTil?: string;
+      gyldigTil?: string | null;
     };
     /** @description Representasjon av et kommunenummer */
     Kommunenummer: {
@@ -915,19 +950,6 @@ export interface components {
       type: "KOMMUNENUMMER" | "FYLKESNUMMER" | "MAALEMETODE_KODE";
       /** @description Liste av kodeliste-elementer. */
       items: components["schemas"]["KodelisteItem"][];
-    };
-    /** @description Koordinatet til representasjonspunktet til inndelingen. */
-    Coordinate: {
-      /** Format: double */
-      x?: number;
-      /** Format: double */
-      y?: number;
-      /** Format: double */
-      z?: number;
-      valid?: boolean;
-      /** Format: double */
-      m?: number;
-      coordinate?: components["schemas"]["Coordinate"];
     };
     InndelingResponse: {
       /** @description Lokalid til inndelingen */
@@ -1210,19 +1232,6 @@ export interface operations {
       404: {
         content: {
           "application/json": components["schemas"]["ApiErrorResponse"];
-        };
-      };
-    };
-  };
-  /** Invaliderer kodeliste-cache slik at kodelister refreshes. */
-  invalidateKodelisteCache: {
-    responses: {
-      /** Successful operation */
-      200: unknown;
-      /** Bad Request */
-      400: {
-        content: {
-          "*/*": { [key: string]: unknown };
         };
       };
     };
