@@ -49,6 +49,9 @@ type InndelingerContextValue = {
 
   selectedFylkeId: string;
   setSelectedFylkeId: (id: string) => void;
+
+  selectedFlatedataInndeling: Inndeling | null;
+  setSelectedFlatedataInndeling: (inndeling: Inndeling | null) => void;
 };
 
 const InndelingerContext = createContext<InndelingerContextValue | undefined>(undefined);
@@ -63,6 +66,9 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
   const [selectedFylkeId, setSelectedFylkeId] = useState("");
   const [selectedInndeling, setSelectedInndeling] = useState<Inndeling | null>(null);
+
+  // TODO: mellomløsning for flatedata i visningsmodus til vi får skrevet det om
+  const [selectedFlatedataInndeling, setSelectedFlatedataInndeling] = useState<Inndeling | null>(null);
 
   const { isFetching, inndelingFeatures, utkastFeaturesInInndeling } = useInndelingFeatures(selectedInndeling);
   const { utkast } = useUtkast();
@@ -303,6 +309,9 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
     selectedFylkeId,
     setSelectedFylkeId,
+
+    selectedFlatedataInndeling,
+    setSelectedFlatedataInndeling,
   };
 
   return <InndelingerContext.Provider value={value}>{children}</InndelingerContext.Provider>;
