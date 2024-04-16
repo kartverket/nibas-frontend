@@ -11,7 +11,7 @@ import { isFeatureEditable } from "utils/features";
 
 const useSelectPoint = () => {
   const toast = useToast();
-  const { activeTool } = useToolbar();
+  const { activeTool, activeModeTools } = useToolbar();
   const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } = useOverlayPanel();
   const { selectPointOnFeature, selectedFeatures, selectedPoint, clearSelection } = useFeatureStyle();
   const { getFeaturesAtPixel } = useGetFeatures();
@@ -30,7 +30,7 @@ const useSelectPoint = () => {
   }, [activeOverlayPanel, activeTool, allowedPointModes, clearSelection, closeOverlayPanel, selectedPoint]);
 
   const selectPoint = (event: MapBrowserEvent<MouseEvent>) => {
-    if (allowedPointModes.includes(activeTool) && !event.dragging) {
+    if (!activeModeTools.includes("move") && allowedPointModes.includes(activeTool) && !event.dragging) {
       event.stopPropagation();
 
       const archivedFeatures = getFeaturesAtPixel(event, "archived");

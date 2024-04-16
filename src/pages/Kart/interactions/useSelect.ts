@@ -19,7 +19,7 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 
 const useSelect = () => {
   const toast = useToast();
-  const { activeTool } = useToolbar();
+  const { activeTool, activeModeTools } = useToolbar();
   const {
     selectFeatures,
     selectedFeatures,
@@ -49,7 +49,7 @@ const useSelect = () => {
   }, [activeOverlayPanel, activeTool, clearSelection, closeOverlayPanel, previousPointMode, selectedFeatures.length]);
 
   const select = (event: MapBrowserEvent<MouseEvent>) => {
-    if (!disallowedTools.includes(activeTool) && !event.dragging) {
+    if (!activeModeTools.includes("move") && !disallowedTools.includes(activeTool) && !event.dragging) {
       const activeFeatures = getLineStringFeaturesAtPixel(event, safeTools.includes(activeTool) ? null : "edit");
 
       // Dersom man har klikket på kartet skal vi kvitte oss med selection
