@@ -41,6 +41,7 @@ const Panel = styled.div<{ $isOpen: boolean }>`
 `;
 
 export const ModalPanel = styled(Panel)`
+  height: 100%;
   max-width: 1250px;
   margin-left: 16px;
   margin-right: 16px;
