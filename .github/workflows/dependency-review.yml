@@ -17,4 +17,4 @@ jobs:
         uses: actions/dependency-review-action@v4
         with:
           comment-summary-in-pr: true
-          deny-licenses: MIT, BSD-2.0, BSD-3.0
+          allow-licenses: MIT
