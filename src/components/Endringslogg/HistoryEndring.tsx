@@ -37,7 +37,9 @@ const getAggregatedEndringer = (minimaleHistoryEndringer: MinimalHistoryEntry[])
 export const HistoryEndringer = ({ minimalHistoryEntries }: Props) => {
   return (
     <Stack spacing={4}>
-      <Text fontSize={"sm"}>Publiserer du uten å lagre først vil endringene nedenfor ikke bli med.</Text>
+      <Text fontSize={"sm"}>
+        {`Publiserer du uten å lagre først vil ${minimalHistoryEntries.length > 1 ? "endringene" : "endringen"} nedenfor ikke bli med.`}
+      </Text>
       {getAggregatedEndringer(minimalHistoryEntries)}
     </Stack>
   );
