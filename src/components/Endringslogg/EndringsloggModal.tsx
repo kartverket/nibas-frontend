@@ -14,6 +14,7 @@ import { EndringsloggStemmekretsendringer } from "./EndringsloggStemmekretsendri
 import { useUtkastEndringer } from "./hooks/useUtkastEndringer";
 import { UtkastResponse } from "types/api";
 import { UlagredeEndringer } from "./UlagredeEndringer";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
 
 type Props = {
   isOpen: boolean;
@@ -23,7 +24,8 @@ type Props = {
 
 const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
   const { harEndringer, laster, stemmekretsendringer, grunnkretsendringer } = useUtkastEndringer(utkast);
-
+  const { history } = useHistory();
+  const harUlagredeEndringer = history.entries.length > 0;
   const harLastetData = !laster || !!stemmekretsendringer || !!grunnkretsendringer;
 
   return (
@@ -33,9 +35,9 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
         <ModalHeader>Endringer i dette utkastet</ModalHeader>
         <ModalCloseButton aria-label="Lukk" />
         <ModalBody>
-          {!harEndringer && <Empty>Det er ingen endringer i dette utkastet</Empty>}
+          {!harEndringer && !harUlagredeEndringer && <Empty>Det er ingen endringer i dette utkastet</Empty>}
           <Stack spacing={6}>
-            <UlagredeEndringer />
+            <UlagredeEndringer history={history} />
             {stemmekretsendringer?.map((endringer) => (
               <Skeleton key={endringer.kommune.id} isLoaded={harLastetData}>
                 <EndringsloggStemmekretsendringer endringer={endringer} />

@@ -1,34 +1,60 @@
 import { Alert, AlertIcon, AlertTitle, Button, Collapse, Box, Text } from "@kvib/react";
-import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { HistoryEntry, HistoryTypeValues } from "contexts/HistoryContext/types";
+import { HistoryEntry, HistoryState, HistoryTypeValues, MinimalGrense } from "contexts/HistoryContext/types";
 import { useMemo, useState } from "react";
 import { styled } from "styled-components";
+import {
+  FeatureProperties,
+  GrunnkretsRequest,
+  KontekstEgenskaper,
+  StemmekretsRequest,
+  StemmekretsSammenslaaingsendringRequest,
+} from "types/api";
+import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
+import { Feature } from "ol";
+import { HistoryEndringer } from "./HistoryEndring";
 
-type MinimalHistoryEntry<T> = {
-  type: HistoryTypeValues;
-  lokalid: string;
-  from: T;
-  to: T;
+type Props = {
+  history: HistoryState;
 };
 
-export const UlagredeEndringer = () => {
-  const { history } = useHistory();
+type historyData =
+  | MinimalGrense
+  | FeatureProperties
+  | GrunnkretsRequest
+  | StemmekretsRequest
+  | UtkastRequestWithoutOperations
+  | StemmekretsSammenslaaingsendringRequest
+  | FeatureProperties
+  | KontekstEgenskaper[]
+  | (MinimalGrense & FeatureProperties)
+  | Feature[];
+
+export type MinimalHistoryEntry = {
+  type: HistoryTypeValues;
+  lokalid: string;
+  from: historyData;
+  to: historyData;
+};
+
+export const UlagredeEndringer = ({ history }: Props) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   // History lagrer absolutt alt, men vi er kun interessert i å vise bruker hva som er forskjellen sammenlignet med utkastet.
   // Dermed må vi finne de siste endringene for hver lokalid, og sammenligne dette med den første endringen sin "from" (utgangspunktet) for å se hva som faktisk blir endringen man utfører hvis man lagrer.
   const minimalHistory = useMemo(() => {
+    const currentHistroySlice = history.entries.slice(0, history.index);
+
     const firstEntriesForLokalids: Record<string, HistoryEntry> = {};
     const latestEntriesForLokalids: Record<string, HistoryEntry> = {};
 
-    history.entries.forEach((entry) => {
+    currentHistroySlice.forEach((entry) => {
       const change = entry.changes[0];
       if (!(change.id in firstEntriesForLokalids)) {
         firstEntriesForLokalids[change.id] = entry;
       }
     });
 
-    history.entries
+    currentHistroySlice
       .slice()
       .reverse()
       .forEach((entry) => {
@@ -38,16 +64,14 @@ export const UlagredeEndringer = () => {
         }
       });
 
-    const minimalChanges: MinimalHistoryEntry<unknown>[] = Object.entries(firstEntriesForLokalids).map(
-      ([lokalid, entry]) => {
-        const firstFrom = entry.changes[0].from;
-        const lastTo = latestEntriesForLokalids[lokalid].changes[0].to;
-        return { type: entry.type, lokalid: lokalid, from: firstFrom, to: lastTo };
-      },
-    );
+    const minimalChanges: MinimalHistoryEntry[] = Object.entries(firstEntriesForLokalids).map(([lokalid, entry]) => {
+      const firstFrom = entry.changes[0].from;
+      const lastTo = latestEntriesForLokalids[lokalid].changes[0].to;
+      return { type: entry.type, lokalid: lokalid, from: firstFrom, to: lastTo };
+    });
 
     return minimalChanges;
-  }, [history.entries]);
+  }, [history.entries, history.index]);
 
   return (
     history.index > 0 && (
@@ -56,7 +80,8 @@ export const UlagredeEndringer = () => {
           <Wrapper>
             <AlertIcon />
             <AlertTitle>
-              Du har {history.index} {history.index > 1 ? "ulagrede endringer" : "ulagret endring"} i utkastet
+              Du har {minimalHistory.length} {minimalHistory.length > 1 ? "ulagrede endringer" : "ulagret endring"} i
+              utkastet
             </AlertTitle>
           </Wrapper>
           <CustomButton
@@ -68,7 +93,7 @@ export const UlagredeEndringer = () => {
           </CustomButton>
         </AlertWithButton>
         <EndringerContent>
-          <Text fontSize={"sm"}>Publiserer du uten å lagre først vil endringene nedenfor ikke bli med.</Text>
+          <HistoryEndringer minimalHistoryEntries={minimalHistory} />
         </EndringerContent>
       </CustomCollapse>
     )
