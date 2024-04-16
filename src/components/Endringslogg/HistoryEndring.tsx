@@ -5,7 +5,7 @@ import { Stack, Text } from "@kvib/react";
 import { ReactNode } from "react";
 
 type Props = {
-  abstrahertHistory: MinimalHistoryEntry[];
+  entries: MinimalHistoryEntry[];
 };
 
 const getAggregatedEndringer = (minimaleHistoryEndringer: MinimalHistoryEntry[]): ReactNode => {
@@ -34,7 +34,7 @@ const getAggregatedEndringer = (minimaleHistoryEndringer: MinimalHistoryEntry[])
   );
 };
 
-export const HistoryEndringer = ({ abstrahertHistory: minimalHistoryEntries }: Props) => {
+export const HistoryEndringer = ({ entries: minimalHistoryEntries }: Props) => {
   return (
     <Stack spacing={4}>
       <Text fontSize={"sm"}>

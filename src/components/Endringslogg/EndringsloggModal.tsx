@@ -37,7 +37,7 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
         <ModalBody>
           {!harEndringer && !harUlagredeEndringer && <Empty>Det er ingen endringer i dette utkastet</Empty>}
           <Stack spacing={6}>
-            <UlagredeEndringer history={history} />
+            <UlagredeEndringer history={history} harLagredeEndringer={harEndringer} />
             {stemmekretsendringer?.map((endringer) => (
               <Skeleton key={endringer.kommune.id} isLoaded={harLastetData}>
                 <EndringsloggStemmekretsendringer endringer={endringer} />

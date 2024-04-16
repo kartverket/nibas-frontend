@@ -2,13 +2,17 @@ import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import HeaderButton, { HeaderSection } from "./HeaderButton";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
-import { useDisclosure } from "@kvib/react";
+import { Badge, useDisclosure } from "@kvib/react";
 import EndringsloggModal from "components/Endringslogg/EndringsloggModal";
+import { useUlagredeEndringer } from "components/Endringslogg/hooks/useUlagredeEndringer";
+import styled from "styled-components";
 
 const HeaderHistoryOperations = () => {
   const { utkast, updateUtkastWithHistory } = useUtkast();
   const { canSave, undo, redo } = useHistory();
   const { isOpen, onClose, onOpen } = useDisclosure();
+
+  const ulagredeEndringer = useUlagredeEndringer();
 
   const handleSave = () => {
     if (utkast && canSave) {
@@ -59,12 +63,25 @@ const HeaderHistoryOperations = () => {
         icon="published_with_changes"
         onClick={onOpen}
         tooltip={{
-          text: "Se en liste over alle endringer som er gjort i dette utkastet",
+          text: "Se en liste over alle lagrede og ulagrede endringer som er gjort i dette utkastet",
         }}
+        alert={ulagredeEndringer.length > 0 && <AlertIcon count={ulagredeEndringer.length} />}
       />
       <EndringsloggModal isOpen={isOpen} onClose={onClose} utkast={utkast} />
     </HeaderSection>
   );
 };
+
+const AlertIcon = ({ count }: { count: number }) => {
+  return <RoundBadge variant={"solid"}>{count}</RoundBadge>;
+};
+
+const RoundBadge = styled(Badge)`
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  border-radius: 50%;
+  background-color: var(--kvib-colors-red-400);
+`;
 
 export default HeaderHistoryOperations;

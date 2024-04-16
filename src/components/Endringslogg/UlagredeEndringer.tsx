@@ -1,6 +1,8 @@
-import { Alert, AlertIcon, AlertTitle, Button, Collapse, Box, Text } from "@kvib/react";
-import { HistoryEntry, HistoryState, HistoryTypeValues, MinimalGrense } from "contexts/HistoryContext/types";
-import { useMemo, useState } from "react";
+import { Alert, AlertIcon, AlertTitle, Box, Button, Collapse } from "@kvib/react";
+import { HistoryState, HistoryTypeValues, MinimalGrense } from "contexts/HistoryContext/types";
+import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
+import { Feature } from "ol";
+import { useState } from "react";
 import { styled } from "styled-components";
 import {
   FeatureProperties,
@@ -9,12 +11,12 @@ import {
   StemmekretsRequest,
   StemmekretsSammenslaaingsendringRequest,
 } from "types/api";
-import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
-import { Feature } from "ol";
 import { HistoryEndringer } from "./HistoryEndring";
+import { useUlagredeEndringer } from "./hooks/useUlagredeEndringer";
 
 type Props = {
   history: HistoryState;
+  harLagredeEndringer: boolean;
 };
 
 type historyData =
@@ -36,42 +38,9 @@ export type MinimalHistoryEntry = {
   to: historyData;
 };
 
-export const UlagredeEndringer = ({ history }: Props) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  // History lagrer absolutt alt, men vi er kun interessert i å vise bruker hva som er forskjellen sammenlignet med utkastet.
-  // Dermed må vi finne de siste endringene for hver lokalid, og sammenligne dette med den første endringen sin "from" (utgangspunktet) for å se hva som faktisk blir endringen hvis man lagrer.
-  const abstrahertHistory = useMemo(() => {
-    const currentHistroySlice = history.entries.slice(0, history.index);
-
-    const firstEntriesForLokalids: Record<string, HistoryEntry> = {};
-    const latestEntriesForLokalids: Record<string, HistoryEntry> = {};
-
-    currentHistroySlice.forEach((entry) => {
-      const change = entry.changes[0];
-      if (!(change.id in firstEntriesForLokalids)) {
-        firstEntriesForLokalids[change.id] = entry;
-      }
-    });
-
-    currentHistroySlice
-      .slice()
-      .reverse()
-      .forEach((entry) => {
-        const change = entry.changes[0];
-        if (!(change.id in latestEntriesForLokalids)) {
-          latestEntriesForLokalids[change.id] = entry;
-        }
-      });
-
-    const minimalChanges: MinimalHistoryEntry[] = Object.entries(firstEntriesForLokalids).map(([lokalid, entry]) => {
-      const firstFrom = entry.changes[0].from;
-      const lastTo = latestEntriesForLokalids[lokalid].changes[0].to;
-      return { type: entry.type, lokalid: lokalid, from: firstFrom, to: lastTo };
-    });
-
-    return minimalChanges;
-  }, [history.entries, history.index]);
+export const UlagredeEndringer = ({ history, harLagredeEndringer }: Props) => {
+  const [isExpanded, setIsExpanded] = useState(!harLagredeEndringer);
+  const ulagredeEndringer = useUlagredeEndringer();
 
   return (
     history.index > 0 && (
@@ -80,8 +49,8 @@ export const UlagredeEndringer = ({ history }: Props) => {
           <Wrapper>
             <AlertIcon />
             <AlertTitle>
-              Du har {abstrahertHistory.length}{" "}
-              {abstrahertHistory.length > 1 ? "ulagrede endringer" : "ulagret endring"} i utkastet
+              Du har {ulagredeEndringer.length}{" "}
+              {ulagredeEndringer.length > 1 ? "ulagrede endringer" : "ulagret endring"} i utkastet
             </AlertTitle>
           </Wrapper>
           <CustomButton
@@ -93,7 +62,7 @@ export const UlagredeEndringer = ({ history }: Props) => {
           </CustomButton>
         </AlertWithButton>
         <EndringerContent>
-          <HistoryEndringer abstrahertHistory={abstrahertHistory} />
+          <HistoryEndringer entries={ulagredeEndringer} />
         </EndringerContent>
       </CustomCollapse>
     )

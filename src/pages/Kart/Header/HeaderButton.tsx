@@ -1,6 +1,7 @@
 import { Button, ButtonProps, IconButton, MaterialSymbol, Tooltip } from "@kvib/react";
 import { CustomTooltipProps, TooltipBody } from "../Toolbar/CustomTooltip";
 import { styled } from "styled-components";
+import { ReactNode } from "react";
 
 type HeaderButtonProps = {
   icon: MaterialSymbol;
@@ -9,6 +10,7 @@ type HeaderButtonProps = {
   tooltip: CustomTooltipProps;
   label: string;
   isLabelHidden?: boolean;
+  alert?: ReactNode;
 } & ButtonProps;
 
 const HeaderButton = ({
@@ -18,6 +20,7 @@ const HeaderButton = ({
   isDisabled,
   tooltip,
   isLabelHidden = false,
+  alert,
   ...props
 }: HeaderButtonProps) => (
   <Tooltip hasArrow label={<TooltipBody text={tooltip.text} shortcut={tooltip.shortcut} />}>
@@ -33,11 +36,17 @@ const HeaderButton = ({
       />
     ) : (
       <Button size="sm" variant="ghost" leftIcon={icon} onClick={onClick} isDisabled={isDisabled} {...props}>
-        {label}
+        <ButtonContent>
+          {label} {alert}
+        </ButtonContent>
       </Button>
     )}
   </Tooltip>
 );
+
+const ButtonContent = styled.div`
+  justify-content: space-between;
+`;
 
 export const HeaderSection = styled.section`
   display: flex;
