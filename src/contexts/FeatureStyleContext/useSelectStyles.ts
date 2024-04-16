@@ -13,11 +13,9 @@ export const useSelectStyles = () => {
 
   const selectPointOnFeature = (coordinate: Coordinate) => {
     if (selectedPoint) {
-      const geometry = selectedPoint.getGeometry() as Point;
-      geometry.setCoordinates(coordinate);
+      selectedPoint.getGeometry()?.setCoordinates(coordinate);
     } else {
-      const geometry = new Point(coordinate);
-      const highlightPoint = new Feature(geometry);
+      const highlightPoint = new Feature(new Point(coordinate));
       highlightPoint.setId("temp-point-highlight");
       highlightPoint.setStyle(selectedPointStyle);
       editSource.addFeatures([highlightPoint]);
@@ -48,8 +46,8 @@ export const useSelectStyles = () => {
       if (selectedPointId != null) {
         removeFeaturesFromSourceByIds("edit", [selectedPointId]);
       }
+      setSelectedPoint(null);
     }
-    setSelectedPoint(null);
   };
 
   const isSelectedFeature = (feature: Feature<LineString>) =>
