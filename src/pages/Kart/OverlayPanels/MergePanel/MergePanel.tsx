@@ -9,7 +9,7 @@ import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useCallback } from "react";
 import Input from "components/Input";
 import { stemmekretsgrenserFetcher } from "api/stemmekrets";
-import { deduplicate, duplicates, removeNil } from "utils/list-utils";
+import { getDuplicateItems, getUniqueItemsBy, removeNil } from "utils/list-utils";
 import { MergeMultiselect } from "./MergeMultiselect";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
@@ -101,10 +101,12 @@ const MergePanel = ({ isOpen }: PanelProps) => {
       lokalId: stemmekretsRespons.id.lokalid.value,
       version: stemmekretsRespons.version,
     },
-    stemmekretserTilSammenslaaing: deduplicate(sammenslaaingsStemmekretser).map((sammenslaaingsStemmekrets) => ({
-      lokalId: sammenslaaingsStemmekrets.id.lokalid.value,
-      version: sammenslaaingsStemmekrets.version,
-    })),
+    stemmekretserTilSammenslaaing: getUniqueItemsBy(sammenslaaingsStemmekretser, (krets) => krets.id.lokalid.value).map(
+      (sammenslaaingsStemmekrets) => ({
+        lokalId: sammenslaaingsStemmekrets.id.lokalid.value,
+        version: sammenslaaingsStemmekrets.version,
+      }),
+    ),
     navn: getValues("navn"),
     nummer: getValues("nummer"),
   });
@@ -135,7 +137,7 @@ const MergePanel = ({ isOpen }: PanelProps) => {
       updateUtkast(utkast.id, updateUtkastRequest);
       const sammenslaaingsStemmekretsIds = getStemmekretsIdList(selectedStemmekrets, stemmekretsTilSammenslaaingListe);
       const stemmekretsFeatureIds = await stemmekretsgrenserFetcher(sammenslaaingsStemmekretsIds, auth.token);
-      const overlappingFeatureIds = duplicates(stemmekretsFeatureIds);
+      const overlappingFeatureIds = getDuplicateItems(stemmekretsFeatureIds);
       const uniqueStemmekretsFeatureIds = stemmekretsFeatureIds.filter(
         (sfi) => !overlappingFeatureIds.some((ofi) => sfi === ofi),
       );

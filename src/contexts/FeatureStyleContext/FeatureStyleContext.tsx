@@ -23,7 +23,7 @@ import {
 import { newFeatureOnlyExistsAfterIndex, getChangeIds } from "contexts/HistoryContext/history-utils";
 import { Geometry, LineString } from "ol/geom";
 import { FeatureProperties } from "types/api";
-import { duplicates, removeNil } from "utils/list-utils";
+import { getDuplicateItems, removeNil } from "utils/list-utils";
 
 export const FeatureStyleContext = createContext<FeatureStyleContextValue | undefined>(undefined);
 
@@ -219,32 +219,30 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       (featureEndpoint) => featureEndpoint !== null,
     ) as FeatureIdWithEndpoints[];
 
-    if (editedFeatures.length > 0) {
-      for (const endretFeature of editedFeatures) {
-        const featureId = endretFeature.getId()?.toString();
+    for (const endretFeature of editedFeatures) {
+      const featureId = endretFeature.getId()?.toString();
 
-        if (featureId != null) {
-          const properties = endretFeature.getProperties() as FeatureProperties | undefined;
+      if (featureId != null) {
+        const properties = endretFeature.getProperties() as FeatureProperties | undefined;
 
-          // Avgjør hvilken type endringsfarge featuren skal ha
-          if (properties != null && properties.shouldArchive) {
-            archivedFeatureIds.push(featureId);
+        // Avgjør hvilken type endringsfarge featuren skal ha
+        if (properties != null && properties.shouldArchive) {
+          archivedFeatureIds.push(featureId);
 
-            const connectedFeatures = getFeaturesConnectedToFeatureAtEndpoints(endretFeature);
+          const connectedFeatures = getFeaturesConnectedToFeatureAtEndpoints(endretFeature);
 
-            for (const connectedFeature of connectedFeatures) {
-              const connectedFeatureId = connectedFeature.getId()?.toString();
-              const connectedFeatureProperties = connectedFeature.getProperties() as FeatureProperties | undefined;
-              if (connectedFeatureId == null || !connectedFeatureProperties) continue;
+          for (const connectedFeature of connectedFeatures) {
+            const connectedFeatureId = connectedFeature.getId()?.toString();
+            const connectedFeatureProperties = connectedFeature.getProperties() as FeatureProperties | undefined;
+            if (connectedFeatureId == null || !connectedFeatureProperties) continue;
 
-              if (!connectedFeatureProperties.shouldArchive && isFeatureDeadEnd(connectedFeature, allFeatureEndpoints))
-                errorFeatureIds.push(connectedFeatureId);
-            }
-          } else if (isFeatureDeadEnd(endretFeature, allFeatureEndpoints)) {
-            errorFeatureIds.push(featureId);
-          } else {
-            dirtyFeatureIds.push(featureId);
+            if (!connectedFeatureProperties.shouldArchive && isFeatureDeadEnd(connectedFeature, allFeatureEndpoints))
+              errorFeatureIds.push(connectedFeatureId);
           }
+        } else if (isFeatureDeadEnd(endretFeature, allFeatureEndpoints)) {
+          errorFeatureIds.push(featureId);
+        } else {
+          dirtyFeatureIds.push(featureId);
         }
       }
     }
@@ -258,7 +256,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     const stemmekretsFeatureIds = removeNil(sammenslaaingFeatures.map((feature) => feature.getId()?.toString()));
 
     if (stemmekretsFeatureIds.length > 0) {
-      const overlappingFeatureIds = duplicates(stemmekretsFeatureIds);
+      const overlappingFeatureIds = getDuplicateItems(stemmekretsFeatureIds);
       const uniqueStemmekretsFeatureIds = stemmekretsFeatureIds.filter((sfi) => !overlappingFeatureIds.includes(sfi));
 
       sammenslaaingStyleFunctions.setAndSaveCustomStyles(uniqueStemmekretsFeatureIds);

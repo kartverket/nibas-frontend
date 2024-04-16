@@ -113,7 +113,6 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
     const removeInndelingFromLayer = (layer: GrenseId, features: Feature<Geometry>[]) => {
       const featureIds = removeNil(features.map((feature) => feature.getId()?.toString()));
-
       removeFeaturesFromSourceByIds(layer, featureIds);
     };
 

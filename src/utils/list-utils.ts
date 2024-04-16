@@ -5,39 +5,21 @@ export function removeNil<T>(list: (T | null | undefined)[]): T[] {
   return list.filter(isNotNil);
 }
 
-export function deduplicate<T>(list: T[]): T[] {
-  return list.filter((element, index) => list.indexOf(element) === index);
-}
-
-export function deduplicateBy<T>(list: T[], selector: (item: T) => string | number | null | undefined): T[] {
-  const deduplicatedList: T[] = [];
+export function getUniqueItemsBy<T>(list: T[], selector: (item: T) => Primitive): T[] {
+  const uniqueItems: T[] = [];
   for (const item of list) {
-    if (deduplicatedList.every((k) => selector(k) !== selector(item))) {
-      deduplicatedList.push(item);
+    if (uniqueItems.every((k) => selector(k) !== selector(item))) {
+      uniqueItems.push(item);
     }
   }
-  return deduplicatedList;
+  return uniqueItems;
 }
 
-export function duplicates<T>(list: T[]): T[] {
-  const seenItems: T[] = [];
-  const duplicateItems: T[] = [];
-
-  for (const item of list) {
-    const duplicate = seenItems.find((seenItem) => seenItem === item);
-
-    if (duplicate != null) {
-      const duplicateIsAdded = duplicateItems.find((duplicateItem) => duplicateItem === duplicate);
-      if (duplicateIsAdded == null) duplicateItems.push(duplicate);
-    } else {
-      seenItems.push(item);
-    }
-  }
-
-  return duplicateItems;
+export function getUniqueItems<T extends Primitive>(list: T[]): T[] {
+  return getUniqueItemsBy(list, (item) => item);
 }
 
-export function duplicatesBy<T>(list: T[], predicate: (item: T) => Primitive): T[] {
+export function getDuplicateItemsBy<T>(list: T[], predicate: (item: T) => Primitive): T[] {
   const seenItems: T[] = [];
   const duplicateItems: T[] = [];
 
@@ -55,6 +37,10 @@ export function duplicatesBy<T>(list: T[], predicate: (item: T) => Primitive): T
   }
 
   return duplicateItems;
+}
+
+export function getDuplicateItems<T extends Primitive>(list: T[]): T[] {
+  return getDuplicateItemsBy(list, (item) => item);
 }
 
 export function addToList<T>(element: T | null | undefined, list: T[] | null): T[] {

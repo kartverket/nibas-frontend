@@ -19,7 +19,7 @@ import { editSource } from "hooks/layers/constants";
 import { Geometry } from "ol/geom";
 import { isAdministrativGrense } from "utils/grenser";
 import { isGrenseType } from "utils/type-utils";
-import { deduplicateBy } from "utils/list-utils";
+import { getUniqueItemsBy } from "utils/list-utils";
 
 const getAdministrativeFeatures = (features: Feature<Geometry>[]) => {
   return features.filter((feature) => {
@@ -37,8 +37,8 @@ const filterKontekstEgenskaperOnType = (egenskaper: KontekstEgenskaper[], type: 
     .filter((id) => id.length > 0 && id !== CustomOption.NOT_CHOSEN);
 };
 
-const deduplicateById = (kretser: Krets[]) => {
-  return deduplicateBy(kretser, (krets) => krets.id.lokalid.value);
+const getUniqueItemsById = (kretser: Krets[]) => {
+  return getUniqueItemsBy(kretser, (krets) => krets.id.lokalid.value);
 };
 
 const useGetMuligeKretserForNyAdministrativGrense = (
@@ -94,13 +94,13 @@ const useGetMuligeKretserForNyAdministrativGrense = (
       }) ?? [];
 
     const fullGrunnkretser = sortKretserOptionsByFormattedName(
-      deduplicateById(
+      getUniqueItemsById(
         mapGrunnkretsResponseToKrets(grunnkretserFromContext).concat(grunnkretserFraGrenseKontekstegenskaper),
       ),
     );
 
     const fullStemmekretser = sortKretserOptionsByFormattedName(
-      deduplicateById(
+      getUniqueItemsById(
         mapStemmekretResponseToKrets(stemmekretserFromContext).concat(stemmekretserFraGrenseKontekstEgenskaper),
       ),
     );
