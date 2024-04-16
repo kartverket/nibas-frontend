@@ -40,8 +40,8 @@ export const UlagredeEndringer = ({ history }: Props) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   // History lagrer absolutt alt, men vi er kun interessert i å vise bruker hva som er forskjellen sammenlignet med utkastet.
-  // Dermed må vi finne de siste endringene for hver lokalid, og sammenligne dette med den første endringen sin "from" (utgangspunktet) for å se hva som faktisk blir endringen man utfører hvis man lagrer.
-  const minimalHistory = useMemo(() => {
+  // Dermed må vi finne de siste endringene for hver lokalid, og sammenligne dette med den første endringen sin "from" (utgangspunktet) for å se hva som faktisk blir endringen hvis man lagrer.
+  const abstrahertHistory = useMemo(() => {
     const currentHistroySlice = history.entries.slice(0, history.index);
 
     const firstEntriesForLokalids: Record<string, HistoryEntry> = {};
@@ -80,8 +80,8 @@ export const UlagredeEndringer = ({ history }: Props) => {
           <Wrapper>
             <AlertIcon />
             <AlertTitle>
-              Du har {minimalHistory.length} {minimalHistory.length > 1 ? "ulagrede endringer" : "ulagret endring"} i
-              utkastet
+              Du har {abstrahertHistory.length}{" "}
+              {abstrahertHistory.length > 1 ? "ulagrede endringer" : "ulagret endring"} i utkastet
             </AlertTitle>
           </Wrapper>
           <CustomButton
@@ -93,7 +93,7 @@ export const UlagredeEndringer = ({ history }: Props) => {
           </CustomButton>
         </AlertWithButton>
         <EndringerContent>
-          <HistoryEndringer minimalHistoryEntries={minimalHistory} />
+          <HistoryEndringer abstrahertHistory={abstrahertHistory} />
         </EndringerContent>
       </CustomCollapse>
     )
