@@ -1,4 +1,4 @@
-import { Card, Stack, Text } from "@kvib/react";
+import { Badge, Card, Stack, Text } from "@kvib/react";
 import { HistoryTypeValues } from "contexts/HistoryContext/types";
 import { styled } from "styled-components";
 import { EndringFraTil } from "./EndringsloggComponents";
@@ -35,6 +35,7 @@ const DetailedFlateEndringerList = ({ endringer }: DetailedEndringerPorps) => {
             <EndringFraTil
               key={i}
               endring={{ fra: `${fraFlate.nummer} ${fraFlate.navn}`, til: `${tilFlate.nummer} ${tilFlate.navn}` }}
+              withBadges
             />
           );
         } else return null;
@@ -43,9 +44,33 @@ const DetailedFlateEndringerList = ({ endringer }: DetailedEndringerPorps) => {
   );
 };
 
+type KontekstWithBadgeProps = {
+  kontekst: string;
+  erNy: boolean;
+  erErstattet: boolean;
+  erUendret: boolean;
+};
+
 const DetailedKontekstEgenskaperEndringerList = ({ endringer }: DetailedEndringerPorps) => {
   const getFormattedKontekstEgenskaper = (kontekstEgenskaper: KontekstEgenskaper[]) => {
-    return kontekstEgenskaper.map((kontekst) => `${kontekst.kretsNummer} ${kontekst.kretsNavn}`).join(", ");
+    return kontekstEgenskaper.map((kontekst) => `${kontekst.kretsNummer} ${kontekst.kretsNavn}`);
+  };
+
+  const KontekstWithBadge = ({ kontekst, erNy, erErstattet, erUendret }: KontekstWithBadgeProps) => {
+    return (
+      <div>
+        <Container>
+          <Text>{kontekst}</Text>
+          {erNy ? (
+            <Badge colorScheme="green">ny</Badge>
+          ) : erErstattet ? (
+            <Badge colorScheme={"gray"}>utgår</Badge>
+          ) : erUendret ? (
+            <Badge colorScheme={"green"}>består</Badge>
+          ) : null}
+        </Container>
+      </div>
+    );
   };
 
   return (
@@ -53,12 +78,36 @@ const DetailedKontekstEgenskaperEndringerList = ({ endringer }: DetailedEndringe
       {endringer.map((endring, i) => {
         const fraKontekster = endring.from as KontekstEgenskaper[];
         const tilKontekster = endring.to as KontekstEgenskaper[];
+
+        const fraKonteksterFormatted = getFormattedKontekstEgenskaper(fraKontekster);
+        const tilKonteksterFormatted = getFormattedKontekstEgenskaper(tilKontekster);
+
+        const fraKonsteksterWithBadge = fraKonteksterFormatted.map((fraKontekst, index) => (
+          <KontekstWithBadge
+            key={index}
+            kontekst={fraKontekst}
+            erNy={false}
+            erErstattet={!tilKonteksterFormatted.includes(fraKontekst)}
+            erUendret={tilKonteksterFormatted.includes(fraKontekst)}
+          />
+        ));
+
+        const tilKonteksterWithBadge = tilKonteksterFormatted.map((tilKontekst, index) => (
+          <KontekstWithBadge
+            key={index}
+            kontekst={tilKontekst}
+            erNy={!fraKonteksterFormatted.includes(tilKontekst)}
+            erErstattet={false}
+            erUendret={fraKonteksterFormatted.includes(tilKontekst)}
+          />
+        ));
+
         return (
           <EndringFraTil
             key={i}
             endring={{
-              fra: getFormattedKontekstEgenskaper(fraKontekster),
-              til: getFormattedKontekstEgenskaper(tilKontekster),
+              fra: fraKonsteksterWithBadge,
+              til: tilKonteksterWithBadge,
             }}
           />
         );
@@ -161,4 +210,10 @@ const getTitleAndDescriptionFragments = (
 const EndringTitle = styled(Text)`
   font-size: small;
   color: var(--kvib-color-gray-700);
+`;
+
+const Container = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
 `;

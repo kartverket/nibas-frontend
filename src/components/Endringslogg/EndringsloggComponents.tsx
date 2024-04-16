@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 import { Endring, KretsSplittingEndring } from "./hooks/utkastEndringerTypes";
-import { Badge, Heading, Icon, Text } from "@kvib/react";
+import { Badge, Heading, Icon } from "@kvib/react";
 import { UnstyledList } from "components/UnstyledList";
 import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 
@@ -70,6 +70,7 @@ export const EndringstypeTag = styled.span`
 
 type EndringFraTilProps = {
   endring: Endring;
+  withBadges?: boolean;
 };
 
 const Container = styled.div`
@@ -78,20 +79,24 @@ const Container = styled.div`
   gap: 6px;
 `;
 
-export const EndringFraTil = ({ endring }: EndringFraTilProps) => (
+export const EndringFraTil = ({ endring, withBadges }: EndringFraTilProps) => (
   <Container>
     <Container>
-      <Text>{endring.fra}</Text>
-      <Badge variant={"subtle"} colorScheme="gray">
-        Utgår
-      </Badge>
+      {endring.fra}
+      {withBadges === true && (
+        <Badge variant={"subtle"} colorScheme="gray">
+          Utgår
+        </Badge>
+      )}
     </Container>
     <RightArrow icon="arrow_right_alt" />
     <Container>
-      <Text>{endring.til}</Text>
-      <Badge variant={"subtle"} colorScheme="green">
-        Ny
-      </Badge>
+      {endring.til}
+      {withBadges === true && (
+        <Badge variant={"subtle"} colorScheme="green">
+          Ny
+        </Badge>
+      )}
     </Container>
   </Container>
 );

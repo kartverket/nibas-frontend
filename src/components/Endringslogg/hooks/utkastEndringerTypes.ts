@@ -1,8 +1,9 @@
+import { ReactNode } from "react";
 import { GrunnkretsResponse, KretsNavnOgNummer, StemmekretsResponse } from "../../../types/api";
 
 export type Endring = {
-  fra: string;
-  til: string;
+  fra: ReactNode;
+  til: ReactNode;
 };
 
 export type StemmekretsMetadataEndringstype = "navn" | "nummer" | "valgdistriktsnummer";
