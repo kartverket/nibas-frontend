@@ -51,7 +51,7 @@ const StyledList = styled.ul`
   list-style-type: none;
 `;
 
-export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
+export const SplittingPanel = ({ isOpen }: PanelProps) => {
   const { closeOverlayPanel } = useOverlayPanel();
   const { currentlyEditedInndeling } = useInndelinger();
   const {
@@ -137,7 +137,7 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
   const opprinneligKretsRegister = register("opprinneligKrets.lokalId");
 
   return (
-    <SidePanel $isOpen={isOpen} className={className}>
+    <SidePanel $isOpen={isOpen}>
       <PanelHeader
         onClose={closeAndResetForm}
         subHeading="Ved å splitte en flate kan du opprette en eller flere nye flater"

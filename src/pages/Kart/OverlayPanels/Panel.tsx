@@ -4,7 +4,6 @@ import { zindex } from "utils/constants";
 
 export type PanelProps = {
   isOpen: boolean;
-  className?: string;
 };
 
 const fadeIn = keyframes`

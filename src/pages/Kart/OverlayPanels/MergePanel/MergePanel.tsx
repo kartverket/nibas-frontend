@@ -37,7 +37,7 @@ const Buttons = styled.div`
   margin-top: auto;
 `;
 
-const MergePanel = ({ isOpen, className }: PanelProps) => {
+const MergePanel = ({ isOpen }: PanelProps) => {
   const { closeOverlayPanel } = useOverlayPanel();
   const { setError } = useErrorHandling();
   const { utkast, updateUtkast, utkastHarEndringer } = useUtkast();
@@ -175,7 +175,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
     setValue("nummer", selectedStemmekrets?.nummer ?? "");
   };
   return (
-    <SidePanel $isOpen={isOpen} className={className}>
+    <SidePanel $isOpen={isOpen}>
       <PanelHeader onClose={closeOverlayPanel}>Slå sammen stemmekretser</PanelHeader>
       {(history.entries.length > 0 && history.index > 0) || utkastHarEndringer() ? (
         <Alert>

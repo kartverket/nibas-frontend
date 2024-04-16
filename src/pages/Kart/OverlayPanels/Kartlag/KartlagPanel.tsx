@@ -5,12 +5,12 @@ import Kartlag from "./Kartlag";
 import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { Spinner } from "@kvib/react";
 
-const KartlagPanel = ({ isOpen, className }: PanelProps) => {
+const KartlagPanel = ({ isOpen }: PanelProps) => {
   const { mappedLayers } = useKartlag();
   const { closeOverlayPanel } = useOverlayPanel();
 
   return (
-    <SidePanel $isOpen={isOpen} className={className}>
+    <SidePanel $isOpen={isOpen}>
       <PanelHeader onClose={closeOverlayPanel}>Kartlag</PanelHeader>
       <KartlagList>
         {mappedLayers.length > 0 ? (

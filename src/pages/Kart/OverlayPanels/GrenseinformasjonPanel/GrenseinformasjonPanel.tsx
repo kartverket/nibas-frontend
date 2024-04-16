@@ -12,7 +12,7 @@ import { styled } from "styled-components";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { newFeatureOnlyExistsAfterIndex } from "contexts/HistoryContext/history-utils";
 
-const GrenseinformasjonPanel = ({ isOpen, className }: PanelProps) => {
+const GrenseinformasjonPanel = ({ isOpen }: PanelProps) => {
   const { selectedFeatures } = useFeatureStyle();
   const { activeOverlayPanel, closeOverlayPanel } = useOverlayPanel();
   const { history } = useHistory();
@@ -39,7 +39,7 @@ const GrenseinformasjonPanel = ({ isOpen, className }: PanelProps) => {
   return (
     selectedFeature &&
     !isMatrikkelFeature(selectedFeature) && (
-      <SidePanel $isOpen={isOpen} className={className}>
+      <SidePanel $isOpen={isOpen}>
         {selectedProperties ? (
           <GrensePanelContent>
             <GrenseinformasjonForm onClose={closeOverlayPanel} feature={selectedFeature} />

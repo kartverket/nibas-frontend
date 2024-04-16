@@ -17,7 +17,7 @@ import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import useKommuner from "hooks/inndelinger/useKommuner";
 import { inndelingResponseNavnToString } from "contexts/InndelingerContext/useInndelingFeatures";
 
-const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
+const GrunnkretsPanel = ({ isOpen }: PanelProps) => {
   const { utkast } = useUtkast();
   const { sortProperty, sortOrder, sortHeaderProps } = useTableSort<GrunnkretsResponse>(["nummer", "navn"]);
   const { closeOverlayModal } = useOverlayPanel();
@@ -44,7 +44,7 @@ const GrunnkretsPanel = ({ isOpen, className }: PanelProps) => {
   return (
     <Modal isOpen={isOpen} onClose={closeOverlayModal} scrollBehavior="inside">
       <ModalOverlay />
-      <ModalContent as={ModalPanel} $isOpen={isOpen} className={className}>
+      <ModalContent as={ModalPanel} $isOpen={isOpen}>
         {kommune && filteredGrunnkretser ? (
           <>
             <PanelHeader onClose={closeOverlayModal}>

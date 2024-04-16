@@ -14,7 +14,7 @@ import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import useKommuner from "hooks/inndelinger/useKommuner";
 import { inndelingResponseNavnToString } from "contexts/InndelingerContext/useInndelingFeatures";
 
-const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
+const StemmekretsPanel = ({ isOpen }: PanelProps) => {
   const { utkast } = useUtkast();
   const { sortProperty, sortOrder, sortHeaderProps } = useTableSort<StemmekretsResponse>([
     "nummer",
@@ -37,7 +37,7 @@ const StemmekretsPanel = ({ isOpen, className }: PanelProps) => {
   return (
     <Modal isOpen={isOpen} onClose={closeOverlayModal} scrollBehavior="inside">
       <ModalOverlay />
-      <ModalContent as={ModalPanel} $isOpen={isOpen} className={className}>
+      <ModalContent as={ModalPanel} $isOpen={isOpen}>
         {utkastStemmekretser && kommune ? (
           <>
             <PanelHeader onClose={closeOverlayModal}>

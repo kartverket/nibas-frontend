@@ -13,7 +13,7 @@ import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { capitalize } from "utils/string-utils";
 import { useToolbar } from "contexts/ToolbarContext";
 
-const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
+const InndelingerPanel = ({ isOpen }: PanelProps) => {
   const [selectedInndelingtype, setSelectedInndelingtype] = useState<Inndelingtype | null>(null);
 
   // Bedre navn på denne for å skille den mer fra valgt fylke i context?
@@ -71,7 +71,7 @@ const InndelingerPanel = ({ isOpen, className }: PanelProps) => {
   return (
     <Modal isOpen={isOpen} onClose={resetInndelingerPanel} scrollBehavior="inside">
       <ModalOverlay />
-      <ModalContent as={ModalPanel} $isOpen={isOpen} className={className}>
+      <ModalContent as={ModalPanel} $isOpen={isOpen}>
         <PanelHeader onClose={resetInndelingerPanel}>
           Velg en inndeling du ønsker å {isEditingPanel ? "redigere" : "se i kartet"}
         </PanelHeader>
