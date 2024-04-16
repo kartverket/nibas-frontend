@@ -124,7 +124,7 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
                     <InndelingOption isActive={false} onClick={() => selectKommune(kommuneId)}>
                       {`${kommune.nummer} ${getNavnInSpraak(kommune.navn, "nor")}`}
                     </InndelingOption>
-                    {flatedataIsAvailable && (
+                    {flatedataIsAvailable && !isEditingPanel && (
                       <IconButton
                         variant="ghost"
                         icon="feed"
