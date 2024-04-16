@@ -9,6 +9,8 @@ import { Tool, useToolbar } from "contexts/ToolbarContext";
 import { GrenseId } from "hooks/layers/types";
 import { useCursorStyles } from "./useCursorStyles";
 import { SnapData, createKartlagSnapsData } from "./snapping-utils";
+import { MapBrowserEvent } from "ol";
+import { shiftKeyOnly } from "ol/events/condition";
 
 const useInteractions = () => {
   const { modify } = useModify();
@@ -30,6 +32,21 @@ const useInteractions = () => {
   useCursorStyles({
     isEnabled: pointerCursorTools.includes(activeTool),
     defaultCursor: () => "pointer",
+  });
+
+  useCursorStyles({
+    isEnabled: !pointerCursorTools.includes(activeTool) && activeModeTools.includes("move"),
+    defaultCursor: () => "grab",
+    eventsAndCursor: [
+      {
+        name: "pointerdrag",
+        cursor: (e) => (shiftKeyOnly(e as MapBrowserEvent<UIEvent>) ? "zoom-in" : "grabbing"),
+      },
+      {
+        name: "mouseup",
+        cursor: () => "grab",
+      },
+    ],
   });
 
   useEffect(() => {
