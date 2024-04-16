@@ -97,9 +97,9 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         if (!everyFetchedFeatureIsInSource) {
           addFeaturesToSource(layer, features, () => {
             if (layer === "edit") {
-              zoomToFeatures(features);
               setFeatureStylesForUtkast(changedFeaturesInUtkast, sammenslaaingFeaturesInUtkast);
             }
+            zoomToFeatures(features);
           });
         }
       }
