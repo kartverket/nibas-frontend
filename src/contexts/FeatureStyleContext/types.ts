@@ -21,8 +21,7 @@ export type FeatureStyleContextValue = {
   addErrorStyles: (featureIds: string[]) => void;
   addArchivedStyles: (featureIds: string[]) => void;
 
-  setFeatureStylesForUtkastFeatures: (features: Feature<Geometry>[]) => void;
-  setFeatureStylesForSammenslaaingsFeatures: (features: Feature<Geometry>[]) => void;
+  setFeatureStylesForUtkast: (editedFeatures: Feature<Geometry>[], sammenslaaingFeatures: Feature<Geometry>[]) => void;
 
   setAndSaveSammenslaaingStyles: (features: string[]) => void;
   setAndSaveSammenslaaingOverlappingStyles: (features: string[]) => void;

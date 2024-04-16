@@ -210,7 +210,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     }
   };
 
-  const setFeatureStylesForUtkastFeatures = (endredeFeatures: Feature<Geometry>[]) => {
+  const setCustomStylesForUtkastFeatures = (editedFeatures: Feature<Geometry>[]) => {
     const dirtyFeatureIds: string[] = [];
     const archivedFeatureIds: string[] = [];
     const errorFeatureIds: string[] = [];
@@ -219,8 +219,8 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       (featureEndpoint) => featureEndpoint !== null,
     ) as FeatureIdWithEndpoints[];
 
-    if (endredeFeatures.length > 0) {
-      for (const endretFeature of endredeFeatures) {
+    if (editedFeatures.length > 0) {
+      for (const endretFeature of editedFeatures) {
         const featureId = endretFeature.getId()?.toString();
 
         if (featureId != null) {
@@ -254,8 +254,8 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     archivedStyleFunctions.setAndSaveCustomStyles(archivedFeatureIds);
   };
 
-  const setFeatureStylesForSammenslaaingsFeatures = (stemmekretsFeatures: Feature<Geometry>[]) => {
-    const stemmekretsFeatureIds = removeNil(stemmekretsFeatures.map((feature) => feature.getId()?.toString()));
+  const setSammenslaaingsStylesForUtkastFeatures = (sammenslaaingFeatures: Feature<Geometry>[]) => {
+    const stemmekretsFeatureIds = removeNil(sammenslaaingFeatures.map((feature) => feature.getId()?.toString()));
 
     if (stemmekretsFeatureIds.length > 0) {
       const overlappingFeatureIds = duplicates(stemmekretsFeatureIds);
@@ -264,6 +264,14 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       sammenslaaingStyleFunctions.setAndSaveCustomStyles(uniqueStemmekretsFeatureIds);
       sammenslaaingOverlappingStyleFunctions.setAndSaveCustomStyles(overlappingFeatureIds);
     }
+  };
+
+  const setFeatureStylesForUtkast = (
+    editedFeatures: Feature<Geometry>[],
+    sammenslaaingFeatures: Feature<Geometry>[],
+  ) => {
+    setCustomStylesForUtkastFeatures(editedFeatures);
+    setSammenslaaingsStylesForUtkastFeatures(sammenslaaingFeatures);
   };
 
   const value = {
@@ -281,15 +289,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     addErrorStyles: errorStyleFunctions.addCustomStyles,
     addArchivedStyles: archivedStyleFunctions.addCustomStyles,
 
-    setFeatureStylesForUtkastFeatures: useCallback(setFeatureStylesForUtkastFeatures, [
-      archivedStyleFunctions,
-      dirtyStyleFunctions,
-      errorStyleFunctions,
-    ]),
-    setFeatureStylesForSammenslaaingsFeatures: useCallback(setFeatureStylesForSammenslaaingsFeatures, [
-      sammenslaaingOverlappingStyleFunctions,
-      sammenslaaingStyleFunctions,
-    ]),
+    setFeatureStylesForUtkast,
 
     setAndSaveSammenslaaingStyles: sammenslaaingStyleFunctions.setAndSaveCustomStyles,
     setAndSaveSammenslaaingOverlappingStyles: sammenslaaingOverlappingStyleFunctions.setAndSaveCustomStyles,

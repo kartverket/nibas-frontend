@@ -56,7 +56,7 @@ const InndelingerContext = createContext<InndelingerContextValue | undefined>(un
 export const InndelingerProvider = ({ children }: { children: React.ReactNode }) => {
   const [inndelinger, setInndelinger] = useState<Inndelinger>(getEmptyInndelinger());
 
-  const { setFeatureStylesForUtkastFeatures, setFeatureStylesForSammenslaaingsFeatures } = useFeatureStyle();
+  const { setFeatureStylesForUtkast } = useFeatureStyle();
 
   const previousInndelinger = useRef<Inndelinger>();
   if (previousInndelinger.current == null) previousInndelinger.current = getEmptyInndelinger();
@@ -98,8 +98,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
           addFeaturesToSource(layer, features, () => {
             if (layer === "edit") {
               zoomToFeatures(features);
-              setFeatureStylesForUtkastFeatures(changedFeaturesInUtkast);
-              setFeatureStylesForSammenslaaingsFeatures(sammenslaaingFeaturesInUtkast);
+              setFeatureStylesForUtkast(changedFeaturesInUtkast, sammenslaaingFeaturesInUtkast);
             }
           });
         }
@@ -201,8 +200,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
   }, [
     inndelingFeatures,
     selectedInndeling,
-    setFeatureStylesForSammenslaaingsFeatures,
-    setFeatureStylesForUtkastFeatures,
+    setFeatureStylesForUtkast,
     utkast?.operasjoner.stemmekretsSammenslaaingsendring,
     utkastFeaturesInInndeling,
   ]);
