@@ -5,7 +5,7 @@ import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts
 import { Badge, useDisclosure } from "@kvib/react";
 import EndringsloggModal from "components/Endringslogg/EndringsloggModal";
 import { useUlagredeEndringer } from "components/Endringslogg/hooks/useUlagredeEndringer";
-import styled from "styled-components";
+import { styled } from "styled-components";
 
 const HeaderHistoryOperations = () => {
   const { utkast, updateUtkastWithHistory } = useUtkast();

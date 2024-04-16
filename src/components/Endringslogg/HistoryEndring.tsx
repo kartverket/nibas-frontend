@@ -1,5 +1,5 @@
 import { HistoryTypeValues } from "contexts/HistoryContext/types";
-import { Endring } from "./Endring";
+import { Endringer } from "./Endring";
 import { MinimalHistoryEntry } from "./UlagredeEndringer";
 import { Stack, Text } from "@kvib/react";
 import { ReactNode } from "react";
@@ -28,7 +28,7 @@ const getAggregatedEndringer = (minimaleHistoryEndringer: MinimalHistoryEntry[])
     <>
       {Object.entries(aggregatedEndringer).map(
         ([type, endringer]) =>
-          endringer.length > 0 && <Endring key={type} type={type as HistoryTypeValues} endringer={endringer} />,
+          endringer.length > 0 && <Endringer key={type} type={type as HistoryTypeValues} endringer={endringer} />,
       )}
     </>
   );

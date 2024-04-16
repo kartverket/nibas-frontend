@@ -1,14 +1,15 @@
 import { Card, Stack, Text } from "@kvib/react";
 import { HistoryTypeValues } from "contexts/HistoryContext/types";
-import { MinimalHistoryEntry } from "./UlagredeEndringer";
 import { styled } from "styled-components";
+import { EndringFraTil } from "./EndringsloggComponents";
+import { MinimalHistoryEntry } from "./UlagredeEndringer";
 
-type EndringProps = {
+type EndringerProps = {
   type: HistoryTypeValues;
   endringer: MinimalHistoryEntry[];
 };
 
-export const Endring = ({ type, endringer }: EndringProps) => {
+export const Endringer = ({ type, endringer }: EndringerProps) => {
   const { title, description } = getTitleAndDescriptionFragments(type, endringer);
   return (
     <Card padding={4} variant={"outline"}>
@@ -20,10 +21,30 @@ export const Endring = ({ type, endringer }: EndringProps) => {
   );
 };
 
-const EndringTitle = styled(Text)`
-  font-size: small;
-  color: var(--kvib-color-gray-700);
-`;
+type DetailedEndringerPorps = Pick<EndringerProps, "endringer">;
+
+const DetailedFlateEndringerList = ({ endringer }: DetailedEndringerPorps) => {
+  return (
+    <Stack>
+      {endringer.map((endring, i) => {
+        const fraFlate = endring.from;
+        const tilFlate = endring.to;
+        if (("navn" && "nummer") in fraFlate && ("navn" && "nummer") in tilFlate) {
+          return (
+            <EndringFraTil
+              key={i}
+              endring={{ fra: `${fraFlate.nummer} ${fraFlate.navn}`, til: `${tilFlate.nummer} ${tilFlate.navn}` }}
+            />
+          );
+        } else return null;
+      })}
+    </Stack>
+  );
+};
+
+const DetailedKontekstEgenskaperEndringerList = ({ endringer }: DetailedEndringerPorps) => {
+  return <Stack></Stack>;
+};
 
 const getTitleAndDescriptionFragments = (
   type: HistoryTypeValues,
@@ -54,22 +75,12 @@ const getTitleAndDescriptionFragments = (
     case "grunnkrets":
       return {
         title: <EndringTitle>Endring på grunnkretser</EndringTitle>,
-        description: (
-          <Text>
-            {antallEndringer <= 1 ? `${antallEndringer} grunnkrets` : `${antallEndringer} grunnkretser`} har fått endret
-            informasjon
-          </Text>
-        ),
+        description: <DetailedFlateEndringerList endringer={endringer} />,
       };
     case "stemmekrets":
       return {
         title: <EndringTitle>Endring på stemmekretser</EndringTitle>,
-        description: (
-          <Text>
-            {antallEndringer <= 1 ? `${antallEndringer} stemmekrets` : `${antallEndringer} stemmekretser`} har fått
-            endret informasjon
-          </Text>
-        ),
+        description: <DetailedFlateEndringerList endringer={endringer} />,
       };
     case "utkast":
       return {
@@ -102,12 +113,7 @@ const getTitleAndDescriptionFragments = (
     case "grensetilhorighetendring":
       return {
         title: <EndringTitle>Tilhørighetendringer på grenser</EndringTitle>,
-        description: (
-          <Text>
-            {antallEndringer <= 1 ? `${antallEndringer} grense` : `${antallEndringer} grenser`} har fått endret
-            tilhørighet
-          </Text>
-        ),
+        description: <DetailedKontekstEgenskaperEndringerList endringer={endringer} />,
       };
     case "nygrense":
       return {
@@ -130,3 +136,8 @@ const getTitleAndDescriptionFragments = (
       };
   }
 };
+
+const EndringTitle = styled(Text)`
+  font-size: small;
+  color: var(--kvib-color-gray-700);
+`;
