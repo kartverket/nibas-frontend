@@ -29,9 +29,9 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
   const harLastetData = !laster || !!stemmekretsendringer || !!grunnkretsendringer;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xl" isCentered scrollBehavior="inside">
+    <Modal isOpen={isOpen} onClose={onClose} size="3xl" isCentered scrollBehavior="inside">
       <ModalOverlay />
-      <WideModalContent>
+      <ModalContent>
         <ModalHeader>Endringer i dette utkastet</ModalHeader>
         <ModalCloseButton aria-label="Lukk" />
         <ModalBody>
@@ -50,17 +50,13 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
             ))}
           </Stack>
         </ModalBody>
-      </WideModalContent>
+      </ModalContent>
     </Modal>
   );
 };
 
 const Empty = styled.div`
   margin-bottom: 16px;
-`;
-
-const WideModalContent = styled(ModalContent)`
-  max-width: 800px;
 `;
 
 export default EndringsloggModal;
