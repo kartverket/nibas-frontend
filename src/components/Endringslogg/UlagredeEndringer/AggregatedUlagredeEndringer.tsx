@@ -1,15 +1,15 @@
 import { HistoryTypeValues } from "contexts/HistoryContext/types";
-import { Endringer } from "./Endring";
-import { MinimalHistoryEntry } from "./UlagredeEndringer";
+import { EndringerCard } from "./EndringerCard";
 import { Stack, Text } from "@kvib/react";
 import { ReactNode } from "react";
+import { AbstrahertHistroyEntry } from "../hooks/useUlagredeEndringer";
 
 type Props = {
-  entries: MinimalHistoryEntry[];
+  abstrahertHistory: AbstrahertHistroyEntry[];
 };
 
-const getAggregatedEndringer = (minimaleHistoryEndringer: MinimalHistoryEntry[]): ReactNode => {
-  const aggregatedEndringer: Record<HistoryTypeValues, MinimalHistoryEntry[]> = {
+const getAggregatedEndringer = (minimaleHistoryEndringer: AbstrahertHistroyEntry[]): ReactNode => {
+  const aggregatedEndringer: Record<HistoryTypeValues, AbstrahertHistroyEntry[]> = {
     grense: [],
     property: [],
     grunnkrets: [],
@@ -24,17 +24,13 @@ const getAggregatedEndringer = (minimaleHistoryEndringer: MinimalHistoryEntry[])
 
   minimaleHistoryEndringer.forEach((entry) => aggregatedEndringer[entry.type].push(entry));
 
-  return (
-    <>
-      {Object.entries(aggregatedEndringer).map(
-        ([type, endringer]) =>
-          endringer.length > 0 && <Endringer key={type} type={type as HistoryTypeValues} endringer={endringer} />,
-      )}
-    </>
+  return Object.entries(aggregatedEndringer).map(
+    ([type, endringer]) =>
+      endringer.length > 0 && <EndringerCard key={type} type={type as HistoryTypeValues} endringer={endringer} />,
   );
 };
 
-export const HistoryEndringer = ({ entries: minimalHistoryEntries }: Props) => {
+export const AggregatedUlagredeEndringer = ({ abstrahertHistory: minimalHistoryEntries }: Props) => {
   return (
     <Stack spacing={4}>
       <Text fontSize={"sm"}>

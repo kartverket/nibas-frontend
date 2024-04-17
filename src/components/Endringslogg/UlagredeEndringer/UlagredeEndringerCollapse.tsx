@@ -1,44 +1,16 @@
 import { Alert, AlertIcon, AlertTitle, Box, Button, Collapse } from "@kvib/react";
-import { HistoryState, HistoryTypeValues, MinimalGrense } from "contexts/HistoryContext/types";
-import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
-import { Feature } from "ol";
+import { HistoryState } from "contexts/HistoryContext/types";
 import { useState } from "react";
 import { styled } from "styled-components";
-import {
-  FeatureProperties,
-  GrunnkretsRequest,
-  KontekstEgenskaper,
-  StemmekretsRequest,
-  StemmekretsSammenslaaingsendringRequest,
-} from "types/api";
-import { HistoryEndringer } from "./HistoryEndring";
-import { useUlagredeEndringer } from "./hooks/useUlagredeEndringer";
+import { useUlagredeEndringer } from "../hooks/useUlagredeEndringer";
+import { AggregatedUlagredeEndringer } from "./AggregatedUlagredeEndringer";
 
 type Props = {
   history: HistoryState;
   harLagredeEndringer: boolean;
 };
 
-type historyData =
-  | MinimalGrense
-  | FeatureProperties
-  | GrunnkretsRequest
-  | StemmekretsRequest
-  | UtkastRequestWithoutOperations
-  | StemmekretsSammenslaaingsendringRequest
-  | FeatureProperties
-  | KontekstEgenskaper[]
-  | (MinimalGrense & FeatureProperties)
-  | Feature[];
-
-export type MinimalHistoryEntry = {
-  type: HistoryTypeValues;
-  lokalid: string;
-  from: historyData;
-  to: historyData;
-};
-
-export const UlagredeEndringer = ({ history, harLagredeEndringer }: Props) => {
+export const UlagredeEndringerCollapse = ({ history, harLagredeEndringer }: Props) => {
   const [isExpanded, setIsExpanded] = useState(!harLagredeEndringer);
   const ulagredeEndringer = useUlagredeEndringer();
 
@@ -62,7 +34,7 @@ export const UlagredeEndringer = ({ history, harLagredeEndringer }: Props) => {
           </CustomButton>
         </AlertWithButton>
         <EndringerContent>
-          <HistoryEndringer entries={ulagredeEndringer} />
+          <AggregatedUlagredeEndringer abstrahertHistory={ulagredeEndringer} />
         </EndringerContent>
       </CustomCollapse>
     )

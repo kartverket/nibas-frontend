@@ -1,16 +1,16 @@
 import { Badge, Card, Stack, Text } from "@kvib/react";
 import { HistoryTypeValues } from "contexts/HistoryContext/types";
 import { styled } from "styled-components";
-import { EndringFraTil } from "./EndringsloggComponents";
-import { MinimalHistoryEntry } from "./UlagredeEndringer";
+import { Container, EndringFraTil } from "../EndringsloggComponents";
 import { KontekstEgenskaper } from "types/api";
+import { AbstrahertHistroyEntry } from "../hooks/useUlagredeEndringer";
 
 type EndringerProps = {
   type: HistoryTypeValues;
-  endringer: MinimalHistoryEntry[];
+  endringer: AbstrahertHistroyEntry[];
 };
 
-export const Endringer = ({ type, endringer }: EndringerProps) => {
+export const EndringerCard = ({ type, endringer }: EndringerProps) => {
   const { title, description } = getTitleAndDescriptionFragments(type, endringer);
   return (
     <Card padding={4} variant={"outline"}>
@@ -20,6 +20,97 @@ export const Endringer = ({ type, endringer }: EndringerProps) => {
       </Stack>
     </Card>
   );
+};
+
+const getTitleAndDescriptionFragments = (
+  type: HistoryTypeValues,
+  endringer: AbstrahertHistroyEntry[],
+): { title: JSX.Element; description: JSX.Element } => {
+  const antallEndringer = endringer.length;
+
+  switch (type) {
+    case "grense":
+      return {
+        title: <EndringTitle>Justering på grenser</EndringTitle>,
+        description: (
+          <Text>
+            {antallEndringer <= 1 ? `${antallEndringer} grense` : `${antallEndringer} grenser`} har blitt endret på
+          </Text>
+        ),
+      };
+    case "property":
+      return {
+        title: <EndringTitle>Informasjon om grenser</EndringTitle>,
+        description: (
+          <Text>
+            {antallEndringer <= 1 ? `${antallEndringer} grense` : `${antallEndringer} grenser`} har fått endret
+            informasjon
+          </Text>
+        ),
+      };
+    case "grunnkrets":
+      return {
+        title: <EndringTitle>Endring på grunnkretser</EndringTitle>,
+        description: <DetailedFlateEndringerList endringer={endringer} />,
+      };
+    case "stemmekrets":
+      return {
+        title: <EndringTitle>Endring på stemmekretser</EndringTitle>,
+        description: <DetailedFlateEndringerList endringer={endringer} />,
+      };
+    case "utkast":
+      return {
+        title: <EndringTitle>Endringer på utkast</EndringTitle>,
+        description: (
+          <Text>
+            {antallEndringer <= 1 ? `${antallEndringer} endring` : `${antallEndringer} endringer`} er gjort på utkastet
+          </Text>
+        ),
+      };
+    case "stemmekretssammenslaaingsendring":
+      return {
+        title: <EndringTitle>Stemmekretssammenslåing</EndringTitle>,
+        description: (
+          <Text>
+            {antallEndringer <= 1 ? `${antallEndringer} sammenslåing` : `${antallEndringer} sammenslåinger`} har blitt
+            utført
+          </Text>
+        ),
+      };
+    case "grensearkivering":
+      return {
+        title: <EndringTitle>Arkiverte grenser</EndringTitle>,
+        description: (
+          <Text>
+            {antallEndringer <= 1 ? `${antallEndringer} grense` : `${antallEndringer} grenser`} har blitt arkivert
+          </Text>
+        ),
+      };
+    case "grensetilhorighetendring":
+      return {
+        title: <EndringTitle>Tilhørighetendringer på grenser</EndringTitle>,
+        description: <DetailedKontekstEgenskaperEndringerList endringer={endringer} />,
+      };
+    case "nygrense":
+      return {
+        title: <EndringTitle>Nye grenser</EndringTitle>,
+        description: (
+          <Text>
+            {antallEndringer <= 1 ? `${antallEndringer} ny grense` : `${antallEndringer} nye grenser`} har blitt
+            opprettet
+          </Text>
+        ),
+      };
+    case "grensedeling":
+      return {
+        title: <EndringTitle>Delte grenser</EndringTitle>,
+        description: (
+          <Text>
+            {antallEndringer <= 1 ? `${antallEndringer} grense` : `${antallEndringer} grenser`} har blitt delt
+          </Text>
+        ),
+      };
+  }
 };
 
 type DetailedEndringerPorps = Pick<EndringerProps, "endringer">;
@@ -116,104 +207,7 @@ const DetailedKontekstEgenskaperEndringerList = ({ endringer }: DetailedEndringe
   );
 };
 
-const getTitleAndDescriptionFragments = (
-  type: HistoryTypeValues,
-  endringer: MinimalHistoryEntry[],
-): { title: JSX.Element; description: JSX.Element } => {
-  const antallEndringer = endringer.length;
-
-  switch (type) {
-    case "grense":
-      return {
-        title: <EndringTitle>Justering på grenser</EndringTitle>,
-        description: (
-          <Text>
-            {antallEndringer <= 1 ? `${antallEndringer} grense` : `${antallEndringer} grenser`} har blitt endret på
-          </Text>
-        ),
-      };
-    case "property":
-      return {
-        title: <EndringTitle>Informasjon om grenser</EndringTitle>,
-        description: (
-          <Text>
-            {antallEndringer <= 1 ? `${antallEndringer} grense` : `${antallEndringer} grenser`} har fått endret
-            informasjon
-          </Text>
-        ),
-      };
-    case "grunnkrets":
-      return {
-        title: <EndringTitle>Endring på grunnkretser</EndringTitle>,
-        description: <DetailedFlateEndringerList endringer={endringer} />,
-      };
-    case "stemmekrets":
-      return {
-        title: <EndringTitle>Endring på stemmekretser</EndringTitle>,
-        description: <DetailedFlateEndringerList endringer={endringer} />,
-      };
-    case "utkast":
-      return {
-        title: <EndringTitle>Endringer på utkast</EndringTitle>,
-        description: (
-          <Text>
-            {antallEndringer <= 1 ? `${antallEndringer} endring` : `${antallEndringer} endringer`} er gjort på utkastet
-          </Text>
-        ),
-      };
-    case "stemmekretssammenslaaingsendring":
-      return {
-        title: <EndringTitle>Stemmekretssammenslåing</EndringTitle>,
-        description: (
-          <Text>
-            {antallEndringer <= 1 ? `${antallEndringer} sammenslåing` : `${antallEndringer} sammenslåinger`} har blitt
-            utført
-          </Text>
-        ),
-      };
-    case "grensearkivering":
-      return {
-        title: <EndringTitle>Arkiverte grenser</EndringTitle>,
-        description: (
-          <Text>
-            {antallEndringer <= 1 ? `${antallEndringer} grense` : `${antallEndringer} grenser`} har blitt arkivert
-          </Text>
-        ),
-      };
-    case "grensetilhorighetendring":
-      return {
-        title: <EndringTitle>Tilhørighetendringer på grenser</EndringTitle>,
-        description: <DetailedKontekstEgenskaperEndringerList endringer={endringer} />,
-      };
-    case "nygrense":
-      return {
-        title: <EndringTitle>Nye grenser</EndringTitle>,
-        description: (
-          <Text>
-            {antallEndringer <= 1 ? `${antallEndringer} ny grense` : `${antallEndringer} nye grenser`} har blitt
-            opprettet
-          </Text>
-        ),
-      };
-    case "grensedeling":
-      return {
-        title: <EndringTitle>Delte grenser</EndringTitle>,
-        description: (
-          <Text>
-            {antallEndringer <= 1 ? `${antallEndringer} grense` : `${antallEndringer} grenser`} har blitt delt
-          </Text>
-        ),
-      };
-  }
-};
-
 const EndringTitle = styled(Text)`
   font-size: small;
   color: var(--kvib-color-gray-700);
-`;
-
-const Container = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 6px;
 `;

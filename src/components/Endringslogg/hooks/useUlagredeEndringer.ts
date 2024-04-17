@@ -1,7 +1,34 @@
-import { HistoryEntry } from "contexts/HistoryContext/types";
+import { HistoryEntry, HistoryTypeValues, MinimalGrense } from "contexts/HistoryContext/types";
 import { useMemo } from "react";
-import { MinimalHistoryEntry } from "../UlagredeEndringer";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
+import { Feature } from "ol";
+import {
+  FeatureProperties,
+  GrunnkretsRequest,
+  StemmekretsRequest,
+  StemmekretsSammenslaaingsendringRequest,
+  KontekstEgenskaper,
+} from "types/api";
+
+type HistoryTypeData =
+  | MinimalGrense
+  | FeatureProperties
+  | GrunnkretsRequest
+  | StemmekretsRequest
+  | UtkastRequestWithoutOperations
+  | StemmekretsSammenslaaingsendringRequest
+  | FeatureProperties
+  | KontekstEgenskaper[]
+  | (MinimalGrense & FeatureProperties)
+  | Feature[];
+
+export type AbstrahertHistroyEntry = {
+  type: HistoryTypeValues;
+  lokalid: string;
+  from: HistoryTypeData;
+  to: HistoryTypeData;
+};
 
 export const useUlagredeEndringer = () => {
   const { history } = useHistory();
@@ -33,7 +60,7 @@ export const useUlagredeEndringer = () => {
         }
       });
 
-    const minimalChanges: MinimalHistoryEntry[] = Object.entries(firstEntriesForLokalids).map(([lokalid, entry]) => {
+    const minimalChanges: AbstrahertHistroyEntry[] = Object.entries(firstEntriesForLokalids).map(([lokalid, entry]) => {
       const firstFrom = entry.changes[0].from;
       const lastTo = latestEntriesForLokalids[lokalid].changes[0].to;
       return { type: entry.type, lokalid: lokalid, from: firstFrom, to: lastTo };

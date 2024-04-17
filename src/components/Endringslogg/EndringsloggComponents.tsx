@@ -73,7 +73,7 @@ type EndringFraTilProps = {
   withBadges?: boolean;
 };
 
-const Container = styled.div`
+export const Container = styled.div`
   display: flex;
   align-items: center;
   gap: 6px;
