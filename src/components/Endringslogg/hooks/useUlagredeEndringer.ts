@@ -16,8 +16,9 @@ export const useUlagredeEndringer = () => {
 
     currentHistroySlice.forEach((entry) => {
       const change = entry.changes[0];
-      if (!(change.id in firstEntriesForLokalids)) {
-        firstEntriesForLokalids[change.id] = entry;
+      const key = change.id + "_" + entry.type;
+      if (!(key in firstEntriesForLokalids)) {
+        firstEntriesForLokalids[key] = entry;
       }
     });
 
@@ -26,8 +27,9 @@ export const useUlagredeEndringer = () => {
       .reverse()
       .forEach((entry) => {
         const change = entry.changes[0];
-        if (!(change.id in latestEntriesForLokalids)) {
-          latestEntriesForLokalids[change.id] = entry;
+        const key = change.id + "_" + entry.type;
+        if (!(key in latestEntriesForLokalids)) {
+          latestEntriesForLokalids[key] = entry;
         }
       });
 
