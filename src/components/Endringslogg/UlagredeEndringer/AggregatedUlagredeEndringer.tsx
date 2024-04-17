@@ -8,7 +8,7 @@ type Props = {
   abstrahertHistory: AbstrahertHistroyEntry[];
 };
 
-const getAggregatedEndringer = (minimaleHistoryEndringer: AbstrahertHistroyEntry[]): ReactNode => {
+const getAggregatedEndringer = (abstraherteHistoryEndringer: AbstrahertHistroyEntry[]): ReactNode => {
   const aggregatedEndringer: Record<HistoryTypeValues, AbstrahertHistroyEntry[]> = {
     grense: [],
     property: [],
@@ -22,7 +22,7 @@ const getAggregatedEndringer = (minimaleHistoryEndringer: AbstrahertHistroyEntry
     grensedeling: [],
   };
 
-  minimaleHistoryEndringer.forEach((entry) => aggregatedEndringer[entry.type].push(entry));
+  abstraherteHistoryEndringer.forEach((entry) => aggregatedEndringer[entry.type].push(entry));
 
   return Object.entries(aggregatedEndringer).map(
     ([type, endringer]) =>
@@ -30,13 +30,13 @@ const getAggregatedEndringer = (minimaleHistoryEndringer: AbstrahertHistroyEntry
   );
 };
 
-export const AggregatedUlagredeEndringer = ({ abstrahertHistory: minimalHistoryEntries }: Props) => {
+export const AggregatedUlagredeEndringer = ({ abstrahertHistory }: Props) => {
   return (
     <Stack spacing={4}>
       <Text fontSize={"sm"}>
-        {`Publiserer du uten å lagre først vil ${minimalHistoryEntries.length > 1 ? "endringene" : "endringen"} nedenfor ikke bli med.`}
+        {`Publiserer du uten å lagre først vil ${abstrahertHistory.length > 1 ? "endringene" : "endringen"} nedenfor ikke bli med.`}
       </Text>
-      {getAggregatedEndringer(minimalHistoryEntries)}
+      {getAggregatedEndringer(abstrahertHistory)}
     </Stack>
   );
 };
