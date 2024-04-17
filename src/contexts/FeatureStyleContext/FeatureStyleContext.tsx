@@ -144,7 +144,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       return;
     }
 
-    const allFeatureIds = removeDuplicateIds(history.entries.flatMap(getChangeIds));
+    const allFeatureIds = removeDuplicateIds(history.entries.flat().flatMap(getChangeIds));
     // Finn IDer som er med i historikken etter index, men ikke før
     const featureIdsToIgnore = allFeatureIds.filter((id) => newFeatureOnlyExistsAfterIndex(id, history));
 

@@ -12,116 +12,120 @@ import {
 } from "./history-utils";
 import useHistoryState from "contexts/HistoryContext/useHistoryState";
 
-const onUndo = (entry: HistoryEntry) => {
-  const { type } = entry;
+const onUndo = (entries: HistoryEntry[]) => {
+  entries.forEach((entry) => {
+    const { type } = entry;
 
-  switch (type) {
-    case "grense": {
-      return setFeatureCoordinatesForEntry(entry, "from");
+    switch (type) {
+      case "grense": {
+        return setFeatureCoordinatesForEntry(entry, "from");
+      }
+      case "property": {
+        return setFeaturePropertiesForEntry(entry, "from");
+      }
+      case "nygrense": {
+        return setFeatureCoordinatesAndPropertiesForEntry(entry, "from");
+      }
+      case "grunnkrets": {
+        return document.dispatchEvent(
+          new CustomEvent("grunnkretsUndo", {
+            detail: { entry },
+          }),
+        );
+      }
+      case "stemmekrets": {
+        return document.dispatchEvent(
+          new CustomEvent("stemmekretsUndo", {
+            detail: { entry },
+          }),
+        );
+      }
+      case "utkast": {
+        return document.dispatchEvent(
+          new CustomEvent("utkastUndo", {
+            detail: { entry },
+          }),
+        );
+      }
+      case "stemmekretssammenslaaingsendring": {
+        return document.dispatchEvent(
+          new CustomEvent("stemmekretssammenslaaingsendringUndo", {
+            detail: { entry },
+          }),
+        );
+      }
+      case "grensearkivering": {
+        return undoArchving(entry);
+      }
+      case "grensetilhorighetendring": {
+        return setKontekstEgenskaperForEntry(entry, "from");
+      }
+      case "grensedeling": {
+        return undoGrensedeling(
+          entry.changes.flatMap((e) => e.from)[0],
+          entry.changes.flatMap((e) => e.to),
+        );
+      }
     }
-    case "property": {
-      return setFeaturePropertiesForEntry(entry, "from");
-    }
-    case "nygrense": {
-      return setFeatureCoordinatesAndPropertiesForEntry(entry, "from");
-    }
-    case "grunnkrets": {
-      return document.dispatchEvent(
-        new CustomEvent("grunnkretsUndo", {
-          detail: { entry },
-        }),
-      );
-    }
-    case "stemmekrets": {
-      return document.dispatchEvent(
-        new CustomEvent("stemmekretsUndo", {
-          detail: { entry },
-        }),
-      );
-    }
-    case "utkast": {
-      return document.dispatchEvent(
-        new CustomEvent("utkastUndo", {
-          detail: { entry },
-        }),
-      );
-    }
-    case "stemmekretssammenslaaingsendring": {
-      return document.dispatchEvent(
-        new CustomEvent("stemmekretssammenslaaingsendringUndo", {
-          detail: { entry },
-        }),
-      );
-    }
-    case "grensearkivering": {
-      return undoArchving(entry);
-    }
-    case "grensetilhorighetendring": {
-      return setKontekstEgenskaperForEntry(entry, "from");
-    }
-    case "grensedeling": {
-      return undoGrensedeling(
-        entry.changes.flatMap((e) => e.from)[0],
-        entry.changes.flatMap((e) => e.to),
-      );
-    }
-  }
+  });
 };
 
-const onRedo = (entry: HistoryEntry) => {
-  const { type } = entry;
+const onRedo = (entries: HistoryEntry[]) => {
+  entries.forEach((entry) => {
+    const { type } = entry;
 
-  switch (type) {
-    case "grense": {
-      return setFeatureCoordinatesForEntry(entry, "to");
+    switch (type) {
+      case "grense": {
+        return setFeatureCoordinatesForEntry(entry, "to");
+      }
+      case "property": {
+        return setFeaturePropertiesForEntry(entry, "to");
+      }
+      case "nygrense": {
+        return setFeatureCoordinatesAndPropertiesForEntry(entry, "to");
+      }
+      case "grunnkrets": {
+        return document.dispatchEvent(
+          new CustomEvent("grunnkretsRedo", {
+            detail: { entry },
+          }),
+        );
+      }
+      case "stemmekrets": {
+        return document.dispatchEvent(
+          new CustomEvent("stemmekretsRedo", {
+            detail: { entry },
+          }),
+        );
+      }
+      case "utkast": {
+        return document.dispatchEvent(
+          new CustomEvent("utkastRedo", {
+            detail: { entry },
+          }),
+        );
+      }
+      case "stemmekretssammenslaaingsendring": {
+        return document.dispatchEvent(
+          new CustomEvent("stemmekretssammenslaaingsendringRedo", {
+            detail: { entry },
+          }),
+        );
+      }
+      case "grensearkivering": {
+        return redoArchiving(entry);
+      }
+      case "grensetilhorighetendring": {
+        return setKontekstEgenskaperForEntry(entry, "to");
+      }
+      case "grensedeling": {
+        return redoGrensedeling(
+          entry.changes.flatMap((e) => e.from)[0],
+          entry.changes.flatMap((e) => e.to),
+        );
+      }
     }
-    case "property": {
-      return setFeaturePropertiesForEntry(entry, "to");
-    }
-    case "nygrense": {
-      return setFeatureCoordinatesAndPropertiesForEntry(entry, "to");
-    }
-    case "grunnkrets": {
-      return document.dispatchEvent(
-        new CustomEvent("grunnkretsRedo", {
-          detail: { entry },
-        }),
-      );
-    }
-    case "stemmekrets": {
-      return document.dispatchEvent(
-        new CustomEvent("stemmekretsRedo", {
-          detail: { entry },
-        }),
-      );
-    }
-    case "utkast": {
-      return document.dispatchEvent(
-        new CustomEvent("utkastRedo", {
-          detail: { entry },
-        }),
-      );
-    }
-    case "stemmekretssammenslaaingsendring": {
-      return document.dispatchEvent(
-        new CustomEvent("stemmekretssammenslaaingsendringRedo", {
-          detail: { entry },
-        }),
-      );
-    }
-    case "grensearkivering": {
-      return redoArchiving(entry);
-    }
-    case "grensetilhorighetendring": {
-      return setKontekstEgenskaperForEntry(entry, "to");
-    }
-    case "grensedeling": {
-      return redoGrensedeling(
-        entry.changes.flatMap((e) => e.from)[0],
-        entry.changes.flatMap((e) => e.to),
-      );
-    }
-  }
+  });
 };
 
 export const HistoryContext = createContext<HistoryContextValue | undefined>(undefined);

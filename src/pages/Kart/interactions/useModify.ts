@@ -152,10 +152,12 @@ const useModify = () => {
 
       // insertVertex utløser ikke pointerup-events, som gjør at vi må gjøre history-endringen for å legge til punkt her
       if (activeTool === "add" && !e.mapBrowserEvent.dragging) {
-        addHistoryEntry({
-          type: "grense",
-          changes: createGrenseHistoryChange(e.features.getArray()),
-        });
+        addHistoryEntry([
+          {
+            type: "grense",
+            changes: createGrenseHistoryChange(e.features.getArray()),
+          },
+        ]);
       }
     };
     modify.on("modifystart", saveCoordinatesBeforeModification);
@@ -168,10 +170,12 @@ const useModify = () => {
   useEffect(() => {
     const addModificationToHistory = (features: Feature<Geometry>[]) => {
       if (features.length > 0) {
-        addHistoryEntry({
-          type: "grense",
-          changes: createGrenseHistoryChange(features),
-        });
+        addHistoryEntry([
+          {
+            type: "grense",
+            changes: createGrenseHistoryChange(features),
+          },
+        ]);
       }
     };
 

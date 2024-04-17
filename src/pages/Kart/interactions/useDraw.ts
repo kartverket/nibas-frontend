@@ -118,10 +118,12 @@ const useDraw = () => {
       const grenseType = getGrenseTypeFromEditingType(editingType);
 
       if (grenseType) {
-        addHistoryEntry({
-          type: "nygrense",
-          changes: createNyGrenseHistoryChanges([drawnFeature], grenseType),
-        });
+        addHistoryEntry([
+          {
+            type: "nygrense",
+            changes: createNyGrenseHistoryChanges([drawnFeature], grenseType),
+          },
+        ]);
       }
     };
 

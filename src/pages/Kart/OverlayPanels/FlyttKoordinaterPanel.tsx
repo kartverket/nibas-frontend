@@ -172,10 +172,12 @@ const FlyttKoordinaterPanel = ({ isOpen, className }: PanelProps) => {
         });
       }
 
-      addHistoryEntry({
-        type: "grense",
-        changes,
-      });
+      addHistoryEntry([
+        {
+          type: "grense",
+          changes,
+        },
+      ]);
 
       const highlightGeometry = selectedPoint.getGeometry() as Point;
       highlightGeometry.setCoordinates(newCoordinates);

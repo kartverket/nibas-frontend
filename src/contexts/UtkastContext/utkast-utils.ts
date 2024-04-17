@@ -121,11 +121,11 @@ const addKretsChangeToOperations = (
 };
 
 export const historyToUtkastOperations = (history: HistoryState, previousUtkast?: UtkastResponse) => {
-  const historyToCurrentIndex = history.entries.slice(0, history.index);
+  const historyToCurrentIndex = history.entries.slice(0, history.index).flat();
 
   // hent endringer på enheter og gjør endringene om til utkastoperasjoner
   const utkastOperations = (
-    historyToCurrentIndex.filter((entry) => entry.type === "stemmekrets" || entry.type === "grunnkrets") as (
+    historyToCurrentIndex.flat().filter((entry) => entry.type === "stemmekrets" || entry.type === "grunnkrets") as (
       | GrunnkretsEntry
       | StemmekretsEntry
     )[]
@@ -161,9 +161,9 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
     "grensedeling",
   ];
 
-  const relevantHistoryEntries = historyToCurrentIndex.filter((entry) =>
-    editedFeatureHistoryEntries.includes(entry.type),
-  );
+  const relevantHistoryEntries = historyToCurrentIndex
+    .flat()
+    .filter((entry) => editedFeatureHistoryEntries.includes(entry.type));
 
   // hent grenseendringer og gjør endringene om til en liste av features
   const editedFeatures: GeoJSONFeature[] = utkastOperations.grenseendringer.endredeFeatures;
@@ -189,7 +189,7 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
     editedFeatures.push(featureAsGeoJson);
   };
 
-  relevantHistoryEntries.forEach((entry) => {
+  relevantHistoryEntries.flat().forEach((entry) => {
     entry.changes.forEach((change) => {
       if (change.to == null) return;
       addFeatureToEditedFeaturesIfNotAlreadyAdded(change.id);

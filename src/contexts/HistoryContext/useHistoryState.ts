@@ -5,8 +5,8 @@ import { getChangeIds } from "./history-utils";
 import { removeFeatureFromAllLayers } from "utils/features";
 
 type Options = {
-  onUndo: (entry: HistoryEntry) => void;
-  onRedo: (entry: HistoryEntry) => void;
+  onUndo: (entry: HistoryEntry[]) => void;
+  onRedo: (entry: HistoryEntry[]) => void;
 };
 
 const useHistoryState = ({ onUndo, onRedo }: Options) => {
@@ -19,8 +19,8 @@ const useHistoryState = ({ onUndo, onRedo }: Options) => {
 
     const entriesBeforeIndex = history.entries.slice(0, history.index);
     const entriesAfterIndex = history.entries.slice(history.index);
-    const changedFeatureIdsAfterIndex: string[] = entriesAfterIndex.flatMap(getChangeIds);
-    const changedFeatureIdsBeforeIndex: string[] = entriesBeforeIndex.flatMap(getChangeIds);
+    const changedFeatureIdsAfterIndex: string[] = entriesAfterIndex.flat().flatMap(getChangeIds);
+    const changedFeatureIdsBeforeIndex: string[] = entriesBeforeIndex.flat().flatMap(getChangeIds);
 
     const featureIdsToRemove = changedFeatureIdsAfterIndex?.filter(
       (futuresHistoryId) =>
@@ -32,7 +32,7 @@ const useHistoryState = ({ onUndo, onRedo }: Options) => {
   }, [history]);
 
   const addHistoryEntry = useCallback(
-    (entry: HistoryEntry) => {
+    (entry: HistoryEntry[]) => {
       clearFeaturesAfterIndex();
       setHistory((prevHistory) => ({
         index: prevHistory.index + 1,

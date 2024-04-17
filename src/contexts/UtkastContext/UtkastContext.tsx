@@ -130,6 +130,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     const utkastEntry = history.entries
       .slice(0, history.index)
       .reverse() // siste entry inneholder alle endringene på utkastet
+      .flat()
       .find((entry) => entry.changes.some((change) => change.id === utkast.id));
 
     if (utkastEntry) {

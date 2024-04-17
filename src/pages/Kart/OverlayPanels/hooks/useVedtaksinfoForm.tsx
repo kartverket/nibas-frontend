@@ -82,7 +82,7 @@ const updateFeatureWithNewMetadata = (feature: Feature<LineString>, newMetadata:
 
 const addMetadataEntryFromFeature = (
   feature: Feature<LineString>,
-  addHistoryEntry: (entry: PropertyEntry) => void,
+  addHistoryEntry: (entry: PropertyEntry[]) => void,
   updatedMetadata: Metadata,
 ) => {
   const id = feature.getId()?.toString();
@@ -92,16 +92,18 @@ const addMetadataEntryFromFeature = (
 
   updateFeatureWithNewMetadata(feature as Feature<LineString>, updatedMetadata);
 
-  addHistoryEntry({
-    type: "property",
-    changes: [
-      {
-        id: id,
-        from: oldProperties,
-        to: feature.getProperties() as FeatureProperties,
-      },
-    ],
-  });
+  addHistoryEntry([
+    {
+      type: "property",
+      changes: [
+        {
+          id: id,
+          from: oldProperties,
+          to: feature.getProperties() as FeatureProperties,
+        },
+      ],
+    },
+  ]);
 };
 
 export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoId?: string) => {

@@ -162,6 +162,7 @@ export const undoGrensedeling = (deltFeature: Feature, newFeaturesFromsDeling: F
 };
 export const getChangeIds = (historyEntry: HistoryEntry): string[] => {
   const changedFeatureIds: string[] = [];
+
   historyEntry.changes.forEach((change) => {
     if (change.to == null) return;
 
@@ -172,6 +173,7 @@ export const getChangeIds = (historyEntry: HistoryEntry): string[] => {
     }
     changedFeatureIds.push(change.id);
   });
+
   return changedFeatureIds;
 };
 /**

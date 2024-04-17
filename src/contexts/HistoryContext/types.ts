@@ -12,7 +12,7 @@ import { Feature } from "ol";
 // Obs: navnsetting for å unngå overlapp med innebygd History type
 export type HistoryState = {
   index: number;
-  entries: HistoryEntry[];
+  entries: HistoryEntry[][];
 };
 
 export type HistoryChange<T> = {
@@ -79,7 +79,7 @@ export type HistoryEntry =
   | PropertyEntry;
 
 export type HistoryContextValue = {
-  addHistoryEntry: (entry: HistoryEntry) => void;
+  addHistoryEntry: (entries: HistoryEntry[]) => void;
   history: HistoryState;
   clearHistory: () => void;
 

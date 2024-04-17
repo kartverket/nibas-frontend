@@ -17,23 +17,25 @@ export const getEntriesUpToIndex = (
   filter?: (value: HistoryEntry, index: number, array: HistoryEntry[]) => boolean,
 ): HistoryEntry[] => {
   const filterFn = filter ? filter : () => true;
-  return history.entries.slice(0, history.index).filter(filterFn);
+  return history.entries.slice(0, history.index).flat().filter(filterFn);
 };
 
 export const mapAffectedFeaturesForErrorEntries = (entry: HistoryEntry) => {
+  const features: Feature<Geometry>[] = [];
+
   const changes = entry.changes;
-  const accumulator: Feature<Geometry>[] = [];
   for (const change of changes) {
     const feature = getFeatureIfExistsInAnyLayer(change.id);
 
     if (!feature) continue;
     else if (entry.type === "nygrense" || entry.type === "grense") {
-      accumulator.push(feature);
+      features.push(feature);
     } else if (entry.type === "grensearkivering") {
-      accumulator.push(...getFeaturesConnectedToFeatureAtEndpoints(feature));
+      features.push(...getFeaturesConnectedToFeatureAtEndpoints(feature));
     }
   }
-  return accumulator;
+
+  return features;
 };
 
 export const removeDuplicateIds = (featureIds: string[]) => [...new Set(featureIds)];

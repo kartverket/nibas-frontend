@@ -30,7 +30,7 @@ const updateFeatureWithNewProperties = (feature: Feature<LineString>, newPropert
 
 export const addFeaturePropertiesEntryFromFeature = (
   feature: Feature<LineString>,
-  addHistoryEntry: (entry: PropertyEntry) => void,
+  addHistoryEntry: (entry: PropertyEntry[]) => void,
   updatedFeatureProperties: FeatureProperties,
 ) => {
   const id = feature.getId()?.toString();
@@ -40,21 +40,23 @@ export const addFeaturePropertiesEntryFromFeature = (
 
   updateFeatureWithNewProperties(feature as Feature<LineString>, updatedFeatureProperties);
 
-  addHistoryEntry({
-    type: "property",
-    changes: [
-      {
-        id: id,
-        from: oldFeatureProperties,
-        to: updatedFeatureProperties,
-      },
-    ],
-  });
+  addHistoryEntry([
+    {
+      type: "property",
+      changes: [
+        {
+          id: id,
+          from: oldFeatureProperties,
+          to: updatedFeatureProperties,
+        },
+      ],
+    },
+  ]);
 };
 
 export const addArchivingEntryFromFeatureList = (
   features: Feature<LineString>[],
-  addHistoryEntry: (entry: GrenseArkiveringsEntry) => void,
+  addHistoryEntry: (entry: GrenseArkiveringsEntry[]) => void,
 ) => {
   const changeEntries: HistoryChange<FeatureProperties>[] = removeNil(
     features.map((feature) => {
@@ -76,16 +78,18 @@ export const addArchivingEntryFromFeatureList = (
     }),
   );
 
-  addHistoryEntry({
-    type: "grensearkivering",
-    changes: changeEntries,
-  });
+  addHistoryEntry([
+    {
+      type: "grensearkivering",
+      changes: changeEntries,
+    },
+  ]);
 };
 
 export const addKontekstEntryFromFeature = (
   feature: Feature<LineString>,
   updatedKontekstEgenskaper: KontekstEgenskaper[],
-  addHistoryEntry: (entry: GrenseTilhorighetEntry) => void,
+  addHistoryEntry: (entry: GrenseTilhorighetEntry[]) => void,
 ) => {
   const id = feature.getId()?.toString();
   if (id == null) return;
@@ -99,14 +103,16 @@ export const addKontekstEntryFromFeature = (
   };
   feature.setProperties(newProperties);
 
-  addHistoryEntry({
-    type: "grensetilhorighetendring",
-    changes: [
-      {
-        id: id,
-        from: oldKontekstEgenskaper ?? ({} as KontekstEgenskaper),
-        to: updatedKontekstEgenskaper,
-      },
-    ],
-  });
+  addHistoryEntry([
+    {
+      type: "grensetilhorighetendring",
+      changes: [
+        {
+          id: id,
+          from: oldKontekstEgenskaper ?? ({} as KontekstEgenskaper),
+          to: updatedKontekstEgenskaper,
+        },
+      ],
+    },
+  ]);
 };

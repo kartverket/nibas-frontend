@@ -81,10 +81,12 @@ const useSplit = () => {
           addFeaturesToSource("edit", newFeatures);
           removeFeaturesFromSourceByIds("edit", [oldFeatureId]);
 
-          addHistoryEntry({
-            type: "grensedeling",
-            changes: [{ id: oldFeatureId, from: [oldFeature], to: newFeatures }],
-          });
+          addHistoryEntry([
+            {
+              type: "grensedeling",
+              changes: [{ id: oldFeatureId, from: [oldFeature], to: newFeatures }],
+            },
+          ]);
 
           // Hvis featuren som ble splittet er en gammel feature med ID ønsker vi å vise den som arkivert
           if (!isTempFeatureId(oldFeatureId)) {

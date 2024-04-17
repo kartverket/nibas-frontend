@@ -113,17 +113,19 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
 
   const saveAndAddHistoryEntry = () => {
     const newValues = getValues();
-    addHistoryEntry({
-      type: "stemmekrets",
-      kommuneId,
-      changes: [
-        {
-          from: fromFormToRequest(previousValues.current, stemmekrets),
-          to: fromFormToRequest(newValues, stemmekrets),
-          id: stemmekretsId,
-        },
-      ],
-    });
+    addHistoryEntry([
+      {
+        type: "stemmekrets",
+        kommuneId,
+        changes: [
+          {
+            from: fromFormToRequest(previousValues.current, stemmekrets),
+            to: fromFormToRequest(newValues, stemmekrets),
+            id: stemmekretsId,
+          },
+        ],
+      },
+    ]);
     previousValues.current = newValues;
     updateEditFeatureText(getRepresentasjonspunktId(stemmekretsId), newValues.navn, newValues.nummer);
     toggleEditing();
