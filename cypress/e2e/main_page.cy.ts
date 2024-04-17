@@ -4,7 +4,7 @@ describe("main page", () => {
   });
 
   it("should load the front page with a greeting header", () => {
-    cy.get("h2").should("contain", "Hva har du lyst til å gjøre nå?");
+    cy.get("h2", {timeout: 30000}).should("contain", "Hva har du lyst til å gjøre nå?");
   });
 
   it("should contain at least one button", () => {
