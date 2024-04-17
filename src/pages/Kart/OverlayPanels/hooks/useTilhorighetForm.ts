@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FeatureProperties, KontekstEgenskaper, KretsDelingEndringRequest, UtkastOperasjoner } from "types/api";
-import { getIdFromEntity } from "utils/api";
 import {
   CustomOption,
   KontekstType,
@@ -17,10 +16,10 @@ import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { Feature } from "ol";
 import { LineString } from "ol/geom";
 import { addKontekstEntryFromFeature } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { isGrenseType } from "utils/type-utils";
 import { GrenseType } from "hooks/layers/types";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import useNibasApi from "hooks/useNibasApi";
 
 const mapGrenseTypeTilKontekstType = (grenseType: GrenseType): KontekstType => {
@@ -109,16 +108,15 @@ export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: Kont
     [featureProperties.kontekstEgenskaper, utkast],
   );
   const kontekstType = kontekstTypeOverride ?? getKontekstTypeForFeature(kontekstEgenskaper, featureProperties);
-
-  const { flatedata } = useOverlayPanel();
+  const { currentlyEditedInndeling } = useInndelinger();
 
   const kommunerId = useMemo(
     () =>
       getKommunerIdFromKontekstEgenskaper(
         kontekstEgenskaper.filter((k) => k.id?.lokalid.value !== CustomOption.NOT_CHOSEN),
         kontekstType,
-      ) ?? (flatedata ? [getIdFromEntity(flatedata)] : []),
-    [kontekstType, flatedata, kontekstEgenskaper],
+      ) ?? [currentlyEditedInndeling != null ? currentlyEditedInndeling.id : ""],
+    [kontekstType, currentlyEditedInndeling, kontekstEgenskaper],
   );
 
   const kommunerIdOgNummer: { id: string; nummer: string }[] = useMemo(() => {

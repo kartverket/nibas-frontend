@@ -27,13 +27,13 @@ const Container = styled(Button).attrs({ variant: "ghost" })`
   cursor: pointer;
 
   background: var(--kvib-colors-chakra-body-bg);
-  color: var(--kvib-colors-chakra-body-text);
+  color: inherit;
   box-shadow: var(--kvib-shadows-base);
 
   &:hover {
     border-color: var(--kvib-colors-blue-500);
     background: white;
-    color: var(--kvib-colors-chakra-body-text);
+    color: inherit;
   }
 
   & > div {

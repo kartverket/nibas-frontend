@@ -1,30 +1,56 @@
 import { styled } from "styled-components";
-import HeaderBreadcrumb from "./HeaderBreadcrumb";
+import HeaderBreadcrumb, { Separator } from "./HeaderBreadcrumb";
 import HeaderHistoryOperations from "./HeaderHistoryOperations";
 import HeaderUtkastOperations from "./HeaderUtkastOperations";
 import HeaderButton, { HeaderSection } from "./HeaderButton";
-import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import HeaderHome from "./HeaderHome";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import { zindex } from "utils/constants";
+import { useConfirmationModal } from "contexts/ConfirmationModalContext";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import useFylker from "hooks/inndelinger/useFylker";
+import useKommuner from "hooks/inndelinger/useKommuner";
+import { inndelingResponseNavnToString } from "contexts/InndelingerContext/useInndelingFeatures";
+import { Breadcrumb, BreadcrumbItem, Hide, Text } from "@kvib/react";
+import { capitalize } from "utils/string-utils";
 
 const Header = () => {
   const { utkast } = useUtkast();
-  const { activeSidebarPanel, openSidebarPanel, closeSidebarPanel } = useSidebarPanel();
-  const { closeOverlayPanel } = useOverlayPanel();
+  const { history } = useHistory();
+  const { activeOverlayModal, closeOverlayModal, openOverlayModal } = useOverlayPanel();
+  const { openAsync } = useConfirmationModal();
 
-  const toggleSidebar = () => {
-    if (activeSidebarPanel === "inndelinger") {
-      closeSidebarPanel();
+  const { currentlyEditedInndeling, selectedFylkeId } = useInndelinger();
+
+  const { fylker } = useFylker(selectedFylkeId !== "");
+  const { kommuner } = useKommuner(selectedFylkeId, selectedFylkeId !== "");
+
+  const activeFylke = fylker?.find((fylke) => fylke.id.lokalid.value === selectedFylkeId);
+  const activeKommune = kommuner?.find((kommune) => kommune.id.lokalid.value === currentlyEditedInndeling?.id);
+
+  const toggleModal = (modalName: "inndelinger" | "inndelinger-view") => {
+    if (activeOverlayModal === modalName) {
+      closeOverlayModal();
     } else {
-      openSidebarPanel("inndelinger");
-      closeOverlayPanel();
+      openOverlayModal(modalName);
     }
   };
 
-  useKeyboardShortcut("open", toggleSidebar);
+  const hasUnsavedChangesInHistory = history.entries.length > 0;
+
+  const confirmSelectIfDirtyModal = () =>
+    openAsync({
+      title: "Ulagrede endringer i utkast",
+      description:
+        "Du har ulagrede endringer i utkastet ditt. Å redigere en ny inndeling vil forkaste endringene i utkastet. Ønsker du å fortsette?",
+      acceptText: "Ja",
+      declineText: "Gå tilbake",
+    });
+
+  useKeyboardShortcut("open", () => toggleModal("inndelinger"));
 
   return (
     <Container>
@@ -35,16 +61,54 @@ const Header = () => {
       <Bar>
         <HeaderSection>
           {!utkast && <HeaderHome />}
+          {utkast && (
+            <HeaderButton
+              label="Rediger en inndeling"
+              icon="travel_explore"
+              onClick={async () => {
+                if (hasUnsavedChangesInHistory) {
+                  const shouldToggle = await confirmSelectIfDirtyModal();
+                  if (!shouldToggle) return;
+                }
+                toggleModal("inndelinger");
+              }}
+              tooltip={{
+                text: "Åpne og rediger en inndeling i kartet",
+                shortcut: "open",
+              }}
+              variant="primary"
+            />
+          )}
           <HeaderButton
-            variant="primary"
-            label="Åpne en inndeling"
-            icon="travel_explore"
-            onClick={toggleSidebar}
+            label="Forhåndsvis en inndeling"
+            icon="preview"
+            onClick={() => toggleModal("inndelinger-view")}
             tooltip={{
-              text: "Åpne og rediger en inndeling i kartet",
-              shortcut: "open",
+              text: "Åpne og se en inndeling i kartet",
             }}
+            variant={utkast == null ? "primary" : "ghost"}
           />
+          {activeFylke && currentlyEditedInndeling && (
+            <Hide below="xl">
+              <Breadcrumb separator={<Separator icon="chevron_right" />} spacing={0}>
+                <BreadcrumbItem>
+                  <InndelingText>{capitalize(currentlyEditedInndeling.inndelingtype)}</InndelingText>
+                </BreadcrumbItem>
+                <BreadcrumbItem>
+                  <InndelingText $isBold={activeKommune == null}>
+                    {activeFylke.nummer} {inndelingResponseNavnToString(activeFylke.navn)}
+                  </InndelingText>
+                </BreadcrumbItem>
+                {activeKommune && (
+                  <BreadcrumbItem>
+                    <InndelingText $isBold>
+                      {activeKommune.nummer} {inndelingResponseNavnToString(activeKommune.navn)}
+                    </InndelingText>
+                  </BreadcrumbItem>
+                )}
+              </Breadcrumb>
+            </Hide>
+          )}
         </HeaderSection>
         {utkast && <HeaderUtkastOperations utkast={utkast} />}
       </Bar>
@@ -52,8 +116,11 @@ const Header = () => {
   );
 };
 
+const InndelingText = styled(Text)<{ $isBold?: boolean }>`
+  ${(props) => props.$isBold === true && "font-weight: var(--kvib-fontWeights-bold)"};
+`;
+
 const Container = styled.header`
-  grid-area: header;
   box-shadow: var(--kvib-shadows-base);
   z-index: ${zindex.mapHeader};
   font-size: var(--kvib-fontSizes-sm);

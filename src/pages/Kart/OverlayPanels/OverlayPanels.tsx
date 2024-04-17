@@ -7,6 +7,7 @@ import FlyttKoordinaterPanel from "./FlyttKoordinaterPanel";
 import { TegnforklaringPanel } from "./Tegnforklaring/TegnforklaringPanel";
 import KartlagPanel from "./Kartlag/KartlagPanel";
 import { SplittingPanel } from "./SplittingPanel/SplittingPanel";
+import InndelingerPanel from "./Inndelinger/InndelingerPanel";
 import NavigasjonPanel from "./NavigasjonPanel/NavigasjonPanel";
 
 const OverlayPanels = () => {
@@ -21,6 +22,7 @@ const OverlayPanels = () => {
       <TegnforklaringPanel isOpen={activeOverlayPanel === "tegnforklaring"} />
       <KartlagPanel isOpen={activeOverlayPanel === "kartlag"} />
 
+      <InndelingerPanel isOpen={activeOverlayModal === "inndelinger" || activeOverlayModal === "inndelinger-view"} />
       <NavigasjonPanel isOpen={activeOverlayModal === "navigasjon"} />
       <GrunnkretsPanel isOpen={activeOverlayModal === "grunnkrets"} />
       <StemmekretsPanel isOpen={activeOverlayModal === "stemmekrets"} />

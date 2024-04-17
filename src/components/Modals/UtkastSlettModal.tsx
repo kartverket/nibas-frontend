@@ -25,6 +25,7 @@ import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useMatch, useNavigate } from "react-router-dom";
 import { routes } from "utils/routes";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
 type Props = {
   isOpen: boolean;
@@ -40,6 +41,8 @@ const UtkastSlettModal = ({ isOpen, onClose, utkast }: Props) => {
   const navigate = useNavigate();
   const utkastPathMatch = useMatch(`${routes.utkast}/${routes.utkastId}`);
 
+  const { clearInndelingerAndSources } = useInndelinger();
+
   const slettUtkast = async () => {
     setIsLoading(true);
     const response = await deleteUtkast(utkast.id, token);
@@ -48,6 +51,7 @@ const UtkastSlettModal = ({ isOpen, onClose, utkast }: Props) => {
     if (statusCode.isSuccessful(response.status)) {
       await mutate(["/v1/utkast", token]);
       closeUtkast();
+      clearInndelingerAndSources();
 
       if (utkastPathMatch) {
         navigate(routes.utkast);

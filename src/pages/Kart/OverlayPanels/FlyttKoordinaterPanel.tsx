@@ -37,7 +37,7 @@ const InputRow = styled.div`
 export const coordinateDecimalPattern = /^-?\d+(\.\d+)?$/;
 export const coordinateDecimalPatternHelperText = "Koordinatet ditt må være et tall med eventuell punktum-separator";
 
-const FlyttKoordinaterPanel = ({ isOpen, className }: PanelProps) => {
+const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
   const { closeOverlayPanel } = useOverlayPanel();
   const { selectedPoint, selectedFeatures, selectPointOnFeature } = useFeatureStyle();
   const { resetTool } = useToolbar();
@@ -185,7 +185,7 @@ const FlyttKoordinaterPanel = ({ isOpen, className }: PanelProps) => {
   };
 
   return (
-    <AbsolutePanel $isOpen={isOpen} className={className}>
+    <AbsolutePanel $isOpen={isOpen}>
       <PanelHeader onClose={closeOverlayPanel} isSmall>
         Flytt punkt med koordinater
       </PanelHeader>

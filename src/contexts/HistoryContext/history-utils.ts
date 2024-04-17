@@ -118,6 +118,10 @@ export const undoArchving = (entry: GrenseArkiveringsEntry) => {
   const features = removeNil(entry.changes.map((c) => archivedSource.getFeatureById(c.id)));
   const featureIds = entry.changes.map((c) => c.id);
 
+  for (const feature of features) {
+    feature.set("shouldArchive", false);
+  }
+
   addFeaturesToSource("edit", features);
   removeFeaturesFromSourceByIds("archived", featureIds);
 

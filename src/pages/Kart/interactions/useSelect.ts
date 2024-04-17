@@ -8,7 +8,7 @@ import { useToast } from "@kvib/react";
 import { useEffect } from "react";
 import { usePrevious } from "hooks/usePrevious";
 import { useGetFeatures } from "./interaction-utils";
-import { isFeatureEditable, isMatrikkelFeature } from "utils/features";
+import { isFeatureToBeArchived, isFeatureEditable, isMatrikkelFeature } from "utils/features";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -20,15 +20,8 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 const useSelect = () => {
   const toast = useToast();
   const { activeTool, activeModeTools } = useToolbar();
-  const {
-    selectFeatures,
-    selectedFeatures,
-    clearSelection,
-    featureIsArchived,
-    addToSelection,
-    removeFromSelection,
-    isSelectedFeature,
-  } = useFeatureStyle();
+  const { selectFeatures, selectedFeatures, clearSelection, addToSelection, removeFromSelection, isSelectedFeature } =
+    useFeatureStyle();
   const { activeOverlayPanel, closeOverlayPanel, openOverlayPanel } = useOverlayPanel();
   const previousPointMode = usePrevious(activeTool);
   const { getLineStringFeaturesAtPixel } = useGetFeatures();
@@ -76,7 +69,10 @@ const useSelect = () => {
       }
 
       // I noen verktøy skal man ikke kunne velge ikke-redigerbare grenser
-      if (!safeTools.includes(activeTool) && !isFeatureEditable(clickedFeature, featureIsArchived(clickedFeature))) {
+      if (
+        !safeTools.includes(activeTool) &&
+        !isFeatureEditable(clickedFeature, isFeatureToBeArchived(clickedFeature))
+      ) {
         toast({ status: "error", title: "Denne grensen er ikke redigerbar" });
         event.stopPropagation();
         return;
@@ -112,7 +108,7 @@ const useSelect = () => {
         }
       }
 
-      if (activeTool === "archive" && featureIsArchived(clickedFeature)) {
+      if (activeTool === "archive" && isFeatureToBeArchived(clickedFeature) === true) {
         toast({
           status: "error",
           title: "Kan ikke arkivere grenser som allerede er arkivert",

@@ -2,16 +2,19 @@ import { Suspense, useEffect, useRef } from "react";
 import { styled } from "styled-components";
 import { map } from "./constants";
 import OverlayPopup from "./OverlayPopup";
-import SidebarPanels from "./SidebarPanels";
 import useInteractions from "./interactions/useInteractions";
 import Toolbar from "./Toolbar/Toolbar";
 import OverlayPanels from "./OverlayPanels/OverlayPanels";
 import { TegnforklaringButton } from "./OverlayPanels/Tegnforklaring/TegnforklaringButton";
 import Kartinformasjon from "./Kartinformasjon";
 import { zindex } from "utils/constants";
+import { Spinner } from "@kvib/react";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
 const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
+
+  const { isLoadingInndeling } = useInndelinger();
 
   // Legger til interactions (modify, select, osv) på kartet
   useInteractions();
@@ -33,9 +36,13 @@ const Kart = () => {
       <KartTarget ref={mapRef}>
         <Suspense fallback="More loading...">
           <KartOverlay>
+            {isLoadingInndeling && (
+              <SpinnerBackground>
+                <KartLoadingSpinner size="lg" />
+              </SpinnerBackground>
+            )}
             <Kartinformasjon />
             <TegnforklaringButton />
-            <SidebarPanels />
             <OverlayPanels />
             <Toolbar />
           </KartOverlay>
@@ -47,7 +54,6 @@ const Kart = () => {
 };
 
 const KartWrapper = styled.div`
-  grid-area: map;
   position: relative;
   width: 100%;
   height: 100%;
@@ -72,14 +78,30 @@ const KartTarget = styled.div`
   }
 `;
 
+const SpinnerBackground = styled.div`
+  display: grid;
+  place-items: center;
+  background: white;
+  padding: 12px;
+  border-radius: 50%;
+  box-shadow: var(--kvib-shadows-md);
+  margin: auto;
+`;
+
+const KartLoadingSpinner = styled(Spinner)`
+  color: var(--kvib-colors-blue-500);
+  border-width: 3px;
+  margin: auto;
+`;
+
 const KartOverlay = styled.div`
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: 1fr auto;
   grid-template-rows: 1fr auto;
   justify-items: center;
   grid-template-areas:
-    "sidebar overlay sidepanel"
-    "sidebar toolbar sidepanel";
+    "overlay sidepanel"
+    "toolbar sidepanel";
   gap: 16px;
   width: 100%;
   height: 100%;

@@ -1,6 +1,6 @@
 import { Feature } from "ol";
-import { FeatureLike } from "ol/Feature";
 import { Coordinate } from "ol/coordinate";
+import { Geometry } from "ol/geom";
 import LineString from "ol/geom/LineString";
 import Point from "ol/geom/Point";
 
@@ -18,14 +18,10 @@ export type FeatureStyleContextValue = {
   isSelectedFeature: (feature: Feature<LineString>) => boolean;
 
   addDirtyStyles: (featureIds: string[]) => void;
-  setAndSaveDirtyStyles: (featureIds: string[]) => void;
-
   addErrorStyles: (featureIds: string[]) => void;
-  setAndSaveErrorStyles: (featureIds: string[]) => void;
-
   addArchivedStyles: (featureIds: string[]) => void;
-  setAndSaveArchivedStyles: (features: string[]) => void;
-  featureIsArchived: (feature: FeatureLike) => boolean;
+
+  setFeatureStylesForUtkast: (editedFeatures: Feature<Geometry>[], sammenslaaingFeatures: Feature<Geometry>[]) => void;
 
   setAndSaveSammenslaaingStyles: (features: string[]) => void;
   setAndSaveSammenslaaingOverlappingStyles: (features: string[]) => void;

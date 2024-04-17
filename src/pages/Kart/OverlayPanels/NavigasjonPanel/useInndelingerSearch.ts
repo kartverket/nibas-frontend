@@ -1,7 +1,7 @@
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import useToastUnique from "hooks/toast/useToastUnique";
-import { InndelingResponse } from "types/api";
+import { InndelingSearchResponse } from "types/api";
 import { getUrlForPath, statusCode } from "utils/api";
 
 export const useInndelingerSearch = () => {
@@ -13,7 +13,7 @@ export const useInndelingerSearch = () => {
     description: "Vennligst prøv igjen. Ta kontakt med Kartverket om feilen vedvarer.",
   });
 
-  const searchInndelinger = async (searchString: string, limit: number): Promise<InndelingResponse[] | null> => {
+  const searchInndelinger = async (searchString: string, limit: number): Promise<InndelingSearchResponse[] | null> => {
     const gyldhetsdato = utkast?.gyldigFra;
 
     const response = await fetch(

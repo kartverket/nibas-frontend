@@ -2,11 +2,11 @@ import { Badge, SearchAsync, Text } from "@kvib/react";
 import { FormatOptionLabelMeta } from "chakra-react-select";
 import { ReactNode, useState } from "react";
 import { styled } from "styled-components";
-import { InndelingResponse } from "types/api";
+import { InndelingSearchResponse } from "types/api";
 import { NavigasjonProps } from "./NavigasjonPanel";
 import { useInndelingerSearch } from "./useInndelingerSearch";
 
-type InndelingOption = InndelingResponse & {
+type InndelingOption = InndelingSearchResponse & {
   label: string;
 };
 
@@ -20,7 +20,7 @@ export const InndelingSearch = ({ onSelect: centerOnCoordinate }: NavigasjonProp
     navn,
     nummer,
     representasjonspunkt,
-  }: InndelingResponse): InndelingOption => {
+  }: InndelingSearchResponse): InndelingOption => {
     return {
       id,
       navn,

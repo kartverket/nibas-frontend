@@ -1,5 +1,5 @@
+import { Inndelingtype } from "contexts/InndelingerContext/InndelingerContext";
 import { components, paths } from "./api-gen";
-import { EditingType } from "contexts/EditGrenserContext/types";
 
 /**
  * Diverse
@@ -24,9 +24,12 @@ export type KommuneResponse = components["schemas"]["KommuneResponse"];
 export type FylkeRequest = components["schemas"]["FylkeRequest"];
 export type FylkeResponse = components["schemas"]["FylkeResponse"];
 export type NasjonRequest = components["schemas"]["NasjonRequest"];
-export type KretsResponse = GrunnkretsResponse | StemmekretsResponse;
-export type AdministrativEnhetResponse = FylkeResponse | KommuneResponse;
-export type InndelingResponse = components["schemas"]["InndelingResponse"];
+
+type KretsResponse = GrunnkretsResponse | StemmekretsResponse;
+type AdministrativEnhetResponse = FylkeResponse | KommuneResponse;
+export type InndelingResponse = KretsResponse | AdministrativEnhetResponse;
+export type InndelingNavn = components["schemas"]["AdministrativEnhetNavn"][] | string;
+export type InndelingSearchResponse = components["schemas"]["InndelingResponse"];
 export type KretsNavnOgNummer = components["schemas"]["KretsNavnOgNummer"];
 
 /**
@@ -36,7 +39,6 @@ export type UtkastOperasjoner = UtkastResponse["operasjoner"];
 export type UtkastResponse = components["schemas"]["UtkastResponse"];
 export type UtkastRef = components["schemas"]["UtkastRef"];
 export type UtkastMetadataendringer = components["schemas"]["Metadataendringer"];
-export type UtkastGrenseendringer = components["schemas"]["Grenseendringer"];
 export type OpprettUtkastRequest = components["schemas"]["OpprettUtkastRequest"];
 export type OppdaterUtkastRequest = components["schemas"]["OppdaterUtkastRequest"];
 export type StemmekretsSammenslaaingsendringRequest = components["schemas"]["StemmekretsSammenslaaingsendringRequest"];
@@ -72,7 +74,7 @@ export type KontekstEgenskaper = components["schemas"]["KontekstEgenskaper"];
 export type FeatureProperties = components["schemas"]["FeatureProperties"] & {
   inndelingerKontekst: {
     id: string;
-    type: EditingType;
+    type: Inndelingtype;
   };
 };
 export type DokumentasjonsreferanseDTO = components["schemas"]["DokumentasjonsreferanseDTO"];

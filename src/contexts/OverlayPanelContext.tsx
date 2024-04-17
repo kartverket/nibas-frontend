@@ -1,12 +1,9 @@
 import React, { createContext, useContext, useState } from "react";
-import { useSidebarPanel } from "./SidebarPanelContext";
 import { useFeatureStyle } from "./FeatureStyleContext/FeatureStyleContext";
-import { KommuneResponse } from "types/api";
 
 type OverlayPanel = "grenseinfo" | "sammenslåing" | "splitting" | "tegnforklaring" | "koordinater" | "kartlag";
 
-type OverlayModal = "stemmekrets" | "grunnkrets" | "navigasjon";
-export type Flatedata = KommuneResponse | null;
+type OverlayModal = "inndelinger" | "inndelinger-view" | "stemmekrets" | "grunnkrets" | "navigasjon";
 
 export type OverlayPanelContextValue = {
   activeOverlayPanel: OverlayPanel | null;
@@ -16,22 +13,17 @@ export type OverlayPanelContextValue = {
   activeOverlayModal: OverlayModal | null;
   openOverlayModal: (overlayModal: OverlayModal) => void;
   closeOverlayModal: () => void;
-
-  flatedata: Flatedata;
-  setFlatedata: (flatedata: Flatedata) => void;
 };
 
 export const OverlayPanelContext = createContext<OverlayPanelContextValue | undefined>(undefined);
 
 export const OverlayPanelProvider = ({ children }: { children: React.ReactNode }) => {
-  const { closeSidebarPanel } = useSidebarPanel();
   const { clearSelection } = useFeatureStyle();
   const [activeOverlayModal, setActiveOverlayModal] = useState<OverlayModal | null>(null);
   const [activeOverlayPanel, setActiveOverlayPanel] = useState<OverlayPanel | null>(null);
 
   const openOverlayPanel = (panelType: OverlayPanel) => {
     setActiveOverlayPanel(panelType);
-    closeSidebarPanel();
   };
 
   const openOverlayModal = (modalType: OverlayModal) => {
@@ -47,9 +39,6 @@ export const OverlayPanelProvider = ({ children }: { children: React.ReactNode }
     clearSelection();
   };
 
-  // Brukes kun til paneler for stemmekrets og grunnkrets
-  const [flatedata, setFlatedata] = useState<Flatedata>(null);
-
   const value = {
     activeOverlayPanel,
     activeOverlayModal,
@@ -57,8 +46,6 @@ export const OverlayPanelProvider = ({ children }: { children: React.ReactNode }
     openOverlayModal,
     closeOverlayPanel,
     closeOverlayModal,
-    flatedata,
-    setFlatedata,
   };
 
   return <OverlayPanelContext.Provider value={value}>{children}</OverlayPanelContext.Provider>;

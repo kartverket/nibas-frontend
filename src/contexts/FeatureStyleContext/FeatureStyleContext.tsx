@@ -3,11 +3,16 @@ import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { FeatureStyleContextValue } from "./types";
 import { useSelectStyles } from "./useSelectStyles";
 import { getArchiveLayerStyle, grenseStyles, setFeatureStyle } from "utils/map/layerStyles";
-import Feature, { FeatureLike } from "ol/Feature";
+import Feature from "ol/Feature";
 import useCustomStyles from "./useCustomStyles";
 import { Coordinate } from "ol/coordinate";
 import { archivedSource } from "hooks/layers/constants";
-import { FeatureIdWithEndpoints, getAllFeatureEndPointCoordinates } from "utils/features";
+import {
+  FeatureIdWithEndpoints,
+  getAllFeatureEndPointCoordinates,
+  getFeaturesConnectedToFeatureAtEndpoints,
+  isFeatureDeadEnd,
+} from "utils/features";
 import { HistoryTypeValues } from "contexts/HistoryContext/types";
 import {
   filterOnlyDeadEnds,
@@ -16,7 +21,9 @@ import {
   removeDuplicateIds,
 } from "./feature-style-utils";
 import { newFeatureOnlyExistsAfterIndex, getChangeIds } from "contexts/HistoryContext/history-utils";
-import { LineString } from "ol/geom";
+import { Geometry, LineString } from "ol/geom";
+import { FeatureProperties } from "types/api";
+import { getDuplicateItems, removeNil } from "utils/list-utils";
 
 export const FeatureStyleContext = createContext<FeatureStyleContextValue | undefined>(undefined);
 
@@ -203,15 +210,66 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     }
   };
 
-  const featureIsArchived = (feature: FeatureLike) => {
-    const featureId = feature.getId()?.toString();
-    if (featureId != null) {
-      return (
-        archivedStyleFunctions.customFeatureIds.includes(featureId) ||
-        archivedStyleFunctions.savedCustomFeatureIds.includes(featureId)
-      );
+  const setCustomStylesForUtkastFeatures = (editedFeatures: Feature<Geometry>[]) => {
+    const dirtyFeatureIds: string[] = [];
+    const archivedFeatureIds: string[] = [];
+    const errorFeatureIds: string[] = [];
+
+    const allFeatureEndpoints = getAllFeatureEndPointCoordinates(["matrikkel", "archived"]).filter(
+      (featureEndpoint) => featureEndpoint !== null,
+    ) as FeatureIdWithEndpoints[];
+
+    for (const endretFeature of editedFeatures) {
+      const featureId = endretFeature.getId()?.toString();
+
+      if (featureId != null) {
+        const properties = endretFeature.getProperties() as FeatureProperties | undefined;
+
+        // Avgjør hvilken type endringsfarge featuren skal ha
+        if (properties != null && properties.shouldArchive) {
+          archivedFeatureIds.push(featureId);
+
+          const connectedFeatures = getFeaturesConnectedToFeatureAtEndpoints(endretFeature);
+
+          for (const connectedFeature of connectedFeatures) {
+            const connectedFeatureId = connectedFeature.getId()?.toString();
+            const connectedFeatureProperties = connectedFeature.getProperties() as FeatureProperties | undefined;
+            if (connectedFeatureId == null || !connectedFeatureProperties) continue;
+
+            if (!connectedFeatureProperties.shouldArchive && isFeatureDeadEnd(connectedFeature, allFeatureEndpoints))
+              errorFeatureIds.push(connectedFeatureId);
+          }
+        } else if (isFeatureDeadEnd(endretFeature, allFeatureEndpoints)) {
+          errorFeatureIds.push(featureId);
+        } else {
+          dirtyFeatureIds.push(featureId);
+        }
+      }
     }
-    return false;
+
+    dirtyStyleFunctions.setAndSaveCustomStyles(dirtyFeatureIds);
+    errorStyleFunctions.setAndSaveCustomStyles(errorFeatureIds);
+    archivedStyleFunctions.setAndSaveCustomStyles(archivedFeatureIds);
+  };
+
+  const setSammenslaaingsStylesForUtkastFeatures = (sammenslaaingFeatures: Feature<Geometry>[]) => {
+    const stemmekretsFeatureIds = removeNil(sammenslaaingFeatures.map((feature) => feature.getId()?.toString()));
+
+    if (stemmekretsFeatureIds.length > 0) {
+      const overlappingFeatureIds = getDuplicateItems(stemmekretsFeatureIds);
+      const uniqueStemmekretsFeatureIds = stemmekretsFeatureIds.filter((sfi) => !overlappingFeatureIds.includes(sfi));
+
+      sammenslaaingStyleFunctions.setAndSaveCustomStyles(uniqueStemmekretsFeatureIds);
+      sammenslaaingOverlappingStyleFunctions.setAndSaveCustomStyles(overlappingFeatureIds);
+    }
+  };
+
+  const setFeatureStylesForUtkast = (
+    editedFeatures: Feature<Geometry>[],
+    sammenslaaingFeatures: Feature<Geometry>[],
+  ) => {
+    setCustomStylesForUtkastFeatures(editedFeatures);
+    setSammenslaaingsStylesForUtkastFeatures(sammenslaaingFeatures);
   };
 
   const value = {
@@ -226,17 +284,14 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     isSelectedFeature,
 
     addDirtyStyles: dirtyStyleFunctions.addCustomStyles,
-    setAndSaveDirtyStyles: dirtyStyleFunctions.setAndSaveCustomStyles,
-
     addErrorStyles: errorStyleFunctions.addCustomStyles,
-    setAndSaveErrorStyles: errorStyleFunctions.setAndSaveCustomStyles,
-
     addArchivedStyles: archivedStyleFunctions.addCustomStyles,
-    setAndSaveArchivedStyles: archivedStyleFunctions.setAndSaveCustomStyles,
-    featureIsArchived,
+
+    setFeatureStylesForUtkast,
 
     setAndSaveSammenslaaingStyles: sammenslaaingStyleFunctions.setAndSaveCustomStyles,
     setAndSaveSammenslaaingOverlappingStyles: sammenslaaingOverlappingStyleFunctions.setAndSaveCustomStyles,
+
     clearFeatureStyles,
   };
 

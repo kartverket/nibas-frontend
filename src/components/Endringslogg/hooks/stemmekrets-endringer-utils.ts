@@ -1,4 +1,4 @@
-import { deduplicate, removeNil } from "utils/list-utils";
+import { getUniqueItems, removeNil } from "utils/list-utils";
 import { KommuneResponse, StemmekretsResponse, UtkastOperasjoner } from "../../../types/api";
 import {
   StemmekretsMetadataEndringstype,
@@ -42,7 +42,7 @@ export const getStemmekretserMedEndringer = (operasjoner: OperasjonerOrNull): st
     .concat(stemmekretserMedSammenslaaing)
     .concat(stemmekretserMedSplitting);
 
-  return deduplicate(alleStemmekretserMedEndringer);
+  return getUniqueItems(alleStemmekretserMedEndringer);
 };
 
 const getEndringAvTypeForId = (
