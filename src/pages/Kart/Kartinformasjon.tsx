@@ -3,6 +3,7 @@ import { map } from "./constants";
 import { useEffect } from "react";
 import { MousePosition, ScaleLine } from "ol/control";
 import { zindex } from "utils/constants";
+import { defaultProjection } from "utils/map/projections";
 
 const Kartinformasjon = () => {
   useEffect(() => {
@@ -12,7 +13,7 @@ const Kartinformasjon = () => {
           if (!coordinates) return "";
           return `${coordinates[1].toFixed(2)}N  ${coordinates[0].toFixed(2)}Ø`;
         },
-        projection: "EPSG:25833",
+        projection: defaultProjection,
         target: document.getElementById("mouse-position") ?? "",
       });
 
