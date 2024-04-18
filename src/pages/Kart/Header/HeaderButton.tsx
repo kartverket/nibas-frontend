@@ -45,7 +45,9 @@ const HeaderButton = ({
 );
 
 const ButtonContent = styled.div`
-  justify-content: space-between;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 `;
 
 export const HeaderSection = styled.section`

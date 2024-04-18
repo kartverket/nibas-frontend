@@ -23,44 +23,40 @@ type HistoryTypeData =
   | (MinimalGrense & FeatureProperties)
   | Feature[];
 
-export type AbstrahertHistroyEntry = {
+export type AbstractedHistoryEntry = {
   type: HistoryTypeValues;
   lokalid: string;
   from: HistoryTypeData;
   to: HistoryTypeData;
 };
 
-export const useUlagredeEndringer = () => {
+export const useUnsavedEndringer = () => {
   const { history } = useHistory();
 
   // History lagrer absolutt alt, men vi er kun interessert i å vise bruker hva som er forskjellen sammenlignet med utkastet.
   // Dermed må vi finne de siste endringene for hver lokalid, og sammenligne dette med den første endringen sin "from" (utgangspunktet) for å se hva som faktisk blir endringen hvis man lagrer.
-  const abstrahertHistory = useMemo(() => {
-    const currentHistroySlice = history.entries.slice(0, history.index);
+  const abstractedHistory = useMemo(() => {
+    const currentHistorySlice = history.entries.slice(0, history.index);
 
     const firstEntriesForLokalids: Record<string, HistoryEntry> = {};
     const latestEntriesForLokalids: Record<string, HistoryEntry> = {};
 
-    currentHistroySlice.forEach((entry) => {
+    for (const entry of currentHistorySlice) {
       const change = entry.changes[0];
       const key = change.id + "_" + entry.type;
       if (!(key in firstEntriesForLokalids)) {
         firstEntriesForLokalids[key] = entry;
       }
-    });
+    }
+    for (const entry of currentHistorySlice.toReversed()) {
+      const change = entry.changes[0];
+      const key = change.id + "_" + entry.type;
+      if (!(key in latestEntriesForLokalids)) {
+        latestEntriesForLokalids[key] = entry;
+      }
+    }
 
-    currentHistroySlice
-      .slice()
-      .reverse()
-      .forEach((entry) => {
-        const change = entry.changes[0];
-        const key = change.id + "_" + entry.type;
-        if (!(key in latestEntriesForLokalids)) {
-          latestEntriesForLokalids[key] = entry;
-        }
-      });
-
-    const minimalChanges: AbstrahertHistroyEntry[] = Object.entries(firstEntriesForLokalids).map(([lokalid, entry]) => {
+    const minimalChanges: AbstractedHistoryEntry[] = Object.entries(firstEntriesForLokalids).map(([lokalid, entry]) => {
       const firstFrom = entry.changes[0].from;
       const lastTo = latestEntriesForLokalids[lokalid].changes[0].to;
       return { type: entry.type, lokalid: lokalid, from: firstFrom, to: lastTo };
@@ -69,5 +65,5 @@ export const useUlagredeEndringer = () => {
     return minimalChanges;
   }, [history.entries, history.index]);
 
-  return abstrahertHistory;
+  return abstractedHistory;
 };

@@ -1,28 +1,28 @@
 import { Alert, AlertIcon, AlertTitle, Box, Button, Collapse } from "@kvib/react";
-import { HistoryState } from "contexts/HistoryContext/types";
 import { useState } from "react";
 import { styled } from "styled-components";
-import { useUlagredeEndringer } from "../hooks/useUlagredeEndringer";
-import { AggregatedUlagredeEndringer } from "./AggregatedUlagredeEndringer";
+import { useUnsavedEndringer } from "../hooks/useUnsavedEndringer";
+import { AggregatedUnsavedEndringer } from "./AggregatedUnsavedEndringer";
 
 type Props = {
-  history: HistoryState;
-  harLagredeEndringer: boolean;
+  expandedByDefault?: boolean;
 };
 
-export const UlagredeEndringerCollapse = ({ history, harLagredeEndringer }: Props) => {
-  const [isExpanded, setIsExpanded] = useState(!harLagredeEndringer);
-  const ulagredeEndringer = useUlagredeEndringer();
+export const UnsavedEndringerCollapse = ({ expandedByDefault = false }: Props) => {
+  const [isExpanded, setIsExpanded] = useState(expandedByDefault);
+  const abstractedHistory = useUnsavedEndringer();
+
+  const numberOfUnsavedEndringer = abstractedHistory.length;
 
   return (
-    history.index > 0 && (
+    numberOfUnsavedEndringer > 0 && (
       <CustomCollapse animateOpacity={false} in={isExpanded} startingHeight={64}>
         <AlertWithButton status="warning">
           <Wrapper>
             <AlertIcon />
             <AlertTitle>
-              Du har {ulagredeEndringer.length}{" "}
-              {ulagredeEndringer.length > 1 ? "ulagrede endringer" : "ulagret endring"} i utkastet
+              Du har {numberOfUnsavedEndringer}{" "}
+              {numberOfUnsavedEndringer > 1 ? "ulagrede endringer" : "ulagret endring"} i utkastet
             </AlertTitle>
           </Wrapper>
           <CustomButton
@@ -30,11 +30,11 @@ export const UlagredeEndringerCollapse = ({ history, harLagredeEndringer }: Prop
             variant="tertiary"
             onClick={() => setIsExpanded((prevState) => !prevState)}
           >
-            {isExpanded ? "Skjul" : "Vis"} {history.index > 1 ? "ulagrede endringer" : "ulagret endring"}
+            {isExpanded ? "Skjul" : "Vis"} {numberOfUnsavedEndringer > 1 ? "ulagrede endringer" : "ulagret endring"}
           </CustomButton>
         </AlertWithButton>
         <EndringerContent>
-          <AggregatedUlagredeEndringer abstrahertHistory={ulagredeEndringer} />
+          <AggregatedUnsavedEndringer abstractedHistory={abstractedHistory} />
         </EndringerContent>
       </CustomCollapse>
     )

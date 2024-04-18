@@ -4,7 +4,7 @@ import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import { Badge, useDisclosure } from "@kvib/react";
 import EndringsloggModal from "components/Endringslogg/EndringsloggModal";
-import { useUlagredeEndringer } from "components/Endringslogg/hooks/useUlagredeEndringer";
+import { useUnsavedEndringer } from "components/Endringslogg/hooks/useUnsavedEndringer";
 import { styled } from "styled-components";
 
 const HeaderHistoryOperations = () => {
@@ -12,7 +12,7 @@ const HeaderHistoryOperations = () => {
   const { canSave, undo, redo } = useHistory();
   const { isOpen, onClose, onOpen } = useDisclosure();
 
-  const ulagredeEndringer = useUlagredeEndringer();
+  const unsavedEndringer = useUnsavedEndringer();
 
   const handleSave = () => {
     if (utkast && canSave) {
@@ -65,7 +65,7 @@ const HeaderHistoryOperations = () => {
         tooltip={{
           text: "Se en liste over alle lagrede og ulagrede endringer som er gjort i dette utkastet",
         }}
-        alert={ulagredeEndringer.length > 0 && <AlertIcon count={ulagredeEndringer.length} />}
+        alert={unsavedEndringer.length > 0 && <AlertIcon count={unsavedEndringer.length} />}
       />
       <EndringsloggModal isOpen={isOpen} onClose={onClose} utkast={utkast} />
     </HeaderSection>

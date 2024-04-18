@@ -13,7 +13,7 @@ import { EndringsloggGrunnkretsendringer } from "./EndringsloggGrunnkretsendring
 import { EndringsloggStemmekretsendringer } from "./EndringsloggStemmekretsendringer";
 import { useUtkastEndringer } from "./hooks/useUtkastEndringer";
 import { UtkastResponse } from "types/api";
-import { UlagredeEndringerCollapse } from "./UlagredeEndringer/UlagredeEndringerCollapse";
+import { UnsavedEndringerCollapse } from "./UlagredeEndringer/UnsavedEndringerCollapse";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 
 type Props = {
@@ -37,7 +37,7 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
         <ModalBody>
           {!harEndringer && !harUlagredeEndringer && <Empty>Det er ingen endringer i dette utkastet</Empty>}
           <Stack spacing={6}>
-            <UlagredeEndringerCollapse history={history} harLagredeEndringer={harEndringer} />
+            <UnsavedEndringerCollapse expandedByDefault={!harEndringer} />
             {stemmekretsendringer?.map((endringer) => (
               <Skeleton key={endringer.kommune.id} isLoaded={harLastetData}>
                 <EndringsloggStemmekretsendringer endringer={endringer} />

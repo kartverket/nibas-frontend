@@ -73,7 +73,7 @@ type EndringFraTilProps = {
   withBadges?: boolean;
 };
 
-export const Container = styled.div`
+const Container = styled.div`
   display: flex;
   align-items: center;
   gap: 6px;
@@ -81,23 +81,19 @@ export const Container = styled.div`
 
 export const EndringFraTil = ({ endring, withBadges }: EndringFraTilProps) => (
   <Container>
-    <Container>
-      {endring.fra}
-      {withBadges === true && (
-        <Badge variant={"subtle"} colorScheme="gray">
-          Utgår
-        </Badge>
-      )}
-    </Container>
+    {endring.fra}
+    {withBadges === true && (
+      <Badge variant={"subtle"} colorScheme="gray">
+        Utgår
+      </Badge>
+    )}
     <RightArrow icon="arrow_right_alt" />
-    <Container>
-      {endring.til}
-      {withBadges === true && (
-        <Badge variant={"subtle"} colorScheme="green">
-          Ny
-        </Badge>
-      )}
-    </Container>
+    {endring.til}
+    {withBadges === true && (
+      <Badge variant={"subtle"} colorScheme="green">
+        Ny
+      </Badge>
+    )}
   </Container>
 );
 

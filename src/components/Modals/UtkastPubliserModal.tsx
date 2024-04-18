@@ -1,36 +1,38 @@
-import { styled } from "styled-components";
 import {
-  useToast,
-  Modal,
-  ModalOverlay,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
   Alert,
+  AlertDescription,
   AlertIcon,
   AlertTitle,
-  AlertDescription,
-  ModalFooter,
-  ButtonGroup,
   Button,
+  ButtonGroup,
   Datepicker,
   FormLabel,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  useToast,
 } from "@kvib/react";
 import { publishUtkast } from "api/utkast";
+import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { UnsavedEndringerCollapse } from "components/Endringslogg/UlagredeEndringer/UnsavedEndringerCollapse";
+import { useUnsavedEndringer } from "components/Endringslogg/hooks/useUnsavedEndringer";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import { format, isToday } from "date-fns";
 import { datestringToFormattedDatestring } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
 import { EndringsloggAccordion } from "pages/Utkast/UtkastEndringslogg";
 import { useState } from "react";
+import { useMatch, useNavigate } from "react-router-dom";
+import { styled } from "styled-components";
 import { useSWRConfig } from "swr";
-import { isToday, format } from "date-fns";
 import { ApiErrorResponse, UtkastResponse } from "types/api";
 import { statusCode } from "utils/api";
-import { useUtkast } from "contexts/UtkastContext/UtkastContext";
-import { useMatch, useNavigate } from "react-router-dom";
-import { routes } from "utils/routes";
 import { isAdministrativGrense } from "utils/grenser";
-import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { routes } from "utils/routes";
 import { isGrenseType } from "utils/type-utils";
 
 type Props = {
@@ -49,6 +51,7 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
   const { mutate } = useSWRConfig();
   const navigate = useNavigate();
   const utkastPathMatch = useMatch(`${routes.utkast}/${routes.utkastId}`);
+  const abstractedHistory = useUnsavedEndringer();
 
   const cleanUpUtkast = () => {
     mutate(["/v1/utkast", token]);
@@ -118,7 +121,7 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered size="2xl">
+    <Modal isOpen={isOpen} onClose={onClose} isCentered size="3xl">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Publiser utkast</ModalHeader>
@@ -149,6 +152,8 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
               </Alert>
             )
           }
+
+          {abstractedHistory.length > 0 && <UnsavedEndringerCollapse />}
           <EndringsloggAccordion utkast={utkast} />
           <Datepickerlabel>
             Fra hvilken dato skal endringene utkastet tre i kraft?

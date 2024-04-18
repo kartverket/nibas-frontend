@@ -1,31 +1,29 @@
-import { Badge, Card, Stack, Text } from "@kvib/react";
+import { Badge, Card, Text } from "@kvib/react";
 import { HistoryTypeValues } from "contexts/HistoryContext/types";
+import { ReactNode } from "react";
 import { styled } from "styled-components";
-import { Container, EndringFraTil } from "../EndringsloggComponents";
-import { KontekstEgenskaper } from "types/api";
-import { AbstrahertHistroyEntry } from "../hooks/useUlagredeEndringer";
+import { EndringFraTil } from "../EndringsloggComponents";
+import { AbstractedHistoryEntry } from "../hooks/useUnsavedEndringer";
 
 type EndringerProps = {
   type: HistoryTypeValues;
-  endringer: AbstrahertHistroyEntry[];
+  endringer: AbstractedHistoryEntry[];
 };
 
 export const EndringerCard = ({ type, endringer }: EndringerProps) => {
   const { title, description } = getTitleAndDescriptionFragments(type, endringer);
   return (
     <Card padding={4} variant={"outline"}>
-      <Stack>
-        {title}
-        {description}
-      </Stack>
+      {title}
+      {description}
     </Card>
   );
 };
 
 const getTitleAndDescriptionFragments = (
   type: HistoryTypeValues,
-  endringer: AbstrahertHistroyEntry[],
-): { title: JSX.Element; description: JSX.Element } => {
+  endringer: AbstractedHistoryEntry[],
+): { title: ReactNode; description: ReactNode } => {
   const antallEndringer = endringer.length;
 
   switch (type) {
@@ -117,7 +115,7 @@ type DetailedEndringerPorps = Pick<EndringerProps, "endringer">;
 
 const DetailedFlateEndringerList = ({ endringer }: DetailedEndringerPorps) => {
   return (
-    <Stack>
+    <Container>
       {endringer.map((endring, i) => {
         const fraFlate = endring.from;
         const tilFlate = endring.to;
@@ -129,67 +127,70 @@ const DetailedFlateEndringerList = ({ endringer }: DetailedEndringerPorps) => {
               withBadges
             />
           );
-        } else return null;
+        }
       })}
-    </Stack>
+    </Container>
   );
 };
 
 type KontekstWithBadgeProps = {
-  kontekst: string;
-  erNy: boolean;
-  erErstattet: boolean;
-  erUendret: boolean;
+  kontekstEgenskaper: string;
+  isNew: boolean;
+  isReplaced: boolean;
+  isUnchanged: boolean;
 };
 
 const DetailedKontekstEgenskaperEndringerList = ({ endringer }: DetailedEndringerPorps) => {
-  const getFormattedKontekstEgenskaper = (kontekstEgenskaper: KontekstEgenskaper[]) => {
-    return kontekstEgenskaper.map((kontekst) => `${kontekst.kretsNummer} ${kontekst.kretsNavn}`);
+  const getFormattedKontekstEgenskaper = (objects: object[]) => {
+    return objects.map((kontekstEgenskaper) => {
+      if ("kretsNummer" in kontekstEgenskaper && "kretsNavn" in kontekstEgenskaper) {
+        return `${kontekstEgenskaper.kretsNummer} ${kontekstEgenskaper.kretsNavn}`;
+      } else return "Ukjent krets";
+    });
   };
 
-  const KontekstWithBadge = ({ kontekst, erNy, erErstattet, erUendret }: KontekstWithBadgeProps) => {
+  const KontekstWithBadge = ({ kontekstEgenskaper, isNew, isReplaced, isUnchanged }: KontekstWithBadgeProps) => {
     return (
-      <div>
-        <Container>
-          <Text>{kontekst}</Text>
-          {erNy ? (
-            <Badge colorScheme="green">ny</Badge>
-          ) : erErstattet ? (
-            <Badge colorScheme={"gray"}>utgår</Badge>
-          ) : erUendret ? (
-            <Badge colorScheme={"green"}>består</Badge>
-          ) : null}
-        </Container>
-      </div>
+      <Container>
+        <Text>{kontekstEgenskaper}</Text>
+        {isNew ? (
+          <Badge colorScheme="green">ny</Badge>
+        ) : isReplaced ? (
+          <Badge colorScheme="gray">utgår</Badge>
+        ) : isUnchanged ? (
+          <Badge colorScheme="green">består</Badge>
+        ) : null}
+      </Container>
     );
   };
 
   return (
-    <Stack>
+    <Container>
       {endringer.map((endring, i) => {
-        const fraKontekster = endring.from as KontekstEgenskaper[];
-        const tilKontekster = endring.to as KontekstEgenskaper[];
+        if (!Array.isArray(endring.from) || !Array.isArray(endring.to)) {
+          return false;
+        }
 
-        const fraKonteksterFormatted = getFormattedKontekstEgenskaper(fraKontekster);
-        const tilKonteksterFormatted = getFormattedKontekstEgenskaper(tilKontekster);
+        const fraKonteksterFormatted = getFormattedKontekstEgenskaper(endring.from);
+        const tilKonteksterFormatted = getFormattedKontekstEgenskaper(endring.to);
 
         const fraKonsteksterWithBadge = fraKonteksterFormatted.map((fraKontekst, index) => (
           <KontekstWithBadge
             key={index}
-            kontekst={fraKontekst}
-            erNy={false}
-            erErstattet={!tilKonteksterFormatted.includes(fraKontekst)}
-            erUendret={tilKonteksterFormatted.includes(fraKontekst)}
+            kontekstEgenskaper={fraKontekst}
+            isNew={false}
+            isReplaced={!tilKonteksterFormatted.includes(fraKontekst)}
+            isUnchanged={tilKonteksterFormatted.includes(fraKontekst)}
           />
         ));
 
         const tilKonteksterWithBadge = tilKonteksterFormatted.map((tilKontekst, index) => (
           <KontekstWithBadge
             key={index}
-            kontekst={tilKontekst}
-            erNy={!fraKonteksterFormatted.includes(tilKontekst)}
-            erErstattet={false}
-            erUendret={fraKonteksterFormatted.includes(tilKontekst)}
+            kontekstEgenskaper={tilKontekst}
+            isNew={!fraKonteksterFormatted.includes(tilKontekst)}
+            isReplaced={false}
+            isUnchanged={fraKonteksterFormatted.includes(tilKontekst)}
           />
         ));
 
@@ -203,11 +204,17 @@ const DetailedKontekstEgenskaperEndringerList = ({ endringer }: DetailedEndringe
           />
         );
       })}
-    </Stack>
+    </Container>
   );
 };
 
 const EndringTitle = styled(Text)`
-  font-size: small;
+  font-size: var(--kvib-fontSizes-sm);
   color: var(--kvib-color-gray-700);
+`;
+
+const Container = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
 `;
