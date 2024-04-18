@@ -50,7 +50,10 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
 
     selectInndeling(newInndeling);
     resetInndelingerPanel();
-    disableModeTool("move");
+
+    if (isEditingPanel) {
+      disableModeTool("move");
+    }
   };
 
   const selectFylke = (fylkeId: string) => {
