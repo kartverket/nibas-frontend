@@ -21,7 +21,7 @@ import {
   AuthenticationWrapper,
   AuthError,
   AuthLogIn,
-  AuthNotAutherized,
+  AuthNotAuthorized,
 } from "components/Authentication/Authentication";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 
@@ -33,7 +33,7 @@ const App = () => {
       <Route element={<ErrorBoundaryWithFrontendLogger authToken={token} />}>
         <Route path={routes.authentication} element={<AuthenticationWrapper />}>
           <Route index element={<AuthLogIn />} />
-          <Route path={routes.notAutherized} element={<AuthNotAutherized />} />
+          <Route path={routes.notAuthorized} element={<AuthNotAuthorized />} />
           <Route path={routes.authError} element={<AuthError />} />
         </Route>
         <Route path={routes.afterAuthentication} element={<AfterAuthentication />} />
@@ -68,7 +68,7 @@ const ProtectedPage = () => {
     if (isAuthenticated) {
       checkAuthorization().then((result) => {
         if (!result) {
-          navigate(`${routes.authentication}/${routes.notAutherized}`);
+          navigate(`${routes.authentication}/${routes.notAuthorized}`);
         }
       });
     }
