@@ -64,9 +64,8 @@ const keyComboToString = (key: string, modifierKeys: ModifierKeysOption): string
 
 const createShortcut = (key: string, modifierKeys: ModifierKeysOption): KeyboardShortcut => ({
   displayString: keyComboToString(key, modifierKeys),
-  checkEvent: (event: KeyboardEvent) => {
-    return checkModifierKeys(event, modifierKeys) && event.key.toLowerCase() === key.toLowerCase();
-  },
+  checkEvent: (event: KeyboardEvent) =>
+    checkModifierKeys(event, modifierKeys) && event.key.toLowerCase() === key.toLowerCase(),
 });
 
 export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
