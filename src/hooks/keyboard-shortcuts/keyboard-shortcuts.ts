@@ -16,7 +16,8 @@ export type Shortcut =
   | "matrikkel"
   | "flate"
   | "draw"
-  | "escape";
+  | "escape"
+  | "goto";
 
 type KeyboardShortcut = {
   displayString: string;
@@ -63,8 +64,9 @@ const keyComboToString = (key: string, modifierKeys: ModifierKeysOption): string
 
 const createShortcut = (key: string, modifierKeys: ModifierKeysOption): KeyboardShortcut => ({
   displayString: keyComboToString(key, modifierKeys),
-  checkEvent: (event: KeyboardEvent) =>
-    checkModifierKeys(event, modifierKeys) && event.key.toLowerCase() === key.toLowerCase(),
+  checkEvent: (event: KeyboardEvent) => {
+    return checkModifierKeys(event, modifierKeys) && event.key.toLowerCase() === key.toLowerCase();
+  },
 });
 
 export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
@@ -86,4 +88,5 @@ export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
   archive: createShortcut("a", { control: true }),
   matrikkel: createShortcut("e", { control: true }),
   draw: createShortcut("t", { control: true }),
+  goto: createShortcut("Enter", { control: true }),
 };

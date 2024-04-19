@@ -69,6 +69,15 @@ const Toolbar = () => {
     toggleModeTool("matrikkel");
   };
 
+  const toggleGoto = () => {
+    if (activeOverlayModal === "navigasjon") {
+      closeOverlayModal();
+      return;
+    }
+
+    openOverlayModal("navigasjon");
+  };
+
   const zoom = (difference: number) => {
     const view = map.getView();
     view.animate({
@@ -110,6 +119,7 @@ const Toolbar = () => {
   useKeyboardShortcut("edit", () => disableModeTool("move"), isEditing);
   useKeyboardShortcut("matrikkel", () => toggleModeTool("matrikkel"));
   useKeyboardShortcut("grenseinfo", toggleGrenseinfo);
+  useKeyboardShortcut("goto", toggleGoto);
   useHoldButtonToggle(
     "alt",
     activeModeTools.includes("move"),
