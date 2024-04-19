@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 import { Endring, KretsSplittingEndring } from "./hooks/utkastEndringerTypes";
-import { Heading, Icon } from "@kvib/react";
+import { Badge, Heading, Icon } from "@kvib/react";
 import { UnstyledList } from "components/UnstyledList";
 import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 
@@ -70,27 +70,43 @@ export const EndringstypeTag = styled.span`
 
 type EndringFraTilProps = {
   endring: Endring;
+  withBadges?: boolean;
 };
 
-const EndringFraTil = ({ endring }: EndringFraTilProps) => (
-  <>
-    <TekstEllerTom tekst={endring.fra} />
+const FraTilContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+`;
+
+const EndringAndBadge = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+export const EndringFraTil = ({ endring, withBadges }: EndringFraTilProps) => (
+  <FraTilContainer>
+    <EndringAndBadge>
+      {endring.fra}
+      {withBadges === true && (
+        <Badge variant={"subtle"} colorScheme="gray">
+          Utgår
+        </Badge>
+      )}
+    </EndringAndBadge>
     <RightArrow icon="arrow_right_alt" />
-    <TekstEllerTom tekst={endring.til} bold={true} />
-  </>
+    <EndringAndBadge>
+      {endring.til}
+      {withBadges === true && (
+        <Badge variant={"subtle"} colorScheme="green">
+          Ny
+        </Badge>
+      )}
+    </EndringAndBadge>
+  </FraTilContainer>
 );
-
-type TekstEllerTomProps = {
-  tekst: string | null;
-  bold?: boolean;
-};
-
-const TekstEllerTom = ({ tekst, bold = false }: TekstEllerTomProps) => {
-  if (tekst == null || tekst.trim() === "") {
-    return <KursivTekst $isBold={bold}>(tom)</KursivTekst>;
-  }
-  return <EndringTekst $isBold={bold}>{tekst.trim()}</EndringTekst>;
-};
 
 export const EndringTekst = styled.span<{ $isBold?: boolean }>`
   font-weight: ${({ $isBold = false }) => ($isBold ? "900" : "300")};
@@ -98,14 +114,9 @@ export const EndringTekst = styled.span<{ $isBold?: boolean }>`
   margin-right: 8px;
 `;
 
-const KursivTekst = styled(EndringTekst)`
-  font-style: italic;
-`;
-
 const RightArrow = styled(Icon)`
   color: var(--kvib-colors-blue-500);
   font-size: 20px;
-  margin: 0 8px 0 0;
   vertical-align: middle;
 `;
 
