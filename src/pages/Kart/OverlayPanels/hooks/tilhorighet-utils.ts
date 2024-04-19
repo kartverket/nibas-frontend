@@ -116,7 +116,6 @@ export const getUpdatedKontekstEgenskaper = (
     id: krets.id.lokalid.value.startsWith("NY_KRETS") ? undefined : krets.id, // fjerner tempid når vi setter kontekstEgenskapene på featuren
     kommuneId: krets.kommuneId,
     kretsNummer: krets.nummer,
-    kretsNavn: krets.navn,
     type: krets.type,
     version: krets.version,
   }));

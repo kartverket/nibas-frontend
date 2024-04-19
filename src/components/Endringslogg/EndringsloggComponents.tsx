@@ -73,28 +73,38 @@ type EndringFraTilProps = {
   withBadges?: boolean;
 };
 
-const Container = styled.div`
+const FraTilContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 12px;
+`;
+
+const EndringAndBadge = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
 `;
 
 export const EndringFraTil = ({ endring, withBadges }: EndringFraTilProps) => (
-  <Container>
-    {endring.fra}
-    {withBadges === true && (
-      <Badge variant={"subtle"} colorScheme="gray">
-        Utgår
-      </Badge>
-    )}
+  <FraTilContainer>
+    <EndringAndBadge>
+      {endring.fra}
+      {withBadges === true && (
+        <Badge variant={"subtle"} colorScheme="gray">
+          Utgår
+        </Badge>
+      )}
+    </EndringAndBadge>
     <RightArrow icon="arrow_right_alt" />
-    {endring.til}
-    {withBadges === true && (
-      <Badge variant={"subtle"} colorScheme="green">
-        Ny
-      </Badge>
-    )}
-  </Container>
+    <EndringAndBadge>
+      {endring.til}
+      {withBadges === true && (
+        <Badge variant={"subtle"} colorScheme="green">
+          Ny
+        </Badge>
+      )}
+    </EndringAndBadge>
+  </FraTilContainer>
 );
 
 export const EndringTekst = styled.span<{ $isBold?: boolean }>`

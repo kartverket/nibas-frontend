@@ -393,8 +393,6 @@ export interface components {
       kommuneId?: components["schemas"]["ObjektIdentifikator"];
       /** @description kretsnummeret til konteksten */
       kretsNummer?: string;
-      /** @description kretsnummeret til konteksten */
-      kretsNavn?: string;
       /**
        * @description Hvilken kontekst geometrien skal sees i
        * @enum {string}
@@ -414,7 +412,13 @@ export interface components {
        * @description Flatetypen som skal deles
        * @enum {string}
        */
-      flatetype: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
+      flatetype:
+        | "FYLKE"
+        | "KOMMUNE"
+        | "NASJON"
+        | "GRUNNKRETS"
+        | "STEMMEKRETS"
+        | "SKOLEKRETS";
       /** @description Navn og nummer for de nye kretsene som skal utledes fra opprinnelig krets */
       nyeKretser: components["schemas"]["KretsNavnOgNummer"][];
     };
@@ -506,11 +510,6 @@ export interface components {
       navn: string;
       /** @description Typen endring utkastet representerer. */
       endringstype: string;
-      /**
-       * Format: date
-       * @description Tidspunktet utkastet skal være gyldig fra.
-       */
-      gyldigFra?: string;
       operasjoner: components["schemas"]["Operasjoner"];
       /**
        * Format: int32
@@ -613,20 +612,6 @@ export interface components {
       commonGrense: unknown;
       dokumentasjonsreferanser: unknown;
     };
-    ApiErrorResponse: {
-      /** @description En unik feilkode for denne feilen som kan vises til bruker. Denne feilkoden burde også være med i loggene så man finner igjen feilen som oppstod. */
-      errorCode: string;
-      errorDescription: components["schemas"]["ErrorDescription"];
-    };
-    /** @description En forklaring av feilen som oppstod. Denne er ment til å kunne vises direkte til brukeren. */
-    ErrorDescription: {
-      /** @description Tittelen på feilmeldingen som skal vises. */
-      title: string;
-      /** @description En beskrivende forklaring av feilen som oppstod. */
-      description: string;
-      /** @description Litt tilleggsinfo relatert til feilen om man vil gi noe mer forklaring av konteksten. Ikke obligatorisk. */
-      additionalInfo?: string;
-    };
     /** @description Feil som har oppstått pga optimistisk lås. */
     OptimistiskLaasResponse: {
       /** @description Identifikatoren til objektet som er utdatert. */
@@ -724,6 +709,20 @@ export interface components {
       /** @description Feil som har oppstått pga optimistisk lås. */
       optimisticLockExceptions: components["schemas"]["OptimistiskLaasResponse"][];
     };
+    ApiErrorResponse: {
+      /** @description En unik feilkode for denne feilen som kan vises til bruker. Denne feilkoden burde også være med i loggene så man finner igjen feilen som oppstod. */
+      errorCode: string;
+      errorDescription: components["schemas"]["ErrorDescription"];
+    };
+    /** @description En forklaring av feilen som oppstod. Denne er ment til å kunne vises direkte til brukeren. */
+    ErrorDescription: {
+      /** @description Tittelen på feilmeldingen som skal vises. */
+      title: string;
+      /** @description En beskrivende forklaring av feilen som oppstod. */
+      description: string;
+      /** @description Litt tilleggsinfo relatert til feilen om man vil gi noe mer forklaring av konteksten. Ikke obligatorisk. */
+      additionalInfo?: string;
+    };
     /** @description Representasjon av audit info for et objekt. */
     AuditInfoResponse: {
       /**
@@ -742,11 +741,6 @@ export interface components {
       endringstype: string;
       /** @description Status for utkastet. */
       status: string;
-      /**
-       * Format: date
-       * @description Tidspunktet utkastet skal være gyldig fra.
-       */
-      gyldigFra: string;
       /**
        * Format: date-time
        * @description Da utkastet ble opprettet.
@@ -794,32 +788,6 @@ export interface components {
        * @description Tidspunktet utkastet ble opprettet.
        */
       opprettetDato: string;
-    };
-    /** @description Koordinatet til representasjonspunktet til inndelingen. */
-    Coordinate: {
-      /** Format: double */
-      x?: number;
-      /** Format: double */
-      y?: number;
-      /** Format: double */
-      z?: number;
-      valid?: boolean;
-      /** Format: double */
-      m?: number;
-      coordinate?: components["schemas"]["Coordinate"];
-    };
-    /** @description Eventuelle feil som har blitt funnet i utkastet */
-    TopologyValidationError: {
-      /** Format: int32 */
-      errorType?: number;
-      message?: string;
-      coordinate?: components["schemas"]["Coordinate"];
-    };
-    UtkastValideringResponse: {
-      /** @description ID-en til utkastet som har blitt validert */
-      id: string;
-      /** @description Eventuelle feil som har blitt funnet i utkastet */
-      feil: components["schemas"]["TopologyValidationError"][];
     };
     /** @description Gyldighetsintervall for objektet */
     GyldighetResponse: {
@@ -951,6 +919,19 @@ export interface components {
       /** @description Liste av kodeliste-elementer. */
       items: components["schemas"]["KodelisteItem"][];
     };
+    /** @description Koordinatet til representasjonspunktet til inndelingen. */
+    Coordinate: {
+      /** Format: double */
+      x?: number;
+      /** Format: double */
+      y?: number;
+      /** Format: double */
+      z?: number;
+      /** Format: double */
+      m?: number;
+      valid?: boolean;
+      coordinate?: components["schemas"]["Coordinate"];
+    };
     InndelingResponse: {
       /** @description Lokalid til inndelingen */
       id: string;
@@ -958,7 +939,13 @@ export interface components {
        * @description Flatetypen til inndelingen
        * @enum {string}
        */
-      type: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
+      type:
+        | "FYLKE"
+        | "KOMMUNE"
+        | "NASJON"
+        | "GRUNNKRETS"
+        | "STEMMEKRETS"
+        | "SKOLEKRETS";
       /** @description Navnet til inndelingen */
       navn: string;
       /** @description Nummeret til inndelingen */

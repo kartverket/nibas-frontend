@@ -1,9 +1,14 @@
 import { Badge, Card, Text } from "@kvib/react";
 import { HistoryTypeValues } from "contexts/HistoryContext/types";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { EndringFraTil } from "../EndringsloggComponents";
 import { AbstractedHistoryEntry } from "../hooks/useUnsavedEndringer";
+import { KontekstEgenskaper } from "types/api";
+import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { getUrlForPath } from "utils/api";
+import { removeNil } from "utils/list-utils";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 
 type EndringerProps = {
   type: HistoryTypeValues;
@@ -13,10 +18,10 @@ type EndringerProps = {
 export const EndringerCard = ({ type, endringer }: EndringerProps) => {
   const { title, description } = getTitleAndDescriptionFragments(type, endringer);
   return (
-    <Card padding={4} variant={"outline"}>
+    <EndringCard variant={"outline"}>
       {title}
       {description}
-    </Card>
+    </EndringCard>
   );
 };
 
@@ -141,10 +146,68 @@ type KontekstWithBadgeProps = {
 };
 
 const DetailedKontekstEgenskaperEndringerList = ({ endringer }: DetailedEndringerPorps) => {
+  const [kontekstDataForEndringer, setKontekstDataForEndringer] =
+    useState<{ kretsNummer: unknown; kretsNavn: unknown }[]>();
+  const auth = useAuthentication();
+  const { utkast } = useUtkast();
+
+  useEffect(() => {
+    const getKontekstEgenskaperMetadata = async (tilhorighetEndringer: AbstractedHistoryEntry[]) => {
+      return Promise.all(
+        tilhorighetEndringer.flatMap((tilhorighetEndring) => {
+          const fromKontekstEgenskaper = tilhorighetEndring.from as KontekstEgenskaper[];
+          const toKontekstEgenskaper = tilhorighetEndring.to as KontekstEgenskaper[];
+
+          return fromKontekstEgenskaper.concat(toKontekstEgenskaper).map((kontekstEgenskaper) => {
+            const lokalid = kontekstEgenskaper.id?.lokalid.value;
+            const pathType =
+              kontekstEgenskaper.type === "GRUNNKRETS"
+                ? "grunnkretser"
+                : kontekstEgenskaper.type === "STEMMEKRETS"
+                  ? "stemmekretser"
+                  : null;
+            const kommuneLokalid = kontekstEgenskaper.kommuneId?.lokalid.value;
+            if (lokalid !== undefined && pathType !== null) {
+              return fetch(getUrlForPath(`v1/${pathType}/${lokalid}`), {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: "Bearer " + auth.token,
+                },
+              })
+                .then((response) => response.json())
+                .then((krets) => {
+                  if ("navn" in krets && "nummer" in krets) {
+                    return { kretsNavn: krets.navn, kretsNummer: krets.nummer };
+                  }
+                });
+            } else if (lokalid === undefined && kommuneLokalid !== null) {
+              const nyeKretser = utkast?.operasjoner.kretsDelingEndringer
+                .filter((kretsDeling) => kretsDeling.kommuneId.lokalid.value === kommuneLokalid)
+                .flatMap((kretsDeling) => kretsDeling.nyeKretser);
+              return nyeKretser?.find((krets) => krets.kretsNummer === kontekstEgenskaper.kretsNummer);
+            }
+          });
+        }),
+      );
+    };
+    getKontekstEgenskaperMetadata(endringer).then((data) => {
+      if (data != null) {
+        setKontekstDataForEndringer(removeNil(data));
+      }
+    });
+  }, [auth.token, endringer, utkast?.operasjoner.kretsDelingEndringer]);
+
   const getFormattedKontekstEgenskaper = (objects: object[]) => {
+    if (objects.length === 0) {
+      return ["Ingen tilhørighet"];
+    }
     return objects.map((kontekstEgenskaper) => {
-      if ("kretsNummer" in kontekstEgenskaper && "kretsNavn" in kontekstEgenskaper) {
-        return `${kontekstEgenskaper.kretsNummer} ${kontekstEgenskaper.kretsNavn}`;
+      if ("kretsNummer" in kontekstEgenskaper) {
+        const kretsNavn = kontekstDataForEndringer?.find(
+          (krets) => krets.kretsNummer === kontekstEgenskaper.kretsNummer,
+        )?.kretsNavn;
+        return `${kontekstEgenskaper.kretsNummer} ${kretsNavn}`;
       } else return "Ukjent krets";
     });
   };
@@ -165,7 +228,7 @@ const DetailedKontekstEgenskaperEndringerList = ({ endringer }: DetailedEndringe
   };
 
   return (
-    <Container>
+    <TilhorighetEndringer>
       {endringer.map((endring, i) => {
         if (!Array.isArray(endring.from) || !Array.isArray(endring.to)) {
           return false;
@@ -204,7 +267,7 @@ const DetailedKontekstEgenskaperEndringerList = ({ endringer }: DetailedEndringe
           />
         );
       })}
-    </Container>
+    </TilhorighetEndringer>
   );
 };
 
@@ -216,5 +279,17 @@ const EndringTitle = styled(Text)`
 const Container = styled.div`
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--kvib-space-1);
+`;
+
+const TilhorighetEndringer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: var(--kvib-space-2);
+`;
+
+const EndringCard = styled(Card)`
+  display: flex;
+  gap: var(--kvib-space-2);
+  padding: var(--kvib-space-4);
 `;
