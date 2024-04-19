@@ -8,7 +8,7 @@ import { useToast } from "@kvib/react";
 import { useEffect } from "react";
 import { usePrevious } from "hooks/usePrevious";
 import { useGetFeatures } from "./interaction-utils";
-import { isFeatureEditable, isMatrikkelFeature } from "utils/features";
+import { isFeatureToBeArchived, isFeatureEditable, isMatrikkelFeature } from "utils/features";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -19,14 +19,17 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
 
 const useSelect = () => {
   const toast = useToast();
-  const { activeTool } = useToolbar();
-  const { selectFeatures, selectedFeatures, clearSelection, featureIsArchived } = useFeatureStyle();
+  const { activeTool, activeModeTools } = useToolbar();
+  const { selectFeatures, selectedFeatures, clearSelection, addToSelection, removeFromSelection, isSelectedFeature } =
+    useFeatureStyle();
   const { activeOverlayPanel, closeOverlayPanel, openOverlayPanel } = useOverlayPanel();
   const previousPointMode = usePrevious(activeTool);
-  const { getActiveFeaturesAtPixel } = useGetFeatures();
+  const { getLineStringFeaturesAtPixel } = useGetFeatures();
 
-  const dangerousPointModes: Tool[] = ["archive", "split", "detach"];
-  const allowedPointModes: Tool[] = [...dangerousPointModes, "grenseinfo"];
+  const disallowedTools: Tool[] = ["draw", "koordinater"];
+  const safeTools: Tool[] = ["grenseinfo"];
+  const pointTools: Tool[] = ["add", "remove", "split"];
+  const exclusiveSelectTools: Tool[] = ["grenseinfo", "split"];
 
   // Dersom man bytter verktøy ønsker vi å cleare selection
   useEffect(() => {
@@ -39,11 +42,15 @@ const useSelect = () => {
   }, [activeOverlayPanel, activeTool, clearSelection, closeOverlayPanel, previousPointMode, selectedFeatures.length]);
 
   const select = (event: MapBrowserEvent<MouseEvent>) => {
-    if (allowedPointModes.includes(activeTool) && !event.dragging) {
-      // Henter features og filtrerer ut den blå prikken som indikerer hva man trykker på
-      const filteredFeatures = getActiveFeaturesAtPixel(event, null);
+    if (
+      !event.dragging &&
+      !disallowedTools.includes(activeTool) &&
+      !(activeModeTools.includes("move") && !safeTools.includes(activeTool))
+    ) {
+      const activeFeatures = getLineStringFeaturesAtPixel(event, safeTools.includes(activeTool) ? null : "edit");
 
-      if (filteredFeatures.length === 0) {
+      // Dersom man har klikket på kartet skal vi kvitte oss med selection
+      if (activeFeatures.length === 0) {
         overlayPopup.setPosition(undefined);
         closeOverlayPanel();
         clearSelection();
@@ -51,12 +58,20 @@ const useSelect = () => {
         return;
       }
 
-      const clickedFeature = filteredFeatures[0] as Feature<LineString>;
+      // Vi velger kun én feature om gangen
+      const clickedFeature = activeFeatures[0];
+
+      // Hvis feature allerede er valgt skal den de-selectes
+      if (!pointTools.includes(activeTool) && isSelectedFeature(clickedFeature)) {
+        removeFromSelection(clickedFeature);
+        event.stopPropagation();
+        return;
+      }
 
       // I noen verktøy skal man ikke kunne velge ikke-redigerbare grenser
       if (
-        dangerousPointModes.includes(activeTool) &&
-        !isFeatureEditable(clickedFeature, featureIsArchived(clickedFeature))
+        !safeTools.includes(activeTool) &&
+        !isFeatureEditable(clickedFeature, isFeatureToBeArchived(clickedFeature))
       ) {
         toast({ status: "error", title: "Denne grensen er ikke redigerbar" });
         event.stopPropagation();
@@ -65,8 +80,8 @@ const useSelect = () => {
 
       if (activeTool === "split") {
         // Dersom featuren vi vil splitte er for liten skal vi ikke velge den
-        const geometry = clickedFeature.getGeometry() as LineString;
-        const coordinates = geometry.getCoordinates();
+        const geometry = clickedFeature.getGeometry();
+        const coordinates = geometry?.getCoordinates() ?? [];
         if (coordinates.length <= 2) {
           toast({
             status: "error",
@@ -93,28 +108,21 @@ const useSelect = () => {
         }
       }
 
-      if (activeTool === "archive") {
-        if (featureIsArchived(clickedFeature)) {
-          toast({
-            status: "error",
-            title: "Kan ikke arkivere grenser som allerede er arkivert",
-          });
-          event.stopPropagation();
-          return;
-        }
-
-        const newSelectedFeatures = selectedFeatures.concat(clickedFeature);
-        selectFeatures(newSelectedFeatures);
-
+      if (activeTool === "archive" && isFeatureToBeArchived(clickedFeature) === true) {
+        toast({
+          status: "error",
+          title: "Kan ikke arkivere grenser som allerede er arkivert",
+        });
         event.stopPropagation();
         return;
       }
 
-      selectFeatures([clickedFeature]);
-
-      // Vi tar denne til slutt da vi noen ganger ønsker å returnere tidlig og la eventet propagere
-      // f.eks. ønsker vi at split skal både kunne gjøre select og selectPoint
-      event.stopPropagation();
+      // Noen verktøy skal kun kunne velge én grense om gangen
+      if (exclusiveSelectTools.includes(activeTool)) {
+        selectFeatures([clickedFeature]);
+      } else {
+        addToSelection(clickedFeature);
+      }
     }
   };
 

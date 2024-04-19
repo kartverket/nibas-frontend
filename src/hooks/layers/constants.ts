@@ -1,13 +1,13 @@
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
-import VectorSource from "ol/source/Vector";
-import { getPointOverlayStyle, getLayerStyle } from "utils/map/layerStyles";
-import { StyleFunction } from "ol/style/Style";
-import { GrenseId, KartlagId } from "./types";
-import WMTS from "ol/source/WMTS";
 import TileWMS from "ol/source/TileWMS";
-import { kartlagSources } from "./kartlagSources";
+import VectorSource from "ol/source/Vector";
+import WMTS from "ol/source/WMTS";
+import { StyleFunction } from "ol/style/Style";
 import { map } from "pages/Kart/constants";
+import { getLayerStyle, getPointOverlayStyle } from "utils/map/layerStyles";
+import { kartlagSources } from "./kartlagSources";
+import { GrenseId, KartlagId } from "./types";
 import { Options } from "ol/layer/BaseTile";
 
 const createTileLayerFromKartlagSource = (id: keyof typeof kartlagSources, options?: Options<WMTS | TileWMS>) => {
@@ -41,7 +41,7 @@ export const archivedSource = new VectorSource();
 
 const grenseStyle =
   (grenseId: GrenseId): StyleFunction =>
-  (feature) => [...getLayerStyle(feature, grenseId, false), getPointOverlayStyle(feature)];
+  (feature) => [...getLayerStyle(feature, grenseId, false), getPointOverlayStyle(feature, grenseId)];
 
 const createVectorLayer = (id: GrenseId, source?: VectorSource) => {
   const newLayer = new VectorLayer({

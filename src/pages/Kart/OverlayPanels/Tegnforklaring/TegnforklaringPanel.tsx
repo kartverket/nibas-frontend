@@ -5,10 +5,10 @@ import { Tegnforklaring } from "./Tegnforklaring";
 import { tegnforklaringer } from "./tegnforklaring-styles";
 import { Divider } from "@kvib/react";
 
-export const TegnforklaringPanel = ({ isOpen, className }: PanelProps) => {
+export const TegnforklaringPanel = ({ isOpen }: PanelProps) => {
   const { closeOverlayPanel } = useOverlayPanel();
   return (
-    <SidePanel $isOpen={isOpen} className={className}>
+    <SidePanel $isOpen={isOpen}>
       <PanelHeader onClose={closeOverlayPanel}>Tegnforklaring</PanelHeader>
       {tegnforklaringer.map((group, index) => (
         <React.Fragment key={`group-${index}`}>

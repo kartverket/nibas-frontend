@@ -11,9 +11,9 @@ import { isFeatureEditable } from "utils/features";
 
 const useSelectPoint = () => {
   const toast = useToast();
-  const { activeTool } = useToolbar();
+  const { activeTool, activeModeTools } = useToolbar();
   const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } = useOverlayPanel();
-  const { selectPointOnFeature, selectedPoint, clearSelection } = useFeatureStyle();
+  const { selectPointOnFeature, selectedFeatures, selectedPoint, clearSelection } = useFeatureStyle();
   const { getFeaturesAtPixel } = useGetFeatures();
 
   const allowedPointModes: Tool[] = useMemo(() => ["koordinater", "split"], []);
@@ -30,21 +30,20 @@ const useSelectPoint = () => {
   }, [activeOverlayPanel, activeTool, allowedPointModes, clearSelection, closeOverlayPanel, selectedPoint]);
 
   const selectPoint = (event: MapBrowserEvent<MouseEvent>) => {
-    if (allowedPointModes.includes(activeTool) && !event.dragging) {
+    if (!activeModeTools.includes("move") && allowedPointModes.includes(activeTool) && !event.dragging) {
       event.stopPropagation();
 
-      const nonArchivedFeatures = getFeaturesAtPixel(event, "edit");
       const archivedFeatures = getFeaturesAtPixel(event, "archived");
-      const allFeaturesAtPixel = nonArchivedFeatures.concat(archivedFeatures);
+      const nonArchivedFeatures = getFeaturesAtPixel(event, "edit");
 
-      if (allFeaturesAtPixel.length === 0) {
+      if (archivedFeatures.length === 0 && nonArchivedFeatures.length === 0) {
         clearSelection();
         closeOverlayPanel();
         return;
       }
 
       // Valgt punkt kan ikke være en del av en ikke-redigerbar grense
-      if (!nonArchivedFeatures.every((feature) => isFeatureEditable(feature, false))) {
+      if (!nonArchivedFeatures.every((feature) => isFeatureEditable(feature))) {
         toast({
           status: "error",
           title: "Denne grensen er ikke redigerbar.",
@@ -59,7 +58,7 @@ const useSelectPoint = () => {
       );
 
       if (nearbyVertexCoordinate) {
-        // Om man punktet har mer enn 1 ikke-arkivert feature betyr det at det er et endepunkt.
+        // Om punktet har mer enn 1 ikke-arkivert feature betyr det at det er et endepunkt.
         if (activeTool === "split" && nonArchivedFeatures.length > 1) {
           toast({
             status: "error",
@@ -74,7 +73,7 @@ const useSelectPoint = () => {
           openOverlayPanel("koordinater");
         }
       } else {
-        if (activeTool === "split") {
+        if (activeTool === "split" && selectedFeatures.length > 0) {
           toast({
             status: "error",
             title: "Du kan kun dele grensen i et eksisterende grensepunkt ",

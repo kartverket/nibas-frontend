@@ -3,20 +3,20 @@ import { PanelHeader, PanelProps, SidePanel } from "../Panel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useUtkast, useUtkastEntity } from "contexts/UtkastContext/UtkastContext";
 import { StemmekretsResponse, StemmekretsSammenslaaingsendringRequest } from "types/api";
-import { getIdFromEntity } from "utils/api";
 import { FormProvider, useForm } from "react-hook-form";
 import { MergeFormData } from "./MergeForm";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useCallback } from "react";
 import Input from "components/Input";
 import { stemmekretsgrenserFetcher } from "api/stemmekrets";
-import { deduplicate, removeNil } from "utils/list-utils";
+import { getDuplicateItems, getUniqueItemsBy, removeNil } from "utils/list-utils";
 import { MergeMultiselect } from "./MergeMultiselect";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { Alert, AlertIcon, AlertTitle, Button, Divider, FormControl, FormLabel, Heading, Select } from "@kvib/react";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
 const Form = styled.form`
   display: flex;
@@ -37,14 +37,16 @@ const Buttons = styled.div`
   margin-top: auto;
 `;
 
-const MergePanel = ({ isOpen, className }: PanelProps) => {
-  const { flatedata, closeOverlayPanel } = useOverlayPanel();
+const MergePanel = ({ isOpen }: PanelProps) => {
+  const { closeOverlayPanel } = useOverlayPanel();
   const { setError } = useErrorHandling();
   const { utkast, updateUtkast, utkastHarEndringer } = useUtkast();
   const auth = useAuthentication();
   const { setAndSaveSammenslaaingStyles, setAndSaveSammenslaaingOverlappingStyles } = useFeatureStyle();
   const { history } = useHistory();
-  const { data: stemmekretserByKommune } = useKommuneStemmekretser(flatedata ? getIdFromEntity(flatedata) : null);
+  const { currentlyEditedInndeling } = useInndelinger();
+
+  const { data: stemmekretserByKommune } = useKommuneStemmekretser(currentlyEditedInndeling?.id ?? null);
 
   const utkastStemmekretser = useUtkastEntity(stemmekretserByKommune, "stemmekretsendringer") as
     | StemmekretsResponse[]
@@ -91,10 +93,6 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
     [utkastStemmekretser],
   );
 
-  const getOverlappingStemmekretsFeatureIds = (featureIds: string[]) => {
-    return featureIds.filter((featureId, index) => featureIds.indexOf(featureId) !== index);
-  };
-
   const fromFormToRequest = (
     stemmekretsRespons: StemmekretsResponse,
     sammenslaaingsStemmekretser: StemmekretsResponse[],
@@ -103,10 +101,12 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
       lokalId: stemmekretsRespons.id.lokalid.value,
       version: stemmekretsRespons.version,
     },
-    stemmekretserTilSammenslaaing: deduplicate(sammenslaaingsStemmekretser).map((sammenslaaingsStemmekrets) => ({
-      lokalId: sammenslaaingsStemmekrets.id.lokalid.value,
-      version: sammenslaaingsStemmekrets.version,
-    })),
+    stemmekretserTilSammenslaaing: getUniqueItemsBy(sammenslaaingsStemmekretser, (krets) => krets.id.lokalid.value).map(
+      (sammenslaaingsStemmekrets) => ({
+        lokalId: sammenslaaingsStemmekrets.id.lokalid.value,
+        version: sammenslaaingsStemmekrets.version,
+      }),
+    ),
     navn: getValues("navn"),
     nummer: getValues("nummer"),
   });
@@ -137,7 +137,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
       updateUtkast(utkast.id, updateUtkastRequest);
       const sammenslaaingsStemmekretsIds = getStemmekretsIdList(selectedStemmekrets, stemmekretsTilSammenslaaingListe);
       const stemmekretsFeatureIds = await stemmekretsgrenserFetcher(sammenslaaingsStemmekretsIds, auth.token);
-      const overlappingFeatureIds = getOverlappingStemmekretsFeatureIds(stemmekretsFeatureIds);
+      const overlappingFeatureIds = getDuplicateItems(stemmekretsFeatureIds);
       const uniqueStemmekretsFeatureIds = stemmekretsFeatureIds.filter(
         (sfi) => !overlappingFeatureIds.some((ofi) => sfi === ofi),
       );
@@ -177,7 +177,7 @@ const MergePanel = ({ isOpen, className }: PanelProps) => {
     setValue("nummer", selectedStemmekrets?.nummer ?? "");
   };
   return (
-    <SidePanel $isOpen={isOpen} className={className}>
+    <SidePanel $isOpen={isOpen}>
       <PanelHeader onClose={closeOverlayPanel}>Slå sammen stemmekretser</PanelHeader>
       {(history.entries.length > 0 && history.index > 0) || utkastHarEndringer() ? (
         <Alert>

@@ -5,6 +5,8 @@ import { getLayerById } from "./layers";
 import { LayerId } from "hooks/layers/types";
 import VectorSource from "ol/source/Vector";
 import { FeatureProperties } from "../../types/api";
+import { isFeatureToBeArchived } from "utils/features";
+import { archivedSource } from "hooks/layers/constants";
 
 export const addEditedFeaturesToSource = (features: Feature<Geometry>[], callback?: () => void) => {
   const editedFeatured = features.filter((f) => !(f.getProperties() as FeatureProperties).shouldArchive);
@@ -20,6 +22,20 @@ export const removeEditedFeaturesFromSourceByIds = (featureIds: string[]) => {
   removeFeaturesFromSourceByIds("archived", featureIds);
 };
 
+const setSharedIndexIfFeatureInSource = (source: VectorSource, featureId: string): boolean => {
+  const existingFeature = source.getFeatureById(featureId) as Feature<Geometry> | null;
+
+  // oppdatere eksisterende feature hvis den finnes, så den ikke slettes
+  // når nærliggende grense fjernes
+  if (existingFeature) {
+    const sharedIndex = existingFeature.get("sharedIndex") ?? 0;
+    existingFeature.set("sharedIndex", sharedIndex + 1);
+    return true;
+  }
+
+  return false;
+};
+
 export const addFeaturesToSource = (sourceId: LayerId, features: Feature<Geometry>[], callback?: () => void) => {
   const layer = getLayerById(sourceId) as VectorLayer<VectorSource>;
   const source = layer.getSource();
@@ -31,14 +47,14 @@ export const addFeaturesToSource = (sourceId: LayerId, features: Feature<Geometr
     const id = feature.getId();
     if (id == null) return;
 
-    const existingFeature = source.getFeatureById(id) as Feature<Geometry> | null;
+    const shouldBeArchived = isFeatureToBeArchived(feature);
+    if (shouldBeArchived) {
+      const didSetSharedIndex = !setSharedIndexIfFeatureInSource(archivedSource, feature.getId()?.toString() ?? "");
 
-    // oppdatere eksisterende feature hvis den finnes, så den ikke slettes
-    // når nærliggende grense fjernes
-    if (existingFeature) {
-      const sharedIndex = existingFeature.get("sharedIndex") ?? 0;
-      existingFeature.set("sharedIndex", sharedIndex + 1);
-      return;
+      if (didSetSharedIndex) {
+        archivedSource.addFeature(feature);
+        return;
+      }
     }
 
     newFeatures.push(feature);
@@ -77,8 +93,4 @@ export const removeFeaturesFromSourceByIds = (sourceId: LayerId, featureIds: str
   featureIds.forEach(removeFeature);
 };
 
-export const getFeatureId = (feature: Feature<Geometry>) => feature.getId()?.toString() ?? "";
-
 export const getRepresentasjonspunktId = (entityId: string) => `${entityId}-representasjonspunkt`;
-
-export const getFlateId = (entityId: string) => `${entityId}-flate`;

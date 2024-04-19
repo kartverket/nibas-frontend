@@ -1,13 +1,18 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo } from "react";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { FeatureStyleContextValue, SelectedFeatures } from "./types";
+import { FeatureStyleContextValue } from "./types";
 import { useSelectStyles } from "./useSelectStyles";
 import { getArchiveLayerStyle, grenseStyles, setFeatureStyle } from "utils/map/layerStyles";
-import { FeatureLike } from "ol/Feature";
+import Feature from "ol/Feature";
 import useCustomStyles from "./useCustomStyles";
 import { Coordinate } from "ol/coordinate";
 import { archivedSource } from "hooks/layers/constants";
-import { FeatureIdWithEndpoints, getAllFeatureEndPointCoordinates } from "utils/features";
+import {
+  FeatureIdWithEndpoints,
+  getAllFeatureEndPointCoordinates,
+  getFeaturesConnectedToFeatureAtEndpoints,
+  isFeatureDeadEnd,
+} from "utils/features";
 import { HistoryTypeValues } from "contexts/HistoryContext/types";
 import {
   filterOnlyDeadEnds,
@@ -16,13 +21,26 @@ import {
   removeDuplicateIds,
 } from "./feature-style-utils";
 import { newFeatureOnlyExistsAfterIndex, getChangeIds } from "contexts/HistoryContext/history-utils";
+import { Geometry, LineString } from "ol/geom";
+import { FeatureProperties } from "types/api";
+import { getDuplicateItems, removeNil } from "utils/list-utils";
 
 export const FeatureStyleContext = createContext<FeatureStyleContextValue | undefined>(undefined);
 
 export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }) => {
   const { history } = useHistory();
-  const { selectedPoint, selectFeatures, selectedFeatures, selectPointOnFeature, removeSelection, clearSelectedPoint } =
-    useSelectStyles();
+  const {
+    selectedPoint,
+    selectFeatures: selectFeaturesInternal,
+    selectedFeatures,
+    selectPointOnFeature: selectPointOnFeatureInternal,
+    resetSelection,
+    clearSelectedPoint,
+    renderSelectStyles,
+    addToSelection,
+    isSelectedFeature,
+    removeFromSelection: removeFromSelectionInternal,
+  } = useSelectStyles();
 
   const sammenslaaingOverlappingStyleFunctions = useCustomStyles(grenseStyles.sammenslaaingOverlapping);
   const sammenslaaingStyleFunctions = useCustomStyles(grenseStyles.sammenslaaing);
@@ -49,12 +67,9 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
   );
 
   // Når en feature ikke er valgt lengre må vi avgjøre hvilken stil den skal ha
-  const clearSelection = () => {
-    const deselectedFeatures = removeSelection();
-    for (const feature of deselectedFeatures) {
-      const featureId = feature.getId()?.toString();
-      if (featureId == null) continue;
-
+  const setDeselectedStyle = (feature: Feature<LineString>) => {
+    const featureId = feature.getId()?.toString();
+    if (featureId !== undefined) {
       // Dersom featuren har en aktiv stil faller vi tilbake til den
       const matchingCustomStyle = customStyles.find((customStyle) => customStyle.customFeatureIds.includes(featureId));
 
@@ -73,14 +88,29 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     }
   };
 
-  const clearAndSelectPointOnFeature = (coordinate: Coordinate, features: SelectedFeatures) => {
-    clearAndSelectFeatures(features);
-    selectPointOnFeature(coordinate);
+  const clearSelection = () => {
+    const deselectedFeatures = resetSelection();
+    for (const feature of deselectedFeatures) {
+      setDeselectedStyle(feature);
+    }
   };
 
-  const clearAndSelectFeatures = (features: SelectedFeatures) => {
-    clearSelection();
+  const removeFromSelection = (feature: Feature<LineString>) => {
+    removeFromSelectionInternal(feature);
+    setDeselectedStyle(feature);
+  };
+
+  const selectFeatures = (features: Feature<LineString>[]) => {
+    const deselectedFeatures = selectedFeatures.filter((sf) => !features.some((f) => sf.getId() === f.getId()));
+    for (const feature of deselectedFeatures) {
+      setDeselectedStyle(feature);
+    }
+    selectFeaturesInternal(features);
+  };
+
+  const selectPointOnFeature = (coordinate: Coordinate, features: Feature<LineString>[]) => {
     selectFeatures(features);
+    selectPointOnFeatureInternal(coordinate);
   };
 
   const undoFeatureStyles = useCallback(
@@ -162,7 +192,17 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     dirtyStyleFunctions.setCustomStyles(dirtyFeatures);
     archivedStyleFunctions.setCustomStyles(archivedFeatures);
     errorStyleFunctions.setCustomStyles(errorFeatures);
-  }, [archivedStyleFunctions, customStyles, dirtyStyleFunctions, errorStyleFunctions, history, undoFeatureStyles]);
+    renderSelectStyles(selectedFeatures);
+  }, [
+    archivedStyleFunctions,
+    customStyles,
+    dirtyStyleFunctions,
+    errorStyleFunctions,
+    history,
+    renderSelectStyles,
+    selectedFeatures,
+    undoFeatureStyles,
+  ]);
 
   const clearFeatureStyles = () => {
     for (const customStyle of customStyles) {
@@ -170,37 +210,88 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     }
   };
 
-  const featureIsArchived = (feature: FeatureLike) => {
-    const featureId = feature.getId()?.toString();
-    if (featureId != null) {
-      return (
-        archivedStyleFunctions.customFeatureIds.includes(featureId) ||
-        archivedStyleFunctions.savedCustomFeatureIds.includes(featureId)
-      );
+  const setCustomStylesForUtkastFeatures = (editedFeatures: Feature<Geometry>[]) => {
+    const dirtyFeatureIds: string[] = [];
+    const archivedFeatureIds: string[] = [];
+    const errorFeatureIds: string[] = [];
+
+    const allFeatureEndpoints = getAllFeatureEndPointCoordinates(["matrikkel", "archived"]).filter(
+      (featureEndpoint) => featureEndpoint !== null,
+    ) as FeatureIdWithEndpoints[];
+
+    for (const endretFeature of editedFeatures) {
+      const featureId = endretFeature.getId()?.toString();
+
+      if (featureId != null) {
+        const properties = endretFeature.getProperties() as FeatureProperties | undefined;
+
+        // Avgjør hvilken type endringsfarge featuren skal ha
+        if (properties != null && properties.shouldArchive) {
+          archivedFeatureIds.push(featureId);
+
+          const connectedFeatures = getFeaturesConnectedToFeatureAtEndpoints(endretFeature);
+
+          for (const connectedFeature of connectedFeatures) {
+            const connectedFeatureId = connectedFeature.getId()?.toString();
+            const connectedFeatureProperties = connectedFeature.getProperties() as FeatureProperties | undefined;
+            if (connectedFeatureId == null || !connectedFeatureProperties) continue;
+
+            if (!connectedFeatureProperties.shouldArchive && isFeatureDeadEnd(connectedFeature, allFeatureEndpoints))
+              errorFeatureIds.push(connectedFeatureId);
+          }
+        } else if (isFeatureDeadEnd(endretFeature, allFeatureEndpoints)) {
+          errorFeatureIds.push(featureId);
+        } else {
+          dirtyFeatureIds.push(featureId);
+        }
+      }
     }
-    return false;
+
+    dirtyStyleFunctions.setAndSaveCustomStyles(dirtyFeatureIds);
+    errorStyleFunctions.setAndSaveCustomStyles(errorFeatureIds);
+    archivedStyleFunctions.setAndSaveCustomStyles(archivedFeatureIds);
+  };
+
+  const setSammenslaaingsStylesForUtkastFeatures = (sammenslaaingFeatures: Feature<Geometry>[]) => {
+    const stemmekretsFeatureIds = removeNil(sammenslaaingFeatures.map((feature) => feature.getId()?.toString()));
+
+    if (stemmekretsFeatureIds.length > 0) {
+      const overlappingFeatureIds = getDuplicateItems(stemmekretsFeatureIds);
+      const uniqueStemmekretsFeatureIds = stemmekretsFeatureIds.filter((sfi) => !overlappingFeatureIds.includes(sfi));
+
+      sammenslaaingStyleFunctions.setAndSaveCustomStyles(uniqueStemmekretsFeatureIds);
+      sammenslaaingOverlappingStyleFunctions.setAndSaveCustomStyles(overlappingFeatureIds);
+    }
+  };
+
+  const setFeatureStylesForUtkast = (
+    editedFeatures: Feature<Geometry>[],
+    sammenslaaingFeatures: Feature<Geometry>[],
+  ) => {
+    setCustomStylesForUtkastFeatures(editedFeatures);
+    setSammenslaaingsStylesForUtkastFeatures(sammenslaaingFeatures);
   };
 
   const value = {
-    selectFeatures: clearAndSelectFeatures,
-    selectPointOnFeature: clearAndSelectPointOnFeature,
+    selectFeatures,
+    selectPointOnFeature,
     selectedFeatures,
     selectedPoint,
     clearSelection,
     clearSelectedPoint,
+    addToSelection,
+    removeFromSelection,
+    isSelectedFeature,
 
     addDirtyStyles: dirtyStyleFunctions.addCustomStyles,
-    setAndSaveDirtyStyles: dirtyStyleFunctions.setAndSaveCustomStyles,
-
     addErrorStyles: errorStyleFunctions.addCustomStyles,
-    setAndSaveErrorStyles: errorStyleFunctions.setAndSaveCustomStyles,
-
     addArchivedStyles: archivedStyleFunctions.addCustomStyles,
-    setAndSaveArchivedStyles: archivedStyleFunctions.setAndSaveCustomStyles,
-    featureIsArchived,
+
+    setFeatureStylesForUtkast,
 
     setAndSaveSammenslaaingStyles: sammenslaaingStyleFunctions.setAndSaveCustomStyles,
     setAndSaveSammenslaaingOverlappingStyles: sammenslaaingOverlappingStyleFunctions.setAndSaveCustomStyles,
+
     clearFeatureStyles,
   };
 

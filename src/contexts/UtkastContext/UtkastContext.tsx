@@ -1,11 +1,9 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { useMatch } from "react-router-dom";
 import { useSWRConfig } from "swr";
 import { EntityUtkastType, UtkastContextValue, UtkastEntity, UtkastRequestWithoutOperations } from "./types";
 import {
   addTempFeatureIdToNewFeaturesInUtkast,
-  applyFeatureUtkast,
   applyNonFeatureUtkast,
   historyToUtkastOperations,
   toCleanUtkast,
@@ -14,21 +12,19 @@ import { updateUtkastApi } from "api/utkast";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { HistoryChange } from "contexts/HistoryContext/types";
 import useNibasApi from "hooks/useNibasApi";
-import { ApiErrorResponse, FeatureCollection, OppdaterUtkastRequest, UtkastResponse } from "types/api";
+import { ApiErrorResponse, OppdaterUtkastRequest, UtkastResponse } from "types/api";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useToast } from "@kvib/react";
 import { routes } from "utils/routes";
-import { useSidebarPanel } from "contexts/SidebarPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { addEditedFeaturesToSource, removeEditedFeaturesFromSourceByIds } from "utils/map/source";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { FeatureIdWithEndpoints, getAllFeatureEndPointCoordinates, isFeatureDeadEnd } from "utils/features";
-import { useEditAllGrenser } from "contexts/EditGrenserContext/EditGrenserContext";
 import { resetMapView } from "utils/map/map-utils";
 import { removeNil } from "utils/list-utils";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
@@ -41,9 +37,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
 
   const { history, clearHistory } = useHistory();
   const { addDirtyStyles, addErrorStyles, clearFeatureStyles } = useFeatureStyle();
-  const { resetAndClearAllLayers } = useEditAllGrenser();
   const { closeOverlayPanel, closeOverlayModal } = useOverlayPanel();
-  const { closeSidebarPanel } = useSidebarPanel();
   const { setError } = useErrorHandling();
   const { resetTool, resetModeTools } = useToolbar();
   const toast = useToast();
@@ -83,23 +77,11 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     resetKartlag();
     clearHistory();
     clearFeatureStyles();
-    resetAndClearAllLayers();
     closeOverlayPanel();
     closeOverlayModal();
-    closeSidebarPanel();
     resetModeTools();
     resetTool();
-  }, [
-    clearFeatureStyles,
-    clearHistory,
-    closeOverlayModal,
-    closeOverlayPanel,
-    closeSidebarPanel,
-    resetAndClearAllLayers,
-    resetKartlag,
-    resetModeTools,
-    resetTool,
-  ]);
+  }, [clearFeatureStyles, clearHistory, closeOverlayModal, closeOverlayPanel, resetKartlag, resetModeTools, resetTool]);
 
   useEffect(() => {
     if (fetchedUtkast && !utkast) {
@@ -196,7 +178,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
         });
       }
 
-      setUtkast(updatedUtkastWithTempFeatureIds);
+      setUtkast(updatedUtkast);
     } else if (statusCode.isConflict(response.status)) {
       setError({
         title: "Konflikt ved lagring av utkast",
@@ -281,20 +263,4 @@ export const useUtkastEntity = <T extends UtkastEntity>(entity: T, type: EntityU
 
     return applyNonFeatureUtkast(entity, utkast, type);
   }, [entity, utkast, type]);
-};
-
-// TODO: noe er galt med typingen her, geojsonfeaturecollection betyr bare any, den fanger ikke at den returnerer undefined
-export const useUtkastFeature = (
-  featureCollection: GeoJSONFeatureCollection | GeoJSONFeatureCollection[],
-  utkast?: UtkastResponse,
-): FeatureCollection | undefined => {
-  return useMemo(() => {
-    if (featureCollection == null || !utkast) return featureCollection;
-
-    if (Array.isArray(featureCollection)) {
-      return featureCollection.map((collection) => applyFeatureUtkast(collection, utkast));
-    }
-
-    return applyFeatureUtkast(featureCollection, utkast);
-  }, [featureCollection, utkast]);
 };

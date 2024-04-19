@@ -10,7 +10,7 @@ export type NavigasjonProps = {
   onSelect: (north: number | null, east: number | null) => void;
 };
 
-const NavigasjonPanel = ({ isOpen, className }: PanelProps) => {
+const NavigasjonPanel = ({ isOpen }: PanelProps) => {
   const { closeOverlayModal } = useOverlayPanel();
 
   const centerOnCoordinate = (north: number | null, east: number | null) => {
@@ -22,7 +22,7 @@ const NavigasjonPanel = ({ isOpen, className }: PanelProps) => {
   };
 
   return (
-    <Container $isOpen={isOpen} className={className}>
+    <Container $isOpen={isOpen}>
       <CustomTabs size="md">
         <TabList>
           <Tab>Gå til inndeling</Tab>

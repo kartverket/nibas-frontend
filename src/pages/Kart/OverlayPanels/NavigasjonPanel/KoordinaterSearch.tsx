@@ -1,8 +1,10 @@
-import { Button, Input, InputGroup, InputRightAddon } from "@kvib/react";
+import { Button, InputGroup, InputRightAddon } from "@kvib/react";
 import { useForm } from "react-hook-form";
 import { coordinateDecimalPattern, coordinateDecimalPatternHelperText } from "../FlyttKoordinaterPanel";
 import { NavigasjonProps } from "./NavigasjonPanel";
 import { styled } from "styled-components";
+import { norwayExtent } from "pages/Kart/constants";
+import Input from "components/Input";
 
 const Form = styled.form`
   display: grid;
@@ -17,7 +19,7 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
     handleSubmit,
     getValues,
     reset,
-    formState: { isDirty },
+    formState: { errors, isDirty },
   } = useForm<{ north: number | null; east: number | null }>({
     defaultValues: { north: null, east: null },
   });
@@ -37,7 +39,15 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
           title={coordinateDecimalPatternHelperText}
           placeholder="Fyll inn koordinat ..."
           isRequired
-          {...register("north")}
+          {...register("north", {
+            validate: (value: number | null) =>
+              (value !== null && value > norwayExtent[1] && value < norwayExtent[3]) ||
+              "Koordinatet må være innenfor Norges lengde",
+          })}
+          validationError={{
+            showError: !!errors.north,
+            message: errors.north?.message ?? "",
+          }}
         />
         <InputRightAddon>N</InputRightAddon>
       </InputGroup>
@@ -49,7 +59,15 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
           title={coordinateDecimalPatternHelperText}
           placeholder="Fyll inn koordinat ..."
           isRequired
-          {...register("east")}
+          {...register("east", {
+            validate: (value: number | null) =>
+              (value !== null && value > norwayExtent[0] && value < norwayExtent[2]) ||
+              "Koordinatet må være innenfor Norges bredde",
+          })}
+          validationError={{
+            showError: !!errors.east,
+            message: errors.east?.message ?? "",
+          }}
         />
         <InputRightAddon>Ø</InputRightAddon>
       </InputGroup>

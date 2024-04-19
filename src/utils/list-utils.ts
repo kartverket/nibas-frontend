@@ -1,12 +1,46 @@
 import get from "lodash.get";
-import { isNotNil } from "./type-utils";
+import { isNotNil, Primitive } from "./type-utils";
 
 export function removeNil<T>(list: (T | null | undefined)[]): T[] {
   return list.filter(isNotNil);
 }
 
-export function deduplicate<T>(list: T[]): T[] {
-  return list.filter((element, index) => list.indexOf(element) === index);
+export function getUniqueItemsBy<T>(list: T[], selector: (item: T) => Primitive): T[] {
+  const uniqueItems: T[] = [];
+  for (const item of list) {
+    if (uniqueItems.every((k) => selector(k) !== selector(item))) {
+      uniqueItems.push(item);
+    }
+  }
+  return uniqueItems;
+}
+
+export function getUniqueItems<T extends Primitive>(list: T[]): T[] {
+  return getUniqueItemsBy(list, (item) => item);
+}
+
+export function getDuplicateItemsBy<T>(list: T[], predicate: (item: T) => Primitive): T[] {
+  const seenItems: T[] = [];
+  const duplicateItems: T[] = [];
+
+  for (const item of list) {
+    const duplicate = seenItems.find((seenItem) => predicate(seenItem) === predicate(item));
+
+    if (duplicate != null) {
+      const duplicateIsAdded = duplicateItems.find(
+        (duplicateItem) => predicate(duplicateItem) === predicate(duplicate),
+      );
+      if (duplicateIsAdded == null) duplicateItems.push(duplicate);
+    } else {
+      seenItems.push(item);
+    }
+  }
+
+  return duplicateItems;
+}
+
+export function getDuplicateItems<T extends Primitive>(list: T[]): T[] {
+  return getDuplicateItemsBy(list, (item) => item);
 }
 
 export function addToList<T>(element: T | null | undefined, list: T[] | null): T[] {

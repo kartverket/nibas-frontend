@@ -4,8 +4,7 @@ import { pixelTolerance } from "./constants";
 import { useToolbar } from "contexts/ToolbarContext";
 import { noModifierKeys } from "ol/events/condition";
 import { grenseStyles } from "utils/map/layerStyles";
-import { useEditAllGrenser } from "contexts/EditGrenserContext/EditGrenserContext";
-import { getGrenseTypeFromEditingType } from "hooks/layers/types";
+import { getGrensetypeFromInndelingtype } from "hooks/layers/types";
 import { useToast } from "@kvib/react";
 import { Feature, MapBrowserEvent } from "ol";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
@@ -24,14 +23,15 @@ import { findNearbyVertexOnFeature } from "utils/map/map-utils";
 import useToastUnique from "hooks/toast/useToastUnique";
 import { addFeaturesToSource } from "utils/map/source";
 import { editSource } from "hooks/layers/constants";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
 const useDraw = () => {
   const { activeTool, activeModeTools, toggleTool } = useToolbar();
-  const { getCurrentlyEditingType } = useEditAllGrenser();
+  const { currentlyEditedInndeling } = useInndelinger();
   const { addHistoryEntry } = useHistory();
   const { openOverlayPanel } = useOverlayPanel();
   const { selectFeatures, selectedFeatures } = useFeatureStyle();
-  const { getActiveFeaturesAtPixel } = useGetFeatures();
+  const { getLineStringFeaturesAtPixel } = useGetFeatures();
   const toast = useToast();
   const { performFeatureSplit } = useSplit();
   const { openAsync } = useConfirmationModal();
@@ -58,7 +58,7 @@ const useDraw = () => {
       condition: (event: MapBrowserEvent<MouseEvent>) => {
         if (!noModifierKeys(event) || activeTool !== "draw" || activeModeTools.includes("move")) return false;
 
-        const featuresAtPixel = getActiveFeaturesAtPixel(event, "edit");
+        const featuresAtPixel = getLineStringFeaturesAtPixel(event, "edit");
 
         // Legg til feature hvis vi ikke treffer noen andre features
         if (featuresAtPixel.length === 0) {
@@ -108,14 +108,13 @@ const useDraw = () => {
         return true;
       },
     });
-  }, [abortDrawMemoHelper, activeTool, activeModeTools, getActiveFeaturesAtPixel, toast, endpointToast]);
+  }, [abortDrawMemoHelper, activeTool, activeModeTools, getLineStringFeaturesAtPixel, toast, endpointToast]);
 
   useEffect(() => {
     const addDrawToHistory = (drawnFeature: Feature<LineString>) => {
-      const editingType = getCurrentlyEditingType();
-      if (!editingType) return;
+      if (currentlyEditedInndeling == null) return;
 
-      const grenseType = getGrenseTypeFromEditingType(editingType);
+      const grenseType = getGrensetypeFromInndelingtype(currentlyEditedInndeling.inndelingtype);
 
       if (grenseType) {
         addHistoryEntry({
@@ -157,6 +156,7 @@ const useDraw = () => {
       const drawnFeatureHead = drawnFeatureGeometry.getFirstCoordinate();
       const drawnFeatureTail = drawnFeatureGeometry.getLastCoordinate();
       const geometry = feature.getGeometry();
+
       if (geometry && geometry instanceof LineString) {
         const coordinates = geometry.getCoordinates();
         const head = geometry.getFirstCoordinate();
@@ -175,13 +175,12 @@ const useDraw = () => {
     };
 
     const onDrawEnd = async (e: DrawEvent) => {
-      const editingType = getCurrentlyEditingType();
       const drawnFeature = e.feature as Feature<LineString>;
       const drawnFeatureGeometry = drawnFeature.getGeometry();
 
       // Skal ikke være mulig da tegneverktøyet bare skal være tilgjengelig i redigering
       if (
-        !editingType ||
+        !currentlyEditedInndeling ||
         !drawnFeatureGeometry ||
         drawnFeatureGeometry.getLength() === 0 ||
         drawnFeatureGeometry.getCoordinates().length < 2
@@ -199,7 +198,7 @@ const useDraw = () => {
         splitFeatureAtDrawnFeatureEndpoints(feature, drawnFeatureGeometry);
       }
 
-      setDefaultFeatureProperties(drawnFeature, getGrenseTypeFromEditingType(editingType));
+      setDefaultFeatureProperties(drawnFeature, getGrensetypeFromInndelingtype(currentlyEditedInndeling.inndelingtype));
 
       addDrawToHistory(drawnFeature);
       addFeaturesToSource("edit", [drawnFeature]);
@@ -225,8 +224,8 @@ const useDraw = () => {
     };
   }, [
     addHistoryEntry,
+    currentlyEditedInndeling,
     draw,
-    getCurrentlyEditingType,
     openAsync,
     openOverlayPanel,
     performFeatureSplit,

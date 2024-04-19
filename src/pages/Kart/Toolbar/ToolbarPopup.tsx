@@ -7,7 +7,7 @@ type Props = {
   onClick?: () => void;
   secondaryOnClick?: () => void;
   secondaryButtonText?: string;
-  onClose: () => void;
+  onClose?: () => void;
   buttonText?: string;
   isDisabled?: boolean;
   isLoading?: boolean;
@@ -42,9 +42,11 @@ const ToolbarPopup = ({
           {secondaryButtonText}
         </Button>
       )}
-      <Button size="sm" variant="ghost" onClick={onClose}>
-        Lukk
-      </Button>
+      {onClose != null && (
+        <Button size="sm" variant="ghost" onClick={onClose}>
+          Lukk
+        </Button>
+      )}
     </ToolbarPopupBody>
   );
 };

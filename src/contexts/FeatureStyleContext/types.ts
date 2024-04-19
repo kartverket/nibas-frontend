@@ -1,29 +1,27 @@
 import { Feature } from "ol";
-import { FeatureLike } from "ol/Feature";
 import { Coordinate } from "ol/coordinate";
+import { Geometry } from "ol/geom";
 import LineString from "ol/geom/LineString";
 import Point from "ol/geom/Point";
 
-export type SelectedFeatures = Feature<LineString>[];
 export type SelectedPoint = Feature<Point> | null;
 
 export type FeatureStyleContextValue = {
-  selectedFeatures: SelectedFeatures;
-  selectPointOnFeature: (coordinate: Coordinate, features: SelectedFeatures) => void;
-  selectFeatures: (features: SelectedFeatures) => void;
+  selectedFeatures: Feature<LineString>[];
+  selectPointOnFeature: (coordinate: Coordinate, features: Feature<LineString>[]) => void;
+  selectFeatures: (features: Feature<LineString>[]) => void;
   selectedPoint: SelectedPoint;
   clearSelection: () => void;
   clearSelectedPoint: () => void;
+  addToSelection: (feature: Feature<LineString>) => void;
+  removeFromSelection: (feature: Feature<LineString>) => void;
+  isSelectedFeature: (feature: Feature<LineString>) => boolean;
 
   addDirtyStyles: (featureIds: string[]) => void;
-  setAndSaveDirtyStyles: (featureIds: string[]) => void;
-
   addErrorStyles: (featureIds: string[]) => void;
-  setAndSaveErrorStyles: (featureIds: string[]) => void;
-
   addArchivedStyles: (featureIds: string[]) => void;
-  setAndSaveArchivedStyles: (features: string[]) => void;
-  featureIsArchived: (feature: FeatureLike) => boolean;
+
+  setFeatureStylesForUtkast: (editedFeatures: Feature<Geometry>[], sammenslaaingFeatures: Feature<Geometry>[]) => void;
 
   setAndSaveSammenslaaingStyles: (features: string[]) => void;
   setAndSaveSammenslaaingOverlappingStyles: (features: string[]) => void;

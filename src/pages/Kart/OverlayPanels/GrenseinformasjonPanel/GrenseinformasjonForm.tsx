@@ -7,7 +7,6 @@ import { dateToFormattedDatestring, datestringToFormattedDatestring } from "./gr
 import useNibasApi from "hooks/useNibasApi";
 import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
-import { useEditAllGrenser } from "contexts/EditGrenserContext/EditGrenserContext";
 import GrenseinformasjonRow from "./GrenseinformasjonRow";
 import useIsGrenseinformasjonPanelDisabled from "../hooks/useIsGrenseInformasjonPanelDisabled";
 import { useGrenseinformasjonForm } from "../hooks/useGrenseinformasjonForm";
@@ -15,8 +14,8 @@ import { PanelHeader } from "../Panel";
 import { useEffect, useState } from "react";
 import { Controller } from "react-hook-form";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { EditingType } from "contexts/EditGrenserContext/types";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
+import { Inndelingtype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
 type Props = {
   feature: Feature<Geometry>;
@@ -53,7 +52,7 @@ const EditGrenseInfoButton = ({ isEditing, handleSubmit, toggleEdit }: EditGrens
 
 const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
-  const { getCurrentlyEditingType } = useEditAllGrenser();
+  const { currentlyEditedInndeling } = useInndelinger();
   const { history } = useHistory();
   const [isEditing, setIsEditing] = useState(false);
   const isGrenseinformasjonPanelDisabled = useIsGrenseinformasjonPanelDisabled(feature);
@@ -78,11 +77,11 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
     return "Ukjent målemetode er registrert på grensen";
   };
 
-  const getPossibleGrenseTypesFromEditingType = (editingType: EditingType | null): GrenseType[] => {
-    if (editingType === "stemmekrets") {
+  const getPossibleGrenseTypesFromInndelingtype = (inndelingtype: Inndelingtype | undefined): GrenseType[] => {
+    if (inndelingtype === "stemmekrets") {
       return ["Stemmekretsgrense", "Kommunegrense"];
     }
-    if (editingType === "grunnkrets") {
+    if (inndelingtype === "grunnkrets") {
       return ["Grunnkretsgrense", "Delområdegrense", "Kommunegrense"];
     }
 
@@ -166,7 +165,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         isRequired
       >
         <Select {...register("grenseType")}>
-          {getPossibleGrenseTypesFromEditingType(getCurrentlyEditingType()).map((type) => (
+          {getPossibleGrenseTypesFromInndelingtype(currentlyEditedInndeling?.inndelingtype).map((type) => (
             <option key={type} value={type}>
               {type}
             </option>

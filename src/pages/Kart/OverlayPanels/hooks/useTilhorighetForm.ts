@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FeatureProperties, KontekstEgenskaper, KretsDelingEndringRequest, UtkastOperasjoner } from "types/api";
-import { getIdFromEntity } from "utils/api";
 import {
   CustomOption,
   KontekstType,
@@ -17,10 +16,11 @@ import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { Feature } from "ol";
 import { LineString } from "ol/geom";
 import { addKontekstEntryFromFeature } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { isGrenseType } from "utils/type-utils";
 import { GrenseType } from "hooks/layers/types";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import useNibasApi from "hooks/useNibasApi";
 
 const mapGrenseTypeTilKontekstType = (grenseType: GrenseType): KontekstType => {
   switch (grenseType) {
@@ -32,11 +32,11 @@ const mapGrenseTypeTilKontekstType = (grenseType: GrenseType): KontekstType => {
 };
 
 const getKretserFromKretsDelingEndringer = (
-  kommunerId: string[],
+  kommunerIdOgNummer: { id: string; nummer: string }[],
   kretsDelingEndringRequests: KretsDelingEndringRequest[],
 ): Krets[] => {
   return kretsDelingEndringRequests
-    .filter((kretsDeling) => kommunerId.includes(kretsDeling.kommuneId.lokalid.value))
+    .filter((kretsDeling) => kommunerIdOgNummer.some(({ id }) => id === kretsDeling.kommuneId.lokalid.value))
     .flatMap((kretsDeling) =>
       kretsDeling.nyeKretser.map((nyKrets) => ({
         id: {
@@ -44,6 +44,8 @@ const getKretserFromKretsDelingEndringer = (
           gyldighetsdato: "",
         },
         kommuneId: kretsDeling.kommuneId,
+        kommunenummer:
+          kommunerIdOgNummer.find((idOgNummer) => idOgNummer.id === kretsDeling.kommuneId.lokalid.value)?.nummer ?? "",
         version: kretsDeling.opprinneligKrets.version,
         type: kretsDeling.flatetype === "STEMMEKRETS" ? KontekstType.STEMMEKRETS : KontekstType.GRUNNKRETS,
         navn: nyKrets.kretsNavn,
@@ -85,8 +87,19 @@ const getIdForKontekstEgenskaper = (
   }
 };
 
-export const useTilhorighetForm = (feature: Feature) => {
+const getKontekstTypeForFeature = (
+  kontekstgenskaper: KontekstEgenskaper[],
+  featureProperties: FeatureProperties,
+): KontekstType => {
+  return (
+    kontekstgenskaper.map((k) => k.type as KontekstType)[0] ??
+    (isGrenseType(featureProperties.type) && mapGrenseTypeTilKontekstType(featureProperties.type))
+  );
+};
+
+export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: KontekstType) => {
   const { addHistoryEntry } = useHistory();
+  const { data: kommuneResponses } = useNibasApi("/v1/kommuner");
   const { utkast } = useUtkast();
 
   const featureProperties = feature.getProperties() as FeatureProperties;
@@ -94,18 +107,27 @@ export const useTilhorighetForm = (feature: Feature) => {
     () => featureProperties.kontekstEgenskaper.map((ke) => getIdForKontekstEgenskaper(ke, utkast?.operasjoner)), // kontekster som peker til nye kretser i utkastet har undefined som id. Vi må gi disse en unik id også som kan brukes i formet.
     [featureProperties.kontekstEgenskaper, utkast],
   );
-  const kontekstType =
-    kontekstEgenskaper.map((k) => k.type as KontekstType)[0] ??
-    (isGrenseType(featureProperties.type) && mapGrenseTypeTilKontekstType(featureProperties.type));
-  const { flatedata } = useOverlayPanel();
+  const kontekstType = kontekstTypeOverride ?? getKontekstTypeForFeature(kontekstEgenskaper, featureProperties);
+  const { currentlyEditedInndeling } = useInndelinger();
 
   const kommunerId = useMemo(
     () =>
       getKommunerIdFromKontekstEgenskaper(
         kontekstEgenskaper.filter((k) => k.id?.lokalid.value !== CustomOption.NOT_CHOSEN),
-      ) ?? (flatedata ? [getIdFromEntity(flatedata)] : []),
-    [flatedata, kontekstEgenskaper],
+        kontekstType,
+      ) ?? [currentlyEditedInndeling != null ? currentlyEditedInndeling.id : ""],
+    [kontekstType, currentlyEditedInndeling, kontekstEgenskaper],
   );
+
+  const kommunerIdOgNummer: { id: string; nummer: string }[] = useMemo(() => {
+    if (kommuneResponses == null) {
+      return [];
+    }
+
+    return kommuneResponses
+      .filter((kommune) => kommunerId.some((id) => id === kommune.id.lokalid.value))
+      .map((kommune) => ({ id: kommune.id.lokalid.value, nummer: kommune.nummer }));
+  }, [kommuneResponses, kommunerId]);
 
   const [tilhorighetOptions, setTilhorighetValg] = useState<TilhorighetOptions>();
 
@@ -114,7 +136,7 @@ export const useTilhorighetForm = (feature: Feature) => {
     (commonOptions: TilhorighetOptions | undefined) => {
       if (utkast && commonOptions) {
         const tilhorighetOptionsFromUtkast = getKretserFromKretsDelingEndringer(
-          kommunerId,
+          kommunerIdOgNummer,
           utkast.operasjoner.kretsDelingEndringer.filter((deling) => deling.flatetype === kontekstType),
         );
         setTilhorighetValg({
@@ -125,7 +147,7 @@ export const useTilhorighetForm = (feature: Feature) => {
         setTilhorighetValg(commonOptions);
       }
     },
-    [kommunerId, kontekstType, utkast],
+    [kommunerIdOgNummer, kontekstType, utkast],
   );
 
   const {
@@ -147,6 +169,7 @@ export const useTilhorighetForm = (feature: Feature) => {
         kontekstType,
         getValues(kontekstType),
         tilhorighetOptions,
+        kontekstEgenskaper,
       );
       addKontekstEntryFromFeature(feature as Feature<LineString>, oppdaterteKontekstEgenskaper, addHistoryEntry);
     }

@@ -2,7 +2,7 @@ export const routes = {
   index: "/",
   afterAuthentication: "/authenticated",
   authentication: "/auth",
-  notAutherized: "notautherized",
+  notAuthorized: "notauthorized",
   authError: "autherror",
   logout: "/logout",
   utkast: "/utkast",

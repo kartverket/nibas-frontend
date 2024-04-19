@@ -1,5 +1,5 @@
 import { GrunnkretsResponse, KommuneResponse, UtkastOperasjoner } from "../../../types/api";
-import { deduplicate, removeNil } from "utils/list-utils";
+import { getUniqueItems, removeNil } from "utils/list-utils";
 import {
   GrunnkretsEndringstype,
   Grunnkretsendringer,
@@ -33,7 +33,7 @@ export const getGrunnkretserMedEndringer = (operasjoner: OperasjonerOrNull): str
     .concat(grunnkretsMetadataEndringer)
     .concat(grunnkretserMedSplitting);
 
-  return deduplicate(alleGrunnkretserMedEndringer);
+  return getUniqueItems(alleGrunnkretserMedEndringer);
 };
 
 const getEndringAvTypeForId = (

@@ -17,7 +17,7 @@ export const AfterAuthentication = () => {
         if (result) {
           navigate(routes.index, { replace: true });
         } else {
-          navigate(`${routes.authentication}/${routes.notAutherized}`, { replace: true });
+          navigate(`${routes.authentication}/${routes.notAuthorized}`, { replace: true });
         }
       });
     }

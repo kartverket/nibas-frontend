@@ -17,6 +17,7 @@ import { PanelHeader, PanelProps, SidePanel } from "../Panel";
 import { CustomOption } from "../hooks/tilhorighet-utils";
 import { ChangeEvent, useEffect } from "react";
 import { useSplittingForm } from "./useSplittingForm";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
 const NyKretsField = styled.div`
   display: flex;
@@ -50,10 +51,11 @@ const StyledList = styled.ul`
   list-style-type: none;
 `;
 
-export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
-  const { flatedata, closeOverlayPanel } = useOverlayPanel();
+export const SplittingPanel = ({ isOpen }: PanelProps) => {
+  const { closeOverlayPanel } = useOverlayPanel();
+  const { currentlyEditedInndeling } = useInndelinger();
   const {
-    editingType,
+    inndelingtype,
     opprinneligFlateOptions,
     fields,
     register,
@@ -67,11 +69,11 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
     errors,
     trigger,
     isSubmitted,
-  } = useSplittingForm(flatedata);
+  } = useSplittingForm(currentlyEditedInndeling);
 
   useEffect(() => {
     resetSplitting();
-  }, [flatedata, resetSplitting]); // Vi ønsker å kalle reset hvis vi bytter inndeling
+  }, [currentlyEditedInndeling, resetSplitting]); // Vi ønsker å kalle reset hvis vi bytter inndeling
 
   const closeAndResetForm = () => {
     closeOverlayPanel();
@@ -81,7 +83,7 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
   const validateNotDuplicateKretsnummer = (value: string) => {
     const conflictingKrets = opprinneligFlateOptions.find((krets) => krets.nummer === value);
     if (conflictingKrets) {
-      return `Nytt ${editingType}nummer er allerede i bruk av ${conflictingKrets.nummer} ${conflictingKrets.navn}`;
+      return `Nytt ${inndelingtype}nummer er allerede i bruk av ${conflictingKrets.nummer} ${conflictingKrets.navn}`;
     }
 
     const nyeKretsNummere = getValues("nyeKretser").map((k) => k.kretsNummer);
@@ -89,31 +91,31 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
     nyeKretsNummere.splice(indexOfCurrentNummer, 1); // fjerner value fra lista
     if (nyeKretsNummere.includes(value)) {
       // hvis et nummer lik value fremdeles er i lista har vi duplikat for value
-      return `Nytt ${editingType}nummer er allerede i bruk i denne splittingen`;
+      return `Nytt ${inndelingtype}nummer er allerede i bruk i denne splittingen`;
     }
 
     return true;
   };
 
   const kretsNumberValidator = {
-    required: `Ny ${editingType} må ha et nummer`,
+    required: `Ny ${inndelingtype} må ha et nummer`,
     pattern: {
       value: /^\d+$/,
-      message: `Nytt ${editingType}nummer må være et gyldig positivt tall`,
+      message: `Nytt ${inndelingtype}nummer må være et gyldig positivt tall`,
     },
     minValue: {
       value: 1,
-      message: `Nytt ${editingType}nummer må være et gyldig positivt tall`,
+      message: `Nytt ${inndelingtype}nummer må være et gyldig positivt tall`,
     },
     minLength: {
-      value: editingType === "stemmekrets" ? 1 : 8,
-      message: `Nytt ${editingType}nummer må være ${
-        editingType === "stemmekrets" ? "minst 1 tegn langt" : "nøyaktig 8 tegn langt"
+      value: inndelingtype === "stemmekrets" ? 1 : 8,
+      message: `Nytt ${inndelingtype}nummer må være ${
+        inndelingtype === "stemmekrets" ? "minst 1 tegn langt" : "nøyaktig 8 tegn langt"
       }`,
     },
     maxLength: {
-      value: editingType === "stemmekrets" ? 4 : 8,
-      message: `Nytt ${editingType}nummer kan ikke være lengre enn ${editingType === "stemmekrets" ? 4 : 8} tegn`,
+      value: inndelingtype === "stemmekrets" ? 4 : 8,
+      message: `Nytt ${inndelingtype}nummer kan ikke være lengre enn ${inndelingtype === "stemmekrets" ? 4 : 8} tegn`,
     },
     validate: validateNotDuplicateKretsnummer,
   };
@@ -135,7 +137,7 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
   const opprinneligKretsRegister = register("opprinneligKrets.lokalId");
 
   return (
-    <SidePanel $isOpen={isOpen} className={className}>
+    <SidePanel $isOpen={isOpen}>
       <PanelHeader
         onClose={closeAndResetForm}
         subHeading="Ved å splitte en flate kan du opprette en eller flere nye flater"
@@ -145,7 +147,7 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
 
       <Stack spacing={8}>
         <FormControl>
-          <FormLabel>{`Hvilken ${editingType} skal splittes?`}</FormLabel>
+          <FormLabel>{`Hvilken ${inndelingtype} skal splittes?`}</FormLabel>
           <Select
             {...opprinneligKretsRegister}
             onChange={(e) => {
@@ -153,7 +155,7 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
               handleOpprinneligKretsChange(e);
             }}
           >
-            <option value={CustomOption.NOT_CHOSEN}>{`Velg ${editingType}`}</option>
+            <option value={CustomOption.NOT_CHOSEN}>{`Velg ${inndelingtype}`}</option>
             {opprinneligFlateOptions?.map((krets) => (
               <option
                 value={krets.id.lokalid.value}
@@ -185,7 +187,7 @@ export const SplittingPanel = ({ isOpen, className }: PanelProps) => {
                       <Input
                         disabled={index === 0}
                         {...register(`nyeKretser.${index}.kretsNavn`, {
-                          required: `Ny ${editingType} må ha et navn`,
+                          required: `Ny ${inndelingtype} må ha et navn`,
                         })}
                       />
                     </FormControl>

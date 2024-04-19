@@ -24,13 +24,7 @@ const UtkastEndringslogg = ({ utkast }: Props) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   return (
     <>
-      <MenuItem
-        icon={<Icon icon="published_with_changes" />}
-        onClick={(e) => {
-          e.stopPropagation();
-          onOpen();
-        }}
-      >
+      <MenuItem icon={<Icon icon="published_with_changes" />} onClick={onOpen}>
         Se endringslogg
       </MenuItem>
       <EndringsloggModal isOpen={isOpen} onClose={onClose} utkast={utkast} />

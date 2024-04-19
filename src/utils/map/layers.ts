@@ -10,6 +10,7 @@ import VectorSource from "ol/source/Vector";
 import { WFS } from "ol/format";
 import { getFeaturesFromGeoJson } from "./geoJson";
 import { addFeaturesToSource } from "./source";
+import { defaultProjection } from "./projections";
 
 const getLayersArray = () => map.getLayers().getArray() ?? [];
 
@@ -39,20 +40,10 @@ export const isWMSLayer = (layer: BaseLayer): layer is TileLayer<TileWMS> => {
   return layer instanceof TileLayer && layer.getSource() instanceof TileWMS;
 };
 
-export const removeAllFeatures = () => {
-  Object.values(grenserLayers).forEach((layer) => {
-    const source = layer.getSource();
-    if (source) {
-      // Obs! Bruker fast-flagget siden vi ikke lytter på removeFeature-eventet per nå
-      source.clear(true);
-    }
-  });
-};
-
 export const getMatrikkelFeatures = async () => {
   const extent = map.getView().calculateExtent(map.getSize());
   const request: Node = new WFS({ version: "2.0.0" }).writeGetFeature({
-    srsName: "EPSG:25833",
+    srsName: defaultProjection,
     featureNS: "http://www.statkart.no/matrikkel",
     featurePrefix: "matrikkel",
     featureTypes: ["TEIGGRENSEWFS"],

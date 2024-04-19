@@ -2,18 +2,19 @@ import Feature from "ol/Feature";
 import GeoJSON, { GeoJSONFeature, GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { Geometry } from "ol/geom";
 import VectorSource from "ol/source/Vector";
+import { defaultProjection } from "./projections";
 
 const geoJson = new GeoJSON();
 
 export const getFeaturesFromGeoJson = (json: GeoJSONFeature | GeoJSONFeatureCollection) => {
   return geoJson.readFeatures(json, {
-    dataProjection: "EPSG:25833",
+    dataProjection: defaultProjection,
   }) as Feature<Geometry>[];
 };
 
 export const getFeatureFromGeoJson = (json: GeoJSONFeature) => {
   return geoJson.readFeature(json, {
-    dataProjection: "EPSG:25833",
+    dataProjection: defaultProjection,
   }) as Feature<Geometry>;
 };
 
@@ -25,5 +26,5 @@ export const geoJsonToSource = (json: GeoJSONFeature | GeoJSONFeatureCollection)
 
 export const featureToGeoJson = (feature: Feature<Geometry>): GeoJSONFeature =>
   geoJson.writeFeatureObject(feature, {
-    dataProjection: "EPSG:25833",
+    dataProjection: defaultProjection,
   });

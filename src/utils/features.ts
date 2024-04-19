@@ -1,4 +1,4 @@
-import { GrenseType, LayerId, editableGrenseTypes, getEditingTypeFromGrenseType } from "hooks/layers/types";
+import { GrenseType, LayerId, editableGrenseTypes, getInndelingtypeFromGrensetype } from "hooks/layers/types";
 import { MetadataDiscriminator, getMetadataDiscriminatorFromType, isAdministrativGrense } from "./grenser";
 import { Feature } from "ol";
 import { Geometry, LineString } from "ol/geom";
@@ -150,9 +150,7 @@ export const isFeatureDeadEnd = (feature: Feature<Geometry>, allFeatureEndpoints
     (featureEndPoint) => equals(featureEndPoint.endpoints.first, tail) || equals(featureEndPoint.endpoints.last, tail),
   );
 
-  const test = !(isHeadConnected2 && isTailConnected2);
-
-  return test;
+  return !(isHeadConnected2 && isTailConnected2);
 };
 
 const getDefaultFeatureMetadata = (discriminator: MetadataDiscriminator): Metadata => {
@@ -175,9 +173,9 @@ const getDefaultFeatureMetadata = (discriminator: MetadataDiscriminator): Metada
 
 export const getDefaultFeatureProperties = (grenseType: GrenseType): FeatureProperties | null => {
   const metadataDiscriminator = getMetadataDiscriminatorFromType(grenseType);
-  const editingType = getEditingTypeFromGrenseType(grenseType);
+  const inndelingtype = getInndelingtypeFromGrensetype(grenseType);
 
-  if (!metadataDiscriminator || !editingType) return null;
+  if (!metadataDiscriminator || !inndelingtype) return null;
 
   const metadata: Metadata = getDefaultFeatureMetadata(metadataDiscriminator);
 
@@ -185,7 +183,7 @@ export const getDefaultFeatureProperties = (grenseType: GrenseType): FeatureProp
     inndelingerKontekst: {
       // Burde sette ID her fra noe? Vet ikke hvordan man kan hente ut inndelingskonteksten automatisk
       id: "",
-      type: editingType,
+      type: inndelingtype,
     },
     kontekstEgenskaper: [],
     shouldArchive: false,
@@ -198,12 +196,16 @@ export const getDefaultFeatureProperties = (grenseType: GrenseType): FeatureProp
   return properties;
 };
 
-export const isFeatureEditable = (feature: FeatureLike, isArchived: boolean) => {
+export const isFeatureEditable = (
+  feature: FeatureLike,
+  isArchived = false,
+  requireAllContextsVisible: boolean = true,
+) => {
   const isMetadataEditable = isFeatureMetadataEditable(feature, isArchived);
 
   const featureType = feature.get("type");
 
-  if (isGrenseType(featureType) && isAdministrativGrense(featureType)) {
+  if (isGrenseType(featureType) && isAdministrativGrense(featureType) && requireAllContextsVisible) {
     if (isTempFeatureId(feature.getId())) return true;
 
     const properties = feature.getProperties() as FeatureProperties;
@@ -262,3 +264,5 @@ export const isMatrikkelFeature = (feature: FeatureLike) => {
 
   return false;
 };
+
+export const isFeatureToBeArchived = (feature: FeatureLike): boolean => feature.get("shouldArchive") ?? false;

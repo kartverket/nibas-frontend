@@ -1,12 +1,6 @@
 import { ReactNode } from "react";
 import { KartlagProvider, KartlagContext, KartlagContextValue } from "contexts/KartlagContext/KartlagContext";
-import {
-  EditGrenserProvider,
-  EditGrenserContext,
-  EditGrenserContextValue,
-} from "contexts/EditGrenserContext/EditGrenserContext";
 import { OverlayPanelProvider, OverlayPanelContext, OverlayPanelContextValue } from "contexts/OverlayPanelContext";
-import { SidebarPanelProvider, SidebarPanelContext, SidebarPanelContextValue } from "contexts/SidebarPanelContext";
 import { HistoryProvider, HistoryContext } from "contexts/HistoryContext/HistoryContext";
 import { HistoryContextValue } from "contexts/HistoryContext/types";
 import { ToolbarProvider, ToolbarContext, ToolbarContextValue } from "contexts/ToolbarContext";
@@ -30,9 +24,7 @@ const defaultProviderMap = {
   HistoryProvider,
   FeatureStyleProvider,
   ToolbarProvider,
-  SidebarPanelProvider,
   OverlayPanelProvider,
-  EditGrenserProvider,
   KartlagProvider,
   UtkastProvider,
 };
@@ -43,9 +35,7 @@ const contextMap = {
   HistoryProvider: HistoryContext.Provider,
   ToolbarProvider: ToolbarContext.Provider,
   FeatureStyleProvider: FeatureStyleContext.Provider,
-  SidebarPanelProvider: SidebarPanelContext.Provider,
   OverlayPanelProvider: OverlayPanelContext.Provider,
-  EditGrenserProvider: EditGrenserContext.Provider,
   KartlagProvider: KartlagContext.Provider,
   UtkastProvider: UtkastContext.Provider,
 };
@@ -56,9 +46,7 @@ export type TestProviderValues = {
   HistoryProvider?: HistoryContextValue | boolean;
   ToolbarProvider?: ToolbarContextValue | boolean;
   FeatureStyleProvider?: FeatureStyleContextValue | boolean;
-  SidebarPanelProvider?: SidebarPanelContextValue | boolean;
   OverlayPanelProvider?: OverlayPanelContextValue | boolean;
-  EditGrenserProvider?: EditGrenserContextValue | boolean;
   KartlagProvider?: KartlagContextValue | boolean;
   UtkastProvider?: UtkastContextValue | boolean;
 };

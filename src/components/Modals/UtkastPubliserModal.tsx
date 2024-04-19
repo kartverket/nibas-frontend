@@ -34,6 +34,7 @@ import { statusCode } from "utils/api";
 import { isAdministrativGrense } from "utils/grenser";
 import { routes } from "utils/routes";
 import { isGrenseType } from "utils/type-utils";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
 type Props = {
   isOpen: boolean;
@@ -53,10 +54,13 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
   const utkastPathMatch = useMatch(`${routes.utkast}/${routes.utkastId}`);
   const abstractedHistory = useUnsavedEndringer();
 
+  const { clearInndelingerAndSources } = useInndelinger();
+
   const cleanUpUtkast = () => {
     mutate(["/v1/utkast", token]);
 
     // Mutate alle grense-ressurser som kan ha vært endret
+    // revalidate: false gjør at grensedata er satt til undefined når man forsøker å hente grensene på nytt igjen
     mutate(
       (key) =>
         Array.isArray(key) &&
@@ -64,6 +68,8 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
         (key[0].endsWith("/grenser") ||
           key[0].endsWith("/stemmekretsgrenser") ||
           key[0].endsWith("/grunnkretsgrenser")),
+      undefined,
+      { revalidate: false },
     );
   };
 
@@ -86,6 +92,7 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
       });
       cleanUpUtkast();
       closeUtkast();
+      clearInndelingerAndSources();
 
       if (utkastPathMatch) {
         navigate(routes.utkast);

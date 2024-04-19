@@ -30,7 +30,7 @@ export const AuthLogIn = () => {
   );
 };
 
-export const AuthNotAutherized = () => (
+export const AuthNotAuthorized = () => (
   <ErrorBox
     title="Du har ikke tilgang til å se inndelingsbasen."
     text="Vennlist kontakt Kartverket hvis du mener dette er en feil."
