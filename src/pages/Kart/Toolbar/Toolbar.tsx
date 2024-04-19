@@ -218,7 +218,7 @@ const Toolbar = () => {
             isActive={activeOverlayModal === "navigasjon"}
             onClick={() => (activeOverlayModal === "navigasjon" ? closeOverlayModal() : openOverlayModal("navigasjon"))}
             aria-label="Gå til punkt i kartet"
-            tooltip={{ text: "Gå til punkt i kartet" }}
+            tooltip={{ text: "Gå til punkt i kartet", shortcut: "goto" }}
           >
             Gå til ...
           </ToolbarButton>
