@@ -1,14 +1,13 @@
 import { Badge, Card, Text } from "@kvib/react";
+import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { HistoryTypeValues } from "contexts/HistoryContext/types";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { ReactNode, useEffect, useState } from "react";
 import { styled } from "styled-components";
-import { EndringFraTil } from "../EndringsloggComponents";
-import { AbstractedHistoryEntry, HistoryTypeData } from "../hooks/useUnsavedEndringer";
-import { KontekstEgenskaper } from "types/api";
-import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { getUrlForPath } from "utils/api";
 import { removeNil } from "utils/list-utils";
-import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import { EndringFraTil } from "../EndringsloggComponents";
+import { AbstractedHistoryEntry } from "../hooks/useUnsavedEndringer";
 
 type EndringerProps = {
   type: HistoryTypeValues;
