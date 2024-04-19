@@ -3,7 +3,7 @@ import { HistoryTypeValues } from "contexts/HistoryContext/types";
 import { ReactNode, useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { EndringFraTil } from "../EndringsloggComponents";
-import { AbstractedHistoryEntry } from "../hooks/useUnsavedEndringer";
+import { AbstractedHistoryEntry, HistoryTypeData } from "../hooks/useUnsavedEndringer";
 import { KontekstEgenskaper } from "types/api";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { getUrlForPath } from "utils/api";
@@ -155,37 +155,42 @@ const DetailedKontekstEgenskaperEndringerList = ({ endringer }: DetailedEndringe
     const getKontekstEgenskaperMetadata = async (tilhorighetEndringer: AbstractedHistoryEntry[]) => {
       return Promise.all(
         tilhorighetEndringer.flatMap((tilhorighetEndring) => {
-          const fromKontekstEgenskaper = tilhorighetEndring.from as KontekstEgenskaper[];
-          const toKontekstEgenskaper = tilhorighetEndring.to as KontekstEgenskaper[];
+          if (!Array.isArray(tilhorighetEndring.from) || !Array.isArray(tilhorighetEndring.to)) {
+            return null;
+          }
+          const fromKontekstEgenskaper = tilhorighetEndring.from;
+          const toKontekstEgenskaper = tilhorighetEndring.to;
 
           return fromKontekstEgenskaper.concat(toKontekstEgenskaper).map((kontekstEgenskaper) => {
-            const lokalid = kontekstEgenskaper.id?.lokalid.value;
-            const pathType =
-              kontekstEgenskaper.type === "GRUNNKRETS"
-                ? "grunnkretser"
-                : kontekstEgenskaper.type === "STEMMEKRETS"
-                  ? "stemmekretser"
-                  : null;
-            const kommuneLokalid = kontekstEgenskaper.kommuneId?.lokalid.value;
-            if (lokalid !== undefined && pathType !== null) {
-              return fetch(getUrlForPath(`v1/${pathType}/${lokalid}`), {
-                method: "GET",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: "Bearer " + auth.token,
-                },
-              })
-                .then((response) => response.json())
-                .then((krets) => {
-                  if ("navn" in krets && "nummer" in krets) {
-                    return { kretsNavn: krets.navn, kretsNummer: krets.nummer };
-                  }
-                });
-            } else if (lokalid === undefined && kommuneLokalid !== null) {
-              const nyeKretser = utkast?.operasjoner.kretsDelingEndringer
-                .filter((kretsDeling) => kretsDeling.kommuneId.lokalid.value === kommuneLokalid)
-                .flatMap((kretsDeling) => kretsDeling.nyeKretser);
-              return nyeKretser?.find((krets) => krets.kretsNummer === kontekstEgenskaper.kretsNummer);
+            if ("id" in kontekstEgenskaper && "type" in kontekstEgenskaper && "kommuneId" in kontekstEgenskaper) {
+              const lokalid = kontekstEgenskaper.id?.lokalid.value;
+              const pathType =
+                kontekstEgenskaper.type === "GRUNNKRETS"
+                  ? "grunnkretser"
+                  : kontekstEgenskaper.type === "STEMMEKRETS"
+                    ? "stemmekretser"
+                    : null;
+              const kommuneLokalid = kontekstEgenskaper.kommuneId?.lokalid.value;
+              if (lokalid !== undefined && pathType !== null) {
+                return fetch(getUrlForPath(`v1/${pathType}/${lokalid}`), {
+                  method: "GET",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + auth.token,
+                  },
+                })
+                  .then((response) => response.json())
+                  .then((krets) => {
+                    if ("navn" in krets && "nummer" in krets) {
+                      return { kretsNavn: krets.navn, kretsNummer: krets.nummer };
+                    }
+                  });
+              } else if (lokalid === undefined && kommuneLokalid !== null) {
+                const nyeKretser = utkast?.operasjoner.kretsDelingEndringer
+                  .filter((kretsDeling) => kretsDeling.kommuneId.lokalid.value === kommuneLokalid)
+                  .flatMap((kretsDeling) => kretsDeling.nyeKretser);
+                return nyeKretser?.find((krets) => krets.kretsNummer === kontekstEgenskaper.kretsNummer);
+              }
             }
           });
         }),
@@ -212,9 +217,15 @@ const DetailedKontekstEgenskaperEndringerList = ({ endringer }: DetailedEndringe
     });
   };
 
+  const EndringAndBadge = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  `;
+
   const KontekstWithBadge = ({ kontekstEgenskaper, isNew, isReplaced, isUnchanged }: KontekstWithBadgeProps) => {
     return (
-      <Container>
+      <EndringAndBadge>
         <Text>{kontekstEgenskaper}</Text>
         {isNew ? (
           <Badge colorScheme="green">ny</Badge>
@@ -223,7 +234,7 @@ const DetailedKontekstEgenskaperEndringerList = ({ endringer }: DetailedEndringe
         ) : isUnchanged ? (
           <Badge colorScheme="green">består</Badge>
         ) : null}
-      </Container>
+      </EndringAndBadge>
     );
   };
 
@@ -231,7 +242,7 @@ const DetailedKontekstEgenskaperEndringerList = ({ endringer }: DetailedEndringe
     <TilhorighetEndringer>
       {endringer.map((endring, i) => {
         if (!Array.isArray(endring.from) || !Array.isArray(endring.to)) {
-          return false;
+          return null;
         }
 
         const fraKonteksterFormatted = getFormattedKontekstEgenskaper(endring.from);
@@ -278,7 +289,7 @@ const EndringTitle = styled(Text)`
 
 const Container = styled.div`
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: var(--kvib-space-1);
 `;
 

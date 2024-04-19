@@ -75,14 +75,15 @@ type EndringFraTilProps = {
 
 const FraTilContainer = styled.div`
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
+  gap: 6px;
 `;
 
 const EndringAndBadge = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 6px;
 `;
 
 export const EndringFraTil = ({ endring, withBadges }: EndringFraTilProps) => (

@@ -11,7 +11,7 @@ import {
   KontekstEgenskaper,
 } from "types/api";
 
-type HistoryTypeData =
+export type HistoryTypeData =
   | MinimalGrense
   | FeatureProperties
   | GrunnkretsRequest
