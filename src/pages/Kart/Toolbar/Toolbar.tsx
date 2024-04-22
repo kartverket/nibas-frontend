@@ -1,4 +1,4 @@
-import { Checkbox, CloseButton, Divider, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Switch } from "@kvib/react";
+import { Divider } from "@kvib/react";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useHoldButtonToggle, useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
@@ -14,8 +14,11 @@ import { useState } from "react";
 
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import SnapMenu from "./SnapMenu";
 
 const Toolbar = () => {
+  const { utkast } = useUtkast();
   const { activeTool, activeModeTools, toggleTool, toggleModeTool, enableModeTool, disableModeTool, resetTool } =
     useToolbar();
   const {
@@ -33,18 +36,6 @@ const Toolbar = () => {
 
   const [isSnappingMenuOpen, setIsSnappingMenuOpen] = useState(false);
 
-  const toggleSnapping = () => {
-    const isMatrikkelToggled = activeModeTools.includes("snap_matrikkel");
-    const isNibasToggled = activeModeTools.includes("snap_nibas");
-
-    if (isMatrikkelToggled === isNibasToggled) {
-      toggleModeTool("snap_matrikkel");
-      toggleModeTool("snap_nibas");
-    } else if (isMatrikkelToggled) {
-      toggleModeTool("snap_matrikkel");
-    } else toggleModeTool("snap_nibas");
-  };
-
   const toggleGrenseinfo = () => {
     toggleTool("grenseinfo");
 
@@ -61,10 +52,6 @@ const Toolbar = () => {
       }
     }
     toggleModeTool("matrikkel");
-  };
-
-  const toggleSnapMenu = () => {
-    setIsSnappingMenuOpen(!isSnappingMenuOpen);
   };
 
   const zoom = (difference: number) => {
@@ -109,7 +96,6 @@ const Toolbar = () => {
   useKeyboardShortcut("matrikkel", () => toggleModeTool("matrikkel"));
   useKeyboardShortcut("grenseinfo", toggleGrenseinfo);
   useKeyboardShortcut("goto", () => toggleOverlayModal("navigasjon"));
-  useKeyboardShortcut("snap", toggleSnapMenu);
   useHoldButtonToggle(
     "alt",
     activeModeTools.includes("move"),
@@ -174,34 +160,38 @@ const Toolbar = () => {
       <ToolbarPopups />
       <Container>
         <ToolbarButtons>
-          <ToolbarButton
-            icon="back_hand"
-            onClick={() => enableModeTool("move")}
-            isActive={activeModeTools.includes("move")}
-            isDisabled={!panningEnabled}
-            aria-label="Panorer i kartet"
-            tooltip={{
-              text: "Panorer i kartet",
-              shortcut: "move",
-              holdButton: "ALT-tasten",
-              additionalInfo: "Hold inne Shift + marker i kartet for å zoome",
-            }}
-          >
-            Panorer
-          </ToolbarButton>
-          <ConditionalHide below="xl" condition={!!activeOverlayPanel}>
-            <ToolbarButton
-              icon="arrow_selector_tool"
-              onClick={() => disableModeTool("move")}
-              isActive={!activeModeTools.includes("move")}
-              aria-label="Flytt eller rediger grenser i kartet"
-              isDisabled={!isEditing}
-              tooltip={{ text: "Flytt eller rediger grenser i kartet", shortcut: "edit" }}
-            >
-              Flytt / Rediger
-            </ToolbarButton>
-            <ToolbarMenus />
-          </ConditionalHide>
+          {utkast && (
+            <>
+              <ToolbarButton
+                icon="back_hand"
+                onClick={() => enableModeTool("move")}
+                isActive={activeModeTools.includes("move")}
+                isDisabled={!panningEnabled}
+                aria-label="Panorer i kartet"
+                tooltip={{
+                  text: "Panorer i kartet",
+                  shortcut: "move",
+                  holdButton: "ALT-tasten",
+                  additionalInfo: "Hold inne Shift + marker i kartet for å zoome",
+                }}
+              >
+                Panorer
+              </ToolbarButton>
+              <ConditionalHide below="xl" condition={!!activeOverlayPanel}>
+                <ToolbarButton
+                  icon="arrow_selector_tool"
+                  onClick={() => disableModeTool("move")}
+                  isActive={!activeModeTools.includes("move")}
+                  aria-label="Flytt eller rediger grenser i kartet"
+                  isDisabled={!isEditing}
+                  tooltip={{ text: "Flytt eller rediger grenser i kartet", shortcut: "edit" }}
+                >
+                  Flytt / Rediger
+                </ToolbarButton>
+                <ToolbarMenus />
+              </ConditionalHide>
+            </>
+          )}
           <ToolbarButton
             icon="search"
             isActive={activeOverlayModal === "navigasjon"}
@@ -251,64 +241,7 @@ const Toolbar = () => {
               >
                 Matrikkel
               </ToolbarButton>
-              <Menu
-                closeOnSelect={false}
-                closeOnBlur={false}
-                onClose={() => setIsSnappingMenuOpen(false)}
-                isOpen={isSnappingMenuOpen}
-              >
-                {({ onClose }) => {
-                  return (
-                    <>
-                      <MenuButton
-                        onClick={toggleSnapMenu}
-                        isActive={activeModeTools.includes("snap_nibas") || activeModeTools.includes("snap_matrikkel")}
-                        as={ToolbarButton}
-                        aria-label="Snap til andre grenser i kartet"
-                        icon="align_justify_space_between"
-                        tooltip={{ text: "Skru av/på snapping mot andre grenser.", shortcut: "snap" }}
-                      >
-                        Snap
-                      </MenuButton>
-                      <MenuList minWidth="240px" marginBottom="10px">
-                        <SnappingMenuHeader>
-                          <SnappingToggle>
-                            <Switch
-                              aria-label="Switch medium"
-                              marginRight="5px"
-                              isChecked={
-                                activeModeTools.includes("snap_matrikkel") || activeModeTools.includes("snap_nibas")
-                              }
-                              onChange={() => toggleSnapping()}
-                            />
-                            <SnappingTitle>Snapping</SnappingTitle>
-                          </SnappingToggle>
-                          <CloseButton marginRight="8px" onClick={onClose} />
-                        </SnappingMenuHeader>
-                        <MenuDivider />
-                        <MenuItem>
-                          <Checkbox
-                            value="egne"
-                            onChange={() => toggleModeTool("snap_nibas")}
-                            isChecked={activeModeTools.includes("snap_nibas")}
-                          >
-                            Snap til egne grenser
-                          </Checkbox>
-                        </MenuItem>
-                        <MenuItem>
-                          <Checkbox
-                            value="matrikkel"
-                            onChange={() => toggleModeTool("snap_matrikkel")}
-                            isChecked={activeModeTools.includes("snap_matrikkel")}
-                          >
-                            Snap til teiggrenser
-                          </Checkbox>
-                        </MenuItem>
-                      </MenuList>
-                    </>
-                  );
-                }}
-              </Menu>
+              {utkast && <SnapMenu />}
             </>
           </ConditionalHide>
         </ToolbarButtons>
@@ -377,20 +310,6 @@ const ZoomButtons = styled.div`
   border-radius: 10px;
   background: white;
   box-shadow: var(--kvib-shadows-base);
-`;
-
-const SnappingTitle = styled.strong`
-  padding-left: 10px;
-`;
-
-const SnappingMenuHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-
-const SnappingToggle = styled.div`
-  display: flex;
-  padding: 5px 10px;
 `;
 
 export default Toolbar;
