@@ -1,22 +1,16 @@
-import {
-  Menu,
-  MenuButton,
-  MenuList,
-  Switch,
-  CloseButton,
-  MenuDivider,
-  MenuItem,
-  Checkbox,
-  useDisclosure,
-  Spacer,
-} from "@kvib/react";
+import { Menu, MenuButton, MenuList, Switch, CloseButton, MenuDivider, MenuItem, Checkbox, Spacer } from "@kvib/react";
 import ToolbarButton from "./ToolbarButton";
 import { useToolbar } from "contexts/ToolbarContext";
 import { styled } from "styled-components";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 
-const SnapMenu = () => {
-  const { isOpen, onClose, onToggle } = useDisclosure();
+type Props = {
+  isOpen: boolean;
+  onClose: () => void;
+  onToggle: () => void;
+};
+
+const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
   const { activeModeTools, toggleModeTool } = useToolbar();
 
   const toggleSnapping = () => {
@@ -46,7 +40,7 @@ const SnapMenu = () => {
         Snap
       </MenuButton>
       <MenuList minWidth="240px" marginBottom="10px">
-        <SnappingMenuHeader>
+        <SnapMenuHeader>
           <Switch
             aria-label="Switch medium"
             isChecked={activeModeTools.includes("snap_matrikkel") || activeModeTools.includes("snap_nibas")}
@@ -55,7 +49,7 @@ const SnapMenu = () => {
           <span>Snapping</span>
           <Spacer />
           <CloseButton onClick={onClose} />
-        </SnappingMenuHeader>
+        </SnapMenuHeader>
         <MenuDivider />
         <MenuItem>
           <Checkbox
@@ -80,7 +74,7 @@ const SnapMenu = () => {
   );
 };
 
-const SnappingMenuHeader = styled.div`
+const SnapMenuHeader = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
