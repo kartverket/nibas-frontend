@@ -4,8 +4,12 @@ import { useEffect } from "react";
 import { MousePosition, ScaleLine } from "ol/control";
 import { zindex } from "utils/constants";
 import { defaultProjection } from "utils/map/projections";
+import { IconButton } from "@kvib/react";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
 
 const Kartinformasjon = () => {
+  const { closeOverlayModal, openOverlayModal, activeOverlayModal } = useOverlayPanel();
+
   useEffect(() => {
     if (map.getControls().getLength() === 0) {
       const mousePosition = new MousePosition({
@@ -40,21 +44,39 @@ const Kartinformasjon = () => {
     <>
       <ScaleIndicator id="scale-line" />
       <Container>
-        <Position id="mouse-position" />
-        <Scale id="scale-bar" />
+        <Wrapper>
+          <Position id="mouse-position" />
+          <Scale id="scale-bar" />
+        </Wrapper>
+        <IconButton
+          aria-label={"koordinatsystem-innstillinger"}
+          icon={"settings"}
+          iconFill
+          size={"sm"}
+          variant="ghost"
+          onClick={() =>
+            activeOverlayModal === "koordinatsystem" ? closeOverlayModal() : openOverlayModal("koordinatsystem")
+          }
+        />
       </Container>
     </>
   );
 };
 
+const Wrapper = styled.div`
+  display: flex;
+  gap: 12px;
+`;
+
 const Container = styled.div`
   position: absolute;
   top: 6px;
   left: 8px;
-
+  align-items: center;
   display: flex;
+  justify-content: space-between;
   padding: 2px 8px;
-  gap: 12px;
+  width: 340px;
 
   background: white;
   box-shadow: var(--kvib-shadows-base);

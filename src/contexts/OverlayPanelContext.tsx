@@ -3,7 +3,13 @@ import { useFeatureStyle } from "./FeatureStyleContext/FeatureStyleContext";
 
 type OverlayPanel = "grenseinfo" | "sammenslåing" | "splitting" | "tegnforklaring" | "koordinater" | "kartlag";
 
-type OverlayModal = "inndelinger" | "inndelinger-view" | "stemmekrets" | "grunnkrets" | "navigasjon";
+type OverlayModal =
+  | "inndelinger"
+  | "inndelinger-view"
+  | "stemmekrets"
+  | "grunnkrets"
+  | "navigasjon"
+  | "koordinatsystem";
 
 export type OverlayPanelContextValue = {
   activeOverlayPanel: OverlayPanel | null;
