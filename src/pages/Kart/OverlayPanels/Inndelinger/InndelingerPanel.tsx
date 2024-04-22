@@ -1,4 +1,4 @@
-import { Divider, IconButton, Modal, ModalContent, ModalOverlay } from "@kvib/react";
+import { Button, ButtonGroup, Divider, Flex, IconButton, Modal, ModalContent, ModalOverlay } from "@kvib/react";
 import { PanelHeader, PanelProps, ModalPanel } from "../Panel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { INNDELINGTYPER, Inndelingtype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
@@ -140,10 +140,28 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
               })}
           </InndelingerList>
         </InndelingerLayout>
+        <Divider></Divider>
+        <ButtonContainer>
+          <Button variant="ghost" size={"sm"}>
+            Nullstill markering
+          </Button>
+          <ButtonGroup>
+            <Button variant="secondary" size={"sm"}>
+              Avbryt
+            </Button>
+            <Button size={"sm"}>Rediger valgte inndelinger</Button>
+          </ButtonGroup>
+        </ButtonContainer>
       </ModalContent>
     </Modal>
   );
 };
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin: 12px 0;
+`;
 
 const InndelingerLayout = styled.div`
   display: grid;
