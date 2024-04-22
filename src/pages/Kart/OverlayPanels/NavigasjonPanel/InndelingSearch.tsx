@@ -98,8 +98,22 @@ export const InndelingSearch = ({ onSelect: centerOnCoordinate, isOpen }: Inndel
   };
 
   useEffect(() => {
-    if (isOpen && searchRef.current != null) {
-      searchRef.current.focus();
+    const searchElement = searchRef.current;
+    if (isOpen && searchElement != null) {
+      searchElement.focus();
+
+      searchElement.onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        const inputRef = searchElement.inputRef;
+        if (inputRef != null && event.code === "Escape") {
+          if (inputRef.value.length === 0) {
+            searchElement.blur();
+          } else {
+            inputRef.value = "";
+            searchElement.onMenuClose();
+            searchElement.clearValue();
+          }
+        }
+      };
     }
   }, [isOpen]);
 
