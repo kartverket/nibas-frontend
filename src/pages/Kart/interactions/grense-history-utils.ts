@@ -19,6 +19,7 @@ export const createGrenseHistoryChange = (features: Feature[], grenseType?: Gren
 
       changes.push({
         id: featureId,
+        type: "grense",
         from: {
           coordinates: feature.get(previousCoordinateKey) ?? [],
           type: grenseType,
@@ -59,6 +60,7 @@ export const createNyGrenseHistoryChanges = (features: Feature[], grenseType: Gr
 
       changes.push({
         id: featureId,
+        type: "nygrense",
         from: fromChange,
         to: toChange,
       });

@@ -75,9 +75,10 @@ const reduceStemmekretssammenslaingsOperations = (
   entry: StemmekretsSammenslaaingsendringEntry,
 ): StemmekretsSammenslaaingsendringRequest => {
   entry.changes.forEach((change) => {
-    if (change.to == null) return operations;
+    if (change.to == null || change.type !== "stemmekretssammenslaaingsendring") return operations;
 
-    operations = change.to;
+    const sammenslaaingChange = change as HistoryChange<StemmekretsSammenslaaingsendringRequest>;
+    operations = sammenslaaingChange.to;
   });
   return operations;
 };
@@ -88,8 +89,15 @@ const addKretsChangeToOperations = (
   endringerKey: "grunnkretsendringer" | "stemmekretsendringer",
 ) => {
   entry.changes.forEach((change) => {
-    if (change.to != null && operations.metadataendringer[endringerKey] != null) {
-      operations.metadataendringer[endringerKey][change.id] = change.to;
+    if (change.type === "grunnkrets" || change.type === "stemmekrets") {
+      const castedChange =
+        endringerKey === "grunnkretsendringer"
+          ? (change as HistoryChange<GrunnkretsRequest>)
+          : (change as HistoryChange<StemmekretsRequest>);
+
+      if (change.to != null && operations.metadataendringer[endringerKey] != null) {
+        operations.metadataendringer[endringerKey][change.id] = castedChange.to;
+      }
     }
   });
 

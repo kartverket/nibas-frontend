@@ -57,7 +57,11 @@ const setCoordinatesFromChange = (change: HistoryChange<MinimalGrense>, directio
 };
 
 export const setFeatureCoordinatesForEntry = (entry: GrenseEntry, direction: HistoryDirection) => {
-  entry.changes.forEach((change) => setCoordinatesFromChange(change, direction));
+  entry.changes.forEach((change) => {
+    if (change.type === "grense") {
+      setCoordinatesFromChange(change as HistoryChange<MinimalGrense>, direction);
+    }
+  });
 
   return document.dispatchEvent(
     new CustomEvent(direction === "from" ? "grenseUndo" : "grenseRedo", {
@@ -77,13 +81,19 @@ const setPropertiesFromChange = (change: HistoryChange<FeatureProperties>, direc
 };
 
 export const setFeaturePropertiesForEntry = (entry: PropertyEntry, direction: HistoryDirection) => {
-  entry.changes.forEach((change) => setPropertiesFromChange(change, direction));
+  entry.changes.forEach((change) => {
+    if (change.type === "property") {
+      setPropertiesFromChange(change as HistoryChange<FeatureProperties>, direction);
+    }
+  });
 };
 
 export const setFeatureCoordinatesAndPropertiesForEntry = (entry: NyGrenseEntry, direction: HistoryDirection) => {
   entry.changes.forEach((change) => {
-    setPropertiesFromChange(change, direction);
-    setCoordinatesFromChange(change, direction);
+    if (change.type === "nygrense") {
+      setPropertiesFromChange(change as HistoryChange<MinimalGrense & FeatureProperties>, direction);
+      setCoordinatesFromChange(change as HistoryChange<MinimalGrense & FeatureProperties>, direction);
+    }
   });
 };
 

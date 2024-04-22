@@ -114,7 +114,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
       .reverse() // siste entry inneholder alle endringene på utkastet
       .find((entry) => entry.changes.some((change) => change.id === utkast.id));
 
-    if (utkastEntry) {
+    if (utkastEntry && utkastEntry.changes.every((entry) => entry.type === "utkast")) {
       const change = (utkastEntry.changes as HistoryChange<UtkastRequestWithoutOperations>[]).find(
         (c) => c.id === utkast.id,
       );

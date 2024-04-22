@@ -17,6 +17,7 @@ export type HistoryState = {
 
 export type HistoryChange<T> = {
   id: string;
+  type: HistoryTypeValues;
   from: T;
   to: T;
 };
@@ -32,9 +33,9 @@ export type HistoryTypeValues =
   | "nygrense"
   | "grensedeling";
 
-type BaseHistoryEntry<HistoryType extends HistoryTypeValues, Model> = {
+export type BaseHistoryEntry<HistoryType extends HistoryTypeValues> = {
   type: HistoryType;
-  changes: HistoryChange<Model>[];
+  changes: HistoryChange<HistoryChangeEntry>[];
 };
 
 export type MinimalGrense = {
@@ -42,28 +43,37 @@ export type MinimalGrense = {
   type?: GrenseType | undefined;
 };
 
-export type GrenseEntry = BaseHistoryEntry<"grense", MinimalGrense>;
-export type PropertyEntry = BaseHistoryEntry<"property", FeatureProperties>;
-export type GrunnkretsEntry = BaseHistoryEntry<"grunnkrets", GrunnkretsRequest> & {
+export type HistoryChangeEntry =
+  | MinimalGrense
+  | FeatureProperties
+  | GrunnkretsRequest
+  | StemmekretsRequest
+  | UtkastRequestWithoutOperations
+  | StemmekretsSammenslaaingsendringRequest
+  | FeatureProperties
+  | KontekstEgenskaper[]
+  | (MinimalGrense & FeatureProperties)
+  | Feature[];
+
+export type GrenseEntry = BaseHistoryEntry<"grense">;
+export type PropertyEntry = BaseHistoryEntry<"property">;
+export type GrunnkretsEntry = BaseHistoryEntry<"grunnkrets"> & {
   kommuneId: string;
 };
-export type StemmekretsEntry = BaseHistoryEntry<"stemmekrets", StemmekretsRequest> & {
+export type StemmekretsEntry = BaseHistoryEntry<"stemmekrets"> & {
   kommuneId: string;
 };
-type UtkastEntry = BaseHistoryEntry<"utkast", UtkastRequestWithoutOperations>;
+type UtkastEntry = BaseHistoryEntry<"utkast">;
 
-export type StemmekretsSammenslaaingsendringEntry = BaseHistoryEntry<
-  "stemmekretssammenslaaingsendring",
-  StemmekretsSammenslaaingsendringRequest
->;
+export type StemmekretsSammenslaaingsendringEntry = BaseHistoryEntry<"stemmekretssammenslaaingsendring">;
 
-export type GrenseArkiveringsEntry = BaseHistoryEntry<"grensearkivering", FeatureProperties>;
+export type GrenseArkiveringsEntry = BaseHistoryEntry<"grensearkivering">;
 
-export type GrenseTilhorighetEntry = BaseHistoryEntry<"grensetilhorighetendring", KontekstEgenskaper[]>;
+export type GrenseTilhorighetEntry = BaseHistoryEntry<"grensetilhorighetendring">;
 
-export type NyGrenseEntry = BaseHistoryEntry<"nygrense", MinimalGrense & FeatureProperties>;
+export type NyGrenseEntry = BaseHistoryEntry<"nygrense">;
 
-export type GrenseDelingEntry = BaseHistoryEntry<"grensedeling", Feature[]>;
+export type GrenseDelingEntry = BaseHistoryEntry<"grensedeling">;
 
 // endringer skal kunne gjøres i bulk, feks et punkt på to features endrer to features i en entry
 export type HistoryEntry =

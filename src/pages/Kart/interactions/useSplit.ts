@@ -83,7 +83,7 @@ const useSplit = () => {
 
           addHistoryEntry({
             type: "grensedeling",
-            changes: [{ id: oldFeatureId, from: [oldFeature], to: newFeatures }],
+            changes: [{ id: oldFeatureId, type: "grensedeling", from: [oldFeature], to: newFeatures }],
           });
 
           // Hvis featuren som ble splittet er en gammel feature med ID ønsker vi å vise den som arkivert

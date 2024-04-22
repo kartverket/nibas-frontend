@@ -97,6 +97,7 @@ const addMetadataEntryFromFeature = (
     changes: [
       {
         id: id,
+        type: "property",
         from: oldProperties,
         to: feature.getProperties() as FeatureProperties,
       },

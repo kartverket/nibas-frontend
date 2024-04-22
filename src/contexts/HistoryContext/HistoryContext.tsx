@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from "react";
-import { HistoryContextValue, HistoryEntry } from "./types";
+import { HistoryChange, HistoryContextValue, HistoryEntry } from "./types";
 import {
   setFeatureCoordinatesAndPropertiesForEntry,
   setFeatureCoordinatesForEntry,
@@ -11,6 +11,8 @@ import {
   redoGrensedeling,
 } from "./history-utils";
 import useHistoryState from "contexts/HistoryContext/useHistoryState";
+import { Feature } from "ol";
+import { removeNil } from "utils/list-utils";
 
 const onUndo = (entry: HistoryEntry) => {
   const { type } = entry;
@@ -61,8 +63,16 @@ const onUndo = (entry: HistoryEntry) => {
     }
     case "grensedeling": {
       return undoGrensedeling(
-        entry.changes.flatMap((e) => e.from)[0],
-        entry.changes.flatMap((e) => e.to),
+        removeNil(
+          entry.changes.flatMap((e) => {
+            if (e.type === "grensedeling") return (e as HistoryChange<Feature[]>).from;
+          }),
+        )[0],
+        removeNil(
+          entry.changes.flatMap((e) => {
+            if (e.type === "grensedeling") return (e as HistoryChange<Feature[]>).to;
+          }),
+        ),
       );
     }
   }
@@ -117,8 +127,16 @@ const onRedo = (entry: HistoryEntry) => {
     }
     case "grensedeling": {
       return redoGrensedeling(
-        entry.changes.flatMap((e) => e.from)[0],
-        entry.changes.flatMap((e) => e.to),
+        removeNil(
+          entry.changes.flatMap((e) => {
+            if (e.type === "grensedeling") return (e as HistoryChange<Feature[]>).from;
+          }),
+        )[0],
+        removeNil(
+          entry.changes.flatMap((e) => {
+            if (e.type === "grensedeling") return (e as HistoryChange<Feature[]>).to;
+          }),
+        ),
       );
     }
   }

@@ -45,6 +45,7 @@ export const addFeaturePropertiesEntryFromFeature = (
     changes: [
       {
         id: id,
+        type: "property",
         from: oldFeatureProperties,
         to: updatedFeatureProperties,
       },
@@ -70,6 +71,7 @@ export const addArchivingEntryFromFeatureList = (
 
       return {
         id: id,
+        type: "grensearkivering",
         from: oldProperties,
         to: newProperties,
       };
@@ -104,6 +106,7 @@ export const addKontekstEntryFromFeature = (
     changes: [
       {
         id: id,
+        type: "grensetilhorighetendring",
         from: oldKontekstEgenskaper ?? ({} as KontekstEgenskaper),
         to: updatedKontekstEgenskaper,
       },

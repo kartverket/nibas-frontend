@@ -6,7 +6,7 @@ import EditAndSaveButton from "../EditAndSaveButton";
 import InputCell from "../InputCell";
 import { ValidationError } from "components/Input";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { StemmekretsEntry, HistoryDirection } from "contexts/HistoryContext/types";
+import { StemmekretsEntry, HistoryDirection, HistoryChange } from "contexts/HistoryContext/types";
 import { RegisterOptions, FieldError, useForm } from "react-hook-form";
 import { updateEditFeatureText } from "utils/map/layerStyles";
 import { getRepresentasjonspunktId } from "utils/map/source";
@@ -63,8 +63,9 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
 
   const setFormValues = useCallback(
     (change: StemmekretsEntry["changes"][number], direction: HistoryDirection) => {
-      const newName = change[direction]?.navn;
-      const newNumber = change[direction]?.nummer;
+      const stemmekretsChange = change as HistoryChange<StemmekretsRequest>;
+      const newName = stemmekretsChange[direction]?.navn;
+      const newNumber = stemmekretsChange[direction]?.nummer;
       setValue("navn", newName ?? "");
       setValue("nummer", newNumber ?? "");
 
@@ -119,6 +120,7 @@ const StemmekretsRow = ({ stemmekrets, kommuneId }: Props) => {
       changes: [
         {
           from: fromFormToRequest(previousValues.current, stemmekrets),
+          type: "stemmekrets",
           to: fromFormToRequest(newValues, stemmekrets),
           id: stemmekretsId,
         },

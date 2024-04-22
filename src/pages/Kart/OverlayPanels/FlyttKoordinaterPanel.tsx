@@ -90,7 +90,7 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
         const selectedChange = entry.changes.find((c) => selectedFeatures.some((f) => f.getId() === c.id));
 
         if (selectedChange) {
-          const coordinate = getCoordinateFromChange(selectedChange, direction);
+          const coordinate = getCoordinateFromChange(selectedChange as HistoryChange<MinimalGrense>, direction);
           if (coordinate) {
             const features = [];
             for (const change of entry.changes) {
@@ -163,6 +163,7 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
 
         changes.push({
           id: featureId,
+          type: "grense",
           from: {
             coordinates: originalCoordinates,
           },
