@@ -23,13 +23,14 @@ const Header = () => {
   const { activeOverlayModal, closeOverlayModal, openOverlayModal } = useOverlayPanel();
   const { openAsync } = useConfirmationModal();
 
-  const { currentlyEditedInndeling, selectedFylkeId } = useInndelinger();
+  const { currentlyEditingInndelinger, selectedFylkeId } = useInndelinger();
 
   const { fylker } = useFylker(selectedFylkeId !== "");
   const { kommuner } = useKommuner(selectedFylkeId, selectedFylkeId !== "");
 
   const activeFylke = fylker?.find((fylke) => fylke.id.lokalid.value === selectedFylkeId);
-  const activeKommune = kommuner?.find((kommune) => kommune.id.lokalid.value === currentlyEditedInndeling?.id);
+  // TODO CurrentlyEditing
+  const activeKommune = kommuner?.find((kommune) => kommune.id.lokalid.value === currentlyEditingInndelinger[0].id);
 
   const toggleModal = (modalName: "inndelinger" | "inndelinger-view") => {
     if (activeOverlayModal === modalName) {
@@ -88,11 +89,11 @@ const Header = () => {
             }}
             variant={utkast == null ? "primary" : "ghost"}
           />
-          {activeFylke && currentlyEditedInndeling && (
+          {activeFylke && currentlyEditingInndelinger.length > 0 && (
             <Hide below="xl">
               <Breadcrumb separator={<Separator icon="chevron_right" />} spacing={0}>
                 <BreadcrumbItem>
-                  <InndelingText>{capitalize(currentlyEditedInndeling.inndelingtype)}</InndelingText>
+                  <InndelingText>{capitalize(currentlyEditingInndelinger[0].inndelingtype)}</InndelingText>
                 </BreadcrumbItem>
                 <BreadcrumbItem>
                   <InndelingText $isBold={activeKommune == null}>

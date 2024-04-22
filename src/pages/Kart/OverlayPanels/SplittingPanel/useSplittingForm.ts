@@ -60,8 +60,10 @@ export const useSplittingForm = (inndeling: Inndeling | null) => {
     name: "nyeKretser",
   });
 
-  const { currentlyEditedInndeling } = useInndelinger();
-  const inndelingtype = currentlyEditedInndeling?.inndelingtype;
+  const { currentlyEditingInndelinger } = useInndelinger();
+  // TODO
+  const inndelingtype =
+    currentlyEditingInndelinger[0] != null ? currentlyEditingInndelinger[0].inndelingtype : undefined;
 
   // TODO Vi trenger ikke hente begge, vi kan velge hva vi henter basert på inndelingstypen
   const { data: stemmekretser } = useKommuneStemmekretser(inndeling?.id ?? null);

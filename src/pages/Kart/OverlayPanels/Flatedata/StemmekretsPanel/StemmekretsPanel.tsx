@@ -23,14 +23,15 @@ const StemmekretsPanel = ({ isOpen }: PanelProps) => {
   ]);
 
   const { closeOverlayModal } = useOverlayPanel();
-  const { currentlyEditedInndeling, selectedFlatedataInndeling, selectedFylkeId } = useInndelinger();
+  const { currentlyEditingInndelinger, selectedFlatedataInndeling, selectedFylkeId } = useInndelinger();
   const { kommuner } = useKommuner(selectedFylkeId);
 
-  const kommuneId = currentlyEditedInndeling
-    ? currentlyEditedInndeling.id
-    : selectedFlatedataInndeling
-      ? selectedFlatedataInndeling.id
-      : null;
+  const kommuneId =
+    currentlyEditingInndelinger.length > 0
+      ? currentlyEditingInndelinger[0].id
+      : selectedFlatedataInndeling
+        ? selectedFlatedataInndeling.id
+        : null;
   const kommune = kommuner?.find((fetchedKommune) => fetchedKommune.id.lokalid.value === kommuneId);
 
   const { data: stemmekretserByKommune } = useKommuneStemmekretser(kommuneId);

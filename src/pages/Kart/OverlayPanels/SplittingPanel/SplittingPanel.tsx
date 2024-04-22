@@ -53,7 +53,7 @@ const StyledList = styled.ul`
 
 export const SplittingPanel = ({ isOpen }: PanelProps) => {
   const { closeOverlayPanel } = useOverlayPanel();
-  const { currentlyEditedInndeling } = useInndelinger();
+  const { currentlyEditingInndelinger } = useInndelinger();
   const {
     inndelingtype,
     opprinneligFlateOptions,
@@ -69,11 +69,11 @@ export const SplittingPanel = ({ isOpen }: PanelProps) => {
     errors,
     trigger,
     isSubmitted,
-  } = useSplittingForm(currentlyEditedInndeling);
+  } = useSplittingForm(currentlyEditingInndelinger[0]);
 
   useEffect(() => {
     resetSplitting();
-  }, [currentlyEditedInndeling, resetSplitting]); // Vi ønsker å kalle reset hvis vi bytter inndeling
+  }, [currentlyEditingInndelinger, resetSplitting]); // Vi ønsker å kalle reset hvis vi bytter inndeling
 
   const closeAndResetForm = () => {
     closeOverlayPanel();

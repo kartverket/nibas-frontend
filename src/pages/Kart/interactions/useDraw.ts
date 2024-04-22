@@ -27,7 +27,7 @@ import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
 const useDraw = () => {
   const { activeTool, activeModeTools, toggleTool } = useToolbar();
-  const { currentlyEditedInndeling } = useInndelinger();
+  const { currentlyEditingInndelinger } = useInndelinger();
   const { addHistoryEntry } = useHistory();
   const { openOverlayPanel } = useOverlayPanel();
   const { selectFeatures, selectedFeatures } = useFeatureStyle();
@@ -112,9 +112,10 @@ const useDraw = () => {
 
   useEffect(() => {
     const addDrawToHistory = (drawnFeature: Feature<LineString>) => {
-      if (currentlyEditedInndeling == null) return;
+      if (currentlyEditingInndelinger.length > 0) return;
 
-      const grenseType = getGrensetypeFromInndelingtype(currentlyEditedInndeling.inndelingtype);
+      // TODO Fiks currentlyediting
+      const grenseType = getGrensetypeFromInndelingtype(currentlyEditingInndelinger[0].inndelingtype);
 
       if (grenseType) {
         addHistoryEntry({
@@ -180,7 +181,7 @@ const useDraw = () => {
 
       // Skal ikke være mulig da tegneverktøyet bare skal være tilgjengelig i redigering
       if (
-        !currentlyEditedInndeling ||
+        currentlyEditingInndelinger.length === 0 ||
         !drawnFeatureGeometry ||
         drawnFeatureGeometry.getLength() === 0 ||
         drawnFeatureGeometry.getCoordinates().length < 2
@@ -198,7 +199,10 @@ const useDraw = () => {
         splitFeatureAtDrawnFeatureEndpoints(feature, drawnFeatureGeometry);
       }
 
-      setDefaultFeatureProperties(drawnFeature, getGrensetypeFromInndelingtype(currentlyEditedInndeling.inndelingtype));
+      setDefaultFeatureProperties(
+        drawnFeature,
+        getGrensetypeFromInndelingtype(currentlyEditingInndelinger[0].inndelingtype),
+      );
 
       addDrawToHistory(drawnFeature);
       addFeaturesToSource("edit", [drawnFeature]);
@@ -224,7 +228,7 @@ const useDraw = () => {
     };
   }, [
     addHistoryEntry,
-    currentlyEditedInndeling,
+    currentlyEditingInndelinger,
     draw,
     openAsync,
     openOverlayPanel,

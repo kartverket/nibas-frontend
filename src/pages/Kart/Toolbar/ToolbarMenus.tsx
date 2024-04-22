@@ -36,10 +36,10 @@ const ToolbarMenus = () => {
     closeOverlayModal,
   } = useOverlayPanel();
 
-  const { currentlyEditedInndeling } = useInndelinger();
+  const { currentlyEditingInndelinger } = useInndelinger();
 
-  const isEditing = currentlyEditedInndeling != null;
-  const currentlyEditingInndelingtype = currentlyEditedInndeling?.inndelingtype;
+  const isEditing = currentlyEditingInndelinger != null;
+  const currentlyEditingInndelingtype = currentlyEditingInndelinger[0].inndelingtype ?? undefined;
 
   const mergeIsActive = activeOverlayPanel === "sammenslåing";
   const splitIsActive = activeOverlayPanel === "splitting";

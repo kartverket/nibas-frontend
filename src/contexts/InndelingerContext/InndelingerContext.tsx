@@ -39,8 +39,8 @@ const getEmptyInndelinger = (): Inndelinger => {
 
 type InndelingerContextValue = {
   inndelinger: Inndelinger;
-  selectInndeling: (inndeling: Inndeling) => void;
-  currentlyEditedInndeling: Inndeling | null;
+  selectInndelinger: (inndelinger: Inndeling[]) => void;
+  currentlyEditingInndelinger: Inndeling[];
   isLoadingInndeling: boolean;
 
   getNewInndeling: (id: string, type: Inndelingtype, isEditing: boolean) => Inndeling;
@@ -65,12 +65,12 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
   if (previousInndelinger.current == null) previousInndelinger.current = getEmptyInndelinger();
 
   const [selectedFylkeId, setSelectedFylkeId] = useState("");
-  const [selectedInndeling, setSelectedInndeling] = useState<Inndeling | null>(null);
+  const [selectedInndelinger, setSelectedInndelinger] = useState<Inndeling[]>([]);
 
   // TODO: mellomløsning for flatedata i visningsmodus til vi får skrevet det om
   const [selectedFlatedataInndeling, setSelectedFlatedataInndeling] = useState<Inndeling | null>(null);
 
-  const { isFetching, inndelingFeatures, utkastFeaturesInInndeling } = useInndelingFeatures(selectedInndeling);
+  const { isFetching, inndelingFeatures, utkastFeaturesInInndeling } = useInndelingFeatures(selectedInndelinger);
   const { utkast } = useUtkast();
 
   const isSameInndelinger = (a: Inndeling, b: Inndeling): boolean => {
@@ -116,27 +116,27 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
       removeFeaturesFromSourceByIds(layer, featureIds);
     };
 
-    if (!selectedInndeling) return;
-
+    if (selectedInndelinger.length === 0) return;
+    /*
     if (inndelingFeatures.length > 0) {
       const defaultPreviousinndeling = {
-        id: selectedInndeling.id,
-        inndelingtype: selectedInndeling.inndelingtype,
+        id: selectedInndelinger.id,
+        inndelingtype: selectedInndelinger.inndelingtype,
         isEditing: false,
         isVisible: false,
       };
 
       const previousInndeling = previousInndelinger.current
-        ? previousInndelinger.current[selectedInndeling.inndelingtype].get(selectedInndeling.id) ??
+        ? previousInndelinger.current[selectedInndelinger.inndelingtype].get(selectedInndelinger.id) ??
           defaultPreviousinndeling
         : defaultPreviousinndeling;
 
       if (
-        previousInndeling.inndelingtype !== selectedInndeling.inndelingtype ||
-        previousInndeling.isEditing !== selectedInndeling.isEditing
+        previousInndeling.inndelingtype !== selectedInndelinger.inndelingtype ||
+        previousInndeling.isEditing !== selectedInndelinger.isEditing
       ) {
         editSource.clear(true);
-        if (selectedInndeling.isEditing) {
+        if (selectedInndelinger.isEditing) {
           // TODO Kan man unngå så mye looping her? Er det en potensiell performance save?
           const inndelingFeaturesExcludedUtkastFeatures: Feature<Geometry>[] = [...utkastFeaturesInInndeling];
 
@@ -152,7 +152,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
           const sammenslaaingFeaturesWithDuplicates: Feature<Geometry>[] = [];
 
-          if (selectedInndeling.inndelingtype === "stemmekrets") {
+          if (selectedInndelinger.inndelingtype === "stemmekrets") {
             const sammenslaaing = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
             if (sammenslaaing != null) {
               const innlemmedeStemmekretsIder = sammenslaaing.stemmekretserTilSammenslaaing.map(
@@ -192,19 +192,20 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         }
       }
 
-      if (previousInndeling.isVisible !== selectedInndeling.isVisible) {
-        if (!selectedInndeling.isVisible) {
-          removeInndelingFromLayer(selectedInndeling.inndelingtype, inndelingFeatures);
+      if (previousInndeling.isVisible !== selectedInndelinger.isVisible) {
+        if (!selectedInndelinger.isVisible) {
+          removeInndelingFromLayer(selectedInndelinger.inndelingtype, inndelingFeatures);
         } else {
-          addInndelingToLayer(selectedInndeling.inndelingtype, inndelingFeatures);
+          addInndelingToLayer(selectedInndelinger.inndelingtype, inndelingFeatures);
         }
       }
 
-      setSelectedInndeling(null);
     }
+    */
+    setSelectedInndelinger([]);
   }, [
     inndelingFeatures,
-    selectedInndeling,
+    selectedInndelinger,
     setFeatureStylesForUtkast,
     utkast?.operasjoner.stemmekretsSammenslaaingsendring,
     utkastFeaturesInInndeling,
@@ -215,22 +216,23 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
       const source = layer.getSource();
       source?.clear(true);
     }
-    setSelectedInndeling(null);
+    setSelectedInndelinger([]);
     setInndelinger(getEmptyInndelinger());
   };
 
   /**
-   * Sjekker om det er en inndeling som redigeres
-   * @returns Inndelingen som redigeres dersom den finnes, null ellers
+   * Sjekker hvilke inndelinger som redigeres
+   * @returns Inndelingene som redigeres dersom de finnes, tom liste ellers
    */
-  const getCurrentlyEditingInndeling = (): Inndeling | null => {
+  const getCurrentlyEditingInndelinger = (): Inndeling[] => {
+    const currentlyEditingInndelinger: Inndeling[] = [];
     for (const inndelingerType of Object.values(inndelinger)) {
       for (const [, inndeling] of inndelingerType) {
-        if (inndeling.isEditing) return inndeling;
+        if (inndeling.isEditing) currentlyEditingInndelinger.push(inndeling);
       }
     }
 
-    return null;
+    return currentlyEditingInndelinger;
   };
 
   /**
@@ -261,45 +263,30 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     return newInndeling;
   };
 
-  const getInndelingerWithNewInndeling = (newInndeling: Inndeling): Inndelinger => {
-    const newInndelinger: Inndelinger = structuredClone(inndelinger);
+  const selectInndelinger = (inndelingerToSelect: Inndeling[]) => {
+    const newInndelinger = structuredClone(inndelinger);
 
-    newInndelinger[newInndeling.inndelingtype].set(newInndeling.id, newInndeling);
+    for (const inndeling of inndelingerToSelect) {
+      const inndelingIfExists = inndelinger[inndeling.inndelingtype].get(inndeling.id);
 
-    return newInndelinger;
-  };
-
-  const selectInndeling = (inndeling: Inndeling) => {
-    const inndelingIfExists = inndelinger[inndeling.inndelingtype].get(inndeling.id);
-
-    if (inndelingIfExists != null) {
-      if (isEqualInndelinger(inndelingIfExists, inndeling)) {
-        return;
+      if (inndelingIfExists != null) {
+        if (isEqualInndelinger(inndelingIfExists, inndeling)) {
+          continue;
+        }
       }
-    }
 
-    const newInndelinger: Inndelinger = getInndelingerWithNewInndeling(inndeling);
-
-    if (inndeling.isEditing) {
-      const currentlyEditingInndeling = getCurrentlyEditingInndeling();
-
-      if (currentlyEditingInndeling && currentlyEditingInndeling.id !== inndeling.id) {
-        newInndelinger[currentlyEditingInndeling.inndelingtype].set(currentlyEditingInndeling.id, {
-          ...currentlyEditingInndeling,
-          isEditing: false,
-        });
-      }
+      newInndelinger[inndeling.inndelingtype].set(inndeling.id, inndeling);
     }
 
     previousInndelinger.current = inndelinger;
-    setSelectedInndeling(inndeling);
     setInndelinger(newInndelinger);
+    setSelectedInndelinger(inndelingerToSelect);
   };
 
   const value = {
     inndelinger,
-    selectInndeling,
-    currentlyEditedInndeling: getCurrentlyEditingInndeling(),
+    selectInndelinger,
+    currentlyEditingInndelinger: getCurrentlyEditingInndelinger(),
     isLoadingInndeling: isFetching && inndelingFeatures.length === 0,
 
     getNewInndeling,

@@ -1,11 +1,14 @@
 import { styled } from "styled-components";
 import { Button, MaterialSymbol } from "@kvib/react";
 
+export type InndelingButtonType = "checkbox" | "radio" | "button";
+
 type Props = {
   onClick: () => void;
   rightIcon?: MaterialSymbol;
   children: React.ReactNode;
   isActive: boolean;
+  type: InndelingButtonType;
 };
 
 const InndelingOption = ({ onClick, rightIcon, children, isActive }: Props) => (

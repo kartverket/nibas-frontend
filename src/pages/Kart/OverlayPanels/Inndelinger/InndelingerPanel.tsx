@@ -1,7 +1,12 @@
-import { Button, ButtonGroup, Divider, Flex, IconButton, Modal, ModalContent, ModalOverlay } from "@kvib/react";
+import { Button, ButtonGroup, Divider, IconButton, Modal, ModalContent, ModalOverlay } from "@kvib/react";
 import { PanelHeader, PanelProps, ModalPanel } from "../Panel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { INNDELINGTYPER, Inndelingtype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import {
+  INNDELINGTYPER,
+  Inndeling,
+  Inndelingtype,
+  useInndelinger,
+} from "contexts/InndelingerContext/InndelingerContext";
 import { getIdFromEntity } from "utils/api";
 import { getNavnInSpraak } from "utils/language/language";
 import { useState } from "react";
@@ -18,9 +23,12 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
 
   // Bedre navn på denne for å skille den mer fra valgt fylke i context?
   const [selectedPanelFylkeId, setSelectedPanelFylkeId] = useState<string>("");
-  const { selectInndeling, setSelectedFylkeId, getNewInndeling, setSelectedFlatedataInndeling } = useInndelinger();
+  const { selectInndelinger, setSelectedFylkeId, getNewInndeling, setSelectedFlatedataInndeling } = useInndelinger();
   const { closeOverlayModal, activeOverlayModal, openOverlayModal } = useOverlayPanel();
   const { disableModeTool } = useToolbar();
+
+  const [selectedInndelinger, setSelectedInndelinger] = useState<Inndeling[]>([]);
+  const resetSelectedInndelinger = () => setSelectedInndelinger([]);
 
   const { history, clearHistory } = useHistory();
   const hasUnsavedChangesInHistory = history.entries.length > 0;
@@ -48,7 +56,7 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
 
     const newInndeling = getNewInndeling(inndelingId, inndelingtype, isEditingPanel);
 
-    selectInndeling(newInndeling);
+    selectInndelinger([newInndeling]);
     resetInndelingerPanel();
 
     if (isEditingPanel) {
@@ -95,6 +103,7 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
                 isActive={selectedInndelingtype === inndelingtype}
                 onClick={() => selectInndelingtype(inndelingtype)}
                 rightIcon="chevron_right"
+                type="button"
               >
                 {capitalize(inndelingtype)}
               </InndelingOption>
@@ -111,6 +120,7 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
                     key={fylkeId}
                     onClick={() => selectFylke(fylkeId)}
                     rightIcon={selectedInndelingtype !== "fylke" ? "chevron_right" : undefined}
+                    type="button"
                   >
                     {`${fylke.nummer} ${getNavnInSpraak(fylke.navn, "nor")}`}
                   </InndelingOption>
@@ -124,7 +134,7 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
                 const kommuneId = getIdFromEntity(kommune);
                 return (
                   <FlatedataWrapper key={kommuneId}>
-                    <InndelingOption isActive={false} onClick={() => selectKommune(kommuneId)}>
+                    <InndelingOption isActive={false} onClick={() => selectKommune(kommuneId)} type="button">
                       {`${kommune.nummer} ${getNavnInSpraak(kommune.navn, "nor")}`}
                     </InndelingOption>
                     {flatedataIsAvailable && !isEditingPanel && (
@@ -142,7 +152,7 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
         </InndelingerLayout>
         <Divider></Divider>
         <ButtonContainer>
-          <Button variant="ghost" size={"sm"}>
+          <Button variant="ghost" size={"sm"} onClick={resetSelectedInndelinger}>
             Nullstill markering
           </Button>
           <ButtonGroup>

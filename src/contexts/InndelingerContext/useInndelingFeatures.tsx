@@ -1,5 +1,5 @@
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
-import useNibasApi from "hooks/useNibasApi";
+import { getModifiedUrl } from "hooks/useNibasApi";
 import { GeoJSONFeature } from "ol/format/GeoJSON";
 import { useMemo } from "react";
 import { geoJsonToSource, getFeatureFromGeoJson } from "utils/map/geoJson";
@@ -11,6 +11,9 @@ import { removeNil } from "utils/list-utils";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { getRepresentasjonspunktId } from "utils/map/source";
 import { paths } from "types/api-gen";
+import { fetcherWithToken } from "utils/api";
+import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import useSWR from "swr";
 
 export const inndelingResponseNavnToString = (inndelingNavn: InndelingNavn): string => {
   return Array.isArray(inndelingNavn) ? inndelingNavn.map((navn) => navn.navn).join(" - ") : inndelingNavn;
@@ -44,18 +47,43 @@ const getInndelingRequestUrl = (inndelingtype: Inndelingtype): keyof InndelingRe
   return `/v1/kommuner/{id}/${inndelingtype}er`;
 };
 
-const useInndelingFeatures = (inndeling: Inndeling | null) => {
+const inndelingGrenseFetcher = async ([inndelinger, token]: [Inndeling[], string | undefined]) => {
+  const promises: Promise<FeatureCollection>[] = inndelinger.map(async (inndeling) => {
+    const url = getGrenseRequestUrl(inndeling.inndelingtype);
+
+    return fetcherWithToken([getModifiedUrl<typeof url>(url, { id: inndeling.id }), token]);
+  });
+
+  return await Promise.all(promises);
+};
+
+const useInndelingerGrenser = (inndelinger: Inndeling[]) => {
+  const auth = useAuthentication();
+
+  return useSWR(inndelinger.length > 0 ? [inndelinger, auth.token] : null, inndelingGrenseFetcher);
+};
+
+const inndelingFetcher = async ([inndelinger, token]: [Inndeling[], string | undefined]) => {
+  const promises: Promise<InndelingResponse>[] = inndelinger.map(async (inndeling) => {
+    const url = getInndelingRequestUrl(inndeling.inndelingtype);
+
+    return fetcherWithToken([getModifiedUrl<typeof url>(url, { id: inndeling.id }), token]);
+  });
+
+  return await Promise.all(promises);
+};
+
+const useInndelinger = (inndelinger: Inndeling[]) => {
+  const auth = useAuthentication();
+
+  return useSWR(inndelinger.length > 0 ? [inndelinger, auth.token] : null, inndelingFetcher);
+};
+
+const useInndelingFeatures = (inndelinger: Inndeling[]) => {
   const { utkast } = useUtkast();
 
-  const { data: featuresResponse, isValidating: isFetchingFeatures } = useNibasApi(
-    inndeling != null ? getGrenseRequestUrl(inndeling.inndelingtype) : null,
-    inndeling != null ? { id: inndeling.id } : null,
-  );
-
-  const { data: inndelingResponse, isValidating: isFetchingInndeling } = useNibasApi(
-    inndeling != null ? getInndelingRequestUrl(inndeling.inndelingtype) : null,
-    inndeling != null ? { id: inndeling.id } : null,
-  );
+  const { data: featuresResponse, isValidating: isFetchingFeatures } = useInndelingerGrenser(inndelinger);
+  const { data: inndelingResponse, isValidating: isFetchingInndeling } = useInndelinger(inndelinger);
 
   const getRepresentasjonspunktFeatureForInndeling = (
     inndelingWithRepresentasjonspunkt: InndelingResponse,
@@ -80,7 +108,11 @@ const useInndelingFeatures = (inndeling: Inndeling | null) => {
         : [getRepresentasjonspunktFeatureForInndeling(inndelingResponse)];
 
       // TODO Håndtere feil ved dårlig formatert json her
-      const geoJsonFeatures = geoJsonToSource(featuresResponse).getFeatures();
+      const featuresFromAllInndelinger = featuresResponse.flatMap((featureResponse) => featureResponse.features);
+      const geoJsonFeatures = geoJsonToSource({
+        ...featuresResponse,
+        features: featuresFromAllInndelinger,
+      }).getFeatures();
 
       const geoJsonFeaturesWithRepresentasjonspunkter = geoJsonFeatures.concat(representasjonspunkter);
 

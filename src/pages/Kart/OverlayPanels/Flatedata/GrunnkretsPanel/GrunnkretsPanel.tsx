@@ -22,14 +22,15 @@ const GrunnkretsPanel = ({ isOpen }: PanelProps) => {
   const { sortProperty, sortOrder, sortHeaderProps } = useTableSort<GrunnkretsResponse>(["nummer", "navn"]);
   const { closeOverlayModal } = useOverlayPanel();
   const { searchValue, setInputValue } = useSearch();
-  const { currentlyEditedInndeling, selectedFylkeId, selectedFlatedataInndeling } = useInndelinger();
+  const { currentlyEditingInndelinger, selectedFylkeId, selectedFlatedataInndeling } = useInndelinger();
   const { kommuner } = useKommuner(selectedFylkeId);
 
-  const kommuneId = currentlyEditedInndeling
-    ? currentlyEditedInndeling.id
-    : selectedFlatedataInndeling
-      ? selectedFlatedataInndeling.id
-      : null;
+  const kommuneId =
+    currentlyEditingInndelinger.length > 0
+      ? currentlyEditingInndelinger[0].id
+      : selectedFlatedataInndeling
+        ? selectedFlatedataInndeling.id
+        : null;
   const kommune = kommuner?.find((fetchedKommune) => fetchedKommune.id.lokalid.value === kommuneId);
   const { data: grunnkretserByKommune } = useKommuneGrunnkretser(kommuneId);
   const utkastGrunnkretser = useUtkastEntity(grunnkretserByKommune, "grunnkretsendringer") as

@@ -28,8 +28,8 @@ const Toolbar = () => {
   } = useOverlayPanel();
   const { selectedFeatures, selectedPoint, clearSelectedPoint, clearSelection } = useFeatureStyle();
 
-  const { currentlyEditedInndeling } = useInndelinger();
-  const isEditing = currentlyEditedInndeling != null;
+  const { currentlyEditingInndelinger } = useInndelinger();
+  const isEditing = currentlyEditingInndelinger.length > 0;
 
   const toggleSnapping = () => {
     const isMatrikkelToggled = activeModeTools.includes("snap_matrikkel");

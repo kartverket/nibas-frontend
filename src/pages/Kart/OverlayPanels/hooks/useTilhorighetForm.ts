@@ -108,15 +108,15 @@ export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: Kont
     [featureProperties.kontekstEgenskaper, utkast],
   );
   const kontekstType = kontekstTypeOverride ?? getKontekstTypeForFeature(kontekstEgenskaper, featureProperties);
-  const { currentlyEditedInndeling } = useInndelinger();
+  const { currentlyEditingInndelinger } = useInndelinger();
 
   const kommunerId = useMemo(
     () =>
       getKommunerIdFromKontekstEgenskaper(
         kontekstEgenskaper.filter((k) => k.id?.lokalid.value !== CustomOption.NOT_CHOSEN),
         kontekstType,
-      ) ?? [currentlyEditedInndeling != null ? currentlyEditedInndeling.id : ""],
-    [kontekstType, currentlyEditedInndeling, kontekstEgenskaper],
+      ) ?? [currentlyEditingInndelinger != null ? currentlyEditingInndelinger[0].id : ""],
+    [kontekstType, currentlyEditingInndelinger, kontekstEgenskaper],
   );
 
   const kommunerIdOgNummer: { id: string; nummer: string }[] = useMemo(() => {
