@@ -20,11 +20,11 @@ const Toolbar = () => {
     useToolbar();
   const {
     activeOverlayPanel,
-    openOverlayPanel,
     closeOverlayPanel,
     activeOverlayModal,
-    openOverlayModal,
     closeOverlayModal,
+    toggleOverlayPanel,
+    toggleOverlayModal,
   } = useOverlayPanel();
   const { selectedFeatures, selectedPoint, clearSelectedPoint, clearSelection } = useFeatureStyle();
 
@@ -53,14 +53,6 @@ const Toolbar = () => {
     }
   };
 
-  const toggleKartlag = () => {
-    if (activeOverlayPanel === "kartlag") {
-      closeOverlayPanel();
-    } else {
-      openOverlayPanel("kartlag");
-    }
-  };
-
   const toggleMatrikkel = () => {
     if (activeModeTools.includes("matrikkel")) {
       const source = getLayerById("matrikkel").getSource();
@@ -69,15 +61,6 @@ const Toolbar = () => {
       }
     }
     toggleModeTool("matrikkel");
-  };
-
-  const toggleGoto = () => {
-    if (activeOverlayModal === "navigasjon") {
-      closeOverlayModal();
-      return;
-    }
-
-    openOverlayModal("navigasjon");
   };
 
   const toggleSnapMenu = () => {
@@ -120,12 +103,12 @@ const Toolbar = () => {
     else setPanningEnabled(false);
   });
 
-  useKeyboardShortcut("layers", toggleKartlag);
+  useKeyboardShortcut("layers", () => toggleOverlayPanel("kartlag"));
   useKeyboardShortcut("move", () => enableModeTool("move"), panningEnabled);
   useKeyboardShortcut("edit", () => disableModeTool("move"), isEditing);
   useKeyboardShortcut("matrikkel", () => toggleModeTool("matrikkel"));
   useKeyboardShortcut("grenseinfo", toggleGrenseinfo);
-  useKeyboardShortcut("goto", toggleGoto);
+  useKeyboardShortcut("goto", () => toggleOverlayModal("navigasjon"));
   useKeyboardShortcut("snap", toggleSnapMenu);
   useHoldButtonToggle(
     "alt",
@@ -222,11 +205,22 @@ const Toolbar = () => {
           <ToolbarButton
             icon="search"
             isActive={activeOverlayModal === "navigasjon"}
-            onClick={() => (activeOverlayModal === "navigasjon" ? closeOverlayModal() : openOverlayModal("navigasjon"))}
+            onClick={() => toggleOverlayModal("navigasjon")}
             aria-label="Gå til inndeling eller punkt i kartet"
             tooltip={{ text: "Gå til inndeling eller punkt i kartet", shortcut: "goto" }}
           >
             Gå til ...
+          </ToolbarButton>
+          <ToolbarButton
+            icon="window"
+            onClick={() => toggleOverlayModal("flatedata")}
+            isActive={activeOverlayModal === "flatedata"}
+            aria-label="Se eller endre flatedetaljer"
+            tooltip={{
+              text: "Se eller endre flatedetaljer",
+            }}
+          >
+            Flatedetaljer
           </ToolbarButton>
           <ToolbarButton
             icon="query_stats"
@@ -241,7 +235,7 @@ const Toolbar = () => {
             icon="map"
             aria-label="Åpne kartlagsmenyen"
             isActive={activeOverlayPanel === "kartlag"}
-            onClick={toggleKartlag}
+            onClick={() => toggleOverlayPanel("kartlag")}
             tooltip={{ text: "Legg til, endre rekkefølge og fjern kartlag fra kartet.", shortcut: "layers" }}
           >
             Kartlag

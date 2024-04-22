@@ -3,19 +3,15 @@ import { styled } from "styled-components";
 import { IconButton, Tooltip } from "@kvib/react";
 
 export const TegnforklaringButton = () => {
-  const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } = useOverlayPanel();
-
-  const onClick = () => {
-    if (activeOverlayPanel === "tegnforklaring") {
-      closeOverlayPanel();
-    } else {
-      openOverlayPanel("tegnforklaring");
-    }
-  };
+  const { toggleOverlayPanel } = useOverlayPanel();
 
   return (
     <Tooltip label="Vis tegnforklaring for grensetypene i kartet" hasArrow placement="left">
-      <RoundButton onClick={onClick} aria-label="Åpne og lukke tegnforklaring" icon="question_mark" />
+      <RoundButton
+        onClick={() => toggleOverlayPanel("tegnforklaring")}
+        aria-label="Åpne og lukke tegnforklaring"
+        icon="question_mark"
+      />
     </Tooltip>
   );
 };
