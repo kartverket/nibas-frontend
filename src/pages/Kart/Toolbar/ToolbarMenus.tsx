@@ -39,7 +39,14 @@ const ToolbarMenus = () => {
   const { currentlyEditingInndelinger } = useInndelinger();
 
   const isEditing = currentlyEditingInndelinger != null;
-  const currentlyEditingInndelingtype = currentlyEditingInndelinger[0].inndelingtype ?? undefined;
+
+  const flatedetaljerIsAvailable = currentlyEditingInndelinger.some((inndeling) => {
+    return inndeling.inndelingtype === "stemmekrets" || inndeling.inndelingtype === "grunnkrets";
+  });
+
+  const mergeIsAvailable = currentlyEditingInndelinger.some((inndeling) => {
+    return inndeling.inndelingtype === "stemmekrets";
+  });
 
   const mergeIsActive = activeOverlayPanel === "sammenslåing";
   const splitIsActive = activeOverlayPanel === "splitting";
@@ -49,11 +56,8 @@ const ToolbarMenus = () => {
   const toggleFlatedetaljer = () => {
     if (flatedetaljerIsActive) {
       closeOverlayModal();
-    } else if (
-      (currentlyEditingInndelingtype && currentlyEditingInndelingtype === "grunnkrets") ||
-      currentlyEditingInndelingtype === "stemmekrets"
-    ) {
-      openOverlayModal(currentlyEditingInndelingtype);
+    } else if (flatedetaljerIsAvailable === true) {
+      openOverlayModal("grunnkrets");
     }
   };
 
@@ -78,7 +82,7 @@ const ToolbarMenus = () => {
   useKeyboardShortcut("add", () => toggleTool("add"), isEditing);
   useKeyboardShortcut("remove", () => toggleTool("remove"), isEditing);
   useKeyboardShortcut("edit_point", toggleMovePoint, isEditing);
-  useKeyboardShortcut("merge", toggleMergePanel, currentlyEditingInndelingtype === "stemmekrets");
+  useKeyboardShortcut("merge", toggleMergePanel, mergeIsAvailable);
   useKeyboardShortcut("archive", () => toggleTool("archive"), isEditing);
   useKeyboardShortcut("draw", () => toggleTool("draw"), isEditing);
   useKeyboardShortcut("flate", toggleFlatedetaljer);
@@ -148,7 +152,7 @@ const ToolbarMenus = () => {
       icon: <Icon icon="description" />,
       command: KeyboardShortcuts["flate"].displayString,
       // Vi har ikke laget flatedetaljerpaneler for Kommune og Fylke ennå
-      isDisabled: !(currentlyEditingInndelingtype === "stemmekrets" || currentlyEditingInndelingtype === "grunnkrets"),
+      isDisabled: !(flatedetaljerIsAvailable === true),
       $isActive: flatedetaljerIsActive,
       onClick: toggleFlatedetaljer,
       "aria-label": "Se eller endre flatedetaljer for kretsen som redigeres",
@@ -158,7 +162,7 @@ const ToolbarMenus = () => {
       icon: <Icon icon="cell_merge" />,
       command: KeyboardShortcuts["merge"].displayString,
       $isActive: mergeIsActive,
-      isDisabled: currentlyEditingInndelingtype !== "stemmekrets",
+      isDisabled: !(mergeIsAvailable === true),
       onClick: toggleMergePanel,
       "aria-label": "Slå sammen stemmekretser",
     },
@@ -166,7 +170,7 @@ const ToolbarMenus = () => {
       label: "Splitt en flate",
       icon: <Icon icon="splitscreen" />,
       $isActive: splitIsActive,
-      isDisabled: !(currentlyEditingInndelingtype === "stemmekrets" || currentlyEditingInndelingtype === "grunnkrets"),
+      isDisabled: !(flatedetaljerIsAvailable === true),
       onClick: toggleSplitPanel,
       "aria-label": "Splitt en flate",
     },

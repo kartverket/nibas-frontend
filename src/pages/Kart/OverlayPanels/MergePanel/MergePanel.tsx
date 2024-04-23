@@ -46,7 +46,13 @@ const MergePanel = ({ isOpen }: PanelProps) => {
   const { history } = useHistory();
   const { currentlyEditingInndelinger } = useInndelinger();
 
-  const { data: stemmekretserByKommune } = useKommuneStemmekretser(currentlyEditingInndelinger[0].id ?? null);
+  const currentlyEditingStemmekrets = currentlyEditingInndelinger.find(
+    (inndeling) => inndeling.inndelingtype === "stemmekrets",
+  );
+
+  const { data: stemmekretserByKommune } = useKommuneStemmekretser(
+    currentlyEditingStemmekrets != null ? currentlyEditingStemmekrets.id : null,
+  );
 
   const utkastStemmekretser = useUtkastEntity(stemmekretserByKommune, "stemmekretsendringer") as
     | StemmekretsResponse[]
