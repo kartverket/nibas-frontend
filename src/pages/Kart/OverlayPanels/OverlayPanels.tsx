@@ -9,7 +9,7 @@ import KartlagPanel from "./Kartlag/KartlagPanel";
 import { SplittingPanel } from "./SplittingPanel/SplittingPanel";
 import InndelingerPanel from "./Inndelinger/InndelingerPanel";
 import NavigasjonPanel from "./NavigasjonPanel/NavigasjonPanel";
-import { KoordinatSystemPanel } from "./KoordinatSystemPanel";
+import { KoordinatsystemPanel } from "./KoordinatsystemPanel";
 
 const OverlayPanels = () => {
   const { activeOverlayPanel, activeOverlayModal } = useOverlayPanel();
@@ -27,7 +27,7 @@ const OverlayPanels = () => {
       <NavigasjonPanel isOpen={activeOverlayModal === "navigasjon"} />
       <GrunnkretsPanel isOpen={activeOverlayModal === "grunnkrets"} />
       <StemmekretsPanel isOpen={activeOverlayModal === "stemmekrets"} />
-      <KoordinatSystemPanel isOpen={activeOverlayModal === "koordinatsystem"} />
+      <KoordinatsystemPanel isOpen={activeOverlayModal === "koordinatsystem"} />
     </>
   );
 };

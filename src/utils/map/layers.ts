@@ -1,16 +1,16 @@
+import { grenserLayers, kartlagLayers } from "hooks/layers/constants";
+import { LayerId } from "hooks/layers/types";
+import { WFS } from "ol/format";
 import BaseLayer from "ol/layer/Base";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import TileWMS from "ol/source/TileWMS";
+import VectorSource from "ol/source/Vector";
 import WMTS from "ol/source/WMTS";
 import { map } from "pages/Kart/constants";
-import { kartlagLayers, grenserLayers } from "hooks/layers/constants";
-import { LayerId } from "hooks/layers/types";
-import VectorSource from "ol/source/Vector";
-import { WFS } from "ol/format";
 import { getFeaturesFromGeoJson } from "./geoJson";
+import { defaultProjectionEpsgCode } from "./projections";
 import { addFeaturesToSource } from "./source";
-import { defaultProjection } from "./projections";
 
 const getLayersArray = () => map.getLayers().getArray() ?? [];
 
@@ -43,7 +43,7 @@ export const isWMSLayer = (layer: BaseLayer): layer is TileLayer<TileWMS> => {
 export const getMatrikkelFeatures = async () => {
   const extent = map.getView().calculateExtent(map.getSize());
   const request: Node = new WFS({ version: "2.0.0" }).writeGetFeature({
-    srsName: defaultProjection,
+    srsName: defaultProjectionEpsgCode,
     featureNS: "http://www.statkart.no/matrikkel",
     featurePrefix: "matrikkel",
     featureTypes: ["TEIGGRENSEWFS"],

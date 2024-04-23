@@ -1,11 +1,32 @@
-import { styled } from "styled-components";
-import { map } from "./constants";
-import { useEffect } from "react";
-import { MousePosition, ScaleLine } from "ol/control";
-import { zindex } from "utils/constants";
-import { defaultProjection } from "utils/map/projections";
 import { IconButton } from "@kvib/react";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { MousePosition, ScaleLine } from "ol/control";
+import { useEffect, useState } from "react";
+import { styled } from "styled-components";
+import { zindex } from "utils/constants";
+import { map } from "./constants";
+import { projectionDefinitions } from "utils/map/projections";
+
+const getCurrentProjection = () => map.getView().getProjection();
+
+const getCurrentProjectionName = () => {
+  const projection = getCurrentProjection();
+  return projectionDefinitions.find((def) => def.epsgCode === projection.getCode())?.shortName;
+};
+
+const Projection = () => {
+  const [currentProjectionName, setCurrentProjectionName] = useState(getCurrentProjectionName());
+  useEffect(() => {
+    const updateName = () => {
+      setCurrentProjectionName(getCurrentProjectionName());
+    };
+    map.on("change:view", updateName);
+    return () => {
+      map.un("change:view", updateName);
+    };
+  }, []);
+  return <ProjectionSpan>{currentProjectionName}</ProjectionSpan>;
+};
 
 const Kartinformasjon = () => {
   const { closeOverlayModal, openOverlayModal, activeOverlayModal } = useOverlayPanel();
@@ -17,7 +38,7 @@ const Kartinformasjon = () => {
           if (!coordinates) return "";
           return `${coordinates[1].toFixed(2)}N  ${coordinates[0].toFixed(2)}Ø`;
         },
-        projection: defaultProjection,
+        projection: getCurrentProjection(),
         target: document.getElementById("mouse-position") ?? "",
       });
 
@@ -45,6 +66,7 @@ const Kartinformasjon = () => {
       <ScaleIndicator id="scale-line" />
       <Container>
         <Wrapper>
+          <Projection />
           <Position id="mouse-position" />
           <Scale id="scale-bar" />
         </Wrapper>
@@ -76,8 +98,8 @@ const Container = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 2px 8px;
-  width: 340px;
-
+  width: fit-content;
+  gap: 12px;
   background: white;
   box-shadow: var(--kvib-shadows-base);
   font-size: var(--kvib-fontSizes-sm);
@@ -121,6 +143,10 @@ const Position = styled.span`
   div {
     white-space: pre;
   }
+`;
+
+const ProjectionSpan = styled.span`
+  color: var(--kvib-colors-gray-700);
 `;
 
 export default Kartinformasjon;
