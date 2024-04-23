@@ -16,6 +16,7 @@ import useKommuner from "hooks/inndelinger/useKommuner";
 import { inndelingResponseNavnToString } from "contexts/InndelingerContext/useInndelingFeatures";
 import { Breadcrumb, BreadcrumbItem, Hide, Text } from "@kvib/react";
 import { capitalize } from "utils/string-utils";
+import { KommuneResponse } from "types/api";
 
 const Header = () => {
   const { utkast } = useUtkast();
@@ -29,8 +30,22 @@ const Header = () => {
   const { kommuner } = useKommuner(selectedFylkeId, selectedFylkeId !== "");
 
   const activeFylke = fylker?.find((fylke) => fylke.id.lokalid.value === selectedFylkeId);
-  // TODO CurrentlyEditing
-  const activeKommune = kommuner?.find((kommune) => kommune.id.lokalid.value === currentlyEditingInndelinger[0].id);
+  const activeKommuner = kommuner?.filter((kommune) =>
+    currentlyEditingInndelinger.map((inndeling) => inndeling.id).includes(kommune.id.lokalid.value),
+  );
+
+  const getReadableStringFromKommuner = (responses: KommuneResponse[]) => {
+    const responsesToString = responses.map(
+      (response) => `${response.nummer} ${inndelingResponseNavnToString(response.navn)}`,
+    );
+
+    if (responsesToString.length === 1) return responsesToString[0];
+
+    const responsesExceptLast = responsesToString.slice(0, -1);
+    const responseLast = responsesToString.slice(-1);
+
+    return `${responsesExceptLast.join(", ")}, og ${responseLast}`;
+  };
 
   const toggleModal = (modalName: "inndelinger" | "inndelinger-view") => {
     if (activeOverlayModal === modalName) {
@@ -96,15 +111,13 @@ const Header = () => {
                   <InndelingText>{capitalize(currentlyEditingInndelinger[0].inndelingtype)}</InndelingText>
                 </BreadcrumbItem>
                 <BreadcrumbItem>
-                  <InndelingText $isBold={activeKommune == null}>
+                  <InndelingText $isBold={activeKommuner == null}>
                     {activeFylke.nummer} {inndelingResponseNavnToString(activeFylke.navn)}
                   </InndelingText>
                 </BreadcrumbItem>
-                {activeKommune && (
+                {activeKommuner && activeKommuner.length > 0 && (
                   <BreadcrumbItem>
-                    <InndelingText $isBold>
-                      {activeKommune.nummer} {inndelingResponseNavnToString(activeKommune.navn)}
-                    </InndelingText>
+                    <InndelingText $isBold>{getReadableStringFromKommuner(activeKommuner)}</InndelingText>
                   </BreadcrumbItem>
                 )}
               </Breadcrumb>
