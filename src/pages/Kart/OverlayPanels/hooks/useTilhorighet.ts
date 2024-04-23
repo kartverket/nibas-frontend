@@ -37,8 +37,8 @@ export const useTilhorighet = (feature: Feature): UseTilhorighet => {
   const {
     setTilhorighetOptions,
     tilhorighetOptions,
-    register,
-    getValues,
+    formState,
+    setValue,
     isDirty,
     resetTilhorighet,
     updateDraftFromFeature,
@@ -59,10 +59,10 @@ export const useTilhorighet = (feature: Feature): UseTilhorighet => {
     kontekstType,
     tilhorighetOptions,
     isDirty,
-    register,
     resetTilhorighet,
     updateDraftFromFeature,
-    getValues,
+    formState,
+    setValue,
     isLoading: kontekstType === KontekstType.GRUNNKRETS ? grunnkretserIsLoading : stemmekretserIsLoading,
   };
 };

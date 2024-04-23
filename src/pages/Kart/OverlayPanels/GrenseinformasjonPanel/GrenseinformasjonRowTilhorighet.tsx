@@ -1,5 +1,5 @@
 // TODO Skal slettes i TS-1579, kun brukt som en kopi av den gamle GrenseinformasjonRow slik at vi ikke trenger å lage en midlertidig "smart" GrenseinformasjonRow som håndterer tilhørighet i tillegg
-import { Icon, SkeletonText, Text, Tooltip } from "@kvib/react";
+import { FormControl, FormErrorMessage, Icon, SkeletonText, Text, Tooltip } from "@kvib/react";
 import { styled } from "styled-components";
 import EditAndSaveButton from "../Flatedata/EditAndSaveButton";
 import { useEffect, useState } from "react";
@@ -15,6 +15,7 @@ interface Props {
   onMetadataSubmit: () => void;
   isDisabled?: boolean;
   isDirty: boolean;
+  isValid: boolean;
   isUneditable?: boolean;
   isLoading?: boolean;
   reset: () => void;
@@ -29,16 +30,29 @@ const GrenseinformasjonRow = ({
   onMetadataSubmit,
   isDisabled,
   isDirty,
+  isValid,
   isUneditable = false,
   isLoading = false,
   reset,
 }: Props) => {
   const [isEditing, setIsEditing] = useState(false);
   const [iconHovered, setIconHovered] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   useEffect(() => {
     setIsEditing(false);
   }, [feature]);
+
+  const handleSubmit = () => {
+    setIsSubmitted(true);
+    if (isDirty && isValid) {
+      onMetadataSubmit();
+      setIsEditing(false);
+    }
+    if (!isDirty) {
+      setIsEditing(false);
+    }
+  };
 
   return (
     <Container>
@@ -58,14 +72,10 @@ const GrenseinformasjonRow = ({
               isDisabled={isDisabled}
               isEditing={isEditing}
               size="sm"
-              onSubmit={() => {
-                if (isDirty) {
-                  onMetadataSubmit();
-                }
-                setIsEditing(false);
-              }}
+              onSubmit={handleSubmit}
               toggleEditing={() =>
                 setIsEditing((prevState) => {
+                  setIsSubmitted(false);
                   if (isEditing) {
                     reset();
                   }
@@ -76,7 +86,10 @@ const GrenseinformasjonRow = ({
           )}
         </Row>
         {isEditing ? (
-          <Field>{children}</Field>
+          <FormControl isInvalid={!isValid && isSubmitted}>
+            <Field>{children}</Field>
+            {!isValid && isSubmitted && <FormErrorMessage>Du må velge 2 tilhørigheter for grensen</FormErrorMessage>}
+          </FormControl>
         ) : isLoading ? (
           <SkeletonText noOfLines={1} skeletonHeight={5} marginTop="8px" />
         ) : (

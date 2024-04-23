@@ -1,16 +1,15 @@
 import { useCallback, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
 import { FeatureProperties, KontekstEgenskaper, KretsDelingEndringRequest, UtkastOperasjoner } from "types/api";
 import {
   CustomOption,
+  getKommunerIdFromKontekstEgenskaper,
+  getTilhorighetData,
+  getUpdatedKontekstEgenskaper,
   KontekstType,
   Krets,
   Tilhorighet,
   TilhorighetForm,
   TilhorighetOptions,
-  getKommunerIdFromKontekstEgenskaper,
-  getTilhorighetData,
-  getUpdatedKontekstEgenskaper,
 } from "./tilhorighet-utils";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { Feature } from "ol";
@@ -150,24 +149,35 @@ export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: Kont
     [kommunerIdOgNummer, kontekstType, utkast],
   );
 
-  const {
-    register,
-    getValues,
-    formState: { isDirty },
-    reset,
-  } = useForm<TilhorighetForm>({
-    defaultValues: getTilhorighetData(kontekstEgenskaper),
-  });
+  const [formState, setFormState] = useState<TilhorighetForm>(getTilhorighetData(kontekstEgenskaper));
+  const setValue = (tilhorighet: Tilhorighet, value: string | undefined) => {
+    const newState = { ...formState };
+    newState[kontekstType][tilhorighet] = value;
+    setFormState(newState);
+  };
+
+  const isDirty = useMemo(() => {
+    const initialData = getTilhorighetData(kontekstEgenskaper);
+
+    const grunnkretsIsDirty =
+      initialData[KontekstType.GRUNNKRETS][Tilhorighet.A] !== formState[KontekstType.GRUNNKRETS][Tilhorighet.A] ||
+      initialData[KontekstType.GRUNNKRETS][Tilhorighet.B] !== formState[KontekstType.GRUNNKRETS][Tilhorighet.B];
+    const stemmekretsIsDirty =
+      initialData[KontekstType.STEMMEKRETS][Tilhorighet.A] !== formState[KontekstType.STEMMEKRETS][Tilhorighet.A] ||
+      initialData[KontekstType.STEMMEKRETS][Tilhorighet.B] !== formState[KontekstType.STEMMEKRETS][Tilhorighet.B];
+
+    return stemmekretsIsDirty || grunnkretsIsDirty;
+  }, [formState, kontekstEgenskaper]);
 
   const resetTilhorighet = useCallback(() => {
-    reset(getTilhorighetData(kontekstEgenskaper));
-  }, [kontekstEgenskaper, reset]);
+    setFormState(getTilhorighetData(kontekstEgenskaper));
+  }, [kontekstEgenskaper]);
 
   const updateDraftFromFeature = () => {
     if (tilhorighetOptions) {
       const oppdaterteKontekstEgenskaper = getUpdatedKontekstEgenskaper(
         kontekstType,
-        getValues(kontekstType),
+        formState[kontekstType],
         tilhorighetOptions,
         kontekstEgenskaper,
       );
@@ -178,8 +188,8 @@ export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: Kont
   return {
     setTilhorighetOptions,
     tilhorighetOptions,
-    register,
-    getValues,
+    formState,
+    setValue,
     isDirty,
     resetTilhorighet,
     updateDraftFromFeature,

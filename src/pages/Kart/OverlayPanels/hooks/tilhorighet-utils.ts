@@ -1,4 +1,3 @@
-import { UseFormRegister, UseFormGetValues } from "react-hook-form";
 import { GrunnkretsResponse, KontekstEgenskaper, ObjektIdentifikator, StemmekretsResponse } from "types/api";
 
 export enum Tilhorighet {
@@ -44,10 +43,10 @@ export interface UseTilhorighet {
   kontekstType: KontekstType;
   tilhorighetOptions: TilhorighetOptions | undefined;
   isDirty: boolean;
-  register: UseFormRegister<TilhorighetForm>;
   resetTilhorighet: () => void;
   updateDraftFromFeature: () => void;
-  getValues: UseFormGetValues<TilhorighetForm>;
+  formState: TilhorighetForm;
+  setValue: (tilhorighet: Tilhorighet, value: string | undefined) => void;
   isLoading: boolean;
 }
 
@@ -65,15 +64,15 @@ export const getTilhorighetData = (tilhorigheter: KontekstEgenskaper[] | undefin
     const stemmekretser = tilhorigheter
       .filter((kontekstEgenskaper) => kontekstEgenskaper.type === KontekstType.STEMMEKRETS)
       .map((stemmekrets) => stemmekrets.id?.lokalid.value);
-    if (grunnkretser.length === 2 || stemmekretser.length === 2) {
+    if (grunnkretser.length > 0 || stemmekretser.length > 0) {
       return {
         [KontekstType.GRUNNKRETS]: {
           [Tilhorighet.A]: grunnkretser[0],
-          [Tilhorighet.B]: grunnkretser[1],
+          [Tilhorighet.B]: grunnkretser.length > 1 ? grunnkretser[1] : "NOT_CHOSEN",
         },
         [KontekstType.STEMMEKRETS]: {
           [Tilhorighet.A]: stemmekretser[0],
-          [Tilhorighet.B]: stemmekretser[1],
+          [Tilhorighet.B]: stemmekretser.length > 1 ? stemmekretser[1] : "NOT_CHOSEN",
         },
       };
     }
