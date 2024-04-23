@@ -11,6 +11,12 @@ import { FeatureProperties } from "../../../types/api";
 import { Coordinate } from "ol/coordinate";
 import { equals } from "ol/array";
 
+export type SplittedFeatures = {
+  oldFeatureId: string;
+  newFeatures: Feature<Geometry>[];
+  oldFeature: Feature<Geometry>;
+};
+
 // OBS! Per nå skiller denne seg fra de andre interaksjonene ved at den ikke legges til som et event i kartet
 // I stedet bruker man select og selectPoint etter hverandre, og utløser handlingen ved en knapp i React
 const useSplit = () => {
@@ -18,24 +24,10 @@ const useSplit = () => {
   const { activeTool } = useToolbar();
   const { selectedFeatures, selectedPoint } = useFeatureStyle();
 
-  const createCloneOfFeatureWithPartsOfCoordinates = (
-    feature: Feature,
-    startIndex: number,
-    endIndex: number,
-  ): Feature<Geometry> => {
-    const newFeature = feature.clone();
-    const newFeatureId = getTempFeatureId();
-    const newGeometry = newFeature.getGeometry() as LineString;
-
-    // Siden OL er mutable og vi ikke ønsker å mutere den eksisterende geometrien
-    const coordinates = [...newGeometry.getCoordinates()];
-    const newCoordinates = coordinates.splice(startIndex, endIndex);
-    newFeature.setId(newFeatureId);
-    newGeometry.setCoordinates(newCoordinates);
-    return newFeature;
-  };
-
-  const performFeatureSplit = (featureToSplit: Feature<Geometry>, coordinatesToSplit: Coordinate[]) => {
+  const createNewFeatures = (
+    featureToSplit: Feature<Geometry>,
+    coordinatesToSplit: Coordinate[],
+  ): SplittedFeatures | undefined => {
     const oldFeature = featureToSplit;
     const oldGeometry = oldFeature.getGeometry();
     if (oldGeometry instanceof LineString) {
@@ -76,22 +68,52 @@ const useSplit = () => {
             return createCloneOfFeatureWithPartsOfCoordinates(oldFeature, indices[0], indices[1]);
           });
 
-          const properties = oldFeature.getProperties() as FeatureProperties;
-          oldFeature.setProperties({ ...properties, shouldArchive: true });
-          addFeaturesToSource("edit", newFeatures);
-          removeFeaturesFromSourceByIds("edit", [oldFeatureId]);
-
-          addHistoryEntry({
-            type: "grensedeling",
-            changes: [{ id: oldFeatureId, type: "grensedeling", from: [oldFeature], to: newFeatures }],
-          });
-
-          // Hvis featuren som ble splittet er en gammel feature med ID ønsker vi å vise den som arkivert
-          if (!isTempFeatureId(oldFeatureId)) {
-            addFeaturesToSource("archived", [oldFeature]);
-          }
+          return {
+            newFeatures,
+            oldFeatureId,
+            oldFeature,
+          };
         }
       }
+    }
+  };
+
+  const createCloneOfFeatureWithPartsOfCoordinates = (
+    feature: Feature,
+    startIndex: number,
+    endIndex: number,
+  ): Feature<Geometry> => {
+    const newFeature = feature.clone();
+    const newFeatureId = getTempFeatureId();
+    const newGeometry = newFeature.getGeometry() as LineString;
+
+    // Siden OL er mutable og vi ikke ønsker å mutere den eksisterende geometrien
+    const coordinates = [...newGeometry.getCoordinates()];
+    const newCoordinates = coordinates.splice(startIndex, endIndex);
+    newFeature.setId(newFeatureId);
+    newGeometry.setCoordinates(newCoordinates);
+    return newFeature;
+  };
+
+  //TODO: metode for arkivering
+
+  const performFeatureSplit = (featureToSplit: Feature<Geometry>, coordinatesToSplit: Coordinate[]) => {
+    const features = createNewFeatures(featureToSplit, coordinatesToSplit);
+    if (features == null) return;
+    const { newFeatures, oldFeature, oldFeatureId } = features;
+    const properties = oldFeature.getProperties() as FeatureProperties;
+    oldFeature.setProperties({ ...properties, shouldArchive: true });
+    addFeaturesToSource("edit", newFeatures);
+    removeFeaturesFromSourceByIds("edit", [oldFeatureId]);
+
+    addHistoryEntry({
+      type: "grensedeling",
+      changes: [{ id: oldFeatureId, type: "grensedeling", from: [oldFeature], to: newFeatures }],
+    });
+
+    // Hvis featuren som ble splittet er en gammel feature med ID ønsker vi å vise den som arkivert
+    if (!isTempFeatureId(oldFeatureId)) {
+      addFeaturesToSource("archived", [oldFeature]);
     }
   };
 
@@ -105,7 +127,7 @@ const useSplit = () => {
       }
     }
   };
-  return { split, performFeatureSplit };
+  return { split, performFeatureSplit, createNewFeatures };
 };
 
 export default useSplit;

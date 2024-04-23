@@ -142,6 +142,43 @@ export const undoArchving = (entry: GrenseArkiveringsEntry) => {
   );
 };
 
+export const undoNyGrense = (entry: HistoryEntry) => {
+  if (entry.type !== "nygrense") return;
+
+  setFeatureCoordinatesAndPropertiesForEntry(entry, "from");
+
+  undoGrensedeling(
+    removeNil(
+      entry.changes.flatMap((e) => {
+        if (e.type === "grensedeling") return (e as HistoryChange<Feature[]>).from;
+      }),
+    )[0],
+    removeNil(
+      entry.changes.flatMap((e) => {
+        if (e.type === "grensedeling") return (e as HistoryChange<Feature[]>).to;
+      }),
+    ),
+  );
+};
+
+export const redoNyGrense = (entry: HistoryEntry) => {
+  if (entry.type !== "nygrense") return;
+  setFeatureCoordinatesAndPropertiesForEntry(entry, "to");
+
+  redoGrensedeling(
+    removeNil(
+      entry.changes.flatMap((e) => {
+        if (e.type === "grensedeling") return (e as HistoryChange<Feature[]>).from;
+      }),
+    )[0],
+    removeNil(
+      entry.changes.flatMap((e) => {
+        if (e.type === "grensedeling") return (e as HistoryChange<Feature[]>).to;
+      }),
+    ),
+  );
+};
+
 export const redoGrensedeling = (deltFeature: Feature, newFeaturesFromsDeling: Feature[]) => {
   const properties = deltFeature.getProperties() as FeatureProperties;
   deltFeature.setProperties({ ...properties, shouldArchive: true });

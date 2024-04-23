@@ -16,7 +16,7 @@ import LineString from "ol/geom/LineString";
 import { useGetFeatures } from "./interaction-utils";
 import { equals } from "ol/coordinate";
 import { setDefaultFeatureProperties } from "utils/features";
-import useSplit from "./useSplit";
+import useSplit, { SplittedFeatures as SplittedFeature } from "./useSplit";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import { Geometry } from "ol/geom";
 import { findNearbyVertexOnFeature } from "utils/map/map-utils";
@@ -24,6 +24,7 @@ import useToastUnique from "hooks/toast/useToastUnique";
 import { addFeaturesToSource } from "utils/map/source";
 import { editSource } from "hooks/layers/constants";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import { HistoryChange, HistoryChangeEntry } from "contexts/HistoryContext/types";
 
 const useDraw = () => {
   const { activeTool, activeModeTools, toggleTool } = useToolbar();
@@ -33,7 +34,7 @@ const useDraw = () => {
   const { selectFeatures, selectedFeatures } = useFeatureStyle();
   const { getLineStringFeaturesAtPixel } = useGetFeatures();
   const toast = useToast();
-  const { performFeatureSplit } = useSplit();
+  const { performFeatureSplit, createNewFeatures } = useSplit();
   const { openAsync } = useConfirmationModal();
 
   const [abortDrawMemoHelper, setAbortDrawMemoHelper] = useState(0);
@@ -111,15 +112,31 @@ const useDraw = () => {
   }, [abortDrawMemoHelper, activeTool, activeModeTools, getLineStringFeaturesAtPixel, toast, endpointToast]);
 
   useEffect(() => {
-    const addDrawToHistory = (drawnFeature: Feature<LineString>) => {
+    const addDrawToHistory = (drawnFeature: Feature<LineString>, splittedFeatures: SplittedFeature[]) => {
       if (currentlyEditedInndeling == null) return;
 
       const grenseType = getGrensetypeFromInndelingtype(currentlyEditedInndeling.inndelingtype);
 
       if (grenseType) {
+        const changes: HistoryChange<HistoryChangeEntry>[] = [];
+
+        changes.push(...createNyGrenseHistoryChanges([drawnFeature], grenseType));
+
+        if (splittedFeatures.length > 0) {
+          splittedFeatures.forEach((split) => {
+            const splittedFeaturesChange: HistoryChange<Feature[]> = {
+              type: "grensedeling",
+              id: split.oldFeatureId,
+              from: [split.oldFeature],
+              to: split.newFeatures,
+            };
+            changes.push(splittedFeaturesChange);
+          });
+        }
+
         addHistoryEntry({
           type: "nygrense",
-          changes: createNyGrenseHistoryChanges([drawnFeature], grenseType),
+          changes: changes,
         });
       }
     };
@@ -152,7 +169,10 @@ const useDraw = () => {
       );
     };
 
-    const splitFeatureAtDrawnFeatureEndpoints = (feature: Feature<Geometry>, drawnFeatureGeometry: LineString) => {
+    const splitFeatureAtDrawnFeatureEndpoints = (
+      feature: Feature<Geometry>,
+      drawnFeatureGeometry: LineString,
+    ): SplittedFeature | undefined => {
       const drawnFeatureHead = drawnFeatureGeometry.getFirstCoordinate();
       const drawnFeatureTail = drawnFeatureGeometry.getLastCoordinate();
       const geometry = feature.getGeometry();
@@ -169,7 +189,7 @@ const useDraw = () => {
         });
 
         if (coordinatesToSplitAt.length > 0) {
-          performFeatureSplit(feature, coordinatesToSplitAt);
+          return createNewFeatures(feature, coordinatesToSplitAt);
         }
       }
     };
@@ -193,14 +213,16 @@ const useDraw = () => {
       drawnFeature.setId(newId);
 
       const uniqueFeaturesToBeSplit = getUniqueFeaturesToSplitIfExists(drawnFeatureGeometry);
+      const splittedFeatures: SplittedFeature[] = [];
 
       for (const feature of uniqueFeaturesToBeSplit) {
-        splitFeatureAtDrawnFeatureEndpoints(feature, drawnFeatureGeometry);
+        const newFeatures = splitFeatureAtDrawnFeatureEndpoints(feature, drawnFeatureGeometry);
+        if (newFeatures !== undefined) splittedFeatures.push(newFeatures);
       }
 
       setDefaultFeatureProperties(drawnFeature, getGrensetypeFromInndelingtype(currentlyEditedInndeling.inndelingtype));
 
-      addDrawToHistory(drawnFeature);
+      addDrawToHistory(drawnFeature, splittedFeatures);
       addFeaturesToSource("edit", [drawnFeature]);
 
       toast({
@@ -224,6 +246,7 @@ const useDraw = () => {
     };
   }, [
     addHistoryEntry,
+    createNewFeatures,
     currentlyEditedInndeling,
     draw,
     openAsync,

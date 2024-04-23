@@ -9,6 +9,8 @@ import {
   undoArchving,
   undoGrensedeling,
   redoGrensedeling,
+  undoNyGrense,
+  redoNyGrense,
 } from "./history-utils";
 import useHistoryState from "contexts/HistoryContext/useHistoryState";
 import { Feature } from "ol";
@@ -25,7 +27,7 @@ const onUndo = (entry: HistoryEntry) => {
       return setFeaturePropertiesForEntry(entry, "from");
     }
     case "nygrense": {
-      return setFeatureCoordinatesAndPropertiesForEntry(entry, "from");
+      return undoNyGrense(entry);
     }
     case "grunnkrets": {
       return document.dispatchEvent(
@@ -89,7 +91,7 @@ const onRedo = (entry: HistoryEntry) => {
       return setFeaturePropertiesForEntry(entry, "to");
     }
     case "nygrense": {
-      return setFeatureCoordinatesAndPropertiesForEntry(entry, "to");
+      return redoNyGrense(entry);
     }
     case "grunnkrets": {
       return document.dispatchEvent(
