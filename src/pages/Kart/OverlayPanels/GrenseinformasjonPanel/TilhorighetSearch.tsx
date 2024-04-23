@@ -92,4 +92,5 @@ const OptionContainer = styled.div`
 
 const SearchContainer = styled.div`
   background: var(--kvib-colors-white);
+  border-radius: 5px;
 `;
