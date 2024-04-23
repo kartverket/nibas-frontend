@@ -68,6 +68,7 @@ const TilhorighetRow = ({
           <div key={tilhorighet}>
             <TilhorighetSearch
               value={formState[kontekstType][tilhorighet]}
+              kretsType={kontekstType}
               onChange={(newValue) => setValue(tilhorighet, newValue)}
               options={
                 tilhorighetOptions?.[tilhorighet]?.map((krets) => ({

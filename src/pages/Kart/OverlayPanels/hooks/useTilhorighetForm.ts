@@ -159,14 +159,14 @@ export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: Kont
   const isDirty = useMemo(() => {
     const initialData = getTilhorighetData(kontekstEgenskaper);
 
-    const grunnkretsDirty =
+    const grunnkretsIsDirty =
       initialData[KontekstType.GRUNNKRETS][Tilhorighet.A] !== formState[KontekstType.GRUNNKRETS][Tilhorighet.A] ||
       initialData[KontekstType.GRUNNKRETS][Tilhorighet.B] !== formState[KontekstType.GRUNNKRETS][Tilhorighet.B];
-    const stemmekretsDirty =
+    const stemmekretsIsDirty =
       initialData[KontekstType.STEMMEKRETS][Tilhorighet.A] !== formState[KontekstType.STEMMEKRETS][Tilhorighet.A] ||
       initialData[KontekstType.STEMMEKRETS][Tilhorighet.B] !== formState[KontekstType.STEMMEKRETS][Tilhorighet.B];
 
-    return stemmekretsDirty || grunnkretsDirty;
+    return stemmekretsIsDirty || grunnkretsIsDirty;
   }, [formState, kontekstEgenskaper]);
 
   const resetTilhorighet = useCallback(() => {
