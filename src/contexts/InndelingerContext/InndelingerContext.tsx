@@ -117,6 +117,10 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     };
 
     if (selectedInndelinger.length === 0) return;
+
+    // for (const selectedInndeling of selectedInndelinger) {
+    //   const featuresForSelectedInndeling = inndelingFeatures
+    // }
     /*
     if (inndelingFeatures.length > 0) {
       const defaultPreviousinndeling = {
@@ -202,7 +206,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
     }
     */
-    setSelectedInndelinger([]);
+    // setSelectedInndelinger([]);
   }, [
     inndelingFeatures,
     selectedInndelinger,

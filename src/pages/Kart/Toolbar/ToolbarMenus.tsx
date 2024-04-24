@@ -38,7 +38,7 @@ const ToolbarMenus = () => {
 
   const { currentlyEditingInndelinger } = useInndelinger();
 
-  const isEditing = currentlyEditingInndelinger != null;
+  const isEditing = currentlyEditingInndelinger.length > 0;
 
   const flatedetaljerIsAvailable = currentlyEditingInndelinger.some((inndeling) => {
     return inndeling.inndelingtype === "stemmekrets" || inndeling.inndelingtype === "grunnkrets";
