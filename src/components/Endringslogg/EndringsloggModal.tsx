@@ -6,15 +6,15 @@ import {
   ModalHeader,
   ModalCloseButton,
   ModalBody,
-  Skeleton,
   Stack,
+  Spinner,
 } from "@kvib/react";
-import { EndringsloggGrunnkretsendringer } from "./EndringsloggGrunnkretsendringer";
-import { EndringsloggStemmekretsendringer } from "./EndringsloggStemmekretsendringer";
 import { useUtkastEndringer } from "./hooks/useUtkastEndringer";
 import { UtkastResponse } from "types/api";
 import { UnsavedEndringerCollapse } from "./UlagredeEndringer/UnsavedEndringerCollapse";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { EndringerForKommune } from "components/Endringslogg/EndringerForKommune";
+import { EndringList } from "components/Endringslogg/EndringerList";
 
 type Props = {
   isOpen: boolean;
@@ -26,28 +26,26 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
   const { harEndringer, laster, stemmekretsendringer, grunnkretsendringer } = useUtkastEndringer(utkast);
   const { history } = useHistory();
   const harUlagredeEndringer = history.index > 0;
-  const harLastetData = !laster || !!stemmekretsendringer || !!grunnkretsendringer;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="3xl" isCentered scrollBehavior="inside">
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Endringer i dette utkastet</ModalHeader>
+        <ModalHeader>Endringslogg</ModalHeader>
         <ModalCloseButton aria-label="Lukk" />
         <ModalBody>
           {!harEndringer && !harUlagredeEndringer && <Empty>Det er ingen endringer i dette utkastet</Empty>}
           <Stack spacing={6}>
             <UnsavedEndringerCollapse expandedByDefault={!harEndringer} />
-            {stemmekretsendringer?.map((endringer) => (
-              <Skeleton key={endringer.kommune.id} isLoaded={harLastetData}>
-                <EndringsloggStemmekretsendringer endringer={endringer} />
-              </Skeleton>
-            ))}
-            {grunnkretsendringer?.map((endringer) => (
-              <Skeleton key={endringer.kommune.id} isLoaded={harLastetData}>
-                <EndringsloggGrunnkretsendringer endringer={endringer} />
-              </Skeleton>
-            ))}
+            {laster && <Spinner size="xl" />}
+            <EndringList>
+              {stemmekretsendringer?.map((endringer) => (
+                <EndringerForKommune key={endringer.kommune.id} endringer={endringer} kretstype="STEMMEKRETS" />
+              ))}
+              {grunnkretsendringer?.map((endringer) => (
+                <EndringerForKommune key={endringer.kommune.id} endringer={endringer} kretstype="GRUNNKRETS" />
+              ))}
+            </EndringList>
           </Stack>
         </ModalBody>
       </ModalContent>

@@ -9,12 +9,11 @@ import {
   useDisclosure,
   Icon,
 } from "@kvib/react";
-import { EndringsloggGrunnkretsendringer } from "components/Endringslogg/EndringsloggGrunnkretsendringer";
 import EndringsloggModal from "components/Endringslogg/EndringsloggModal";
-import { EndringsloggStemmekretsendringer } from "components/Endringslogg/EndringsloggStemmekretsendringer";
 import { useUtkastEndringer } from "components/Endringslogg/hooks/useUtkastEndringer";
 import { styled } from "styled-components";
 import { UtkastResponse } from "types/api";
+import { EndringerForKommune } from "components/Endringslogg/EndringerForKommune";
 
 type Props = {
   utkast: UtkastResponse;
@@ -49,13 +48,13 @@ export const EndringsloggAccordion = ({ utkast }: Props) => {
 
           {stemmekretsendringer?.map((endringer) => (
             <Skeleton key={endringer.kommune.id} isLoaded={harLastetData}>
-              <EndringsloggStemmekretsendringer endringer={endringer} />
+              <EndringerForKommune kretstype="STEMMEKRETS" endringer={endringer} />
             </Skeleton>
           ))}
 
           {grunnkretsendringer?.map((endringer) => (
             <Skeleton key={endringer.kommune.id} isLoaded={harLastetData}>
-              <EndringsloggGrunnkretsendringer endringer={endringer} />
+              <EndringerForKommune kretstype="GRUNNKRETS" endringer={endringer} />
             </Skeleton>
           ))}
         </AccordionPanel>

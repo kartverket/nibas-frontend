@@ -6,50 +6,51 @@ export type Endring = {
   til: ReactNode;
 };
 
-export type StemmekretsMetadataEndringstype = "navn" | "nummer" | "valgdistriktsnummer";
+export type StemmekretsMetadataFields = "navn" | "nummer" | "valgdistriktsnummer";
+export type GrunnkretsMetadataFields = "navn" | "nummer";
 
-export type GrunnkretsEndringstype = "navn" | "nummer";
+export type KretsType = "STEMMEKRETS" | "GRUNNKRETS";
 
-export type StemmekretsMetadataEndring = {
-  kretsEndret: StemmekretsResponse;
-  navn: Endring | null | undefined;
-  nummer: Endring | null | undefined;
-  valgdistriktsnummer: Endring | null | undefined;
+export type EndringsFieldFromKretstype<T extends KretsType> = T extends "STEMMEKRETS"
+  ? StemmekretsMetadataFields
+  : T extends "GRUNNKRETS"
+    ? GrunnkretsMetadataFields
+    : never;
+
+export type ResponseTypeFromKretstype<T extends KretsType> = T extends "STEMMEKRETS"
+  ? StemmekretsResponse
+  : T extends "GRUNNKRETS"
+    ? GrunnkretsResponse
+    : never;
+
+export type KretsMetadataFields = {
+  STEMMEKRETS: StemmekretsMetadataFields;
+  GRUNNKRETS: GrunnkretsMetadataFields;
 };
 
-export type GrunnkretsMetadataEndring = {
-  kretsEndret: GrunnkretsResponse;
-  navn: Endring | null | undefined;
-  nummer: Endring | null | undefined;
-};
+export type Metadataendringer<T extends KretsType> = T extends "STEMMEKRETS"
+  ? { [Key in KretsMetadataFields["STEMMEKRETS"]]: Endring | null }
+  : T extends "GRUNNKRETS"
+    ? { [Key in KretsMetadataFields["GRUNNKRETS"]]: Endring | null }
+    : never;
 
-export type Stemmekretsendringer = {
+export type Kretsendringer<T extends KretsType> = {
   kommune: {
     id: string;
     nummer: string;
     navn: string;
   };
-  metadataendringer: StemmekretsMetadataEndring[];
-  grensejusteringer: StemmekretsResponse[];
-  sammenslaaing: StemmekretsSammenslaaingEndring | null;
-  splitting: KretsSplittingEndring[] | null;
-};
-
-export type Grunnkretsendringer = {
-  kommune: {
-    id: string;
-    nummer: string;
-    navn: string;
-  };
-  metadataendringer: GrunnkretsMetadataEndring[];
-  grensejusteringer: GrunnkretsResponse[];
-  splittinger: KretsSplittingEndring[] | null;
+  metadataendringer: Metadataendringer<T>[];
+  antallArkiverteGrenser: number;
+  antallNyeGrenser: number;
+  antallEndredeGrenser: number;
+  sammenslaaing: KretsSammenslaaingEndring | null;
+  delinger: KretsSplittingEndring[] | null;
 };
 
 export type KretsSplittingEndring = { opprinneligKrets: KretsNavnOgNummer; nyeKretser: KretsNavnOgNummer[] };
 
-export type StemmekretsSammenslaaingEndring = {
-  viderefoertKrets: StemmekretsResponse;
+export type KretsSammenslaaingEndring = {
   nyttNavn: string;
   nyttNummer: string;
   gamleKretser: {

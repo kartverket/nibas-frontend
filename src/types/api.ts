@@ -8,6 +8,8 @@ export type Spraak = {
   navn: string;
   spraak: string;
 };
+
+export type FeatureDTO = components["schemas"]["Feature"];
 export type FeatureCollection = components["schemas"]["FeatureCollection"];
 export type KodelisteRespons = components["schemas"]["KodelisteRespons"];
 export type ObjektIdentifikator = components["schemas"]["ObjektIdentifikator"];

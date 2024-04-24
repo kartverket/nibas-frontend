@@ -1,4 +1,4 @@
-import { Badge, Card, Text } from "@kvib/react";
+import { Badge, Card, Icon, Text } from "@kvib/react";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { HistoryTypeValues } from "contexts/HistoryContext/types";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
@@ -6,8 +6,8 @@ import { ReactNode, useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { getUrlForPath } from "utils/api";
 import { removeNil } from "utils/list-utils";
-import { EndringFraTil } from "../EndringsloggComponents";
 import { AbstractedHistoryEntry } from "../hooks/useUnsavedEndringer";
+import { Endring } from "components/Endringslogg/hooks/utkastEndringerTypes";
 
 type EndringerProps = {
   type: HistoryTypeValues;
@@ -280,6 +280,52 @@ const DetailedKontekstEgenskaperEndringerList = ({ endringer }: DetailedEndringe
     </TilhorighetEndringer>
   );
 };
+
+type EndringFraTilProps = {
+  endring: Endring;
+  withBadges?: boolean;
+};
+
+const FraTilContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+`;
+
+const EndringAndBadge = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+const RightArrow = styled(Icon)`
+  color: var(--kvib-colors-blue-500);
+  font-size: 20px;
+  vertical-align: middle;
+`;
+
+export const EndringFraTil = ({ endring, withBadges }: EndringFraTilProps) => (
+  <FraTilContainer>
+    <EndringAndBadge>
+      {endring.fra}
+      {withBadges === true && (
+        <Badge variant={"subtle"} colorScheme="gray">
+          Utgår
+        </Badge>
+      )}
+    </EndringAndBadge>
+    <RightArrow icon="arrow_right_alt" />
+    <EndringAndBadge>
+      {endring.til}
+      {withBadges === true && (
+        <Badge variant={"subtle"} colorScheme="green">
+          Ny
+        </Badge>
+      )}
+    </EndringAndBadge>
+  </FraTilContainer>
+);
 
 const EndringTitle = styled(Text)`
   font-size: var(--kvib-fontSizes-sm);
