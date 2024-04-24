@@ -1,11 +1,10 @@
-import { Select, Stack, Text } from "@kvib/react";
+import { Stack, Text } from "@kvib/react";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { useEffect } from "react";
-import { isAdministrativGrense } from "utils/grenser";
+import { isAdministrativGrense, isKommuneGrense } from "utils/grenser";
 import {
-  CustomOption,
   formatKretsNavn,
   KontekstType,
   Tilhorighet,
@@ -13,14 +12,14 @@ import {
   TilhorighetOptions,
   UseTilhorighet,
 } from "../hooks/tilhorighet-utils";
-import { useTilhorighetAdministrativ } from "../hooks/useTilhorighetAdministrativ";
+import { useTilhorighetKommune } from "../hooks/useTilhorighetKommune";
 import { useTilhorighet } from "../hooks/useTilhorighet";
-import { useTilhorighetNyAdministrativ } from "../hooks/useTilhorighetNyAdministrativ";
-import { isFeatureToBeArchived, isFeatureEditable } from "utils/features";
+import { isFeatureEditable, isFeatureToBeArchived } from "utils/features";
 import useIsGrenseinformasjonPanelDisabled from "../hooks/useIsGrenseInformasjonPanelDisabled";
 import GrenseinformasjonRowTilhorighet from "./GrenseinformasjonRowTilhorighet";
-import { styled } from "styled-components";
 import { isGrenseType } from "utils/type-utils";
+import { useTilhorighetIkkeRedigerbar } from "pages/Kart/OverlayPanels/hooks/useTilhorighetIkkeRedigerbar";
+import { TilhorighetSearch } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/TilhorighetSearch";
 
 type TilhorighetRowProps = {
   feature: Feature;
@@ -28,29 +27,16 @@ type TilhorighetRowProps = {
   isDisabled?: boolean;
 };
 
-type CustomOptionProps = {
-  kontekstType: KontekstType;
-};
-
-const NotChosenSelectOption = ({ kontekstType }: CustomOptionProps) => {
-  return <option value={CustomOption.NOT_CHOSEN}>Velg {kontekstType.toLocaleLowerCase()}</option>;
-};
-
-// Dette er default, men en annen farge blir satt fra containeren
-const WhiteSelect = styled(Select)`
-  background-color: white;
-`;
-
 const TilhorighetRow = ({
   feature,
   useTilhorighet: {
     kontekstType,
     tilhorighetOptions,
     isDirty,
-    register,
     resetTilhorighet,
     updateDraftFromFeature,
-    getValues,
+    formState,
+    setValue,
     isLoading,
   },
   isDisabled,
@@ -59,34 +45,39 @@ const TilhorighetRow = ({
     resetTilhorighet();
   }, [resetTilhorighet]);
 
+  const isValid = formState[kontekstType][Tilhorighet.A] != null && formState[kontekstType][Tilhorighet.B] != null;
+
   return (
     <GrenseinformasjonRowTilhorighet
       feature={feature}
       name={`Tilhørighet (${kontekstType.toLocaleLowerCase()})`}
       valueLabel={
-        getTilhorighetValuesFormatted(getValues(kontekstType), tilhorighetOptions) ??
+        getTilhorighetValuesFormatted(formState[kontekstType], tilhorighetOptions) ??
         (isTempFeatureId(feature.getId()?.toString()) ? "Ny grense - Mangler tilhørighet" : undefined)
       }
       onMetadataSubmit={() => updateDraftFromFeature()}
       isDisabled={isDisabled}
       isDirty={isDirty}
+      isValid={isValid}
       isLoading={isLoading}
       reset={resetTilhorighet}
       tooltipLabel="Definerer hvilke inndelinger grensen har på hver sin side. Obs! Endring av dette feltet kan forårsake geometriendringer."
     >
       <Stack>
         {Object.values(Tilhorighet).map((tilhorighet) => (
-          <WhiteSelect key={tilhorighet} isDisabled={isDisabled} {...register(`${kontekstType}.${tilhorighet}`)}>
-            <NotChosenSelectOption kontekstType={kontekstType} />
-            {tilhorighetOptions?.[tilhorighet].map((krets) => {
-              const uid = `${tilhorighet}_${krets.id.lokalid.value}`;
-              return (
-                <option key={uid} value={krets.id.lokalid.value}>
-                  {formatKretsNavn(krets)}
-                </option>
-              );
-            })}
-          </WhiteSelect>
+          <div key={tilhorighet}>
+            <TilhorighetSearch
+              value={formState[kontekstType][tilhorighet]}
+              kretsType={kontekstType}
+              onChange={(newValue) => setValue(tilhorighet, newValue)}
+              options={
+                tilhorighetOptions?.[tilhorighet]?.map((krets) => ({
+                  value: krets.id.lokalid.value,
+                  label: formatKretsNavn(krets),
+                })) ?? []
+              }
+            />
+          </div>
         ))}
       </Stack>
     </GrenseinformasjonRowTilhorighet>
@@ -102,9 +93,9 @@ const CommonTilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
   return <TilhorighetRow feature={feature} useTilhorighet={useTilhorighet(feature)} isDisabled={isDisabled} />;
 };
 
-const AdministrativTilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
-  const useTilhorighetGrunnkrets = useTilhorighetAdministrativ(feature, KontekstType.GRUNNKRETS);
-  const useTilhorighetStemmekrets = useTilhorighetAdministrativ(feature, KontekstType.STEMMEKRETS);
+const KommunegrenseTilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
+  const useTilhorighetGrunnkrets = useTilhorighetKommune(feature, KontekstType.GRUNNKRETS);
+  const useTilhorighetStemmekrets = useTilhorighetKommune(feature, KontekstType.STEMMEKRETS);
 
   return (
     <>
@@ -114,14 +105,14 @@ const AdministrativTilhorighetField = ({ feature, isDisabled }: TilhorighetProps
   );
 };
 
-const NyAdministrativTilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
-  const useTilhorighetGrunnkrets = useTilhorighetNyAdministrativ(feature, KontekstType.GRUNNKRETS);
-  const useTilhorighetStemmekrets = useTilhorighetNyAdministrativ(feature, KontekstType.STEMMEKRETS);
+const IkkeRedigerbarAdministrativGrense = ({ feature }: TilhorighetProps) => {
+  const useTilhorighetGrunnkrets = useTilhorighetIkkeRedigerbar(feature, KontekstType.GRUNNKRETS);
+  const useTilhorighetStemmekrets = useTilhorighetIkkeRedigerbar(feature, KontekstType.STEMMEKRETS);
 
   return (
     <>
-      <TilhorighetRow feature={feature} useTilhorighet={useTilhorighetGrunnkrets} isDisabled={isDisabled} />
-      <TilhorighetRow feature={feature} useTilhorighet={useTilhorighetStemmekrets} isDisabled={isDisabled} />
+      <TilhorighetRow feature={feature} useTilhorighet={useTilhorighetGrunnkrets} isDisabled />
+      <TilhorighetRow feature={feature} useTilhorighet={useTilhorighetStemmekrets} isDisabled />
     </>
   );
 };
@@ -131,14 +122,12 @@ export const TilhorighetField = ({ feature, isDisabled = false }: TilhorighetPro
 
   const featureType = feature.getProperties().type;
 
-  if (isGrenseType(featureType) && isAdministrativGrense(featureType)) {
+  if (isGrenseType(featureType) && isKommuneGrense(featureType)) {
     const isEditable = isFeatureEditable(feature, isFeatureToBeArchived(feature), false);
-
     const shouldBeDisabled = isDisabled || isGrensePanelDisabled || !isEditable;
-    if (isTempFeatureId(feature.getId())) {
-      return <NyAdministrativTilhorighetField feature={feature} isDisabled={shouldBeDisabled} />;
-    }
-    return <AdministrativTilhorighetField feature={feature} isDisabled={shouldBeDisabled} />;
+    return <KommunegrenseTilhorighetField feature={feature} isDisabled={shouldBeDisabled} />;
+  } else if (isGrenseType(featureType) && isAdministrativGrense(featureType)) {
+    return <IkkeRedigerbarAdministrativGrense feature={feature} />;
   }
 
   const shouldBeDisabled = isDisabled || isGrensePanelDisabled;

@@ -12,6 +12,10 @@ export const isAdministrativGrense = (grenseType: GrenseType): boolean => {
   return administrativeGrenser.includes(grenseType);
 };
 
+export const isKommuneGrense = (grenseType: GrenseType): boolean => {
+  return grenseType === "Kommunegrense";
+};
+
 export type MetadataDiscriminator =
   | "FlateMetadata"
   | "AdministrativGrenseMetadata"
