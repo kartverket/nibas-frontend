@@ -37,3 +37,4 @@ spec:
   system: "nibas"
   dependencyOf:
   - "component:nibas-frontend"
+
