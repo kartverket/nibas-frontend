@@ -4,8 +4,8 @@ import WMTS from "ol/source/WMTS";
 import { createXYZ } from "ol/tilegrid";
 import WMTSTileGrid from "ol/tilegrid/WMTS";
 import { getSrcWithTicket } from "utils/geonorgeTicket";
+import { defaultProjectionEpsgCode } from "utils/map/projections";
 import { KartlagId } from "./types";
-import { defaultProjection, defaultProjectionEpsgCode } from "utils/map/projections";
 
 const tileGrid = createXYZ({
   extent: [-2465144.8, 4102893.55, 776625.76, 9408555.22],
@@ -87,7 +87,7 @@ const createWMTS = (id: KartlagId, config: WMTSConfig) => {
 };
 
 const defaultTileWMSParams = {
-  CRS: defaultProjection,
+  CRS: defaultProjectionEpsgCode,
   TILED: true,
 };
 

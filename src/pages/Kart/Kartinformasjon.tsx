@@ -7,7 +7,7 @@ import { zindex } from "utils/constants";
 import { map } from "./constants";
 import { projectionDefinitions } from "utils/map/projections";
 
-const getCurrentProjection = () => map.getView().getProjection();
+export const getCurrentProjection = () => map.getView().getProjection();
 
 const getCurrentProjectionName = () => {
   const projection = getCurrentProjection();

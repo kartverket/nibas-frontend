@@ -1,7 +1,7 @@
 import { register } from "ol/proj/proj4";
 import proj4 from "proj4";
 
-type EpsgCode = `EPSG:${string}`;
+export type EpsgCode = `EPSG:${string}`;
 
 type EpsgDefinition = {
   name: string;

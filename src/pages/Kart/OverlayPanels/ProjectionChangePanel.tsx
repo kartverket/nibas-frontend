@@ -3,19 +3,38 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { View } from "ol";
 import { get as getProjection } from "ol/proj.js";
 import { register } from "ol/proj/proj4";
+import { ImageWMS, TileWMS } from "ol/source";
 import proj4 from "proj4";
+import { useEffect, useState } from "react";
 import { keyframes, styled } from "styled-components";
+import { EpsgCode, defaultProjection, projectionDefinitions } from "utils/map/projections";
 import { map } from "../constants";
 import { AbsolutePanel, PanelProps } from "./Panel";
-import { useState } from "react";
-import { projectionDefinitions } from "utils/map/projections";
 
-export const KoordinatsystemPanel = ({ isOpen }: PanelProps) => {
+export const ProjectionChangePanel = ({ isOpen }: PanelProps) => {
   const { closeOverlayModal } = useOverlayPanel();
-  const [coordianteSystem, setCoordinateSystem] = useState("EPSG:25833");
+  const [coordianteSystem, setCoordinateSystem] = useState(defaultProjection.epsgCode);
+
+  useEffect(() => {
+    const updateProjection = () => {
+      const viewProjection = map.getView().getProjection();
+      map.getAllLayers().forEach((layer) => {
+        const source = layer.getSource();
+        if (source instanceof TileWMS || source instanceof ImageWMS) {
+          source.updateParams({ CRS: viewProjection.getCode(), SRS: viewProjection.getCode() });
+        }
+      });
+    };
+
+    map.on("change:view", updateProjection);
+
+    return () => {
+      map.un("change:view", updateProjection);
+    };
+  }, []);
 
   const setProjection = (selectedEpsgCode: string) => {
-    setCoordinateSystem(selectedEpsgCode);
+    setCoordinateSystem(selectedEpsgCode as EpsgCode);
     const proj4Def = projectionDefinitions.find((epsgDef) => epsgDef.epsgCode === selectedEpsgCode)?.def;
     if (proj4Def != null) {
       proj4.defs(selectedEpsgCode, proj4Def);
@@ -33,6 +52,14 @@ export const KoordinatsystemPanel = ({ isOpen }: PanelProps) => {
             projection: projection,
           }),
         );
+        // for (const layer of map.getAllLayers()) {
+        //   if (layer instanceof TileLayer) {
+        //     const source = layer.getSource();
+        //     if (source instanceof TileImage) {
+        //       source.setRenderReprojectionEdges(false);
+        //     }
+        //   }
+        // }
         closeOverlayModal();
       }
     }
@@ -49,9 +76,9 @@ export const KoordinatsystemPanel = ({ isOpen }: PanelProps) => {
           value={coordianteSystem}
           onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setProjection(e.target.value)}
         >
-          {projectionDefinitions.map((epsgDef) => (
-            <option value={epsgDef.epsgCode} key={epsgDef.epsgCode}>
-              {epsgDef.name}
+          {projectionDefinitions.map((projection) => (
+            <option value={projection.epsgCode} key={projection.epsgCode}>
+              {projection.name}
             </option>
           ))}
         </Select>
