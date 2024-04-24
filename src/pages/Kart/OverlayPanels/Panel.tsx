@@ -6,6 +6,41 @@ export type PanelProps = {
   isOpen: boolean;
 };
 
+type PanelHeaderProps = {
+  onClose: () => void;
+  children: React.ReactNode;
+  button?: React.ReactNode;
+  subHeading?: string;
+  isSmall?: boolean;
+  noMargin?: boolean;
+};
+
+export const PanelHeader = ({
+  children,
+  onClose,
+  button,
+  subHeading = "",
+  isSmall = false,
+  noMargin = false,
+}: PanelHeaderProps) => (
+  <PanelHeaderContainer $isSmall={isSmall} $noMargin={noMargin}>
+    <PanelHeadingContainer>
+      <Heading as={PanelHeadingText} size={isSmall ? "sm" : "md"}>
+        {children}
+      </Heading>
+      {subHeading && <Text fontSize="sm">{subHeading}</Text>}
+    </PanelHeadingContainer>
+    {button != null ? (
+      <ButtonGroup>
+        {button}
+        <CloseButton size={isSmall ? "md" : "lg"} onClick={onClose} aria-label="Lukk" />
+      </ButtonGroup>
+    ) : (
+      <CloseButton size={isSmall ? "md" : "lg"} onClick={onClose} aria-label="Lukk" />
+    )}
+  </PanelHeaderContainer>
+);
+
 const fadeIn = keyframes`
   from {
     opacity: 0;
@@ -76,53 +111,27 @@ const PanelHeaderContainer = styled.div<{ $isSmall: boolean; $noMargin: boolean 
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
   padding: ${({ $isSmall }) => ($isSmall ? "12px 0 8px" : "16px 0 12px")};
   margin-bottom: ${({ $isSmall, $noMargin }) => ($noMargin ? "" : $isSmall ? "16px" : "20px")};
   border-bottom: 2px solid var(--kvib-colors-gray-50);
   background: var(--kvib-colors-chakra-body-bg);
 `;
 
-const PanelHeaderText = styled.div`
+const PanelHeadingContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 4px;
   justify-content: center;
+  gap: 4px;
+  width: 100%;
 `;
 
-type PanelHeaderProps = {
-  onClose: () => void;
-  children: React.ReactNode;
-  button?: React.ReactNode;
-  subHeading?: string;
-  isSmall?: boolean;
-  noMargin?: boolean;
-};
-
-export const PanelHeader = ({
-  children,
-  onClose,
-  button,
-  subHeading = "",
-  isSmall = false,
-  noMargin = false,
-}: PanelHeaderProps) => (
-  <PanelHeaderContainer $isSmall={isSmall} $noMargin={noMargin}>
-    <PanelHeaderText>
-      <Heading as="h3" size={isSmall ? "sm" : "md"}>
-        {children}
-      </Heading>
-      {subHeading && <Text fontSize="sm">{subHeading}</Text>}
-    </PanelHeaderText>
-    {button != null ? (
-      <ButtonGroup>
-        {button}
-        <CloseButton size={isSmall ? "md" : "lg"} onClick={onClose} aria-label="Lukk" />
-      </ButtonGroup>
-    ) : (
-      <CloseButton size={isSmall ? "md" : "lg"} onClick={onClose} aria-label="Lukk" />
-    )}
-  </PanelHeaderContainer>
-);
+const PanelHeadingText = styled.h3`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+`;
 
 const ButtonGroup = styled.div`
   display: flex;
