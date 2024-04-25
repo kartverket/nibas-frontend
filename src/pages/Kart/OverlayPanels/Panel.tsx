@@ -13,17 +13,19 @@ type PanelHeaderProps = {
   subHeading?: string;
   isSmall?: boolean;
   noMargin?: boolean;
+  className?: string;
 };
 
 export const PanelHeader = ({
   children,
   onClose,
   button,
+  className,
   subHeading = "",
   isSmall = false,
   noMargin = false,
 }: PanelHeaderProps) => (
-  <PanelHeaderContainer $isSmall={isSmall} $noMargin={noMargin}>
+  <PanelHeaderContainer $isSmall={isSmall} $noMargin={noMargin} className={className}>
     <PanelHeadingContainer>
       <Heading as={PanelHeadingText} size={isSmall ? "sm" : "md"}>
         {children}
@@ -64,8 +66,9 @@ const slideIn = keyframes`
 `;
 
 const Panel = styled.div<{ $isOpen: boolean }>`
+  --panel-padding: 16px;
   width: 100%;
-  padding: 0 18px;
+  padding: 0 var(--panel-padding);
   background: white;
   border: 2px solid var(--kvib-colors-gray-50);
   border-radius: 12px;

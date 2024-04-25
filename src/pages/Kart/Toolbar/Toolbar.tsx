@@ -31,8 +31,9 @@ const Toolbar = () => {
   } = useOverlayPanel();
   const { selectedFeatures, selectedPoint, clearSelectedPoint, clearSelection } = useFeatureStyle();
 
-  const { currentlyEditedInndeling } = useInndelinger();
+  const { inndelinger, currentlyEditedInndeling } = useInndelinger();
   const isEditing = currentlyEditedInndeling != null;
+  const flatedataIsAvailable = Object.values(inndelinger).some((inndelingtype) => inndelingtype.size > 0);
 
   const { isOpen: isSnapMenuOpen, onClose: closeSnapMenu, onToggle: toggleSnapMenu } = useDisclosure();
 
@@ -197,6 +198,7 @@ const Toolbar = () => {
             icon="window"
             onClick={() => toggleOverlayModal("flatedata")}
             isActive={activeOverlayModal === "flatedata"}
+            isDisabled={!flatedataIsAvailable}
             aria-label="Se eller endre flatedetaljer"
             tooltip={{
               text: "Se eller endre flatedetaljer",

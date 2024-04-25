@@ -1,6 +1,5 @@
 import { styled } from "styled-components";
 import {
-  Badge,
   Icon,
   Input,
   InputGroup,
@@ -17,8 +16,9 @@ import {
 import { ModalPanel, PanelHeader, PanelProps } from "../Panel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import KretsTable from "./KretsTable";
-import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import { Inndeling, pluralizeInndelingtype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { getNavnInSpraak } from "utils/language/language";
+import { capitalize } from "utils/string-utils";
 
 const FlatedataPanel = ({ isOpen }: PanelProps) => {
   const { closeOverlayModal } = useOverlayPanel();
@@ -28,11 +28,21 @@ const FlatedataPanel = ({ isOpen }: PanelProps) => {
     .flatMap((inndelingerMap) => [...inndelingerMap.values()])
     .toSorted((a, b) => (a.isEditing === b.isEditing ? 0 : a.isEditing ? -1 : 1));
 
+  const getTabText = (inndeling: Inndeling) => {
+    const nameAndNumber = inndeling.nummer + " " + getNavnInSpraak(inndeling.navn, "nor");
+    const inndelingIsUnique = !allInndelinger.some(
+      (i) => i.id === inndeling.id && i.inndelingtype !== inndeling.inndelingtype,
+    );
+    const inndelingType = !inndelingIsUnique ? ` (${capitalize(pluralizeInndelingtype(inndeling.inndelingtype))})` : "";
+    const isEditable = inndeling.isEditing ? " (Kan redigeres)" : "";
+    return nameAndNumber + inndelingType + isEditable;
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={closeOverlayModal} scrollBehavior="inside">
       <ModalOverlay />
       <ModalContent as={ModalPanel} $isOpen={isOpen}>
-        <PanelHeader onClose={closeOverlayModal}>
+        <InndelingPanelHeader onClose={closeOverlayModal}>
           <span>Flateinformasjon</span>
           <SearchInput>
             <InputLeftElement>
@@ -40,28 +50,21 @@ const FlatedataPanel = ({ isOpen }: PanelProps) => {
             </InputLeftElement>
             <Input placeholder="TODO" />
           </SearchInput>
-        </PanelHeader>
-        {allInndelinger.length > 0 ? (
-          <Tabs size="md">
-            <TabList>
-              {allInndelinger.map((inndeling) => (
-                <Tab key={inndeling.id + inndeling.inndelingtype}>
-                  {`${inndeling.nummer} ${getNavnInSpraak(inndeling.navn, "nor")}`}
-                  {inndeling.isEditing && <EditBadge colorScheme="blue">Kan redigeres</EditBadge>}
-                </Tab>
-              ))}
-            </TabList>
-            <TabPanels>
-              {allInndelinger.map((inndeling) => (
-                <TabPanel key={inndeling.id + inndeling.inndelingtype}>
-                  <KretsTable inndeling={inndeling} />
-                </TabPanel>
-              ))}
-            </TabPanels>
-          </Tabs>
-        ) : (
-          <p>TODO empty state</p>
-        )}
+        </InndelingPanelHeader>
+        <InndelingTabs size="md">
+          <InndelingTabList>
+            {allInndelinger.map((inndeling) => (
+              <InndelingTab key={inndeling.id + inndeling.inndelingtype}>{getTabText(inndeling)}</InndelingTab>
+            ))}
+          </InndelingTabList>
+          <TabPanels>
+            {allInndelinger.map((inndeling) => (
+              <InndelingTabPanel key={inndeling.id + inndeling.inndelingtype}>
+                <KretsTable inndeling={inndeling} />
+              </InndelingTabPanel>
+            ))}
+          </TabPanels>
+        </InndelingTabs>
       </ModalContent>
     </Modal>
   );
@@ -71,8 +74,40 @@ const SearchInput = styled(InputGroup)`
   max-width: 300px;
 `;
 
-const EditBadge = styled(Badge)`
-  margin-left: 4px;
+const InndelingPanelHeader = styled(PanelHeader)`
+  border: none;
+  margin-bottom: 8px;
+`;
+
+const InndelingTabs = styled(Tabs)`
+  width: calc(100% + var(--panel-padding) * 2);
+  margin: 0 calc(var(--panel-padding) * -1);
+`;
+
+const InndelingTabList = styled(TabList)`
+  position: relative;
+  overflow-x: auto;
+  border-bottom: none;
+  box-shadow: inset 0 -2px var(--kvib-colors-chakra-border-color);
+
+  &::after {
+    content: "";
+    position: sticky;
+    top: 0;
+    right: 0;
+    padding: 0 24px;
+    margin-bottom: 2px;
+    background: linear-gradient(to right, transparent, white);
+  }
+`;
+
+const InndelingTab = styled(Tab)`
+  white-space: nowrap;
+  margin-bottom: 0;
+`;
+
+const InndelingTabPanel = styled(TabPanel)`
+  padding: 0;
 `;
 
 export default FlatedataPanel;

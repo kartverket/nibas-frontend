@@ -48,6 +48,7 @@ const Table = styled.table`
   display: grid;
   grid-template-columns: auto auto 1fr;
   height: 100%;
+  width: 100%;
 
   thead,
   tbody,

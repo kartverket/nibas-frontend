@@ -16,6 +16,17 @@ export const INNDELINGTYPER = ["fylke", "kommune", "stemmekrets", "grunnkrets"] 
 type Inndelingtyper = typeof INNDELINGTYPER;
 export type Inndelingtype = Inndelingtyper[number];
 
+export const pluralizeInndelingtype = (inndelingtype: Inndelingtype) => {
+  switch (inndelingtype) {
+    case "fylke":
+    case "kommune":
+      return inndelingtype + "r";
+    case "stemmekrets":
+    case "grunnkrets":
+      return inndelingtype + "er";
+  }
+};
+
 export type BaseInndeling = {
   id: string;
   nummer: string;
