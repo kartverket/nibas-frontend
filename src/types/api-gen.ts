@@ -12,10 +12,6 @@ export interface paths {
     /** Forkast angitt utkast. */
     delete: operations["forkastUtkast"];
   };
-  "/v1/admin/kodelister/invalidate": {
-    /** Invaliderer kodeliste-cache slik at kodelister refreshes. */
-    put: operations["invalidateKodelisteCache"];
-  };
   "/v1/utkast": {
     /** Henter alle utkast i status Opprettet sortert på navn. */
     get: operations["hentUtkastIStatusOpprettet"];
@@ -93,6 +89,12 @@ export interface paths {
   "/v1/fylker/{id}": {
     /** Henter fylke med gitt id */
     get: operations["hentFylke"];
+  };
+  "/v1/fylker/{id}/stemmekretser": {
+    get: operations["hentFylkesStemmekretser"];
+  };
+  "/v1/fylker/{id}/grunnkretser": {
+    get: operations["hentFylkesGrunnkretser"];
   };
   "/v1/fylker/{id}/grenser": {
     /** Henter grensene til et fylke med gitt id */
@@ -332,6 +334,16 @@ export interface components {
        */
       version: number;
     };
+    /** @description Representasjon av sammenslåing av en grunnkrets med 1 eller flere andre grunnkretser i samme kommune */
+    GrunnkretsSammenslaaingsendringRequest: {
+      viderefoertGrunnkrets: components["schemas"]["IdentifikatorMedVersjon"];
+      /** @description Liste av identifikatorer som skal bli del av den videreførte grunnkretsen */
+      grunnkretserTilSammenslaaing: components["schemas"]["IdentifikatorMedVersjon"][];
+      /** @description Navnet til den sammenslåtte grunnkretsen */
+      navn: string;
+      /** @description Grunnkretsnummeret til den sammenslåtte grunnkretsen */
+      nummer: string;
+    };
     /** @description Spesifikk metadata for en Grunnlinje. Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Diagram/Index/EAID_EEECEE48_B3FA_4807_AAE4_B30B63BC28E1 */
     GrunnlinjeMetadata: components["schemas"]["Metadata"] & {
       common?: components["schemas"]["CommonMetadata"];
@@ -488,6 +500,7 @@ export interface components {
       metadataendringer: components["schemas"]["Metadataendringer"];
       grenseendringer: components["schemas"]["Grenseendringer"];
       stemmekretsSammenslaaingsendring?: components["schemas"]["StemmekretsSammenslaaingsendringRequest"];
+      grunnkretsSammenslaaingsendring?: components["schemas"]["GrunnkretsSammenslaaingsendringRequest"];
       /** @description Deling av en stemmekrets eller grunnkrets */
       kretsDelingEndringer: components["schemas"]["KretsDelingEndringRequest"][];
     };
@@ -497,11 +510,6 @@ export interface components {
       navn: string;
       /** @description Typen endring utkastet representerer. */
       endringstype: string;
-      /**
-       * Format: date
-       * @description Tidspunktet utkastet skal være gyldig fra.
-       */
-      gyldigFra?: string;
       operasjoner: components["schemas"]["Operasjoner"];
       /**
        * Format: int32
@@ -734,11 +742,6 @@ export interface components {
       /** @description Status for utkastet. */
       status: string;
       /**
-       * Format: date
-       * @description Tidspunktet utkastet skal være gyldig fra.
-       */
-      gyldigFra: string;
-      /**
        * Format: date-time
        * @description Da utkastet ble opprettet.
        */
@@ -797,7 +800,7 @@ export interface components {
        * Format: date
        * @description Tidspunktet objektet er gyldig til. Kan være tomt/løpende.
        */
-      gyldigTil?: string;
+      gyldigTil?: string | null;
     };
     /** @description Representasjon av et kommunenummer */
     Kommunenummer: {
@@ -851,6 +854,8 @@ export interface components {
     /** @description Representasjon av en kommune */
     KommuneResponse: {
       id: components["schemas"]["ObjektIdentifikator"];
+      /** @description Lokal-id til fylket denne kommunen er i */
+      fylkeId: string;
       /** @description Liste over navn til kommunen */
       navn: components["schemas"]["AdministrativEnhetNavn"][];
       /** @description Kommunenummeret til kommunen */
@@ -924,10 +929,10 @@ export interface components {
       y?: number;
       /** Format: double */
       z?: number;
-      valid?: boolean;
       /** Format: double */
       m?: number;
       coordinate?: components["schemas"]["Coordinate"];
+      valid?: boolean;
     };
     InndelingResponse: {
       /** @description Lokalid til inndelingen */
@@ -1210,19 +1215,6 @@ export interface operations {
       404: {
         content: {
           "application/json": components["schemas"]["ApiErrorResponse"];
-        };
-      };
-    };
-  };
-  /** Invaliderer kodeliste-cache slik at kodelister refreshes. */
-  invalidateKodelisteCache: {
-    responses: {
-      /** Successful operation */
-      200: unknown;
-      /** Bad Request */
-      400: {
-        content: {
-          "*/*": { [key: string]: unknown };
         };
       };
     };
@@ -1815,6 +1807,58 @@ export interface operations {
       404: {
         content: {
           "application/json": components["schemas"]["FylkeResponse"];
+        };
+      };
+    };
+  };
+  hentFylkesStemmekretser: {
+    parameters: {
+      path: {
+        /** ID til fylket man vil hente stemmekretsenee til */
+        id: string;
+      };
+      query: {
+        /** Eventuell gyldighetsdato for fylket (default = dagens dato */
+        gyldighetsdato?: string;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json": components["schemas"]["StemmekretsResponse"][];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
+    };
+  };
+  hentFylkesGrunnkretser: {
+    parameters: {
+      path: {
+        /** ID til fylket man vil hente grunnkretsene til */
+        id: string;
+      };
+      query: {
+        /** Eventuell gyldighetsdato for fylket (default = dagens dato */
+        gyldighetsdato?: string;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json": components["schemas"]["GrunnkretsResponse"][];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
         };
       };
     };

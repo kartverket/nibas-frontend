@@ -190,6 +190,7 @@ export const mockKommune: KommuneResponse = {
   },
   version: 1,
   nummer: "5031",
+  fylkeId: "50",
   oppdateringsdato: "2022-12-31",
   samiskforvaltningsomraade: false,
 };
@@ -211,6 +212,7 @@ const mockKommuneGiske: KommuneResponse = {
   },
   version: 1,
   nummer: "1532",
+  fylkeId: "50",
   oppdateringsdato: "2022-12-31",
   samiskforvaltningsomraade: false,
 };
@@ -347,7 +349,6 @@ export const mockStemmekretser: StemmekretsResponse[] = [mockStemmekrets1, mockS
 export const mockUtkast: UtkastResponse = {
   navn: "Mock utkast",
   endringstype: "Retting",
-  gyldigFra: "2022-06-01",
   id: "1",
   status: "Ikke publisert",
   opprettetDato: "2022-01-01",

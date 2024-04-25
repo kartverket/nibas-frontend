@@ -1,6 +1,6 @@
-import { Badge, SearchAsync, Text } from "@kvib/react";
+import { Badge, SearchAsync, SearchAsyncElement, Text } from "@kvib/react";
 import { FormatOptionLabelMeta } from "chakra-react-select";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { styled } from "styled-components";
 import { InndelingSearchResponse } from "types/api";
 import { NavigasjonProps } from "./NavigasjonPanel";
@@ -10,9 +10,14 @@ type InndelingOption = InndelingSearchResponse & {
   label: string;
 };
 
-export const InndelingSearch = ({ onSelect: centerOnCoordinate }: NavigasjonProps) => {
+type InndelingSearchProps = NavigasjonProps & {
+  isOpen: boolean;
+};
+
+export const InndelingSearch = ({ onSelect: centerOnCoordinate, isOpen }: InndelingSearchProps) => {
   const searchInndelinger = useInndelingerSearch();
   const [selectedInndeling, setSelectedInndeling] = useState<InndelingOption | null>();
+  const searchRef = useRef<SearchAsyncElement<InndelingOption>>(null);
 
   const mapInndelingResponseToOption = ({
     id,
@@ -92,6 +97,26 @@ export const InndelingSearch = ({ onSelect: centerOnCoordinate }: NavigasjonProp
     );
   };
 
+  useEffect(() => {
+    const searchElement = searchRef.current;
+    if (isOpen && searchElement != null) {
+      searchElement.focus();
+
+      searchElement.onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        const inputRef = searchElement.inputRef;
+        if (inputRef != null && event.code === "Escape") {
+          if (inputRef.value.length === 0) {
+            searchElement.blur();
+          } else {
+            inputRef.value = "";
+            searchElement.onMenuClose();
+            searchElement.clearValue();
+          }
+        }
+      };
+    }
+  }, [isOpen]);
+
   return (
     <SearchAsync
       value={selectedInndeling}
@@ -102,6 +127,7 @@ export const InndelingSearch = ({ onSelect: centerOnCoordinate }: NavigasjonProp
       loadOptions={loadResults}
       debounceTime={150}
       autoFocus
+      ref={searchRef}
     />
   );
 };

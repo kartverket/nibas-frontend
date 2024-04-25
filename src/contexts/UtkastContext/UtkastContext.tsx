@@ -104,7 +104,6 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     const updatedUtkast: OppdaterUtkastRequest = {
       endringstype: utkast.endringstype,
       navn: utkast.navn,
-      gyldigFra: utkast.gyldigFra,
       operasjoner,
       version: utkast.version,
     };
@@ -122,7 +121,6 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
       if (change?.to) {
         updatedUtkast.endringstype = change.to.endringstype;
         updatedUtkast.navn = change.to.navn;
-        updatedUtkast.gyldigFra = change.to.gyldigFra;
       }
     }
 

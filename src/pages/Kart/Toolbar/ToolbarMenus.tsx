@@ -81,11 +81,13 @@ const ToolbarMenus = () => {
 
   useKeyboardShortcut("add", () => toggleTool("add"), isEditing);
   useKeyboardShortcut("remove", () => toggleTool("remove"), isEditing);
-  useKeyboardShortcut("edit_point", toggleMovePoint, isEditing);
+  useKeyboardShortcut("movepoint", toggleMovePoint, isEditing);
   useKeyboardShortcut("merge", toggleMergePanel, mergeIsAvailable);
   useKeyboardShortcut("archive", () => toggleTool("archive"), isEditing);
   useKeyboardShortcut("draw", () => toggleTool("draw"), isEditing);
-  useKeyboardShortcut("flate", toggleFlatedetaljer);
+  useKeyboardShortcut("grensesplit", () => toggleTool("split"), isEditing);
+  useKeyboardShortcut("flateinfo", toggleFlatedetaljer);
+  useKeyboardShortcut("flatesplit", toggleSplitPanel, isEditing);
 
   // For å kunne vise at en meny er aktiv må vi kunne sjekke hvorvidt noen av menuitems er aktive
   // Korteste vei til mål da blir å kunne iterere gjennom menu items
@@ -106,6 +108,7 @@ const ToolbarMenus = () => {
       isDisabled: !isEditing,
       onClick: () => toggleTool("split"),
       "aria-label": "Del en grense i to fra et punkt",
+      command: KeyboardShortcuts["grensesplit"].displayString,
     },
     {
       label: "Arkiver grense",
@@ -121,7 +124,7 @@ const ToolbarMenus = () => {
     {
       label: "Flytt punkt med koordinater",
       icon: <Icon icon="location_on" />,
-      command: KeyboardShortcuts["edit_point"].displayString,
+      command: KeyboardShortcuts["movepoint"].displayString,
       $isActive: activeTool === "koordinater",
       isDisabled: !isEditing,
       onClick: toggleMovePoint,
@@ -150,7 +153,7 @@ const ToolbarMenus = () => {
     {
       label: "Se/endre flatedetaljer",
       icon: <Icon icon="description" />,
-      command: KeyboardShortcuts["flate"].displayString,
+      command: KeyboardShortcuts["flateinfo"].displayString,
       // Vi har ikke laget flatedetaljerpaneler for Kommune og Fylke ennå
       isDisabled: !(flatedetaljerIsAvailable === true),
       $isActive: flatedetaljerIsActive,
@@ -173,6 +176,7 @@ const ToolbarMenus = () => {
       isDisabled: !(flatedetaljerIsAvailable === true),
       onClick: toggleSplitPanel,
       "aria-label": "Splitt en flate",
+      command: KeyboardShortcuts["flatesplit"].displayString,
     },
   ];
   return (

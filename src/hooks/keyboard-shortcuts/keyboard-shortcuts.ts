@@ -3,7 +3,7 @@ export type Shortcut =
   | "redo"
   | "undo"
   | "edit"
-  | "edit_point"
+  | "movepoint"
   | "move"
   | "add"
   | "remove"
@@ -12,11 +12,14 @@ export type Shortcut =
   | "snap"
   | "open"
   | "grenseinfo"
+  | "grensesplit"
   | "archive"
   | "matrikkel"
-  | "flate"
+  | "flateinfo"
+  | "flatesplit"
   | "draw"
-  | "escape";
+  | "escape"
+  | "goto";
 
 type KeyboardShortcut = {
   displayString: string;
@@ -68,22 +71,38 @@ const createShortcut = (key: string, modifierKeys: ModifierKeysOption): Keyboard
 });
 
 export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
-  escape: createShortcut("Escape", {}),
+  // Mode Tools
   move: createShortcut("v", {}),
   edit: createShortcut("r", {}),
-  edit_point: createShortcut("f", { control: true }),
+  matrikkel: createShortcut("e", { control: true }),
+
+  // Grense Tools
+  archive: createShortcut("a", { control: true }),
+  draw: createShortcut("t", { control: true }),
+  grenseinfo: createShortcut("i", { control: true }),
+  grensesplit: createShortcut("p", { control: true, shift: true }),
+
+  // Point Tools
   add: createShortcut("l", { control: true }),
   remove: createShortcut("l", { control: true, shift: true }),
+  movepoint: createShortcut("f", { control: true }),
+
+  // Flate Tools
   merge: createShortcut("m", { control: true }),
+  flateinfo: createShortcut("i", { control: true, shift: true }),
+  flatesplit: createShortcut("m", { control: true, shift: true }),
+
+  // Misc Toolbar
   snap: createShortcut("g", { control: true }),
   layers: createShortcut("k", { control: true }),
+  goto: createShortcut("Enter", { control: true }),
+
+  // Utkast / History Tools
   redo: createShortcut("z", { control: true, shift: true }),
   undo: createShortcut("z", { control: true }),
   save: createShortcut("s", { control: true }),
+
+  // Misc
+  escape: createShortcut("Escape", {}),
   open: createShortcut("o", { control: true }),
-  grenseinfo: createShortcut("i", { control: true }),
-  flate: createShortcut("i", { control: true, shift: true }),
-  archive: createShortcut("a", { control: true }),
-  matrikkel: createShortcut("e", { control: true }),
-  draw: createShortcut("t", { control: true }),
 };
