@@ -3,7 +3,7 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { View } from "ol";
 import { get as getProjection } from "ol/proj.js";
 import { register } from "ol/proj/proj4";
-import { ImageWMS, TileWMS } from "ol/source";
+import { TileWMS } from "ol/source";
 import proj4 from "proj4";
 import { useEffect, useState } from "react";
 import { keyframes, styled } from "styled-components";
@@ -20,14 +20,15 @@ export const ProjectionChangePanel = ({ isOpen }: PanelProps) => {
       const viewProjection = map.getView().getProjection();
       map.getAllLayers().forEach((layer) => {
         const source = layer.getSource();
-        if (source instanceof TileWMS || source instanceof ImageWMS) {
-          source.updateParams({ CRS: viewProjection.getCode(), SRS: viewProjection.getCode() });
+        if (source !== null) {
+          if (source instanceof TileWMS) {
+            source.updateParams({ CRS: viewProjection.getCode() });
+          }
+          source["projection"] = viewProjection;
         }
       });
     };
-
     map.on("change:view", updateProjection);
-
     return () => {
       map.un("change:view", updateProjection);
     };
@@ -52,14 +53,6 @@ export const ProjectionChangePanel = ({ isOpen }: PanelProps) => {
             projection: projection,
           }),
         );
-        // for (const layer of map.getAllLayers()) {
-        //   if (layer instanceof TileLayer) {
-        //     const source = layer.getSource();
-        //     if (source instanceof TileImage) {
-        //       source.setRenderReprojectionEdges(false);
-        //     }
-        //   }
-        // }
         closeOverlayModal();
       }
     }
