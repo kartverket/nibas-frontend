@@ -116,47 +116,49 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
       removeFeaturesFromSourceByIds(layer, featureIds);
     };
 
-    if (selectedInndelinger.length === 0) return;
+    if (inndelingFeatures.length === 0) return;
 
-    // for (const selectedInndeling of selectedInndelinger) {
-    //   const featuresForSelectedInndeling = inndelingFeatures
-    // }
-    /*
-    if (inndelingFeatures.length > 0) {
+    for (const inndelingWithFeatures of inndelingFeatures) {
+      const currentInndeling = selectedInndelinger.find((inndeling) => {
+        return inndeling.id === inndelingWithFeatures.id && inndeling.inndelingtype === inndeling.inndelingtype;
+      });
+
+      if (!currentInndeling) continue;
+
       const defaultPreviousinndeling = {
-        id: selectedInndelinger.id,
-        inndelingtype: selectedInndelinger.inndelingtype,
+        id: currentInndeling.id,
+        inndelingtype: currentInndeling.inndelingtype,
         isEditing: false,
         isVisible: false,
       };
 
       const previousInndeling = previousInndelinger.current
-        ? previousInndelinger.current[selectedInndelinger.inndelingtype].get(selectedInndelinger.id) ??
+        ? previousInndelinger.current[currentInndeling.inndelingtype].get(currentInndeling.id) ??
           defaultPreviousinndeling
         : defaultPreviousinndeling;
 
       if (
-        previousInndeling.inndelingtype !== selectedInndelinger.inndelingtype ||
-        previousInndeling.isEditing !== selectedInndelinger.isEditing
+        previousInndeling.inndelingtype !== currentInndeling.inndelingtype ||
+        previousInndeling.isEditing !== currentInndeling.isEditing
       ) {
         editSource.clear(true);
-        if (selectedInndelinger.isEditing) {
+        if (currentInndeling.isEditing) {
           // TODO Kan man unngå så mye looping her? Er det en potensiell performance save?
           const inndelingFeaturesExcludedUtkastFeatures: Feature<Geometry>[] = [...utkastFeaturesInInndeling];
 
-          for (const inndelingFeature of inndelingFeatures) {
+          for (const feature of inndelingWithFeatures.features) {
             const featureIfInUtkast = inndelingFeaturesExcludedUtkastFeatures.find(
-              (featureFromUtkast) => featureFromUtkast.getId()?.toString() === inndelingFeature.getId()?.toString(),
+              (featureFromUtkast) => featureFromUtkast.getId()?.toString() === feature.getId()?.toString(),
             );
 
             if (!featureIfInUtkast) {
-              inndelingFeaturesExcludedUtkastFeatures.push(inndelingFeature);
+              inndelingFeaturesExcludedUtkastFeatures.push(feature);
             }
           }
 
           const sammenslaaingFeaturesWithDuplicates: Feature<Geometry>[] = [];
 
-          if (selectedInndelinger.inndelingtype === "stemmekrets") {
+          if (currentInndeling.inndelingtype === "stemmekrets") {
             const sammenslaaing = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
             if (sammenslaaing != null) {
               const innlemmedeStemmekretsIder = sammenslaaing.stemmekretserTilSammenslaaing.map(
@@ -168,7 +170,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
                 ...innlemmedeStemmekretsIder,
               ];
 
-              for (const feature of inndelingFeatures) {
+              for (const feature of inndelingWithFeatures.features) {
                 const geometry = feature.getGeometry();
 
                 // Filtrerer ut representasjonspunkt
@@ -196,17 +198,16 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         }
       }
 
-      if (previousInndeling.isVisible !== selectedInndelinger.isVisible) {
-        if (!selectedInndelinger.isVisible) {
-          removeInndelingFromLayer(selectedInndelinger.inndelingtype, inndelingFeatures);
+      if (previousInndeling.isVisible !== currentInndeling.isVisible) {
+        if (!currentInndeling.isVisible) {
+          removeInndelingFromLayer(currentInndeling.inndelingtype, inndelingWithFeatures.features);
         } else {
-          addInndelingToLayer(selectedInndelinger.inndelingtype, inndelingFeatures);
+          addInndelingToLayer(currentInndeling.inndelingtype, inndelingWithFeatures.features);
         }
       }
-
     }
-    */
-    // setSelectedInndelinger([]);
+
+    setSelectedInndelinger([]);
   }, [
     inndelingFeatures,
     selectedInndelinger,

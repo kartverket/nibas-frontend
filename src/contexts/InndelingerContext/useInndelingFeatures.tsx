@@ -2,14 +2,13 @@ import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { getModifiedUrl } from "hooks/useNibasApi";
 import { GeoJSONFeature } from "ol/format/GeoJSON";
 import { useMemo } from "react";
-import { featureToGeoJson, geoJsonToSource, getFeatureFromGeoJson } from "utils/map/geoJson";
+import { geoJsonToSource } from "utils/map/geoJson";
 import { Inndeling, Inndelingtype } from "./InndelingerContext";
 import { Feature } from "ol";
-import { Geometry } from "ol/geom";
-import { FeatureCollection, InndelingNavn, InndelingResponse } from "types/api";
+import { Geometry, Point } from "ol/geom";
+import { FeatureCollection, InndelingNavn } from "types/api";
 import { removeNil } from "utils/list-utils";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
-import { getRepresentasjonspunktId } from "utils/map/source";
 import { paths } from "types/api-gen";
 import { fetcherWithToken } from "utils/api";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
@@ -19,32 +18,20 @@ export const inndelingResponseNavnToString = (inndelingNavn: InndelingNavn): str
   return Array.isArray(inndelingNavn) ? inndelingNavn.map((navn) => navn.navn).join(" - ") : inndelingNavn;
 };
 
-type GrenseRequestPath = Pick<
+type InndelingFeaturesRequestPath = Pick<
   paths,
-  | "/v1/fylker/{id}/grenser"
-  | "/v1/kommuner/{id}/grenser"
-  | "/v1/kommuner/{id}/stemmekretsgrenser"
-  | "/v1/kommuner/{id}/grunnkretsgrenser"
+  | "/v1/fylker/{id}/features"
+  | "/v1/kommuner/{id}/features"
+  | "/v1/kommuner/{id}/stemmekretsfeatures"
+  | "/v1/kommuner/{id}/grunnkretsfeatures"
 >;
 
-type InndelingRequestPath = Pick<
-  paths,
-  "/v1/fylker/{id}" | "/v1/kommuner/{id}" | "/v1/kommuner/{id}/stemmekretser" | "/v1/kommuner/{id}/grunnkretser"
->;
-const getGrenseRequestUrl = (inndelingtype: Inndelingtype): keyof GrenseRequestPath => {
+const getFeaturesRequestUrl = (inndelingtype: Inndelingtype): keyof InndelingFeaturesRequestPath => {
   if (inndelingtype === "fylke" || inndelingtype === "kommune") {
-    return `/v1/${inndelingtype}r/{id}/grenser`;
+    return `/v1/${inndelingtype}r/{id}/features`;
   }
 
-  return `/v1/kommuner/{id}/${inndelingtype}grenser`;
-};
-
-const getInndelingRequestUrl = (inndelingtype: Inndelingtype): keyof InndelingRequestPath => {
-  if (inndelingtype === "fylke" || inndelingtype === "kommune") {
-    return `/v1/${inndelingtype}r/{id}`;
-  }
-
-  return `/v1/kommuner/{id}/${inndelingtype}er`;
+  return `/v1/kommuner/{id}/${inndelingtype}features`;
 };
 
 type InndelingWithFeatureCollection = {
@@ -53,15 +40,19 @@ type InndelingWithFeatureCollection = {
   geoJSONFeatures: GeoJSONFeature;
 };
 
-const inndelingGrenseFetcher = async ([inndelinger, token]: [Inndeling[], string | undefined]) => {
-  const promises: Promise<InndelingWithFeatureCollection>[] = inndelinger.map(async (inndeling) => {
-    const url = getGrenseRequestUrl(inndeling.inndelingtype);
+const inndelingFeatureFetcher = async ([inndelingIds, inndelingtype, token]: [
+  string[],
+  Inndelingtype,
+  string | undefined,
+]) => {
+  const promises: Promise<InndelingWithFeatureCollection>[] = inndelingIds.map(async (id) => {
+    const url = getFeaturesRequestUrl(inndelingtype);
 
-    const geoJSONFeatures = await fetcherWithToken([getModifiedUrl<typeof url>(url, { id: inndeling.id }), token]);
+    const geoJSONFeatures = await fetcherWithToken([getModifiedUrl<typeof url>(url, { id: id }), token]);
 
     return {
-      id: inndeling.id,
-      inndelingtype: inndeling.inndelingtype,
+      id,
+      inndelingtype,
       geoJSONFeatures,
     };
   });
@@ -69,38 +60,15 @@ const inndelingGrenseFetcher = async ([inndelinger, token]: [Inndeling[], string
   return await Promise.all(promises);
 };
 
-const useInndelingerGrenser = (inndelinger: Inndeling[]) => {
+const useInndelingerFeatures = (inndelinger: Inndeling[]) => {
   const auth = useAuthentication();
 
-  return useSWR(inndelinger.length > 0 ? [inndelinger, auth.token] : null, inndelingGrenseFetcher);
-};
-
-type InndelingWithInndelingResponse = {
-  id: string;
-  inndelingtype: Inndelingtype;
-  inndelingResponse: InndelingResponse | InndelingResponse[];
-};
-
-const inndelingFetcher = async ([inndelinger, token]: [Inndeling[], string | undefined]) => {
-  const promises: Promise<InndelingWithInndelingResponse>[] = inndelinger.map(async (inndeling) => {
-    const url = getInndelingRequestUrl(inndeling.inndelingtype);
-
-    const inndelingResponse = await fetcherWithToken([getModifiedUrl<typeof url>(url, { id: inndeling.id }), token]);
-
-    return {
-      id: inndeling.id,
-      inndelingtype: inndeling.inndelingtype,
-      inndelingResponse,
-    };
-  });
-
-  return await Promise.all(promises);
-};
-
-const useInndelinger = (inndelinger: Inndeling[]) => {
-  const auth = useAuthentication();
-
-  return useSWR(inndelinger.length > 0 ? [inndelinger, auth.token] : null, inndelingFetcher);
+  return useSWR(
+    inndelinger.length > 0
+      ? [inndelinger.map((inndeling) => inndeling.id), inndelinger[0].inndelingtype, auth.token]
+      : null,
+    inndelingFeatureFetcher,
+  );
 };
 
 type InndelingWithFeatures = {
@@ -112,65 +80,51 @@ type InndelingWithFeatures = {
 const useInndelingFeatures = (inndelinger: Inndeling[]) => {
   const { utkast } = useUtkast();
 
-  const { data: featuresResponses, isValidating: isFetchingFeatures } = useInndelingerGrenser(inndelinger);
-  const { data: inndelingResponses, isValidating: isFetchingInndeling } = useInndelinger(inndelinger);
+  const { data: featuresResponses, isValidating: isFetchingFeatures } = useInndelingerFeatures(inndelinger);
 
-  const getRepresentasjonspunktFeatureForInndeling = (
-    inndelingWithRepresentasjonspunkt: InndelingResponse,
-  ): GeoJSONFeature => {
-    const inndelingName: string = inndelingResponseNavnToString(inndelingWithRepresentasjonspunkt.navn);
+  // const getRepresentasjonspunktFeatureForInndeling = (
+  //   inndelingWithRepresentasjonspunkt: InndelingResponse,
+  // ): GeoJSONFeature => {
+  //   const inndelingName: string = inndelingResponseNavnToString(inndelingWithRepresentasjonspunkt.navn);
 
-    return getFeatureFromGeoJson({
-      ...inndelingWithRepresentasjonspunkt.representasjonspunkt,
-      id: getRepresentasjonspunktId(inndelingWithRepresentasjonspunkt.id.lokalid.value),
-      properties: {
-        ...inndelingWithRepresentasjonspunkt.representasjonspunkt.properties,
-        name: inndelingName,
-        number: inndelingWithRepresentasjonspunkt.nummer,
-      },
-    });
-  };
+  //   return getFeatureFromGeoJson({
+  //     ...inndelingWithRepresentasjonspunkt.representasjonspunkt,
+  //     id: getRepresentasjonspunktId(inndelingWithRepresentasjonspunkt.id.lokalid.value),
+  //     properties: {
+  //       ...inndelingWithRepresentasjonspunkt.representasjonspunkt.properties,
+  //       name: inndelingName,
+  //       number: inndelingWithRepresentasjonspunkt.nummer,
+  //     },
+  //   });
+  // };
 
   const inndelingFeatures: InndelingWithFeatures[] = useMemo(() => {
-    if (featuresResponses != null && inndelingResponses != null) {
-      console.log(featuresResponses);
-      console.log(inndelingResponses);
-      const responseMapping: InndelingWithFeatures[] = removeNil(
-        featuresResponses.map((featureResponse) => {
-          const relevantInndelingResponse = inndelingResponses.find((inndelingResponse) => {
-            return (
-              inndelingResponse.id === featureResponse.id &&
-              featureResponse.inndelingtype === inndelingResponse.inndelingtype
-            );
+    if (featuresResponses != null) {
+      const inndelingerWithFeatures: InndelingWithFeatures[] = removeNil(
+        featuresResponses.map((featuresResponse) => {
+          const features = geoJsonToSource(featuresResponse.geoJSONFeatures).getFeatures();
+
+          const representasjonspunkter = features.filter((feature) => {
+            const geometry = feature.getGeometry();
+
+            return geometry instanceof Point;
           });
 
-          if (relevantInndelingResponse == null) return;
-
-          const actualResponse = relevantInndelingResponse.inndelingResponse;
-
-          const representasjonspunkter = Array.isArray(actualResponse)
-            ? actualResponse.map((response) => getRepresentasjonspunktFeatureForInndeling(response))
-            : [getRepresentasjonspunktFeatureForInndeling(actualResponse)];
-
-          const geoJsonFeatures = geoJsonToSource(featureResponse.geoJSONFeatures).getFeatures();
-
-          const geoJsonFeaturesWithRepresentasjonspunkter = geoJsonFeatures.concat(representasjonspunkter);
+          console.log(representasjonspunkter);
 
           return {
-            id: featureResponse.id,
-            inndelingtype: featureResponse.inndelingtype,
-            features: geoJsonFeaturesWithRepresentasjonspunkter,
+            id: featuresResponse.id,
+            inndelingtype: featuresResponse.inndelingtype,
+            features,
           };
         }),
       );
 
-      // TODO Håndtere feil ved dårlig formatert json her
-
-      return responseMapping;
+      return inndelingerWithFeatures;
     }
 
     return [];
-  }, [featuresResponses, inndelingResponses]);
+  }, [featuresResponses]);
 
   const utkastFeaturesInInndeling: Feature<Geometry>[] = useMemo(() => {
     const endredeFeatures = utkast?.operasjoner.grenseendringer.endredeFeatures;
@@ -203,7 +157,7 @@ const useInndelingFeatures = (inndelinger: Inndeling[]) => {
   return {
     inndelingFeatures,
     utkastFeaturesInInndeling,
-    isFetching: isFetchingFeatures || isFetchingInndeling,
+    isFetching: isFetchingFeatures,
   };
 };
 
