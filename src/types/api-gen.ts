@@ -37,6 +37,10 @@ export interface paths {
     /** Henter grensene til en stemmekrets med gitt id */
     get: operations["hentGrenserForStemmekrets"];
   };
+  "/v1/nasjon/": {
+    /** Henter nasjon på en gitt dato */
+    get: operations["hentNasjon"];
+  };
   "/v1/kommuner": {
     /** Henter alle kommuner i Nasjonal inndelingsbase. */
     get: operations["hentKommuner"];
@@ -418,7 +422,13 @@ export interface components {
        * @description Flatetypen som skal deles
        * @enum {string}
        */
-      flatetype: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
+      flatetype:
+        | "FYLKE"
+        | "KOMMUNE"
+        | "NASJON"
+        | "GRUNNKRETS"
+        | "STEMMEKRETS"
+        | "SKOLEKRETS";
       /** @description Navn og nummer for de nye kretsene som skal utledes fra opprinnelig krets */
       nyeKretser: components["schemas"]["KretsNavnOgNummer"][];
     };
@@ -851,6 +861,24 @@ export interface components {
       /** @description Liste av features som holder på dataene */
       features: components["schemas"]["Feature"][];
     };
+    /** @description Representasjon av nasjon */
+    NasjonResponse: {
+      id: components["schemas"]["ObjektIdentifikator"];
+      /** @description Liste over navn til nasjon */
+      navn: components["schemas"]["AdministrativEnhetNavn"][];
+      omraade?: components["schemas"]["MultiPolygon"];
+      representasjonspunkt: components["schemas"]["Feature"];
+      /**
+       * Format: date-time
+       * @description Angir når denne nasjonen ble sist oppdatert
+       */
+      oppdateringsdato: string;
+      /**
+       * Format: int32
+       * @description Teknisk versjon for å støtte samhandling og redigering
+       */
+      version: number;
+    };
     /** @description Representasjon av en kommune */
     KommuneResponse: {
       id: components["schemas"]["ObjektIdentifikator"];
@@ -929,10 +957,10 @@ export interface components {
       y?: number;
       /** Format: double */
       z?: number;
+      valid?: boolean;
       /** Format: double */
       m?: number;
       coordinate?: components["schemas"]["Coordinate"];
-      valid?: boolean;
     };
     InndelingResponse: {
       /** @description Lokalid til inndelingen */
@@ -941,7 +969,13 @@ export interface components {
        * @description Flatetypen til inndelingen
        * @enum {string}
        */
-      type: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
+      type:
+        | "FYLKE"
+        | "KOMMUNE"
+        | "NASJON"
+        | "GRUNNKRETS"
+        | "STEMMEKRETS"
+        | "SKOLEKRETS";
       /** @description Navnet til inndelingen */
       navn: string;
       /** @description Nummeret til inndelingen */
@@ -1400,6 +1434,35 @@ export interface operations {
       404: {
         content: {
           "application/json": components["schemas"]["FeatureCollection"];
+        };
+      };
+    };
+  };
+  /** Henter nasjon på en gitt dato */
+  hentNasjon: {
+    parameters: {
+      query: {
+        /** Eventuell gyldighetsdato for nasjonen (default = dagens dato */
+        gyldighetsdato?: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["NasjonResponse"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["NasjonResponse"];
         };
       };
     };

@@ -1,16 +1,21 @@
-import { Button, InputGroup, InputRightAddon } from "@kvib/react";
+import { Button, FormControl, FormErrorMessage, InputGroup, InputRightAddon } from "@kvib/react";
+import Input from "components/Input";
+import useNibasApi from "hooks/useNibasApi";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { styled } from "styled-components";
 import { coordinateDecimalPattern, coordinateDecimalPatternHelperText } from "../FlyttKoordinaterPanel";
 import { NavigasjonProps } from "./NavigasjonPanel";
-import { styled } from "styled-components";
-import { norwayExtent } from "pages/Kart/constants";
-import Input from "components/Input";
+import { isPointInsideMultiPolygon } from "./koordinater-utils";
 
-const Form = styled.form`
+const StyledFormControl = styled(FormControl)`
   display: grid;
   grid-template-columns: 256px 256px min-content;
   justify-content: space-between;
-  gap: 16px;
+`;
+
+const StyledFormErrorMessage = styled(FormErrorMessage)`
+  grid-column: 1 / -2;
 `;
 
 export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonProps) => {
@@ -19,61 +24,63 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
     handleSubmit,
     getValues,
     reset,
-    formState: { errors, isDirty },
+    formState: { isDirty },
   } = useForm<{ north: number | null; east: number | null }>({
     defaultValues: { north: null, east: null },
   });
+  const { data: nasjon } = useNibasApi("/v1/nasjon/");
+  const [error, setError] = useState<string | null>();
 
   return (
-    <Form
+    <form
       onSubmit={handleSubmit(() => {
-        centerOnCoordinate(getValues("north"), getValues("east"));
-        reset();
+        const [east, north] = [getValues("east"), getValues("north")];
+        if (
+          east !== null &&
+          north !== null &&
+          nasjon?.omraade?.coordinates != null &&
+          isPointInsideMultiPolygon(east, north, nasjon?.omraade?.coordinates)
+        ) {
+          setError(null);
+          centerOnCoordinate(north, east);
+          reset();
+        } else {
+          setError("Koordinatene må være innenfor Norge sine grenser");
+        }
       })}
     >
-      <InputGroup>
-        <Input
-          type="text"
-          inputMode="decimal"
-          pattern={coordinateDecimalPattern.source}
-          title={coordinateDecimalPatternHelperText}
-          placeholder="Fyll inn koordinat ..."
-          isRequired
-          {...register("north", {
-            validate: (value: number | null) =>
-              (value !== null && value > norwayExtent[1] && value < norwayExtent[3]) ||
-              "Koordinatet må være innenfor Norges lengde",
-          })}
-          validationError={{
-            showError: !!errors.north,
-            message: errors.north?.message ?? "",
-          }}
-        />
-        <InputRightAddon>N</InputRightAddon>
-      </InputGroup>
-      <InputGroup>
-        <Input
-          type="text"
-          inputMode="decimal"
-          pattern={coordinateDecimalPattern.source}
-          title={coordinateDecimalPatternHelperText}
-          placeholder="Fyll inn koordinat ..."
-          isRequired
-          {...register("east", {
-            validate: (value: number | null) =>
-              (value !== null && value > norwayExtent[0] && value < norwayExtent[2]) ||
-              "Koordinatet må være innenfor Norges bredde",
-          })}
-          validationError={{
-            showError: !!errors.east,
-            message: errors.east?.message ?? "",
-          }}
-        />
-        <InputRightAddon>Ø</InputRightAddon>
-      </InputGroup>
-      <Button type="submit" isDisabled={!isDirty}>
-        Gå til koordinater
-      </Button>
-    </Form>
+      <StyledFormControl isInvalid={error != null}>
+        <InputGroup>
+          <Input
+            type="text"
+            inputMode="decimal"
+            pattern={coordinateDecimalPattern.source}
+            title={coordinateDecimalPatternHelperText}
+            placeholder="Fyll inn koordinat ..."
+            isRequired
+            {...register("north")}
+          />
+          <InputRightAddon>N</InputRightAddon>
+        </InputGroup>
+
+        <InputGroup>
+          <Input
+            type="text"
+            inputMode="decimal"
+            pattern={coordinateDecimalPattern.source}
+            title={coordinateDecimalPatternHelperText}
+            placeholder="Fyll inn koordinat ..."
+            isRequired
+            {...register("east")}
+          />
+          <InputRightAddon>Ø</InputRightAddon>
+        </InputGroup>
+
+        <Button type="submit" disabled={!isDirty}>
+          Gå til koordinater
+        </Button>
+        {error != null && <StyledFormErrorMessage>{error}</StyledFormErrorMessage>}
+      </StyledFormControl>
+    </form>
   );
 };
