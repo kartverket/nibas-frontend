@@ -15,4 +15,15 @@ const useKommuner = (fylkeId: string, shouldFetch = true) => {
   };
 };
 
+export const useKommune = (kommuneId: string, shouldFetch = true) => {
+  const { data: kommune, ...rest } = useNibasApi(shouldFetch ? "/v1/kommuner/{id}" : null, {
+    id: kommuneId,
+  });
+
+  return {
+    kommune,
+    ...rest,
+  };
+};
+
 export default useKommuner;

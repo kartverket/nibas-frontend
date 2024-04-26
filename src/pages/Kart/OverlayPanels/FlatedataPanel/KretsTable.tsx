@@ -1,6 +1,9 @@
 import { Button, TabPanel } from "@kvib/react";
 import { Inndeling } from "contexts/InndelingerContext/InndelingerContext";
 import { styled } from "styled-components";
+import { useFlatedata } from "./useFlatedata";
+import { getIdFromEntity } from "utils/api";
+import { getNavnInSpraak } from "utils/language/language";
 
 type Props = {
   inndeling: Inndeling;
@@ -10,6 +13,8 @@ const KretsTable = ({ inndeling }: Props) => {
   const isFylkeInndeling = inndeling.inndelingtype === "fylke";
   const isEditableFlatedata =
     inndeling.isEditing && inndeling.inndelingtype !== "fylke" && inndeling.inndelingtype !== "kommune";
+
+  const flatedata = useFlatedata(inndeling) ?? [];
 
   return (
     <Container>
@@ -22,21 +27,13 @@ const KretsTable = ({ inndeling }: Props) => {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>lorem</td>
-            <td>ipsum</td>
-            <td>schmipsum</td>
-          </tr>
-          <tr>
-            <td>lorem</td>
-            <td>ipsum</td>
-            <td>schmipsum</td>
-          </tr>
-          <tr>
-            <td>lorem</td>
-            <td>ipsum</td>
-            <td>schmipsum</td>
-          </tr>
+          {flatedata.map((krets) => (
+            <tr key={getIdFromEntity(krets)}>
+              <td>{krets.nummer}</td>
+              <td>{getNavnInSpraak(krets.navn, "nor")}</td>
+              <td>TODO</td>
+            </tr>
+          ))}
         </tbody>
       </Table>
       {isEditableFlatedata && (
@@ -84,6 +81,7 @@ const Table = styled.table`
 const FlatedataFooter = styled.div`
   display: flex;
   padding: 16px;
+  border-top: 1px solid var(--kvib-colors-chakra-border-color);
 `;
 
 const EditButton = styled(Button)`
