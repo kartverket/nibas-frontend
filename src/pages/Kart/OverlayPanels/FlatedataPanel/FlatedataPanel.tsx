@@ -9,7 +9,6 @@ import {
   ModalOverlay,
   Tab,
   TabList,
-  TabPanel,
   TabPanels,
   Tabs,
 } from "@kvib/react";
@@ -41,8 +40,8 @@ const FlatedataPanel = ({ isOpen }: PanelProps) => {
   return (
     <Modal isOpen={isOpen} onClose={closeOverlayModal} scrollBehavior="inside">
       <ModalOverlay />
-      <ModalContent as={ModalPanel} $isOpen={isOpen}>
-        <InndelingPanelHeader onClose={closeOverlayModal}>
+      <ModalContent as={FlatedataPanelContent} $isOpen={isOpen}>
+        <FlatedataPanelHeader onClose={closeOverlayModal}>
           <span>Flateinformasjon</span>
           <SearchInput>
             <InputLeftElement>
@@ -50,21 +49,19 @@ const FlatedataPanel = ({ isOpen }: PanelProps) => {
             </InputLeftElement>
             <Input placeholder="TODO" />
           </SearchInput>
-        </InndelingPanelHeader>
-        <InndelingTabs size="md">
-          <InndelingTabList>
+        </FlatedataPanelHeader>
+        <FlatedataTabs size="md">
+          <FlatedataTabList>
             {allInndelinger.map((inndeling) => (
-              <InndelingTab key={inndeling.id + inndeling.inndelingtype}>{getTabText(inndeling)}</InndelingTab>
+              <FlatedataTab key={inndeling.id + inndeling.inndelingtype}>{getTabText(inndeling)}</FlatedataTab>
             ))}
-          </InndelingTabList>
-          <TabPanels>
+          </FlatedataTabList>
+          <FlatedataTabPanels>
             {allInndelinger.map((inndeling) => (
-              <InndelingTabPanel key={inndeling.id + inndeling.inndelingtype}>
-                <KretsTable inndeling={inndeling} />
-              </InndelingTabPanel>
+              <KretsTable key={inndeling.id + inndeling.inndelingtype} inndeling={inndeling} />
             ))}
-          </TabPanels>
-        </InndelingTabs>
+          </FlatedataTabPanels>
+        </FlatedataTabs>
       </ModalContent>
     </Modal>
   );
@@ -74,17 +71,26 @@ const SearchInput = styled(InputGroup)`
   max-width: 300px;
 `;
 
-const InndelingPanelHeader = styled(PanelHeader)`
+const FlatedataPanelContent = styled(ModalPanel)`
+  display: grid;
+  grid-template-rows: auto 1fr;
+  overflow: hidden;
+`;
+
+const FlatedataPanelHeader = styled(PanelHeader)`
   border: none;
   margin-bottom: 8px;
 `;
 
-const InndelingTabs = styled(Tabs)`
+const FlatedataTabs = styled(Tabs)`
+  display: grid;
+  grid-template-rows: auto 1fr;
   width: calc(100% + var(--panel-padding) * 2);
   margin: 0 calc(var(--panel-padding) * -1);
+  overflow: hidden;
 `;
 
-const InndelingTabList = styled(TabList)`
+const FlatedataTabList = styled(TabList)`
   position: relative;
   overflow-x: auto;
   border-bottom: none;
@@ -101,13 +107,14 @@ const InndelingTabList = styled(TabList)`
   }
 `;
 
-const InndelingTab = styled(Tab)`
-  white-space: nowrap;
-  margin-bottom: 0;
+const FlatedataTabPanels = styled(TabPanels)`
+  height: 100%;
+  overflow: hidden;
 `;
 
-const InndelingTabPanel = styled(TabPanel)`
-  padding: 0;
+const FlatedataTab = styled(Tab)`
+  white-space: nowrap;
+  margin-bottom: 0;
 `;
 
 export default FlatedataPanel;

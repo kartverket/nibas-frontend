@@ -1,4 +1,4 @@
-import { Button } from "@kvib/react";
+import { Button, TabPanel } from "@kvib/react";
 import { Inndeling } from "contexts/InndelingerContext/InndelingerContext";
 import { styled } from "styled-components";
 
@@ -12,7 +12,7 @@ const KretsTable = ({ inndeling }: Props) => {
     inndeling.isEditing && inndeling.inndelingtype !== "fylke" && inndeling.inndelingtype !== "kommune";
 
   return (
-    <>
+    <Container>
       <Table>
         <thead>
           <tr>
@@ -39,16 +39,29 @@ const KretsTable = ({ inndeling }: Props) => {
           </tr>
         </tbody>
       </Table>
-      {isEditableFlatedata && <Button>Rediger flatedetaljer</Button>}
-    </>
+      {isEditableFlatedata && (
+        <FlatedataFooter>
+          <EditButton rightIcon="edit_note">Rediger flatedetaljer</EditButton>
+        </FlatedataFooter>
+      )}
+    </Container>
   );
 };
+
+const Container = styled(TabPanel)`
+  padding: 0;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  overflow: hidden;
+`;
 
 const Table = styled.table`
   display: grid;
   grid-template-columns: auto auto 1fr;
-  height: 100%;
+  grid-auto-rows: max-content;
   width: 100%;
+  overflow: auto;
 
   thead,
   tbody,
@@ -66,6 +79,15 @@ const Table = styled.table`
     padding: 12px 18px;
     border-bottom: 1px solid var(--kvib-colors-chakra-border-color);
   }
+`;
+
+const FlatedataFooter = styled.div`
+  display: flex;
+  padding: 16px;
+`;
+
+const EditButton = styled(Button)`
+  margin-left: auto;
 `;
 
 export default KretsTable;
