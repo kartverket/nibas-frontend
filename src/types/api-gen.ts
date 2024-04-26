@@ -37,10 +37,6 @@ export interface paths {
     /** Henter grensene til en stemmekrets med gitt id */
     get: operations["hentGrenserForStemmekrets"];
   };
-  "/v1/stemmekretser/{id}/features": {
-    /** Henter grenser og representasjonspunkt til en stemmekrets med gitt id */
-    get: operations["hentFeaturesForStemmekrets"];
-  };
   "/v1/kommuner": {
     /** Henter alle kommuner i Nasjonal inndelingsbase. */
     get: operations["hentKommuner"];
@@ -52,18 +48,18 @@ export interface paths {
   "/v1/kommuner/{id}/stemmekretsgrenser": {
     get: operations["hentKommunesStemmekretsgrenser"];
   };
-  "/v1/kommuner/{id}/stemmekretsfeatures": {
-    get: operations["hentKommunesStemmekretsFeatures"];
-  };
   "/v1/kommuner/{id}/stemmekretser": {
     /** Henter alle stemmekretser som tilhører en kommune. */
     get: operations["hentKommunesStemmekretser"];
   };
+  "/v1/kommuner/{id}/kommunalkretsgrenser": {
+    get: operations["hentKommunesKommunalKretsGrenser"];
+  };
+  "/v1/kommuner/{id}/kommunalkretser": {
+    get: operations["hentKommunesKommunalKretser"];
+  };
   "/v1/kommuner/{id}/grunnkretsgrenser": {
     get: operations["hentKommunesGrunnkretsgrenser"];
-  };
-  "/v1/kommuner/{id}/grunnkretsfeatures": {
-    get: operations["hentKommunesGrunnkretsFeatures"];
   };
   "/v1/kommuner/{id}/grunnkretser": {
     /** Henter alle grunnkretser som tilhører en kommune. */
@@ -72,10 +68,6 @@ export interface paths {
   "/v1/kommuner/{id}/grenser": {
     /** Henter grensene til en kommune med gitt id */
     get: operations["hentGrenserForKommune"];
-  };
-  "/v1/kommuner/{id}/features": {
-    /** Henter grenser og representasjonspunkt til en kommune med gitt id */
-    get: operations["hentFeaturesForKommune"];
   };
   "/v1/kodeliste/maalemetode-koder": {
     get: operations["fetchMaalemetodeKoder"];
@@ -96,10 +88,6 @@ export interface paths {
     /** Henter grensene til en grunnkrets med gitt id */
     get: operations["hentGrenserForGrunnkrets"];
   };
-  "/v1/grunnkretser/{id}/features": {
-    /** Henter grenser og representasjonspunkt til en grunnkrets med gitt id */
-    get: operations["hentFeaturesForGrunnkrets"];
-  };
   "/v1/fylker": {
     /** Henter alle fylker i Nasjonal inndelingsbase. */
     get: operations["hentFylker"];
@@ -117,10 +105,6 @@ export interface paths {
   "/v1/fylker/{id}/grenser": {
     /** Henter grensene til et fylke med gitt id */
     get: operations["hentGrenserForFylke"];
-  };
-  "/v1/fylker/{id}/features": {
-    /** Henter grensene og representasjonspunktet til et fylke med gitt id */
-    get: operations["hentFeaturesForFylke"];
   };
   "/v1/ekstern/stemmekretser": {
     /** Henter stemmekretser med gitte id-er */
@@ -440,7 +424,13 @@ export interface components {
        * @description Flatetypen som skal deles
        * @enum {string}
        */
-      flatetype: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
+      flatetype:
+        | "FYLKE"
+        | "KOMMUNE"
+        | "NASJON"
+        | "GRUNNKRETS"
+        | "STEMMEKRETS"
+        | "SKOLEKRETS";
       /** @description Navn og nummer for de nye kretsene som skal utledes fra opprinnelig krets */
       nyeKretser: components["schemas"]["KretsNavnOgNummer"][];
     };
@@ -925,6 +915,13 @@ export interface components {
        */
       version: number;
     };
+    /** @description Samling av alle kommunalkretser for en kommune */
+    KommunalKretsResponse: {
+      /** @description Stemmekretsene i kommunen */
+      stemmekretser: components["schemas"]["StemmekretsResponse"][];
+      /** @description Grunnkretsene i kommunen */
+      grunnkretser: components["schemas"]["GrunnkretsResponse"][];
+    };
     /** @description Liste av kodeliste-elementer. */
     KodelisteItem: {
       /** @description Id til kodeliste-innslaget. */
@@ -963,7 +960,13 @@ export interface components {
        * @description Flatetypen til inndelingen
        * @enum {string}
        */
-      type: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
+      type:
+        | "FYLKE"
+        | "KOMMUNE"
+        | "NASJON"
+        | "GRUNNKRETS"
+        | "STEMMEKRETS"
+        | "SKOLEKRETS";
       /** @description Navnet til inndelingen */
       navn: string;
       /** @description Nummeret til inndelingen */
@@ -1426,39 +1429,6 @@ export interface operations {
       };
     };
   };
-  /** Henter grenser og representasjonspunkt til en stemmekrets med gitt id */
-  hentFeaturesForStemmekrets: {
-    parameters: {
-      path: {
-        /** ID-en til stemmekretsen man vil hente */
-        id: string;
-      };
-      query: {
-        /** Eventuell gyldighetsdato for stemmekrets (default = dagens dato */
-        gyldighetsdato?: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["FeatureCollection"];
-        };
-      };
-      /** Bad Request */
-      400: {
-        content: {
-          "*/*": { [key: string]: unknown };
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "application/json": components["schemas"]["FeatureCollection"];
-        };
-      };
-    };
-  };
   /** Henter alle kommuner i Nasjonal inndelingsbase. */
   hentKommuner: {
     parameters: {
@@ -1549,38 +1519,6 @@ export interface operations {
       };
     };
   };
-  hentKommunesStemmekretsFeatures: {
-    parameters: {
-      path: {
-        /** ID til kommunen man vil hente features til */
-        id: string;
-      };
-      query: {
-        /** Eventuell gyldighetsdato for kommune (default = dagens dato */
-        gyldighetsdato?: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["FeatureCollection"];
-        };
-      };
-      /** Bad Request */
-      400: {
-        content: {
-          "*/*": { [key: string]: unknown };
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "application/json": components["schemas"]["FeatureCollection"];
-        };
-      };
-    };
-  };
   /** Henter alle stemmekretser som tilhører en kommune. */
   hentKommunesStemmekretser: {
     parameters: {
@@ -1608,10 +1546,10 @@ export interface operations {
       };
     };
   };
-  hentKommunesGrunnkretsgrenser: {
+  hentKommunesKommunalKretsGrenser: {
     parameters: {
       path: {
-        /** ID til kommunen man vil hente grunnkretsgrensene til */
+        /** ID til kommunen man vil hente kommunalkretsgrenser til */
         id: string;
       };
       query: {
@@ -1640,10 +1578,42 @@ export interface operations {
       };
     };
   };
-  hentKommunesGrunnkretsFeatures: {
+  hentKommunesKommunalKretser: {
     parameters: {
       path: {
-        /** ID til kommunen man vil hente features til */
+        /** ID til kommunen man vil hente kommunalkretser til */
+        id: string;
+      };
+      query: {
+        /** Eventuell gyldighetsdato for kommune (default = dagens dato */
+        gyldighetsdato?: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["FeatureCollection"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["KommunalKretsResponse"];
+        };
+      };
+    };
+  };
+  hentKommunesGrunnkretsgrenser: {
+    parameters: {
+      path: {
+        /** ID til kommunen man vil hente grunnkretsgrensene til */
         id: string;
       };
       query: {
@@ -1701,39 +1671,6 @@ export interface operations {
   };
   /** Henter grensene til en kommune med gitt id */
   hentGrenserForKommune: {
-    parameters: {
-      path: {
-        /** ID-en til kommunen man vil hente */
-        id: string;
-      };
-      query: {
-        /** Eventuell gyldighetsdato for kommune (default = dagens dato */
-        gyldighetsdato?: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["FeatureCollection"];
-        };
-      };
-      /** Bad Request */
-      400: {
-        content: {
-          "*/*": { [key: string]: unknown };
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "application/json": components["schemas"]["FeatureCollection"];
-        };
-      };
-    };
-  };
-  /** Henter grenser og representasjonspunkt til en kommune med gitt id */
-  hentFeaturesForKommune: {
     parameters: {
       path: {
         /** ID-en til kommunen man vil hente */
@@ -1907,39 +1844,6 @@ export interface operations {
       };
     };
   };
-  /** Henter grenser og representasjonspunkt til en grunnkrets med gitt id */
-  hentFeaturesForGrunnkrets: {
-    parameters: {
-      path: {
-        /** ID-en til grunnkretsen man vil hente */
-        id: string;
-      };
-      query: {
-        /** Eventuell gyldighetsdato for grunnkrets (default = dagens dato */
-        gyldighetsdato?: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["FeatureCollection"];
-        };
-      };
-      /** Bad Request */
-      400: {
-        content: {
-          "*/*": { [key: string]: unknown };
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "application/json": components["schemas"]["FeatureCollection"];
-        };
-      };
-    };
-  };
   /** Henter alle fylker i Nasjonal inndelingsbase. */
   hentFylker: {
     parameters: {
@@ -2050,39 +1954,6 @@ export interface operations {
   };
   /** Henter grensene til et fylke med gitt id */
   hentGrenserForFylke: {
-    parameters: {
-      path: {
-        /** ID-en til fylket man vil hente */
-        id: string;
-      };
-      query: {
-        /** Eventuell gyldighetsdato for fylke (default = dagens dato */
-        gyldighetsdato?: string;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["FeatureCollection"];
-        };
-      };
-      /** Bad Request */
-      400: {
-        content: {
-          "*/*": { [key: string]: unknown };
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "application/json": components["schemas"]["FeatureCollection"];
-        };
-      };
-    };
-  };
-  /** Henter grensene og representasjonspunktet til et fylke med gitt id */
-  hentFeaturesForFylke: {
     parameters: {
       path: {
         /** ID-en til fylket man vil hente */
