@@ -1,4 +1,4 @@
-import { Button, TabPanel } from "@kvib/react";
+import { Badge, Button, TabPanel } from "@kvib/react";
 import { Inndeling } from "contexts/InndelingerContext/InndelingerContext";
 import { styled } from "styled-components";
 import { useFlatedata } from "./useFlatedata";
@@ -31,7 +31,11 @@ const KretsTable = ({ inndeling }: Props) => {
             <tr key={getIdFromEntity(krets)}>
               <td>{krets.nummer}</td>
               <td>{getNavnInSpraak(krets.navn, "nor")}</td>
-              <td>TODO</td>
+              <td>
+                {"samiskforvaltningsomraade" in krets
+                  ? krets.samiskforvaltningsomraade && <Merknad>Samisk forvaltningsområde</Merknad>
+                  : ""}
+              </td>
             </tr>
           ))}
         </tbody>
@@ -76,6 +80,17 @@ const Table = styled.table`
     padding: 12px 18px;
     border-bottom: 1px solid var(--kvib-colors-chakra-border-color);
   }
+`;
+
+const Merknad = styled(Badge)`
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 8px;
+  text-transform: unset;
+  vertical-align: unset;
+  border-radius: 6px;
+  background: var(--kvib-colors-orange-100);
 `;
 
 const FlatedataFooter = styled.div`
