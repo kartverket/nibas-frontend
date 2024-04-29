@@ -186,33 +186,37 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
     }
   };
 
-  const { data: nasjon } = useNibasApi("/v1/nasjon/");
+  const onKoordinaterPanelClose = () => {
+    closeOverlayPanel();
+    setError(null);
+    reset();
+    resetTool();
+  };
+
+  const { data: nasjon, isLoading, error: nasjonFetchError } = useNibasApi("/v1/nasjon/");
   const [error, setError] = useState<string | null>();
+
+  const moveToCoordinate = () => {
+    if (nasjonFetchError != null) {
+      movePoint();
+    } else if (
+      isLoading === false &&
+      nasjon?.omraade?.coordinates != null &&
+      isPointInsideMultiPolygon(getValues("east"), getValues("north"), nasjon?.omraade?.coordinates)
+    ) {
+      setError(null);
+      movePoint();
+    } else {
+      setError("Koordinatene må være innenfor Norge sine grenser");
+    }
+  };
 
   return (
     <AbsolutePanel $isOpen={isOpen}>
-      <PanelHeader
-        onClose={() => {
-          closeOverlayPanel();
-          setError(null);
-        }}
-        isSmall
-      >
+      <PanelHeader onClose={onKoordinaterPanelClose} isSmall>
         Flytt punkt med koordinater
       </PanelHeader>
-      <Form
-        onSubmit={handleSubmit(() => {
-          if (
-            nasjon?.omraade?.coordinates != null &&
-            isPointInsideMultiPolygon(getValues("east"), getValues("north"), nasjon?.omraade?.coordinates)
-          ) {
-            setError(null);
-            movePoint();
-          } else {
-            setError("Koordinatene må være innenfor Norge sine grenser");
-          }
-        })}
-      >
+      <Form onSubmit={handleSubmit(moveToCoordinate)}>
         <FormControl isInvalid={error != null}>
           <InputRow>
             <Input
@@ -236,15 +240,7 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
         </FormControl>
         <InputRow>
           <Spacer />
-          <Button
-            variant="tertiary"
-            onClick={() => {
-              closeOverlayPanel();
-              setError(null);
-              reset();
-              resetTool();
-            }}
-          >
+          <Button variant="tertiary" onClick={onKoordinaterPanelClose}>
             Avbryt
           </Button>
           <Button type="submit" isDisabled={!isDirty}>

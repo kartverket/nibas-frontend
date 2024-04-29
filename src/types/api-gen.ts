@@ -422,13 +422,7 @@ export interface components {
        * @description Flatetypen som skal deles
        * @enum {string}
        */
-      flatetype:
-        | "FYLKE"
-        | "KOMMUNE"
-        | "NASJON"
-        | "GRUNNKRETS"
-        | "STEMMEKRETS"
-        | "SKOLEKRETS";
+      flatetype: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
       /** @description Navn og nummer for de nye kretsene som skal utledes fra opprinnelig krets */
       nyeKretser: components["schemas"]["KretsNavnOgNummer"][];
     };
@@ -969,13 +963,7 @@ export interface components {
        * @description Flatetypen til inndelingen
        * @enum {string}
        */
-      type:
-        | "FYLKE"
-        | "KOMMUNE"
-        | "NASJON"
-        | "GRUNNKRETS"
-        | "STEMMEKRETS"
-        | "SKOLEKRETS";
+      type: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
       /** @description Navnet til inndelingen */
       navn: string;
       /** @description Nummeret til inndelingen */
