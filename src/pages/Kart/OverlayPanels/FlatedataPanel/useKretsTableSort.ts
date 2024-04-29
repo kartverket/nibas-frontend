@@ -57,24 +57,28 @@ export function orderInndelingerBy(
     const itemAValue = get(itemA, sortField, "");
     const itemBValue = get(itemB, sortField, "");
 
-    // TODO: må håndtere Spraak
-    // TODO: må håndtere... alt annet, dette sorterer jo bare på string? eller?
-
-    if (isString(itemAValue) && isString(itemBValue)) {
+    if (typeof itemAValue === "string" && typeof itemBValue === "string") {
       return itemAValue.toLowerCase().localeCompare(itemBValue.toLowerCase(), "no");
     }
-    if (isString(itemAValue)) {
-      return 1;
+
+    if (typeof itemAValue === "boolean" && typeof itemBValue === "boolean") {
+      return itemAValue === itemBValue ? 0 : itemAValue ? 1 : -1;
     }
-    if (isString(itemBValue)) {
-      return -1;
+
+    if (typeof itemAValue === "number" && typeof itemBValue === "number") {
+      return itemAValue - itemBValue;
     }
+
+    // Spesifikt vinklet mot å kunne sortere på navn for administrative enheter (Spraak[])
+    // Som en forenkling sorterer vi på det første navnet i listen
+    if (Array.isArray(itemAValue) && Array.isArray(itemBValue)) {
+      if ("navn" in itemAValue[0] && "navn" in itemBValue[0]) {
+        return itemAValue[0].navn.toLowerCase().localeCompare(itemBValue[0].navn.toLowerCase(), "no");
+      }
+    }
+
     return 0;
   });
 
   return sortOrder === "asc" ? sortedItems : sortedItems.reverse();
-}
-
-function isString(value: unknown): value is string {
-  return typeof value === "string";
 }
