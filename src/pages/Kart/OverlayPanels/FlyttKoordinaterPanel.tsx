@@ -4,16 +4,18 @@ import Input from "components/Input";
 import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import LineString from "ol/geom/LineString";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { HistoryChange, MinimalGrense, HistoryDirection, GrenseEntry } from "contexts/HistoryContext/types";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { SelectedPoint } from "contexts/FeatureStyleContext/types";
 import Point from "ol/geom/Point";
-import { Button, Spacer, useToast } from "@kvib/react";
+import { Button, FormControl, FormErrorMessage, Spacer, useToast } from "@kvib/react";
 import { editSource } from "hooks/layers/constants";
 import { useToolbar } from "contexts/ToolbarContext";
 import { Feature } from "ol";
+import useNibasApi from "hooks/useNibasApi";
+import { isPointInsideMultiPolygon } from "./NavigasjonPanel/koordinater-utils";
 
 type KoordinaterFormData = {
   north: number;
@@ -184,39 +186,61 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
     }
   };
 
+  const onKoordinaterPanelClose = () => {
+    closeOverlayPanel();
+    setError(null);
+    reset();
+    resetTool();
+  };
+
+  const { data: nasjon, isLoading, error: nasjonFetchError } = useNibasApi("/v1/nasjon/");
+  const [error, setError] = useState<string | null>();
+
+  const moveToCoordinate = () => {
+    if (nasjonFetchError != null) {
+      movePoint();
+    } else if (
+      isLoading === false &&
+      nasjon?.omraade?.coordinates != null &&
+      isPointInsideMultiPolygon(getValues("east"), getValues("north"), nasjon?.omraade?.coordinates)
+    ) {
+      setError(null);
+      movePoint();
+    } else {
+      setError("Koordinatene må være innenfor Norge sine grenser");
+    }
+  };
+
   return (
     <AbsolutePanel $isOpen={isOpen}>
-      <PanelHeader onClose={closeOverlayPanel} isSmall>
+      <PanelHeader onClose={onKoordinaterPanelClose} isSmall>
         Flytt punkt med koordinater
       </PanelHeader>
-      <Form onSubmit={handleSubmit(movePoint)}>
-        <InputRow>
-          <Input
-            type="text"
-            inputMode="decimal"
-            pattern={coordinateDecimalPattern.source}
-            title={coordinateDecimalPatternHelperText}
-            label="Nord"
-            {...register("north")}
-          />
-          <Input
-            type="text"
-            inputMode="decimal"
-            pattern={coordinateDecimalPattern.source}
-            title={coordinateDecimalPatternHelperText}
-            label="Øst"
-            {...register("east")}
-          />
-        </InputRow>
+      <Form onSubmit={handleSubmit(moveToCoordinate)}>
+        <FormControl isInvalid={error != null}>
+          <InputRow>
+            <Input
+              type="text"
+              inputMode="decimal"
+              pattern={coordinateDecimalPattern.source}
+              title={coordinateDecimalPatternHelperText}
+              label="Nord"
+              {...register("north")}
+            />
+            <Input
+              type="text"
+              inputMode="decimal"
+              pattern={coordinateDecimalPattern.source}
+              title={coordinateDecimalPatternHelperText}
+              label="Øst"
+              {...register("east")}
+            />
+          </InputRow>
+          {error != null && <FormErrorMessage>{error}</FormErrorMessage>}
+        </FormControl>
         <InputRow>
           <Spacer />
-          <Button
-            variant="tertiary"
-            onClick={() => {
-              reset();
-              resetTool();
-            }}
-          >
+          <Button variant="tertiary" onClick={onKoordinaterPanelClose}>
             Avbryt
           </Button>
           <Button type="submit" isDisabled={!isDirty}>

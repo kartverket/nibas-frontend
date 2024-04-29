@@ -4,6 +4,6 @@
   "prettier.trailingComma": "all",
   "stylelint.validate": ["css", "less", "postcss", "typescript", "typescriptreact"],
   "editor.codeActionsOnSave": {
-    "source.fixAll.stylelint": true
+    "source.fixAll.stylelint": "explicit"
   }
 }
