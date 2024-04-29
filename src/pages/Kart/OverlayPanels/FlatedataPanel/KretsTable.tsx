@@ -4,38 +4,54 @@ import { styled } from "styled-components";
 import { useFlatedata } from "./useFlatedata";
 import { getIdFromEntity } from "utils/api";
 import { getNavnInSpraak } from "utils/language/language";
+import { capitalize } from "utils/string-utils";
+import { orderInndelingerBy, useKretsTableSort } from "./useKretsTableSort";
+import KretsTableHeader from "./KretsTableHeader";
 
 type Props = {
   inndeling: Inndeling;
 };
 
 const KretsTable = ({ inndeling }: Props) => {
-  const isFylkeInndeling = inndeling.inndelingtype === "fylke";
-  const isEditableFlatedata =
-    inndeling.isEditing && inndeling.inndelingtype !== "fylke" && inndeling.inndelingtype !== "kommune";
+  const isAdministrativEnhet = inndeling.inndelingtype === "fylke" || inndeling.inndelingtype === "kommune";
+  const isEditableFlatedata = inndeling.isEditing && !isAdministrativEnhet;
 
   const flatedata = useFlatedata(inndeling) ?? [];
+
+  const { sortProperty, sortOrder, sortHeaderProps } = useKretsTableSort(inndeling.inndelingtype);
 
   return (
     <Container>
       <Table>
         <thead>
           <tr>
-            <th>{isFylkeInndeling ? "Fylkesnummer" : "Kommunenummer"}</th>
-            <th>{isFylkeInndeling ? "Fylkesnavn" : "Kommunenavn"}</th>
-            <th>Merknad</th>
+            <KretsTableHeader
+              {...sortHeaderProps("nummer")}
+            >{`${capitalize(inndeling.inndelingtype)}nummer`}</KretsTableHeader>
+            <KretsTableHeader
+              {...sortHeaderProps("navn")}
+            >{`${capitalize(inndeling.inndelingtype)}navn`}</KretsTableHeader>
+            {isAdministrativEnhet ? (
+              <KretsTableHeader {...sortHeaderProps("samiskforvaltningsomraade")}>Merknad</KretsTableHeader>
+            ) : inndeling.inndelingtype === "stemmekrets" ? (
+              <KretsTableHeader {...sortHeaderProps("valgdistriktsnummer")}>Valgdistriktsnummer</KretsTableHeader>
+            ) : (
+              <th></th>
+            )}
           </tr>
         </thead>
         <tbody>
-          {flatedata.map((krets) => (
+          {orderInndelingerBy(flatedata, sortProperty, sortOrder).map((krets) => (
             <tr key={getIdFromEntity(krets)}>
               <td>{krets.nummer}</td>
               <td>{getNavnInSpraak(krets.navn, "nor")}</td>
-              <td>
-                {"samiskforvaltningsomraade" in krets
-                  ? krets.samiskforvaltningsomraade && <Merknad>Samisk forvaltningsområde</Merknad>
-                  : ""}
-              </td>
+              {"samiskforvaltningsomraade" in krets ? (
+                <td>{krets.samiskforvaltningsomraade && <Merknad>Samisk forvaltningsområde</Merknad>}</td>
+              ) : "valgdistriktsnummer" in krets ? (
+                <td>{krets.valgdistriktsnummer ?? ""}</td>
+              ) : (
+                <td></td>
+              )}
             </tr>
           ))}
         </tbody>
@@ -79,6 +95,10 @@ const Table = styled.table`
   td {
     padding: 12px 18px;
     border-bottom: 1px solid var(--kvib-colors-chakra-border-color);
+
+    &:first-child {
+      padding-left: 24px;
+    }
   }
 `;
 
