@@ -28,27 +28,30 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
   } = useForm<{ north: number | null; east: number | null }>({
     defaultValues: { north: null, east: null },
   });
-  const { data: nasjon } = useNibasApi("/v1/nasjon/");
+  const { data: nasjon, isLoading, error: nasjonFetchError } = useNibasApi("/v1/nasjon/");
   const [error, setError] = useState<string | null>();
 
+  const moveToCoordinate = () => {
+    const [east, north] = [getValues("east"), getValues("north")];
+    if (nasjonFetchError != null) {
+      centerOnCoordinate(north, east);
+    } else if (
+      isLoading === false &&
+      east !== null &&
+      north !== null &&
+      nasjon?.omraade?.coordinates != null &&
+      isPointInsideMultiPolygon(east, north, nasjon?.omraade?.coordinates)
+    ) {
+      setError(null);
+      centerOnCoordinate(north, east);
+      reset();
+    } else {
+      setError("Koordinatene må være innenfor Norge sine grenser");
+    }
+  };
+
   return (
-    <form
-      onSubmit={handleSubmit(() => {
-        const [east, north] = [getValues("east"), getValues("north")];
-        if (
-          east !== null &&
-          north !== null &&
-          nasjon?.omraade?.coordinates != null &&
-          isPointInsideMultiPolygon(east, north, nasjon?.omraade?.coordinates)
-        ) {
-          setError(null);
-          centerOnCoordinate(north, east);
-          reset();
-        } else {
-          setError("Koordinatene må være innenfor Norge sine grenser");
-        }
-      })}
-    >
+    <form onSubmit={handleSubmit(moveToCoordinate)}>
       <StyledFormControl isInvalid={error != null}>
         <InputGroup>
           <Input
