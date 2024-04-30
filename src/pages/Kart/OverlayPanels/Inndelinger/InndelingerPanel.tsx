@@ -37,6 +37,7 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
   const resetInndelingerPanel = () => {
     closeOverlayModal();
     setSelectedInndelingtype(null);
+    setSelectedInndelinger([]);
     setActivePanelFylkeId("");
   };
 
