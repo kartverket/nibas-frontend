@@ -39,3 +39,11 @@ export const useFlatedata = (inndeling: Inndeling): Flatedata => {
     }
   }
 };
+
+export const isKommuneInndeling = (
+  value: StemmekretsResponse | GrunnkretsResponse | KommuneResponse,
+): value is KommuneResponse => "samiskforvaltningsomraade" in value;
+
+export const isStemmekretsInndeling = (
+  value: StemmekretsResponse | GrunnkretsResponse | KommuneResponse,
+): value is StemmekretsResponse => "valgdistriktsnummer" in value;

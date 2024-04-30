@@ -1,36 +1,91 @@
-import { Badge, Button, TabPanel } from "@kvib/react";
+import { Badge, TabPanel } from "@kvib/react";
 import { Inndeling } from "contexts/InndelingerContext/InndelingerContext";
 import { styled } from "styled-components";
-import { useFlatedata } from "./useFlatedata";
+import { isKommuneInndeling, isStemmekretsInndeling, useFlatedata } from "./useFlatedata";
 import { getIdFromEntity } from "utils/api";
 import { getNavnInSpraak } from "utils/language/language";
 import { capitalize } from "utils/string-utils";
 import { orderInndelingerBy, useKretsTableSort } from "./useKretsTableSort";
 import KretsTableHeader from "./KretsTableHeader";
+import { useForm } from "react-hook-form";
+import FlatedataFooter from "./FlatedataFooter";
+import { useState } from "react";
+
+type KommuneInputs = {
+  [inndelingId: string]: {
+    samiskforvaltningsomraade: boolean;
+  };
+};
+
+type StemmekretsInputs = {
+  [inndelingId: string]: {
+    navn: string;
+    nummer: string;
+  };
+};
+type GrunnkretsInputs = StemmekretsInputs;
+type FormInputs = KommuneInputs | StemmekretsInputs | GrunnkretsInputs;
 
 type Props = {
   inndeling: Inndeling;
 };
 
 const KretsTable = ({ inndeling }: Props) => {
+  const [isEditing, setIsEditing] = useState(false);
+
+  const flatedata = useFlatedata(inndeling) ?? [];
+  const { sortProperty, sortOrder, sortHeaderProps } = useKretsTableSort(inndeling.inndelingtype);
+
   const isAdministrativEnhet = inndeling.inndelingtype === "fylke" || inndeling.inndelingtype === "kommune";
   const isEditableFlatedata = inndeling.isEditing && !isAdministrativEnhet;
 
-  const flatedata = useFlatedata(inndeling) ?? [];
+  const defaultValues = flatedata.reduce<FormInputs>((inndelinger, currentInndeling) => {
+    if (isKommuneInndeling(currentInndeling)) {
+      inndelinger[getIdFromEntity(currentInndeling)] = {
+        samiskforvaltningsomraade: currentInndeling.samiskforvaltningsomraade,
+      };
+    } else {
+      inndelinger[getIdFromEntity(currentInndeling)] = {
+        nummer: currentInndeling.nummer,
+        navn: currentInndeling.navn,
+      };
+    }
+    return inndelinger;
+  }, {});
 
-  const { sortProperty, sortOrder, sortHeaderProps } = useKretsTableSort(inndeling.inndelingtype);
+  const {
+    handleSubmit,
+    formState: { isDirty },
+  } = useForm<FormInputs>({ defaultValues });
+
+  const saveAndAddHistoryEntry = () => {
+    /*
+    const newValues = getValues();
+    addHistoryEntry({
+      type: "stemmekrets",
+      kommuneId,
+      changes: [
+        {
+          from: fromFormToRequest(previousValues.current, stemmekrets),
+          to: fromFormToRequest(newValues, stemmekrets),
+          id: stemmekretsId,
+        },
+      ],
+    });
+    updateEditFeatureText(getRepresentasjonspunktId(stemmekretsId), newValues.navn, newValues.nummer);
+    */
+    setIsEditing((value) => !value);
+  };
+
+  const headerPrefix = isAdministrativEnhet ? "Kommune" : capitalize(inndeling.inndelingtype);
 
   return (
     <Container>
       <Table>
         <thead>
           <tr>
-            <KretsTableHeader
-              {...sortHeaderProps("nummer")}
-            >{`${capitalize(inndeling.inndelingtype)}nummer`}</KretsTableHeader>
-            <KretsTableHeader
-              {...sortHeaderProps("navn")}
-            >{`${capitalize(inndeling.inndelingtype)}navn`}</KretsTableHeader>
+            <KretsTableHeader {...sortHeaderProps("nummer")}>{`${headerPrefix}nummer`}</KretsTableHeader>
+            <KretsTableHeader {...sortHeaderProps("navn")}>{`${headerPrefix}navn`}</KretsTableHeader>
             {isAdministrativEnhet ? (
               <KretsTableHeader {...sortHeaderProps("samiskforvaltningsomraade")}>Merknad</KretsTableHeader>
             ) : inndeling.inndelingtype === "stemmekrets" ? (
@@ -45,9 +100,9 @@ const KretsTable = ({ inndeling }: Props) => {
             <tr key={getIdFromEntity(krets)}>
               <td>{krets.nummer}</td>
               <td>{getNavnInSpraak(krets.navn, "nor")}</td>
-              {"samiskforvaltningsomraade" in krets ? (
+              {isKommuneInndeling(krets) ? (
                 <td>{krets.samiskforvaltningsomraade && <Merknad>Samisk forvaltningsområde</Merknad>}</td>
-              ) : "valgdistriktsnummer" in krets ? (
+              ) : isStemmekretsInndeling(krets) ? (
                 <td>{krets.valgdistriktsnummer ?? ""}</td>
               ) : (
                 <td></td>
@@ -57,9 +112,12 @@ const KretsTable = ({ inndeling }: Props) => {
         </tbody>
       </Table>
       {isEditableFlatedata && (
-        <FlatedataFooter>
-          <EditButton rightIcon="edit_note">Rediger flatedetaljer</EditButton>
-        </FlatedataFooter>
+        <FlatedataFooter
+          isEditing={isEditing}
+          toggleEditing={() => setIsEditing((value) => !value)}
+          canSave={isDirty}
+          onSubmit={handleSubmit(saveAndAddHistoryEntry)}
+        />
       )}
     </Container>
   );
@@ -111,16 +169,6 @@ const Merknad = styled(Badge)`
   vertical-align: unset;
   border-radius: 6px;
   background: var(--kvib-colors-orange-100);
-`;
-
-const FlatedataFooter = styled.div`
-  display: flex;
-  padding: 16px;
-  border-top: 1px solid var(--kvib-colors-chakra-border-color);
-`;
-
-const EditButton = styled(Button)`
-  margin-left: auto;
 `;
 
 export default KretsTable;
