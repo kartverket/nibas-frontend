@@ -5,15 +5,16 @@ import {
   AccordionItem,
   AccordionPanel,
   MenuItem,
-  Skeleton,
   useDisclosure,
   Icon,
+  Spinner,
 } from "@kvib/react";
 import EndringsloggModal from "components/Endringslogg/EndringsloggModal";
 import { useUtkastEndringer } from "components/Endringslogg/hooks/useUtkastEndringer";
 import { styled } from "styled-components";
 import { UtkastResponse } from "types/api";
 import { EndringerForKommune } from "components/Endringslogg/EndringerForKommune";
+import { EndringList } from "components/Endringslogg/EndringerList";
 
 type Props = {
   utkast: UtkastResponse;
@@ -33,7 +34,6 @@ const UtkastEndringslogg = ({ utkast }: Props) => {
 
 export const EndringsloggAccordion = ({ utkast }: Props) => {
   const { harEndringer, laster, stemmekretsendringer, grunnkretsendringer } = useUtkastEndringer(utkast);
-
   const harLastetData = !laster || !!stemmekretsendringer || !!grunnkretsendringer;
 
   return (
@@ -44,19 +44,18 @@ export const EndringsloggAccordion = ({ utkast }: Props) => {
           <AccordionIcon />
         </EndringsloggAccordionButton>
         <AccordionPanel>
-          {!harEndringer && <div>Det er ingen endringer i dette utkastet</div>}
+          {!harEndringer && harLastetData && <div>Det er ingen endringer i dette utkastet</div>}
 
-          {stemmekretsendringer?.map((endringer) => (
-            <Skeleton key={endringer.kommune.id} isLoaded={harLastetData}>
-              <EndringerForKommune kretstype="STEMMEKRETS" endringer={endringer} />
-            </Skeleton>
-          ))}
+          {!harLastetData && <Spinner size="xl" />}
+          <EndringList>
+            {stemmekretsendringer?.map((endringer) => (
+              <EndringerForKommune key={endringer.kommune.id} kretstype="STEMMEKRETS" endringer={endringer} />
+            ))}
 
-          {grunnkretsendringer?.map((endringer) => (
-            <Skeleton key={endringer.kommune.id} isLoaded={harLastetData}>
-              <EndringerForKommune kretstype="GRUNNKRETS" endringer={endringer} />
-            </Skeleton>
-          ))}
+            {grunnkretsendringer?.map((endringer) => (
+              <EndringerForKommune key={endringer.kommune.id} kretstype="GRUNNKRETS" endringer={endringer} />
+            ))}
+          </EndringList>
         </AccordionPanel>
       </EndringsloggAccordionItem>
     </Accordion>

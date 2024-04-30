@@ -150,12 +150,18 @@ const getSammenslaaingEndring = (
     return null;
   }
 
+  const viderefoertKretResponse = findKrets(viderefoertKrets?.lokalId, alleStemmekretser);
+
   const gamleKretser = sammenslaaing.stemmekretserTilSammenslaaing
     .map((gammelKrets) => findKrets(gammelKrets.lokalId, alleStemmekretser))
     .map((gammelKrets) => ({
       navn: gammelKrets.navn,
       nummer: gammelKrets.nummer,
-    }));
+    }))
+    .concat({
+      navn: viderefoertKretResponse.navn,
+      nummer: viderefoertKretResponse.nummer,
+    });
 
   return {
     nyttNavn: sammenslaaing.navn ?? "",
@@ -173,18 +179,18 @@ const getKretsdelinger = (
   return operasjoner.kretsDelingEndringer
     .filter((splitting) => splitting.flatetype === kretsType && splitting.kommuneId.lokalid.value === kommuneId)
     .map((splitting) => {
-      const opprinneligKrets = alleKretser.find(
+      const opprinneligKretsResponse = alleKretser.find(
         (krets) => krets.id.lokalid.value === splitting.opprinneligKrets.lokalId,
       );
 
+      const opprinneligKrets = {
+        kretsNummer: opprinneligKretsResponse?.nummer ?? "XX",
+        kretsNavn: opprinneligKretsResponse?.navn ?? "Ukjent",
+      };
+
       const kretsSplittingEndring: KretsSplittingEndring = {
-        opprinneligKrets: opprinneligKrets
-          ? {
-              kretsNavn: opprinneligKrets.navn,
-              kretsNummer: opprinneligKrets.nummer,
-            }
-          : { kretsNavn: "ukjent", kretsNummer: "ukjent" },
-        nyeKretser: splitting.nyeKretser,
+        opprinneligKrets: opprinneligKrets,
+        nyeKretser: splitting.nyeKretser.concat(opprinneligKrets),
       };
       return kretsSplittingEndring;
     });
