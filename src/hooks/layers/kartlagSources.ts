@@ -28,9 +28,9 @@ const getWMTSTileGrid = (extent: number[], setMatrixId: (i: number) => string) =
   });
 };
 
-const getBaseGrid = () => getWMTSTileGrid([-2500000, 3500000, 3045984, 9045984], (z) => z.toString());
+const getDefaultTileGrid = () => getWMTSTileGrid([-2500000, 3500000, 3045984, 9045984], (z) => z.toString());
 
-type WMTSConfig = {
+export type WMTSConfig = {
   url: string;
   layer: string;
   matrixSet: string;
@@ -43,7 +43,7 @@ const topoWMTSConfig: WMTSConfig = {
   url: "https://cache.kartverket.no/topo/v1/wmts/1.0.0/",
   layer: "topo",
   matrixSet: "utm33n",
-  tileGrid: getBaseGrid(),
+  tileGrid: getDefaultTileGrid(),
   style: "default",
   format: "image/png",
 };
@@ -52,7 +52,7 @@ const toporasterWMTSConfig: WMTSConfig = {
   url: "https://cache.kartverket.no/toporaster/v1/wmts/1.0.0/",
   layer: "toporaster",
   matrixSet: "utm33n",
-  tileGrid: getBaseGrid(),
+  tileGrid: getDefaultTileGrid(),
   style: "default",
   format: "image/png",
 };
@@ -61,7 +61,7 @@ const topograatoneWMTSConfig: WMTSConfig = {
   url: "https://cache.kartverket.no/topograatone/v1/wmts/1.0.0/",
   layer: "topograatone",
   matrixSet: "utm33n",
-  tileGrid: getBaseGrid(),
+  tileGrid: getDefaultTileGrid(),
   style: "default",
   format: "image/png",
 };
@@ -70,7 +70,7 @@ const norgeIBilderConfig: WMTSConfig = {
   url: "https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm33_wmts_v2",
   layer: "Nibcache_UTM33_EUREF89_v2",
   matrixSet: "default028mm",
-  tileGrid: getBaseGrid(),
+  tileGrid: getDefaultTileGrid(),
   style: "default",
   format: "image/png",
 };

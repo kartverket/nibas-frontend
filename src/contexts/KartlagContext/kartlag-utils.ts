@@ -1,9 +1,12 @@
-import { getLayerById } from "utils/map/layers";
-import { MappedLayer } from "./KartlagContext";
+import { WMTSConfig } from "hooks/layers/kartlagSources";
+import WMTSCapabilities from "ol/format/WMTSCapabilities";
 import TileLayer from "ol/layer/Tile";
 import TileSource from "ol/source/Tile";
 import TileWMS from "ol/source/TileWMS";
-import WMTS from "ol/source/WMTS";
+import WMTS, { optionsFromCapabilities } from "ol/source/WMTS";
+import { getLayerById } from "utils/map/layers";
+import { EpsgCode } from "utils/map/projections";
+import { MappedLayer } from "./KartlagContext";
 
 /**
  * Navigerer rekursivt gjennom kartlagene for å finne laget som skal endres
@@ -216,5 +219,56 @@ export const resetWMTSLayer = (layer: TileLayer<TileSource>) => {
     newSource.set("config", config);
     layer.setSource(newSource);
     layer.setVisible(false);
+  }
+};
+
+//nibcache kartlaget har et eget endepunkt for hver projeksjon og er derfor ikke med her
+type WMTSLayers = "topo" | "toporaster" | "topograatone";
+
+type WMTSLayerToCapabilities = Record<WMTSLayers, string>;
+const capabilitiesMap: WMTSLayerToCapabilities = {
+  topo: "https://cache.kartverket.no/capabilities/topo/WMTSCapabilities.xml?request=GetCapabilities",
+  toporaster: "https://cache.kartverket.no/capabilities/toporaster/WMTSCapabilities.xml?request=GetCapabilities",
+  topograatone: "https://cache.kartverket.no/capabilities/topograatone/WMTSCapabilities.xml?request=GetCapabilities",
+};
+
+export const setWMTSProjection = async (layer: TileLayer<TileSource>, projectionEpsgCode: EpsgCode) => {
+  const source = layer.getSource();
+  if (source instanceof WMTS) {
+    const config = source.get("config") as WMTSConfig;
+    const layerId = config.layer as WMTSLayers;
+    const parser = new WMTSCapabilities();
+
+    // Henter metadata om projeksjonen for sourcen
+    const wmtsConfig = await fetch(capabilitiesMap[layerId])
+      .then((result) => result.text())
+      .then((text) => {
+        const parsedXML = parser.read(text);
+        // Vi ønsker å få config for den projeksjon vi får inn
+        return optionsFromCapabilities(parsedXML, {
+          layer: layerId,
+          projection: projectionEpsgCode,
+        });
+      });
+    const newMatrixSet = wmtsConfig?.matrixSet;
+    const newTileGrid = wmtsConfig?.tileGrid;
+    if (newMatrixSet != null && newTileGrid != null) {
+      // lager ny source med info fra capabilities endepunkt
+      const newSource = new WMTS({
+        ...config,
+        matrixSet: newMatrixSet,
+        tileGrid: newTileGrid,
+        layer: layerId,
+      });
+      newSource.set("config", config);
+      layer.setSource(newSource);
+    }
+  }
+};
+
+export const setWMSProjection = (layer: TileLayer<TileSource>, projectionEpsgCode: EpsgCode) => {
+  const source = layer.getSource();
+  if (source instanceof TileWMS) {
+    source.updateParams({ CRS: projectionEpsgCode });
   }
 };

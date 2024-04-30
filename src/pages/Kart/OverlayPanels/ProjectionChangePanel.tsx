@@ -1,12 +1,13 @@
 import { CloseButton, Select, Text } from "@kvib/react";
+import { setWMSProjection, setWMTSProjection } from "contexts/KartlagContext/kartlag-utils";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { View } from "ol";
 import { get as getProjection } from "ol/proj.js";
 import { register } from "ol/proj/proj4";
-import { TileWMS } from "ol/source";
 import proj4 from "proj4";
 import { useEffect, useState } from "react";
 import { keyframes, styled } from "styled-components";
+import { isWMSLayer, isWMTSLayer } from "utils/map/layers";
 import { EpsgCode, defaultProjection, projectionDefinitions } from "utils/map/projections";
 import { map } from "../constants";
 import { AbsolutePanel, PanelProps } from "./Panel";
@@ -18,13 +19,12 @@ export const ProjectionChangePanel = ({ isOpen }: PanelProps) => {
   useEffect(() => {
     const updateProjection = () => {
       const viewProjection = map.getView().getProjection();
+      const projectionEpsgCode = viewProjection.getCode() as EpsgCode;
       map.getAllLayers().forEach((layer) => {
-        const source = layer.getSource();
-        if (source !== null) {
-          if (source instanceof TileWMS) {
-            source.updateParams({ CRS: viewProjection.getCode() });
-          }
-          source["projection"] = viewProjection;
+        if (isWMSLayer(layer)) {
+          setWMSProjection(layer, projectionEpsgCode);
+        } else if (isWMTSLayer(layer)) {
+          setWMTSProjection(layer, projectionEpsgCode);
         }
       });
     };
