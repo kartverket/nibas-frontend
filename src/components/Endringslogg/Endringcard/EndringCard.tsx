@@ -92,8 +92,7 @@ const CardTitleText = styled(Heading)`
 
 const ChangeRow = styled.div`
   display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
+  flex-flow: wrap row;
   gap: 8px;
 `;
 
