@@ -222,7 +222,7 @@ export const resetWMTSLayer = (layer: TileLayer<TileSource>) => {
   }
 };
 
-//nibcache kartlaget har et eget endepunkt for hver projeksjon og er derfor ikke med her
+//nibcache kartlaget har et eget endepunkt for hver projeksjon og er derfor ikke med her da den håndteres separat
 type WMTSLayers = "topo" | "toporaster" | "topograatone";
 
 type WMTSLayerToCapabilities = Record<WMTSLayers, string>;
@@ -232,41 +232,83 @@ const capabilitiesMap: WMTSLayerToCapabilities = {
   topograatone: "https://cache.kartverket.no/capabilities/topograatone/WMTSCapabilities.xml?request=GetCapabilities",
 };
 
-export const setWMTSProjection = async (layer: TileLayer<TileSource>, projectionEpsgCode: EpsgCode) => {
+const nibcacheMetadataMap: Record<EpsgCode, { capabilities: string; url: string; identifierKey: string }> = {
+  "EPSG:25833": {
+    capabilities:
+      "https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm33_wmts_v2?SERVICE=WMTS&REQUEST=GetCapabilities",
+    url: "https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm33_wmts_v2",
+    identifierKey: "UTM33_EUREF89",
+  },
+  "EPSG:3857": {
+    capabilities:
+      "https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_web_mercator_wmts_v2?SERVICE=WMTS&REQUEST=GetCapabilities",
+    url: "https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_web_mercator_wmts_v2",
+    identifierKey: "web_mercator",
+  },
+
+  "EPSG:25832": {
+    capabilities:
+      "https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm32_wmts_v2?SERVICE=WMTS&REQUEST=GetCapabilities",
+    url: "https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm32_wmts_v2",
+    identifierKey: "UTM32_EUREF89",
+  },
+
+  "EPSG:25835": {
+    capabilities:
+      "https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm35_wmts_v2?SERVICE=WMTS&REQUEST=GetCapabilities",
+    url: "https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm35_wmts_v2",
+    identifierKey: "UTM35_EUREF89",
+  },
+};
+
+export const setWMTSProjection = async (layer: TileLayer<WMTS>, projectionEpsgCode: EpsgCode) => {
   const source = layer.getSource();
-  if (source instanceof WMTS) {
+  if (source != null) {
     const config = source.get("config") as WMTSConfig;
-    const layerId = config.layer as WMTSLayers;
+    const isNibcacheLayer = config.layer.startsWith("Nibcache");
+    // Nibcache lagene sin id varierer pga. at de har unike endepunkter for hver projeksjon, så vi kan ikke bare bruke samme mellom hver projeksjon
+    const layerId = isNibcacheLayer
+      ? `Nibcache_${nibcacheMetadataMap[projectionEpsgCode].identifierKey}_v2`
+      : config.layer;
     const parser = new WMTSCapabilities();
 
-    // Henter metadata om projeksjonen for sourcen
-    const wmtsConfig = await fetch(capabilitiesMap[layerId])
-      .then((result) => result.text())
-      .then((text) => {
-        const parsedXML = parser.read(text);
-        // Vi ønsker å få config for den projeksjon vi får inn
-        return optionsFromCapabilities(parsedXML, {
-          layer: layerId,
-          projection: projectionEpsgCode,
+    // For nibcache er det et eget endepunkt for hver støttede projeksjon.
+    // Hvis vi bytter til noe som den ikke støtter får vi undefined.
+    const path = isNibcacheLayer
+      ? nibcacheMetadataMap[projectionEpsgCode].capabilities
+      : capabilitiesMap[layerId as WMTSLayers];
+
+    if (path !== undefined) {
+      const wmtsConfig = await fetch(path)
+        .then((result) => result.text())
+        .then((text) => {
+          const parsedXML = parser.read(text);
+          // Vi ønsker å få config for den projeksjon vi får inn
+          return optionsFromCapabilities(parsedXML, {
+            layer: layerId,
+            ...(!isNibcacheLayer ? { projection: projectionEpsgCode } : {}),
+          });
         });
-      });
-    const newMatrixSet = wmtsConfig?.matrixSet;
-    const newTileGrid = wmtsConfig?.tileGrid;
-    if (newMatrixSet != null && newTileGrid != null) {
-      // lager ny source med info fra capabilities endepunkt
-      const newSource = new WMTS({
-        ...config,
-        matrixSet: newMatrixSet,
-        tileGrid: newTileGrid,
-        layer: layerId,
-      });
-      newSource.set("config", config);
-      layer.setSource(newSource);
+      const newMatrixSet = wmtsConfig?.matrixSet;
+      const newTileGrid = wmtsConfig?.tileGrid;
+      if (newMatrixSet != null && newTileGrid != null) {
+        const newConfig = {
+          ...config,
+          ...(isNibcacheLayer ? { url: nibcacheMetadataMap[projectionEpsgCode].url } : {}),
+          matrixSet: newMatrixSet,
+          tileGrid: newTileGrid,
+          layer: layerId,
+        };
+        // lager ny source med info fra capabilities endepunkt
+        const newSource = new WMTS(newConfig);
+        newSource.set("config", newConfig);
+        layer.setSource(newSource);
+      }
     }
   }
 };
 
-export const setWMSProjection = (layer: TileLayer<TileSource>, projectionEpsgCode: EpsgCode) => {
+export const setWMSProjection = (layer: TileLayer<TileWMS>, projectionEpsgCode: EpsgCode) => {
   const source = layer.getSource();
   if (source instanceof TileWMS) {
     source.updateParams({ CRS: projectionEpsgCode });
