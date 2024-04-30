@@ -52,6 +52,8 @@ type InndelingerContextValue = {
 
   selectedFlatedataInndeling: Inndeling | null;
   setSelectedFlatedataInndeling: (inndeling: Inndeling | null) => void;
+
+  isSameInndelinger: (a: Inndeling, b: Inndeling) => boolean;
 };
 
 const InndelingerContext = createContext<InndelingerContextValue | undefined>(undefined);
@@ -118,6 +120,8 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
     if (inndelingFeatures.length === 0) return;
 
+    if (selectedInndelinger.some((inndeling) => inndeling.isEditing)) editSource.clear(true);
+
     for (const inndelingWithFeatures of inndelingFeatures) {
       const currentInndeling = selectedInndelinger.find((inndeling) => {
         return inndeling.id === inndelingWithFeatures.id && inndeling.inndelingtype === inndeling.inndelingtype;
@@ -141,7 +145,6 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         previousInndeling.inndelingtype !== currentInndeling.inndelingtype ||
         previousInndeling.isEditing !== currentInndeling.isEditing
       ) {
-        editSource.clear(true);
         if (currentInndeling.isEditing) {
           // TODO Kan man unngå så mye looping her? Er det en potensiell performance save?
           const inndelingFeaturesExcludedUtkastFeatures: Feature<Geometry>[] = [...utkastFeaturesInInndeling];
@@ -271,6 +274,23 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
   const selectInndelinger = (inndelingerToSelect: Inndeling[]) => {
     const newInndelinger = structuredClone(inndelinger);
 
+    // Dersom man redigerer nye inndelinger så skal alle gamle inndelinger som er i redigeringsmodus fjernes
+    const isNewEditingInndelinger = inndelingerToSelect.some((inndeling) => inndeling.isEditing);
+    if (isNewEditingInndelinger) {
+      for (const inndelingerType of Object.values(inndelinger)) {
+        for (const [, inndeling] of inndelingerType) {
+          if (inndeling.isEditing) {
+            const notEditingInndeling: Inndeling = {
+              ...inndeling,
+              isEditing: false,
+            };
+
+            newInndelinger[notEditingInndeling.inndelingtype].set(notEditingInndeling.id, notEditingInndeling);
+          }
+        }
+      }
+    }
+
     for (const inndeling of inndelingerToSelect) {
       const inndelingIfExists = inndelinger[inndeling.inndelingtype].get(inndeling.id);
 
@@ -303,6 +323,8 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
     selectedFlatedataInndeling,
     setSelectedFlatedataInndeling,
+
+    isSameInndelinger,
   };
 
   return <InndelingerContext.Provider value={value}>{children}</InndelingerContext.Provider>;

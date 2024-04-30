@@ -20,43 +20,40 @@ import { useToolbar } from "contexts/ToolbarContext";
 
 const InndelingerPanel = ({ isOpen }: PanelProps) => {
   const [selectedInndelingtype, setSelectedInndelingtype] = useState<Inndelingtype | null>(null);
+  const [selectedInndelinger, setSelectedInndelinger] = useState<Inndeling[]>([]);
+  const [activePanelFylkeId, setActivePanelFylkeId] = useState<string>("");
 
-  // Bedre navn på denne for å skille den mer fra valgt fylke i context?
-  const [selectedPanelFylkeId, setSelectedPanelFylkeId] = useState<string>("");
   const { selectInndelinger, setSelectedFylkeId, getNewInndeling, setSelectedFlatedataInndeling } = useInndelinger();
   const { closeOverlayModal, activeOverlayModal, openOverlayModal } = useOverlayPanel();
   const { disableModeTool } = useToolbar();
-
-  const [selectedInndelinger, setSelectedInndelinger] = useState<Inndeling[]>([]);
-  const resetSelectedInndelinger = () => setSelectedInndelinger([]);
-
   const { history, clearHistory } = useHistory();
-  const hasUnsavedChangesInHistory = history.entries.length > 0;
-
-  const isEditingPanel = activeOverlayModal === "inndelinger";
-
   const { fylker } = useFylker();
-  const { kommuner } = useKommuner(selectedPanelFylkeId);
+  const { kommuner } = useKommuner(activePanelFylkeId);
+
+  const hasUnsavedChangesInHistory = history.entries.length > 0;
+  const isEditingPanel = activeOverlayModal === "inndelinger";
+  const isMultiSelectionInndeling = selectedInndelingtype === "kommune" || selectedInndelingtype === "fylke";
 
   const resetInndelingerPanel = () => {
     closeOverlayModal();
     setSelectedInndelingtype(null);
-    setSelectedPanelFylkeId("");
+    setActivePanelFylkeId("");
   };
 
   const selectInndelingtype = (inndelingtype: Inndelingtype) => {
-    setSelectedInndelingtype(inndelingtype);
-    setSelectedPanelFylkeId("");
+    if (selectedInndelingtype !== inndelingtype) {
+      setSelectedInndelingtype(inndelingtype);
+      setActivePanelFylkeId("");
+      setSelectedInndelinger([]);
+    }
   };
 
-  const selectNewInndeling = (inndelingId: string, inndelingtype: Inndelingtype) => {
+  const selectNewInndelinger = () => {
     if (hasUnsavedChangesInHistory && isEditingPanel) {
       clearHistory();
     }
 
-    const newInndeling = getNewInndeling(inndelingId, inndelingtype, isEditingPanel);
-
-    selectInndelinger([newInndeling]);
+    selectInndelinger(selectedInndelinger);
     resetInndelingerPanel();
 
     if (isEditingPanel) {
@@ -64,18 +61,45 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
     }
   };
 
-  const selectFylke = (fylkeId: string) => {
+  const toggleFylke = (fylkeId: string) => {
     if (selectedInndelingtype === "fylke") {
-      selectNewInndeling(fylkeId, "fylke");
+      const isAlreadySelected = selectedInndelinger.findIndex(
+        (inndeling) => inndeling.id === fylkeId && inndeling.inndelingtype === selectedInndelingtype,
+      );
+
+      if (isAlreadySelected < 0) {
+        const newInndeling = getNewInndeling(fylkeId, selectedInndelingtype, isEditingPanel);
+        setSelectedInndelinger(selectedInndelinger.concat(newInndeling));
+        return;
+      }
+
+      setSelectedInndelinger(selectedInndelinger.filter((_, index) => isAlreadySelected !== index));
     } else {
-      setSelectedPanelFylkeId(fylkeId);
+      setActivePanelFylkeId(fylkeId);
       setSelectedFylkeId(fylkeId);
+      setSelectedInndelinger([]);
     }
   };
 
-  const selectKommune = (kommuneId: string) => {
+  const toggleKommune = (kommuneId: string) => {
     if (selectedInndelingtype) {
-      selectNewInndeling(kommuneId, selectedInndelingtype);
+      const newInndeling = getNewInndeling(kommuneId, selectedInndelingtype, isEditingPanel);
+
+      if (selectedInndelingtype === "grunnkrets" || selectedInndelingtype === "stemmekrets") {
+        setSelectedInndelinger([newInndeling]);
+        return;
+      }
+
+      const isAlreadySelected = selectedInndelinger.findIndex(
+        (inndeling) => inndeling.id === kommuneId && inndeling.inndelingtype === selectedInndelingtype,
+      );
+
+      if (isAlreadySelected === -1) {
+        setSelectedInndelinger(selectedInndelinger.concat(newInndeling));
+        return;
+      }
+
+      setSelectedInndelinger(selectedInndelinger.filter((_, index) => isAlreadySelected !== index).concat());
     }
   };
 
@@ -92,7 +116,14 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
     <Modal isOpen={isOpen} onClose={resetInndelingerPanel} scrollBehavior="inside">
       <ModalOverlay />
       <ModalContent as={ModalPanel} $isOpen={isOpen}>
-        <PanelHeader onClose={resetInndelingerPanel}>
+        <PanelHeader
+          onClose={resetInndelingerPanel}
+          subHeading={
+            isMultiSelectionInndeling
+              ? "For å redigere kommunegrenser må du skru på redigering for begge kommunene grensen gjelder"
+              : ""
+          }
+        >
           Velg en inndeling du ønsker å {isEditingPanel ? "redigere" : "se i kartet"}
         </PanelHeader>
         <InndelingerLayout>
@@ -116,11 +147,14 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
                 const fylkeId = getIdFromEntity(fylke);
                 return (
                   <InndelingOption
-                    isActive={selectedPanelFylkeId === fylkeId}
+                    isActive={selectedInndelinger.some(
+                      (inndeling) =>
+                        inndeling.id === fylke.id.lokalid.value && inndeling.inndelingtype === selectedInndelingtype,
+                    )}
                     key={fylkeId}
-                    onClick={() => selectFylke(fylkeId)}
+                    onClick={() => toggleFylke(fylkeId)}
                     rightIcon={selectedInndelingtype !== "fylke" ? "chevron_right" : undefined}
-                    type="button"
+                    type={selectedInndelingtype === "fylke" ? "checkbox" : "button"}
                   >
                     {`${fylke.nummer} ${getNavnInSpraak(fylke.navn, "nor")}`}
                   </InndelingOption>
@@ -129,12 +163,20 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
           </InndelingerList>
           <Divider orientation="vertical" />
           <InndelingerList>
-            {selectedPanelFylkeId &&
+            {activePanelFylkeId &&
               kommuner?.map((kommune) => {
                 const kommuneId = getIdFromEntity(kommune);
                 return (
                   <FlatedataWrapper key={kommuneId}>
-                    <InndelingOption isActive={false} onClick={() => selectKommune(kommuneId)} type="button">
+                    <InndelingOption
+                      isActive={selectedInndelinger.some(
+                        (inndeling) =>
+                          inndeling.id === kommune.id.lokalid.value &&
+                          inndeling.inndelingtype === selectedInndelingtype,
+                      )}
+                      onClick={() => toggleKommune(kommuneId)}
+                      type={selectedInndelingtype === "kommune" ? "checkbox" : "radio"}
+                    >
                       {`${kommune.nummer} ${getNavnInSpraak(kommune.navn, "nor")}`}
                     </InndelingOption>
                     {flatedataIsAvailable && !isEditingPanel && (
@@ -152,14 +194,16 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
         </InndelingerLayout>
         <Divider></Divider>
         <ButtonContainer>
-          <Button variant="ghost" size={"sm"} onClick={resetSelectedInndelinger}>
+          <Button variant="ghost" size={"md"} onClick={() => setSelectedInndelinger([])}>
             Nullstill markering
           </Button>
           <ButtonGroup>
-            <Button variant="secondary" size={"sm"}>
+            <Button variant="secondary" size={"md"} onClick={closeOverlayModal}>
               Avbryt
             </Button>
-            <Button size={"sm"}>Rediger valgte inndelinger</Button>
+            <Button size={"md"} isDisabled={selectedInndelinger.length === 0} onClick={selectNewInndelinger}>
+              {isEditingPanel ? "Rediger" : "Se"} valgte inndelinger
+            </Button>
           </ButtonGroup>
         </ButtonContainer>
       </ModalContent>
