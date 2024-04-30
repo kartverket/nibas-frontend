@@ -1,4 +1,4 @@
-export type NumericEndringType = "grenseendring" | "nyegrenser" | "arkiveringer";
+export type NumericEndringType = "grenseendring" | "nyegrenser" | "arkiveringer" | "grenseinformasjon";
 
 export type ToFromChangeType = "flatedetaljer" | "sammenslåing" | "deling" | "valgdistrikt";
 

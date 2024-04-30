@@ -8,6 +8,10 @@ import { getUrlForPath } from "utils/api";
 import { removeNil } from "utils/list-utils";
 import { AbstractedHistoryEntry } from "../hooks/useUnsavedEndringer";
 import { Endring } from "components/Endringslogg/hooks/utkastEndringerTypes";
+import {
+  getBodyTextForNumericChange,
+  getTitleForEndringstype,
+} from "components/Endringslogg/Endringcard/EndringCardUtils";
 
 type EndringerProps = {
   type: HistoryTypeValues;
@@ -33,22 +37,13 @@ const getTitleAndDescriptionFragments = (
   switch (type) {
     case "grense":
       return {
-        title: <EndringTitle>Justering på grenser</EndringTitle>,
-        description: (
-          <Text>
-            {antallEndringer <= 1 ? `${antallEndringer} grense` : `${antallEndringer} grenser`} har blitt endret på
-          </Text>
-        ),
+        title: <EndringTitle>{getTitleForEndringstype("grenseendring")}</EndringTitle>,
+        description: <Text>{getBodyTextForNumericChange(antallEndringer, "grenseendring")}</Text>,
       };
     case "property":
       return {
-        title: <EndringTitle>Informasjon om grenser</EndringTitle>,
-        description: (
-          <Text>
-            {antallEndringer <= 1 ? `${antallEndringer} grense` : `${antallEndringer} grenser`} har fått endret
-            informasjon
-          </Text>
-        ),
+        title: <EndringTitle>{getTitleForEndringstype("grenseinformasjon")}</EndringTitle>,
+        description: <Text>{getBodyTextForNumericChange(antallEndringer, "grenseinformasjon")}</Text>,
       };
     case "grunnkrets":
       return {
@@ -71,7 +66,7 @@ const getTitleAndDescriptionFragments = (
       };
     case "stemmekretssammenslaaingsendring":
       return {
-        title: <EndringTitle>Stemmekretssammenslåing</EndringTitle>,
+        title: <EndringTitle>{getTitleForEndringstype("sammenslåing")}</EndringTitle>,
         description: (
           <Text>
             {antallEndringer <= 1 ? `${antallEndringer} sammenslåing` : `${antallEndringer} sammenslåinger`} har blitt
@@ -81,12 +76,8 @@ const getTitleAndDescriptionFragments = (
       };
     case "grensearkivering":
       return {
-        title: <EndringTitle>Arkiverte grenser</EndringTitle>,
-        description: (
-          <Text>
-            {antallEndringer <= 1 ? `${antallEndringer} grense` : `${antallEndringer} grenser`} har blitt arkivert
-          </Text>
-        ),
+        title: <EndringTitle>{getTitleForEndringstype("arkiveringer")}</EndringTitle>,
+        description: <Text>{getBodyTextForNumericChange(antallEndringer, "arkiveringer")}</Text>,
       };
     case "grensetilhorighetendring":
       return {
@@ -95,17 +86,12 @@ const getTitleAndDescriptionFragments = (
       };
     case "nygrense":
       return {
-        title: <EndringTitle>Nye grenser</EndringTitle>,
-        description: (
-          <Text>
-            {antallEndringer <= 1 ? `${antallEndringer} ny grense` : `${antallEndringer} nye grenser`} har blitt
-            opprettet
-          </Text>
-        ),
+        title: <EndringTitle>{getTitleForEndringstype("nyegrenser")}</EndringTitle>,
+        description: <Text>{getBodyTextForNumericChange(antallEndringer, "nyegrenser")}</Text>,
       };
     case "grensedeling":
       return {
-        title: <EndringTitle>Delte grenser</EndringTitle>,
+        title: <EndringTitle>{getTitleForEndringstype("deling")}</EndringTitle>,
         description: (
           <Text>
             {antallEndringer <= 1 ? `${antallEndringer} grense` : `${antallEndringer} grenser`} har blitt delt

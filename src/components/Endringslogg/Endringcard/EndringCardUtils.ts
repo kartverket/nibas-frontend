@@ -11,6 +11,8 @@ export const getTitleForEndringstype = (endringstype: AllEndringTypes): string =
       return "Endring av flatedetaljer";
     case "grenseendring":
       return "Endringer på grenser";
+    case "grenseinformasjon":
+      return "Endring av grenseinformasjon";
     case "nyegrenser":
       return "Nye grenser";
     case "sammenslåing":
@@ -26,6 +28,8 @@ export const getBodyTextForNumericChange = (value: number, endringstype: Numeric
       return `${value} ${value > 1 ? "grendeendringer" : "grenseendring"} er gjennomført`;
     case "arkiveringer":
       return `${value} eksisterende ${value > 1 ? "grenser" : "grense"} er arkivert`;
+    case "grenseinformasjon":
+      return `${value} eksisterende ${value > 1 ? "grenser" : "grense"} har fått endret informasjon`;
     case "nyegrenser":
       return `${value} nye ${value > 1 ? "grenser" : "grense"} er tegnet`;
   }
