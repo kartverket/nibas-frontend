@@ -22,12 +22,6 @@ export const defaultProjection = {
 export const projectionDefinitions: EpsgDefinition[] = [
   defaultProjection,
   {
-    name: "EUREF89 - Geografisk, grader (Lat/Lon)",
-    shortName: "EU89 Geografisk, grader",
-    epsgCode: "EPSG:4258",
-    def: "+proj=longlat +ellps=GRS80 +no_defs +type=crs",
-  },
-  {
     name: "WGS84 (Google Maps)",
     shortName: "WGS84 Google",
     epsgCode: "EPSG:3857",
