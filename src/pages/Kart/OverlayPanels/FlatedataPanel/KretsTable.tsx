@@ -7,9 +7,12 @@ import { getNavnInSpraak } from "utils/language/language";
 import { capitalize } from "utils/string-utils";
 import { orderInndelingerBy, useKretsTableSort } from "./useKretsTableSort";
 import KretsTableHeader from "./KretsTableHeader";
-import { useForm } from "react-hook-form";
+import { FieldError, RegisterOptions, useForm } from "react-hook-form";
 import FlatedataFooter from "./FlatedataFooter";
 import { useState } from "react";
+import InputCell, { TableCell } from "./InputCell";
+import { ValidationError } from "components/Input";
+import { isIntegerString } from "utils/type-utils";
 
 type KommuneInputs = {
   [inndelingId: string]: {
@@ -37,7 +40,6 @@ const KretsTable = ({ inndeling }: Props) => {
   const { sortProperty, sortOrder, sortHeaderProps } = useKretsTableSort(inndeling.inndelingtype);
 
   const isAdministrativEnhet = inndeling.inndelingtype === "fylke" || inndeling.inndelingtype === "kommune";
-  const isEditableFlatedata = inndeling.isEditing && !isAdministrativEnhet;
 
   const defaultValues = flatedata.reduce<FormInputs>((inndelinger, currentInndeling) => {
     if (isKommuneInndeling(currentInndeling)) {
@@ -54,9 +56,20 @@ const KretsTable = ({ inndeling }: Props) => {
   }, {});
 
   const {
+    register,
+    getValues,
     handleSubmit,
-    formState: { isDirty },
+    formState: { isDirty, errors },
   } = useForm<FormInputs>({ defaultValues });
+
+  const validationError = (error: FieldError | undefined | null) => {
+    if (error) {
+      return {
+        showError: true,
+        message: error.message,
+      } as ValidationError;
+    }
+  };
 
   const saveAndAddHistoryEntry = () => {
     /*
@@ -77,15 +90,34 @@ const KretsTable = ({ inndeling }: Props) => {
     setIsEditing((value) => !value);
   };
 
-  const headerPrefix = isAdministrativEnhet ? "Kommune" : capitalize(inndeling.inndelingtype);
+  const kretsPrefix = isAdministrativEnhet ? "Kommune" : capitalize(inndeling.inndelingtype);
+
+  // TODO: legg til mer?
+  const registerOptions: Record<string, RegisterOptions> = {
+    nummer: {
+      required: `${kretsPrefix}nummer kan ikke være tomt`,
+      validate: (nummer: string) => {
+        if (!isIntegerString(nummer) || parseInt(nummer) > 9999) {
+          return `${kretsPrefix}nummer må kun inneholde siffer (maks 4)`;
+        }
+        if (parseInt(nummer) <= 0) {
+          return `${kretsPrefix}nummer kan ikke være 0 eller et negativt tall`;
+        }
+        return true;
+      },
+    },
+    navn: {
+      required: `${kretsPrefix}navn kan ikke være tomt`,
+    },
+  };
 
   return (
     <Container>
       <Table>
         <thead>
           <tr>
-            <KretsTableHeader {...sortHeaderProps("nummer")}>{`${headerPrefix}nummer`}</KretsTableHeader>
-            <KretsTableHeader {...sortHeaderProps("navn")}>{`${headerPrefix}navn`}</KretsTableHeader>
+            <KretsTableHeader {...sortHeaderProps("nummer")}>{`${kretsPrefix}nummer`}</KretsTableHeader>
+            <KretsTableHeader {...sortHeaderProps("navn")}>{`${kretsPrefix}navn`}</KretsTableHeader>
             {isAdministrativEnhet ? (
               <KretsTableHeader {...sortHeaderProps("samiskforvaltningsomraade")}>Merknad</KretsTableHeader>
             ) : inndeling.inndelingtype === "stemmekrets" ? (
@@ -96,29 +128,56 @@ const KretsTable = ({ inndeling }: Props) => {
           </tr>
         </thead>
         <tbody>
-          {orderInndelingerBy(flatedata, sortProperty, sortOrder).map((krets) => (
-            <tr key={getIdFromEntity(krets)}>
-              <td>{krets.nummer}</td>
-              <td>{getNavnInSpraak(krets.navn, "nor")}</td>
-              {isKommuneInndeling(krets) ? (
-                <td>{krets.samiskforvaltningsomraade && <Merknad>Samisk forvaltningsområde</Merknad>}</td>
-              ) : isStemmekretsInndeling(krets) ? (
-                <td>{krets.valgdistriktsnummer ?? ""}</td>
-              ) : (
-                <td></td>
-              )}
-            </tr>
-          ))}
+          {orderInndelingerBy(flatedata, sortProperty, sortOrder).map((krets) => {
+            const kretsId = getIdFromEntity(krets);
+
+            return (
+              <tr key={kretsId}>
+                {isKommuneInndeling(krets) ? (
+                  <>
+                    <TableCell>{krets.nummer}</TableCell>
+                    <TableCell>{getNavnInSpraak(krets.navn, "nor")}</TableCell>
+                    <TableCell>
+                      {krets.samiskforvaltningsomraade && <Merknad>Samisk forvaltningsområde</Merknad>}
+                    </TableCell>
+
+                    {/* uhuhu hauh uahu hau 
+                  <InputCell
+                    isEditing={isEditing}
+                    data={`${getValues(`${kretsId}.navn`)}`}
+                    validationError={"navn" in errors ? validationError(errors.navn as FieldError) : undefined}
+                    {...register("navn", registerOptions.navn)}
+                  />
+                  */}
+                  </>
+                ) : (
+                  <>
+                    <InputCell
+                      isEditing={isEditing}
+                      data={`${getValues(`${kretsId}.nummer`)}`}
+                      validationError={"nummer" in errors ? validationError(errors.nummer as FieldError) : undefined}
+                      {...register(`${kretsId}.nummer`, registerOptions.nummer)}
+                    />
+                    <InputCell
+                      isEditing={isEditing}
+                      data={`${getValues(`${kretsId}.navn`)}`}
+                      validationError={"navn" in errors ? validationError(errors.navn as FieldError) : undefined}
+                      {...register(`${kretsId}.navn`, registerOptions.navn)}
+                    />
+                    <TableCell>{isStemmekretsInndeling(krets) ? krets.valgdistriktsnummer ?? "" : ""}</TableCell>
+                  </>
+                )}
+              </tr>
+            );
+          })}
         </tbody>
       </Table>
-      {isEditableFlatedata && (
-        <FlatedataFooter
-          isEditing={isEditing}
-          toggleEditing={() => setIsEditing((value) => !value)}
-          canSave={isDirty}
-          onSubmit={handleSubmit(saveAndAddHistoryEntry)}
-        />
-      )}
+      <FlatedataFooter
+        isEditing={isEditing}
+        toggleEditing={() => setIsEditing((value) => !value)}
+        canSave={isDirty}
+        onSubmit={handleSubmit(saveAndAddHistoryEntry)}
+      />
     </Container>
   );
 };

@@ -33,7 +33,7 @@ const KretsTableHeader = ({ children, onClick, isActivated, isReversed }: Props)
 };
 
 const ClickableHeader = styled(Button)`
-  margin-left: -10px;
+  margin-left: -8px;
   padding: 0 8px;
   height: 20px;
 
