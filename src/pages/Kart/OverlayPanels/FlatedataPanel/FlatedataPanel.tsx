@@ -18,10 +18,16 @@ import KretsTable from "./KretsTable";
 import { Inndeling, pluralizeInndelingtype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { getNavnInSpraak } from "utils/language/language";
 import { capitalize } from "utils/string-utils";
+import { useState } from "react";
+import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 
 const FlatedataPanel = ({ isOpen }: PanelProps) => {
+  const [tabIndex, setTabIndex] = useState(0);
+  const [isEditing, setIsEditing] = useState(false);
+
   const { closeOverlayModal } = useOverlayPanel();
   const { inndelinger } = useInndelinger();
+  const { open } = useConfirmationModal();
 
   const allInndelinger = Object.values(inndelinger)
     .flatMap((inndelingerMap) => [...inndelingerMap.values()])
@@ -37,11 +43,37 @@ const FlatedataPanel = ({ isOpen }: PanelProps) => {
     return nameAndNumber + inndelingType + isEditable;
   };
 
+  const handleDraft = (callback: () => void) => {
+    if (isEditing) {
+      open({
+        title: "Du har ulagrede endringer",
+        description:
+          "Hvis du går ut av flateinformasjon uten å fullføre redigeringen vil du miste endringene du har gjort.",
+        declineText: "Gå tilbake til redigering",
+        acceptText: "Forkast endringene",
+        onAccept: callback,
+      });
+    } else {
+      callback();
+    }
+  };
+
+  const handleTabsChange = (index: number) => {
+    handleDraft(() => setTabIndex(index));
+    setIsEditing(false);
+  };
+
+  const handleCloseModal = () => {
+    handleDraft(() => closeOverlayModal());
+    setIsEditing(false);
+    setTabIndex(0);
+  };
+
   return (
-    <Modal isOpen={isOpen} onClose={closeOverlayModal} scrollBehavior="inside">
-      <ModalOverlay />
+    <Modal isOpen={isOpen} onClose={handleCloseModal} scrollBehavior="inside">
+      <ModalOverlay onClick={handleCloseModal} />
       <ModalContent as={FlatedataPanelContent} $isOpen={isOpen}>
-        <FlatedataPanelHeader onClose={closeOverlayModal}>
+        <FlatedataPanelHeader onClose={handleCloseModal}>
           <span>Flateinformasjon</span>
           <SearchInput>
             <InputLeftElement>
@@ -50,7 +82,7 @@ const FlatedataPanel = ({ isOpen }: PanelProps) => {
             <Input placeholder="TODO" />
           </SearchInput>
         </FlatedataPanelHeader>
-        <FlatedataTabs size="md">
+        <FlatedataTabs size="md" index={tabIndex} onChange={handleTabsChange}>
           <FlatedataTabList>
             {allInndelinger.map((inndeling) => (
               <FlatedataTab key={inndeling.id + inndeling.inndelingtype}>{getTabText(inndeling)}</FlatedataTab>
@@ -58,7 +90,12 @@ const FlatedataPanel = ({ isOpen }: PanelProps) => {
           </FlatedataTabList>
           <FlatedataTabPanels>
             {allInndelinger.map((inndeling) => (
-              <KretsTable key={inndeling.id + inndeling.inndelingtype} inndeling={inndeling} />
+              <KretsTable
+                key={inndeling.id + inndeling.inndelingtype}
+                inndeling={inndeling}
+                isEditing={isEditing}
+                setIsEditing={setIsEditing}
+              />
             ))}
           </FlatedataTabPanels>
         </FlatedataTabs>

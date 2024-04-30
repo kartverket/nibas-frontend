@@ -9,7 +9,6 @@ import { orderInndelingerBy, useKretsTableSort } from "./useKretsTableSort";
 import KretsTableHeader from "./KretsTableHeader";
 import { FieldError, RegisterOptions, useForm } from "react-hook-form";
 import FlatedataFooter from "./FlatedataFooter";
-import { useState } from "react";
 import InputCell, { MerknadCell, TableCell } from "./KretsTableCells";
 import { ValidationError } from "components/Input";
 import { isIntegerString } from "utils/type-utils";
@@ -31,11 +30,11 @@ type FormInputs = KommuneInputs | StemmekretsInputs | GrunnkretsInputs;
 
 type Props = {
   inndeling: Inndeling;
+  isEditing: boolean;
+  setIsEditing: (isEditing: boolean) => void;
 };
 
-const KretsTable = ({ inndeling }: Props) => {
-  const [isEditing, setIsEditing] = useState(false);
-
+const KretsTable = ({ inndeling, isEditing, setIsEditing }: Props) => {
   const flatedata = useFlatedata(inndeling) ?? [];
   const { sortProperty, sortOrder, sortHeaderProps } = useKretsTableSort(inndeling.inndelingtype);
   const isAdministrativEnhet = inndeling.inndelingtype === "fylke" || inndeling.inndelingtype === "kommune";
@@ -56,6 +55,8 @@ const KretsTable = ({ inndeling }: Props) => {
     }
   };
 
+  // TODO: history
+  // TODO: form history sync for undo og redo?
   const saveAndAddHistoryEntry = () => {
     /*
     const newValues = getValues();
@@ -72,7 +73,7 @@ const KretsTable = ({ inndeling }: Props) => {
     });
     updateEditFeatureText(getRepresentasjonspunktId(stemmekretsId), newValues.navn, newValues.nummer);
     */
-    setIsEditing((value) => !value);
+    setIsEditing(!isEditing);
   };
 
   const kretsPrefix = isAdministrativEnhet ? "Kommune" : capitalize(inndeling.inndelingtype);
@@ -115,7 +116,6 @@ const KretsTable = ({ inndeling }: Props) => {
           {orderInndelingerBy(flatedata, sortProperty, sortOrder).map((krets) => {
             const kretsId = getIdFromEntity(krets);
             const kretsErrors = errors[kretsId];
-
             return (
               <tr key={kretsId}>
                 {isKommuneInndeling(krets) ? (
@@ -161,7 +161,7 @@ const KretsTable = ({ inndeling }: Props) => {
       </Table>
       <FlatedataFooter
         isEditing={isEditing}
-        toggleEditing={() => setIsEditing((value) => !value)}
+        toggleEditing={() => setIsEditing(!isEditing)}
         canSave={isDirty}
         onSubmit={handleSubmit(saveAndAddHistoryEntry)}
       />
